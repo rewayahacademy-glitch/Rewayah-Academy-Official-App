@@ -1,0 +1,40 @@
+# Secrets — jamais versionné
+.env
+.env.*
+*.env
+!.env.example
+*.pem
+*.key
+*.keystore
+*.jks
+secrets/
+keys/
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/
+
+# Flutter / Dart
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+
+# Node
+node_modules/
+npm-debug.log*
+
+# IDE
+.idea/
+*.code-workspace
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
