@@ -4,6 +4,12 @@
 > Cohé par l'agent de code, une étape à la fois, jamais en bloc.
 > Quand le fichier n'existait pas encore, une nouvelle session doit partir du **mode onboarding** (voir `CLAUDE.md`).
 
+## DÉMARRER ICI — prochaine session (ne rien chercher d'autre)
+
+1. **Étape D (secrets, ~15 min, interactif)** : demander à l'opérateur d'exécuter `supabase login` puis `supabase link --project-ref gggmtelinlpseweouyav`, puis poser dans GitHub les secrets `SUPABASE_ACCESS_TOKEN` (jeton `sbp_`) et `SUPABASE_DB_URL` (connexion directe port 5432). Vérifier : zéro clé dans le dépôt.
+2. **Puis Étape 2 — coder, sans délai** : si `pubspec.yaml` n'existe pas, lancer `flutter create` à la racine, puis appliquer `docs/architecture/etape-2-core-flutter.md` (thème, cache local, routeur unique). Backend (`gggmtelinlpseweouyav`) prêt et validé — étape C terminée, migrations applicables.
+3. Ne pas revoir A/B/C/E. Ne toucher ni au routeur ni au thème avant d'avoir lu `docs/produit/parcours-utilisateurs.md` et `lib/CLAUDE.md`.
+
 ## État courant — PARTIELLEMENT INITIALISÉ (bootstrap fait)
 
 Le socle de dépôt est en place. Les étapes qui ont pu être automatisées le sont ; les étapes restantes exigent une authentification interactive (compte) et/ou des ressources externes. Une nouvelle session d'agent de code doit reprendre le protocole `docs/agent-onboarding.md` **à la première étape non cochée** ci-dessous, dans l'ordre.
