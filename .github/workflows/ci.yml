@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  migrate-check:
+    name: Migrations applicables (Postgres 17)
+    runs-on: ubuntu-latest
+    container: postgres:17-alpine
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stub les rôles Supabase puis applique les migrations
+        shell: bash
+        run: |
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon nologin;
+          create role authenticated nologin;
+          create role service_role nologin bypassrls;
+          create role supabase_auth_admin nologin bypassrls;
+          create schema auth;
+          grant usage on schema auth to anon, authenticated;
+          create table auth.users (id uuid primary key, email text);
+          SQL
+          for f in supabase/migrations/*.sql; do
+            psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+  flutter:
+    name: Flutter (${{ matrix.target }})
+    # Le projet Flutter arrive à l'étape 2 ; ce job s'active dès que pubspec.yaml existe.
+    if: hashFiles('pubspec.yaml') != ''
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: web
+          - os: ubuntu-latest
+            target: apk
+          - os: windows-latest
+            target: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+      - run: flutter pub get
+      - run: dart analyze --fatal-infos
+      - run: flutter test
+      - run: flutter build ${{ matrix.target }}
+        working-directory: .

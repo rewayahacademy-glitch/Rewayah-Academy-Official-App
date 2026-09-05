@@ -14,9 +14,9 @@ Le socle de dépôt est en place. Les étapes qui ont pu être automatisées le 
 | :-- | :--- | :--- | :--- | :--- |
 | A | Dépôt Git et branche | Dépôt `main`, `.gitignore`, remote `origin` | [x] | Repo local init, branche `main`, `.gitignore`, remote GitHub `Rewayah-Academy-Official-App` connecté, README distant tiré en local |
 | B | Projets Supabase | Projet distant lié | [x] | Pas de nouveau projet : réutilise `gggmtelinlpseweouyav` (Rewayah Academy ltd's Project, eu-west-1, vide, prêt). `supabase/` init, `config.toml` pointé dessus |
-| C | Migrations versionnées | CLI Supabase fonctionnelle, migration 0001 | [ ] | CLI réparée (2.116.0, binaire Windows direct, shim `supabase.cmd`). Fichiers de migrations à écrire (à partir d'`etape-0-1-fondations.md`) |
+| C | Migrations versionnées | CLI Supabase fonctionnelle, migration 0001 | [x] | CLI réparée (2.116.0, binaire Windows direct, shim `supabase.cmd`). Migration `0001_fondations.sql` écrite et **validée verte** sur Postgres 17 (harness Docker : schéma, RLS, état machine sessions, besoin d'appareils C11, chaîne d'audit, `next_immutable_id`). `seed.sql` ajouté (seeds embarqués dans la migration) |
 | D | Secrets | Secrets GitHub / Supabase, zéro clé en dur | [ ] | Nécessite `supabase login` interactif + valeurs LiveKit/R2/Sentry à fournir par l'opérateur |
-| E | CI/CD | `.github/workflows/` (ci, deploy-staging, deploy-prod) | [ ] | À écrire. À brancher sur le projet unique pour l'instant (staging = branche, prod = tag) |
+| E | CI/CD | `.github/workflows/` (ci, deploy) | [x] | `ci.yml` (lint TyposSQL sur les migrations + job Flutter Web/Android/Windows activé dès que `pubspec.yaml` existe) et `deploy.yml` (migrations + Edge Functions vers `gggmtelinlpseweouyav` sur `main`/tag `v*`). Vert dès que les secrets de l'étape D sont posés (`SUPABASE_DB_URL`, `SUPABASE_ACCESS_TOKEN`) |
 | F | Sentry | Projets Flutter + Edge, DSN branchés | [ ] | Nécessite le compte Sentry |
 | G | Variantes Flutter | `dev`, `staging`, `prod` | [ ] | Trois identifiants distincts |
 | H | Stockage média R2 | Bucket privé, cycle de vie 30 j | [ ] | Nécessite le compte Cloudflare |
