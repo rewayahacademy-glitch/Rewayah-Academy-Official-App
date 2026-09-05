@@ -16,6 +16,7 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 | Le backend Supabase | `supabase/CLAUDE.md` | Rappels non négociables du dossier |
 | Un écran, un composant Flutter | `docs/produit/parcours-utilisateurs.md` | États, direction artistique, raisons des choix |
 | Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Les 9 composants partagés et le routeur unique |
+| Tokens visuels, polices, icônes, éthique | `docs/produit/design-tokens.md` | Palette, typographie, librairie d'icônes, règles islamiques, anti-IA |
 | Le front-end Flutter | `lib/CLAUDE.md` | Rappels non négociables du dossier |
 
 ### Historique (ne les ouvre que sur demande explicite)

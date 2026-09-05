@@ -1,7 +1,7 @@
 # Plan d'exécution - Étape 2
 ## Core Flutter, thème, cache local et routeur
 
-Spécification à destination de l'agent de code, sans implémentation. S'appuie sur les tokens de couleur et les composants déjà validés dans les maquettes de `docs/produit/parcours-utilisateurs.md`.
+Spécification à destination de l'agent de code, sans implémentation. S'appuie sur les tokens de couleur et les composants déjà validés dans les maquettes de `docs/produit/parcours-utilisateurs.md`. **Références complètes : `docs/produit/design-tokens.md`** (palette, polices, icônes, éthique, copywriting).
 
 ---
 
@@ -27,7 +27,18 @@ L'audit a mesuré trois échecs de contraste dans la charte d'origine (section 1
 
 ### Typographie et espacement
 
-Échelle d'espacement fixe : 4, 8, 12, 16, 20, 24, 32. Aucune valeur ponctuelle en dehors de cette échelle, y compris dans les écrans enfants où la tentation d'ajuster au pixel est la plus forte.
+Référence complète : `docs/produit/design-tokens.md` (§2 Polices, §7 Espacement).
+
+Quatre polices, pas plus :
+
+| Langue | Police | Usage |
+| :--- | :--- | :--- |
+| Arabe — documents | KFGQPC Uthman Taha Naskh | Coran, hadiths, livres, lettres |
+| Arabe — interface | Noto Sans Arabic | RTL, menus, boutons, labels |
+| Français — corps | Noto Sans | Labels, navigation, texte |
+| Français — titres | Varela Round | Headings, éléments d'accent |
+
+Échelle d'espacement fixe : 4, 8, 12, 16, 20, 24, 32. Aucune valeur ponctuelle en dehors de cette échelle.
 
 Deux échelles typographiques, pas une seule modulée par `fontSize` libre : une échelle standard pour les rôles adultes, une échelle agrandie d'environ 20% pour le mode enfant, appliquée par un `TextTheme` distinct et non par des multiplicateurs dispersés dans les écrans.
 
