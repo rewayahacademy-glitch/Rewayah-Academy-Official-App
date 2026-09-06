@@ -167,6 +167,77 @@ void main() {
     });
   });
 
+  group('Le bloc dominant de ENS-02', () {
+    test('c est le premier cours dont la fin n est pas passee', () {
+      final List<Seance> seances = <Seance>[
+        _cours(heure: 9),
+        _cours(heure: 11, id: 's2'),
+        _cours(heure: 14, id: 's3'),
+      ];
+
+      // 10h30 : le cours de 9h est fini, celui de 11h est le prochain.
+      expect(
+        prochainCours(seances, _jour.add(const Duration(hours: 10, minutes: 30)))
+            ?.id,
+        's2',
+      );
+      // 9h30 : on est dedans, c'est lui qui domine, pas le suivant.
+      expect(
+        prochainCours(seances, _jour.add(const Duration(hours: 9, minutes: 30)))
+            ?.id,
+        's1',
+      );
+    });
+
+    test('un cours qui deborde reste le bloc dominant', () {
+      // La base le declare en cours alors que son heure de fin est passee. Sans
+      // cette priorite, l'enseignant lirait le cours suivant alors qu'il est
+      // encore dans le premier.
+      final List<Seance> seances = <Seance>[
+        _cours(heure: 9, statut: StatutSeance.enCours),
+        _cours(heure: 11, id: 's2'),
+      ];
+
+      expect(
+        prochainCours(seances, _jour.add(const Duration(hours: 10, minutes: 30)))
+            ?.id,
+        's1',
+      );
+    });
+
+    test('une seance annulee ne peut pas etre le prochain cours', () {
+      final List<Seance> seances = <Seance>[
+        _cours(heure: 11, statut: StatutSeance.annulee),
+        _cours(heure: 14, id: 's2', statut: StatutSeance.annuleeTard),
+        _cours(heure: 16, id: 's3'),
+      ];
+
+      expect(prochainCours(seances, _jour.add(const Duration(hours: 10)))?.id,
+          's3');
+    });
+
+    test('le bloc n est pas borne a la journee courante', () {
+      // La colonne dit ce qu'est aujourd'hui, ce bloc dit ce qui vient : un
+      // enseignant dont la journee est finie doit lire quand il reprend.
+      final Seance demain = _cours(heure: 33, id: 'demain');
+
+      expect(
+        prochainCours(<Seance>[demain], _jour.add(const Duration(hours: 20)))
+            ?.id,
+        'demain',
+      );
+    });
+
+    test('sans cours a venir, il n y a pas de bloc dominant', () {
+      expect(
+        prochainCours(<Seance>[_cours(heure: 9)],
+            _jour.add(const Duration(hours: 20))),
+        isNull,
+      );
+      expect(prochainCours(const <Seance>[], _jour), isNull);
+    });
+  });
+
   group('Ce que ELV-02 annonce avant le cours', () {
     test('les interruptions d une seance sont celles qui tombent dedans', () {
       final DateTime dhuhr = HorairesPriere.duJour(

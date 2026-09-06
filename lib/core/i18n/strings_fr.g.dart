@@ -1120,6 +1120,81 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: 'Vérifier avant le cours'
 	String get preflight => 'Vérifier avant le cours';
+
+	/// fr: 'Votre journée'
+	String get titre => 'Votre journée';
+
+	/// fr: 'Prochain cours'
+	String get prochainCours => 'Prochain cours';
+
+	/// fr: 'Cours en cours'
+	String get coursEnCours => 'Cours en cours';
+
+	/// fr: 'Dans {heures} h {minutes}'
+	String minuteurHeures({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}';
+
+	/// fr: 'Dans {minutes} min'
+	String minuteurMinutes({required Object minutes}) => 'Dans ${minutes} min';
+
+	/// fr: 'Ça commence'
+	String get minuteurImminent => 'Ça commence';
+
+	/// fr: 'Jusqu'à {heure}'
+	String jusqua({required Object heure}) => 'Jusqu\'à ${heure}';
+
+	/// fr: '{jour}, à {heure}'
+	String unAutreJour({required Object jour, required Object heure}) => '${jour}, à ${heure}';
+
+	/// fr: 'Le lancement se fera depuis cet écran quand la salle existera. Pour l'instant il annonce, il n'ouvre pas.'
+	String get sansLancement => 'Le lancement se fera depuis cet écran quand la salle existera. Pour l\'instant il annonce, il n\'ouvre pas.';
+
+	/// fr: 'Aucun cours à venir'
+	String get aucunCours => 'Aucun cours à venir';
+
+	/// fr: 'Prenez un élève en attente : c'est ce qui remplit votre journée.'
+	String get aucunCoursDetail => 'Prenez un élève en attente : c\'est ce qui remplit votre journée.';
+
+	/// fr: 'La journée'
+	String get colonne => 'La journée';
+
+	/// fr: 'Cours avec {prenom}'
+	String ligneCours({required Object prenom}) => 'Cours avec ${prenom}';
+
+	/// fr: 'Pause'
+	String get lignePause => 'Pause';
+
+	/// fr: '{debut} à {fin}'
+	String plage({required Object debut, required Object fin}) => '${debut} à ${fin}';
+
+	/// fr: '{minutes} min'
+	String duree({required Object minutes}) => '${minutes} min';
+
+	/// fr: 'Rien de prévu aujourd'hui'
+	String get rienAujourdhui => 'Rien de prévu aujourd\'hui';
+
+	/// fr: 'Votre prochain cours est {jour} à {heure}.'
+	String rienAujourdhuiDetail({required Object jour, required Object heure}) => 'Votre prochain cours est ${jour} à ${heure}.';
+
+	/// fr: '{nombre} cours donnés aujourd'hui.'
+	String journeeTerminee({required Object nombre}) => '${nombre} cours donnés aujourd\'hui.';
+
+	/// fr: '1 cours donné aujourd'hui.'
+	String get journeeTermineeUn => '1 cours donné aujourd\'hui.';
+
+	/// fr: '{nombre} élèves attendent sur vos heures'
+	String elevesEnAttente({required Object nombre}) => '${nombre} élèves attendent sur vos heures';
+
+	/// fr: '1 élève attend sur vos heures'
+	String get unEleveEnAttente => '1 élève attend sur vos heures';
+
+	/// fr: 'Aucun élève en attente sur vos heures'
+	String get aucunEleveEnAttente => 'Aucun élève en attente sur vos heures';
+
+	/// fr: 'Voir mes créneaux'
+	String get voirCreneaux => 'Voir mes créneaux';
+
+	/// fr: 'La journée n'a pas pu être lue en entier. Réessayez dans un instant.'
+	String get erreur => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -1374,6 +1449,31 @@ extension on Traductions {
 			'tuteur.accueil.assister' => 'Assister',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
+			'enseignant.journee.titre' => 'Votre journée',
+			'enseignant.journee.prochainCours' => 'Prochain cours',
+			'enseignant.journee.coursEnCours' => 'Cours en cours',
+			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
+			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
+			'enseignant.journee.minuteurImminent' => 'Ça commence',
+			'enseignant.journee.jusqua' => ({required Object heure}) => 'Jusqu\'à ${heure}',
+			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '${jour}, à ${heure}',
+			'enseignant.journee.sansLancement' => 'Le lancement se fera depuis cet écran quand la salle existera. Pour l\'instant il annonce, il n\'ouvre pas.',
+			'enseignant.journee.aucunCours' => 'Aucun cours à venir',
+			'enseignant.journee.aucunCoursDetail' => 'Prenez un élève en attente : c\'est ce qui remplit votre journée.',
+			'enseignant.journee.colonne' => 'La journée',
+			'enseignant.journee.ligneCours' => ({required Object prenom}) => 'Cours avec ${prenom}',
+			'enseignant.journee.lignePause' => 'Pause',
+			'enseignant.journee.plage' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
+			'enseignant.journee.duree' => ({required Object minutes}) => '${minutes} min',
+			'enseignant.journee.rienAujourdhui' => 'Rien de prévu aujourd\'hui',
+			'enseignant.journee.rienAujourdhuiDetail' => ({required Object jour, required Object heure}) => 'Votre prochain cours est ${jour} à ${heure}.',
+			'enseignant.journee.journeeTerminee' => ({required Object nombre}) => '${nombre} cours donnés aujourd\'hui.',
+			'enseignant.journee.journeeTermineeUn' => '1 cours donné aujourd\'hui.',
+			'enseignant.journee.elevesEnAttente' => ({required Object nombre}) => '${nombre} élèves attendent sur vos heures',
+			'enseignant.journee.unEleveEnAttente' => '1 élève attend sur vos heures',
+			'enseignant.journee.aucunEleveEnAttente' => 'Aucun élève en attente sur vos heures',
+			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
+			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
 			'aConstruire.titre' => 'Écran à construire',
 			'aConstruire.detail' => 'Cet écran arrive à l\'étape 3.',
 			'galerie.titre' => 'Galerie des composants',

@@ -1,7 +1,7 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **6 septembre 2026**, fin du lot **L5** de l'étape 4.
-> Commit `2bc7818` sur `main`, poussé.
+> Dernière passation : **6 septembre 2026**, fin du lot **L6** de l'étape 4.
+> Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
 
 ## 1. Le projet actif est celui-ci
 
@@ -32,8 +32,8 @@ prières**. Découpage en onze lots, un lot par commit.
 | L3 | Grille de semaine partagée, `TUT-04` | fait |
 | L4 | `ENS-06`, prise atomique, plafond | fait |
 | L5 | Prières : réglages, calcul, ajustements, journée | fait |
-| **L6** | **`ENS-02` la journée en une colonne** | **à faire, commencer ici** |
-| L7 | `ELV-02` et ses six états, puis le démarrage à froid | |
+| L6 | `ENS-02` la journée en une colonne | fait |
+| **L7** | **`ELV-02` et ses six états, puis le démarrage à froid** | **à faire, commencer ici** |
 | L8 | `TUT-01`, `TUT-05`, demandes des parties | |
 | L9 | `ADM-01`, `ADM-06` | |
 | L10 | Vérifications de fin d'étape, documentation, `PROGRESS.md` | |
@@ -50,43 +50,55 @@ prières**. Découpage en onze lots, un lot par commit.
 Ne pas rouvrir l'historique des étapes 1 à 3 : leurs journaux ne servent qu'en
 cas de doute sur un point précis.
 
-## 4. Reprendre : le lot L6
+## 4. Reprendre : le lot L7
 
-`ENS-02` remplace le placeholder de `Routes.enseignantJournee`. Ce qu'il rend,
-d'après la spécification section 5 :
+`ELV-02` remplace le placeholder de `Routes.eleve`. Ce qu'il rend, d'après la
+spécification section 5 et la fiche de `parcours-utilisateurs.md` :
 
-- **Bloc dominant** : le prochain cours, prénom et identifiant immuable de
-  l'élève, minuteur. Le bouton de lancement **n'est pas rendu** : le pre-flight
-  est l'étape 5, et un bouton qui échoue après le geste coûte plus cher qu'un
-  bouton absent.
-- **Une seule colonne de haut en bas** : cours, pauses et prières comme des
-  entrées de même nature. Un bloc « prières » séparé est explicitement interdit.
-- **Bloc secondaire** : le nombre d'élèves en attente compatibles, et l'accès à
-  `ENS-06`.
+- **Deux blocs, rien d'autre.** En mode enfant, aucune navigation : l'écran est
+  le produit.
+- **Six états du bloc principal**, tels que la fiche les tabule : cours dans
+  plus d'une heure, cours dans moins de cinq minutes, cours en direct, aucun
+  cours aujourd'hui, séance annulée, hors ligne. Le prochain cours s'exprime
+  **en jours, jamais en date**.
+- **Deuxième bloc permanent** : le Coran, qui mène au placeholder de `ELV-04`.
+- **Les interruptions de prière de la séance à venir sont annoncées ici**, avant
+  le cours et non pendant (ADR-017). Pictogramme et libellé audio en mode
+  enfant, en clair en mode standard.
+- C'est sur cet écran que se mesure enfin le **démarrage à froid**, scénario 7
+  de l'étape 2, non coché depuis deux étapes faute d'écran métier à charger.
+
+Cela ferme les scénarios 13 et 14 du tableau de la section 7.
 
 Tout est déjà en place côté données, **ne rien réécrire** :
 
-| Ce dont L6 a besoin | Où c'est déjà fait |
+| Ce dont L7 a besoin | Où c'est déjà fait |
 | :--- | :--- |
-| La colonne triée cours + pauses + prières | `construireJournee` dans `lib/core/planning/journee.dart` |
+| Le cours qui vient, en cours ou à venir | `prochainCours`, `lib/core/planning/journee.dart` |
+| Les interruptions d'une séance donnée | `interruptionsDe`, même fichier |
 | Les séances des trois rôles | `seancesProvider`, `lib/core/planning/service_planning.dart` |
 | Les réglages de prière de l'enseignant | `reglagesPriereProvider`, `lib/core/priere/service_priere.dart` |
 | Le nom d'une prière | `libellePriere`, `lib/core/priere/libelle_priere.dart` |
-| La durée maximale d'une pause | `ServiceRegles.valeur(profil, CleRegle.pauseEntreCours)` — **jamais une constante** |
-| Le feed des élèves en attente | `elevesEnAttenteProvider`, `lib/core/matching/service_matching.dart` |
+| La valeur d'une règle pour un profil | `valeurRegleProvider` — **par `regle_effective()`, jamais par `regles_profil_v`**, voir le journal L6 |
+| Le libellé parlé d'un texte | `CleAudio`, `lib/core/i18n/cle_audio.dart`, et le composant `AudioLabel` |
 
-Les libellés vont dans `assets/i18n/fr.i18n.json`, section nouvelle, puis
-`dart run slang`. Aucune chaîne en dur.
+`ENS-02` est le modèle le plus proche : `lib/features/journee/journee_page.dart`
+et son test `test/features/journee_test.dart`. Les deux écrans lisent la même
+séance et doivent en dire la même chose.
+
+Les libellés vont dans `assets/i18n/fr.i18n.json`, puis `dart run slang`.
+Aucune chaîne en dur. Les fichiers son de `assets/audio/fr/` restent à
+enregistrer : la clé audio se pose, le son viendra.
 
 ## 5. Mesures de référence, à ne pas faire régresser
 
-Relevées le 6 septembre 2026, après L5 :
+Relevées le 6 septembre 2026, après L6 :
 
 | Contrôle | Valeur |
 | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème |
-| `flutter test` | **196 tests**, tous verts |
-| `dart run tool/verifier_jetons.dart` | **69 fichiers**, aucune violation |
+| `flutter test` | **211 tests**, tous verts |
+| `dart run tool/verifier_jetons.dart` | **70 fichiers**, aucune violation |
 | `scenarios_etape3.sql` | **34 contrôles** verts |
 | `scenarios_etape4.sql` | **37 contrôles** verts |
 

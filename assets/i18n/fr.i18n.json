@@ -315,7 +315,32 @@
   "enseignant": {
     "journee": {
       "lancer": "Lancer le cours",
-      "preflight": "Vérifier avant le cours"
+      "preflight": "Vérifier avant le cours",
+      "titre": "Votre journée",
+      "prochainCours": "Prochain cours",
+      "coursEnCours": "Cours en cours",
+      "minuteurHeures": "Dans {heures} h {minutes}",
+      "minuteurMinutes": "Dans {minutes} min",
+      "minuteurImminent": "Ça commence",
+      "jusqua": "Jusqu'à {heure}",
+      "unAutreJour": "{jour}, à {heure}",
+      "sansLancement": "Le lancement se fera depuis cet écran quand la salle existera. Pour l'instant il annonce, il n'ouvre pas.",
+      "aucunCours": "Aucun cours à venir",
+      "aucunCoursDetail": "Prenez un élève en attente : c'est ce qui remplit votre journée.",
+      "colonne": "La journée",
+      "ligneCours": "Cours avec {prenom}",
+      "lignePause": "Pause",
+      "plage": "{debut} à {fin}",
+      "duree": "{minutes} min",
+      "rienAujourdhui": "Rien de prévu aujourd'hui",
+      "rienAujourdhuiDetail": "Votre prochain cours est {jour} à {heure}.",
+      "journeeTerminee": "{nombre} cours donnés aujourd'hui.",
+      "journeeTermineeUn": "1 cours donné aujourd'hui.",
+      "elevesEnAttente": "{nombre} élèves attendent sur vos heures",
+      "unEleveEnAttente": "1 élève attend sur vos heures",
+      "aucunEleveEnAttente": "Aucun élève en attente sur vos heures",
+      "voirCreneaux": "Voir mes créneaux",
+      "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant."
     }
   },
 

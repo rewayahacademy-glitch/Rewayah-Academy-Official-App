@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../domain/enums.dart';
 import '../priere/horaires_priere.dart';
 import '../priere/reglages_priere.dart';
 import 'service_planning.dart';
@@ -127,6 +128,38 @@ List<EntreeJournee> construireJournee({
     return parHeure != 0 ? parHeure : a.sorte.index.compareTo(b.sorte.index);
   });
   return entrees;
+}
+
+/// Le cours qui occupe le bloc dominant : celui qui se tient maintenant, sinon
+/// le prochain a venir.
+///
+/// **Volontairement non borne a la journee courante.** Un enseignant dont la
+/// journee est finie doit lire quand il reprend, pas un bloc vide : la colonne
+/// dit ce qu'est aujourd'hui, ce bloc dit ce qui vient. Les seances annulees
+/// sont ecartees, comme dans [construireJournee] : ce qui n'aura pas lieu ne
+/// peut pas etre le prochain cours.
+///
+/// Un cours que la base declare `en_cours` l'emporte sur l'heure : un cours qui
+/// deborde reste le bloc dominant, sinon l'enseignant lirait le suivant alors
+/// qu'il est encore dans le premier.
+Seance? prochainCours(List<Seance> seances, DateTime maintenant) {
+  final List<Seance> retenues =
+      seances
+          .where((Seance seance) => (seance.statut?.estAnnulee ?? false) == false)
+          .toList()
+        ..sort((Seance a, Seance b) => a.debut.compareTo(b.debut));
+
+  for (final Seance seance in retenues) {
+    if (seance.statut == StatutSeance.enCours) {
+      return seance;
+    }
+  }
+  for (final Seance seance in retenues) {
+    if (maintenant.isBefore(seance.fin)) {
+      return seance;
+    }
+  }
+  return null;
 }
 
 /// Les interruptions prevues pendant une seance.

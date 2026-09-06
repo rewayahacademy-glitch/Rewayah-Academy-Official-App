@@ -15,6 +15,7 @@ import '../../features/dossier/depot_piece_page.dart';
 import '../../features/dossier/signature_page.dart';
 import '../../features/eleve_connexion/eleve_connexion_page.dart';
 import '../../features/inscription/inscription_page.dart';
+import '../../features/journee/journee_page.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
@@ -148,8 +149,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Enseignant.
       GoRoute(
         path: Routes.enseignantJournee,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.enseignant.journee),
+        builder: (BuildContext _, GoRouterState _) => const JourneePage(),
       ),
       GoRoute(
         path: Routes.enseignantCreneaux,

@@ -150,3 +150,25 @@ final FutureProviderFamily<List<RegleProfil>, String> reglesProfilProvider =
       (Ref ref, String profilId) =>
           ref.watch(serviceReglesProvider).regles(profilId),
     );
+
+/// Ce qu'une lecture de regle demande : un profil et une regle.
+typedef DemandeRegle = ({String profilId, CleRegle cle});
+
+/// La valeur qui s'applique a un profil pour **une** regle.
+///
+/// **Passe par `regle_effective()`, jamais par `regles_profil_v`.** La vue ne
+/// joint a un profil que les cles qui ont un sens pour son role : a un
+/// enseignant, elle ne rend que son plafond d'eleves. La pause entre deux cours
+/// n'y figure donc pas, et un ecran qui l'y chercherait, comme `ENS-06` cherche
+/// le plafond, lirait zero sans qu'aucune erreur ne se produise. Zero se lit
+/// « aucun trou n'est une pause » : la colonne de `ENS-02` n'en afficherait
+/// jamais une seule, et rien ne le signalerait.
+///
+/// La fonction, elle, ne borne rien par role : elle borne par perimetre de
+/// lecture, et rend la surcharge du profil ou le defaut de plateforme.
+final FutureProviderFamily<int, DemandeRegle> valeurRegleProvider =
+    FutureProvider.family<int, DemandeRegle>(
+      (Ref ref, DemandeRegle demande) => ref
+          .watch(serviceReglesProvider)
+          .valeur(demande.profilId, demande.cle),
+    );

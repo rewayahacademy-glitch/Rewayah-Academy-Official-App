@@ -5,7 +5,7 @@
 > `docs/architecture/etape-4-dashboards.md` reste la spécification ; ce journal
 > est son compte rendu. Mis à jour à la fin de chaque lot, jamais en bloc.
 
-## État : L5 fait, les prières se calculent des deux côtés
+## État : L6 fait, l'enseignant lit sa journée en une colonne
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
@@ -15,7 +15,7 @@
 | L3 | Grille de semaine partagée, `TUT-04` | x |
 | L4 | `ENS-06` élèves en attente, prise atomique, plafond | x |
 | L5 | Prières : réglages, calcul, ajustements, entrées de planning | x |
-| L6 | `ENS-02` la journée | |
+| L6 | `ENS-02` la journée | x |
 | L7 | `ELV-02` et la mesure du démarrage à froid | |
 | L8 | `TUT-01`, `TUT-05`, demandes des parties | |
 | L9 | `ADM-01`, `ADM-06` | |
@@ -150,6 +150,111 @@ restant ouverte.
 Le calcul lui-même n'est mesuré que côté Dart, et c'est volontaire : la base ne
 calcule aucune heure de prière, elle n'en porte que les entrées. C'est
 précisément ce qui rend l'invariant I8 vérifiable.
+
+## Mesures du lot L6
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | **211 tests**, tous verts, dont 15 nouveaux : 10 sur `ENS-02`, 5 sur le bloc dominant |
+| `dart run tool/verifier_jetons.dart` | **70 fichiers**, aucune violation |
+| `0001` à `0005` sur une base nue | appliquées, aucune erreur |
+| `scenarios_etape3.sql` puis `scenarios_etape4.sql` | 34 puis 37 contrôles, tous verts |
+
+`ENS-02` remplace le dernier `EcranAConstruire` de l'enseignant. Aucune ligne de
+`0005` n'a bougé : ce lot est le premier de l'étape qui ne touche pas à la base.
+
+La colonne, les entrées de journée et les horaires de prière viennent tous de
+L5. Ce lot n'a écrit qu'un écran, un provider et une fonction de sélection,
+`prochainCours`, posée dans `lib/core/planning/journee.dart` et non dans
+l'écran : `ELV-02` et `TUT-01` ont besoin du même « quel cours vient ensuite »,
+et deux réponses différentes à cette question se verraient tout de suite.
+
+### Ce que L6 ne rend pas, et ce n'est pas un oubli
+
+- **Aucun bouton de lancement.** Le pre-flight est l'étape 5. Une phrase occupe
+  sa place, comme le plafond de `ENS-06` en occupe une en L4.
+- **Aucun rappel de rapport en retard.** La fiche produit de `ENS-02` en prévoit
+  un, mais le cahier de transmission est l'étape 6 : rien ne peut encore être
+  en retard.
+- **Aucune mention de fuseau**, contrairement à la grille de `ENS-06`. Voir
+  plus bas : ce serait la seule ligne fausse de l'écran.
+
+## Pièges du lot L6
+
+### La vue des règles ne rend pas la même chose que la fonction
+
+`ENS-06` lit le plafond dans `regles_profil_v`, et cela marche. La même méthode
+appliquée à la pause entre deux cours rend **zéro**, sans erreur : la vue joint
+à chaque profil les seules clés qui ont un sens pour son rôle, et à un
+enseignant elle ne rend que `max_students_per_teacher`.
+
+Zéro se lit « aucun trou n'est une pause ». La colonne de `ENS-02` n'aurait
+jamais affiché une seule pause, et rien ne l'aurait signalé : ni exception, ni
+ligne vide, ni test rouge. `regle_effective()` ne borne pas par rôle, elle borne
+par périmètre de lecture, et rend bien la valeur de plateforme à l'enseignant
+qui la demande pour lui-même.
+
+**Leçon : une vue de commodité et la fonction qu'elle enveloppe ne couvrent pas
+le même périmètre.** Le nouveau `valeurRegleProvider` passe par la fonction, et
+son commentaire dit pourquoi. Le test le mesure dans les deux sens, comme le
+plafond en L4 : la même journée, avec et sans la règle, rend la pause ou ne la
+rend pas.
+
+### Compter les lignes d'un feed, ce n'est pas compter les familles
+
+`eleves_en_attente_v` rend **une ligne par créneau compatible** : un élève qui
+propose quatre heures que cet enseignant peut tenir y figure quatre fois. C'est
+voulu pour `ENS-06`, dont chaque carte porte un bouton « Prendre mardi à 17 h ».
+
+Le bloc secondaire de `ENS-02`, lui, annonce un nombre de familles. Compter les
+lignes aurait annoncé quatre élèves en attente là où un seul attendait, et le
+chiffre aurait grossi chaque fois qu'une famille ajoute un créneau, c'est-à-dire
+exactement quand elle facilite le travail de l'enseignant.
+
+### Une paire dit sur quoi elle s'écrit, y compris dans un bloc dominant
+
+`BentoTile` pose bien l'encre de sa surface par défaut, mais un style pris dans
+le thème porte déjà sa couleur et l'écrase. Le bloc dominant en cours est sur
+la surface d'accent, violette : les styles du thème y auraient écrit en noir.
+
+Le bloc n'a donc qu'un seul chemin, la paire est lue dans une variable et chaque
+style la traverse par `applyTo`. C'est le même défaut qu'à l'étape 3 dans
+`PinPad`, pris par l'autre bout.
+
+### Une journée civile ne dure pas toujours vingt-quatre heures
+
+Les bornes de la colonne s'écrivent `DateTime(annee, mois, jour + 1)` et non
+`debutDuJour.add(const Duration(days: 1))`. Deux fois par an, la seconde forme
+perd ou double une heure de cours, et la colonne serait fausse le jour où
+personne ne pense à regarder.
+
+Même famille que le piège de L5 sur `PrayerTimes.utc` : ce qui se calcule en
+instants se convertit à l'affichage, et une date civile se manipule en
+composantes de date.
+
+### Pourquoi cet écran ne mentionne aucun fuseau
+
+`ENS-06` affiche « heures affichées en Europe/Paris », et c'est exact : sa
+grille est un motif hebdomadaire, posé dans le fuseau que `mon_fuseau()`
+déclare. `ENS-02` n'affiche que des instants absolus, rendus dans l'heure de
+l'appareil. Reprendre la même mention aurait annoncé Paris à un enseignant qui
+lit son écran depuis Conakry, avec des heures qui, elles, seraient bien celles
+de Conakry.
+
+**Une mention de fuseau ne se recopie pas d'un écran à l'autre : elle dit d'où
+vient l'heure affichée, et les deux écrans ne la tiennent pas du même endroit.**
+
+### Le test mesurait la hauteur du viewport
+
+Deux prières sur cinq manquaient à la colonne sous test. La colonne était juste :
+un `ListView` ne construit pas ce qui n'est pas à l'écran, et les lignes du bas
+n'existaient pas dans l'arbre. Le test a gagné une fenêtre haute, avec la raison
+écrite à côté.
+
+C'est le pendant du piège de L1, « le test mesurait le harnais » : ici il
+mesurait la surface d'affichage. **Un `findsNothing` sur une liste longue ne
+prouve rien tant que la fenêtre n'est pas assez haute pour la contenir.**
 
 ## Ce que l'étape reprend de l'existant
 
