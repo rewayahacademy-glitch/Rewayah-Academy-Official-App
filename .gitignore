@@ -9,6 +9,8 @@
 *.jks
 secrets/
 keys/
+dart_define.json
+!dart_define.example.json
 
 # Supabase CLI
 supabase/.temp/
@@ -19,7 +21,33 @@ supabase/.branches/
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
+.pub/
+.pub-cache/
 *.iml
+# Le code genere (drift, riverpod, slang) est VERSIONNE : la CI lance
+# `dart analyze` sans etape de generation prealable, et un diff non vide
+# apres regeneration signale une divergence.
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+*.jks
+
+# iOS
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/ephemeral/
+ios/Pods/
+ios/.symlinks/
+**/Flutter/App.framework/
+**/Flutter/Flutter.framework/
+
+# Windows
+windows/flutter/ephemeral/
 
 # Node
 node_modules/

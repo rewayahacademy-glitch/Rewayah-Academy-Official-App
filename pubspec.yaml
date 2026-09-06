@@ -1,0 +1,88 @@
+name: rewayah_academy
+description: "Rewayah Academy : gestion des cours de Coran en visio."
+publish_to: 'none'
+
+version: 0.2.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Etat et navigation
+  flutter_riverpod: ^3.4.3
+  riverpod_annotation: ^4.0.7
+  go_router: ^18.0.1
+
+  # Backend
+  supabase_flutter: ^2.17.2
+
+  # Cache local (etape-2-core-flutter.md, section 4)
+  drift: ^2.34.4
+  drift_flutter: ^0.3.1
+  flutter_secure_storage: ^11.0.0
+  flutter_cache_manager: ^3.4.2
+
+  # Interface
+  phosphor_flutter: ^2.1.0
+
+  # Internationalisation, cles en points (section 5)
+  slang: ^4.19.1
+  slang_flutter: ^4.19.0
+
+  # Libelles audio du composant AudioLabel
+  just_audio: ^0.10.6
+
+  # Bandeau de degradation reseau
+  connectivity_plus: ^7.3.1
+
+  # Cles d'idempotence de la file de synchronisation
+  uuid: ^4.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.9.1
+  drift_dev: ^2.34.4
+  riverpod_generator: ^4.0.7
+  slang_build_runner: ^4.19.0
+
+flutter:
+  # Les icones viennent de Phosphor (design-tokens.md section 3), jamais de Material.
+  uses-material-design: false
+
+  # assets/i18n n'est pas declare ici : slang compile les chaines dans
+  # lib/core/i18n/strings.g.dart, elles ne sont pas lues au reseau ni au disque.
+  # Seuls les libelles audio sont de vrais assets d'execution.
+  assets:
+    - assets/audio/fr/
+
+  # Quatre familles, pas une de plus (design-tokens.md section 2).
+  # Fichiers versionnes dans le depot : aucune police n'est chargee au reseau,
+  # sinon le budget de demarrage a froid et le mode hors ligne tombent.
+  fonts:
+    # Arabe, documents : Coran, hadiths, livres, lettres.
+    - family: UthmanTahaNaskh
+      fonts:
+        - asset: assets/fonts/UthmanTahaNaskh-Regular.otf
+
+    # Arabe, interface : RTL, menus, boutons, labels.
+    # Police variable : la graisse se pilote par FontVariation dans AppTypography.
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-Variable.ttf
+
+    # Francais, corps de texte.
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Variable.ttf
+
+    # Francais, titres et accents.
+    - family: VarelaRound
+      fonts:
+        - asset: assets/fonts/VarelaRound-Regular.ttf

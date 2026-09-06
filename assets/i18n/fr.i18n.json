@@ -1,0 +1,128 @@
+{
+  "commun": {
+    "continuer": "Continuer",
+    "retour": "Retour",
+    "valider": "Valider",
+    "annuler": "Annuler",
+    "fermer": "Fermer",
+    "reessayer": "Réessayer",
+    "chargement": "Chargement"
+  },
+
+  "reseau": {
+    "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
+    "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
+    "retabli": "Réseau rétabli"
+  },
+
+  "salle": {
+    "bandeauPermanent": "Cours enregistré, visite de contrôle possible.",
+    "micro": "Micro",
+    "microCoupe": "Micro coupé",
+    "camera": "Caméra",
+    "cameraCoupee": "Caméra éteinte",
+    "quitter": "Quitter",
+    "ouvrirCoran": "Ouvrir le Coran",
+    "confirmerSortie": "Quitter le cours ?",
+    "expiree": "Cette salle n'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours."
+  },
+
+  "attente": {
+    "titre": "Votre dossier est en cours de vérification",
+    "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
+    "enVerification": "Nous vérifions votre dossier. Vous recevrez une notification dès qu'il est validé.",
+    "refuse": "Votre dossier n'a pas été validé.",
+    "suspendu": "Votre compte est suspendu.",
+    "contacterAcademie": "Contacter l'académie"
+  },
+
+  "vide": {
+    "aucunCours": "Aucun cours aujourd'hui",
+    "aucunCoursDetail": "Votre prochain cours apparaîtra ici.",
+    "aucunCreneau": "Aucun créneau disponible pour le moment",
+    "aucunRapport": "Aucun cahier de transmission pour l'instant",
+    "aucunAppareil": "Aucun appareil appairé"
+  },
+
+  "pin": {
+    "titre": "Entre ton code",
+    "erreur": "Ce code ne correspond pas",
+    "effacer": "Effacer"
+  },
+
+  "choix": {
+    "autre": "Autre",
+    "autreInvite": "Précisez",
+    "selectionMultiple": "Plusieurs réponses possibles"
+  },
+
+  "avatar": {
+    "sansPhoto": "Pas encore de photo"
+  },
+
+  "nav": {
+    "eleve": {
+      "accueil": "Accueil",
+      "coran": "Coran",
+      "suivi": "Suivi"
+    },
+    "tuteur": {
+      "foyer": "Foyer",
+      "disponibilites": "Disponibilités",
+      "reglages": "Réglages",
+      "suivi": "Suivi"
+    },
+    "enseignant": {
+      "journee": "Journée",
+      "creneaux": "Créneaux",
+      "profil": "Profil"
+    },
+    "controleur": {
+      "planning": "Planning"
+    },
+    "admin": {
+      "tableauDeBord": "Tableau de bord",
+      "dossiers": "Dossiers",
+      "attribution": "Attribution",
+      "journal": "Journal"
+    }
+  },
+
+  "eleve": {
+    "accueil": {
+      "rejoindre": "Rejoindre",
+      "coran": "Le Coran",
+      "prochainCours": "Prochain cours",
+      "coursEnDirect": "Ton cours a commencé"
+    }
+  },
+
+  "tuteur": {
+    "accueil": {
+      "assister": "Assister"
+    }
+  },
+
+  "enseignant": {
+    "journee": {
+      "lancer": "Lancer le cours",
+      "preflight": "Vérifier avant le cours"
+    }
+  },
+
+  "aConstruire": {
+    "titre": "Écran à construire",
+    "detail": "Cet écran arrive à l'étape 3."
+  },
+
+  "galerie": {
+    "titre": "Galerie des composants",
+    "avertissement": "Banc d'essai de développement. Absent des versions de production.",
+    "paires": "Paires de couleurs",
+    "typographie": "Échelles typographiques",
+    "polices": "Polices",
+    "composants": "Composants partagés",
+    "modeEnfant": "Mode enfant",
+    "modeStandard": "Mode standard"
+  }
+}

@@ -1,0 +1,118 @@
+import '../domain/enums.dart';
+
+/// Les chemins de l'application.
+///
+/// **Une seule arborescence, pour toutes les plateformes et pour les deux modes
+/// d'interface.** Le mode enfant ne cree pas de routes distinctes : il change ce
+/// qu'un meme ecran affiche. Deux arborescences dupliquees finissent toujours
+/// par diverger silencieusement
+/// (`docs/architecture/etape-2-core-flutter.md` section 3).
+abstract final class Routes {
+  /// Racine. Redirige selon le role.
+  static const String racine = '/';
+
+  /// Connexion. Google ou courriel.
+  static const String connexion = '/connexion';
+
+  /// Portail d'attente : dossier en verification, refuse, ou compte suspendu.
+  static const String attente = '/attente';
+
+  // --- Eleve, meme arborescence en mode enfant et en mode standard --------
+
+  /// Accueil eleve.
+  static const String eleve = '/eleve';
+
+  /// Le Coran.
+  static const String eleveCoran = '/eleve/coran';
+
+  /// Suivi et historique de l'eleve.
+  static const String eleveSuivi = '/eleve/suivi';
+
+  // --- Tuteur -------------------------------------------------------------
+
+  /// Foyer et appareils.
+  static const String tuteurFoyer = '/tuteur/foyer';
+
+  /// Disponibilites du foyer.
+  static const String tuteurDisponibilites = '/tuteur/disponibilites';
+
+  /// Reglages par enfant.
+  static const String tuteurReglages = '/tuteur/reglages';
+
+  /// Suivi des cahiers de transmission.
+  static const String tuteurSuivi = '/tuteur/suivi';
+
+  // --- Enseignant ---------------------------------------------------------
+
+  /// La journee de cours.
+  static const String enseignantJournee = '/enseignant/journee';
+
+  /// Disponibilites et feed de matching.
+  static const String enseignantCreneaux = '/enseignant/creneaux';
+
+  /// Profil de l'enseignant.
+  static const String enseignantProfil = '/enseignant/profil';
+
+  // --- Controleur ---------------------------------------------------------
+
+  /// Planning global. Une seule destination, pas de barre de navigation.
+  static const String controleur = '/controleur';
+
+  // --- Admin --------------------------------------------------------------
+
+  /// Centre de commande.
+  static const String adminTableauDeBord = '/admin/tableau-de-bord';
+
+  /// Validation des dossiers d'identite.
+  static const String adminDossiers = '/admin/dossiers';
+
+  /// Attribution manuelle.
+  static const String adminAttribution = '/admin/attribution';
+
+  /// Journal d'audit, lecture seule.
+  static const String adminJournal = '/admin/journal';
+
+  // --- Comptable ----------------------------------------------------------
+
+  /// Le role existe dans le modele de donnees, son interface arrive en V1
+  /// avec le module finance (ADR-003).
+  static const String comptable = '/comptable';
+
+  // --- Salle ---------------------------------------------------------------
+
+  /// Salle de cours.
+  ///
+  /// Jamais partageable, jamais memorisable en favori (ADR-005). Le billet
+  /// d'entree transite par `extra`, qui n'apparait pas dans l'URL et disparait
+  /// au rechargement : une adresse copiee ne rouvre donc rien.
+  static const String salle = '/salle';
+
+  // --- Developpement --------------------------------------------------------
+
+  /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.
+  static const String galerie = '/_galerie';
+
+  /// Routes atteignables sans session resolue.
+  static const Set<String> publiques = <String>{connexion, galerie};
+
+  /// La racine de chaque role, ou une redirection renvoie toujours.
+  static String racinePour(AppRole role) => switch (role) {
+    AppRole.student => eleve,
+    AppRole.guardian => tuteurFoyer,
+    AppRole.teacher => enseignantJournee,
+    AppRole.controller => controleur,
+    AppRole.admin => adminTableauDeBord,
+    AppRole.accountant => comptable,
+  };
+
+  /// Le prefixe de chemin reserve a un role. Sert a refuser une route d'un
+  /// autre role demandee directement par URL, y compris sur le Web.
+  static String prefixePour(AppRole role) => switch (role) {
+    AppRole.student => eleve,
+    AppRole.guardian => '/tuteur',
+    AppRole.teacher => '/enseignant',
+    AppRole.controller => controleur,
+    AppRole.admin => '/admin',
+    AppRole.accountant => comptable,
+  };
+}

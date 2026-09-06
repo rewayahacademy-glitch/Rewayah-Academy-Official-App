@@ -1,0 +1,25 @@
+# Configuration de slang.
+#
+# Convention de cle stable des l'etape 2 : `role.ecran.element`, en points,
+# par exemple `eleve.accueil.rejoindre`
+# (docs/architecture/etape-2-core-flutter.md section 5).
+#
+# `flat_map` est indispensable : le composant AudioLabel resout un fichier son
+# a partir de la MEME chaine de cle que le texte, pour que les deux ne puissent
+# pas diverger.
+
+base_locale: fr
+fallback_strategy: base_locale
+
+input_directory: assets/i18n
+input_file_pattern: .i18n.json
+
+output_directory: lib/core/i18n
+output_file_name: strings.g.dart
+
+translate_var: t
+enum_name: AppLocale
+class_name: Traductions
+
+flat_map: true
+timestamp: false
