@@ -174,6 +174,23 @@ pourquoi à chaque fois.
 - PowerShell 5.1 : `2>&1` sur un exécutable natif fabrique un `NativeCommandError`
   même quand la commande a réussi. Lire la sortie, pas le code de retour.
 
+## 7 bis. Du travail non commité traîne dans l'arbre
+
+`web/index.html` et `web/manifest.json` sont modifiés et **non commités** : un
+début de mise en forme PWA, daté d'avant le lot L8, qui remplace les valeurs par
+défaut de Flutter par le nom, la description et les couleurs du produit. C'est
+l'étape M du tableau d'onboarding, toujours `[ ]`.
+
+Le lot L8 ne les a pas repris : ce n'est pas son périmètre, et personne ne sait
+si le service worker et l'URL déployée qui vont avec sont commencés. **Ne pas les
+committer sans les avoir vérifiés** par un `flutter build web`, et sans savoir ce
+que l'opérateur voulait en faire.
+
+La même situation s'est produite pour `0001` et `0004` : la correction `pgcrypto`
+attendait dans l'arbre depuis une session antérieure, et a été commitée à part
+au début du lot L8. Vérifier `git status` en arrivant vaut mieux que le
+découvrir au moment de committer.
+
 ## 8. Ce qui reste ouvert, et ne dépend pas du code
 
 - **Étape D, les secrets.** Toujours ouverte, et bloquante pour l'usage : sans
