@@ -14,6 +14,7 @@ SessionState _session({
   householdId: 'h1',
   role: role,
   accountStatus: statut,
+  lectureProfil: LectureProfil.presente,
 );
 
 void main() {
@@ -65,6 +66,7 @@ void main() {
         resolue: true,
         profileId: 'p1',
         role: AppRole.admin,
+        lectureProfil: LectureProfil.presente,
       );
       expect(sansStatut.porte, PorteAcces.attente);
       expect(
@@ -208,6 +210,129 @@ void main() {
     });
   });
 
+  group('Etape 3, scenario 1 : un compte sans profil va s inscrire', () {
+    // Une session valide dont la lecture de profil a abouti sans rien trouver.
+    // C'est l'etat d'un compte tout juste cree : le jeton ne porte encore ni
+    // role ni foyer, puisque le hook les lit dans une ligne qui n'existe pas.
+    const SessionState sansProfil = SessionState(
+      resolue: true,
+      profileId: 'p1',
+      lectureProfil: LectureProfil.absente,
+    );
+
+    test('la porte est bien celle de l inscription, pas la deconnexion', () {
+      expect(sansProfil.porte, PorteAcces.inscription);
+    });
+
+    for (final String chemin in <String>[
+      Routes.racine,
+      Routes.connexion,
+      Routes.attente,
+      Routes.eleve,
+      Routes.tuteurFoyer,
+      Routes.enseignantJournee,
+      Routes.adminJournal,
+      Routes.salle,
+    ]) {
+      test('$chemin renvoie sur l inscription', () {
+        expect(
+          deciderRedirection(
+            session: sansProfil,
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          Routes.inscription,
+        );
+      });
+    }
+
+    test('l inscription elle-meme reste atteignable', () {
+      expect(
+        deciderRedirection(
+          session: sansProfil,
+          cheminDemande: Routes.inscription,
+          maintenant: maintenant,
+        ),
+        isNull,
+      );
+    });
+
+    test('un compte deja profile ne peut pas revenir a l inscription', () {
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.guardian),
+          cheminDemande: Routes.inscription,
+          maintenant: maintenant,
+        ),
+        Routes.tuteurFoyer,
+      );
+    });
+
+    test('un compte en attente ne peut pas non plus s y refabriquer un profil', () {
+      expect(
+        deciderRedirection(
+          session: _session(
+            role: AppRole.guardian,
+            statut: AccountStatus.disabled,
+          ),
+          cheminDemande: Routes.inscription,
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
+    });
+  });
+
+  group('Etape 3, scenario 2 : un echec de lecture n est pas une absence', () {
+    // La distinction est la seule chose qui separe « inscris-toi » de
+    // « attends » : les deux etats se ressemblent depuis le client.
+    const SessionState lectureEchouee = SessionState(
+      resolue: true,
+      profileId: 'p1',
+      lectureProfil: LectureProfil.echouee,
+    );
+
+    test('un echec ferme sur le portail d attente, il n ouvre pas l inscription', () {
+      expect(lectureEchouee.porte, PorteAcces.attente);
+      expect(
+        deciderRedirection(
+          session: lectureEchouee,
+          cheminDemande: Routes.inscription,
+          maintenant: maintenant,
+        ),
+        Routes.attente,
+      );
+    });
+
+    test('tant que la lecture n a pas eu lieu, rien n est decide', () {
+      const SessionState pasEncoreLue = SessionState(
+        resolue: true,
+        profileId: 'p1',
+      );
+      expect(pasEncoreLue.porte, PorteAcces.chargement);
+      expect(
+        deciderRedirection(
+          session: pasEncoreLue,
+          cheminDemande: Routes.adminJournal,
+          maintenant: maintenant,
+        ),
+        isNull,
+      );
+    });
+
+    test('un profil present dont le jeton n a pas encore le role attend', () {
+      // Fenetre entre la creation du profil et le rafraichissement du jeton.
+      // Elle se ferme, mais elle ne doit rien ouvrir en attendant.
+      const SessionState jetonEnRetard = SessionState(
+        resolue: true,
+        profileId: 'p1',
+        accountStatus: AccountStatus.active,
+        lectureProfil: LectureProfil.presente,
+      );
+      expect(jetonEnRetard.porte, PorteAcces.attente);
+    });
+  });
+
   group('Scenario 6 : une seule arborescence pour les deux modes', () {
     test('les racines de role ne dependent pas du mode d interface', () {
       const SessionState enfant = SessionState(
@@ -216,6 +341,7 @@ void main() {
         role: AppRole.student,
         accountStatus: AccountStatus.active,
         interfaceMode: InterfaceMode.enfant,
+        lectureProfil: LectureProfil.presente,
       );
       const SessionState standard = SessionState(
         resolue: true,
@@ -223,6 +349,7 @@ void main() {
         role: AppRole.student,
         accountStatus: AccountStatus.active,
         interfaceMode: InterfaceMode.standard,
+        lectureProfil: LectureProfil.presente,
       );
 
       for (final String chemin in <String>[

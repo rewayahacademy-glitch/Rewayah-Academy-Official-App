@@ -14,6 +14,13 @@ abstract final class Routes {
   /// Connexion. Google ou courriel.
   static const String connexion = '/connexion';
 
+  /// Inscription : le compte existe, le profil reste a creer.
+  ///
+  /// Atteignable uniquement depuis [PorteAcces.inscription], donc avec une
+  /// session valide et aucune ligne `profiles`. Un compte deja profile ne peut
+  /// pas y revenir.
+  static const String inscription = '/inscription';
+
   /// Portail d'attente : dossier en verification, refuse, ou compte suspendu.
   static const String attente = '/attente';
 

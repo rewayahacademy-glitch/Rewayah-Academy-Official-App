@@ -16,6 +16,14 @@ enum PorteAcces {
   /// Aucune session. Seules les routes publiques sont atteignables.
   deconnecte,
 
+  /// Session valide, aucun profil. L'inscription reste a terminer.
+  ///
+  /// Sans cette porte, un compte tout juste cree n'avait ni role ni foyer dans
+  /// son jeton, tombait en [deconnecte] et repartait sur l'ecran de connexion :
+  /// le produit n'avait aucune porte d'entree
+  /// (`docs/architecture/etape-3-auth-kyc.md` section 2.1).
+  inscription,
+
   /// Dossier non valide. Portail d'attente uniquement, quelle que soit l'URL
   /// tapee directement dans un navigateur.
   attente,
@@ -25,6 +33,26 @@ enum PorteAcces {
 
   /// Acces complet aux routes du role.
   actif,
+}
+
+/// Ce que la lecture du profil a appris.
+///
+/// **Une absence n'est pas un echec.** Les deux se ressemblent depuis le client
+/// et ne veulent pas dire la meme chose : l'absence ouvre l'inscription,
+/// l'echec ferme sur le portail d'attente. Les confondre enverrait un compte
+/// suspendu recreer un profil.
+enum LectureProfil {
+  /// Pas encore lue.
+  enAttente,
+
+  /// Lue, aucune ligne : le compte existe, le profil reste a creer.
+  absente,
+
+  /// Lue, une ligne.
+  presente,
+
+  /// La lecture a echoue, reseau ou refus. On ne devine pas.
+  echouee,
 }
 
 /// L'etat de session dont depend toute la navigation.
@@ -42,6 +70,7 @@ class SessionState {
     this.profileId,
     this.accountStatus,
     this.interfaceMode = InterfaceMode.standard,
+    this.lectureProfil = LectureProfil.enAttente,
   });
 
   /// L'etat initial, avant toute resolution.
@@ -70,6 +99,9 @@ class SessionState {
   /// affiche, jamais l'arborescence de navigation (ADR-009).
   final InterfaceMode interfaceMode;
 
+  /// Ce que la lecture du profil a appris.
+  final LectureProfil lectureProfil;
+
   /// Vrai quand une session existe.
   bool get connecte => profileId != null;
 
@@ -78,17 +110,41 @@ class SessionState {
     if (!resolue) {
       return PorteAcces.chargement;
     }
-    if (!connecte || role == null) {
+    if (!connecte) {
       return PorteAcces.deconnecte;
     }
-    return switch (accountStatus) {
-      AccountStatus.active ||
-      AccountStatus.provisionalActive => PorteAcces.actif,
-      AccountStatus.disabled => PorteAcces.suspendu,
-      // Un statut absent ou illisible se traite comme une attente : on ne
-      // laisse jamais passer par defaut ce qu'on n'a pas su lire.
-      AccountStatus.pendingKyc || null => PorteAcces.attente,
-    };
+
+    switch (lectureProfil) {
+      // On ne sait pas encore : on ne redirige pas.
+      case LectureProfil.enAttente:
+        return PorteAcces.chargement;
+
+      // Le compte existe, le profil reste a creer. C'est la seule porte qui
+      // ouvre l'inscription, et elle ne s'ouvre que sur une lecture reussie.
+      case LectureProfil.absente:
+        return PorteAcces.inscription;
+
+      // Refus ou reseau : on ferme. Ouvrir l'inscription ici laisserait un
+      // compte suspendu s'en refabriquer un.
+      case LectureProfil.echouee:
+        return PorteAcces.attente;
+
+      case LectureProfil.presente:
+        // Le profil existe mais le jeton ne porte pas encore son role : c'est
+        // la fenetre entre la creation du profil et le rafraichissement du
+        // jeton. On ferme le temps qu'elle se referme.
+        if (role == null) {
+          return PorteAcces.attente;
+        }
+        return switch (accountStatus) {
+          AccountStatus.active ||
+          AccountStatus.provisionalActive => PorteAcces.actif,
+          AccountStatus.disabled => PorteAcces.suspendu,
+          // Un statut absent ou illisible se traite comme une attente : on ne
+          // laisse jamais passer par defaut ce qu'on n'a pas su lire.
+          AccountStatus.pendingKyc || null => PorteAcces.attente,
+        };
+    }
   }
 
   /// Copie avec remplacement.
@@ -99,6 +155,7 @@ class SessionState {
     String? profileId,
     AccountStatus? accountStatus,
     InterfaceMode? interfaceMode,
+    LectureProfil? lectureProfil,
   }) {
     return SessionState(
       resolue: resolue ?? this.resolue,
@@ -107,6 +164,7 @@ class SessionState {
       profileId: profileId ?? this.profileId,
       accountStatus: accountStatus ?? this.accountStatus,
       interfaceMode: interfaceMode ?? this.interfaceMode,
+      lectureProfil: lectureProfil ?? this.lectureProfil,
     );
   }
 
@@ -118,7 +176,8 @@ class SessionState {
       other.householdId == householdId &&
       other.profileId == profileId &&
       other.accountStatus == accountStatus &&
-      other.interfaceMode == interfaceMode;
+      other.interfaceMode == interfaceMode &&
+      other.lectureProfil == lectureProfil;
 
   @override
   int get hashCode => Object.hash(
@@ -128,5 +187,6 @@ class SessionState {
     profileId,
     accountStatus,
     interfaceMode,
+    lectureProfil,
   );
 }

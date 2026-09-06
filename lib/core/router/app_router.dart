@@ -56,6 +56,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const EcranAConstruire(destination: 'TUT-00'),
       ),
       GoRoute(
+        path: Routes.inscription,
+        builder: (BuildContext _, GoRouterState _) =>
+            EcranAConstruire(destination: t.inscription.titre),
+      ),
+      GoRoute(
         path: Routes.attente,
         builder: (BuildContext _, GoRouterState _) =>
             EcranAConstruire(destination: t.attente.titre),

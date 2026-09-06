@@ -35,6 +35,13 @@ String? deciderRedirection({
     case PorteAcces.deconnecte:
       return cheminDemande == Routes.connexion ? null : Routes.connexion;
 
+    // Session valide, aucun profil : l'inscription est la seule destination.
+    // Sans cette porte, ce compte retombait en `deconnecte` et repartait sur
+    // l'ecran de connexion en boucle
+    // (`docs/architecture/etape-3-auth-kyc.md` section 2.1).
+    case PorteAcces.inscription:
+      return cheminDemande == Routes.inscription ? null : Routes.inscription;
+
     // Un compte en portail d'attente n'atteint aucune route protegee, quelle
     // que soit l'URL tapee directement dans un navigateur.
     case PorteAcces.attente:
@@ -48,10 +55,11 @@ String? deciderRedirection({
       }
       final String racine = Routes.racinePour(role);
 
-      // Un compte actif n'a plus rien a faire sur la racine, la connexion ou le
-      // portail d'attente.
+      // Un compte actif n'a plus rien a faire sur la racine, la connexion,
+      // l'inscription ou le portail d'attente.
       if (cheminDemande == Routes.racine ||
           cheminDemande == Routes.connexion ||
+          cheminDemande == Routes.inscription ||
           cheminDemande == Routes.attente) {
         return racine;
       }

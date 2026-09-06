@@ -11,7 +11,7 @@
 | :-- | :--- | :-: |
 | L0 | Spécification `etape-3-auth-kyc.md` et ce journal | x |
 | L1 | Migration 0004 : les cinq défauts, les tables et fonctions de l'étape | x |
-| L2 | Porte `inscription` dans la session et le routeur | |
+| L2 | Porte `inscription` dans la session et le routeur | x |
 | L3 | Connexion `TUT-00` et service d'authentification abstrait | |
 | L4 | Onboarding en cartes `TUT-00c` | |
 | L5 | KYC, contrat, accusé ADR-011, portail d'attente `TUT-00b` | |
@@ -27,8 +27,8 @@ mesuré : c'est la règle qui a coûté la découverte du défaut de CI à l'ét
 
 | # | Scénario | État | Où c'est vérifié |
 | :-- | :--- | :--- | :--- |
-| 1 | Compte sans profil : inscription et rien d'autre | | |
-| 2 | Échec de lecture : portail d'attente, jamais l'inscription | | |
+| 1 | Compte sans profil : inscription et rien d'autre | vert | `test/router/redirection_test.dart`, 8 routes croisées plus les deux contrôles négatifs |
+| 2 | Échec de lecture : portail d'attente, jamais l'inscription | vert | Même fichier, groupe « scénario 2 » |
 | 3 | Inscription publique bornée à deux rôles et à `pending_kyc` | vert | `supabase/tests/scenarios_etape3.sql`, S3a à S3d |
 | 4 | L'enseignant dépose sa pièce | vert | S4, S4b, S4c, sous RLS réelle |
 | 5 | Genre du lecteur KYC inconnu : refus explicite | vert | S5a à S5d |

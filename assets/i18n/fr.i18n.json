@@ -33,7 +33,137 @@
     "enVerification": "Nous vérifions votre dossier. Vous recevrez une notification dès qu'il est validé.",
     "refuse": "Votre dossier n'a pas été validé.",
     "suspendu": "Votre compte est suspendu.",
-    "contacterAcademie": "Contacter l'académie"
+    "contacterAcademie": "Contacter l'académie",
+    "deposeLe": "Déposé le {date}",
+    "delai": "La vérification prend en général moins de 48 heures.",
+    "aFournir": "À fournir",
+    "pieceIdentite": "Une pièce d'identité",
+    "signatureContrat": "La signature du contrat",
+    "deposerLaPiece": "Déposer ma pièce",
+    "signerLeContrat": "Lire et signer",
+    "corriger": "Reprendre mon dossier",
+    "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
+    "seDeconnecter": "Se déconnecter"
+  },
+
+  "connexion": {
+    "titre": "Se connecter",
+    "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
+    "courriel": "Votre adresse électronique",
+    "envoyerLien": "Recevoir le lien",
+    "avecGoogle": "Continuer avec Google",
+    "ou": "ou",
+    "lienEnvoye": "Lien envoyé",
+    "lienEnvoyeDetail": "Ouvrez le message envoyé à {courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.",
+    "changerAdresse": "Utiliser une autre adresse",
+    "erreurCourriel": "Cette adresse ne semble pas valide.",
+    "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant."
+  },
+
+  "inscription": {
+    "titre": "Créer votre compte",
+    "etapeSur": "Étape {n} sur {total}",
+    "tempsRestant": "Environ {minutes} min",
+    "roleQuestion": "Vous inscrivez-vous comme parent ou comme enseignant ?",
+    "roleTuteur": "Parent ou tuteur",
+    "roleEnseignant": "Enseignant",
+    "identiteQuestion": "Comment vous appelez-vous ?",
+    "identiteRaison": "Ce nom doit être celui de votre pièce d'identité.",
+    "prenom": "Prénom",
+    "nom": "Nom",
+    "genreQuestion": "Vous êtes",
+    "genreHomme": "Un homme",
+    "genreFemme": "Une femme",
+    "genreRaison": "Cette réponse ne sert qu'à confier votre pièce d'identité à un membre du personnel du même genre.",
+    "recapitulatif": "Avant de continuer",
+    "creer": "Créer mon compte",
+    "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
+    "champRequis": "Cette réponse est nécessaire pour continuer."
+  },
+
+  "contrat": {
+    "titre": "Ce que vous signez",
+    "intro": "Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.",
+    "pointEnregistrement": "Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.",
+    "pointControle": "Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.",
+    "pointCoordonnees": "Vous ne voyez jamais les coordonnées d'une famille : ni nom complet, ni courriel, ni téléphone.",
+    "lireTexte": "Lire le texte complet",
+    "accepter": "J'ai lu et j'accepte",
+    "accepteLe": "Accepté le {date}",
+    "erreur": "La signature n'a pas abouti. Réessayez dans un instant."
+  },
+
+  "accuse": {
+    "titre": "À savoir avant de commencer",
+    "compris": "J'ai compris"
+  },
+
+  "kyc": {
+    "titre": "Votre pièce d'identité",
+    "intro": "Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.",
+    "typeQuestion": "Quelle pièce déposez-vous ?",
+    "carteIdentite": "Carte d'identité",
+    "passeport": "Passeport",
+    "titreSejour": "Titre de séjour",
+    "choisirFichier": "Choisir la photo",
+    "fichierChoisi": "Photo prête à être envoyée",
+    "envoyer": "Envoyer ma pièce",
+    "envoiEnCours": "Envoi en cours",
+    "deposee": "Pièce reçue",
+    "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse."
+  },
+
+  "appareils": {
+    "titre": "Appareils",
+    "regle": "Deux appareils au maximum par enfant, un seul en cours à la fois.",
+    "ajouter": "Ajouter un appareil",
+    "limiteAtteinte": "Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.",
+    "codeTitre": "Sur l'appareil de l'enfant",
+    "codeInstruction": "Ouvrez l'application Rewayah, puis entrez ce code.",
+    "expireDans": "Expire dans {temps}",
+    "expire": "Ce code a expiré.",
+    "regenerer": "Générer un nouveau code",
+    "revoquer": "Retirer",
+    "revoquerConfirmation": "Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.",
+    "derniereUtilisation": "Utilisé {quand}",
+    "jamaisUtilise": "Jamais utilisé",
+    "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
+  },
+
+  "eleveConnexion": {
+    "entrerCode": "J'ai un code",
+    "scanner": "Scanner le carré",
+    "codeInvite": "Entre le code affiché sur le téléphone de tes parents",
+    "codeErreur": "Ce code ne marche pas",
+    "codeExpire": "Ce code est trop vieux. Demande-en un nouveau.",
+    "choisirProfil": "Qui es-tu ?",
+    "nouveauCode": "Choisis ton code secret",
+    "nouveauCodeConfirmer": "Entre-le encore une fois",
+    "codeDifferent": "Les deux codes ne sont pas les mêmes",
+    "codeEnregistre": "Code enregistré"
+  },
+
+  "dossiers": {
+    "titre": "Dossiers à valider",
+    "aucun": "Aucun dossier en attente",
+    "aucunDetail": "Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.",
+    "restants": "{n} dossier(s) en attente",
+    "deposeLe": "Déposé le {date}",
+    "apercu": "La pièce déposée",
+    "apercuIndisponible": "Aperçu indisponible",
+    "verifications": "Vérifications",
+    "pointLisible": "La pièce est lisible",
+    "pointNom": "Le nom correspond à celui du compte",
+    "pointValidite": "La pièce n'est pas expirée",
+    "verdict": "Décision",
+    "approuver": "Valider le dossier",
+    "refuser": "Refuser",
+    "motif": "Ce qui ne va pas, en une phrase",
+    "motifRequis": "Un refus doit dire ce qui ne va pas : la famille n'a que cette phrase pour corriger.",
+    "journalisation": "Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.",
+    "genreManquant": "Renseignez votre genre dans votre profil avant de consulter un dossier.",
+    "erreur": "La décision n'a pas abouti. Réessayez dans un instant."
   },
 
   "vide": {
