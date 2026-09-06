@@ -47,6 +47,15 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape3.sql
 
+      # Disponibilites communes aux deux roles, affectation durable et son
+      # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
+      # cloisonnement des disponibilites, demandes des quatre parties, feed de
+      # matching a cheval sur deux fuseaux, compteurs de ADM-01.
+      # Voir docs/architecture/etape-4-dashboards.md section 7.
+      - name: Scenarios d'acceptation SQL de l'etape 4
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape4.sql
+
   flutter:
     name: Flutter (${{ matrix.target }})
     strategy:

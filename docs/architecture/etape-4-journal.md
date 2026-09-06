@@ -5,12 +5,12 @@
 > `docs/architecture/etape-4-dashboards.md` reste la spécification ; ce journal
 > est son compte rendu. Mis à jour à la fin de chaque lot, jamais en bloc.
 
-## État : L0 fait, l'étape commence
+## État : L1 fait, la base porte l'étape 4
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
 | L0 | Spécification `etape-4-dashboards.md`, ADR-017, ce journal | x |
-| L1 | Migration `0005` et `supabase/tests/scenarios_etape4.sql` | |
+| L1 | Migration `0005` et `supabase/tests/scenarios_etape4.sql` | x |
 | L2 | Services Dart : règles, planning, affectations, disponibilités | |
 | L3 | Grille de semaine partagée, `TUT-04`, onglet de `ENS-06` | |
 | L4 | `ENS-06` élèves en attente, prise atomique, plafond | |
@@ -31,30 +31,59 @@ Avant la première ligne de l'étape 4, sur le dépôt tel que l'étape 3 l'a la
 
 C'est la ligne de base : toute régression de cette étape se mesure contre elle.
 
+## Mesures du lot L1, sur Postgres 17.11
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `0001` à `0005` sur une base nue | appliquées, aucune erreur |
+| `scenarios_etape3.sql` après `0005` | 34 contrôles, tous verts. L'étape 3 ne régresse pas |
+| `scenarios_etape4.sql` | 36 contrôles, tous verts |
+| Prise concurrente du même élève, deux transactions réelles | une seule passe |
+
+Le harnais est le même qu'à l'étape 3 : conteneur `postgres:17-alpine` neuf,
+`stub_auth.sql`, les cinq migrations, puis les deux fichiers de scénarios dans
+l'ordre de la CI, qui les rejoue tous les deux à chaque pull request.
+
 ## Les dix-sept scénarios d'acceptation
 
 Voir la section 7 de la spécification. Aucun n'est coché tant qu'il n'est pas
 mesuré, règle constante depuis l'étape 1.
 
-| # | Scénario | État |
-| :-- | :--- | :--- |
-| 1 | Tuteur et enseignant écrivent dans la même table de disponibilités | à mesurer |
-| 2 | Un élève ne peut pas avoir deux enseignants actifs | à mesurer |
-| 3 | Le sixième élève est refusé par la base | à mesurer |
-| 4 | Deux prises simultanées : une seule passe | à mesurer |
-| 5 | Un enseignant ne se retire pas un élève sans décision | à mesurer |
-| 6 | Le tuteur change la caméra de son enfant, et rien d'autre | à mesurer |
-| 7 | Deux séances du même enseignant qui se recoupent sont refusées | à mesurer |
-| 8 | Un tuteur ne lit plus les disponibilités des enseignants étrangers à son foyer | à mesurer |
-| 9 | Élève et enseignant affichent la même minute de prière | à mesurer |
-| 10 | Un ajustement d'une minute déplace l'entrée des deux côtés | à mesurer |
-| 11 | Les compteurs de `ADM-01` affichent zéro sans disparaître | à mesurer |
-| 12 | `ENS-06` ne rend pas « Prendre » au plafond | à mesurer |
-| 13 | `ELV-02` affiche ses six états | à mesurer |
-| 14 | Démarrage à froid mesuré sur `ELV-02` réel | à mesurer |
-| 15 | Une règle posée pour un élève ne change rien pour les autres | à mesurer |
-| 16 | Une surcharge close reste lisible, aucune ne se supprime | à mesurer |
-| 17 | Une demande de chacune des quatre parties atteint `ADM-06` | à mesurer |
+| # | Scénario | État | Où c'est vérifié |
+| :-- | :--- | :--- | :--- |
+| 1 | Tuteur et enseignant écrivent dans la même table de disponibilités | vert | `scenarios_etape4.sql`, S1a à S1d |
+| 2 | Un élève ne peut pas avoir deux enseignants actifs | vert | S2a, S2b |
+| 3 | Le sixième élève est refusé par la base | vert | S3a, plus S3b sur le plafond surchargé |
+| 4 | Deux prises simultanées : une seule passe | vert | Mesuré hors fichier, en deux transactions réelles. Voir plus bas |
+| 5 | Un enseignant ne se retire pas un élève sans décision | vert | S5 |
+| 6 | Le tuteur change la caméra de son enfant, et rien d'autre | vert | S6a, S6b |
+| 7 | Deux séances du même enseignant qui se recoupent sont refusées | vert | S7a, plus S7b sur l'adjacence |
+| 8 | Un tuteur ne lit plus les disponibilités des enseignants étrangers à son foyer | vert | S8a, S8b |
+| 9 | Élève et enseignant affichent la même minute de prière | à mesurer | L5 |
+| 10 | Un ajustement d'une minute déplace l'entrée des deux côtés | à mesurer | L5. Les réglages, eux, sont vérifiés en base |
+| 11 | Les compteurs de `ADM-01` affichent zéro sans disparaître | à mesurer | L9. L'exactitude des six compteurs est déjà vérifiée en SQL |
+| 12 | `ENS-06` ne rend pas « Prendre » au plafond | à mesurer | L4 |
+| 13 | `ELV-02` affiche ses six états | à mesurer | L7 |
+| 14 | Démarrage à froid mesuré sur `ELV-02` réel | à mesurer | L7 |
+| 15 | Une règle posée pour un élève ne change rien pour les autres | vert | S15a à S15c |
+| 16 | Une surcharge close reste lisible, aucune ne se supprime | vert | S16a à S16c |
+| 17 | Une demande de chacune des quatre parties atteint `ADM-06` | vert | S17a à S17e |
+
+### Le scénario 4 se mesure hors du fichier, et c'est volontaire
+
+Un script `psql` s'exécute dans une seule session : il ne peut pas mettre deux
+transactions en concurrence, seulement vérifier le mécanisme qui les départage.
+Le fichier vérifie donc l'index unique partiel ; la concurrence réelle a été
+jouée à part, deux `psql` simultanés prenant le même élève après une seconde
+d'attente :
+
+```
+Aissatou : 2c391397-089e-45ec-9c24-f048233aa201
+Omar     : ERROR: cet eleve vient d'etre pris par un autre enseignant
+```
+
+Une seule affectation active en base après coup. Le perdant reçoit une phrase,
+pas un code d'erreur : c'est ce que `ENS-06` affichera.
 
 ## Ce que l'étape reprend de l'existant
 
@@ -74,4 +103,53 @@ Les pièges de poste des étapes 2 et 3 restent valables : magasin de racines qu
 ne fait pas confiance à `github.com`, composant ATL absent de Visual Studio,
 plateforme Android mal nommée. Voir les journaux précédents.
 
-Cette section se remplit lot par lot.
+### Un plafond qui n'en était pas un
+
+Le scénario 3 refusait la deuxième prise sur cinq créneaux consécutifs, puis la
+quatrième : trois passaient, deux échouaient. Cela ressemblait à un plafond mal
+compté. C'était `guard_session_overlap`, qui compare les séances en **bornes
+fermées** : un cours de 10h à 11h et le suivant de 11h à 12h partagent l'instant
+11h00 et se recoupent donc, au sens de `tstzrange(..., '[]')`.
+
+Le défaut existait depuis l'étape 1 et ne pouvait pas se voir : aucun écran ne
+créait de séance. Il aurait rendu `ENS-02` faux pour son cas d'usage principal,
+l'enseignant qui enchaîne cinq cours.
+
+**Leçon : un garde-fou de planning se lit sur ses bornes.** Un intervalle de
+temps se ferme à gauche et s'ouvre à droite ; la fin d'une séance est le début de
+la suivante, elle ne lui appartient pas. Les deux garde-fous de l'étape, le
+déclencheur et la contrainte `EXCLUDE`, emploient désormais la même convention.
+
+### Le test mesurait le harnais, pas la migration
+
+Deux refus attendus ne se produisaient pas. Cause : le fichier de scénarios
+commence par les grants que Supabase applique par défaut, `grant all on all
+tables`, qui **annulaient** la restriction de colonnes et les révocations posées
+par la migration. En production l'ordre est inverse, la migration passant après
+les droits par défaut.
+
+Les révocations sont donc rejouées dans le harnais, avec la raison écrite à côté.
+Sans cela, le scénario 6 aurait mesuré le harnais et déclaré verte une
+protection absente.
+
+### Qui est partie à un dossier, exactement
+
+Première écriture de `partie_concernee()` : l'élève, son foyer, son enseignant,
+le personnel. Le tuteur ne pouvait donc lire ni les disponibilités ni les
+réglages de prière de l'enseignant **de son enfant**, faute de lien direct entre
+lui et cet enseignant.
+
+La transparence de l'ADR-017 se serait arrêtée à l'enfant lui-même, qui a six
+ans et ne lit pas encore. Le foyer est partie au dossier de l'enseignant de son
+enfant : c'est une branche de plus, et elle est la raison d'être de la fonction.
+
+### Le test qui accuse le code à tort
+
+Deux échecs de scénario venaient du test, pas de la migration : un tuteur
+« étranger » qui avait en fait un enfant suivi par l'enseignant observé, et un
+élève « incompatible » dont le créneau figurait bien chez l'enseignant. Les
+fixtures ont gagné un troisième foyer, sans aucune affectation, dont c'est le
+seul rôle.
+
+**Un test qui échoue ne prouve pas que le code a tort.** Avant de corriger une
+migration, relire ce que le test suppose.

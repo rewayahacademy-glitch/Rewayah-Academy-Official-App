@@ -128,10 +128,13 @@ minutes ce jour-là » est une phrase qui doit se vérifier six mois plus tard.
 
 ---
 
-## 3. Sept défauts trouvés dans l'existant, à corriger ici
+## 3. Neuf défauts trouvés dans l'existant, à corriger ici
 
 Comme à l'étape 3, ils ont été trouvés en construisant les parcours, pas en
 relisant le schéma. Chacun rend un parcours de l'étape 4 impossible.
+
+Les deux derniers, 3.8 et 3.9, ne se sont pas vus en construisant : ils se sont
+vus en **mesurant**. Ce document en annonçait sept.
 
 ### 3.1 Aucune table ne peut recevoir les disponibilités d'un foyer
 
@@ -207,6 +210,31 @@ rester des constantes dispersées dans le code Dart.
 Plus grave, rien ne permet de les poser **par élève**, ce que l'ADR-017 exige en
 2.4. Une valeur d'`app_config` est unique pour la plateforme : la surcharge est
 donc une table à écrire, pas une clé à ajouter.
+
+### 3.8 La liste des élèves d'un enseignant porte leur nom de famille
+
+`teacher_roster_v` sélectionne `p.last_name`. L'ADR-008 et le registre des
+décisions disent pourtant, pour cette vue précise : « prénom et identifiant
+seulement ». C'est le contrôle anti-pillage qui a remplacé le filigrane, et il
+fuyait par la vue censée l'appliquer.
+
+Trouvé en écrivant le contrôle de schéma qui devait le vérifier.
+
+### 3.9 Deux cours consécutifs sont refusés comme un chevauchement
+
+Trouvé en mesurant, pas en lisant : sur cinq créneaux consécutifs, trois prises
+passaient et deux échouaient, une sur deux. Cela ressemblait à un plafond mal
+compté, et n'en était pas un.
+
+`guard_session_overlap` compare les séances avec `tstzrange(..., '[]')`, donc
+**bornes fermées**. Un cours de 10h à 11h et le suivant de 11h à 12h partagent
+alors l'instant 11h00 et sont réputés se recouper. Or `ENS-02` est écrit pour
+« un enseignant qui enchaîne 5 cours ».
+
+Un intervalle de temps se ferme à gauche et s'ouvre à droite : la fin d'une
+séance est le début de la suivante, elle ne lui appartient pas. La contrainte
+`EXCLUDE` du défaut 3.4 emploie la même convention, sans quoi l'un des deux
+garde-fous accepterait ce que l'autre refuse.
 
 ---
 
@@ -364,22 +392,32 @@ constate.
 
 ## 6. Ce que la base doit gagner (migration 0005)
 
+Ce tableau dit ce qui a été écrit, avec les noms retenus à l'implémentation.
+
 | Objet | Rôle |
 | :--- | :--- |
 | `weekly_availability` | Le motif hebdomadaire, **commun à l'élève et à l'enseignant**. Défaut 3.1 |
 | `teacher_student_assignments` | L'affectation durable de l'ADR-017. Défaut 3.2 |
 | `matching_requests` | Demandes de réaffectation, d'augmentation de plafond et de changement de règle, avec leur décision |
-| `student_rule_overrides` | La règle d'un élève, avec auteur, motif et clôture. ADR-017 section 2.4 |
-| `regle_effective()`, `regles_eleve_v` | Le seul chemin de lecture d'une règle, avec I10 et I12 |
+| `rule_overrides` | La règle d'un profil, avec auteur, motif et clôture. ADR-017 section 2.4. Une seule table pour l'élève et pour l'enseignant, la clé disant sur quel rôle elle a un sens |
+| `regle_effective()`, `regles_profil_v` | Le seul chemin client de lecture d'une règle, avec I10 et I12 |
+| `regle_brute()` | Le même calcul sans contrôle d'accès, réservé aux déclencheurs et aux tâches : un plafond ne se contourne pas faute de droit de lecture |
+| `partie_concernee()` | Qui est partie à un dossier, au sens de l'ADR-017. Une seule définition, partagée par toutes les policies de l'étape |
+| `instant_creneau()` | L'instant réel d'un créneau hebdomadaire. Tout croisement passe par là, jamais par une égalité d'heures locales |
 | `prayer_settings` | Coordonnées, méthode de calcul et ajustements à la minute, par enseignant |
 | `sessions` : contrainte `EXCLUDE` et `prayer_pause_minutes` | Défauts 3.4 et 2.3 |
+| `guard_session_overlap()` en bornes semi-ouvertes | Défaut 3.9 |
 | Policy d'update famille sur `student_profiles`, plus `GRANT UPDATE (colonnes)` | Défaut 3.3, avec I6 |
+| `maj_eleve_pedagogie()` | Ce que le grant par colonnes retire à l'administration lui revient par une porte nommée et journalisée |
 | `availability_slots_reader` resserrée | Défaut 3.5 |
-| `mon_enseignant_v` | Prénom et identifiant de l'enseignant, pour le foyer. Défaut 3.6 |
-| `eleves_en_attente_v` | Le feed de `ENS-06`, trié par ancienneté, filtré par compatibilité |
-| `prendre_eleve()` | La prise atomique, avec I1, I2, I4, et la matérialisation des séances |
-| `demander_reaffectation()`, `decider_demande()` | Le seul chemin de rupture, avec I3 |
-| `indicateurs_admin()` | Les cinq compteurs de `ADM-01` en une lecture |
+| `mes_seances_v` | Les séances des trois rôles, prénom et identifiant des deux côtés. Remplace `family_sessions_v`. Défaut 3.6 |
+| `mes_affectations_v` | Qui suit qui, y compris avant la première séance : c'est ce qui permet « en recherche d'un enseignant » |
+| `teacher_roster_v` recréée | Défaut 3.8 |
+| `eleves_en_attente_v` | Le feed de `ENS-06`, trié par ancienneté, filtré par compatibilité d'instants |
+| `prendre_eleve()`, `materialiser_seances()` | La prise atomique, avec I1, I2, I4, et les séances de l'horizon glissant |
+| `demander()`, `decider_demande()` | Le seul chemin de rupture et de changement, avec I3 |
+| `poser_regle()`, `clore_regle()` | La règle à la volée, et sa clôture. Même porte que la décision d'une demande |
+| `indicateurs_admin()`, `demandes_en_attente()` | Les six compteurs de `ADM-01` en une lecture, et la file de `ADM-06` |
 | Clés d'`app_config` | Les **défauts** surchargeables : `session_duration_minutes` 60, `session_paid_minimum_minutes` 45, `max_students_per_teacher` 5, `break_minutes_between_sessions` 30. Plus `matching_horizon_weeks` 4, qui n'est pas une règle d'élève |
 
 **Une seule table de disponibilités, pas deux.** `TUT-04` et `ENS-06` affichent

@@ -674,8 +674,8 @@ L'administration change ces valeurs **élève par élève, à la volée ou sur d
 d'une des parties**. Un enfant de six ans qui décroche à trente minutes et un
 adulte autonome qui veut deux heures ne relèvent pas de la même règle.
 
-Trois étages : le défaut de plateforme dans `app_config`, la surcharge d'un élève
-dans `student_rule_overrides`, et la demande d'une partie dans
+Trois étages : le défaut de plateforme dans `app_config`, la surcharge d'un
+profil dans `rule_overrides`, et la demande d'une partie dans
 `matching_requests`. Une seule fonction de lecture, `regle_effective()` : un
 écran qui lirait `app_config` en direct afficherait la règle de la plateforme à
 un élève qui n'en relève pas.
