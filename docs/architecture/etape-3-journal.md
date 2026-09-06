@@ -18,6 +18,7 @@ Vérifications au 6 septembre 2026 :
 | Régénération slang puis `build_runner` | aucun diff |
 | `flutter build web` | réussi, 3,28 Mo, galerie totalement élaguée |
 | `flutter build windows` | **échoue sur ce poste**, voir les pièges |
+| `flutter build apk` | **échoue sur ce poste**, voir les pièges |
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
@@ -220,6 +221,30 @@ consigné à l'étape 2 :
 [!] Network resources
     X A cryptographic error occurred while checking "https://github.com/"
 ```
+
+### Le build Android échoue sur un nom de dossier du SDK
+
+```
+Could not determine the dependencies of task
+  ':flutter_secure_storage:compileDebugJavaWithJavac'.
+> Failed to find target with hash string 'android-37' in:
+  C:\Users\dell\AppData\Local\Android\Sdk
+```
+
+Le SDK a installé la plateforme dans `platforms\android-37.0`, alors que Gradle
+la cherche sous `android-37`. C'est une lacune d'environnement, pas de code, et
+elle ne vient pas des dépendances ajoutées à l'étape 3 : la tâche qui échoue est
+celle de `flutter_secure_storage`, une dépendance de l'étape 2, et le message
+dit que **la cible entière** est introuvable, donc n'importe quel greffon aurait
+échoué de la même façon. `file_picker`, ajouté à l'étape 3, s'était résolu sans
+incident jusque-là.
+
+Marche à suivre côté poste, à faire par l'opérateur plutôt qu'en aveugle depuis
+une session d'agent, puisque cela touche l'installation du SDK :
+`sdkmanager "platforms;android-37"`, ou épingler `compileSdk` à 36. **Ne pas
+épingler `compileSdk` uniquement pour contourner ce poste** : ce serait modifier
+la cible de compilation de tout le monde pour un dossier mal nommé sur une seule
+machine. La CI compile sur un SDK propre et tranchera.
 
 ### Risque à vérifier quand l'étape D sera posée
 

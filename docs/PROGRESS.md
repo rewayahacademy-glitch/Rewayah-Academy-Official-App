@@ -94,6 +94,7 @@ psql -f supabase/tests/scenarios_etape3.sql
 | `child_ui_mode_max_age` | Posé à **8** et employé tel quel par l'étape 3. Modifiable en une ligne d'`app_config`, sans redéploiement. À confirmer ou corriger | `decisions.md`, ADR-016 |
 | Lecture du QR par la caméra | Reportée : le paquet réclame une configuration de permissions par plateforme. Le chemin par le code fonctionne partout. À rouvrir si le QR devient nécessaire | `etape-3-auth-kyc.md` section 9 |
 | Composant ATL de Visual Studio | Le build Windows échoue sur `atlstr.h` absent, réclamé par `flutter_secure_storage_windows`. Installer « C++ ATL for latest v143 build tools » dans Visual Studio Build Tools | `etape-3-journal.md` |
+| Plateforme Android 37 | Le build APK échoue : le SDK a installé `platforms\android-37.0`, Gradle cherche `android-37`. Lancer `sdkmanager "platforms;android-37"`. Ne pas épingler `compileSdk` pour contourner un seul poste | `etape-3-journal.md` |
 
 ## Règle de lecture
 
