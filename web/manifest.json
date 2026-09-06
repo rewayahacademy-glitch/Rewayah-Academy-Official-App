@@ -1,12 +1,16 @@
 {
-    "name": "rewayah_academy",
-    "short_name": "rewayah_academy",
-    "start_url": ".",
+    "id": "/",
+    "name": "Rewayah Academy",
+    "short_name": "Rewayah",
+    "description": "Cours de Coran en visio, avec un enseignant attitre pour chaque eleve.",
+    "lang": "fr",
+    "dir": "ltr",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F1E3E4",
+    "theme_color": "#8652E6",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

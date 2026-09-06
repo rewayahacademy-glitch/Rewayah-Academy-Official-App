@@ -167,35 +167,59 @@ pourquoi à chaque fois.
 - Composant **ATL absent** de Visual Studio : `flutter build windows` échoue sur
   `atlstr.h`. Revérifié le 6 septembre, en `--profile` : l'échec vient du
   plugin `flutter_secure_storage_windows`, après 222 secondes de compilation.
-- Plateforme Android mal nommée (`android-37.0` au lieu d'`android-37`) : le
-  build APK échoue. Et **aucun appareil ni AVD** n'est disponible : `flutter
-  devices` ne propose que Windows, Chrome et Edge. C'est ce qui empêche de
-  mesurer le démarrage à froid, scénario 14.
+- Build APK : **ce n'est pas la plateforme du SDK**, contrairement à ce qui
+  était écrit ici. `sdkmanager "platforms;android-37"` répond `Failed to find
+  package` — ce paquet n'existe pas, Google publie `android-37.0`, déjà
+  installé. L'échec réel vient du magasin de certificats : le hook de
+  `package:sqlite3` ne peut pas télécharger sa bibliothèque depuis `github.com`
+  (`CERTIFICATE_VERIFY_FAILED`), et `Invoke-WebRequest` échoue pareillement sur
+  la même adresse. **C'est le poste entier qui ne fait pas confiance à
+  `github.com`**, pas l'outillage Flutter. Détail dans `MISE-EN-SERVICE.md`,
+  section 4.1.
+- **Aucun appareil ni AVD** Android : `flutter devices` ne propose que Windows,
+  Chrome et Edge. Mais la cible web, elle, se construit et **tourne en ligne**
+  depuis le 7 septembre : le démarrage à froid du scénario 14 peut désormais se
+  mesurer en installant la PWA sur un vrai téléphone d'entrée de gamme. La
+  mesure sera pessimiste — un bundle web pèse plus qu'un APK — donc un échec ne
+  condamnerait pas le produit, mais une réussite compterait.
 - PowerShell 5.1 : `2>&1` sur un exécutable natif fabrique un `NativeCommandError`
   même quand la commande a réussi. Lire la sortie, pas le code de retour.
 
-## 7 bis. Du travail non commité traîne dans l'arbre
+## 7 bis. Le produit est en service, et ça change trois choses
 
-`web/index.html` et `web/manifest.json` sont modifiés et **non commités** : un
-début de mise en forme PWA, daté d'avant le lot L8, qui remplace les valeurs par
-défaut de Flutter par le nom, la description et les couleurs du produit. C'est
-l'étape M du tableau d'onboarding, toujours `[ ]`.
+Le 7 septembre 2026, en parallèle du lot L8, l'application a été **mise en
+service pour de vrai**. Tout est consigné dans **`docs/MISE-EN-SERVICE.md`**, à
+lire avant de toucher au SQL ou au déploiement.
 
-Le lot L8 ne les a pas repris : ce n'est pas son périmètre, et personne ne sait
-si le service worker et l'URL déployée qui vont avec sont commencés. **Ne pas les
-committer sans les avoir vérifiés** par un `flutter build web`, et sans savoir ce
-que l'opérateur voulait en faire.
+Le travail PWA non commité que cette section signalait était la moitié de cette
+mise en service : il est désormais vérifié par un `flutter build web`, déployé
+et commité.
 
-La même situation s'est produite pour `0001` et `0004` : la correction `pgcrypto`
-attendait dans l'arbre depuis une session antérieure, et a été commitée à part
-au début du lot L8. Vérifier `git status` en arrivant vaut mieux que le
-découvrir au moment de committer.
+Ce qui change pour vous :
+
+1. **Les migrations `0001` à `0005` sont appliquées au projet réel**
+   `gggmtelinlpseweouyav`, et inscrites dans `supabase_migrations`. La
+   convention « `0005` se corrige sur place » est morte : tout changement
+   structurel passe désormais par une migration `0006` et suivantes. Les deux
+   objets que L8 a modifiés dans `0005` **ne sont pas encore sur la base
+   réelle** ; le bloc SQL à coller est dans `MISE-EN-SERVICE.md`, section 5.
+2. **L'application tourne sur <https://rewayah-academy.vercel.app>**, construite
+   depuis un commit vert, jamais depuis l'arbre de travail.
+3. **Deux commandes restent à la main de l'opérateur** (hook de jeton et
+   `STUDENT_EMAIL_DOMAIN`) : sans la première, toutes les RLS refusent et
+   l'application n'affiche que des écrans vides, sans la moindre erreur.
+
+Et la leçon de méthode qui valait déjà : **vérifier `git status` en arrivant**.
+La correction `pgcrypto` de `0001` et `0004` attendait dans l'arbre, et a été
+commitée à part au début du lot L8.
 
 ## 8. Ce qui reste ouvert, et ne dépend pas du code
 
-- **Étape D, les secrets.** Toujours ouverte, et bloquante pour l'usage : sans
-  elle les deux fonctions Edge de l'étape 3 ne sont pas déployées, donc **aucun
-  enfant ne peut ouvrir de session**. Voir `docs/PROGRESS.md`.
+- **Étape D, les secrets.** Aux trois quarts fermée le 7 septembre : le projet
+  est lié, `dart_define.json` est écrit, et les deux fonctions Edge sont
+  déployées et `ACTIVE`. Il reste **deux commandes**, listées dans
+  `docs/MISE-EN-SERVICE.md` section 3 : le hook de jeton et
+  `STUDENT_EMAIL_DOMAIN`. Sans la seconde, aucun enfant ne peut être créé.
 - **Compression serveur des photos.** Devenue concrète au lot L8 : `TUT-05`
   dépose désormais vraiment une photo dans le seau `avatars`, avec un refus
   au-delà de 4 Mo côté client et rien de plus. C'est l'original du téléphone qui

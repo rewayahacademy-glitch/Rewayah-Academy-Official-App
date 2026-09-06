@@ -155,11 +155,15 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+site_url = "https://rewayah-academy.vercel.app"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = [
+  "https://rewayah-academy.vercel.app/**",
+  "http://localhost:3000/**",
+  "http://127.0.0.1:3000/**",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -280,9 +284,14 @@ max_frequency = "5s"
 # uri = "pg-functions://postgres/auth/before-user-created-hook"
 
 # This hook runs before a token is issued and allows you to add additional claims based on the authentication method used.
+# ATTENTION au premier segment de l'URI : c'est le nom de la BASE, toujours
+# `postgres` chez Supabase, et non la reference du projet. Ecrit avec la
+# reference, le hook pointe vers une base qui n'existe pas ; Auth continue
+# d'emettre des jetons, simplement sans `app_metadata.role` ni `household_id`,
+# et toutes les RLS refusent alors sans qu'aucune erreur ne s'affiche.
 [auth.hook.custom_access_token]
 enabled = true
-uri = "pg-functions://gggmtelinlpseweouyav/public/custom_access_token_hook"
+uri = "pg-functions://postgres/public/custom_access_token_hook"
 
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
 [auth.sms.twilio]

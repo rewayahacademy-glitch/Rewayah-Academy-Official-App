@@ -1,46 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
+    Le chemin de base est remplace par la valeur de --base-href passee a
+    `flutter build web`. Il doit commencer et finir par une barre oblique.
   -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
 
-  <!-- iOS meta tags & icons -->
+  <!--
+    Sans cette ligne, Safari sur iPad rend la page dans une fenetre virtuelle de
+    980 px et l'application arrive miniaturisee : c'est la premiere chose qui se
+    voit sur une tablette. `viewport-fit=cover` rend l'encoche au SafeArea, que
+    l'application pose deja sur chaque ecran.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta name="description" content="Cours de Coran en visio, avec un enseignant attitre pour chaque eleve.">
+
+  <!-- La couleur de l'accent, celle de app_palette.dart, pas celle du gabarit. -->
+  <meta name="theme-color" content="#8652E6">
+
+  <!-- Ajout a l'ecran d'accueil, iOS et Android. -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="rewayah_academy">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Le fond de l'application est clair : la barre d'etat reste en encre sombre. -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Rewayah">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>rewayah_academy</title>
+  <title>Rewayah Academy</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /*
+      Le fond du document porte la meme couleur que le fond de l'application.
+      Sans lui, le temps de chargement s'affiche en blanc puis bascule en rose :
+      un clignotement qui se voit surtout au demarrage a froid, celui-la meme que
+      le scenario 7 cherche a mesurer.
+    */
+    html, body { margin: 0; padding: 0; background-color: #F1E3E4; }
+  </style>
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
