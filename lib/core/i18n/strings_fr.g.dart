@@ -53,6 +53,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$appareils$fr appareils = Traductions$appareils$fr.internal(_root);
 	late final Traductions$enfant$fr enfant = Traductions$enfant$fr.internal(_root);
 	late final Traductions$disponibilites$fr disponibilites = Traductions$disponibilites$fr.internal(_root);
+	late final Traductions$creneaux$fr creneaux = Traductions$creneaux$fr.internal(_root);
 	late final Traductions$eleveConnexion$fr eleveConnexion = Traductions$eleveConnexion$fr.internal(_root);
 	late final Traductions$dossiers$fr dossiers = Traductions$dossiers$fr.internal(_root);
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
@@ -585,6 +586,78 @@ class Traductions$disponibilites$fr {
 		'samedi',
 		'dimanche',
 	];
+}
+
+// Path: creneaux
+class Traductions$creneaux$fr {
+	Traductions$creneaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Créneaux'
+	String get titre => 'Créneaux';
+
+	/// fr: 'Mes heures'
+	String get ongletHeures => 'Mes heures';
+
+	/// fr: 'Élèves en attente'
+	String get ongletEleves => 'Élèves en attente';
+
+	/// fr: 'Vous suivez {nombre} élèves sur {plafond} possibles.'
+	String mesEleves({required Object nombre, required Object plafond}) => 'Vous suivez ${nombre} élèves sur ${plafond} possibles.';
+
+	/// fr: 'Aucun élève en attente sur vos heures'
+	String get aucunEleve => 'Aucun élève en attente sur vos heures';
+
+	/// fr: 'Proposez d'autres heures pour voir plus de familles.'
+	String get aucunEleveDetail => 'Proposez d\'autres heures pour voir plus de familles.';
+
+	/// fr: 'Attend depuis {jours} jours'
+	String attendDepuis({required Object jours}) => 'Attend depuis ${jours} jours';
+
+	/// fr: 'Attend depuis 1 jour'
+	String get attendUnJour => 'Attend depuis 1 jour';
+
+	/// fr: 'Demande déposée aujourd'hui'
+	String get attendAujourdhui => 'Demande déposée aujourd\'hui';
+
+	/// fr: 'Niveau {niveau}'
+	String niveau({required Object niveau}) => 'Niveau ${niveau}';
+
+	/// fr: 'Prendre {jour} à {heure} h'
+	String prendre({required Object jour, required Object heure}) => 'Prendre ${jour} à ${heure} h';
+
+	/// fr: 'Enregistrement'
+	String get priseEnCours => 'Enregistrement';
+
+	/// fr: 'Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.'
+	String plafondAtteint({required Object nombre}) => 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.';
+
+	/// fr: 'Demander à suivre plus d'élèves'
+	String get plafondDemander => 'Demander à suivre plus d\'élèves';
+
+	/// fr: 'Combien d'élèves pouvez-vous suivre ?'
+	String get demandeTitre => 'Combien d\'élèves pouvez-vous suivre ?';
+
+	/// fr: 'Pourquoi ce changement ?'
+	String get demandeMotif => 'Pourquoi ce changement ?';
+
+	/// fr: 'Un motif est nécessaire : c'est lui qui permet de trancher.'
+	String get demandeMotifRequis => 'Un motif est nécessaire : c\'est lui qui permet de trancher.';
+
+	/// fr: 'Envoyer la demande'
+	String get demandeEnvoyer => 'Envoyer la demande';
+
+	/// fr: 'Demande envoyée. L'administration la tranchera.'
+	String get demandeEnvoyee => 'Demande envoyée. L\'administration la tranchera.';
+
+	/// fr: '{nombre} élèves'
+	String eleves({required Object nombre}) => '${nombre} élèves';
+
+	/// fr: 'L'opération n'a pas abouti : {message}'
+	String erreur({required Object message}) => 'L\'opération n\'a pas abouti : ${message}';
 }
 
 // Path: eleveConnexion
@@ -1147,6 +1220,27 @@ extension on Traductions {
 			'disponibilites.joursLongs.4' => 'vendredi',
 			'disponibilites.joursLongs.5' => 'samedi',
 			'disponibilites.joursLongs.6' => 'dimanche',
+			'creneaux.titre' => 'Créneaux',
+			'creneaux.ongletHeures' => 'Mes heures',
+			'creneaux.ongletEleves' => 'Élèves en attente',
+			'creneaux.mesEleves' => ({required Object nombre, required Object plafond}) => 'Vous suivez ${nombre} élèves sur ${plafond} possibles.',
+			'creneaux.aucunEleve' => 'Aucun élève en attente sur vos heures',
+			'creneaux.aucunEleveDetail' => 'Proposez d\'autres heures pour voir plus de familles.',
+			'creneaux.attendDepuis' => ({required Object jours}) => 'Attend depuis ${jours} jours',
+			'creneaux.attendUnJour' => 'Attend depuis 1 jour',
+			'creneaux.attendAujourdhui' => 'Demande déposée aujourd\'hui',
+			'creneaux.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
+			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'Prendre ${jour} à ${heure} h',
+			'creneaux.priseEnCours' => 'Enregistrement',
+			'creneaux.plafondAtteint' => ({required Object nombre}) => 'Vous suivez déjà ${nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.',
+			'creneaux.plafondDemander' => 'Demander à suivre plus d\'élèves',
+			'creneaux.demandeTitre' => 'Combien d\'élèves pouvez-vous suivre ?',
+			'creneaux.demandeMotif' => 'Pourquoi ce changement ?',
+			'creneaux.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
+			'creneaux.demandeEnvoyer' => 'Envoyer la demande',
+			'creneaux.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
+			'creneaux.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'creneaux.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.codeInvite' => 'Entre le code affiché sur le téléphone de tes parents',

@@ -13,7 +13,7 @@
 | L1 | Migration `0005` et `supabase/tests/scenarios_etape4.sql` | x |
 | L2 | Services Dart : règles, planning, affectations, disponibilités | x |
 | L3 | Grille de semaine partagée, `TUT-04` | x |
-| L4 | `ENS-06` élèves en attente, prise atomique, plafond | |
+| L4 | `ENS-06` élèves en attente, prise atomique, plafond | x |
 | L5 | Prières : réglages, calcul, ajustements, entrées de planning | |
 | L6 | `ENS-02` la journée | |
 | L7 | `ELV-02` et la mesure du démarrage à froid | |
@@ -77,7 +77,7 @@ mesuré, règle constante depuis l'étape 1.
 | 9 | Élève et enseignant affichent la même minute de prière | à mesurer | L5 |
 | 10 | Un ajustement d'une minute déplace l'entrée des deux côtés | à mesurer | L5. Les réglages, eux, sont vérifiés en base |
 | 11 | Les compteurs de `ADM-01` affichent zéro sans disparaître | à mesurer | L9. L'exactitude des six compteurs est déjà vérifiée en SQL |
-| 12 | `ENS-06` ne rend pas « Prendre » au plafond | à mesurer | L4 |
+| 12 | `ENS-06` ne rend pas « Prendre » au plafond | vert | `test/features/creneaux_test.dart`, plus le contrôle inverse avec un plafond surchargé |
 | 13 | `ELV-02` affiche ses six états | à mesurer | L7 |
 | 14 | Démarrage à froid mesuré sur `ELV-02` réel | à mesurer | L7 |
 | 15 | Une règle posée pour un élève ne change rien pour les autres | vert | S15a à S15c |
@@ -112,6 +112,20 @@ La grille est **un seul composant pour les deux écrans**, dans
 `lib/features/disponibilites/`, et non un onzième composant partagé : elle sert
 `TUT-04` et l'onglet de `ENS-06`, pas le reste de l'application. La liste des
 dix composants de l'étape 2 reste donc exacte.
+
+## Mesures du lot L4
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | 174 tests, tous verts, dont 5 sur `ENS-06` |
+| `dart run tool/verifier_jetons.dart` | 64 fichiers, aucune violation |
+
+Le scénario 12 est vert : au plafond, `ENS-06` ne rend pas le bouton « Prendre »,
+il affiche la limite et le chemin pour la lever. Le test le mesure **dans les
+deux sens** : le même écran, la même situation, avec la règle de cet enseignant
+portée à six, rend le bouton. C'est la démonstration de l'ADR-017 côté écran, et
+non plus seulement en base.
 
 ## Ce que l'étape reprend de l'existant
 

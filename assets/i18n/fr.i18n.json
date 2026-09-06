@@ -168,6 +168,30 @@
     "joursLongs": ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
   },
 
+  "creneaux": {
+    "titre": "Créneaux",
+    "ongletHeures": "Mes heures",
+    "ongletEleves": "Élèves en attente",
+    "mesEleves": "Vous suivez {nombre} élèves sur {plafond} possibles.",
+    "aucunEleve": "Aucun élève en attente sur vos heures",
+    "aucunEleveDetail": "Proposez d'autres heures pour voir plus de familles.",
+    "attendDepuis": "Attend depuis {jours} jours",
+    "attendUnJour": "Attend depuis 1 jour",
+    "attendAujourdhui": "Demande déposée aujourd'hui",
+    "niveau": "Niveau {niveau}",
+    "prendre": "Prendre {jour} à {heure} h",
+    "priseEnCours": "Enregistrement",
+    "plafondAtteint": "Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.",
+    "plafondDemander": "Demander à suivre plus d'élèves",
+    "demandeTitre": "Combien d'élèves pouvez-vous suivre ?",
+    "demandeMotif": "Pourquoi ce changement ?",
+    "demandeMotifRequis": "Un motif est nécessaire : c'est lui qui permet de trancher.",
+    "demandeEnvoyer": "Envoyer la demande",
+    "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
+    "eleves": "{nombre} élèves",
+    "erreur": "L'opération n'a pas abouti : {message}"
+  },
+
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
     "scanner": "Scanner le carré",

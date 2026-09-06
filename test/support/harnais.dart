@@ -14,7 +14,9 @@ import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -344,6 +346,105 @@ class FauxServicePlanning implements ServicePlanning {
 
   @override
   Future<List<Affectation>> affectations() async => affectationsRendues;
+}
+
+/// Un service de matching en memoire.
+class FauxServiceMatching implements ServiceMatching {
+  /// Le feed rendu.
+  List<EleveEnAttente> feed = const <EleveEnAttente>[];
+
+  /// Les prises demandees.
+  final List<({String eleveId, Creneau creneau})> prises =
+      <({String eleveId, Creneau creneau})>[];
+
+  /// Les demandes deposees.
+  final List<({SorteDemande sorte, String sujetId, String motif, int? valeur})>
+  demandes =
+      <({SorteDemande sorte, String sujetId, String motif, int? valeur})>[];
+
+  /// Ce que la prochaine prise doit jeter.
+  Object? erreurPrise;
+
+  @override
+  Future<List<EleveEnAttente>> elevesEnAttente() async => feed;
+
+  @override
+  Future<void> prendre({
+    required String eleveId,
+    required Creneau creneau,
+  }) async {
+    final Object? erreur = erreurPrise;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    prises.add((eleveId: eleveId, creneau: creneau));
+  }
+
+  @override
+  Future<void> demander({
+    required SorteDemande sorte,
+    required String sujetId,
+    required String motif,
+    CleRegle? cle,
+    int? valeur,
+  }) async {
+    demandes.add((
+      sorte: sorte,
+      sujetId: sujetId,
+      motif: motif,
+      valeur: valeur,
+    ));
+  }
+}
+
+/// Un service de regles en memoire.
+class FauxServiceRegles implements ServiceRegles {
+  /// Les regles rendues, par profil.
+  final Map<String, List<RegleProfil>> parProfil =
+      <String, List<RegleProfil>>{};
+
+  /// Les regles posees.
+  final List<({String profilId, CleRegle cle, int valeur, String motif})> posees =
+      <({String profilId, CleRegle cle, int valeur, String motif})>[];
+
+  /// Les surcharges closes.
+  final List<String> closes = <String>[];
+
+  @override
+  Future<int> valeur(String profilId, CleRegle cle) async =>
+      (parProfil[profilId] ?? const <RegleProfil>[])
+          .firstWhere(
+            (RegleProfil r) => r.cle == cle,
+            orElse: () => const RegleProfil(
+              cle: null,
+              valeurEffective: 0,
+              valeurPlateforme: 0,
+            ),
+          )
+          .valeurEffective;
+
+  @override
+  Future<List<RegleProfil>> regles(String profilId) async =>
+      parProfil[profilId] ?? const <RegleProfil>[];
+
+  @override
+  Future<void> poser({
+    required String profilId,
+    required CleRegle cle,
+    required int valeur,
+    required String motif,
+  }) async {
+    posees.add((profilId: profilId, cle: cle, valeur: valeur, motif: motif));
+  }
+
+  @override
+  Future<void> clore({
+    required String surchargeId,
+    required String motif,
+  }) async {
+    closes.add(surchargeId);
+  }
 }
 
 /// Un selecteur de fichier qui rend toujours la meme piece.

@@ -8,6 +8,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
 import '../../features/connexion/connexion_page.dart';
+import '../../features/creneaux/creneaux_page.dart';
 import '../../features/disponibilites/disponibilites_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
@@ -152,8 +153,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.enseignantCreneaux,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.enseignant.creneaux),
+        builder: (BuildContext _, GoRouterState _) => const CreneauxPage(),
       ),
       GoRoute(
         path: Routes.enseignantProfil,
