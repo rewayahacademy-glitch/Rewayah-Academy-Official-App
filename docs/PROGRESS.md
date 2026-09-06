@@ -5,26 +5,27 @@
 
 ## DÉMARRER ICI — prochaine session (ne rien chercher d'autre)
 
-**L'étape 3 est terminée, l'étape 4 est en cours.** Sa spécification est écrite
-et ses décisions sont prises (ADR-017) : le lot L0 est fait, le lot L1 est la
-migration `0005`.
+**Lire `docs/HANDOFF.md` en premier, avant toute action.** Il dit quel est le
+dépôt actif, où le travail s'est arrêté, quel lot reprendre, et avec quelles
+commandes. Le reste de ce fichier est le tableau d'avancement, pas la consigne
+de reprise.
 
-1. **Lire, dans cet ordre, et rien de plus** :
+**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L5 sont
+faits, le prochain est **L6, `ENS-02`**.
+
+1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis
    `docs/architecture/etape-4-journal.md` (où en est l'étape, lot par lot), puis
-   `docs/architecture/etape-4-dashboards.md` (la spécification, ses sept défauts
-   à corriger et ses douze invariants), puis `docs/produit/parcours-utilisateurs.md`
-   pour les écrans, puis `lib/CLAUDE.md`.
+   `docs/architecture/etape-4-dashboards.md` (la spécification, ses neuf défauts
+   corrigés et ses douze invariants), puis `lib/CLAUDE.md`.
 2. **Ne rien réécrire des étapes 2 et 3.** Les dix composants partagés, le
    thème, le routeur et les services de dossier sont les seuls points d'entrée
    de leur fonction. `dart run tool/verifier_jetons.dart` le dira.
-3. **Les écrans de l'étape 4** sont `TUT-01`, `ELV-02`, `ENS-02`, `ADM-01`, plus
-   `TUT-04`, `TUT-05`, `ENS-06`, et `ADM-06` qu'a fait naître l'ADR-017. Tous
-   remplacent un placeholder `EcranAConstruire` d'une route déjà déclarée, sauf
-   `ADM-06` dont la route est à ajouter.
+3. **Ne rien réécrire des lots L2 à L5.** Les services de planning, de règles,
+   de matching, d'administration et de prières existent, avec leurs faux dans
+   `test/support/harnais.dart`. Le tableau du handoff dit lequel sert à quoi.
 4. **Mesurer le démarrage à froid** sur `ELV-02` réel, sur un appareil d'entrée
    de gamme. C'est le scénario 7 de l'étape 2, toujours non coché faute d'écran
-   métier à charger. L'étape 3 n'a pas d'écran de ce type non plus : le premier
-   candidat est `ELV-02`.
+   métier à charger : le premier candidat est `ELV-02`, au lot L7.
 5. **Étape D toujours ouverte** (secrets), et elle bloque désormais plus qu'avant
    : les deux fonctions Edge de l'étape 3 ne peuvent pas être déployées sans
    elle, donc aucun enfant ne peut ouvrir de session tant qu'elle n'est pas
@@ -45,12 +46,15 @@ flutter run --dart-define-from-file=dart_define.json     # voir l'exemple versio
 flutter build web --dart-define=GALERIE=true             # galerie des composants sur /_galerie
 ```
 
-Les scénarios SQL se rejouent sur un Postgres nu, comme en CI :
+Les scénarios SQL se rejouent sur un Postgres **nu**, comme en CI. Un fichier de
+scénarios ne se rejoue pas deux fois sur la même base : il insère ses fixtures.
+Les commandes exactes, avec le conteneur, sont dans `docs/HANDOFF.md`.
 
 ```
 psql -f supabase/tests/stub_auth.sql
-psql -f supabase/migrations/0001_fondations.sql          # puis 0002, 0003, 0004
-psql -f supabase/tests/scenarios_etape3.sql
+psql -f supabase/migrations/0001_fondations.sql          # puis 0002 à 0005
+psql -f supabase/tests/scenarios_etape3.sql              # 34 contrôles
+psql -f supabase/tests/scenarios_etape4.sql              # 37 contrôles
 ```
 
 ## Étapes de code
@@ -71,9 +75,9 @@ psql -f supabase/tests/scenarios_etape3.sql
 | :-- | :--- | :--- | :--- |
 | A | Dépôt Git et branche | [x] | `main`, `.gitignore`, remote GitHub connecté |
 | B | Projet Supabase | [x] | `gggmtelinlpseweouyav`, `supabase/` initialisé et lié |
-| C | Migrations versionnées | [x] | `0001` à `0004`, appliquées et vérifiées sur Postgres 17. **Jamais appliquées au projet réel** : voir le risque `pgcrypto` du journal de l'étape 3 |
+| C | Migrations versionnées | [x] | `0001` à `0005`, appliquées et vérifiées sur Postgres 17. **Jamais appliquées au projet réel** : voir le risque `pgcrypto` du journal de l'étape 3 |
 | D | Secrets | [ ] | **Ouverte, et désormais bloquante pour l'usage.** Sans elle, les fonctions Edge `creer-profil-enfant` et `session-enfant` ne sont pas déployées, donc aucun enfant ne peut ouvrir de session. Demande `supabase login`, `supabase link --project-ref gggmtelinlpseweouyav`, les secrets GitHub `SUPABASE_ACCESS_TOKEN` et `SUPABASE_DB_URL`, plus un secret de fonction `STUDENT_EMAIL_DOMAIN` |
-| E | CI/CD | [x] | `ci.yml` rejoue les 36 contrôles SQL de `supabase/tests/` à chaque pull request |
+| E | CI/CD | [x] | `ci.yml` rejoue les 71 contrôles SQL de `supabase/tests/` à chaque pull request, 34 pour les étapes 1 et 3, 37 pour l'étape 4 |
 | F | Sentry | [ ] | Nécessite le compte Sentry |
 | G | Variantes Flutter `dev` / `staging` / `prod` | [ ] | Un seul identifiant aujourd'hui : `com.rewayahacademy.app` |
 | H | Stockage média R2 | [ ] | Nécessite le compte Cloudflare. Les seaux `kyc` et `avatars` de Supabase Storage, eux, sont créés par la migration 0004 |

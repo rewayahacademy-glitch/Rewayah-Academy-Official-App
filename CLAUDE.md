@@ -11,7 +11,8 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 
 | Si tu touches | Lis d'abord | Rôle |
 | :--- | :--- | :--- |
-| **N'importe quoi, au démarrage** | `docs/PROGRESS.md` | Où en est le projet et quoi faire ensuite. Une seule section à lire : DÉMARRER ICI |
+| **N'importe quoi, au démarrage** | `docs/HANDOFF.md` | **À lire en premier, avant toute action.** Où la session précédente s'est arrêtée, quel lot reprendre, avec quelles commandes, et les mesures à ne pas faire régresser |
+| Juste après le handoff | `docs/PROGRESS.md` | Où en est le projet dans son ensemble. Une seule section à lire : DÉMARRER ICI |
 | Tout le projet, au démarrage | `docs/architecture/decisions.md` | Le registre ADR (questions déjà tranchées) |
 | Le code Flutter existant | `docs/architecture/etape-2-journal.md` | Le socle : thème, composants, routeur, cache |
 | L'auth, le KYC, l'appairage, les portails | `docs/architecture/etape-3-journal.md` | Ce qui existe, ce qui est mesuré, les pièges déjà payés |
@@ -33,9 +34,9 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 **La première fois que tu es lancé dans ce dépôt, et avant toute autre tâche**, tu dois détecter si le fichier `docs/PROGRESS.md` existe.
 
 - **S'il n'existe PAS** : le projet n'a jamais été initialisé. Tu passes en **mode onboarding** et tu exécutes intégralement le protocole `docs/agent-onboarding.md` (github, CI/CD, Supabase staging+prod, secrets, cache, mémoire graphify, ressources frontend/backend, PWA). Tu ne fais AUCUNE autre tâche avant de l'avoir terminé. À la fin, tu crées `docs/PROGRESS.md` qui coche chaque étape et tu fais un commit.
-- **S'il EXISTE** : le projet est initialisé. Tu lis sa section **DÉMARRER ICI**, tu reprends là où la session précédente s'est arrêtée, et tu appliques les consignes de `docs/agent-onboarding.md` si une étape y est encore non cochée.
+- **S'il EXISTE** : le projet est initialisé. Tu lis `docs/HANDOFF.md`, puis la section **DÉMARRER ICI** de `docs/PROGRESS.md`, tu reprends là où la session précédente s'est arrêtée, et tu appliques les consignes de `docs/agent-onboarding.md` si une étape y est encore non cochée.
 
-Il existe. Va lire `docs/PROGRESS.md`.
+Il existe. **Va lire `docs/HANDOFF.md`, puis `docs/PROGRESS.md`.** Tu reprends un travail en cours : ne redémarre pas une étape déjà faite, et ne pars pas sur un autre dépôt parce qu'une mémoire ou un historique en parle.
 
 ## Vérifier avant de dire que c'est fait
 
@@ -51,9 +52,12 @@ Et côté base, sur un Postgres nu, exactement ce que rejoue la CI :
 
 ```
 psql -f supabase/tests/stub_auth.sql
-psql -f supabase/migrations/0001_fondations.sql   # puis 0002, 0003, 0004
-psql -f supabase/tests/scenarios_etape3.sql
+psql -f supabase/migrations/0001_fondations.sql   # puis 0002 à 0005
+psql -f supabase/tests/scenarios_etape3.sql       # 34 contrôles
+psql -f supabase/tests/scenarios_etape4.sql       # 37 contrôles
 ```
+
+Sur une base **neuve** à chaque fois : un fichier de scénarios insère ses fixtures, le rejouer deux fois sur la même base échoue sans que rien ne soit cassé. Les commandes complètes, avec le conteneur, sont dans `docs/HANDOFF.md`.
 
 Un contrôle qui n'a jamais tourné n'est pas un contrôle vert : c'est ce qui a masqué un défaut de la CI pendant toute l'étape 1. Ne coche jamais un critère que tu n'as pas mesuré, et écris le chiffre plutôt que l'appréciation.
 
