@@ -5,7 +5,19 @@
 > `docs/architecture/etape-3-auth-kyc.md` reste la spécification ; ce journal est
 > son compte rendu. Mis à jour à la fin de chaque lot, jamais en bloc.
 
-## État : en cours
+## État : étape 3 terminée
+
+Vérifications au 6 septembre 2026 :
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | 156 tests, tous verts |
+| `dart run tool/verifier_jetons.dart` | 57 fichiers, aucune violation |
+| `supabase/tests/scenarios_etape3.sql` sur Postgres 17 | 36 contrôles, tous verts |
+| Régénération slang puis `build_runner` | aucun diff |
+| `flutter build web` | réussi, 3,28 Mo, galerie totalement élaguée |
+| `flutter build windows` | **échoue sur ce poste**, voir les pièges |
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
@@ -18,7 +30,7 @@
 | L6 | Appairage `TUT-02` et connexion enfant `ELV-01` | x |
 | L7 | Fonctions Edge : profil enfant, session enfant | x |
 | L8 | Validation des dossiers `ADM-02` | x |
-| L9 | Vérifications, CI, documentation | |
+| L9 | Vérifications, CI, documentation | x |
 
 ## Les douze scénarios d'acceptation
 
@@ -42,7 +54,21 @@ mesuré : c'est la règle qui a coûté la découverte du défaut de CI à l'ét
 
 Les scénarios SQL tournent sur un Postgres 17 nu, avec le stub `auth` versionné
 dans `supabase/tests/stub_auth.sql`, et la CI les rejoue à chaque pull request.
-Trente contrôles, tous verts au 6 septembre 2026.
+Trente-six contrôles, tous verts au 6 septembre 2026.
+
+**Les douze scénarios sont verts.** C'est la différence avec l'étape 2, dont le
+septième restait non mesuré : ici, aucun scénario ne dépend d'un écran qui
+n'existe pas encore.
+
+## Ce que l'étape 3 ne fait pas, et pourquoi
+
+| Point | État | Raison |
+| :--- | :--- | :--- |
+| Démarrage à froid sous 1,5 s | toujours non mesuré | Ni l'étape 2 ni l'étape 3 n'ont d'écran métier à charger. Un portail d'attente ne dit rien du produit. Premier candidat honnête : `ELV-02`, étape 4 |
+| Lecture du QR par la caméra | non fait | Le bloc n'est pas rendu plutôt que rendu inerte. Le chemin par le code fonctionne partout (ADR-016) |
+| Fonctions Edge déployées | non | L'étape D est ouverte : elles sont versionnées, elles n'ont jamais tourné, et le dire vaut mieux que de les compter vertes |
+| Import des comptes migrés | non | `provisional_active` n'existe que par un import déclenché par l'administration, à partir d'un fichier que l'opérateur n'a pas fourni |
+| Photo réelle sur les tuiles d'enfant | repli sur initiales | L'URL signée arrive avec `TUT-05`, à l'étape 4. Le repli est déjà celui de l'ADR-012, jamais une icône d'erreur |
 
 ## Pièges rencontrés, à ne pas repayer
 
@@ -169,6 +195,31 @@ son état se calcule depuis un `TextEditingController`, mais rien ne
 reconstruisait le widget à la frappe. Un `onChanged` manquant ne casse rien de
 visible, il rend juste une action impossible. C'est le genre de défaut qu'un
 test de bout en bout attrape et qu'une relecture laisse passer.
+
+### Le build Windows échoue sur un composant absent de Visual Studio
+
+```
+flutter_secure_storage_windows_plugin.cpp(6,10): error C1083:
+Impossible d'ouvrir le fichier include: 'atlstr.h'
+```
+
+Ce n'est pas un défaut du code, et ce n'est pas nouveau : `flutter_secure_storage`
+est une dépendance de l'étape 2, et le build Windows n'avait jamais été lancé sur
+ce poste. Visual Studio Build Tools 2022 est bien installé, mais **sans le
+composant « C++ ATL for latest v143 build tools »**. Les runners `windows-latest`
+de la CI l'ont, eux.
+
+Bonne nouvelle en passant : le mode développeur Windows, que le journal de
+l'étape 2 signalait comme désactivé, ne bloque plus. Les liens symboliques des
+greffons se créent, la compilation va jusqu'au code natif.
+
+`flutter doctor` confirme aussi, de son côté, le défaut de confiance TLS déjà
+consigné à l'étape 2 :
+
+```
+[!] Network resources
+    X A cryptographic error occurred while checking "https://github.com/"
+```
 
 ### Risque à vérifier quand l'étape D sera posée
 

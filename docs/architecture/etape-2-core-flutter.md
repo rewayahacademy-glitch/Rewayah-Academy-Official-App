@@ -131,12 +131,12 @@ Budget de démarrage à froid sous 1,5 seconde. `--split-debug-info` activé. Po
 ## 8. Définition de fin d'étape
 
 - Le thème n'expose aucune couleur nue, uniquement des paires.
-- Les **neuf** composants partagés existent et sont les seuls points d'entrée de leur fonction respective dans le code. Cette ligne disait « huit » : la section 2 en liste bien neuf depuis que l'ADR-013 y a ajouté `ChoiceCardGroup`.
+- Les **dix** composants partagés existent et sont les seuls points d'entrée de leur fonction respective dans le code. Cette ligne disait « huit », puis « neuf » : la section 2 en listait bien neuf depuis que l'ADR-013 y a ajouté `ChoiceCardGroup`, et l'étape 3 a sorti `ActionPrincipale` de l'intérieur d'`EmptyState`, ou le seul bouton du produit vivait cache (ADR-016).
 - Le routeur est unique, sans branche par plateforme.
 - Le schéma Drift correspond exactement à la liste de la section 4, ni plus ni moins.
 - Les sept scénarios de test passent.
 
-**État réel : voir `docs/architecture/etape-2-journal.md`.** Six scénarios sur sept sont verts. Le septième, le démarrage à froid sous 1,5 seconde, n'est pas mesuré et n'est donc pas coché : à l'étape 2 il n'existe aucun écran métier à charger, et chronométrer un placeholder ne dirait rien du produit. La mesure appartient à l'étape 3.
+**État réel : voir `docs/architecture/etape-2-journal.md`.** Six scénarios sur sept sont verts. Le septième, le démarrage à froid sous 1,5 seconde, n'est toujours pas mesuré et n'est donc pas coché : ni l'étape 2 ni l'étape 3 n'ont d'écran métier à charger, un portail d'attente ne dit rien du produit. Le premier candidat honnête est `ELV-02`, à l'étape 4.
 
 ---
 

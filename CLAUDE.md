@@ -13,11 +13,13 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 | :--- | :--- | :--- |
 | **N'importe quoi, au démarrage** | `docs/PROGRESS.md` | Où en est le projet et quoi faire ensuite. Une seule section à lire : DÉMARRER ICI |
 | Tout le projet, au démarrage | `docs/architecture/decisions.md` | Le registre ADR (questions déjà tranchées) |
-| Le code Flutter existant | `docs/architecture/etape-2-journal.md` | Ce qui existe, ce qui est mesuré, les pièges déjà payés |
+| Le code Flutter existant | `docs/architecture/etape-2-journal.md` | Le socle : thème, composants, routeur, cache |
+| L'auth, le KYC, l'appairage, les portails | `docs/architecture/etape-3-journal.md` | Ce qui existe, ce qui est mesuré, les pièges déjà payés |
+| Les portes d'accès et leurs invariants | `docs/architecture/etape-3-auth-kyc.md` | Spécification de l'étape 3 et ses douze scénarios |
 | Le schéma, RLS, fonctions, migrations | `docs/architecture/etape-0-1-fondations.md` | Dictionnaire de données, contraintes, tests d'acceptation |
 | Le backend Supabase | `supabase/CLAUDE.md` | Rappels non négociables du dossier |
 | Un écran, un composant Flutter | `docs/produit/parcours-utilisateurs.md` | États, direction artistique, raisons des choix |
-| Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Les 9 composants partagés et le routeur unique |
+| Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Les 10 composants partagés et le routeur unique |
 | Tokens visuels, polices, icônes, éthique | `docs/produit/design-tokens.md` | Palette, typographie, librairie d'icônes, règles islamiques, anti-IA |
 | Le Coran, les invocations, le tajwid, l'alphabet | `docs/produit/bibliotheque-contenu.md` | Formats de contenu, micro-paquets de synchronisation, budget de poids |
 | Le front-end Flutter | `lib/CLAUDE.md` | Rappels non négociables du dossier |
@@ -43,6 +45,14 @@ dart run build_runner build --delete-conflicting-outputs
 dart analyze --fatal-infos
 flutter test
 dart run tool/verifier_jetons.dart
+```
+
+Et côté base, sur un Postgres nu, exactement ce que rejoue la CI :
+
+```
+psql -f supabase/tests/stub_auth.sql
+psql -f supabase/migrations/0001_fondations.sql   # puis 0002, 0003, 0004
+psql -f supabase/tests/scenarios_etape3.sql
 ```
 
 Un contrôle qui n'a jamais tourné n'est pas un contrôle vert : c'est ce qui a masqué un défaut de la CI pendant toute l'étape 1. Ne coche jamais un critère que tu n'as pas mesuré, et écris le chiffre plutôt que l'appréciation.

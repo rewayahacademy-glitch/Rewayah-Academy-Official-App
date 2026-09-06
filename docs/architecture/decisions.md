@@ -522,6 +522,101 @@ moment où elle se prend, pas après.
 
 ---
 
+## ADR-016 - Ce que l'étape 3 a dû trancher
+
+Dix points décidés en construisant l'auth, le KYC et l'appairage. Aucun n'était
+écrit, et chacun aurait été décidé implicitement par la première ligne de code
+qui l'aurait touché.
+
+### Aucun mot de passe, nulle part
+
+Un lien reçu par courriel, ou Google. Un mot de passe qu'on ne demande jamais
+est un mot de passe qu'on ne peut ni perdre, ni voler, ni réutiliser ailleurs,
+et il n'y a aucun parcours de réinitialisation à protéger. Aucun écran du
+produit n'a de champ masqué.
+
+### Le rôle déclaré à l'inscription est borné par la base
+
+Une inscription publique ne produit que `guardian` ou `teacher`, et toujours en
+`pending_kyc`. Ce n'est pas une règle d'écran : `creer_profil_inscription()`
+refuse tout le reste et écrit le statut en dur. Un rôle reçu du client n'est
+jamais un rôle accordé, et `provisional_active` reste inatteignable autrement
+que par un import déclenché par l'administration (ADR-014).
+
+L'élève adulte autonome n'est pas un rôle de plus : il est **son propre
+tuteur**, un foyer d'une personne (ADR-009). Deux libellés à l'écran, un seul
+chemin en base.
+
+### Le personnel n'a pas de foyer
+
+`profiles.household_id` devient facultatif, avec une contrainte qui l'exige pour
+un élève et un tuteur et l'interdit de fait au personnel. L'alternative était un
+foyer fantôme par enseignant, qui polluerait la table servant d'unité de
+facturation et les compteurs de `ADM-01`.
+
+### Le genre d'un dossier vient du profil, jamais du client
+
+Ce champ décide quel membre du personnel pourra ouvrir la pièce (audit 1.3). Le
+laisser arriver du client reviendrait à confier au déposant le choix de qui le
+regarde. Un déclencheur l'écrase par celui du profil concerné, et refuse le
+dépôt quand ce genre est inconnu. Le paramètre n'existe pas dans l'interface
+Dart : ce qui ne peut pas être envoyé ne peut pas être forgé.
+
+Symétriquement, le genre du **lecteur** vient de son profil et non de ses
+propres documents, et son absence est un refus explicite plutôt qu'un filtrage
+silencieux à moitié.
+
+### Le code personnel de l'enfant est local, et ne se réinitialise pas à distance
+
+Il est créé sur l'appareil juste après l'appairage, en présence du tuteur qui
+vient de montrer le code à six caractères. Il n'est jamais transmis : aucun
+service ne déclare de paramètre pour le recevoir. Conséquence assumée : il n'y a
+pas de « code oublié ». Le tuteur révoque l'appareil et le réappaire.
+
+Ce que ce code protège est nommé précisément dans le journal de l'étape 3 : un
+frère ou une sœur, pas un attaquant qui aurait le coffre du système.
+
+### L'accusé de l'ADR-011 précède le contrat
+
+Les deux dispositifs qu'il nomme figurent aussi dans le contrat. Mais une clause
+signée au milieu d'un texte long n'informe personne, et c'est exactement le
+litige que l'ADR-011 cherche à éviter. La carte courte vient donc d'abord, le
+contrat la formalise ensuite.
+
+### Le seuil du mode enfant est employé à 8
+
+`child_ui_mode_max_age` valait déjà 8 dans `app_config` depuis la migration
+0001, avec la mention « à trancher ». L'étape 3 s'en sert pour dériver le mode
+d'interface et la politique caméra à la création d'un profil enfant. La valeur
+reste administrable en une ligne, sans redéploiement : ce n'est pas une
+constante d'application. **À confirmer ou corriger par l'opérateur**, ce qui
+clôt la question 5 par défaut et non par décision.
+
+### La lecture du QR par la caméra est reportée
+
+Le paquet nécessaire réclame une configuration de permissions par plateforme et
+un build Android que le poste de développement ne peut pas produire aujourd'hui.
+Le chemin par le code à six caractères fonctionne partout, Web et Windows
+compris. Le bloc « scanner » n'est donc **pas rendu** plutôt que rendu inerte :
+un bouton qui échoue après le geste coûte plus cher qu'un bouton absent, la même
+règle que le bouton d'ajout d'appareil à la limite de deux.
+
+### Le dixième composant partagé
+
+`ActionPrincipale`. L'étape 2 n'avait aucun formulaire : le seul bouton du
+produit vivait à l'intérieur d'`EmptyState`, qui le redessinait pour son compte.
+Le sortir est une déduplication, pas un ajout. La liste des composants partagés
+passe donc de neuf à dix.
+
+### La validation des dossiers se construit sur la lecture, pas à côté
+
+`dossiers_en_attente()` et `decider_dossier()` passent toutes deux par
+`read_kyc_documents()`. Le cloisonnement de genre et la journalisation sont donc
+tenus par une seule porte, et connaître un identifiant ne permet pas de la
+contourner.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -547,12 +642,15 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 2 | Un enseignant a-t-il une photo publique visible par les familles avant le premier cours | Étape 3, 4 | Ouverte |
 | 3 | Riwaya du mushaf, Warsh ou Hafs | Étape 5 | Ouverte |
 | 4 | Identité visuelle, violet de l'application ou vert et or de Rewayah | Étape 2, 4 | Non bloquant, jetons de couleur abstraits |
-| 5 | Seuil d'âge exact séparant le mode enfant du mode standard | Étape 3 | Ouverte, 7 à 8 ans évoqué sans valeur fixée. L'étape 2 fournit les deux échelles typographiques, elle n'attend pas cette valeur |
+| 5 | Seuil d'âge exact séparant le mode enfant du mode standard | Étape 3 | **Résolue par défaut, pas par décision** : `child_ui_mode_max_age` vaut 8 dans `app_config` et l'étape 3 s'en sert. Modifiable en une ligne, sans redéploiement. À confirmer par l'opérateur (ADR-016) |
 | 6 | Poular dans l'interface élève dès le MVP-0 ou plus tard | Étape 3 | **Résolue par la négative** : pas de poular dans l'application (ADR-015) |
 | 7 | Format de compression des photos | Étape 2 | Résolue par défaut, WebP |
 | 8 | Prestataire de payout de remplacement | V1 | Non bloquant |
 | 9 | Coupure automatique ou non à l'échéance des 30 jours de migration | Étape 7, plus tard | Résolue par défaut, pas de coupure automatique (ADR-014) |
 | 10 | `borderDefault` mesure 1,86:1, sous le seuil de 3:1 des éléments non textuels. Jeton décoratif seulement, ou passage à `#8F8080` (3,03:1) pour qu'il puisse porter du sens | Étape 3, 4 | Ouverte. Traité comme décoratif en attendant : le focus et l'erreur passent par `surfacePrimary` et `surfaceAlert` |
-| 11 | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler la police, et avec quel outil dans la chaîne de build | Étape 3 | Ouverte, mesurée dans `etape-2-journal.md` |
+| 11 | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler la police, et avec quel outil dans la chaîne de build | Étape 4 | Ouverte, mesurée dans `etape-2-journal.md` |
+| 12 | `0001` fait `create extension if not exists pgcrypto` sans schéma et appelle `public.digest`. Sur un projet Supabase où pgcrypto vit déjà dans le schéma `extensions`, la migration échouerait à sa première application réelle | Étape D, premier `db push` | Ouverte. `0004` suit volontairement la même convention : un seul problème, une seule correction. Voir `etape-3-journal.md` |
+| 13 | Lecture du QR par la caméra sur l'appareil de l'enfant | Étape 4 ou plus tard | Reportée (ADR-016). Le chemin par le code fonctionne partout ; l'interface est posée pour recevoir un lecteur |
+| 14 | Limitation de débit sur l'échange d'un code d'appairage | Si la durée de validité s'allonge | Non traitée, arithmétique consignée dans `supabase/functions/session-enfant/index.ts` : 32^6 combinaisons pour une fenêtre de dix minutes |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.
