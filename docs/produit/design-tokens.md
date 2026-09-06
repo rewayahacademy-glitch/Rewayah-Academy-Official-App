@@ -34,34 +34,44 @@ Le thème Flutter n'expose que ces paires. Les couleurs brutes ne sont jamais ut
 
 **Règle d'API** : le thème expose `AppColorPair` avec `.background` et `.onBackground`. Un widget qui prend une seule des deux valeurs sans l'autre est un signal de revue de code à corriger avant fusion.
 
+Les deux jetons sans fond, `borderDefault` et `textOnLightAccent`, passent par un type distinct, `AppInkColor`, qui n'expose aucune couleur brute : seulement `applyTo` pour un texte, `asBorderSide` pour un trait et `asIconTheme` pour une icône. Ils sont ainsi inutilisables comme fond, ce qui recréerait la paire illisible que la règle cherche à empêcher.
+
+### Mesures relevées
+
+Le tableau ci-dessus a été mesuré, pas relu. Toutes les paires de texte passent 4,5:1, entre 4,81:1 pour `surfacePrimary` et 13,51:1 pour `surfaceBase`.
+
+**Une exception, à connaître avant d'utiliser le jeton** : `borderDefault` (`#B8A6A6`) mesure **1,86:1** sur `surfaceBase`. La correction héritée de l'audit l'a fait passer de 1,47:1 à 1,86:1, ce qui améliore sans atteindre le seuil de 3:1 des éléments non textuels. **Ce jeton est donc décoratif** : il ne doit jamais porter seul le sens d'un contrôle ou d'un état. Un focus, une erreur ou une sélection passent par `surfacePrimary`, `surfaceAlert` ou `textOnLightAccent`. Détail et valeur de remplacement dans `docs/architecture/etape-2-journal.md`.
+
 ---
 
 ## 2. Polices
 
+**Toutes les polices sont des fichiers versionnés dans `assets/fonts/`, jamais un CDN.** Une police chargée au réseau ferait tomber à la fois le budget de démarrage à froid et le mode hors ligne. La colonne « Source » ci-dessous dit d'où le fichier provient, pas comment il est livré.
+
 ### Arabe — documents, Coran, livres, lettres
 
-| Police | Usage | Source |
-| :--- | :--- | :--- |
-| **KFGQPC Uthman Taha Naskh** | Tout contenu arabe de type document : Coran, hadiths, livres, lettres, textes pédagogiques | Google Fonts / CDN |
+| Police | Fichier | Usage | Source |
+| :--- | :--- | :--- | :--- |
+| **KFGQPC Uthman Taha Naskh** | `UthmanTahaNaskh-Regular.otf` | Tout contenu arabe de type document : Coran, hadiths, livres, lettres, textes pédagogiques | Complexe du Roi Fahd. **Pas sur Google Fonts**, contrairement à ce que disait ce tableau : fichier fourni par l'opérateur |
 
 ### Arabe — interface utilisateur
 
-| Police | Usage | Source |
-| :--- | :--- | :--- |
-| **Noto Sans Arabic** | Affichage RTL, menus, boutons, labels, navigation, tout élément d'interface en arabe | Google Fonts / CDN |
+| Police | Fichier | Usage | Source |
+| :--- | :--- | :--- | :--- |
+| **Noto Sans Arabic** | `NotoSansArabic-Variable.ttf` | Affichage RTL, menus, boutons, labels, navigation, tout élément d'interface en arabe | Google Fonts, OFL |
 
 ### Français
 
-| Police | Usage | Source |
-| :--- | :--- | :--- |
-| **Noto Sans** | corps de texte, labels, navigation, tout élément d'interface en français | Google Fonts / CDN |
-| **Varela Round** | titres, headings, éléments d'accent en français | Google Fonts / CDN |
+| Police | Fichier | Usage | Source |
+| :--- | :--- | :--- | :--- |
+| **Noto Sans** | `NotoSans-Variable.ttf` | corps de texte, labels, navigation, tout élément d'interface en français | Google Fonts, OFL |
+| **Varela Round** | `VarelaRound-Regular.ttf` | titres, headings, éléments d'accent en français | Google Fonts, OFL |
 
 ### Règles
 
-- Aucune autre police. Si un style manque, étendre l'une des quatre existantes (variations de poids/graisses).
-- Les polices arabes sont prioritaires : l'app est bilingue arabe/français, l'arabe est la langue principale.
-- Sous-ensembles réduits aux glyphes réellement utilisés (français + arabe), pas de chargement complet.
+- Aucune autre police pour le texte. Si un style manque, étendre l'une des quatre existantes. Noto Sans et Noto Sans Arabic sont des polices variables : la graisse se pilote par l'axe `wght`, jamais par un faux gras synthétisé.
+- Les polices arabes sont prioritaires : l'app est bilingue arabe/français, l'arabe est la langue principale. Les styles latins déclarent Noto Sans Arabic en repli, pour qu'un texte mixte reste lisible sans que l'écran ait à choisir sa police.
+- Sous-ensembles réduits aux glyphes réellement utilisés. **Non fait à l'étape 2** : l'élagage de Flutter ne concerne que les polices d'icônes. `NotoSans-Variable` pèse 2 Mo pour une interface française, c'est le plus gros gain disponible. Mesures dans `docs/architecture/etape-2-journal.md`.
 
 ---
 
@@ -69,7 +79,11 @@ Le thème Flutter n'expose que ces paires. Les couleurs brutes ne sont jamais ut
 
 | Librairie | Choix | Raison |
 | :--- | :--- | :--- |
-| **Phosphor Icons** (`phosphor_flutter`) | Icônes uniques, modernes, 6 poids (thin → duotone), esthétique arrondie cohérente avec le style Storyset/Rafiki | Pas Material (trop générique), pas Font Awesome (daté), pas d'emojis |
+| **Phosphor Icons**, polices intégrées en assets | Icônes uniques, modernes, esthétique arrondie cohérente avec le style Storyset/Rafiki | Pas Material (trop générique), pas Font Awesome (daté), pas d'emojis |
+
+**Le paquet `phosphor_flutter` n'est pas utilisé.** Sa version 2.1.0, la dernière publiée, ne compile plus avec Flutter 3.47 : elle étend `IconData`, devenue une classe `final`. Deux graisses seulement sont embarquées, `Phosphor-Regular.ttf` et `Phosphor-Fill.ttf`, licence MIT conservée dans `assets/fonts/LICENSE-Phosphor.txt`. Les points de code sont déclarés dans `lib/core/icons/app_icons.dart`, seul fichier du dépôt autorisé à construire un `IconData`.
+
+Les glyphes Material et Cupertino restent embarqués, mais **uniquement pour le chrome interne de Flutter** : la flèche de retour d'`AppBar`, les affordances de `TextField`. Priver le framework de ses glyphes ne les remplacerait pas, cela afficherait des carrés vides. L'iconographie de l'application, elle, reste Phosphor et rien d'autre, et c'est `tool/verifier_jetons.dart` qui tient la règle en refusant tout `Icons.` hors d'`AppIcons`. L'élagage ramène les quatre polices d'icônes à 28,7 Ko au total.
 
 ### Règles strictes
 

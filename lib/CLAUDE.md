@@ -2,14 +2,38 @@
 
 Avant de créer ou modifier un écran, lis la fiche correspondante dans `docs/produit/parcours-utilisateurs.md`. Chaque écran y est décrit avec ses états, sa direction artistique et les raisons de ses choix, pas seulement son contenu.
 
-Avant de créer un composant, vérifie `docs/architecture/etape-2-core-flutter.md`. Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`, `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`) sont les seuls points d'entrée de leur fonction respective. **N'en réimplémente jamais un nouveau qui ferait la même chose.**
+Avant de créer un composant, vérifie `docs/architecture/etape-2-core-flutter.md`. Les neuf composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`, `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`) sont les seuls points d'entrée de leur fonction respective. **N'en réimplémente jamais un nouveau qui ferait la même chose.**
+
+Pour savoir ce qui existe déjà et quels pièges ont déjà coûté du temps, lis `docs/architecture/etape-2-journal.md`.
 
 Ne lis pas `docs/architecture/etape-0-1-fondations.md` pour une tâche d'interface, sauf besoin de comprendre une contrainte du schéma qui affecte ce que l'écran peut afficher.
 
 ## Rappels non négociables, valables pour tout fichier de ce dossier
 
-- Aucun `onTap` nu : tout passe par `Pressable`.
-- Le thème n'expose jamais une couleur seule, uniquement des paires fond-texte.
-- `PermanentNotice` n'accepte aucun paramètre de visibilité conditionnelle.
-- Tout choix proposé à l'utilisateur passe par `ChoiceCardGroup`, avec une carte "Autre" en repli.
-- Un seul routeur pour toutes les plateformes, aucune branche par plateforme.
+Ces règles ne sont pas des conventions : `dart run tool/verifier_jetons.dart` les applique, en local et en CI.
+
+- **Aucun `onTap` nu** : tout passe par `Pressable`.
+- **Aucune couleur littérale** hors de `lib/core/theme/app_palette.dart`. Le thème n'expose jamais une couleur seule, uniquement des paires `AppColorPair` ou des encres `AppInkColor`. Un widget qui prend `background` sans `onBackground` est à corriger avant fusion.
+- **Aucun `IconData` construit** hors de `lib/core/icons/app_icons.dart`, et aucun `Icons.` de Material. Une seule iconographie : Phosphor.
+- **Aucune valeur d'espacement** hors de l'échelle 4, 8, 12, 16, 20, 24, 32. Utilise `AppSpacing` et `Ecart`. Une valeur dérivée d'un jeton par un calcul est permise, une valeur posée telle quelle ne l'est pas.
+- **`PermanentNotice` n'accepte aucun paramètre**, pas même `key`. Si un paramètre de visibilité existait, quelqu'un finirait par s'en servir et l'ADR-011 tomberait.
+- **Tout choix proposé à l'utilisateur passe par `ChoiceCardGroup`**, avec sa carte « Autre » systématique.
+- **Un seul routeur**, `lib/core/router/app_router.dart`, aucune branche par plateforme. Le mode enfant et le mode standard partagent la même arborescence : c'est ce qu'un écran **affiche** qui change, jamais la structure.
+- **Zéro emoji, zéro M-dash**, dans le code comme dans les libellés.
+- **Aucune chaîne visible en dur** : tout passe par slang, clés en points (`eleve.accueil.rejoindre`). Un libellé qui doit aussi être parlé passe par `CleAudio`, pour que texte et son ne divergent pas.
+- **Le mode d'interface ne se passe pas d'écran en écran** : il est porté par le thème, via `AppMetriques.of(context)`. Un composant qui recevrait le mode en paramètre finirait par le recevoir faux quelque part.
+
+## Ce que le routeur n'est pas
+
+Le routeur est une **commodité d'expérience**. La barrière de sécurité reste la RLS de l'étape 1 : un compte qui contournerait une redirection ne lirait aucune donnée de plus. N'écris jamais une règle métier dont l'application ne repose que sur une redirection.
+
+## Génération de code
+
+Dans cet ordre, sinon slang échoue :
+
+```
+dart run slang
+dart run build_runner build --delete-conflicting-outputs
+```
+
+Le code généré est **versionné** : `dart analyze` doit fonctionner sans étape préalable, et la CI refuse tout diff après régénération.

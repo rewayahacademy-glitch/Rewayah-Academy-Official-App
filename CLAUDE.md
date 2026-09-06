@@ -11,12 +11,15 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 
 | Si tu touches | Lis d'abord | Rôle |
 | :--- | :--- | :--- |
+| **N'importe quoi, au démarrage** | `docs/PROGRESS.md` | Où en est le projet et quoi faire ensuite. Une seule section à lire : DÉMARRER ICI |
 | Tout le projet, au démarrage | `docs/architecture/decisions.md` | Le registre ADR (questions déjà tranchées) |
+| Le code Flutter existant | `docs/architecture/etape-2-journal.md` | Ce qui existe, ce qui est mesuré, les pièges déjà payés |
 | Le schéma, RLS, fonctions, migrations | `docs/architecture/etape-0-1-fondations.md` | Dictionnaire de données, contraintes, tests d'acceptation |
 | Le backend Supabase | `supabase/CLAUDE.md` | Rappels non négociables du dossier |
 | Un écran, un composant Flutter | `docs/produit/parcours-utilisateurs.md` | États, direction artistique, raisons des choix |
 | Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Les 9 composants partagés et le routeur unique |
 | Tokens visuels, polices, icônes, éthique | `docs/produit/design-tokens.md` | Palette, typographie, librairie d'icônes, règles islamiques, anti-IA |
+| Le Coran, les invocations, le tajwid, l'alphabet | `docs/produit/bibliotheque-contenu.md` | Formats de contenu, micro-paquets de synchronisation, budget de poids |
 | Le front-end Flutter | `lib/CLAUDE.md` | Rappels non négociables du dossier |
 
 ### Historique (ne les ouvre que sur demande explicite)
@@ -28,7 +31,21 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 **La première fois que tu es lancé dans ce dépôt, et avant toute autre tâche**, tu dois détecter si le fichier `docs/PROGRESS.md` existe.
 
 - **S'il n'existe PAS** : le projet n'a jamais été initialisé. Tu passes en **mode onboarding** et tu exécutes intégralement le protocole `docs/agent-onboarding.md` (github, CI/CD, Supabase staging+prod, secrets, cache, mémoire graphify, ressources frontend/backend, PWA). Tu ne fais AUCUNE autre tâche avant de l'avoir terminé. À la fin, tu crées `docs/PROGRESS.md` qui coche chaque étape et tu fais un commit.
-- **S'il EXISTE** : le projet est initialisé. Tu lis la dernière section de `PROGRESS.md`, tu reprends là où le lead précédent s'est arrêté, et tu appliques les consignes de `docs/agent-onboarding.md` si une étape y est encore non cochée.
+- **S'il EXISTE** : le projet est initialisé. Tu lis sa section **DÉMARRER ICI**, tu reprends là où la session précédente s'est arrêtée, et tu appliques les consignes de `docs/agent-onboarding.md` si une étape y est encore non cochée.
+
+Il existe. Va lire `docs/PROGRESS.md`.
+
+## Vérifier avant de dire que c'est fait
+
+```
+dart run slang
+dart run build_runner build --delete-conflicting-outputs
+dart analyze --fatal-infos
+flutter test
+dart run tool/verifier_jetons.dart
+```
+
+Un contrôle qui n'a jamais tourné n'est pas un contrôle vert : c'est ce qui a masqué un défaut de la CI pendant toute l'étape 1. Ne coche jamais un critère que tu n'as pas mesuré, et écris le chiffre plutôt que l'appréciation.
 
 ## Règles transverses (à respecter sans exception)
 

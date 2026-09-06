@@ -342,6 +342,10 @@ Cinq manques identifiés en construisant les parcours.
 
 ---
 
-# Seul point encore ouvert
+# Langue de l'écran élève — tranché
 
-La langue de l'écran élève. Je pars sur le français, avec les chaînes externalisées et le poular prêt à activer sans reprise de code. Les libellés audio, eux, comptent plus que le texte pour les moins de 8 ans : si vous voulez du poular quelque part en priorité, c'est là.
+**Français.** Chaînes externalisées, clés en points, arabe déclaré et vide, prêt à remplir sans reprise de code.
+
+**Pas de poular**, décision de l'opérateur du 6 septembre 2026 (ADR-015). Cette section proposait à l'origine de le préparer : ce n'est plus le cas, ni pour le texte ni pour les libellés audio.
+
+Les libellés audio comptent plus que le texte pour les moins de 8 ans : c'est le sens du composant `AudioLabel`, qui retrouve un fichier son à partir de la même clé que le texte, pour que les deux ne puissent pas diverger. La liste des libellés parlés est dans `lib/core/i18n/cle_audio.dart` ; **les fichiers son eux-mêmes restent à enregistrer**, `assets/audio/fr/` est encore vide.

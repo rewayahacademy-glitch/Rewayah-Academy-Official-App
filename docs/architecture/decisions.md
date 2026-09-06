@@ -462,6 +462,66 @@ Quand vous fournirez le fichier, l'import associera chaque ligne à un foyer ou 
 
 ---
 
+## ADR-015 - Socle technique du front, et retrait du poular
+
+Quatre points tranchés avec l'opérateur le 6 septembre 2026, au démarrage de
+l'étape 2. Aucun ADR ne les couvrait, et chacun est coûteux à changer ensuite.
+
+### Gestion d'état : Riverpod
+
+`flutter_riverpod` avec son générateur. C'est lui qui porte `SessionState` et
+qui alimente le `refreshListenable` du routeur. Retenu pour une raison précise :
+la redirection doit pouvoir décider **sans `BuildContext` et sans attendre**, et
+l'état de session doit se tester sans monter d'application. Bloc aurait imposé
+plus de cérémonie sur chaque écran pour le même résultat.
+
+### Internationalisation : slang
+
+La spécification de l'étape 2 impose des clés en points, `eleve.accueil.rejoindre`,
+et exige que `AudioLabel` consomme **la même clé** pour retrouver un fichier son.
+L'outil officiel de Flutter, `gen_l10n`, n'accepte pas les points dans les clés :
+il aurait fallu aplatir la convention et corriger la spécification. `slang` la
+respecte à la lettre et vérifie les clés à la compilation.
+
+Le lien texte-son passe par le type `CleAudio` et la carte plate de slang, avec
+un test qui refuse toute clé audio sans texte correspondant. Texte et audio
+restent ainsi dans un seul système, pas deux qui divergent.
+
+### Langues : français et arabe, pas de poular
+
+**Décision de l'opérateur : le poular n'existe pas dans l'application**, malgré
+ce qu'écrivaient `etape-2-core-flutter.md` section 5 et la dernière section de
+`parcours-utilisateurs.md`. Les deux documents sont corrigés.
+
+Restent le français, rempli, et l'arabe, déclaré et vide. L'arabe est conservé
+parce que `design-tokens.md` pose l'application comme bilingue arabe-français
+avec une police d'interface arabe dédiée : le retirer contredirait la charte
+typographique. Il se remplit en déposant un fichier, sans reprise de code.
+
+Cela clôt la question ouverte numéro 6.
+
+### Statut de compte : la base rattrape l'ADR-014
+
+L'ADR-014 définit quatre statuts de compte. La migration 0001 n'en portait que
+trois : `en_attente_kyc` manquait, et toute nouvelle inscription naissait
+`active`, c'est-à-dire avec un accès complet. L'écart n'était pas visible parce
+qu'aucun parcours d'inscription n'existait encore.
+
+Les migrations `0002` et `0003` ajoutent `pending_kyc` et le posent en valeur
+par défaut. `app_account_valid()` n'a pas changé : elle n'accepte toujours que
+`active` et `provisional_active`, donc un compte en attente ne lit rien, dans
+aucune table, quel que soit son rôle. La redirection du routeur Flutter n'est
+qu'une commodité d'expérience par-dessus cette règle.
+
+### Une conséquence de méthode
+
+Ces quatre points partagent la même origine : ils n'étaient écrits nulle part,
+et chacun aurait été décidé implicitement par la première ligne de code qui
+l'aurait touché. Toute décision de ce genre s'ajoute désormais à ce fichier au
+moment où elle se prend, pas après.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -487,10 +547,12 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 2 | Un enseignant a-t-il une photo publique visible par les familles avant le premier cours | Étape 3, 4 | Ouverte |
 | 3 | Riwaya du mushaf, Warsh ou Hafs | Étape 5 | Ouverte |
 | 4 | Identité visuelle, violet de l'application ou vert et or de Rewayah | Étape 2, 4 | Non bloquant, jetons de couleur abstraits |
-| 5 | Seuil d'âge exact séparant le mode enfant du mode standard | Étape 3 | Ouverte, 7 à 8 ans évoqué sans valeur fixée |
-| 6 | Poular dans l'interface élève dès le MVP-0 ou plus tard | Étape 3 | Ouverte |
+| 5 | Seuil d'âge exact séparant le mode enfant du mode standard | Étape 3 | Ouverte, 7 à 8 ans évoqué sans valeur fixée. L'étape 2 fournit les deux échelles typographiques, elle n'attend pas cette valeur |
+| 6 | Poular dans l'interface élève dès le MVP-0 ou plus tard | Étape 3 | **Résolue par la négative** : pas de poular dans l'application (ADR-015) |
 | 7 | Format de compression des photos | Étape 2 | Résolue par défaut, WebP |
 | 8 | Prestataire de payout de remplacement | V1 | Non bloquant |
 | 9 | Coupure automatique ou non à l'échéance des 30 jours de migration | Étape 7, plus tard | Résolue par défaut, pas de coupure automatique (ADR-014) |
+| 10 | `borderDefault` mesure 1,86:1, sous le seuil de 3:1 des éléments non textuels. Jeton décoratif seulement, ou passage à `#8F8080` (3,03:1) pour qu'il puisse porter du sens | Étape 3, 4 | Ouverte. Traité comme décoratif en attendant : le focus et l'erreur passent par `surfacePrimary` et `surfaceAlert` |
+| 11 | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler la police, et avec quel outil dans la chaîne de build | Étape 3 | Ouverte, mesurée dans `etape-2-journal.md` |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.

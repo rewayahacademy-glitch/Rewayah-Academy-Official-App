@@ -106,7 +106,11 @@ C'est le seul besoin d'écriture hors ligne réel du produit (audit 2.1). Chaque
 
 ## 5. Internationalisation
 
-Chaînes externalisées dès l'Étape 2, français par défaut, fichiers poular préparés mais vides. Convention de clé stable dès le départ, par exemple `eleve.accueil.rejoindre`, pour qu'ajouter le poular plus tard ne demande aucune reprise de code, seulement le remplissage des fichiers.
+Chaînes externalisées dès l'Étape 2, français par défaut. Convention de clé stable dès le départ, par exemple `eleve.accueil.rejoindre`, pour qu'ajouter une langue plus tard ne demande aucune reprise de code, seulement le remplissage des fichiers.
+
+**Correction du 6 septembre 2026 (ADR-015).** Cette section demandait à l'origine des fichiers poular préparés mais vides. L'opérateur a tranché : **pas de poular dans l'application**. Les langues déclarées sont le français, rempli, et l'arabe, vide, l'application étant bilingue arabe-français d'après `design-tokens.md` section 2.
+
+Moteur retenu : `slang`. L'outil officiel `gen_l10n` n'accepte pas les points dans les clés et aurait forcé à abandonner la convention ci-dessus.
 
 **Les libellés audio suivent la même logique que les chaînes textuelles**, avec une clé identique pointant vers un fichier son plutôt qu'une chaîne. Le composant `AudioLabel` de la section 2 consomme cette même clé, pour que texte et audio restent synchronisés dans un seul système plutôt que deux.
 
@@ -127,10 +131,12 @@ Budget de démarrage à froid sous 1,5 seconde. `--split-debug-info` activé. Po
 ## 8. Définition de fin d'étape
 
 - Le thème n'expose aucune couleur nue, uniquement des paires.
-- Les huit composants partagés existent et sont les seuls points d'entrée de leur fonction respective dans le code.
+- Les **neuf** composants partagés existent et sont les seuls points d'entrée de leur fonction respective dans le code. Cette ligne disait « huit » : la section 2 en liste bien neuf depuis que l'ADR-013 y a ajouté `ChoiceCardGroup`.
 - Le routeur est unique, sans branche par plateforme.
 - Le schéma Drift correspond exactement à la liste de la section 4, ni plus ni moins.
 - Les sept scénarios de test passent.
+
+**État réel : voir `docs/architecture/etape-2-journal.md`.** Six scénarios sur sept sont verts. Le septième, le démarrage à froid sous 1,5 seconde, n'est pas mesuré et n'est donc pas coché : à l'étape 2 il n'existe aucun écran métier à charger, et chronométrer un placeholder ne dirait rien du produit. La mesure appartient à l'étape 3.
 
 ---
 
