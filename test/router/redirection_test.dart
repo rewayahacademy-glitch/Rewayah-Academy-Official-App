@@ -27,6 +27,7 @@ void main() {
       Routes.eleve,
       Routes.eleveCoran,
       Routes.eleveSuivi,
+      Routes.tuteurAccueil,
       Routes.tuteurFoyer,
       Routes.tuteurDisponibilites,
       Routes.tuteurReglages,
@@ -264,7 +265,10 @@ void main() {
           cheminDemande: Routes.inscription,
           maintenant: maintenant,
         ),
-        Routes.tuteurFoyer,
+        // La racine du tuteur est son accueil, `TUT-01`, et non l'ecran de
+        // gestion des appareils : c'est le suivi du foyer qui accueille le
+        // parent, pas son administration.
+        Routes.tuteurAccueil,
       );
     });
 

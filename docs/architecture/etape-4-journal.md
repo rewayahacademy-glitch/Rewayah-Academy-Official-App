@@ -5,7 +5,7 @@
 > `docs/architecture/etape-4-dashboards.md` reste la spécification ; ce journal
 > est son compte rendu. Mis à jour à la fin de chaque lot, jamais en bloc.
 
-## État : L7 fait, l'enfant voit son prochain cours, et rien d'autre
+## État : L8 fait, le foyer voit ses enfants et règle leur profil
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
@@ -17,7 +17,7 @@
 | L5 | Prières : réglages, calcul, ajustements, entrées de planning | x |
 | L6 | `ENS-02` la journée | x |
 | L7 | `ELV-02` et ses six états | x |
-| L8 | `TUT-01`, `TUT-05`, demandes des parties | |
+| L8 | `TUT-01`, `TUT-05`, demandes des parties | x |
 | L9 | `ADM-01`, `ADM-06` | |
 | L10 | Vérifications de fin d'étape et documentation | |
 
@@ -82,7 +82,7 @@ mesuré, règle constante depuis l'étape 1.
 | 14 | Démarrage à froid mesuré sur `ELV-02` réel | **non mesurable ici** | L7 a livré l'écran ; aucune cible de mesure sur ce poste. Voir plus bas, « Le démarrage à froid n'a pas pu être mesuré » |
 | 15 | Une règle posée pour un élève ne change rien pour les autres | vert | S15a à S15c |
 | 16 | Une surcharge close reste lisible, aucune ne se supprime | vert | S16a à S16c |
-| 17 | Une demande de chacune des quatre parties atteint `ADM-06` | vert | S17a à S17e |
+| 17 | Une demande de chacune des quatre parties atteint `ADM-06` | vert | S17a à S17e, plus les demandes du tuteur mesurées à l'écran en L8 |
 
 ### Le scénario 4 se mesure hors du fichier, et c'est volontaire
 
@@ -242,6 +242,131 @@ C'est une question d'équipement, pas de code : elle est portée dans
 - **Aucune semaine à venir ni historique.** Le mode standard les gagne d'après
   la fiche, mais l'un est l'étape 6 et l'autre n'a rien à afficher : les deux
   modes rendent donc les mêmes deux blocs, seul le détail des prières change.
+
+## Mesures du lot L8
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | **253 tests**, tous verts, dont 26 nouveaux : 15 sur `TUT-01`, 11 sur `TUT-05` |
+| `dart run tool/verifier_jetons.dart` | **75 fichiers**, aucune violation |
+| `0001` à `0005` sur une base nue | appliquées, aucune erreur |
+| `scenarios_etape3.sql` puis `scenarios_etape4.sql` | 34 puis **39** contrôles, tous verts |
+
+Deux contrôles de plus qu'à L7, et une correction de `0005`. Les deux sont
+détaillés plus bas : le premier mesure ce que le foyer lit de ses enfants, le
+second un défaut de calcul de semaine qui **existait depuis L1 et n'était pas
+visible**.
+
+`TUT-01` et `TUT-05` ferment le parcours 3 du tableau de la section 1 de la
+spécification. Il ne reste aucun `EcranAConstruire` chez le tuteur, hors `TUT-06`
+qui est l'étape 6.
+
+### `TUT-01` n'avait aucune route, et la racine du tuteur tombait sur `TUT-02`
+
+La spécification annonçait que l'étape 4 n'ajouterait qu'une route, celle de
+`ADM-06`. Elle en ajoute une seconde, et ce n'est pas un oubli de cadrage :
+**aucun chemin ne menait à `TUT-01`.** `Routes.racinePour(guardian)` rendait
+`/tuteur/foyer`, c'est-à-dire l'écran de gestion des appareils. Un parent validé
+arrivait donc sur l'administration de son foyer plutôt que sur son suivi, et le
+tableau de bord que toutes les specs nomment `TUT-01` n'existait nulle part dans
+l'arborescence.
+
+`/tuteur` est donc déclarée, et devient la racine du rôle. `prefixePour` la
+désignait déjà en dur sous la forme `'/tuteur'` : les deux lisent maintenant la
+même constante.
+
+### Ce que L8 ne rend pas, et ce n'est pas un oubli
+
+- **Aucun motif d'annulation en texte libre.** La fiche de `TUT-01` demande le
+  motif d'une séance annulée. Aucune colonne ne le porte : `sessions` n'a que son
+  `status`, et la salle qui le remplirait est l'étape 5. Le motif affiché est
+  donc ce statut dit en clair, « Séance annulée » ou « annulée peu avant
+  l'heure », et rien de plus. Inventer une colonne ici aurait produit une phrase
+  que personne n'a écrite.
+- **Aucune notification de changement de règle.** Une demande déposée par le
+  tuteur atteint la file de `ADM-06`, qui est L9. Tant qu'elle n'existe pas,
+  l'écran dit que l'administration tranchera, ce qui est exact, et ne promet pas
+  de réponse dans un délai.
+- **Aucun aperçu de la photo avant envoi.** La photo choisie part telle quelle,
+  avec son refus de taille avant l'envoi. Un recadrage est un écran à lui seul.
+
+## Pièges du lot L8
+
+### La semaine d'un créneau se datait dans le fuseau de celui qui la demandait
+
+Défaut de `0005`, écrit en L1, **trouvé en mesurant** : le contrôle « Feed » de
+`scenarios_etape4.sql`, vert le 6 septembre, est rouge le 7 à 00h23 locales.
+L'enseignante de Conakry ne voyait plus le créneau posé en heure de Paris.
+
+`instant_creneau()` ancrait sa semaine sur
+`date_trunc('week', now() at time zone p_tz)`. Chaque fuseau datait donc sa
+propre semaine, et les deux minuits du lundi ne tombent pas au même instant :
+entre lundi 00h00 à Paris et lundi 00h00 à Conakry, Paris est en semaine N et
+Conakry encore en semaine N-1. Mesure, à 22h23 UTC : « lundi 17h Paris » rendait
+`2026-09-07 15:00+00`, « lundi 15h Conakry » `2026-08-31 15:00+00`. Sept jours
+d'écart pour le même rendez-vous.
+
+Conséquence en production, et c'est elle qui compte : **deux heures par semaine,
+le feed de `ENS-06` se vidait de toute famille d'un autre fuseau.** Sans erreur,
+sans ligne de journal, et deux heures plus tard tout revenait. C'est exactement
+la panne qu'on ne reproduit jamais quand on la cherche.
+
+L'ancre est donc en UTC, la même pour tous les appels. **Leçon : un calcul
+partagé entre plusieurs fuseaux s'ancre sur une référence commune**, et se
+convertit à l'affichage seulement. Même règle qu'à L5 pour `PrayerTimes.utc` et
+qu'à L7 pour `joursCivilsEntre`, appliquée cette fois à la semaine.
+
+Le contrôle qui le mesure ne compare à aucune valeur écrite en dur, qui serait
+vraie en été et fausse en hiver : deux fuseaux séparés de quelques heures ne
+peuvent pas rendre un jour entier d'écart pour le même jour et la même heure
+nominale. Il vaut donc à n'importe quelle heure, n'importe quel jour de l'année,
+ce qui est précisément ce qui manquait au contrôle « Feed » : celui-là mesurait
+juste, mais seulement les jours où il avait raison.
+
+### Une vue de cache ne portait pas ce que l'écran devait afficher
+
+`TUT-01` affiche, en MVP-0 et à la place d'un portefeuille, la date de fin
+d'accès de chaque enfant. Elle vit dans `profiles.access_until`, que le tuteur
+lit déjà, mais `profils_du_foyer_v` ne la portait pas : l'écran aurait lu une
+seconde source pour une colonne de la même ligne, et les deux auraient fini par
+diverger. La vue est donc recréée dans `0005`, avec sa colonne.
+
+C'est la quatrième correction sur place de cette migration, et pour la même
+raison que les trois précédentes : elle n'est appliquée nulle part, l'étape D
+restant ouverte.
+
+### Une écriture manquait, et une seule
+
+Le tableau de passation de L7 disait vrai : tout était en place côté données sauf
+l'écriture des trois réglages de `student_profiles`. `ServiceAppairage` a gagné
+`majReglages`, bornée aux trois colonnes que le `GRANT UPDATE (colonnes)` de
+`0005` autorise, et **qui n'envoie que ce qui change**. Envoyer les trois à
+chaque geste aurait écrasé ce qu'un autre appareil du foyer venait de poser, ce
+qui est le cas d'usage normal d'un foyer à deux parents.
+
+### `demander()` avait déjà un appelant, contrairement à ce qu'annonçait la passation
+
+`ENS-06` l'appelle depuis L4 pour l'augmentation de plafond. Ce qui manquait,
+c'étaient les demandes du **tuteur** : réaffectation, durée de séance et minimum
+payable. Elles partent de `TUT-05`, là où le parent constate la règle, et non
+d'un écran de demandes qui n'existe pas.
+
+La réaffectation n'est proposée **que si un enseignant suit l'enfant** : sinon la
+base refuse « cet élève n'a pas d'enseignant à changer » après le geste, et un
+bouton qui échoue après le geste coûte plus cher qu'un bouton absent. Les deux
+demandes de règle, elles, restent proposées dans tous les cas.
+
+### La photo avait son seau depuis l'étape 3, et aucun code pour y écrire
+
+Le seau `avatars` et ses quatre policies existent depuis `0004`. `ServiceAvatar`
+n'ouvre donc aucune porte nouvelle, il emprunte celle qui attendait son écran. Le
+chemin de dépôt porte l'identifiant de **l'enfant** en premier segment, et non
+celui du tuteur : c'est lui que `profil_de_mon_foyer()` compare dans la policy de
+stockage, contrairement au dépôt KYC où le premier segment est celui du déposant.
+
+Le refus de taille se dit **avant** l'envoi. Le seau refuserait aussi, mais après
+avoir fait monter quatre mégaoctets sur une connexion de téléphone.
 
 ## Pièges du lot L7
 

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/galerie_page.dart';
 import '../../features/accueil_eleve/accueil_eleve_page.dart';
+import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
@@ -17,6 +18,7 @@ import '../../features/dossier/signature_page.dart';
 import '../../features/eleve_connexion/eleve_connexion_page.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
@@ -115,7 +117,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ],
       ),
 
-      // Tuteur.
+      // Tuteur. `TUT-01` est la racine du role : c'est le suivi du foyer, et
+      // non l'ecran de gestion des appareils, qui accueille le parent.
+      GoRoute(
+        path: Routes.tuteurAccueil,
+        builder: (BuildContext _, GoRouterState _) =>
+            const AccueilFamillePage(),
+      ),
       GoRoute(
         path: Routes.tuteurFoyer,
         builder: (BuildContext _, GoRouterState _) => const AppareilsPage(),
@@ -138,7 +146,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.tuteurReglages,
         builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.tuteur.reglages),
+            const ReglagesEnfantPage(),
       ),
       GoRoute(
         path: Routes.tuteurSuivi,

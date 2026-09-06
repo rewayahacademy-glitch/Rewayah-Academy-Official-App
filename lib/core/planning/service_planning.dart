@@ -20,6 +20,7 @@ class Creneau {
     required this.jour,
     required this.heure,
     required this.fuseau,
+    this.poseLe,
   });
 
   /// Lit une ligne de `weekly_availability`.
@@ -27,6 +28,7 @@ class Creneau {
     jour: (json['weekday'] as num).toInt(),
     heure: (json['hour_local'] as num).toInt(),
     fuseau: json['timezone_iana'] as String? ?? 'Europe/Paris',
+    poseLe: DateTime.tryParse(json['created_at'] as String? ?? '')?.toLocal(),
   );
 
   /// Jour ISO, 1 pour lundi.
@@ -38,6 +40,20 @@ class Creneau {
   /// Le fuseau IANA dans lequel cette heure se lit.
   final String fuseau;
 
+  /// Quand cette case a ete proposee. `null` quand la source ne le dit pas.
+  ///
+  /// C'est ce qui donne a `TUT-01` la date de la demande de son enfant : le
+  /// foyer attend depuis le jour ou il a propose sa premiere heure, et c'est
+  /// exactement l'anciennete sur laquelle `ENS-06` trie son feed. **Une seule
+  /// source pour un meme fait** : deux calculs de « depuis quand ce foyer
+  /// attend » finiraient par afficher deux dates.
+  final DateTime? poseLe;
+
+  /// Deux cases sont la meme case quand elles designent la meme heure.
+  ///
+  /// [poseLe] n'entre pas dans la comparaison, volontairement : la grille
+  /// compare des cases, et une case reposee apres avoir ete retiree reste la
+  /// meme case de la semaine.
   @override
   bool operator ==(Object other) =>
       other is Creneau &&

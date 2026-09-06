@@ -924,6 +924,7 @@ class Traductions$tuteur$fr {
 
 	// Translations
 	late final Traductions$tuteur$accueil$fr accueil = Traductions$tuteur$accueil$fr.internal(_root);
+	late final Traductions$tuteur$reglages$fr reglages = Traductions$tuteur$reglages$fr.internal(_root);
 }
 
 // Path: enseignant
@@ -1148,8 +1149,212 @@ class Traductions$tuteur$accueil$fr {
 
 	// Translations
 
+	/// fr: 'Votre foyer'
+	String get titre => 'Votre foyer';
+
 	/// fr: 'Assister'
 	String get assister => 'Assister';
+
+	/// fr: 'En cours avec {prenom}'
+	String enCours({required Object prenom}) => 'En cours avec ${prenom}';
+
+	/// fr: 'Commencé il y a {minutes} min'
+	String depuisMinutes({required Object minutes}) => 'Commencé il y a ${minutes} min';
+
+	/// fr: 'Vient de commencer'
+	String get depuisInstant => 'Vient de commencer';
+
+	/// fr: 'Aujourd'hui à {heure}, avec {prenom}'
+	String aujourdhui({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}';
+
+	/// fr: '{jour} à {heure}, avec {prenom}'
+	String unAutreJour({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}';
+
+	/// fr: 'Rien aujourd'hui'
+	String get rienAujourdhui => 'Rien aujourd\'hui';
+
+	/// fr: 'Aucun cours programmé pour l'instant'
+	String get aucunCoursPrevu => 'Aucun cours programmé pour l\'instant';
+
+	/// fr: 'Les cours de la semaine sont préparés à l'avance. Celui-ci apparaîtra ici.'
+	String get aucunCoursPrevuDetail => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.';
+
+	/// fr: 'En recherche d'un enseignant'
+	String get enRecherche => 'En recherche d\'un enseignant';
+
+	/// fr: 'Demande déposée le {date}'
+	String enRechercheDepuis({required Object date}) => 'Demande déposée le ${date}';
+
+	/// fr: 'Un enseignant prendra {prenom} en charge parmi les heures proposées.'
+	String enRechercheSansDate({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.';
+
+	/// fr: 'Aucune heure proposée pour {prenom}'
+	String sansCreneau({required Object prenom}) => 'Aucune heure proposée pour ${prenom}';
+
+	/// fr: 'Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.'
+	String sansCreneauDetail({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.';
+
+	/// fr: 'Proposer des heures'
+	String get poserDesHeures => 'Proposer des heures';
+
+	/// fr: 'Le cours de {heure} n'aura pas lieu'
+	String annulee({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu';
+
+	/// fr: 'Séance annulée'
+	String get motifAnnulee => 'Séance annulée';
+
+	/// fr: 'Séance annulée peu avant l'heure'
+	String get motifAnnuleeTard => 'Séance annulée peu avant l\'heure';
+
+	/// fr: 'Prochain cours {jour} à {heure}'
+	String proposeApres({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}';
+
+	/// fr: 'Un nouveau cours vous sera proposé.'
+	String get proposeAucun => 'Un nouveau cours vous sera proposé.';
+
+	/// fr: 'Appareils du foyer'
+	String get blocAppareils => 'Appareils du foyer';
+
+	/// fr: 'Ajouter un appareil, ou en retirer un.'
+	String get blocAppareilsDetail => 'Ajouter un appareil, ou en retirer un.';
+
+	/// fr: 'Réglages par enfant'
+	String get blocReglages => 'Réglages par enfant';
+
+	/// fr: 'Photo, caméra et affichage, enfant par enfant.'
+	String get blocReglagesDetail => 'Photo, caméra et affichage, enfant par enfant.';
+
+	/// fr: 'Accès'
+	String get acces => 'Accès';
+
+	/// fr: 'Accès de {prenom} jusqu'au {date}'
+	String accesJusqua({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}';
+
+	/// fr: 'Accès de {prenom} sans date de fin'
+	String accesSansFin({required Object prenom}) => 'Accès de ${prenom} sans date de fin';
+
+	/// fr: 'Aucun enfant dans le foyer'
+	String get aucunEnfant => 'Aucun enfant dans le foyer';
+
+	/// fr: 'Ajoutez votre premier enfant pour commencer.'
+	String get aucunEnfantDetail => 'Ajoutez votre premier enfant pour commencer.';
+
+	/// fr: 'Le foyer n'a pas pu être lu en entier. Réessayez dans un instant.'
+	String get erreur => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.';
+}
+
+// Path: tuteur.reglages
+class Traductions$tuteur$reglages$fr {
+	Traductions$tuteur$reglages$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réglages par enfant'
+	String get titre => 'Réglages par enfant';
+
+	/// fr: 'Ces réglages s'appliquent à la séance suivante, jamais pendant un cours.'
+	String get intro => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.';
+
+	/// fr: 'Photo'
+	String get photo => 'Photo';
+
+	/// fr: '{prenom} n'a pas encore de photo. Elle reste visible du seul foyer.'
+	String photoAucune({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.';
+
+	/// fr: 'La photo de {prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.'
+	String photoPresente({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.';
+
+	/// fr: 'Ajouter une photo'
+	String get photoAjouter => 'Ajouter une photo';
+
+	/// fr: 'Changer la photo'
+	String get photoChanger => 'Changer la photo';
+
+	/// fr: 'Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.'
+	String photoTropLourde({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.';
+
+	/// fr: 'Caméra'
+	String get camera => 'Caméra';
+
+	/// fr: '{prenom} peut allumer sa caméra pendant le cours.'
+	String cameraAutorisee({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.';
+
+	/// fr: 'Le bouton caméra n'apparaîtra pas pour {prenom}.'
+	String cameraInterdite({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.';
+
+	/// fr: 'Autoriser la caméra de {prenom}'
+	String cameraAutoriser({required Object prenom}) => 'Autoriser la caméra de ${prenom}';
+
+	/// fr: 'Retirer la caméra de {prenom}'
+	String cameraRetirer({required Object prenom}) => 'Retirer la caméra de ${prenom}';
+
+	/// fr: 'Affichage'
+	String get mode => 'Affichage';
+
+	/// fr: 'Grand affichage, sans lecture : {prenom} reconnaît des images et écoute.'
+	String modeEnfant({required Object prenom}) => 'Grand affichage, sans lecture : ${prenom} reconnaît des images et écoute.';
+
+	/// fr: 'Affichage courant : {prenom} lit son écran.'
+	String modeStandard({required Object prenom}) => 'Affichage courant : ${prenom} lit son écran.';
+
+	/// fr: 'Passer {prenom} au grand affichage'
+	String modePasserEnfant({required Object prenom}) => 'Passer ${prenom} au grand affichage';
+
+	/// fr: 'Passer {prenom} à l'affichage courant'
+	String modePasserStandard({required Object prenom}) => 'Passer ${prenom} à l\'affichage courant';
+
+	/// fr: 'Demander un changement'
+	String get demandes => 'Demander un changement';
+
+	/// fr: 'Changer d'enseignant'
+	String get demandeReaffectation => 'Changer d\'enseignant';
+
+	/// fr: 'Changer la durée des cours'
+	String get demandeDuree => 'Changer la durée des cours';
+
+	/// fr: 'Changer la durée minimale payable'
+	String get demandeMinimum => 'Changer la durée minimale payable';
+
+	/// fr: '{prenom} n'a pas encore d'enseignant : il n'y a rien à changer.'
+	String demandeSansEnseignant({required Object prenom}) => '${prenom} n\'a pas encore d\'enseignant : il n\'y a rien à changer.';
+
+	/// fr: 'Changer l'enseignant de {prenom}'
+	String demandeTitreReaffectation({required Object prenom}) => 'Changer l\'enseignant de ${prenom}';
+
+	/// fr: 'La durée des cours de {prenom}'
+	String demandeTitreDuree({required Object prenom}) => 'La durée des cours de ${prenom}';
+
+	/// fr: 'La durée minimale payable pour {prenom}'
+	String demandeTitreMinimum({required Object prenom}) => 'La durée minimale payable pour ${prenom}';
+
+	/// fr: 'Aujourd'hui : {minutes} min'
+	String demandeActuelle({required Object minutes}) => 'Aujourd\'hui : ${minutes} min';
+
+	/// fr: '{minutes} min'
+	String demandeMinutes({required Object minutes}) => '${minutes} min';
+
+	/// fr: 'Pourquoi ce changement ?'
+	String get demandeMotif => 'Pourquoi ce changement ?';
+
+	/// fr: 'Un motif est nécessaire : c'est lui qui permet de trancher.'
+	String get demandeMotifRequis => 'Un motif est nécessaire : c\'est lui qui permet de trancher.';
+
+	/// fr: 'Envoyer la demande'
+	String get demandeEnvoyer => 'Envoyer la demande';
+
+	/// fr: 'Demande envoyée. L'administration la tranchera.'
+	String get demandeEnvoyee => 'Demande envoyée. L\'administration la tranchera.';
+
+	/// fr: 'Aucun enfant dans le foyer'
+	String get aucunEnfant => 'Aucun enfant dans le foyer';
+
+	/// fr: 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.'
+	String get aucunEnfantDetail => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.';
+
+	/// fr: 'L'enregistrement n'a pas abouti : {message}'
+	String erreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
 }
 
 // Path: enseignant.journee
@@ -1506,7 +1711,72 @@ extension on Traductions {
 			'eleve.accueil.horsLigneDetail' => 'Tu pourras entrer dès que le réseau revient.',
 			'eleve.accueil.pausePriere' => 'Pause pour la prière',
 			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
+			'tuteur.accueil.titre' => 'Votre foyer',
 			'tuteur.accueil.assister' => 'Assister',
+			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
+			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
+			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
+			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
+			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
+			'tuteur.accueil.rienAujourdhui' => 'Rien aujourd\'hui',
+			'tuteur.accueil.aucunCoursPrevu' => 'Aucun cours programmé pour l\'instant',
+			'tuteur.accueil.aucunCoursPrevuDetail' => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.',
+			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
+			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'Demande déposée le ${date}',
+			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
+			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
+			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
+			'tuteur.accueil.poserDesHeures' => 'Proposer des heures',
+			'tuteur.accueil.annulee' => ({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu',
+			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
+			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
+			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
+			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
+			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
+			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
+			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
+			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
+			'tuteur.accueil.acces' => 'Accès',
+			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
+			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'Accès de ${prenom} sans date de fin',
+			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
+			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
+			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
+			'tuteur.reglages.titre' => 'Réglages par enfant',
+			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
+			'tuteur.reglages.photo' => 'Photo',
+			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
+			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
+			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
+			'tuteur.reglages.photoChanger' => 'Changer la photo',
+			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
+			'tuteur.reglages.camera' => 'Caméra',
+			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.',
+			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.',
+			'tuteur.reglages.cameraAutoriser' => ({required Object prenom}) => 'Autoriser la caméra de ${prenom}',
+			'tuteur.reglages.cameraRetirer' => ({required Object prenom}) => 'Retirer la caméra de ${prenom}',
+			'tuteur.reglages.mode' => 'Affichage',
+			'tuteur.reglages.modeEnfant' => ({required Object prenom}) => 'Grand affichage, sans lecture : ${prenom} reconnaît des images et écoute.',
+			'tuteur.reglages.modeStandard' => ({required Object prenom}) => 'Affichage courant : ${prenom} lit son écran.',
+			'tuteur.reglages.modePasserEnfant' => ({required Object prenom}) => 'Passer ${prenom} au grand affichage',
+			'tuteur.reglages.modePasserStandard' => ({required Object prenom}) => 'Passer ${prenom} à l\'affichage courant',
+			'tuteur.reglages.demandes' => 'Demander un changement',
+			'tuteur.reglages.demandeReaffectation' => 'Changer d\'enseignant',
+			'tuteur.reglages.demandeDuree' => 'Changer la durée des cours',
+			'tuteur.reglages.demandeMinimum' => 'Changer la durée minimale payable',
+			'tuteur.reglages.demandeSansEnseignant' => ({required Object prenom}) => '${prenom} n\'a pas encore d\'enseignant : il n\'y a rien à changer.',
+			'tuteur.reglages.demandeTitreReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',
+			'tuteur.reglages.demandeTitreDuree' => ({required Object prenom}) => 'La durée des cours de ${prenom}',
+			'tuteur.reglages.demandeTitreMinimum' => ({required Object prenom}) => 'La durée minimale payable pour ${prenom}',
+			'tuteur.reglages.demandeActuelle' => ({required Object minutes}) => 'Aujourd\'hui : ${minutes} min',
+			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '${minutes} min',
+			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
+			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
+			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
+			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
+			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
+			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
+			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
 			'enseignant.journee.titre' => 'Votre journée',

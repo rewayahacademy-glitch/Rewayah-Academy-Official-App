@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
@@ -199,6 +200,28 @@ class FauxServiceAppairage implements ServiceAppairage {
   final List<({String prenom, String nom, int age})> enfantsCrees =
       <({String prenom, String nom, int age})>[];
 
+  /// Les reglages ecrits, dans l'ordre.
+  ///
+  /// C'est ce qui permet de mesurer l'invariant I6 cote ecran : `TUT-05`
+  /// n'envoie que ce qui change, et jamais une colonne pedagogique.
+  final List<
+    ({
+      String eleveId,
+      InterfaceMode? mode,
+      CameraPolicy? camera,
+      String? cleAvatar,
+    })
+  >
+  reglagesEcrits =
+      <
+        ({
+          String eleveId,
+          InterfaceMode? mode,
+          CameraPolicy? camera,
+          String? cleAvatar,
+        })
+      >[];
+
   /// Ce que la prochaine operation doit jeter.
   Object? erreurAJeter;
 
@@ -245,6 +268,82 @@ class FauxServiceAppairage implements ServiceAppairage {
     _peutEchouer();
     enfantsCrees.add((prenom: prenom, nom: nom, age: age));
   }
+
+  @override
+  Future<void> majReglages({
+    required String eleveId,
+    InterfaceMode? mode,
+    CameraPolicy? camera,
+    String? cleAvatar,
+  }) async {
+    _peutEchouer();
+    reglagesEcrits.add((
+      eleveId: eleveId,
+      mode: mode,
+      camera: camera,
+      cleAvatar: cleAvatar,
+    ));
+    // Le faux relit ce qu'il a ecrit, comme la base : l'ecran n'a aucun etat
+    // local, il reaffiche ce que la lecture rend.
+    elevesRendus = <EleveDuFoyer>[
+      for (final EleveDuFoyer eleve in elevesRendus)
+        if (eleve.id != eleveId)
+          eleve
+        else
+          EleveDuFoyer(
+            id: eleve.id,
+            prenom: eleve.prenom,
+            identifiantImmuable: eleve.identifiantImmuable,
+            mode: mode ?? eleve.mode,
+            camera: camera ?? eleve.camera,
+            cleAvatar: cleAvatar ?? eleve.cleAvatar,
+            finAcces: eleve.finAcces,
+          ),
+    ];
+  }
+}
+
+/// Un service de photos en memoire.
+///
+/// Aucun test ne peut deposer un fichier dans un seau de stockage : sans ce
+/// faux, le premier des trois reglages de `TUT-05` ne serait pas mesurable.
+class FauxServiceAvatar implements ServiceAvatar {
+  /// Les photos deposees, dans l'ordre.
+  final List<({String eleveId, PhotoEnfant photo})> depots =
+      <({String eleveId, PhotoEnfant photo})>[];
+
+  /// Ce que le depot doit jeter.
+  Object? erreurAJeter;
+
+  @override
+  Future<String> televerser({
+    required String eleveId,
+    required PhotoEnfant photo,
+  }) async {
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    depots.add((eleveId: eleveId, photo: photo));
+    return '$eleveId/${depots.length}.${photo.extension}';
+  }
+
+  @override
+  Future<String> urlSignee(String cleAvatar) async =>
+      'https://exemple.test/$cleAvatar';
+}
+
+/// Un selecteur de photo qui rend toujours la meme image.
+class FauxSelecteurPhoto implements SelecteurPhoto {
+  /// Cree le selecteur.
+  FauxSelecteurPhoto(this.reponse);
+
+  /// Ce que le selecteur rendra. `null` simule un abandon.
+  PhotoEnfant? reponse;
+
+  @override
+  Future<PhotoEnfant?> choisirPhoto() async => reponse;
 }
 
 /// Un service de validation en memoire.

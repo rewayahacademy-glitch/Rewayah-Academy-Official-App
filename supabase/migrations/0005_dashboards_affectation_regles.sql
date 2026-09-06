@@ -490,6 +490,23 @@ create policy availability_slots_reader on public.availability_slots
 -- heure de Paris, l'enseignant lit en heure de Conakry, et seule la base connait
 -- l'UTC. Tout croisement de creneaux passe donc par cette fonction, jamais par
 -- une egalite de `hour_local`.
+--
+-- **La semaine de reference s'ancre en UTC, jamais dans le fuseau de la ligne.**
+-- Premiere ecriture : `date_trunc('week', now() at time zone p_tz)`. Chaque
+-- fuseau y datait donc sa propre semaine, et les deux minuits du lundi ne
+-- tombent pas au meme instant : entre lundi 00h00 a Paris et lundi 00h00 a
+-- Conakry, Paris est en semaine N et Conakry encore en semaine N-1. Pendant ces
+-- deux heures, chaque semaine, les deux instants d'un meme rendez-vous
+-- differaient d'exactement sept jours, et le feed de ENS-06 se vidait de toute
+-- famille d'un autre fuseau. Sans erreur, sans trace, et deux heures plus tard
+-- tout revenait. Mesure du 6 septembre 2026 a 22h23 UTC, sur les fixtures :
+-- « lundi 17h Paris » rendait 2026-09-07 15:00+00 et « lundi 15h Conakry »
+-- 2026-08-31 15:00+00.
+--
+-- L'ancre UTC donne aux deux appels le meme lundi, donc la meme reponse a
+-- l'heure ou ils se comparent. C'est la regle de L5 sur `PrayerTimes.utc`,
+-- appliquee au calendrier : **un calcul partage entre plusieurs fuseaux se fait
+-- sur une reference commune, et se convertit a l'affichage seulement.**
 create function public.instant_creneau(
   p_weekday int,
   p_hour int,
@@ -498,7 +515,7 @@ create function public.instant_creneau(
 ) returns timestamptz
 language sql stable set search_path = ''
 as $$
-  select ((date_trunc('week', (now() at time zone p_tz))::date
+  select ((date_trunc('week', (now() at time zone 'UTC'))::date
            + (p_weekday - 1) + (p_semaine_offset * 7))::timestamp
           + make_interval(hours => p_hour)) at time zone p_tz;
 $$;
@@ -575,6 +592,36 @@ $$;
 
 revoke execute on function public.maj_eleve_pedagogie(uuid, text, text) from public, anon;
 grant execute on function public.maj_eleve_pedagogie(uuid, text, text) to authenticated;
+
+-- La fiche produit de TUT-01 demande, en MVP-0 et a la place d'un portefeuille,
+-- « la date de fin d'acces de chaque enfant ». Elle vit dans profiles, que le
+-- tuteur lit deja par profiles_family_select, mais profils_du_foyer_v ne la
+-- portait pas : l'ecran aurait du lire une seconde source pour une colonne de la
+-- meme ligne, et les deux auraient fini par diverger.
+--
+-- Elle est ajoutee ICI plutot qu'a la vue de 0004 pour la meme raison que le
+-- reste de cette migration : 0004 est deja ecrite, et une vue se recree ou elle
+-- gagne une colonne. Ce qui entre dans cette vue entre aussi dans le cache local
+-- de l'appareil de l'enfant, ce qui est acceptable pour une date d'echeance du
+-- foyer : c'est une information que ce foyer possede deja, pas celle d'un tiers.
+create or replace view public.profils_du_foyer_v
+with (security_barrier = true)
+as
+select
+  p.id,
+  p.first_name,
+  p.immutable_id,
+  sp.interface_mode,
+  sp.camera_policy,
+  sp.avatar_storage_key,
+  p.access_until
+from public.profiles p
+join public.student_profiles sp on sp.profile_id = p.id
+where p.household_id is not null
+  and p.household_id = public.app_household_id()
+  and p.role = 'student'
+  and p.deleted_at is null
+  and sp.deleted_at is null;
 
 -- ============================================================
 -- 6. Deux seances d'un meme enseignant (defaut 3.4)

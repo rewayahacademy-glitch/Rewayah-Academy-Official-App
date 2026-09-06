@@ -188,6 +188,36 @@ begin
     v_heure, v_jour;
 end $$;
 
+-- La semaine de reference d'un creneau ne depend pas du fuseau qui le demande.
+--
+-- Le defaut, mesure le 6 septembre 2026 a 22h23 UTC : instant_creneau ancrait sa
+-- semaine sur `date_trunc('week', now() at time zone p_tz)`. A cette heure-la,
+-- Paris etait deja lundi et Conakry encore dimanche, donc les deux fuseaux
+-- dataient deux semaines differentes et le meme rendez-vous rendait deux
+-- instants a SEPT JOURS d'ecart. Le feed de ENS-06 se vidait alors de toute
+-- famille d'un autre fuseau, deux heures par semaine, sans erreur ni trace.
+--
+-- Le controle ne compare pas a une valeur ecrite en dur, qui serait vraie en ete
+-- et fausse en hiver : deux fuseaux separes de quelques heures ne peuvent pas
+-- rendre un ecart d'un jour entier pour le meme jour et la meme heure nominale.
+-- Il vaut donc a n'importe quelle heure, n'importe quel jour de l'annee.
+do $$
+declare
+  v_jour int;
+  v_ecart interval;
+begin
+  for v_jour in 1 .. 7 loop
+    v_ecart := public.instant_creneau(v_jour, 12, 'Europe/Paris')
+             - public.instant_creneau(v_jour, 12, 'Africa/Conakry');
+    if abs(extract(epoch from v_ecart)) >= 86400 then
+      raise exception
+        'Instant ECHEC : le jour % rend % d''ecart entre Paris et Conakry, soit une semaine de decalage',
+        v_jour, v_ecart;
+    end if;
+  end loop;
+  raise notice 'Instant ok : la semaine de reference est la meme dans tous les fuseaux';
+end $$;
+
 -- ============================================================
 -- S15 : une regle posee pour un eleve ne change rien pour les autres
 -- ============================================================
@@ -663,6 +693,42 @@ begin
     raise exception 'S6 ECHEC : un tuteur a regle l''enfant d''un autre foyer';
   end if;
   raise notice 'S6b ok : le reglage s''arrete a la limite du foyer';
+end $$;
+
+-- La date de fin d'acces, que TUT-01 affiche par enfant en MVP-0 a la place d'un
+-- portefeuille. Posee ici en superuser : elle vient d'un import d'administration
+-- (ADR-014), aucun tuteur ne l'ecrit.
+update public.profiles set access_until = now() + interval '30 days'
+where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+
+do $$
+declare
+  v_lignes int;
+  v_echeance timestamptz;
+  v_etrangers int;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', 'aaaaaaaa-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"guardian","household_id":"ffffffff-0000-0000-0000-00000000000a"}}',
+    true);
+
+  select count(*) into v_lignes from public.profils_du_foyer_v;
+  select access_until into v_echeance from public.profils_du_foyer_v
+  where id = 'aaaaaaaa-0000-0000-0000-000000000003';
+  select count(*) into v_etrangers from public.profils_du_foyer_v
+  where id = 'bbbbbbbb-0000-0000-0000-000000000002';
+
+  if v_lignes <> 2 then
+    raise exception 'S6 ECHEC : le foyer lit % enfants au lieu de 2', v_lignes;
+  end if;
+  if v_echeance is null then
+    raise exception 'S6 ECHEC : la date de fin d''acces de l''enfant n''est pas lisible par son foyer';
+  end if;
+  if v_etrangers <> 0 then
+    raise exception 'S6 ECHEC : un foyer lit l''enfant d''un autre foyer';
+  end if;
+  raise notice 'S6c ok : le foyer lit les reglages et la date de fin d''acces de ses enfants, et d''aucun autre';
 end $$;
 
 -- ============================================================

@@ -97,6 +97,7 @@ class EleveDuFoyer {
     required this.mode,
     required this.camera,
     this.cleAvatar,
+    this.finAcces,
   });
 
   /// Lit une ligne de la vue.
@@ -107,6 +108,9 @@ class EleveDuFoyer {
     mode: InterfaceMode.depuisSql(json['interface_mode'] as String?),
     camera: CameraPolicy.depuisSql(json['camera_policy'] as String?),
     cleAvatar: json['avatar_storage_key'] as String?,
+    finAcces: DateTime.tryParse(
+      json['access_until'] as String? ?? '',
+    )?.toLocal(),
   );
 
   /// Identifiant du profil.
@@ -126,6 +130,13 @@ class EleveDuFoyer {
 
   /// Cle de l'avatar dans le stockage.
   final String? cleAvatar;
+
+  /// Date de fin d'acces, quand le compte en porte une (ADR-014).
+  ///
+  /// `null` est le cas ordinaire : un compte valide n'a pas d'echeance. Elle ne
+  /// vaut que pour les foyers importes, dont le profil reste a completer, et
+  /// c'est ce que `TUT-01` affiche en MVP-0 a la place d'un portefeuille.
+  final DateTime? finAcces;
 }
 
 /// L'appairage, cote tuteur.
@@ -151,6 +162,24 @@ abstract interface class ServiceAppairage {
     required String nom,
     required int age,
     String? niveau,
+  });
+
+  /// Ecrit les trois reglages de `TUT-05` pour un enfant du foyer.
+  ///
+  /// **Trois colonnes, pas une de plus.** Ce que la base autorise ici est un
+  /// `GRANT UPDATE (interface_mode, camera_policy, avatar_storage_key)` :
+  /// le niveau, la riwaya et le type d'eleve sont des donnees pedagogiques, et
+  /// la porte de l'administration pour les changer est ailleurs. Une RLS borne
+  /// les lignes, pas les colonnes, d'ou ce grant (invariant I6, defaut 3.3).
+  ///
+  /// Chaque parametre laisse a `null` ce qui ne change pas : cet ecran regle un
+  /// reglage a la fois, et envoyer les trois a chaque fois ecraserait ce qu'un
+  /// autre appareil du foyer vient de poser.
+  Future<void> majReglages({
+    required String eleveId,
+    InterfaceMode? mode,
+    CameraPolicy? camera,
+    String? cleAvatar,
   });
 
   /// Le plafond d'appareils affiche a l'ecran.
@@ -228,6 +257,30 @@ class ServiceAppairageSupabase implements ServiceAppairage {
         'level': ?niveau,
       },
     );
+  }
+
+  @override
+  Future<void> majReglages({
+    required String eleveId,
+    InterfaceMode? mode,
+    CameraPolicy? camera,
+    String? cleAvatar,
+  }) async {
+    final Map<String, dynamic> champs = <String, dynamic>{
+      'interface_mode': ?mode?.valeurSql,
+      'camera_policy': ?camera?.valeurSql,
+      'avatar_storage_key': ?cleAvatar,
+    };
+    if (champs.isEmpty) {
+      return;
+    }
+
+    // Sans `.select()` : la ligne modifiee n'est pas relue, et une lecture de
+    // retour demanderait un droit que ce chemin n'a pas besoin d'avoir.
+    await _client
+        .from('student_profiles')
+        .update(champs)
+        .eq('profile_id', eleveId);
   }
 }
 

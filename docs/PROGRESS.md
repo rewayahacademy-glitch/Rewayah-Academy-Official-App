@@ -10,8 +10,8 @@ dépôt actif, où le travail s'est arrêté, quel lot reprendre, et avec quelle
 commandes. Le reste de ce fichier est le tableau d'avancement, pas la consigne
 de reprise.
 
-**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L7 sont
-faits, le prochain est **L8, `TUT-01` et `TUT-05`**.
+**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L8 sont
+faits, le prochain est **L9, `ADM-01` et `ADM-06`**.
 
 1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis
    `docs/architecture/etape-4-journal.md` (où en est l'étape, lot par lot), puis
@@ -20,10 +20,10 @@ faits, le prochain est **L8, `TUT-01` et `TUT-05`**.
 2. **Ne rien réécrire des étapes 2 et 3.** Les dix composants partagés, le
    thème, le routeur et les services de dossier sont les seuls points d'entrée
    de leur fonction. `dart run tool/verifier_jetons.dart` le dira.
-3. **Ne rien réécrire des lots L2 à L7.** Les services de planning, de règles,
-   de matching, d'administration, de prières et de réseau existent, avec leurs
-   faux dans `test/support/harnais.dart`. Le tableau du handoff dit lequel sert
-   à quoi.
+3. **Ne rien réécrire des lots L2 à L8.** Les services de planning, de règles,
+   de matching, d'administration, de prières, de réseau, d'appairage et de
+   photos existent, avec leurs faux dans `test/support/harnais.dart`. Le tableau
+   du handoff dit lequel sert à quoi.
 4. **Le démarrage à froid attend un appareil, plus un écran.** `ELV-02` existe
    depuis le lot L7, et la mesure reste impossible sur ce poste : le build
    Windows échoue sur `atlstr.h`, aucun appareil ni émulateur Android n'est
@@ -58,7 +58,7 @@ Les commandes exactes, avec le conteneur, sont dans `docs/HANDOFF.md`.
 psql -f supabase/tests/stub_auth.sql
 psql -f supabase/migrations/0001_fondations.sql          # puis 0002 à 0005
 psql -f supabase/tests/scenarios_etape3.sql              # 34 contrôles
-psql -f supabase/tests/scenarios_etape4.sql              # 37 contrôles
+psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 ```
 
 ## Étapes de code
@@ -81,7 +81,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 37 contrôles
 | B | Projet Supabase | [x] | `gggmtelinlpseweouyav`, `supabase/` initialisé et lié |
 | C | Migrations versionnées | [x] | `0001` à `0005`, appliquées et vérifiées sur Postgres 17. **Jamais appliquées au projet réel** : voir le risque `pgcrypto` du journal de l'étape 3 |
 | D | Secrets | [ ] | **Ouverte, et désormais bloquante pour l'usage.** Sans elle, les fonctions Edge `creer-profil-enfant` et `session-enfant` ne sont pas déployées, donc aucun enfant ne peut ouvrir de session. Demande `supabase login`, `supabase link --project-ref gggmtelinlpseweouyav`, les secrets GitHub `SUPABASE_ACCESS_TOKEN` et `SUPABASE_DB_URL`, plus un secret de fonction `STUDENT_EMAIL_DOMAIN` |
-| E | CI/CD | [x] | `ci.yml` rejoue les 71 contrôles SQL de `supabase/tests/` à chaque pull request, 34 pour les étapes 1 et 3, 37 pour l'étape 4 |
+| E | CI/CD | [x] | `ci.yml` rejoue les 73 contrôles SQL de `supabase/tests/` à chaque pull request, 34 pour les étapes 1 et 3, 39 pour l'étape 4 |
 | F | Sentry | [ ] | Nécessite le compte Sentry |
 | G | Variantes Flutter `dev` / `staging` / `prod` | [ ] | Un seul identifiant aujourd'hui : `com.rewayahacademy.app` |
 | H | Stockage média R2 | [ ] | Nécessite le compte Cloudflare. Les seaux `kyc` et `avatars` de Supabase Storage, eux, sont créés par la migration 0004 |
@@ -99,7 +99,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 37 contrôles
 | Poids des polices | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler ? | `etape-2-journal.md`, section Poids |
 | `child_ui_mode_max_age` | Posé à **8** et employé tel quel par l'étape 3. Modifiable en une ligne d'`app_config`, sans redéploiement. À confirmer ou corriger | `decisions.md`, ADR-016 |
 | Lecture du QR par la caméra | Reportée : le paquet réclame une configuration de permissions par plateforme. Le chemin par le code fonctionne partout. À rouvrir si le QR devient nécessaire | `etape-3-auth-kyc.md` section 9 |
-| Compression serveur des photos | `TUT-05` laisse le tuteur remplacer la photo de son enfant, mais aucune compression serveur n'existe : le cache local ne peut pas borner sa taille comme l'étape 2 le prévoyait | `decisions.md`, question 17 |
+| Compression serveur des photos | **Devenue concrète au lot L8** : `TUT-05` dépose désormais vraiment la photo dans le seau `avatars`, avec un refus au-delà de 4 Mo côté client et rien de plus. Aucune compression serveur n'existe, donc le cache local ne peut pas borner sa taille comme l'étape 2 le prévoyait, et c'est l'original du téléphone qui est servi aux appareils du foyer | `decisions.md`, question 17 |
 | Litige sur le temps effectif | L'étape 4 pose le minimum payable et sa trace, l'étape 5 mesurera la présence réelle. Les deux doivent se rejoindre avant la première paie | `decisions.md`, question 16 |
 | Composant ATL de Visual Studio | Le build Windows échoue sur `atlstr.h` absent, réclamé par `flutter_secure_storage_windows`. Installer « C++ ATL for latest v143 build tools » dans Visual Studio Build Tools | `etape-3-journal.md` |
 | Plateforme Android 37 | Le build APK échoue : le SDK a installé `platforms\android-37.0`, Gradle cherche `android-37`. Lancer `sdkmanager "platforms;android-37"`. Ne pas épingler `compileSdk` pour contourner un seul poste | `etape-3-journal.md` |

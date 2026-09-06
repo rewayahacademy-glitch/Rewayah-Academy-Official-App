@@ -55,6 +55,15 @@ abstract final class Routes {
 
   // --- Tuteur -------------------------------------------------------------
 
+  /// Accueil famille : l'etat en direct de chaque enfant.
+  ///
+  /// **Seule route ajoutee a l'etape 4 hors de `ADM-06`**, et elle repare un
+  /// manque de l'etape 2 : `TUT-01` etait le tableau de bord du tuteur dans
+  /// toutes les specs, et aucun chemin ne menait a lui. La racine du role
+  /// tombait donc sur `TUT-02`, l'ecran de gestion des appareils, c'est-a-dire
+  /// sur un ecran d'administration du foyer plutot que sur son suivi.
+  static const String tuteurAccueil = '/tuteur';
+
   /// Foyer et appareils.
   static const String tuteurFoyer = '/tuteur/foyer';
 
@@ -135,7 +144,7 @@ abstract final class Routes {
   /// La racine de chaque role, ou une redirection renvoie toujours.
   static String racinePour(AppRole role) => switch (role) {
     AppRole.student => eleve,
-    AppRole.guardian => tuteurFoyer,
+    AppRole.guardian => tuteurAccueil,
     AppRole.teacher => enseignantJournee,
     AppRole.controller => controleur,
     AppRole.admin => adminTableauDeBord,
@@ -146,7 +155,7 @@ abstract final class Routes {
   /// autre role demandee directement par URL, y compris sur le Web.
   static String prefixePour(AppRole role) => switch (role) {
     AppRole.student => eleve,
-    AppRole.guardian => '/tuteur',
+    AppRole.guardian => tuteurAccueil,
     AppRole.teacher => '/enseignant',
     AppRole.controller => controleur,
     AppRole.admin => '/admin',
