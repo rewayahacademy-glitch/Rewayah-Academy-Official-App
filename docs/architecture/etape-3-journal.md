@@ -12,9 +12,9 @@
 | L0 | Spécification `etape-3-auth-kyc.md` et ce journal | x |
 | L1 | Migration 0004 : les cinq défauts, les tables et fonctions de l'étape | x |
 | L2 | Porte `inscription` dans la session et le routeur | x |
-| L3 | Connexion `TUT-00` et service d'authentification abstrait | |
-| L4 | Onboarding en cartes `TUT-00c` | |
-| L5 | KYC, contrat, accusé ADR-011, portail d'attente `TUT-00b` | |
+| L3 | Connexion `TUT-00` et service d'authentification abstrait | x |
+| L4 | Onboarding en cartes `TUT-00c` | x |
+| L5 | KYC, contrat, accusé ADR-011, portail d'attente `TUT-00b` | x |
 | L6 | Appairage `TUT-02` et connexion enfant `ELV-01` | |
 | L7 | Fonctions Edge : profil enfant, session enfant | |
 | L8 | Validation des dossiers `ADM-02` | |
@@ -36,9 +36,9 @@ mesuré : c'est la règle qui a coûté la découverte du défaut de CI à l'ét
 | 7 | Troisième appareil refusé par la base | vert | S7a, plus S7b sur la réactivation |
 | 8 | Code d'appairage expiré ou consommé : refusé | vert | S8a, S8b, S8c |
 | 9 | Le code personnel de l'enfant ne part jamais au réseau | | |
-| 10 | Portail d'attente, quatre états | | |
+| 10 | Portail d'attente, quatre états | vert | `test/features/attente_test.dart` |
 | 11 | Bouton d'ajout absent à la limite, jamais en échec | | |
-| 12 | Toujours une issue « Autre » | | |
+| 12 | Toujours une issue « Autre » | vert | `test/features/inscription_test.dart`, la carte « Autre » du rôle mène quelque part sans rien fabriquer |
 
 Les scénarios SQL tournent sur un Postgres 17 nu, avec le stub `auth` versionné
 dans `supabase/tests/stub_auth.sql`, et la CI les rejoue à chaque pull request.
@@ -87,6 +87,37 @@ Première écriture de `read_kyc_documents()` : journaliser, puis refuser si le
 genre du lecteur est inconnu. Une exception annule la transaction, donc la trace
 de la lecture était écrite puis effacée. On refuse d'abord, on journalise ce qui
 va réellement sortir.
+
+### Un message d'erreur qui n'existait pas à l'écran
+
+`surfaceAlert` est une **paire** dont la couleur de texte est le blanc, prévue
+pour un fond rouge. Écrit sur la page avec `surfaceAlert.applyTo(...)`, un
+message d'erreur sortait donc en blanc sur `#F1E3E4`, mesuré à **1,19:1**.
+`PinPad` le faisait depuis l'étape 2 : le « Ce code ne correspond pas » d'un
+enfant de six ans était présent dans l'arbre de widgets et absent de l'écran.
+
+La palette gagne l'encre `textOnLightAlert`, et deux tests figent le piège
+plutôt que sa seule correction : l'un vérifie que l'encre passe 4,5:1, l'autre
+que la couleur de texte de `surfaceAlert` échoue bien sur le fond général, ce
+qui documente pourquoi le jeton existe.
+
+**Leçon : une paire dit sur quoi elle s'écrit.** L'employer à l'envers passe la
+compilation, passe la relecture, et ne se voit qu'à l'écran.
+
+### Le genre d'un dossier ne peut pas venir du client
+
+Première version : l'écran de dépôt envoyait le genre avec la pièce. Or ce
+champ décide **quel membre du personnel pourra l'ouvrir** (audit 1.3) : le
+laisser venir du client revient à confier au déposant le choix de qui le
+regarde. Un déclencheur de la base l'écrase désormais par celui du profil
+concerné, et refuse le dépôt quand ce genre est inconnu plutôt que de créer un
+dossier que personne ne saura classer. Le paramètre a disparu de l'interface
+Dart : ce qui ne peut pas être envoyé ne peut pas être forgé.
+
+`0004` a été corrigée sur place plutôt que complétée par une `0005`. C'est
+volontaire et borné : cette migration n'a **jamais été appliquée nulle part**,
+l'étape D restant ouverte et le projet n'ayant jamais été lié. La règle
+« migrations en avant, jamais de reprise » s'applique à ce qui a tourné.
 
 ### Risque à vérifier quand l'étape D sera posée
 

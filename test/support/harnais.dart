@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3 : il vit
 // dans `misc.dart`, alors que `ProviderScope.overrides` en attend une liste.
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
@@ -31,6 +32,27 @@ Widget hote(
   ),
 );
 
+/// L'hote d'un ecran qui navigue.
+///
+/// Certains ecrans de l'etape 3 se terminent par un `go` vers le portail : sans
+/// routeur, ils echouent au moment ou l'on teste justement ce qu'ils font de
+/// reussi. Le routeur du test reste minimal, il ne rejoue pas celui de
+/// l'application.
+Widget hoteRoutant({
+  required String depart,
+  required List<RouteBase> routes,
+  List<Override> surcharges = const <Override>[],
+  InterfaceMode mode = InterfaceMode.standard,
+}) => ProviderScope(
+  overrides: surcharges,
+  child: TranslationProvider(
+    child: MaterialApp.router(
+      theme: AppTheme.pour(mode),
+      routerConfig: GoRouter(initialLocation: depart, routes: routes),
+    ),
+  ),
+);
+
 /// Un service de dossier en memoire.
 class FauxServiceDossier implements ServiceDossier {
   /// Ce que [etat] renverra.
@@ -46,9 +68,8 @@ class FauxServiceDossier implements ServiceDossier {
   /// Les contrats acceptes.
   final List<SorteContrat> contratsAcceptes = <SorteContrat>[];
 
-  /// Les pieces deposees, avec le genre transmis.
-  final List<({PieceAEnvoyer piece, Genre genre})> depots =
-      <({PieceAEnvoyer piece, Genre genre})>[];
+  /// Les pieces deposees.
+  final List<PieceAEnvoyer> depots = <PieceAEnvoyer>[];
 
   void _peutEchouer() {
     final Object? erreur = erreurAJeter;
@@ -86,9 +107,9 @@ class FauxServiceDossier implements ServiceDossier {
   }
 
   @override
-  Future<void> deposerPiece(PieceAEnvoyer piece, Genre genre) async {
+  Future<void> deposerPiece(PieceAEnvoyer piece) async {
     _peutEchouer();
-    depots.add((piece: piece, genre: genre));
+    depots.add(piece);
   }
 }
 

@@ -190,11 +190,20 @@ class Traductions$attente$fr {
 	/// fr: 'La signature du contrat'
 	String get signatureContrat => 'La signature du contrat';
 
+	/// fr: 'Ce que vous devez savoir'
+	String get carteAccuse => 'Ce que vous devez savoir';
+
 	/// fr: 'Déposer ma pièce'
 	String get deposerLaPiece => 'Déposer ma pièce';
 
 	/// fr: 'Lire et signer'
 	String get signerLeContrat => 'Lire et signer';
+
+	/// fr: 'Lire'
+	String get lireLaCarte => 'Lire';
+
+	/// fr: 'Tout est déposé.'
+	String get toutEstDepose => 'Tout est déposé.';
 
 	/// fr: 'Reprendre mon dossier'
 	String get corriger => 'Reprendre mon dossier';
@@ -912,8 +921,11 @@ extension on Traductions {
 			'attente.aFournir' => 'À fournir',
 			'attente.pieceIdentite' => 'Une pièce d\'identité',
 			'attente.signatureContrat' => 'La signature du contrat',
+			'attente.carteAccuse' => 'Ce que vous devez savoir',
 			'attente.deposerLaPiece' => 'Déposer ma pièce',
 			'attente.signerLeContrat' => 'Lire et signer',
+			'attente.lireLaCarte' => 'Lire',
+			'attente.toutEstDepose' => 'Tout est déposé.',
 			'attente.corriger' => 'Reprendre mon dossier',
 			'attente.suspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.seDeconnecter' => 'Se déconnecter',

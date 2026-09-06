@@ -39,8 +39,11 @@
     "aFournir": "À fournir",
     "pieceIdentite": "Une pièce d'identité",
     "signatureContrat": "La signature du contrat",
+    "carteAccuse": "Ce que vous devez savoir",
     "deposerLaPiece": "Déposer ma pièce",
     "signerLeContrat": "Lire et signer",
+    "lireLaCarte": "Lire",
+    "toutEstDepose": "Tout est déposé.",
     "corriger": "Reprendre mon dossier",
     "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "seDeconnecter": "Se déconnecter"

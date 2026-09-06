@@ -40,13 +40,19 @@ String? deciderRedirection({
     // l'ecran de connexion en boucle
     // (`docs/architecture/etape-3-auth-kyc.md` section 2.1).
     case PorteAcces.inscription:
-      return cheminDemande == Routes.inscription ? null : Routes.inscription;
+      return _dansLeSousArbre(cheminDemande, Routes.inscription)
+          ? null
+          : Routes.inscription;
 
     // Un compte en portail d'attente n'atteint aucune route protegee, quelle
-    // que soit l'URL tapee directement dans un navigateur.
+    // que soit l'URL tapee directement dans un navigateur. Le portail a ses
+    // propres pages, accusé, contrat et depot de piece : c'est le sous-arbre
+    // entier qui est ouvert, pas la seule racine.
     case PorteAcces.attente:
     case PorteAcces.suspendu:
-      return cheminDemande == Routes.attente ? null : Routes.attente;
+      return _dansLeSousArbre(cheminDemande, Routes.attente)
+          ? null
+          : Routes.attente;
 
     case PorteAcces.actif:
       final AppRole? role = session.role;
@@ -56,11 +62,11 @@ String? deciderRedirection({
       final String racine = Routes.racinePour(role);
 
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,
-      // l'inscription ou le portail d'attente.
+      // l'inscription ou le portail d'attente, sous-arbres compris.
       if (cheminDemande == Routes.racine ||
           cheminDemande == Routes.connexion ||
-          cheminDemande == Routes.inscription ||
-          cheminDemande == Routes.attente) {
+          _dansLeSousArbre(cheminDemande, Routes.inscription) ||
+          _dansLeSousArbre(cheminDemande, Routes.attente)) {
         return racine;
       }
 
@@ -76,8 +82,13 @@ String? deciderRedirection({
       // Une route d'un autre role demandee directement par URL renvoie chez
       // soi, sur le Web comme ailleurs.
       final String prefixe = Routes.prefixePour(role);
-      final bool danssonEspace =
-          cheminDemande == prefixe || cheminDemande.startsWith('$prefixe/');
-      return danssonEspace ? null : racine;
+      return _dansLeSousArbre(cheminDemande, prefixe) ? null : racine;
   }
 }
+
+/// Vrai quand [chemin] est [racine] ou l'une de ses pages filles.
+///
+/// La comparaison teste `racine/` et non un simple prefixe : sans le separateur,
+/// `/attentes-du-tuteur` passerait pour une page de `/attente`.
+bool _dansLeSousArbre(String chemin, String racine) =>
+    chemin == racine || chemin.startsWith('$racine/');

@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/galerie_page.dart';
 import '../../features/connexion/connexion_page.dart';
+import '../../features/dossier/attente_page.dart';
+import '../../features/dossier/depot_piece_page.dart';
+import '../../features/dossier/signature_page.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
@@ -60,10 +63,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.inscription,
         builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
       ),
+      // Le portail d'attente et ses trois pages. Le sous-arbre entier est
+      // ouvert a un compte en attente, la racine seule ne suffirait pas.
       GoRoute(
         path: Routes.attente,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.attente.titre),
+        builder: (BuildContext _, GoRouterState _) => const AttentePage(),
+      ),
+      GoRoute(
+        path: Routes.attenteAccuse,
+        builder: (BuildContext _, GoRouterState _) => const AccusePage(),
+      ),
+      GoRoute(
+        path: Routes.attenteContrat,
+        builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+      ),
+      GoRoute(
+        path: Routes.attentePiece,
+        builder: (BuildContext _, GoRouterState _) => const DepotPiecePage(),
       ),
 
       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce

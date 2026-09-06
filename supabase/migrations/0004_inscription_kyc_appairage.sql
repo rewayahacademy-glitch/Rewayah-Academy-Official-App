@@ -118,22 +118,42 @@ insert into public.app_config (key, value) values
   ('pairing_code_ttl_minutes', '10'::jsonb)
 on conflict (key) do nothing;
 
-create function public.set_kyc_purge_at()
+-- Deux valeurs que le client n'a pas a fournir : la date de purge, et surtout le
+-- genre.
+--
+-- Le genre porte par un dossier decide **quel membre du personnel pourra
+-- l'ouvrir** (audit 1.3). Le laisser arriver du client reviendrait a confier au
+-- deposant le choix de qui le regarde. Il est donc ecrase par celui du profil
+-- concerne, et un genre inconnu fait echouer le depot plutot que de creer un
+-- dossier que personne ne pourra classer.
+create function public.completer_kyc_document()
 returns trigger
 language plpgsql security definer set search_path = ''
 as $$
+declare
+  v_genre public.gender;
 begin
   if new.purge_at is null then
     new.purge_at := now() + make_interval(days =>
       coalesce((public.get_config('kyc_retention_days', '90'::jsonb) #>> '{}')::int, 90));
   end if;
+
+  select p.gender into v_genre
+  from public.profiles p
+  where p.id = new.profile_id and p.deleted_at is null;
+
+  if v_genre is null then
+    raise exception 'genre du titulaire inconnu : impossible de classer ce dossier';
+  end if;
+
+  new.gender := v_genre;
   return new;
 end;
 $$;
 
-create trigger kyc_documents_purge_at
+create trigger kyc_documents_completer
 before insert on public.kyc_documents
-for each row execute function public.set_kyc_purge_at();
+for each row execute function public.completer_kyc_document();
 
 -- ============================================================
 -- 5. L'enseignant et le controleur deposent leur propre piece (defaut 2.2)

@@ -13,7 +13,9 @@ insert into auth.users (id, email) values
   ('22222222-2222-2222-2222-222222222222', 'enseignant@example.test'),
   ('33333333-3333-3333-3333-333333333333', 'admin@example.test'),
   ('44444444-4444-4444-4444-444444444444', 'enfant1@example.test'),
-  ('55555555-5555-5555-5555-555555555555', 'enfant2@example.test');
+  ('55555555-5555-5555-5555-555555555555', 'enfant2@example.test'),
+  ('66666666-6666-6666-6666-666666666666', 'enseignante@example.test'),
+  ('77777777-7777-7777-7777-777777777777', 'sansgenre@example.test');
 
 -- ============================================================
 -- S3 : une inscription publique est bornee a deux roles et a pending_kyc
@@ -102,11 +104,46 @@ begin
   perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
 
+  -- Le genre est volontairement FAUX ici : c'est ce qui decide quel membre du
+  -- personnel pourra ouvrir la piece, donc le deposant n'a pas a le choisir.
   insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
-  values ('22222222-2222-2222-2222-222222222222', 'id_card', 'male',
+  values ('22222222-2222-2222-2222-222222222222', 'id_card', 'female',
           '22222222-2222-2222-2222-222222222222/piece.webp');
 
   raise notice 'S4 ok : l''enseignant depose sa piece sous RLS';
+end $$;
+
+do $$
+begin
+  if (select gender from public.kyc_documents
+      where profile_id = '22222222-2222-2222-2222-222222222222') <> 'male' then
+    raise exception
+      'S4 ECHEC : le genre envoye par le client a ete conserve. Le deposant '
+      'choisirait alors qui peut ouvrir sa piece.';
+  end if;
+  raise notice 'S4a ok : le genre du dossier est celui du profil, pas celui du client';
+end $$;
+
+-- Un profil sans genre ne peut pas deposer : mieux vaut un refus qu'un dossier
+-- que personne ne saura classer.
+insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status)
+values ('77777777-7777-7777-7777-777777777777', 'TEACHER-SG-009999', 'teacher',
+        'Sans', 'Genre', 'pending_kyc');
+
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '77777777-7777-7777-7777-777777777777', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  begin
+    insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+    values ('77777777-7777-7777-7777-777777777777', 'id_card', 'male',
+            '77777777-7777-7777-7777-777777777777/piece.webp');
+    raise exception 'S4 ECHEC : un dossier sans genre de titulaire a ete accepte';
+  exception when sqlstate 'P0001' then
+    if position('genre du titulaire inconnu' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S4d ok : sans genre au profil, le depot est refuse';
 end $$;
 
 -- Controle negatif : personne ne depose une piece pour autrui.
@@ -185,11 +222,31 @@ begin
 end $$;
 
 -- Cloisonnement : un lecteur masculin ne voit aucun dossier feminin.
-insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
-values ('11111111-1111-1111-1111-111111111111', 'passport', 'female', 'f/piece.webp');
+-- Le dossier feminin vient d'une enseignante reelle, puisque le genre du
+-- dossier est desormais celui du profil et ne peut plus etre pose a la main.
+select set_config('test.uid', '66666666-6666-6666-6666-666666666666', false);
+select public.creer_profil_inscription('teacher', 'Aissatou', 'Balde', 'female')
+       is not null as enseignante_creee;
 
 do $$
 begin
+  set local role authenticated;
+  perform set_config('test.uid', '66666666-6666-6666-6666-666666666666', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+  values ('66666666-6666-6666-6666-666666666666', 'passport', 'male',
+          '66666666-6666-6666-6666-666666666666/piece.webp');
+end $$;
+
+select set_config('test.uid', '33333333-3333-3333-3333-333333333333', false);
+select set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', false);
+
+do $$
+begin
+  if (select gender from public.kyc_documents
+      where profile_id = '66666666-6666-6666-6666-666666666666') <> 'female' then
+    raise exception 'S5 ECHEC : le genre du dossier n''a pas suivi le profil';
+  end if;
   if exists (select 1 from public.read_kyc_documents() where gender = 'female') then
     raise exception 'S5 ECHEC : un lecteur masculin a vu un dossier feminin (audit 1.3)';
   end if;

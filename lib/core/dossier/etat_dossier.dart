@@ -84,7 +84,7 @@ class EtatDossier {
     if (statutPiece == StatutPiece.refusee) {
       return EtapeDossier.refuse;
     }
-    if (!contratSigne || !pieceDeposee) {
+    if (manquants.isNotEmpty) {
       return EtapeDossier.incomplet;
     }
     return EtapeDossier.enVerification;
@@ -94,7 +94,13 @@ class EtatDossier {
   ///
   /// Deux ou trois elements au maximum, chacun avec son bouton : jamais un
   /// formulaire long (`docs/produit/parcours-utilisateurs.md`, `TUT-00b`).
+  ///
+  /// L'accuse vient **avant** le contrat, et non l'inverse : il dit en langage
+  /// clair ce que le contrat formalisera ensuite. Une clause signee au milieu
+  /// d'un texte long n'informe personne, et c'est exactement le litige que
+  /// l'ADR-011 cherche a eviter.
   List<PieceManquante> get manquants => <PieceManquante>[
+    if (!accuseSigne) PieceManquante.accuse,
     if (!contratSigne) PieceManquante.contrat,
     if (!pieceDeposee || statutPiece == StatutPiece.refusee)
       PieceManquante.pieceIdentite,
@@ -144,6 +150,9 @@ enum EtapeDossier {
 
 /// Ce qui peut manquer a un dossier.
 enum PieceManquante {
+  /// La carte a accuser une fois (ADR-011).
+  accuse,
+
   /// La signature du contrat ou des conditions.
   contrat,
 

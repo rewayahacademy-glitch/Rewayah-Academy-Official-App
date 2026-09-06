@@ -64,7 +64,13 @@ abstract interface class ServiceDossier {
   Future<void> accepterContrat(SorteContrat sorte, String version);
 
   /// Depose une piece d'identite et cree sa ligne de suivi.
-  Future<void> deposerPiece(PieceAEnvoyer piece, Genre genre);
+  ///
+  /// **Le genre du dossier n'est pas un parametre.** Il decide quel membre du
+  /// personnel pourra ouvrir la piece (audit 1.3) : le laisser venir du client
+  /// reviendrait a confier au deposant le choix de qui le regarde. Un
+  /// declencheur de la base l'ecrase par celui du profil concerne, et refuse le
+  /// depot quand ce genre est inconnu.
+  Future<void> deposerPiece(PieceAEnvoyer piece);
 
   /// Taille maximale acceptee pour une piece.
   static const int tailleMaximaleOctets = 8 * 1024 * 1024;
@@ -121,7 +127,7 @@ class ServiceDossierSupabase implements ServiceDossier {
   }
 
   @override
-  Future<void> deposerPiece(PieceAEnvoyer piece, Genre genre) async {
+  Future<void> deposerPiece(PieceAEnvoyer piece) async {
     final String? uid = _client.auth.currentUser?.id;
     if (uid == null) {
       throw StateError('aucune session');
@@ -139,10 +145,12 @@ class ServiceDossierSupabase implements ServiceDossier {
 
     // Insertion sans `.select()` : la table n'a volontairement aucune policy de
     // lecture pour le titulaire, qui suit son dossier par `etat_dossier()`.
+    //
+    // Ni `gender` ni `purge_at` ne sont envoyes : un declencheur de la base les
+    // pose, et ecrase toute valeur qui arriverait d'ici.
     await _client.from('kyc_documents').insert(<String, dynamic>{
       'profile_id': uid,
       'doc_type': piece.type.valeurSql,
-      'gender': genre.valeurSql,
       'object_key': cle,
     });
   }
