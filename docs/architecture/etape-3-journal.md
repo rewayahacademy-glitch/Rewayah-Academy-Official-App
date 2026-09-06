@@ -15,8 +15,8 @@
 | L3 | Connexion `TUT-00` et service d'authentification abstrait | x |
 | L4 | Onboarding en cartes `TUT-00c` | x |
 | L5 | KYC, contrat, accusé ADR-011, portail d'attente `TUT-00b` | x |
-| L6 | Appairage `TUT-02` et connexion enfant `ELV-01` | |
-| L7 | Fonctions Edge : profil enfant, session enfant | |
+| L6 | Appairage `TUT-02` et connexion enfant `ELV-01` | x |
+| L7 | Fonctions Edge : profil enfant, session enfant | x |
 | L8 | Validation des dossiers `ADM-02` | |
 | L9 | Vérifications, CI, documentation | |
 
@@ -35,9 +35,9 @@ mesuré : c'est la règle qui a coûté la découverte du défaut de CI à l'ét
 | 6 | Tablette partagée entre deux enfants | vert | S6 |
 | 7 | Troisième appareil refusé par la base | vert | S7a, plus S7b sur la réactivation |
 | 8 | Code d'appairage expiré ou consommé : refusé | vert | S8a, S8b, S8c |
-| 9 | Le code personnel de l'enfant ne part jamais au réseau | | |
+| 9 | Le code personnel de l'enfant ne part jamais au réseau | vert | `test/appairage/code_local_test.dart` : aucune ligne d'appel réseau de `lib/` ne mentionne le vocabulaire du code, et aucun service ne déclare de paramètre pour le recevoir |
 | 10 | Portail d'attente, quatre états | vert | `test/features/attente_test.dart` |
-| 11 | Bouton d'ajout absent à la limite, jamais en échec | | |
+| 11 | Bouton d'ajout absent à la limite, jamais en échec | vert | `test/features/appareils_test.dart` |
 | 12 | Toujours une issue « Autre » | vert | `test/features/inscription_test.dart`, la carte « Autre » du rôle mène quelque part sans rien fabriquer |
 
 Les scénarios SQL tournent sur un Postgres 17 nu, avec le stub `auth` versionné
@@ -118,6 +118,30 @@ Dart : ce qui ne peut pas être envoyé ne peut pas être forgé.
 volontaire et borné : cette migration n'a **jamais été appliquée nulle part**,
 l'étape D restant ouverte et le projet n'ayant jamais été lié. La règle
 « migrations en avant, jamais de reprise » s'applique à ce qui a tourné.
+
+### Ce que le code personnel de l'enfant protège, et ce qu'il ne protège pas
+
+À dire précisément, sinon la mesure passe pour plus forte qu'elle n'est. Le code
+à quatre chiffres empêche **un frère ou une sœur d'ouvrir le profil d'un autre
+enfant sur la tablette du salon**, ce qui est le risque réel du produit. Il
+n'empêche rien contre quelqu'un qui obtient le contenu du coffre du système :
+dix mille combinaisons s'essaient instantanément, quelle que soit la fonction
+d'empreinte. La vraie barrière est le jeton d'appareil, émis par le serveur,
+révocable par le tuteur, et la RLS derrière lui.
+
+Le code est **créé sur l'appareil** juste après l'appairage, en présence du
+tuteur qui vient de montrer le code à six caractères. Il n'est donc pas
+réinitialisable à distance : le tuteur révoque l'appareil et le réappaire. C'est
+la conséquence directe de « le code ne quitte jamais l'appareil », et elle vaut
+mieux qu'un canal de réinitialisation qui ferait exactement ce que l'ADR-005
+interdit.
+
+### Le jeton survit-il à la révocation
+
+Première écriture de `revoquer_appareil()` : poser `revoked_at` et s'arrêter là.
+Un appareil révoqué dont le jeton reste en base resterait utilisable jusqu'à ce
+que quelqu'un pense à le relire. La fonction efface donc `token_hash` dans le
+même mouvement, et le scénario de test le vérifie explicitement.
 
 ### Risque à vérifier quand l'étape D sera posée
 

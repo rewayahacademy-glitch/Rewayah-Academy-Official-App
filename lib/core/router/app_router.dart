@@ -3,10 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/galerie_page.dart';
+import '../../features/appareils/ajouter_enfant_page.dart';
+import '../../features/appareils/appairage_page.dart';
+import '../../features/appareils/appareils_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
 import '../../features/dossier/signature_page.dart';
+import '../../features/eleve_connexion/eleve_connexion_page.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
@@ -60,6 +64,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const ConnexionPage(),
       ),
       GoRoute(
+        path: Routes.connexionEleve,
+        builder: (BuildContext _, GoRouterState _) =>
+            const EleveConnexionPage(),
+      ),
+      GoRoute(
         path: Routes.inscription,
         builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
       ),
@@ -105,8 +114,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Tuteur.
       GoRoute(
         path: Routes.tuteurFoyer,
+        builder: (BuildContext _, GoRouterState _) => const AppareilsPage(),
+      ),
+      GoRoute(
+        path: Routes.tuteurAjouterEnfant,
         builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.tuteur.foyer),
+            const AjouterEnfantPage(),
+      ),
+      GoRoute(
+        path: '${Routes.tuteurAppairer}/:eleveId',
+        builder: (BuildContext _, GoRouterState etat) =>
+            AppairagePage(eleveId: etat.pathParameters['eleveId'] ?? ''),
       ),
       GoRoute(
         path: Routes.tuteurDisponibilites,

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // dans `misc.dart`, alors que `ProviderScope.overrides` en attend une liste.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
@@ -170,6 +171,72 @@ class FauxServiceAuth implements ServiceAuth {
   @override
   Future<void> deconnexion() async {
     deconnexions++;
+  }
+}
+
+/// Un service d'appairage en memoire.
+class FauxServiceAppairage implements ServiceAppairage {
+  /// Les eleves rendus.
+  List<EleveDuFoyer> elevesRendus = const <EleveDuFoyer>[];
+
+  /// Les appareils rendus.
+  List<AppareilAppaire> appareilsRendus = const <AppareilAppaire>[];
+
+  /// Les codes demandes, par eleve.
+  final List<String> codesDemandes = <String>[];
+
+  /// Les appareils revoques.
+  final List<String> revocations = <String>[];
+
+  /// Les enfants crees.
+  final List<({String prenom, String nom, int age})> enfantsCrees =
+      <({String prenom, String nom, int age})>[];
+
+  /// Ce que la prochaine operation doit jeter.
+  Object? erreurAJeter;
+
+  /// Le code rendu par [creerCode].
+  CodeAppairage code = CodeAppairage(
+    code: 'AB23CD',
+    expireA: DateTime.now().add(const Duration(minutes: 10)),
+  );
+
+  void _peutEchouer() {
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+  }
+
+  @override
+  Future<List<EleveDuFoyer>> eleves() async => elevesRendus;
+
+  @override
+  Future<List<AppareilAppaire>> appareils() async => appareilsRendus;
+
+  @override
+  Future<CodeAppairage> creerCode(String eleveId) async {
+    _peutEchouer();
+    codesDemandes.add(eleveId);
+    return code;
+  }
+
+  @override
+  Future<void> revoquer(String appareilId) async {
+    _peutEchouer();
+    revocations.add(appareilId);
+  }
+
+  @override
+  Future<void> creerEnfant({
+    required String prenom,
+    required String nom,
+    required int age,
+    String? niveau,
+  }) async {
+    _peutEchouer();
+    enfantsCrees.add((prenom: prenom, nom: nom, age: age));
   }
 }
 

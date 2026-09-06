@@ -51,6 +51,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$accuse$fr accuse = Traductions$accuse$fr.internal(_root);
 	late final Traductions$kyc$fr kyc = Traductions$kyc$fr.internal(_root);
 	late final Traductions$appareils$fr appareils = Traductions$appareils$fr.internal(_root);
+	late final Traductions$enfant$fr enfant = Traductions$enfant$fr.internal(_root);
 	late final Traductions$eleveConnexion$fr eleveConnexion = Traductions$eleveConnexion$fr.internal(_root);
 	late final Traductions$dossiers$fr dossiers = Traductions$dossiers$fr.internal(_root);
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
@@ -474,6 +475,45 @@ class Traductions$appareils$fr {
 
 	/// fr: 'L'opération n'a pas abouti. Réessayez dans un instant.'
 	String get erreur => 'L\'opération n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: enfant
+class Traductions$enfant$fr {
+	Traductions$enfant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouter un enfant'
+	String get titre => 'Ajouter un enfant';
+
+	/// fr: 'Son prénom'
+	String get prenom => 'Son prénom';
+
+	/// fr: 'Son nom'
+	String get nom => 'Son nom';
+
+	/// fr: 'Son âge'
+	String get age => 'Son âge';
+
+	/// fr: 'Indiquez un âge entre 3 et 18 ans.'
+	String get ageInvalide => 'Indiquez un âge entre 3 et 18 ans.';
+
+	/// fr: 'L'âge fixe le mode d'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.'
+	String get ageRaison => 'L\'âge fixe le mode d\'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.';
+
+	/// fr: 'Ajouter au foyer'
+	String get creer => 'Ajouter au foyer';
+
+	/// fr: 'L'ajout n'a pas abouti. Réessayez dans un instant.'
+	String get erreur => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.';
+
+	/// fr: 'Aucun enfant dans le foyer'
+	String get aucun => 'Aucun enfant dans le foyer';
+
+	/// fr: 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.'
+	String get aucunDetail => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.';
 }
 
 // Path: eleveConnexion
@@ -998,6 +1038,16 @@ extension on Traductions {
 			'appareils.derniereUtilisation' => ({required Object quand}) => 'Utilisé ${quand}',
 			'appareils.jamaisUtilise' => 'Jamais utilisé',
 			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
+			'enfant.titre' => 'Ajouter un enfant',
+			'enfant.prenom' => 'Son prénom',
+			'enfant.nom' => 'Son nom',
+			'enfant.age' => 'Son âge',
+			'enfant.ageInvalide' => 'Indiquez un âge entre 3 et 18 ans.',
+			'enfant.ageRaison' => 'L\'âge fixe le mode d\'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.',
+			'enfant.creer' => 'Ajouter au foyer',
+			'enfant.erreur' => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.',
+			'enfant.aucun' => 'Aucun enfant dans le foyer',
+			'enfant.aucunDetail' => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.codeInvite' => 'Entre le code affiché sur le téléphone de tes parents',

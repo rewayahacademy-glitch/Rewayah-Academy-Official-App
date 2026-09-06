@@ -469,6 +469,46 @@ begin
 end $$;
 
 -- ============================================================
+-- La revocation : possible pour le tuteur, bornee a son foyer
+-- ============================================================
+
+do $$
+declare v_device uuid;
+begin
+  select id into v_device from public.devices
+  where profile_id = '44444444-4444-4444-4444-444444444444'
+    and revoked_at is null limit 1;
+
+  perform public.revoquer_appareil(v_device);
+
+  if (select revoked_at from public.devices where id = v_device) is null then
+    raise exception 'REVOCATION ECHEC : l''appareil n''a pas ete revoque';
+  end if;
+  -- Un appareil revoque dont le jeton survivrait resterait utilisable.
+  if (select token_hash from public.devices where id = v_device) is not null then
+    raise exception 'REVOCATION ECHEC : le jeton survit a la revocation';
+  end if;
+  raise notice 'Revocation ok : le tuteur retire un appareil, et son jeton avec';
+end $$;
+
+do $$
+declare v_device uuid;
+begin
+  -- Un tuteur d'un autre foyer ne revoque rien.
+  select id into v_device from public.devices limit 1;
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"guardian","household_id":"00000000-0000-0000-0000-000000000000"}}',
+    true);
+  begin
+    perform public.revoquer_appareil(v_device);
+    raise exception 'REVOCATION ECHEC : un appareil d''un autre foyer a pu etre revoque';
+  exception when sqlstate 'P0001' then
+    if position('votre foyer' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'Revocation ok : bornee au foyer de l''appelant';
+end $$;
+
+-- ============================================================
 -- Le tuteur voit ses codes sans jamais voir leur empreinte
 -- ============================================================
 

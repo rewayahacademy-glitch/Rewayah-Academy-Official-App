@@ -32,8 +32,12 @@ String? deciderRedirection({
     case PorteAcces.chargement:
       return null;
 
+    // La connexion a deux entrees : celle de l'adulte, et celle de l'enfant qui
+    // arrive avec un code. Le sous-arbre entier est donc public.
     case PorteAcces.deconnecte:
-      return cheminDemande == Routes.connexion ? null : Routes.connexion;
+      return _dansLeSousArbre(cheminDemande, Routes.connexion)
+          ? null
+          : Routes.connexion;
 
     // Session valide, aucun profil : l'inscription est la seule destination.
     // Sans cette porte, ce compte retombait en `deconnecte` et repartait sur
@@ -64,7 +68,7 @@ String? deciderRedirection({
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,
       // l'inscription ou le portail d'attente, sous-arbres compris.
       if (cheminDemande == Routes.racine ||
-          cheminDemande == Routes.connexion ||
+          _dansLeSousArbre(cheminDemande, Routes.connexion) ||
           _dansLeSousArbre(cheminDemande, Routes.inscription) ||
           _dansLeSousArbre(cheminDemande, Routes.attente)) {
         return racine;

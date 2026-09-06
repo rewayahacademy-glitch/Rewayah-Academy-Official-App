@@ -14,6 +14,12 @@ abstract final class Routes {
   /// Connexion. Google ou courriel.
   static const String connexion = '/connexion';
 
+  /// Connexion de l'eleve : un code d'appairage, puis le choix de profil.
+  ///
+  /// Sous-arbre de la connexion, donc public : l'appareil d'un enfant qui
+  /// arrive avec un code n'a par construction aucune session.
+  static const String connexionEleve = '/connexion/eleve';
+
   /// Inscription : le compte existe, le profil reste a creer.
   ///
   /// Atteignable uniquement depuis [PorteAcces.inscription], donc avec une
@@ -51,6 +57,18 @@ abstract final class Routes {
 
   /// Foyer et appareils.
   static const String tuteurFoyer = '/tuteur/foyer';
+
+  /// Ajout d'un enfant au foyer.
+  static const String tuteurAjouterEnfant = '/tuteur/foyer/ajouter-enfant';
+
+  /// Appairage d'un appareil pour un eleve donne.
+  ///
+  /// L'identifiant est dans le chemin et non dans `extra` : contrairement a la
+  /// salle, cet ecran n'a rien d'ephemere et doit survivre a un rechargement.
+  static const String tuteurAppairer = '/tuteur/foyer/appairer';
+
+  /// Le chemin d'appairage d'un eleve.
+  static String appairerPour(String eleveId) => '$tuteurAppairer/$eleveId';
 
   /// Disponibilites du foyer.
   static const String tuteurDisponibilites = '/tuteur/disponibilites';

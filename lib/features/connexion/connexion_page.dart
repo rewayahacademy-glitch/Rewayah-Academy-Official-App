@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -103,6 +105,8 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                     onChanged: () => setState(() {}),
                     onEnvoyer: () => unawaited(_envoyerLien()),
                     onGoogle: () => unawaited(_google()),
+                    onEleve: () =>
+                        GoRouter.of(context).go(Routes.connexionEleve),
                   ),
                 ),
               ),
@@ -123,6 +127,7 @@ class _Saisie extends StatelessWidget {
     required this.onChanged,
     required this.onEnvoyer,
     required this.onGoogle,
+    required this.onEleve,
   });
 
   final TextEditingController controleur;
@@ -132,6 +137,7 @@ class _Saisie extends StatelessWidget {
   final VoidCallback onChanged;
   final VoidCallback onEnvoyer;
   final VoidCallback onGoogle;
+  final VoidCallback onEleve;
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +185,15 @@ class _Saisie extends StatelessWidget {
         ActionPrincipale(
           libelle: t.connexion.avecGoogle,
           onPress: onGoogle,
+          surface: palette.surfaceBase,
+        ),
+        Ecart.vXxxl,
+        // L'entree de l'eleve, discrete : c'est un parcours different, pas une
+        // autre facon de faire le meme. L'enfant arrive avec un code que son
+        // tuteur vient de lui montrer, jamais avec une adresse.
+        ActionPrincipale(
+          libelle: t.eleveConnexion.entrerCode,
+          onPress: onEleve,
           surface: palette.surfaceBase,
         ),
       ],

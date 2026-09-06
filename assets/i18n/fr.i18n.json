@@ -136,6 +136,19 @@
     "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
   },
 
+  "enfant": {
+    "titre": "Ajouter un enfant",
+    "prenom": "Son prénom",
+    "nom": "Son nom",
+    "age": "Son âge",
+    "ageInvalide": "Indiquez un âge entre 3 et 18 ans.",
+    "ageRaison": "L'âge fixe le mode d'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.",
+    "creer": "Ajouter au foyer",
+    "erreur": "L'ajout n'a pas abouti. Réessayez dans un instant.",
+    "aucun": "Aucun enfant dans le foyer",
+    "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
+  },
+
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
     "scanner": "Scanner le carré",

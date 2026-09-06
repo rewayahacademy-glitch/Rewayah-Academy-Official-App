@@ -721,6 +721,74 @@ revoke execute on function public.consommer_code_appairage(text, text, text)
   from public, anon, authenticated;
 grant execute on function public.consommer_code_appairage(text, text, text) to service_role;
 
+-- La matrice d'acces de l'etape 1 accorde au tuteur un « L E » sur `devices`,
+-- mais seules des policies de SELECT existaient : la revocation, qui est la
+-- moitie utile de TUT-02, etait impossible.
+--
+-- Une fonction plutot qu'une policy d'UPDATE : une policy laisserait le tuteur
+-- ecrire N'IMPORTE QUELLE colonne de la ligne, `token_hash` compris. Ici il ne
+-- peut faire qu'une chose, et elle est journalisee.
+create function public.revoquer_appareil(p_device_id uuid)
+returns void
+language plpgsql security definer set search_path = ''
+as $$
+declare
+  v_profil uuid;
+begin
+  if public.app_role() not in ('guardian', 'admin') then
+    raise exception 'seul un tuteur ou un administrateur revoque un appareil';
+  end if;
+
+  select d.profile_id into v_profil
+  from public.devices d
+  join public.profiles p on p.id = d.profile_id
+  where d.id = p_device_id
+    and d.deleted_at is null
+    and p.deleted_at is null
+    and (
+      public.app_role() = 'admin'
+      or (p.household_id is not null and p.household_id = public.app_household_id())
+    );
+
+  if v_profil is null then
+    raise exception 'cet appareil n''appartient pas a votre foyer';
+  end if;
+
+  update public.devices
+  set revoked_at = now(), token_hash = null
+  where id = p_device_id and revoked_at is null;
+
+  -- Le jeton est efface en meme temps que la revocation : un appareil revoque
+  -- dont le jeton survivrait resterait utilisable jusqu'a la prochaine lecture.
+  perform public.log_sensitive_access('appareil_revoque', 'devices',
+    p_device_id::text, jsonb_build_object('profile_id', v_profil));
+end;
+$$;
+
+revoke execute on function public.revoquer_appareil(uuid) from public, anon;
+grant execute on function public.revoquer_appareil(uuid) to authenticated;
+
+-- Ce que le tuteur voit de ses appareils : de quoi reconnaitre lequel il
+-- retire, et rien de plus. Ni empreinte de jeton, ni empreinte d'appareil.
+create view public.mes_appareils_v
+with (security_barrier = true)
+as
+select
+  d.id,
+  d.profile_id,
+  p.first_name,
+  d.platform,
+  d.label,
+  d.paired_at,
+  d.last_used_at,
+  d.revoked_at
+from public.devices d
+join public.profiles p on p.id = d.profile_id
+where d.deleted_at is null
+  and p.deleted_at is null
+  and p.household_id is not null
+  and p.household_id = public.app_household_id();
+
 -- Le jeton d'appareil rouvre une session sans repasser par un code. Reserve a la
 -- fonction Edge pour la meme raison.
 create function public.profil_du_jeton_appareil(p_token text)
