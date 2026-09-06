@@ -777,6 +777,12 @@ create table public.prayer_settings (
     '{"fajr": 0, "dhuhr": 0, "asr": 0, "maghrib": 0, "isha": 0}'::jsonb,
   timezone_iana text not null default 'Europe/Paris',
   pause_minutes smallint not null default 15 check (pause_minutes between 0 and 60),
+  -- Le preavis de l'alerte exigee par l'operateur. Il vit ICI et non dans le
+  -- code client : si chaque role portait le sien, l'enseignant serait prevenu
+  -- dix minutes avant et l'eleve cinq, ce qui rouvre exactement le litige que
+  -- l'ADR-017 ferme. Une pause et son annonce voyagent ensemble.
+  alert_lead_minutes smallint not null default 10
+    check (alert_lead_minutes between 0 and 60),
   place_label text,
   updated_at timestamptz not null default now()
 );

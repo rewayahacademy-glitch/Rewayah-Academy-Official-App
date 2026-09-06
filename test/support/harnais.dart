@@ -16,6 +16,8 @@ import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/priere/reglages_priere.dart';
+import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
@@ -444,6 +446,25 @@ class FauxServiceRegles implements ServiceRegles {
     required String motif,
   }) async {
     closes.add(surchargeId);
+  }
+}
+
+/// Un service de prieres en memoire.
+class FauxServicePriere implements ServicePriere {
+  /// Les reglages rendus, par enseignant.
+  final Map<String, ReglagesPriere> parEnseignant = <String, ReglagesPriere>{};
+
+  /// Les reglages enregistres, dans l'ordre.
+  final List<ReglagesPriere> enregistres = <ReglagesPriere>[];
+
+  @override
+  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+      parEnseignant[enseignantId];
+
+  @override
+  Future<void> enregistrer(ReglagesPriere reglages) async {
+    enregistres.add(reglages);
+    parEnseignant[reglages.enseignantId] = reglages;
   }
 }
 

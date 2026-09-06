@@ -997,9 +997,13 @@ begin
   values ('cccccccc-0000-0000-0000-000000000001', 48.85341, 2.34880,
           'muslim_world_league', 'shafi', 'Europe/Paris', 'Paris');
 
-  -- L'ajustement a la minute pres, exige par l'operateur.
+  -- L'ajustement a la minute pres, exige par l'operateur. La pause et son
+  -- preavis d'alerte se posent au meme endroit, pour que tout le monde soit
+  -- prevenu au meme instant.
   update public.prayer_settings
-  set adjustments = '{"fajr": 0, "dhuhr": 2, "asr": 0, "maghrib": -1, "isha": 0}'::jsonb
+  set adjustments = '{"fajr": 0, "dhuhr": 2, "asr": 0, "maghrib": -1, "isha": 0}'::jsonb,
+      pause_minutes = 12,
+      alert_lead_minutes = 5
   where teacher_id = 'cccccccc-0000-0000-0000-000000000001';
 
   begin
@@ -1024,6 +1028,8 @@ do $$
 declare
   v_lu int;
   v_dhuhr int;
+  v_pause int;
+  v_preavis int;
 begin
   -- Le tuteur de l'eleve suivi par Omar. Amina a ete reaffectee, on prend donc
   -- un eleve encore suivi : Eleve1, du foyer B.
@@ -1033,7 +1039,9 @@ begin
     '{"app_metadata":{"role":"guardian","household_id":"ffffffff-0000-0000-0000-00000000000b"}}',
     true);
 
-  select count(*), min((adjustments -> 'dhuhr' #>> '{}')::int) into v_lu, v_dhuhr
+  select count(*), min((adjustments -> 'dhuhr' #>> '{}')::int),
+         min(pause_minutes), min(alert_lead_minutes)
+    into v_lu, v_dhuhr, v_pause, v_preavis
   from public.prayer_settings
   where teacher_id = 'cccccccc-0000-0000-0000-000000000001';
 
@@ -1045,7 +1053,15 @@ begin
   if v_dhuhr <> 2 then
     raise exception 'Prieres ECHEC : l''ajustement lu vaut % au lieu de 2', v_dhuhr;
   end if;
-  raise notice 'Prieres ok : le foyer lit les memes entrees de calcul que l''enseignant, ajustement compris';
+  -- La duree de l'interruption et le moment de l'alerte sont les memes des deux
+  -- cotes : c'est la condition pour que « personne ne soit surpris » veuille
+  -- dire la meme chose pour l'eleve et pour l'enseignant.
+  if v_pause <> 12 or v_preavis <> 5 then
+    raise exception
+      'Prieres ECHEC : le foyer lit une pause de % min et un preavis de % min, '
+      'la ou l''enseignant a pose 12 et 5', v_pause, v_preavis;
+  end if;
+  raise notice 'Prieres ok : le foyer lit les memes entrees de calcul que l''enseignant, ajustement, pause et preavis compris';
 end $$;
 
 do $$

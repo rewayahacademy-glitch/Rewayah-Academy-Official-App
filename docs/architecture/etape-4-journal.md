@@ -5,7 +5,7 @@
 > `docs/architecture/etape-4-dashboards.md` reste la spécification ; ce journal
 > est son compte rendu. Mis à jour à la fin de chaque lot, jamais en bloc.
 
-## État : L1 fait, la base porte l'étape 4
+## État : L5 fait, les prières se calculent des deux côtés
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
@@ -14,7 +14,7 @@
 | L2 | Services Dart : règles, planning, affectations, disponibilités | x |
 | L3 | Grille de semaine partagée, `TUT-04` | x |
 | L4 | `ENS-06` élèves en attente, prise atomique, plafond | x |
-| L5 | Prières : réglages, calcul, ajustements, entrées de planning | |
+| L5 | Prières : réglages, calcul, ajustements, entrées de planning | x |
 | L6 | `ENS-02` la journée | |
 | L7 | `ELV-02` et la mesure du démarrage à froid | |
 | L8 | `TUT-01`, `TUT-05`, demandes des parties | |
@@ -74,8 +74,8 @@ mesuré, règle constante depuis l'étape 1.
 | 6 | Le tuteur change la caméra de son enfant, et rien d'autre | vert | S6a, S6b |
 | 7 | Deux séances du même enseignant qui se recoupent sont refusées | vert | S7a, plus S7b sur l'adjacence |
 | 8 | Un tuteur ne lit plus les disponibilités des enseignants étrangers à son foyer | vert | S8a, S8b |
-| 9 | Élève et enseignant affichent la même minute de prière | à mesurer | L5 |
-| 10 | Un ajustement d'une minute déplace l'entrée des deux côtés | à mesurer | L5. Les réglages, eux, sont vérifiés en base |
+| 9 | Élève et enseignant affichent la même minute de prière | vert | `test/priere/horaires_priere_test.dart`, plus les contrôles de lecture en base |
+| 10 | Un ajustement d'une minute déplace l'entrée des deux côtés | vert | Même fichier, dans les deux sens, et sans déplacer les quatre autres prières |
 | 11 | Les compteurs de `ADM-01` affichent zéro sans disparaître | à mesurer | L9. L'exactitude des six compteurs est déjà vérifiée en SQL |
 | 12 | `ENS-06` ne rend pas « Prendre » au plafond | vert | `test/features/creneaux_test.dart`, plus le contrôle inverse avec un plafond surchargé |
 | 13 | `ELV-02` affiche ses six états | à mesurer | L7 |
@@ -126,6 +126,30 @@ il affiche la limite et le chemin pour la lever. Le test le mesure **dans les
 deux sens** : le même écran, la même situation, avec la règle de cet enseignant
 portée à six, rend le bouton. C'est la démonstration de l'ADR-017 côté écran, et
 non plus seulement en base.
+
+## Mesures du lot L5
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | 196 tests, tous verts, dont 22 sur les prières et les entrées de journée |
+| `dart run tool/verifier_jetons.dart` | 69 fichiers, aucune violation |
+| `0001` à `0005` sur une base nue | appliquées, aucune erreur |
+| `scenarios_etape3.sql` puis `scenarios_etape4.sql` | 34 puis 37 contrôles, tous verts |
+
+`0005` a gagné, avant ce relevé, `prayer_settings.alert_lead_minutes`. Le
+préavis de l'alerte ne pouvait pas rester dans le code : porté par chaque
+application, il aurait prévenu l'enseignant dix minutes avant et l'élève cinq,
+ce qui rouvre exactement le litige que l'ADR-017 ferme. Il vit donc à côté de
+`pause_minutes`, dans la ligne que les trois rôles lisent, et le contrôle SQL
+vérifie que le foyer lit bien les mêmes deux valeurs que l'enseignant a posées.
+La migration a été corrigée sur place, pour la troisième fois de la même
+manière et pour la même raison : elle n'est appliquée nulle part, l'étape D
+restant ouverte.
+
+Le calcul lui-même n'est mesuré que côté Dart, et c'est volontaire : la base ne
+calcule aucune heure de prière, elle n'en porte que les entrées. C'est
+précisément ce qui rend l'invariant I8 vérifiable.
 
 ## Ce que l'étape reprend de l'existant
 
@@ -192,6 +216,31 @@ exactement comme `Override` à l'étape 3. Il vit dans
 `package:flutter_riverpod/misc.dart`. Le projet annote tous ses providers, donc
 le type est nécessaire, et l'erreur est une classe indéfinie plutôt qu'un
 import manquant, ce qui envoie chercher au mauvais endroit.
+
+### La porte par défaut du paquet de prières rend l'heure de l'appareil
+
+`PrayerTimes(coordonnees, date, parametres)` est le constructeur naturel du
+paquet `adhan`, celui de tous ses exemples. Il termine par `.toLocal()` : il
+rend donc les heures **du fuseau de l'appareil qui calcule**, pas celles du lieu
+de référence de l'enseignant.
+
+Sur un produit à un seul pays, cela ne se serait jamais vu. Ici, l'enseignante
+de Conakry et le foyer parisien auraient obtenu deux journées décalées d'une
+heure pour la même prière du même cours, chacun avec la même certitude. C'est
+mot pour mot le litige que l'ADR-017 cherche à éteindre, reconstitué par une
+ligne de code.
+
+La porte employée est donc `PrayerTimes.utc`, qui prend une date civile en UTC
+et rend des instants absolus. Chacun les affiche ensuite dans son heure locale :
+deux heures différentes à l'écran, **le même instant**, ce qui est exactement ce
+que dit l'invariant I8.
+
+**Leçon : un calcul partagé entre plusieurs fuseaux se fait en instants, et se
+convertit à l'affichage seulement.** Même règle que `instant_creneau` en base
+depuis L1, et le croisement d'une prière avec une séance suit la même : les
+horaires des trois jours civils qui entourent la fenêtre sont calculés, puis
+filtrés par instant. Un croisement par heure locale se tromperait de journée
+deux fois par an, au changement d'heure.
 
 ### Le test qui accuse le code à tort
 

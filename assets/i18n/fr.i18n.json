@@ -192,6 +192,24 @@
     "erreur": "L'opération n'a pas abouti : {message}"
   },
 
+  "priere": {
+    "fajr": "Fajr",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha",
+    "entree": "{priere}, {minutes} min",
+    "annonce": "Ce cours sera interrompu pour {priere}, vers {heure}.",
+    "annonceAucune": "Aucune interruption prévue pendant ce cours.",
+    "alerte": "{priere} dans {minutes} min",
+    "alerteMaintenant": "Pause pour {priere}, reprise à {heure}",
+    "pause": "Pause",
+    "lieu": "Horaires calculés pour {lieu}",
+    "lieuSansNom": "Horaires calculés pour le lieu de l'enseignant",
+    "ajustee": "{priere} ajustée de {minutes} min par l'enseignant",
+    "reglagesAbsents": "L'enseignant n'a pas encore réglé ses horaires de prière."
+  },
+
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
     "scanner": "Scanner le carré",

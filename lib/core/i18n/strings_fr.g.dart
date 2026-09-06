@@ -54,6 +54,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$enfant$fr enfant = Traductions$enfant$fr.internal(_root);
 	late final Traductions$disponibilites$fr disponibilites = Traductions$disponibilites$fr.internal(_root);
 	late final Traductions$creneaux$fr creneaux = Traductions$creneaux$fr.internal(_root);
+	late final Traductions$priere$fr priere = Traductions$priere$fr.internal(_root);
 	late final Traductions$eleveConnexion$fr eleveConnexion = Traductions$eleveConnexion$fr.internal(_root);
 	late final Traductions$dossiers$fr dossiers = Traductions$dossiers$fr.internal(_root);
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
@@ -660,6 +661,60 @@ class Traductions$creneaux$fr {
 	String erreur({required Object message}) => 'L\'opération n\'a pas abouti : ${message}';
 }
 
+// Path: priere
+class Traductions$priere$fr {
+	Traductions$priere$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fajr'
+	String get fajr => 'Fajr';
+
+	/// fr: 'Dhuhr'
+	String get dhuhr => 'Dhuhr';
+
+	/// fr: 'Asr'
+	String get asr => 'Asr';
+
+	/// fr: 'Maghrib'
+	String get maghrib => 'Maghrib';
+
+	/// fr: 'Isha'
+	String get isha => 'Isha';
+
+	/// fr: '{priere}, {minutes} min'
+	String entree({required Object priere, required Object minutes}) => '${priere}, ${minutes} min';
+
+	/// fr: 'Ce cours sera interrompu pour {priere}, vers {heure}.'
+	String annonce({required Object priere, required Object heure}) => 'Ce cours sera interrompu pour ${priere}, vers ${heure}.';
+
+	/// fr: 'Aucune interruption prévue pendant ce cours.'
+	String get annonceAucune => 'Aucune interruption prévue pendant ce cours.';
+
+	/// fr: '{priere} dans {minutes} min'
+	String alerte({required Object priere, required Object minutes}) => '${priere} dans ${minutes} min';
+
+	/// fr: 'Pause pour {priere}, reprise à {heure}'
+	String alerteMaintenant({required Object priere, required Object heure}) => 'Pause pour ${priere}, reprise à ${heure}';
+
+	/// fr: 'Pause'
+	String get pause => 'Pause';
+
+	/// fr: 'Horaires calculés pour {lieu}'
+	String lieu({required Object lieu}) => 'Horaires calculés pour ${lieu}';
+
+	/// fr: 'Horaires calculés pour le lieu de l'enseignant'
+	String get lieuSansNom => 'Horaires calculés pour le lieu de l\'enseignant';
+
+	/// fr: '{priere} ajustée de {minutes} min par l'enseignant'
+	String ajustee({required Object priere, required Object minutes}) => '${priere} ajustée de ${minutes} min par l\'enseignant';
+
+	/// fr: 'L'enseignant n'a pas encore réglé ses horaires de prière.'
+	String get reglagesAbsents => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.';
+}
+
 // Path: eleveConnexion
 class Traductions$eleveConnexion$fr {
 	Traductions$eleveConnexion$fr.internal(this._root);
@@ -1241,6 +1296,21 @@ extension on Traductions {
 			'creneaux.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'creneaux.eleves' => ({required Object nombre}) => '${nombre} élèves',
 			'creneaux.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
+			'priere.fajr' => 'Fajr',
+			'priere.dhuhr' => 'Dhuhr',
+			'priere.asr' => 'Asr',
+			'priere.maghrib' => 'Maghrib',
+			'priere.isha' => 'Isha',
+			'priere.entree' => ({required Object priere, required Object minutes}) => '${priere}, ${minutes} min',
+			'priere.annonce' => ({required Object priere, required Object heure}) => 'Ce cours sera interrompu pour ${priere}, vers ${heure}.',
+			'priere.annonceAucune' => 'Aucune interruption prévue pendant ce cours.',
+			'priere.alerte' => ({required Object priere, required Object minutes}) => '${priere} dans ${minutes} min',
+			'priere.alerteMaintenant' => ({required Object priere, required Object heure}) => 'Pause pour ${priere}, reprise à ${heure}',
+			'priere.pause' => 'Pause',
+			'priere.lieu' => ({required Object lieu}) => 'Horaires calculés pour ${lieu}',
+			'priere.lieuSansNom' => 'Horaires calculés pour le lieu de l\'enseignant',
+			'priere.ajustee' => ({required Object priere, required Object minutes}) => '${priere} ajustée de ${minutes} min par l\'enseignant',
+			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.codeInvite' => 'Entre le code affiché sur le téléphone de tes parents',

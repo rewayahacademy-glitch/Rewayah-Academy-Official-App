@@ -368,6 +368,132 @@ enum CleRegle {
   }
 }
 
+/// Une des cinq prieres. Cles de `prayer_settings.adjustments`, tenues par
+/// `guard_prayer_adjustments` : ni plus, ni moins que ces cinq-la.
+///
+/// Le lever du soleil n'en fait pas partie. Le paquet de calcul le rend parce
+/// qu'il borne le fajr, mais ce n'est pas une priere et cela n'interrompt aucun
+/// cours.
+enum Priere {
+  /// Aube.
+  fajr('fajr'),
+
+  /// Midi.
+  dhuhr('dhuhr'),
+
+  /// Apres-midi. Son heure depend de l'ecole, voir [Madhab].
+  asr('asr'),
+
+  /// Coucher du soleil.
+  maghrib('maghrib'),
+
+  /// Nuit.
+  isha('isha');
+
+  const Priere(this.valeurSql);
+
+  /// La cle telle qu'elle existe dans le jsonb des ajustements.
+  final String valeurSql;
+
+  /// Lit une priere depuis sa cle. `null` si absente ou inconnue.
+  static Priere? depuisSql(String? valeur) {
+    for (final Priere priere in Priere.values) {
+      if (priere.valeurSql == valeur) {
+        return priere;
+      }
+    }
+    return null;
+  }
+}
+
+/// Methode de calcul des horaires. Contrainte SQL `prayer_settings.method`.
+///
+/// Les douze valeurs sont celles du paquet `adhan`, reprises telles quelles :
+/// une correspondance nom pour nom se verifie a l'oeil, une table de traduction
+/// se trompe en silence.
+enum MethodeCalcul {
+  /// Ligue islamique mondiale. Defaut de la base.
+  ligueMondiale('muslim_world_league'),
+
+  /// Autorite generale egyptienne.
+  egypte('egyptian'),
+
+  /// Universite des sciences islamiques de Karachi.
+  karachi('karachi'),
+
+  /// Umm al-Qura, La Mecque.
+  ummAlQura('umm_al_qura'),
+
+  /// Golfe.
+  dubai('dubai'),
+
+  /// Moon Sighting Committee.
+  moonSighting('moon_sighting_committee'),
+
+  /// ISNA, Amerique du Nord.
+  ameriqueDuNord('north_america'),
+
+  /// Koweit.
+  koweit('kuwait'),
+
+  /// Qatar.
+  qatar('qatar'),
+
+  /// Singapour.
+  singapour('singapore'),
+
+  /// Teheran.
+  teheran('tehran'),
+
+  /// Diyanet, Turquie.
+  turquie('turkey');
+
+  const MethodeCalcul(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit une methode depuis sa valeur SQL. **`null` si elle est inconnue**, et
+  /// surtout pas un repli sur la methode par defaut : une heure calculee avec
+  /// la mauvaise methode est annoncee a tout le monde avec le meme aplomb, et
+  /// c'est precisement le litige que l'ADR-017 ferme. Mieux vaut n'annoncer
+  /// aucune interruption que la mauvaise.
+  static MethodeCalcul? depuisSql(String? valeur) {
+    for (final MethodeCalcul methode in MethodeCalcul.values) {
+      if (methode.valeurSql == valeur) {
+        return methode;
+      }
+    }
+    return null;
+  }
+}
+
+/// Ecole juridique qui decide de l'heure du asr. Contrainte SQL
+/// `prayer_settings.madhab`.
+enum Madhab {
+  /// Ombre egale a la hauteur de l'objet. Defaut de la base.
+  shafi('shafi'),
+
+  /// Ombre egale au double. Le asr y tombe plus tard.
+  hanafi('hanafi');
+
+  const Madhab(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit une ecole depuis sa valeur SQL. `null` si absente ou inconnue, pour la
+  /// meme raison que [MethodeCalcul.depuisSql].
+  static Madhab? depuisSql(String? valeur) {
+    for (final Madhab madhab in Madhab.values) {
+      if (madhab.valeurSql == valeur) {
+        return madhab;
+      }
+    }
+    return null;
+  }
+}
+
 /// Politique camera d'un eleve. Enumere SQL `public.camera_policy`.
 ///
 /// Attribut de profil fixe une fois, jamais une autorisation par seance

@@ -91,6 +91,12 @@ en base, le calcul est déterministe, et tous les rôles calculent à partir des
 mêmes réglages.** Si l'enseignant calculait chez lui et annonçait le résultat,
 il n'y aurait aucune transparence, seulement une parole contre une autre.
 
+Le préavis de l'alerte suit la même règle et vit dans la même ligne, à côté de
+la durée de l'interruption. Un préavis porté par chaque application aurait
+prévenu l'enseignant dix minutes avant et l'élève cinq : la pause et son
+annonce voyagent ensemble, sinon « personne n'est surpris » ne veut pas dire la
+même chose des deux côtés.
+
 ### 2.4 Aucune règle n'est figée, et chaque élève peut avoir la sienne
 
 Consigne arrivée après les trois précédentes, et qui les recadre toutes :
@@ -404,7 +410,7 @@ Ce tableau dit ce qui a été écrit, avec les noms retenus à l'implémentation
 | `regle_brute()` | Le même calcul sans contrôle d'accès, réservé aux déclencheurs et aux tâches : un plafond ne se contourne pas faute de droit de lecture |
 | `partie_concernee()` | Qui est partie à un dossier, au sens de l'ADR-017. Une seule définition, partagée par toutes les policies de l'étape |
 | `instant_creneau()` | L'instant réel d'un créneau hebdomadaire. Tout croisement passe par là, jamais par une égalité d'heures locales |
-| `prayer_settings` | Coordonnées, méthode de calcul et ajustements à la minute, par enseignant |
+| `prayer_settings` | Coordonnées, méthode de calcul, ajustements à la minute, durée de l'interruption et préavis de son alerte, par enseignant |
 | `sessions` : contrainte `EXCLUDE` et `prayer_pause_minutes` | Défauts 3.4 et 2.3 |
 | `guard_session_overlap()` en bornes semi-ouvertes | Défaut 3.9 |
 | Policy d'update famille sur `student_profiles`, plus `GRANT UPDATE (colonnes)` | Défaut 3.3, avec I6 |

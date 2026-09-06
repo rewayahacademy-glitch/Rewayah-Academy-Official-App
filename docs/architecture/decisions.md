@@ -668,6 +668,15 @@ déterministe, donc tous les rôles obtiennent la même minute. Un enseignant qu
 calculerait chez lui et annoncerait le résultat ne produirait pas de la
 transparence, seulement une parole contre une autre.
 
+La durée de l'interruption et le **préavis de son alerte** sont dans cette même
+ligne. Un préavis porté par chaque application aurait prévenu l'enseignant dix
+minutes avant et l'élève cinq : la pause et son annonce voyagent ensemble.
+
+Le calcul se fait en **instants absolus**, jamais en heures locales : entre
+Paris et Conakry, la même prière du même cours ne tombe pas la même heure ni
+toujours le même jour civil. Chacun l'affiche dans son fuseau, tous parlent du
+même moment.
+
 ### Aucune règle n'est figée, et chaque élève peut avoir la sienne
 
 L'administration change ces valeurs **élève par élève, à la volée ou sur demande
