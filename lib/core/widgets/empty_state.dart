@@ -58,7 +58,10 @@ class EmptyState extends StatelessWidget {
           children: <Widget>[
             IconTheme(
               data: palette.textOnLightAccent.asIconTheme(
-                size: metriques.estEnfant ? 96 : 64,
+                // Multiples de l'echelle, pas des valeurs ponctuelles.
+                size: metriques.estEnfant
+                    ? AppSpacing.xxxl * 3
+                    : AppSpacing.xxxl * 2,
               ),
               child: Icon((icone ?? AppIcons.rienAAfficher).repos),
             ),

@@ -1,10 +1,9 @@
 import 'package:flutter/widgets.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-/// Une icone, dans ses deux etats.
+/// Une icone, dans ses deux graisses.
 ///
-/// Les deux graisses sont liees a la construction : un etat actif ne peut pas
-/// se retrouver avec une icone differente de son etat inactif, ce qui arriverait
+/// Les deux sont liees a la construction : un etat actif ne peut pas se
+/// retrouver avec une icone differente de son etat inactif, ce qui arriverait
 /// si chaque ecran choisissait sa paire lui-meme.
 @immutable
 class AppIcon {
@@ -22,227 +21,240 @@ class AppIcon {
 
 /// Le catalogue d'icones de l'application.
 ///
-/// **C'est le seul fichier du depot autorise a importer `phosphor_flutter`.**
-/// Une seule librairie d'icones dans tout le projet, pas de melange Material,
+/// **C'est le seul fichier du depot autorise a construire un [IconData].** Une
+/// seule librairie d'icones dans tout le projet, pas de melange Material,
 /// Font Awesome ou autre, et zero emoji
 /// (`docs/produit/design-tokens.md` section 3).
-/// `tool/verifier_jetons.dart` echoue si un autre fichier de `lib/` importe
-/// Phosphor ou utilise `Icons.` de Material.
+/// `tool/verifier_jetons.dart` echoue si un autre fichier de `lib/` en
+/// construit un.
+///
+/// Les polices Phosphor sont **integrees en assets** plutot que tirees du
+/// paquet `phosphor_flutter` : sa version 2.1.0 ne compile plus avec
+/// Flutter 3.47, ou `IconData` est devenue une classe `final` qu'il ne peut
+/// plus etendre, et aucune version corrigee n'est publiee. Deux graisses
+/// seulement sont embarquees au lieu des six du paquet.
+///
+/// Les [IconData] sont declares `const` pour que l'elagage d'icones des
+/// versions de production fonctionne : seuls les points de code cites ici sont
+/// conserves dans la police livree.
 abstract final class AppIcons {
+  static const String _repos = 'Phosphor';
+  static const String _actif = 'PhosphorFill';
+
   // --- Navigation, eleve -------------------------------------------------
 
   /// Accueil de l'eleve.
   static const AppIcon accueil = AppIcon._(
-    PhosphorIconsRegular.house,
-    PhosphorIconsFill.house,
+    IconData(0xe2c2, fontFamily: _repos),
+    IconData(0xe2c2, fontFamily: _actif),
   );
 
   /// Le Coran.
   static const AppIcon coran = AppIcon._(
-    PhosphorIconsRegular.bookOpenText,
-    PhosphorIconsFill.bookOpenText,
+    IconData(0xe8f2, fontFamily: _repos),
+    IconData(0xe8f2, fontFamily: _actif),
   );
 
   /// Suivi et historique.
   static const AppIcon suivi = AppIcon._(
-    PhosphorIconsRegular.chartLine,
-    PhosphorIconsFill.chartLine,
+    IconData(0xe154, fontFamily: _repos),
+    IconData(0xe154, fontFamily: _actif),
   );
 
   // --- Navigation, tuteur ------------------------------------------------
 
   /// Le foyer et ses enfants.
   static const AppIcon foyer = AppIcon._(
-    PhosphorIconsRegular.usersThree,
-    PhosphorIconsFill.usersThree,
+    IconData(0xe68e, fontFamily: _repos),
+    IconData(0xe68e, fontFamily: _actif),
   );
 
   /// Disponibilites du foyer ou de l'enseignant.
   static const AppIcon disponibilites = AppIcon._(
-    PhosphorIconsRegular.calendarDots,
-    PhosphorIconsFill.calendarDots,
+    IconData(0xe7b4, fontFamily: _repos),
+    IconData(0xe7b4, fontFamily: _actif),
   );
 
   /// Reglages.
   static const AppIcon reglages = AppIcon._(
-    PhosphorIconsRegular.gearSix,
-    PhosphorIconsFill.gearSix,
+    IconData(0xe272, fontFamily: _repos),
+    IconData(0xe272, fontFamily: _actif),
   );
 
   // --- Navigation, enseignant --------------------------------------------
 
   /// La journee de cours.
   static const AppIcon journee = AppIcon._(
-    PhosphorIconsRegular.calendarCheck,
-    PhosphorIconsFill.calendarCheck,
+    IconData(0xe712, fontFamily: _repos),
+    IconData(0xe712, fontFamily: _actif),
   );
 
   /// Le feed de creneaux disponibles.
   static const AppIcon creneaux = AppIcon._(
-    PhosphorIconsRegular.listChecks,
-    PhosphorIconsFill.listChecks,
+    IconData(0xeadc, fontFamily: _repos),
+    IconData(0xeadc, fontFamily: _actif),
   );
 
   /// Profil personnel.
   static const AppIcon profil = AppIcon._(
-    PhosphorIconsRegular.user,
-    PhosphorIconsFill.user,
+    IconData(0xe4c2, fontFamily: _repos),
+    IconData(0xe4c2, fontFamily: _actif),
   );
 
   // --- Navigation, controleur et admin -----------------------------------
 
   /// Planning global du controleur.
   static const AppIcon planningGlobal = AppIcon._(
-    PhosphorIconsRegular.listMagnifyingGlass,
-    PhosphorIconsFill.listMagnifyingGlass,
+    IconData(0xebe0, fontFamily: _repos),
+    IconData(0xebe0, fontFamily: _actif),
   );
 
   /// Tableau de bord de l'administration.
   static const AppIcon tableauDeBord = AppIcon._(
-    PhosphorIconsRegular.squaresFour,
-    PhosphorIconsFill.squaresFour,
+    IconData(0xe464, fontFamily: _repos),
+    IconData(0xe464, fontFamily: _actif),
   );
 
   /// Dossiers d'identite a valider.
   static const AppIcon dossiers = AppIcon._(
-    PhosphorIconsRegular.identificationCard,
-    PhosphorIconsFill.identificationCard,
+    IconData(0xe2c8, fontFamily: _repos),
+    IconData(0xe2c8, fontFamily: _actif),
   );
 
   /// Attribution manuelle enseignant vers foyer.
   static const AppIcon attribution = AppIcon._(
-    PhosphorIconsRegular.treeStructure,
-    PhosphorIconsFill.treeStructure,
+    IconData(0xe67c, fontFamily: _repos),
+    IconData(0xe67c, fontFamily: _actif),
   );
 
   /// Journal d'audit.
   static const AppIcon journal = AppIcon._(
-    PhosphorIconsRegular.scroll,
-    PhosphorIconsFill.scroll,
+    IconData(0xeb7a, fontFamily: _repos),
+    IconData(0xeb7a, fontFamily: _actif),
   );
 
   // --- Salle de cours ----------------------------------------------------
 
   /// Micro ouvert.
   static const AppIcon micro = AppIcon._(
-    PhosphorIconsRegular.microphone,
-    PhosphorIconsFill.microphone,
+    IconData(0xe326, fontFamily: _repos),
+    IconData(0xe326, fontFamily: _actif),
   );
 
   /// Micro coupe.
   static const AppIcon microCoupe = AppIcon._(
-    PhosphorIconsRegular.microphoneSlash,
-    PhosphorIconsFill.microphoneSlash,
+    IconData(0xe328, fontFamily: _repos),
+    IconData(0xe328, fontFamily: _actif),
   );
 
   /// Camera allumee. N'est jamais rendue quand la politique camera du profil
   /// vaut `forbidden` : le bouton n'existe pas, il n'est pas grise (ADR-009).
   static const AppIcon camera = AppIcon._(
-    PhosphorIconsRegular.videoCamera,
-    PhosphorIconsFill.videoCamera,
+    IconData(0xe4da, fontFamily: _repos),
+    IconData(0xe4da, fontFamily: _actif),
   );
 
   /// Camera eteinte.
   static const AppIcon cameraCoupee = AppIcon._(
-    PhosphorIconsRegular.videoCameraSlash,
-    PhosphorIconsFill.videoCameraSlash,
+    IconData(0xe4dc, fontFamily: _repos),
+    IconData(0xe4dc, fontFamily: _actif),
   );
 
   /// Sortie de seance.
   static const AppIcon sortie = AppIcon._(
-    PhosphorIconsRegular.signOut,
-    PhosphorIconsFill.signOut,
+    IconData(0xe42a, fontFamily: _repos),
+    IconData(0xe42a, fontFamily: _actif),
   );
 
   /// Le bandeau permanent de la salle : cours enregistre, controle possible.
   static const AppIcon controleQualite = AppIcon._(
-    PhosphorIconsRegular.shieldCheck,
-    PhosphorIconsFill.shieldCheck,
+    IconData(0xe40c, fontFamily: _repos),
+    IconData(0xe40c, fontFamily: _actif),
   );
 
   // --- Composants partages -----------------------------------------------
 
   /// Haut-parleur du composant `AudioLabel`.
   static const AppIcon libelleAudio = AppIcon._(
-    PhosphorIconsRegular.speakerHigh,
-    PhosphorIconsFill.speakerHigh,
+    IconData(0xe44a, fontFamily: _repos),
+    IconData(0xe44a, fontFamily: _actif),
   );
 
   /// Reseau indisponible, composant `OfflineBanner`.
   static const AppIcon horsLigne = AppIcon._(
-    PhosphorIconsRegular.wifiSlash,
-    PhosphorIconsFill.wifiSlash,
+    IconData(0xe4f2, fontFamily: _repos),
+    IconData(0xe4f2, fontFamily: _actif),
   );
 
   /// Synchronisation en attente.
   static const AppIcon enAttenteEnvoi = AppIcon._(
-    PhosphorIconsRegular.cloudArrowUp,
-    PhosphorIconsFill.cloudArrowUp,
+    IconData(0xe1ae, fontFamily: _repos),
+    IconData(0xe1ae, fontFamily: _actif),
   );
 
   /// Etat vide, composant `EmptyState`.
   static const AppIcon rienAAfficher = AppIcon._(
-    PhosphorIconsRegular.handWaving,
-    PhosphorIconsFill.handWaving,
+    IconData(0xe580, fontFamily: _repos),
+    IconData(0xe580, fontFamily: _actif),
   );
 
   /// Repli du composant `AvatarTile` quand aucune photo n'est disponible.
   static const AppIcon avatarSansPhoto = AppIcon._(
-    PhosphorIconsRegular.user,
-    PhosphorIconsFill.user,
+    IconData(0xe4c2, fontFamily: _repos),
+    IconData(0xe4c2, fontFamily: _actif),
   );
 
   /// Validation, succes.
   static const AppIcon succes = AppIcon._(
-    PhosphorIconsRegular.checkCircle,
-    PhosphorIconsFill.checkCircle,
+    IconData(0xe184, fontFamily: _repos),
+    IconData(0xe184, fontFamily: _actif),
   );
 
   /// Avertissement, erreur.
   static const AppIcon avertissement = AppIcon._(
-    PhosphorIconsRegular.warningCircle,
-    PhosphorIconsFill.warningCircle,
+    IconData(0xe4e2, fontFamily: _repos),
+    IconData(0xe4e2, fontFamily: _actif),
   );
 
   /// Appairage par QR.
   static const AppIcon qr = AppIcon._(
-    PhosphorIconsRegular.qrCode,
-    PhosphorIconsFill.qrCode,
+    IconData(0xe3e6, fontFamily: _repos),
+    IconData(0xe3e6, fontFamily: _actif),
   );
 
   /// Appareil appaire.
   static const AppIcon appareil = AppIcon._(
-    PhosphorIconsRegular.deviceMobile,
-    PhosphorIconsFill.deviceMobile,
+    IconData(0xe1e0, fontFamily: _repos),
+    IconData(0xe1e0, fontFamily: _actif),
   );
 
   /// Cahier de transmission.
   static const AppIcon cahier = AppIcon._(
-    PhosphorIconsRegular.notebook,
-    PhosphorIconsFill.notebook,
+    IconData(0xe34e, fontFamily: _repos),
+    IconData(0xe34e, fontFamily: _actif),
   );
 
   /// Effacement d'un caractere sur le pave numerique.
   static const AppIcon effacer = AppIcon._(
-    PhosphorIconsRegular.x,
-    PhosphorIconsFill.x,
+    IconData(0xe4f6, fontFamily: _repos),
+    IconData(0xe4f6, fontFamily: _actif),
   );
 
   /// Ajout.
   static const AppIcon ajouter = AppIcon._(
-    PhosphorIconsRegular.plus,
-    PhosphorIconsFill.plus,
+    IconData(0xe3d4, fontFamily: _repos),
+    IconData(0xe3d4, fontFamily: _actif),
   );
 
   /// Progression vers l'element suivant.
   static const AppIcon suivant = AppIcon._(
-    PhosphorIconsRegular.caretRight,
-    PhosphorIconsFill.caretRight,
+    IconData(0xe13a, fontFamily: _repos),
+    IconData(0xe13a, fontFamily: _actif),
   );
 
   /// Carte "Autre" du composant `ChoiceCardGroup`.
   static const AppIcon autreChoix = AppIcon._(
-    PhosphorIconsRegular.pencilSimple,
-    PhosphorIconsFill.pencilSimple,
+    IconData(0xe3b4, fontFamily: _repos),
+    IconData(0xe3b4, fontFamily: _actif),
   );
 }

@@ -303,7 +303,7 @@ class _Composants extends StatelessWidget {
 
               // EmptyState.
               SizedBox(
-                height: 260,
+                height: AppSpacing.xxxl * 8,
                 child: EmptyState(
                   message: t.vide.aucunCours,
                   invitation: t.vide.aucunCoursDetail,

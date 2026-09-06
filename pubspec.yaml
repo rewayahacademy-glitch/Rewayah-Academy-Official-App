@@ -27,8 +27,10 @@ dependencies:
   flutter_secure_storage: ^11.0.0
   flutter_cache_manager: ^3.4.2
 
-  # Interface
-  phosphor_flutter: ^2.1.0
+  # Les icones Phosphor sont integrees en assets, pas en dependance : le paquet
+  # phosphor_flutter 2.1.0 ne compile plus avec Flutter 3.47 (IconData y est
+  # devenue une classe `final`, il ne peut plus l'etendre) et aucune version
+  # corrigee n'existe. Voir docs/architecture/etape-2-journal.md.
 
   # Internationalisation, cles en points (section 5)
   slang: ^4.19.1
@@ -43,6 +45,10 @@ dependencies:
   # Cles d'idempotence de la file de synchronisation
   uuid: ^4.6.0
 
+  # Glyphes du chrome interne de Flutter uniquement. L'iconographie de
+  # l'application reste Phosphor : voir la note sous `flutter:` plus bas.
+  cupertino_icons: ^1.0.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -53,8 +59,14 @@ dev_dependencies:
   slang_build_runner: ^4.19.0
 
 flutter:
-  # Les icones viennent de Phosphor (design-tokens.md section 3), jamais de Material.
-  uses-material-design: false
+  # Les glyphes Material servent uniquement au chrome interne du framework :
+  # fleche de retour d'AppBar, affordances de TextField. L'iconographie DE
+  # L'APPLICATION reste Phosphor et rien d'autre (design-tokens.md section 3),
+  # et c'est `tool/verifier_jetons.dart` qui tient cette regle en refusant tout
+  # `Icons.` hors de AppIcons. Priver le framework de ses glyphes ne les
+  # remplacerait pas : cela afficherait des carres vides.
+  # L'elagage d'icones ne garde que les points de code reellement atteints.
+  uses-material-design: true
 
   # assets/i18n n'est pas declare ici : slang compile les chaines dans
   # lib/core/i18n/strings.g.dart, elles ne sont pas lues au reseau ni au disque.
@@ -86,3 +98,14 @@ flutter:
     - family: VarelaRound
       fonts:
         - asset: assets/fonts/VarelaRound-Regular.ttf
+
+    # Icones Phosphor, deux graisses seulement : `regular` par defaut, `fill`
+    # pour les etats actifs (design-tokens.md section 3). Les quatre autres
+    # graisses du jeu ne sont pas embarquees. Licence MIT, voir
+    # assets/fonts/LICENSE-Phosphor.txt.
+    - family: Phosphor
+      fonts:
+        - asset: assets/fonts/Phosphor-Regular.ttf
+    - family: PhosphorFill
+      fonts:
+        - asset: assets/fonts/Phosphor-Fill.ttf

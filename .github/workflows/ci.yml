@@ -22,9 +22,13 @@ jobs:
           --health-retries 10
     steps:
       - uses: actions/checkout@v4
-      - name: Stub les rôles Supabase puis applique les migrations
+      - name: Stub les roles et les fonctions Supabase, puis applique les migrations
         shell: bash
         run: |
+          # auth.uid() et auth.jwt() font partie du stub : Postgres valide le
+          # corps des fonctions SQL a leur creation, donc 0001 ne s'applique pas
+          # sans elles. Leur absence faisait echouer ce job des la premiere
+          # migration.
           psql -h postgres -U postgres -v ON_ERROR_STOP=1 <<'SQL'
           create role anon nologin;
           create role authenticated nologin;
@@ -33,15 +37,30 @@ jobs:
           create schema auth;
           grant usage on schema auth to anon, authenticated;
           create table auth.users (id uuid primary key, email text);
+          create function auth.uid() returns uuid language sql stable as $$ select null::uuid $$;
+          create function auth.jwt() returns jsonb language sql stable as $$ select '{}'::jsonb $$;
           SQL
           for f in supabase/migrations/*.sql; do
+            echo "--- $f"
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
+      - name: Verifie les invariants de l'ADR-014 sur le statut de compte
+        shell: bash
+        run: |
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 <<'SQL'
+          do $$
+          begin
+            if (select column_default from information_schema.columns
+                where table_schema = 'public' and table_name = 'profiles'
+                  and column_name = 'account_status')
+               is distinct from '''pending_kyc''::account_status' then
+              raise exception 'Une nouvelle inscription doit naitre pending_kyc (ADR-014).';
+            end if;
+          end $$;
+          SQL
 
   flutter:
     name: Flutter (${{ matrix.target }})
-    # Le projet Flutter arrive à l'étape 2 ; ce job s'active dès que pubspec.yaml existe.
-    if: hashFiles('pubspec.yaml') != ''
     strategy:
       fail-fast: false
       matrix:
@@ -56,8 +75,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
       - run: flutter pub get
+
+      # Le code genere est versionne pour que `dart analyze` fonctionne sans
+      # etape prealable. On le regenere quand meme, et un diff non vide signale
+      # qu'un fichier source et son code genere ont diverge.
+      - name: Regenere le code et refuse toute divergence
+        shell: bash
+        run: |
+          dart run slang
+          dart run build_runner build --delete-conflicting-outputs
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Le code genere ne correspond plus aux sources :"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+
       - run: dart analyze --fatal-infos
       - run: flutter test
+
+      # Jetons de couleur, echelle d'espacement, catalogue d'icones unique,
+      # absence d'onTap nu, zero emoji, API de PermanentNotice, routeur unique.
+      - name: Verifie les invariants de l'etape 2
+        run: dart run tool/verifier_jetons.dart
+
       - run: flutter build ${{ matrix.target }}
-        working-directory: .
