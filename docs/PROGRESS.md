@@ -5,24 +5,22 @@
 
 ## DÉMARRER ICI — prochaine session (ne rien chercher d'autre)
 
-**L'étape 3 est terminée.** Un tuteur ou un enseignant peut s'inscrire, déposer
-son dossier et attendre ; l'administration peut valider ou refuser ; un tuteur
-peut créer ses enfants et appairer leurs appareils ; un enfant peut entrer avec
-un code puis son code personnel. La prochaine session attaque l'**étape 4 :
-dashboards Bento Grid**.
+**L'étape 3 est terminée, l'étape 4 est en cours.** Sa spécification est écrite
+et ses décisions sont prises (ADR-017) : le lot L0 est fait, le lot L1 est la
+migration `0005`.
 
 1. **Lire, dans cet ordre, et rien de plus** :
-   `docs/architecture/etape-3-journal.md` (ce qui existe, ce qui est mesuré, les
-   pièges déjà payés), puis `docs/architecture/etape-3-auth-kyc.md` pour le
-   modèle de portes et d'invariants, puis
-   `docs/produit/parcours-utilisateurs.md` pour les écrans à construire, puis
-   `lib/CLAUDE.md`.
+   `docs/architecture/etape-4-journal.md` (où en est l'étape, lot par lot), puis
+   `docs/architecture/etape-4-dashboards.md` (la spécification, ses sept défauts
+   à corriger et ses douze invariants), puis `docs/produit/parcours-utilisateurs.md`
+   pour les écrans, puis `lib/CLAUDE.md`.
 2. **Ne rien réécrire des étapes 2 et 3.** Les dix composants partagés, le
    thème, le routeur et les services de dossier sont les seuls points d'entrée
    de leur fonction. `dart run tool/verifier_jetons.dart` le dira.
 3. **Les écrans de l'étape 4** sont `TUT-01`, `ELV-02`, `ENS-02`, `ADM-01`, plus
-   `TUT-04`, `TUT-05` et `ENS-06`. Ils remplacent les derniers placeholders
-   `EcranAConstruire` des routes déjà déclarées.
+   `TUT-04`, `TUT-05`, `ENS-06`, et `ADM-06` qu'a fait naître l'ADR-017. Tous
+   remplacent un placeholder `EcranAConstruire` d'une route déjà déclarée, sauf
+   `ADM-06` dont la route est à ajouter.
 4. **Mesurer le démarrage à froid** sur `ELV-02` réel, sur un appareil d'entrée
    de gamme. C'est le scénario 7 de l'étape 2, toujours non coché faute d'écran
    métier à charger. L'étape 3 n'a pas d'écran de ce type non plus : le premier
@@ -63,7 +61,7 @@ psql -f supabase/tests/scenarios_etape3.sql
 | 1 | Fondations DB, RLS, fonctions, audit | [x] | `supabase/migrations/0001` à `0004` |
 | 2 | Core Flutter, thème, cache local, routeur | [x] | `docs/architecture/etape-2-journal.md` |
 | 3 | Auth, KYC, appairage, portails d'attente | [x] | `docs/architecture/etape-3-journal.md` |
-| 4 | Dashboards Bento Grid | [ ] | **prochaine** |
+| 4 | Dashboards Bento Grid, affectation durable, prières | [ ] | **en cours**, `docs/architecture/etape-4-journal.md` |
 | 5 | Visio LiveKit, preuve de présence, Coran | [ ] | |
 | 6 | Cahier de transmission | [ ] | |
 
@@ -93,6 +91,8 @@ psql -f supabase/tests/scenarios_etape3.sql
 | Poids des polices | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler ? | `etape-2-journal.md`, section Poids |
 | `child_ui_mode_max_age` | Posé à **8** et employé tel quel par l'étape 3. Modifiable en une ligne d'`app_config`, sans redéploiement. À confirmer ou corriger | `decisions.md`, ADR-016 |
 | Lecture du QR par la caméra | Reportée : le paquet réclame une configuration de permissions par plateforme. Le chemin par le code fonctionne partout. À rouvrir si le QR devient nécessaire | `etape-3-auth-kyc.md` section 9 |
+| Compression serveur des photos | `TUT-05` laisse le tuteur remplacer la photo de son enfant, mais aucune compression serveur n'existe : le cache local ne peut pas borner sa taille comme l'étape 2 le prévoyait | `decisions.md`, question 17 |
+| Litige sur le temps effectif | L'étape 4 pose le minimum payable et sa trace, l'étape 5 mesurera la présence réelle. Les deux doivent se rejoindre avant la première paie | `decisions.md`, question 16 |
 | Composant ATL de Visual Studio | Le build Windows échoue sur `atlstr.h` absent, réclamé par `flutter_secure_storage_windows`. Installer « C++ ATL for latest v143 build tools » dans Visual Studio Build Tools | `etape-3-journal.md` |
 | Plateforme Android 37 | Le build APK échoue : le SDK a installé `platforms\android-37.0`, Gradle cherche `android-37`. Lancer `sdkmanager "platforms;android-37"`. Ne pas épingler `compileSdk` pour contourner un seul poste | `etape-3-journal.md` |
 

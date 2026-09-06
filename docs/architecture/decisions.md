@@ -617,6 +617,82 @@ contourner.
 
 ---
 
+## ADR-017 - Ce que l'étape 4 a dû trancher
+
+Décisions prises avec l'opérateur le 6 septembre 2026, avant d'écrire la
+migration `0005`, parce que chacune décide du schéma. Détail d'exécution dans
+`docs/architecture/etape-4-dashboards.md`.
+
+### Le matching est un engagement durable, pas une réservation
+
+« Le matching, c'est un mariage. » Un enseignant qui prend un élève le garde. Ce
+que prend `ENS-06` n'est donc pas un créneau, c'est un **élève** ; le créneau
+n'est que l'heure du rendez-vous hebdomadaire qui en découle.
+
+La relation ne se rompt que par une **demande de réaffectation**, ouverte à
+quatre parties : administration, contrôleur, tuteur ou élève adulte autonome, et
+enseignant. Aucune ne se dégage seule, et la décision revient à
+l'administration.
+
+Un modèle par réservations successives aurait fait retomber chaque foyer en
+« recherche d'enseignant » après chaque cours, ce qui est le contraire du
+produit vendu.
+
+### Cinq élèves par enseignant, et la demande qui l'augmente
+
+Valeur d'`app_config`, jamais une constante de code, cohérente avec le groupe de
+six de l'ADR-004. Un enseignant qui a du temps demande une augmentation, du même
+registre que la réaffectation.
+
+### Une séance de 60 minutes, payable à partir de 45
+
+Les cases de la grille de `TUT-04` et de `ENS-06` durent une heure.
+
+Le minimum payable existe pour que **ni une pause ni une prière ne fasse tomber
+une séance sous le seuil de rémunération**. C'est la mécanique de compensation
+que `couverture-specs.md` signalait comme non spécifiée, et la question 3 de
+l'audit initial trouve ici sa réponse.
+
+### Les prières sont calculées, ajustables, annoncées et consignées
+
+Calcul réel par le paquet `adhan`, contre les deux autres options proposées, la
+saisie manuelle et l'approximation par ville.
+
+Quatre exigences l'accompagnent, nées d'un litige réel de l'académie : tout le
+monde voit les interruptions **à l'avance**, une alerte prévient de leur
+approche, chacune est **consignée**, et l'heure calculée s'ajuste **à la minute
+près** quand elle ne correspond pas à la mosquée de référence.
+
+Conséquence de conception : les **réglages** sont en base et le calcul est
+déterministe, donc tous les rôles obtiennent la même minute. Un enseignant qui
+calculerait chez lui et annoncerait le résultat ne produirait pas de la
+transparence, seulement une parole contre une autre.
+
+### Aucune règle n'est figée, et chaque élève peut avoir la sienne
+
+L'administration change ces valeurs **élève par élève, à la volée ou sur demande
+d'une des parties**. Un enfant de six ans qui décroche à trente minutes et un
+adulte autonome qui veut deux heures ne relèvent pas de la même règle.
+
+Trois étages : le défaut de plateforme dans `app_config`, la surcharge d'un élève
+dans `student_rule_overrides`, et la demande d'une partie dans
+`matching_requests`. Une seule fonction de lecture, `regle_effective()` : un
+écran qui lirait `app_config` en direct afficherait la règle de la plateforme à
+un élève qui n'en relève pas.
+
+**Une surcharge ne se supprime pas, elle se clôt**, avec son auteur et son motif.
+Une règle qui a compté pour une séance passée doit rester vérifiable six mois
+plus tard, sinon la consignation ci-dessus ne prouve rien.
+
+### Une seule table de disponibilités pour les deux rôles
+
+`TUT-04` et `ENS-06` affichent la même grille : un motif hebdomadaire commun,
+`weekly_availability`. Deux tables jumelles divergeraient à la première
+évolution. `availability_slots`, en instants absolus, reste pour les exceptions
+datées d'une version ultérieure et n'est pas employée en MVP-0.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -639,7 +715,7 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | # | Question | Bloque | Statut |
 | :-- | :--- | :--- | :--- |
 | 1 | Le "système de création d'objectifs élèves" reporté en V1 : est-ce la grille d'examen anonyme et l'imputabilité des specs d'origine, ou autre chose | Étape 6 | Ouverte |
-| 2 | Un enseignant a-t-il une photo publique visible par les familles avant le premier cours | Étape 3, 4 | Ouverte |
+| 2 | Un enseignant a-t-il une photo publique visible par les familles avant le premier cours | Étape 3, 4 | **Résolue par la négative pour l'étape 4** : `TUT-01` et `mon_enseignant_v` donnent prénom et identifiant immuable, jamais de photo ni de nom complet (ADR-008). À rouvrir si le produit veut une vitrine d'enseignants |
 | 3 | Riwaya du mushaf, Warsh ou Hafs | Étape 5 | Ouverte |
 | 4 | Identité visuelle, violet de l'application ou vert et or de Rewayah | Étape 2, 4 | Non bloquant, jetons de couleur abstraits |
 | 5 | Seuil d'âge exact séparant le mode enfant du mode standard | Étape 3 | **Résolue par défaut, pas par décision** : `child_ui_mode_max_age` vaut 8 dans `app_config` et l'étape 3 s'en sert. Modifiable en une ligne, sans redéploiement. À confirmer par l'opérateur (ADR-016) |
@@ -652,5 +728,8 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 12 | `0001` fait `create extension if not exists pgcrypto` sans schéma et appelle `public.digest`. Sur un projet Supabase où pgcrypto vit déjà dans le schéma `extensions`, la migration échouerait à sa première application réelle | Étape D, premier `db push` | Ouverte. `0004` suit volontairement la même convention : un seul problème, une seule correction. Voir `etape-3-journal.md` |
 | 13 | Lecture du QR par la caméra sur l'appareil de l'enfant | Étape 4 ou plus tard | Reportée (ADR-016). Le chemin par le code fonctionne partout ; l'interface est posée pour recevoir un lecteur |
 | 14 | Limitation de débit sur l'échange d'un code d'appairage | Si la durée de validité s'allonge | Non traitée, arithmétique consignée dans `supabase/functions/session-enfant/index.ts` : 32^6 combinaisons pour une fenêtre de dix minutes |
+| 15 | Méthode de calcul des prières et lieu de référence : qui les pose | Étape 4 | **Résolue par configuration** : `prayer_settings` porte le lieu, la méthode et les ajustements à la minute, par enseignant, lisibles par ses élèves (ADR-017) |
+| 16 | Un litige sur le temps effectif se tranche-t-il sur le minimum payable de l'élève, ou sur la présence mesurée en salle | Étape 5 | Ouverte. L'étape 4 pose la règle et sa trace, l'étape 5 mesurera la présence. Les deux doivent se rejoindre avant la première paie |
+| 17 | La photo de profil d'un élève passe-t-elle par une compression serveur avant le stockage | Étape 4, `TUT-05` | Ouverte. L'ADR-012 et `etape-2-core-flutter.md` section 4 supposent une compression serveur qui n'existe pas encore : sans elle, le cache local borne mal sa taille |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.
