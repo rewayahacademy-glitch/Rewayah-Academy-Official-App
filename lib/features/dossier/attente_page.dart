@@ -46,14 +46,19 @@ class AttentePage extends ConsumerWidget {
                 child: ListView(
                   padding: EdgeInsets.all(metriques.marge),
                   children: <Widget>[
-                    switch (etat) {
-                      AsyncData<EtatDossier>(:final EtatDossier value) =>
-                        _Contenu(etat: value),
-                      AsyncError<EtatDossier>() => _Indisponible(
+                    // Les getters, jamais le type d'execution : Riverpod 3
+                    // relance un provider en echec tout seul, et l'etat
+                    // repasse alors par `AsyncLoading` en conservant
+                    // `hasError`. Un `switch` sur `AsyncError<T>` rate donc
+                    // l'erreur une fois sur deux, selon l'instant du rendu.
+                    if (etat.hasValue)
+                      _Contenu(etat: etat.requireValue)
+                    else if (etat.hasError)
+                      _Indisponible(
                         onReessayer: () => ref.invalidate(etatDossierProvider),
-                      ),
-                      _ => const _Patience(),
-                    },
+                      )
+                    else
+                      const _Patience(),
                     Ecart.vXxxl,
                     _Deconnexion(
                       onDeconnexion: () => unawaited(

@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
@@ -237,6 +238,41 @@ class FauxServiceAppairage implements ServiceAppairage {
   }) async {
     _peutEchouer();
     enfantsCrees.add((prenom: prenom, nom: nom, age: age));
+  }
+}
+
+/// Un service de validation en memoire.
+class FauxServiceValidation implements ServiceValidation {
+  /// La file rendue.
+  List<DossierAValider> file = const <DossierAValider>[];
+
+  /// Ce que la lecture de la file doit jeter.
+  Object? erreurFile;
+
+  /// Les verdicts rendus.
+  final List<({String documentId, bool approuve, String? motif})> verdicts =
+      <({String documentId, bool approuve, String? motif})>[];
+
+  @override
+  Future<List<DossierAValider>> enAttente() async {
+    final Object? erreur = erreurFile;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return file;
+  }
+
+  @override
+  Future<String> apercu(String cleObjet) async => 'https://exemple.test/$cleObjet';
+
+  @override
+  Future<void> decider({
+    required String documentId,
+    required bool approuve,
+    String? motif,
+  }) async {
+    verdicts.add((documentId: documentId, approuve: approuve, motif: motif));
   }
 }
 

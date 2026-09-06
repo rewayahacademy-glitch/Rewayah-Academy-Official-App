@@ -17,7 +17,7 @@
 | L5 | KYC, contrat, accusé ADR-011, portail d'attente `TUT-00b` | x |
 | L6 | Appairage `TUT-02` et connexion enfant `ELV-01` | x |
 | L7 | Fonctions Edge : profil enfant, session enfant | x |
-| L8 | Validation des dossiers `ADM-02` | |
+| L8 | Validation des dossiers `ADM-02` | x |
 | L9 | Vérifications, CI, documentation | |
 
 ## Les douze scénarios d'acceptation
@@ -142,6 +142,33 @@ Première écriture de `revoquer_appareil()` : poser `revoked_at` et s'arrêter 
 Un appareil révoqué dont le jeton reste en base resterait utilisable jusqu'à ce
 que quelqu'un pense à le relire. La fonction efface donc `token_hash` dans le
 même mouvement, et le scénario de test le vérifie explicitement.
+
+### Filtrer un `AsyncValue` par son type d'exécution est faux sous Riverpod 3
+
+Un écran affichait son état d'erreur une fois sur deux. Mesuré plutôt que
+deviné, avec un test jetable qui imprime l'état réel :
+
+```
+type=AsyncLoading<int>  hasError=true  err=MonException  match=autre
+```
+
+**Riverpod 3 relance automatiquement un provider en échec.** L'état repasse donc
+par `AsyncLoading` en conservant `hasError`, et un `switch` sur
+`AsyncError<T>()` ne matche plus. Le rendu dépendait de l'instant où la frame
+tombait, ce qui donne un écran correct en développement et faux en production,
+ou l'inverse.
+
+**Règle : lire `hasValue`, `hasError` et `isLoading`, jamais le type
+d'exécution.** Les deux écrans concernés, `AttentePage` et `DossiersPage`, sont
+corrigés.
+
+### Un bouton dont l'état dépend d'un champ qu'il n'écoute pas
+
+Le bouton de refus de `ADM-02` restait inerte alors que le motif était saisi :
+son état se calcule depuis un `TextEditingController`, mais rien ne
+reconstruisait le widget à la frappe. Un `onChanged` manquant ne casse rien de
+visible, il rend juste une action impossible. C'est le genre de défaut qu'un
+test de bout en bout attrape et qu'une relecture laisse passer.
 
 ### Risque à vérifier quand l'étape D sera posée
 

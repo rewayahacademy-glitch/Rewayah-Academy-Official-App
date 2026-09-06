@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/galerie_page.dart';
+import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
@@ -174,8 +175,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminDossiers,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.admin.dossiers),
+        builder: (BuildContext _, GoRouterState _) => const DossiersPage(),
       ),
       GoRoute(
         path: Routes.adminAttribution,
