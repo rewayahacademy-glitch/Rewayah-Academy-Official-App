@@ -5,7 +5,19 @@
 
 begin;
 
-create extension if not exists pgcrypto;
+-- pgcrypto vit dans le schema `extensions`, pas dans `public`.
+--
+-- Sur un projet Supabase reel, l'extension est DEJA installee dans `extensions` :
+-- un `create extension if not exists pgcrypto` sans schema n'y installe rien et ne
+-- signale rien, puis chaque appel a `public.digest` echoue a la premiere ecriture
+-- d'audit. C'est ce qui aurait fait tomber cette migration au premier `db push`.
+-- Les deux lignes ci-dessous sont donc ecrites pour valoir des deux cotes : sur
+-- Supabase elles ne font rien, sur un Postgres nu elles posent le meme schema.
+-- Les appels sont qualifies `extensions.` parce que toutes les fonctions de ce
+-- depot portent `set search_path = ''` : rien n'est resolu implicitement.
+create schema if not exists extensions;
+create extension if not exists pgcrypto with schema extensions;
+grant usage on schema extensions to public;
 
 -- ============================================================
 -- Types
@@ -599,7 +611,7 @@ begin
   limit 1;
   last_hash := coalesce(last_hash, '');
 
-  row_digest := encode(public.digest(
+  row_digest := encode(extensions.digest(
     convert_to(coalesce(auth.uid()::text, '') || coalesce(public.app_role()::text, '') || p_action ||
       p_table_name || coalesce(p_row_id, '') || p_payload::text, 'UTF8'),
     'sha256'), 'hex');
@@ -607,7 +619,7 @@ begin
   insert into public.audit_logs (actor, actor_role, action, table_name, row_id, payload, prev_hash, hash)
   values (
     auth.uid(), public.app_role()::text, p_action, p_table_name, p_row_id, p_payload, last_hash,
-    encode(public.digest(convert_to(last_hash || row_digest, 'UTF8'), 'sha256'), 'hex')
+    encode(extensions.digest(convert_to(last_hash || row_digest, 'UTF8'), 'sha256'), 'hex')
   );
 end;
 $$;

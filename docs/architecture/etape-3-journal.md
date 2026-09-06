@@ -248,9 +248,20 @@ machine. La CI compile sur un SDK propre et tranchera.
 
 ### Risque à vérifier quand l'étape D sera posée
 
-`0001` fait `create extension if not exists pgcrypto` sans schéma, et appelle
+`0001` faisait `create extension if not exists pgcrypto` sans schéma, et appelait
 `public.digest`. Sur un projet Supabase où pgcrypto est déjà installée dans le
 schéma `extensions`, le `if not exists` ne fait rien et `public.digest` n'existe
-pas : `0001` échouerait à la première application réelle. `0004` suit la même
-convention, volontairement, pour qu'il n'y ait qu'un seul problème à corriger et
-qu'une seule correction à faire. **À vérifier au premier `supabase db push`.**
+pas : `0001` aurait échoué à la première application réelle. `0004` suivait la
+même convention, volontairement, pour qu'il n'y ait qu'un seul problème à
+corriger et qu'une seule correction à faire.
+
+**Corrigé depuis.** `0001` crée le schéma `extensions`, y installe l'extension et
+lui accorde `usage`, puis les appels des deux migrations sont qualifiés
+`extensions.digest` et `extensions.gen_random_bytes`. Les lignes valent des deux
+côtés : sur Supabase la création ne fait rien, sur un Postgres nu elle pose le
+même schéma. Les contrôles SQL restent verts, harnais compris.
+
+Ce qui reste : **la vérification sur un vrai projet**, au premier
+`supabase db push`. Elle ne peut pas se faire depuis ce poste tant que l'étape D
+est ouverte, et une migration qui n'a jamais été appliquée ailleurs que sur un
+Postgres nu reste une migration non prouvée.

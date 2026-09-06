@@ -622,7 +622,7 @@ begin
 
   select string_agg(substr(v_alphabet, 1 + (get_byte(s.b, i) % 32), 1), '' order by i)
   into v_code
-  from (select public.gen_random_bytes(6) as b) s,
+  from (select extensions.gen_random_bytes(6) as b) s,
        generate_series(0, 5) as i;
 
   v_expire := now() + make_interval(mins =>
@@ -631,7 +631,7 @@ begin
   insert into public.device_pairing_codes (student_profile_id, code_hash, created_by, expires_at)
   values (
     p_student_profile_id,
-    encode(public.digest(convert_to(v_code, 'UTF8'), 'sha256'), 'hex'),
+    encode(extensions.digest(convert_to(v_code, 'UTF8'), 'sha256'), 'hex'),
     auth.uid(),
     v_expire
   );
@@ -656,10 +656,10 @@ create function public.consommer_code_appairage(
 language plpgsql security definer set search_path = ''
 as $$
 declare
-  v_hash text := encode(public.digest(convert_to(upper(btrim(p_code)), 'UTF8'), 'sha256'), 'hex');
+  v_hash text := encode(extensions.digest(convert_to(upper(btrim(p_code)), 'UTF8'), 'sha256'), 'hex');
   v_row public.device_pairing_codes;
   v_device uuid;
-  v_token text := encode(public.gen_random_bytes(32), 'hex');
+  v_token text := encode(extensions.gen_random_bytes(32), 'hex');
   v_max int;
   v_actifs int;
 begin
@@ -695,7 +695,7 @@ begin
     profile_id, device_fingerprint, platform, token_hash, last_used_at
   ) values (
     v_row.student_profile_id, p_device_fingerprint, p_platform,
-    encode(public.digest(convert_to(v_token, 'UTF8'), 'sha256'), 'hex'), now()
+    encode(extensions.digest(convert_to(v_token, 'UTF8'), 'sha256'), 'hex'), now()
   )
   -- Le conflit se designe par le NOM de la contrainte, pas par ses colonnes :
   -- `profile_id` est aussi le nom d'un parametre de sortie de cette fonction, et
@@ -796,7 +796,7 @@ returns uuid
 language plpgsql security definer set search_path = ''
 as $$
 declare
-  v_hash text := encode(public.digest(convert_to(p_token, 'UTF8'), 'sha256'), 'hex');
+  v_hash text := encode(extensions.digest(convert_to(p_token, 'UTF8'), 'sha256'), 'hex');
   v_profile uuid;
 begin
   select d.profile_id into v_profile
