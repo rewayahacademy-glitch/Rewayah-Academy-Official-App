@@ -14,12 +14,35 @@
 | :--- | :--- | :--- |
 | Base Supabase | `gggmtelinlpseweouyav`, eu-west-1, plan gratuit | migrations `0001` a `0005` appliquees |
 | Fonctions Edge | `creer-profil-enfant`, `session-enfant` | deployees, `ACTIVE`, `verify_jwt = true` |
-| Application web (PWA) | <https://rewayah-academy.vercel.app> | en ligne, chargee sans erreur console |
+| Application web (PWA) | <https://rewayah-academy.vercel.app> | en ligne, chargee sans erreur console, **acces public** |
 | Configuration locale | `dart_define.json` | ecrit, ignore par git, cle **publiable** |
 
-L'application a ete construite depuis le commit **`761450a`** (fin du lot L7),
-pas depuis le repertoire de travail : le lot L8 etait en cours d'ecriture, et on
-ne met pas en ligne du code a moitie ecrit.
+L'application n'est jamais construite depuis le repertoire de travail, toujours
+depuis un commit : la premiere mise en ligne datait de `761450a` (fin du lot L7)
+parce que le lot L8 etait alors en cours d'ecriture, et on ne met pas en ligne
+du code a moitie ecrit.
+
+### Deux adresses, et laquelle sert a quoi
+
+| Adresse | Contenu |
+| :--- | :--- |
+| <https://rewayah-academy.vercel.app> | l'adresse **stable**, celle a garder ; elle sert la mise en ligne de production |
+| l'URL de previsualisation du dernier `vercel deploy` | le dernier build, tant qu'il n'a pas ete promu |
+
+**La barriere du poste refuse `vercel deploy --prod` a l'agent.** Pour que
+l'adresse stable serve le dernier build, une commande, a votre main :
+
+```powershell
+cd "D:\ra-pwa-build\build\web" ; vercel deploy --prod --yes
+```
+
+⚠ **L'authentification Vercel a ete desactivee sur le projet**, a votre demande
+du 7 septembre : sans cela, toute adresse en `.vercel.app` exigeait une
+connexion Vercel, y compris depuis votre iPad. **L'application est donc
+publiquement accessible.** Le risque reste borne — tout compte naît
+`pending_kyc` et ne voit rien avant validation, et les RLS protegent la base —
+mais c'est a rouvrir avant que le produit ne contienne de vraies donnees
+d'usagers. Le reglage se remet dans Vercel, Settings, Deployment Protection.
 
 ### Ce qui a ete verifie sur la base reelle, et non suppose
 

@@ -24,16 +24,16 @@ faits, le prochain est **L9, `ADM-01` et `ADM-06`**.
    de matching, d'administration, de prières, de réseau, d'appairage et de
    photos existent, avec leurs faux dans `test/support/harnais.dart`. Le tableau
    du handoff dit lequel sert à quoi.
-4. **Le démarrage à froid attend un appareil, plus un écran.** `ELV-02` existe
-   depuis le lot L7, et la mesure reste impossible sur ce poste : le build
-   Windows échoue sur `atlstr.h`, aucun appareil ni émulateur Android n'est
-   disponible, et les navigateurs de bureau ne sont pas « un appareil d'entrée
-   de gamme ». Les deux portes possibles sont dans le tableau des décisions en
-   attente, plus bas.
-5. **Étape D toujours ouverte** (secrets), et elle bloque désormais plus qu'avant
-   : les deux fonctions Edge de l'étape 3 ne peuvent pas être déployées sans
-   elle, donc aucun enfant ne peut ouvrir de session tant qu'elle n'est pas
-   posée. Voir le tableau d'onboarding.
+4. **Le démarrage à froid a désormais où se mesurer.** L'application est en
+   ligne depuis le 7 septembre : installer la PWA sur un vrai téléphone d'entrée
+   de gamme donne enfin une mesure du scénario 14. Elle sera pessimiste, un
+   bundle web pesant plus qu'un APK. Les cibles natives, elles, restent fermées
+   sur ce poste : `atlstr.h` pour Windows, le magasin de certificats pour
+   l'APK — et **pas** la plateforme du SDK, contrairement à ce qui était écrit.
+5. **L'application est en service.** Base réelle peuplée, fonctions Edge
+   déployées, PWA en ligne. **Lire `docs/MISE-EN-SERVICE.md`** avant de toucher
+   au SQL ou au déploiement : `0005` ne se corrige plus sur place, et deux
+   commandes de configuration restent à la main de l'opérateur.
 
 ### Commandes du projet
 
@@ -79,8 +79,8 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | :-- | :--- | :--- | :--- |
 | A | Dépôt Git et branche | [x] | `main`, `.gitignore`, remote GitHub connecté |
 | B | Projet Supabase | [x] | `gggmtelinlpseweouyav`, `supabase/` initialisé et lié |
-| C | Migrations versionnées | [x] | `0001` à `0005`, appliquées et vérifiées sur Postgres 17. **Jamais appliquées au projet réel** : voir le risque `pgcrypto` du journal de l'étape 3 |
-| D | Secrets | [ ] | **Ouverte, et désormais bloquante pour l'usage.** Sans elle, les fonctions Edge `creer-profil-enfant` et `session-enfant` ne sont pas déployées, donc aucun enfant ne peut ouvrir de session. Demande `supabase login`, `supabase link --project-ref gggmtelinlpseweouyav`, les secrets GitHub `SUPABASE_ACCESS_TOKEN` et `SUPABASE_DB_URL`, plus un secret de fonction `STUDENT_EMAIL_DOMAIN` |
+| C | Migrations versionnées | [x] | `0001` à `0005`, **appliquées au projet réel le 7 septembre 2026** et inscrites dans `supabase_migrations`. Le risque `pgcrypto` du journal de l'étape 3 était réel, et il est corrigé. **Corollaire : `0005` ne se corrige plus sur place**, tout changement structurel passe par `0006`. Voir `docs/MISE-EN-SERVICE.md` |
+| D | Secrets | [~] | Aux trois quarts fermée : projet lié, `dart_define.json` écrit, fonctions Edge `creer-profil-enfant` et `session-enfant` **déployées et `ACTIVE`**. Restent **deux commandes à la main de l'opérateur**, le hook de jeton et `STUDENT_EMAIL_DOMAIN`, détaillées dans `docs/MISE-EN-SERVICE.md` section 3. Sans le hook, toutes les RLS refusent et l'application n'affiche que du vide, sans la moindre erreur |
 | E | CI/CD | [x] | `ci.yml` rejoue les 73 contrôles SQL de `supabase/tests/` à chaque pull request, 34 pour les étapes 1 et 3, 39 pour l'étape 4 |
 | F | Sentry | [ ] | Nécessite le compte Sentry |
 | G | Variantes Flutter `dev` / `staging` / `prod` | [ ] | Un seul identifiant aujourd'hui : `com.rewayahacademy.app` |
@@ -89,7 +89,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | J | Config applicative `app_config` | [x] | Étendue à l'étape 3 : `kyc_retention_days`, `pairing_code_ttl_minutes` |
 | K | Mémoire graphify | [ ] | À faire |
 | L | Ressources front et back | [x] | Conformes aux étapes 2 et 3 |
-| M | PWA multiappareils | [ ] | Le build Web fonctionne ; manifest, service worker et URL déployée restent à faire |
+| M | PWA multiappareils | [x] | En ligne sur <https://rewayah-academy.vercel.app>, chargée sans erreur console. Manifeste, `index.html` et `vercel.json` portent le nom, la palette, la balise `viewport` qui manquait et la réécriture SPA. Service worker généré par Flutter. Reste à décider : le plan Vercel Hobby exclut l'usage commercial |
 
 ## Décisions en attente de l'opérateur
 
@@ -102,8 +102,10 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | Compression serveur des photos | **Devenue concrète au lot L8** : `TUT-05` dépose désormais vraiment la photo dans le seau `avatars`, avec un refus au-delà de 4 Mo côté client et rien de plus. Aucune compression serveur n'existe, donc le cache local ne peut pas borner sa taille comme l'étape 2 le prévoyait, et c'est l'original du téléphone qui est servi aux appareils du foyer | `decisions.md`, question 17 |
 | Litige sur le temps effectif | L'étape 4 pose le minimum payable et sa trace, l'étape 5 mesurera la présence réelle. Les deux doivent se rejoindre avant la première paie | `decisions.md`, question 16 |
 | Composant ATL de Visual Studio | Le build Windows échoue sur `atlstr.h` absent, réclamé par `flutter_secure_storage_windows`. Installer « C++ ATL for latest v143 build tools » dans Visual Studio Build Tools | `etape-3-journal.md` |
-| Plateforme Android 37 | Le build APK échoue : le SDK a installé `platforms\android-37.0`, Gradle cherche `android-37`. Lancer `sdkmanager "platforms;android-37"`. Ne pas épingler `compileSdk` pour contourner un seul poste | `etape-3-journal.md` |
-| Appareil de mesure du démarrage à froid | Le scénario 7 de l'étape 2 demande **moins de 1,5 seconde sur un appareil d'entrée de gamme**, et l'écran à charger existe depuis L7. Il faut soit un téléphone Android d'entrée de gamme branché en USB, avec la plateforme du SDK renommée, soit le composant ATL pour rouvrir la cible Windows. Sans l'un des deux, le scénario 14 reste non coché, et ce n'est pas une question de code | `etape-4-journal.md`, section L7 |
+| Magasin de certificats du poste | **Remplace la ligne « Plateforme Android 37 », qui était fausse** : `sdkmanager "platforms;android-37"` répond `Failed to find package`, ce paquet n'existe pas, Google publie `android-37.0` et il est déjà installé. Le build APK échoue en réalité parce que le hook de `package:sqlite3` ne peut pas joindre `github.com` en TLS — et `Invoke-WebRequest` échoue pareillement, donc c'est le poste, pas Flutter. À réparer côté racines Windows ou antivirus, jamais en désactivant la vérification | `MISE-EN-SERVICE.md` section 4.1 |
+| Deux commandes de configuration Supabase | Le hook de jeton et `STUDENT_EMAIL_DOMAIN`. Elles ont été refusées à l'agent par la barrière de sécurité du poste, qui bloque toute écriture de configuration Auth distante et tout secret. **Sans le hook, l'application se connecte et n'affiche que des écrans vides, sans erreur** | `MISE-EN-SERVICE.md` section 3 |
+| Plan d'hébergement | La PWA est sur Vercel Hobby, gratuit, dont les conditions **excluent l'usage commercial**. À trancher avant l'ouverture payante : plan payant, ou un hébergeur statique gratuit qui autorise le commerce | `MISE-EN-SERVICE.md` section 4 |
+| Appareil de mesure du démarrage à froid | Le scénario 7 de l'étape 2 demande **moins de 1,5 seconde sur un appareil d'entrée de gamme**. L'écran existe depuis L7 et l'application est en ligne depuis le 7 septembre : la mesure est désormais possible en installant la PWA sur un vrai téléphone d'entrée de gamme. Elle sera pessimiste, un bundle web pesant plus qu'un APK, donc un échec ne condamnerait pas le produit mais une réussite compterait | `etape-4-journal.md`, section L7 |
 
 ## Règle de lecture
 
