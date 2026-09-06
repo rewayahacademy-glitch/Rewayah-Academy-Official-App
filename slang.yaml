@@ -23,3 +23,13 @@ class_name: Traductions
 
 flat_map: true
 timestamp: false
+
+# Interpolation en accolades, `{prenom}`, et non en style Dart `$prenom`.
+#
+# Deux raisons. La premiere : les libelles sont relus et corriges par des
+# personnes qui n'ecrivent pas de Dart, et `{prenom}` est la notation qu'elles
+# reconnaissent. La seconde tient au francais : `$prenom,` colle au signe de
+# ponctuation et se lit mal, alors que les accolades bornent le parametre sans
+# ambiguite. Sans ce reglage, slang ne voit aucun parametre et genere un getter
+# qui rend les accolades telles quelles a l'ecran.
+string_interpolation: braces

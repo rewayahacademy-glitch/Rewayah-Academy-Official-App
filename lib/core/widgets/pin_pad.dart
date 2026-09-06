@@ -81,9 +81,13 @@ class _PinPadState extends State<PinPad> {
         ),
         if (widget.enErreur) ...<Widget>[
           Ecart.vMd,
+          // Encre d'alerte, et non `surfaceAlert.applyTo` : cette paire porte du
+          // blanc, prevu pour un fond rouge. Pose sur le fond general, le
+          // message etait ecrit en blanc sur clair, a 1.19:1. Il existait dans
+          // l'arbre et pas a l'ecran.
           Text(
             t.pin.erreur,
-            style: palette.surfaceAlert.applyTo(
+            style: palette.textOnLightAlert.applyTo(
               Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             ),
           ),

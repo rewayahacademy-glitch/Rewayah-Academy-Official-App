@@ -48,6 +48,9 @@ dependencies:
   # Glyphes du chrome interne de Flutter uniquement. L'iconographie de
   # l'application reste Phosphor : voir la note sous `flutter:` plus bas.
   cupertino_icons: ^1.0.9
+  crypto: ^3.0.7
+  qr_flutter: ^4.1.0
+  file_picker: ^12.2.0
 
 dev_dependencies:
   flutter_test:

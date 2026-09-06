@@ -1,0 +1,152 @@
+import 'package:flutter/foundation.dart';
+
+import '../domain/enums.dart';
+
+/// Ce qui manque au dossier, tel que le portail d'attente le lira.
+///
+/// Miroir Dart de la fonction SQL `public.etat_dossier()`. Le calcul est en
+/// base et non ici : le portail doit dire la meme chose que ce que
+/// l'administration voit, et deux calculs finissent toujours par diverger.
+@immutable
+class EtatDossier {
+  /// Cree un etat de dossier.
+  const EtatDossier({
+    required this.profilExiste,
+    this.role,
+    this.statutCompte,
+    this.pieceDeposee = false,
+    this.statutPiece,
+    this.motifRefus,
+    this.deposeLe,
+    this.contratSigne = false,
+    this.accuseSigne = false,
+  });
+
+  /// L'etat d'un compte dont le profil reste a creer.
+  const EtatDossier.sansProfil() : this(profilExiste: false);
+
+  /// Lit la reponse de `public.etat_dossier()`.
+  factory EtatDossier.depuisJson(Map<String, dynamic> json) {
+    if (json['profil'] != true) {
+      return const EtatDossier.sansProfil();
+    }
+    final Object? depose = json['depose_le'];
+    return EtatDossier(
+      profilExiste: true,
+      role: AppRole.depuisSql(json['role'] as String?),
+      statutCompte: AccountStatus.depuisSql(json['statut'] as String?),
+      pieceDeposee: json['piece_deposee'] == true,
+      statutPiece: StatutPiece.depuisSql(json['piece_statut'] as String?),
+      motifRefus: json['motif_refus'] as String?,
+      deposeLe: depose is String ? DateTime.tryParse(depose)?.toLocal() : null,
+      contratSigne: json['contrat_signe'] == true,
+      accuseSigne: json['accuse_signe'] == true,
+    );
+  }
+
+  /// Vrai quand une ligne `profiles` existe.
+  final bool profilExiste;
+
+  /// Le role du titulaire.
+  final AppRole? role;
+
+  /// Le statut de compte.
+  final AccountStatus? statutCompte;
+
+  /// Vrai quand une piece a ete deposee.
+  final bool pieceDeposee;
+
+  /// Le statut de la derniere piece deposee.
+  final StatutPiece? statutPiece;
+
+  /// Le motif de refus, en une phrase. Toujours present quand la piece est
+  /// refusee : la base refuse un verdict negatif sans motif.
+  final String? motifRefus;
+
+  /// Date de depot de la derniere piece.
+  final DateTime? deposeLe;
+
+  /// Vrai quand le contrat propre au role est signe.
+  final bool contratSigne;
+
+  /// Vrai quand la carte d'accuse de l'ADR-011 a ete accusee.
+  final bool accuseSigne;
+
+  /// Ce que le portail d'attente doit afficher.
+  ///
+  /// L'ordre compte : un compte suspendu le reste quel que soit l'etat de son
+  /// dossier, et un refus prime sur une piece manquante puisque c'est lui qui
+  /// dit quoi corriger.
+  EtapeDossier get etape {
+    if (statutCompte == AccountStatus.disabled) {
+      return EtapeDossier.suspendu;
+    }
+    if (statutPiece == StatutPiece.refusee) {
+      return EtapeDossier.refuse;
+    }
+    if (!contratSigne || !pieceDeposee) {
+      return EtapeDossier.incomplet;
+    }
+    return EtapeDossier.enVerification;
+  }
+
+  /// Ce qu'il reste a fournir, dans l'ordre ou l'ecran le proposera.
+  ///
+  /// Deux ou trois elements au maximum, chacun avec son bouton : jamais un
+  /// formulaire long (`docs/produit/parcours-utilisateurs.md`, `TUT-00b`).
+  List<PieceManquante> get manquants => <PieceManquante>[
+    if (!contratSigne) PieceManquante.contrat,
+    if (!pieceDeposee || statutPiece == StatutPiece.refusee)
+      PieceManquante.pieceIdentite,
+  ];
+
+  @override
+  bool operator ==(Object other) =>
+      other is EtatDossier &&
+      other.profilExiste == profilExiste &&
+      other.role == role &&
+      other.statutCompte == statutCompte &&
+      other.pieceDeposee == pieceDeposee &&
+      other.statutPiece == statutPiece &&
+      other.motifRefus == motifRefus &&
+      other.deposeLe == deposeLe &&
+      other.contratSigne == contratSigne &&
+      other.accuseSigne == accuseSigne;
+
+  @override
+  int get hashCode => Object.hash(
+    profilExiste,
+    role,
+    statutCompte,
+    pieceDeposee,
+    statutPiece,
+    motifRefus,
+    deposeLe,
+    contratSigne,
+    accuseSigne,
+  );
+}
+
+/// Les quatre etats du portail d'attente.
+enum EtapeDossier {
+  /// Il manque des pieces. Une liste courte, chacune avec son bouton.
+  incomplet,
+
+  /// Tout est depose, l'academie verifie.
+  enVerification,
+
+  /// Refuse, avec un motif et de quoi corriger.
+  refuse,
+
+  /// Compte suspendu par decision d'administration.
+  suspendu,
+}
+
+/// Ce qui peut manquer a un dossier.
+enum PieceManquante {
+  /// La signature du contrat ou des conditions.
+  contrat,
+
+  /// La piece d'identite.
+  pieceIdentite,
+}

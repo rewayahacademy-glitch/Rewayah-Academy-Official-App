@@ -106,6 +106,117 @@ enum InterfaceMode {
   }
 }
 
+/// Genre du titulaire d'un profil. Enumere SQL `public.gender`.
+///
+/// **Un seul usage dans tout le produit** : confier un dossier d'identite a un
+/// membre du personnel du meme genre (audit 1.3). Il ne pilote aucun droit,
+/// aucun affichage, aucune notification. Quand il est inconnu, la lecture des
+/// dossiers est refusee, jamais filtree a moitie.
+enum Genre {
+  /// Homme.
+  homme('male'),
+
+  /// Femme.
+  femme('female');
+
+  const Genre(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit un genre depuis sa valeur SQL. `null` si absent ou inconnu.
+  static Genre? depuisSql(String? valeur) {
+    for (final Genre genre in Genre.values) {
+      if (genre.valeurSql == valeur) {
+        return genre;
+      }
+    }
+    return null;
+  }
+}
+
+/// Type de piece d'identite. Contrainte SQL `kyc_documents.doc_type`.
+enum TypePiece {
+  /// Carte nationale d'identite.
+  carteIdentite('id_card'),
+
+  /// Passeport.
+  passeport('passport'),
+
+  /// Titre de sejour.
+  titreSejour('residence_permit'),
+
+  /// Autre piece, decrite en saisie libre.
+  autre('other');
+
+  const TypePiece(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit un type depuis sa valeur SQL. `null` si absent ou inconnu.
+  static TypePiece? depuisSql(String? valeur) {
+    for (final TypePiece type in TypePiece.values) {
+      if (type.valeurSql == valeur) {
+        return type;
+      }
+    }
+    return null;
+  }
+}
+
+/// Statut d'une piece deposee. Enumere SQL `public.kyc_doc_status`.
+enum StatutPiece {
+  /// Deposee, pas encore examinee.
+  enAttente('pending'),
+
+  /// Validee par l'administration.
+  validee('approved'),
+
+  /// Refusee, avec un motif.
+  refusee('rejected');
+
+  const StatutPiece(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit un statut depuis sa valeur SQL. `null` si absent ou inconnu.
+  static StatutPiece? depuisSql(String? valeur) {
+    for (final StatutPiece statut in StatutPiece.values) {
+      if (statut.valeurSql == valeur) {
+        return statut;
+      }
+    }
+    return null;
+  }
+}
+
+/// Ce qu'un utilisateur peut signer. Contrainte SQL
+/// `contract_acceptances.contract_kind`.
+enum SorteContrat {
+  /// Conditions d'utilisation du tuteur.
+  conditionsTuteur('guardian_terms'),
+
+  /// Contrat de non-concurrence de l'enseignant.
+  contratEnseignant('teacher_nda'),
+
+  /// La carte a accuser une fois : enregistrement audio et visite de controle
+  /// (ADR-011). Elle n'est pas un contrat, mais elle suit la meme regle : elle
+  /// se signe une fois et ne se modifie jamais.
+  accuseEnregistrementControle('recording_and_control_notice');
+
+  const SorteContrat(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// La sorte de contrat que doit signer un role donne.
+  static SorteContrat pour(AppRole role) => role == AppRole.teacher
+      ? SorteContrat.contratEnseignant
+      : SorteContrat.conditionsTuteur;
+}
+
 /// Politique camera d'un eleve. Enumere SQL `public.camera_policy`.
 ///
 /// Attribut de profil fixe une fois, jamais une autorisation par seance

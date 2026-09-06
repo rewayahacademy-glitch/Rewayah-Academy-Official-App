@@ -5,7 +5,7 @@ import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
-import 'pressable.dart';
+import 'action_principale.dart';
 
 /// Etat vide illustre.
 ///
@@ -48,7 +48,6 @@ class EmptyState extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair fond = palette.surfaceBase;
-    final AppColorPair action = palette.surfacePrimary;
 
     return Center(
       child: Padding(
@@ -81,29 +80,12 @@ class EmptyState extends StatelessWidget {
             ],
             if (libelleAction != null && onAction != null) ...<Widget>[
               Ecart.vXxl,
-              Pressable(
+              // Le bouton n'est plus redessine ici : c'est le meme composant que
+              // celui de toutes les autres actions principales du produit.
+              ActionPrincipale(
+                libelle: libelleAction!,
                 onPress: onAction,
-                libelleSemantique: libelleAction,
-                respecterCibleTactile: false,
-                child: Container(
-                  constraints: BoxConstraints(
-                    minHeight: metriques.cibleTactile,
-                  ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xxl,
-                    vertical: AppSpacing.md,
-                  ),
-                  decoration: action.decoration(
-                    borderRadius: BorderRadius.circular(metriques.rayon),
-                  ),
-                  child: Text(
-                    libelleAction!,
-                    style: action.applyTo(
-                      textes.labelLarge ?? const TextStyle(),
-                    ),
-                  ),
-                ),
+                pleineLargeur: false,
               ),
             ],
           ],

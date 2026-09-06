@@ -51,6 +51,54 @@ void main() {
       );
       expect(mesure, greaterThanOrEqualTo(4.5));
     });
+
+    test('textOnLightAlert est lisible sur le fond general', () {
+      final double mesure = contraste(
+        palette.textOnLightAlert.debugValue,
+        palette.surfaceBase.background,
+      );
+      expect(
+        mesure,
+        greaterThanOrEqualTo(4.5),
+        reason:
+            'L encre d alerte mesure ${mesure.toStringAsFixed(2)}:1 sur le fond '
+            'general. Tout message d erreur du produit passe par ce jeton.',
+      );
+    });
+  });
+
+  group('Le piege qui a rendu un message d erreur invisible', () {
+    // Trouve a l'etape 3 en construisant les ecrans, present depuis l'etape 2
+    // dans PinPad : un message d'erreur pose sur la page etait style par
+    // `surfaceAlert.applyTo(...)`, donc avec la couleur de texte prevue pour un
+    // fond ROUGE. Le message existait dans l'arbre de widgets et n'existait pas
+    // a l'ecran.
+    test('la couleur de texte de surfaceAlert est illisible sur le fond general', () {
+      final double mesure = contraste(
+        palette.surfaceAlert.onBackground,
+        palette.surfaceBase.background,
+      );
+      expect(
+        mesure,
+        lessThan(4.5),
+        reason:
+            'Si cette mesure passe desormais 4.5:1, la palette a change et ce '
+            'garde-fou doit etre relu : il documente pourquoi textOnLightAlert '
+            'existe.',
+      );
+    });
+
+    test('l encre d alerte corrige bien ce cas', () {
+      final double avant = contraste(
+        palette.surfaceAlert.onBackground,
+        palette.surfaceBase.background,
+      );
+      final double apres = contraste(
+        palette.textOnLightAlert.debugValue,
+        palette.surfaceBase.background,
+      );
+      expect(apres, greaterThan(avant));
+    });
   });
 
   group('Les echecs mesures dans les specs sont bien evites', () {

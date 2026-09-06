@@ -176,7 +176,7 @@ class Traductions$attente$fr {
 	String get contacterAcademie => 'Contacter l\'académie';
 
 	/// fr: 'Déposé le {date}'
-	String get deposeLe => 'Déposé le {date}';
+	String deposeLe({required Object date}) => 'Déposé le ${date}';
 
 	/// fr: 'La vérification prend en général moins de 48 heures.'
 	String get delai => 'La vérification prend en général moins de 48 heures.';
@@ -236,7 +236,7 @@ class Traductions$connexion$fr {
 	String get lienEnvoye => 'Lien envoyé';
 
 	/// fr: 'Ouvrez le message envoyé à {courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.'
-	String get lienEnvoyeDetail => 'Ouvrez le message envoyé à {courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.';
+	String lienEnvoyeDetail({required Object courriel}) => 'Ouvrez le message envoyé à ${courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.';
 
 	/// fr: 'Utiliser une autre adresse'
 	String get changerAdresse => 'Utiliser une autre adresse';
@@ -260,10 +260,10 @@ class Traductions$inscription$fr {
 	String get titre => 'Créer votre compte';
 
 	/// fr: 'Étape {n} sur {total}'
-	String get etapeSur => 'Étape {n} sur {total}';
+	String etapeSur({required Object n, required Object total}) => 'Étape ${n} sur ${total}';
 
 	/// fr: 'Environ {minutes} min'
-	String get tempsRestant => 'Environ {minutes} min';
+	String tempsRestant({required Object minutes}) => 'Environ ${minutes} min';
 
 	/// fr: 'Vous inscrivez-vous comme parent ou comme enseignant ?'
 	String get roleQuestion => 'Vous inscrivez-vous comme parent ou comme enseignant ?';
@@ -271,8 +271,14 @@ class Traductions$inscription$fr {
 	/// fr: 'Parent ou tuteur'
 	String get roleTuteur => 'Parent ou tuteur';
 
+	/// fr: 'Élève adulte, pour moi-même'
+	String get roleEleveAdulte => 'Élève adulte, pour moi-même';
+
 	/// fr: 'Enseignant'
 	String get roleEnseignant => 'Enseignant';
+
+	/// fr: 'Écrivez à l'académie et nous créerons votre accès. Cette page ne peut pas le faire pour vous.'
+	String get autreAide => 'Écrivez à l\'académie et nous créerons votre accès. Cette page ne peut pas le faire pour vous.';
 
 	/// fr: 'Comment vous appelez-vous ?'
 	String get identiteQuestion => 'Comment vous appelez-vous ?';
@@ -341,7 +347,7 @@ class Traductions$contrat$fr {
 	String get accepter => 'J\'ai lu et j\'accepte';
 
 	/// fr: 'Accepté le {date}'
-	String get accepteLe => 'Accepté le {date}';
+	String accepteLe({required Object date}) => 'Accepté le ${date}';
 
 	/// fr: 'La signature n'a pas abouti. Réessayez dans un instant.'
 	String get erreur => 'La signature n\'a pas abouti. Réessayez dans un instant.';
@@ -407,7 +413,7 @@ class Traductions$kyc$fr {
 	String get erreur => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.';
 
 	/// fr: 'Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.'
-	String get tropVolumineux => 'Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.';
+	String tropVolumineux({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.';
 }
 
 // Path: appareils
@@ -428,7 +434,7 @@ class Traductions$appareils$fr {
 	String get ajouter => 'Ajouter un appareil';
 
 	/// fr: 'Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.'
-	String get limiteAtteinte => 'Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.';
+	String limiteAtteinte({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.';
 
 	/// fr: 'Sur l'appareil de l'enfant'
 	String get codeTitre => 'Sur l\'appareil de l\'enfant';
@@ -437,7 +443,7 @@ class Traductions$appareils$fr {
 	String get codeInstruction => 'Ouvrez l\'application Rewayah, puis entrez ce code.';
 
 	/// fr: 'Expire dans {temps}'
-	String get expireDans => 'Expire dans {temps}';
+	String expireDans({required Object temps}) => 'Expire dans ${temps}';
 
 	/// fr: 'Ce code a expiré.'
 	String get expire => 'Ce code a expiré.';
@@ -452,7 +458,7 @@ class Traductions$appareils$fr {
 	String get revoquerConfirmation => 'Retirer cet appareil ? L\'enfant devra le réappairer pour s\'en resservir.';
 
 	/// fr: 'Utilisé {quand}'
-	String get derniereUtilisation => 'Utilisé {quand}';
+	String derniereUtilisation({required Object quand}) => 'Utilisé ${quand}';
 
 	/// fr: 'Jamais utilisé'
 	String get jamaisUtilise => 'Jamais utilisé';
@@ -518,10 +524,10 @@ class Traductions$dossiers$fr {
 	String get aucunDetail => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.';
 
 	/// fr: '{n} dossier(s) en attente'
-	String get restants => '{n} dossier(s) en attente';
+	String restants({required Object n}) => '${n} dossier(s) en attente';
 
 	/// fr: 'Déposé le {date}'
-	String get deposeLe => 'Déposé le {date}';
+	String deposeLe({required Object date}) => 'Déposé le ${date}';
 
 	/// fr: 'La pièce déposée'
 	String get apercu => 'La pièce déposée';
@@ -901,7 +907,7 @@ extension on Traductions {
 			'attente.refuse' => 'Votre dossier n\'a pas été validé.',
 			'attente.suspendu' => 'Votre compte est suspendu.',
 			'attente.contacterAcademie' => 'Contacter l\'académie',
-			'attente.deposeLe' => 'Déposé le {date}',
+			'attente.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
 			'attente.delai' => 'La vérification prend en général moins de 48 heures.',
 			'attente.aFournir' => 'À fournir',
 			'attente.pieceIdentite' => 'Une pièce d\'identité',
@@ -918,16 +924,18 @@ extension on Traductions {
 			'connexion.avecGoogle' => 'Continuer avec Google',
 			'connexion.ou' => 'ou',
 			'connexion.lienEnvoye' => 'Lien envoyé',
-			'connexion.lienEnvoyeDetail' => 'Ouvrez le message envoyé à {courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.',
+			'connexion.lienEnvoyeDetail' => ({required Object courriel}) => 'Ouvrez le message envoyé à ${courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.',
 			'connexion.changerAdresse' => 'Utiliser une autre adresse',
 			'connexion.erreurCourriel' => 'Cette adresse ne semble pas valide.',
 			'connexion.erreurEnvoi' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
 			'inscription.titre' => 'Créer votre compte',
-			'inscription.etapeSur' => 'Étape {n} sur {total}',
-			'inscription.tempsRestant' => 'Environ {minutes} min',
+			'inscription.etapeSur' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
+			'inscription.tempsRestant' => ({required Object minutes}) => 'Environ ${minutes} min',
 			'inscription.roleQuestion' => 'Vous inscrivez-vous comme parent ou comme enseignant ?',
 			'inscription.roleTuteur' => 'Parent ou tuteur',
+			'inscription.roleEleveAdulte' => 'Élève adulte, pour moi-même',
 			'inscription.roleEnseignant' => 'Enseignant',
+			'inscription.autreAide' => 'Écrivez à l\'académie et nous créerons votre accès. Cette page ne peut pas le faire pour vous.',
 			'inscription.identiteQuestion' => 'Comment vous appelez-vous ?',
 			'inscription.identiteRaison' => 'Ce nom doit être celui de votre pièce d\'identité.',
 			'inscription.prenom' => 'Prénom',
@@ -947,7 +955,7 @@ extension on Traductions {
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
-			'contrat.accepteLe' => 'Accepté le {date}',
+			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
@@ -963,19 +971,19 @@ extension on Traductions {
 			'kyc.envoiEnCours' => 'Envoi en cours',
 			'kyc.deposee' => 'Pièce reçue',
 			'kyc.erreur' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
-			'kyc.tropVolumineux' => 'Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.',
+			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'appareils.titre' => 'Appareils',
 			'appareils.regle' => 'Deux appareils au maximum par enfant, un seul en cours à la fois.',
 			'appareils.ajouter' => 'Ajouter un appareil',
-			'appareils.limiteAtteinte' => 'Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.',
+			'appareils.limiteAtteinte' => ({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.',
 			'appareils.codeTitre' => 'Sur l\'appareil de l\'enfant',
 			'appareils.codeInstruction' => 'Ouvrez l\'application Rewayah, puis entrez ce code.',
-			'appareils.expireDans' => 'Expire dans {temps}',
+			'appareils.expireDans' => ({required Object temps}) => 'Expire dans ${temps}',
 			'appareils.expire' => 'Ce code a expiré.',
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
 			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? L\'enfant devra le réappairer pour s\'en resservir.',
-			'appareils.derniereUtilisation' => 'Utilisé {quand}',
+			'appareils.derniereUtilisation' => ({required Object quand}) => 'Utilisé ${quand}',
 			'appareils.jamaisUtilise' => 'Jamais utilisé',
 			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
@@ -991,8 +999,8 @@ extension on Traductions {
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.aucun' => 'Aucun dossier en attente',
 			'dossiers.aucunDetail' => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.',
-			'dossiers.restants' => '{n} dossier(s) en attente',
-			'dossiers.deposeLe' => 'Déposé le {date}',
+			'dossiers.restants' => ({required Object n}) => '${n} dossier(s) en attente',
+			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
 			'dossiers.apercu' => 'La pièce déposée',
 			'dossiers.apercuIndisponible' => 'Aperçu indisponible',
 			'dossiers.verifications' => 'Vérifications',

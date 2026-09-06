@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/galerie_page.dart';
+import '../../features/connexion/connexion_page.dart';
+import '../../features/inscription/inscription_page.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
@@ -52,13 +54,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.connexion,
-        builder: (BuildContext _, GoRouterState _) =>
-            const EcranAConstruire(destination: 'TUT-00'),
+        builder: (BuildContext _, GoRouterState _) => const ConnexionPage(),
       ),
       GoRoute(
         path: Routes.inscription,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.inscription.titre),
+        builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
       ),
       GoRoute(
         path: Routes.attente,

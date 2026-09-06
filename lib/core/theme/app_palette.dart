@@ -21,6 +21,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.surfaceAlert,
     required this.borderDefault,
     required this.textOnLightAccent,
+    required this.textOnLightAlert,
   });
 
   /// La palette de l'application. Une seule, le mode sombre n'est pas
@@ -64,6 +65,14 @@ class AppPalette extends ThemeExtension<AppPalette> {
     borderDefault: AppInkColor(Color(0xFFB8A6A6)),
     // Violet assombri pour texte sur fond clair : l'original echouait a 3.83:1.
     textOnLightAccent: AppInkColor(Color(0xFF5B36B0)),
+    // Rouge d'alerte employe comme ENCRE sur le fond general.
+    //
+    // Sans ce jeton, un message d'erreur pose sur la page etait ecrit avec
+    // `surfaceAlert.applyTo(...)`, donc en BLANC, puisque c'est la couleur de
+    // texte prevue pour un fond rouge. Blanc sur le fond general mesure 1.19:1 :
+    // le message existait dans l'arbre et n'existait pas a l'ecran. C'est le
+    // defaut qui a ete trouve dans `PinPad` en construisant l'etape 3.
+    textOnLightAlert: AppInkColor(Color(0xFFB01B3C)),
   );
 
   /// Fond general de l'application.
@@ -87,6 +96,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
   /// Accent violet lisible sur fond clair.
   final AppInkColor textOnLightAccent;
 
+  /// Rouge d'alerte lisible sur fond clair. **A employer pour tout message
+  /// d'erreur pose sur la page**, jamais surfaceAlert.applyTo, qui ecrirait
+  /// en blanc.
+  final AppInkColor textOnLightAlert;
+
   /// Raccourci de lecture depuis un widget.
   static AppPalette of(BuildContext context) =>
       Theme.of(context).extension<AppPalette>()!;
@@ -100,6 +114,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     AppColorPair? surfaceAlert,
     AppInkColor? borderDefault,
     AppInkColor? textOnLightAccent,
+    AppInkColor? textOnLightAlert,
   }) {
     return AppPalette(
       surfaceBase: surfaceBase ?? this.surfaceBase,
@@ -109,6 +124,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
       surfaceAlert: surfaceAlert ?? this.surfaceAlert,
       borderDefault: borderDefault ?? this.borderDefault,
       textOnLightAccent: textOnLightAccent ?? this.textOnLightAccent,
+      textOnLightAlert: textOnLightAlert ?? this.textOnLightAlert,
     );
   }
 
@@ -139,6 +155,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textOnLightAccent: AppInkColor.lerp(
         textOnLightAccent,
         other.textOnLightAccent,
+        t,
+      ),
+      textOnLightAlert: AppInkColor.lerp(
+        textOnLightAlert,
+        other.textOnLightAlert,
         t,
       ),
     );
