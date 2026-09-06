@@ -217,6 +217,157 @@ enum SorteContrat {
       : SorteContrat.conditionsTuteur;
 }
 
+/// Etat d'une seance. Enumere SQL `public.session_status`.
+///
+/// La machine a etats est tenue en base par `guard_session_state_transition` :
+/// cette enumeration ne fait que lire ce qu'elle a decide.
+enum StatutSeance {
+  /// Planifiee, personne n'est encore entre.
+  planifiee('planned'),
+
+  /// Verification technique en cours, avant l'entree en salle.
+  preflight('preflight'),
+
+  /// En cours.
+  enCours('in_progress'),
+
+  /// Terminee normalement.
+  terminee('ended'),
+
+  /// L'enseignant ne s'est pas presente.
+  enseignantAbsent('teacher_absent'),
+
+  /// L'eleve ne s'est pas presente.
+  eleveAbsent('student_absent'),
+
+  /// Interrompue par un incident technique.
+  incidentTechnique('tech_failure'),
+
+  /// Annulee tardivement.
+  annuleeTard('canceled_late'),
+
+  /// Annulee.
+  annulee('canceled');
+
+  const StatutSeance(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit un statut depuis sa valeur SQL. `null` si absent ou inconnu : un etat
+  /// illisible ne doit pas se replier sur « planifiee », qui ferait croire a un
+  /// cours a venir.
+  static StatutSeance? depuisSql(String? valeur) {
+    for (final StatutSeance statut in StatutSeance.values) {
+      if (statut.valeurSql == valeur) {
+        return statut;
+      }
+    }
+    return null;
+  }
+
+  /// Vrai quand la seance n'aura pas lieu, quelle qu'en soit la raison.
+  bool get estAnnulee =>
+      this == StatutSeance.annulee || this == StatutSeance.annuleeTard;
+}
+
+/// Ce qu'une partie peut demander. Contrainte SQL `matching_requests.kind`.
+///
+/// Les trois sortes suivent le meme chemin : une demande motivee, une decision
+/// de l'administration, un effet applique en base (ADR-017).
+enum SorteDemande {
+  /// Changer l'enseignant d'un eleve. Le seul chemin de rupture d'une
+  /// affectation : personne ne se degage seul.
+  reaffectation('reassignment'),
+
+  /// Augmenter le plafond d'eleves d'un enseignant.
+  plafond('capacity'),
+
+  /// Changer une regle d'un eleve, duree ou minimum payable.
+  regle('rule_change');
+
+  const SorteDemande(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit une sorte depuis sa valeur SQL. `null` si absente ou inconnue.
+  static SorteDemande? depuisSql(String? valeur) {
+    for (final SorteDemande sorte in SorteDemande.values) {
+      if (sorte.valeurSql == valeur) {
+        return sorte;
+      }
+    }
+    return null;
+  }
+}
+
+/// Ou en est une demande. Contrainte SQL `matching_requests.status`.
+enum StatutDemande {
+  /// En attente d'une decision de l'administration.
+  enAttente('pending'),
+
+  /// Accordee, et son effet est deja applique en base.
+  accordee('approved'),
+
+  /// Refusee, avec un motif.
+  refusee('rejected');
+
+  const StatutDemande(this.valeurSql);
+
+  /// La valeur telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit un statut depuis sa valeur SQL. `null` si absent ou inconnu.
+  static StatutDemande? depuisSql(String? valeur) {
+    for (final StatutDemande statut in StatutDemande.values) {
+      if (statut.valeurSql == valeur) {
+        return statut;
+      }
+    }
+    return null;
+  }
+}
+
+/// Les regles qui peuvent differer d'un profil a l'autre (ADR-017 section 2.4).
+///
+/// **Aucune de ces valeurs n'est une constante Dart.** Elles se lisent par
+/// `regle_effective()`, qui rend celle de ce profil, et non celle de la
+/// plateforme. Un ecran qui lirait la valeur par defaut afficherait la mauvaise
+/// regle a l'eleve qui n'en releve pas, et l'ecart ne se verrait qu'au moment
+/// de la facture.
+enum CleRegle {
+  /// Duree d'une seance, en minutes.
+  dureeSeance('session_duration_minutes'),
+
+  /// Duree de presence minimale qui rend la seance payable, en minutes. Elle
+  /// existe pour qu'une pause ou une priere ne fasse jamais tomber une seance
+  /// sous le seuil de remuneration.
+  minimumPayable('session_paid_minimum_minutes'),
+
+  /// Pause entre deux cours, en minutes.
+  pauseEntreCours('break_minutes_between_sessions'),
+
+  /// Plafond d'eleves d'un enseignant. Seule regle qui porte sur un enseignant
+  /// et non sur un eleve.
+  plafondEleves('max_students_per_teacher');
+
+  const CleRegle(this.valeurSql);
+
+  /// La cle telle qu'elle existe en base.
+  final String valeurSql;
+
+  /// Lit une cle depuis sa valeur SQL. `null` si absente ou inconnue.
+  static CleRegle? depuisSql(String? valeur) {
+    for (final CleRegle cle in CleRegle.values) {
+      if (cle.valeurSql == valeur) {
+        return cle;
+      }
+    }
+    return null;
+  }
+}
+
 /// Politique camera d'un eleve. Enumere SQL `public.camera_policy`.
 ///
 /// Attribut de profil fixe une fois, jamais une autorisation par seance

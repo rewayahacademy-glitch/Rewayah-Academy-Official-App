@@ -77,9 +77,35 @@ values
   ('aaaaaaaa-0000-0000-0000-000000000003', 'minor', 'standard', 'allowed', 'intermediaire'),
   ('bbbbbbbb-0000-0000-0000-000000000002', 'minor', 'child', 'forbidden', 'debutant');
 
-insert into public.teacher_profiles (profile_id, country) values
-  ('cccccccc-0000-0000-0000-000000000001', 'FR'),
-  ('cccccccc-0000-0000-0000-000000000002', 'GN');
+insert into public.teacher_profiles (profile_id, country, timezone_iana) values
+  ('cccccccc-0000-0000-0000-000000000001', 'FR', 'Europe/Paris'),
+  ('cccccccc-0000-0000-0000-000000000002', 'GN', 'Africa/Conakry');
+
+-- Le fuseau dans lequel chacun pose ses creneaux, quel que soit son role.
+do $$
+declare
+  v_tuteur text;
+  v_enseignante text;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', 'aaaaaaaa-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"guardian","household_id":"ffffffff-0000-0000-0000-00000000000a"}}',
+    true);
+  v_tuteur := public.mon_fuseau();
+
+  perform set_config('test.uid', 'cccccccc-0000-0000-0000-000000000002', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  v_enseignante := public.mon_fuseau();
+
+  if v_tuteur <> 'Europe/Paris' then
+    raise exception 'Fuseau ECHEC : le foyer lit % au lieu de son fuseau', v_tuteur;
+  end if;
+  if v_enseignante <> 'Africa/Conakry' then
+    raise exception 'Fuseau ECHEC : l''enseignante lit % au lieu du sien', v_enseignante;
+  end if;
+  raise notice 'Fuseau ok : chaque role pose ses creneaux dans son fuseau, sans que l''ecran ait a le savoir';
+end $$;
 
 -- ============================================================
 -- S1 : tuteur et enseignant ecrivent dans la meme table de disponibilites

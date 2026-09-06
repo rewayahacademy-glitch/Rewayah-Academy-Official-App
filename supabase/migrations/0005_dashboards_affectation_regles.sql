@@ -394,6 +394,32 @@ comment on table public.weekly_availability is
 
 alter table public.weekly_availability enable row level security;
 
+-- Un foyer porte son fuseau depuis l'etape 1 ; un enseignant n'a pas de foyer et
+-- n'en portait aucun. Il lui en faut un : c'est ce qui decide de l'heure locale
+-- qu'il pose dans la grille, et le produit fait travailler Conakry avec Paris.
+alter table public.teacher_profiles
+  add column timezone_iana text not null default 'Europe/Paris';
+
+-- Le fuseau dans lequel l'appelant pose et lit ses creneaux. Une seule reponse,
+-- quel que soit le role : l'ecran n'a pas a savoir ou la valeur est rangee, et
+-- ne doit surtout pas se rabattre sur le fuseau de l'appareil, qui suit le
+-- voyageur alors que le cours, lui, ne bouge pas.
+create function public.mon_fuseau()
+returns text
+language sql stable security definer set search_path = ''
+as $$
+  select coalesce(
+    (select h.timezone from public.households h
+      where h.id = public.app_household_id() and h.deleted_at is null),
+    (select tp.timezone_iana from public.teacher_profiles tp
+      where tp.profile_id = auth.uid() and tp.deleted_at is null),
+    'Europe/Paris'
+  );
+$$;
+
+revoke execute on function public.mon_fuseau() from public, anon;
+grant execute on function public.mon_fuseau() to authenticated, service_role;
+
 -- Qui pose les creneaux d'un profil : l'enseignant les siens, le tuteur ceux des
 -- eleves de son foyer, l'eleve adulte autonome les siens (ADR-009).
 create function public.peut_poser_disponibilite(p_profile_id uuid)

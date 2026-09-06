@@ -11,7 +11,7 @@
 | :-- | :--- | :-: |
 | L0 | Spécification `etape-4-dashboards.md`, ADR-017, ce journal | x |
 | L1 | Migration `0005` et `supabase/tests/scenarios_etape4.sql` | x |
-| L2 | Services Dart : règles, planning, affectations, disponibilités | |
+| L2 | Services Dart : règles, planning, affectations, disponibilités | x |
 | L3 | Grille de semaine partagée, `TUT-04`, onglet de `ENS-06` | |
 | L4 | `ENS-06` élèves en attente, prise atomique, plafond | |
 | L5 | Prières : réglages, calcul, ajustements, entrées de planning | |
@@ -43,6 +43,21 @@ C'est la ligne de base : toute régression de cette étape se mesure contre elle
 Le harnais est le même qu'à l'étape 3 : conteneur `postgres:17-alpine` neuf,
 `stub_auth.sql`, les cinq migrations, puis les deux fichiers de scénarios dans
 l'ordre de la CI, qui les rejoue tous les deux à chaque pull request.
+
+`0005` a gagné, après ce relevé, le fuseau d'un enseignant et `mon_fuseau()` :
+un foyer porte son fuseau depuis l'étape 1, un enseignant n'en portait aucun, et
+la grille de `ENS-06` ne pouvait donc pas savoir dans quelle heure locale elle
+écrit. La migration a été **corrigée sur place**, comme `0004` à l'étape 3 et
+pour la même raison : elle n'a jamais été appliquée nulle part, l'étape D restant
+ouverte. Le compte de contrôles passe alors à 37.
+
+## Mesures du lot L2
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | 164 tests, tous verts, dont 8 nouveaux sur les modèles |
+| `dart run tool/verifier_jetons.dart` | 61 fichiers, aucune violation |
 
 ## Les dix-sept scénarios d'acceptation
 
@@ -142,6 +157,14 @@ lui et cet enseignant.
 La transparence de l'ADR-017 se serait arrêtée à l'enfant lui-même, qui a six
 ans et ne lit pas encore. Le foyer est partie au dossier de l'enseignant de son
 enfant : c'est une branche de plus, et elle est la raison d'être de la fonction.
+
+### Riverpod cache encore un type dans `misc.dart`
+
+`FutureProviderFamily` n'est pas exporté par l'entrée principale de Riverpod 3,
+exactement comme `Override` à l'étape 3. Il vit dans
+`package:flutter_riverpod/misc.dart`. Le projet annote tous ses providers, donc
+le type est nécessaire, et l'erreur est une classe indéfinie plutôt qu'un
+import manquant, ce qui envoie chercher au mauvais endroit.
 
 ### Le test qui accuse le code à tort
 
