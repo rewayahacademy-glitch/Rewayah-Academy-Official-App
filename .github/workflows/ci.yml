@@ -29,35 +29,23 @@ jobs:
           # corps des fonctions SQL a leur creation, donc 0001 ne s'applique pas
           # sans elles. Leur absence faisait echouer ce job des la premiere
           # migration.
-          psql -h postgres -U postgres -v ON_ERROR_STOP=1 <<'SQL'
-          create role anon nologin;
-          create role authenticated nologin;
-          create role service_role nologin bypassrls;
-          create role supabase_auth_admin nologin bypassrls;
-          create schema auth;
-          grant usage on schema auth to anon, authenticated;
-          create table auth.users (id uuid primary key, email text);
-          create function auth.uid() returns uuid language sql stable as $$ select null::uuid $$;
-          create function auth.jwt() returns jsonb language sql stable as $$ select '{}'::jsonb $$;
-          SQL
+          #
+          # Le stub est versionne plutot qu'ecrit ici : les scenarios ci-dessous
+          # ont besoin de pouvoir se faire passer pour un appelant donne, et un
+          # stub qui differe entre la CI et le poste ne prouve rien.
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql
           for f in supabase/migrations/*.sql; do
             echo "--- $f"
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
-      - name: Verifie les invariants de l'ADR-014 sur le statut de compte
+
+      # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
+      # de genre, appareil partage, plafond d'appareils, codes d'appairage,
+      # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
+      # search_path partout. Voir docs/architecture/etape-3-auth-kyc.md section 8.
+      - name: Scenarios d'acceptation SQL des etapes 1 et 3
         shell: bash
-        run: |
-          psql -h postgres -U postgres -v ON_ERROR_STOP=1 <<'SQL'
-          do $$
-          begin
-            if (select column_default from information_schema.columns
-                where table_schema = 'public' and table_name = 'profiles'
-                  and column_name = 'account_status')
-               is distinct from '''pending_kyc''::account_status' then
-              raise exception 'Une nouvelle inscription doit naitre pending_kyc (ADR-014).';
-            end if;
-          end $$;
-          SQL
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape3.sql
 
   flutter:
     name: Flutter (${{ matrix.target }})

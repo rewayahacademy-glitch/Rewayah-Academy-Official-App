@@ -1,0 +1,576 @@
+-- Scenarios d'acceptation SQL de l'etape 3 (section 8 de etape-3-auth-kyc.md).
+-- Chaque scenario echoue bruyamment ou n'ecrit rien : aucun ne se contente
+-- d'un « pas d'erreur ».
+
+-- Droits facon Supabase (alter default privileges du projet).
+grant usage on schema public to anon, authenticated, service_role;
+grant all on all tables in schema public to authenticated, service_role;
+grant all on all sequences in schema public to authenticated, service_role;
+grant all on all functions in schema public to service_role;
+
+insert into auth.users (id, email) values
+  ('11111111-1111-1111-1111-111111111111', 'tuteur@example.test'),
+  ('22222222-2222-2222-2222-222222222222', 'enseignant@example.test'),
+  ('33333333-3333-3333-3333-333333333333', 'admin@example.test'),
+  ('44444444-4444-4444-4444-444444444444', 'enfant1@example.test'),
+  ('55555555-5555-5555-5555-555555555555', 'enfant2@example.test');
+
+-- ============================================================
+-- S3 : une inscription publique est bornee a deux roles et a pending_kyc
+-- ============================================================
+
+select set_config('test.uid', '11111111-1111-1111-1111-111111111111', false);
+select set_config('test.jwt', '{}', false);
+
+do $$
+declare
+  v_role text;
+  v_refus int := 0;
+begin
+  foreach v_role in array array['admin', 'controller', 'accountant', 'student'] loop
+    begin
+      perform public.creer_profil_inscription(v_role, 'Ada', 'Lovelace');
+      raise exception 'S3 ECHEC : le role % a ete accepte a l''inscription publique', v_role;
+    exception
+      when sqlstate 'P0001' then
+        if position('non ouvert' in sqlerrm) = 0 then raise; end if;
+        v_refus := v_refus + 1;
+    end;
+  end loop;
+  if v_refus <> 4 then
+    raise exception 'S3 ECHEC : % refus au lieu de 4', v_refus;
+  end if;
+  raise notice 'S3a ok : les quatre roles prives sont refuses a l''inscription publique';
+end $$;
+
+-- Le tuteur s'inscrit pour de bon.
+select public.creer_profil_inscription('guardian', 'Fatou', 'Diallo', 'male') is not null
+       as tuteur_cree;
+
+do $$
+declare v_statut public.account_status; v_foyer uuid;
+begin
+  select account_status, household_id into v_statut, v_foyer
+  from public.profiles where id = '11111111-1111-1111-1111-111111111111';
+
+  if v_statut <> 'pending_kyc' then
+    raise exception 'S3 ECHEC : statut % au lieu de pending_kyc (ADR-014)', v_statut;
+  end if;
+  if v_foyer is null then
+    raise exception 'S3 ECHEC : un tuteur doit fonder un foyer';
+  end if;
+  raise notice 'S3b ok : le tuteur naît pending_kyc et fonde son foyer';
+end $$;
+
+-- I3 : un compte, un profil.
+do $$
+begin
+  begin
+    perform public.creer_profil_inscription('teacher', 'Fatou', 'Diallo');
+    raise exception 'S3 ECHEC : un second profil a pu etre cree pour le meme compte';
+  exception when sqlstate 'P0001' then
+    if position('deja un profil' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S3c ok : un compte ne peut pas se creer deux profils';
+end $$;
+
+-- L'enseignant s'inscrit. Il ne doit PAS recevoir de foyer.
+select set_config('test.uid', '22222222-2222-2222-2222-222222222222', false);
+select public.creer_profil_inscription('teacher', 'Moussa', 'Barry', 'male') is not null
+       as enseignant_cree;
+
+do $$
+begin
+  if (select household_id from public.profiles
+      where id = '22222222-2222-2222-2222-222222222222') is not null then
+    raise exception 'S3 ECHEC : un enseignant s''est vu attribuer un foyer fantome';
+  end if;
+  if not exists (select 1 from public.teacher_profiles
+                 where profile_id = '22222222-2222-2222-2222-222222222222') then
+    raise exception 'S3 ECHEC : la fiche enseignant n''a pas ete creee';
+  end if;
+  raise notice 'S3d ok : le personnel n''a pas de foyer, et sa fiche existe';
+end $$;
+
+-- ============================================================
+-- S4 : l'enseignant depose sa propre piece d'identite
+-- ============================================================
+
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+
+  insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+  values ('22222222-2222-2222-2222-222222222222', 'id_card', 'male',
+          '22222222-2222-2222-2222-222222222222/piece.webp');
+
+  raise notice 'S4 ok : l''enseignant depose sa piece sous RLS';
+end $$;
+
+-- Controle negatif : personne ne depose une piece pour autrui.
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  begin
+    insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+    values ('11111111-1111-1111-1111-111111111111', 'id_card', 'male', 'x/y.webp');
+    raise exception 'S4 ECHEC : une piece a pu etre deposee pour un autre profil';
+  exception when insufficient_privilege then
+    null;
+  end;
+  raise notice 'S4b ok : le depot pour autrui est refuse par la RLS';
+end $$;
+
+-- La duree de conservation est posee par la base, pas par le client.
+do $$
+begin
+  if (select purge_at from public.kyc_documents
+      where profile_id = '22222222-2222-2222-2222-222222222222') is null then
+    raise exception 'S4 ECHEC : purge_at n''a pas ete pose';
+  end if;
+  raise notice 'S4c ok : la date de purge est posee en base';
+end $$;
+
+-- Le tuteur depose la sienne.
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('test.jwt',
+    '{"app_metadata":{"role":"guardian","household_id":"' ||
+    (select household_id from public.profiles where id = '11111111-1111-1111-1111-111111111111') ||
+    '"}}', true);
+  insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+  values ('11111111-1111-1111-1111-111111111111', 'id_card', 'male',
+          '11111111-1111-1111-1111-111111111111/piece.webp');
+end $$;
+
+-- ============================================================
+-- S5 : un lecteur KYC sans genre recoit un refus explicite
+-- ============================================================
+
+insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status)
+values ('33333333-3333-3333-3333-333333333333', 'ADMIN-AA-000001', 'admin',
+        'Aicha', 'Admin', 'active');
+
+select set_config('test.uid', '33333333-3333-3333-3333-333333333333', false);
+select set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', false);
+
+do $$
+begin
+  begin
+    perform * from public.read_kyc_documents();
+    raise exception 'S5 ECHEC : un lecteur sans genre a obtenu des dossiers';
+  exception when sqlstate 'P0001' then
+    if position('genre du lecteur inconnu' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S5a ok : genre inconnu, refus explicite plutot que filtrage a moitie';
+end $$;
+
+update public.profiles set gender = 'male'
+where id = '33333333-3333-3333-3333-333333333333';
+
+do $$
+declare v_n int;
+begin
+  select count(*) into v_n from public.read_kyc_documents();
+  if v_n <> 2 then
+    raise exception 'S5 ECHEC : % dossiers masculins lus au lieu de 2', v_n;
+  end if;
+  raise notice 'S5b ok : le genre du lecteur vient de son profil';
+end $$;
+
+-- Cloisonnement : un lecteur masculin ne voit aucun dossier feminin.
+insert into public.kyc_documents (profile_id, doc_type, gender, object_key)
+values ('11111111-1111-1111-1111-111111111111', 'passport', 'female', 'f/piece.webp');
+
+do $$
+begin
+  if exists (select 1 from public.read_kyc_documents() where gender = 'female') then
+    raise exception 'S5 ECHEC : un lecteur masculin a vu un dossier feminin (audit 1.3)';
+  end if;
+  raise notice 'S5c ok : aucun dossier feminin visible par un lecteur masculin';
+end $$;
+
+-- La lecture laisse une trace, le refus n'en laisse pas de fausse.
+do $$
+declare v_n int;
+begin
+  select count(*) into v_n from public.audit_logs where action = 'kyc_read';
+  if v_n < 2 then
+    raise exception 'S5 ECHEC : % lectures journalisees, au moins 2 attendues', v_n;
+  end if;
+  raise notice 'S5d ok : chaque lecture de dossier est journalisee (%)' , v_n;
+end $$;
+
+-- ============================================================
+-- ADM-02 : le verdict, et ce qu'il change
+-- ============================================================
+
+do $$
+declare v_doc uuid; v_n int;
+begin
+  select count(*) into v_n from public.dossiers_en_attente();
+  if v_n <> 2 then
+    raise exception 'ADM-02 ECHEC : % dossiers en attente au lieu de 2', v_n;
+  end if;
+
+  begin
+    select document_id into v_doc from public.dossiers_en_attente() limit 1;
+    perform public.decider_dossier(v_doc, false, null);
+    raise exception 'ADM-02 ECHEC : un refus sans motif a ete accepte';
+  exception when sqlstate 'P0001' then
+    if position('exige un motif' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'ADM-02a ok : un refus sans motif est refuse';
+end $$;
+
+do $$
+declare v_doc uuid;
+begin
+  select document_id into v_doc from public.dossiers_en_attente()
+  where profile_id = '11111111-1111-1111-1111-111111111111' limit 1;
+  perform public.decider_dossier(v_doc, true);
+
+  if (select account_status from public.profiles
+      where id = '11111111-1111-1111-1111-111111111111') <> 'active' then
+    raise exception 'ADM-02 ECHEC : le tuteur n''est pas passe actif apres validation';
+  end if;
+  raise notice 'ADM-02b ok : la validation active le compte';
+end $$;
+
+do $$
+declare v_doc uuid;
+begin
+  select document_id into v_doc from public.dossiers_en_attente()
+  where profile_id = '22222222-2222-2222-2222-222222222222' limit 1;
+  perform public.decider_dossier(v_doc, false, 'Photo illisible, merci de la reprendre en pleine lumiere.');
+
+  if (select rejection_reason from public.kyc_documents where id = v_doc) is null then
+    raise exception 'ADM-02 ECHEC : le motif de refus n''a pas ete conserve';
+  end if;
+  if (select account_status from public.profiles
+      where id = '22222222-2222-2222-2222-222222222222') <> 'pending_kyc' then
+    raise exception 'ADM-02 ECHEC : un refus ne doit pas activer le compte';
+  end if;
+  raise notice 'ADM-02c ok : le refus conserve son motif et n''ouvre rien';
+end $$;
+
+-- ============================================================
+-- S6 et S7 : appareil partage, puis plafond
+-- ============================================================
+
+select public.creer_profil_enfant(
+  '44444444-4444-4444-4444-444444444444',
+  '11111111-1111-1111-1111-111111111111', 'Amina', 'Diallo', 7) is not null as enfant1;
+select public.creer_profil_enfant(
+  '55555555-5555-5555-5555-555555555555',
+  '11111111-1111-1111-1111-111111111111', 'Ibrahim', 'Diallo', 12) is not null as enfant2;
+
+do $$
+begin
+  if (select interface_mode from public.student_profiles
+      where profile_id = '44444444-4444-4444-4444-444444444444') <> 'child' then
+    raise exception 'ADR-009 ECHEC : un enfant de 7 ans doit naitre en mode enfant';
+  end if;
+  if (select camera_policy from public.student_profiles
+      where profile_id = '44444444-4444-4444-4444-444444444444') <> 'forbidden' then
+    raise exception 'ADR-009 ECHEC : camera interdite en dessous de 11 ans';
+  end if;
+  if (select interface_mode from public.student_profiles
+      where profile_id = '55555555-5555-5555-5555-555555555555') <> 'standard' then
+    raise exception 'ADR-009 ECHEC : un enfant de 12 ans doit naitre en mode standard';
+  end if;
+  raise notice 'ADR-009 ok : mode et camera derives de l''age par la configuration';
+end $$;
+
+select set_config('test.uid', '11111111-1111-1111-1111-111111111111', false);
+select set_config('test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"' ||
+  (select household_id from public.profiles where id = '11111111-1111-1111-1111-111111111111') ||
+  '"}}', false);
+
+-- Une tablette, deux enfants du meme foyer.
+do $$
+declare v_code text; v_p1 uuid; v_p2 uuid;
+begin
+  select code into v_code from public.creer_code_appairage('44444444-4444-4444-4444-444444444444');
+  select profile_id into v_p1
+  from public.consommer_code_appairage(v_code, 'TABLETTE-SALON', 'android');
+
+  select code into v_code from public.creer_code_appairage('55555555-5555-5555-5555-555555555555');
+  select profile_id into v_p2
+  from public.consommer_code_appairage(v_code, 'TABLETTE-SALON', 'android');
+
+  if v_p1 = v_p2 then
+    raise exception 'S6 ECHEC : le meme profil a ete appaire deux fois';
+  end if;
+  if (select count(*) from public.devices where device_fingerprint = 'TABLETTE-SALON') <> 2 then
+    raise exception 'S6 ECHEC : une tablette ne se partage pas entre deux enfants';
+  end if;
+  raise notice 'S6 ok : une tablette se partage entre deux enfants du meme foyer';
+end $$;
+
+-- Le code n'est jamais stocke en clair (I4).
+do $$
+begin
+  if exists (select 1 from public.device_pairing_codes where length(code_hash) <> 64) then
+    raise exception 'I4 ECHEC : une valeur qui n''est pas une empreinte sha256 est stockee';
+  end if;
+  raise notice 'I4 ok : seule l''empreinte du code est stockee';
+end $$;
+
+-- Deuxieme appareil pour Amina : accepte. Troisieme : refuse par la base.
+do $$
+declare v_code text;
+begin
+  select code into v_code from public.creer_code_appairage('44444444-4444-4444-4444-444444444444');
+  perform public.consommer_code_appairage(v_code, 'TELEPHONE-MAMAN', 'ios');
+
+  begin
+    select code into v_code from public.creer_code_appairage('44444444-4444-4444-4444-444444444444');
+    raise exception 'S7 ECHEC : un troisieme code a pu etre demande';
+  exception when sqlstate 'P0001' then
+    if position('plafond' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S7a ok : le troisieme appareil est refuse des la demande de code';
+end $$;
+
+-- Le plafond tient aussi a la reactivation d'un appareil revoque.
+do $$
+declare v_code text; v_revoque uuid;
+begin
+  select id into v_revoque from public.devices
+  where profile_id = '44444444-4444-4444-4444-444444444444'
+    and device_fingerprint = 'TELEPHONE-MAMAN';
+  update public.devices set revoked_at = now() where id = v_revoque;
+
+  select code into v_code from public.creer_code_appairage('44444444-4444-4444-4444-444444444444');
+  perform public.consommer_code_appairage(v_code, 'ORDINATEUR-PAPA', 'windows');
+
+  begin
+    update public.devices set revoked_at = null where id = v_revoque;
+    raise exception 'S7 ECHEC : un appareil revoque a pu etre reactive au-dela du plafond';
+  exception when sqlstate 'P0001' then
+    if position('plafond' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S7b ok : la reactivation ne contourne pas le plafond';
+end $$;
+
+-- ============================================================
+-- S8 : un code expire ou deja consomme est refuse
+-- ============================================================
+
+do $$
+declare v_code text;
+begin
+  select code into v_code from public.creer_code_appairage('55555555-5555-5555-5555-555555555555');
+  perform public.consommer_code_appairage(v_code, 'TELEPHONE-IBRAHIM', 'ios');
+  begin
+    perform public.consommer_code_appairage(v_code, 'AUTRE-APPAREIL', 'web');
+    raise exception 'S8 ECHEC : un code deja consomme a ete accepte';
+  exception when sqlstate 'P0001' then
+    if position('deja utilise' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S8a ok : un code consomme ne se rejoue pas';
+end $$;
+
+do $$
+declare v_code text;
+begin
+  update public.devices set revoked_at = now()
+  where profile_id = '55555555-5555-5555-5555-555555555555';
+
+  select code into v_code from public.creer_code_appairage('55555555-5555-5555-5555-555555555555');
+  update public.device_pairing_codes set expires_at = now() - interval '1 minute'
+  where consumed_at is null and deleted_at is null
+    and student_profile_id = '55555555-5555-5555-5555-555555555555';
+
+  begin
+    perform public.consommer_code_appairage(v_code, 'APPAREIL-TARDIF', 'web');
+    raise exception 'S8 ECHEC : un code expire a ete accepte';
+  exception when sqlstate 'P0001' then
+    if position('expire' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S8b ok : un code expire est refuse';
+end $$;
+
+-- Un code inconnu ne dit pas pourquoi il est inconnu.
+do $$
+begin
+  begin
+    perform public.consommer_code_appairage('ZZZZZZ', 'APPAREIL-INTRUS', 'web');
+    raise exception 'S8 ECHEC : un code invente a ete accepte';
+  exception when sqlstate 'P0001' then
+    if position('inconnu' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'S8c ok : un code inconnu est refuse';
+end $$;
+
+-- ============================================================
+-- Le tuteur voit ses codes sans jamais voir leur empreinte
+-- ============================================================
+
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'mes_codes_appairage_v'
+      and column_name = 'code_hash'
+  ) then
+    raise exception 'PRINCIPE 8 ECHEC : la vue expose l''empreinte du code';
+  end if;
+  raise notice 'Vue ok : le tuteur lit ses codes sans leur empreinte';
+end $$;
+
+-- ============================================================
+-- Etat du dossier, tel que le portail d'attente le lira
+-- ============================================================
+
+select set_config('test.uid', '22222222-2222-2222-2222-222222222222', false);
+select set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', false);
+
+do $$
+declare v_etat jsonb;
+begin
+  v_etat := public.etat_dossier();
+  if (v_etat ->> 'piece_statut') <> 'rejected' then
+    raise exception 'ETAT ECHEC : statut de piece % au lieu de rejected', v_etat ->> 'piece_statut';
+  end if;
+  if (v_etat ->> 'motif_refus') is null then
+    raise exception 'ETAT ECHEC : le portail d''attente n''a aucun motif a afficher';
+  end if;
+  if (v_etat ->> 'contrat_signe') <> 'false' then
+    raise exception 'ETAT ECHEC : contrat signe sans acceptation';
+  end if;
+  raise notice 'Etat ok : le portail d''attente sait quoi afficher';
+end $$;
+
+-- Une acceptation de contrat est un fait : ni modifiable, ni effacable.
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '22222222-2222-2222-2222-222222222222', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  insert into public.contract_acceptances (profile_id, contract_kind, version)
+  values ('22222222-2222-2222-2222-222222222222', 'teacher_nda', '2026-09');
+end $$;
+
+do $$
+begin
+  begin
+    update public.contract_acceptances set version = '2020-01'
+    where profile_id = '22222222-2222-2222-2222-222222222222';
+    raise exception 'CONTRAT ECHEC : une acceptation a pu etre modifiee';
+  exception when sqlstate 'P0001' then
+    if position('ne se modifie' in sqlerrm) = 0 then raise; end if;
+  end;
+  begin
+    delete from public.contract_acceptances
+    where profile_id = '22222222-2222-2222-2222-222222222222';
+    raise exception 'CONTRAT ECHEC : une acceptation a pu etre effacee';
+  exception when sqlstate 'P0001' then
+    if position('ne se modifie' in sqlerrm) = 0 then raise; end if;
+  end;
+  raise notice 'Contrat ok : une signature ne se modifie ni ne s''efface';
+end $$;
+
+-- ============================================================
+-- Invariant ADR-014 deja verifie par la CI, reverifie apres 0004
+-- ============================================================
+
+do $$
+begin
+  if (select column_default from information_schema.columns
+      where table_schema = 'public' and table_name = 'profiles'
+        and column_name = 'account_status')
+     is distinct from '''pending_kyc''::account_status' then
+    raise exception 'ADR-014 ECHEC : une nouvelle inscription ne naît plus pending_kyc';
+  end if;
+  raise notice 'ADR-014 ok : le defaut de compte reste pending_kyc';
+end $$;
+
+-- ============================================================
+-- Le journal d'audit ne se lit pas par sa partition
+-- ============================================================
+
+do $$
+declare v_parent int; v_partition int;
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"guardian"}}', true);
+
+  select count(*) into v_parent from public.audit_logs;
+  if v_parent <> 0 then
+    raise exception 'AUDIT ECHEC : un tuteur lit % lignes du journal par le parent', v_parent;
+  end if;
+
+  begin
+    select count(*) into v_partition from public.audit_logs_default;
+  exception when insufficient_privilege then
+    v_partition := -1;
+  end;
+  if v_partition > 0 then
+    raise exception 'AUDIT ECHEC : un tuteur lit % lignes du journal par la partition', v_partition;
+  end if;
+
+  raise notice 'Audit ok : le journal ne fuit ni par le parent ni par la partition';
+end $$;
+
+do $$
+begin
+  set local role authenticated;
+  perform set_config('test.uid', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"guardian"}}', true);
+  begin
+    insert into public.audit_logs (action, table_name, hash)
+    values ('forge', 'profiles', 'x');
+    raise exception 'AUDIT ECHEC : une ligne de journal a pu etre forgee par la partition';
+  exception when insufficient_privilege then
+    null;
+  end;
+  raise notice 'Audit ok : aucune ligne de journal ne se forge depuis un compte';
+end $$;
+
+-- ============================================================
+-- Aucune table sans RLS
+-- ============================================================
+
+do $$
+declare v_sans text;
+begin
+  select string_agg(c.relname, ', ') into v_sans
+  from pg_class c join pg_namespace n on n.oid = c.relnamespace
+  where n.nspname = 'public' and c.relkind in ('r', 'p') and not c.relrowsecurity;
+  if v_sans is not null then
+    raise exception 'RLS ECHEC : tables sans RLS : %', v_sans;
+  end if;
+  raise notice 'RLS ok : aucune table publique sans RLS';
+end $$;
+
+-- ============================================================
+-- Aucune fonction SECURITY DEFINER sans search_path fixe
+-- ============================================================
+
+do $$
+declare v_sans text;
+begin
+  select string_agg(p.proname, ', ') into v_sans
+  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+  where n.nspname = 'public' and p.prosecdef
+    and not exists (
+      select 1 from unnest(coalesce(p.proconfig, array[]::text[])) cfg
+      where cfg like 'search_path=%'
+    );
+  if v_sans is not null then
+    raise exception 'SEARCH_PATH ECHEC : % ', v_sans;
+  end if;
+  raise notice 'search_path ok : toute fonction SECURITY DEFINER le fixe';
+end $$;
+
+select 'TOUS LES SCENARIOS SQL DE L''ETAPE 3 SONT PASSES' as verdict;
