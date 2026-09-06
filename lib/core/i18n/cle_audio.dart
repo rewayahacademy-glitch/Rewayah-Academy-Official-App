@@ -66,6 +66,15 @@ abstract final class ClesAudio {
     'eleve.accueil.coursEnDirect',
   );
 
+  /// Annonce d'une interruption de priere pendant le cours a venir.
+  ///
+  /// L'ADR-017 veut l'interruption annoncee **avant** le cours. En mode enfant,
+  /// l'annonce ne peut pas passer par une phrase a lire : elle passe par ce
+  /// libelle parle et par le pictogramme `AppIcons.priere`.
+  static const CleAudio eleveAccueilPausePriere = CleAudio(
+    'eleve.accueil.pausePriere',
+  );
+
   /// Invite du pave numerique.
   static const CleAudio pinTitre = CleAudio('pin.titre');
 
@@ -78,6 +87,7 @@ abstract final class ClesAudio {
     eleveAccueilCoran,
     eleveAccueilProchainCours,
     eleveAccueilCoursEnDirect,
+    eleveAccueilPausePriere,
     pinTitre,
     pinErreur,
   ];

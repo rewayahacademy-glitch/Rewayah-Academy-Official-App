@@ -1,6 +1,6 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **6 septembre 2026**, fin du lot **L6** de l'étape 4.
+> Dernière passation : **6 septembre 2026**, fin du lot **L7** de l'étape 4.
 > Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
 
 ## 1. Le projet actif est celui-ci
@@ -33,10 +33,14 @@ prières**. Découpage en onze lots, un lot par commit.
 | L4 | `ENS-06`, prise atomique, plafond | fait |
 | L5 | Prières : réglages, calcul, ajustements, journée | fait |
 | L6 | `ENS-02` la journée en une colonne | fait |
-| **L7** | **`ELV-02` et ses six états, puis le démarrage à froid** | **à faire, commencer ici** |
-| L8 | `TUT-01`, `TUT-05`, demandes des parties | |
+| L7 | `ELV-02` et ses six états | fait |
+| **L8** | **`TUT-01`, `TUT-05`, demandes des parties** | **à faire, commencer ici** |
 | L9 | `ADM-01`, `ADM-06` | |
 | L10 | Vérifications de fin d'étape, documentation, `PROGRESS.md` | |
+
+Le démarrage à froid, scénario 14, **n'est pas mesurable sur ce poste** : aucune
+cible ne se construit ni ne se lance. Ce n'est pas du travail en retard, c'est
+une question d'équipement, détaillée dans le journal et dans `PROGRESS.md`.
 
 ## 3. Quoi lire, dans cet ordre, et rien d'autre
 
@@ -50,41 +54,52 @@ prières**. Découpage en onze lots, un lot par commit.
 Ne pas rouvrir l'historique des étapes 1 à 3 : leurs journaux ne servent qu'en
 cas de doute sur un point précis.
 
-## 4. Reprendre : le lot L7
+## 4. Reprendre : le lot L8
 
-`ELV-02` remplace le placeholder de `Routes.eleve`. Ce qu'il rend, d'après la
-spécification section 5 et la fiche de `parcours-utilisateurs.md` :
+Deux écrans du tuteur, plus le chemin des demandes. D'après la spécification
+section 5 et les fiches de `parcours-utilisateurs.md` :
 
-- **Deux blocs, rien d'autre.** En mode enfant, aucune navigation : l'écran est
-  le produit.
-- **Six états du bloc principal**, tels que la fiche les tabule : cours dans
-  plus d'une heure, cours dans moins de cinq minutes, cours en direct, aucun
-  cours aujourd'hui, séance annulée, hors ligne. Le prochain cours s'exprime
-  **en jours, jamais en date**.
-- **Deuxième bloc permanent** : le Coran, qui mène au placeholder de `ELV-04`.
-- **Les interruptions de prière de la séance à venir sont annoncées ici**, avant
-  le cours et non pendant (ADR-017). Pictogramme et libellé audio en mode
-  enfant, en clair en mode standard.
-- C'est sur cet écran que se mesure enfin le **démarrage à froid**, scénario 7
-  de l'étape 2, non coché depuis deux étapes faute d'écran métier à charger.
+- **`TUT-01`, accueil famille.** Bloc dominant : l'état en direct de chaque
+  enfant, **une ligne par enfant**, selon les cinq états de la fiche. Le bouton
+  « Assister » n'est rendu que pendant une séance en cours et mène à la salle en
+  observateur, donc au placeholder de `Routes.salle` avec son billet. Blocs
+  secondaires : ajouter un appareil, réglages du foyer, et la date de fin
+  d'accès de chaque enfant.
+- **`TUT-05`, réglages par enfant.** Un enfant par carte, trois réglages :
+  photo, caméra, mode d'interface. Le texte dit la conséquence en clair **avec
+  le prénom de l'enfant**, jamais un libellé abstrait. Ils s'appliquent à la
+  séance suivante, jamais pendant un cours. Il remplace le placeholder de
+  `Routes.tuteurReglages`.
+- **Les demandes des parties.** `ServiceMatching.demander` existe déjà et n'a
+  encore aucun appelant : c'est ici que le tuteur demande une réaffectation ou
+  un changement de règle.
 
-Cela ferme les scénarios 13 et 14 du tableau de la section 7.
+Cela ferme le parcours 3 du tableau de la section 1 de la spécification.
 
-Tout est déjà en place côté données, **ne rien réécrire** :
+Tout est en place côté données sauf une écriture, **ne rien réécrire** :
 
-| Ce dont L7 a besoin | Où c'est déjà fait |
+| Ce dont L8 a besoin | Où c'est déjà fait |
 | :--- | :--- |
+| Les enfants du foyer, avec leur mode, leur caméra et leur photo | `elevesDuFoyerProvider`, `lib/core/appairage/service_appairage.dart` |
+| Qui suit qui, y compris avant la première séance | `affectationsProvider`, `lib/core/planning/service_planning.dart` |
 | Le cours qui vient, en cours ou à venir | `prochainCours`, `lib/core/planning/journee.dart` |
+| La séance annulée qu'on attendait aujourd'hui | `seanceAnnuleeDuJour`, même fichier, posée par L7 pour `ELV-02` **et** pour `TUT-01` |
 | Les interruptions d'une séance donnée | `interruptionsDe`, même fichier |
-| Les séances des trois rôles | `seancesProvider`, `lib/core/planning/service_planning.dart` |
-| Les réglages de prière de l'enseignant | `reglagesPriereProvider`, `lib/core/priere/service_priere.dart` |
-| Le nom d'une prière | `libellePriere`, `lib/core/priere/libelle_priere.dart` |
+| L'état du réseau | `horsLigneProvider`, `lib/core/reseau/service_reseau.dart`, avec son faux au harnais |
+| Déposer une demande | `ServiceMatching.demander`, `lib/core/matching/service_matching.dart` |
 | La valeur d'une règle pour un profil | `valeurRegleProvider` — **par `regle_effective()`, jamais par `regles_profil_v`**, voir le journal L6 |
-| Le libellé parlé d'un texte | `CleAudio`, `lib/core/i18n/cle_audio.dart`, et le composant `AudioLabel` |
+| Le libellé parlé d'un texte | `CleAudio`, `lib/core/i18n/cle_audio.dart`, et le composant `AudioLabel`, qui accepte une paire depuis L7 |
 
-`ENS-02` est le modèle le plus proche : `lib/features/journee/journee_page.dart`
-et son test `test/features/journee_test.dart`. Les deux écrans lisent la même
-séance et doivent en dire la même chose.
+**Ce qui manque, et qu'il faudra écrire** : aucune méthode n'écrit les trois
+réglages de `student_profiles`. La base est prête et les mesure déjà, contrainte
+aux trois colonnes (`scenarios_etape4.sql`, S6a et S6b) ; c'est le service Dart
+qui n'a que la lecture.
+
+`ELV-02` est le modèle le plus proche pour l'état en direct :
+`lib/features/accueil_eleve/accueil_eleve_page.dart` et son test. Les deux
+écrans lisent la même séance et doivent en dire la même chose, le tuteur avec
+ses mots d'adulte. **L'horloge s'injecte** : un état qui se compte en minutes ne
+se teste pas contre l'horloge de la machine, voir le journal L7.
 
 Les libellés vont dans `assets/i18n/fr.i18n.json`, puis `dart run slang`.
 Aucune chaîne en dur. Les fichiers son de `assets/audio/fr/` restent à
@@ -92,13 +107,13 @@ enregistrer : la clé audio se pose, le son viendra.
 
 ## 5. Mesures de référence, à ne pas faire régresser
 
-Relevées le 6 septembre 2026, après L6 :
+Relevées le 6 septembre 2026, après L7 :
 
 | Contrôle | Valeur |
 | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème |
-| `flutter test` | **211 tests**, tous verts |
-| `dart run tool/verifier_jetons.dart` | **70 fichiers**, aucune violation |
+| `flutter test` | **227 tests**, tous verts |
+| `dart run tool/verifier_jetons.dart` | **72 fichiers**, aucune violation |
 | `scenarios_etape3.sql` | **34 contrôles** verts |
 | `scenarios_etape4.sql` | **37 contrôles** verts |
 
@@ -146,9 +161,12 @@ pourquoi à chaque fois.
   `package:sqlite3` échoue, donc `dart run` et `flutter test` peuvent échouer
   au premier appel. Voir `etape-2-journal.md`.
 - Composant **ATL absent** de Visual Studio : `flutter build windows` échoue sur
-  `atlstr.h`.
+  `atlstr.h`. Revérifié le 6 septembre, en `--profile` : l'échec vient du
+  plugin `flutter_secure_storage_windows`, après 222 secondes de compilation.
 - Plateforme Android mal nommée (`android-37.0` au lieu d'`android-37`) : le
-  build APK échoue.
+  build APK échoue. Et **aucun appareil ni AVD** n'est disponible : `flutter
+  devices` ne propose que Windows, Chrome et Edge. C'est ce qui empêche de
+  mesurer le démarrage à froid, scénario 14.
 - PowerShell 5.1 : `2>&1` sur un exécutable natif fabrique un `NativeCommandError`
   même quand la commande a réussi. Lire la sortie, pas le code de retour.
 

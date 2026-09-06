@@ -10,8 +10,8 @@ dépôt actif, où le travail s'est arrêté, quel lot reprendre, et avec quelle
 commandes. Le reste de ce fichier est le tableau d'avancement, pas la consigne
 de reprise.
 
-**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L5 sont
-faits, le prochain est **L6, `ENS-02`**.
+**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L7 sont
+faits, le prochain est **L8, `TUT-01` et `TUT-05`**.
 
 1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis
    `docs/architecture/etape-4-journal.md` (où en est l'étape, lot par lot), puis
@@ -20,12 +20,16 @@ faits, le prochain est **L6, `ENS-02`**.
 2. **Ne rien réécrire des étapes 2 et 3.** Les dix composants partagés, le
    thème, le routeur et les services de dossier sont les seuls points d'entrée
    de leur fonction. `dart run tool/verifier_jetons.dart` le dira.
-3. **Ne rien réécrire des lots L2 à L5.** Les services de planning, de règles,
-   de matching, d'administration et de prières existent, avec leurs faux dans
-   `test/support/harnais.dart`. Le tableau du handoff dit lequel sert à quoi.
-4. **Mesurer le démarrage à froid** sur `ELV-02` réel, sur un appareil d'entrée
-   de gamme. C'est le scénario 7 de l'étape 2, toujours non coché faute d'écran
-   métier à charger : le premier candidat est `ELV-02`, au lot L7.
+3. **Ne rien réécrire des lots L2 à L7.** Les services de planning, de règles,
+   de matching, d'administration, de prières et de réseau existent, avec leurs
+   faux dans `test/support/harnais.dart`. Le tableau du handoff dit lequel sert
+   à quoi.
+4. **Le démarrage à froid attend un appareil, plus un écran.** `ELV-02` existe
+   depuis le lot L7, et la mesure reste impossible sur ce poste : le build
+   Windows échoue sur `atlstr.h`, aucun appareil ni émulateur Android n'est
+   disponible, et les navigateurs de bureau ne sont pas « un appareil d'entrée
+   de gamme ». Les deux portes possibles sont dans le tableau des décisions en
+   attente, plus bas.
 5. **Étape D toujours ouverte** (secrets), et elle bloque désormais plus qu'avant
    : les deux fonctions Edge de l'étape 3 ne peuvent pas être déployées sans
    elle, donc aucun enfant ne peut ouvrir de session tant qu'elle n'est pas
@@ -99,6 +103,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 37 contrôles
 | Litige sur le temps effectif | L'étape 4 pose le minimum payable et sa trace, l'étape 5 mesurera la présence réelle. Les deux doivent se rejoindre avant la première paie | `decisions.md`, question 16 |
 | Composant ATL de Visual Studio | Le build Windows échoue sur `atlstr.h` absent, réclamé par `flutter_secure_storage_windows`. Installer « C++ ATL for latest v143 build tools » dans Visual Studio Build Tools | `etape-3-journal.md` |
 | Plateforme Android 37 | Le build APK échoue : le SDK a installé `platforms\android-37.0`, Gradle cherche `android-37`. Lancer `sdkmanager "platforms;android-37"`. Ne pas épingler `compileSdk` pour contourner un seul poste | `etape-3-journal.md` |
+| Appareil de mesure du démarrage à froid | Le scénario 7 de l'étape 2 demande **moins de 1,5 seconde sur un appareil d'entrée de gamme**, et l'écran à charger existe depuis L7. Il faut soit un téléphone Android d'entrée de gamme branché en USB, avec la plateforme du SDK renommée, soit le composant ATL pour rouvrir la cible Windows. Sans l'un des deux, le scénario 14 reste non coché, et ce n'est pas une question de code | `etape-4-journal.md`, section L7 |
 
 ## Règle de lecture
 

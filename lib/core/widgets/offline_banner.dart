@@ -1,10 +1,9 @@
-import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../reseau/service_reseau.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -18,47 +17,20 @@ import '../theme/app_spacing.dart';
 /// d'un rapport. Le reste reste consultable depuis le cache, et un rapport se
 /// met en file d'attente au lieu d'echouer. Le texte du bandeau dit donc ce qui
 /// continue de marcher, pas seulement ce qui est casse.
-class OfflineBanner extends StatefulWidget {
+///
+/// L'etat vient de [horsLigneProvider] et non d'un abonnement propre a ce
+/// widget : `ELV-02` grise son bloc « Rejoindre » sur le meme fait, et deux
+/// abonnements independants finiraient par se contredire a l'ecran.
+class OfflineBanner extends ConsumerWidget {
   /// Cree le bandeau.
   const OfflineBanner({super.key});
 
   @override
-  State<OfflineBanner> createState() => _OfflineBannerState();
-}
-
-class _OfflineBannerState extends State<OfflineBanner> {
-  StreamSubscription<List<ConnectivityResult>>? _abonnement;
-  bool _horsLigne = false;
-
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_initialiser());
-  }
-
-  Future<void> _initialiser() async {
-    final Connectivity connectivite = Connectivity();
-    _appliquer(await connectivite.checkConnectivity());
-    _abonnement = connectivite.onConnectivityChanged.listen(_appliquer);
-  }
-
-  void _appliquer(List<ConnectivityResult> resultats) {
-    final bool horsLigne =
-        resultats.isEmpty || resultats.every((ConnectivityResult r) => r == ConnectivityResult.none);
-    if (mounted && horsLigne != _horsLigne) {
-      setState(() => _horsLigne = horsLigne);
-    }
-  }
-
-  @override
-  void dispose() {
-    unawaited(_abonnement?.cancel());
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_horsLigne) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Tant que la reponse n'est pas la, l'appareil est repute en ligne : un
+    // bandeau affiche pendant la premiere frame clignoterait sur chaque ecran.
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    if (!horsLigne) {
       return const SizedBox.shrink();
     }
 

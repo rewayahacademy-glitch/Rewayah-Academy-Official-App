@@ -162,6 +162,45 @@ Seance? prochainCours(List<Seance> seances, DateTime maintenant) {
   return null;
 }
 
+/// La seance annulee qu'on attendait encore aujourd'hui.
+///
+/// [prochainCours] ecarte les seances annulees, et c'est ce qu'il faut pour un
+/// bloc qui dit « ce qui vient ». Mais un enfant qui ouvre son ecran a l'heure
+/// de son cours doit apprendre qu'il n'aura pas lieu, sinon il attend devant un
+/// ecran qui ne dit rien. C'est le cinquieme etat de `ELV-02`, et l'un des cinq
+/// etats par enfant de `TUT-01` : la fonction vit donc ici, avec
+/// [prochainCours], et non dans un ecran.
+///
+/// Ne sont retenues que les seances du jour civil courant qui ne sont pas encore
+/// passees : une annulation d'hier n'a plus rien a annoncer. Bornes du jour
+/// calculees en composantes de date, jamais par addition de vingt-quatre heures.
+Seance? seanceAnnuleeDuJour(List<Seance> seances, DateTime maintenant) {
+  final DateTime debutJour = DateTime(
+    maintenant.year,
+    maintenant.month,
+    maintenant.day,
+  );
+  final DateTime finJour = DateTime(
+    maintenant.year,
+    maintenant.month,
+    maintenant.day + 1,
+  );
+
+  final List<Seance> retenues =
+      seances
+          .where(
+            (Seance seance) =>
+                (seance.statut?.estAnnulee ?? false) &&
+                seance.debut.isBefore(finJour) &&
+                !seance.debut.isBefore(debutJour) &&
+                maintenant.isBefore(seance.fin),
+          )
+          .toList()
+        ..sort((Seance a, Seance b) => a.debut.compareTo(b.debut));
+
+  return retenues.isEmpty ? null : retenues.first;
+}
+
 /// Les interruptions prevues pendant une seance.
 ///
 /// C'est ce que `ELV-02` annonce avant le cours : l'eleve et son tuteur voient

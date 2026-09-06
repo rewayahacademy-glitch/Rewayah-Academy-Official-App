@@ -172,6 +172,17 @@ abstract final class AppIcons {
     IconData(0xe40c, fontFamily: _actif),
   );
 
+  // --- Journee et interruptions ------------------------------------------
+
+  /// Interruption de priere prevue pendant une seance (ADR-017).
+  ///
+  /// C'est le pictogramme du mode enfant : a six ans, on ne lit pas « Dhuhr,
+  /// vers 13:20 », on reconnait une forme. Le libelle audio l'accompagne.
+  static const AppIcon priere = AppIcon._(
+    IconData(0xecee, fontFamily: _repos),
+    IconData(0xecee, fontFamily: _actif),
+  );
+
   // --- Composants partages -----------------------------------------------
 
   /// Haut-parleur du composant `AudioLabel`.

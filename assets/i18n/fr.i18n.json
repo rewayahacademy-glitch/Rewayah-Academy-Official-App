@@ -301,8 +301,23 @@
     "accueil": {
       "rejoindre": "Rejoindre",
       "coran": "Le Coran",
+      "coranDetail": "À lire quand tu veux",
       "prochainCours": "Prochain cours",
-      "coursEnDirect": "Ton cours a commencé"
+      "coursEnDirect": "Ton cours a commencé",
+      "avec": "Avec {prenom}",
+      "dansMinutes": "Dans {minutes} min",
+      "dansHeures": "Dans {heures} h {minutes}",
+      "imminent": "C'est presque l'heure",
+      "aucunCours": "Pas de cours aujourd'hui",
+      "aucunCoursDetail": "Ton enseignant prépare le prochain.",
+      "prochainAujourdhui": "Ton prochain cours est plus tard aujourd'hui.",
+      "prochainDemain": "Ton prochain cours est demain.",
+      "prochainDansJours": "Ton prochain cours est dans {jours} jours.",
+      "annulee": "Ce cours n'aura pas lieu",
+      "horsLigne": "Pas de réseau",
+      "horsLigneDetail": "Tu pourras entrer dès que le réseau revient.",
+      "pausePriere": "Pause pour la prière",
+      "pausePriereDetail": "{priere}, vers {heure}"
     }
   },
 

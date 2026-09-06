@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import '../i18n/cle_audio.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -25,6 +26,7 @@ class AudioLabel extends StatefulWidget {
     required this.cle,
     super.key,
     this.afficherTexte = true,
+    this.surface,
   });
 
   /// La cle du libelle, commune au texte et au son.
@@ -32,6 +34,15 @@ class AudioLabel extends StatefulWidget {
 
   /// Faux pour n'afficher que le haut-parleur, sans le texte.
   final bool afficherTexte;
+
+  /// La paire de la surface qui porte ce libelle.
+  ///
+  /// Par defaut, le composant ecrit pour le fond general : haut-parleur a
+  /// l'encre d'accent, texte a la couleur du theme. Pose tel quel sur une
+  /// surface d'accent, le violet ecrirait sur du violet et le texte du theme en
+  /// noir. **Une paire dit sur quoi elle s'ecrit** : un bloc colore passe la
+  /// sienne, comme il le fait deja a `BentoTile` et a `ActionPrincipale`.
+  final AppColorPair? surface;
 
   @override
   State<AudioLabel> createState() => _AudioLabelState();
@@ -75,6 +86,12 @@ class _AudioLabelState extends State<AudioLabel> {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final String texte = t.parCle(widget.cle);
+    final double taille = metriques.estEnfant
+        ? AppSpacing.xxxl
+        : AppSpacing.xxl;
+    final AppColorPair? paire = widget.surface;
+    final TextStyle base =
+        Theme.of(context).textTheme.bodyLarge ?? const TextStyle();
 
     return Pressable(
       onPress: () => unawaited(_jouer()),
@@ -83,9 +100,9 @@ class _AudioLabelState extends State<AudioLabel> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           IconTheme(
-            data: palette.textOnLightAccent.asIconTheme(
-              size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-            ),
+            data: paire == null
+                ? palette.textOnLightAccent.asIconTheme(size: taille)
+                : IconThemeData(color: paire.onBackground, size: taille),
             child: Icon(
               AppIcons.libelleAudio.resoudre(selectionne: _enLecture),
             ),
@@ -95,7 +112,7 @@ class _AudioLabelState extends State<AudioLabel> {
             Flexible(
               child: Text(
                 texte,
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: paire == null ? base : paire.applyTo(base),
               ),
             ),
           ],

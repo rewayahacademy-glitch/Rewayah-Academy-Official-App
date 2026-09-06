@@ -5,7 +5,7 @@
 > `docs/architecture/etape-4-dashboards.md` reste la spécification ; ce journal
 > est son compte rendu. Mis à jour à la fin de chaque lot, jamais en bloc.
 
-## État : L6 fait, l'enseignant lit sa journée en une colonne
+## État : L7 fait, l'enfant voit son prochain cours, et rien d'autre
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
@@ -16,7 +16,7 @@
 | L4 | `ENS-06` élèves en attente, prise atomique, plafond | x |
 | L5 | Prières : réglages, calcul, ajustements, entrées de planning | x |
 | L6 | `ENS-02` la journée | x |
-| L7 | `ELV-02` et la mesure du démarrage à froid | |
+| L7 | `ELV-02` et ses six états | x |
 | L8 | `TUT-01`, `TUT-05`, demandes des parties | |
 | L9 | `ADM-01`, `ADM-06` | |
 | L10 | Vérifications de fin d'étape et documentation | |
@@ -78,8 +78,8 @@ mesuré, règle constante depuis l'étape 1.
 | 10 | Un ajustement d'une minute déplace l'entrée des deux côtés | vert | Même fichier, dans les deux sens, et sans déplacer les quatre autres prières |
 | 11 | Les compteurs de `ADM-01` affichent zéro sans disparaître | à mesurer | L9. L'exactitude des six compteurs est déjà vérifiée en SQL |
 | 12 | `ENS-06` ne rend pas « Prendre » au plafond | vert | `test/features/creneaux_test.dart`, plus le contrôle inverse avec un plafond surchargé |
-| 13 | `ELV-02` affiche ses six états | à mesurer | L7 |
-| 14 | Démarrage à froid mesuré sur `ELV-02` réel | à mesurer | L7 |
+| 13 | `ELV-02` affiche ses six états | vert | `test/features/accueil_eleve_test.dart`, un test par état, plus deux mesures inverses |
+| 14 | Démarrage à froid mesuré sur `ELV-02` réel | **non mesurable ici** | L7 a livré l'écran ; aucune cible de mesure sur ce poste. Voir plus bas, « Le démarrage à froid n'a pas pu être mesuré » |
 | 15 | Une règle posée pour un élève ne change rien pour les autres | vert | S15a à S15c |
 | 16 | Une surcharge close reste lisible, aucune ne se supprime | vert | S16a à S16c |
 | 17 | Une demande de chacune des quatre parties atteint `ADM-06` | vert | S17a à S17e |
@@ -179,6 +179,147 @@ et deux réponses différentes à cette question se verraient tout de suite.
   en retard.
 - **Aucune mention de fuseau**, contrairement à la grille de `ENS-06`. Voir
   plus bas : ce serait la seule ligne fausse de l'écran.
+
+## Mesures du lot L7
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | **227 tests**, tous verts, dont 16 nouveaux sur `ELV-02` |
+| `dart run tool/verifier_jetons.dart` | **72 fichiers**, aucune violation |
+| `0001` à `0005` sur une base nue | appliquées, aucune erreur |
+| `scenarios_etape3.sql` puis `scenarios_etape4.sql` | 34 puis 37 contrôles, tous verts |
+
+`ELV-02` remplace le dernier `EcranAConstruire` de l'élève, hors Coran et suivi.
+Aucune ligne de `0005` n'a bougé : deuxième lot de l'étape à ne pas toucher la
+base, après L6.
+
+Les 16 tests se répartissent en trois groupes : les six états du bloc principal
+et leurs deux mesures inverses, les deux blocs et leur seule navigation, les
+interruptions de prière dans les deux modes. Quatre tests de plus mesurent la
+décision d'état **sans monter d'écran**, comme `deciderRedirection` à l'étape 2 :
+la fonction `etatAccueilEleve` est pure et reçoit son instant.
+
+### Le démarrage à froid n'a pas pu être mesuré, et voici sur quoi ça bute
+
+Le scénario 14 attendait `ELV-02` depuis deux étapes : il existe enfin, et la
+mesure reste impossible **sur ce poste**. Les trois portes ont été essayées, pas
+supposées :
+
+| Cible | Ce qui a été tenté | Résultat |
+| :--- | :--- | :--- |
+| Windows | `flutter build windows --profile` | Échec après 222 s : `atlstr.h` introuvable, dans `flutter_secure_storage_windows`. Le composant ATL de Visual Studio est absent, piège de poste connu depuis l'étape 2 |
+| Android | `flutter devices`, `flutter emulators`, `adb devices` | Aucun appareil branché, aucun AVD. La plateforme du SDK reste mal nommée, `android-37.0` au lieu d'`android-37` |
+| Web | `flutter devices` | Chrome et Edge sont disponibles, et ne sont pas « un appareil d'entrée de gamme » |
+
+Le scénario 7 de l'étape 2 dit **« sous 1,5 seconde sur un appareil d'entrée de
+gamme »**. Une mesure dans un navigateur de bureau ne mesure ni le même
+démarrage, ni la même machine : elle donnerait un chiffre, pas une réponse, et
+un chiffre qui coche une case qu'il ne remplit pas coûte plus cher que la case
+vide. Il reste donc **non coché**, comme il l'est depuis l'étape 2, mais pour la
+première fois la raison n'est plus « aucun écran à charger ».
+
+Ce qu'il faut pour le fermer, au choix, et rien de plus :
+
+- un téléphone Android d'entrée de gamme branché en USB, plus le dossier
+  `platforms/android-37.0` du SDK renommé `android-37`, puis
+  `flutter run --profile --trace-startup -d <appareil>` et la lecture de
+  `build/start_up_info.json` ;
+- ou le composant **ATL** ajouté à l'installation de Visual Studio, qui rouvre
+  la cible Windows pour une mesure de bureau, laquelle ne remplace pas la
+  précédente mais vaut mieux que rien.
+
+C'est une question d'équipement, pas de code : elle est portée dans
+`docs/PROGRESS.md`, à la main de l'opérateur.
+
+### Ce que L7 ne rend pas, et ce n'est pas un oubli
+
+- **Aucune barre de navigation.** La fiche produit dit « deux blocs, rien
+  d'autre » : un test compte les tuiles et échouerait à la troisième.
+- **Aucun son.** Les clés audio sont posées, `assets/audio/fr/` reste vide :
+  la clé se pose, le son viendra. Le texte reste affiché à côté du
+  haut-parleur, donc l'écran ne dépend pas d'un fichier absent.
+- **Aucune semaine à venir ni historique.** Le mode standard les gagne d'après
+  la fiche, mais l'un est l'étape 6 et l'autre n'a rien à afficher : les deux
+  modes rendent donc les mêmes deux blocs, seul le détail des prières change.
+
+## Pièges du lot L7
+
+### Deux sources pour un même fait finissent par se contredire
+
+`OfflineBanner` s'abonnait lui-même à `connectivity_plus`. Le sixième état de
+`ELV-02` se lit sur le même fait, et un second abonnement aurait suffi à mettre
+un bandeau « pas de réseau » au-dessus d'un bouton d'entrée en séance resté
+actif, ou l'inverse, pendant le temps où les deux abonnements divergent.
+
+Il y avait plus gênant : **cet état n'était pas mesurable**. Aucun test ne coupe
+le réseau de la machine qui l'exécute. Le fait vit désormais dans un service,
+comme les autres, avec son faux en mémoire, et le bandeau le lit comme l'écran.
+
+### Le retour tactile est déjà une animation d'échelle
+
+Le test qui vérifie que le bloc imminent pulse cherchait un `ScaleTransition`.
+Il en trouvait plusieurs, et aurait été **vert sans aucune pulsation** :
+`Pressable` en pose un par zone tactile, pour son propre retour au doigt.
+
+La pulsation porte donc une clé nommée, et le test la désigne. Même famille que
+le piège de L6 : un test qui trouve ce qu'il cherche à côté de ce qu'il croit
+mesurer. **Chercher un type de widget ne prouve rien quand un composant partagé
+emploie le même type pour autre chose.**
+
+### Un composant partagé qui ne sait pas sur quoi il écrit
+
+`AudioLabel` dessinait son haut-parleur à l'encre d'accent et son texte à la
+couleur du thème. Posé tel quel sur le bloc violet des états imminent et en
+direct, il aurait écrit du violet foncé sur du violet et du noir sur du violet.
+
+C'est le piège de paire de L6 pris par un troisième bout : ni l'écran ni le
+thème n'étaient en tort, c'est l'**API du composant** qui ne demandait pas sur
+quoi elle s'écrivait. Il accepte maintenant une paire, comme `BentoTile` et
+`ActionPrincipale` le font depuis l'étape 2. La correction vaut pour tous les
+écrans à venir qui poseront un libellé parlé sur autre chose que le fond
+général.
+
+### Un écran dont l'état se compte en minutes ne lit pas l'horloge
+
+Les six états se distinguent par des minutes : cinq avant le début, le début, la
+fin. Les premières fixtures se calaient sur `DateTime.now()`, et deux tests
+devenaient faux dans le dernier quart d'heure avant minuit, où « dans 25
+minutes » cesse d'être aujourd'hui. Environ deux exécutions sur cent, c'est-à-dire
+un échec inexplicable tous les quelques jours.
+
+L'écran reçoit donc son horloge, comme `deciderRedirection` reçoit son
+`maintenant` depuis l'étape 2. En production c'est `DateTime.now`, en test c'est
+un mardi de septembre à dix-sept heures. Les marges de trente secondes des tests
+de `ENS-02` n'ont plus lieu d'être ici.
+
+### Le test du changement d'heure mesurait le fuseau de la machine
+
+Le prochain cours s'exprime en jours. Un premier `joursCivilsEntre` posait deux
+minuits **locaux** et divisait : correct, mais son test ne prouvait rien. Ce
+poste est à UTC+3 sans heure d'été et la CI tourne en UTC ; dans ces deux
+fuseaux, la nuit de mars dure vingt-quatre heures comme les autres, et le test
+serait resté vert même avec un calcul faux.
+
+Les deux dates civiles sont donc reposées **en UTC**, où un jour dure toujours
+vingt-quatre heures : le calendrier est conservé, le fuseau neutralisé, et le
+compte est le même partout. Le test vaut alors sur n'importe quelle machine, au
+lieu de valoir sur celles qui n'ont pas d'heure d'été. Même règle qu'à L5 pour
+`PrayerTimes.utc`, appliquée au calendrier plutôt qu'au soleil.
+
+### Un bouton grisé, alors que la règle dit de ne pas le rendre
+
+Depuis l'étape 3, un bouton qui ne peut pas aboutir n'est pas rendu : une phrase
+prend sa place. Hors ligne, `ELV-02` fait pourtant l'inverse et garde
+« Rejoindre » en place, inerte, avec le pictogramme de réseau.
+
+Ce n'est pas une entorse mais l'autre moitié de la même règle. Ce qu'un bouton
+absent explique, c'est une **limite** : le plafond de `ENS-06` ne tombera pas
+tout seul, et le chemin pour le lever est ailleurs. Une panne de réseau n'est
+pas une limite, c'est un état passager de l'appareil, et pour un enfant de six
+ans un bouton disparu voudrait dire que son cours n'existe plus. L'inertie se
+signale par un changement de **paire**, jamais par de la transparence, qui
+ferait tomber le libellé sous le seuil de contraste.
 
 ## Pièges du lot L6
 

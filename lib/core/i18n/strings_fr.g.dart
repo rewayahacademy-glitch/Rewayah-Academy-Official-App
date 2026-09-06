@@ -1088,11 +1088,56 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Le Coran'
 	String get coran => 'Le Coran';
 
+	/// fr: 'À lire quand tu veux'
+	String get coranDetail => 'À lire quand tu veux';
+
 	/// fr: 'Prochain cours'
 	String get prochainCours => 'Prochain cours';
 
 	/// fr: 'Ton cours a commencé'
 	String get coursEnDirect => 'Ton cours a commencé';
+
+	/// fr: 'Avec {prenom}'
+	String avec({required Object prenom}) => 'Avec ${prenom}';
+
+	/// fr: 'Dans {minutes} min'
+	String dansMinutes({required Object minutes}) => 'Dans ${minutes} min';
+
+	/// fr: 'Dans {heures} h {minutes}'
+	String dansHeures({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}';
+
+	/// fr: 'C'est presque l'heure'
+	String get imminent => 'C\'est presque l\'heure';
+
+	/// fr: 'Pas de cours aujourd'hui'
+	String get aucunCours => 'Pas de cours aujourd\'hui';
+
+	/// fr: 'Ton enseignant prépare le prochain.'
+	String get aucunCoursDetail => 'Ton enseignant prépare le prochain.';
+
+	/// fr: 'Ton prochain cours est plus tard aujourd'hui.'
+	String get prochainAujourdhui => 'Ton prochain cours est plus tard aujourd\'hui.';
+
+	/// fr: 'Ton prochain cours est demain.'
+	String get prochainDemain => 'Ton prochain cours est demain.';
+
+	/// fr: 'Ton prochain cours est dans {jours} jours.'
+	String prochainDansJours({required Object jours}) => 'Ton prochain cours est dans ${jours} jours.';
+
+	/// fr: 'Ce cours n'aura pas lieu'
+	String get annulee => 'Ce cours n\'aura pas lieu';
+
+	/// fr: 'Pas de réseau'
+	String get horsLigne => 'Pas de réseau';
+
+	/// fr: 'Tu pourras entrer dès que le réseau revient.'
+	String get horsLigneDetail => 'Tu pourras entrer dès que le réseau revient.';
+
+	/// fr: 'Pause pour la prière'
+	String get pausePriere => 'Pause pour la prière';
+
+	/// fr: '{priere}, vers {heure}'
+	String pausePriereDetail({required Object priere, required Object heure}) => '${priere}, vers ${heure}';
 }
 
 // Path: tuteur.accueil
@@ -1444,8 +1489,23 @@ extension on Traductions {
 			'nav.admin.journal' => 'Journal',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
+			'eleve.accueil.coranDetail' => 'À lire quand tu veux',
 			'eleve.accueil.prochainCours' => 'Prochain cours',
 			'eleve.accueil.coursEnDirect' => 'Ton cours a commencé',
+			'eleve.accueil.avec' => ({required Object prenom}) => 'Avec ${prenom}',
+			'eleve.accueil.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
+			'eleve.accueil.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
+			'eleve.accueil.imminent' => 'C\'est presque l\'heure',
+			'eleve.accueil.aucunCours' => 'Pas de cours aujourd\'hui',
+			'eleve.accueil.aucunCoursDetail' => 'Ton enseignant prépare le prochain.',
+			'eleve.accueil.prochainAujourdhui' => 'Ton prochain cours est plus tard aujourd\'hui.',
+			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
+			'eleve.accueil.prochainDansJours' => ({required Object jours}) => 'Ton prochain cours est dans ${jours} jours.',
+			'eleve.accueil.annulee' => 'Ce cours n\'aura pas lieu',
+			'eleve.accueil.horsLigne' => 'Pas de réseau',
+			'eleve.accueil.horsLigneDetail' => 'Tu pourras entrer dès que le réseau revient.',
+			'eleve.accueil.pausePriere' => 'Pause pour la prière',
+			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
 			'tuteur.accueil.assister' => 'Assister',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',

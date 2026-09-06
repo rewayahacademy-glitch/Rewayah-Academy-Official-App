@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/galerie_page.dart';
+import '../../features/accueil_eleve/accueil_eleve_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
@@ -99,8 +100,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // que chaque ecran AFFICHE qui change, jamais la structure.
       GoRoute(
         path: Routes.eleve,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.eleve.accueil),
+        builder: (BuildContext _, GoRouterState _) => const AccueilElevePage(),
         routes: <RouteBase>[
           GoRoute(
             path: 'coran',

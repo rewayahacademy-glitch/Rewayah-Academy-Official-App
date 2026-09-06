@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -466,6 +467,21 @@ class FauxServicePriere implements ServicePriere {
     enregistres.add(reglages);
     parEnseignant[reglages.enseignantId] = reglages;
   }
+}
+
+/// Un etat de reseau fige.
+///
+/// Aucun test ne peut couper le reseau de la machine qui l'execute : sans ce
+/// faux, le sixieme etat de `ELV-02`, le hors ligne, ne serait pas mesurable.
+class FauxServiceReseau implements ServiceReseau {
+  /// Cree la source sur un etat donne.
+  FauxServiceReseau({this.horsLigneRendu = false});
+
+  /// Vrai pour simuler l'absence de reseau.
+  bool horsLigneRendu;
+
+  @override
+  Stream<bool> horsLigne() => Stream<bool>.value(horsLigneRendu);
 }
 
 /// Un selecteur de fichier qui rend toujours la meme piece.
