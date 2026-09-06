@@ -8,6 +8,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
 import '../../features/connexion/connexion_page.dart';
+import '../../features/disponibilites/disponibilites_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
 import '../../features/dossier/signature_page.dart';
@@ -130,7 +131,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.tuteurDisponibilites,
         builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.tuteur.disponibilites),
+            const DisponibilitesPage(),
       ),
       GoRoute(
         path: Routes.tuteurReglages,

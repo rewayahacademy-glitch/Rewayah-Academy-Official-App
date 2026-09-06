@@ -52,6 +52,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$kyc$fr kyc = Traductions$kyc$fr.internal(_root);
 	late final Traductions$appareils$fr appareils = Traductions$appareils$fr.internal(_root);
 	late final Traductions$enfant$fr enfant = Traductions$enfant$fr.internal(_root);
+	late final Traductions$disponibilites$fr disponibilites = Traductions$disponibilites$fr.internal(_root);
 	late final Traductions$eleveConnexion$fr eleveConnexion = Traductions$eleveConnexion$fr.internal(_root);
 	late final Traductions$dossiers$fr dossiers = Traductions$dossiers$fr.internal(_root);
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
@@ -514,6 +515,76 @@ class Traductions$enfant$fr {
 
 	/// fr: 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.'
 	String get aucunDetail => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.';
+}
+
+// Path: disponibilites
+class Traductions$disponibilites$fr {
+	Traductions$disponibilites$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quand vos enfants peuvent-ils suivre un cours ?'
+	String get titre => 'Quand vos enfants peuvent-ils suivre un cours ?';
+
+	/// fr: 'Quand pouvez-vous donner cours ?'
+	String get titreEnseignant => 'Quand pouvez-vous donner cours ?';
+
+	/// fr: 'Touchez les heures possibles pour {prenom}.'
+	String consigne({required Object prenom}) => 'Touchez les heures possibles pour ${prenom}.';
+
+	/// fr: 'Touchez les heures où vous êtes disponible.'
+	String get consigneEnseignant => 'Touchez les heures où vous êtes disponible.';
+
+	/// fr: 'Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.'
+	String get effet => 'Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.';
+
+	/// fr: 'Vous ne verrez que les élèves dont les heures croisent les vôtres.'
+	String get effetEnseignant => 'Vous ne verrez que les élèves dont les heures croisent les vôtres.';
+
+	/// fr: 'Heures affichées en {fuseau}'
+	String fuseau({required Object fuseau}) => 'Heures affichées en ${fuseau}';
+
+	/// fr: 'Aucune heure proposée pour {prenom}'
+	String aucune({required Object prenom}) => 'Aucune heure proposée pour ${prenom}';
+
+	/// fr: 'Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.'
+	String aucuneDetail({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.';
+
+	/// fr: '{nombre} heures proposées'
+	String posees({required Object nombre}) => '${nombre} heures proposées';
+
+	/// fr: '1 heure proposée'
+	String get poseeUne => '1 heure proposée';
+
+	/// fr: '{jour} {heure} heures, proposé. Toucher pour retirer'
+	String cellulePosee({required Object jour, required Object heure}) => '${jour} ${heure} heures, proposé. Toucher pour retirer';
+
+	/// fr: '{jour} {heure} heures, libre. Toucher pour proposer'
+	String celluleLibre({required Object jour, required Object heure}) => '${jour} ${heure} heures, libre. Toucher pour proposer';
+
+	/// fr: 'Ce créneau n'a pas pu être enregistré. Réessayez.'
+	String get erreur => 'Ce créneau n\'a pas pu être enregistré. Réessayez.';
+
+	List<String> get joursCourts => [
+		'Lun',
+		'Mar',
+		'Mer',
+		'Jeu',
+		'Ven',
+		'Sam',
+		'Dim',
+	];
+	List<String> get joursLongs => [
+		'lundi',
+		'mardi',
+		'mercredi',
+		'jeudi',
+		'vendredi',
+		'samedi',
+		'dimanche',
+	];
 }
 
 // Path: eleveConnexion
@@ -1048,6 +1119,34 @@ extension on Traductions {
 			'enfant.erreur' => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.',
 			'enfant.aucun' => 'Aucun enfant dans le foyer',
 			'enfant.aucunDetail' => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.',
+			'disponibilites.titre' => 'Quand vos enfants peuvent-ils suivre un cours ?',
+			'disponibilites.titreEnseignant' => 'Quand pouvez-vous donner cours ?',
+			'disponibilites.consigne' => ({required Object prenom}) => 'Touchez les heures possibles pour ${prenom}.',
+			'disponibilites.consigneEnseignant' => 'Touchez les heures où vous êtes disponible.',
+			'disponibilites.effet' => 'Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.',
+			'disponibilites.effetEnseignant' => 'Vous ne verrez que les élèves dont les heures croisent les vôtres.',
+			'disponibilites.fuseau' => ({required Object fuseau}) => 'Heures affichées en ${fuseau}',
+			'disponibilites.aucune' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
+			'disponibilites.aucuneDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
+			'disponibilites.posees' => ({required Object nombre}) => '${nombre} heures proposées',
+			'disponibilites.poseeUne' => '1 heure proposée',
+			'disponibilites.cellulePosee' => ({required Object jour, required Object heure}) => '${jour} ${heure} heures, proposé. Toucher pour retirer',
+			'disponibilites.celluleLibre' => ({required Object jour, required Object heure}) => '${jour} ${heure} heures, libre. Toucher pour proposer',
+			'disponibilites.erreur' => 'Ce créneau n\'a pas pu être enregistré. Réessayez.',
+			'disponibilites.joursCourts.0' => 'Lun',
+			'disponibilites.joursCourts.1' => 'Mar',
+			'disponibilites.joursCourts.2' => 'Mer',
+			'disponibilites.joursCourts.3' => 'Jeu',
+			'disponibilites.joursCourts.4' => 'Ven',
+			'disponibilites.joursCourts.5' => 'Sam',
+			'disponibilites.joursCourts.6' => 'Dim',
+			'disponibilites.joursLongs.0' => 'lundi',
+			'disponibilites.joursLongs.1' => 'mardi',
+			'disponibilites.joursLongs.2' => 'mercredi',
+			'disponibilites.joursLongs.3' => 'jeudi',
+			'disponibilites.joursLongs.4' => 'vendredi',
+			'disponibilites.joursLongs.5' => 'samedi',
+			'disponibilites.joursLongs.6' => 'dimanche',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.codeInvite' => 'Entre le code affiché sur le téléphone de tes parents',

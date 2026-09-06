@@ -12,7 +12,7 @@
 | L0 | Spécification `etape-4-dashboards.md`, ADR-017, ce journal | x |
 | L1 | Migration `0005` et `supabase/tests/scenarios_etape4.sql` | x |
 | L2 | Services Dart : règles, planning, affectations, disponibilités | x |
-| L3 | Grille de semaine partagée, `TUT-04`, onglet de `ENS-06` | |
+| L3 | Grille de semaine partagée, `TUT-04` | x |
 | L4 | `ENS-06` élèves en attente, prise atomique, plafond | |
 | L5 | Prières : réglages, calcul, ajustements, entrées de planning | |
 | L6 | `ENS-02` la journée | |
@@ -99,6 +99,19 @@ Omar     : ERROR: cet eleve vient d'etre pris par un autre enseignant
 
 Une seule affectation active en base après coup. Le perdant reçoit une phrase,
 pas un code d'erreur : c'est ce que `ENS-06` affichera.
+
+## Mesures du lot L3
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | 169 tests, tous verts, dont 5 sur `TUT-04` |
+| `dart run tool/verifier_jetons.dart` | 63 fichiers, aucune violation |
+
+La grille est **un seul composant pour les deux écrans**, dans
+`lib/features/disponibilites/`, et non un onzième composant partagé : elle sert
+`TUT-04` et l'onglet de `ENS-06`, pas le reste de l'application. La liste des
+dix composants de l'étape 2 reste donc exacte.
 
 ## Ce que l'étape reprend de l'existant
 

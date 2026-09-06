@@ -149,6 +149,25 @@
     "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
   },
 
+  "disponibilites": {
+    "titre": "Quand vos enfants peuvent-ils suivre un cours ?",
+    "titreEnseignant": "Quand pouvez-vous donner cours ?",
+    "consigne": "Touchez les heures possibles pour {prenom}.",
+    "consigneEnseignant": "Touchez les heures où vous êtes disponible.",
+    "effet": "Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.",
+    "effetEnseignant": "Vous ne verrez que les élèves dont les heures croisent les vôtres.",
+    "fuseau": "Heures affichées en {fuseau}",
+    "aucune": "Aucune heure proposée pour {prenom}",
+    "aucuneDetail": "Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.",
+    "posees": "{nombre} heures proposées",
+    "poseeUne": "1 heure proposée",
+    "cellulePosee": "{jour} {heure} heures, proposé. Toucher pour retirer",
+    "celluleLibre": "{jour} {heure} heures, libre. Toucher pour proposer",
+    "erreur": "Ce créneau n'a pas pu être enregistré. Réessayez.",
+    "joursCourts": ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+    "joursLongs": ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+  },
+
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
     "scanner": "Scanner le carré",

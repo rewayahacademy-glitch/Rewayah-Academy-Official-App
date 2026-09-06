@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -274,6 +275,75 @@ class FauxServiceValidation implements ServiceValidation {
   }) async {
     verdicts.add((documentId: documentId, approuve: approuve, motif: motif));
   }
+}
+
+/// Un service de planning en memoire.
+class FauxServicePlanning implements ServicePlanning {
+  /// Les creneaux rendus, par profil.
+  final Map<String, List<Creneau>> creneaux = <String, List<Creneau>>{};
+
+  /// Les seances rendues.
+  List<Seance> seancesRendues = const <Seance>[];
+
+  /// Les affectations rendues.
+  List<Affectation> affectationsRendues = const <Affectation>[];
+
+  /// Le fuseau rendu.
+  String fuseau = 'Europe/Paris';
+
+  /// Les creneaux poses, dans l'ordre.
+  final List<({String profilId, Creneau creneau})> poses =
+      <({String profilId, Creneau creneau})>[];
+
+  /// Les creneaux retires, dans l'ordre.
+  final List<({String profilId, Creneau creneau})> retires =
+      <({String profilId, Creneau creneau})>[];
+
+  /// Ce que la prochaine ecriture doit jeter.
+  Object? erreurAJeter;
+
+  void _peutEchouer() {
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+  }
+
+  @override
+  Future<String> monFuseau() async => fuseau;
+
+  @override
+  Future<List<Creneau>> disponibilites(String profilId) async =>
+      creneaux[profilId] ?? const <Creneau>[];
+
+  @override
+  Future<void> poser({
+    required String profilId,
+    required Creneau creneau,
+  }) async {
+    _peutEchouer();
+    poses.add((profilId: profilId, creneau: creneau));
+    creneaux.putIfAbsent(profilId, () => <Creneau>[]).add(creneau);
+  }
+
+  @override
+  Future<void> retirer({
+    required String profilId,
+    required Creneau creneau,
+  }) async {
+    _peutEchouer();
+    retires.add((profilId: profilId, creneau: creneau));
+    creneaux[profilId]?.removeWhere(
+      (Creneau c) => c.jour == creneau.jour && c.heure == creneau.heure,
+    );
+  }
+
+  @override
+  Future<List<Seance>> seances() async => seancesRendues;
+
+  @override
+  Future<List<Affectation>> affectations() async => affectationsRendues;
 }
 
 /// Un selecteur de fichier qui rend toujours la meme piece.
