@@ -614,9 +614,19 @@ declare
   v_fin timestamptz;
   v_id uuid;
 begin
-  select ended_at into v_fin from public.sessions
-  where teacher_id = 'cccccccc-0000-0000-0000-000000000001'
-  order by started_at limit 1;
+  -- La seance d'Amina, materialisee le lundi 17h par S2a : c'est la seule
+  -- seance d'Omar dont l'heure suivante est libre a coup sur, le lundi ne
+  -- portant rien d'autre. `order by started_at limit 1` sur toutes ses seances
+  -- tombait sinon sur une seance du jeudi (S3, heures 9 a 13, collees) des que
+  -- le prochain jeudi precede le prochain lundi, trois jours sur sept : ce
+  -- controle etait alors vert le week-end et rouge du mardi au jeudi. Un
+  -- controle vrai seulement certains jours n'est pas un controle.
+  select s.ended_at into v_fin
+  from public.sessions s
+  join public.session_participants sp on sp.session_id = s.id
+  where s.teacher_id = 'cccccccc-0000-0000-0000-000000000001'
+    and sp.profile_id = 'aaaaaaaa-0000-0000-0000-000000000002'
+  order by s.started_at limit 1;
 
   -- Defaut 3.9 : avec les bornes fermees de l'etape 1, cette seance collee a la
   -- precedente etait refusee comme un chevauchement.

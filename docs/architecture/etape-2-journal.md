@@ -325,16 +325,17 @@ rien d'autre. Il sert de preuve du système.
 | `flutter test` | **420 tests**, tous verts | 418 |
 | `dart run tool/verifier_jetons.dart` | **94 fichiers**, aucune violation | 94 |
 | `scenarios_etape3.sql` | 34 contrôles verts | 34 |
-| `scenarios_etape4.sql` | **rouge sur ce poste ce 7 septembre** : S7b échoue sur `sessions_no_teacher_overlap` | 39 verts |
+| `scenarios_etape4.sql` | 39 contrôles verts, **après un correctif à part** (voir ci-dessous) | 39 verts |
 
-⚠ **`scenarios_etape4.sql` n'est pas de la responsabilité de R1** et R1 n'y touche
-aucun octet. Le contrôle S7b (« deux cours qui s'enchaînent ») insère une séance
-à l'heure `v_fin` du premier cours de l'enseignant `cccc…01`, et cette heure
-tombe aujourd'hui sur le début d'une séance déjà matérialisée : violation
-d'exclusion. C'est la même fragilité horodatée que ce journal signale déjà pour
-le contrôle « Feed », « vert le 6 septembre, rouge le 7 à 00h23 locales » : un
-contrôle vrai seulement certains jours n'est pas un contrôle. À corriger dans le
-fichier de scénarios, hors lot R. Sur la CI (UTC), le harnais reste vert.
+⚠ **S7b de `scenarios_etape4.sql` était rouge sur ce poste**, et R1 n'y touchait
+aucun octet. Le contrôle prenait `order by started_at limit 1` sur toutes les
+séances de l'enseignant `cccc…01` et insérait une séance juste après : dès que le
+prochain jeudi précède le prochain lundi (mardi à jeudi), cette séance tombait
+sur une séance de S3 déjà en place, collision. Exactement la fragilité horodatée
+que ce journal signalait déjà pour le contrôle « Feed », « vert le 6 septembre,
+rouge le 7 à 00h23 locales ». Corrigé dans un **commit à part**, hors lot R : S7b
+cible désormais la séance d'Amina du lundi 17 h, la seule dont l'heure suivante
+est libre à coup sûr. Le harnais passe 34 puis 39 sur ce poste comme sur la CI.
 
 ---
 
