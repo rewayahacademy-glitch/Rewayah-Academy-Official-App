@@ -165,10 +165,17 @@ de le corriger. C'est cosmetique et c'est voulu : l'identifiant date la ligne,
 il ne decrit pas son role d'aujourd'hui.
 
 ⚠ **Ce que cet admin voit reellement aujourd'hui** : sa racine
-`/admin/tableau-de-bord` rend `EcranAConstruire`, un ecran vide — `ADM-01` est
-justement le lot L9, en cours. Le seul ecran d'administration reellement bati
-est `/admin/dossiers`. L'acces admin ouvre donc les donnees, pas encore les
-interfaces.
+`/admin/tableau-de-bord` rend `EcranAConstruire`, un ecran vide — `ADM-01` etait
+justement le lot L9, alors en cours. Le seul ecran d'administration reellement
+bati etait `/admin/dossiers`. L'acces admin ouvrait donc les donnees, pas encore
+les interfaces.
+
+**Depuis, le lot L9 est fermé** : `ADM-01` remplace ce placeholder et `ADM-06`
+est déclarée sur `/admin/demandes`. Mais **la production sert toujours la build
+de `c5a511f`**, c'est-à-dire L8 : tant que la promotion de la section 7.1 n'a
+pas été lancée, un admin connecté à l'adresse stable voit encore l'écran vide.
+Le code et ce qui est en ligne ne disent pas la même chose, et c'est ce qui est
+en ligne qui compte pour juger de ce que voit l'opérateur.
 
 **Et c'est pourquoi le compte est repasse en `guardian` le meme jour**, a la
 demande de l'operateur, qui n'avait vu qu'un ecran a construire. Etat courant :

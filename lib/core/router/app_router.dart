@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/_dev/galerie/galerie_page.dart';
 import '../../features/accueil_eleve/accueil_eleve_page.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
+import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
+import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
@@ -180,11 +182,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.adminTableauDeBord,
         builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.admin.tableauDeBord),
+            const TableauDeBordPage(),
       ),
       GoRoute(
         path: Routes.adminDossiers,
         builder: (BuildContext _, GoRouterState _) => const DossiersPage(),
+      ),
+      GoRoute(
+        path: Routes.adminDemandes,
+        builder: (BuildContext _, GoRouterState _) => const DemandesPage(),
       ),
       GoRoute(
         path: Routes.adminAttribution,

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // dans `misc.dart`, alors que `ProviderScope.overrides` en attend une liste.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
@@ -500,11 +501,75 @@ class FauxServiceMatching implements ServiceMatching {
   }
 }
 
+/// Un service d'administration en memoire.
+///
+/// Le dernier des sept services a en recevoir un : personne n'en avait eu
+/// besoin avant `ADM-01`, dont le scenario 11 se mesure precisement par un test
+/// de widget.
+class FauxServiceAdmin implements ServiceAdmin {
+  /// Les six compteurs rendus. **Tous a zero par defaut**, parce que c'est
+  /// l'etat que l'invariant I9 demande de savoir afficher.
+  IndicateursAdmin indicateursRendus = const IndicateursAdmin(
+    dossiersEnAttente: 0,
+    foyersSansEnseignant: 0,
+    rapportsManquants: 0,
+    incidents24h: 0,
+    comptesEchus: 0,
+    demandesEnAttente: 0,
+  );
+
+  /// La file rendue.
+  List<Demande> file = const <Demande>[];
+
+  /// Ce que la lecture des compteurs doit jeter.
+  Object? erreurIndicateurs;
+
+  /// Ce que la lecture de la file doit jeter.
+  Object? erreurFile;
+
+  /// Les verdicts rendus, dans l'ordre.
+  final List<({String demandeId, bool accepte, String? motif})> verdicts =
+      <({String demandeId, bool accepte, String? motif})>[];
+
+  @override
+  Future<IndicateursAdmin> indicateurs() async {
+    final Object? erreur = erreurIndicateurs;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return indicateursRendus;
+  }
+
+  @override
+  Future<List<Demande>> demandesEnAttente() async {
+    final Object? erreur = erreurFile;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return file;
+  }
+
+  @override
+  Future<void> decider({
+    required String demandeId,
+    required bool accepte,
+    String? motif,
+  }) async {
+    verdicts.add((demandeId: demandeId, accepte: accepte, motif: motif));
+  }
+}
+
 /// Un service de regles en memoire.
 class FauxServiceRegles implements ServiceRegles {
   /// Les regles rendues, par profil.
   final Map<String, List<RegleProfil>> parProfil =
       <String, List<RegleProfil>>{};
+
+  /// Les surcharges closes rendues, par profil.
+  final Map<String, List<SurchargeClose>> historiqueParProfil =
+      <String, List<SurchargeClose>>{};
 
   /// Les regles posees.
   final List<({String profilId, CleRegle cle, int valeur, String motif})> posees =
@@ -529,6 +594,10 @@ class FauxServiceRegles implements ServiceRegles {
   @override
   Future<List<RegleProfil>> regles(String profilId) async =>
       parProfil[profilId] ?? const <RegleProfil>[];
+
+  @override
+  Future<List<SurchargeClose>> historique(String profilId) async =>
+      historiqueParProfil[profilId] ?? const <SurchargeClose>[];
 
   @override
   Future<void> poser({

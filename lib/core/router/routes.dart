@@ -112,6 +112,13 @@ abstract final class Routes {
   /// Validation des dossiers d'identite.
   static const String adminDossiers = '/admin/dossiers';
 
+  /// Demandes des quatre parties, et feuille de regles de l'eleve concerne.
+  ///
+  /// **La seule route que l'etape 4 avait annoncee**, `ADM-06` etant le seul
+  /// ecran vraiment nouveau de l'etape : la notion de regle par eleve n'existait
+  /// dans aucune spec d'origine, elle nait de l'ADR-017.
+  static const String adminDemandes = '/admin/demandes';
+
   /// Attribution manuelle.
   static const String adminAttribution = '/admin/attribution';
 

@@ -223,8 +223,12 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
               .first;
     final bool auPlafond = plafond > 0 && suivis >= plafond;
 
-    final List<EleveEnAttente> eleves =
-        feed.value ?? const <EleveEnAttente>[];
+    // L'anciennete ordonne la liste ici, et non dans la requete : sans ce tri,
+    // la famille qui attend depuis le plus longtemps se retrouvait en bas, ce
+    // qui vide le matching de son interet.
+    final List<EleveEnAttente> eleves = parAnciennete(
+      feed.value ?? const <EleveEnAttente>[],
+    );
 
     return ListView(
       padding: EdgeInsets.all(metriques.marge),

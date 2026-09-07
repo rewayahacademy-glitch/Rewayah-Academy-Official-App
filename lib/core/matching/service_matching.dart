@@ -129,6 +129,18 @@ class Demande {
   final DateTime creeeLe;
 }
 
+/// Le feed, de la famille qui attend depuis le plus longtemps a la plus
+/// recente.
+///
+/// **L'ordre appartient a l'ecran, pas a la requete.** Il vivait dans le seul
+/// `.order()` de la lecture, dont le sens par defaut est l'inverse de celui
+/// qu'on voulait ; il se mesure maintenant la ou il se voit, et une lecture qui
+/// rendrait ses lignes dans n'importe quel ordre ne changerait plus rien a ce
+/// que `ENS-06` affiche.
+List<EleveEnAttente> parAnciennete(List<EleveEnAttente> feed) =>
+    List<EleveEnAttente>.of(feed)
+      ..sort((EleveEnAttente a, EleveEnAttente b) => a.depuis.compareTo(b.depuis));
+
 /// Le matching, cote enseignant, et les demandes des quatre parties.
 abstract interface class ServiceMatching {
   /// Les eleves sans enseignant dont un creneau croise les miens.
@@ -169,7 +181,14 @@ class ServiceMatchingSupabase implements ServiceMatching {
         .select()
         // Anciennete d'abord : sans ce tri, un eleve peut rester invisible en
         // bas de liste indefiniment, ce qui viderait le matching de son interet.
-        .order('depuis');
+        //
+        // **Le sens s'ecrit.** `order()` de postgrest trie en DESCENDANT quand
+        // on ne dit rien : ecrit `.order('depuis')`, ce feed rendait la famille
+        // qui attend depuis le moins longtemps en premier, et enfoncait au bas
+        // de la liste celle qui attend depuis le plus longtemps. Exactement le
+        // defaut que le commentaire ci-dessus dit prevenir, et la vue ne trie
+        // rien de son cote.
+        .order('depuis', ascending: true);
     return lignes.map(EleveEnAttente.depuisJson).toList();
   }
 

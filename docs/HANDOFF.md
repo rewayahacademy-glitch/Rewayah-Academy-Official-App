@@ -1,6 +1,6 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **7 septembre 2026**, fin du lot **L8** de l'étape 4.
+> Dernière passation : **7 septembre 2026**, fin du lot **L9** de l'étape 4.
 > Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
 
 ## 1. Le projet actif est celui-ci
@@ -35,8 +35,8 @@ prières**. Découpage en onze lots, un lot par commit.
 | L6 | `ENS-02` la journée en une colonne | fait |
 | L7 | `ELV-02` et ses six états | fait |
 | L8 | `TUT-01`, `TUT-05`, demandes du tuteur | fait |
-| **L9** | **`ADM-01`, `ADM-06`** | **à faire, commencer ici** |
-| L10 | Vérifications de fin d'étape, documentation, `PROGRESS.md` | |
+| L9 | `ADM-01`, `ADM-06` | fait |
+| **L10** | **Vérifications de fin d'étape, documentation, `PROGRESS.md`** | **à faire, commencer ici** |
 
 Le démarrage à froid, scénario 14, **n'est pas mesurable sur ce poste** : aucune
 cible ne se construit ni ne se lance. Ce n'est pas du travail en retard, c'est
@@ -54,64 +54,51 @@ une question d'équipement, détaillée dans le journal et dans `PROGRESS.md`.
 Ne pas rouvrir l'historique des étapes 1 à 3 : leurs journaux ne servent qu'en
 cas de doute sur un point précis.
 
-## 4. Reprendre : le lot L9
+## 4. Reprendre : le lot L10
 
-Les deux écrans de l'administration. D'après la spécification section 5 :
+Le dernier lot de l'étape 4. Il n'ajoute aucun écran : il **vérifie et
+consigne**. Trois choses, dans cet ordre.
 
-- **`ADM-01`, centre de commande.** Cinq compteurs, plus un sixième arrivé par
-  l'ADR-017, les demandes en attente de décision. **Le zéro s'affiche comme les
-  autres valeurs**, il ne fait pas disparaître son compteur : c'est l'invariant
-  I9 et le scénario 11, qui se mesure par un test de widget. Sous les compteurs,
-  la liste « à traiter en premier », ordonnée par ancienneté, chaque ligne menant
-  d'un tap à l'écran d'action. Il remplace le placeholder de
-  `Routes.adminTableauDeBord`.
-- **`ADM-06`, demandes et règles.** **Seul écran vraiment nouveau de l'étape**,
-  et sa route reste à déclarer. Deux usages, un seul écran, dans le registre de
-  `ADM-02` : une file de demandes prise une par une, deux verdicts, motif
-  obligatoire pour un refus ; et la feuille de règles d'un élève, où chaque
-  valeur affiche **côte à côte** le défaut de la plateforme et la valeur
-  effective, pour que l'écart se voie sans calcul mental. L'administration change
-  une règle à la volée depuis cette feuille, sans qu'une demande existe : c'est la
-  consigne, une demande n'est qu'un des deux chemins. L'historique des surcharges
-  closes reste affiché sous la valeur courante.
+1. **Rejouer les cinq contrôles de la section 5**, sur un conteneur neuf, et
+   inscrire les chiffres obtenus dans `etape-4-journal.md`. Les mesures de L9
+   sont dans ce fichier : elles servent de référence, pas de dispense.
+2. **Mettre `docs/PROGRESS.md` à jour.** Il ment sur trois points, et
+   `MISE-EN-SERVICE.md` dit lesquels dans son propre en-tête : les lignes C, D
+   et M du tableau d'onboarding, et la ligne « Plateforme Android 37 » des
+   décisions en attente, qui est à **retirer** (ce paquet n'existe pas sous ce
+   nom, l'échec venait du magasin de certificats). À reporter aussi : l'étape 4
+   est close côté écrans, et le scénario 14 reste non mesurable faute
+   d'équipement, pas faute de code.
+3. **Relire les dix-sept scénarios** du journal. Seize sont verts ; le
+   quatorzième, le démarrage à froid, ne l'est pas et ne peut pas l'être sur ce
+   poste. Ne pas le cocher. La PWA étant en ligne, il se ferme désormais en
+   installant l'application sur un vrai téléphone d'entrée de gamme, ce qui est
+   à la main de l'opérateur.
 
-Cela ferme le parcours 6 du tableau de la section 1 de la spécification, et rend
-enfin visibles les demandes que `ENS-06` et `TUT-05` déposent déjà.
+Ce que L10 **ne doit pas** faire : ouvrir l'étape 5. La salle, le pre-flight et
+`ELV-03` / `ENS-03` sont une autre étape, avec sa propre spécification à écrire.
 
-Tout est en place côté données, **ne rien réécrire** :
+Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 
-| Ce dont L9 a besoin | Où c'est déjà fait |
-| :--- | :--- |
-| Les six compteurs en une lecture | `indicateurs_admin()`, `lib/core/admin/service_admin.dart` |
-| La file des demandes en attente | `ServiceAdmin.demandesEnAttente`, même fichier, et le modèle `Demande` de `lib/core/matching/service_matching.dart` |
-| Trancher une demande | `ServiceAdmin.decider`, écrit en L2 et **sans aucun écran qui l'appelle** : c'est l'écran que L9 apporte, pas le service |
-| Poser et clore une règle | `ServiceRegles.poser` et `.clore`, `lib/core/regles/service_regles.dart`, sans appelant à ce jour non plus |
-| Valeur effective et valeur de plateforme, côte à côte | `RegleProfil`, déjà porteur des deux, et `reglesProfilProvider` |
-| La valeur d'une règle pour un profil | `valeurRegleProvider` — **par `regle_effective()`, jamais par `regles_profil_v`**, voir le journal L6 |
-| Les dossiers à valider, pour la ligne « à traiter » | `ServiceValidation`, écrit à l'étape 3, et l'écran `ADM-02` qui existe |
-
-Les modèles les plus proches : `dossiers_page.dart` pour une file avec verdict et
-motif obligatoire, et la feuille `_FeuilleDemande` de `creneaux_page.dart` puis
-`FeuilleDemandeTuteur` de `reglages_enfant_page.dart` pour le formulaire de
-demande. Les trois se ressemblent volontairement.
-
-**`ServiceAdmin` n'a pas encore de faux** dans `test/support/harnais.dart`,
-contrairement aux six autres services : personne n'en avait eu besoin. C'est la
-première chose à écrire, sans quoi `ADM-01` n'est pas mesurable, et le scénario
-11 demande précisément un test de widget.
-
-Les libellés vont dans `assets/i18n/fr.i18n.json`, puis `dart run slang`.
-Aucune chaîne en dur.
+- **`0006` n'est toujours pas jouée sur la base réelle.** Elle est écrite,
+  commitée, et le harnais la rejoue à la suite de `0005` sans rien casser. Elle
+  porte le correctif de la semaine UTC et la colonne de `profils_du_foyer_v`.
+  Tant qu'elle n'est pas passée, `ENS-06` reste faux deux heures par semaine en
+  production, et `TUT-01` lit une vue sans sa colonne. Le SQL à coller est dans
+  `MISE-EN-SERVICE.md` section 5.
+- **La production sert la build de `c5a511f`**, c'est-à-dire L8. Les deux écrans
+  d'administration de L9 n'y sont pas. La ligne de promotion est à l'opérateur,
+  `MISE-EN-SERVICE.md` section 7.1.
 
 ## 5. Mesures de référence, à ne pas faire régresser
 
-Relevées le 7 septembre 2026, après L8 :
+Relevées le 7 septembre 2026, après L9 :
 
 | Contrôle | Valeur |
 | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème |
-| `flutter test` | **253 tests**, tous verts |
-| `dart run tool/verifier_jetons.dart` | **75 fichiers**, aucune violation |
+| `flutter test` | **277 tests**, tous verts |
+| `dart run tool/verifier_jetons.dart` | **77 fichiers**, aucune violation |
 | `scenarios_etape3.sql` | **34 contrôles** verts |
 | `scenarios_etape4.sql` | **39 contrôles** verts |
 
@@ -142,7 +129,8 @@ docker run -d --name ra_e5 -e POSTGRES_HOST_AUTH_METHOD=trust `
 # boucler sur pg_isready, puis :
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -q -f /sql/tests/stub_auth.sql
 # 0001_fondations, 0002_statut_attente_kyc, 0003_profil_defaut_attente,
-# 0004_inscription_kyc_appairage, 0005_dashboards_affectation_regles
+# 0004_inscription_kyc_appairage, 0005_dashboards_affectation_regles,
+# 0006_rattrapage_semaine_utc_et_foyer
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -q -f /sql/migrations/0001_fondations.sql
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape3.sql
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape4.sql
@@ -155,9 +143,13 @@ Le compte de contrôles se lit en comptant les `NOTICE`. Un `docker rm -f` dont 
 ligne contient aussi le chemin du volume peut être refusé par la protection de
 chemins : le passer sur sa propre ligne.
 
-`0005` n'est appliquée nulle part en réel, l'étape D restant ouverte : elle se
-**corrige sur place**, comme elle l'a déjà été quatre fois. Le journal dit
-pourquoi à chaque fois.
+⚠ **La convention « `0005` se corrige sur place » est morte.** Elle valait tant
+que la migration n'était appliquée nulle part ; depuis le 7 septembre, `0001` à
+`0005` sont inscrites dans `supabase_migrations` du projet réel, qui ne les
+rejouera jamais. Toute correction posée dans `0005` y resterait donc invisible.
+Tout changement structurel passe désormais par `0006` et suivantes, et `0006`
+existe déjà : le harnais la rejoue à la suite de `0005`, sans effet sur une base
+neuve puisqu'elle n'est faite que de `create or replace`.
 
 ## 7. Ce qui casse sur ce poste, et n'est pas de votre fait
 
@@ -201,8 +193,9 @@ Ce qui change pour vous :
    `gggmtelinlpseweouyav`, et inscrites dans `supabase_migrations`. La
    convention « `0005` se corrige sur place » est morte : tout changement
    structurel passe désormais par une migration `0006` et suivantes. Les deux
-   objets que L8 a modifiés dans `0005` **ne sont pas encore sur la base
-   réelle** ; le bloc SQL à coller est dans `MISE-EN-SERVICE.md`, section 5.
+   objets que L8 a modifiés dans `0005` **ne sont toujours pas sur la base
+   réelle** : ils vivent dans `supabase/migrations/0006_rattrapage_semaine_utc_et_foyer.sql`,
+   qui reste à jouer. Le même bloc SQL est dans `MISE-EN-SERVICE.md`, section 5.
 2. **L'application tourne sur <https://rewayah-academy.vercel.app>**, construite
    depuis un commit vert, jamais depuis l'arbre de travail.
 3. **Deux commandes restent à la main de l'opérateur** (hook de jeton et

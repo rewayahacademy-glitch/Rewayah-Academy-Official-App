@@ -265,5 +265,54 @@ void main() {
       expect(find.text(t.creneaux.attendUnJour), findsOneWidget);
       expect(find.text(t.creneaux.attendDepuis(jours: '6')), findsOneWidget);
     });
+
+    test('parAnciennete rend la plus longue attente en premier', () {
+      final List<EleveEnAttente> range = parAnciennete(<EleveEnAttente>[
+        _eleve(jours: 0),
+        _eleve(id: 'e3', prenom: 'Fatou', jours: 6),
+        _eleve(id: 'e2', prenom: 'Ibrahim', jours: 1),
+      ]);
+
+      expect(
+        range.map((EleveEnAttente e) => e.prenom).toList(),
+        <String>['Fatou', 'Ibrahim', 'Khadija'],
+      );
+    });
+
+    testWidgets('la famille qui attend le plus longtemps est en haut', (
+      WidgetTester tester,
+    ) async {
+      // Le feed arrive volontairement dans le desordre. L'ordre appartient a
+      // l'ecran : il vivait dans le seul `.order()` de la lecture, dont le sens
+      // par defaut est DESCENDANT, ce qui enfoncait au bas de la liste la
+      // famille qui attend depuis le plus longtemps, c'est-a-dire exactement
+      // celle que ce tri existe pour faire remonter.
+      final FauxServiceMatching matching = FauxServiceMatching()
+        ..feed = <EleveEnAttente>[
+          _eleve(jours: 0),
+          _eleve(id: 'e3', prenom: 'Fatou', jours: 6, jour: 4),
+          _eleve(id: 'e2', prenom: 'Ibrahim', jours: 1, jour: 3),
+        ];
+
+      await tester.pumpWidget(
+        hote(
+          const CreneauxPage(),
+          surcharges: _surcharges(
+            matching: matching,
+            planning: FauxServicePlanning(),
+            regles: _reglesAvecPlafond(5),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _ouvrirOngletEleves(tester);
+
+      final double yFatou = tester.getTopLeft(find.text('Fatou')).dy;
+      final double yIbrahim = tester.getTopLeft(find.text('Ibrahim')).dy;
+      final double yKhadija = tester.getTopLeft(find.text('Khadija')).dy;
+
+      expect(yFatou, lessThan(yIbrahim));
+      expect(yIbrahim, lessThan(yKhadija));
+    });
   });
 }

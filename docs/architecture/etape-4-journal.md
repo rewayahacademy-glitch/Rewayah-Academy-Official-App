@@ -5,7 +5,7 @@
 > `docs/architecture/etape-4-dashboards.md` reste la spécification ; ce journal
 > est son compte rendu. Mis à jour à la fin de chaque lot, jamais en bloc.
 
-## État : L8 fait, le foyer voit ses enfants et règle leur profil
+## État : L9 fait, l'administration voit ce qui bloque et tranche
 
 | Lot | Contenu | Fait |
 | :-- | :--- | :-: |
@@ -18,7 +18,7 @@
 | L6 | `ENS-02` la journée | x |
 | L7 | `ELV-02` et ses six états | x |
 | L8 | `TUT-01`, `TUT-05`, demandes des parties | x |
-| L9 | `ADM-01`, `ADM-06` | |
+| L9 | `ADM-01`, `ADM-06` | x |
 | L10 | Vérifications de fin d'étape et documentation | |
 
 ## Point de départ, mesuré le 6 septembre 2026
@@ -76,7 +76,7 @@ mesuré, règle constante depuis l'étape 1.
 | 8 | Un tuteur ne lit plus les disponibilités des enseignants étrangers à son foyer | vert | S8a, S8b |
 | 9 | Élève et enseignant affichent la même minute de prière | vert | `test/priere/horaires_priere_test.dart`, plus les contrôles de lecture en base |
 | 10 | Un ajustement d'une minute déplace l'entrée des deux côtés | vert | Même fichier, dans les deux sens, et sans déplacer les quatre autres prières |
-| 11 | Les compteurs de `ADM-01` affichent zéro sans disparaître | à mesurer | L9. L'exactitude des six compteurs est déjà vérifiée en SQL |
+| 11 | Les compteurs de `ADM-01` affichent zéro sans disparaître | vert | `test/features/tableau_de_bord_test.dart`, plus la mesure inverse et le cas de la lecture en échec |
 | 12 | `ENS-06` ne rend pas « Prendre » au plafond | vert | `test/features/creneaux_test.dart`, plus le contrôle inverse avec un plafond surchargé |
 | 13 | `ELV-02` affiche ses six états | vert | `test/features/accueil_eleve_test.dart`, un test par état, plus deux mesures inverses |
 | 14 | Démarrage à froid mesuré sur `ELV-02` réel | **non mesurable ici** | L7 a livré l'écran ; aucune cible de mesure sur ce poste. Voir plus bas, « Le démarrage à froid n'a pas pu être mesuré » |
@@ -290,6 +290,128 @@ même constante.
   de réponse dans un délai.
 - **Aucun aperçu de la photo avant envoi.** La photo choisie part telle quelle,
   avec son refus de taille avant l'envoi. Un recadrage est un écran à lui seul.
+
+## Mesures du lot L9
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | **277 tests**, tous verts, dont 24 nouveaux : 9 sur `ADM-01`, 13 sur `ADM-06`, 2 sur le tri du feed de `ENS-06` |
+| `dart run tool/verifier_jetons.dart` | **77 fichiers**, aucune violation |
+| `0001` à `0006` sur une base nue | appliquées, aucune erreur |
+| `scenarios_etape3.sql` puis `scenarios_etape4.sql` | 34 puis 39 contrôles, tous verts |
+
+Troisième lot de l'étape à ne pas toucher la base, après L6 et L7 : tout ce dont
+`ADM-01` et `ADM-06` avaient besoin était écrit en L1 et L2, y compris
+`ServiceAdmin.decider`, `ServiceRegles.poser` et `.clore`, qui n'avaient
+jusqu'ici **aucun appelant**. Une seule lecture manquait, l'historique des
+surcharges closes, détaillée plus bas.
+
+`0006` est désormais rejouée par le harnais, à la suite de `0005` : elle est
+faite de deux `create or replace`, donc sans effet sur une base neuve, et le
+compte de contrôles reste identique. C'est ce qui prouve qu'elle est sans
+danger là où elle sert vraiment, la base réelle, qui ne l'a **toujours pas
+jouée**.
+
+L'étape ferme ainsi le parcours 6 du tableau de la section 1 de la
+spécification, et rend visibles les demandes que `ENS-06` et `TUT-05`
+déposaient depuis L4 et L8 sans que personne puisse les lire.
+
+### Le tri du feed de `ENS-06` était l'exact inverse de sa règle
+
+Défaut de L4, trouvé en écrivant la liste « à traiter en premier » de `ADM-01`,
+qui repose sur la même grandeur : l'ancienneté.
+
+`elevesEnAttente()` lisait `.order('depuis')`, sous un commentaire qui dit
+« Ancienneté d'abord : sans ce tri, un élève peut rester invisible en bas de
+liste indéfiniment ». **`order()` de postgrest trie en descendant quand on ne
+dit rien** : `ascending` vaut `false` par défaut. Le feed rendait donc la
+famille qui attend depuis le moins longtemps en premier, et enfonçait au bas de
+la liste celle qui attend depuis le plus longtemps, c'est-à-dire exactement
+celle que le tri existe pour faire remonter. La vue ne trie rien de son côté,
+il n'y avait donc aucun garde-fou derrière.
+
+Le défaut ne se voyait pas : la liste était bien triée, et rien ne dit à l'œil
+dans quel sens elle devrait l'être. Il fallait deux familles d'ancienneté
+différente et savoir laquelle devait être en haut.
+
+Deux corrections, pas une :
+
+1. La requête écrit son sens, `ascending: true`, et la lecture de l'historique
+   des règles écrit le sien, `ascending: false`, alors même que c'est le défaut.
+   **Un sens de tri se lit ; il ne se déduit pas de la documentation d'un
+   paquet.**
+2. Surtout, **l'ordre a changé de place** : il vit maintenant dans
+   `parAnciennete()`, fonction pure appelée par `ENS-06`, et non plus dans un
+   paramètre de requête. C'est ce qui le rend mesurable : le faux service ne
+   passe par aucun client Postgrest, donc aucun test ne pouvait attraper ce
+   défaut tant qu'il vivait dans la requête. Le test donne maintenant un feed
+   volontairement en désordre et mesure l'ordre à l'écran.
+
+Les quatre autres `.order()` du dépôt ont été relus : `seances()`,
+`affectations()`, la grille de disponibilités et les appareils appairés. Toutes
+sont en descendant elles aussi, et **aucune n'est un défaut** : chaque
+consommateur retrie en Dart (`prochainCours`, `seanceAnnuleeDuJour`,
+`construireJournee`) ou lit la liste par `where` et `any`, sans dépendre de son
+ordre. Elles n'ont donc pas été touchées : ce lot corrige un défaut, il ne
+refactorise pas ce qui marche.
+
+### Une lecture manquait, et une seule
+
+L'historique des surcharges closes. `regles_profil_v` ne joint que la surcharge
+**active**, parce que c'est elle seule qui décide de la valeur effective ; la
+migration le dit dans son propre commentaire. Un écran qui aurait cherché les
+surcharges closes dans cette vue n'aurait rien trouvé, sans erreur : même
+famille de piège qu'à L6, où la pause lue dans cette vue rendait zéro.
+
+`ServiceRegles.historique()` lit donc la table `rule_overrides`, où la RLS
+`rule_overrides_parties_read` borne la lecture aux mêmes parties que la vue.
+
+### `ADM-01` ne rend que deux des six compteurs en lignes, et c'est mesuré
+
+La liste « à traiter en premier » mêle deux sources, les dossiers et les
+demandes, ordonnées par la seule ancienneté : un dossier déposé le 1er passe
+devant une demande du 4, qui passe devant un dossier du 7. La nature de la ligne
+n'entre jamais dans le tri.
+
+Les quatre autres compteurs n'ont **aucune ligne**, et ce n'est pas un oubli :
+un foyer sans enseignant, un cahier manquant, un incident et un accès échu se
+comptent en base, mais aucune fonction ne rend la ligne correspondante.
+`ADM-05`, l'attribution manuelle, et le journal d'audit sont hors de l'étape 4.
+Une ligne qui ne mènerait nulle part vaut moins qu'un compteur qui dit combien,
+et l'écran le dit en toutes lettres sous la liste.
+
+### La file des dossiers peut échouer sans emporter les compteurs
+
+`read_kyc_documents()` refuse la lecture quand le genre du lecteur est inconnu,
+et `ADM-01` lit cette file pour ses lignes de dossiers. Les six compteurs, eux,
+viennent d'`indicateurs_admin()` : les perdre en même temps ferait croire à une
+panne générale là où il manque une information que l'administrateur peut
+fournir. Les deux lectures sont donc séparées à l'écran, et un test le mesure.
+
+Le cas inverse compte autant : une lecture des compteurs en échec **ne rend pas
+six zéros**. Six zéros sur une lecture ratée seraient un mensonge tranquille,
+l'écran annonçant « rien à faire » alors qu'il n'a rien lu. C'est la même règle
+qu'à l'étape 3 : une absence n'est pas un échec, et un échec n'est pas une
+absence.
+
+### Ce que L9 ne rend pas, et ce n'est pas un oubli
+
+- **Aucun choix libre d'élève sur `ADM-06`.** La feuille de règles s'ouvre sur
+  le sujet de la demande en cours. Ouvrir celle d'un élève quelconque
+  demanderait une liste d'élèves côté administration, et **aucune fonction n'en
+  rend une** : `eleves_en_attente_v` est bornée à l'enseignant qui regarde,
+  `profils_du_foyer_v` au foyer, et `ADM-05` est hors étape. La consigne de
+  l'ADR-017 est honorée là où elle se joue : depuis la feuille, l'administration
+  change **n'importe laquelle** des règles de l'élève, y compris celles que la
+  demande ne vise pas, et sans qu'aucune demande existe pour elles. Un test le
+  mesure en montant la feuille seule, sans aucune demande.
+- **Aucune notification à la partie qui a demandé.** Le canal n'existe pas,
+  `device_tokens` est vide et l'étape D reste ouverte. L'écran ne promet donc
+  aucun délai de réponse.
+- **Aucun historique des demandes tranchées.** `demandes_en_attente()` ne rend
+  que les demandes en attente, ce qui est ce dont la file a besoin. Les
+  décisions passées se lisent au journal d'audit, qui est un écran à part.
 
 ## Pièges du lot L8
 

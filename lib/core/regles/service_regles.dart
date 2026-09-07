@@ -55,6 +55,61 @@ class RegleProfil {
   bool get surchargee => surchargeId != null;
 }
 
+/// Une surcharge close, telle que `rule_overrides` la conserve.
+///
+/// Une regle ne se supprime pas : « la seance durait 45 minutes ce jour-la » est
+/// une phrase qui doit se verifier six mois plus tard. `ADM-06` affiche donc ces
+/// lignes sous la valeur courante, avec les deux motifs : celui de la pose et
+/// celui de la cloture.
+@immutable
+class SurchargeClose {
+  /// Cree une surcharge close.
+  const SurchargeClose({
+    required this.id,
+    required this.cle,
+    required this.valeur,
+    required this.motif,
+    required this.poseeLe,
+    required this.closeLe,
+    required this.motifCloture,
+  });
+
+  /// Lit une ligne de `rule_overrides`.
+  factory SurchargeClose.depuisJson(Map<String, dynamic> json) {
+    final Object? valeur = json['value'];
+    return SurchargeClose(
+      id: json['id'] as String,
+      cle: CleRegle.depuisSql(json['key'] as String?),
+      valeur: valeur is num ? valeur.toInt() : 0,
+      motif: json['reason'] as String? ?? '',
+      poseeLe: DateTime.tryParse(json['created_at'] as String? ?? '')?.toLocal(),
+      closeLe: DateTime.tryParse(json['ended_at'] as String? ?? '')?.toLocal(),
+      motifCloture: json['end_reason'] as String? ?? '',
+    );
+  }
+
+  /// Identifiant de la surcharge.
+  final String id;
+
+  /// La regle concernee. `null` quand la base en expose une inconnue de ce code.
+  final CleRegle? cle;
+
+  /// Ce qu'elle valait.
+  final int valeur;
+
+  /// Pourquoi elle avait ete posee.
+  final String motif;
+
+  /// Depuis quand elle s'appliquait.
+  final DateTime? poseeLe;
+
+  /// Quand elle a cesse de s'appliquer.
+  final DateTime? closeLe;
+
+  /// Pourquoi elle a ete close. La base refuse une cloture sans motif.
+  final String motifCloture;
+}
+
 /// Les regles qui peuvent differer d'un profil a l'autre (ADR-017 section 2.4).
 ///
 /// **Seul chemin de lecture d'une regle.** Un ecran qui lirait une constante ou
@@ -66,6 +121,14 @@ abstract interface class ServiceRegles {
 
   /// Toutes les regles d'un profil, avec le defaut de plateforme en regard.
   Future<List<RegleProfil>> regles(String profilId);
+
+  /// Les surcharges closes de ce profil, la plus recente d'abord.
+  ///
+  /// **Elle ne se lit pas dans `regles_profil_v`** : la vue ne joint que la
+  /// surcharge active, parce que c'est elle seule qui decide de la valeur
+  /// effective. L'historique vit dans la table, ou la RLS le borne aux memes
+  /// parties.
+  Future<List<SurchargeClose>> historique(String profilId);
 
   /// Pose une regle sur un profil. Reserve a l'administration, et le motif est
   /// obligatoire : une regle sans motif ne se relit pas.
@@ -113,6 +176,21 @@ class ServiceReglesSupabase implements ServiceRegles {
   }
 
   @override
+  Future<List<SurchargeClose>> historique(String profilId) async {
+    final List<Map<String, dynamic>> lignes = await _client
+        .from('rule_overrides')
+        .select()
+        .eq('profile_id', profilId)
+        .not('ended_at', 'is', null)
+        // Le sens est ecrit, jamais laisse au defaut du client : `order()` de
+        // postgrest trie en DESCENDANT quand on ne dit rien, ce qui est
+        // l'inverse de ce que le nom laisse croire. Ici la plus recente
+        // d'abord, c'est bien ce qu'on veut, mais cela se lit.
+        .order('ended_at', ascending: false);
+    return lignes.map(SurchargeClose.depuisJson).toList();
+  }
+
+  @override
   Future<void> poser({
     required String profilId,
     required CleRegle cle,
@@ -149,6 +227,14 @@ final FutureProviderFamily<List<RegleProfil>, String> reglesProfilProvider =
     FutureProvider.family<List<RegleProfil>, String>(
       (Ref ref, String profilId) =>
           ref.watch(serviceReglesProvider).regles(profilId),
+    );
+
+/// Les surcharges closes d'un profil, la plus recente d'abord.
+final FutureProviderFamily<List<SurchargeClose>, String>
+historiqueReglesProvider =
+    FutureProvider.family<List<SurchargeClose>, String>(
+      (Ref ref, String profilId) =>
+          ref.watch(serviceReglesProvider).historique(profilId),
     );
 
 /// Ce qu'une lecture de regle demande : un profil et une regle.

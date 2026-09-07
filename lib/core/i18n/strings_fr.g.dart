@@ -57,6 +57,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$priere$fr priere = Traductions$priere$fr.internal(_root);
 	late final Traductions$eleveConnexion$fr eleveConnexion = Traductions$eleveConnexion$fr.internal(_root);
 	late final Traductions$dossiers$fr dossiers = Traductions$dossiers$fr.internal(_root);
+	late final Traductions$admin$fr admin = Traductions$admin$fr.internal(_root);
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
@@ -820,6 +821,17 @@ class Traductions$dossiers$fr {
 	String get erreur => 'La décision n\'a pas abouti. Réessayez dans un instant.';
 }
 
+// Path: admin
+class Traductions$admin$fr {
+	Traductions$admin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
+	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
+}
+
 // Path: vide
 class Traductions$vide$fr {
 	Traductions$vide$fr.internal(this._root);
@@ -985,6 +997,231 @@ class Traductions$galerie$fr {
 	String get modeStandard => 'Mode standard';
 }
 
+// Path: admin.tableau
+class Traductions$admin$tableau$fr {
+	Traductions$admin$tableau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Centre de commande'
+	String get titre => 'Centre de commande';
+
+	/// fr: 'Dossiers à valider'
+	String get dossiers => 'Dossiers à valider';
+
+	/// fr: 'Foyers sans enseignant'
+	String get foyers => 'Foyers sans enseignant';
+
+	/// fr: 'Cahiers manquants'
+	String get rapports => 'Cahiers manquants';
+
+	/// fr: 'Incidents (24 h)'
+	String get incidents => 'Incidents (24 h)';
+
+	/// fr: 'Accès échus'
+	String get comptes => 'Accès échus';
+
+	/// fr: 'Demandes à trancher'
+	String get demandes => 'Demandes à trancher';
+
+	/// fr: 'Les compteurs n'ont pas pu être lus. Réessayez dans un instant.'
+	String get compteursErreur => 'Les compteurs n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'À traiter en premier'
+	String get aTraiter => 'À traiter en premier';
+
+	/// fr: 'Rien à traiter'
+	String get aTraiterAucun => 'Rien à traiter';
+
+	/// fr: 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.'
+	String get aTraiterAucunDetail => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.';
+
+	/// fr: 'Les quatre autres compteurs se règlent ailleurs : ils n'ont pas encore d'écran d'action.'
+	String get aTraiterPortee => 'Les quatre autres compteurs se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.';
+
+	/// fr: 'La liste n'a pas pu être lue en entier. Les compteurs, eux, restent justes.'
+	String get listeErreur => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.';
+
+	/// fr: 'Dossier d'identité de {prenom}'
+	String ligneDossier({required Object prenom}) => 'Dossier d\'identité de ${prenom}';
+
+	/// fr: 'Changement d'enseignant pour {prenom}'
+	String ligneReaffectation({required Object prenom}) => 'Changement d\'enseignant pour ${prenom}';
+
+	/// fr: 'Plafond d'élèves de {prenom}'
+	String lignePlafond({required Object prenom}) => 'Plafond d\'élèves de ${prenom}';
+
+	/// fr: 'Changement de règle pour {prenom}'
+	String ligneRegle({required Object prenom}) => 'Changement de règle pour ${prenom}';
+
+	/// fr: 'Déposé aujourd'hui'
+	String get attenteAujourdhui => 'Déposé aujourd\'hui';
+
+	/// fr: 'En attente depuis 1 jour'
+	String get attenteUnJour => 'En attente depuis 1 jour';
+
+	/// fr: 'En attente depuis {jours} jours'
+	String attenteJours({required Object jours}) => 'En attente depuis ${jours} jours';
+}
+
+// Path: admin.demandes
+class Traductions$admin$demandes$fr {
+	Traductions$admin$demandes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demandes et règles'
+	String get titre => 'Demandes et règles';
+
+	/// fr: '{n} demande(s) en attente'
+	String restantes({required Object n}) => '${n} demande(s) en attente';
+
+	/// fr: 'Aucune demande en attente'
+	String get aucune => 'Aucune demande en attente';
+
+	/// fr: 'Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.'
+	String get aucuneDetail => 'Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.';
+
+	/// fr: 'Demandée le {date}, par {role}'
+	String faitePar({required Object date, required Object role}) => 'Demandée le ${date}, par ${role}';
+
+	/// fr: 'un tuteur'
+	String get roleGuardian => 'un tuteur';
+
+	/// fr: 'un enseignant'
+	String get roleTeacher => 'un enseignant';
+
+	/// fr: 'un élève autonome'
+	String get roleStudent => 'un élève autonome';
+
+	/// fr: 'l'administration'
+	String get roleAdmin => 'l\'administration';
+
+	/// fr: 'un contrôleur'
+	String get roleController => 'un contrôleur';
+
+	/// fr: 'une partie au dossier'
+	String get roleInconnu => 'une partie au dossier';
+
+	/// fr: 'Ce qui est demandé'
+	String get reclame => 'Ce qui est demandé';
+
+	/// fr: 'Changer l'enseignant de {prenom}'
+	String reclameReaffectation({required Object prenom}) => 'Changer l\'enseignant de ${prenom}';
+
+	/// fr: 'Porter le plafond à {valeur} élèves'
+	String reclamePlafond({required Object valeur}) => 'Porter le plafond à ${valeur} élèves';
+
+	/// fr: 'Porter {regle} à {valeur} min'
+	String reclameRegle({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min';
+
+	/// fr: 'Revoir {regle}'
+	String reclameRegleSansValeur({required Object regle}) => 'Revoir ${regle}';
+
+	/// fr: 'Motif invoqué'
+	String get motifDemande => 'Motif invoqué';
+
+	/// fr: 'Décision'
+	String get verdict => 'Décision';
+
+	/// fr: 'Accorder'
+	String get accorder => 'Accorder';
+
+	/// fr: 'Refuser'
+	String get refuser => 'Refuser';
+
+	/// fr: 'Ce qui motive ce refus, en une phrase'
+	String get motif => 'Ce qui motive ce refus, en une phrase';
+
+	/// fr: 'Un refus doit dire pourquoi : c'est la seule phrase que la partie recevra.'
+	String get motifRequis => 'Un refus doit dire pourquoi : c\'est la seule phrase que la partie recevra.';
+
+	/// fr: 'Accorder applique l'effet en base : l'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.'
+	String get effet => 'Accorder applique l\'effet en base : l\'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.';
+
+	/// fr: 'Chaque décision et chaque règle posée sont inscrites au journal d'audit, avec votre nom.'
+	String get journalisation => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.';
+
+	/// fr: 'Les règles de {prenom}'
+	String feuille({required Object prenom}) => 'Les règles de ${prenom}';
+
+	/// fr: 'La valeur de la plateforme et celle qui s'applique, côte à côte. Une règle se change ici sans qu'une demande existe.'
+	String get feuilleIntro => 'La valeur de la plateforme et celle qui s\'applique, côte à côte. Une règle se change ici sans qu\'une demande existe.';
+
+	/// fr: 'Durée d'une séance'
+	String get regleDuree => 'Durée d\'une séance';
+
+	/// fr: 'Durée minimale payable'
+	String get regleMinimum => 'Durée minimale payable';
+
+	/// fr: 'Pause entre deux cours'
+	String get reglePause => 'Pause entre deux cours';
+
+	/// fr: 'Plafond d'élèves'
+	String get reglePlafond => 'Plafond d\'élèves';
+
+	/// fr: 'Règle non reconnue'
+	String get regleInconnue => 'Règle non reconnue';
+
+	/// fr: 'Plateforme : {valeur}'
+	String plateforme({required Object valeur}) => 'Plateforme : ${valeur}';
+
+	/// fr: 'Appliquée : {valeur}'
+	String effective({required Object valeur}) => 'Appliquée : ${valeur}';
+
+	/// fr: '{valeur} min'
+	String minutes({required Object valeur}) => '${valeur} min';
+
+	/// fr: '{valeur} élèves'
+	String eleves({required Object valeur}) => '${valeur} élèves';
+
+	/// fr: 'Posée le {date} : {motif}'
+	String surchargeDepuis({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}';
+
+	/// fr: 'Cet élève suit la règle de la plateforme.'
+	String get sansSurcharge => 'Cet élève suit la règle de la plateforme.';
+
+	/// fr: 'Changer'
+	String get changer => 'Changer';
+
+	/// fr: 'Revenir à la règle de la plateforme'
+	String get clore => 'Revenir à la règle de la plateforme';
+
+	/// fr: 'Surcharges closes'
+	String get historique => 'Surcharges closes';
+
+	/// fr: '{valeur}, du {debut} au {fin}'
+	String historiqueLigne({required Object valeur, required Object debut, required Object fin}) => '${valeur}, du ${debut} au ${fin}';
+
+	/// fr: 'Posée : {motif}. Close : {cloture}.'
+	String historiqueMotifs({required Object motif, required Object cloture}) => 'Posée : ${motif}. Close : ${cloture}.';
+
+	/// fr: '{regle}, pour {prenom}'
+	String poserTitre({required Object regle, required Object prenom}) => '${regle}, pour ${prenom}';
+
+	/// fr: 'Clore la surcharge de {prenom}'
+	String cloreTitre({required Object prenom}) => 'Clore la surcharge de ${prenom}';
+
+	/// fr: 'Pourquoi ce changement ?'
+	String get poserMotif => 'Pourquoi ce changement ?';
+
+	/// fr: 'Une règle sans motif ne se relit pas six mois plus tard.'
+	String get poserMotifRequis => 'Une règle sans motif ne se relit pas six mois plus tard.';
+
+	/// fr: 'Poser la règle'
+	String get poserEnvoyer => 'Poser la règle';
+
+	/// fr: 'Clore la surcharge'
+	String get cloreEnvoyer => 'Clore la surcharge';
+
+	/// fr: 'L'opération n'a pas abouti : {message}'
+	String erreur({required Object message}) => 'L\'opération n\'a pas abouti : ${message}';
+}
+
 // Path: nav.eleve
 class Traductions$nav$eleve$fr {
 	Traductions$nav$eleve$fr.internal(this._root);
@@ -1067,6 +1304,9 @@ class Traductions$nav$admin$fr {
 
 	/// fr: 'Dossiers'
 	String get dossiers => 'Dossiers';
+
+	/// fr: 'Demandes'
+	String get demandes => 'Demandes';
 
 	/// fr: 'Attribution'
 	String get attribution => 'Attribution';
@@ -1665,6 +1905,75 @@ extension on Traductions {
 			'dossiers.journalisation' => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.',
 			'dossiers.genreManquant' => 'Renseignez votre genre dans votre profil avant de consulter un dossier.',
 			'dossiers.erreur' => 'La décision n\'a pas abouti. Réessayez dans un instant.',
+			'admin.tableau.titre' => 'Centre de commande',
+			'admin.tableau.dossiers' => 'Dossiers à valider',
+			'admin.tableau.foyers' => 'Foyers sans enseignant',
+			'admin.tableau.rapports' => 'Cahiers manquants',
+			'admin.tableau.incidents' => 'Incidents (24 h)',
+			'admin.tableau.comptes' => 'Accès échus',
+			'admin.tableau.demandes' => 'Demandes à trancher',
+			'admin.tableau.compteursErreur' => 'Les compteurs n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.tableau.aTraiter' => 'À traiter en premier',
+			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
+			'admin.tableau.aTraiterAucunDetail' => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.',
+			'admin.tableau.aTraiterPortee' => 'Les quatre autres compteurs se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
+			'admin.tableau.listeErreur' => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.',
+			'admin.tableau.ligneDossier' => ({required Object prenom}) => 'Dossier d\'identité de ${prenom}',
+			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'Changement d\'enseignant pour ${prenom}',
+			'admin.tableau.lignePlafond' => ({required Object prenom}) => 'Plafond d\'élèves de ${prenom}',
+			'admin.tableau.ligneRegle' => ({required Object prenom}) => 'Changement de règle pour ${prenom}',
+			'admin.tableau.attenteAujourdhui' => 'Déposé aujourd\'hui',
+			'admin.tableau.attenteUnJour' => 'En attente depuis 1 jour',
+			'admin.tableau.attenteJours' => ({required Object jours}) => 'En attente depuis ${jours} jours',
+			'admin.demandes.titre' => 'Demandes et règles',
+			'admin.demandes.restantes' => ({required Object n}) => '${n} demande(s) en attente',
+			'admin.demandes.aucune' => 'Aucune demande en attente',
+			'admin.demandes.aucuneDetail' => 'Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.',
+			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'Demandée le ${date}, par ${role}',
+			'admin.demandes.roleGuardian' => 'un tuteur',
+			'admin.demandes.roleTeacher' => 'un enseignant',
+			'admin.demandes.roleStudent' => 'un élève autonome',
+			'admin.demandes.roleAdmin' => 'l\'administration',
+			'admin.demandes.roleController' => 'un contrôleur',
+			'admin.demandes.roleInconnu' => 'une partie au dossier',
+			'admin.demandes.reclame' => 'Ce qui est demandé',
+			'admin.demandes.reclameReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',
+			'admin.demandes.reclamePlafond' => ({required Object valeur}) => 'Porter le plafond à ${valeur} élèves',
+			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min',
+			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'Revoir ${regle}',
+			'admin.demandes.motifDemande' => 'Motif invoqué',
+			'admin.demandes.verdict' => 'Décision',
+			'admin.demandes.accorder' => 'Accorder',
+			'admin.demandes.refuser' => 'Refuser',
+			'admin.demandes.motif' => 'Ce qui motive ce refus, en une phrase',
+			'admin.demandes.motifRequis' => 'Un refus doit dire pourquoi : c\'est la seule phrase que la partie recevra.',
+			'admin.demandes.effet' => 'Accorder applique l\'effet en base : l\'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.',
+			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
+			'admin.demandes.feuille' => ({required Object prenom}) => 'Les règles de ${prenom}',
+			'admin.demandes.feuilleIntro' => 'La valeur de la plateforme et celle qui s\'applique, côte à côte. Une règle se change ici sans qu\'une demande existe.',
+			'admin.demandes.regleDuree' => 'Durée d\'une séance',
+			'admin.demandes.regleMinimum' => 'Durée minimale payable',
+			'admin.demandes.reglePause' => 'Pause entre deux cours',
+			'admin.demandes.reglePlafond' => 'Plafond d\'élèves',
+			'admin.demandes.regleInconnue' => 'Règle non reconnue',
+			'admin.demandes.plateforme' => ({required Object valeur}) => 'Plateforme : ${valeur}',
+			'admin.demandes.effective' => ({required Object valeur}) => 'Appliquée : ${valeur}',
+			'admin.demandes.minutes' => ({required Object valeur}) => '${valeur} min',
+			'admin.demandes.eleves' => ({required Object valeur}) => '${valeur} élèves',
+			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}',
+			'admin.demandes.sansSurcharge' => 'Cet élève suit la règle de la plateforme.',
+			'admin.demandes.changer' => 'Changer',
+			'admin.demandes.clore' => 'Revenir à la règle de la plateforme',
+			'admin.demandes.historique' => 'Surcharges closes',
+			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '${valeur}, du ${debut} au ${fin}',
+			'admin.demandes.historiqueMotifs' => ({required Object motif, required Object cloture}) => 'Posée : ${motif}. Close : ${cloture}.',
+			'admin.demandes.poserTitre' => ({required Object regle, required Object prenom}) => '${regle}, pour ${prenom}',
+			'admin.demandes.cloreTitre' => ({required Object prenom}) => 'Clore la surcharge de ${prenom}',
+			'admin.demandes.poserMotif' => 'Pourquoi ce changement ?',
+			'admin.demandes.poserMotifRequis' => 'Une règle sans motif ne se relit pas six mois plus tard.',
+			'admin.demandes.poserEnvoyer' => 'Poser la règle',
+			'admin.demandes.cloreEnvoyer' => 'Clore la surcharge',
+			'admin.demandes.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',
@@ -1690,6 +1999,7 @@ extension on Traductions {
 			'nav.controleur.planning' => 'Planning',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
+			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.attribution' => 'Attribution',
 			'nav.admin.journal' => 'Journal',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
