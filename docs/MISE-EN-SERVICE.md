@@ -306,24 +306,43 @@ La copie `D:\ra-pwa-build` est un `git worktree` detache du depot principal :
 elle sert a construire sans jamais compiler le travail en cours d'une autre
 session. `git worktree remove "D:\ra-pwa-build"` la supprime.
 
-### 7.1 L'adresse stable sert encore le lot L7, et c'est mesure
+### 7.1 La promotion en production se demande a l'operateur, pas au poste
 
-`vercel deploy --prod` est refuse a l'agent par la barriere du poste ; la
-previsualisation, elle, passe. La build de `c5a511f` (donc L8, `TUT-01`
-compris) est donc en ligne, mais **sur une adresse de previsualisation**, pas
-sur `rewayah-academy.vercel.app`, qui sert toujours la build de `761450a` (L7).
+`https://rewayah-academy.vercel.app` sert la build de `c5a511f`, donc L8,
+`TUT-01`, `TUT-04` et `TUT-05` compris. Elle a servi la build de `761450a`
+(L7) pendant une journee entiere, parce que `vercel deploy --prod` a ete refuse
+**trois fois** a l'agent par la barriere du poste, alors que la
+previsualisation, elle, passait.
 
-Ne pas s'en remettre a la taille du dernier televersement pour le croire : le
-constat se fait en comparant les deux `main.dart.js` sur une chaine qui
-n'existe qu'a partir de L8 — « Ajoutez votre premier enfant pour commencer. »,
-le message vide de `TUT-01`. En ligne : 3 670 040 octets, chaine absente.
-Localement : 3 705 770 octets, chaine presente.
+**La meme commande passe quand c'est l'operateur qui la lance** (`!` devant la
+ligne, dans la fenetre de session) : la barriere porte sur l'appel de l'agent,
+pas sur le poste. Ne pas s'entêter, ne pas chercher un contournement, ne pas
+deployer en previsualisation en esperant que ca suffise : livrer la ligne.
 
-⚠ **Et l'adresse de previsualisation ne remplace pas la production pour se
-connecter.** Le produit n'envoie aucun `emailRedirectTo`, donc le lien de
-connexion retombe toujours sur `site_url`, c'est-a-dire sur l'adresse stable.
-Une session ouverte depuis une previsualisation s'etablirait sur l'autre
-origine, et le `localStorage` etant par origine, la previsualisation resterait
-deconnectee. **Tant que la promotion en production n'est pas faite, la seule
-adresse ou l'on peut reellement se connecter est
-`https://rewayah-academy.vercel.app`, et elle sert L7.**
+```powershell
+! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
+```
+
+⚠ **Une previsualisation ne remplace jamais la production pour se connecter.**
+Le produit n'envoie aucun `emailRedirectTo`, donc le lien de connexion retombe
+toujours sur `site_url`, c'est-a-dire sur l'adresse stable. Une session ouverte
+depuis une previsualisation s'etablirait sur l'autre origine, et le
+`localStorage` etant par origine, la previsualisation resterait deconnectee.
+
+⚠ **Ce qui est en ligne se verifie sur le fichier, jamais sur la taille du
+dernier televersement** — c'est ainsi qu'un redeploiement de la build identique
+etait passe inapercu. Chercher dans `main.dart.js` une chaine qui n'existe qu'a
+partir du lot vise :
+
+```powershell
+$f = "$env:TEMP\ra.js"
+Invoke-WebRequest "https://rewayah-academy.vercel.app/main.dart.js" -OutFile $f -UseBasicParsing
+[System.IO.File]::ReadAllText($f, [System.Text.Encoding]::UTF8).Contains("Ajoutez votre premier enfant pour commencer.")
+```
+
+L7 rendait 3 670 040 octets sans cette chaine ; L8 rend 3 705 770 avec.
+
+⚠ **Prendre une chaine SANS accent.** `dart2js` echappe les caracteres non
+ASCII dans le JavaScript produit : chercher « regler son affichage et sa
+camera » avec ses accents rend `False` sur un ecran pourtant bien present, et
+fait conclure a un manque qui n'existe pas.
