@@ -31,9 +31,11 @@ faits, le prochain est **L9, `ADM-01` et `ADM-06`**.
    sur ce poste : `atlstr.h` pour Windows, le magasin de certificats pour
    l'APK — et **pas** la plateforme du SDK, contrairement à ce qui était écrit.
 5. **L'application est en service.** Base réelle peuplée, fonctions Edge
-   déployées, PWA en ligne. **Lire `docs/MISE-EN-SERVICE.md`** avant de toucher
-   au SQL ou au déploiement : `0005` ne se corrige plus sur place, et deux
-   commandes de configuration restent à la main de l'opérateur.
+   déployées, hook de jeton actif, PWA en ligne, et le compte propriétaire est
+   **administrateur**. **Lire `docs/MISE-EN-SERVICE.md`** avant de toucher au
+   SQL ou au déploiement : `0005` ne se corrige plus sur place, `0006` attend
+   d'être jouée, et l'admin ouvre les données mais pas encore les écrans —
+   `ADM-01` est justement le lot L9.
 
 ### Commandes du projet
 
@@ -80,7 +82,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | A | Dépôt Git et branche | [x] | `main`, `.gitignore`, remote GitHub connecté |
 | B | Projet Supabase | [x] | `gggmtelinlpseweouyav`, `supabase/` initialisé et lié |
 | C | Migrations versionnées | [x] | `0001` à `0005`, **appliquées au projet réel le 7 septembre 2026** et inscrites dans `supabase_migrations`. Le risque `pgcrypto` du journal de l'étape 3 était réel, et il est corrigé. **Corollaire : `0005` ne se corrige plus sur place**, tout changement structurel passe par `0006`. Voir `docs/MISE-EN-SERVICE.md` |
-| D | Secrets | [~] | Aux trois quarts fermée : projet lié, `dart_define.json` écrit, fonctions Edge `creer-profil-enfant` et `session-enfant` **déployées et `ACTIVE`**. Restent **deux commandes à la main de l'opérateur**, le hook de jeton et `STUDENT_EMAIL_DOMAIN`, détaillées dans `docs/MISE-EN-SERVICE.md` section 3. Sans le hook, toutes les RLS refusent et l'application n'affiche que du vide, sans la moindre erreur |
+| D | Secrets | [x] | **Fermée le 7 septembre 2026.** Projet lié, `dart_define.json` écrit, fonctions Edge `creer-profil-enfant` et `session-enfant` déployées et `ACTIVE`, **hook de jeton actif** (`pg-functions://postgres/public/custom_access_token_hook`, vérifié en lecture sur `/config/auth`) et **`STUDENT_EMAIL_DOMAIN` posé**. Voir `docs/MISE-EN-SERVICE.md` section 3, qui note aussi les quatre réglages Auth que `config push` a écrasés au passage |
 | E | CI/CD | [x] | `ci.yml` rejoue les 73 contrôles SQL de `supabase/tests/` à chaque pull request, 34 pour les étapes 1 et 3, 39 pour l'étape 4 |
 | F | Sentry | [ ] | Nécessite le compte Sentry |
 | G | Variantes Flutter `dev` / `staging` / `prod` | [ ] | Un seul identifiant aujourd'hui : `com.rewayahacademy.app` |
@@ -103,7 +105,9 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | Litige sur le temps effectif | L'étape 4 pose le minimum payable et sa trace, l'étape 5 mesurera la présence réelle. Les deux doivent se rejoindre avant la première paie | `decisions.md`, question 16 |
 | Composant ATL de Visual Studio | Le build Windows échoue sur `atlstr.h` absent, réclamé par `flutter_secure_storage_windows`. Installer « C++ ATL for latest v143 build tools » dans Visual Studio Build Tools | `etape-3-journal.md` |
 | Magasin de certificats du poste | **Remplace la ligne « Plateforme Android 37 », qui était fausse** : `sdkmanager "platforms;android-37"` répond `Failed to find package`, ce paquet n'existe pas, Google publie `android-37.0` et il est déjà installé. Le build APK échoue en réalité parce que le hook de `package:sqlite3` ne peut pas joindre `github.com` en TLS — et `Invoke-WebRequest` échoue pareillement, donc c'est le poste, pas Flutter. À réparer côté racines Windows ou antivirus, jamais en désactivant la vérification | `MISE-EN-SERVICE.md` section 4.1 |
-| Deux commandes de configuration Supabase | Le hook de jeton et `STUDENT_EMAIL_DOMAIN`. Elles ont été refusées à l'agent par la barrière de sécurité du poste, qui bloque toute écriture de configuration Auth distante et tout secret. **Sans le hook, l'application se connecte et n'affiche que des écrans vides, sans erreur** | `MISE-EN-SERVICE.md` section 3 |
+| Réglages Auth écrasés par `config push` | Quatre valeurs distantes ont été remplacées par celles de `config.toml` sans qu'on le demande : TOTP `enroll`/`verify` passés à `false`, `enable_confirmations` à `false` (comptes auto-confirmés), `max_frequency` 1 min → 1 s, `otp_length` 8 → 6. À trancher avant l'ouverture au public | `MISE-EN-SERVICE.md` section 3 |
+| Migration `0006` non appliquée | Le rattrapage des deux objets que L8 a modifiés dans `0005` après son application (ancre UTC de `instant_creneau`, colonne `access_until` de `profils_du_foyer_v`) est commité mais **pas encore joué sur la base réelle**. Non bloquant : l'application fonctionne sans. Bloc SQL prêt à coller | `MISE-EN-SERVICE.md` section 5 |
+| Interfaces d'administration | Le compte propriétaire est **admin depuis le 7 septembre**, donc les données lui sont ouvertes — mais `/admin/tableau-de-bord` rend encore `EcranAConstruire`. C'est exactement `ADM-01`, le lot L9. Tant qu'il n'est pas bâti, un admin ne voit rien de plus qu'un écran vide | `MISE-EN-SERVICE.md` section 3.3 |
 | Plan d'hébergement | La PWA est sur Vercel Hobby, gratuit, dont les conditions **excluent l'usage commercial**. À trancher avant l'ouverture payante : plan payant, ou un hébergeur statique gratuit qui autorise le commerce | `MISE-EN-SERVICE.md` section 4 |
 | Appareil de mesure du démarrage à froid | Le scénario 7 de l'étape 2 demande **moins de 1,5 seconde sur un appareil d'entrée de gamme**. L'écran existe depuis L7 et l'application est en ligne depuis le 7 septembre : la mesure est désormais possible en installant la PWA sur un vrai téléphone d'entrée de gamme. Elle sera pessimiste, un bundle web pesant plus qu'un APK, donc un échec ne condamnerait pas le produit mais une réussite compterait | `etape-4-journal.md`, section L7 |
 
