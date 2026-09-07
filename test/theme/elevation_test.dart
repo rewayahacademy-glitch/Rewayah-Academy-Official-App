@@ -20,9 +20,18 @@ void main() {
                 .map((BoxShadow o) => o.offset.dy + o.blurRadius)
                 .reduce((double a, double b) => a > b ? a : b);
 
-      expect(portee(AppElevation.niveau0), lessThan(portee(AppElevation.niveau1)));
-      expect(portee(AppElevation.niveau1), lessThan(portee(AppElevation.niveau2)));
-      expect(portee(AppElevation.niveau2), lessThan(portee(AppElevation.niveau3)));
+      expect(
+        portee(AppElevation.niveau0),
+        lessThan(portee(AppElevation.niveau1)),
+      );
+      expect(
+        portee(AppElevation.niveau1),
+        lessThan(portee(AppElevation.niveau2)),
+      );
+      expect(
+        portee(AppElevation.niveau2),
+        lessThan(portee(AppElevation.niveau3)),
+      );
     });
 
     test('les compositions sont celles du tableau', () {

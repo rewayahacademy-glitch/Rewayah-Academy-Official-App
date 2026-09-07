@@ -69,8 +69,7 @@ class AppMetriques extends ThemeExtension<AppMetriques> {
     }
     return AppMetriques(
       mode: t < 0.5 ? mode : other.mode,
-      cibleTactile:
-          cibleTactile + (other.cibleTactile - cibleTactile) * t,
+      cibleTactile: cibleTactile + (other.cibleTactile - cibleTactile) * t,
     );
   }
 }

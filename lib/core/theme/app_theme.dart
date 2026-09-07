@@ -65,9 +65,7 @@ abstract final class AppTheme {
         titleTextStyle: palette.surfaceRaised.applyTo(
           texte.titleLarge ?? const TextStyle(),
         ),
-        shape: Border(
-          bottom: palette.borderHairline.asBorderSide(),
-        ),
+        shape: Border(bottom: palette.borderHairline.asBorderSide()),
       ),
       // Un champ de saisie est une surface ENFONCEE : c'est le seul moyen de le
       // distinguer de la carte qui le contient sans lui coller un cadre lourd.

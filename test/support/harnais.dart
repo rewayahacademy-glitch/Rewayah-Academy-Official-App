@@ -370,7 +370,8 @@ class FauxServiceValidation implements ServiceValidation {
   }
 
   @override
-  Future<String> apercu(String cleObjet) async => 'https://exemple.test/$cleObjet';
+  Future<String> apercu(String cleObjet) async =>
+      'https://exemple.test/$cleObjet';
 
   @override
   Future<void> decider({
@@ -572,8 +573,8 @@ class FauxServiceRegles implements ServiceRegles {
       <String, List<SurchargeClose>>{};
 
   /// Les regles posees.
-  final List<({String profilId, CleRegle cle, int valeur, String motif})> posees =
-      <({String profilId, CleRegle cle, int valeur, String motif})>[];
+  final List<({String profilId, CleRegle cle, int valeur, String motif})>
+  posees = <({String profilId, CleRegle cle, int valeur, String motif})>[];
 
   /// Les surcharges closes.
   final List<String> closes = <String>[];

@@ -44,10 +44,7 @@ class CreneauxPage extends ConsumerWidget {
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    t.creneaux.titre,
-                    style: textes.headlineSmall,
-                  ),
+                  child: Text(t.creneaux.titre, style: textes.headlineSmall),
                 ),
               ),
               TabBar(
@@ -216,7 +213,8 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
         .length;
     final int plafond = monId == null
         ? 0
-        : (ref.watch(reglesProfilProvider(monId)).value ?? const <RegleProfil>[])
+        : (ref.watch(reglesProfilProvider(monId)).value ??
+                  const <RegleProfil>[])
               .where((RegleProfil r) => r.cle == CleRegle.plafondEleves)
               .map((RegleProfil r) => r.valeurEffective)
               .followedBy(const <int>[0])
@@ -235,10 +233,7 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
       children: <Widget>[
         if (plafond > 0)
           Text(
-            t.creneaux.mesEleves(
-              nombre: '$suivis',
-              plafond: '$plafond',
-            ),
+            t.creneaux.mesEleves(nombre: '$suivis', plafond: '$plafond'),
             style: textes.bodySmall,
           ),
         Ecart.vMd,
@@ -253,7 +248,7 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
           ActionPrincipale(
             libelle: t.creneaux.plafondDemander,
             onPress: () => _ouvrirDemande(context, monId!, plafond),
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
           ),
           Ecart.vLg,
         ],
@@ -333,7 +328,6 @@ class _CarteEleve extends StatelessWidget {
     final bool signale = jours >= _OngletElevesEtat.joursAvantSignal;
 
     return BentoTile(
-      avecBordure: true,
       // Le lisere de l'attente : il ne remplace pas le texte, il le double.
       surface: signale ? palette.surfaceWarning : null,
       child: Column(
@@ -347,14 +341,11 @@ class _CarteEleve extends StatelessWidget {
               style: textes.bodySmall,
             ),
           Ecart.vXs,
-          Text(
-            switch (jours) {
-              0 => t.creneaux.attendAujourdhui,
-              1 => t.creneaux.attendUnJour,
-              _ => t.creneaux.attendDepuis(jours: '$jours'),
-            },
-            style: textes.bodySmall,
-          ),
+          Text(switch (jours) {
+            0 => t.creneaux.attendAujourdhui,
+            1 => t.creneaux.attendUnJour,
+            _ => t.creneaux.attendDepuis(jours: '$jours'),
+          }, style: textes.bodySmall),
           Ecart.vSm,
           if (avecBouton)
             ActionPrincipale(
@@ -406,12 +397,14 @@ class _FeuilleDemandeEtat extends ConsumerState<_FeuilleDemande> {
       _erreur = null;
     });
     try {
-      await ref.read(serviceMatchingProvider).demander(
-        sorte: SorteDemande.plafond,
-        sujetId: widget.monId,
-        motif: _motif.text.trim(),
-        valeur: valeur,
-      );
+      await ref
+          .read(serviceMatchingProvider)
+          .demander(
+            sorte: SorteDemande.plafond,
+            sujetId: widget.monId,
+            motif: _motif.text.trim(),
+            valeur: valeur,
+          );
       if (mounted) {
         setState(() => _envoyee = true);
       }

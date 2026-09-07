@@ -189,16 +189,12 @@ class _Demande extends StatelessWidget {
       children: <Widget>[
         Text(t.admin.demandes.titre, style: textes.headlineSmall),
         Ecart.vSm,
-        Text(
-          t.admin.demandes.restantes(n: restantes),
-          style: textes.bodySmall,
-        ),
+        Text(t.admin.demandes.restantes(n: restantes), style: textes.bodySmall),
         Ecart.vXl,
 
         // 1. LE CONSTAT : qui demande, en quelle qualite, quand, sur qui, et
         // ce qui est reclame.
         BentoTile(
-          avecBordure: true,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -227,10 +223,7 @@ class _Demande extends StatelessWidget {
 
         // 2. CE QUI PERMET DE JUGER : la regle de la plateforme et celle qui
         // s'applique, cote a cote.
-        FeuilleRegles(
-          profilId: demande.sujetId,
-          prenom: demande.sujetPrenom,
-        ),
+        FeuilleRegles(profilId: demande.sujetId, prenom: demande.sujetPrenom),
         Ecart.vXxl,
 
         // 3. LE JUGEMENT, en dernier et jamais melange au reste.
@@ -251,7 +244,7 @@ class _Demande extends StatelessWidget {
           ActionPrincipale(
             libelle: t.admin.demandes.refuser,
             enCours: envoi,
-            surface: palette.surfaceAlert,
+            niveau: NiveauAction.destructive,
             onPress: motif.text.trim().isEmpty ? null : onRefuser,
           ),
         ] else ...<Widget>[
@@ -264,7 +257,7 @@ class _Demande extends StatelessWidget {
           ActionPrincipale(
             libelle: t.admin.demandes.refuser,
             onPress: onOuvrirRefus,
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
           ),
         ],
         if (erreur != null) ...<Widget>[
@@ -346,7 +339,11 @@ class FeuilleRegles extends ConsumerWidget {
         for (final RegleProfil regle in lignes)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: _LigneRegle(regle: regle, profilId: profilId, prenom: prenom),
+            child: _LigneRegle(
+              regle: regle,
+              profilId: profilId,
+              prenom: prenom,
+            ),
           ),
         if (passees.isNotEmpty) ...<Widget>[
           Ecart.vMd,
@@ -403,7 +400,6 @@ class _LigneRegle extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
 
     return BentoTile(
-      avecBordure: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -447,7 +443,7 @@ class _LigneRegle extends StatelessWidget {
           Ecart.vSm,
           ActionPrincipale(
             libelle: t.admin.demandes.changer,
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
             onPress: () => unawaited(
               _ouvrir(
                 context,
@@ -467,7 +463,7 @@ class _LigneRegle extends StatelessWidget {
             Ecart.vSm,
             ActionPrincipale(
               libelle: t.admin.demandes.clore,
-              surface: palette.surfaceCanvas,
+              niveau: NiveauAction.secondaire,
               onPress: () => unawaited(
                 _ouvrir(
                   context,
@@ -640,7 +636,7 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
           Ecart.vSm,
           Text(
             t.admin.demandes.effective(
-              valeur: _valeur(widget.cle,widget.valeurCourante),
+              valeur: _valeur(widget.cle, widget.valeurCourante),
             ),
             style: textes.bodySmall,
           ),
@@ -651,7 +647,7 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
                 for (final int propose in FeuilleRegle.proposees(widget.cle))
                   OptionChoix(
                     valeur: '$propose',
-                    libelle: _valeur(widget.cle,propose),
+                    libelle: _valeur(widget.cle, propose),
                   ),
               ],
               onChange: (ReponseChoix reponse) => setState(() {
@@ -666,9 +662,7 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
           ],
           TextField(
             controller: _motif,
-            decoration: InputDecoration(
-              labelText: t.admin.demandes.poserMotif,
-            ),
+            decoration: InputDecoration(labelText: t.admin.demandes.poserMotif),
             // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
             // inerte alors que le motif est saisi (piege de l'etape 3).
             onChanged: (String _) => setState(() {}),
@@ -722,21 +716,21 @@ String _reclame(Demande demande) => switch (demande.sorte) {
   SorteDemande.reaffectation => t.admin.demandes.reclameReaffectation(
     prenom: demande.sujetPrenom,
   ),
-  SorteDemande.plafond => demande.valeurDemandee == null
-      ? t.admin.demandes.reclameRegleSansValeur(
-          regle: t.admin.demandes.reglePlafond,
-        )
-      : t.admin.demandes.reclamePlafond(
-          valeur: '${demande.valeurDemandee}',
-        ),
-  _ => demande.valeurDemandee == null
-      ? t.admin.demandes.reclameRegleSansValeur(
-          regle: _libelleRegle(demande.cleRegle),
-        )
-      : t.admin.demandes.reclameRegle(
-          regle: _libelleRegle(demande.cleRegle),
-          valeur: '${demande.valeurDemandee}',
-        ),
+  SorteDemande.plafond =>
+    demande.valeurDemandee == null
+        ? t.admin.demandes.reclameRegleSansValeur(
+            regle: t.admin.demandes.reglePlafond,
+          )
+        : t.admin.demandes.reclamePlafond(valeur: '${demande.valeurDemandee}'),
+  _ =>
+    demande.valeurDemandee == null
+        ? t.admin.demandes.reclameRegleSansValeur(
+            regle: _libelleRegle(demande.cleRegle),
+          )
+        : t.admin.demandes.reclameRegle(
+            regle: _libelleRegle(demande.cleRegle),
+            valeur: '${demande.valeurDemandee}',
+          ),
 };
 
 /// En quelle qualite la demande a ete faite.

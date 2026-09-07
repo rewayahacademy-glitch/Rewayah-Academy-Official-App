@@ -50,14 +50,15 @@ List<Override> _surcharges({
   serviceReglesProvider.overrideWithValue(regles),
 ];
 
-FauxServiceRegles _reglesAvecPlafond(int plafond) => FauxServiceRegles()
-  ..parProfil[_monId] = <RegleProfil>[
-    RegleProfil(
-      cle: CleRegle.plafondEleves,
-      valeurEffective: plafond,
-      valeurPlateforme: 5,
-    ),
-  ];
+FauxServiceRegles _reglesAvecPlafond(int plafond) =>
+    FauxServiceRegles()
+      ..parProfil[_monId] = <RegleProfil>[
+        RegleProfil(
+          cle: CleRegle.plafondEleves,
+          valeurEffective: plafond,
+          valeurPlateforme: 5,
+        ),
+      ];
 
 Future<void> _ouvrirOngletEleves(WidgetTester tester) async {
   await tester.tap(find.text(t.creneaux.ongletEleves));
@@ -116,11 +117,7 @@ void main() {
               enseignantIdentifiant: 'TEACH-OS-000001',
               eleveId: 'x$i',
               elevePrenom: 'Eleve $i',
-              creneau: const Creneau(
-                jour: 4,
-                heure: 9,
-                fuseau: 'Europe/Paris',
-              ),
+              creneau: const Creneau(jour: 4, heure: 9, fuseau: 'Europe/Paris'),
               depuis: DateTime.now(),
             ),
         ];
@@ -167,11 +164,7 @@ void main() {
               enseignantIdentifiant: 'TEACH-OS-000001',
               eleveId: 'x$i',
               elevePrenom: 'Eleve $i',
-              creneau: const Creneau(
-                jour: 4,
-                heure: 9,
-                fuseau: 'Europe/Paris',
-              ),
+              creneau: const Creneau(jour: 4, heure: 9, fuseau: 'Europe/Paris'),
               depuis: DateTime.now(),
             ),
         ];
@@ -195,8 +188,10 @@ void main() {
         find.text(t.creneaux.prendre(jour: 'mardi', heure: '17')),
         findsOneWidget,
       );
-      expect(find.text(t.creneaux.mesEleves(nombre: '5', plafond: '6')),
-          findsOneWidget);
+      expect(
+        find.text(t.creneaux.mesEleves(nombre: '5', plafond: '6')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('un refus de la base se lit tel quel', (
@@ -273,10 +268,11 @@ void main() {
         _eleve(id: 'e2', prenom: 'Ibrahim', jours: 1),
       ]);
 
-      expect(
-        range.map((EleveEnAttente e) => e.prenom).toList(),
-        <String>['Fatou', 'Ibrahim', 'Khadija'],
-      );
+      expect(range.map((EleveEnAttente e) => e.prenom).toList(), <String>[
+        'Fatou',
+        'Ibrahim',
+        'Khadija',
+      ]);
     });
 
     testWidgets('la famille qui attend le plus longtemps est en haut', (

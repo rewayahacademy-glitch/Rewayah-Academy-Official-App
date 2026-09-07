@@ -27,7 +27,5 @@ Future<void> main() async {
     );
   }
 
-  runApp(
-    ProviderScope(child: TranslationProvider(child: const RewayahApp())),
-  );
+  runApp(ProviderScope(child: TranslationProvider(child: const RewayahApp())));
 }

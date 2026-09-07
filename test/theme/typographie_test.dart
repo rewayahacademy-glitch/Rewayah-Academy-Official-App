@@ -187,7 +187,8 @@ void main() {
           expect(
             style.fontFeatures,
             contains(const FontFeature.tabularFigures()),
-            reason: '${e.key} : un role d affichage a perdu ses chiffres '
+            reason:
+                '${e.key} : un role d affichage a perdu ses chiffres '
                 'tabulaires.',
           );
         }

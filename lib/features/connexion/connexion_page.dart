@@ -8,7 +8,6 @@ import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_metriques.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/offline_banner.dart';
@@ -93,21 +92,26 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(metriques.marge),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: AppSpacing.xxxl * 15),
-                  child: _envoye ? _LienEnvoye(
-                    courriel: _courriel.text.trim(),
-                    onChangerAdresse: () => setState(() => _envoye = false),
-                  ) : _Saisie(
-                    controleur: _courriel,
-                    erreur: _erreur,
-                    envoi: _envoi,
-                    peutEnvoyer: _adressePlausible,
-                    onChanged: () => setState(() {}),
-                    onEnvoyer: () => unawaited(_envoyerLien()),
-                    onGoogle: () => unawaited(_google()),
-                    onEleve: () =>
-                        GoRouter.of(context).go(Routes.connexionEleve),
+                  constraints: const BoxConstraints(
+                    maxWidth: AppSpacing.xxxl * 15,
                   ),
+                  child: _envoye
+                      ? _LienEnvoye(
+                          courriel: _courriel.text.trim(),
+                          onChangerAdresse: () =>
+                              setState(() => _envoye = false),
+                        )
+                      : _Saisie(
+                          controleur: _courriel,
+                          erreur: _erreur,
+                          envoi: _envoi,
+                          peutEnvoyer: _adressePlausible,
+                          onChanged: () => setState(() {}),
+                          onEnvoyer: () => unawaited(_envoyerLien()),
+                          onGoogle: () => unawaited(_google()),
+                          onEleve: () =>
+                              GoRouter.of(context).go(Routes.connexionEleve),
+                        ),
                 ),
               ),
             ),
@@ -141,7 +145,6 @@ class _Saisie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Column(
@@ -185,7 +188,7 @@ class _Saisie extends StatelessWidget {
         ActionPrincipale(
           libelle: t.connexion.avecGoogle,
           onPress: onGoogle,
-          surface: palette.surfaceCanvas,
+          niveau: NiveauAction.secondaire,
         ),
         Ecart.vXxxl,
         // L'entree de l'eleve, discrete : c'est un parcours different, pas une
@@ -194,7 +197,7 @@ class _Saisie extends StatelessWidget {
         ActionPrincipale(
           libelle: t.eleveConnexion.entrerCode,
           onPress: onEleve,
-          surface: palette.surfaceCanvas,
+          niveau: NiveauAction.secondaire,
         ),
       ],
     );
@@ -209,7 +212,6 @@ class _LienEnvoye extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Column(
@@ -226,7 +228,7 @@ class _LienEnvoye extends StatelessWidget {
         ActionPrincipale(
           libelle: t.connexion.changerAdresse,
           onPress: onChangerAdresse,
-          surface: palette.surfaceCanvas,
+          niveau: NiveauAction.secondaire,
         ),
       ],
     );

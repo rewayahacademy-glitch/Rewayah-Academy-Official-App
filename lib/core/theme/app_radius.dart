@@ -49,6 +49,14 @@ abstract final class AppRadius {
     Radius.circular(full),
   );
 
+  /// Arrondi d'une feuille de bas d'ecran : les deux coins hauts seulement.
+  ///
+  /// Les coins bas restent droits parce que la feuille s'ancre au bord de
+  /// l'ecran : les arrondir dessinerait un espace qui n'existe pas.
+  static const BorderRadius arrondiFeuille = BorderRadius.vertical(
+    top: Radius.circular(lg),
+  );
+
   /// Le plus grand cran strictement inferieur a [parent].
   ///
   /// Un rayon deja au plus serre le reste : on ne descend jamais sous [xs].

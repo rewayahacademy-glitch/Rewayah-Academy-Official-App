@@ -18,10 +18,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class BilletSalle {
   /// Cree un billet pour une seance.
-  const BilletSalle({
-    required this.sessionId,
-    required this.emisA,
-  });
+  const BilletSalle({required this.sessionId, required this.emisA});
 
   /// La seance visee.
   final String sessionId;

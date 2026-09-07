@@ -62,23 +62,26 @@ void main() {
       }
     }
 
-    test('un statut illisible se traite comme une attente, jamais comme un acces', () {
-      const SessionState sansStatut = SessionState(
-        resolue: true,
-        profileId: 'p1',
-        role: AppRole.admin,
-        lectureProfil: LectureProfil.presente,
-      );
-      expect(sansStatut.porte, PorteAcces.attente);
-      expect(
-        deciderRedirection(
-          session: sansStatut,
-          cheminDemande: Routes.adminJournal,
-          maintenant: maintenant,
-        ),
-        Routes.attente,
-      );
-    });
+    test(
+      'un statut illisible se traite comme une attente, jamais comme un acces',
+      () {
+        const SessionState sansStatut = SessionState(
+          resolue: true,
+          profileId: 'p1',
+          role: AppRole.admin,
+          lectureProfil: LectureProfil.presente,
+        );
+        expect(sansStatut.porte, PorteAcces.attente);
+        expect(
+          deciderRedirection(
+            session: sansStatut,
+            cheminDemande: Routes.adminJournal,
+            maintenant: maintenant,
+          ),
+          Routes.attente,
+        );
+      },
+    );
 
     test('le portail d attente lui-meme reste atteignable', () {
       expect(
@@ -272,19 +275,22 @@ void main() {
       );
     });
 
-    test('un compte en attente ne peut pas non plus s y refabriquer un profil', () {
-      expect(
-        deciderRedirection(
-          session: _session(
-            role: AppRole.guardian,
-            statut: AccountStatus.disabled,
+    test(
+      'un compte en attente ne peut pas non plus s y refabriquer un profil',
+      () {
+        expect(
+          deciderRedirection(
+            session: _session(
+              role: AppRole.guardian,
+              statut: AccountStatus.disabled,
+            ),
+            cheminDemande: Routes.inscription,
+            maintenant: maintenant,
           ),
-          cheminDemande: Routes.inscription,
-          maintenant: maintenant,
-        ),
-        Routes.attente,
-      );
-    });
+          Routes.attente,
+        );
+      },
+    );
   });
 
   group('Etape 3, scenario 2 : un echec de lecture n est pas une absence', () {
@@ -296,17 +302,20 @@ void main() {
       lectureProfil: LectureProfil.echouee,
     );
 
-    test('un echec ferme sur le portail d attente, il n ouvre pas l inscription', () {
-      expect(lectureEchouee.porte, PorteAcces.attente);
-      expect(
-        deciderRedirection(
-          session: lectureEchouee,
-          cheminDemande: Routes.inscription,
-          maintenant: maintenant,
-        ),
-        Routes.attente,
-      );
-    });
+    test(
+      'un echec ferme sur le portail d attente, il n ouvre pas l inscription',
+      () {
+        expect(lectureEchouee.porte, PorteAcces.attente);
+        expect(
+          deciderRedirection(
+            session: lectureEchouee,
+            cheminDemande: Routes.inscription,
+            maintenant: maintenant,
+          ),
+          Routes.attente,
+        );
+      },
+    );
 
     test('tant que la lecture n a pas eu lieu, rien n est decide', () {
       const SessionState pasEncoreLue = SessionState(

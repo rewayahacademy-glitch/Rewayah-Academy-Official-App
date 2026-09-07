@@ -165,7 +165,9 @@ class TableauDeBordPage extends ConsumerWidget {
                     // 2. CE QUI SE TRAITE D'UN TAP.
                     Text(t.admin.tableau.aTraiter, style: textes.titleMedium),
                     Ecart.vMd,
-                    if (lignes.isEmpty && dossiers.hasValue && demandes.hasValue)
+                    if (lignes.isEmpty &&
+                        dossiers.hasValue &&
+                        demandes.hasValue)
                       EmptyState(
                         message: t.admin.tableau.aTraiterAucun,
                         invitation: t.admin.tableau.aTraiterAucunDetail,
@@ -175,10 +177,7 @@ class TableauDeBordPage extends ConsumerWidget {
                       for (final ATraiter ligne in lignes)
                         Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                          child: _Ligne(
-                            ligne: ligne,
-                            maintenant: horloge(),
-                          ),
+                          child: _Ligne(ligne: ligne, maintenant: horloge()),
                         ),
                     // La file des dossiers passe par `read_kyc_documents()`, qui
                     // refuse la lecture quand le genre du lecteur est inconnu.
@@ -300,7 +299,6 @@ class _Compteur extends StatelessWidget {
     final bool aTraiter = valeur > 0;
 
     return BentoTile(
-      avecBordure: !aTraiter,
       surface: aTraiter ? palette.surfaceWarning : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,7 +335,6 @@ class _Ligne extends StatelessWidget {
     final int jours = maintenant.difference(ligne.depuis).inDays;
 
     return BentoTile(
-      avecBordure: true,
       libelleSemantique: ligne.libelle,
       onPress: () => GoRouter.of(context).go(ligne.destination),
       child: Row(
@@ -352,14 +349,11 @@ class _Ligne extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(ligne.libelle, style: textes.titleMedium),
-                Text(
-                  switch (jours) {
-                    <= 0 => t.admin.tableau.attenteAujourdhui,
-                    1 => t.admin.tableau.attenteUnJour,
-                    _ => t.admin.tableau.attenteJours(jours: '$jours'),
-                  },
-                  style: textes.bodySmall,
-                ),
+                Text(switch (jours) {
+                  <= 0 => t.admin.tableau.attenteAujourdhui,
+                  1 => t.admin.tableau.attenteUnJour,
+                  _ => t.admin.tableau.attenteJours(jours: '$jours'),
+                }, style: textes.bodySmall),
               ],
             ),
           ),

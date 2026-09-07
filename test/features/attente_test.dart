@@ -12,9 +12,7 @@ Future<void> _monter(WidgetTester tester, FauxServiceDossier dossier) async {
   await tester.pumpWidget(
     hote(
       const AttentePage(),
-      surcharges: <Override>[
-        serviceDossierProvider.overrideWithValue(dossier),
-      ],
+      surcharges: <Override>[serviceDossierProvider.overrideWithValue(dossier)],
     ),
   );
   await tester.pumpAndSettle();
@@ -56,12 +54,12 @@ void main() {
 
       // L'accuse precede le contrat : il dit en langage clair ce que le
       // contrat formalisera ensuite (ADR-011).
-      final double yAccuse = tester.getTopLeft(
-        find.text(t.attente.carteAccuse),
-      ).dy;
-      final double yContrat = tester.getTopLeft(
-        find.text(t.attente.signatureContrat),
-      ).dy;
+      final double yAccuse = tester
+          .getTopLeft(find.text(t.attente.carteAccuse))
+          .dy;
+      final double yContrat = tester
+          .getTopLeft(find.text(t.attente.signatureContrat))
+          .dy;
       expect(yAccuse, lessThan(yContrat));
     });
 
@@ -184,24 +182,27 @@ void main() {
       expect(lu.profilExiste, isFalse);
     });
 
-    test('la lecture reprend le motif et la date telle que la base les donne', () {
-      final EtatDossier lu = EtatDossier.depuisJson(const <String, dynamic>{
-        'profil': true,
-        'role': 'teacher',
-        'statut': 'pending_kyc',
-        'piece_deposee': true,
-        'piece_statut': 'rejected',
-        'motif_refus': 'Photo illisible.',
-        'depose_le': '2026-09-04T08:30:00Z',
-        'contrat_signe': true,
-        'accuse_signe': true,
-      });
+    test(
+      'la lecture reprend le motif et la date telle que la base les donne',
+      () {
+        final EtatDossier lu = EtatDossier.depuisJson(const <String, dynamic>{
+          'profil': true,
+          'role': 'teacher',
+          'statut': 'pending_kyc',
+          'piece_deposee': true,
+          'piece_statut': 'rejected',
+          'motif_refus': 'Photo illisible.',
+          'depose_le': '2026-09-04T08:30:00Z',
+          'contrat_signe': true,
+          'accuse_signe': true,
+        });
 
-      expect(lu.role, AppRole.teacher);
-      expect(lu.statutPiece, StatutPiece.refusee);
-      expect(lu.motifRefus, 'Photo illisible.');
-      expect(lu.deposeLe?.toUtc(), DateTime.utc(2026, 9, 4, 8, 30));
-      expect(lu.etape, EtapeDossier.refuse);
-    });
+        expect(lu.role, AppRole.teacher);
+        expect(lu.statutPiece, StatutPiece.refusee);
+        expect(lu.motifRefus, 'Photo illisible.');
+        expect(lu.deposeLe?.toUtc(), DateTime.utc(2026, 9, 4, 8, 30));
+        expect(lu.etape, EtapeDossier.refuse);
+      },
+    );
   });
 }

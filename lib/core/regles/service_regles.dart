@@ -82,7 +82,8 @@ class SurchargeClose {
       cle: CleRegle.depuisSql(json['key'] as String?),
       valeur: valeur is num ? valeur.toInt() : 0,
       motif: json['reason'] as String? ?? '',
-      poseeLe: DateTime.tryParse(json['created_at'] as String? ?? '')?.toLocal(),
+      poseeLe: DateTime.tryParse(json['created_at'] as String? ?? '')
+          ?.toLocal(),
       closeLe: DateTime.tryParse(json['ended_at'] as String? ?? '')?.toLocal(),
       motifCloture: json['end_reason'] as String? ?? '',
     );
@@ -231,11 +232,10 @@ final FutureProviderFamily<List<RegleProfil>, String> reglesProfilProvider =
 
 /// Les surcharges closes d'un profil, la plus recente d'abord.
 final FutureProviderFamily<List<SurchargeClose>, String>
-historiqueReglesProvider =
-    FutureProvider.family<List<SurchargeClose>, String>(
-      (Ref ref, String profilId) =>
-          ref.watch(serviceReglesProvider).historique(profilId),
-    );
+historiqueReglesProvider = FutureProvider.family<List<SurchargeClose>, String>(
+  (Ref ref, String profilId) =>
+      ref.watch(serviceReglesProvider).historique(profilId),
+);
 
 /// Ce qu'une lecture de regle demande : un profil et une regle.
 typedef DemandeRegle = ({String profilId, CleRegle cle});

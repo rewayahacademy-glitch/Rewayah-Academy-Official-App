@@ -256,7 +256,6 @@ class _BlocPrincipal extends StatelessWidget {
 
     final Widget tuile = BentoTile(
       surface: paire,
-      avecBordure: !accentue,
       child: switch (etat) {
         EtatAccueilEleve.coursPlusTard ||
         EtatAccueilEleve.coursImminent => _CoursAVenir(
@@ -319,10 +318,7 @@ class _CoursAVenir extends StatelessWidget {
       children: <Widget>[
         // Le haut-parleur lit la phrase : un enfant de six ans comprend cet
         // ecran sans savoir lire.
-        AudioLabel(
-          cle: ClesAudio.eleveAccueilProchainCours,
-          surface: paire,
-        ),
+        AudioLabel(cle: ClesAudio.eleveAccueilProchainCours, surface: paire),
         Ecart.vMd,
         Text(
           _compteARebours(reste),
@@ -398,7 +394,6 @@ class _CoursEnDirect extends StatelessWidget {
         // non par de la transparence, qui ferait tomber son texte sous le seuil.
         ActionPrincipale(
           libelle: t.eleve.accueil.rejoindre,
-          surface: palette.surfaceSuccess,
           onPress: joignable
               ? () => GoRouter.of(context).go(
                   Routes.salle,
@@ -425,9 +420,7 @@ class _CoursEnDirect extends StatelessWidget {
               Flexible(
                 child: Text(
                   t.eleve.accueil.horsLigne,
-                  style: paire.applyTo(
-                    textes.titleMedium ?? const TextStyle(),
-                  ),
+                  style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
                 ),
               ),
             ],
@@ -566,7 +559,6 @@ class _BlocCoran extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
 
     return BentoTile(
-      avecBordure: true,
       libelleSemantique: t.eleve.accueil.coran,
       onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
       child: Row(

@@ -1,8 +1,10 @@
 # HANDOFF — à lire en premier, avant toute action
 
 > Dernière passation : **7 septembre 2026**, fin du lot **L9** de l'étape 4,
-> puis **refonte UX/UI v1.0** (documentation), puis le **lot T** de cette
-> refonte (jetons, thème, typographie, mouvement).
+> puis **refonte UX/UI v1.0** (documentation), puis le **lot T** (jetons, thème,
+> typographie, mouvement), puis le **lot C** de cette refonte (les douze
+> composants P0, la reprise des onze existants, la galerie devenue preuve du
+> catalogue). **Reprendre au lot R** : la reprise des écrans.
 > Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
@@ -152,11 +154,12 @@ par commit, comme toujours.
 | Lot | Contenu | Écrans touchés | État |
 | :-- | :--- | :--- | :-: |
 | **T** | Jetons, thème, typographie, mouvement. Palette crème et rampes, trois bordures, rayons, ombres, crénage, durées et courbes, échelle d'espacement étendue, et les nouvelles règles de `verifier_jetons.dart` | aucun repris, 29 renommés | **fait** |
-| **C** | Les douze composants P0 de `07-catalogue-composants.md`, plus la reprise des onze existants, plus la galerie qui montre tous leurs états | aucun | **à faire, commencer ici** |
-| **R** | Reprise dans cet ordre : `ELV-02`, puis `TUT-01`, puis `ENS-02` et `ADM-01`, puis le reste | quatre d'abord | à faire |
+| **C** | Les douze composants P0 de `07-catalogue-composants.md`, plus la reprise des onze existants, plus la galerie qui montre tous leurs états. Audit de fin de lot en six tranches, 8 constats corrigés. Compte rendu : `etape-2-journal.md`, « Refonte UX/UI, lot C » | aucun | **fait** |
+| **R** | Reprise dans cet ordre : `ELV-02`, puis `TUT-01`, puis `ENS-02` et `ADM-01`, puis le reste | quatre d'abord | **à faire, commencer ici** |
 
-**Le lot T se faisait en premier et entièrement.** C'est fait : reprendre un
-écran avant les jetons aurait obligé à le reprendre deux fois.
+**Le lot T se faisait en premier et entièrement**, puis le lot C : reprendre un
+écran avant les jetons puis avant les composants aurait obligé à le reprendre
+trois fois.
 
 Les deux polices sont désormais **dans le dépôt**, avec leur licence OFL :
 `assets/fonts/BricolageGrotesque-Variable.ttf` et `InstrumentSans-Variable.ttf`.
@@ -164,15 +167,20 @@ Il n'y a plus rien à récupérer. Si un jour il faut y revenir, l'adresse qui
 marche est `fonts.google.com/download/list?family=...` : les deux autres pistes
 évidentes sont des impasses, détaillées dans `etape-2-journal.md`.
 
-Ce que le lot C trouvera en arrivant, et qui l'attend :
+Ce que le lot R trouvera en arrivant :
 
-- les onze composants partagés emploient les nouveaux noms mais gardent les
-  usages d'avant : `BentoTile` pose ses tuiles sur `surfaceCanvas` au lieu de
-  `surfaceRaised`, et aucune n'a d'ombre ;
-- la grille de disponibilités n'a pas son fond `surfaceSunken`, alors que
-  `01-systeme-visuel.md` §2 nomme les cases vides de grille ;
-- la galerie `/_galerie` montre les jetons, pas encore les dix états de chaque
-  composant.
+- les composants du catalogue portent leur profondeur (`BentoTile` sur
+  `surfaceRaised` avec ombre, cases vides de grille en `surfaceSunken`), la
+  galerie `/_galerie` montre tous les états sur les cinq axes de la section 5, et
+  `PageParcours` vit dans `lib/core/widgets/` ;
+- les écrans, eux, n'ont **pas** bougé : seize `Container` avec `decoration`
+  vivent encore dans `lib/features/`, et les deux règles `07` §6 qui les
+  interdiraient (plus celle du `showDialog` destructif) sont à ajouter à
+  `verifier_jetons.dart` **avec** la reprise des écrans, pas avant ;
+- deux imprécisions rédactionnelles de `07-catalogue-composants.md` restent à
+  trancher côté document : « sélection en `surfacePrimary` » de la ligne
+  `GrilleSemaine` §1, et « plus hors ligne » de la famille « composant d'état »
+  §4. Détail dans `etape-2-journal.md`, « lot C ».
 
 Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 

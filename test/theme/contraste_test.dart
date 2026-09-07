@@ -234,7 +234,12 @@ void main() {
       creme,
     );
     mesure('inkAlert sur le creme', 6.25, palette.inkAlert.debugValue, creme);
-    mesure('inkAccent sur une carte', 8.08, palette.inkAccent.debugValue, blanc);
+    mesure(
+      'inkAccent sur une carte',
+      8.08,
+      palette.inkAccent.debugValue,
+      blanc,
+    );
     mesure(
       'inkSuccess sur une carte',
       7.75,

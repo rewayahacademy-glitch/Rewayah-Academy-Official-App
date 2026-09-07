@@ -58,18 +58,14 @@ void main() {
       await tester.tap(find.text(t.accuse.compris));
       await tester.pumpAndSettle();
 
-      expect(
-        dossier.contratsAcceptes,
-        <SorteContrat>[SorteContrat.accuseEnregistrementControle],
-      );
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.accuseEnregistrementControle,
+      ]);
     });
   });
 
   group('Le contrat depend du role, et lui seul', () {
-    Future<FauxServiceDossier> monter(
-      WidgetTester tester,
-      AppRole role,
-    ) async {
+    Future<FauxServiceDossier> monter(WidgetTester tester, AppRole role) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..etatRendu = EtatDossier(
           profilExiste: true,
@@ -107,10 +103,9 @@ void main() {
 
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
-      expect(
-        dossier.contratsAcceptes,
-        <SorteContrat>[SorteContrat.contratEnseignant],
-      );
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.contratEnseignant,
+      ]);
     });
 
     testWidgets('un tuteur signe les conditions, sans la clause enseignant', (
@@ -122,10 +117,9 @@ void main() {
 
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
-      expect(
-        dossier.contratsAcceptes,
-        <SorteContrat>[SorteContrat.conditionsTuteur],
-      );
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.conditionsTuteur,
+      ]);
     });
   });
 

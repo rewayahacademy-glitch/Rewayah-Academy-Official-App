@@ -71,14 +71,15 @@ EleveEnAttente _enAttente({
   mode: InterfaceMode.enfant,
 );
 
-FauxServiceRegles _reglesAvecPause(int minutes) => FauxServiceRegles()
-  ..parProfil[_monId] = <RegleProfil>[
-    RegleProfil(
-      cle: CleRegle.pauseEntreCours,
-      valeurEffective: minutes,
-      valeurPlateforme: 30,
-    ),
-  ];
+FauxServiceRegles _reglesAvecPause(int minutes) =>
+    FauxServiceRegles()
+      ..parProfil[_monId] = <RegleProfil>[
+        RegleProfil(
+          cle: CleRegle.pauseEntreCours,
+          valeurEffective: minutes,
+          valeurPlateforme: 30,
+        ),
+      ];
 
 List<Override> _surcharges({
   required FauxServicePlanning planning,
@@ -90,9 +91,7 @@ List<Override> _surcharges({
     FausseSourceSession(_sessionEnseignant),
   ),
   servicePlanningProvider.overrideWithValue(planning),
-  serviceMatchingProvider.overrideWithValue(
-    matching ?? FauxServiceMatching(),
-  ),
+  serviceMatchingProvider.overrideWithValue(matching ?? FauxServiceMatching()),
   serviceReglesProvider.overrideWithValue(regles ?? FauxServiceRegles()),
   servicePriereProvider.overrideWithValue(priere ?? FauxServicePriere()),
 ];

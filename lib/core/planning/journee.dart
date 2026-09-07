@@ -145,7 +145,9 @@ List<EntreeJournee> construireJournee({
 Seance? prochainCours(List<Seance> seances, DateTime maintenant) {
   final List<Seance> retenues =
       seances
-          .where((Seance seance) => (seance.statut?.estAnnulee ?? false) == false)
+          .where(
+            (Seance seance) => (seance.statut?.estAnnulee ?? false) == false,
+          )
           .toList()
         ..sort((Seance a, Seance b) => a.debut.compareTo(b.debut));
 

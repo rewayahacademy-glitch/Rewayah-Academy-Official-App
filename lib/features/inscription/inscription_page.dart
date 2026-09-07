@@ -11,7 +11,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/choice_card_group.dart';
-import 'page_parcours.dart';
+import '../../core/widgets/page_parcours.dart';
 
 /// `TUT-00c` : creer son profil, en pages courtes.
 ///
@@ -132,7 +132,9 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
       question: t.inscription.roleQuestion,
       libelleAction: t.commun.continuer,
       onAction: _choixRole == null || _horsParcours ? null : _avancer,
-      souscription: _horsParcours ? _Refus(message: t.inscription.autreAide) : null,
+      souscription: _horsParcours
+          ? _Refus(message: t.inscription.autreAide)
+          : null,
       enfant: ChoiceCardGroup(
         options: <OptionChoix>[
           OptionChoix(
@@ -213,7 +215,9 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
       libelleAction: t.commun.continuer,
       onAction: _genre == null || _horsParcours ? null : _avancer,
       onRetour: _reculer,
-      souscription: _horsParcours ? _Refus(message: t.inscription.autreAide) : null,
+      souscription: _horsParcours
+          ? _Refus(message: t.inscription.autreAide)
+          : null,
       enfant: ChoiceCardGroup(
         options: <OptionChoix>[
           OptionChoix(

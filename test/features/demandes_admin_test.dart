@@ -43,27 +43,28 @@ Demande _demande({
 );
 
 /// Les regles d'un eleve : deux au defaut de la plateforme, une surchargee.
-FauxServiceRegles _regles() => FauxServiceRegles()
-  ..parProfil['e1'] = <RegleProfil>[
-    RegleProfil(
-      cle: CleRegle.dureeSeance,
-      valeurEffective: 45,
-      valeurPlateforme: 60,
-      surchargeId: 'ovr1',
-      motif: 'Enfant de six ans.',
-      poseeLe: DateTime(2026, 8, 20),
-    ),
-    const RegleProfil(
-      cle: CleRegle.minimumPayable,
-      valeurEffective: 45,
-      valeurPlateforme: 45,
-    ),
-    const RegleProfil(
-      cle: CleRegle.pauseEntreCours,
-      valeurEffective: 30,
-      valeurPlateforme: 30,
-    ),
-  ];
+FauxServiceRegles _regles() =>
+    FauxServiceRegles()
+      ..parProfil['e1'] = <RegleProfil>[
+        RegleProfil(
+          cle: CleRegle.dureeSeance,
+          valeurEffective: 45,
+          valeurPlateforme: 60,
+          surchargeId: 'ovr1',
+          motif: 'Enfant de six ans.',
+          poseeLe: DateTime(2026, 8, 20),
+        ),
+        const RegleProfil(
+          cle: CleRegle.minimumPayable,
+          valeurEffective: 45,
+          valeurPlateforme: 45,
+        ),
+        const RegleProfil(
+          cle: CleRegle.pauseEntreCours,
+          valeurEffective: 30,
+          valeurPlateforme: 30,
+        ),
+      ];
 
 Future<void> _monter(
   WidgetTester tester, {
@@ -106,7 +107,10 @@ void main() {
       WidgetTester tester,
     ) async {
       _fenetreHaute(tester);
-      await _monter(tester, admin: FauxServiceAdmin()..file = <Demande>[_demande()]);
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()..file = <Demande>[_demande()],
+      );
 
       // Meme ordre qu'a `ADM-02` : ce qui permet de juger est au-dessus du
       // jugement, et la feuille de regles en fait partie.
@@ -128,7 +132,10 @@ void main() {
       WidgetTester tester,
     ) async {
       _fenetreHaute(tester);
-      await _monter(tester, admin: FauxServiceAdmin()..file = <Demande>[_demande()]);
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()..file = <Demande>[_demande()],
+      );
 
       expect(
         find.text(
@@ -173,9 +180,7 @@ void main() {
       expect(admin.verdicts.single.motif, isNull);
     });
 
-    testWidgets('un refus sans motif ne part pas', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('un refus sans motif ne part pas', (WidgetTester tester) async {
       _fenetreHaute(tester);
       final FauxServiceAdmin admin = FauxServiceAdmin()
         ..file = <Demande>[_demande()];
@@ -234,7 +239,10 @@ void main() {
       WidgetTester tester,
     ) async {
       _fenetreHaute(tester);
-      await _monter(tester, admin: FauxServiceAdmin()..file = <Demande>[_demande()]);
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()..file = <Demande>[_demande()],
+      );
 
       // 60 minutes pour la plateforme, 45 pour cette eleve : l'ecart se voit,
       // il ne se deduit pas.
@@ -293,7 +301,10 @@ void main() {
       WidgetTester tester,
     ) async {
       _fenetreHaute(tester);
-      await _monter(tester, admin: FauxServiceAdmin()..file = <Demande>[_demande()]);
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()..file = <Demande>[_demande()],
+      );
 
       // Trois regles, une seule surchargee : un bouton de cloture sur les
       // autres echouerait apres le geste, et un bouton qui echoue apres le

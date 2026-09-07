@@ -155,11 +155,9 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
       affectationsProvider,
     );
 
-    final List<EleveDuFoyer> foyer =
-        enfants.value ?? const <EleveDuFoyer>[];
+    final List<EleveDuFoyer> foyer = enfants.value ?? const <EleveDuFoyer>[];
     final List<Seance> toutes = seances.value ?? const <Seance>[];
-    final List<Affectation> liens =
-        affectations.value ?? const <Affectation>[];
+    final List<Affectation> liens = affectations.value ?? const <Affectation>[];
 
     return Scaffold(
       body: SafeArea(
@@ -184,9 +182,8 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
                         message: t.tuteur.accueil.aucunEnfant,
                         invitation: t.tuteur.accueil.aucunEnfantDetail,
                         libelleAction: t.enfant.titre,
-                        onAction: () => GoRouter.of(
-                          context,
-                        ).go(Routes.tuteurAjouterEnfant),
+                        onAction: () =>
+                            GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
                       )
                     else
                       for (final EleveDuFoyer enfant in foyer)
@@ -195,9 +192,7 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
                           child: _LigneEnfant(
                             enfant: enfant,
                             seances: toutes
-                                .where(
-                                  (Seance s) => s.eleveId == enfant.id,
-                                )
+                                .where((Seance s) => s.eleveId == enfant.id)
                                 .toList(),
                             affecte: liens.any(
                               (Affectation a) =>
@@ -276,7 +271,6 @@ class _LigneEnfant extends StatelessWidget {
 
     return BentoTile(
       surface: paire,
-      avecBordure: !enDirect,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -298,9 +292,7 @@ class _LigneEnfant extends StatelessWidget {
               Expanded(
                 child: Text(
                   enfant.prenom,
-                  style: paire.applyTo(
-                    textes.titleLarge ?? const TextStyle(),
-                  ),
+                  style: paire.applyTo(textes.titleLarge ?? const TextStyle()),
                 ),
               ),
             ],
@@ -321,7 +313,6 @@ class _LigneEnfant extends StatelessWidget {
             Ecart.vMd,
             ActionPrincipale(
               libelle: t.tuteur.accueil.assister,
-              surface: palette.surfaceSuccess,
               onPress: () => GoRouter.of(context).go(
                 Routes.salle,
                 // Le billet passe par `extra`, jamais par l'URL (ADR-005).
@@ -453,9 +444,8 @@ class _EnRecherche extends ConsumerWidget {
           Ecart.vSm,
           ActionPrincipale(
             libelle: t.tuteur.accueil.poserDesHeures,
-            surface: AppPalette.of(context).surfaceCanvas,
-            onPress: () =>
-                GoRouter.of(context).go(Routes.tuteurDisponibilites),
+            niveau: NiveauAction.secondaire,
+            onPress: () => GoRouter.of(context).go(Routes.tuteurDisponibilites),
           ),
         ],
       );
@@ -526,7 +516,6 @@ class _BlocSecondaire extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
 
     return BentoTile(
-      avecBordure: true,
       libelleSemantique: titre,
       onPress: () => GoRouter.of(context).go(destination),
       child: Row(
@@ -567,7 +556,6 @@ class _BlocAcces extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
 
     return BentoTile(
-      avecBordure: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

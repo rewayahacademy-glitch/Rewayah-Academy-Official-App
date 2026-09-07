@@ -18,6 +18,13 @@ import '../theme/app_palette.dart';
 /// 3. La photo n'est jamais exposee a l'enseignant ni aux autres eleves. Les
 ///    vues `teacher_roster_v` et `session_peers_v` ne la portent pas, ce
 ///    composant n'est donc pas rendu dans ces contextes.
+///
+/// **Le lot C change son repli.** Il etait peint en `surfacePrimary`, c'est-a
+/// dire en aplat violet sature : sur `TUT-01`, quatre enfants sans photo
+/// faisaient quatre aplats pleins, la ou la regle n'en autorise qu'un par
+/// ecran. Il prend desormais la teinte du domaine foyer, `washFamily`, et un
+/// contour `borderStrong` qui le detache de la carte
+/// (`docs/design/07-catalogue-composants.md` section 1).
 class AvatarTile extends StatelessWidget {
   /// Cree une tuile d'avatar.
   const AvatarTile({
@@ -41,37 +48,44 @@ class AvatarTile extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final double taille = diametre ?? metriques.cibleTactile * 2;
-    final AppColorPair paire = palette.surfacePrimary;
+    final AppColorPair paire = palette.washFamily;
 
-    final Widget repli = _Initiales(prenom: prenom, paire: paire, taille: taille);
-
-    if (urlSignee == null || urlSignee!.isEmpty) {
-      return _cadre(taille, paire, repli);
-    }
-
-    return _cadre(
-      taille,
-      paire,
-      Image.network(
-        urlSignee!,
-        width: taille,
-        height: taille,
-        fit: BoxFit.cover,
-        // Meme repli que l'absence de photo : identique, jamais une erreur.
-        errorBuilder: (BuildContext _, Object _, StackTrace? _) => repli,
-        loadingBuilder:
-            (BuildContext _, Widget enfant, ImageChunkEvent? progression) =>
-                progression == null ? enfant : repli,
-      ),
+    final Widget repli = _Initiales(
+      prenom: prenom,
+      paire: paire,
+      taille: taille,
     );
-  }
 
-  Widget _cadre(double taille, AppColorPair paire, Widget contenu) {
-    return ClipOval(
-      child: SizedBox(
-        width: taille,
-        height: taille,
-        child: ColoredBox(color: paire.background, child: contenu),
+    final Widget contenu = urlSignee == null || urlSignee!.isEmpty
+        ? repli
+        : Image.network(
+            urlSignee!,
+            width: taille,
+            height: taille,
+            fit: BoxFit.cover,
+            // Meme repli que l'absence de photo : identique, jamais une erreur.
+            errorBuilder: (BuildContext _, Object _, StackTrace? _) => repli,
+            loadingBuilder: (
+              BuildContext _,
+              Widget enfant,
+              ImageChunkEvent? progression,
+            ) => progression == null ? enfant : repli,
+          );
+
+    return SizedBox(
+      width: taille,
+      height: taille,
+      child: DecoratedBox(
+        // Le contour se pose en PREMIER PLAN : derriere l'image, il serait
+        // recouvert par elle et l'avatar photographie n'aurait plus de bord.
+        position: DecorationPosition.foreground,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.fromBorderSide(palette.borderStrong.asBorderSide()),
+        ),
+        child: ClipOval(
+          child: ColoredBox(color: paire.background, child: contenu),
+        ),
       ),
     );
   }

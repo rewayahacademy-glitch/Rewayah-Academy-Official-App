@@ -96,7 +96,9 @@ class ServiceAdminSupabase implements ServiceAdmin {
       'demandes_en_attente',
     );
     return reponse
-        .map((dynamic ligne) => Demande.depuisJson(ligne as Map<String, dynamic>))
+        .map(
+          (dynamic ligne) => Demande.depuisJson(ligne as Map<String, dynamic>),
+        )
         .toList();
   }
 

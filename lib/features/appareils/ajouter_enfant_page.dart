@@ -8,7 +8,7 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../features/inscription/page_parcours.dart';
+import '../../core/widgets/page_parcours.dart';
 
 /// L'ajout d'un enfant au foyer.
 ///

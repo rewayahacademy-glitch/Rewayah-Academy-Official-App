@@ -103,10 +103,10 @@ void main() {
         pauseMaximale: const Duration(minutes: 30),
       );
 
-      expect(
-        journee.map((EntreeJournee e) => e.sorte),
-        <SorteEntree>[SorteEntree.cours, SorteEntree.cours],
-      );
+      expect(journee.map((EntreeJournee e) => e.sorte), <SorteEntree>[
+        SorteEntree.cours,
+        SorteEntree.cours,
+      ]);
     });
 
     test('une pause plus longue devient une pause si la regle le dit', () {
@@ -125,22 +125,25 @@ void main() {
       expect(journee[1].duree, const Duration(hours: 1));
     });
 
-    test('une seance annulee ne tient aucune place et ne cree aucune pause', () {
-      final List<EntreeJournee> journee = construireJournee(
-        seances: <Seance>[
-          _cours(heure: 9, statut: StatutSeance.annulee),
-          _cours(heure: 10, id: 's2', statut: StatutSeance.annuleeTard),
-          _cours(heure: 11, id: 's3'),
-        ],
-        reglages: null,
-        debut: _jour,
-        fin: _jour.add(const Duration(days: 1)),
-        pauseMaximale: const Duration(minutes: 30),
-      );
+    test(
+      'une seance annulee ne tient aucune place et ne cree aucune pause',
+      () {
+        final List<EntreeJournee> journee = construireJournee(
+          seances: <Seance>[
+            _cours(heure: 9, statut: StatutSeance.annulee),
+            _cours(heure: 10, id: 's2', statut: StatutSeance.annuleeTard),
+            _cours(heure: 11, id: 's3'),
+          ],
+          reglages: null,
+          debut: _jour,
+          fin: _jour.add(const Duration(days: 1)),
+          pauseMaximale: const Duration(minutes: 30),
+        );
 
-      expect(journee.length, 1);
-      expect(journee.single.seance?.id, 's3');
-    });
+        expect(journee.length, 1);
+        expect(journee.single.seance?.id, 's3');
+      },
+    );
 
     test('sans reglages de priere, la colonne ne contient que les cours', () {
       final List<EntreeJournee> journee = construireJournee(
@@ -156,7 +159,10 @@ void main() {
 
     test('une seance hors de la fenetre ne s y invite pas', () {
       final List<EntreeJournee> journee = construireJournee(
-        seances: <Seance>[_cours(heure: 9), _cours(heure: 20, id: 's2')],
+        seances: <Seance>[
+          _cours(heure: 9),
+          _cours(heure: 20, id: 's2'),
+        ],
         reglages: null,
         debut: _jour.add(const Duration(hours: 8)),
         fin: _jour.add(const Duration(hours: 12)),
@@ -177,14 +183,18 @@ void main() {
 
       // 10h30 : le cours de 9h est fini, celui de 11h est le prochain.
       expect(
-        prochainCours(seances, _jour.add(const Duration(hours: 10, minutes: 30)))
-            ?.id,
+        prochainCours(
+          seances,
+          _jour.add(const Duration(hours: 10, minutes: 30)),
+        )?.id,
         's2',
       );
       // 9h30 : on est dedans, c'est lui qui domine, pas le suivant.
       expect(
-        prochainCours(seances, _jour.add(const Duration(hours: 9, minutes: 30)))
-            ?.id,
+        prochainCours(
+          seances,
+          _jour.add(const Duration(hours: 9, minutes: 30)),
+        )?.id,
         's1',
       );
     });
@@ -199,8 +209,10 @@ void main() {
       ];
 
       expect(
-        prochainCours(seances, _jour.add(const Duration(hours: 10, minutes: 30)))
-            ?.id,
+        prochainCours(
+          seances,
+          _jour.add(const Duration(hours: 10, minutes: 30)),
+        )?.id,
         's1',
       );
     });
@@ -212,8 +224,10 @@ void main() {
         _cours(heure: 16, id: 's3'),
       ];
 
-      expect(prochainCours(seances, _jour.add(const Duration(hours: 10)))?.id,
-          's3');
+      expect(
+        prochainCours(seances, _jour.add(const Duration(hours: 10)))?.id,
+        's3',
+      );
     });
 
     test('le bloc n est pas borne a la journee courante', () {
@@ -222,16 +236,18 @@ void main() {
       final Seance demain = _cours(heure: 33, id: 'demain');
 
       expect(
-        prochainCours(<Seance>[demain], _jour.add(const Duration(hours: 20)))
-            ?.id,
+        prochainCours(<Seance>[
+          demain,
+        ], _jour.add(const Duration(hours: 20)))?.id,
         'demain',
       );
     });
 
     test('sans cours a venir, il n y a pas de bloc dominant', () {
       expect(
-        prochainCours(<Seance>[_cours(heure: 9)],
-            _jour.add(const Duration(hours: 20))),
+        prochainCours(<Seance>[
+          _cours(heure: 9),
+        ], _jour.add(const Duration(hours: 20))),
         isNull,
       );
       expect(prochainCours(const <Seance>[], _jour), isNull);

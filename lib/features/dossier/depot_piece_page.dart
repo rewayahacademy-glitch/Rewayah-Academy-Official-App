@@ -144,7 +144,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                         ? t.kyc.choisirFichier
                         : t.kyc.fichierChoisi,
                     onPress: _type == null ? null : () => unawaited(_choisir()),
-                    surface: palette.surfaceCanvas,
+                    niveau: NiveauAction.secondaire,
                   ),
                 ],
               ),
@@ -183,4 +183,3 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
     );
   }
 }
-

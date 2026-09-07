@@ -21,7 +21,8 @@ class CleAudio {
   final String chemin;
 
   /// Le fichier son correspondant pour une langue donnee.
-  String fichierPour(String codeLangue) => 'assets/audio/$codeLangue/$chemin.mp3';
+  String fichierPour(String codeLangue) =>
+      'assets/audio/$codeLangue/$chemin.mp3';
 
   @override
   bool operator ==(Object other) => other is CleAudio && other.chemin == chemin;

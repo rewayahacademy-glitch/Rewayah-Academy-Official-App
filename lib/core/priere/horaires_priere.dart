@@ -166,20 +166,19 @@ List<InterruptionPriere> interruptionsEntre({
 }
 
 /// La correspondance avec le paquet de calcul, nom pour nom.
-adhan.CalculationParameters _parametres(MethodeCalcul methode) =>
-    switch (methode) {
-      MethodeCalcul.ligueMondiale =>
-        adhan.CalculationMethod.muslim_world_league,
-      MethodeCalcul.egypte => adhan.CalculationMethod.egyptian,
-      MethodeCalcul.karachi => adhan.CalculationMethod.karachi,
-      MethodeCalcul.ummAlQura => adhan.CalculationMethod.umm_al_qura,
-      MethodeCalcul.dubai => adhan.CalculationMethod.dubai,
-      MethodeCalcul.moonSighting =>
-        adhan.CalculationMethod.moon_sighting_committee,
-      MethodeCalcul.ameriqueDuNord => adhan.CalculationMethod.north_america,
-      MethodeCalcul.koweit => adhan.CalculationMethod.kuwait,
-      MethodeCalcul.qatar => adhan.CalculationMethod.qatar,
-      MethodeCalcul.singapour => adhan.CalculationMethod.singapore,
-      MethodeCalcul.teheran => adhan.CalculationMethod.tehran,
-      MethodeCalcul.turquie => adhan.CalculationMethod.turkey,
-    }.getParameters();
+adhan.CalculationParameters _parametres(
+  MethodeCalcul methode,
+) => switch (methode) {
+  MethodeCalcul.ligueMondiale => adhan.CalculationMethod.muslim_world_league,
+  MethodeCalcul.egypte => adhan.CalculationMethod.egyptian,
+  MethodeCalcul.karachi => adhan.CalculationMethod.karachi,
+  MethodeCalcul.ummAlQura => adhan.CalculationMethod.umm_al_qura,
+  MethodeCalcul.dubai => adhan.CalculationMethod.dubai,
+  MethodeCalcul.moonSighting => adhan.CalculationMethod.moon_sighting_committee,
+  MethodeCalcul.ameriqueDuNord => adhan.CalculationMethod.north_america,
+  MethodeCalcul.koweit => adhan.CalculationMethod.kuwait,
+  MethodeCalcul.qatar => adhan.CalculationMethod.qatar,
+  MethodeCalcul.singapour => adhan.CalculationMethod.singapore,
+  MethodeCalcul.teheran => adhan.CalculationMethod.tehran,
+  MethodeCalcul.turquie => adhan.CalculationMethod.turkey,
+}.getParameters();

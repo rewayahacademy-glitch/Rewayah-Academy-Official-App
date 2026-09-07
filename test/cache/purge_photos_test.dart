@@ -20,21 +20,24 @@ class _CacheMemoire implements CacheMedia {
 
 void main() {
   group('Scenario 4 : une photo supprimee cote serveur disparait en local', () {
-    test('un evenement de synchronisation retire la photo immediatement', () async {
-      final _CacheMemoire cache = _CacheMemoire(<String>['avatar-amina']);
-      final PurgePhotos purge = PurgePhotos(cache);
+    test(
+      'un evenement de synchronisation retire la photo immediatement',
+      () async {
+        final _CacheMemoire cache = _CacheMemoire(<String>['avatar-amina']);
+        final PurgePhotos purge = PurgePhotos(cache);
 
-      await purge.signaler(
-        EvenementPhoto(
-          cleAvatar: 'avatar-amina',
-          survenuA: DateTime.utc(2026, 9, 6, 10),
-        ),
-      );
+        await purge.signaler(
+          EvenementPhoto(
+            cleAvatar: 'avatar-amina',
+            survenuA: DateTime.utc(2026, 9, 6, 10),
+          ),
+        );
 
-      expect(cache.retraits, <String>['avatar-amina']);
-      expect(await cache.clesConservees(), isEmpty);
-      expect(purge.enAttente, isEmpty);
-    });
+        expect(cache.retraits, <String>['avatar-amina']);
+        expect(await cache.clesConservees(), isEmpty);
+        expect(purge.enAttente, isEmpty);
+      },
+    );
 
     test('la purge ne touche pas les autres photos du foyer', () async {
       final _CacheMemoire cache = _CacheMemoire(<String>[
@@ -76,7 +79,11 @@ void main() {
         final Set<String> retirees = await rattrapage.rattraper(
           changement.add(PurgePhotos.delaiMaximal),
         );
-        expect(retirees.contains('avatar-amina') || apresRedemarrage.retraits.contains('avatar-amina'), isTrue);
+        expect(
+          retirees.contains('avatar-amina') ||
+              apresRedemarrage.retraits.contains('avatar-amina'),
+          isTrue,
+        );
         expect(await apresRedemarrage.clesConservees(), isEmpty);
       },
     );

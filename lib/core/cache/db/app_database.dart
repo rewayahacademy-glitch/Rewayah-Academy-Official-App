@@ -19,7 +19,8 @@ class ProfilsFoyer extends Table {
   TextColumn get prenom => text()();
 
   /// Mode d'interface, valeur SQL (`child` ou `standard`).
-  TextColumn get modeInterface => text().withDefault(const Constant('standard'))();
+  TextColumn get modeInterface =>
+      text().withDefault(const Constant('standard'))();
 
   /// Politique camera, valeur SQL (`allowed` ou `forbidden`).
   TextColumn get politiqueCamera =>

@@ -71,8 +71,7 @@ class PurgePhotos {
     final Set<String> conservees = await _cache.clesConservees();
 
     for (final MapEntry<String, DateTime> e in _aRetirer.entries.toList()) {
-      final bool depasse =
-          maintenant.difference(e.value) >= delaiMaximal;
+      final bool depasse = maintenant.difference(e.value) >= delaiMaximal;
       if (conservees.contains(e.key) || depasse) {
         await _cache.retirer(e.key);
         retirees.add(e.key);
@@ -83,7 +82,8 @@ class PurgePhotos {
   }
 
   /// Les retraits encore en attente. Expose pour les tests et le diagnostic.
-  Map<String, DateTime> get enAttente => Map<String, DateTime>.unmodifiable(_aRetirer);
+  Map<String, DateTime> get enAttente =>
+      Map<String, DateTime>.unmodifiable(_aRetirer);
 }
 
 /// Le cache media reel, adosse a `flutter_cache_manager`.

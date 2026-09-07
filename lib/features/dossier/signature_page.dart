@@ -141,7 +141,6 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.md),
                       child: BentoTile(
-                        avecBordure: true,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[

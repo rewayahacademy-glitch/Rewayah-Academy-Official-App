@@ -355,11 +355,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
       surfaceRaised: AppColorPair.lerp(surfaceRaised, other.surfaceRaised, t),
       surfaceCanvas: AppColorPair.lerp(surfaceCanvas, other.surfaceCanvas, t),
       surfaceSunken: AppColorPair.lerp(surfaceSunken, other.surfaceSunken, t),
-      borderHairline: AppInkColor.lerp(
-        borderHairline,
-        other.borderHairline,
-        t,
-      ),
+      borderHairline: AppInkColor.lerp(borderHairline, other.borderHairline, t),
       borderResting: AppInkColor.lerp(borderResting, other.borderResting, t),
       borderStrong: AppInkColor.lerp(borderStrong, other.borderStrong, t),
       inkFaint: AppInkColor.lerp(inkFaint, other.inkFaint, t),

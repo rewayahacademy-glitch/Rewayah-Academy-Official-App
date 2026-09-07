@@ -3,40 +3,67 @@ import 'package:flutter/material.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
 
-/// L'action principale d'un ecran.
+/// Les quatre niveaux d'action, pas cinq.
 ///
-/// **Dixieme composant partage, ajoute a l'etape 3.** L'etape 2 n'avait aucun
-/// formulaire : le seul bouton du produit vivait a l'interieur d'`EmptyState`,
-/// qui le redessinait pour son propre compte. L'etape 3 en a besoin sur chaque
-/// page d'inscription, de contrat et de depot. Ce fichier n'ajoute donc pas un
-/// composant a cote d'un autre, il sort celui qui existait deja pour que les
-/// deux usages ne divergent pas.
+/// Source : `docs/design/02-regles-ux.md` section 4. Le nombre par ecran est
+/// une regle d'ecran, pas une regle de composant : elle se tient en revue, et
+/// c'est `08-catalogue-ecrans.md` qui la porte.
+enum NiveauAction {
+  /// Fond plein `surfacePrimary`. **Une seule par ecran**, zero si l'ecran est
+  /// en lecture.
+  principale,
+
+  /// Contour `borderStrong` sur `surfaceRaised`. Deux au plus.
+  secondaire,
+
+  /// Texte `inkAccent`, sans contour. Autant que necessaire, mais jamais
+  /// alignees comme des boutons.
+  tertiaire,
+
+  /// Texte `inkAlert`, **jamais un fond rouge plein**. Jamais dans la zone
+  /// principale.
+  destructive,
+}
+
+/// L'action d'un ecran, dans l'un de ses quatre niveaux.
+///
+/// **Seul point d'entree des actions du produit.** `tool/verifier_jetons.dart`
+/// echoue sur tout `ElevatedButton`, `TextButton`, `OutlinedButton` ou
+/// `FilledButton` dans `lib/` : un bouton Material rapporterait la palette de
+/// Material avec lui.
 ///
 /// Regle d'ecran heritee des parcours : **un ecran, une action principale.** Si
-/// deux `ActionPrincipale` se disputent un ecran, l'ecran est a revoir, pas le
-/// composant.
+/// deux [NiveauAction.principale] se disputent un ecran, l'ecran est a revoir,
+/// pas le composant.
+///
+/// Le quatrieme niveau, le destructif, a ete ajoute au lot C de la refonte.
+/// Avant lui, un refus se peignait en passant la paire `surfaceAlert` au
+/// bouton, c'est-a-dire en aplat rouge plein, ce que
+/// `01-systeme-visuel.md` section 3 interdit.
 class ActionPrincipale extends StatelessWidget {
-  /// Cree l'action principale.
+  /// Cree une action.
   const ActionPrincipale({
     required this.libelle,
     required this.onPress,
     super.key,
-    this.surface,
+    this.niveau = NiveauAction.principale,
     this.enCours = false,
     this.pleineLargeur = true,
   });
 
-  /// Le libelle du bouton.
+  /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
+  /// pas « Valider » (`02-regles-ux.md` section 9).
   final String libelle;
 
   /// L'action. `null` rend le bouton inerte, et le dit visuellement.
   final VoidCallback? onPress;
 
-  /// La paire de couleurs. Par defaut, l'accent principal.
-  final AppColorPair? surface;
+  /// Le niveau hierarchique de l'action.
+  final NiveauAction niveau;
 
   /// Remplace le libelle par un indicateur d'activite, et bloque la pression.
   final bool enCours;
@@ -50,14 +77,26 @@ class ActionPrincipale extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     final bool actif = onPress != null && !enCours;
 
-    // Un bouton inerte ne se signale pas par de la transparence : baisser
-    // l'opacite ferait tomber tout le sous-arbre sous le seuil de contraste.
-    // Il change de PAIRE, donc son texte reste lisible et suit son fond.
-    final AppColorPair paire = actif
-        ? (surface ?? palette.surfacePrimary)
-        : palette.surfaceCanvas;
+    return Pressable.selon(
+      onPress: actif ? onPress : null,
+      libelleSemantique: libelle,
+      respecterCibleTactile: false,
+      arrondiFocus: AppRadius.arrondiSm,
+      constructeur: (BuildContext contexte, EtatPression etat) =>
+          _corps(contexte, palette, metriques, etat, actif: actif),
+    );
+  }
 
-    final Widget contenu = Container(
+  Widget _corps(
+    BuildContext context,
+    AppPalette palette,
+    AppMetriques metriques,
+    EtatPression etat, {
+    required bool actif,
+  }) {
+    final _Peinture peinture = _peinturePour(palette, actif: actif, etat: etat);
+
+    return Container(
       width: pleineLargeur ? double.infinity : null,
       constraints: BoxConstraints(minHeight: metriques.cibleTactile),
       alignment: Alignment.center,
@@ -65,32 +104,102 @@ class ActionPrincipale extends StatelessWidget {
         horizontal: AppSpacing.xxl,
         vertical: AppSpacing.md,
       ),
-      decoration: paire.decoration(
-        borderRadius: BorderRadius.circular(metriques.rayon),
-        side: actif ? null : palette.borderResting.asBorderSide(width: 2),
+      decoration: BoxDecoration(
+        color: peinture.fond,
+        borderRadius: AppRadius.arrondiSm,
+        border: peinture.filet == null
+            ? null
+            : Border.fromBorderSide(peinture.filet!),
       ),
       child: enCours
           ? SizedBox.square(
               dimension: AppSpacing.xl,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: paire.onBackground,
+                color: peinture.encre(const TextStyle()).color,
               ),
             )
           : Text(
               libelle,
               textAlign: TextAlign.center,
-              style: paire.applyTo(
+              style: peinture.encre(
                 Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
               ),
             ),
     );
-
-    return Pressable(
-      onPress: actif ? onPress : null,
-      libelleSemantique: libelle,
-      respecterCibleTactile: false,
-      child: contenu,
-    );
   }
+
+  /// Le fond, l'encre et le filet du niveau, dans l'etat courant.
+  ///
+  /// **Un bouton inerte ne se signale pas par de la transparence** : baisser
+  /// l'opacite ferait tomber tout le sous-arbre sous le seuil de contraste. Il
+  /// change de paire, donc son texte reste lisible et suit son fond.
+  ///
+  /// Le survol n'invente aucune couleur : il passe au registre doux de la meme
+  /// famille pour les niveaux plats, et pose le filet fort sur le niveau plein.
+  _Peinture _peinturePour(
+    AppPalette palette, {
+    required bool actif,
+    required EtatPression etat,
+  }) {
+    if (!actif) {
+      return _Peinture(
+        fond: palette.surfaceSunken.background,
+        encre: palette.inkMuted.applyTo,
+        filet: palette.borderResting.asBorderSide(width: 2),
+      );
+    }
+
+    switch (niveau) {
+      case NiveauAction.principale:
+        return _Peinture(
+          fond: palette.surfacePrimary.background,
+          encre: palette.surfacePrimary.applyTo,
+          // Au survol, l'aplat plein ne change pas de teinte : il gagne le
+          // filet fort. Une seconde nuance de violet serait une couleur de
+          // plus, hors palette.
+          filet: etat.survole || etat.presse
+              ? palette.borderStrong.asBorderSide(width: 2)
+              : null,
+        );
+      case NiveauAction.secondaire:
+        {
+          // Le survol passe au registre doux de l'accent : la paire change en
+          // entier, le texte suit donc toujours son fond.
+          final AppColorPair paire = etat.survole
+              ? palette.washAccent
+              : palette.surfaceRaised;
+          return _Peinture(
+            fond: paire.background,
+            encre: paire.applyTo,
+            filet: palette.borderStrong.asBorderSide(width: 2),
+          );
+        }
+      case NiveauAction.tertiaire:
+        return _Peinture(
+          fond: etat.survole ? palette.washAccent.background : null,
+          encre: palette.inkAccent.applyTo,
+        );
+      case NiveauAction.destructive:
+        return _Peinture(
+          fond: etat.survole ? palette.washAlert.background : null,
+          encre: palette.inkAlert.applyTo,
+        );
+    }
+  }
+}
+
+/// Ce qu'il faut peindre : un fond eventuel, une encre, un filet eventuel.
+///
+/// L'encre est une **fonction de style** et non une couleur : c'est la
+/// signature commune a `AppColorPair.applyTo` et a `AppInkColor.applyTo`, et
+/// c'est ce qui permet aux quatre niveaux de puiser dans les deux familles
+/// sans qu'aucune couleur brute ne transite par ce type.
+@immutable
+class _Peinture {
+  const _Peinture({required this.fond, required this.encre, this.filet});
+
+  final Color? fond;
+  final TextStyle Function(TextStyle base) encre;
+  final BorderSide? filet;
 }

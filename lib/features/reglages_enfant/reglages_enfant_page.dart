@@ -153,8 +153,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
         if (mounted) {
           setState(
             () => _erreur = t.tuteur.reglages.photoTropLourde(
-              taille:
-                  '${ServiceAvatar.tailleMaximaleOctets ~/ (1024 * 1024)}',
+              taille: '${ServiceAvatar.tailleMaximaleOctets ~/ (1024 * 1024)}',
             ),
           );
         }
@@ -186,7 +185,6 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
     final bool modeEnfant = _enfant.mode == InterfaceMode.enfant;
 
     return BentoTile(
-      avecBordure: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -220,7 +218,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             libelle: _enfant.cleAvatar == null
                 ? t.tuteur.reglages.photoAjouter
                 : t.tuteur.reglages.photoChanger,
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
             enCours: _photoEnCours,
             onPress: _changerPhoto,
           ),
@@ -239,7 +237,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             libelle: cameraAutorisee
                 ? t.tuteur.reglages.cameraRetirer(prenom: _enfant.prenom)
                 : t.tuteur.reglages.cameraAutoriser(prenom: _enfant.prenom),
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
             enCours: _reglageEnCours,
             onPress: () => _ecrire(
               camera: cameraAutorisee
@@ -262,7 +260,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             libelle: modeEnfant
                 ? t.tuteur.reglages.modePasserStandard(prenom: _enfant.prenom)
                 : t.tuteur.reglages.modePasserEnfant(prenom: _enfant.prenom),
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
             enCours: _reglageEnCours,
             onPress: () => _ecrire(
               mode: modeEnfant ? InterfaceMode.standard : InterfaceMode.enfant,
@@ -327,7 +325,6 @@ class _Demandes extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
     final List<Affectation> liens =
         ref.watch(affectationsProvider).value ?? const <Affectation>[];
     final bool affecte = liens.any(
@@ -342,7 +339,7 @@ class _Demandes extends ConsumerWidget {
         if (affecte)
           ActionPrincipale(
             libelle: t.tuteur.reglages.demandeReaffectation,
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
             onPress: () => _ouvrir(context, SorteDemande.reaffectation, null),
           )
         else
@@ -355,14 +352,14 @@ class _Demandes extends ConsumerWidget {
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.tuteur.reglages.demandeDuree,
-          surface: palette.surfaceCanvas,
+          niveau: NiveauAction.secondaire,
           onPress: () =>
               _ouvrir(context, SorteDemande.regle, CleRegle.dureeSeance),
         ),
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.tuteur.reglages.demandeMinimum,
-          surface: palette.surfaceCanvas,
+          niveau: NiveauAction.secondaire,
           onPress: () =>
               _ouvrir(context, SorteDemande.regle, CleRegle.minimumPayable),
         ),
@@ -571,10 +568,10 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
     SorteDemande.reaffectation => t.tuteur.reglages.demandeTitreReaffectation(
       prenom: widget.enfant.prenom,
     ),
-    SorteDemande.plafond ||
-    SorteDemande.regle => widget.cle == CleRegle.minimumPayable
-        ? t.tuteur.reglages.demandeTitreMinimum(prenom: widget.enfant.prenom)
-        : t.tuteur.reglages.demandeTitreDuree(prenom: widget.enfant.prenom),
+    SorteDemande.plafond || SorteDemande.regle =>
+      widget.cle == CleRegle.minimumPayable
+          ? t.tuteur.reglages.demandeTitreMinimum(prenom: widget.enfant.prenom)
+          : t.tuteur.reglages.demandeTitreDuree(prenom: widget.enfant.prenom),
   };
 }
 

@@ -12,7 +12,21 @@
   "reseau": {
     "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
-    "retabli": "Réseau rétabli"
+    "retabli": "Réseau rétabli",
+    "syncImpossible": "Synchronisation impossible"
+  },
+
+  "etat": {
+    "enDirect": "En direct",
+    "imminent": "C'est bientôt",
+    "annule": "Annulé",
+    "enAttente": "En attente",
+    "enRetard": "En retard",
+    "termine": "Terminé"
+  },
+
+  "destructif": {
+    "irreversible": "Cette action ne peut pas être annulée."
   },
 
   "salle": {

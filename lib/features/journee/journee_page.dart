@@ -229,7 +229,6 @@ class _BlocDominant extends StatelessWidget {
 
     return BentoTile(
       surface: paire,
-      avecBordure: !enCours,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -250,19 +249,14 @@ class _BlocDominant extends StatelessWidget {
             style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
           ),
           Ecart.vSm,
-          Text(
-            switch ((enCours, aujourdhui)) {
-              (true, _) => t.enseignant.journee.jusqua(
-                heure: _hhmm(cours.fin),
-              ),
-              (false, true) => _minuteur(cours.avantDebut(maintenant)),
-              (false, false) => t.enseignant.journee.unAutreJour(
-                jour: t.disponibilites.joursLongs[cours.debut.weekday - 1],
-                heure: _hhmm(cours.debut),
-              ),
-            },
-            style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
-          ),
+          Text(switch ((enCours, aujourdhui)) {
+            (true, _) => t.enseignant.journee.jusqua(heure: _hhmm(cours.fin)),
+            (false, true) => _minuteur(cours.avantDebut(maintenant)),
+            (false, false) => t.enseignant.journee.unAutreJour(
+              jour: t.disponibilites.joursLongs[cours.debut.weekday - 1],
+              heure: _hhmm(cours.debut),
+            ),
+          }, style: paire.applyTo(textes.titleMedium ?? const TextStyle())),
           Ecart.vSm,
           // La place du bouton de lancement, occupee par la raison de son
           // absence : la salle est l'etape 5.
@@ -292,7 +286,6 @@ class _LigneJournee extends StatelessWidget {
     final int minutes = entree.duree.inMinutes;
 
     return BentoTile(
-      avecBordure: true,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -376,10 +369,8 @@ class _BlocMatching extends StatelessWidget {
     };
 
     return BentoTile(
-      avecBordure: true,
       libelleSemantique: phrase,
-      onPress: () =>
-          GoRouter.of(context).go(Routes.enseignantCreneaux),
+      onPress: () => GoRouter.of(context).go(Routes.enseignantCreneaux),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -423,9 +414,10 @@ String _libelle(EntreeJournee entree) => switch (entree.sorte) {
     prenom: entree.seance?.elevePrenom ?? '',
   ),
   SorteEntree.pause => t.enseignant.journee.lignePause,
-  SorteEntree.priere => entree.interruption == null
-      ? t.enseignant.journee.lignePause
-      : libellePriere(entree.interruption!.priere),
+  SorteEntree.priere =>
+    entree.interruption == null
+        ? t.enseignant.journee.lignePause
+        : libellePriere(entree.interruption!.priere),
 };
 
 /// Vrai quand deux instants tombent le meme jour civil local.

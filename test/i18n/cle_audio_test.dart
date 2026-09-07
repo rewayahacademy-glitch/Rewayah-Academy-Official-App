@@ -17,16 +17,19 @@ void main() {
       }
     });
 
-    test('le chemin du fichier son se derive de la cle, pas d une constante', () {
-      expect(
-        ClesAudio.eleveAccueilRejoindre.fichierPour('fr'),
-        'assets/audio/fr/eleve.accueil.rejoindre.mp3',
-      );
-      expect(
-        ClesAudio.eleveAccueilRejoindre.fichierPour('ar'),
-        'assets/audio/ar/eleve.accueil.rejoindre.mp3',
-      );
-    });
+    test(
+      'le chemin du fichier son se derive de la cle, pas d une constante',
+      () {
+        expect(
+          ClesAudio.eleveAccueilRejoindre.fichierPour('fr'),
+          'assets/audio/fr/eleve.accueil.rejoindre.mp3',
+        );
+        expect(
+          ClesAudio.eleveAccueilRejoindre.fichierPour('ar'),
+          'assets/audio/ar/eleve.accueil.rejoindre.mp3',
+        );
+      },
+    );
 
     test('les cles suivent la convention en points', () {
       for (final CleAudio cle in ClesAudio.toutes) {

@@ -170,14 +170,11 @@ void main() {
       // Un dossier depose le 1er passe devant une demande du 4, qui passe
       // devant un dossier du 7 : c'est l'anciennete qui ordonne, jamais la
       // nature de la ligne.
-      expect(
-        lignes.map((ATraiter l) => l.libelle).toList(),
-        <String>[
-          t.admin.tableau.ligneDossier(prenom: 'Ancien'),
-          t.admin.tableau.ligneReaffectation(prenom: 'Milieu'),
-          t.admin.tableau.ligneDossier(prenom: 'Recent'),
-        ],
-      );
+      expect(lignes.map((ATraiter l) => l.libelle).toList(), <String>[
+        t.admin.tableau.ligneDossier(prenom: 'Ancien'),
+        t.admin.tableau.ligneReaffectation(prenom: 'Milieu'),
+        t.admin.tableau.ligneDossier(prenom: 'Recent'),
+      ]);
     });
 
     test('chaque sorte de demande mene a l ecran des demandes', () {
@@ -217,7 +214,10 @@ void main() {
       );
 
       // Trois jours pleins entre le 5 a 17 h et le 8 a 17 h.
-      await _allerA(tester, find.text(t.admin.tableau.attenteJours(jours: '3')));
+      await _allerA(
+        tester,
+        find.text(t.admin.tableau.attenteJours(jours: '3')),
+      );
       expect(
         find.text(t.admin.tableau.attenteJours(jours: '3')),
         findsOneWidget,

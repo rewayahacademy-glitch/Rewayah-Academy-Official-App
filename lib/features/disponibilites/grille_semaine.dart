@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -58,9 +62,8 @@ class GrilleSemaine extends StatelessWidget {
     return heures.toList()..sort();
   }
 
-  bool _posee(int jour, int heure) => creneaux.any(
-    (Creneau c) => c.jour == jour && c.heure == heure,
-  );
+  bool _posee(int jour, int heure) =>
+      creneaux.any((Creneau c) => c.jour == jour && c.heure == heure);
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +73,7 @@ class GrilleSemaine extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(
-          t.disponibilites.fuseau(fuseau: fuseau),
-          style: textes.bodySmall,
-        ),
+        Text(t.disponibilites.fuseau(fuseau: fuseau), style: textes.bodySmall),
         Ecart.vSm,
         Row(
           children: <Widget>[
@@ -138,42 +138,72 @@ class _Case extends StatelessWidget {
   final bool actif;
   final void Function(Creneau creneau, bool posee) onBasculer;
 
+  /// La decoration d'une case, dans l'etat ou elle se trouve.
+  ///
+  /// Les trois surfaces de la refonte, appliquees a la grille
+  /// (`docs/design/07-catalogue-composants.md` section 1) :
+  ///
+  /// - **case vide : `surfaceSunken`**, parce qu'une case vide de grille est
+  ///   nommement l'un des emplois de la surface enfoncee
+  ///   (`01-systeme-visuel.md` section 2). Elle etait auparavant transparente
+  ///   avec un simple filet, donc indiscernable du fond de page ;
+  /// - **case posee : `washAccent`**, le registre doux. Elle etait peinte en
+  ///   violet plein : une semaine de vingt creneaux faisait vingt aplats
+  ///   satures sur un meme ecran ;
+  /// - **case survolee ou pressee : filet `borderStrong`**, la seule bordure
+  ///   porteuse de sens.
+  BoxDecoration _decoration(
+    AppPalette palette,
+    AppMetriques metriques,
+    EtatPression etat,
+  ) {
+    final AppColorPair paire = posee
+        ? palette.washAccent
+        : palette.surfaceSunken;
+    return paire.decoration(
+      borderRadius: metriques.arrondiInterieur,
+      side: posee || etat.survole || etat.presse
+          ? palette.borderStrong.asBorderSide()
+          : palette.borderResting.asBorderSide(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final String jourLong = t.disponibilites.joursLongs[jour - 1];
 
-    final Widget corps = DecoratedBox(
-      decoration: posee
-          ? palette.surfacePrimary.decoration(
-              borderRadius: BorderRadius.circular(metriques.rayon / 2),
-            )
-          : BoxDecoration(
-              borderRadius: BorderRadius.circular(metriques.rayon / 2),
-              border: Border.fromBorderSide(
-                palette.borderResting.asBorderSide(),
-              ),
-            ),
-      child: SizedBox(height: metriques.cibleTactile),
-    );
-
     if (!actif) {
-      return corps;
+      return DecoratedBox(
+        decoration: _decoration(
+          palette,
+          metriques,
+          const EtatPression(actif: false),
+        ),
+        child: SizedBox(height: metriques.cibleTactile),
+      );
     }
 
-    return Pressable(
-      onPress: () => onBasculer(
-        Creneau(jour: jour, heure: heure, fuseau: fuseau),
-        posee,
-      ),
+    return Pressable.selon(
+      onPress: () {
+        // Le passage d'un cran : le meme retour haptique que le pave PIN
+        // (`04-systeme-mouvement.md` section 6). Une case qui bascule sous le
+        // pouce se sent avant de se voir.
+        unawaited(HapticFeedback.selectionClick());
+        onBasculer(Creneau(jour: jour, heure: heure, fuseau: fuseau), posee);
+      },
       // Le libelle dit l'etat ET ce que le geste fera : une case vide et une
       // case pleine ne se distinguent que par la couleur, ce qui ne suffit pas.
       libelleSemantique: posee
           ? t.disponibilites.cellulePosee(jour: jourLong, heure: '$heure')
           : t.disponibilites.celluleLibre(jour: jourLong, heure: '$heure'),
       respecterCibleTactile: false,
-      child: corps,
+      arrondiFocus: metriques.arrondiInterieur,
+      constructeur: (BuildContext _, EtatPression etat) => DecoratedBox(
+        decoration: _decoration(palette, metriques, etat),
+        child: SizedBox(height: metriques.cibleTactile),
+      ),
     );
   }
 }

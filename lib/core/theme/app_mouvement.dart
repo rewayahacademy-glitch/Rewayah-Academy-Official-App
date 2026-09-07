@@ -55,6 +55,13 @@ abstract final class AppMouvement {
   /// Temps d'affichage d'un retour local, avant sa disparition.
   static const Duration retourLocalMaintien = Duration(seconds: 3);
 
+  /// Delai avant qu'un squelette de chargement apparaisse.
+  ///
+  /// **Sous ce delai, on n'affiche rien du tout** : un squelette qui clignote
+  /// coute plus cher qu'il ne rassure (`02-regles-ux.md` section 6). Porte par
+  /// `Skeleton` lui-meme, pour qu'aucun ecran n'ait a s'en souvenir.
+  static const Duration delaiSquelette = apparition;
+
   /// Tout ce qui entre. Rapide au depart, s'installe doucement.
   static const Curve entree = Curves.easeOutCubic;
 

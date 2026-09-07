@@ -58,7 +58,10 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
     _erreur = null;
   });
 
-  Future<void> _decider(DossierAValider dossier, {required bool approuve}) async {
+  Future<void> _decider(
+    DossierAValider dossier, {
+    required bool approuve,
+  }) async {
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -211,11 +214,13 @@ class _Dossier extends StatelessWidget {
         // 1. LE CONSTAT. L'apercu reste volontairement abstrait : aucune piece
         // d'identite reelle ou vraisemblable n'est representee dans ce depot.
         BentoTile(
-          avecBordure: true,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('${dossier.prenom} ${dossier.nom}', style: textes.titleLarge),
+              Text(
+                '${dossier.prenom} ${dossier.nom}',
+                style: textes.titleLarge,
+              ),
               Text(dossier.identifiantImmuable, style: textes.bodySmall),
               Ecart.vSm,
               Text(
@@ -260,7 +265,7 @@ class _Dossier extends StatelessWidget {
           ActionPrincipale(
             libelle: t.dossiers.refuser,
             enCours: envoi,
-            surface: palette.surfaceAlert,
+            niveau: NiveauAction.destructive,
             onPress: motif.text.trim().isEmpty ? null : onRefuser,
           ),
         ] else ...<Widget>[
@@ -273,7 +278,7 @@ class _Dossier extends StatelessWidget {
           ActionPrincipale(
             libelle: t.dossiers.refuser,
             onPress: onOuvrirRefus,
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
           ),
         ],
         if (erreur != null) ...<Widget>[
@@ -385,10 +390,7 @@ class _Case extends StatelessWidget {
 }
 
 class _Indisponible extends StatelessWidget {
-  const _Indisponible({
-    required this.genreManquant,
-    required this.onReessayer,
-  });
+  const _Indisponible({required this.genreManquant, required this.onReessayer});
 
   final bool genreManquant;
   final VoidCallback onReessayer;

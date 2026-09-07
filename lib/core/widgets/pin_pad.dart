@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../i18n/cle_audio.dart';
 import '../i18n/strings.g.dart';
@@ -6,6 +9,7 @@ import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'audio_label.dart';
 import 'pressable.dart';
@@ -47,6 +51,11 @@ class _PinPadState extends State<PinPad> {
     if (_saisie.length >= widget.longueur) {
       return;
     }
+    // Le passage d'un cran, l'un des trois seuls usages haptiques du produit
+    // (`docs/design/04-systeme-mouvement.md` section 6). Il double la pastille
+    // qui se remplit : un enfant qui ne regarde pas l'ecran sait qu'un chiffre
+    // est entre.
+    unawaited(HapticFeedback.selectionClick());
     setState(() => _saisie += '$chiffre');
     if (_saisie.length == widget.longueur) {
       final String code = _saisie;
@@ -59,9 +68,7 @@ class _PinPadState extends State<PinPad> {
     if (_saisie.isEmpty) {
       return;
     }
-    setState(
-      () => _saisie = _saisie.substring(0, _saisie.length - 1),
-    );
+    setState(() => _saisie = _saisie.substring(0, _saisie.length - 1));
   }
 
   @override
@@ -159,24 +166,33 @@ class _Touche extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
-    final AppColorPair paire = palette.surfacePrimary;
+    // Registre doux, et non l'aplat violet d'origine : dix touches pleines
+    // faisaient dix zones saturees sur un meme ecran, la ou la regle n'en
+    // autorise qu'une (`docs/design/01-systeme-visuel.md` section 3). Le
+    // contour fort porte la lisibilite du bouton, la teinte porte son
+    // appartenance a l'accent.
+    final AppColorPair paire = palette.washAccent;
     final double cote = metriques.cibleTactile * 1.4;
 
-    return Pressable(
+    return Pressable.selon(
       onPress: onPress,
       libelleSemantique: '$chiffre',
       respecterCibleTactile: false,
-      child: Container(
+      arrondiFocus: AppRadius.arrondiFull,
+      constructeur: (BuildContext contexte, EtatPression etat) => Container(
         width: cote,
         height: cote,
         alignment: Alignment.center,
         decoration: paire.decoration(
-          borderRadius: BorderRadius.circular(cote / 2),
+          borderRadius: AppRadius.arrondiFull,
+          side: etat.survole || etat.presse
+              ? palette.borderStrong.asBorderSide(width: 2)
+              : palette.borderResting.asBorderSide(width: 2),
         ),
         child: Text(
           '$chiffre',
           style: paire.applyTo(
-            Theme.of(context).textTheme.headlineMedium ?? const TextStyle(),
+            Theme.of(contexte).textTheme.headlineMedium ?? const TextStyle(),
           ),
         ),
       ),

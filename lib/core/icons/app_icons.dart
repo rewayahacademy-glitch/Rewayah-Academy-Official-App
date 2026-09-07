@@ -263,6 +263,19 @@ abstract final class AppIcons {
     IconData(0xe13a, fontFamily: _actif),
   );
 
+  /// Le chevron d'une ligne qui mene ailleurs : `SignalRow`, `ChildCard`,
+  /// lignes de liste.
+  ///
+  /// **Meme glyphe que [suivant], et pourtant une entree separee** : celle-ci
+  /// porte `matchTextDirection`, donc elle se miroite en arabe, alors que
+  /// [suivant] designe la progression du temps, qui ne se miroite pas
+  /// (`docs/design/06-accessibilite.md` section 5). Les deux ne peuvent donc
+  /// pas etre la meme icone, malgre le meme dessin.
+  static const AppIcon chevron = AppIcon._(
+    IconData(0xe13a, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe13a, fontFamily: _actif, matchTextDirection: true),
+  );
+
   /// Carte "Autre" du composant `ChoiceCardGroup`.
   static const AppIcon autreChoix = AppIcon._(
     IconData(0xe3b4, fontFamily: _repos),

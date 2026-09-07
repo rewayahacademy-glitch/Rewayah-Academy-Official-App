@@ -69,25 +69,28 @@ void main() {
       expect(find.text(t.dossiers.restants(n: 2)), findsOneWidget);
     });
 
-    testWidgets('le constat precede le jugement, a l ecran comme dans l ordre', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
-      );
+    testWidgets(
+      'le constat precede le jugement, a l ecran comme dans l ordre',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+        );
 
-      final double yApercu = tester.getTopLeft(find.text(t.dossiers.apercu)).dy;
-      final double yChecklist = tester
-          .getTopLeft(find.text(t.dossiers.verifications))
-          .dy;
-      final double yVerdict = tester
-          .getTopLeft(find.text(t.dossiers.verdict))
-          .dy;
+        final double yApercu = tester
+            .getTopLeft(find.text(t.dossiers.apercu))
+            .dy;
+        final double yChecklist = tester
+            .getTopLeft(find.text(t.dossiers.verifications))
+            .dy;
+        final double yVerdict = tester
+            .getTopLeft(find.text(t.dossiers.verdict))
+            .dy;
 
-      expect(yApercu, lessThan(yChecklist));
-      expect(yChecklist, lessThan(yVerdict));
-    });
+        expect(yApercu, lessThan(yChecklist));
+        expect(yChecklist, lessThan(yVerdict));
+      },
+    );
 
     testWidgets('la validation attend que les trois constats soient poses', (
       WidgetTester tester,

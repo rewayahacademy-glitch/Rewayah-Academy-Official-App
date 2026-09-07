@@ -1,4 +1,4 @@
-﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
@@ -48,27 +48,36 @@ void main() {
       expect(StatutSeance.planifiee.estAnnulee, isFalse);
     });
 
-    test('une seance est en cours pendant sa plage, meme si le statut tarde', () {
-      final DateTime debut = DateTime(2026, 9, 7, 17);
-      final Seance seance = Seance.depuisJson(<String, dynamic>{
-        'session_id': 's1',
-        'started_at': debut.toUtc().toIso8601String(),
-        'ended_at': debut
-            .add(const Duration(hours: 1))
-            .toUtc()
-            .toIso8601String(),
-        'status': 'planned',
-      });
+    test(
+      'une seance est en cours pendant sa plage, meme si le statut tarde',
+      () {
+        final DateTime debut = DateTime(2026, 9, 7, 17);
+        final Seance seance = Seance.depuisJson(<String, dynamic>{
+          'session_id': 's1',
+          'started_at': debut.toUtc().toIso8601String(),
+          'ended_at': debut
+              .add(const Duration(hours: 1))
+              .toUtc()
+              .toIso8601String(),
+          'status': 'planned',
+        });
 
-      expect(seance.enCoursA(debut.add(const Duration(minutes: 10))), isTrue);
-      expect(seance.enCoursA(debut.subtract(const Duration(minutes: 10))), isFalse);
-      expect(
-        seance.avantDebut(debut.subtract(const Duration(minutes: 10))),
-        const Duration(minutes: 10),
-      );
-      // Jamais de duree negative : un compte a rebours passe reste a zero.
-      expect(seance.avantDebut(debut.add(const Duration(hours: 2))), Duration.zero);
-    });
+        expect(seance.enCoursA(debut.add(const Duration(minutes: 10))), isTrue);
+        expect(
+          seance.enCoursA(debut.subtract(const Duration(minutes: 10))),
+          isFalse,
+        );
+        expect(
+          seance.avantDebut(debut.subtract(const Duration(minutes: 10))),
+          const Duration(minutes: 10),
+        );
+        // Jamais de duree negative : un compte a rebours passe reste a zero.
+        expect(
+          seance.avantDebut(debut.add(const Duration(hours: 2))),
+          Duration.zero,
+        );
+      },
+    );
 
     test('un creneau est un motif hebdomadaire, avec son fuseau', () {
       final Creneau creneau = Creneau.depuisJson(const <String, dynamic>{
@@ -83,76 +92,84 @@ void main() {
       // Deux cases de meme heure dans deux fuseaux ne sont pas la meme case :
       // c'est ce qui interdit de les comparer par leur heure locale.
       expect(
-        creneau ==
-            const Creneau(jour: 1, heure: 17, fuseau: 'Europe/Paris'),
+        creneau == const Creneau(jour: 1, heure: 17, fuseau: 'Europe/Paris'),
         isFalse,
       );
     });
 
     test('le feed dit depuis quand un foyer attend', () {
-      final EleveEnAttente eleve = EleveEnAttente.depuisJson(const <String, dynamic>{
-        'student_id': 'e1',
-        'first_name': 'Khadija',
-        'immutable_id': 'STUD-KB-000003',
-        'level': 'debutant',
-        'interface_mode': 'child',
-        'weekday': 3,
-        'hour_local': 17,
-        'timezone_iana': 'Europe/Paris',
-        'depuis': '2026-09-01T10:00:00Z',
-      });
+      final EleveEnAttente eleve = EleveEnAttente.depuisJson(
+        const <String, dynamic>{
+          'student_id': 'e1',
+          'first_name': 'Khadija',
+          'immutable_id': 'STUD-KB-000003',
+          'level': 'debutant',
+          'interface_mode': 'child',
+          'weekday': 3,
+          'hour_local': 17,
+          'timezone_iana': 'Europe/Paris',
+          'depuis': '2026-09-01T10:00:00Z',
+        },
+      );
 
       expect(eleve.prenom, 'Khadija');
       expect(eleve.mode, InterfaceMode.enfant);
-      expect(
-        eleve.joursDAttente(DateTime.utc(2026, 9, 8, 10)),
-        7,
-      );
+      expect(eleve.joursDAttente(DateTime.utc(2026, 9, 8, 10)), 7);
     });
 
-    test('une regle dit ce qu\'elle vaut ici et ce qu\'elle vaudrait ailleurs', () {
-      final RegleProfil surchargee = RegleProfil.depuisJson(const <String, dynamic>{
-        'key': 'session_duration_minutes',
-        'valeur_plateforme': 60,
-        'valeur_surchargee': 30,
-        'valeur_effective': 30,
-        'override_id': 'r1',
-        'motif': 'age de l\'enfant',
-        'pose_le': '2026-09-06T12:00:00Z',
-      });
-      final RegleProfil defaut = RegleProfil.depuisJson(const <String, dynamic>{
-        'key': 'session_paid_minimum_minutes',
-        'valeur_plateforme': 45,
-        'valeur_effective': 45,
-      });
+    test(
+      'une regle dit ce qu\'elle vaut ici et ce qu\'elle vaudrait ailleurs',
+      () {
+        final RegleProfil surchargee = RegleProfil.depuisJson(
+          const <String, dynamic>{
+            'key': 'session_duration_minutes',
+            'valeur_plateforme': 60,
+            'valeur_surchargee': 30,
+            'valeur_effective': 30,
+            'override_id': 'r1',
+            'motif': 'age de l\'enfant',
+            'pose_le': '2026-09-06T12:00:00Z',
+          },
+        );
+        final RegleProfil defaut = RegleProfil.depuisJson(
+          const <String, dynamic>{
+            'key': 'session_paid_minimum_minutes',
+            'valeur_plateforme': 45,
+            'valeur_effective': 45,
+          },
+        );
 
-      expect(surchargee.cle, CleRegle.dureeSeance);
-      expect(surchargee.surchargee, isTrue);
-      expect(surchargee.valeurEffective, 30);
-      expect(surchargee.valeurPlateforme, 60);
-      expect(defaut.surchargee, isFalse);
-      expect(defaut.valeurEffective, defaut.valeurPlateforme);
-    });
+        expect(surchargee.cle, CleRegle.dureeSeance);
+        expect(surchargee.surchargee, isTrue);
+        expect(surchargee.valeurEffective, 30);
+        expect(surchargee.valeurPlateforme, 60);
+        expect(defaut.surchargee, isFalse);
+        expect(defaut.valeurEffective, defaut.valeurPlateforme);
+      },
+    );
 
-    test('une demande porte qui l\'a faite, en quelle qualite, et pourquoi', () {
-      final Demande demande = Demande.depuisJson(const <String, dynamic>{
-        'id': 'd1',
-        'kind': 'capacity',
-        'subject_profile_id': 't1',
-        'subject_first_name': 'Omar',
-        'subject_immutable_id': 'TEACH-OS-000001',
-        'rule_key': 'max_students_per_teacher',
-        'rule_value': 8,
-        'reason': 'j\'ai du temps le samedi',
-        'requester_role': 'teacher',
-        'created_at': '2026-09-06T09:00:00Z',
-      });
+    test(
+      'une demande porte qui l\'a faite, en quelle qualite, et pourquoi',
+      () {
+        final Demande demande = Demande.depuisJson(const <String, dynamic>{
+          'id': 'd1',
+          'kind': 'capacity',
+          'subject_profile_id': 't1',
+          'subject_first_name': 'Omar',
+          'subject_immutable_id': 'TEACH-OS-000001',
+          'rule_key': 'max_students_per_teacher',
+          'rule_value': 8,
+          'reason': 'j\'ai du temps le samedi',
+          'requester_role': 'teacher',
+          'created_at': '2026-09-06T09:00:00Z',
+        });
 
-      expect(demande.sorte, SorteDemande.plafond);
-      expect(demande.cleRegle, CleRegle.plafondEleves);
-      expect(demande.valeurDemandee, 8);
-      expect(demande.roleDemandeur, AppRole.teacher);
-      expect(demande.motif, isNotEmpty);
-    });
+        expect(demande.sorte, SorteDemande.plafond);
+        expect(demande.cleRegle, CleRegle.plafondEleves);
+        expect(demande.valeurDemandee, 8);
+        expect(demande.roleDemandeur, AppRole.teacher);
+        expect(demande.motif, isNotEmpty);
+      },
+    );
   });
 }

@@ -16,12 +16,13 @@ final RegExp _appelReseau = RegExp(
   r'\.rpc[<(]|functions\.invoke|\.from\(|\.insert\(|\.update\(|\.uploadBinary\(',
 );
 
-List<File> _sources(String dossier) => Directory(dossier)
-    .listSync(recursive: true)
-    .whereType<File>()
-    .where((File f) => f.path.endsWith('.dart'))
-    .where((File f) => !f.path.endsWith('.g.dart'))
-    .toList();
+List<File> _sources(String dossier) =>
+    Directory(dossier)
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((File f) => f.path.endsWith('.dart'))
+        .where((File f) => !f.path.endsWith('.g.dart'))
+        .toList();
 
 void main() {
   group('CodeLocal : ce que l empreinte protege, et ce qu elle ne protege pas', () {
@@ -124,9 +125,8 @@ void main() {
     });
 
     test('le coffre recoit une empreinte, jamais un code', () {
-      final String source = File(
-        'lib/core/cache/secure/stockage_securise.dart',
-      ).readAsStringSync();
+      final String source = File('lib/core/cache/secure/stockage_securise.dart')
+          .readAsStringSync();
 
       // La signature nomme ce qu elle recoit. Un parametre appele `code`
       // laisserait passer un code brut par inadvertance.

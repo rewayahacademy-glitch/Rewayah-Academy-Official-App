@@ -254,7 +254,9 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(metriques.marge),
                 child: switch (_moment) {
-                  _Moment.chargement => Center(child: Text(t.commun.chargement)),
+                  _Moment.chargement => Center(
+                    child: Text(t.commun.chargement),
+                  ),
                   _Moment.saisieCode => _saisieCode(),
                   _Moment.choixProfil => _choixProfil(),
                   _Moment.creationCode => _pave(
@@ -348,9 +350,8 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
           Text(
             _message!,
             textAlign: TextAlign.center,
-            style: AppPalette.of(context).inkAlert.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
+            style: AppPalette.of(context).inkAlert
+                .applyTo(textes.bodyMedium ?? const TextStyle()),
           ),
       ],
     );

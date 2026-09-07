@@ -66,9 +66,8 @@ class AppareilsPage extends ConsumerWidget {
                         message: t.enfant.aucun,
                         invitation: t.enfant.aucunDetail,
                         libelleAction: t.enfant.titre,
-                        onAction: () => GoRouter.of(
-                          context,
-                        ).go(Routes.tuteurAjouterEnfant),
+                        onAction: () =>
+                            GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
                       )
                     else ...<Widget>[
                       for (final EleveDuFoyer eleve
@@ -78,8 +77,7 @@ class AppareilsPage extends ConsumerWidget {
                           child: _BlocEleve(
                             eleve: eleve,
                             appareils:
-                                (appareils.value ??
-                                        const <AppareilAppaire>[])
+                                (appareils.value ?? const <AppareilAppaire>[])
                                     .where(
                                       (AppareilAppaire a) =>
                                           a.profilId == eleve.id && a.actif,
@@ -98,7 +96,7 @@ class AppareilsPage extends ConsumerWidget {
                         libelle: t.enfant.titre,
                         onPress: () =>
                             GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-                        surface: AppPalette.of(context).surfaceCanvas,
+                        niveau: NiveauAction.secondaire,
                       ),
                     ],
                   ],
@@ -132,7 +130,6 @@ class _BlocEleve extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
 
     return BentoTile(
-      avecBordure: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -148,10 +145,7 @@ class _BlocEleve extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(eleve.prenom, style: textes.titleMedium),
-                    Text(
-                      eleve.identifiantImmuable,
-                      style: textes.bodySmall,
-                    ),
+                    Text(eleve.identifiantImmuable, style: textes.bodySmall),
                   ],
                 ),
               ),
@@ -197,7 +191,6 @@ class _LigneAppareil extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -223,7 +216,7 @@ class _LigneAppareil extends StatelessWidget {
           ActionPrincipale(
             libelle: t.appareils.revoquer,
             onPress: onRevoquer,
-            surface: palette.surfaceCanvas,
+            niveau: NiveauAction.secondaire,
             pleineLargeur: false,
           ),
         ],

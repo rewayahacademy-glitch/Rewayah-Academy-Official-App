@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -39,8 +39,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(t.disponibilites.aucuneDetail(prenom: 'Amina')),
-          findsOneWidget);
+      expect(
+        find.text(t.disponibilites.aucuneDetail(prenom: 'Amina')),
+        findsOneWidget,
+      );
       expect(find.byType(GrilleSemaine), findsOneWidget);
     });
 
@@ -177,8 +179,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text(t.disponibilites.fuseau(fuseau: 'Africa/Conakry')),
-          findsOneWidget);
+      expect(
+        find.text(t.disponibilites.fuseau(fuseau: 'Africa/Conakry')),
+        findsOneWidget,
+      );
     });
   });
 }

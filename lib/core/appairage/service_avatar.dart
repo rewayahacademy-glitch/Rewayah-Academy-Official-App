@@ -156,9 +156,8 @@ final Provider<ServiceAvatar> serviceAvatarProvider = Provider<ServiceAvatar>(
 );
 
 /// Le selecteur de photo employe par l'application.
-final Provider<SelecteurPhoto> selecteurPhotoProvider = Provider<SelecteurPhoto>(
-  (Ref ref) => const SelecteurPhotoNatif(),
-);
+final Provider<SelecteurPhoto> selecteurPhotoProvider =
+    Provider<SelecteurPhoto>((Ref ref) => const SelecteurPhotoNatif());
 
 /// L'URL signee d'une photo, par sa cle de stockage.
 ///

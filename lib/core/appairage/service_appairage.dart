@@ -108,9 +108,8 @@ class EleveDuFoyer {
     mode: InterfaceMode.depuisSql(json['interface_mode'] as String?),
     camera: CameraPolicy.depuisSql(json['camera_policy'] as String?),
     cleAvatar: json['avatar_storage_key'] as String?,
-    finAcces: DateTime.tryParse(
-      json['access_until'] as String? ?? '',
-    )?.toLocal(),
+    finAcces: DateTime.tryParse(json['access_until'] as String? ?? '')
+        ?.toLocal(),
   );
 
   /// Identifiant du profil.

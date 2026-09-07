@@ -203,6 +203,91 @@ ne répond ni à la molette du pilote ni à `Page_Down`. Il faut envoyer un
 
 ---
 
+## Refonte UX/UI, lot C — 7 septembre 2026
+
+> Le lot C donne au produit la **profondeur** que le lot T lui avait donné le
+> vocabulaire. Aucun écran métier n'est repris — c'est le lot R. Le catalogue
+> `docs/design/07-catalogue-composants.md` est désormais tenu par le code et par
+> la galerie.
+
+### Ce que le lot a livré
+
+| Livrable | Détail |
+| :--- | :--- |
+| **12 composants P0** | `PageShell`, `NavShell`, `AppCard`, `SectionHeader`, `StatusPill`, `Skeleton`, `LocalFeedback`, `StatTile`, `SignalRow`, `AppBottomSheet`, `ConfirmDestructive`, `ChildCard` — chacun avec les états obligatoires de sa famille (section 4) |
+| **`app_gabarit.dart`** | nouveau : les trois gabarits de `05-regles-responsive.md` §1, seuils 600 / 1024 dans ce seul fichier, gouttières 20 / 32 / 48, largeur de rail et de barre latérale |
+| **11 composants repris** | `Pressable` (survol + anneau de focus + `PressionForcee`), `BentoTile` (→ `surfaceRaised` + `elevation1` + `borderHairline`), `AvatarTile` (repli `washFamily` + `borderStrong`), `PinPad` (erreur en `inkAlert`), `EmptyState` (trois registres), `OfflineBanner` (registre doux), `ChoiceCardGroup` (`washAccent` + `borderStrong`), `ActionPrincipale` (4ᵉ niveau destructif + survol/focus), `GrilleSemaine` (cases vides `surfaceSunken`, posées `washAccent`). `AudioLabel` et `PermanentNotice` : intacts, l'API de `PermanentNotice` reste sans le moindre paramètre (ADR-011) |
+| **`PageParcours` remontée** | de `lib/features/inscription/` vers `lib/core/widgets/`, reposée sur `PageShell`, tous les imports mis à jour |
+| **La galerie, preuve du catalogue** | `catalogue_galerie.dart` : 24 entrées (12 P0 + 10 partagés + `GrilleSemaine` + `PageParcours`) avec tous leurs états nommés ; `galerie_page.dart` : les cinq axes de la section 5 en bascules réelles |
+| **Deux fichiers de test** | `composants_test.dart` (invariants de fond, pas des types de widgets) et `catalogue_galerie_test.dart` (la liste écrite du document, comparée au disque : un composant ajouté à `lib/core/widgets/` sans entrée fait échouer la suite) |
+
+Les deux dettes que le handoff pointait sont payées : une tuile Bento vit
+maintenant sur `surfaceRaised` avec son ombre, et les cases vides de la grille de
+disponibilités portent `surfaceSunken`.
+
+### L'audit de fin de lot, et ce qu'il a trouvé
+
+Le lot a été relu par six agents en parallèle, une tranche de livrable chacun,
+puis chaque constat a été soumis à un sceptique chargé de le réfuter. **29
+constats bruts, 8 confirmés de la portée du lot C, tous corrigés dans ce lot.**
+Aucun bloquant.
+
+| # | Composant | Gravité | Écart, et correction |
+| :-: | :--- | :--- | :--- |
+| 1 | `PageShell` | majeur | l'`entete` défilait avec le contenu. Le gabarit sépare désormais une tête fixe (titre + en-tête) d'une zone défilante, comme la zone d'action collée en bas |
+| 2 | `ConfirmDestructive` | majeur | le bouton destructif était l'élément le plus bas de la feuille, donc le premier au pouce (`02-regles-ux.md` §5). Il passe en haut ; « Annuler » reste premier au clavier par `FocusTraversalOrder` |
+| 3 | `ChildCard` « aucun planning » | mineur | pas de `contour borderStrong` (`07` §3). `AppCard` gagne `contourFort`, que cet état active |
+| 4 | `AppBottomSheet` | mineur | les courbes d'ouverture/fermeture venaient de Material. Elles viennent maintenant de `AppMouvement.entree` / `sortie` via `sheetAnimationStyle` |
+| 5 | `AppBottomSheet` | mineur | ombre `elevation3` sans filet. La feuille passe par `AppElevation.avecFilet`, qui compose les deux |
+| 6 | `ChildCard` « en recherche » | mineur | encre `inkFaint` au lieu de `inkMuted` (`07` §3). Jeton nommé directement |
+| 7 | `LocalFeedback` | mineur | sous mouvement réduit, les durées tombaient à 120 ms. `04` §5 dit « inchangé » : elles restent 200 / 160, seule la translation tombe à zéro |
+| 8 | `BentoTile` | mineur | `plate: true` fabriquait un filet sans ombre, combinaison interdite (`01` §2) et hors du registre unique du catalogue. Paramètre supprimé, entrée de galerie retirée |
+
+### Ce qui est renvoyé ailleurs, à dessein
+
+- **Deux imprécisions de `07-catalogue-composants.md` à trancher côté document**,
+  pas côté code : le « sélection en `surfacePrimary` » de la ligne `GrilleSemaine`
+  §1 (la grille n'a pas d'état « sélection » distinct de « posée », et vingt
+  aplats violets violeraient « une seule zone pleine par écran » — un test fige
+  d'ailleurs `isNot(surfacePrimary)`) ; et la clause « plus hors ligne » de la
+  famille « composant d'état » §4, que la section 3 ne réclame que pour la donnée
+  volatile.
+- **Deux des cinq puces de `07` §6 ne sont pas encore outillées** (`Container`
+  avec `decoration` dans `lib/features/`, `showDialog` de confirmation
+  destructive). `showDialog` : zéro occurrence. `Container(decoration:)` : seize,
+  toutes dans des écrans métier que le lot C n'a pas le droit de toucher. Les
+  deux règles s'ajouteront à `verifier_jetons.dart` **avec la reprise des
+  écrans, au lot R** — les poser maintenant rendrait le vérificateur rouge sur
+  du code hors périmètre.
+- **Le ressort amorti de la feuille** (`04` §2) : les courbes viennent désormais
+  du budget de mouvement (correction 4), mais l'ouverture/fermeture reste pilotée
+  par une courbe et non par une `SpringSimulation` sur une route modale
+  personnalisée. Le geste de glissement, lui, porte déjà la physique de ressort
+  de Material. `AppMouvement.ressort` reste en place : il sert aussi au conteneur
+  partagé, à venir.
+
+⚠ Le commit du lot C emporte un `dart format` pris sur tout le dépôt : il touche
+des écrans métier et des fichiers de tests sans raison fonctionnelle. « Aucun
+écran touché » reste vrai au sens des usages — aucune reprise d'écran, seulement
+des ajustements d'appel forcés par les changements d'API des composants partagés
+(`BentoTile` perd `avecBordure`, `ActionPrincipale` passe de `surface` à
+`niveau`) — mais faux au niveau fichier.
+
+### Mesures de fin de lot
+
+| Contrôle | Résultat | Après le lot T, pour mémoire |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème | aucun problème |
+| `flutter test` | **418 tests**, tous verts | 362 |
+| `dart run tool/verifier_jetons.dart` | **94 fichiers**, aucune violation | 80 |
+| `scenarios_etape3.sql` | 34 contrôles verts | 34 |
+| `scenarios_etape4.sql` | 39 contrôles verts | 39 |
+
+Les deux harnais SQL n'ont pas bougé, et c'est attendu : le lot C ne touche
+aucun `.sql`. Ils ont été rejoués sur un conteneur neuf pour la forme.
+
+---
+
 ## Mesures relevées à l'étape 2 — état d'avant la refonte
 
 ### Contraste

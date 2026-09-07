@@ -43,6 +43,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	// Translations
 	late final Traductions$commun$fr commun = Traductions$commun$fr.internal(_root);
 	late final Traductions$reseau$fr reseau = Traductions$reseau$fr.internal(_root);
+	late final Traductions$etat$fr etat = Traductions$etat$fr.internal(_root);
+	late final Traductions$destructif$fr destructif = Traductions$destructif$fr.internal(_root);
 	late final Traductions$salle$fr salle = Traductions$salle$fr.internal(_root);
 	late final Traductions$attente$fr attente = Traductions$attente$fr.internal(_root);
 	late final Traductions$connexion$fr connexion = Traductions$connexion$fr.internal(_root);
@@ -116,6 +118,48 @@ class Traductions$reseau$fr {
 
 	/// fr: 'Réseau rétabli'
 	String get retabli => 'Réseau rétabli';
+
+	/// fr: 'Synchronisation impossible'
+	String get syncImpossible => 'Synchronisation impossible';
+}
+
+// Path: etat
+class Traductions$etat$fr {
+	Traductions$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En direct'
+	String get enDirect => 'En direct';
+
+	/// fr: 'C'est bientôt'
+	String get imminent => 'C\'est bientôt';
+
+	/// fr: 'Annulé'
+	String get annule => 'Annulé';
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'En retard'
+	String get enRetard => 'En retard';
+
+	/// fr: 'Terminé'
+	String get termine => 'Terminé';
+}
+
+// Path: destructif
+class Traductions$destructif$fr {
+	Traductions$destructif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette action ne peut pas être annulée.'
+	String get irreversible => 'Cette action ne peut pas être annulée.';
 }
 
 // Path: salle
@@ -1708,6 +1752,14 @@ extension on Traductions {
 			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
+			'reseau.syncImpossible' => 'Synchronisation impossible',
+			'etat.enDirect' => 'En direct',
+			'etat.imminent' => 'C\'est bientôt',
+			'etat.annule' => 'Annulé',
+			'etat.enAttente' => 'En attente',
+			'etat.enRetard' => 'En retard',
+			'etat.termine' => 'Terminé',
+			'destructif.irreversible' => 'Cette action ne peut pas être annulée.',
 			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
 			'salle.micro' => 'Micro',
 			'salle.microCoupe' => 'Micro coupé',

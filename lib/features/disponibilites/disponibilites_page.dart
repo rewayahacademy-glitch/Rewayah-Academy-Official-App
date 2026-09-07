@@ -123,7 +123,6 @@ class _BlocEnfantEtat extends ConsumerState<_BlocEnfant> {
     final List<Creneau> poses = creneaux.value ?? const <Creneau>[];
 
     return BentoTile(
-      avecBordure: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

@@ -21,6 +21,14 @@ import '../theme/app_spacing.dart';
 /// L'etat vient de [horsLigneProvider] et non d'un abonnement propre a ce
 /// widget : `ELV-02` grise son bloc « Rejoindre » sur le meme fait, et deux
 /// abonnements independants finiraient par se contredire a l'ecran.
+///
+/// **Le lot C le passe au registre doux.** Il occupait un aplat ambre sature
+/// sur toute la largeur, en permanence, sur chaque ecran d'un appareil sans
+/// reseau, alors que la regle n'autorise qu'une zone pleine
+/// par ecran et la reserve a l'action principale
+/// (`docs/design/01-systeme-visuel.md` section 3). Il prend desormais
+/// `washWarning` en fond, `inkWarning` en encre, et un filet fort en tete qui
+/// le detache de la barre.
 class OfflineBanner extends ConsumerWidget {
   /// Cree le bandeau.
   const OfflineBanner({super.key});
@@ -35,36 +43,40 @@ class OfflineBanner extends ConsumerWidget {
     }
 
     final AppPalette palette = AppPalette.of(context);
-    final AppColorPair paire = palette.surfaceWarning;
+    final AppColorPair paire = palette.washWarning;
 
     return Semantics(
       liveRegion: true,
-      child: Container(
-        width: double.infinity,
-        color: paire.background,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: paire.background,
+          border: Border(bottom: palette.borderStrong.asBorderSide()),
         ),
-        child: Row(
-          children: <Widget>[
-            IconTheme(
-              data: IconThemeData(
-                color: paire.onBackground,
-                size: AppSpacing.xl,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
+          child: Row(
+            children: <Widget>[
+              IconTheme(
+                data: IconThemeData(
+                  color: paire.onBackground,
+                  size: AppSpacing.xl,
+                ),
+                child: Icon(AppIcons.horsLigne.repos),
               ),
-              child: Icon(AppIcons.horsLigne.repos),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                t.reseau.horsLigne,
-                style: paire.applyTo(
-                  Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+              Ecart.hSm,
+              Expanded(
+                child: Text(
+                  t.reseau.horsLigne,
+                  style: paire.applyTo(
+                    Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

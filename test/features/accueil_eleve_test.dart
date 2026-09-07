@@ -245,8 +245,10 @@ void main() {
       );
       // En jours, jamais en date : ni le jour de la semaine, ni l'heure.
       expect(find.text(_hhmm(debut)), findsNothing);
-      expect(find.text(t.disponibilites.joursLongs[debut.weekday - 1]),
-          findsNothing);
+      expect(
+        find.text(t.disponibilites.joursLongs[debut.weekday - 1]),
+        findsNothing,
+      );
     });
 
     testWidgets('une seance annulee ne dit ni statut ni motif', (
@@ -375,88 +377,92 @@ void main() {
     });
   });
 
-  group('ELV-02 : les interruptions de priere sont annoncees avant le cours', () {
-    testWidgets('en mode standard, chaque interruption se lit en clair', (
-      WidgetTester tester,
-    ) async {
-      final ({Seance seance, InterruptionPriere interruption}) cas =
-          _seanceAvecPriere();
-      final FauxServicePlanning planning = FauxServicePlanning()
-        ..seancesRendues = <Seance>[cas.seance];
-      final FauxServicePriere priere = FauxServicePriere()
-        ..parEnseignant[_enseignantId] = _paris;
+  group(
+    'ELV-02 : les interruptions de priere sont annoncees avant le cours',
+    () {
+      testWidgets('en mode standard, chaque interruption se lit en clair', (
+        WidgetTester tester,
+      ) async {
+        final ({Seance seance, InterruptionPriere interruption}) cas =
+            _seanceAvecPriere();
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..seancesRendues = <Seance>[cas.seance];
+        final FauxServicePriere priere = FauxServicePriere()
+          ..parEnseignant[_enseignantId] = _paris;
 
-      await tester.pumpWidget(
-        hote(
-          _ecran(),
-          surcharges: _surcharges(planning: planning, priere: priere),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.eleve.accueil.pausePriere), findsOneWidget);
-      expect(
-        find.text(
-          t.eleve.accueil.pausePriereDetail(
-            priere: libellePriere(cas.interruption.priere),
-            heure: _hhmm(cas.interruption.debut),
+        await tester.pumpWidget(
+          hote(
+            _ecran(),
+            surcharges: _surcharges(planning: planning, priere: priere),
           ),
-        ),
-        findsOneWidget,
-      );
-    });
+        );
+        await tester.pumpAndSettle();
 
-    testWidgets('en mode enfant, le libelle parle remplace le detail', (
-      WidgetTester tester,
-    ) async {
-      final ({Seance seance, InterruptionPriere interruption}) cas =
-          _seanceAvecPriere();
-      final FauxServicePlanning planning = FauxServicePlanning()
-        ..seancesRendues = <Seance>[cas.seance];
-      final FauxServicePriere priere = FauxServicePriere()
-        ..parEnseignant[_enseignantId] = _paris;
-
-      await tester.pumpWidget(
-        hote(
-          _ecran(),
-          surcharges: _surcharges(planning: planning, priere: priere),
-          mode: InterfaceMode.enfant,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Le pictogramme et le libelle parle restent, l'heure et le nom de la
-      // priere disparaissent : a six ans, on ne lit ni l'un ni l'autre.
-      expect(find.text(t.eleve.accueil.pausePriere), findsOneWidget);
-      expect(
-        find.text(
-          t.eleve.accueil.pausePriereDetail(
-            priere: libellePriere(cas.interruption.priere),
-            heure: _hhmm(cas.interruption.debut),
+        expect(find.text(t.eleve.accueil.pausePriere), findsOneWidget);
+        expect(
+          find.text(
+            t.eleve.accueil.pausePriereDetail(
+              priere: libellePriere(cas.interruption.priere),
+              heure: _hhmm(cas.interruption.debut),
+            ),
           ),
-        ),
-        findsNothing,
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('en mode enfant, le libelle parle remplace le detail', (
+        WidgetTester tester,
+      ) async {
+        final ({Seance seance, InterruptionPriere interruption}) cas =
+            _seanceAvecPriere();
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..seancesRendues = <Seance>[cas.seance];
+        final FauxServicePriere priere = FauxServicePriere()
+          ..parEnseignant[_enseignantId] = _paris;
+
+        await tester.pumpWidget(
+          hote(
+            _ecran(),
+            surcharges: _surcharges(planning: planning, priere: priere),
+            mode: InterfaceMode.enfant,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Le pictogramme et le libelle parle restent, l'heure et le nom de la
+        // priere disparaissent : a six ans, on ne lit ni l'un ni l'autre.
+        expect(find.text(t.eleve.accueil.pausePriere), findsOneWidget);
+        expect(
+          find.text(
+            t.eleve.accueil.pausePriereDetail(
+              priere: libellePriere(cas.interruption.priere),
+              heure: _hhmm(cas.interruption.debut),
+            ),
+          ),
+          findsNothing,
+        );
+      });
+
+      testWidgets(
+        'sans reglages lisibles, aucune interruption n est annoncee',
+        (WidgetTester tester) async {
+          final ({Seance seance, InterruptionPriere interruption}) cas =
+              _seanceAvecPriere();
+          final FauxServicePlanning planning = FauxServicePlanning()
+            ..seancesRendues = <Seance>[cas.seance];
+
+          await tester.pumpWidget(
+            // Le meme cours, sans les reglages de l'enseignant : mieux vaut
+            // n'annoncer aucune interruption qu'une fausse.
+            hote(_ecran(), surcharges: _surcharges(planning: planning)),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text(t.eleve.accueil.pausePriere), findsNothing);
+        },
       );
-    });
-
-    testWidgets('sans reglages lisibles, aucune interruption n est annoncee', (
-      WidgetTester tester,
-    ) async {
-      final ({Seance seance, InterruptionPriere interruption}) cas =
-          _seanceAvecPriere();
-      final FauxServicePlanning planning = FauxServicePlanning()
-        ..seancesRendues = <Seance>[cas.seance];
-
-      await tester.pumpWidget(
-        // Le meme cours, sans les reglages de l'enseignant : mieux vaut
-        // n'annoncer aucune interruption qu'une fausse.
-        hote(_ecran(), surcharges: _surcharges(planning: planning)),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.eleve.accueil.pausePriere), findsNothing);
-    });
-  });
+    },
+  );
 
   group('ELV-02 : l etat se decide sans monter d ecran', () {
     final Seance enCours = _cours(

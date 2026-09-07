@@ -165,7 +165,7 @@ elles sont faites. L'ordre restant :
 [fait] Système responsive et web                     05
 [fait] Catalogue d'écrans                            08
 [fait] Lot T : jetons, thème, typographie             → lib/core/theme/
-[à faire] Lot C : composants du catalogue             → lib/core/widgets/
+[fait] Lot C : composants du catalogue                → lib/core/widgets/
 [à faire] Lot R : reprise des écrans déjà construits  → lib/features/
 ```
 

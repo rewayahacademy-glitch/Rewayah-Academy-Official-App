@@ -44,11 +44,7 @@ class SelecteurFichierNatif implements SelecteurFichier {
     }
 
     final Uint8List octets = await fichier.readAsBytes();
-    return PieceAEnvoyer(
-      octets: octets,
-      nomFichier: fichier.name,
-      type: type,
-    );
+    return PieceAEnvoyer(octets: octets, nomFichier: fichier.name, type: type);
   }
 }
 

@@ -43,10 +43,7 @@ import 'routes.dart';
 final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   final _RafraichisseurRoutage rafraichisseur = _RafraichisseurRoutage();
 
-  ref.listen<SessionState>(sessionProvider, (
-    SessionState? _,
-    SessionState _,
-  ) {
+  ref.listen<SessionState>(sessionProvider, (SessionState? _, SessionState _) {
     rafraichisseur.declencher();
   });
   ref.onDispose(rafraichisseur.dispose);
@@ -132,8 +129,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.tuteurAjouterEnfant,
-        builder: (BuildContext _, GoRouterState _) =>
-            const AjouterEnfantPage(),
+        builder: (BuildContext _, GoRouterState _) => const AjouterEnfantPage(),
       ),
       GoRoute(
         path: '${Routes.tuteurAppairer}/:eleveId',
@@ -181,8 +177,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Admin.
       GoRoute(
         path: Routes.adminTableauDeBord,
-        builder: (BuildContext _, GoRouterState _) =>
-            const TableauDeBordPage(),
+        builder: (BuildContext _, GoRouterState _) => const TableauDeBordPage(),
       ),
       GoRoute(
         path: Routes.adminDossiers,

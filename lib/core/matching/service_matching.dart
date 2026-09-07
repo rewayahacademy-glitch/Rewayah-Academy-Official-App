@@ -138,8 +138,9 @@ class Demande {
 /// rendrait ses lignes dans n'importe quel ordre ne changerait plus rien a ce
 /// que `ENS-06` affiche.
 List<EleveEnAttente> parAnciennete(List<EleveEnAttente> feed) =>
-    List<EleveEnAttente>.of(feed)
-      ..sort((EleveEnAttente a, EleveEnAttente b) => a.depuis.compareTo(b.depuis));
+    List<EleveEnAttente>.of(feed)..sort(
+      (EleveEnAttente a, EleveEnAttente b) => a.depuis.compareTo(b.depuis),
+    );
 
 /// Le matching, cote enseignant, et les demandes des quatre parties.
 abstract interface class ServiceMatching {
@@ -193,17 +194,15 @@ class ServiceMatchingSupabase implements ServiceMatching {
   }
 
   @override
-  Future<void> prendre({
-    required String eleveId,
-    required Creneau creneau,
-  }) => _client.rpc<void>(
-    'prendre_eleve',
-    params: <String, dynamic>{
-      'p_student_profile_id': eleveId,
-      'p_weekday': creneau.jour,
-      'p_hour': creneau.heure,
-    },
-  );
+  Future<void> prendre({required String eleveId, required Creneau creneau}) =>
+      _client.rpc<void>(
+        'prendre_eleve',
+        params: <String, dynamic>{
+          'p_student_profile_id': eleveId,
+          'p_weekday': creneau.jour,
+          'p_hour': creneau.heure,
+        },
+      );
 
   @override
   Future<void> demander({

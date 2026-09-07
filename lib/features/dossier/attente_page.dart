@@ -166,14 +166,10 @@ class _AFournir extends StatelessWidget {
     final (String libelle, String action, String chemin) = _textes;
 
     return BentoTile(
-      avecBordure: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(
-            libelle,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Text(libelle, style: Theme.of(context).textTheme.titleMedium),
           Ecart.vMd,
           ActionPrincipale(
             libelle: action,
@@ -250,9 +246,7 @@ class _Bloc extends StatelessWidget {
         IconTheme(
           data: alerte
               ? palette.inkAlert.asIconTheme(size: AppSpacing.xxxl * 2)
-              : palette.inkAccent.asIconTheme(
-                  size: AppSpacing.xxxl * 2,
-                ),
+              : palette.inkAccent.asIconTheme(size: AppSpacing.xxxl * 2),
           child: Icon(icone.repos),
         ),
         Ecart.vXl,
@@ -312,11 +306,10 @@ class _Deconnexion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     return ActionPrincipale(
       libelle: t.attente.seDeconnecter,
       onPress: onDeconnexion,
-      surface: palette.surfaceCanvas,
+      niveau: NiveauAction.secondaire,
     );
   }
 }

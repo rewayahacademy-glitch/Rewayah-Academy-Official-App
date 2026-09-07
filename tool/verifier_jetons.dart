@@ -85,6 +85,7 @@ const Map<String, String> vocabulairePerime = <String, String>{
   'VarelaRound': 'BricolageGrotesque',
   'NotoSans': 'InstrumentSans',
 };
+
 /// Les icones se declarent en un seul endroit : `AppIcons`. Les polices
 /// Phosphor sont integrees en assets, il n'y a donc aucun paquet a importer,
 /// mais un `IconData` construit ailleurs reintroduirait un second catalogue.
@@ -92,20 +93,47 @@ final RegExp _iconeHorsCatalogue = RegExp(
   r'\bIconData\s*\(|\bIcons\.[a-zA-Z]|package:phosphor_flutter',
 );
 final RegExp _onTapNu = RegExp(r'\bonTap\s*:');
+
+/// Les boutons de Material.
+///
+/// Ajoutee au lot C, en meme temps que les quatre niveaux d'`ActionPrincipale`
+/// (`docs/design/07-catalogue-composants.md` section 6). Un bouton Material
+/// rapporterait la palette de Material avec lui, et son etat desactive
+/// travaille par transparence, ce qui fait tomber le texte sous le seuil de
+/// contraste. **Verifiee en la faisant echouer** sur un fichier piege.
+final RegExp _boutonMaterial = RegExp(
+  r'\b(?:Elevated|Text|Outlined|Filled|Icon)Button\b',
+);
+
+/// Le forcage d'etat d'interaction.
+///
+/// Il existe pour que la galerie puisse montrer les dix etats cote a cote, ce
+/// qu'aucune souris ne saurait faire dans une capture. C'est une prise, donc un
+/// risque : employee dans un ecran, elle peindrait un survol qui n'existe pas.
+final RegExp _pressionForcee = RegExp(r'\bPressionForcee\b');
 final RegExp _constructeurGoRouter = RegExp(r'\bGoRouter\s*\(');
 final RegExp _mDash = RegExp('—');
 final RegExp _emoji = RegExp(
   '[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]',
   unicode: true,
 );
+
 /// Les constructeurs dont les arguments sont des espacements.
 ///
 /// `BorderRadius.circular` n'y figure plus : les rayons ont leur propre echelle
 /// depuis la refonte, et 999 n'appartient pas a celle des espacements. Ils sont
 /// controles par [_rayonLitteral].
+///
+/// `EdgeInsetsDirectional` a ete ajoute au lot C, et c'etait un trou : la regle
+/// RTL de `05-regles-responsive.md` section 7 impose les variantes
+/// directionnelles dans les ecrans, or elles echappaient au controle
+/// d'espacement. Chaque marge reprise au lot R serait donc sortie de l'echelle
+/// sans que rien ne le dise.
 final RegExp _appelEspacement = RegExp(
-  r'(?:EdgeInsets\.(?:all|symmetric|only|fromLTRB)|SizedBox)\(',
+  r'(?:EdgeInsets(?:Directional)?'
+  r'\.(?:all|symmetric|only|fromLTRB|fromSTEB)|SizedBox)\(',
 );
+
 /// Un argument dont la valeur est **entierement** un nombre litteral.
 ///
 /// Volontairement strict : `cote / 2` ou `cibleTactile * 1.4` sont des calculs
@@ -151,9 +179,7 @@ void main() {
       // 1. Aucune couleur nue hors du fichier de palette.
       if (_couleurLitterale.hasMatch(code) &&
           !chemin.endsWith(_fichierPalette)) {
-        violations.add(
-          Violation(chemin, numero, 'couleur-nue', ligne),
-        );
+        violations.add(Violation(chemin, numero, 'couleur-nue', ligne));
       }
 
       // 1 bis. Aucune ombre composee hors du fichier d'elevation, aucun crenage
@@ -184,8 +210,7 @@ void main() {
       }
 
       // 1 quater. Le vocabulaire d'avant la refonte ne revient pas.
-      for (final MapEntry<String, String> perime
-          in vocabulairePerime.entries) {
+      for (final MapEntry<String, String> perime in vocabulairePerime.entries) {
         if (RegExp('\\b${perime.key}\\b').hasMatch(code)) {
           violations.add(
             Violation(
@@ -201,13 +226,30 @@ void main() {
       // 2. Une seule librairie d'icones, un seul point d'entree.
       if (_iconeHorsCatalogue.hasMatch(code) &&
           !chemin.endsWith('core/icons/app_icons.dart')) {
-        violations.add(Violation(chemin, numero, 'icone-hors-catalogue', ligne));
+        violations.add(
+          Violation(chemin, numero, 'icone-hors-catalogue', ligne),
+        );
       }
 
       // 3. Aucun onTap nu : tout passe par Pressable.
       if (_onTapNu.hasMatch(code) &&
           !chemin.endsWith('core/widgets/pressable.dart')) {
         violations.add(Violation(chemin, numero, 'ontap-nu', ligne));
+      }
+
+      // 3 bis. Aucun bouton Material : tout passe par ActionPrincipale et ses
+      // quatre niveaux.
+      if (_boutonMaterial.hasMatch(code)) {
+        violations.add(Violation(chemin, numero, 'bouton-material', ligne));
+      }
+
+      // 3 ter. Le forcage d'etat ne sort pas de la galerie.
+      if (_pressionForcee.hasMatch(code) &&
+          !chemin.endsWith('core/widgets/pressable.dart') &&
+          !chemin.contains('features/_dev/')) {
+        violations.add(
+          Violation(chemin, numero, 'pression-forcee-hors-galerie', ligne),
+        );
       }
 
       // 4. Zero emoji, zero M-dash, code comme libelles.
@@ -217,7 +259,6 @@ void main() {
       if (_mDash.hasMatch(ligne)) {
         violations.add(Violation(chemin, numero, 'm-dash', ligne));
       }
-
     }
 
     // 5. Echelle d'espacement fixe. Balayage sur le fichier entier : un
@@ -266,8 +307,12 @@ void main() {
 
   if (routeursTrouves == 0) {
     violations.add(
-      Violation('lib/core/router/app_router.dart', 1, 'routeur-absent',
-          'aucun GoRouter construit'),
+      Violation(
+        'lib/core/router/app_router.dart',
+        1,
+        'routeur-absent',
+        'aucun GoRouter construit',
+      ),
     );
   }
 
@@ -284,7 +329,12 @@ void main() {
         }
         if (_mDash.hasMatch(lignes[i])) {
           violations.add(
-            Violation(_relatif(f.path, racine.path), i + 1, 'm-dash', lignes[i]),
+            Violation(
+              _relatif(f.path, racine.path),
+              i + 1,
+              'm-dash',
+              lignes[i],
+            ),
           );
         }
       }
@@ -338,11 +388,12 @@ List<Violation> _espacementsHorsEchelle(String chemin, String contenu) {
     final String arguments = code.substring(ouverture + 1, fin);
     for (final String argument in _decouperNiveauUn(arguments)) {
       final int sep = argument.indexOf(':');
-      final String valeur =
-          (sep == -1 ? argument : argument.substring(sep + 1)).trim();
+      final String valeur = (sep == -1 ? argument : argument.substring(sep + 1))
+          .trim();
       final RegExpMatch? nombre = _valeurNumeriquePure.firstMatch(valeur);
       if (nombre != null && !echelleEspacement.contains(nombre.group(1))) {
-        final int ligne = '\n'.allMatches(code.substring(0, appel.start)).length + 1;
+        final int ligne =
+            '\n'.allMatches(code.substring(0, appel.start)).length + 1;
         trouvees.add(
           Violation(
             chemin,

@@ -343,9 +343,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(
-          t.tuteur.reglages.demandeTitreReaffectation(prenom: 'Amina'),
-        ),
+        find.text(t.tuteur.reglages.demandeTitreReaffectation(prenom: 'Amina')),
         findsOneWidget,
       );
       // Sans motif, le bouton n'aboutit pas : la base refuse une demande sans
@@ -407,10 +405,7 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'Elle decroche');
       await tester.pumpAndSettle();
       await tester.tap(
-        find.widgetWithText(
-          ActionPrincipale,
-          t.tuteur.reglages.demandeEnvoyer,
-        ),
+        find.widgetWithText(ActionPrincipale, t.tuteur.reglages.demandeEnvoyer),
       );
       await tester.pumpAndSettle();
 

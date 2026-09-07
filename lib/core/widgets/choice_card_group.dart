@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_elevation.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -177,23 +178,36 @@ class _Carte extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
     // La selection change la PAIRE entiere, pas seulement le fond : le texte
     // suit toujours son fond.
+    //
+    // **Le lot C la passe au registre doux.** Une carte retenue etait peinte en
+    // aplat violet plein : sur une page de parcours qui porte deja son bouton
+    // « Continuer » en `surfacePrimary`, deux aplats satures se disputaient
+    // l'ecran, ce que la regle de la zone pleine unique interdit
+    // (`docs/design/01-systeme-visuel.md` section 3). La selection se dit
+    // maintenant par la teinte douce et par le contour fort, qui est la seule
+    // bordure porteuse de sens.
     final AppColorPair paire = retenue
-        ? palette.surfacePrimary
-        : palette.surfaceCanvas;
+        ? palette.washAccent
+        : palette.surfaceRaised;
 
-    return Pressable(
+    return Pressable.selon(
       onPress: onPress,
       libelleSemantique: libelle,
       respecterCibleTactile: false,
-      child: Container(
-        constraints: BoxConstraints(minHeight: metriques.cibleTactile),
-        padding: EdgeInsets.all(metriques.marge),
-        decoration: paire.decoration(
-          borderRadius: BorderRadius.circular(metriques.rayon),
-          side: retenue ? null : palette.borderResting.asBorderSide(width: 2),
+      constructeur: (BuildContext contexte, EtatPression etat) => Container(
+        constraints: BoxConstraints(
+          minHeight: AppMetriques.of(contexte).cibleTactile,
+        ),
+        padding: EdgeInsets.all(AppMetriques.of(contexte).marge),
+        decoration: AppElevation.avecFilet(
+          surface: paire,
+          filet: retenue || etat.survole || etat.presse
+              ? palette.borderStrong
+              : palette.borderResting,
+          arrondi: AppMetriques.of(contexte).arrondi,
+          ombres: retenue ? AppElevation.niveau2 : AppElevation.niveau1,
         ),
         child: Row(
           children: <Widget>[
@@ -211,10 +225,12 @@ class _Carte extends StatelessWidget {
               child: Text(
                 libelle,
                 style: paire.applyTo(
-                  Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+                  Theme.of(contexte).textTheme.titleMedium ?? const TextStyle(),
                 ),
               ),
             ),
+            // La coche double la couleur : une selection qui ne se lirait qu'a
+            // la teinte n'existerait pas pour un daltonien.
             if (retenue)
               IconTheme(
                 data: IconThemeData(

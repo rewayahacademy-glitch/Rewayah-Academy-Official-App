@@ -85,8 +85,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final CodeAppairage? code = _code;
-    final Duration restant =
-        code?.restantA(_maintenant) ?? Duration.zero;
+    final Duration restant = code?.restantA(_maintenant) ?? Duration.zero;
     final bool expire = code != null && restant == Duration.zero;
 
     return Scaffold(
@@ -153,7 +152,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
               child: ActionPrincipale(
                 libelle: t.commun.retour,
                 onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
-                surface: palette.surfaceCanvas,
+                niveau: NiveauAction.secondaire,
               ),
             ),
           ],

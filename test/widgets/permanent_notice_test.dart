@@ -62,9 +62,8 @@ void main() {
       // regle : le jour ou quelqu'un ajoute `bool visible = true`, le code
       // continuerait de compiler partout et l'ADR-011 tomberait en silence.
       // tool/verifier_jetons.dart applique le meme controle en CI.
-      final String source = File(
-        'lib/core/widgets/permanent_notice.dart',
-      ).readAsStringSync();
+      final String source = File('lib/core/widgets/permanent_notice.dart')
+          .readAsStringSync();
 
       final RegExpMatch? constructeur = RegExp(
         r'const\s+PermanentNotice\s*\(\s*([^)]*)\)',

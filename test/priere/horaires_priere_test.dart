@@ -121,7 +121,10 @@ void main() {
       );
 
       expect(inconnus.calculables, isFalse);
-      expect(HorairesPriere.duJour(reglages: inconnus, jour: _jour).vides, isTrue);
+      expect(
+        HorairesPriere.duJour(reglages: inconnus, jour: _jour).vides,
+        isTrue,
+      );
       expect(
         interruptionsEntre(
           reglages: inconnus,
@@ -208,10 +211,12 @@ void main() {
           continue;
         }
         expect(
-          HorairesPriere.duJour(reglages: ajustes, jour: _jour)[priere]!
-              .isAtSameMomentAs(
-                HorairesPriere.duJour(reglages: _paris, jour: _jour)[priere]!,
-              ),
+          HorairesPriere.duJour(
+            reglages: ajustes,
+            jour: _jour,
+          )[priere]!.isAtSameMomentAs(
+            HorairesPriere.duJour(reglages: _paris, jour: _jour)[priere]!,
+          ),
           isTrue,
         );
       }
@@ -255,20 +260,23 @@ void main() {
       );
     });
 
-    test('une priere commencee avant le cours mais qui deborde dedans compte', () {
-      final DateTime dhuhr = HorairesPriere.duJour(
-        reglages: _paris,
-        jour: _jour,
-      )[Priere.dhuhr]!;
+    test(
+      'une priere commencee avant le cours mais qui deborde dedans compte',
+      () {
+        final DateTime dhuhr = HorairesPriere.duJour(
+          reglages: _paris,
+          jour: _jour,
+        )[Priere.dhuhr]!;
 
-      final List<InterruptionPriere> trouvees = interruptionsEntre(
-        reglages: _paris,
-        debut: dhuhr.add(const Duration(minutes: 5)),
-        fin: dhuhr.add(const Duration(hours: 1)),
-      );
+        final List<InterruptionPriere> trouvees = interruptionsEntre(
+          reglages: _paris,
+          debut: dhuhr.add(const Duration(minutes: 5)),
+          fin: dhuhr.add(const Duration(hours: 1)),
+        );
 
-      expect(trouvees.single.priere, Priere.dhuhr);
-    });
+        expect(trouvees.single.priere, Priere.dhuhr);
+      },
+    );
 
     test('une fenetre a cheval sur deux jours civils trouve la priere du '
         'lendemain', () {
@@ -297,39 +305,44 @@ void main() {
       );
     });
 
-    test('l alerte est visible du preavis jusqu a la fin de l interruption', () {
-      final DateTime dhuhr = HorairesPriere.duJour(
-        reglages: _paris,
-        jour: _jour,
-      )[Priere.dhuhr]!;
-      final InterruptionPriere interruption = interruptionsEntre(
-        reglages: _paris,
-        debut: dhuhr.subtract(const Duration(hours: 1)),
-        fin: dhuhr.add(const Duration(hours: 1)),
-      ).single;
+    test(
+      'l alerte est visible du preavis jusqu a la fin de l interruption',
+      () {
+        final DateTime dhuhr = HorairesPriere.duJour(
+          reglages: _paris,
+          jour: _jour,
+        )[Priere.dhuhr]!;
+        final InterruptionPriere interruption = interruptionsEntre(
+          reglages: _paris,
+          debut: dhuhr.subtract(const Duration(hours: 1)),
+          fin: dhuhr.add(const Duration(hours: 1)),
+        ).single;
 
-      // Le preavis vient des reglages, pas du code : il vaut dix minutes ici
-      // parce que la base le dit, et il vaut la meme chose pour les trois roles.
-      expect(interruption.preavis, const Duration(minutes: 10));
-      expect(
-        interruption.alerteVisibleA(
-          dhuhr.subtract(const Duration(minutes: 11)),
-        ),
-        isFalse,
-      );
-      expect(
-        interruption.alerteVisibleA(dhuhr.subtract(const Duration(minutes: 9))),
-        isTrue,
-      );
-      expect(
-        interruption.alerteVisibleA(dhuhr.add(const Duration(minutes: 14))),
-        isTrue,
-      );
-      expect(
-        interruption.alerteVisibleA(dhuhr.add(const Duration(minutes: 15))),
-        isFalse,
-      );
-    });
+        // Le preavis vient des reglages, pas du code : il vaut dix minutes ici
+        // parce que la base le dit, et il vaut la meme chose pour les trois roles.
+        expect(interruption.preavis, const Duration(minutes: 10));
+        expect(
+          interruption.alerteVisibleA(
+            dhuhr.subtract(const Duration(minutes: 11)),
+          ),
+          isFalse,
+        );
+        expect(
+          interruption.alerteVisibleA(
+            dhuhr.subtract(const Duration(minutes: 9)),
+          ),
+          isTrue,
+        );
+        expect(
+          interruption.alerteVisibleA(dhuhr.add(const Duration(minutes: 14))),
+          isTrue,
+        );
+        expect(
+          interruption.alerteVisibleA(dhuhr.add(const Duration(minutes: 15))),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('Ce que la base recoit et ce qu elle rend', () {
@@ -352,25 +365,27 @@ void main() {
     });
 
     test('une ligne de la base se relit sans rien perdre', () {
-      final ReglagesPriere lus = ReglagesPriere.depuisJson(const <String, dynamic>{
-        'teacher_id': 't1',
-        // PostgREST rend un numeric sous forme de chaine selon les versions.
-        'latitude': '48.85341',
-        'longitude': '2.34880',
-        'method': 'karachi',
-        'madhab': 'hanafi',
-        'adjustments': <String, dynamic>{
-          'fajr': 0,
-          'dhuhr': 2,
-          'asr': 0,
-          'maghrib': -1,
-          'isha': 0,
+      final ReglagesPriere lus = ReglagesPriere.depuisJson(
+        const <String, dynamic>{
+          'teacher_id': 't1',
+          // PostgREST rend un numeric sous forme de chaine selon les versions.
+          'latitude': '48.85341',
+          'longitude': '2.34880',
+          'method': 'karachi',
+          'madhab': 'hanafi',
+          'adjustments': <String, dynamic>{
+            'fajr': 0,
+            'dhuhr': 2,
+            'asr': 0,
+            'maghrib': -1,
+            'isha': 0,
+          },
+          'timezone_iana': 'Europe/Paris',
+          'pause_minutes': 12,
+          'alert_lead_minutes': 5,
+          'place_label': 'Paris',
         },
-        'timezone_iana': 'Europe/Paris',
-        'pause_minutes': 12,
-        'alert_lead_minutes': 5,
-        'place_label': 'Paris',
-      });
+      );
 
       expect(lus.methode, MethodeCalcul.karachi);
       expect(lus.madhab, Madhab.hanafi);
