@@ -170,6 +170,23 @@ justement le lot L9, en cours. Le seul ecran d'administration reellement bati
 est `/admin/dossiers`. L'acces admin ouvre donc les donnees, pas encore les
 interfaces.
 
+**Et c'est pourquoi le compte est repasse en `guardian` le meme jour**, a la
+demande de l'operateur, qui n'avait vu qu'un ecran a construire. Etat courant :
+
+```sql
+update public.profiles
+set role = 'guardian', account_status = 'active', updated_at = now()
+where id = '06a05adc-e580-4909-a688-17b5071a2def';
+```
+
+Le foyer `c1b933b4` n'avait jamais ete detache — `primary_guardian_id` pointe
+toujours sur ce profil — donc l'aller-retour n'a rien coute. La difference avec
+l'etat d'origine tient au statut : `active` au lieu de `pending_kyc`, ce qui
+ouvre le sous-arbre `/tuteur` au lieu du portail d'attente.
+
+**Le role se bascule donc a volonte**, par cette seule requete, tant qu'aucun
+ecran d'administration n'existe pour valider un dossier autrement.
+
 ## 4. Ce qui reste ouvert, et qui n'est pas du code
 
 | Sujet | Etat | Ce qu'il faut |
@@ -288,3 +305,25 @@ cd ".\build\web" ; vercel deploy --prod --yes
 La copie `D:\ra-pwa-build` est un `git worktree` detache du depot principal :
 elle sert a construire sans jamais compiler le travail en cours d'une autre
 session. `git worktree remove "D:\ra-pwa-build"` la supprime.
+
+### 7.1 L'adresse stable sert encore le lot L7, et c'est mesure
+
+`vercel deploy --prod` est refuse a l'agent par la barriere du poste ; la
+previsualisation, elle, passe. La build de `c5a511f` (donc L8, `TUT-01`
+compris) est donc en ligne, mais **sur une adresse de previsualisation**, pas
+sur `rewayah-academy.vercel.app`, qui sert toujours la build de `761450a` (L7).
+
+Ne pas s'en remettre a la taille du dernier televersement pour le croire : le
+constat se fait en comparant les deux `main.dart.js` sur une chaine qui
+n'existe qu'a partir de L8 — « Ajoutez votre premier enfant pour commencer. »,
+le message vide de `TUT-01`. En ligne : 3 670 040 octets, chaine absente.
+Localement : 3 705 770 octets, chaine presente.
+
+⚠ **Et l'adresse de previsualisation ne remplace pas la production pour se
+connecter.** Le produit n'envoie aucun `emailRedirectTo`, donc le lien de
+connexion retombe toujours sur `site_url`, c'est-a-dire sur l'adresse stable.
+Une session ouverte depuis une previsualisation s'etablirait sur l'autre
+origine, et le `localStorage` etant par origine, la previsualisation resterait
+deconnectee. **Tant que la promotion en production n'est pas faite, la seule
+adresse ou l'on peut reellement se connecter est
+`https://rewayah-academy.vercel.app`, et elle sert L7.**
