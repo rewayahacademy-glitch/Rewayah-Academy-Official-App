@@ -702,6 +702,88 @@ datées d'une version ultérieure et n'est pas employée en MVP-0.
 
 ---
 
+## ADR-018 - Refonte UX/UI : un langage avant les écrans
+
+Décision de l'opérateur du 7 septembre 2026, après que le premier rendu visuel
+de l'application ait été jugé daté. Le corpus complet est dans **`docs/design/`**,
+neuf fichiers, dont `README.md` fait office de constitution.
+
+### Le problème n'était pas dans les écrans
+
+Chaque écran a été spécifié dans le plan de son étape, puis construit. Ça a
+produit des écrans corrects un par un et un ensemble qui ne ressemble pas à un
+produit. Le défaut est l'absence de **langage** au dessus des écrans : un agent
+qui reçoit « fais `ADM-01` » sans langage invente un rayon, une carte, un bouton,
+et l'écran suivant en invente d'autres.
+
+Cinq causes mesurables, corrigées ensemble :
+
+1. **Une seule surface.** Fond de page, carte, champ de saisie et en-tête
+   partageaient la même couleur. Sans deux surfaces, pas de hiérarchie possible.
+2. **Les couleurs de marque n'existaient qu'en aplats saturés.** Un
+   avertissement occupait un pavé `#FFB703` entier.
+3. **Le fond était le rose pâle `#F1E3E4`**, teinte 356°, qui vire au beige sale
+   ou au mauve selon l'écran.
+4. **Un seul jeton de bordure, mesuré à 1,86:1**, donc invisible et pourtant
+   employé pour délimiter.
+5. **Aucun crénage optique, aucun rayon systématique, aucune ombre**, et une
+   police de titre à graisse unique au registre du début des années 2010.
+
+### Ce qui est tranché
+
+**La palette de marque est conservée**, dans ses cinq couleurs. Ce qui change est
+le rôle de deux d'entre elles et l'ajout de leurs déclinaisons.
+
+- Le fond général passe au **crème `#F8F4EE`**, teinte 36°, écart entre canaux de
+  10. Le témoin jaunâtre auquel il a été comparé, `#FBF3D9`, a un écart de 34 :
+  le jaunissement se lit sur la chromaticité, pas sur la teinte.
+- Le rose pâle `#F1E3E4` **garde sa valeur** et devient la teinte du domaine
+  foyer, au lieu d'être le fond de tout le produit.
+- Chaque famille sémantique reçoit un **registre doux** : une teinte pâle et une
+  encre foncée de la même famille. L'aplat saturé est réservé à une seule zone
+  par écran.
+- Trois bordures remplacent l'unique `borderDefault` : deux décoratives et une
+  porteuse de sens, `#8F8279`, mesurée à 3,40 sur le crème.
+- **Les polices arabes ne changent pas.** Les deux polices françaises sont
+  remplacées par Bricolage Grotesque (titres, axe `opsz`) et Instrument Sans
+  (corps), toutes deux OFL et variables.
+
+Toutes les valeurs et leurs mesures sont dans `docs/produit/design-tokens.md`,
+qui reste la source unique. Les documents de `docs/design/` disent comment les
+employer et ne recopient aucune valeur.
+
+### La règle qui compte le plus
+
+> **Aucun écran ne s'implémente s'il n'est pas inscrit dans
+> `docs/design/08-catalogue-ecrans.md`.**
+
+Si un écran manque au catalogue, on l'ajoute au catalogue d'abord, avec sa fiche,
+et on discute de la fiche avant d'ouvrir un fichier `.dart`. C'est cette règle,
+et pas le goût de qui construit, qui tient la cohérence.
+
+### Ce que la refonte ne change pas
+
+Plusieurs recommandations de la note de refonte étaient déjà tranchées ici,
+parfois dans l'autre sens. Le tableau complet est en section 7 du
+`docs/design/README.md`. Les trois à retenir :
+
+- **La contradiction « qui pose les créneaux »** n'existe pas dans ce dépôt :
+  une seule table `weekly_availability`, la famille pose ses créneaux,
+  l'enseignant prend **un élève** et le garde (ADR-017). Ne pas la « corriger ».
+- **Le mode enfant est déjà un mode d'interface**, porté par le profil, pas un
+  rôle (ADR-009, ADR-016).
+- **La séance porte déjà des participants en plusieurs-à-plusieurs**, avec
+  observateurs masqués (ADR-004, ADR-011).
+
+### Conséquence sur l'ordre de travail
+
+L'étape 5 attend. Trois lots passent avant : **T** les jetons et le thème, **C**
+les douze composants de priorité P0, **R** la reprise des quatre écrans déjà
+construits. Reprendre un écran avant les jetons obligerait à le reprendre deux
+fois.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -726,19 +808,22 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 1 | Le "système de création d'objectifs élèves" reporté en V1 : est-ce la grille d'examen anonyme et l'imputabilité des specs d'origine, ou autre chose | Étape 6 | Ouverte |
 | 2 | Un enseignant a-t-il une photo publique visible par les familles avant le premier cours | Étape 3, 4 | **Résolue par la négative pour l'étape 4** : `TUT-01` et `mon_enseignant_v` donnent prénom et identifiant immuable, jamais de photo ni de nom complet (ADR-008). À rouvrir si le produit veut une vitrine d'enseignants |
 | 3 | Riwaya du mushaf, Warsh ou Hafs | Étape 5 | Ouverte |
-| 4 | Identité visuelle, violet de l'application ou vert et or de Rewayah | Étape 2, 4 | Non bloquant, jetons de couleur abstraits |
+| 4 | Identité visuelle, violet de l'application ou vert et or de Rewayah | Étape 2, 4 | **Résolue par ADR-018** : la palette de l'application est conservée, le violet reste l'accent unique. Le vert et l'or restent des accents religieux réservés aux illustrations (`design-tokens.md` §5), jamais des couleurs d'interface |
 | 5 | Seuil d'âge exact séparant le mode enfant du mode standard | Étape 3 | **Résolue par défaut, pas par décision** : `child_ui_mode_max_age` vaut 8 dans `app_config` et l'étape 3 s'en sert. Modifiable en une ligne, sans redéploiement. À confirmer par l'opérateur (ADR-016) |
 | 6 | Poular dans l'interface élève dès le MVP-0 ou plus tard | Étape 3 | **Résolue par la négative** : pas de poular dans l'application (ADR-015) |
 | 7 | Format de compression des photos | Étape 2 | Résolue par défaut, WebP |
 | 8 | Prestataire de payout de remplacement | V1 | Non bloquant |
 | 9 | Coupure automatique ou non à l'échéance des 30 jours de migration | Étape 7, plus tard | Résolue par défaut, pas de coupure automatique (ADR-014) |
-| 10 | `borderDefault` mesure 1,86:1, sous le seuil de 3:1 des éléments non textuels. Jeton décoratif seulement, ou passage à `#8F8080` (3,03:1) pour qu'il puisse porter du sens | Étape 3, 4 | Ouverte. Traité comme décoratif en attendant : le focus et l'erreur passent par `surfacePrimary` et `surfaceAlert` |
-| 11 | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler la police, et avec quel outil dans la chaîne de build | Étape 4 | Ouverte, mesurée dans `etape-2-journal.md` |
+| 10 | `borderDefault` mesure 1,86:1, sous le seuil de 3:1 des éléments non textuels. Jeton décoratif seulement, ou passage à `#8F8080` (3,03:1) pour qu'il puisse porter du sens | Étape 3, 4 | **Résolue par ADR-018, et autrement que par le choix proposé** : le jeton unique est remplacé par trois. `borderHairline` et `borderResting` sont décoratifs et assumés tels ; `borderStrong` `#8F8279` porte le sens et mesure 3,40 sur le crème, 3,73 sur une carte blanche. Un seul jeton ne pouvait pas faire les deux |
+| 11 | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler la police, et avec quel outil dans la chaîne de build | Étape 4, lot T | **Déplacée, pas résolue.** Noto Sans sort de la palette (ADR-018), remplacé par Instrument Sans et Bricolage Grotesque. Le sous-ensemblage reste entièrement à faire, et le poids des deux nouveaux fichiers est à **mesurer**, pas à supposer meilleur |
 | 12 | `0001` fait `create extension if not exists pgcrypto` sans schéma et appelle `public.digest`. Sur un projet Supabase où pgcrypto vit déjà dans le schéma `extensions`, la migration échouerait à sa première application réelle | Étape D, premier `db push` | **Corrigée en code** : `0001` crée le schéma `extensions`, y installe l'extension, et les appels de `0001` et `0004` sont qualifiés `extensions.`. Les deux formes valent des deux côtés, sur Supabase comme sur un Postgres nu, et les 73 contrôles SQL restent verts. **Reste à confirmer au premier `db push`**, qui dépend de l'étape D |
 | 13 | Lecture du QR par la caméra sur l'appareil de l'enfant | Étape 4 ou plus tard | Reportée (ADR-016). Le chemin par le code fonctionne partout ; l'interface est posée pour recevoir un lecteur |
 | 14 | Limitation de débit sur l'échange d'un code d'appairage | Si la durée de validité s'allonge | Non traitée, arithmétique consignée dans `supabase/functions/session-enfant/index.ts` : 32^6 combinaisons pour une fenêtre de dix minutes |
 | 15 | Méthode de calcul des prières et lieu de référence : qui les pose | Étape 4 | **Résolue par configuration** : `prayer_settings` porte le lieu, la méthode et les ajustements à la minute, par enseignant, lisibles par ses élèves (ADR-017) |
 | 16 | Un litige sur le temps effectif se tranche-t-il sur le minimum payable de l'élève, ou sur la présence mesurée en salle | Étape 5 | Ouverte. L'étape 4 pose la règle et sa trace, l'étape 5 mesurera la présence. Les deux doivent se rejoindre avant la première paie |
 | 17 | La photo de profil d'un élève passe-t-elle par une compression serveur avant le stockage | Étape 4, `TUT-05` | Ouverte. L'ADR-012 et `etape-2-core-flutter.md` section 4 supposent une compression serveur qui n'existe pas encore : sans elle, le cache local borne mal sa taille |
+| 18 | La messagerie est-elle un chat générique ou une conversation **contextuelle** attachée à une séance, au personnel, au support ou à la facturation, avec une politique par contexte | V1 | **Ouverte, et à trancher avant le premier écran de messagerie.** Soulevée par la note de refonte du 7 septembre : un chat générique construit puis sécurisé après coup est plus cher qu'une conversation contextuelle dès le départ. Aucun écran de messagerie n'existe en MVP-0, la question n'est donc pas encore bloquante |
+| 19 | Le journal d'audit doit-il porter une **liste nommée d'événements** (`MATCH_ACCEPTED`, `SESSION_JOINED`, `REPORT_SUBMITTED`…) plutôt que des libellés libres | Étape 5, 6 | Ouverte. `audit_logs` existe et est alimenté ; ce qui manque est la nomenclature figée. Sans elle, `ADM-04` ne pourra pas filtrer par type d'événement autrement que par une chaîne |
+| 20 | Faut-il modéliser une entité **groupe, cohorte ou parcours** distincte de la séance | V1 | Ouverte, **sans dette pour l'instant** : le MVP-0 n'a pas d'entité niveau, et `session_participants` est déjà en plusieurs-à-plusieurs (ADR-004). La question se rouvrira quand les cours de groupe deviendront sérieux. Ne pas la préempter par une énumération rigide de types |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.

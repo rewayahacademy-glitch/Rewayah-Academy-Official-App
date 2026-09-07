@@ -3,6 +3,17 @@
 
 Périmètre : MVP-0 (ADR-003). Codes d'écran repris de vos specs, corrigés des décisions ADR-001 à ADR-010.
 
+> **Depuis l'ADR-018, ce document n'est plus la seule source pour un écran.**
+> Il dit **ce que l'écran contient** et pourquoi, ce qui reste vrai et fait
+> autorité. Il ne dit plus **à quoi il ressemble ni comment il se comporte** :
+> surfaces, couleurs, mouvement, gabarits, états et registre visuel sont dans
+> `docs/design/`, et le registre des écrans avec leur présentation mobile et
+> desktop est dans `docs/design/08-catalogue-ecrans.md`.
+>
+> Les mentions de « direction artistique » ci-dessous restent des intentions
+> valides ; quand elles rencontrent une règle de `docs/design/`, c'est la règle
+> qui tranche.
+
 ---
 
 ## Règles d'affichage communes à tous les écrans

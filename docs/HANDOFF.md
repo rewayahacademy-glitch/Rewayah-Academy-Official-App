@@ -1,7 +1,31 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **7 septembre 2026**, fin du lot **L9** de l'étape 4.
+> Dernière passation : **7 septembre 2026**, fin du lot **L9** de l'étape 4,
+> puis **refonte UX/UI v1.0** (documentation seule, aucun code touché).
 > Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
+
+## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
+
+L'opérateur a jugé le premier rendu visuel daté, et a demandé qu'on **arrête
+d'ajouter des écrans pour poser d'abord un langage**. C'est fait, en
+documentation : **`docs/design/`**, neuf fichiers, plus l'**ADR-018** dans
+`decisions.md` et une réécriture de `docs/produit/design-tokens.md`.
+
+Trois conséquences immédiates pour vous :
+
+1. **`docs/design/README.md` se lit avant d'ouvrir un fichier d'écran.** C'est la
+   constitution : hiérarchie des sources de vérité, les huit documents, les
+   interdits, et surtout la liste de ce que la note de refonte demandait **et qui
+   existe déjà** — plusieurs points y sont tranchés dans l'autre sens, ne les
+   « corrigez » pas.
+2. **Aucun écran ne s'implémente s'il n'est pas dans
+   `docs/design/08-catalogue-ecrans.md`.**
+3. **Le tableau de jetons d'`etape-2-core-flutter.md` §1 est périmé.** La source
+   unique des valeurs est `docs/produit/design-tokens.md`.
+
+Le code, lui, **n'a pas encore bougé** : le thème contient toujours l'ancienne
+palette et les anciennes polices. Les trois lots qui le mettront à jour sont en
+section 4 bis.
 
 ## 1. Le projet actif est celui-ci
 
@@ -44,12 +68,23 @@ une question d'équipement, détaillée dans le journal et dans `PROGRESS.md`.
 
 ## 3. Quoi lire, dans cet ordre, et rien d'autre
 
+Si vous reprenez **L10** (vérifications de fin d'étape 4) :
+
 1. `docs/architecture/etape-4-journal.md` — où en est le code, ce que valent les
    mesures, et les pièges déjà payés. **Le plus important des trois.**
 2. `docs/architecture/etape-4-dashboards.md` — la spécification : ADR-017, les
    neuf défauts corrigés, les douze invariants, les écrans, les 17 scénarios.
 3. `lib/CLAUDE.md` — les règles du code, qui font échouer la CI quand on les
    ignore.
+
+Si vous attaquez la **refonte** (lots T, C, R) :
+
+1. `docs/design/README.md` — la constitution, et la section 7, qui dit ce qui est
+   déjà tranché.
+2. `docs/produit/design-tokens.md` — toutes les valeurs, toutes mesurées.
+3. `docs/design/01-systeme-visuel.md` puis `07-catalogue-composants.md` puis
+   `08-catalogue-ecrans.md`.
+4. `lib/CLAUDE.md`.
 
 Ne pas rouvrir l'historique des étapes 1 à 3 : leurs journaux ne servent qu'en
 cas de doute sur un point précis.
@@ -77,6 +112,25 @@ consigne**. Trois choses, dans cet ordre.
 
 Ce que L10 **ne doit pas** faire : ouvrir l'étape 5. La salle, le pre-flight et
 `ELV-03` / `ENS-03` sont une autre étape, avec sa propre spécification à écrire.
+
+## 4 bis. Puis la refonte, avant l'étape 5
+
+L'ordre est décidé (ADR-018) : l'étape 5 attend, trois lots passent avant. Un lot
+par commit, comme toujours.
+
+| Lot | Contenu | Écrans touchés |
+| :-- | :--- | :--- |
+| **T** | Jetons, thème, typographie, mouvement. Palette crème et rampes, trois bordures, rayons, ombres, crénage, durées et courbes, échelle d'espacement étendue, et les nouvelles règles de `verifier_jetons.dart` | aucun |
+| **C** | Les douze composants P0 de `07-catalogue-composants.md`, plus la reprise des onze existants, plus la galerie qui montre tous leurs états | aucun |
+| **R** | Reprise dans cet ordre : `ELV-02`, puis `TUT-01`, puis `ENS-02` et `ADM-01`, puis le reste | quatre d'abord |
+
+**Le lot T se fait en premier et entièrement.** Reprendre un écran avant les
+jetons oblige à le reprendre deux fois. C'est la seule contrainte d'ordre.
+
+Deux choses à récupérer avant le lot T, et qui ne sont pas dans le dépôt : les
+fichiers **Bricolage Grotesque** et **Instrument Sans** depuis `fonts.google.com`.
+⚠ Ne pas passer par le dépôt `google/fonts` : ce poste ne fait pas confiance à
+`github.com` en TLS (section 7).
 
 Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 

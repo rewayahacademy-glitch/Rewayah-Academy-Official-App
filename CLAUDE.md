@@ -19,9 +19,11 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 | Les portes d'accès et leurs invariants | `docs/architecture/etape-3-auth-kyc.md` | Spécification de l'étape 3 et ses douze scénarios |
 | Le schéma, RLS, fonctions, migrations | `docs/architecture/etape-0-1-fondations.md` | Dictionnaire de données, contraintes, tests d'acceptation |
 | Le backend Supabase | `supabase/CLAUDE.md` | Rappels non négociables du dossier |
-| Un écran, un composant Flutter | `docs/produit/parcours-utilisateurs.md` | États, direction artistique, raisons des choix |
-| Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Les 10 composants partagés et le routeur unique |
-| Tokens visuels, polices, icônes, éthique | `docs/produit/design-tokens.md` | Palette, typographie, librairie d'icônes, règles islamiques, anti-IA |
+| **Tout écran, tout composant, toute couleur** | **`docs/design/README.md`** | **La constitution UX/UI (ADR-018).** Hiérarchie des sources de vérité, les huit documents, les interdits, et ce qui est déjà tranché ailleurs. **À lire avant d'ouvrir un fichier d'écran** |
+| Un écran précis | `docs/design/08-catalogue-ecrans.md` | Le registre. Un écran absent du registre ne s'implémente pas |
+| Ce que l'écran contient et pourquoi | `docs/produit/parcours-utilisateurs.md` | États métier, raisons des choix. Ne dit plus à quoi ça ressemble |
+| Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Le routeur unique. ⚠ Son tableau de jetons est périmé, voir `design-tokens.md` |
+| Tokens visuels, polices, icônes, éthique | `docs/produit/design-tokens.md` | **Source unique des valeurs** : palette mesurée, typographie, rayons, ombres, espacement, icônes, règles islamiques, anti-IA |
 | Le Coran, les invocations, le tajwid, l'alphabet | `docs/produit/bibliotheque-contenu.md` | Formats de contenu, micro-paquets de synchronisation, budget de poids |
 | Le front-end Flutter | `lib/CLAUDE.md` | Rappels non négociables du dossier |
 
@@ -69,6 +71,10 @@ Un contrôle qui n'a jamais tourné n'est pas un contrôle vert : c'est ce qui a
 - Toute fonction `SECURITY DEFINER` fixe `search_path = ''` et qualifie chaque objet.
 - Toute config est codée dans le dépôt : `supabase/migrations/`, `supabase/functions/`, `.github/workflows/`, `lib/core/`.
 - Un seul routeur pour toutes les plateformes, aucune branche par plateforme. Le mode enfant/standard change l'affichage, jamais l'arborescence.
+- **Aucun écran ne s'implémente s'il n'est pas inscrit dans `docs/design/08-catalogue-ecrans.md`.** S'il manque, on l'ajoute au catalogue avec sa fiche, et on discute de la fiche avant d'ouvrir un fichier `.dart`. Sans cette règle, tu improvises une UX, et c'est ce qui produit les applications incohérentes (ADR-018).
+- Aucune couleur, police, rayon, ombre, durée, courbe ou valeur d'espacement inventée. Tout vient de `docs/produit/design-tokens.md`, et `tool/verifier_jetons.dart` le vérifie.
+- Un widget ne lit jamais un rôle. Il lit une capacité. `if (role == admin)` dans un écran est un défaut à corriger, pas un raccourci.
+- Un écran n'est fini qu'avec ses états `loading`, `content`, `empty`, `error` et `offline`. Un écran livré avec son seul état nominal est refusé en revue.
 - Tant que le natif n'est pas publié, tout doit fonctionner en PWA (Windows, Android, iPad) pour que l'opérateur suive l'évolution tôt. Le Web est ouvert à tous les rôles (ADR-008).
 
 ## Rappels des références mappées

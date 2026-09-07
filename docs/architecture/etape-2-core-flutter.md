@@ -9,36 +9,29 @@ Spécification à destination de l'agent de code, sans implémentation. S'appuie
 
 ### Correction des paires de couleurs
 
-L'audit a mesuré trois échecs de contraste dans la charte d'origine (section 1.2). Le thème n'expose jamais une couleur seule : il expose des **paires** `(fond, texte)`, pour que l'erreur de contraste devienne structurellement impossible plutôt que dépendante de la vigilance de qui écrit l'écran.
+> ⚠ **Le tableau de jetons qui figurait ici est périmé depuis l'ADR-018,
+> 7 septembre 2026.** Il donnait `surfaceBase` à `#F1E3E4`, un seul
+> `borderDefault` et quatre polices dont deux ont été remplacées. La liste
+> vivante est dans **`docs/produit/design-tokens.md`**, source unique, et les
+> règles d'emploi dans **`docs/design/01-systeme-visuel.md`**.
+>
+> Ce qui reste vrai de cette section, et qui compte : le principe des paires.
 
-| Nom du jeton | Fond | Texte associé | Usage |
-| :--- | :--- | :--- | :--- |
-| `surfaceBase` | `#F1E3E4` | `#1C1D21` | Fond général |
-| `surfacePrimary` | `#8652E6` | `#FFFFFF` | Actions principales |
-| `surfaceSuccess` | `#70EE9C` | `#1C1D21` | **Jamais** de texte blanc, échec mesuré à 1.46:1 |
-| `surfaceWarning` | `#FFB703` | `#1C1D21` | **Jamais** de texte blanc, échec mesuré à 1.75:1 |
-| `surfaceAlert` | `#B01B3C`\* | `#FFFFFF` | Rouge assombri pour texte blanc, l'original `#FF385C` échoue à 3.51:1 |
-| `borderDefault` | - | `#B8A6A6`\* | Bordure remontée en luminance, l'original `#CCBCBC` échouait à 1.47:1 |
-| `textOnLightAccent` | - | `#5B36B0`\* | Violet assombri pour texte sur fond clair, l'original échouait à 3.83:1 |
-
-\* Valeurs déjà utilisées dans les maquettes livrées, à figer telles quelles à l'implémentation plutôt qu'à recalculer.
+Le thème n'expose jamais une couleur seule : il expose des **paires**
+`(fond, texte)`, pour que l'erreur de contraste devienne structurellement
+impossible plutôt que dépendante de la vigilance de qui écrit l'écran.
 
 **Règle d'API** : le thème n'expose pas `AppColors.success` en couleur nue. Il expose un objet `AppColorPair` avec `.background` et `.onBackground`, consommé ensemble. Un widget qui prend une seule des deux valeurs sans l'autre est un signal de revue de code à corriger avant fusion.
 
+Les jetons sans fond, encres et bordures, passent par `AppInkColor`, qui n'expose aucune couleur brute et ne peut donc pas servir de fond.
+
 ### Typographie et espacement
 
-Référence complète : `docs/produit/design-tokens.md` (§2 Polices, §7 Espacement).
+Référence complète : `docs/produit/design-tokens.md` (§2 Polices, §7 Espacement, §8 Rayons, §9 Élévation, §10 Crénage).
 
-Quatre polices, pas plus :
+Quatre polices, pas plus : deux pour l'arabe, inchangées depuis l'étape 2, et deux pour le français, **remplacées par l'ADR-018**. Le tableau des familles, de leurs axes variables et de leurs licences est dans `design-tokens.md` §2 ; il n'est pas recopié ici, il divergerait.
 
-| Langue | Police | Usage |
-| :--- | :--- | :--- |
-| Arabe — documents | KFGQPC Uthman Taha Naskh | Coran, hadiths, livres, lettres |
-| Arabe — interface | Noto Sans Arabic | RTL, menus, boutons, labels |
-| Français — corps | Noto Sans | Labels, navigation, texte |
-| Français — titres | Varela Round | Headings, éléments d'accent |
-
-Échelle d'espacement fixe : 4, 8, 12, 16, 20, 24, 32. Aucune valeur ponctuelle en dehors de cette échelle.
+Échelle d'espacement fixe, étendue par l'ADR-018 : 4, 8, 12, 16, 20, 24, 32, 40, 48, 64. Aucune valeur ponctuelle en dehors de cette échelle.
 
 Deux échelles typographiques, pas une seule modulée par `fontSize` libre : une échelle standard pour les rôles adultes, une échelle agrandie d'environ 20% pour le mode enfant, appliquée par un `TextTheme` distinct et non par des multiplicateurs dispersés dans les écrans.
 

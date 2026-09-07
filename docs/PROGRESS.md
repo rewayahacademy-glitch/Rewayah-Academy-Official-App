@@ -10,13 +10,22 @@ dépôt actif, où le travail s'est arrêté, quel lot reprendre, et avec quelle
 commandes. Le reste de ce fichier est le tableau d'avancement, pas la consigne
 de reprise.
 
-**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L8 sont
-faits, le prochain est **L9, `ADM-01` et `ADM-06`**.
+**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L9 sont
+faits, le prochain est **L10, vérifications de fin d'étape et documentation**,
+qui n'ajoute aucun écran.
 
-1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis
-   `docs/architecture/etape-4-journal.md` (où en est l'étape, lot par lot), puis
-   `docs/architecture/etape-4-dashboards.md` (la spécification, ses neuf défauts
-   corrigés et ses douze invariants), puis `lib/CLAUDE.md`.
+**Puis vient la refonte UX/UI, pas l'étape 5.** Décision de l'opérateur du
+7 septembre 2026 (ADR-018) : le premier rendu visuel a été jugé daté, et le
+langage visuel se pose **avant** d'ajouter des écrans. Le corpus est écrit, dans
+`docs/design/` ; le code ne l'a pas encore. Trois lots : **T** jetons et thème,
+**C** composants, **R** reprise de quatre écrans. Le lot T d'abord et
+entièrement, sinon les écrans se reprennent deux fois.
+
+1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis, selon ce
+   que vous reprenez, soit `docs/architecture/etape-4-journal.md` et
+   `etape-4-dashboards.md` pour L10, soit `docs/design/README.md` et
+   `docs/produit/design-tokens.md` pour la refonte. Puis `lib/CLAUDE.md` dans les
+   deux cas.
 2. **Ne rien réécrire des étapes 2 et 3.** Les dix composants partagés, le
    thème, le routeur et les services de dossier sont les seuls points d'entrée
    de leur fonction. `dart run tool/verifier_jetons.dart` le dira.
@@ -71,8 +80,9 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | 1 | Fondations DB, RLS, fonctions, audit | [x] | `supabase/migrations/0001` à `0004` |
 | 2 | Core Flutter, thème, cache local, routeur | [x] | `docs/architecture/etape-2-journal.md` |
 | 3 | Auth, KYC, appairage, portails d'attente | [x] | `docs/architecture/etape-3-journal.md` |
-| 4 | Dashboards Bento Grid, affectation durable, prières | [ ] | **en cours**, `docs/architecture/etape-4-journal.md` |
-| 5 | Visio LiveKit, preuve de présence, Coran | [ ] | |
+| 4 | Dashboards Bento Grid, affectation durable, prières | [ ] | **en cours**, L0 à L9 faits, reste L10. `docs/architecture/etape-4-journal.md` |
+| 4 bis | **Refonte UX/UI** : jetons, composants, reprise des écrans | [ ] | Documentation écrite (`docs/design/`, ADR-018). **Code non touché.** Lots T, C, R |
+| 5 | Visio LiveKit, preuve de présence, Coran | [ ] | Attend la refonte |
 | 6 | Cahier de transmission | [ ] | |
 
 ## Protocole d'onboarding (`docs/agent-onboarding.md`)
@@ -97,8 +107,9 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 
 | Sujet | Question | Où c'est documenté |
 | :--- | :--- | :--- |
-| `borderDefault` | La bordure mesure 1,86:1, sous le seuil de 3:1. Décoratif seulement, ou passer à `#8F8080` (3,03:1) pour qu'elle puisse porter du sens ? | `etape-2-journal.md`, section Mesures |
-| Poids des polices | `NotoSans-Variable` pèse 2 Mo pour une interface française. Sous-ensembler ? | `etape-2-journal.md`, section Poids |
+| ~~`borderDefault`~~ | **Résolue par l'ADR-018** : le jeton unique est remplacé par trois bordures, dont une seule porte du sens et mesure 3,40 sur le crème | `decisions.md`, question 10 |
+| Poids des polices | **Déplacée, pas résolue.** Noto Sans et Varela Round sortent (ADR-018), remplacées par Instrument Sans et Bricolage Grotesque. Le poids obtenu est à **mesurer** au lot T, et le sous-ensemblage reste entièrement à faire | `decisions.md`, question 11 |
+| Fichiers de police à récupérer | Bricolage Grotesque et Instrument Sans, depuis `fonts.google.com`. ⚠ Pas depuis le dépôt `google/fonts` : ce poste ne fait pas confiance à `github.com` en TLS | `design-tokens.md` §2.4 |
 | `child_ui_mode_max_age` | Posé à **8** et employé tel quel par l'étape 3. Modifiable en une ligne d'`app_config`, sans redéploiement. À confirmer ou corriger | `decisions.md`, ADR-016 |
 | Lecture du QR par la caméra | Reportée : le paquet réclame une configuration de permissions par plateforme. Le chemin par le code fonctionne partout. À rouvrir si le QR devient nécessaire | `etape-3-auth-kyc.md` section 9 |
 | Compression serveur des photos | **Devenue concrète au lot L8** : `TUT-05` dépose désormais vraiment la photo dans le seau `avatars`, avec un refus au-delà de 4 Mo côté client et rien de plus. Aucune compression serveur n'existe, donc le cache local ne peut pas borner sa taille comme l'étape 2 le prévoyait, et c'est l'original du téléphone qui est servi aux appareils du foyer | `decisions.md`, question 17 |
