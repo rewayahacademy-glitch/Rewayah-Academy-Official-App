@@ -164,10 +164,26 @@ elles sont faites. L'ordre restant :
 [fait] Système de mouvement                          04
 [fait] Système responsive et web                     05
 [fait] Catalogue d'écrans                            08
-[à faire] Lot T : jetons, thème, typographie          → lib/core/theme/
+[fait] Lot T : jetons, thème, typographie             → lib/core/theme/
 [à faire] Lot C : composants du catalogue             → lib/core/widgets/
 [à faire] Lot R : reprise des écrans déjà construits  → lib/features/
 ```
 
 Le lot T se fait en premier et se fait **entièrement** : reprendre les écrans
 avant les jetons obligerait à les reprendre deux fois.
+
+### Ce que le lot T a livré, et ce qu'il n'a délibérément pas touché
+
+Livré, le 7 septembre 2026 : la palette entière en trois registres, les trois
+bordures, les quatre encres, l'échelle d'espacement étendue, les cinq rayons,
+les quatre élévations, le budget de mouvement, la typographie française
+remplacée avec son crénage et ses axes variables, et sept règles de
+vérification. Compte rendu dans `docs/architecture/etape-2-journal.md`.
+
+**Non touché, et c'est le lot C qui s'en charge** : les onze composants
+partagés emploient les nouveaux noms de jetons mais gardent leurs usages
+d'avant. Une tuile Bento est toujours posée sur `surfaceCanvas` et non sur
+`surfaceRaised`, une case vide de grille n'a toujours pas son fond enfoncé,
+aucun composant ne porte encore d'ombre. Le produit a donc le bon vocabulaire
+et pas encore la bonne profondeur : c'est voulu, un renommage et une reprise
+d'usage ne se relisent pas ensemble.

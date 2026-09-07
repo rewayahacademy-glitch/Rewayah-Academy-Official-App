@@ -93,15 +93,27 @@ flutter:
       fonts:
         - asset: assets/fonts/NotoSansArabic-Variable.ttf
 
-    # Francais, corps de texte.
-    - family: NotoSans
+    # Francais, corps de texte, labels, navigation, boutons, tableaux.
+    # Police variable, axes releves sur le binaire : wght 400 a 700 (defaut
+    # 400), wdth 75 a 100. Il n'y a pas de graisse plus fine que 400 dans ce
+    # produit : la hierarchie du texte se fait par la couleur, jamais par un
+    # gris clair obtenu en amaigrissant la police. Licence OFL, voir
+    # assets/fonts/LICENSE-InstrumentSans.txt.
+    # L'italique est un fichier separe, non embarque : aucun style du produit
+    # ne le demande, et l'embarquer couterait 190 Ko pour rien.
+    - family: InstrumentSans
       fonts:
-        - asset: assets/fonts/NotoSans-Variable.ttf
+        - asset: assets/fonts/InstrumentSans-Variable.ttf
 
-    # Francais, titres et accents.
-    - family: VarelaRound
+    # Francais, titres, en-tetes, chiffres de tuile.
+    # Axes releves sur le binaire : opsz 12 a 96 (defaut 96), wght 200 a 800
+    # (defaut 800), wdth 75 a 100. Les deux defauts sont des pieges : un titre
+    # qui ne declare pas ses axes sort en extra-gras dessine pour 96 points.
+    # AppTypography les pilote tous les deux. Licence OFL, voir
+    # assets/fonts/LICENSE-BricolageGrotesque.txt.
+    - family: BricolageGrotesque
       fonts:
-        - asset: assets/fonts/VarelaRound-Regular.ttf
+        - asset: assets/fonts/BricolageGrotesque-Variable.ttf
 
     # Icones Phosphor, deux graisses seulement : `regular` par defaut, `fill`
     # pour les etats actifs (design-tokens.md section 3). Les quatre autres

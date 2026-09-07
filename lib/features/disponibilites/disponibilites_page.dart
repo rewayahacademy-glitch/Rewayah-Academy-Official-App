@@ -158,7 +158,7 @@ class _BlocEnfantEtat extends ConsumerState<_BlocEnfant> {
               t.disponibilites.erreur,
               // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
               // blanc, ce qui est illisible sur la page (etape 3).
-              style: palette.textOnLightAlert.applyTo(
+              style: palette.inkAlert.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),
             ),

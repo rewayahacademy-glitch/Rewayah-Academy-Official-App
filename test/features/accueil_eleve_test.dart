@@ -191,7 +191,7 @@ void main() {
       final BentoTile principal = tester.widget<BentoTile>(
         find.byType(BentoTile).first,
       );
-      expect(principal.surface, AppPalette.claire().surfaceBase);
+      expect(principal.surface, AppPalette.claire().surfaceCanvas);
       expect(find.byKey(clePulsationImminente), findsNothing);
     });
 

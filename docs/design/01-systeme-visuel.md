@@ -216,13 +216,27 @@ Deux précisions que la refonte ajoute :
 
 ## 9. Ce qui se vérifie automatiquement
 
-À ajouter à `tool/verifier_jetons.dart` au lot T, en plus des règles existantes :
-
-1. Aucun `BorderRadius.circular` avec une valeur littérale hors des jetons de rayon.
-2. Aucun `BoxShadow` construit ailleurs que dans le fichier d'élévation.
-3. Aucun `letterSpacing` littéral hors du fichier de typographie.
-4. Aucun `Color` littéral hors de `app_palette.dart`. **Déjà tenu.**
-5. Aucune valeur d'espacement littérale hors de l'échelle. **Déjà tenu.**
-
 Une règle de style qui n'est pas vérifiée par un outil n'est pas une règle :
 c'est un souhait, et l'étape suivante la contredit.
+
+Les cinq règles demandées au lot T sont dans `tool/verifier_jetons.dart`, et
+deux de plus s'y sont ajoutées en cours de route.
+
+| Règle | Nom de la violation | État |
+| :--- | :--- | :--- |
+| Aucun `BorderRadius.circular` littéral hors des jetons de rayon | `rayon-litteral` | tenu |
+| Aucun `BoxShadow` construit hors du fichier d'élévation | `ombre-hors-echelle` | tenu |
+| Aucun `letterSpacing` littéral hors du fichier de typographie | `crenage-litteral` | tenu |
+| Aucun `Color` littéral hors d'`app_palette.dart` | `couleur-nue` | tenu depuis l'étape 2 |
+| Aucune valeur d'espacement hors de l'échelle | `espacement-hors-echelle` | tenu depuis l'étape 2 |
+| Aucune durée d'animation ni courbe nommée hors du fichier de mouvement | `duree-litterale`, `courbe-litterale` | ajouté au lot T |
+| Aucun nom de jeton d'avant la refonte | `vocabulaire-perime` | ajouté au lot T |
+
+Les deux dernières lignes viennent de `04-systeme-mouvement.md` section 7 et de
+`design-tokens.md` section 1.8. La règle de mouvement ne vise que
+`Duration(milliseconds: ...)` : une durée métier en minutes ou en heures n'est
+pas du mouvement, et l'interdire aurait fait une règle fausse.
+
+**Ces sept règles ont été vérifiées en les faisant échouer**, sur un fichier
+piège écrit puis retiré : une règle qu'on n'a jamais vue refuser quelque chose
+n'est pas une règle prouvée.

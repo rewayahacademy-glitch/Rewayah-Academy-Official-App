@@ -34,7 +34,7 @@ class PermanentNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final AppColorPair paire = palette.surfaceBase;
+    final AppColorPair paire = palette.surfaceCanvas;
 
     return Semantics(
       liveRegion: false,

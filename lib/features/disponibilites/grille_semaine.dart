@@ -152,7 +152,7 @@ class _Case extends StatelessWidget {
           : BoxDecoration(
               borderRadius: BorderRadius.circular(metriques.rayon / 2),
               border: Border.fromBorderSide(
-                palette.borderDefault.asBorderSide(),
+                palette.borderResting.asBorderSide(),
               ),
             ),
       child: SizedBox(height: metriques.cibleTactile),

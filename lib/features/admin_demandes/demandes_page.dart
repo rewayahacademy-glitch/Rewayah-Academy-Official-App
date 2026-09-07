@@ -264,7 +264,7 @@ class _Demande extends StatelessWidget {
           ActionPrincipale(
             libelle: t.admin.demandes.refuser,
             onPress: onOuvrirRefus,
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
           ),
         ],
         if (erreur != null) ...<Widget>[
@@ -274,7 +274,7 @@ class _Demande extends StatelessWidget {
             textAlign: TextAlign.center,
             // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
             // blanc, illisible sur la page.
-            style: palette.textOnLightAlert.applyTo(
+            style: palette.inkAlert.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),
@@ -426,7 +426,7 @@ class _LigneRegle extends StatelessWidget {
                     valeur: _valeur(regle.cle, regle.valeurEffective),
                   ),
                   style: regle.surchargee
-                      ? palette.textOnLightAccent.applyTo(
+                      ? palette.inkAccent.applyTo(
                           textes.bodyMedium ?? const TextStyle(),
                         )
                       : textes.bodySmall,
@@ -447,7 +447,7 @@ class _LigneRegle extends StatelessWidget {
           Ecart.vSm,
           ActionPrincipale(
             libelle: t.admin.demandes.changer,
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
             onPress: () => unawaited(
               _ouvrir(
                 context,
@@ -467,7 +467,7 @@ class _LigneRegle extends StatelessWidget {
             Ecart.vSm,
             ActionPrincipale(
               libelle: t.admin.demandes.clore,
-              surface: palette.surfaceBase,
+              surface: palette.surfaceCanvas,
               onPress: () => unawaited(
                 _ouvrir(
                   context,
@@ -682,7 +682,7 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
             Ecart.vSm,
             Text(
               _erreur!,
-              style: palette.textOnLightAlert.applyTo(
+              style: palette.inkAlert.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),
             ),

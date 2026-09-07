@@ -103,7 +103,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
                   Text(t.appareils.codeInstruction, style: textes.bodyMedium),
                   Ecart.vXxl,
                   if (code != null && !expire) ...<Widget>[
-                    _Qr(code: code.code, paire: palette.surfaceBase),
+                    _Qr(code: code.code, paire: palette.surfaceCanvas),
                     Ecart.vXl,
                     _CodeEnClair(code: code.code),
                     Ecart.vLg,
@@ -119,7 +119,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
                     Text(
                       t.appareils.expire,
                       textAlign: TextAlign.center,
-                      style: palette.textOnLightAlert.applyTo(
+                      style: palette.inkAlert.applyTo(
                         textes.titleMedium ?? const TextStyle(),
                       ),
                     ),
@@ -133,7 +133,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
                     Text(
                       _erreur!,
                       textAlign: TextAlign.center,
-                      style: palette.textOnLightAlert.applyTo(
+                      style: palette.inkAlert.applyTo(
                         textes.bodyMedium ?? const TextStyle(),
                       ),
                     ),
@@ -153,7 +153,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
               child: ActionPrincipale(
                 libelle: t.commun.retour,
                 onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
-                surface: palette.surfaceBase,
+                surface: palette.surfaceCanvas,
               ),
             ),
           ],
@@ -210,7 +210,7 @@ class _CodeEnClair extends StatelessWidget {
       child: Text(
         code.split('').join(' '),
         textAlign: TextAlign.center,
-        style: palette.textOnLightAccent.applyTo(
+        style: palette.inkAccent.applyTo(
           textes.headlineMedium ?? const TextStyle(),
         ),
       ),

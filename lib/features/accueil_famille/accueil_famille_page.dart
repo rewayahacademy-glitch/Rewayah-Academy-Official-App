@@ -214,7 +214,7 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
                         t.tuteur.accueil.erreur,
                         // L'encre d'alerte, jamais la paire : `surfaceAlert`
                         // ecrit en blanc, illisible sur la page.
-                        style: palette.textOnLightAlert.applyTo(
+                        style: palette.inkAlert.applyTo(
                           textes.bodySmall ?? const TextStyle(),
                         ),
                       ),
@@ -272,7 +272,7 @@ class _LigneEnfant extends StatelessWidget {
     final bool enDirect = etat == EtatEnfant.enCours;
     final AppColorPair paire = enDirect
         ? palette.surfacePrimary
-        : palette.surfaceBase;
+        : palette.surfaceCanvas;
 
     return BentoTile(
       surface: paire,
@@ -453,7 +453,7 @@ class _EnRecherche extends ConsumerWidget {
           Ecart.vSm,
           ActionPrincipale(
             libelle: t.tuteur.accueil.poserDesHeures,
-            surface: AppPalette.of(context).surfaceBase,
+            surface: AppPalette.of(context).surfaceCanvas,
             onPress: () =>
                 GoRouter.of(context).go(Routes.tuteurDisponibilites),
           ),
@@ -532,7 +532,7 @@ class _BlocSecondaire extends StatelessWidget {
       child: Row(
         children: <Widget>[
           IconTheme(
-            data: palette.textOnLightAccent.asIconTheme(
+            data: palette.inkAccent.asIconTheme(
               size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
             ),
             child: Icon(icone.repos),

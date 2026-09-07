@@ -316,7 +316,7 @@ class _Refus extends StatelessWidget {
       child: Text(
         message,
         textAlign: TextAlign.center,
-        style: palette.textOnLightAlert.applyTo(
+        style: palette.inkAlert.applyTo(
           Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
         ),
       ),

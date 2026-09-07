@@ -182,7 +182,7 @@ class _Carte extends StatelessWidget {
     // suit toujours son fond.
     final AppColorPair paire = retenue
         ? palette.surfacePrimary
-        : palette.surfaceBase;
+        : palette.surfaceCanvas;
 
     return Pressable(
       onPress: onPress,
@@ -193,7 +193,7 @@ class _Carte extends StatelessWidget {
         padding: EdgeInsets.all(metriques.marge),
         decoration: paire.decoration(
           borderRadius: BorderRadius.circular(metriques.rayon),
-          side: retenue ? null : palette.borderDefault.asBorderSide(width: 2),
+          side: retenue ? null : palette.borderResting.asBorderSide(width: 2),
         ),
         child: Row(
           children: <Widget>[

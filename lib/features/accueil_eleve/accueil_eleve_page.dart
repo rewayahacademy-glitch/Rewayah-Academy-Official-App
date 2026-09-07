@@ -18,6 +18,7 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -251,7 +252,7 @@ class _BlocPrincipal extends StatelessWidget {
     };
     final AppColorPair paire = accentue
         ? palette.surfacePrimary
-        : palette.surfaceBase;
+        : palette.surfaceCanvas;
 
     final Widget tuile = BentoTile(
       surface: paire,
@@ -571,7 +572,7 @@ class _BlocCoran extends StatelessWidget {
       child: Row(
         children: <Widget>[
           IconTheme(
-            data: palette.textOnLightAccent.asIconTheme(
+            data: palette.inkAccent.asIconTheme(
               size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
             ),
             child: Icon(AppIcons.coran.repos),
@@ -613,11 +614,21 @@ class _PulsationEtat extends State<_Pulsation>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controleur = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1200),
+    duration: AppMouvement.pulsation,
   );
 
+  // Le battement se compose des deux seules courbes du produit : l'entree a
+  // l'aller, la sortie au retour. Aucune troisieme courbe n'est necessaire, et
+  // le systeme de mouvement n'en autorise pas
+  // (`docs/design/04-systeme-mouvement.md` section 2).
   late final Animation<double> _echelle = Tween<double>(begin: 1, end: 1.02)
-      .animate(CurvedAnimation(parent: _controleur, curve: Curves.easeInOut));
+      .animate(
+        CurvedAnimation(
+          parent: _controleur,
+          curve: AppMouvement.entree,
+          reverseCurve: AppMouvement.sortie,
+        ),
+      );
 
   @override
   void didChangeDependencies() {

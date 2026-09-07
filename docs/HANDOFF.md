@@ -1,7 +1,8 @@
 # HANDOFF — à lire en premier, avant toute action
 
 > Dernière passation : **7 septembre 2026**, fin du lot **L9** de l'étape 4,
-> puis **refonte UX/UI v1.0** (documentation seule, aucun code touché).
+> puis **refonte UX/UI v1.0** (documentation), puis le **lot T** de cette
+> refonte (jetons, thème, typographie, mouvement).
 > Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
@@ -23,9 +24,28 @@ Trois conséquences immédiates pour vous :
 3. **Le tableau de jetons d'`etape-2-core-flutter.md` §1 est périmé.** La source
    unique des valeurs est `docs/produit/design-tokens.md`.
 
-Le code, lui, **n'a pas encore bougé** : le thème contient toujours l'ancienne
-palette et les anciennes polices. Les trois lots qui le mettront à jour sont en
-section 4 bis.
+### 0 bis. Le lot T est fait : le code porte les nouveaux jetons
+
+Le thème a été remplacé le 7 septembre. Compte rendu complet dans
+`docs/architecture/etape-2-journal.md`, section « Refonte UX/UI, lot T ».
+
+Ce que ça change pour vous, en quatre points :
+
+1. **Le vocabulaire des jetons a changé, et l'ancien est refusé par l'outil.**
+   `surfaceBase`, `borderDefault`, `textOnLightAccent`, `textOnLightAlert`,
+   `NotoSans` et `VarelaRound` font échouer `verifier_jetons.dart`. La
+   correspondance est dans `design-tokens.md` §1.8.
+2. **Trois nouveaux fichiers de thème** : `app_radius.dart`,
+   `app_elevation.dart`, `app_mouvement.dart`. Un rayon, une ombre, une durée
+   d'animation ou une courbe posés ailleurs sont refusés.
+3. **Le produit a le bon vocabulaire, pas encore la bonne profondeur.** Les
+   composants ont été renommés, pas repris : une tuile Bento est toujours posée
+   sur `surfaceCanvas` au lieu de `surfaceRaised`, et rien ne porte encore
+   d'ombre. C'est le **lot C** qui reprend les usages, et c'est voulu.
+4. **Deux chiffres de `design-tokens.md` étaient faux** et ont été corrigés par
+   la mesure : blanc sur le fond général vaut 1,10 et non 1,19, et l'axe `opsz`
+   de Bricolage Grotesque a pour défaut 96 et non 14. Les valeurs sont
+   désormais rejouées par les tests : le document ne peut plus dériver seul.
 
 ## 1. Le projet actif est celui-ci
 
@@ -60,7 +80,15 @@ prières**. Découpage en onze lots, un lot par commit.
 | L7 | `ELV-02` et ses six états | fait |
 | L8 | `TUT-01`, `TUT-05`, demandes du tuteur | fait |
 | L9 | `ADM-01`, `ADM-06` | fait |
-| **L10** | **Vérifications de fin d'étape, documentation, `PROGRESS.md`** | **à faire, commencer ici** |
+| **L10** | **Vérifications de fin d'étape, documentation, `PROGRESS.md`** | **toujours à faire** |
+
+⚠ **L10 n'est pas le point de reprise, contrairement à ce que disait cette
+page.** L'opérateur a demandé le lot T de la refonte avant lui, et le lot T est
+fait. L10 reste ouvert, et il a perdu une partie de son contenu au passage : ses
+cinq contrôles ont été rejoués le 7 septembre en clôture du lot T, et leurs
+chiffres sont en section 5. Ce qui lui reste, c'est `PROGRESS.md` et la relecture
+des dix-sept scénarios, décrits en section 4. Il peut se faire à tout moment,
+avant ou après le lot C.
 
 Le démarrage à froid, scénario 14, **n'est pas mesurable sur ce poste** : aucune
 cible ne se construit ni ne se lance. Ce n'est pas du travail en retard, c'est
@@ -77,14 +105,17 @@ Si vous reprenez **L10** (vérifications de fin d'étape 4) :
 3. `lib/CLAUDE.md` — les règles du code, qui font échouer la CI quand on les
    ignore.
 
-Si vous attaquez la **refonte** (lots T, C, R) :
+Si vous attaquez la **refonte** (lots C puis R) :
 
-1. `docs/design/README.md` — la constitution, et la section 7, qui dit ce qui est
-   déjà tranché.
-2. `docs/produit/design-tokens.md` — toutes les valeurs, toutes mesurées.
-3. `docs/design/01-systeme-visuel.md` puis `07-catalogue-composants.md` puis
+1. `docs/design/README.md` — la constitution, sa section 7, qui dit ce qui est
+   déjà tranché, et sa section 9, qui dit ce que le lot T a laissé au lot C.
+2. `docs/produit/design-tokens.md` — toutes les valeurs, toutes mesurées, toutes
+   rejouées par les tests.
+3. `docs/architecture/etape-2-journal.md`, section « Refonte UX/UI, lot T » — ce
+   que le thème contient maintenant, et les pièges déjà payés.
+4. `docs/design/01-systeme-visuel.md` puis `07-catalogue-composants.md` puis
    `08-catalogue-ecrans.md`.
-4. `lib/CLAUDE.md`.
+5. `lib/CLAUDE.md`.
 
 Ne pas rouvrir l'historique des étapes 1 à 3 : leurs journaux ne servent qu'en
 cas de doute sur un point précis.
@@ -118,19 +149,30 @@ Ce que L10 **ne doit pas** faire : ouvrir l'étape 5. La salle, le pre-flight et
 L'ordre est décidé (ADR-018) : l'étape 5 attend, trois lots passent avant. Un lot
 par commit, comme toujours.
 
-| Lot | Contenu | Écrans touchés |
-| :-- | :--- | :--- |
-| **T** | Jetons, thème, typographie, mouvement. Palette crème et rampes, trois bordures, rayons, ombres, crénage, durées et courbes, échelle d'espacement étendue, et les nouvelles règles de `verifier_jetons.dart` | aucun |
-| **C** | Les douze composants P0 de `07-catalogue-composants.md`, plus la reprise des onze existants, plus la galerie qui montre tous leurs états | aucun |
-| **R** | Reprise dans cet ordre : `ELV-02`, puis `TUT-01`, puis `ENS-02` et `ADM-01`, puis le reste | quatre d'abord |
+| Lot | Contenu | Écrans touchés | État |
+| :-- | :--- | :--- | :-: |
+| **T** | Jetons, thème, typographie, mouvement. Palette crème et rampes, trois bordures, rayons, ombres, crénage, durées et courbes, échelle d'espacement étendue, et les nouvelles règles de `verifier_jetons.dart` | aucun repris, 29 renommés | **fait** |
+| **C** | Les douze composants P0 de `07-catalogue-composants.md`, plus la reprise des onze existants, plus la galerie qui montre tous leurs états | aucun | **à faire, commencer ici** |
+| **R** | Reprise dans cet ordre : `ELV-02`, puis `TUT-01`, puis `ENS-02` et `ADM-01`, puis le reste | quatre d'abord | à faire |
 
-**Le lot T se fait en premier et entièrement.** Reprendre un écran avant les
-jetons oblige à le reprendre deux fois. C'est la seule contrainte d'ordre.
+**Le lot T se faisait en premier et entièrement.** C'est fait : reprendre un
+écran avant les jetons aurait obligé à le reprendre deux fois.
 
-Deux choses à récupérer avant le lot T, et qui ne sont pas dans le dépôt : les
-fichiers **Bricolage Grotesque** et **Instrument Sans** depuis `fonts.google.com`.
-⚠ Ne pas passer par le dépôt `google/fonts` : ce poste ne fait pas confiance à
-`github.com` en TLS (section 7).
+Les deux polices sont désormais **dans le dépôt**, avec leur licence OFL :
+`assets/fonts/BricolageGrotesque-Variable.ttf` et `InstrumentSans-Variable.ttf`.
+Il n'y a plus rien à récupérer. Si un jour il faut y revenir, l'adresse qui
+marche est `fonts.google.com/download/list?family=...` : les deux autres pistes
+évidentes sont des impasses, détaillées dans `etape-2-journal.md`.
+
+Ce que le lot C trouvera en arrivant, et qui l'attend :
+
+- les onze composants partagés emploient les nouveaux noms mais gardent les
+  usages d'avant : `BentoTile` pose ses tuiles sur `surfaceCanvas` au lieu de
+  `surfaceRaised`, et aucune n'a d'ombre ;
+- la grille de disponibilités n'a pas son fond `surfaceSunken`, alors que
+  `01-systeme-visuel.md` §2 nomme les cases vides de grille ;
+- la galerie `/_galerie` montre les jetons, pas encore les dix états de chaque
+  composant.
 
 Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 
@@ -146,15 +188,15 @@ Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 
 ## 5. Mesures de référence, à ne pas faire régresser
 
-Relevées le 7 septembre 2026, après L9 :
+Relevées le 7 septembre 2026, après le lot T de la refonte :
 
-| Contrôle | Valeur |
-| :--- | :--- |
-| `dart analyze --fatal-infos` | aucun problème |
-| `flutter test` | **277 tests**, tous verts |
-| `dart run tool/verifier_jetons.dart` | **77 fichiers**, aucune violation |
-| `scenarios_etape3.sql` | **34 contrôles** verts |
-| `scenarios_etape4.sql` | **39 contrôles** verts |
+| Contrôle | Valeur | Après L9, pour mémoire |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème | aucun problème |
+| `flutter test` | **362 tests**, tous verts | 277 tests |
+| `dart run tool/verifier_jetons.dart` | **80 fichiers**, aucune violation | 77 fichiers |
+| `scenarios_etape3.sql` | **34 contrôles** verts | 34 |
+| `scenarios_etape4.sql` | **39 contrôles** verts | 39 |
 
 Un lot se termine par ces cinq contrôles, la mise à jour de
 `etape-4-journal.md`, un commit et un push. Jamais l'inverse.

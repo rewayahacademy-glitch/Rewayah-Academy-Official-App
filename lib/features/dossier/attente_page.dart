@@ -206,7 +206,7 @@ class _Refuse extends StatelessWidget {
         // toujours quand on arrive ici.
         Text(
           etat.motifRefus ?? '',
-          style: palette.textOnLightAlert.applyTo(
+          style: palette.inkAlert.applyTo(
             textes.titleMedium ?? const TextStyle(),
           ),
         ),
@@ -249,8 +249,8 @@ class _Bloc extends StatelessWidget {
         Ecart.vXxl,
         IconTheme(
           data: alerte
-              ? palette.textOnLightAlert.asIconTheme(size: AppSpacing.xxxl * 2)
-              : palette.textOnLightAccent.asIconTheme(
+              ? palette.inkAlert.asIconTheme(size: AppSpacing.xxxl * 2)
+              : palette.inkAccent.asIconTheme(
                   size: AppSpacing.xxxl * 2,
                 ),
           child: Icon(icone.repos),
@@ -316,7 +316,7 @@ class _Deconnexion extends StatelessWidget {
     return ActionPrincipale(
       libelle: t.attente.seDeconnecter,
       onPress: onDeconnexion,
-      surface: palette.surfaceBase,
+      surface: palette.surfaceCanvas,
     );
   }
 }

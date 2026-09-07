@@ -11,6 +11,12 @@ ne recopie l'autre.
 > marque est **conservée** dans ses cinq couleurs. Ce qui change : le fond
 > général passe au crème, chaque famille reçoit un registre doux en plus de son
 > aplat, et la typographie française est remplacée. L'arabe ne change pas.
+>
+> **Appliqué au code par le lot T, le 7 septembre 2026.** Toutes les valeurs de
+> ce fichier sont désormais rejouées par `test/theme/contraste_test.dart`,
+> `typographie_test.dart`, `elevation_test.dart` et `mouvement_test.dart` : une
+> mesure fausse ici fait échouer la suite. Deux chiffres ont été corrigés à
+> cette occasion, et ils sont signalés par la mention **mesuré au lot T**.
 
 ---
 
@@ -66,6 +72,17 @@ Elle relie le crème au noir de la charte, en passant par la taupe réchauffée.
 seuil de 4,5. Sur une surface enfoncée, le texte secondaire passe à `inkMuted`,
 qui y mesure 6,19. C'est le seul jeton de la rampe qui a une surface interdite.
 
+Le lot T a rendu cette interdiction structurelle plutôt que mémorielle :
+`AppPalette.encreSecondaireSur(surface)` rend `inkMuted` sur la surface
+enfoncée et `inkFaint` ailleurs. Un écran qui passe par là ne peut pas se
+tromper ; un écran qui lit `inkFaint` directement le peut encore, et c'est
+pourquoi la fonction existe.
+
+`borderStrong` est le seul filet mesuré au dessus de 3:1, et il l'est **sur les
+trois surfaces**, ce que le lot T a vérifié plutôt que supposé : 3,40 sur le
+crème, 3,73 sur une carte blanche, 3,21 sur la surface enfoncée. C'est la marge
+la plus mince des trois qui compte, et elle passe.
+
 ### 1.4 Les paires pleines
 
 Un aplat saturé et son encre. **Une seule zone pleine par écran**
@@ -116,8 +133,13 @@ règle cherche à empêcher.
 
 **Le piège déjà payé** : `surfaceAlert.applyTo(...)` posé sur la page écrivait en
 blanc, puisque le blanc est l'encre du fond rouge. Blanc sur le fond général
-mesure 1,19 : le message existait dans l'arbre et n'existait pas à l'écran.
+mesure **1,10** : le message existait dans l'arbre et n'existait pas à l'écran.
 D'où les quatre encres de la section 1.5.
+
+⚠ **Mesuré au lot T** : cette ligne annonçait 1,19. C'était la mesure d'un fond
+qui n'existe plus. Sur le crème, blanc sur fond vaut 1,10, exactement la même
+valeur que `surfaceRaised` sur le crème en section 1.3 : c'est la même paire,
+elle ne pouvait pas valoir deux chiffres. La conclusion, elle, ne bouge pas.
 
 ### 1.7 Méthode de mesure
 
@@ -131,11 +153,12 @@ Ce qui disparaît par rapport à la version précédente : le jeton unique
 Il est remplacé par les trois bordures de la section 1.3, dont une seule porte du
 sens et passe le seuil. La question ouverte 10 du registre est close par là.
 
-### 1.8 Correspondance des anciens noms, pour le lot T
+### 1.8 Correspondance des anciens noms — renommage fait au lot T
 
-`app_palette.dart` porte encore les noms de l'étape 2. Le renommage se fait en
-une passe, et le vérificateur de jetons doit refuser les anciens noms ensuite,
-sinon les deux vocabulaires cohabiteront.
+Le renommage a été fait en une passe, sur 29 fichiers de `lib/` et de `test/`,
+et **`tool/verifier_jetons.dart` refuse désormais les anciens noms** sous la
+règle `vocabulaire-perime` : les deux vocabulaires ne peuvent plus cohabiter.
+Le tableau reste ici pour lire un ancien commit ou une ancienne note.
 
 | Ancien nom | Ancienne valeur | Devient |
 | :--- | :--- | :--- |
@@ -148,10 +171,16 @@ sinon les deux vocabulaires cohabiteront.
 | `surfaceWarning` | `#FFB703` | inchangé, plus `washWarning` et `inkWarning` |
 | `surfaceAlert` | `#B01B3C` | inchangé |
 
-Trois endroits hors de `lib/` portent aussi l'ancien fond et sont à reprendre au
-même moment : `web/manifest.json` (`background_color`), `web/index.html`
-(couleur de fond du chargeur) et la couleur de fond de la vignette PWA. Sans ça,
-l'écran de démarrage reste rose et le produit clignote au lancement.
+Deux endroits hors de `lib/` portaient aussi l'ancien fond, et sont repris :
+`web/manifest.json` (`background_color`) et `web/index.html` (couleur de fond du
+chargeur). Sans eux, l'écran de démarrage serait resté rose et le produit
+clignoterait au lancement. **Aucun outil ne tient ces deux valeurs** : elles
+sont hors de `lib/`, donc hors de portée du vérificateur, et un commentaire les
+rattache au jeton dans chacun des deux fichiers.
+
+Les **vignettes PWA** de `web/icons/`, elles, n'étaient pas concernées : leurs
+quatre PNG ont un fond blanc, vérifié au pixel, et le blanc est `surfaceRaised`.
+Rien à y reprendre.
 
 ---
 
@@ -170,13 +199,25 @@ démarrage à froid et le mode hors ligne.
 
 ### 2.2 Français — remplacé
 
-| Police | Fichier | Axes | Usage |
+| Police | Fichier | Axes, et leur **valeur par défaut** | Usage |
 | :--- | :--- | :--- | :--- |
-| **Bricolage Grotesque** | `BricolageGrotesque-Variable.ttf` | `wght` 200 à 800, `wdth` 75 à 100, **`opsz` 12 à 96** | Titres, en-têtes, chiffres de tuile, tout ce qui est au dessus de 18 pt |
-| **Instrument Sans** | `InstrumentSans-Variable.ttf` | `wght` 400 à 700, `wdth` 75 à 100, italique | Corps de texte, labels, navigation, boutons, tableaux |
+| **Bricolage Grotesque** | `BricolageGrotesque-Variable.ttf` | `opsz` 12 à 96 (**défaut 96**), `wght` 200 à 800 (**défaut 800**), `wdth` 75 à 100 (défaut 100) | Titres, en-têtes, chiffres de tuile, tout ce qui est au dessus de 18 pt |
+| **Instrument Sans** | `InstrumentSans-Variable.ttf` | `wght` 400 à 700 (défaut 400), `wdth` 75 à 100 (défaut 100) | Corps de texte, labels, navigation, boutons, tableaux |
 
-Les deux sont sous licence OFL, vérifiées sur les métadonnées de Google Fonts le
-7 septembre 2026 (axes et graisses relevés, pas supposés).
+Les deux sont sous licence OFL, texte versionné dans
+`assets/fonts/LICENSE-BricolageGrotesque.txt` et `LICENSE-InstrumentSans.txt`.
+
+⚠ **Mesuré au lot T** : les axes ci-dessus sont lus dans la table `fvar` des
+binaires, pas relevés sur une fiche. Les **valeurs par défaut** en sont la
+partie qui compte, et elles sont des pièges : un titre qui ne déclare ni `wght`
+ni `opsz` sort en extra-gras dessiné pour 96 points. `AppTypography` pilote donc
+les deux, sur tous les rôles, et `test/theme/typographie_test.dart` le vérifie
+rôle par rôle.
+
+L'italique d'Instrument Sans est un **fichier séparé**, pas un axe : il n'est
+pas embarqué, aucun style du produit ne le demande, et l'ajouter coûterait
+190 Ko. Le jour où un style en aura besoin, c'est un second `asset` sous la même
+famille, pas une cinquième famille.
 
 **Ce qu'elles remplacent, et pourquoi.**
 
@@ -191,9 +232,14 @@ encres neutres, jamais par un gris clair obtenu en amaigrissant la police. Un
 texte gris clair est un texte qui échoue au contraste.
 
 ⚠ **L'axe `opsz` de Bricolage Grotesque se règle sur la taille rendue**, jamais
-laissé à sa valeur par défaut de 14. Une police de titre dessinée pour 14 pt et
-affichée à 40 pt paraît molle : c'est exactement l'effet « pas fini » du premier
-rendu.
+laissé à sa valeur par défaut. Une police de titre dessinée pour une taille et
+affichée à une autre paraît molle ou fragile : c'est exactement l'effet « pas
+fini » du premier rendu.
+
+⚠ **Mesuré au lot T** : cette ligne annonçait un défaut de 14. Le fichier a un
+défaut de **96**, donc le risque est l'inverse de celui décrit : un petit titre
+laissé au défaut serait dessiné pour 96 points, trop fin et trop serré. La règle
+ne change pas, sa raison si.
 
 ### 2.3 Règles
 
@@ -209,21 +255,29 @@ rendu.
   colonne, un compteur, un minuteur ou une tuile de statistique. Sans eux, un
   compteur qui passe de 17 à 18 fait bouger toute la ligne.
 - Sous-ensembles réduits aux glyphes réellement utilisés. **Toujours pas fait** :
-  l'élagage de Flutter ne concerne que les polices d'icônes. Le remplacement de
-  Noto Sans est l'occasion de mesurer le gain, pas la preuve qu'il est acquis.
+  l'élagage de Flutter ne concerne que les polices d'icônes. Le gain est
+  désormais chiffré, voir la section 2.4.
 
-### 2.4 À faire au lot typographique
+### 2.4 Le lot typographique, et ce qu'il a trouvé
 
-1. Récupérer les deux fichiers depuis `fonts.google.com`. ⚠ Ce poste ne fait pas
-   confiance à `github.com` en TLS : ne pas passer par le dépôt `google/fonts`.
-2. Mesurer le poids obtenu, avant et après sous-ensemblage, et l'inscrire dans
-   `etape-2-journal.md`.
-3. Vérifier sur un **échantillon mixte français-arabe** que la hauteur d'x et la
-   graisse d'Instrument Sans s'accordent à Noto Sans Arabic. C'est une intention
-   de conception, pas une mesure : si elle ne tient pas, l'ajustement se fait par
-   l'axe `wdth` ou par un décalage de taille déclaré une seule fois.
-4. Vérifier la présence de `tnum` dans les deux fichiers. Si l'un ne l'a pas, le
-   dire et trancher, ne pas l'écrire dans le style en espérant.
+Les quatre points de la liste d'origine, avec leur résultat au 7 septembre 2026.
+
+1. **Fichiers récupérés depuis `fonts.google.com`**, par son API de listing
+   (`fonts.google.com/download/list?family=...`), qui donne l'URL du fichier
+   variable sur `fonts.gstatic.com`. ⚠ Deux impasses à ne pas repayer :
+   `fonts.google.com/download?family=...` ne rend plus une archive mais la page
+   HTML de l'application, et l'API CSS `css2` ne sert que des **instances
+   statiques**, une par graisse, jamais le fichier variable. Le dépôt
+   `google/fonts` reste inatteignable en TLS depuis ce poste.
+2. **Poids mesuré.** Les deux entrantes pèsent ensemble 587 Ko, les deux
+   sortantes en pesaient 2 131 : **1 544 Ko de gagnés, soit 72 %**, avant tout
+   sous-ensemblage. Détail dans `etape-2-journal.md`.
+3. **Accord avec l'arabe : non vérifié.** C'est le seul point de cette liste qui
+   reste ouvert, et il ne se ferme pas sans un rendu à l'œil, sur un écran, avec
+   un échantillon mixte. La galerie l'affiche désormais, l'opérateur tranche.
+4. **`tnum` est présent dans les trois polices d'interface**, lu dans la table
+   `GSUB` de chaque binaire : Bricolage Grotesque, Instrument Sans et Noto Sans
+   Arabic le déclarent. Rien n'a donc été écrit en espérant.
 
 ---
 
@@ -404,6 +458,12 @@ Une surface élevée porte **un filet et une ombre**, jamais l'un des deux seul 
 le filet tient en contraste élevé et sur un écran mal calibré, l'ombre donne la
 profondeur.
 
+Dans le code : `AppElevation.niveau0` à `niveau3`, plus `AppElevation.avecFilet`
+qui compose fond, arrondi, filet et ombre en une fois. C'est le seul fichier
+autorisé à construire une `BoxShadow`, avec `app_color_pair.dart` qui porte le
+type `AppShadowColor`. Ce type n'expose aucune couleur brute : une ombre ne peut
+donc pas être posée en fond ni en texte.
+
 ---
 
 ## 10. Crénage optique
@@ -422,7 +482,13 @@ plus un écran, avec l'absence d'élévation.
 | Libellé en capitales, 12 et moins | +0,06 em |
 
 Le crénage se calcule dans le fichier de typographie, à partir de la taille.
-Aucune valeur littérale ailleurs.
+Aucune valeur littérale ailleurs, et `tool/verifier_jetons.dart` refuse tout
+`letterSpacing` posé hors d'`app_typography.dart`.
+
+Le barème est en **em**, l'API Flutter attend des **pixels logiques** :
+`AppTypography.crenage(taille)` fait la conversion, et la fait sur la taille
+**rendue**, donc après le facteur du mode enfant. Un crénage calculé sur la
+taille de base serait trop lâche de 20 % sur tout l'écran d'un enfant.
 
 ---
 
@@ -443,6 +509,16 @@ valeurs, pour que le fichier de jetons reste complet :
 Courbes : `easeOutCubic` à l'entrée, `easeInCubic` à la sortie, ressort amorti
 sans rebond visible pour les feuilles et le conteneur partagé. `linear` réservé
 aux progressions indéterminées.
+
+Dans le code : `AppMouvement`, seul fichier autorisé à poser un
+`Duration(milliseconds: ...)` ou à nommer une `Curves.`. Les durées **métier**
+restent libres : une pause de prière en minutes ou un cache de vingt-quatre
+heures ne sont pas du mouvement, et la règle ne les touche pas.
+
+Une valeur s'ajoute à ce tableau, et elle est **hors budget** : la pulsation
+d'`ELV-02` bat sur **1 200 ms**. Le plafond de 400 ms borne ce qui explique un
+changement, pas ce qui signale une imminence en continu ; un battement de 400 ms
+serait une alarme. C'est la seule pulsation du produit, et elle reste seule.
 
 ---
 

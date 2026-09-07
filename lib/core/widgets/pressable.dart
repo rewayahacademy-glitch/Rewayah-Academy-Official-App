@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/app_metriques.dart';
+import '../theme/app_mouvement.dart';
 
 /// Le seul point d'entree du retour tactile de l'application.
 ///
@@ -41,8 +42,9 @@ class Pressable extends StatefulWidget {
   /// que pour un element deja plus grand que la cible, jamais pour la reduire.
   final bool respecterCibleTactile;
 
-  /// Duree de l'animation de pression.
-  static const Duration duree = Duration(milliseconds: 120);
+  /// Duree de l'animation de pression : le retour tactile du budget de
+  /// mouvement, jamais une valeur posee ici (`app_mouvement.dart`).
+  static const Duration duree = AppMouvement.retourTactile;
 
   /// Echelle atteinte au doigt pose.
   static const double echelleEnfoncee = 0.96;

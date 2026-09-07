@@ -39,12 +39,14 @@
 
   <style>
     /*
-      Le fond du document porte la meme couleur que le fond de l'application.
-      Sans lui, le temps de chargement s'affiche en blanc puis bascule en rose :
-      un clignotement qui se voit surtout au demarrage a froid, celui-la meme que
-      le scenario 7 cherche a mesurer.
+      Le fond du document porte la meme couleur que le fond de l'application,
+      le creme surfaceCanvas. Sans lui, le temps de chargement s'affiche en
+      blanc puis bascule : un clignotement qui se voit surtout au demarrage a
+      froid, celui-la meme que le scenario 7 cherche a mesurer.
+      Cette valeur suit surfaceCanvas de docs/produit/design-tokens.md, comme
+      background_color de web/manifest.json. Les trois changent ensemble.
     */
-    html, body { margin: 0; padding: 0; background-color: #F1E3E4; }
+    html, body { margin: 0; padding: 0; background-color: #F8F4EE; }
   </style>
 </head>
 <body>

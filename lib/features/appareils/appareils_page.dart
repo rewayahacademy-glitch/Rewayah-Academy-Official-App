@@ -98,7 +98,7 @@ class AppareilsPage extends ConsumerWidget {
                         libelle: t.enfant.titre,
                         onPress: () =>
                             GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-                        surface: AppPalette.of(context).surfaceBase,
+                        surface: AppPalette.of(context).surfaceCanvas,
                       ),
                     ],
                   ],
@@ -172,7 +172,7 @@ class _BlocEleve extends StatelessWidget {
           if (_limiteAtteinte)
             Text(
               t.appareils.limiteAtteinte(prenom: eleve.prenom),
-              style: palette.textOnLightAlert.applyTo(
+              style: palette.inkAlert.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),
             )
@@ -223,7 +223,7 @@ class _LigneAppareil extends StatelessWidget {
           ActionPrincipale(
             libelle: t.appareils.revoquer,
             onPress: onRevoquer,
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
             pleineLargeur: false,
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/enums.dart';
+import 'app_radius.dart';
 import 'app_spacing.dart';
 
 /// Les mesures qui dependent du mode d'interface.
@@ -31,8 +32,21 @@ class AppMetriques extends ThemeExtension<AppMetriques> {
   /// Vrai en mode enfant.
   bool get estEnfant => mode == InterfaceMode.enfant;
 
-  /// Rayon d'arrondi des surfaces, plus genereux en mode enfant.
-  double get rayon => estEnfant ? AppSpacing.xxl : AppSpacing.lg;
+  /// Rayon d'arrondi des surfaces, plus genereux en mode enfant : la tuile
+  /// Bento en mode enfant, la carte en mode standard
+  /// (`docs/produit/design-tokens.md` section 8).
+  double get rayon => estEnfant ? AppRadius.lg : AppRadius.md;
+
+  /// L'arrondi correspondant a [rayon].
+  BorderRadius get arrondi =>
+      estEnfant ? AppRadius.arrondiLg : AppRadius.arrondiMd;
+
+  /// L'arrondi d'un element pose DANS une surface de ce mode.
+  ///
+  /// Le rayon d'un enfant est plus petit que celui de son parent : une vignette
+  /// dans une carte de rayon 16 prend 12. L'inverse produit l'effet de bulle
+  /// qui date le produit.
+  BorderRadius get arrondiInterieur => AppRadius.arrondiEnfantDe(rayon);
 
   /// Marge interne des surfaces.
   double get marge => estEnfant ? AppSpacing.xxl : AppSpacing.lg;

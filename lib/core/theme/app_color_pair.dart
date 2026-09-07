@@ -55,13 +55,13 @@ class AppColorPair {
 
 /// Une encre : couleur valable uniquement en premier plan.
 ///
-/// Deux jetons de `design-tokens.md` n'ont pas de fond associe
-/// (`borderDefault`, `textOnLightAccent`). Les exposer en [Color] nu
-/// permettrait de les poser en fond, donc de creer la paire illisible que
-/// [AppColorPair] cherche justement a empecher.
+/// Neuf jetons de `design-tokens.md` n'ont pas de fond associe : les trois
+/// bordures et les six encres. Les exposer en [Color] nu permettrait de les
+/// poser en fond, donc de creer la paire illisible que [AppColorPair] cherche
+/// justement a empecher.
 ///
-/// Cette classe n'expose donc aucune couleur brute : seulement les deux usages
-/// legitimes, le texte et le trait.
+/// Cette classe n'expose donc aucune couleur brute : seulement les trois usages
+/// legitimes, le texte, le trait et l'icone.
 @immutable
 class AppInkColor {
   /// Cree une encre de premier plan.
@@ -95,6 +95,56 @@ class AppInkColor {
   @override
   bool operator ==(Object other) =>
       other is AppInkColor && other._value == _value;
+
+  @override
+  int get hashCode => _value.hashCode;
+}
+
+/// Une couleur d'ombre : valable uniquement sous une surface, jamais dedans.
+///
+/// L'ombre du produit est **chaude** et non pas grise : sur le fond creme, une
+/// ombre neutre se lit comme une salissure (`design-tokens.md` section 9).
+///
+/// Comme [AppInkColor], cette classe n'expose aucune couleur brute. Elle ne
+/// sait construire qu'une [BoxShadow], ce qui empeche de la poser en fond ou
+/// en texte, ou elle serait illisible.
+///
+/// Les quatre niveaux d'elevation se lisent dans `app_elevation.dart` : c'est
+/// le seul fichier du depot autorise a construire une [BoxShadow].
+@immutable
+class AppShadowColor {
+  /// Cree une couleur d'ombre.
+  const AppShadowColor(this._value);
+
+  final Color _value;
+
+  /// Construit une ombre portee de cette couleur.
+  ///
+  /// [opacite] est l'alpha applique a la couleur de base, entre 0 et 1.
+  BoxShadow asBoxShadow({
+    required double y,
+    required double flou,
+    required double opacite,
+  }) {
+    return BoxShadow(
+      color: _value.withValues(alpha: opacite),
+      offset: Offset(0, y),
+      blurRadius: flou,
+    );
+  }
+
+  /// Valeur brute, reservee aux tests et aux outils de verification.
+  /// Ne pas utiliser dans un widget.
+  @visibleForTesting
+  Color get debugValue => _value;
+
+  /// Interpolation, requise par [ThemeExtension].
+  static AppShadowColor lerp(AppShadowColor a, AppShadowColor b, double t) =>
+      AppShadowColor(Color.lerp(a._value, b._value, t)!);
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppShadowColor && other._value == _value;
 
   @override
   int get hashCode => _value.hashCode;

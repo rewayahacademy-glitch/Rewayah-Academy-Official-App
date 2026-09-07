@@ -22,6 +22,10 @@ class Violation {
 }
 
 /// L'echelle d'espacement autorisee, miroir de `AppSpacing`.
+///
+/// Etendue vers le haut par la refonte : 40, 48 et 64 servent le rythme de
+/// page, la ou les paliers courts servaient l'interieur des composants
+/// (`docs/produit/design-tokens.md` section 7).
 const Set<String> echelleEspacement = <String>{
   '4',
   '8',
@@ -30,10 +34,57 @@ const Set<String> echelleEspacement = <String>{
   '20',
   '24',
   '32',
+  '40',
+  '48',
+  '64',
   '0',
 };
 
+/// Les fichiers qui detiennent chacun un jeton, et sont donc les seuls
+/// autorises a en poser la valeur litterale.
+///
+/// Une regle de style qui n'est pas verifiee par un outil n'est pas une regle :
+/// c'est un souhait, et l'etape suivante la contredit
+/// (`docs/design/01-systeme-visuel.md` section 9).
+const String _fichierPalette = 'core/theme/app_palette.dart';
+const String _fichierRayons = 'core/theme/app_radius.dart';
+const String _fichierElevation = 'core/theme/app_elevation.dart';
+const String _fichierTypographie = 'core/theme/app_typography.dart';
+const String _fichierMouvement = 'core/theme/app_mouvement.dart';
+
+/// Les deux seuls fichiers qui touchent a une [BoxShadow].
+///
+/// `app_color_pair.dart` porte le constructeur unique, `AppShadowColor`, et
+/// `app_elevation.dart` compose les quatre niveaux avec. Le premier ne peut pas
+/// etre fusionne dans le second : la palette importe les types de couleur, et
+/// l'elevation importe la palette.
+const List<String> _fichiersOmbre = <String>[
+  _fichierElevation,
+  'core/theme/app_color_pair.dart',
+];
+
 final RegExp _couleurLitterale = RegExp(r'Color\(0x|Colors\.[a-zA-Z]');
+final RegExp _ombreLitterale = RegExp(r'\bBoxShadow\s*\(');
+final RegExp _crenageLitteral = RegExp(r'\bletterSpacing\s*:');
+final RegExp _dureeAnimation = RegExp(r'\bDuration\s*\(\s*milliseconds\s*:');
+final RegExp _courbeNommee = RegExp(r'\bCurves\.[a-zA-Z]');
+final RegExp _rayonLitteral = RegExp(
+  r'\bBorderRadius\.circular\s*\(\s*(\d+(?:\.\d+)?)\s*\)',
+);
+
+/// Le vocabulaire d'avant la refonte.
+///
+/// Le renommage des jetons s'est fait en une passe au lot T. Sans cette regle,
+/// les deux vocabulaires cohabiteraient, et le mauvais serait recopie
+/// (`docs/produit/design-tokens.md` section 1.8).
+const Map<String, String> vocabulairePerime = <String, String>{
+  'surfaceBase': 'surfaceCanvas',
+  'borderDefault': 'borderHairline, borderResting ou borderStrong',
+  'textOnLightAccent': 'inkAccent',
+  'textOnLightAlert': 'inkAlert',
+  'VarelaRound': 'BricolageGrotesque',
+  'NotoSans': 'InstrumentSans',
+};
 /// Les icones se declarent en un seul endroit : `AppIcons`. Les polices
 /// Phosphor sont integrees en assets, il n'y a donc aucun paquet a importer,
 /// mais un `IconData` construit ailleurs reintroduirait un second catalogue.
@@ -48,8 +99,12 @@ final RegExp _emoji = RegExp(
   unicode: true,
 );
 /// Les constructeurs dont les arguments sont des espacements.
+///
+/// `BorderRadius.circular` n'y figure plus : les rayons ont leur propre echelle
+/// depuis la refonte, et 999 n'appartient pas a celle des espacements. Ils sont
+/// controles par [_rayonLitteral].
 final RegExp _appelEspacement = RegExp(
-  r'(?:EdgeInsets\.(?:all|symmetric|only|fromLTRB)|SizedBox|BorderRadius\.circular)\(',
+  r'(?:EdgeInsets\.(?:all|symmetric|only|fromLTRB)|SizedBox)\(',
 );
 /// Un argument dont la valeur est **entierement** un nombre litteral.
 ///
@@ -95,10 +150,52 @@ void main() {
 
       // 1. Aucune couleur nue hors du fichier de palette.
       if (_couleurLitterale.hasMatch(code) &&
-          !chemin.endsWith('core/theme/app_palette.dart')) {
+          !chemin.endsWith(_fichierPalette)) {
         violations.add(
           Violation(chemin, numero, 'couleur-nue', ligne),
         );
+      }
+
+      // 1 bis. Aucune ombre composee hors du fichier d'elevation, aucun crenage
+      // pose hors du fichier de typographie, aucune duree d'animation ni
+      // courbe nommee hors du fichier de mouvement. Les durees METIER, elles,
+      // restent libres : une pause de priere en minutes n'est pas du mouvement.
+      if (_ombreLitterale.hasMatch(code) &&
+          !_fichiersOmbre.any(chemin.endsWith)) {
+        violations.add(Violation(chemin, numero, 'ombre-hors-echelle', ligne));
+      }
+      if (_crenageLitteral.hasMatch(code) &&
+          !chemin.endsWith(_fichierTypographie)) {
+        violations.add(Violation(chemin, numero, 'crenage-litteral', ligne));
+      }
+      if (_dureeAnimation.hasMatch(code) &&
+          !chemin.endsWith(_fichierMouvement)) {
+        violations.add(Violation(chemin, numero, 'duree-litterale', ligne));
+      }
+      if (_courbeNommee.hasMatch(code) && !chemin.endsWith(_fichierMouvement)) {
+        violations.add(Violation(chemin, numero, 'courbe-litterale', ligne));
+      }
+
+      // 1 ter. Aucun rayon pose tel quel : l'echelle a cinq crans et 999 n'est
+      // pas un espacement. Une valeur derivee d'un jeton reste permise.
+      final RegExpMatch? rayon = _rayonLitteral.firstMatch(code);
+      if (rayon != null && !chemin.endsWith(_fichierRayons)) {
+        violations.add(Violation(chemin, numero, 'rayon-litteral', ligne));
+      }
+
+      // 1 quater. Le vocabulaire d'avant la refonte ne revient pas.
+      for (final MapEntry<String, String> perime
+          in vocabulairePerime.entries) {
+        if (RegExp('\\b${perime.key}\\b').hasMatch(code)) {
+          violations.add(
+            Violation(
+              chemin,
+              numero,
+              'vocabulaire-perime',
+              '${perime.key} : employer ${perime.value}',
+            ),
+          );
+        }
       }
 
       // 2. Une seule librairie d'icones, un seul point d'entree.

@@ -55,7 +55,7 @@ class ActionPrincipale extends StatelessWidget {
     // Il change de PAIRE, donc son texte reste lisible et suit son fond.
     final AppColorPair paire = actif
         ? (surface ?? palette.surfacePrimary)
-        : palette.surfaceBase;
+        : palette.surfaceCanvas;
 
     final Widget contenu = Container(
       width: pleineLargeur ? double.infinity : null,
@@ -67,7 +67,7 @@ class ActionPrincipale extends StatelessWidget {
       ),
       decoration: paire.decoration(
         borderRadius: BorderRadius.circular(metriques.rayon),
-        side: actif ? null : palette.borderDefault.asBorderSide(width: 2),
+        side: actif ? null : palette.borderResting.asBorderSide(width: 2),
       ),
       child: enCours
           ? SizedBox.square(

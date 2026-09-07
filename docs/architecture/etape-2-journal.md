@@ -54,7 +54,156 @@ langues non basiques chargées en différé par slang.
 | L10 | Migrations 0002 et 0003, statut `pending_kyc` | x |
 | L11 | Documentation | x |
 
-## Mesures relevées
+## Refonte UX/UI, lot T — 7 septembre 2026
+
+> Le thème de l'étape 2 a été remplacé par celui de la refonte (ADR-018).
+> **Les deux tableaux de la section suivante décrivent l'état d'avant** : ils
+> restent pour lire un ancien commit, pas pour être appliqués. Les valeurs
+> courantes sont dans `docs/produit/design-tokens.md`, et elles sont rejouées
+> par quatre fichiers de tests.
+
+### Ce que le lot a changé
+
+| Fichier | Ce qui s'y trouve maintenant |
+| :--- | :--- |
+| `app_palette.dart` | 25 jetons au lieu de 8 : trois surfaces, trois bordures, six encres, cinq paires pleines, six paires douces, une couleur d'ombre |
+| `app_color_pair.dart` | `AppShadowColor` s'ajoute à `AppColorPair` et `AppInkColor` |
+| `app_radius.dart` | **nouveau** : cinq rayons, et `enfantDe` qui tient la règle du rayon décroissant |
+| `app_elevation.dart` | **nouveau** : quatre niveaux, plus `avecFilet` qui interdit l'ombre sans filet |
+| `app_mouvement.dart` | **nouveau** : durées, courbes, amplitudes, réduction du mouvement |
+| `app_spacing.dart` | échelle étendue à 40, 48, 64, plus `AppPage` (gouttières, largeur de contenu, largeur de lecture) |
+| `app_typography.dart` | deux polices françaises remplacées, crénage calculé, axes `wght` et `opsz` pilotés, chiffres tabulaires |
+| `app_theme.dart` | trois surfaces câblées : page sur le crème, barres sur l'élevé, champs sur l'enfoncé |
+| `verifier_jetons.dart` | sept règles au lieu de quatre |
+
+### Contraste, après refonte
+
+Les 33 mesures du tableau de `design-tokens.md` section 1 sont rejouées une par
+une par `test/theme/contraste_test.dart`, avec une tolérance de 0,01. Une valeur
+fausse dans le document fait donc échouer la suite, ce qui est le seul moyen
+d'empêcher un tableau de mesures de dériver.
+
+**Deux chiffres du document étaient faux, et le test les a trouvés.**
+
+| Ce que le document disait | Mesure réelle | Conséquence |
+| :--- | :--- | :--- |
+| Blanc sur le fond général : 1,19 | **1,10** | Aucune : la conclusion tenait. Le 1,19 était la mesure d'un fond qui n'existe plus, et la même paire était déjà donnée à 1,10 trois sections plus haut |
+| `opsz` de Bricolage Grotesque, défaut 14 | **défaut 96** | Le risque est l'inverse de celui décrit : c'est le petit titre laissé au défaut qui sort faux, pas le grand |
+
+Deux mesures manquaient au document et ont été ajoutées : `borderStrong` vaut
+3,73 sur une carte blanche et 3,21 sur la surface enfoncée. C'est ce qui permet
+d'affirmer, sans le supposer, qu'il passe 3:1 **sur les trois surfaces**.
+
+### Poids des polices
+
+| Élément | Avant | Après |
+| :--- | ---: | ---: |
+| Titres français | VarelaRound, 130 Ko | BricolageGrotesque variable, **398 Ko** |
+| Corps français | NotoSans variable, 2 001 Ko | InstrumentSans variable, **189 Ko** |
+| **Total français** | **2 131 Ko** | **587 Ko** |
+
+**1 544 Ko de gagnés, soit 72 %**, alors que le produit gagne au passage une
+plage de graisses continue de 200 à 800 pour les titres et un axe de taille
+optique qu'il n'avait pas. La police de titre pèse trois fois plus qu'avant, et
+c'est normal : Varela Round n'avait qu'une graisse, donc rien à faire varier.
+
+Les polices arabes ne bougent pas : 825 Ko et 161 Ko.
+
+### Sous-ensemblage : mesuré, pas livré
+
+Le gain restant a été chiffré, sur un sous-ensemble latin de Google Fonts
+(`pyftsubset`, dans un environnement jetable hors du dépôt) :
+
+| Police | Complète | Sous-ensemblée latin | Gain |
+| :--- | ---: | ---: | ---: |
+| Bricolage Grotesque | 398 Ko | 220 Ko | 45 % |
+| Instrument Sans | 189 Ko | 123 Ko | 35 % |
+| **Total** | **587 Ko** | **343 Ko** | **42 %** |
+
+Les axes variables, `kern` et `tnum` survivent au découpage, vérifié sur les
+binaires produits.
+
+**Les fichiers découpés ne sont pas versionnés, et c'est une décision, pas un
+oubli.** Trois raisons, dans cet ordre :
+
+1. Le sous-ensemble latin retire tout ce qui sort de Latin-1. L'application
+   affiche des **prénoms saisis par les familles** : un nom en cyrillique, en
+   vietnamien ou portant un diacritique rare deviendrait un carré vide. C'est un
+   risque produit, il se tranche avec l'opérateur, pas dans un lot de jetons.
+2. La chaîne de découpage n'existe pas dans le dépôt. Livrer un binaire modifié
+   sans script reproductible en CI, c'est livrer un fichier que personne ne
+   saura régénérer.
+3. `design-tokens.md` le disait déjà : le remplacement est « l'occasion de
+   mesurer le gain, pas la preuve qu'il est acquis ».
+
+### Le piège des valeurs par défaut d'une police variable
+
+Une police variable a une valeur par défaut par axe, et **elle n'est presque
+jamais celle qu'on suppose**. Bricolage Grotesque est livrée à `wght` 800 et
+`opsz` 96 : un titre qui déclare seulement `fontSize` sort en extra-gras dessiné
+pour 96 points, à toutes les tailles. Rien ne le signale, ni à la compilation ni
+à l'analyse : ça se voit à l'écran, ou jamais.
+
+La règle qui en sort : **lire la table `fvar` du binaire avant d'écrire un
+style**, et piloter tous les axes qu'elle déclare. `typographie_test.dart` le
+vérifie rôle par rôle, dans les deux échelles.
+
+### Deux impasses en récupérant les polices
+
+`fonts.google.com/download?family=...` ne rend plus une archive : il rend la
+page HTML de l'application, 198 Ko qui ressemblent à un zip par leur taille et
+n'en sont pas. Et l'API CSS `css2`, même avec un vieil `User-Agent` pour obtenir
+du TrueType, ne sert que des **instances statiques**, une par graisse et par
+largeur : 21 fichiers pour Bricolage Grotesque, aucun variable.
+
+Ce qui marche : `fonts.google.com/download/list?family=...`, qui rend un JSON
+(préfixé de `)]}'`) contenant l'URL du fichier variable sur `fonts.gstatic.com`,
+et le texte de la licence OFL.
+
+### Mesures de fin de lot
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | **362 tests**, tous verts (277 avant le lot) |
+| `dart run tool/verifier_jetons.dart` | **80 fichiers**, aucune violation |
+| `scenarios_etape3.sql` | 34 contrôles verts |
+| `scenarios_etape4.sql` | 39 contrôles verts |
+| Les sept règles du vérificateur, mises en échec exprès | 7 violations levées sur 7 attendues |
+| `flutter build web --release` | réussi. `FontManifest.json` déclare les deux nouvelles familles, les deux anciennes ont disparu du bundle |
+| Rendu réel de `/_galerie` dans Chrome | vérifié à l'œil, voir ci-dessous |
+
+### Pourquoi un rendu réel, et pas seulement des tests
+
+**Aucun test Flutter ne prouve qu'une police se charge** : en test, le moteur
+rend tout en Ahem, une police de blocs. Un nom de famille mal orthographié dans
+`pubspec.yaml` donnerait un repli silencieux, et les 362 tests resteraient
+verts.
+
+La galerie a donc été construite avec `--dart-define=GALERIE=true`, servie en
+local et ouverte dans Chrome. Ce qui s'y voit, et qui ne se voyait pas
+autrement :
+
+- les deux polices rendent, et rendent **différemment** l'une de l'autre : ce
+  n'est pas un repli système ;
+- les chiffres tabulaires alignent bien leurs colonnes, `11 111` au dessus de
+  `00 000` ;
+- les trois bordures se distinguent à l'œil dans le bon ordre, et
+  `borderStrong` se voit franchement là où `borderHairline` s'efface ;
+- les quatre élévations montent visiblement, sans qu'aucune ne fasse tache sur
+  le crème : l'ombre chaude tient sa promesse ;
+- l'échantillon mixte français-arabe se lit sur une seule ligne, le repli vers
+  Noto Sans Arabic fonctionne. **L'accord des deux polices reste à juger par
+  l'opérateur** : question ouverte 21 du registre.
+
+⚠ Piège de l'outillage, pour la prochaine fois : le défilement de la galerie
+ne répond ni à la molette du pilote ni à `Page_Down`. Il faut envoyer un
+`WheelEvent` à l'élément `flutter-view` en JavaScript. Et la capture d'écran
+échoue une fois sur deux avec un délai de 30 s : réessayer suffit.
+
+---
+
+## Mesures relevées à l'étape 2 — état d'avant la refonte
 
 ### Contraste
 

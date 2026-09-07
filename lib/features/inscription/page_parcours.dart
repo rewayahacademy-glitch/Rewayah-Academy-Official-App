@@ -95,7 +95,7 @@ class PageParcours extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               t.commun.retour,
-                              style: palette.textOnLightAccent.applyTo(
+                              style: palette.inkAccent.applyTo(
                                 textes.labelLarge ?? const TextStyle(),
                               ),
                             ),
@@ -200,7 +200,7 @@ class _Progression extends StatelessWidget {
                       border: i <= numero
                           ? null
                           : Border.fromBorderSide(
-                              palette.borderDefault.asBorderSide(),
+                              palette.borderResting.asBorderSide(),
                             ),
                     ),
                   ),

@@ -981,6 +981,9 @@ class Traductions$galerie$fr {
 	/// fr: 'Paires de couleurs'
 	String get paires => 'Paires de couleurs';
 
+	/// fr: 'Élévation et rayons'
+	String get elevation => 'Élévation et rayons';
+
 	/// fr: 'Échelles typographiques'
 	String get typographie => 'Échelles typographiques';
 
@@ -2119,6 +2122,7 @@ extension on Traductions {
 			'galerie.titre' => 'Galerie des composants',
 			'galerie.avertissement' => 'Banc d\'essai de développement. Absent des versions de production.',
 			'galerie.paires' => 'Paires de couleurs',
+			'galerie.elevation' => 'Élévation et rayons',
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
 			'galerie.composants' => 'Composants partagés',

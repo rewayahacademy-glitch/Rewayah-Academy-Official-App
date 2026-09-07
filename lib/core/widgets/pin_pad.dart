@@ -87,7 +87,7 @@ class _PinPadState extends State<PinPad> {
           // l'arbre et pas a l'ecran.
           Text(
             t.pin.erreur,
-            style: palette.textOnLightAlert.applyTo(
+            style: palette.inkAlert.applyTo(
               Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             ),
           ),
@@ -134,7 +134,7 @@ class _PinPadState extends State<PinPad> {
                   height: metriques.cibleTactile * 1.4,
                   child: IconTheme(
                     data: IconThemeData(
-                      color: palette.surfaceBase.onBackground,
+                      color: palette.surfaceCanvas.onBackground,
                       size: AppSpacing.xxl,
                     ),
                     child: Icon(AppIcons.effacer.repos),
@@ -215,7 +215,7 @@ class _Pastilles extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: i < remplies ? pleine.background : null,
                 border: Border.fromBorderSide(
-                  palette.borderDefault.asBorderSide(width: 2),
+                  palette.borderResting.asBorderSide(width: 2),
                 ),
               ),
             ),

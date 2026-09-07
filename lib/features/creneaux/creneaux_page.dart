@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/domain/enums.dart';
@@ -146,7 +146,7 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
           Ecart.vSm,
           Text(
             t.disponibilites.erreur,
-            style: palette.textOnLightAlert.applyTo(
+            style: palette.inkAlert.applyTo(
               textes.bodySmall ?? const TextStyle(),
             ),
           ),
@@ -253,14 +253,14 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
           ActionPrincipale(
             libelle: t.creneaux.plafondDemander,
             onPress: () => _ouvrirDemande(context, monId!, plafond),
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
           ),
           Ecart.vLg,
         ],
         if (_erreur != null) ...<Widget>[
           Text(
             t.creneaux.erreur(message: _erreur!),
-            style: palette.textOnLightAlert.applyTo(
+            style: palette.inkAlert.applyTo(
               textes.bodySmall ?? const TextStyle(),
             ),
           ),
@@ -479,7 +479,7 @@ class _FeuilleDemandeEtat extends ConsumerState<_FeuilleDemande> {
               Ecart.vSm,
               Text(
                 _erreur!,
-                style: palette.textOnLightAlert.applyTo(
+                style: palette.inkAlert.applyTo(
                   textes.bodySmall ?? const TextStyle(),
                 ),
               ),

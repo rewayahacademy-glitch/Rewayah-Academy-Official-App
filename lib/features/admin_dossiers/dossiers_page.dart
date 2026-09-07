@@ -273,7 +273,7 @@ class _Dossier extends StatelessWidget {
           ActionPrincipale(
             libelle: t.dossiers.refuser,
             onPress: onOuvrirRefus,
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
           ),
         ],
         if (erreur != null) ...<Widget>[
@@ -281,7 +281,7 @@ class _Dossier extends StatelessWidget {
           Text(
             erreur!,
             textAlign: TextAlign.center,
-            style: palette.textOnLightAlert.applyTo(
+            style: palette.inkAlert.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),
@@ -325,7 +325,7 @@ class _Apercu extends ConsumerWidget {
         return ClipRRect(
           borderRadius: BorderRadius.circular(AppSpacing.md),
           child: ColoredBox(
-            color: palette.surfaceBase.background,
+            color: palette.surfaceCanvas.background,
             child: Image.network(
               instantane.data!,
               fit: BoxFit.contain,
@@ -366,8 +366,8 @@ class _Case extends StatelessWidget {
           children: <Widget>[
             IconTheme(
               data: cochee
-                  ? palette.textOnLightAccent.asIconTheme(size: AppSpacing.xxl)
-                  : palette.borderDefault.asIconTheme(size: AppSpacing.xxl),
+                  ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
+                  : palette.borderStrong.asIconTheme(size: AppSpacing.xxl),
               child: Icon(AppIcons.succes.resoudre(selectionne: cochee)),
             ),
             SizedBox(width: metriques.marge),

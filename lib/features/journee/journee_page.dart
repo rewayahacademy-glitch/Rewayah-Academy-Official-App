@@ -159,7 +159,7 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
                       t.enseignant.journee.erreur,
                       // L'encre d'alerte, jamais la paire : `surfaceAlert`
                       // ecrit en blanc, illisible sur la page.
-                      style: palette.textOnLightAlert.applyTo(
+                      style: palette.inkAlert.applyTo(
                         textes.bodySmall ?? const TextStyle(),
                       ),
                     ),
@@ -224,7 +224,7 @@ class _BlocDominant extends StatelessWidget {
     // sur la surface d'accent y ecrirait en noir.
     final AppColorPair paire = enCours
         ? palette.surfacePrimary
-        : palette.surfaceBase;
+        : palette.surfaceCanvas;
     final bool aujourdhui = _memeJour(cours.debut, maintenant);
 
     return BentoTile(
@@ -387,7 +387,7 @@ class _BlocMatching extends StatelessWidget {
           Ecart.vXs,
           Text(
             t.enseignant.journee.voirCreneaux,
-            style: palette.textOnLightAccent.applyTo(
+            style: palette.inkAccent.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),

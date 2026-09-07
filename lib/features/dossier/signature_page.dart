@@ -146,7 +146,7 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             IconTheme(
-                              data: palette.textOnLightAccent.asIconTheme(
+                              data: palette.inkAccent.asIconTheme(
                                 size: AppSpacing.xxl,
                               ),
                               child: Icon(AppIcons.controleQualite.repos),
@@ -173,7 +173,7 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
                       child: Text(
                         _erreur!,
                         textAlign: TextAlign.center,
-                        style: palette.textOnLightAlert.applyTo(
+                        style: palette.inkAlert.applyTo(
                           textes.bodyMedium ?? const TextStyle(),
                         ),
                       ),

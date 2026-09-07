@@ -195,7 +195,7 @@ void main() {
       final BentoTile ligne = tester.widget<BentoTile>(
         find.byType(BentoTile).first,
       );
-      expect(ligne.surface, AppPalette.claire().surfaceBase);
+      expect(ligne.surface, AppPalette.claire().surfaceCanvas);
     });
 
     testWidgets('rien aujourd hui : le prochain cours est date', (

@@ -60,22 +60,24 @@ class BentoTile extends StatelessWidget {
   /// Libelle lu par les technologies d'assistance.
   final String? libelleSemantique;
 
-  /// Ajoute la bordure decorative. Elle ne porte jamais de sens a elle seule :
-  /// voir l'avertissement de contraste sur `AppPalette.borderDefault`.
+  /// Ajoute le filet de contour de la tuile. Il est decoratif et ne porte
+  /// jamais de sens a lui seul : une selection ou une erreur passe par
+  /// `borderStrong` ou par une couleur semantique
+  /// (`docs/produit/design-tokens.md` section 1.3).
   final bool avecBordure;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
-    final AppColorPair paire = surface ?? palette.surfaceBase;
+    final AppColorPair paire = surface ?? palette.surfaceCanvas;
 
     final Widget corps = Container(
       constraints: BoxConstraints(minHeight: metriques.cibleTactile),
       padding: EdgeInsets.all(metriques.marge),
       decoration: paire.decoration(
-        borderRadius: BorderRadius.circular(metriques.rayon),
-        side: avecBordure ? palette.borderDefault.asBorderSide() : null,
+        borderRadius: metriques.arrondi,
+        side: avecBordure ? palette.borderHairline.asBorderSide() : null,
       ),
       child: DefaultTextStyle.merge(
         style: TextStyle(color: paire.onBackground),

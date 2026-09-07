@@ -154,7 +154,7 @@ class TableauDeBordPage extends ConsumerWidget {
                         t.admin.tableau.compteursErreur,
                         // L'encre d'alerte, jamais la paire : `surfaceAlert`
                         // ecrit en blanc, illisible sur la page.
-                        style: palette.textOnLightAlert.applyTo(
+                        style: palette.inkAlert.applyTo(
                           textes.bodySmall ?? const TextStyle(),
                         ),
                       )
@@ -188,7 +188,7 @@ class TableauDeBordPage extends ConsumerWidget {
                       Ecart.vSm,
                       Text(
                         t.admin.tableau.listeErreur,
-                        style: palette.textOnLightAlert.applyTo(
+                        style: palette.inkAlert.applyTo(
                           textes.bodySmall ?? const TextStyle(),
                         ),
                       ),
@@ -343,7 +343,7 @@ class _Ligne extends StatelessWidget {
       child: Row(
         children: <Widget>[
           IconTheme(
-            data: palette.textOnLightAccent.asIconTheme(size: AppSpacing.xxl),
+            data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
             child: Icon(ligne.icone.repos),
           ),
           SizedBox(width: metriques.marge),

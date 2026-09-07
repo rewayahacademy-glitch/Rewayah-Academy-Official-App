@@ -220,7 +220,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             libelle: _enfant.cleAvatar == null
                 ? t.tuteur.reglages.photoAjouter
                 : t.tuteur.reglages.photoChanger,
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
             enCours: _photoEnCours,
             onPress: _changerPhoto,
           ),
@@ -239,7 +239,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             libelle: cameraAutorisee
                 ? t.tuteur.reglages.cameraRetirer(prenom: _enfant.prenom)
                 : t.tuteur.reglages.cameraAutoriser(prenom: _enfant.prenom),
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
             enCours: _reglageEnCours,
             onPress: () => _ecrire(
               camera: cameraAutorisee
@@ -262,7 +262,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             libelle: modeEnfant
                 ? t.tuteur.reglages.modePasserStandard(prenom: _enfant.prenom)
                 : t.tuteur.reglages.modePasserEnfant(prenom: _enfant.prenom),
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
             enCours: _reglageEnCours,
             onPress: () => _ecrire(
               mode: modeEnfant ? InterfaceMode.standard : InterfaceMode.enfant,
@@ -275,7 +275,7 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
               t.tuteur.reglages.erreur(message: _erreur!),
               // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
               // blanc, illisible sur la page.
-              style: palette.textOnLightAlert.applyTo(
+              style: palette.inkAlert.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),
             ),
@@ -342,7 +342,7 @@ class _Demandes extends ConsumerWidget {
         if (affecte)
           ActionPrincipale(
             libelle: t.tuteur.reglages.demandeReaffectation,
-            surface: palette.surfaceBase,
+            surface: palette.surfaceCanvas,
             onPress: () => _ouvrir(context, SorteDemande.reaffectation, null),
           )
         else
@@ -355,14 +355,14 @@ class _Demandes extends ConsumerWidget {
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.tuteur.reglages.demandeDuree,
-          surface: palette.surfaceBase,
+          surface: palette.surfaceCanvas,
           onPress: () =>
               _ouvrir(context, SorteDemande.regle, CleRegle.dureeSeance),
         ),
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.tuteur.reglages.demandeMinimum,
-          surface: palette.surfaceBase,
+          surface: palette.surfaceCanvas,
           onPress: () =>
               _ouvrir(context, SorteDemande.regle, CleRegle.minimumPayable),
         ),
@@ -538,7 +538,7 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
               Ecart.vSm,
               Text(
                 _erreur!,
-                style: palette.textOnLightAlert.applyTo(
+                style: palette.inkAlert.applyTo(
                   textes.bodySmall ?? const TextStyle(),
                 ),
               ),

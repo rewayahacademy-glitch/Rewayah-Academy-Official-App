@@ -144,7 +144,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                         ? t.kyc.choisirFichier
                         : t.kyc.fichierChoisi,
                     onPress: _type == null ? null : () => unawaited(_choisir()),
-                    surface: palette.surfaceBase,
+                    surface: palette.surfaceCanvas,
                   ),
                 ],
               ),
@@ -160,7 +160,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                       child: Text(
                         _erreur!,
                         textAlign: TextAlign.center,
-                        style: palette.textOnLightAlert.applyTo(
+                        style: palette.inkAlert.applyTo(
                           textes.bodyMedium ?? const TextStyle(),
                         ),
                       ),

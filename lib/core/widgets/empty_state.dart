@@ -47,7 +47,7 @@ class EmptyState extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppColorPair fond = palette.surfaceBase;
+    final AppColorPair fond = palette.surfaceCanvas;
 
     return Center(
       child: Padding(
@@ -56,7 +56,7 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             IconTheme(
-              data: palette.textOnLightAccent.asIconTheme(
+              data: palette.inkAccent.asIconTheme(
                 // Multiples de l'echelle, pas des valeurs ponctuelles.
                 size: metriques.estEnfant
                     ? AppSpacing.xxxl * 3

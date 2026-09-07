@@ -348,7 +348,7 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
           Text(
             _message!,
             textAlign: TextAlign.center,
-            style: AppPalette.of(context).textOnLightAlert.applyTo(
+            style: AppPalette.of(context).inkAlert.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),

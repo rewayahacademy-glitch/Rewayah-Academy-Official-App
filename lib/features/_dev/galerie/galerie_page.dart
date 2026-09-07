@@ -5,8 +5,10 @@ import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/theme/app_color_pair.dart';
+import '../../../core/theme/app_elevation.dart';
 import '../../../core/theme/app_metriques.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_typography.dart';
@@ -50,6 +52,7 @@ class GaleriePage extends StatelessWidget {
           Ecart.vXxxl,
 
           _Section(titre: t.galerie.paires, enfant: const _Paires()),
+          _Section(titre: t.galerie.elevation, enfant: const _Elevation()),
           _Section(titre: t.galerie.typographie, enfant: const _Typographie()),
           _Section(titre: t.galerie.polices, enfant: const _Polices()),
           _Section(
@@ -93,40 +96,148 @@ class _Paires extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final Map<String, AppColorPair> paires = <String, AppColorPair>{
-      'surfaceBase': palette.surfaceBase,
+    final TextStyle base =
+        Theme.of(context).textTheme.titleMedium ?? const TextStyle();
+
+    // Les trois registres de la palette, dans l'ordre ou ils se lisent : la
+    // rampe qui porte la hierarchie, les aplats reserves a l'action, les
+    // teintes douces qui portent tout le reste.
+    final Map<String, AppColorPair> rampe = <String, AppColorPair>{
+      'surfaceRaised': palette.surfaceRaised,
+      'surfaceCanvas': palette.surfaceCanvas,
+      'surfaceSunken': palette.surfaceSunken,
+    };
+    final Map<String, AppColorPair> pleines = <String, AppColorPair>{
       'surfacePrimary': palette.surfacePrimary,
       'surfaceSuccess': palette.surfaceSuccess,
       'surfaceWarning': palette.surfaceWarning,
       'surfaceAlert': palette.surfaceAlert,
+      'surfaceInverse': palette.surfaceInverse,
+    };
+    final Map<String, AppColorPair> douces = <String, AppColorPair>{
+      'washAccent': palette.washAccent,
+      'washSuccess': palette.washSuccess,
+      'washWarning': palette.washWarning,
+      'washAlert': palette.washAlert,
+      'washFamily': palette.washFamily,
+      'surfaceQuran': palette.surfaceQuran,
+    };
+    final Map<String, AppInkColor> encres = <String, AppInkColor>{
+      'inkStrong': palette.inkStrong,
+      'inkMuted': palette.inkMuted,
+      'inkFaint': palette.inkFaint,
+      'inkAccent': palette.inkAccent,
+      'inkSuccess': palette.inkSuccess,
+      'inkWarning': palette.inkWarning,
+      'inkAlert': palette.inkAlert,
     };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        for (final MapEntry<String, AppColorPair> e in paires.entries)
+        for (final Map<String, AppColorPair> groupe in <
+          Map<String, AppColorPair>
+        >[rampe, pleines, douces])
+          for (final MapEntry<String, AppColorPair> e in groupe.entries)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: BentoTile(
+                surface: e.value,
+                avecBordure: true,
+                child: Text(e.key, style: e.value.applyTo(base)),
+              ),
+            ),
+        // Les encres se montrent posees sur le fond general : c'est la que se
+        // joue leur lisibilite, et c'est la que le piege de l'encre blanche
+        // avait rendu un message d'erreur invisible.
+        for (final MapEntry<String, AppInkColor> e in encres.entries)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: BentoTile(
-              surface: e.value,
-              avecBordure: true,
-              child: Text(
-                e.key,
-                style: e.value.applyTo(
-                  Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
-                ),
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Text(e.key, style: e.value.applyTo(base)),
+          ),
+        Ecart.vMd,
+        // Les trois bordures, cote a cote : seule la troisieme porte du sens.
+        for (final MapEntry<String, AppInkColor> e
+            in <String, AppInkColor>{
+              'borderHairline': palette.borderHairline,
+              'borderResting': palette.borderResting,
+              'borderStrong': palette.borderStrong,
+            }.entries)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: AppRadius.arrondiSm,
+                border: Border.fromBorderSide(e.value.asBorderSide(width: 2)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Text(e.key),
               ),
             ),
           ),
-        BentoTile(
-          avecBordure: true,
-          child: Text(
-            'textOnLightAccent',
-            style: palette.textOnLightAccent.applyTo(
-              Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+      ],
+    );
+  }
+}
+
+/// Les quatre niveaux d'elevation et les cinq rayons, cote a cote.
+///
+/// Ils se montrent ensemble parce qu'ils se lisent ensemble : une surface
+/// elevee porte un filet ET une ombre, jamais l'un des deux seul.
+class _Elevation extends StatelessWidget {
+  const _Elevation();
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final Map<String, List<BoxShadow>> niveaux = <String, List<BoxShadow>>{
+      'elevation0': AppElevation.niveau0,
+      'elevation1': AppElevation.niveau1,
+      'elevation2': AppElevation.niveau2,
+      'elevation3': AppElevation.niveau3,
+    };
+    final Map<String, BorderRadius> rayons = <String, BorderRadius>{
+      'radiusXs': AppRadius.arrondiXs,
+      'radiusSm': AppRadius.arrondiSm,
+      'radiusMd': AppRadius.arrondiMd,
+      'radiusLg': AppRadius.arrondiLg,
+      'radiusFull': AppRadius.arrondiFull,
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        for (final MapEntry<String, List<BoxShadow>> e in niveaux.entries)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+            child: DecoratedBox(
+              decoration: AppElevation.avecFilet(
+                surface: palette.surfaceRaised,
+                filet: palette.borderHairline,
+                arrondi: AppRadius.arrondiMd,
+                ombres: e.value,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Text(e.key),
+              ),
             ),
           ),
-        ),
+        for (final MapEntry<String, BorderRadius> e in rayons.entries)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: DecoratedBox(
+              decoration: palette.surfaceSunken.decoration(
+                borderRadius: e.value,
+                side: palette.borderResting.asBorderSide(),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Text(e.key),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -186,7 +297,7 @@ class _EchelleTexte extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: Text(
               '${e.key} ${e.value?.fontSize?.round()}',
-              style: palette.surfaceBase.applyTo(e.value ?? const TextStyle()),
+              style: palette.surfaceCanvas.applyTo(e.value ?? const TextStyle()),
             ),
           ),
       ],
@@ -207,24 +318,41 @@ class _Polices extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'NotoSans : les Makharij se corrigent a l’oreille',
-          style: palette.surfaceBase
+          'InstrumentSans : les Makharij se corrigent a l’oreille',
+          style: palette.surfaceCanvas
               .applyTo(base)
               .copyWith(fontFamily: AppFontFamily.corps),
         ),
         Ecart.vMd,
         Text(
-          'VarelaRound : Prochain cours jeudi',
-          style: palette.surfaceBase
+          'BricolageGrotesque : Prochain cours jeudi',
+          style: palette.surfaceCanvas
               .applyTo(base)
               .copyWith(fontFamily: AppFontFamily.titre),
+        ),
+        Ecart.vMd,
+        // Les chiffres tabulaires ne se voient que compares : deux lignes de
+        // chiffres differents doivent aligner leurs colonnes.
+        Text(
+          '11 111\n00 000',
+          style: AppTypography.tabulaire(palette.surfaceCanvas.applyTo(base)),
+        ),
+        Ecart.vMd,
+        // L'echantillon mixte. C'est la seule facon de juger si la hauteur d'x
+        // et la graisse d'Instrument Sans s'accordent a Noto Sans Arabic : les
+        // deux polices doivent se lire sur UNE ligne, pas cote a cote sur deux.
+        // C'est une intention de conception, pas une mesure : elle se tranche
+        // a l'oeil (question ouverte 21 du registre).
+        Text(
+          'Sourate الفاتحة, verset 5 : اهدنا الصراط المستقيم',
+          style: palette.surfaceCanvas.applyTo(base),
         ),
         Ecart.vMd,
         Directionality(
           textDirection: TextDirection.rtl,
           child: Text(
             'نوتو عربي',
-            style: palette.surfaceBase
+            style: palette.surfaceCanvas
                 .applyTo(base)
                 .copyWith(fontFamily: AppFontFamily.arabeInterface),
           ),
@@ -235,7 +363,7 @@ class _Polices extends StatelessWidget {
           child: Text(
             'الحمد لله '
             'رب العالمين',
-            style: palette.surfaceBase.applyTo(AppTypography.document()),
+            style: palette.surfaceCanvas.applyTo(AppTypography.document()),
           ),
         ),
       ],

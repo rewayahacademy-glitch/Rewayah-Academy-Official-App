@@ -185,7 +185,7 @@ class _Saisie extends StatelessWidget {
         ActionPrincipale(
           libelle: t.connexion.avecGoogle,
           onPress: onGoogle,
-          surface: palette.surfaceBase,
+          surface: palette.surfaceCanvas,
         ),
         Ecart.vXxxl,
         // L'entree de l'eleve, discrete : c'est un parcours different, pas une
@@ -194,7 +194,7 @@ class _Saisie extends StatelessWidget {
         ActionPrincipale(
           libelle: t.eleveConnexion.entrerCode,
           onPress: onEleve,
-          surface: palette.surfaceBase,
+          surface: palette.surfaceCanvas,
         ),
       ],
     );
@@ -226,7 +226,7 @@ class _LienEnvoye extends StatelessWidget {
         ActionPrincipale(
           libelle: t.connexion.changerAdresse,
           onPress: onChangerAdresse,
-          surface: palette.surfaceBase,
+          surface: palette.surfaceCanvas,
         ),
       ],
     );

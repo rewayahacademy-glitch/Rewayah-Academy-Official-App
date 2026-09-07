@@ -101,7 +101,7 @@ class _AudioLabelState extends State<AudioLabel> {
         children: <Widget>[
           IconTheme(
             data: paire == null
-                ? palette.textOnLightAccent.asIconTheme(size: taille)
+                ? palette.inkAccent.asIconTheme(size: taille)
                 : IconThemeData(color: paire.onBackground, size: taille),
             child: Icon(
               AppIcons.libelleAudio.resoudre(selectionne: _enLecture),
