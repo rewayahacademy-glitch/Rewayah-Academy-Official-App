@@ -144,6 +144,22 @@ final RegExp _parametresPermanentNotice = RegExp(
   r'const\s+PermanentNotice\s*\(\s*([^)]*)\)',
 );
 
+/// Le constructeur `Container`, pour la regle « une surface d'ecran ne se pose
+/// pas a la main ».
+final RegExp _containerConstructeur = RegExp(r'\bContainer\s*\(');
+
+/// Un argument nomme `decoration`, en tete d'un morceau de liste d'arguments.
+final RegExp _argumentDecoration = RegExp(r'^\s*decoration\s*:');
+
+/// `showDialog`, avec ou sans argument de type.
+final RegExp _showDialog = RegExp(r'\bshowDialog\s*(?:<[^>]*>)?\s*\(');
+
+/// Le seul fichier autorise a ouvrir une boite de dialogue : celui du composant
+/// de confirmation destructive. Il n'en ouvre aucune aujourd'hui (il passe par
+/// une feuille), mais s'il en ouvrait une un jour, c'est la qu'elle vivrait.
+const String _fichierConfirmDestructif =
+    'core/widgets/confirm_destructive.dart';
+
 void main() {
   final Directory racine = Directory.current;
   final List<Violation> violations = <Violation>[];
@@ -243,6 +259,18 @@ void main() {
         violations.add(Violation(chemin, numero, 'bouton-material', ligne));
       }
 
+      // 3 bis (suite). Aucun showDialog hors de ConfirmDestructive : une
+      // confirmation destructive passe par ce composant, jamais par une
+      // AlertDialog posee dans un ecran
+      // (`docs/design/07-catalogue-composants.md` section 6). Zero occurrence
+      // aujourd'hui ; la regle garde la porte fermee. Ajoutee au lot R.
+      if (_showDialog.hasMatch(code) &&
+          !chemin.endsWith(_fichierConfirmDestructif)) {
+        violations.add(
+          Violation(chemin, numero, 'showdialog-hors-confirmation', ligne),
+        );
+      }
+
       // 3 ter. Le forcage d'etat ne sort pas de la galerie.
       if (_pressionForcee.hasMatch(code) &&
           !chemin.endsWith('core/widgets/pressable.dart') &&
@@ -264,6 +292,17 @@ void main() {
     // 5. Echelle d'espacement fixe. Balayage sur le fichier entier : un
     // constructeur ecrit sur plusieurs lignes doit etre vu comme les autres.
     violations.addAll(_espacementsHorsEchelle(chemin, contenu));
+
+    // 5 bis. Aucun `Container` porteur d'une `decoration` sous `lib/features/` :
+    // les surfaces d'un ecran viennent d'`AppCard` et de `PageShell`
+    // (`docs/design/07-catalogue-composants.md` section 6). La regle nomme
+    // `Container`, pas `DecoratedBox` : le seul `DecoratedBox` de `features/`
+    // est celui de `GrilleSemaine`, composant partage que l'arborescence a
+    // laisse la. Ajoutee au lot R avec la reprise de `TUT-01`, premiere a
+    // retirer son `Container` decore, la pastille verte passee a `StatusPill`.
+    if (chemin.startsWith('lib/features/')) {
+      violations.addAll(_containersDecoresDeFeatures(chemin, contenu));
+    }
 
     // 6. PermanentNotice n'accepte aucun parametre.
     if (chemin.endsWith('core/widgets/permanent_notice.dart')) {
@@ -404,6 +443,51 @@ List<Violation> _espacementsHorsEchelle(String chemin, String contenu) {
         );
       }
     }
+  }
+  return trouvees;
+}
+
+/// Releve les `Container` porteurs d'une `decoration` sous `lib/features/`.
+///
+/// Meme balayage a parentheses equilibrees que [_espacementsHorsEchelle] : la
+/// `decoration` est le plus souvent posee sur une autre ligne que le
+/// `Container(`, et une expression reguliere de ligne la manquerait.
+/// **Verifiee en la faisant echouer** sur un fichier piege.
+List<Violation> _containersDecoresDeFeatures(String chemin, String contenu) {
+  final String code = _sansCommentaires(contenu);
+  final List<Violation> trouvees = <Violation>[];
+
+  for (final RegExpMatch appel in _containerConstructeur.allMatches(code)) {
+    final int ouverture = appel.end - 1;
+    int profondeur = 0;
+    int fin = ouverture;
+    for (int i = ouverture; i < code.length; i++) {
+      if (code[i] == '(') {
+        profondeur++;
+      } else if (code[i] == ')') {
+        profondeur--;
+        if (profondeur == 0) {
+          fin = i;
+          break;
+        }
+      }
+    }
+    if (fin == ouverture) {
+      continue;
+    }
+
+    final String arguments = code.substring(ouverture + 1, fin);
+    final bool porteDecoration = _decouperNiveauUn(arguments)
+        .any(_argumentDecoration.hasMatch);
+    if (!porteDecoration) {
+      continue;
+    }
+
+    final int ligne =
+        '\n'.allMatches(code.substring(0, appel.start)).length + 1;
+    trouvees.add(
+      Violation(chemin, ligne, 'container-decore-dans-features', 'Container('),
+    );
   }
   return trouvees;
 }

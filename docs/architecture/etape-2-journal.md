@@ -337,6 +337,79 @@ rouge le 7 à 00h23 locales ». Corrigé dans un **commit à part**, hors lot R 
 cible désormais la séance d'Amina du lundi 17 h, la seule dont l'heure suivante
 est libre à coup sûr. Le harnais passe 34 puis 39 sur ce poste comme sur la CI.
 
+### R2 : `TUT-01`, l'accueil du foyer
+
+Le deuxième des quatre premiers. Il porte `ChildCard`, la carte du domaine
+famille, et c'est elle que la note de refonte donnait en exemple.
+
+| Livrable | Détail |
+| :--- | :--- |
+| **`TUT-01` repris** | passe par `PageShell` au lieu de son `Scaffold` + `OfflineBanner` + `RefreshIndicator` + `ListView` propres ; les lignes d'enfant deviennent des `ChildCard` ; la pastille « en direct », un `Container` décoré, passe par `StatusPill` portée par la carte ; le cours en direct redevient une carte `surfaceRaised` avec bouton d'entrée en `surfacePrimary`, seule zone pleine désormais réservée au bouton |
+| **`phaseEnfant`, fonction pure** | renommage de l'ancien `etatEnfant` : `ChildCard` exporte déjà un `EtatEnfant` scellé, et deux `EtatEnfant` dans le même fichier ne cohabitent pas. `phaseEnfant` **décide** de la phase (cinq, celles de la fiche produit) ; un mapper la traduit en état visuel de `ChildCard` avec les phrases mises en forme. Le corps de la décision et `attendDepuis` sont inchangés, leurs tests unitaires aussi |
+| **`SectionHeader` « Gérer le foyer »** | sépare les cartes des trois blocs secondaires (appareils, réglages, accès), qui restent des `BentoTile` comme le bloc Coran d'`ELV-02`. Nouvelle clé `t.tuteur.accueil.gererLeFoyer` |
+| **Deux règles pour `verifier_jetons.dart`** | les deux puces de `07-catalogue-composants.md` §6 que le lot C avait renvoyées au lot R : aucun `Container` porteur d'une `decoration` sous `lib/features/` (`container-decore-dans-features`), aucun `showDialog` hors de `ConfirmDestructive` (`showdialog-hors-confirmation`). Chacune **vérifiée en la faisant échouer** sur un fichier piège. Zéro occurrence de l'une comme de l'autre après la reprise |
+| **Fiche `TUT-01`** | remplie dans `08-catalogue-ecrans.md` §6, à partir du code, dettes assumées comprises |
+| **Tests `TUT-01`** | les contrôles qui lisaient un `BentoTile` et sa `surface` lisent désormais une `ChildCard` et la décoration de son `Container` externe ; « rien aujourd'hui » vérifie l'absence du préambule ; « séance annulée » vérifie la pastille et non le libellé de statut. Deux ajoutés : « passe par `PageShell` », « deux enfants en direct : deux cartes posées, aucun aplat » |
+
+### L'audit de fin de sous-lot, et ce qu'il a trouvé
+
+Six agents en parallèle, une tranche chacun, puis un sceptique par constat, comme
+au lot C. **Treize constats bruts, dont un doublon entre deux tranches, et aucun
+code à changer.** Onze réfutés, le dernier ramené de « majeur » à « mineur, à
+consigner ». La tranche « tests » : propre.
+
+Ce que les réfutations ont rappelé : plusieurs « pertes » de la reprise sont des
+simplifications que `07-catalogue-composants.md` §3 **prescrit** (le préambule
+« Rien aujourd'hui », la phrase de conséquence de « aucune heure proposée », le
+libellé de statut « Séance annulée » porté par la pastille) ; le chevron listé
+pour la ligne « Normal » de `ChildCard` est une prise du **composant**, pas une
+obligation de câblage de l'écran, et `07` §4 interdirait une affordance qui ne
+mène nulle part ; la mise en colonnes desktop relève de
+`05-regles-responsive.md`, hors du périmètre du lot R comme pour `ELV-02` ; les
+deux règles du vérificateur, plus larges que la lettre de leur puce, suivent le
+style déjà accepté au lot C pour `bouton-material`.
+
+Le seul constat qui survit : **le tirage-pour-rafraîchir de l'ancien écran
+disparaît** avec le passage à `PageShell`. Le fait est réel — l'ancien
+`RefreshIndicator` invalidait les trois providers, `PageShell` n'a pas de prise
+équivalente, et `seancesProvider` / `affectationsProvider` ne sont sinon relus
+qu'au démarrage. Mais le remède n'est pas un correctif R2 : `PageShell` exclut
+**volontairement** les états de données de son périmètre (son en-tête le dit), et
+envelopper l'écran dans un `RefreshIndicator` réintroduirait la tuyauterie par
+écran que le lot R retire. `R1` a traité son manque analogue — pas d'état
+loading/error — en le **consignant** dans la fiche `ELV-02`, sans code. R2 fait
+pareil : la dette est écrite dans la fiche `TUT-01` §6, avec la piste propre
+(une prise `onRafraichir` optionnelle de `PageShell`, à trancher explicitement
+puisqu'elle touche cette frontière, et utile aussi à `ELV-02` et aux écrans
+R3/R4).
+
+### Ce qui n'a délibérément pas bougé
+
+- **`NavShell` n'est toujours pas câblé au routeur.** R1 l'avait classé « un
+  chantier à part » ; R2 confirme. Le tuteur a quatre destinations, le routeur
+  n'a aucun `StatefulShellRoute`, et l'ajouter couvrirait tous les rôles à barre
+  d'un coup : ça éclaterait « un sous-lot par commit » et forcerait une reprise à
+  R3/R4. Après R2, la racine du rôle tuteur est refondue mais n'offre toujours
+  aucune navigation de premier niveau. Son sous-lot naturel est R3, avec
+  `ENS-02` / `ADM-01`, ou après.
+- **Aucun `.sql` touché.** Le harnais lit exactement les mêmes octets qu'avant R2.
+- **`docs/produit/parcours-utilisateurs.md`** n'est pas modifié : la fiche `TUT-01`
+  y décrit toujours les cinq états de l'enfant, que la reprise respecte.
+
+### Mesures de fin de sous-lot R2
+
+| Contrôle | Résultat | Après R1, pour mémoire |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème | aucun problème |
+| `flutter test` | **422 tests**, tous verts | 420 |
+| `dart run tool/verifier_jetons.dart` | **94 fichiers**, aucune violation | 94 |
+| `scenarios_etape3.sql` | 34 contrôles verts | 34 |
+| `scenarios_etape4.sql` | 39 contrôles verts | 39 |
+
+Rejoués sur un conteneur `postgres:17-alpine` neuf. Le compte de fichiers du
+vérificateur ne bouge pas : R2 n'ajoute aucun fichier `.dart` à `lib/`, et
+`strings.g.dart` reste hors de son balayage.
+
 ---
 
 ## Mesures relevées à l'étape 2 — état d'avant la refonte

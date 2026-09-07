@@ -10,7 +10,9 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
-import 'package:rewayah_academy/core/widgets/bento_tile.dart';
+import 'package:rewayah_academy/core/widgets/child_card.dart';
+import 'package:rewayah_academy/core/widgets/page_shell.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 
 import '../support/harnais.dart';
@@ -80,9 +82,10 @@ Widget _ecran() => AccueilFamillePage(horloge: () => _maintenant);
 /// Une fenetre haute, le temps d'un test.
 ///
 /// Un foyer de deux enfants, ses deux blocs secondaires et son bloc d'acces
-/// depassent l'ecran d'un telephone, et un `ListView` ne construit pas ce qui
-/// n'est pas visible : sans cette fenetre, le test mesure la hauteur du
-/// viewport et non le contenu de l'ecran. Meme piege qu'a `ENS-02` en L6.
+/// depassent l'ecran d'un telephone. `PageShell` construit tout son contenu
+/// d'un coup (contrairement a un `ListView`), mais un widget hors du viewport
+/// ne se laisse pas taper : sans cette fenetre, les tests qui tapent une action
+/// echoueraient. Meme piege qu'a `ENS-02` en L6.
 void _fenetreHaute(WidgetTester tester) {
   tester.view.physicalSize = const Size(1200, 2400);
   tester.view.devicePixelRatio = 1;
@@ -109,6 +112,10 @@ Future<void> _monter(
           builder: (BuildContext _, GoRouterState _) => const Text('TUT-02'),
         ),
         GoRoute(
+          path: Routes.tuteurAjouterEnfant,
+          builder: (BuildContext _, GoRouterState _) => const Text('TUT-02/a'),
+        ),
+        GoRoute(
           path: Routes.tuteurReglages,
           builder: (BuildContext _, GoRouterState _) => const Text('TUT-05'),
         ),
@@ -127,9 +134,26 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
+/// La decoration du `Container` le plus externe d'une carte enfant : celui
+/// d'`AppCard`, qui porte la surface de la carte. Les autres `Container` de la
+/// carte (pastille, bouton) viennent apres dans l'ordre de l'arbre.
+BoxDecoration _decoCarte(WidgetTester tester) {
+  final Container carte = tester
+      .widgetList<Container>(
+        find.descendant(
+          of: find.byType(ChildCard),
+          matching: find.byType(Container),
+        ),
+      )
+      .first;
+  return carte.decoration! as BoxDecoration;
+}
+
 void main() {
-  group('TUT-01 : les cinq etats, une ligne par enfant', () {
-    testWidgets('un cours en direct porte la pastille verte et Assister', (
+  final AppPalette palette = AppPalette.claire();
+
+  group('TUT-01 : les cinq phases, une carte par enfant', () {
+    testWidgets('un cours en direct : pastille verte, Assister, carte posee', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -156,17 +180,30 @@ void main() {
         find.text(t.tuteur.accueil.depuisMinutes(minutes: '12')),
         findsOneWidget,
       );
+
+      // Le bouton de confiance, cable.
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
         find.byType(ActionPrincipale),
       );
       expect(bouton.libelle, t.tuteur.accueil.assister);
       expect(bouton.onPress, isNotNull);
-      // La ligne bascule sur la surface d'accent, comme le bloc en direct de
-      // `ELV-02` : les deux ecrans disent la meme chose du meme cours.
-      final BentoTile ligne = tester.widget<BentoTile>(
-        find.byType(BentoTile).first,
+
+      // La pastille verte accompagne la phrase : une couleur seule ne porte
+      // jamais un etat.
+      final StatusPill pastille = tester.widget<StatusPill>(
+        find.byType(StatusPill),
       );
-      expect(ligne.surface, AppPalette.claire().surfacePrimary);
+      expect(pastille.ton, TonEtat.succes);
+
+      // Comme le bloc en direct d'`ELV-02` repris : la carte redevient une
+      // surface posee, seul le bouton porte l'aplat sature. Deux enfants en
+      // cours ne font donc plus deux zones pleines
+      // (`docs/design/01-systeme-visuel.md` section 3).
+      expect(_decoCarte(tester).color, palette.surfaceRaised.background);
+      expect(
+        _decoCarte(tester).color,
+        isNot(palette.surfacePrimary.background),
+      );
     });
 
     testWidgets('hors seance, Assister n est pas rendu du tout', (
@@ -192,41 +229,41 @@ void main() {
         findsOneWidget,
       );
       expect(find.byType(ActionPrincipale), findsNothing);
-      final BentoTile ligne = tester.widget<BentoTile>(
-        find.byType(BentoTile).first,
-      );
-      expect(ligne.surface, AppPalette.claire().surfaceCanvas);
+      expect(_decoCarte(tester).color, palette.surfaceRaised.background);
     });
 
-    testWidgets('rien aujourd hui : le prochain cours est date', (
-      WidgetTester tester,
-    ) async {
-      final DateTime jeudi = _maintenant.add(const Duration(days: 2));
-      await _monter(
-        tester,
-        appairage: FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_enfant()],
-        planning: FauxServicePlanning()
-          ..seancesRendues = <Seance>[_cours(debut: jeudi)]
-          ..affectationsRendues = <Affectation>[_affectation()],
-      );
+    testWidgets(
+      'rien aujourd hui : le prochain cours est date, sans preambule',
+      (WidgetTester tester) async {
+        final DateTime jeudi = _maintenant.add(const Duration(days: 2));
+        await _monter(
+          tester,
+          appairage: FauxServiceAppairage()
+            ..elevesRendus = <EleveDuFoyer>[_enfant()],
+          planning: FauxServicePlanning()
+            ..seancesRendues = <Seance>[_cours(debut: jeudi)]
+            ..affectationsRendues = <Affectation>[_affectation()],
+        );
 
-      expect(find.text(t.tuteur.accueil.rienAujourdhui), findsOneWidget);
-      // Date et heure, contrairement a `ELV-02` qui compte en jours : le parent
-      // organise sa semaine, l'enfant attend son cours.
-      expect(
-        find.text(
-          t.tuteur.accueil.unAutreJour(
-            jour: t.disponibilites.joursLongs[jeudi.weekday - 1],
-            heure: '17:00',
-            prenom: 'Aminata',
+        // Date et heure, contrairement a `ELV-02` qui compte en jours : le parent
+        // organise sa semaine, l'enfant attend son cours.
+        expect(
+          find.text(
+            t.tuteur.accueil.unAutreJour(
+              jour: t.disponibilites.joursLongs[jeudi.weekday - 1],
+              heure: '17:00',
+              prenom: 'Aminata',
+            ),
           ),
-        ),
-        findsOneWidget,
-      );
-    });
+          findsOneWidget,
+        );
+        // La reprise laisse tomber le preambule « Rien aujourd'hui » : la carte
+        // affiche directement le rendez-vous date.
+        expect(find.text(t.tuteur.accueil.rienAujourdhui), findsNothing);
+      },
+    );
 
-    testWidgets('sans enseignant, la ligne dit depuis quand le foyer attend', (
+    testWidgets('sans enseignant, la carte dit depuis quand le foyer attend', (
       WidgetTester tester,
     ) async {
       final FauxServicePlanning planning = FauxServicePlanning()
@@ -252,7 +289,12 @@ void main() {
         planning: planning,
       );
 
+      // Le libelle de la pastille neutre.
       expect(find.text(t.tuteur.accueil.enRecherche), findsOneWidget);
+      final StatusPill pastille = tester.widget<StatusPill>(
+        find.byType(StatusPill),
+      );
+      expect(pastille.ton, TonEtat.neutre);
       // La plus ancienne des heures proposees, pas la derniere : c'est
       // l'anciennete sur laquelle `ENS-06` trie son feed.
       expect(
@@ -275,6 +317,7 @@ void main() {
         find.text(t.tuteur.accueil.sansCreneau(prenom: 'Amina')),
         findsOneWidget,
       );
+      await tester.ensureVisible(find.text(t.tuteur.accueil.poserDesHeures));
       await tester.tap(find.text(t.tuteur.accueil.poserDesHeures));
       await tester.pumpAndSettle();
 
@@ -300,13 +343,19 @@ void main() {
           ..affectationsRendues = <Affectation>[_affectation()],
       );
 
+      // Le motif tient en une phrase : quel cours n'aura pas lieu.
       expect(
         find.text(t.tuteur.accueil.annulee(heure: '17:30')),
         findsOneWidget,
       );
-      // Le motif est le statut dit en clair, jamais sa valeur SQL : le tuteur
-      // est un adulte, mais ce n'est pas un lecteur de base de donnees.
-      expect(find.text(t.tuteur.accueil.motifAnnulee), findsOneWidget);
+      // Le statut « Annule » vit maintenant dans la pastille, pas dans une
+      // phrase, et jamais dans sa valeur SQL : le tuteur est un adulte, mais
+      // pas un lecteur de base de donnees.
+      final StatusPill pastille = tester.widget<StatusPill>(
+        find.byType(StatusPill),
+      );
+      expect(pastille.libelle, t.etat.annule);
+      expect(pastille.ton, TonEtat.alerte);
       expect(find.textContaining(StatutSeance.annulee.valeurSql), findsNothing);
       expect(
         find.text(
@@ -318,9 +367,78 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets('deux enfants en direct : deux cartes posees, aucun aplat', (
+      WidgetTester tester,
+    ) async {
+      // L'ancien ecran posait la ligne en cours sur un aplat `surfacePrimary`
+      // plein : deux enfants en cours donnaient deux zones pleines. Chaque
+      // carte est desormais posee, l'aplat sature ne vit que dans le bouton.
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[
+            _enfant(),
+            _enfant(id: 'e2', prenom: 'Ibrahim'),
+          ],
+        planning: FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(
+              debut: _maintenant.subtract(const Duration(minutes: 5)),
+              statut: StatutSeance.enCours,
+            ),
+            _cours(
+              id: 's2',
+              eleveId: 'e2',
+              debut: _maintenant.subtract(const Duration(minutes: 3)),
+              statut: StatutSeance.enCours,
+            ),
+          ]
+          ..affectationsRendues = <Affectation>[
+            _affectation(),
+            _affectation(eleveId: 'e2'),
+          ],
+      );
+
+      expect(find.byType(ChildCard), findsNWidgets(2));
+      // La surface propre de chaque carte, c'est-a-dire le `Container` le plus
+      // externe (celui d'`AppCard`), pas le fond du bouton qui vit dedans.
+      for (int i = 0; i < 2; i++) {
+        final Container carte = tester
+            .widgetList<Container>(
+              find.descendant(
+                of: find.byType(ChildCard).at(i),
+                matching: find.byType(Container),
+              ),
+            )
+            .first;
+        final BoxDecoration deco = carte.decoration! as BoxDecoration;
+        expect(deco.color, palette.surfaceRaised.background);
+        expect(deco.color, isNot(palette.surfacePrimary.background));
+      }
+    });
   });
 
   group('TUT-01 : ce que le foyer lit autour des enfants', () {
+    testWidgets('l ecran passe par PageShell et porte la section de gestion', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[_enfant()],
+        planning: FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(debut: _maintenant.add(const Duration(days: 2))),
+          ]
+          ..affectationsRendues = <Affectation>[_affectation()],
+      );
+
+      expect(find.byType(PageShell), findsOneWidget);
+      expect(find.text(t.tuteur.accueil.titre), findsOneWidget);
+      expect(find.text(t.tuteur.accueil.gererLeFoyer), findsOneWidget);
+    });
+
     testWidgets('la date de fin d acces se lit enfant par enfant', (
       WidgetTester tester,
     ) async {
@@ -358,6 +476,7 @@ void main() {
         planning: FauxServicePlanning(),
       );
 
+      await tester.ensureVisible(find.text(t.tuteur.accueil.blocReglages));
       await tester.tap(find.text(t.tuteur.accueil.blocReglages));
       await tester.pumpAndSettle();
       expect(find.text('TUT-05'), findsOneWidget);
@@ -377,7 +496,7 @@ void main() {
     });
   });
 
-  group('TUT-01 : l etat se decide sans monter d ecran', () {
+  group('TUT-01 : la phase se decide sans monter d ecran', () {
     final Seance enCours = _cours(
       debut: _maintenant.subtract(const Duration(minutes: 10)),
       statut: StatutSeance.enCours,
@@ -385,24 +504,24 @@ void main() {
 
     test('sans affectation et sans cours, l enfant est en recherche', () {
       expect(
-        etatEnfant(
+        phaseEnfant(
           prochain: null,
           annulee: null,
           affecte: false,
           maintenant: _maintenant,
         ),
-        EtatEnfant.enRecherche,
+        PhaseEnfant.enRecherche,
       );
       // Affecte mais sans seance materialisee : ce n'est pas une recherche,
       // c'est une semaine qui n'est pas encore posee.
       expect(
-        etatEnfant(
+        phaseEnfant(
           prochain: null,
           annulee: null,
           affecte: true,
           maintenant: _maintenant,
         ),
-        EtatEnfant.rienAujourdhui,
+        PhaseEnfant.rienAujourdhui,
       );
     });
 
@@ -410,13 +529,13 @@ void main() {
       // Un enfant dont l'enseignant vient de changer garde ses seances : dire
       // « en recherche » au-dessus d'un cours qui se tient serait faux.
       expect(
-        etatEnfant(
+        phaseEnfant(
           prochain: enCours,
           annulee: null,
           affecte: false,
           maintenant: _maintenant,
         ),
-        EtatEnfant.enCours,
+        PhaseEnfant.enCours,
       );
     });
 
@@ -432,16 +551,16 @@ void main() {
       );
 
       expect(
-        etatEnfant(
+        phaseEnfant(
           prochain: plusTard,
           annulee: annuleeTot,
           affecte: true,
           maintenant: _maintenant,
         ),
-        EtatEnfant.seanceAnnulee,
+        PhaseEnfant.seanceAnnulee,
       );
       expect(
-        etatEnfant(
+        phaseEnfant(
           prochain: _cours(debut: _maintenant.add(const Duration(minutes: 30))),
           annulee: _cours(
             id: 's4',
@@ -451,7 +570,7 @@ void main() {
           affecte: true,
           maintenant: _maintenant,
         ),
-        EtatEnfant.coursAujourdhui,
+        PhaseEnfant.coursAujourdhui,
       );
     });
 

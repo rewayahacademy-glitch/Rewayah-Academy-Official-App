@@ -1499,6 +1499,9 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Un nouveau cours vous sera proposé.'
 	String get proposeAucun => 'Un nouveau cours vous sera proposé.';
 
+	/// fr: 'Gérer le foyer'
+	String get gererLeFoyer => 'Gérer le foyer';
+
 	/// fr: 'Appareils du foyer'
 	String get blocAppareils => 'Appareils du foyer';
 
@@ -2097,6 +2100,7 @@ extension on Traductions {
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
+			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',

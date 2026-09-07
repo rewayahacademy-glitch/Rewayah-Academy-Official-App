@@ -27,7 +27,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `TUT-01` | Accueil famille | Tuteur | C | 0 | `/tuteur` | Liste de `ChildCard` | 2 à 3 colonnes + colonne « à confirmer » | construit, **à reprendre** |
+| `TUT-01` | Accueil famille | Tuteur | C | 0 | `/tuteur` | Liste de `ChildCard` | 2 à 3 colonnes + colonne « à confirmer » | **repris (R2)**, fiche §6 |
 | `TUT-02` | Foyer et appareils | Tuteur | C | 1 | `/tuteur/foyer` | Deux listes denses | Deux colonnes | construit |
 | `TUT-02/a` | Ajouter un enfant | Tuteur | C | 2 | `/tuteur/foyer/ajouter-enfant` | Parcours | Feuille latérale | construit |
 | `TUT-02/b` | Appairer un appareil | Tuteur | C | 2 | `/tuteur/foyer/appairer/:id` | Page, QR grand format | Page centrée | construit |
@@ -79,7 +79,8 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 ## 2. Ce que le registre révèle
 
 Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent sont à
-reprendre par le lot R : `ELV-02` (fait, R1), `TUT-01`, `ENS-02` et `ADM-01`.
+reprendre par le lot R : `ELV-02` (fait, R1), `TUT-01` (fait, R2), `ENS-02` et
+`ADM-01`.
 
 Le point à ne pas rater : **`ENS-06` emploie des onglets sur desktop alors qu'il
 a la place d'afficher les deux panneaux**. Un onglet sur un écran de 1440 pixels
@@ -166,7 +167,7 @@ les portent.
 | **T** | aucun | Jetons, thème, typographie, mouvement. Reprendre un écran avant obligerait à le reprendre deux fois |
 | **C** | aucun | Les douze composants P0 de `07-catalogue-composants.md`, et leur galerie |
 | **R1** | `ELV-02` | **fait le 7 septembre 2026.** C'est l'écran montré à l'opérateur, et le plus simple : deux blocs. Il sert de preuve du système |
-| **R2** | `TUT-01` | Il porte `ChildCard`, composant du domaine famille |
+| **R2** | `TUT-01` | **fait le 8 septembre 2026.** Il porte `ChildCard`, composant du domaine famille |
 | **R3** | `ENS-02`, `ADM-01` | Les deux tableaux de bord denses, une fois que `StatTile`, `SignalRow` et `TimelineRow` existent |
 | **R4** | `TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06` | Le reste de l'existant |
 | **N** | les onze écrans manquants | Chacun avec sa fiche remplie d'abord |
@@ -264,3 +265,150 @@ que la reprise a corrigé :
 - sous mouvement réduit, la pulsation était simplement arrêtée. Elle est
   désormais **remplacée** par une bordure `borderStrong` fixe, portée par une
   nouvelle prise `contourFort` de `BentoTile`, jumelle de celle d'`AppCard`.
+
+### `TUT-01` Accueil famille
+
+```
+CODE              TUT-01
+Nom               Accueil famille
+Role              Tuteur
+Zone              Foyer
+Niveau de charge  C
+Ecran parent      aucun : racine du role
+Profondeur        0
+Question          Comment va chacun de mes enfants aujourd'hui, et qu'ai-je a
+                  confirmer ?
+
+Priorites         P0  l'etat en direct de chaque enfant, une carte par enfant
+                  P0  l'entree en observateur muet pendant une seance en cours
+                  P1  la date de fin d'acces de chaque enfant, qui tient lieu de
+                      portefeuille en MVP-0
+                  P1  l'acces aux appareils et aux reglages par enfant
+
+Action principale     Assister : rendue seulement pendant une seance en cours de
+                      l'enfant. Entre en observateur muet, et l'enseignant le
+                      voit arriver
+Actions secondaires   Proposer des heures : sur la seule carte "aucune heure
+                      proposee"
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Liste de ChildCard, puis section "Gerer le foyer"
+Tablette          Identique, gouttiere du gabarit
+Desktop           Identique, colonne centree et bornee a 1200. La mise en deux ou
+                  trois colonnes et la colonne "a confirmer" du paragraphe 1 ne
+                  sont pas implementees : reporte, comme le desktop multi-colonnes
+                  d'ELV-02. Le lot R porte le langage des lots T et C, pas les
+                  presentations de 05-regles-responsive.md
+
+Etats (carte d'un enfant, cinq phases decidees par phaseEnfant, fonction pure)
+  en cours              ChildCard posee surfaceRaised, pastille StatusPill verte
+                        "En direct", prenom de l'enseignant, minuteur ecoule,
+                        bouton "Assister" en surfacePrimary. Jamais un aplat
+                        plein : deux enfants en cours ne font pas deux zones
+                        pleines (01-systeme-visuel.md section 3)
+  cours a venir         ChildCard posee, "Aujourd'hui a {heure}, avec {prenom}",
+  aujourd'hui           aucune action
+  rien aujourd'hui      ChildCard posee, le prochain rendez-vous date ("{jour} a
+                        {heure}, avec {prenom}"), ou, quand la semaine n'est pas
+                        encore posee, "Aucun cours programme pour l'instant". Le
+                        preambule "Rien aujourd'hui" de l'ecran d'avant est
+                        retire : la carte dit directement le prochain rendez-vous,
+                        ce que le catalogue nomme "Rien aujourd'hui : prochain
+                        cours date"
+  en recherche          ChildCard posee, encre inkMuted, pastille neutre "En
+                        recherche d'un enseignant", "Demande deposee le {date}"
+                        ou, sans date datable, "Un enseignant prendra {prenom} en
+                        charge parmi les heures proposees"
+  aucune heure          ChildCard washWarning + contour borderStrong, "Aucune
+  proposee              heure proposee pour {prenom}", bouton "Proposer des
+                        heures". La phrase de consequence de l'ecran d'avant
+                        ("Sans creneau, aucun enseignant ne peut...") n'est plus
+                        rendue : l'etat scelle EnfantSansPlanning ne porte que
+                        ce que 07-catalogue-composants.md section 3 lui fixe
+  seance annulee        ChildCard washAlert, pastille alerte "Annule", motif en
+                        une phrase ("Le cours de {heure} n'aura pas lieu", ou
+                        "Seance annulee peu avant l'heure" pour une annulation
+                        tardive), et ce qui est propose. Le libelle de statut
+                        "Seance annulee" de l'ecran d'avant est porte par la
+                        pastille, plus par une ligne
+  loading / error       pas d'etat dedie : une lecture en echec des enfants, des
+                        seances ou des affectations affiche une phrase d'alerte
+                        sous les cartes ; une lecture qui tarde retombe sur
+                        l'etat nominal, y compris le transitoire "en recherche ->
+                        aucune heure" pendant que les creneaux se chargent. Meme
+                        dette assumee qu'ELV-02
+  hors ligne            le bandeau OfflineBanner de PageShell coiffe la page.
+                        L'etat hors ligne par carte de ChildCard n'est pas cable :
+                        distinguer donnee volatile et donnee stable par enfant
+                        depasse la reprise
+
+Mouvement         aucun propre a l'ecran. La carte imminente de ChildCard ne
+                  pulse pas : une seule zone pulse par produit, c'est ELV-02
+
+Invariants        une carte par enfant, aucune statistique decorative : le tuteur
+                  n'a pas le tableau de bord d'un gestionnaire (03 section 6)
+                  "Assister" entre en observateur muet, et l'enseignant le voit
+                  arriver
+                  "Assister" n'est rendu que pendant une seance en cours
+                  une seule zone pleine par ecran : aucune carte n'est un aplat
+                  surfacePrimary, seul le bouton "Assister" l'est
+                  le motif d'une annulation est une phrase humaine, jamais la
+                  valeur SQL du statut
+                  rien ne se ferme sur minuterie
+                  la carte n'est pas cliquable : TUT-01 n'a pas d'ecran de detail
+                  par enfant, et 07 section 4 interdit une affordance qui ne mene
+                  nulle part. Le chevron de la ligne "Normal" du catalogue 07
+                  section 3 est une prise du composant, honoree le jour ou un
+                  ecran de suivi par enfant existera
+
+Accessibilite     cibles a 44 en mode standard
+                  chaque ChildCard porte un libelle parle : prenom, etat, detail
+                  les cartes se lisent de droite a gauche en arabe
+                  a 200 % de taille de texte, les cartes grandissent, aucun texte
+                  rogne
+```
+
+Reprise faite le 8 septembre 2026, sous-lot R2. Ce que le code portait avant, et
+que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold` avec `OfflineBanner`, `RefreshIndicator`
+  et `ListView`. Il passe par `PageShell` : fond crème, gouttière du gabarit,
+  colonne centrée et bornée à 1200, titre d'écran, bandeau hors ligne ;
+- ses lignes d'enfant étaient un `BentoTile` portant un `switch` d'états dans
+  l'écran. Elles passent par `ChildCard` : l'écran ne décide plus que **quelle**
+  phase, par la fonction pure `phaseEnfant` (renommage de l'ancien `etatEnfant`,
+  pour éviter la collision avec le `EtatEnfant` scellé de `ChildCard`), et un
+  mapper traduit la phase en état visuel avec les phrases mises en forme ;
+- la pastille « en direct » était un `Container` décoré posé dans l'écran. Elle
+  passe par `StatusPill`, portée par la carte. Conséquence de fond, la même qu'à
+  `ELV-02` : le cours en direct n'est plus un aplat `surfacePrimary` plein mais
+  une carte posée, seul son bouton porte l'aplat ;
+- une `SectionHeader` « Gérer le foyer » sépare les cartes des blocs secondaires
+  (appareils, réglages, accès), qui restent des `BentoTile` comme le bloc Coran
+  d'`ELV-02`. Nouvelle clé `t.tuteur.accueil.gererLeFoyer` ;
+- deux règles ajoutées à `verifier_jetons.dart` avec la reprise, comme le lot C
+  l'avait prévu : aucun `Container` décoré dans `lib/features/`, aucun
+  `showDialog` hors de `ConfirmDestructive`. Zéro occurrence de l'un et de
+  l'autre après la reprise.
+
+Dettes assumées et écarts reportés, sur le modèle de la dette loading/error
+d'`ELV-02` :
+
+- **le tirage-pour-rafraîchir disparaît.** L'ancien écran portait un
+  `RefreshIndicator` qui invalidait les trois providers ; `PageShell` ne porte
+  volontairement pas d'état de données, et l'envelopper dans un `RefreshIndicator`
+  réintroduirait la tuyauterie par écran que le lot R retire. `seancesProvider`
+  et `affectationsProvider` ne sont alors relus qu'au démarrage de l'application,
+  ou après édition des disponibilités, chemin hors du parcours tuteur. Un
+  rétablissement propre est une **prise `onRafraichir` optionnelle de
+  `PageShell`** : évolution de composant à trancher explicitement, puisqu'elle
+  touche la frontière « ni les états de données » de son en-tête, et utile aussi
+  à `ELV-02` et aux écrans R3/R4 ;
+- desktop multi-colonnes et colonne « à confirmer » du §1 : non implémentés,
+  reportés, comme pour `ELV-02` ;
+- **`NavShell` n'est toujours pas câblé au routeur**, comme R1 l'avait laissé.
+  Après R2, la racine du rôle tuteur est refondue mais n'offre toujours aucune
+  navigation de premier niveau vers Disponibilités, Réglages ou Suivi. Le câblage
+  demande un `StatefulShellRoute` couvrant tous les rôles à barre : c'est son
+  propre sous-lot, à traiter avec `ENS-02` / `ADM-01` (R3) ou après.

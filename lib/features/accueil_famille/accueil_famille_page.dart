@@ -12,29 +12,35 @@ import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/child_card.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/section_header.dart';
 
-/// Ce que la ligne d'un enfant annonce sur `TUT-01`.
+/// La phase de vie d'un enfant du foyer, a un instant donne.
 ///
-/// Les cinq etats sont ceux que la fiche produit tabule, dans son ordre : en
-/// cours, cours a venir aujourd'hui, rien aujourd'hui, en recherche
-/// d'enseignant, seance annulee
-/// (`docs/produit/parcours-utilisateurs.md`, fiche `TUT-01`).
-enum EtatEnfant {
-  /// Le cours se tient maintenant. Seul etat qui porte « Assister ».
+/// Cinq phases, celles que la fiche produit tabule
+/// (`docs/produit/parcours-utilisateurs.md`, fiche `TUT-01`) : en cours, cours a
+/// venir aujourd'hui, rien aujourd'hui, en recherche d'enseignant, seance
+/// annulee.
+///
+/// Le nom evite la collision avec `EtatEnfant` de `child_card.dart`, et la
+/// distinction est reelle : `PhaseEnfant` **decide** de ce qui se passe,
+/// `EtatEnfant` **affiche** avec les phrases deja mises en forme. Le passage de
+/// l'une a l'autre est [_CarteEnfant._etat].
+enum PhaseEnfant {
+  /// Le cours se tient maintenant. Seule phase qui porte « Assister ».
   enCours,
 
   /// Un cours plus tard dans la journee.
   coursAujourdhui,
 
-  /// Rien aujourd'hui. Le prochain cours se dit avec sa date.
+  /// Rien aujourd'hui. Le prochain cours se dit avec sa date, ou, quand la
+  /// semaine n'est pas encore posee, sans date.
   rienAujourdhui,
 
   /// Aucun enseignant ne suit encore cet enfant.
@@ -44,9 +50,9 @@ enum EtatEnfant {
   seanceAnnulee,
 }
 
-/// L'etat d'un enfant, a un instant donne.
+/// La phase d'un enfant, a un instant donne.
 ///
-/// Fonction pure, comme `etatAccueilEleve` : les cinq etats se verifient sans
+/// Fonction pure, comme `etatAccueilEleve` : les cinq phases se verifient sans
 /// monter d'ecran. [prochain] vient de `prochainCours`, qui ecarte deja les
 /// seances annulees, et [annulee] de `seanceAnnuleeDuJour`. Les deux ecrans
 /// lisent donc la meme seance par les memes fonctions : `ELV-02` et `TUT-01`
@@ -57,7 +63,7 @@ enum EtatEnfant {
 /// enfant dont l'enseignant vient de changer garde des seances planifiees :
 /// afficher « en recherche d'un enseignant » au-dessus d'un cours qui commence
 /// dans dix minutes serait faux, et inquietant.
-EtatEnfant etatEnfant({
+PhaseEnfant phaseEnfant({
   required Seance? prochain,
   required Seance? annulee,
   required bool affecte,
@@ -65,17 +71,17 @@ EtatEnfant etatEnfant({
 }) {
   if (annulee != null &&
       (prochain == null || annulee.debut.isBefore(prochain.debut))) {
-    return EtatEnfant.seanceAnnulee;
+    return PhaseEnfant.seanceAnnulee;
   }
   if (prochain == null) {
-    return affecte ? EtatEnfant.rienAujourdhui : EtatEnfant.enRecherche;
+    return affecte ? PhaseEnfant.rienAujourdhui : PhaseEnfant.enRecherche;
   }
   if (prochain.enCoursA(maintenant)) {
-    return EtatEnfant.enCours;
+    return PhaseEnfant.enCours;
   }
   return _memeJour(prochain.debut, maintenant)
-      ? EtatEnfant.coursAujourdhui
-      : EtatEnfant.rienAujourdhui;
+      ? PhaseEnfant.coursAujourdhui
+      : PhaseEnfant.rienAujourdhui;
 }
 
 /// Depuis quand ce foyer attend un enseignant.
@@ -97,13 +103,23 @@ DateTime? attendDepuis(List<Creneau> creneaux) {
 
 /// `TUT-01` : l'accueil du foyer.
 ///
-/// **Bloc dominant : l'etat en direct de chaque enfant, une ligne par enfant.**
-/// Le bouton « Assister » n'est rendu que pendant une seance en cours ; il entre
+/// **Bloc dominant : l'etat en direct de chaque enfant, une carte par enfant**,
+/// portee par `ChildCard` (`docs/design/07-catalogue-composants.md` section 3).
+/// Le bouton « Assister » n'est cable que pendant une seance en cours ; il entre
 /// en observateur muet, et c'est la fonction de confiance la plus forte du
 /// produit (`docs/produit/parcours-utilisateurs.md`).
 ///
-/// Blocs secondaires : les appareils, les reglages par enfant, et la date de fin
-/// d'acces de chaque enfant, qui tient lieu de portefeuille en MVP-0.
+/// Sous les cartes, une section « Gerer le foyer » : les appareils, les reglages
+/// par enfant, et la date de fin d'acces de chaque enfant, qui tient lieu de
+/// portefeuille en MVP-0.
+///
+/// Repris au lot R (sous-lot R2) : l'ecran passe par `PageShell` au lieu de son
+/// `Scaffold` propre, ses lignes deviennent des `ChildCard`, et la pastille
+/// « en direct » qui etait un `Container` decore passe par `StatusPill`, portee
+/// par la carte. La consequence de fond, la meme qu'a `ELV-02` : le cours en
+/// direct n'est plus un aplat `surfacePrimary` plein mais une carte posee, seul
+/// son bouton porte l'aplat sature, et deux enfants en cours ne font donc plus
+/// deux zones pleines (`docs/design/01-systeme-visuel.md` section 3).
 class AccueilFamillePage extends ConsumerStatefulWidget {
   /// Cree l'accueil du foyer.
   const AccueilFamillePage({super.key, this.horloge = DateTime.now});
@@ -143,7 +159,6 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
@@ -159,83 +174,74 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
     final List<Seance> toutes = seances.value ?? const <Seance>[];
     final List<Affectation> liens = affectations.value ?? const <Affectation>[];
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  ref
-                    ..invalidate(elevesDuFoyerProvider)
-                    ..invalidate(seancesProvider)
-                    ..invalidate(affectationsProvider);
-                },
-                child: ListView(
-                  padding: EdgeInsets.all(metriques.marge),
-                  children: <Widget>[
-                    Text(t.tuteur.accueil.titre, style: textes.headlineSmall),
-                    Ecart.vLg,
-                    if (enfants.hasValue && foyer.isEmpty)
-                      EmptyState(
-                        message: t.tuteur.accueil.aucunEnfant,
-                        invitation: t.tuteur.accueil.aucunEnfantDetail,
-                        libelleAction: t.enfant.titre,
-                        onAction: () =>
-                            GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-                      )
-                    else
-                      for (final EleveDuFoyer enfant in foyer)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                          child: _LigneEnfant(
-                            enfant: enfant,
-                            seances: toutes
-                                .where((Seance s) => s.eleveId == enfant.id)
-                                .toList(),
-                            affecte: liens.any(
-                              (Affectation a) =>
-                                  a.active && a.eleveId == enfant.id,
-                            ),
-                            maintenant: _maintenant,
-                          ),
-                        ),
-                    if (seances.hasError ||
-                        enfants.hasError ||
-                        affectations.hasError) ...<Widget>[
-                      Ecart.vSm,
-                      Text(
-                        t.tuteur.accueil.erreur,
-                        // L'encre d'alerte, jamais la paire : `surfaceAlert`
-                        // ecrit en blanc, illisible sur la page.
-                        style: palette.inkAlert.applyTo(
-                          textes.bodySmall ?? const TextStyle(),
-                        ),
-                      ),
-                    ],
-                    Ecart.vXl,
-                    const _BlocAppareils(),
-                    Ecart.vMd,
-                    const _BlocReglages(),
-                    if (foyer.isNotEmpty) ...<Widget>[
-                      Ecart.vXl,
-                      _BlocAcces(enfants: foyer),
-                    ],
-                  ],
+    final bool enErreur =
+        seances.hasError || enfants.hasError || affectations.hasError;
+
+    // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
+    // colonne centree et bornee a 1200, le titre d'ecran et le bandeau hors
+    // ligne. L'ecran ne rend plus que son contenu.
+    return PageShell(
+      titre: t.tuteur.accueil.titre,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (enfants.hasValue && foyer.isEmpty)
+            EmptyState(
+              message: t.tuteur.accueil.aucunEnfant,
+              invitation: t.tuteur.accueil.aucunEnfantDetail,
+              libelleAction: t.enfant.titre,
+              onAction: () =>
+                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+            )
+          else
+            for (final EleveDuFoyer enfant in foyer)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                child: _CarteEnfant(
+                  enfant: enfant,
+                  seances: toutes
+                      .where((Seance s) => s.eleveId == enfant.id)
+                      .toList(),
+                  affecte: liens.any(
+                    (Affectation a) => a.active && a.eleveId == enfant.id,
+                  ),
+                  maintenant: _maintenant,
                 ),
+              ),
+          if (enErreur) ...<Widget>[
+            Ecart.vSm,
+            Text(
+              t.tuteur.accueil.erreur,
+              // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
+              // blanc, illisible sur le fond de page.
+              style: palette.inkAlert.applyTo(
+                textes.bodySmall ?? const TextStyle(),
               ),
             ),
           ],
-        ),
+          Ecart.vXl,
+          SectionHeader(titre: t.tuteur.accueil.gererLeFoyer),
+          Ecart.vLg,
+          const _BlocAppareils(),
+          Ecart.vMd,
+          const _BlocReglages(),
+          if (foyer.isNotEmpty) ...<Widget>[
+            Ecart.vMd,
+            _BlocAcces(enfants: foyer),
+          ],
+        ],
       ),
     );
   }
 }
 
-/// Une ligne par enfant, dans l'un de ses cinq etats.
-class _LigneEnfant extends StatelessWidget {
-  const _LigneEnfant({
+/// Une carte par enfant, dans l'une de ses cinq phases.
+///
+/// `ConsumerWidget` parce que la phase « en recherche » a besoin des creneaux
+/// proposes pour l'enfant, et qu'ils vivent dans leur propre provider
+/// (`disponibilitesProvider`). Les quatre autres phases ne le lisent pas.
+class _CarteEnfant extends ConsumerWidget {
+  const _CarteEnfant({
     required this.enfant,
     required this.seances,
     required this.affecte,
@@ -243,228 +249,125 @@ class _LigneEnfant extends StatelessWidget {
   });
 
   final EleveDuFoyer enfant;
+
+  /// Les seances de cet enfant, deja filtrees par l'ecran.
   final List<Seance> seances;
+
   final bool affecte;
   final DateTime maintenant;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
+  Widget build(BuildContext context, WidgetRef ref) {
     final Seance? prochain = prochainCours(seances, maintenant);
     final Seance? annulee = seanceAnnuleeDuJour(seances, maintenant);
-    final EtatEnfant etat = etatEnfant(
+    final PhaseEnfant phase = phaseEnfant(
       prochain: prochain,
       annulee: annulee,
       affecte: affecte,
       maintenant: maintenant,
     );
 
-    // Une paire dit sur quoi elle s'ecrit : la surface et l'encre changent
-    // ensemble, et chaque style la traverse par `applyTo`. Un style du theme
-    // pose tel quel sur la surface d'accent y ecrirait en noir.
-    final bool enDirect = etat == EtatEnfant.enCours;
-    final AppColorPair paire = enDirect
-        ? palette.surfacePrimary
-        : palette.surfaceCanvas;
+    // Les creneaux ne sont lus que par la phase qui s'en sert : sans heure
+    // proposee, la recherche ne peut pas aboutir, et l'ecran le dit autrement.
+    final AsyncValue<List<Creneau>>? creneaux = phase == PhaseEnfant.enRecherche
+        ? ref.watch(disponibilitesProvider(enfant.id))
+        : null;
+    final List<Creneau> poses = creneaux?.value ?? const <Creneau>[];
+    final bool sansPlanning =
+        phase == PhaseEnfant.enRecherche &&
+        (creneaux?.hasValue ?? false) &&
+        poses.isEmpty;
 
-    return BentoTile(
-      surface: paire,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              if (enDirect) ...<Widget>[
-                // La pastille verte de la fiche produit. Elle accompagne la
-                // phrase, elle ne la remplace pas : une couleur seule ne porte
-                // jamais un etat.
-                Container(
-                  width: AppSpacing.md,
-                  height: AppSpacing.md,
-                  decoration: palette.surfaceSuccess.decoration(
-                    borderRadius: BorderRadius.circular(AppSpacing.md),
-                  ),
-                ),
-                Ecart.hSm,
-              ],
-              Expanded(
-                child: Text(
-                  enfant.prenom,
-                  style: paire.applyTo(textes.titleLarge ?? const TextStyle()),
-                ),
-              ),
-            ],
-          ),
-          Ecart.vSm,
-          _EtatDeLEnfant(
-            etat: etat,
-            enfant: enfant,
-            prochain: prochain,
-            annulee: annulee,
-            paire: paire,
-            maintenant: maintenant,
-          ),
-          // Le bouton n'est rendu QUE pendant une seance en cours : partout
-          // ailleurs, il n'y a pas de salle a rejoindre, et un bouton qui
-          // echoue apres le geste coute plus cher qu'un bouton absent.
-          if (enDirect && prochain != null) ...<Widget>[
-            Ecart.vMd,
-            ActionPrincipale(
-              libelle: t.tuteur.accueil.assister,
-              onPress: () => GoRouter.of(context).go(
-                Routes.salle,
-                // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-                extra: BilletSalle(
-                  sessionId: prochain.id,
-                  emisA: DateTime.now(),
-                ),
-              ),
-            ),
-          ],
-        ],
+    return ChildCard(
+      prenom: enfant.prenom,
+      etat: _etat(
+        phase: phase,
+        prochain: prochain,
+        annulee: annulee,
+        poses: poses,
+        sansPlanning: sansPlanning,
       ),
+      // `TUT-01` n'a pas d'ecran de detail par enfant : la carte n'est pas
+      // cliquable et ne porte pas de chevron, comme avant la reprise. Le chevron
+      // de la ligne « Normal » du catalogue attend un ecran de suivi par enfant
+      // (`docs/design/07-catalogue-composants.md` section 3).
+      onPoserHoraire: sansPlanning
+          ? () => GoRouter.of(context).go(Routes.tuteurDisponibilites)
+          : null,
+      // Le bouton n'est cable que pendant une seance en cours : ailleurs, il
+      // n'y a pas de salle a rejoindre, et un bouton qui echoue apres le geste
+      // coute plus cher qu'un bouton absent.
+      onAssister: phase == PhaseEnfant.enCours && prochain != null
+          ? () => GoRouter.of(context).go(
+              Routes.salle,
+              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+              extra: BilletSalle(sessionId: prochain.id, emisA: DateTime.now()),
+            )
+          : null,
     );
   }
-}
 
-/// Ce que la ligne dit, selon l'etat.
-class _EtatDeLEnfant extends StatelessWidget {
-  const _EtatDeLEnfant({
-    required this.etat,
-    required this.enfant,
-    required this.prochain,
-    required this.annulee,
-    required this.paire,
-    required this.maintenant,
-  });
+  /// Traduit une [PhaseEnfant] en `EtatEnfant`, l'etat visuel scelle de
+  /// `ChildCard`, avec les phrases mises en forme pour un adulte.
+  EtatEnfant _etat({
+    required PhaseEnfant phase,
+    required Seance? prochain,
+    required Seance? annulee,
+    required List<Creneau> poses,
+    required bool sansPlanning,
+  }) => switch (phase) {
+    PhaseEnfant.enCours => EnfantEnCours(
+      // Le prenom de l'enseignant, jamais son nom de famille (ADR-008).
+      enseignant: prochain!.enseignantPrenom,
+      depuis: _ecoule(maintenant.difference(prochain.debut)),
+    ),
+    PhaseEnfant.coursAujourdhui => EnfantProchainCours(
+      t.tuteur.accueil.aujourdhui(
+        heure: _hhmm(prochain!.debut),
+        prenom: prochain.enseignantPrenom,
+      ),
+    ),
+    // Date et heure, contrairement a `ELV-02` qui compte en jours : le parent
+    // organise sa semaine. La reprise laisse tomber le preambule « Rien
+    // aujourd'hui » : la carte affiche directement le prochain rendez-vous, ce
+    // que le catalogue nomme « Rien aujourd'hui : prochain cours date ».
+    PhaseEnfant.rienAujourdhui => EnfantProchainCours(
+      prochain == null
+          ? t.tuteur.accueil.aucunCoursPrevu
+          : t.tuteur.accueil.unAutreJour(
+              jour: t.disponibilites.joursLongs[prochain.debut.weekday - 1],
+              heure: _hhmm(prochain.debut),
+              prenom: prochain.enseignantPrenom,
+            ),
+    ),
+    PhaseEnfant.enRecherche =>
+      sansPlanning ? const EnfantSansPlanning() : _enRecherche(poses),
+    PhaseEnfant.seanceAnnulee => EnfantSeanceAnnulee(
+      // Le motif tenait sur deux registres : un libelle de statut et une
+      // phrase. `ChildCard` porte le statut dans sa pastille « Annule » ; la
+      // phrase va dans `motif`. L'annulation tardive garde sa phrase a elle,
+      // la seule difference qui compte pour un parent.
+      motif: annulee!.statut == StatutSeance.annuleeTard
+          ? t.tuteur.accueil.motifAnnuleeTard
+          : t.tuteur.accueil.annulee(heure: _hhmm(annulee.debut)),
+      propose: prochain == null
+          ? t.tuteur.accueil.proposeAucun
+          : t.tuteur.accueil.proposeApres(
+              jour: t.disponibilites.joursLongs[prochain.debut.weekday - 1],
+              heure: _hhmm(prochain.debut),
+            ),
+    ),
+  };
 
-  final EtatEnfant etat;
-  final EleveDuFoyer enfant;
-  final Seance? prochain;
-  final Seance? annulee;
-  final AppColorPair paire;
-  final DateTime maintenant;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (etat) {
-      EtatEnfant.enCours => _lignes(context, <String>[
-        t.tuteur.accueil.enCours(prenom: prochain!.enseignantPrenom),
-        _ecoule(maintenant.difference(prochain!.debut)),
-      ]),
-      EtatEnfant.coursAujourdhui => _lignes(context, <String>[
-        t.tuteur.accueil.aujourdhui(
-          heure: _hhmm(prochain!.debut),
-          prenom: prochain!.enseignantPrenom,
-        ),
-      ]),
-      EtatEnfant.rienAujourdhui => _lignes(context, <String>[
-        t.tuteur.accueil.rienAujourdhui,
-        if (prochain == null)
-          t.tuteur.accueil.aucunCoursPrevu
-        else
-          t.tuteur.accueil.unAutreJour(
-            jour: t.disponibilites.joursLongs[prochain!.debut.weekday - 1],
-            heure: _hhmm(prochain!.debut),
-            prenom: prochain!.enseignantPrenom,
-          ),
-      ]),
-      EtatEnfant.seanceAnnulee => _lignes(context, <String>[
-        t.tuteur.accueil.annulee(heure: _hhmm(annulee!.debut)),
-        // Le motif est le statut que la base a pose, dit en clair. Il n'existe
-        // aucune colonne de motif libre : en inventer une ici afficherait une
-        // phrase que personne n'a ecrite.
-        annulee!.statut == StatutSeance.annuleeTard
-            ? t.tuteur.accueil.motifAnnuleeTard
-            : t.tuteur.accueil.motifAnnulee,
-        // Et ce qui est propose a la place.
-        if (prochain == null)
-          t.tuteur.accueil.proposeAucun
-        else
-          t.tuteur.accueil.proposeApres(
-            jour: t.disponibilites.joursLongs[prochain!.debut.weekday - 1],
-            heure: _hhmm(prochain!.debut),
-          ),
-      ]),
-      EtatEnfant.enRecherche => _EnRecherche(enfant: enfant, paire: paire),
-    };
-  }
-
-  Widget _lignes(BuildContext context, List<String> phrases) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          phrases.first,
-          style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
-        ),
-        for (final String phrase in phrases.skip(1))
-          Text(
-            phrase,
-            style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
-          ),
-      ],
-    );
-  }
-}
-
-/// L'enfant attend un enseignant : depuis quand, et ce qui manque.
-class _EnRecherche extends ConsumerWidget {
-  const _EnRecherche({required this.enfant, required this.paire});
-
-  final EleveDuFoyer enfant;
-  final AppColorPair paire;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AsyncValue<List<Creneau>> creneaux = ref.watch(
-      disponibilitesProvider(enfant.id),
-    );
-    final List<Creneau> poses = creneaux.value ?? const <Creneau>[];
+  /// L'enfant attend un enseignant, et des heures sont bien proposees : depuis
+  /// quand. La plus ancienne des heures, pas la derniere, parce que c'est
+  /// l'anciennete sur laquelle `ENS-06` trie son feed.
+  EtatEnfant _enRecherche(List<Creneau> poses) {
     final DateTime? depuis = attendDepuis(poses);
-
-    // Sans heure proposee, la recherche ne peut pas aboutir : ce n'est pas une
-    // attente, c'est une etape qui manque. L'ecran le dit et donne le chemin.
-    if (creneaux.hasValue && poses.isEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            t.tuteur.accueil.sansCreneau(prenom: enfant.prenom),
-            style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
-          ),
-          Text(
-            t.tuteur.accueil.sansCreneauDetail(prenom: enfant.prenom),
-            style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: t.tuteur.accueil.poserDesHeures,
-            niveau: NiveauAction.secondaire,
-            onPress: () => GoRouter.of(context).go(Routes.tuteurDisponibilites),
-          ),
-        ],
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          t.tuteur.accueil.enRecherche,
-          style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
-        ),
-        Text(
-          depuis == null
-              ? t.tuteur.accueil.enRechercheSansDate(prenom: enfant.prenom)
-              : t.tuteur.accueil.enRechercheDepuis(date: _jour(depuis)),
-          style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
-        ),
-      ],
+    return EnfantEnRecherche(
+      depuis == null
+          ? t.tuteur.accueil.enRechercheSansDate(prenom: enfant.prenom)
+          : t.tuteur.accueil.enRechercheDepuis(date: _jour(depuis)),
     );
   }
 }

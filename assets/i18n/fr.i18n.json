@@ -435,6 +435,7 @@
       "motifAnnuleeTard": "Séance annulée peu avant l'heure",
       "proposeApres": "Prochain cours {jour} à {heure}",
       "proposeAucun": "Un nouveau cours vous sera proposé.",
+      "gererLeFoyer": "Gérer le foyer",
       "blocAppareils": "Appareils du foyer",
       "blocAppareilsDetail": "Ajouter un appareil, ou en retirer un.",
       "blocReglages": "Réglages par enfant",
