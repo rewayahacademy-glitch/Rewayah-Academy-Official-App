@@ -45,7 +45,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `ELV-02` | Accueil élève | Élève | B / C | 0 | `/eleve` | Deux blocs | Deux blocs centrés, **rien de plus** | construit, **à reprendre** |
+| `ELV-02` | Accueil élève | Élève | B / C | 0 | `/eleve` | Deux blocs | Deux blocs centrés, **rien de plus** | **repris (R1)**, fiche §6 |
 | `ENS-02` | Journée | Enseignant | D | 0 | `/enseignant/journee` | Une colonne | Colonne + panneau de détail | construit, **à reprendre** |
 | `CTR-01` | Planning global | Contrôleur | D | 0 | `/controleur` | Liste | Tableau dense | **à construire** |
 | `ELV-03` | Salle, élève | Élève | B / C | hors arbre | `/salle` | Plein écran | Vidéo + contenu | **à construire**, étape 5 |
@@ -78,8 +78,8 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 
 ## 2. Ce que le registre révèle
 
-Onze écrans sont encore `EcranAConstruire`, et trois de ceux qui existent sont à
-reprendre par le lot R : `TUT-01`, `ELV-02`, `ENS-02` et `ADM-01`.
+Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent sont à
+reprendre par le lot R : `ELV-02` (fait, R1), `TUT-01`, `ENS-02` et `ADM-01`.
 
 Le point à ne pas rater : **`ENS-06` emploie des onglets sur desktop alors qu'il
 a la place d'afficher les deux panneaux**. Un onglet sur un écran de 1440 pixels
@@ -165,8 +165,102 @@ les portent.
 | :--- | :--- | :--- |
 | **T** | aucun | Jetons, thème, typographie, mouvement. Reprendre un écran avant obligerait à le reprendre deux fois |
 | **C** | aucun | Les douze composants P0 de `07-catalogue-composants.md`, et leur galerie |
-| **R1** | `ELV-02` | C'est l'écran montré à l'opérateur, et le plus simple : deux blocs. Il sert de preuve du système |
+| **R1** | `ELV-02` | **fait le 7 septembre 2026.** C'est l'écran montré à l'opérateur, et le plus simple : deux blocs. Il sert de preuve du système |
 | **R2** | `TUT-01` | Il porte `ChildCard`, composant du domaine famille |
 | **R3** | `ENS-02`, `ADM-01` | Les deux tableaux de bord denses, une fois que `StatTile`, `SignalRow` et `TimelineRow` existent |
 | **R4** | `TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06` | Le reste de l'existant |
 | **N** | les onze écrans manquants | Chacun avec sa fiche remplie d'abord |
+
+## 6. Fiches des écrans repris
+
+Une fiche par écran, remplie au lot R **à partir du code**, ce qui sert aussi de
+relecture. Un champ vide serait une question à poser, pas une case à deviner.
+
+### `ELV-02` Accueil élève
+
+```
+CODE              ELV-02
+Nom               Accueil eleve
+Role              Eleve, en mode enfant et en mode standard
+Zone              Journee
+Niveau de charge  B en mode enfant, C en mode standard
+Ecran parent      aucun : racine du role
+Profondeur        0
+Question          Quand est mon prochain cours, et comment j'y entre ?
+
+Priorites         P0  l'etat du prochain cours, dans ses six formes
+                  P0  l'entree en seance, pendant un cours en direct
+                  P1  les interruptions de priere du cours, annoncees avant lui
+                  P1  l'acces au Coran, permanent
+
+Action principale     Rejoindre : rendue seulement pendant un cours en direct,
+                      inerte hors ligne, jamais absente
+Actions secondaires   aucune
+Action tertiaire      Ouvrir le Coran : le second bloc, toujours present
+Destructif            aucun
+
+Mobile            Deux blocs empiles
+Tablette          Deux blocs, gouttiere elargie a 32
+Desktop           Identique, colonne centree et bornee a 1200. On n'ajoute
+                  rien : le niveau B ne gagne pas de densite avec la largeur
+
+Etats (bloc principal)
+  cours plus tard   carte surfaceRaised : haut-parleur, compte a rebours en
+                    displayMedium, prenom de l'enseignant
+  cours imminent    carte surfacePrimary pleine, pulsation 1200 ms. Seule zone
+                    pleine de l'ecran, seule pulsation du produit. Sous
+                    mouvement reduit : bordure borderStrong fixe, sans pulsation
+                    (04-systeme-mouvement.md section 5)
+  cours en direct   carte surfaceRaised, pastille StatusPill verte, haut-parleur,
+                    prenom, bouton Rejoindre en surfacePrimary
+  aucun cours du jour   EmptyState registre subi, prochain cours exprime en
+                        jours et jamais en date
+  seance annulee    EmptyState registre subi, aucune explication technique,
+                    aucun statut, aucun motif
+  offline           identique au cours en direct : le bouton Rejoindre devient
+                    inerte et gagne un pictogramme de reseau. Le bandeau
+                    OfflineBanner de PageShell coiffe la page
+  loading / error   pas d'etat dedie : la lecture des seances qui echoue ou qui
+                    tarde retombe sur l'etat "aucun cours". Dette assumee,
+                    reportee : concevoir un squelette et un message d'erreur a
+                    hauteur d'enfant depasse la reprise
+
+Mouvement         pulsation du bloc imminent : 1200 ms, hors budget de
+                  transition ; remplacee par une bordure fixe sous mouvement
+                  reduit
+
+Invariants        deux blocs, rien d'autre, quel que soit l'etat
+                  une seule zone pleine : le bloc imminent
+                  les interruptions de priere sont annoncees avant le cours,
+                  jamais decouvertes pendant (ADR-017), et sans condition d'etat
+                  en mode enfant, chaque decision porte un libelle parle
+                  (AudioLabel) ; l'heure et le nom de la priere ne s'y lisent pas
+                  le prochain cours se dit en jours pour l'enfant, jamais en date
+                  rien ne se ferme sur minuterie
+
+Accessibilite     cibles a 44 en standard, 72 en mode enfant
+                  libelles parles sur le prochain cours, le cours en direct et
+                  la pause priere
+                  les deux blocs se lisent de droite a gauche en arabe
+                  a 200 % de taille de texte, les blocs grandissent, aucun texte
+                  rogne
+```
+
+Reprise faite le 7 septembre 2026, sous-lot R1. Ce que le code portait avant, et
+que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold` avec sa gouttière et son `OfflineBanner`.
+  Il passe par `PageShell`, qui borne aussi la colonne à 1200 et la centre sur
+  desktop, ce que le catalogue demandait pour le desktop du niveau B ;
+- le cours en direct et le hors ligne étaient des aplats `surfacePrimary`
+  pleins : trois zones pleines possibles sur un même écran. Seul l'imminent le
+  reste ; les deux autres redeviennent des cartes, avec pastille verte et bouton
+  d'entrée en `surfacePrimary` ;
+- la pastille « en direct » était un `Container` décoré posé dans l'écran. Elle
+  passe par `StatusPill`, comme sur `TUT-01` ;
+- les états vides prenaient le registre « actionnable » par défaut, avec son
+  icône d'accent. Ils passent au registre « subi » : l'enfant ne peut rien y
+  faire, son enseignant prépare le prochain cours ;
+- sous mouvement réduit, la pulsation était simplement arrêtée. Elle est
+  désormais **remplacée** par une bordure `borderStrong` fixe, portée par une
+  nouvelle prise `contourFort` de `BentoTile`, jumelle de celle d'`AppCard`.

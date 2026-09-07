@@ -724,10 +724,7 @@ void main() {
       );
       final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
       expect(d.color, palette.surfaceRaised.background);
-      expect(
-        d.border!.top.color,
-        palette.borderHairline.asBorderSide().color,
-      );
+      expect(d.border!.top.color, palette.borderHairline.asBorderSide().color);
       expect(d.boxShadow, AppElevation.niveau1);
     });
 
@@ -746,6 +743,22 @@ void main() {
       expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
       expect(d.boxShadow, AppElevation.niveau2);
       expect(d.boxShadow, isNot(AppElevation.niveau0));
+    });
+
+    testWidgets('contour fort : le filet porteur de sens des le repos', (
+      WidgetTester tester,
+    ) async {
+      // La bordure `borderStrong` fixe qui remplace la pulsation d'`ELV-02`
+      // sous mouvement reduit : elle est la sans survol ni pression, mais la
+      // tuile reste posee, ombre de niveau 1.
+      await tester.pumpWidget(
+        hoteComposant(
+          const BentoTile(contourFort: true, child: Text('Une tuile')),
+        ),
+      );
+      final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
+      expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
+      expect(d.boxShadow, AppElevation.niveau1);
     });
   });
 

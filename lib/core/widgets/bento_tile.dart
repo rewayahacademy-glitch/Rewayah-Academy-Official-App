@@ -48,6 +48,7 @@ class BentoTile extends StatelessWidget {
     this.surface,
     this.onPress,
     this.libelleSemantique,
+    this.contourFort = false,
   });
 
   /// Le contenu de la tuile.
@@ -60,6 +61,17 @@ class BentoTile extends StatelessWidget {
   ///
   /// C'est une paire : impossible de poser un fond sans son texte.
   final AppColorPair? surface;
+
+  /// Vrai quand la tuile porte un contour `borderStrong` au repos, sans etre
+  /// survolee ni pressee.
+  ///
+  /// Meme prise que [AppCard.contourFort], et pour la meme raison : il existe
+  /// des etats ou une bordure porte du sens en dehors de l'interaction. Le cas
+  /// du produit est le bloc imminent d'`ELV-02` sous mouvement reduit, ou la
+  /// bordure fixe **remplace** la pulsation supprimee : l'information portee par
+  /// la pulsation doit survivre (`docs/design/04-systeme-mouvement.md`
+  /// section 5).
+  final bool contourFort;
 
   /// Action au tap. Passe par [Pressable], jamais par un `onTap` nu.
   final VoidCallback? onPress;
@@ -105,7 +117,11 @@ class BentoTile extends StatelessWidget {
       padding: EdgeInsets.all(metriques.marge),
       decoration: AppElevation.avecFilet(
         surface: paire,
-        filet: eveillee ? palette.borderStrong : palette.borderHairline,
+        // Le filet decoratif au repos, le filet porteur de sens des que la
+        // tuile dit quelque chose : contour impose, survolee ou pressee.
+        filet: contourFort || eveillee
+            ? palette.borderStrong
+            : palette.borderHairline,
         arrondi: metriques.arrondi,
         // Registre unique : `surfaceRaised` + `elevation1` + `borderHairline`,
         // et le niveau 2 quand la tuile s'eveille

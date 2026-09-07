@@ -157,20 +157,55 @@ void main() {
         ];
 
       await tester.pumpWidget(
-        hote(
-          const _SansAnimation(child: _EcranFige()),
-          surcharges: _surcharges(planning: planning),
-        ),
+        hote(_ecran(), surcharges: _surcharges(planning: planning)),
       );
-      await tester.pumpAndSettle();
+      // Pas de `pumpAndSettle` : la pulsation tourne en boucle. Deux frames
+      // suffisent a la voir demarrer.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
       final BentoTile principal = tester.widget<BentoTile>(
         find.byType(BentoTile).first,
       );
       final AppPalette palette = AppPalette.claire();
       expect(principal.surface, palette.surfacePrimary);
+      expect(principal.contourFort, isFalse);
       expect(find.byKey(clePulsationImminente), findsOneWidget);
+      expect(tester.hasRunningAnimations, isTrue);
+
+      // Demonter l'ecran arrete la pulsation : sinon le ticker de la repetition
+      // survivrait au test.
+      await tester.pumpWidget(const SizedBox.shrink());
     });
+
+    testWidgets(
+      'sous mouvement reduit, une bordure fixe remplace la pulsation',
+      (WidgetTester tester) async {
+        // `04-systeme-mouvement.md` section 5 : une animation qui porte du sens
+        // n'est pas supprimee, elle est remplacee. La pulsation d'imminence
+        // devient une bordure `borderStrong` fixe, et l'information survit.
+        final DateTime debut = _maintenant.add(const Duration(minutes: 4));
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(debut: debut, fin: debut.add(const Duration(minutes: 60))),
+          ];
+
+        await tester.pumpWidget(
+          hote(
+            const _SansAnimation(child: _EcranFige()),
+            surcharges: _surcharges(planning: planning),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final BentoTile principal = tester.widget<BentoTile>(
+          find.byType(BentoTile).first,
+        );
+        expect(principal.surface, AppPalette.claire().surfacePrimary);
+        expect(principal.contourFort, isTrue);
+        expect(find.byKey(clePulsationImminente), findsNothing);
+      },
+    );
 
     testWidgets('le meme cours une heure plus tot ne pulse pas', (
       WidgetTester tester,
@@ -187,11 +222,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // La mesure vaut dans les deux sens, comme le plafond de `ENS-06` : la
-      // meme seance, quarante minutes plus tot, sur la surface du fond general.
+      // meme seance, quarante minutes plus tot, redevient une carte normale,
+      // sur la surface elevee par defaut et sans aplat plein.
       final BentoTile principal = tester.widget<BentoTile>(
         find.byType(BentoTile).first,
       );
-      expect(principal.surface, AppPalette.claire().surfaceCanvas);
+      expect(principal.surface, isNull);
+      expect(principal.contourFort, isFalse);
       expect(find.byKey(clePulsationImminente), findsNothing);
     });
 

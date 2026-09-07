@@ -288,6 +288,56 @@ aucun `.sql`. Ils ont été rejoués sur un conteneur neuf pour la forme.
 
 ---
 
+## Refonte UX/UI, lot R — 7 septembre 2026
+
+> Le lot R reprend les écrans déjà construits pour qu'ils portent le langage
+> posé aux lots T et C. Un sous-lot par commit, dans l'ordre de
+> `docs/design/08-catalogue-ecrans.md` section 5 : `ELV-02`, puis `TUT-01`, puis
+> `ENS-02` et `ADM-01`, puis le reste. Chaque écran repris gagne sa fiche dans
+> `08-catalogue-ecrans.md` section 6, remplie **à partir du code**.
+
+### R1 : `ELV-02`, l'accueil de l'élève
+
+Le plus simple des quatre premiers, et celui montré à l'opérateur : deux blocs,
+rien d'autre. Il sert de preuve du système.
+
+| Livrable | Détail |
+| :--- | :--- |
+| **`ELV-02` repris** | passe par `PageShell` (fond crème, gouttière du gabarit, colonne centrée et bornée à 1200, bandeau hors ligne) au lieu de son `Scaffold` propre ; le cours en direct et le hors ligne redeviennent des cartes `surfaceRaised` avec pastille verte et bouton d'entrée en `surfacePrimary`, seul le bloc imminent reste un aplat plein ; la pastille « en direct » passe de `Container` décoré à `StatusPill` ; les états vides passent au registre `subi` ; sous mouvement réduit, la pulsation est **remplacée** par une bordure `borderStrong` fixe |
+| **`BentoTile` gagne `contourFort`** | prise jumelle de celle d'`AppCard` (lot C) : un filet `borderStrong` au repos, sans survol. Sert la bordure fixe qui remplace la pulsation d'`ELV-02` sous mouvement réduit (`04-systeme-mouvement.md` §5). Nouvel état « contour fort » dans la galerie, nouveau contrôle dans `composants_test.dart` |
+| **Fiche `ELV-02`** | remplie dans `08-catalogue-ecrans.md` section 6, à partir du code. Elle consigne aussi la dette assumée : pas d'état `loading` ni `error` dédié, la lecture des séances qui échoue ou tarde retombe sur « aucun cours » |
+| **Tests `ELV-02`** | le contrôle « à moins de cinq minutes, le bloc pulse » est scindé : un cas pour la pulsation réelle (sans `pumpAndSettle`, la pulsation tourne en boucle), un cas pour la bordure fixe sous mouvement réduit. Le contrôle « une heure plus tôt » vérifie désormais la carte `surfaceRaised` par défaut, pas l'ancien `surfaceCanvas` |
+
+### Ce qui n'a délibérément pas bougé
+
+- **`NavShell` n'est toujours pas câblé au routeur.** `ELV-02` en mode enfant
+  n'a aucune navigation (0 destination), donc R1 n'en a pas besoin. Le câblage
+  de la barre de navigation pour les rôles qui en ont une reste un chantier à
+  part, à traiter avec `TUT-01` / `ENS-02` / `ADM-01` ou après.
+- **Aucun `.sql` touché.** Le harnais SQL lit exactement les mêmes octets
+  qu'avant R1.
+
+### Mesures de fin de sous-lot R1
+
+| Contrôle | Résultat | Après le lot C, pour mémoire |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème | aucun problème |
+| `flutter test` | **420 tests**, tous verts | 418 |
+| `dart run tool/verifier_jetons.dart` | **94 fichiers**, aucune violation | 94 |
+| `scenarios_etape3.sql` | 34 contrôles verts | 34 |
+| `scenarios_etape4.sql` | **rouge sur ce poste ce 7 septembre** : S7b échoue sur `sessions_no_teacher_overlap` | 39 verts |
+
+⚠ **`scenarios_etape4.sql` n'est pas de la responsabilité de R1** et R1 n'y touche
+aucun octet. Le contrôle S7b (« deux cours qui s'enchaînent ») insère une séance
+à l'heure `v_fin` du premier cours de l'enseignant `cccc…01`, et cette heure
+tombe aujourd'hui sur le début d'une séance déjà matérialisée : violation
+d'exclusion. C'est la même fragilité horodatée que ce journal signale déjà pour
+le contrôle « Feed », « vert le 6 septembre, rouge le 7 à 00h23 locales » : un
+contrôle vrai seulement certains jours n'est pas un contrôle. À corriger dans le
+fichier de scénarios, hors lot R. Sur la CI (UTC), le harnais reste vert.
+
+---
+
 ## Mesures relevées à l'étape 2 — état d'avant la refonte
 
 ### Contraste

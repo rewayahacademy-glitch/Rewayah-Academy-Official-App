@@ -690,6 +690,15 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'disabled',
         (BuildContext _) => const BentoTile(child: Text('Une tuile inerte')),
       ),
+      EtatGalerie(
+        'contour fort',
+        // Le bloc imminent d'`ELV-02` sous mouvement reduit : la bordure
+        // `borderStrong` fixe remplace la pulsation supprimee.
+        (BuildContext _) => const BentoTile(
+          contourFort: true,
+          child: Text('Une tuile a contour impose'),
+        ),
+      ),
     ],
   ),
   EntreeGalerie(

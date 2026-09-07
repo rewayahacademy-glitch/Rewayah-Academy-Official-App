@@ -25,7 +25,8 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/status_pill.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
 ///
@@ -161,8 +162,6 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-
     final AsyncValue<List<Seance>> seances = ref.watch(seancesProvider);
     // Lu par `value`, jamais par le type d'execution de l'AsyncValue : Riverpod
     // relance un provider en echec et repasse par AsyncLoading. Tant que la
@@ -194,28 +193,23 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
         ? const <InterruptionPriere>[]
         : interruptionsDe(prochain, reglages.value);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(metriques.marge),
-                children: <Widget>[
-                  _BlocPrincipal(
-                    etat: etat,
-                    prochain: prochain,
-                    interruptions: interruptions,
-                    maintenant: _maintenant,
-                  ),
-                  Ecart.vXl,
-                  const _BlocCoran(),
-                ],
-              ),
-            ),
-          ],
-        ),
+    // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
+    // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
+    // `docs/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
+    // L'ecran ne rend plus que ses deux blocs.
+    return PageShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _BlocPrincipal(
+            etat: etat,
+            prochain: prochain,
+            interruptions: interruptions,
+            maintenant: _maintenant,
+          ),
+          Ecart.vXl,
+          const _BlocCoran(),
+        ],
       ),
     );
   }
@@ -238,24 +232,24 @@ class _BlocPrincipal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final bool imminent = etat == EtatAccueilEleve.coursImminent;
+    final bool mouvementReduit = AppMouvement.mouvementReduit(context);
 
-    // Une paire dit sur quoi elle s'ecrit : la surface et l'encre changent
-    // ensemble, et chaque style la traverse par `applyTo`. Un style du theme
-    // pose tel quel sur la surface d'accent y ecrirait en noir.
-    final bool accentue = switch (etat) {
-      EtatAccueilEleve.coursImminent ||
-      EtatAccueilEleve.coursEnDirect ||
-      EtatAccueilEleve.horsLigne => true,
-      EtatAccueilEleve.coursPlusTard ||
-      EtatAccueilEleve.aucunCoursAujourdhui ||
-      EtatAccueilEleve.seanceAnnulee => false,
-    };
-    final AppColorPair paire = accentue
+    // **Une seule zone pleine par ecran** (`docs/design/01-systeme-visuel.md`
+    // section 3) : le bloc imminent, et lui seul. Le cours en direct redevient
+    // une carte normale avec sa pastille verte et son bouton d'entree en
+    // `surfacePrimary`. Une paire dit sur quoi elle s'ecrit : les styles des
+    // enfants la traversent par `applyTo`.
+    final AppColorPair paire = imminent
         ? palette.surfacePrimary
-        : palette.surfaceCanvas;
+        : palette.surfaceRaised;
 
     final Widget tuile = BentoTile(
-      surface: paire,
+      surface: imminent ? palette.surfacePrimary : null,
+      // Sous mouvement reduit, la pulsation disparait et une bordure
+      // `borderStrong` fixe porte a sa place l'information d'imminence
+      // (`docs/design/04-systeme-mouvement.md` section 5).
+      contourFort: imminent && mouvementReduit,
       child: switch (etat) {
         EtatAccueilEleve.coursPlusTard ||
         EtatAccueilEleve.coursImminent => _CoursAVenir(
@@ -288,7 +282,9 @@ class _BlocPrincipal extends StatelessWidget {
       },
     );
 
-    return etat == EtatAccueilEleve.coursImminent
+    // La pulsation ne bat que si le mouvement est autorise : sinon, la bordure
+    // fixe posee ci-dessus l'a deja remplacee.
+    return imminent && !mouvementReduit
         ? _Pulsation(key: clePulsationImminente, child: tuile)
         : tuile;
   }
@@ -352,33 +348,20 @@ class _CoursEnDirect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            // La pastille verte de la fiche produit. Elle accompagne la phrase,
-            // elle ne la remplace pas : une couleur seule ne porte jamais un
-            // etat.
-            Container(
-              width: AppSpacing.md,
-              height: AppSpacing.md,
-              decoration: palette.surfaceSuccess.decoration(
-                borderRadius: BorderRadius.circular(AppSpacing.md),
-              ),
-            ),
-            Ecart.hSm,
-            Flexible(
-              child: AudioLabel(
-                cle: ClesAudio.eleveAccueilCoursEnDirect,
-                surface: paire,
-              ),
-            ),
-          ],
+        // La pastille verte de la fiche produit, portee par le composant
+        // d'etat : une pastille pleine `surfaceSuccess` et son mot, jamais la
+        // couleur seule (`docs/design/01-systeme-visuel.md` section 8).
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
         ),
+        Ecart.vSm,
+        AudioLabel(cle: ClesAudio.eleveAccueilCoursEnDirect, surface: paire),
         Ecart.vSm,
         Text(
           t.eleve.accueil.avec(prenom: seance.enseignantPrenom),
@@ -477,6 +460,10 @@ class _SansCoursAujourdhui extends StatelessWidget {
   Widget _etatVide(Seance? cours, int jours) {
     return EmptyState(
       message: message,
+      // Registre **subi** : l'enfant ne peut rien y faire, son enseignant
+      // prepare le prochain cours. Proposer un bouton ici mentirait sur ce que
+      // l'enfant peut obtenir (`docs/design/02-regles-ux.md` section 6).
+      registre: RegistreVide.subi,
       // Un etat vide est une invitation, pas un constat. Le prochain cours peut
       // tomber le jour meme : une seance annulee le matin n'empeche pas celle
       // de l'apres-midi, et « demain » serait alors faux.
