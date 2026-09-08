@@ -9,12 +9,12 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/signal_row.dart';
+import '../../core/widgets/stat_tile.dart';
 
 /// Une ligne de la liste « a traiter en premier ».
 ///
@@ -106,7 +106,6 @@ class TableauDeBordPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
@@ -126,89 +125,92 @@ class TableauDeBordPage extends ConsumerWidget {
       demandes: demandes.value ?? const <Demande>[],
     );
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  ref
-                    ..invalidate(indicateursProvider)
-                    ..invalidate(demandesProvider)
-                    ..invalidate(dossiersEnAttenteProvider);
-                },
-                child: ListView(
-                  padding: EdgeInsets.all(metriques.marge),
-                  children: <Widget>[
-                    Text(t.admin.tableau.titre, style: textes.headlineSmall),
-                    Ecart.vLg,
+    // A lire une seule fois pour toute la liste : l'anciennete de chaque ligne
+    // se dit en jours par rapport au meme instant, sinon une ligne cramee par
+    // la seconde changerait seule.
+    final DateTime maintenant = horloge();
 
-                    // 1. LES SIX COMPTEURS. Ils sont rendus des que la lecture
-                    // aboutit, zeros compris.
-                    if (indicateurs.hasValue)
-                      _Compteurs(indicateurs: indicateurs.requireValue)
-                    else if (indicateurs.hasError)
-                      Text(
-                        t.admin.tableau.compteursErreur,
-                        // L'encre d'alerte, jamais la paire : `surfaceAlert`
-                        // ecrit en blanc, illisible sur la page.
-                        style: palette.inkAlert.applyTo(
-                          textes.bodySmall ?? const TextStyle(),
-                        ),
-                      )
-                    else
-                      Text(t.commun.chargement, style: textes.bodySmall),
-                    Ecart.vXxl,
+    return PageShell(
+      titre: t.admin.tableau.titre,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // 1. LES SIX COMPTEURS. Ils sont rendus des que la lecture aboutit,
+          // zeros compris.
+          if (indicateurs.hasValue)
+            _Compteurs(indicateurs: indicateurs.requireValue)
+          else if (indicateurs.hasError)
+            Text(
+              t.admin.tableau.compteursErreur,
+              // L'encre d'alerte, jamais la paire : `surfaceAlert`
+              // ecrit en blanc, illisible sur la page.
+              style: palette.inkAlert.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            )
+          else
+            Text(t.commun.chargement, style: textes.bodySmall),
+          Ecart.vXxl,
 
-                    // 2. CE QUI SE TRAITE D'UN TAP.
-                    Text(t.admin.tableau.aTraiter, style: textes.titleMedium),
-                    Ecart.vMd,
-                    if (lignes.isEmpty &&
-                        dossiers.hasValue &&
-                        demandes.hasValue)
-                      EmptyState(
-                        message: t.admin.tableau.aTraiterAucun,
-                        invitation: t.admin.tableau.aTraiterAucunDetail,
-                        icone: AppIcons.tableauDeBord,
-                      )
-                    else
-                      for (final ATraiter ligne in lignes)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                          child: _Ligne(ligne: ligne, maintenant: horloge()),
-                        ),
-                    // La file des dossiers passe par `read_kyc_documents()`, qui
-                    // refuse la lecture quand le genre du lecteur est inconnu.
-                    // Ce refus ne doit pas emporter la page : les compteurs, eux,
-                    // viennent d'une autre fonction et restent exacts.
-                    if (dossiers.hasError || demandes.hasError) ...<Widget>[
-                      Ecart.vSm,
-                      Text(
-                        t.admin.tableau.listeErreur,
-                        style: palette.inkAlert.applyTo(
-                          textes.bodySmall ?? const TextStyle(),
-                        ),
-                      ),
-                    ],
-                    Ecart.vMd,
-                    Text(
-                      t.admin.tableau.aTraiterPortee,
-                      style: textes.bodySmall,
+          // 2. CE QUI SE TRAITE D'UN TAP.
+          Text(t.admin.tableau.aTraiter, style: textes.titleMedium),
+          Ecart.vMd,
+          if (lignes.isEmpty && dossiers.hasValue && demandes.hasValue)
+            EmptyState(
+              message: t.admin.tableau.aTraiterAucun,
+              invitation: t.admin.tableau.aTraiterAucunDetail,
+              icone: AppIcons.tableauDeBord,
+            )
+          else
+            for (final ATraiter ligne in lignes)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: SignalRow(
+                  phrase: ligne.libelle,
+                  icone: ligne.icone,
+                  // La nouveaute se dit en jours, jamais en heures : une ligne
+                  // deposee ce matin et une deposee la veille se lisent d'un
+                  // coup d'oeil, et le tri se verifie a l'oeil.
+                  anciennete: switch (maintenant
+                      .difference(ligne.depuis)
+                      .inDays) {
+                    <= 0 => t.admin.tableau.attenteAujourdhui,
+                    1 => t.admin.tableau.attenteUnJour,
+                    _ => t.admin.tableau.attenteJours(
+                      jours: '${maintenant.difference(ligne.depuis).inDays}',
                     ),
-                  ],
+                  },
+                  onPress: () => GoRouter.of(context).go(ligne.destination),
                 ),
+              ),
+          // La file des dossiers passe par `read_kyc_documents()`, qui refuse
+          // la lecture quand le genre du lecteur est inconnu. Ce refus ne doit
+          // pas emporter la page : les compteurs, eux, viennent d'une autre
+          // fonction et restent exacts.
+          if (dossiers.hasError || demandes.hasError) ...<Widget>[
+            Ecart.vSm,
+            Text(
+              t.admin.tableau.listeErreur,
+              style: palette.inkAlert.applyTo(
+                textes.bodySmall ?? const TextStyle(),
               ),
             ),
           ],
-        ),
+          Ecart.vMd,
+          Text(t.admin.tableau.aTraiterPortee, style: textes.bodySmall),
+        ],
       ),
     );
   }
 }
 
 /// Les six compteurs, en deux colonnes.
+///
+/// Deux portent vers un ecran d'action (dossiers, demandes) : un chiffre qui
+/// mene a sa file se charge d'un coup de pouce. Les quatre autres sont des
+/// rapports, et ne mement nulle part tant qu'`ADM-05` et le journal ne
+/// suivent pas : une tuile sans [onPress] est un rapport, jamais un bouton
+/// grise.
 class _Compteurs extends StatelessWidget {
   const _Compteurs({required this.indicateurs});
 
@@ -216,39 +218,34 @@ class _Compteurs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<({String libelle, int valeur, AppIcon icone})> compteurs =
-        <({String libelle, int valeur, AppIcon icone})>[
-          (
-            libelle: t.admin.tableau.dossiers,
-            valeur: indicateurs.dossiersEnAttente,
-            icone: AppIcons.dossiers,
-          ),
-          (
-            libelle: t.admin.tableau.demandes,
-            valeur: indicateurs.demandesEnAttente,
-            icone: AppIcons.attribution,
-          ),
-          (
-            libelle: t.admin.tableau.foyers,
-            valeur: indicateurs.foyersSansEnseignant,
-            icone: AppIcons.foyer,
-          ),
-          (
-            libelle: t.admin.tableau.rapports,
-            valeur: indicateurs.rapportsManquants,
-            icone: AppIcons.cahier,
-          ),
-          (
-            libelle: t.admin.tableau.incidents,
-            valeur: indicateurs.incidents24h,
-            icone: AppIcons.avertissement,
-          ),
-          (
-            libelle: t.admin.tableau.comptes,
-            valeur: indicateurs.comptesEchus,
-            icone: AppIcons.journee,
-          ),
-        ];
+    final List<StatTile> tuiles = <StatTile>[
+      StatTile(
+        valeur: indicateurs.dossiersEnAttente,
+        libelle: t.admin.tableau.dossiers,
+        onPress: () => GoRouter.of(context).go(Routes.adminDossiers),
+      ),
+      StatTile(
+        valeur: indicateurs.demandesEnAttente,
+        libelle: t.admin.tableau.demandes,
+        onPress: () => GoRouter.of(context).go(Routes.adminDemandes),
+      ),
+      StatTile(
+        valeur: indicateurs.foyersSansEnseignant,
+        libelle: t.admin.tableau.foyers,
+      ),
+      StatTile(
+        valeur: indicateurs.rapportsManquants,
+        libelle: t.admin.tableau.rapports,
+      ),
+      StatTile(
+        valeur: indicateurs.incidents24h,
+        libelle: t.admin.tableau.incidents,
+      ),
+      StatTile(
+        valeur: indicateurs.comptesEchus,
+        libelle: t.admin.tableau.comptes,
+      ),
+    ];
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
@@ -259,107 +256,11 @@ class _Compteurs extends StatelessWidget {
           spacing: AppSpacing.md,
           runSpacing: AppSpacing.md,
           children: <Widget>[
-            for (final ({String libelle, int valeur, AppIcon icone}) compteur
-                in compteurs)
-              SizedBox(
-                width: colonne,
-                child: _Compteur(
-                  libelle: compteur.libelle,
-                  valeur: compteur.valeur,
-                  icone: compteur.icone,
-                ),
-              ),
+            for (final StatTile tuile in tuiles)
+              SizedBox(width: colonne, child: tuile),
           ],
         );
       },
-    );
-  }
-}
-
-/// Un compteur. **Zero s'affiche**, c'est tout l'invariant I9.
-class _Compteur extends StatelessWidget {
-  const _Compteur({
-    required this.libelle,
-    required this.valeur,
-    required this.icone,
-  });
-
-  final String libelle;
-  final int valeur;
-  final AppIcon icone;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    // Une valeur non nulle appelle l'oeil, une valeur nulle ne s'efface pas
-    // pour autant : elle change de paire, jamais de presence. La couleur ne
-    // porte donc rien seule, le chiffre le dit deja.
-    final bool aTraiter = valeur > 0;
-
-    return BentoTile(
-      surface: aTraiter ? palette.surfaceWarning : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // `merge` et non `IconTheme` : la couleur vient de la paire posee par
-          // `BentoTile`, et seule la taille est dite ici. Un `IconTheme` nu
-          // l'effacerait, et l'icone serait noire sur la tuile d'avertissement
-          // comme sur le fond general, quelle que soit la paire.
-          IconTheme.merge(
-            data: const IconThemeData(size: AppSpacing.xxl),
-            child: Icon(icone.resoudre(selectionne: aTraiter)),
-          ),
-          Ecart.vSm,
-          Text('$valeur', style: textes.headlineMedium),
-          Text(libelle, style: textes.bodySmall),
-        ],
-      ),
-    );
-  }
-}
-
-/// Une ligne a traiter, qui mene d'un tap a l'ecran d'action.
-class _Ligne extends StatelessWidget {
-  const _Ligne({required this.ligne, required this.maintenant});
-
-  final ATraiter ligne;
-  final DateTime maintenant;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final int jours = maintenant.difference(ligne.depuis).inDays;
-
-    return BentoTile(
-      libelleSemantique: ligne.libelle,
-      onPress: () => GoRouter.of(context).go(ligne.destination),
-      child: Row(
-        children: <Widget>[
-          IconTheme(
-            data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
-            child: Icon(ligne.icone.repos),
-          ),
-          SizedBox(width: metriques.marge),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(ligne.libelle, style: textes.titleMedium),
-                Text(switch (jours) {
-                  <= 0 => t.admin.tableau.attenteAujourdhui,
-                  1 => t.admin.tableau.attenteUnJour,
-                  _ => t.admin.tableau.attenteJours(jours: '$jours'),
-                }, style: textes.bodySmall),
-              ],
-            ),
-          ),
-          Icon(AppIcons.suivant.repos),
-        ],
-      ),
     );
   }
 }

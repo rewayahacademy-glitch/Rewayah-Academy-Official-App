@@ -183,6 +183,18 @@ abstract final class AppIcons {
     IconData(0xecee, fontFamily: _actif),
   );
 
+  /// Un cours de la journee.
+  static const AppIcon cours = AppIcon._(
+    IconData(0xe600, fontFamily: _repos),
+    IconData(0xe600, fontFamily: _actif),
+  );
+
+  /// Le temps entre deux cours.
+  static const AppIcon pause = AppIcon._(
+    IconData(0xe1c2, fontFamily: _repos),
+    IconData(0xe1c2, fontFamily: _actif),
+  );
+
   // --- Composants partages -----------------------------------------------
 
   /// Haut-parleur du composant `AudioLabel`.

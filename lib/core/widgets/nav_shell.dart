@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../domain/enums.dart';
+import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../router/routes.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
@@ -29,6 +32,122 @@ class Destination {
 
   /// Le chemin de la route. C'est ce que [NavShell] rend a l'appelant.
   final String chemin;
+}
+
+/// Les destinations de premier niveau d'un role, dans l'ordre de la barre.
+///
+/// Fonction pure, a part du cأ¢blage : la regle des quatre destinations se
+/// verifie sans monter de routeur.
+///
+/// **Le role seul ne suffit pas, le mode d'interface compte.** Un eleve en
+/// mode enfant n'a aucune destination : sans decision a lui laisser, aucune
+/// navigation n'est offerte, et `NavShell` rend alors son enfant sans le
+/// moindre chrome. Le controleur et le comptable, de meme, n'ont pas de
+/// coquille : une destination unique ne monte pas une barre.
+///
+/// **Le mode change le nombre de destinations, jamais l'arborescence**
+/// (ADR-009) : les branches du routeur sont les memes pour les deux modes,
+/// seule la liste rendue a la barre change ici.
+List<Destination> destinationsPour({
+  required AppRole role,
+  required InterfaceMode mode,
+}) {
+  final List<Destination> destinations = switch (role) {
+    AppRole.student =>
+      mode == InterfaceMode.enfant
+          ? const <Destination>[]
+          : <Destination>[
+              Destination(
+                libelle: t.nav.eleve.accueil,
+                icone: AppIcons.accueil,
+                chemin: Routes.eleve,
+              ),
+              Destination(
+                libelle: t.nav.eleve.coran,
+                icone: AppIcons.coran,
+                chemin: Routes.eleveCoran,
+              ),
+              Destination(
+                libelle: t.nav.eleve.suivi,
+                icone: AppIcons.suivi,
+                chemin: Routes.eleveSuivi,
+              ),
+            ],
+    AppRole.guardian => <Destination>[
+      Destination(
+        libelle: t.nav.tuteur.accueil,
+        icone: AppIcons.foyer,
+        chemin: Routes.tuteurAccueil,
+      ),
+      Destination(
+        libelle: t.nav.tuteur.disponibilites,
+        icone: AppIcons.disponibilites,
+        chemin: Routes.tuteurDisponibilites,
+      ),
+      Destination(
+        libelle: t.nav.tuteur.reglages,
+        icone: AppIcons.reglages,
+        chemin: Routes.tuteurReglages,
+      ),
+      Destination(
+        libelle: t.nav.tuteur.suivi,
+        icone: AppIcons.suivi,
+        chemin: Routes.tuteurSuivi,
+      ),
+    ],
+    AppRole.teacher => <Destination>[
+      Destination(
+        libelle: t.nav.enseignant.journee,
+        icone: AppIcons.journee,
+        chemin: Routes.enseignantJournee,
+      ),
+      Destination(
+        libelle: t.nav.enseignant.creneaux,
+        icone: AppIcons.creneaux,
+        chemin: Routes.enseignantCreneaux,
+      ),
+      Destination(
+        libelle: t.nav.enseignant.profil,
+        icone: AppIcons.profil,
+        chemin: Routes.enseignantProfil,
+      ),
+    ],
+    // L'admin tient quatre destinations : les demandes (ADM-06) restent
+    // atteintes depuis leur compteur et la liste a traiter, jamais depuis la
+    // barre, ou cinq entrees feraient un menu (section 5).
+    AppRole.admin => <Destination>[
+      Destination(
+        libelle: t.nav.admin.tableauDeBord,
+        icone: AppIcons.tableauDeBord,
+        chemin: Routes.adminTableauDeBord,
+      ),
+      Destination(
+        libelle: t.nav.admin.dossiers,
+        icone: AppIcons.dossiers,
+        chemin: Routes.adminDossiers,
+      ),
+      Destination(
+        libelle: t.nav.admin.attribution,
+        icone: AppIcons.attribution,
+        chemin: Routes.adminAttribution,
+      ),
+      Destination(
+        libelle: t.nav.admin.journal,
+        icone: AppIcons.journal,
+        chemin: Routes.adminJournal,
+      ),
+    ],
+    // Le controleur observe et signale : une seule destination, qui ne monte
+    // pas de barre. Le comptable est hors de l'arborescence en MVP-0 (ADR-003).
+    AppRole.controller || AppRole.accountant => const <Destination>[],
+  };
+
+  assert(
+    destinations.length <= NavShell.maxDestinations,
+    'Aucun role n a plus de ${NavShell.maxDestinations} destinations de '
+    'premier niveau (03-architecture-information.md section 5).',
+  );
+  return destinations;
 }
 
 /// La navigation de premier niveau, dans ses trois formes.

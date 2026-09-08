@@ -46,6 +46,8 @@ const List<String> composantsDuCatalogue = <String>[
   'ActionPrincipale',
   'GrilleSemaine',
   'PageParcours',
+  // Section 2 : le P1 que le lot R3 produit.
+  'TimelineRow',
 ];
 
 /// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.

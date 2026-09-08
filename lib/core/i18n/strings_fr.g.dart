@@ -1295,6 +1295,9 @@ class Traductions$nav$tuteur$fr {
 
 	// Translations
 
+	/// fr: 'Accueil'
+	String get accueil => 'Accueil';
+
 	/// fr: 'Foyer'
 	String get foyer => 'Foyer';
 
@@ -2047,6 +2050,7 @@ extension on Traductions {
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
 			'nav.eleve.suivi' => 'Suivi',
+			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',

@@ -9,19 +9,18 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
-import '../../core/priere/libelle_priere.dart';
 import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
-import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/timeline_row.dart';
 
 /// `ENS-02` : la journee de l'enseignant, en une seule colonne.
 ///
@@ -71,7 +70,6 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? monId = ref.watch(sessionProvider).profileId;
@@ -141,58 +139,48 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
         .toSet()
         .length;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(metriques.marge),
-                children: <Widget>[
-                  Text(t.enseignant.journee.titre, style: textes.headlineSmall),
-                  Ecart.vLg,
-                  _BlocDominant(seance: dominant, maintenant: _maintenant),
-                  if (seances.hasError) ...<Widget>[
-                    Ecart.vSm,
-                    Text(
-                      t.enseignant.journee.erreur,
-                      // L'encre d'alerte, jamais la paire : `surfaceAlert`
-                      // ecrit en blanc, illisible sur la page.
-                      style: palette.inkAlert.applyTo(
-                        textes.bodySmall ?? const TextStyle(),
-                      ),
-                    ),
-                  ],
-                  Ecart.vXl,
-                  Text(t.enseignant.journee.colonne, style: textes.titleMedium),
-                  Ecart.vMd,
-                  if (journee.isEmpty)
-                    _RienAujourdhui(prochain: dominant)
-                  else
-                    for (final EntreeJournee entree in journee)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                        child: _LigneJournee(entree: entree),
-                      ),
-                  if (journeeFinie) ...<Widget>[
-                    Ecart.vSm,
-                    Text(
-                      coursDuJour.length == 1
-                          ? t.enseignant.journee.journeeTermineeUn
-                          : t.enseignant.journee.journeeTerminee(
-                              nombre: '${coursDuJour.length}',
-                            ),
-                      style: textes.bodySmall,
-                    ),
-                  ],
-                  Ecart.vXl,
-                  _BlocMatching(nombre: enAttente),
-                ],
+    return PageShell(
+      titre: t.enseignant.journee.titre,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _BlocDominant(seance: dominant, maintenant: _maintenant),
+          if (seances.hasError) ...<Widget>[
+            Ecart.vSm,
+            Text(
+              t.enseignant.journee.erreur,
+              // L'encre d'alerte, jamais la paire : `surfaceAlert`
+              // ecrit en blanc, illisible sur la page.
+              style: palette.inkAlert.applyTo(
+                textes.bodySmall ?? const TextStyle(),
               ),
             ),
           ],
-        ),
+          Ecart.vXl,
+          Text(t.enseignant.journee.colonne, style: textes.titleMedium),
+          Ecart.vMd,
+          if (journee.isEmpty)
+            _RienAujourdhui(prochain: dominant)
+          else
+            for (final EntreeJournee entree in journee)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: TimelineRow(entree: entree),
+              ),
+          if (journeeFinie) ...<Widget>[
+            Ecart.vSm,
+            Text(
+              coursDuJour.length == 1
+                  ? t.enseignant.journee.journeeTermineeUn
+                  : t.enseignant.journee.journeeTerminee(
+                      nombre: '${coursDuJour.length}',
+                    ),
+              style: textes.bodySmall,
+            ),
+          ],
+          Ecart.vXl,
+          _BlocMatching(nombre: enAttente),
+        ],
       ),
     );
   }
@@ -207,7 +195,6 @@ class _BlocDominant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final Seance? cours = seance;
 
@@ -215,38 +202,46 @@ class _BlocDominant extends StatelessWidget {
       return EmptyState(
         message: t.enseignant.journee.aucunCours,
         invitation: t.enseignant.journee.aucunCoursDetail,
+        // Un constat, pas une porte : l'enseignant ne quitte pas cet ecran
+        // pour agir, le bloc matching en dessous le fait.
+        registre: RegistreVide.subi,
       );
     }
 
     final bool enCours = cours.enCoursA(maintenant);
-    // Une paire dit sur quoi elle s'ecrit : la surface et l'encre changent
-    // ensemble, et chaque style la traverse. Un style du theme pose tel quel
-    // sur la surface d'accent y ecrirait en noir.
-    final AppColorPair paire = enCours
-        ? palette.surfacePrimary
-        : palette.surfaceCanvas;
     final bool aujourdhui = _memeJour(cours.debut, maintenant);
 
+    // Carte posee, jamais un aplat sature : `ENS-02` n'a pas d'action a
+    // promouvoir (le lancement est l'etape 5), et la regle de la zone pleine
+    // unique n'attribue l'aplat qu'a l'action principale. L'etat « en cours »
+    // se dit par la pastille, jamais par la couleur de fond.
     return BentoTile(
-      surface: paire,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(
-            enCours
-                ? t.enseignant.journee.coursEnCours
-                : t.enseignant.journee.prochainCours,
-            style: paire.applyTo(textes.labelLarge ?? const TextStyle()),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  enCours
+                      ? t.enseignant.journee.coursEnCours
+                      : t.enseignant.journee.prochainCours,
+                  style: textes.labelLarge ?? const TextStyle(),
+                ),
+              ),
+              if (enCours)
+                StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+            ],
           ),
           Ecart.vXs,
           Text(
             cours.elevePrenom,
-            style: paire.applyTo(textes.headlineSmall ?? const TextStyle()),
+            style: textes.headlineSmall ?? const TextStyle(),
           ),
           // Prenom et identifiant immuable, jamais le nom de famille (ADR-008).
           Text(
             cours.eleveIdentifiant,
-            style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
+            style: textes.bodySmall ?? const TextStyle(),
           ),
           Ecart.vSm,
           Text(switch ((enCours, aujourdhui)) {
@@ -256,63 +251,13 @@ class _BlocDominant extends StatelessWidget {
               jour: t.disponibilites.joursLongs[cours.debut.weekday - 1],
               heure: _hhmm(cours.debut),
             ),
-          }, style: paire.applyTo(textes.titleMedium ?? const TextStyle())),
+          }, style: textes.titleMedium ?? const TextStyle()),
           Ecart.vSm,
           // La place du bouton de lancement, occupee par la raison de son
           // absence : la salle est l'etape 5.
           Text(
             t.enseignant.journee.sansLancement,
-            style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Une entree de la colonne, quelle que soit sa sorte.
-///
-/// Le meme gabarit pour un cours, une pause et une priere : c'est ce que
-/// « des entrees de meme nature » veut dire concretement. Ce qui les distingue
-/// est le libelle, jamais la seule couleur.
-class _LigneJournee extends StatelessWidget {
-  const _LigneJournee({required this.entree});
-
-  final EntreeJournee entree;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final int minutes = entree.duree.inMinutes;
-
-    return BentoTile(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  t.enseignant.journee.plage(
-                    debut: _hhmm(entree.debut),
-                    fin: _hhmm(entree.fin),
-                  ),
-                  style: textes.bodySmall,
-                ),
-                Text(_libelle(entree), style: textes.titleMedium),
-                if (entree.sorte == SorteEntree.cours)
-                  Text(
-                    entree.seance?.eleveIdentifiant ?? '',
-                    style: textes.bodySmall,
-                  ),
-              ],
-            ),
-          ),
-          Ecart.hSm,
-          Text(
-            t.enseignant.journee.duree(minutes: '$minutes'),
-            style: textes.bodySmall,
+            style: textes.bodySmall ?? const TextStyle(),
           ),
         ],
       ),
@@ -407,18 +352,6 @@ String _minuteur(Duration reste) {
     minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
   );
 }
-
-/// Le libelle d'une entree, selon sa sorte.
-String _libelle(EntreeJournee entree) => switch (entree.sorte) {
-  SorteEntree.cours => t.enseignant.journee.ligneCours(
-    prenom: entree.seance?.elevePrenom ?? '',
-  ),
-  SorteEntree.pause => t.enseignant.journee.lignePause,
-  SorteEntree.priere =>
-    entree.interruption == null
-        ? t.enseignant.journee.lignePause
-        : libellePriere(entree.interruption!.priere),
-};
 
 /// Vrai quand deux instants tombent le meme jour civil local.
 bool _memeJour(DateTime a, DateTime b) =>

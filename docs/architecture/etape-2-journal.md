@@ -410,6 +410,63 @@ Rejoués sur un conteneur `postgres:17-alpine` neuf. Le compte de fichiers du
 vérificateur ne bouge pas : R2 n'ajoute aucun fichier `.dart` à `lib/`, et
 `strings.g.dart` reste hors de son balayage.
 
+### R3 : `ENS-02`, `ADM-01`, et le câblage de `NavShell`
+
+Les trois derniers chantiers du lot R annoncés en tête : les deux écrans
+restants passent au langage des lots T/C, et la barre de premier niveau, mise de
+côté en R1 puis R2, est enfin câblée au routeur.
+
+| Livrable | Détail |
+| :--- | :--- |
+| **`ENS-02` repris** | passe par `PageShell` au lieu de son `Scaffold` + `OfflineBanner` ; `_LigneJournee` disparaît au profit de `TimelineRow` ; `_BlocDominant` n'a plus d'aplat plein : une carte `BentoTile` posée, et la pastille « En direct » passe par `StatusPill` ; la phrase « sans lancement » remplace le bouton de lancement ; la consultation des interruptions de prière n'a plus besoin du harnais complet, la lecture de la journée fournit les entrées |
+| **`TimelineRow`, composant de registre** | nouvelle famille de la section 2 de `07-catalogue-composants.md` : une icône (cours / pause / prière), une plage, un libellé, l'identifiant de l'élève pour un cours, la durée pour une pause ou une prière. L'icône vit dans un cercle posé sur la surface, le texte en encre secondaire, jamais `inkFaint`. Deux points de code ajoutés à `AppIcons` (`cours` 0xe600, `pause` 0xe1c2). Trois états à la galerie (cours avec identifiant, pause, prière) |
+| **`ADM-01` repris** | passe par `PageShell` au lieu de son `Scaffold` + `RefreshIndicator` + `ListView` ; `maintenant = horloge()` lu **une seule fois** dans le build, l'ancienneté reste cohérente sur toute la liste d'un même rendu ; les six compteurs passent par `StatTile` (deux actionnables — dossiers, demandes —, quatre rapports sans prise), la liste à traiter par `SignalRow` avec l'ancienneté en jours ; `_Compteur` et `_Ligne` supprimés, `ATraiter` reste une fonction pure |
+| **`destinationsPour`, fonction pure** | dans `nav_shell.dart` : le nombre et l'ordre des destinations d'un rôle et d'un mode. Élève 3 (0 en mode enfant, ADR-009 — sans décision, pas de barre), tuteur 4, enseignant 3, admin 4 (les demandes restent derrière leur compteur, une cinquième entrée ferait une barre-menu), contrôleur et comptable 0 (une seule destination ne monte pas de barre). L'assertion « jamais plus de quatre » borne chaque rôle, pour la règle de `03-architecture-information.md` §5. Testée par `test/router/navigation_test.dart` |
+| **`NavShell` câblé au routeur** | quatre `StatefulShellRoute.indexedStack` dans `app_router.dart` (élève, tuteur, enseignant, admin), une coquille par rôle : elle lit le mode d'interface dans la session et délègue à `destinationsPour`. Le tuteur a enfin sa barre, annonce des R1/R2. La navigation URL directe (PWA, ADR-005) n'est pas touchée : les branches gardent leurs chemins, `redirection_test.dart` passe sans modification. Le contrôleur, une seule destination, garde sa route nue |
+| **Fiches `ENS-02` et `ADM-01`** | remplies dans `08-catalogue-ecrans.md` §6, à partir du code. Deux écarts à trancher y sont consignés : **six compteurs contre cinq** annoncés dans le produit, et **l'ordre « chiffres d'abord »** choisi par l'écran contre « les signaux d'abord » du registre — la hiérarchie des documents (`parcours-utilisateurs.md` au-dessus des registres) justifie le choix fait, sans le figer. Dettes assumées : la suppression du tirage-pour-rafraîchir (même format que la fiche `TUT-01`), le panneau de détail / plein largeur desktop |
+| **Clé i18n `nav.tuteur.accueil`** | absente des clés `nav.*` (il n'y avait aucune navigation de premier niveau tuteur), ajoutée puis générée. Confirmer à la relecture que les sept rôles ont bien tous leurs libellés |
+
+### L'audit de fin de sous-lot R3
+
+Huit tranches en parallèle, puis un sceptique par constat (le même protocole
+qu'aux lots C, C et R2). **Sept constats bruts : cinq réfutés par le sceptique,
+deux retenus.** Les réfutations : la phrase « en direct », la cohérence de
+l'ancienneté et l'incohérence d'un mode enfant naviguant ont été relues contre
+les documents sources puis rejetées (la première est prise par l'icône `StatusPill`,
+la deuxième est gérée par `maintenant` hoisté et le label des `StatTile`, la
+troisième relève du routeur, pas de `NavShell`).
+
+Les deux constats retenus : **la suppression du tirage-pour-rafraîchir** du
+tableau de bord (même famille que la dette `TUT-01`, `PageShell` exclut
+volontairement les états de données, la piste propre est la prise
+`onRafraichir` — consignée, pas implémentée) et **les deux imprécisions de
+`07-catalogue-composants.md`** (« sélection en `surfacePrimary` » de
+`GrilleSemaine` §1, « plus hors ligne » de la famille « composant d'état » §4)
+que la reprise a fait remonter en même temps que la doc s'aligne sur le code.
+
+### Ce qui n'a délibérément pas bougé
+
+- **La navigation URL directe.** Les chemins des branches sont restés les
+  mêmes, `deciderRedirection` n'a pas changé de comportement : les tests de
+  redirection passent sans être touchés. C'est la condition du câblage, posée
+  dès R1.
+- **Aucun `.sql` touché.** Le harnais lit exactement les mêmes octets qu'avant R3.
+
+### Mesures de fin de sous-lot R3
+
+| Contrôle | Résultat | Après R2, pour mémoire |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème | aucun problème |
+| `flutter test` | **426 tests**, tous verts | 422 |
+| `dart run tool/verifier_jetons.dart` | **95 fichiers**, aucune violation | 94 |
+| `scenarios_etape3.sql` | 34 contrôles verts | 34 |
+| `scenarios_etape4.sql` | 39 contrôles verts | 39 |
+| `flutter build web --release` | compile | — (non rejoué à R2) |
+
+Le compte du vérificateur passe à 95 : R3 ajoute `timeline_row.dart` à
+`lib/core/widgets/`. R3b n'ajoute aucun fichier à `lib/`, les coquilles vivent
+le même routeur que les routes nues.
+
 ---
 
 ## Mesures relevées à l'étape 2 — état d'avant la refonte

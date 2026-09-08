@@ -26,6 +26,7 @@ import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
+import '../widgets/nav_shell.dart';
 import 'billet_salle.dart';
 import 'ecran_a_construire.dart';
 import 'redirection.dart';
@@ -98,30 +99,90 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce
-      // que chaque ecran AFFICHE qui change, jamais la structure.
-      GoRoute(
-        path: Routes.eleve,
-        builder: (BuildContext _, GoRouterState _) => const AccueilElevePage(),
-        routes: <RouteBase>[
-          GoRoute(
-            path: 'coran',
-            builder: (BuildContext _, GoRouterState _) =>
-                EcranAConstruire(destination: t.nav.eleve.coran),
+      // que chaque ecran AFFICHE qui change, jamais la structure (ADR-009). La
+      // barre a trois destinations en mode standard, zero en mode enfant :
+      // `destinationsPour` decide ce qui est rendu, les branches existent dans
+      // les deux modes.
+      StatefulShellRoute.indexedStack(
+        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
+            _CoquilleNavigation(role: AppRole.student, navigationShell: n),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.eleve,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const AccueilElevePage(),
+              ),
+            ],
           ),
-          GoRoute(
-            path: 'suivi',
-            builder: (BuildContext _, GoRouterState _) =>
-                EcranAConstruire(destination: t.nav.eleve.suivi),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.eleveCoran,
+                builder: (BuildContext _, GoRouterState _) =>
+                    EcranAConstruire(destination: t.nav.eleve.coran),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.eleveSuivi,
+                builder: (BuildContext _, GoRouterState _) =>
+                    EcranAConstruire(destination: t.nav.eleve.suivi),
+              ),
+            ],
           ),
         ],
       ),
 
       // Tuteur. `TUT-01` est la racine du role : c'est le suivi du foyer, et
-      // non l'ecran de gestion des appareils, qui accueille le parent.
-      GoRoute(
-        path: Routes.tuteurAccueil,
-        builder: (BuildContext _, GoRouterState _) =>
-            const AccueilFamillePage(),
+      // non l'ecran de gestion des appareils, qui accueille le parent. Les
+      // routes foyer, ajout d'enfant et appairage restent hors de la barre,
+      // atteintes depuis l'ecran puis quittees : ce sont des poses, pas des
+      // etages (`03-architecture-information.md` section 5).
+      StatefulShellRoute.indexedStack(
+        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
+            _CoquilleNavigation(role: AppRole.guardian, navigationShell: n),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.tuteurAccueil,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const AccueilFamillePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.tuteurDisponibilites,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const DisponibilitesPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.tuteurReglages,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const ReglagesEnfantPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.tuteurSuivi,
+                builder: (BuildContext _, GoRouterState _) =>
+                    EcranAConstruire(destination: t.nav.tuteur.suivi),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: Routes.tuteurFoyer,
@@ -136,35 +197,40 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState etat) =>
             AppairagePage(eleveId: etat.pathParameters['eleveId'] ?? ''),
       ),
-      GoRoute(
-        path: Routes.tuteurDisponibilites,
-        builder: (BuildContext _, GoRouterState _) =>
-            const DisponibilitesPage(),
-      ),
-      GoRoute(
-        path: Routes.tuteurReglages,
-        builder: (BuildContext _, GoRouterState _) =>
-            const ReglagesEnfantPage(),
-      ),
-      GoRoute(
-        path: Routes.tuteurSuivi,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.tuteur.suivi),
-      ),
 
       // Enseignant.
-      GoRoute(
-        path: Routes.enseignantJournee,
-        builder: (BuildContext _, GoRouterState _) => const JourneePage(),
-      ),
-      GoRoute(
-        path: Routes.enseignantCreneaux,
-        builder: (BuildContext _, GoRouterState _) => const CreneauxPage(),
-      ),
-      GoRoute(
-        path: Routes.enseignantProfil,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.enseignant.profil),
+      StatefulShellRoute.indexedStack(
+        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
+            _CoquilleNavigation(role: AppRole.teacher, navigationShell: n),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.enseignantJournee,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const JourneePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.enseignantCreneaux,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const CreneauxPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.enseignantProfil,
+                builder: (BuildContext _, GoRouterState _) =>
+                    EcranAConstruire(destination: t.nav.enseignant.profil),
+              ),
+            ],
+          ),
+        ],
       ),
 
       // Controleur : une seule destination, pas de barre de navigation.
@@ -174,28 +240,53 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             EcranAConstruire(destination: t.nav.controleur.planning),
       ),
 
-      // Admin.
-      GoRoute(
-        path: Routes.adminTableauDeBord,
-        builder: (BuildContext _, GoRouterState _) => const TableauDeBordPage(),
-      ),
-      GoRoute(
-        path: Routes.adminDossiers,
-        builder: (BuildContext _, GoRouterState _) => const DossiersPage(),
+      // Admin. Quatre barres : les demandes (ADM-06) restent derriere leur
+      // compteur, une cinquieme entree ferait une barre-menu.
+      StatefulShellRoute.indexedStack(
+        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
+            _CoquilleNavigation(role: AppRole.admin, navigationShell: n),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.adminTableauDeBord,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const TableauDeBordPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.adminDossiers,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const DossiersPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.adminAttribution,
+                builder: (BuildContext _, GoRouterState _) =>
+                    EcranAConstruire(destination: t.nav.admin.attribution),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.adminJournal,
+                builder: (BuildContext _, GoRouterState _) =>
+                    EcranAConstruire(destination: t.nav.admin.journal),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: Routes.adminDemandes,
         builder: (BuildContext _, GoRouterState _) => const DemandesPage(),
-      ),
-      GoRoute(
-        path: Routes.adminAttribution,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.admin.attribution),
-      ),
-      GoRoute(
-        path: Routes.adminJournal,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.admin.journal),
       ),
 
       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
@@ -267,3 +358,54 @@ List<String> cheminsDeclares(GoRouter routeur) {
 @visibleForTesting
 String racineDe(AppRole? role) =>
     role == null ? Routes.connexion : Routes.racinePour(role);
+
+/// La coquille de navigation d'un role, autour des branches qui sont ses
+/// destinations.
+///
+/// Le role est connu par construction de la route : chaque coquille est câblée
+/// a un seul role. Le mode d'interface, lui, est lu dans la session : un eleve
+/// en mode enfant obtient zero destination, `NavShell` rend alors l'ecran sans
+/// le moindre chrome, sur les memes branches (ADR-009).
+class _CoquilleNavigation extends ConsumerWidget {
+  /// Cree la coquille d'un role.
+  const _CoquilleNavigation({
+    required this.role,
+    required this.navigationShell,
+  });
+
+  /// Le role dont cette coquille tient les destinations.
+  final AppRole role;
+
+  /// Les branches de la coquille, pilotées par `go_router`.
+  final StatefulNavigationShell navigationShell;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final InterfaceMode mode = ref.watch(
+      sessionProvider.select((SessionState s) => s.interfaceMode),
+    );
+    final List<Destination> destinations = destinationsPour(
+      role: role,
+      mode: mode,
+    );
+
+    return NavShell(
+      destinations: destinations,
+      indexActif: navigationShell.currentIndex,
+      onAller: (String chemin) {
+        final int index = destinations.indexWhere(
+          (Destination d) => d.chemin == chemin,
+        );
+        if (index == -1) {
+          return;
+        }
+        navigationShell.goBranch(
+          index,
+          // Retaper la destination courante la reprend a sa racine.
+          initialLocation: index == navigationShell.currentIndex,
+        );
+      },
+      child: navigationShell,
+    );
+  }
+}

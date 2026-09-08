@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/domain/enums.dart';
 import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/planning/journee.dart';
 import '../../../core/planning/service_planning.dart';
+import '../../../core/priere/horaires_priere.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
@@ -31,6 +34,7 @@ import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../../../core/widgets/timeline_row.dart';
 import '../../disponibilites/grille_semaine.dart';
 
 /// Les familles d'etats obligatoires.
@@ -132,6 +136,37 @@ class EntreeGalerie {
 const List<Creneau> _creneauxExemple = <Creneau>[
   Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
   Creneau(jour: 4, heure: 18, fuseau: 'Europe/Paris'),
+];
+
+/// Un cours, pour la journee de la galerie.
+final Seance _seanceExemple = Seance(
+  id: 's1',
+  debut: DateTime(2026, 9, 8, 9),
+  fin: DateTime(2026, 9, 8, 9, 45),
+  statut: StatutSeance.planifiee,
+  eleveId: 'e1',
+  elevePrenom: 'Aicha',
+  eleveIdentifiant: 'STUD-AC-000001',
+  enseignantId: 't1',
+  enseignantPrenom: 'Omar',
+  enseignantIdentifiant: 'TEACH-OS-000001',
+);
+
+/// Les trois entrees de journee de la galerie, une par sorte.
+final List<EntreeJournee> _entreesJournee = <EntreeJournee>[
+  EntreeJournee.cours(_seanceExemple),
+  EntreeJournee.pause(
+    debut: DateTime(2026, 9, 8, 9, 45),
+    fin: DateTime(2026, 9, 8, 10, 15),
+  ),
+  EntreeJournee.priere(
+    InterruptionPriere(
+      priere: Priere.dhuhr,
+      debut: DateTime(2026, 9, 8, 13, 30),
+      duree: const Duration(minutes: 15),
+      preavis: const Duration(minutes: 5),
+    ),
+  ),
 ];
 
 /// Trois destinations, pour les trois formes du chrome de navigation.
@@ -942,6 +977,19 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           ),
         ),
       ),
+    ],
+  ),
+
+  // --- Les composants P1, dans l'ordre du catalogue -----------------------
+  EntreeGalerie(
+    nom: 'TimelineRow',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      for (final EntreeJournee entree in _entreesJournee)
+        EtatGalerie(
+          entree.sorte.name,
+          (BuildContext _) => TimelineRow(entree: entree),
+        ),
     ],
   ),
 ];

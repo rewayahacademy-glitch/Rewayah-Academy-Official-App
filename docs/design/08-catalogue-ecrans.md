@@ -46,7 +46,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `ELV-02` | Accueil élève | Élève | B / C | 0 | `/eleve` | Deux blocs | Deux blocs centrés, **rien de plus** | **repris (R1)**, fiche §6 |
-| `ENS-02` | Journée | Enseignant | D | 0 | `/enseignant/journee` | Une colonne | Colonne + panneau de détail | construit, **à reprendre** |
+| `ENS-02` | Journée | Enseignant | D | 0 | `/enseignant/journee` | Une colonne | Colonne + panneau de détail | **repris (R3)**, fiche §6 |
 | `CTR-01` | Planning global | Contrôleur | D | 0 | `/controleur` | Liste | Tableau dense | **à construire** |
 | `ELV-03` | Salle, élève | Élève | B / C | hors arbre | `/salle` | Plein écran | Vidéo + contenu | **à construire**, étape 5 |
 | `ENS-03` | Salle, enseignant | Enseignant | D | hors arbre | `/salle` | Plein écran | Vidéo + contenu + participants | **à construire**, étape 5 |
@@ -65,7 +65,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `ADM-01` | Centre de commande | Admin | E | 0 | `/admin/tableau-de-bord` | Signaux puis chiffres | 4 chiffres + liste pleine largeur | construit, **à reprendre** |
+| `ADM-01` | Centre de commande | Admin | E | 0 | `/admin/tableau-de-bord` | Signaux puis chiffres | 4 chiffres + liste pleine largeur | **repris (R3)**, fiche §6 |
 | `ADM-02` | Validation des dossiers | Admin | E | 1 | `/admin/dossiers` | Un dossier à la fois | File à gauche, dossier à droite | construit |
 | `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/demandes` | Liste de demandes | Liste + feuille de règles | construit |
 | `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/journal` | Cartes | Tableau dense | **à construire** |
@@ -78,9 +78,9 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 
 ## 2. Ce que le registre révèle
 
-Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent sont à
-reprendre par le lot R : `ELV-02` (fait, R1), `TUT-01` (fait, R2), `ENS-02` et
-`ADM-01`.
+Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent
+étaient à reprendre par le lot R. Le lot R les a repris tous les quatre :
+`ELV-02` (fait, R1), `TUT-01` (fait, R2), `ENS-02` et `ADM-01` (fait, R3).
 
 Le point à ne pas rater : **`ENS-06` emploie des onglets sur desktop alors qu'il
 a la place d'afficher les deux panneaux**. Un onglet sur un écran de 1440 pixels
@@ -168,7 +168,7 @@ les portent.
 | **C** | aucun | Les douze composants P0 de `07-catalogue-composants.md`, et leur galerie |
 | **R1** | `ELV-02` | **fait le 7 septembre 2026.** C'est l'écran montré à l'opérateur, et le plus simple : deux blocs. Il sert de preuve du système |
 | **R2** | `TUT-01` | **fait le 8 septembre 2026.** Il porte `ChildCard`, composant du domaine famille |
-| **R3** | `ENS-02`, `ADM-01` | Les deux tableaux de bord denses, une fois que `StatTile`, `SignalRow` et `TimelineRow` existent |
+| **R3** | `ENS-02`, `ADM-01` | **fait le 8 septembre 2026.** `TimelineRow` porté par les trois sorties (cours, pause, prière), `StatTile` aux compteurs, `SignalRow` à la liste à traiter. `NavShell` câblé au routeur dans le même lot, voir `etape-2-journal.md` |
 | **R4** | `TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06` | Le reste de l'existant |
 | **N** | les onze écrans manquants | Chacun avec sa fiche remplie d'abord |
 
@@ -412,3 +412,213 @@ d'`ELV-02` :
   navigation de premier niveau vers Disponibilités, Réglages ou Suivi. Le câblage
   demande un `StatefulShellRoute` couvrant tous les rôles à barre : c'est son
   propre sous-lot, à traiter avec `ENS-02` / `ADM-01` (R3) ou après.
+
+### `ENS-02` Journée
+
+```
+CODE              ENS-02
+Nom               Journee
+Role              Enseignant
+Zone              Journee
+Niveau de charge  D
+Ecran parent      aucun : racine du role
+Profondeur        0
+Question          Quel est mon prochain cours, et qui attend un enseignant ?
+
+Priorites         P0  l'etat du cours : en cours ou prochain, en une carte
+                      dominante
+                  P0  la colonne de la journee, cours, pauses et prieres
+                      comme entrees de meme nature
+                  P1  le feed des eleves en attente, porte vers la grille
+                      des creneaux (ENS-06)
+
+Action principale     aucune : le lancement d'une seance est l'etape 5, et une
+                      phrase prend sa place. Meme la porte vers la grille est
+                      un bloc secondaire, pas une action
+Actions secondaires   Ouvrir la grille des creneaux, par le bloc matching
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            carte dominante, colonne, puis bloc matching
+Tablette          identique, gouttiere du gabarit
+Desktop           la colonne et un panneau de detail cote a cote (registre) ne
+                  sont pas implementes : reporte, comme les multi-colonnes
+                  d'ELV-02. Le lot R porte le langage, pas les presentations
+                  de 05-regles-responsive.md
+
+Etats
+  en cours          carte posee surfaceRaised, pastille StatusPill verte
+                    "En direct", prenom, identifiant immuable, "jusqu'a
+                    {heure}". Jamais un aplat sature : une seule zone pleine
+                    par ecran, et l'etat se dit par la pastille, pas par la
+                    couleur de fond
+  a venir           carte posee, "Prochain cours", minuteur en heures et
+                    minutes, sans date
+  autre jour        carte posee, "{jour} a {heure}" : le jour long nomme
+                    l'instant, une date seule n'y ajoute rien
+  aucun cours       EmptyState registre subi : l'enseignant ne quitte pas
+                    l'ecran pour agir, le bloc matching en dessous le fait
+  journee finie     une phrase sous la colonne, singulier ou pluriel
+  loading / error   pas d'etat dedic : une lecture qui tarde retombe sur la
+                    colonne vide, une lecture en echec dit une phrase d'erreur
+                    sous la carte dominante. Meme dette qu'ELV-02
+  hors ligne        le bandeau OfflineBanner de PageShell coiffe la page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        pauses et prieres sont des entrees de la meme colonne,
+                  jamais un bloc separe : l'interruption se lit a sa place
+                  dans le deroule
+                  une seule colonne, une entree par evenement, aucune
+                  statistique decorative
+                  la colonne est portee par TimelineRow, qui decide lui-meme
+                  du libelle et de l'icone de chaque sorte
+                  les heures affichees sont celles de l'appareil, sans
+                  mention de fuseau : les seances sont des instants absolus,
+                  et mon_fuseau dit ou l'enseignant pose ses creneaux
+                  rien ne se ferme sur minuterie
+
+Accessibilite     cibles a 44
+                  chaque ligne de la colonne porte son libelle parle
+                  la colonne se lit de droite a gauche en arabe
+                  a 200 % de taille de texte, aucun texte rogne
+```
+
+Reprise faite le 8 septembre 2026, sous-lot R3. Ce que le code portait avant, et
+que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold`, un `OfflineBanner`, un tirage-pour-
+  rafraîchir et un `ListView` avec sa gouttière. Il passe par `PageShell` :
+  fond crème, titre d'écran, gouttière du gabarit, colonne bornée et centrée,
+  bandeau hors ligne ;
+- le bloc dominant était un aplat `surfacePrimary` plein quand un cours était
+  en cours : une zone pleine de plus sur un écran qui n'a aucune action à
+  promouvoir. Il devient une carte posée, et l'état « en cours » se dit par
+  une pastille `StatusPill` verte, la même que sur `ELV-02` et `TUT-01` ;
+- les lignes de la colonne étaient un `BentoTile` local `_LigneJournee`. Elles
+  passent par `TimelineRow` (nouveau composant, `07` §2) : un seul gabarit pour
+  les trois sorties, l'icône `AppIcon.cours` ou `AppIcon.pause`, le libellé et
+  la durée décidés par le composant lui-même, pour que la colonne reste une
+  seule liste homogène ;
+- l'état vide « aucun cours » prenait le registre actionnable par défaut. Il
+  passe au registre « subi », comme sur `ELV-02` : l'enseignant ne peut rien y
+  faire ici, le bloc matching est en dessous.
+
+Dettes assumées et écarts reportés :
+
+- **le tirage-pour-rafraîchir disparaît**, comme sur `TUT-01` et `ADM-01`
+  (même format de dette, voir la fiche `TUT-01`). `seancesProvider`,
+  `reglagesPriereProvider` et `valeurRegleProvider` ne sont alors relus qu'au
+  démarrage de l'application ; la sortie de la grille des créneaux (ENS-06)
+  reste un chemin de relecture honnête. Rétablissement propre = prise
+  **`onRafraichir` optionnelle de `PageShell`**, à trancher explicitement ;
+- le panneau de détail desktop du registre : non implémenté, reporté.
+
+### `ADM-01` Centre de commande
+
+```
+CODE              ADM-01
+Nom               Centre de commande
+Role              Admin
+Zone              Administration
+Niveau de charge  E
+Ecran parent      aucun : racine du role
+Profondeur        0
+Question          Qu'est-ce qui attend une decision ce matin ?
+
+Priorites         P0  les six compteurs, zeros compris (invariant I9)
+                  P0  ce qui se traite d'un tap : dossiers et demandes,
+                      ordonnes par anciennete
+                  P1  la portee de la liste, dite en une phrase
+
+Action principale     aucune : chaque signal EST son propre bouton, il n'y a
+                      pas d'action qui prime sur les autres
+Actions secondaires   Ouvrir la validation des dossiers (ADM-02), ouvrir les
+                      demandes et regles (ADM-06) : depuis le compteur comme
+                      depuis la ligne
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            six compteurs en deux colonnes, puis la liste a traiter
+Tablette          identique, gouttiere du gabarit
+Desktop           la liste pleine largeur (registre) : les compteurs restent
+                  deux par deux, denses et recurrents. Reporte avec le desktop
+                  multi-colonnes
+
+Etats
+  compteurs         toujours six, zeros compris (I9) : rendus des que la
+                    lecture aboutit
+  compteurs         une phrase d'alerte, jamais six zeros inventes : l'admin
+  en echec          verrait une ruche vide et croirait tout traite
+  liste a traiter   une SignalRow par cas, triee par anciennete de depose,
+                    jamais par nature : un dossier depose hier passe devant
+                    une demande de ce matin
+  rien a traiter    EmptyState "tout est traite", sans bouton : il n'y a rien
+                    a ouvrir
+  liste en echec    une phrase sous la liste, et les compteurs restent :
+                    dossiers et demandes passent par deux fonctions
+                    differentes, l'echec de l'une n'emporte pas l'autre
+  loading           "chargement" sous le titre, avant les compteurs
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        le zero s'affiche comme les autres valeurs, jamais masque
+                  le tri est par anciennete d'attente, jamais alphabetique
+                  deux compteurs menent a leur ecran (dossiers, demandes) ;
+                  les quatre autres sont des rapports sans onPress, jusqu'a
+                  ce qu'ADM-05 et le journal existent
+                  un signal mene directement a son ecran d'action, jamais a
+                  un menu (02-regles-ux.md section 2)
+                  l'anciennete se lit en jours, tous les jours lus sur le
+                  meme instant, jamais recolores dans une meme liste
+                  rien ne se ferme sur minuterie
+
+Accessibilite     cibles a 44
+                  chaque tuile et chaque ligne porte un libelle parle, chiffre
+                  et libelle ensemble
+                  chiffres tabulaires : passer de 17 a 18 ne fait pas bouger
+                  la ligne
+                  la page se lit de droite a gauche en arabe
+```
+
+Reprise faite le 8 septembre 2026, sous-lot R3. Ce que le code portait avant, et
+que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold`, un `OfflineBanner`, un tirage-pour-
+  rafraîchir (`RefreshIndicator` invalidant trois providers) et son `ListView`.
+  Il passe par `PageShell`, comme `ELV-02`, `TUT-01` et `ENS-02` ;
+- les compteurs étaient un `BentoTile` local `_Compteur` qui teintait la tuile
+  en discret quand la valeur passait au-dessus de zéro — une couleur portée
+  par la seule valeur, que le catalogue de composants interdit (« le ton ne se
+  lit pas sur la valeur », `stat_tile.dart`). Ils passent par `StatTile` :
+  chiffres tabulaires, libellé parlé, et le ton neutre partout. Deux d'entre
+  eux tiennent des compteurs actionnables (dossiers → `ADM-02`, demandes →
+  `ADM-06`) ; les quatre autres sont des rapports sans `onPress`, jusqu'à ce
+  que `ADM-05` et le journal existent ;
+- les lignes à traiter étaient un `BentoTile` local `_Ligne`. Elles passent
+  par `SignalRow` : icône, phrase, ancienneté, chevron, et un libellé parlé
+  qui lie la phrase à l'ancienneté.
+
+Deux écarts du registre à trancher, révélés par la relecture de la fiche, et
+retenus **sans rien déplacer** dans le code, qui suit `parcours-utilisateurs.md`
+(cadre du haut dans `docs/design/README.md` §3) :
+
+- **six compteurs**, là où `parcours-utilisateurs.md` §5 et le README §7 en
+  écrivent cinq : `demandes`, `ADM-06`, figure dans le code mais pas dans la
+  liste produit. Choisir si le sixième reste, ou si le coup de pouce vers les
+  demandes est porté par la liste à traiter seule ;
+- **l'ordre** : le registre dit « Signaux puis chiffres » et `02-regles-ux.md`
+  §2 place « ce que je dois traiter » en premier ; `parcours-utilisateurs.md`
+  dit « Cinq indicateurs en haut, sous les chiffres une liste ». Le code rend
+  les compteurs d'abord. Si la règle « les signaux d'abord » l'emporte, les
+  compteurs passent sous la liste, et c'est une fiche refaite.
+
+Dettes assumées :
+
+- **le tirage-pour-rafraîchir disparaît**, même format et même sort que sur
+  `TUT-01` et `ENS-02` : les trois providers d'`ADM-01` ne sont relus qu'au
+  démarrage. Rétablissement propre = prise `onRafraichir` optionnelle de
+  `PageShell`, à trancher explicitement. C'est le troisième écran qui la
+  demande, le lot R en fait une dette commune ;
+- **desktop pleine largeur de la liste** : non implémenté, la liste garde la
+  gouttière du gabarit. Reporté, comme les autres multi-colonnes du lot R.
