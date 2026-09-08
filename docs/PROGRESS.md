@@ -101,7 +101,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | J | Config applicative `app_config` | [x] | Étendue à l'étape 3 : `kyc_retention_days`, `pairing_code_ttl_minutes` |
 | K | Mémoire graphify | [ ] | À faire |
 | L | Ressources front et back | [x] | Conformes aux étapes 2 et 3 |
-| M | PWA multiappareils | [x] | En ligne sur <https://rewayah-academy.vercel.app>, chargée sans erreur console. Manifeste, `index.html` et `vercel.json` portent le nom, la palette, la balise `viewport` qui manquait et la réécriture SPA. Service worker généré par Flutter. L'adresse stable sert la build `c5a511f`, donc **L8**, `TUT-01`, `TUT-04` et `TUT-05` compris (`MISE-EN-SERVICE.md` 7.1 dit comment le vérifier, et pourquoi la taille du téléversement ne le prouve pas). Reste à décider : le plan Vercel Hobby exclut l'usage commercial |
+| M | PWA multiappareils | [x] | En ligne sur <https://rewayah-academy.vercel.app>, chargée sans erreur console. Manifeste, `index.html` et `vercel.json` portent le nom, la palette, la balise `viewport` qui manquait et la réécriture SPA. Service worker généré par Flutter. L'adresse stable sert la build `09527ec`, donc **la refonte UX/UI au lot R3 compris** (fond crème, polices Bricolage Grotesque / Instrument Sans, `NavShell` câblé). Redeployée le 8 septembre au soir : la refonte entière n'était pas arrivée en ligne depuis le début (`MISE-EN-SERVICE.md` 7.1 dit comment le vérifier, et pourquoi la taille du téléversement ne le prouve pas). Reste à décider : le plan Vercel Hobby exclut l'usage commercial |
 
 ## Décisions en attente de l'opérateur
 

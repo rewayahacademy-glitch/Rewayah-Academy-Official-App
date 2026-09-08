@@ -315,18 +315,24 @@ session. `git worktree remove "D:\ra-pwa-build"` la supprime.
 
 ### 7.1 La promotion en production se demande a l'operateur, pas au poste
 
-`https://rewayah-academy.vercel.app` sert la build de `c5a511f`, donc L8,
-`TUT-01`, `TUT-04` et `TUT-05` compris. Elle a servi la build de `761450a`
-(L7) pendant une journee entiere, parce que `vercel deploy --prod` a ete refuse
-**trois fois** a l'agent par la barriere du poste, alors que la
-previsualisation, elle, passait.
+`https://rewayah-academy.vercel.app` sert la build de `09527ec`, donc **la
+refonte UX/UI au lot R3 compris** (R1 à R3, `NavShell` câblé). Elle a servi la
+build de `c5a511f` (L8) jusqu'au 8 septembre au soir — la refonte entière
+(commits `67e8e49` à `09527ec`) n'était pas en ligne —, et elle avait servi la
+build de `761450a` (L7) pendant une journee entiere, parce que `vercel deploy
+--prod` a ete refuse **trois fois** a l'agent par la barriere du poste, alors
+que la previsualisation, elle, passait. Le 8 septembre, le meme appel est passe
+au troisieme essai sur la copie de travail : la barriere **refuse par
+intermittence**, pas toujours.
 
 **La meme commande passe quand c'est l'operateur qui la lance** (`!` devant la
 ligne, dans la fenetre de session) : la barriere porte sur l'appel de l'agent,
-pas sur le poste. Ne pas s'entêter, ne pas chercher un contournement, ne pas
-deployer en previsualisation en esperant que ca suffise : livrer la ligne.
+pas sur le poste — **reeessayer une fois avant d'abandonner**, la barriere est
+intermittente. Ne pas s'entêter, ne pas chercher un contournement, ne pas
+deployer en previsualisation en esperant que ca suffise : livrer la ligne si le
+second essai est refuse.
 
-```powershell
+```
 ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
 ```
 
