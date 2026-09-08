@@ -1,10 +1,11 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **7 septembre 2026**, fin du lot **L9** de l'étape 4,
-> puis **refonte UX/UI v1.0** (documentation), puis le **lot T** (jetons, thème,
-> typographie, mouvement), puis le **lot C** de cette refonte (les douze
-> composants P0, la reprise des onze existants, la galerie devenue preuve du
-> catalogue). **Reprendre au lot R** : la reprise des écrans.
+> Dernière passation : **8 septembre 2026**, après la clôture du **lot R** de la
+> refonte UX/UI. Le lot R est livré en trois sous-lots, un commit chacun :
+> `ELV-02` (R1), `TUT-01` (R2), puis `ENS-02` et `ADM-01` avec le **câblage de
+> `NavShell`** au routeur (R3). **Reprendre au sous-lot R4** : `TUT-02`,
+> `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06` — le reste de l'existant,
+> rangée R4 de `08-catalogue-ecrans.md` §5.
 > Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
@@ -167,20 +168,21 @@ Il n'y a plus rien à récupérer. Si un jour il faut y revenir, l'adresse qui
 marche est `fonts.google.com/download/list?family=...` : les deux autres pistes
 évidentes sont des impasses, détaillées dans `etape-2-journal.md`.
 
-Ce que le lot R trouvera en arrivant :
+Ce que le sous-lot R4 trouvera en arrivant :
 
-- les composants du catalogue portent leur profondeur (`BentoTile` sur
-  `surfaceRaised` avec ombre, cases vides de grille en `surfaceSunken`), la
-  galerie `/_galerie` montre tous les états sur les cinq axes de la section 5, et
-  `PageParcours` vit dans `lib/core/widgets/` ;
-- les écrans, eux, n'ont **pas** bougé : seize `Container` avec `decoration`
-  vivent encore dans `lib/features/`, et les deux règles `07` §6 qui les
-  interdiraient (plus celle du `showDialog` destructif) sont à ajouter à
-  `verifier_jetons.dart` **avec** la reprise des écrans, pas avant ;
-- deux imprécisions rédactionnelles de `07-catalogue-composants.md` restent à
-  trancher côté document : « sélection en `surfacePrimary` » de la ligne
-  `GrilleSemaine` §1, et « plus hors ligne » de la famille « composant d'état »
-  §4. Détail dans `etape-2-journal.md`, « lot C ».
+- les quatre premiers écrans et la coquille de navigation portent le langage
+  des lots T/C : `PageShell`, `TimelineRow`, `StatTile`, `SignalRow`,
+  `ChildCard`, `StatusPill`, et les `BentoTile` posés sur `surfaceRaised` ;
+- le routeur tient quatre `StatefulShellRoute` (élève, tuteur, enseignant,
+  admin) et une fonction pure `destinationsPour(role, mode)` testée — le mode
+  enfant ne propose aucune barre (ADR-009), le contrôleur et le comptable non
+  plus ;
+- deux écarts à trancher sont consignés dans les fiches `ENS-02` / `ADM-01`
+  (six compteurs contre cinq annoncés, ordre « chiffres d'abord »), et deux
+  imprécisions de `07-catalogue-composants.md` sont documentées (`GrilleSemaine`
+  §1, famille « composant d'état » §4) — les trier avec la reprise de R4 ;
+- les écrans restants portent encore l'ancien rendu (`Scaffold` + bandeau, ou
+  liste sans coquille) : c'est exactement ce que la rangée R4 reprend.
 
 Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 
