@@ -1,0 +1,15 @@
+# Configuration de la generation de code.
+#
+# slang est configure par `slang.yaml` et lance par `dart run slang`, pas par
+# build_runner : deux fichiers de configuration pour un meme outil finiraient
+# par diverger. Son builder est donc desactive ici.
+#
+# Ordre a respecter en local comme en CI :
+#   dart run slang
+#   dart run build_runner build --delete-conflicting-outputs
+
+targets:
+  $default:
+    builders:
+      slang_build_runner:
+        enabled: false

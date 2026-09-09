@@ -1,0 +1,28 @@
+name: Deploy Supabase
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Migrations + Edge Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Apply migrations
+        # DIRECT (non poolé, port 5432) : la connexion via pooler (6543) rejette le DDL.
+        # Secret à créer (étape D) : postgresql://postgres.gggmtelinlpseweouyav:<MOT_DE_PASSE_DB>@<hôte>.pooler.supabase.com:5432/postgres?sslmode=require
+        run: supabase db push --db-url "${{ secrets.SUPABASE_DB_URL }}"
+
+      - name: Deploy Edge Functions
+        if: hashFiles('supabase/functions/**') != ''
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy --project-ref gggmtelinlpseweouyav --no-verify-jwt

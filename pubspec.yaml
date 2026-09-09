@@ -1,0 +1,127 @@
+name: rewayah_academy
+description: "Rewayah Academy : gestion des cours de Coran en visio."
+publish_to: 'none'
+
+version: 0.2.0+1
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Etat et navigation
+  flutter_riverpod: any
+  riverpod_annotation: any
+  go_router: any
+
+  # Backend
+  supabase_flutter: any
+
+  # Cache local (etape-2-core-flutter.md, section 4)
+  drift: any
+  drift_flutter: any
+  flutter_secure_storage: any
+  flutter_cache_manager: any
+
+  # Les icones Phosphor sont integrees en assets, pas en dependance : le paquet
+  # phosphor_flutter 2.1.0 ne compile plus avec Flutter 3.47 (IconData y est
+  # devenue une classe `final`, il ne peut plus l'etendre) et aucune version
+  # corrigee n'existe. Voir docs/architecture/etape-2-journal.md.
+
+  # Internationalisation, cles en points (section 5)
+  slang: any
+  slang_flutter: any
+
+  # Libelles audio du composant AudioLabel
+  just_audio: any
+
+  # Bandeau de degradation reseau
+  connectivity_plus: any
+
+  # Cles d'idempotence de la file de synchronisation
+  uuid: any
+
+  # Glyphes du chrome interne de Flutter uniquement. L'iconographie de
+  # l'application reste Phosphor : voir la note sous `flutter:` plus bas.
+  cupertino_icons: any
+  crypto: any
+  qr_flutter: any
+  file_picker: any
+  adhan: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+  build_runner: any
+  drift_dev: any
+  riverpod_generator: any
+  slang_build_runner: any
+
+flutter:
+  # Les glyphes Material servent uniquement au chrome interne du framework :
+  # fleche de retour d'AppBar, affordances de TextField. L'iconographie DE
+  # L'APPLICATION reste Phosphor et rien d'autre (design-tokens.md section 3),
+  # et c'est `tool/verifier_jetons.dart` qui tient cette regle en refusant tout
+  # `Icons.` hors de AppIcons. Priver le framework de ses glyphes ne les
+  # remplacerait pas : cela afficherait des carres vides.
+  # L'elagage d'icones ne garde que les points de code reellement atteints.
+  uses-material-design: true
+
+  # assets/i18n n'est pas declare ici : slang compile les chaines dans
+  # lib/core/i18n/strings.g.dart, elles ne sont pas lues au reseau ni au disque.
+  # Seuls les libelles audio sont de vrais assets d'execution.
+  assets:
+    - assets/audio/fr/
+
+  # Quatre familles, pas une de plus (design-tokens.md section 2).
+  # Fichiers versionnes dans le depot : aucune police n'est chargee au reseau,
+  # sinon le budget de demarrage a froid et le mode hors ligne tombent.
+  fonts:
+    # Arabe, documents : Coran, hadiths, livres, lettres.
+    - family: UthmanTahaNaskh
+      fonts:
+        - asset: assets/fonts/UthmanTahaNaskh-Regular.otf
+
+    # Arabe, interface : RTL, menus, boutons, labels.
+    # Police variable : la graisse se pilote par FontVariation dans AppTypography.
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-Variable.ttf
+
+    # Francais, corps de texte, labels, navigation, boutons, tableaux.
+    # Police variable, axes releves sur le binaire : wght 400 a 700 (defaut
+    # 400), wdth 75 a 100. Il n'y a pas de graisse plus fine que 400 dans ce
+    # produit : la hierarchie du texte se fait par la couleur, jamais par un
+    # gris clair obtenu en amaigrissant la police. Licence OFL, voir
+    # assets/fonts/LICENSE-InstrumentSans.txt.
+    # L'italique est un fichier separe, non embarque : aucun style du produit
+    # ne le demande, et l'embarquer couterait 190 Ko pour rien.
+    - family: InstrumentSans
+      fonts:
+        - asset: assets/fonts/InstrumentSans-Variable.ttf
+
+    # Francais, titres, en-tetes, chiffres de tuile.
+    # Axes releves sur le binaire : opsz 12 a 96 (defaut 96), wght 200 a 800
+    # (defaut 800), wdth 75 a 100. Les deux defauts sont des pieges : un titre
+    # qui ne declare pas ses axes sort en extra-gras dessine pour 96 points.
+    # AppTypography les pilote tous les deux. Licence OFL, voir
+    # assets/fonts/LICENSE-BricolageGrotesque.txt.
+    - family: BricolageGrotesque
+      fonts:
+        - asset: assets/fonts/BricolageGrotesque-Variable.ttf
+
+    # Icones Phosphor, deux graisses seulement : `regular` par defaut, `fill`
+    # pour les etats actifs (design-tokens.md section 3). Les quatre autres
+    # graisses du jeu ne sont pas embarquees. Licence MIT, voir
+    # assets/fonts/LICENSE-Phosphor.txt.
+    - family: Phosphor
+      fonts:
+        - asset: assets/fonts/Phosphor-Regular.ttf
+    - family: PhosphorFill
+      fonts:
+        - asset: assets/fonts/Phosphor-Fill.ttf

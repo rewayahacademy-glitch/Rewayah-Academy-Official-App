@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  migrate-check:
+    name: Migrations applicables (Postgres 17)
+    runs-on: ubuntu-latest
+    container: postgres:17-alpine
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stub les roles et les fonctions Supabase, puis applique les migrations
+        shell: bash
+        run: |
+          # auth.uid() et auth.jwt() font partie du stub : Postgres valide le
+          # corps des fonctions SQL a leur creation, donc 0001 ne s'applique pas
+          # sans elles. Leur absence faisait echouer ce job des la premiere
+          # migration.
+          #
+          # Le stub est versionne plutot qu'ecrit ici : les scenarios ci-dessous
+          # ont besoin de pouvoir se faire passer pour un appelant donne, et un
+          # stub qui differe entre la CI et le poste ne prouve rien.
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql
+          for f in supabase/migrations/*.sql; do
+            echo "--- $f"
+            psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
+      # de genre, appareil partage, plafond d'appareils, codes d'appairage,
+      # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
+      # search_path partout. Voir docs/architecture/etape-3-auth-kyc.md section 8.
+      - name: Scenarios d'acceptation SQL des etapes 1 et 3
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape3.sql
+
+      # Disponibilites communes aux deux roles, affectation durable et son
+      # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
+      # cloisonnement des disponibilites, demandes des quatre parties, feed de
+      # matching a cheval sur deux fuseaux, compteurs de ADM-01.
+      # Voir docs/architecture/etape-4-dashboards.md section 7.
+      - name: Scenarios d'acceptation SQL de l'etape 4
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape4.sql
+
+  flutter:
+    name: Flutter (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: web
+          - os: ubuntu-latest
+            target: apk
+          - os: windows-latest
+            target: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+
+      # Le code genere est versionne pour que `dart analyze` fonctionne sans
+      # etape prealable. On le regenere quand meme, et un diff non vide signale
+      # qu'un fichier source et son code genere ont diverge.
+      - name: Regenere le code et refuse toute divergence
+        shell: bash
+        run: |
+          dart run slang
+          dart run build_runner build --delete-conflicting-outputs
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Le code genere ne correspond plus aux sources :"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+
+      - run: dart analyze --fatal-infos
+      - run: flutter test
+
+      # Jetons de couleur, echelle d'espacement, catalogue d'icones unique,
+      # absence d'onTap nu, zero emoji, API de PermanentNotice, routeur unique.
+      - name: Verifie les invariants de l'etape 2
+        run: dart run tool/verifier_jetons.dart
+
+      - run: flutter build ${{ matrix.target }}

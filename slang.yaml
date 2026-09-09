@@ -1,0 +1,35 @@
+# Configuration de slang.
+#
+# Convention de cle stable des l'etape 2 : `role.ecran.element`, en points,
+# par exemple `eleve.accueil.rejoindre`
+# (docs/architecture/etape-2-core-flutter.md section 5).
+#
+# `flat_map` est indispensable : le composant AudioLabel resout un fichier son
+# a partir de la MEME chaine de cle que le texte, pour que les deux ne puissent
+# pas diverger.
+
+base_locale: fr
+fallback_strategy: base_locale
+
+input_directory: assets/i18n
+input_file_pattern: .i18n.json
+
+output_directory: lib/core/i18n
+output_file_name: strings.g.dart
+
+translate_var: t
+enum_name: AppLocale
+class_name: Traductions
+
+flat_map: true
+timestamp: false
+
+# Interpolation en accolades, `{prenom}`, et non en style Dart `$prenom`.
+#
+# Deux raisons. La premiere : les libelles sont relus et corriges par des
+# personnes qui n'ecrivent pas de Dart, et `{prenom}` est la notation qu'elles
+# reconnaissent. La seconde tient au francais : `$prenom,` colle au signe de
+# ponctuation et se lit mal, alors que les accolades bornent le parametre sans
+# ambiguite. Sans ce reglage, slang ne voit aucun parametre et genere un getter
+# qui rend les accolades telles quelles a l'ecran.
+string_interpolation: braces

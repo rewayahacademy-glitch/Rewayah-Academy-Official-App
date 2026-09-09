@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <!--
+    Le chemin de base est remplace par la valeur de --base-href passee a
+    `flutter build web`. Il doit commencer et finir par une barre oblique.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+
+  <!--
+    Sans cette ligne, Safari sur iPad rend la page dans une fenetre virtuelle de
+    980 px et l'application arrive miniaturisee : c'est la premiere chose qui se
+    voit sur une tablette. `viewport-fit=cover` rend l'encoche au SafeArea, que
+    l'application pose deja sur chaque ecran.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta name="description" content="Cours de Coran en visio, avec un enseignant attitre pour chaque eleve.">
+
+  <!-- La couleur de l'accent, celle de app_palette.dart, pas celle du gabarit. -->
+  <meta name="theme-color" content="#8652E6">
+
+  <!-- Ajout a l'ecran d'accueil, iOS et Android. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Le fond de l'application est clair : la barre d'etat reste en encre sombre. -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Rewayah">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Rewayah Academy</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /*
+      Le fond du document porte la meme couleur que le fond de l'application,
+      le creme surfaceCanvas. Sans lui, le temps de chargement s'affiche en
+      blanc puis bascule : un clignotement qui se voit surtout au demarrage a
+      froid, celui-la meme que le scenario 7 cherche a mesurer.
+      Cette valeur suit surfaceCanvas de docs/produit/design-tokens.md, comme
+      background_color de web/manifest.json. Les trois changent ensemble.
+    */
+    html, body { margin: 0; padding: 0; background-color: #F8F4EE; }
+  </style>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+# La CI lance `dart analyze --fatal-infos` : tout ce qui est signale ici bloque la fusion.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - "**/*.g.dart"
+    - "**/*.drift.dart"
+    - lib/core/i18n/strings.g.dart
+
+linter:
+  rules:
+    # Immuabilite et const : le theme et les composants partages en dependent.
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - prefer_final_in_for_each
+    - prefer_final_locals
+
+    # Lisibilite et surete
+    - always_declare_return_types
+    - avoid_dynamic_calls
+    - avoid_slow_async_io
+    - cancel_subscriptions
+    - close_sinks
+    - directives_ordering
+    - implicit_call_tearoffs
+    - only_throw_errors
+    - prefer_single_quotes
+    - require_trailing_commas
+    - throw_in_finally
+    - unawaited_futures
+    - unnecessary_lambdas
+    - unnecessary_parenthesis
+    - use_enums
+    - use_super_parameters
+
+    # Les traces passent par le journal applicatif, jamais par print.
+    - avoid_print
