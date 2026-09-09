@@ -1,0 +1,538 @@
+{
+  "commun": {
+    "continuer": "Continuer",
+    "retour": "Retour",
+    "valider": "Valider",
+    "annuler": "Annuler",
+    "fermer": "Fermer",
+    "reessayer": "Réessayer",
+    "chargement": "Chargement"
+  },
+
+  "reseau": {
+    "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
+    "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
+    "retabli": "Réseau rétabli",
+    "syncImpossible": "Synchronisation impossible"
+  },
+
+  "etat": {
+    "enDirect": "En direct",
+    "imminent": "C'est bientôt",
+    "annule": "Annulé",
+    "enAttente": "En attente",
+    "enRetard": "En retard",
+    "termine": "Terminé"
+  },
+
+  "destructif": {
+    "irreversible": "Cette action ne peut pas être annulée."
+  },
+
+  "salle": {
+    "bandeauPermanent": "Cours enregistré, visite de contrôle possible.",
+    "micro": "Micro",
+    "microCoupe": "Micro coupé",
+    "camera": "Caméra",
+    "cameraCoupee": "Caméra éteinte",
+    "quitter": "Quitter",
+    "ouvrirCoran": "Ouvrir le Coran",
+    "confirmerSortie": "Quitter le cours ?",
+    "expiree": "Cette salle n'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours."
+  },
+
+  "attente": {
+    "titre": "Votre dossier est en cours de vérification",
+    "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
+    "enVerification": "Nous vérifions votre dossier. Vous recevrez une notification dès qu'il est validé.",
+    "refuse": "Votre dossier n'a pas été validé.",
+    "suspendu": "Votre compte est suspendu.",
+    "contacterAcademie": "Contacter l'académie",
+    "deposeLe": "Déposé le {date}",
+    "delai": "La vérification prend en général moins de 48 heures.",
+    "aFournir": "À fournir",
+    "pieceIdentite": "Une pièce d'identité",
+    "signatureContrat": "La signature du contrat",
+    "carteAccuse": "Ce que vous devez savoir",
+    "deposerLaPiece": "Déposer ma pièce",
+    "signerLeContrat": "Lire et signer",
+    "lireLaCarte": "Lire",
+    "toutEstDepose": "Tout est déposé.",
+    "corriger": "Reprendre mon dossier",
+    "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
+    "seDeconnecter": "Se déconnecter"
+  },
+
+  "connexion": {
+    "titre": "Se connecter",
+    "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
+    "courriel": "Votre adresse électronique",
+    "envoyerLien": "Recevoir le lien",
+    "avecGoogle": "Continuer avec Google",
+    "ou": "ou",
+    "lienEnvoye": "Lien envoyé",
+    "lienEnvoyeDetail": "Ouvrez le message envoyé à {courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.",
+    "changerAdresse": "Utiliser une autre adresse",
+    "erreurCourriel": "Cette adresse ne semble pas valide.",
+    "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant."
+  },
+
+  "inscription": {
+    "titre": "Créer votre compte",
+    "etapeSur": "Étape {n} sur {total}",
+    "tempsRestant": "Environ {minutes} min",
+    "roleQuestion": "Vous inscrivez-vous comme parent ou comme enseignant ?",
+    "roleTuteur": "Parent ou tuteur",
+    "roleEleveAdulte": "Élève adulte, pour moi-même",
+    "roleEnseignant": "Enseignant",
+    "autreAide": "Écrivez à l'académie et nous créerons votre accès. Cette page ne peut pas le faire pour vous.",
+    "identiteQuestion": "Comment vous appelez-vous ?",
+    "identiteRaison": "Ce nom doit être celui de votre pièce d'identité.",
+    "prenom": "Prénom",
+    "nom": "Nom",
+    "genreQuestion": "Vous êtes",
+    "genreHomme": "Un homme",
+    "genreFemme": "Une femme",
+    "genreRaison": "Cette réponse ne sert qu'à confier votre pièce d'identité à un membre du personnel du même genre.",
+    "recapitulatif": "Avant de continuer",
+    "creer": "Créer mon compte",
+    "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
+    "champRequis": "Cette réponse est nécessaire pour continuer."
+  },
+
+  "contrat": {
+    "titre": "Ce que vous signez",
+    "intro": "Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.",
+    "pointEnregistrement": "Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.",
+    "pointControle": "Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.",
+    "pointCoordonnees": "Vous ne voyez jamais les coordonnées d'une famille : ni nom complet, ni courriel, ni téléphone.",
+    "lireTexte": "Lire le texte complet",
+    "accepter": "J'ai lu et j'accepte",
+    "accepteLe": "Accepté le {date}",
+    "erreur": "La signature n'a pas abouti. Réessayez dans un instant."
+  },
+
+  "accuse": {
+    "titre": "À savoir avant de commencer",
+    "compris": "J'ai compris"
+  },
+
+  "kyc": {
+    "titre": "Votre pièce d'identité",
+    "intro": "Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.",
+    "typeQuestion": "Quelle pièce déposez-vous ?",
+    "carteIdentite": "Carte d'identité",
+    "passeport": "Passeport",
+    "titreSejour": "Titre de séjour",
+    "choisirFichier": "Choisir la photo",
+    "fichierChoisi": "Photo prête à être envoyée",
+    "envoyer": "Envoyer ma pièce",
+    "envoiEnCours": "Envoi en cours",
+    "deposee": "Pièce reçue",
+    "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse."
+  },
+
+  "appareils": {
+    "titre": "Appareils",
+    "regle": "Deux appareils au maximum par enfant, un seul en cours à la fois.",
+    "ajouter": "Ajouter un appareil",
+    "limiteAtteinte": "Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.",
+    "codeTitre": "Sur l'appareil de l'enfant",
+    "codeInstruction": "Ouvrez l'application Rewayah, puis entrez ce code.",
+    "expireDans": "Expire dans {temps}",
+    "expire": "Ce code a expiré.",
+    "regenerer": "Générer un nouveau code",
+    "revoquer": "Retirer",
+    "revoquerConfirmation": "Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.",
+    "derniereUtilisation": "Utilisé {quand}",
+    "jamaisUtilise": "Jamais utilisé",
+    "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
+  },
+
+  "enfant": {
+    "titre": "Ajouter un enfant",
+    "prenom": "Son prénom",
+    "nom": "Son nom",
+    "age": "Son âge",
+    "ageInvalide": "Indiquez un âge entre 3 et 18 ans.",
+    "ageRaison": "L'âge fixe le mode d'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.",
+    "creer": "Ajouter au foyer",
+    "erreur": "L'ajout n'a pas abouti. Réessayez dans un instant.",
+    "aucun": "Aucun enfant dans le foyer",
+    "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
+  },
+
+  "disponibilites": {
+    "titre": "Quand vos enfants peuvent-ils suivre un cours ?",
+    "titreEnseignant": "Quand pouvez-vous donner cours ?",
+    "consigne": "Touchez les heures possibles pour {prenom}.",
+    "consigneEnseignant": "Touchez les heures où vous êtes disponible.",
+    "effet": "Un enseignant choisira parmi ces heures. Plus vous en proposez, plus vite le cours démarre.",
+    "effetEnseignant": "Vous ne verrez que les élèves dont les heures croisent les vôtres.",
+    "fuseau": "Heures affichées en {fuseau}",
+    "aucune": "Aucune heure proposée pour {prenom}",
+    "aucuneDetail": "Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.",
+    "posees": "{nombre} heures proposées",
+    "poseeUne": "1 heure proposée",
+    "cellulePosee": "{jour} {heure} heures, proposé. Toucher pour retirer",
+    "celluleLibre": "{jour} {heure} heures, libre. Toucher pour proposer",
+    "erreur": "Ce créneau n'a pas pu être enregistré. Réessayez.",
+    "joursCourts": ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+    "joursLongs": ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+  },
+
+  "creneaux": {
+    "titre": "Créneaux",
+    "ongletHeures": "Mes heures",
+    "ongletEleves": "Élèves en attente",
+    "mesEleves": "Vous suivez {nombre} élèves sur {plafond} possibles.",
+    "aucunEleve": "Aucun élève en attente sur vos heures",
+    "aucunEleveDetail": "Proposez d'autres heures pour voir plus de familles.",
+    "attendDepuis": "Attend depuis {jours} jours",
+    "attendUnJour": "Attend depuis 1 jour",
+    "attendAujourdhui": "Demande déposée aujourd'hui",
+    "niveau": "Niveau {niveau}",
+    "prendre": "Prendre {jour} à {heure} h",
+    "priseEnCours": "Enregistrement",
+    "plafondAtteint": "Vous suivez déjà {nombre} élèves, votre maximum. Un élève pris est un engagement durable, pas une réservation.",
+    "plafondDemander": "Demander à suivre plus d'élèves",
+    "demandeTitre": "Combien d'élèves pouvez-vous suivre ?",
+    "demandeMotif": "Pourquoi ce changement ?",
+    "demandeMotifRequis": "Un motif est nécessaire : c'est lui qui permet de trancher.",
+    "demandeEnvoyer": "Envoyer la demande",
+    "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
+    "eleves": "{nombre} élèves",
+    "erreur": "L'opération n'a pas abouti : {message}"
+  },
+
+  "priere": {
+    "fajr": "Fajr",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha",
+    "entree": "{priere}, {minutes} min",
+    "annonce": "Ce cours sera interrompu pour {priere}, vers {heure}.",
+    "annonceAucune": "Aucune interruption prévue pendant ce cours.",
+    "alerte": "{priere} dans {minutes} min",
+    "alerteMaintenant": "Pause pour {priere}, reprise à {heure}",
+    "pause": "Pause",
+    "lieu": "Horaires calculés pour {lieu}",
+    "lieuSansNom": "Horaires calculés pour le lieu de l'enseignant",
+    "ajustee": "{priere} ajustée de {minutes} min par l'enseignant",
+    "reglagesAbsents": "L'enseignant n'a pas encore réglé ses horaires de prière."
+  },
+
+  "eleveConnexion": {
+    "entrerCode": "J'ai un code",
+    "scanner": "Scanner le carré",
+    "codeInvite": "Entre le code affiché sur le téléphone de tes parents",
+    "codeErreur": "Ce code ne marche pas",
+    "codeExpire": "Ce code est trop vieux. Demande-en un nouveau.",
+    "choisirProfil": "Qui es-tu ?",
+    "nouveauCode": "Choisis ton code secret",
+    "nouveauCodeConfirmer": "Entre-le encore une fois",
+    "codeDifferent": "Les deux codes ne sont pas les mêmes",
+    "codeEnregistre": "Code enregistré"
+  },
+
+  "dossiers": {
+    "titre": "Dossiers à valider",
+    "aucun": "Aucun dossier en attente",
+    "aucunDetail": "Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.",
+    "restants": "{n} dossier(s) en attente",
+    "deposeLe": "Déposé le {date}",
+    "apercu": "La pièce déposée",
+    "apercuIndisponible": "Aperçu indisponible",
+    "verifications": "Vérifications",
+    "pointLisible": "La pièce est lisible",
+    "pointNom": "Le nom correspond à celui du compte",
+    "pointValidite": "La pièce n'est pas expirée",
+    "verdict": "Décision",
+    "approuver": "Valider le dossier",
+    "refuser": "Refuser",
+    "motif": "Ce qui ne va pas, en une phrase",
+    "motifRequis": "Un refus doit dire ce qui ne va pas : la famille n'a que cette phrase pour corriger.",
+    "journalisation": "Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.",
+    "genreManquant": "Renseignez votre genre dans votre profil avant de consulter un dossier.",
+    "erreur": "La décision n'a pas abouti. Réessayez dans un instant."
+  },
+
+  "admin": {
+    "tableau": {
+      "titre": "Centre de commande",
+      "dossiers": "Dossiers à valider",
+      "foyers": "Foyers sans enseignant",
+      "rapports": "Cahiers manquants",
+      "incidents": "Incidents (24 h)",
+      "comptes": "Accès échus",
+      "demandes": "Demandes à trancher",
+      "compteursErreur": "Les compteurs n'ont pas pu être lus. Réessayez dans un instant.",
+      "aTraiter": "À traiter en premier",
+      "aTraiterAucun": "Rien à traiter",
+      "aTraiterAucunDetail": "Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.",
+      "aTraiterPortee": "Les quatre autres compteurs se règlent ailleurs : ils n'ont pas encore d'écran d'action.",
+      "listeErreur": "La liste n'a pas pu être lue en entier. Les compteurs, eux, restent justes.",
+      "ligneDossier": "Dossier d'identité de {prenom}",
+      "ligneReaffectation": "Changement d'enseignant pour {prenom}",
+      "lignePlafond": "Plafond d'élèves de {prenom}",
+      "ligneRegle": "Changement de règle pour {prenom}",
+      "attenteAujourdhui": "Déposé aujourd'hui",
+      "attenteUnJour": "En attente depuis 1 jour",
+      "attenteJours": "En attente depuis {jours} jours"
+    },
+    "demandes": {
+      "titre": "Demandes et règles",
+      "restantes": "{n} demande(s) en attente",
+      "aucune": "Aucune demande en attente",
+      "aucuneDetail": "Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.",
+      "faitePar": "Demandée le {date}, par {role}",
+      "roleGuardian": "un tuteur",
+      "roleTeacher": "un enseignant",
+      "roleStudent": "un élève autonome",
+      "roleAdmin": "l'administration",
+      "roleController": "un contrôleur",
+      "roleInconnu": "une partie au dossier",
+      "reclame": "Ce qui est demandé",
+      "reclameReaffectation": "Changer l'enseignant de {prenom}",
+      "reclamePlafond": "Porter le plafond à {valeur} élèves",
+      "reclameRegle": "Porter {regle} à {valeur} min",
+      "reclameRegleSansValeur": "Revoir {regle}",
+      "motifDemande": "Motif invoqué",
+      "verdict": "Décision",
+      "accorder": "Accorder",
+      "refuser": "Refuser",
+      "motif": "Ce qui motive ce refus, en une phrase",
+      "motifRequis": "Un refus doit dire pourquoi : c'est la seule phrase que la partie recevra.",
+      "effet": "Accorder applique l'effet en base : l'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.",
+      "journalisation": "Chaque décision et chaque règle posée sont inscrites au journal d'audit, avec votre nom.",
+      "feuille": "Les règles de {prenom}",
+      "feuilleIntro": "La valeur de la plateforme et celle qui s'applique, côte à côte. Une règle se change ici sans qu'une demande existe.",
+      "regleDuree": "Durée d'une séance",
+      "regleMinimum": "Durée minimale payable",
+      "reglePause": "Pause entre deux cours",
+      "reglePlafond": "Plafond d'élèves",
+      "regleInconnue": "Règle non reconnue",
+      "plateforme": "Plateforme : {valeur}",
+      "effective": "Appliquée : {valeur}",
+      "minutes": "{valeur} min",
+      "eleves": "{valeur} élèves",
+      "surchargeDepuis": "Posée le {date} : {motif}",
+      "sansSurcharge": "Cet élève suit la règle de la plateforme.",
+      "changer": "Changer",
+      "clore": "Revenir à la règle de la plateforme",
+      "historique": "Surcharges closes",
+      "historiqueLigne": "{valeur}, du {debut} au {fin}",
+      "historiqueMotifs": "Posée : {motif}. Close : {cloture}.",
+      "poserTitre": "{regle}, pour {prenom}",
+      "cloreTitre": "Clore la surcharge de {prenom}",
+      "poserMotif": "Pourquoi ce changement ?",
+      "poserMotifRequis": "Une règle sans motif ne se relit pas six mois plus tard.",
+      "poserEnvoyer": "Poser la règle",
+      "cloreEnvoyer": "Clore la surcharge",
+      "erreur": "L'opération n'a pas abouti : {message}"
+    }
+  },
+
+  "vide": {
+    "aucunCours": "Aucun cours aujourd'hui",
+    "aucunCoursDetail": "Votre prochain cours apparaîtra ici.",
+    "aucunCreneau": "Aucun créneau disponible pour le moment",
+    "aucunRapport": "Aucun cahier de transmission pour l'instant",
+    "aucunAppareil": "Aucun appareil appairé"
+  },
+
+  "pin": {
+    "titre": "Entre ton code",
+    "erreur": "Ce code ne correspond pas",
+    "effacer": "Effacer"
+  },
+
+  "choix": {
+    "autre": "Autre",
+    "autreInvite": "Précisez",
+    "selectionMultiple": "Plusieurs réponses possibles"
+  },
+
+  "avatar": {
+    "sansPhoto": "Pas encore de photo"
+  },
+
+  "nav": {
+    "eleve": {
+      "accueil": "Accueil",
+      "coran": "Coran",
+      "suivi": "Suivi"
+    },
+    "tuteur": {
+      "accueil": "Accueil",
+      "foyer": "Foyer",
+      "disponibilites": "Disponibilités",
+      "reglages": "Réglages",
+      "suivi": "Suivi"
+    },
+    "enseignant": {
+      "journee": "Journée",
+      "creneaux": "Créneaux",
+      "profil": "Profil"
+    },
+    "controleur": {
+      "planning": "Planning"
+    },
+    "admin": {
+      "tableauDeBord": "Tableau de bord",
+      "dossiers": "Dossiers",
+      "demandes": "Demandes",
+      "attribution": "Attribution",
+      "journal": "Journal"
+    }
+  },
+
+  "eleve": {
+    "accueil": {
+      "rejoindre": "Rejoindre",
+      "coran": "Le Coran",
+      "coranDetail": "À lire quand tu veux",
+      "prochainCours": "Prochain cours",
+      "coursEnDirect": "Ton cours a commencé",
+      "avec": "Avec {prenom}",
+      "dansMinutes": "Dans {minutes} min",
+      "dansHeures": "Dans {heures} h {minutes}",
+      "imminent": "C'est presque l'heure",
+      "aucunCours": "Pas de cours aujourd'hui",
+      "aucunCoursDetail": "Ton enseignant prépare le prochain.",
+      "prochainAujourdhui": "Ton prochain cours est plus tard aujourd'hui.",
+      "prochainDemain": "Ton prochain cours est demain.",
+      "prochainDansJours": "Ton prochain cours est dans {jours} jours.",
+      "annulee": "Ce cours n'aura pas lieu",
+      "horsLigne": "Pas de réseau",
+      "horsLigneDetail": "Tu pourras entrer dès que le réseau revient.",
+      "pausePriere": "Pause pour la prière",
+      "pausePriereDetail": "{priere}, vers {heure}"
+    }
+  },
+
+  "tuteur": {
+    "accueil": {
+      "titre": "Votre foyer",
+      "assister": "Assister",
+      "enCours": "En cours avec {prenom}",
+      "depuisMinutes": "Commencé il y a {minutes} min",
+      "depuisInstant": "Vient de commencer",
+      "aujourdhui": "Aujourd'hui à {heure}, avec {prenom}",
+      "unAutreJour": "{jour} à {heure}, avec {prenom}",
+      "rienAujourdhui": "Rien aujourd'hui",
+      "aucunCoursPrevu": "Aucun cours programmé pour l'instant",
+      "aucunCoursPrevuDetail": "Les cours de la semaine sont préparés à l'avance. Celui-ci apparaîtra ici.",
+      "enRecherche": "En recherche d'un enseignant",
+      "enRechercheDepuis": "Demande déposée le {date}",
+      "enRechercheSansDate": "Un enseignant prendra {prenom} en charge parmi les heures proposées.",
+      "sansCreneau": "Aucune heure proposée pour {prenom}",
+      "sansCreneauDetail": "Sans créneau, aucun enseignant ne peut prendre {prenom} en charge.",
+      "poserDesHeures": "Proposer des heures",
+      "annulee": "Le cours de {heure} n'aura pas lieu",
+      "motifAnnulee": "Séance annulée",
+      "motifAnnuleeTard": "Séance annulée peu avant l'heure",
+      "proposeApres": "Prochain cours {jour} à {heure}",
+      "proposeAucun": "Un nouveau cours vous sera proposé.",
+      "gererLeFoyer": "Gérer le foyer",
+      "blocAppareils": "Appareils du foyer",
+      "blocAppareilsDetail": "Ajouter un appareil, ou en retirer un.",
+      "blocReglages": "Réglages par enfant",
+      "blocReglagesDetail": "Photo, caméra et affichage, enfant par enfant.",
+      "acces": "Accès",
+      "accesJusqua": "Accès de {prenom} jusqu'au {date}",
+      "accesSansFin": "Accès de {prenom} sans date de fin",
+      "aucunEnfant": "Aucun enfant dans le foyer",
+      "aucunEnfantDetail": "Ajoutez votre premier enfant pour commencer.",
+      "erreur": "Le foyer n'a pas pu être lu en entier. Réessayez dans un instant."
+    },
+    "reglages": {
+      "titre": "Réglages par enfant",
+      "intro": "Ces réglages s'appliquent à la séance suivante, jamais pendant un cours.",
+      "photo": "Photo",
+      "photoAucune": "{prenom} n'a pas encore de photo. Elle reste visible du seul foyer.",
+      "photoPresente": "La photo de {prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.",
+      "photoAjouter": "Ajouter une photo",
+      "photoChanger": "Changer la photo",
+      "photoTropLourde": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
+      "camera": "Caméra",
+      "cameraAutorisee": "{prenom} peut allumer sa caméra pendant le cours.",
+      "cameraInterdite": "Le bouton caméra n'apparaîtra pas pour {prenom}.",
+      "cameraAutoriser": "Autoriser la caméra de {prenom}",
+      "cameraRetirer": "Retirer la caméra de {prenom}",
+      "mode": "Affichage",
+      "modeEnfant": "Grand affichage, sans lecture : {prenom} reconnaît des images et écoute.",
+      "modeStandard": "Affichage courant : {prenom} lit son écran.",
+      "modePasserEnfant": "Passer {prenom} au grand affichage",
+      "modePasserStandard": "Passer {prenom} à l'affichage courant",
+      "demandes": "Demander un changement",
+      "demandeReaffectation": "Changer d'enseignant",
+      "demandeDuree": "Changer la durée des cours",
+      "demandeMinimum": "Changer la durée minimale payable",
+      "demandeSansEnseignant": "{prenom} n'a pas encore d'enseignant : il n'y a rien à changer.",
+      "demandeTitreReaffectation": "Changer l'enseignant de {prenom}",
+      "demandeTitreDuree": "La durée des cours de {prenom}",
+      "demandeTitreMinimum": "La durée minimale payable pour {prenom}",
+      "demandeActuelle": "Aujourd'hui : {minutes} min",
+      "demandeMinutes": "{minutes} min",
+      "demandeMotif": "Pourquoi ce changement ?",
+      "demandeMotifRequis": "Un motif est nécessaire : c'est lui qui permet de trancher.",
+      "demandeEnvoyer": "Envoyer la demande",
+      "demandeEnvoyee": "Demande envoyée. L'administration la tranchera.",
+      "aucunEnfant": "Aucun enfant dans le foyer",
+      "aucunEnfantDetail": "Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.",
+      "erreur": "L'enregistrement n'a pas abouti : {message}"
+    }
+  },
+
+  "enseignant": {
+    "journee": {
+      "lancer": "Lancer le cours",
+      "preflight": "Vérifier avant le cours",
+      "titre": "Votre journée",
+      "prochainCours": "Prochain cours",
+      "coursEnCours": "Cours en cours",
+      "minuteurHeures": "Dans {heures} h {minutes}",
+      "minuteurMinutes": "Dans {minutes} min",
+      "minuteurImminent": "Ça commence",
+      "jusqua": "Jusqu'à {heure}",
+      "unAutreJour": "{jour}, à {heure}",
+      "sansLancement": "Le lancement se fera depuis cet écran quand la salle existera. Pour l'instant il annonce, il n'ouvre pas.",
+      "aucunCours": "Aucun cours à venir",
+      "aucunCoursDetail": "Prenez un élève en attente : c'est ce qui remplit votre journée.",
+      "colonne": "La journée",
+      "ligneCours": "Cours avec {prenom}",
+      "lignePause": "Pause",
+      "plage": "{debut} à {fin}",
+      "duree": "{minutes} min",
+      "rienAujourdhui": "Rien de prévu aujourd'hui",
+      "rienAujourdhuiDetail": "Votre prochain cours est {jour} à {heure}.",
+      "journeeTerminee": "{nombre} cours donnés aujourd'hui.",
+      "journeeTermineeUn": "1 cours donné aujourd'hui.",
+      "elevesEnAttente": "{nombre} élèves attendent sur vos heures",
+      "unEleveEnAttente": "1 élève attend sur vos heures",
+      "aucunEleveEnAttente": "Aucun élève en attente sur vos heures",
+      "voirCreneaux": "Voir mes créneaux",
+      "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant."
+    }
+  },
+
+  "aConstruire": {
+    "titre": "Écran à construire",
+    "detail": "Cet écran arrive à l'étape 3."
+  },
+
+  "galerie": {
+    "titre": "Galerie des composants",
+    "avertissement": "Banc d'essai de développement. Absent des versions de production.",
+    "paires": "Paires de couleurs",
+    "elevation": "Élévation et rayons",
+    "typographie": "Échelles typographiques",
+    "polices": "Polices",
+    "composants": "Composants partagés",
+    "modeEnfant": "Mode enfant",
+    "modeStandard": "Mode standard"
+  }
+}

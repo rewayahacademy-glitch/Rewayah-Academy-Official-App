@@ -1,0 +1,1 @@
+-- Les seeds applicatifs (app_config, ...) sont embarqués dans la migration 0001 pour que la base soit reconstruite à l'identique par les seules migrations.
