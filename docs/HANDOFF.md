@@ -1,42 +1,39 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026, troisième session**. Les lots
-> **B0**, **T2** (durcir le langage), **R0** (tunnel d'entrée) et **T3**
-> (mode sombre) sont tous les quatre **poussés sur `main`** (`1eb0d30`).
+> Dernière passation : **11 septembre 2026, quatrième session**. Les lots
+> **B0**, **T2** (durcir le langage), **R0** (tunnel d'entrée), **T3** (mode
+> sombre) et **R4** (le reste de l'existant, section 0 septies) sont tous les
+> cinq **poussés sur `main`** (`76867a7`). Le lot **R** est désormais complet.
 > **Ni `flutter test` ni `tool/verifier_jetons.dart` n'ont jamais pu tourner
-> sur ce poste**, pour aucun des quatre : c'est la **quatrième confirmation
+> sur ce poste**, pour aucun des cinq : c'est la **cinquième confirmation
 > consécutive** du même blocage TLS de `github.com` (hook `package:sqlite3`),
 > `CERTIFICATE_VERIFY_FAILED` côté Dart et `SEC_E_UNTRUSTED_ROOT` côté
 > `curl.exe`, preuve indépendante que c'est le magasin de certificats du
-> poste, pas le réseau ni un incident ponctuel. **T2, R0 et T3 ont tous été
-> poussés malgré cette absence de vérification, sur décision explicite de
+> poste, pas le réseau ni un incident ponctuel. **T2, R0, T3 et R4 ont tous
+> été poussés malgré cette absence de vérification, sur décision explicite de
 > l'opérateur** (accord donné une première fois pour T2/R0 « pour voir en
-> direct », puis reconduit explicitement pour T3) : `dart analyze
-> --fatal-infos` est la seule preuve automatique obtenue pour les quatre
-> lots, complétée par une vérification visuelle manuelle (`flutter build
-> web`) pour R0 (rendu clair de `TUT-00`) et pour T3 (rendu clair seulement,
-> le rendu sombre n'a pas pu être vérifié visuellement — détail sections
-> 0 quinquies et 0 sexies).
+> direct », reconduit pour T3, puis reconduit une nouvelle fois pour R4 quand
+> la question a été reposée) : `dart analyze --fatal-infos` est la seule
+> preuve automatique obtenue pour les cinq lots, complétée par une
+> vérification visuelle manuelle (`flutter build web`) pour R0 (rendu clair de
+> `TUT-00`) et pour T3 (rendu clair seulement, le rendu sombre n'a pas pu être
+> vérifié visuellement — détail sections 0 quinquies et 0 sexies). R4 n'a reçu
+> aucune vérification visuelle de substitution (l'opérateur avait déjà l'app
+> ouverte de son côté).
 > **Priorité de la prochaine session, avant tout code neuf** : faire tourner
 > `flutter test` et `dart run tool/verifier_jetons.dart` sur ce qui est
-> maintenant en production (T2, R0, T3), pour combler cette dette de
+> maintenant en production (T2, R0, T3, R4), pour combler cette dette de
 > vérification qui s'accumule lot après lot — soit en réparant le magasin de
 > certificats du poste, soit sur un autre poste, soit avec l'accord explicite
 > de l'opérateur pour continuer sans. Ne pas boucler sur le même
 > contournement TLS déjà refusé deux fois par le classificateur auto-mode
 > cette semaine.
-> Dernier commit **poussé** de `main` : celui de T3 (`1eb0d30`).
+> Dernier commit **poussé** de `main` : celui de R4 (`76867a7`).
 > `git log --oneline -3` doit correspondre exactement à `origin/main`.
-> **Le lot R4** (reste de l'existant : `TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`,
-> `ADM-02`, `ADM-06`, et leurs deux sous-écrans) est codé et documenté à la
-> suite de B0/T2/R0/T3, section 0 septies. `flutter test` et
-> `dart run tool/verifier_jetons.dart` restent bloqués par le même problème
-> de magasin de certificats — **cinquième confirmation** consécutive, pas
-> une nouvelle information. `dart analyze --fatal-infos` reste vert. **Commité
-> localement** (`180cc86`), **pas encore poussé** au moment où cette ligne est
-> écrite : la décision revient à l'opérateur, comme pour T2/R0/T3. Statut réel
-> à confirmer avec `git log --oneline` et `git status` plutôt qu'avec cette
-> ligne.
+> Détail du lot R4 : section 0 septies. Deux écarts de conception restent
+> ouverts et non tranchés, sur `ADM-01`/`ADM-06` (six compteurs contre cinq
+> annoncés, ordre signaux/chiffres) — pas des écrans de R4, voir fiche `ADM-01`
+> section 6 de `08-catalogue-ecrans.md`.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -402,10 +399,9 @@ même blocage : `flutter test` et `dart run tool/verifier_jetons.dart`
 la cause est établie. `dart analyze --fatal-infos` est vert sur l'ensemble du
 dépôt après ce lot.
 
-**Commit et push** : commité localement (`180cc86`), pas encore poussé au
-moment où cette section est écrite — décision de l'opérateur, comme pour
-T2/R0/T3. Voir l'état réel dans `git log --oneline` plutôt que dans ce
-paragraphe.
+**Commit et push** : poussé sur `main` (`76867a7`), sur décision explicite de
+l'opérateur — même raison que T2/R0/T3, voir l'avertissement en tête de
+fichier. Confirmé par `git fetch origin main` : `origin/main` correspond.
 
 ## 1. Le projet actif est celui-ci
 
@@ -686,9 +682,8 @@ commitée à part au début du lot L8.
 ## 9. Prompt de reprise — combler la dette de vérification, PUIS le lot A1
 
 À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3 et R4
-sont codés** (R4 commité localement en `180cc86`, push encore à confirmer —
-voir `git log --oneline` et `git status` plutôt que ce paragraphe). Le lot
-**R** est désormais complet. Aucun des cinq lots n'a été confirmé par
+sont tous les cinq poussés sur `main`** (`76867a7`). Le lot **R** est
+désormais complet. Aucun des cinq lots n'a été confirmé par
 `flutter test` ni `tool/verifier_jetons.dart` sur ce poste — cinq
 confirmations consécutives du même blocage TLS, détail en tête de fichier et
 section 0 septies.
