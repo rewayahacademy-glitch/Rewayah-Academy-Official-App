@@ -129,7 +129,7 @@ void main() {
       final BoxDecoration d = decorationSous(tester, find.byType(AppCard));
       // Survolee, la carte porte le filet FORT et l'ombre de niveau 2.
       expect(d.border, isNotNull);
-      expect(d.boxShadow, AppElevation.niveau2);
+      expect(d.boxShadow, AppElevation.niveau2(palette.ombre));
     });
   });
 
@@ -203,7 +203,16 @@ void main() {
         tester,
         find.byType(ActionPrincipale),
       );
-      expect(d.color, palette.surfaceSunken.background);
+      // Le lot T2 a change la paire de l'inerte, et ce test avait garde
+      // l'ancienne : `surfaceSunken` ne mesurait que 1,06:1 d'ecart avec le
+      // fond, si bien que le bouton le plus important de l'ecran disparaissait
+      // au premier champ vide et se lisait comme une panne. Il reste desormais
+      // sur `surfaceRaised`, avec le filet le plus epais du produit -- plus
+      // lourd qu'un secondaire au repos, qui porte 2.
+      expect(d.color, palette.surfaceRaised.background);
+      expect(d.color, isNot(palette.surfaceSunken.background));
+      expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
+      expect(d.border!.top.width, 3);
       expect(find.byType(Opacity), findsNothing);
     });
   });
@@ -217,7 +226,7 @@ void main() {
       );
       final BoxDecoration d = decorationSous(tester, find.byType(AppCard));
       expect(d.color, palette.surfaceRaised.background);
-      expect(d.boxShadow, AppElevation.niveau1);
+      expect(d.boxShadow, AppElevation.niveau1(palette.ombre));
       expect(d.border!.top.color, palette.borderHairline.asBorderSide().color);
     });
 
@@ -725,7 +734,7 @@ void main() {
       final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
       expect(d.color, palette.surfaceRaised.background);
       expect(d.border!.top.color, palette.borderHairline.asBorderSide().color);
-      expect(d.boxShadow, AppElevation.niveau1);
+      expect(d.boxShadow, AppElevation.niveau1(palette.ombre));
     });
 
     testWidgets('eveillee : filet fort et ombre au niveau 2, jamais plate', (
@@ -741,7 +750,7 @@ void main() {
       );
       final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
       expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
-      expect(d.boxShadow, AppElevation.niveau2);
+      expect(d.boxShadow, AppElevation.niveau2(palette.ombre));
       expect(d.boxShadow, isNot(AppElevation.niveau0));
     });
 
@@ -758,7 +767,7 @@ void main() {
       );
       final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
       expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
-      expect(d.boxShadow, AppElevation.niveau1);
+      expect(d.boxShadow, AppElevation.niveau1(palette.ombre));
     });
   });
 
@@ -869,7 +878,7 @@ void main() {
         find.byType(AppBottomSheet),
       );
       expect(d.border, isNotNull);
-      expect(d.boxShadow, AppElevation.niveau3);
+      expect(d.boxShadow, AppElevation.niveau3(palette.ombre));
     });
   });
 }

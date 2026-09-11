@@ -36,7 +36,7 @@ class Destination {
 
 /// Les destinations de premier niveau d'un role, dans l'ordre de la barre.
 ///
-/// Fonction pure, a part du cأ¢blage : la regle des quatre destinations se
+/// Fonction pure, a part du cablage : la regle des quatre destinations se
 /// verifie sans monter de routeur.
 ///
 /// **Le role seul ne suffit pas, le mode d'interface compte.** Un eleve en

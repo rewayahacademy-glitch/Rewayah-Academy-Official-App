@@ -16,6 +16,7 @@ import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/section_header.dart';
 import '../disponibilites/grille_semaine.dart';
 
 /// `ENS-06` : les heures de l'enseignant, et les eleves qui les attendent.
@@ -40,27 +41,54 @@ class CreneauxPage extends StatelessWidget {
       return const _CreneauxOnglets();
     }
 
+    // **Les deux panneaux portent leur nom des que les onglets disparaissent.**
+    // Le lot R4 a rendu l'ecran responsive et a laisse les deux libelles
+    // derriere lui, dans le seul `TabBar` mobile : a partir de la tablette, la
+    // grille gardait sa question en tete mais le feed n'avait plus aucun titre.
+    // Une liste d'eleves sans titre a cote d'une grille d'heures ne se lit pas.
+    final Widget heures = _Panneau(
+      titre: t.creneaux.ongletHeures,
+      child: const _OngletHeures(),
+    );
+    final Widget eleves = _Panneau(
+      titre: t.creneaux.ongletEleves,
+      child: const _OngletEleves(),
+    );
+
     return PageShell(
       titre: t.creneaux.titre,
       child: gabarit == Gabarit.desktop
-          ? const Row(
+          ? Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Expanded(child: _OngletHeures()),
+                Expanded(child: heures),
                 Ecart.hXxl,
-                Expanded(child: _OngletEleves()),
+                Expanded(child: eleves),
               ],
             )
-          : const Column(
+          : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                _OngletHeures(),
-                Ecart.vXxl,
-                _OngletEleves(),
-              ],
+              children: <Widget>[heures, Ecart.vXxl, eleves],
             ),
     );
   }
+}
+
+/// Un panneau nomme, hors gabarit mobile.
+///
+/// Il porte le libelle que le `TabBar` porte sur telephone : un seul et meme
+/// mot pour la meme zone, quelle que soit la largeur.
+class _Panneau extends StatelessWidget {
+  const _Panneau({required this.titre, required this.child});
+
+  final String titre;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[SectionHeader(titre: titre), Ecart.vMd, child],
+  );
 }
 
 /// La presentation mobile : deux onglets, un seul panneau visible a la fois.

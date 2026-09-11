@@ -48,8 +48,28 @@ class AppBottomSheet extends StatelessWidget {
   /// Ouvre une feuille modale et rend ce que sa fermeture renvoie.
   ///
   /// `Echap` la ferme, comme le veut la regle du clavier
-  /// (`05-regles-responsive.md` section 5) : c'est le comportement par defaut
-  /// d'une route modale, il n'y a rien a cabler.
+  /// (`05-regles-responsive.md` section 5). C'est bien le comportement par
+  /// defaut d'une route modale -- `ModalRoute` associe `DismissIntent` a
+  /// `Navigator.maybePop()` (framework, `widgets/routes.dart`) -- mais il a
+  /// fallu le lot de remise au vert pour que ce soit vrai ici, et la cause
+  /// merite d'etre ecrite parce qu'elle ne se devine pas.
+  ///
+  /// **La feuille se depopait sans jamais se retirer de l'ecran.** Cette
+  /// methode fournissait son propre `transitionAnimationController`. Or
+  /// `ModalBottomSheetRoute` pose alors `willDisposeAnimationController =
+  /// false` : le controleur appartient a l'appelant. Et l'appelant, ici, le
+  /// detruisait par `.whenComplete(animation.dispose)`, c'est-a-dire quand la
+  /// future de la feuille se complete -- **au pop, pas au retrait**. Le
+  /// controleur mourait donc au milieu de l'animation de sortie, la route
+  /// n'atteignait jamais l'etat qui la fait retirer de l'overlay, et la
+  /// feuille restait affichee sur une route deja depopee. `Echap` faisait
+  /// exactement ce qu'il fallait, et rien ne bougeait.
+  ///
+  /// Le remede supprime le controleur au lieu d'en ajouter : `AnimationStyle`
+  /// porte aussi bien les durees que les courbes, et `showModalBottomSheet`
+  /// construit alors le controleur lui-meme -- et le detruit lui-meme, au bon
+  /// moment. **Ne jamais repasser de `transitionAnimationController` ici** :
+  /// ce serait reprendre la propriete du controleur, donc le bug.
   static Future<T?> ouvrir<T>(
     BuildContext context, {
     required String titre,
@@ -58,28 +78,22 @@ class AppBottomSheet extends StatelessWidget {
   }) {
     final AppPalette palette = AppPalette.of(context);
 
-    // Les durees du budget de mouvement, et non celles de Material : 280 ms a
-    // l'ouverture, 200 ms a la fermeture, la sortie plus courte que l'entree
-    // d'environ un tiers. Le controleur se dispose a la fermeture, sinon
-    // chaque feuille ouverte laisserait un ticker derriere elle.
-    final AnimationController animation =
-        BottomSheet.createAnimationController(Navigator.of(context))
-          ..duration = AppMouvement.feuilleOuverture
-          ..reverseDuration = AppMouvement.feuilleFermeture;
-
     return showModalBottomSheet<T>(
       context: context,
       // La feuille peut depasser la moitie de l'ecran : une confirmation
       // destructive qui explique sa consequence prend la place qu'il faut.
       isScrollControlled: true,
       useSafeArea: true,
-      transitionAnimationController: animation,
-      // Les courbes viennent du budget de mouvement, jamais de Material : ce
-      // qui entre s'installe doucement, ce qui sort part plus vite
+      // Les durees et les courbes du budget de mouvement, jamais celles de
+      // Material : 280 ms a l'ouverture, 200 ms a la fermeture -- la sortie
+      // plus courte que l'entree d'environ un tiers -- et ce qui entre
+      // s'installe doucement quand ce qui sort part plus vite
       // (`04-systeme-mouvement.md` section 2).
       sheetAnimationStyle: const AnimationStyle(
         curve: AppMouvement.entree,
+        duration: AppMouvement.feuilleOuverture,
         reverseCurve: AppMouvement.sortie,
+        reverseDuration: AppMouvement.feuilleFermeture,
       ),
       backgroundColor: palette.surfaceRaised.background,
       // Le voile derive du noir de la charte, jamais d'un gris invente.
@@ -98,7 +112,7 @@ class AppBottomSheet extends StatelessWidget {
         actions: actions?.call(contexte),
         child: constructeur(contexte),
       ),
-    ).whenComplete(animation.dispose);
+    );
   }
 
   @override

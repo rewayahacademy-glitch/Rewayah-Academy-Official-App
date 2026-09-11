@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -60,6 +61,24 @@ FauxServiceRegles _reglesAvecPlafond(int plafond) =>
         ),
       ];
 
+/// Mesure sur un telephone reel, jamais sur la surface par defaut.
+///
+/// `flutter_test` monte tout sur 800 x 600, c'est-a-dire au gabarit
+/// **tablette**. Or `ENS-06` n'a d'onglets qu'au gabarit mobile : depuis le lot
+/// R4, la tablette empile les deux panneaux et le desktop les met cote a cote
+/// (`08-catalogue-ecrans.md` section 2). Ces six tests mesurent le parcours
+/// mobile -- prendre un eleve depuis l'onglet -- et cherchaient donc un onglet
+/// qui n'existe plus a 800 de large. Ils le disent maintenant.
+///
+/// 390 x 844, et non une hauteur inventee : c'est le gabarit de reference du
+/// produit. Une mesure faite sur une fenetre plus haute que les telephones
+/// reels cache les depassements au lieu de les montrer.
+void _telephone(WidgetTester tester) {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+}
+
 Future<void> _ouvrirOngletEleves(WidgetTester tester) async {
   await tester.tap(find.text(t.creneaux.ongletEleves));
   await tester.pumpAndSettle();
@@ -75,6 +94,7 @@ void main() {
       final FauxServicePlanning planning = FauxServicePlanning();
       final FauxServiceRegles regles = _reglesAvecPlafond(5);
 
+      _telephone(tester);
       await tester.pumpWidget(
         hote(
           const CreneauxPage(),
@@ -123,6 +143,7 @@ void main() {
         ];
       final FauxServiceRegles regles = _reglesAvecPlafond(5);
 
+      _telephone(tester);
       await tester.pumpWidget(
         hote(
           const CreneauxPage(),
@@ -171,6 +192,7 @@ void main() {
       // La meme situation, avec la regle de CET enseignant portee a 6.
       final FauxServiceRegles regles = _reglesAvecPlafond(6);
 
+      _telephone(tester);
       await tester.pumpWidget(
         hote(
           const CreneauxPage(),
@@ -205,6 +227,7 @@ void main() {
       final FauxServicePlanning planning = FauxServicePlanning();
       final FauxServiceRegles regles = _reglesAvecPlafond(5);
 
+      _telephone(tester);
       await tester.pumpWidget(
         hote(
           const CreneauxPage(),
@@ -243,6 +266,7 @@ void main() {
       final FauxServicePlanning planning = FauxServicePlanning();
       final FauxServiceRegles regles = _reglesAvecPlafond(5);
 
+      _telephone(tester);
       await tester.pumpWidget(
         hote(
           const CreneauxPage(),
@@ -290,6 +314,7 @@ void main() {
           _eleve(id: 'e2', prenom: 'Ibrahim', jours: 1, jour: 3),
         ];
 
+      _telephone(tester);
       await tester.pumpWidget(
         hote(
           const CreneauxPage(),
@@ -310,5 +335,45 @@ void main() {
       expect(yFatou, lessThan(yIbrahim));
       expect(yIbrahim, lessThan(yKhadija));
     });
+
+    testWidgets(
+      'des la tablette, chaque panneau porte le nom de son onglet',
+      (WidgetTester tester) async {
+        // Le lot R4 a supprime les onglets au-dela de 600 et laisse leurs deux
+        // libelles dans le seul `TabBar` mobile : le feed s'est retrouve sans
+        // titre sur tablette comme sur desktop. Les six tests ci-dessus ne
+        // pouvaient pas le voir, ils mesurent le gabarit mobile.
+        for (final double largeur in <double>[768, 1440]) {
+          tester.view.physicalSize = Size(largeur, 2000);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+
+          await tester.pumpWidget(
+            hote(
+              const CreneauxPage(),
+              surcharges: _surcharges(
+                matching: FauxServiceMatching()..feed = <EleveEnAttente>[
+                  _eleve(),
+                ],
+                planning: FauxServicePlanning(),
+                regles: _reglesAvecPlafond(5),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(
+            find.text(t.creneaux.ongletHeures),
+            findsOneWidget,
+            reason: 'panneau des heures sans titre a $largeur',
+          );
+          expect(
+            find.text(t.creneaux.ongletEleves),
+            findsOneWidget,
+            reason: 'panneau des eleves sans titre a $largeur',
+          );
+        }
+      },
+    );
   });
 }

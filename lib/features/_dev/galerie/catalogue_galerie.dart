@@ -22,6 +22,7 @@ import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/local_feedback.dart';
+import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/page_parcours.dart';
@@ -975,6 +976,29 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onAction: _rien,
             enfant: const Text('Le corps de la page.'),
           ),
+        ),
+      ),
+    ],
+  ),
+
+  // --- Ce que la refonte a produit en chemin ------------------------------
+  EntreeGalerie(
+    nom: 'MarquePage',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      // Deux etats, pas trois : meme cas que `PermanentNotice`, le composant ne
+      // prend aucun parametre, il ne peut donc pas porter d'etat de plus. Ce
+      // qui se verifie ici est la seule chose qui puisse le casser : il tient
+      // dans les deux sens de lecture.
+      EtatGalerie(
+        'unique, sans parametre',
+        (BuildContext _) => const MarquePage(),
+      ),
+      EtatGalerie(
+        'en arabe : le meme, en miroir',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: MarquePage(),
         ),
       ),
     ],

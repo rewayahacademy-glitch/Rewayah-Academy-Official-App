@@ -128,6 +128,17 @@ void main() {
       WidgetTester tester,
       PieceAEnvoyer? choisie,
     ) async {
+      // Mesure sur un telephone reel, jamais sur la surface par defaut.
+      // `flutter_test` monte tout sur 800 x 600, plus court que n'importe quel
+      // telephone : `TUT-00c/c` porte la marque, une carte, trois choix et
+      // deux boutons, et son bouton « Choisir le fichier » tombait donc sous
+      // la ligne de flottaison de cette fenetre-la. Les `tap` atteignaient la
+      // zone d'action collee au lieu du bouton, et les trois tests echouaient
+      // en accusant l'ecran. 390 x 844 est le gabarit de reference du produit.
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
       final FauxServiceDossier dossier = FauxServiceDossier();
       final FauxSelecteurFichier selecteur = FauxSelecteurFichier(choisie);
       await tester.pumpWidget(

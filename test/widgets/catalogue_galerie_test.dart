@@ -46,6 +46,8 @@ const List<String> composantsDuCatalogue = <String>[
   'ActionPrincipale',
   'GrilleSemaine',
   'PageParcours',
+  // Section 2 : ce que la refonte a produit en chemin, hors liste d'origine.
+  'MarquePage',
   // Section 2 : le P1 que le lot R3 produit.
   'TimelineRow',
 ];

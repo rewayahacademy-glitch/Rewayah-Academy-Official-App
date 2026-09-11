@@ -45,6 +45,7 @@ nécessaire avant l'étape 5. P2 : plus tard.
 | `AppBottomSheet` | Feuille de bas d'écran : suit le doigt, seuil de vitesse, voile, ressort amorti | P0 |
 | `ConfirmDestructive` | Les trois temps du destructif : question, conséquence en langage humain, deux actions asymétriques | P0 |
 | `ChildCard` | La carte enfant du foyer, avec ses six états (§3). Composant fondamental du domaine famille | P0 |
+| `MarquePage` | La zone de marque du tunnel d'entrée : le nom du produit en `inkAccent`, seul, faute d'asset de logo. **Produit au lot R0, absent de cette liste d'origine** ; inscrit ici parce qu'un composant hors catalogue est un composant que personne ne relit, et que c'est le test de la galerie qui l'a signalé | P0 |
 | `DataCollection` | Tableau sur desktop, liste de cartes sur mobile, **à partir de la même définition de colonnes** | P1 |
 | `TimelineRow` | Une entrée de la journée : cours, pause, prière. Même composant pour les trois, sinon la colonne de `ENS-02` se casse | P1 |
 | `ReadingColumn` | Colonne de lecture bornée à 68 caractères, pour tout texte suivi | P1 |

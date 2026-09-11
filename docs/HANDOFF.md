@@ -1,17 +1,25 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026, septième session**. Le lot **L10**
-> (clôture de l'étape 4) est fait : section 0 decies. **L'ordre de travail de
-> l'ADR-019 est désormais entièrement épuisé** — B0, T2, R0, T3, R4, A1 (les
-> six lots de code) et N0 (documentaire) étaient déjà poussés, L10 était la
-> seule dette restante et ne touchait ni `lib/` ni `test/`. **Aucun des six
-> lots de code n'a jamais pu être confirmé par `flutter test` ni
-> `tool/verifier_jetons.dart` sur ce poste** : **huitième confirmation
-> consécutive** du même blocage TLS de `github.com` (hook `package:sqlite3`),
-> `CERTIFICATE_VERIFY_FAILED` côté Dart, revérifiée au début de cette
-> septième session (étape 1 du prompt de reprise), une seule fois comme
-> prescrit. Le constat ne change pas : c'est le magasin de certificats du
-> poste, pas le réseau ni un incident ponctuel.
+> Dernière passation : **11 septembre 2026, huitième session — la dette de
+> vérification est soldée.** Le lot **L10** (clôture de l'étape 4) est fait :
+> section 0 decies. **L'ordre de travail de l'ADR-019 est entièrement épuisé** —
+> B0, T2, R0, T3, R4, A1 (les six lots de code) et N0 (documentaire) sont
+> poussés.
+> ✅ **`flutter test` a enfin tourné, pour la première fois en neuf sessions.**
+> Le blocage TLS de `github.com` (hook `package:sqlite3`,
+> `CERTIFICATE_VERIFY_FAILED`) **est toujours là et n'a pas été réparé** : il a
+> été **contourné** par le `user_define` `source: system` que le paquet
+> documente lui-même, posé uniquement dans le worktree détaché
+> `D:\ra-pwa-build`, jamais commité, retiré après la mesure. Méthode et
+> précautions : **section 0 undecies**.
+> **Ce que la mesure a trouvé : aucune régression de production.** 515 verts,
+> 19 rouges au départ ; sept tests périmés, neuf mesurés sur une fenêtre
+> 800 × 600 (gabarit tablette, plus court que tout téléphone) et trois vrais
+> défauts, dont `Échap` qui ne fermait aucune modale. Tout est corrigé :
+> **534 verts, 1 rouge**, `dart analyze --fatal-infos` propre,
+> `verifier_jetons.dart` 96 fichiers sans violation. Le rouge restant est une
+> bombe à retardement horaire sans rapport avec la refonte, décrite en fin de
+> section 0 undecies.
 > **Découverte de cette session, sans rapport avec L10 lui-même, et déjà
 > résolue** : la production servait `a9127fd` (lot R3, déployé le
 > 8 septembre), onze commits de retard sur `main` — pas `c5a511f`/L8 comme
@@ -605,6 +613,97 @@ cohérent avec la règle déjà appliquée (build vert → commit et push sans
 redemander) et sans le risque des lots de code précédents, puisque rien en
 `lib/` ni `test/` n'a changé.
 
+### 0 undecies. Le lot de remise au vert : le blocage TLS contourné, et ce que la mesure a trouvé
+
+**Neuf sessions durant, `flutter test` n'a jamais tourné sur ce poste.** Le hook
+de build de `package:sqlite3` télécharge une DLL depuis `github.com`, que le
+magasin de racines du poste refuse. Six lots de code ont donc été poussés, puis
+déployés, sans qu'aucune suite ne les ait jamais confirmés.
+
+**Le contournement était documenté depuis le début, dans le paquet lui-même.**
+`sqlite3/doc/hook.md` décrit un `user_define` qui lie le SQLite **du système**
+au lieu d'en télécharger un :
+
+```yaml
+hooks:
+  user_defines:
+    sqlite3:
+      source: system
+      name_windows: winsqlite3
+      name: sqlite3
+```
+
+⚠ **Il n'est ni commité ni laissé en place.** Il change le SQLite d'un build de
+production. Il a été posé dans le worktree détaché `D:\ra-pwa-build`, le temps
+de la mesure, puis retiré par `git checkout -- pubspec.yaml`. La méthode :
+éditer dans le dépôt de travail, copier les fichiers touchés vers le worktree,
+mesurer là-bas. Le dépôt de travail n'est jamais modifié par la mesure.
+
+**Première mesure réelle : 515 verts, 19 rouges.** Aucune régression de
+production : les dix-neuf se rangent en trois familles, et aucune n'était un
+écran cassé.
+
+| Famille | Nb | Ce que c'était vraiment |
+| :--- | :-: | :--- |
+| Tests périmés | 7 | `composants_test.dart` comparait `d.boxShadow` à `AppElevation.niveau2`, c'est-à-dire à un **tear-off de fonction** : le lot T3 a fait des trois niveaux des fonctions de `AppShadowColor`, les tests ne l'ont pas suivi. Plus une assertion restée sur la paire d'avant T2 |
+| Surface de mesure fausse | 9 | `flutter_test` monte tout sur **800 × 600**, c'est-à-dire au gabarit **tablette**, plus court que n'importe quel téléphone. `ENS-06` n'a d'onglets qu'en mobile depuis R4 : six tests cherchaient un onglet inexistant à cette largeur. `TUT-00c/c` : trois `tap` tombaient sous la ligne de flottaison de cette fenêtre-là. **Le produit tenait, la fenêtre mentait** — les neuf passent en 390 × 844 sans toucher un écran |
+| Vrais défauts | 3 | `Échap` ne fermait aucune modale (2), `MarquePage` absente du catalogue (1) |
+
+**Le défaut d'`AppBottomSheet` mérite d'être lu, il ne se devine pas.** La
+méthode `ouvrir` fournissait son propre `transitionAnimationController`. Or
+`ModalBottomSheetRoute` pose alors `willDisposeAnimationController = false` :
+le contrôleur appartient à l'appelant. Et l'appelant le détruisait par
+`.whenComplete(animation.dispose)` — c'est-à-dire **au pop, pas au retrait**.
+Le contrôleur mourait au milieu de l'animation de sortie, la route
+n'atteignait jamais l'état qui la retire de l'overlay, et **la feuille restait
+affichée sur une route déjà dépopée**. `Échap` faisait exactement ce qu'il
+fallait ; rien ne bougeait. Le commentaire du fichier affirmait au contraire
+qu'« il n'y a rien à câbler ».
+
+Le remède **supprime** du code : `AnimationStyle` porte les durées autant que
+les courbes, donc `showModalBottomSheet` construit le contrôleur lui-même — et
+le détruit lui-même, au bon moment. **Ne jamais repasser de
+`transitionAnimationController` ici.**
+
+Diagnostic obtenu par élimination, et la méthode vaut d'être notée : une
+feuille Material **nue** se ferme sur `Échap` ; on lui rajoute un ingrédient à
+la fois (contrôleur, style, `isScrollControlled`) jusqu'à ce qu'elle cesse. Le
+premier suffit.
+
+**Un vrai défaut de rendu trouvé au passage, corrigé.** Le lot R4 a rendu
+`ENS-06` responsive et a laissé les deux libellés d'onglet dans le seul
+`TabBar` mobile : au-delà de 600 px, la grille gardait sa question en tête mais
+**le feed d'élèves n'avait plus aucun titre**. Les deux panneaux portent
+désormais un `SectionHeader` avec le libellé de leur onglet, et un test le tient
+à 768 comme à 1440.
+
+**Deux lignes du tableau de correspondance de `docs/design/README.md` étaient
+fausses**, et disaient « Fait » sans que rien ne l'ait vérifié :
+
+- **§13.4 clavier** — le lot A1 avait écrit le test d'`Échap` et l'avait laissé
+  rouge, faute de pouvoir le lancer. Fermé pour de bon ici.
+- **§18 chargement** — `Skeleton` est né au lot C et **aucun écran ne
+  l'emploie** : zéro usage dans `lib/features/` hors `_dev/`. Les écrans qui
+  disent quelque chose affichent un `Text` « Chargement… », parfois un
+  `EmptyState` détourné en attente (`creneaux_page.dart`). La ligne dit
+  maintenant « Écart ». **C'est le premier chantier de rendu qui reste.**
+
+**Résultat : 534 verts, 1 rouge, `dart analyze --fatal-infos` propre,
+`verifier_jetons.dart` 96 fichiers sans violation** (il en comptait une avant :
+un tiret cadratin dans `appareils_page.dart`).
+
+⚠ **Le rouge restant n'a rien à voir avec ce lot : c'est une bombe à
+retardement.** `test/features/journee_test.dart`, « `ENS-02` : le bloc
+dominant », place son cours à `DateTime.now() + 25 min 30 s` et attend
+« Dans 25 min ». Passé **23 h 34**, cet instant tombe le lendemain, et `ENS-02`
+affiche la journée d'aujourd'hui : le cours n'y est pas. Le test échoue donc
+tous les soirs entre 23 h 34 et minuit, et il a effectivement basculé du vert au
+rouge entre deux exécutions de cette session, à 23 h 42. **Le scénario est
+inexprimable près de minuit sans horloge injectable** : le vrai remède est de
+faire lire l'heure au code de planning via une horloge qu'un test puisse figer
+(`package:clock` et `withClock`), ce qui touche la couche planning — une
+décision, pas un correctif de test. À trancher avec l'opérateur.
+
 ## 1. Le projet actif est celui-ci
 
 **Dépôt de travail : `D:\RA _APP\RA -OFFICIAL-APP`** — Rewayah Academy,
@@ -742,15 +841,21 @@ Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 
 ## 5. Mesures de référence, à ne pas faire régresser
 
-Relevées le 7 septembre 2026, après le lot T de la refonte :
+Relevées le **11 septembre 2026**, au lot de remise au vert — **les premières
+vraies depuis le lot T** : les colonnes intermédiaires n'ont jamais pu être
+mesurées sur ce poste, voir section 0 undecies.
 
-| Contrôle | Valeur | Après L9, pour mémoire |
+| Contrôle | Valeur | Au lot T (07/09), pour mémoire |
 | :--- | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème | aucun problème |
-| `flutter test` | **362 tests**, tous verts | 277 tests |
-| `dart run tool/verifier_jetons.dart` | **80 fichiers**, aucune violation | 77 fichiers |
+| `flutter test` | **535 tests, 534 verts** — le rouge est la bombe horaire de `journee_test.dart`, section 0 undecies | 362 tests, tous verts |
+| `dart run tool/verifier_jetons.dart` | **96 fichiers**, aucune violation | 80 fichiers |
 | `scenarios_etape3.sql` | **34 contrôles** verts | 34 |
 | `scenarios_etape4.sql` | **39 contrôles** verts | 39 |
+
+⚠ `flutter test` ne tourne pas tel quel sur ce poste : il faut le contournement
+du hook `sqlite3`, dans le worktree de build **et nulle part ailleurs**. Recette
+complète en section 0 undecies.
 
 Un lot se termine par ces cinq contrôles, la mise à jour de
 `etape-4-journal.md`, un commit et un push. Jamais l'inverse.
@@ -805,7 +910,12 @@ neuve puisqu'elle n'est faite que de `create or replace`.
 
 - Le magasin de racines ne fait pas confiance à `github.com` : le hook de
   `package:sqlite3` échoue, donc `dart run` et `flutter test` peuvent échouer
-  au premier appel. Voir `etape-2-journal.md`.
+  au premier appel. Voir `etape-2-journal.md`. **Contournable sans réparer le
+  poste** depuis le 11 septembre : le `user_define` `source: system` documenté
+  par le paquet, posé dans le seul worktree `D:\ra-pwa-build` et retiré après
+  la mesure — **jamais commité**, il changerait le SQLite d'un build de
+  production. Recette en section 0 undecies. La vraie réparation (ajouter la
+  racine au magasin du poste) reste à faire et vaudrait mieux.
 - Composant **ATL absent** de Visual Studio : `flutter build windows` échoue sur
   `atlstr.h`. Revérifié le 6 septembre, en `--profile` : l'échec vient du
   plugin `flutter_secure_storage_windows`, après 222 secondes de compilation.
@@ -870,72 +980,89 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — après L10, un sujet restant pour l'opérateur
+## 9. Prompt de reprise — la suite se joue sur le rendu, plus sur la dette
 
 À copier tel quel pour démarrer la prochaine session. **L'ordre de travail de
-l'ADR-019 est désormais entièrement épuisé** : B0, T2, R0, T3, R4, A1 (six
-lots de code), N0 (documentaire) et L10 (vérifications, section 0 decies)
-sont tous faits, poussés sur `main`, **et en ligne** (le retard de production
-découvert puis comblé pendant la session de L10, détail section 0 decies).
-Il n'y a **pas de lot suivant déjà tranché** : un sujet attend une décision
-de l'opérateur avant que du travail neuf commence, détaillé dans le prompt
-ci-dessous. Aucun des six lots de code n'a été confirmé par `flutter test` ni
-`tool/verifier_jetons.dart` sur ce poste — huitième confirmation consécutive
-du même blocage TLS, détail en tête de fichier. L10 n'a rien eu à confirmer
-par ces outils au-delà de la répétition de l'étape 1, n'ayant touché ni
-`lib/` ni `test/`.
+l'ADR-019 est entièrement épuisé** (B0, T2, R0, T3, R4, A1, N0, L10), **et la
+dette de vérification est soldée** : la suite tourne enfin, six lots de code
+sont confirmés sans régression, détail en section 0 undecies.
+
+Trois sujets sont ouverts, tous connus et chiffrés :
+
+1. **Le chargement (§18 de la bible).** `Skeleton` existe depuis le lot C et
+   **aucun écran ne l'emploie**. C'est le plus gros écart de rendu qui reste.
+2. **La largeur de lecture.** `AppSpacing.largeurLectureCaracteres = 68` est
+   déclaré et **n'a aucun usage** ; `ReadingColumn` est encore en P1 au
+   catalogue. Les écrans sont une colonne unique à toute largeur.
+3. **L'horloge de test.** La bombe horaire de `journee_test.dart` demande une
+   horloge injectable dans la couche planning — une décision, pas un
+   correctif de test.
+
+Et un sujet reste à trancher avec l'opérateur avant tout code neuf d'étape 5 :
+le découpage de **N1**.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 decies),
-puis decisions.md ADR-019, ADR-020 et l'ecart 24, puis docs/PROGRESS.md.
+Lis docs/HANDOFF.md en entier (l'en-tete, puis les sections 0 quater a
+0 undecies), puis decisions.md ADR-019, ADR-020 et l'ecart 24, puis
+docs/PROGRESS.md.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a L10 sont tous codes/verifies
-et pousses (confirme l'etat reel avec git log --oneline -5 et git status,
-l'en-tete de HANDOFF.md peut etre legerement en retard sur le depot reel).
-Aucun des SIX LOTS DE CODE n'a ete confirme par flutter test sur ce poste,
-HUIT sessions de suite (N0 et L10 sont documentaires, hors de ce compte) :
+ETAPE 1 -- MESURER, ET LA MESURE MARCHE DESORMAIS :
   1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
-     origin/main.
-  2. dart analyze --fatal-infos (deja vert a la cloture de tous les lots).
-  3. flutter test -- HUIT sessions de suite ne l'ont JAMAIS obtenu (le
-     poste bloque github.com en TLS pour le hook package:sqlite3,
-     CERTIFICATE_VERIFY_FAILED ; curl.exe echoue aussi sur la meme URL avec
-     SEC_E_UNTRUSTED_ROOT, independamment de Dart -- confirmation
-     independante que c'est le magasin de certificats du poste). Reessaie
-     UNE fois, pas plus : la cause est deja etablie avec certitude, boucler
-     dessus une neuvieme fois n'apporterait aucune preuve nouvelle. Si ca
-     bloque encore de la meme facon, continue directement a l'etape 2 -- ce
-     n'est plus une question ouverte, c'est un fait du poste. Note :
-     `git push` fonctionne malgre ce blocage (chaine de certificats
-     differente de celle de Dart/curl.exe, probablement le cacert.pem de Git
-     for Windows) : ce n'est PAS une preuve que le blocage general est leve.
-  4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne.
-  5. Si les deux passent enfin (poste repare, ou lance ailleurs) : ecrase
-     l'avertissement en tete de HANDOFF.md par les vrais chiffres, puis
-     continue a l'etape 2. Si l'un des deux echoue pour une VRAIE raison (pas
-     le blocage reseau) : c'est une regression EN PRODUCTION possible sur
-     l'un des six lots de code, la signaler immediatement a l'operateur avant
-     toute chose.
+     origin/main. ATTENTION : OpenCode travaille en parallele sur le meme
+     depot (lib/app.dart, lib/core/config/env.dart, lib/main.dart,
+     lib/features/_dev/playground/). Ne jamais committer ses fichiers.
+  2. dart analyze --fatal-infos -- vert au dernier lot.
+  3. flutter test -- NE TOURNE PAS tel quel : le poste refuse github.com en
+     TLS pour le hook package:sqlite3 (CERTIFICATE_VERIFY_FAILED). N'essaie
+     PAS de reparer le reseau, c'est etabli depuis neuf sessions. Utilise le
+     contournement documente en section 0 undecies : poser le user_define
+     `source: system` dans le pubspec du worktree D:\ra-pwa-build UNIQUEMENT,
+     y copier les fichiers modifies, mesurer la-bas, puis
+     `git checkout -- pubspec.yaml`. NE JAMAIS le committer ni le poser dans
+     le depot de travail : il changerait le SQLite d'un build de production.
+  4. dart run tool/verifier_jetons.dart -- meme worktree, meme contournement.
+  5. Reference a ne pas faire regresser : 535 tests dont 534 verts,
+     96 fichiers de jetons sans violation. Le seul rouge attendu est
+     journee_test.dart / "ENS-02 : le bloc dominant", et SEULEMENT entre
+     23h34 et minuit (voir ci-dessous). Un rouge a une autre heure, ou
+     ailleurs, est une vraie regression : la signaler avant toute chose.
 
-ETAPE 2 -- UN SEUL SUJET RESTE OUVERT, A POSER A L'OPERATEUR AVANT DE CODER
-QUOI QUE CE SOIT (meme methode qu'au lot N0 : ne pas deviner a sa place) :
+ETAPE 2 -- TROIS SUJETS OUVERTS, CHIFFRES, A PROPOSER A L'OPERATEUR :
 
-  Le premier lot de code de l'etape 5, N1. Specifiee par N0
-  (etape-5-salle-coran-presence.md, ADR-020) : un decoupage en huit lots
-  N0 a N7 y est propose, explicitement "a confirmer au premier lot de code".
-  Ne pas commencer N1 sans relire ce decoupage avec l'operateur et confirmer
-  qu'il tient, exactement comme N0 a pose deux questions (format du
-  livrable, riwaya) avant d'ecrire quoi que ce soit.
+  a) LE CHARGEMENT (bible §18). Skeleton existe depuis le lot C et AUCUN
+     ecran ne l'emploie : zero usage dans lib/features/ hors _dev/. Les
+     ecrans qui disent quelque chose affichent un Text "Chargement...",
+     parfois un EmptyState detourne en attente (creneaux_page.dart). C'est
+     le plus gros ecart de rendu restant. docs/design/README.md le dit
+     maintenant ("Ecart"), il disait "Fait" avant le 11/09.
 
-Le retard de production (decouvert au lot L10, la prod servait a9127fd/R3,
-onze commits de retard) a ete comble dans la meme session, sur autorisation
-explicite de l'operateur : l'adresse stable sert desormais ad21990 (main).
-Rien a refaire de ce cote sauf si un ecart est reconstate (verifier via
-l'API Vercel ou main.dart.js, methode dans MISE-EN-SERVICE.md section 7.1).
+  b) LA LARGEUR DE LECTURE. AppSpacing.largeurLectureCaracteres = 68 est
+     declare et n'a AUCUN usage ; ReadingColumn est encore en P1 au
+     catalogue. Consequence mesurable : les ecrans sont une colonne unique
+     a toute largeur, la carte de connexion fait plus de 1100 px de large
+     sur desktop. Passer par le catalogue (08-catalogue-ecrans.md) AVANT
+     de coder, comme toujours.
 
-Ce qu'il ne faut PAS faire : coder N1 sans confirmation du decoupage. Un lot
+  c) L'HORLOGE DE TEST. journee_test.dart place son cours a
+     DateTime.now() + 25 min 30 s et attend "Dans 25 min". Passe 23h34, cet
+     instant tombe le lendemain et ENS-02 -- qui affiche la journee
+     d'aujourd'hui -- ne le porte pas. Le scenario est inexprimable pres de
+     minuit sans horloge injectable : le remede est de faire lire l'heure a
+     la couche planning via package:clock, qu'un test fige avec withClock.
+     C'est une decision d'architecture, pas un correctif de test.
+
+  d) Et toujours, avant tout code neuf d'etape 5 : le decoupage de N1,
+     propose par N0 (etape-5-salle-coran-presence.md, ADR-020) en huit lots
+     N0 a N7, explicitement "a confirmer au premier lot de code". Ne pas
+     commencer N1 sans le relire avec l'operateur.
+
+La production sert ad21990 depuis le lot L10 (verifier via l'API Vercel ou
+main.dart.js, methode dans MISE-EN-SERVICE.md section 7.1).
+
+Ce qu'il ne faut PAS faire : coder N1 sans confirmation du decoupage ;
+committer le contournement sqlite3 ; toucher aux fichiers d'OpenCode. Un lot
 par session, comme toujours. Ignore la branche refactor-ui-lavender.
 ```

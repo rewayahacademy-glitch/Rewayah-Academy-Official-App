@@ -36,7 +36,7 @@ class AppareilsPage extends ConsumerWidget {
   //
   // Dette assumee : **le tirage-pour-rafraichir disparait**, meme sort et
   // meme raison que sur `TUT-00b`, `TUT-01`, `ENS-02` et `ADM-01` (voir leurs
-  // fiches, section 6) — un `RefreshIndicator` autour d'un `ListView` a
+  // fiches, section 6) : un `RefreshIndicator` autour d'un `ListView` a
   // besoin d'etre l'enfant direct d'un `Expanded` pour ne pas planter en
   // hauteur non bornee, et `PageShell` ne donne pas cette garantie a son
   // `child`. C'est le cinquieme ecran qui la demande.
