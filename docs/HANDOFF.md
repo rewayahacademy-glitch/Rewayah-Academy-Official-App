@@ -1,5 +1,12 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🔴 **12 septembre 2026 — l'opérateur, désormais `admin` et regardant le
+> produit de l'intérieur : « l'app est loin d'être fonctionnelle ».** Ce verdict
+> prime sur tout plan écrit dans ce fichier. **Section 9, étape 0** : lui
+> demander ce qu'il a vu avant d'analyser quoi que ce soit, et écarter d'abord
+> les deux causes connues qui ne sont pas du code (la migration `0006` jamais
+> jouée en production, et la production qui ne sert pas `main`).
+
 > Dernière passation : **11 septembre 2026, huitième session — la dette de
 > vérification est soldée.** Le lot **L10** (clôture de l'étape 4) est fait :
 > section 0 decies. **L'ordre de travail de l'ADR-019 est entièrement épuisé** —
@@ -980,17 +987,40 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — la suite se joue sur le rendu, plus sur la dette
+## 9. Prompt de reprise — l'opérateur juge l'app « loin d'être fonctionnelle »
 
-À copier tel quel pour démarrer la prochaine session. **L'ordre de travail de
-l'ADR-019 est entièrement épuisé** (B0, T2, R0, T3, R4, A1, N0, L10), **et la
-dette de vérification est soldée** : la suite tourne enfin, six lots de code
-sont confirmés sans régression, détail en section 0 undecies.
+À copier tel quel pour démarrer la prochaine session.
 
-Trois sujets sont ouverts, tous connus et chiffrés :
+🔴 **LE FAIT LE PLUS IMPORTANT, DIT PAR L'OPÉRATEUR LE 12 SEPTEMBRE 2026 :
+« l'app est loin d'être fonctionnelle ».** Il a désormais l'accès `admin` et
+regarde le produit de l'intérieur. Ce verdict prime sur tout plan écrit ici :
+**ne pas dérouler la liste ci-dessous sans lui avoir d'abord demandé ce qu'il a
+vu**, écran par écran. Deviner à sa place a déjà coûté deux refontes.
+
+**Ce qui est acquis** : l'ordre de travail de l'ADR-019 est épuisé (B0, T2, R0,
+T3, R4, A1, N0, L10), la dette de vérification est soldée (534/535, section
+0 undecies), et l'amorçage `admin` de `rewayahacademy@gmail.com` est fait et
+confirmé par l'opérateur (`MISE-EN-SERVICE.md` §3.3).
+
+**Deux causes déjà connues, à vérifier AVANT d'accuser le code** — l'une comme
+l'autre expliquerait qu'un écran paraisse mort sans qu'aucune ligne de Dart
+soit fautive :
+
+1. ⚠ **La migration `0006` n'a jamais été jouée sur la base réelle.** Écrite,
+   commitée, rejouée par le harnais, mais absente de la production. Tant qu'elle
+   n'est pas passée, **`ENS-06` est faux deux heures par semaine** et
+   **`TUT-01` lit une vue amputée d'une colonne**. Le SQL à coller est dans
+   `MISE-EN-SERVICE.md` section 5 — l'opérateur sait le faire, il vient de le
+   faire pour l'admin.
+2. ⚠ **La production ne sert pas `main`.** L'adresse stable servait `df96c6a`
+   au 11 septembre ; le lot de remise au vert (`8f10686`) est poussé mais **non
+   déployé**. Ce que l'opérateur voit n'est pas ce que dit le dépôt. Méthode de
+   vérification : `MISE-EN-SERVICE.md` section 7.1.
+
+**Trois chantiers chiffrés, si et seulement si l'opérateur les confirme :**
 
 1. **Le chargement (§18 de la bible).** `Skeleton` existe depuis le lot C et
-   **aucun écran ne l'emploie**. C'est le plus gros écart de rendu qui reste.
+   **aucun écran ne l'emploie**. Le plus gros écart de rendu restant.
 2. **La largeur de lecture.** `AppSpacing.largeurLectureCaracteres = 68` est
    déclaré et **n'a aucun usage** ; `ReadingColumn` est encore en P1 au
    catalogue. Les écrans sont une colonne unique à toute largeur.
@@ -998,16 +1028,40 @@ Trois sujets sont ouverts, tous connus et chiffrés :
    horloge injectable dans la couche planning — une décision, pas un
    correctif de test.
 
-Et un sujet reste à trancher avec l'opérateur avant tout code neuf d'étape 5 :
-le découpage de **N1**.
+Et le découpage de **N1** reste à trancher avant tout code neuf d'étape 5.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md en entier (l'en-tete, puis les sections 0 quater a
-0 undecies), puis decisions.md ADR-019, ADR-020 et l'ecart 24, puis
-docs/PROGRESS.md.
+NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre, et rien
+d'autre avant d'avoir parle a l'operateur :
+  1. docs/HANDOFF.md -- l'en-tete, la section 0 undecies, la section 9.
+  2. La memoire rewayah_remise_au_vert_2026-09-11.md.
+  3. docs/MISE-EN-SERVICE.md sections 3.3, 5 et 7.1.
+Le reste (sections 0 a 0 decies, decisions.md, PROGRESS.md) ne se lit que
+si le sujet du jour y touche.
+
+ETAPE 0 -- LA PHRASE QUI COMMANDE TOUT LE RESTE.
+Le 12/09/2026 l'operateur a dit : "l'app est loin d'etre fonctionnelle".
+Il a l'acces admin et regarde le produit de l'interieur. AVANT toute
+analyse, tout code, tout plan : demande-lui CE QU'IL A VU, ecran par
+ecran, et fais-toi donner des captures ou des parcours precis. Ne devine
+pas a sa place -- c'est la troisieme tentative de refonte, les deux
+precedentes ont echoue sur des suppositions.
+
+Deux causes connues expliquent qu'un ecran paraisse mort sans qu'une seule
+ligne de Dart soit fautive. Les ecarter AVANT d'accuser le code :
+  a) LA MIGRATION 0006 N'A JAMAIS ETE JOUEE SUR LA BASE REELLE. Ecrite,
+     commitee, rejouee par le harnais, absente de la production. Tant
+     qu'elle ne passe pas, ENS-06 est faux deux heures par semaine et
+     TUT-01 lit une vue amputee d'une colonne. SQL a coller :
+     MISE-EN-SERVICE.md section 5. L'operateur sait le faire, il vient de
+     le faire pour l'amorcage admin.
+  b) LA PRODUCTION NE SERT PAS main. L'adresse stable servait df96c6a au
+     11/09 ; le lot de remise au vert (8f10686) est pousse mais NON
+     DEPLOYE. Ce que l'operateur voit n'est pas ce que dit le depot.
+     Verifier avant de conclure : MISE-EN-SERVICE.md section 7.1.
 
 ETAPE 1 -- MESURER, ET LA MESURE MARCHE DESORMAIS :
   1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
@@ -1030,7 +1084,9 @@ ETAPE 1 -- MESURER, ET LA MESURE MARCHE DESORMAIS :
      23h34 et minuit (voir ci-dessous). Un rouge a une autre heure, ou
      ailleurs, est une vraie regression : la signaler avant toute chose.
 
-ETAPE 2 -- TROIS SUJETS OUVERTS, CHIFFRES, A PROPOSER A L'OPERATEUR :
+ETAPE 2 -- TROIS CHANTIERS CHIFFRES, A NE LANCER QUE SI L'OPERATEUR LES
+CONFIRME APRES L'ETAPE 0. Ce sont des ecarts mesures, pas forcement ce qui
+le gene le plus : sa reponse a l'etape 0 passe devant.
 
   a) LE CHARGEMENT (bible §18). Skeleton existe depuis le lot C et AUCUN
      ecran ne l'emploie : zero usage dans lib/features/ hors _dev/. Les
@@ -1059,10 +1115,17 @@ ETAPE 2 -- TROIS SUJETS OUVERTS, CHIFFRES, A PROPOSER A L'OPERATEUR :
      N0 a N7, explicitement "a confirmer au premier lot de code". Ne pas
      commencer N1 sans le relire avec l'operateur.
 
-La production sert ad21990 depuis le lot L10 (verifier via l'API Vercel ou
-main.dart.js, methode dans MISE-EN-SERVICE.md section 7.1).
+L'amorcage admin est FAIT : rewayahacademy@gmail.com est admin depuis le
+12/09, l'operateur l'a pose lui-meme et a confirme que ca marche. Ne pas le
+repasser en guardian. Detail MISE-EN-SERVICE.md section 3.3.
 
-Ce qu'il ne faut PAS faire : coder N1 sans confirmation du decoupage ;
-committer le contournement sqlite3 ; toucher aux fichiers d'OpenCode. Un lot
-par session, comme toujours. Ignore la branche refactor-ui-lavender.
+Ce qu'il ne faut PAS faire : partir sur un plan sans avoir fait l'etape 0 ;
+coder N1 sans confirmation du decoupage ; committer le contournement
+sqlite3 ; toucher aux fichiers d'OpenCode. Un lot par session, comme
+toujours. Ignore la branche refactor-ui-lavender.
+
+FIN DE SESSION : livre toujours un prompt de reprise comme celui-ci, et
+mets a jour cette section 9. C'est une consigne permanente de l'operateur
+(12/09) -- il ferme les sessions pour economiser des jetons, et l'agent
+suivant ne doit pas avoir a relire le code pour savoir ou on en est.
 ```

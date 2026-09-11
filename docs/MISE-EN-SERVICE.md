@@ -171,11 +171,11 @@ bati etait `/admin/dossiers`. L'acces admin ouvrait donc les donnees, pas encore
 les interfaces.
 
 **Depuis, le lot L9 est fermé** : `ADM-01` remplace ce placeholder et `ADM-06`
-est déclarée sur `/admin/demandes`. Mais **la production sert toujours la build
-de `c5a511f`**, c'est-à-dire L8 : tant que la promotion de la section 7.1 n'a
-pas été lancée, un admin connecté à l'adresse stable voit encore l'écran vide.
-Le code et ce qui est en ligne ne disent pas la même chose, et c'est ce qui est
-en ligne qui compte pour juger de ce que voit l'opérateur.
+est déclarée sur `/admin/demandes`. Le retard de production a été comblé au lot
+L10, puis la correction hiérarchie/Bento déployée : **l'adresse stable sert
+`df96c6a`**. Le code et ce qui est en ligne ne disent pas toujours la même
+chose, et c'est ce qui est en ligne qui compte pour juger de ce que voit
+l'opérateur — vérifier avant de conclure (méthode section 7.1).
 
 **Et c'est pourquoi le compte est repasse en `guardian` le meme jour**, a la
 demande de l'operateur, qui n'avait vu qu'un ecran a construire. Etat courant :
@@ -190,6 +190,23 @@ Le foyer `c1b933b4` n'avait jamais ete detache — `primary_guardian_id` pointe
 toujours sur ce profil — donc l'aller-retour n'a rien coute. La difference avec
 l'etat d'origine tient au statut : `active` au lieu de `pending_kyc`, ce qui
 ouvre le sous-arbre `/tuteur` au lieu du portail d'attente.
+
+⚠ **ÉTAT COURANT DEPUIS LE 12 SEPTEMBRE 2026 : le compte est de nouveau
+`admin`.** L'opérateur a rejoué l'amorçage lui-même dans l'éditeur SQL du
+tableau de bord, pour inspecter le produit de l'intérieur, et a confirmé que
+l'accès fonctionne. **Ne pas le repasser en `guardian`** sans le lui demander :
+le bloc `guardian` ci-dessus est l'historique du 7 septembre, plus l'état réel.
+
+```sql
+update public.profiles p
+set    role = 'admin', account_status = 'active', updated_at = now()
+from   auth.users u
+where  u.id = p.id and u.email = 'rewayahacademy@gmail.com';
+```
+
+Rappel qui vaut à chaque bascule : **le rôle vient du jeton**, donc se
+déconnecter puis se reconnecter après l'écriture, sinon rien ne change à
+l'écran.
 
 **Le role se bascule donc a volonte**, par cette seule requete, tant qu'aucun
 ecran d'administration n'existe pour valider un dossier autrement.
