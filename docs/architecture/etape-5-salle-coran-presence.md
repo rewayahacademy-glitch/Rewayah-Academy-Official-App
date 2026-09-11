@@ -451,20 +451,22 @@ quatre écrans de ce lot.
 
 ---
 
-## 12. Découpage en lots proposé (à confirmer au premier lot de code)
+## 12. Découpage en lots proposé (confirmé le 12 septembre 2026)
 
-Proposition, sur le modèle de l'étape 4 — un lot, un commit, jamais en bloc :
+Proposition, sur le modèle de l'étape 4 — un lot, un commit, jamais en bloc.
+**Découpage confirmé par l'opérateur le 12 septembre 2026** (« je t'ai donné
+toutes les specs »), et N1 exécuté le jour même.
 
-| Lot | Contenu |
-| :-- | :--- |
-| N0 | Cette spécification, l'ADR-020, la mise à jour du registre (ce lot) |
-| N1 | Migration : `mushaf`/`sourate`/`page_mushaf`/`verset`, `student_reading_position`, vue ou fonction de présence dérivée |
-| N2 | `VideoSessionProvider`/`LiveKitSessionProvider` (ADR-001), pre-flight, émission de token |
-| N3 | `ELV-03`/`ENS-03`/`CTR-02` : coquille de salle, document partagé, contrôles enseignant niveau 1 |
-| N4 | Machine à états de présence : calcul, affichage, vue enseignant et élève |
-| N5 | `ELV-04` : lecteur Coran, mode immersif, reprise de lecture |
-| N6 | Mode suivi enseignant, annotation si retenue |
-| N7 | Vérifications de fin d'étape, scénarios d'acceptation, documentation |
+| Lot | Contenu | État |
+| :-- | :--- | :--- |
+| N0 | Cette spécification, l'ADR-020, la mise à jour du registre | **Fait** (`39aec71`) |
+| N1 | Migration : `mushaf`/`sourate`/`page_mushaf`/`verset`, `student_reading_position`, vue ou fonction de présence dérivée | **Fait** (`a736a43`), 15 contrôles — reste à appliquer à la base réelle, `MISE-EN-SERVICE.md` §5.2 |
+| N2 | `VideoSessionProvider`/`LiveKitSessionProvider` (ADR-001), pre-flight, émission de token | À faire — **c'est ici que se décide le fournisseur vidéo et ses clés**, et ici que naît la trace qui rendra `en_connexion` dérivable |
+| N3 | `ELV-03`/`ENS-03`/`CTR-02` : coquille de salle, document partagé, contrôles enseignant niveau 1 | À faire — remplace le plus gros placeholder du routeur |
+| N4 | Machine à états de présence : calcul, affichage, vue enseignant et élève | À faire — le calcul existe depuis N1, reste l'affichage |
+| N5 | `ELV-04` : lecteur Coran, mode immersif, reprise de lecture | À faire — demande d'abord l'import du jeu de données coranique |
+| N6 | Mode suivi enseignant, annotation si retenue | À faire |
+| N7 | Vérifications de fin d'étape, scénarios d'acceptation, documentation | À faire |
 
 ---
 

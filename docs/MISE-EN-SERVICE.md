@@ -300,6 +300,49 @@ commit;
 `0006` et suivantes.** Corriger `0005` sur place ne se voit plus nulle part :
 la base reelle ne la rejouera jamais.
 
+### 5.1 Etat mesure le 12 septembre 2026 : `0006` n'est toujours pas passee
+
+Verifie ce jour-la contre la base reelle, sans supposition, par une lecture
+PostgREST de la vue :
+
+```
+GET /rest/v1/profils_du_foyer_v?select=access_until&limit=1
+-> 400 {"code":"42703","message":"column profils_du_foyer_v.access_until does not exist"}
+```
+
+La colonne manque donc toujours : **`TUT-01` lit une vue amputee et `ENS-06`
+reste faux deux heures par semaine.** Le bloc SQL de la section 5 ci-dessus est
+a coller tel quel dans l'editeur SQL du tableau de bord Supabase du projet
+`gggmtelinlpseweouyav`.
+
+⚠ **Le serveur MCP `supabase` de ce poste n'est pas branche sur ce projet.**
+Il pointe sur `riaqzfhdynmtshvbgdvt`, c'est-a-dire sur la base **PISI**. Une
+session qui l'utiliserait pour « appliquer la migration » ecrirait dans le
+mauvais produit. Verifier par `get_project_url` avant toute ecriture, et s'en
+tenir a l'editeur SQL du tableau de bord tant que ce reglage n'a pas change.
+
+### 5.2 `0007` (lot N1, etape 5) attend la meme operation
+
+La migration `supabase/migrations/0007_coran_structure_position_presence.sql`
+est ecrite, jouee par le harnais et tenue par quinze controles
+(`supabase/tests/scenarios_etape5.sql`), mais **elle n'est pas non plus
+appliquee a la base reelle**. Elle ne casse rien tant qu'elle n'est pas
+passee : aucun ecran existant ne lit encore ses objets. Elle devient
+necessaire des le lot N2.
+
+Coller le fichier entier dans le meme editeur SQL, **apres** le bloc de la
+section 5. Il est ecrit pour etre rejouable sans effet de bord :
+`on conflict do nothing` sur l'amorcage, `create or replace` sur les
+fonctions.
+
+Ce qu'elle ajoute : cinq tables de contenu coranique (`mushaf`, `sourate`,
+`juz`, `page_mushaf`, `verset`), la position de lecture personnelle
+(`student_reading_position`), le type `presence_state` a quatorze etats, la
+fonction `etat_presence()`, la vue `presence_seance_v`, la table de correction
+`session_presence_override`, deux cles `app_config`, et une contrainte de
+vocabulaire sur `session_events.source`. Toutes les tables neuves ont leur RLS
+activee et leurs policies posees dans la meme migration.
+
 ## 6. Ce qui a ete constate en regardant l'application en ligne
 
 - Elle demarre, initialise Supabase et route jusqu'a `/#/connexion` **sans une

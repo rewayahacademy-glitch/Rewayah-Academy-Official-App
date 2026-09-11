@@ -1,11 +1,26 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> 🔴 **12 septembre 2026 — l'opérateur, désormais `admin` et regardant le
-> produit de l'intérieur : « l'app est loin d'être fonctionnelle ».** Ce verdict
-> prime sur tout plan écrit dans ce fichier. **Section 9, étape 0** : lui
-> demander ce qu'il a vu avant d'analyser quoi que ce soit, et écarter d'abord
-> les deux causes connues qui ne sont pas du code (la migration `0006` jamais
-> jouée en production, et la production qui ne sert pas `main`).
+> 🔴 **12 septembre 2026 — le verdict de l'opérateur est vérifié, chiffré, et
+> il avait raison.** « L'app est loin d'être fonctionnelle » : mesuré en
+> ouvrant la production en session admin, pas déduit. **Onze destinations du
+> routeur sur trente rendent `EcranAConstruire`** — dont `ELV-03 / ENS-03`,
+> c'est-à-dire la salle de cours elle-même, le produit. Côté admin, deux des
+> quatre entrées de navigation (Attribution, Journal) affichent « Cet écran
+> arrive à l'étape 3 », et les deux autres sont vides. **Ce n'est pas une
+> régression : c'est que l'étape 5 n'était pas commencée.** Le détail écran par
+> écran est en section 9.
+> ✅ **Le lot N1 est fait le même jour** (`a736a43`) : migration `0007`, le
+> Coran structuré, la position de lecture personnelle, la présence dérivée à
+> quatorze états. Quinze contrôles verts, non-régression des étapes 3 (34) et
+> 4 (39) vérifiée. **Le découpage N0→N7 est confirmé** par l'opérateur.
+> ⚠ **Deux actions restent à sa main, et rien n'avance sans elles** : coller
+> `0006` **et** `0007` dans l'éditeur SQL du projet `gggmtelinlpseweouyav`
+> (`MISE-EN-SERVICE.md` §5, §5.1, §5.2), et promouvoir la build prête en
+> production (section 9). `0006` est toujours absente de la base réelle,
+> mesuré ce jour par PostgREST.
+> ⚠ **Le serveur MCP `supabase` de ce poste pointe sur la base PISI**
+> (`riaqzfhdynmtshvbgdvt`), pas sur Rewayah. Ne jamais l'utiliser pour
+> appliquer une migration de ce projet.
 
 > Dernière passation : **11 septembre 2026, huitième session — la dette de
 > vérification est soldée.** Le lot **L10** (clôture de l'étape 4) est fait :
@@ -987,145 +1002,153 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — l'opérateur juge l'app « loin d'être fonctionnelle »
+## 9. Prompt de reprise — le verdict est vérifié, l'étape 5 est commencée
 
 À copier tel quel pour démarrer la prochaine session.
 
-🔴 **LE FAIT LE PLUS IMPORTANT, DIT PAR L'OPÉRATEUR LE 12 SEPTEMBRE 2026 :
-« l'app est loin d'être fonctionnelle ».** Il a désormais l'accès `admin` et
-regarde le produit de l'intérieur. Ce verdict prime sur tout plan écrit ici :
-**ne pas dérouler la liste ci-dessous sans lui avoir d'abord demandé ce qu'il a
-vu**, écran par écran. Deviner à sa place a déjà coûté deux refontes.
+### 9.1 Ce que la session du 12 septembre a mesuré, et non supposé
 
-**Ce qui est acquis** : l'ordre de travail de l'ADR-019 est épuisé (B0, T2, R0,
-T3, R4, A1, N0, L10), la dette de vérification est soldée (534/535, section
-0 undecies), et l'amorçage `admin` de `rewayahacademy@gmail.com` est fait et
-confirmé par l'opérateur (`MISE-EN-SERVICE.md` §3.3).
+L'opérateur a demandé d'agir plutôt que de le questionner écran par écran
+(« fais le nécessaire, je veux une app fonctionnelle. et je t'ai donné toutes
+les specs »). La production a donc été ouverte en session admin, et voici ce
+qu'elle rend réellement :
 
-**Deux causes déjà connues, à vérifier AVANT d'accuser le code** — l'une comme
-l'autre expliquerait qu'un écran paraisse mort sans qu'aucune ligne de Dart
-soit fautive :
+| Écran | Ce qu'il affiche |
+| :--- | :--- |
+| `ADM-01` `/admin/tableau-de-bord` | Six compteurs, tous à 0 sauf « Foyers sans enseignant » = 1, puis « Rien à traiter ». **Plus de treize secondes** de démarrage à froid, pendant lesquelles l'écran n'affiche qu'un `Text` « Chargement » nu |
+| `ADM-02` `/admin/dossiers` | « Aucun dossier en attente » |
+| `/admin/attribution` | **« Écran à construire — Cet écran arrive à l'étape 3 »** |
+| `/admin/journal` | **« Écran à construire — Cet écran arrive à l'étape 3 »** |
 
-1. ⚠ **La migration `0006` n'a jamais été jouée sur la base réelle.** Écrite,
-   commitée, rejouée par le harnais, mais absente de la production. Tant qu'elle
-   n'est pas passée, **`ENS-06` est faux deux heures par semaine** et
-   **`TUT-01` lit une vue amputée d'une colonne**. Le SQL à coller est dans
-   `MISE-EN-SERVICE.md` section 5 — l'opérateur sait le faire, il vient de le
-   faire pour l'admin.
-2. ⚠ **La production ne sert pas `main`.** L'adresse stable servait `df96c6a`
-   au 11 septembre ; le lot de remise au vert (`8f10686`) est poussé mais **non
-   déployé**. Ce que l'opérateur voit n'est pas ce que dit le dépôt. Méthode de
-   vérification : `MISE-EN-SERVICE.md` section 7.1.
+Aucune erreur console : rien n'est cassé. **Le produit n'est pas en panne, il
+est inachevé** — et le placeholder ment sur son échéance, l'étape 3 étant close
+depuis longtemps.
 
-**Trois chantiers chiffrés, si et seulement si l'opérateur les confirme :**
+Le compte exact, lu dans `lib/core/router/app_router.dart` : **onze
+destinations rendent `EcranAConstruire`** — élève (Coran, Suivi), tuteur
+(Suivi), enseignant (Profil), contrôleur (Planning), admin (Attribution,
+Journal), espace comptable entier, et **`ELV-03 / ENS-03`, la salle de cours**.
+En face, **dix-neuf écrans réellement implémentés** dans `lib/features/`.
 
-1. **Le chargement (§18 de la bible).** `Skeleton` existe depuis le lot C et
-   **aucun écran ne l'emploie**. Le plus gros écart de rendu restant.
-2. **La largeur de lecture.** `AppSpacing.largeurLectureCaracteres = 68` est
-   déclaré et **n'a aucun usage** ; `ReadingColumn` est encore en P1 au
-   catalogue. Les écrans sont une colonne unique à toute largeur.
-3. **L'horloge de test.** La bombe horaire de `journee_test.dart` demande une
-   horloge injectable dans la couche planning — une décision, pas un
-   correctif de test.
+**C'est la réponse à « pourquoi l'app n'est pas fonctionnelle » : le cœur du
+produit — faire cours — n'a jamais été construit.** C'est l'étape 5, spécifiée
+par N0/ADR-020 le 11 septembre, commencée le 12 avec N1.
 
-Et le découpage de **N1** reste à trancher avant tout code neuf d'étape 5.
+### 9.2 Les deux causes non-code, mesurées
+
+1. ✅ **Confirmée : la migration `0006` n'est pas sur la base réelle.**
+   `GET /rest/v1/profils_du_foyer_v?select=access_until` répond
+   `42703 column ... does not exist`. `TUT-01` lit donc une vue amputée et
+   `ENS-06` reste faux deux heures par semaine. SQL en `MISE-EN-SERVICE.md` §5.
+2. ✅ **Confirmée : la production ne sert pas `main`.** L'API Vercel donne
+   `df96c6a` comme dernier déploiement de production. L'écart avec `main` était
+   mince (Échap sur les modales, titres d'`ENS-06`), donc **cela n'explique pas
+   le verdict** — mais le retard est réel.
+
+### 9.3 Ce que la session a livré
+
+- **Lot N1 poussé** (`a736a43`) : migration `0007`, cinq tables de Coran
+  structuré, `student_reading_position`, `presence_state` (14 états),
+  `etat_presence()`, `presence_seance_v`, `session_presence_override`, deux
+  clés `app_config`, vocabulaire fermé de `session_events.source`.
+- **`supabase/tests/scenarios_etape5.sql`** : 15 contrôles verts. Étapes 3 (34)
+  et 4 (39) rejouées sans régression.
+- **La build de `5b8b868` est construite** et attend dans
+  `D:\ra-pwa-build\build\web`.
+
+### 9.4 Deux actions qui ne peuvent pas être faites depuis le poste
+
+Elles bloquent la suite ; aucune n'excède une minute.
+
+**1. Coller les deux migrations** dans l'éditeur SQL du tableau de bord
+Supabase du projet `gggmtelinlpseweouyav` — d'abord le bloc de
+`MISE-EN-SERVICE.md` §5 (`0006`), puis le fichier
+`supabase/migrations/0007_coran_structure_position_presence.sql` en entier.
+⚠ Le serveur MCP `supabase` de ce poste pointe sur **PISI**, pas sur Rewayah :
+il ne peut pas le faire, et une session qui l'utiliserait écrirait dans le
+mauvais produit.
+
+**2. Promouvoir la build en production** (le déploiement est refusé à l'agent) :
+
+```
+! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
+```
+
+### 9.5 Le prompt
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre, et rien
-d'autre avant d'avoir parle a l'operateur :
-  1. docs/HANDOFF.md -- l'en-tete, la section 0 undecies, la section 9.
-  2. La memoire rewayah_remise_au_vert_2026-09-11.md.
-  3. docs/MISE-EN-SERVICE.md sections 3.3, 5 et 7.1.
-Le reste (sections 0 a 0 decies, decisions.md, PROGRESS.md) ne se lit que
-si le sujet du jour y touche.
+NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre :
+  1. docs/HANDOFF.md -- l'en-tete et la section 9.
+  2. docs/architecture/etape-5-salle-coran-presence.md -- sections 5, 7 et 12.
+  3. docs/MISE-EN-SERVICE.md sections 5.1, 5.2 et 7.1.
+Le reste ne se lit que si le sujet du jour y touche.
 
-ETAPE 0 -- LA PHRASE QUI COMMANDE TOUT LE RESTE.
-Le 12/09/2026 l'operateur a dit : "l'app est loin d'etre fonctionnelle".
-Il a l'acces admin et regarde le produit de l'interieur. AVANT toute
-analyse, tout code, tout plan : demande-lui CE QU'IL A VU, ecran par
-ecran, et fais-toi donner des captures ou des parcours precis. Ne devine
-pas a sa place -- c'est la troisieme tentative de refonte, les deux
-precedentes ont echoue sur des suppositions.
+OU ON EN EST, MESURE LE 12/09/2026 ET NON SUPPOSE.
+Le verdict "l'app est loin d'etre fonctionnelle" est VERIFIE : onze
+destinations du routeur rendent EcranAConstruire, dont ELV-03/ENS-03,
+c'est-a-dire la salle de cours -- le produit lui-meme. Dix-neuf ecrans
+existent pour de vrai. Rien n'est casse (zero erreur console) : c'est
+l'etape 5 qui n'etait pas commencee. Ne REFAIS PAS ce diagnostic.
 
-Deux causes connues expliquent qu'un ecran paraisse mort sans qu'une seule
-ligne de Dart soit fautive. Les ecarter AVANT d'accuser le code :
-  a) LA MIGRATION 0006 N'A JAMAIS ETE JOUEE SUR LA BASE REELLE. Ecrite,
-     commitee, rejouee par le harnais, absente de la production. Tant
-     qu'elle ne passe pas, ENS-06 est faux deux heures par semaine et
-     TUT-01 lit une vue amputee d'une colonne. SQL a coller :
-     MISE-EN-SERVICE.md section 5. L'operateur sait le faire, il vient de
-     le faire pour l'amorcage admin.
-  b) LA PRODUCTION NE SERT PAS main. L'adresse stable servait df96c6a au
-     11/09 ; le lot de remise au vert (8f10686) est pousse mais NON
-     DEPLOYE. Ce que l'operateur voit n'est pas ce que dit le depot.
-     Verifier avant de conclure : MISE-EN-SERVICE.md section 7.1.
+L'etape 5 est lancee. Decoupage N0-N7 CONFIRME par l'operateur le 12/09
+(section 12 de la spec). N0 et N1 sont faits :
+  N0 = specification + ADR-020 (39aec71)
+  N1 = migration 0007 : Coran structure (mushaf/sourate/juz/page_mushaf/
+       verset), student_reading_position, presence_state a 14 etats,
+       etat_presence(), presence_seance_v, session_presence_override,
+       vocabulaire ferme de session_events.source (a736a43)
+       -> 15 controles verts dans supabase/tests/scenarios_etape5.sql
 
-ETAPE 1 -- MESURER, ET LA MESURE MARCHE DESORMAIS :
-  1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
-     origin/main. ATTENTION : OpenCode travaille en parallele sur le meme
-     depot (lib/app.dart, lib/core/config/env.dart, lib/main.dart,
-     lib/features/_dev/playground/). Ne jamais committer ses fichiers.
-  2. dart analyze --fatal-infos -- vert au dernier lot.
-  3. flutter test -- NE TOURNE PAS tel quel : le poste refuse github.com en
-     TLS pour le hook package:sqlite3 (CERTIFICATE_VERIFY_FAILED). N'essaie
-     PAS de reparer le reseau, c'est etabli depuis neuf sessions. Utilise le
-     contournement documente en section 0 undecies : poser le user_define
-     `source: system` dans le pubspec du worktree D:\ra-pwa-build UNIQUEMENT,
-     y copier les fichiers modifies, mesurer la-bas, puis
-     `git checkout -- pubspec.yaml`. NE JAMAIS le committer ni le poser dans
-     le depot de travail : il changerait le SQLite d'un build de production.
-  4. dart run tool/verifier_jetons.dart -- meme worktree, meme contournement.
-  5. Reference a ne pas faire regresser : 535 tests dont 534 verts,
-     96 fichiers de jetons sans violation. Le seul rouge attendu est
-     journee_test.dart / "ENS-02 : le bloc dominant", et SEULEMENT entre
-     23h34 et minuit (voir ci-dessous). Un rouge a une autre heure, ou
-     ailleurs, est une vraie regression : la signaler avant toute chose.
+LE PROCHAIN LOT EST N2, ET IL DEMANDE UNE DECISION AVANT DU CODE :
+N2 = VideoSessionProvider/LiveKitSessionProvider (ADR-001), pre-flight,
+emission de jeton. C'est la que se tranche le FOURNISSEUR VIDEO et que
+ses cles sont necessaires. Demander a l'operateur : quel fournisseur,
+quel compte, quelles cles. Sans cela N2 ne peut pas etre code, et N3
+(la salle) ne peut pas suivre.
+C'est aussi N2 qui posera la trace d'emission de jeton rendant l'etat
+`en_connexion` derivable -- N1 ne le derive volontairement pas, faute de
+trace en base. Ne pas l'inventer.
 
-ETAPE 2 -- TROIS CHANTIERS CHIFFRES, A NE LANCER QUE SI L'OPERATEUR LES
-CONFIRME APRES L'ETAPE 0. Ce sont des ecarts mesures, pas forcement ce qui
-le gene le plus : sa reponse a l'etape 0 passe devant.
+DEUX ACTIONS A LA MAIN DE L'OPERATEUR, a lui rappeler si pas faites :
+  a) Coller 0006 (MISE-EN-SERVICE.md section 5) PUIS le fichier
+     supabase/migrations/0007_coran_structure_position_presence.sql
+     dans l'editeur SQL du projet gggmtelinlpseweouyav. 0006 etait
+     toujours absente au 12/09, mesure par PostgREST (42703).
+     ATTENTION : le MCP supabase de ce poste pointe sur la base PISI
+     (riaqzfhdynmtshvbgdvt). NE JAMAIS l'utiliser pour ce projet.
+  b) Promouvoir la build deja construite (le deploiement est refuse a
+     l'agent) :
+     ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
 
-  a) LE CHARGEMENT (bible §18). Skeleton existe depuis le lot C et AUCUN
-     ecran ne l'emploie : zero usage dans lib/features/ hors _dev/. Les
-     ecrans qui disent quelque chose affichent un Text "Chargement...",
-     parfois un EmptyState detourne en attente (creneaux_page.dart). C'est
-     le plus gros ecart de rendu restant. docs/design/README.md le dit
-     maintenant ("Ecart"), il disait "Fait" avant le 11/09.
+POUR MESURER :
+  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0007,
+    puis les scenarios. Recette section 6. Docker Desktop n'est pas
+    forcement demarre : le lancer et boucler sur `docker info`.
+    Le `docker rm -f` se passe SEUL sur sa ligne (protection de chemins).
+    Reference : etape3 34 controles, etape4 39, etape5 15, zero erreur.
+  - Dart : flutter test NE TOURNE PAS tel quel (TLS github.com refuse pour
+    le hook package:sqlite3). Contournement en section 0 undecies : le
+    user_define `source: system` dans le pubspec du worktree
+    D:\ra-pwa-build UNIQUEMENT, jamais commite. Reference 534/535.
+    Le worktree peut contenir un stash : `git stash list` avant de l'utiliser.
 
-  b) LA LARGEUR DE LECTURE. AppSpacing.largeurLectureCaracteres = 68 est
-     declare et n'a AUCUN usage ; ReadingColumn est encore en P1 au
-     catalogue. Consequence mesurable : les ecrans sont une colonne unique
-     a toute largeur, la carte de connexion fait plus de 1100 px de large
-     sur desktop. Passer par le catalogue (08-catalogue-ecrans.md) AVANT
-     de coder, comme toujours.
+PIEGES :
+- OpenCode travaille EN PARALLELE sur le meme depot (lib/app.dart,
+  lib/core/config/env.dart, lib/main.dart, lib/features/_dev/playground/).
+  git status avant tout commit, ne jamais stager ses fichiers.
+- journee_test.dart / "ENS-02 : le bloc dominant" est rouge entre 23h34 et
+  minuit seulement. Rouge a une autre heure = vraie regression.
+- Une ligne "Fait" du tableau de docs/design/README.md ne vaut que si un
+  test la tient : deux etaient fausses (13.4 et 18).
+- Le demarrage a froid de la PWA depasse treize secondes et n'affiche
+  qu'un Text "Chargement" nu. Skeleton existe depuis le lot C et AUCUN
+  ecran ne l'emploie : c'est le plus gros ecart de rendu restant (bible
+  section 18), et il se voit des la premiere seconde d'usage.
 
-  c) L'HORLOGE DE TEST. journee_test.dart place son cours a
-     DateTime.now() + 25 min 30 s et attend "Dans 25 min". Passe 23h34, cet
-     instant tombe le lendemain et ENS-02 -- qui affiche la journee
-     d'aujourd'hui -- ne le porte pas. Le scenario est inexprimable pres de
-     minuit sans horloge injectable : le remede est de faire lire l'heure a
-     la couche planning via package:clock, qu'un test fige avec withClock.
-     C'est une decision d'architecture, pas un correctif de test.
-
-  d) Et toujours, avant tout code neuf d'etape 5 : le decoupage de N1,
-     propose par N0 (etape-5-salle-coran-presence.md, ADR-020) en huit lots
-     N0 a N7, explicitement "a confirmer au premier lot de code". Ne pas
-     commencer N1 sans le relire avec l'operateur.
-
-L'amorcage admin est FAIT : rewayahacademy@gmail.com est admin depuis le
-12/09, l'operateur l'a pose lui-meme et a confirme que ca marche. Ne pas le
-repasser en guardian. Detail MISE-EN-SERVICE.md section 3.3.
-
-Ce qu'il ne faut PAS faire : partir sur un plan sans avoir fait l'etape 0 ;
-coder N1 sans confirmation du decoupage ; committer le contournement
-sqlite3 ; toucher aux fichiers d'OpenCode. Un lot par session, comme
-toujours. Ignore la branche refactor-ui-lavender.
-
-FIN DE SESSION : livre toujours un prompt de reprise comme celui-ci, et
-mets a jour cette section 9. C'est une consigne permanente de l'operateur
-(12/09) -- il ferme les sessions pour economiser des jetons, et l'agent
-suivant ne doit pas avoir a relire le code pour savoir ou on en est.
+Un lot par session. Ignore la branche refactor-ui-lavender.
+FIN DE SESSION : livrer un prompt de reprise et mettre a jour cette
+section 9. Consigne permanente de l'operateur.
 ```
