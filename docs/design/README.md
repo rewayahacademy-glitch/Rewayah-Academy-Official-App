@@ -1,8 +1,12 @@
 # Système UX/UI Rewayah — la constitution
 
-> Version 1.0, 7 septembre 2026. Écrit avant l'étape 5, après que le premier
-> rendu visuel de l'application ait été jugé daté par l'opérateur.
-> **Aucun écran ne se construit plus sans passer par ces documents.**
+> Version 1.1, 11 septembre 2026. Version 1.0 écrite le 7 septembre, avant
+> l'étape 5, après que le premier rendu visuel de l'application ait été jugé
+> daté. Le rendu mobile déployé après le lot R3 a ensuite été jugé « plus nul
+> que du générique » : l'opérateur a remis une deuxième Bible, plus stricte et
+> plus complète (`00-bible-frontend-v2.md`), adoptée par **ADR-019** et lue en
+> premier, avant ce fichier. **Aucun écran ne se construit plus sans passer par
+> ces documents.**
 
 ## 1. Pourquoi ce corpus existe
 
@@ -66,15 +70,16 @@ gagne, et l'autre se corrige.
 Un défaut visuel se corrige dans `docs/design/`. Un défaut de règle se corrige
 dans `decisions.md`, jamais dans l'écran qui l'a révélé.
 
-## 4. Les huit documents
+## 4. Les neuf documents
 
 | Fichier | Répond à |
 | :--- | :--- |
+| `00-bible-frontend-v2.md` | Le contrat lui-même : 61 chapitres, copie intégrale et inchangée, adopté par ADR-019. Se lit **avant** les huit autres |
 | `01-systeme-visuel.md` | À quoi ça ressemble : surfaces, élévation, rayons, densité, rythme, usage des couleurs, échelle typographique |
-| `02-regles-ux.md` | Comment ça se comporte : une fonction par écran, dévoilement progressif, hiérarchie des actions, états, erreurs, destructif, notifications |
-| `03-architecture-information.md` | Qui voit quoi et par où : rôles et capacités, cinq niveaux de charge, zones, navigation, profondeur |
+| `02-regles-ux.md` | Comment ça se comporte : une fonction par écran, dévoilement progressif, hiérarchie des actions, états, erreurs, destructif, notifications, matrice de conteneur |
+| `03-architecture-information.md` | Qui voit quoi et par où : rôles et capacités, cinq niveaux de charge, zones, navigation, profondeur, classification état métier / UI / préférence |
 | `04-systeme-mouvement.md` | Comment ça bouge : durées, courbes, les six motifs, réduction du mouvement |
-| `05-regles-responsive.md` | Comment ça s'adapte : trois gabarits, un seul système de composants, tableaux, RTL |
+| `05-regles-responsive.md` | Comment ça s'adapte : trois gabarits, un seul système de composants, tableaux, RTL, zoning physique |
 | `06-accessibilite.md` | Utilisable par qui : contraste mesuré, cibles, échelle dynamique, lecteur d'écran, mode accessibilité |
 | `07-catalogue-composants.md` | Avec quoi : les composants existants, ceux à construire, et les dix états obligatoires |
 | `08-catalogue-ecrans.md` | Le registre des écrans, leur fiche, et la règle qui interdit d'en inventer un |
@@ -83,6 +88,46 @@ Les valeurs de jetons (hex, noms de police, icônes, règles islamiques,
 copywriting) restent dans **`docs/produit/design-tokens.md`**, source unique. Les
 documents de ce dossier nomment les jetons, ils ne recopient jamais leurs valeurs :
 deux tableaux d'hex finiraient par diverger, et le mauvais serait recopié.
+
+## 4 BIS. La Bible Frontend V2, et sa table de correspondance
+
+`00-bible-frontend-v2.md` est le texte remis par l'opérateur le 11 septembre
+2026, adopté sans modification par ADR-019. Il ne se réécrit jamais : c'est la
+table ci-dessous qui évolue, lot après lot, jamais le contrat.
+
+Trois colonnes : ce que le chapitre demande, où c'est déjà tenu dans ce dépôt
+(souvent mieux qu'exigé, parce qu'outillé par `tool/verifier_jetons.dart` plutôt
+que laissé à la relecture), et l'écart réel s'il en reste un, avec le lot qui le
+ferme.
+
+| Bible | État dans ce dépôt |
+| :--- | :--- |
+| §0.1-0.3 hiérarchie des sources, interdits, dérogations | Ce fichier §3 et §6, même schéma |
+| §7.1 aucun hardcoding visuel | **Outillé** : `tool/verifier_jetons.dart`, 26+ règles, échoue en CI |
+| §7.2 couleurs via `ColorScheme` | **Tranché autrement, par écrit (ADR-019)** : `AppPalette` (ThemeExtension) est la source, `ColorScheme` en dérive dans `app_theme.dart`. L'inverse casserait le lot T. Conforme à la fin de §7.2 (« exposées via un ThemeExtension ») |
+| §7.3 lightTheme ET darkTheme | **Écart, fermé au lot T3.** Un seul thème existe aujourd'hui (`AppPalette.claire()`, `Brightness.light` en dur) |
+| §8 typographie par `TextTheme` | Fait, crénage outillé (`app_typography.dart`) |
+| §9 échelle de spacing 4→64 | Fait (`AppSpacing`, règle `espacement-hors-echelle`) |
+| §10 shape system | Fait (`app_radius.dart`, `AppRadius.enfantDe`) |
+| §11 BIS composants partagés nommés | Tous existent dans `lib/core/widgets/`, plus dix-neuf autres |
+| §12 dix états d'interaction | Fait, galerie `lib/features/_dev/galerie/` |
+| §12, §52 ombres et bordures trop faibles | **Écart, fermé au lot T2** (cause n°3 mesurée du rejet du 11/09 : ombres à 5 %, trois surfaces dans 4 % de clarté) |
+| §5.1, §6, §52 tunnel d'entrée | **Écart, fermé au lot R0** (cause n°1 : `connexion_page.dart` monte un `Scaffold` nu, hors de tout lot de reprise) |
+| §14 RTL | **Partiellement tenu** (slang + `flutter_localizations`), **non outillé** avant B0 (`direction-non-geree`), **non testé** avant A1 |
+| §13.2, §13.4 text scaling et clavier | **Écart, fermé au lot A1** : aucun test avant ce lot |
+| §15 responsive par l'espace | Fait, `app_gabarit.dart` seul fichier autorisé à comparer une largeur |
+| §16 motion | Fait, `app_mouvement.dart` |
+| §18 empty/loading/error/offline | Fait, exigé par `lib/CLAUDE.md` |
+| §19-32 salle, Coran structuré, présence | **Non construit. Spécifié documentairement au lot N0** (ADR-020), codé à l'étape 5 |
+| §40-41 état métier / UI / préférence | Ajouté à `03-architecture-information.md` au lot B0 |
+| §44 protocole avant codage | La fiche d'écran de `08-catalogue-ecrans.md` §3 |
+| §45 tags de conformité | Vocabulaire fermé posé dans `lib/CLAUDE.md` au lot B0 |
+| §5, §6 matrice de conteneur, zoning physique | Ajoutés à `02-regles-ux.md` et `05-regles-responsive.md` §3 au lot B0 |
+| §43 anti-hallucination | ADR-001 à ADR-020, registre des questions ouvertes |
+| §7, points repris de la note de refonte V1 | Section 7 ci-dessous : dix points déjà tranchés autrement, restent tranchés |
+
+Un chapitre marqué « fait » ici et dont le code régresse plus tard est une
+régression au sens de la Bible §51, pas une réouverture de discussion.
 
 ## 5. Le comité, avant d'ouvrir un fichier
 
@@ -153,8 +198,11 @@ introduite.
 
 ## 9. Ordre de travail
 
-La note de refonte proposait dix étapes. Six d'entre elles sont ce dossier, et
-elles sont faites. L'ordre restant :
+La note de refonte V1 proposait dix étapes. Six d'entre elles sont ce dossier, et
+elles sont faites. Le rendu mobile déployé après le lot R3 a ensuite été jugé
+« plus nul que du générique » (11 septembre 2026) : la Bible Frontend V2 est la
+réponse à ce jugement, et son adoption (ADR-019) rouvre l'ordre de travail avec
+les lots B0, T2, R0, T3, A1 et N0 insérés avant la suite. L'ordre complet :
 
 ```
 [fait] Audit du code et des specs existantes
@@ -163,14 +211,24 @@ elles sont faites. L'ordre restant :
 [fait] Système de composants                         07
 [fait] Système de mouvement                          04
 [fait] Système responsive et web                     05
-[fait] Catalogue d'écrans                            08
+[fait] Catalogue d'écrans                             08
 [fait] Lot T : jetons, thème, typographie             → lib/core/theme/
 [fait] Lot C : composants du catalogue                → lib/core/widgets/
-[à faire] Lot R : reprise des écrans déjà construits  → lib/features/
+[fait] Lot R1-R3 : ELV-02, TUT-01, ENS-02, ADM-01     → lib/features/
+[fait] Lot B0 : ancrage de la Bible V2 (ADR-019)      → ce dossier, decisions.md, verifier_jetons.dart
+[à faire] Lot T2 : durcir le langage (ombres, bordures, bouton désactivé)
+[à faire] Lot R0 : tunnel d'entrée (zone Accès du catalogue 08)
+[à faire] Lot T3 : mode sombre (§7.3)
+[à faire] Lot R4 : reste de l'existant (TUT-02, TUT-04, TUT-05, ENS-06, ADM-02, ADM-06)
+[à faire] Lot A1 : accessibilité, RTL et clavier prouvés par des tests
+[à faire] Lot N0 : specs de l'étape 5 (ADR-020, Coran structuré, machine à états de présence)
+[dette indépendante] Lot L10 : clôture de l'étape 4 (0006, PROGRESS.md, 17 scénarios)
 ```
 
 Le lot T se fait en premier et se fait **entièrement** : reprendre les écrans
-avant les jetons obligerait à les reprendre deux fois.
+avant les jetons obligerait à les reprendre deux fois. Même logique pour B0 :
+poser le vocabulaire et les règles machine de la Bible avant de reprendre un
+écran de plus évite de reprendre ce même écran une deuxième fois.
 
 ### Ce que le lot T a livré, et ce qu'il n'a délibérément pas touché
 

@@ -175,3 +175,39 @@ Présentation desktop  panneau de détail
 
 Le catalogue d'écrans (`08-catalogue-ecrans.md`) tient ces fiches. Un écran sans
 fiche ne s'implémente pas.
+
+## 8. État métier, état UI, préférence personnelle
+
+Ajouté au lot B0 (Bible Frontend V2 §40-41). Trois familles, et un `state`
+Flutter qui ne dit jamais à laquelle il appartient : c'est à qui l'écrit de le
+savoir avant de choisir où le ranger.
+
+| Famille | Exemples dans ce produit | Vit dans |
+| :--- | :--- | :--- |
+| **État métier** | Présence, session, document partagé de la salle, droits, progression | La base (Supabase), lu par un provider Riverpod. Jamais une variable locale d'écran |
+| **État UI** | Menu ouvert, feuille ouverte, focus visuel, position de défilement, mode compact d'un panneau | L'arbre de widgets ou un `StateProvider` local à l'écran. Ne survit pas à la navigation |
+| **Préférence personnelle** | Thème clair/sombre (lot T3), zoom du lecteur, préférences de lecture | Le mécanisme de stockage local déjà existant (`lib/core/cache/secure/stockage_securise.dart`, `lib/core/cache/db/app_database.dart`). Jamais réinventé par écran |
+
+**Ne jamais stocker un état métier dans une variable d'UI locale** : un
+`setState` qui retient « l'élève est présent » se désynchronise de la base à la
+première reconnexion, et l'écran ment sans qu'aucun test ne le voie, puisque le
+test ne rejoue pas la reconnexion.
+
+### Restauration
+
+Quand l'application est interrompue puis reprise, restaurer lorsque pertinent :
+route, session, document, position, sélection, mode d'affichage, formulaire non
+soumis quand c'est sûr de le faire.
+
+Ne jamais restaurer aveuglément :
+
+- un état expiré ;
+- une permission devenue invalide (elle a pu changer pendant l'absence) ;
+- une session terminée ;
+- une action déjà consommée (un dossier déjà validé ne se rouvre pas sur un
+  formulaire qui propose de le revalider).
+
+C'est la même distinction qui gouverne `24. QURAN READER — ÉTATS PERSONNELS VS
+PARTAGÉS` de la Bible, spécifiée pour le lecteur au lot N0 : l'état partagé de
+la salle est un état métier, l'état personnel de lecture de l'élève est une
+préférence personnelle, et l'un ne doit jamais écraser silencieusement l'autre.

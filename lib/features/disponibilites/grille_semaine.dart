@@ -102,7 +102,9 @@ class GrilleSemaine extends StatelessWidget {
                 for (int jour = 1; jour <= 7; jour++)
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: AppSpacing.xs),
+                      padding: const EdgeInsetsDirectional.only(
+                        start: AppSpacing.xs,
+                      ),
                       child: _Case(
                         jour: jour,
                         heure: heure,

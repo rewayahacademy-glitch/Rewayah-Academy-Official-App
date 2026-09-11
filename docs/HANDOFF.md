@@ -1,12 +1,23 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **8 septembre 2026**, après la clôture du **lot R** de la
-> refonte UX/UI. Le lot R est livré en trois sous-lots, un commit chacun :
-> `ELV-02` (R1), `TUT-01` (R2), puis `ENS-02` et `ADM-01` avec le **câblage de
-> `NavShell`** au routeur (R3). **Reprendre au sous-lot R4** : `TUT-02`,
-> `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06` — le reste de l'existant,
-> rangée R4 de `08-catalogue-ecrans.md` §5.
+> Dernière passation : **11 septembre 2026**, après la clôture du **lot B0**
+> (ancrage de la Bible Frontend V2, ADR-019). Le rendu mobile déployé après le
+> lot R3 a été jugé « plus nul que du générique » par l'opérateur, qui a remis
+> une deuxième Bible plus stricte, à ne plus jamais redonner : elle est
+> désormais dans `docs/design/00-bible-frontend-v2.md`, lue avant tout écran.
+> **Reprendre au lot T2** — durcir le langage (ombres, bordures, bouton
+> `ActionPrincipale` désactivé) — voir section 0 ter ci-dessous. Le lot R4
+> (`TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06`) reste après T2,
+> R0 et T3.
 > Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
+> ⚠ **`flutter test` n'a pas pu tourner à la clôture de ce lot** : le poste
+> bloque `github.com` (le hook `package:sqlite3` en dépend), constaté trois
+> fois de suite, pas seulement au premier appel comme d'habitude. `dart
+> analyze --fatal-infos` (aucun problème) et `tool/verifier_jetons.dart` (95
+> fichiers, aucune violation) sont, eux, vérifiés. **La toute première chose à
+> faire en reprenant est de relancer `flutter test`** avant tout code neuf : si
+> ça passe, consigner le chiffre ici ; si ça bloque encore, c'est un problème
+> réseau du poste à signaler à l'opérateur, pas une régression du lot B0.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -49,6 +60,74 @@ Ce que ça change pour vous, en quatre points :
    la mesure : blanc sur le fond général vaut 1,10 et non 1,19, et l'axe `opsz`
    de Bricolage Grotesque a pour défaut 96 et non 14. Les valeurs sont
    désormais rejouées par les tests : le document ne peut plus dériver seul.
+
+### 0 ter. Le rendu déployé jugé « plus nul que du générique » : la Bible V2 et le lot B0
+
+Le 11 septembre 2026, l'opérateur a vu le rendu mobile déployé (build de `main`
+post-lot R3 poussé sur `rewayah-academy.vercel.app`) et l'a jugé pire que le
+générique habituel. Il a remis une **deuxième** Bible frontend, plus stricte et
+plus complète que la note du 7 septembre, avec l'instruction explicite qu'elle
+ne se redonnera pas une troisième fois.
+
+**Trois causes mesurées dans le code** (pas seulement une impression) :
+
+1. **Le tunnel d'entrée n'a jamais été repris.** `connexion_page.dart` montait
+   (avant B0, toujours vrai après B0 : B0 ne touche à aucun écran) un
+   `Scaffold` nu — pas de `PageShell`, pas de carte, pas d'ombre, pas de marque.
+   C'est le seul écran visible sans compte : tout ce que l'opérateur a vu.
+2. **Le bouton `ActionPrincipale` désactivé ressemblait à une panne** : peint
+   `surfaceSunken` + `inkMuted`, il pesait moins que les boutons secondaires à
+   contour. Toujours vrai après B0.
+3. **Le langage visuel était trop timide** : ombres à 5 % d'opacité,
+   `borderHairline` à 1,20:1, les trois surfaces dans 4 % de clarté. Toujours
+   vrai après B0.
+
+**Ce que B0 a fait, le 11 septembre : rendre la Bible permanente, sans toucher
+à un seul pixel d'écran.** Trois couches, pour qu'elle survive au changement de
+session ET au changement d'outil (OpenCode, Hermes) :
+
+1. **`docs/design/00-bible-frontend-v2.md`** — le texte intégral, copié sans
+   modification, adopté par **ADR-019**. `docs/design/README.md` §4 BIS porte
+   la table de correspondance chapitre par chapitre : ce qui est déjà tenu
+   (souvent mieux qu'exigé, via `verifier_jetons.dart`), ce qui est tranché
+   autrement pour une raison écrite (deux dérogations dans ADR-019), ce qui
+   reste un écart et son lot.
+2. **Trois chapitres absents du corpus, ajoutés** : la matrice de décision de
+   conteneur dans `02-regles-ux.md` §11, le zoning physique en cinq zones dans
+   `05-regles-responsive.md` §9, la classification état métier/UI/préférence
+   dans `03-architecture-information.md` §8.
+3. **Trois règles neuves dans `tool/verifier_jetons.dart`**, chacune prouvée en
+   la faisant échouer sur un fichier piège avant d'être acquise (95 fichiers
+   vérifiés, méthode déjà utilisée pour les 26 règles précédentes) :
+   - `direction-non-geree` — a trouvé et fait corriger **six** occurrences
+     réelles de `left`/`right` codés en dur (pas seulement les deux repérées à
+     l'audit initial) : `grille_semaine.dart`, `creneaux_page.dart` (deux
+     endroits différents), `admin_demandes/demandes_page.dart`,
+     `eleve_connexion_page.dart`, `reglages_enfant_page.dart`. Trois d'entre
+     elles partagent le même motif de padding de feuille de bas d'écran copié
+     trois fois — une dette de duplication notée mais pas traitée ici, hors
+     scope Bible ;
+   - `page-sans-coquille` — retient une liste **nominative et temporaire** de
+     douze écrans encore à l'état brut (cinq pour le lot R0, sept pour R4),
+     documentée dans le fichier lui-même. Chaque entrée doit se retirer au lot
+     qui reprend vraiment l'écran, jamais avant ;
+   - `tag-conformite` — vérifie que tout tag `[XXX]` en début de ligne de
+     commentaire appartient au vocabulaire fermé de `lib/CLAUDE.md`
+     (`[M3-COLOR]`, `[A11Y]`, `[RESPONSIVE]`, `[QURAN-STAGE]`). Anchré sur la
+     ligne entière pour ne pas confondre un tag avec une classe de caractères
+     de `RegExp` telle que `'[A-Z2-9]'`, qui l'aurait fait échouer sur du code
+     parfaitement sain sans cette précaution.
+4. **`docs/AGENT_HANDOFF.md`** créé : le même point d'entrée pour OpenCode et
+   Hermes, avec le gabarit de prompt de reprise, pour que la Bible s'applique
+   aux trois outils de l'écosystème et pas seulement à Claude Code.
+
+⚠ **Un écart neuf, découvert pendant B0, pas dans l'audit initial** : le lot
+`journee_page.dart` (ENS-02, déjà « repris » au lot R3) contenait encore un
+`Scaffold` nu pour son état de chargement initial (`monId == null`). Corrigé
+dans ce même lot (`PageShell` partout), sans quoi la règle `page-sans-coquille`
+aurait dû l'exempter à tort. Un écran marqué « repris » qui régresse plus tard
+sur cette règle est une régression au sens de la Bible §51, pas une réouverture
+de discussion sur l'exemption.
 
 ## 1. Le projet actif est celui-ci
 
@@ -325,3 +404,50 @@ commitée à part au début du lot L8.
   est servi aux appareils du foyer.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
+
+## 9. Prompt de reprise — lot T2
+
+À copier tel quel pour démarrer la prochaine session.
+
+```
+Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
+Chemins en absolu : Glob ne trouve pas ce depot.
+
+Lis docs/HANDOFF.md section 0 ter en entier, puis docs/design/00-bible-frontend-v2.md
+chapitres 7 (jetons), 12 (etats) et 52 (sobriete), puis decisions.md ADR-019.
+
+AVANT tout code neuf : relance `flutter test`. La derniere session ne l'a pas
+obtenu (le poste bloquait github.com trois fois de suite, hook package:sqlite3).
+Si ca passe, ecris le chiffre ici en remplacement de cet avertissement. Si ca
+bloque encore, c'est un probleme reseau du poste, pas une regression : le
+signaler et continuer quand meme (dart analyze et verifier_jetons.dart, eux,
+etaient verts a la cloture du lot B0).
+
+LOT A FAIRE : T2 -- durcir le langage. Cause n3 mesuree du rejet du 11
+septembre : ombres a 5% d'opacite, borderHairline a 1,20:1, les trois surfaces
+dans 4% de clarte, bouton ActionPrincipale desactive qui pese moins que ses
+boutons secondaires.
+
+Fichiers : lib/core/theme/app_elevation.dart, app_palette.dart, app_theme.dart
+(anneau de focus, champ desactive), lib/core/widgets/action_principale.dart,
+docs/produit/design-tokens.md sections 1 et 9, test/theme/contraste_test.dart
+et elevation_test.dart, route /_galerie derriere kDebugMode pour la preuve
+avant/apres.
+
+Valeurs cibles (jugement d'ingenierie pose en l'absence de l'operateur pour ce
+cycle de lots, a documenter comme tel, pas une derogation silencieuse) :
+  - niveau1 : opacite 0.05 -> ~0.10 (y1/flou2) et ~0.09 (y2/flou6)
+  - niveau2 : ~0.08 (y2/flou4) et ~0.14 (y8/flou20)
+  - niveau3 : ~0.22 (y12/flou32)
+  - couleur d'ombre inchangee (#3A302A)
+  - borderHairline cible >= 1.35:1, borderResting cible >= 1.65:1
+  - AUCUNE mesure deja verte dans design-tokens.md section 1 ne doit repasser
+    sous son seuil : verifier via contraste_test.dart, jamais a l'oeil
+  - ActionPrincipale desactive : plus lourd qu'un NiveauAction.secondaire au
+    repos, ne doit plus ressembler a une panne
+
+Fin de lot : dart analyze --fatal-infos, flutter test, dart run
+tool/verifier_jetons.dart, capture 390x844 avant/apres, mise a jour de ce
+HANDOFF (section 0 ter et l'en-tete), commit, push. Un lot par session. Ignore
+la branche refactor-ui-lavender. Termine par le prompt de reprise du lot R0.
+```

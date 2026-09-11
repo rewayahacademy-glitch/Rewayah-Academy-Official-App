@@ -43,7 +43,7 @@ class CreneauxPage extends ConsumerWidget {
                   vertical: AppSpacing.sm,
                 ),
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: Text(t.creneaux.titre, style: textes.headlineSmall),
                 ),
               ),
@@ -426,9 +426,9 @@ class _FeuilleDemandeEtat extends ConsumerState<_FeuilleDemande> {
     final AppPalette palette = AppPalette.of(context);
 
     return Padding(
-      padding: EdgeInsets.only(
-        left: metriques.marge,
-        right: metriques.marge,
+      padding: EdgeInsetsDirectional.only(
+        start: metriques.marge,
+        end: metriques.marge,
         top: metriques.marge,
         bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
       ),

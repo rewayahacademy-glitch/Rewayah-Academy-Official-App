@@ -1,5 +1,13 @@
 # Front-end — Flutter
 
+**Avant tout : `docs/design/00-bible-frontend-v2.md`.** C'est le contrat frontend
+(ADR-019), 61 chapitres, adopté le 11 septembre 2026. `docs/design/README.md`
+§4 BIS dit ce qui en est déjà tenu, ce qui est tranché autrement pour une raison
+écrite, et ce qui reste un écart ouvert avec son lot. Ne redérive jamais une
+règle de ce fichier depuis une intuition : la Bible existe précisément parce que
+deux refontes successives ont montré que sans elle, chaque écran invente son
+propre rayon, sa propre carte, son propre bouton.
+
 Avant de créer ou modifier un écran, lis la fiche correspondante dans `docs/produit/parcours-utilisateurs.md`. Chaque écran y est décrit avec ses états, sa direction artistique et les raisons de ses choix, pas seulement son contenu.
 
 Avant de créer un composant, vérifie `docs/architecture/etape-2-core-flutter.md`. Les dix composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`, `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`, `ActionPrincipale`) sont les seuls points d'entrée de leur fonction respective. **N'en réimplémente jamais un nouveau qui ferait la même chose.**
@@ -46,6 +54,23 @@ payés une fois.
 - **Un bouton qui ne peut pas aboutir n'est pas rendu**, il n'est pas grisé. La limite s'explique par une phrase à la place du bouton. Un bouton qui échoue après le geste coûte plus cher en confiance qu'un bouton absent.
 - **Le code personnel de l'élève ne quitte jamais l'appareil.** Aucun service ne déclare de paramètre pour le recevoir, et `test/appairage/code_local_test.dart` relit toutes les lignes d'appel réseau de `lib/` pour le vérifier.
 - **Ce qui décide d'un droit se pose en base, pas à l'écran.** Le genre d'un dossier KYC, le plafond d'appareils, le rôle d'une inscription : tous écrasés ou refusés par la base, quoi que le client envoie.
+
+## Tags de conformité (Bible V2 §45)
+
+Un vocabulaire **fermé**, vérifié par `tool/verifier_jetons.dart` (règle
+`tag-conformite`) : tout tag entre crochets ressemblant à un tag de conformité
+dans `lib/` doit être l'un de ceux-ci, jamais un tag inventé à la volée.
+
+- `[M3-COLOR]` — usage d'un rôle sémantique de `ColorScheme` ou d'`AppPalette`,
+  aucune couleur hardcodée.
+- `[A11Y]` — décision d'accessibilité : semantics, focus, cible tactile, texte
+  agrandi.
+- `[RESPONSIVE]` — choix de présentation dépendant du gabarit (`AppGabarit`).
+- `[QURAN-STAGE]` — séparation entre état partagé de la salle et état personnel
+  de lecture (Bible §24, spécifié à l'étape 5 par ADR-020).
+
+Ne pas mettre de commentaire évident partout : le tag documente une **décision**
+structurante, pas un fait déjà visible dans le code qui l'entoure.
 
 ## Ce que le routeur n'est pas
 

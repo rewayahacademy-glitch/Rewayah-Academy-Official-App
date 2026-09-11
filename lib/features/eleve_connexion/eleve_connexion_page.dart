@@ -336,10 +336,10 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
         // de reglages.
         for (int i = 0; i < _profils.length; i++)
           Padding(
-            padding: EdgeInsets.only(
+            padding: EdgeInsetsDirectional.only(
               bottom: AppSpacing.xxl,
-              left: i.isEven ? 0 : AppSpacing.xxxl,
-              right: i.isEven ? AppSpacing.xxxl : 0,
+              start: i.isEven ? 0 : AppSpacing.xxxl,
+              end: i.isEven ? AppSpacing.xxxl : 0,
             ),
             child: _TuileProfil(
               profil: _profils[i],

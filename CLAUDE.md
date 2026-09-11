@@ -19,7 +19,7 @@ Tu es l'agent de code de ce projet. Ta mission : **transformer les spécificatio
 | Les portes d'accès et leurs invariants | `docs/architecture/etape-3-auth-kyc.md` | Spécification de l'étape 3 et ses douze scénarios |
 | Le schéma, RLS, fonctions, migrations | `docs/architecture/etape-0-1-fondations.md` | Dictionnaire de données, contraintes, tests d'acceptation |
 | Le backend Supabase | `supabase/CLAUDE.md` | Rappels non négociables du dossier |
-| **Tout écran, tout composant, toute couleur** | **`docs/design/README.md`** | **La constitution UX/UI (ADR-018).** Hiérarchie des sources de vérité, les huit documents, les interdits, et ce qui est déjà tranché ailleurs. **À lire avant d'ouvrir un fichier d'écran** |
+| **Tout écran, tout composant, toute couleur** | **`docs/design/00-bible-frontend-v2.md`** puis **`docs/design/README.md`** | **Le contrat frontend (ADR-019) puis sa constitution.** La Bible V2, 61 chapitres, adoptée le 11 septembre 2026 après que le rendu déployé du lot R3 ait été jugé « plus nul que du générique » ; `README.md` porte la table de correspondance (§4 BIS) — ce qui est déjà tenu, ce qui est tranché autrement pour une raison écrite, ce qui reste un écart et son lot. **À lire avant d'ouvrir un fichier d'écran** |
 | Un écran précis | `docs/design/08-catalogue-ecrans.md` | Le registre. Un écran absent du registre ne s'implémente pas |
 | Ce que l'écran contient et pourquoi | `docs/produit/parcours-utilisateurs.md` | États métier, raisons des choix. Ne dit plus à quoi ça ressemble |
 | Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Le routeur unique. ⚠ Son tableau de jetons est périmé, voir `design-tokens.md` |

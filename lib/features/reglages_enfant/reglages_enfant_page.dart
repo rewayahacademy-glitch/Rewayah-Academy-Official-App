@@ -476,9 +476,9 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
           );
 
     return Padding(
-      padding: EdgeInsets.only(
-        left: metriques.marge,
-        right: metriques.marge,
+      padding: EdgeInsetsDirectional.only(
+        start: metriques.marge,
+        end: metriques.marge,
         top: metriques.marge,
         bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
       ),

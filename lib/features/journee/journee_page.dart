@@ -75,10 +75,8 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
     final String? monId = ref.watch(sessionProvider).profileId;
 
     if (monId == null) {
-      return Scaffold(
-        body: SafeArea(
-          child: EmptyState(message: t.commun.chargement, invitation: ''),
-        ),
+      return PageShell(
+        child: EmptyState(message: t.commun.chargement, invitation: ''),
       );
     }
 

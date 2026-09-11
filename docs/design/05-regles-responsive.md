@@ -122,3 +122,23 @@ moins cher que la reprise.
 3. Aucun `EdgeInsets` non directionnel dans `lib/features/`.
 4. Chaque écran du catalogue a une capture aux trois largeurs, en français et en
    arabe, dans la galerie de composants (`/_galerie`).
+
+## 9. Zoning physique d'un écran
+
+Ajouté au lot B0 (Bible Frontend V2 §6). Un « zoning » différent de celui de la
+section 3 : la section 3 dit comment une zone se redispose selon la largeur, le
+zoning ci-dessous dit ce qu'une zone du haut vers le bas de l'écran a le droit
+de contenir, quelle que soit la largeur. Les deux se lisent ensemble, jamais
+l'un à la place de l'autre.
+
+| Zone | Autorisé | Interdit |
+| :--- | :--- | :--- |
+| **AppBar / en-tête** | Navigation, contexte, titre, une action primaire, une action contextuelle, identité, statut bref | Formulaire complexe, longue liste, plusieurs actions critiques concurrentes, information secondaire massive |
+| **Contenu principal** | L'objet de la tâche de l'écran, avec la plus grande priorité visuelle | Être partagé avec un deuxième objet de même poids (`02-regles-ux.md` §1, « un seul bloc dominant ») |
+| **Zone secondaire** | Metadata, informations auxiliaires, outils secondaires, navigation contextuelle | Contenu qui devrait être l'objet principal d'un autre écran |
+| **Zone d'action basse** | Une action primaire persistante si nécessaire, un CTA contextuel, une navigation secondaire | Empiler toutes les actions disponibles (`02-regles-ux.md` §4) |
+| **Desktop à panneaux** | `Navigation \| Contenu primaire \| Contexte / outils`, le panneau de contexte restant secondaire | Un panneau de contexte qui rivalise en largeur ou en poids visuel avec le contenu primaire |
+
+Chaque fiche d'écran de `08-catalogue-ecrans.md` §3 doit pouvoir se lire selon
+ce zoning avant d'être codée : c'est l'étape 3 du protocole avant codage de la
+Bible (§44).

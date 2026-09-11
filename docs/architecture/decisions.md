@@ -782,6 +782,81 @@ les douze composants de priorité P0, **R** la reprise des quatre écrans déjà
 construits. Reprendre un écran avant les jetons obligerait à le reprendre deux
 fois.
 
+## ADR-019 - Adoption de la Bible Frontend V2, deuxième refonte
+
+Décision de l'opérateur du 11 septembre 2026. Le rendu mobile déployé après le
+lot R3 (`ELV-02`, `TUT-01`, `ENS-02`, `ADM-01` repris, `NavShell` câblé) a été
+jugé « plus nul que du générique ». L'opérateur a remis une deuxième Bible,
+`REWAYAH_FRONTEND_UIUX_BIBLE_V2.clauderules.md`, plus stricte et plus complète
+que la note du 7 septembre, avec l'instruction explicite qu'elle ne se
+redonnera pas une troisième fois : elle doit être **permanente**.
+
+### Ce qui est adopté
+
+Le texte intégral, copié sans modification dans
+`docs/design/00-bible-frontend-v2.md`, devient le document 0 du corpus design,
+lu avant `README.md`. Ce texte ne se réécrit jamais : c'est la table de
+correspondance de `README.md` §4 BIS qui absorbe l'évolution, chapitre par
+chapitre.
+
+### Ce que l'audit a mesuré avant d'exécuter
+
+Le dépôt couvrait déjà environ soixante pour cent du contrat au moment de son
+adoption, et plusieurs fois mieux qu'exigé : `tool/verifier_jetons.dart`
+applique en CI des règles que la Bible se contente d'écrire (aucun hardcoding
+visuel, échelle de spacing, shape system, RTL à partir de ce lot). Les écarts
+réels, mesurés et non supposés, sont les trois causes du rejet du 11 septembre
+— le tunnel d'entrée jamais repris, le bouton d'action principale désactivé qui
+ressemble à une panne, les ombres et bordures trop faibles pour porter une
+hiérarchie — plus l'absence totale de mode sombre (§7.3), le RTL non outillé et
+non testé (§14), et les exigences neuves de la Bible sur une étape 5 pas encore
+construite (§19-32 : la salle, le Coran comme contenu structuré et non comme
+PDF, la séparation état partagé/état personnel, la machine à états de
+présence).
+
+### Deux dérogations écrites (§0.3 de la Bible elle-même)
+
+1. **§7.2, couleurs par `ColorScheme`.** La Bible demande d'utiliser
+   prioritairement `Theme.of(context).colorScheme`. Ce dépôt fait l'inverse :
+   `AppPalette` (une `ThemeExtension`, voir `lib/core/theme/app_palette.dart`)
+   est la source de vérité, et le `ColorScheme` Material en est **dérivé** dans
+   `app_theme.dart`, pour qu'aucun widget Material non enrobé ne puisse
+   ressortir une couleur hors palette. Impact : aucun, c'est la construction
+   déjà en place depuis le lot T. Alternative écartée : inverser le sens de
+   dérivation, ce qui aurait cassé la garantie « aucune couleur littérale hors
+   d'un seul fichier » que porte `verifier_jetons.dart`. Portée : tout le
+   thème, définitivement, sauf changement d'architecture explicite. Conforme à
+   la fin de la même section 7.2, qui autorise l'exposition via un
+   `ThemeExtension`.
+2. **§7.3, mode sombre.** Non traité comme une dérogation permanente : planifié
+   et fermé au lot **T3** de la feuille de route ci-dessous, pas laissé ouvert.
+
+### La règle des trois couches d'ancrage
+
+Pour que cette Bible n'ait pas besoin d'être redonnée une troisième fois, elle
+est portée par trois couches, de la plus faible à la plus forte :
+
+1. **Mémoire d'agent** : survit aux sessions Claude Code, pas au changement
+   d'outil.
+2. **Documents versionnés** (ce fichier, `docs/design/`, `CLAUDE.md`,
+   `lib/CLAUDE.md`, `docs/AGENT_HANDOFF.md`) : survivent au changement d'agent,
+   lus aussi par OpenCode et Hermes.
+3. **Règles machine** (`tool/verifier_jetons.dart`, suites de tests) :
+   survivent à l'inattention, la seule couche qui empêche au lieu de demander.
+
+Chaque chapitre de la Bible est porté par la couche la plus forte qui peut le
+tenir. Un chapitre outillable resté seulement documenté est considéré comme un
+chapitre qui finira par être violé, pas comme un chapitre tenu.
+
+### Ordre de travail
+
+Huit lots, un par session, chacun se terminant par les cinq contrôles de
+`docs/HANDOFF.md` §5 et un commit-push : **B0** (ce lot, ancrage) → **T2**
+(durcir le langage) → **R0** (tunnel d'entrée) → **T3** (mode sombre) → **R4**
+(reste de l'existant) → **A1** (accessibilité, RTL et clavier prouvés par des
+tests) → **N0** (specs de l'étape 5, documentaire) → **L10** (clôture de
+l'étape 4, dette indépendante). Détail complet dans `README.md` §9.
+
 ---
 
 ## Impacts sur la roadmap
@@ -827,5 +902,7 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 20 | Faut-il modéliser une entité **groupe, cohorte ou parcours** distincte de la séance | V1 | Ouverte, **sans dette pour l'instant** : le MVP-0 n'a pas d'entité niveau, et `session_participants` est déjà en plusieurs-à-plusieurs (ADR-004). La question se rouvrira quand les cours de groupe deviendront sérieux. Ne pas la préempter par une énumération rigide de types |
 | 21 | Instrument Sans et Noto Sans Arabic s'accordent-ils en hauteur d'x et en graisse dans un texte mixte français-arabe | Lot C | **Ouverte, et elle ne se ferme pas par une mesure.** `design-tokens.md` §2.2 pose l'accord comme une intention de conception ; il se vérifie à l'œil, sur un écran, sur un échantillon mixte. La galerie `/_galerie` affiche désormais cet échantillon. Si l'accord ne tient pas, l'ajustement se fait par l'axe `wdth` ou par un décalage de taille déclaré **une seule fois** dans `app_typography.dart`, jamais écran par écran |
 | 22 | L'interligne des grands corps est resserré de combien exactement | Lot C | **Tranchée par défaut au lot T, à confirmer.** `01-systeme-visuel.md` §5 demande de resserrer l'interligne des grands corps sans donner de valeur. Le lot T a posé 1,05, 1,08 et 1,10 pour les trois rôles d'affichage, contre 1,12, 1,15 et 1,18 avant, et n'a pas touché aux titres. C'est un choix, pas une mesure : il se juge sur le rendu de `ELV-02` au lot R |
+| 23 | Aucun mode sombre n'existe (Bible V2 §7.3) : `AppPalette.claire()` est la seule palette, `Brightness.light` codé en dur | Lot T3 | **Ouverte, fermée au lot T3** (ADR-019). Toutes les mesures de contraste seront refaites à cette occasion, aucune ne se transpose depuis le clair |
+| 24 | Le RTL n'est ni outillé ni testé (Bible V2 §14) : deux `EdgeInsets.only(left:)` / `Alignment.centerLeft` restent dans le code, aucun test de rendu arabe | Lot B0 pour l'outillage, lot A1 pour les tests | **Ouverte, fermée en deux temps** (ADR-019). B0 ajoute la règle `direction-non-geree` à `verifier_jetons.dart` et corrige les deux occurrences connues ; A1 ajoute les tests de rendu arabe, d'agrandissement à 200 % et de focus clavier |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.

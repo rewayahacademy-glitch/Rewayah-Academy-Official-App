@@ -113,6 +113,84 @@ final RegExp _boutonMaterial = RegExp(
 final RegExp _pressionForcee = RegExp(r'\bPressionForcee\b');
 final RegExp _constructeurGoRouter = RegExp(r'\bGoRouter\s*\(');
 final RegExp _mDash = RegExp('—');
+
+/// Trois regles ajoutees au lot B0, adoption de la Bible Frontend V2
+/// (ADR-019, `docs/design/00-bible-frontend-v2.md`).
+
+/// `EdgeInsets.fromLTRB` est directionnel par construction : ses quatre
+/// arguments positionnels sont gauche/haut/droite/bas, jamais debut/fin. Toute
+/// occurrence est une violation, il n'existe pas de forme correcte.
+final RegExp _edgeInsetsFromLTRB = RegExp(r'\bEdgeInsets\.fromLTRB\s*\(');
+
+/// `EdgeInsets.only` et `Positioned`, dont seuls les arguments `left`/`right`
+/// posent probleme : `top`/`bottom` sont deja neutres a la direction. Les
+/// arguments se relisent avec le meme decoupage a parentheses equilibrees que
+/// [_espacementsHorsEchelle], parce qu'un appel etale sur plusieurs lignes
+/// echapperait a une expression reguliere de ligne.
+final RegExp _edgeInsetsOnly = RegExp(r'\bEdgeInsets\.only\s*\(');
+final RegExp _positionedConstructeur = RegExp(r'\bPositioned\s*\(');
+final RegExp _argumentLeftOuRight = RegExp(r'^\s*(?:left|right)\s*:');
+
+/// Les quatre constantes d'`Alignment` qui codent un cote en dur. Les huit
+/// autres (`center`, `topCenter`, `bottomCenter`, et les quatre variantes
+/// `*Start`/`*End` d'`AlignmentDirectional`) restent permises : elles sont
+/// deja neutres ou deja directionnelles.
+final RegExp _alignementNonDirectionnel = RegExp(
+  r'\bAlignment\.(?:centerLeft|centerRight|topLeft|topRight|bottomLeft|bottomRight)\b',
+);
+
+/// Le seul dossier ou un rayon, une couleur ou une ombre peut legitimement
+/// avoir besoin d'un point de reference non directionnel pour construire un
+/// type Flutter bas niveau. Aucune occurrence connue aujourd'hui : la
+/// derogation est ecrite, pas silencieuse (Bible V2 section 0.3).
+const String _dossierTheme = 'core/theme/';
+
+/// Un ecran de `Scaffold` nu, sans passer par la coquille du produit
+/// (`PageShell` ou `PageParcours`). C'est exactement le defaut mesure sur le
+/// tunnel d'entree le 11 septembre 2026 : `connexion_page.dart` montait un
+/// `Scaffold` nu, sans carte, sans ombre, sans marque -- et c'est le seul
+/// ecran visible sans compte, donc tout ce que l'operateur a vu.
+final RegExp _scaffoldConstructeur = RegExp(r'\bScaffold\s*\(');
+
+/// Les ecrans de `lib/features/` encore a l'etat brut au moment du lot B0.
+///
+/// Exemption TEMPORAIRE et NOMINATIVE, jamais une exemption de dossier entier :
+/// chaque ligne se retire au lot qui reprend reellement l'ecran vise, jamais
+/// avant. Une entree retiree sans que l'ecran soit repris romprait la garantie
+/// que cette regle existe pour tenir (Bible V2 section 0.3, derogation ecrite).
+const Set<String> _ecransEnAttenteDeCoquille = <String>{
+  // Lot R0, tunnel d'entree, zone Acces de `08-catalogue-ecrans.md`.
+  'features/connexion/connexion_page.dart',
+  'features/eleve_connexion/eleve_connexion_page.dart',
+  'features/dossier/attente_page.dart',
+  'features/dossier/signature_page.dart',
+  'features/dossier/depot_piece_page.dart',
+  // Lot R4, le reste de l'existant, `08-catalogue-ecrans.md` section 5.
+  'features/creneaux/creneaux_page.dart',
+  'features/reglages_enfant/reglages_enfant_page.dart',
+  'features/disponibilites/disponibilites_page.dart',
+  'features/appareils/appareils_page.dart',
+  'features/appareils/appairage_page.dart',
+  'features/admin_dossiers/dossiers_page.dart',
+  'features/admin_demandes/demandes_page.dart',
+};
+
+/// Un tag de conformite (Bible V2 section 45) : une ligne de commentaire qui ne
+/// contient QUE `[TAG]`, comme dans l'exemple de la Bible. L'ancrage sur la
+/// ligne entiere evite qu'une classe de caracteres de `RegExp` telle que
+/// `'[A-Z2-9]'` posee dans du code ne soit prise pour un tag : elle ne suit
+/// jamais `//` en debut de ligne.
+final RegExp _tagConformite = RegExp(
+  r'^\s*//\s*\[([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*)\]\s*$',
+);
+
+/// Le vocabulaire ferme des tags, miroir de `lib/CLAUDE.md`.
+const Set<String> _tagsConformiteConnus = <String>{
+  'M3-COLOR',
+  'A11Y',
+  'RESPONSIVE',
+  'QURAN-STAGE',
+};
 final RegExp _emoji = RegExp(
   '[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]',
   unicode: true,
@@ -287,11 +365,54 @@ void main() {
       if (_mDash.hasMatch(ligne)) {
         violations.add(Violation(chemin, numero, 'm-dash', ligne));
       }
+
+      // 4 bis. Direction geree, jamais un cote code en dur (lot B0, Bible V2
+      // section 14). `EdgeInsets.only`/`Positioned` se relisent a part : seuls
+      // leurs arguments `left`/`right` posent probleme, voir
+      // _violationsPositionDirectionnelle.
+      if (_edgeInsetsFromLTRB.hasMatch(code) &&
+          !chemin.contains(_dossierTheme)) {
+        violations.add(
+          Violation(chemin, numero, 'direction-non-geree', ligne),
+        );
+      }
+      if (_alignementNonDirectionnel.hasMatch(code) &&
+          !chemin.contains(_dossierTheme)) {
+        violations.add(
+          Violation(chemin, numero, 'direction-non-geree', ligne),
+        );
+      }
+
+      // 4 ter. Un ecran de lib/features/ passe par une coquille (PageShell,
+      // PageParcours), jamais par un Scaffold nu (lot B0, Bible V2 sections 6
+      // et 52) -- c'est le defaut mesure sur le tunnel d'entree le 11 septembre
+      // 2026. La galerie de developpement n'est pas un ecran du catalogue.
+      if (_scaffoldConstructeur.hasMatch(code) &&
+          chemin.startsWith('lib/features/') &&
+          !chemin.contains('features/_dev/') &&
+          !_ecransEnAttenteDeCoquille.any(chemin.endsWith)) {
+        violations.add(Violation(chemin, numero, 'page-sans-coquille', ligne));
+      }
+
+      // 4 quater. Vocabulaire ferme des tags de conformite (lot B0, Bible V2
+      // section 45). Verifie sur la ligne BRUTE, pas sur `code` : le tag est un
+      // commentaire, `_sansCommentaireDeLigne` l'aurait deja retire.
+      final RegExpMatch? tag = _tagConformite.firstMatch(ligne);
+      if (tag != null && !_tagsConformiteConnus.contains(tag.group(1))) {
+        violations.add(Violation(chemin, numero, 'tag-conformite', ligne));
+      }
     }
 
     // 5. Echelle d'espacement fixe. Balayage sur le fichier entier : un
     // constructeur ecrit sur plusieurs lignes doit etre vu comme les autres.
     violations.addAll(_espacementsHorsEchelle(chemin, contenu));
+
+    // 5 ter. `EdgeInsets.only(left:/right:)` et `Positioned(left:/right:)`,
+    // balayes sur le fichier entier pour la meme raison : ces deux
+    // constructeurs s'etalent le plus souvent sur plusieurs lignes (lot B0).
+    if (!chemin.contains(_dossierTheme)) {
+      violations.addAll(_violationsPositionDirectionnelle(chemin, contenu));
+    }
 
     // 5 bis. Aucun `Container` porteur d'une `decoration` sous `lib/features/` :
     // les surfaces d'un ecran viennent d'`AppCard` et de `PageShell`
@@ -442,6 +563,66 @@ List<Violation> _espacementsHorsEchelle(String chemin, String contenu) {
           ),
         );
       }
+    }
+  }
+  return trouvees;
+}
+
+/// Releve les `EdgeInsets.only` et `Positioned` dont un argument `left` ou
+/// `right` code un cote en dur, au lieu de `start`/`end`.
+///
+/// Meme balayage a parentheses equilibrees que [_espacementsHorsEchelle] : ces
+/// deux constructeurs s'etalent le plus souvent sur plusieurs lignes, une
+/// expression reguliere de ligne les manquerait.
+/// **Verifiee en la faisant echouer** sur un fichier piege.
+List<Violation> _violationsPositionDirectionnelle(
+  String chemin,
+  String contenu,
+) {
+  final String code = _sansCommentaires(contenu);
+  final List<Violation> trouvees = <Violation>[];
+
+  for (final RegExp constructeur in <RegExp>[
+    _edgeInsetsOnly,
+    _positionedConstructeur,
+  ]) {
+    for (final RegExpMatch appel in constructeur.allMatches(code)) {
+      final int ouverture = appel.end - 1;
+      int profondeur = 0;
+      int fin = ouverture;
+      for (int i = ouverture; i < code.length; i++) {
+        if (code[i] == '(') {
+          profondeur++;
+        } else if (code[i] == ')') {
+          profondeur--;
+          if (profondeur == 0) {
+            fin = i;
+            break;
+          }
+        }
+      }
+      if (fin == ouverture) {
+        continue;
+      }
+
+      final String arguments = code.substring(ouverture + 1, fin);
+      final bool porteLeftOuRight = _decouperNiveauUn(
+        arguments,
+      ).any(_argumentLeftOuRight.hasMatch);
+      if (!porteLeftOuRight) {
+        continue;
+      }
+
+      final int ligne =
+          '\n'.allMatches(code.substring(0, appel.start)).length + 1;
+      trouvees.add(
+        Violation(
+          chemin,
+          ligne,
+          'direction-non-geree',
+          '${appel.group(0)}... left/right au lieu de start/end',
+        ),
+      );
     }
   }
   return trouvees;

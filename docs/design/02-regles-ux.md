@@ -231,3 +231,26 @@ ajouts propres aux interfaces :
   geste coûte plus en confiance qu'un bouton absent.
 - Faire porter une restriction par le client seul. Le routeur est une commodité,
   la RLS est la barrière.
+
+## 11. Matrice de décision de conteneur
+
+Ajouté au lot B0 (Bible Frontend V2 §5). Le conteneur se choisit sur la nature
+de l'action, jamais sur l'habitude ou sur ce qui « rentre bien ».
+
+| Conteneur | Employer quand | Exemples dans le produit |
+| :--- | :--- | :--- |
+| **Page complète** | L'information est un objectif en soi, la tâche est multi-étapes, le contenu doit être partageable, restaurable ou deep-linkable, ou exige un grand espace | Profil détaillé, bibliothèque, lecteur, historique de présence, paramètres complexes |
+| **Bottom Sheet** | Le contexte courant doit rester visible, la tâche est courte, la sélection s'applique immédiatement | Filtres simples, options d'affichage, sélection courte, actions secondaires |
+| **Dialog** | L'action est critique, la confirmation doit être explicite, le contexte ne peut pas attendre | Confirmation destructive (section 5 ci-dessus), interruption nécessaire |
+| **Menu contextuel** | Actions secondaires, options simples, peu fréquentes, attachées à un objet | Menu « Plus » d'une ligne de liste |
+| **Card extensible** | Détails secondaires, informations optionnelles, historique dont la lecture n'est pas indispensable immédiatement | Le bloc « Voir plus » de la section 3 ci-dessus |
+
+Interdits explicites (Bible §5.6), qui recoupent les règles déjà posées plus
+haut dans ce document :
+
+- un Dialog comme page miniature (une tâche longue n'est jamais un Dialog) ;
+- une Bottom Sheet pour une tâche complexe (elle redevient une Page) ;
+- une Card pour cacher une capacité critique (ce n'est pas du dévoilement
+  progressif, section 3, c'est de la dissimulation) ;
+- un dropdown à la place d'un processus multi-étapes ;
+- un écran entier pour une action ponctuelle triviale.
