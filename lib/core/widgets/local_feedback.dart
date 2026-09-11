@@ -172,9 +172,10 @@ class _Bandeau extends StatelessWidget {
           // sature reste reserve a l'action principale.
           surface: palette.washAccent,
           filet: palette.borderHairline,
+          ombre: palette.ombre,
           arrondi: AppRadius.arrondiSm,
           // Il flotte au dessus du contenu : niveau 2.
-          ombres: AppElevation.niveau2,
+          ombres: AppElevation.niveau2(palette.ombre),
         ),
         child: Row(
           children: <Widget>[

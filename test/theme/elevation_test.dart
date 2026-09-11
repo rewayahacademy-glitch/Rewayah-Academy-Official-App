@@ -22,30 +22,30 @@ void main() {
 
       expect(
         portee(AppElevation.niveau0),
-        lessThan(portee(AppElevation.niveau1)),
+        lessThan(portee(AppElevation.niveau1(palette.ombre))),
       );
       expect(
-        portee(AppElevation.niveau1),
-        lessThan(portee(AppElevation.niveau2)),
+        portee(AppElevation.niveau1(palette.ombre)),
+        lessThan(portee(AppElevation.niveau2(palette.ombre))),
       );
       expect(
-        portee(AppElevation.niveau2),
-        lessThan(portee(AppElevation.niveau3)),
+        portee(AppElevation.niveau2(palette.ombre)),
+        lessThan(portee(AppElevation.niveau3(palette.ombre))),
       );
     });
 
     test('les compositions sont celles du tableau', () {
-      expect(AppElevation.niveau1.length, 2);
-      expect(AppElevation.niveau2.length, 2);
-      expect(AppElevation.niveau3.length, 1);
+      expect(AppElevation.niveau1(palette.ombre).length, 2);
+      expect(AppElevation.niveau2(palette.ombre).length, 2);
+      expect(AppElevation.niveau3(palette.ombre).length, 1);
 
-      expect(AppElevation.niveau1.first.offset.dy, 1);
-      expect(AppElevation.niveau1.first.blurRadius, 2);
-      expect(AppElevation.niveau1.last.offset.dy, 2);
-      expect(AppElevation.niveau1.last.blurRadius, 6);
+      expect(AppElevation.niveau1(palette.ombre).first.offset.dy, 1);
+      expect(AppElevation.niveau1(palette.ombre).first.blurRadius, 2);
+      expect(AppElevation.niveau1(palette.ombre).last.offset.dy, 2);
+      expect(AppElevation.niveau1(palette.ombre).last.blurRadius, 6);
 
-      expect(AppElevation.niveau3.single.offset.dy, 12);
-      expect(AppElevation.niveau3.single.blurRadius, 32);
+      expect(AppElevation.niveau3(palette.ombre).single.offset.dy, 12);
+      expect(AppElevation.niveau3(palette.ombre).single.blurRadius, 32);
     });
   });
 
@@ -57,11 +57,13 @@ void main() {
       expect(base.g, greaterThan(base.b));
     });
 
-    test('toutes les ombres derivent de cette seule couleur', () {
+    test('toutes les ombres derivent de la couleur DE LA PALETTE FOURNIE', () {
+      // Depuis le lot T3, AppElevation ne tire plus silencieusement
+      // AppPalette.claire().ombre : chaque niveau prend l'ombre en parametre.
       for (final BoxShadow o in <BoxShadow>[
-        ...AppElevation.niveau1,
-        ...AppElevation.niveau2,
-        ...AppElevation.niveau3,
+        ...AppElevation.niveau1(palette.ombre),
+        ...AppElevation.niveau2(palette.ombre),
+        ...AppElevation.niveau3(palette.ombre),
       ]) {
         final Color base = palette.ombre.debugValue;
         expect(o.color.r, closeTo(base.r, 0.001));
@@ -73,6 +75,18 @@ void main() {
         expect(o.color.a, lessThan(0.3));
       }
     });
+
+    test('la palette sombre fournit sa propre ombre, pas celle du clair', () {
+      // Reutilisee a la meme valeur par choix documente (AppPalette.sombre),
+      // mais via son propre champ : le mecanisme ne suppose plus une seule
+      // palette possible.
+      final AppPalette sombre = AppPalette.sombre();
+      final BoxShadow o = AppElevation.niveau1(sombre.ombre).first;
+      final Color base = sombre.ombre.debugValue;
+      expect(o.color.r, closeTo(base.r, 0.001));
+      expect(o.color.g, closeTo(base.g, 0.001));
+      expect(o.color.b, closeTo(base.b, 0.001));
+    });
   });
 
   group('Une surface elevee porte un filet ET une ombre', () {
@@ -83,6 +97,7 @@ void main() {
       final BoxDecoration d = AppElevation.avecFilet(
         surface: palette.surfaceRaised,
         filet: palette.borderHairline,
+        ombre: palette.ombre,
         arrondi: AppRadius.arrondiMd,
       );
 
@@ -96,9 +111,10 @@ void main() {
       final BoxDecoration d = AppElevation.avecFilet(
         surface: palette.surfaceRaised,
         filet: palette.borderHairline,
+        ombre: palette.ombre,
         arrondi: AppRadius.arrondiMd,
       );
-      expect(d.boxShadow, AppElevation.niveau1);
+      expect(d.boxShadow, AppElevation.niveau1(palette.ombre));
     });
   });
 }

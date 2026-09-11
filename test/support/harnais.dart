@@ -38,7 +38,10 @@ Widget hote(
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
-    child: MaterialApp(theme: AppTheme.pour(mode), home: enfant),
+    child: MaterialApp(
+      theme: AppTheme.pour(mode, Brightness.light),
+      home: enfant,
+    ),
   ),
 );
 
@@ -57,7 +60,7 @@ Widget hoteRoutant({
   overrides: surcharges,
   child: TranslationProvider(
     child: MaterialApp.router(
-      theme: AppTheme.pour(mode),
+      theme: AppTheme.pour(mode, Brightness.light),
       routerConfig: GoRouter(initialLocation: depart, routes: routes),
     ),
   ),

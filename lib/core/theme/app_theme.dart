@@ -14,14 +14,24 @@ import 'app_typography.dart';
 /// (`docs/architecture/etape-2-core-flutter.md` section 1).
 ///
 /// Le theme pose les trois surfaces de la refonte : le fond de page est le
-/// creme, les barres et les cartes sont sur la surface elevee, les champs sur
-/// la surface enfoncee. C'est ce qui remplace l'ancien fond unique, ou la page,
-/// la carte et le champ partageaient la meme couleur et ou aucune hierarchie
-/// n'etait donc possible (`docs/design/01-systeme-visuel.md` section 2).
+/// creme (ou son equivalent sombre), les barres et les cartes sont sur la
+/// surface elevee, les champs sur la surface enfoncee. C'est ce qui remplace
+/// l'ancien fond unique, ou la page, la carte et le champ partageaient la
+/// meme couleur et ou aucune hierarchie n'etait donc possible
+/// (`docs/design/01-systeme-visuel.md` section 2).
+///
+/// Depuis le lot T3 (Bible V2 section 7.3, ADR-019, ecart 23 de
+/// `decisions.md`), [pour] prend aussi la [Brightness] : c'est le seul
+/// endroit du depot qui choisit entre [AppPalette.claire] et
+/// [AppPalette.sombre]. Aucun composant en aval ne connait directement l'une
+/// ou l'autre palette, conformement a l'interdiction de la Bible ; il ne
+/// connait que des roles semantiques exposes par [AppPalette].
 abstract final class AppTheme {
-  /// Le theme correspondant a un mode d'interface.
-  static ThemeData pour(InterfaceMode mode) {
-    final AppPalette palette = AppPalette.claire();
+  /// Le theme correspondant a un mode d'interface et une luminosite.
+  static ThemeData pour(InterfaceMode mode, Brightness brightness) {
+    final AppPalette palette = brightness == Brightness.dark
+        ? AppPalette.sombre()
+        : AppPalette.claire();
     final TextTheme echelle = mode == InterfaceMode.enfant
         ? AppTypography.enfant
         : AppTypography.standard;
@@ -37,7 +47,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       extensions: <ThemeExtension<dynamic>>[palette, metriques],
-      colorScheme: _schemaDepuisPalette(palette),
+      colorScheme: _schemaDepuisPalette(palette, brightness),
       scaffoldBackgroundColor: palette.surfaceCanvas.background,
       textTheme: texte,
       // Toutes les cibles tactiles respectent le minimum du mode courant, y
@@ -127,9 +137,12 @@ abstract final class AppTheme {
   /// Les quatre roles `container` recoivent les paires douces : c'est ce qui
   /// evite qu'un widget Material non enrobe ressorte un aplat sature la ou le
   /// produit veut une teinte pale (`01-systeme-visuel.md` section 3).
-  static ColorScheme _schemaDepuisPalette(AppPalette palette) {
+  static ColorScheme _schemaDepuisPalette(
+    AppPalette palette,
+    Brightness brightness,
+  ) {
     return ColorScheme(
-      brightness: Brightness.light,
+      brightness: brightness,
       primary: palette.surfacePrimary.background,
       onPrimary: palette.surfacePrimary.onBackground,
       primaryContainer: palette.washAccent.background,

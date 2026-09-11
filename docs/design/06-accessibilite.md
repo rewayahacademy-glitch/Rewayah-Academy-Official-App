@@ -128,4 +128,4 @@ bloc « cours dans moins de 5 minutes » devient une bordure fixe.
 | Enregistrement des libellés audio français | Non fait. `assets/audio/fr/` vide |
 | Traduction arabe de l'interface | Déclarée, vide. `strings_ar.g.dart` existe |
 | Test au lecteur d'écran sur appareil réel | Jamais fait : aucun appareil Android disponible sur ce poste |
-| Contraste en mode sombre | Sans objet : le mode sombre n'existe pas encore. Quand il arrivera, **toutes** les mesures de §1 sont à refaire, aucune ne se transpose |
+| Contraste en mode sombre | **Fait au lot T3.** Toutes les mesures ont été refaites, aucune transposée depuis le clair — `design-tokens.md` §12, `AppPalette.sombre()`, `test/theme/contraste_sombre_test.dart` |

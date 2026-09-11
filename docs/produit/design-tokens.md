@@ -542,9 +542,92 @@ serait une alarme. C'est la seule pulsation du produit, et elle reste seule.
 
 ## 12. Mode sombre
 
-Toujours pas implémenté. Les jetons ci-dessus valent pour le mode clair.
+Implémenté au lot T3 (Bible V2 §7.3, ADR-019, écart 23 du registre de
+`decisions.md`). Aucune valeur de la section 1 ne s'y transpose : chaque
+jeton a été choisi et mesuré indépendamment, avec la même méthode (§1.7).
+Source de code : `AppPalette.sombre()` dans
+`lib/core/theme/app_palette.dart`, rejouée par
+`test/theme/contraste_sombre_test.dart`.
 
-⚠ Quand le mode sombre arrivera, **toutes les mesures de la section 1 sont à
-refaire** : aucune ne se transpose. En particulier, les quatre encres foncées de
-la section 1.5 deviendront des encres claires, et les teintes douces deviendront
-des fonds sombres désaturés, jamais les mêmes valeurs assombries.
+### 12.1 Ce qui est réutilisé sans changement
+
+Les quatre paires pleines (`surfacePrimary`, `surfaceSuccess`,
+`surfaceWarning`, `surfaceAlert`) et `ombre` sont des couleurs de marque :
+leur contraste interne fond/encre ne dépend pas du canevas alentour, elles
+restent donc identiques entre les deux palettes. Seule `surfaceInverse`
+s'inverse (crème+noir au lieu de noir+crème) puisque son rôle est justement
+de désigner le pôle opposé au canevas courant — mesure inchangée, 15,37, car
+c'est la même paire de teintes.
+
+### 12.2 La rampe neutre chaude, sombre
+
+Ancrée sur `#1C1D21`, déjà le noir de la charte côté clair.
+
+| Jeton | Hex | Emploi | Contraste sur le canevas |
+| :--- | :--- | :--- | :-: |
+| `surfaceRaised` | `#302E29` | Cartes, tuiles, feuilles, menus, barres de navigation | 1,24 |
+| `surfaceCanvas` | `#1C1D21` | **Fond général** | — |
+| `surfaceSunken` | `#121110` | Champs, en-têtes de tableau, pistes, cases vides de grille | 1,12 |
+| `borderHairline` | `#3B3833` | Filet entre deux blocs, contour de carte | 1,44 |
+| `borderResting` | `#4C463F` | Contour d'un contrôle au repos | 1,81 |
+| `borderStrong` | `#A69A8F` | **Contour porteur de sens** | **6,13** (4,93 sur `surfaceRaised`, 6,86 sur `surfaceSunken`) |
+| `inkFaint` | `#9D9A93` | Texte tertiaire, métadonnées | **6,00** (4,83 sur `surfaceRaised`, 6,72 sur `surfaceSunken`) |
+| `inkMuted` | `#C4C0B8` | Texte secondaire | **9,28** |
+| `inkStrong` | `#F5F1E9` | Texte principal | **14,95** |
+
+⚠ **À la différence du clair, `inkFaint` n'a ici aucune surface interdite** :
+côté clair, il échouait à 4,48 sur `surfaceSunken` (juste sous 4,5) parce que
+la surface enfoncée était à peine plus sombre que le canevas, donc plus
+proche de l'encre. Côté sombre, c'est l'inverse : la surface la plus proche
+d'une encre claire est la surface **élevée** (plus claire que le canevas). La
+valeur retenue ici a été choisie pour rester au-dessus de 4,5 même sur cette
+surface (4,83), ce qui ferme le trou plutôt que de le déplacer.
+
+`borderStrong` passe 3:1 sur les trois surfaces avec une marge plus large que
+côté clair (qui n'avait que 3,21 sur la plus fine des trois) : 6,13 / 4,93 /
+6,86.
+
+### 12.3 Les paires douces, sombres
+
+Le registre doux du clair (teinte très pâle + encre foncée) se lirait comme
+une pastille lumineuse sur un écran sombre : il s'inverse en teinte sombre
+désaturée + encre claire de la même famille — exactement l'anticipation de la
+version précédente de cette section.
+
+| Jeton | Teinte | Encre | Encre sur teinte | Teinte sur le canevas |
+| :--- | :--- | :--- | :-: | :-: |
+| `washAccent` / `inkAccent` | `#2E2247` | `#C9B8F5` | 8,12 | 1,15 |
+| `washSuccess` / `inkSuccess` | `#12301F` | `#8FE0B0` | 9,17 | 1,18 |
+| `washWarning` / `inkWarning` | `#3A2A05` | `#F5C56B` | 8,64 | 1,21 |
+| `washAlert` / `inkAlert` | `#3B141B` | `#F2A0B4` | 8,04 | 1,04 |
+| `washFamily` | `#3A262A` | `#F5F1E9` (encre générique) | 12,51 | 1,20 |
+| `surfaceQuran` | `#2E2417` | `#F5F1E9` (encre générique) | 13,50 | 1,11 |
+
+Les quatre encres posées directement sur le canevas : `inkAccent` 9,35,
+`inkSuccess` 10,79, `inkWarning` 10,49, `inkAlert` 8,39. Sur une carte
+(`surfaceRaised`), respectivement 7,53, 8,69, 8,45 et 6,76.
+
+⚠ **Le violet plein ne s'écrit toujours pas en texte directement sur le
+canevas** : il mesure 3,50 (la marge d'échec est même plus large que côté
+clair, où il mesurait 4,39). `inkAccent` reste la raison d'être du
+contournement.
+
+⚠ **Le piège du texte blanc de `surfaceAlert` ne se reproduit pas de la même
+façon en sombre** : côté clair, `surfaceAlert.applyTo(...)` posé sur la page
+écrivait en blanc, illisible sur le crème (1,10). Côté sombre, ce même blanc
+reste lisible sur le canevas proche du noir (16,84). La règle — toujours
+passer par l'encre sémantique, jamais par l'encre d'une paire pleine — reste
+la même par cohérence, pas par nécessité de contraste sur cette palette
+précise.
+
+### 12.4 Comment le thème choisit
+
+`AppTheme.pour(mode, brightness)` est le seul point du dépôt qui choisit
+entre `AppPalette.claire()` et `AppPalette.sombre()`. L'application suit
+`ThemeMode.system` (`lib/app.dart`) : aucune bascule manuelle n'existe encore
+dans un écran du produit, faute d'entrée au catalogue
+(`08-catalogue-ecrans.md`). Ce lot ferme le mécanisme du thème, pas une
+préférence utilisateur dédiée — voir `03-architecture-information.md` §8, qui
+classe déjà « thème clair/sombre » comme une préférence personnelle à
+stocker plus tard via le mécanisme existant, si un écran de réglages
+l'expose un jour.

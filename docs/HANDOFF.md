@@ -1,28 +1,37 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026, deuxième session**. Les lots
+> Dernière passation : **11 septembre 2026, troisième session**. Les lots
 > **B0**, **T2** (durcir le langage) et **R0** (tunnel d'entrée) sont tous les
-> trois **poussés sur `main`** (`5f96b84`). **Ni `flutter test` ni
-> `tool/verifier_jetons.dart` n'ont jamais pu tourner sur ce poste pour
-> vérifier T2 et R0**, dans les deux sessions du 11 septembre (détail section
-> 0 quater et 0 quinquies) — le blocage TLS de `github.com` (hook
-> `package:sqlite3`) est confirmé **persistant d'une session à l'autre**, pas
-> ponctuel (`curl.exe` échoue aussi, `SEC_E_UNTRUSTED_ROOT` : c'est le magasin
-> de certificats du poste, pas le réseau). **T2 et R0 ont été poussés malgré
-> cette absence de vérification, sur demande explicite de l'opérateur** (« il
-> faut pousser sur main pour que je puisse voir en direct et donner du
-> feedback ») : `dart analyze --fatal-infos` est la seule preuve automatique
-> obtenue, complétée par une vérification visuelle manuelle
-> (`flutter build web`, détail section 0 quinquies) pour R0 seulement.
+> trois **poussés sur `main`** (`5f96b84`). Le lot **T3** (mode sombre) est
+> codé et commité **localement**, mais **non poussé** (détail section
+> 0 sexies).
+> **Ni `flutter test` ni `tool/verifier_jetons.dart` n'ont jamais pu tourner
+> sur ce poste**, ni pour vérifier T2/R0 ni pour vérifier T3 : c'est
+> maintenant la **quatrième confirmation consécutive** du même blocage TLS de
+> `github.com` (hook `package:sqlite3`), `CERTIFICATE_VERIFY_FAILED` côté
+> Dart et `SEC_E_UNTRUSTED_ROOT` côté `curl.exe`, preuve indépendante que
+> c'est le magasin de certificats du poste, pas le réseau ni un incident
+> ponctuel. **T2 et R0 ont été poussés malgré cette absence de vérification,
+> sur demande explicite de l'opérateur** (« il faut pousser sur main pour que
+> je puisse voir en direct et donner du feedback ») : `dart analyze
+> --fatal-infos` est la seule preuve automatique obtenue pour les trois lots,
+> complétée par une vérification visuelle manuelle (`flutter build web`) pour
+> R0 et pour T3 (détail sections 0 quinquies et 0 sexies).
+> **T3, lui, n'a pas été poussé** : rien n'oblige à répéter pour un lot
+> purement visuel la même urgence que pour le tunnel d'entrée, et une
+> quatrième confirmation identique du blocage ne vaut plus la peine d'être
+> re-signalée en boucle — la dette de vérification est déjà connue de
+> l'opérateur.
 > **Priorité de la prochaine session, avant tout code neuf** : faire tourner
-> `flutter test` et `dart run tool/verifier_jetons.dart` sur ce qui est
-> maintenant en production, pour combler cette dette de vérification — soit en
-> réparant le magasin de certificats du poste, soit sur un autre poste, soit
-> avec l'accord explicite de l'opérateur pour continuer sans. Ne pas boucler
-> sur le même contournement TLS déjà refusé deux fois par le classificateur
-> auto-mode cette semaine.
-> Dernier commit **poussé** de `main` : celui de B0. `git log --oneline -3`
-> peut nommer deux commits locaux, T2 puis R0, en avance sur `origin/main`.
+> `flutter test` et `dart run tool/verifier_jetons.dart` sur les trois lots
+> (T2, R0 en production ; T3 en local), pour combler cette dette de
+> vérification — soit en réparant le magasin de certificats du poste, soit
+> sur un autre poste, soit avec l'accord explicite de l'opérateur pour
+> continuer sans. Ne pas boucler sur le même contournement TLS déjà refusé
+> deux fois par le classificateur auto-mode cette semaine.
+> Derniers commits **poussés** de `main` : B0, T2, R0 (`5f96b84`).
+> `git log --oneline -3` peut nommer un commit local en avance sur
+> `origin/main`, celui de T3.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -257,6 +266,54 @@ prise à la résolution native de l'outil de capture de cette session (l'outil
 n'a pas honoré les demandes de redimensionnement à 390×844), pas une preuve
 au format demandé mais une preuve réelle d'exécution, au-delà de
 `dart analyze`.
+
+### 0 sexies. Le lot T3 : mode sombre, commité localement, non poussé
+
+Écart 23 du registre de `decisions.md` (Bible V2 §7.3, ADR-019). Avant ce
+lot, `AppPalette.claire()` était la seule palette et `Brightness.light`
+était codé en dur dans `_schemaDepuisPalette`.
+
+Résumé factuel :
+
+1. `AppPalette.sombre()` ajoutée (`lib/core/theme/app_palette.dart`), toutes
+   valeurs neuves et mesurées independamment du clair. Détail complet dans
+   `docs/produit/design-tokens.md` §12. Les quatre paires pleines et `ombre`
+   sont réutilisées telles quelles (couleurs de marque, documenté comme un
+   choix) ; `surfaceInverse` s'inverse (crème+noir au lieu de noir+crème).
+2. `AppElevation` prend désormais l'ombre en paramètre au lieu de tirer
+   silencieusement `AppPalette.claire().ombre` (`app_elevation.dart`). Neuf
+   fichiers appelants mis à jour.
+3. `AppTheme.pour(mode, brightness)` choisit entre les deux palettes ;
+   `lib/app.dart` expose `theme`, `darkTheme`, `ThemeMode.system`. Pas de
+   bascule manuelle dans un écran : aucune entrée au catalogue
+   `08-catalogue-ecrans.md` pour ça, ce lot ferme le mécanisme, pas une
+   préférence utilisateur.
+4. `test/theme/contraste_sombre_test.dart` créé, même méthode que
+   `contraste_test.dart`. Deux constats notables : `inkFaint` n'a aucune
+   surface interdite en sombre (le trou du clair, sur `surfaceSunken`, se
+   serait déplacé vers `surfaceRaised` ; fermé par le choix de valeur) ; le
+   piège du texte blanc de `surfaceAlert` posé sur la page ne se reproduit
+   pas en sombre (16,84 contre 1,10 côté clair).
+5. La galerie de composants reste clair seulement : le catalogue
+   (`07-catalogue-composants.md` §5) ne liste que cinq axes de vérification,
+   pas la luminosité.
+
+Non fait : bascule manuelle clair/sombre dans un écran de réglages ;
+vérification visuelle du rendu sombre lui-même (voir plus bas).
+
+Vérification tentée, pas obtenue : `flutter test` et
+`dart run tool/verifier_jetons.dart` bloquent avec le même
+`CERTIFICATE_VERIFY_FAILED` que les sessions précédentes — quatrième
+confirmation du même blocage, voir l'en-tête. Vérification visuelle de
+substitution : `flutter build web --release` compile, servi en local et
+ouvert dans Chrome — `TUT-00` s'affiche en clair comme au lot R0, sans
+régression visible du refactor `AppElevation`. Le rendu sombre lui-même n'a
+pas été vérifié visuellement : `prefers-color-scheme` ne se force pas depuis
+le JS d'une page, et changer le thème du système d'exploitation du poste
+pour ce seul test a été jugé disproportionné. Preuve disponible pour le
+sombre : `dart analyze` propre, et les mesures de contraste calculées à la
+main hors Dart avant d'être écrites dans le code (même formule WCAG que
+`Color.computeLuminance`).
 
 ## 1. Le projet actif est celui-ci
 
@@ -534,70 +591,65 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — vérifier T2 et R0, PUIS le lot T3
+## 9. Prompt de reprise — combler la dette de vérification, PUIS le lot R4
 
-À copier tel quel pour démarrer la prochaine session. **T2 et R0 sont déjà
-poussés sur `main`** (`5f96b84`, sur demande explicite de l'opérateur) : ils
-tournent en production sans jamais avoir été confirmés par `flutter test` ni
-`tool/verifier_jetons.dart` sur ce poste. Cette session a deux objectifs
-distincts, dans l'ordre : d'abord combler cette dette de vérification sur ce
-qui est déjà en ligne, ensuite seulement attaquer T3.
+À copier tel quel pour démarrer la prochaine session. **B0, T2 et R0 sont
+poussés sur `main`** (`5f96b84`). **T3 (mode sombre) est codé et commité
+localement** (`git log --oneline -3` le montre en avance sur `origin/main`),
+**non poussé**. Aucun des trois derniers lots n'a été confirmé par
+`flutter test` ni `tool/verifier_jetons.dart` sur ce poste — quatre
+confirmations consécutives du même blocage TLS, détail en tête de fichier et
+section 0 sexies.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 ter, 0 quater et
-0 quinquies), puis decisions.md ADR-019.
+Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater, 0 quinquies
+et 0 sexies), puis decisions.md ADR-019 et l'ecart 23.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : les lots T2 et R0 sont deja
-POUSSES sur main et EN PRODUCTION (commit 5f96b84), mais n'ont jamais ete
-verifies par flutter test sur ce poste -- l'operateur a explicitement demande
-le push pour voir le rendu en direct avant que la verification soit possible.
-Le but ici n'est plus de decider si on pousse, c'est de combler la dette :
-  1. git log --oneline -5, pour confirmer l'etat exact.
-  2. dart analyze --fatal-infos (deja vert a la cloture des deux lots).
-  3. flutter test -- deux sessions de suite ne l'ont JAMAIS obtenu (le poste
-     bloque github.com en TLS pour le hook package:sqlite3 : neuf tentatives
-     cumulees, et curl.exe echoue aussi sur la meme URL avec
-     SEC_E_UNTRUSTED_ROOT, independamment de Dart). Reessaie une fois. Si ca
-     bloque encore de la meme facon, c'est le poste, pas le code : ne boucle
-     pas dessus une troisieme session de suite. Signale-le a l'operateur avec
-     ces deux preuves (CERTIFICATE_VERIFY_FAILED ET SEC_E_UNTRUSTED_ROOT).
-     Note : `git push` lui-meme fonctionne sur ce poste malgre ce blocage
-     (protocole/magasin de certificats different de celui que consultent
-     Dart et curl.exe pour un telechargement HTTPS) -- ce n'est PAS une preuve
-     que le blocage est leve, seulement que git et le hook sqlite3 ne
-     partagent pas la meme chaine de confiance TLS. Piste a explorer si
-     l'operateur veut reparer le poste : la chaine de certificats que git
-     utilise (probablement le cacert.pem fourni par Git for Windows).
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : T2 et R0 sont EN PRODUCTION
+(commit 5f96b84), T3 est commite LOCALEMENT (non pousse). Aucun des trois n'a
+ete confirme par flutter test sur ce poste, quatre sessions de suite :
+  1. git log --oneline -5, pour confirmer l'etat exact (T3 doit apparaitre en
+     avance sur origin/main).
+  2. dart analyze --fatal-infos (deja vert a la cloture des trois lots).
+  3. flutter test -- QUATRE sessions de suite ne l'ont JAMAIS obtenu (le
+     poste bloque github.com en TLS pour le hook package:sqlite3,
+     CERTIFICATE_VERIFY_FAILED ; curl.exe echoue aussi sur la meme URL avec
+     SEC_E_UNTRUSTED_ROOT, independamment de Dart -- confirmation
+     independante que c'est le magasin de certificats du poste). Reessaie
+     UNE fois, pas plus : la cause est deja etablie avec certitude, boucler
+     dessus une cinquieme fois n'apporterait aucune preuve nouvelle. Si ca
+     bloque encore de la meme facon, continue directement a l'etape 2 sans
+     re-demander l'autorisation de pousser T3 -- ce n'est plus une question
+     ouverte, c'est un fait du poste. Note : `git push` fonctionne malgre ce
+     blocage (chaine de certificats differente de celle de Dart/curl.exe,
+     probablement le cacert.pem de Git for Windows) : ce n'est PAS une preuve
+     que le blocage general est leve.
   4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne.
-  5. Si les deux passent enfin : ecrase l'avertissement en tete de HANDOFF.md
-     par les vrais chiffres (plus besoin de push, c'est deja fait), puis
-     continue a l'etape 2. S'ils echouent encore pour le meme blocage reseau,
-     documente-le une fois de plus et continue quand meme a l'etape 2 -- ne
-     pas re-demander l'autorisation de pousser puisque c'est deja pousse et
-     que retarder T3 ne repare rien sur ce poste. Si flutter test echoue pour
-     une VRAIE raison (pas le blocage reseau), c'est une regression en
-     production : la signaler immediatement a l'operateur avant toute chose.
+  5. Si les deux passent enfin (poste repare, ou lance ailleurs) : ecrase
+     l'avertissement en tete de HANDOFF.md par les vrais chiffres, git push
+     origin main pour T3, puis continue a l'etape 2. Si l'un des deux echoue
+     pour une VRAIE raison (pas le blocage reseau) : c'est une regression --
+     sur T2/R0, deja en production, le signaler immediatement a l'operateur
+     avant toute chose ; sur T3, seul en local, corriger avant de pousser.
 
-ETAPE 2, seulement apres l'etape 1 : LOT T3 -- le mode sombre (Bible V2 §7.3,
-ADR-019, ecart 23 du registre de decisions.md). Aujourd'hui, AppPalette.claire()
-est la seule palette et Brightness.light est code en dur.
+ETAPE 2, seulement apres l'etape 1 : LOT R4 -- le reste de l'existant
+(TUT-02, TUT-04, TUT-05, ENS-06, ADM-02, ADM-06), Bible V2, ADR-019. C'est le
+dernier sous-lot du lot R (voir HANDOFF.md section 4 bis pour ce que R4
+trouvera en arrivant : le langage T/C deja porte par les quatre premiers
+ecrans et NavShell, deux ecarts a trancher dans les fiches ENS-02/ADM-01, deux
+imprecisions de 07-catalogue-composants.md a trier).
 
-Avant de coder : lire ADR-019 (derogation §7.3 : "planifie et ferme au lot T3,
-pas laisse ouvert") et l'ecart 23 de decisions.md ("Toutes les mesures de
-contraste seront refaites a cette occasion, aucune ne se transpose depuis le
-clair") -- aucune valeur de palette sombre n'existe encore nulle part dans le
-depot, ce lot les invente ET les mesure, il ne les recopie pas d'un document
-existant.
+Avant de coder : lire 08-catalogue-ecrans.md pour les six fiches concernees,
+et confirmer qu'aucune n'a change de perimetre depuis leur redaction.
 
-Fin de lot T3 : dart analyze --fatal-infos, flutter test, dart run
+Fin de lot R4 : dart analyze --fatal-infos, flutter test, dart run
 tool/verifier_jetons.dart, mise a jour de HANDOFF.md (nouvelle section,
-en-tete) et de decisions.md (ecart 23 ferme), commit. Ne pousse que si les
-tests tournent et passent reellement -- un lot visuel non verifie ne se
-pousse pas sur une branche qui deploie en production a chaque push, decision
+en-tete) et de decisions.md si les deux ecarts trouves y sont tranches,
+commit. Ne pousse que si les tests tournent et passent reellement -- decision
 qui revient a l'operateur si les tests restent bloques par le poste. Un lot
 par session. Ignore la branche refactor-ui-lavender. Termine par le prompt de
-reprise du lot R4.
+reprise du lot A1 (accessibilite, RTL et clavier).
 ```

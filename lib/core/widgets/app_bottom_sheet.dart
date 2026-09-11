@@ -114,8 +114,9 @@ class AppBottomSheet extends StatelessWidget {
       decoration: AppElevation.avecFilet(
         surface: palette.surfaceRaised,
         filet: palette.borderHairline,
+        ombre: palette.ombre,
         arrondi: AppRadius.arrondiFeuille,
-        ombres: AppElevation.niveau3,
+        ombres: AppElevation.niveau3(palette.ombre),
       ),
       child: Padding(
         padding: EdgeInsets.all(metriques.marge),

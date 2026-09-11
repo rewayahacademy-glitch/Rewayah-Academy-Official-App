@@ -107,12 +107,13 @@ class AppCard extends StatelessWidget {
         filet: selectionnee || contourFort || etat.survole || etat.presse
             ? palette.borderStrong
             : palette.borderHairline,
+        ombre: palette.ombre,
         arrondi: metriques.arrondi,
         // La carte pressee ou survolee flotte : c'est le niveau 2, celui de ce
         // qui passe au dessus du contenu (`01-systeme-visuel.md` section 4).
         ombres: etat.presse || etat.survole
-            ? AppElevation.niveau2
-            : AppElevation.niveau1,
+            ? AppElevation.niveau2(palette.ombre)
+            : AppElevation.niveau1(palette.ombre),
       ),
       child: DefaultTextStyle.merge(
         style: TextStyle(color: paire.onBackground),

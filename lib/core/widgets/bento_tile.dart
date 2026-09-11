@@ -122,11 +122,14 @@ class BentoTile extends StatelessWidget {
         filet: contourFort || eveillee
             ? palette.borderStrong
             : palette.borderHairline,
+        ombre: palette.ombre,
         arrondi: metriques.arrondi,
         // Registre unique : `surfaceRaised` + `elevation1` + `borderHairline`,
         // et le niveau 2 quand la tuile s'eveille
         // (`07-catalogue-composants.md` section 1). Jamais un filet sans ombre.
-        ombres: eveillee ? AppElevation.niveau2 : AppElevation.niveau1,
+        ombres: eveillee
+            ? AppElevation.niveau2(palette.ombre)
+            : AppElevation.niveau1(palette.ombre),
       ),
       child: DefaultTextStyle.merge(
         style: TextStyle(color: paire.onBackground),

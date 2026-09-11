@@ -275,7 +275,7 @@ class _Barre extends StatelessWidget {
         color: palette.surfaceRaised.background,
         border: Border(top: palette.borderHairline.asBorderSide()),
         // Une barre collee flotte au dessus du contenu : niveau 2.
-        boxShadow: AppElevation.niveau2,
+        boxShadow: AppElevation.niveau2(palette.ombre),
       ),
       child: SafeArea(
         top: false,

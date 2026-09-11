@@ -206,8 +206,11 @@ class _Carte extends StatelessWidget {
           filet: retenue || etat.survole || etat.presse
               ? palette.borderStrong
               : palette.borderResting,
+          ombre: palette.ombre,
           arrondi: AppMetriques.of(contexte).arrondi,
-          ombres: retenue ? AppElevation.niveau2 : AppElevation.niveau1,
+          ombres: retenue
+              ? AppElevation.niveau2(palette.ombre)
+              : AppElevation.niveau1(palette.ombre),
         ),
         child: Row(
           children: <Widget>[

@@ -115,8 +115,13 @@ class _GaleriePageState extends State<GaleriePage> {
   /// la preference de mouvement passent par `MediaQuery`, c'est-a-dire par la
   /// meme porte que le systeme d'exploitation.
   Widget _sousConditions(Widget enfant) {
+    // Toujours le theme clair : le catalogue de composants
+    // (`07-catalogue-composants.md` section 5) ne liste que cinq axes de
+    // verification (largeur, langue, taille de texte, mouvement, mode
+    // d'interface), pas la luminosite. Ajouter un sixieme axe releve d'une
+    // decision de doc, pas de ce lot.
     return Theme(
-      data: AppTheme.pour(_mode),
+      data: AppTheme.pour(_mode, Brightness.light),
       child: Builder(
         builder: (BuildContext contexte) => MediaQuery(
           data: MediaQuery.of(contexte).copyWith(
@@ -172,7 +177,7 @@ class _BarreReglages extends StatelessWidget {
       decoration: BoxDecoration(
         color: palette.surfaceRaised.background,
         border: Border(bottom: palette.borderHairline.asBorderSide()),
-        boxShadow: AppElevation.niveau2,
+        boxShadow: AppElevation.niveau2(palette.ombre),
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
@@ -426,6 +431,7 @@ class _Paires extends StatelessWidget {
                 decoration: AppElevation.avecFilet(
                   surface: e.value,
                   filet: palette.borderHairline,
+                  ombre: palette.ombre,
                   arrondi: AppRadius.arrondiMd,
                 ),
                 child: Padding(
@@ -479,9 +485,9 @@ class _Elevation extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final Map<String, List<BoxShadow>> niveaux = <String, List<BoxShadow>>{
       'elevation0': AppElevation.niveau0,
-      'elevation1': AppElevation.niveau1,
-      'elevation2': AppElevation.niveau2,
-      'elevation3': AppElevation.niveau3,
+      'elevation1': AppElevation.niveau1(palette.ombre),
+      'elevation2': AppElevation.niveau2(palette.ombre),
+      'elevation3': AppElevation.niveau3(palette.ombre),
     };
     final Map<String, BorderRadius> rayons = <String, BorderRadius>{
       'radiusXs': AppRadius.arrondiXs,
@@ -501,6 +507,7 @@ class _Elevation extends StatelessWidget {
               decoration: AppElevation.avecFilet(
                 surface: palette.surfaceRaised,
                 filet: palette.borderHairline,
+                ombre: palette.ombre,
                 arrondi: AppRadius.arrondiMd,
                 ombres: e.value,
               ),

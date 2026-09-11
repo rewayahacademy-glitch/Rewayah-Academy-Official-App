@@ -9,7 +9,7 @@ import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 
 Widget _hote(Widget enfant, InterfaceMode mode) => TranslationProvider(
   child: MaterialApp(
-    theme: AppTheme.pour(mode),
+    theme: AppTheme.pour(mode, Brightness.light),
     home: Scaffold(body: enfant),
   ),
 );

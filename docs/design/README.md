@@ -105,7 +105,7 @@ ferme.
 | §0.1-0.3 hiérarchie des sources, interdits, dérogations | Ce fichier §3 et §6, même schéma |
 | §7.1 aucun hardcoding visuel | **Outillé** : `tool/verifier_jetons.dart`, 26+ règles, échoue en CI |
 | §7.2 couleurs via `ColorScheme` | **Tranché autrement, par écrit (ADR-019)** : `AppPalette` (ThemeExtension) est la source, `ColorScheme` en dérive dans `app_theme.dart`. L'inverse casserait le lot T. Conforme à la fin de §7.2 (« exposées via un ThemeExtension ») |
-| §7.3 lightTheme ET darkTheme | **Écart, fermé au lot T3.** Un seul thème existe aujourd'hui (`AppPalette.claire()`, `Brightness.light` en dur) |
+| §7.3 lightTheme ET darkTheme | **Fait au lot T3.** `AppTheme.pour(mode, brightness)` choisit entre `AppPalette.claire()` et `AppPalette.sombre()` ; `app.dart` expose `theme`, `darkTheme` et `ThemeMode.system`. Aucun composant en aval ne connaît directement l'une ou l'autre palette |
 | §8 typographie par `TextTheme` | Fait, crénage outillé (`app_typography.dart`) |
 | §9 échelle de spacing 4→64 | Fait (`AppSpacing`, règle `espacement-hors-echelle`) |
 | §10 shape system | Fait (`app_radius.dart`, `AppRadius.enfantDe`) |
@@ -216,9 +216,9 @@ les lots B0, T2, R0, T3, A1 et N0 insérés avant la suite. L'ordre complet :
 [fait] Lot C : composants du catalogue                → lib/core/widgets/
 [fait] Lot R1-R3 : ELV-02, TUT-01, ENS-02, ADM-01     → lib/features/
 [fait] Lot B0 : ancrage de la Bible V2 (ADR-019)      → ce dossier, decisions.md, verifier_jetons.dart
-[à faire] Lot T2 : durcir le langage (ombres, bordures, bouton désactivé)
-[à faire] Lot R0 : tunnel d'entrée (zone Accès du catalogue 08)
-[à faire] Lot T3 : mode sombre (§7.3)
+[fait] Lot T2 : durcir le langage (ombres, bordures, bouton désactivé)
+[fait] Lot R0 : tunnel d'entrée (zone Accès du catalogue 08)
+[fait] Lot T3 : mode sombre (§7.3)                    → app_palette.dart, app_theme.dart, app.dart
 [à faire] Lot R4 : reste de l'existant (TUT-02, TUT-04, TUT-05, ENS-06, ADM-02, ADM-06)
 [à faire] Lot A1 : accessibilité, RTL et clavier prouvés par des tests
 [à faire] Lot N0 : specs de l'étape 5 (ADR-020, Coran structuré, machine à états de présence)
