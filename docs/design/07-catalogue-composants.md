@@ -23,7 +23,7 @@ La refonte ne les supprime pas : elle en corrige trois et en ajoute.
 | `OfflineBanner` | Dégradation réseau | Passe en registre doux : `washWarning` + `inkWarning`, au lieu d'un aplat |
 | `ChoiceCardGroup` | Sélection par cartes, repli « Autre » | Contour de sélection en `borderStrong`, fond `washAccent` |
 | `ActionPrincipale` | Le bouton du produit | Gagne le quatrième niveau, **destructif**, et les états survol et focus |
-| `GrilleSemaine` | Grille de disponibilités partagée `TUT-04` / `ENS-06` | Cases vides en `surfaceSunken`, cases posées en `washAccent`, sélection en `surfacePrimary` |
+| `GrilleSemaine` | Grille de disponibilités partagée `TUT-04` / `ENS-06` | Cases vides en `surfaceSunken`, cases posées en `washAccent`, filet `borderStrong` au survol ou à la pression -- **pas de `surfacePrimary`** : un aplat plein sur vingt cases par semaine sature l'écran (corrigé au lot R4, imprécision relevée à la relecture) |
 | `PageParcours` | Coquille d'une page de parcours : une question, une action, où l'on en est, le temps restant | Vit dans `lib/features/inscription/`. **À remonter dans `lib/core/widgets/`** au lot C : c'est un composant partagé, pas un détail de l'inscription |
 
 ## 2. Ce qui manque

@@ -12,7 +12,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 
 /// `ADM-02` : la validation des dossiers.
@@ -91,69 +91,54 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AsyncValue<List<DossierAValider>> file = ref.watch(
       dossiersEnAttenteProvider,
     );
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              // Les getters, jamais le type d'execution : Riverpod 3 relance un
-              // provider en echec tout seul, et l'etat repasse alors par
-              // `AsyncLoading` en conservant `hasError`. Un `switch` sur
-              // `AsyncError<T>` rate donc l'erreur une fois sur deux.
-              child: switch (file) {
-                AsyncValue<List<DossierAValider>>(hasValue: true) =>
-                  file.requireValue.isEmpty
-                      ? EmptyState(
-                          message: t.dossiers.aucun,
-                          invitation: t.dossiers.aucunDetail,
-                          icone: AppIcons.dossiers,
-                        )
-                      : _Dossier(
-                          dossier: file.requireValue.first,
-                          restants: file.requireValue.length,
-                          verifie: _verifie,
-                          motif: _motif,
-                          refusEnCours: _refusEnCours,
-                          envoi: _envoi,
-                          erreur: _erreur,
-                          onCocher: (String point) => setState(() {
-                            if (!_verifie.remove(point)) {
-                              _verifie.add(point);
-                            }
-                          }),
-                          onOuvrirRefus: () =>
-                              setState(() => _refusEnCours = true),
-                          onMotifChange: (String _) => setState(() {}),
-                          onApprouver: () => unawaited(
-                            _decider(file.requireValue.first, approuve: true),
-                          ),
-                          onRefuser: () => unawaited(
-                            _decider(file.requireValue.first, approuve: false),
-                          ),
-                          tousVerifies: _verifie.length == _points.length,
-                          points: _points,
-                        ),
-                AsyncValue<List<DossierAValider>>(hasError: true) =>
-                  _Indisponible(
-                    genreManquant: file.error is GenreLecteurInconnu,
-                    onReessayer: () =>
-                        ref.invalidate(dossiersEnAttenteProvider),
+    return PageShell(
+      titre: t.dossiers.titre,
+      // Les getters, jamais le type d'execution : Riverpod 3 relance un
+      // provider en echec tout seul, et l'etat repasse alors par
+      // `AsyncLoading` en conservant `hasError`. Un `switch` sur
+      // `AsyncError<T>` rate donc l'erreur une fois sur deux.
+      child: switch (file) {
+        AsyncValue<List<DossierAValider>>(hasValue: true) =>
+          file.requireValue.isEmpty
+              ? EmptyState(
+                  message: t.dossiers.aucun,
+                  invitation: t.dossiers.aucunDetail,
+                  icone: AppIcons.dossiers,
+                )
+              : _Dossier(
+                  dossier: file.requireValue.first,
+                  restants: file.requireValue.length,
+                  verifie: _verifie,
+                  motif: _motif,
+                  refusEnCours: _refusEnCours,
+                  envoi: _envoi,
+                  erreur: _erreur,
+                  onCocher: (String point) => setState(() {
+                    if (!_verifie.remove(point)) {
+                      _verifie.add(point);
+                    }
+                  }),
+                  onOuvrirRefus: () => setState(() => _refusEnCours = true),
+                  onMotifChange: (String _) => setState(() {}),
+                  onApprouver: () => unawaited(
+                    _decider(file.requireValue.first, approuve: true),
                   ),
-                _ => Padding(
-                  padding: EdgeInsets.all(metriques.marge),
-                  child: Center(child: Text(t.commun.chargement)),
+                  onRefuser: () => unawaited(
+                    _decider(file.requireValue.first, approuve: false),
+                  ),
+                  tousVerifies: _verifie.length == _points.length,
+                  points: _points,
                 ),
-              },
-            ),
-          ],
+        AsyncValue<List<DossierAValider>>(hasError: true) => _Indisponible(
+          genreManquant: file.error is GenreLecteurInconnu,
+          onReessayer: () => ref.invalidate(dossiersEnAttenteProvider),
         ),
-      ),
+        _ => Center(child: Text(t.commun.chargement)),
+      },
     );
   }
 }
@@ -199,15 +184,12 @@ class _Dossier extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return ListView(
-      padding: EdgeInsets.all(metriques.marge),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.dossiers.titre, style: textes.headlineSmall),
-        Ecart.vSm,
         Text(t.dossiers.restants(n: restants), style: textes.bodySmall),
         Ecart.vXl,
 

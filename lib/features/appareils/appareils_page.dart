@@ -7,14 +7,13 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
 
 /// `TUT-02` : le foyer et ses appareils.
 ///
@@ -29,9 +28,20 @@ class AppareilsPage extends ConsumerWidget {
   /// Cree l'ecran du foyer.
   const AppareilsPage({super.key});
 
+  // Reprise au lot R4 : l'ecran passait par un `Scaffold` propre, un
+  // `OfflineBanner` pose a la main et un tirage-pour-rafraichir
+  // (`RefreshIndicator` invalidant les deux providers du foyer) autour de son
+  // `ListView`. Il passe desormais par `PageShell`, qui porte deja le fond, le
+  // bandeau hors ligne et la gouttiere du gabarit.
+  //
+  // Dette assumee : **le tirage-pour-rafraichir disparait**, meme sort et
+  // meme raison que sur `TUT-00b`, `TUT-01`, `ENS-02` et `ADM-01` (voir leurs
+  // fiches, section 6) — un `RefreshIndicator` autour d'un `ListView` a
+  // besoin d'etre l'enfant direct d'un `Expanded` pour ne pas planter en
+  // hauteur non bornee, et `PageShell` ne donne pas cette garantie a son
+  // `child`. C'est le cinquieme ecran qui la demande.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AsyncValue<List<EleveDuFoyer>> eleves = ref.watch(
       elevesDuFoyerProvider,
@@ -40,71 +50,51 @@ class AppareilsPage extends ConsumerWidget {
       appareilsDuFoyerProvider,
     );
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  ref
-                    ..invalidate(elevesDuFoyerProvider)
-                    ..invalidate(appareilsDuFoyerProvider);
-                },
-                child: ListView(
-                  padding: EdgeInsets.all(metriques.marge),
-                  children: <Widget>[
-                    Text(t.appareils.titre, style: textes.headlineSmall),
-                    Ecart.vSm,
-                    // La regle de l'ADR-010 est affichee en clair : deux
-                    // appareils au maximum, un seul en cours a la fois.
-                    Text(t.appareils.regle, style: textes.bodySmall),
-                    Ecart.vXl,
-                    if (eleves.hasValue && eleves.requireValue.isEmpty)
-                      EmptyState(
-                        message: t.enfant.aucun,
-                        invitation: t.enfant.aucunDetail,
-                        libelleAction: t.enfant.titre,
-                        onAction: () =>
-                            GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+    return PageShell(
+      titre: t.appareils.titre,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // La regle de l'ADR-010 est affichee en clair : deux appareils au
+          // maximum, un seul en cours a la fois.
+          Text(t.appareils.regle, style: textes.bodySmall),
+          Ecart.vXl,
+          if (eleves.hasValue && eleves.requireValue.isEmpty)
+            EmptyState(
+              message: t.enfant.aucun,
+              invitation: t.enfant.aucunDetail,
+              libelleAction: t.enfant.titre,
+              onAction: () =>
+                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+            )
+          else ...<Widget>[
+            for (final EleveDuFoyer eleve
+                in eleves.value ?? const <EleveDuFoyer>[])
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                child: _BlocEleve(
+                  eleve: eleve,
+                  appareils: (appareils.value ?? const <AppareilAppaire>[])
+                      .where(
+                        (AppareilAppaire a) =>
+                            a.profilId == eleve.id && a.actif,
                       )
-                    else ...<Widget>[
-                      for (final EleveDuFoyer eleve
-                          in eleves.value ?? const <EleveDuFoyer>[])
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                          child: _BlocEleve(
-                            eleve: eleve,
-                            appareils:
-                                (appareils.value ?? const <AppareilAppaire>[])
-                                    .where(
-                                      (AppareilAppaire a) =>
-                                          a.profilId == eleve.id && a.actif,
-                                    )
-                                    .toList(),
-                            onRevoquer: (String id) async {
-                              await ref
-                                  .read(serviceAppairageProvider)
-                                  .revoquer(id);
-                              ref.invalidate(appareilsDuFoyerProvider);
-                            },
-                          ),
-                        ),
-                      Ecart.vLg,
-                      ActionPrincipale(
-                        libelle: t.enfant.titre,
-                        onPress: () =>
-                            GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-                        niveau: NiveauAction.secondaire,
-                      ),
-                    ],
-                  ],
+                      .toList(),
+                  onRevoquer: (String id) async {
+                    await ref.read(serviceAppairageProvider).revoquer(id);
+                    ref.invalidate(appareilsDuFoyerProvider);
+                  },
                 ),
               ),
+            Ecart.vLg,
+            ActionPrincipale(
+              libelle: t.enfant.titre,
+              onPress: () =>
+                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+              niveau: NiveauAction.secondaire,
             ),
           ],
-        ),
+        ],
       ),
     );
   }

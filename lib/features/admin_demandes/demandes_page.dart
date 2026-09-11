@@ -16,7 +16,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
 
 /// `ADM-06` : les demandes des quatre parties, et les regles d'un eleve.
 ///
@@ -96,58 +96,45 @@ class _DemandesPageEtat extends ConsumerState<DemandesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AsyncValue<List<Demande>> file = ref.watch(demandesProvider);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              // Les getters, jamais le type d'execution : Riverpod 3 relance un
-              // provider en echec tout seul, et l'etat repasse par
-              // `AsyncLoading` en conservant `hasError`.
-              child: switch (file) {
-                AsyncValue<List<Demande>>(hasValue: true) =>
-                  file.requireValue.isEmpty
-                      ? EmptyState(
-                          message: t.admin.demandes.aucune,
-                          invitation: t.admin.demandes.aucuneDetail,
-                          icone: AppIcons.attribution,
-                        )
-                      : _Demande(
-                          demande: file.requireValue.first,
-                          restantes: file.requireValue.length,
-                          motif: _motif,
-                          refusEnCours: _refusEnCours,
-                          envoi: _envoi,
-                          erreur: _erreur,
-                          onOuvrirRefus: () =>
-                              setState(() => _refusEnCours = true),
-                          onMotifChange: (String _) => setState(() {}),
-                          onAccorder: () => unawaited(
-                            _decider(file.requireValue.first, accepte: true),
-                          ),
-                          onRefuser: () => unawaited(
-                            _decider(file.requireValue.first, accepte: false),
-                          ),
-                        ),
-                AsyncValue<List<Demande>>(hasError: true) => EmptyState(
-                  message: t.admin.demandes.erreur(message: t.reseau.horsLigne),
-                  icone: AppIcons.avertissement,
-                  libelleAction: t.commun.reessayer,
-                  onAction: () => ref.invalidate(demandesProvider),
+    return PageShell(
+      titre: t.admin.demandes.titre,
+      // Les getters, jamais le type d'execution : Riverpod 3 relance un
+      // provider en echec tout seul, et l'etat repasse par `AsyncLoading` en
+      // conservant `hasError`.
+      child: switch (file) {
+        AsyncValue<List<Demande>>(hasValue: true) =>
+          file.requireValue.isEmpty
+              ? EmptyState(
+                  message: t.admin.demandes.aucune,
+                  invitation: t.admin.demandes.aucuneDetail,
+                  icone: AppIcons.attribution,
+                )
+              : _Demande(
+                  demande: file.requireValue.first,
+                  restantes: file.requireValue.length,
+                  motif: _motif,
+                  refusEnCours: _refusEnCours,
+                  envoi: _envoi,
+                  erreur: _erreur,
+                  onOuvrirRefus: () => setState(() => _refusEnCours = true),
+                  onMotifChange: (String _) => setState(() {}),
+                  onAccorder: () => unawaited(
+                    _decider(file.requireValue.first, accepte: true),
+                  ),
+                  onRefuser: () => unawaited(
+                    _decider(file.requireValue.first, accepte: false),
+                  ),
                 ),
-                _ => Padding(
-                  padding: EdgeInsets.all(metriques.marge),
-                  child: Center(child: Text(t.commun.chargement)),
-                ),
-              },
-            ),
-          ],
+        AsyncValue<List<Demande>>(hasError: true) => EmptyState(
+          message: t.admin.demandes.erreur(message: t.reseau.horsLigne),
+          icone: AppIcons.avertissement,
+          libelleAction: t.commun.reessayer,
+          onAction: () => ref.invalidate(demandesProvider),
         ),
-      ),
+        _ => Center(child: Text(t.commun.chargement)),
+      },
     );
   }
 }
@@ -180,15 +167,12 @@ class _Demande extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return ListView(
-      padding: EdgeInsets.all(metriques.marge),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.admin.demandes.titre, style: textes.headlineSmall),
-        Ecart.vSm,
         Text(t.admin.demandes.restantes(n: restantes), style: textes.bodySmall),
         Ecart.vXl,
 

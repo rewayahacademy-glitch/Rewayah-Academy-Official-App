@@ -7,6 +7,7 @@ import '../../core/matching/service_matching.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -14,7 +15,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
 import '../disponibilites/grille_semaine.dart';
 
 /// `ENS-06` : les heures de l'enseignant, et les eleves qui les attendent.
@@ -22,46 +23,91 @@ import '../disponibilites/grille_semaine.dart';
 /// Ce qui se prend ici est un **eleve**, pas un creneau : la relation dure et ne
 /// se rompt que par une demande tranchee par l'administration (ADR-017). Le
 /// creneau n'est que l'heure du rendez-vous hebdomadaire qui en decoule.
-class CreneauxPage extends ConsumerWidget {
+///
+/// **Onglets sur mobile seulement.** A partir de la tablette, l'ecran a la
+/// place de montrer la grille et le feed a la fois : un onglet sur un ecran de
+/// 1440 pixels cacherait la moitie de l'information sans raison
+/// (`docs/design/08-catalogue-ecrans.md` section 2). Reprise au lot R4.
+class CreneauxPage extends StatelessWidget {
   /// Cree l'ecran des creneaux.
   const CreneauxPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final TextTheme textes = Theme.of(context).textTheme;
+  Widget build(BuildContext context) {
+    final Gabarit gabarit = AppGabarit.de(context);
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              const OfflineBanner(),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.sm,
-                ),
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(t.creneaux.titre, style: textes.headlineSmall),
-                ),
-              ),
-              TabBar(
-                tabs: <Widget>[
-                  Tab(text: t.creneaux.ongletHeures),
-                  Tab(text: t.creneaux.ongletEleves),
-                ],
-              ),
-              const Expanded(
-                child: TabBarView(
-                  children: <Widget>[_OngletHeures(), _OngletEleves()],
-                ),
-              ),
-            ],
-          ),
-        ),
+    if (gabarit == Gabarit.mobile) {
+      return const _CreneauxOnglets();
+    }
+
+    return PageShell(
+      titre: t.creneaux.titre,
+      child: gabarit == Gabarit.desktop
+          ? const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(child: _OngletHeures()),
+                Ecart.hXxl,
+                Expanded(child: _OngletEleves()),
+              ],
+            )
+          : const Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _OngletHeures(),
+                Ecart.vXxl,
+                _OngletEleves(),
+              ],
+            ),
+    );
+  }
+}
+
+/// La presentation mobile : deux onglets, un seul panneau visible a la fois.
+///
+/// **Pas de `TabBarView`** : il s'appuie sur un `PageView`, qui exige une
+/// hauteur bornee, alors que `PageShell` ne borne jamais la hauteur de son
+/// `child` -- c'est la page entiere qui defile, meme mecanique que le reste du
+/// produit. Le panneau bascule donc directement sur l'index du controleur, au
+/// prix du balayage au doigt entre onglets.
+class _CreneauxOnglets extends StatefulWidget {
+  const _CreneauxOnglets();
+
+  @override
+  State<_CreneauxOnglets> createState() => _CreneauxOngletsEtat();
+}
+
+class _CreneauxOngletsEtat extends State<_CreneauxOnglets>
+    with SingleTickerProviderStateMixin {
+  late final TabController _controleur;
+
+  @override
+  void initState() {
+    super.initState();
+    _controleur = TabController(length: 2, vsync: this)
+      ..addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _controleur.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageShell(
+      titre: t.creneaux.titre,
+      entete: TabBar(
+        controller: _controleur,
+        tabs: <Widget>[
+          Tab(text: t.creneaux.ongletHeures),
+          Tab(text: t.creneaux.ongletEleves),
+        ],
       ),
+      child: _controleur.index == 0
+          ? const _OngletHeures()
+          : const _OngletEleves(),
     );
   }
 }
@@ -108,7 +154,6 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
     final String? monId = ref.watch(sessionProvider).profileId;
@@ -123,8 +168,8 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
     );
     final List<Creneau> poses = creneaux.value ?? const <Creneau>[];
 
-    return ListView(
-      padding: EdgeInsets.all(metriques.marge),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(t.disponibilites.titreEnseignant, style: textes.titleMedium),
         Ecart.vXs,
@@ -197,7 +242,6 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
     final String? monId = ref.watch(sessionProvider).profileId;
@@ -228,8 +272,8 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
       feed.value ?? const <EleveEnAttente>[],
     );
 
-    return ListView(
-      padding: EdgeInsets.all(metriques.marge),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (plafond > 0)
           Text(

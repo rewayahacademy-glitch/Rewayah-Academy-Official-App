@@ -4,12 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
 import 'grille_semaine.dart';
 
 /// `TUT-04` : les disponibilites du foyer, un enfant a la fois.
@@ -26,46 +25,35 @@ class DisponibilitesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AsyncValue<List<EleveDuFoyer>> eleves = ref.watch(
       elevesDuFoyerProvider,
     );
     final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(metriques.marge),
-                children: <Widget>[
-                  Text(t.disponibilites.titre, style: textes.headlineSmall),
-                  Ecart.vSm,
-                  Text(t.disponibilites.effet, style: textes.bodySmall),
-                  Ecart.vXl,
-                  if (eleves.hasValue && eleves.requireValue.isEmpty)
-                    EmptyState(
-                      message: t.enfant.aucun,
-                      invitation: t.enfant.aucunDetail,
-                    )
-                  else
-                    for (final EleveDuFoyer eleve
-                        in eleves.value ?? const <EleveDuFoyer>[])
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                        child: _BlocEnfant(
-                          eleve: eleve,
-                          fuseau: fuseau.value ?? 'Europe/Paris',
-                        ),
-                      ),
-                ],
+    return PageShell(
+      titre: t.disponibilites.titre,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(t.disponibilites.effet, style: textes.bodySmall),
+          Ecart.vXl,
+          if (eleves.hasValue && eleves.requireValue.isEmpty)
+            EmptyState(
+              message: t.enfant.aucun,
+              invitation: t.enfant.aucunDetail,
+            )
+          else
+            for (final EleveDuFoyer eleve
+                in eleves.value ?? const <EleveDuFoyer>[])
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                child: _BlocEnfant(
+                  eleve: eleve,
+                  fuseau: fuseau.value ?? 'Europe/Paris',
+                ),
               ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

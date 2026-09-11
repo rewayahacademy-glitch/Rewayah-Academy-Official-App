@@ -18,7 +18,7 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
 
 /// `TUT-05` : les reglages du tuteur, enfant par enfant.
 ///
@@ -39,45 +39,34 @@ class ReglagesEnfantPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AsyncValue<List<EleveDuFoyer>> enfants = ref.watch(
       elevesDuFoyerProvider,
     );
     final List<EleveDuFoyer> foyer = enfants.value ?? const <EleveDuFoyer>[];
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(metriques.marge),
-                children: <Widget>[
-                  Text(t.tuteur.reglages.titre, style: textes.headlineSmall),
-                  Ecart.vXs,
-                  Text(t.tuteur.reglages.intro, style: textes.bodySmall),
-                  Ecart.vXl,
-                  if (enfants.hasValue && foyer.isEmpty)
-                    EmptyState(
-                      message: t.tuteur.reglages.aucunEnfant,
-                      invitation: t.tuteur.reglages.aucunEnfantDetail,
-                      libelleAction: t.enfant.titre,
-                      onAction: () =>
-                          GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-                    )
-                  else
-                    for (final EleveDuFoyer enfant in foyer)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                        child: _CarteEnfant(enfant: enfant),
-                      ),
-                ],
+    return PageShell(
+      titre: t.tuteur.reglages.titre,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(t.tuteur.reglages.intro, style: textes.bodySmall),
+          Ecart.vXl,
+          if (enfants.hasValue && foyer.isEmpty)
+            EmptyState(
+              message: t.tuteur.reglages.aucunEnfant,
+              invitation: t.tuteur.reglages.aucunEnfantDetail,
+              libelleAction: t.enfant.titre,
+              onAction: () =>
+                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+            )
+          else
+            for (final EleveDuFoyer enfant in foyer)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                child: _CarteEnfant(enfant: enfant),
               ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

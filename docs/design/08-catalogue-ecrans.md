@@ -28,17 +28,17 @@ réellement dans `lib/`, au 7 septembre 2026.
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `TUT-01` | Accueil famille | Tuteur | C | 0 | `/tuteur` | Liste de `ChildCard` | 2 à 3 colonnes + colonne « à confirmer » | **repris (R2)**, fiche §6 |
-| `TUT-02` | Foyer et appareils | Tuteur | C | 1 | `/tuteur/foyer` | Deux listes denses | Deux colonnes | construit |
-| `TUT-02/a` | Ajouter un enfant | Tuteur | C | 2 | `/tuteur/foyer/ajouter-enfant` | Parcours | Feuille latérale | construit |
-| `TUT-02/b` | Appairer un appareil | Tuteur | C | 2 | `/tuteur/foyer/appairer/:id` | Page, QR grand format | Page centrée | construit |
-| `TUT-05` | Réglages par enfant | Tuteur | C | 1 | `/tuteur/reglages` | Une carte par enfant | 2 colonnes | construit |
+| `TUT-02` | Foyer et appareils | Tuteur | C | 1 | `/tuteur/foyer` | Deux listes denses | Deux colonnes | **repris (R4)**, fiche §6 |
+| `TUT-02/a` | Ajouter un enfant | Tuteur | C | 2 | `/tuteur/foyer/ajouter-enfant` | Parcours | Feuille latérale | **repris (R4)**, fiche §6 |
+| `TUT-02/b` | Appairer un appareil | Tuteur | C | 2 | `/tuteur/foyer/appairer/:id` | Page, QR grand format | Page centrée | **repris (R4)**, fiche §6 |
+| `TUT-05` | Réglages par enfant | Tuteur | C | 1 | `/tuteur/reglages` | Une carte par enfant | 2 colonnes | **repris (R4)**, fiche §6 |
 
 ### Zone Disponibilités et affectation
 
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `TUT-04` | Disponibilités du foyer | Tuteur | C | 1 | `/tuteur/disponibilites` | Grille défilante | Grille entière | construit |
-| `ENS-06` | Disponibilités et matching | Enseignant | D | 1 | `/enseignant/creneaux` | Deux onglets | Grille + feed côte à côte | construit, **onglets à supprimer sur desktop** |
+| `TUT-04` | Disponibilités du foyer | Tuteur | C | 1 | `/tuteur/disponibilites` | Grille défilante | Grille entière | **repris (R4)**, fiche §6 |
+| `ENS-06` | Disponibilités et matching | Enseignant | D | 1 | `/enseignant/creneaux` | Deux onglets | Grille + feed côte à côte | **repris (R4)**, fiche §6 |
 | `ADM-05` | Attribution manuelle | Admin | E | 1 | `/admin/attribution` | Deux listes empilées | Deux listes côte à côte | **à construire** |
 
 ### Zone Journée et salle
@@ -66,8 +66,8 @@ réellement dans `lib/`, au 7 septembre 2026.
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `ADM-01` | Centre de commande | Admin | E | 0 | `/admin/tableau-de-bord` | Signaux puis chiffres | 4 chiffres + liste pleine largeur | **repris (R3)**, fiche §6 |
-| `ADM-02` | Validation des dossiers | Admin | E | 1 | `/admin/dossiers` | Un dossier à la fois | File à gauche, dossier à droite | construit |
-| `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/demandes` | Liste de demandes | Liste + feuille de règles | construit |
+| `ADM-02` | Validation des dossiers | Admin | E | 1 | `/admin/dossiers` | Un dossier à la fois | File à gauche, dossier à droite | **repris (R4)**, fiche §6 |
+| `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/demandes` | Liste de demandes | Liste + feuille de règles | **repris (R4)**, fiche §6 |
 | `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/journal` | Cartes | Tableau dense | **à construire** |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
@@ -88,9 +88,15 @@ qui montaient un `Scaffold` nu (cause n1 mesurée du rejet du 11 septembre,
 `TUT-00c/b`, `TUT-00c/c`. `TUT-00c` n'a pas changé de code : il passait déjà
 par `PageParcours`, seule sa fiche manquait.
 
-Le point à ne pas rater : **`ENS-06` emploie des onglets sur desktop alors qu'il
-a la place d'afficher les deux panneaux**. Un onglet sur un écran de 1440 pixels
-cache la moitié de l'information sans raison.
+Le lot **R4**, le même jour, a repris les six derniers écrans construits de la
+refonte et leurs deux sous-écrans : `TUT-02`, `TUT-02/a`, `TUT-02/b`, `TUT-04`,
+`TUT-05`, `ENS-06`, `ADM-02`, `ADM-06`. Le lot **R** est désormais complet.
+
+Le point qui n'était pas à rater, corrigé au lot R4 : **`ENS-06` employait des
+onglets sur desktop alors qu'il a la place d'afficher les deux panneaux**. Un
+onglet sur un écran de 1440 pixels cachait la moitié de l'information sans
+raison ; à partir de la tablette, la grille et le feed se voient désormais
+tous les deux, sans onglet (fiche §6).
 
 ## 3. La fiche d'écran
 
@@ -175,7 +181,7 @@ les portent.
 | **R1** | `ELV-02` | **fait le 7 septembre 2026.** C'est l'écran montré à l'opérateur, et le plus simple : deux blocs. Il sert de preuve du système |
 | **R2** | `TUT-01` | **fait le 8 septembre 2026.** Il porte `ChildCard`, composant du domaine famille |
 | **R3** | `ENS-02`, `ADM-01` | **fait le 8 septembre 2026.** `TimelineRow` porté par les trois sorties (cours, pause, prière), `StatTile` aux compteurs, `SignalRow` à la liste à traiter. `NavShell` câblé au routeur dans le même lot, voir `etape-2-journal.md` |
-| **R4** | `TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06` | Le reste de l'existant |
+| **R4** | `TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06` | Le reste de l'existant. **fait le 11 septembre 2026** |
 | **N** | les onze écrans manquants | Chacun avec sa fiche remplie d'abord |
 
 ## 6. Fiches des écrans repris
@@ -1044,3 +1050,514 @@ et que la reprise a corrigé :
   fichier") flottait dans un `ListView` a meme le fond crème. Il est pose sur
   une `AppCard` ;
 - une `MarquePage` précède la carte.
+
+### `TUT-02` Foyer et appareils
+
+```
+CODE              TUT-02
+Nom               Foyer et appareils
+Role              Tuteur
+Zone              Foyer
+Niveau de charge  C
+Ecran parent      TUT-01 (lien direct depuis l'accueil famille)
+Profondeur        1
+Question          Qui vit dans ce foyer, et quels appareils leur sont appaires ?
+
+Priorites         P0  un bloc par enfant : ses appareils actifs
+                  P0  revoquer un appareil
+                  P1  ajouter un enfant
+                  P1  ajouter un appareil, tant que la limite (ADR-010, deux
+                      par enfant) n'est pas atteinte
+
+Action principale     Ajouter un enfant (bas de liste) ; par enfant, Ajouter
+                      un appareil
+Actions secondaires   Revoquer un appareil (par ligne)
+Action tertiaire      aucune
+Destructif            aucun -- revoquer coupe l'acces de l'appareil, ca ne
+                      supprime rien ; niveau secondaire, pas destructif
+
+Mobile            Liste dense, un bloc par enfant
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200 -- le registre
+                  section 1 annonce "deux colonnes" au bureau ; non
+                  implemente, ecart anterieur a ce lot, hors scope d'une
+                  reprise de coquille
+
+Etats             content         nominal
+                  empty           aucun enfant dans le foyer (EmptyState,
+                                  bouton "Ajouter un enfant")
+                  limite atteinte le bouton "Ajouter un appareil" est
+                                  remplace par une phrase, jamais desactive
+                                  (invariant deja acquis, section 4)
+                  aucun appareil  phrase seule, pas de liste vide dessinee
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        a la limite de deux appareils, le bouton d'ajout est
+                  remplace par une phrase (deja acquis, section 4)
+                  la photo reelle ou le repli sur initiales, jamais une icone
+                  d'erreur (ADR-012)
+
+Accessibilite     non revue par ce lot (report au lot A1)
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R4. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold`, un `OfflineBanner` posé à la main et
+  un tirage-pour-rafraîchir (`RefreshIndicator` invalidant les deux providers
+  du foyer) autour de son `ListView`. Il passe par `PageShell` ;
+- **Dette assumée** : le tirage-pour-rafraîchir disparaît, même sort et même
+  raison que sur `TUT-00b`, `TUT-01`, `ENS-02` et `ADM-01` (voir leurs
+  fiches) — un `RefreshIndicator` autour d'un `ListView` a besoin d'être
+  l'enfant direct d'un `Expanded` pour ne pas planter en hauteur non bornée,
+  et `PageShell` ne donne pas cette garantie à son `child`. C'est le
+  cinquième écran qui la demande.
+
+### `TUT-02/a` Ajout d'un enfant
+
+```
+CODE              TUT-02/a
+Nom               Ajout d'un enfant
+Role              Tuteur
+Zone              Foyer
+Niveau de charge  C
+Ecran parent      TUT-02 (bouton "Ajouter un enfant"), aussi atteint depuis
+                  TUT-05 quand le foyer est vide
+Profondeur        2
+Question          Qui est cet enfant, et quel age a-t-il ?
+
+Priorites         P0  le prenom et le nom
+                  P0  l'age, qui fixe en base le mode d'interface et la
+                      politique camera initiale (ADR-009) -- jamais calcule
+                      ici
+                  P1  dire l'erreur si la creation echoue
+
+Action principale     Creer (PageParcours), inerte tant que les trois champs
+                      ne sont pas valides
+Actions secondaires   Retour
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Page unique de PageParcours (question, action, retour) ;
+                  numero 1 sur 1, pas de barre de progression segmentee
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats             saisie          nominal
+                  age invalide    message d'erreur sous le champ age (hors
+                                  3-18 ans), bouton Creer reste inerte
+                  envoi           bouton en cours
+                  erreur d'envoi  message en liveRegion sous l'action
+
+Mouvement         coquille de PageParcours, aucun mouvement propre
+
+Invariants        l'age ne decide de rien ici : le mode d'interface et la
+                  politique camera sont derives en base depuis app_config,
+                  jamais dans ce code
+                  le seuil d'age est un reglage d'academie, pas une constante
+                  d'application
+
+Accessibilite     le message d'erreur d'envoi est en liveRegion
+```
+
+Aucune reprise : cet écran passait déjà par `PageParcours` avant le lot R4.
+Seule sa fiche manquait, écrite ici à partir du code existant, même cas que
+`TUT-00c` au lot R0.
+
+### `TUT-02/b` Appairer un appareil
+
+```
+CODE              TUT-02/b
+Nom               Appairer un appareil
+Role              Tuteur
+Zone              Foyer
+Niveau de charge  C
+Ecran parent      TUT-02 (bouton "Ajouter" d'un enfant)
+Profondeur        2
+Question          Comment cet appareil rejoint-il le foyer ?
+
+Priorites         P0  le QR grand format et le code en clair, lisibles a
+                      distance
+                  P0  le delai de validite qui s'ecoule, annonce en clair
+                  P1  pouvoir regenerer un code expire
+
+Action principale     aucune sur le QR lui-meme -- Regenerer (code expire) ou
+                      Reessayer (erreur), seuls boutons du corps
+Actions secondaires   Retour, dans la zone d'action collee en bas
+                      (PageShell.actions)
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Page centree, une carte, QR grand format, retour colle en
+                  bas
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats             chargement   texte de chargement, le temps de creer le code
+                  code actif   QR + code en clair + compte a rebours
+                               (Semantics liveRegion)
+                  code expire  message + bouton Regenerer
+                  erreur       message + bouton Reessayer
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        le code n'existe qu'a l'ecran, la base n'en garde que
+                  l'empreinte -- quitter l'ecran le perd, comportement attendu
+                  le QR ne porte que le code, ni identifiant de foyer ni
+                  adresse
+
+Accessibilite     le compte a rebours est en liveRegion ; le code en clair a
+                  un libelle parle, espace lettre par lettre
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R4. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold`. Il passe par `PageShell` ;
+- le bouton de retour, collé en bas à la main dans un `Padding` hors
+  `Scaffold`, passe par la prise `actions:` de `PageShell` — même correction
+  que les feuilles d'accueil du lot R0 (`TUT-00c/a`, `TUT-00c/b`,
+  `TUT-00c/c`).
+
+### `TUT-04` Disponibilités du foyer
+
+```
+CODE              TUT-04
+Nom               Disponibilites du foyer
+Role              Tuteur
+Zone              Disponibilites et affectation
+Niveau de charge  C
+Ecran parent      aucun : onglet de la navigation tuteur, atteint depuis la
+                  barre
+Profondeur        1
+Question          Quand chaque enfant du foyer est-il disponible pour un
+                  cours ?
+
+Priorites         P0  une grille de semaine par enfant, case par case
+                  P0  dire ce que la grille produit (elle alimente le
+                      matching inverse)
+                  P1  le repli quand le foyer n'a aucun enfant
+
+Action principale     aucune globale -- chaque case de GrilleSemaine est
+                      l'action elementaire (tap = pose ou retire un creneau)
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Une carte par enfant, une grille par carte, la page defile
+                  verticalement
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200 -- le registre
+                  section 1 annonce "grille entiere" au bureau ; GrilleSemaine
+                  ne defile jamais horizontalement (pas de Viewport), la
+                  distinction n'a jamais eu de code a elle
+
+Etats             content    nominal
+                  empty      aucun enfant dans le foyer (EmptyState)
+                  error      erreur d'enregistrement d'une case (message sous
+                             la grille, la grille reste utilisable)
+                  en cours   une case en ecriture n'accepte plus de tap
+
+Mouvement         retour haptique de la case (Pressable), aucun mouvement
+                  propre a l'ecran
+
+Invariants        GrilleSemaine est le meme composant, au sens litteral, que
+                  celui d'ENS-06 -- deux grilles jumelles finiraient par ne
+                  plus afficher la meme chose (ADR-017)
+                  l'etat d'ecriture ne se filtre jamais par type d'execution
+                  de l'AsyncValue
+
+Accessibilite     non revue par ce lot (report au lot A1)
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R4. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold` et son `ListView`. Il passe par
+  `PageShell` ; pas de tirage-pour-rafraîchir à perdre ici, il n'y en avait
+  pas.
+
+### `TUT-05` Réglages par enfant
+
+```
+CODE              TUT-05
+Nom               Reglages par enfant
+Role              Tuteur
+Zone              Foyer
+Niveau de charge  C
+Ecran parent      aucun : onglet de la navigation tuteur, atteint depuis la
+                  barre
+Profondeur        1
+Question          Que faut-il changer pour cet enfant avant la prochaine
+                  seance ?
+
+Priorites         P0  une carte par enfant : photo, camera, mode d'interface
+                  P0  le texte dit la consequence en clair, avec le prenom
+                      (jamais un libelle abstrait)
+                  P1  les trois demandes que le tuteur peut deposer
+                      (reaffectation, duree, minimum payable)
+
+Action principale     par carte : Ajouter/Changer la photo ; Autoriser/
+                      Retirer la camera ; Passer standard/enfant
+Actions secondaires   Demander une reaffectation (si un enseignant suit
+                      l'enfant), la duree de seance, le minimum payable --
+                      chacune ouvre une feuille
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Une carte par enfant, verticale
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200 -- le registre
+                  section 1 annonce "2 colonnes" au bureau ; non implemente,
+                  ecart anterieur a ce lot, hors scope d'une reprise de
+                  coquille
+
+Etats             content   nominal
+                  empty     aucun enfant dans le foyer (EmptyState, bouton
+                            "Ajouter un enfant")
+                  error     par geste (photo, reglage, demande), message sous
+                            le bouton concerne, jamais un etat de page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        ces reglages s'appliquent a la seance suivante, jamais
+                  pendant un cours en direct (dit une fois en tete, pas
+                  repete par carte)
+                  aucune copie locale optimiste : ce que la base a accepte
+                  est ce qui s'affiche
+                  la carte "reaffectation" n'apparait que si un enseignant
+                  suit deja l'enfant
+
+Accessibilite     non revue par ce lot (report au lot A1)
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R4. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold` et son `ListView`. Il passe par
+  `PageShell` ;
+- la feuille `FeuilleDemandeTuteur` (bottom sheet) garde son `Padding` manuel
+  dupliqué — dette déjà connue depuis le lot B0 (`docs/HANDOFF.md` section
+  0 ter, point 3), pas traitée ici, hors scope.
+
+### `ENS-06` Disponibilités et matching
+
+```
+CODE              ENS-06
+Nom               Disponibilites et matching
+Role              Enseignant
+Zone              Disponibilites et affectation
+Niveau de charge  D
+Ecran parent      aucun : onglet de la navigation enseignant, atteint depuis
+                  la barre (aussi depuis ENS-02, bloc matching)
+Profondeur        1
+Question          Quand suis-je libre, et qui attend un enseignant ?
+
+Priorites         P0  la grille de mes disponibilites
+                  P0  le feed des eleves en attente, trie par anciennete
+                  P1  le nombre de places restantes sur mon plafond
+                  P1  l'acces a la demande d'augmentation de plafond
+
+Action principale     Prendre un eleve
+Actions secondaires   Poser ou retirer un creneau (case de GrilleSemaine)
+Action tertiaire      Demander une augmentation de plafond
+Destructif            aucun
+
+Mobile            deux onglets (Heures, Eleves), un seul panneau visible,
+                  PageShell.entete porte le TabBar -- pas de balayage au
+                  doigt entre onglets : le contenu bascule sur l'index du
+                  TabController au tap (voir Invariants)
+Tablette          pas d'onglet : la grille puis le feed, empiles dans une
+                  seule colonne defilante
+Desktop           pas d'onglet : la grille a gauche, le feed a droite, cote a
+                  cote dans une Row
+
+Etats             loading         texte de chargement, le temps que la
+                                  session livre l'identifiant
+                  content         nominal
+                  empty           aucune famille en attente sur vos creneaux,
+                                  sans bouton (l'enseignant ne peut rien y
+                                  faire)
+                  error           message sur le feed ou sous la grille,
+                                  chaque panneau reste utilisable
+                                  independamment de l'autre
+                  offline         grille consultable, prise impossible et
+                                  dite (OfflineBanner, deja porte par
+                                  PageShell)
+                  plafond atteint le bouton Prendre n'est pas rendu, une
+                                  phrase l'explique, avec l'acces a la
+                                  demande d'augmentation
+
+Mouvement         retour haptique de la case (Pressable) ; aucun mouvement
+                  propre a la bascule d'onglet (pas de PageView, donc pas de
+                  transition animee entre panneaux)
+
+Invariants        le tri est par anciennete d'attente, jamais alphabetique
+                  le feed rend une ligne par creneau compatible, pas par
+                  eleve : compter les lignes annoncerait quatre familles la
+                  ou une seule attend
+                  pas de TabBarView : il s'appuie sur un PageView, qui exige
+                  une hauteur bornee, et PageShell ne borne jamais la hauteur
+                  de son child -- c'est la page entiere qui defile, meme
+                  mecanique que le reste du produit
+                  a partir de la tablette, la grille et le feed se voient a
+                  la fois : un onglet sur un ecran large cacherait la moitie
+                  de l'information sans raison
+
+Accessibilite     cases de grille a 44 minimum, label parle "Lundi 17 heures,
+                  disponible"
+                  grille lisible de droite a gauche en arabe (a revoir au lot
+                  A1)
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R4. Ce que le code portait avant,
+et que la reprise a corrigé — **l'écart du registre (section 2), corrigé** :
+
+- l'écran montait un `DefaultTabController` et un `Scaffold` propres, avec un
+  `TabBar` et un `TabBarView` fixes, quel que soit le gabarit. À partir de la
+  tablette, la grille et le feed se voient désormais tous les deux, sans
+  onglet ;
+- sur mobile, les deux onglets restent, mais sans `TabBarView` : `PageShell`
+  ne borne jamais la hauteur de son `child`, condition que `TabBarView` (un
+  `PageView`) exige. Le panneau bascule directement sur l'index du
+  `TabController`, ce qui coûte le balayage au doigt entre onglets, gardé au
+  tap seul ;
+- `CreneauxPage` passe de `ConsumerWidget` à `StatelessWidget` : elle ne lit
+  plus aucun provider elle-même, elle choisit seulement la présentation selon
+  `AppGabarit.de(context)` ;
+- les deux onglets internes (`_OngletHeures`, `_OngletEleves`) passaient
+  chacun par leur propre `ListView`. Ils passent par `Column`, comme les
+  autres écrans de ce lot : c'est désormais la page entière (ou la colonne du
+  panneau, sur tablette et desktop) qui défile, jamais un `Viewport` imbriqué.
+
+### `ADM-02` Validation des dossiers
+
+```
+CODE              ADM-02
+Nom               Validation des dossiers
+Role              Admin
+Zone              Administration
+Niveau de charge  E
+Ecran parent      aucun : onglet de la navigation admin, atteint depuis la
+                  barre (aussi depuis le compteur "dossiers" de ADM-01)
+Profondeur        1
+Question          Ce dossier est-il complet et lisible, et faut-il
+                  l'approuver ?
+
+Priorites         P0  un dossier a la fois, jamais une grille (attention
+                      sequentielle)
+                  P0  la checklist des trois constats avant tout jugement
+                      (lisible, nom, validite)
+                  P0  le motif obligatoire d'un refus
+                  P1  combien de dossiers restent apres celui-ci
+
+Action principale     Approuver (inerte tant que les trois constats ne sont
+                      pas coches)
+Actions secondaires   Refuser (ouvre le champ de motif)
+Action tertiaire      Reessayer (lecture de la file en erreur, ou genre du
+                      lecteur inconnu)
+Destructif            Refuser un dossier (niveau destructif, motif
+                      obligatoire)
+
+Mobile            Colonne unique : apercu du document, checklist, verdict,
+                  dans cet ordre
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200 -- le registre
+                  section 1 annonce "file a gauche, dossier a droite" ; non
+                  implemente, ecart anterieur a ce lot, hors scope d'une
+                  reprise de coquille
+
+Etats             content   nominal (dossier en cours)
+                  empty     aucun dossier en attente (EmptyState)
+                  error     genre du lecteur inconnu (message specifique,
+                            pas de bouton Reessayer : ce n'est pas
+                            transitoire) ou erreur de lecture generique
+                            (bouton Reessayer)
+                  loading   texte de chargement
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        constat -> checklist -> verdict, jamais melanges : le
+                  verdict reste dans le corps defilant de PageShell et
+                  jamais dans sa zone actions: -- une zone actions collee en
+                  bas detacherait le jugement du constat qu'il suit
+                  (section 4 de ce document)
+                  le cloisonnement de genre n'est pas applique ici : il vit
+                  dans read_kyc_documents(), en base
+                  Riverpod 3 : lire hasError/hasValue par getter, jamais le
+                  type d'execution de l'AsyncValue
+
+Accessibilite     non revue par ce lot (report au lot A1)
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R4. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold` autour du même `switch` sur
+  `AsyncValue`. Il passe par `PageShell` ;
+- la zone de verdict (checklist puis approuver/refuser) reste délibérément
+  dans le corps défilant, **pas** dans `PageShell.actions` : contrairement
+  aux écrans à action unique du lot R0, la séquence constat→checklist→verdict
+  doit rester lisible de haut en bas en une seule colonne (invariant déjà
+  noté section 4, "Constat et jugement séparés").
+
+### `ADM-06` Demandes et règles
+
+```
+CODE              ADM-06
+Nom               Demandes et regles
+Role              Admin
+Zone              Administration
+Niveau de charge  E
+Ecran parent      ADM-01 (compteur "demandes")
+Profondeur        1
+Question          Cette demande doit-elle etre accordee, et que dit la regle
+                  du profil concerne ?
+
+Priorites         P0  une demande a la fois, la plus ancienne en premier
+                  P0  la feuille de regles du sujet, plateforme et effective
+                      cote a cote
+                  P0  le motif obligatoire d'un refus
+                  P1  changer ou clore une regle a la volee, sans qu'une
+                      demande existe
+
+Action principale     Accorder
+Actions secondaires   Refuser (ouvre le motif) ; Changer / Clore une regle
+                      depuis la feuille
+Action tertiaire      Reessayer (lecture de la file en erreur)
+Destructif            Refuser une demande (motif obligatoire)
+
+Mobile            Colonne unique : constat de la demande, feuille de regles,
+                  verdict
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200 -- le registre
+                  section 1 annonce "liste + feuille de regles" ; non
+                  implemente, meme ecart et meme raison qu'ADM-02
+
+Etats             content   nominal
+                  empty     aucune demande en attente
+                  error     lecture hors ligne (bouton Reessayer)
+                  loading   texte de chargement
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        meme sequence constat -> jugement qu'ADM-02, meme raison de
+                  garder le verdict dans le corps defilant plutot que dans
+                  PageShell.actions
+                  chaque regle vient de la meme ligne de regles_profil_v,
+                  jamais deux lectures separees qui finiraient par diverger
+                  une surcharge close ne se supprime jamais (historique)
+
+Accessibilite     non revue par ce lot (report au lot A1)
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R4. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold` autour du même `switch` sur
+  `AsyncValue`. Il passe par `PageShell` ;
+- la zone de verdict reste, pour la même raison qu'`ADM-02`, dans le corps
+  défilant et pas dans `PageShell.actions` ;
+- `FeuilleRegle` (bottom sheet) garde aussi son `Padding` manuel dupliqué,
+  même dette que `TUT-05`.

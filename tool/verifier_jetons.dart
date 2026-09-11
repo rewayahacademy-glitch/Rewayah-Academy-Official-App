@@ -161,14 +161,8 @@ final RegExp _scaffoldConstructeur = RegExp(r'\bScaffold\s*\(');
 const Set<String> _ecransEnAttenteDeCoquille = <String>{
   // Lot R0 fait le 11 septembre 2026 : les cinq ecrans du tunnel d'entree
   // passent par PageShell, retires de cette liste.
-  // Lot R4, le reste de l'existant, `08-catalogue-ecrans.md` section 5.
-  'features/creneaux/creneaux_page.dart',
-  'features/reglages_enfant/reglages_enfant_page.dart',
-  'features/disponibilites/disponibilites_page.dart',
-  'features/appareils/appareils_page.dart',
-  'features/appareils/appairage_page.dart',
-  'features/admin_dossiers/dossiers_page.dart',
-  'features/admin_demandes/demandes_page.dart',
+  // Lot R4 fait le 11 septembre 2026 : le reste de l'existant passe par
+  // PageShell, retire de cette liste. Le lot R est desormais complet.
 };
 
 /// Un tag de conformite (Bible V2 section 45) : une ligne de commentaire qui ne

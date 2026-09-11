@@ -9,11 +9,10 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/page_shell.dart';
 
 /// L'ajout d'un appareil : un QR grand format, le code en dessous, et le delai
 /// de validite qui s'ecoule.
@@ -81,82 +80,72 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final CodeAppairage? code = _code;
     final Duration restant = code?.restantA(_maintenant) ?? Duration.zero;
     final bool expire = code != null && restant == Duration.zero;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(metriques.marge),
-                children: <Widget>[
-                  Text(t.appareils.codeTitre, style: textes.headlineSmall),
-                  Ecart.vMd,
-                  Text(t.appareils.codeInstruction, style: textes.bodyMedium),
-                  Ecart.vXxl,
-                  if (code != null && !expire) ...<Widget>[
-                    _Qr(code: code.code, paire: palette.surfaceCanvas),
-                    Ecart.vXl,
-                    _CodeEnClair(code: code.code),
-                    Ecart.vLg,
-                    Semantics(
-                      liveRegion: true,
-                      child: Text(
-                        t.appareils.expireDans(temps: _mmss(restant)),
-                        textAlign: TextAlign.center,
-                        style: textes.bodyMedium,
-                      ),
-                    ),
-                  ] else if (expire) ...<Widget>[
-                    Text(
-                      t.appareils.expire,
-                      textAlign: TextAlign.center,
-                      style: palette.inkAlert.applyTo(
-                        textes.titleMedium ?? const TextStyle(),
-                      ),
-                    ),
-                    Ecart.vXl,
-                    ActionPrincipale(
-                      libelle: t.appareils.regenerer,
-                      onPress: () => unawaited(_demander()),
-                      enCours: _enCours,
-                    ),
-                  ] else if (_erreur != null) ...<Widget>[
-                    Text(
-                      _erreur!,
-                      textAlign: TextAlign.center,
-                      style: palette.inkAlert.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
-                      ),
-                    ),
-                    Ecart.vXl,
-                    ActionPrincipale(
-                      libelle: t.commun.reessayer,
-                      onPress: () => unawaited(_demander()),
-                      enCours: _enCours,
-                    ),
-                  ] else
-                    Center(child: Text(t.commun.chargement)),
-                ],
+    return PageShell(
+      titre: t.appareils.codeTitre,
+      // Reprise au lot R4 : le bouton de retour, jusque-la colle en bas a la
+      // main dans un `Padding` hors `Scaffold`, passe par la prise `actions:`
+      // de `PageShell` -- meme correction que les feuilles d'accueil du lot
+      // R0.
+      actions: ActionPrincipale(
+        libelle: t.commun.retour,
+        onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
+        niveau: NiveauAction.secondaire,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(t.appareils.codeInstruction, style: textes.bodyMedium),
+          Ecart.vXxl,
+          if (code != null && !expire) ...<Widget>[
+            _Qr(code: code.code, paire: palette.surfaceCanvas),
+            Ecart.vXl,
+            _CodeEnClair(code: code.code),
+            Ecart.vLg,
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                t.appareils.expireDans(temps: _mmss(restant)),
+                textAlign: TextAlign.center,
+                style: textes.bodyMedium,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(metriques.marge),
-              child: ActionPrincipale(
-                libelle: t.commun.retour,
-                onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
-                niveau: NiveauAction.secondaire,
+          ] else if (expire) ...<Widget>[
+            Text(
+              t.appareils.expire,
+              textAlign: TextAlign.center,
+              style: palette.inkAlert.applyTo(
+                textes.titleMedium ?? const TextStyle(),
               ),
             ),
-          ],
-        ),
+            Ecart.vXl,
+            ActionPrincipale(
+              libelle: t.appareils.regenerer,
+              onPress: () => unawaited(_demander()),
+              enCours: _enCours,
+            ),
+          ] else if (_erreur != null) ...<Widget>[
+            Text(
+              _erreur!,
+              textAlign: TextAlign.center,
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vXl,
+            ActionPrincipale(
+              libelle: t.commun.reessayer,
+              onPress: () => unawaited(_demander()),
+              enCours: _enCours,
+            ),
+          ] else
+            Center(child: Text(t.commun.chargement)),
+        ],
       ),
     );
   }

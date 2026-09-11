@@ -27,6 +27,16 @@
 > cette semaine.
 > Dernier commit **poussé** de `main` : celui de T3 (`1eb0d30`).
 > `git log --oneline -3` doit correspondre exactement à `origin/main`.
+> **Le lot R4** (reste de l'existant : `TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`,
+> `ADM-02`, `ADM-06`, et leurs deux sous-écrans) est codé et documenté à la
+> suite de B0/T2/R0/T3, section 0 septies. `flutter test` et
+> `dart run tool/verifier_jetons.dart` restent bloqués par le même problème
+> de magasin de certificats — **cinquième confirmation** consécutive, pas
+> une nouvelle information. `dart analyze --fatal-infos` reste vert. **Commité
+> localement** (`180cc86`), **pas encore poussé** au moment où cette ligne est
+> écrite : la décision revient à l'opérateur, comme pour T2/R0/T3. Statut réel
+> à confirmer avec `git log --oneline` et `git status` plutôt qu'avec cette
+> ligne.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -315,6 +325,88 @@ main hors Dart avant d'être écrites dans le code (même formule WCAG que
 T2 et R0, voir l'avertissement en tête de fichier. Le rendu sombre en
 production reste donc à vérifier visuellement dès que possible.
 
+### 0 septies. Le lot R4 : le reste de l'existant, reprise de coquille
+
+Dernier sous-lot du lot **R** (`08-catalogue-ecrans.md` section 5) : les six
+derniers écrans construits mais pas encore repris par le langage T/C, plus
+leurs deux sous-écrans. Le lot **R** est désormais complet. Fiches complètes
+dans `08-catalogue-ecrans.md` section 6.
+
+**Ce qui a changé, écran par écran :**
+
+1. **`TUT-02`** (`appareils_page.dart`) : `Scaffold` + `OfflineBanner` +
+   `RefreshIndicator` + `ListView` → `PageShell`. Dette assumée : le
+   tirage-pour-rafraîchir disparaît, cinquième occurrence après `TUT-00b`,
+   `TUT-01`, `ENS-02` et `ADM-01`, même raison à chaque fois (`RefreshIndicator`
+   a besoin d'un `Expanded` direct, `PageShell` ne le garantit pas à son
+   `child`).
+2. **`TUT-02/a`** (`ajouter_enfant_page.dart`) : aucun changement de code, il
+   passait déjà par `PageParcours`. Seule sa fiche manquait (même cas que
+   `TUT-00c` au lot R0).
+3. **`TUT-02/b`** (`appairage_page.dart`) : `Scaffold` + `ListView` →
+   `PageShell` ; le bouton de retour, collé en bas à la main dans un `Padding`
+   hors `Scaffold`, passe par la prise `actions:` de `PageShell` — même
+   correction que les feuilles d'accueil du lot R0.
+4. **`TUT-04`** (`disponibilites_page.dart`) : `Scaffold` + `ListView` →
+   `PageShell`. Pas de tirage-pour-rafraîchir à perdre ici, il n'y en avait
+   pas.
+5. **`TUT-05`** (`reglages_enfant_page.dart`) : `Scaffold` + `ListView` →
+   `PageShell`. `FeuilleDemandeTuteur` (feuille de bas d'écran) garde son
+   `Padding` manuel dupliqué — dette déjà connue depuis le lot B0 (section
+   0 ter, point 3), pas traitée ici, hors scope.
+6. **`ENS-06`** (`creneaux_page.dart`) : **l'écart mesuré au registre est
+   corrigé.** L'écran montait un `DefaultTabController` + `Scaffold` propres,
+   `TabBar`/`TabBarView` fixes quel que soit le gabarit. Désormais : sur
+   mobile, deux onglets restent (`TabBar` dans `PageShell.entete`) mais
+   **sans `TabBarView`** — un `TabBarView` s'appuie sur un `PageView`, qui
+   exige une hauteur bornée, et `PageShell` ne borne jamais la hauteur de son
+   `child` (c'est la page entière qui défile). Le panneau bascule donc
+   directement sur l'index du `TabController`, au prix du balayage au doigt
+   entre onglets. Sur tablette, les deux panneaux s'empilent sans onglet ;
+   sur desktop, ils sont côte à côte dans une `Row`. `CreneauxPage` passe de
+   `ConsumerWidget` à `StatelessWidget`. Les deux onglets internes passent de
+   `ListView` à `Column`, même transformation que les autres écrans de ce
+   lot.
+7. **`ADM-02`** (`dossiers_page.dart`) : `Scaffold` + `switch(AsyncValue)` →
+   `PageShell` enveloppant le même `switch`. La zone de verdict (checklist
+   puis approuver/refuser) reste délibérément dans le corps défilant, **pas**
+   dans `PageShell.actions` : la séquence constat→checklist→verdict doit
+   rester lisible de haut en bas en une seule colonne (invariant déjà noté
+   `08-catalogue-ecrans.md` section 4, « Constat et jugement séparés »),
+   contrairement aux écrans à action unique du lot R0.
+8. **`ADM-06`** (`demandes_page.dart`) : même transformation et même raison
+   qu'`ADM-02` pour garder le verdict dans le corps. `FeuilleRegle` (feuille
+   de bas d'écran) garde aussi son `Padding` manuel dupliqué, même dette que
+   `TUT-05`.
+
+`tool/verifier_jetons.dart` : les sept entrées R4 de
+`_ecransEnAttenteDeCoquille` (règle `page-sans-coquille`) sont retirées, le
+set est désormais vide — le lot R est complet, plus aucun écran de
+`lib/features/` n'est exempté de cette règle.
+
+`docs/design/07-catalogue-composants.md` section 1 : la ligne `GrilleSemaine`
+disait à tort « sélection en `surfacePrimary` » ; corrigée pour décrire les
+vrais états du code (case vide `surfaceSunken`, posée `washAccent`,
+survol/pression filet `borderStrong`, jamais d'aplat plein).
+
+**Deux écarts restent ouverts, non traités par ce lot** : les six compteurs
+contre cinq annoncés et l'ordre signaux/chiffres d'`ADM-01`/`ADM-06`
+(`08-catalogue-ecrans.md` section 6, fiche `ADM-01`, lignes ~608-620). Ce
+sont des questions de conception sur un écran déjà repris au lot R3, pas des
+écrans de R4 : elles restent à trancher, aucune décision n'a été prise ici.
+
+**Vérification tentée, pas obtenue** — cinquième confirmation consécutive du
+même blocage : `flutter test` et `dart run tool/verifier_jetons.dart`
+échouent toujours avec `CERTIFICATE_VERIFY_FAILED` sur le hook natif de
+`package:sqlite3`. Retenté une fois cette session, comme prescrit, pas plus —
+la cause est établie. `dart analyze --fatal-infos` est vert sur l'ensemble du
+dépôt après ce lot.
+
+**Commit et push** : commité localement (`180cc86`), pas encore poussé au
+moment où cette section est écrite — décision de l'opérateur, comme pour
+T2/R0/T3. Voir l'état réel dans `git log --oneline` plutôt que dans ce
+paragraphe.
+
 ## 1. Le projet actif est celui-ci
 
 **Dépôt de travail : `D:\RA _APP\RA -OFFICIAL-APP`** — Rewayah Academy,
@@ -421,7 +513,7 @@ par commit, comme toujours.
 | :-- | :--- | :--- | :-: |
 | **T** | Jetons, thème, typographie, mouvement. Palette crème et rampes, trois bordures, rayons, ombres, crénage, durées et courbes, échelle d'espacement étendue, et les nouvelles règles de `verifier_jetons.dart` | aucun repris, 29 renommés | **fait** |
 | **C** | Les douze composants P0 de `07-catalogue-composants.md`, plus la reprise des onze existants, plus la galerie qui montre tous leurs états. Audit de fin de lot en six tranches, 8 constats corrigés. Compte rendu : `etape-2-journal.md`, « Refonte UX/UI, lot C » | aucun | **fait** |
-| **R** | Reprise dans cet ordre : `ELV-02`, puis `TUT-01`, puis `ENS-02` et `ADM-01`, puis le reste | quatre d'abord | **à faire, commencer ici** |
+| **R** | Reprise dans cet ordre : `ELV-02`, puis `TUT-01`, puis `ENS-02` et `ADM-01`, puis le reste | quatre d'abord | **fait le 11 septembre 2026** (R1 à R4, y compris R0 hors ordre initial) |
 
 **Le lot T se faisait en premier et entièrement**, puis le lot C : reprendre un
 écran avant les jetons puis avant les composants aurait obligé à le reprendre
@@ -591,34 +683,38 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — combler la dette de vérification, PUIS le lot R4
+## 9. Prompt de reprise — combler la dette de vérification, PUIS le lot A1
 
-À copier tel quel pour démarrer la prochaine session. **B0, T2, R0 et T3 sont
-tous poussés sur `main`** (`1eb0d30`). Aucun des quatre lots n'a été confirmé
-par `flutter test` ni `tool/verifier_jetons.dart` sur ce poste — quatre
+À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3 et R4
+sont codés** (R4 commité localement en `180cc86`, push encore à confirmer —
+voir `git log --oneline` et `git status` plutôt que ce paragraphe). Le lot
+**R** est désormais complet. Aucun des cinq lots n'a été confirmé par
+`flutter test` ni `tool/verifier_jetons.dart` sur ce poste — cinq
 confirmations consécutives du même blocage TLS, détail en tête de fichier et
-section 0 sexies.
+section 0 septies.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater, 0 quinquies
-et 0 sexies), puis decisions.md ADR-019 et l'ecart 23.
+Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 septies),
+puis decisions.md ADR-019 et l'ecart 23.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0, T2, R0 et T3 sont tous EN
-PRODUCTION (commit 1eb0d30). Aucun n'a ete confirme par flutter test sur ce
-poste, quatre sessions de suite :
-  1. git log --oneline -5, pour confirmer l'etat exact (doit correspondre a
-     origin/main, rien en avance).
-  2. dart analyze --fatal-infos (deja vert a la cloture des quatre lots).
-  3. flutter test -- QUATRE sessions de suite ne l'ont JAMAIS obtenu (le
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0, T2, R0, T3 et R4 sont codes
+(confirme leur etat reel de commit/push avec git log --oneline -5 et git
+status, l'en-tete de HANDOFF.md peut etre legerement en retard sur le depot
+reel). Aucun n'a ete confirme par flutter test sur ce poste, cinq sessions de
+suite :
+  1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
+     origin/main.
+  2. dart analyze --fatal-infos (deja vert a la cloture des cinq lots).
+  3. flutter test -- CINQ sessions de suite ne l'ont JAMAIS obtenu (le
      poste bloque github.com en TLS pour le hook package:sqlite3,
      CERTIFICATE_VERIFY_FAILED ; curl.exe echoue aussi sur la meme URL avec
      SEC_E_UNTRUSTED_ROOT, independamment de Dart -- confirmation
      independante que c'est le magasin de certificats du poste). Reessaie
      UNE fois, pas plus : la cause est deja etablie avec certitude, boucler
-     dessus une cinquieme fois n'apporterait aucune preuve nouvelle. Si ca
+     dessus une sixieme fois n'apporterait aucune preuve nouvelle. Si ca
      bloque encore de la meme facon, continue directement a l'etape 2 -- ce
      n'est plus une question ouverte, c'est un fait du poste. Note :
      `git push` fonctionne malgre ce blocage (chaine de certificats
@@ -626,27 +722,31 @@ poste, quatre sessions de suite :
      for Windows) : ce n'est PAS une preuve que le blocage general est leve.
   4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne.
   5. Si les deux passent enfin (poste repare, ou lance ailleurs) : ecrase
-     l'avertissement en tete de HANDOFF.md par les vrais chiffres (rien a
-     pousser, B0/T2/R0/T3 sont deja tous en production), puis continue a
-     l'etape 2. Si l'un des deux echoue pour une VRAIE raison (pas le blocage
-     reseau) : c'est une regression EN PRODUCTION sur l'un des quatre lots,
-     la signaler immediatement a l'operateur avant toute chose.
+     l'avertissement en tete de HANDOFF.md par les vrais chiffres, puis
+     continue a l'etape 2. Si l'un des deux echoue pour une VRAIE raison (pas
+     le blocage reseau) : c'est une regression EN PRODUCTION possible sur
+     l'un des cinq lots, la signaler immediatement a l'operateur avant toute
+     chose.
 
-ETAPE 2, seulement apres l'etape 1 : LOT R4 -- le reste de l'existant
-(TUT-02, TUT-04, TUT-05, ENS-06, ADM-02, ADM-06), Bible V2, ADR-019. C'est le
-dernier sous-lot du lot R (voir HANDOFF.md section 4 bis pour ce que R4
-trouvera en arrivant : le langage T/C deja porte par les quatre premiers
-ecrans et NavShell, deux ecarts a trancher dans les fiches ENS-02/ADM-01, deux
-imprecisions de 07-catalogue-composants.md a trier).
+ETAPE 2, seulement apres l'etape 1 : LOT A1 -- accessibilite, RTL et clavier.
+Cette section ne connait PAS le detail de ce que "lot A1" recouvre au-dela de
+son nom : NE PAS EN INVENTER LE CONTENU. Avant de coder :
+  1. Chercher dans docs/design/ (notamment 02-regles-ux.md, 05-regles-
+     responsive.md, 07-catalogue-composants.md, 08-catalogue-ecrans.md) toute
+     mention d'accessibilite, de RTL (lecture de droite a gauche en arabe,
+     deja citee ecran par ecran dans plusieurs fiches section 6) ou de
+     navigation clavier -- ces mentions eparses sont probablement la matiere
+     du lot A1, jamais rassemblees a ce jour.
+  2. Chercher un lot A1 deja nomme dans decisions.md (registre de fin de
+     fichier) ou dans PROGRESS.md.
+  3. Si rien de precis n'en ressort au-dela de fragments epars : DEMANDER A
+     L'OPERATEUR de preciser le perimetre du lot A1 avant d'ecrire le moindre
+     code -- ne pas improviser une specification a sa place, meme partielle.
 
-Avant de coder : lire 08-catalogue-ecrans.md pour les six fiches concernees,
-et confirmer qu'aucune n'a change de perimetre depuis leur redaction.
-
-Fin de lot R4 : dart analyze --fatal-infos, flutter test, dart run
-tool/verifier_jetons.dart, mise a jour de HANDOFF.md (nouvelle section,
-en-tete) et de decisions.md si les deux ecarts trouves y sont tranches,
+Fin de lot A1 (une fois son perimetre confirme) : dart analyze --fatal-infos,
+flutter test, dart run tool/verifier_jetons.dart, mise a jour de HANDOFF.md
+(nouvelle section, en-tete) et de decisions.md si des ecarts y sont tranches,
 commit. Ne pousse que si les tests tournent et passent reellement -- decision
 qui revient a l'operateur si les tests restent bloques par le poste. Un lot
-par session. Ignore la branche refactor-ui-lavender. Termine par le prompt de
-reprise du lot A1 (accessibilite, RTL et clavier).
+par session. Ignore la branche refactor-ui-lavender.
 ```
