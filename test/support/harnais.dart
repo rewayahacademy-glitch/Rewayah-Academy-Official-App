@@ -7,9 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
+import 'package:rewayah_academy/core/appairage/profils_locaux.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
+import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
@@ -666,4 +669,103 @@ class FauxSelecteurFichier implements SelecteurFichier {
 
   @override
   Future<PieceAEnvoyer?> choisirPiece(TypePiece type) async => reponse;
+}
+
+/// Les profils locaux d'un appareil, en memoire.
+///
+/// `ELV-01` n'avait aucun test de widget avant le lot A1 : la connexion de
+/// l'eleve ne passe par aucun provider Riverpod « service », mais par trois
+/// depots locaux (profils, coffre, appairage). Sans ces trois faux, l'ecran ne
+/// peut pas se monter en test, faute de plateforme pour `flutter_secure_storage`
+/// et de base Drift reelle.
+class FauxProfilsLocaux implements ProfilsLocaux {
+  /// Les profils connus de cet appareil.
+  List<ProfilLocal> profils = const <ProfilLocal>[];
+
+  @override
+  Future<List<ProfilLocal>> lister() async => profils;
+
+  @override
+  Future<void> enregistrer(ProfilLocal profil) async {
+    profils = <ProfilLocal>[
+      for (final ProfilLocal p in profils)
+        if (p.id != profil.id) p,
+      profil,
+    ];
+  }
+
+  @override
+  Future<void> oublier(String profilId) async {
+    profils = profils.where((ProfilLocal p) => p.id != profilId).toList();
+  }
+}
+
+/// Le coffre securise de l'appareil, en memoire.
+class FauxStockageSecurise implements StockageSecurise {
+  /// Jetons d'appareil, par profil.
+  final Map<String, String> jetons = <String, String>{};
+
+  /// Empreintes de code personnel, par profil.
+  final Map<String, String> empreintes = <String, String>{};
+
+  @override
+  Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
+
+  @override
+  Future<void> enregistrerJetonAppareil(
+    String profilId,
+    String jeton,
+  ) async {
+    jetons[profilId] = jeton;
+  }
+
+  @override
+  Future<void> oublierAppareil(String profilId) async {
+    jetons.remove(profilId);
+  }
+
+  @override
+  Future<String?> empreintePin(String profilId) async =>
+      empreintes[profilId];
+
+  @override
+  Future<void> enregistrerEmpreintePin(
+    String profilId,
+    String empreinte,
+  ) async {
+    empreintes[profilId] = empreinte;
+  }
+
+  @override
+  Future<void> effacerEmpreintePin(String profilId) async {
+    empreintes.remove(profilId);
+  }
+
+  @override
+  Future<String> empreinteAppareil() async => 'appareil-test';
+}
+
+/// Le service d'appairage de l'enfant, en memoire.
+class FauxServiceEnfant implements ServiceEnfant {
+  /// Ce que le prochain appairage rendra.
+  AppairageReussi reponse = const AppairageReussi(
+    profilId: 'e1',
+    prenom: 'Khadija',
+    jetonAppareil: 'jeton-test',
+  );
+
+  /// Le nombre d'ouvertures de session reussies.
+  int sessionsOuvertes = 0;
+
+  @override
+  Future<AppairageReussi> appairer({
+    required String code,
+    required String empreinteAppareil,
+    required String plateforme,
+  }) async => reponse;
+
+  @override
+  Future<void> ouvrirSession(String jetonAppareil) async {
+    sessionsOuvertes++;
+  }
 }

@@ -1,11 +1,14 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026, quatrième session**. Les lots
+> Dernière passation : **11 septembre 2026, cinquième session**. Les lots
 > **B0**, **T2** (durcir le langage), **R0** (tunnel d'entrée), **T3** (mode
-> sombre) et **R4** (le reste de l'existant, section 0 septies) sont tous les
-> cinq **poussés sur `main`** (`76867a7`). Le lot **R** est désormais complet.
+> sombre), **R4** (le reste de l'existant, section 0 septies) et **A1**
+> (accessibilité, RTL et clavier prouvés par des tests, section 0 octies)
+> sont codés. B0 à R4 sont **poussés sur `main`** (`76867a7`) ; **A1 ne l'est
+> pas encore**, en attente de la même décision opérateur que les quatre
+> précédents (voir section 0 octies). Le lot **R** est désormais complet.
 > **Ni `flutter test` ni `tool/verifier_jetons.dart` n'ont jamais pu tourner
-> sur ce poste**, pour aucun des cinq : c'est la **cinquième confirmation
+> sur ce poste**, pour aucun des six lots : c'est la **sixième confirmation
 > consécutive** du même blocage TLS de `github.com` (hook `package:sqlite3`),
 > `CERTIFICATE_VERIFY_FAILED` côté Dart et `SEC_E_UNTRUSTED_ROOT` côté
 > `curl.exe`, preuve indépendante que c'est le magasin de certificats du
@@ -14,26 +17,31 @@
 > l'opérateur** (accord donné une première fois pour T2/R0 « pour voir en
 > direct », reconduit pour T3, puis reconduit une nouvelle fois pour R4 quand
 > la question a été reposée) : `dart analyze --fatal-infos` est la seule
-> preuve automatique obtenue pour les cinq lots, complétée par une
+> preuve automatique obtenue pour les cinq lots poussés, complétée par une
 > vérification visuelle manuelle (`flutter build web`) pour R0 (rendu clair de
 > `TUT-00`) et pour T3 (rendu clair seulement, le rendu sombre n'a pas pu être
 > vérifié visuellement — détail sections 0 quinquies et 0 sexies). R4 n'a reçu
 > aucune vérification visuelle de substitution (l'opérateur avait déjà l'app
-> ouverte de son côté).
+> ouverte de son côté). **A1 n'ajoute aucun écran** (seulement des tests, et
+> trois faux dans `harnais.dart`) : pas de vérification visuelle de
+> substitution nécessaire pour ce lot, `dart analyze --fatal-infos` est la
+> seule preuve possible sur ce poste.
 > **Priorité de la prochaine session, avant tout code neuf** : faire tourner
 > `flutter test` et `dart run tool/verifier_jetons.dart` sur ce qui est
-> maintenant en production (T2, R0, T3, R4), pour combler cette dette de
-> vérification qui s'accumule lot après lot — soit en réparant le magasin de
-> certificats du poste, soit sur un autre poste, soit avec l'accord explicite
-> de l'opérateur pour continuer sans. Ne pas boucler sur le même
-> contournement TLS déjà refusé deux fois par le classificateur auto-mode
-> cette semaine.
-> Dernier commit **poussé** de `main` : celui de R4 (`76867a7`).
-> `git log --oneline -3` doit correspondre exactement à `origin/main`.
+> maintenant en production (T2, R0, T3, R4) et sur A1 une fois poussé, pour
+> combler cette dette de vérification qui s'accumule lot après lot — soit en
+> réparant le magasin de certificats du poste, soit sur un autre poste, soit
+> avec l'accord explicite de l'opérateur pour continuer sans. Ne pas boucler
+> sur le même contournement TLS déjà refusé deux fois par le classificateur
+> auto-mode cette semaine.
+> Dernier commit **poussé** de `main` : celui de R4 (`76867a7`). A1 est codé
+> mais pas commité/poussé au moment d'écrire cette ligne.
+> `git log --oneline -3` doit correspondre exactement à `origin/main` pour
+> tout ce qui précède A1.
 > Détail du lot R4 : section 0 septies. Deux écarts de conception restent
 > ouverts et non tranchés, sur `ADM-01`/`ADM-06` (six compteurs contre cinq
 > annoncés, ordre signaux/chiffres) — pas des écrans de R4, voir fiche `ADM-01`
-> section 6 de `08-catalogue-ecrans.md`.
+> section 6 de `08-catalogue-ecrans.md`. Détail du lot A1 : section 0 octies.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -403,6 +411,84 @@ dépôt après ce lot.
 l'opérateur — même raison que T2/R0/T3, voir l'avertissement en tête de
 fichier. Confirmé par `git fetch origin main` : `origin/main` correspond.
 
+### 0 octies. Le lot A1 : accessibilité, RTL et clavier prouvés par des tests
+
+Dernier lot de la liste ADR-019 avant N0 (specs étape 5). Écart 24 du
+registre de `decisions.md`, fermé.
+
+**Constat inexact corrigé, avant de dire ce qui a été fait** :
+`decisions.md` écart 24 (écrit au lot B0) affirmait « aucun test de rendu
+arabe ». C'est faux : `test/widgets/catalogue_galerie_test.dart` teste déjà le
+RTL et le 200 % depuis le lot C (7 septembre), sur les composants isolés de la
+galerie. L'écart réel n'était donc pas « rien n'existe », mais une couverture
+incomplète : la galerie ne vérifie que l'absence d'exception (pas que le
+miroir RTL est *comportementalement* correct), et ne porte que sur les
+composants isolés, jamais sur un écran métier réel avec sa propre mise en
+page.
+
+**Ce que ce lot ajoute, trois fichiers neufs plus une extension du
+harnais :**
+
+1. **`test/icons/app_icons_rtl_test.dart`** : preuve comportementale, pas
+   seulement « ne lève pas ». `AppIcons.chevron` porte `matchTextDirection`
+   sur ses deux graisses ; `AppIcons.suivant`, même dessin, ne le porte pas
+   (c'est la progression du temps, pas une ligne qui mène ailleurs,
+   `06-accessibilite.md` section 5) ; les icônes de média (micro, caméra,
+   lecture/pause) ne se miroitent jamais. Une régression qui retirerait
+   `matchTextDirection` de `chevron` ne lèverait toujours aucune exception :
+   sans ce test, elle serait passée inaperçue indéfiniment.
+2. **`test/accessibilite/rtl_echelle_texte_ecrans_test.dart`** : les
+   **dix-neuf écrans réels** du catalogue (dix-huit fichiers,
+   `signature_page.dart` en portant deux : `AccusePage` et `ContratPage`),
+   montés avec leurs propres services factices, rejoués en RTL puis à 200 %
+   de taille de texte, sans qu'aucune exception ne soit levée. Les cinq
+   écrans marqués « à construire » ou « hors MVP-0 » au catalogue n'existent
+   pas encore dans le code : rien à monter avant qu'ils soient écrits.
+   **Découverte au passage** : `ELV-01` (`EleveConnexionPage`) n'avait
+   **aucun test de widget** dans tout le dépôt, ni ici ni ailleurs. Trois faux
+   ajoutés à `harnais.dart` pour le rendre montable en test :
+   `FauxProfilsLocaux`, `FauxStockageSecurise`, `FauxServiceEnfant`.
+3. **`test/accessibilite/clavier_test.dart`** : trois preuves distinctes.
+   - **Ordre de focus** : `Tab` fait passer le focus du champ prénom au champ
+     nom sur la page identité de `TUT-00c`, dans l'ordre visuel — pas un ordre
+     qui daterait de la construction.
+   - **Focus visible** : `app_theme.dart` câble bien `focusedBorder` sur
+     `borderStrong` à 3px (lot T2), distinct du repos et du désactivé. C'est
+     une vérification du câblage du thème, pas du rendu pixel : creuser plus
+     loin (l'`InputDecorator` réellement peint) exigerait d'inspecter des
+     objets de rendu internes à Flutter, jugé disproportionné pour la preuve
+     recherchée ici.
+   - **Échap ferme une surface modale** : `lib/core/widgets/app_bottom_sheet.dart`
+     documentait déjà ce comportement comme automatique (« rien à câbler »),
+     mais rien ne le rejouait. `AppBottomSheet.ouvrir` est le seul point
+     d'entrée des surfaces modales du produit : le prouver une fois à ce
+     niveau couvre transitivement `ConfirmDestructive`, `FeuilleDemandeTuteur`
+     et `FeuilleRegle`, qui n'en sont que des contenus. Un test dédié confirme
+     en plus que `ConfirmDestructive.demander` rend bien `false` sur Échap,
+     jamais `true`.
+
+**Non fait, et pourquoi** : les cinq écrans « à construire »/« hors MVP-0 »
+(`ADM-05`, `CTR-01`, `ELV-03`/`ENS-03`/`CTR-02`, `ELV-04`, `ENS-04`, `TUT-06`,
+`ADM-04`, `ENS-05`, `CPT-01`) ne sont pas testés : ils n'existent pas encore
+dans le code, rien n'aurait pu être monté. Le rendu pixel du focus (au-delà du
+câblage du thème) n'est pas vérifié : inspecter l'`InputDecorator` peint
+exigerait de creuser des objets de rendu internes, jugé disproportionné ici.
+
+**Vérification tentée, pas obtenue** — sixième confirmation consécutive du
+même blocage : `flutter test` et `dart run tool/verifier_jetons.dart`
+échouent toujours avec `CERTIFICATE_VERIFY_FAILED` sur le hook natif de
+`package:sqlite3`. Retenté une fois cette session, comme prescrit, pas plus.
+`dart analyze --fatal-infos` est vert sur l'ensemble du dépôt après ce lot.
+`tool/verifier_jetons.dart` ne scanne que `lib/` (vérifié en lisant son code,
+`Directory('${racine.path}/lib')` dans `main()`) : les fichiers de ce lot,
+tous sous `test/`, ne peuvent de toute façon déclencher aucune de ses règles.
+
+**Commit et push** : **codé, pas encore commité au moment d'écrire cette
+section.** Contrairement aux cinq lots précédents, la décision de pousser
+malgré l'absence de vérification par `flutter test` n'a pas encore été
+redemandée à l'opérateur pour ce lot précis — à faire avant de pousser, même
+schéma que T2/R0/T3/R4.
+
 ## 1. Le projet actif est celui-ci
 
 **Dépôt de travail : `D:\RA _APP\RA -OFFICIAL-APP`** — Rewayah Academy,
@@ -679,69 +765,76 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — combler la dette de vérification, PUIS le lot A1
+## 9. Prompt de reprise — décider du push d'A1, PUIS le lot N0
 
 À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3 et R4
-sont tous les cinq poussés sur `main`** (`76867a7`). Le lot **R** est
-désormais complet. Aucun des cinq lots n'a été confirmé par
-`flutter test` ni `tool/verifier_jetons.dart` sur ce poste — cinq
-confirmations consécutives du même blocage TLS, détail en tête de fichier et
+sont poussés sur `main`** (`76867a7`). **A1 (accessibilité, RTL et clavier
+prouvés par des tests) est codé mais pas encore poussé** — trois fichiers de
+test neufs, plus trois faux ajoutés à `harnais.dart`, aucun écran touché,
+détail section 0 octies. Aucun des six lots n'a été confirmé par
+`flutter test` ni `tool/verifier_jetons.dart` sur ce poste — sixième
+confirmation consécutive du même blocage TLS, détail en tête de fichier et
 section 0 septies.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 septies),
-puis decisions.md ADR-019 et l'ecart 23.
+Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 octies),
+puis decisions.md ADR-019 et l'ecart 24.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0, T2, R0, T3 et R4 sont codes
-(confirme leur etat reel de commit/push avec git log --oneline -5 et git
-status, l'en-tete de HANDOFF.md peut etre legerement en retard sur le depot
-reel). Aucun n'a ete confirme par flutter test sur ce poste, cinq sessions de
-suite :
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a R4 sont pousses, A1 est code
+mais pas pousse (confirme l'etat reel de commit/push avec git log --oneline -5
+et git status, l'en-tete de HANDOFF.md peut etre legerement en retard sur le
+depot reel).
   1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
-     origin/main.
-  2. dart analyze --fatal-infos (deja vert a la cloture des cinq lots).
-  3. flutter test -- CINQ sessions de suite ne l'ont JAMAIS obtenu (le
+     origin/main et l'etat non commite d'A1.
+  2. dart analyze --fatal-infos (deja vert a la cloture des six lots).
+  3. flutter test -- SIX sessions de suite ne l'ont JAMAIS obtenu (le
      poste bloque github.com en TLS pour le hook package:sqlite3,
      CERTIFICATE_VERIFY_FAILED ; curl.exe echoue aussi sur la meme URL avec
      SEC_E_UNTRUSTED_ROOT, independamment de Dart -- confirmation
      independante que c'est le magasin de certificats du poste). Reessaie
      UNE fois, pas plus : la cause est deja etablie avec certitude, boucler
-     dessus une sixieme fois n'apporterait aucune preuve nouvelle. Si ca
+     dessus une septieme fois n'apporterait aucune preuve nouvelle. Si ca
      bloque encore de la meme facon, continue directement a l'etape 2 -- ce
      n'est plus une question ouverte, c'est un fait du poste. Note :
      `git push` fonctionne malgre ce blocage (chaine de certificats
      differente de celle de Dart/curl.exe, probablement le cacert.pem de Git
      for Windows) : ce n'est PAS une preuve que le blocage general est leve.
-  4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne.
+  4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne (mais
+     ce lot n'ajoute rien sous lib/, donc rien de nouveau a y craindre).
   5. Si les deux passent enfin (poste repare, ou lance ailleurs) : ecrase
-     l'avertissement en tete de HANDOFF.md par les vrais chiffres, puis
-     continue a l'etape 2. Si l'un des deux echoue pour une VRAIE raison (pas
-     le blocage reseau) : c'est une regression EN PRODUCTION possible sur
-     l'un des cinq lots, la signaler immediatement a l'operateur avant toute
-     chose.
+     l'avertissement en tete de HANDOFF.md par les vrais chiffres. Si l'un des
+     deux echoue pour une VRAIE raison (pas le blocage reseau) sur les lots
+     deja en production (B0 a R4) : regression EN PRODUCTION possible, la
+     signaler immediatement a l'operateur. Si un test d'A1 echoue pour une
+     vraie raison (pas le blocage reseau) : c'est un defaut du lot A1
+     lui-meme (un montage d'ecran incorrect dans
+     test/accessibilite/rtl_echelle_texte_ecrans_test.dart, par exemple), pas
+     une regression en production puisque rien n'est pousse -- corrige-le
+     avant de demander le push.
+  6. DEMANDER A L'OPERATEUR s'il faut pousser A1 malgre l'absence de
+     verification par flutter test -- meme decision que pour T2/R0/T3/R4,
+     jamais implicite.
 
-ETAPE 2, seulement apres l'etape 1 : LOT A1 -- accessibilite, RTL et clavier.
-Cette section ne connait PAS le detail de ce que "lot A1" recouvre au-dela de
-son nom : NE PAS EN INVENTER LE CONTENU. Avant de coder :
-  1. Chercher dans docs/design/ (notamment 02-regles-ux.md, 05-regles-
-     responsive.md, 07-catalogue-composants.md, 08-catalogue-ecrans.md) toute
-     mention d'accessibilite, de RTL (lecture de droite a gauche en arabe,
-     deja citee ecran par ecran dans plusieurs fiches section 6) ou de
-     navigation clavier -- ces mentions eparses sont probablement la matiere
-     du lot A1, jamais rassemblees a ce jour.
-  2. Chercher un lot A1 deja nomme dans decisions.md (registre de fin de
-     fichier) ou dans PROGRESS.md.
+ETAPE 2, seulement apres l'etape 1 : LOT N0 -- specs de l'etape 5 (ADR-020,
+Coran structure, machine a etats de presence). Lot documentaire, aucun ecran
+ne se code ici. Cette section ne connait PAS le detail de ce que "lot N0"
+recouvre au-dela de son nom : NE PAS EN INVENTER LE CONTENU. Avant d'ecrire
+quoi que ce soit :
+  1. Chercher dans docs/design/08-catalogue-ecrans.md les ecrans marques
+     "a construire, etape 5" (ELV-03, ENS-03, CTR-02) et section 0.19-32 du
+     resume README.md (Bible V2 non construite, specifiee ici).
+  2. Chercher "N0", "ADR-020" et "Coran structure" dans decisions.md
+     (registre de fin de fichier) et PROGRESS.md.
   3. Si rien de precis n'en ressort au-dela de fragments epars : DEMANDER A
-     L'OPERATEUR de preciser le perimetre du lot A1 avant d'ecrire le moindre
-     code -- ne pas improviser une specification a sa place, meme partielle.
+     L'OPERATEUR de preciser le perimetre du lot N0 avant d'ecrire le moindre
+     document -- ne pas improviser une specification a sa place, meme
+     partielle.
 
-Fin de lot A1 (une fois son perimetre confirme) : dart analyze --fatal-infos,
-flutter test, dart run tool/verifier_jetons.dart, mise a jour de HANDOFF.md
+Fin de lot N0 (une fois son perimetre confirme) : mise a jour de HANDOFF.md
 (nouvelle section, en-tete) et de decisions.md si des ecarts y sont tranches,
-commit. Ne pousse que si les tests tournent et passent reellement -- decision
-qui revient a l'operateur si les tests restent bloques par le poste. Un lot
-par session. Ignore la branche refactor-ui-lavender.
+commit, decision de push a l'operateur si des tests restent bloques par le
+poste. Un lot par session. Ignore la branche refactor-ui-lavender.
 ```

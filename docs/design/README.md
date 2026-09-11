@@ -113,8 +113,8 @@ ferme.
 | §12 dix états d'interaction | Fait, galerie `lib/features/_dev/galerie/` |
 | §12, §52 ombres et bordures trop faibles | **Écart, fermé au lot T2** (cause n°3 mesurée du rejet du 11/09 : ombres à 5 %, trois surfaces dans 4 % de clarté) |
 | §5.1, §6, §52 tunnel d'entrée | **Écart, fermé au lot R0** (cause n°1 : `connexion_page.dart` monte un `Scaffold` nu, hors de tout lot de reprise) |
-| §14 RTL | **Partiellement tenu** (slang + `flutter_localizations`), **non outillé** avant B0 (`direction-non-geree`), **non testé** avant A1 |
-| §13.2, §13.4 text scaling et clavier | **Écart, fermé au lot A1** : aucun test avant ce lot |
+| §14 RTL | **Fait au lot A1.** Outillé depuis B0 (`direction-non-geree`) ; testé en comportement depuis A1, pas seulement au niveau composant (galerie, depuis le lot C) : `test/icons/app_icons_rtl_test.dart` (miroir des icônes) et `test/accessibilite/rtl_echelle_texte_ecrans_test.dart` (dix-neuf écrans réels) |
+| §13.2, §13.4 text scaling et clavier | **Fait au lot A1.** `test/accessibilite/rtl_echelle_texte_ecrans_test.dart` (200 % sur les dix-neuf écrans réels) et `test/accessibilite/clavier_test.dart` (ordre de focus, focus visible, Échap) |
 | §15 responsive par l'espace | Fait, `app_gabarit.dart` seul fichier autorisé à comparer une largeur |
 | §16 motion | Fait, `app_mouvement.dart` |
 | §18 empty/loading/error/offline | Fait, exigé par `lib/CLAUDE.md` |
@@ -219,8 +219,8 @@ les lots B0, T2, R0, T3, A1 et N0 insérés avant la suite. L'ordre complet :
 [fait] Lot T2 : durcir le langage (ombres, bordures, bouton désactivé)
 [fait] Lot R0 : tunnel d'entrée (zone Accès du catalogue 08)
 [fait] Lot T3 : mode sombre (§7.3)                    → app_palette.dart, app_theme.dart, app.dart
-[à faire] Lot R4 : reste de l'existant (TUT-02, TUT-04, TUT-05, ENS-06, ADM-02, ADM-06)
-[à faire] Lot A1 : accessibilité, RTL et clavier prouvés par des tests
+[fait] Lot R4 : reste de l'existant (TUT-02, TUT-04, TUT-05, ENS-06, ADM-02, ADM-06)
+[fait] Lot A1 : accessibilité, RTL et clavier prouvés par des tests
 [à faire] Lot N0 : specs de l'étape 5 (ADR-020, Coran structuré, machine à états de présence)
 [dette indépendante] Lot L10 : clôture de l'étape 4 (0006, PROGRESS.md, 17 scénarios)
 ```
