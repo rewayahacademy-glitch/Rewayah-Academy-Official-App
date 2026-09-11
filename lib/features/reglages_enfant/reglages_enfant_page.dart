@@ -207,7 +207,11 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             libelle: _enfant.cleAvatar == null
                 ? t.tuteur.reglages.photoAjouter
                 : t.tuteur.reglages.photoChanger,
-            niveau: NiveauAction.secondaire,
+            // Tertiaire, pas secondaire : la photo se change rarement, et la
+            // carte porte deja deux secondaires (camera, mode). Au dela de
+            // deux, `02-regles-ux.md` section 4 est violee -- constat du
+            // 11 septembre 2026, six secondaires empiles sur cette carte.
+            niveau: NiveauAction.tertiaire,
             enCours: _photoEnCours,
             onPress: _changerPhoto,
           ),
@@ -325,10 +329,17 @@ class _Demandes extends ConsumerWidget {
       children: <Widget>[
         Text(t.tuteur.reglages.demandes, style: textes.titleMedium),
         Ecart.vSm,
+        // Les trois demandes sont tertiaires, pas secondaires : ce sont des
+        // requetes administratives que l'administration tranche, pas des
+        // reglages immediats comme la camera ou le mode d'affichage
+        // (`02-regles-ux.md` section 3, « derriere un geste : secondaire ou
+        // administratif »). Avec la camera et le mode deja au niveau
+        // secondaire ailleurs sur la carte, un troisieme secondaire ici
+        // depasserait le plafond de deux par ecran.
         if (affecte)
           ActionPrincipale(
             libelle: t.tuteur.reglages.demandeReaffectation,
-            niveau: NiveauAction.secondaire,
+            niveau: NiveauAction.tertiaire,
             onPress: () => _ouvrir(context, SorteDemande.reaffectation, null),
           )
         else
@@ -341,14 +352,14 @@ class _Demandes extends ConsumerWidget {
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.tuteur.reglages.demandeDuree,
-          niveau: NiveauAction.secondaire,
+          niveau: NiveauAction.tertiaire,
           onPress: () =>
               _ouvrir(context, SorteDemande.regle, CleRegle.dureeSeance),
         ),
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.tuteur.reglages.demandeMinimum,
-          niveau: NiveauAction.secondaire,
+          niveau: NiveauAction.tertiaire,
           onPress: () =>
               _ouvrir(context, SorteDemande.regle, CleRegle.minimumPayable),
         ),

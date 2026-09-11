@@ -14,11 +14,14 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/child_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 
 /// La phase de vie d'un enfant du foyer, a un instant donne.
@@ -222,9 +225,7 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
           Ecart.vXl,
           SectionHeader(titre: t.tuteur.accueil.gererLeFoyer),
           Ecart.vLg,
-          const _BlocAppareils(),
-          Ecart.vMd,
-          const _BlocReglages(),
+          const _GererLeFoyer(),
           if (foyer.isNotEmpty) ...<Widget>[
             Ecart.vMd,
             _BlocAcces(enfants: foyer),
@@ -372,35 +373,43 @@ class _CarteEnfant extends ConsumerWidget {
   }
 }
 
-/// Bloc secondaire : les appareils du foyer.
-class _BlocAppareils extends StatelessWidget {
-  const _BlocAppareils();
+/// Le bloc « Gerer le foyer » : une seule carte elevee, deux lignes de menu.
+///
+/// Avant ce lot, chaque lien etait sa propre `BentoTile` : deux surfaces
+/// elevees empilees, du meme poids visuel que les `ChildCard` au dessus,
+/// exactement la « decoration universelle » que `00-bible-frontend-v2.md`
+/// section 11 bis interdit a `BentoTile`. Une seule `AppCard` les regroupe
+/// desormais, chaque ligne restant pressable pour sa propre destination
+/// (constat du 11 septembre 2026, capture d'ecran a l'appui).
+class _GererLeFoyer extends StatelessWidget {
+  const _GererLeFoyer();
 
   @override
-  Widget build(BuildContext context) => _BlocSecondaire(
-    icone: AppIcons.appareil,
-    titre: t.tuteur.accueil.blocAppareils,
-    detail: t.tuteur.accueil.blocAppareilsDetail,
-    destination: Routes.tuteurFoyer,
+  Widget build(BuildContext context) => AppCard(
+    marge: 0,
+    child: Column(
+      children: <Widget>[
+        _LigneMenu(
+          icone: AppIcons.appareil,
+          titre: t.tuteur.accueil.blocAppareils,
+          detail: t.tuteur.accueil.blocAppareilsDetail,
+          destination: Routes.tuteurFoyer,
+        ),
+        const Divider(height: 1),
+        _LigneMenu(
+          icone: AppIcons.reglages,
+          titre: t.tuteur.accueil.blocReglages,
+          detail: t.tuteur.accueil.blocReglagesDetail,
+          destination: Routes.tuteurReglages,
+        ),
+      ],
+    ),
   );
 }
 
-/// Bloc secondaire : les reglages par enfant, c'est-a-dire `TUT-05`.
-class _BlocReglages extends StatelessWidget {
-  const _BlocReglages();
-
-  @override
-  Widget build(BuildContext context) => _BlocSecondaire(
-    icone: AppIcons.reglages,
-    titre: t.tuteur.accueil.blocReglages,
-    detail: t.tuteur.accueil.blocReglagesDetail,
-    destination: Routes.tuteurReglages,
-  );
-}
-
-/// Le gabarit commun des deux blocs secondaires.
-class _BlocSecondaire extends StatelessWidget {
-  const _BlocSecondaire({
+/// Une ligne de menu vers un ecran : icone, titre, detail, chevron.
+class _LigneMenu extends StatelessWidget {
+  const _LigneMenu({
     required this.icone,
     required this.titre,
     required this.detail,
@@ -418,28 +427,44 @@ class _BlocSecondaire extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return BentoTile(
-      libelleSemantique: titre,
+    return Pressable(
       onPress: () => GoRouter.of(context).go(destination),
-      child: Row(
-        children: <Widget>[
-          IconTheme(
-            data: palette.inkAccent.asIconTheme(
-              size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-            ),
-            child: Icon(icone.repos),
+      libelleSemantique: '$titre, $detail',
+      respecterCibleTactile: false,
+      arrondiFocus: AppRadius.arrondiSm,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: metriques.cibleTactile),
+        child: Padding(
+          padding: EdgeInsets.all(metriques.marge),
+          child: Row(
+            children: <Widget>[
+              IconTheme(
+                data: palette.inkAccent.asIconTheme(
+                  size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
+                ),
+                child: Icon(icone.repos),
+              ),
+              Ecart.hMd,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(titre, style: textes.titleMedium),
+                    Text(detail, style: textes.bodySmall),
+                  ],
+                ),
+              ),
+              Ecart.hSm,
+              IconTheme(
+                data: palette.inkFaint.asIconTheme(size: AppSpacing.xl),
+                // Le chevron se miroite en arabe : une direction de lecture,
+                // pas une progression du temps (meme registre que
+                // `SignalRow`).
+                child: Icon(AppIcons.chevron.repos),
+              ),
+            ],
           ),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(titre, style: textes.titleMedium),
-                Text(detail, style: textes.bodySmall),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
