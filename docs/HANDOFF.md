@@ -12,12 +12,12 @@
 > septième session (étape 1 du prompt de reprise), une seule fois comme
 > prescrit. Le constat ne change pas : c'est le magasin de certificats du
 > poste, pas le réseau ni un incident ponctuel.
-> **Découverte de cette session, sans rapport avec L10 lui-même** : la
-> production (`rewayah-academy.vercel.app`) ne sert pas `c5a511f`/L8 comme
-> l'affirmait cette page depuis plusieurs sessions, mais `a9127fd` (lot R3,
-> déployé le 8 septembre) — **onze commits de retard sur `main`**. B0, T2,
-> R0, T3, R4, A1 et N0 sont codés et poussés mais **aucun n'est en ligne**.
-> Vérifié en lecture seule par l'API Vercel, rien déployé. Détail section
+> **Découverte de cette session, sans rapport avec L10 lui-même, et déjà
+> résolue** : la production servait `a9127fd` (lot R3, déployé le
+> 8 septembre), onze commits de retard sur `main` — pas `c5a511f`/L8 comme
+> l'affirmait à tort cette page depuis plusieurs sessions. **Comblé dans la
+> même session, sur autorisation explicite de l'opérateur** : la production
+> sert désormais `ad21990`, confirmé par l'API Vercel. Détail section
 > 0 decies et `PROGRESS.md` ligne M.
 > Dernier commit **poussé** de `main` avant cette session : `39aec71`.
 > `git log --oneline -5` doit correspondre exactement à `origin/main`.
@@ -588,9 +588,17 @@ production »). La ligne de promotion reste à l'opérateur, comme toujours —
 ce lot n'a rien déployé, seulement lu l'état réel.
 
 **Ce que L10 n'a pas fait, volontairement** : ouvrir l'étape 5 (N1 reste un
-autre lot, un autre jour) ; toucher au SQL de la base réelle ; déployer quoi
-que ce soit en production, y compris pour combler le retard de onze commits
-découvert ci-dessus.
+autre lot, un autre jour) ; toucher au SQL de la base réelle.
+
+**Mise à jour, plus tard dans la même session** : sur autorisation explicite
+de l'opérateur, le retard de production a été comblé. Reconstruction dans le
+worktree `D:\ra-pwa-build` depuis `ad21990` (`flutter pub get`, `flutter
+build web --release` — pas besoin de `dart run slang`/`build_runner`, les
+fichiers générés sont commités dans le dépôt, donc déjà corrects après le
+`git checkout`), puis `vercel deploy --prod --yes` depuis `build/web`. **Passé
+sans refus cette fois.** Confirmé par l'API Vercel : l'alias
+`rewayah-academy.vercel.app` porte `gitCommitSha: ad21990...`. La production
+est maintenant à jour avec `main`.
 
 **Commit et push** : à faire sur ce lot, `docs/` et `PROGRESS.md` seulement,
 cohérent avec la règle déjà appliquée (build vert → commit et push sans
@@ -862,15 +870,16 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — après L10, deux sujets distincts pour l'opérateur
+## 9. Prompt de reprise — après L10, un sujet restant pour l'opérateur
 
 À copier tel quel pour démarrer la prochaine session. **L'ordre de travail de
 l'ADR-019 est désormais entièrement épuisé** : B0, T2, R0, T3, R4, A1 (six
 lots de code), N0 (documentaire) et L10 (vérifications, section 0 decies)
-sont tous faits et poussés sur `main`. Il n'y a **pas de lot suivant déjà
-tranché** : deux sujets distincts attendent une décision de l'opérateur avant
-que du travail neuf commence, détaillés dans le prompt ci-dessous. Aucun des
-six lots de code n'a été confirmé par `flutter test` ni
+sont tous faits, poussés sur `main`, **et en ligne** (le retard de production
+découvert puis comblé pendant la session de L10, détail section 0 decies).
+Il n'y a **pas de lot suivant déjà tranché** : un sujet attend une décision
+de l'opérateur avant que du travail neuf commence, détaillé dans le prompt
+ci-dessous. Aucun des six lots de code n'a été confirmé par `flutter test` ni
 `tool/verifier_jetons.dart` sur ce poste — huitième confirmation consécutive
 du même blocage TLS, détail en tête de fichier. L10 n'a rien eu à confirmer
 par ces outils au-delà de la répétition de l'étape 1, n'ayant touché ni
@@ -911,26 +920,22 @@ HUIT sessions de suite (N0 et L10 sont documentaires, hors de ce compte) :
      l'un des six lots de code, la signaler immediatement a l'operateur avant
      toute chose.
 
-ETAPE 2 -- DEUX SUJETS DISTINCTS, NI L'UN NI L'AUTRE TRANCHE, A POSER A
-L'OPERATEUR AVANT DE CODER QUOI QUE CE SOIT (meme methode qu'au lot N0 : ne
-pas deviner a sa place) :
+ETAPE 2 -- UN SEUL SUJET RESTE OUVERT, A POSER A L'OPERATEUR AVANT DE CODER
+QUOI QUE CE SOIT (meme methode qu'au lot N0 : ne pas deviner a sa place) :
 
-  A. Le retard de production. Decouvert au lot L10 : la production
-     (rewayah-academy.vercel.app) sert `a9127fd` (lot R3, deploye le
-     8 septembre), ONZE commits de retard sur `main`. B0, T2, R0, T3, R4, A1
-     et N0 sont codes et pousses mais aucun n'est en ligne. `vercel deploy
-     --prod` reste refuse a l'agent (barriere sur l'appel de l'agent, pas sur
-     le poste) : livrer la ligne a l'operateur au lieu d'insister
-     (MISE-EN-SERVICE.md section 7.1), et lui signaler l'ecart avant toute
-     autre chose si ce n'est pas deja fait.
-  B. Le premier lot de code de l'etape 5, N1. Specifiee par N0
-     (etape-5-salle-coran-presence.md, ADR-020) : un decoupage en huit lots
-     N0 a N7 y est propose, explicitement "a confirmer au premier lot de
-     code". Ne pas commencer N1 sans relire ce decoupage avec l'operateur et
-     confirmer qu'il tient, exactement comme N0 a pose deux questions
-     (format du livrable, riwaya) avant d'ecrire quoi que ce soit.
+  Le premier lot de code de l'etape 5, N1. Specifiee par N0
+  (etape-5-salle-coran-presence.md, ADR-020) : un decoupage en huit lots
+  N0 a N7 y est propose, explicitement "a confirmer au premier lot de code".
+  Ne pas commencer N1 sans relire ce decoupage avec l'operateur et confirmer
+  qu'il tient, exactement comme N0 a pose deux questions (format du
+  livrable, riwaya) avant d'ecrire quoi que ce soit.
 
-Ce qu'il ne faut PAS faire : deployer en production de sa propre initiative
-(sujet A), ou coder N1 sans confirmation du decoupage (sujet B). Un lot par
-session, comme toujours. Ignore la branche refactor-ui-lavender.
+Le retard de production (decouvert au lot L10, la prod servait a9127fd/R3,
+onze commits de retard) a ete comble dans la meme session, sur autorisation
+explicite de l'operateur : l'adresse stable sert desormais ad21990 (main).
+Rien a refaire de ce cote sauf si un ecart est reconstate (verifier via
+l'API Vercel ou main.dart.js, methode dans MISE-EN-SERVICE.md section 7.1).
+
+Ce qu'il ne faut PAS faire : coder N1 sans confirmation du decoupage. Un lot
+par session, comme toujours. Ignore la branche refactor-ui-lavender.
 ```
