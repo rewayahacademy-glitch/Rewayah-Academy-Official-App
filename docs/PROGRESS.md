@@ -82,7 +82,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | 3 | Auth, KYC, appairage, portails d'attente | [x] | `docs/architecture/etape-3-journal.md` |
 | 4 | Dashboards Bento Grid, affectation durable, prières | [ ] | **en cours**, L0 à L9 faits, reste L10. `docs/architecture/etape-4-journal.md` |
 | 4 bis | **Refonte UX/UI** : jetons, composants, reprise des écrans | [ ] | Documentation écrite (`docs/design/`, ADR-018). **Code non touché.** Lots T, C, R |
-| 5 | Visio LiveKit, preuve de présence, Coran | [ ] | Attend la refonte |
+| 5 | Visio LiveKit, preuve de présence, Coran | [ ] | **Spécifiée (lot N0, ADR-020)** : `docs/architecture/etape-5-salle-coran-presence.md`. Code non touché, attend son premier lot (N1) |
 | 6 | Cahier de transmission | [ ] | |
 
 ## Protocole d'onboarding (`docs/agent-onboarding.md`)

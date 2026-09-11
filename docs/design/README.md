@@ -118,7 +118,7 @@ ferme.
 | §15 responsive par l'espace | Fait, `app_gabarit.dart` seul fichier autorisé à comparer une largeur |
 | §16 motion | Fait, `app_mouvement.dart` |
 | §18 empty/loading/error/offline | Fait, exigé par `lib/CLAUDE.md` |
-| §19-32 salle, Coran structuré, présence | **Non construit. Spécifié documentairement au lot N0** (ADR-020), codé à l'étape 5 |
+| §19-32 salle, Coran structuré, présence | **Spécifié documentairement au lot N0** (ADR-020) : `docs/architecture/etape-5-salle-coran-presence.md`. Riwaya Hafs/Roi Fahd tranchée, modèle Coran structuré et machine à états de présence posés. Non codé — construction à l'étape 5 |
 | §40-41 état métier / UI / préférence | Ajouté à `03-architecture-information.md` au lot B0 |
 | §44 protocole avant codage | La fiche d'écran de `08-catalogue-ecrans.md` §3 |
 | §45 tags de conformité | Vocabulaire fermé posé dans `lib/CLAUDE.md` au lot B0 |
@@ -221,7 +221,7 @@ les lots B0, T2, R0, T3, A1 et N0 insérés avant la suite. L'ordre complet :
 [fait] Lot T3 : mode sombre (§7.3)                    → app_palette.dart, app_theme.dart, app.dart
 [fait] Lot R4 : reste de l'existant (TUT-02, TUT-04, TUT-05, ENS-06, ADM-02, ADM-06)
 [fait] Lot A1 : accessibilité, RTL et clavier prouvés par des tests
-[à faire] Lot N0 : specs de l'étape 5 (ADR-020, Coran structuré, machine à états de présence)
+[fait] Lot N0 : specs de l'étape 5 (ADR-020, Coran structuré, machine à états de présence)
 [dette indépendante] Lot L10 : clôture de l'étape 4 (0006, PROGRESS.md, 17 scénarios)
 ```
 

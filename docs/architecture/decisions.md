@@ -859,6 +859,49 @@ l'étape 4, dette indépendante). Détail complet dans `README.md` §9.
 
 ---
 
+## ADR-020 - Spécification de l'étape 5 : salle, Coran structuré (Hafs, Roi Fahd), présence
+
+Décision de l'opérateur du 11 septembre 2026, lot **N0** de l'ordre de travail
+de l'ADR-019 (documentaire, aucun écran ni migration codés ici). Détail complet
+dans `docs/architecture/etape-5-salle-coran-presence.md`, qui tient pour
+l'étape 5 le rôle que `etape-4-dashboards.md` tient pour l'étape 4.
+
+### Ce qui est tranché
+
+1. **Riwaya et édition du Coran** : Hafs ʿan ʿĀṣim, édition Mushaf
+   Al-Madinah An-Nabawiyyah du Complexe du Roi Fahd, pagination standard (604
+   pages, 15 lignes par page). Ferme la question 3 du registre ci-dessous. Ce
+   choix confirme un défaut déjà présent en base depuis l'étape 1 :
+   `student_profiles.riwaya` vaut `'hafs'` par défaut, jamais écrit autrement.
+   **Non tranché par la même décision** : la source technique des données
+   (jeu de données ou API, police, licence), qui reste un choix de fournisseur
+   à faire au codage.
+2. **Modèle du Coran comme contenu structuré**, adapté des §23-24 de la Bible
+   V2 : `mushaf` → `sourate` → `page_mushaf` → `verset` (`mot` en option,
+   reporté tant que le focus mot-à-mot n'est pas un P0 confirmé), plus
+   `student_reading_position` pour l'état personnel de lecture, distinct de
+   l'état partagé de séance (règle critique §24.3 : une action de l'enseignant
+   n'écrase jamais silencieusement la position personnelle d'un élève).
+3. **Machine à états de présence**, par participant (distincte de
+   `StatutSeance`, qui reste l'état de la séance entière) : les 14 états de la
+   Bible V2 §29.1, traduits et adossés à `session_events`/`session_event_type`
+   déjà existants (`joined`, `left`, `track_subscribed`, `track_unsubscribed`,
+   `record_started`, `record_ended`) et à leur colonne `source`. C'est une
+   dérivation (vue ou calcul), pas une nouvelle table d'événements bruts.
+4. **Aucune dérogation à la Bible V2** n'est nécessaire sur ce périmètre : les
+   §19-32 sont un modèle UX abstrait, sans prescription de jetons ou de
+   composants en conflit avec ce que le dépôt a déjà posé.
+
+### Ce qui reste explicitement ouvert, non inventé par ce lot
+
+Source technique des données Coran, seuil de retard et fenêtre de reconnexion
+de la présence, vocabulaire exact de `session_events.source`, écran et policy
+pour marquer un participant excusé, canal de diffusion de l'état partagé de
+séance, granularité mot-à-mot. Détail et raison de chaque point :
+`etape-5-salle-coran-presence.md` §10.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -882,7 +925,7 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | :-- | :--- | :--- | :--- |
 | 1 | Le "système de création d'objectifs élèves" reporté en V1 : est-ce la grille d'examen anonyme et l'imputabilité des specs d'origine, ou autre chose | Étape 6 | Ouverte |
 | 2 | Un enseignant a-t-il une photo publique visible par les familles avant le premier cours | Étape 3, 4 | **Résolue par la négative pour l'étape 4** : `TUT-01` et `mon_enseignant_v` donnent prénom et identifiant immuable, jamais de photo ni de nom complet (ADR-008). À rouvrir si le produit veut une vitrine d'enseignants |
-| 3 | Riwaya du mushaf, Warsh ou Hafs | Étape 5 | Ouverte |
+| 3 | Riwaya du mushaf, Warsh ou Hafs | Étape 5 | **Résolue par ADR-020** : Hafs ʿan ʿĀṣim, édition Mushaf Al-Madinah An-Nabawiyyah du Complexe du Roi Fahd, pagination standard (604 pages, 15 lignes par page). Confirme le défaut déjà présent en base depuis l'étape 1 (`student_profiles.riwaya = 'hafs'`). La source technique des données (jeu de données ou API, police, licence) reste ouverte, à trancher au codage |
 | 4 | Identité visuelle, violet de l'application ou vert et or de Rewayah | Étape 2, 4 | **Résolue par ADR-018** : la palette de l'application est conservée, le violet reste l'accent unique. Le vert et l'or restent des accents religieux réservés aux illustrations (`design-tokens.md` §5), jamais des couleurs d'interface |
 | 5 | Seuil d'âge exact séparant le mode enfant du mode standard | Étape 3 | **Résolue par défaut, pas par décision** : `child_ui_mode_max_age` vaut 8 dans `app_config` et l'étape 3 s'en sert. Modifiable en une ligne, sans redéploiement. À confirmer par l'opérateur (ADR-016) |
 | 6 | Poular dans l'interface élève dès le MVP-0 ou plus tard | Étape 3 | **Résolue par la négative** : pas de poular dans l'application (ADR-015) |
@@ -898,7 +941,7 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 16 | Un litige sur le temps effectif se tranche-t-il sur le minimum payable de l'élève, ou sur la présence mesurée en salle | Étape 5 | Ouverte. L'étape 4 pose la règle et sa trace, l'étape 5 mesurera la présence. Les deux doivent se rejoindre avant la première paie |
 | 17 | La photo de profil d'un élève passe-t-elle par une compression serveur avant le stockage | Étape 4, `TUT-05` | Ouverte. L'ADR-012 et `etape-2-core-flutter.md` section 4 supposent une compression serveur qui n'existe pas encore : sans elle, le cache local borne mal sa taille |
 | 18 | La messagerie est-elle un chat générique ou une conversation **contextuelle** attachée à une séance, au personnel, au support ou à la facturation, avec une politique par contexte | V1 | **Ouverte, et à trancher avant le premier écran de messagerie.** Soulevée par la note de refonte du 7 septembre : un chat générique construit puis sécurisé après coup est plus cher qu'une conversation contextuelle dès le départ. Aucun écran de messagerie n'existe en MVP-0, la question n'est donc pas encore bloquante |
-| 19 | Le journal d'audit doit-il porter une **liste nommée d'événements** (`MATCH_ACCEPTED`, `SESSION_JOINED`, `REPORT_SUBMITTED`…) plutôt que des libellés libres | Étape 5, 6 | Ouverte. `audit_logs` existe et est alimenté ; ce qui manque est la nomenclature figée. Sans elle, `ADM-04` ne pourra pas filtrer par type d'événement autrement que par une chaîne |
+| 19 | Le journal d'audit doit-il porter une **liste nommée d'événements** (`MATCH_ACCEPTED`, `SESSION_JOINED`, `REPORT_SUBMITTED`…) plutôt que des libellés libres | Étape 5, 6 | **Partiellement posée par ADR-020, pour le seul domaine présence** : les 14 états de la machine à états de présence (`etape-5-salle-coran-presence.md` §6.2) donnent une première brique fermée. La nomenclature complète (matching, séance, contenu) reste ouverte ; `ADM-04` ne pourra filtrer au-delà de la présence tant qu'elle ne l'est pas |
 | 20 | Faut-il modéliser une entité **groupe, cohorte ou parcours** distincte de la séance | V1 | Ouverte, **sans dette pour l'instant** : le MVP-0 n'a pas d'entité niveau, et `session_participants` est déjà en plusieurs-à-plusieurs (ADR-004). La question se rouvrira quand les cours de groupe deviendront sérieux. Ne pas la préempter par une énumération rigide de types |
 | 21 | Instrument Sans et Noto Sans Arabic s'accordent-ils en hauteur d'x et en graisse dans un texte mixte français-arabe | Lot C | **Ouverte, et elle ne se ferme pas par une mesure.** `design-tokens.md` §2.2 pose l'accord comme une intention de conception ; il se vérifie à l'œil, sur un écran, sur un échantillon mixte. La galerie `/_galerie` affiche désormais cet échantillon. Si l'accord ne tient pas, l'ajustement se fait par l'axe `wdth` ou par un décalage de taille déclaré **une seule fois** dans `app_typography.dart`, jamais écran par écran |
 | 22 | L'interligne des grands corps est resserré de combien exactement | Lot C | **Tranchée par défaut au lot T, à confirmer.** `01-systeme-visuel.md` §5 demande de resserrer l'interligne des grands corps sans donner de valeur. Le lot T a posé 1,05, 1,08 et 1,10 pour les trois rôles d'affichage, contre 1,12, 1,15 et 1,18 avant, et n'a pas touché aux titres. C'est un choix, pas une mesure : il se juge sur le rendu de `ELV-02` au lot R |

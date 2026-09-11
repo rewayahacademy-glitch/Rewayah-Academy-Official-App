@@ -1,45 +1,45 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026, cinquième session**. Les lots
+> Dernière passation : **11 septembre 2026, sixième session**. Les lots
 > **B0**, **T2** (durcir le langage), **R0** (tunnel d'entrée), **T3** (mode
 > sombre), **R4** (le reste de l'existant, section 0 septies) et **A1**
 > (accessibilité, RTL et clavier prouvés par des tests, section 0 octies)
-> sont tous les six codés et **poussés sur `main`** (`761db39`). Le lot **R**
-> est désormais complet. **Ni `flutter test` ni `tool/verifier_jetons.dart`
-> n'ont jamais pu tourner sur ce poste**, pour aucun des six lots : c'est la
-> **sixième confirmation
-> consécutive** du même blocage TLS de `github.com` (hook `package:sqlite3`),
-> `CERTIFICATE_VERIFY_FAILED` côté Dart et `SEC_E_UNTRUSTED_ROOT` côté
-> `curl.exe`, preuve indépendante que c'est le magasin de certificats du
-> poste, pas le réseau ni un incident ponctuel. **T2, R0, T3 et R4 ont tous
-> été poussés malgré cette absence de vérification, sur décision explicite de
-> l'opérateur** (accord donné une première fois pour T2/R0 « pour voir en
-> direct », reconduit pour T3, puis reconduit une nouvelle fois pour R4 quand
-> la question a été reposée) : `dart analyze --fatal-infos` est la seule
-> preuve automatique obtenue pour les cinq lots poussés, complétée par une
-> vérification visuelle manuelle (`flutter build web`) pour R0 (rendu clair de
-> `TUT-00`) et pour T3 (rendu clair seulement, le rendu sombre n'a pas pu être
-> vérifié visuellement — détail sections 0 quinquies et 0 sexies). R4 n'a reçu
-> aucune vérification visuelle de substitution (l'opérateur avait déjà l'app
-> ouverte de son côté). **A1 n'ajoute aucun écran** (seulement des tests, et
-> trois faux dans `harnais.dart`) : pas de vérification visuelle de
-> substitution nécessaire pour ce lot, `dart analyze --fatal-infos` est la
-> seule preuve possible sur ce poste. **A1 poussé sur décision explicite de
-> l'opérateur**, même raison que les quatre lots précédents.
-> **Priorité de la prochaine session, avant tout code neuf** : faire tourner
-> `flutter test` et `dart run tool/verifier_jetons.dart` sur ce qui est
-> maintenant en production (B0 à A1), pour combler cette dette de
-> vérification qui s'accumule lot après lot — soit en réparant le magasin de
-> certificats du poste, soit sur un autre poste, soit avec l'accord explicite
-> de l'opérateur pour continuer sans. Ne pas boucler sur le même
-> contournement TLS déjà refusé deux fois par le classificateur auto-mode
-> cette semaine.
-> Dernier commit **poussé** de `main` : celui d'A1 (`761db39`).
+> sont tous les six codés et **poussés sur `main`** (`761db39` puis
+> `1748c06` pour la doc). Le lot **R** est désormais complet. **Ni
+> `flutter test` ni `tool/verifier_jetons.dart` n'ont jamais pu tourner sur ce
+> poste**, pour aucun des six lots : **septième confirmation consécutive** du
+> même blocage TLS de `github.com` (hook `package:sqlite3`),
+> `CERTIFICATE_VERIFY_FAILED` côté Dart, revérifiée au début de cette sixième
+> session (étape 1 du prompt de reprise), une seule fois comme prescrit. Le
+> constat ne change pas : c'est le magasin de certificats du poste, pas le
+> réseau ni un incident ponctuel.
+> **Le lot N0 est fait cette sixième session** : spécification documentaire de
+> l'étape 5 (salle, Coran structuré, machine à états de présence), ADR-020.
+> Aucun écran, aucune migration codés — voir section 0 novies. Le lot **A1
+> à N0 clôt l'ordre de travail de l'ADR-019** sauf **L10**, dette indépendante
+> de l'étape 4, qui redevient la priorité de la prochaine session (section 4).
+> **T2, R0, T3, R4 et A1 ont tous été poussés malgré l'absence de
+> vérification par `flutter test`, sur décision explicite de l'opérateur**
+> (accord donné une première fois pour T2/R0 « pour voir en direct »,
+> reconduit pour T3, R4 et A1 à chaque nouvelle demande) : `dart analyze
+> --fatal-infos` est la seule preuve automatique obtenue pour ces cinq lots,
+> complétée par une vérification visuelle manuelle (`flutter build web`) pour
+> R0 et T3 seulement (détail sections 0 quinquies et 0 sexies). **A1 n'ajoute
+> aucun écran** (seulement des tests, trois faux dans `harnais.dart`) : pas de
+> vérification visuelle de substitution nécessaire, `dart analyze
+> --fatal-infos` est la seule preuve possible. **N0 n'ajoute ni écran ni
+> code** : trois fichiers de documentation seulement
+> (`etape-5-salle-coran-presence.md`, `decisions.md`, `README.md`/`PROGRESS.md`),
+> `flutter test` et `verifier_jetons.dart` n'ont aucune prise sur ce lot,
+> `dart analyze --fatal-infos` reste vert par construction (rien en `lib/` ni
+> `test/` n'a changé).
+> Dernier commit **poussé** de `main` : `1748c06` avant cette session.
 > `git log --oneline -3` doit correspondre exactement à `origin/main`.
 > Détail du lot R4 : section 0 septies. Deux écarts de conception restent
 > ouverts et non tranchés, sur `ADM-01`/`ADM-06` (six compteurs contre cinq
 > annoncés, ordre signaux/chiffres) — pas des écrans de R4, voir fiche `ADM-01`
 > section 6 de `08-catalogue-ecrans.md`. Détail du lot A1 : section 0 octies.
+> Détail du lot N0 : section 0 novies.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -485,6 +485,75 @@ tous sous `test/`, ne peuvent de toute façon déclencher aucune de ses règles.
 l'opérateur — même raison que T2/R0/T3/R4, voir l'avertissement en tête de
 fichier. Confirmé par `git fetch origin main` : `origin/main` correspond.
 
+### 0 novies. Le lot N0 : spécification de l'étape 5, ADR-020
+
+Dernier lot de la liste ADR-019 avant **L10** (dette indépendante de
+l'étape 4). Lot documentaire : aucun écran, aucune migration, aucun test.
+
+**Étape 1 de ce prompt de reprise, avant N0** : `git log --oneline -5` et
+`git status` confirmés contre `origin/main` (`1748c06`, aucune divergence,
+seuls des fichiers Windows générés — `generated_plugin_registrant.*` —
+modifiés, sans rapport). `dart analyze --fatal-infos` vert. `flutter test`
+puis `dart run tool/verifier_jetons.dart` retentés une fois chacun, comme
+prescrit : même échec identique, `CERTIFICATE_VERIFY_FAILED` sur le hook natif
+de `package:sqlite3`, **septième confirmation consécutive**. Pas de nouvelle
+tentative au-delà de celle prescrite.
+
+**Ce que N0 a produit**, après recherche du périmètre dans
+`docs/design/08-catalogue-ecrans.md` (écrans `ELV-03`, `ENS-03`, `CTR-02`,
+`ELV-04`, tous « à construire, étape 5 », plus leurs invariants déjà notés) et
+`docs/design/README.md` §4 BIS (qui pointait vers les §19-32 de la Bible V2,
+déjà adoptée en entier par l'ADR-019 et lue en entier pour ce lot) :
+
+1. **`docs/architecture/etape-5-salle-coran-presence.md`**, nouveau, sur le
+   modèle de `etape-4-dashboards.md` : ce que l'étape 5 doit rendre possible,
+   ce qui est déjà tranché par dix ADR d'architecture antérieurs (001, 002,
+   004-006, 008-012) et n'est pas rouvert, le Coran comme contenu structuré
+   (`mushaf`/`sourate`/`page_mushaf`/`verset`, état personnel de lecture
+   distinct de l'état partagé de séance), la salle en cinq sous-systèmes à
+   dégradation indépendante, la machine à états de présence par participant
+   (14 états de la Bible §29.1, aucun ajouté ni retiré, dérivée de
+   `session_events`/`StatutSeance` déjà existants, pas une nouvelle table
+   d'événements bruts), les quatre écrans en prose, huit invariants, ce que
+   l'étape 5 ne fait pas, six questions explicitement laissées ouvertes
+   (§10 : source technique des données Coran, seuils de retard/reconnexion,
+   vocabulaire de `session_events.source`, écran pour marquer un participant
+   excusé, canal de diffusion de l'état partagé, granularité mot-à-mot), un
+   découpage en huit lots proposé (N0 à N7, à confirmer au premier lot de
+   code) et une proposition de migration non écrite.
+2. **`decisions.md`** : **ADR-020** ajouté, qui pointe vers ce document.
+   **Question 3 du registre fermée** : Hafs ʿan ʿĀṣim, édition Mushaf
+   Al-Madinah An-Nabawiyyah du Complexe du Roi Fahd — décision explicite de
+   l'opérateur (« c'est hafs, le package du roi fahd avec tout ce qui va
+   avec »), qui confirme un défaut déjà présent en base depuis l'étape 1
+   (`student_profiles.riwaya = 'hafs'`, jamais écrit autrement). La source
+   technique des données (jeu de données ou API, police, licence) reste
+   ouverte, ce n'est pas une décision de riwaya. **Question 19 mise à jour** :
+   posée pour le seul domaine présence par les 14 états ci-dessus, reste
+   ouverte pour les autres domaines (matching, séance, contenu).
+3. **`docs/design/README.md`** §4 BIS (ligne « §19-32 salle, Coran structuré,
+   présence ») et §9 (liste `[à faire] Lot N0` → `[fait]`) mis à jour.
+4. **`docs/PROGRESS.md`** ligne 5 (étape 5) mise à jour : spécifiée, code non
+   touché, attend son premier lot de code (N1).
+
+**Deux points ont été posés à l'opérateur avant d'écrire quoi que ce soit**,
+conformément à la consigne « ne pas inventer » du prompt de reprise : le
+format du livrable (spec complète façon L0, retenu) et la riwaya (Hafs/Roi
+Fahd, retenu, voir ci-dessus). Sans ces deux réponses, ce lot n'aurait pas pu
+avancer sans deviner à la place de l'opérateur.
+
+**Ce qui n'a pas été fait, volontairement** : aucun code, aucune fiche
+d'écran remplie dans `08-catalogue-ecrans.md` (les fiches complètes se
+remplissent au lot qui construit vraiment l'écran, comme le dit déjà §3 de ce
+fichier — pas avant), aucune migration écrite (la proposition §13 du nouveau
+document n'est pas `0006` ni une nouvelle migration, elle sera affinée au lot
+N1).
+
+**Commit et push** : à faire sur ce lot, docs uniquement, aucun code touché
+— cohérent avec la règle déjà appliquée depuis plusieurs lots (build vert →
+commit et push sans redemander), et sans le risque des lots précédents
+puisque rien en `lib/` ni `test/` n'a changé.
+
 ## 1. Le projet actif est celui-ci
 
 **Dépôt de travail : `D:\RA _APP\RA -OFFICIAL-APP`** — Rewayah Academy,
@@ -761,38 +830,41 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — combler la dette de vérification, PUIS le lot N0
+## 9. Prompt de reprise — le lot L10, dette indépendante de l'étape 4
 
-À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3, R4 et
-A1 sont tous les six poussés sur `main`** (`761db39`). Le lot **R** est
-complet, et **A1 (accessibilité, RTL et clavier prouvés par des tests) aussi**
-— trois fichiers de test neufs, plus trois faux ajoutés à `harnais.dart`,
-aucun écran touché, détail section 0 octies. Aucun des six lots n'a été
-confirmé par `flutter test` ni `tool/verifier_jetons.dart` sur ce poste —
-sixième confirmation consécutive du même blocage TLS, détail en tête de
-fichier et section 0 septies.
+À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3, R4,
+A1 et N0 sont tous les sept poussés sur `main`**. Le lot **R** est complet,
+**A1** (accessibilité, RTL, clavier) aussi, et **N0** (spécification de
+l'étape 5, ADR-020) aussi — détail sections 0 octies et 0 novies. L'ordre de
+travail de l'ADR-019 est désormais épuisé sauf **L10**, qui redevient la
+seule dette ouverte. Aucun des six lots de code n'a été confirmé par
+`flutter test` ni `tool/verifier_jetons.dart` sur ce poste — septième
+confirmation consécutive du même blocage TLS, détail en tête de fichier et
+section 0 novies. N0 n'a rien à confirmer par ces outils, n'ayant touché ni
+`lib/` ni `test/`.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 octies),
-puis decisions.md ADR-019 et l'ecart 24.
+Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 novies),
+puis decisions.md ADR-019, ADR-020 et l'ecart 24.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a A1 sont tous codes et
-pousses (confirme l'etat reel avec git log --oneline -5 et git status,
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a N0 sont tous codes/specifies
+et pousses (confirme l'etat reel avec git log --oneline -5 et git status,
 l'en-tete de HANDOFF.md peut etre legerement en retard sur le depot reel).
-Aucun n'a ete confirme par flutter test sur ce poste, six sessions de suite :
+Aucun des SIX LOTS DE CODE n'a ete confirme par flutter test sur ce poste,
+sept sessions de suite (N0 est documentaire, hors de ce compte) :
   1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
      origin/main.
-  2. dart analyze --fatal-infos (deja vert a la cloture des six lots).
-  3. flutter test -- SIX sessions de suite ne l'ont JAMAIS obtenu (le
+  2. dart analyze --fatal-infos (deja vert a la cloture de tous les lots).
+  3. flutter test -- SEPT sessions de suite ne l'ont JAMAIS obtenu (le
      poste bloque github.com en TLS pour le hook package:sqlite3,
      CERTIFICATE_VERIFY_FAILED ; curl.exe echoue aussi sur la meme URL avec
      SEC_E_UNTRUSTED_ROOT, independamment de Dart -- confirmation
      independante que c'est le magasin de certificats du poste). Reessaie
      UNE fois, pas plus : la cause est deja etablie avec certitude, boucler
-     dessus une septieme fois n'apporterait aucune preuve nouvelle. Si ca
+     dessus une huitieme fois n'apporterait aucune preuve nouvelle. Si ca
      bloque encore de la meme facon, continue directement a l'etape 2 -- ce
      n'est plus une question ouverte, c'est un fait du poste. Note :
      `git push` fonctionne malgre ce blocage (chaine de certificats
@@ -803,26 +875,33 @@ Aucun n'a ete confirme par flutter test sur ce poste, six sessions de suite :
      l'avertissement en tete de HANDOFF.md par les vrais chiffres, puis
      continue a l'etape 2. Si l'un des deux echoue pour une VRAIE raison (pas
      le blocage reseau) : c'est une regression EN PRODUCTION possible sur
-     l'un des six lots, la signaler immediatement a l'operateur avant toute
-     chose.
+     l'un des six lots de code, la signaler immediatement a l'operateur avant
+     toute chose.
 
-ETAPE 2, seulement apres l'etape 1 : LOT N0 -- specs de l'etape 5 (ADR-020,
-Coran structure, machine a etats de presence). Lot documentaire, aucun ecran
-ne se code ici. Cette section ne connait PAS le detail de ce que "lot N0"
-recouvre au-dela de son nom : NE PAS EN INVENTER LE CONTENU. Avant d'ecrire
-quoi que ce soit :
-  1. Chercher dans docs/design/08-catalogue-ecrans.md les ecrans marques
-     "a construire, etape 5" (ELV-03, ENS-03, CTR-02) et section 0.19-32 du
-     resume README.md (Bible V2 non construite, specifiee ici).
-  2. Chercher "N0", "ADR-020" et "Coran structure" dans decisions.md
-     (registre de fin de fichier) et PROGRESS.md.
-  3. Si rien de precis n'en ressort au-dela de fragments epars : DEMANDER A
-     L'OPERATEUR de preciser le perimetre du lot N0 avant d'ecrire le moindre
-     document -- ne pas improviser une specification a sa place, meme
-     partielle.
+ETAPE 2, seulement apres l'etape 1 : LOT L10 -- cloture de l'etape 4, dette
+INDEPENDANTE de la refonte (ADR-019 est desormais entierement traite). Section
+4 de ce fichier decrit deja les trois choses a faire, dans l'ordre :
+  1. Rejouer les cinq controles de la section 5 sur un conteneur Docker neuf
+     (harnais SQL, section 6 de ce fichier). Les deux controles Dart
+     (flutter test, verifier_jetons.dart) subiront probablement le meme
+     blocage TLS que l'etape 1 -- ne pas re-retenter au-dela de ce qui a deja
+     ete fait a l'etape 1, ce sont les MEMES commandes. Les trois controles
+     SQL (scenarios_etape3.sql, scenarios_etape4.sql, dart analyze) n'en
+     dependent pas et doivent etre obtenus.
+  2. Mettre docs/PROGRESS.md a jour : les lignes C, D et M du tableau
+     d'onboarding, retirer la ligne "Plateforme Android 37" des decisions en
+     attente (le paquet existe, l'echec vient du magasin de certificats, deja
+     documente section 7). Profiter du passage pour verifier si les lignes 4
+     bis (refonte, marquee [ ] alors que T/C/R sont tous "fait") et 5 (etape
+     5, deja mise a jour par N0 cette session) sont encore exactes.
+  3. Relire les dix-sept scenarios du journal etape-4-journal.md. Seize verts,
+     le quatorzieme (demarrage a froid) reste non mesurable sur ce poste,
+     faute d'equipement -- ne pas le cocher, ne pas le refaire.
 
-Fin de lot N0 (une fois son perimetre confirme) : mise a jour de HANDOFF.md
-(nouvelle section, en-tete) et de decisions.md si des ecarts y sont tranches,
-commit, decision de push a l'operateur si des tests restent bloques par le
-poste. Un lot par session. Ignore la branche refactor-ui-lavender.
+Ce que L10 ne doit PAS faire : ouvrir l'etape 5 (N0 l'a specifiee cette
+session, coder N1 est un autre lot, un autre jour). Fin de lot : mise a jour
+de HANDOFF.md (nouvelle section, en-tete), commit et push -- docs et
+PROGRESS.md seulement, coherent avec la regle deja appliquee (build vert ->
+commit et push sans redemander). Un lot par session. Ignore la branche
+refactor-ui-lavender.
 ```
