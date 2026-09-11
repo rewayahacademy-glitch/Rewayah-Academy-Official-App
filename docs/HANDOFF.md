@@ -1,25 +1,26 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026, deuxième session**. Le **lot B0**
-> est fait, vérifié et poussé sur `main`. Les lots **T2** (durcir le langage)
-> et **R0** (tunnel d'entrée) sont codés et commités **localement**, mais
-> **non poussés** : ni `flutter test` ni `tool/verifier_jetons.dart` n'ont pu
-> tourner sur ce poste pour les vérifier, dans les deux sessions du 11
-> septembre (détail section 0 quater et 0 quinquies) — le blocage TLS de
-> `github.com` sur ce poste est confirmé **persistant d'une session à
-> l'autre**, pas ponctuel (`curl.exe` échoue aussi, `SEC_E_UNTRUSTED_ROOT` :
-> c'est le magasin de certificats du poste, pas le réseau). `main` se déploie
-> automatiquement en production à chaque push : la décision de pousser un lot
-> non vérifié par les tests revient à l'opérateur, pas à l'agent.
-> **Avant tout code neuf** : relancer `flutter test` et
-> `dart run tool/verifier_jetons.dart`. S'ils passent sur les deux commits
-> locaux (`git log --oneline -3` les montre, ni l'un ni l'autre n'est sur le
-> serveur), les pousser et continuer au lot **T3**. S'ils échouent encore
-> avec `CERTIFICATE_VERIFY_FAILED` ou `SEC_E_UNTRUSTED_ROOT`, c'est le poste,
-> pas le lot : ne pas boucler dessus, le signaler et décider avec
-> l'opérateur — un correctif possible (mise à jour du magasin de certificats
-> racine Windows, ou proxy TLS d'entreprise à investiguer) dépasse ce qu'un
-> agent doit changer seul sur la configuration système du poste.
+> Dernière passation : **11 septembre 2026, deuxième session**. Les lots
+> **B0**, **T2** (durcir le langage) et **R0** (tunnel d'entrée) sont tous les
+> trois **poussés sur `main`** (`5f96b84`). **Ni `flutter test` ni
+> `tool/verifier_jetons.dart` n'ont jamais pu tourner sur ce poste pour
+> vérifier T2 et R0**, dans les deux sessions du 11 septembre (détail section
+> 0 quater et 0 quinquies) — le blocage TLS de `github.com` (hook
+> `package:sqlite3`) est confirmé **persistant d'une session à l'autre**, pas
+> ponctuel (`curl.exe` échoue aussi, `SEC_E_UNTRUSTED_ROOT` : c'est le magasin
+> de certificats du poste, pas le réseau). **T2 et R0 ont été poussés malgré
+> cette absence de vérification, sur demande explicite de l'opérateur** (« il
+> faut pousser sur main pour que je puisse voir en direct et donner du
+> feedback ») : `dart analyze --fatal-infos` est la seule preuve automatique
+> obtenue, complétée par une vérification visuelle manuelle
+> (`flutter build web`, détail section 0 quinquies) pour R0 seulement.
+> **Priorité de la prochaine session, avant tout code neuf** : faire tourner
+> `flutter test` et `dart run tool/verifier_jetons.dart` sur ce qui est
+> maintenant en production, pour combler cette dette de vérification — soit en
+> réparant le magasin de certificats du poste, soit sur un autre poste, soit
+> avec l'accord explicite de l'opérateur pour continuer sans. Ne pas boucler
+> sur le même contournement TLS déjà refusé deux fois par le classificateur
+> auto-mode cette semaine.
 > Dernier commit **poussé** de `main` : celui de B0. `git log --oneline -3`
 > peut nommer deux commits locaux, T2 puis R0, en avance sur `origin/main`.
 
@@ -133,13 +134,14 @@ aurait dû l'exempter à tort. Un écran marqué « repris » qui régresse plus
 sur cette règle est une régression au sens de la Bible §51, pas une réouverture
 de discussion sur l'exemption.
 
-### 0 quater. Le lot T2 : durcir le langage, commité localement, non poussé
+### 0 quater. Le lot T2 : durcir le langage, poussé sans vérification par les tests
 
 Cause n3 mesurée du rejet du 11 septembre (ombres à 5 %, bordures décoratives
 à 1,20:1 et 1,45:1) et cause n2 (bouton `ActionPrincipale` désactivé qui pesait
-moins qu'un secondaire). Les deux sont corrigées dans le code, mais ce lot
-n'est **pas vérifié par les tests** et **pas poussé** — voir l'avertissement en
-tête de fichier.
+moins qu'un secondaire). Les deux sont corrigées dans le code. Ce lot **n'a
+jamais pu être vérifié par `flutter test`** sur ce poste, et a été **poussé
+sur `main` malgré cela, sur demande explicite de l'opérateur** — voir
+l'avertissement en tête de fichier.
 
 **Ce qui a changé, et pourquoi ces valeurs précises :**
 
@@ -184,15 +186,18 @@ raison ci-dessus : élargir l'écart de clarté entre les trois surfaces. La
 route `/_galerie` était déjà correctement gardée par `Env.galerieActive`
 (faux par défaut), rien à faire de ce côté.
 
-### 0 quinquies. Le lot R0 : le tunnel d'entrée, commité localement, non poussé
+### 0 quinquies. Le lot R0 : le tunnel d'entrée, poussé sans vérification par les tests
 
 Causes n1 et n2 mesurées du rejet du 11 septembre (`connexion_page.dart`
 montait un `Scaffold` nu, seul écran visible sans compte ; le bouton
 `ActionPrincipale` désactivé du lot T2 corrige déjà la cause n2 par ailleurs).
 Six écrans de la zone Accès reprennent le même défaut, et sont tous corrigés
-dans le même lot, commit local **`Lot R0 : le tunnel d'entree`**, au-dessus du
-commit local de T2, jamais poussé — même raison que T2, voir l'avertissement
-en tête de fichier.
+dans le même lot, commit **`5f96b84`** (« Lot R0 : le tunnel d'entree »),
+au-dessus du commit de T2. **Poussé sur `main` malgré l'absence de
+confirmation par `flutter test`**, sur demande explicite de l'opérateur —
+même raison que T2, voir l'avertissement en tête de fichier. Une vérification
+visuelle de substitution a été faite (voir plus bas) : elle confirme le rendu
+de `TUT-00`, pas les autres écrans, et ne remplace pas `flutter test`.
 
 **Ce qui a changé :**
 
@@ -531,10 +536,12 @@ commitée à part au début du lot L8.
 
 ## 9. Prompt de reprise — vérifier T2 et R0, PUIS le lot T3
 
-À copier tel quel pour démarrer la prochaine session. Cette session a deux
-objectifs distincts, dans l'ordre : d'abord lever le doute sur T2 **et** R0
-(tous deux déjà codés, commités localement, pas poussés), ensuite seulement
-attaquer T3.
+À copier tel quel pour démarrer la prochaine session. **T2 et R0 sont déjà
+poussés sur `main`** (`5f96b84`, sur demande explicite de l'opérateur) : ils
+tournent en production sans jamais avoir été confirmés par `flutter test` ni
+`tool/verifier_jetons.dart` sur ce poste. Cette session a deux objectifs
+distincts, dans l'ordre : d'abord combler cette dette de vérification sur ce
+qui est déjà en ligne, ensuite seulement attaquer T3.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
@@ -543,10 +550,12 @@ Chemins en absolu : Glob ne trouve pas ce depot.
 Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 ter, 0 quater et
 0 quinquies), puis decisions.md ADR-019.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : verifier les lots T2 et R0, deja
-codes et commites localement (git log --oneline -3 le montre : deux commits
-en avance sur origin/main, aucun pousse).
-  1. git log --oneline -3, pour confirmer l'etat exact.
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : les lots T2 et R0 sont deja
+POUSSES sur main et EN PRODUCTION (commit 5f96b84), mais n'ont jamais ete
+verifies par flutter test sur ce poste -- l'operateur a explicitement demande
+le push pour voir le rendu en direct avant que la verification soit possible.
+Le but ici n'est plus de decider si on pousse, c'est de combler la dette :
+  1. git log --oneline -5, pour confirmer l'etat exact.
   2. dart analyze --fatal-infos (deja vert a la cloture des deux lots).
   3. flutter test -- deux sessions de suite ne l'ont JAMAIS obtenu (le poste
      bloque github.com en TLS pour le hook package:sqlite3 : neuf tentatives
@@ -554,14 +563,23 @@ en avance sur origin/main, aucun pousse).
      SEC_E_UNTRUSTED_ROOT, independamment de Dart). Reessaie une fois. Si ca
      bloque encore de la meme facon, c'est le poste, pas le code : ne boucle
      pas dessus une troisieme session de suite. Signale-le a l'operateur avec
-     ces deux preuves (CERTIFICATE_VERIFY_FAILED ET SEC_E_UNTRUSTED_ROOT) et
-     demande explicitement s'il veut reparer le magasin de certificats du
-     poste, sinon continue avec dart analyze seul comme preuve.
+     ces deux preuves (CERTIFICATE_VERIFY_FAILED ET SEC_E_UNTRUSTED_ROOT).
+     Note : `git push` lui-meme fonctionne sur ce poste malgre ce blocage
+     (protocole/magasin de certificats different de celui que consultent
+     Dart et curl.exe pour un telechargement HTTPS) -- ce n'est PAS une preuve
+     que le blocage est leve, seulement que git et le hook sqlite3 ne
+     partagent pas la meme chaine de confiance TLS. Piste a explorer si
+     l'operateur veut reparer le poste : la chaine de certificats que git
+     utilise (probablement le cacert.pem fourni par Git for Windows).
   4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne.
-  5. Si les deux passent : ecrase l'avertissement en tete de HANDOFF.md par les
-     vrais chiffres, git push origin main (les deux commits), puis seulement
-     continue a l'etape 2. Si flutter test echoue pour une VRAIE raison (pas
-     le blocage reseau) : ne pousse rien, corrige, ecris ce que tu as trouve.
+  5. Si les deux passent enfin : ecrase l'avertissement en tete de HANDOFF.md
+     par les vrais chiffres (plus besoin de push, c'est deja fait), puis
+     continue a l'etape 2. S'ils echouent encore pour le meme blocage reseau,
+     documente-le une fois de plus et continue quand meme a l'etape 2 -- ne
+     pas re-demander l'autorisation de pousser puisque c'est deja pousse et
+     que retarder T3 ne repare rien sur ce poste. Si flutter test echoue pour
+     une VRAIE raison (pas le blocage reseau), c'est une regression en
+     production : la signaler immediatement a l'operateur avant toute chose.
 
 ETAPE 2, seulement apres l'etape 1 : LOT T3 -- le mode sombre (Bible V2 §7.3,
 ADR-019, ecart 23 du registre de decisions.md). Aujourd'hui, AppPalette.claire()
