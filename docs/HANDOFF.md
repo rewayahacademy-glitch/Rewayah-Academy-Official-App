@@ -1,45 +1,31 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026, sixième session**. Les lots
-> **B0**, **T2** (durcir le langage), **R0** (tunnel d'entrée), **T3** (mode
-> sombre), **R4** (le reste de l'existant, section 0 septies) et **A1**
-> (accessibilité, RTL et clavier prouvés par des tests, section 0 octies)
-> sont tous les six codés et **poussés sur `main`** (`761db39` puis
-> `1748c06` pour la doc). Le lot **R** est désormais complet. **Ni
-> `flutter test` ni `tool/verifier_jetons.dart` n'ont jamais pu tourner sur ce
-> poste**, pour aucun des six lots : **septième confirmation consécutive** du
-> même blocage TLS de `github.com` (hook `package:sqlite3`),
-> `CERTIFICATE_VERIFY_FAILED` côté Dart, revérifiée au début de cette sixième
-> session (étape 1 du prompt de reprise), une seule fois comme prescrit. Le
-> constat ne change pas : c'est le magasin de certificats du poste, pas le
-> réseau ni un incident ponctuel.
-> **Le lot N0 est fait cette sixième session** : spécification documentaire de
-> l'étape 5 (salle, Coran structuré, machine à états de présence), ADR-020.
-> Aucun écran, aucune migration codés — voir section 0 novies. Le lot **A1
-> à N0 clôt l'ordre de travail de l'ADR-019** sauf **L10**, dette indépendante
-> de l'étape 4, qui redevient la priorité de la prochaine session (section 4).
-> **T2, R0, T3, R4 et A1 ont tous été poussés malgré l'absence de
-> vérification par `flutter test`, sur décision explicite de l'opérateur**
-> (accord donné une première fois pour T2/R0 « pour voir en direct »,
-> reconduit pour T3, R4 et A1 à chaque nouvelle demande) : `dart analyze
-> --fatal-infos` est la seule preuve automatique obtenue pour ces cinq lots,
-> complétée par une vérification visuelle manuelle (`flutter build web`) pour
-> R0 et T3 seulement (détail sections 0 quinquies et 0 sexies). **A1 n'ajoute
-> aucun écran** (seulement des tests, trois faux dans `harnais.dart`) : pas de
-> vérification visuelle de substitution nécessaire, `dart analyze
-> --fatal-infos` est la seule preuve possible. **N0 n'ajoute ni écran ni
-> code** : trois fichiers de documentation seulement
-> (`etape-5-salle-coran-presence.md`, `decisions.md`, `README.md`/`PROGRESS.md`),
-> `flutter test` et `verifier_jetons.dart` n'ont aucune prise sur ce lot,
-> `dart analyze --fatal-infos` reste vert par construction (rien en `lib/` ni
-> `test/` n'a changé).
-> Dernier commit **poussé** de `main` : `1748c06` avant cette session.
-> `git log --oneline -3` doit correspondre exactement à `origin/main`.
+> Dernière passation : **11 septembre 2026, septième session**. Le lot **L10**
+> (clôture de l'étape 4) est fait : section 0 decies. **L'ordre de travail de
+> l'ADR-019 est désormais entièrement épuisé** — B0, T2, R0, T3, R4, A1 (les
+> six lots de code) et N0 (documentaire) étaient déjà poussés, L10 était la
+> seule dette restante et ne touchait ni `lib/` ni `test/`. **Aucun des six
+> lots de code n'a jamais pu être confirmé par `flutter test` ni
+> `tool/verifier_jetons.dart` sur ce poste** : **huitième confirmation
+> consécutive** du même blocage TLS de `github.com` (hook `package:sqlite3`),
+> `CERTIFICATE_VERIFY_FAILED` côté Dart, revérifiée au début de cette
+> septième session (étape 1 du prompt de reprise), une seule fois comme
+> prescrit. Le constat ne change pas : c'est le magasin de certificats du
+> poste, pas le réseau ni un incident ponctuel.
+> **Découverte de cette session, sans rapport avec L10 lui-même** : la
+> production (`rewayah-academy.vercel.app`) ne sert pas `c5a511f`/L8 comme
+> l'affirmait cette page depuis plusieurs sessions, mais `a9127fd` (lot R3,
+> déployé le 8 septembre) — **onze commits de retard sur `main`**. B0, T2,
+> R0, T3, R4, A1 et N0 sont codés et poussés mais **aucun n'est en ligne**.
+> Vérifié en lecture seule par l'API Vercel, rien déployé. Détail section
+> 0 decies et `PROGRESS.md` ligne M.
+> Dernier commit **poussé** de `main` avant cette session : `39aec71`.
+> `git log --oneline -5` doit correspondre exactement à `origin/main`.
 > Détail du lot R4 : section 0 septies. Deux écarts de conception restent
 > ouverts et non tranchés, sur `ADM-01`/`ADM-06` (six compteurs contre cinq
 > annoncés, ordre signaux/chiffres) — pas des écrans de R4, voir fiche `ADM-01`
 > section 6 de `08-catalogue-ecrans.md`. Détail du lot A1 : section 0 octies.
-> Détail du lot N0 : section 0 novies.
+> Détail du lot N0 : section 0 novies. Détail du lot L10 : section 0 decies.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -554,6 +540,63 @@ N1).
 commit et push sans redemander), et sans le risque des lots précédents
 puisque rien en `lib/` ni `test/` n'a changé.
 
+### 0 decies. Le lot L10 : clôture de l'étape 4
+
+Dernier lot du découpage en onze de l'étape 4 (section 2), dette indépendante
+de la refonte, redevenue la priorité après que N0 a épuisé l'ordre de travail
+de l'ADR-019. N'ajoute aucun écran : vérifie et consigne, comme prescrit.
+
+**Étape 1 de ce prompt de reprise, avant L10** : `git log --oneline -5` et
+`git status` confirmés contre `origin/main` (`39aec71`, aucune divergence,
+seuls les fichiers Windows générés modifiés, sans rapport). `dart analyze
+--fatal-infos` vert. `flutter test` puis `dart run tool/verifier_jetons.dart`
+retentés une fois chacun, comme prescrit : même échec identique,
+`CERTIFICATE_VERIFY_FAILED` sur le hook natif de `package:sqlite3`,
+**huitième confirmation consécutive**. Pas de nouvelle tentative au-delà de
+celle prescrite.
+
+**Ce que L10 a fait, dans l'ordre de la section 4 :**
+
+1. **Les cinq contrôles rejoués sur un conteneur Docker neuf.** Trois obtenus,
+   deux non (même blocage TLS que l'étape 1, ce sont les mêmes commandes) :
+   `dart analyze --fatal-infos` vert, `scenarios_etape3.sql` 34 contrôles
+   verts, `scenarios_etape4.sql` 39 contrôles verts — identiques aux comptes
+   de L9, aucune régression. Chiffres et détail consignés dans
+   `etape-4-journal.md`, nouvelle section « Mesures du lot L10 ».
+2. **`docs/PROGRESS.md` mis à jour** : étapes 4 et 4 bis passées à `[x]`, ligne
+   M de l'onboarding corrigée, ligne « Promotion en production » corrigée,
+   section « DÉMARRER ICI » réécrite pour pointer vers N1 plutôt que L10. La
+   ligne « Plateforme Android 37 » avait déjà été retirée lors d'une session
+   antérieure (remplacée par « Magasin de certificats du poste ») : rien à
+   faire de ce côté, contrairement à ce que disait le prompt de reprise.
+3. **Les dix-sept scénarios relus** (`etape-4-journal.md` section « Les
+   dix-sept scénarios d'acceptation ») : déjà exacts, seize verts, le
+   quatorzième (démarrage à froid) toujours marqué non mesurable sur ce
+   poste, ni coché ni refait. Rien à corriger.
+
+⚠ **Découverte non prévue par le prompt de reprise, en vérifiant la ligne M** :
+`docs/HANDOFF.md` affirmait depuis plusieurs sessions que la production
+servait `c5a511f` (L8). C'était faux. Vérifié par l'API Vercel
+(`get_deployment` sur `rewayah-academy.vercel.app`, en lecture seule, aucun
+déploiement déclenché) : la production sert en réalité **`a9127fd`**, le
+commit qui a suivi la clôture du lot R3 (déployé le 8 septembre au soir, déjà
+noté dans `PROGRESS.md` mais avec le mauvais SHA, `09527ec`). Conséquence :
+**onze commits séparent la production de `main`** — B0, T2, R0, T3, R4, A1 et
+N0 sont codés et poussés mais **aucun n'est en ligne**. Corrigé dans les deux
+fichiers (`HANDOFF.md` section 4 bis, `PROGRESS.md` lignes M et « Promotion en
+production »). La ligne de promotion reste à l'opérateur, comme toujours —
+ce lot n'a rien déployé, seulement lu l'état réel.
+
+**Ce que L10 n'a pas fait, volontairement** : ouvrir l'étape 5 (N1 reste un
+autre lot, un autre jour) ; toucher au SQL de la base réelle ; déployer quoi
+que ce soit en production, y compris pour combler le retard de onze commits
+découvert ci-dessus.
+
+**Commit et push** : à faire sur ce lot, `docs/` et `PROGRESS.md` seulement,
+cohérent avec la règle déjà appliquée (build vert → commit et push sans
+redemander) et sans le risque des lots de code précédents, puisque rien en
+`lib/` ni `test/` n'a changé.
+
 ## 1. Le projet actif est celui-ci
 
 **Dépôt de travail : `D:\RA _APP\RA -OFFICIAL-APP`** — Rewayah Academy,
@@ -587,15 +630,9 @@ prières**. Découpage en onze lots, un lot par commit.
 | L7 | `ELV-02` et ses six états | fait |
 | L8 | `TUT-01`, `TUT-05`, demandes du tuteur | fait |
 | L9 | `ADM-01`, `ADM-06` | fait |
-| **L10** | **Vérifications de fin d'étape, documentation, `PROGRESS.md`** | **toujours à faire** |
+| **L10** | **Vérifications de fin d'étape, documentation, `PROGRESS.md`** | **fait le 11 septembre 2026** |
 
-⚠ **L10 n'est pas le point de reprise, contrairement à ce que disait cette
-page.** L'opérateur a demandé le lot T de la refonte avant lui, et le lot T est
-fait. L10 reste ouvert, et il a perdu une partie de son contenu au passage : ses
-cinq contrôles ont été rejoués le 7 septembre en clôture du lot T, et leurs
-chiffres sont en section 5. Ce qui lui reste, c'est `PROGRESS.md` et la relecture
-des dix-sept scénarios, décrits en section 4. Il peut se faire à tout moment,
-avant ou après le lot C.
+**L'étape 4 est désormais close.** Détail du lot L10 : section 0 decies.
 
 Le démarrage à froid, scénario 14, **n'est pas mesurable sur ce poste** : aucune
 cible ne se construit ni ne se lance. Ce n'est pas du travail en retard, c'est
@@ -627,29 +664,19 @@ Si vous attaquez la **refonte** (lots C puis R) :
 Ne pas rouvrir l'historique des étapes 1 à 3 : leurs journaux ne servent qu'en
 cas de doute sur un point précis.
 
-## 4. Reprendre : le lot L10
+## 4. Le lot L10 est fait
 
-Le dernier lot de l'étape 4. Il n'ajoute aucun écran : il **vérifie et
-consigne**. Trois choses, dans cet ordre.
+Clôture de l'étape 4, détail complet en section 0 decies. Les cinq contrôles
+de la section 5 sont rejoués (chiffres dans `etape-4-journal.md`),
+`docs/PROGRESS.md` est à jour, les dix-sept scénarios sont relus (seize
+verts, le quatorzième toujours non mesurable sur ce poste, non coché). Ce
+n'est plus le point de reprise.
 
-1. **Rejouer les cinq contrôles de la section 5**, sur un conteneur neuf, et
-   inscrire les chiffres obtenus dans `etape-4-journal.md`. Les mesures de L9
-   sont dans ce fichier : elles servent de référence, pas de dispense.
-2. **Mettre `docs/PROGRESS.md` à jour.** Il ment sur trois points, et
-   `MISE-EN-SERVICE.md` dit lesquels dans son propre en-tête : les lignes C, D
-   et M du tableau d'onboarding, et la ligne « Plateforme Android 37 » des
-   décisions en attente, qui est à **retirer** (ce paquet n'existe pas sous ce
-   nom, l'échec venait du magasin de certificats). À reporter aussi : l'étape 4
-   est close côté écrans, et le scénario 14 reste non mesurable faute
-   d'équipement, pas faute de code.
-3. **Relire les dix-sept scénarios** du journal. Seize sont verts ; le
-   quatorzième, le démarrage à froid, ne l'est pas et ne peut pas l'être sur ce
-   poste. Ne pas le cocher. La PWA étant en ligne, il se ferme désormais en
-   installant l'application sur un vrai téléphone d'entrée de gamme, ce qui est
-   à la main de l'opérateur.
-
-Ce que L10 **ne doit pas** faire : ouvrir l'étape 5. La salle, le pre-flight et
-`ELV-03` / `ENS-03` sont une autre étape, avec sa propre spécification à écrire.
+L'étape 5 (salle, pre-flight, `ELV-03`/`ENS-03`) reste une autre étape : elle
+est désormais **spécifiée** (lot N0, ADR-020,
+`docs/architecture/etape-5-salle-coran-presence.md`), mais son premier lot de
+code, **N1**, n'a pas été ouvert par L10 — c'est volontaire, voir section
+0 decies.
 
 ## 4 bis. Puis la refonte, avant l'étape 5
 
@@ -696,9 +723,14 @@ Deux dettes restent ouvertes et n'appartiennent à aucun lot :
   Tant qu'elle n'est pas passée, `ENS-06` reste faux deux heures par semaine en
   production, et `TUT-01` lit une vue sans sa colonne. Le SQL à coller est dans
   `MISE-EN-SERVICE.md` section 5.
-- **La production sert la build de `c5a511f`**, c'est-à-dire L8. Les deux écrans
-  d'administration de L9 n'y sont pas. La ligne de promotion est à l'opérateur,
-  `MISE-EN-SERVICE.md` section 7.1.
+- **La production sert la build de `a9127fd`** (lot R3, déployée le 8 septembre
+  au soir), pas `c5a511f`/L8 comme l'affichait cette ligne — corrigé au lot L10
+  après vérification par l'API Vercel (`docs/PROGRESS.md` ligne M). Les deux
+  écrans d'administration de L9 (`ADM-01`, `ADM-06`) y sont, L9 étant antérieur
+  à ce déploiement ; ce qui n'y est pas, c'est tout ce qui a suivi le 8
+  septembre : B0, T2, R0, T3, R4, A1, N0, soit onze commits de retard sur
+  `main`. La ligne de promotion est à l'opérateur, `MISE-EN-SERVICE.md`
+  section 7.1.
 
 ## 5. Mesures de référence, à ne pas faire régresser
 
@@ -830,41 +862,42 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — le lot L10, dette indépendante de l'étape 4
+## 9. Prompt de reprise — après L10, deux sujets distincts pour l'opérateur
 
-À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3, R4,
-A1 et N0 sont tous les sept poussés sur `main`**. Le lot **R** est complet,
-**A1** (accessibilité, RTL, clavier) aussi, et **N0** (spécification de
-l'étape 5, ADR-020) aussi — détail sections 0 octies et 0 novies. L'ordre de
-travail de l'ADR-019 est désormais épuisé sauf **L10**, qui redevient la
-seule dette ouverte. Aucun des six lots de code n'a été confirmé par
-`flutter test` ni `tool/verifier_jetons.dart` sur ce poste — septième
-confirmation consécutive du même blocage TLS, détail en tête de fichier et
-section 0 novies. N0 n'a rien à confirmer par ces outils, n'ayant touché ni
+À copier tel quel pour démarrer la prochaine session. **L'ordre de travail de
+l'ADR-019 est désormais entièrement épuisé** : B0, T2, R0, T3, R4, A1 (six
+lots de code), N0 (documentaire) et L10 (vérifications, section 0 decies)
+sont tous faits et poussés sur `main`. Il n'y a **pas de lot suivant déjà
+tranché** : deux sujets distincts attendent une décision de l'opérateur avant
+que du travail neuf commence, détaillés dans le prompt ci-dessous. Aucun des
+six lots de code n'a été confirmé par `flutter test` ni
+`tool/verifier_jetons.dart` sur ce poste — huitième confirmation consécutive
+du même blocage TLS, détail en tête de fichier. L10 n'a rien eu à confirmer
+par ces outils au-delà de la répétition de l'étape 1, n'ayant touché ni
 `lib/` ni `test/`.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 novies),
-puis decisions.md ADR-019, ADR-020 et l'ecart 24.
+Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 decies),
+puis decisions.md ADR-019, ADR-020 et l'ecart 24, puis docs/PROGRESS.md.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a N0 sont tous codes/specifies
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a L10 sont tous codes/verifies
 et pousses (confirme l'etat reel avec git log --oneline -5 et git status,
 l'en-tete de HANDOFF.md peut etre legerement en retard sur le depot reel).
 Aucun des SIX LOTS DE CODE n'a ete confirme par flutter test sur ce poste,
-sept sessions de suite (N0 est documentaire, hors de ce compte) :
+HUIT sessions de suite (N0 et L10 sont documentaires, hors de ce compte) :
   1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
      origin/main.
   2. dart analyze --fatal-infos (deja vert a la cloture de tous les lots).
-  3. flutter test -- SEPT sessions de suite ne l'ont JAMAIS obtenu (le
+  3. flutter test -- HUIT sessions de suite ne l'ont JAMAIS obtenu (le
      poste bloque github.com en TLS pour le hook package:sqlite3,
      CERTIFICATE_VERIFY_FAILED ; curl.exe echoue aussi sur la meme URL avec
      SEC_E_UNTRUSTED_ROOT, independamment de Dart -- confirmation
      independante que c'est le magasin de certificats du poste). Reessaie
      UNE fois, pas plus : la cause est deja etablie avec certitude, boucler
-     dessus une huitieme fois n'apporterait aucune preuve nouvelle. Si ca
+     dessus une neuvieme fois n'apporterait aucune preuve nouvelle. Si ca
      bloque encore de la meme facon, continue directement a l'etape 2 -- ce
      n'est plus une question ouverte, c'est un fait du poste. Note :
      `git push` fonctionne malgre ce blocage (chaine de certificats
@@ -878,30 +911,26 @@ sept sessions de suite (N0 est documentaire, hors de ce compte) :
      l'un des six lots de code, la signaler immediatement a l'operateur avant
      toute chose.
 
-ETAPE 2, seulement apres l'etape 1 : LOT L10 -- cloture de l'etape 4, dette
-INDEPENDANTE de la refonte (ADR-019 est desormais entierement traite). Section
-4 de ce fichier decrit deja les trois choses a faire, dans l'ordre :
-  1. Rejouer les cinq controles de la section 5 sur un conteneur Docker neuf
-     (harnais SQL, section 6 de ce fichier). Les deux controles Dart
-     (flutter test, verifier_jetons.dart) subiront probablement le meme
-     blocage TLS que l'etape 1 -- ne pas re-retenter au-dela de ce qui a deja
-     ete fait a l'etape 1, ce sont les MEMES commandes. Les trois controles
-     SQL (scenarios_etape3.sql, scenarios_etape4.sql, dart analyze) n'en
-     dependent pas et doivent etre obtenus.
-  2. Mettre docs/PROGRESS.md a jour : les lignes C, D et M du tableau
-     d'onboarding, retirer la ligne "Plateforme Android 37" des decisions en
-     attente (le paquet existe, l'echec vient du magasin de certificats, deja
-     documente section 7). Profiter du passage pour verifier si les lignes 4
-     bis (refonte, marquee [ ] alors que T/C/R sont tous "fait") et 5 (etape
-     5, deja mise a jour par N0 cette session) sont encore exactes.
-  3. Relire les dix-sept scenarios du journal etape-4-journal.md. Seize verts,
-     le quatorzieme (demarrage a froid) reste non mesurable sur ce poste,
-     faute d'equipement -- ne pas le cocher, ne pas le refaire.
+ETAPE 2 -- DEUX SUJETS DISTINCTS, NI L'UN NI L'AUTRE TRANCHE, A POSER A
+L'OPERATEUR AVANT DE CODER QUOI QUE CE SOIT (meme methode qu'au lot N0 : ne
+pas deviner a sa place) :
 
-Ce que L10 ne doit PAS faire : ouvrir l'etape 5 (N0 l'a specifiee cette
-session, coder N1 est un autre lot, un autre jour). Fin de lot : mise a jour
-de HANDOFF.md (nouvelle section, en-tete), commit et push -- docs et
-PROGRESS.md seulement, coherent avec la regle deja appliquee (build vert ->
-commit et push sans redemander). Un lot par session. Ignore la branche
-refactor-ui-lavender.
+  A. Le retard de production. Decouvert au lot L10 : la production
+     (rewayah-academy.vercel.app) sert `a9127fd` (lot R3, deploye le
+     8 septembre), ONZE commits de retard sur `main`. B0, T2, R0, T3, R4, A1
+     et N0 sont codes et pousses mais aucun n'est en ligne. `vercel deploy
+     --prod` reste refuse a l'agent (barriere sur l'appel de l'agent, pas sur
+     le poste) : livrer la ligne a l'operateur au lieu d'insister
+     (MISE-EN-SERVICE.md section 7.1), et lui signaler l'ecart avant toute
+     autre chose si ce n'est pas deja fait.
+  B. Le premier lot de code de l'etape 5, N1. Specifiee par N0
+     (etape-5-salle-coran-presence.md, ADR-020) : un decoupage en huit lots
+     N0 a N7 y est propose, explicitement "a confirmer au premier lot de
+     code". Ne pas commencer N1 sans relire ce decoupage avec l'operateur et
+     confirmer qu'il tient, exactement comme N0 a pose deux questions
+     (format du livrable, riwaya) avant d'ecrire quoi que ce soit.
+
+Ce qu'il ne faut PAS faire : deployer en production de sa propre initiative
+(sujet A), ou coder N1 sans confirmation du decoupage (sujet B). Un lot par
+session, comme toujours. Ignore la branche refactor-ui-lavender.
 ```

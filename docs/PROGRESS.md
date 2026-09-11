@@ -10,22 +10,18 @@ dépôt actif, où le travail s'est arrêté, quel lot reprendre, et avec quelle
 commandes. Le reste de ce fichier est le tableau d'avancement, pas la consigne
 de reprise.
 
-**L'étape 3 est terminée, l'étape 4 est en cours** : les lots L0 à L9 sont
-faits, le prochain est **L10, vérifications de fin d'étape et documentation**,
-qui n'ajoute aucun écran.
+**Les étapes 3 et 4 sont terminées, la refonte UX/UI aussi.** L0 à L10 sont
+faits (étape 4 close le 11 septembre 2026), et B0, T, C, R (R0 à R4), T2, T3,
+A1 sont tous codés et poussés sur `main` (ADR-019). **Rien de tout cela n'est
+en ligne** : la production sert `a9127fd` (lot R3), onze commits de retard —
+voir la ligne M du tableau d'onboarding plus bas. N0 (documentaire) a spécifié
+l'étape 5 (ADR-020) ; son premier lot de code, **N1**, est le prochain
+candidat, à confirmer dans `docs/HANDOFF.md` avant de commencer — un lot par
+session.
 
-**Puis vient la refonte UX/UI, pas l'étape 5.** Décision de l'opérateur du
-7 septembre 2026 (ADR-018) : le premier rendu visuel a été jugé daté, et le
-langage visuel se pose **avant** d'ajouter des écrans. Le corpus est écrit, dans
-`docs/design/` ; le code ne l'a pas encore. Trois lots : **T** jetons et thème,
-**C** composants, **R** reprise de quatre écrans. Le lot T d'abord et
-entièrement, sinon les écrans se reprennent deux fois.
-
-1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis, selon ce
-   que vous reprenez, soit `docs/architecture/etape-4-journal.md` et
-   `etape-4-dashboards.md` pour L10, soit `docs/design/README.md` et
-   `docs/produit/design-tokens.md` pour la refonte. Puis `lib/CLAUDE.md` dans les
-   deux cas.
+1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis, pour le
+   lot N1 (étape 5), `docs/architecture/etape-5-salle-coran-presence.md` et
+   `decisions.md` (ADR-020). Puis `lib/CLAUDE.md` dans tous les cas.
 2. **Ne rien réécrire des étapes 2 et 3.** Les dix composants partagés, le
    thème, le routeur et les services de dossier sont les seuls points d'entrée
    de leur fonction. `dart run tool/verifier_jetons.dart` le dira.
@@ -80,8 +76,8 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | 1 | Fondations DB, RLS, fonctions, audit | [x] | `supabase/migrations/0001` à `0004` |
 | 2 | Core Flutter, thème, cache local, routeur | [x] | `docs/architecture/etape-2-journal.md` |
 | 3 | Auth, KYC, appairage, portails d'attente | [x] | `docs/architecture/etape-3-journal.md` |
-| 4 | Dashboards Bento Grid, affectation durable, prières | [ ] | **en cours**, L0 à L9 faits, reste L10. `docs/architecture/etape-4-journal.md` |
-| 4 bis | **Refonte UX/UI** : jetons, composants, reprise des écrans | [ ] | Documentation écrite (`docs/design/`, ADR-018). **Code non touché.** Lots T, C, R |
+| 4 | Dashboards Bento Grid, affectation durable, prières | [x] | **Close le 11 septembre 2026 (lot L10)** : L0 à L10 faits, dix-sept scénarios relus (seize verts, le quatorzième non mesurable sur ce poste). `docs/architecture/etape-4-journal.md` |
+| 4 bis | **Refonte UX/UI** : jetons, composants, reprise des écrans | [x] | **Close le 11 septembre 2026.** Lots T, C, R (R0 à R4) faits, plus B0, T2, T3 et A1 de la Bible Frontend V2 (ADR-019). **Non en ligne** : la production sert `a9127fd`, onze commits de retard — voir ligne M ci-dessus |
 | 5 | Visio LiveKit, preuve de présence, Coran | [ ] | **Spécifiée (lot N0, ADR-020)** : `docs/architecture/etape-5-salle-coran-presence.md`. Code non touché, attend son premier lot (N1) |
 | 6 | Cahier de transmission | [ ] | |
 
@@ -101,7 +97,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | J | Config applicative `app_config` | [x] | Étendue à l'étape 3 : `kyc_retention_days`, `pairing_code_ttl_minutes` |
 | K | Mémoire graphify | [ ] | À faire |
 | L | Ressources front et back | [x] | Conformes aux étapes 2 et 3 |
-| M | PWA multiappareils | [x] | En ligne sur <https://rewayah-academy.vercel.app>, chargée sans erreur console. Manifeste, `index.html` et `vercel.json` portent le nom, la palette, la balise `viewport` qui manquait et la réécriture SPA. Service worker généré par Flutter. L'adresse stable sert la build `09527ec`, donc **la refonte UX/UI au lot R3 compris** (fond crème, polices Bricolage Grotesque / Instrument Sans, `NavShell` câblé). Redeployée le 8 septembre au soir : la refonte entière n'était pas arrivée en ligne depuis le début (`MISE-EN-SERVICE.md` 7.1 dit comment le vérifier, et pourquoi la taille du téléversement ne le prouve pas). Reste à décider : le plan Vercel Hobby exclut l'usage commercial |
+| M | PWA multiappareils | [x] | En ligne sur <https://rewayah-academy.vercel.app>, chargée sans erreur console. Manifeste, `index.html` et `vercel.json` portent le nom, la palette, la balise `viewport` qui manquait et la réécriture SPA. Service worker généré par Flutter. **Vérifié via l'API Vercel le 11 septembre 2026** (lot L10) : l'adresse stable sert en réalité la build `a9127fd` (« Mise en ligne de la refonte lot R3 »), déployée le 8 septembre au soir — un commit après `09527ec`, pas `09527ec` lui-même. C'est **onze commits de retard sur `main`** (`39aec71`) : B0, T2, R0, T3, R4, A1 et N0 ne sont pas en ligne. Reste à décider : le plan Vercel Hobby exclut l'usage commercial |
 
 ## Décisions en attente de l'opérateur
 
@@ -119,7 +115,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | Réglages Auth écrasés par `config push` | Quatre valeurs distantes ont été remplacées par celles de `config.toml` sans qu'on le demande : TOTP `enroll`/`verify` passés à `false`, `enable_confirmations` à `false` (comptes auto-confirmés), `max_frequency` 1 min → 1 s, `otp_length` 8 → 6. À trancher avant l'ouverture au public | `MISE-EN-SERVICE.md` section 3 |
 | Migration `0006` non appliquée | Le rattrapage des deux objets que L8 a modifiés dans `0005` après son application (ancre UTC de `instant_creneau`, colonne `access_until` de `profils_du_foyer_v`) est commité mais **pas encore joué sur la base réelle**. Non bloquant : l'application fonctionne sans. Bloc SQL prêt à coller | `MISE-EN-SERVICE.md` section 5 |
 | Interfaces d'administration | Le compte propriétaire a été passé en **admin** le 7 septembre, puis **remis en `guardian` le même jour** : `/admin/tableau-de-bord` ne rend qu'`EcranAConstruire`, l'accès admin ouvre les données et pas encore les écrans. C'est exactement `ADM-01`, le lot L9. Le rôle se bascule à volonté par une requête, documentée | `MISE-EN-SERVICE.md` section 3.3 |
-| Promotion en production | **Réglé le 7 septembre** : l'adresse stable sert la build `c5a511f` (L8). `vercel deploy --prod` reste refusé à l'agent, mais **passe quand l'opérateur lance la ligne lui-même** — la barrière porte sur l'appel de l'agent, pas sur le poste. Livrer la ligne au lieu d'insister | `MISE-EN-SERVICE.md` section 7.1 |
+| Promotion en production | **Périmé, corrigé au lot L10** : l'adresse stable ne sert pas `c5a511f` (L8) mais `a9127fd` (lot R3, déployé le 8 septembre), toujours **onze commits de retard sur `main`** (B0, T2, R0, T3, R4, A1, N0 absents de la production). `vercel deploy --prod` reste refusé à l'agent, mais **passe quand l'opérateur lance la ligne lui-même** — la barrière porte sur l'appel de l'agent, pas sur le poste. Livrer la ligne au lieu d'insister | `MISE-EN-SERVICE.md` section 7.1, ligne M ci-dessus |
 | Plan d'hébergement | La PWA est sur Vercel Hobby, gratuit, dont les conditions **excluent l'usage commercial**. À trancher avant l'ouverture payante : plan payant, ou un hébergeur statique gratuit qui autorise le commerce | `MISE-EN-SERVICE.md` section 4 |
 | Appareil de mesure du démarrage à froid | Le scénario 7 de l'étape 2 demande **moins de 1,5 seconde sur un appareil d'entrée de gamme**. L'écran existe depuis L7 et l'application est en ligne depuis le 7 septembre : la mesure est désormais possible en installant la PWA sur un vrai téléphone d'entrée de gamme. Elle sera pessimiste, un bundle web pesant plus qu'un APK, donc un échec ne condamnerait pas le produit mais une réussite compterait | `etape-4-journal.md`, section L7 |
 

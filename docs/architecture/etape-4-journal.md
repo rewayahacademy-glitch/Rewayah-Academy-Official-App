@@ -317,6 +317,34 @@ L'étape ferme ainsi le parcours 6 du tableau de la section 1 de la
 spécification, et rend visibles les demandes que `ENS-06` et `TUT-05`
 déposaient depuis L4 et L8 sans que personne puisse les lire.
 
+## Mesures du lot L10, clôture de l'étape 4
+
+Rejouées le 11 septembre 2026, sur un conteneur Docker neuf, entre les lots
+N0 et L10 de la refonte (`HANDOFF.md` section 9). L'écart avec les 362 tests
+et 80 fichiers de la référence du 7 septembre (`HANDOFF.md` section 5) vient
+des lots C, R (R0 à R4), T2, T3 et A1 codés depuis, qui ont chacun ajouté des
+tests et des fichiers vérifiés : ce compte n'a jamais pu être rejoué depuis,
+faute de `flutter test` disponible sur ce poste.
+
+| Contrôle | Résultat |
+| :--- | :--- |
+| `dart analyze --fatal-infos` | aucun problème |
+| `flutter test` | **non obtenu** — `CERTIFICATE_VERIFY_FAILED` sur le hook natif de `package:sqlite3`, huitième confirmation consécutive du même blocage TLS du poste, détail `HANDOFF.md` en-tête |
+| `dart run tool/verifier_jetons.dart` | **non obtenu** — même blocage, même cause |
+| `0001` à `0006` sur une base nue | appliquées, aucune erreur |
+| `scenarios_etape3.sql` | **34 contrôles**, tous verts |
+| `scenarios_etape4.sql` | **39 contrôles**, tous verts |
+
+Les trois contrôles indépendants du blocage TLS (analyse statique, deux
+harnais SQL) sont donc obtenus et verts, sans régression sur les comptes de
+référence (34 et 39, identiques à L9). Les deux contrôles Dart qui dépendent
+du réseau restent à confirmer le jour où le magasin de certificats du poste
+sera réparé, ou depuis un autre poste.
+
+Ceci clôt l'étape 4 côté vérifications. Le scénario 14 (démarrage à froid) du
+journal reste non mesurable sur ce poste, faute d'équipement — voir section 2
+de `HANDOFF.md`.
+
 ### Le tri du feed de `ENS-06` était l'exact inverse de sa règle
 
 Défaut de L4, trouvé en écrivant la liste « à traiter en premier » de `ADM-01`,
