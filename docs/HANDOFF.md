@@ -4,11 +4,10 @@
 > **B0**, **T2** (durcir le langage), **R0** (tunnel d'entrée), **T3** (mode
 > sombre), **R4** (le reste de l'existant, section 0 septies) et **A1**
 > (accessibilité, RTL et clavier prouvés par des tests, section 0 octies)
-> sont codés. B0 à R4 sont **poussés sur `main`** (`76867a7`) ; **A1 ne l'est
-> pas encore**, en attente de la même décision opérateur que les quatre
-> précédents (voir section 0 octies). Le lot **R** est désormais complet.
-> **Ni `flutter test` ni `tool/verifier_jetons.dart` n'ont jamais pu tourner
-> sur ce poste**, pour aucun des six lots : c'est la **sixième confirmation
+> sont tous les six codés et **poussés sur `main`** (`761db39`). Le lot **R**
+> est désormais complet. **Ni `flutter test` ni `tool/verifier_jetons.dart`
+> n'ont jamais pu tourner sur ce poste**, pour aucun des six lots : c'est la
+> **sixième confirmation
 > consécutive** du même blocage TLS de `github.com` (hook `package:sqlite3`),
 > `CERTIFICATE_VERIFY_FAILED` côté Dart et `SEC_E_UNTRUSTED_ROOT` côté
 > `curl.exe`, preuve indépendante que c'est le magasin de certificats du
@@ -25,19 +24,18 @@
 > ouverte de son côté). **A1 n'ajoute aucun écran** (seulement des tests, et
 > trois faux dans `harnais.dart`) : pas de vérification visuelle de
 > substitution nécessaire pour ce lot, `dart analyze --fatal-infos` est la
-> seule preuve possible sur ce poste.
+> seule preuve possible sur ce poste. **A1 poussé sur décision explicite de
+> l'opérateur**, même raison que les quatre lots précédents.
 > **Priorité de la prochaine session, avant tout code neuf** : faire tourner
 > `flutter test` et `dart run tool/verifier_jetons.dart` sur ce qui est
-> maintenant en production (T2, R0, T3, R4) et sur A1 une fois poussé, pour
-> combler cette dette de vérification qui s'accumule lot après lot — soit en
-> réparant le magasin de certificats du poste, soit sur un autre poste, soit
-> avec l'accord explicite de l'opérateur pour continuer sans. Ne pas boucler
-> sur le même contournement TLS déjà refusé deux fois par le classificateur
-> auto-mode cette semaine.
-> Dernier commit **poussé** de `main` : celui de R4 (`76867a7`). A1 est codé
-> mais pas commité/poussé au moment d'écrire cette ligne.
-> `git log --oneline -3` doit correspondre exactement à `origin/main` pour
-> tout ce qui précède A1.
+> maintenant en production (B0 à A1), pour combler cette dette de
+> vérification qui s'accumule lot après lot — soit en réparant le magasin de
+> certificats du poste, soit sur un autre poste, soit avec l'accord explicite
+> de l'opérateur pour continuer sans. Ne pas boucler sur le même
+> contournement TLS déjà refusé deux fois par le classificateur auto-mode
+> cette semaine.
+> Dernier commit **poussé** de `main` : celui d'A1 (`761db39`).
+> `git log --oneline -3` doit correspondre exactement à `origin/main`.
 > Détail du lot R4 : section 0 septies. Deux écarts de conception restent
 > ouverts et non tranchés, sur `ADM-01`/`ADM-06` (six compteurs contre cinq
 > annoncés, ordre signaux/chiffres) — pas des écrans de R4, voir fiche `ADM-01`
@@ -483,11 +481,9 @@ même blocage : `flutter test` et `dart run tool/verifier_jetons.dart`
 `Directory('${racine.path}/lib')` dans `main()`) : les fichiers de ce lot,
 tous sous `test/`, ne peuvent de toute façon déclencher aucune de ses règles.
 
-**Commit et push** : **codé, pas encore commité au moment d'écrire cette
-section.** Contrairement aux cinq lots précédents, la décision de pousser
-malgré l'absence de vérification par `flutter test` n'a pas encore été
-redemandée à l'opérateur pour ce lot précis — à faire avant de pousser, même
-schéma que T2/R0/T3/R4.
+**Commit et push** : poussé sur `main` (`761db39`), sur décision explicite de
+l'opérateur — même raison que T2/R0/T3/R4, voir l'avertissement en tête de
+fichier. Confirmé par `git fetch origin main` : `origin/main` correspond.
 
 ## 1. Le projet actif est celui-ci
 
@@ -765,16 +761,16 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — décider du push d'A1, PUIS le lot N0
+## 9. Prompt de reprise — combler la dette de vérification, PUIS le lot N0
 
-À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3 et R4
-sont poussés sur `main`** (`76867a7`). **A1 (accessibilité, RTL et clavier
-prouvés par des tests) est codé mais pas encore poussé** — trois fichiers de
-test neufs, plus trois faux ajoutés à `harnais.dart`, aucun écran touché,
-détail section 0 octies. Aucun des six lots n'a été confirmé par
-`flutter test` ni `tool/verifier_jetons.dart` sur ce poste — sixième
-confirmation consécutive du même blocage TLS, détail en tête de fichier et
-section 0 septies.
+À copier tel quel pour démarrer la prochaine session. **B0, T2, R0, T3, R4 et
+A1 sont tous les six poussés sur `main`** (`761db39`). Le lot **R** est
+complet, et **A1 (accessibilité, RTL et clavier prouvés par des tests) aussi**
+— trois fichiers de test neufs, plus trois faux ajoutés à `harnais.dart`,
+aucun écran touché, détail section 0 octies. Aucun des six lots n'a été
+confirmé par `flutter test` ni `tool/verifier_jetons.dart` sur ce poste —
+sixième confirmation consécutive du même blocage TLS, détail en tête de
+fichier et section 0 septies.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
@@ -783,12 +779,12 @@ Chemins en absolu : Glob ne trouve pas ce depot.
 Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 quater a 0 octies),
 puis decisions.md ADR-019 et l'ecart 24.
 
-ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a R4 sont pousses, A1 est code
-mais pas pousse (confirme l'etat reel de commit/push avec git log --oneline -5
-et git status, l'en-tete de HANDOFF.md peut etre legerement en retard sur le
-depot reel).
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : B0 a A1 sont tous codes et
+pousses (confirme l'etat reel avec git log --oneline -5 et git status,
+l'en-tete de HANDOFF.md peut etre legerement en retard sur le depot reel).
+Aucun n'a ete confirme par flutter test sur ce poste, six sessions de suite :
   1. git log --oneline -5 et git status, pour confirmer l'etat exact contre
-     origin/main et l'etat non commite d'A1.
+     origin/main.
   2. dart analyze --fatal-infos (deja vert a la cloture des six lots).
   3. flutter test -- SIX sessions de suite ne l'ont JAMAIS obtenu (le
      poste bloque github.com en TLS pour le hook package:sqlite3,
@@ -802,21 +798,13 @@ depot reel).
      `git push` fonctionne malgre ce blocage (chaine de certificats
      differente de celle de Dart/curl.exe, probablement le cacert.pem de Git
      for Windows) : ce n'est PAS une preuve que le blocage general est leve.
-  4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne (mais
-     ce lot n'ajoute rien sous lib/, donc rien de nouveau a y craindre).
+  4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne.
   5. Si les deux passent enfin (poste repare, ou lance ailleurs) : ecrase
-     l'avertissement en tete de HANDOFF.md par les vrais chiffres. Si l'un des
-     deux echoue pour une VRAIE raison (pas le blocage reseau) sur les lots
-     deja en production (B0 a R4) : regression EN PRODUCTION possible, la
-     signaler immediatement a l'operateur. Si un test d'A1 echoue pour une
-     vraie raison (pas le blocage reseau) : c'est un defaut du lot A1
-     lui-meme (un montage d'ecran incorrect dans
-     test/accessibilite/rtl_echelle_texte_ecrans_test.dart, par exemple), pas
-     une regression en production puisque rien n'est pousse -- corrige-le
-     avant de demander le push.
-  6. DEMANDER A L'OPERATEUR s'il faut pousser A1 malgre l'absence de
-     verification par flutter test -- meme decision que pour T2/R0/T3/R4,
-     jamais implicite.
+     l'avertissement en tete de HANDOFF.md par les vrais chiffres, puis
+     continue a l'etape 2. Si l'un des deux echoue pour une VRAIE raison (pas
+     le blocage reseau) : c'est une regression EN PRODUCTION possible sur
+     l'un des six lots, la signaler immediatement a l'operateur avant toute
+     chose.
 
 ETAPE 2, seulement apres l'etape 1 : LOT N0 -- specs de l'etape 5 (ADR-020,
 Coran structure, machine a etats de presence). Lot documentaire, aucun ecran
