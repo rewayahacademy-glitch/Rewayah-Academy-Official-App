@@ -159,12 +159,8 @@ final RegExp _scaffoldConstructeur = RegExp(r'\bScaffold\s*\(');
 /// avant. Une entree retiree sans que l'ecran soit repris romprait la garantie
 /// que cette regle existe pour tenir (Bible V2 section 0.3, derogation ecrite).
 const Set<String> _ecransEnAttenteDeCoquille = <String>{
-  // Lot R0, tunnel d'entree, zone Acces de `08-catalogue-ecrans.md`.
-  'features/connexion/connexion_page.dart',
-  'features/eleve_connexion/eleve_connexion_page.dart',
-  'features/dossier/attente_page.dart',
-  'features/dossier/signature_page.dart',
-  'features/dossier/depot_piece_page.dart',
+  // Lot R0 fait le 11 septembre 2026 : les cinq ecrans du tunnel d'entree
+  // passent par PageShell, retires de cette liste.
   // Lot R4, le reste de l'existant, `08-catalogue-ecrans.md` section 5.
   'features/creneaux/creneaux_page.dart',
   'features/reglages_enfant/reglages_enfant_page.dart',

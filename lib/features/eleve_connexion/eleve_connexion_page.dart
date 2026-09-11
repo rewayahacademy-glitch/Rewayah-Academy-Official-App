@@ -15,8 +15,10 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/marque_page.dart';
+import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pin_pad.dart';
 import '../../core/widgets/pressable.dart';
 
@@ -243,37 +245,30 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(metriques.marge),
-                child: switch (_moment) {
-                  _Moment.chargement => Center(
-                    child: Text(t.commun.chargement),
-                  ),
-                  _Moment.saisieCode => _saisieCode(),
-                  _Moment.choixProfil => _choixProfil(),
-                  _Moment.creationCode => _pave(
-                    titre: _premierEssai == null
-                        ? t.eleveConnexion.nouveauCode
-                        : t.eleveConnexion.nouveauCodeConfirmer,
-                    onComplet: (String code) => unawaited(_creerCode(code)),
-                  ),
-                  _Moment.saisieCodePersonnel => _pave(
-                    titre: t.pin.titre,
-                    onComplet: (String code) => unawaited(_verifierCode(code)),
-                  ),
-                },
+    return PageShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          const MarquePage(),
+          Ecart.vXxxl,
+          AppCard(
+            child: switch (_moment) {
+              _Moment.chargement => Center(child: Text(t.commun.chargement)),
+              _Moment.saisieCode => _saisieCode(),
+              _Moment.choixProfil => _choixProfil(),
+              _Moment.creationCode => _pave(
+                titre: _premierEssai == null
+                    ? t.eleveConnexion.nouveauCode
+                    : t.eleveConnexion.nouveauCodeConfirmer,
+                onComplet: (String code) => unawaited(_creerCode(code)),
               ),
-            ),
-          ],
-        ),
+              _Moment.saisieCodePersonnel => _pave(
+                titre: t.pin.titre,
+                onComplet: (String code) => unawaited(_verifierCode(code)),
+              ),
+            },
+          ),
+        ],
       ),
     );
   }
@@ -284,7 +279,6 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXxl,
         Text(t.eleveConnexion.entrerCode, style: textes.headlineSmall),
         Ecart.vMd,
         Text(t.eleveConnexion.codeInvite, style: textes.bodyLarge),
@@ -324,7 +318,6 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXxl,
         Text(
           t.eleveConnexion.choisirProfil,
           textAlign: TextAlign.center,
@@ -363,7 +356,6 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
   }) {
     return Column(
       children: <Widget>[
-        Ecart.vXl,
         Text(titre, style: Theme.of(context).textTheme.titleLarge),
         Ecart.vXl,
         PinPad(

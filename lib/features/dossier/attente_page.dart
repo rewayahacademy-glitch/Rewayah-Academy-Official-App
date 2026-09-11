@@ -10,12 +10,13 @@ import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bento_tile.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/marque_page.dart';
+import '../../core/widgets/page_shell.dart';
 
 /// `TUT-00b` : le portail d'attente.
 ///
@@ -32,45 +33,34 @@ class AttentePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AsyncValue<EtatDossier> etat = ref.watch(etatDossierProvider);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async => ref.invalidate(etatDossierProvider),
-                child: ListView(
-                  padding: EdgeInsets.all(metriques.marge),
-                  children: <Widget>[
-                    // Les getters, jamais le type d'execution : Riverpod 3
-                    // relance un provider en echec tout seul, et l'etat
-                    // repasse alors par `AsyncLoading` en conservant
-                    // `hasError`. Un `switch` sur `AsyncError<T>` rate donc
-                    // l'erreur une fois sur deux, selon l'instant du rendu.
-                    if (etat.hasValue)
-                      _Contenu(etat: etat.requireValue)
-                    else if (etat.hasError)
-                      _Indisponible(
-                        onReessayer: () => ref.invalidate(etatDossierProvider),
-                      )
-                    else
-                      const _Patience(),
-                    Ecart.vXxxl,
-                    _Deconnexion(
-                      onDeconnexion: () => unawaited(
-                        ref.read(serviceAuthProvider).deconnexion(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+    return PageShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          const MarquePage(),
+          Ecart.vXxxl,
+          AppCard(
+            // Les getters, jamais le type d'execution : Riverpod 3 relance un
+            // provider en echec tout seul, et l'etat repasse alors par
+            // `AsyncLoading` en conservant `hasError`. Un `switch` sur
+            // `AsyncError<T>` rate donc l'erreur une fois sur deux, selon
+            // l'instant du rendu.
+            child: etat.hasValue
+                ? _Contenu(etat: etat.requireValue)
+                : etat.hasError
+                ? _Indisponible(
+                    onReessayer: () => ref.invalidate(etatDossierProvider),
+                  )
+                : const _Patience(),
+          ),
+          Ecart.vXxxl,
+          _Deconnexion(
+            onDeconnexion: () =>
+                unawaited(ref.read(serviceAuthProvider).deconnexion()),
+          ),
+        ],
       ),
     );
   }
@@ -122,7 +112,6 @@ class _Incomplet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXl,
         Text(t.attente.dossierIncomplet, style: textes.headlineSmall),
         Ecart.vXl,
         Text(t.attente.aFournir, style: textes.bodySmall),
@@ -195,7 +184,6 @@ class _Refuse extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXl,
         Text(t.attente.refuse, style: textes.headlineSmall),
         Ecart.vMd,
         // La base refuse un verdict negatif sans motif : cette phrase existe
@@ -242,7 +230,6 @@ class _Bloc extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXxl,
         IconTheme(
           data: alerte
               ? palette.inkAlert.asIconTheme(size: AppSpacing.xxxl * 2)
@@ -286,7 +273,6 @@ class _Indisponible extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXxl,
         Text(
           t.attente.titre,
           textAlign: TextAlign.center,

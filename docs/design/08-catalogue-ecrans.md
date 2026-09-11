@@ -15,13 +15,13 @@ réellement dans `lib/`, au 7 septembre 2026.
 
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `TUT-00` | Connexion | Tous | A | 0 | `/connexion` | Page | Page centrée | construit |
-| `ELV-01` | Connexion élève | Élève | B | 0 | `/connexion/eleve` | Page | Page centrée | construit |
-| `TUT-00c` | Création de profil | Tuteur, enseignant | C | 1 | `/inscription` | Parcours | Parcours centré | construit |
-| `TUT-00b` | Portail d'attente | Tuteur, enseignant | C | 0 | `/attente` | Page | Page centrée | construit |
-| `TUT-00c/a` | Accusé enregistrement et contrôle | Tuteur, enseignant | C | 1 | `/attente/accuse` | Page | Page centrée | construit |
-| `TUT-00c/b` | Contrat | Tuteur, enseignant | C | 1 | `/attente/contrat` | Page | Page centrée | construit |
-| `TUT-00c/c` | Dépôt de la pièce | Tuteur, enseignant | C | 1 | `/attente/piece` | Page | Page centrée | construit |
+| `TUT-00` | Connexion | Tous | A | 0 | `/connexion` | Page | Page centrée | **repris (R0)**, fiche §6 |
+| `ELV-01` | Connexion élève | Élève | B | 0 | `/connexion/eleve` | Page | Page centrée | **repris (R0)**, fiche §6 |
+| `TUT-00c` | Création de profil | Tuteur, enseignant | C | 1 | `/inscription` | Parcours | Parcours centré | construit, fiche §6 |
+| `TUT-00b` | Portail d'attente | Tuteur, enseignant | C | 0 | `/attente` | Page | Page centrée | **repris (R0)**, fiche §6 |
+| `TUT-00c/a` | Accusé enregistrement et contrôle | Tuteur, enseignant | C | 1 | `/attente/accuse` | Page | Page centrée | **repris (R0)**, fiche §6 |
+| `TUT-00c/b` | Contrat | Tuteur, enseignant | C | 1 | `/attente/contrat` | Page | Page centrée | **repris (R0)**, fiche §6 |
+| `TUT-00c/c` | Dépôt de la pièce | Tuteur, enseignant | C | 1 | `/attente/piece` | Page | Page centrée | **repris (R0)**, fiche §6 |
 
 ### Zone Foyer
 
@@ -81,6 +81,12 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent
 étaient à reprendre par le lot R. Le lot R les a repris tous les quatre :
 `ELV-02` (fait, R1), `TUT-01` (fait, R2), `ENS-02` et `ADM-01` (fait, R3).
+
+Le lot **R0**, le 11 septembre 2026, a repris les six écrans de la zone Accès
+qui montaient un `Scaffold` nu (cause n1 mesurée du rejet du 11 septembre,
+`docs/HANDOFF.md` section 0 ter) : `TUT-00`, `ELV-01`, `TUT-00b`, `TUT-00c/a`,
+`TUT-00c/b`, `TUT-00c/c`. `TUT-00c` n'a pas changé de code : il passait déjà
+par `PageParcours`, seule sa fiche manquait.
 
 Le point à ne pas rater : **`ENS-06` emploie des onglets sur desktop alors qu'il
 a la place d'afficher les deux panneaux**. Un onglet sur un écran de 1440 pixels
@@ -622,3 +628,419 @@ Dettes assumées :
   demande, le lot R en fait une dette commune ;
 - **desktop pleine largeur de la liste** : non implémenté, la liste garde la
   gouttière du gabarit. Reporté, comme les autres multi-colonnes du lot R.
+
+### `TUT-00` Connexion
+
+```
+CODE              TUT-00
+Nom               Connexion
+Role              Tous
+Zone              Acces
+Niveau de charge  A
+Ecran parent      aucun : racine, seul ecran atteignable sans session
+Profondeur        0
+Question          Comment entrer, sans mot de passe a creer ni a retenir ?
+
+Priorites         P0  envoyer un lien de connexion par courriel
+                  P0  se connecter avec Google
+                  P1  rejoindre l'entree eleve (ELV-01), un parcours different,
+                      jamais une variante de celui-ci
+
+Action principale     Envoyer le lien : inerte tant que l'adresse saisie n'est
+                      pas plausible, jamais grisee sans raison dite
+Actions secondaires   Se connecter avec Google ; entrer un code eleve
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Page centree, une carte
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats             saisie      carte avec le champ courriel, bouton inerte tant
+                              que l'adresse n'est pas plausible
+                  envoi       bouton en cours
+                  lien envoye la carte est remplacee par la confirmation et un
+                              bouton "changer d'adresse". Ne se ferme jamais
+                              tout seul et ne compte pas a rebours
+                  erreur      message sous le champ, avant l'envoi si le format
+                              est invalide, apres l'envoi si le service refuse
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        aucun mot de passe nulle part dans ce parcours
+                  l'etat "lien envoye" ne se ferme jamais sur minuterie
+                  seul ecran du produit atteignable sans session
+
+Accessibilite     champ courriel avec l'autofill hint email, action clavier
+                  "go" pour envoyer sans quitter le clavier
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R0. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold`, sans carte, sans ombre, sans marque :
+  la cause n1 mesurée du rejet du 11 septembre (`docs/HANDOFF.md` section
+  0 ter), parce que c'est le seul écran visible sans compte. Il passe par
+  `PageShell` ;
+- le formulaire flottait à même le fond crème. Il est posé sur `AppCard`
+  (`surfaceRaised`, filet et ombre) ;
+- une zone de marque (`MarquePage`, nouveau composant partagé) précède la
+  carte : le nom du produit seul, en `inkAccent`, faute d'un asset de logo
+  dans le dépôt.
+
+### `ELV-01` Connexion élève
+
+```
+CODE              ELV-01
+Nom               Connexion eleve
+Role              Eleve
+Zone              Acces
+Niveau de charge  B
+Ecran parent      aucun : racine, parcours distinct de TUT-00 (ADR-005)
+Profondeur        0
+Question          Qui est-ce, et avec quel code personnel ?
+
+Priorites         P0  sur un appareil deja appaire, retrouver son profil sans
+                      ressaisir le code d'appairage
+                  P0  creer ou saisir son code personnel, qui ne quitte jamais
+                      l'appareil (ADR-005)
+                  P1  premier appairage : saisir le code recu du tuteur
+
+Action principale     Valider (appairage), ou le pave numerique lui-meme
+                      (creation et saisie du code personnel)
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Page centree, une carte, le contenu change selon le moment
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats (moments successifs, jamais deux a la fois)
+  chargement        texte de chargement, le temps de lire les profils connus
+                    de l'appareil
+  saisie du code    aucun profil connu : champ code (6 caracteres, majuscules),
+                    bouton Valider inerte avant 6 caracteres
+  choix du profil   des profils existent : une tuile par profil, composition
+                    volontairement asymetrique
+  creation du code  premier usage du profil sur cet appareil : le pave
+                    numerique demande le code deux fois, un ecart efface la
+                    premiere saisie et le dit
+  saisie du code    le profil a deja un code : le pave numerique le demande.
+  personnel         Une erreur du pave le dit sans relancer de saisie ailleurs
+  code expire       le jeton d'appareil a ete revoque par le tuteur : le
+                    profil disparait de la liste et un message le dit
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        le code personnel ne quitte jamais l'appareil : aucun
+                  service ne declare de parametre pour le recevoir (ADR-005)
+                  sur un appareil deja appaire, l'ecran de saisie du code
+                  d'appairage ne reapparait jamais
+                  la comparaison du code personnel est locale, aucun appel
+                  reseau ne recoit la saisie
+
+Accessibilite     cibles larges sur les tuiles de profil (AvatarTile)
+                  le pave numerique dit l'erreur sans redemander une saisie
+                  de plus
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R0. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold`, cause n1 avec `TUT-00`. Il passe par
+  `PageShell` ;
+- chaque moment (saisie du code, choix du profil, pave numerique) flottait
+  directement sur le fond crème. Le contenu du moment courant est posé sur une
+  seule `AppCard`, comme sur `TUT-00` ;
+- la même `MarquePage` que `TUT-00` précède la carte : les deux écrans du
+  tunnel d'entrée partagent la même identité visuelle.
+
+### `TUT-00c` Création de profil
+
+```
+CODE              TUT-00c
+Nom               Creation de profil
+Role              Tuteur, enseignant
+Zone              Acces
+Niveau de charge  C
+Ecran parent      TUT-00 (atteint apres une premiere connexion sans profil)
+Profondeur        1
+Question          Qui es-tu, et quel role joues-tu dans le foyer ou l'ecole ?
+
+Priorites         P0  le role (tuteur, eleve adulte qui est son propre tuteur,
+                      ou enseignant) : ADR-009
+                  P0  l'identite (prenom, nom)
+                  P1  le genre, qui decide en base qui pourra lire une piece
+                      d'identite plus tard (audit 1.3)
+                  P1  un recapitulatif avant l'envoi
+
+Action principale     Continuer (pages 1 a 3), Creer mon profil (page 4)
+Actions secondaires   Retour (pages 2 a 4)
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Parcours en quatre pages courtes, une question par page
+                  (ADR-013), coquille PageParcours (retour, progression,
+                  temps restant estime)
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats             page 1 (role)      trois cartes cliquables + "Autre", qui
+                                     renvoie vers l'academie sans inventer de
+                                     role (ChoiceCardGroup)
+                  page 2 (identite)  deux champs, Continuer inerte tant que
+                                     les deux ne sont pas remplis
+                  page 3 (genre)     deux cartes + "Autre", meme registre que
+                                     la page 1
+                  page 4 (recap)     trois lignes libelle/valeur, erreur
+                                     d'envoi dite sous le bouton
+                  envoi              bouton en cours
+
+Mouvement         la barre de progression segmentee de PageParcours, pas de
+                  mouvement propre a l'ecran
+
+Invariants        le role declare ici n'accorde rien : la base ecrit
+                  pending_kyc en dur, quoi que le client envoie
+                  l'eleve adulte n'est pas un role de plus, c'est son propre
+                  tuteur, un foyer d'une personne (ADR-009)
+                  la carte "Autre" ne devine jamais un role ou un genre, elle
+                  dit que le parcours ne convient pas
+
+Accessibilite     une question par page : jamais un formulaire qui empile les
+                  champs (ADR-013)
+                  temps restant estime a chaque page, pour que l'incertitude
+                  ne coute pas plus cher que la longueur
+```
+
+Aucune reprise : cet écran passait déjà par `PageParcours` avant le lot R0.
+Seule sa fiche manquait, écrite ici à partir du code existant, comme le
+demande la section 3.
+
+### `TUT-00b` Portail d'attente
+
+```
+CODE              TUT-00b
+Nom               Portail d'attente
+Role              Tuteur, enseignant
+Zone              Acces
+Niveau de charge  C
+Ecran parent      TUT-00 (session valide, profil cree, dossier incomplet)
+Profondeur        0
+Question          Qu'est-ce qui manque encore avant d'entrer dans l'app ?
+
+Priorites         P0  dire exactement ce que l'administration voit, jamais un
+                      calcul divergent recalcule a l'ecran (etat_dossier() en
+                      base)
+                  P0  l'action pour chaque piece manquante, une a une
+                  P1  se deconnecter
+
+Action principale     Selon la piece manquante : lire la carte d'accuse
+                      (TUT-00c/a), signer le contrat (TUT-00c/b), deposer la
+                      piece (TUT-00c/c)
+Actions secondaires   Se deconnecter
+Action tertiaire      Reessayer, seulement quand la lecture du dossier echoue
+Destructif            aucun
+
+Mobile            Page centree, une carte
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats (etat.etape, calcule en base par etat_dossier())
+  incomplet         une BentoTile par piece manquante (accuse, contrat, piece
+                    d'identite), chacune avec son bouton
+  en verification   icone, "en cours d'examen", date de depot si connue, delai
+                    indicatif
+  refuse            le motif de refus en clair (la base ne renvoie jamais un
+                    refus sans motif), bouton pour corriger
+  suspendu          icone d'alerte, detail, "contacter l'academie"
+  loading           texte de chargement
+  error (lecture)   phrase d'erreur, bouton Reessayer : un etat de dossier
+                    illisible ne se devine pas
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        ne montre jamais l'application derriere un voile : dit ce
+                  qui manque et rien d'autre
+                  le calcul de l'etape vient de la base, jamais recalcule ici
+                  une lecture qui echoue dit une phrase et laisse reessayer,
+                  elle ne ferme jamais la deconnexion
+
+Accessibilite     le message d'erreur de lecture est en liveRegion
+                  la carte se lit de droite a gauche en arabe
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R0. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold` et son propre tirage-pour-rafraîchir
+  (`RefreshIndicator` invalidant `etatDossierProvider`). Il passe par
+  `PageShell` ;
+- le contenu (les quatre états `_Contenu`, `_Indisponible`, `_Patience`)
+  flottait sur le fond crème. Il est posé sur une seule `AppCard` ;
+- la même `MarquePage` que `TUT-00` et `ELV-01` précède la carte.
+
+Dette assumée : **le tirage-pour-rafraîchir disparaît**, même sort que sur
+`TUT-01`, `ENS-02` et `ADM-01` (voir leurs fiches) — `RefreshIndicator` posé
+autour d'un `ListView` a besoin d'être l'enfant direct d'un `Expanded` pour ne
+pas planter (hauteur non bornée), et `PageShell` en mode `defilante: false` ne
+donne pas cette garantie à son `child`. C'est le quatrième écran qui la
+demande. Le bouton « réessayer » de l'état d'erreur reste le seul moyen de
+relire le dossier avant le prochain démarrage de l'application.
+
+### `TUT-00c/a` Accusé enregistrement et contrôle
+
+```
+CODE              TUT-00c/a
+Nom               Accuse enregistrement et controle
+Role              Tuteur, enseignant
+Zone              Acces
+Niveau de charge  C
+Ecran parent      TUT-00b (une des pieces manquantes du dossier)
+Profondeur        1
+Question          Que faut-il savoir du dispositif d'enregistrement et de
+                  controle, avant de l'accepter ?
+
+Priorites         P0  les deux points en clair : enregistrement audio, visite
+                      de controle possible (ADR-011)
+                  P1  revenir au portail sans accepter
+
+Action principale     "Compris" : accepte l'accuse et retourne au portail
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Page centree, une carte, action collee en bas
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats             nominal    titre, deux points illustres (BentoTile + icone),
+                              bouton dans la zone d'action
+                  envoi      bouton en cours
+                  erreur     message sous le titre, dans la zone d'action
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        vient avant le contrat, jamais apres : un dispositif decouvert
+                  apres coup est un litige (ADR-011)
+                  courte pour etre lue : deux points, pas un texte long
+
+Accessibilite     le message d'erreur est en liveRegion
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R0. Ce que le code portait avant,
+et que la reprise a corrigé (partagé avec `TUT-00c/b`, meme coquille
+`_PageASigner` dans `signature_page.dart`) :
+
+- l'écran montait son propre `Scaffold`, avec une zone d'action reimplementee
+  a la main (`Padding` + `Column` + message d'erreur). Il passe par
+  `PageShell`, dont c'est exactement le role (`actions:`) ;
+- les points en clair flottaient dans un `ListView` a meme le fond crème. Ils
+  sont poses sur une `AppCard` ;
+- une `MarquePage` précède la carte.
+
+### `TUT-00c/b` Contrat
+
+```
+CODE              TUT-00c/b
+Nom               Contrat
+Role              Tuteur, enseignant
+Zone              Acces
+Niveau de charge  C
+Ecran parent      TUT-00b (une des pieces manquantes du dossier)
+Profondeur        1
+Question          Quelles sont mes conditions, et les accepter ?
+
+Priorites         P0  les points du contrat propre au role : enregistrement et
+                      controle pour tous, occultation des coordonnees en plus
+                      pour l'enseignant (ADR-008)
+                  P1  revenir au portail sans accepter
+
+Action principale     "Accepter" : accepte le contrat et retourne au portail
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Page centree, une carte, action collee en bas
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats             nominal    titre, introduction, une BentoTile par point,
+                              bouton dans la zone d'action
+                  envoi      bouton en cours
+                  erreur     message sous le titre, dans la zone d'action
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        le contenu depend du role (SorteContrat.pour(role)) : le
+                  point sur l'occultation des coordonnees n'existe que pour
+                  l'enseignant, c'est le controle anti-pillage de l'ADR-008
+                  meme coquille que TUT-00c/a : deux ecrans du meme type de
+                  page, pas deux implementations
+
+Accessibilite     le message d'erreur est en liveRegion
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R0, même changement que
+`TUT-00c/a` : `Scaffold` et zone d'action manuelle remplacés par `PageShell` et
+sa prise `actions:`, contenu posé sur `AppCard`, `MarquePage` en tête.
+
+### `TUT-00c/c` Dépôt de la pièce
+
+```
+CODE              TUT-00c/c
+Nom               Depot de la piece d'identite
+Role              Tuteur, enseignant
+Zone              Acces
+Niveau de charge  C
+Ecran parent      TUT-00b (une des pieces manquantes du dossier)
+Profondeur        1
+Question          Quelle piece, et laquelle envoyer ?
+
+Priorites         P0  le type de piece (carte d'identite, passeport, titre de
+                      sejour)
+                  P0  choisir un fichier, borne a la taille maximale acceptee
+                  P1  revenir au portail sans envoyer
+
+Action principale     Envoyer : inerte tant qu'aucun fichier n'est choisi
+Actions secondaires   Choisir un fichier : inerte tant qu'aucun type n'est
+                      choisi
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            Page centree, une carte, action collee en bas
+Tablette          Identique
+Desktop           Identique, colonne centree et bornee a 1200
+
+Etats             nominal          titre, intro, ChoiceCardGroup des trois
+                                    types, bouton secondaire "choisir un
+                                    fichier"
+                  fichier trop lourd  message sous le titre, avant meme la
+                                    tentative d'envoi
+                  fichier choisi   le bouton secondaire dit "Fichier choisi",
+                                    le bouton Envoyer devient actif
+                  envoi            bouton en cours, dans la zone d'action
+                  erreur d'envoi   message dans la zone d'action
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        le genre transmis avec la piece vient du profil, jamais
+                  d'une saisie de plus : il decide quel membre du personnel
+                  pourra la regarder (audit 1.3)
+                  la borne de taille est verifiee avant l'envoi, jamais apres
+                  plusieurs minutes de televersement
+
+Accessibilite     les deux messages d'erreur (taille, envoi) sont en
+                  liveRegion
+```
+
+Reprise faite le 11 septembre 2026, sous-lot R0. Ce que le code portait avant,
+et que la reprise a corrigé :
+
+- l'écran montait son propre `Scaffold`, avec une zone d'action reimplementee
+  a la main. Il passe par `PageShell` et sa prise `actions:`, comme
+  `TUT-00c/a` et `TUT-00c/b` ;
+- le contenu (question du type, `ChoiceCardGroup`, bouton "choisir un
+  fichier") flottait dans un `ListView` a meme le fond crème. Il est pose sur
+  une `AppCard` ;
+- une `MarquePage` précède la carte.

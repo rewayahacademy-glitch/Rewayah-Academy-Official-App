@@ -9,12 +9,13 @@ import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/marque_page.dart';
+import '../../core/widgets/page_shell.dart';
 
 /// Le depot de la piece d'identite.
 ///
@@ -92,93 +93,88 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(metriques.marge),
-                children: <Widget>[
-                  Text(t.kyc.titre, style: textes.headlineSmall),
-                  Ecart.vMd,
-                  Text(t.kyc.intro, style: textes.bodyMedium),
-                  Ecart.vXxl,
-                  Text(t.kyc.typeQuestion, style: textes.titleMedium),
-                  Ecart.vMd,
-                  ChoiceCardGroup(
-                    options: <OptionChoix>[
-                      OptionChoix(
-                        valeur: TypePiece.carteIdentite.valeurSql,
-                        libelle: t.kyc.carteIdentite,
-                      ),
-                      OptionChoix(
-                        valeur: TypePiece.passeport.valeurSql,
-                        libelle: t.kyc.passeport,
-                      ),
-                      OptionChoix(
-                        valeur: TypePiece.titreSejour.valeurSql,
-                        libelle: t.kyc.titreSejour,
-                      ),
-                    ],
-                    onChange: (ReponseChoix reponse) => setState(() {
-                      final String? valeur = reponse.valeurs.isEmpty
-                          ? null
-                          : reponse.valeurs.first;
-                      // La carte « Autre » a bien une valeur ici, contrairement
-                      // a la question du role : `other` existe en base.
-                      _type = valeur == ChoiceCardGroup.valeurAutre
-                          ? TypePiece.autre
-                          : TypePiece.depuisSql(valeur);
-                      _piece = null;
-                    }),
-                  ),
-                  Ecart.vXxl,
-                  ActionPrincipale(
-                    libelle: _piece == null
-                        ? t.kyc.choisirFichier
-                        : t.kyc.fichierChoisi,
-                    onPress: _type == null ? null : () => unawaited(_choisir()),
-                    niveau: NiveauAction.secondaire,
-                  ),
-                ],
+    return PageShell(
+      actions: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (_erreur != null) ...<Widget>[
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _erreur!,
+                textAlign: TextAlign.center,
+                style: palette.inkAlert.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(metriques.marge),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  if (_erreur != null) ...<Widget>[
-                    Semantics(
-                      liveRegion: true,
-                      child: Text(
-                        _erreur!,
-                        textAlign: TextAlign.center,
-                        style: palette.inkAlert.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
-                        ),
-                      ),
-                    ),
-                    Ecart.vMd,
-                  ],
-                  ActionPrincipale(
-                    libelle: t.kyc.envoyer,
-                    enCours: _envoi,
-                    onPress: _piece == null
-                        ? null
-                        : () => unawaited(_envoyer()),
-                  ),
-                ],
-              ),
-            ),
+            Ecart.vMd,
           ],
-        ),
+          ActionPrincipale(
+            libelle: t.kyc.envoyer,
+            enCours: _envoi,
+            onPress: _piece == null ? null : () => unawaited(_envoyer()),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          const MarquePage(),
+          Ecart.vXxxl,
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(t.kyc.titre, style: textes.headlineSmall),
+                Ecart.vMd,
+                Text(t.kyc.intro, style: textes.bodyMedium),
+                Ecart.vXxl,
+                Text(t.kyc.typeQuestion, style: textes.titleMedium),
+                Ecart.vMd,
+                ChoiceCardGroup(
+                  options: <OptionChoix>[
+                    OptionChoix(
+                      valeur: TypePiece.carteIdentite.valeurSql,
+                      libelle: t.kyc.carteIdentite,
+                    ),
+                    OptionChoix(
+                      valeur: TypePiece.passeport.valeurSql,
+                      libelle: t.kyc.passeport,
+                    ),
+                    OptionChoix(
+                      valeur: TypePiece.titreSejour.valeurSql,
+                      libelle: t.kyc.titreSejour,
+                    ),
+                  ],
+                  onChange: (ReponseChoix reponse) => setState(() {
+                    final String? valeur = reponse.valeurs.isEmpty
+                        ? null
+                        : reponse.valeurs.first;
+                    // La carte « Autre » a bien une valeur ici, contrairement
+                    // a la question du role : `other` existe en base.
+                    _type = valeur == ChoiceCardGroup.valeurAutre
+                        ? TypePiece.autre
+                        : TypePiece.depuisSql(valeur);
+                    _piece = null;
+                  }),
+                ),
+                Ecart.vXxl,
+                ActionPrincipale(
+                  libelle: _piece == null
+                      ? t.kyc.choisirFichier
+                      : t.kyc.fichierChoisi,
+                  onPress: _type == null ? null : () => unawaited(_choisir()),
+                  niveau: NiveauAction.secondaire,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

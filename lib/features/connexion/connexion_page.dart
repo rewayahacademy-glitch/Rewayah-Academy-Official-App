@@ -7,10 +7,11 @@ import 'package:go_router/go_router.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/offline_banner.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/marque_page.dart';
+import '../../core/widgets/page_shell.dart';
 
 /// `TUT-00` : la connexion.
 ///
@@ -81,42 +82,31 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            const OfflineBanner(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(metriques.marge),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: AppSpacing.xxxl * 15,
+    return PageShell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          const MarquePage(),
+          Ecart.vXxxl,
+          AppCard(
+            child: _envoye
+                ? _LienEnvoye(
+                    courriel: _courriel.text.trim(),
+                    onChangerAdresse: () => setState(() => _envoye = false),
+                  )
+                : _Saisie(
+                    controleur: _courriel,
+                    erreur: _erreur,
+                    envoi: _envoi,
+                    peutEnvoyer: _adressePlausible,
+                    onChanged: () => setState(() {}),
+                    onEnvoyer: () => unawaited(_envoyerLien()),
+                    onGoogle: () => unawaited(_google()),
+                    onEleve: () =>
+                        GoRouter.of(context).go(Routes.connexionEleve),
                   ),
-                  child: _envoye
-                      ? _LienEnvoye(
-                          courriel: _courriel.text.trim(),
-                          onChangerAdresse: () =>
-                              setState(() => _envoye = false),
-                        )
-                      : _Saisie(
-                          controleur: _courriel,
-                          erreur: _erreur,
-                          envoi: _envoi,
-                          peutEnvoyer: _adressePlausible,
-                          onChanged: () => setState(() {}),
-                          onEnvoyer: () => unawaited(_envoyerLien()),
-                          onGoogle: () => unawaited(_google()),
-                          onEleve: () =>
-                              GoRouter.of(context).go(Routes.connexionEleve),
-                        ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -150,7 +140,6 @@ class _Saisie extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXxxl,
         Text(t.connexion.titre, style: textes.headlineMedium),
         Ecart.vMd,
         Text(t.connexion.intro, style: textes.bodyMedium),
@@ -217,7 +206,6 @@ class _LienEnvoye extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Ecart.vXxxl,
         Text(t.connexion.lienEnvoye, style: textes.headlineMedium),
         Ecart.vMd,
         Text(

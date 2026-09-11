@@ -80,6 +80,9 @@ class Traductions$commun$fr {
 
 	// Translations
 
+	/// fr: 'Rewayah Academy'
+	String get marque => 'Rewayah Academy';
+
 	/// fr: 'Continuer'
 	String get continuer => 'Continuer';
 
@@ -1748,6 +1751,7 @@ class Traductions$enseignant$journee$fr {
 extension on Traductions {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'commun.marque' => 'Rewayah Academy',
 			'commun.continuer' => 'Continuer',
 			'commun.retour' => 'Retour',
 			'commun.valider' => 'Valider',
