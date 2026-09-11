@@ -135,6 +135,16 @@ class ActionPrincipale extends StatelessWidget {
   /// l'opacite ferait tomber tout le sous-arbre sous le seuil de contraste. Il
   /// change de paire, donc son texte reste lisible et suit son fond.
   ///
+  /// **Un [NiveauAction.principale] desactive reste plus lourd qu'un
+  /// secondaire au repos** (lot T2, cause n2 mesuree du rejet du 11 septembre
+  /// 2026) : avant ce lot, le fond `surfaceSunken` se fondait presque dans
+  /// `surfaceCanvas` (1,06:1 d'ecart) et le filet `borderResting` etait le plus
+  /// faible de la rampe, si bien que le bouton le plus important de l'ecran
+  /// disparaissait au premier champ vide et se lisait comme une panne. Il
+  /// passe desormais sur `surfaceRaised` avec le filet `borderStrong`, plus
+  /// epais que celui d'un secondaire (3 contre 2) : la forme reste visible et
+  /// pese plus, seule l'encre `inkMuted` dit qu'il attend une condition.
+  ///
   /// Le survol n'invente aucune couleur : il passe au registre doux de la meme
   /// famille pour les niveaux plats, et pose le filet fort sur le niveau plein.
   _Peinture _peinturePour(
@@ -144,9 +154,9 @@ class ActionPrincipale extends StatelessWidget {
   }) {
     if (!actif) {
       return _Peinture(
-        fond: palette.surfaceSunken.background,
+        fond: palette.surfaceRaised.background,
         encre: palette.inkMuted.applyTo,
-        filet: palette.borderResting.asBorderSide(width: 2),
+        filet: palette.borderStrong.asBorderSide(width: 3),
       );
     }
 

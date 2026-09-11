@@ -67,8 +67,10 @@ void main() {
         expect(o.color.r, closeTo(base.r, 0.001));
         expect(o.color.g, closeTo(base.g, 0.001));
         expect(o.color.b, closeTo(base.b, 0.001));
-        // Une ombre opaque n'est plus une ombre.
-        expect(o.color.a, lessThan(0.2));
+        // Une ombre opaque n'est plus une ombre. Plafond remonte au lot T2
+        // (0.2 -> 0.3) : niveau3 est passe a 0.22 pour se detacher enfin du
+        // fond, cause n3 mesuree du rejet du 11 septembre 2026.
+        expect(o.color.a, lessThan(0.3));
       }
     });
   });

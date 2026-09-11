@@ -17,6 +17,18 @@ ne recopie l'autre.
 > `typographie_test.dart`, `elevation_test.dart` et `mouvement_test.dart` : une
 > mesure fausse ici fait échouer la suite. Deux chiffres ont été corrigés à
 > cette occasion, et ils sont signalés par la mention **mesuré au lot T**.
+>
+> **Durci au lot T2, le 11 septembre 2026** (Bible Frontend V2, ADR-019),
+> après que le rendu déployé du lot R3 ait été jugé « plus nul que du
+> générique ». Trois causes mesurées, signalées par **mesuré au lot T2** :
+> les ombres à 5 % d'opacité ne détachaient aucune carte du fond ; les deux
+> bordures décoratives, à 1,20:1 et 1,45:1, étaient à peine perceptibles ; le
+> bouton `ActionPrincipale` désactivé, peint sur `surfaceSunken` avec le filet
+> le plus faible de la rampe, se fondait dans la page et pesait moins qu'un
+> bouton secondaire. **Les trois surfaces neutres ne bougent pas** : mesuré,
+> le moindre assombrissement de `surfaceSunken` fait chuter `borderStrong`
+> sous 3:1 sur cette surface, qui n'avait déjà que 3,21 de marge — chiffré
+> avant d'être écarté, pas supposé.
 
 ---
 
@@ -61,8 +73,8 @@ Elle relie le crème au noir de la charte, en passant par la taupe réchauffée.
 | `surfaceRaised` | `#FFFFFF` | Cartes, tuiles, feuilles, menus, barres de navigation | 1,10 |
 | `surfaceCanvas` | `#F8F4EE` | **Fond général** | — |
 | `surfaceSunken` | `#F3EDE7` | Champs, en-têtes de tableau, pistes, cases vides de grille | 1,06 |
-| `borderHairline` | `#E7DFD8` | Filet entre deux blocs, contour de carte | 1,20 |
-| `borderResting` | `#D6CBC3` | Contour d'un contrôle au repos | 1,45 |
+| `borderHairline` | `#DCD2C8` | Filet entre deux blocs, contour de carte | 1,36 *(mesuré au lot T2, était 1,20 sur `#E7DFD8`)* |
+| `borderResting` | `#C9BCB1` | Contour d'un contrôle au repos | 1,69 *(mesuré au lot T2, était 1,45 sur `#D6CBC3`)* |
 | `borderStrong` | `#8F8279` | **Contour porteur de sens** : sélection, focus, bord de tableau | **3,40** |
 | `inkFaint` | `#756B63` | Texte tertiaire, métadonnées | **4,74** |
 | `inkMuted` | `#5E564F` | Texte secondaire | **6,56** |
@@ -450,9 +462,15 @@ ombre grise neutre sur un fond crème se lit comme une salissure.
 | Jeton | Composition | Emploi |
 | :--- | :--- | :--- |
 | `elevation0` | aucune | Ce qui est posé à plat : sections, séparateurs |
-| `elevation1` | `0 1 2 rgba(58,48,42,0.05)` + `0 2 6 rgba(58,48,42,0.05)` | Cartes, tuiles, lignes cliquables. Le défaut |
-| `elevation2` | `0 2 4 rgba(58,48,42,0.05)` + `0 8 20 rgba(58,48,42,0.08)` | Menu, popover, barre collée, carte pressée |
-| `elevation3` | `0 12 32 rgba(58,48,42,0.14)` | Feuille de bas d'écran, boîte de dialogue |
+| `elevation1` | `0 1 2 rgba(58,48,42,0.10)` + `0 2 6 rgba(58,48,42,0.09)` | Cartes, tuiles, lignes cliquables. Le défaut |
+| `elevation2` | `0 2 4 rgba(58,48,42,0.08)` + `0 8 20 rgba(58,48,42,0.14)` | Menu, popover, barre collée, carte pressée |
+| `elevation3` | `0 12 32 rgba(58,48,42,0.22)` | Feuille de bas d'écran, boîte de dialogue |
+
+*(Opacités remontées au lot T2, 11 septembre 2026 : à 5-8 %, une carte ne se
+détachait pas du fond sur un écran en plein jour, cause n3 mesurée du rejet du
+rendu déployé après le lot R3. `elevation0` à `elevation3` dans ce tableau sont
+les noms de jetons ; le code les expose comme `AppElevation.niveau0` à
+`niveau3`.)*
 
 Une surface élevée porte **un filet et une ombre**, jamais l'un des deux seul :
 le filet tient en contraste élevé et sur un écran mal calibré, l'ombre donne la

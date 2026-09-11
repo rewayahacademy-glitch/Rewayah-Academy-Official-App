@@ -89,13 +89,13 @@ void main() {
     mesure('surfaceSunken sur le creme', 1.06, enfonce, creme);
     mesure(
       'borderHairline sur le creme',
-      1.20,
+      1.36,
       palette.borderHairline.debugValue,
       creme,
     );
     mesure(
       'borderResting sur le creme',
-      1.45,
+      1.69,
       palette.borderResting.debugValue,
       creme,
     );
@@ -412,14 +412,43 @@ void main() {
     });
 
     test('le focus et l erreur passent, eux, le seuil de 3:1 sur le creme', () {
+      // Le focus est passe de surfacePrimary a borderStrong au lot T2 : le
+      // violet restait un choix de couleur, borderStrong est le jeton deja
+      // documente comme porteur de sens ET stable a travers un futur theme
+      // sombre (lot T3).
       expect(
-        contraste(palette.surfacePrimary.background, creme),
+        contraste(palette.borderStrong.debugValue, creme),
         greaterThanOrEqualTo(3),
       );
       expect(
         contraste(palette.surfaceAlert.background, creme),
         greaterThanOrEqualTo(3),
       );
+    });
+  });
+
+  group('ActionPrincipale desactivee reste lisible et plus lourde (lot T2)', () {
+    // Avant le lot T2, le bouton principal desactive se peignait sur
+    // surfaceSunken avec le filet le plus faible de la rampe : il se fondait
+    // dans la page, cause n2 mesuree du rejet du 11 septembre 2026. Il passe
+    // desormais sur surfaceRaised avec inkMuted et borderStrong.
+    test('inkMuted sur surfaceRaised reste lisible', () {
+      final double m = contraste(palette.inkMuted.debugValue, blanc);
+      expect(m, greaterThanOrEqualTo(4.5));
+    });
+
+    test('borderStrong, filet du desactive, reste au dessus de borderResting', () {
+      // "Plus lourd qu'un secondaire au repos" se traduit ici par un filet
+      // au moins aussi porteur que celui d'un controle au repos ordinaire.
+      final double filetDesactive = contraste(
+        palette.borderStrong.debugValue,
+        blanc,
+      );
+      final double filetRepos = contraste(
+        palette.borderResting.debugValue,
+        blanc,
+      );
+      expect(filetDesactive, greaterThan(filetRepos));
     });
   });
 

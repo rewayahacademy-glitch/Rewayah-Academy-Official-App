@@ -29,21 +29,26 @@ abstract final class AppElevation {
   static const List<BoxShadow> niveau0 = <BoxShadow>[];
 
   /// Cartes, tuiles, lignes cliquables. **Le defaut.**
+  ///
+  /// Opacites remontees au lot T2 (0.05 -> 0.10/0.09) : a 5%, une carte ne se
+  /// detachait pas du fond sur un ecran en plein jour, cause n3 mesuree du
+  /// rejet du rendu deploye le 11 septembre 2026.
   static final List<BoxShadow> niveau1 = <BoxShadow>[
-    _ombre.asBoxShadow(y: 1, flou: 2, opacite: 0.05),
-    _ombre.asBoxShadow(y: 2, flou: 6, opacite: 0.05),
+    _ombre.asBoxShadow(y: 1, flou: 2, opacite: 0.10),
+    _ombre.asBoxShadow(y: 2, flou: 6, opacite: 0.09),
   ];
 
   /// Ce qui flotte au dessus du contenu : menu, popover, barre collee, carte
-  /// pressee.
+  /// pressee. Opacites remontees au lot T2 (0.05/0.08 -> 0.08/0.14).
   static final List<BoxShadow> niveau2 = <BoxShadow>[
-    _ombre.asBoxShadow(y: 2, flou: 4, opacite: 0.05),
-    _ombre.asBoxShadow(y: 8, flou: 20, opacite: 0.08),
+    _ombre.asBoxShadow(y: 2, flou: 4, opacite: 0.08),
+    _ombre.asBoxShadow(y: 8, flou: 20, opacite: 0.14),
   ];
 
-  /// Ce qui recouvre : feuille de bas d'ecran, boite de dialogue.
+  /// Ce qui recouvre : feuille de bas d'ecran, boite de dialogue. Opacite
+  /// remontee au lot T2 (0.14 -> 0.22).
   static final List<BoxShadow> niveau3 = <BoxShadow>[
-    _ombre.asBoxShadow(y: 12, flou: 32, opacite: 0.14),
+    _ombre.asBoxShadow(y: 12, flou: 32, opacite: 0.22),
   ];
 
   /// La decoration complete d'une surface elevee : fond, arrondi, filet et

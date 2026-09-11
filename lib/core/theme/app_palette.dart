@@ -81,11 +81,22 @@ class AppPalette extends ThemeExtension<AppPalette> {
       background: Color(0xFFF3EDE7),
       onBackground: Color(0xFF1C1D21),
     ),
-    // Filet entre deux blocs, contour de carte. 1.20 : decoratif.
-    borderHairline: AppInkColor(Color(0xFFE7DFD8)),
-    // Contour d'un controle au repos. 1.45 : decoratif, et toujours accompagne
-    // d'un fond enfonce, jamais seul a delimiter.
-    borderResting: AppInkColor(Color(0xFFD6CBC3)),
+    // Filet entre deux blocs, contour de carte. 1.36 sur le creme (lot T2,
+    // remonte depuis 1.20 : le langage etait trop timide, cause n3 mesuree du
+    // rejet du 11 septembre 2026). Toujours decoratif : reste sous 3:1.
+    borderHairline: AppInkColor(Color(0xFFDCD2C8)),
+    // Contour d'un controle au repos. 1.69 sur le creme (lot T2, remonte
+    // depuis 1.45). Decoratif, et toujours accompagne d'un fond enfonce,
+    // jamais seul a delimiter.
+    //
+    // Les trois surfaces neutres (surfaceRaised, surfaceCanvas, surfaceSunken)
+    // ne bougent PAS au lot T2, contrairement a l'intention initiale de les
+    // ecarter davantage : mesure faite, le moindre assombrissement de
+    // surfaceSunken fait chuter borderStrong sous 3:1 sur cette surface (2,96
+    // des le premier cran teste), qui n'a deja que 3,21 de marge. La
+    // profondeur manquante se corrige par l'ombre et les bordures, qui n'ont
+    // pas ce plancher, pas par les surfaces.
+    borderResting: AppInkColor(Color(0xFFC9BCB1)),
     // **La seule bordure porteuse de sens** : selection, focus, bord de
     // tableau dense. 3.40, donc au dessus du seuil de 3:1 de WCAG 1.4.11.
     // C'est ce jeton qui remplace l'ancien borderDefault mesure a 1.86, qui

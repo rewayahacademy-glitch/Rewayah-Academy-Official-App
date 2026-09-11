@@ -82,15 +82,23 @@ abstract final class AppTheme {
           borderRadius: AppRadius.arrondiSm,
           borderSide: palette.borderResting.asBorderSide(),
         ),
+        // Un champ desactive se distingue d'un champ au repos par un filet
+        // plus faible (lot T2, Bible section 12 : le disabled est un etat a
+        // part entiere, pas une variante ignoree du repos).
+        disabledBorder: OutlineInputBorder(
+          borderRadius: AppRadius.arrondiSm,
+          borderSide: palette.borderHairline.asBorderSide(),
+        ),
         // Le focus et l'erreur ne s'appuient pas sur borderResting : ce jeton
         // est decoratif et ne passe pas le seuil de 3:1 des elements porteurs
-        // de sens. Ils passent par une couleur semantique, qui elle le passe.
+        // de sens. Le focus passe par borderStrong, la seule bordure de la
+        // rampe deja documentee comme porteuse de sens (`app_palette.dart`) et
+        // qui reste correcte quel que soit le theme a venir (lot T3, mode
+        // sombre) ; l'erreur reste semantique. Largeur remontee a 3 (lot T2,
+        // Bible section 13.4 : anneau de focus visible).
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadius.arrondiSm,
-          borderSide: BorderSide(
-            color: palette.surfacePrimary.background,
-            width: 2,
-          ),
+          borderSide: palette.borderStrong.asBorderSide(width: 3),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.arrondiSm,
@@ -100,12 +108,13 @@ abstract final class AppTheme {
           ),
         ),
         // Sans cette ligne, un champ en erreur qui prend le focus repasse au
-        // violet et l'erreur disparait de l'ecran au moment ou on la corrige.
+        // gris de borderStrong et l'erreur disparait de l'ecran au moment ou
+        // on la corrige. Largeur 3, alignee sur focusedBorder (lot T2).
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppRadius.arrondiSm,
           borderSide: BorderSide(
             color: palette.surfaceAlert.background,
-            width: 2,
+            width: 3,
           ),
         ),
       ),

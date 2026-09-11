@@ -1,23 +1,21 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> Dernière passation : **11 septembre 2026**, après la clôture du **lot B0**
-> (ancrage de la Bible Frontend V2, ADR-019). Le rendu mobile déployé après le
-> lot R3 a été jugé « plus nul que du générique » par l'opérateur, qui a remis
-> une deuxième Bible plus stricte, à ne plus jamais redonner : elle est
-> désormais dans `docs/design/00-bible-frontend-v2.md`, lue avant tout écran.
-> **Reprendre au lot T2** — durcir le langage (ombres, bordures, bouton
-> `ActionPrincipale` désactivé) — voir section 0 ter ci-dessous. Le lot R4
-> (`TUT-02`, `TUT-04`, `TUT-05`, `ENS-06`, `ADM-02`, `ADM-06`) reste après T2,
-> R0 et T3.
-> Dernier commit de `main`, poussé. `git log -1 --oneline` le nomme.
-> ⚠ **`flutter test` n'a pas pu tourner à la clôture de ce lot** : le poste
-> bloque `github.com` (le hook `package:sqlite3` en dépend), constaté trois
-> fois de suite, pas seulement au premier appel comme d'habitude. `dart
-> analyze --fatal-infos` (aucun problème) et `tool/verifier_jetons.dart` (95
-> fichiers, aucune violation) sont, eux, vérifiés. **La toute première chose à
-> faire en reprenant est de relancer `flutter test`** avant tout code neuf : si
-> ça passe, consigner le chiffre ici ; si ça bloque encore, c'est un problème
-> réseau du poste à signaler à l'opérateur, pas une régression du lot B0.
+> Dernière passation : **11 septembre 2026**. Le **lot B0** (ancrage de la
+> Bible Frontend V2, ADR-019) est fait, vérifié et poussé sur `main`. Le
+> **lot T2** (durcir le langage) est codé et commité **localement**, mais
+> **non poussé** : ni `flutter test` ni `tool/verifier_jetons.dart` n'ont pu
+> tourner sur ce poste pour le vérifier (détail section 0 quater), et `main`
+> se déploie automatiquement en production à chaque push. La décision de
+> pousser un lot non vérifié par les tests revient à l'opérateur, pas à
+> l'agent.
+> **Avant tout code neuf** : relancer `flutter test` et
+> `dart run tool/verifier_jetons.dart`. S'ils passent sur le commit local de
+> T2 (`git log -1` sur la branche locale le montre, il n'est pas sur le
+> serveur), pousser ce commit et continuer au lot **R0**. S'ils échouent
+> encore, c'est le poste, pas le lot : le signaler et décider avec
+> l'opérateur.
+> Dernier commit **poussé** de `main` : celui de B0. `git log -1 --oneline`
+> peut nommer un commit local de T2 en avance sur `origin/main`.
 
 ## 0. Ce qui a changé le 7 septembre au soir : la refonte UX/UI
 
@@ -128,6 +126,57 @@ dans ce même lot (`PageShell` partout), sans quoi la règle `page-sans-coquille
 aurait dû l'exempter à tort. Un écran marqué « repris » qui régresse plus tard
 sur cette règle est une régression au sens de la Bible §51, pas une réouverture
 de discussion sur l'exemption.
+
+### 0 quater. Le lot T2 : durcir le langage, commité localement, non poussé
+
+Cause n3 mesurée du rejet du 11 septembre (ombres à 5 %, bordures décoratives
+à 1,20:1 et 1,45:1) et cause n2 (bouton `ActionPrincipale` désactivé qui pesait
+moins qu'un secondaire). Les deux sont corrigées dans le code, mais ce lot
+n'est **pas vérifié par les tests** et **pas poussé** — voir l'avertissement en
+tête de fichier.
+
+**Ce qui a changé, et pourquoi ces valeurs précises :**
+
+1. **Ombres** (`app_elevation.dart`) : niveau1 0,05/0,05 → 0,10/0,09, niveau2
+   0,05/0,08 → 0,08/0,14, niveau3 0,14 → 0,22. La teinte de l'ombre (`#3A302A`)
+   ne change pas.
+2. **Bordures décoratives** (`app_palette.dart`) : `borderHairline`
+   `#E7DFD8` → `#DCD2C8` (1,20:1 → 1,36:1 sur le crème), `borderResting`
+   `#D6CBC3` → `#C9BCB1` (1,45:1 → 1,69:1). **Les trois surfaces neutres ne
+   bougent pas** — décision mesurée, pas oubliée : le moindre assombrissement
+   de `surfaceSunken` fait chuter `borderStrong` sous 3:1 sur cette surface
+   (2,96 dès `#ECE4DA`, un cran à peine plus sombre), qui n'avait déjà que
+   3,21 de marge, la plus fine des trois. Chiffré avant d'être écarté.
+3. **Focus des champs** (`app_theme.dart`) : passait par `surfacePrimary`
+   (violet) à 2px, passe par `borderStrong` à 3px. `borderStrong` est déjà
+   documenté dans `app_palette.dart` comme *« la seule bordure porteuse de
+   sens : sélection, focus, bord de tableau »* — l'implémentation ne suivait
+   pas encore sa propre documentation. `focusedErrorBorder` passe aussi à 3px,
+   par cohérence. `disabledBorder` ajouté (`borderHairline`), absent avant :
+   un champ désactivé et un champ au repos étaient indiscernables.
+4. **`ActionPrincipale` désactivée** (`action_principale.dart`) : peignait
+   `surfaceSunken` + `inkMuted` + `borderResting` (2px), donc un fond presque
+   invisible sur le fond général (1,06:1 d'écart) et le filet le plus faible
+   de la rampe — plus léger qu'un bouton secondaire au repos. Peint
+   maintenant `surfaceRaised` (blanc) + `inkMuted` + `borderStrong` (3px,
+   plus épais que le contour 2px d'un secondaire) : la forme reste visible et
+   pèse plus, seule l'encre dit que l'action attend une condition. Ce
+   traitement s'applique aux quatre niveaux d'action quand ils sont
+   désactivés, pas seulement au principal — c'était déjà le cas avant ce lot.
+5. **Tests mis à jour en conséquence**, dans `test/theme/contraste_test.dart`
+   (nouvelles valeurs de bordures, le test de focus vérifie `borderStrong` et
+   non plus `surfacePrimary`, un groupe neuf vérifie `inkMuted` sur
+   `surfaceRaised` et que le filet du désactivé dépasse celui du repos) et
+   `test/theme/elevation_test.dart` (plafond d'opacité remonté de 0,2 à 0,3
+   pour laisser passer le niveau3 à 0,22). **Ces fichiers n'ont pas pu tourner
+   pour confirmer qu'ils passent réellement** — voir l'avertissement en tête.
+6. `docs/produit/design-tokens.md` sections 1.3 et 9 mises à jour avec les
+   nouvelles valeurs et leur justification.
+
+**Non fait dans ce lot**, contrairement à l'intention initiale, et pour la
+raison ci-dessus : élargir l'écart de clarté entre les trois surfaces. La
+route `/_galerie` était déjà correctement gardée par `Env.galerieActive`
+(faux par défaut), rien à faire de ce côté.
 
 ## 1. Le projet actif est celui-ci
 
@@ -405,49 +454,67 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — lot T2
+## 9. Prompt de reprise — vérifier T2, PUIS le lot R0
 
-À copier tel quel pour démarrer la prochaine session.
+À copier tel quel pour démarrer la prochaine session. Cette session a deux
+objectifs distincts, dans l'ordre : d'abord lever le doute sur T2 (déjà codé,
+commité localement, pas pousse), ensuite seulement attaquer R0.
 
 ```
 Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
-Lis docs/HANDOFF.md section 0 ter en entier, puis docs/design/00-bible-frontend-v2.md
-chapitres 7 (jetons), 12 (etats) et 52 (sobriete), puis decisions.md ADR-019.
+Lis docs/HANDOFF.md en entier (l'en-tete et les sections 0 ter et 0 quater),
+puis decisions.md ADR-019.
 
-AVANT tout code neuf : relance `flutter test`. La derniere session ne l'a pas
-obtenu (le poste bloquait github.com trois fois de suite, hook package:sqlite3).
-Si ca passe, ecris le chiffre ici en remplacement de cet avertissement. Si ca
-bloque encore, c'est un probleme reseau du poste, pas une regression : le
-signaler et continuer quand meme (dart analyze et verifier_jetons.dart, eux,
-etaient verts a la cloture du lot B0).
+ETAPE 1, OBLIGATOIRE AVANT TOUT CODE NEUF : verifier le lot T2, deja codee et
+commite localement (git log -1 le montre : c'est un commit en avance sur
+origin/main, pas encore pousse).
+  1. git log --oneline -3, pour confirmer l'etat exact.
+  2. dart analyze --fatal-infos (deja vert a la cloture de T2).
+  3. flutter test -- la derniere session ne l'a JAMAIS obtenu (le poste
+     bloquait github.com en TLS pour le hook package:sqlite3, sept tentatives).
+     Reessaie. Si ca bloque encore de la meme facon (CERTIFICATE_VERIFY_FAILED),
+     c'est le poste, pas le code : le signaler a l'operateur plutot que de
+     boucler dessus, et passer a l'etape suivante avec dart analyze seul comme
+     preuve.
+  4. dart run tool/verifier_jetons.dart -- meme punition, meme consigne.
+  5. Si les deux passent : ecrase l'avertissement en tete de HANDOFF.md par les
+     vrais chiffres, git push origin main, puis seulement continue a l'etape 2.
+     Si flutter test echoue pour une VRAIE raison (pas le blocage reseau) :
+     ne pousse rien, corrige, ecris ce que tu as trouve.
 
-LOT A FAIRE : T2 -- durcir le langage. Cause n3 mesuree du rejet du 11
-septembre : ombres a 5% d'opacite, borderHairline a 1,20:1, les trois surfaces
-dans 4% de clarte, bouton ActionPrincipale desactive qui pese moins que ses
-boutons secondaires.
+ETAPE 2, seulement apres l'etape 1 : LOT R0 -- le tunnel d'entree. Causes n1 et
+n2 mesurees du rejet du 11 septembre : connexion_page.dart montre un Scaffold
+nu (pas de PageShell, pas de carte, pas d'ombre, pas de marque), et c'est le
+seul ecran visible sans compte -- tout ce que l'operateur a vu.
 
-Fichiers : lib/core/theme/app_elevation.dart, app_palette.dart, app_theme.dart
-(anneau de focus, champ desactive), lib/core/widgets/action_principale.dart,
-docs/produit/design-tokens.md sections 1 et 9, test/theme/contraste_test.dart
-et elevation_test.dart, route /_galerie derriere kDebugMode pour la preuve
-avant/apres.
+Fichiers :
+  - docs/design/08-catalogue-ecrans.md section 6 : ecrire les SEPT fiches
+    manquantes de la zone Acces (TUT-00, ELV-01, TUT-00c, TUT-00b, TUT-00c/a,
+    TUT-00c/b, TUT-00c/c), a partir du code existant.
+  - lib/features/connexion/connexion_page.dart
+  - lib/features/eleve_connexion/eleve_connexion_page.dart
+  - lib/features/dossier/attente_page.dart
+  - lib/features/dossier/signature_page.dart
+  - lib/features/dossier/depot_piece_page.dart
+  - tool/verifier_jetons.dart : resserre la liste _ecransEnAttenteDeCoquille
+    posee au lot B0, retire ces cinq entrees une fois les ecrans repris.
 
-Valeurs cibles (jugement d'ingenierie pose en l'absence de l'operateur pour ce
-cycle de lots, a documenter comme tel, pas une derogation silencieuse) :
-  - niveau1 : opacite 0.05 -> ~0.10 (y1/flou2) et ~0.09 (y2/flou6)
-  - niveau2 : ~0.08 (y2/flou4) et ~0.14 (y8/flou20)
-  - niveau3 : ~0.22 (y12/flou32)
-  - couleur d'ombre inchangee (#3A302A)
-  - borderHairline cible >= 1.35:1, borderResting cible >= 1.65:1
-  - AUCUNE mesure deja verte dans design-tokens.md section 1 ne doit repasser
-    sous son seuil : verifier via contraste_test.dart, jamais a l'oeil
-  - ActionPrincipale desactive : plus lourd qu'un NiveauAction.secondaire au
-    repos, ne doit plus ressembler a une panne
+Chaque ecran repris : PageShell ou PageParcours (jamais Scaffold nu), page
+centree, carte surfaceRaised posee via AppElevation.avecFilet, une zone de
+marque (logo si un asset existe deja dans le depot), une seule action
+principale visuellement dominante -- le bouton desactive du lot T2 doit deja
+etre correct, ne le recontredit pas. Si le tool Skill est disponible, invoque
+UNE FOIS en tete de lot /impeccable puis /apple-hig puis /apple-design puis
+emil-design-eng.
 
-Fin de lot : dart analyze --fatal-infos, flutter test, dart run
-tool/verifier_jetons.dart, capture 390x844 avant/apres, mise a jour de ce
-HANDOFF (section 0 ter et l'en-tete), commit, push. Un lot par session. Ignore
-la branche refactor-ui-lavender. Termine par le prompt de reprise du lot R0.
+Fin de lot R0 : dart analyze --fatal-infos, flutter test, dart run
+tool/verifier_jetons.dart, capture 390x844 avant/apres, mise a jour de
+HANDOFF.md (nouvelle section, en-tete), commit. Ne pousse que si les tests
+tournent et passent reellement -- un lot visuel non verifie ne se pousse pas
+sur une branche qui deploie en production a chaque push, decision qui revient
+a l'operateur si les tests restent bloques par le poste. Un lot par session.
+Ignore la branche refactor-ui-lavender. Termine par le prompt de reprise du
+lot T3.
 ```
