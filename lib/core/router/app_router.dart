@@ -23,6 +23,7 @@ import '../../features/eleve_connexion/eleve_connexion_page.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/reglages_enfant/reglages_enfant_page.dart';
+import '../../features/salle/salle_page.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
@@ -299,10 +300,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).
+      //
+      // `deciderRedirection` a deja refuse l'entree sans billet presentable :
+      // arriver ici avec `extra` vide est donc impossible par le routeur. Le
+      // repli sur une seance vide existe quand meme, et il est sur -- le
+      // backend refusera le jeton, et l'ecran affichera son impasse d'acces
+      // plutot que de lever.
       GoRoute(
         path: Routes.salle,
-        builder: (BuildContext _, GoRouterState _) =>
-            const EcranAConstruire(destination: 'ELV-03 / ENS-03'),
+        builder: (BuildContext _, GoRouterState etat) => SallePage(
+          seanceId: etat.extra is BilletSalle
+              ? (etat.extra! as BilletSalle).sessionId
+              : '',
+        ),
       ),
 
       // Galerie de developpement, absente des versions de production.

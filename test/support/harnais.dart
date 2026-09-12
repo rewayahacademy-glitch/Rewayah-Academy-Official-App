@@ -30,6 +30,9 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/pre_vol.dart';
+import 'package:rewayah_academy/core/video/service_video.dart';
+import 'package:rewayah_academy/core/video/video_session_provider.dart';
 
 /// L'hote minimal d'un ecran sous test.
 ///
@@ -938,6 +941,185 @@ class FauxStockageSecurise implements StockageSecurise {
 
   @override
   Future<String> empreinteAppareil() async => 'appareil-test';
+}
+
+/// Un pre-vol en memoire.
+///
+/// Aucun test ne peut enumerer les micros de la machine qui l'execute : sans ce
+/// faux, la premiere phase de la salle -- celle qui refuse d'entrer sans micro
+/// -- ne serait pas mesurable.
+class FauxServicePreVol implements ServicePreVol {
+  /// Cree le faux, avec un materiel complet par defaut.
+  FauxServicePreVol({
+    this.microDisponible = true,
+    this.cameraDisponible = true,
+    this.permissionRefusee = false,
+  });
+
+  /// Vrai quand une entree audio est utilisable.
+  bool microDisponible;
+
+  /// Vrai quand une camera est utilisable.
+  bool cameraDisponible;
+
+  /// Vrai pour simuler un refus de permission du navigateur.
+  bool permissionRefusee;
+
+  /// Le nombre d'inspections demandees. C'est par lui qu'un test verifie qu'un
+  /// « Reessayer » relance vraiment le pre-vol.
+  int verifications = 0;
+
+  @override
+  Future<ResultatPreVol> verifier() async {
+    verifications++;
+    return ResultatPreVol(
+      microDisponible: microDisponible,
+      cameraDisponible: cameraDisponible,
+      sortieAudioDisponible: true,
+      permissionRefusee: permissionRefusee,
+    );
+  }
+}
+
+/// Un service d'acces a la salle en memoire.
+class FauxServiceVideo implements ServiceVideo {
+  /// Cree le faux.
+  FauxServiceVideo({this.acces0, this.motifARefuser});
+
+  /// L'acces rendu. Nul et sans motif signifie « rien ne repond ».
+  AccesSalle? acces0;
+
+  /// Le refus a lever, s'il y en a un.
+  MotifRefusSalle? motifARefuser;
+
+  /// Les seances pour lesquelles un acces a ete demande.
+  final List<String> demandes = <String>[];
+
+  /// Les sorties volontaires annoncees, dans l'ordre. C'est la seule ecriture
+  /// de presence confiee au client, et c'est elle qui distingue `sortie` de
+  /// `deconnectee` : un test doit pouvoir constater qu'elle a bien eu lieu.
+  final List<String> sorties = <String>[];
+
+  @override
+  Future<AccesSalle> acces(String seanceId) async {
+    demandes.add(seanceId);
+    final MotifRefusSalle? motif = motifARefuser;
+    if (motif != null) {
+      throw EchecSalle(motif);
+    }
+    final AccesSalle? rendu = acces0;
+    if (rendu == null) {
+      throw const EchecSalle(MotifRefusSalle.reseau);
+    }
+    return rendu;
+  }
+
+  @override
+  Future<void> annoncerSortie(String seanceId) async {
+    sorties.add(seanceId);
+  }
+}
+
+/// Un moteur de salle en memoire.
+///
+/// Il ne simule pas WebRTC : il rejoue ce que le vrai moteur **publie**, c'est
+/// a dire trois flux et une liste. C'est tout ce dont la salle depend, et c'est
+/// pourquoi elle se verifie sans SDK, sans reseau et sans compte LiveKit --
+/// lequel n'existe pas encore.
+class FauxMoteurSalle implements VideoSessionProvider {
+  final StreamController<EtatSalle> _etats =
+      StreamController<EtatSalle>.broadcast();
+  final StreamController<List<ParticipantSalle>> _participants =
+      StreamController<List<ParticipantSalle>>.broadcast();
+  final StreamController<QualiteLien> _qualite =
+      StreamController<QualiteLien>.broadcast();
+
+  EtatSalle _etat = EtatSalle.absent;
+
+  /// Les acces avec lesquels on a rejoint, dans l'ordre.
+  final List<AccesSalle> entrees = <AccesSalle>[];
+
+  /// Le nombre de sorties du moteur.
+  int departs = 0;
+
+  /// Les reglages de micro demandes, dans l'ordre.
+  final List<bool> microDemande = <bool>[];
+
+  /// Les reglages de camera demandes, dans l'ordre.
+  final List<bool> cameraDemandee = <bool>[];
+
+  /// Ce que `rejoindre` doit lever, quand on teste un echec de connexion.
+  Object? erreurEntree;
+
+  /// Les identites pour lesquelles une image existe.
+  final Set<String> avecImage = <String>{};
+
+  /// Pose un etat et le publie, comme le vrai moteur.
+  void poser(EtatSalle etat) {
+    _etat = etat;
+    _etats.add(etat);
+  }
+
+  /// Publie une liste de participants.
+  void publier(List<ParticipantSalle> liste) => _participants.add(liste);
+
+  /// Publie une qualite de lien.
+  void publierQualite(QualiteLien lien) => _qualite.add(lien);
+
+  @override
+  EtatSalle get etatCourant => _etat;
+
+  @override
+  Stream<EtatSalle> get etats => _etats.stream;
+
+  @override
+  Stream<List<ParticipantSalle>> get participants => _participants.stream;
+
+  @override
+  Stream<QualiteLien> get qualite => _qualite.stream;
+
+  @override
+  Future<void> rejoindre(AccesSalle acces) async {
+    final Object? erreur = erreurEntree;
+    if (erreur != null) {
+      poser(EtatSalle.echec);
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    entrees.add(acces);
+    poser(EtatSalle.connecte);
+  }
+
+  @override
+  Future<void> quitter() async {
+    departs++;
+    poser(EtatSalle.absent);
+  }
+
+  @override
+  Future<void> reglerMicro({required bool actif}) async {
+    microDemande.add(actif);
+  }
+
+  @override
+  Future<void> reglerCamera({required bool actif}) async {
+    cameraDemandee.add(actif);
+  }
+
+  @override
+  Future<void> reglerAudioSeul({required bool actif}) async {}
+
+  @override
+  Widget? renduVideo(String identite) => avecImage.contains(identite)
+      ? const SizedBox.expand(key: Key('image-video'))
+      : null;
+
+  @override
+  Future<void> liberer() async {
+    await _etats.close();
+    await _participants.close();
+    await _qualite.close();
+  }
 }
 
 /// Le service d'appairage de l'enfant, en memoire.

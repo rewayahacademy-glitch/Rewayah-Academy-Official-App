@@ -57,6 +57,11 @@ const List<String> composantsDuCatalogue = <String>[
   // catalogue est un composant que personne ne relit.
   'DataCollection',
   'FilterPill',
+  // Section 2 : la coquille que le lot N3 produit. Elle n'etait pas a la liste
+  // d'origine : la refonte n'avait prevu qu'un gabarit de page, et la salle a
+  // montre qu'il en manquait un second, pour les ecrans sans page -- ni titre,
+  // ni gouttiere, ni colonne bornee.
+  'PageImmersive',
 ];
 
 /// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.

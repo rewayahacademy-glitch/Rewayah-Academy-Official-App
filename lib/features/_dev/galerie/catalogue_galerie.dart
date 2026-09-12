@@ -27,6 +27,7 @@ import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
+import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/permanent_notice.dart';
@@ -803,6 +804,35 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const Directionality(
           textDirection: TextDirection.rtl,
           child: PermanentNotice(),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'PageImmersive',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'salle : entete, bandeau, commandes',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurPage,
+          child: PageImmersive(
+            registre: RegistreImmersif.salle,
+            entete: Text('En direct'),
+            bandeau: PermanentNotice(),
+            commandes: Text('Les commandes de la salle vivent ici.'),
+            child: Center(child: Text('La scene occupe tout le reste.')),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'lecture : le contenu seul',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurPage,
+          child: PageImmersive(
+            registre: RegistreImmersif.lecture,
+            child: Center(child: Text('CONTENT > CHROME : rien autour.')),
+          ),
         ),
       ),
     ],

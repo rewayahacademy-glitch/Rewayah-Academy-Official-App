@@ -156,10 +156,37 @@ void main() {
       );
     });
 
-    testWidgets('le bouton de lancement n existe pas, une phrase le remplace', (
+    testWidgets(
+      'hors de la fenetre d ouverture, une phrase remplace le bouton',
+      (WidgetTester tester) async {
+        final DateTime debut = DateTime.now().add(const Duration(minutes: 30));
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(debut: debut, fin: debut.add(const Duration(minutes: 60))),
+          ];
+
+        await tester.pumpWidget(
+          hote(const JourneePage(), surcharges: _surcharges(planning: planning)),
+        );
+        await tester.pumpAndSettle();
+
+        // La base refuserait le jeton avant `debut - 10 min` (ADR-005) : un
+        // bouton qui echoue apres le geste coute plus cher qu'un bouton absent,
+        // et une phrase dit quand il s'ouvrira.
+        expect(find.text(t.enseignant.journee.lancer), findsNothing);
+        expect(
+          find.text(t.enseignant.journee.lancementPlusTard),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('dans la fenetre d ouverture, le bouton de lancement existe', (
       WidgetTester tester,
     ) async {
-      final DateTime debut = DateTime.now().add(const Duration(minutes: 30));
+      // Neuf minutes : dans la fenetre de dix, et assez loin de la borne pour
+      // que les microsecondes du test ne la franchissent pas.
+      final DateTime debut = DateTime.now().add(const Duration(minutes: 9));
       final FauxServicePlanning planning = FauxServicePlanning()
         ..seancesRendues = <Seance>[
           _cours(debut: debut, fin: debut.add(const Duration(minutes: 60))),
@@ -170,11 +197,27 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Le pre-flight est l'etape 5 : un bouton qui echoue apres le geste coute
-      // plus cher qu'un bouton absent.
-      expect(find.text(t.enseignant.journee.lancer), findsNothing);
-      expect(find.text(t.enseignant.journee.preflight), findsNothing);
-      expect(find.text(t.enseignant.journee.sansLancement), findsOneWidget);
+      expect(find.text(t.enseignant.journee.lancer), findsOneWidget);
+      expect(find.text(t.enseignant.journee.lancementPlusTard), findsNothing);
+    });
+
+    testWidgets('un cours deja commence porte lui aussi le lancement', (
+      WidgetTester tester,
+    ) async {
+      final DateTime debut = DateTime.now().subtract(
+        const Duration(minutes: 5),
+      );
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..seancesRendues = <Seance>[
+          _cours(debut: debut, fin: debut.add(const Duration(minutes: 60))),
+        ];
+
+      await tester.pumpWidget(
+        hote(const JourneePage(), surcharges: _surcharges(planning: planning)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.journee.lancer), findsOneWidget);
     });
 
     testWidgets('un cours commence annonce son heure de fin', (

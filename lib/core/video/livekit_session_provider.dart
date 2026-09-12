@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 
 import 'video_session_provider.dart';
@@ -109,16 +110,17 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       rethrow;
     }
 
-    // La voix d'abord : on ouvre le micro des l'entree quand le jeton
-    // l'autorise, la camera seulement si elle est permise ET si l'on n'est pas
-    // en mode economie de donnees.
-    if (acces.capacites.peutPublier) {
-      await reglerMicro(actif: true);
-    }
-    if (acces.capacites.peutPublierVideo && !_audioSeul) {
-      await reglerCamera(actif: true);
-    }
-
+    // **Rien ne publie a l'entree, et c'est un invariant, pas une preference.**
+    // Le catalogue d'ecrans le porte depuis la refonte et la fiche produit
+    // l'ecrit deux fois : « a l'entree en seance, le micro ne publie rien tant
+    // que l'eleve n'a pas tape dessus une fois », et « micro et camera de
+    // l'enseignant demarrent egalement desactives ». La regle vaut pour les
+    // quatre roles.
+    //
+    // Le lot N2 ouvrait ici le micro -- « la voix d'abord » -- et cette ligne
+    // etait fausse : aucun ecran n'existait alors pour l'exercer, donc rien ne
+    // l'a signalee. Ouvrir un micro sans geste, dans une maison ou un enfant
+    // recite, est exactement ce que la regle empeche.
     _poser(EtatSalle.connecte);
     _publierParticipants();
   }
@@ -323,6 +325,48 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   }
 
   @override
+  Widget? renduVideo(String identite) {
+    final lk.Room? salle = _salle;
+    if (salle == null) {
+      return null;
+    }
+
+    final lk.Participant? qui = _participant(salle, identite);
+    if (qui == null) {
+      return null;
+    }
+
+    // Une publication coupee garde sa piste : sans le test de `muted`, une
+    // camera fermee afficherait sa derniere image figee, ce qui est pire
+    // qu'un fond vide -- l'usager croirait etre vu.
+    for (final lk.TrackPublication<lk.Track> publication
+        in qui.videoTrackPublications) {
+      final lk.Track? piste = publication.track;
+      if (piste is lk.VideoTrack && !publication.muted) {
+        // `cover` et non `contain` : une vignette de visage doit remplir son
+        // cadre. Le miroir reste sur `auto`, qui retourne la seule image
+        // locale -- se voir a l'envers de son miroir est desorientant.
+        return lk.VideoTrackRenderer(piste, fit: lk.VideoViewFit.cover);
+      }
+    }
+    return null;
+  }
+
+  /// Retrouve un participant par son identite, soi-meme comprise.
+  lk.Participant? _participant(lk.Room salle, String identite) {
+    final lk.LocalParticipant? moi = salle.localParticipant;
+    if (moi != null && moi.identity == identite) {
+      return moi;
+    }
+    for (final lk.RemoteParticipant autre in salle.remoteParticipants.values) {
+      if (autre.identity == identite) {
+        return autre;
+      }
+    }
+    return null;
+  }
+
+  @override
   Future<void> quitter() async {
     // L'ordre compte : on cesse d'ecouter AVANT de fermer, sinon la fermeture
     // republie des etats dans des controleurs qu'on s'apprete a vider.
@@ -355,3 +399,25 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     await _qualite.close();
   }
 }
+
+/// Le moteur temps reel de l'application.
+///
+/// **Un seul pour tout le produit, et c'est delibere** : une seance a lieu dans
+/// une salle a la fois (ADR-010 refuse deja un profil present dans deux
+/// seances). Deux moteurs vivants doubleraient l'audio sans qu'aucune erreur ne
+/// s'affiche, le pire des defauts possibles ici.
+///
+/// Il vit aussi longtemps que l'application, et c'est sans danger : hors salle
+/// il ne detient ni piste, ni rendu, ni ecouteur -- `quitter()` les libere
+/// tous. Les ecrans, eux, s'abonnent et se desabonnent.
+///
+/// Ce provider vit dans ce fichier parce que le construire ailleurs
+/// demanderait d'importer `LiveKitSessionProvider` depuis un second endroit, et
+/// c'est precisement le nombre d'endroits qui compte : un seul, verifiable d'un
+/// `grep`.
+final Provider<VideoSessionProvider> moteurSalleProvider =
+    Provider<VideoSessionProvider>((Ref ref) {
+      final LiveKitSessionProvider moteur = LiveKitSessionProvider();
+      ref.onDispose(() => unawaited(moteur.liberer()));
+      return moteur;
+    });

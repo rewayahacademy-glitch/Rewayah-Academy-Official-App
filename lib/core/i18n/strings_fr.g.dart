@@ -199,6 +199,120 @@ class Traductions$salle$fr {
 
 	/// fr: 'Cette salle n'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours.'
 	String get expiree => 'Cette salle n\'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours.';
+
+	/// fr: 'Ouverture de la salle'
+	String get ouverture => 'Ouverture de la salle';
+
+	/// fr: 'Vérification de votre micro'
+	String get verificationMateriel => 'Vérification de votre micro';
+
+	/// fr: 'Connexion au cours'
+	String get connexion => 'Connexion au cours';
+
+	/// fr: 'Connexion instable, reconnexion en cours'
+	String get reconnexion => 'Connexion instable, reconnexion en cours';
+
+	/// fr: 'Reconnexion'
+	String get reconnexionCourt => 'Reconnexion';
+
+	/// fr: 'La connexion au cours est perdue'
+	String get perdue => 'La connexion au cours est perdue';
+
+	/// fr: 'Votre professeur n'est pas encore arrivé'
+	String get seulEnseignant => 'Votre professeur n\'est pas encore arrivé';
+
+	/// fr: 'Restez sur cet écran. Vous le verrez apparaître.'
+	String get seulEnseignantDetail => 'Restez sur cet écran. Vous le verrez apparaître.';
+
+	/// fr: 'Votre élève n'est pas encore arrivé'
+	String get seulEleve => 'Votre élève n\'est pas encore arrivé';
+
+	/// fr: 'Restez sur cet écran. Vous le verrez apparaître.'
+	String get seulEleveDetail => 'Restez sur cet écran. Vous le verrez apparaître.';
+
+	/// fr: 'Personne n'est encore entré dans cette salle'
+	String get seulObservation => 'Personne n\'est encore entré dans cette salle';
+
+	/// fr: 'Le cours n'a pas commencé, ou il est déjà terminé.'
+	String get seulObservationDetail => 'Le cours n\'a pas commencé, ou il est déjà terminé.';
+
+	/// fr: 'Ce cours ne vous est pas ouvert en ce moment'
+	String get refusAcces => 'Ce cours ne vous est pas ouvert en ce moment';
+
+	/// fr: 'La salle s'ouvre dix minutes avant l'heure du cours, et se ferme un quart d'heure après sa fin.'
+	String get refusAccesDetail => 'La salle s\'ouvre dix minutes avant l\'heure du cours, et se ferme un quart d\'heure après sa fin.';
+
+	/// fr: 'La salle n'est pas encore disponible'
+	String get refusConfiguration => 'La salle n\'est pas encore disponible';
+
+	/// fr: 'Ce n'est pas votre appareil : le service de visioconférence n'est pas branché. L'équipe le sait.'
+	String get refusConfigurationDetail => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.';
+
+	/// fr: 'La salle n'a pas répondu'
+	String get refusReseau => 'La salle n\'a pas répondu';
+
+	/// fr: 'Vérifiez votre connexion, puis réessayez.'
+	String get refusReseauDetail => 'Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Aucun micro utilisable sur cet appareil'
+	String get refusMateriel => 'Aucun micro utilisable sur cet appareil';
+
+	/// fr: 'Un cours de Coran se fait à la voix. Autorisez l'accès au micro, ou branchez un casque, puis réessayez.'
+	String get refusMaterielDetail => 'Un cours de Coran se fait à la voix. Autorisez l\'accès au micro, ou branchez un casque, puis réessayez.';
+
+	/// fr: 'Revenir à mon accueil'
+	String get retourAccueil => 'Revenir à mon accueil';
+
+	/// fr: 'Ouvrir le micro'
+	String get ouvrirMicro => 'Ouvrir le micro';
+
+	/// fr: 'Fermer le micro'
+	String get fermerMicro => 'Fermer le micro';
+
+	/// fr: 'Allumer la caméra'
+	String get ouvrirCamera => 'Allumer la caméra';
+
+	/// fr: 'Éteindre la caméra'
+	String get fermerCamera => 'Éteindre la caméra';
+
+	/// fr: 'Quitter le cours'
+	String get quitterLeCours => 'Quitter le cours';
+
+	/// fr: 'Le cours continue sans vous, et votre départ est inscrit dans la séance.'
+	String get consequenceSortie => 'Le cours continue sans vous, et votre départ est inscrit dans la séance.';
+
+	/// fr: 'Vous'
+	String get vousMeme => 'Vous';
+
+	/// fr: 'Sans image'
+	String get sansImage => 'Sans image';
+
+	/// fr: 'Connexion faible'
+	String get lienMediocre => 'Connexion faible';
+
+	/// fr: 'Connexion perdue'
+	String get lienPerdu => 'Connexion perdue';
+
+	/// fr: 'Image coupée le temps que la connexion revienne. La voix continue.'
+	String get videoSuspendue => 'Image coupée le temps que la connexion revienne. La voix continue.';
+
+	/// fr: 'Participants'
+	String get participants => 'Participants';
+
+	/// fr: 'Enseignant'
+	String get roleEnseignant => 'Enseignant';
+
+	/// fr: 'Élève'
+	String get roleEleve => 'Élève';
+
+	/// fr: 'Tuteur, en observation'
+	String get roleTuteur => 'Tuteur, en observation';
+
+	/// fr: 'Vous assistez au cours. Vous n'êtes pas entendu.'
+	String get observationMuette => 'Vous assistez au cours. Vous n\'êtes pas entendu.';
+
+	/// fr: 'Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.'
+	String get bandeauControle => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.';
 }
 
 // Path: attente
@@ -1966,8 +2080,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: '{jour}, à {heure}'
 	String unAutreJour({required Object jour, required Object heure}) => '${jour}, à ${heure}';
 
-	/// fr: 'Le lancement se fera depuis cet écran quand la salle existera. Pour l'instant il annonce, il n'ouvre pas.'
-	String get sansLancement => 'Le lancement se fera depuis cet écran quand la salle existera. Pour l\'instant il annonce, il n\'ouvre pas.';
+	/// fr: 'Le lancement s'ouvre dix minutes avant l'heure du cours.'
+	String get lancementPlusTard => 'Le lancement s\'ouvre dix minutes avant l\'heure du cours.';
 
 	/// fr: 'Aucun cours à venir'
 	String get aucunCours => 'Aucun cours à venir';
@@ -2054,6 +2168,44 @@ extension on Traductions {
 			'salle.ouvrirCoran' => 'Ouvrir le Coran',
 			'salle.confirmerSortie' => 'Quitter le cours ?',
 			'salle.expiree' => 'Cette salle n\'est plus accessible. Revenez à votre accueil pour rejoindre le prochain cours.',
+			'salle.ouverture' => 'Ouverture de la salle',
+			'salle.verificationMateriel' => 'Vérification de votre micro',
+			'salle.connexion' => 'Connexion au cours',
+			'salle.reconnexion' => 'Connexion instable, reconnexion en cours',
+			'salle.reconnexionCourt' => 'Reconnexion',
+			'salle.perdue' => 'La connexion au cours est perdue',
+			'salle.seulEnseignant' => 'Votre professeur n\'est pas encore arrivé',
+			'salle.seulEnseignantDetail' => 'Restez sur cet écran. Vous le verrez apparaître.',
+			'salle.seulEleve' => 'Votre élève n\'est pas encore arrivé',
+			'salle.seulEleveDetail' => 'Restez sur cet écran. Vous le verrez apparaître.',
+			'salle.seulObservation' => 'Personne n\'est encore entré dans cette salle',
+			'salle.seulObservationDetail' => 'Le cours n\'a pas commencé, ou il est déjà terminé.',
+			'salle.refusAcces' => 'Ce cours ne vous est pas ouvert en ce moment',
+			'salle.refusAccesDetail' => 'La salle s\'ouvre dix minutes avant l\'heure du cours, et se ferme un quart d\'heure après sa fin.',
+			'salle.refusConfiguration' => 'La salle n\'est pas encore disponible',
+			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
+			'salle.refusReseau' => 'La salle n\'a pas répondu',
+			'salle.refusReseauDetail' => 'Vérifiez votre connexion, puis réessayez.',
+			'salle.refusMateriel' => 'Aucun micro utilisable sur cet appareil',
+			'salle.refusMaterielDetail' => 'Un cours de Coran se fait à la voix. Autorisez l\'accès au micro, ou branchez un casque, puis réessayez.',
+			'salle.retourAccueil' => 'Revenir à mon accueil',
+			'salle.ouvrirMicro' => 'Ouvrir le micro',
+			'salle.fermerMicro' => 'Fermer le micro',
+			'salle.ouvrirCamera' => 'Allumer la caméra',
+			'salle.fermerCamera' => 'Éteindre la caméra',
+			'salle.quitterLeCours' => 'Quitter le cours',
+			'salle.consequenceSortie' => 'Le cours continue sans vous, et votre départ est inscrit dans la séance.',
+			'salle.vousMeme' => 'Vous',
+			'salle.sansImage' => 'Sans image',
+			'salle.lienMediocre' => 'Connexion faible',
+			'salle.lienPerdu' => 'Connexion perdue',
+			'salle.videoSuspendue' => 'Image coupée le temps que la connexion revienne. La voix continue.',
+			'salle.participants' => 'Participants',
+			'salle.roleEnseignant' => 'Enseignant',
+			'salle.roleEleve' => 'Élève',
+			'salle.roleTuteur' => 'Tuteur, en observation',
+			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
+			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.',
@@ -2500,6 +2652,8 @@ extension on Traductions {
 			'tuteur.reglages.demandes' => 'Demander un changement',
 			'tuteur.reglages.demandeReaffectation' => 'Changer d\'enseignant',
 			'tuteur.reglages.demandeDuree' => 'Changer la durée des cours',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.demandeMinimum' => 'Changer la durée minimale payable',
 			'tuteur.reglages.demandeSansEnseignant' => ({required Object prenom}) => '${prenom} n\'a pas encore d\'enseignant : il n\'y a rien à changer.',
 			'tuteur.reglages.demandeTitreReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',
@@ -2524,7 +2678,7 @@ extension on Traductions {
 			'enseignant.journee.minuteurImminent' => 'Ça commence',
 			'enseignant.journee.jusqua' => ({required Object heure}) => 'Jusqu\'à ${heure}',
 			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '${jour}, à ${heure}',
-			'enseignant.journee.sansLancement' => 'Le lancement se fera depuis cet écran quand la salle existera. Pour l\'instant il annonce, il n\'ouvre pas.',
+			'enseignant.journee.lancementPlusTard' => 'Le lancement s\'ouvre dix minutes avant l\'heure du cours.',
 			'enseignant.journee.aucunCours' => 'Aucun cours à venir',
 			'enseignant.journee.aucunCoursDetail' => 'Prenez un élève en attente : c\'est ce qui remplit votre journée.',
 			'enseignant.journee.colonne' => 'La journée',

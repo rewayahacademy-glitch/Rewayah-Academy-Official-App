@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 /// Le fournisseur qui sert une seance. Decide en base, jamais ici.
 ///
@@ -258,6 +258,24 @@ abstract interface class VideoSessionProvider {
 
   /// L'etat courant, pour un premier rendu sans attendre le flux.
   EtatSalle get etatCourant;
+
+  /// L'image d'un participant, prete a poser dans l'arbre de widgets.
+  ///
+  /// Rend `null` quand ce participant ne publie aucune image : c'est le cas
+  /// ordinaire, pas une panne -- camera fermee, politique qui l'interdit, ou
+  /// degradation reseau en cours.
+  ///
+  /// **C'est par cette methode que la portabilite de l'ADR-001 survit au rendu.**
+  /// Afficher une piste WebRTC demande un widget du SDK ; si la salle le
+  /// construisait elle-meme, elle importerait `livekit_client`, et la promesse
+  /// de changer de moteur sans rouvrir les ecrans tomberait. L'ecran ne recoit
+  /// donc pas une piste, il recoit un [Widget] deja monte -- il ne sait meme pas
+  /// de quelle classe il est.
+  ///
+  /// Le widget rendu est **volontairement sans cle** : c'est l'appelant qui
+  /// connait sa place dans une liste, et c'est donc a lui de poser la cle qui
+  /// empeche deux vignettes d'echanger leur etat.
+  Widget? renduVideo(String identite);
 
   /// Libere les ressources.
   Future<void> liberer();

@@ -12,10 +12,12 @@ import '../../core/planning/service_planning.dart';
 import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/regles/service_regles.dart';
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
@@ -30,15 +32,33 @@ import '../../core/widgets/timeline_row.dart';
 /// deroule, pas dans un encadre a cote. Le gabarit est donc litteralement le
 /// meme pour les trois sortes, seul le contenu change.
 ///
-/// **Le bouton de lancement n'est pas rendu.** Le pre-flight est l'etape 5 :
-/// un bouton qui echoue apres le geste coute plus cher en confiance qu'un
-/// bouton absent, et une phrase prend sa place.
+/// **Le bouton de lancement existe depuis le lot N3**, et seulement dans la
+/// fenetre ou il peut aboutir : de dix minutes avant le debut du cours jusqu'a
+/// sa fin. Hors de cette fenetre, une phrase dit quand il s'ouvrira, plutot
+/// qu'un bouton grise -- un bouton qui echoue apres le geste coute plus cher en
+/// confiance qu'un bouton absent.
+///
+/// La fenetre du client est la meme que celle de la base, et c'est la base qui
+/// tranche : `autoriser_jeton_video()` refuse le jeton avant `debut - 10 min`
+/// et apres `fin + 15 min` (ADR-005). Le seuil pose ici ne fait qu'eviter de
+/// proposer un geste dont on sait qu'il serait refuse.
 ///
 /// Les heures affichees sont celles de l'appareil. Aucune mention de fuseau
 /// n'est posee ici, contrairement a la grille de `ENS-06` : les seances et les
 /// prieres sont des instants absolus, et `mon_fuseau()` dit ou l'enseignant
 /// **pose** ses creneaux, pas ou il se trouve. Annoncer « heures affichees en
 /// Europe/Paris » a un enseignant en deplacement serait faux.
+/// A partir de quand la salle s'ouvre a l'enseignant.
+///
+/// Le meme seuil que la base (ADR-005 : `debut - 10 minutes`), pose ici pour
+/// **ne pas proposer** un geste dont on sait qu'il serait refuse. Ce n'est pas
+/// une barriere : c'est `autoriser_jeton_video()` qui refuse, et elle refuserait
+/// aussi bien si ce seuil etait faux.
+///
+/// L'enseignant l'obtient avant l'eleve, dont l'accueil n'offre « Rejoindre »
+/// qu'en direct : c'est lui qui ouvre la salle, verifie son micro et accueille.
+const Duration seuilOuvertureSalle = Duration(minutes: 10);
+
 class JourneePage extends ConsumerStatefulWidget {
   /// Cree l'ecran de la journee.
   const JourneePage({super.key});
@@ -209,10 +229,10 @@ class _BlocDominant extends StatelessWidget {
     final bool enCours = cours.enCoursA(maintenant);
     final bool aujourdhui = _memeJour(cours.debut, maintenant);
 
-    // Carte posee, jamais un aplat sature : `ENS-02` n'a pas d'action a
-    // promouvoir (le lancement est l'etape 5), et la regle de la zone pleine
-    // unique n'attribue l'aplat qu'a l'action principale. L'etat « en cours »
-    // se dit par la pastille, jamais par la couleur de fond.
+    // Carte posee, jamais un aplat sature : la regle de la zone pleine unique
+    // n'attribue l'aplat qu'a l'action principale, et depuis le lot N3 c'est le
+    // bouton de lancement qui la porte -- pas la carte qui l'entoure. L'etat
+    // « en cours » se dit par la pastille, jamais par la couleur de fond.
     return BentoTile(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -251,12 +271,27 @@ class _BlocDominant extends StatelessWidget {
             ),
           }, style: textes.titleMedium ?? const TextStyle()),
           Ecart.vSm,
-          // La place du bouton de lancement, occupee par la raison de son
-          // absence : la salle est l'etape 5.
-          Text(
-            t.enseignant.journee.sansLancement,
-            style: textes.bodySmall ?? const TextStyle(),
-          ),
+          // Le lancement, ou la raison de son absence. Jamais les deux, jamais
+          // un bouton inerte.
+          if (cours.avantDebut(maintenant) <= seuilOuvertureSalle ||
+              enCours)
+            ActionPrincipale(
+              libelle: t.enseignant.journee.lancer,
+              onPress: () => GoRouter.of(context).go(
+                Routes.salle,
+                // Le billet passe par `extra`, jamais par l'URL (ADR-005) :
+                // une adresse de salle copiee ne rouvre rien.
+                extra: BilletSalle(
+                  sessionId: cours.id,
+                  emisA: DateTime.now(),
+                ),
+              ),
+            )
+          else
+            Text(
+              t.enseignant.journee.lancementPlusTard,
+              style: textes.bodySmall ?? const TextStyle(),
+            ),
         ],
       ),
     );

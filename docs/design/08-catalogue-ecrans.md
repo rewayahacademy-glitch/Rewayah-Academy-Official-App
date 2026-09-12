@@ -48,9 +48,9 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ELV-02` | Accueil élève | Élève | B / C | 0 | `/eleve` | Deux blocs | Deux blocs centrés, **rien de plus** | **repris (R1)**, fiche §6 |
 | `ENS-02` | Journée | Enseignant | D | 0 | `/enseignant/journee` | Une colonne | Colonne + panneau de détail | **repris (R3)**, fiche §6 |
 | `CTR-01` | Planning global | Contrôleur | D | 0 | `/controleur` | Liste | Tableau dense | **à construire** |
-| `ELV-03` | Salle, élève | Élève | B / C | hors arbre | `/salle` | Plein écran | Vidéo + contenu | **à construire**, étape 5 |
-| `ENS-03` | Salle, enseignant | Enseignant | D | hors arbre | `/salle` | Plein écran | Vidéo + contenu + participants | **à construire**, étape 5 |
-| `CTR-02` | Observation invisible | Contrôleur | D | hors arbre | `/salle` | Plein écran | Idem, bandeau noir permanent | **à construire**, étape 5 |
+| `ELV-03` | Salle, élève | Élève | B / C | hors arbre | `/salle` | Plein écran | Vidéo + contenu | **construit (12/09)**, fiche §6 |
+| `ENS-03` | Salle, enseignant | Enseignant | D | hors arbre | `/salle` | Plein écran | Vidéo + contenu + participants | **construit (12/09)**, fiche §6 |
+| `CTR-02` | Observation invisible | Contrôleur | D | hors arbre | `/salle` | Plein écran | Idem, bandeau de contrôle permanent | **construit (12/09)**, fiche §6 |
 
 ### Zone Contenu et transmission
 
@@ -78,12 +78,15 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 
 ## 2. Ce que le registre révèle
 
-> **Mise à jour du 12 septembre 2026.** Le compte ci-dessous datait de la
-> refonte. Depuis, `ADM-05` (hors série) puis `ADM-04` ont été construits : il
-> reste **neuf** destinations en `EcranAConstruire`, dont `ELV-03`/`ENS-03`, la
-> salle de cours. L'espace admin, lui, n'a plus un seul écran manquant. Le
-> compte se lit dans `lib/core/router/app_router.dart`, jamais en parcourant
-> les écrans.
+> **Mise à jour du 12 septembre 2026, lot N3.** Le compte ci-dessous datait de
+> la refonte. Depuis, `ADM-05` (hors série), `ADM-04` puis **la salle**
+> (`ELV-03`/`ENS-03`/`CTR-02`, un seul écran pour trois codes) ont été
+> construits. Il reste **six** écrans à construire : `ELV-04` le Coran, le suivi
+> élève, `TUT-06`, `ENS-05`, `CTR-01`, et `CPT-01` qui est hors MVP-0. Mesuré :
+> `lib/core/router/app_router.dart` contient sept `EcranAConstruire`, dont un
+> qui n'est pas un écran manquant mais l'état de chargement de la racine.
+> L'espace admin n'a plus un seul écran manquant. Le compte se lit dans le
+> routeur, jamais en parcourant les écrans.
 
 Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent
 étaient à reprendre par le lot R. Le lot R les a repris tous les quatre :
@@ -1719,3 +1722,129 @@ Trois conséquences hors de l'écran lui-même :
   Elle existait depuis l'étape 1, et chaque écriture payait un `lock table`
   pour la tenir : le prix était payé, la garantie jamais constatée. Détail et
   arbitrage : **ADR-022**.
+
+### `ELV-03` / `ENS-03` / `CTR-02` La salle
+
+**Les trois codes sont un seul écran, et c'est la première décision de la
+fiche.** Ce qui les distingue ne vient pas du rôle de session, que le client
+porte, mais du **jeton** émis par `create-room-token` : son champ `role` et ses
+capacités signées (`can_publish`, `can_publish_video`, `hidden`). Un écran qui
+choisirait sa vue d'après `sessionProvider.role` déciderait d'après une valeur
+que le client peut avoir mal lue ; le jeton, lui, est ce que le serveur LiveKit
+fera respecter de toute façon. Trois écrans séparés auraient par ailleurs
+divergé sur le bandeau permanent, qui est exactement ce que l'ADR-011 interdit.
+
+Le jeton porte **quatre** rôles, pas trois : `participant_role` vaut `teacher`,
+`student`, `guardian_observer` ou `masked_controller`. Le quatrième code manquait
+au registre : le tuteur qui presse « Assister » depuis `TUT-01` entre en
+observateur muet et **visible**, là où le contrôleur entre invisible. Il n'a pas
+de code d'écran propre parce qu'il n'a pas d'écran propre : c'est `ELV-03` sans
+aucune commande de publication.
+
+```
+CODE              ELV-03, ENS-03, CTR-02
+Nom               La salle
+Role              Eleve, enseignant, tuteur observateur, controleur
+Zone              Journee et salle
+Niveau de charge  B / C (eleve), D (enseignant, controleur)
+Ecran parent      aucun. HORS ARBRE : ni barre basse, ni rail, ni retour
+Profondeur        hors arbre
+Question          Mon cours a lieu maintenant : est-ce que j'y suis, est-ce que
+                  l'autre y est, et qu'est-ce que j'entends ?
+
+Priorites         P0  le flux de l'autre, en grand
+                  P0  micro, camera, quitter -- selon ce que le jeton permet
+                  P0  le bandeau permanent, jamais masque (ADR-011)
+                  P0  dire l'etat de la connexion en mots, jamais en couleur
+                  P1  la liste des participants (enseignant, controleur)
+                  P2  le document partage et les controles de page (lot N5)
+
+Action principale     AUCUNE au sens du bouton plein : la salle est un lieu, pas
+                      un formulaire. Les commandes sont des controles egaux
+Actions secondaires   ouvrir ou fermer le micro ; ouvrir ou fermer la camera
+Action tertiaire      aucune
+Destructif            quitter, et c'est le seul geste confirme de l'ecran
+
+Mobile            Une seule scene : le flux dominant plein cadre, la vignette
+                  locale posee dessus, en bas de la zone. Bandeau puis
+                  commandes sous la scene
+Tablette          Idem, plus la colonne des participants pour l'enseignant et
+                  le controleur
+Desktop           Idem tablette, vignette locale plus grande
+
+Etats             loading   demande de jeton en cours, puis pre-vol : un mot par
+                            etape, jamais un squelette -- il n'y a aucune forme
+                            de contenu a preparer
+                  content   connecte. Sous-etat : seul en salle, qui se dit
+                  empty     seul en salle : « n'est pas encore arrive »
+                  error     quatre refus distincts, un message par cause
+                  offline   AUCUN bandeau hors ligne : c'est LiveKit qui sait,
+                            et deux signaux concurrents se contrediraient
+
+Mouvement         aucun propre a l'ecran. Le mouvement d'encouragement de la
+                  sortie (fiche produit) attend le lot de la presence : il
+                  annoncerait un cours fini, ce que N3 ne sait pas encore
+
+Invariants        le bandeau permanent est le MEME pour les quatre roles, sans
+                  parametre : PermanentNotice n'en accepte aucun
+                  micro et camera FERMES a l'entree, pour TOUS les roles. Un
+                  tap les ouvre
+                  un controle que le jeton refuse N'EST PAS RENDU, jamais grise
+                  le controleur ne figure PAS dans sa propre liste de
+                  participants : il voit deux personnes, comme l'enseignant.
+                  C'est le test visuel de l'invisibilite
+                  la qualite du lien se dit en mots. Une pastille seule ne
+                  represente jamais un etat critique
+                  aucune URL LiveKit, aucun import du SDK hors de
+                  livekit_session_provider.dart
+
+Accessibilite     chaque commande porte le libelle de son ACTE (« Ouvrir le
+                  micro »), jamais celui de son etat
+                  chaque vignette se lit comme un element unique : nom, role,
+                  micro, image
+                  cible tactile du mode courant, 72 en mode enfant
+```
+
+**Le bandeau permanent est en bas, sous la scène.** Les deux sources se
+contredisaient : la fiche produit dit « bandeau permanent en bas de salle »,
+`etape-5-salle-coran-presence.md` §7 dit « en haut ». La fiche produit tranche,
+pour une raison matérielle : en haut, le bandeau entre en concurrence avec la
+zone média dominante et, sur téléphone, avec l'encoche et le geste de retour.
+En bas, il touche les commandes, c'est-à-dire l'endroit que l'on regarde quand
+on décide d'ouvrir son micro.
+
+**Ce que N3 ne construit pas, et pourquoi ce n'est pas un oubli :**
+
+- **le document partagé et les contrôles de page de niveau 1.** Ils n'ont ni
+  contenu à paginer (le Coran est le lot N5, et son jeu de données n'est pas
+  importé) ni canal de diffusion tranché (question `e` du §10 de la spécification
+  d'étape : LiveKit data, Supabase Realtime, autre). Les livrer maintenant
+  donnerait à l'enseignant des boutons qui tournent des pages que l'élève ne
+  verrait pas : un produit qui ment. La zone n'est donc pas rendue du tout, et
+  le bouton « Ouvrir le Coran » **n'existe pas** plutôt que d'être grisé, par la
+  règle déjà appliquée au bouton caméra ;
+- **les quatorze états de présence.** C'est le lot N4. La salle dit l'état de sa
+  **connexion** temps réel, ce que LiveKit sait, et rien de ce que la base
+  dérive. L'invariant J3 (« un état de présence indisponible s'affiche comme
+  inconnu ») n'a donc encore rien à borner ici ;
+- **`ENS-03` vers `ENS-04`.** L'invariant du §4 exige que la sortie de
+  l'enseignant mène au cahier de transmission, et rien d'autre. `ENS-04` est
+  l'étape 6 : aucune route n'existe. La sortie mène donc à `ENS-02`, et **cet
+  écart est ouvert**, nommé ici plutôt que masqué par une route vide qui
+  prétendrait tenir l'invariant.
+
+Construit le 12 septembre 2026, lot N3. Il remplace le plus gros
+`EcranAConstruire` du routeur : il reste **six** écrans à construire.
+
+Deux conséquences hors de l'écran :
+
+- **`PageImmersive` existe**, dans `lib/core/widgets/`, et rejoint le catalogue
+  des composants. C'est la coquille des écrans qui n'ont ni titre, ni gouttière,
+  ni page : la salle aujourd'hui, `ELV-04` au lot N5. Sans elle, la salle aurait
+  monté un `Scaffold` nu, c'est-à-dire exactement le défaut mesuré sur le tunnel
+  d'entrée le 11 septembre ;
+- **un défaut de `N2` est corrigé.** `LiveKitSessionProvider.rejoindre()` ouvrait
+  le micro dès l'entrée « la voix d'abord ». C'était contraire à l'invariant du
+  §4, présent au catalogue depuis la refonte et écrit deux fois dans la fiche
+  produit : à l'entrée, rien ne publie tant que personne n'a tapé. Le défaut
+  était invisible sans écran pour l'exercer.
