@@ -28,12 +28,17 @@
 > **une plomberie sans écran est une plomberie non testée.**
 > 📈 **Le vrai coût de `flutter_webrtc` est mesuré** : le module vidéo n'est plus
 > élagué, le bundle passe de 3 833 921 à **4 312 086 octets** (+12,5 %).
-> 🔴 **CE QUI N'EST TOUJOURS PAS PROUVÉ : la connexion réelle à une salle.** Le
-> compte LiveKit existe, mais les trois secrets sont posés **sur Vercel, où
-> personne ne les lit** : ils vont sur **Supabase → Edge Functions → Secrets**.
-> Tant qu'ils n'y sont pas, `create-room-token` répond `503`, et la salle affiche
-> « La salle n'est pas encore disponible » — ce qui est le comportement voulu,
-> mais reste un écran d'impasse.
+> ✅ **LiveKit est branché, et ce lot l'a re-vérifié lui-même.**
+> `create-room-token`, interrogée par HTTP avec la clé anon, répond
+> **`401 authentification requise`** et non plus `503 video non configuree` : la
+> fonction testant `videoConfiguree()` **avant** l'authentification, les trois
+> secrets sont donc bien posés sur Supabase. La salle ne tombera plus sur
+> « La salle n'est pas encore disponible ».
+> 🔴 **CE QUI N'EST TOUJOURS PAS PROUVÉ : un vrai cours.** Personne n'a encore
+> ouvert deux navigateurs sur une même séance. Restent en angle mort l'URL
+> `LIVEKIT_CLOUD_WS_URL`, que rien ne valide, et la clé qui signe le webhook.
+> **La première vraie mesure de bout en bout est un cours — et depuis ce lot,
+> elle est possible.**
 > ⚠ **Deux écarts assumés, écrits plutôt que masqués** : la sortie de `ENS-03`
 > mène à `ENS-02` et non à `ENS-04`, qui est l'étape 6 et n'a aucune route ; et
 > le **document partagé n'est pas construit**, faute de contenu à paginer (le
@@ -1239,12 +1244,12 @@ les écrans.
    ajoute aucune : il ne touche pas à la base.
 2. ~~La production ne sert pas N2~~ — **close.** Elle sert N3, compilée avec ses
    clés, ouverte et vérifiée console à l'appui.
-3. 🔴 **Les secrets LiveKit sont au mauvais endroit.** Le compte existe et les
-   clés sont créées, mais elles ont été posées **sur Vercel**, où rien ne les
-   lit. Elles vont sur **Supabase → Project Settings → Edge Functions →
-   Secrets** du projet `gggmtelinlpseweouyav`, plus le webhook à déclarer.
-   Recette exacte : `docs/MISE-EN-SERVICE.md` §8. **C'est la seule chose qui
-   sépare la salle d'un vrai cours**, et ce n'est pas du code.
+3. ~~Les secrets LiveKit manquent~~ — **close, et vérifiée par HTTP depuis ce
+   lot** : `create-room-token` répond `401 authentification requise` là où elle
+   répondait `503 video non configuree`, et la configuration est testée avant
+   l'authentification. Il ne reste donc aucune cause non-code connue. **Ce qui
+   sépare encore la salle d'un vrai cours n'est plus une action, c'est une
+   mesure : ouvrir deux navigateurs sur une même séance.**
 
 ### 9.3 Ce que la sixième session a livré
 
@@ -1374,19 +1379,22 @@ de Coran -- mais il demande D'ABORD un jeu de donnees coranique, qui
 n'est pas choisi (question `a` de la section 10 de la spec d'etape).
 
 CE QUI N'EST PAS PROUVE, ET QU'IL NE FAUT PAS PRETENDRE AVOIR PROUVE :
-la connexion reelle a une salle LiveKit, donc un vrai cours. La salle
-se teste par ses 20 tests de widget et son rendu, pas par un cours.
+un vrai cours. Personne n'a encore ouvert deux navigateurs sur une meme
+seance. La salle se teste par ses 20 tests de widget et son rendu.
 
-UNE SEULE ACTION A LA MAIN DE L'OPERATEUR, ET ELLE DEBLOQUE TOUT :
-  Le compte LiveKit existe et les cles sont creees, mais elles ont ete
-  posees SUR VERCEL, ou personne ne les lit. Elles vont sur
-  Supabase -> Project Settings -> Edge Functions -> Secrets du projet
-  gggmtelinlpseweouyav, plus le webhook a declarer.
-  Recette copiable : docs/MISE-EN-SERVICE.md section 8.
-  Tant qu'elles n'y sont pas, create-room-token repond 503 et la salle
-  affiche "La salle n'est pas encore disponible" -- comportement voulu,
-  mais ce n'est pas un cours.
-  AUCUN redeploiement d'application ensuite (ADR-023).
+LIVEKIT EST BRANCHE, ET C'EST VERIFIE, PAS SUPPOSE :
+  create-room-token interrogee par HTTP avec la cle anon repond
+  "401 authentification requise" et non plus "503 video non configuree".
+  La fonction teste videoConfiguree() AVANT l'authentification : les
+  trois secrets sont donc bien poses sur Supabase.
+  Restent en angle mort LIVEKIT_CLOUD_WS_URL, que rien ne valide, et la
+  cle qui signe le webhook -- les deux ne se prouvent qu'en salle.
+
+LA PREMIERE MESURE QUI VAUT, MAINTENANT QU'ELLE EST POSSIBLE :
+  creer une seance a l'instant present entre un enseignant et un eleve
+  (ADM-05 attribue, la seance nait du creneau), ouvrir deux navigateurs,
+  et regarder. C'est le premier vrai cours, et la premiere preuve de
+  bout en bout depuis le debut de l'etape 5.
 
 DEUX ECARTS ASSUMES, ECRITS PLUTOT QUE MASQUES :
   - la sortie de ENS-03 mene a ENS-02, pas a ENS-04 : le cahier de
