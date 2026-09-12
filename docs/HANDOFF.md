@@ -1,5 +1,38 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🔴 **12 septembre 2026, quatrième session — la production était cassée depuis
+> la nuit, elle est réparée, et la cause de fond est corrigée.** L'opérateur :
+> « l'app ne marche plus depuis la nuit. » Écran gris, `LateInitializationError`
+> levé dans un provider. **Cause mesurée : le bundle en ligne ne contenait
+> aucune configuration Supabase** — zéro occurrence de `gggmtelinlpseweouyav`.
+> Il avait été compilé par `flutter build web --release` **sans
+> `--dart-define-from-file=dart_define.json`** : `Env.supabaseUrl` et
+> `Env.supabaseAnonKey` sont des `String.fromEnvironment`, ils valaient donc la
+> chaîne vide, et `Supabase.initialize` n'était jamais appelé. **Trois
+> déploiements de suite étaient partis ainsi** (06:08, 13:26, 14:32), tous par
+> des agents.
+> ✅ **Réparé et vérifié à l'écran, pas déduit** : la production sert un bundle
+> configuré, la session admin se restaure, `/admin/tableau-de-bord` rend ses
+> chiffres lus en base, zéro erreur console.
+> 🔴 **Le défaut qui a rendu la panne muette est corrigé (`6404843`)** : le
+> garde-fou de `main.dart` était un `assert`, **inexistant en release**, si bien
+> qu'une compilation sans clés démarrait normalement pour mourir plus loin.
+> `!Env.configuree` affiche désormais `EcranConfigurationAbsente`, qui nomme ce
+> qui manque et donne la commande qui répare. Prouvé sur **deux** builds
+> release : avec clés l'écran est tree-shaké (aucune graisse en production),
+> sans clés il apparaît et le bundle tombe à 2,4 Mo contre 3,8.
+> `flutter test` **563/563**, jetons **103 fichiers**, `dart analyze` propre.
+> ⚠ **Un `assert` n'est pas un garde-fou**, et une suite de tests ne prouve rien
+> d'un comportement de release : elle tourne en VM debug, où l'`assert` existe
+> encore. ⚠ **Chercher une chaîne du dernier lot dans le bundle servi ne suffit
+> pas** : le bundle mort du 14:32 contenait bien `Journal intact`. Le seul
+> contrôle qui vaut est d'**ouvrir l'application et de lire la console**.
+> 🎥 **N2 est débloqué.** L'opérateur a demandé le prompt d'implémentation du
+> fournisseur vidéo : **c'est le prochain lot**, et le seul qui justifie
+> d'ouvrir `D:\RA _APP\docs de lancement\architecture live kit..md`.
+> ⚠ OpenCode a déjà ajouté `livekit_client: ^2.12.0` à son `pubspec.yaml` non
+> commité, en même temps qu'un Playground : **se concerter avant de coder N2.**
+>
 > 🟢 **12 septembre 2026, troisième session — `ADM-04`, le journal d'audit,
 > est construit. L'espace admin n'a plus un seul écran manquant.** L'opérateur
 > a de nouveau demandé de laisser la vidéo de côté : N2 reste non commencé, et
@@ -1243,6 +1276,19 @@ FAIT :
        Il a surtout rendu VERIFIABLE la chaine de hachage que
        audit_logs portait depuis l'etape 1 sans que personne ne la
        relise : 34/34 se recalculent sur la base reelle.
+  FIX = garde-fou de configuration (6404843). L'assert de main.dart
+       n'existait pas en release : TROIS deploiements de suite ont mis
+       en ligne un bundle compile sans --dart-define, qui demarrait
+       puis mourait sur un ecran gris (LateInitializationError). La
+       prod etait cassee depuis la nuit du 12/09 sans que rien ne le
+       dise. Desormais EcranConfigurationAbsente nomme ce qui manque
+       et donne la commande qui repare. Verifie sur DEUX builds
+       release : avec cles l'ecran est tree-shake (aucune graisse en
+       prod), sans cles il apparait et le bundle tombe a 2,4 Mo.
+       flutter test 563/563, jetons 103 fichiers, analyze propre.
+       LECON : un assert n'est pas un garde-fou, et une suite de tests
+       ne prouve rien d'un comportement de release -- elle tourne en
+       VM debug, ou l'assert existait deja.
 
 LE PROCHAIN LOT EST N2, ET IL EST DEBLOQUE DEPUIS LE 12/09 AU SOIR.
 L'operateur l'avait repousse DEUX FOIS dans la journee, puis a donne le
