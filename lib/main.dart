@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/i18n/strings.g.dart';
 
@@ -17,15 +18,18 @@ Future<void> main() async {
   await LocaleSettings.useDeviceLocale();
 
   // La configuration est injectee a la compilation, jamais versionnee.
-  // Sans elle, on echoue tot et en clair plutot que sur un appel reseau obscur.
-  assert(Env.configuree, Env.aideConfiguration);
-
-  if (Env.configuree) {
-    await Supabase.initialize(
-      url: Env.supabaseUrl,
-      publishableKey: Env.supabaseAnonKey,
-    );
+  // Sans elle, on echoue tot, en clair, et EN RELEASE AUSSI : un `assert` seul
+  // ne tient pas cette promesse, il disparait de la version compilee et laisse
+  // l'application demarrer pour mourir plus loin sur un ecran gris.
+  if (!Env.configuree) {
+    runApp(const EcranConfigurationAbsente());
+    return;
   }
+
+  await Supabase.initialize(
+    url: Env.supabaseUrl,
+    publishableKey: Env.supabaseAnonKey,
+  );
 
   runApp(ProviderScope(child: TranslationProvider(child: const RewayahApp())));
 }

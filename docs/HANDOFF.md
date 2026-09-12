@@ -1164,22 +1164,45 @@ condensat pour la modification, le maillon pour la suppression. Les deux
 réparent ce qu'ils ont cassé et le reverifient, sans quoi ils rendraient rouge
 tout ce qui passe après eux.
 
-### 9.4 Ce qui ne peut pas se faire depuis le poste
+### 9.4 Reconstruire et promouvoir
 
-**Une seule chose désormais : reconstruire et promouvoir.** La build de
-`D:\ra-pwa-build\build\web` date de `5b8b868` et ne contient ni `ADM-05` ni
-`ADM-04`.
+**Rien n'attend l'opérateur : la production est à jour et elle fonctionne**
+(vérifiée à l'écran le 12/09). Ce qui suit est la recette, pour la prochaine
+fois.
 
 ```
-! cd "D:\ra-pwa-build"; flutter build web --release
+! cd "D:\ra-pwa-build"; flutter build web --release --dart-define-from-file=dart_define.json
 ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
 ```
 
-⚠ Le worktree `D:\ra-pwa-build` a servi à la mesure et pointe sur un commit
-détaché. Le remettre sur le dernier commit de `main` avant de construire, sinon
-la build sortira d'un état antérieur. Et vérifier que le `user_define`
+🔴 **Le `--dart-define-from-file` n'est pas optionnel.** Sans lui,
+`Env.supabaseUrl` et `Env.supabaseAnonKey` — des `String.fromEnvironment` —
+valent la chaîne vide, `Supabase.initialize` n'est jamais appelé, et
+l'application meurt sur un **écran gris** au premier provider qui touche le
+client (`LateInitializationError`). **Trois déploiements de suite sont partis
+ainsi le 12/09** (06:08, 13:26, 14:32), tous par des agents, sans que rien ne
+le signale. Depuis, une compilation sans clés affiche
+`EcranConfigurationAbsente` au lieu de démarrer.
+
+🔴 **Construire depuis `D:\ra-pwa-build` uniquement.** Le `dart_define.json` du
+dépôt de travail porte une clé **factice** et `GALERIE`/`PLAYGROUND` à `true` :
+bâtir la production avec lui publierait une clé morte, la galerie et le
+playground.
+
+⚠ `D:\ra-pwa-build` est un worktree **lié** : `git checkout main` y est
+**impossible**, `main` étant déjà sorti dans le dépôt principal. Il reste
+détaché, **et c'est normal** — ce qui compte n'est pas l'état git mais que les
+sources soient les bonnes. Vérifier en revanche que le `hooks.user_defines`
 `sqlite3` de la section 0 undecies n'est plus dans son `pubspec.yaml` : il
 change le SQLite d'une build de production.
+
+**Contrôle après promotion, les deux, pas un seul :**
+
+1. `gggmtelinlpseweouyav` doit apparaître dans le `main.dart.js` servi ;
+2. **ouvrir l'application et lire la console.**
+
+Chercher une chaîne du dernier lot **ne prouve rien** : le bundle mort du 14:32
+contenait bien `Journal intact` et n'avait aucune configuration.
 
 ### 9.5 Le prompt
 
@@ -1221,14 +1244,19 @@ FAIT :
        audit_logs portait depuis l'etape 1 sans que personne ne la
        relise : 34/34 se recalculent sur la base reelle.
 
-LE PROCHAIN LOT EST N2, ET IL DEMANDE UNE DECISION AVANT DU CODE.
+LE PROCHAIN LOT EST N2, ET IL EST DEBLOQUE DEPUIS LE 12/09 AU SOIR.
+L'operateur l'avait repousse DEUX FOIS dans la journee, puis a donne le
+feu vert le soir meme : "donne-moi le prompt qui va lancer l'implementation
+du fournisseur video et de ses specs, tu sais que le doc est dispo".
 N2 = VideoSessionProvider/LiveKitSessionProvider (ADR-001), pre-flight,
-emission de jeton. L'operateur a dit le 12/09, DEUX FOIS, qu'il lui
-restait des infos a completer sur l'outil, et a pointe la spec :
+emission de jeton. La spec est :
   "D:\RA _APP\docs de lancement\architecture live kit..md"
-NE PAS LIRE CE FICHIER tant que le lot du jour ne traite pas la video :
-il est long et coute cher en contexte. Demander d'abord a l'operateur
-si la decision est prise (fournisseur, compte, cles).
+C'EST LE SEUL LOT QUI JUSTIFIE DE L'OUVRIR : elle est longue et coute cher
+en contexte, donc ne la lire que dans la session qui traite la video.
+Demander a l'operateur ce que la spec ne fixe pas : fournisseur retenu,
+compte, cles.
+N2 debloque aussi la salle de cours (ELV-03 / ENS-03 / CTR-02), le produit
+lui-meme, qui rend encore EcranAConstruire.
 C'est aussi N2 qui posera la trace d'emission de jeton rendant l'etat
 `en_connexion` derivable. N1 ne le derive volontairement pas, faute de
 trace en base. Ne pas l'inventer.
@@ -1245,15 +1273,40 @@ valeur decroissante :
   - ENS-05 profil enseignant (niveau D, fiche a remplir d'abord).
 CTR-01 et CTR-02 restent bloques par la salle, pas par la video seule.
 
-UNE SEULE ACTION A LA MAIN DE L'OPERATEUR :
-  Reconstruire PUIS promouvoir. La build de D:\ra-pwa-build\build\web
-  date de 5b8b868 et ne contient ni ADM-05 ni ADM-04 :
-     ! cd "D:\ra-pwa-build"; flutter build web --release
-     ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
-  ATTENTION : ce worktree sert aux mesures et reste sur un commit
-  DETACHE. Le remettre sur le dernier commit de main avant de
-  construire, et verifier que le user_define sqlite3 n'est plus dans
-  son pubspec.yaml.
+AUCUNE ACTION N'ATTEND L'OPERATEUR. La production est a jour et elle
+FONCTIONNE : verifiee a l'ecran le 12/09 (session admin restauree,
+/admin/tableau-de-bord rendu avec ses chiffres lus en base, zero erreur
+console).
+
+DEPLOIEMENT -- LA COMMANDE EXACTE, ET LE --dart-define N'EST PAS OPTIONNEL :
+   ! cd "D:\ra-pwa-build"; flutter build web --release --dart-define-from-file=dart_define.json
+   ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
+
+  Sans --dart-define-from-file, Env.supabaseUrl et Env.supabaseAnonKey sont
+  des String.fromEnvironment VIDES : Supabase.initialize n'est jamais appele
+  et l'application meurt sur un ecran gris, au premier provider qui touche
+  le client (LateInitializationError). TROIS DEPLOIEMENTS DE SUITE sont
+  partis ainsi le 12/09 (06:08, 13:26, 14:32), tous par des agents.
+  Depuis ce jour, une compilation sans cles affiche EcranConfigurationAbsente
+  au lieu de demarrer : la panne ne peut plus etre muette. La commande reste
+  a respecter -- le garde-fou dit qu'on s'est trompe, il ne repare rien.
+
+  CONSTRUIRE DEPUIS D:\ra-pwa-build UNIQUEMENT. Le dart_define.json du depot
+  de travail porte une cle FACTICE et GALERIE/PLAYGROUND a true : batir la
+  production avec lui publierait une cle morte, la galerie et le playground.
+
+  Ce worktree est un worktree LIE (son .git est un fichier qui pointe vers
+  .git/worktrees/ra-pwa-build) : `git checkout main` y est IMPOSSIBLE, main
+  etant deja sorti dans le depot principal. Il reste DETACHE, et c'est
+  normal. Ce qui compte n'est pas l'etat git mais que les sources soient les
+  bonnes. Verifier aussi que le user_define sqlite3 n'est PAS dans son
+  pubspec.yaml avant une version de production (il n'y sert qu'aux mesures).
+
+  CONTROLE APRES PROMOTION -- LES DEUX, PAS UN SEUL :
+   1. `gggmtelinlpseweouyav` doit apparaitre dans le main.dart.js servi ;
+   2. ouvrir l'application et lire la console.
+  Chercher une chaine du dernier lot NE PROUVE RIEN : le bundle mort du
+  14:32 contenait bien `Journal intact` et n'avait aucune configuration.
 
 A LUI SOUMETTRE, PAS BLOQUANT (decisions prises par l'agent) :
   - ADR-021 : l'administration peut attribuer un eleve hors des
