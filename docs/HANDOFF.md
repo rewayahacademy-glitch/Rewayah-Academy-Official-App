@@ -1303,6 +1303,17 @@ Demander a l'operateur ce que la spec ne fixe pas : fournisseur retenu,
 compte, cles.
 N2 debloque aussi la salle de cours (ELV-03 / ENS-03 / CTR-02), le produit
 lui-meme, qui rend encore EcranAConstruire.
+
+/!\ COMMENCER PAR LIRE LE TRAVAIL D'OPENCODE, IL A DEJA COMMENCE N2.
+Constate le 12/09 au soir, tout en NON COMMITE dans le depot de travail :
+  - livekit_client: ^2.12.0 ajoute au pubspec.yaml
+  - supabase/migrations/0010_video_jeton_presence.sql
+  - supabase/tests/scenarios_n2.sql
+  - .github/workflows/ci.yml modifie
+  - le Playground (PLAYGROUND en bool.fromEnvironment, PlaygroundRacine)
+Faire `git status` puis LIRE ces deux fichiers SQL avant d'ecrire une
+ligne, sinon migration 0010 en double et deux conceptions concurrentes du
+jeton. NE PAS APPLIQUER 0010 sans l'avoir lue : elle n'est pas de nous.
 C'est aussi N2 qui posera la trace d'emission de jeton rendant l'etat
 `en_connexion` derivable. N1 ne le derive volontairement pas, faute de
 trace en base. Ne pas l'inventer.
