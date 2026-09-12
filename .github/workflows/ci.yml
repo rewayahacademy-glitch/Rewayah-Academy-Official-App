@@ -56,6 +56,27 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape4.sql
 
+      # Coran structure, position de lecture personnelle, machine a etats de
+      # presence a quatorze etats et sa derivation.
+      # Voir docs/architecture/etape-5-salle-coran-presence.md section 6.
+      #
+      # Ce fichier existait depuis le lot N1 et n'avait jamais ete ajoute ici :
+      # ses quinze controles n'ont ete rejoues que sur le poste, jamais par la
+      # CI, jusqu'au 12 septembre 2026.
+      - name: Scenarios d'acceptation SQL de l'etape 5
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape5.sql
+
+      # Attribution manuelle : file des eleves sans enseignant, croisement des
+      # creneaux par instant, motif obligatoire hors disponibilite (ADR-021),
+      # plafond, et le mur d'ecriture de 0005 qui doit tenir apres 0008.
+      #
+      # Il vient en dernier : ses assertions sont bornees a ses propres fixtures
+      # precisement pour tenir a la suite des trois autres sur la meme base.
+      - name: Scenarios d'acceptation SQL de ADM-05
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_adm05.sql
+
   flutter:
     name: Flutter (${{ matrix.target }})
     strategy:

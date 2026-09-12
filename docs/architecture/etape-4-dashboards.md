@@ -473,6 +473,15 @@ Un scénario non mesuré n'est pas un scénario vert.
 - **Aucun `ADM-05` ni `CTR-01`.** L'attribution manuelle et le planning global
   sont utiles, mais `ADM-01` mène déjà à `ADM-02`, et le contrôleur n'a rien à
   observer tant qu'aucune salle n'existe.
+  > ⚠ **Périmé pour `ADM-05` depuis le 12 septembre 2026.** L'attribution
+  > manuelle a été construite hors série, pendant que le lot N2 de l'étape 5
+  > attendait la décision du fournisseur vidéo : migration `0008`, écran
+  > `lib/features/admin_attribution/`, ADR-021, neuf contrôles SQL dans
+  > `supabase/tests/scenarios_adm05.sql`. La raison invoquée ici ne tenait plus :
+  > sans `ADM-05`, **aucune affectation ne pouvait naître sans qu'un enseignant
+  > la demande**, donc aucune séance n'était matérialisée, donc `ENS-02`,
+  > `ELV-02` et `TUT-01` restaient vides quoi qu'ait fait l'étape 4.
+  > `CTR-01`, lui, reste à construire et reste bloqué par la salle.
 - **Aucun groupe.** `allow_multi_participant_sessions` reste faux : l'ADR-004
   prévoit les groupes, le MVP-0 les laisse fermés.
 

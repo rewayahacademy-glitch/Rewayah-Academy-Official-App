@@ -12,16 +12,25 @@ de reprise.
 
 **Les étapes 3 et 4 sont terminées, la refonte UX/UI aussi.** L0 à L10 sont
 faits (étape 4 close le 11 septembre 2026), et B0, T, C, R (R0 à R4), T2, T3,
-A1 sont tous codés et poussés sur `main` (ADR-019). **Rien de tout cela n'est
-en ligne** : la production sert `a9127fd` (lot R3), onze commits de retard —
-voir la ligne M du tableau d'onboarding plus bas. N0 (documentaire) a spécifié
-l'étape 5 (ADR-020) ; son premier lot de code, **N1**, est le prochain
-candidat, à confirmer dans `docs/HANDOFF.md` avant de commencer — un lot par
-session.
+A1 sont tous codés et poussés sur `main` (ADR-019). N0 (documentaire) a
+spécifié l'étape 5 (ADR-020), **N1** a posé sa migration `0007`, et
+**`ADM-05`** (l'attribution manuelle, hors série) a été construit le
+12 septembre pendant que **N2 attend la décision du fournisseur vidéo**.
+
+**Le prochain lot est N2, et il ne peut pas commencer sans l'opérateur** :
+fournisseur, compte, clés. S'il est encore bloqué, `docs/HANDOFF.md` §9.5 donne
+la liste des lots qui ne dépendent pas de la vidéo, par valeur décroissante.
+
+**Ce qui a changé de nature le 12 septembre.** Avant `ADM-05`, une affectation
+ne pouvait naître que si un enseignant la prenait dans `ENS-06`. Sans
+affectation, `materialiser_seances()` n'est jamais appelée ; sans séance,
+`ENS-02`, `ELV-02` et `TUT-01` restent vides **quoi qu'ait construit l'étape
+4**. L'administration peut désormais attribuer elle-même, et le compteur
+« Foyers sans enseignant » d'`ADM-01` mène enfin à son geste.
 
 1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis, pour le
-   lot N1 (étape 5), `docs/architecture/etape-5-salle-coran-presence.md` et
-   `decisions.md` (ADR-020). Puis `lib/CLAUDE.md` dans tous les cas.
+   lot N2 (étape 5), `docs/architecture/etape-5-salle-coran-presence.md` et
+   `decisions.md` (ADR-020, ADR-021). Puis `lib/CLAUDE.md` dans tous les cas.
 2. **Ne rien réécrire des étapes 2 et 3.** Les dix composants partagés, le
    thème, le routeur et les services de dossier sont les seuls points d'entrée
    de leur fonction. `dart run tool/verifier_jetons.dart` le dira.
@@ -66,6 +75,8 @@ psql -f supabase/tests/stub_auth.sql
 psql -f supabase/migrations/0001_fondations.sql          # puis 0002 à 0005
 psql -f supabase/tests/scenarios_etape3.sql              # 34 contrôles
 psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
+psql -f supabase/tests/scenarios_etape5.sql              # 15 contrôles
+psql -f supabase/tests/scenarios_adm05.sql               #  9 contrôles
 ```
 
 ## Étapes de code
@@ -78,7 +89,8 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | 3 | Auth, KYC, appairage, portails d'attente | [x] | `docs/architecture/etape-3-journal.md` |
 | 4 | Dashboards Bento Grid, affectation durable, prières | [x] | **Close le 11 septembre 2026 (lot L10)** : L0 à L10 faits, dix-sept scénarios relus (seize verts, le quatorzième non mesurable sur ce poste). `docs/architecture/etape-4-journal.md` |
 | 4 bis | **Refonte UX/UI** : jetons, composants, reprise des écrans | [x] | **Close le 11 septembre 2026.** Lots T, C, R (R0 à R4) faits, plus B0, T2, T3 et A1 de la Bible Frontend V2 (ADR-019). **Non en ligne** : la production sert `a9127fd`, onze commits de retard — voir ligne M ci-dessus |
-| 5 | Visio LiveKit, preuve de présence, Coran | [ ] | **Spécifiée (lot N0, ADR-020)** : `docs/architecture/etape-5-salle-coran-presence.md`. Code non touché, attend son premier lot (N1) |
+| 5 | Visio LiveKit, preuve de présence, Coran | [ ] | **Spécifiée (lot N0, ADR-020)**, découpage N0→N7 confirmé. **N1 fait** (migration `0007`, 15 contrôles). **N2 bloqué** : il tranche le fournisseur vidéo et ses clés, l'opérateur complète encore ses informations. `docs/architecture/etape-5-salle-coran-presence.md` |
+| 5 bis | **`ADM-05` attribution manuelle**, hors série | [x] | **Fait le 12 septembre 2026**, pendant le blocage de N2. Migration `0008` (trois fonctions, aucune table), `lib/features/admin_attribution/`, ADR-021, 9 contrôles SQL et 7 tests de widget. Débloque la création d'affectations sans initiative d'un enseignant, donc la matérialisation des séances, donc le contenu d'`ENS-02`/`ELV-02`/`TUT-01`. Fiche `ADM-05` au catalogue |
 | 6 | Cahier de transmission | [ ] | |
 
 ## Protocole d'onboarding (`docs/agent-onboarding.md`)
@@ -89,7 +101,7 @@ psql -f supabase/tests/scenarios_etape4.sql              # 39 contrôles
 | B | Projet Supabase | [x] | `gggmtelinlpseweouyav`, `supabase/` initialisé et lié |
 | C | Migrations versionnées | [x] | `0001` à `0005`, **appliquées au projet réel le 7 septembre 2026** et inscrites dans `supabase_migrations`. Le risque `pgcrypto` du journal de l'étape 3 était réel, et il est corrigé. **Corollaire : `0005` ne se corrige plus sur place**, tout changement structurel passe par `0006`. Voir `docs/MISE-EN-SERVICE.md` |
 | D | Secrets | [x] | **Fermée le 7 septembre 2026.** Projet lié, `dart_define.json` écrit, fonctions Edge `creer-profil-enfant` et `session-enfant` déployées et `ACTIVE`, **hook de jeton actif** (`pg-functions://postgres/public/custom_access_token_hook`, vérifié en lecture sur `/config/auth`) et **`STUDENT_EMAIL_DOMAIN` posé**. Voir `docs/MISE-EN-SERVICE.md` section 3, qui note aussi les quatre réglages Auth que `config push` a écrasés au passage |
-| E | CI/CD | [x] | `ci.yml` rejoue les 73 contrôles SQL de `supabase/tests/` à chaque pull request, 34 pour les étapes 1 et 3, 39 pour l'étape 4 |
+| E | CI/CD | [x] | `ci.yml` rejoue les contrôles SQL de `supabase/tests/` à chaque pull request. **97 au 12 septembre 2026** : 34 pour les étapes 1 et 3, 39 pour l'étape 4, 15 pour l'étape 5, 9 pour `ADM-05`. ⚠ **Défaut trouvé et corrigé le 12 septembre** : `scenarios_etape5.sql` existait depuis le lot N1 et n'avait jamais été ajouté au workflow ; ses quinze contrôles n'étaient rejoués que sur le poste. Les migrations, elles, passent par un glob et n'ont jamais eu ce problème |
 | F | Sentry | [ ] | Nécessite le compte Sentry |
 | G | Variantes Flutter `dev` / `staging` / `prod` | [ ] | Un seul identifiant aujourd'hui : `com.rewayahacademy.app` |
 | H | Stockage média R2 | [ ] | Nécessite le compte Cloudflare. Les seaux `kyc` et `avatars` de Supabase Storage, eux, sont créés par la migration 0004 |

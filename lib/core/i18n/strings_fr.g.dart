@@ -877,6 +877,7 @@ class Traductions$admin$fr {
 	// Translations
 	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
+	late final Traductions$admin$attribution$fr attribution = Traductions$admin$attribution$fr.internal(_root);
 }
 
 // Path: vide
@@ -1088,8 +1089,8 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.'
 	String get aTraiterAucunDetail => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.';
 
-	/// fr: 'Les quatre autres compteurs se règlent ailleurs : ils n'ont pas encore d'écran d'action.'
-	String get aTraiterPortee => 'Les quatre autres compteurs se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.';
+	/// fr: 'Les foyers sans enseignant s'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.'
+	String get aTraiterPortee => 'Les foyers sans enseignant s\'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.';
 
 	/// fr: 'La liste n'a pas pu être lue en entier. Les compteurs, eux, restent justes.'
 	String get listeErreur => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.';
@@ -1270,6 +1271,111 @@ class Traductions$admin$demandes$fr {
 
 	/// fr: 'L'opération n'a pas abouti : {message}'
 	String erreur({required Object message}) => 'L\'opération n\'a pas abouti : ${message}';
+}
+
+// Path: admin.attribution
+class Traductions$admin$attribution$fr {
+	Traductions$admin$attribution$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Attribution'
+	String get titre => 'Attribution';
+
+	/// fr: 'Quand aucun enseignant n'a pris un enfant, c'est ici qu'on lui en donne un.'
+	String get intro => 'Quand aucun enseignant n\'a pris un enfant, c\'est ici qu\'on lui en donne un.';
+
+	/// fr: 'Élèves sans enseignant'
+	String get colonneEleves => 'Élèves sans enseignant';
+
+	/// fr: 'Enseignants'
+	String get colonneEnseignants => 'Enseignants';
+
+	/// fr: 'Chaque élève a son enseignant'
+	String get aucunEleve => 'Chaque élève a son enseignant';
+
+	/// fr: 'Les enfants que personne n'a encore pris apparaîtront ici, celui qui attend depuis le plus longtemps en premier.'
+	String get aucunEleveDetail => 'Les enfants que personne n\'a encore pris apparaîtront ici, celui qui attend depuis le plus longtemps en premier.';
+
+	/// fr: 'La file n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreurEleves => 'La file n\'a pas pu être lue. Réessayez dans un instant.';
+
+	/// fr: 'Les enseignants n'ont pas pu être lus. Réessayez dans un instant.'
+	String get erreurEnseignants => 'Les enseignants n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'Inscrit aujourd'hui'
+	String get attendAujourdhui => 'Inscrit aujourd\'hui';
+
+	/// fr: 'Attend depuis 1 jour'
+	String get attendUnJour => 'Attend depuis 1 jour';
+
+	/// fr: 'Attend depuis {jours} jours'
+	String attendJours({required Object jours}) => 'Attend depuis ${jours} jours';
+
+	/// fr: 'Niveau {niveau}'
+	String niveau({required Object niveau}) => 'Niveau ${niveau}';
+
+	/// fr: '{nombre} heures proposées'
+	String heuresProposees({required Object nombre}) => '${nombre} heures proposées';
+
+	/// fr: '1 heure proposée'
+	String get heureProposee => '1 heure proposée';
+
+	/// fr: 'Aucune heure proposée'
+	String get sansHeure => 'Aucune heure proposée';
+
+	/// fr: 'Tant que la famille n'a posé aucun créneau, personne ne peut lui donner d'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.'
+	String get sansHeureDetail => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.';
+
+	/// fr: 'Choisir un autre élève'
+	String get changerEleve => 'Choisir un autre élève';
+
+	/// fr: 'Choisissez un élève'
+	String get choisirEleve => 'Choisissez un élève';
+
+	/// fr: 'Les enseignants s'afficheront ici, ceux qui partagent une heure avec lui en premier.'
+	String get choisirEleveDetail => 'Les enseignants s\'afficheront ici, ceux qui partagent une heure avec lui en premier.';
+
+	/// fr: '{actifs} élèves sur {plafond}'
+	String charge({required Object actifs, required Object plafond}) => '${actifs} élèves sur ${plafond}';
+
+	/// fr: 'Plafond atteint'
+	String get complet => 'Plafond atteint';
+
+	/// fr: 'Libre {jour} à {heure} h'
+	String libreSur({required Object jour, required Object heure}) => 'Libre ${jour} à ${heure} h';
+
+	/// fr: 'Libre sur {nombre} des heures proposées'
+	String libreSurPlusieurs({required Object nombre}) => 'Libre sur ${nombre} des heures proposées';
+
+	/// fr: 'Aucune heure commune'
+	String get sansHeureCommune => 'Aucune heure commune';
+
+	/// fr: 'Sur quelle heure ?'
+	String get quelleHeure => 'Sur quelle heure ?';
+
+	/// fr: '{jour} à {heure} h'
+	String creneau({required Object jour, required Object heure}) => '${jour} à ${heure} h';
+
+	/// fr: 'Pourquoi passer outre ?'
+	String get motif => 'Pourquoi passer outre ?';
+
+	/// fr: '{prenom} n'a pas posé cette heure. L'attribuer quand même peut se justifier, et cela s'inscrit au journal.'
+	String motifRequis({required Object prenom}) => '${prenom} n\'a pas posé cette heure. L\'attribuer quand même peut se justifier, et cela s\'inscrit au journal.';
+
+	/// fr: 'Attribuer {eleve} à {enseignant}'
+	String attribuer({required Object eleve, required Object enseignant}) => 'Attribuer ${eleve} à ${enseignant}';
+
+	/// fr: 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s'il a fallu passer outre.'
+	String get journalisation => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.';
+
+	/// fr: 'L'élève quitte cette file et ses cours sont posés au calendrier tout de suite.'
+	String get effet => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.';
+
+	/// fr: 'L'attribution n'a pas abouti : {message}'
+	String erreur({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}';
 }
 
 // Path: nav.eleve
@@ -1981,7 +2087,7 @@ extension on Traductions {
 			'admin.tableau.aTraiter' => 'À traiter en premier',
 			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
 			'admin.tableau.aTraiterAucunDetail' => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.',
-			'admin.tableau.aTraiterPortee' => 'Les quatre autres compteurs se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
+			'admin.tableau.aTraiterPortee' => 'Les foyers sans enseignant s\'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
 			'admin.tableau.listeErreur' => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.',
 			'admin.tableau.ligneDossier' => ({required Object prenom}) => 'Dossier d\'identité de ${prenom}',
 			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'Changement d\'enseignant pour ${prenom}',
@@ -2039,6 +2145,38 @@ extension on Traductions {
 			'admin.demandes.poserEnvoyer' => 'Poser la règle',
 			'admin.demandes.cloreEnvoyer' => 'Clore la surcharge',
 			'admin.demandes.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
+			'admin.attribution.titre' => 'Attribution',
+			'admin.attribution.intro' => 'Quand aucun enseignant n\'a pris un enfant, c\'est ici qu\'on lui en donne un.',
+			'admin.attribution.colonneEleves' => 'Élèves sans enseignant',
+			'admin.attribution.colonneEnseignants' => 'Enseignants',
+			'admin.attribution.aucunEleve' => 'Chaque élève a son enseignant',
+			'admin.attribution.aucunEleveDetail' => 'Les enfants que personne n\'a encore pris apparaîtront ici, celui qui attend depuis le plus longtemps en premier.',
+			'admin.attribution.erreurEleves' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
+			'admin.attribution.erreurEnseignants' => 'Les enseignants n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.attribution.attendAujourdhui' => 'Inscrit aujourd\'hui',
+			'admin.attribution.attendUnJour' => 'Attend depuis 1 jour',
+			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
+			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
+			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
+			'admin.attribution.heureProposee' => '1 heure proposée',
+			'admin.attribution.sansHeure' => 'Aucune heure proposée',
+			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
+			'admin.attribution.changerEleve' => 'Choisir un autre élève',
+			'admin.attribution.choisirEleve' => 'Choisissez un élève',
+			'admin.attribution.choisirEleveDetail' => 'Les enseignants s\'afficheront ici, ceux qui partagent une heure avec lui en premier.',
+			'admin.attribution.charge' => ({required Object actifs, required Object plafond}) => '${actifs} élèves sur ${plafond}',
+			'admin.attribution.complet' => 'Plafond atteint',
+			'admin.attribution.libreSur' => ({required Object jour, required Object heure}) => 'Libre ${jour} à ${heure} h',
+			'admin.attribution.libreSurPlusieurs' => ({required Object nombre}) => 'Libre sur ${nombre} des heures proposées',
+			'admin.attribution.sansHeureCommune' => 'Aucune heure commune',
+			'admin.attribution.quelleHeure' => 'Sur quelle heure ?',
+			'admin.attribution.creneau' => ({required Object jour, required Object heure}) => '${jour} à ${heure} h',
+			'admin.attribution.motif' => 'Pourquoi passer outre ?',
+			'admin.attribution.motifRequis' => ({required Object prenom}) => '${prenom} n\'a pas posé cette heure. L\'attribuer quand même peut se justifier, et cela s\'inscrit au journal.',
+			'admin.attribution.attribuer' => ({required Object eleve, required Object enseignant}) => 'Attribuer ${eleve} à ${enseignant}',
+			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
+			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
+			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',

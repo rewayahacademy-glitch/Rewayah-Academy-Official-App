@@ -902,6 +902,67 @@ séance, granularité mot-à-mot. Détail et raison de chaque point :
 
 ---
 
+## ADR-021 - L'administration peut attribuer hors des disponibilités d'un enseignant, jamais en silence
+
+Décision prise le 12 septembre 2026, au lot `ADM-05`, et **prise par l'agent
+faute de pouvoir attendre** : elle est réversible, et le paragraphe « comment la
+défaire » ci-dessous dit exactement à quel prix.
+
+### Le problème
+
+`parcours-utilisateurs.md` §5 définit `ADM-05` comme « l'écran de secours quand
+le matching inversé ne produit rien ». Or le matching inversé ne produit rien
+pour deux raisons distinctes :
+
+1. des enseignants partagent une heure avec la famille, mais aucun n'a pris
+   l'enfant dans `ENS-06` ;
+2. **aucun enseignant ne partage d'heure avec elle.**
+
+Un `ADM-05` qui n'accepterait qu'un créneau commun ne traite que le premier cas.
+Dans le second, c'est-à-dire précisément le jour où l'on ouvre cet écran, il
+afficherait une colonne de droite vide. Un écran de secours qui ne secourt pas
+le cas pour lequel il existe n'en est pas un.
+
+### Ce qui est tranché
+
+- **L'administration peut attribuer un enseignant sur une heure qu'il n'a pas
+  posée.** Le geste existe, il n'est pas caché derrière un réglage.
+- **Il exige un motif, vérifié en base et non seulement à l'écran.**
+  `attribuer_eleve()` refuse un motif vide ou fait d'espaces. Ce qui ne se
+  vérifie qu'au clavier finit par ne plus se vérifier du tout.
+- **Il est journalisé avec le fait lui-même** : la ligne `audit_logs` porte
+  `hors_disponibilite: true` et le motif. Six mois plus tard, « pourquoi cet
+  enseignant a-t-il ce cours le mardi » se relit.
+- **L'heure reste celle de la famille.** C'est la seule limite qui ne bouge
+  pas : `attribuer_eleve()` refuse tout créneau absent de
+  `weekly_availability` de l'élève, exactement comme `prendre_eleve()`. Une
+  administration ne choisit pas l'heure du cours d'un enfant à la place de ses
+  parents, et un enfant indisponible ne devient pas disponible parce qu'un
+  adulte l'a décidé.
+- **Le plafond ne se contourne pas.** Le déclencheur `assignments_cap` de
+  `0005` tourne pour cette porte comme pour l'autre. Dépasser un plafond se
+  fait en le changeant, depuis `ADM-06`, et cela laisse sa propre trace.
+
+### Ce que cela ne dit pas
+
+Rien sur le droit du travail ni sur l'accord de l'enseignant. Le produit
+enregistre une décision humaine et son motif ; il ne prétend pas que la
+décision était fondée. L'accord se prend hors de l'application, et le champ
+motif est l'endroit où l'on écrit qu'il a été pris.
+
+### Comment la défaire, si l'opérateur la refuse
+
+Retirer le calcul `v_hors` et la branche qui l'accompagne dans
+`attribuer_eleve()` (migration `0008`), et remplacer par un refus sec quand le
+créneau ne figure pas dans les disponibilités de l'enseignant. Côté écran,
+`_ColonneEnseignants.offerts` rendrait alors toujours `creneauxCommuns`, et la
+carte d'un enseignant sans heure commune deviendrait non sélectionnable, comme
+celle d'un enseignant au plafond. Le contrôle A6 de
+`supabase/tests/scenarios_adm05.sql` s'inverse. Coût : une heure, et l'écran
+redevient vide dans le cas 2 ci-dessus.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -947,5 +1008,7 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 22 | L'interligne des grands corps est resserré de combien exactement | Lot C | **Tranchée par défaut au lot T, à confirmer.** `01-systeme-visuel.md` §5 demande de resserrer l'interligne des grands corps sans donner de valeur. Le lot T a posé 1,05, 1,08 et 1,10 pour les trois rôles d'affichage, contre 1,12, 1,15 et 1,18 avant, et n'a pas touché aux titres. C'est un choix, pas une mesure : il se juge sur le rendu de `ELV-02` au lot R |
 | 23 | Aucun mode sombre n'existe (Bible V2 §7.3) : `AppPalette.claire()` est la seule palette, `Brightness.light` codé en dur | Lot T3 | **Fermée au lot T3** (ADR-019). `AppPalette.sombre()` ajoutée, toutes les mesures de contraste refaites indépendamment (aucune transposée depuis le clair, `design-tokens.md` §12, `test/theme/contraste_sombre_test.dart`). `AppTheme.pour(mode, brightness)` choisit la palette, `app.dart` suit `ThemeMode.system`. Non traité par ce lot : une bascule manuelle dans un écran de réglages, faute d'entrée au catalogue `08-catalogue-ecrans.md` |
 | 24 | Le RTL n'est ni outillé ni testé (Bible V2 §14) : deux `EdgeInsets.only(left:)` / `Alignment.centerLeft` restent dans le code, aucun test de rendu arabe | Lot B0 pour l'outillage, lot A1 pour les tests | **Fermée au lot A1** (ADR-019). **Correction d'un constat inexact de cette ligne, ecrit au lot B0** : `test/widgets/catalogue_galerie_test.dart` testait deja le RTL et le 200 % depuis le lot C (7 septembre), sur les composants isoles de la galerie — ce n'etait donc pas « aucun test », seulement une couverture incomplete. L'ecart reel ferme par A1 : (1) `test/icons/app_icons_rtl_test.dart` prouve le miroir RTL par son comportement (`AppIcons.chevron` porte `matchTextDirection`, `AppIcons.suivant`, meme dessin, ne le porte pas), pas seulement l'absence d'exception ; (2) `test/accessibilite/rtl_echelle_texte_ecrans_test.dart` rejoue les dix-neuf ecrans reels du catalogue (pas seulement les composants isoles) en RTL et a 200 %, decouvrant au passage qu'`ELV-01` (`EleveConnexionPage`) n'avait aucun test de widget — trois faux ajoutes a `harnais.dart` pour le monter ; (3) `test/accessibilite/clavier_test.dart` prouve l'ordre de focus au clavier (Tab avance dans l'ordre visuel, `TUT-00c`), que `focusedBorder` est bien cable sur `borderStrong` (§13.2/§13.4), et qu'Echap ferme `AppBottomSheet.ouvrir` (donc `ConfirmDestructive` et toute feuille modale qui en herite) sans jamais se lire comme une confirmation. Aucun de ces trois fichiers n'a pu etre confirme par `flutter test` sur ce poste (blocage TLS, voir HANDOFF.md) : `dart analyze --fatal-infos` est la seule preuve automatique obtenue |
+| 25 | L'administration a-t-elle le droit d'attribuer un élève à un enseignant sur une heure que celui-ci n'a pas posée | Lot `ADM-05` | **Tranchée par l'agent, à confirmer par l'opérateur** (ADR-021, 12 septembre 2026). Oui, avec motif obligatoire vérifié en base et journalisation portant `hors_disponibilite: true`. Raison : sans ce droit, `ADM-05` afficherait une colonne de droite vide exactement dans le cas pour lequel il existe. L'heure de la famille, elle, ne se contourne jamais, et le plafond non plus. **Comment défaire** : ADR-021, dernier paragraphe, une heure de travail, le contrôle A6 de `scenarios_adm05.sql` s'inverse |
+| 26 | Un enseignant doit-il être averti quand l'administration lui attribue un élève, et surtout quand elle le fait hors de ses disponibilités | Lot `ADM-05`, étape D | **Ouverte, et sans dette immédiate** : le canal de notification n'existe pas (`device_tokens` vide, étape D ouverte), donc la question ne se pose pas encore en code. Aujourd'hui l'enseignant découvre l'élève dans `ENS-02` à la prochaine séance matérialisée. Dès qu'un canal existe, c'est la première notification à écrire |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.

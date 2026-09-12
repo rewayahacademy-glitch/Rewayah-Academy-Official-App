@@ -39,7 +39,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `TUT-04` | Disponibilités du foyer | Tuteur | C | 1 | `/tuteur/disponibilites` | Grille défilante | Grille entière | **repris (R4)**, fiche §6 |
 | `ENS-06` | Disponibilités et matching | Enseignant | D | 1 | `/enseignant/creneaux` | Deux onglets | Grille + feed côte à côte | **repris (R4)**, fiche §6 |
-| `ADM-05` | Attribution manuelle | Admin | E | 1 | `/admin/attribution` | Deux listes empilées | Deux listes côte à côte | **à construire** |
+| `ADM-05` | Attribution manuelle | Admin | E | 1 | `/admin/attribution` | Deux listes empilées | Deux listes côte à côte | **construit (12/09)**, fiche §6 |
 
 ### Zone Journée et salle
 
@@ -1561,3 +1561,74 @@ et que la reprise a corrigé :
   défilant et pas dans `PageShell.actions` ;
 - `FeuilleRegle` (bottom sheet) garde aussi son `Padding` manuel dupliqué,
   même dette que `TUT-05`.
+
+### `ADM-05` Attribution manuelle
+
+```
+CODE              ADM-05
+Nom               Attribution manuelle
+Role              Admin
+Zone              Administration
+Niveau de charge  E
+Ecran parent      ADM-01 (compteur "foyers sans enseignant")
+Profondeur        1
+Question          A quel enseignant confier cet enfant que personne n'a pris ?
+
+Priorites         P0  deux listes, jamais un formulaire : eleves a gauche,
+                      enseignants a droite, confirmation dessous
+                  P0  l'anciennete d'attente ordonne la colonne de gauche
+                  P0  l'eleve sans creneau reste visible ET non selectionnable,
+                      avec la raison ecrite
+                  P0  l'enseignant qui ne partage aucune heure reste dans la
+                      liste, apres les autres : sans lui l'ecran serait vide le
+                      jour ou l'on en a besoin
+                  P0  le motif obligatoire hors disponibilite (ADR-021)
+                  P1  l'heure evidente est preselectionnee : deux taps
+
+Action principale     Attribuer X a Y
+Actions secondaires   Choisir un autre eleve (repli mobile) ; choisir l'heure
+                      quand plusieurs sont possibles
+Action tertiaire      Reessayer (lecture en erreur)
+Destructif            aucun -- une affectation se defait par ADM-06, jamais ici
+
+Mobile            Deux listes empilees. La file cede la place des qu'un eleve
+                  est choisi : empiler deux listes longues obligerait a
+                  chercher sous le pli ce que le premier tap vient de faire
+                  apparaitre
+Tablette          Deux colonnes cote a cote
+Desktop           Identique
+
+Etats             content   nominal
+                  empty     aucun eleve sans enseignant ; aucun eleve choisi
+                            (colonne de droite)
+                  error     lecture hors ligne des deux cotes, separement
+                  loading   Skeleton.liste -- premier ecran du produit a
+                            employer le composant (bible section 18)
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        l'heure vient TOUJOURS des creneaux de la famille, jamais de
+                  l'enseignant ni de l'administration
+                  un enseignant au plafond n'est pas selectionnable, il n'est
+                  pas grise apres le geste
+                  changer d'eleve remet a zero enseignant, heure et motif
+                  aucune ecriture directe dans teacher_student_assignments :
+                  ADM-05 appelle attribuer_eleve(), comme ENS-06 appelle
+                  prendre_eleve()
+
+Accessibilite     cartes selectionnables via AppCard (Pressable : focus,
+                  survol, cible tactile), libelle semantique porte le nom
+```
+
+Construit le 12 septembre 2026, hors série, pendant que le lot N2 de l'étape 5
+attendait la décision du fournisseur vidéo. Sept tests de widget et neuf
+contrôles SQL (`supabase/tests/scenarios_adm05.sql`) le tiennent.
+
+Deux conséquences hors de l'écran lui-même :
+
+- le compteur « Foyers sans enseignant » d'`ADM-01` mène désormais ici. Il ne
+  menait nulle part depuis le lot L3, faute d'écran d'action ;
+- `parcours-utilisateurs.md` §5 annonçait « attribution en deux taps ». Elle
+  l'est quand une seule heure est possible, et **seulement** dans ce cas : avec
+  deux heures communes, choisir à la place de l'administration reviendrait à
+  poser une heure de cours par défaut.

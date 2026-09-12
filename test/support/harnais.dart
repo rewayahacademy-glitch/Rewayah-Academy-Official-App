@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/reglages_priere.dart';
@@ -565,6 +566,94 @@ class FauxServiceAdmin implements ServiceAdmin {
     String? motif,
   }) async {
     verdicts.add((demandeId: demandeId, accepte: accepte, motif: motif));
+  }
+}
+
+/// Un service d'attribution en memoire.
+///
+/// `ADM-05` est le seul ecran du produit dont les deux listes viennent de deux
+/// lectures distinctes : sans ce faux, on ne pourrait mesurer ni l'ordre de la
+/// file, ni le motif exige hors disponibilite.
+class FauxServiceAttribution implements ServiceAttribution {
+  /// La colonne de gauche.
+  List<FoyerEnAttente> foyers = const <FoyerEnAttente>[];
+
+  /// La colonne de droite, par eleve.
+  final Map<String, List<EnseignantCandidat>> enseignants =
+      <String, List<EnseignantCandidat>>{};
+
+  /// Les attributions demandees, dans l'ordre.
+  final List<
+    ({String eleveId, String enseignantId, Creneau creneau, String? motif})
+  >
+  attributions =
+      <({String eleveId, String enseignantId, Creneau creneau, String? motif})>[];
+
+  /// Ce que la lecture de la file doit jeter.
+  Object? erreurFoyers;
+
+  /// Ce que la lecture des enseignants doit jeter.
+  Object? erreurEnseignants;
+
+  /// Ce que la prochaine attribution doit jeter.
+  Object? erreurAttribution;
+
+  /// Le temps que prend une lecture.
+  ///
+  /// Sans lui, aucun test ne peut regarder l'ecran **pendant** le chargement :
+  /// un faux qui rend tout de suite resout son futur dans la micro-tache que le
+  /// premier `pump` vide, et l'etat d'attente n'existe jamais.
+  Duration delai = Duration.zero;
+
+  Future<void> _attendre() async {
+    if (delai > Duration.zero) {
+      await Future<void>.delayed(delai);
+    }
+  }
+
+  @override
+  Future<List<FoyerEnAttente>> foyersEnAttente() async {
+    await _attendre();
+    final Object? erreur = erreurFoyers;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return foyers;
+  }
+
+  @override
+  Future<List<EnseignantCandidat>> enseignantsPour(String eleveId) async {
+    await _attendre();
+    final Object? erreur = erreurEnseignants;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return enseignants[eleveId] ?? const <EnseignantCandidat>[];
+  }
+
+  @override
+  Future<void> attribuer({
+    required String eleveId,
+    required String enseignantId,
+    required Creneau creneau,
+    String? motif,
+  }) async {
+    final Object? erreur = erreurAttribution;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    attributions.add((
+      eleveId: eleveId,
+      enseignantId: enseignantId,
+      creneau: creneau,
+      motif: motif,
+    ));
+    // Le faux relit ce qu'il a ecrit, comme la base : l'eleve attribue quitte
+    // la file, et c'est ce que l'ecran doit refleter sans etat local.
+    foyers = foyers.where((FoyerEnAttente f) => f.eleveId != eleveId).toList();
   }
 }
 

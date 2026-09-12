@@ -1,7 +1,32 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> 🔴 **12 septembre 2026 — le verdict de l'opérateur est vérifié, chiffré, et
-> il avait raison.** « L'app est loin d'être fonctionnelle » : mesuré en
+> 🟢 **12 septembre 2026, deuxième session — `ADM-05`, l'attribution manuelle,
+> est construite.** L'opérateur a demandé de **laisser le fournisseur vidéo de
+> côté** et d'avancer ailleurs en attendant : le lot N2 reste donc non
+> commencé, et `ADM-05` a été fait hors série. Ce n'est pas un écran de plus :
+> **c'était le chaînon manquant du produit.** Sans lui, une affectation ne
+> pouvait naître que si un enseignant la demandait dans `ENS-06` ; sans
+> affectation, `materialiser_seances()` n'est jamais appelée ; sans séance,
+> `ENS-02`, `ELV-02` et `TUT-01` restent vides quoi qu'ait construit l'étape 4.
+> Le compteur « Foyers sans enseignant » d'`ADM-01`, qui ne menait nulle part,
+> mène maintenant à son geste.
+> Livré : migration `0008` (trois fonctions, aucune table, aucune policy
+> d'écriture ouverte), `lib/core/matching/service_attribution.dart`,
+> `lib/features/admin_attribution/`, **ADR-021**, fiche `ADM-05` au catalogue.
+> Mesuré, pas supposé : **`flutter test` 542/542**, `dart analyze` propre,
+> jetons **98 fichiers** sans violation, et **97 contrôles SQL** verts
+> (34 + 39 + 15 + 9) rejoués ensemble sur `0001`→`0008`.
+> ⚠ **Une décision a été prise sans l'opérateur, et elle est réversible** :
+> l'administration peut attribuer hors des disponibilités déclarées d'un
+> enseignant, **avec motif obligatoire vérifié en base** et journalisation.
+> Raison, et la recette pour la défaire en une heure : **ADR-021**, plus les
+> questions 25 et 26 du registre.
+> ⚠ **`0008` doit être collée à la base réelle, sinon `/admin/attribution`
+> affichera une erreur de lecture** au lieu de ses deux listes. Contrairement à
+> `0006` et `0007`, celle-ci se voit tout de suite. `MISE-EN-SERVICE.md` §5.3.
+>
+> 🔴 **12 septembre 2026, première session — le verdict de l'opérateur est
+> vérifié, chiffré, et il avait raison.** « L'app est loin d'être fonctionnelle » : mesuré en
 > ouvrant la production en session admin, pas déduit. **Onze destinations du
 > routeur sur trente rendent `EcranAConstruire`** — dont `ELV-03 / ENS-03`,
 > c'est-à-dire la salle de cours elle-même, le produit. Côté admin, deux des
@@ -863,24 +888,33 @@ Deux dettes restent ouvertes et n'appartiennent à aucun lot :
 
 ## 5. Mesures de référence, à ne pas faire régresser
 
-Relevées le **11 septembre 2026**, au lot de remise au vert — **les premières
-vraies depuis le lot T** : les colonnes intermédiaires n'ont jamais pu être
-mesurées sur ce poste, voir section 0 undecies.
+Relevées le **12 septembre 2026**, au lot `ADM-05`. La colonne du milieu est
+celle du 11 septembre, lot de remise au vert — **les premières vraies depuis le
+lot T**, les colonnes intermédiaires n'ayant jamais pu être mesurées sur ce
+poste (section 0 undecies).
 
-| Contrôle | Valeur | Au lot T (07/09), pour mémoire |
+| Contrôle | Valeur (12/09) | Au lot de remise au vert (11/09) |
 | :--- | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème | aucun problème |
-| `flutter test` | **535 tests, 534 verts** — le rouge est la bombe horaire de `journee_test.dart`, section 0 undecies | 362 tests, tous verts |
-| `dart run tool/verifier_jetons.dart` | **96 fichiers**, aucune violation | 80 fichiers |
+| `flutter test` | **542 tests, tous verts** | 535 tests, 534 verts |
+| `dart run tool/verifier_jetons.dart` | **98 fichiers**, aucune violation | 96 fichiers |
 | `scenarios_etape3.sql` | **34 contrôles** verts | 34 |
 | `scenarios_etape4.sql` | **39 contrôles** verts | 39 |
+| `scenarios_etape5.sql` | **15 contrôles** verts | 15 |
+| `scenarios_adm05.sql` | **9 contrôles** verts | — |
 
-⚠ `flutter test` ne tourne pas tel quel sur ce poste : il faut le contournement
-du hook `sqlite3`, dans le worktree de build **et nulle part ailleurs**. Recette
-complète en section 0 undecies.
+⚠ Le 535e test, rouge le 11 septembre, est la **bombe horaire** de
+`journee_test.dart` : il ne tombe qu'entre 23 h 34 et minuit. Le voir vert ne
+prouve pas qu'il soit réparé, seulement qu'il n'est pas cette heure-là. Détail
+en fin de section 0 undecies.
 
-Un lot se termine par ces cinq contrôles, la mise à jour de
-`etape-4-journal.md`, un commit et un push. Jamais l'inverse.
+⚠ `flutter test` ne tourne toujours pas tel quel sur ce poste : il faut le
+contournement du hook `sqlite3`, dans le worktree de build **et nulle part
+ailleurs**. Recette complète en section 0 undecies. `dart run` est logé à la
+même enseigne : `verifier_jetons.dart` se lance depuis le worktree lui aussi.
+
+Un lot se termine par ces contrôles, la mise à jour de la documentation d'étape,
+un commit et un push. Jamais l'inverse.
 
 ## 6. Commandes vérifiées sur ce poste
 
@@ -905,13 +939,33 @@ docker run -d --name ra_e5 -e POSTGRES_HOST_AUTH_METHOD=trust `
   -v "D:\RA _APP\RA -OFFICIAL-APP\supabase:/sql" postgres:17-alpine
 # boucler sur pg_isready, puis :
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -q -f /sql/tests/stub_auth.sql
-# 0001_fondations, 0002_statut_attente_kyc, 0003_profil_defaut_attente,
+# puis les HUIT migrations, dans l'ordre : 0001_fondations,
+# 0002_statut_attente_kyc, 0003_profil_defaut_attente,
 # 0004_inscription_kyc_appairage, 0005_dashboards_affectation_regles,
-# 0006_rattrapage_semaine_utc_et_foyer
+# 0006_rattrapage_semaine_utc_et_foyer,
+# 0007_coran_structure_position_presence, 0008_attribution_manuelle
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -q -f /sql/migrations/0001_fondations.sql
+# puis les QUATRE fichiers de scenarios, dans cet ordre : ils tiennent sur la
+# meme base et chacun borne ses assertions a ses propres fixtures.
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape3.sql
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape4.sql
+docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape5.sql
+docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_adm05.sql
 ```
+
+⚠ **Un fichier de scénarios ne compte jamais en global.** Les quatre tournent
+sur la même base : `select count(*) from eleves_sans_enseignant()` y voit les
+élèves des trois autres fichiers. Une assertion se borne à ses propres fixtures
+(par `household_id` ou par identifiant), et l'ordre se vérifie en **rang
+relatif**, jamais par `limit 1`. Le lot `ADM-05` s'est fait prendre une fois :
+vert seul, rouge à la suite.
+
+⚠ **Aucune heure locale ne s'écrit en dur dans un scénario qui croise deux
+fuseaux.** Conakry ne change pas d'heure, Paris si : « 16 h Conakry = 17 h
+Paris » est vrai d'octobre à mars et faux le reste de l'année. Le fixture
+d'`ADM-05` calcule l'heure par
+`extract(hour from (instant_creneau(...) at time zone '...'))`. Même piège que
+la bombe horaire de `journee_test.dart`, en version saisonnière.
 
 Un fichier de scénarios **ne se rejoue pas deux fois sur la même base** : il
 insère ses fixtures. Repartir d'un conteneur neuf à chaque mesure.
@@ -1002,75 +1056,66 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — le verdict est vérifié, l'étape 5 est commencée
+## 9. Prompt de reprise — `ADM-05` est fait, N2 attend toujours la vidéo
 
 À copier tel quel pour démarrer la prochaine session.
 
-### 9.1 Ce que la session du 12 septembre a mesuré, et non supposé
+### 9.1 Ce qui a été mesuré le 12 septembre, et non supposé
 
-L'opérateur a demandé d'agir plutôt que de le questionner écran par écran
-(« fais le nécessaire, je veux une app fonctionnelle. et je t'ai donné toutes
-les specs »). La production a donc été ouverte en session admin, et voici ce
-qu'elle rend réellement :
+**Première session.** La production a été ouverte en session admin plutôt que
+de questionner l'opérateur écran par écran. Le verdict « l'app est loin d'être
+fonctionnelle » est **vérifié** : onze destinations du routeur rendaient
+`EcranAConstruire`, dont `ELV-03`/`ENS-03`, la salle de cours, c'est-à-dire le
+produit. Dix-neuf écrans existaient pour de vrai. Zéro erreur console : rien
+n'était cassé, l'étape 5 n'était pas commencée. **Ne pas refaire ce
+diagnostic.**
 
-| Écran | Ce qu'il affiche |
-| :--- | :--- |
-| `ADM-01` `/admin/tableau-de-bord` | Six compteurs, tous à 0 sauf « Foyers sans enseignant » = 1, puis « Rien à traiter ». **Plus de treize secondes** de démarrage à froid, pendant lesquelles l'écran n'affiche qu'un `Text` « Chargement » nu |
-| `ADM-02` `/admin/dossiers` | « Aucun dossier en attente » |
-| `/admin/attribution` | **« Écran à construire — Cet écran arrive à l'étape 3 »** |
-| `/admin/journal` | **« Écran à construire — Cet écran arrive à l'étape 3 »** |
+**Deuxième session.** L'opérateur a demandé de laisser le fournisseur vidéo de
+côté et d'avancer ailleurs. `ADM-05` a donc été construit : il ne reste plus
+que **dix** `EcranAConstruire`, et surtout le produit peut enfin produire une
+séance sans qu'un enseignant en prenne l'initiative.
 
-Aucune erreur console : rien n'est cassé. **Le produit n'est pas en panne, il
-est inachevé** — et le placeholder ment sur son échéance, l'étape 3 étant close
-depuis longtemps.
+### 9.2 Les deux causes non-code, toujours ouvertes
 
-Le compte exact, lu dans `lib/core/router/app_router.dart` : **onze
-destinations rendent `EcranAConstruire`** — élève (Coran, Suivi), tuteur
-(Suivi), enseignant (Profil), contrôleur (Planning), admin (Attribution,
-Journal), espace comptable entier, et **`ELV-03 / ENS-03`, la salle de cours**.
-En face, **dix-neuf écrans réellement implémentés** dans `lib/features/`.
+1. **La migration `0006` n'est pas sur la base réelle.** Mesuré par PostgREST
+   (`42703 column ... does not exist` sur `profils_du_foyer_v.access_until`).
+   `TUT-01` lit une vue amputée, `ENS-06` reste faux deux heures par semaine.
+2. **La production ne sert pas `main`.** L'écart est mince, mais réel.
 
-**C'est la réponse à « pourquoi l'app n'est pas fonctionnelle » : le cœur du
-produit — faire cours — n'a jamais été construit.** C'est l'étape 5, spécifiée
-par N0/ADR-020 le 11 septembre, commencée le 12 avec N1.
+Trois migrations attendent désormais l'éditeur SQL, dans cet ordre : `0006`
+(bloc de `MISE-EN-SERVICE.md` §5), `0007`, `0008`. **`0008` est la première
+dont l'absence se voit immédiatement** : `/admin/attribution` afficherait une
+erreur de lecture au lieu de ses deux listes.
 
-### 9.2 Les deux causes non-code, mesurées
+### 9.3 Ce que la deuxième session a livré
 
-1. ✅ **Confirmée : la migration `0006` n'est pas sur la base réelle.**
-   `GET /rest/v1/profils_du_foyer_v?select=access_until` répond
-   `42703 column ... does not exist`. `TUT-01` lit donc une vue amputée et
-   `ENS-06` reste faux deux heures par semaine. SQL en `MISE-EN-SERVICE.md` §5.
-2. ✅ **Confirmée : la production ne sert pas `main`.** L'API Vercel donne
-   `df96c6a` comme dernier déploiement de production. L'écart avec `main` était
-   mince (Échap sur les modales, titres d'`ENS-06`), donc **cela n'explique pas
-   le verdict** — mais le retard est réel.
+- `supabase/migrations/0008_attribution_manuelle.sql` : `eleves_sans_enseignant()`,
+  `enseignants_pour(uuid)`, `attribuer_eleve(...)`. **Aucune table, aucune
+  policy d'écriture ouverte** : l'invariant I3 de `0005` tient, le contrôle A9
+  le mesure.
+- `supabase/tests/scenarios_adm05.sql` : neuf contrôles, rejoués à la suite des
+  trois autres fichiers sur `0001`→`0008`. **97 contrôles verts au total.**
+- `lib/core/matching/service_attribution.dart`, `lib/features/admin_attribution/`,
+  le compteur `ADM-01` câblé, sept tests de widget.
+- **ADR-021** et les questions **25** et **26** du registre.
+- `ADM-05` est le **premier écran du produit à employer `Skeleton`**. L'écart de
+  la Bible §18 n'est plus théorique : il reste ouvert sur les dix-neuf autres
+  écrans, mais il a un précédent à copier.
 
-### 9.3 Ce que la session a livré
+### 9.4 Ce qui ne peut pas se faire depuis le poste
 
-- **Lot N1 poussé** (`a736a43`) : migration `0007`, cinq tables de Coran
-  structuré, `student_reading_position`, `presence_state` (14 états),
-  `etat_presence()`, `presence_seance_v`, `session_presence_override`, deux
-  clés `app_config`, vocabulaire fermé de `session_events.source`.
-- **`supabase/tests/scenarios_etape5.sql`** : 15 contrôles verts. Étapes 3 (34)
-  et 4 (39) rejouées sans régression.
-- **La build de `5b8b868` est construite** et attend dans
-  `D:\ra-pwa-build\build\web`.
+**1. Coller les trois migrations** dans l'éditeur SQL du projet
+`gggmtelinlpseweouyav` : `MISE-EN-SERVICE.md` §5 (bloc `0006`), puis §5.2
+(`0007`), puis §5.3 (`0008`).
+⚠ Le serveur MCP `supabase` de ce poste pointe sur **PISI**
+(`riaqzfhdynmtshvbgdvt`), pas sur Rewayah.
 
-### 9.4 Deux actions qui ne peuvent pas être faites depuis le poste
-
-Elles bloquent la suite ; aucune n'excède une minute.
-
-**1. Coller les deux migrations** dans l'éditeur SQL du tableau de bord
-Supabase du projet `gggmtelinlpseweouyav` — d'abord le bloc de
-`MISE-EN-SERVICE.md` §5 (`0006`), puis le fichier
-`supabase/migrations/0007_coran_structure_position_presence.sql` en entier.
-⚠ Le serveur MCP `supabase` de ce poste pointe sur **PISI**, pas sur Rewayah :
-il ne peut pas le faire, et une session qui l'utiliserait écrirait dans le
-mauvais produit.
-
-**2. Promouvoir la build en production** (le déploiement est refusé à l'agent) :
+**2. Reconstruire et promouvoir.** La build qui attend dans
+`D:\ra-pwa-build\build\web` date de `5b8b868` : elle **ne contient pas**
+`ADM-05`. Il faut la refaire avant de promouvoir.
 
 ```
+! cd "D:\ra-pwa-build"; flutter build web --release
 ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
 ```
 
@@ -1083,72 +1128,110 @@ Chemins en absolu : Glob ne trouve pas ce depot.
 NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre :
   1. docs/HANDOFF.md -- l'en-tete et la section 9.
   2. docs/architecture/etape-5-salle-coran-presence.md -- sections 5, 7 et 12.
-  3. docs/MISE-EN-SERVICE.md sections 5.1, 5.2 et 7.1.
+  3. docs/MISE-EN-SERVICE.md sections 5.1, 5.2, 5.3 et 7.1.
 Le reste ne se lit que si le sujet du jour y touche.
 
-OU ON EN EST, MESURE LE 12/09/2026 ET NON SUPPOSE.
-Le verdict "l'app est loin d'etre fonctionnelle" est VERIFIE : onze
-destinations du routeur rendent EcranAConstruire, dont ELV-03/ENS-03,
-c'est-a-dire la salle de cours -- le produit lui-meme. Dix-neuf ecrans
-existent pour de vrai. Rien n'est casse (zero erreur console) : c'est
-l'etape 5 qui n'etait pas commencee. Ne REFAIS PAS ce diagnostic.
+OU ON EN EST, MESURE ET NON SUPPOSE.
+Le verdict "l'app est loin d'etre fonctionnelle" est VERIFIE depuis le
+12/09 : onze destinations du routeur rendaient EcranAConstruire, dont
+ELV-03/ENS-03, la salle de cours. Ne REFAIS PAS ce diagnostic.
+Il en reste DIX : eleve (Coran, Suivi), tuteur (Suivi), enseignant
+(Profil), controleur (Planning), admin (Journal), espace comptable,
+et ELV-03/ENS-03/CTR-02 la salle.
 
-L'etape 5 est lancee. Decoupage N0-N7 CONFIRME par l'operateur le 12/09
-(section 12 de la spec). N0 et N1 sont faits :
-  N0 = specification + ADR-020 (39aec71)
-  N1 = migration 0007 : Coran structure (mushaf/sourate/juz/page_mushaf/
-       verset), student_reading_position, presence_state a 14 etats,
-       etat_presence(), presence_seance_v, session_presence_override,
-       vocabulaire ferme de session_events.source (a736a43)
-       -> 15 controles verts dans supabase/tests/scenarios_etape5.sql
+FAIT :
+  N0 = spec etape 5 + ADR-020 (39aec71)
+  N1 = migration 0007 : Coran structure, student_reading_position,
+       presence_state a 14 etats, etat_presence(), presence_seance_v
+       (a736a43) -> 15 controles
+  ADM-05 = attribution manuelle, HORS SERIE, fait pendant que N2
+       attendait la decision video. Migration 0008 (trois fonctions),
+       ecran, ADR-021 -> 9 controles SQL + 7 tests de widget.
+       C'etait le chainon manquant : sans lui aucune affectation ne
+       naissait sans un enseignant, donc aucune seance, donc ENS-02 /
+       ELV-02 / TUT-01 restaient vides.
 
-LE PROCHAIN LOT EST N2, ET IL DEMANDE UNE DECISION AVANT DU CODE :
+LE PROCHAIN LOT EST N2, ET IL DEMANDE UNE DECISION AVANT DU CODE.
 N2 = VideoSessionProvider/LiveKitSessionProvider (ADR-001), pre-flight,
-emission de jeton. C'est la que se tranche le FOURNISSEUR VIDEO et que
-ses cles sont necessaires. Demander a l'operateur : quel fournisseur,
-quel compte, quelles cles. Sans cela N2 ne peut pas etre code, et N3
-(la salle) ne peut pas suivre.
+emission de jeton. L'operateur a dit le 12/09 qu'il lui restait des
+infos a completer sur l'outil, et a pointe la spec :
+  "D:\RA _APP\docs de lancement\architecture live kit..md"
+NE PAS LIRE CE FICHIER tant que le lot du jour ne traite pas la video :
+il est long et coute cher en contexte. Demander d'abord a l'operateur
+si la decision est prise (fournisseur, compte, cles).
 C'est aussi N2 qui posera la trace d'emission de jeton rendant l'etat
-`en_connexion` derivable -- N1 ne le derive volontairement pas, faute de
+`en_connexion` derivable. N1 ne le derive volontairement pas, faute de
 trace en base. Ne pas l'inventer.
 
-DEUX ACTIONS A LA MAIN DE L'OPERATEUR, a lui rappeler si pas faites :
-  a) Coller 0006 (MISE-EN-SERVICE.md section 5) PUIS le fichier
-     supabase/migrations/0007_coran_structure_position_presence.sql
+SI N2 EST TOUJOURS BLOQUE, les lots non bloques par la video sont, par
+valeur decroissante :
+  - ADM-04 journal d'audit (/admin/journal, dernier placeholder de
+    l'espace admin, table audit_logs en place depuis l'etape 1) ;
+  - N5 / ELV-04 lecteur Coran -- mais il demande d'abord l'import du
+    jeu de donnees coranique, et github.com est injoignable en TLS
+    depuis ce poste ;
+  - l'ecart Skeleton sur les dix-neuf ecrans restants (bible section
+    18) : ADM-05 montre le motif a copier.
+CTR-01 et CTR-02 restent bloques par la salle, pas par la video seule.
+
+TROIS ACTIONS A LA MAIN DE L'OPERATEUR, a lui rappeler si pas faites :
+  a) Coller 0006 (MISE-EN-SERVICE.md section 5) PUIS 0007 PUIS 0008
      dans l'editeur SQL du projet gggmtelinlpseweouyav. 0006 etait
      toujours absente au 12/09, mesure par PostgREST (42703).
+     0008 est la premiere dont l'absence SE VOIT : sans elle,
+     /admin/attribution affiche une erreur au lieu de ses deux listes.
      ATTENTION : le MCP supabase de ce poste pointe sur la base PISI
      (riaqzfhdynmtshvbgdvt). NE JAMAIS l'utiliser pour ce projet.
-  b) Promouvoir la build deja construite (le deploiement est refuse a
-     l'agent) :
+  b) Confirmer ou refuser l'ADR-021 : l'administration peut attribuer
+     un eleve hors des disponibilites declarees d'un enseignant, avec
+     motif obligatoire et journalisation. Decision prise par l'agent
+     faute de pouvoir attendre. Reversible en une heure, recette en
+     fin d'ADR-021.
+  c) Reconstruire PUIS promouvoir. La build de D:\ra-pwa-build\build\web
+     date de 5b8b868 et ne contient pas ADM-05 :
+     ! cd "D:\ra-pwa-build"; flutter build web --release
      ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
 
 POUR MESURER :
-  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0007,
-    puis les scenarios. Recette section 6. Docker Desktop n'est pas
-    forcement demarre : le lancer et boucler sur `docker info`.
+  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0008,
+    puis les QUATRE fichiers de scenarios a la suite. Recette section 6.
+    Docker Desktop n'est pas forcement demarre : le lancer et boucler
+    sur `docker info`.
     Le `docker rm -f` se passe SEUL sur sa ligne (protection de chemins).
-    Reference : etape3 34 controles, etape4 39, etape5 15, zero erreur.
-  - Dart : flutter test NE TOURNE PAS tel quel (TLS github.com refuse pour
-    le hook package:sqlite3). Contournement en section 0 undecies : le
-    user_define `source: system` dans le pubspec du worktree
-    D:\ra-pwa-build UNIQUEMENT, jamais commite. Reference 534/535.
-    Le worktree peut contenir un stash : `git stash list` avant de l'utiliser.
+    Reference : 34 + 39 + 15 + 9 = 97 controles, zero erreur.
+    PIEGE : les quatre fichiers tournent sur la MEME base. Une assertion
+    qui compte en global mesure les fixtures des autres. Borner par
+    household_id ou par identifiant, et verifier l'ordre en rang
+    relatif, jamais par limit 1.
+  - Dart : flutter test NE TOURNE PAS tel quel (TLS github.com refuse
+    pour le hook package:sqlite3). Contournement en section 0 undecies :
+    le user_define `source: system` dans le pubspec du worktree
+    D:\ra-pwa-build UNIQUEMENT, jamais commite, retire apres la mesure
+    par `git checkout -- pubspec.yaml`. Reference 542/542.
+    `dart run tool/verifier_jetons.dart` est loge a la meme enseigne :
+    il se lance depuis le worktree. Reference 98 fichiers.
+    Methode : editer dans le depot de travail, copier les fichiers
+    touches vers le worktree, mesurer la-bas.
 
 PIEGES :
 - OpenCode travaille EN PARALLELE sur le meme depot (lib/app.dart,
   lib/core/config/env.dart, lib/main.dart, lib/features/_dev/playground/).
   git status avant tout commit, ne jamais stager ses fichiers.
-- journee_test.dart / "ENS-02 : le bloc dominant" est rouge entre 23h34 et
-  minuit seulement. Rouge a une autre heure = vraie regression.
+- verifier_jetons.dart refuse le tiret cadratin dans le code Dart.
+  Deux points ou une virgule a la place.
+- journee_test.dart / "ENS-02 : le bloc dominant" est rouge entre 23h34
+  et minuit seulement. Vert ne prouve pas repare.
+- Aucune heure locale en dur dans un scenario qui croise deux fuseaux :
+  Conakry ne change pas d'heure, Paris si. Calculer par
+  extract(hour from (instant_creneau(...) at time zone '...')).
 - Une ligne "Fait" du tableau de docs/design/README.md ne vaut que si un
   test la tient : deux etaient fausses (13.4 et 18).
-- Le demarrage a froid de la PWA depasse treize secondes et n'affiche
-  qu'un Text "Chargement" nu. Skeleton existe depuis le lot C et AUCUN
-  ecran ne l'emploie : c'est le plus gros ecart de rendu restant (bible
-  section 18), et il se voit des la premiere seconde d'usage.
+- Skeleton n'est employe que par ADM-05. Les dix-neuf autres ecrans
+  affichent encore un Text "Chargement" nu, et le demarrage a froid de
+  la PWA depasse treize secondes.
 
 Un lot par session. Ignore la branche refactor-ui-lavender.
 FIN DE SESSION : livrer un prompt de reprise et mettre a jour cette
 section 9. Consigne permanente de l'operateur.
 ```
+

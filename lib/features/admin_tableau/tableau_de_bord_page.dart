@@ -206,11 +206,13 @@ class TableauDeBordPage extends ConsumerWidget {
 
 /// Les six compteurs, en deux colonnes.
 ///
-/// Deux portent vers un ecran d'action (dossiers, demandes) : un chiffre qui
-/// mene a sa file se charge d'un coup de pouce. Les quatre autres sont des
-/// rapports, et ne mement nulle part tant qu'`ADM-05` et le journal ne
-/// suivent pas : une tuile sans [onPress] est un rapport, jamais un bouton
-/// grise.
+/// Trois portent vers un ecran d'action (dossiers, demandes, attribution) : un
+/// chiffre qui mene a sa file se charge d'un coup de pouce. « Foyers sans
+/// enseignant » a rejoint les deux autres le jour ou `ADM-05` a existe : c'est
+/// tout l'interet d'un compteur que de mener a son geste. Les trois restants
+/// sont des rapports, et ne menent nulle part tant que le journal et le cahier
+/// de transmission ne suivent pas : une tuile sans [onPress] est un rapport,
+/// jamais un bouton grise.
 class _Compteurs extends StatelessWidget {
   const _Compteurs({required this.indicateurs});
 
@@ -232,6 +234,7 @@ class _Compteurs extends StatelessWidget {
       StatTile(
         valeur: indicateurs.foyersSansEnseignant,
         libelle: t.admin.tableau.foyers,
+        onPress: () => GoRouter.of(context).go(Routes.adminAttribution),
       ),
       StatTile(
         valeur: indicateurs.rapportsManquants,

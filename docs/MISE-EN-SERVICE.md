@@ -343,6 +343,30 @@ fonction `etat_presence()`, la vue `presence_seance_v`, la table de correction
 vocabulaire sur `session_events.source`. Toutes les tables neuves ont leur RLS
 activee et leurs policies posees dans la meme migration.
 
+### 5.3 `0008` (lot `ADM-05`) : la troisieme, et celle qui se voit tout de suite
+
+`supabase/migrations/0008_attribution_manuelle.sql` est ecrite, jouee par le
+harnais et tenue par neuf controles (`supabase/tests/scenarios_adm05.sql`).
+Elle n'est pas appliquee a la base reelle non plus.
+
+**Difference avec les deux precedentes : celle-ci, l'ecran la lit tout de
+suite.** `/admin/attribution` n'est plus un placeholder ; sans `0008`, il
+affichera une erreur de lecture au lieu de ses deux listes. Les trois se
+collent donc **dans l'ordre** dans le meme editeur SQL du projet
+`gggmtelinlpseweouyav` : d'abord le bloc de la section 5 (`0006`), puis le
+fichier `0007` entier, puis le fichier `0008` entier.
+
+Ce qu'elle ajoute : trois fonctions et rien d'autre.
+`eleves_sans_enseignant()` (la colonne de gauche), `enseignants_pour(uuid)` (la
+colonne de droite, croisement par instant), et `attribuer_eleve(...)`, la
+**deuxieme et derniere porte** d'ecriture de `teacher_student_assignments` a
+cote de `prendre_eleve()`. Aucune table, aucune policy d'ecriture ouverte :
+l'invariant I3 de `0005` (« personne n'ecrit ici a la main, pas meme
+l'administration ») tient toujours, et le controle A9 le mesure.
+
+⚠ Elle depend de `0005` seulement. Elle peut donc se coller meme si `0006` et
+`0007` tardent — mais il n'y a aucune raison de les separer.
+
 ## 6. Ce qui a ete constate en regardant l'application en ligne
 
 - Elle demarre, initialise Supabase et route jusqu'a `/#/connexion` **sans une

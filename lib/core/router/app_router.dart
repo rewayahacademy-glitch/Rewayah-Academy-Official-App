@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/_dev/galerie/galerie_page.dart';
 import '../../features/accueil_eleve/accueil_eleve_page.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
+import '../../features/admin_attribution/attribution_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
@@ -269,7 +270,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRoute(
                 path: Routes.adminAttribution,
                 builder: (BuildContext _, GoRouterState _) =>
-                    EcranAConstruire(destination: t.nav.admin.attribution),
+                    const AttributionPage(),
               ),
             ],
           ),
