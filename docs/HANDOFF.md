@@ -1,5 +1,56 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🧭 **13 septembre 2026, septième session — `N4` est fait. La présence
+> s'affiche.**
+> Le calcul des quatorze états était en base depuis `N1`, et le quatorzième
+> depuis `N2` ; il n'avait **aucun écran**. Il en a un : l'élève lit son propre
+> état, en permanence et en mots, sous la pastille de connexion ; l'enseignant
+> et le contrôleur lisent le tableau des **inscrits** — en colonne sur tablette,
+> en feuille sur téléphone. Livré : `lib/core/presence/` (`EtatPresence` à
+> quatorze valeurs plus l'inconnu, `PresenceParticipant`, le service, et
+> `VuePresence.depuis` — fonction pure comme `VueSalle.depuis`), le composant
+> `LignePresence` au catalogue et à la galerie, et la migration **`0011`**.
+> 🔴 **Le lot a trouvé deux défauts, et aucun des deux ne se voyait.**
+> **Le premier : `presence_seance_v` n'avait aucun filtre d'appelant.** Les
+> trois vues d'exposition de `0001` en portent toutes un, et ce n'est pas
+> décoratif — une vue appartenant à `postgres` sans `security_invoker` ne voit
+> pas la RLS des tables qu'elle lit. Chiffré, pas supposé : sur les fixtures de
+> `scenarios_n4.sql`, un élève inscrit à **aucune** des deux séances y lisait
+> **6 lignes sur 6** ; il en lit **0** après `0011`. Rien n'a fuité (zéro séance
+> en base), et le défaut n'avait jamais été exercé **parce qu'aucun écran ne
+> lisait la vue**. C'est la leçon de `N3` une seconde fois : **une vue sans
+> écran est une vue non testée.**
+> **Le second : l'invisibilité du contrôleur s'arrêtait à la vidéo.** Le jeton
+> porte `hidden`, LiveKit masque la personne, et `N3` la retire même de sa
+> propre liste — mais la présence l'écrivait en toutes lettres : l'enseignant y
+> aurait lu une quatrième ligne, « masked_controller, présente ». Seule
+> l'administration la lit désormais, pas même l'intéressé.
+> 🔵 **Et un troisième, mesuré par les tests :** le flux de présence, écrit en
+> `async*` avec un `Future.delayed`, laissait une attente en vie après la sortie
+> de la salle — rien ne pouvait l'interrompre. `flutter test` l'a dit d'un arbre
+> démonté (« A Timer is still pending ») ; c'est vrai d'un élève qui a quitté le
+> cours. Remplacé par une minuterie annulée à `ref.onDispose`.
+> Mesuré, pas supposé : **`flutter test` 646/646** (25 nouveaux),
+> `dart analyze --fatal-infos` propre, jetons **113 fichiers** sans violation,
+> **125 contrôles SQL** verts (116 + **9**) rejoués ensemble sur `0001`→`0011`
+> dans une base neuve, migration `0011` **appliquée en production**, et la
+> **production ouverte, console lue** : zéro erreur, session admin restaurée,
+> `/#/salle` tapée à la main redirige toujours vers la racine du rôle (ADR-005).
+> La vue elle-même interrogée depuis le navigateur authentifié : **`200` avec
+> ses treize colonnes**, ce qui écarte le piège `42703` qui traverse la RLS.
+> Bundle : 4 312 086 → **4 325 111** octets (+0,3 %).
+> ⚠ **Deux écarts assumés, écrits plutôt que masqués** : le **geste** de
+> correction manuelle (`corrigee_manuel`) et le marquage `excusee` ne sont pas
+> construits — la table et ses policies existent depuis `0007`, mais l'écran qui
+> les déclenche demande confirmation, motif obligatoire et entrée de journal :
+> c'est un lot, pas une ligne, et §6.5 laisse ce mécanisme explicitement ouvert.
+> Et le **tuteur observateur ne lit ni sa présence ni la liste** : il assiste, il
+> n'est pas noté, et le suivi d'un enfant est `TUT-06`, à l'étape 6.
+> 🔴 **CE QUI N'EST TOUJOURS PAS PROUVÉ : un vrai cours.** Personne n'a encore
+> ouvert deux navigateurs sur une même séance. Il n'existe **aucune séance en
+> base** — c'est ce qui rend la mesure possible aussi vite qu'on le décide, et
+> c'est la seule qui vaille maintenant.
+>
 > 🏫 **12 septembre 2026, sixième session — `N3` est fait. La salle existe.**
 > Le plus gros `EcranAConstruire` du routeur est remplacé : `/salle` rend
 > désormais un écran, et c'est **un seul écran pour trois codes**
@@ -1048,15 +1099,19 @@ celle du 11 septembre, lot de remise au vert — **les premières vraies depuis 
 lot T**, les colonnes intermédiaires n'ayant jamais pu être mesurées sur ce
 poste (section 0 undecies).
 
-| Contrôle | Valeur (12/09) | Au lot de remise au vert (11/09) |
+| Contrôle | Valeur (13/09, lot `N4`) | Au lot `N3` (12/09) |
 | :--- | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème | aucun problème |
-| `flutter test` | **542 tests, tous verts** | 535 tests, 534 verts |
-| `dart run tool/verifier_jetons.dart` | **98 fichiers**, aucune violation | 96 fichiers |
+| `flutter test` | **646 tests, tous verts** | 621, tous verts |
+| `dart run tool/verifier_jetons.dart` | **113 fichiers**, aucune violation | 110 fichiers |
 | `scenarios_etape3.sql` | **34 contrôles** verts | 34 |
 | `scenarios_etape4.sql` | **39 contrôles** verts | 39 |
 | `scenarios_etape5.sql` | **15 contrôles** verts | 15 |
-| `scenarios_adm05.sql` | **9 contrôles** verts | — |
+| `scenarios_adm05.sql` | **9 contrôles** verts | 9 |
+| `scenarios_n2.sql` | **10 contrôles** verts | 10 |
+| `scenarios_n4.sql` | **9 contrôles** verts | — |
+| `scenarios_adm04.sql` | **9 contrôles** verts | 9 |
+| `main.dart.js` servi | **4 325 111** octets | 4 312 086 |
 
 ⚠ Le 535e test, rouge le 11 septembre, est la **bombe horaire** de
 `journee_test.dart` : il ne tombe qu'entre 23 h 34 et minuit. Le voir vert ne
@@ -1212,7 +1267,7 @@ commitée à part au début du lot L8.
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
 
-## 9. Prompt de reprise — `N3` est fait, la salle existe
+## 9. Prompt de reprise — `N4` est fait, la présence s'affiche
 
 À copier tel quel pour démarrer la prochaine session.
 
@@ -1238,6 +1293,9 @@ dont un qui n'est pas un écran manquant mais l'état de chargement de la racine
 Le compte se lit dans `lib/core/router/app_router.dart`, jamais en parcourant
 les écrans.
 
+**Septième session.** **N4 fait** : la présence s'affiche. Aucun écran neuf —
+N4 étend la salle — donc **le compte d'écrans manquants ne bouge pas : six.**
+
 ### 9.2 Les causes non-code
 
 1. ~~Migrations en attente~~ — **close depuis la troisième session.** N3 n'en
@@ -1250,6 +1308,33 @@ les écrans.
    l'authentification. Il ne reste donc aucune cause non-code connue. **Ce qui
    sépare encore la salle d'un vrai cours n'est plus une action, c'est une
    mesure : ouvrir deux navigateurs sur une même séance.**
+
+### 9.2 bis Ce que la septième session a livré
+
+- `supabase/migrations/0011_presence_bornee.sql` : `presence_seance_v`
+  reconstruite. Elle gagne une **borne d'appelant** — admin et contrôleur voient
+  les séances, l'enseignant les siennes, le tuteur son foyer, l'élève **sa seule
+  ligne** (§6.6) —, le **prénom** et l'identifiant immuable (ADR-008 : jamais de
+  nom de famille), et un booléen `consolide` qui dit qu'une décision humaine a
+  figé l'état **sans jamais dire pourquoi** : le motif reste en base et au
+  journal. Un `masked_controller` n'y est visible que par l'administration.
+  **Appliquée en production.**
+- `supabase/tests/scenarios_n4.sql` : neuf contrôles, **avant**
+  `scenarios_adm04.sql` dans `ci.yml`. `P3` est celui du lot : un élève inscrit
+  à rien lisait 6 lignes sur 6, il en lit 0.
+- `lib/core/presence/service_presence.dart` : `EtatPresence` (quatorze valeurs
+  plus `inconnu`), `PresenceParticipant`, le service, et le flux relu toutes les
+  **20 secondes** — un sixième de la plus courte fenêtre qui bascule toute
+  seule, celle de `en_reconnexion`.
+- `lib/core/presence/vue_presence.dart` : `VuePresence.depuis`, **fonction
+  pure**, et `RepereTemps` — parce qu'une durée sans son repère ne veut rien
+  dire : « 3 minutes » n'est pas la même chose selon qu'il s'agit du temps passé
+  en salle, du retard à l'entrée ou du silence depuis la dernière trace.
+- `lib/core/widgets/ligne_presence.dart` : le composant, au catalogue et à la
+  galerie. Il porte J3 et J7 par construction.
+- `salle_page.dart` : l'en-tête gagne la présence personnelle de l'élève et le
+  bouton « Présence » de l'enseignant sur petit écran ; la colonne latérale
+  passe des **connectés** aux **inscrits**.
 
 ### 9.3 Ce que la sixième session a livré
 
@@ -1298,6 +1383,31 @@ refusé de l'inventer faute de trace en base. `video_token_grants` est cette
 trace. Le quatorzième état se dérive, et il est **non falsifiable par le
 client** — comme les treize autres.
 
+### 9.3 ter Les pièges fermés par `N4`, à ne pas rouvrir
+
+1. **Une vue sans `where` d'appelant n'est pas protégée par la RLS.** Une vue
+   appartenant à `postgres` sans `security_invoker` s'exécute avec les droits de
+   son propriétaire. Les trois vues de `0001` se bornent elles-mêmes ; celle de
+   la présence ne le faisait pas. **Toute vue `grant`ée à `authenticated` doit
+   porter sa propre borne dans son corps.**
+2. **L'invisibilité se vérifie partout où la personne peut apparaître.** Le
+   jeton LiveKit ne masque que la vidéo. La présence est une seconde surface, et
+   elle disait la visite en toutes lettres.
+3. **La liste de présence se bâtit sur les inscrits, jamais sur les connectés.**
+   Celui qui n'est jamais arrivé n'a aucune piste, donc aucune ligne côté
+   moteur — et c'est de lui qu'il faut savoir quelque chose.
+4. **`inconnu` n'est pas `absente`.** L'un ne compte pour rien, l'autre compte
+   pour le suivi et pour la paie. Les trois cas qui rendent `null` — pas encore
+   chargé, lecture refusée, réseau coupé — se disent tous « inconnu » (J3).
+5. **Un `async*` avec un `Future.delayed` ne s'annule pas.** Écrit ainsi, le
+   flux de présence continuait d'attendre après la sortie de la salle. Une
+   minuterie plus `ref.onDispose` s'annule ; la boucle, non.
+6. ⚠ **`AsyncValue` n'a pas de `valueOrNull` sous Riverpod 3** : c'est `.value`,
+   comme partout ailleurs dans ce dépôt.
+7. ⚠ **`''` n'échappe pas une apostrophe en Dart** — c'est du SQL. Deux
+   littéraux adjacents sont concaténés, donc `'qu''une'` compile en `'quune'`
+   sans rien signaler.
+
 ### 9.4 Les pièges fermés par `N3`, à ne pas rouvrir
 
 1. **La vue de la salle se décide sur le jeton, jamais sur la session.** Le
@@ -1340,7 +1450,8 @@ Chemins en absolu : Glob ne trouve pas ce depot.
 NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre :
   1. docs/HANDOFF.md -- l'en-tete et la section 9.
   2. docs/design/08-catalogue-ecrans.md -- la fiche
-     "ELV-03 / ENS-03 / CTR-02 La salle", en fin de section 6.
+     "ELV-03 / ENS-03 / CTR-02 La salle" et ce que N4 y ajoute, en fin
+     de section 6.
   3. docs/architecture/etape-5-salle-coran-presence.md -- sections 4, 6, 12.
 N'OUVRE PAS "D:\RA _APP\docs de lancement\architecture live kit..md" :
 son contenu utile est dans l'ADR-023 et les commentaires de 0010.
@@ -1366,21 +1477,40 @@ FAIT :
        PageImmersive au catalogue, renduVideo() sur le contrat video,
        bouton de lancement de ENS-02 -> 621/621 tests, 110 fichiers
        de jetons, prod ouverte et console lue.
+  N4 = LA PRESENCE S'AFFICHE. lib/core/presence/ (EtatPresence a 14
+       valeurs + inconnu, VuePresence.depuis qui est PURE), le
+       composant LignePresence au catalogue, et la migration 0011 qui
+       BORNE presence_seance_v -- N1 l'avait laissee sans filtre
+       d'appelant : un eleve inscrit a rien y lisait 6 lignes sur 6,
+       il en lit 0. Le controleur masque n'y laisse plus aucune ligne
+       lisible non plus (ADR-011 ne tenait que sur la video).
+       -> 646/646 tests, 113 fichiers de jetons, 125 controles SQL,
+       0011 APPLIQUEE EN PROD, prod ouverte et console lue.
 
-LE PROCHAIN LOT EST N4 : la machine a etats de presence, son calcul
-etant deja en base depuis N1 (etat_presence(), 14 etats, en_connexion
-derivable depuis N2). Il reste l'AFFICHAGE : vue enseignant (qui est
-present, en retard, absent, deconnecte ; provisoire contre finalise) et
-vue eleve (son propre etat, et lui seul). Invariants J3 et J7 de
-l'etape 5 : un etat indisponible s'affiche INCONNU, jamais "absent", et
-une couleur seule ne represente jamais un etat critique.
-Alternative si l'operateur prefere le produit visible : N5, le lecteur
-de Coran -- mais il demande D'ABORD un jeu de donnees coranique, qui
-n'est pas choisi (question `a` de la section 10 de la spec d'etape).
+LE PROCHAIN LOT EST N5 : le lecteur de Coran, ELV-04. ATTENTION, il
+demande D'ABORD une decision : le jeu de donnees coranique n'est pas
+choisi (question `a` de la section 10 de la spec d'etape). Le mushaf de
+reference est deja en base depuis 0007 (madina-hafs-604, une ligne),
+mais ni les 604 pages ni les 6236 versets ne sont importes. NE PAS
+INVENTER un corpus : demander a l'operateur, ou lui proposer deux
+sources avec leur licence.
+Alternative sans decision prealable : N6, le mode suivi enseignant --
+mais il vient AVEC le document partage, donc apres N5.
 
 CE QUI N'EST PAS PROUVE, ET QU'IL NE FAUT PAS PRETENDRE AVOIR PROUVE :
 un vrai cours. Personne n'a encore ouvert deux navigateurs sur une meme
-seance. La salle se teste par ses 20 tests de widget et son rendu.
+seance. IL N'EXISTE AUCUNE SEANCE EN BASE (verifie le 13/09 : 0 seance,
+0 participant, 0 evenement, 7 profils) -- c'est ce qui rend la mesure
+faisable des qu'on le decide, et c'est la seule qui vaille.
+
+CE QUE N4 N'A PAS CONSTRUIT, ET CE N'EST PAS UN OUBLI :
+  - le GESTE de correction manuelle (corrigee_manuel) et le marquage
+    excusee. La table session_presence_override et ses policies
+    existent depuis 0007, mais l'ecran demande confirmation, motif
+    obligatoire et entree de journal : c'est un lot. La section 6.5 de
+    la spec laisse d'ailleurs ce mecanisme explicitement ouvert.
+  - le tuteur observateur ne lit ni sa presence ni la liste : il
+    assiste, il n'est pas note. Le suivi d'un enfant est TUT-06.
 
 LIVEKIT EST BRANCHE, ET C'EST VERIFIE, PAS SUPPOSE :
   create-room-token interrogee par HTTP avec la cle anon repond
@@ -1411,15 +1541,23 @@ A LUI SOUMETTRE, PAS BLOQUANT (decisions prises par l'agent) :
   - ADR-023 : deux fournisseurs video, route ancree par seance.
   - N3 : le bandeau permanent est EN BAS (fiche produit) et non en haut
     (spec d'etape section 7) -- les deux sources se contredisaient.
+  - N4 : un masked_controller ne laisse AUCUNE ligne de presence lisible,
+    pas meme a lui-meme ; seule l'administration la voit. L'ADR-011 ne
+    tranchait que la video, et la trace d'une observation vit deja dans
+    audit_logs.
+  - N4 : la vue dit QU'UNE decision humaine a fige un etat, jamais
+    POURQUOI. Le motif reste en base et au journal (section 6.6 interdit
+    tout detail administratif a l'eleve).
 
 MIGRATIONS : plus aucune en attente. GARDER LE REFLEXE get_project_url
 AVANT toute ecriture : le MCP a deja vise PISI (riaqzfhdynmtshvbgdvt)
 au lieu de Rewayah (gggmtelinlpseweouyav) pendant des sessions entieres.
 
 POUR MESURER :
-  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0010,
-    puis les SIX fichiers de scenarios a la suite, scenarios_adm04.sql
-    EN DERNIER. Reference 116 controles. (N3 n'y touche pas.)
+  - SQL : docker, base neuve, stub_auth puis migrations 0001 a 0011,
+    puis les SEPT fichiers de scenarios a la suite, dans cet ordre :
+    etape3, etape4, etape5, adm05, n2, n4, adm04 -- adm04 EN DERNIER.
+    Reference 125 controles (116 + 9 pour N4).
     Astuce si le conteneur existe deja : creer une base neuve dedans
     (createdb) plutot que de le recreer -- stub_auth.sql echoue alors
     sur les roles deja presents, sans consequence : lancer le stub SANS
@@ -1432,8 +1570,15 @@ POUR MESURER :
            sqlite3:
              source: system
     Methode : editer dans le depot, copier vers le worktree, mesurer
-    la-bas. Reference 621/621 et 110 fichiers de jetons.
+    la-bas. Reference 646/646 et 113 fichiers de jetons.
     `dart analyze` fonctionne dans le depot principal, lui.
+    ATTENTION en copiant vers le worktree : lib/main.dart, lib/app.dart
+    et lib/core/config/env.dart y arrivent dans la version NON COMMITEE
+    d'OpenCode, qui importe son playground. La compilation casse. Les
+    restaurer depuis le commit avant de construire :
+       git checkout <commit> -- lib/main.dart lib/app.dart lib/core/config/env.dart
+    Et le playground fait echouer verifier_jetons.dart (6 violations qui
+    ne sont pas les notres) : l'ecarter avant de mesurer.
 
 PIEGES :
 - OpenCode travaille EN PARALLELE sur le meme depot (lib/app.dart,

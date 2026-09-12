@@ -78,13 +78,43 @@
     "lienPerdu": "Connexion perdue",
     "videoSuspendue": "Image coupée le temps que la connexion revienne. La voix continue.",
 
-    "participants": "Participants",
     "roleEnseignant": "Enseignant",
     "roleEleve": "Élève",
     "roleTuteur": "Tuteur, en observation",
 
     "observationMuette": "Vous assistez au cours. Vous n'êtes pas entendu.",
     "bandeauControle": "Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal."
+  },
+
+  "presence": {
+    "titre": "Présence",
+    "voir": "Voir la présence",
+    "mienne": "Votre présence",
+    "consolide": "consolidé",
+
+    "planifiee": "Cours à venir",
+    "enAttente": "Pas encore là",
+    "enConnexion": "Connexion en cours",
+    "presente": "En salle",
+    "enRetard": "En retard",
+    "deconnectee": "Lien coupé",
+    "enReconnexion": "Reconnexion en cours",
+    "reconnectee": "De retour",
+    "sortie": "A quitté le cours",
+    "absente": "Absence",
+    "excusee": "Absence excusée",
+    "confirmationEnAttente": "À confirmer",
+    "corrigeeManuel": "Correction manuelle",
+    "finalisee": "Définitif",
+    "inconnu": "État inconnu",
+
+    "entreeInstant": "en salle à l'instant",
+    "entreeMinutes": "en salle depuis {minutes} min",
+    "retardMinutes": "{minutes} min après l'heure",
+    "silenceInstant": "sans nouvelles depuis quelques secondes",
+    "silenceMinutes": "sans nouvelles depuis {minutes} min",
+    "attenteInstant": "le cours vient de commencer",
+    "attenteMinutes": "le cours a commencé il y a {minutes} min"
   },
 
   "attente": {

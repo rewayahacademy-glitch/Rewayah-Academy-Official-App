@@ -1836,6 +1836,74 @@ on décide d'ouvrir son micro.
 Construit le 12 septembre 2026, lot N3. Il remplace le plus gros
 `EcranAConstruire` du routeur : il reste **six** écrans à construire.
 
+#### Ce que le lot `N4` y ajoute, le 13 septembre 2026
+
+La fiche ci-dessus ne change pas : **N4 étend la salle, il ne la réécrit pas.**
+Trois ajouts, et une correction.
+
+```
+Priorites   P0  l'etat de presence personnel de l'eleve, permanent (section 6.6)
+            P1  le tableau de presence des inscrits (enseignant, controleur)
+
+Mobile      L'eleve : sa presence sous la pastille de connexion, en mots.
+            L'enseignant : un bouton « Presence » dans l'entete, qui ouvre
+            la liste en feuille -- consultable, jamais imposee
+Tablette    La colonne laterale porte la presence, et non plus la seule liste
+            des participants connectes
+```
+
+**La liste change de nature, et c'est la décision du lot.** Elle était bâtie sur
+les participants que le moteur temps réel publie ; elle est désormais bâtie sur
+les **inscrits**, avec l'état de chacun. La raison est celle qui justifiait N4 :
+celui qui n'est jamais arrivé n'a aucune piste LiveKit, donc aucune ligne côté
+moteur — et c'est précisément de lui que l'enseignant a besoin de savoir quelque
+chose. L'état du micro reste affiché, mais seulement pour qui est réellement
+dans la salle : un micro barré à côté de « Pas encore là » dirait deux fois la
+même chose, et la deuxième serait fausse.
+
+**Deux faits distincts, deux lignes.** La pastille du haut dit l'état de la
+**connexion** temps réel, ce que le moteur sait ; celle de la présence dit ce
+que la base dérive. On peut être parfaitement connecté et noté « en retard », et
+avoir perdu le lien depuis dix secondes sans être encore noté « déconnecté ».
+Les confondre en une seule pastille aurait été faux.
+
+**Le tuteur observateur ne lit ni l'un ni l'autre.** Il assiste : il n'a pas
+d'état pédagogique à consulter, et la liste ne lui est pas due. Le suivi d'un
+enfant est `TUT-06`, à l'étape 6.
+
+**Invariants ajoutés à la fiche :**
+
+```
+Invariants  un etat de presence indisponible s'affiche INCONNU, jamais
+            « absent » -- les deux ne disent pas la meme chose, et l'un
+            compte pour le suivi quand l'autre ne compte pour rien (J3)
+            une couleur seule ne represente jamais un etat de presence : la
+            pastille porte toujours son mot, et sa duree quand il y en a
+            une (J7)
+            l'eleve ne lit QUE son propre etat -- la borne est en base, pas
+            dans l'ecran
+            une visite de controle ne laisse AUCUNE ligne de presence
+            lisible, pas meme a l'interesse (ADR-011)
+```
+
+**La correction.** `presence_seance_v`, posée au lot N1, n'avait **aucun filtre
+d'appelant** — alors que les trois vues d'exposition de `0001` en portent toutes
+un. Une vue appartenant à `postgres` sans `security_invoker` ne voit pas la RLS
+des tables qu'elle lit : tout compte authentifié y aurait lu la présence de
+toutes les séances de la plateforme. Mesuré sur les fixtures de
+`scenarios_n4.sql` : un élève inscrit à aucune des deux séances y lisait **6
+lignes sur 6** ; il en lit **0** depuis la migration `0011`. Rien n'a fuité — il
+n'existe aucune séance en base — et le défaut n'avait jamais été exercé parce
+qu'aucun écran ne lisait la vue. **Une vue sans écran est une vue non testée**,
+c'est la leçon de N3 une seconde fois.
+
+**Ce que N4 ne construit pas :** le **geste** de correction manuelle
+(`corrigee_manuel`) et le marquage `excusee`. La table et ses policies existent
+depuis `0007`, mais l'écran qui les déclenche demande une confirmation, un motif
+obligatoire et une entrée de journal — c'est un lot, pas une ligne, et la
+spécification d'étape §6.5 laisse d'ailleurs ce mécanisme explicitement ouvert.
+N4 **affiche** la consolidation ; il ne la prononce pas.
+
 Deux conséquences hors de l'écran :
 
 - **`PageImmersive` existe**, dans `lib/core/widgets/`, et rejoint le catalogue

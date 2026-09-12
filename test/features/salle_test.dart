@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -65,12 +66,38 @@ List<Override> _surcharges({
   required FauxMoteurSalle moteur,
   required FauxServicePreVol preVol,
   AppRole role = AppRole.student,
+  FauxServicePresence? presence,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(FausseSourceSession(_session(role))),
   servicePreVolProvider.overrideWithValue(preVol),
   serviceVideoProvider.overrideWithValue(video),
   moteurSalleProvider.overrideWithValue(moteur),
+  // **Indisponible par defaut, et c'est le bon defaut** : un test qui ne parle
+  // pas de presence doit exercer le repli de l'invariant J3, pas un tableau
+  // rempli par commodite.
+  servicePresenceProvider.overrideWithValue(
+    presence ?? FauxServicePresence(),
+  ),
 ];
+
+/// Une ligne de presence telle que `presence_seance_v` la rend.
+PresenceParticipant _presence(
+  EtatPresence etat, {
+  required String profilId,
+  required String prenom,
+  String role = 'student',
+  bool consolide = false,
+  DateTime? entreLe,
+}) => PresenceParticipant(
+  profilId: profilId,
+  role: role,
+  prenom: prenom,
+  identifiantImmuable: 'ID-$profilId',
+  etat: etat,
+  consolide: consolide,
+  entreLe: entreLe,
+  debutSeance: DateTime.now().subtract(const Duration(minutes: 15)),
+);
 
 /// Une commande de la salle, retrouvee par le libelle de son ACTE.
 ///
@@ -353,7 +380,7 @@ void main() {
       ]);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.salle.participants), findsOneWidget);
+      expect(find.text(t.presence.titre), findsOneWidget);
       expect(find.text('Omar'), findsWidgets);
       expect(find.text('Khadija'), findsWidgets);
       expect(find.text('Le controleur'), findsNothing);
@@ -603,6 +630,191 @@ void main() {
 
       expect(video.sorties, isEmpty);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+    });
+  });
+
+  group('La presence, telle que la salle la montre', () {
+    testWidgets('l eleve lit SON etat, et aucun autre', (
+      WidgetTester tester,
+    ) async {
+      // Section 6.6 : « son propre etat ; aucun detail administratif, pas les
+      // etats des autres ». La vue en base ne lui rend qu'une ligne ; l'ecran
+      // ne doit donc pas aller en chercher une seconde ailleurs.
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          presence: FauxServicePresence(
+            lignes: <PresenceParticipant>[
+              _presence(
+                EtatPresence.enRetard,
+                profilId: 'p1',
+                prenom: 'Maryam',
+                entreLe: DateTime.now().subtract(const Duration(minutes: 3)),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(find.text(t.presence.mienne), findsOneWidget);
+      expect(find.text(t.presence.enRetard), findsOneWidget);
+      // Aucune liste : l'eleve n'y a pas droit, et le bouton qui l'ouvrirait
+      // n'existe pas non plus.
+      expect(find.text(t.presence.titre), findsNothing);
+    });
+
+    testWidgets('l enseignant lit les inscrits, celui qui manque compris', (
+      WidgetTester tester,
+    ) async {
+      // **Le coeur du lot.** Celui qui n'est jamais arrive n'a aucune piste
+      // LiveKit, donc aucune ligne cote moteur. Une liste batie sur les
+      // connectes ne montrerait que ceux dont il n'y a rien a dire.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          presence: FauxServicePresence(
+            lignes: <PresenceParticipant>[
+              _presence(
+                EtatPresence.presente,
+                profilId: 'p1',
+                prenom: 'Omar',
+                role: 'teacher',
+                entreLe: DateTime.now().subtract(const Duration(minutes: 14)),
+              ),
+              _presence(
+                EtatPresence.enAttente,
+                profilId: 'e1',
+                prenom: 'Khadija',
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // Seul l'enseignant est connecte : Khadija n'existe que par sa ligne.
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 'p1', role: 'teacher', nom: 'Omar', local: true),
+      ]);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Khadija'), findsOneWidget);
+      expect(find.text(t.presence.enAttente), findsOneWidget);
+      expect(find.text(t.presence.presente), findsOneWidget);
+      // Lui-meme se nomme « Vous », pas par son prenom : c'est deja la regle
+      // de la liste de N3.
+      expect(find.text(t.salle.vousMeme), findsWidgets);
+    });
+
+    testWidgets('une presence illisible se dit inconnue, jamais absente', (
+      WidgetTester tester,
+    ) async {
+      // **Invariant J3, mesure a l'ecran et pas seulement dans la fonction
+      // pure.** Le faux rend `null` : reseau coupe, lecture refusee, ou simple
+      // premiere seconde avant la reponse. Les trois se disent pareil.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 'p1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Khadija'),
+      ]);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.presence.inconnu), findsWidgets);
+      expect(find.text(t.presence.absente), findsNothing);
+      // La salle ne perd pas sa liste parce qu'une requete a echoue : elle
+      // retombe sur ce que le moteur sait, et dit qu'elle ne sait pas le reste.
+      expect(find.text('Khadija'), findsWidgets);
+    });
+
+    testWidgets('le controleur voit la meme liste que l enseignant', (
+      WidgetTester tester,
+    ) async {
+      // ADR-011 jusque dans la presence : la vue en base ne lui rend aucune
+      // ligne de `masked_controller`, pas meme la sienne. Son ecran affiche
+      // donc exactement les memes personnes que celui de l'enseignant.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('masked_controller')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.controller,
+          presence: FauxServicePresence(
+            lignes: <PresenceParticipant>[
+              _presence(
+                EtatPresence.presente,
+                profilId: 't1',
+                prenom: 'Omar',
+                role: 'teacher',
+              ),
+              _presence(
+                EtatPresence.presente,
+                profilId: 'e1',
+                prenom: 'Khadija',
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Omar'), findsWidgets);
+      expect(find.text('Khadija'), findsWidgets);
+      expect(find.text(t.salle.vousMeme), findsNothing);
+      // Et il ne lit pas son propre etat non plus : il assiste, il n'est pas
+      // note.
+      expect(find.text(t.presence.mienne), findsNothing);
+    });
+
+    testWidgets('un etat consolide se distingue d un etat calcule', (
+      WidgetTester tester,
+    ) async {
+      // Section 6.6 : l'enseignant distingue le provisoire du finalise. Le
+      // motif, lui, ne traverse pas la vue -- il vit au journal d'audit.
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          presence: FauxServicePresence(
+            lignes: <PresenceParticipant>[
+              _presence(
+                EtatPresence.excusee,
+                profilId: 'e1',
+                prenom: 'Khadija',
+                consolide: true,
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.presence.excusee), findsOneWidget);
+      expect(
+        find.textContaining(t.presence.consolide),
+        findsOneWidget,
+      );
     });
   });
 }

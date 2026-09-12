@@ -85,12 +85,21 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n2.sql
 
+      # Presence : ce que `presence_seance_v` montre a chacun, et surtout ce
+      # qu'elle refuse de montrer. Le calcul des quatorze etats se mesure plus
+      # haut (etape 5, puis N2) ; ici c'est la BORNE -- l'eleve n'y lit que sa
+      # ligne, un tiers n'y lit rien, et une visite de controle n'y laisse
+      # aucune trace lisible (ADR-011).
+      - name: Scenarios d'acceptation SQL de N4 (presence)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n4.sql
+
       # Journal d'audit : lecture reservee a l'administration, pagination par
       # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
       # verifiee -- y compris en la falsifiant volontairement (J5, J6).
       #
       # Il vient en DERNIER, et c'est structurel : J4 verifie l'integrite de
-      # tout ce que les cinq fichiers precedents ont ecrit dans `audit_logs`.
+      # tout ce que les six fichiers precedents ont ecrit dans `audit_logs`.
       # Le remonter dans la liste ne mesurerait plus que ses propres fixtures.
       - name: Scenarios d'acceptation SQL de ADM-04
         shell: bash

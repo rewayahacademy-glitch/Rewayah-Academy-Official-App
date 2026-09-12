@@ -62,6 +62,13 @@ const List<String> composantsDuCatalogue = <String>[
   // montre qu'il en manquait un second, pour les ecrans sans page -- ni titre,
   // ni gouttiere, ni colonne bornee.
   'PageImmersive',
+  // Section 2 : le composant d'etat que le lot N4 produit. Il porte a lui seul
+  // deux invariants de l'etape 5 -- J3, un etat indisponible se dit « inconnu »
+  // et jamais « absent », et J7, une couleur seule ne represente jamais un etat
+  // critique -- ce qui est exactement la raison de le mettre au catalogue :
+  // ecrit dans un ecran, ces deux regles seraient rejouees de memoire au
+  // suivant.
+  'LignePresence',
 ];
 
 /// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.

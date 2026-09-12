@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/presence/service_presence.dart';
+import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -20,8 +22,10 @@ import '../../core/video/pre_vol.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/confirm_destructive.dart';
+import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
@@ -42,9 +46,11 @@ import 'vue_salle.dart';
 ///
 /// - il **n'ecrit aucun appel reseau video** : tout passe par `lib/core/video/`,
 ///   et il n'importe pas `livekit_client` ;
-/// - il **n'affiche aucun des quatorze etats de presence** : la presence est
-///   derivee en base, c'est le lot suivant. Ici on ne dit que l'etat de la
-///   connexion temps reel, ce que le moteur sait ;
+/// - il **ne calcule aucun etat de presence** : les quatorze etats sont derives
+///   en base par `etat_presence()` et lus par `presence_seance_v`, bornee a ce
+///   que l'appelant a le droit de savoir. L'ecran les **montre**, il ne les
+///   decide pas -- et il ne dit jamais « absent » quand il ne sait pas
+///   (invariant J3) ;
 /// - il **ne partage aucun document** : le Coran n'est pas importe et le canal
 ///   de diffusion de l'etat partage n'est pas tranche (question `e` de
 ///   `docs/architecture/etape-5-salle-coran-presence.md` section 10). Le bouton
@@ -212,13 +218,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _basculerCamera(bool ouverte) =>
       _moteur.reglerCamera(actif: !ouverte);
 
+  /// Ouvre la presence en feuille, pour qui n'a pas la place de la garder
+  /// ouverte a cote de la scene.
+  Future<void> _voirPresence(List<_Presence> lignes) => AppBottomSheet.ouvrir(
+    context,
+    titre: t.presence.titre,
+    constructeur: (BuildContext _) => _ListePresence(lignes: lignes),
+  );
+
   @override
   Widget build(BuildContext context) {
     // La session est **observee**, pas lue au dernier moment : `_rentrer` a
     // besoin du role, et un `ref.read` au moment du clic trouverait le provider
     // encore en chargement s'il n'avait jamais ete observe. La sortie tomberait
     // alors sur la racine, qui redirige, au lieu de l'accueil du role.
-    ref.watch(sessionProvider);
+    final String? monProfil = ref.watch(sessionProvider).profileId;
 
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
@@ -230,9 +244,40 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
     final bool enImpasse = vue.phase == PhaseSalle.refus;
 
+    // **`.value`, et surtout pas un filtrage par le type de l'AsyncValue**
+    // (piege de l'etape 3, Riverpod 3). Les trois cas qui rendent `null` --
+    // pas encore charge, lecture refusee, reseau coupe -- se disent de la meme
+    // facon a l'ecran : inconnu. C'est J3, et c'est ce qui le rend simple.
+    final List<PresenceParticipant>? presence = ref
+        .watch(presenceSeanceProvider(widget.seanceId))
+        .value;
+    final List<_Presence> lignes = _Presence.composer(
+      presence: presence,
+      vue: vue,
+      monProfil: monProfil,
+      maintenant: DateTime.now(),
+    );
+    final VuePresence mienne = VuePresence.depuis(
+      ligne: maPresence(presence, monProfil),
+      maintenant: DateTime.now(),
+    );
+
     return PageImmersive(
       registre: RegistreImmersif.salle,
-      entete: _Entete(vue: vue),
+      entete: _Entete(
+        vue: vue,
+        // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
+        // et la vue en base le lui impose de toute facon. L'observateur, lui,
+        // n'a aucun etat pedagogique a lire -- il assiste.
+        mienne: vue.role == RoleSalle.eleve ? mienne : null,
+        // Le bouton n'existe que pour qui a droit a la liste ET n'a pas la
+        // place de la garder ouverte. Ailleurs il ferait doublon avec la
+        // colonne, et un doublon finit par diverger.
+        onVoirPresence:
+            vue.voitLesParticipants && !_colonneOuverte(context, vue)
+            ? () => unawaited(_voirPresence(lignes))
+            : null,
+      ),
       // Le bandeau disparait dans la seule situation ou il serait faux : une
       // impasse n'est pas une salle, rien n'y est enregistre. Partout ailleurs
       // il est present, y compris pendant l'attente : la regle se lit donc
@@ -248,16 +293,37 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             ),
       child: enImpasse
           ? _Impasse(cause: vue.cause, onReessayer: _entrer, onRentrer: _rentrer)
-          : _Corps(vue: vue),
+          : _Corps(vue: vue, lignes: lignes),
     );
   }
+
+  /// Vrai quand la presence tient en colonne a cote de la scene.
+  ///
+  /// La meme condition que `_Corps`, et elle est ici pour que l'entete sache
+  /// s'il doit offrir le bouton : deux facons d'ouvrir la meme liste sur un
+  /// meme ecran, c'est une de trop.
+  bool _colonneOuverte(BuildContext context, VueSalle vue) =>
+      AppGabarit.de(context).estLarge && vue.voitLesParticipants;
 }
 
-/// La ligne de contexte : ou l'on en est, et ce que vaut le lien.
+/// La ligne de contexte : ou l'on en est, ce que vaut le lien, et -- pour
+/// l'eleve -- comment sa presence est notee.
+///
+/// **Deux faits distincts, deux lignes.** La pastille du haut dit l'etat de la
+/// **connexion** temps reel, ce que le moteur sait ; celle du bas dit l'etat de
+/// **presence**, ce que la base derive. Les confondre serait faux : on peut
+/// etre parfaitement connecte et note « en retard », et on peut avoir perdu le
+/// lien depuis dix secondes sans etre encore note « deconnecte ».
 class _Entete extends StatelessWidget {
-  const _Entete({required this.vue});
+  const _Entete({required this.vue, this.mienne, this.onVoirPresence});
 
   final VueSalle vue;
+
+  /// Ma propre presence, pour l'eleve et lui seul. `null` ailleurs.
+  final VuePresence? mienne;
+
+  /// Ouvre la liste de presence, quand elle ne tient pas en colonne.
+  final VoidCallback? onVoirPresence;
 
   @override
   Widget build(BuildContext context) {
@@ -276,29 +342,57 @@ class _Entete extends StatelessWidget {
       return Text(attente, style: textes.labelLarge ?? const TextStyle());
     }
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (vue.phase == PhaseSalle.reconnexion)
-          // Une reconnexion n'est pas une absence : la seance continue, et
-          // l'ecran le dit sans dramatiser.
-          StatusPill(
-            libelle: t.salle.reconnexionCourt,
-            ton: TonEtat.avertissement,
-          )
-        else
-          StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
-        // La qualite du lien se dit en MOTS. Une pastille de couleur seule ne
-        // represente jamais un etat critique (invariant J7 de l'etape 5).
-        if (vue.lienADire) ...<Widget>[
-          Ecart.hSm,
-          Flexible(
-            child: Text(
-              vue.qualite == QualiteLien.perdue
-                  ? t.salle.lienPerdu
-                  : t.salle.lienMediocre,
-              style: textes.labelMedium ?? const TextStyle(),
-            ),
-          ),
+        Row(
+          children: <Widget>[
+            if (vue.phase == PhaseSalle.reconnexion)
+              // Une reconnexion n'est pas une absence : la seance continue, et
+              // l'ecran le dit sans dramatiser.
+              StatusPill(
+                libelle: t.salle.reconnexionCourt,
+                ton: TonEtat.avertissement,
+              )
+            else
+              StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+            // La qualite du lien se dit en MOTS. Une pastille de couleur seule
+            // ne represente jamais un etat critique (invariant J7).
+            if (vue.lienADire) ...<Widget>[
+              Ecart.hSm,
+              Flexible(
+                child: Text(
+                  vue.qualite == QualiteLien.perdue
+                      ? t.salle.lienPerdu
+                      : t.salle.lienMediocre,
+                  style: textes.labelMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+            if (onVoirPresence != null) ...<Widget>[
+              const Spacer(),
+              // **Un mot, pas une icone.** Aucune icone du catalogue ne dit
+              // « presence » : emprunter celle du foyer lui donnerait un
+              // second sens, et `AppIcons` n'existe que pour qu'un signe garde
+              // le sien. Le mot suffit, et `Pressable` lui donne sa cible
+              // tactile.
+              Pressable(
+                onPress: onVoirPresence,
+                libelleSemantique: t.presence.voir,
+                child: Text(
+                  t.presence.titre,
+                  style: textes.labelMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ],
+        ),
+        // Visible en permanence, discrete, jamais superposee au contenu
+        // (specification d'etape section 7, `ELV-03`).
+        if (mienne case final VuePresence etat) ...<Widget>[
+          Ecart.vSm,
+          LignePresence(nom: t.presence.mienne, vue: etat),
         ],
       ],
     );
@@ -398,11 +492,12 @@ class _Rappel extends StatelessWidget {
   }
 }
 
-/// La scene, et la liste des participants quand l'ecran a la place.
+/// La scene, et la presence quand l'ecran a la place de la garder ouverte.
 class _Corps extends StatelessWidget {
-  const _Corps({required this.vue});
+  const _Corps({required this.vue, required this.lignes});
 
   final VueSalle vue;
+  final List<_Presence> lignes;
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +516,10 @@ class _Corps extends StatelessWidget {
           // Une largeur de chrome, deja posee pour la barre laterale : la
           // reutiliser evite d'en inventer une seconde.
           width: AppGabarit.largeurBarreLaterale,
-          child: _Participants(vue: vue),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: _ListePresence(lignes: lignes, entete: true),
+          ),
         ),
       ],
     );
@@ -637,69 +735,139 @@ class _Seul extends StatelessWidget {
   }
 }
 
-/// La liste des participants, pour qui a le droit de la voir.
-class _Participants extends StatelessWidget {
-  const _Participants({required this.vue});
+/// Une personne de la seance, telle que la liste la montre.
+///
+/// **Les inscrits comme ossature, la video comme complement, et l'ordre
+/// compte.** Celui qui n'est jamais arrive n'a aucune piste LiveKit, donc
+/// aucune ligne cote moteur -- et c'est justement de lui que l'enseignant a
+/// besoin de savoir quelque chose. Batir la liste sur les participants
+/// connectes reviendrait a ne montrer que ceux dont on n'a pas a s'inquieter.
+@immutable
+class _Presence {
+  const _Presence({
+    required this.nom,
+    required this.role,
+    required this.vue,
+    this.micro,
+  });
 
-  final VueSalle vue;
+  /// Compose la liste que l'ecran affiche.
+  ///
+  /// Quand la presence est indisponible, la liste retombe sur les participants
+  /// que le moteur connait, chacun avec un etat **inconnu** -- et non « absent »
+  /// (invariant J3). Une salle ne perd pas sa liste parce qu'une requete a
+  /// echoue ; elle perd ce qu'elle ne sait pas, et le dit.
+  static List<_Presence> composer({
+    required List<PresenceParticipant>? presence,
+    required VueSalle vue,
+    required String? monProfil,
+    required DateTime maintenant,
+  }) {
+    if (presence == null) {
+      return <_Presence>[
+        for (final ParticipantSalle personne in vue.participantsListes)
+          _Presence(
+            nom: personne.estLocal ? t.salle.vousMeme : personne.nom,
+            role: _libelleRole(personne.role),
+            vue: VuePresence.depuis(ligne: null, maintenant: maintenant),
+            micro: personne.micro,
+          ),
+      ];
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final List<ParticipantSalle> liste = vue.participantsListes;
+    return <_Presence>[
+      for (final PresenceParticipant ligne in tableauDePresence(presence))
+        _Presence(
+          nom: ligne.profilId == monProfil ? t.salle.vousMeme : ligne.prenom,
+          role: _libelleRole(ligne.role),
+          vue: VuePresence.depuis(ligne: ligne, maintenant: maintenant),
+          // La base emet `identity = profile_id` : le rapprochement se fait
+          // donc sans table de correspondance. `null` quand la personne n'est
+          // pas dans la salle -- et « pas de micro » ne se dit pas alors, parce
+          // que ce serait un fait, la ou il n'y a qu'une absence de fait.
+          micro: _microDe(vue.participantsListes, ligne.profilId),
+        ),
+    ];
+  }
 
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          SectionHeader(titre: t.salle.participants, compteur: liste.length),
-          Ecart.vMd,
-          for (final ParticipantSalle personne in liste) ...<Widget>[
-            MergeSemantics(
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          personne.estLocal ? t.salle.vousMeme : personne.nom,
-                          style: textes.labelLarge ?? const TextStyle(),
-                        ),
-                        Text(
-                          _libelleRole(personne.role),
-                          style: textes.bodySmall ?? const TextStyle(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    personne.micro
-                        ? AppIcons.micro.repos
-                        : AppIcons.microCoupe.repos,
-                    semanticLabel: personne.micro
-                        ? t.salle.micro
-                        : t.salle.microCoupe,
-                  ),
-                ],
-              ),
-            ),
-            Ecart.vMd,
-          ],
-        ],
-      ),
-    );
+  /// L'etat du micro d'une personne, si le moteur la connait.
+  static bool? _microDe(List<ParticipantSalle> connectes, String profilId) {
+    for (final ParticipantSalle personne in connectes) {
+      if (personne.identite == profilId) {
+        return personne.micro;
+      }
+    }
+    return null;
   }
 
   /// Le role de seance, en mots. Un role inconnu ne s'affiche pas du tout
   /// plutot que de s'afficher faux : le vocabulaire vit en base et grandira.
-  String _libelleRole(String brut) => switch (RoleSalle.depuis(brut)) {
+  static String _libelleRole(String brut) => switch (RoleSalle.depuis(brut)) {
     RoleSalle.enseignant => t.salle.roleEnseignant,
     RoleSalle.eleve => t.salle.roleEleve,
     RoleSalle.tuteurObservateur => t.salle.roleTuteur,
     RoleSalle.controleur || RoleSalle.inconnu => '',
   };
+
+  final String nom;
+  final String role;
+  final VuePresence vue;
+
+  /// Micro ouvert, ferme, ou absent de la salle.
+  final bool? micro;
+}
+
+/// La presence de la seance, pour qui a le droit de la lire.
+///
+/// Le meme corps en colonne et en feuille : deux rendus d'une meme liste
+/// finiraient par ne plus dire la meme chose, et c'est precisement ce que le
+/// lot N3 a evite en refusant trois ecrans de salle.
+class _ListePresence extends StatelessWidget {
+  const _ListePresence({required this.lignes, this.entete = false});
+
+  final List<_Presence> lignes;
+
+  /// L'en-tete de section, en colonne seulement : la feuille a deja son titre.
+  final bool entete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (entete) ...<Widget>[
+          SectionHeader(titre: t.presence.titre, compteur: lignes.length),
+          Ecart.vMd,
+        ],
+        for (final _Presence personne in lignes) ...<Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: LignePresence(
+                  nom: personne.nom,
+                  role: personne.role,
+                  vue: personne.vue,
+                ),
+              ),
+              // Le micro n'apparait que pour qui est dans la salle : un micro
+              // barre a cote de « Pas encore la » dirait deux fois la meme
+              // chose, et la deuxieme serait fausse.
+              if (personne.micro case final bool ouvert) ...<Widget>[
+                Ecart.hSm,
+                Icon(
+                  ouvert ? AppIcons.micro.repos : AppIcons.microCoupe.repos,
+                  semanticLabel: ouvert ? t.salle.micro : t.salle.microCoupe,
+                  size: AppSpacing.xl,
+                ),
+              ],
+            ],
+          ),
+          Ecart.vMd,
+        ],
+      ],
+    );
+  }
 }
 
 /// Les commandes, selon ce que le jeton permet.

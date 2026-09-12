@@ -6,6 +6,8 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/planning/journee.dart';
 import '../../../core/planning/service_planning.dart';
+import '../../../core/presence/service_presence.dart';
+import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
@@ -23,6 +25,7 @@ import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/filter_pill.dart';
+import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/nav_shell.dart';
@@ -199,6 +202,45 @@ List<Destination> _destinationsExemple() => <Destination>[
 /// Hauteur allouee a un composant qui prend toute une page.
 const double _hauteurPage = AppSpacing.respiration * 6;
 
+/// Une presence de demonstration, calculee par la vraie fonction.
+///
+/// **Elle passe par `VuePresence.depuis`, elle ne fabrique pas son resultat** :
+/// une galerie qui construirait ses tons a la main montrerait des etats que le
+/// produit ne sait pas produire, et ne verifierait plus rien.
+VuePresence _presence(
+  EtatPresence etat, {
+  int? entreIlYA,
+  int? retardDe,
+  int? silenceDe,
+  int? attenteDe,
+  bool consolide = false,
+}) {
+  final DateTime maintenant = DateTime(2026, 9, 13, 10, 30);
+  final DateTime debut = maintenant.subtract(Duration(minutes: attenteDe ?? 0));
+  return VuePresence.depuis(
+    maintenant: maintenant,
+    ligne: PresenceParticipant(
+      profilId: 'p-galerie',
+      role: 'student',
+      prenom: 'Galerie',
+      identifiantImmuable: 'STUD-000000',
+      etat: etat,
+      consolide: consolide,
+      debutSeance: debut,
+      entreLe: switch ((entreIlYA, retardDe)) {
+        (final int minutes, _) when minutes > 0 =>
+          maintenant.subtract(Duration(minutes: minutes)),
+        (_, final int minutes) when minutes > 0 =>
+          debut.add(Duration(minutes: minutes)),
+        _ => null,
+      },
+      derniereTraceLe: silenceDe == null
+          ? null
+          : maintenant.subtract(Duration(minutes: silenceDe)),
+    ),
+  );
+}
+
 /// **Le catalogue, et la preuve du catalogue.**
 ///
 /// `docs/design/07-catalogue-composants.md` section 5 : « Un composant absent
@@ -365,6 +407,62 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'alerte',
         (BuildContext _) =>
             StatusPill(libelle: t.etat.annule, ton: TonEtat.alerte),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LignePresence',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'presente, avec sa duree',
+        (BuildContext _) => LignePresence(
+          nom: 'Maryam',
+          role: t.salle.roleEleve,
+          vue: _presence(EtatPresence.presente, entreIlYA: 12),
+        ),
+      ),
+      EtatGalerie(
+        'en retard : la duree change de sens',
+        (BuildContext _) => LignePresence(
+          nom: 'Ilyas',
+          role: t.salle.roleEleve,
+          vue: _presence(EtatPresence.enRetard, retardDe: 8),
+        ),
+      ),
+      EtatGalerie(
+        'lien coupe',
+        (BuildContext _) => LignePresence(
+          nom: 'Zineb',
+          role: t.salle.roleEleve,
+          vue: _presence(EtatPresence.deconnectee, silenceDe: 3),
+        ),
+      ),
+      EtatGalerie(
+        'pas encore la',
+        (BuildContext _) => LignePresence(
+          nom: 'Adam',
+          role: t.salle.roleEleve,
+          vue: _presence(EtatPresence.enAttente, attenteDe: 4),
+        ),
+      ),
+      EtatGalerie(
+        'consolide par une decision humaine',
+        (BuildContext _) => LignePresence(
+          nom: 'Nour',
+          role: t.salle.roleEleve,
+          vue: _presence(EtatPresence.excusee, consolide: true),
+        ),
+      ),
+      // L'etat que l'invariant J3 impose : indisponible se dit « inconnu »,
+      // jamais « absence ». Il est ici pour qu'on le VOIE, a cote des autres.
+      EtatGalerie(
+        'indisponible : inconnu, jamais absent',
+        (BuildContext _) => LignePresence(
+          nom: 'Kamal',
+          role: t.salle.roleEleve,
+          vue: VuePresence.depuis(ligne: null, maintenant: DateTime.now()),
+        ),
       ),
     ],
   ),

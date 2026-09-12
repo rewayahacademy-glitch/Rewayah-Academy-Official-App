@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/journal/service_journal.dart';
 import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
@@ -1017,6 +1018,29 @@ class FauxServiceVideo implements ServiceVideo {
   @override
   Future<void> annoncerSortie(String seanceId) async {
     sorties.add(seanceId);
+  }
+}
+
+/// La presence d'une seance, en memoire.
+///
+/// **Le `null` est le cas le plus important a pouvoir jouer**, pas le cas
+/// degrade : c'est lui qui exerce l'invariant J3 -- une presence indisponible
+/// s'affiche « inconnu », jamais « absent ». Sans ce faux, la seule facon de
+/// l'obtenir serait de couper le reseau de la machine qui execute les tests.
+class FauxServicePresence implements ServicePresence {
+  /// Cree le faux.
+  FauxServicePresence({this.lignes});
+
+  /// Ce que la lecture rend. `null` signifie « indisponible ».
+  List<PresenceParticipant>? lignes;
+
+  /// Les seances dont la presence a ete demandee.
+  final List<String> demandes = <String>[];
+
+  @override
+  Future<List<PresenceParticipant>?> presence(String seanceId) async {
+    demandes.add(seanceId);
+    return lignes;
   }
 }
 

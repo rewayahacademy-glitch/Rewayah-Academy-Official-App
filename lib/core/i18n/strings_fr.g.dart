@@ -46,6 +46,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$etat$fr etat = Traductions$etat$fr.internal(_root);
 	late final Traductions$destructif$fr destructif = Traductions$destructif$fr.internal(_root);
 	late final Traductions$salle$fr salle = Traductions$salle$fr.internal(_root);
+	late final Traductions$presence$fr presence = Traductions$presence$fr.internal(_root);
 	late final Traductions$attente$fr attente = Traductions$attente$fr.internal(_root);
 	late final Traductions$connexion$fr connexion = Traductions$connexion$fr.internal(_root);
 	late final Traductions$inscription$fr inscription = Traductions$inscription$fr.internal(_root);
@@ -296,9 +297,6 @@ class Traductions$salle$fr {
 	/// fr: 'Image coupée le temps que la connexion revienne. La voix continue.'
 	String get videoSuspendue => 'Image coupée le temps que la connexion revienne. La voix continue.';
 
-	/// fr: 'Participants'
-	String get participants => 'Participants';
-
 	/// fr: 'Enseignant'
 	String get roleEnseignant => 'Enseignant';
 
@@ -313,6 +311,93 @@ class Traductions$salle$fr {
 
 	/// fr: 'Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.'
 	String get bandeauControle => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.';
+}
+
+// Path: presence
+class Traductions$presence$fr {
+	Traductions$presence$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Présence'
+	String get titre => 'Présence';
+
+	/// fr: 'Voir la présence'
+	String get voir => 'Voir la présence';
+
+	/// fr: 'Votre présence'
+	String get mienne => 'Votre présence';
+
+	/// fr: 'consolidé'
+	String get consolide => 'consolidé';
+
+	/// fr: 'Cours à venir'
+	String get planifiee => 'Cours à venir';
+
+	/// fr: 'Pas encore là'
+	String get enAttente => 'Pas encore là';
+
+	/// fr: 'Connexion en cours'
+	String get enConnexion => 'Connexion en cours';
+
+	/// fr: 'En salle'
+	String get presente => 'En salle';
+
+	/// fr: 'En retard'
+	String get enRetard => 'En retard';
+
+	/// fr: 'Lien coupé'
+	String get deconnectee => 'Lien coupé';
+
+	/// fr: 'Reconnexion en cours'
+	String get enReconnexion => 'Reconnexion en cours';
+
+	/// fr: 'De retour'
+	String get reconnectee => 'De retour';
+
+	/// fr: 'A quitté le cours'
+	String get sortie => 'A quitté le cours';
+
+	/// fr: 'Absence'
+	String get absente => 'Absence';
+
+	/// fr: 'Absence excusée'
+	String get excusee => 'Absence excusée';
+
+	/// fr: 'À confirmer'
+	String get confirmationEnAttente => 'À confirmer';
+
+	/// fr: 'Correction manuelle'
+	String get corrigeeManuel => 'Correction manuelle';
+
+	/// fr: 'Définitif'
+	String get finalisee => 'Définitif';
+
+	/// fr: 'État inconnu'
+	String get inconnu => 'État inconnu';
+
+	/// fr: 'en salle à l'instant'
+	String get entreeInstant => 'en salle à l\'instant';
+
+	/// fr: 'en salle depuis {minutes} min'
+	String entreeMinutes({required Object minutes}) => 'en salle depuis ${minutes} min';
+
+	/// fr: '{minutes} min après l'heure'
+	String retardMinutes({required Object minutes}) => '${minutes} min après l\'heure';
+
+	/// fr: 'sans nouvelles depuis quelques secondes'
+	String get silenceInstant => 'sans nouvelles depuis quelques secondes';
+
+	/// fr: 'sans nouvelles depuis {minutes} min'
+	String silenceMinutes({required Object minutes}) => 'sans nouvelles depuis ${minutes} min';
+
+	/// fr: 'le cours vient de commencer'
+	String get attenteInstant => 'le cours vient de commencer';
+
+	/// fr: 'le cours a commencé il y a {minutes} min'
+	String attenteMinutes({required Object minutes}) => 'le cours a commencé il y a ${minutes} min';
 }
 
 // Path: attente
@@ -2200,12 +2285,37 @@ extension on Traductions {
 			'salle.lienMediocre' => 'Connexion faible',
 			'salle.lienPerdu' => 'Connexion perdue',
 			'salle.videoSuspendue' => 'Image coupée le temps que la connexion revienne. La voix continue.',
-			'salle.participants' => 'Participants',
 			'salle.roleEnseignant' => 'Enseignant',
 			'salle.roleEleve' => 'Élève',
 			'salle.roleTuteur' => 'Tuteur, en observation',
 			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
 			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
+			'presence.titre' => 'Présence',
+			'presence.voir' => 'Voir la présence',
+			'presence.mienne' => 'Votre présence',
+			'presence.consolide' => 'consolidé',
+			'presence.planifiee' => 'Cours à venir',
+			'presence.enAttente' => 'Pas encore là',
+			'presence.enConnexion' => 'Connexion en cours',
+			'presence.presente' => 'En salle',
+			'presence.enRetard' => 'En retard',
+			'presence.deconnectee' => 'Lien coupé',
+			'presence.enReconnexion' => 'Reconnexion en cours',
+			'presence.reconnectee' => 'De retour',
+			'presence.sortie' => 'A quitté le cours',
+			'presence.absente' => 'Absence',
+			'presence.excusee' => 'Absence excusée',
+			'presence.confirmationEnAttente' => 'À confirmer',
+			'presence.corrigeeManuel' => 'Correction manuelle',
+			'presence.finalisee' => 'Définitif',
+			'presence.inconnu' => 'État inconnu',
+			'presence.entreeInstant' => 'en salle à l\'instant',
+			'presence.entreeMinutes' => ({required Object minutes}) => 'en salle depuis ${minutes} min',
+			'presence.retardMinutes' => ({required Object minutes}) => '${minutes} min après l\'heure',
+			'presence.silenceInstant' => 'sans nouvelles depuis quelques secondes',
+			'presence.silenceMinutes' => ({required Object minutes}) => 'sans nouvelles depuis ${minutes} min',
+			'presence.attenteInstant' => 'le cours vient de commencer',
+			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.',
@@ -2627,6 +2737,8 @@ extension on Traductions {
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'Accès de ${prenom} sans date de fin',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
@@ -2652,8 +2764,6 @@ extension on Traductions {
 			'tuteur.reglages.demandes' => 'Demander un changement',
 			'tuteur.reglages.demandeReaffectation' => 'Changer d\'enseignant',
 			'tuteur.reglages.demandeDuree' => 'Changer la durée des cours',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.demandeMinimum' => 'Changer la durée minimale payable',
 			'tuteur.reglages.demandeSansEnseignant' => ({required Object prenom}) => '${prenom} n\'a pas encore d\'enseignant : il n\'y a rien à changer.',
 			'tuteur.reglages.demandeTitreReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',

@@ -463,7 +463,7 @@ toutes les specs »), et N1 exécuté le jour même.
 | N1 | Migration : `mushaf`/`sourate`/`page_mushaf`/`verset`, `student_reading_position`, vue ou fonction de présence dérivée | **Fait** (`a736a43`), 15 contrôles — reste à appliquer à la base réelle, `MISE-EN-SERVICE.md` §5.2 |
 | N2 | `VideoSessionProvider`/`LiveKitSessionProvider` (ADR-001), pre-flight, émission de token | À faire — **c'est ici que se décide le fournisseur vidéo et ses clés**, et ici que naît la trace qui rendra `en_connexion` dérivable |
 | N3 | `ELV-03`/`ENS-03`/`CTR-02` : coquille de salle, document partagé, contrôles enseignant niveau 1 | À faire — remplace le plus gros placeholder du routeur |
-| N4 | Machine à états de présence : calcul, affichage, vue enseignant et élève | À faire — le calcul existe depuis N1, reste l'affichage |
+| N4 | Machine à états de présence : calcul, affichage, vue enseignant et élève | **Fait** (13 septembre 2026). Le calcul existait depuis N1 ; ce lot livre l'affichage — `lib/core/presence/`, `LignePresence` au catalogue, et la migration `0011` qui **borne** `presence_seance_v`, laissée sans filtre d'appelant par N1 |
 | N5 | `ELV-04` : lecteur Coran, mode immersif, reprise de lecture | À faire — demande d'abord l'import du jeu de données coranique |
 | N6 | Mode suivi enseignant, annotation si retenue | À faire |
 | N7 | Vérifications de fin d'étape, scénarios d'acceptation, documentation | À faire |
