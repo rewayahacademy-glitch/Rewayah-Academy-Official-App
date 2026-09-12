@@ -1038,6 +1038,73 @@ qui vérifie qu'une pagination de trois pages n'écrit qu'une ligne.
 
 ---
 
+## ADR-023 - Les deux fournisseurs vidéo coexistent, et la route est ancrée par séance
+
+**Décision de l'opérateur, 12 septembre 2026**, prise à l'ouverture du lot N2 :
+« si tu penses que tu peux ajouter les deux, fais-le : Cloud pour tester l'app,
+self-hosted pour le scaling. Mais jamais Cloud tout seul, car c'est cher. »
+
+### Ce que cela change par rapport à l'ADR-001
+
+L'ADR-001 prévoyait LiveKit Cloud d'abord, avec une portabilité conçue pour une
+migration **future**. La spécification d'intégration, elle, penchait en §8 pour
+un déploiement self-hosted. Les deux avaient raison sur un point et tort sur
+l'autre : le Cloud seul devient cher dès les premiers élèves réels — le tier
+gratuit plafonne vers quatre élèves en un-à-un — et le self-hosted seul oblige à
+déployer TURN en TCP 443 avant d'avoir prouvé quoi que ce soit, faute de quoi
+les élèves sur réseaux mobiles restrictifs ne se connectent pas du tout.
+
+`video_config` cesse donc d'être un filet de migration pour devenir
+**l'aiguillage permanent** du produit : `active_provider` désigne le fournisseur
+courant, `canary_provider` et `canary_percentage` en routent une fraction vers
+l'autre, `ws_url_override` pointe un serveur précis sans redéployer quoi que ce
+soit. Les secrets Supabase sont doublés en conséquence :
+`LIVEKIT_CLOUD_*` et `LIVEKIT_SELFHOST_*`.
+
+### Le piège que cette décision crée, et comment il est fermé
+
+Faire coexister deux serveurs ouvre une faute qui ne se voit pas en relecture :
+**si le fournisseur était tiré à chaque émission de jeton, un enseignant et son
+élève pourraient atterrir sur deux serveurs différents et ne jamais se voir.**
+Le cours serait perdu sans qu'aucune erreur ne s'affiche nulle part — les deux
+seraient « connectés », chacun dans une salle vide.
+
+`session_video_route` ferme cela : la **première** émission de jeton d'une
+séance fige le fournisseur, l'URL et le nom de salle ; toutes les suivantes les
+relisent. Trois conséquences, toutes voulues :
+
+1. Un changement de `canary_percentage` en cours de séance ne peut plus couper
+   une salle en deux. Il ne s'applique qu'aux séances qui n'ont pas commencé.
+2. Le tirage du canari est **déterministe**, dérivé du `session_id` par `md5` et
+   non d'un hasard : deux appels concurrents choisissent la même chose avant
+   même que l'unicité de la clé primaire ne tranche.
+3. Un participant qui arrive en retard, après un changement de configuration,
+   rejoint le serveur de ses camarades et non le nouveau.
+
+### Ce que le client Flutter ne sait toujours pas
+
+Le contrat de portabilité de l'ADR-001 est **renforcé**, pas assoupli :
+`grep -ri 'livekit.cloud\|wss://' lib/` doit rendre zéro résultat. L'URL arrive
+du backend à chaque session, avec le jeton. `lib/core/video/livekit_session_provider.dart`
+reste le seul fichier autorisé à importer `livekit_client`, et
+`supabase/functions/_shared/livekit.ts` le seul à importer le SDK serveur.
+
+### Ce que cette décision ne tranche pas
+
+Elle ne dit pas **quand** basculer sur le self-hosted, ni sur quel hébergeur.
+Ce sont des décisions d'exploitation, à prendre sur des chiffres de charge
+réels — pas avant. L'aiguillage existe pour que ce jour-là coûte une ligne de
+`video_config`, pas un lot de développement.
+
+### Comment défaire
+
+Revenir au Cloud seul : `update video_config set canary_provider = null,
+canary_percentage = 0, active_provider = 'cloud'`. Aucun code ne change, aucun
+déploiement n'est nécessaire. C'est la propriété qui justifie toute la
+construction.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -1088,5 +1155,8 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 
 | 27 | La consultation du journal d'audit doit-elle elle-même s'inscrire au journal | Lot `ADM-04` | **Tranchée par l'agent, à confirmer par l'opérateur** (ADR-022, décision 4, 12 septembre 2026). Non, pour l'instant. Deux raisons : `log_sensitive_access()` prend un `lock table`, donc journaliser une lecture paginée sérialiserait les lectures du journal contre toutes les écritures du produit ; et une consultation produirait autant d'entrées que de pages parcourues, noyant les événements métier sous les traces de leur propre consultation. **Ce que ça laisse ouvert** : un administrateur peut aujourd'hui lire l'intégralité du journal sans qu'il en reste trace, ce qui est exactement le genre d'angle mort qu'un audit sert à fermer. **Comment défaire** : une entrée par consultation et non par page, en conditionnant l'écriture au premier appel sans curseur. ADR-022, dernier paragraphe, une heure de travail |
 | 28 | L'en-tête de colonnes de `DataCollection` est collée en haut parce que le composant porte sa propre zone défilante, ce qui oblige la page à passer `defilante: false` à `PageShell`. Est-ce la bonne répartition | Lot `ADM-04`, à revoir au prochain écran qui emploie `DataCollection` | **Ouverte, sans dette immédiate** : `ADM-04` est aujourd'hui le seul écran du produit à l'employer, donc la question ne coûte rien tant qu'elle n'a qu'un cas. Elle se tranchera au deuxième, quand on saura si un écran voudra un tableau qui défile AVEC sa page plutôt qu'à l'intérieur d'elle. Le jour où cela arrive, l'alternative est un `CustomScrollView` et un en-tête en sliver épinglé, ce qui déplace la complexité dans le composant au lieu de la poser sur la page |
+
+| 29 | Quand faut-il basculer une part réelle du trafic sur le serveur auto-hébergé, et sur quel hébergeur | Lot N2, à trancher sur des chiffres de charge | **Ouverte, et volontairement non préemptée** (ADR-023, 12 septembre 2026). L'aiguillage est construit et testé, les deux trousseaux de secrets sont prévus, mais aucun serveur auto-hébergé n'existe encore. La bascule est une décision d'exploitation qui demande trois chiffres qu'on n'a pas : le nombre d'élèves réels, la consommation mensuelle en minutes-participant, et le coût de la bande passante sortante chez l'hébergeur retenu. **Ce qu'il ne faut surtout pas oublier le jour venu** : TURN en TCP 443. LiveKit Cloud le fournit, un VPS nu non — et c'est la première cause d'échec des migrations self-host, parce qu'elle ne se voit qu'en production, chez les élèves derrière un réseau restrictif, jamais sur le poste de développement |
+| 30 | Le heartbeat applicatif de la section 28 de la spécification d'intégration n'est pas construit | Lot N4 | **Ouverte, et sans dette tant que N4 n'est pas fait.** N2 pose les deux sources serveur (émission de jeton, webhooks) qui suffisent à dériver treize des quatorze états. Le heartbeat sert un cas qu'elles ne couvrent pas : une application tuée par le système sans que LiveKit n'émette `participant_left`, laissant un participant « présent » jusqu'à l'expiration côté serveur. Le seuil `presence.fenetre_reconnexion_secondes` le masque aujourd'hui. À mesurer contre le comportement réel avant d'ajouter un mécanisme de plus |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.

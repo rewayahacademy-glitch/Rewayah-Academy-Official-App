@@ -487,3 +487,95 @@ L7 rendait 3 670 040 octets sans cette chaine ; L8 rend 3 705 770 avec.
 ASCII dans le JavaScript produit : chercher « regler son affichage et sa
 camera » avec ses accents rend `False` sur un ecran pourtant bien present, et
 fait conclure a un manque qui n'existe pas.
+
+
+## 8. LiveKit : ce qu'il reste a poser pour que la video fonctionne
+
+Le lot N2 (12 septembre 2026) a construit toute la chaine video : migration
+`0010`, fonctions Edge `create-room-token` et `livekit-webhook` **deja
+deployees et actives**, module Flutter `lib/core/video/`. Elle est inerte tant
+que les cles n'existent pas, et elle le dit franchement plutot que d'echouer
+en silence :
+
+```powershell
+Invoke-WebRequest "https://gggmtelinlpseweouyav.supabase.co/functions/v1/livekit-webhook" `
+  -Method POST -Body '{}' -ContentType "application/json" -UseBasicParsing
+# -> HTTP 401 "signature invalide"  (mesure du 12 septembre 2026)
+```
+
+`create-room-token` rend `503 {"error":"video non configuree"}` tant qu'aucun
+trousseau n'est pose. **C'est l'etat normal aujourd'hui**, pas une panne.
+
+### 8.1 Ouvrir le compte et relever les cles
+
+1. Creer un projet sur `cloud.livekit.io` (tier **Build**, gratuit).
+2. Relever dans **Settings -> Keys** : l'`API Key`, l'`API Secret` et l'URL du
+   projet, de la forme `wss://<nom>.livekit.cloud`.
+
+⚠ **Le secret ne s'affiche qu'une fois.** Le noter avant de fermer la page.
+
+### 8.2 Poser les secrets Supabase
+
+Les noms sont **prefixes par fournisseur** (ADR-023) : les deux trousseaux
+coexistent, `LIVEKIT_API_KEY` tout court serait ambigu le jour de la bascule.
+
+```
+supabase secrets set LIVEKIT_CLOUD_WS_URL=wss://<nom>.livekit.cloud --project-ref gggmtelinlpseweouyav
+supabase secrets set LIVEKIT_CLOUD_API_KEY=<API Key> --project-ref gggmtelinlpseweouyav
+supabase secrets set LIVEKIT_CLOUD_API_SECRET=<API Secret> --project-ref gggmtelinlpseweouyav
+```
+
+Le jour du serveur auto-heberge, les trois memes avec `LIVEKIT_SELFHOST_`.
+**Aucun redeploiement de fonction n'est necessaire** : les secrets sont lus a
+chaque appel.
+
+⚠ Ces trois valeurs ne vont **jamais** dans le depot, jamais dans
+`dart_define.json`, jamais dans Flutter. Le client n'apprend l'adresse du
+serveur qu'a l'ouverture d'une salle, avec son jeton.
+
+### 8.3 Declarer le webhook cote LiveKit
+
+Dans **Settings -> Webhooks**, ajouter :
+
+```
+https://gggmtelinlpseweouyav.supabase.co/functions/v1/livekit-webhook
+```
+
+C'est lui qui ecrit la presence avec un horodatage **serveur**, non
+falsifiable. Sans lui, `etat_presence()` ne verra jamais personne entrer : elle
+restera bloquee sur `en_connexion` puis retombera sur `en_attente`.
+
+### 8.4 Verifier que c'est branche
+
+```sql
+-- La configuration active, et le TTL des jetons.
+select active_provider, canary_provider, canary_percentage, token_ttl_seconds
+  from public.video_config;
+
+-- Apres une premiere entree en salle : la route figee, puis les jetons emis.
+select * from public.session_video_route;
+select session_id, profile_id, role, provider, can_publish_video, hidden, emis_le
+  from public.video_token_grants order by emis_le desc limit 10;
+
+-- Les webhooks recus. `applique = false` sur un `participant_joined` signale
+-- une salle inconnue ou un rejeu, pas une panne.
+select event_id, event_type, applique, recu_le
+  from public.livekit_webhook_deliveries order by recu_le desc limit 10;
+```
+
+⚠ **Ce qui n'a PAS ete prouve au lot N2, faute de compte** : la connexion
+reelle a une salle. Tout le reste l'a ete -- dix controles SQL sur base neuve,
+treize tests Dart, et les deux fonctions Edge appelees en production. Le
+premier cours reel reste donc la premiere vraie mesure de bout en bout.
+
+### 8.5 Les deux seuils reglables sans redeploiement
+
+```sql
+update public.app_config set value = '90'::jsonb
+ where key = 'presence.fenetre_connexion_secondes';   -- « en connexion » -> « en attente »
+update public.app_config set value = '120'::jsonb
+ where key = 'presence.fenetre_reconnexion_secondes'; -- « en reconnexion » -> « deconnectee »
+```
+
+Ils se mesurent contre le comportement reel des webhooks, ils ne se devinent
+pas. Les valeurs actuelles sont des points de depart.

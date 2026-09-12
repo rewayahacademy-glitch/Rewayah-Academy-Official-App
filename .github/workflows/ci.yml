@@ -77,12 +77,20 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_adm05.sql
 
+      # Video : aiguillage a deux fournisseurs ancre par seance, emission de
+      # jeton, capacites deduites du role, webhooks idempotents, et l'etat
+      # `en_connexion` que N1 refusait de deviner faute de trace en base.
+      # Voir docs/architecture/decisions.md, ADR-001 et ADR-023.
+      - name: Scenarios d'acceptation SQL de N2 (video)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n2.sql
+
       # Journal d'audit : lecture reservee a l'administration, pagination par
       # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
       # verifiee -- y compris en la falsifiant volontairement (J5, J6).
       #
       # Il vient en DERNIER, et c'est structurel : J4 verifie l'integrite de
-      # tout ce que les quatre fichiers precedents ont ecrit dans `audit_logs`.
+      # tout ce que les cinq fichiers precedents ont ecrit dans `audit_logs`.
       # Le remonter dans la liste ne mesurerait plus que ses propres fixtures.
       - name: Scenarios d'acceptation SQL de ADM-04
         shell: bash

@@ -1,5 +1,44 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🎥 **12 septembre 2026, cinquième session — `N2` est fait. La vidéo a son
+> squelette complet, et il ne lui manque qu'un compte.**
+> L'opérateur a débloqué le lot et tranché la question que ni l'ADR-001 ni la
+> spécification d'intégration ne tranchaient de la même façon : **les deux
+> fournisseurs coexistent** — LiveKit Cloud pour éprouver, auto-hébergé pour
+> encaisser la charge, **jamais Cloud seul, parce que c'est cher**. C'est
+> l'**ADR-023**, et il renforce le contrat de portabilité de l'ADR-001 au lieu
+> de l'assouplir.
+> Livré : migration **`0010`** (quatre tables, cinq fonctions, aucune policy
+> d'écriture ouverte au client), les fonctions Edge **`create-room-token`** et
+> **`livekit-webhook`** — **déployées, `ACTIVE`, et appelées en production pour
+> le vérifier** —, et le module Flutter `lib/core/video/` : interface
+> `VideoSessionProvider`, implémentation `LiveKitSessionProvider`, service
+> d'accès, pré-vol.
+> Mesuré, pas supposé : **`flutter test` 576/576** (13 nouveaux),
+> `dart analyze --fatal-infos` propre, jetons **107 fichiers** sans violation,
+> **116 contrôles SQL** verts (34 + 39 + 15 + 9 + **10** + 9) rejoués ensemble
+> sur `0001`→`0010` dans un conteneur neuf, et les deux fonctions Edge
+> interrogées par HTTP : `401 signature invalide` pour le webhook,
+> `503 video non configuree` pour l'émission.
+> 🔑 **Ce que le lot a vraiment débloqué** : `etat_presence()` ne dérivait que
+> treize des quatorze états. `en_connexion` manquait, et N1 avait refusé de
+> l'inventer faute de trace en base. `video_token_grants` est cette trace : le
+> quatorzième état se dérive désormais, et c'est la première brique de présence
+> **non falsifiable par le client**.
+> 🔴 **CE QUI N'EST PAS PROUVÉ, et il faut le dire tel quel : la connexion
+> réelle à une salle.** Aucun compte LiveKit n'existe. Tout le reste est mesuré,
+> mais le premier vrai cours reste la première vraie mesure de bout en bout.
+> **Trois secrets à poser et un webhook à déclarer, recette complète en
+> `MISE-EN-SERVICE.md` §8** — aucun redéploiement d'application ne sera
+> nécessaire, le client n'a aucune URL en dur.
+> ⚠ **Une affirmation de cette page était fausse et elle est corrigée** : le
+> commit `c2e52d2` annonçait « OpenCode a déjà commencé N2 ». Non. Les fichiers
+> qu'il décrivait (`0010`, `scenarios_n2.sql`, `livekit_client`, `ci.yml`)
+> étaient le travail **non encore commité de cette session-ci**, observé depuis
+> une autre session. Aucun code vidéo n'a jamais été suivi par git avant ce
+> lot. **Leçon générale : des fichiers non commités dans un dépôt partagé ne
+> disent pas qui les a écrits.**
+>
 > 🔴 **12 septembre 2026, quatrième session — la production était cassée depuis
 > la nuit, elle est réparée, et la cause de fond est corrigée.** L'opérateur :
 > « l'app ne marche plus depuis la nuit. » Écran gris, `LateInitializationError`
@@ -1126,116 +1165,71 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — `ADM-04` est fait, l'espace admin est complet
+
+## 9. Prompt de reprise — `N2` est fait, la vidéo attend son compte
 
 À copier tel quel pour démarrer la prochaine session.
 
 ### 9.1 Ce qui a été mesuré le 12 septembre, et non supposé
 
-**Première session.** La production a été ouverte en session admin plutôt que
-de questionner l'opérateur écran par écran. Le verdict « l'app est loin d'être
-fonctionnelle » est **vérifié** : onze destinations du routeur rendaient
-`EcranAConstruire`, dont `ELV-03`/`ENS-03`, la salle de cours, c'est-à-dire le
-produit. Dix-neuf écrans existaient pour de vrai. Zéro erreur console : rien
-n'était cassé, l'étape 5 n'était pas commencée. **Ne pas refaire ce
-diagnostic.**
+**Première session.** Le verdict « l'app est loin d'être fonctionnelle » est
+**vérifié** : onze destinations du routeur rendaient `EcranAConstruire`, dont
+`ELV-03`/`ENS-03`, la salle de cours. Zéro erreur console : rien n'était cassé,
+l'étape 5 n'était pas commencée. **Ne pas refaire ce diagnostic.**
 
-**Deuxième session.** `ADM-05` construit, hors série, pendant que N2 attendait
-la décision vidéo. Le produit peut enfin produire une séance sans qu'un
-enseignant en prenne l'initiative.
+**Deuxième et troisième sessions.** `ADM-05` puis `ADM-04`, hors série,
+pendant que N2 attendait la décision vidéo. L'espace admin est complet.
 
-**Troisième session.** N2 toujours bloqué sur la vidéo ; `ADM-04` construit,
-premier lot libre de la liste par valeur décroissante. **Il reste neuf
-destinations en `EcranAConstruire`**, et **plus une seule dans l'espace
-admin**. Compté dans `lib/core/router/app_router.dart` : huit sites d'appel,
-dont un écran de chargement qui n'est pas un écran du catalogue, et un seul
-site pour la salle qui porte trois codes (`ELV-03`, `ENS-03`, `CTR-02`).
+**Quatrième session.** La production réparée, et le garde-fou `assert` remplacé
+par un écran d'erreur réel.
 
-### 9.2 Les causes non-code : une seule reste
+**Cinquième session.** **N2 fait.** Il reste **neuf** destinations en
+`EcranAConstruire`, inchangé : N2 ne pose aucun écran, il pose la plomberie
+sous la salle. Le compte se lit dans `lib/core/router/app_router.dart`, jamais
+en parcourant les écrans.
 
-1. ~~La migration `0006` n'est pas sur la base réelle~~ — **close.** `0006`,
-   `0007`, `0008` appliquées par l'opérateur, `0009` par l'agent. Vérifié sur
-   la base réelle : `access_until`, `etat_presence()`, `presence_seance_v`,
-   `student_reading_position` et les trois fonctions d'`ADM-05` répondent.
-   **Plus aucune migration n'attend une main humaine** : le MCP `supabase`
-   vise Rewayah et l'opérateur a donné mandat de les appliquer directement.
-2. **La production ne sert pas `main`.** Seule cause non-code encore ouverte,
-   et elle grandit : la build de `D:\ra-pwa-build\build\web` date de `5b8b868`
-   et ne contient ni `ADM-05` ni `ADM-04`.
+### 9.2 Les causes non-code
 
-### 9.3 Ce que la troisième session a livré
+1. ~~Migrations en attente~~ — **close depuis la troisième session.** `0010` a
+   été appliquée par l'agent et vérifiée sur la base réelle.
+2. **La production ne sert pas encore N2.** Elle sert `main` et fonctionne,
+   mais la build date d'avant ce lot.
+3. 🔴 **Aucun compte LiveKit n'existe.** C'est la seule chose qui manque à la
+   vidéo, et elle n'est pas du code.
 
-- `supabase/migrations/0009_journal_audit.sql` : `journal_audit(...)`,
-  `journal_audit_filtres()`, `verifier_chaine_audit(int)`. **Aucune table,
-  aucune colonne, aucune policy** — `audit_logs` existe depuis l'étape 1 et
-  était déjà remplie. Trois lectures, rien d'autre. **Appliquée et vérifiée
-  sur la base réelle.**
-- `supabase/tests/scenarios_adm04.sql` : neuf contrôles, rejoués à la suite des
-  quatre autres fichiers sur `0001`→`0009`. **106 contrôles verts au total**
-  (34 + 39 + 15 + 9 + 9). Ajouté à `ci.yml`, qui ne s'en charge pas seul.
-- `lib/core/journal/service_journal.dart`, `lib/features/admin_journal/`,
-  treize tests de widget et trois tests unitaires.
-- **`DataCollection`** : le P1 du catalogue des composants, « nécessaire avant
-  l'étape 5 », jamais construit jusqu'ici faute d'écran dont la forme naturelle
-  soit un tableau. Tableau dense au desktop, cartes ailleurs, **une seule
-  définition de colonnes** pour les deux.
-- **`FilterPill`**, née ici, hors liste d'origine, inscrite au catalogue comme
-  `MarquePage` avant elle.
-- **ADR-022** et les questions **27** et **28** du registre.
-- `ADM-04` est le **deuxième écran du produit à employer `Skeleton`**. L'écart
-  de la Bible §18 reste ouvert sur les dix-neuf autres, mais il a maintenant
-  deux motifs à copier, dont un sur liste paginée.
+### 9.3 Ce que la cinquième session a livré
 
-**Ce que le lot a débloqué au-delà de l'écran.** `audit_logs` porte
-`prev_hash`/`hash` depuis l'étape 1, et `log_sensitive_access()` paie un
-`lock table` à chaque écriture du produit pour les tenir — **sans que personne
-ne les relise jamais**. Le prix était payé, la garantie jamais constatée. Elle
-l'est : 34 entrées sur 34 se recalculent sur la base réelle, et les scénarios
-`J5` et `J6` falsifient délibérément le journal, l'un par `update` et l'autre
-par `delete`, pour vérifier que chacun se voit **à un endroit différent** — le
-condensat pour la modification, le maillon pour la suppression. Les deux
-réparent ce qu'ils ont cassé et le reverifient, sans quoi ils rendraient rouge
-tout ce qui passe après eux.
+- `supabase/migrations/0010_video_jeton_presence.sql` : `video_config`,
+  `session_video_route`, `video_token_grants`, `livekit_webhook_deliveries`,
+  et cinq fonctions. **Aucune policy d'écriture ouverte au client** : le jeton
+  vidéo EST le contrôle d'accès à la salle.
+- `supabase/tests/scenarios_n2.sql` : dix contrôles, **avant** `scenarios_adm04.sql`
+  dans `ci.yml` (l'émission de jeton écrit dans `audit_logs`, et J4 relit la chaîne).
+- `supabase/functions/_shared/livekit.ts`, `create-room-token/`,
+  `livekit-webhook/` : **déployées et `ACTIVE`**.
+- `lib/core/video/` : `video_session_provider.dart` (le contrat),
+  `livekit_session_provider.dart` (seul fichier autorisé à importer
+  `livekit_client`), `service_video.dart`, `pre_vol.dart`.
+- **ADR-023**, questions **29** et **30** du registre.
 
-### 9.4 Reconstruire et promouvoir
+**Ce que le lot a débloqué au-delà de la plomberie.** `etat_presence()` ne
+dérivait que treize des quatorze états : `en_connexion` manquait, et N1 avait
+refusé de l'inventer faute de trace en base. `video_token_grants` est cette
+trace. Le quatorzième état se dérive, et il est **non falsifiable par le
+client** — comme les treize autres.
 
-**Rien n'attend l'opérateur : la production est à jour et elle fonctionne**
-(vérifiée à l'écran le 12/09). Ce qui suit est la recette, pour la prochaine
-fois.
+### 9.4 Les trois pièges fermés dans ce lot, à ne pas rouvrir
 
-```
-! cd "D:\ra-pwa-build"; flutter build web --release --dart-define-from-file=dart_define.json
-! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
-```
-
-🔴 **Le `--dart-define-from-file` n'est pas optionnel.** Sans lui,
-`Env.supabaseUrl` et `Env.supabaseAnonKey` — des `String.fromEnvironment` —
-valent la chaîne vide, `Supabase.initialize` n'est jamais appelé, et
-l'application meurt sur un **écran gris** au premier provider qui touche le
-client (`LateInitializationError`). **Trois déploiements de suite sont partis
-ainsi le 12/09** (06:08, 13:26, 14:32), tous par des agents, sans que rien ne
-le signale. Depuis, une compilation sans clés affiche
-`EcranConfigurationAbsente` au lieu de démarrer.
-
-🔴 **Construire depuis `D:\ra-pwa-build` uniquement.** Le `dart_define.json` du
-dépôt de travail porte une clé **factice** et `GALERIE`/`PLAYGROUND` à `true` :
-bâtir la production avec lui publierait une clé morte, la galerie et le
-playground.
-
-⚠ `D:\ra-pwa-build` est un worktree **lié** : `git checkout main` y est
-**impossible**, `main` étant déjà sorti dans le dépôt principal. Il reste
-détaché, **et c'est normal** — ce qui compte n'est pas l'état git mais que les
-sources soient les bonnes. Vérifier en revanche que le `hooks.user_defines`
-`sqlite3` de la section 0 undecies n'est plus dans son `pubspec.yaml` : il
-change le SQLite d'une build de production.
-
-**Contrôle après promotion, les deux, pas un seul :**
-
-1. `gggmtelinlpseweouyav` doit apparaître dans le `main.dart.js` servi ;
-2. **ouvrir l'application et lire la console.**
-
-Chercher une chaîne du dernier lot **ne prouve rien** : le bundle mort du 14:32
-contenait bien `Journal intact` et n'avait aucune configuration.
+1. **Deux fournisseurs, une seule salle.** Tirer le fournisseur à chaque
+   émission enverrait l'enseignant et l'élève sur deux serveurs différents, sans
+   aucune erreur visible : les deux seraient « connectés », chacun seul.
+   `session_video_route` fige la route à la première émission.
+2. **Le webhook ne doit pas écraser une sortie volontaire.** `left` arrive dans
+   les deux cas ; seule `source` distingue `sortie` de `deconnectee`. Une
+   fenêtre de trente secondes protège le geste de l'usager.
+3. **Les capacités se calculent en base, jamais dans le client ni dans le
+   TypeScript.** Un élève dont `camera_policy` vaut `forbidden` — le défaut
+   pour un mineur — reçoit un jeton qui ne *peut* pas publier d'image.
 
 ### 9.5 Le prompt
 
@@ -1245,191 +1239,109 @@ Chemins en absolu : Glob ne trouve pas ce depot.
 
 NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre :
   1. docs/HANDOFF.md -- l'en-tete et la section 9.
-  2. docs/architecture/etape-5-salle-coran-presence.md -- sections 5, 7 et 12.
-  3. docs/MISE-EN-SERVICE.md sections 5.1, 5.2, 5.3 et 7.1.
-Le reste ne se lit que si le sujet du jour y touche.
+  2. docs/architecture/etape-5-salle-coran-presence.md -- sections 5, 7, 12.
+  3. docs/MISE-EN-SERVICE.md section 8 (LiveKit) et 7.1.
+N'OUVRE PAS "D:\RA _APP\docs de lancement\architecture live kit..md" :
+elle est longue, elle a servi au lot N2, et son contenu utile est
+desormais dans l'ADR-023 et les commentaires de la migration 0010.
 
 OU ON EN EST, MESURE ET NON SUPPOSE.
 Le verdict "l'app est loin d'etre fonctionnelle" est VERIFIE depuis le
-12/09 : onze destinations du routeur rendaient EcranAConstruire, dont
-ELV-03/ENS-03, la salle de cours. Ne REFAIS PAS ce diagnostic.
-Il en reste NEUF : eleve (Coran, Suivi), tuteur (Suivi), enseignant
+12/09. Ne REFAIS PAS ce diagnostic. NEUF destinations rendent encore
+EcranAConstruire : eleve (Coran, Suivi), tuteur (Suivi), enseignant
 (Profil), controleur (Planning), espace comptable, et
 ELV-03/ENS-03/CTR-02 la salle. L'ESPACE ADMIN EST COMPLET.
-Le compte se lit dans lib/core/router/app_router.dart, jamais en
-parcourant les ecrans.
+Le compte se lit dans lib/core/router/app_router.dart.
 
 FAIT :
   N0 = spec etape 5 + ADR-020 (39aec71)
-  N1 = migration 0007 : Coran structure, student_reading_position,
-       presence_state a 14 etats, etat_presence(), presence_seance_v
-       (a736a43) -> 15 controles
-  ADM-05 = attribution manuelle, HORS SERIE (1eddc9c). Migration 0008,
-       ecran, ADR-021 -> 9 controles SQL + 7 tests de widget.
-       C'etait le chainon manquant : sans lui aucune affectation ne
-       naissait sans un enseignant, donc aucune seance, donc ENS-02 /
-       ELV-02 / TUT-01 restaient vides.
-  ADM-04 = journal d'audit, HORS SERIE lui aussi, fait pendant que N2
-       attendait toujours la video. Migration 0009 (trois lectures,
-       aucune table), ecran, DataCollection, FilterPill, ADR-022
-       -> 9 controles SQL + 13 tests de widget + 3 unitaires.
-       Il a surtout rendu VERIFIABLE la chaine de hachage que
-       audit_logs portait depuis l'etape 1 sans que personne ne la
-       relise : 34/34 se recalculent sur la base reelle.
-  FIX = garde-fou de configuration (6404843). L'assert de main.dart
-       n'existait pas en release : TROIS deploiements de suite ont mis
-       en ligne un bundle compile sans --dart-define, qui demarrait
-       puis mourait sur un ecran gris (LateInitializationError). La
-       prod etait cassee depuis la nuit du 12/09 sans que rien ne le
-       dise. Desormais EcranConfigurationAbsente nomme ce qui manque
-       et donne la commande qui repare. Verifie sur DEUX builds
-       release : avec cles l'ecran est tree-shake (aucune graisse en
-       prod), sans cles il apparait et le bundle tombe a 2,4 Mo.
-       flutter test 563/563, jetons 103 fichiers, analyze propre.
-       LECON : un assert n'est pas un garde-fou, et une suite de tests
-       ne prouve rien d'un comportement de release -- elle tourne en
-       VM debug, ou l'assert existait deja.
+  N1 = migration 0007 : Coran structure, presence a 14 etats (a736a43)
+  ADM-05 = attribution manuelle, HORS SERIE (1eddc9c)
+  ADM-04 = journal d'audit, HORS SERIE (1c60089)
+  N2 = LA VIDEO. Migration 0010, fonctions Edge create-room-token et
+       livekit-webhook (DEPLOYEES ET ACTIVE), module lib/core/video/,
+       ADR-023 -> 10 controles SQL + 13 tests Dart.
+       Il rend `en_connexion` derivable : c'etait le 14e etat que N1
+       refusait d'inventer faute de trace en base.
 
-LE PROCHAIN LOT EST N2, ET IL EST DEBLOQUE DEPUIS LE 12/09 AU SOIR.
-L'operateur l'avait repousse DEUX FOIS dans la journee, puis a donne le
-feu vert le soir meme : "donne-moi le prompt qui va lancer l'implementation
-du fournisseur video et de ses specs, tu sais que le doc est dispo".
-N2 = VideoSessionProvider/LiveKitSessionProvider (ADR-001), pre-flight,
-emission de jeton. La spec est :
-  "D:\RA _APP\docs de lancement\architecture live kit..md"
-C'EST LE SEUL LOT QUI JUSTIFIE DE L'OUVRIR : elle est longue et coute cher
-en contexte, donc ne la lire que dans la session qui traite la video.
-Demander a l'operateur ce que la spec ne fixe pas : fournisseur retenu,
-compte, cles.
-N2 debloque aussi la salle de cours (ELV-03 / ENS-03 / CTR-02), le produit
-lui-meme, qui rend encore EcranAConstruire.
+LE PROCHAIN LOT EST N3 : la coquille de salle (ELV-03/ENS-03/CTR-02).
+C'est le plus gros placeholder du routeur, et le produit lui-meme.
+Il consomme ce que N2 a pose : ref.watch(serviceVideoProvider).acces(...)
+rend un AccesSalle, LiveKitSessionProvider le consomme, les flux
+etats/participants/qualite sont deja la. N3 n'ecrit AUCUN appel reseau
+video : tout passe par lib/core/video/.
+Lire la fiche de salle dans docs/design/08-catalogue-ecrans.md AVANT.
 
-/!\ COMMENCER PAR LIRE LE TRAVAIL D'OPENCODE, IL A DEJA COMMENCE N2.
-Constate le 12/09 au soir, tout en NON COMMITE dans le depot de travail :
-  - livekit_client: ^2.12.0 ajoute au pubspec.yaml
-  - supabase/migrations/0010_video_jeton_presence.sql
-  - supabase/tests/scenarios_n2.sql
-  - .github/workflows/ci.yml modifie
-  - le Playground (PLAYGROUND en bool.fromEnvironment, PlaygroundRacine)
-Faire `git status` puis LIRE ces deux fichiers SQL avant d'ecrire une
-ligne, sinon migration 0010 en double et deux conceptions concurrentes du
-jeton. NE PAS APPLIQUER 0010 sans l'avoir lue : elle n'est pas de nous.
-C'est aussi N2 qui posera la trace d'emission de jeton rendant l'etat
-`en_connexion` derivable. N1 ne le derive volontairement pas, faute de
-trace en base. Ne pas l'inventer.
+CE QUI N'EST PAS PROUVE, ET QU'IL NE FAUT PAS PRETENDRE AVOIR PROUVE :
+la connexion reelle a une salle LiveKit. Aucun compte n'existe. La
+chaine repond proprement "video non configuree" (503) et le webhook
+refuse tout (401) -- verifie par HTTP le 12/09. Le reste est mesure.
 
-SI N2 EST TOUJOURS BLOQUE, les lots non bloques par la video sont, par
-valeur decroissante :
-  - l'ecart Skeleton sur les dix-neuf ecrans restants (bible section
-    18). C'EST DESORMAIS LE PREMIER : le dernier placeholder admin est
-    tombe, et c'est le plus gros ecart de rendu qui reste. ADM-05 et
-    ADM-04 donnent deux motifs a copier, dont un sur liste paginee ;
-  - N5 / ELV-04 lecteur Coran -- mais il demande d'abord l'import du
-    jeu de donnees coranique, et github.com est injoignable en TLS
-    depuis ce poste ;
-  - ENS-05 profil enseignant (niveau D, fiche a remplir d'abord).
-CTR-01 et CTR-02 restent bloques par la salle, pas par la video seule.
-
-AUCUNE ACTION N'ATTEND L'OPERATEUR. La production est a jour et elle
-FONCTIONNE : verifiee a l'ecran le 12/09 (session admin restauree,
-/admin/tableau-de-bord rendu avec ses chiffres lus en base, zero erreur
-console).
-
-DEPLOIEMENT -- LA COMMANDE EXACTE, ET LE --dart-define N'EST PAS OPTIONNEL :
-   ! cd "D:\ra-pwa-build"; flutter build web --release --dart-define-from-file=dart_define.json
-   ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
-
-  Sans --dart-define-from-file, Env.supabaseUrl et Env.supabaseAnonKey sont
-  des String.fromEnvironment VIDES : Supabase.initialize n'est jamais appele
-  et l'application meurt sur un ecran gris, au premier provider qui touche
-  le client (LateInitializationError). TROIS DEPLOIEMENTS DE SUITE sont
-  partis ainsi le 12/09 (06:08, 13:26, 14:32), tous par des agents.
-  Depuis ce jour, une compilation sans cles affiche EcranConfigurationAbsente
-  au lieu de demarrer : la panne ne peut plus etre muette. La commande reste
-  a respecter -- le garde-fou dit qu'on s'est trompe, il ne repare rien.
-
-  CONSTRUIRE DEPUIS D:\ra-pwa-build UNIQUEMENT. Le dart_define.json du depot
-  de travail porte une cle FACTICE et GALERIE/PLAYGROUND a true : batir la
-  production avec lui publierait une cle morte, la galerie et le playground.
-
-  Ce worktree est un worktree LIE (son .git est un fichier qui pointe vers
-  .git/worktrees/ra-pwa-build) : `git checkout main` y est IMPOSSIBLE, main
-  etant deja sorti dans le depot principal. Il reste DETACHE, et c'est
-  normal. Ce qui compte n'est pas l'etat git mais que les sources soient les
-  bonnes. Verifier aussi que le user_define sqlite3 n'est PAS dans son
-  pubspec.yaml avant une version de production (il n'y sert qu'aux mesures).
-
-  CONTROLE APRES PROMOTION -- LES DEUX, PAS UN SEUL :
-   1. `gggmtelinlpseweouyav` doit apparaitre dans le main.dart.js servi ;
-   2. ouvrir l'application et lire la console.
-  Chercher une chaine du dernier lot NE PROUVE RIEN : le bundle mort du
-  14:32 contenait bien `Journal intact` et n'avait aucune configuration.
+UNE SEULE ACTION A LA MAIN DE L'OPERATEUR, ET ELLE DEBLOQUE TOUT :
+  Ouvrir un projet sur cloud.livekit.io (tier Build, gratuit), puis
+  poser trois secrets et declarer un webhook. Recette exacte, copiable
+  telle quelle : docs/MISE-EN-SERVICE.md section 8.
+  AUCUN redeploiement d'application n'est necessaire ensuite : le
+  client n'a aucune URL LiveKit en dur (ADR-023).
+  ATTENTION : le secret LiveKit ne s'affiche QU'UNE FOIS.
 
 A LUI SOUMETTRE, PAS BLOQUANT (decisions prises par l'agent) :
-  - ADR-021 : l'administration peut attribuer un eleve hors des
-    disponibilites declarees d'un enseignant, avec motif obligatoire
-    et journalisation. Reversible en une heure.
-  - ADR-022 decision 4 : la consultation du journal ne s'inscrit PAS
-    au journal. Un admin peut donc lire tout le journal sans trace.
-    Reversible en une heure, recette en fin d'ADR-022.
+  - ADR-021 : attribution hors disponibilites, avec motif.
+  - ADR-022 decision 4 : la consultation du journal ne se journalise pas.
+  - ADR-023 : les deux fournisseurs video coexistent, route ancree par
+    seance. C'est SA decision, mais l'ancrage par seance est de l'agent.
 
-MIGRATIONS : il n'y en a plus en attente. Le MCP supabase vise Rewayah
-(gggmtelinlpseweouyav) et l'operateur a donne mandat de les appliquer
-directement. GARDER LE REFLEXE get_project_url AVANT toute ecriture :
-le serveur a deja vise PISI (riaqzfhdynmtshvbgdvt) pendant des
-sessions entieres, ce qui faisait echouer toute requete.
+MIGRATIONS : plus aucune en attente. 0010 est appliquee et verifiee sur
+la base reelle. GARDER LE REFLEXE get_project_url AVANT toute ecriture :
+le MCP a deja vise PISI (riaqzfhdynmtshvbgdvt) au lieu de Rewayah
+(gggmtelinlpseweouyav) pendant des sessions entieres.
 
 POUR MESURER :
-  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0009,
-    puis les CINQ fichiers de scenarios a la suite. Recette section 6.
-    Docker Desktop n'est pas forcement demarre : le lancer et boucler
-    sur `docker info`.
-    Le `docker rm -f` se passe SEUL sur sa ligne (protection de chemins).
-    Reference : 34 + 39 + 15 + 9 + 9 = 106 controles, zero erreur.
-    PIEGE : les cinq fichiers tournent sur la MEME base. Une assertion
-    qui compte en global mesure les fixtures des autres. Borner par
-    household_id ou par identifiant, et verifier l'ordre en rang
-    relatif, jamais par limit 1. SEULE EXCEPTION assumee : le controle
-    J4 de scenarios_adm04.sql, qui verifie l'integrite de la chaine de
-    TOUT le journal, fixtures des autres fichiers comprises. C'est pour
-    cela qu'il tourne en dernier ; le remonter ne mesurerait plus rien.
-  - Dart : flutter test NE TOURNE PAS tel quel (TLS github.com refuse
-    pour le hook package:sqlite3). Contournement en section 0 undecies :
-    le user_define `source: system` dans le pubspec du worktree
-    D:\ra-pwa-build UNIQUEMENT, jamais commite, retire apres la mesure
-    par `git checkout -- pubspec.yaml`. Reference 559/559.
-    `dart run tool/verifier_jetons.dart` est loge a la meme enseigne :
-    il se lance depuis le worktree. Reference 102 fichiers.
-    Methode : editer dans le depot de travail, copier les fichiers
-    touches vers le worktree, mesurer la-bas.
+  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0010,
+    puis les SIX fichiers de scenarios a la suite, scenarios_adm04.sql
+    EN DERNIER. Reference 116 controles.
+    Astuce si le conteneur existe deja : creer une base neuve dedans
+    (createdb) plutot que de le recreer -- stub_auth.sql echoue alors
+    sur les roles deja presents, ce qui est sans consequence, lancer
+    le stub SANS ON_ERROR_STOP.
+  - Flutter : blocage TLS de github.com toujours la (hook package:sqlite3).
+    Contournement : user_define `source: system` dans le pubspec du
+    worktree D:\ra-pwa-build UNIQUEMENT, jamais commite, retire apres.
+    Methode : editer dans le depot, copier vers le worktree, mesurer
+    la-bas. Reference 576/576 et 107 fichiers de jetons.
 
 PIEGES :
 - OpenCode travaille EN PARALLELE sur le meme depot (lib/app.dart,
   lib/core/config/env.dart, lib/main.dart, lib/features/_dev/playground/).
   git status avant tout commit, ne jamais stager ses fichiers.
-  ATTENTION a ne pas confondre : lib/features/_dev/galerie/ est SUIVI
-  et c'est le notre ; seul _dev/playground/ est a OpenCode.
+  ATTENTION : lib/features/_dev/galerie/ est SUIVI et c'est le notre ;
+  seul _dev/playground/ est a OpenCode.
+- DES FICHIERS NON COMMITES NE DISENT PAS QUI LES A ECRITS. Le commit
+  c2e52d2 affirmait "OpenCode a deja commence N2" : c'etait le travail
+  non commite de la session N2 elle-meme, vu depuis une autre session.
+  Verifier par `git ls-files` avant de conclure a un travail concurrent.
 - TOUT nouveau composant de lib/core/widgets/ doit avoir son entree de
   galerie ET sa ligne dans composantsDuCatalogue de
-  catalogue_galerie_test.dart, sinon la suite casse. Deux etats au
-  minimum par entree.
+  catalogue_galerie_test.dart. (N2 n'en a cree aucun : il ne touche
+  a aucun widget.)
 - verifier_jetons.dart refuse le tiret cadratin dans le code Dart.
-  Deux points ou une virgule a la place.
 - journee_test.dart / "ENS-02 : le bloc dominant" est rouge entre 23h34
   et minuit seulement. Vert ne prouve pas repare.
-- Aucune heure locale en dur dans un scenario qui croise deux fuseaux :
-  Conakry ne change pas d'heure, Paris si. Calculer par
-  extract(hour from (instant_creneau(...) at time zone '...')).
-- Une ligne "Fait" du tableau de docs/design/README.md ne vaut que si un
-  test la tient : deux etaient fausses (13.4 et 18).
-- Skeleton n'est employe que par ADM-05 et ADM-04. Les dix-neuf autres
-  ecrans affichent encore un Text "Chargement" nu, et le demarrage a
-  froid de la PWA depasse treize secondes.
-- Un nouveau fichier de scenarios SQL ne s'ajoute PAS tout seul a
-  ci.yml. Y penser dans le meme lot.
+- Un nouveau fichier de scenarios SQL ne s'ajoute PAS tout seul a ci.yml.
+- Une seance est plafonnee a DEUX participants par
+  guard_session_participant_cap, sauf si allow_multi_participant_sessions
+  vaut true. Un scenario qui met un prof, deux eleves et un controleur
+  doit lever le plafond puis le REPOSER : les fichiers partagent une base.
+- DEPLOIEMENT, la commande exacte, depuis le worktree :
+     cd "D:\ra-pwa-build"; flutter build web --release --dart-define-from-file=dart_define.json
+     cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
+  SANS --dart-define-from-file, Supabase n'est jamais initialise.
+  Depuis 6404843 l'app affiche EcranConfigurationAbsente au lieu d'un
+  ecran gris, mais c'est un garde-fou, pas une excuse.
+  vercel deploy NE CONSTRUIT RIEN : il televerse le disque.
+  Puis OUVRIR L'APP ET LIRE LA CONSOLE.
 
 Un lot par session. Ignore la branche refactor-ui-lavender.
 FIN DE SESSION : livrer un prompt de reprise et mettre a jour cette
 section 9. Consigne permanente de l'operateur.
 ```
-
