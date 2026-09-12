@@ -20,7 +20,9 @@ import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/confirm_destructive.dart';
+import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/nav_shell.dart';
@@ -1016,7 +1018,134 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         ),
     ],
   ),
+  EntreeGalerie(
+    nom: 'FilterPill',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'libre',
+        (BuildContext _) =>
+            FilterPill(libelle: t.galerie.composants, onPress: _rien),
+      ),
+      EtatGalerie(
+        'retenue',
+        (BuildContext _) => FilterPill(
+          libelle: t.galerie.composants,
+          retenue: true,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'avec compteur',
+        (BuildContext _) => FilterPill(
+          libelle: t.galerie.composants,
+          compteur: 12,
+          onPress: _rien,
+        ),
+      ),
+      // Zero s'affiche comme les autres valeurs : une pilule qui perdrait son
+      // compteur a zero laisserait croire qu'il n'a pas ete lu.
+      EtatGalerie(
+        'compteur a zero',
+        (BuildContext _) => FilterPill(
+          libelle: t.galerie.composants,
+          compteur: 0,
+          onPress: _rien,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'DataCollection',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // La hauteur est posee par la galerie et non par le composant : il porte
+      // sa propre zone defilante, donc il lui faut des contraintes verticales,
+      // que la page qui l'emploie lui donne par `PageShell(defilante: false)`.
+      EtatGalerie(
+        'trois lignes',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurCollection,
+          child: DataCollection<List<String>>(
+            colonnes: _colonnesDemonstration,
+            lignes: _lignesDemonstration,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'une seule ligne',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurCollection,
+          child: DataCollection<List<String>>(
+            colonnes: _colonnesDemonstration,
+            lignes: _uneSeuleLigne,
+          ),
+        ),
+      ),
+      // Aucune ligne : le composant ne dessine pas d'etat vide, c'est l'ecran
+      // qui choisit son registre d'`EmptyState`. En rendu tableau, l'en-tete de
+      // colonnes reste, et c'est voulu.
+      EtatGalerie(
+        'aucune ligne',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurCollection,
+          child: DataCollection<List<String>>(
+            colonnes: _colonnesDemonstration,
+            lignes: <List<String>>[],
+          ),
+        ),
+      ),
+    ],
+  ),
 ];
+
+/// La hauteur donnee a `DataCollection` dans la galerie.
+const double _hauteurCollection = AppSpacing.respiration * 3;
+
+/// Trois lignes de demonstration, chacune un triplet de textes.
+const List<List<String>> _lignesDemonstration = <List<String>>[
+  _premiereLigne,
+  <String>['11/09/2026', 'Omar Sow', 'deux mots'],
+  <String>['10/09/2026', 'Ibrahim Diop', 'un mot'],
+];
+
+const List<String> _premiereLigne = <String>[
+  '12/09/2026',
+  'Amina Bah',
+  'trois mots de detail',
+];
+
+/// La meme, seule : `.first` ne s'evalue pas dans une expression constante.
+const List<List<String>> _uneSeuleLigne = <List<String>>[_premiereLigne];
+
+/// Les trois roles de colonne, pour que la galerie montre la transformation.
+const List<ColonneDonnees<List<String>>> _colonnesDemonstration =
+    <ColonneDonnees<List<String>>>[
+      ColonneDonnees<List<String>>(
+        titre: 'Quand',
+        texte: _premiereColonne,
+        tabulaire: true,
+        flex: 2,
+      ),
+      ColonneDonnees<List<String>>(
+        titre: 'Qui',
+        texte: _deuxiemeColonne,
+        role: RoleColonne.identifiante,
+        flex: 3,
+      ),
+      ColonneDonnees<List<String>>(
+        titre: 'Detail',
+        texte: _troisiemeColonne,
+        role: RoleColonne.aPart,
+        flex: 4,
+      ),
+    ];
+
+String _premiereColonne(List<String> ligne) => ligne[0];
+
+String _deuxiemeColonne(List<String> ligne) => ligne[1];
+
+String _troisiemeColonne(List<String> ligne) => ligne[2];
 
 /// Les quatre niveaux d'action, dans un etat d'interaction donne.
 Widget _quatreNiveaux(EtatPression etat) => PressionForcee(

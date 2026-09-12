@@ -300,7 +300,20 @@ commit;
 `0006` et suivantes.** Corriger `0005` sur place ne se voit plus nulle part :
 la base reelle ne la rejouera jamais.
 
+> ✅ **Tout ce qui suit en 5.1, 5.2 et 5.3 est FAIT.** Mesure du
+> 12 septembre 2026, troisieme session, contre la base reelle : `0006`, `0007`
+> et `0008` sont appliquees (colonne `access_until` presente, `etat_presence()`,
+> `presence_seance_v`, `student_reading_position` et les trois fonctions
+> d'`ADM-05` repondent), et `0009` l'est aussi. **Plus aucune migration
+> n'attend une main humaine.** Le MCP `supabase` vise desormais Rewayah, et
+> l'operateur a donne mandat d'appliquer les suivantes directement.
+> Les trois sous-sections restent ci-dessous parce qu'elles portent les blocs
+> SQL et la recette, utiles si une base doit etre rejouee de zero. **Elles ne
+> decrivent plus l'etat courant.**
+
 ### 5.1 Etat mesure le 12 septembre 2026 : `0006` n'est toujours pas passee
+
+> ⚠ **Perime : `0006` est passee depuis.** Conserve pour la recette.
 
 Verifie ce jour-la contre la base reelle, sans supposition, par une lecture
 PostgREST de la vue :
@@ -315,11 +328,13 @@ reste faux deux heures par semaine.** Le bloc SQL de la section 5 ci-dessus est
 a coller tel quel dans l'editeur SQL du tableau de bord Supabase du projet
 `gggmtelinlpseweouyav`.
 
-⚠ **Le serveur MCP `supabase` de ce poste n'est pas branche sur ce projet.**
-Il pointe sur `riaqzfhdynmtshvbgdvt`, c'est-a-dire sur la base **PISI**. Une
-session qui l'utiliserait pour « appliquer la migration » ecrirait dans le
-mauvais produit. Verifier par `get_project_url` avant toute ecriture, et s'en
-tenir a l'editeur SQL du tableau de bord tant que ce reglage n'a pas change.
+⚠ ~~**Le serveur MCP `supabase` de ce poste n'est pas branche sur ce
+projet.**~~ **Corrige le 12 septembre 2026** : il vise desormais
+`gggmtelinlpseweouyav`, verifie par `get_project_url`. Il a pointe sur
+`riaqzfhdynmtshvbgdvt`, c'est-a-dire sur la base **PISI**, pendant des sessions
+entieres, ce qui faisait echouer toute requete sur les tables Rewayah. **Garder
+le reflexe `get_project_url` avant toute ecriture** : la bascule s'est deja
+produite une fois, et elle ne s'annonce pas.
 
 ### 5.2 `0007` (lot N1, etape 5) attend la meme operation
 
@@ -366,6 +381,35 @@ l'administration ») tient toujours, et le controle A9 le mesure.
 
 ⚠ Elle depend de `0005` seulement. Elle peut donc se coller meme si `0006` et
 `0007` tardent — mais il n'y a aucune raison de les separer.
+
+### 5.4 `0009` (lot `ADM-04`) : appliquee par l'agent, et verifiee
+
+`supabase/migrations/0009_journal_audit.sql` a ete **appliquee directement par
+l'agent** le 12 septembre 2026, sur mandat de l'operateur, une fois le MCP
+`supabase` repointe sur Rewayah. Elle est inscrite dans
+`supabase_migrations.schema_migrations` sous le nom `0009_journal_audit`.
+
+Ce qu'elle ajoute : **trois lectures, et rien d'autre.** Aucune table, aucune
+colonne, aucune policy — `audit_logs` existe depuis l'etape 1, elle est deja
+remplie, deja append-only, deja lisible par l'administration.
+
+- `journal_audit(...)` : la liste, filtree et paginee par keyset ;
+- `journal_audit_filtres()` : les valeurs reellement presentes, acteurs et
+  types, chacune avec son compte ;
+- `verifier_chaine_audit(int)` : le recalcul de la chaine de hachage.
+
+**Verifie sur la base reelle apres application**, pas suppose : les trois
+fonctions repondent en se faisant passer pour un admin
+(`request.jwt.claims` = `{"app_metadata":{"role":"admin"}}`), la liste rend les
+entrees les plus recentes avec le nom de leur acteur resolu, les filtres
+remontent 7 types et 3 acteurs, la pagination par curseur rend bien le
+complement exact de la premiere page, et **`verifier_chaine_audit(200)` rend
+34 verifiees, 0 rompue**.
+
+⚠ Les trois fonctions sont reservees a `admin`, alors que la policy
+`audit_logs_read` de `0001` autorise aussi `controller`. Ce n'est pas un
+retrecissement : la policy n'est pas touchee, un controleur lit la table
+exactement comme avant. La raison est en ADR-022, decision 3.
 
 ## 6. Ce qui a ete constate en regardant l'application en ligne
 

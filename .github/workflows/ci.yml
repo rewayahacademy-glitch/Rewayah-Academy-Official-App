@@ -71,11 +71,22 @@ jobs:
       # creneaux par instant, motif obligatoire hors disponibilite (ADR-021),
       # plafond, et le mur d'ecriture de 0005 qui doit tenir apres 0008.
       #
-      # Il vient en dernier : ses assertions sont bornees a ses propres fixtures
-      # precisement pour tenir a la suite des trois autres sur la meme base.
+      # Ses assertions sont bornees a ses propres fixtures precisement pour
+      # tenir a la suite des trois autres sur la meme base.
       - name: Scenarios d'acceptation SQL de ADM-05
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_adm05.sql
+
+      # Journal d'audit : lecture reservee a l'administration, pagination par
+      # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
+      # verifiee -- y compris en la falsifiant volontairement (J5, J6).
+      #
+      # Il vient en DERNIER, et c'est structurel : J4 verifie l'integrite de
+      # tout ce que les quatre fichiers precedents ont ecrit dans `audit_logs`.
+      # Le remonter dans la liste ne mesurerait plus que ses propres fixtures.
+      - name: Scenarios d'acceptation SQL de ADM-04
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_adm04.sql
 
   flutter:
     name: Flutter (${{ matrix.target }})

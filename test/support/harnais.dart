@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/journal/service_journal.dart';
 import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
@@ -654,6 +655,111 @@ class FauxServiceAttribution implements ServiceAttribution {
     // Le faux relit ce qu'il a ecrit, comme la base : l'eleve attribue quitte
     // la file, et c'est ce que l'ecran doit refleter sans etat local.
     foyers = foyers.where((FoyerEnAttente f) => f.eleveId != eleveId).toList();
+  }
+}
+
+/// Un journal d'audit en memoire.
+///
+/// Il **pagine pour de vrai** plutot que de rendre tout d'un coup : `ADM-04`
+/// est le premier ecran du produit dont la liste n'a pas de fin, et un faux qui
+/// ignorerait le curseur laisserait le bouton « charger la suite » non mesure.
+class FauxServiceJournal implements ServiceJournal {
+  /// Le journal, le plus recent d'abord. L'ordre est celui de la base.
+  List<EntreeJournal> entreesEnBase = const <EntreeJournal>[];
+
+  /// Ce que les filtres proposent.
+  FiltresJournal filtres0 = const FiltresJournal(
+    actions: <ValeurFiltre>[],
+    acteurs: <ValeurFiltre>[],
+    total: 0,
+  );
+
+  /// Le verdict de la chaine.
+  EtatChaine chaine = const EtatChaine(verifiees: 0, rompues: 0);
+
+  /// Les lectures demandees, dans l'ordre. C'est par elles qu'un test verifie
+  /// qu'un changement de filtre a bien relu depuis le debut.
+  final List<
+    ({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})
+  >
+  lectures =
+      <({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})>[];
+
+  /// Ce que la lecture doit jeter.
+  Object? erreurEntrees;
+
+  /// Ce que la verification de chaine doit jeter.
+  Object? erreurChaine;
+
+  /// Le temps que prend une lecture.
+  Duration delai = Duration.zero;
+
+  @override
+  Future<List<EntreeJournal>> entrees({
+    String? acteur,
+    String? typeEvenement,
+    DateTime? depuis,
+    int limite = 50,
+    CurseurJournal? curseur,
+  }) async {
+    lectures.add((
+      acteur: acteur,
+      type: typeEvenement,
+      depuis: depuis,
+      curseur: curseur,
+    ));
+    if (delai > Duration.zero) {
+      await Future<void>.delayed(delai);
+    }
+    final Object? erreur = erreurEntrees;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+
+    Iterable<EntreeJournal> retenues = entreesEnBase;
+    if (acteur != null) {
+      retenues = retenues.where((EntreeJournal e) => e.acteur == acteur);
+    }
+    if (typeEvenement != null) {
+      retenues = retenues.where(
+        (EntreeJournal e) => e.typeEvenement == typeEvenement,
+      );
+    }
+    if (depuis != null) {
+      retenues = retenues.where((EntreeJournal e) => !e.survenuLe.isBefore(depuis));
+    }
+    if (curseur != null) {
+      // Le meme keyset que la base : strictement avant le couple donne.
+      retenues = retenues.where(
+        (EntreeJournal e) =>
+            e.survenuLe.isBefore(curseur.avantDate) ||
+            (e.survenuLe.isAtSameMomentAs(curseur.avantDate) &&
+                e.id < curseur.avantId),
+      );
+    }
+    return retenues.take(limite).toList();
+  }
+
+  @override
+  Future<FiltresJournal> filtres() async {
+    if (delai > Duration.zero) {
+      await Future<void>.delayed(delai);
+    }
+    return filtres0;
+  }
+
+  @override
+  Future<EtatChaine> verifierChaine({int limite = 200}) async {
+    if (delai > Duration.zero) {
+      await Future<void>.delayed(delai);
+    }
+    final Object? erreur = erreurChaine;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return chaine;
   }
 }
 

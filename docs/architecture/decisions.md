@@ -963,6 +963,81 @@ redevient vide dans le cas 2 ci-dessus.
 
 ---
 
+## ADR-022 - Le journal d'audit prouve son intégrité, et ne journalise pas sa propre lecture
+
+**Statut** : acceptée, 12 septembre 2026, lot `ADM-04`.
+**Contexte** : `audit_logs` porte `prev_hash` et `hash` depuis l'étape 1, et
+`log_sensitive_access()` prend un `lock table ... share row exclusive` à chaque
+écriture pour les tenir cohérents. Jusqu'à ce lot, **personne ne les relisait** :
+le coût était payé à chaque geste du produit, et la garantie n'avait jamais été
+constatée une seule fois.
+
+### Décision 1 : la chaîne est vérifiable, et l'écran la vérifie
+
+`verifier_chaine_audit(p_limite)` recalcule, pour chaque entrée de la fenêtre,
+les deux quantités que l'écriture avait posées :
+
+```
+condensat = sha256(acteur || role || action || table || ligne || payload)
+hash      = sha256(prev_hash || condensat)
+```
+
+C'est possible parce que **les six morceaux sont tous stockés en colonnes** :
+`auth.uid()` dans `actor`, `app_role()` dans `actor_role`, le reste tel quel. Et
+parce que `payload` est une colonne `jsonb`, dont le rendu texte est canonique :
+avec une colonne `json`, l'espacement d'origine aurait survécu et la comparaison
+aurait échoué sur des entrées pourtant saines.
+
+**Deux contrôles par entrée, et il faut les deux.** Le condensat dit que la
+ligne n'a pas été modifiée. Le maillon (`prev_hash` = `hash` de l'entrée
+précédente) dit qu'aucune ligne n'a été **retirée** entre les deux — une
+suppression laisse tous les condensats valides et ne se voit que là. Les
+scénarios `J5` et `J6` de `supabase/tests/scenarios_adm04.sql` falsifient
+délibérément le journal, l'un par `update` et l'autre par `delete`, désarment le
+déclencheur pour y parvenir, vérifient que chacun se voit **à un endroit
+différent**, puis réparent et reverifient.
+
+Mesuré sur la base réelle avant d'écrire la migration : **34 entrées sur 34 se
+recalculent, 34 maillons sur 34 se chaînent.**
+
+### Décision 2 : la vérification ne voyage pas avec la liste
+
+Elle a sa propre fonction, et l'écran son propre provider. Un `lag()` posé sur
+une liste **filtrée** comparerait chaque entrée à la précédente *du filtre* et
+non à celle de la chaîne : le journal se déclarerait rompu dès le premier filtre
+posé. Et calculer un condensat par ligne à chaque page coûterait un sha256 par
+entrée affichée, pour une information qui ne dépend pas du filtre.
+
+### Décision 3 : les trois lectures sont réservées à `admin`
+
+La policy `audit_logs_read` de `0001` autorise pourtant aussi `controller`, et
+**elle n'est pas touchée** : un contrôleur lit `audit_logs` exactement comme
+avant, par la table. Mais les trois fonctions sont `security definer`, donc
+au-dessus de la RLS, et elles résolvent l'identité de l'acteur par `profiles` —
+or `profiles_family_select` ne laisse un contrôleur voir que les profils de
+**son** foyer. Les ouvrir au contrôleur lui donnerait les noms de tout le
+personnel. Le scénario `J1` mesure les deux moitiés : les fonctions refusées, la
+policy intacte.
+
+### Décision 4 : la consultation du journal ne s'inscrit PAS au journal
+
+C'est le point le plus discutable, et il est ouvert en **question 27**.
+
+Deux raisons de ne pas le faire aujourd'hui. `log_sensitive_access()` prend un
+verrou de table : journaliser une lecture paginée et filtrée ferait prendre ce
+verrou à chaque page, sérialisant les lectures du journal contre **toutes** les
+écritures du produit. Et une consultation produirait autant d'entrées que de
+pages parcourues, noyant les événements métier sous les traces de leur propre
+consultation.
+
+**Comment la défaire, si l'opérateur veut une trace de consultation** : un
+`perform public.log_sensitive_access('journal_lu', 'audit_logs', null, ...)`
+dans `journal_audit()`, conditionné au **premier appel sans curseur** — c'est-à-dire
+une entrée par consultation et non par page. Coût : une heure, plus un scénario
+qui vérifie qu'une pagination de trois pages n'écrit qu'une ligne.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -1010,5 +1085,8 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 | 24 | Le RTL n'est ni outillé ni testé (Bible V2 §14) : deux `EdgeInsets.only(left:)` / `Alignment.centerLeft` restent dans le code, aucun test de rendu arabe | Lot B0 pour l'outillage, lot A1 pour les tests | **Fermée au lot A1** (ADR-019). **Correction d'un constat inexact de cette ligne, ecrit au lot B0** : `test/widgets/catalogue_galerie_test.dart` testait deja le RTL et le 200 % depuis le lot C (7 septembre), sur les composants isoles de la galerie — ce n'etait donc pas « aucun test », seulement une couverture incomplete. L'ecart reel ferme par A1 : (1) `test/icons/app_icons_rtl_test.dart` prouve le miroir RTL par son comportement (`AppIcons.chevron` porte `matchTextDirection`, `AppIcons.suivant`, meme dessin, ne le porte pas), pas seulement l'absence d'exception ; (2) `test/accessibilite/rtl_echelle_texte_ecrans_test.dart` rejoue les dix-neuf ecrans reels du catalogue (pas seulement les composants isoles) en RTL et a 200 %, decouvrant au passage qu'`ELV-01` (`EleveConnexionPage`) n'avait aucun test de widget — trois faux ajoutes a `harnais.dart` pour le monter ; (3) `test/accessibilite/clavier_test.dart` prouve l'ordre de focus au clavier (Tab avance dans l'ordre visuel, `TUT-00c`), que `focusedBorder` est bien cable sur `borderStrong` (§13.2/§13.4), et qu'Echap ferme `AppBottomSheet.ouvrir` (donc `ConfirmDestructive` et toute feuille modale qui en herite) sans jamais se lire comme une confirmation. Aucun de ces trois fichiers n'a pu etre confirme par `flutter test` sur ce poste (blocage TLS, voir HANDOFF.md) : `dart analyze --fatal-infos` est la seule preuve automatique obtenue |
 | 25 | L'administration a-t-elle le droit d'attribuer un élève à un enseignant sur une heure que celui-ci n'a pas posée | Lot `ADM-05` | **Tranchée par l'agent, à confirmer par l'opérateur** (ADR-021, 12 septembre 2026). Oui, avec motif obligatoire vérifié en base et journalisation portant `hors_disponibilite: true`. Raison : sans ce droit, `ADM-05` afficherait une colonne de droite vide exactement dans le cas pour lequel il existe. L'heure de la famille, elle, ne se contourne jamais, et le plafond non plus. **Comment défaire** : ADR-021, dernier paragraphe, une heure de travail, le contrôle A6 de `scenarios_adm05.sql` s'inverse |
 | 26 | Un enseignant doit-il être averti quand l'administration lui attribue un élève, et surtout quand elle le fait hors de ses disponibilités | Lot `ADM-05`, étape D | **Ouverte, et sans dette immédiate** : le canal de notification n'existe pas (`device_tokens` vide, étape D ouverte), donc la question ne se pose pas encore en code. Aujourd'hui l'enseignant découvre l'élève dans `ENS-02` à la prochaine séance matérialisée. Dès qu'un canal existe, c'est la première notification à écrire |
+
+| 27 | La consultation du journal d'audit doit-elle elle-même s'inscrire au journal | Lot `ADM-04` | **Tranchée par l'agent, à confirmer par l'opérateur** (ADR-022, décision 4, 12 septembre 2026). Non, pour l'instant. Deux raisons : `log_sensitive_access()` prend un `lock table`, donc journaliser une lecture paginée sérialiserait les lectures du journal contre toutes les écritures du produit ; et une consultation produirait autant d'entrées que de pages parcourues, noyant les événements métier sous les traces de leur propre consultation. **Ce que ça laisse ouvert** : un administrateur peut aujourd'hui lire l'intégralité du journal sans qu'il en reste trace, ce qui est exactement le genre d'angle mort qu'un audit sert à fermer. **Comment défaire** : une entrée par consultation et non par page, en conditionnant l'écriture au premier appel sans curseur. ADR-022, dernier paragraphe, une heure de travail |
+| 28 | L'en-tête de colonnes de `DataCollection` est collée en haut parce que le composant porte sa propre zone défilante, ce qui oblige la page à passer `defilante: false` à `PageShell`. Est-ce la bonne répartition | Lot `ADM-04`, à revoir au prochain écran qui emploie `DataCollection` | **Ouverte, sans dette immédiate** : `ADM-04` est aujourd'hui le seul écran du produit à l'employer, donc la question ne coûte rien tant qu'elle n'a qu'un cas. Elle se tranchera au deuxième, quand on saura si un écran voudra un tableau qui défile AVEC sa page plutôt qu'à l'intérieur d'elle. Le jour où cela arrive, l'alternative est un `CustomScrollView` et un en-tête en sliver épinglé, ce qui déplace la complexité dans le composant au lieu de la poser sur la page |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.

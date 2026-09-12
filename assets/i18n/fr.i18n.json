@@ -368,6 +368,69 @@
       "journalisation": "Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s'il a fallu passer outre.",
       "effet": "L'élève quitte cette file et ses cours sont posés au calendrier tout de suite.",
       "erreur": "L'attribution n'a pas abouti : {message}"
+    },
+
+    "journal": {
+      "titre": "Journal",
+
+      "chaineIntacte": "Journal intact",
+      "chaineIntacteDetail": "{nombre} entrées relues une à une : aucune n'a été modifiée ni retirée depuis son écriture.",
+      "chaineRompue": "Journal altéré",
+      "chaineRompueDetail": "{nombre} entrée(s) ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.",
+      "chaineInconnue": "Intégrité inconnue",
+      "chaineInconnueDetail": "La vérification n'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l'instant qu'elles sont complètes.",
+      "chaineEnCours": "Vérification",
+      "chaineEnCoursDetail": "Relecture de l'empreinte de chaque entrée.",
+
+      "periodeSemaine": "7 derniers jours",
+      "periodeMois": "30 derniers jours",
+      "periodeTout": "Depuis le début",
+      "tousTypes": "Tous les événements",
+      "tousActeurs": "Tout le monde",
+
+      "colonneQuand": "Quand",
+      "colonneQui": "Qui",
+      "colonneRole": "À quel titre",
+      "colonneQuoi": "Ce qui a été fait",
+      "colonneCible": "Sur quoi",
+      "colonneDetail": "Détail",
+      "horodatage": "{date} à {heure}",
+
+      "acteurSysteme": "Le système",
+      "acteurInconnu": "Compte supprimé",
+
+      "roleAdmin": "Administration",
+      "roleEnseignant": "Enseignant",
+      "roleTuteur": "Tuteur",
+      "roleEleve": "Élève",
+      "roleControleur": "Contrôleur",
+      "roleComptable": "Comptable",
+      "roleAucun": "Hors session",
+
+      "evtKycLu": "Dossier d'identité consulté",
+      "evtKycTranche": "Dossier d'identité tranché",
+      "evtProfilCree": "Profil créé",
+      "evtProfilEnfantCree": "Profil enfant créé",
+      "evtCodeCree": "Code d'appairage créé",
+      "evtAppareilAppaire": "Appareil appairé",
+      "evtAppareilRevoque": "Appareil révoqué",
+      "evtPedagogie": "Réglages pédagogiques modifiés",
+      "evtAffectationPrise": "Élève pris par un enseignant",
+      "evtAffectationAttribuee": "Élève attribué par l'administration",
+      "evtDemandeCreee": "Demande déposée",
+      "evtDemandeTranchee": "Demande tranchée",
+      "evtReglePosee": "Règle posée",
+      "evtRegleClose": "Règle close",
+
+      "vide": "Aucun événement enregistré",
+      "videDetail": "Chaque lecture de dossier, chaque décision et chaque attribution viendra s'inscrire ici.",
+      "videFiltre": "Aucun événement ne correspond",
+      "videFiltreDetail": "Élargissez la période, ou relâchez un filtre.",
+      "effacerFiltres": "Effacer les filtres",
+      "erreur": "Le journal n'a pas pu être lu. Réessayez dans un instant.",
+      "erreurSuite": "Les entrées plus anciennes n'ont pas pu être lues.",
+      "chargerSuite": "Charger les entrées plus anciennes",
+      "fin": "Vous êtes remonté jusqu'à la première entrée du journal."
     }
   },
 

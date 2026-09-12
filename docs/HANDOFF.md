@@ -1,6 +1,41 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> 🟢 **12 septembre 2026, deuxième session — `ADM-05`, l'attribution manuelle,
+> 🟢 **12 septembre 2026, troisième session — `ADM-04`, le journal d'audit,
+> est construit. L'espace admin n'a plus un seul écran manquant.** L'opérateur
+> a de nouveau demandé de laisser la vidéo de côté : N2 reste non commencé, et
+> `ADM-04` était le premier lot libre par valeur décroissante (section 9.5 de
+> la passation précédente). **Il reste neuf destinations en
+> `EcranAConstruire`** — élève (Coran, Suivi), tuteur (Suivi), enseignant
+> (Profil), contrôleur (Planning), espace comptable, et `ELV-03`/`ENS-03`/`CTR-02`,
+> la salle.
+> ✅ **Les trois migrations en attente sont posées, et la quatrième aussi.**
+> L'opérateur a appliqué `0006`, `0007` et `0008` lui-même, puis a repointé le
+> MCP `supabase` sur Rewayah (`gggmtelinlpseweouyav`) et donné mandat
+> d'appliquer les suivantes directement. **`0009` a donc été appliquée par
+> l'agent, et vérifiée sur la base réelle.** Plus aucune migration n'attend une
+> main humaine. ⚠ Le réflexe `get_project_url` avant toute écriture reste.
+> Livré : migration `0009` (trois fonctions de lecture, aucune table),
+> `lib/core/journal/service_journal.dart`, `lib/features/admin_journal/`,
+> **`DataCollection`** (P1 du catalogue, jamais construit jusqu'ici),
+> **`FilterPill`**, **ADR-022**, fiche `ADM-04` au catalogue.
+> Mesuré, pas supposé : **`flutter test` 559/559** (542 avant le lot),
+> `dart analyze --fatal-infos` propre, jetons **102 fichiers** sans violation,
+> et **106 contrôles SQL** verts (34 + 39 + 15 + 9 + 9) rejoués ensemble sur
+> `0001`→`0009` dans un conteneur neuf.
+> 🔑 **Ce que ce lot a vraiment débloqué, au-delà d'un écran** : `audit_logs`
+> portait `prev_hash`/`hash` depuis l'étape 1, et chaque écriture du produit
+> payait un `lock table` pour les tenir — **sans que personne ne les relise
+> jamais**. Le prix était payé, la garantie jamais constatée. Elle l'est
+> maintenant : 34 entrées sur 34 se recalculent sur la base réelle, et deux
+> scénarios SQL falsifient délibérément le journal (un `update`, un `delete`)
+> pour vérifier que chacun se voit **à un endroit différent** — le condensat
+> pour la modification, le maillon pour la suppression.
+> ⚠ **Deux décisions ont été prises sans l'opérateur, toutes deux réversibles**,
+> questions **27** et **28** du registre : la consultation du journal ne
+> s'inscrit pas au journal (ADR-022, décision 4 — recette pour l'inverser en
+> une heure), et `DataCollection` porte sa propre zone défilante.
+>
+> 🟡 **12 septembre 2026, deuxième session — `ADM-05`, l'attribution manuelle,
 > est construite.** L'opérateur a demandé de **laisser le fournisseur vidéo de
 > côté** et d'avancer ailleurs en attendant : le lot N2 reste donc non
 > commencé, et `ADM-05` a été fait hors série. Ce n'est pas un écran de plus :
@@ -21,9 +56,9 @@
 > enseignant, **avec motif obligatoire vérifié en base** et journalisation.
 > Raison, et la recette pour la défaire en une heure : **ADR-021**, plus les
 > questions 25 et 26 du registre.
-> ⚠ **`0008` doit être collée à la base réelle, sinon `/admin/attribution`
-> affichera une erreur de lecture** au lieu de ses deux listes. Contrairement à
-> `0006` et `0007`, celle-ci se voit tout de suite. `MISE-EN-SERVICE.md` §5.3.
+> ⚠ ~~**`0008` doit être collée à la base réelle**~~ — **fait par l'opérateur,
+> vérifié par PostgREST le 12/09 en troisième session.** `0006`, `0007` et
+> `0008` sont toutes les trois en base. Cet avertissement est clos.
 >
 > 🔴 **12 septembre 2026, première session — le verdict de l'opérateur est
 > vérifié, chiffré, et il avait raison.** « L'app est loin d'être fonctionnelle » : mesuré en
@@ -43,9 +78,11 @@
 > (`MISE-EN-SERVICE.md` §5, §5.1, §5.2), et promouvoir la build prête en
 > production (section 9). `0006` est toujours absente de la base réelle,
 > mesuré ce jour par PostgREST.
-> ⚠ **Le serveur MCP `supabase` de ce poste pointe sur la base PISI**
-> (`riaqzfhdynmtshvbgdvt`), pas sur Rewayah. Ne jamais l'utiliser pour
-> appliquer une migration de ce projet.
+> ⚠ ~~**Le serveur MCP `supabase` de ce poste pointe sur la base PISI**~~ —
+> **corrigé le 12/09.** Il vise désormais Rewayah (`gggmtelinlpseweouyav`),
+> vérifié par `get_project_url`, et l'opérateur a donné mandat d'appliquer les
+> migrations directement. Garder le réflexe : `get_project_url` **avant** toute
+> écriture, la bascule s'est déjà produite une fois.
 
 > Dernière passation : **11 septembre 2026, huitième session — la dette de
 > vérification est soldée.** Le lot **L10** (clôture de l'étape 4) est fait :
@@ -1056,7 +1093,7 @@ commitée à part au début du lot L8.
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
-## 9. Prompt de reprise — `ADM-05` est fait, N2 attend toujours la vidéo
+## 9. Prompt de reprise — `ADM-04` est fait, l'espace admin est complet
 
 À copier tel quel pour démarrer la prochaine session.
 
@@ -1070,54 +1107,79 @@ produit. Dix-neuf écrans existaient pour de vrai. Zéro erreur console : rien
 n'était cassé, l'étape 5 n'était pas commencée. **Ne pas refaire ce
 diagnostic.**
 
-**Deuxième session.** L'opérateur a demandé de laisser le fournisseur vidéo de
-côté et d'avancer ailleurs. `ADM-05` a donc été construit : il ne reste plus
-que **dix** `EcranAConstruire`, et surtout le produit peut enfin produire une
-séance sans qu'un enseignant en prenne l'initiative.
+**Deuxième session.** `ADM-05` construit, hors série, pendant que N2 attendait
+la décision vidéo. Le produit peut enfin produire une séance sans qu'un
+enseignant en prenne l'initiative.
 
-### 9.2 Les deux causes non-code, toujours ouvertes
+**Troisième session.** N2 toujours bloqué sur la vidéo ; `ADM-04` construit,
+premier lot libre de la liste par valeur décroissante. **Il reste neuf
+destinations en `EcranAConstruire`**, et **plus une seule dans l'espace
+admin**. Compté dans `lib/core/router/app_router.dart` : huit sites d'appel,
+dont un écran de chargement qui n'est pas un écran du catalogue, et un seul
+site pour la salle qui porte trois codes (`ELV-03`, `ENS-03`, `CTR-02`).
 
-1. **La migration `0006` n'est pas sur la base réelle.** Mesuré par PostgREST
-   (`42703 column ... does not exist` sur `profils_du_foyer_v.access_until`).
-   `TUT-01` lit une vue amputée, `ENS-06` reste faux deux heures par semaine.
-2. **La production ne sert pas `main`.** L'écart est mince, mais réel.
+### 9.2 Les causes non-code : une seule reste
 
-Trois migrations attendent désormais l'éditeur SQL, dans cet ordre : `0006`
-(bloc de `MISE-EN-SERVICE.md` §5), `0007`, `0008`. **`0008` est la première
-dont l'absence se voit immédiatement** : `/admin/attribution` afficherait une
-erreur de lecture au lieu de ses deux listes.
+1. ~~La migration `0006` n'est pas sur la base réelle~~ — **close.** `0006`,
+   `0007`, `0008` appliquées par l'opérateur, `0009` par l'agent. Vérifié sur
+   la base réelle : `access_until`, `etat_presence()`, `presence_seance_v`,
+   `student_reading_position` et les trois fonctions d'`ADM-05` répondent.
+   **Plus aucune migration n'attend une main humaine** : le MCP `supabase`
+   vise Rewayah et l'opérateur a donné mandat de les appliquer directement.
+2. **La production ne sert pas `main`.** Seule cause non-code encore ouverte,
+   et elle grandit : la build de `D:\ra-pwa-build\build\web` date de `5b8b868`
+   et ne contient ni `ADM-05` ni `ADM-04`.
 
-### 9.3 Ce que la deuxième session a livré
+### 9.3 Ce que la troisième session a livré
 
-- `supabase/migrations/0008_attribution_manuelle.sql` : `eleves_sans_enseignant()`,
-  `enseignants_pour(uuid)`, `attribuer_eleve(...)`. **Aucune table, aucune
-  policy d'écriture ouverte** : l'invariant I3 de `0005` tient, le contrôle A9
-  le mesure.
-- `supabase/tests/scenarios_adm05.sql` : neuf contrôles, rejoués à la suite des
-  trois autres fichiers sur `0001`→`0008`. **97 contrôles verts au total.**
-- `lib/core/matching/service_attribution.dart`, `lib/features/admin_attribution/`,
-  le compteur `ADM-01` câblé, sept tests de widget.
-- **ADR-021** et les questions **25** et **26** du registre.
-- `ADM-05` est le **premier écran du produit à employer `Skeleton`**. L'écart de
-  la Bible §18 n'est plus théorique : il reste ouvert sur les dix-neuf autres
-  écrans, mais il a un précédent à copier.
+- `supabase/migrations/0009_journal_audit.sql` : `journal_audit(...)`,
+  `journal_audit_filtres()`, `verifier_chaine_audit(int)`. **Aucune table,
+  aucune colonne, aucune policy** — `audit_logs` existe depuis l'étape 1 et
+  était déjà remplie. Trois lectures, rien d'autre. **Appliquée et vérifiée
+  sur la base réelle.**
+- `supabase/tests/scenarios_adm04.sql` : neuf contrôles, rejoués à la suite des
+  quatre autres fichiers sur `0001`→`0009`. **106 contrôles verts au total**
+  (34 + 39 + 15 + 9 + 9). Ajouté à `ci.yml`, qui ne s'en charge pas seul.
+- `lib/core/journal/service_journal.dart`, `lib/features/admin_journal/`,
+  treize tests de widget et trois tests unitaires.
+- **`DataCollection`** : le P1 du catalogue des composants, « nécessaire avant
+  l'étape 5 », jamais construit jusqu'ici faute d'écran dont la forme naturelle
+  soit un tableau. Tableau dense au desktop, cartes ailleurs, **une seule
+  définition de colonnes** pour les deux.
+- **`FilterPill`**, née ici, hors liste d'origine, inscrite au catalogue comme
+  `MarquePage` avant elle.
+- **ADR-022** et les questions **27** et **28** du registre.
+- `ADM-04` est le **deuxième écran du produit à employer `Skeleton`**. L'écart
+  de la Bible §18 reste ouvert sur les dix-neuf autres, mais il a maintenant
+  deux motifs à copier, dont un sur liste paginée.
+
+**Ce que le lot a débloqué au-delà de l'écran.** `audit_logs` porte
+`prev_hash`/`hash` depuis l'étape 1, et `log_sensitive_access()` paie un
+`lock table` à chaque écriture du produit pour les tenir — **sans que personne
+ne les relise jamais**. Le prix était payé, la garantie jamais constatée. Elle
+l'est : 34 entrées sur 34 se recalculent sur la base réelle, et les scénarios
+`J5` et `J6` falsifient délibérément le journal, l'un par `update` et l'autre
+par `delete`, pour vérifier que chacun se voit **à un endroit différent** — le
+condensat pour la modification, le maillon pour la suppression. Les deux
+réparent ce qu'ils ont cassé et le reverifient, sans quoi ils rendraient rouge
+tout ce qui passe après eux.
 
 ### 9.4 Ce qui ne peut pas se faire depuis le poste
 
-**1. Coller les trois migrations** dans l'éditeur SQL du projet
-`gggmtelinlpseweouyav` : `MISE-EN-SERVICE.md` §5 (bloc `0006`), puis §5.2
-(`0007`), puis §5.3 (`0008`).
-⚠ Le serveur MCP `supabase` de ce poste pointe sur **PISI**
-(`riaqzfhdynmtshvbgdvt`), pas sur Rewayah.
-
-**2. Reconstruire et promouvoir.** La build qui attend dans
-`D:\ra-pwa-build\build\web` date de `5b8b868` : elle **ne contient pas**
-`ADM-05`. Il faut la refaire avant de promouvoir.
+**Une seule chose désormais : reconstruire et promouvoir.** La build de
+`D:\ra-pwa-build\build\web` date de `5b8b868` et ne contient ni `ADM-05` ni
+`ADM-04`.
 
 ```
 ! cd "D:\ra-pwa-build"; flutter build web --release
 ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
 ```
+
+⚠ Le worktree `D:\ra-pwa-build` a servi à la mesure et pointe sur un commit
+détaché. Le remettre sur le dernier commit de `main` avant de construire, sinon
+la build sortira d'un état antérieur. Et vérifier que le `user_define`
+`sqlite3` de la section 0 undecies n'est plus dans son `pubspec.yaml` : il
+change le SQLite d'une build de production.
 
 ### 9.5 Le prompt
 
@@ -1135,26 +1197,34 @@ OU ON EN EST, MESURE ET NON SUPPOSE.
 Le verdict "l'app est loin d'etre fonctionnelle" est VERIFIE depuis le
 12/09 : onze destinations du routeur rendaient EcranAConstruire, dont
 ELV-03/ENS-03, la salle de cours. Ne REFAIS PAS ce diagnostic.
-Il en reste DIX : eleve (Coran, Suivi), tuteur (Suivi), enseignant
-(Profil), controleur (Planning), admin (Journal), espace comptable,
-et ELV-03/ENS-03/CTR-02 la salle.
+Il en reste NEUF : eleve (Coran, Suivi), tuteur (Suivi), enseignant
+(Profil), controleur (Planning), espace comptable, et
+ELV-03/ENS-03/CTR-02 la salle. L'ESPACE ADMIN EST COMPLET.
+Le compte se lit dans lib/core/router/app_router.dart, jamais en
+parcourant les ecrans.
 
 FAIT :
   N0 = spec etape 5 + ADR-020 (39aec71)
   N1 = migration 0007 : Coran structure, student_reading_position,
        presence_state a 14 etats, etat_presence(), presence_seance_v
        (a736a43) -> 15 controles
-  ADM-05 = attribution manuelle, HORS SERIE, fait pendant que N2
-       attendait la decision video. Migration 0008 (trois fonctions),
+  ADM-05 = attribution manuelle, HORS SERIE (1eddc9c). Migration 0008,
        ecran, ADR-021 -> 9 controles SQL + 7 tests de widget.
        C'etait le chainon manquant : sans lui aucune affectation ne
        naissait sans un enseignant, donc aucune seance, donc ENS-02 /
        ELV-02 / TUT-01 restaient vides.
+  ADM-04 = journal d'audit, HORS SERIE lui aussi, fait pendant que N2
+       attendait toujours la video. Migration 0009 (trois lectures,
+       aucune table), ecran, DataCollection, FilterPill, ADR-022
+       -> 9 controles SQL + 13 tests de widget + 3 unitaires.
+       Il a surtout rendu VERIFIABLE la chaine de hachage que
+       audit_logs portait depuis l'etape 1 sans que personne ne la
+       relise : 34/34 se recalculent sur la base reelle.
 
 LE PROCHAIN LOT EST N2, ET IL DEMANDE UNE DECISION AVANT DU CODE.
 N2 = VideoSessionProvider/LiveKitSessionProvider (ADR-001), pre-flight,
-emission de jeton. L'operateur a dit le 12/09 qu'il lui restait des
-infos a completer sur l'outil, et a pointe la spec :
+emission de jeton. L'operateur a dit le 12/09, DEUX FOIS, qu'il lui
+restait des infos a completer sur l'outil, et a pointe la spec :
   "D:\RA _APP\docs de lancement\architecture live kit..md"
 NE PAS LIRE CE FICHIER tant que le lot du jour ne traite pas la video :
 il est long et coute cher en contexte. Demander d'abord a l'operateur
@@ -1165,51 +1235,61 @@ trace en base. Ne pas l'inventer.
 
 SI N2 EST TOUJOURS BLOQUE, les lots non bloques par la video sont, par
 valeur decroissante :
-  - ADM-04 journal d'audit (/admin/journal, dernier placeholder de
-    l'espace admin, table audit_logs en place depuis l'etape 1) ;
+  - l'ecart Skeleton sur les dix-neuf ecrans restants (bible section
+    18). C'EST DESORMAIS LE PREMIER : le dernier placeholder admin est
+    tombe, et c'est le plus gros ecart de rendu qui reste. ADM-05 et
+    ADM-04 donnent deux motifs a copier, dont un sur liste paginee ;
   - N5 / ELV-04 lecteur Coran -- mais il demande d'abord l'import du
     jeu de donnees coranique, et github.com est injoignable en TLS
     depuis ce poste ;
-  - l'ecart Skeleton sur les dix-neuf ecrans restants (bible section
-    18) : ADM-05 montre le motif a copier.
+  - ENS-05 profil enseignant (niveau D, fiche a remplir d'abord).
 CTR-01 et CTR-02 restent bloques par la salle, pas par la video seule.
 
-TROIS ACTIONS A LA MAIN DE L'OPERATEUR, a lui rappeler si pas faites :
-  a) Coller 0006 (MISE-EN-SERVICE.md section 5) PUIS 0007 PUIS 0008
-     dans l'editeur SQL du projet gggmtelinlpseweouyav. 0006 etait
-     toujours absente au 12/09, mesure par PostgREST (42703).
-     0008 est la premiere dont l'absence SE VOIT : sans elle,
-     /admin/attribution affiche une erreur au lieu de ses deux listes.
-     ATTENTION : le MCP supabase de ce poste pointe sur la base PISI
-     (riaqzfhdynmtshvbgdvt). NE JAMAIS l'utiliser pour ce projet.
-  b) Confirmer ou refuser l'ADR-021 : l'administration peut attribuer
-     un eleve hors des disponibilites declarees d'un enseignant, avec
-     motif obligatoire et journalisation. Decision prise par l'agent
-     faute de pouvoir attendre. Reversible en une heure, recette en
-     fin d'ADR-021.
-  c) Reconstruire PUIS promouvoir. La build de D:\ra-pwa-build\build\web
-     date de 5b8b868 et ne contient pas ADM-05 :
+UNE SEULE ACTION A LA MAIN DE L'OPERATEUR :
+  Reconstruire PUIS promouvoir. La build de D:\ra-pwa-build\build\web
+  date de 5b8b868 et ne contient ni ADM-05 ni ADM-04 :
      ! cd "D:\ra-pwa-build"; flutter build web --release
      ! cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
+  ATTENTION : ce worktree sert aux mesures et reste sur un commit
+  DETACHE. Le remettre sur le dernier commit de main avant de
+  construire, et verifier que le user_define sqlite3 n'est plus dans
+  son pubspec.yaml.
+
+A LUI SOUMETTRE, PAS BLOQUANT (decisions prises par l'agent) :
+  - ADR-021 : l'administration peut attribuer un eleve hors des
+    disponibilites declarees d'un enseignant, avec motif obligatoire
+    et journalisation. Reversible en une heure.
+  - ADR-022 decision 4 : la consultation du journal ne s'inscrit PAS
+    au journal. Un admin peut donc lire tout le journal sans trace.
+    Reversible en une heure, recette en fin d'ADR-022.
+
+MIGRATIONS : il n'y en a plus en attente. Le MCP supabase vise Rewayah
+(gggmtelinlpseweouyav) et l'operateur a donne mandat de les appliquer
+directement. GARDER LE REFLEXE get_project_url AVANT toute ecriture :
+le serveur a deja vise PISI (riaqzfhdynmtshvbgdvt) pendant des
+sessions entieres, ce qui faisait echouer toute requete.
 
 POUR MESURER :
-  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0008,
-    puis les QUATRE fichiers de scenarios a la suite. Recette section 6.
+  - SQL : docker, conteneur neuf, stub_auth puis migrations 0001 a 0009,
+    puis les CINQ fichiers de scenarios a la suite. Recette section 6.
     Docker Desktop n'est pas forcement demarre : le lancer et boucler
     sur `docker info`.
     Le `docker rm -f` se passe SEUL sur sa ligne (protection de chemins).
-    Reference : 34 + 39 + 15 + 9 = 97 controles, zero erreur.
-    PIEGE : les quatre fichiers tournent sur la MEME base. Une assertion
+    Reference : 34 + 39 + 15 + 9 + 9 = 106 controles, zero erreur.
+    PIEGE : les cinq fichiers tournent sur la MEME base. Une assertion
     qui compte en global mesure les fixtures des autres. Borner par
     household_id ou par identifiant, et verifier l'ordre en rang
-    relatif, jamais par limit 1.
+    relatif, jamais par limit 1. SEULE EXCEPTION assumee : le controle
+    J4 de scenarios_adm04.sql, qui verifie l'integrite de la chaine de
+    TOUT le journal, fixtures des autres fichiers comprises. C'est pour
+    cela qu'il tourne en dernier ; le remonter ne mesurerait plus rien.
   - Dart : flutter test NE TOURNE PAS tel quel (TLS github.com refuse
     pour le hook package:sqlite3). Contournement en section 0 undecies :
     le user_define `source: system` dans le pubspec du worktree
     D:\ra-pwa-build UNIQUEMENT, jamais commite, retire apres la mesure
-    par `git checkout -- pubspec.yaml`. Reference 542/542.
+    par `git checkout -- pubspec.yaml`. Reference 559/559.
     `dart run tool/verifier_jetons.dart` est loge a la meme enseigne :
-    il se lance depuis le worktree. Reference 98 fichiers.
+    il se lance depuis le worktree. Reference 102 fichiers.
     Methode : editer dans le depot de travail, copier les fichiers
     touches vers le worktree, mesurer la-bas.
 
@@ -1217,6 +1297,12 @@ PIEGES :
 - OpenCode travaille EN PARALLELE sur le meme depot (lib/app.dart,
   lib/core/config/env.dart, lib/main.dart, lib/features/_dev/playground/).
   git status avant tout commit, ne jamais stager ses fichiers.
+  ATTENTION a ne pas confondre : lib/features/_dev/galerie/ est SUIVI
+  et c'est le notre ; seul _dev/playground/ est a OpenCode.
+- TOUT nouveau composant de lib/core/widgets/ doit avoir son entree de
+  galerie ET sa ligne dans composantsDuCatalogue de
+  catalogue_galerie_test.dart, sinon la suite casse. Deux etats au
+  minimum par entree.
 - verifier_jetons.dart refuse le tiret cadratin dans le code Dart.
   Deux points ou une virgule a la place.
 - journee_test.dart / "ENS-02 : le bloc dominant" est rouge entre 23h34
@@ -1226,9 +1312,11 @@ PIEGES :
   extract(hour from (instant_creneau(...) at time zone '...')).
 - Une ligne "Fait" du tableau de docs/design/README.md ne vaut que si un
   test la tient : deux etaient fausses (13.4 et 18).
-- Skeleton n'est employe que par ADM-05. Les dix-neuf autres ecrans
-  affichent encore un Text "Chargement" nu, et le demarrage a froid de
-  la PWA depasse treize secondes.
+- Skeleton n'est employe que par ADM-05 et ADM-04. Les dix-neuf autres
+  ecrans affichent encore un Text "Chargement" nu, et le demarrage a
+  froid de la PWA depasse treize secondes.
+- Un nouveau fichier de scenarios SQL ne s'ajoute PAS tout seul a
+  ci.yml. Y penser dans le meme lot.
 
 Un lot par session. Ignore la branche refactor-ui-lavender.
 FIN DE SESSION : livrer un prompt de reprise et mettre a jour cette

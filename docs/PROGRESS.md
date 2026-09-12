@@ -13,13 +13,21 @@ de reprise.
 **Les étapes 3 et 4 sont terminées, la refonte UX/UI aussi.** L0 à L10 sont
 faits (étape 4 close le 11 septembre 2026), et B0, T, C, R (R0 à R4), T2, T3,
 A1 sont tous codés et poussés sur `main` (ADR-019). N0 (documentaire) a
-spécifié l'étape 5 (ADR-020), **N1** a posé sa migration `0007`, et
-**`ADM-05`** (l'attribution manuelle, hors série) a été construit le
-12 septembre pendant que **N2 attend la décision du fournisseur vidéo**.
+spécifié l'étape 5 (ADR-020), **N1** a posé sa migration `0007`, puis
+**`ADM-05`** (l'attribution manuelle) et **`ADM-04`** (le journal d'audit),
+tous deux hors série, ont été construits le 12 septembre pendant que **N2
+attend la décision du fournisseur vidéo**.
+
+**L'espace admin n'a plus un seul écran manquant**, et il reste **neuf**
+destinations en `EcranAConstruire` : élève (Coran, Suivi), tuteur (Suivi),
+enseignant (Profil), contrôleur (Planning), espace comptable, et la salle
+(`ELV-03`/`ENS-03`/`CTR-02`). Le compte se lit dans
+`lib/core/router/app_router.dart`, jamais en parcourant les écrans.
 
 **Le prochain lot est N2, et il ne peut pas commencer sans l'opérateur** :
 fournisseur, compte, clés. S'il est encore bloqué, `docs/HANDOFF.md` §9.5 donne
-la liste des lots qui ne dépendent pas de la vidéo, par valeur décroissante.
+la liste des lots qui ne dépendent pas de la vidéo, par valeur décroissante —
+l'écart `Skeleton` sur les dix-neuf écrans restants est désormais en tête.
 
 **Ce qui a changé de nature le 12 septembre.** Avant `ADM-05`, une affectation
 ne pouvait naître que si un enseignant la prenait dans `ENS-06`. Sans
@@ -27,6 +35,15 @@ affectation, `materialiser_seances()` n'est jamais appelée ; sans séance,
 `ENS-02`, `ELV-02` et `TUT-01` restent vides **quoi qu'ait construit l'étape
 4**. L'administration peut désormais attribuer elle-même, et le compteur
 « Foyers sans enseignant » d'`ADM-01` mène enfin à son geste.
+
+**Et ce qu'`ADM-04` a rendu vrai le même jour.** `audit_logs` portait
+`prev_hash` et `hash` depuis l'étape 1, et `log_sensitive_access()` payait un
+`lock table` à chaque écriture du produit pour les tenir cohérents — **sans que
+personne ne les relise jamais**. Le journal était donc immuable *par
+déclencheur*, mais sa complétude n'avait jamais été constatée. Elle l'est :
+`verifier_chaine_audit()` recalcule condensat et maillon, 34 entrées sur 34 se
+vérifient sur la base réelle, et deux scénarios SQL falsifient délibérément le
+journal pour prouver que la falsification se voit (ADR-022).
 
 1. **Lire, dans cet ordre, et rien de plus** : `docs/HANDOFF.md`, puis, pour le
    lot N2 (étape 5), `docs/architecture/etape-5-salle-coran-presence.md` et
@@ -91,6 +108,7 @@ psql -f supabase/tests/scenarios_adm05.sql               #  9 contrôles
 | 4 bis | **Refonte UX/UI** : jetons, composants, reprise des écrans | [x] | **Close le 11 septembre 2026.** Lots T, C, R (R0 à R4) faits, plus B0, T2, T3 et A1 de la Bible Frontend V2 (ADR-019). **Non en ligne** : la production sert `a9127fd`, onze commits de retard — voir ligne M ci-dessus |
 | 5 | Visio LiveKit, preuve de présence, Coran | [ ] | **Spécifiée (lot N0, ADR-020)**, découpage N0→N7 confirmé. **N1 fait** (migration `0007`, 15 contrôles). **N2 bloqué** : il tranche le fournisseur vidéo et ses clés, l'opérateur complète encore ses informations. `docs/architecture/etape-5-salle-coran-presence.md` |
 | 5 bis | **`ADM-05` attribution manuelle**, hors série | [x] | **Fait le 12 septembre 2026**, pendant le blocage de N2. Migration `0008` (trois fonctions, aucune table), `lib/features/admin_attribution/`, ADR-021, 9 contrôles SQL et 7 tests de widget. Débloque la création d'affectations sans initiative d'un enseignant, donc la matérialisation des séances, donc le contenu d'`ENS-02`/`ELV-02`/`TUT-01`. Fiche `ADM-05` au catalogue |
+| 5 ter | **`ADM-04` journal d'audit**, hors série | [x] | **Fait le 12 septembre 2026**, pendant le blocage de N2. Migration `0009` (trois lectures, **aucune table** : `audit_logs` existait et était déjà remplie), `lib/features/admin_journal/`, les composants `DataCollection` (P1 du catalogue, jamais construit jusqu'ici) et `FilterPill`, ADR-022, 9 contrôles SQL et 16 tests Dart. **L'espace admin n'a plus un seul placeholder.** Rend surtout vérifiable la chaîne de hachage que `audit_logs` portait depuis l'étape 1 sans que personne ne la relise. Fiche `ADM-04` au catalogue |
 | 6 | Cahier de transmission | [ ] | |
 
 ## Protocole d'onboarding (`docs/agent-onboarding.md`)
@@ -101,7 +119,7 @@ psql -f supabase/tests/scenarios_adm05.sql               #  9 contrôles
 | B | Projet Supabase | [x] | `gggmtelinlpseweouyav`, `supabase/` initialisé et lié |
 | C | Migrations versionnées | [x] | `0001` à `0005`, **appliquées au projet réel le 7 septembre 2026** et inscrites dans `supabase_migrations`. Le risque `pgcrypto` du journal de l'étape 3 était réel, et il est corrigé. **Corollaire : `0005` ne se corrige plus sur place**, tout changement structurel passe par `0006`. Voir `docs/MISE-EN-SERVICE.md` |
 | D | Secrets | [x] | **Fermée le 7 septembre 2026.** Projet lié, `dart_define.json` écrit, fonctions Edge `creer-profil-enfant` et `session-enfant` déployées et `ACTIVE`, **hook de jeton actif** (`pg-functions://postgres/public/custom_access_token_hook`, vérifié en lecture sur `/config/auth`) et **`STUDENT_EMAIL_DOMAIN` posé**. Voir `docs/MISE-EN-SERVICE.md` section 3, qui note aussi les quatre réglages Auth que `config push` a écrasés au passage |
-| E | CI/CD | [x] | `ci.yml` rejoue les contrôles SQL de `supabase/tests/` à chaque pull request. **97 au 12 septembre 2026** : 34 pour les étapes 1 et 3, 39 pour l'étape 4, 15 pour l'étape 5, 9 pour `ADM-05`. ⚠ **Défaut trouvé et corrigé le 12 septembre** : `scenarios_etape5.sql` existait depuis le lot N1 et n'avait jamais été ajouté au workflow ; ses quinze contrôles n'étaient rejoués que sur le poste. Les migrations, elles, passent par un glob et n'ont jamais eu ce problème |
+| E | CI/CD | [x] | `ci.yml` rejoue les contrôles SQL de `supabase/tests/` à chaque pull request. **106 au 12 septembre 2026** : 34 pour les étapes 1 et 3, 39 pour l'étape 4, 15 pour l'étape 5, 9 pour `ADM-05`, 9 pour `ADM-04`. ⚠ **Défaut trouvé et corrigé le 12 septembre** : `scenarios_etape5.sql` existait depuis le lot N1 et n'avait jamais été ajouté au workflow ; ses quinze contrôles n'étaient rejoués que sur le poste. Les migrations, elles, passent par un glob et n'ont jamais eu ce problème. **Un fichier de scénarios ne s'ajoute donc pas tout seul : y penser dans le lot qui le crée.** `scenarios_adm04.sql` vient en dernier, et c'est structurel — son contrôle J4 vérifie l'intégrité de la chaîne de tout ce que les fichiers précédents ont écrit |
 | F | Sentry | [ ] | Nécessite le compte Sentry |
 | G | Variantes Flutter `dev` / `staging` / `prod` | [ ] | Un seul identifiant aujourd'hui : `com.rewayahacademy.app` |
 | H | Stockage média R2 | [ ] | Nécessite le compte Cloudflare. Les seaux `kyc` et `avatars` de Supabase Storage, eux, sont créés par la migration 0004 |

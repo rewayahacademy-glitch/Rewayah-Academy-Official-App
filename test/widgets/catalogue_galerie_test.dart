@@ -50,6 +50,13 @@ const List<String> composantsDuCatalogue = <String>[
   'MarquePage',
   // Section 2 : le P1 que le lot R3 produit.
   'TimelineRow',
+  // Section 2 : les deux que le lot ADM-04 produit. `DataCollection` etait au
+  // catalogue en P1 depuis la refonte et n'avait jamais ete construit, faute
+  // d'ecran dont la forme naturelle soit un tableau. `FilterPill` n'y etait
+  // pas : inscrit comme `MarquePage` avant lui, parce qu'un composant hors
+  // catalogue est un composant que personne ne relit.
+  'DataCollection',
+  'FilterPill',
 ];
 
 /// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.

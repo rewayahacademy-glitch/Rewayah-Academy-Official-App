@@ -878,6 +878,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
 	late final Traductions$admin$attribution$fr attribution = Traductions$admin$attribution$fr.internal(_root);
+	late final Traductions$admin$journal$fr journal = Traductions$admin$journal$fr.internal(_root);
 }
 
 // Path: vide
@@ -1376,6 +1377,174 @@ class Traductions$admin$attribution$fr {
 
 	/// fr: 'L'attribution n'a pas abouti : {message}'
 	String erreur({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}';
+}
+
+// Path: admin.journal
+class Traductions$admin$journal$fr {
+	Traductions$admin$journal$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Journal'
+	String get titre => 'Journal';
+
+	/// fr: 'Journal intact'
+	String get chaineIntacte => 'Journal intact';
+
+	/// fr: '{nombre} entrées relues une à une : aucune n'a été modifiée ni retirée depuis son écriture.'
+	String chaineIntacteDetail({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.';
+
+	/// fr: 'Journal altéré'
+	String get chaineRompue => 'Journal altéré';
+
+	/// fr: '{nombre} entrée(s) ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.'
+	String chaineRompueDetail({required Object nombre, required Object entree}) => '${nombre} entrée(s) ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.';
+
+	/// fr: 'Intégrité inconnue'
+	String get chaineInconnue => 'Intégrité inconnue';
+
+	/// fr: 'La vérification n'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l'instant qu'elles sont complètes.'
+	String get chaineInconnueDetail => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.';
+
+	/// fr: 'Vérification'
+	String get chaineEnCours => 'Vérification';
+
+	/// fr: 'Relecture de l'empreinte de chaque entrée.'
+	String get chaineEnCoursDetail => 'Relecture de l\'empreinte de chaque entrée.';
+
+	/// fr: '7 derniers jours'
+	String get periodeSemaine => '7 derniers jours';
+
+	/// fr: '30 derniers jours'
+	String get periodeMois => '30 derniers jours';
+
+	/// fr: 'Depuis le début'
+	String get periodeTout => 'Depuis le début';
+
+	/// fr: 'Tous les événements'
+	String get tousTypes => 'Tous les événements';
+
+	/// fr: 'Tout le monde'
+	String get tousActeurs => 'Tout le monde';
+
+	/// fr: 'Quand'
+	String get colonneQuand => 'Quand';
+
+	/// fr: 'Qui'
+	String get colonneQui => 'Qui';
+
+	/// fr: 'À quel titre'
+	String get colonneRole => 'À quel titre';
+
+	/// fr: 'Ce qui a été fait'
+	String get colonneQuoi => 'Ce qui a été fait';
+
+	/// fr: 'Sur quoi'
+	String get colonneCible => 'Sur quoi';
+
+	/// fr: 'Détail'
+	String get colonneDetail => 'Détail';
+
+	/// fr: '{date} à {heure}'
+	String horodatage({required Object date, required Object heure}) => '${date} à ${heure}';
+
+	/// fr: 'Le système'
+	String get acteurSysteme => 'Le système';
+
+	/// fr: 'Compte supprimé'
+	String get acteurInconnu => 'Compte supprimé';
+
+	/// fr: 'Administration'
+	String get roleAdmin => 'Administration';
+
+	/// fr: 'Enseignant'
+	String get roleEnseignant => 'Enseignant';
+
+	/// fr: 'Tuteur'
+	String get roleTuteur => 'Tuteur';
+
+	/// fr: 'Élève'
+	String get roleEleve => 'Élève';
+
+	/// fr: 'Contrôleur'
+	String get roleControleur => 'Contrôleur';
+
+	/// fr: 'Comptable'
+	String get roleComptable => 'Comptable';
+
+	/// fr: 'Hors session'
+	String get roleAucun => 'Hors session';
+
+	/// fr: 'Dossier d'identité consulté'
+	String get evtKycLu => 'Dossier d\'identité consulté';
+
+	/// fr: 'Dossier d'identité tranché'
+	String get evtKycTranche => 'Dossier d\'identité tranché';
+
+	/// fr: 'Profil créé'
+	String get evtProfilCree => 'Profil créé';
+
+	/// fr: 'Profil enfant créé'
+	String get evtProfilEnfantCree => 'Profil enfant créé';
+
+	/// fr: 'Code d'appairage créé'
+	String get evtCodeCree => 'Code d\'appairage créé';
+
+	/// fr: 'Appareil appairé'
+	String get evtAppareilAppaire => 'Appareil appairé';
+
+	/// fr: 'Appareil révoqué'
+	String get evtAppareilRevoque => 'Appareil révoqué';
+
+	/// fr: 'Réglages pédagogiques modifiés'
+	String get evtPedagogie => 'Réglages pédagogiques modifiés';
+
+	/// fr: 'Élève pris par un enseignant'
+	String get evtAffectationPrise => 'Élève pris par un enseignant';
+
+	/// fr: 'Élève attribué par l'administration'
+	String get evtAffectationAttribuee => 'Élève attribué par l\'administration';
+
+	/// fr: 'Demande déposée'
+	String get evtDemandeCreee => 'Demande déposée';
+
+	/// fr: 'Demande tranchée'
+	String get evtDemandeTranchee => 'Demande tranchée';
+
+	/// fr: 'Règle posée'
+	String get evtReglePosee => 'Règle posée';
+
+	/// fr: 'Règle close'
+	String get evtRegleClose => 'Règle close';
+
+	/// fr: 'Aucun événement enregistré'
+	String get vide => 'Aucun événement enregistré';
+
+	/// fr: 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s'inscrire ici.'
+	String get videDetail => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.';
+
+	/// fr: 'Aucun événement ne correspond'
+	String get videFiltre => 'Aucun événement ne correspond';
+
+	/// fr: 'Élargissez la période, ou relâchez un filtre.'
+	String get videFiltreDetail => 'Élargissez la période, ou relâchez un filtre.';
+
+	/// fr: 'Effacer les filtres'
+	String get effacerFiltres => 'Effacer les filtres';
+
+	/// fr: 'Le journal n'a pas pu être lu. Réessayez dans un instant.'
+	String get erreur => 'Le journal n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Les entrées plus anciennes n'ont pas pu être lues.'
+	String get erreurSuite => 'Les entrées plus anciennes n\'ont pas pu être lues.';
+
+	/// fr: 'Charger les entrées plus anciennes'
+	String get chargerSuite => 'Charger les entrées plus anciennes';
+
+	/// fr: 'Vous êtes remonté jusqu'à la première entrée du journal.'
+	String get fin => 'Vous êtes remonté jusqu\'à la première entrée du journal.';
 }
 
 // Path: nav.eleve
@@ -2177,6 +2346,59 @@ extension on Traductions {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
+			'admin.journal.titre' => 'Journal',
+			'admin.journal.chaineIntacte' => 'Journal intact',
+			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
+			'admin.journal.chaineRompue' => 'Journal altéré',
+			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '${nombre} entrée(s) ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+			'admin.journal.chaineInconnue' => 'Intégrité inconnue',
+			'admin.journal.chaineInconnueDetail' => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.',
+			'admin.journal.chaineEnCours' => 'Vérification',
+			'admin.journal.chaineEnCoursDetail' => 'Relecture de l\'empreinte de chaque entrée.',
+			'admin.journal.periodeSemaine' => '7 derniers jours',
+			'admin.journal.periodeMois' => '30 derniers jours',
+			'admin.journal.periodeTout' => 'Depuis le début',
+			'admin.journal.tousTypes' => 'Tous les événements',
+			'admin.journal.tousActeurs' => 'Tout le monde',
+			'admin.journal.colonneQuand' => 'Quand',
+			'admin.journal.colonneQui' => 'Qui',
+			'admin.journal.colonneRole' => 'À quel titre',
+			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
+			'admin.journal.colonneCible' => 'Sur quoi',
+			'admin.journal.colonneDetail' => 'Détail',
+			'admin.journal.horodatage' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'admin.journal.acteurSysteme' => 'Le système',
+			'admin.journal.acteurInconnu' => 'Compte supprimé',
+			'admin.journal.roleAdmin' => 'Administration',
+			'admin.journal.roleEnseignant' => 'Enseignant',
+			'admin.journal.roleTuteur' => 'Tuteur',
+			'admin.journal.roleEleve' => 'Élève',
+			'admin.journal.roleControleur' => 'Contrôleur',
+			'admin.journal.roleComptable' => 'Comptable',
+			'admin.journal.roleAucun' => 'Hors session',
+			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
+			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
+			'admin.journal.evtProfilCree' => 'Profil créé',
+			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
+			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
+			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
+			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
+			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
+			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
+			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
+			'admin.journal.evtDemandeCreee' => 'Demande déposée',
+			'admin.journal.evtDemandeTranchee' => 'Demande tranchée',
+			'admin.journal.evtReglePosee' => 'Règle posée',
+			'admin.journal.evtRegleClose' => 'Règle close',
+			'admin.journal.vide' => 'Aucun événement enregistré',
+			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
+			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
+			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
+			'admin.journal.effacerFiltres' => 'Effacer les filtres',
+			'admin.journal.erreur' => 'Le journal n\'a pas pu être lu. Réessayez dans un instant.',
+			'admin.journal.erreurSuite' => 'Les entrées plus anciennes n\'ont pas pu être lues.',
+			'admin.journal.chargerSuite' => 'Charger les entrées plus anciennes',
+			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',

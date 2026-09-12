@@ -68,7 +68,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ADM-01` | Centre de commande | Admin | E | 0 | `/admin/tableau-de-bord` | Signaux puis chiffres | 4 chiffres + liste pleine largeur | **repris (R3)**, fiche §6 |
 | `ADM-02` | Validation des dossiers | Admin | E | 1 | `/admin/dossiers` | Un dossier à la fois | File à gauche, dossier à droite | **repris (R4)**, fiche §6 |
 | `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/demandes` | Liste de demandes | Liste + feuille de règles | **repris (R4)**, fiche §6 |
-| `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/journal` | Cartes | Tableau dense | **à construire** |
+| `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/journal` | Cartes | Tableau dense | **construit (12/09)**, fiche §6 |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
 
@@ -77,6 +77,13 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 `/c`, qui étaient décrits sans être nommés. Aucun code existant n'est renommé.
 
 ## 2. Ce que le registre révèle
+
+> **Mise à jour du 12 septembre 2026.** Le compte ci-dessous datait de la
+> refonte. Depuis, `ADM-05` (hors série) puis `ADM-04` ont été construits : il
+> reste **neuf** destinations en `EcranAConstruire`, dont `ELV-03`/`ENS-03`, la
+> salle de cours. L'espace admin, lui, n'a plus un seul écran manquant. Le
+> compte se lit dans `lib/core/router/app_router.dart`, jamais en parcourant
+> les écrans.
 
 Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent
 étaient à reprendre par le lot R. Le lot R les a repris tous les quatre :
@@ -1632,3 +1639,83 @@ Deux conséquences hors de l'écran lui-même :
   l'est quand une seule heure est possible, et **seulement** dans ce cas : avec
   deux heures communes, choisir à la place de l'administration reviendrait à
   poser une heure de cours par défaut.
+
+### `ADM-04` Journal d'audit
+
+```
+CODE              ADM-04
+Nom               Journal d'audit
+Role              Admin
+Zone              Administration
+Niveau de charge  E
+Ecran parent      aucun. Quatrieme destination du menu admin
+Profondeur        1
+Question          Qui a fait quoi, quand -- et personne n'y a-t-il touche depuis ?
+
+Priorites         P0  la liste, la plus recente d'abord, paginee
+                  P0  trois filtres : acteur, type d'evenement, periode
+                  P0  AUCUN bouton qui ecrive, nulle part
+                  P0  l'etat de la chaine de hachage, en tete
+                  P1  le detail de l'entree, borne a trois couples
+                  P2  charger les entrees plus anciennes
+
+Action principale     AUCUNE. Seul ecran du produit dans ce cas, et c'est le
+                      sujet : la seule chose qu'on puisse faire d'un journal
+                      immuable, c'est le lire
+Actions secondaires   filtrer ; charger la suite
+Action tertiaire      effacer les filtres (depuis l'etat vide seulement)
+Destructif            aucun, et par construction : audit_logs refuse update et
+                      delete par declencheur depuis 0001
+
+Mobile            Cartes : le type d'evenement en titre, quand/qui/role/cible
+                  sur la ligne secondaire, le detail sur sa propre ligne
+Tablette          Cartes, identique
+Desktop           Tableau dense, en-tete collee en haut. C'est sa forme
+                  naturelle (05-regles-responsive.md section 3)
+
+Etats             loading   Skeleton.liste -- deuxieme ecran du produit a
+                            employer le composant, apres ADM-05
+                  content   nominal
+                  empty     aucun evenement : registre BONNE NOUVELLE, sans
+                            bouton. Sous filtre : registre actionnable, avec
+                            « effacer les filtres »
+                  error     message + reessayer. Une page SUIVANTE en echec
+                            n'efface pas ce qui est deja lu
+                  offline   bandeau de PageShell
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        l'ordre est chronologique inverse, jamais autre chose
+                  un changement de filtre relit depuis le debut : garder les
+                  entrees deja lues melangerait deux filtres dans une liste
+                  la pagination est un keyset (created_at, id), jamais un
+                  offset : le journal recoit des lignes pendant qu'on le lit
+                  un type d'evenement inconnu s'affiche TEL QUEL, jamais
+                  masque : le vocabulaire vit en base et grandira
+                  une entree sans acteur humain est nommee « Le systeme », un
+                  compte clos « Compte supprime ». Jamais une case vide
+                  la verification de chaine ne voyage pas avec la liste, elle
+                  a sa propre lecture (voir ADR-022)
+
+Accessibilite     chaque cellule du tableau porte le titre de sa colonne dans
+                  son libelle parle : Flutter n'associe pas un en-tete a ses
+                  cellules comme le ferait un <th>
+                  chaque carte se lit comme un seul element (MergeSemantics)
+                  les pilules de filtre portent l'etat « selectionne »
+```
+
+Construit le 12 septembre 2026. Treize tests de widget, trois tests unitaires
+et neuf contrôles SQL (`supabase/tests/scenarios_adm04.sql`) le tiennent.
+
+Trois conséquences hors de l'écran lui-même :
+
+- **`DataCollection` existe enfin.** Il était au catalogue des composants en P1
+  depuis la refonte, « nécessaire avant l'étape 5 », et n'avait jamais été
+  construit faute d'écran dont la forme naturelle soit un tableau. `ADM-04`
+  était cet écran ;
+- **`FilterPill` est né ici**, hors de la liste d'origine, et a été inscrit au
+  catalogue comme `MarquePage` avant lui ;
+- **la chaîne de hachage de `audit_logs` est relue pour la première fois.**
+  Elle existait depuis l'étape 1, et chaque écriture payait un `lock table`
+  pour la tenir : le prix était payé, la garantie jamais constatée. Détail et
+  arbitrage : **ADR-022**.
