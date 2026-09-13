@@ -321,8 +321,8 @@ void main() {
       expect(AppGabarit.pour(320), Gabarit.mobile);
       expect(AppGabarit.pour(599), Gabarit.mobile);
       expect(AppGabarit.pour(600), Gabarit.tablette);
-      expect(AppGabarit.pour(1024), Gabarit.tablette);
-      expect(AppGabarit.pour(1025), Gabarit.desktop);
+      expect(AppGabarit.pour(1199), Gabarit.tablette);
+      expect(AppGabarit.pour(1200), Gabarit.desktop);
       expect(AppGabarit.pour(1440), Gabarit.desktop);
     });
 

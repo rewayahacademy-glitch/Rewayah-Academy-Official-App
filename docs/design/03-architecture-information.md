@@ -120,8 +120,8 @@ les change pas.
 | Largeur | Forme | Détail |
 | :--- | :--- | :--- |
 | < 600 | Barre basse | Les mêmes destinations, icône plus label |
-| 600 à 1024 | Rail latéral | Icônes plus labels courts, replié |
-| > 1024 | Barre latérale permanente | Labels complets, section active mise en valeur |
+| 600 à 1199 | Rail latéral 80 | Icônes plus labels courts, replié |
+| ≥ 1200 | Barre latérale permanente 256 | Labels complets, section active mise en valeur |
 
 Une seule liste de destinations alimente les trois formes. Trois listes
 finiraient par diverger.

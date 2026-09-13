@@ -153,7 +153,7 @@ List<Destination> destinationsPour({
 /// La navigation de premier niveau, dans ses trois formes.
 ///
 /// **Une seule liste de destinations alimente les trois formes** : barre basse
-/// sous 600, rail de 600 a 1024, barre laterale au dela
+/// sous 600, rail de 600 a 1199, barre laterale a partir de 1200
 /// (`docs/design/03-architecture-information.md` section 5). Trois listes
 /// finiraient par diverger.
 ///
@@ -166,6 +166,13 @@ List<Destination> destinationsPour({
 ///   enfant n'a aucune navigation, le controleur n'en a qu'une. Aucun chrome
 ///   n'est alors rendu, et l'ecran occupe toute la place.
 class NavShell extends StatelessWidget {
+  /// Cles stables pour verifier les trois presentations adaptatives du shell.
+  static const Key barreBasseKey = ValueKey<String>('nav-shell-barre-basse');
+  static const Key railKey = ValueKey<String>('nav-shell-rail');
+  static const Key barreLateraleKey = ValueKey<String>(
+    'nav-shell-barre-laterale',
+  );
+
   /// Cree la coquille de navigation.
   ///
   /// **Volontairement non `const`** : les deux assertions portent sur la
@@ -270,29 +277,32 @@ class _Barre extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: palette.surfaceRaised.background,
-        border: Border(top: palette.borderHairline.asBorderSide()),
-        // Une barre collee flotte au dessus du contenu : niveau 2.
-        boxShadow: AppElevation.niveau2(palette.ombre),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-          child: Row(
-            children: <Widget>[
-              for (int i = 0; i < destinations.length; i++)
-                Expanded(
-                  child: _Entree(
-                    destination: destinations[i],
-                    active: i == indexActif,
-                    enColonne: true,
-                    onPress: () => onAller(destinations[i].chemin),
+    return KeyedSubtree(
+      key: NavShell.barreBasseKey,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: palette.surfaceRaised.background,
+          border: Border(top: palette.borderHairline.asBorderSide()),
+          // Une barre collee flotte au dessus du contenu : niveau 2.
+          boxShadow: AppElevation.niveau2(palette.ombre),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: Row(
+              children: <Widget>[
+                for (int i = 0; i < destinations.length; i++)
+                  Expanded(
+                    child: _Entree(
+                      destination: destinations[i],
+                      active: i == indexActif,
+                      enColonne: true,
+                      onPress: () => onAller(destinations[i].chemin),
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -321,6 +331,7 @@ class _Cote extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
 
     return SizedBox(
+      key: enColonne ? NavShell.railKey : NavShell.barreLateraleKey,
       width: largeur,
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -330,23 +341,30 @@ class _Cote extends StatelessWidget {
           border: BorderDirectional(end: palette.borderHairline.asBorderSide()),
         ),
         child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                for (int i = 0; i < destinations.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: _Entree(
-                      destination: destinations[i],
-                      active: i == indexActif,
-                      enColonne: enColonne,
-                      onPress: () => onAller(destinations[i].chemin),
-                    ),
-                  ),
-              ],
+          // La PageShell protege deja son contenu ; le chrome doit aussi
+          // proteger sa propre zone de focus sur desktop et tablette.
+          child: Semantics(
+            container: true,
+            explicitChildNodes: true,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    for (int i = 0; i < destinations.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: _Entree(
+                          destination: destinations[i],
+                          active: i == indexActif,
+                          enColonne: enColonne,
+                          onPress: () => onAller(destinations[i].chemin),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -380,54 +398,57 @@ class _Entree extends StatelessWidget {
     final TextStyle base =
         Theme.of(context).textTheme.labelMedium ?? const TextStyle();
 
-    return Pressable.selon(
-      onPress: onPress,
-      libelleSemantique: destination.libelle,
-      respecterCibleTactile: false,
-      arrondiFocus: AppRadius.arrondiSm,
-      constructeur: (BuildContext _, EtatPression etat) {
-        // L'aplat sature reste reserve a l'action principale : une destination
-        // active prend la teinte douce de l'accent, jamais le violet plein.
-        final AppColorPair? fond = active
-            ? palette.washAccent
-            : (etat.survole ? palette.surfaceSunken : null);
-        final TextStyle style = active
-            ? palette.inkAccent.applyTo(base)
-            : palette.inkMuted.applyTo(base);
-        final Widget icone = IconTheme(
-          data: active
-              ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
-              : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
-          child: Icon(destination.icone.resoudre(selectionne: active)),
-        );
-        // Ni `maxLines` ni ellipse : un libelle de navigation porte du sens, et
-        // `06-accessibilite.md` section 3 interdit de le rogner. A 200 pour
-        // cent de taille de texte, la barre grandit ; elle ne coupe pas.
-        final Widget libelle = Text(
-          destination.libelle,
-          style: style,
-          textAlign: TextAlign.center,
-        );
+    return Semantics(
+      selected: active,
+      child: Pressable.selon(
+        onPress: onPress,
+        libelleSemantique: destination.libelle,
+        respecterCibleTactile: false,
+        arrondiFocus: AppRadius.arrondiSm,
+        constructeur: (BuildContext _, EtatPression etat) {
+          // L'aplat sature reste reserve a l'action principale : une destination
+          // active prend la teinte douce de l'accent, jamais le violet plein.
+          final AppColorPair? fond = active
+              ? palette.washAccent
+              : (etat.survole ? palette.surfaceSunken : null);
+          final TextStyle style = active
+              ? palette.inkAccent.applyTo(base)
+              : palette.inkMuted.applyTo(base);
+          final Widget icone = IconTheme(
+            data: active
+                ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
+                : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+            child: Icon(destination.icone.resoudre(selectionne: active)),
+          );
+          // Ni `maxLines` ni ellipse : un libelle de navigation porte du sens, et
+          // `06-accessibilite.md` section 3 interdit de le rogner. A 200 pour
+          // cent de taille de texte, la barre grandit ; elle ne coupe pas.
+          final Widget libelle = Text(
+            destination.libelle,
+            style: style,
+            textAlign: TextAlign.center,
+          );
 
-        return Container(
-          constraints: BoxConstraints(minHeight: metriques.cibleTactile),
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: fond?.decoration(borderRadius: AppRadius.arrondiSm),
-          child: enColonne
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[icone, Ecart.vXs, libelle],
-                )
-              : Row(
-                  children: <Widget>[
-                    icone,
-                    Ecart.hMd,
-                    Expanded(child: libelle),
-                  ],
-                ),
-        );
-      },
+          return Container(
+            constraints: BoxConstraints(minHeight: metriques.cibleTactile),
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: fond?.decoration(borderRadius: AppRadius.arrondiSm),
+            child: enColonne
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[icone, Ecart.vXs, libelle],
+                  )
+                : Row(
+                    children: <Widget>[
+                      icone,
+                      Ecart.hMd,
+                      Expanded(child: libelle),
+                    ],
+                  ),
+          );
+        },
+      ),
     );
   }
 }
