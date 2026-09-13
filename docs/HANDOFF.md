@@ -1,5 +1,44 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 👪 **13 septembre 2026, neuvième session — `TUT-06` est fait, et un cours
+> annulé ne dit plus rien de l'enfant.** Le tuteur ouvre `/tuteur/suivi` et lit
+> les cours de ses enfants, du plus récent au plus ancien : la date, l'enfant,
+> l'enseignant, et l'état de présence que `TUT-01` n'affiche jamais.
+> **Il ne reste que TROIS écrans, DEUX dans le MVP-0** — le suivi élève,
+> `ENS-05`, et `CPT-01` qui est hors MVP-0.
+> 🔑 **Ce lot a d'abord dû trancher entre deux sources qui se contredisaient.**
+> `parcours-utilisateurs.md` fait de `TUT-06` l'historique des **cahiers de
+> transmission** — « ce qui a été travaillé, les points de phonétique » — et le
+> cahier est `ENS-04`, étape 6, sans table ni format ; mais `0011`, en bornant
+> `presence_seance_v`, écrit dans son propre corps que le tuteur y voit les
+> participants de son foyer et que **c'est ce qui permettra à `TUT-06`
+> d'exister**. Décision : construire ce que la base sait nourrir, et **ne rien
+> poser pour le reste** — pas de colonne de contenu pédagogique remplie de
+> tirets, pas de panneau de détail vide. ⚠ **Un espace réservé à un contenu
+> absent se lit comme une panne**, et il se lirait ainsi à chaque ligne, tous
+> les jours, jusqu'à l'étape 6.
+> 🔍 **Ce que le lot a trouvé, et que rien ne signalait** : `etat_presence()` ne
+> lit que les événements de salle. Un cours **annulé**, un cours où
+> **l'enseignant** ne s'est pas présenté, un cours tombé en **panne** n'en ont
+> produit aucun — la fonction en déduit une absence, ce qui est exact au sens de
+> la base. Affiché tel quel au parent, cela lui dit que **son enfant était
+> absent d'un cours que l'académie n'a pas donné**. ⚠ **La donnée n'était pas
+> fausse ; la phrase, elle, l'aurait été.** Le sort du cours prime donc sur
+> l'état de la personne. Un élève absent, lui, reste un cours tenu : c'est bien
+> **sa** présence.
+> ✅ **Aucune migration, et c'est le premier lot d'écran de l'étape 5 dans ce
+> cas** : `0005` et `0011` avaient déjà tout ouvert, `scenarios_n4.sql` P5
+> prouvait déjà la borne du foyer (2 enfants lus, 0 ligne hors foyer), et les
+> **144 contrôles SQL sur neuf fichiers ne bougent pas**. Mesuré : **733/733**
+> tests — dont **32 de ce lot**, le reste de l'écart venant du travail non
+> commité d'OpenCode (section 5) —, `dart analyze --fatal-infos` propre,
+> **124 fichiers de jetons** sans violation, `TUT-06` ajouté aux écrans vérifiés
+> en RTL et à 200 % de taille de texte (19 → 20). ⚠ **Rien n'est déployé par ce lot** : la
+> production porte toujours `6d06d39`. ⚠ **`Env.configuree` n'est toujours pas
+> durci** — et `lib/core/config/env.dart` porte en ce moment le travail non
+> commité d'OpenCode (Sentry) : ne pas le stager par mégarde. Commit `122b8e8`,
+> poussé.
+>
 > ✅ **13 septembre 2026, tout à la fin de la huitième session — C'EST RÉPARÉ, ET
 > LA CONNEXION EST PROUVÉE.** Reconstruit depuis `D:\ra-pwa-fix` et déployé : le
 > `main.dart.js` servi fait **4 401 919** octets, ne contient **plus**
@@ -1246,11 +1285,11 @@ celle du 11 septembre, lot de remise au vert — **les premières vraies depuis 
 lot T**, les colonnes intermédiaires n'ayant jamais pu être mesurées sur ce
 poste (section 0 undecies).
 
-| Contrôle | Valeur (13/09, lots `N5` + `CTR-01`) | Au lot `N4` (13/09) |
+| Contrôle | Valeur (13/09, lot `TUT-06`) | Aux lots `N5` + `CTR-01` (13/09) |
 | :--- | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème | aucun problème |
-| `flutter test` | **692 tests, tous verts** | 646, tous verts |
-| `dart run tool/verifier_jetons.dart` | **120 fichiers**, aucune violation | 113 fichiers |
+| `flutter test` | **733 tests, tous verts** | 692, tous verts |
+| `dart run tool/verifier_jetons.dart` | **124 fichiers**, aucune violation | 120 fichiers |
 | `scenarios_etape3.sql` | **34 contrôles** verts | 34 |
 | `scenarios_etape4.sql` | **39 contrôles** verts | 39 |
 | `scenarios_etape5.sql` | **15 contrôles** verts | 15 |
@@ -1261,7 +1300,20 @@ poste (section 0 undecies).
 | `scenarios_n5.sql` | **9 contrôles** verts | — |
 | `scenarios_adm04.sql` | **9 contrôles** verts, **toujours en dernier** | 9 |
 | **Total SQL** | **144 contrôles**, neuf fichiers, base neuve `0001`→`0013` | 125, sept fichiers |
-| `main.dart.js` servi | **4 442 280** octets | 4 324 978 |
+| `main.dart.js` servi | **4 401 919** octets (`6d06d39`, sans `TUT-06`) | 4 442 280 |
+
+⚠ **Le total SQL ne bouge pas au lot `TUT-06`, et ce n'est pas un oubli** :
+l'écran n'ajoute aucune migration, et la borne du foyer sur laquelle il repose
+est déjà mesurée par `scenarios_n4.sql` **P5** — deux enfants lus, zéro ligne
+hors foyer.
+
+⚠ **Les 733 tests comptent aussi ceux d'OpenCode**, dont le travail n'était pas
+commité au moment de la mesure : **7** viennent de `test/observabilite/`
+(mesurés), les autres d'ailleurs dans son arbre. `TUT-06` en apporte **32** :
+16 sur la vue pure, 14 sur l'écran, et 2 de plus dans le test d'accessibilité,
+qui passe de 19 à 20 écrans. **Le chiffre du seul arbre commité n'a pas été
+isolé** — le mesurer demanderait un worktree neuf, donc un `pub get`, donc le
+blocage TLS.
 
 ⚠ Le `flutter test` à **692** a été relevé par la session `N5` sur l'arbre
 complet des deux lots ; la session `CTR-01` mesurait 690 avant que les deux
@@ -1463,7 +1515,7 @@ commitée à part au début du lot L8.
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
 
-## 9. Prompt de reprise — `N5` et `CTR-01` sont faits, et la production ne peut pas authentifier
+## 9. Prompt de reprise — `TUT-06` est fait, il ne reste que deux écrans au MVP-0
 
 À copier tel quel pour démarrer la prochaine session. Le prompt lui-même est en
 **§9.5**.
@@ -1504,6 +1556,14 @@ Les quatre sont le **suivi élève** (`t.nav.eleve.suivi`), **`TUT-06`**
 (l'espace comptable, **hors MVP-0**). **Dans le MVP-0, il n'en reste donc que
 trois.**
 
+**Neuvième session.** **`TUT-06` fait** : le suivi du foyer. **Un écran de
+moins : il en reste trois**, dont **deux dans le MVP-0** — le suivi élève et
+`ENS-05` ; `CPT-01` est hors MVP-0. Mesuré dans
+`lib/core/router/app_router.dart` : **quatre `EcranAConstruire`**, dont un qui
+n'est pas un écran manquant mais l'état de chargement de la racine. ⚠ **Rien
+n'a été déployé par cette session** : la production porte toujours `6d06d39`,
+c'est-à-dire `N5` et `CTR-01`, jamais `TUT-06`.
+
 ### 9.2 Les causes non-code
 
 1. ~~Migrations en attente~~ — **close depuis la troisième session.** N3 n'en
@@ -1527,6 +1587,43 @@ trois.**
    séance — n'a jamais été *possible* en production, puisque l'authentification
    n'y fonctionne pas. Ce n'était pas une négligence de mesure, c'était un
    empêchement que personne n'avait vu.
+
+### 9.2 zero Ce que la neuvième session a livré — `TUT-06`, le suivi du foyer
+
+**`TUT-06` — le suivi du foyer** (commit `122b8e8`, poussé, **non déployé**) :
+
+- `lib/core/suivi/service_suivi.dart` : deux lectures bornées **en base**, et
+  **aucune vue neuve** — `mes_seances_v` pour les cours du foyer (`0005`),
+  `presence_seance_v` pour la présence de ses membres (`0011`). Le client ne
+  filtre **rien** par foyer : un `select()` nu rend le foyer et rien d'autre.
+- `lib/features/suivi_foyer/vue_suivi_foyer.dart` : `VueSuiviFoyer.depuis` est
+  **pure**, comme `VuePlanning.depuis`, `VueSalle.depuis` et
+  `VuePresence.depuis`.
+- `lib/features/suivi_foyer/suivi_foyer_page.dart`, branché au routeur, plus la
+  fiche §6 du catalogue et 30 tests.
+- `PresenceParticipant` gagne `seanceId` : la vue l'exposait déjà
+  (`session_id`), la salle n'en avait pas besoin — elle demande **une** séance —
+  mais sans lui, rapprocher un état de son cours demanderait une requête par
+  ligne de liste.
+
+**Ce que ce lot a trouvé, et que rien ne signalait.** `etat_presence()` ne lit
+que les événements de salle. Un cours **annulé**, un cours où **l'enseignant**
+ne s'est pas présenté, un cours tombé en **panne** n'en ont produit aucun : la
+fonction en déduit une absence, et c'est exact au sens de la base. Affiché tel
+quel au parent, cela lui dit que **son enfant était absent d'un cours que
+l'académie n'a pas donné**. ⚠ **La donnée n'était pas fausse ; la phrase,
+elle, l'aurait été.** Le sort du cours prime donc sur l'état de la personne :
+annulé, non tenu, ou l'état de l'enfant, dans cet ordre. Un **élève** absent,
+lui, reste un cours tenu : c'est bien **sa** présence, et elle se dit.
+
+**Et la contradiction entre deux sources, tranchée plutôt que contournée.**
+`parcours-utilisateurs.md` décrit `TUT-06` comme l'historique des **cahiers de
+transmission**, qui sont `ENS-04`, étape 6, sans table ni format ; `0011` écrit
+dans son propre corps que la borne du foyer est là **pour que `TUT-06` existe**.
+Les deux parlent du même écran à deux moments de sa vie. L'écran construit est
+celui que la base sait nourrir — la date, l'enseignant, l'assiduité — et **rien
+n'est posé pour le reste** : ⚠ **un espace réservé à un contenu absent se lit
+comme une panne**, et il se lirait ainsi à chaque ligne jusqu'à l'étape 6.
 
 ### 9.2 bis Ce que la huitième session a livré — deux lots en parallèle
 
@@ -1762,44 +1859,33 @@ NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre :
 N'OUVRE PAS "D:\RA _APP\docs de lancement\architecture live kit..md" :
 son contenu utile est dans l'ADR-023 et les commentaires de 0010.
 
-+++ LA PREMIERE CHOSE A FAIRE, AVANT TOUT LOT +++
-LA PRODUCTION NE PEUT PAS AUTHENTIFIER : elle est compilee avec une cle
-Supabase FACTICE. Mesure du 13/09, pas supposition :
-  - le main.dart.js servi (4 442 280 octets) contient la chaine
-    "cle-factice-playground-ne-jamais-utilisee" ;
-  - cette cle rend HTTP 401 sur
-    https://gggmtelinlpseweouyav.supabase.co/auth/v1/settings, la vraie
-    cle anon du projet rend 200 ;
-  - Env.configuree ne teste que isNotEmpty : une cle fausse mais NON
-    VIDE passe le garde-fou. L'app demarre, affiche l'ecran de
-    connexion, et la console reste MUETTE. C'est exactement ce que sept
-    sessions ont "verifie".
-CAUSE : D:\ra-pwa-build\dart_define.json est la copie EXACTE du
-dart_define.json de DEBUG du depot (384 octets, meme contenu, ecrit le
-11/09) : cle factice, GALERIE true, PLAYGROUND true. Toute version
-compilee depuis ce worktree depuis le 11/09 porte donc la fausse cle ET
-expose /_galerie (la chaine _galerie est bien dans le bundle servi).
-CORRECTIF : ecrire la vraie cle anon dans le dart_define.json du
-worktree (MCP Supabase, get_publishable_keys ; elle est publiable par
-nature, c'est la RLS qui protege), passer GALERIE et PLAYGROUND a false,
-recompiler, redeployer, PUIS SE CONNECTER POUR DE VRAI.
-Un worktree propre sur 090ae6f est deja pret en D:\ra-pwa-fix :
-dependances resolues, dart_define.json correct deja ecrit. Il ne
-manquait que la permission de lancer flutter build.
-ENSUITE, DURCIR LE GARDE-FOU : Env.configuree doit refuser une cle qui
-n'a pas la forme d'une cle Supabase (JWT "eyJ..." ou "sb_publishable_"),
-sinon le prochain fichier de debug repartira en prod sans un bruit.
-UN GARDE-FOU QUI TESTE LA PRESENCE NE TESTE PAS LA VALIDITE.
++++ CE QUI ATTEND, AVANT OU APRES LE PROCHAIN LOT +++
+1. TUT-06 N'EST PAS DEPLOYE. La production porte 6d06d39 (N5 et CTR-01)
+   et rien de plus. Le deploiement se fait depuis un worktree, avec la
+   commande exacte des PIEGES ci-dessous, et LIRE le dart_define.json
+   AVANT de construire.
+2. DURCIR Env.configuree, toujours pas fait. Elle ne teste que
+   isNotEmpty : une cle fausse mais NON VIDE passe le garde-fou, et
+   c'est exactement ce qui a mis une cle factice en production du 11 au
+   13 septembre sans qu'aucune console ne dise rien. Elle doit refuser
+   une cle qui n'a pas la FORME d'une cle Supabase (JWT "eyJ..." ou
+   "sb_publishable_").
+   UN GARDE-FOU QUI TESTE LA PRESENCE NE TESTE PAS LA VALIDITE.
+   ATTENTION : lib/core/config/env.dart porte en ce moment le travail
+   NON COMMITE d'OpenCode (Sentry). Relire le fichier juste avant de
+   l'editer, et ne jamais stager ses lignes avec les siennes.
+3. GALERIE=true en production reste a trancher : /_galerie serait alors
+   expose sur le site public, alors que le commentaire d'Env dit
+   l'inverse. Le build du 13/09 au soir, lui, ne contient plus _galerie.
 
 OU ON EN EST, MESURE ET NON SUPPOSE.
 Le verdict "l'app est loin d'etre fonctionnelle" est VERIFIE depuis le
-12/09. Ne REFAIS PAS ce diagnostic. Il reste QUATRE ecrans a construire :
-le suivi eleve, TUT-06, ENS-05, et CPT-01 qui est HORS MVP-0 -- donc
-TROIS dans le MVP-0. L'ESPACE ADMIN EST COMPLET, LA SALLE EXISTE, LE
-CORAN EST DANS LE PRODUIT, ET LES TROIS PORTES D'ENTREE DE LA SALLE
-EXISTENT ENFIN TOUTES LES TROIS (enseignant ENS-02, tuteur TUT-01,
-controleur CTR-01).
-Le compte se lit dans lib/core/router/app_router.dart : cinq
+12/09. Ne REFAIS PAS ce diagnostic. Il reste TROIS ecrans a construire :
+le suivi eleve, ENS-05, et CPT-01 qui est HORS MVP-0 -- donc DEUX dans
+le MVP-0. L'ESPACE ADMIN EST COMPLET, LA SALLE EXISTE, LE CORAN EST DANS
+LE PRODUIT, LES TROIS PORTES D'ENTREE DE LA SALLE EXISTENT (enseignant
+ENS-02, tuteur TUT-01, controleur CTR-01), ET LE FOYER A SON SUIVI.
+Le compte se lit dans lib/core/router/app_router.dart : quatre
 EcranAConstruire, dont un qui est l'etat de chargement de la racine.
 
 FAIT :
@@ -1832,27 +1918,58 @@ FAIT :
        conserver le contenu plus de 7 jours et reste revocable sans
        preavis. Migration 0013 : 114 sourates, 30 juz, 604 pages,
        6236 versets (090ae6f).
-  -> 692/692 tests, 120 fichiers de jetons, 144 controles SQL sur NEUF
-     fichiers, 0012 ET 0013 APPLIQUEES EN PROD.
+  TUT-06 = LE SUIVI DU FOYER, et un cours ANNULE ne dit rien de
+       l'enfant. AUCUNE MIGRATION : 0005 et 0011 avaient deja tout
+       ouvert au tuteur, et 0011 le nomme dans son propre corps. Le
+       sort du cours prime sur l'etat de la personne -- annule, non
+       tenu, ou l'etat de l'enfant -- parce qu'etat_presence() ne lit
+       que les evenements de salle et deduit une absence d'un cours que
+       l'academie n'a pas donne. L'ecran ne porte AUCUNE action : le
+       geste de correction appartient a l'enseignant et a
+       l'administration (122b8e8).
+  -> 733/733 tests (32 de TUT-06 ; le reste de l'ecart avec 692 vient du
+     travail NON COMMITE d'OpenCode, voir section 5), 124 fichiers de
+     jetons, 144 controles SQL sur NEUF fichiers (INCHANGES : TUT-06
+     n'ajoute aucune migration et scenarios_n4.sql P5 prouve deja la
+     borne du foyer), 0012 ET 0013 APPLIQUEES EN PROD.
 
-LE PROCHAIN LOT, UNE FOIS LA PROD REPAREE : au choix, tous les trois
-dans le MVP-0 --
-  - TUT-06, le suivi d'un enfant par son tuteur ;
-  - ENS-05, le profil enseignant ;
-  - le suivi eleve.
+LE PROCHAIN LOT : au choix, et il n'en reste que deux dans le MVP-0 --
+  - le suivi eleve (/eleve/suivi), le jumeau de TUT-06 vu par l'enfant.
+    C'EST LE MOINS CHER : ServiceSuivi sert les deux roles SANS UNE
+    LIGNE DE PLUS -- les memes vues rendent alors sa seule seance et sa
+    seule ligne de presence, c'est la BORNE qui change d'appelant, pas
+    la requete. Attention, la section 6.6 de la spec d'etape interdit
+    tout detail administratif a l'eleve : il lit SON etat, jamais celui
+    d'un autre, et jamais un motif.
+  - ENS-05, le profil enseignant. Le catalogue le dit REPORTE AVEC LE
+    MODULE FINANCE (ADR-003) : verifier ce que la fiche peut porter sans
+    argent avant de l'ouvrir.
 N6 (mode suivi enseignant) vient AVEC le document partage : le Coran est
 desormais en base, mais le canal de diffusion (question `e`) n'est
 toujours pas tranche.
 
 CE QUI N'EST PAS PROUVE, ET QU'IL NE FAUT PAS PRETENDRE AVOIR PROUVE :
 un vrai cours. Personne n'a encore ouvert deux navigateurs sur une meme
-seance, ET ON SAIT MAINTENANT POURQUOI : l'authentification ne fonctionne
-pas en production. Ce n'etait pas une mesure negligee, c'etait un
-empechement que personne n'avait vu. IL N'EXISTE AUCUNE SEANCE EN BASE
-(verifie le 13/09 : 0 seance, 0 participant, 0 evenement, 7 profils).
-NI l'ecran du Coran NI le planning du controle n'ont ete VUS en
-production : seules leurs ROUTES l'ont ete, et elles redirigent vers
-/connexion faute de session. Meme cause.
+seance. L'empechement, lui, est leve : l'authentification fonctionne en
+production depuis le 13/09 au soir, prouvee par une vraie connexion.
+Ce qui manque maintenant, c'est une SEANCE : IL N'EN EXISTE AUCUNE EN
+BASE (verifie le 13/09 : 0 seance, 0 participant, 0 evenement, 7
+profils). NI l'ecran du Coran NI le planning du controle NI le suivi du
+foyer n'ont ete VUS avec des donnees : le premier et le deuxieme sont en
+production sans seance a montrer, le troisieme n'y est meme pas deploye.
+
+CE QUE LA NEUVIEME SESSION N'A PAS CONSTRUIT, ET CE N'EST PAS UN OUBLI :
+  - le contenu pedagogique de TUT-06 : ce qui a ete travaille, les
+    points de phonetique. C'est ENS-04, etape 6. Tant qu'aucun
+    enseignant ne peut l'ecrire, aucun parent ne peut le lire, et une
+    colonne vide ne comble pas un cahier absent.
+  - la notification de fin de seance, que la fiche produit decrit
+    pourtant comme ce qui justifie l'abonnement aux yeux du parent qui
+    paie. Elle demande un canal : device_tokens est vide et l'etape D de
+    l'onboarding reste ouverte. Ce serait un message sans destinataire.
+  - le panneau de detail que le registre annoncait sur desktop : il n'a
+    rien a porter de plus que sa ligne tant que le cahier n'existe pas.
+    La fiche le remplace par le tableau dense, et le DIT.
 
 CE QUE LA HUITIEME SESSION N'A PAS CONSTRUIT, ET CE N'EST PAS UN OUBLI :
   - les trois signalements automatiques de l'ADR-011 : leur place est
@@ -1925,6 +2042,22 @@ A LUI SOUMETTRE, PAS BLOQUANT (decisions prises par l'agent) :
     public. Le commentaire d'Env dit pourtant "une version de production
     ne contient pas la galerie". A trancher avec la reparation de la
     cle.
+  - TUT-06 : entre parcours-utilisateurs.md (le cahier de transmission,
+    etape 6) et 0011 (qui nomme TUT-06 dans son propre corps), l'ecran
+    construit est celui que la base sait nourrir. Rien n'est pose pour
+    le cahier, pas meme une colonne vide.
+  - TUT-06 : un cours annule ou non tenu ne dit RIEN de l'enfant, meme
+    quand etat_presence() calcule une absence. Le sort du cours prime
+    sur l'etat de la personne.
+  - TUT-06 : l'ecran ne porte AUCUNE action. Corriger un etat ou excuser
+    une absence appartient a l'enseignant et a l'administration, avec
+    motif et entree de journal (section 6.5). Un bouton chez le tuteur
+    lui donnerait le droit de corriger ce qui compte pour la paie.
+  - TUT-06 : la pastille sans phrase de contexte. La duree que porte
+    LignePresence se compte depuis maintenant et n'a de sens que pendant
+    le cours ; le libelle, lui, vient quand meme de
+    LignePresence.libelle, pour que la salle et le suivi ne nomment
+    jamais un etat autrement.
 
 MIGRATIONS : plus aucune en attente. GARDER LE REFLEXE get_project_url
 AVANT toute ecriture : le MCP a deja vise PISI (riaqzfhdynmtshvbgdvt)
@@ -1949,15 +2082,22 @@ POUR MESURER :
            sqlite3:
              source: system
     Methode : editer dans le depot, copier vers le worktree, mesurer
-    la-bas. Reference 692/692 et 120 fichiers de jetons.
+    la-bas. Reference 733/733 et 124 fichiers de jetons.
+    ++ MESURE DU 13/09, NEUVIEME SESSION : `flutter test` a tourne DANS
+    LE DEPOT PRINCIPAL, 733/733, SANS aucun contournement, et
+    `dart run slang` aussi. Le blocage TLS ne les atteint plus. NE PAS
+    EN CONCLURE qu'il a disparu pour `flutter build web` : cela n'a pas
+    ete mesure, et c'est la commande qui avait ete refusee. Essayer
+    d'abord dans le depot, garder le worktree comme repli. ++
     `dart analyze` fonctionne dans le depot principal, lui.
+    Le playground d'OpenCode fait echouer verifier_jetons.dart (6
+    violations qui ne sont pas les notres) : le deplacer hors de `lib/`
+    le temps de la mesure, PUIS LE REMETTRE.
     ATTENTION en copiant vers le worktree : lib/main.dart, lib/app.dart
     et lib/core/config/env.dart y arrivent dans la version NON COMMITEE
     d'OpenCode, qui importe son playground. La compilation casse. Les
     restaurer depuis le commit avant de construire :
        git checkout <commit> -- lib/main.dart lib/app.dart lib/core/config/env.dart
-    Et le playground fait echouer verifier_jetons.dart (6 violations qui
-    ne sont pas les notres) : l'ecarter avant de mesurer.
 
 PIEGES :
 - OpenCode travaille EN PARALLELE sur le meme depot (lib/app.dart,
@@ -1970,6 +2110,15 @@ PIEGES :
 - TOUT nouveau composant de lib/core/widgets/ doit avoir son entree de
   galerie ET sa ligne dans composantsDuCatalogue de
   catalogue_galerie_test.dart, ET sa ligne au catalogue de composants.
+- DataCollection REND DEUX ARBRES DIFFERENTS. En tableau (desktop), chaque
+  colonne est son propre Text ; en carte (mobile, tablette), les colonnes
+  `secondaire` sont JOINTES en une seule chaine separee par un point
+  median. Un `find.text('Rachid - TEACH-000001')` qui passe a 1400 trouve
+  zero widget a 390 : il faut `find.textContaining`. Mesure, pas
+  supposition : deux tests de TUT-06 sont tombes la-dessus.
+- ET UN PRENOM D'ENFANT EST AUSSI UN LIBELLE DE PILULE. Sur un ecran qui
+  filtre par personne, `find.text('Sofia')` trouve la pilule, pas la
+  ligne. Prendre un temoin qui n'existe qu'une fois -- l'enseignant.
 - Un libelle semantique de Pressable se FOND dans le noeud semantique
   avec le texte affiche dessous : find.bySemanticsLabel avec une chaine
   exacte ne trouve rien, il faut une RegExp. Et tester.ensureSemantics()
