@@ -127,6 +127,7 @@ class PresenceParticipant {
     required this.identifiantImmuable,
     required this.etat,
     required this.consolide,
+    this.seanceId = '',
     this.entreLe,
     this.derniereTraceLe,
     this.debutSeance,
@@ -135,6 +136,7 @@ class PresenceParticipant {
   /// Lit une ligne de la vue.
   factory PresenceParticipant.depuisJson(Map<String, dynamic> json) =>
       PresenceParticipant(
+        seanceId: json['session_id'] as String? ?? '',
         profilId: json['profile_id'] as String? ?? '',
         role: json['role'] as String? ?? '',
         prenom: json['prenom'] as String? ?? '',
@@ -151,6 +153,15 @@ class PresenceParticipant {
           json['started_at'] as String? ?? '',
         )?.toLocal(),
       );
+
+  /// La seance a laquelle cette ligne appartient.
+  ///
+  /// Vide dans la salle, ou elle ne sert a rien : l'ecran a demande **une**
+  /// seance, il sait laquelle. Elle devient indispensable des que plusieurs
+  /// seances se lisent d'un coup -- `TUT-06` rapproche chaque etat de son cours,
+  /// et sans cette colonne il devrait redemander la presence seance par seance,
+  /// c'est-a-dire une requete par ligne de liste.
+  final String seanceId;
 
   /// L'identifiant du profil. **C'est aussi l'identite LiveKit** : la base emet
   /// `identity = profile_id::text`, ce qui permet de rapprocher une ligne de

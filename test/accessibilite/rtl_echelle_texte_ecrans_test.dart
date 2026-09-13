@@ -16,12 +16,14 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 import 'package:rewayah_academy/features/admin_demandes/demandes_page.dart';
@@ -40,6 +42,7 @@ import 'package:rewayah_academy/features/eleve_connexion/eleve_connexion_page.da
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
+import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
 import '../support/harnais.dart';
 
@@ -313,6 +316,52 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
     ),
   ),
   _EcranAVerifier(
+    'TUT-06',
+    // Une liste pleine, jamais l'etat vide : c'est la ligne la plus longue qui
+    // deborde -- une date, un prenom, un enseignant et sa pastille d'etat sur
+    // 390 points, a 200 pour cent de taille de texte.
+    (TextDirection d, double e) => hote(
+      _enveloppe(
+        SuiviFoyerPage(horloge: () => _horlogeFixe),
+        direction: d,
+        echelleTexte: e,
+      ),
+      surcharges: <Override>[
+        serviceSuiviProvider.overrideWithValue(
+          FauxServiceSuivi(
+            seancesRendues: <Seance>[
+              Seance(
+                id: 's1',
+                debut: _horlogeFixe.subtract(const Duration(days: 3)),
+                fin: _horlogeFixe.subtract(
+                  const Duration(days: 3, minutes: -60),
+                ),
+                statut: StatutSeance.terminee,
+                eleveId: 'enf-1',
+                elevePrenom: 'Sofia',
+                eleveIdentifiant: 'STUD-000001',
+                enseignantId: 'ens-1',
+                enseignantPrenom: 'Rachid',
+                enseignantIdentifiant: 'TEACH-000001',
+              ),
+            ],
+            presencesRendues: <PresenceParticipant>[
+              const PresenceParticipant(
+                seanceId: 's1',
+                profilId: 'enf-1',
+                role: 'student',
+                prenom: 'Sofia',
+                identifiantImmuable: 'STUD-000001',
+                etat: EtatPresence.confirmationEnAttente,
+                consolide: false,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+  _EcranAVerifier(
     'ENS-06',
     (TextDirection d, double e) => hote(
       _enveloppe(const CreneauxPage(), direction: d, echelleTexte: e),
@@ -426,12 +475,12 @@ Future<void> _verifier(
 void main() {
   final List<_EcranAVerifier> ecrans = _ecrans();
 
-  test('dix-neuf ecrans reels sont couverts, un par identifiant du catalogue', () {
+  test('vingt ecrans reels sont couverts, un par identifiant du catalogue', () {
     // Garde-fou : un ecran ajoute au catalogue sans entree ici passerait
     // inapercu, comme `catalogue_galerie_test.dart` le fait deja pour les
     // composants.
-    expect(ecrans.length, 19);
-    expect(ecrans.map((_EcranAVerifier e) => e.nom).toSet().length, 19);
+    expect(ecrans.length, 20);
+    expect(ecrans.map((_EcranAVerifier e) => e.nom).toSet().length, 20);
   });
 
   group('Chaque ecran reel se rend en arabe (RTL) sans lever', () {

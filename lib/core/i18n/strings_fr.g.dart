@@ -1187,6 +1187,7 @@ class Traductions$tuteur$fr {
 	// Translations
 	late final Traductions$tuteur$accueil$fr accueil = Traductions$tuteur$accueil$fr.internal(_root);
 	late final Traductions$tuteur$reglages$fr reglages = Traductions$tuteur$reglages$fr.internal(_root);
+	late final Traductions$tuteur$suivi$fr suivi = Traductions$tuteur$suivi$fr.internal(_root);
 }
 
 // Path: enseignant
@@ -2220,6 +2221,75 @@ class Traductions$tuteur$reglages$fr {
 	String erreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
 }
 
+// Path: tuteur.suivi
+class Traductions$tuteur$suivi$fr {
+	Traductions$tuteur$suivi$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Suivi du foyer'
+	String get titre => 'Suivi du foyer';
+
+	/// fr: 'Tous les enfants'
+	String get tousLesEnfants => 'Tous les enfants';
+
+	/// fr: 'Date'
+	String get colonneDate => 'Date';
+
+	/// fr: 'Enfant'
+	String get colonneEnfant => 'Enfant';
+
+	/// fr: 'Enseignant'
+	String get colonneEnseignant => 'Enseignant';
+
+	/// fr: 'État'
+	String get colonneEtat => 'État';
+
+	/// fr: 'Aujourd'hui, {heure}'
+	String aujourdhui({required Object heure}) => 'Aujourd\'hui, ${heure}';
+
+	/// fr: 'Hier, {heure}'
+	String hier({required Object heure}) => 'Hier, ${heure}';
+
+	/// fr: '{date}, {heure}'
+	String date({required Object date, required Object heure}) => '${date}, ${heure}';
+
+	/// fr: 'Cours annulé'
+	String get annule => 'Cours annulé';
+
+	/// fr: 'Cours non tenu'
+	String get nonTenu => 'Cours non tenu';
+
+	/// fr: 'Aucun cours pour l'instant'
+	String get vide => 'Aucun cours pour l\'instant';
+
+	/// fr: 'Les cours de vos enfants s'afficheront ici, du plus récent au plus ancien, avec leur présence.'
+	String get videDetail => 'Les cours de vos enfants s\'afficheront ici, du plus récent au plus ancien, avec leur présence.';
+
+	/// fr: 'Aucun cours pour cet enfant'
+	String get videFiltre => 'Aucun cours pour cet enfant';
+
+	/// fr: 'Relâchez le filtre pour retrouver le reste du foyer.'
+	String get videFiltreDetail => 'Relâchez le filtre pour retrouver le reste du foyer.';
+
+	/// fr: 'Tout afficher'
+	String get effacerFiltres => 'Tout afficher';
+
+	/// fr: 'Le suivi n'a pas pu être lu. Réessayez dans un instant.'
+	String get erreur => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Les {nombre} cours les plus récents sont affichés.'
+	String tronquee({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.';
+
+	/// fr: '{nombre} cours au suivi.'
+	String fin({required Object nombre}) => '${nombre} cours au suivi.';
+
+	/// fr: '1 cours au suivi.'
+	String get finUn => '1 cours au suivi.';
+}
+
 // Path: enseignant.journee
 class Traductions$enseignant$journee$fr {
 	Traductions$enseignant$journee$fr.internal(this._root);
@@ -2991,6 +3061,26 @@ extension on Traductions {
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'tuteur.suivi.titre' => 'Suivi du foyer',
+			'tuteur.suivi.tousLesEnfants' => 'Tous les enfants',
+			'tuteur.suivi.colonneDate' => 'Date',
+			'tuteur.suivi.colonneEnfant' => 'Enfant',
+			'tuteur.suivi.colonneEnseignant' => 'Enseignant',
+			'tuteur.suivi.colonneEtat' => 'État',
+			'tuteur.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
+			'tuteur.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
+			'tuteur.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'tuteur.suivi.annule' => 'Cours annulé',
+			'tuteur.suivi.nonTenu' => 'Cours non tenu',
+			'tuteur.suivi.vide' => 'Aucun cours pour l\'instant',
+			'tuteur.suivi.videDetail' => 'Les cours de vos enfants s\'afficheront ici, du plus récent au plus ancien, avec leur présence.',
+			'tuteur.suivi.videFiltre' => 'Aucun cours pour cet enfant',
+			'tuteur.suivi.videFiltreDetail' => 'Relâchez le filtre pour retrouver le reste du foyer.',
+			'tuteur.suivi.effacerFiltres' => 'Tout afficher',
+			'tuteur.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
+			'tuteur.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
+			'tuteur.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
+			'tuteur.suivi.finUn' => '1 cours au suivi.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
 			'enseignant.journee.titre' => 'Votre journée',

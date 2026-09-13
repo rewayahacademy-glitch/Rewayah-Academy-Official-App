@@ -684,6 +684,29 @@
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.",
       "erreur": "L'enregistrement n'a pas abouti : {message}"
+    },
+
+    "suivi": {
+      "titre": "Suivi du foyer",
+      "tousLesEnfants": "Tous les enfants",
+      "colonneDate": "Date",
+      "colonneEnfant": "Enfant",
+      "colonneEnseignant": "Enseignant",
+      "colonneEtat": "État",
+      "aujourdhui": "Aujourd'hui, {heure}",
+      "hier": "Hier, {heure}",
+      "date": "{date}, {heure}",
+      "annule": "Cours annulé",
+      "nonTenu": "Cours non tenu",
+      "vide": "Aucun cours pour l'instant",
+      "videDetail": "Les cours de vos enfants s'afficheront ici, du plus récent au plus ancien, avec leur présence.",
+      "videFiltre": "Aucun cours pour cet enfant",
+      "videFiltreDetail": "Relâchez le filtre pour retrouver le reste du foyer.",
+      "effacerFiltres": "Tout afficher",
+      "erreur": "Le suivi n'a pas pu être lu. Réessayez dans un instant.",
+      "tronquee": "Les {nombre} cours les plus récents sont affichés.",
+      "fin": "{nombre} cours au suivi.",
+      "finUn": "1 cours au suivi."
     }
   },
 

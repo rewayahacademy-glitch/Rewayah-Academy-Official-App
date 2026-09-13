@@ -26,6 +26,7 @@ import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../../features/salle/salle_page.dart';
+import '../../features/suivi_foyer/suivi_foyer_page.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
@@ -183,7 +184,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRoute(
                 path: Routes.tuteurSuivi,
                 builder: (BuildContext _, GoRouterState _) =>
-                    EcranAConstruire(destination: t.nav.tuteur.suivi),
+                    const SuiviFoyerPage(),
               ),
             ],
           ),

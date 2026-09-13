@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
+import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
@@ -1247,4 +1248,56 @@ class FauxServiceControle implements ServiceControle {
     }
     return seancesRendues;
   }
+}
+
+/// Le suivi du foyer, en memoire.
+///
+/// **Ses deux lectures echouent separement, et c'est tout l'interet du faux.**
+/// `TUT-06` lit les cours d'un cote et la presence de l'autre : une presence
+/// indisponible doit laisser l'historique lisible, avec des etats « inconnu »,
+/// la ou une lecture de cours impossible vide l'ecran. Un faux qui ne saurait
+/// echouer qu'en bloc ne permettrait pas de distinguer les deux.
+class FauxServiceSuivi implements ServiceSuivi {
+  /// Cree le faux.
+  FauxServiceSuivi({
+    this.seancesRendues = const <Seance>[],
+    this.presencesRendues = const <PresenceParticipant>[],
+  });
+
+  /// Les cours que la lecture rend.
+  List<Seance> seancesRendues;
+
+  /// Les lignes de presence rendues. `null` signifie « indisponible ».
+  List<PresenceParticipant>? presencesRendues;
+
+  /// Ce que la prochaine lecture de cours doit jeter, s'il y a lieu.
+  Object? erreurAJeter;
+
+  /// Combien de temps la lecture des cours met a repondre.
+  ///
+  /// Nul par defaut, pour la meme raison qu'a [FauxServiceControle] : sans
+  /// delai, l'ecran n'est en chargement pendant aucune frame et l'etat
+  /// squelette serait impossible a mesurer.
+  Duration? delai;
+
+  /// Combien de fois les cours ont ete lus.
+  int lectures = 0;
+
+  @override
+  Future<List<Seance>> seances() async {
+    lectures++;
+    final Duration? attente = delai;
+    if (attente != null) {
+      await Future<void>.delayed(attente);
+    }
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return seancesRendues;
+  }
+
+  @override
+  Future<List<PresenceParticipant>?> presences() async => presencesRendues;
 }

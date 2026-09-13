@@ -58,7 +58,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `ELV-04` | Coran | Élève, enseignant | B / C | 1 | `/eleve/coran` | Lecteur plein écran | Colonne de lecture bornée | **construit (13/09)**, lot N5 |
 | `ENS-04` | Cahier de transmission | Enseignant | D | 2 | depuis la salle | Page, une main, 45 s | Panneau | **à construire**, étape 6 |
-| `TUT-06` | Suivi du foyer | Tuteur | C | 1 | `/tuteur/suivi` | Liste par enfant | Liste + détail | **à construire** |
+| `TUT-06` | Suivi du foyer | Tuteur | C | 1 | `/tuteur/suivi` | Une carte par cours | Tableau dense | **construit (13/09)**, fiche §6 |
 | — | Suivi élève | Élève standard | C | 1 | `/eleve/suivi` | Liste | Liste + détail | **à construire** |
 
 ### Zone Administration
@@ -94,6 +94,19 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 > suivi élève et `TUT-06` relèvent de la transmission, étape 6 avec `ENS-04` ;
 > `ENS-05` est reporté avec l'ensemble du module finance (ADR-003) ; `CPT-01`
 > est hors MVP-0. L'étape 5 n'a donc plus d'écran manquant.
+>
+> ✅ **`TUT-06` est construit le 13 septembre 2026**, et il en reste **trois** :
+> le suivi élève, `ENS-05`, `CPT-01` — donc **deux dans le MVP-0**. Ce lot
+> tranche une contradiction entre deux sources, et la fiche §6 l'écrit plutôt
+> que de la masquer : `parcours-utilisateurs.md` décrit `TUT-06` comme
+> l'historique des **cahiers de transmission**, qui n'existent ni comme table ni
+> comme écran avant l'étape 6, quand la migration `0011` a ouvert
+> `presence_seance_v` au tuteur **en nommant `TUT-06`** dans son propre corps.
+> L'écran construit est donc celui que la base sait nourrir aujourd'hui — la
+> date, l'enseignant, l'assiduité — et le contenu pédagogique le rejoindra avec
+> `ENS-04`. **Aucune colonne vide n'est posée en attendant** : une colonne
+> « ce qui a été travaillé » remplie de tirets serait une promesse non tenue à
+> chaque ligne.
 
 Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent
 étaient à reprendre par le lot R. Le lot R les a repris tous les quatre :
@@ -2142,3 +2155,128 @@ interroge une table protégée par RLS ne voit que ce que l'appelant voit.
   sans destinataire.
 
 Construit le 13 septembre 2026, lot `CTR-01`, en parallèle du lot N5.
+
+### `TUT-06` Suivi du foyer
+
+**La fiche commence par une contradiction entre deux sources, parce qu'elle a dû
+la trancher.** `docs/produit/parcours-utilisateurs.md` décrit `TUT-06` sous le
+titre « Après le cours » : *historique par enfant des cahiers de transmission —
+date, enseignant, ce qui a été travaillé, les points de phonétique relevés*. Le
+cahier de transmission est `ENS-04`, il appartient à l'**étape 6** (ADR-003), et
+il n'a aujourd'hui ni table, ni écran, ni format. Mais la migration `0011`, en
+bornant `presence_seance_v` à son appelant, a écrit dans son propre corps :
+*« Le tuteur : les participants de son foyer. C'est ce qui permettra à `TUT-06`
+d'exister sans rouvrir cette vue. »*
+
+Les deux sources parlent donc du même écran à deux moments de sa vie. La
+décision de ce lot : **construire les deux tiers que la base sait nourrir — la
+date, l'enseignant, l'assiduité — et ne rien poser pour le tiers manquant.**
+Pas de colonne « travaillé » remplie de tirets, pas de panneau de détail vide :
+un espace réservé à un contenu absent se lit comme une panne, et il se lira
+ainsi à chaque ligne, tous les jours, jusqu'à l'étape 6.
+
+**Ce que l'écran ajoute à `TUT-01`, et pourquoi il ne fait pas double emploi.**
+`TUT-01` répond à « que se passe-t-il **maintenant** » — une carte par enfant,
+cinq phases, le bouton « Assister ». `TUT-06` répond à « comment ça **se
+passe** » : la même donnée lue dans l'autre sens, du plus récent vers le passé,
+avec l'état de présence que `TUT-01` n'affiche jamais. Un parent qui paie a
+deux questions, pas une.
+
+```
+CODE              TUT-06
+Nom               Suivi du foyer
+Role              Tuteur
+Zone              Contenu et transmission
+Niveau de charge  C
+Ecran parent      TUT-01
+Profondeur        1
+Question          Comment se passent les cours de mes enfants ?
+
+Priorites         P0  un cours par ligne, du plus recent au plus ancien
+                  P0  l'etat de presence de MON enfant sur ce cours, avec son
+                      mot -- jamais la seule pastille (invariant J7)
+                  P0  la date et l'enseignant de chaque cours
+                  P1  le filtre par enfant, des que le foyer en compte deux
+                  P1  le prochain cours, en tete, quand il y en a un
+                  P2  ce que la lecture n'a pas montre, en pied de liste
+
+Action principale     AUCUNE. L'ecran est une lecture : rien ne s'y decide, rien
+                      ne s'y corrige. Le geste de correction d'un etat de
+                      presence appartient a l'enseignant et a l'administration
+                      (section 6.5 de la spec d'etape), jamais au tuteur
+Actions secondaires   retenir un enfant, tout afficher
+Action tertiaire      reessayer une lecture qui a echoue
+Destructif            aucun
+
+Mobile            Une carte par cours : la date en titre, l'enfant et
+                  l'enseignant sur la ligne secondaire, l'etat en pastille
+Tablette          Idem mobile, comme `CTR-01` : un tableau dense retreci est ce
+                  que `05-regles-responsive.md` section 3 interdit
+Desktop           Tableau dense, en-tete de colonnes collee en haut
+
+Etats             loading   squelette de liste, jamais le mot « Chargement »
+                  content   la liste, du plus recent au plus ancien
+                  empty     aucun cours encore tenu : un CONSTAT, pas une panne,
+                            et sans bouton -- le foyer n'a rien a y faire, il
+                            attend son premier cours
+                  empty+    aucun cours pour l'enfant retenu : une impasse de
+                            filtre, dont on sort par « Tout afficher »
+                  error     la lecture a echoue, avec « Reessayer ». Une
+                            relecture qui echoue n'efface jamais la liste deja
+                            affichee
+                  offline   le bandeau hors ligne de PageShell, rien de plus
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        `inconnu` n'est JAMAIS rendu « Absence » (invariant J3). Un
+                  cours sans ligne de presence lisible dit « Etat inconnu » :
+                  une absence compte pour le suivi et pour la paie, ne pas
+                  savoir ne compte pour rien
+                  l'ordre ne depend JAMAIS de l'etat. Le plus recent d'abord, et
+                  rien d'autre : une ligne qui remonterait parce qu'elle est
+                  devenue critique se ferait toucher a la place d'une autre
+                  le tuteur lit l'etat, il ne le PRONONCE pas. Aucun geste de
+                  correction, aucune demande d'excuse : ce sont deux surfaces
+                  d'ecriture qui n'existent pas encore, et qui ne lui
+                  reviendront pas
+                  la vue dit QU'UNE decision humaine a fige un etat, jamais
+                  POURQUOI. Le motif reste en base et au journal (section 6.6)
+                  prenom ET identifiant immuable de l'enseignant, jamais le nom
+                  de famille ni la photo (ADR-008, ADR-012)
+                  le client ne filtre RIEN par foyer : `presence_seance_v` et
+                  `mes_seances_v` sont deja bornees en base. Un filtre client
+                  serait une decoration par-dessus une donnee deja livree
+
+Accessibilite     chaque cellule porte le titre de sa colonne dans son libelle
+                  parle : Flutter n'associe pas un en-tete a ses cellules
+                  la carte se lit comme un seul element (MergeSemantics)
+                  l'etat porte toujours son mot
+```
+
+**Aucune migration.** C'est le premier lot d'écran de l'étape 5 à n'en demander
+aucune, et ce n'est pas un hasard : `0011` et `0005` avaient déjà ouvert au
+tuteur exactement ce que cet écran lit, `presence_seance_v` pour les membres de
+son foyer et `mes_seances_v` pour leurs séances. La lecture se fait donc **sans
+filtre client** — un `select()` nu rend au tuteur son foyer et rien d'autre.
+
+**Ce que la fiche ne construit pas, et pourquoi ce n'est pas un oubli :**
+
+- **le contenu pédagogique** — ce qui a été travaillé, les points de phonétique.
+  C'est `ENS-04`, étape 6. Tant qu'aucun enseignant ne peut l'écrire, aucun
+  parent ne peut le lire, et une colonne vide ne comble pas un cahier absent ;
+- **la notification de fin de séance**, que la fiche produit décrit comme ce qui
+  « justifie l'abonnement aux yeux du parent qui paie ». Elle demande un canal :
+  `device_tokens` est vide et l'étape D de l'onboarding reste ouverte
+  (`etape-4-dashboards.md` section 8). La construire ici en aurait fait un
+  message sans destinataire ;
+- **le détail d'une séance.** Il n'a rien à porter de plus que sa ligne tant que
+  le cahier n'existe pas. Le registre annonçait « liste + détail » sur desktop ;
+  la fiche le remplace par le tableau dense, et le dit plutôt que de livrer un
+  panneau vide ;
+- **le geste de correction ou d'excuse d'une absence.** Il appartient à
+  l'enseignant et à l'administration, il demande motif, confirmation et entrée
+  de journal, et la section 6.5 de la spécification d'étape le laisse
+  explicitement ouvert. Le poser chez le tuteur aurait donné au foyer le droit
+  de corriger ce qui compte pour la paie de l'enseignant.
+
+Construit le 13 septembre 2026, lot `TUT-06`.
