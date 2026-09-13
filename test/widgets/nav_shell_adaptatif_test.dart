@@ -73,11 +73,65 @@ void main() {
 
       expect(find.byKey(const Key('contenu')), findsOneWidget);
       expect(find.byKey(cas.chrome), findsOneWidget, reason: '${cas.largeur}');
+      final Type typeChrome = switch (cas.chrome) {
+        NavShell.barreBasseKey => NavigationBar,
+        NavShell.railKey => NavigationRail,
+        NavShell.barreLateraleKey => NavigationDrawer,
+        _ => Never,
+      };
+      expect(find.byType(typeChrome), findsOneWidget, reason: '${cas.largeur}');
+      if (cas.chrome == NavShell.barreBasseKey) {
+        expect(tester.getSize(find.byKey(cas.chrome)).height, 80);
+      }
       if (cas.largeurChrome != null) {
         expect(tester.getSize(find.byKey(cas.chrome)).width, cas.largeurChrome);
       }
       expect(tester.takeException(), isNull, reason: '${cas.largeur}');
     }
+  });
+
+  testWidgets('le rail Material 3 conserve un defilement vertical', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      hote(
+        MediaQuery(
+          data: const MediaQueryData(size: Size(768, 240)),
+          child: _shell(onAller: (_) {}),
+        ),
+      ),
+    );
+
+    final NavigationRail rail = tester.widget(find.byType(NavigationRail));
+    expect(rail.scrollable, isTrue);
+    expect(
+      find.descendant(
+        of: find.byType(NavigationRail),
+        matching: find.byType(Scrollable),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('le tiroir Material 3 conserve un defilement vertical', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      hote(
+        MediaQuery(
+          data: const MediaQueryData(size: Size(1200, 240)),
+          child: _shell(onAller: (_) {}),
+        ),
+      ),
+    );
+
+    expect(
+      find.descendant(
+        of: find.byType(NavigationDrawer),
+        matching: find.byType(Scrollable),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('la destination conserve son contrat de chemin au clavier', (
