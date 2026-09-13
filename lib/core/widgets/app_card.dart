@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_spacing.dart';
 import 'pressable.dart';
 
 /// La surface elevee du produit : `surfaceRaised`, `borderHairline`,
@@ -32,6 +35,9 @@ class AppCard extends StatelessWidget {
     this.selectionnee = false,
     this.contourFort = false,
     this.marge,
+    this.dominante = false,
+    this.entete,
+    this.actions,
   });
 
   /// Le contenu de la carte.
@@ -63,11 +69,20 @@ class AppCard extends StatelessWidget {
   /// Marge interne. Par defaut, celle du mode courant.
   final double? marge;
 
+  /// The single visually dominant card allowed on a page.
+  final bool dominante;
+
+  /// Optional structural zones. They avoid screens rebuilding their own card.
+  final Widget? entete;
+  final Widget? actions;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
-    final AppColorPair paire = surface ?? palette.surfaceRaised;
+    final AppColorPair paire = selectionnee
+        ? palette.washAccent
+        : surface ?? palette.surfaceRaised;
 
     if (onPress == null) {
       return _corps(
@@ -83,7 +98,7 @@ class AppCard extends StatelessWidget {
       onPress: onPress,
       libelleSemantique: libelleSemantique,
       respecterCibleTactile: false,
-      arrondiFocus: metriques.arrondi,
+      arrondiFocus: dominante ? AppRadius.arrondiLg : AppRadius.arrondiMd,
       constructeur: (BuildContext contexte, EtatPression etat) =>
           _corps(contexte, palette, metriques, paire, etat),
     );
@@ -98,28 +113,49 @@ class AppCard extends StatelessWidget {
   ) {
     return Container(
       constraints: BoxConstraints(minHeight: metriques.cibleTactile),
-      padding: EdgeInsets.all(marge ?? metriques.marge),
-      decoration: AppElevation.avecFilet(
-        surface: paire,
-        // Le filet decoratif au repos, le filet porteur de sens des que la
-        // carte dit quelque chose : retenue, porteuse d'un etat, survolee ou
-        // pressee.
-        filet: selectionnee || contourFort || etat.survole || etat.presse
-            ? palette.borderStrong
-            : palette.borderHairline,
-        ombre: palette.ombre,
-        arrondi: metriques.arrondi,
-        // La carte pressee ou survolee flotte : c'est le niveau 2, celui de ce
-        // qui passe au dessus du contenu (`01-systeme-visuel.md` section 4).
-        ombres: etat.presse || etat.survole
-            ? AppElevation.niveau2(palette.ombre)
-            : AppElevation.niveau1(palette.ombre),
+      padding: EdgeInsets.all(
+        marge ??
+            (MediaQuery.sizeOf(context).width < AppGabarit.seuilTablette
+                ? AppSpacing.xl
+                : AppSpacing.xxl),
+      ),
+      decoration: BoxDecoration(
+        color: etat.survole || etat.presse
+            ? Color.alphaBlend(
+                palette.calqueInteraction(presse: etat.presse),
+                paire.background,
+              )
+            : paire.background,
+        borderRadius: dominante ? AppRadius.arrondiLg : AppRadius.arrondiMd,
+        // The decorative border only becomes semantic for an explicit state.
+        border: Border.fromBorderSide(
+          (selectionnee
+                  ? palette.inkAccent.asBorderSide(width: 2)
+                  : (contourFort || etat.survole || etat.presse
+                            ? palette.borderStrong
+                            : palette.contourCarte)
+                        .asBorderSide())
+              .copyWith(),
+        ),
+        boxShadow: dominante && !palette.estSombre
+            ? AppElevation.niveau1(palette.ombre)
+            : AppElevation.niveau0,
       ),
       child: DefaultTextStyle.merge(
         style: TextStyle(color: paire.onBackground),
         child: IconTheme.merge(
           data: IconThemeData(color: paire.onBackground),
-          child: child,
+          child: entete == null && actions == null
+              ? child
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    if (entete != null) ...<Widget>[entete!, Ecart.vLg],
+                    child,
+                    if (actions != null) ...<Widget>[Ecart.vLg, actions!],
+                  ],
+                ),
         ),
       ),
     );

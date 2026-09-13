@@ -16,23 +16,23 @@ import 'package:flutter/widgets.dart';
 /// trois se retire.
 abstract final class AppMouvement {
   /// La pression d'un element. Tenu par `Pressable`.
-  static const Duration retourTactile = Duration(milliseconds: 120);
+  static const Duration retourTactile = Duration(milliseconds: 100);
 
   /// Bascule, case cochee, pastille qui change d'etat, survol.
-  static const Duration micro = Duration(milliseconds: 160);
+  static const Duration micro = Duration(milliseconds: 120);
 
   /// Une ligne qui entre ou sort d'une liste, un bandeau, un retour local.
-  static const Duration apparition = Duration(milliseconds: 200);
+  static const Duration apparition = Duration(milliseconds: 180);
 
   /// Passage d'une page a l'autre.
-  static const Duration navigation = Duration(milliseconds: 240);
+  static const Duration navigation = Duration(milliseconds: 220);
 
   /// Ouverture d'une feuille de bas d'ecran.
-  static const Duration feuilleOuverture = Duration(milliseconds: 280);
+  static const Duration feuilleOuverture = Duration(milliseconds: 180);
 
   /// Fermeture d'une feuille. **La sortie est toujours plus courte que
   /// l'entree**, d'environ un tiers.
-  static const Duration feuilleFermeture = Duration(milliseconds: 200);
+  static const Duration feuilleFermeture = Duration(milliseconds: 120);
 
   /// Plafond absolu. Une animation plus longue que ca n'explique plus, elle
   /// fait attendre.
@@ -63,6 +63,7 @@ abstract final class AppMouvement {
   static const Duration delaiSquelette = apparition;
 
   /// Tout ce qui entre. Rapide au depart, s'installe doucement.
+  static const Curve selection = Curves.easeOut;
   static const Curve entree = Curves.easeOutCubic;
 
   /// Tout ce qui sort.
@@ -102,7 +103,7 @@ abstract final class AppMouvement {
   /// Quand le systeme signale la reduction du mouvement, tout retombe a
   /// [disparitionOpacite] : il reste un fondu, jamais un glissement.
   static Duration duree(BuildContext context, Duration voulue) =>
-      mouvementReduit(context) ? disparitionOpacite : voulue;
+      mouvementReduit(context) ? Duration.zero : voulue;
 
   /// La translation effective d'un motif, preference systeme comprise.
   ///

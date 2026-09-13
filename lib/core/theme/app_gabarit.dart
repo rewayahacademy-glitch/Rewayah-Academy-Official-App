@@ -52,7 +52,29 @@ enum Gabarit {
 /// un nombre.** Un `MediaQuery.of(context).size.width > 700` pose au fil d'un
 /// ecran est exactement la maniere dont un produit finit avec quatre seuils
 /// differents, dont trois faux (`docs/design/05-regles-responsive.md` section 1).
+/// R1 content classes. Legacy navigation mapping below is retained for R2.
+enum ClasseLargeur { compacte, moyenne, etendue, large }
+
 abstract final class AppGabarit {
+  static const double seuilEtendu = 840;
+  static const double seuilLarge = 1200;
+  static const double seuilChoixDouble = 560;
+  static const double seuilTexteColonne = 1.5;
+  static ClasseLargeur classe(double largeur) {
+    if (largeur < seuilTablette) return ClasseLargeur.compacte;
+    if (largeur < seuilEtendu) return ClasseLargeur.moyenne;
+    if (largeur < seuilLarge) return ClasseLargeur.etendue;
+    return ClasseLargeur.large;
+  }
+
+  static double margePour(double largeur) => largeur < seuilTablette
+      ? AppSpacing.lg
+      : largeur < seuilLarge
+      ? AppSpacing.xxl
+      : AppSpacing.xxxl;
+  static bool choixEnColonnes(double largeur, TextScaler texte) =>
+      largeur >= seuilChoixDouble && texte.scale(16) / 16 < seuilTexteColonne;
+
   /// A partir de cette largeur, le rail remplace la barre basse.
   static const double seuilTablette = 600;
 

@@ -127,9 +127,10 @@ void main() {
       );
 
       final BoxDecoration d = decorationSous(tester, find.byType(AppCard));
-      // Survolee, la carte porte le filet FORT et l'ombre de niveau 2.
+      // Survolee, la carte porte le filet fort sans devenir une surface
+      // flottante : R1 reserve les ombres au seul bloc dominant.
       expect(d.border, isNotNull);
-      expect(d.boxShadow, AppElevation.niveau2(palette.ombre));
+      expect(d.boxShadow, AppElevation.niveau0);
     });
   });
 
@@ -217,8 +218,8 @@ void main() {
     });
   });
 
-  group('AppCard : une surface elevee porte un filet ET une ombre', () {
-    testWidgets('au repos, filet decoratif et ombre de niveau 1', (
+  group('AppCard : une surface elevee reste sobre', () {
+    testWidgets('au repos, filet decoratif et niveau E0', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -226,8 +227,8 @@ void main() {
       );
       final BoxDecoration d = decorationSous(tester, find.byType(AppCard));
       expect(d.color, palette.surfaceRaised.background);
-      expect(d.boxShadow, AppElevation.niveau1(palette.ombre));
-      expect(d.border!.top.color, palette.borderHairline.asBorderSide().color);
+      expect(d.boxShadow, AppElevation.niveau0);
+      expect(d.border!.top.color, palette.contourCarte.asBorderSide().color);
     });
 
     testWidgets('retenue, le contour passe au filet porteur de sens', (
@@ -239,7 +240,7 @@ void main() {
         ),
       );
       final BoxDecoration d = decorationSous(tester, find.byType(AppCard));
-      expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
+      expect(d.border!.top.color, palette.inkAccent.asBorderSide().color);
     });
   });
 
@@ -724,8 +725,8 @@ void main() {
     });
   });
 
-  group('BentoTile : registre unique, jamais un filet sans ombre', () {
-    testWidgets('au repos : surfaceRaised, filet hairline, ombre niveau 1', (
+  group('BentoTile : registre unique et sans ombre de liste', () {
+    testWidgets('au repos : surfaceRaised, filet hairline, niveau E0', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -734,10 +735,10 @@ void main() {
       final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
       expect(d.color, palette.surfaceRaised.background);
       expect(d.border!.top.color, palette.borderHairline.asBorderSide().color);
-      expect(d.boxShadow, AppElevation.niveau1(palette.ombre));
+      expect(d.boxShadow, AppElevation.niveau0);
     });
 
-    testWidgets('eveillee : filet fort et ombre au niveau 2, jamais plate', (
+    testWidgets('eveillee : filet fort, sans ombre de liste', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -750,16 +751,14 @@ void main() {
       );
       final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
       expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
-      expect(d.boxShadow, AppElevation.niveau2(palette.ombre));
-      expect(d.boxShadow, isNot(AppElevation.niveau0));
+      expect(d.boxShadow, AppElevation.niveau0);
     });
 
     testWidgets('contour fort : le filet porteur de sens des le repos', (
       WidgetTester tester,
     ) async {
       // La bordure `borderStrong` fixe qui remplace la pulsation d'`ELV-02`
-      // sous mouvement reduit : elle est la sans survol ni pression, mais la
-      // tuile reste posee, ombre de niveau 1.
+      // sous mouvement reduit : elle est la sans survol ni pression.
       await tester.pumpWidget(
         hoteComposant(
           const BentoTile(contourFort: true, child: Text('Une tuile')),
@@ -767,7 +766,7 @@ void main() {
       );
       final BoxDecoration d = decorationSous(tester, find.byType(BentoTile));
       expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
-      expect(d.boxShadow, AppElevation.niveau1(palette.ombre));
+      expect(d.boxShadow, AppElevation.niveau0);
     });
   });
 

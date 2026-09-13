@@ -44,7 +44,10 @@ class SectionHeader extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle styleTitre = textes.headlineSmall ?? const TextStyle();
 
-    return Row(
+    final bool actionSousTitre =
+        MediaQuery.textScalerOf(context).scale(16) > 16 ||
+        MediaQuery.sizeOf(context).width < 600;
+    final Widget titreEtCompteur = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Flexible(
@@ -59,14 +62,31 @@ class SectionHeader extends StatelessWidget {
             ),
           ),
         ],
-        const Spacer(),
-        if (libelleAction != null && onAction != null)
-          ActionPrincipale(
+      ],
+    );
+    final Widget? action = libelleAction != null && onAction != null
+        ? ActionPrincipale(
             libelle: libelleAction!,
             onPress: onAction,
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
-          ),
+          )
+        : null;
+
+    if (action == null) {
+      return titreEtCompteur;
+    }
+    if (actionSousTitre) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[titreEtCompteur, Ecart.vSm, action],
+      );
+    }
+    return Row(
+      children: <Widget>[
+        Expanded(child: titreEtCompteur),
+        Ecart.hLg,
+        action,
       ],
     );
   }
