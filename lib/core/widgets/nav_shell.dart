@@ -4,14 +4,11 @@ import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../router/routes.dart';
-import '../theme/app_color_pair.dart';
-import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
-import 'pressable.dart';
 
 /// Une destination de premier niveau.
 @immutable
@@ -261,7 +258,7 @@ class NavShell extends StatelessWidget {
   }
 }
 
-/// La barre basse : une surface elevee, collee sous le contenu.
+/// La barre basse Material 3 : une surface elevee, collee sous le contenu.
 class _Barre extends StatelessWidget {
   const _Barre({
     required this.destinations,
@@ -283,26 +280,31 @@ class _Barre extends StatelessWidget {
         decoration: BoxDecoration(
           color: palette.surfaceRaised.background,
           border: Border(top: palette.borderHairline.asBorderSide()),
-          // Une barre collee flotte au dessus du contenu : niveau 2.
-          boxShadow: AppElevation.niveau2(palette.ombre),
         ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-            child: Row(
-              children: <Widget>[
-                for (int i = 0; i < destinations.length; i++)
-                  Expanded(
-                    child: _Entree(
-                      destination: destinations[i],
-                      active: i == indexActif,
-                      enColonne: true,
-                      onPress: () => onAller(destinations[i].chemin),
-                    ),
-                  ),
-              ],
+        child: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            labelTextStyle: _stylesLibelleNavigation(context, palette),
+            iconTheme: _stylesIconeNavigation(palette),
+          ),
+          child: NavigationBar(
+            selectedIndex: indexActif,
+            onDestinationSelected: (int index) {
+              onAller(destinations[index].chemin);
+            },
+            backgroundColor: palette.surfaceRaised.background,
+            indicatorColor: palette.washAccent.background,
+            indicatorShape: const RoundedRectangleBorder(
+              borderRadius: AppRadius.arrondiSm,
             ),
+            labelPadding: const EdgeInsets.only(top: AppSpacing.xs),
+            destinations: <Widget>[
+              for (final Destination destination in destinations)
+                NavigationDestination(
+                  icon: Icon(destination.icone.repos),
+                  selectedIcon: Icon(destination.icone.actif),
+                  label: destination.libelle,
+                ),
+            ],
           ),
         ),
       ),
@@ -310,7 +312,7 @@ class _Barre extends StatelessWidget {
   }
 }
 
-/// Le rail et la barre laterale : la meme colonne, deux largeurs.
+/// Le rail Material 3 : la meme liste de destinations que la barre basse.
 class _Cote extends StatelessWidget {
   const _Cote({
     required this.destinations,
@@ -330,6 +332,63 @@ class _Cote extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
 
+    final Widget chrome = enColonne
+        ? NavigationRail(
+            selectedIndex: indexActif,
+            onDestinationSelected: (int index) {
+              onAller(destinations[index].chemin);
+            },
+            backgroundColor: palette.surfaceRaised.background,
+            minWidth: AppGabarit.largeurRail,
+            labelType: NavigationRailLabelType.all,
+            scrollable: true,
+            groupAlignment: -1,
+            useIndicator: true,
+            indicatorColor: palette.washAccent.background,
+            indicatorShape: const RoundedRectangleBorder(
+              borderRadius: AppRadius.arrondiSm,
+            ),
+            selectedLabelTextStyle: _styleLibelleSelectionne(context, palette),
+            unselectedLabelTextStyle: _styleLibelleNonSelectionne(
+              context,
+              palette,
+            ),
+            selectedIconTheme: palette.inkAccent.asIconTheme(
+              size: AppSpacing.xxl,
+            ),
+            unselectedIconTheme: palette.inkMuted.asIconTheme(
+              size: AppSpacing.xxl,
+            ),
+            destinations: <NavigationRailDestination>[
+              for (final Destination destination in destinations)
+                NavigationRailDestination(
+                  icon: Icon(destination.icone.repos),
+                  selectedIcon: Icon(destination.icone.actif),
+                  label: Text(destination.libelle),
+                ),
+            ],
+          )
+        : NavigationDrawer(
+            selectedIndex: indexActif,
+            onDestinationSelected: (int index) {
+              onAller(destinations[index].chemin);
+            },
+            backgroundColor: palette.surfaceRaised.background,
+            indicatorColor: palette.washAccent.background,
+            indicatorShape: const RoundedRectangleBorder(
+              borderRadius: AppRadius.arrondiSm,
+            ),
+            tilePadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            children: <Widget>[
+              for (final Destination destination in destinations)
+                NavigationDrawerDestination(
+                  icon: Icon(destination.icone.repos),
+                  selectedIcon: Icon(destination.icone.actif),
+                  label: Text(destination.libelle),
+                ),
+            ],
+          );
+
     return SizedBox(
       key: enColonne ? NavShell.railKey : NavShell.barreLateraleKey,
       width: largeur,
@@ -340,115 +399,56 @@ class _Cote extends StatelessWidget {
           // avec lui.
           border: BorderDirectional(end: palette.borderHairline.asBorderSide()),
         ),
-        child: SafeArea(
-          // La PageShell protege deja son contenu ; le chrome doit aussi
-          // proteger sa propre zone de focus sur desktop et tablette.
-          child: Semantics(
-            container: true,
-            explicitChildNodes: true,
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    for (int i = 0; i < destinations.length; i++)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                        child: _Entree(
-                          destination: destinations[i],
-                          active: i == indexActif,
-                          enColonne: enColonne,
-                          onPress: () => onAller(destinations[i].chemin),
-                        ),
-                      ),
-                  ],
+        child: enColonne
+            ? SafeArea(child: chrome)
+            : DrawerTheme(
+                data: DrawerThemeData(width: AppGabarit.largeurBarreLaterale),
+                child: NavigationDrawerTheme(
+                  data: NavigationDrawerThemeData(
+                    tileHeight: AppMetriques.of(context).cibleTactile,
+                    labelTextStyle: _stylesLibelleNavigation(context, palette),
+                    iconTheme: _stylesIconeNavigation(palette),
+                  ),
+                  child: chrome,
                 ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
 }
 
-/// Une entree, quelle que soit la forme du chrome.
-///
-/// L'etat actif se dit **trois fois** : la graisse `fill` de l'icone, le fond
-/// doux, et l'encre d'accent. Une seule des trois ne suffirait pas
-/// (`01-systeme-visuel.md` section 8).
-class _Entree extends StatelessWidget {
-  const _Entree({
-    required this.destination,
-    required this.active,
-    required this.enColonne,
-    required this.onPress,
-  });
+WidgetStateProperty<TextStyle?> _stylesLibelleNavigation(
+  BuildContext context,
+  AppPalette palette,
+) {
+  final TextStyle base =
+      Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+  return WidgetStateProperty.resolveWith<TextStyle?>(
+    (Set<WidgetState> states) => states.contains(WidgetState.selected)
+        ? _styleLibelleSelectionne(context, palette)
+        : base.copyWith(color: palette.inkMuted.asBorderSide().color),
+  );
+}
 
-  final Destination destination;
-  final bool active;
-  final bool enColonne;
-  final VoidCallback onPress;
+TextStyle _styleLibelleSelectionne(BuildContext context, AppPalette palette) {
+  final TextStyle base =
+      Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+  return base.copyWith(color: palette.inkAccent.asBorderSide().color);
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
-    final TextStyle base =
-        Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+TextStyle _styleLibelleNonSelectionne(
+  BuildContext context,
+  AppPalette palette,
+) {
+  final TextStyle base =
+      Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+  return base.copyWith(color: palette.inkMuted.asBorderSide().color);
+}
 
-    return Semantics(
-      selected: active,
-      child: Pressable.selon(
-        onPress: onPress,
-        libelleSemantique: destination.libelle,
-        respecterCibleTactile: false,
-        arrondiFocus: AppRadius.arrondiSm,
-        constructeur: (BuildContext _, EtatPression etat) {
-          // L'aplat sature reste reserve a l'action principale : une destination
-          // active prend la teinte douce de l'accent, jamais le violet plein.
-          final AppColorPair? fond = active
-              ? palette.washAccent
-              : (etat.survole ? palette.surfaceSunken : null);
-          final TextStyle style = active
-              ? palette.inkAccent.applyTo(base)
-              : palette.inkMuted.applyTo(base);
-          final Widget icone = IconTheme(
-            data: active
-                ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
-                : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
-            child: Icon(destination.icone.resoudre(selectionne: active)),
-          );
-          // Ni `maxLines` ni ellipse : un libelle de navigation porte du sens, et
-          // `06-accessibilite.md` section 3 interdit de le rogner. A 200 pour
-          // cent de taille de texte, la barre grandit ; elle ne coupe pas.
-          final Widget libelle = Text(
-            destination.libelle,
-            style: style,
-            textAlign: TextAlign.center,
-          );
-
-          return Container(
-            constraints: BoxConstraints(minHeight: metriques.cibleTactile),
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            decoration: fond?.decoration(borderRadius: AppRadius.arrondiSm),
-            child: enColonne
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[icone, Ecart.vXs, libelle],
-                  )
-                : Row(
-                    children: <Widget>[
-                      icone,
-                      Ecart.hMd,
-                      Expanded(child: libelle),
-                    ],
-                  ),
-          );
-        },
-      ),
-    );
-  }
+WidgetStateProperty<IconThemeData?> _stylesIconeNavigation(AppPalette palette) {
+  return WidgetStateProperty.resolveWith<IconThemeData?>(
+    (Set<WidgetState> states) => states.contains(WidgetState.selected)
+        ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
+        : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+  );
 }
