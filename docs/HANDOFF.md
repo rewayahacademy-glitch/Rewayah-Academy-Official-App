@@ -1,5 +1,25 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🔴 **13 septembre 2026, en fin de huitième session — LA PRODUCTION NE PEUT PAS
+> AUTHENTIFIER, ET C'EST LE PREMIER TRAVAIL DE LA PROCHAINE SESSION.** Elle est
+> compilée avec une **clé Supabase factice**. Mesuré, pas supposé : le
+> `main.dart.js` servi contient `cle-factice-playground-ne-jamais-utilisee` ;
+> cette clé rend **401** sur l'API du projet quand la vraie clé `anon` rend
+> **200**. `Env.configuree` ne teste que `isNotEmpty`, donc **une clé fausse mais
+> non vide passe le garde-fou** : l'application démarre, affiche l'écran de
+> connexion, console muette — c'est exactement ce que sept sessions ont
+> « vérifié ». La cause est le fichier de compilation, pas le code :
+> `D:\ra-pwa-build\dart_define.json` est la copie exacte du `dart_define.json` de
+> **debug** du dépôt (clé factice, `GALERIE: true`, `PLAYGROUND: true`), et tout
+> ce qui est compilé depuis ce worktree depuis le **11 septembre** porte cette
+> clé **et expose `/_galerie`**. ⚠ **Cela réécrit une phrase qui traînait depuis
+> six sessions** : « ce qui sépare la salle d'un vrai cours n'est plus qu'une
+> mesure » était faux — la mesure était **impossible**. Correctif, contrôles et
+> durcissement du garde-fou : **section 8**, et le prompt de reprise **§9.5**
+> commence par là. Un worktree propre sur `090ae6f` est prêt en `D:\ra-pwa-fix`,
+> dépendances résolues et `dart_define.json` correct déjà écrit ; **il ne
+> manquait que la permission de lancer `flutter build`.**
+>
 > 📖 **13 septembre 2026, huitième session — `N5` est fait. Le Coran est dans le
 > produit, et c'est un texte, pas un fichier.** Lot mené **en parallèle de
 > `CTR-01`**, sur le même dépôt et en accord avec l'autre session.
@@ -1210,19 +1230,27 @@ celle du 11 septembre, lot de remise au vert — **les premières vraies depuis 
 lot T**, les colonnes intermédiaires n'ayant jamais pu être mesurées sur ce
 poste (section 0 undecies).
 
-| Contrôle | Valeur (13/09, lot `N4`) | Au lot `N3` (12/09) |
+| Contrôle | Valeur (13/09, lots `N5` + `CTR-01`) | Au lot `N4` (13/09) |
 | :--- | :--- | :--- |
 | `dart analyze --fatal-infos` | aucun problème | aucun problème |
-| `flutter test` | **646 tests, tous verts** | 621, tous verts |
-| `dart run tool/verifier_jetons.dart` | **113 fichiers**, aucune violation | 110 fichiers |
+| `flutter test` | **692 tests, tous verts** | 646, tous verts |
+| `dart run tool/verifier_jetons.dart` | **120 fichiers**, aucune violation | 113 fichiers |
 | `scenarios_etape3.sql` | **34 contrôles** verts | 34 |
 | `scenarios_etape4.sql` | **39 contrôles** verts | 39 |
 | `scenarios_etape5.sql` | **15 contrôles** verts | 15 |
 | `scenarios_adm05.sql` | **9 contrôles** verts | 9 |
 | `scenarios_n2.sql` | **10 contrôles** verts | 10 |
-| `scenarios_n4.sql` | **9 contrôles** verts | — |
-| `scenarios_adm04.sql` | **9 contrôles** verts | 9 |
-| `main.dart.js` servi | **4 325 111** octets | 4 312 086 |
+| `scenarios_n4.sql` | **9 contrôles** verts | 9 |
+| `scenarios_ctr01.sql` | **10 contrôles** verts | — |
+| `scenarios_n5.sql` | **9 contrôles** verts | — |
+| `scenarios_adm04.sql` | **9 contrôles** verts, **toujours en dernier** | 9 |
+| **Total SQL** | **144 contrôles**, neuf fichiers, base neuve `0001`→`0013` | 125, sept fichiers |
+| `main.dart.js` servi | **4 442 280** octets | 4 324 978 |
+
+⚠ Le `flutter test` à **692** a été relevé par la session `N5` sur l'arbre
+complet des deux lots ; la session `CTR-01` mesurait 690 avant que les deux
+entrées de galerie de `rosace_verset` ne soient ajoutées au catalogue. Les deux
+mesures décrivent le même arbre à deux instants, pas un désaccord.
 
 ⚠ Le 535e test, rouge le 11 septembre, est la **bombe horaire** de
 `journee_test.dart` : il ne tombe qu'entre 23 h 34 et minuit. Le voir vert ne
@@ -1260,21 +1288,31 @@ docker run -d --name ra_e5 -e POSTGRES_HOST_AUTH_METHOD=trust `
   -v "D:\RA _APP\RA -OFFICIAL-APP\supabase:/sql" postgres:17-alpine
 # boucler sur pg_isready, puis :
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -q -f /sql/tests/stub_auth.sql
-# puis les HUIT migrations, dans l'ordre : 0001_fondations,
+# puis les TREIZE migrations, dans l'ordre du numero : 0001_fondations,
 # 0002_statut_attente_kyc, 0003_profil_defaut_attente,
 # 0004_inscription_kyc_appairage, 0005_dashboards_affectation_regles,
 # 0006_rattrapage_semaine_utc_et_foyer,
-# 0007_coran_structure_position_presence, 0008_attribution_manuelle
+# 0007_coran_structure_position_presence, 0008_attribution_manuelle,
+# 0009_journal_audit, 0010_video_jeton_presence, 0011_presence_bornee,
+# 0012_observation_controleur, 0013_corpus_coranique
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -q -f /sql/migrations/0001_fondations.sql
-# puis les QUATRE fichiers de scenarios, dans cet ordre : ils tiennent sur la
+# puis les NEUF fichiers de scenarios, dans cet ordre : ils tiennent sur la
 # meme base et chacun borne ses assertions a ses propres fixtures.
+# scenarios_adm04.sql se joue TOUJOURS EN DERNIER : il relit la chaine de
+# hachage d'audit_logs, que toute emission de jeton ou visite de controle
+# allonge.
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape3.sql
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape4.sql
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_etape5.sql
 docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_adm05.sql
+docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_n2.sql
+docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_n4.sql
+docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_ctr01.sql
+docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_n5.sql
+docker exec ra_e5 psql -U postgres -v ON_ERROR_STOP=1 -f /sql/tests/scenarios_adm04.sql
 ```
 
-⚠ **Un fichier de scénarios ne compte jamais en global.** Les quatre tournent
+⚠ **Un fichier de scénarios ne compte jamais en global.** Les neuf tournent
 sur la même base : `select count(*) from eleves_sans_enseignant()` y voit les
 élèves des trois autres fichiers. Une assertion se borne à ses propres fixtures
 (par `household_id` ou par identifiant), et l'ordre se vérifie en **rang
@@ -1374,13 +1412,45 @@ commitée à part au début du lot L8.
   dépose désormais vraiment une photo dans le seau `avatars`, avec un refus
   au-delà de 4 Mo côté client et rien de plus. C'est l'original du téléphone qui
   est servi aux appareils du foyer.
+- 🔴 **La production est compilée avec une clé Supabase FACTICE, et personne ne
+  peut donc s'y connecter.** Trouvé le 13 septembre 2026, en fin de huitième
+  session, et **mesuré, pas supposé** :
+  - le `main.dart.js` servi par `rewayah-academy.vercel.app` (4 442 280 octets,
+    celui des deux lots du jour) contient la chaîne
+    `cle-factice-playground-ne-jamais-utilisee` ;
+  - cette clé rend **HTTP 401** sur
+    `https://gggmtelinlpseweouyav.supabase.co/auth/v1/settings`, là où la vraie
+    clé `anon` du projet rend **200** ;
+  - `Env.configuree` ne vérifie que `isNotEmpty` : une clé fausse mais non vide
+    **passe le garde-fou**. L'application démarre, rend l'écran de connexion,
+    **et la console reste muette** — c'est exactement ce que sept sessions ont
+    « vérifié ».
+  ⚠ **La cause est le fichier de compilation, pas le code.**
+  `D:\ra-pwa-build\dart_define.json` est l'**exacte copie** du
+  `dart_define.json` de debug du dépôt (384 octets, identique, écrit le
+  11 septembre) : clé factice, `GALERIE: true`, `PLAYGROUND: true`. Toute
+  version compilée depuis ce worktree depuis le 11 septembre porte donc la
+  fausse clé **et expose `/_galerie`** (la chaîne `_galerie` est bien dans le
+  bundle servi).
+  **Le correctif**, une fois la permission de compiler accordée : écrire dans le
+  `dart_define.json` du worktree la vraie clé `anon` (elle se lit par le MCP
+  Supabase, `get_publishable_keys`, et elle est publiable par nature — c'est la
+  RLS qui protège), passer `GALERIE` et `PLAYGROUND` à `false`, recompiler,
+  redéployer. Un worktree propre sur `090ae6f` est prêt en `D:\ra-pwa-fix`,
+  dépendances résolues, `dart_define.json` correct déjà écrit.
+  ⚠ **Ce qu'il faut ajouter au garde-fou** : `Env.configuree` doit refuser une
+  clé qui n'a pas la forme d'une clé Supabase (un JWT `eyJ…` ou un
+  `sb_publishable_…`), sinon le prochain `dart_define.json` de debug repartira
+  en production sans que rien ne le signale. **Un garde-fou qui teste la
+  présence ne teste pas la validité.**
 - Les questions en attente de l'opérateur sont listées dans `PROGRESS.md`, et
   les questions de conception dans `decisions.md`, registre en fin de fichier.
 
 
-## 9. Prompt de reprise — `N4` est fait, la présence s'affiche
+## 9. Prompt de reprise — `N5` et `CTR-01` sont faits, et la production ne peut pas authentifier
 
-À copier tel quel pour démarrer la prochaine session.
+À copier tel quel pour démarrer la prochaine session. Le prompt lui-même est en
+**§9.5**.
 
 ### 9.1 Ce qui a été mesuré le 12 septembre, et non supposé
 
@@ -1407,20 +1477,130 @@ les écrans.
 **Septième session.** **N4 fait** : la présence s'affiche. Aucun écran neuf —
 N4 étend la salle — donc **le compte d'écrans manquants ne bouge pas : six.**
 
+**Huitième session, DEUX LOTS EN PARALLÈLE** — deux sessions sur le même dépôt,
+coordonnées par messages, une seule compilation et **un seul déploiement, fait
+par celle qui a fini en dernier**. `N5` (`ELV-04`, le Coran) et `CTR-01` (le
+planning du contrôle) sont faits. **Deux écrans de moins : il en reste quatre.**
+Mesuré dans `lib/core/router/app_router.dart` : **cinq `EcranAConstruire`**,
+dont un qui n'est pas un écran manquant mais l'état de chargement de la racine.
+Les quatre sont le **suivi élève** (`t.nav.eleve.suivi`), **`TUT-06`**
+(`t.nav.tuteur.suivi`), **`ENS-05`** (`t.nav.enseignant.profil`) et **`CPT-01`**
+(l'espace comptable, **hors MVP-0**). **Dans le MVP-0, il n'en reste donc que
+trois.**
+
 ### 9.2 Les causes non-code
 
 1. ~~Migrations en attente~~ — **close depuis la troisième session.** N3 n'en
    ajoute aucune : il ne touche pas à la base.
 2. ~~La production ne sert pas N2~~ — **close.** Elle sert N3, compilée avec ses
    clés, ouverte et vérifiée console à l'appui.
-3. ~~Les secrets LiveKit manquent~~ — **close, et vérifiée par HTTP depuis ce
-   lot** : `create-room-token` répond `401 authentification requise` là où elle
+3. ~~Les secrets LiveKit manquent~~ — **close, et vérifiée par HTTP** :
+   `create-room-token` répond `401 authentification requise` là où elle
    répondait `503 video non configuree`, et la configuration est testée avant
-   l'authentification. Il ne reste donc aucune cause non-code connue. **Ce qui
+   l'authentification.
+4. 🔴 **OUVERTE, et c'est la plus grave : la production est compilée avec une
+   clé Supabase factice.** Le bundle servi contient
+   `cle-factice-playground-ne-jamais-utilisee`, qui rend **401** sur l'API du
+   projet quand la vraie clé `anon` rend **200**. **Personne ne peut se
+   connecter à la production**, et rien ne le dit : l'application démarre,
+   affiche l'écran de connexion, console muette. Détail complet, mesures et
+   correctif en **section 8**.
+   ⚠ **Cela réécrit la phrase qui traînait depuis six sessions.** « Ce qui
    sépare encore la salle d'un vrai cours n'est plus une action, c'est une
-   mesure : ouvrir deux navigateurs sur une même séance.**
+   mesure » était **faux** : la mesure — ouvrir deux navigateurs sur une même
+   séance — n'a jamais été *possible* en production, puisque l'authentification
+   n'y fonctionne pas. Ce n'était pas une négligence de mesure, c'était un
+   empêchement que personne n'avait vu.
 
-### 9.2 bis Ce que la septième session a livré
+### 9.2 bis Ce que la huitième session a livré — deux lots en parallèle
+
+**`N5` — `ELV-04`, le Coran** (session `windowsterminal-de`, commit `090ae6f`) :
+
+- **ADR-024** : la question `a` du §10 de la spécification d'étape, ouverte
+  depuis `N0`, est tranchée. L'ADR-020 avait fixé la **riwaya**, jamais la
+  **source**. Le critère vient de l'opérateur — « la version qui propose le plus
+  de flexibilité » — et il désigne l'**import**, pas l'API : l'API Quran
+  Foundation interdit de conserver le contenu plus de sept jours, exige une
+  licence commerciale signée pour toute redistribution et reste révocable
+  « immediately and without liability ». Le corpus vient du **Tanzil Project**
+  (CC BY 3.0).
+- `supabase/migrations/0013_corpus_coranique.sql` : **114 sourates, 30 juz,
+  604 pages, 6236 versets**, appliquée en production.
+- `lib/core/coran/`, `lib/features/coran/`, `lib/core/widgets/rosace_verset.dart`
+  et `scenarios_n5.sql` (9 contrôles).
+
+**`CTR-01` — le planning du contrôle** (session `windowsterminal-vs`, commit
+`5641348`) :
+
+- `supabase/migrations/0012_observation_controleur.sql` : le plafond de
+  participants borné au **groupe pédagogique**, `session_peers_v` et six
+  policies resserrées, `est_observateur_masque()`, et **les deux portes
+  d'inscription qui n'existaient pas** — `rejoindre_observation()` pour le
+  contrôleur (invisible et journalisée nommément) et `assister_seance()` pour le
+  tuteur (visible et muet, sans entrée d'audit : un parent qui regarde son
+  enfant n'est pas un accès sensible). **Appliquée en production.**
+- `lib/core/controle/service_controle.dart` et `lib/features/controleur/` —
+  `VuePlanning.depuis` est **pure**, comme `VueSalle.depuis` et
+  `VuePresence.depuis`.
+- `supabase/tests/scenarios_ctr01.sql` : 10 contrôles, **avant**
+  `scenarios_adm04.sql` dans `ci.yml`. `C1` est celui du lot : un cours 1-to-1
+  **plein** accepte une visite.
+- **Le bouton « Assister » de `TUT-01` enfin câblé** : il était en production
+  depuis l'étape 4 et échouait silencieusement.
+
+**Ce que ce lot a trouvé, et que rien ne signalait.** `CTR-02` — l'observation
+invisible de l'ADR-011, confirmée pour le MVP-0 — était **inatteignable depuis
+sa construction** : rien, nulle part, n'inscrivait jamais de ligne
+`masked_controller`. L'enum l'a depuis `0001`, `autoriser_jeton_video()` en
+déduit `hidden` depuis `0010`, `presence_seance_v` la cache depuis `0011` — mais
+aucune fonction ne l'écrivait, et cette fonction refuse tout appelant absent de
+`session_participants`. **N2 a posé le jeton, N3 l'écran, et personne n'avait
+posé la porte.**
+
+### 9.2 ter Les pièges fermés par la huitième session, à ne pas rouvrir
+
+1. ⚠ **Un `create or replace` part du corps COURANT de l'objet, jamais de la
+   migration qui l'a créé.** `0012` a d'abord réécrit `guard_session_overlap()`
+   depuis `0001` et a donc effacé le correctif 3.9 de `0005` (bornes `'[)'` au
+   lieu de `'[]'`). Mesure : `scenarios_etape4.sql` est passé de vert à
+   « S3 ECHEC : 3 prises au lieu de 4 » — une prise sur deux refusée, ce qui a
+   l'air d'un plafond et n'en est pas un. **C'est l'autre session qui l'a
+   détecté**, en rejouant la chaîne complète.
+2. ⚠ **Une policy RLS qui interroge une table protégée par RLS ne voit que ce
+   que l'appelant voit.** Le `not exists (select ... from session_participants)`
+   écrit directement dans les policies de `session_events` ne trouvait jamais
+   rien — les policies de `session_participants` venaient de fermer ces lignes —
+   donc l'enseignant lisait quand même les événements de la visite. **Le pont
+   doit être une fonction `security definer`**, exactement comme
+   `session_belongs_to_teacher` en `0001`.
+3. ⚠ **Un plafond de participants borne le groupe pédagogique, pas
+   l'assistance.** Compter les témoins comme des élèves ferme un cours 1-to-1 à
+   toute visite. La spécification d'étape 5 §9 l'écrivait : « le 1-to-1, **le
+   contrôleur en plus** ».
+4. ⚠ **« En cours » se mesure sur les heures, jamais sur `sessions.status`.**
+   Rien dans le produit ne fait passer une séance à `in_progress` : le webhook
+   LiveKit écrit des **événements**, pas un statut. Un bouton conditionné à ce
+   statut ne s'afficherait jamais. Le statut ne sert qu'à dire qu'une séance a
+   mal tourné.
+5. ⚠ **Un import de 1,48 Mo ne transite pas par un appel d'outil.** `0013` a
+   fait lire le corpus à la base, à sa source, et l'identité avec le fichier
+   versionné a été prouvée **avant toute écriture** par deux empreintes (`md5`
+   du texte et `md5` de la pagination), réinscrites dans les contrôles de la
+   migration : **un import complet mais d'une autre édition passerait tous les
+   comptages sans que rien ne le signale.** L'extension `http`, créée pour cet
+   import, a été **retirée** — laissée en place, elle donne à tout ce qui peut
+   exécuter du SQL le droit d'émettre des requêtes sortantes depuis la base.
+6. ⚠ **Deux sessions sur un même dépôt, ce qui l'a fait marcher** : réserver par
+   message **avant** de commencer (numéro de migration, worktree de build, liste
+   de fichiers), ne toucher aux fichiers partagés que par **édition ciblée**,
+   relire le fichier juste avant d'éditer, et **créer son propre worktree de
+   mesure** — deux `flutter build` dans le même dossier se détruisent. Un
+   fichier partagé qui porte les deux travaux ne peut pas être commité par le
+   premier sans casser la compilation : **celui dont le code est importé par
+   l'autre pousse en premier**, et l'autre commite sa seule version du fichier
+   par `git hash-object -w` + `git update-index --cacheinfo`.
+
+### 9.2 quater Ce que la septième session a livré
 
 - `supabase/migrations/0011_presence_bornee.sql` : `presence_seance_v`
   reconstruite. Elle gagne une **borne d'appelant** — admin et contrôleur voient
@@ -1559,20 +1739,51 @@ Rewayah Academy -- depot D:\RA _APP\RA -OFFICIAL-APP, branche main.
 Chemins en absolu : Glob ne trouve pas ce depot.
 
 NE RELIS PAS TOUT LE CODE. Lis exactement ceci, dans cet ordre :
-  1. docs/HANDOFF.md -- l'en-tete et la section 9.
-  2. docs/design/08-catalogue-ecrans.md -- la fiche
-     "ELV-03 / ENS-03 / CTR-02 La salle" et ce que N4 y ajoute, en fin
-     de section 6.
+  1. docs/HANDOFF.md -- l'en-tete, la SECTION 8 et la section 9.
+  2. docs/design/08-catalogue-ecrans.md -- les fiches "ELV-04 Le Coran"
+     et "CTR-01 Planning global", en fin de section 6.
   3. docs/architecture/etape-5-salle-coran-presence.md -- sections 4, 6, 12.
 N'OUVRE PAS "D:\RA _APP\docs de lancement\architecture live kit..md" :
 son contenu utile est dans l'ADR-023 et les commentaires de 0010.
 
++++ LA PREMIERE CHOSE A FAIRE, AVANT TOUT LOT +++
+LA PRODUCTION NE PEUT PAS AUTHENTIFIER : elle est compilee avec une cle
+Supabase FACTICE. Mesure du 13/09, pas supposition :
+  - le main.dart.js servi (4 442 280 octets) contient la chaine
+    "cle-factice-playground-ne-jamais-utilisee" ;
+  - cette cle rend HTTP 401 sur
+    https://gggmtelinlpseweouyav.supabase.co/auth/v1/settings, la vraie
+    cle anon du projet rend 200 ;
+  - Env.configuree ne teste que isNotEmpty : une cle fausse mais NON
+    VIDE passe le garde-fou. L'app demarre, affiche l'ecran de
+    connexion, et la console reste MUETTE. C'est exactement ce que sept
+    sessions ont "verifie".
+CAUSE : D:\ra-pwa-build\dart_define.json est la copie EXACTE du
+dart_define.json de DEBUG du depot (384 octets, meme contenu, ecrit le
+11/09) : cle factice, GALERIE true, PLAYGROUND true. Toute version
+compilee depuis ce worktree depuis le 11/09 porte donc la fausse cle ET
+expose /_galerie (la chaine _galerie est bien dans le bundle servi).
+CORRECTIF : ecrire la vraie cle anon dans le dart_define.json du
+worktree (MCP Supabase, get_publishable_keys ; elle est publiable par
+nature, c'est la RLS qui protege), passer GALERIE et PLAYGROUND a false,
+recompiler, redeployer, PUIS SE CONNECTER POUR DE VRAI.
+Un worktree propre sur 090ae6f est deja pret en D:\ra-pwa-fix :
+dependances resolues, dart_define.json correct deja ecrit. Il ne
+manquait que la permission de lancer flutter build.
+ENSUITE, DURCIR LE GARDE-FOU : Env.configuree doit refuser une cle qui
+n'a pas la forme d'une cle Supabase (JWT "eyJ..." ou "sb_publishable_"),
+sinon le prochain fichier de debug repartira en prod sans un bruit.
+UN GARDE-FOU QUI TESTE LA PRESENCE NE TESTE PAS LA VALIDITE.
+
 OU ON EN EST, MESURE ET NON SUPPOSE.
 Le verdict "l'app est loin d'etre fonctionnelle" est VERIFIE depuis le
-12/09. Ne REFAIS PAS ce diagnostic. Il reste SIX ecrans a construire :
-ELV-04 le Coran, le suivi eleve, TUT-06, ENS-05, CTR-01, et CPT-01 qui
-est hors MVP-0. L'ESPACE ADMIN EST COMPLET, ET LA SALLE EXISTE.
-Le compte se lit dans lib/core/router/app_router.dart : sept
+12/09. Ne REFAIS PAS ce diagnostic. Il reste QUATRE ecrans a construire :
+le suivi eleve, TUT-06, ENS-05, et CPT-01 qui est HORS MVP-0 -- donc
+TROIS dans le MVP-0. L'ESPACE ADMIN EST COMPLET, LA SALLE EXISTE, LE
+CORAN EST DANS LE PRODUIT, ET LES TROIS PORTES D'ENTREE DE LA SALLE
+EXISTENT ENFIN TOUTES LES TROIS (enseignant ENS-02, tuteur TUT-01,
+controleur CTR-01).
+Le compte se lit dans lib/core/router/app_router.dart : cinq
 EcranAConstruire, dont un qui est l'etat de chargement de la racine.
 
 FAIT :
@@ -1586,35 +1797,61 @@ FAIT :
   N3 = LA SALLE. Un seul ecran pour ELV-03/ENS-03/CTR-02 et QUATRE
        roles (le 4e est guardian_observer, le tuteur qui "assiste").
        PageImmersive au catalogue, renduVideo() sur le contrat video,
-       bouton de lancement de ENS-02 -> 621/621 tests, 110 fichiers
-       de jetons, prod ouverte et console lue.
+       bouton de lancement de ENS-02 (61a0ba8).
   N4 = LA PRESENCE S'AFFICHE. lib/core/presence/ (EtatPresence a 14
        valeurs + inconnu, VuePresence.depuis qui est PURE), le
        composant LignePresence au catalogue, et la migration 0011 qui
        BORNE presence_seance_v -- N1 l'avait laissee sans filtre
        d'appelant : un eleve inscrit a rien y lisait 6 lignes sur 6,
-       il en lit 0. Le controleur masque n'y laisse plus aucune ligne
-       lisible non plus (ADR-011 ne tenait que sur la video).
-       -> 646/646 tests, 113 fichiers de jetons, 125 controles SQL,
-       0011 APPLIQUEE EN PROD, prod ouverte et console lue.
+       il en lit 0 (f1855de).
+  CTR-01 = LE PLANNING DU CONTROLE, et l'observation invisible etait
+       IMPOSSIBLE : rien n'inscrivait jamais de ligne masked_controller,
+       et le plafond de 2 comptait les temoins comme des eleves -- donc
+       un cours 1-to-1 etait "plein", et le bouton "Assister" de TUT-01
+       echouait silencieusement en prod DEPUIS L'ETAPE 4. Migration
+       0012, deux portes (rejoindre_observation, assister_seance),
+       VuePlanning.depuis qui est PURE, TUT-01 repare (5641348).
+  N5 = LE CORAN EST DANS LE PRODUIT. ADR-024 : corpus Tanzil (CC BY 3.0)
+       IMPORTE plutot qu'API -- la Quran Foundation interdit de
+       conserver le contenu plus de 7 jours et reste revocable sans
+       preavis. Migration 0013 : 114 sourates, 30 juz, 604 pages,
+       6236 versets (090ae6f).
+  -> 692/692 tests, 120 fichiers de jetons, 144 controles SQL sur NEUF
+     fichiers, 0012 ET 0013 APPLIQUEES EN PROD.
 
-LE PROCHAIN LOT EST N5 : le lecteur de Coran, ELV-04. ATTENTION, il
-demande D'ABORD une decision : le jeu de donnees coranique n'est pas
-choisi (question `a` de la section 10 de la spec d'etape). Le mushaf de
-reference est deja en base depuis 0007 (madina-hafs-604, une ligne),
-mais ni les 604 pages ni les 6236 versets ne sont importes. NE PAS
-INVENTER un corpus : demander a l'operateur, ou lui proposer deux
-sources avec leur licence.
-Alternative sans decision prealable : N6, le mode suivi enseignant --
-mais il vient AVEC le document partage, donc apres N5.
+LE PROCHAIN LOT, UNE FOIS LA PROD REPAREE : au choix, tous les trois
+dans le MVP-0 --
+  - TUT-06, le suivi d'un enfant par son tuteur ;
+  - ENS-05, le profil enseignant ;
+  - le suivi eleve.
+N6 (mode suivi enseignant) vient AVEC le document partage : le Coran est
+desormais en base, mais le canal de diffusion (question `e`) n'est
+toujours pas tranche.
 
 CE QUI N'EST PAS PROUVE, ET QU'IL NE FAUT PAS PRETENDRE AVOIR PROUVE :
 un vrai cours. Personne n'a encore ouvert deux navigateurs sur une meme
-seance. IL N'EXISTE AUCUNE SEANCE EN BASE (verifie le 13/09 : 0 seance,
-0 participant, 0 evenement, 7 profils) -- c'est ce qui rend la mesure
-faisable des qu'on le decide, et c'est la seule qui vaille.
+seance, ET ON SAIT MAINTENANT POURQUOI : l'authentification ne fonctionne
+pas en production. Ce n'etait pas une mesure negligee, c'etait un
+empechement que personne n'avait vu. IL N'EXISTE AUCUNE SEANCE EN BASE
+(verifie le 13/09 : 0 seance, 0 participant, 0 evenement, 7 profils).
+NI l'ecran du Coran NI le planning du controle n'ont ete VUS en
+production : seules leurs ROUTES l'ont ete, et elles redirigent vers
+/connexion faute de session. Meme cause.
 
-CE QUE N4 N'A PAS CONSTRUIT, ET CE N'EST PAS UN OUBLI :
+CE QUE LA HUITIEME SESSION N'A PAS CONSTRUIT, ET CE N'EST PAS UN OUBLI :
+  - les trois signalements automatiques de l'ADR-011 : leur place est
+    l'espace admin, pas l'ecran du controleur. Ni CTR-03, ni le
+    signalement d'incident a l'administrateur (aucune table, aucun
+    canal).
+  - verset.ligne reste NULLE. Le layout QPC v2 porte le decoupage en
+    quinze lignes, mais il compte les mots autrement que le texte
+    Tanzil : 83 668 contre 77 881, mesure. Les faire coincider
+    demanderait de DEVINER une correspondance sur un texte sacre. 0007
+    autorise la colonne nulle et rien a l'ecran n'en depend.
+  - le lien vers tanzil.net n'est pas cliquable : url_launcher n'est pas
+    au pubspec, et l'y ajouter demandait de toucher un fichier
+    qu'OpenCode modifie. La source est bien citee au pied de chaque
+    page, comme la licence l'exige.
   - le GESTE de correction manuelle (corrigee_manuel) et le marquage
     excusee. La table session_presence_override et ses policies
     existent depuis 0007, mais l'ecran demande confirmation, motif
@@ -1631,11 +1868,13 @@ LIVEKIT EST BRANCHE, ET C'EST VERIFIE, PAS SUPPOSE :
   Restent en angle mort LIVEKIT_CLOUD_WS_URL, que rien ne valide, et la
   cle qui signe le webhook -- les deux ne se prouvent qu'en salle.
 
-LA PREMIERE MESURE QUI VAUT, MAINTENANT QU'ELLE EST POSSIBLE :
+LA PREMIERE MESURE QUI VAUT, DES QUE LA PROD SAIT AUTHENTIFIER :
   creer une seance a l'instant present entre un enseignant et un eleve
   (ADM-05 attribue, la seance nait du creneau), ouvrir deux navigateurs,
   et regarder. C'est le premier vrai cours, et la premiere preuve de
-  bout en bout depuis le debut de l'etape 5.
+  bout en bout depuis le debut de l'etape 5. Elle exerce d'un coup N2,
+  N3, N4, N5 et CTR-01. TANT QUE LA CLE EST FAUSSE, ELLE EST
+  IMPOSSIBLE -- ce n'est pas un choix de priorite, c'est un prerequis.
 
 DEUX ECARTS ASSUMES, ECRITS PLUTOT QUE MASQUES :
   - la sortie de ENS-03 mene a ENS-02, pas a ENS-04 : le cahier de
@@ -1659,16 +1898,29 @@ A LUI SOUMETTRE, PAS BLOQUANT (decisions prises par l'agent) :
   - N4 : la vue dit QU'UNE decision humaine a fige un etat, jamais
     POURQUOI. Le motif reste en base et au journal (section 6.6 interdit
     tout detail administratif a l'eleve).
+  - ADR-024 : corpus coranique Tanzil, importe et non appele par API.
+  - CTR-01 : le tuteur qui "assiste" entre VISIBLE et MUET, sans entree
+    d'audit -- un parent qui regarde son enfant n'est pas un acces
+    sensible ; le controleur entre INVISIBLE et journalise nommement.
+  - CTR-01 : seule l'ADMINISTRATION voit une visite de controle. Ni le
+    controleur lui-meme, ni ses collegues (regle de 0011 etendue a
+    toutes les surfaces).
+  - GALERIE=true en production : /_galerie est expose sur le site
+    public. Le commentaire d'Env dit pourtant "une version de production
+    ne contient pas la galerie". A trancher avec la reparation de la
+    cle.
 
 MIGRATIONS : plus aucune en attente. GARDER LE REFLEXE get_project_url
 AVANT toute ecriture : le MCP a deja vise PISI (riaqzfhdynmtshvbgdvt)
 au lieu de Rewayah (gggmtelinlpseweouyav) pendant des sessions entieres.
 
 POUR MESURER :
-  - SQL : docker, base neuve, stub_auth puis migrations 0001 a 0011,
-    puis les SEPT fichiers de scenarios a la suite, dans cet ordre :
-    etape3, etape4, etape5, adm05, n2, n4, adm04 -- adm04 EN DERNIER.
-    Reference 125 controles (116 + 9 pour N4).
+  - SQL : docker, base neuve, stub_auth puis migrations 0001 a 0013,
+    puis les NEUF fichiers de scenarios a la suite, dans cet ordre :
+    etape3, etape4, etape5, adm05, n2, n4, ctr01, n5, adm04 -- adm04 EN
+    DERNIER, toujours : il relit la chaine de hachage d'audit_logs, que
+    toute emission de jeton ou visite de controle allonge.
+    Reference 144 controles (125 + 10 pour CTR-01 + 9 pour N5).
     Astuce si le conteneur existe deja : creer une base neuve dedans
     (createdb) plutot que de le recreer -- stub_auth.sql echoue alors
     sur les roles deja presents, sans consequence : lancer le stub SANS
@@ -1681,7 +1933,7 @@ POUR MESURER :
            sqlite3:
              source: system
     Methode : editer dans le depot, copier vers le worktree, mesurer
-    la-bas. Reference 646/646 et 113 fichiers de jetons.
+    la-bas. Reference 692/692 et 120 fichiers de jetons.
     `dart analyze` fonctionne dans le depot principal, lui.
     ATTENTION en copiant vers le worktree : lib/main.dart, lib/app.dart
     et lib/core/config/env.dart y arrivent dans la version NON COMMITEE
@@ -1716,13 +1968,28 @@ PIEGES :
 - journee_test.dart / "ENS-02 : le bloc dominant" est rouge entre 23h34
   et minuit seulement. Vert ne prouve pas repare.
 - Un nouveau fichier de scenarios SQL ne s'ajoute PAS tout seul a ci.yml.
-- DEPLOIEMENT, la commande exacte, depuis le worktree :
-     cd "D:\ra-pwa-build"; flutter build web --release --dart-define-from-file=dart_define.json
-     cd "D:\ra-pwa-build\build\web"; vercel deploy --prod --yes
+- DEPLOIEMENT, la commande exacte, depuis un worktree :
+     cd "D:\ra-pwa-fix"; flutter build web --release --dart-define-from-file=dart_define.json
+     cd "D:\ra-pwa-fix\build\web"; vercel deploy --prod --yes
   SANS --dart-define-from-file, Supabase n'est jamais initialise.
   vercel deploy NE CONSTRUIT RIEN : il televerse le disque.
   Puis OUVRIR L'APP ET LIRE LA CONSOLE. Reference : main.dart.js fait
-  4 312 086 octets depuis que la video n'est plus elaguee (+12,5 %).
+  4 442 280 octets avec le Coran et le planning du controle.
+  ++ LIRE LE dart_define.json AVANT DE CONSTRUIRE ++ celui de
+  D:\ra-pwa-build porte une CLE FACTICE et GALERIE/PLAYGROUND a true.
+  Trois controles sur le bundle servi, pas un seul :
+     gggmtelinlpseweouyav PRESENT (l'app est configuree),
+     "cle-factice" ABSENT (la cle est vraie),
+     une chaine du dernier lot PRESENTE (c'est bien le bon bundle).
+  Et un quatrieme qui vaut les trois autres : SE CONNECTER.
+- DEUX SESSIONS SUR LE MEME DEPOT, ca marche : reserver par message
+  AVANT de commencer (numero de migration, worktree, liste de fichiers),
+  n'editer les fichiers partages que de facon ciblee, et relire le
+  fichier juste avant de l'editer. Chacun son worktree de mesure : deux
+  flutter build dans le meme dossier se detruisent. Celui dont le code
+  est IMPORTE par l'autre pousse EN PREMIER. UN SEUL DEPLOIEMENT, par
+  celui qui finit en dernier, depuis main a jour : il deploie son
+  travail ET celui de l'autre.
 
 Un lot par session. Ignore la branche refactor-ui-lavender.
 FIN DE SESSION : livrer un prompt de reprise et mettre a jour cette
