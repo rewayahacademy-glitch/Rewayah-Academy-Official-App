@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
 
 /// L'etat d'interaction d'une zone pressable, a un instant donne.
 ///
@@ -81,7 +82,7 @@ class PressionForcee extends InheritedWidget {
 
 /// Le seul point d'entree du retour tactile de l'application.
 ///
-/// Echelle 0.96, 120 ms, retour haptique moyen. **Aucun `onTap` nu ailleurs
+/// Echelle 0.98, 100 ms, retour haptique moyen. **Aucun `onTap` nu ailleurs
 /// dans le code** : `tool/verifier_jetons.dart` echoue si un autre fichier de
 /// `lib/` en declare un
 /// (`docs/architecture/etape-2-core-flutter.md` section 2).
@@ -158,7 +159,7 @@ class Pressable extends StatefulWidget {
   static const Duration duree = AppMouvement.retourTactile;
 
   /// Echelle atteinte au doigt pose.
-  static const double echelleEnfoncee = 0.96;
+  static const double echelleEnfoncee = 0.98;
 
   /// Epaisseur de l'anneau de focus. Deux points : c'est le minimum visible
   /// sur un ecran de telephone d'entree de gamme.
@@ -195,14 +196,18 @@ class _PressableState extends State<Pressable>
       return;
     }
     setState(() => _presse = true);
-    unawaited(_controleur.reverse());
+    if (!AppMouvement.mouvementReduit(context)) {
+      unawaited(_controleur.reverse());
+    }
   }
 
   void _relacher() {
     if (_presse) {
       setState(() => _presse = false);
     }
-    unawaited(_controleur.forward());
+    if (!AppMouvement.mouvementReduit(context)) {
+      unawaited(_controleur.forward());
+    }
   }
 
   void _declencher() {
@@ -224,7 +229,15 @@ class _PressableState extends State<Pressable>
     }
     // Le retour tactile complet, aller puis retour, pour que la zone reponde
     // au clavier comme elle repond au doigt.
-    unawaited(_controleur.reverse().then((void _) => _controleur.forward()));
+    if (!AppMouvement.mouvementReduit(context)) {
+      unawaited(
+        _controleur.reverse().then((void _) {
+          if (mounted) {
+            _controleur.forward();
+          }
+        }),
+      );
+    }
     _declencher();
   }
 
@@ -242,27 +255,37 @@ class _PressableState extends State<Pressable>
         );
 
     Widget contenu = ScaleTransition(
-      scale: _controleur,
+      scale: AppMouvement.mouvementReduit(context)
+          ? const AlwaysStoppedAnimation<double>(1)
+          : _controleur,
       child: widget.child ?? widget.constructeur!(context, etat),
     );
 
-    // L'anneau de focus se pose en PREMIER PLAN : pose en fond, il passerait
-    // sous la surface du composant et ne se verrait pas. Il emploie
-    // `surfacePrimary`, l'une des deux couleurs autorisees pour un focus
-    // (`05-regles-responsive.md` section 5).
+    // The ring is outside the hit target: no layout shift and no clipping.
     if (etat.focus) {
-      contenu = DecoratedBox(
-        position: DecorationPosition.foreground,
-        decoration: BoxDecoration(
-          borderRadius: widget.arrondiFocus ?? metriques.arrondi,
-          border: Border.fromBorderSide(
-            BorderSide(
-              color: palette.surfacePrimary.background,
-              width: Pressable.epaisseurFocus,
+      contenu = Stack(
+        clipBehavior: Clip.none,
+        children: <Widget>[
+          contenu,
+          PositionedDirectional(
+            start: -AppSpacing.xs,
+            end: -AppSpacing.xs,
+            top: -AppSpacing.xs,
+            bottom: -AppSpacing.xs,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: widget.arrondiFocus ?? metriques.arrondi,
+                  border: Border.fromBorderSide(
+                    palette.inkAccent.asBorderSide(
+                      width: Pressable.epaisseurFocus,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-        child: contenu,
+        ],
       );
     }
 

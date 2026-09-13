@@ -56,9 +56,7 @@ class FilterPill extends StatelessWidget {
       button: true,
       child: Pressable.selon(
         onPress: onPress,
-        libelleSemantique: compteur == null
-            ? libelle
-            : '$libelle, $compteur',
+        libelleSemantique: compteur == null ? libelle : '$libelle, $compteur',
         arrondiFocus: AppRadius.arrondiFull,
         constructeur: (BuildContext contexte, EtatPression etat) {
           // La paire douce d'accent quand le filtre porte, la surface elevee
@@ -85,21 +83,16 @@ class FilterPill extends StatelessWidget {
                 horizontal: AppSpacing.lg,
                 vertical: AppSpacing.sm,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: <Widget>[
-                  Flexible(
-                    child: Text(
-                      libelle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: fond.applyTo(
-                        textes.labelLarge ?? const TextStyle(),
-                      ),
-                    ),
+                  Text(
+                    libelle,
+                    style: fond.applyTo(textes.labelLarge ?? const TextStyle()),
                   ),
                   if (compteur != null) ...<Widget>[
-                    Ecart.hSm,
                     Text(
                       '$compteur',
                       style: AppTypography.tabulaire(

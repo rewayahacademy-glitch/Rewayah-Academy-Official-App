@@ -25,7 +25,7 @@ class AppMetriques extends ThemeExtension<AppMetriques> {
   /// Le mode d'interface courant.
   final InterfaceMode mode;
 
-  /// Cible tactile minimale : 72pt en mode enfant, 44pt en mode standard
+  /// Cible tactile minimale : 72pt en mode enfant, 48pt en mode standard
   /// (`docs/architecture/etape-2-core-flutter.md` section 2).
   final double cibleTactile;
 

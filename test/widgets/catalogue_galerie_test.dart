@@ -57,6 +57,8 @@ const List<String> composantsDuCatalogue = <String>[
   // catalogue est un composant que personne ne relit.
   'DataCollection',
   'FilterPill',
+  'SettingRow',
+  'ScheduleOption',
   // Section 2 : la coquille que le lot N3 produit. Elle n'etait pas a la liste
   // d'origine : la refonte n'avait prevu qu'un gabarit de page, et la salle a
   // montre qu'il en manquait un second, pour les ecrans sans page -- ni titre,
@@ -325,12 +327,21 @@ void main() {
     });
 
     test('chaque gabarit porte sa gouttiere et sa forme de chrome', () {
-      expect(Gabarit.mobile.gouttiere, 20);
-      expect(Gabarit.tablette.gouttiere, 32);
-      expect(Gabarit.desktop.gouttiere, 48);
+      expect(Gabarit.mobile.gouttiere, 16);
+      expect(Gabarit.tablette.gouttiere, 24);
+      expect(Gabarit.desktop.gouttiere, 32);
       expect(Gabarit.mobile.chrome, ChromeNavigation.barreBasse);
       expect(Gabarit.tablette.chrome, ChromeNavigation.rail);
       expect(Gabarit.desktop.chrome, ChromeNavigation.barreLaterale);
+    });
+
+    test('les quatre seuils de contenu R1 sont exacts', () {
+      expect(AppGabarit.classe(599), ClasseLargeur.compacte);
+      expect(AppGabarit.classe(600), ClasseLargeur.moyenne);
+      expect(AppGabarit.classe(839), ClasseLargeur.moyenne);
+      expect(AppGabarit.classe(840), ClasseLargeur.etendue);
+      expect(AppGabarit.classe(1199), ClasseLargeur.etendue);
+      expect(AppGabarit.classe(1200), ClasseLargeur.large);
     });
 
     testWidgets('le gabarit se lit sur la largeur de la fenetre', (
