@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/domain/enums.dart';
@@ -48,6 +49,7 @@ class _GaleriePageState extends State<GaleriePage> {
   bool _grandTexte = false;
   bool _mouvementReduit = false;
   bool _jetons = true;
+  bool _sombre = false;
 
   /// La largeur simulee du gabarit choisi.
   ///
@@ -61,6 +63,11 @@ class _GaleriePageState extends State<GaleriePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (kReleaseMode) {
+      return const Scaffold(
+        body: Center(child: Text('Galerie indisponible en production')),
+      );
+    }
     final List<EntreeGalerie> entrees = catalogueGalerie();
 
     return Scaffold(
@@ -73,12 +80,14 @@ class _GaleriePageState extends State<GaleriePage> {
             direction: _direction,
             grandTexte: _grandTexte,
             mouvementReduit: _mouvementReduit,
+            sombre: _sombre,
             jetons: _jetons,
             onGabarit: (Gabarit g) => setState(() => _gabarit = g),
             onMode: (InterfaceMode m) => setState(() => _mode = m),
             onDirection: (TextDirection d) => setState(() => _direction = d),
             onGrandTexte: (bool v) => setState(() => _grandTexte = v),
             onMouvement: (bool v) => setState(() => _mouvementReduit = v),
+            onSombre: (bool v) => setState(() => _sombre = v),
             onJetons: (bool v) => setState(() => _jetons = v),
           ),
           Expanded(
@@ -121,7 +130,7 @@ class _GaleriePageState extends State<GaleriePage> {
     // d'interface), pas la luminosite. Ajouter un sixieme axe releve d'une
     // decision de doc, pas de ce lot.
     return Theme(
-      data: AppTheme.pour(_mode, Brightness.light),
+      data: AppTheme.pour(_mode, _sombre ? Brightness.dark : Brightness.light),
       child: Builder(
         builder: (BuildContext contexte) => MediaQuery(
           data: MediaQuery.of(contexte).copyWith(
@@ -147,12 +156,14 @@ class _BarreReglages extends StatelessWidget {
     required this.direction,
     required this.grandTexte,
     required this.mouvementReduit,
+    required this.sombre,
     required this.jetons,
     required this.onGabarit,
     required this.onMode,
     required this.onDirection,
     required this.onGrandTexte,
     required this.onMouvement,
+    required this.onSombre,
     required this.onJetons,
   });
 
@@ -161,12 +172,14 @@ class _BarreReglages extends StatelessWidget {
   final TextDirection direction;
   final bool grandTexte;
   final bool mouvementReduit;
+  final bool sombre;
   final bool jetons;
   final void Function(Gabarit) onGabarit;
   final void Function(InterfaceMode) onMode;
   final void Function(TextDirection) onDirection;
   final void Function(bool) onGrandTexte;
   final void Function(bool) onMouvement;
+  final void Function(bool) onSombre;
   final void Function(bool) onJetons;
 
   @override
@@ -210,6 +223,11 @@ class _BarreReglages extends StatelessWidget {
               libelle: 'mouvement reduit',
               active: mouvementReduit,
               onPress: () => onMouvement(!mouvementReduit),
+            ),
+            _Bascule(
+              libelle: 'thème sombre',
+              active: sombre,
+              onPress: () => onSombre(!sombre),
             ),
             _Bascule(
               libelle: t.galerie.modeEnfant,

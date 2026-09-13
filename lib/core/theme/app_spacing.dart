@@ -62,16 +62,24 @@ abstract final class AppSpacing {
 /// `docs/design/01-systeme-visuel.md` section 6.
 abstract final class AppPage {
   /// Gouttiere laterale sur mobile.
-  static const double gouttiereMobile = AppSpacing.xl;
+  static const double gouttiereMobile = AppSpacing.lg;
 
   /// Gouttiere laterale sur tablette.
-  static const double gouttiereTablette = AppSpacing.xxxl;
+  static const double gouttiereTablette = AppSpacing.xxl;
 
   /// Gouttiere laterale sur desktop.
-  static const double gouttiereDesktop = AppSpacing.titreEcran;
+  static const double gouttiereDesktop = AppSpacing.xxxl;
 
   /// Largeur maximale du contenu. Au dela, la colonne se centre.
   static const double largeurMaxContenu = 1200;
+  static const double largeurFormulaire = 640;
+  static const double largeurReglages = 760;
+  static const double largeurLecture = 800;
+  static const double largeurGestion = 1440;
+  static const double largeurEtatVide = 400;
+  static const double hauteurBouton = 52;
+  static const double hauteurChoix = 112;
+  static const double hauteurReglage = 64;
 
   /// Largeur de lecture, en caracteres, pour tout texte suivi.
   ///
@@ -83,14 +91,14 @@ abstract final class AppPage {
 
 /// Cibles tactiles minimales.
 ///
-/// 72pt en mode enfant, 44pt en mode standard
+/// 72pt en mode enfant, 48pt en mode standard
 /// (`docs/architecture/etape-2-core-flutter.md` section 2, ligne `BentoTile`).
 abstract final class AppTouchTarget {
   /// Cible minimale en mode enfant.
   static const double enfant = 72;
 
   /// Cible minimale en mode standard.
-  static const double standard = 44;
+  static const double standard = 48;
 }
 
 /// Espaces verticaux et horizontaux prets a l'emploi, pour eviter les

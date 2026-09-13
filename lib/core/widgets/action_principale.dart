@@ -81,7 +81,7 @@ class ActionPrincipale extends StatelessWidget {
       onPress: actif ? onPress : null,
       libelleSemantique: libelle,
       respecterCibleTactile: false,
-      arrondiFocus: AppRadius.arrondiSm,
+      arrondiFocus: AppRadius.arrondiMd,
       constructeur: (BuildContext contexte, EtatPression etat) =>
           _corps(contexte, palette, metriques, etat, actif: actif),
     );
@@ -98,34 +98,51 @@ class ActionPrincipale extends StatelessWidget {
 
     return Container(
       width: pleineLargeur ? double.infinity : null,
-      constraints: BoxConstraints(minHeight: metriques.cibleTactile),
+      constraints: BoxConstraints(
+        minHeight: metriques.estEnfant
+            ? AppTouchTarget.enfant
+            : AppPage.hauteurBouton,
+      ),
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xxl,
+        horizontal: AppSpacing.xl,
         vertical: AppSpacing.md,
       ),
       decoration: BoxDecoration(
         color: peinture.fond,
-        borderRadius: AppRadius.arrondiSm,
+        borderRadius: AppRadius.arrondiMd,
         border: peinture.filet == null
             ? null
             : Border.fromBorderSide(peinture.filet!),
       ),
-      child: enCours
-          ? SizedBox.square(
-              dimension: AppSpacing.xl,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: peinture.encre(const TextStyle()).color,
+      child: Semantics(
+        liveRegion: enCours,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (enCours) ...<Widget>[
+              SizedBox.square(
+                dimension: AppSpacing.xl,
+                child: CircularProgressIndicator(
+                  value: 0.65,
+                  strokeWidth: 2,
+                  color: peinture.encre(const TextStyle()).color,
+                ),
               ),
-            )
-          : Text(
-              libelle,
-              textAlign: TextAlign.center,
-              style: peinture.encre(
-                Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+              Ecart.hSm,
+            ],
+            Flexible(
+              child: Text(
+                libelle,
+                textAlign: TextAlign.center,
+                style: peinture.encre(
+                  Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+                ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 

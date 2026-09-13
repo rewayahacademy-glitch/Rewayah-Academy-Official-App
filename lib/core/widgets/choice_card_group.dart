@@ -6,6 +6,7 @@ import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
 
@@ -57,6 +58,7 @@ class ChoiceCardGroup extends StatefulWidget {
     super.key,
     this.selectionMultiple = false,
     this.valeurInitiale,
+    this.autoriserSaisieLibre = true,
   });
 
   /// Les reponses les plus courantes.
@@ -70,6 +72,10 @@ class ChoiceCardGroup extends StatefulWidget {
 
   /// Reponse pre-cochee, utile a l'onboarding de confirmation (ADR-014).
   final ReponseChoix? valeurInitiale;
+
+  /// Legacy flows may keep an "Other" text answer. New scheduling choices use
+  /// closed administrative proposals and pass false.
+  final bool autoriserSaisieLibre;
 
   /// Valeur interne de la carte « Autre ».
   static const String valeurAutre = r'$autre';
@@ -139,14 +145,14 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
               onPress: () => _basculer(option.valeur),
             ),
           ),
-        // La carte « Autre » n'est jamais conditionnelle.
-        _Carte(
-          libelle: t.choix.autre,
-          icone: AppIcons.autreChoix,
-          retenue: _autreRetenu,
-          onPress: () => _basculer(ChoiceCardGroup.valeurAutre),
-        ),
-        if (_autreRetenu) ...<Widget>[
+        if (widget.autoriserSaisieLibre)
+          _Carte(
+            libelle: t.choix.autre,
+            icone: AppIcons.autreChoix,
+            retenue: _autreRetenu,
+            onPress: () => _basculer(ChoiceCardGroup.valeurAutre),
+          ),
+        if (widget.autoriserSaisieLibre && _autreRetenu) ...<Widget>[
           Ecart.vMd,
           ConstrainedBox(
             constraints: BoxConstraints(minHeight: metriques.cibleTactile),
@@ -197,20 +203,16 @@ class _Carte extends StatelessWidget {
       libelleSemantique: libelle,
       respecterCibleTactile: false,
       constructeur: (BuildContext contexte, EtatPression etat) => Container(
-        constraints: BoxConstraints(
-          minHeight: AppMetriques.of(contexte).cibleTactile,
-        ),
-        padding: EdgeInsets.all(AppMetriques.of(contexte).marge),
+        constraints: const BoxConstraints(minHeight: AppPage.hauteurChoix),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         decoration: AppElevation.avecFilet(
           surface: paire,
           filet: retenue || etat.survole || etat.presse
               ? palette.borderStrong
               : palette.borderResting,
           ombre: palette.ombre,
-          arrondi: AppMetriques.of(contexte).arrondi,
-          ombres: retenue
-              ? AppElevation.niveau2(palette.ombre)
-              : AppElevation.niveau1(palette.ombre),
+          arrondi: AppRadius.arrondiLg,
+          ombres: AppElevation.niveau0,
         ),
         child: Row(
           children: <Widget>[
