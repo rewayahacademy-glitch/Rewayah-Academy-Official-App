@@ -38,10 +38,31 @@ class EchecSalle implements Exception {
   String toString() => 'EchecSalle($motif)';
 }
 
-/// L'acces a la salle, et la sortie volontaire.
+/// L'acces a la salle, l'inscription des temoins, et la sortie volontaire.
+///
+/// **Les deux portes de temoin ne remplacent pas `acces`, elles la precedent.**
+/// `autoriser_jeton_video()` lit l'appartenance dans `session_participants` et
+/// n'accepte jamais de la recevoir en parametre (0010) : un temoin qui n'y est
+/// pas inscrit obtient « non inscrit a cette seance », quel que soit son role.
+/// C'est precisement ce qui arrivait au controleur et au tuteur jusqu'a la
+/// migration 0012 -- personne ne les inscrivait.
 abstract interface class ServiceVideo {
   /// Demande au backend le droit d'entrer dans une seance.
   Future<AccesSalle> acces(String seanceId);
+
+  /// Inscrit l'appelant comme **observateur invisible** d'une seance en cours.
+  ///
+  /// Reservee au controle qualite, et journalisee nommement : identite, seance,
+  /// horodatage (ADR-011). La base refuse une seance close, une seance pas
+  /// encore commencee, et une seance dont l'appelant est deja partie prenante.
+  Future<void> observerEnControle(String seanceId);
+
+  /// Inscrit l'appelant comme **temoin visible** du cours de son enfant.
+  ///
+  /// L'inverse exact de la precedente : le tuteur entre muet mais visible, et
+  /// sa presence n'a rien d'une visite de controle -- l'enseignant doit savoir
+  /// qu'un parent regarde.
+  Future<void> assisterEnTuteur(String seanceId);
 
   /// Annonce un depart **volontaire**, avant de se deconnecter.
   ///
@@ -95,6 +116,22 @@ class ServiceVideoSupabase implements ServiceVideo {
     }
     return MotifRefusSalle.reseau;
   }
+
+  // Les deux inscriptions ne rattrapent aucune erreur, contrairement a la
+  // sortie : un echec ici doit remonter a l'ecran, qui dira que la visite n'a
+  // pas eu lieu. Continuer vers la salle apres un refus n'y ferait entrer
+  // personne et remplacerait un message clair par l'impasse d'acces.
+  @override
+  Future<void> observerEnControle(String seanceId) => _client.rpc<void>(
+    'rejoindre_observation',
+    params: <String, dynamic>{'p_session_id': seanceId},
+  );
+
+  @override
+  Future<void> assisterEnTuteur(String seanceId) => _client.rpc<void>(
+    'assister_seance',
+    params: <String, dynamic>{'p_session_id': seanceId},
+  );
 
   @override
   Future<void> annoncerSortie(String seanceId) async {

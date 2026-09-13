@@ -16,10 +16,12 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/service_video.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/child_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
@@ -143,6 +145,10 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
   Timer? _minuteur;
   late DateTime _maintenant = widget.horloge();
 
+  /// Ce que dit l'ecran quand l'inscription du tuteur a echoue. `null` tant que
+  /// rien n'a echoue.
+  String? _echecAssistance;
+
   @override
   void initState() {
     super.initState();
@@ -158,6 +164,33 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
   void dispose() {
     _minuteur?.cancel();
     super.dispose();
+  }
+
+  /// Inscrit le tuteur comme temoin, PUIS ouvre la salle.
+  ///
+  /// Le geste etait un simple `go` jusqu'au lot `CTR-01`, et il ne pouvait pas
+  /// aboutir : `autoriser_jeton_video()` lit l'appartenance dans
+  /// `session_participants`, ou personne n'inscrivait le tuteur. Il arrivait
+  /// donc dans l'impasse d'acces de la salle, sans que rien ne dise pourquoi.
+  /// La migration `0012` ouvre la porte ; celle-ci la franchit avant de
+  /// naviguer, parce qu'un refus se dit ici, pas trois ecrans plus loin.
+  Future<void> _assister(String seanceId) async {
+    try {
+      await ref.read(serviceVideoProvider).assisterEnTuteur(seanceId);
+    } on Object {
+      if (mounted) {
+        setState(() => _echecAssistance = t.tuteur.accueil.assisterRefuse);
+      }
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    GoRouter.of(context).go(
+      Routes.salle,
+      // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+      extra: BilletSalle(sessionId: seanceId, emisA: DateTime.now()),
+    );
   }
 
   @override
@@ -209,8 +242,12 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
                     (Affectation a) => a.active && a.eleveId == enfant.id,
                   ),
                   maintenant: _maintenant,
+                  onAssister: _assister,
                 ),
               ),
+          // Pose sous les cartes, la ou le geste a eu lieu : un retour local ne
+          // se met jamais au centre de l'ecran (`02-regles-ux.md` section 7).
+          LocalFeedback(message: _echecAssistance),
           if (enErreur) ...<Widget>[
             Ecart.vSm,
             Text(
@@ -247,6 +284,7 @@ class _CarteEnfant extends ConsumerWidget {
     required this.seances,
     required this.affecte,
     required this.maintenant,
+    required this.onAssister,
   });
 
   final EleveDuFoyer enfant;
@@ -256,6 +294,10 @@ class _CarteEnfant extends ConsumerWidget {
 
   final bool affecte;
   final DateTime maintenant;
+
+  /// Ce que fait « Assister » : inscrire, puis ouvrir la salle. La carte ne
+  /// connait ni l'un ni l'autre, elle rend le geste a l'ecran qui la porte.
+  final Future<void> Function(String seanceId) onAssister;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -299,11 +341,7 @@ class _CarteEnfant extends ConsumerWidget {
       // n'y a pas de salle a rejoindre, et un bouton qui echoue apres le geste
       // coute plus cher qu'un bouton absent.
       onAssister: phase == PhaseEnfant.enCours && prochain != null
-          ? () => GoRouter.of(context).go(
-              Routes.salle,
-              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-              extra: BilletSalle(sessionId: prochain.id, emisA: DateTime.now()),
-            )
+          ? () => unawaited(onAssister(prochain.id))
           : null,
     );
   }

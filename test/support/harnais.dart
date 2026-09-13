@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
+import 'package:rewayah_academy/core/controle/service_controle.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
@@ -1001,6 +1002,39 @@ class FauxServiceVideo implements ServiceVideo {
   /// `deconnectee` : un test doit pouvoir constater qu'elle a bien eu lieu.
   final List<String> sorties = <String>[];
 
+  /// Les seances ou une visite de controle a ete inscrite, dans l'ordre.
+  final List<String> observations = <String>[];
+
+  /// Les seances ou un tuteur s'est inscrit comme temoin, dans l'ordre.
+  final List<String> assistances = <String>[];
+
+  /// Ce que la prochaine inscription doit jeter, s'il y a lieu.
+  ///
+  /// Sans lui, le refus de la porte ne serait pas mesurable : il vient de la
+  /// base -- seance close, role insuffisant, deja partie prenante -- et aucun
+  /// test ne peut le produire autrement.
+  Object? refusInscription;
+
+  @override
+  Future<void> observerEnControle(String seanceId) async {
+    final Object? refus = refusInscription;
+    if (refus != null) {
+      // ignore: only_throw_errors
+      throw refus;
+    }
+    observations.add(seanceId);
+  }
+
+  @override
+  Future<void> assisterEnTuteur(String seanceId) async {
+    final Object? refus = refusInscription;
+    if (refus != null) {
+      // ignore: only_throw_errors
+      throw refus;
+    }
+    assistances.add(seanceId);
+  }
+
   @override
   Future<AccesSalle> acces(String seanceId) async {
     demandes.add(seanceId);
@@ -1168,5 +1202,49 @@ class FauxServiceEnfant implements ServiceEnfant {
   @override
   Future<void> ouvrirSession(String jetonAppareil) async {
     sessionsOuvertes++;
+  }
+}
+
+/// Le planning global du controle qualite, en memoire.
+///
+/// Il rend des `Seance`, le meme modele que le planning des trois autres roles :
+/// `CTR-01` lit `mes_seances_v` comme eux, et un faux qui rendrait un autre
+/// modele laisserait croire a une vue jumelle qui n'existe pas.
+class FauxServiceControle implements ServiceControle {
+  /// Cree le faux.
+  FauxServiceControle({this.seancesRendues = const <Seance>[]});
+
+  /// Ce que la lecture rend.
+  List<Seance> seancesRendues;
+
+  /// Ce que la prochaine lecture doit jeter, s'il y a lieu.
+  Object? erreurAJeter;
+
+  /// Combien de temps la lecture met a repondre.
+  ///
+  /// Nul par defaut : un faux qui repond dans la micro-tache suivante ne laisse
+  /// **aucune frame** pendant laquelle l'ecran est en chargement, et l'etat
+  /// squelette serait alors impossible a mesurer -- non parce qu'il manque, mais
+  /// parce que le faux est trop rapide pour lui.
+  Duration? delai;
+
+  /// Combien de fois le planning a ete relu. C'est ce qui permet de constater
+  /// qu'une minute ecoulee relit, plutot que de recalculer sur des donnees
+  /// vieillies.
+  int lectures = 0;
+
+  @override
+  Future<List<Seance>> planning() async {
+    lectures++;
+    final Duration? attente = delai;
+    if (attente != null) {
+      await Future<void>.delayed(attente);
+    }
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return seancesRendues;
   }
 }

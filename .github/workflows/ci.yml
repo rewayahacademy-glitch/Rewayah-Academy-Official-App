@@ -94,6 +94,31 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n4.sql
 
+      # Coran : ce que le corpus importe par 0013 contient reellement, et a qui
+      # la position de lecture appartient. Les comptages (114, 30, 604, 6236)
+      # sont deja tenus par la migration elle-meme ; ce qu'ils ne peuvent pas
+      # tenir et qui est ici, c'est la PAGINATION -- quatre reperes verifiables
+      # sur un exemplaire imprime, sans lesquels un corpus complet mais pagine
+      # au hasard passerait tous les comptages sans rien signaler.
+      #
+      # Et surtout J2 : aucune policy n'autorise un enseignant a ecrire la
+      # position de lecture d'un eleve. C'est pour cela que
+      # `student_reading_position` existe separement de tout etat de seance.
+      - name: Scenarios d'acceptation SQL de N5 (Coran)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n5.sql
+
+      # Controle qualite : la porte d'observation de `CTR-01`, et les quatre
+      # surfaces ou l'invisibilite de l'ADR-011 n'existait pas avant 0012.
+      # `C1` est le controle du lot : un cours 1-to-1 est plein au sens du
+      # plafond du MVP-0, et aucune visite n'y etait donc possible -- c'est-a-dire
+      # aucune visite nulle part. Les fixtures de ce fichier ne levent PAS
+      # `allow_multi_participant_sessions`, volontairement : c'est l'etat normal
+      # du produit qu'il faut mesurer.
+      - name: Scenarios d'acceptation SQL de CTR-01 (observation)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_ctr01.sql
+
       # Journal d'audit : lecture reservee a l'administration, pagination par
       # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
       # verifiee -- y compris en la falsifiant volontairement (J5, J6).

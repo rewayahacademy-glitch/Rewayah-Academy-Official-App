@@ -1,5 +1,64 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🕵️ **13 septembre 2026, huitième session — `CTR-01` est fait, et le contrôle
+> invisible était impossible.** Lot mené **en parallèle du lot N5**, sur le même
+> dépôt et en accord avec l'autre session : elle a livré `ELV-04`, celui-ci
+> `CTR-01`. Le planning global du contrôle qualité existe : `/controleur` ne rend
+> plus `EcranAConstruire` mais la liste des séances en cours et à venir, heure
+> locale **et** heure UTC, filtres par état et par enseignant, et un bouton
+> d'entrée invisible sur les seules lignes qui ont lieu maintenant.
+> 🔴 **Le lot a trouvé trois défauts, aucun visible, et le premier rendait
+> `CTR-02` inatteignable depuis sa construction.**
+> **Un.** Rien, nulle part, n'inscrivait jamais de ligne `masked_controller` dans
+> `session_participants` : l'enum l'a depuis `0001`, `autoriser_jeton_video()` en
+> déduit `hidden` depuis `0010`, `presence_seance_v` la cache depuis `0011` —
+> mais aucune fonction ne l'écrivait. Un contrôleur qui pressait « Observer »
+> aurait reçu « non inscrit a cette seance ». **La plomberie de N2 et l'écran de
+> N3 attendaient une porte que personne n'avait posée.**
+> **Deux.** Le plafond de participants du MVP-0 — deux — **comptait les témoins
+> comme des élèves**. Un cours 1-to-1 est donc plein : le contrôleur ET le tuteur
+> observateur étaient refusés par le déclencheur avant même d'atteindre le jeton.
+> Conséquence non théorique : **le bouton « Assister » de `TUT-01` est en
+> production depuis l'étape 4 et échouait silencieusement** — le parent arrivait
+> dans l'impasse d'accès de la salle. La spécification d'étape 5 §9 écrivait
+> pourtant la règle : « le 1-to-1, **le contrôleur en plus** ». Le plafond borne
+> le **groupe pédagogique**, pas l'assistance.
+> **Trois.** L'invisibilité s'arrêtait à la vidéo et à la présence. Restaient
+> `session_peers_v`, la table `session_participants` (policies enseignant et
+> foyer) et `session_events` : trois surfaces lisibles depuis un navigateur
+> authentifié, où la visite s'écrivait en toutes lettres. ⚠ **Une invisibilité se
+> vérifie sur CHAQUE surface** — la leçon de N4, une seconde fois.
+> Livré : la migration **`0012`** (le plafond, C2, `session_peers_v`, six
+> policies, `est_observateur_masque()`, `rejoindre_observation()` et
+> `assister_seance()`), `lib/core/controle/`, `lib/features/controleur/`
+> (`VuePlanning.depuis`, fonction pure comme `VueSalle.depuis`), les deux portes
+> d'inscription sur `ServiceVideo`, et **le bouton « Assister » de `TUT-01`
+> enfin câblé**.
+> ⚠ **DEUX PIÈGES À NE PAS ROUVRIR, tous deux mesurés pendant le lot, pas
+> devinés.**
+> **Un `create or replace` part du corps COURANT de l'objet, jamais de la
+> migration qui l'a créé.** La première écriture de `0012` est repartie de `0001`
+> pour `guard_session_overlap()` et a donc effacé le correctif 3.9 de `0005`
+> (bornes `'[)'`) : `scenarios_etape4.sql` est passé de vert à « S3 ECHEC : 3
+> prises au lieu de 4 », une prise sur deux refusée. **C'est l'autre session qui
+> l'a détecté**, en rejouant la chaîne complète.
+> **Une policy RLS qui interroge une table protégée par RLS ne voit que ce que
+> l'appelant voit.** Le `not exists (select ... from session_participants ...)`
+> écrit directement dans les policies de `session_events` ne trouvait jamais rien
+> — les policies de `session_participants` venaient de fermer ces lignes — donc
+> l'enseignant lisait quand même les événements de la visite. Le pont doit être
+> une fonction `security definer`, exactement comme `session_belongs_to_teacher`
+> en `0001`.
+> Mesuré, pas supposé : **`dart analyze --fatal-infos` propre**, `verifier_jetons`
+> **120 fichiers** sans violation, **24 tests neufs verts** (13 unitaires sur la
+> vue pure, 11 d'écran), et **les neuf fichiers de scénarios SQL rejoués ensemble
+> sur une base neuve `0001`→`0013`, tous verts**, dont les **10 contrôles** de
+> `scenarios_ctr01.sql`.
+> 🔴 **CE QUI N'EST TOUJOURS PAS PROUVÉ : un vrai cours.** Toujours aucune séance
+> en base. Mais depuis ce lot, **les trois portes d'entrée de la salle existent
+> enfin toutes les trois** : l'enseignant (`ENS-02`, lot N3), le tuteur
+> (`TUT-01`, réparé ici) et le contrôleur (`CTR-01`).
+>
 > 🧭 **13 septembre 2026, septième session — `N4` est fait. La présence
 > s'affiche.**
 > Le calcul des quatorze états était en base depuis `N1`, et le quatorzième

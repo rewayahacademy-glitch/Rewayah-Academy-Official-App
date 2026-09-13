@@ -14,6 +14,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
 import '../../features/connexion/connexion_page.dart';
+import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/disponibilites/disponibilites_page.dart';
 import '../../features/dossier/attente_page.dart';
@@ -237,10 +238,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Controleur : une seule destination, pas de barre de navigation.
+      // `CTR-01` est sa racine et son seul ecran ; `CTR-02`, la salle, se
+      // rejoint depuis une ligne en cours et vit hors de l'arbre (ADR-005).
       GoRoute(
         path: Routes.controleur,
         builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.nav.controleur.planning),
+            const PlanningControleurPage(),
       ),
 
       // Admin. Quatre barres : les demandes (ADM-06) restent derriere leur

@@ -69,6 +69,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$eleve$fr eleve = Traductions$eleve$fr.internal(_root);
 	late final Traductions$tuteur$fr tuteur = Traductions$tuteur$fr.internal(_root);
 	late final Traductions$enseignant$fr enseignant = Traductions$enseignant$fr.internal(_root);
+	late final Traductions$controleur$fr controleur = Traductions$controleur$fr.internal(_root);
 	late final Traductions$aConstruire$fr aConstruire = Traductions$aConstruire$fr.internal(_root);
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
 }
@@ -1174,6 +1175,7 @@ class Traductions$eleve$fr {
 
 	// Translations
 	late final Traductions$eleve$accueil$fr accueil = Traductions$eleve$accueil$fr.internal(_root);
+	late final Traductions$eleve$coran$fr coran = Traductions$eleve$coran$fr.internal(_root);
 }
 
 // Path: tuteur
@@ -1195,6 +1197,16 @@ class Traductions$enseignant$fr {
 
 	// Translations
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
+}
+
+// Path: controleur
+class Traductions$controleur$fr {
+	Traductions$controleur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$controleur$planning$fr planning = Traductions$controleur$planning$fr.internal(_root);
 }
 
 // Path: aConstruire
@@ -1908,6 +1920,84 @@ class Traductions$eleve$accueil$fr {
 	String pausePriereDetail({required Object priere, required Object heure}) => '${priere}, vers ${heure}';
 }
 
+// Path: eleve.coran
+class Traductions$eleve$coran$fr {
+	Traductions$eleve$coran$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le Coran'
+	String get titre => 'Le Coran';
+
+	/// fr: 'Page {page} sur {total}'
+	String page({required Object page, required Object total}) => 'Page ${page} sur ${total}';
+
+	/// fr: 'Juz {juz}'
+	String juz({required Object juz}) => 'Juz ${juz}';
+
+	/// fr: 'Révélée à La Mecque'
+	String get mecquoise => 'Révélée à La Mecque';
+
+	/// fr: 'Révélée à Médine'
+	String get medinoise => 'Révélée à Médine';
+
+	/// fr: 'Reprendre ta lecture'
+	String get reprendre => 'Reprendre ta lecture';
+
+	/// fr: 'Tu en étais page {page}'
+	String reprendreDetail({required Object page}) => 'Tu en étais page ${page}';
+
+	/// fr: 'Le texte arrive'
+	String get chargement => 'Le texte arrive';
+
+	/// fr: 'Le texte n'a pas pu être chargé'
+	String get indisponible => 'Le texte n\'a pas pu être chargé';
+
+	/// fr: 'Dès que le réseau revient, ta page se rouvre ici.'
+	String get indisponibleDetail => 'Dès que le réseau revient, ta page se rouvre ici.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Cette page est vide'
+	String get absent => 'Cette page est vide';
+
+	/// fr: 'Le texte n'a pas été installé sur cette page. Signale-le : ce n'est pas toi.'
+	String get absentDetail => 'Le texte n\'a pas été installé sur cette page. Signale-le : ce n\'est pas toi.';
+
+	/// fr: 'Page précédente'
+	String get pagePrecedente => 'Page précédente';
+
+	/// fr: 'Page suivante'
+	String get pageSuivante => 'Page suivante';
+
+	/// fr: 'Réglages de lecture'
+	String get reglages => 'Réglages de lecture';
+
+	/// fr: 'Fermer les réglages'
+	String get fermerReglages => 'Fermer les réglages';
+
+	/// fr: 'Taille du texte'
+	String get taille => 'Taille du texte';
+
+	/// fr: 'Agrandir le texte'
+	String get agrandir => 'Agrandir le texte';
+
+	/// fr: 'Réduire le texte'
+	String get reduire => 'Réduire le texte';
+
+	/// fr: 'Texte du Coran : Tanzil Project'
+	String get source => 'Texte du Coran : Tanzil Project';
+
+	/// fr: 'tanzil.net'
+	String get sourceLien => 'tanzil.net';
+
+	/// fr: 'Mushaf de Médine, riwaya Hafs'
+	String get edition => 'Mushaf de Médine, riwaya Hafs';
+}
+
 // Path: tuteur.accueil
 class Traductions$tuteur$accueil$fr {
 	Traductions$tuteur$accueil$fr.internal(this._root);
@@ -1921,6 +2011,9 @@ class Traductions$tuteur$accueil$fr {
 
 	/// fr: 'Assister'
 	String get assister => 'Assister';
+
+	/// fr: 'Le cours n'a pas pu être rejoint. Il vient peut-être de se terminer.'
+	String get assisterRefuse => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.';
 
 	/// fr: 'En cours avec {prenom}'
 	String enCours({required Object prenom}) => 'En cours avec ${prenom}';
@@ -2215,6 +2308,102 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: 'La journée n'a pas pu être lue en entier. Réessayez dans un instant.'
 	String get erreur => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.';
+}
+
+// Path: controleur.planning
+class Traductions$controleur$planning$fr {
+	Traductions$controleur$planning$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Planning global'
+	String get titre => 'Planning global';
+
+	/// fr: 'Votre entrée est enregistrée : votre nom, la séance, l'heure. Les participants, eux, ne vous voient pas.'
+	String get visiteJournalisee => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.';
+
+	/// fr: 'Tout'
+	String get tousEtats => 'Tout';
+
+	/// fr: 'En cours'
+	String get etatEnCours => 'En cours';
+
+	/// fr: 'À venir'
+	String get etatAVenir => 'À venir';
+
+	/// fr: 'À vérifier'
+	String get etatIncident => 'À vérifier';
+
+	/// fr: 'Tous les enseignants'
+	String get tousEnseignants => 'Tous les enseignants';
+
+	/// fr: 'Enseignant'
+	String get colonneEnseignant => 'Enseignant';
+
+	/// fr: 'Élève'
+	String get colonneEleve => 'Élève';
+
+	/// fr: 'Heure locale'
+	String get colonneHeure => 'Heure locale';
+
+	/// fr: 'UTC'
+	String get colonneUtc => 'UTC';
+
+	/// fr: 'État'
+	String get colonneEtat => 'État';
+
+	/// fr: 'Entrée'
+	String get colonneEntree => 'Entrée';
+
+	/// fr: '{enseignant} et {eleve}'
+	String avec({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}';
+
+	/// fr: '{debut} à {fin}'
+	String plage({required Object debut, required Object fin}) => '${debut} à ${fin}';
+
+	/// fr: '{jour} {debut} à {fin}'
+	String plageAutreJour({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}';
+
+	/// fr: '{debut} à {fin} UTC'
+	String plageUtc({required Object debut, required Object fin}) => '${debut} à ${fin} UTC';
+
+	/// fr: 'Observer'
+	String get observer => 'Observer';
+
+	/// fr: 'Entrée en cours'
+	String get entree => 'Entrée en cours';
+
+	/// fr: 'L'entrée n'a pas été accordée. La séance vient peut-être de se terminer.'
+	String get entreeRefusee => 'L\'entrée n\'a pas été accordée. La séance vient peut-être de se terminer.';
+
+	/// fr: 'Aucune séance en cours ni à venir'
+	String get vide => 'Aucune séance en cours ni à venir';
+
+	/// fr: 'Les cours programmés apparaîtront ici, du plus proche au plus lointain.'
+	String get videDetail => 'Les cours programmés apparaîtront ici, du plus proche au plus lointain.';
+
+	/// fr: 'Aucune séance ne correspond'
+	String get videFiltre => 'Aucune séance ne correspond';
+
+	/// fr: 'Relâchez un filtre pour retrouver le reste du planning.'
+	String get videFiltreDetail => 'Relâchez un filtre pour retrouver le reste du planning.';
+
+	/// fr: 'Tout afficher'
+	String get effacerFiltres => 'Tout afficher';
+
+	/// fr: 'Le planning n'a pas pu être lu. Réessayez dans un instant.'
+	String get erreur => 'Le planning n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Les {nombre} premières séances sont affichées.'
+	String tronquee({required Object nombre}) => 'Les ${nombre} premières séances sont affichées.';
+
+	/// fr: '{nombre} séances au planning.'
+	String fin({required Object nombre}) => '${nombre} séances au planning.';
+
+	/// fr: '1 séance au planning.'
+	String get finUne => '1 séance au planning.';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -2709,10 +2898,36 @@ extension on Traductions {
 			'eleve.accueil.horsLigneDetail' => 'Tu pourras entrer dès que le réseau revient.',
 			'eleve.accueil.pausePriere' => 'Pause pour la prière',
 			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
+			'eleve.coran.titre' => 'Le Coran',
+			'eleve.coran.page' => ({required Object page, required Object total}) => 'Page ${page} sur ${total}',
+			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
+			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
+			'eleve.coran.medinoise' => 'Révélée à Médine',
+			'eleve.coran.reprendre' => 'Reprendre ta lecture',
+			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
+			'eleve.coran.chargement' => 'Le texte arrive',
+			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
+			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
+			'eleve.coran.reessayer' => 'Réessayer',
+			'eleve.coran.absent' => 'Cette page est vide',
+			'eleve.coran.absentDetail' => 'Le texte n\'a pas été installé sur cette page. Signale-le : ce n\'est pas toi.',
+			'eleve.coran.pagePrecedente' => 'Page précédente',
+			'eleve.coran.pageSuivante' => 'Page suivante',
+			'eleve.coran.reglages' => 'Réglages de lecture',
+			'eleve.coran.fermerReglages' => 'Fermer les réglages',
+			'eleve.coran.taille' => 'Taille du texte',
+			'eleve.coran.agrandir' => 'Agrandir le texte',
+			'eleve.coran.reduire' => 'Réduire le texte',
+			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
+			'eleve.coran.sourceLien' => 'tanzil.net',
+			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
 			'tuteur.accueil.titre' => 'Votre foyer',
 			'tuteur.accueil.assister' => 'Assister',
+			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
@@ -2737,8 +2952,6 @@ extension on Traductions {
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'Accès de ${prenom} sans date de fin',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
@@ -2805,6 +3018,35 @@ extension on Traductions {
 			'enseignant.journee.aucunEleveEnAttente' => 'Aucun élève en attente sur vos heures',
 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
+			'controleur.planning.titre' => 'Planning global',
+			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
+			'controleur.planning.tousEtats' => 'Tout',
+			'controleur.planning.etatEnCours' => 'En cours',
+			'controleur.planning.etatAVenir' => 'À venir',
+			'controleur.planning.etatIncident' => 'À vérifier',
+			'controleur.planning.tousEnseignants' => 'Tous les enseignants',
+			'controleur.planning.colonneEnseignant' => 'Enseignant',
+			'controleur.planning.colonneEleve' => 'Élève',
+			'controleur.planning.colonneHeure' => 'Heure locale',
+			'controleur.planning.colonneUtc' => 'UTC',
+			'controleur.planning.colonneEtat' => 'État',
+			'controleur.planning.colonneEntree' => 'Entrée',
+			'controleur.planning.avec' => ({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}',
+			'controleur.planning.plage' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
+			'controleur.planning.plageAutreJour' => ({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}',
+			'controleur.planning.plageUtc' => ({required Object debut, required Object fin}) => '${debut} à ${fin} UTC',
+			'controleur.planning.observer' => 'Observer',
+			'controleur.planning.entree' => 'Entrée en cours',
+			'controleur.planning.entreeRefusee' => 'L\'entrée n\'a pas été accordée. La séance vient peut-être de se terminer.',
+			'controleur.planning.vide' => 'Aucune séance en cours ni à venir',
+			'controleur.planning.videDetail' => 'Les cours programmés apparaîtront ici, du plus proche au plus lointain.',
+			'controleur.planning.videFiltre' => 'Aucune séance ne correspond',
+			'controleur.planning.videFiltreDetail' => 'Relâchez un filtre pour retrouver le reste du planning.',
+			'controleur.planning.effacerFiltres' => 'Tout afficher',
+			'controleur.planning.erreur' => 'Le planning n\'a pas pu être lu. Réessayez dans un instant.',
+			'controleur.planning.tronquee' => ({required Object nombre}) => 'Les ${nombre} premières séances sont affichées.',
+			'controleur.planning.fin' => ({required Object nombre}) => '${nombre} séances au planning.',
+			'controleur.planning.finUne' => '1 séance au planning.',
 			'aConstruire.titre' => 'Écran à construire',
 			'aConstruire.detail' => 'Cet écran arrive à l\'étape 3.',
 			'galerie.titre' => 'Galerie des composants',

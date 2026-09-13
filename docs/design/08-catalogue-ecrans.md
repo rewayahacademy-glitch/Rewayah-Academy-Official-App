@@ -47,7 +47,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `ELV-02` | Accueil élève | Élève | B / C | 0 | `/eleve` | Deux blocs | Deux blocs centrés, **rien de plus** | **repris (R1)**, fiche §6 |
 | `ENS-02` | Journée | Enseignant | D | 0 | `/enseignant/journee` | Une colonne | Colonne + panneau de détail | **repris (R3)**, fiche §6 |
-| `CTR-01` | Planning global | Contrôleur | D | 0 | `/controleur` | Liste | Tableau dense | **à construire** |
+| `CTR-01` | Planning global | Contrôleur | D | 0 | `/controleur` | Liste | Tableau dense | **construit (13/09)**, fiche §6 |
 | `ELV-03` | Salle, élève | Élève | B / C | hors arbre | `/salle` | Plein écran | Vidéo + contenu | **construit (12/09)**, fiche §6 |
 | `ENS-03` | Salle, enseignant | Enseignant | D | hors arbre | `/salle` | Plein écran | Vidéo + contenu + participants | **construit (12/09)**, fiche §6 |
 | `CTR-02` | Observation invisible | Contrôleur | D | hors arbre | `/salle` | Plein écran | Idem, bandeau de contrôle permanent | **construit (12/09)**, fiche §6 |
@@ -56,7 +56,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `ELV-04` | Coran | Élève, enseignant | B / C | 1 | `/eleve/coran` | Lecteur plein écran | Colonne de lecture bornée | **à construire**, étape 5 |
+| `ELV-04` | Coran | Élève, enseignant | B / C | 1 | `/eleve/coran` | Lecteur plein écran | Colonne de lecture bornée | **construit (13/09)**, lot N5 |
 | `ENS-04` | Cahier de transmission | Enseignant | D | 2 | depuis la salle | Page, une main, 45 s | Panneau | **à construire**, étape 6 |
 | `TUT-06` | Suivi du foyer | Tuteur | C | 1 | `/tuteur/suivi` | Liste par enfant | Liste + détail | **à construire** |
 | — | Suivi élève | Élève standard | C | 1 | `/eleve/suivi` | Liste | Liste + détail | **à construire** |
@@ -78,15 +78,22 @@ existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 
 ## 2. Ce que le registre révèle
 
-> **Mise à jour du 12 septembre 2026, lot N3.** Le compte ci-dessous datait de
-> la refonte. Depuis, `ADM-05` (hors série), `ADM-04` puis **la salle**
-> (`ELV-03`/`ENS-03`/`CTR-02`, un seul écran pour trois codes) ont été
-> construits. Il reste **six** écrans à construire : `ELV-04` le Coran, le suivi
-> élève, `TUT-06`, `ENS-05`, `CTR-01`, et `CPT-01` qui est hors MVP-0. Mesuré :
-> `lib/core/router/app_router.dart` contient sept `EcranAConstruire`, dont un
-> qui n'est pas un écran manquant mais l'état de chargement de la racine.
-> L'espace admin n'a plus un seul écran manquant. Le compte se lit dans le
-> routeur, jamais en parcourant les écrans.
+> **Mise à jour du 13 septembre 2026, lot N5.** Le compte ci-dessous datait de
+> la refonte. Depuis, `ADM-05` (hors série), `ADM-04`, **la salle**
+> (`ELV-03`/`ENS-03`/`CTR-02`, un seul écran pour trois codes) puis **le
+> lecteur de Coran** (`ELV-04`) ont été construits. Il reste **quatre** écrans à
+> construire : le suivi élève, `TUT-06`, `ENS-05`, et `CPT-01` qui
+> est hors MVP-0. L'espace admin n'a plus un seul écran manquant. Le compte se
+> lit dans `lib/core/router/app_router.dart`, jamais en parcourant les écrans :
+> un `EcranAConstruire` de ce fichier n'est pas un écran manquant mais l'état
+> de chargement de la racine.
+>
+> ✅ **`CTR-01` est construit**, le même jour et par une autre session : sa
+> route ne rend plus `EcranAConstruire`, et le compte est donc bien tombé à
+> quatre. Fiche §6. **Aucun des quatre restants n'appartient à l'étape 5** : le
+> suivi élève et `TUT-06` relèvent de la transmission, étape 6 avec `ENS-04` ;
+> `ENS-05` est reporté avec l'ensemble du module finance (ADR-003) ; `CPT-01`
+> est hors MVP-0. L'étape 5 n'a donc plus d'écran manquant.
 
 Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent
 étaient à reprendre par le lot R. Le lot R les a repris tous les quatre :
@@ -1916,3 +1923,222 @@ Deux conséquences hors de l'écran :
   §4, présent au catalogue depuis la refonte et écrit deux fois dans la fiche
   produit : à l'entrée, rien ne publie tant que personne n'a tapé. Le défaut
   était invisible sans écran pour l'exercer.
+
+---
+
+### `ELV-04` Le Coran
+
+**Le premier écran du produit dont le contenu n'est pas de l'interface.** Tous
+les autres présentent des données de l'application ; celui-ci présente un texte
+qui existait avant elle, et cela renverse trois habitudes du dépôt.
+
+La première est visuelle : le motif « carte sur fond crème », pris à tous les
+écrans des lots R, **s'inverse ici délibérément**. La Bible §22 l'impose,
+`CONTENT > CHROME`, et §5.3 de la spécification d'étape l'écrit sans détour : le
+Coran ne se traite jamais comme une `AppCard` entourée de contrôles. L'écran
+passe donc par `PageImmersive`, registre `lecture`, le parchemin plus chaud que
+`parcours-utilisateurs.md` réclamait pour cet écran.
+
+La deuxième est le sens de lecture. Le `PageView` des 604 pages vit dans un
+`Directionality.rtl`, **quelle que soit la langue de l'interface autour** : on
+tourne les pages d'un mushaf de la droite vers la gauche, et ce n'est pas une
+préférence d'affichage, c'est le document.
+
+La troisième est l'écriture. **L'écran n'enregistre la position de lecture
+qu'après un geste de navigation de l'élève.** Ouvrir le Coran ne doit jamais
+écraser le marque-page par la page d'ouverture : ce serait le défaut que
+l'invariant J2 interdit à l'enseignant, commis par l'écran lui-même.
+
+```
+CODE              ELV-04
+Nom               Le Coran
+Role              Eleve (enseignant au lot N6, en document partage)
+Zone              Contenu et transmission
+Niveau de charge  B / C
+Ecran parent      ELV-02, et la barre basse de l'eleve
+Profondeur        1
+Question          Ou en etais-je, et qu'est-ce que je lis maintenant ?
+
+Priorites         P0  le texte, en grand, sans rien par-dessus
+                  P0  savoir ou l'on est : sourate, page sur 604, juz
+                  P0  reprendre la ou l'on s'etait arrete
+                  P1  tourner la page, au doigt comme au bouton
+                  P2  la taille du texte, et la provenance du corpus
+
+Action principale     AUCUNE au sens du bouton plein : lire n'est pas valider.
+                      « Reprendre » est la seule action mise en avant, et elle
+                      disparait des qu'elle ne menerait nulle part
+Actions secondaires   page precedente, page suivante
+Action tertiaire      reduire ou agrandir le texte
+Destructif            aucun
+
+Mobile            Le texte plein cadre, balayage lateral pour tourner la page.
+                  Entete de reperage en haut, commandes de page en bas
+Tablette          Idem, texte plus grand
+Desktop           Idem, colonne de lecture bornee par la coquille
+
+Etats             loading   le texte arrive
+                  content   la page, decoupee par sourate
+                  empty     AUCUN etat vide legitime : une page du mushaf porte
+                            toujours du texte. Une page vide signifie que le
+                            corpus n'est pas importe, et se dit comme tel
+                  error     lecture impossible, avec « Reessayer »
+                  offline   celui de la coquille
+
+Mouvement         le glissement d'une page a l'autre, et rien d'autre : un
+                  texte sacre ne s'anime pas
+
+Invariants        J6 : aucun identifiant de fichier nulle part. L'ecran lit des
+                  versets et compose lui-meme
+                  J2 : la position de lecture ne s'ecrit qu'apres un geste de
+                  l'eleve, et aucun enseignant ne peut l'ecrire (borne en base)
+                  le texte ne se modifie jamais : aucune ecriture hors admin
+                  la provenance du corpus est visible AU PIED DE CHAQUE PAGE,
+                  jamais reléguee dans un ecran « a propos »
+                  une sourate ne porte son titre que la ou elle COMMENCE
+
+Accessibilite     le texte reste selectionnable et lisible par un lecteur
+                  d'ecran : c'est ce que le rendu Unicode achete, et c'est la
+                  raison de ne pas etre passe aux glyphes d'une edition
+                  les numeros de verset sont MUETS : ce sont des reperes de mise
+                  en page, pas du texte a epeler au milieu d'une phrase
+                  les commandes de page portent un verbe, pas une fleche
+```
+
+**Ce que la navigation de page n'est pas.** §5.3 demande que les contrôles
+secondaires soient masqués et révélés par un tap. Tourner la page **n'est pas
+un contrôle secondaire** : c'est le geste du lecteur. Le masquer laisserait le
+clavier et les technologies d'assistance sans aucun moyen d'avancer, le
+balayage étant le seul recours. Sont donc masqués, derrière le bouton de
+réglages de l'en-tête : la taille du texte, et rien d'autre pour l'instant.
+
+**Ce que `N5` ne construit pas, et qui est écrit plutôt que masqué :**
+
+- **le mode suivi enseignant** (§4.4) et le document partagé. C'est le lot N6,
+  et il attend toujours la question `e` du §10 : le canal de diffusion de l'état
+  partagé de séance n'est pas tranché. Le bouton « Ouvrir le Coran » de la salle
+  n'existe donc toujours pas ;
+- **le découpage en quinze lignes par page.** La colonne `verset.ligne` reste
+  nulle : les deux sources disponibles ne segmentent pas les mots de la même
+  façon (83 668 contre 77 881, mesuré), et une correspondance devinée sur un
+  texte sacré n'est pas acceptable. Rien à l'écran n'en dépend (ADR-024) ;
+- **le lien cliquable vers tanzil.net.** L'URL est affichée en clair ;
+  `url_launcher` n'est pas au `pubspec.yaml`, qu'une autre session modifiait au
+  moment du lot.
+
+Construit le 13 septembre 2026, lot N5. Le composant `RosaceVerset` rejoint le
+catalogue des composants a cette occasion.
+
+### `CTR-01` Planning global
+
+**La seule destination du rôle**, et c'est la première contrainte de la fiche :
+un contrôleur n'a qu'un travail (modèle de navigation, `parcours-utilisateurs.md`),
+donc pas de barre basse, pas de rail, pas de menu. L'écran répond à une seule
+question, celle que `02-regles-ux.md` lui assigne : **qu'est-ce qui nécessite une
+vérification ?** L'ordre des lignes est la réponse, et il ne se règle pas.
+
+```
+CODE              CTR-01
+Nom               Planning global
+Role              Controleur
+Zone              Journee et salle
+Niveau de charge  D
+Ecran parent      aucun : c'est la racine du role
+Profondeur        0
+Question          Qu'est-ce qui a lieu maintenant, qu'est-ce qui a mal tourne,
+                  et ou dois-je entrer ?
+
+Priorites         P0  les seances en cours, en tete, avec leur bouton d'entree
+                  P0  l'heure locale ET l'heure UTC de chaque seance
+                  P0  le rappel permanent que la visite est journalisee
+                  P1  les seances a venir, du plus proche au plus lointain
+                  P1  les filtres par etat et par enseignant
+                  P2  ce que la lecture n'a pas montre, en pied de liste
+
+Action principale     AUCUNE au sens du bouton plein : l'ecran est une liste, et
+                      « Observer » se pose sur une LIGNE, pas sur l'ecran. Vingt
+                      cours en direct feraient vingt zones pleines, ce que la
+                      regle de la zone pleine unique interdit. Niveau secondaire
+Actions secondaires   retenir un etat, retenir un enseignant, tout afficher
+Action tertiaire      reessayer une lecture qui a echoue
+Destructif            aucun
+
+Mobile            Une carte par seance : enseignant en titre, eleve, heure et
+                  etat sur la ligne secondaire, heure UTC en dessous, bouton
+                  d'entree en dernier
+Tablette          Idem mobile : un tableau dense retreci est precisement ce que
+                  `05-regles-responsive.md` section 3 interdit
+Desktop           Tableau dense, en-tete de colonnes collee en haut, la liste
+                  defile dessous
+
+Etats             loading   squelette de liste, jamais le mot « Chargement »
+                  content   la liste, triee : en cours, incidents, a venir
+                  empty     aucune seance : un constat, pas une panne, et aucun
+                            bouton -- il n'y a rien a relacher
+                  empty+    aucune seance SOUS FILTRE : une impasse dont on sort,
+                            avec « Tout afficher »
+                  error     la lecture a echoue, avec « Reessayer ». Une
+                            relecture qui echoue n'efface jamais la liste deja
+                            affichee
+                  offline   le bandeau hors ligne de PageShell, rien de plus
+
+Mouvement         aucun propre a l'ecran. Le seul mouvement est le retour local
+                  d'un refus d'entree
+
+Invariants        « en cours » se mesure sur les HEURES, jamais sur
+                  `sessions.status` : rien dans le produit ne fait passer une
+                  seance a `in_progress`, et un bouton conditionne a ce statut
+                  ne s'afficherait jamais
+                  le bouton d'entree n'existe QUE sur une seance en cours. Hors
+                  de la, pas de bouton grise : pas de bouton
+                  l'inscription precede la navigation. On n'ouvre la salle
+                  qu'apres que la base a accepte la visite
+                  l'heure locale et l'heure UTC sont TOUTES LES DEUX affichees
+                  le rappel de journalisation est permanent, comme le bandeau
+                  de la salle : ni conditionnel, ni au premier passage
+                  prenom ET identifiant immuable des deux cotes, jamais le nom
+                  de famille ni la photo (ADR-008, ADR-012)
+
+Accessibilite     chaque cellule porte le titre de sa colonne dans son libelle
+                  parle : Flutter n'associe pas un en-tete a ses cellules
+                  la carte se lit comme un seul element (MergeSemantics)
+                  l'etat porte toujours son mot, jamais la seule pastille
+```
+
+**Ce que le lot a trouvé, et qui ne se voyait pas.** `CTR-02`, l'observation
+invisible, était **inatteignable** depuis sa construction : rien n'inscrivait
+jamais de ligne `masked_controller` dans `session_participants`, et
+`autoriser_jeton_video()` refuse tout appelant qui n'y figure pas. Pire, le
+plafond de participants du MVP-0 — deux — comptait les témoins comme des élèves :
+un cours 1-to-1 était **plein**, donc fermé à toute visite, et le bouton
+« Assister » de `TUT-01`, en production depuis l'étape 4, échouait de la même
+façon sans rien dire. La migration `0012` ouvre les deux portes et rend au
+plafond son sens : il borne le **groupe pédagogique**, pas l'assistance. La
+spécification d'étape 5 §9 l'écrivait déjà — « le 1-to-1, **le contrôleur en
+plus** ».
+
+**Et l'invisibilité ne tenait que sur deux surfaces.** `N4` l'avait fermée sur la
+présence ; restaient `session_peers_v`, la table `session_participants`
+elle-même (policies enseignant et foyer) et `session_events`, toutes trois
+lisibles depuis un navigateur authentifié. Aucune n'avait jamais été exercée,
+faute de ligne à y lire. **Une invisibilité se vérifie sur chaque surface où la
+personne peut apparaître** — la leçon de N4, une seconde fois, et il a fallu la
+mesurer pour la croire : le premier correctif écrivait la borne directement dans
+la policy de `session_events`, où elle ne voyait rien, parce qu'une policy qui
+interroge une table protégée par RLS ne voit que ce que l'appelant voit.
+
+**Ce que la fiche ne construit pas, et pourquoi ce n'est pas un oubli :**
+
+- **les trois signalements automatiques de l'ADR-011** (visites répétées sur un
+  même enseignant, volume anormal sur une journée, concentration sur un élève).
+  Ils surveillent le surveillant, et leur place est l'espace admin, pas l'écran
+  du contrôleur : les lui montrer lui dirait exactement quel seuil ne pas
+  franchir. Le journal porte déjà la matière (`controller_observation_started`) ;
+- **`CTR-03`, la grille d'audit.** Reportée par la fiche produit elle-même : en
+  MVP-0 le contrôleur observe et signale, il ne note pas ;
+- **le signalement d'incident à l'administrateur.** Il figure dans le tableau
+  « peut / ne peut pas » de l'ADR-011, mais aucun écran, aucune table et aucun
+  canal ne le portent aujourd'hui. Le construire ici en aurait fait un formulaire
+  sans destinataire.
+
+Construit le 13 septembre 2026, lot `CTR-01`, en parallèle du lot N5.

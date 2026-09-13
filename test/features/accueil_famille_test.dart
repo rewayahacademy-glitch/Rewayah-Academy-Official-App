@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/child_card.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
@@ -70,10 +71,15 @@ Affectation _affectation({String eleveId = 'e1'}) => Affectation(
 List<Override> _surcharges({
   required FauxServiceAppairage appairage,
   required FauxServicePlanning planning,
+  FauxServiceVideo? video,
 }) => <Override>[
   serviceAppairageProvider.overrideWithValue(appairage),
   servicePlanningProvider.overrideWithValue(planning),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+  // Depuis le lot `CTR-01`, « Assister » ecrit avant de naviguer : il inscrit
+  // le tuteur comme temoin de la seance. Sans ce faux, le premier tap tenterait
+  // d'atteindre Supabase.
+  serviceVideoProvider.overrideWithValue(video ?? FauxServiceVideo()),
 ];
 
 /// L'ecran, a l'instant de reference.
@@ -97,6 +103,7 @@ Future<void> _monter(
   WidgetTester tester, {
   required FauxServiceAppairage appairage,
   required FauxServicePlanning planning,
+  FauxServiceVideo? video,
 }) async {
   _fenetreHaute(tester);
   await tester.pumpWidget(
@@ -128,7 +135,11 @@ Future<void> _monter(
           builder: (BuildContext _, GoRouterState _) => const Text('ELV-03'),
         ),
       ],
-      surcharges: _surcharges(appairage: appairage, planning: planning),
+      surcharges: _surcharges(
+        appairage: appairage,
+        planning: planning,
+        video: video,
+      ),
     ),
   );
   await tester.pumpAndSettle();
@@ -204,6 +215,64 @@ void main() {
         _decoCarte(tester).color,
         isNot(palette.surfacePrimary.background),
       );
+    });
+
+    testWidgets('Assister inscrit le tuteur AVANT d\'ouvrir la salle', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceVideo video = FauxServiceVideo();
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[_enfant()],
+        planning: FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(
+              debut: _maintenant.subtract(const Duration(minutes: 12)),
+              statut: StatutSeance.enCours,
+            ),
+          ]
+          ..affectationsRendues = <Affectation>[_affectation()],
+        video: video,
+      );
+
+      await tester.tap(find.text(t.tuteur.accueil.assister));
+      await tester.pumpAndSettle();
+
+      // L'ordre est tout le sujet : jusqu'au lot `CTR-01`, ce bouton faisait un
+      // simple `go` vers la salle, et le tuteur y arrivait dans l'impasse
+      // d'acces -- `autoriser_jeton_video()` lit l'appartenance dans
+      // `session_participants`, ou personne ne l'inscrivait.
+      expect(video.assistances, <String>['s1']);
+      expect(find.text('ELV-03'), findsOneWidget);
+    });
+
+    testWidgets('un refus d\'inscription n\'ouvre aucune salle et se dit', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceVideo video = FauxServiceVideo()
+        ..refusInscription = StateError('seance close');
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[_enfant()],
+        planning: FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(
+              debut: _maintenant.subtract(const Duration(minutes: 12)),
+              statut: StatutSeance.enCours,
+            ),
+          ]
+          ..affectationsRendues = <Affectation>[_affectation()],
+        video: video,
+      );
+
+      await tester.tap(find.text(t.tuteur.accueil.assister));
+      await tester.pumpAndSettle();
+
+      expect(find.text('ELV-03'), findsNothing);
+      // Le refus se dit la ou le geste a eu lieu, jamais au centre de l'ecran.
+      expect(find.text(t.tuteur.accueil.assisterRefuse), findsOneWidget);
     });
 
     testWidgets('hors seance, Assister n est pas rendu du tout', (

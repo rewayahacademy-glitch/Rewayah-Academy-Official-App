@@ -584,6 +584,31 @@
       "horsLigneDetail": "Tu pourras entrer dès que le réseau revient.",
       "pausePriere": "Pause pour la prière",
       "pausePriereDetail": "{priere}, vers {heure}"
+    },
+    "coran": {
+      "titre": "Le Coran",
+      "page": "Page {page} sur {total}",
+      "juz": "Juz {juz}",
+      "mecquoise": "Révélée à La Mecque",
+      "medinoise": "Révélée à Médine",
+      "reprendre": "Reprendre ta lecture",
+      "reprendreDetail": "Tu en étais page {page}",
+      "chargement": "Le texte arrive",
+      "indisponible": "Le texte n'a pas pu être chargé",
+      "indisponibleDetail": "Dès que le réseau revient, ta page se rouvre ici.",
+      "reessayer": "Réessayer",
+      "absent": "Cette page est vide",
+      "absentDetail": "Le texte n'a pas été installé sur cette page. Signale-le : ce n'est pas toi.",
+      "pagePrecedente": "Page précédente",
+      "pageSuivante": "Page suivante",
+      "reglages": "Réglages de lecture",
+      "fermerReglages": "Fermer les réglages",
+      "taille": "Taille du texte",
+      "agrandir": "Agrandir le texte",
+      "reduire": "Réduire le texte",
+      "source": "Texte du Coran : Tanzil Project",
+      "sourceLien": "tanzil.net",
+      "edition": "Mushaf de Médine, riwaya Hafs"
     }
   },
 
@@ -591,6 +616,7 @@
     "accueil": {
       "titre": "Votre foyer",
       "assister": "Assister",
+      "assisterRefuse": "Le cours n'a pas pu être rejoint. Il vient peut-être de se terminer.",
       "enCours": "En cours avec {prenom}",
       "depuisMinutes": "Commencé il y a {minutes} min",
       "depuisInstant": "Vient de commencer",
@@ -690,6 +716,40 @@
       "aucunEleveEnAttente": "Aucun élève en attente sur vos heures",
       "voirCreneaux": "Voir mes créneaux",
       "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant."
+    }
+  },
+
+  "controleur": {
+    "planning": {
+      "titre": "Planning global",
+      "visiteJournalisee": "Votre entrée est enregistrée : votre nom, la séance, l'heure. Les participants, eux, ne vous voient pas.",
+      "tousEtats": "Tout",
+      "etatEnCours": "En cours",
+      "etatAVenir": "À venir",
+      "etatIncident": "À vérifier",
+      "tousEnseignants": "Tous les enseignants",
+      "colonneEnseignant": "Enseignant",
+      "colonneEleve": "Élève",
+      "colonneHeure": "Heure locale",
+      "colonneUtc": "UTC",
+      "colonneEtat": "État",
+      "colonneEntree": "Entrée",
+      "avec": "{enseignant} et {eleve}",
+      "plage": "{debut} à {fin}",
+      "plageAutreJour": "{jour} {debut} à {fin}",
+      "plageUtc": "{debut} à {fin} UTC",
+      "observer": "Observer",
+      "entree": "Entrée en cours",
+      "entreeRefusee": "L'entrée n'a pas été accordée. La séance vient peut-être de se terminer.",
+      "vide": "Aucune séance en cours ni à venir",
+      "videDetail": "Les cours programmés apparaîtront ici, du plus proche au plus lointain.",
+      "videFiltre": "Aucune séance ne correspond",
+      "videFiltreDetail": "Relâchez un filtre pour retrouver le reste du planning.",
+      "effacerFiltres": "Tout afficher",
+      "erreur": "Le planning n'a pas pu être lu. Réessayez dans un instant.",
+      "tronquee": "Les {nombre} premières séances sont affichées.",
+      "fin": "{nombre} séances au planning.",
+      "finUne": "1 séance au planning."
     }
   },
 
