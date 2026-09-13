@@ -1,7 +1,23 @@
 # HANDOFF — à lire en premier, avant toute action
 
-> 🔴 **13 septembre 2026, en fin de huitième session — LA PRODUCTION NE PEUT PAS
-> AUTHENTIFIER, ET C'EST LE PREMIER TRAVAIL DE LA PROCHAINE SESSION.** Elle est
+> ✅ **13 septembre 2026, tout à la fin de la huitième session — C'EST RÉPARÉ, ET
+> LA CONNEXION EST PROUVÉE.** Reconstruit depuis `D:\ra-pwa-fix` et déployé : le
+> `main.dart.js` servi fait **4 401 919** octets, ne contient **plus**
+> `cle-factice` ni `_galerie`, contient la vraie clé `anon`, l'URL du projet,
+> `madina-hafs-604` (`N5`) et `rejoindre_observation` (`CTR-01`). ⚠ **Et cette
+> fois la connexion a été faite pour de vrai** : lien magique demandé depuis
+> l'écran de production, reçu, suivi — l'espace tuteur s'ouvre avec les **données
+> réelles de la base** (le foyer « Dynah », demande du 12/09). ⚠ **Un piège de
+> déploiement en plus** : un worktree neuf n'a pas de lien Vercel, et
+> `vercel deploy --prod` y **crée un projet nouveau** (`web`) au lieu de viser
+> `rewayah-academy` — copier `.vercel\project.json` depuis
+> `D:\ra-pwa-build\build\web` **avant** de déployer. Un projet parasite `web`
+> traîne sur le compte Vercel, à supprimer. ⚠ Reste à faire : **durcir
+> `Env.configuree`** (section 8). Le paragraphe ci-dessous décrit le défaut tel
+> qu'il a été trouvé — conservé parce que sa leçon, elle, ne périme pas.
+>
+> 🔴 **Le défaut, tel qu'il a été trouvé — LA PRODUCTION NE POUVAIT PAS
+> AUTHENTIFIER.** Elle était
 > compilée avec une **clé Supabase factice**. Mesuré, pas supposé : le
 > `main.dart.js` servi contient `cle-factice-playground-ne-jamais-utilisee` ;
 > cette clé rend **401** sur l'API du projet quand la vraie clé `anon` rend
