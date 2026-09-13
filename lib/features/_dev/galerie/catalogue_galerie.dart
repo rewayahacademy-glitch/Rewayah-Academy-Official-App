@@ -36,6 +36,7 @@ import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/pressable.dart';
+import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
@@ -463,6 +464,30 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           role: t.salle.roleEleve,
           vue: VuePresence.depuis(ligne: null, maintenant: DateTime.now()),
         ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'RosaceVerset',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'un chiffre',
+        (BuildContext _) => const RosaceVerset(numero: 7),
+      ),
+      EtatGalerie(
+        'deux chiffres',
+        (BuildContext _) => const RosaceVerset(numero: 30),
+      ),
+      // Le plus long numero du Coran : Al-Baqara compte 286 versets. La
+      // rosace doit s'elargir sans cesser d'etre un cercle.
+      EtatGalerie(
+        'trois chiffres, le maximum du corpus',
+        (BuildContext _) => const RosaceVerset(numero: 286),
+      ),
+      EtatGalerie(
+        'suit le grossissement du texte',
+        (BuildContext _) => const RosaceVerset(numero: 255, echelle: 2),
       ),
     ],
   ),

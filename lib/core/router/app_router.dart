@@ -15,6 +15,7 @@ import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/controleur/planning_page.dart';
+import '../../features/coran/coran_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/disponibilites/disponibilites_page.dart';
 import '../../features/dossier/attente_page.dart';
@@ -125,7 +126,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRoute(
                 path: Routes.eleveCoran,
                 builder: (BuildContext _, GoRouterState _) =>
-                    EcranAConstruire(destination: t.nav.eleve.coran),
+                    const CoranPage(),
               ),
             ],
           ),

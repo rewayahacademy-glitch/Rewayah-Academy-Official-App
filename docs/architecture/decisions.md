@@ -1105,6 +1105,72 @@ construction.
 
 ---
 
+## ADR-024 - Le corpus coranique est importé, pas appelé
+
+**Décision de l'opérateur, 13 septembre 2026**, prise à l'ouverture du lot N5
+sur un critère explicite : « je veux la version qui propose le plus de
+flexibilité/adaptation ». Elle ferme la question `a` du §10 de
+`etape-5-salle-coran-presence.md`, ouverte depuis N0 : l'ADR-020 avait tranché
+la **riwaya** (Hafs, Mushaf de Médine), jamais la **source technique**.
+
+### Ce qui est décidé
+
+Le texte, la pagination, les sourates et les juz viennent du **Tanzil Project**
+(`quran-uthmani`, version 1.1, et `quran-data.xml`), sous **Creative Commons
+Attribution 3.0**, et ils sont **importés une fois pour toutes** dans la base
+par la migration `0013`. Le rendu est **Unicode**, avec la police
+`UthmanTahaNaskh` déjà embarquée depuis le lot T.
+
+### L'alternative examinée, et pourquoi elle est écartée
+
+L'API Quran Foundation (quran.com v4) sert les mêmes données, avec un layout
+mushaf plus riche. Ses conditions pour développeurs l'excluent :
+
+- **« Cache or store QF Content longer than 1 week »** est interdit, sauf par
+  les Content Sync APIs resynchronisées au moins tous les sept jours. Le Coran
+  est le contenu du produit : le rendre périssable, et le hors-ligne
+  impossible, coûte plus que l'import ne coûte ;
+- toute redistribution du contenu ou des données brutes exige une **licence
+  commerciale signée** ;
+- les accès sont révocables **« immediately and without liability »**. Un tiers
+  pourrait fermer le lecteur de Coran du produit du jour au lendemain.
+
+Une licence CC BY 3.0 sur un fichier qu'on possède ne peut rien faire de tout
+cela. C'est en ce sens précis qu'elle est « la plus flexible ».
+
+### Les trois obligations que cette licence crée, et où elles sont tenues
+
+1. **Le texte ne se modifie jamais** (« CHANGING IT IS NOT ALLOWED »). Aucune
+   policy n'ouvre l'écriture de `verset` hors administration, et le contrôle
+   `C4` de `scenarios_n5.sql` le mesure.
+2. **La notice de copyright est reproduite** dans tout fichier dérivé : elle
+   est en tête de `0013`, mot pour mot.
+3. **La source est clairement indiquée, avec un lien vers tanzil.net.** Elle
+   est au pied de **chaque page** du lecteur, dans le flux, pas dans un écran
+   « à propos » que personne n'ouvre. ⚠ Le lien n'est pas encore **cliquable** :
+   `url_launcher` n'est pas au `pubspec.yaml`, et l'y ajouter demandait de
+   toucher un fichier qu'une autre session modifie. L'URL est affichée en
+   clair ; la rendre cliquable est une ligne, le jour où le `pubspec` est libre.
+
+### Ce que cette décision ne tranche pas, et le piège qu'elle documente
+
+Elle ne donne **pas** le découpage en quinze lignes par page. Le layout QPC v2
+du Quranic Universal Library le porte, mais il **compte les mots autrement que
+le texte Tanzil** : 83 668 contre 77 881, mesuré le 13 septembre, pas supposé.
+Faire coïncider les deux demanderait de deviner une correspondance sur un texte
+sacré. La colonne `verset.ligne` reste donc **nulle** — `0007` l'autorise — et
+rien dans l'application n'en dépend. Le jour où une source unique porte le
+texte **et** ses lignes, elle se remplit sans qu'aucun écran ne change.
+
+### Comment défaire
+
+Le contrat de l'invariant **J6** est ce qui rend ce choix réversible : aucune
+couche d'affichage ne dépend d'un identifiant de fichier, et `VersetCoran` ne
+porte que sa place et son texte. Passer aux glyphes d'une édition, ou à une
+API, se fait en changeant `ServiceCoran` — une classe — sans toucher à l'écran.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |

@@ -58,20 +58,33 @@ insert into public.student_profiles (profile_id) values
 insert into public.teacher_profiles (profile_id) values
   ('50000000-0000-0000-0000-000000000003');
 
--- Un fragment de Coran : la page, la sourate, deux versets. Le mushaf de
--- reference est deja pose par la migration.
+-- Un fragment de Coran : la page, la sourate, deux versets.
+--
+-- **Ces quatre inserts ne posent plus rien depuis le lot N5.** Ils dataient de
+-- N1, quand le corpus n'existait pas et qu'il fallait bien un verset pour
+-- mesurer une policy. La migration `0013` importe desormais les 114 sourates,
+-- les 30 juz, les 604 pages et les 6236 versets reels : chacun de ces inserts
+-- entre donc en conflit de cle avec une ligne qui dit vrai, et c'est la ligne
+-- qui dit vrai qui doit rester. On les garde plutot que de les effacer pour
+-- que ce fichier continue de se rejouer seul, sur une base ou 0013 n'aurait
+-- pas ete appliquee.
 insert into public.sourate (numero, nom_arabe, nom_translittere, lieu_revelation, nombre_versets)
-values (2, 'البقرة', 'Al-Baqara', 'medine', 286);
+values (2, 'البقرة', 'Al-Baqara', 'medine', 286)
+on conflict (numero) do nothing;
 
-insert into public.juz (numero, sourate_depart, verset_depart) values (1, 2, 1);
+insert into public.juz (numero, sourate_depart, verset_depart) values (1, 2, 1)
+on conflict (numero) do nothing;
 
 insert into public.page_mushaf (mushaf_id, numero, juz_numero)
-select m.id, 2, 1 from public.mushaf m where m.code = 'madina-hafs-604';
+select m.id, 2, 1 from public.mushaf m where m.code = 'madina-hafs-604'
+on conflict (mushaf_id, numero) do nothing;
 
 insert into public.verset (mushaf_id, sourate_numero, numero, texte, page_numero, ligne)
-select m.id, 2, 1, 'الم', 2, 1 from public.mushaf m where m.code = 'madina-hafs-604';
+select m.id, 2, 1, 'الم', 2, 1 from public.mushaf m where m.code = 'madina-hafs-604'
+on conflict (mushaf_id, sourate_numero, numero) do nothing;
 insert into public.verset (mushaf_id, sourate_numero, numero, texte, page_numero, ligne)
-select m.id, 2, 30, 'وإذ قال ربك للملائكة', 2, 5 from public.mushaf m where m.code = 'madina-hafs-604';
+select m.id, 2, 30, 'وإذ قال ربك للملائكة', 2, 5 from public.mushaf m where m.code = 'madina-hafs-604'
+on conflict (mushaf_id, sourate_numero, numero) do nothing;
 
 -- Sept seances, une par etat derive a prouver. Leurs plages sont disjointes :
 -- `sessions_no_teacher_overlap` interdit a un enseignant deux cours qui se
@@ -387,13 +400,18 @@ select set_config('test.jwt',
 do $$
 declare v_n int;
 begin
+  -- 6236 depuis le lot N5, et non plus les deux versets du fragment de N1 :
+  -- c'est le corpus entier que `0013` importe, et un eleve valide le lit en
+  -- entier. Le chiffre est ecrit en clair plutot que compare a un sous-select
+  -- pour qu'un import partiel echoue ici aussi, pas seulement dans 0013.
   select count(*) into v_n from public.verset;
-  if v_n <> 2 then
-    raise exception 'Coran ECHEC : un eleve lit % verset(s) au lieu de 2', v_n;
+  if v_n <> 6236 then
+    raise exception 'Coran ECHEC : un eleve lit % verset(s) au lieu de 6236', v_n;
   end if;
 
   begin
-    update public.verset set texte = 'altere' where numero = 1;
+    update public.verset set texte = 'altere'
+     where sourate_numero = 1 and numero = 1;
     raise exception 'Coran ECHEC : un eleve a pu modifier le texte coranique';
   exception when insufficient_privilege then
     raise notice 'Coran OK : lecture ouverte, ecriture refusee a l''eleve';
@@ -406,7 +424,10 @@ reset role;
 do $$
 declare v_texte text;
 begin
-  select texte into v_texte from public.verset where numero = 1;
+  -- La sourate est nommee : depuis N5, `numero = 1` designe le premier verset
+  -- de chacune des 114 sourates, plus un seul.
+  select texte into v_texte from public.verset
+   where sourate_numero = 1 and numero = 1;
   if v_texte = 'altere' then
     raise exception 'Coran ECHEC : le texte a ete altere';
   end if;

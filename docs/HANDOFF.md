@@ -1,5 +1,57 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 📖 **13 septembre 2026, huitième session — `N5` est fait. Le Coran est dans le
+> produit, et c'est un texte, pas un fichier.** Lot mené **en parallèle de
+> `CTR-01`**, sur le même dépôt et en accord avec l'autre session.
+> `/eleve/coran` ne rend plus `EcranAConstruire` : l'élève ouvre les **604 pages**
+> du Mushaf de Médine, tourne les pages au doigt comme au bouton, retrouve sa
+> place, et règle la taille du texte.
+> 🔑 **Ce que ce lot a surtout fait, c'est trancher.** La question `a` du §10 de
+> la spécification d'étape était ouverte depuis `N0` : l'ADR-020 avait fixé la
+> **riwaya**, jamais la **source**. C'est l'**ADR-024**, et le critère est venu de
+> l'opérateur : « la version qui propose le plus de flexibilité ». Cela désigne
+> l'**import** et non l'API — l'API Quran Foundation interdit de conserver le
+> contenu **plus de sept jours** (« Cache or store QF Content longer than
+> 1 week »), exige une licence commerciale signée pour toute redistribution, et
+> reste révocable « immediately and without liability ». Le Coran est le contenu
+> du produit : le rendre périssable et révocable coûtait plus cher que l'import.
+> Le corpus vient donc du **Tanzil Project** (CC BY 3.0), et il est en base.
+> ✅ **Mesuré, pas supposé** : `flutter test` **692/692** (22 nouveaux),
+> `dart analyze --fatal-infos` **propre sur tout le dépôt**, jetons **120
+> fichiers** sans violation, **134 contrôles SQL** (125 + 9) rejoués ensemble sur
+> `0001`→`0013` dans une base neuve, et la migration `0013` **appliquée en
+> production**, qui porte **114 sourates, 30 juz, 604 pages, 6236 versets**.
+> 🔍 **La production n'a pas reçu le fichier, elle a reçu le même corpus, et
+> l'identité est prouvée par deux empreintes.** Faire transiter 1,48 Mo de SQL
+> par un appel d'outil était hors de question ; la base a donc lu le corpus à sa
+> source, et le résultat a été comparé au fichier versionné **avant** toute
+> écriture : `md5` du texte `04b9f93c…a49d` et `md5` de la pagination
+> `c43df346…c973`, **identiques des deux côtés**. Les deux empreintes sont
+> réinscrites dans les contrôles de la migration appliquée : un import complet
+> mais d'une **autre édition** passerait tous les comptages sans que rien ne le
+> signale. ⚠ L'extension `http`, créée pour cet import, a été **retirée** :
+> laissée en place, elle donne à tout ce qui peut exécuter du SQL le droit
+> d'émettre des requêtes sortantes depuis la base.
+> ⚠ **DEUX ÉCARTS ASSUMÉS, écrits plutôt que masqués.**
+> **Un. `verset.ligne` reste NULLE, et ce n'est pas un oubli.** Le découpage en
+> quinze lignes par page existe (layout QPC v2 du Quranic Universal Library),
+> mais il **compte les mots autrement que le texte Tanzil** : **83 668 contre
+> 77 881**, mesuré et non supposé. Les faire coïncider demanderait de deviner une
+> correspondance sur un texte sacré. `0007` autorise la colonne nulle, rien à
+> l'écran n'en dépend, et elle se remplira le jour où une source portera le texte
+> **et** ses lignes.
+> **Deux. Le lien vers tanzil.net n'est pas cliquable.** La licence exige que la
+> source soit clairement indiquée et jointe ; elle l'est, au pied de **chaque
+> page**, dans le flux — mais `url_launcher` n'est pas au `pubspec.yaml`, et
+> l'y ajouter demandait de toucher un fichier qu'OpenCode modifie. C'est une
+> ligne, le jour où le `pubspec` est libre.
+> 🧭 **Une décision de conception à ne pas rouvrir** : la navigation de page
+> **n'est pas un contrôle secondaire**. §5.3 demande de masquer les contrôles
+> secondaires derrière un tap, et c'est fait — pour la taille du texte. Masquer
+> aussi « page suivante » laisserait le clavier et les lecteurs d'écran sans
+> aucun moyen d'avancer, le balayage étant le seul recours.
+> 🔴 **CE QUI N'EST TOUJOURS PAS PROUVÉ : un vrai cours.** Inchangé par ce lot.
+>
 > 🕵️ **13 septembre 2026, huitième session — `CTR-01` est fait, et le contrôle
 > invisible était impossible.** Lot mené **en parallèle du lot N5**, sur le même
 > dépôt et en accord avec l'autre session : elle a livré `ELV-04`, celui-ci

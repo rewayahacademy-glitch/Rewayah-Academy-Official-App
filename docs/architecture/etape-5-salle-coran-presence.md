@@ -428,7 +428,7 @@ quand l'enseignant l'active (§4.4, mode suivi).
 
 | # | Question | Pourquoi elle n'est pas tranchée ici |
 | :-- | :--- | :--- |
-| a | Source technique des données du Mushaf Madina (API, jeu de données, licence, police) | Choix de fournisseur, pas de riwaya (§3.1) |
+| a | ~~Source technique des données du Mushaf Madina (API, jeu de données, licence, police)~~ | **Résolue le 13 septembre 2026 par l'ADR-024** : Tanzil Project (CC BY 3.0), **importé** dans la base par `0013` plutôt qu'appelé à chaque lecture, rendu Unicode avec `UthmanTahaNaskh`. L'API Quran Foundation est écartée : elle interdit de conserver le contenu plus de sept jours et reste révocable « immediately ». ⚠ Le découpage en 15 lignes n'est **pas** importé : les deux sources ne segmentent pas les mots pareil (83 668 contre 77 881, mesuré), et `verset.ligne` reste nulle plutôt que devinée |
 | b | Seuil de retard (`late`) et fenêtre de reconnexion | Paramètres à mesurer contre le comportement réel des webhooks LiveKit, pas à deviner (§6.2, §6.3) |
 | c | Vocabulaire exact de `session_events.source` | Même raison (§6.3) |
 | d | Écran et policy pour marquer un participant `excusee` | Probablement `ADM-04`/`ADM-06`, à confirmer au codage (§6.5) |
@@ -464,7 +464,7 @@ toutes les specs »), et N1 exécuté le jour même.
 | N2 | `VideoSessionProvider`/`LiveKitSessionProvider` (ADR-001), pre-flight, émission de token | À faire — **c'est ici que se décide le fournisseur vidéo et ses clés**, et ici que naît la trace qui rendra `en_connexion` dérivable |
 | N3 | `ELV-03`/`ENS-03`/`CTR-02` : coquille de salle, document partagé, contrôles enseignant niveau 1 | À faire — remplace le plus gros placeholder du routeur |
 | N4 | Machine à états de présence : calcul, affichage, vue enseignant et élève | **Fait** (13 septembre 2026). Le calcul existait depuis N1 ; ce lot livre l'affichage — `lib/core/presence/`, `LignePresence` au catalogue, et la migration `0011` qui **borne** `presence_seance_v`, laissée sans filtre d'appelant par N1 |
-| N5 | `ELV-04` : lecteur Coran, mode immersif, reprise de lecture | À faire — demande d'abord l'import du jeu de données coranique |
+| N5 | `ELV-04` : lecteur Coran, mode immersif, reprise de lecture | **Fait** (13 septembre 2026). La décision qu'il attendait est l'**ADR-024** ; la migration `0013` importe 114 sourates, 30 juz, 604 pages et 6236 versets, et `lib/features/coran/` rend l'écran sur `PageImmersive`. `RosaceVerset` rejoint le catalogue |
 | N6 | Mode suivi enseignant, annotation si retenue | À faire |
 | N7 | Vérifications de fin d'étape, scénarios d'acceptation, documentation | À faire |
 

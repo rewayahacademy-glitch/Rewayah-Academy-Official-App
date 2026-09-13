@@ -69,6 +69,13 @@ const List<String> composantsDuCatalogue = <String>[
   // ecrit dans un ecran, ces deux regles seraient rejouees de memoire au
   // suivant.
   'LignePresence',
+  // Section 2 : le composant que le lot N5 produit. Deux decisions y sont
+  // enfermees plutot que recopiees dans l'ecran de lecture : le cercle est
+  // DESSINE et non tire du glyphe U+06DD, qu'Unicode reserve pourtant a cet
+  // usage exact mais que toutes les polices ne portent pas ; et il est MUET
+  // pour les technologies d'assistance, parce qu'un numero de verset est un
+  // repere de mise en page et non du texte a epeler au milieu d'une phrase.
+  'RosaceVerset',
 ];
 
 /// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.
