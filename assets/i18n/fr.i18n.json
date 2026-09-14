@@ -609,6 +609,26 @@
       "source": "Texte du Coran : Tanzil Project",
       "sourceLien": "tanzil.net",
       "edition": "Mushaf de Médine, riwaya Hafs"
+    },
+    "suivi": {
+      "titre": "Suivi de mes cours",
+      "colonneDate": "Date",
+      "colonneCours": "Cours",
+      "colonneEnseignant": "Enseignant",
+      "colonneEtat": "Présence",
+      "cours": "Cours de Coran",
+      "moi": "Ma présence",
+      "aujourdhui": "Aujourd'hui, {heure}",
+      "hier": "Hier, {heure}",
+      "date": "{date}, {heure}",
+      "annule": "Cours annulé",
+      "nonTenu": "Cours non tenu",
+      "vide": "Aucun cours pour l'instant",
+      "videDetail": "Vos cours s'afficheront ici, du plus récent au plus ancien, avec votre présence.",
+      "erreur": "Le suivi n'a pas pu être lu. Réessayez dans un instant.",
+      "tronquee": "Les {nombre} cours les plus récents sont affichés.",
+      "fin": "{nombre} cours au suivi.",
+      "finUn": "1 cours au suivi."
     }
   },
 

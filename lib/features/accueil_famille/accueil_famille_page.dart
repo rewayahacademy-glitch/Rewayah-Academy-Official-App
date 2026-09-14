@@ -25,6 +25,7 @@ import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/skeleton.dart';
 
 /// La phase de vie d'un enfant du foyer, a un instant donne.
 ///
@@ -213,6 +214,11 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
     final bool enErreur =
         seances.hasError || enfants.hasError || affectations.hasError;
 
+    final bool chargementInitial =
+        (!enfants.hasValue && enfants.isLoading) ||
+        (!seances.hasValue && seances.isLoading) ||
+        (!affectations.hasValue && affectations.isLoading);
+
     // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
     // colonne centree et bornee a 1200, le titre d'ecran et le bandeau hors
     // ligne. L'ecran ne rend plus que son contenu.
@@ -221,7 +227,9 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (enfants.hasValue && foyer.isEmpty)
+          if (chargementInitial)
+            const Skeleton.liste(lignes: 4)
+          else if (enfants.hasValue && foyer.isEmpty)
             EmptyState(
               message: t.tuteur.accueil.aucunEnfant,
               invitation: t.tuteur.accueil.aucunEnfantDetail,

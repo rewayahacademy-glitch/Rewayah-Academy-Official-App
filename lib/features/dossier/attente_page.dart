@@ -17,6 +17,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 
 /// `TUT-00b` : le portail d'attente.
 ///
@@ -254,9 +255,9 @@ class _Patience extends StatelessWidget {
   const _Patience();
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
-    child: Center(child: Text(t.commun.chargement)),
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
+    child: Skeleton.liste(lignes: 3),
   );
 }
 

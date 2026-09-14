@@ -1176,6 +1176,7 @@ class Traductions$eleve$fr {
 	// Translations
 	late final Traductions$eleve$accueil$fr accueil = Traductions$eleve$accueil$fr.internal(_root);
 	late final Traductions$eleve$coran$fr coran = Traductions$eleve$coran$fr.internal(_root);
+	late final Traductions$eleve$suivi$fr suivi = Traductions$eleve$suivi$fr.internal(_root);
 }
 
 // Path: tuteur
@@ -1997,6 +1998,69 @@ class Traductions$eleve$coran$fr {
 
 	/// fr: 'Mushaf de Médine, riwaya Hafs'
 	String get edition => 'Mushaf de Médine, riwaya Hafs';
+}
+
+// Path: eleve.suivi
+class Traductions$eleve$suivi$fr {
+	Traductions$eleve$suivi$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Suivi de mes cours'
+	String get titre => 'Suivi de mes cours';
+
+	/// fr: 'Date'
+	String get colonneDate => 'Date';
+
+	/// fr: 'Cours'
+	String get colonneCours => 'Cours';
+
+	/// fr: 'Enseignant'
+	String get colonneEnseignant => 'Enseignant';
+
+	/// fr: 'Présence'
+	String get colonneEtat => 'Présence';
+
+	/// fr: 'Cours de Coran'
+	String get cours => 'Cours de Coran';
+
+	/// fr: 'Ma présence'
+	String get moi => 'Ma présence';
+
+	/// fr: 'Aujourd'hui, {heure}'
+	String aujourdhui({required Object heure}) => 'Aujourd\'hui, ${heure}';
+
+	/// fr: 'Hier, {heure}'
+	String hier({required Object heure}) => 'Hier, ${heure}';
+
+	/// fr: '{date}, {heure}'
+	String date({required Object date, required Object heure}) => '${date}, ${heure}';
+
+	/// fr: 'Cours annulé'
+	String get annule => 'Cours annulé';
+
+	/// fr: 'Cours non tenu'
+	String get nonTenu => 'Cours non tenu';
+
+	/// fr: 'Aucun cours pour l'instant'
+	String get vide => 'Aucun cours pour l\'instant';
+
+	/// fr: 'Vos cours s'afficheront ici, du plus récent au plus ancien, avec votre présence.'
+	String get videDetail => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.';
+
+	/// fr: 'Le suivi n'a pas pu être lu. Réessayez dans un instant.'
+	String get erreur => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Les {nombre} cours les plus récents sont affichés.'
+	String tronquee({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.';
+
+	/// fr: '{nombre} cours au suivi.'
+	String fin({required Object nombre}) => '${nombre} cours au suivi.';
+
+	/// fr: '1 cours au suivi.'
+	String get finUn => '1 cours au suivi.';
 }
 
 // Path: tuteur.accueil
@@ -2991,13 +3055,31 @@ extension on Traductions {
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
+			'eleve.suivi.titre' => 'Suivi de mes cours',
+			'eleve.suivi.colonneDate' => 'Date',
+			'eleve.suivi.colonneCours' => 'Cours',
+			'eleve.suivi.colonneEnseignant' => 'Enseignant',
+			'eleve.suivi.colonneEtat' => 'Présence',
+			_ => null,
+		} ?? switch (path) {
+			'eleve.suivi.cours' => 'Cours de Coran',
+			'eleve.suivi.moi' => 'Ma présence',
+			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
+			'eleve.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
+			'eleve.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'eleve.suivi.annule' => 'Cours annulé',
+			'eleve.suivi.nonTenu' => 'Cours non tenu',
+			'eleve.suivi.vide' => 'Aucun cours pour l\'instant',
+			'eleve.suivi.videDetail' => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.',
+			'eleve.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
+			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
+			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
+			'eleve.suivi.finUn' => '1 cours au suivi.',
 			'tuteur.accueil.titre' => 'Votre foyer',
 			'tuteur.accueil.assister' => 'Assister',
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',

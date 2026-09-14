@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,8 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/versions_contrat.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
@@ -30,6 +33,28 @@ PieceAEnvoyer _piece({int octets = 1024}) => PieceAEnvoyer(
 );
 
 void main() {
+  testWidgets('le portail montre un squelette pendant sa premiere lecture', (
+    WidgetTester tester,
+  ) async {
+    final Completer<EtatDossier> reponse = Completer<EtatDossier>();
+
+    await tester.pumpWidget(
+      hote(
+        const AttentePage(),
+        surcharges: <Override>[
+          etatDossierProvider.overrideWith((_) => reponse.future),
+        ],
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(Skeleton), findsOneWidget);
+    expect(find.text(t.commun.chargement), findsNothing);
+
+    reponse.complete(const EtatDossier.sansProfil());
+    await tester.pumpAndSettle();
+  });
+
   group('ADR-011 : la carte a accuser une fois', () {
     testWidgets('elle nomme les deux dispositifs, en clair', (
       WidgetTester tester,

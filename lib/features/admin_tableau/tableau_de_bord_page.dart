@@ -14,6 +14,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/signal_row.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/stat_tile.dart';
 
 /// Une ligne de la liste « a traiter en premier ».
@@ -149,7 +150,7 @@ class TableauDeBordPage extends ConsumerWidget {
               ),
             )
           else
-            Text(t.commun.chargement, style: textes.bodySmall),
+            const Skeleton.liste(lignes: 2),
           Ecart.vXxl,
 
           // 2. CE QUI SE TRAITE D'UN TAP.

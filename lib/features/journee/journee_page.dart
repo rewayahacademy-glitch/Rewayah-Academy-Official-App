@@ -21,6 +21,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 
@@ -95,9 +96,7 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
     final String? monId = ref.watch(sessionProvider).profileId;
 
     if (monId == null) {
-      return PageShell(
-        child: EmptyState(message: t.commun.chargement, invitation: ''),
-      );
+      return const PageShell(child: Skeleton.liste(lignes: 4));
     }
 
     final AsyncValue<List<Seance>> seances = ref.watch(seancesProvider);
@@ -112,6 +111,16 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
     final AsyncValue<List<EleveEnAttente>> feed = ref.watch(
       elevesEnAttenteProvider,
     );
+
+    if ((!seances.hasValue && seances.isLoading) ||
+        (!reglages.hasValue && reglages.isLoading) ||
+        (!pause.hasValue && pause.isLoading) ||
+        (!feed.hasValue && feed.isLoading)) {
+      return PageShell(
+        titre: t.enseignant.journee.titre,
+        child: const Skeleton.liste(lignes: 5),
+      );
+    }
 
     final List<Seance> toutes = seances.value ?? const <Seance>[];
     final Seance? dominant = prochainCours(toutes, _maintenant);
@@ -273,18 +282,14 @@ class _BlocDominant extends StatelessWidget {
           Ecart.vSm,
           // Le lancement, ou la raison de son absence. Jamais les deux, jamais
           // un bouton inerte.
-          if (cours.avantDebut(maintenant) <= seuilOuvertureSalle ||
-              enCours)
+          if (cours.avantDebut(maintenant) <= seuilOuvertureSalle || enCours)
             ActionPrincipale(
               libelle: t.enseignant.journee.lancer,
               onPress: () => GoRouter.of(context).go(
                 Routes.salle,
                 // Le billet passe par `extra`, jamais par l'URL (ADR-005) :
                 // une adresse de salle copiee ne rouvre rien.
-                extra: BilletSalle(
-                  sessionId: cours.id,
-                  emisA: DateTime.now(),
-                ),
+                extra: BilletSalle(sessionId: cours.id, emisA: DateTime.now()),
               ),
             )
           else

@@ -26,6 +26,7 @@ import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
@@ -167,6 +168,10 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // relance un provider en echec et repasse par AsyncLoading. Tant que la
     // reponse manque, l'appareil est repute en ligne.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+
+    if (!seances.hasValue && seances.isLoading) {
+      return const PageShell(child: Skeleton.liste(lignes: 2));
+    }
 
     final List<Seance> toutes = seances.value ?? const <Seance>[];
     final Seance? prochain = prochainCours(toutes, _maintenant);

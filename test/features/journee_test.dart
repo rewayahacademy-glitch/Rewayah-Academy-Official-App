@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui' show Size;
 
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -13,6 +14,7 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
 import '../support/harnais.dart';
@@ -127,6 +129,29 @@ DateTime _aujourdhuiA(int heure, [int minute = 0]) {
 }
 
 void main() {
+  testWidgets('la premiere lecture montre un squelette', (
+    WidgetTester tester,
+  ) async {
+    final Completer<List<Seance>> reponse = Completer<List<Seance>>();
+
+    await tester.pumpWidget(
+      hote(
+        const JourneePage(),
+        surcharges: <Override>[
+          ..._surcharges(planning: FauxServicePlanning()),
+          seancesProvider.overrideWith((_) => reponse.future),
+        ],
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(Skeleton), findsOneWidget);
+    expect(find.text(t.commun.chargement), findsNothing);
+
+    reponse.complete(const <Seance>[]);
+    await tester.pumpAndSettle();
+  });
+
   group('ENS-02 : le bloc dominant', () {
     testWidgets('il porte le prenom, l identifiant immuable et le minuteur', (
       WidgetTester tester,
@@ -166,7 +191,10 @@ void main() {
           ];
 
         await tester.pumpWidget(
-          hote(const JourneePage(), surcharges: _surcharges(planning: planning)),
+          hote(
+            const JourneePage(),
+            surcharges: _surcharges(planning: planning),
+          ),
         );
         await tester.pumpAndSettle();
 

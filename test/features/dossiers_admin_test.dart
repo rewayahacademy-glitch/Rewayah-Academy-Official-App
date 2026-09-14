@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 
 import '../support/harnais.dart';
@@ -51,6 +54,30 @@ Future<void> _allerA(WidgetTester tester, String libelle) async {
 }
 
 void main() {
+  testWidgets('la premiere lecture montre un squelette', (
+    WidgetTester tester,
+  ) async {
+    final Completer<List<DossierAValider>> reponse =
+        Completer<List<DossierAValider>>();
+
+    await tester.pumpWidget(
+      hote(
+        const DossiersPage(),
+        surcharges: <Override>[
+          serviceValidationProvider.overrideWithValue(FauxServiceValidation()),
+          dossiersEnAttenteProvider.overrideWith((_) => reponse.future),
+        ],
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(Skeleton), findsOneWidget);
+    expect(find.text(t.commun.chargement), findsNothing);
+
+    reponse.complete(const <DossierAValider>[]);
+    await tester.pumpAndSettle();
+  });
+
   group('ADM-02 : un dossier a la fois, constat puis jugement', () {
     testWidgets('un seul dossier est presente, jamais une grille', (
       WidgetTester tester,
