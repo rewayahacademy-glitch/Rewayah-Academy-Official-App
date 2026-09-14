@@ -1924,6 +1924,25 @@ obligatoire et une entrée de journal — c'est un lot, pas une ligne, et la
 spécification d'étape §6.5 laisse d'ailleurs ce mécanisme explicitement ouvert.
 N4 **affiche** la consolidation ; il ne la prononce pas.
 
+### Surface propriétaire de correction de présence
+
+Cette surface est réservée aux capacités serveur `peutCorriger` et
+`peutExcuser`, sans lire un rôle dans le widget. Elle reçoit une ligne de
+présence déjà bornée, un adaptateur typé et les libellés de l'intégration. Elle
+propose `corrigee_manuel` et `excusee` lorsque la capacité correspondante est
+présente ; aucune action n'est rendue pour une capacité absente ou hors ligne.
+
+Chaque décision ouvre une confirmation explicite avec le participant, l'état
+demandé et un motif obligatoire. Le panneau montre la mutation en cours, ne
+déclare le succès qu'après le retour de l'adaptateur, conserve la ligne lue
+pendant l'attente, puis expose un état succès ou erreur récupérable. Le motif
+n'est pas affiché dans la ligne de présence : il appartient au contrat serveur
+et au journal d'audit.
+
+L'implémentation UI isolée vit dans `lib/features/presence_correction/` et
+n'ajoute aucune route. Elle reste raccordable à la salle enseignant ou à
+l'espace administration après livraison du contrat serveur.
+
 Deux conséquences hors de l'écran :
 
 - **`PageImmersive` existe**, dans `lib/core/widgets/`, et rejoint le catalogue
