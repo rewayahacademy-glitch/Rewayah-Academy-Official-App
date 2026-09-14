@@ -481,8 +481,29 @@ class Traductions$connexion$fr {
 	/// fr: 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.'
 	String get intro => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.';
 
+	/// fr: 'Mode essai local : utilisez un compte Supabase de test avec son mot de passe.'
+	String get introDemo => 'Mode essai local : utilisez un compte Supabase de test avec son mot de passe.';
+
+	/// fr: 'Espace d'essai'
+	String get demoTitre => 'Espace d\'essai';
+
+	/// fr: 'Ce parcours est disponible uniquement dans une compilation locale de démonstration.'
+	String get demoDetail => 'Ce parcours est disponible uniquement dans une compilation locale de démonstration.';
+
 	/// fr: 'Votre adresse électronique'
 	String get courriel => 'Votre adresse électronique';
+
+	/// fr: 'Mot de passe'
+	String get motDePasse => 'Mot de passe';
+
+	/// fr: 'Se connecter'
+	String get seConnecter => 'Se connecter';
+
+	/// fr: 'Saisissez votre mot de passe.'
+	String get erreurMotDePasse => 'Saisissez votre mot de passe.';
+
+	/// fr: 'La connexion n'a pas abouti. Vérifiez vos identifiants puis réessayez.'
+	String get erreurConnexion => 'La connexion n\'a pas abouti. Vérifiez vos identifiants puis réessayez.';
 
 	/// fr: 'Recevoir le lien'
 	String get envoyerLien => 'Recevoir le lien';
@@ -2596,7 +2617,14 @@ extension on Traductions {
 			'attente.seDeconnecter' => 'Se déconnecter',
 			'connexion.titre' => 'Se connecter',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
+			'connexion.introDemo' => 'Mode essai local : utilisez un compte Supabase de test avec son mot de passe.',
+			'connexion.demoTitre' => 'Espace d\'essai',
+			'connexion.demoDetail' => 'Ce parcours est disponible uniquement dans une compilation locale de démonstration.',
 			'connexion.courriel' => 'Votre adresse électronique',
+			'connexion.motDePasse' => 'Mot de passe',
+			'connexion.seConnecter' => 'Se connecter',
+			'connexion.erreurMotDePasse' => 'Saisissez votre mot de passe.',
+			'connexion.erreurConnexion' => 'La connexion n\'a pas abouti. Vérifiez vos identifiants puis réessayez.',
 			'connexion.envoyerLien' => 'Recevoir le lien',
 			'connexion.avecGoogle' => 'Continuer avec Google',
 			'connexion.ou' => 'ou',
@@ -2989,6 +3017,8 @@ extension on Traductions {
 			'eleve.coran.agrandir' => 'Agrandir le texte',
 			'eleve.coran.reduire' => 'Réduire le texte',
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
 			'tuteur.accueil.titre' => 'Votre foyer',
@@ -2996,8 +3026,6 @@ extension on Traductions {
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',

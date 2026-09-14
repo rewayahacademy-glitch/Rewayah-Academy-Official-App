@@ -73,6 +73,9 @@ abstract final class AppPage {
   /// Largeur maximale du contenu. Au dela, la colonne se centre.
   static const double largeurMaxContenu = 1200;
 
+  /// Largeur maximale d'un formulaire d'acces centre.
+  static const double largeurFormulaire = 640;
+
   /// Largeur de lecture, en caracteres, pour tout texte suivi.
   ///
   /// En caracteres et non en pixels : c'est la mesure qui survit au changement

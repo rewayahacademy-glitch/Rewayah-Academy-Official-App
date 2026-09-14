@@ -108,14 +108,74 @@ void main() {
     testWidgets('aucun champ de mot de passe n existe sur cet ecran', (
       WidgetTester tester,
     ) async {
-      // Le produit n'a pas de mot de passe, nulle part. Un champ qui
-      // apparaitrait ici serait le premier.
+      // La compilation de production reste sans mot de passe. Le parcours de
+      // demonstration est couvert explicitement par les tests ci-dessous.
       await _monter(tester);
       final Iterable<TextField> champs = tester.widgetList<TextField>(
         find.byType(TextField),
       );
       expect(champs, hasLength(1));
       expect(champs.single.obscureText, isFalse);
+    });
+
+    testWidgets('le mode demonstration accepte email et mot de passe', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = FauxServiceAuth();
+      await tester.pumpWidget(
+        hote(
+          const ConnexionPage(demoAuth: true),
+          surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        ' fatou@example.test ',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+        'essai-local',
+      );
+      await tester.tap(find.text(t.connexion.seConnecter));
+      await tester.pumpAndSettle();
+
+      expect(
+        auth.connexionsMotDePasse,
+        <({String courriel, String motDePasse})>[
+          (courriel: 'fatou@example.test', motDePasse: 'essai-local'),
+        ],
+      );
+    });
+
+    testWidgets('le mode demonstration affiche une erreur recuperable', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = FauxServiceAuth()
+        ..erreurAJeter = StateError('refuse');
+      await tester.pumpWidget(
+        hote(
+          const ConnexionPage(demoAuth: true),
+          surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        'fatou@example.test',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+        'essai-local',
+      );
+      await tester.tap(find.text(t.connexion.seConnecter));
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.connexion.erreurConnexion), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        findsOneWidget,
+      );
     });
   });
 }

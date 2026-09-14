@@ -166,6 +166,10 @@ class FauxServiceAuth implements ServiceAuth {
   /// Le nombre d'ouvertures du parcours Google.
   int google = 0;
 
+  /// Les identifiants utilises pour une connexion de demonstration.
+  final List<({String courriel, String motDePasse})> connexionsMotDePasse =
+      <({String courriel, String motDePasse})>[];
+
   /// Le nombre de deconnexions.
   int deconnexions = 0;
 
@@ -189,6 +193,19 @@ class FauxServiceAuth implements ServiceAuth {
   @override
   Future<void> connexionGoogle() async {
     google++;
+  }
+
+  @override
+  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    connexionsMotDePasse.add((
+      courriel: courriel.trim(),
+      motDePasse: motDePasse,
+    ));
   }
 
   @override
