@@ -65,6 +65,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
+	late final Traductions$compte$fr compte = Traductions$compte$fr.internal(_root);
 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
 	late final Traductions$eleve$fr eleve = Traductions$eleve$fr.internal(_root);
 	late final Traductions$tuteur$fr tuteur = Traductions$tuteur$fr.internal(_root);
@@ -1153,6 +1154,27 @@ class Traductions$avatar$fr {
 	String get sansPhoto => 'Pas encore de photo';
 }
 
+// Path: compte
+class Traductions$compte$fr {
+	Traductions$compte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Non disponible'
+	String get nonDisponible => 'Non disponible';
+
+	/// fr: 'Contact de connexion'
+	String get contact => 'Contact de connexion';
+
+	/// fr: 'Actif'
+	String get statutActif => 'Actif';
+
+	/// fr: 'Accès provisoire'
+	String get statutProvisoire => 'Accès provisoire';
+}
+
 // Path: nav
 class Traductions$nav$fr {
 	Traductions$nav$fr.internal(this._root);
@@ -1198,6 +1220,7 @@ class Traductions$enseignant$fr {
 
 	// Translations
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
+	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
 }
 
 // Path: controleur
@@ -2380,6 +2403,81 @@ class Traductions$enseignant$journee$fr {
 	String get erreur => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.';
 }
 
+// Path: enseignant.profil
+class Traductions$enseignant$profil$fr {
+	Traductions$enseignant$profil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Profil enseignant'
+	String get titre => 'Profil enseignant';
+
+	/// fr: 'Les informations professionnelles connues par Rewayah.'
+	String get intro => 'Les informations professionnelles connues par Rewayah.';
+
+	/// fr: 'Identité professionnelle'
+	String get identite => 'Identité professionnelle';
+
+	/// fr: 'Prénom professionnel'
+	String get prenom => 'Prénom professionnel';
+
+	/// fr: 'Identifiant enseignant'
+	String get identifiant => 'Identifiant enseignant';
+
+	/// fr: 'Statut du compte'
+	String get statut => 'Statut du compte';
+
+	/// fr: 'Pays de rattachement'
+	String get pays => 'Pays de rattachement';
+
+	/// fr: 'Langues d'enseignement'
+	String get langues => 'Langues d\'enseignement';
+
+	/// fr: 'Capacité hebdomadaire'
+	String get capacite => 'Capacité hebdomadaire';
+
+	/// fr: '{nombre} h par semaine'
+	String heures({required Object nombre}) => '${nombre} h par semaine';
+
+	/// fr: 'Vérification d'identité'
+	String get verification => 'Vérification d\'identité';
+
+	/// fr: 'Vérification en cours'
+	String get verificationEnAttente => 'Vérification en cours';
+
+	/// fr: 'Identité vérifiée'
+	String get verificationValidee => 'Identité vérifiée';
+
+	/// fr: 'Vérification à reprendre'
+	String get verificationRefusee => 'Vérification à reprendre';
+
+	/// fr: 'En attente de validation'
+	String get statutEnAttente => 'En attente de validation';
+
+	/// fr: 'Accès suspendu'
+	String get statutSuspendu => 'Accès suspendu';
+
+	/// fr: 'Votre profil enseignant n'est pas disponible.'
+	String get vide => 'Votre profil enseignant n\'est pas disponible.';
+
+	/// fr: 'Les informations professionnelles apparaîtront ici lorsqu'elles seront disponibles.'
+	String get videDetail => 'Les informations professionnelles apparaîtront ici lorsqu\'elles seront disponibles.';
+
+	/// fr: 'Le profil enseignant n'a pas pu être lu. Réessayez dans un instant.'
+	String get erreur => 'Le profil enseignant n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Votre profil enseignant n'est pas disponible hors ligne.'
+	String get horsLigne => 'Votre profil enseignant n\'est pas disponible hors ligne.';
+
+	/// fr: 'Reconnectez-vous pour consulter les informations à jour.'
+	String get horsLigneDetail => 'Reconnectez-vous pour consulter les informations à jour.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+}
+
 // Path: controleur.planning
 class Traductions$controleur$planning$fr {
 	Traductions$controleur$planning$fr.internal(this._root);
@@ -2932,6 +3030,10 @@ extension on Traductions {
 			'choix.autreInvite' => 'Précisez',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
 			'avatar.sansPhoto' => 'Pas encore de photo',
+			'compte.nonDisponible' => 'Non disponible',
+			'compte.contact' => 'Contact de connexion',
+			'compte.statutActif' => 'Actif',
+			'compte.statutProvisoire' => 'Accès provisoire',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
 			'nav.eleve.suivi' => 'Suivi',
@@ -2992,12 +3094,12 @@ extension on Traductions {
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
 			'tuteur.accueil.titre' => 'Votre foyer',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.assister' => 'Assister',
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
@@ -3108,6 +3210,28 @@ extension on Traductions {
 			'enseignant.journee.aucunEleveEnAttente' => 'Aucun élève en attente sur vos heures',
 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
+			'enseignant.profil.titre' => 'Profil enseignant',
+			'enseignant.profil.intro' => 'Les informations professionnelles connues par Rewayah.',
+			'enseignant.profil.identite' => 'Identité professionnelle',
+			'enseignant.profil.prenom' => 'Prénom professionnel',
+			'enseignant.profil.identifiant' => 'Identifiant enseignant',
+			'enseignant.profil.statut' => 'Statut du compte',
+			'enseignant.profil.pays' => 'Pays de rattachement',
+			'enseignant.profil.langues' => 'Langues d\'enseignement',
+			'enseignant.profil.capacite' => 'Capacité hebdomadaire',
+			'enseignant.profil.heures' => ({required Object nombre}) => '${nombre} h par semaine',
+			'enseignant.profil.verification' => 'Vérification d\'identité',
+			'enseignant.profil.verificationEnAttente' => 'Vérification en cours',
+			'enseignant.profil.verificationValidee' => 'Identité vérifiée',
+			'enseignant.profil.verificationRefusee' => 'Vérification à reprendre',
+			'enseignant.profil.statutEnAttente' => 'En attente de validation',
+			'enseignant.profil.statutSuspendu' => 'Accès suspendu',
+			'enseignant.profil.vide' => 'Votre profil enseignant n\'est pas disponible.',
+			'enseignant.profil.videDetail' => 'Les informations professionnelles apparaîtront ici lorsqu\'elles seront disponibles.',
+			'enseignant.profil.erreur' => 'Le profil enseignant n\'a pas pu être lu. Réessayez dans un instant.',
+			'enseignant.profil.horsLigne' => 'Votre profil enseignant n\'est pas disponible hors ligne.',
+			'enseignant.profil.horsLigneDetail' => 'Reconnectez-vous pour consulter les informations à jour.',
+			'enseignant.profil.reessayer' => 'Réessayer',
 			'controleur.planning.titre' => 'Planning global',
 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
 			'controleur.planning.tousEtats' => 'Tout',

@@ -533,6 +533,13 @@
     "sansPhoto": "Pas encore de photo"
   },
 
+  "compte": {
+    "nonDisponible": "Non disponible",
+    "contact": "Contact de connexion",
+    "statutActif": "Actif",
+    "statutProvisoire": "Accès provisoire"
+  },
+
   "nav": {
     "eleve": {
       "accueil": "Accueil",
@@ -739,6 +746,30 @@
       "aucunEleveEnAttente": "Aucun élève en attente sur vos heures",
       "voirCreneaux": "Voir mes créneaux",
       "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant."
+    },
+    "profil": {
+      "titre": "Profil enseignant",
+      "intro": "Les informations professionnelles connues par Rewayah.",
+      "identite": "Identité professionnelle",
+      "prenom": "Prénom professionnel",
+      "identifiant": "Identifiant enseignant",
+      "statut": "Statut du compte",
+      "pays": "Pays de rattachement",
+      "langues": "Langues d'enseignement",
+      "capacite": "Capacité hebdomadaire",
+      "heures": "{nombre} h par semaine",
+      "verification": "Vérification d'identité",
+      "verificationEnAttente": "Vérification en cours",
+      "verificationValidee": "Identité vérifiée",
+      "verificationRefusee": "Vérification à reprendre",
+      "statutEnAttente": "En attente de validation",
+      "statutSuspendu": "Accès suspendu",
+      "vide": "Votre profil enseignant n'est pas disponible.",
+      "videDetail": "Les informations professionnelles apparaîtront ici lorsqu'elles seront disponibles.",
+      "erreur": "Le profil enseignant n'a pas pu être lu. Réessayez dans un instant.",
+      "horsLigne": "Votre profil enseignant n'est pas disponible hors ligne.",
+      "horsLigneDetail": "Reconnectez-vous pour consulter les informations à jour.",
+      "reessayer": "Réessayer"
     }
   },
 
