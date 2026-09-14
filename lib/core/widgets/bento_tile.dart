@@ -124,12 +124,10 @@ class BentoTile extends StatelessWidget {
             : palette.borderHairline,
         ombre: palette.ombre,
         arrondi: metriques.arrondi,
-        // Registre unique : `surfaceRaised` + `elevation1` + `borderHairline`,
-        // et le niveau 2 quand la tuile s'eveille
-        // (`07-catalogue-composants.md` section 1). Jamais un filet sans ombre.
-        ombres: eveillee
-            ? AppElevation.niveau2(palette.ombre)
-            : AppElevation.niveau1(palette.ombre),
+        // Tiles are list/grid content, not floating chrome. Their hierarchy is
+        // carried by surface and border; shadows are reserved for one dominant
+        // card or a dialog.
+        ombres: AppElevation.niveau0,
       ),
       child: DefaultTextStyle.merge(
         style: TextStyle(color: paire.onBackground),

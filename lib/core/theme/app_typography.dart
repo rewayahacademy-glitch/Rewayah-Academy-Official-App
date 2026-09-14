@@ -73,10 +73,17 @@ abstract final class AppTypography {
   static const double facteurEnfant = 1.2;
 
   /// Echelle des roles adultes et du mode standard.
-  static final TextTheme standard = _construire(facteur: 1);
+  static final TextTheme standard = _construire();
 
   /// Echelle du mode enfant, environ 20 pour cent plus grande.
-  static final TextTheme enfant = _construire(facteur: facteurEnfant);
+  static final TextTheme enfant = standard.copyWith(
+    headlineSmall: _corps(32, 40 / 32, FontWeight.w600),
+    titleLarge: _corps(32, 40 / 32, FontWeight.w600),
+    bodyLarge: _corps(20, 28 / 20, FontWeight.w400),
+    bodyMedium: _corps(20, 28 / 20, FontWeight.w400),
+    labelLarge: _corps(20, 28 / 20, FontWeight.w600),
+    bodySmall: _corps(16, 24 / 16, FontWeight.w400),
+  );
 
   /// Le crenage optique d'une taille rendue, en pixels logiques.
   ///
@@ -140,62 +147,23 @@ abstract final class AppTypography {
     );
   }
 
-  static TextTheme _construire({required double facteur}) {
-    // L'interligne s'ouvre legerement en mode enfant : un texte plus gros dans
-    // le meme interligne se lit moins bien, pas mieux.
-    final double aere = facteur > 1 ? 0.08 : 0;
-
-    return TextTheme(
-      // Les trois roles d'affichage portent les chiffres tabulaires d'office :
-      // leur emploi documente est le chiffre geant d'ELV-02 et le nombre d'une
-      // tuile de statistique, c'est-a-dire exactement des chiffres qui
-      // changent en place (`01-systeme-visuel.md` section 5).
-      displayLarge: tabulaire(_titre(40 * facteur, 1.05 + aere)),
-      displayMedium: tabulaire(_titre(34 * facteur, 1.08 + aere)),
-      displaySmall: tabulaire(_titre(28 * facteur, 1.1 + aere)),
-      headlineLarge: _titre(26 * facteur, 1.2 + aere, poids: FontWeight.w600),
-      headlineMedium: _titre(22 * facteur, 1.24 + aere, poids: FontWeight.w600),
-      headlineSmall: _titre(20 * facteur, 1.28 + aere, poids: FontWeight.w600),
-      titleLarge: _corps(18 * facteur, 1.3 + aere, FontWeight.w600),
-      titleMedium: _corps(16 * facteur, 1.32 + aere, FontWeight.w600),
-      titleSmall: _corps(14 * facteur, 1.34 + aere, FontWeight.w600),
-      bodyLarge: _corps(17 * facteur, 1.45 + aere, FontWeight.w400),
-      bodyMedium: _corps(15 * facteur, 1.47 + aere, FontWeight.w400),
-      bodySmall: _corps(13 * facteur, 1.5 + aere, FontWeight.w400),
-      labelLarge: _corps(15 * facteur, 1.2 + aere, FontWeight.w600),
-      labelMedium: _corps(13 * facteur, 1.2 + aere, FontWeight.w600),
-      labelSmall: _corps(12 * facteur, 1.2 + aere, FontWeight.w600),
-    );
-  }
-
-  /// Bricolage Grotesque : trois axes a piloter, et aucun ne peut etre laisse
-  /// a son defaut.
-  ///
-  /// `opsz` se regle **sur la taille rendue**, borne aux limites du fichier.
-  /// Une police de titre dessinee pour 96 points et affichee a 20 paraitrait
-  /// fragile, l'inverse molle : c'est exactement l'effet "pas fini" du premier
-  /// rendu.
-  static TextStyle _titre(
-    double taille,
-    double interligne, {
-    FontWeight poids = FontWeight.w700,
-  }) {
-    return TextStyle(
-      fontFamily: AppFontFamily.titre,
-      fontFamilyFallback: AppFontFamily.repli,
-      fontSize: taille,
-      height: interligne,
-      fontWeight: poids,
-      letterSpacing: crenage(taille),
-      fontVariations: <FontVariation>[
-        FontVariation('wght', poids.value.toDouble()),
-        FontVariation(
-          'opsz',
-          taille.clamp(AppFontAxis.opszMin, AppFontAxis.opszMax),
-        ),
-      ],
-    );
-  }
+  static TextTheme _construire() => TextTheme(
+    displayLarge: tabulaire(_corps(36, 44 / 36, FontWeight.w600)),
+    displayMedium: tabulaire(_corps(36, 44 / 36, FontWeight.w600)),
+    displaySmall: tabulaire(_corps(36, 44 / 36, FontWeight.w600)),
+    headlineLarge: _corps(36, 44 / 36, FontWeight.w600),
+    headlineMedium: _corps(32, 40 / 32, FontWeight.w600),
+    headlineSmall: _corps(28, 36 / 28, FontWeight.w600),
+    titleLarge: _corps(22, 28 / 22, FontWeight.w600),
+    titleMedium: _corps(18, 26 / 18, FontWeight.w600),
+    titleSmall: _corps(16, 24 / 16, FontWeight.w600),
+    bodyLarge: _corps(16, 24 / 16, FontWeight.w400),
+    bodyMedium: _corps(14, 20 / 14, FontWeight.w400),
+    bodySmall: _corps(12, 16 / 12, FontWeight.w400),
+    labelLarge: _corps(16, 20 / 16, FontWeight.w600),
+    labelMedium: _corps(12, 16 / 12, FontWeight.w500),
+    labelSmall: _corps(12, 16 / 12, FontWeight.w500),
+  );
 
   /// Instrument Sans est une police variable : la graisse se pilote par l'axe
   /// `wght`, [FontWeight] seul ne suffirait pas et Flutter synthetiserait un

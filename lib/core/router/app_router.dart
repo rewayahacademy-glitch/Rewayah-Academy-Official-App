@@ -24,6 +24,7 @@ import '../../features/dossier/signature_page.dart';
 import '../../features/eleve_connexion/eleve_connexion_page.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
@@ -233,7 +234,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRoute(
                 path: Routes.enseignantProfil,
                 builder: (BuildContext _, GoRouterState _) =>
-                    EcranAConstruire(destination: t.nav.enseignant.profil),
+                    const ProfilEnseignantPage(),
               ),
             ],
           ),

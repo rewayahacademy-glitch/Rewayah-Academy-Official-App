@@ -125,11 +125,13 @@ class AppShadowColor {
     required double y,
     required double flou,
     required double opacite,
+    double etalement = 0,
   }) {
     return BoxShadow(
       color: _value.withValues(alpha: opacite),
       offset: Offset(0, y),
       blurRadius: flou,
+      spreadRadius: etalement,
     );
   }
 

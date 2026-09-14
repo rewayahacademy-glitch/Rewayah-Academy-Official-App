@@ -4,15 +4,16 @@ Le Web est ouvert à tous les rôles (ADR-008), et tant que le natif n'est pas
 publié, la PWA est le seul chemin d'accès réel. Un écran mal adapté au desktop
 n'est donc pas un détail de confort : c'est l'écran que l'opérateur voit.
 
-## 1. Trois gabarits, un seul système
+## 1. Quatre classes de largeur, trois chromes
 
 | Gabarit | Largeur | Chrome de navigation | Gouttière |
 | :--- | :--- | :--- | :-: |
-| Mobile | < 600 | Barre basse | 20 |
-| Tablette | 600 à 1024 | Rail latéral | 32 |
-| Desktop | > 1024 | Barre latérale permanente | 48 |
+| Compact | < 600 | Barre basse | 16 |
+| Moyen | 600 à 839 | Rail latéral 80 | 24 |
+| Étendu | 840 à 1199 | Rail latéral 80 | 24 |
+| Large | ≥ 1200 | Barre latérale permanente 256 | 32 |
 
-**Trois présentations, pas trois applications.** Les mêmes composants, la même
+**Trois présentations, pas quatre applications.** Les mêmes composants, la même
 arborescence de routes, les mêmes données. Ce qui change : le chrome, le nombre
 de colonnes, et la manière dont un détail s'ouvre.
 

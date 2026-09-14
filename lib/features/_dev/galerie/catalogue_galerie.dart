@@ -37,7 +37,9 @@ import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/rosace_verset.dart';
+import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/stat_tile.dart';
@@ -229,10 +231,12 @@ VuePresence _presence(
       consolide: consolide,
       debutSeance: debut,
       entreLe: switch ((entreIlYA, retardDe)) {
-        (final int minutes, _) when minutes > 0 =>
-          maintenant.subtract(Duration(minutes: minutes)),
-        (_, final int minutes) when minutes > 0 =>
-          debut.add(Duration(minutes: minutes)),
+        (final int minutes, _) when minutes > 0 => maintenant.subtract(
+          Duration(minutes: minutes),
+        ),
+        (_, final int minutes) when minutes > 0 => debut.add(
+          Duration(minutes: minutes),
+        ),
         _ => null,
       },
       derniereTraceLe: silenceDe == null
@@ -1246,6 +1250,136 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             colonnes: _colonnesDemonstration,
             lignes: <List<String>>[],
           ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SettingRow',
+    famille: FamilleComposant.carteCliquable,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'default',
+        (BuildContext _) => const SettingRow(
+          title: 'Notifications',
+          description: 'Rappels de cours et changements de planning',
+          value: 'Activées',
+          icon: AppIcons.reglages,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'hover',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(survole: true),
+          child: SettingRow(
+            title: 'Notifications',
+            icon: AppIcons.reglages,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'pressed',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(presse: true),
+          child: SettingRow(
+            title: 'Notifications',
+            icon: AppIcons.reglages,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'focus',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(focus: true),
+          child: SettingRow(
+            title: 'Notifications',
+            icon: AppIcons.reglages,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'selected',
+        (BuildContext _) => const SettingRow(
+          title: 'Notifications',
+          value: 'Activées',
+          icon: AppIcons.reglages,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'disabled',
+        (BuildContext _) =>
+            const SettingRow(title: 'Notifications', icon: AppIcons.reglages),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ScheduleOption',
+    famille: FamilleComposant.carteCliquable,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'default',
+        (BuildContext _) => const ScheduleOption(
+          day: 'Mardi',
+          hours: '17:00 - 17:45',
+          timeZone: 'Europe/Paris',
+          onSelected: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'hover',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(survole: true),
+          child: ScheduleOption(
+            day: 'Mardi',
+            hours: '17:00 - 17:45',
+            onSelected: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'pressed',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(presse: true),
+          child: ScheduleOption(
+            day: 'Mardi',
+            hours: '17:00 - 17:45',
+            onSelected: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'focus',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(focus: true),
+          child: ScheduleOption(
+            day: 'Mardi',
+            hours: '17:00 - 17:45',
+            onSelected: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'selected',
+        (BuildContext _) => const ScheduleOption(
+          day: 'Mardi',
+          hours: '17:00 - 17:45',
+          recurrence: 'Chaque semaine',
+          selected: true,
+          onSelected: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'disabled',
+        (BuildContext _) => const ScheduleOption(
+          day: 'Mardi',
+          hours: '17:00 - 17:45',
+          enabled: false,
+          onSelected: _rien,
         ),
       ),
     ],

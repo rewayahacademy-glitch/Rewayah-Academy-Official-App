@@ -2160,3 +2160,41 @@ Un lot par session. Ignore la branche refactor-ui-lavender.
 FIN DE SESSION : livrer un prompt de reprise et mettre a jour cette
 section 9. Consigne permanente de l'operateur.
 ```
+
+## Vague 5 — intégration contrôlée du 15 septembre 2026
+
+Cette intégration est préparée dans le worktree isolé
+`C:\Users\dell\AppData\Local\Programs\WindowsTerminal\rewayah-vague5-integration`.
+Le checkout principal `D:\RA _APP\RA -OFFICIAL-APP` était sale avant l'opération
+et n'a pas été modifié. Les worktrees R1, R2 et présence ont également été
+préservés. Les fichiers OpenCode restent exclus.
+
+### Lots intégrés, dans l'ordre
+
+| Lot | Commit source validé | Commit d'intégration | Limite contrôlée |
+| :--- | :--- | :--- | :--- |
+| R1 design system | `6e85aec` | `773fbd0` | Tokens, composants et tests R1 ; aucune route métier |
+| Shell adaptatif | `da34f9c` | `728da5e` | Chrome responsive et test dédié |
+| Correctif Material 3 | `1fc15c6` | `bbbadc4` | Widgets natifs, clavier, RTL, 200 % |
+| Profil enseignant | `65c564f` | `dbcd380` | Lecture seule ; dépendances i18n absentes du commit source |
+| Raccord profil | — | `d36fb4b` | Route ciblée et chaînes FR/générées uniquement |
+| Correction présence | `d55606c` | `f84580b` | Surface isolée ; pas de route, mutation backend ou migration |
+
+### Contrôles de cette intégration
+
+- `dart analyze --fatal-infos` : **BLOCKED** ; le runner reste sur
+  `Analyzing rewayah-vague5-integration...`, puis a été interrompu sans
+  diagnostic Dart exploitable.
+- `flutter test --no-pub` : **BLOCKED** ; le runner reste sur le chargement du
+  premier test, puis a été interrompu sans résultat de test exploitable.
+- `dart run tool/verifier_jetons.dart` : **PASS**, 129 fichiers, aucune violation.
+- `git diff --check` : **PASS**, worktree propre après rafraîchissement de l'index.
+- Scénarios SQL : **BLOCKED** avant exécution ; le daemon Docker n'est pas
+  disponible (`dockerDesktopLinuxEngine` absent). Aucun résultat SQL n'est
+  inventé.
+- Recette navigateur authentifiée Prompt 51 : **REPORTÉE**, conformément à la
+  demande de l'opérateur ; aucun compte OTP/lien ni LiveKit n'a été utilisé.
+
+Le HEAD d'intégration après le commit documentaire est à relever avec
+`git rev-parse HEAD`. Cette branche n'est pas une promotion de `main` tant que
+les contrôles bloqués et la revue opérateur ne sont pas résolus.

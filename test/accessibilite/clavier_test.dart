@@ -86,34 +86,30 @@ void main() {
     );
   });
 
-  group('Focus visible : la bordure de focus est bien borderStrong', () {
-    test(
-      'app_theme.dart cable focusedBorder sur borderStrong, a 3px '
-      '(lot T2, docs/produit/design-tokens.md section 9)',
-      () {
-        final AppPalette palette = AppPalette.claire();
-        final ThemeData theme = AppTheme.pour(
-          InterfaceMode.standard,
-          Brightness.light,
-        );
-        final OutlineInputBorder focus =
-            theme.inputDecorationTheme.focusedBorder! as OutlineInputBorder;
+  group('Focus visible : la bordure de focus est bien primaryText', () {
+    test('app_theme.dart cable focusedBorder sur primaryText, a 2px', () {
+      final AppPalette palette = AppPalette.claire();
+      final ThemeData theme = AppTheme.pour(
+        InterfaceMode.standard,
+        Brightness.light,
+      );
+      final OutlineInputBorder focus =
+          theme.inputDecorationTheme.focusedBorder! as OutlineInputBorder;
 
-        expect(focus.borderSide.color, palette.borderStrong.asBorderSide().color);
-        expect(focus.borderSide.width, 3);
+      expect(focus.borderSide.color, palette.inkAccent.asBorderSide().color);
+      expect(focus.borderSide.width, 2);
 
-        // Un champ au repos et un champ desactive ne doivent jamais se
-        // confondre avec un champ focalise : la largeur les distingue toutes
-        // les deux du focus, et l'un de l'autre.
-        final OutlineInputBorder repos =
-            theme.inputDecorationTheme.enabledBorder! as OutlineInputBorder;
-        final OutlineInputBorder desactive =
-            theme.inputDecorationTheme.disabledBorder! as OutlineInputBorder;
-        expect(focus.borderSide.width, greaterThan(repos.borderSide.width));
-        expect(repos.borderSide.color, isNot(focus.borderSide.color));
-        expect(desactive.borderSide.color, isNot(focus.borderSide.color));
-      },
-    );
+      // Un champ au repos et un champ desactive ne doivent jamais se
+      // confondre avec un champ focalise : la largeur les distingue toutes
+      // les deux du focus, et l'un de l'autre.
+      final OutlineInputBorder repos =
+          theme.inputDecorationTheme.enabledBorder! as OutlineInputBorder;
+      final OutlineInputBorder desactive =
+          theme.inputDecorationTheme.disabledBorder! as OutlineInputBorder;
+      expect(focus.borderSide.width, greaterThan(repos.borderSide.width));
+      expect(repos.borderSide.color, isNot(focus.borderSide.color));
+      expect(desactive.borderSide.color, isNot(focus.borderSide.color));
+    });
   });
 
   group('Echap ferme une surface modale (Bible V2 §13.4)', () {
