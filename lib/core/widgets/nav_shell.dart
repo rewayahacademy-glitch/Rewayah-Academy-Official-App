@@ -402,7 +402,9 @@ class _Cote extends StatelessWidget {
         child: enColonne
             ? SafeArea(child: chrome)
             : DrawerTheme(
-                data: DrawerThemeData(width: AppGabarit.largeurBarreLaterale),
+                data: const DrawerThemeData(
+                  width: AppGabarit.largeurBarreLaterale,
+                ),
                 child: NavigationDrawerTheme(
                   data: NavigationDrawerThemeData(
                     tileHeight: AppMetriques.of(context).cibleTactile,

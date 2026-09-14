@@ -81,9 +81,6 @@ abstract final class AppPage {
   static const double hauteurChoix = 112;
   static const double hauteurReglage = 64;
 
-  /// Largeur maximale d'un formulaire d'acces centre.
-  static const double largeurFormulaire = 640;
-
   /// Largeur de lecture, en caracteres, pour tout texte suivi.
   ///
   /// En caracteres et non en pixels : c'est la mesure qui survit au changement

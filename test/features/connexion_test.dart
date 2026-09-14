@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 
 import '../support/harnais.dart';
@@ -133,11 +134,17 @@ void main() {
         find.byKey(const ValueKey<String>('connexion-courriel')),
         ' fatou@example.test ',
       );
+      await tester.pump();
       await tester.enterText(
         find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
         'essai-local',
       );
-      await tester.tap(find.text(t.connexion.seConnecter));
+      await tester.pump();
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+      );
+      expect(bouton.onPress, isNotNull);
+      bouton.onPress!();
       await tester.pumpAndSettle();
 
       expect(
@@ -164,11 +171,17 @@ void main() {
         find.byKey(const ValueKey<String>('connexion-courriel')),
         'fatou@example.test',
       );
+      await tester.pump();
       await tester.enterText(
         find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
         'essai-local',
       );
-      await tester.tap(find.text(t.connexion.seConnecter));
+      await tester.pump();
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+      );
+      expect(bouton.onPress, isNotNull);
+      bouton.onPress!();
       await tester.pumpAndSettle();
 
       expect(find.text(t.connexion.erreurConnexion), findsOneWidget);
