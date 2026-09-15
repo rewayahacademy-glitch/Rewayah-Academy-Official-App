@@ -8,6 +8,7 @@ import '../../core/auth/service_auth.dart';
 import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -17,10 +18,9 @@ import '../../core/widgets/page_shell.dart';
 
 /// `TUT-00` : la connexion.
 ///
-/// Le formulaire peut proposer un mot de passe pour faciliter les essais des
-/// interfaces, sans changer la source de session ni les droits. Le lien recu
-/// par courriel et Google restent disponibles. C'est aussi le seul ecran du
-/// produit atteignable sans session.
+/// Dans un build `DEMO_AUTH`, une adresse fictive choisit localement le role et
+/// ne contacte pas Supabase. Le lien recu par courriel et Google restent
+/// disponibles. C'est aussi le seul ecran du produit atteignable sans session.
 ///
 /// L'etat « lien envoye » ne se ferme pas tout seul et ne compte pas a rebours :
 /// rien ne se ferme sur minuterie dans ce produit
@@ -48,7 +48,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   String? _erreur;
   String? _erreurConnexion;
 
-  bool get _modeDemo => widget.demoAuth ?? Env.authParMotDePasseActive;
+  bool get _modeDemo => widget.demoAuth ?? ref.read(demoAuthActiveProvider);
 
   @override
   void dispose() {
@@ -111,9 +111,17 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       _erreurConnexion = null;
     });
     try {
-      await ref
-          .read(serviceAuthProvider)
-          .connexionMotDePasse(_courriel.text, _motDePasse.text);
+      if (ref.read(demoAuthActiveProvider)) {
+        final AccesDemo? acces = accesDemoDepuisCourriel(_courriel.text);
+        if (acces == null) {
+          throw const FormatException('role demo inconnu');
+        }
+        ref.read(sessionProvider.notifier).ouvrirDemo(acces);
+      } else {
+        await ref
+            .read(serviceAuthProvider)
+            .connexionMotDePasse(_courriel.text, _motDePasse.text);
+      }
     } on Object {
       if (mounted) {
         setState(() => _erreurConnexion = t.connexion.erreurConnexion);
@@ -322,45 +330,36 @@ class _Saisie extends StatelessWidget {
                 : null,
             enCours: connexionEnCours,
           ),
-          Ecart.vLg,
+        ] else ...<Widget>[
           ActionPrincipale(
             libelle: t.connexion.envoyerLien,
             onPress: peutEnvoyer ? onEnvoyer : null,
+            enCours: envoi,
+          ),
+          Ecart.vXl,
+          Row(
+            children: <Widget>[
+              const Expanded(child: Divider()),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: Text(t.connexion.ou, style: textes.bodySmall),
+              ),
+              const Expanded(child: Divider()),
+            ],
+          ),
+          Ecart.vXl,
+          ActionPrincipale(
+            libelle: t.connexion.avecGoogle,
+            onPress: onGoogle,
+            niveau: NiveauAction.secondaire,
+          ),
+          Ecart.vXxl,
+          ActionPrincipale(
+            libelle: t.eleveConnexion.entrerCode,
+            onPress: onEleve,
             niveau: NiveauAction.tertiaire,
-            enCours: envoi,
           ),
-        ] else
-          ActionPrincipale(
-            libelle: t.connexion.envoyerLien,
-            onPress: peutEnvoyer ? onEnvoyer : null,
-            enCours: envoi,
-          ),
-        Ecart.vXl,
-        Row(
-          children: <Widget>[
-            const Expanded(child: Divider()),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: Text(t.connexion.ou, style: textes.bodySmall),
-            ),
-            const Expanded(child: Divider()),
-          ],
-        ),
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.connexion.avecGoogle,
-          onPress: onGoogle,
-          niveau: NiveauAction.secondaire,
-        ),
-        Ecart.vXxl,
-        // L'entree de l'eleve, discrete : c'est un parcours different, pas une
-        // autre facon de faire le meme. L'enfant arrive avec un code que son
-        // tuteur vient de lui montrer, jamais avec une adresse.
-        ActionPrincipale(
-          libelle: t.eleveConnexion.entrerCode,
-          onPress: onEleve,
-          niveau: NiveauAction.tertiaire,
-        ),
+        ],
       ],
     );
   }

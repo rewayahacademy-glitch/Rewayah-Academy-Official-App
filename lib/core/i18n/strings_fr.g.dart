@@ -482,14 +482,14 @@ class Traductions$connexion$fr {
 	/// fr: 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.'
 	String get intro => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.';
 
-	/// fr: 'Utilisez votre adresse email et votre mot de passe. Aucun code de confirmation ne vous sera demandé.'
-	String get introDemo => 'Utilisez votre adresse email et votre mot de passe. Aucun code de confirmation ne vous sera demandé.';
+	/// fr: 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N'importe quel mot de passe non vide fonctionne, sans Supabase.'
+	String get introDemo => 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N\'importe quel mot de passe non vide fonctionne, sans Supabase.';
 
 	/// fr: 'Accès direct'
 	String get demoTitre => 'Accès direct';
 
-	/// fr: 'Accès temporaire destiné à essayer les interfaces Rewayah.'
-	String get demoDetail => 'Accès temporaire destiné à essayer les interfaces Rewayah.';
+	/// fr: 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.'
+	String get demoDetail => 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.';
 
 	/// fr: 'Votre adresse électronique'
 	String get courriel => 'Votre adresse électronique';
@@ -3106,9 +3106,9 @@ extension on Traductions {
 			'attente.seDeconnecter' => 'Se déconnecter',
 			'connexion.titre' => 'Se connecter',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
-			'connexion.introDemo' => 'Utilisez votre adresse email et votre mot de passe. Aucun code de confirmation ne vous sera demandé.',
+			'connexion.introDemo' => 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N\'importe quel mot de passe non vide fonctionne, sans Supabase.',
 			'connexion.demoTitre' => 'Accès direct',
-			'connexion.demoDetail' => 'Accès temporaire destiné à essayer les interfaces Rewayah.',
+			'connexion.demoDetail' => 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.',
 			'connexion.courriel' => 'Votre adresse électronique',
 			'connexion.motDePasse' => 'Mot de passe',
 			'connexion.seConnecter' => 'Se connecter',

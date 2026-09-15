@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -102,7 +104,14 @@ class ComptePage extends ConsumerWidget {
             title: t.compte.deconnexion,
             description: t.compte.deconnexionDetail,
             icon: AppIcons.sortie,
-            onPress: () => ref.read(serviceAuthProvider).deconnexion(),
+            onPress: () {
+              final bool demoFermee = ref
+                  .read(sessionProvider.notifier)
+                  .fermerDemo();
+              if (!demoFermee) {
+                unawaited(ref.read(serviceAuthProvider).deconnexion());
+              }
+            },
           ),
         ],
       ),

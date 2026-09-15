@@ -142,9 +142,9 @@
   "connexion": {
     "titre": "Se connecter",
     "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
-    "introDemo": "Utilisez votre adresse email et votre mot de passe. Aucun code de confirmation ne vous sera demandé.",
+    "introDemo": "Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N'importe quel mot de passe non vide fonctionne, sans Supabase.",
     "demoTitre": "Accès direct",
-    "demoDetail": "Accès temporaire destiné à essayer les interfaces Rewayah.",
+    "demoDetail": "Accès fictif temporaire destiné à essayer les interfaces Rewayah.",
     "courriel": "Votre adresse électronique",
     "motDePasse": "Mot de passe",
     "seConnecter": "Se connecter",
