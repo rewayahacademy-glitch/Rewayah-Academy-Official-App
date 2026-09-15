@@ -15,6 +15,7 @@ class SettingRow extends StatelessWidget {
     super.key,
     this.description,
     this.value,
+    this.controle,
     this.onPress,
     this.enabled = true,
   });
@@ -22,6 +23,11 @@ class SettingRow extends StatelessWidget {
   final String title;
   final String? description;
   final String? value;
+
+  /// Controle natif place en fin de ligne, sans enveloppe interactive.
+  ///
+  /// Un [Switch] ou un [Radio] conserve ainsi sa gestion de focus et de geste.
+  final Widget? controle;
   final AppIcon icon;
   final VoidCallback? onPress;
   final bool enabled;
@@ -90,6 +96,7 @@ class SettingRow extends StatelessWidget {
                 ),
               ),
             ],
+            if (controle != null) ...<Widget>[Ecart.hSm, controle!],
             if (onPress != null) ...<Widget>[
               Ecart.hSm,
               IconTheme(

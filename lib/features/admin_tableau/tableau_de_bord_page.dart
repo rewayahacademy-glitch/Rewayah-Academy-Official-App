@@ -13,6 +13,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/section_header.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/signal_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/stat_tile.dart';
@@ -199,6 +201,14 @@ class TableauDeBordPage extends ConsumerWidget {
           ],
           Ecart.vMd,
           Text(t.admin.tableau.aTraiterPortee, style: textes.bodySmall),
+          Ecart.vSection,
+          SectionHeader(titre: t.compte.titre),
+          SettingRow(
+            title: t.compte.profil,
+            description: t.compte.profilDetail,
+            icon: AppIcons.profil,
+            onPress: () => context.push(Routes.compte),
+          ),
         ],
       ),
     );

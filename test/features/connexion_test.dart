@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 
 import '../support/harnais.dart';
@@ -117,6 +118,49 @@ void main() {
       );
       expect(champs, hasLength(1));
       expect(champs.single.obscureText, isFalse);
+    });
+
+    testWidgets('le mode mot de passe porte une hierarchie mobile sobre', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        hote(
+          const ConnexionPage(demoAuth: true),
+          surcharges: <Override>[
+            serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final AppCard carte = tester.widget<AppCard>(
+        find.byKey(const ValueKey<String>('connexion-carte')),
+      );
+      expect(carte.dominante, isTrue);
+
+      final ActionPrincipale connexion = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+      );
+      final ActionPrincipale lien = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+      );
+      final ActionPrincipale google = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.avecGoogle),
+      );
+      final ActionPrincipale eleve = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.eleveConnexion.entrerCode),
+      );
+
+      expect(connexion.niveau, NiveauAction.principale);
+      expect(lien.niveau, NiveauAction.tertiaire);
+      expect(google.niveau, NiveauAction.secondaire);
+      expect(eleve.niveau, NiveauAction.tertiaire);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('le mode demonstration accepte email et mot de passe', (

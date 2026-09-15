@@ -69,6 +69,11 @@ List<Destination> destinationsPour({
                 icone: AppIcons.suivi,
                 chemin: Routes.eleveSuivi,
               ),
+              Destination(
+                libelle: t.nav.eleve.compte,
+                icone: AppIcons.profil,
+                chemin: Routes.compte,
+              ),
             ],
     AppRole.guardian => <Destination>[
       Destination(
@@ -107,6 +112,11 @@ List<Destination> destinationsPour({
         libelle: t.nav.enseignant.profil,
         icone: AppIcons.profil,
         chemin: Routes.enseignantProfil,
+      ),
+      Destination(
+        libelle: t.nav.enseignant.compte,
+        icone: AppIcons.reglages,
+        chemin: Routes.compte,
       ),
     ],
     // L'admin tient quatre destinations : les demandes (ADM-06) restent

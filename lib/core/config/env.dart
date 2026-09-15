@@ -24,11 +24,10 @@ abstract final class Env {
   /// Faux par defaut : une version de production ne contient pas la galerie.
   static const bool galerieActive = bool.fromEnvironment('GALERIE');
 
-  /// Active le formulaire email/mot de passe pour les essais locaux.
+  /// Active le formulaire email/mot de passe pour les essais d'interface.
   ///
-  /// Faux par defaut et compile-time : une compilation de production ne peut
-  /// pas afficher ce parcours sans avoir ete explicitement construite avec
-  /// `--dart-define=DEMO_AUTH=true`.
+  /// Faux par defaut et compile-time : chaque environnement choisit
+  /// explicitement s'il expose ce parcours avec `DEMO_AUTH=true`.
   static const bool authParMotDePasseActive = bool.fromEnvironment('DEMO_AUTH');
 
   /// Vrai quand la configuration minimale est presente.

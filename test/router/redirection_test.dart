@@ -41,6 +41,10 @@ void main() {
       Routes.adminAttribution,
       Routes.adminJournal,
       Routes.comptable,
+      Routes.compte,
+      Routes.compteProfil,
+      Routes.compteReglages,
+      Routes.compteProfils,
       Routes.salle,
     ];
 
@@ -147,6 +151,20 @@ void main() {
         ),
         isNull,
       );
+    });
+
+    test('un compte actif atteint le portail commun depuis chaque role', () {
+      for (final AppRole role in AppRole.values) {
+        expect(
+          deciderRedirection(
+            session: _session(role: role),
+            cheminDemande: Routes.compteReglages,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: 'le role ${role.valeurSql} doit atteindre ses reglages',
+        );
+      }
     });
   });
 

@@ -6,6 +6,7 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/regles/service_regles.dart';
@@ -19,6 +20,8 @@ import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/section_header.dart';
+import '../../core/widgets/setting_row.dart';
 
 /// `TUT-05` : les reglages du tuteur, enfant par enfant.
 ///
@@ -51,6 +54,26 @@ class ReglagesEnfantPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(t.tuteur.reglages.intro, style: textes.bodySmall),
+          Ecart.vXl,
+          SectionHeader(titre: t.compte.titre),
+          SettingRow(
+            title: t.compte.profil,
+            description: t.compte.profilDetail,
+            icon: AppIcons.profil,
+            onPress: () => context.push(Routes.compteProfil),
+          ),
+          SettingRow(
+            title: t.compte.profils,
+            description: t.compte.profilsDetail,
+            icon: AppIcons.foyer,
+            onPress: () => context.push(Routes.compteProfils),
+          ),
+          SettingRow(
+            title: t.compte.reglages,
+            description: t.compte.reglagesDetail,
+            icon: AppIcons.reglages,
+            onPress: () => context.push(Routes.compteReglages),
+          ),
           Ecart.vXl,
           if (enfants.hasValue && foyer.isEmpty)
             EmptyState(

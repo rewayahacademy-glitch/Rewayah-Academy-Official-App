@@ -20,6 +20,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'vue_planning.dart';
@@ -161,13 +162,25 @@ class _PlanningControleurPageEtat
       // La collection defile elle-meme : l'en-tete de colonnes reste collee en
       // haut du tableau, et les filtres restent atteignables sans remonter.
       defilante: false,
-      entete: _Entete(
-        vue: vue,
-        filtre: _filtre,
-        enseignantId: _enseignantId,
-        echec: _echec,
-        onEtat: _changerEtat,
-        onEnseignant: _changerEnseignant,
+      entete: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          SettingRow(
+            title: t.compte.titre,
+            description: t.compte.profilDetail,
+            icon: AppIcons.profil,
+            onPress: () => GoRouter.of(context).push(Routes.compte),
+          ),
+          Ecart.vMd,
+          _Entete(
+            vue: vue,
+            filtre: _filtre,
+            enseignantId: _enseignantId,
+            echec: _echec,
+            onEtat: _changerEtat,
+            onEnseignant: _changerEnseignant,
+          ),
+        ],
       ),
       child: Expanded(
         child: _Corps(
@@ -276,8 +289,11 @@ class _Rangee extends StatelessWidget {
   final List<Widget> pilules;
 
   @override
-  Widget build(BuildContext context) =>
-      Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: pilules);
+  Widget build(BuildContext context) => Wrap(
+    spacing: AppSpacing.sm,
+    runSpacing: AppSpacing.sm,
+    children: pilules,
+  );
 }
 
 /// La liste, et ses cinq etats.
@@ -429,7 +445,8 @@ List<ColonneDonnees<LignePlanning>> colonnesPlanning({
     flex: 2,
     // Vide quand la seance n'a pas lieu maintenant : c'est ce vide qui fait
     // disparaitre la cellule de la carte, plutot qu'un bouton inerte.
-    texte: (LignePlanning l) => l.observable ? t.controleur.planning.observer : '',
+    texte: (LignePlanning l) =>
+        l.observable ? t.controleur.planning.observer : '',
     rendu: (BuildContext _, LignePlanning l) => l.observable
         ? ActionPrincipale(
             libelle: t.controleur.planning.observer,

@@ -9,18 +9,18 @@ import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 
 /// `TUT-00` : la connexion.
 ///
-/// En production, un lien recu par courriel ou Google reste le parcours
-/// public. Une compilation locale peut ajouter un mot de passe pour faciliter
-/// les essais d'interfaces, sans changer la source de session ni les droits.
-/// C'est aussi le seul ecran du produit atteignable sans session.
+/// Le formulaire peut proposer un mot de passe pour faciliter les essais des
+/// interfaces, sans changer la source de session ni les droits. Le lien recu
+/// par courriel et Google restent disponibles. C'est aussi le seul ecran du
+/// produit atteignable sans session.
 ///
 /// L'etat « lien envoye » ne se ferme pas tout seul et ne compte pas a rebours :
 /// rien ne se ferme sur minuterie dans ce produit
@@ -31,8 +31,8 @@ class ConnexionPage extends ConsumerStatefulWidget {
 
   /// Permet de tester le parcours sans modifier les defines de compilation.
   ///
-  /// L'appel de production ne renseigne pas cette valeur et suit donc
-  /// [Env.authParMotDePasseActive], faux par defaut.
+  /// L'appel du routeur ne renseigne pas cette valeur et suit donc
+  /// [Env.authParMotDePasseActive].
   final bool? demoAuth;
 
   @override
@@ -128,18 +128,20 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   @override
   Widget build(BuildContext context) {
     return PageShell(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          const MarquePage(),
-          Ecart.vXxxl,
-          Align(
-            alignment: AlignmentDirectional.topCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: AppPage.largeurFormulaire,
-              ),
-              child: AppCard(
+      child: Align(
+        alignment: AlignmentDirectional.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppPage.largeurEtatVide + AppSpacing.respiration,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const _MarqueConnexion(),
+              Ecart.vXxxl,
+              AppCard(
+                key: const ValueKey<String>('connexion-carte'),
+                dominante: true,
                 child: _envoye
                     ? _LienEnvoye(
                         courriel: _courriel.text.trim(),
@@ -168,6 +170,54 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                             GoRouter.of(context).go(Routes.connexionEleve),
                       ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MarqueConnexion extends StatelessWidget {
+  const _MarqueConnexion();
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+
+    return Semantics(
+      header: true,
+      child: Column(
+        children: <Widget>[
+          ExcludeSemantics(
+            child: SizedBox.square(
+              dimension: AppSpacing.respiration,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: palette.washAccent.background,
+                  borderRadius: AppRadius.arrondiFull,
+                  border: Border.fromBorderSide(
+                    palette.borderHairline.asBorderSide(),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'R',
+                    style: palette.inkAccent.applyTo(
+                      textes.headlineMedium ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Ecart.vMd,
+          Text(
+            t.commun.marque,
+            textAlign: TextAlign.center,
+            style: palette.inkAccent.applyTo(
+              textes.displaySmall ?? const TextStyle(),
             ),
           ),
         ],
@@ -218,21 +268,16 @@ class _Saisie extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (modeDemo) ...<Widget>[
-          Semantics(
-            liveRegion: true,
-            child: Text(
-              t.connexion.demoTitre,
-              style: palette.inkWarning.applyTo(
-                textes.labelLarge ?? const TextStyle(),
-              ),
+          Text(
+            t.connexion.demoTitre,
+            style: palette.inkAccent.applyTo(
+              textes.labelLarge ?? const TextStyle(),
             ),
           ),
-          Ecart.vSm,
-          Text(t.connexion.demoDetail, style: textes.bodyMedium),
-          Ecart.vXxl,
+          Ecart.vMd,
         ],
         Text(t.connexion.titre, style: textes.headlineMedium),
-        Ecart.vMd,
+        Ecart.vSm,
         Text(
           modeDemo ? t.connexion.introDemo : t.connexion.intro,
           style: textes.bodyMedium,
@@ -247,9 +292,10 @@ class _Saisie extends StatelessWidget {
           keyboardType: TextInputType.emailAddress,
           autofillHints: const <String>[AutofillHints.email],
           textInputAction: TextInputAction.go,
-          decoration: InputDecoration(
-            labelText: t.connexion.courriel,
-            errorText: erreur,
+          decoration: _decorationChamp(
+            context,
+            libelle: t.connexion.courriel,
+            erreur: erreur,
           ),
         ),
         Ecart.vLg,
@@ -262,9 +308,10 @@ class _Saisie extends StatelessWidget {
             obscureText: true,
             autofillHints: const <String>[AutofillHints.password],
             textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              labelText: t.connexion.motDePasse,
-              errorText: erreurConnexion,
+            decoration: _decorationChamp(
+              context,
+              libelle: t.connexion.motDePasse,
+              erreur: erreurConnexion,
             ),
           ),
           Ecart.vLg,
@@ -305,16 +352,44 @@ class _Saisie extends StatelessWidget {
           onPress: onGoogle,
           niveau: NiveauAction.secondaire,
         ),
-        Ecart.vXxxl,
+        Ecart.vXxl,
         // L'entree de l'eleve, discrete : c'est un parcours different, pas une
         // autre facon de faire le meme. L'enfant arrive avec un code que son
         // tuteur vient de lui montrer, jamais avec une adresse.
         ActionPrincipale(
           libelle: t.eleveConnexion.entrerCode,
           onPress: onEleve,
-          niveau: NiveauAction.secondaire,
+          niveau: NiveauAction.tertiaire,
         ),
       ],
+    );
+  }
+
+  InputDecoration _decorationChamp(
+    BuildContext context, {
+    required String libelle,
+    String? erreur,
+  }) {
+    final AppPalette palette = AppPalette.of(context);
+    return InputDecoration(
+      labelText: libelle,
+      errorText: erreur,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: AppRadius.arrondiMd,
+        borderSide: palette.borderHairline.asBorderSide(),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: AppRadius.arrondiMd,
+        borderSide: palette.inkAccent.asBorderSide(width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: AppRadius.arrondiMd,
+        borderSide: palette.inkAlert.asBorderSide(width: 2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: AppRadius.arrondiMd,
+        borderSide: palette.inkAlert.asBorderSide(width: 2),
+      ),
     );
   }
 }

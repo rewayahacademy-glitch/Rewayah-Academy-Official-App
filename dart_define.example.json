@@ -5,7 +5,7 @@
   "SUPABASE_ANON_KEY": "",
 
   "_galerie": "Mettez GALERIE a true pour compiler la galerie de composants sur /_galerie. Une version de production la laisse a false.",
-  "_demo_auth": "Activez DEMO_AUTH uniquement pour une compilation locale d'essai; laissez-le a false en production.",
+  "_demo_auth": "Activez DEMO_AUTH pour proposer l'acces temporaire par email et mot de passe, sans OTP.",
   "GALERIE": false,
   "DEMO_AUTH": false
 }
