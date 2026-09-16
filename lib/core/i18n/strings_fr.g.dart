@@ -1176,6 +1176,7 @@ class Traductions$eleve$fr {
 	// Translations
 	late final Traductions$eleve$accueil$fr accueil = Traductions$eleve$accueil$fr.internal(_root);
 	late final Traductions$eleve$coran$fr coran = Traductions$eleve$coran$fr.internal(_root);
+	late final Traductions$eleve$suivi$fr suivi = Traductions$eleve$suivi$fr.internal(_root);
 }
 
 // Path: tuteur
@@ -1198,6 +1199,7 @@ class Traductions$enseignant$fr {
 
 	// Translations
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
+	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
 }
 
 // Path: controleur
@@ -1999,6 +2001,42 @@ class Traductions$eleve$coran$fr {
 	String get edition => 'Mushaf de Médine, riwaya Hafs';
 }
 
+// Path: eleve.suivi
+class Traductions$eleve$suivi$fr {
+	Traductions$eleve$suivi$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mon suivi'
+	String get titre => 'Mon suivi';
+
+	/// fr: 'Sourates lues et révisées'
+	String get souratesApprises => 'Sourates lues et révisées';
+
+	/// fr: 'Historique des cours'
+	String get derniersCours => 'Historique des cours';
+
+	/// fr: 'Conseils de tajwid & prononciation'
+	String get remarquesTajwid => 'Conseils de tajwid & prononciation';
+
+	/// fr: 'Progression globale'
+	String get progressionGlobale => 'Progression globale';
+
+	/// fr: 'Objectifs hebdomadaires'
+	String get objectifs => 'Objectifs hebdomadaires';
+
+	/// fr: '{nombre} pages lues'
+	String pagesLues({required Object nombre}) => '${nombre} pages lues';
+
+	/// fr: 'Aucun cours effectué pour le moment'
+	String get vide => 'Aucun cours effectué pour le moment';
+
+	/// fr: 'Vos cours validés et les conseils de votre enseignant s'afficheront ici.'
+	String get videDetail => 'Vos cours validés et les conseils de votre enseignant s\'afficheront ici.';
+}
+
 // Path: tuteur.accueil
 class Traductions$tuteur$accueil$fr {
 	Traductions$tuteur$accueil$fr.internal(this._root);
@@ -2378,6 +2416,39 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: 'La journée n'a pas pu être lue en entier. Réessayez dans un instant.'
 	String get erreur => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.';
+}
+
+// Path: enseignant.profil
+class Traductions$enseignant$profil$fr {
+	Traductions$enseignant$profil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre profil enseignant'
+	String get titre => 'Votre profil enseignant';
+
+	/// fr: 'Charge pédagogique'
+	String get chargePedagogique => 'Charge pédagogique';
+
+	/// fr: '{nombre} élève(s) suivi(s)'
+	String elevesActifs({required Object nombre}) => '${nombre} élève(s) suivi(s)';
+
+	/// fr: '{nombre} créneaux d'enseignement posés'
+	String heuresDisponibles({required Object nombre}) => '${nombre} créneaux d\'enseignement posés';
+
+	/// fr: 'Statut de votre compte'
+	String get statutCompte => 'Statut de votre compte';
+
+	/// fr: 'Enseignant certifié Rewayah Academy'
+	String get compteValide => 'Enseignant certifié Rewayah Academy';
+
+	/// fr: 'Gérer mes disponibilités'
+	String get reglagesHeures => 'Gérer mes disponibilités';
+
+	/// fr: 'Mes réglages de prière'
+	String get reglagesPriere => 'Mes réglages de prière';
 }
 
 // Path: controleur.planning
@@ -2991,13 +3062,22 @@ extension on Traductions {
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
+			'eleve.suivi.titre' => 'Mon suivi',
+			'eleve.suivi.souratesApprises' => 'Sourates lues et révisées',
+			'eleve.suivi.derniersCours' => 'Historique des cours',
+			'eleve.suivi.remarquesTajwid' => 'Conseils de tajwid & prononciation',
+			'eleve.suivi.progressionGlobale' => 'Progression globale',
+			_ => null,
+		} ?? switch (path) {
+			'eleve.suivi.objectifs' => 'Objectifs hebdomadaires',
+			'eleve.suivi.pagesLues' => ({required Object nombre}) => '${nombre} pages lues',
+			'eleve.suivi.vide' => 'Aucun cours effectué pour le moment',
+			'eleve.suivi.videDetail' => 'Vos cours validés et les conseils de votre enseignant s\'afficheront ici.',
 			'tuteur.accueil.titre' => 'Votre foyer',
 			'tuteur.accueil.assister' => 'Assister',
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.depuisInstant' => 'Vient de commencer',
 			'tuteur.accueil.aujourdhui' => ({required Object heure, required Object prenom}) => 'Aujourd\'hui à ${heure}, avec ${prenom}',
 			'tuteur.accueil.unAutreJour' => ({required Object jour, required Object heure, required Object prenom}) => '${jour} à ${heure}, avec ${prenom}',
@@ -3108,6 +3188,14 @@ extension on Traductions {
 			'enseignant.journee.aucunEleveEnAttente' => 'Aucun élève en attente sur vos heures',
 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
+			'enseignant.profil.titre' => 'Votre profil enseignant',
+			'enseignant.profil.chargePedagogique' => 'Charge pédagogique',
+			'enseignant.profil.elevesActifs' => ({required Object nombre}) => '${nombre} élève(s) suivi(s)',
+			'enseignant.profil.heuresDisponibles' => ({required Object nombre}) => '${nombre} créneaux d\'enseignement posés',
+			'enseignant.profil.statutCompte' => 'Statut de votre compte',
+			'enseignant.profil.compteValide' => 'Enseignant certifié Rewayah Academy',
+			'enseignant.profil.reglagesHeures' => 'Gérer mes disponibilités',
+			'enseignant.profil.reglagesPriere' => 'Mes réglages de prière',
 			'controleur.planning.titre' => 'Planning global',
 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
 			'controleur.planning.tousEtats' => 'Tout',

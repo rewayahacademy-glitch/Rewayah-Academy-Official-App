@@ -26,6 +26,7 @@ import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
@@ -197,20 +198,31 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
     // `docs/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
     // L'ecran ne rend plus que ses deux blocs.
+    final bool enChargement = seances.isLoading && seances.value == null;
+
     return PageShell(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _BlocPrincipal(
-            etat: etat,
-            prochain: prochain,
-            interruptions: interruptions,
-            maintenant: _maintenant,
-          ),
-          Ecart.vXl,
-          const _BlocCoran(),
-        ],
-      ),
+      child: enChargement
+          ? const Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Skeleton.tuileBento(hauteur: 160),
+                Ecart.vXl,
+                Skeleton.tuileBento(hauteur: 80),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _BlocPrincipal(
+                  etat: etat,
+                  prochain: prochain,
+                  interruptions: interruptions,
+                  maintenant: _maintenant,
+                ),
+                Ecart.vXl,
+                const _BlocCoran(),
+              ],
+            ),
     );
   }
 }

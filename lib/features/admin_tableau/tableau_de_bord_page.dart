@@ -14,6 +14,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/signal_row.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/stat_tile.dart';
 
 /// Une ligne de la liste « a traiter en premier ».
@@ -149,7 +150,7 @@ class TableauDeBordPage extends ConsumerWidget {
               ),
             )
           else
-            Text(t.commun.chargement, style: textes.bodySmall),
+            const Skeleton.liste(lignes: 3),
           Ecart.vXxl,
 
           // 2. CE QUI SE TRAITE D'UN TAP.
@@ -252,12 +253,13 @@ class _Compteurs extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        // Deux colonnes a 390 px de large, la mesure de reference du projet.
-        // La largeur derive de l'echelle, elle n'est pas posee telle quelle.
-        final double colonne = (contraintes.maxWidth - AppSpacing.md) / 2;
+        final int nbColonnes = contraintes.maxWidth > 700 ? 3 : 2;
+        const double gap = AppSpacing.md;
+        final double colonne =
+            (contraintes.maxWidth - (nbColonnes - 1) * gap) / nbColonnes;
         return Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
+          spacing: gap,
+          runSpacing: gap,
           children: <Widget>[
             for (final StatTile tuile in tuiles)
               SizedBox(width: colonne, child: tuile),

@@ -21,6 +21,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 
@@ -157,12 +158,23 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
         .toSet()
         .length;
 
+    final bool enChargement = seances.isLoading && seances.value == null;
+
     return PageShell(
       titre: t.enseignant.journee.titre,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _BlocDominant(seance: dominant, maintenant: _maintenant),
+      child: enChargement
+          ? const Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Skeleton.tuileBento(hauteur: 160),
+                Ecart.vXl,
+                Skeleton.ligneTimeline(lignes: 3),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _BlocDominant(seance: dominant, maintenant: _maintenant),
           if (seances.hasError) ...<Widget>[
             Ecart.vSm,
             Text(

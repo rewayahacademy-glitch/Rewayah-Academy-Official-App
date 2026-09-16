@@ -251,22 +251,28 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
         children: <Widget>[
           const MarquePage(),
           Ecart.vXxxl,
-          AppCard(
-            child: switch (_moment) {
-              _Moment.chargement => Center(child: Text(t.commun.chargement)),
-              _Moment.saisieCode => _saisieCode(),
-              _Moment.choixProfil => _choixProfil(),
-              _Moment.creationCode => _pave(
-                titre: _premierEssai == null
-                    ? t.eleveConnexion.nouveauCode
-                    : t.eleveConnexion.nouveauCodeConfirmer,
-                onComplet: (String code) => unawaited(_creerCode(code)),
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: AppCard(
+                child: switch (_moment) {
+                  _Moment.chargement => Center(child: Text(t.commun.chargement)),
+                  _Moment.saisieCode => _saisieCode(),
+                  _Moment.choixProfil => _choixProfil(),
+                  _Moment.creationCode => _pave(
+                    titre: _premierEssai == null
+                        ? t.eleveConnexion.nouveauCode
+                        : t.eleveConnexion.nouveauCodeConfirmer,
+                    onComplet: (String code) => unawaited(_creerCode(code)),
+                  ),
+                  _Moment.saisieCodePersonnel => _pave(
+                    titre: t.pin.titre,
+                    onComplet: (String code) => unawaited(_verifierCode(code)),
+                  ),
+                },
               ),
-              _Moment.saisieCodePersonnel => _pave(
-                titre: t.pin.titre,
-                onComplet: (String code) => unawaited(_verifierCode(code)),
-              ),
-            },
+            ),
           ),
         ],
       ),

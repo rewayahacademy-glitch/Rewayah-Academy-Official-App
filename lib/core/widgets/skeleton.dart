@@ -49,6 +49,27 @@ class Skeleton extends StatefulWidget {
       largeur = null,
       fractionDerniere = 1;
 
+  /// Cree la forme d'une carte d'eleve (ChildCard / Bento).
+  const Skeleton.carteEleve({this.lignes = 2, super.key, this.differe = true})
+    : hauteur = 112.0,
+      largeur = null,
+      fractionDerniere = 1;
+
+  /// Cree la forme d'une tuile Bento de taille personnalisee.
+  const Skeleton.tuileBento({
+    this.hauteur = 120.0,
+    this.largeur,
+    super.key,
+    this.differe = true,
+  }) : lignes = 1,
+       fractionDerniere = 1;
+
+  /// Cree la forme d'une ligne de calendrier / timeline.
+  const Skeleton.ligneTimeline({this.lignes = 3, super.key, this.differe = true})
+    : hauteur = AppSpacing.xxl,
+      largeur = null,
+      fractionDerniere = 1;
+
   /// La hauteur d'un bloc.
   final double hauteur;
 

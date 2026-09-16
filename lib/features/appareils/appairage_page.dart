@@ -97,55 +97,61 @@ class _AppairagePageState extends ConsumerState<AppairagePage> {
         onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
         niveau: NiveauAction.secondaire,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(t.appareils.codeInstruction, style: textes.bodyMedium),
-          Ecart.vXxl,
-          if (code != null && !expire) ...<Widget>[
-            _Qr(code: code.code, paire: palette.surfaceCanvas),
-            Ecart.vXl,
-            _CodeEnClair(code: code.code),
-            Ecart.vLg,
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                t.appareils.expireDans(temps: _mmss(restant)),
-                textAlign: TextAlign.center,
-                style: textes.bodyMedium,
-              ),
-            ),
-          ] else if (expire) ...<Widget>[
-            Text(
-              t.appareils.expire,
-              textAlign: TextAlign.center,
-              style: palette.inkAlert.applyTo(
-                textes.titleMedium ?? const TextStyle(),
-              ),
-            ),
-            Ecart.vXl,
-            ActionPrincipale(
-              libelle: t.appareils.regenerer,
-              onPress: () => unawaited(_demander()),
-              enCours: _enCours,
-            ),
-          ] else if (_erreur != null) ...<Widget>[
-            Text(
-              _erreur!,
-              textAlign: TextAlign.center,
-              style: palette.inkAlert.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-            Ecart.vXl,
-            ActionPrincipale(
-              libelle: t.commun.reessayer,
-              onPress: () => unawaited(_demander()),
-              enCours: _enCours,
-            ),
-          ] else
-            Center(child: Text(t.commun.chargement)),
-        ],
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(t.appareils.codeInstruction, style: textes.bodyMedium),
+              Ecart.vXxl,
+              if (code != null && !expire) ...<Widget>[
+                _Qr(code: code.code, paire: palette.surfaceCanvas),
+                Ecart.vXl,
+                _CodeEnClair(code: code.code),
+                Ecart.vLg,
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    t.appareils.expireDans(temps: _mmss(restant)),
+                    textAlign: TextAlign.center,
+                    style: textes.bodyMedium,
+                  ),
+                ),
+              ] else if (expire) ...<Widget>[
+                Text(
+                  t.appareils.expire,
+                  textAlign: TextAlign.center,
+                  style: palette.inkAlert.applyTo(
+                    textes.titleMedium ?? const TextStyle(),
+                  ),
+                ),
+                Ecart.vXl,
+                ActionPrincipale(
+                  libelle: t.appareils.regenerer,
+                  onPress: () => unawaited(_demander()),
+                  enCours: _enCours,
+                ),
+              ] else if (_erreur != null) ...<Widget>[
+                Text(
+                  _erreur!,
+                  textAlign: TextAlign.center,
+                  style: palette.inkAlert.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+                Ecart.vXl,
+                ActionPrincipale(
+                  libelle: t.commun.reessayer,
+                  onPress: () => unawaited(_demander()),
+                  enCours: _enCours,
+                ),
+              ] else
+                Center(child: Text(t.commun.chargement)),
+            ],
+          ),
+        ),
       ),
     );
   }

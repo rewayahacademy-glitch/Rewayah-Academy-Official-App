@@ -609,6 +609,17 @@
       "source": "Texte du Coran : Tanzil Project",
       "sourceLien": "tanzil.net",
       "edition": "Mushaf de Médine, riwaya Hafs"
+    },
+    "suivi": {
+      "titre": "Mon suivi",
+      "souratesApprises": "Sourates lues et révisées",
+      "derniersCours": "Historique des cours",
+      "remarquesTajwid": "Conseils de tajwid & prononciation",
+      "progressionGlobale": "Progression globale",
+      "objectifs": "Objectifs hebdomadaires",
+      "pagesLues": "{nombre} pages lues",
+      "vide": "Aucun cours effectué pour le moment",
+      "videDetail": "Vos cours validés et les conseils de votre enseignant s'afficheront ici."
     }
   },
 
@@ -739,6 +750,16 @@
       "aucunEleveEnAttente": "Aucun élève en attente sur vos heures",
       "voirCreneaux": "Voir mes créneaux",
       "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant."
+    },
+    "profil": {
+      "titre": "Votre profil enseignant",
+      "chargePedagogique": "Charge pédagogique",
+      "elevesActifs": "{nombre} élève(s) suivi(s)",
+      "heuresDisponibles": "{nombre} créneaux d'enseignement posés",
+      "statutCompte": "Statut de votre compte",
+      "compteValide": "Enseignant certifié Rewayah Academy",
+      "reglagesHeures": "Gérer mes disponibilités",
+      "reglagesPriere": "Mes réglages de prière"
     }
   },
 

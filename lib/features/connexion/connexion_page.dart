@@ -88,23 +88,29 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         children: <Widget>[
           const MarquePage(),
           Ecart.vXxxl,
-          AppCard(
-            child: _envoye
-                ? _LienEnvoye(
-                    courriel: _courriel.text.trim(),
-                    onChangerAdresse: () => setState(() => _envoye = false),
-                  )
-                : _Saisie(
-                    controleur: _courriel,
-                    erreur: _erreur,
-                    envoi: _envoi,
-                    peutEnvoyer: _adressePlausible,
-                    onChanged: () => setState(() {}),
-                    onEnvoyer: () => unawaited(_envoyerLien()),
-                    onGoogle: () => unawaited(_google()),
-                    onEleve: () =>
-                        GoRouter.of(context).go(Routes.connexionEleve),
-                  ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: AppCard(
+                child: _envoye
+                    ? _LienEnvoye(
+                        courriel: _courriel.text.trim(),
+                        onChangerAdresse: () => setState(() => _envoye = false),
+                      )
+                    : _Saisie(
+                        controleur: _courriel,
+                        erreur: _erreur,
+                        envoi: _envoi,
+                        peutEnvoyer: _adressePlausible,
+                        onChanged: () => setState(() {}),
+                        onEnvoyer: () => unawaited(_envoyerLien()),
+                        onGoogle: () => unawaited(_google()),
+                        onEleve: () =>
+                            GoRouter.of(context).go(Routes.connexionEleve),
+                      ),
+              ),
+            ),
           ),
         ],
       ),
