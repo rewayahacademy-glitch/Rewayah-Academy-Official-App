@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'app_color_pair.dart';
+import 'app_palette.dart';
 
 /// Les quatre niveaux d'elevation, pas un de plus.
 ///
@@ -38,15 +39,15 @@ abstract final class AppElevation {
   /// detachait pas du fond sur un ecran en plein jour, cause n3 mesuree du
   /// rejet du rendu deploye le 11 septembre 2026.
   static List<BoxShadow> niveau1(AppShadowColor ombre) => <BoxShadow>[
-    ombre.asBoxShadow(y: 1, flou: 2, opacite: 0.10),
-    ombre.asBoxShadow(y: 2, flou: 6, opacite: 0.09),
+    ombre.asBoxShadow(y: 2, flou: 8, opacite: 0.04),
+    ombre.asBoxShadow(y: 8, flou: 24, opacite: 0.06, etalement: -4),
   ];
 
   /// Ce qui flotte au dessus du contenu : menu, popover, barre collee, carte
   /// pressee. Opacites remontees au lot T2 (0.05/0.08 -> 0.08/0.14).
   static List<BoxShadow> niveau2(AppShadowColor ombre) => <BoxShadow>[
-    ombre.asBoxShadow(y: 2, flou: 4, opacite: 0.08),
-    ombre.asBoxShadow(y: 8, flou: 20, opacite: 0.14),
+    ombre.asBoxShadow(y: 4, flou: 12, opacite: 0.08),
+    ombre.asBoxShadow(y: 16, flou: 40, opacite: 0.10, etalement: -8),
   ];
 
   /// Ce qui recouvre : feuille de bas d'ecran, boite de dialogue. Opacite
@@ -54,6 +55,11 @@ abstract final class AppElevation {
   static List<BoxShadow> niveau3(AppShadowColor ombre) => <BoxShadow>[
     ombre.asBoxShadow(y: 12, flou: 32, opacite: 0.22),
   ];
+
+  /// Dialogues and menus use a dark raised surface rather than an artificial
+  /// shadow in dark mode.
+  static List<BoxShadow> dialogue(AppPalette palette) =>
+      palette.estSombre ? niveau0 : niveau2(palette.ombreDialogue);
 
   /// La decoration complete d'une surface elevee : fond, arrondi, filet et
   /// ombre en une fois.
@@ -76,7 +82,7 @@ abstract final class AppElevation {
       color: surface.background,
       borderRadius: arrondi,
       border: Border.fromBorderSide(filet.asBorderSide()),
-      boxShadow: ombres ?? niveau1(ombre),
+      boxShadow: ombres ?? niveau0,
     );
   }
 }

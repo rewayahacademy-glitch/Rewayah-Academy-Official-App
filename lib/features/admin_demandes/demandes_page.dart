@@ -17,6 +17,7 @@ import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 
 /// `ADM-06` : les demandes des quatre parties, et les regles d'un eleve.
 ///
@@ -133,7 +134,7 @@ class _DemandesPageEtat extends ConsumerState<DemandesPage> {
           libelleAction: t.commun.reessayer,
           onAction: () => ref.invalidate(demandesProvider),
         ),
-        _ => Center(child: Text(t.commun.chargement)),
+        _ => const Skeleton.liste(lignes: 4),
       },
     );
   }

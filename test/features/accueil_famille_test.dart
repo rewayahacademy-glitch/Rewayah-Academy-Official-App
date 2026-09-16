@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -13,6 +15,7 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/child_card.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 
@@ -161,6 +164,33 @@ BoxDecoration _decoCarte(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets('la premiere lecture montre un squelette', (
+    WidgetTester tester,
+  ) async {
+    final Completer<List<EleveDuFoyer>> reponse =
+        Completer<List<EleveDuFoyer>>();
+
+    await tester.pumpWidget(
+      hote(
+        _ecran(),
+        surcharges: <Override>[
+          ..._surcharges(
+            appairage: FauxServiceAppairage(),
+            planning: FauxServicePlanning(),
+          ),
+          elevesDuFoyerProvider.overrideWith((_) => reponse.future),
+        ],
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(Skeleton), findsOneWidget);
+    expect(find.text(t.commun.chargement), findsNothing);
+
+    reponse.complete(const <EleveDuFoyer>[]);
+    await tester.pumpAndSettle();
+  });
+
   final AppPalette palette = AppPalette.claire();
 
   group('TUT-01 : les cinq phases, une carte par enfant', () {

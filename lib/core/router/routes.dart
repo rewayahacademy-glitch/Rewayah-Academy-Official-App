@@ -145,6 +145,30 @@ abstract final class Routes {
   /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.
   static const String galerie = '/_galerie';
 
+  /// Galerie des surfaces Compte, compilee seulement en developpement.
+  static const String galerieCompte = '/_galerie/compte';
+
+  // --- Compte -------------------------------------------------------------
+
+  /// Portail commun aux comptes actifs, hors des arbres metier.
+  static const String compte = '/compte';
+
+  /// Profil de la personne connectee.
+  static const String compteProfil = '/compte/profil';
+
+  /// Preferences locales de l'application.
+  static const String compteReglages = '/compte/reglages';
+
+  /// Profils d'enfants du foyer.
+  static const String compteProfils = '/compte/profils';
+
+  /// Detail d'un profil enfant.
+  static const String compteProfilEnfant = '/compte/profils';
+
+  /// Chemin d'un profil enfant.
+  static String compteProfilEnfantPour(String profilId) =>
+      '$compteProfilEnfant/$profilId';
+
   /// Routes atteignables sans session resolue.
   static const Set<String> publiques = <String>{connexion, galerie};
 

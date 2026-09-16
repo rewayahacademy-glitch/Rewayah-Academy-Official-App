@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/_dev/galerie/compte_galerie.dart';
 import '../../features/_dev/galerie/galerie_page.dart';
 import '../../features/accueil_eleve/accueil_eleve_page.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
@@ -13,6 +14,7 @@ import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/compte/compte_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/controleur/planning_page.dart';
 import '../../features/coran/coran_page.dart';
@@ -106,6 +108,32 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const DepotPiecePage(),
       ),
 
+      // Compte. Cet espace est partage par les roles actifs, mais ses
+      // capacites restent celles projetees par la session et le serveur.
+      GoRoute(
+        path: Routes.compte,
+        builder: (BuildContext _, GoRouterState _) => const ComptePage(),
+      ),
+      GoRoute(
+        path: Routes.compteProfil,
+        builder: (BuildContext _, GoRouterState _) =>
+            const ProfilPersonnelPage(),
+      ),
+      GoRoute(
+        path: Routes.compteReglages,
+        builder: (BuildContext _, GoRouterState _) =>
+            const ReglagesComptePage(),
+      ),
+      GoRoute(
+        path: Routes.compteProfils,
+        builder: (BuildContext _, GoRouterState _) => const ProfilsComptePage(),
+      ),
+      GoRoute(
+        path: '${Routes.compteProfilEnfant}/:profilId',
+        builder: (BuildContext _, GoRouterState etat) =>
+            ProfilEnfantPage(profilId: etat.pathParameters['profilId'] ?? ''),
+      ),
+
       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce
       // que chaque ecran AFFICHE qui change, jamais la structure (ADR-009). La
       // barre a trois destinations en mode standard, zero en mode enfant :
@@ -128,8 +156,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.eleveCoran,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const CoranPage(),
+                builder: (BuildContext _, GoRouterState _) => const CoranPage(),
               ),
             ],
           ),
@@ -302,8 +329,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
       GoRoute(
         path: Routes.comptable,
-        builder: (BuildContext _, GoRouterState _) =>
-            const EcranAConstruire(destination: 'Espace comptable'),
+        builder: (BuildContext _, GoRouterState _) => const ComptePage(),
       ),
 
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).
@@ -327,6 +353,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         GoRoute(
           path: Routes.galerie,
           builder: (BuildContext _, GoRouterState _) => const GaleriePage(),
+        ),
+      if (Env.galerieActive)
+        GoRoute(
+          path: Routes.galerieCompte,
+          builder: (BuildContext _, GoRouterState _) =>
+              const CompteGaleriePage(),
         ),
     ],
   );

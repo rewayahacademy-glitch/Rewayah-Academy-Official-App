@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/i18n/strings.g.dart';
+import 'core/preferences/preferences_locales.dart';
 import 'core/router/app_router.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
@@ -29,13 +30,16 @@ class RewayahApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final GoRouter routeur = ref.watch(routeurProvider);
     final SessionState session = ref.watch(sessionProvider);
+    final PreferencesLocales preferences = ref.watch(
+      preferencesLocalesProvider,
+    );
 
     return MaterialApp.router(
       title: 'Rewayah Academy',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.pour(session.interfaceMode, Brightness.light),
       darkTheme: AppTheme.pour(session.interfaceMode, Brightness.dark),
-      themeMode: ThemeMode.system,
+      themeMode: preferences.theme.mode,
       routerConfig: routeur,
       locale: TranslationProvider.of(context).flutterLocale,
       supportedLocales: AppLocaleUtils.supportedLocales,

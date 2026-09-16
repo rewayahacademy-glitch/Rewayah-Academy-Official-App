@@ -8,12 +8,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// Une interface plutot qu'un appel direct a Supabase, pour la meme raison que
 /// [SourceSession] : les ecrans et leurs tests doivent tourner sans reseau.
 ///
-/// **Aucun mot de passe.** Ni ici, ni ailleurs dans le produit : un lien recu
-/// par courriel, ou Google. Un mot de passe qu'on ne demande jamais est un mot
-/// de passe qu'on ne peut ni perdre, ni voler, ni reutiliser ailleurs.
+/// En production, le parcours reste limite au lien a usage unique et a Google.
+/// Une compilation locale peut activer le parcours courriel/mot de passe via
+/// `DEMO_AUTH`; la validation du compte et des droits reste cote Supabase.
 abstract interface class ServiceAuth {
   /// Envoie un lien de connexion a usage unique.
   Future<void> envoyerLienCourriel(String courriel);
+
+  /// Ouvre une session avec un courriel et un mot de passe.
+  ///
+  /// Ce chemin est reserve a la demonstration locale et reste masque quand
+  /// `DEMO_AUTH` n'est pas active. La validation du compte et des droits reste
+  /// entierement cote Supabase.
+  Future<void> connexionMotDePasse(String courriel, String motDePasse);
 
   /// Ouvre le parcours Google.
   Future<void> connexionGoogle();
@@ -32,6 +39,14 @@ class ServiceAuthSupabase implements ServiceAuth {
   @override
   Future<void> envoyerLienCourriel(String courriel) =>
       _client.auth.signInWithOtp(email: courriel.trim());
+
+  @override
+  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+    await _client.auth.signInWithPassword(
+      email: courriel.trim(),
+      password: motDePasse,
+    );
+  }
 
   @override
   Future<void> connexionGoogle() =>

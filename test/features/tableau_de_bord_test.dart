@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +10,7 @@ import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 
 import '../support/harnais.dart';
@@ -98,6 +101,29 @@ Future<void> _allerA(WidgetTester tester, Finder cible) async {
 }
 
 void main() {
+  testWidgets('la premiere lecture des compteurs montre un squelette', (
+    WidgetTester tester,
+  ) async {
+    final Completer<IndicateursAdmin> reponse = Completer<IndicateursAdmin>();
+
+    await tester.pumpWidget(
+      hote(
+        TableauDeBordPage(horloge: () => _maintenant),
+        surcharges: <Override>[
+          serviceAdminProvider.overrideWithValue(FauxServiceAdmin()),
+          indicateursProvider.overrideWith((_) => reponse.future),
+        ],
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(Skeleton), findsOneWidget);
+    expect(find.text(t.commun.chargement), findsNothing);
+
+    reponse.complete(_indicateurs());
+    await tester.pumpAndSettle();
+  });
+
   group('Scenario 11 : les compteurs affichent zero sans disparaitre', () {
     testWidgets('les six compteurs sont rendus, tous a zero', (
       WidgetTester tester,

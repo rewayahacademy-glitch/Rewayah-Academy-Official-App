@@ -19,6 +19,7 @@ void main() {
           Routes.eleve,
           Routes.eleveCoran,
           Routes.eleveSuivi,
+          Routes.compte,
         ],
         AppRole.guardian: <String>[
           Routes.tuteurAccueil,
@@ -30,6 +31,7 @@ void main() {
           Routes.enseignantJournee,
           Routes.enseignantCreneaux,
           Routes.enseignantProfil,
+          Routes.compte,
         ],
         AppRole.admin: <String>[
           Routes.adminTableauDeBord,

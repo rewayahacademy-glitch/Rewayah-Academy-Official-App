@@ -7,168 +7,193 @@ import 'app_radius.dart';
 import 'app_spacing.dart';
 import 'app_typography.dart';
 
-/// Construction du theme de l'application.
-///
-/// Le mode enfant et le mode standard partagent la meme palette et la meme
-/// arborescence : seule l'echelle typographique et la cible tactile changent
-/// (`docs/architecture/etape-2-core-flutter.md` section 1).
-///
-/// Le theme pose les trois surfaces de la refonte : le fond de page est le
-/// creme (ou son equivalent sombre), les barres et les cartes sont sur la
-/// surface elevee, les champs sur la surface enfoncee. C'est ce qui remplace
-/// l'ancien fond unique, ou la page, la carte et le champ partageaient la
-/// meme couleur et ou aucune hierarchie n'etait donc possible
-/// (`docs/design/01-systeme-visuel.md` section 2).
-///
-/// Depuis le lot T3 (Bible V2 section 7.3, ADR-019, ecart 23 de
-/// `decisions.md`), [pour] prend aussi la [Brightness] : c'est le seul
-/// endroit du depot qui choisit entre [AppPalette.claire] et
-/// [AppPalette.sombre]. Aucun composant en aval ne connait directement l'une
-/// ou l'autre palette, conformement a l'interdiction de la Bible ; il ne
-/// connait que des roles semantiques exposes par [AppPalette].
+/// Existing application adapter. No service/provider is consulted by the theme.
 abstract final class AppTheme {
-  /// Le theme correspondant a un mode d'interface et une luminosite.
   static ThemeData pour(InterfaceMode mode, Brightness brightness) {
-    final AppPalette palette = brightness == Brightness.dark
+    final palette = brightness == Brightness.dark
         ? AppPalette.sombre()
         : AppPalette.claire();
-    final TextTheme echelle = mode == InterfaceMode.enfant
-        ? AppTypography.enfant
-        : AppTypography.standard;
-
-    final TextTheme texte = echelle.apply(
-      bodyColor: palette.surfaceCanvas.onBackground,
-      displayColor: palette.surfaceCanvas.onBackground,
+    final metriques = AppMetriques.pour(mode);
+    final texte =
+        (metriques.estEnfant ? AppTypography.enfant : AppTypography.standard)
+            .apply(
+              bodyColor: palette.surfaceCanvas.onBackground,
+              displayColor: palette.surfaceCanvas.onBackground,
+            );
+    final scheme = _schemaDepuisPalette(palette, brightness);
+    const forme = RoundedRectangleBorder(borderRadius: AppRadius.arrondiMd);
+    final bouton = ButtonStyle(
+      minimumSize: WidgetStatePropertyAll(
+        Size(
+          0,
+          metriques.estEnfant ? AppTouchTarget.enfant : AppPage.hauteurBouton,
+        ),
+      ),
+      padding: const WidgetStatePropertyAll(
+        EdgeInsets.symmetric(
+          horizontal: AppSpacing.xl,
+          vertical: AppSpacing.md,
+        ),
+      ),
+      shape: const WidgetStatePropertyAll(forme),
+      textStyle: WidgetStatePropertyAll(texte.labelLarge),
+      elevation: const WidgetStatePropertyAll(0),
+      overlayColor: WidgetStateProperty.resolveWith((etats) {
+        if (etats.contains(WidgetState.pressed)) {
+          return palette.calqueInteraction(presse: true);
+        }
+        if (etats.contains(WidgetState.hovered) ||
+            etats.contains(WidgetState.focused)) {
+          return palette.calqueInteraction();
+        }
+        return null;
+      }),
     );
-
-    final AppMetriques metriques = AppMetriques.pour(mode);
-    final double cible = metriques.cibleTactile;
-
+    OutlineInputBorder bord(AppInkColorSource source, {double largeur = 1}) =>
+        OutlineInputBorder(
+          borderRadius: AppRadius.arrondiMd,
+          borderSide: BorderSide(
+            color: source == AppInkColorSource.erreur
+                ? scheme.error
+                : source == AppInkColorSource.focus
+                ? palette.inkAccent.asBorderSide().color
+                : scheme.outline,
+            width: largeur,
+          ),
+        );
     return ThemeData(
       useMaterial3: true,
       extensions: <ThemeExtension<dynamic>>[palette, metriques],
-      colorScheme: _schemaDepuisPalette(palette, brightness),
+      colorScheme: scheme,
       scaffoldBackgroundColor: palette.surfaceCanvas.background,
       textTheme: texte,
-      // Toutes les cibles tactiles respectent le minimum du mode courant, y
-      // compris celles des widgets Material que nous n'aurions pas enrobes.
       materialTapTargetSize: MaterialTapTargetSize.padded,
       visualDensity: VisualDensity.standard,
       splashFactory: NoSplash.splashFactory,
+      hoverColor: palette.calqueInteraction(),
+      highlightColor: palette.calqueInteraction(presse: true),
+      focusColor: palette.calqueInteraction(),
+      disabledColor: palette.inkMuted.asBorderSide().color,
       dividerTheme: DividerThemeData(
-        color: palette.borderHairline.asBorderSide().color,
-        space: AppSpacing.lg,
+        color: scheme.outlineVariant,
         thickness: 1,
+        space: AppSpacing.lg,
       ),
-      iconTheme: palette.inkStrong.asIconTheme(
-        size: mode == InterfaceMode.enfant ? AppSpacing.xxxl : AppSpacing.xxl,
-      ),
-      // La barre superieure est une surface elevee, comme toute barre de
-      // navigation : elle porte donc un filet ET pas d'ombre Material, nos
-      // ombres venant d'AppElevation et non de l'echelle de Material.
+      iconTheme: palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
       appBarTheme: AppBarTheme(
-        backgroundColor: palette.surfaceRaised.background,
-        foregroundColor: palette.surfaceRaised.onBackground,
+        backgroundColor: scheme.surface,
+        foregroundColor: scheme.onSurface,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: palette.surfaceRaised.applyTo(
-          texte.titleLarge ?? const TextStyle(),
-        ),
-        shape: Border(bottom: palette.borderHairline.asBorderSide()),
+        titleTextStyle: texte.titleLarge,
       ),
-      // Un champ de saisie est une surface ENFONCEE : c'est le seul moyen de le
-      // distinguer de la carte qui le contient sans lui coller un cadre lourd.
-      // La hauteur minimale suit la cible tactile du mode.
+      filledButtonTheme: FilledButtonThemeData(
+        style: bouton.copyWith(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.disabled)
+                ? palette.surfaceSunken.background
+                : scheme.primary,
+          ),
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.disabled)
+                ? scheme.onSurfaceVariant
+                : scheme.onPrimary,
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: bouton.copyWith(
+          foregroundColor: WidgetStatePropertyAll(
+            palette.inkAccent.asBorderSide().color,
+          ),
+          side: WidgetStatePropertyAll(BorderSide(color: scheme.outline)),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: bouton.copyWith(
+          foregroundColor: WidgetStatePropertyAll(
+            palette.inkAccent.asBorderSide().color,
+          ),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        elevation: 0,
+        color: scheme.surface,
+        shape: forme,
+        margin: EdgeInsets.zero,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: palette.surfaceOverlay.background,
+        barrierColor: palette.voile,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.arrondiLg),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: palette.surfaceOverlay.background,
+        modalBarrierColor: palette.voile,
+        elevation: 0,
+        modalElevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: AppRadius.arrondiFeuille,
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
-        constraints: BoxConstraints(minHeight: cible),
+        constraints: BoxConstraints(minHeight: metriques.cibleTactile),
         filled: true,
         fillColor: palette.surfaceSunken.background,
-        border: OutlineInputBorder(
-          borderRadius: AppRadius.arrondiSm,
-          borderSide: palette.borderResting.asBorderSide(),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: AppRadius.arrondiSm,
-          borderSide: palette.borderResting.asBorderSide(),
-        ),
-        // Un champ desactive se distingue d'un champ au repos par un filet
-        // plus faible (lot T2, Bible section 12 : le disabled est un etat a
-        // part entiere, pas une variante ignoree du repos).
-        disabledBorder: OutlineInputBorder(
-          borderRadius: AppRadius.arrondiSm,
-          borderSide: palette.borderHairline.asBorderSide(),
-        ),
-        // Le focus et l'erreur ne s'appuient pas sur borderResting : ce jeton
-        // est decoratif et ne passe pas le seuil de 3:1 des elements porteurs
-        // de sens. Le focus passe par borderStrong, la seule bordure de la
-        // rampe deja documentee comme porteuse de sens (`app_palette.dart`) et
-        // qui reste correcte quel que soit le theme a venir (lot T3, mode
-        // sombre) ; l'erreur reste semantique. Largeur remontee a 3 (lot T2,
-        // Bible section 13.4 : anneau de focus visible).
-        focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadius.arrondiSm,
-          borderSide: palette.borderStrong.asBorderSide(width: 3),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: AppRadius.arrondiSm,
-          borderSide: BorderSide(
-            color: palette.surfaceAlert.background,
-            width: 2,
-          ),
-        ),
-        // Sans cette ligne, un champ en erreur qui prend le focus repasse au
-        // gris de borderStrong et l'erreur disparait de l'ecran au moment ou
-        // on la corrige. Largeur 3, alignee sur focusedBorder (lot T2).
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: AppRadius.arrondiSm,
-          borderSide: BorderSide(
-            color: palette.surfaceAlert.background,
-            width: 3,
-          ),
-        ),
+        contentPadding: const EdgeInsets.all(AppSpacing.lg),
+        border: bord(AppInkColorSource.contour),
+        enabledBorder: bord(AppInkColorSource.contour),
+        disabledBorder: bord(AppInkColorSource.contour),
+        focusedBorder: bord(AppInkColorSource.focus, largeur: 2),
+        errorBorder: bord(AppInkColorSource.erreur, largeur: 2),
+        focusedErrorBorder: bord(AppInkColorSource.erreur, largeur: 2),
       ),
     );
   }
 
-  /// Le [ColorScheme] Material derive integralement des paires : aucune couleur
-  /// n'est inventee ici, sinon Material en reintroduirait une hors palette.
-  ///
-  /// Les quatre roles `container` recoivent les paires douces : c'est ce qui
-  /// evite qu'un widget Material non enrobe ressorte un aplat sature la ou le
-  /// produit veut une teinte pale (`01-systeme-visuel.md` section 3).
   static ColorScheme _schemaDepuisPalette(
-    AppPalette palette,
+    AppPalette p,
     Brightness brightness,
-  ) {
-    return ColorScheme(
-      brightness: brightness,
-      primary: palette.surfacePrimary.background,
-      onPrimary: palette.surfacePrimary.onBackground,
-      primaryContainer: palette.washAccent.background,
-      onPrimaryContainer: palette.washAccent.onBackground,
-      secondary: palette.surfaceSuccess.background,
-      onSecondary: palette.surfaceSuccess.onBackground,
-      secondaryContainer: palette.washSuccess.background,
-      onSecondaryContainer: palette.washSuccess.onBackground,
-      tertiary: palette.surfaceWarning.background,
-      onTertiary: palette.surfaceWarning.onBackground,
-      tertiaryContainer: palette.washWarning.background,
-      onTertiaryContainer: palette.washWarning.onBackground,
-      error: palette.surfaceAlert.background,
-      onError: palette.surfaceAlert.onBackground,
-      errorContainer: palette.washAlert.background,
-      onErrorContainer: palette.washAlert.onBackground,
-      surface: palette.surfaceCanvas.background,
-      onSurface: palette.surfaceCanvas.onBackground,
-      surfaceContainerLowest: palette.surfaceRaised.background,
-      surfaceContainerHighest: palette.surfaceSunken.background,
-      inverseSurface: palette.surfaceInverse.background,
-      onInverseSurface: palette.surfaceInverse.onBackground,
-      // `outline` porte du sens chez Material : c'est la bordure mesuree.
-      // `outlineVariant` est le filet decoratif.
-      outline: palette.borderStrong.asBorderSide().color,
-      outlineVariant: palette.borderHairline.asBorderSide().color,
-    );
-  }
+  ) => ColorScheme(
+    brightness: brightness,
+    primary: p.surfacePrimary.background,
+    onPrimary: p.surfacePrimary.onBackground,
+    primaryContainer: p.washAccent.background,
+    onPrimaryContainer: p.washAccent.onBackground,
+    secondary: p.inkMuted.asBorderSide().color,
+    onSecondary: p.surfaceCanvas.background,
+    secondaryContainer: p.surfaceSunken.background,
+    onSecondaryContainer: p.surfaceSunken.onBackground,
+    tertiary: p.inkAccent.asBorderSide().color,
+    onTertiary: p.surfaceCanvas.background,
+    tertiaryContainer: p.washAccent.background,
+    onTertiaryContainer: p.washAccent.onBackground,
+    error: p.surfaceAlert.background,
+    onError: p.surfaceAlert.onBackground,
+    errorContainer: p.washAlert.background,
+    onErrorContainer: p.washAlert.onBackground,
+    surface: p.surfaceRaised.background,
+    onSurface: p.surfaceRaised.onBackground,
+    onSurfaceVariant: p.inkMuted.asBorderSide().color,
+    surfaceContainerLowest: p.surfaceCanvas.background,
+    surfaceContainerLow: p.surfaceCanvas.background,
+    surfaceContainer: p.surfaceSunken.background,
+    surfaceContainerHigh: p.surfaceOverlay.background,
+    surfaceContainerHighest: p.surfaceOverlay.background,
+    surfaceDim: p.surfaceSunken.background,
+    surfaceBright: p.surfaceOverlay.background,
+    surfaceTint: p.surfaceRaised.background,
+    inverseSurface: p.surfaceInverse.background,
+    onInverseSurface: p.surfaceInverse.onBackground,
+    inversePrimary: brightness == Brightness.dark
+        ? AppPalette.claire().surfacePrimary.background
+        : AppPalette.sombre().surfacePrimary.background,
+    outline: p.borderStrong.asBorderSide().color,
+    outlineVariant: p.borderHairline.asBorderSide().color,
+    scrim: p.voile,
+  );
 }
+
+enum AppInkColorSource { contour, focus, erreur }

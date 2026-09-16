@@ -22,7 +22,9 @@ String? deciderRedirection({
   // La galerie de developpement echappe a la porte : elle ne montre que des
   // composants, aucune donnee. Elle n'est de toute facon pas compilee en
   // production.
-  if (Env.galerieActive && cheminDemande == Routes.galerie) {
+  if (Env.galerieActive &&
+      (cheminDemande == Routes.galerie ||
+          cheminDemande.startsWith('${Routes.galerie}/'))) {
     return null;
   }
 
@@ -81,6 +83,12 @@ String? deciderRedirection({
       if (cheminDemande == Routes.salle) {
         final bool presentable = billet != null && billet.valideA(maintenant);
         return presentable ? null : racine;
+      }
+
+      // Le compte est un espace commun : chaque role actif peut consulter ses
+      // informations et ses preferences sans changer d'espace metier.
+      if (_dansLeSousArbre(cheminDemande, Routes.compte)) {
+        return null;
       }
 
       // Une route d'un autre role demandee directement par URL renvoie chez

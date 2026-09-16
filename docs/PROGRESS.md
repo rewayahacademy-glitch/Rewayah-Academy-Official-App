@@ -158,3 +158,20 @@ psql -f supabase/tests/scenarios_adm05.sql               #  9 contrôles
   `docs/agent-onboarding.md` et dans les plans d'étape.
 - **Un contrôle qui n'a jamais tourné n'est pas un contrôle vert.** C'est ce qui
   a masqué le défaut de la CI pendant toute l'étape 1.
+
+## Vague 5 — intégration contrôlée du 15 septembre 2026
+
+Worktree d'intégration :
+`C:\Users\dell\AppData\Local\Programs\WindowsTerminal\rewayah-vague5-integration`.
+Les lots R1, shell adaptatif, correctif Material 3, profil enseignant et
+surface de correction de présence ont été intégrés un par un depuis les
+commits sources `6e85aec`, `da34f9c`, `1fc15c6`, `65c564f` et `d55606c`.
+Le profil a nécessité le raccord ciblé `d36fb4b` pour ses chaînes i18n et sa
+route ; aucun lot Compte concurrent n'a été repris. Les fichiers OpenCode et
+le checkout principal sale sont exclus.
+
+État des preuves sur cette branche : vérificateur de jetons **PASS** (129
+fichiers, aucune violation) et `git diff --check` **PASS**. Analyse globale et
+tests Flutter globaux **BLOCKED** par le runner silencieux après démarrage ; les
+scénarios SQL **BLOCKED** car le daemon Docker est indisponible. La recette
+navigateur authentifiée est volontairement reportée et n'est pas prouvée.

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 
 import '../support/harnais.dart';
@@ -120,6 +123,30 @@ String _hhmm(DateTime quand) =>
     '${quand.minute.toString().padLeft(2, '0')}';
 
 void main() {
+  testWidgets('la premiere lecture montre un squelette', (
+    WidgetTester tester,
+  ) async {
+    final Completer<List<Seance>> reponse = Completer<List<Seance>>();
+    final FauxServicePlanning planning = FauxServicePlanning();
+
+    await tester.pumpWidget(
+      hote(
+        _ecran(),
+        surcharges: <Override>[
+          ..._surcharges(planning: planning),
+          seancesProvider.overrideWith((_) => reponse.future),
+        ],
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(Skeleton), findsOneWidget);
+    expect(find.text(t.commun.chargement), findsNothing);
+
+    reponse.complete(const <Seance>[]);
+    await tester.pumpAndSettle();
+  });
+
   group('ELV-02 : les six etats du bloc principal', () {
     testWidgets('un cours plus tard annonce le temps qui reste, et le prenom', (
       WidgetTester tester,

@@ -169,6 +169,10 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // reponse manque, l'appareil est repute en ligne.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
+    if (!seances.hasValue && seances.isLoading) {
+      return const PageShell(child: Skeleton.liste(lignes: 2));
+    }
+
     final List<Seance> toutes = seances.value ?? const <Seance>[];
     final Seance? prochain = prochainCours(toutes, _maintenant);
     final Seance? annulee = seanceAnnuleeDuJour(toutes, _maintenant);

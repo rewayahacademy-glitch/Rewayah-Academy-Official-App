@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -8,6 +10,7 @@ import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_demandes/demandes_page.dart';
 
 import '../support/harnais.dart';
@@ -84,6 +87,30 @@ Future<void> _monter(
 }
 
 void main() {
+  testWidgets('la premiere lecture montre un squelette', (
+    WidgetTester tester,
+  ) async {
+    final Completer<List<Demande>> reponse = Completer<List<Demande>>();
+
+    await tester.pumpWidget(
+      hote(
+        const DemandesPage(),
+        surcharges: <Override>[
+          serviceAdminProvider.overrideWithValue(FauxServiceAdmin()),
+          serviceReglesProvider.overrideWithValue(_regles()),
+          demandesProvider.overrideWith((_) => reponse.future),
+        ],
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(Skeleton), findsOneWidget);
+    expect(find.text(t.commun.chargement), findsNothing);
+
+    reponse.complete(const <Demande>[]);
+    await tester.pumpAndSettle();
+  });
+
   group('ADM-06 : une demande a la fois, et le verdict en dernier', () {
     testWidgets('une seule demande est presentee, jamais une grille', (
       WidgetTester tester,

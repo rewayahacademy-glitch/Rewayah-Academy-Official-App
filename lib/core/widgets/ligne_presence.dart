@@ -32,6 +32,7 @@ class LignePresence extends StatelessWidget {
     required this.vue,
     super.key,
     this.role,
+    this.afficherConsolide = true,
   });
 
   /// Le prenom de la personne, ou ce qui la designe -- « Vous » pour soi-meme.
@@ -42,6 +43,10 @@ class LignePresence extends StatelessWidget {
 
   /// Son role dans la seance, en clair. Absent quand la ligne se lit seule.
   final String? role;
+
+  /// Masque la mention de consolidation dans les vues qui ne doivent pas
+  /// exposer une decision administrative.
+  final bool afficherConsolide;
 
   /// Le libelle d'un etat, dans la langue de l'application.
   ///
@@ -81,18 +86,21 @@ class LignePresence extends StatelessWidget {
     }
     final int minutes = ecoule.inMinutes;
     return switch (vue.repere) {
-      RepereTemps.entree => minutes <= 0
-          ? t.presence.entreeInstant
-          : t.presence.entreeMinutes(minutes: '$minutes'),
+      RepereTemps.entree =>
+        minutes <= 0
+            ? t.presence.entreeInstant
+            : t.presence.entreeMinutes(minutes: '$minutes'),
       // Un retard sous la minute n'existe pas : le seuil est de cinq minutes
       // par defaut, et il se regle en base, jamais ici.
       RepereTemps.retard => t.presence.retardMinutes(minutes: '$minutes'),
-      RepereTemps.silence => minutes <= 0
-          ? t.presence.silenceInstant
-          : t.presence.silenceMinutes(minutes: '$minutes'),
-      RepereTemps.attente => minutes <= 0
-          ? t.presence.attenteInstant
-          : t.presence.attenteMinutes(minutes: '$minutes'),
+      RepereTemps.silence =>
+        minutes <= 0
+            ? t.presence.silenceInstant
+            : t.presence.silenceMinutes(minutes: '$minutes'),
+      RepereTemps.attente =>
+        minutes <= 0
+            ? t.presence.attenteInstant
+            : t.presence.attenteMinutes(minutes: '$minutes'),
       RepereTemps.aucun => null,
     };
   }
@@ -108,7 +116,7 @@ class LignePresence extends StatelessWidget {
     final String detail = <String>[
       if (role case final String r when r.isNotEmpty) r,
       ?dit,
-      if (vue.consolide) t.presence.consolide,
+      if (afficherConsolide && vue.consolide) t.presence.consolide,
     ].join(' · ');
 
     return MergeSemantics(

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 
 import '../support/harnais.dart';
@@ -19,6 +25,88 @@ Future<FauxServiceAuth> _monter(WidgetTester tester) async {
 }
 
 void main() {
+  group('acces demo fictif', () {
+    test('chaque adresse de role produit l interface attendue', () {
+      final Map<String, ({AppRole role, InterfaceMode mode})> attendus = {
+        'admin@demo.test': (role: AppRole.admin, mode: InterfaceMode.standard),
+        'comptable@demo.test': (
+          role: AppRole.accountant,
+          mode: InterfaceMode.standard,
+        ),
+        'controleur@demo.test': (
+          role: AppRole.controller,
+          mode: InterfaceMode.standard,
+        ),
+        'enseignant@demo.test': (
+          role: AppRole.teacher,
+          mode: InterfaceMode.standard,
+        ),
+        'tuteur@demo.test': (
+          role: AppRole.guardian,
+          mode: InterfaceMode.standard,
+        ),
+        'eleve@demo.test': (
+          role: AppRole.student,
+          mode: InterfaceMode.standard,
+        ),
+        'enfant@demo.test': (role: AppRole.student, mode: InterfaceMode.enfant),
+      };
+
+      for (final MapEntry<String, ({AppRole role, InterfaceMode mode})> entree
+          in attendus.entries) {
+        expect(accesDemoDepuisCourriel(entree.key), entree.value);
+      }
+      expect(accesDemoDepuisCourriel('inconnu@demo.test'), isNull);
+    });
+
+    testWidgets('le mode demo ouvre le role sans appeler Supabase', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = FauxServiceAuth();
+      final FausseSourceSession source = FausseSourceSession();
+      await tester.pumpWidget(
+        hote(
+          const ConnexionPage(),
+          surcharges: <Override>[
+            demoAuthActiveProvider.overrideWithValue(true),
+            sourceSessionProvider.overrideWithValue(source),
+            serviceAuthProvider.overrideWithValue(auth),
+          ],
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        'admin@demo.test',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+        'nimporte-quoi',
+      );
+      await tester.pump();
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+      );
+      bouton.onPress!();
+      await tester.pumpAndSettle();
+
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(ConnexionPage)),
+      );
+      expect(auth.connexionsMotDePasse, isEmpty);
+      expect(
+        conteneur.read(sessionProvider),
+        const SessionState(
+          resolue: true,
+          role: AppRole.admin,
+          profileId: 'demo-admin',
+          accountStatus: AccountStatus.active,
+          lectureProfil: LectureProfil.presente,
+        ),
+      );
+    });
+  });
+
   group('courrielPlausible', () {
     // Volontairement permissif : le seul verdict qui compte est celui du
     // serveur de courriel. Ce controle sert a ne pas envoyer une requete pour
@@ -108,14 +196,119 @@ void main() {
     testWidgets('aucun champ de mot de passe n existe sur cet ecran', (
       WidgetTester tester,
     ) async {
-      // Le produit n'a pas de mot de passe, nulle part. Un champ qui
-      // apparaitrait ici serait le premier.
+      // La compilation de production reste sans mot de passe. Le parcours de
+      // demonstration est couvert explicitement par les tests ci-dessous.
       await _monter(tester);
       final Iterable<TextField> champs = tester.widgetList<TextField>(
         find.byType(TextField),
       );
       expect(champs, hasLength(1));
       expect(champs.single.obscureText, isFalse);
+    });
+
+    testWidgets('le mode demo ne propose aucun parcours Supabase', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        hote(
+          const ConnexionPage(demoAuth: true),
+          surcharges: <Override>[
+            serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final AppCard carte = tester.widget<AppCard>(
+        find.byKey(const ValueKey<String>('connexion-carte')),
+      );
+      expect(carte.dominante, isTrue);
+
+      final ActionPrincipale connexion = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+      );
+      expect(connexion.niveau, NiveauAction.principale);
+      expect(find.text(t.connexion.envoyerLien), findsNothing);
+      expect(find.text(t.connexion.avecGoogle), findsNothing);
+      expect(find.text(t.eleveConnexion.entrerCode), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('le mode demonstration accepte email et mot de passe', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = FauxServiceAuth();
+      await tester.pumpWidget(
+        hote(
+          const ConnexionPage(demoAuth: true),
+          surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        ' fatou@example.test ',
+      );
+      await tester.pump();
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+        'essai-local',
+      );
+      await tester.pump();
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+      );
+      expect(bouton.onPress, isNotNull);
+      bouton.onPress!();
+      await tester.pumpAndSettle();
+
+      expect(
+        auth.connexionsMotDePasse,
+        <({String courriel, String motDePasse})>[
+          (courriel: 'fatou@example.test', motDePasse: 'essai-local'),
+        ],
+      );
+    });
+
+    testWidgets('le mode demonstration affiche une erreur recuperable', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAuth auth = FauxServiceAuth()
+        ..erreurAJeter = StateError('refuse');
+      await tester.pumpWidget(
+        hote(
+          const ConnexionPage(demoAuth: true),
+          surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
+        ),
+      );
+
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        'fatou@example.test',
+      );
+      await tester.pump();
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+        'essai-local',
+      );
+      await tester.pump();
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+      );
+      expect(bouton.onPress, isNotNull);
+      bouton.onPress!();
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.connexion.erreurConnexion), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        findsOneWidget,
+      );
     });
   });
 }

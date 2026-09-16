@@ -14,6 +14,7 @@ import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/skeleton.dart';
 
 /// `ADM-02` : la validation des dossiers.
 ///
@@ -137,7 +138,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
           genreManquant: file.error is GenreLecteurInconnu,
           onReessayer: () => ref.invalidate(dossiersEnAttenteProvider),
         ),
-        _ => Center(child: Text(t.commun.chargement)),
+        _ => const Skeleton.liste(lignes: 4),
       },
     );
   }

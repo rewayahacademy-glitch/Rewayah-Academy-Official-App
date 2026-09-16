@@ -1,2 +1,24 @@
 {
+  "eleve": {
+    "suivi": {
+      "titre": "متابعة دروسي",
+      "colonneDate": "التاريخ",
+      "colonneCours": "الدرس",
+      "colonneEnseignant": "المعلم",
+      "colonneEtat": "الحضور",
+      "cours": "درس القرآن",
+      "moi": "حضوري",
+      "aujourdhui": "اليوم، {heure}",
+      "hier": "أمس، {heure}",
+      "date": "{date}، {heure}",
+      "annule": "درس ملغى",
+      "nonTenu": "درس لم يُعقد",
+      "vide": "لا توجد دروس حتى الآن",
+      "videDetail": "ستظهر دروسك هنا من الأحدث إلى الأقدم مع حالة حضورك.",
+      "erreur": "تعذرت قراءة المتابعة. حاول مرة أخرى بعد قليل.",
+      "tronquee": "تظهر أحدث {nombre} دروس.",
+      "fin": "عدد الدروس في المتابعة: {nombre}.",
+      "finUn": "درس واحد في المتابعة."
+    }
+  }
 }
