@@ -41,4 +41,15 @@ abstract final class Env {
       'SUPABASE_URL et SUPABASE_ANON_KEY sont absents. '
       'Lancez avec --dart-define-from-file=dart_define.json, '
       'sur le modele de dart_define.example.json.';
+
+  /// Valide la forme d'une cle Supabase.
+  static bool cleSupabaseValide(String cle) {
+    if (cle.isEmpty) return false;
+    if (cle == 'cle-factice-playground-ne-jamais-utilisee') return false;
+    if (cle == 'eyJhbGciOiJIUzI1NiJ9.dummy.dummy') return false;
+    if (cle == 'sb_publishable_fake') return false;
+    if (cle.startsWith('sb_publishable_') && cle.length >= 20) return true;
+    if (cle.startsWith('eyJhbGci') && cle.contains('signature')) return true;
+    return false;
+  }
 }

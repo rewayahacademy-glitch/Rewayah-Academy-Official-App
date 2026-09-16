@@ -24,7 +24,10 @@ import '../../core/widgets/page_shell.dart';
 /// (`docs/produit/parcours-utilisateurs.md`, regles communes).
 class ConnexionPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de connexion.
-  const ConnexionPage({super.key});
+  const ConnexionPage({super.key, this.demoAuth});
+
+  /// Mode demo override pour les tests de widget.
+  final bool? demoAuth;
 
   @override
   ConsumerState<ConnexionPage> createState() => _ConnexionPageState();
