@@ -18,16 +18,38 @@ spécifié l'étape 5 (ADR-020), **N1** a posé sa migration `0007`, puis
 tous deux hors série, ont été construits le 12 septembre pendant que **N2
 attend la décision du fournisseur vidéo**.
 
-**L'espace admin n'a plus un seul écran manquant**, et il reste **neuf**
-destinations en `EcranAConstruire` : élève (Coran, Suivi), tuteur (Suivi),
-enseignant (Profil), contrôleur (Planning), espace comptable, et la salle
-(`ELV-03`/`ENS-03`/`CTR-02`). Le compte se lit dans
+**L'espace admin n'a plus un seul écran manquant**, et le suivi élève vient de
+rejoindre les écrans réels. Il reste deux écrans fonctionnels à construire dans
+le MVP-0 : le profil enseignant et l'espace comptable ; un état de chargement de
+la racine reste aussi `EcranAConstruire`. Le compte se lit dans
 `lib/core/router/app_router.dart`, jamais en parcourant les écrans.
 
-**Le prochain lot est N2, et il ne peut pas commencer sans l'opérateur** :
-fournisseur, compte, clés. S'il est encore bloqué, `docs/HANDOFF.md` §9.5 donne
-la liste des lots qui ne dépendent pas de la vidéo, par valeur décroissante —
-l'écart `Skeleton` sur les dix-neuf écrans restants est désormais en tête.
+**Le lot R3 — suivi élève — vient d'être construit** sur la route existante
+`/eleve/suivi`. Il réutilise les projections et vues du suivi foyer, sans
+migration, sans API et sans filtrage client. La page expose uniquement les
+cours de l'élève connecté, l'enseignant (prénom + identifiant immuable) et
+l'état de présence, avec chargement, vide, erreur, inconnu, RTL et texte à
+200 %. Voir le compte rendu complet dans `docs/HANDOFF.md` §9.6.
+
+**La prochaine reprise est une revue du lot R3 avant commit** : ne pas inclure
+les modifications concurrentes d'OpenCode dans `lib/app.dart`, `lib/main.dart`,
+`lib/core/config/env.dart` ou `lib/features/_dev/playground/`. Le vérificateur
+de jetons reste rouge uniquement à cause de six violations de ce playground.
+
+**Le lot ENS-05 sécurité/configuration est durci et construit localement** :
+`Env.configuree` refuse désormais les URL/clefs Supabase vides, factices ou mal
+formées, sans afficher de secret. La production est tranchee avec
+`GALERIE=false` et `PLAYGROUND=false`. Dans le worktree detache
+`D:\ra-pwa-secure-deploy` sur `cbc4ff8`, `flutter analyze` est vert, les 729
+tests Flutter sont verts, `verifier_jetons.dart` est vert sur 123 fichiers, et
+le build web release mesure 4 418 221 octets. Le bundle local contient la
+reference Supabase, sans cle factice, sans `_galerie` ni `PLAYGROUND`.
+
+**La promotion et la connexion reelle restent a reprendre** : Vercel a
+confirme le ciblage du projet existant `rewayah-academy`, mais a interrompu la
+commande faute de credentials locaux (`No existing credentials found`). Aucun
+nouveau projet n'a ete cree ; le bundle servi et la connexion Supabase ne sont
+donc pas declares verifies. Voir `docs/HANDOFF.md` §9.8.
 
 **Ce qui a changé de nature le 12 septembre.** Avant `ADM-05`, une affectation
 ne pouvait naître que si un enseignant la prenait dans `ENS-06`. Sans
@@ -159,19 +181,60 @@ psql -f supabase/tests/scenarios_adm05.sql               #  9 contrôles
 - **Un contrôle qui n'a jamais tourné n'est pas un contrôle vert.** C'est ce qui
   a masqué le défaut de la CI pendant toute l'étape 1.
 
-## Vague 5 — intégration contrôlée du 15 septembre 2026
+### Recette MVP-0 executee le 14 septembre 2026
 
-Worktree d'intégration :
-`C:\Users\dell\AppData\Local\Programs\WindowsTerminal\rewayah-vague5-integration`.
-Les lots R1, shell adaptatif, correctif Material 3, profil enseignant et
-surface de correction de présence ont été intégrés un par un depuis les
-commits sources `6e85aec`, `da34f9c`, `1fc15c6`, `65c564f` et `d55606c`.
-Le profil a nécessité le raccord ciblé `d36fb4b` pour ses chaînes i18n et sa
-route ; aucun lot Compte concurrent n'a été repris. Les fichiers OpenCode et
-le checkout principal sale sont exclus.
+Le perimetre QA a ete execute sans nouvelle fonctionnalite ni migration.
 
-État des preuves sur cette branche : vérificateur de jetons **PASS** (129
-fichiers, aucune violation) et `git diff --check` **PASS**. Analyse globale et
-tests Flutter globaux **BLOCKED** par le runner silencieux après démarrage ; les
-scénarios SQL **BLOCKED** car le daemon Docker est indisponible. La recette
-navigateur authentifiée est volontairement reportée et n'est pas prouvée.
+| Controle | Preuve mesuree | Resultat |
+|---|---|---|
+| Base locale | 23 commandes SQL, migrations 0001 a 0013 et scenarios ordonnes, sortie `SQL_RECIPE_OK` | Vert ; reference 144 controles |
+| Analyse | `dart analyze --fatal-infos` | Vert : `No issues found!` |
+| Tests Flutter complets | `flutter test --no-pub` | Vert : `743/743`, environ 4 min 20 s |
+| Verificateur de jetons | `dart run tool/verifier_jetons.dart` | Rouge : 6 violations du playground OpenCode concurrent |
+| Chrome + Edge | Navigation headless vers la racine publique | Shell HTML rendu dans les deux |
+
+La recette navigateur authentifiee reste non prouvee : pas de seance reelle,
+pas de quatre comptes autorises avec boites de reception disponibles, et pas de
+compte LiveKit confirme. Les parcours enseignant/eleve/tuteur/controleur,
+salle, presence, Coran, suivis, observation invisible, non-fuite, retour,
+390/768/1440, RTL, clavier, 200 pour cent, hors-ligne et absence de doublons
+d'abonnements restent donc a mesurer en production. Le depot ne contient aucun
+test d'integration navigateur ; les tests Flutter ne sont pas une preuve de ce
+parcours.
+
+**Prompt suivant :** fournir les comptes de test autorises, les acces OTP/lien,
+le compte LiveKit et la version de production cible, puis reprendre uniquement
+la recette navigateur MVP-0 et completer `docs/HANDOFF.md` avec les preuves.
+Ne pas coder, migrer, creer de compte non autorise ni deployer le travail
+concurrent non valide.
+
+**Promotion ENS-05 reprise et terminee** : apres authentification appareil,
+Vercel a publie le build vers le projet existant `rewayah-academy`, deployment
+`dpl_3MY9XhoivMp3BpwEVUlIAJUOSzPe`, avec alias stable
+`https://rewayah-academy.vercel.app`. Le bundle servi répond `200`, conserve la
+reference Supabase, exclut la clé factice, `_galerie` et `PLAYGROUND`, et porte
+le marqueur `eleve/suivi`. L'API Supabase réelle répond aussi `200 OK` sur
+`/auth/v1/settings` avec la configuration locale non affichée. Une session
+utilisateur magic-link n'a pas été simulée ; elle reste hors de cette preuve.
+Voir `docs/HANDOFF.md` §9.9.
+### Reprise Vercel du 14 septembre 2026
+
+Vercel est authentifie (`rewayahacademy-3863`). La production est mesuree
+`READY` et `PROMOTED` sur l'alias stable, deployment
+`dpl_3MY9XhoivMp9eSjCN52sgS86GEu2`, avec metadata du commit `cbc4ff8`.
+
+Attention : l'API indique `gitDirty=1` et `source=cli`. La livraison contient
+donc potentiellement des modifications non commitees de l'autre agent Codex ;
+elle ne doit pas etre attribuee au commit seul, et aucun reset/redeploy n'a ete
+fait. `version.json` lu sur le deployment est `0.2.0`, build `1`.
+
+La recette authentifiee reste a faire : comptes autorises avec OTP/lien et
+compte LiveKit non confirmes. Aucun resultat ne doit encore etre declare pour
+les quatre roles, la salle, presence, suivis, observation invisible, non-fuite,
+responsive navigateur, RTL, clavier, 200 pour cent, hors-ligne ou abonnements.
+
+**Handoff actif pour la suite :** l'inventaire consolidé des implémentations
+restantes, les contradictions à faire trancher et les prompts Claude Code sont
+dans `docs/HANDOFF.md` §10. Les anciens « prompts suivants » de ce journal sont
+historiques. OpenCode est abandonné : ses changements restent hors périmètre et
+ne doivent pas être promus.

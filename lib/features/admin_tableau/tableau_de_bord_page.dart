@@ -150,7 +150,7 @@ class TableauDeBordPage extends ConsumerWidget {
               ),
             )
           else
-            const Skeleton.liste(lignes: 3),
+            const Skeleton.liste(lignes: 2),
           Ecart.vXxl,
 
           // 2. CE QUI SE TRAITE D'UN TAP.
@@ -253,13 +253,12 @@ class _Compteurs extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        final int nbColonnes = contraintes.maxWidth > 700 ? 3 : 2;
-        const double gap = AppSpacing.md;
-        final double colonne =
-            (contraintes.maxWidth - (nbColonnes - 1) * gap) / nbColonnes;
+        // Deux colonnes a 390 px de large, la mesure de reference du projet.
+        // La largeur derive de l'echelle, elle n'est pas posee telle quelle.
+        final double colonne = (contraintes.maxWidth - AppSpacing.md) / 2;
         return Wrap(
-          spacing: gap,
-          runSpacing: gap,
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.md,
           children: <Widget>[
             for (final StatTile tuile in tuiles)
               SizedBox(width: colonne, child: tuile),

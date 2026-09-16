@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,210 +7,258 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
-import '../../core/presence/vue_presence.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/stat_tile.dart';
-import '../../core/widgets/status_pill.dart';
+import '../suivi_foyer/vue_suivi_foyer.dart';
 
-/// `ELV-05` : L'écran de suivi de l'élève.
+/// Le suivi de l'eleve : une lecture de la meme projection que `TUT-06`.
 ///
-/// Présente à l'élève et au tuteur sa progression dans le Coran, ses objectifs,
-/// et l'historique de ses séances enregistrées.
-class SuiviElevePage extends ConsumerWidget {
-  /// Crée l'écran de suivi de l'élève.
-  const SuiviElevePage({super.key});
+/// La borne d'acces vient de `mes_seances_v` et `presence_seance_v`. Cette
+/// page ne filtre donc pas les eleves cote client et ne rend aucune donnee
+/// d'un autre participant.
+class SuiviElevePage extends ConsumerStatefulWidget {
+  /// Cree le suivi de l'eleve.
+  const SuiviElevePage({super.key, this.horloge = DateTime.now});
+
+  /// Horloge injectable pour les libelles de date et les durees de presence.
+  final DateTime Function() horloge;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<Seance>> seancesAsync = ref.watch(seancesDuSuiviProvider);
-    final AsyncValue<List<PresenceParticipant>?> presencesAsync = ref.watch(presenceDuSuiviProvider);
-
-    final bool enChargement = seancesAsync.isLoading;
-    final bool enErreur = seancesAsync.hasError;
-
-    if (enChargement) {
-      return PageShell(
-        titre: t.eleve.suivi.titre,
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Skeleton.tuileBento(hauteur: 140),
-            Ecart.vMd,
-            Skeleton.liste(lignes: 3),
-          ],
-        ),
-      );
-    }
-
-    if (enErreur || !seancesAsync.hasValue) {
-      return PageShell(
-        titre: t.eleve.suivi.titre,
-        child: EmptyState(
-          message: t.tuteur.suivi.erreur,
-          registre: RegistreVide.subi,
-        ),
-      );
-    }
-
-    final List<Seance> seances = seancesAsync.value ?? const <Seance>[];
-    final List<PresenceParticipant> presences = presencesAsync.value ?? const <PresenceParticipant>[];
-
-    if (seances.isEmpty) {
-      return PageShell(
-        titre: t.eleve.suivi.titre,
-        child: EmptyState(
-          message: t.eleve.suivi.vide,
-          invitation: t.eleve.suivi.videDetail,
-          registre: RegistreVide.subi,
-        ),
-      );
-    }
-
-    return PageShell(
-      titre: t.eleve.suivi.titre,
-      child: _ContenuSuivi(seances: seances, presences: presences),
-    );
-  }
+  ConsumerState<SuiviElevePage> createState() => _SuiviElevePageEtat();
 }
 
-class _ContenuSuivi extends StatelessWidget {
-  const _ContenuSuivi({required this.seances, required this.presences});
+class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
+  Timer? _minuteur;
+  late DateTime _maintenant = widget.horloge();
 
-  final List<Seance> seances;
-  final List<PresenceParticipant> presences;
+  @override
+  void initState() {
+    super.initState();
+    _minuteur = Timer.periodic(const Duration(minutes: 1), (Timer _) {
+      if (mounted) {
+        setState(() => _maintenant = widget.horloge());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _minuteur?.cancel();
+    super.dispose();
+  }
+
+  void _relire() {
+    ref
+      ..invalidate(seancesDuSuiviProvider)
+      ..invalidate(presenceDuSuiviProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
+    final AsyncValue<List<Seance>> seances = ref.watch(seancesDuSuiviProvider);
+    final AsyncValue<List<PresenceParticipant>?> presences = ref.watch(
+      presenceDuSuiviProvider,
+    );
+    final VueSuiviFoyer vue = VueSuiviFoyer.depuis(
+      seances: seances.value ?? const <Seance>[],
+      presences: presences.value,
+      maintenant: _maintenant,
+    );
 
-    final int totalCours = seances.length;
-    final Map<String, PresenceParticipant> parSeance = <String, PresenceParticipant>{
-      for (final PresenceParticipant p in presences) p.seanceId: p,
-    };
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        // Carte Bento d'en-tête de progression EdTech
-        AppCard(
-          surface: palette.surfaceRaised,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  IconTheme(
-                    data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
-                    child: Icon(AppIcons.coran.repos),
-                  ),
-                  Ecart.hMd,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          t.eleve.suivi.progressionGlobale,
-                          style: textes.titleMedium,
-                        ),
-                        Text(
-                          t.eleve.suivi.pagesLues(nombre: '${totalCours * 2}'),
-                          style: palette.inkMuted.applyTo(
-                            textes.bodyMedium ?? const TextStyle(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Ecart.vLg,
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: StatTile(
-                      libelle: t.eleve.suivi.souratesApprises,
-                      valeur: totalCours,
-                    ),
-                  ),
-                  Ecart.hMd,
-                  Expanded(
-                    child: StatTile(
-                      libelle: t.eleve.suivi.objectifs,
-                      valeur: totalCours,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+    return PageShell(
+      titre: t.eleve.suivi.titre,
+      defilante: false,
+      child: Expanded(
+        child: _Corps(
+          vue: vue,
+          chargement: seances.isLoading,
+          erreur: seances.hasError,
+          maintenant: _maintenant,
+          onReessayer: _relire,
         ),
-        Ecart.vLg,
-
-        SectionHeader(titre: t.eleve.suivi.derniersCours),
-        Ecart.vSm,
-
-        // Liste des cours avec états de présence
-        for (final Seance seance in seances)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: BentoTile(
-              child: Row(
-                children: <Widget>[
-                  IconTheme(
-                    data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-                    child: Icon(AppIcons.cours.repos),
-                  ),
-                  Ecart.hMd,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          t.eleve.accueil.avec(prenom: seance.enseignantPrenom),
-                          style: textes.titleSmall,
-                        ),
-                        Ecart.vXs,
-                        Text(
-                          _formaterDate(seance.debut),
-                          style: palette.inkMuted.applyTo(
-                            textes.bodySmall ?? const TextStyle(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Ecart.hSm,
-                  Builder(
-                    builder: (BuildContext context) {
-                      final VuePresence vue = VuePresence.depuis(
-                        ligne: parSeance[seance.id],
-                        maintenant: DateTime.now(),
-                      );
-                      return StatusPill(
-                        libelle: LignePresence.libelle(vue.etat),
-                        ton: vue.ton,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
+      ),
     );
   }
+}
 
-  String _formaterDate(DateTime quand) {
-    return '${quand.day.toString().padLeft(2, '0')}/${quand.month.toString().padLeft(2, '0')} à ${quand.hour.toString().padLeft(2, '0')}:${quand.minute.toString().padLeft(2, '0')}';
+class _Corps extends StatelessWidget {
+  const _Corps({
+    required this.vue,
+    required this.chargement,
+    required this.erreur,
+    required this.maintenant,
+    required this.onReessayer,
+  });
+
+  final VueSuiviFoyer vue;
+  final bool chargement;
+  final bool erreur;
+  final DateTime maintenant;
+  final VoidCallback onReessayer;
+
+  @override
+  Widget build(BuildContext context) {
+    if (erreur && vue.total == 0) {
+      return EmptyState(
+        message: t.eleve.suivi.erreur,
+        icone: AppIcons.avertissement,
+        libelleAction: t.commun.reessayer,
+        onAction: onReessayer,
+      );
+    }
+
+    if (vue.total == 0 && chargement) {
+      return const Skeleton.liste(lignes: 5);
+    }
+
+    if (vue.lignes.isEmpty) {
+      return EmptyState(
+        message: t.eleve.suivi.vide,
+        invitation: t.eleve.suivi.videDetail,
+        registre: RegistreVide.subi,
+      );
+    }
+
+    final Widget? erreurLecture = erreur
+        ? Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(t.eleve.suivi.erreur),
+                Ecart.vSm,
+                ActionPrincipale(
+                  libelle: t.commun.reessayer,
+                  onPress: onReessayer,
+                  niveau: NiveauAction.tertiaire,
+                  pleineLargeur: false,
+                ),
+              ],
+            ),
+          )
+        : null;
+
+    return DataCollection<LigneSuivi>(
+      lignes: vue.lignes,
+      cle: (LigneSuivi ligne) => ValueKey<String>(ligne.seance.id),
+      colonnes: _colonnesSuiviEleve(maintenant: maintenant),
+      piedDePage: erreurLecture == null
+          ? _PiedDePage(vue: vue)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                erreurLecture,
+                _PiedDePage(vue: vue),
+              ],
+            ),
+    );
   }
 }
+
+class _PiedDePage extends StatelessWidget {
+  const _PiedDePage({required this.vue});
+
+  final VueSuiviFoyer vue;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle style =
+        Theme.of(context).textTheme.bodySmall ?? const TextStyle();
+    return Text(
+      vue.tronquee
+          ? t.eleve.suivi.tronquee(nombre: '${vue.total}')
+          : (vue.total == 1
+                ? t.eleve.suivi.finUn
+                : t.eleve.suivi.fin(nombre: '${vue.total}')),
+      style: palette.inkMuted.applyTo(style),
+    );
+  }
+}
+
+List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
+  required DateTime maintenant,
+}) => <ColonneDonnees<LigneSuivi>>[
+  ColonneDonnees<LigneSuivi>(
+    titre: t.eleve.suivi.colonneDate,
+    role: RoleColonne.identifiante,
+    flex: 3,
+    tabulaire: true,
+    texte: (LigneSuivi ligne) => _quand(ligne.seance.debut, maintenant),
+  ),
+  ColonneDonnees<LigneSuivi>(
+    titre: t.eleve.suivi.colonneCours,
+    flex: 3,
+    texte: (_) => t.eleve.suivi.cours,
+  ),
+  ColonneDonnees<LigneSuivi>(
+    titre: t.eleve.suivi.colonneEnseignant,
+    flex: 5,
+    texte: _enseignant,
+  ),
+  ColonneDonnees<LigneSuivi>(
+    titre: t.eleve.suivi.colonneEtat,
+    role: RoleColonne.aPart,
+    flex: 4,
+    texte: _libelleEtat,
+    rendu: (BuildContext context, LigneSuivi ligne) => Semantics(
+      label: '${t.eleve.suivi.colonneEtat} : ${_libelleEtat(ligne)}',
+      excludeSemantics: true,
+      child: ligne.montrePresence
+          ? LignePresence(
+              nom: t.eleve.suivi.moi,
+              vue: ligne.presence,
+              afficherConsolide: false,
+            )
+          : Text(
+              _libelleEtat(ligne),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+    ),
+  ),
+];
+
+String _enseignant(LigneSuivi ligne) =>
+    '${ligne.seance.enseignantPrenom} · ${ligne.seance.enseignantIdentifiant}';
+
+String _libelleEtat(LigneSuivi ligne) => switch (ligne.sort) {
+  SortDuCours.annule => t.eleve.suivi.annule,
+  SortDuCours.nonTenu => t.eleve.suivi.nonTenu,
+  SortDuCours.tenu => LignePresence.libelle(ligne.presence.etat),
+};
+
+String _quand(DateTime debut, DateTime maintenant) {
+  final String heure = _hhmm(debut);
+  final DateTime jour = DateTime(debut.year, debut.month, debut.day);
+  final DateTime aujourdHui = DateTime(
+    maintenant.year,
+    maintenant.month,
+    maintenant.day,
+  );
+  final DateTime hier = DateTime(
+    maintenant.year,
+    maintenant.month,
+    maintenant.day - 1,
+  );
+
+  if (jour == aujourdHui) {
+    return t.eleve.suivi.aujourdhui(heure: heure);
+  }
+  if (jour == hier) {
+    return t.eleve.suivi.hier(heure: heure);
+  }
+  return t.eleve.suivi.date(date: _jjmmaaaa(debut), heure: heure);
+}
+
+String _hhmm(DateTime quand) =>
+    '${quand.hour.toString().padLeft(2, '0')}:${quand.minute.toString().padLeft(2, '0')}';
+
+String _jjmmaaaa(DateTime quand) =>
+    '${quand.day.toString().padLeft(2, '0')}/${quand.month.toString().padLeft(2, '0')}/${quand.year}';

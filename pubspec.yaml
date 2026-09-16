@@ -54,6 +54,17 @@ dependencies:
   adhan: ^2.0.0+1
   livekit_client: ^2.12.0
 
+  # Supervision (etape 0.6, onboarding etape F). VOLONTAIREMENT BLOQUE EN 8.x :
+  # toute version 9.x epingle `jni` a une version exacte (0.14.1 puis 0.14.2),
+  # ce qui force `path_provider_android` de 2.3.1 a 2.2.23 et `package_config`
+  # de 3.0.0 a 2.2.0. `path_provider_android` porte le repertoire du cache
+  # Drift, donc le mode hors ligne, qui est un invariant produit ; la telemetrie
+  # n'en est pas un. On ne retrograde pas le second pour le premier. La 8.14.2
+  # n'a aucune dependance `jni` et n'entraine aucune retrogradation.
+  # A rouvrir le jour ou Sentry relache ce pin (c'est leur pubspec, pas le
+  # notre) : `flutter pub add "sentry_flutter:^9"` et verifier `pub get`.
+  sentry_flutter: ^8.14.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

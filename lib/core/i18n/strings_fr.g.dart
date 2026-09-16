@@ -65,7 +65,6 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
-	late final Traductions$compte$fr compte = Traductions$compte$fr.internal(_root);
 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
 	late final Traductions$eleve$fr eleve = Traductions$eleve$fr.internal(_root);
 	late final Traductions$tuteur$fr tuteur = Traductions$tuteur$fr.internal(_root);
@@ -482,29 +481,8 @@ class Traductions$connexion$fr {
 	/// fr: 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.'
 	String get intro => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.';
 
-	/// fr: 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N'importe quel mot de passe non vide fonctionne, sans Supabase.'
-	String get introDemo => 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N\'importe quel mot de passe non vide fonctionne, sans Supabase.';
-
-	/// fr: 'Accès direct'
-	String get demoTitre => 'Accès direct';
-
-	/// fr: 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.'
-	String get demoDetail => 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.';
-
 	/// fr: 'Votre adresse électronique'
 	String get courriel => 'Votre adresse électronique';
-
-	/// fr: 'Mot de passe'
-	String get motDePasse => 'Mot de passe';
-
-	/// fr: 'Se connecter'
-	String get seConnecter => 'Se connecter';
-
-	/// fr: 'Saisissez votre mot de passe.'
-	String get erreurMotDePasse => 'Saisissez votre mot de passe.';
-
-	/// fr: 'La connexion n'a pas abouti. Vérifiez vos identifiants puis réessayez.'
-	String get erreurConnexion => 'La connexion n\'a pas abouti. Vérifiez vos identifiants puis réessayez.';
 
 	/// fr: 'Recevoir le lien'
 	String get envoyerLien => 'Recevoir le lien';
@@ -1175,288 +1153,6 @@ class Traductions$avatar$fr {
 	String get sansPhoto => 'Pas encore de photo';
 }
 
-// Path: compte
-class Traductions$compte$fr {
-	Traductions$compte$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Compte'
-	String get titre => 'Compte';
-
-	/// fr: 'Votre espace personnel, vos accès et les réglages de cette application.'
-	String get intro => 'Votre espace personnel, vos accès et les réglages de cette application.';
-
-	/// fr: 'Mon profil'
-	String get profil => 'Mon profil';
-
-	/// fr: 'Identité, contact et accès vérifiés'
-	String get profilDetail => 'Identité, contact et accès vérifiés';
-
-	/// fr: 'Réglages de l'application'
-	String get reglages => 'Réglages de l\'application';
-
-	/// fr: 'Apparence, accessibilité, notifications et données'
-	String get reglagesDetail => 'Apparence, accessibilité, notifications et données';
-
-	/// fr: 'Profils du foyer'
-	String get profils => 'Profils du foyer';
-
-	/// fr: 'Gérer les profils des enfants de votre foyer'
-	String get profilsDetail => 'Gérer les profils des enfants de votre foyer';
-
-	/// fr: 'Appareils et sécurité'
-	String get appareils => 'Appareils et sécurité';
-
-	/// fr: 'Appareils appairés et accès de la famille'
-	String get appareilsDetail => 'Appareils appairés et accès de la famille';
-
-	/// fr: 'Confidentialité et aide'
-	String get confidentialite => 'Confidentialité et aide';
-
-	/// fr: 'Informations, consentements et diagnostic'
-	String get confidentialiteDetail => 'Informations, consentements et diagnostic';
-
-	/// fr: 'Se déconnecter'
-	String get deconnexion => 'Se déconnecter';
-
-	/// fr: 'Fermer cette session sur l'appareil'
-	String get deconnexionDetail => 'Fermer cette session sur l\'appareil';
-
-	/// fr: 'Espaces autorisés'
-	String get espaces => 'Espaces autorisés';
-
-	/// fr: 'Ces accès viennent de l'autorisation du compte.'
-	String get espacesDetail => 'Ces accès viennent de l\'autorisation du compte.';
-
-	/// fr: 'Accès actif'
-	String get actif => 'Accès actif';
-
-	/// fr: 'Selon habilitation'
-	String get habilitation => 'Selon habilitation';
-
-	/// fr: 'Lecture seule'
-	String get lectureSeule => 'Lecture seule';
-
-	/// fr: 'Non disponible'
-	String get nonDisponible => 'Non disponible';
-
-	/// fr: 'Identifiant'
-	String get identifiant => 'Identifiant';
-
-	/// fr: 'Statut du compte'
-	String get statut => 'Statut du compte';
-
-	/// fr: 'Contact de connexion'
-	String get contact => 'Contact de connexion';
-
-	/// fr: 'Actif'
-	String get statutActif => 'Actif';
-
-	/// fr: 'Accès provisoire'
-	String get statutProvisoire => 'Accès provisoire';
-
-	/// fr: 'Informations personnelles'
-	String get informations => 'Informations personnelles';
-
-	/// fr: 'Académie et périmètre'
-	String get academie => 'Académie et périmètre';
-
-	/// fr: 'Sécurité'
-	String get securite => 'Sécurité';
-
-	/// fr: 'Modifier'
-	String get modifier => 'Modifier';
-
-	/// fr: 'Géré par la méthode de connexion actuelle'
-	String get contactDetail => 'Géré par la méthode de connexion actuelle';
-
-	/// fr: 'Langue'
-	String get langue => 'Langue';
-
-	/// fr: 'Fuseau horaire'
-	String get fuseau => 'Fuseau horaire';
-
-	/// fr: 'Caméra'
-	String get cameraLabel => 'Caméra';
-
-	/// fr: 'Foyer'
-	String get foyer => 'Foyer';
-
-	/// fr: 'Relation de tutelle vérifiée'
-	String get foyerDetail => 'Relation de tutelle vérifiée';
-
-	/// fr: 'Prénom professionnel et identifiant validé'
-	String get enseignantDetail => 'Prénom professionnel et identifiant validé';
-
-	/// fr: 'Rôles, délégations et périmètre lus depuis le compte'
-	String get personnelDetail => 'Rôles, délégations et périmètre lus depuis le compte';
-
-	/// fr: 'Réglages de l'application'
-	String get reglagesTitre => 'Réglages de l\'application';
-
-	/// fr: 'Ces choix s'appliquent à cet appareil et ne changent pas vos droits.'
-	String get reglagesIntro => 'Ces choix s\'appliquent à cet appareil et ne changent pas vos droits.';
-
-	/// fr: 'Apparence'
-	String get apparence => 'Apparence';
-
-	/// fr: 'Système'
-	String get themeSysteme => 'Système';
-
-	/// fr: 'Suivre le réglage de l'appareil'
-	String get themeSystemeDetail => 'Suivre le réglage de l\'appareil';
-
-	/// fr: 'Clair'
-	String get themeClair => 'Clair';
-
-	/// fr: 'Sombre'
-	String get themeSombre => 'Sombre';
-
-	/// fr: 'Accessibilité'
-	String get accessibilite => 'Accessibilité';
-
-	/// fr: 'Réduire les animations'
-	String get animations => 'Réduire les animations';
-
-	/// fr: 'Respecte aussi la préférence de réduction du système'
-	String get animationsDetail => 'Respecte aussi la préférence de réduction du système';
-
-	/// fr: 'Réduire les effets visuels'
-	String get effets => 'Réduire les effets visuels';
-
-	/// fr: 'Retire les ombres et les effets décoratifs'
-	String get effetsDetail => 'Retire les ombres et les effets décoratifs';
-
-	/// fr: 'Aperçu de lisibilité'
-	String get lisibilite => 'Aperçu de lisibilité';
-
-	/// fr: 'Un texte de démonstration avec la taille actuelle'
-	String get lisibiliteDetail => 'Un texte de démonstration avec la taille actuelle';
-
-	/// fr: 'Langue et région'
-	String get langueRegion => 'Langue et région';
-
-	/// fr: 'Français'
-	String get francais => 'Français';
-
-	/// fr: 'Traduction complète disponible'
-	String get francaisDetail => 'Traduction complète disponible';
-
-	/// fr: 'العربية'
-	String get arabe => 'العربية';
-
-	/// fr: 'Traduction en préparation'
-	String get arabeDetail => 'Traduction en préparation';
-
-	/// fr: 'Valeur locale affichée par l'appareil'
-	String get fuseauDetail => 'Valeur locale affichée par l\'appareil';
-
-	/// fr: 'Notifications'
-	String get notifications => 'Notifications';
-
-	/// fr: 'Permission du système non vérifiée'
-	String get notificationsEtat => 'Permission du système non vérifiée';
-
-	/// fr: 'Cours et rappels'
-	String get notificationsCours => 'Cours et rappels';
-
-	/// fr: 'Rappels liés à vos cours'
-	String get notificationsCoursDetail => 'Rappels liés à vos cours';
-
-	/// fr: 'Foyer'
-	String get notificationsFoyer => 'Foyer';
-
-	/// fr: 'Informations utiles pour le foyer'
-	String get notificationsFoyerDetail => 'Informations utiles pour le foyer';
-
-	/// fr: 'Cours et données'
-	String get coursDonnees => 'Cours et données';
-
-	/// fr: 'Économie de données'
-	String get economieDonnees => 'Économie de données';
-
-	/// fr: 'Réduit en priorité la qualité vidéo'
-	String get economieDonneesDetail => 'Réduit en priorité la qualité vidéo';
-
-	/// fr: 'Lecture'
-	String get lecture => 'Lecture';
-
-	/// fr: 'Texte de lecture agrandi'
-	String get lectureGrande => 'Texte de lecture agrandi';
-
-	/// fr: 'Préférence locale pour les contenus de lecture'
-	String get lectureGrandeDetail => 'Préférence locale pour les contenus de lecture';
-
-	/// fr: 'Appareils et sécurité'
-	String get appareilsSecurite => 'Appareils et sécurité';
-
-	/// fr: 'La liste et la révocation restent dans le foyer'
-	String get appareilsSecuriteDetail => 'La liste et la révocation restent dans le foyer';
-
-	/// fr: 'Aide'
-	String get aide => 'Aide';
-
-	/// fr: 'Diagnostic réseau et version de l'application'
-	String get aideDetail => 'Diagnostic réseau et version de l\'application';
-
-	/// fr: 'Profils du foyer'
-	String get profilsTitre => 'Profils du foyer';
-
-	/// fr: 'Chaque enfant conserve son identité et ses réglages propres.'
-	String get profilsIntro => 'Chaque enfant conserve son identité et ses réglages propres.';
-
-	/// fr: 'Profil de {prenom}'
-	String profilEnfant({required Object prenom}) => 'Profil de ${prenom}';
-
-	/// fr: 'Identifiant {identifiant}'
-	String identifiantEnfant({required Object identifiant}) => 'Identifiant ${identifiant}';
-
-	/// fr: 'Mode enfant'
-	String get modeEnfant => 'Mode enfant';
-
-	/// fr: 'Mode standard'
-	String get modeStandard => 'Mode standard';
-
-	/// fr: 'Caméra autorisée'
-	String get cameraAutorisee => 'Caméra autorisée';
-
-	/// fr: 'Caméra non disponible'
-	String get cameraInterdite => 'Caméra non disponible';
-
-	/// fr: 'Accès jusqu'au {date}'
-	String accesJusqua({required Object date}) => 'Accès jusqu\'au ${date}';
-
-	/// fr: 'Accès sans date de fin'
-	String get accesSansFin => 'Accès sans date de fin';
-
-	/// fr: 'Ouvrir le profil'
-	String get ouvrirProfil => 'Ouvrir le profil';
-
-	/// fr: 'Ajouter un enfant'
-	String get ajouterEnfant => 'Ajouter un enfant';
-
-	/// fr: 'Ouvrir les réglages de {prenom}'
-	String reglerEnfant({required Object prenom}) => 'Ouvrir les réglages de ${prenom}';
-
-	/// fr: 'Aucun profil enfant dans ce foyer'
-	String get aucunProfil => 'Aucun profil enfant dans ce foyer';
-
-	/// fr: 'Ajoutez un enfant depuis la gestion du foyer.'
-	String get aucunProfilDetail => 'Ajoutez un enfant depuis la gestion du foyer.';
-
-	/// fr: 'Les profils du foyer n'ont pas pu être lus.'
-	String get erreurProfils => 'Les profils du foyer n\'ont pas pu être lus.';
-
-	/// fr: 'Réessayer'
-	String get reessayer => 'Réessayer';
-
-	late final Traductions$compte$roles$fr roles = Traductions$compte$roles$fr.internal(_root);
-	late final Traductions$compte$roleDetail$fr roleDetail = Traductions$compte$roleDetail$fr.internal(_root);
-}
-
 // Path: nav
 class Traductions$nav$fr {
 	Traductions$nav$fr.internal(this._root);
@@ -1503,7 +1199,6 @@ class Traductions$enseignant$fr {
 
 	// Translations
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
-	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
 }
 
 // Path: controleur
@@ -2065,66 +1760,6 @@ class Traductions$admin$journal$fr {
 	String get fin => 'Vous êtes remonté jusqu\'à la première entrée du journal.';
 }
 
-// Path: compte.roles
-class Traductions$compte$roles$fr {
-	Traductions$compte$roles$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Administration'
-	String get admin => 'Administration';
-
-	/// fr: 'Super-administration'
-	String get superAdmin => 'Super-administration';
-
-	/// fr: 'Comptabilité'
-	String get accountant => 'Comptabilité';
-
-	/// fr: 'Contrôle'
-	String get controller => 'Contrôle';
-
-	/// fr: 'Enseignement'
-	String get teacher => 'Enseignement';
-
-	/// fr: 'Tutorat'
-	String get guardian => 'Tutorat';
-
-	/// fr: 'Élève'
-	String get student => 'Élève';
-}
-
-// Path: compte.roleDetail
-class Traductions$compte$roleDetail$fr {
-	Traductions$compte$roleDetail$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Décisions et gestion autorisées'
-	String get admin => 'Décisions et gestion autorisées';
-
-	/// fr: 'Politiques et délégations autorisées'
-	String get superAdmin => 'Politiques et délégations autorisées';
-
-	/// fr: 'Données financières autorisées'
-	String get accountant => 'Données financières autorisées';
-
-	/// fr: 'Séances et audits autorisés'
-	String get controller => 'Séances et audits autorisés';
-
-	/// fr: 'Cours et élèves attribués'
-	String get teacher => 'Cours et élèves attribués';
-
-	/// fr: 'Foyer et enfants liés'
-	String get guardian => 'Foyer et enfants liés';
-
-	/// fr: 'Cours et lecture personnels'
-	String get student => 'Cours et lecture personnels';
-}
-
 // Path: nav.eleve
 class Traductions$nav$eleve$fr {
 	Traductions$nav$eleve$fr.internal(this._root);
@@ -2141,9 +1776,6 @@ class Traductions$nav$eleve$fr {
 
 	/// fr: 'Suivi'
 	String get suivi => 'Suivi';
-
-	/// fr: 'Compte'
-	String get compte => 'Compte';
 }
 
 // Path: nav.tuteur
@@ -2186,9 +1818,6 @@ class Traductions$nav$enseignant$fr {
 
 	/// fr: 'Profil'
 	String get profil => 'Profil';
-
-	/// fr: 'Compte'
-	String get compte => 'Compte';
 }
 
 // Path: nav.controleur
@@ -2379,26 +2008,8 @@ class Traductions$eleve$suivi$fr {
 
 	// Translations
 
-	/// fr: 'Mon suivi'
-	String get titre => 'Mon suivi';
-
-	/// fr: 'Sourates lues et révisées'
-	String get souratesApprises => 'Sourates lues et révisées';
-
-	/// fr: 'Historique des cours'
-	String get derniersCours => 'Historique des cours';
-
-	/// fr: 'Conseils de tajwid & prononciation'
-	String get remarquesTajwid => 'Conseils de tajwid & prononciation';
-
-	/// fr: 'Progression globale'
-	String get progressionGlobale => 'Progression globale';
-
-	/// fr: 'Objectifs hebdomadaires'
-	String get objectifs => 'Objectifs hebdomadaires';
-
-	/// fr: '{nombre} pages lues'
-	String pagesLues({required Object nombre}) => '${nombre} pages lues';
+	/// fr: 'Suivi de mes cours'
+	String get titre => 'Suivi de mes cours';
 
 	/// fr: 'Date'
 	String get colonneDate => 'Date';
@@ -2433,11 +2044,11 @@ class Traductions$eleve$suivi$fr {
 	/// fr: 'Cours non tenu'
 	String get nonTenu => 'Cours non tenu';
 
-	/// fr: 'Aucun cours effectué pour le moment'
-	String get vide => 'Aucun cours effectué pour le moment';
+	/// fr: 'Aucun cours pour l'instant'
+	String get vide => 'Aucun cours pour l\'instant';
 
-	/// fr: 'Vos cours validés et les conseils de votre enseignant s'afficheront ici.'
-	String get videDetail => 'Vos cours validés et les conseils de votre enseignant s\'afficheront ici.';
+	/// fr: 'Vos cours s'afficheront ici, du plus récent au plus ancien, avec votre présence.'
+	String get videDetail => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.';
 
 	/// fr: 'Le suivi n'a pas pu être lu. Réessayez dans un instant.'
 	String get erreur => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.';
@@ -2833,102 +2444,6 @@ class Traductions$enseignant$journee$fr {
 	String get erreur => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.';
 }
 
-// Path: enseignant.profil
-class Traductions$enseignant$profil$fr {
-	Traductions$enseignant$profil$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Votre profil enseignant'
-	String get titre => 'Votre profil enseignant';
-
-	/// fr: 'Charge pédagogique'
-	String get chargePedagogique => 'Charge pédagogique';
-
-	/// fr: '{nombre} élève(s) suivi(s)'
-	String elevesActifs({required Object nombre}) => '${nombre} élève(s) suivi(s)';
-
-	/// fr: '{nombre} créneaux d'enseignement posés'
-	String heuresDisponibles({required Object nombre}) => '${nombre} créneaux d\'enseignement posés';
-
-	/// fr: 'Statut de votre compte'
-	String get statutCompte => 'Statut de votre compte';
-
-	/// fr: 'Enseignant certifié Rewayah Academy'
-	String get compteValide => 'Enseignant certifié Rewayah Academy';
-
-	/// fr: 'Gérer mes disponibilités'
-	String get reglagesHeures => 'Gérer mes disponibilités';
-
-	/// fr: 'Mes réglages de prière'
-	String get reglagesPriere => 'Mes réglages de prière';
-
-	/// fr: 'Les informations professionnelles connues par Rewayah.'
-	String get intro => 'Les informations professionnelles connues par Rewayah.';
-
-	/// fr: 'Identité professionnelle'
-	String get identite => 'Identité professionnelle';
-
-	/// fr: 'Prénom professionnel'
-	String get prenom => 'Prénom professionnel';
-
-	/// fr: 'Identifiant enseignant'
-	String get identifiant => 'Identifiant enseignant';
-
-	/// fr: 'Statut du compte'
-	String get statut => 'Statut du compte';
-
-	/// fr: 'Pays de rattachement'
-	String get pays => 'Pays de rattachement';
-
-	/// fr: 'Langues d'enseignement'
-	String get langues => 'Langues d\'enseignement';
-
-	/// fr: 'Capacité hebdomadaire'
-	String get capacite => 'Capacité hebdomadaire';
-
-	/// fr: '{nombre} h par semaine'
-	String heures({required Object nombre}) => '${nombre} h par semaine';
-
-	/// fr: 'Vérification d'identité'
-	String get verification => 'Vérification d\'identité';
-
-	/// fr: 'Vérification en cours'
-	String get verificationEnAttente => 'Vérification en cours';
-
-	/// fr: 'Identité vérifiée'
-	String get verificationValidee => 'Identité vérifiée';
-
-	/// fr: 'Vérification à reprendre'
-	String get verificationRefusee => 'Vérification à reprendre';
-
-	/// fr: 'En attente de validation'
-	String get statutEnAttente => 'En attente de validation';
-
-	/// fr: 'Accès suspendu'
-	String get statutSuspendu => 'Accès suspendu';
-
-	/// fr: 'Votre profil enseignant n'est pas disponible.'
-	String get vide => 'Votre profil enseignant n\'est pas disponible.';
-
-	/// fr: 'Les informations professionnelles apparaîtront ici lorsqu'elles seront disponibles.'
-	String get videDetail => 'Les informations professionnelles apparaîtront ici lorsqu\'elles seront disponibles.';
-
-	/// fr: 'Le profil enseignant n'a pas pu être lu. Réessayez dans un instant.'
-	String get erreur => 'Le profil enseignant n\'a pas pu être lu. Réessayez dans un instant.';
-
-	/// fr: 'Votre profil enseignant n'est pas disponible hors ligne.'
-	String get horsLigne => 'Votre profil enseignant n\'est pas disponible hors ligne.';
-
-	/// fr: 'Reconnectez-vous pour consulter les informations à jour.'
-	String get horsLigneDetail => 'Reconnectez-vous pour consulter les informations à jour.';
-
-	/// fr: 'Réessayer'
-	String get reessayer => 'Réessayer';
-}
-
 // Path: controleur.planning
 class Traductions$controleur$planning$fr {
 	Traductions$controleur$planning$fr.internal(this._root);
@@ -3145,14 +2660,7 @@ extension on Traductions {
 			'attente.seDeconnecter' => 'Se déconnecter',
 			'connexion.titre' => 'Se connecter',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
-			'connexion.introDemo' => 'Choisissez un rôle avec admin@demo.test, comptable@demo.test, controleur@demo.test, enseignant@demo.test, tuteur@demo.test, eleve@demo.test ou enfant@demo.test. N\'importe quel mot de passe non vide fonctionne, sans Supabase.',
-			'connexion.demoTitre' => 'Accès direct',
-			'connexion.demoDetail' => 'Accès fictif temporaire destiné à essayer les interfaces Rewayah.',
 			'connexion.courriel' => 'Votre adresse électronique',
-			'connexion.motDePasse' => 'Mot de passe',
-			'connexion.seConnecter' => 'Se connecter',
-			'connexion.erreurMotDePasse' => 'Saisissez votre mot de passe.',
-			'connexion.erreurConnexion' => 'La connexion n\'a pas abouti. Vérifiez vos identifiants puis réessayez.',
 			'connexion.envoyerLien' => 'Recevoir le lien',
 			'connexion.avecGoogle' => 'Continuer avec Google',
 			'connexion.ou' => 'ou',
@@ -3488,116 +2996,9 @@ extension on Traductions {
 			'choix.autreInvite' => 'Précisez',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
 			'avatar.sansPhoto' => 'Pas encore de photo',
-			'compte.titre' => 'Compte',
-			'compte.intro' => 'Votre espace personnel, vos accès et les réglages de cette application.',
-			'compte.profil' => 'Mon profil',
-			'compte.profilDetail' => 'Identité, contact et accès vérifiés',
-			'compte.reglages' => 'Réglages de l\'application',
-			'compte.reglagesDetail' => 'Apparence, accessibilité, notifications et données',
-			'compte.profils' => 'Profils du foyer',
-			'compte.profilsDetail' => 'Gérer les profils des enfants de votre foyer',
-			'compte.appareils' => 'Appareils et sécurité',
-			'compte.appareilsDetail' => 'Appareils appairés et accès de la famille',
-			'compte.confidentialite' => 'Confidentialité et aide',
-			'compte.confidentialiteDetail' => 'Informations, consentements et diagnostic',
-			'compte.deconnexion' => 'Se déconnecter',
-			'compte.deconnexionDetail' => 'Fermer cette session sur l\'appareil',
-			'compte.espaces' => 'Espaces autorisés',
-			'compte.espacesDetail' => 'Ces accès viennent de l\'autorisation du compte.',
-			'compte.actif' => 'Accès actif',
-			'compte.habilitation' => 'Selon habilitation',
-			'compte.lectureSeule' => 'Lecture seule',
-			'compte.nonDisponible' => 'Non disponible',
-			'compte.identifiant' => 'Identifiant',
-			'compte.statut' => 'Statut du compte',
-			'compte.contact' => 'Contact de connexion',
-			'compte.statutActif' => 'Actif',
-			'compte.statutProvisoire' => 'Accès provisoire',
-			'compte.informations' => 'Informations personnelles',
-			'compte.academie' => 'Académie et périmètre',
-			'compte.securite' => 'Sécurité',
-			'compte.modifier' => 'Modifier',
-			'compte.contactDetail' => 'Géré par la méthode de connexion actuelle',
-			'compte.langue' => 'Langue',
-			'compte.fuseau' => 'Fuseau horaire',
-			'compte.cameraLabel' => 'Caméra',
-			'compte.foyer' => 'Foyer',
-			'compte.foyerDetail' => 'Relation de tutelle vérifiée',
-			'compte.enseignantDetail' => 'Prénom professionnel et identifiant validé',
-			'compte.personnelDetail' => 'Rôles, délégations et périmètre lus depuis le compte',
-			'compte.reglagesTitre' => 'Réglages de l\'application',
-			'compte.reglagesIntro' => 'Ces choix s\'appliquent à cet appareil et ne changent pas vos droits.',
-			'compte.apparence' => 'Apparence',
-			'compte.themeSysteme' => 'Système',
-			'compte.themeSystemeDetail' => 'Suivre le réglage de l\'appareil',
-			'compte.themeClair' => 'Clair',
-			'compte.themeSombre' => 'Sombre',
-			'compte.accessibilite' => 'Accessibilité',
-			'compte.animations' => 'Réduire les animations',
-			'compte.animationsDetail' => 'Respecte aussi la préférence de réduction du système',
-			'compte.effets' => 'Réduire les effets visuels',
-			'compte.effetsDetail' => 'Retire les ombres et les effets décoratifs',
-			'compte.lisibilite' => 'Aperçu de lisibilité',
-			'compte.lisibiliteDetail' => 'Un texte de démonstration avec la taille actuelle',
-			'compte.langueRegion' => 'Langue et région',
-			'compte.francais' => 'Français',
-			'compte.francaisDetail' => 'Traduction complète disponible',
-			'compte.arabe' => 'العربية',
-			'compte.arabeDetail' => 'Traduction en préparation',
-			'compte.fuseauDetail' => 'Valeur locale affichée par l\'appareil',
-			_ => null,
-		} ?? switch (path) {
-			'compte.notifications' => 'Notifications',
-			'compte.notificationsEtat' => 'Permission du système non vérifiée',
-			'compte.notificationsCours' => 'Cours et rappels',
-			'compte.notificationsCoursDetail' => 'Rappels liés à vos cours',
-			'compte.notificationsFoyer' => 'Foyer',
-			'compte.notificationsFoyerDetail' => 'Informations utiles pour le foyer',
-			'compte.coursDonnees' => 'Cours et données',
-			'compte.economieDonnees' => 'Économie de données',
-			'compte.economieDonneesDetail' => 'Réduit en priorité la qualité vidéo',
-			'compte.lecture' => 'Lecture',
-			'compte.lectureGrande' => 'Texte de lecture agrandi',
-			'compte.lectureGrandeDetail' => 'Préférence locale pour les contenus de lecture',
-			'compte.appareilsSecurite' => 'Appareils et sécurité',
-			'compte.appareilsSecuriteDetail' => 'La liste et la révocation restent dans le foyer',
-			'compte.aide' => 'Aide',
-			'compte.aideDetail' => 'Diagnostic réseau et version de l\'application',
-			'compte.profilsTitre' => 'Profils du foyer',
-			'compte.profilsIntro' => 'Chaque enfant conserve son identité et ses réglages propres.',
-			'compte.profilEnfant' => ({required Object prenom}) => 'Profil de ${prenom}',
-			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant ${identifiant}',
-			'compte.modeEnfant' => 'Mode enfant',
-			'compte.modeStandard' => 'Mode standard',
-			'compte.cameraAutorisee' => 'Caméra autorisée',
-			'compte.cameraInterdite' => 'Caméra non disponible',
-			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
-			'compte.accesSansFin' => 'Accès sans date de fin',
-			'compte.ouvrirProfil' => 'Ouvrir le profil',
-			'compte.ajouterEnfant' => 'Ajouter un enfant',
-			'compte.reglerEnfant' => ({required Object prenom}) => 'Ouvrir les réglages de ${prenom}',
-			'compte.aucunProfil' => 'Aucun profil enfant dans ce foyer',
-			'compte.aucunProfilDetail' => 'Ajoutez un enfant depuis la gestion du foyer.',
-			'compte.erreurProfils' => 'Les profils du foyer n\'ont pas pu être lus.',
-			'compte.reessayer' => 'Réessayer',
-			'compte.roles.admin' => 'Administration',
-			'compte.roles.superAdmin' => 'Super-administration',
-			'compte.roles.accountant' => 'Comptabilité',
-			'compte.roles.controller' => 'Contrôle',
-			'compte.roles.teacher' => 'Enseignement',
-			'compte.roles.guardian' => 'Tutorat',
-			'compte.roles.student' => 'Élève',
-			'compte.roleDetail.admin' => 'Décisions et gestion autorisées',
-			'compte.roleDetail.superAdmin' => 'Politiques et délégations autorisées',
-			'compte.roleDetail.accountant' => 'Données financières autorisées',
-			'compte.roleDetail.controller' => 'Séances et audits autorisés',
-			'compte.roleDetail.teacher' => 'Cours et élèves attribués',
-			'compte.roleDetail.guardian' => 'Foyer et enfants liés',
-			'compte.roleDetail.student' => 'Cours et lecture personnels',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
 			'nav.eleve.suivi' => 'Suivi',
-			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
@@ -3606,7 +3007,6 @@ extension on Traductions {
 			'nav.enseignant.journee' => 'Journée',
 			'nav.enseignant.creneaux' => 'Créneaux',
 			'nav.enseignant.profil' => 'Profil',
-			'nav.enseignant.compte' => 'Compte',
 			'nav.controleur.planning' => 'Planning',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
@@ -3655,17 +3055,13 @@ extension on Traductions {
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
-			'eleve.suivi.titre' => 'Mon suivi',
-			'eleve.suivi.souratesApprises' => 'Sourates lues et révisées',
-			'eleve.suivi.derniersCours' => 'Historique des cours',
-			'eleve.suivi.remarquesTajwid' => 'Conseils de tajwid & prononciation',
-			'eleve.suivi.progressionGlobale' => 'Progression globale',
-			'eleve.suivi.objectifs' => 'Objectifs hebdomadaires',
-			'eleve.suivi.pagesLues' => ({required Object nombre}) => '${nombre} pages lues',
+			'eleve.suivi.titre' => 'Suivi de mes cours',
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Cours',
 			'eleve.suivi.colonneEnseignant' => 'Enseignant',
 			'eleve.suivi.colonneEtat' => 'Présence',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
@@ -3673,8 +3069,8 @@ extension on Traductions {
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'eleve.suivi.annule' => 'Cours annulé',
 			'eleve.suivi.nonTenu' => 'Cours non tenu',
-			'eleve.suivi.vide' => 'Aucun cours effectué pour le moment',
-			'eleve.suivi.videDetail' => 'Vos cours validés et les conseils de votre enseignant s\'afficheront ici.',
+			'eleve.suivi.vide' => 'Aucun cours pour l\'instant',
+			'eleve.suivi.videDetail' => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.',
 			'eleve.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
 			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
@@ -3794,35 +3190,6 @@ extension on Traductions {
 			'enseignant.journee.aucunEleveEnAttente' => 'Aucun élève en attente sur vos heures',
 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
-			'enseignant.profil.titre' => 'Votre profil enseignant',
-			'enseignant.profil.chargePedagogique' => 'Charge pédagogique',
-			'enseignant.profil.elevesActifs' => ({required Object nombre}) => '${nombre} élève(s) suivi(s)',
-			'enseignant.profil.heuresDisponibles' => ({required Object nombre}) => '${nombre} créneaux d\'enseignement posés',
-			'enseignant.profil.statutCompte' => 'Statut de votre compte',
-			'enseignant.profil.compteValide' => 'Enseignant certifié Rewayah Academy',
-			'enseignant.profil.reglagesHeures' => 'Gérer mes disponibilités',
-			'enseignant.profil.reglagesPriere' => 'Mes réglages de prière',
-			'enseignant.profil.intro' => 'Les informations professionnelles connues par Rewayah.',
-			'enseignant.profil.identite' => 'Identité professionnelle',
-			'enseignant.profil.prenom' => 'Prénom professionnel',
-			'enseignant.profil.identifiant' => 'Identifiant enseignant',
-			'enseignant.profil.statut' => 'Statut du compte',
-			'enseignant.profil.pays' => 'Pays de rattachement',
-			'enseignant.profil.langues' => 'Langues d\'enseignement',
-			'enseignant.profil.capacite' => 'Capacité hebdomadaire',
-			'enseignant.profil.heures' => ({required Object nombre}) => '${nombre} h par semaine',
-			'enseignant.profil.verification' => 'Vérification d\'identité',
-			'enseignant.profil.verificationEnAttente' => 'Vérification en cours',
-			'enseignant.profil.verificationValidee' => 'Identité vérifiée',
-			'enseignant.profil.verificationRefusee' => 'Vérification à reprendre',
-			'enseignant.profil.statutEnAttente' => 'En attente de validation',
-			'enseignant.profil.statutSuspendu' => 'Accès suspendu',
-			'enseignant.profil.vide' => 'Votre profil enseignant n\'est pas disponible.',
-			'enseignant.profil.videDetail' => 'Les informations professionnelles apparaîtront ici lorsqu\'elles seront disponibles.',
-			'enseignant.profil.erreur' => 'Le profil enseignant n\'a pas pu être lu. Réessayez dans un instant.',
-			'enseignant.profil.horsLigne' => 'Votre profil enseignant n\'est pas disponible hors ligne.',
-			'enseignant.profil.horsLigneDetail' => 'Reconnectez-vous pour consulter les informations à jour.',
-			'enseignant.profil.reessayer' => 'Réessayer',
 			'controleur.planning.titre' => 'Planning global',
 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
 			'controleur.planning.tousEtats' => 'Tout',

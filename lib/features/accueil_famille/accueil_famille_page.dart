@@ -12,7 +12,6 @@ import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -215,18 +214,21 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
     final bool enErreur =
         seances.hasError || enfants.hasError || affectations.hasError;
 
+    final bool chargementInitial =
+        (!enfants.hasValue && enfants.isLoading) ||
+        (!seances.hasValue && seances.isLoading) ||
+        (!affectations.hasValue && affectations.isLoading);
+
     // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
     // colonne centree et bornee a 1200, le titre d'ecran et le bandeau hors
     // ligne. L'ecran ne rend plus que son contenu.
-    final bool enChargement = enfants.isLoading && enfants.value == null;
-
     return PageShell(
       titre: t.tuteur.accueil.titre,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (enChargement)
-            const Skeleton.carteEleve(lignes: 2)
+          if (chargementInitial)
+            const Skeleton.liste(lignes: 4)
           else if (enfants.hasValue && foyer.isEmpty)
             EmptyState(
               message: t.tuteur.accueil.aucunEnfant,
@@ -236,68 +238,21 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
                   GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
             )
           else
-            LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints contraintes) {
-                final Gabarit gabarit = AppGabarit.de(context);
-                final int nbColonnes = switch (gabarit) {
-                  Gabarit.mobile => 1,
-                  Gabarit.tablette => 2,
-                  Gabarit.desktop =>
-                    foyer.length >= 3 ? 3 : (foyer.length == 2 ? 2 : 1),
-                };
-
-                if (nbColonnes == 1) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      for (final EleveDuFoyer enfant in foyer)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                          child: _CarteEnfant(
-                            enfant: enfant,
-                            seances: toutes
-                                .where((Seance s) => s.eleveId == enfant.id)
-                                .toList(),
-                            affecte: liens.any(
-                              (Affectation a) =>
-                                  a.active && a.eleveId == enfant.id,
-                            ),
-                            maintenant: _maintenant,
-                            onAssister: _assister,
-                          ),
-                        ),
-                    ],
-                  );
-                }
-
-                const double gap = AppSpacing.md;
-                final double largeurCarte =
-                    (contraintes.maxWidth - (nbColonnes - 1) * gap) /
-                        nbColonnes;
-                return Wrap(
-                  spacing: gap,
-                  runSpacing: gap,
-                  children: <Widget>[
-                    for (final EleveDuFoyer enfant in foyer)
-                      SizedBox(
-                        width: largeurCarte,
-                        child: _CarteEnfant(
-                          enfant: enfant,
-                          seances: toutes
-                              .where((Seance s) => s.eleveId == enfant.id)
-                              .toList(),
-                          affecte: liens.any(
-                            (Affectation a) =>
-                                a.active && a.eleveId == enfant.id,
-                          ),
-                          maintenant: _maintenant,
-                          onAssister: _assister,
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
+            for (final EleveDuFoyer enfant in foyer)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                child: _CarteEnfant(
+                  enfant: enfant,
+                  seances: toutes
+                      .where((Seance s) => s.eleveId == enfant.id)
+                      .toList(),
+                  affecte: liens.any(
+                    (Affectation a) => a.active && a.eleveId == enfant.id,
+                  ),
+                  maintenant: _maintenant,
+                  onAssister: _assister,
+                ),
+              ),
           // Pose sous les cartes, la ou le geste a eu lieu : un retour local ne
           // se met jamais au centre de l'ecran (`02-regles-ux.md` section 7).
           LocalFeedback(message: _echecAssistance),

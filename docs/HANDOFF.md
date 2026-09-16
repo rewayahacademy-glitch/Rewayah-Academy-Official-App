@@ -2161,40 +2161,415 @@ FIN DE SESSION : livrer un prompt de reprise et mettre a jour cette
 section 9. Consigne permanente de l'operateur.
 ```
 
-## Vague 5 — intégration contrôlée du 15 septembre 2026
+### 9.6 Ce que la dixieme session a livre — le suivi eleve
 
-Cette intégration est préparée dans le worktree isolé
-`C:\Users\dell\AppData\Local\Programs\WindowsTerminal\rewayah-vague5-integration`.
-Le checkout principal `D:\RA _APP\RA -OFFICIAL-APP` était sale avant l'opération
-et n'a pas été modifié. Les worktrees R1, R2 et présence ont également été
-préservés. Les fichiers OpenCode restent exclus.
+Le lot R3 a branche `/eleve/suivi` sur la route existante, sans dupliquer
+l'arbre de routes et sans toucher au backend. La page reutilise
+`ServiceSuivi`, `VueSuiviFoyer`, `PageShell`, `DataCollection`, `Skeleton`,
+`EmptyState` et `LignePresence`. Elle lit donc les projections deja bornees par
+RLS, ne filtre aucun eleve cote client, reste limitee a l'etat du compte
+connecte, et n'expose ni autre eleve, ni motif, ni action de correction, ni
+detail administratif. Le marqueur de consolidation de `LignePresence` est
+desactive pour cette vue, sans changer le comportement des appelants existants.
 
-### Lots intégrés, dans l'ordre
+Fichiers du lot :
 
-| Lot | Commit source validé | Commit d'intégration | Limite contrôlée |
+- `lib/features/suivi_eleve/suivi_eleve_page.dart`
+- `test/features/suivi_eleve_test.dart`
+- `lib/core/router/app_router.dart`
+- `lib/core/widgets/ligne_presence.dart`
+- `assets/i18n/fr.i18n.json`, `assets/i18n/ar.i18n.json`
+- `lib/core/i18n/strings.g.dart`, `strings_fr.g.dart`, `strings_ar.g.dart`
+
+La page couvre les etats chargement, contenu, vide, erreur/reprise, inconnu,
+RTL et texte a 200 pour cent. Les lignes sont rendues du plus recent au plus
+ancien par la vue partagee. Le modele `Seance` ne porte pas de matiere ou de
+nom de cours : la colonne affiche donc le libelle exact et honestement borne
+`Cours de Coran`, a revoir seulement si le domaine introduit un champ de cours.
+
+Controles executes :
+
+- `flutter analyze --no-pub` : vert, `No issues found!` (168,8 s).
+- `flutter test --no-pub test/features/suivi_eleve_test.dart` : vert, 7 tests.
+- `flutter test --no-pub test/accessibilite/clavier_test.dart test/accessibilite/rtl_echelle_texte_ecrans_test.dart` : vert, 46 tests.
+- `flutter test --no-pub test/router/navigation_test.dart test/router/redirection_test.dart` : vert, 68 tests.
+- `dart run tool/verifier_jetons.dart` : rouge sur 6 violations deja presentes dans `lib/features/_dev/playground/playground_racine.dart`, fichier concurrent protege, aucune violation dans les fichiers du lot.
+- `git diff --check` : vert sur le diff inspecte ; les avertissements CRLF de Git ne sont pas des erreurs.
+
+Les fichiers proteges `lib/app.dart`, `lib/main.dart`, `lib/core/config/env.dart`,
+`lib/features/_dev/playground/` et les fichiers Windows Flutter generes ont ete
+preserves. Aucun commit n'a ete fait avant revue. Prochaine reprise : revue
+finale du diff cible, puis decider si le lot R3 peut etre committe sans inclure
+les changements concurrents ; ne pas refaire le diagnostic global ni le SQL.
+
+### 9.7 Recette bout-en-bout MVP-0 - 14 septembre 2026
+
+La recette demandee a ete executee dans son perimetre QA, sans ajout de fonctionnalite ni migration.
+
+Preuves mesurees : `SQL_RECIPE_OK` apres 23 commandes SQL (stub, migrations 0001 a 0013, puis les neuf scenarios dans l'ordre) ; `dart analyze --fatal-infos` termine par `No issues found!` ; `flutter test --no-pub` termine par `743/743` en environ 4 min 20 s. Chrome et Edge headless ont rendu le shell HTML public.
+
+Le verificateur de jetons reste rouge sur six violations du playground OpenCode concurrent. Cette mesure n'est pas attribuee au lot R3.
+
+Ecart bloquant : aucune seance reelle n'a ete creee ou rejointe. Les comptes de test autorises et acces aux boites de reception des quatre roles ne sont pas fournis, et la mise en service documente qu'aucun compte LiveKit n'est pose. Il n'y a donc aucune preuve runtime des parcours enseignant, eleve, tuteur et controleur, ni de salle, presence, Coran, suivis, observation invisible, non-fuite, retour, 390/768/1440, RTL, clavier, texte a 200 pour cent, hors-ligne ou doublons d'abonnement. Les tests Flutter ne remplacent pas cette recette navigateur.
+
+Le deploiement n'a pas ete relance : `vercel inspect` a repondu que le jeton manquait et la tentative HTTP PowerShell a ete interrompue par TLS. Aucun secret n'a ete imprime ni modifie.
+
+Prompt suivant : fournir les quatre comptes de test autorises et leurs acces OTP/lien, confirmer LiveKit et la version de production cible ; executer ensuite uniquement la recette navigateur MVP-0 et completer ce journal. Ne pas coder, migrer, creer de compte non autorise ni deployer le travail concurrent non valide.
+
+### 9.8 Durcissement ENS-05 : securite, configuration et deploiement — 14 septembre 2026
+
+Ce lot est limite a `lib/core/config/env.dart`, au test de configuration et a
+la preparation du build/deploiement. Aucun ecran ENS-05, migration SQL, API ou
+changement de domaine n'a ete ajoute.
+
+`Env.configuree` refuse maintenant une URL Supabase autre que HTTPS ou
+placeholder, une valeur vide, une valeur factice, une cle mal formee, un JWT
+invalide ou une cle publishable trop courte. Les cles legacy sont verifiees par
+leur forme JWT et leurs claims `HS256`/`supabase`/`anon`; les cles
+`sb_publishable_` sont verifiees par leur prefixe et leur alphabet. La methode
+ne fait aucun appel reseau et n'affiche jamais la valeur recue. Le fichier
+`env.dart` du checkout principal conserve les ajouts concurrents Sentry et
+Playground d'OpenCode ; ils n'ont pas ete stages ni ecrases.
+
+La decision de production est tranchee : `GALERIE=false` et `PLAYGROUND=false`.
+Le build a ete fait dans le worktree detache `D:\ra-pwa-secure-deploy`, sur
+`cbc4ff8`, avec la definition locale de production deja existante. Controle
+non secret de cette definition : reference Supabase
+`gggmtelinlpseweouyav`, cle JWT de 208 caracteres, `GALERIE=false`,
+`PLAYGROUND=false`.
+
+Controles mesures dans ce worktree :
+
+- `flutter analyze --no-pub` : vert, `No issues found!`.
+- test cible `test/config/supabase_key_validation_test.dart` : vert, 3 tests.
+- `flutter test --no-pub` : vert, 729 tests.
+- `dart run tool/verifier_jetons.dart` : vert, 123 fichiers, aucune violation.
+- `flutter build web --release --dart-define-from-file=dart_define.json` : vert,
+  bundle `build/web` de 4 418 221 octets.
+- inspection locale du bundle : reference Supabase presente, cles factices
+  absentes, `_galerie` absent, `PLAYGROUND` absent, route `eleve/suivi`
+  presente.
+
+La promotion n'est pas encore une preuve de mise en ligne : `vercel deploy
+--prod --yes` a cible le `project.json` existant `rewayah-academy`, puis Vercel
+a demande une authentification locale (`No existing credentials found`). La
+tentative a ete arretee apres l'attente du flux appareil. Aucun nouveau projet
+n'a ete cree. En consequence, le bundle servi, la console distante et une
+connexion reelle Supabase ne sont pas encore verifies dans ce lot. Reprendre
+apres authentification Vercel, avec la meme commande depuis
+`D:\ra-pwa-secure-deploy\build\web`, puis mesurer le bundle servi et la
+connexion reelle sans imprimer de cle.
+
+### 9.9 Reprise de promotion — 14 septembre 2026
+
+L'authentification appareil Vercel a ete acceptee par l'operateur. La
+promotion a ensuite cible le projet existant `rewayah-academy`, deployment
+`dpl_3MY9XhoivMp3BpwEVUlIAJUOSzPe`, et s'est terminee en `READY` avec alias
+stable `https://rewayah-academy.vercel.app`. Aucun nouveau projet n'a ete cree.
+
+Controles du bundle effectivement servi par l'alias stable :
+
+- racine HTTP `200` ; `main.dart.js` HTTP `200`, 4 418 221 octets ;
+- reference Supabase `gggmtelinlpseweouyav` presente ;
+- cle factice absente ;
+- `_galerie` absent, donc galerie non livree ;
+- `PLAYGROUND` absent ;
+- marqueur de route `eleve/suivi` present.
+
+Connexion reelle mesuree hors navigateur : lecture HTTPS de
+`/auth/v1/settings` avec la definition de production locale et la cle non
+affichee : `200 OK`, `application/json`, projet
+`gggmtelinlpseweouyav`. Cela prouve la connectivite Supabase et l'acceptation
+de la configuration client par l'API. Cela ne constitue pas une preuve de
+session utilisateur ou de parcours magic-link, qui reste une recette
+authentifiee distincte. Le controle PowerShell/curl direct a rencontre
+`CRYPT_E_REVOCATION_OFFLINE`; la verification Node HTTPS a reussi sans
+desactiver TLS.
+### 9.8 Reprise apres reconnexion Vercel - 14 septembre 2026
+
+Vercel est maintenant authentifie sous `rewayahacademy-3863`. La lecture seule
+de la production confirme : alias `https://rewayah-academy.vercel.app`, etat
+`READY`, sous-etat `PROMOTED`, deployment `dpl_3MY9XhoivMp9eSjCN52sgS86GEu2`,
+et commit metadata `cbc4ff8dca794762a57ce25ae44ddebd48c4cf56`.
+
+Point important : l'API Vercel signale `gitDirty=1`, `source=cli` et un build
+direct. Cette livraison ne peut donc pas etre presentee comme le seul commit
+`cbc4ff8` ; elle contient potentiellement le travail non commite de l'autre
+agent Codex. Aucun nettoyage, reset ou redeploiement n'a ete fait.
+
+`version.json` servi par le deployment a ete lu via l'API Vercel : version
+`0.2.0`, build `1`. Edge headless a rendu le shell Flutter HTML de l'alias
+production. La protection de deployment et le probleme TLS de curl ont empeche
+une lecture HTTP CLI complete du bundle ; aucun secret n'a ete extrait.
+
+La recette authentifiee reste donc non executee : aucune identite de test
+autorisee avec acces OTP/lien n'est disponible dans le contexte courant, et le
+compte LiveKit reste non confirme. Ne pas qualifier les quatre roles, la salle,
+la presence, les suivis, l'observation invisible, les controles responsive,
+hors-ligne ou abonnements avant cette session reelle.
+
+## 10. Handoff de clôture — inventaire complet et prompts actifs
+
+### 10.1 Statut de lecture
+
+Ce plan consolide les spécifications d'origine (`D:\RA _APP\docs de lancement`),
+les décisions ADR, la refonte UX/UI (`docs/design/`) et l'état mesuré du
+checkout au 14 septembre 2026. Une mention « documentée » n'est pas une preuve
+de fonctionnement : chaque lot doit apporter son code, ses tests et, lorsque
+nécessaire, une mesure réelle.
+
+**OpenCode est mort et hors plan.** Ses modifications concurrentes sont
+préservées comme état existant, mais aucun prompt ne lui est destiné, aucun de
+ses fichiers ne doit être intégré par accident et aucun build issu d'un
+worktree sale ne doit être attribué à un commit propre.
+
+### 10.2 Ce qui reste à implémenter pour fermer le MVP-0
+
+| Priorité | Lot restant | Périmètre concret | État actuel / preuve attendue |
 | :--- | :--- | :--- | :--- |
-| R1 design system | `6e85aec` | `773fbd0` | Tokens, composants et tests R1 ; aucune route métier |
-| Shell adaptatif | `da34f9c` | `728da5e` | Chrome responsive et test dédié |
-| Correctif Material 3 | `1fc15c6` | `bbbadc4` | Widgets natifs, clavier, RTL, 200 % |
-| Profil enseignant | `65c564f` | `dbcd380` | Lecture seule ; dépendances i18n absentes du commit source |
-| Raccord profil | — | `d36fb4b` | Route ciblée et chaînes FR/générées uniquement |
-| Correction présence | `d55606c` | `f84580b` | Surface isolée ; pas de route, mutation backend ou migration |
+| P0 | Finaliser R3 — suivi élève | Relire le diff local de `lib/features/suivi_eleve/`, ses tests, le routeur, les chaînes et `LignePresence`; séparer les fichiers concurrents; mettre à jour le catalogue et le handoff; commit propre | Le code est présent dans le worktree, mais le lot est non committé. Les tests ciblés ont été verts; refaire la revue ciblée avant commit |
+| P0 | Refonte loading | Remplacer les textes « Chargement… » et les `EmptyState` détournés par `Skeleton` sur les écrans restants; conserver les cinq états `loading/content/empty/error/offline`; couvrir les écrans réels, pas seulement la galerie | La Bible §18 et `docs/design/08-catalogue-ecrans.md` signalent encore cet écart; `ADM-05`, `ADM-04`, `TUT-06` et le suivi élève fournissent les motifs existants |
+| P0 | `ENS-04` — cahier de transmission | Écran enseignant depuis la sortie de salle, saisie en une main en moins de 45 s, constats Makharij, états offline/error/reprise, lecture par `TUT-06` et suivi élève; aucun objectif inventé | Absent du catalogue comme écran construit et absent des migrations dédiées `lesson_reports`/`makharij_findings` au-delà du socle initial |
+| P0 | Synchronisation du cahier | File locale Drift, écriture locale hors ligne, clé d'idempotence, rejeu après reconnexion, Edge Function `submit-lesson-report`, policies/RLS et scénarios SQL | Le socle et les tables de base existent, mais la fonction, le parcours complet et la preuve de rejeu restent à livrer |
+| P0 | `ENS-05` — profil enseignant | Construire `/enseignant/profil` selon la fiche de la refonte, avec données réellement disponibles, états et accessibilité; ne pas y glisser le portefeuille/payout | La route rend encore `EcranAConstruire`. La spécification d'origine nommait `ENS-05` le payout V1; la refonte l'a renommé profil enseignant. Décision retenue ici : profil en MVP, finance en V1, à confirmer par l'opérateur |
+| P0 | N6 — Coran partagé | Mode suivi enseignant, page/verset partagé, séparation état partagé / position personnelle, retour vers l'enseignant, contrôles niveau 1; choisir et documenter le canal de diffusion avant le code | Le lecteur personnel N5 existe. Le bouton partagé est volontairement absent; le canal LiveKit data / Realtime n'est pas tranché |
+| P0 | Présence corrigeable | Geste enseignant/admin pour `corrigee_manuel` et `excusee`, motif obligatoire, confirmation, journalisation et policies; définir l'écran propriétaire | N4 affiche les états mais ne permet pas la décision humaine; la fiche d'étape laisse ce mécanisme ouvert |
+| P0 | Chaîne LiveKit réelle | Fournisseur confirmé, secrets `LIVEKIT_CLOUD_WS_URL`, `LIVEKIT_CLOUD_API_KEY`, `LIVEKIT_CLOUD_API_SECRET`, webhook fournisseur, puis séance réelle enseignant/élève/tuteur/contrôleur | Le code N2 et les Edge Functions sont documentés comme posés; aucun compte LiveKit ni parcours de salle autorisé n'est prouvé |
+| P0 | Enregistrement safeguarding | Egress audio-only systématique, chiffrement, rétention 30 jours, stockage privé R2 et accès journalisé; vérifier le contrat d'information | ADR-002 le rend obligatoire, mais aucun Egress/R2 opérationnel n'est présent dans le périmètre livré |
+| P0 | Recette navigateur authentifiée | Quatre comptes de test autorisés avec OTP/lien; tester login, rôles, salle, présence, Coran, suivi, observation invisible, non-fuite, retour, offline/reconnexion, 390/768/1440, RTL, clavier, 200 %, doublons d'abonnements | La recette headless publique et les tests Flutter ne remplacent pas cette preuve; Chrome DevTools MCP n'est pas disponible dans ce contexte |
 
-### Contrôles de cette intégration
+### 10.3 Compléments d'implémentation et d'exploitation encore ouverts
 
-- `dart analyze --fatal-infos` : **BLOCKED** ; le runner reste sur
-  `Analyzing rewayah-vague5-integration...`, puis a été interrompu sans
-  diagnostic Dart exploitable.
-- `flutter test --no-pub` : **BLOCKED** ; le runner reste sur le chargement du
-  premier test, puis a été interrompu sans résultat de test exploitable.
-- `dart run tool/verifier_jetons.dart` : **PASS**, 129 fichiers, aucune violation.
-- `git diff --check` : **PASS**, worktree propre après rafraîchissement de l'index.
-- Scénarios SQL : **BLOCKED** avant exécution ; le daemon Docker n'est pas
-  disponible (`dockerDesktopLinuxEngine` absent). Aucun résultat SQL n'est
-  inventé.
-- Recette navigateur authentifiée Prompt 51 : **REPORTÉE**, conformément à la
-  demande de l'opérateur ; aucun compte OTP/lien ni LiveKit n'a été utilisé.
+- **Notifications** : enregistrer les appareils et fournir un canal réel pour la
+  validation KYC, l'attribution et la fin de séance; `device_tokens` existe au
+  niveau du modèle, mais le canal push et ses secrets ne sont pas livrés.
+- **Audio enfant** : enregistrer les libellés français attendus par
+  `AudioLabel`; `assets/audio/fr/` ne contient encore que `.gitkeep`.
+- **Arabe** : remplir la traduction arabe de l'interface ou documenter
+  explicitement sa non-livraison; le fichier et les clés existent mais la
+  traduction est vide. Le poular, lui, a été explicitement écarté.
+- **Sentry, variantes et mémoire graphify** : onboarding F non fait, trois
+  identifiants `dev/staging/prod` non séparés, étape K encore ouverte.
+- **Authentification production** : SMTP externe pour les liens destinés aux
+  vrais usagers, OAuth Google si ce parcours est conservé, réglages Auth
+  écrasés par `config push` à revalider avant ouverture publique.
+- **Média et déploiement natifs** : compte Cloudflare/R2; réparation TLS du
+  magasin de certificats pour l'APK; ATL Visual Studio pour Windows; Mac/Xcode
+  et compte Apple pour iOS. La PWA reste le chemin réel tant que le natif n'est
+  pas publié.
+- **PWA et exploitation** : décider d'un hébergement compatible avec l'usage
+  commercial; mesurer le démarrage à froid sous 1,5 s sur un appareil réel;
+  confirmer le deployment propre, car le dernier build signalait `gitDirty=1`.
+- **Hygiène frontend issue de la refonte** : les variantes desktop pleine
+  largeur / multi-colonnes et certains panneaux de détail sont reportés dans
+  les fiches; le rafraîchissement par geste demande une décision sur
+  `PageShell.onRafraichir`; le lien tanzil.net reste affiché mais non
+  cliquable; le découpage exact en quinze lignes du mushaf reste volontairement
+  reporté faute de correspondance fiable.
+- **Mesures accessibilité réelles** : test lecteur d'écran sur un appareil,
+  clavier et zoom sur les navigateurs cibles, en complément des tests Flutter.
 
-Le HEAD d'intégration après le commit documentaire est à relever avec
-`git rev-parse HEAD`. Cette branche n'est pas une promotion de `main` tant que
-les contrôles bloqués et la revue opérateur ne sont pas résolus.
+### 10.4 Ce qui est explicitement V1 — ne pas le coder pour fermer le MVP-0
+
+- espace comptable `CPT-01`, portefeuille, collecte, payout, webhooks de
+  paiement et abstraction `PayoutProvider`;
+- système d'objectifs/évaluations si la question ouverte confirme qu'il est
+  distinct du cahier de transmission;
+- messagerie contextuelle, groupes/cohortes et montée en charge
+  auto-hébergée;
+- écran `CTR-03` et séquestre/exports `ADM-03` **tant que leur contradiction
+  de périmètre n'est pas tranchée**. Les sources d'origine les ont réintroduits
+  au MVP-0, tandis que le parcours et les décisions ultérieures les reportent;
+  aucune implémentation ne doit choisir une version en silence.
+
+### 10.5 Décisions opérateur avant les lots concernés
+
+1. Confirmer le découpage `ENS-05 = profil enseignant MVP` et `CPT-01 = finance
+   V1`, malgré le nom historique de `ENS-05` dans les specs d'origine.
+2. Trancher le périmètre de `ADM-03` et `CTR-03` : MVP-0 ou V1.
+3. Choisir le canal du document Coran partagé (N6).
+4. Définir qui peut corriger/excuser une présence, avec le motif et le délai.
+5. Confirmer `child_ui_mode_max_age = 8` et la politique de compression serveur
+   des photos.
+6. Trancher la règle de paiement en cas de litige entre minimum payable et
+   présence mesurée, puis nommer les événements d'audit métier manquants.
+7. Confirmer la source/licence technique du corpus Coran, même si Hafs/Madina
+   et les 604 pages sont déjà tranchés.
+
+### 10.6 Séquence de prompts actifs — Claude Code uniquement
+
+Les prompts ci-dessous sont indépendants et doivent être exécutés dans l'ordre.
+Un prompt = un lot, un diff relisible, contrôles, mise à jour du handoff et
+commit. Aucun prompt OpenCode n'est fourni.
+
+#### Prompt 1 — reprise sûre et fermeture de R3
+
+```text
+Tu es Claude Code. Dépôt: D:\RA _APP\RA -OFFICIAL-APP, branche main.
+Lis d'abord docs/HANDOFF.md, docs/PROGRESS.md, docs/design/00-bible-frontend-v2.md,
+docs/design/README.md, docs/architecture/decisions.md, lib/CLAUDE.md et
+supabase/CLAUDE.md si nécessaire. Charge aussi le contexte Rewayah persistant.
+
+Objectif unique: auditer puis fermer le lot R3 suivi élève déjà présent dans le
+worktree. Ne touche pas à lib/app.dart, lib/main.dart, lib/core/config/env.dart,
+lib/features/_dev/playground/ ni aux fichiers Windows générés: ces changements
+sont concurrents et OpenCode est abandonné. Commence par git status, le diff
+ciblé et la liste des fichiers non suivis.
+
+Vérifie la fiche de /eleve/suivi, la borne RLS, l'absence de filtrage client,
+loading/content/empty/error/offline, inconnu, RTL, 200 %, navigation et
+accessibilité. Corrige seulement les blockers du lot R3, sans ajouter de
+fonctionnalité. Lance les tests ciblés puis analyze, verifier_jetons et
+git diff --check. Stage uniquement les fichiers R3 autorisés, mets à jour
+docs/HANDOFF.md et docs/PROGRESS.md avec les sorties réelles, puis commit le
+lot. Si un contrôle échoue, corrige avant de déclarer le lot terminé.
+```
+
+#### Prompt 2 — fermer l'écart Skeleton de la refonte
+
+```text
+Tu es Claude Code. Travaille dans D:\RA _APP\RA -OFFICIAL-APP.
+Lis le handoff actif section 10, la Bible Frontend V2, docs/design/07-catalogue-
+composants.md et docs/design/08-catalogue-ecrans.md.
+
+Objectif unique: remplacer les chargements textuels ou EmptyState détournés
+encore présents par Skeleton cohérent, écran par écran, sur les écrans du
+catalogue qui lisent un AsyncValue ou une pagination. Ne change aucune règle
+métier, aucune source de données et aucun fichier concurrent OpenCode.
+
+Conserve séparément loading avec données précédentes, content, empty réel,
+error avec reprise et offline. Ajoute/actualise les tests widget de chaque
+écran touché, vérifie RTL, 200 %, clavier et responsive. N'invente aucun jeton:
+réutilise les composants et mesures existants. Termine par verifier_jetons,
+dart analyze --fatal-infos, flutter test et git diff --check; mets à jour le
+catalogue/handoff avec les écarts réellement fermés et commit ce seul lot.
+```
+
+#### Prompt 3 — construire le profil enseignant MVP
+
+```text
+Tu es Claude Code. Dépôt D:\RA _APP\RA -OFFICIAL-APP.
+Avant de coder, relis la fiche ENS-05 de docs/design/08-catalogue-ecrans.md,
+docs/design/00-bible-frontend-v2.md, docs/design/02-regles-ux.md,
+docs/design/05-regles-responsive.md, docs/design/06-accessibilite.md et les
+services de profil existants. N'implémente pas CPT-01 ni le payout V1.
+
+Construis /enseignant/profil avec la donnée réellement disponible: identité
+autorisée, identifiant immuable, statut et éléments de profil prévus par la
+fiche, sans inventer de photo publique, de finance ou de capacité. Utilise les
+composants partagés, le routeur unique et les états loading/content/empty/error/
+offline. Ajoute tests widget/navigation/accessibilité et une preuve de non-
+exposition des champs interdits. Préserve tous les changements concurrents,
+puis analyze, tests, verifier_jetons, diff check, handoff et commit du seul lot.
+```
+
+#### Prompt 4 — N6 transmission, offline et suivi
+
+```text
+Tu es Claude Code. Dépôt D:\RA _APP\RA -OFFICIAL-APP.
+Lis la spécification de l'étape 5, les décisions ADR, les fiches ENS-04,
+TUT-06 et suivi élève, l'architecture de cache Drift, lib/CLAUDE.md et
+supabase/CLAUDE.md. Ne commence pas si les décisions N6 sur le canal Coran
+partagé et la correction de présence ne sont pas explicitement fournies dans
+le handoff; signale le blocage sans inventer.
+
+Quand les décisions sont présentes, implémente un lot vertical: migration(s)
+nécessaire(s) et RLS, Edge Function idempotente submit-lesson-report, file
+locale Drift avec rejeu offline, écran ENS-04 en moins de 45 secondes, route de
+sortie de salle, lecture honnête par TUT-06/suivi élève, et éventuellement le
+mode Coran partagé seulement si le canal est tranché. Ajoute scénarios SQL,
+tests Dart/widget et tests de doublon/reconnexion. Aucun filtrage client et
+aucune règle métier inventée. Contrôles complets, mise à jour HANDOFF/PROGRESS,
+commit atomique du lot; aucun fichier OpenCode.
+```
+
+#### Prompt 5 — LiveKit, Egress et production après autorisation
+
+```text
+Tu es Claude Code en mode implémentation contrôlée. Travaille dans
+D:\RA _APP\RA -OFFICIAL-APP. Ne crée aucun compte et ne déploie rien sans
+autorisation explicite et secrets fournis localement.
+
+À partir de docs/HANDOFF.md section 10 et docs/MISE-EN-SERVICE.md, vérifie
+d'abord l'état réel read-only de 0006+ et des Edge Functions; la documentation
+contient des historiques contradictoires, donc ne rejoue aucune migration à
+l'aveugle. Si le compte LiveKit et R2 sont confirmés, ferme le lot d'intégration:
+secrets locaux, webhook signé, pre-flight, audio prioritaire, caméra/micro
+éteints à l'entrée, Egress audio-only chiffré/rétention 30 jours et accès
+journalisé. Sinon produis seulement le diagnostic et la liste exacte des
+prérequis.
+
+Après code autorisé: scénarios SQL, tests d'idempotence/RLS, analyze, tests,
+verifier_jetons, build release depuis un commit propre, puis recette navigateur
+avec comptes autorisés. Ne divulgue aucun secret, ne touche pas au playground
+OpenCode et ne qualifie aucun parcours sans preuve runtime.
+```
+
+#### Prompt 6 — clôture QA et documentation
+
+```text
+Tu es Claude Code. Aucun code nouveau sans blocker démontré.
+Relis docs/HANDOFF.md section 10 et exécute uniquement la recette de clôture
+autorisée: build depuis un commit propre, analyse, tests, verifier_jetons,
+contrôles SQL contre une base identifiée, puis navigateur réel avec les quatre
+comptes de test et le compte LiveKit fournis par l'opérateur. Mesure les quatre
+rôles, la salle, présence, Coran, suivi, observation invisible/non-fuite,
+retour, 390/768/1440, RTL, clavier, 200 %, offline/reconnexion et absence de
+doubles abonnements. Capture les erreurs console/réseau et les preuves sans
+afficher de secret.
+
+Ne transforme jamais un test Flutter ou la documentation en preuve navigateur.
+Ne corrige que les blockers reproduits, puis consigne chaque résultat dans
+docs/HANDOFF.md et docs/PROGRESS.md, avec deployment/commit exact et statut
+READY seulement s'il est vérifiable. OpenCode reste abandonné.
+```
+
+#### Prompt 7 — ADM-03 / CTR-03, seulement si le MVP-0 est confirmé
+
+```text
+Tu es Claude Code. N'exécute ce prompt que si l'opérateur a écrit dans le
+handoff que ADM-03 et CTR-03 restent dans le MVP-0. Les documents se
+contredisent actuellement; sans cette décision, arrête-toi après le diagnostic.
+
+Lis l'audit d'origine, ADR-003, ADR-011, les fiches ADM-03/CTR-03 et
+supabase/CLAUDE.md. Implémente ADM-03 côté serveur, jamais comme export natif
+de données déjà téléchargées: demande, approbation, génération XLSX/PDF,
+bucket privé, URL signée courte à usage unique, audit et rétention. Implémente
+CTR-03 comme lecture/évaluation conforme à la politique d'anonymat retenue,
+avec RLS et journalisation; ne révèle pas les identités interdites.
+
+Ajoute migrations versionnées, Edge Functions, tests RLS/idempotence, scénarios
+de sécurité et écrans catalogués avec tous leurs états. Pagination et limites
+de débit doivent rester côté serveur. Contrôles complets, handoff et commit
+isolé. Aucun export de données réelles pendant les tests, aucun changement
+OpenCode.
+```
+
+#### Prompt 8 — V1 finance et modules différés
+
+```text
+Tu es Claude Code. N'ouvre ce lot qu'après clôture documentée du MVP-0 et
+arbitrage produit séparé. Relis l'audit d'origine, ADR-003/007/014, les
+questions ouvertes et les fiches écran concernées.
+
+Implémente par lots verticaux séparés, jamais en bloc: finance (ledger,
+access_until/credits si encore nécessaire, topup-intent, payment-webhook,
+PayoutProvider multi-fournisseurs, verrou 48 h, invoice serveur, CPT-01/TUT-03
+et la partie payout d'ENS-05), puis objectifs/évaluations si l'opérateur
+confirme leur définition, puis messagerie contextuelle et cohortes si elles
+sont spécifiées. Chaque lot doit avoir son contrat de données, sa migration,
+RLS, idempotence, audit, tests et fiche d'écran dans le catalogue.
+
+Ne choisis aucun prestataire ou seuil financier sans décision écrite; ne
+réintroduis pas Flutterwave sans vérification de couverture GNF/XOF; ne mets
+aucune donnée sensible dans le client. Termine chaque sous-lot par les
+contrôles, la documentation et un commit séparé. OpenCode reste abandonné.
+```
+
+### 10.7 Sortie attendue de chaque lot
+
+Un lot n'est clos que si le diff est isolé, les contrôles sont réellement
+exécutés, les décisions nécessaires sont écrites, `docs/HANDOFF.md` et
+`docs/PROGRESS.md` sont cohérents, et le commit exact est indiqué. Les preuves
+de production et les secrets restent séparés du code et ne sont jamais copiés
+dans le dépôt.

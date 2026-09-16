@@ -5,7 +5,11 @@
   "SUPABASE_ANON_KEY": "",
 
   "_galerie": "Mettez GALERIE a true pour compiler la galerie de composants sur /_galerie. Une version de production la laisse a false.",
-  "_demo_auth": "Activez DEMO_AUTH pour proposer l'acces temporaire par email et mot de passe, sans OTP.",
   "GALERIE": false,
-  "DEMO_AUTH": false
+
+  "_supervision": "DSN du projet Sentry Flutter (onboarding etape F, critere 0.6). Laissez vide pour ne rien envoyer : sans DSN, la supervision ne demarre pas, ce qui est le bon reglage sur un poste de developpement. La valeur reelle est dans les secrets GitHub sous SENTRY_DSN_FLUTTER.",
+  "SENTRY_DSN_FLUTTER": "",
+
+  "_environnement": "Etiquette d'environnement envoyee a Sentry : production, staging ou developpement. Vaut developpement quand elle est absente, pour qu'une compilation distraite ne se melange pas aux erreurs de production.",
+  "ENVIRONNEMENT": "developpement"
 }

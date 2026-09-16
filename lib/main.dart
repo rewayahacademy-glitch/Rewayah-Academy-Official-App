@@ -6,6 +6,8 @@ import 'app.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/i18n/strings.g.dart';
+import 'core/observabilite/supervision.dart';
+import 'features/_dev/playground/playground_racine.dart';
 
 /// Point d'entree unique de l'application.
 ///
@@ -14,6 +16,13 @@ import 'core/i18n/strings.g.dart';
 /// demarrage par plateforme.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // La supervision avant tout le reste : une erreur du demarrage lui-meme doit
+  // remonter comme les autres, y compris l'ecran de configuration absente.
+  // Sans DSN, cet appel ne fait rien. Il ne passe pas par `appRunner` : sur
+  // Flutter 3.47, `PlatformDispatcher.onError` existe, donc Sentry n'ouvre
+  // aucune zone gardee et `appRunner` ne capterait pas une erreur de plus.
+  await Supervision.demarrer();
 
   await LocaleSettings.useDeviceLocale();
 
@@ -30,6 +39,15 @@ Future<void> main() async {
     url: Env.supabaseUrl,
     publishableKey: Env.supabaseAnonKey,
   );
+
+  if (Env.playgroundActif) {
+    runApp(
+      ProviderScope(
+        child: TranslationProvider(child: const PlaygroundRacine()),
+      ),
+    );
+    return;
+  }
 
   runApp(ProviderScope(child: TranslationProvider(child: const RewayahApp())));
 }

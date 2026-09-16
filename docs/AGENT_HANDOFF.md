@@ -13,6 +13,14 @@ deux autres outils.
 
 ## 1. Lire dans cet ordre, avant toute tâche
 
+> **Statut au 14 septembre 2026 : OpenCode est abandonné.** Ce document est
+> conservé pour l'historique et pour éviter de perdre les règles qu'il
+> rassemblait, mais aucune tâche ne doit plus être déléguée à OpenCode et aucun
+> de ses changements concurrents ne doit être promu ou déployé. Le handoff
+> actif et les prompts de clôture sont dans `docs/HANDOFF.md`, section 10 ;
+> l'exécution restante relève de Claude Code et des opérations explicitement
+> autorisées par l'opérateur.
+
 1. **`docs/HANDOFF.md`** — où la session précédente s'est arrêtée, le lot à
    reprendre, les commandes vérifiées sur ce poste, les mesures à ne pas faire
    régresser.
