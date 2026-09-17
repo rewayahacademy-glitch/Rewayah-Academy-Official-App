@@ -66,6 +66,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
+	late final Traductions$compte$fr compte = Traductions$compte$fr.internal(_root);
 	late final Traductions$eleve$fr eleve = Traductions$eleve$fr.internal(_root);
 	late final Traductions$tuteur$fr tuteur = Traductions$tuteur$fr.internal(_root);
 	late final Traductions$enseignant$fr enseignant = Traductions$enseignant$fr.internal(_root);
@@ -1167,6 +1168,249 @@ class Traductions$nav$fr {
 	late final Traductions$nav$admin$fr admin = Traductions$nav$admin$fr.internal(_root);
 }
 
+// Path: compte
+class Traductions$compte$fr {
+	Traductions$compte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mon compte'
+	String get titre => 'Mon compte';
+
+	/// fr: 'Vos informations, vos préférences et vos accès, au même endroit.'
+	String get intro => 'Vos informations, vos préférences et vos accès, au même endroit.';
+
+	/// fr: 'Informations'
+	String get informations => 'Informations';
+
+	/// fr: 'Profil'
+	String get profil => 'Profil';
+
+	/// fr: 'Voir et gérer vos informations'
+	String get profilDetail => 'Voir et gérer vos informations';
+
+	/// fr: 'Réglages'
+	String get reglages => 'Réglages';
+
+	/// fr: 'Apparence, notifications et accessibilité'
+	String get reglagesDetail => 'Apparence, notifications et accessibilité';
+
+	/// fr: 'Profils du foyer'
+	String get profils => 'Profils du foyer';
+
+	/// fr: 'Gérer les profils de vos enfants'
+	String get profilsDetail => 'Gérer les profils de vos enfants';
+
+	/// fr: 'Foyer'
+	String get appareils => 'Foyer';
+
+	/// fr: 'Les appareils et profils rattachés à votre foyer'
+	String get appareilsDetail => 'Les appareils et profils rattachés à votre foyer';
+
+	/// fr: 'Confidentialité'
+	String get confidentialite => 'Confidentialité';
+
+	/// fr: 'Bientôt disponible'
+	String get confidentialiteDetail => 'Bientôt disponible';
+
+	/// fr: 'Espaces'
+	String get espaces => 'Espaces';
+
+	/// fr: 'Les espaces auxquels votre compte donne accès'
+	String get espacesDetail => 'Les espaces auxquels votre compte donne accès';
+
+	/// fr: 'Habilité'
+	String get habilitation => 'Habilité';
+
+	/// fr: 'Se déconnecter'
+	String get deconnexion => 'Se déconnecter';
+
+	/// fr: 'Mettre fin à la session sur cet appareil'
+	String get deconnexionDetail => 'Mettre fin à la session sur cet appareil';
+
+	/// fr: 'Identifiant'
+	String get identifiant => 'Identifiant';
+
+	/// fr: 'Non disponible'
+	String get nonDisponible => 'Non disponible';
+
+	/// fr: 'Contact'
+	String get contact => 'Contact';
+
+	/// fr: 'Géré par l'académie'
+	String get contactDetail => 'Géré par l\'académie';
+
+	/// fr: 'Langue'
+	String get langue => 'Langue';
+
+	/// fr: 'Français'
+	String get francais => 'Français';
+
+	/// fr: 'Fuseau horaire'
+	String get fuseau => 'Fuseau horaire';
+
+	/// fr: 'Académie'
+	String get academie => 'Académie';
+
+	/// fr: 'Sécurité'
+	String get securite => 'Sécurité';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Réglages'
+	String get reglagesTitre => 'Réglages';
+
+	/// fr: 'Ces préférences restent sur cet appareil et s'appliquent tout de suite.'
+	String get reglagesIntro => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.';
+
+	/// fr: 'Apparence'
+	String get apparence => 'Apparence';
+
+	/// fr: 'Système'
+	String get themeSysteme => 'Système';
+
+	/// fr: 'Suit le réglage de votre appareil'
+	String get themeSystemeDetail => 'Suit le réglage de votre appareil';
+
+	/// fr: 'Clair'
+	String get themeClair => 'Clair';
+
+	/// fr: 'Sombre'
+	String get themeSombre => 'Sombre';
+
+	/// fr: 'Accessibilité'
+	String get accessibilite => 'Accessibilité';
+
+	/// fr: 'Réduire les animations'
+	String get animations => 'Réduire les animations';
+
+	/// fr: 'Limite les mouvements à l'écran'
+	String get animationsDetail => 'Limite les mouvements à l\'écran';
+
+	/// fr: 'Réduire les effets'
+	String get effets => 'Réduire les effets';
+
+	/// fr: 'Limite les transparences et les ombres'
+	String get effetsDetail => 'Limite les transparences et les ombres';
+
+	/// fr: 'La taille du texte suit le réglage de votre appareil.'
+	String get lisibiliteDetail => 'La taille du texte suit le réglage de votre appareil.';
+
+	/// fr: 'Langue et région'
+	String get langueRegion => 'Langue et région';
+
+	/// fr: 'Langue de l'interface'
+	String get francaisDetail => 'Langue de l\'interface';
+
+	/// fr: 'Actif'
+	String get actif => 'Actif';
+
+	/// fr: 'Arabe'
+	String get arabe => 'Arabe';
+
+	/// fr: 'Bientôt disponible'
+	String get arabeDetail => 'Bientôt disponible';
+
+	/// fr: 'Détecté automatiquement'
+	String get fuseauDetail => 'Détecté automatiquement';
+
+	/// fr: 'Notifications'
+	String get notifications => 'Notifications';
+
+	/// fr: 'Cours'
+	String get notificationsCours => 'Cours';
+
+	/// fr: 'Rappels avant vos cours'
+	String get notificationsCoursDetail => 'Rappels avant vos cours';
+
+	/// fr: 'Foyer'
+	String get notificationsFoyer => 'Foyer';
+
+	/// fr: 'Activité des profils de votre foyer'
+	String get notificationsFoyerDetail => 'Activité des profils de votre foyer';
+
+	/// fr: 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.'
+	String get notificationsEtat => 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.';
+
+	/// fr: 'Cours et données'
+	String get coursDonnees => 'Cours et données';
+
+	/// fr: 'Économie de données'
+	String get economieDonnees => 'Économie de données';
+
+	/// fr: 'Réduit la qualité vidéo sur réseau mobile'
+	String get economieDonneesDetail => 'Réduit la qualité vidéo sur réseau mobile';
+
+	/// fr: 'Lecture en grand texte'
+	String get lectureGrande => 'Lecture en grand texte';
+
+	/// fr: 'Affiche le Coran en plus grand par défaut'
+	String get lectureGrandeDetail => 'Affiche le Coran en plus grand par défaut';
+
+	/// fr: 'Profils du foyer'
+	String get profilsTitre => 'Profils du foyer';
+
+	/// fr: 'Les enfants rattachés à votre foyer.'
+	String get profilsIntro => 'Les enfants rattachés à votre foyer.';
+
+	/// fr: 'Les profils n'ont pas pu être lus.'
+	String get erreurProfils => 'Les profils n\'ont pas pu être lus.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Aucun profil pour l'instant'
+	String get aucunProfil => 'Aucun profil pour l\'instant';
+
+	/// fr: 'Ajoutez un enfant pour commencer'
+	String get aucunProfilDetail => 'Ajoutez un enfant pour commencer';
+
+	/// fr: 'Ajouter un enfant'
+	String get ajouterEnfant => 'Ajouter un enfant';
+
+	/// fr: 'Ouvrir le profil'
+	String get ouvrirProfil => 'Ouvrir le profil';
+
+	/// fr: 'Mode enfant'
+	String get modeEnfant => 'Mode enfant';
+
+	/// fr: 'Mode standard'
+	String get modeStandard => 'Mode standard';
+
+	/// fr: 'Caméra'
+	String get cameraLabel => 'Caméra';
+
+	/// fr: 'Autorisée'
+	String get cameraAutorisee => 'Autorisée';
+
+	/// fr: 'Interdite'
+	String get cameraInterdite => 'Interdite';
+
+	/// fr: 'Accès sans date de fin'
+	String get accesSansFin => 'Accès sans date de fin';
+
+	/// fr: 'Accès jusqu'au {date}'
+	String accesJusqua({required Object date}) => 'Accès jusqu\'au ${date}';
+
+	/// fr: 'Actif'
+	String get statutActif => 'Actif';
+
+	/// fr: 'Actif, à titre provisoire'
+	String get statutProvisoire => 'Actif, à titre provisoire';
+
+	/// fr: 'Profil de {prenom}'
+	String profilEnfant({required Object prenom}) => 'Profil de ${prenom}';
+
+	/// fr: 'Identifiant : {identifiant}'
+	String identifiantEnfant({required Object identifiant}) => 'Identifiant : ${identifiant}';
+
+	late final Traductions$compte$roles$fr roles = Traductions$compte$roles$fr.internal(_root);
+	late final Traductions$compte$roleDetail$fr roleDetail = Traductions$compte$roleDetail$fr.internal(_root);
+}
+
 // Path: eleve
 class Traductions$eleve$fr {
 	Traductions$eleve$fr.internal(this._root);
@@ -1199,6 +1443,7 @@ class Traductions$enseignant$fr {
 
 	// Translations
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
+	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
 }
 
 // Path: controleur
@@ -1776,6 +2021,9 @@ class Traductions$nav$eleve$fr {
 
 	/// fr: 'Suivi'
 	String get suivi => 'Suivi';
+
+	/// fr: 'Compte'
+	String get compte => 'Compte';
 }
 
 // Path: nav.tuteur
@@ -1818,6 +2066,9 @@ class Traductions$nav$enseignant$fr {
 
 	/// fr: 'Profil'
 	String get profil => 'Profil';
+
+	/// fr: 'Compte'
+	String get compte => 'Compte';
 }
 
 // Path: nav.controleur
@@ -1854,6 +2105,60 @@ class Traductions$nav$admin$fr {
 
 	/// fr: 'Journal'
 	String get journal => 'Journal';
+}
+
+// Path: compte.roles
+class Traductions$compte$roles$fr {
+	Traductions$compte$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Administrateur'
+	String get admin => 'Administrateur';
+
+	/// fr: 'Comptable'
+	String get accountant => 'Comptable';
+
+	/// fr: 'Contrôleur'
+	String get controller => 'Contrôleur';
+
+	/// fr: 'Enseignant'
+	String get teacher => 'Enseignant';
+
+	/// fr: 'Tuteur'
+	String get guardian => 'Tuteur';
+
+	/// fr: 'Élève'
+	String get student => 'Élève';
+}
+
+// Path: compte.roleDetail
+class Traductions$compte$roleDetail$fr {
+	Traductions$compte$roleDetail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Gère les dossiers, l'attribution et le journal de l'académie'
+	String get admin => 'Gère les dossiers, l\'attribution et le journal de l\'académie';
+
+	/// fr: 'Gère les paiements et les factures'
+	String get accountant => 'Gère les paiements et les factures';
+
+	/// fr: 'Observe les séances pour la qualité pédagogique'
+	String get controller => 'Observe les séances pour la qualité pédagogique';
+
+	/// fr: 'Donne les cours et suit ses créneaux'
+	String get teacher => 'Donne les cours et suit ses créneaux';
+
+	/// fr: 'Suit le foyer et ses enfants'
+	String get guardian => 'Suit le foyer et ses enfants';
+
+	/// fr: 'Suit ses cours et son Coran'
+	String get student => 'Suit ses cours et son Coran';
 }
 
 // Path: eleve.accueil
@@ -2444,6 +2749,33 @@ class Traductions$enseignant$journee$fr {
 	String get erreur => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.';
 }
 
+// Path: enseignant.profil
+class Traductions$enseignant$profil$fr {
+	Traductions$enseignant$profil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Profil'
+	String get titre => 'Profil';
+
+	/// fr: 'Compte enseignant vérifié'
+	String get compteValide => 'Compte enseignant vérifié';
+
+	/// fr: 'Charge pédagogique'
+	String get chargePedagogique => 'Charge pédagogique';
+
+	/// fr: '{nombre} élèves actifs'
+	String elevesActifs({required Object nombre}) => '${nombre} élèves actifs';
+
+	/// fr: '{nombre} créneaux posés'
+	String heuresDisponibles({required Object nombre}) => '${nombre} créneaux posés';
+
+	/// fr: 'Gérer mes créneaux'
+	String get reglagesHeures => 'Gérer mes créneaux';
+}
+
 // Path: controleur.planning
 class Traductions$controleur$planning$fr {
 	Traductions$controleur$planning$fr.internal(this._root);
@@ -2999,6 +3331,7 @@ extension on Traductions {
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
 			'nav.eleve.suivi' => 'Suivi',
+			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
@@ -3007,12 +3340,104 @@ extension on Traductions {
 			'nav.enseignant.journee' => 'Journée',
 			'nav.enseignant.creneaux' => 'Créneaux',
 			'nav.enseignant.profil' => 'Profil',
+			'nav.enseignant.compte' => 'Compte',
 			'nav.controleur.planning' => 'Planning',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.attribution' => 'Attribution',
 			'nav.admin.journal' => 'Journal',
+			'compte.titre' => 'Mon compte',
+			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
+			'compte.informations' => 'Informations',
+			'compte.profil' => 'Profil',
+			'compte.profilDetail' => 'Voir et gérer vos informations',
+			'compte.reglages' => 'Réglages',
+			'compte.reglagesDetail' => 'Apparence, notifications et accessibilité',
+			'compte.profils' => 'Profils du foyer',
+			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
+			'compte.appareils' => 'Foyer',
+			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
+			'compte.confidentialite' => 'Confidentialité',
+			'compte.confidentialiteDetail' => 'Bientôt disponible',
+			'compte.espaces' => 'Espaces',
+			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
+			'compte.habilitation' => 'Habilité',
+			'compte.deconnexion' => 'Se déconnecter',
+			'compte.deconnexionDetail' => 'Mettre fin à la session sur cet appareil',
+			'compte.identifiant' => 'Identifiant',
+			'compte.nonDisponible' => 'Non disponible',
+			'compte.contact' => 'Contact',
+			'compte.contactDetail' => 'Géré par l\'académie',
+			'compte.langue' => 'Langue',
+			'compte.francais' => 'Français',
+			'compte.fuseau' => 'Fuseau horaire',
+			'compte.academie' => 'Académie',
+			'compte.securite' => 'Sécurité',
+			'compte.statut' => 'Statut',
+			'compte.reglagesTitre' => 'Réglages',
+			'compte.reglagesIntro' => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.',
+			'compte.apparence' => 'Apparence',
+			'compte.themeSysteme' => 'Système',
+			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
+			'compte.themeClair' => 'Clair',
+			'compte.themeSombre' => 'Sombre',
+			'compte.accessibilite' => 'Accessibilité',
+			'compte.animations' => 'Réduire les animations',
+			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
+			'compte.effets' => 'Réduire les effets',
+			'compte.effetsDetail' => 'Limite les transparences et les ombres',
+			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
+			'compte.langueRegion' => 'Langue et région',
+			'compte.francaisDetail' => 'Langue de l\'interface',
+			'compte.actif' => 'Actif',
+			'compte.arabe' => 'Arabe',
+			_ => null,
+		} ?? switch (path) {
+			'compte.arabeDetail' => 'Bientôt disponible',
+			'compte.fuseauDetail' => 'Détecté automatiquement',
+			'compte.notifications' => 'Notifications',
+			'compte.notificationsCours' => 'Cours',
+			'compte.notificationsCoursDetail' => 'Rappels avant vos cours',
+			'compte.notificationsFoyer' => 'Foyer',
+			'compte.notificationsFoyerDetail' => 'Activité des profils de votre foyer',
+			'compte.notificationsEtat' => 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.',
+			'compte.coursDonnees' => 'Cours et données',
+			'compte.economieDonnees' => 'Économie de données',
+			'compte.economieDonneesDetail' => 'Réduit la qualité vidéo sur réseau mobile',
+			'compte.lectureGrande' => 'Lecture en grand texte',
+			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
+			'compte.profilsTitre' => 'Profils du foyer',
+			'compte.profilsIntro' => 'Les enfants rattachés à votre foyer.',
+			'compte.erreurProfils' => 'Les profils n\'ont pas pu être lus.',
+			'compte.reessayer' => 'Réessayer',
+			'compte.aucunProfil' => 'Aucun profil pour l\'instant',
+			'compte.aucunProfilDetail' => 'Ajoutez un enfant pour commencer',
+			'compte.ajouterEnfant' => 'Ajouter un enfant',
+			'compte.ouvrirProfil' => 'Ouvrir le profil',
+			'compte.modeEnfant' => 'Mode enfant',
+			'compte.modeStandard' => 'Mode standard',
+			'compte.cameraLabel' => 'Caméra',
+			'compte.cameraAutorisee' => 'Autorisée',
+			'compte.cameraInterdite' => 'Interdite',
+			'compte.accesSansFin' => 'Accès sans date de fin',
+			'compte.accesJusqua' => ({required Object date}) => 'Accès jusqu\'au ${date}',
+			'compte.statutActif' => 'Actif',
+			'compte.statutProvisoire' => 'Actif, à titre provisoire',
+			'compte.profilEnfant' => ({required Object prenom}) => 'Profil de ${prenom}',
+			'compte.identifiantEnfant' => ({required Object identifiant}) => 'Identifiant : ${identifiant}',
+			'compte.roles.admin' => 'Administrateur',
+			'compte.roles.accountant' => 'Comptable',
+			'compte.roles.controller' => 'Contrôleur',
+			'compte.roles.teacher' => 'Enseignant',
+			'compte.roles.guardian' => 'Tuteur',
+			'compte.roles.student' => 'Élève',
+			'compte.roleDetail.admin' => 'Gère les dossiers, l\'attribution et le journal de l\'académie',
+			'compte.roleDetail.accountant' => 'Gère les paiements et les factures',
+			'compte.roleDetail.controller' => 'Observe les séances pour la qualité pédagogique',
+			'compte.roleDetail.teacher' => 'Donne les cours et suit ses créneaux',
+			'compte.roleDetail.guardian' => 'Suit le foyer et ses enfants',
+			'compte.roleDetail.student' => 'Suit ses cours et son Coran',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
 			'eleve.accueil.coranDetail' => 'À lire quand tu veux',
@@ -3060,8 +3485,6 @@ extension on Traductions {
 			'eleve.suivi.colonneCours' => 'Cours',
 			'eleve.suivi.colonneEnseignant' => 'Enseignant',
 			'eleve.suivi.colonneEtat' => 'Présence',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
@@ -3190,6 +3613,12 @@ extension on Traductions {
 			'enseignant.journee.aucunEleveEnAttente' => 'Aucun élève en attente sur vos heures',
 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
+			'enseignant.profil.titre' => 'Profil',
+			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
+			'enseignant.profil.chargePedagogique' => 'Charge pédagogique',
+			'enseignant.profil.elevesActifs' => ({required Object nombre}) => '${nombre} élèves actifs',
+			'enseignant.profil.heuresDisponibles' => ({required Object nombre}) => '${nombre} créneaux posés',
+			'enseignant.profil.reglagesHeures' => 'Gérer mes créneaux',
 			'controleur.planning.titre' => 'Planning global',
 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
 			'controleur.planning.tousEtats' => 'Tout',

@@ -32,6 +32,14 @@ abstract final class Env {
   /// Faux par defaut : une version de production ne compile pas le Playground.
   static const bool playgroundActif = bool.fromEnvironment('PLAYGROUND');
 
+  /// Active le raccourci de connexion par courriel fictif, sans Supabase
+  /// (`SessionControleur.ouvrirDemo`).
+  ///
+  /// Faux par defaut : une version de production ne compile pas ce raccourci.
+  static const bool authParMotDePasseActive = bool.fromEnvironment(
+    'AUTH_PAR_MOT_DE_PASSE',
+  );
+
   /// DSN Sentry du projet Flutter (onboarding etape F, critere 0.6).
   ///
   /// Vide par defaut, et c'est voulu : **sans DSN, la supervision ne demarre

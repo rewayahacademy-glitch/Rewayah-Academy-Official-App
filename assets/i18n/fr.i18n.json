@@ -537,7 +537,8 @@
     "eleve": {
       "accueil": "Accueil",
       "coran": "Coran",
-      "suivi": "Suivi"
+      "suivi": "Suivi",
+      "compte": "Compte"
     },
     "tuteur": {
       "accueil": "Accueil",
@@ -549,7 +550,8 @@
     "enseignant": {
       "journee": "Journée",
       "creneaux": "Créneaux",
-      "profil": "Profil"
+      "profil": "Profil",
+      "compte": "Compte"
     },
     "controleur": {
       "planning": "Planning"
@@ -560,6 +562,102 @@
       "demandes": "Demandes",
       "attribution": "Attribution",
       "journal": "Journal"
+    }
+  },
+
+  "compte": {
+    "titre": "Mon compte",
+    "intro": "Vos informations, vos préférences et vos accès, au même endroit.",
+    "informations": "Informations",
+    "profil": "Profil",
+    "profilDetail": "Voir et gérer vos informations",
+    "reglages": "Réglages",
+    "reglagesDetail": "Apparence, notifications et accessibilité",
+    "profils": "Profils du foyer",
+    "profilsDetail": "Gérer les profils de vos enfants",
+    "appareils": "Foyer",
+    "appareilsDetail": "Les appareils et profils rattachés à votre foyer",
+    "confidentialite": "Confidentialité",
+    "confidentialiteDetail": "Bientôt disponible",
+    "espaces": "Espaces",
+    "espacesDetail": "Les espaces auxquels votre compte donne accès",
+    "habilitation": "Habilité",
+    "deconnexion": "Se déconnecter",
+    "deconnexionDetail": "Mettre fin à la session sur cet appareil",
+    "identifiant": "Identifiant",
+    "nonDisponible": "Non disponible",
+    "contact": "Contact",
+    "contactDetail": "Géré par l'académie",
+    "langue": "Langue",
+    "francais": "Français",
+    "fuseau": "Fuseau horaire",
+    "academie": "Académie",
+    "securite": "Sécurité",
+    "statut": "Statut",
+    "reglagesTitre": "Réglages",
+    "reglagesIntro": "Ces préférences restent sur cet appareil et s'appliquent tout de suite.",
+    "apparence": "Apparence",
+    "themeSysteme": "Système",
+    "themeSystemeDetail": "Suit le réglage de votre appareil",
+    "themeClair": "Clair",
+    "themeSombre": "Sombre",
+    "accessibilite": "Accessibilité",
+    "animations": "Réduire les animations",
+    "animationsDetail": "Limite les mouvements à l'écran",
+    "effets": "Réduire les effets",
+    "effetsDetail": "Limite les transparences et les ombres",
+    "lisibiliteDetail": "La taille du texte suit le réglage de votre appareil.",
+    "langueRegion": "Langue et région",
+    "francaisDetail": "Langue de l'interface",
+    "actif": "Actif",
+    "arabe": "Arabe",
+    "arabeDetail": "Bientôt disponible",
+    "fuseauDetail": "Détecté automatiquement",
+    "notifications": "Notifications",
+    "notificationsCours": "Cours",
+    "notificationsCoursDetail": "Rappels avant vos cours",
+    "notificationsFoyer": "Foyer",
+    "notificationsFoyerDetail": "Activité des profils de votre foyer",
+    "notificationsEtat": "Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.",
+    "coursDonnees": "Cours et données",
+    "economieDonnees": "Économie de données",
+    "economieDonneesDetail": "Réduit la qualité vidéo sur réseau mobile",
+    "lectureGrande": "Lecture en grand texte",
+    "lectureGrandeDetail": "Affiche le Coran en plus grand par défaut",
+    "profilsTitre": "Profils du foyer",
+    "profilsIntro": "Les enfants rattachés à votre foyer.",
+    "erreurProfils": "Les profils n'ont pas pu être lus.",
+    "reessayer": "Réessayer",
+    "aucunProfil": "Aucun profil pour l'instant",
+    "aucunProfilDetail": "Ajoutez un enfant pour commencer",
+    "ajouterEnfant": "Ajouter un enfant",
+    "ouvrirProfil": "Ouvrir le profil",
+    "modeEnfant": "Mode enfant",
+    "modeStandard": "Mode standard",
+    "cameraLabel": "Caméra",
+    "cameraAutorisee": "Autorisée",
+    "cameraInterdite": "Interdite",
+    "accesSansFin": "Accès sans date de fin",
+    "accesJusqua": "Accès jusqu'au {date}",
+    "statutActif": "Actif",
+    "statutProvisoire": "Actif, à titre provisoire",
+    "profilEnfant": "Profil de {prenom}",
+    "identifiantEnfant": "Identifiant : {identifiant}",
+    "roles": {
+      "admin": "Administrateur",
+      "accountant": "Comptable",
+      "controller": "Contrôleur",
+      "teacher": "Enseignant",
+      "guardian": "Tuteur",
+      "student": "Élève"
+    },
+    "roleDetail": {
+      "admin": "Gère les dossiers, l'attribution et le journal de l'académie",
+      "accountant": "Gère les paiements et les factures",
+      "controller": "Observe les séances pour la qualité pédagogique",
+      "teacher": "Donne les cours et suit ses créneaux",
+      "guardian": "Suit le foyer et ses enfants",
+      "student": "Suit ses cours et son Coran"
     }
   },
 
@@ -759,6 +857,14 @@
       "aucunEleveEnAttente": "Aucun élève en attente sur vos heures",
       "voirCreneaux": "Voir mes créneaux",
       "erreur": "La journée n'a pas pu être lue en entier. Réessayez dans un instant."
+    },
+    "profil": {
+      "titre": "Profil",
+      "compteValide": "Compte enseignant vérifié",
+      "chargePedagogique": "Charge pédagogique",
+      "elevesActifs": "{nombre} élèves actifs",
+      "heuresDisponibles": "{nombre} créneaux posés",
+      "reglagesHeures": "Gérer mes créneaux"
     }
   },
 

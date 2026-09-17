@@ -118,6 +118,9 @@ class FauxServiceAuth implements ServiceAuth {
   /// Les adresses auxquelles un lien a ete demande.
   final List<String> liensEnvoyes = <String>[];
 
+  /// Les adresses ayant tente une connexion par mot de passe.
+  final List<String> motsDePasseTentes = <String>[];
+
   /// Le nombre d'ouvertures du parcours Google.
   int google = 0;
 
@@ -135,6 +138,16 @@ class FauxServiceAuth implements ServiceAuth {
       throw erreur;
     }
     liensEnvoyes.add(courriel.trim());
+  }
+
+  @override
+  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    motsDePasseTentes.add(courriel.trim());
   }
 
   @override
