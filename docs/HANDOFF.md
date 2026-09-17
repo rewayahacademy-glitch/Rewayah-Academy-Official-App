@@ -2573,3 +2573,128 @@ exécutés, les décisions nécessaires sont écrites, `docs/HANDOFF.md` et
 `docs/PROGRESS.md` sont cohérents, et le commit exact est indiqué. Les preuves
 de production et les secrets restent séparés du code et ne sont jamais copiés
 dans le dépôt.
+
+## 11. Réparation de la compilation web et du déploiement — 18 septembre 2026
+
+Entre le 14 septembre et aujourd'hui, un agent externe (« Antigravity »,
+worktree `C:\Users\dell\.gemini\antigravity\worktrees\...`) a fusionné dans
+`main` la quasi-totalité des branches `codex/*` restées ouvertes (login
+courriel/mot de passe, correction de présence, système de design R1/R2,
+intégration Vague 5, refonte lavande) via une série de merges puis un commit
+`chore: sync all local changes` (`99c7b6a`), et a ajouté un workflow GitHub
+Actions `Flutter Web → Vercel` (`.github/workflows/flutter-deploy.yml`) plus
+un `vercel.json`. Il s'est arrêté là, faute de jetons — **sans jamais vérifier
+que `main` compilait**.
+
+**Ce que ça cassait, mesuré et non supposé :** `main` ne compilait plus du
+tout. `flutter build web` échouait sur trois trous d'intégration laissés par
+la fusion — `nav.eleve.compte` / `nav.enseignant.compte`, la page `/compte`
+entière (`lib/features/compte/compte_page.dart`, ~90 clés i18n), et
+`enseignant.profil` (`ENS-05`) — plus `Env.authParMotDePasseActive`, absent
+alors que `SessionControleur.ouvrirDemo` le lit déjà pour fermer son propre
+raccourci de démonstration. `dart analyze` ne voit pas ces trous tant que le
+fichier qui les déclenche n'est pas dans le graphe compilé ; seul
+`flutter build web` les a révélés.
+
+**Effet en production, vérifié par API Vercel avant correction :** le
+déploiement automatique Git de Vercel (le projet n'a pas de framework
+déclaré : zéro-config, aucun `flutter build`) s'est déclenché sur chaque push
+vers `main`, a produit un build vide en 292 ms (« Skipping cache upload
+because no files were prepared ») et l'a promu en production — silencieusement,
+puisqu'un déploiement Vercel « READY » ne dit pas s'il contient une
+application. `rewayah-academy.vercel.app` rendait **404 sur toutes les
+routes**, y compris l'URL unique du déploiement. Le workflow GitHub Actions,
+lui, échouait probablement à la même étape de compilation (aucune trace de
+déploiement `source:"cli"` correspondant dans l'historique Vercel).
+
+### Correctifs, commit `fdf5168`
+
+- `assets/i18n/fr.i18n.json` (+ `strings.g.dart`/`strings_fr.g.dart`
+  régénérés par `dart run slang`) : ajoute `nav.eleve.compte`,
+  `nav.enseignant.compte`, la section `compte` complète et
+  `enseignant.profil`. Aucune traduction existante touchée ; `ar.i18n.json`
+  n'avait pas besoin de ces clés (il ne porte pas de section `nav`, la
+  génération retombe sur le français).
+- `lib/core/config/env.dart` : ajoute `authParMotDePasseActive`
+  (`bool.fromEnvironment('AUTH_PAR_MOT_DE_PASSE')`, faux par défaut, même
+  patron que `GALERIE`/`PLAYGROUND`). Le gate dans `session_controleur.dart`
+  existait déjà et jette une `StateError` si le flag est faux — seule la
+  déclaration manquait.
+- `lib/features/_dev/playground/faux.dart` (fichier Playground OpenCode,
+  édité au strict minimum) : implémente `connexionMotDePasse` sur
+  `FauxServiceAuth`, méthode manquante de l'interface `ServiceAuth` qui
+  bloquait la compilation même avec `PLAYGROUND=false` (Dart type-check tout
+  le graphe importé, indépendamment des `if` runtime).
+- `vercel.json` : `git.deploymentEnabled.main = false`. Arrête le
+  déploiement automatique zéro-config de Vercel sur push vers `main` — la
+  cause du remplacement silencieux de la production par un build vide.
+  Le déploiement reste possible par le workflow GitHub Actions (`vercel
+  deploy build/web --prod`, un déploiement CLI, non concerné par ce
+  réglage) ou par un `vercel deploy` manuel.
+
+**Décision de sécurité, pas seulement de compilation :** `AUTH_PAR_MOT_DE_PASSE`
+reste absent du build de production (comme `GALERIE` et `PLAYGROUND`) — sans
+ce flag, quiconque tape `admin@n'importe-quoi` obtiendrait une session admin
+sans jamais toucher Supabase. Ce raccourci reste réservé à une compilation
+locale explicite.
+
+### Déploiement vérifié
+
+Build fait dans un worktree détaché `D:\ra-pwa-deploy-20260918` sur `main`
+(commit `99c7b6a` puis correctifs), avec la vraie clé `anon` Supabase (projet
+`gggmtelinlpseweouyav`, lue via l'outil MCP `get_publishable_keys`, jamais
+tapée à la main) et `GALERIE=false`, `PLAYGROUND=false`,
+`AUTH_PAR_MOT_DE_PASSE` omis.
+
+- `flutter analyze --no-pub lib` : `No issues found!`. (`test/` porte encore
+  trois clés `connexion.seConnecter`/`connexion.erreurConnexion` obsolètes,
+  sans effet sur le build — voir « Reste ouvert ».)
+- `flutter build web --release` : succès, `build/web/main.dart.js` = 4 645 882
+  octets.
+- Bundle inspecté : réf. Supabase présente, clé factice absente, `_galerie`
+  absent (recherche sensible à la casse), route `/compte` présente, route
+  `eleve/suivi` présente.
+- Déployé sur le projet Vercel `rewayah-academy`
+  (`prj_xDldWMLNH726BpwEVUlIAJUOSzPe`) : `dpl_6dmPw77rvMCQ94RH6jDXcGiS6f2p`,
+  `READY`, `target: production`, aliasé sur `rewayah-academy.vercel.app`.
+- Vérifié après coup : `GET /` → 200, `GET /main.dart.js` → 200 (même
+  taille), `GET https://gggmtelinlpseweouyav.supabase.co/auth/v1/settings`
+  avec la clé réelle → 200 (Google et courriel/OTP activés côté Supabase).
+
+Poussé sur `origin/main` (`99c7b6a..fdf5168`) **après** vérification que le
+build/déploiement fonctionnait, conformément à la règle « build vert →
+commit et push sans redemander ».
+
+### Piège de déploiement payé ce jour-là, à ne pas rouvrir
+
+⚠ **`vercel deploy <dossier>` cherche `.vercel/project.json` DANS
+`<dossier>`, pas dans le répertoire courant.** Un premier essai avec
+`.vercel/project.json` posé à la racine du worktree et
+`vercel deploy build\web --prod` a donc ignoré ce lien et **créé un nouveau
+projet Vercel nommé `web`** (`prj_6MlTdLfO4xBnHNm6K5tDX3At6is3`, dans la
+même équipe) au lieu de viser `rewayah-academy`. Ce projet orphelin
+(un seul déploiement, aucun trafic) n'a pas pu être supprimé : aucun outil
+MCP Vercel connecté n'expose de suppression de projet. **À supprimer
+manuellement depuis le tableau de bord Vercel si l'opérateur le souhaite** —
+Project Settings → `web` → Advanced → Delete. Le correctif : placer (ou
+`vercel link` pour écrire) `.vercel/project.json` DANS le dossier passé à
+`vercel deploy`, ou lancer la commande depuis l'intérieur de ce dossier.
+
+### Reste ouvert
+
+- **Le workflow GitHub Actions `flutter-deploy.yml` n'a pas été vérifié** :
+  ses secrets (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`,
+  `SUPABASE_URL`, `SUPABASE_ANON_KEY`) ne sont pas lisibles depuis cet
+  environnement. Avec `git.deploymentEnabled.main=false`, le déploiement
+  Vercel zéro-config ne peut plus écraser la production, mais si ces secrets
+  manquent ou sont faux, le workflow échoue simplement sans y toucher —
+  aucun risque, mais aucun déploiement continu non plus tant que ce n'est
+  pas vérifié.
+- **Trois clés de test obsolètes** : `test/features/connexion_test.dart`
+  référence `t.connexion.seConnecter` et `t.connexion.erreurConnexion`, qui
+  n'existent dans aucun des deux fichiers i18n — signe que l'écran de
+  connexion a été renommé sans mettre les tests à jour. Sans effet sur le
+  build web ; `flutter test` échouera sur ce fichier tant que ce n'est pas
+  corrigé.
+- **`Env.configuree` reste durci depuis le 14 septembre**, non retouché ici.
+- Le projet Vercel orphelin `web` (ci-dessus).
