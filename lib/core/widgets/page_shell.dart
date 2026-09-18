@@ -86,15 +86,30 @@ class PageShell extends StatelessWidget {
       if (entete != null) ...<Widget>[entete!, Ecart.vXl],
     ];
 
-    final Widget corps = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        child,
-        // La respiration de bas de page : sans elle, le dernier element colle
-        // au bord de l'ecran ou passe sous la zone d'action.
-        Ecart.vSection,
-      ],
-    );
+    // Un `Column` donne a ses enfants non flexibles une hauteur **non bornee**.
+    // Envelopper le contenu de l'ecran pour lui ajouter une respiration de bas
+    // de page cassait donc tout ecran qui gere son propre defilement avec un
+    // `Expanded` : la mesure echouait, et en build release, ou les assertions
+    // sont retirees, le corps disparaissait sans une ligne d'erreur ni un appel
+    // reseau en echec. Cinq ecrans de production etaient dans ce cas
+    // (`ADM-07`, `ADM-04`, `CTR-01`, le suivi eleve et `TUT-06`), et la dette
+    // etait deja ecrite dans la fiche `TUT-00b` du catalogue sans avoir jamais
+    // ete payee.
+    //
+    // En mode non defilant, le contenu devient l'enfant direct de l'`Expanded`
+    // ci-dessous et recoit donc une hauteur bornee. La respiration n'a de sens
+    // que dans le cas defilant, ou c'est le contenu qui pousse le bas de page.
+    final Widget corps = defilante
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              child,
+              // La respiration de bas de page : sans elle, le dernier element
+              // colle au bord de l'ecran ou passe sous la zone d'action.
+              Ecart.vSection,
+            ],
+          )
+        : child;
 
     return Scaffold(
       body: SafeArea(

@@ -351,9 +351,12 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
       return const Skeleton.liste();
     }
     if (_erreur != null) {
+      // Registre **actionnable**, et pas « subi » : `EmptyState` ne rend son
+      // bouton que dans ce registre. Declare en subi, le « Reessayer » ci-dessous
+      // n'a jamais existe a l'ecran, et une lecture en echec laissait
+      // l'administration sans aucun geste.
       return EmptyState(
         message: t.admin.agents.erreur,
-        registre: RegistreVide.subi,
         icone: AppIcons.avertissement,
         libelleAction: t.commun.reessayer,
         onAction: () => unawaited(_charger()),

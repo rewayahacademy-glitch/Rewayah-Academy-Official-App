@@ -350,6 +350,8 @@
       "aTraiterAucunDetail": "Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.",
       "aTraiterPortee": "Les foyers sans enseignant s'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.",
       "outils": "Outils",
+      "outilsComptes": "Comptes",
+      "outilsComptesDetail": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Y compris celles qui n'ont pas encore déposé de pièce.",
       "outilsAccesAgents": "Accès des agents IA",
       "outilsAccesAgentsDetail": "Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d'une personne.",
       "listeErreur": "La liste n'a pas pu être lue en entier. Les compteurs, eux, restent justes.",
@@ -499,6 +501,11 @@
       "evtDemandeTranchee": "Demande tranchée",
       "evtReglePosee": "Règle posée",
       "evtRegleClose": "Règle close",
+      "evtAgentJetonEmis": "Accès d'agent IA émis",
+      "evtAgentJetonRevoque": "Accès d'agent IA révoqué",
+      "evtAgentSessionOuverte": "Session d'agent IA ouverte",
+      "evtObservationControleur": "Visite de contrôle commencée",
+      "evtJetonVideo": "Entrée en salle autorisée",
 
       "vide": "Aucun événement enregistré",
       "videDetail": "Chaque lecture de dossier, chaque décision et chaque attribution viendra s'inscrire ici.",
@@ -509,6 +516,45 @@
       "erreurSuite": "Les entrées plus anciennes n'ont pas pu être lues.",
       "chargerSuite": "Charger les entrées plus anciennes",
       "fin": "Vous êtes remonté jusqu'à la première entrée du journal."
+    },
+
+    "comptes": {
+      "titre": "Comptes",
+      "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.",
+      "attenteUne": "Une personne attend une décision depuis {jours} jours.",
+      "attentePlusieurs": "{nombre} personnes attendent une décision.",
+      "filtreTousEtats": "Tous les états",
+      "filtreTousRoles": "Tous les rôles",
+      "aucunAvecCeFiltre": "Aucun compte avec ce filtre",
+      "aucunAvecCeFiltreDetail": "Retirez un filtre pour élargir la liste.",
+      "erreur": "Les comptes n'ont pas pu être lus. Réessayez dans un instant.",
+      "colonnePersonne": "Personne",
+      "colonneIdentifiant": "Identifiant",
+      "colonneRole": "Rôle",
+      "colonneEtat": "État",
+      "colonnePiece": "Pièce d'identité",
+      "colonneAttente": "Inscrit depuis",
+      "colonneContrats": "Contrats",
+      "etatEnAttente": "En attente",
+      "etatActif": "Actif",
+      "etatProvisoire": "Provisoire",
+      "etatSuspendu": "Suspendu",
+      "etatInconnu": "État inconnu",
+      "roleAdmin": "Administration",
+      "roleComptable": "Comptable",
+      "roleControleur": "Contrôleur",
+      "roleEnseignant": "Enseignant",
+      "roleTuteur": "Tuteur",
+      "roleEleve": "Élève",
+      "roleInconnu": "Rôle inconnu",
+      "pieceAucune": "Aucune pièce déposée",
+      "pieceAVerifier": "À vérifier",
+      "pieceValidee": "Validée",
+      "pieceRefusee": "Refusée",
+      "pieceNonVisible": "Hors de votre portée",
+      "attendAujourdhui": "Aujourd'hui",
+      "attendUnJour": "1 jour",
+      "attendJours": "{jours} jours"
     },
 
     "agents": {
@@ -642,8 +688,11 @@
       "dossiers": "Dossiers",
       "demandes": "Demandes",
       "attribution": "Attribution",
-      "journal": "Journal"
-    }
+      "journal": "Journal",
+      "comptes": "Comptes",
+      "accesAgents": "Accès des agents"
+    },
+    "compte": "Mon compte"
   },
 
   "compte": {

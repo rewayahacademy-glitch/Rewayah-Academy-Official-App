@@ -9,6 +9,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
@@ -216,6 +217,17 @@ class TableauDeBordPage extends ConsumerWidget {
           // traitement que les demandes d'`ADM-06`.
           Text(t.admin.tableau.outils, style: textes.titleMedium),
           Ecart.vMd,
+          // `ADM-08` en premier, et pas par gout : c'est le seul ecran qui
+          // montre une personne inscrite qui n'a pas encore depose sa piece.
+          // Sans lui, trois enseignants ont attendu sept jours sans qu'aucun
+          // ecran ne les nomme (defaut mesure le 18 septembre 2026).
+          SettingRow(
+            title: t.admin.tableau.outilsComptes,
+            description: t.admin.tableau.outilsComptesDetail,
+            icon: AppIcons.profil,
+            onPress: () => GoRouter.of(context).go(Routes.adminComptes),
+          ),
+          Ecart.vSm,
           SettingRow(
             title: t.admin.tableau.outilsAccesAgents,
             description: t.admin.tableau.outilsAccesAgentsDetail,
@@ -274,11 +286,25 @@ class _Compteurs extends StatelessWidget {
       ),
     ];
 
+    // Le nombre de colonnes vient du gabarit, jamais d'une largeur comparee
+    // ici : `05-regles-responsive.md` section 3 demande « grille de deux » en
+    // tablette et « grille de quatre chiffres » en desktop.
+    //
+    // Avant ce correctif, le diviseur etait **2 a toutes les largeurs**. A
+    // 1366 px, les six compteurs devenaient donc six rectangles etires sur une
+    // demi-page, ce que la section 2 du meme document interdit en une phrase :
+    // « Ne pas agrandir l'application mobile. Reorganiser. »
+    final int colonnes = switch (AppGabarit.de(context)) {
+      Gabarit.mobile || Gabarit.tablette => 2,
+      Gabarit.desktop => 4,
+    };
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        // Deux colonnes a 390 px de large, la mesure de reference du projet.
-        // La largeur derive de l'echelle, elle n'est pas posee telle quelle.
-        final double colonne = (contraintes.maxWidth - AppSpacing.md) / 2;
+        // La largeur derive de l'echelle et du nombre de colonnes, elle n'est
+        // jamais posee telle quelle.
+        final double colonne =
+            (contraintes.maxWidth - AppSpacing.md * (colonnes - 1)) / colonnes;
         return Wrap(
           spacing: AppSpacing.md,
           runSpacing: AppSpacing.md,

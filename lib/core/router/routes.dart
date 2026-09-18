@@ -129,6 +129,15 @@ abstract final class Routes {
   /// (`ADM-07`, ADR-025).
   static const String adminAccesAgents = '/admin/acces-agents';
 
+  /// Les comptes du produit (`ADM-08`).
+  ///
+  /// Ecran cree le 18 septembre 2026, apres un defaut mesure en production :
+  /// trois enseignants inscrits attendaient depuis sept jours et **aucun ecran
+  /// de l'administration ne les montrait**. `ADM-02` ne listait que les pieces
+  /// d'identite deposees, `ADM-05` que les eleves sans enseignant. Aucun ecran
+  /// ne repondait a « qui s'est inscrit ? ».
+  static const String adminComptes = '/admin/comptes';
+
   // --- Observation par un agent IA -----------------------------------------
 
   /// Entree d'un agent IA (`AGT-00`, ADR-025).

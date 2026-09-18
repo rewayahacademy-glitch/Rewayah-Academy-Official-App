@@ -569,6 +569,18 @@ String libelleEvenement(String type) => switch (type) {
   'demande_tranchee' => t.admin.journal.evtDemandeTranchee,
   'regle_posee' => t.admin.journal.evtReglePosee,
   'regle_close' => t.admin.journal.evtRegleClose,
+  // Les cinq ci-dessous manquaient : les lots `AGT-01`, `CTR-01` et `N2` ont
+  // ajoute leurs evenements en base sans ajouter leur libelle ici. Le repli
+  // faisait alors exactement son travail, et l'ecran affichait
+  // `agent_session_opened` a cote de « Dossier d'identite consulte ». La
+  // liste de reference est la base elle-meme : les chaines litterales passees
+  // a `log_sensitive_access()`.
+  'agent_token_issued' => t.admin.journal.evtAgentJetonEmis,
+  'agent_token_revoked' => t.admin.journal.evtAgentJetonRevoque,
+  'agent_session_opened' => t.admin.journal.evtAgentSessionOuverte,
+  'controller_observation_started' =>
+    t.admin.journal.evtObservationControleur,
+  'video_token_issued' => t.admin.journal.evtJetonVideo,
   _ => type,
 };
 

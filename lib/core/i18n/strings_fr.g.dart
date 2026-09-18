@@ -1081,6 +1081,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
 	late final Traductions$admin$attribution$fr attribution = Traductions$admin$attribution$fr.internal(_root);
 	late final Traductions$admin$journal$fr journal = Traductions$admin$journal$fr.internal(_root);
+	late final Traductions$admin$comptes$fr comptes = Traductions$admin$comptes$fr.internal(_root);
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
 }
 
@@ -1219,6 +1220,9 @@ class Traductions$nav$fr {
 	late final Traductions$nav$enseignant$fr enseignant = Traductions$nav$enseignant$fr.internal(_root);
 	late final Traductions$nav$controleur$fr controleur = Traductions$nav$controleur$fr.internal(_root);
 	late final Traductions$nav$admin$fr admin = Traductions$nav$admin$fr.internal(_root);
+
+	/// fr: 'Mon compte'
+	String get compte => 'Mon compte';
 }
 
 // Path: compte
@@ -1606,6 +1610,12 @@ class Traductions$admin$tableau$fr {
 
 	/// fr: 'Outils'
 	String get outils => 'Outils';
+
+	/// fr: 'Comptes'
+	String get outilsComptes => 'Comptes';
+
+	/// fr: 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Y compris celles qui n'ont pas encore déposé de pièce.'
+	String get outilsComptesDetail => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Y compris celles qui n\'ont pas encore déposé de pièce.';
 
 	/// fr: 'Accès des agents IA'
 	String get outilsAccesAgents => 'Accès des agents IA';
@@ -2039,6 +2049,21 @@ class Traductions$admin$journal$fr {
 	/// fr: 'Règle close'
 	String get evtRegleClose => 'Règle close';
 
+	/// fr: 'Accès d'agent IA émis'
+	String get evtAgentJetonEmis => 'Accès d\'agent IA émis';
+
+	/// fr: 'Accès d'agent IA révoqué'
+	String get evtAgentJetonRevoque => 'Accès d\'agent IA révoqué';
+
+	/// fr: 'Session d'agent IA ouverte'
+	String get evtAgentSessionOuverte => 'Session d\'agent IA ouverte';
+
+	/// fr: 'Visite de contrôle commencée'
+	String get evtObservationControleur => 'Visite de contrôle commencée';
+
+	/// fr: 'Entrée en salle autorisée'
+	String get evtJetonVideo => 'Entrée en salle autorisée';
+
 	/// fr: 'Aucun événement enregistré'
 	String get vide => 'Aucun événement enregistré';
 
@@ -2065,6 +2090,123 @@ class Traductions$admin$journal$fr {
 
 	/// fr: 'Vous êtes remonté jusqu'à la première entrée du journal.'
 	String get fin => 'Vous êtes remonté jusqu\'à la première entrée du journal.';
+}
+
+// Path: admin.comptes
+class Traductions$admin$comptes$fr {
+	Traductions$admin$comptes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comptes'
+	String get titre => 'Comptes';
+
+	/// fr: 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.'
+	String get intro => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.';
+
+	/// fr: 'Une personne attend une décision depuis {jours} jours.'
+	String attenteUne({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.';
+
+	/// fr: '{nombre} personnes attendent une décision.'
+	String attentePlusieurs({required Object nombre}) => '${nombre} personnes attendent une décision.';
+
+	/// fr: 'Tous les états'
+	String get filtreTousEtats => 'Tous les états';
+
+	/// fr: 'Tous les rôles'
+	String get filtreTousRoles => 'Tous les rôles';
+
+	/// fr: 'Aucun compte avec ce filtre'
+	String get aucunAvecCeFiltre => 'Aucun compte avec ce filtre';
+
+	/// fr: 'Retirez un filtre pour élargir la liste.'
+	String get aucunAvecCeFiltreDetail => 'Retirez un filtre pour élargir la liste.';
+
+	/// fr: 'Les comptes n'ont pas pu être lus. Réessayez dans un instant.'
+	String get erreur => 'Les comptes n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'Personne'
+	String get colonnePersonne => 'Personne';
+
+	/// fr: 'Identifiant'
+	String get colonneIdentifiant => 'Identifiant';
+
+	/// fr: 'Rôle'
+	String get colonneRole => 'Rôle';
+
+	/// fr: 'État'
+	String get colonneEtat => 'État';
+
+	/// fr: 'Pièce d'identité'
+	String get colonnePiece => 'Pièce d\'identité';
+
+	/// fr: 'Inscrit depuis'
+	String get colonneAttente => 'Inscrit depuis';
+
+	/// fr: 'Contrats'
+	String get colonneContrats => 'Contrats';
+
+	/// fr: 'En attente'
+	String get etatEnAttente => 'En attente';
+
+	/// fr: 'Actif'
+	String get etatActif => 'Actif';
+
+	/// fr: 'Provisoire'
+	String get etatProvisoire => 'Provisoire';
+
+	/// fr: 'Suspendu'
+	String get etatSuspendu => 'Suspendu';
+
+	/// fr: 'État inconnu'
+	String get etatInconnu => 'État inconnu';
+
+	/// fr: 'Administration'
+	String get roleAdmin => 'Administration';
+
+	/// fr: 'Comptable'
+	String get roleComptable => 'Comptable';
+
+	/// fr: 'Contrôleur'
+	String get roleControleur => 'Contrôleur';
+
+	/// fr: 'Enseignant'
+	String get roleEnseignant => 'Enseignant';
+
+	/// fr: 'Tuteur'
+	String get roleTuteur => 'Tuteur';
+
+	/// fr: 'Élève'
+	String get roleEleve => 'Élève';
+
+	/// fr: 'Rôle inconnu'
+	String get roleInconnu => 'Rôle inconnu';
+
+	/// fr: 'Aucune pièce déposée'
+	String get pieceAucune => 'Aucune pièce déposée';
+
+	/// fr: 'À vérifier'
+	String get pieceAVerifier => 'À vérifier';
+
+	/// fr: 'Validée'
+	String get pieceValidee => 'Validée';
+
+	/// fr: 'Refusée'
+	String get pieceRefusee => 'Refusée';
+
+	/// fr: 'Hors de votre portée'
+	String get pieceNonVisible => 'Hors de votre portée';
+
+	/// fr: 'Aujourd'hui'
+	String get attendAujourdhui => 'Aujourd\'hui';
+
+	/// fr: '1 jour'
+	String get attendUnJour => '1 jour';
+
+	/// fr: '{jours} jours'
+	String attendJours({required Object jours}) => '${jours} jours';
 }
 
 // Path: admin.agents
@@ -2350,6 +2492,12 @@ class Traductions$nav$admin$fr {
 
 	/// fr: 'Journal'
 	String get journal => 'Journal';
+
+	/// fr: 'Comptes'
+	String get comptes => 'Comptes';
+
+	/// fr: 'Accès des agents'
+	String get accesAgents => 'Accès des agents';
 }
 
 // Path: compte.roles
@@ -3420,6 +3568,8 @@ extension on Traductions {
 			'admin.tableau.aTraiterAucunDetail' => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.',
 			'admin.tableau.aTraiterPortee' => 'Les foyers sans enseignant s\'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
 			'admin.tableau.outils' => 'Outils',
+			'admin.tableau.outilsComptes' => 'Comptes',
+			'admin.tableau.outilsComptesDetail' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Y compris celles qui n\'ont pas encore déposé de pièce.',
 			'admin.tableau.outilsAccesAgents' => 'Accès des agents IA',
 			'admin.tableau.outilsAccesAgentsDetail' => 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d\'une personne.',
 			'admin.tableau.listeErreur' => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.',
@@ -3555,6 +3705,11 @@ extension on Traductions {
 			'admin.journal.evtDemandeTranchee' => 'Demande tranchée',
 			'admin.journal.evtReglePosee' => 'Règle posée',
 			'admin.journal.evtRegleClose' => 'Règle close',
+			'admin.journal.evtAgentJetonEmis' => 'Accès d\'agent IA émis',
+			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
+			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
+			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
+			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
 			'admin.journal.vide' => 'Aucun événement enregistré',
 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
@@ -3564,6 +3719,42 @@ extension on Traductions {
 			'admin.journal.erreurSuite' => 'Les entrées plus anciennes n\'ont pas pu être lues.',
 			'admin.journal.chargerSuite' => 'Charger les entrées plus anciennes',
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
+			'admin.comptes.titre' => 'Comptes',
+			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
+			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
+			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '${nombre} personnes attendent une décision.',
+			'admin.comptes.filtreTousEtats' => 'Tous les états',
+			'admin.comptes.filtreTousRoles' => 'Tous les rôles',
+			'admin.comptes.aucunAvecCeFiltre' => 'Aucun compte avec ce filtre',
+			'admin.comptes.aucunAvecCeFiltreDetail' => 'Retirez un filtre pour élargir la liste.',
+			'admin.comptes.erreur' => 'Les comptes n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.comptes.colonnePersonne' => 'Personne',
+			'admin.comptes.colonneIdentifiant' => 'Identifiant',
+			'admin.comptes.colonneRole' => 'Rôle',
+			'admin.comptes.colonneEtat' => 'État',
+			'admin.comptes.colonnePiece' => 'Pièce d\'identité',
+			'admin.comptes.colonneAttente' => 'Inscrit depuis',
+			'admin.comptes.colonneContrats' => 'Contrats',
+			'admin.comptes.etatEnAttente' => 'En attente',
+			'admin.comptes.etatActif' => 'Actif',
+			'admin.comptes.etatProvisoire' => 'Provisoire',
+			'admin.comptes.etatSuspendu' => 'Suspendu',
+			'admin.comptes.etatInconnu' => 'État inconnu',
+			'admin.comptes.roleAdmin' => 'Administration',
+			'admin.comptes.roleComptable' => 'Comptable',
+			'admin.comptes.roleControleur' => 'Contrôleur',
+			'admin.comptes.roleEnseignant' => 'Enseignant',
+			'admin.comptes.roleTuteur' => 'Tuteur',
+			'admin.comptes.roleEleve' => 'Élève',
+			'admin.comptes.roleInconnu' => 'Rôle inconnu',
+			'admin.comptes.pieceAucune' => 'Aucune pièce déposée',
+			'admin.comptes.pieceAVerifier' => 'À vérifier',
+			'admin.comptes.pieceValidee' => 'Validée',
+			'admin.comptes.pieceRefusee' => 'Refusée',
+			'admin.comptes.pieceNonVisible' => 'Hors de votre portée',
+			'admin.comptes.attendAujourdhui' => 'Aujourd\'hui',
+			'admin.comptes.attendUnJour' => '1 jour',
+			'admin.comptes.attendJours' => ({required Object jours}) => '${jours} jours',
 			'admin.agents.titre' => 'Accès des agents IA',
 			'admin.agents.intro' => 'Un jeton laisse un agent IA ouvrir l\'application et lire ce qu\'une personne y lit. Il ne peut rien écrire, rien annuler, rien modifier : la base le lui refuse, pas l\'interface.',
 			'admin.agents.emettre' => 'Émettre un jeton',
@@ -3594,6 +3785,8 @@ extension on Traductions {
 			'admin.agents.termine' => 'J\'ai copié le lien',
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
 			'admin.agents.colonneLibelle' => 'Jeton',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.colonneQui' => 'Observe',
 			'admin.agents.colonneParcours' => 'Parcours',
 			'admin.agents.colonneIdentite' => 'Prénoms',
@@ -3637,8 +3830,6 @@ extension on Traductions {
 			'agent.bandeauMasque' => 'Prénoms masqués',
 			'agent.bandeauExpire' => ({required Object heure}) => 'jusqu\'à ${heure}',
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
-			_ => null,
-		} ?? switch (path) {
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',
 			'vide.aucunRapport' => 'Aucun cahier de transmission pour l\'instant',
@@ -3669,6 +3860,9 @@ extension on Traductions {
 			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.attribution' => 'Attribution',
 			'nav.admin.journal' => 'Journal',
+			'nav.admin.comptes' => 'Comptes',
+			'nav.admin.accesAgents' => 'Accès des agents',
+			'nav.compte' => 'Mon compte',
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
 			'compte.informations' => 'Informations',

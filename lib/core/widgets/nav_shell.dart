@@ -157,6 +157,57 @@ List<Destination> destinationsPour({
   return destinations;
 }
 
+/// Les entrees secondaires d'un role : le compte, et les ecrans hors barre.
+///
+/// **Elles ne sont pas des destinations**, et ne comptent donc pas dans les
+/// quatre : le compte appartient a la zone Acces
+/// (`03-architecture-information.md` section 4), et `ADM-06`/`ADM-07` sont
+/// volontairement hors de la barre, ce que le routeur ecrit deja.
+///
+/// Ce que cette fonction repare, mesure le 18 septembre 2026 : un admin et un
+/// tuteur valides n'avaient **aucun chemin vers la deconnexion**, et `ADM-06`
+/// comme `ADM-07` n'etaient atteignables qu'en tapant leur URL. L'eleve et
+/// l'enseignant, eux, depensaient deja une de leurs quatre destinations sur le
+/// compte : ils n'ont donc pas besoin de doublon ici.
+List<Destination> secondairesPour({required AppRole role}) =>
+    switch (role) {
+      AppRole.admin => <Destination>[
+        Destination(
+          libelle: t.nav.admin.comptes,
+          icone: AppIcons.profil,
+          chemin: Routes.adminComptes,
+        ),
+        Destination(
+          libelle: t.nav.admin.demandes,
+          icone: AppIcons.reglages,
+          chemin: Routes.adminDemandes,
+        ),
+        Destination(
+          libelle: t.nav.admin.accesAgents,
+          icone: AppIcons.controleQualite,
+          chemin: Routes.adminAccesAgents,
+        ),
+        Destination(
+          libelle: t.nav.compte,
+          icone: AppIcons.sortie,
+          chemin: Routes.compte,
+        ),
+      ],
+      AppRole.guardian => <Destination>[
+        Destination(
+          libelle: t.nav.compte,
+          icone: AppIcons.sortie,
+          chemin: Routes.compte,
+        ),
+      ],
+      // L'eleve et l'enseignant portent deja le compte dans leurs
+      // destinations ; le controleur et le comptable n'ont pas de coquille.
+      AppRole.student ||
+      AppRole.teacher ||
+      AppRole.controller ||
+      AppRole.accountant => const <Destination>[],
+    };
+
 /// La navigation de premier niveau, dans ses trois formes.
 ///
 /// **Une seule liste de destinations alimente les trois formes** : barre basse
@@ -192,6 +243,8 @@ class NavShell extends StatelessWidget {
     required this.indexActif,
     required this.onAller,
     required this.child,
+    this.secondaires = const <Destination>[],
+    this.onAllerSecondaire,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -216,6 +269,33 @@ class NavShell extends StatelessWidget {
 
   /// L'ecran affiche.
   final Widget child;
+
+  /// Les entrees secondaires : le compte, et les ecrans hors de la barre.
+  ///
+  /// **Elles ne comptent pas dans les quatre destinations.** La regle des
+  /// quatre porte sur le premier niveau, et le compte appartient a la zone
+  /// Acces (`03-architecture-information.md` section 4), pas aux destinations.
+  ///
+  /// Defaut mesure le 18 septembre 2026 : sans ce pied de coquille, un admin
+  /// ou un tuteur valide n'avait **aucun moyen de se deconnecter**. Le mot
+  /// « deconnexion » n'existait que dans le portail d'attente — donc avant
+  /// validation — et dans la salle de cours. Vider le cache du navigateur
+  /// etait le seul chemin de sortie.
+  ///
+  /// **Limite assumee** : ce pied n'est rendu que par le rail et la barre
+  /// laterale, donc a partir de 600. Une barre basse Material 3 n'accepte pas
+  /// d'entree hors destination, et en ajouter une ferait une cinquieme. Sous
+  /// 600, ces entrees se rejoignent par les tuiles « Outils » du tableau de
+  /// bord, ce qui est aussi la regle « un signal mene directement a son
+  /// ecran » (`02-regles-ux.md` section 2).
+  final List<Destination> secondaires;
+
+  /// Ce qui se passe quand une entree secondaire est choisie.
+  ///
+  /// Volontairement distinct de `onAller` : une destination est une branche de
+  /// la coquille `go_router` et se rejoint par son index, alors qu'une entree
+  /// secondaire est une route de premier niveau **hors** de la coquille.
+  final void Function(String chemin)? onAllerSecondaire;
 
   /// Le nombre maximal de destinations de premier niveau.
   static const int maxDestinations = 4;
@@ -246,6 +326,8 @@ class NavShell extends StatelessWidget {
             destinations: destinations,
             indexActif: indexActif,
             onAller: onAller,
+            secondaires: secondaires,
+            onAllerSecondaire: onAllerSecondaire,
             largeur: AppGabarit.largeurRail,
             enColonne: true,
           ),
@@ -258,6 +340,8 @@ class NavShell extends StatelessWidget {
             destinations: destinations,
             indexActif: indexActif,
             onAller: onAller,
+            secondaires: secondaires,
+            onAllerSecondaire: onAllerSecondaire,
             largeur: AppGabarit.largeurBarreLaterale,
             enColonne: false,
           ),
@@ -328,6 +412,8 @@ class _Cote extends StatelessWidget {
     required this.destinations,
     required this.indexActif,
     required this.onAller,
+    required this.secondaires,
+    required this.onAllerSecondaire,
     required this.largeur,
     required this.enColonne,
   });
@@ -335,6 +421,8 @@ class _Cote extends StatelessWidget {
   final List<Destination> destinations;
   final int indexActif;
   final void Function(String chemin) onAller;
+  final List<Destination> secondaires;
+  final void Function(String chemin)? onAllerSecondaire;
   final double largeur;
   final bool enColonne;
 
@@ -369,6 +457,25 @@ class _Cote extends StatelessWidget {
             unselectedIconTheme: palette.inkMuted.asIconTheme(
               size: AppSpacing.xxl,
             ),
+            // Le rail n'a que la largeur d'une icone : les entrees secondaires
+            // s'y disent par leur infobulle et leur libelle parle, jamais par
+            // une icone muette.
+            trailing: secondaires.isEmpty
+                ? null
+                : Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.lg),
+                    child: Column(
+                      children: <Widget>[
+                        for (final Destination entree in secondaires)
+                          IconButton(
+                            icon: Icon(entree.icone.repos),
+                            tooltip: entree.libelle,
+                            onPressed: () =>
+                                onAllerSecondaire?.call(entree.chemin),
+                          ),
+                      ],
+                    ),
+                  ),
             destinations: <NavigationRailDestination>[
               for (final Destination destination in destinations)
                 NavigationRailDestination(
@@ -396,6 +503,25 @@ class _Cote extends StatelessWidget {
                   selectedIcon: Icon(destination.icone.actif),
                   label: Text(destination.libelle),
                 ),
+              // `NavigationDrawer` n'indexe que ses `NavigationDrawerDestination` :
+              // un `ListTile` peut donc vivre ici sans decaler la selection, et
+              // sans compter dans les quatre destinations.
+              if (secondaires.isNotEmpty) ...<Widget>[
+                const Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: Divider(height: 1),
+                ),
+                for (final Destination entree in secondaires)
+                  ListTile(
+                    leading: Icon(entree.icone.repos),
+                    title: Text(entree.libelle),
+                    minTileHeight: AppMetriques.of(context).cibleTactile,
+                    onTap: () => onAllerSecondaire?.call(entree.chemin),
+                  ),
+              ],
             ],
           );
 

@@ -8,6 +8,7 @@ import '../../features/accueil_eleve/accueil_eleve_page.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
 import '../../features/admin_attribution/attribution_page.dart';
+import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_journal/journal_page.dart';
@@ -344,6 +345,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const AccesAgentsPage(),
       ),
 
+      // `ADM-08` : les comptes. Hors de la barre pour la meme raison
+      // qu'`ADM-06` et `ADM-07`, et atteignable par le pied de la coquille
+      // ainsi que par le tableau de bord. Sans cet ecran, l'administration
+      // n'avait aucun moyen de voir une personne inscrite qui n'a pas encore
+      // depose sa piece : c'est le defaut mesure le 18 septembre 2026.
+      GoRoute(
+        path: Routes.adminComptes,
+        builder: (BuildContext _, GoRouterState _) => const ComptesPage(),
+      ),
+
       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
       GoRoute(
         path: Routes.comptable,
@@ -474,6 +485,11 @@ class _CoquilleNavigation extends ConsumerWidget {
           initialLocation: index == navigationShell.currentIndex,
         );
       },
+      secondaires: secondairesPour(role: role),
+      // Les entrees secondaires sont des routes de premier niveau **hors** de
+      // la coquille : elles se rejoignent par `go`, jamais par `goBranch`, qui
+      // ne connait que les branches.
+      onAllerSecondaire: (String chemin) => GoRouter.of(context).go(chemin),
       child: navigationShell,
     );
   }

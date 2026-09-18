@@ -71,6 +71,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/demandes` | Liste de demandes | Liste + feuille de règles | **repris (R4)**, fiche §6 |
 | `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/journal` | Cartes | Tableau dense | **construit (12/09)**, fiche §6 |
 | `ADM-07` | Accès des agents IA | Admin | E | 1 | `/admin/acces-agents` | Formulaire puis cartes | Formulaire + tableau dense | **construit (18/09)**, fiche §6 |
+| `ADM-08` | Comptes | Admin | E | 1 | `/admin/comptes` | Cartes | Tableau dense | **construit (18/09)**, fiche §6 |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
 
@@ -2428,3 +2429,76 @@ jeton, elle n'ouvre que ce que la base accorde déjà au rôle `agent_ro`,
 c'est-à-dire de la lecture, et seulement celle de la personne observée.
 
 Construit le 18 septembre 2026, lot `AGT-01` (ADR-025).
+
+### `ADM-08` Comptes
+
+```
+CODE              ADM-08
+Nom               Comptes
+Role              Admin
+Zone              Administration
+Niveau de charge  E
+Ecran parent      ADM-01
+Profondeur        1
+Question          Qui s'est inscrit, et qui attend une decision ?
+
+Priorites         P0  les personnes qui attendent une decision, en premier
+                  P0  l'etat de la piece d'identite, y compris « aucune »
+                  P1  l'anciennete de l'inscription, en jours
+                  P1  le filtre par etat de compte et par role
+
+Action principale     aucune : cet ecran constate, il ne tranche pas. Les
+                      verdicts vivent sur ADM-02, l'attribution sur ADM-05
+Actions secondaires   filtrer par etat, filtrer par role
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            une carte par personne (DataCollection replie le tableau)
+Tablette          identique
+Desktop           tableau dense, sa forme naturelle au niveau E
+
+Etats             loading   squelette de liste, cinq lignes
+                  content   bandeau d'attente, filtres, puis le tableau
+                  empty     « Aucun compte avec ce filtre », registre subi :
+                            c'est le filtre qu'il faut retirer
+                  error     phrase + « Reessayer », registre ACTIONNABLE.
+                            EmptyState ne rend son bouton que dans ce
+                            registre : declare en subi, le bouton n'existe pas
+                  offline   le bandeau OfflineBanner de PageShell coiffe la page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        une personne sans piece deposee est VISIBLE et dit ce qui
+                  manque. C'est la raison d'etre de l'ecran
+                  le tri vient de la base : ce qui attend une decision d'abord,
+                  puis l'anciennete. Jamais l'ordre alphabetique
+                  l'anciennete se rend en jours, jamais en date seule : une
+                  date demande un calcul, « depuis 7 jours » appelle un geste
+                  le masquage d'identite est respecte : sous un jeton d'agent
+                  masque, la base ne rend aucun prenom et l'ecran n'affiche que
+                  l'identifiant immuable
+                  aucune ecriture : cet ecran est en lecture seule
+
+Accessibilite     cibles a 44 ; chaque ligne porte son libelle parle, nom et
+                  etat ensemble ; chiffres tabulaires sur l'anciennete et les
+                  contrats ; la page se lit de droite a gauche en arabe
+```
+
+**Pourquoi cet écran existe, et pourquoi son absence a coûté cher.** Mesuré sur
+la base de production le 18 septembre 2026 : trois enseignants inscrits les 11
+et 15 septembre attendaient depuis sept jours, **contrats signés**, sans avoir
+déposé leur pièce d'identité. Aucun écran de l'administration ne les montrait.
+`dossiers_en_attente()` lisait `kyc_documents where status = 'pending'` — elle
+comptait des **documents**, et une personne sans document n'existait pour
+personne. Le centre de commande affichait « 0 dossiers à valider » et l'écran de
+validation « Aucun dossier en attente », sur une académie bloquée : un foyer
+attendait un enseignant, trois enseignants attendaient d'être validés, et
+l'interface annonçait qu'il n'y avait rien à faire.
+
+La fiche `ADM-01` avait pourtant écrit la phrase du danger — « l'admin verrait
+une ruche vide et croirait tout traité » — mais seulement pour le cas d'une
+lecture en échec. Le cas où la donnée existe et qu'aucun compteur ne la compte
+n'avait jamais été prévu.
+
+Construit le 18 septembre 2026, avec la migration `0015`, qui corrige aussi
+`dossiers_en_attente()` pour qu'elle rende une ligne par **personne**.

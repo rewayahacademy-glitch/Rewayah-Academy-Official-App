@@ -3144,3 +3144,91 @@ Ordre conseillé : **administration**, puis tuteur, puis élève.
 - ⚠ **Ne pas construire depuis `dart_define.json`** : clé factice + `PLAYGROUND`.
 - ⚠ **Ne pas lire ce fichier avec `Get-Content`** : PowerShell 5.1 en détruit
   l'UTF-8, et son comptage de lignes diverge de celui des outils d'édition.
+
+## 14. 🔴 Le défaut qui rendait cinq écrans vides — 18 septembre 2026
+
+Session déclenchée par un constat de l'opérateur, et il avait raison sur toute
+la ligne : **« presque rien n'apparaît sur la vraie app malgré que les agents
+disent qu'ils ont tout développé »**. Le relevé complet specs / réalité est dans
+`docs/ECART-SPEC-REALITE.md`.
+
+### 14.1 La cause racine : `PageShell` dé-bornait la hauteur de son contenu
+
+`PageShell` enveloppait le contenu de **chaque** écran dans son propre `Column`,
+pour lui ajouter une respiration de bas de page. Or un `Column` donne à ses
+enfants non flexibles une hauteur **non bornée**. Tout écran en
+`defilante: false` avec un `Expanded` échouait donc à se mesurer.
+
+**Ce qui rendait le défaut invisible** : en build release, les assertions de
+layout sont retirées. Le corps disparaissait donc **sans une ligne d'erreur en
+console, sans un seul appel réseau en échec, et sans qu'aucun test ne le voie** —
+aucun test ne montait un écran non défilant à travers `PageShell`. L'écran
+rendait son titre, puis du vide.
+
+**Cinq écrans de production, quatre rôles** : `ADM-07`, `ADM-04`, `CTR-01`, le
+suivi élève et `TUT-06`. La dette était déjà écrite dans la fiche `TUT-00b` du
+catalogue (« `PageShell` en mode `defilante: false` ne donne pas cette garantie
+à son `child` ») sans avoir jamais été payée.
+
+Verrouillé par `test/widgets/page_shell_test.dart`, **prouvé rouge avant le
+correctif et vert après** — un test qui n'a jamais été rouge ne prouve rien.
+
+### 14.2 Le chiffre exact et le mensonge humain
+
+`dossiers_en_attente()` lisait `kyc_documents where status = 'pending'` : elle
+comptait des **documents**. Trois enseignants inscrits les 11 et 15 septembre,
+contrats signés, sans pièce déposée, n'existaient donc pour aucun écran. Le
+centre de commande affichait « 0 dossiers à valider » pendant qu'un foyer
+attendait un enseignant et que trois enseignants attendaient leur validation.
+
+Migration `0015` : `dossiers_en_attente()` rend une ligne par **personne**,
+`comptes_admin()` est créée (`ADM-08`), `indicateurs_admin()` compte des
+personnes, et `journal_audit_filtres()` respecte enfin le masquage d'identité.
+
+### 14.3 Les autres défauts trouvés et corrigés
+
+- **Aucune déconnexion dans toute l'application authentifiée.** Le mot
+  n'existait que dans le portail d'attente — donc *avant* validation — et dans
+  la salle. Un admin ou un tuteur validé n'avait pour seule sortie que vider le
+  cache du navigateur. Corrigé par un **pied de coquille** dans `NavShell`
+  (`secondairesPour`), qui porte aussi `ADM-06`, `ADM-07` et `ADM-08` sans
+  toucher à la règle des quatre destinations. ⚠ **Limite assumée** : ce pied
+  n'existe qu'à partir de 600 px ; sous 600, ces entrées passent par les tuiles
+  « Outils » du tableau de bord.
+- **`EmptyState` ne rend son bouton que dans le registre `actionnable`.** Deux
+  états d'erreur le déclaraient en registre `subi` **avec** un « Réessayer » :
+  le bouton n'a donc jamais existé à l'écran, et l'écran devenait un cul-de-sac.
+- **Le journal affichait des clés brutes de base de données.** Les lots
+  `AGT-01`, `CTR-01` et `N2` ont ajouté cinq événements sans ajouter leur
+  libellé : `agent_session_opened` s'affichait à côté de « Dossier d'identité
+  consulté ». La liste de référence est la base elle-même — les littéraux
+  passés à `log_sensitive_access()` — et il y en a **19**, pas 14.
+- **`ADM-01` étirait deux colonnes à toutes les largeurs.** Le diviseur était
+  `2` en dur ; `05-regles-responsive.md` §3 exige quatre chiffres sur desktop,
+  et §2 interdit explicitement d'agrandir le mobile.
+- **`read_kyc_documents()` journalise chaque appel**, même sans pièce à lire :
+  52 entrées « dossier consulté » pour zéro lecture réelle, qui noyaient le
+  journal. `dossiers_en_attente()` ne l'appelle plus que s'il y a à lire.
+- **`GRANT EXECUTE` manquant pour `agent_ro`** sur dix fonctions de lecture
+  (oubli de la migration `0014`) : toute session d'observation recevait `403`.
+
+### 14.4 Ce que l'audit git a évité de recoder
+
+Dix branches jamais fusionnées, dont `codex/vague5-integration` (7 commits :
+design adaptatif, coquille de navigation, profil enseignant, correction de
+présence). **Rien n'était à en tirer** : `main` porte déjà ce travail par le
+commit de synchronisation `99c7b6a` — seuils et coquille identiques au bit
+près. La branche n'avait jamais été fusionnée parce que sa propre session avait
+écrit `dart analyze : BLOCKED`, `flutter test : BLOCKED`, scénarios SQL
+`BLOCKED`. **Vérifier git avant de recoder a économisé la session.**
+
+### 14.5 Ce qui reste ouvert sur l'admin
+
+- ⚠ `ADM-02` ne rend pas encore la file à gauche / dossier à droite du
+  desktop, et son modèle Dart doit suivre la nouvelle forme de
+  `dossiers_en_attente()` (une ligne par personne, `etat_piece`).
+- ⚠ `ADM-03` (séquestre) et `CTR-03` : contradiction de périmètre jamais
+  tranchée entre `couverture-specs.md` (MVP-0) et le handoff §10.4 (V1).
+- ⚠ La contradiction « cinq indicateurs » / « quatre chiffres » / six dans le
+  code n'est toujours pas arbitrée.
+- ⚠ Sous 600 px, l'admin n'a pas de déconnexion dans la coquille (§14.3).
