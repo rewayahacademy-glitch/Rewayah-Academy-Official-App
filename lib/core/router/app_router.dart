@@ -333,7 +333,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminDemandes,
-        builder: (BuildContext _, GoRouterState _) => const DemandesPage(),
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleAdminSecondaire(child: DemandesPage()),
       ),
 
       // `ADM-07` : l'acces des agents IA (ADR-025). Hors de la barre, pour la
@@ -342,7 +343,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // quotidienne.
       GoRoute(
         path: Routes.adminAccesAgents,
-        builder: (BuildContext _, GoRouterState _) => const AccesAgentsPage(),
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleAdminSecondaire(child: AccesAgentsPage()),
       ),
 
       // `ADM-08` : les comptes. Hors de la barre pour la meme raison
@@ -352,7 +354,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // depose sa piece : c'est le defaut mesure le 18 septembre 2026.
       GoRoute(
         path: Routes.adminComptes,
-        builder: (BuildContext _, GoRouterState _) => const ComptesPage(),
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleAdminSecondaire(child: ComptesPage()),
       ),
 
       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
@@ -446,6 +449,42 @@ String racineDe(AppRole? role) =>
 /// a un seul role. Le mode d'interface, lui, est lu dans la session : un eleve
 /// en mode enfant obtient zero destination, `NavShell` rend alors l'ecran sans
 /// le moindre chrome, sur les memes branches (ADR-009).
+/// Le chrome de l'administration autour d'un ecran **hors** de la barre.
+///
+/// `ADM-06`, `ADM-07` et `ADM-08` ne sont pas des destinations de premier
+/// niveau — la barre est plafonnee a quatre — mais ils ont besoin de son chrome
+/// pour qu'on puisse en **sortir**. Sans lui, on y entre et on n'en revient
+/// qu'avec le bouton precedent du navigateur : c'est precisement le reproche
+/// fait a l'interface le 18 septembre 2026, et `ADM-08` venait de le
+/// reproduire le jour meme de sa creation.
+///
+/// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
+/// rend alors ses entrees sans en surligner aucune.
+class _CoquilleAdminSecondaire extends StatelessWidget {
+  const _CoquilleAdminSecondaire({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    void aller(String chemin) => GoRouter.of(context).go(chemin);
+
+    return NavShell(
+      destinations: destinationsPour(
+        role: AppRole.admin,
+        // Les destinations de l'admin ne dependent pas du mode d'interface :
+        // seul l'eleve en a deux formes (ADR-009).
+        mode: InterfaceMode.standard,
+      ),
+      indexActif: null,
+      onAller: aller,
+      secondaires: secondairesPour(role: AppRole.admin),
+      onAllerSecondaire: aller,
+      child: child,
+    );
+  }
+}
+
 class _CoquilleNavigation extends ConsumerWidget {
   /// Cree la coquille d'un role.
   const _CoquilleNavigation({

@@ -1501,7 +1501,14 @@ Desktop           Identique, colonne centree et bornee a 1200 -- le registre
                   implemente, ecart anterieur a ce lot, hors scope d'une
                   reprise de coquille
 
-Etats             content   nominal (dossier en cours)
+Etats             content   nominal (piece deposee, en attente de verdict)
+                  sans piece  la personne est inscrite mais n'a rien depose :
+                            son etat est dit, l'anciennete de l'inscription
+                            avec, et NI checklist NI verdict ne sont rendus
+                            (ajoute le 18/09, migration 0015)
+                  hors portee  une piece existe mais la regle de genre
+                            interdit de la lire : dit comme tel, et jamais
+                            confondu avec une absence de piece
                   empty     aucun dossier en attente (EmptyState)
                   error     genre du lecteur inconnu (message specifique,
                             pas de bouton Reessayer : ce n'est pas
@@ -1516,6 +1523,15 @@ Invariants        constat -> checklist -> verdict, jamais melanges : le
                   jamais dans sa zone actions: -- une zone actions collee en
                   bas detacherait le jugement du constat qu'il suit
                   (section 4 de ce document)
+                  une ligne de cette file est une PERSONNE, pas un document
+                  (migration 0015). Avant elle, une personne inscrite sans
+                  piece n'existait pour aucun ecran, et trois enseignants ont
+                  attendu sept jours pendant que le compteur affichait zero
+                  rien a constater => rien a trancher : sans piece lisible,
+                  aucun verdict n'est propose. La base refuserait le geste, et
+                  un bouton qui echoue apres coup coute plus cher qu'un bouton
+                  absent (meme choix que la carte "aucune heure proposee"
+                  d'ADM-05)
                   le cloisonnement de genre n'est pas applique ici : il vit
                   dans read_kyc_documents(), en base
                   Riverpod 3 : lire hasError/hasValue par getter, jamais le

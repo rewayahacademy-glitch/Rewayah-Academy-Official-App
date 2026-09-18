@@ -253,16 +253,24 @@ class NavShell extends StatelessWidget {
          '(03-architecture-information.md section 5).',
        ),
        assert(
-         indexActif >= 0 && indexActif < destinations.length ||
+         indexActif == null ||
+             indexActif >= 0 && indexActif < destinations.length ||
              destinations.isEmpty,
-         'La destination active doit exister dans la liste.',
+         'La destination active doit exister dans la liste, ou etre nulle '
+         'sur un ecran secondaire qui n en est pas une.',
        );
 
   /// Les destinations du role courant.
   final List<Destination> destinations;
 
   /// L'index de la destination courante.
-  final int indexActif;
+  ///
+  /// **Nul sur un ecran secondaire** : `ADM-06`, `ADM-07` et `ADM-08` sont
+  /// volontairement hors de la barre, mais ils ont besoin de son chrome pour
+  /// qu'on puisse en sortir. Sans cela, on y entre et on n'en revient qu'avec
+  /// le bouton precedent du navigateur — c'est exactement le reproche fait a
+  /// l'interface le 18 septembre 2026.
+  final int? indexActif;
 
   /// Ce qui se passe quand une destination est choisie. Recoit son chemin.
   final void Function(String chemin) onAller;
@@ -309,13 +317,21 @@ class NavShell extends StatelessWidget {
       return child;
     }
 
+    final int? actif = indexActif;
+
     return switch (AppGabarit.de(context).chrome) {
+      // `NavigationBar` de Material exige un index valide : il n'a aucune
+      // forme « rien de selectionne ». Sur un ecran secondaire, la barre
+      // basse est donc omise plutot que de surligner une destination ou l'on
+      // n'est pas. Le retour se fait par le bouton precedent, et l'entree par
+      // les tuiles « Outils » du tableau de bord.
+      ChromeNavigation.barreBasse when actif == null => child,
       ChromeNavigation.barreBasse => Column(
         children: <Widget>[
           Expanded(child: child),
           _Barre(
             destinations: destinations,
-            indexActif: indexActif,
+            indexActif: actif ?? 0,
             onAller: onAller,
           ),
         ],
@@ -419,7 +435,7 @@ class _Cote extends StatelessWidget {
   });
 
   final List<Destination> destinations;
-  final int indexActif;
+  final int? indexActif;
   final void Function(String chemin) onAller;
   final List<Destination> secondaires;
   final void Function(String chemin)? onAllerSecondaire;
