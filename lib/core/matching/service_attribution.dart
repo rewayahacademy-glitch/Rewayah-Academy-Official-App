@@ -58,6 +58,17 @@ class FoyerEnAttente {
   /// Identifiant immuable, seule autre donnee d'identite affichee.
   final String identifiantImmuable;
 
+  /// Comment nommer cet eleve a l'ecran.
+  ///
+  /// **Se replie sur l'identifiant immuable quand le prenom est masque.** En
+  /// mode observation, `eleves_sans_enseignant()` rend `first_name` nul depuis
+  /// la migration `0016` : sans ce repli, `ADM-05` afficherait une carte au
+  /// titre vide.
+  String get libelle => prenom.isEmpty ? identifiantImmuable : prenom;
+
+  /// Vrai quand le prenom est lisible.
+  bool get prenomConnu => prenom.isNotEmpty;
+
   /// Le foyer auquel il appartient. Deux enfants d'un meme foyer se lisent
   /// ainsi comme deux lignes d'une meme famille.
   final String foyerId;
@@ -141,6 +152,23 @@ class EnseignantCandidat {
 
   /// Identifiant immuable.
   final String identifiantImmuable;
+
+  /// Comment nommer cet enseignant a l'ecran.
+  ///
+  /// Se replie sur l'identifiant immuable quand l'identite est masquee
+  /// (migration `0016`).
+  String get libelle {
+    final String complet = '$prenom $nom'.trim();
+    return complet.isEmpty ? identifiantImmuable : complet;
+  }
+
+  /// Vrai quand l'identite est lisible.
+  bool get identiteConnue => prenom.isNotEmpty || nom.isNotEmpty;
+
+  /// Comment le nommer **dans une phrase** : le prenom seul, et l'identifiant
+  /// faute de prenom. Le nom complet reste sur sa carte.
+  String get libelleCourt =>
+      prenom.isEmpty ? identifiantImmuable : prenom;
 
   /// Pays declare, quand il existe.
   final String? pays;

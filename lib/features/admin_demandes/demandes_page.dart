@@ -174,7 +174,12 @@ class _Demande extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.admin.demandes.restantes(n: restantes), style: textes.bodySmall),
+        Text(
+          restantes == 1
+              ? t.admin.demandes.restanteUne
+              : t.admin.demandes.restantes(n: restantes),
+          style: textes.bodySmall,
+        ),
         Ecart.vXl,
 
         // 1. LE CONSTAT : qui demande, en quelle qualite, quand, sur qui, et
@@ -183,8 +188,11 @@ class _Demande extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(demande.sujetPrenom, style: textes.titleLarge),
-              Text(demande.sujetIdentifiant, style: textes.bodySmall),
+              Text(demande.sujetLibelle, style: textes.titleLarge),
+              // Masque, le libelle **est** l'identifiant : le repeter sous lui
+              // n'apprend rien.
+              if (demande.sujetPrenomConnu)
+                Text(demande.sujetIdentifiant, style: textes.bodySmall),
               Ecart.vSm,
               Text(
                 t.admin.demandes.faitePar(
@@ -208,7 +216,7 @@ class _Demande extends StatelessWidget {
 
         // 2. CE QUI PERMET DE JUGER : la regle de la plateforme et celle qui
         // s'applique, cote a cote.
-        FeuilleRegles(profilId: demande.sujetId, prenom: demande.sujetPrenom),
+        FeuilleRegles(profilId: demande.sujetId, prenom: demande.sujetLibelle),
         Ecart.vXxl,
 
         // 3. LE JUGEMENT, en dernier et jamais melange au reste.
@@ -699,7 +707,7 @@ String _valeur(CleRegle? cle, int valeur) => cle == CleRegle.plafondEleves
 /// Ce que la demande reclame, dit en clair.
 String _reclame(Demande demande) => switch (demande.sorte) {
   SorteDemande.reaffectation => t.admin.demandes.reclameReaffectation(
-    prenom: demande.sujetPrenom,
+    prenom: demande.sujetLibelle,
   ),
   SorteDemande.plafond =>
     demande.valeurDemandee == null

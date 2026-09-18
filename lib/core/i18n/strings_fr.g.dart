@@ -1021,11 +1021,20 @@ class Traductions$dossiers$fr {
 	/// fr: 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.'
 	String get aucunDetail => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.';
 
-	/// fr: '{n} dossier(s) en attente'
-	String restants({required Object n}) => '${n} dossier(s) en attente';
+	/// fr: '1 dossier en attente'
+	String get restantUn => '1 dossier en attente';
+
+	/// fr: '{n} dossiers en attente'
+	String restants({required Object n}) => '${n} dossiers en attente';
 
 	/// fr: 'Déposé le {date}'
 	String deposeLe({required Object date}) => 'Déposé le ${date}';
+
+	/// fr: 'Inscrit aujourd'hui'
+	String get inscritAujourdhui => 'Inscrit aujourd\'hui';
+
+	/// fr: 'Inscrit depuis 1 jour'
+	String get inscritDepuisUnJour => 'Inscrit depuis 1 jour';
 
 	/// fr: 'Inscrit depuis {jours} jours'
 	String inscritDepuis({required Object jours}) => 'Inscrit depuis ${jours} jours';
@@ -1677,8 +1686,11 @@ class Traductions$admin$demandes$fr {
 	/// fr: 'Demandes et règles'
 	String get titre => 'Demandes et règles';
 
-	/// fr: '{n} demande(s) en attente'
-	String restantes({required Object n}) => '${n} demande(s) en attente';
+	/// fr: '1 demande en attente'
+	String get restanteUne => '1 demande en attente';
+
+	/// fr: '{n} demandes en attente'
+	String restantes({required Object n}) => '${n} demandes en attente';
 
 	/// fr: 'Aucune demande en attente'
 	String get aucune => 'Aucune demande en attente';
@@ -1947,8 +1959,11 @@ class Traductions$admin$journal$fr {
 	/// fr: 'Journal altéré'
 	String get chaineRompue => 'Journal altéré';
 
-	/// fr: '{nombre} entrée(s) ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.'
-	String chaineRompueDetail({required Object nombre, required Object entree}) => '${nombre} entrée(s) ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.';
+	/// fr: 'Une entrée ne correspond plus à son empreinte, la n° {entree}. Quelque chose a touché la base en dehors de l'application.'
+	String chaineRompueUne({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.';
+
+	/// fr: '{nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° {entree}. Quelque chose a touché la base en dehors de l'application.'
+	String chaineRompueDetail({required Object nombre, required Object entree}) => '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.';
 
 	/// fr: 'Intégrité inconnue'
 	String get chaineInconnue => 'Intégrité inconnue';
@@ -2129,6 +2144,12 @@ class Traductions$admin$comptes$fr {
 
 	/// fr: 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.'
 	String get intro => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.';
+
+	/// fr: 'Une personne attend une décision, inscrite aujourd'hui.'
+	String get attenteUneAujourdhui => 'Une personne attend une décision, inscrite aujourd\'hui.';
+
+	/// fr: 'Une personne attend une décision depuis 1 jour.'
+	String get attenteUneUnJour => 'Une personne attend une décision depuis 1 jour.';
 
 	/// fr: 'Une personne attend une décision depuis {jours} jours.'
 	String attenteUne({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.';
@@ -3566,8 +3587,11 @@ extension on Traductions {
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.aucun' => 'Aucun dossier en attente',
 			'dossiers.aucunDetail' => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.',
-			'dossiers.restants' => ({required Object n}) => '${n} dossier(s) en attente',
+			'dossiers.restantUn' => '1 dossier en attente',
+			'dossiers.restants' => ({required Object n}) => '${n} dossiers en attente',
 			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
+			'dossiers.inscritAujourdhui' => 'Inscrit aujourd\'hui',
+			'dossiers.inscritDepuisUnJour' => 'Inscrit depuis 1 jour',
 			'dossiers.inscritDepuis' => ({required Object jours}) => 'Inscrit depuis ${jours} jours',
 			'dossiers.sansPiece' => 'Aucune pièce déposée',
 			'dossiers.sansPieceDetail' => 'Cette personne a créé son compte et accepté les contrats, mais n\'a pas encore envoyé sa pièce d\'identité. Il n\'y a donc rien à vérifier : le geste est chez elle.',
@@ -3614,7 +3638,8 @@ extension on Traductions {
 			'admin.tableau.attenteUnJour' => 'En attente depuis 1 jour',
 			'admin.tableau.attenteJours' => ({required Object jours}) => 'En attente depuis ${jours} jours',
 			'admin.demandes.titre' => 'Demandes et règles',
-			'admin.demandes.restantes' => ({required Object n}) => '${n} demande(s) en attente',
+			'admin.demandes.restanteUne' => '1 demande en attente',
+			'admin.demandes.restantes' => ({required Object n}) => '${n} demandes en attente',
 			'admin.demandes.aucune' => 'Aucune demande en attente',
 			'admin.demandes.aucuneDetail' => 'Les demandes des familles, des élèves autonomes et des enseignants arrivent ici, la plus ancienne en premier.',
 			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'Demandée le ${date}, par ${role}',
@@ -3698,7 +3723,8 @@ extension on Traductions {
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
 			'admin.journal.chaineRompue' => 'Journal altéré',
-			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '${nombre} entrée(s) ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
 			'admin.journal.chaineInconnue' => 'Intégrité inconnue',
 			'admin.journal.chaineInconnueDetail' => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.',
 			'admin.journal.chaineEnCours' => 'Vérification',
@@ -3756,6 +3782,8 @@ extension on Traductions {
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
 			'admin.comptes.titre' => 'Comptes',
 			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
+			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
+			'admin.comptes.attenteUneUnJour' => 'Une personne attend une décision depuis 1 jour.',
 			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
 			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '${nombre} personnes attendent une décision.',
 			'admin.comptes.filtreTousEtats' => 'Tous',
@@ -3805,6 +3833,8 @@ extension on Traductions {
 			'admin.agents.dureeHeure' => ({required Object nombre}) => '${nombre} h',
 			'admin.agents.dureePlafond' => 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.',
 			'admin.agents.identite' => 'Les prénoms',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.identiteMasquee' => 'Masqués',
 			'admin.agents.identiteMasqueeDetail' => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.',
 			'admin.agents.identiteVisible' => 'Visibles',
@@ -3812,8 +3842,6 @@ extension on Traductions {
 			'admin.agents.pourra' => 'Pourra',
 			'admin.agents.pourraDetail' => 'Ouvrir l\'application, naviguer, et lire tout ce que cette personne lit.',
 			'admin.agents.nePourraPas' => 'Ne pourra pas',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.nePourraPasDetail' => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.',
 			'admin.agents.emissionEnCours' => 'Émission',
 			'admin.agents.emis' => 'Jeton émis',

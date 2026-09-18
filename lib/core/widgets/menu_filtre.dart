@@ -156,7 +156,9 @@ class MenuFiltre<T> extends StatelessWidget {
               ),
               Ecart.hXs,
               Icon(
-                AppIcons.chevron.repos,
+                // Vers le bas, la ou le menu s'ouvre. Un chevron vers la
+                // droite promettrait de mener ailleurs.
+                AppIcons.menuDeroulant.repos,
                 size: AppSpacing.lg,
                 color: (actif ? palette.inkAccent : palette.inkMuted)
                     .asIconTheme()

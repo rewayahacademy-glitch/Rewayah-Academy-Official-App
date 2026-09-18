@@ -64,7 +64,7 @@ List<ATraiter> aTraiter({
   final List<ATraiter> lignes = <ATraiter>[
     for (final DossierAValider dossier in dossiers)
       ATraiter(
-        libelle: t.admin.tableau.ligneDossier(prenom: dossier.prenom),
+        libelle: t.admin.tableau.ligneDossier(prenom: dossier.libelleCourt),
         depuis: dossier.deposeLe,
         destination: Routes.adminDossiers,
         icone: AppIcons.dossiers,
@@ -73,15 +73,15 @@ List<ATraiter> aTraiter({
       ATraiter(
         libelle: switch (demande.sorte) {
           SorteDemande.reaffectation => t.admin.tableau.ligneReaffectation(
-            prenom: demande.sujetPrenom,
+            prenom: demande.sujetLibelle,
           ),
           SorteDemande.plafond => t.admin.tableau.lignePlafond(
-            prenom: demande.sujetPrenom,
+            prenom: demande.sujetLibelle,
           ),
           // Une sorte que ce code ne connait pas encore reste une demande a
           // trancher : elle se dit dans les termes les plus generaux plutot que
           // de disparaitre de la liste.
-          _ => t.admin.tableau.ligneRegle(prenom: demande.sujetPrenom),
+          _ => t.admin.tableau.ligneRegle(prenom: demande.sujetLibelle),
         },
         depuis: demande.creeeLe,
         destination: Routes.adminDemandes,

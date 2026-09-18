@@ -113,6 +113,19 @@ class Demande {
   /// Identifiant immuable du profil concerne.
   final String sujetIdentifiant;
 
+  /// Comment nommer le profil concerne a l'ecran.
+  ///
+  /// **Se replie sur l'identifiant immuable quand le prenom est masque.** En
+  /// mode observation, `demandes_en_attente()` rend `subject_first_name` nul
+  /// depuis la migration `0016` : sans ce repli, la fiche afficherait un titre
+  /// vide, et les phrases construites autour du prenom (« Reaffectation
+  /// demandee pour … ») se termineraient dans le vide.
+  String get sujetLibelle =>
+      sujetPrenom.isEmpty ? sujetIdentifiant : sujetPrenom;
+
+  /// Vrai quand le prenom du profil concerne est lisible.
+  bool get sujetPrenomConnu => sujetPrenom.isNotEmpty;
+
   /// Le motif, obligatoire : une demande sans motif ne se tranche pas.
   final String motif;
 

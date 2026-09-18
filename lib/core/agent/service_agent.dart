@@ -94,6 +94,14 @@ class JetonAgent {
   /// observe, elle ne peut pas le faire sur un identifiant seul.
   final String observePrenom;
 
+  /// Comment designer la personne observee a l'ecran.
+  ///
+  /// Vide, [observePrenom] laisserait « (IDENT) » : une parenthese ouverte sur
+  /// rien. La migration `0016` le vide en mode observation.
+  String get observeLibelle => observePrenom.isEmpty
+      ? observeIdentifiant
+      : '$observePrenom ($observeIdentifiant)';
+
   /// Vrai quand l'agent lira des identifiants a la place des prenoms.
   final bool identiteMasquee;
 
@@ -132,7 +140,7 @@ class PersonneObservable {
     required this.role,
   });
 
-  /// Lit une ligne de `profiles`.
+  /// Lit une ligne de `personnes_observables()`.
   factory PersonneObservable.depuisJson(Map<String, dynamic> json) =>
       PersonneObservable(
         id: json['id'] as String? ?? '',
@@ -158,7 +166,13 @@ class PersonneObservable {
   final AppRole? role;
 
   /// Ce qui s'affiche dans la liste.
-  String get libelle => '$prenom $nom';
+  ///
+  /// L'identifiant seul quand l'identite est masquee : sans ce repli la
+  /// pilule afficherait « (IDENT) », parenthese ouverte sur rien.
+  String get libelle {
+    final String complet = '$prenom $nom'.trim();
+    return complet.isEmpty ? identifiant : '$complet ($identifiant)';
+  }
 }
 
 /// Ce que l'emission rend, une seule fois.
@@ -222,15 +236,15 @@ class ServiceAgentSupabase implements ServiceAgent {
 
   @override
   Future<List<PersonneObservable>> personnes() async {
-    // Tri par role puis par prenom : l'ecran groupe par parcours, et un tri
-    // fait en base evite que deux rendus successifs proposent deux ordres.
-    final List<dynamic> lignes = await _client
-        .from('profiles')
-        .select('id, immutable_id, first_name, last_name, role')
-        .isFilter('deleted_at', null)
-        .inFilter('account_status', <String>['active', 'provisional_active'])
-        .order('role')
-        .order('first_name');
+    // **Une fonction, et non la table.** Cet ecran lisait `profiles` en
+    // direct : aucun appel de fonction, donc aucun endroit ou appliquer le
+    // masquage des identites, et une liste de prenoms en clair sous une
+    // banniere qui promettait le contraire (migration `0016`). Le tri reste
+    // fait en base : deux rendus successifs ne doivent pas proposer deux
+    // ordres.
+    final List<dynamic> lignes = await _client.rpc<List<dynamic>>(
+      'personnes_observables',
+    );
 
     return lignes
         .whereType<Map<String, dynamic>>()

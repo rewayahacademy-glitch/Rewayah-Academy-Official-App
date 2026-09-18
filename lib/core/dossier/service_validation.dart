@@ -114,6 +114,34 @@ class DossierAValider {
   /// L'etat du compte de la personne.
   final AccountStatus? etatCompte;
 
+  /// Vrai quand l'identite de la personne est lisible.
+  ///
+  /// Fausse en mode observation, ou `dossiers_en_attente()` rend les noms
+  /// nuls : c'est alors l'identifiant immuable qui designe la personne, et
+  /// l'afficher deux fois n'apprend rien.
+  bool get nomConnu => prenom.isNotEmpty || nom.isNotEmpty;
+
+  /// Comment nommer cette personne a l'ecran.
+  ///
+  /// **Se replie sur l'identifiant immuable plutot que sur une ligne vide.**
+  /// Le 18 septembre 2026, `ADM-02` affichait « Abdallah Sow » alors que la
+  /// banniere d'observation promettait des prenoms masques ; la migration
+  /// `0016` a ferme la fuite en base, et sans ce repli la fiche rendrait un
+  /// titre vide au-dessus de l'identifiant.
+  String get libelle {
+    final String complet = '$prenom $nom'.trim();
+    return complet.isEmpty ? identifiantImmuable : complet;
+  }
+
+  /// Comment nommer cette personne **dans une phrase**, hors de sa fiche.
+  ///
+  /// Le prenom seul, et l'identifiant faute de prenom. Le nom de famille n'a
+  /// sa place que sur la fiche `ADM-02`, ou l'un des trois constats porte
+  /// justement sur lui (« le nom correspond a celui du compte ») : ailleurs,
+  /// il allonge la ligne sans rien ajouter au jugement (ADR-008).
+  String get libelleCourt =>
+      prenom.isEmpty ? identifiantImmuable : prenom;
+
   /// Vrai quand un verdict est possible : il faut une piece, et qu'elle soit
   /// visible par ce lecteur.
   ///

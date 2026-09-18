@@ -387,10 +387,14 @@ class _BandeauChaine extends ConsumerWidget {
       : (
           t.admin.journal.chaineRompue,
           TonEtat.alerte,
-          t.admin.journal.chaineRompueDetail(
-            entree: etat.premiereRompue ?? 0,
-            nombre: etat.rompues,
-          ),
+          etat.rompues == 1
+              ? t.admin.journal.chaineRompueUne(
+                  entree: etat.premiereRompue ?? 0,
+                )
+              : t.admin.journal.chaineRompueDetail(
+                  entree: etat.premiereRompue ?? 0,
+                  nombre: etat.rompues,
+                ),
         );
 }
 

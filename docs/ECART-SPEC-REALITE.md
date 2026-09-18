@@ -251,10 +251,58 @@ dans `couverture-specs.md` §B, jamais replanifié depuis.
   chaque ouverture, même sans pièce à lire (52 entrées pour zéro lecture
   réelle). `dossiers_en_attente()` ne l'appelle plus que s'il y a à lire.
 
+- ✅ **Les filtres ne sont plus une vingtaine de rectangles.** `ADM-08` rendait
+  onze pastilles et une carte bordée pour une seule phrase, `ADM-04` une
+  vingtaine de boutons : la liste passait sous le pli. La règle sort dans un
+  composant plutôt que dans la vigilance (`lib/core/widgets/menu_filtre.dart`) :
+  **un axe fermé se rend en pastilles** (la période a trois valeurs, un état de
+  compte en a quatre), **un axe ouvert se rend en menu** (le vocabulaire
+  d'événements vit en base et grandit à chaque migration). Et seuls les états
+  **présents dans les données** sont proposés. 👁 Vérifié à l'écran.
+
+- ✅ **Le masquage des identités ne tenait que dans deux fonctions sur sept.**
+  Sous la bannière « Observation, lecture seule . Prénoms masqués », `ADM-08`
+  rendait bien `TEACHER-AS-000001`, mais `ADM-02` affichait « Abdallah Sow »,
+  le tableau de bord « Dossier d'identité de Abdallah », `ADM-05` la carte
+  « Salam » et `ADM-07` la pilule « Abdoulaye Sow ». Le motif
+  `case when agent_identite_masquee() then null else …` était appliqué **à la
+  main**, donc seulement dans les fonctions écrites après la bascule en mode
+  observation. Migration `0016` : sept lectures. `ADM-07` ne passait par
+  **aucune** fonction — il lisait `profiles` en direct par PostgREST — d'où la
+  fonction nouvelle `personnes_observables()`. Aucun test ne pouvait le voir :
+  la fonction rend la bonne colonne, la RLS borne les bonnes lignes, et c'est
+  la **colonne** qui trahit. 👁 Vérifié à l'écran, écran par écran.
+
+- ✅ **« Mon compte » n'avait aucun chrome de navigation.** C'est l'écran où vit
+  « Se déconnecter », donc celui que tout rôle finit par ouvrir : on y entrait
+  par le pied du tiroir et on n'en ressortait qu'avec le bouton précédent du
+  navigateur. Même défaut qu'`ADM-06`/`07`/`08`, oublié parce que cet espace est
+  **partagé par les rôles** : la coquille secondaire lit désormais le rôle dans
+  la session quand la route ne le porte pas.
+
+- ✅ **Six phrases écrivaient « 1 jours », « 0 jours » ou « 3 dossier(s) ».** En
+  français, zéro et un prennent le singulier. Le patron à trois clés existait
+  déjà dans le dépôt (`attendAujourdhui` / `attendUnJour` / `attendDepuis`) :
+  il est appliqué aux quatre endroits qui l'ignoraient.
+
+- ✅ **Le bouton « Valider le dossier » d'`ADM-02` tombait hors de l'écran.**
+  Huit pixels sous la fenêtre de test. `scrollUntilVisible` s'arrête dès que le
+  widget est **construit**, pas dès qu'il est visible. C'était l'un des onze
+  échecs que la branche portait depuis le départ ; il prouve maintenant que le
+  verdict est atteignable au doigt.
+
 **Reste faux dans ce document et corrigé depuis :** le §2 décrivait `ADM-05`
 comme cassé. Il ne l'était pas — son code est correct et il s'affiche
 parfaitement en local. Il était cassé **en production seulement**, ce qui
 restait à expliquer au moment de la rédaction.
+
+**Un piège de mesure, noté ici parce qu'il a failli me faire déclarer trois
+défauts qui n'existaient pas :** dans un navigateur piloté, le canevas Flutter
+**ne repeint que sur une entrée**. Une capture prise sans bouger la souris rend
+une image figée à mi-animation — indicateur du tiroir en vol entre deux
+destinations, menu qui a l'air rouvert, écran qui a l'air vide alors qu'il
+charge. Il faut provoquer un mouvement avant chaque capture. Une capture n'est
+une preuve que si le rendu est **établi**.
 
 ---
 

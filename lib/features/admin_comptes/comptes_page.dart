@@ -158,9 +158,13 @@ class _Corps extends StatelessWidget {
         if (attendent.isNotEmpty) ...<Widget>[
           Text(
             attendent.length == 1
-                ? t.admin.comptes.attenteUne(
-                    jours: '${attendent.first.joursDAttente(maintenant)}',
-                  )
+                ? switch (attendent.first.joursDAttente(maintenant)) {
+                    <= 0 => t.admin.comptes.attenteUneAujourdhui,
+                    1 => t.admin.comptes.attenteUneUnJour,
+                    final int jours => t.admin.comptes.attenteUne(
+                      jours: '$jours',
+                    ),
+                  }
                 : t.admin.comptes.attentePlusieurs(
                     nombre: '${attendent.length}',
                   ),
@@ -169,37 +173,33 @@ class _Corps extends StatelessWidget {
           Ecart.vLg,
         ],
 
-        // Une seule rangee : l'etat, parce que c'est lui qui appelle un geste.
-        // Le role, axe secondaire, passe dans un menu deroulant Material
-        // standard — un affordance connu, pas un controle invente.
-        Row(
+        // Une seule rangee, et les deux axes dans le meme groupe : l'etat en
+        // pastilles parce qu'il appelle un geste, le role dans un menu parce
+        // que c'est l'axe secondaire. Colles l'un a l'autre et non pousses aux
+        // deux bords : deux filtres separes par la largeur de l'ecran ne se
+        // lisent plus comme deux filtres, mais comme deux fonctions.
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
-            Expanded(
-              child: Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: <Widget>[
-                  FilterPill(
-                    libelle: t.admin.comptes.filtreTousEtats,
-                    compteur: comptes.length,
-                    retenue: etat == null,
-                    onPress: () => onEtat(null),
-                  ),
-                  for (final AccountStatus valeur in AccountStatus.values)
-                    if (parEtat.containsKey(valeur))
-                      FilterPill(
-                        libelle: _nomEtat(valeur),
-                        compteur: parEtat[valeur],
-                        retenue: etat == valeur,
-                        onPress: () => onEtat(valeur),
-                      ),
-                ],
-              ),
+            FilterPill(
+              libelle: t.admin.comptes.filtreTousEtats,
+              compteur: comptes.length,
+              retenue: etat == null,
+              onPress: () => onEtat(null),
             ),
+            for (final AccountStatus valeur in AccountStatus.values)
+              if (parEtat.containsKey(valeur))
+                FilterPill(
+                  libelle: _nomEtat(valeur),
+                  compteur: parEtat[valeur],
+                  retenue: etat == valeur,
+                  onPress: () => onEtat(valeur),
+                ),
             // Un seul role present : le menu n'offrirait aucun choix, et un
             // controle sans choix n'est pas un controle.
-            if (rolesPresents.length > 1) ...<Widget>[
-              Ecart.hLg,
+            if (rolesPresents.length > 1)
               MenuFiltre<AppRole>(
                 libelle: t.admin.comptes.filtreRole,
                 valeur: role,
@@ -221,7 +221,6 @@ class _Corps extends StatelessWidget {
                       ),
                 ],
               ),
-            ],
           ],
         ),
         Ecart.vLg,

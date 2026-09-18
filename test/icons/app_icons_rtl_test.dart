@@ -35,6 +35,21 @@ void main() {
     );
 
     test(
+      'menuDeroulant ne se miroite pas : un menu s ouvre vers le bas, '
+      'et le bas est le meme dans les deux sens de lecture',
+      () {
+        expect(AppIcons.menuDeroulant.repos.matchTextDirection, isFalse);
+        expect(AppIcons.menuDeroulant.actif.matchTextDirection, isFalse);
+        // Et ce n'est pas le meme dessin que chevron : la distinction porte
+        // ici sur la direction, pas seulement sur le miroir.
+        expect(
+          AppIcons.menuDeroulant.repos.codePoint,
+          isNot(AppIcons.chevron.repos.codePoint),
+        );
+      },
+    );
+
+    test(
       'les icones de media et l heure ne se miroitent jamais '
       '(docs/design/06-accessibilite.md section 5)',
       () {

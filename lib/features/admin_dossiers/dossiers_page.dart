@@ -203,7 +203,12 @@ class _Dossier extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.dossiers.restants(n: restants), style: textes.bodySmall),
+        Text(
+          restants == 1
+              ? t.dossiers.restantUn
+              : t.dossiers.restants(n: restants),
+          style: textes.bodySmall,
+        ),
         Ecart.vXl,
 
         // 1. LE CONSTAT. L'apercu reste volontairement abstrait : aucune piece
@@ -212,11 +217,12 @@ class _Dossier extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                '${dossier.prenom} ${dossier.nom}',
-                style: textes.titleLarge,
-              ),
-              Text(dossier.identifiantImmuable, style: textes.bodySmall),
+              Text(dossier.libelle, style: textes.titleLarge),
+              // L'identifiant seulement quand le nom est lisible : masque, le
+              // libelle **est** deja l'identifiant, et le repeter sous lui
+              // n'apprend rien.
+              if (dossier.nomConnu)
+                Text(dossier.identifiantImmuable, style: textes.bodySmall),
               Ecart.vSm,
               if (cleObjet != null) ...<Widget>[
                 Text(
@@ -232,9 +238,13 @@ class _Dossier extends StatelessWidget {
                 // l'anciennete de l'inscription qui mesure l'attente, et c'est
                 // justement cette personne qui attend le plus longtemps.
                 Text(
-                  t.dossiers.inscritDepuis(
-                    jours: '${dossier.joursDAttente(DateTime.now())}',
-                  ),
+                  switch (dossier.joursDAttente(DateTime.now())) {
+                    <= 0 => t.dossiers.inscritAujourdhui,
+                    1 => t.dossiers.inscritDepuisUnJour,
+                    final int jours => t.dossiers.inscritDepuis(
+                      jours: '$jours',
+                    ),
+                  },
                   style: textes.bodySmall,
                 ),
                 Ecart.vMd,

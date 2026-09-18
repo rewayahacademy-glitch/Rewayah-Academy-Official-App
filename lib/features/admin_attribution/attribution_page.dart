@@ -112,8 +112,8 @@ class _AttributionPageEtat extends ConsumerState<AttributionPage> {
       if (mounted) {
         setState(() {
           _succes = t.admin.attribution.attribuer(
-            eleve: eleve.prenom,
-            enseignant: enseignant.prenom,
+            eleve: eleve.libelle,
+            enseignant: enseignant.libelleCourt,
           );
           _eleveChoisi = null;
           _enseignantChoisi = null;
@@ -366,12 +366,15 @@ class _CarteEleve extends StatelessWidget {
     return AppCard(
       onPress: onPress,
       selectionnee: selectionne,
-      libelleSemantique: foyer.prenom,
+      libelleSemantique: foyer.libelle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(foyer.prenom, style: textes.titleMedium),
-          Text(foyer.identifiantImmuable, style: textes.bodySmall),
+          Text(foyer.libelle, style: textes.titleMedium),
+          // Masque, le libelle **est** l'identifiant : le repeter sous lui
+          // n'apprend rien.
+          if (foyer.prenomConnu)
+            Text(foyer.identifiantImmuable, style: textes.bodySmall),
           if (foyer.niveau != null)
             Text(
               t.admin.attribution.niveau(niveau: foyer.niveau!),
@@ -600,12 +603,13 @@ class _CarteEnseignant extends StatelessWidget {
     return AppCard(
       onPress: onPress,
       selectionnee: selectionne,
-      libelleSemantique: '${candidat.prenom} ${candidat.nom}',
+      libelleSemantique: candidat.libelle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('${candidat.prenom} ${candidat.nom}', style: textes.titleMedium),
-          Text(candidat.identifiantImmuable, style: textes.bodySmall),
+          Text(candidat.libelle, style: textes.titleMedium),
+          if (candidat.identiteConnue)
+            Text(candidat.identifiantImmuable, style: textes.bodySmall),
           Ecart.vSm,
           Text(
             t.admin.attribution.charge(
@@ -715,7 +719,7 @@ class _Confirmation extends StatelessWidget {
         ],
         if (motifRequis) ...<Widget>[
           Text(
-            t.admin.attribution.motifRequis(prenom: enseignant.prenom),
+            t.admin.attribution.motifRequis(prenom: enseignant.libelleCourt),
             style: textes.bodySmall,
           ),
           Ecart.vSm,
@@ -731,8 +735,8 @@ class _Confirmation extends StatelessWidget {
         ],
         ActionPrincipale(
           libelle: t.admin.attribution.attribuer(
-            eleve: eleve.prenom,
-            enseignant: enseignant.prenom,
+            eleve: eleve.libelle,
+            enseignant: enseignant.libelleCourt,
           ),
           enCours: envoi,
           onPress: pret

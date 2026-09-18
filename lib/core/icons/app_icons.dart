@@ -288,6 +288,19 @@ abstract final class AppIcons {
     IconData(0xe13a, fontFamily: _actif, matchTextDirection: true),
   );
 
+  /// Le chevron d'un controle qui ouvre un menu **sous** lui : `MenuFiltre`.
+  ///
+  /// **Pas [chevron], et c'est tout l'objet de cette entree** : un chevron vers
+  /// la droite promet d'emmener ailleurs, alors qu'un menu s'ouvre en dessous
+  /// et rend la main sur place. Et [chevron] porte `matchTextDirection`, donc
+  /// en arabe il finirait par pointer a gauche : une direction cardinale
+  /// fausse pour un menu, qui ne s'ouvre pas plus a gauche qu'a droite. Le bas
+  /// ne se miroite pas (`docs/design/06-accessibilite.md` section 5).
+  static const AppIcon menuDeroulant = AppIcon._(
+    IconData(0xe136, fontFamily: _repos),
+    IconData(0xe136, fontFamily: _actif),
+  );
+
   /// Carte "Autre" du composant `ChoiceCardGroup`.
   static const AppIcon autreChoix = AppIcon._(
     IconData(0xe3b4, fontFamily: _repos),

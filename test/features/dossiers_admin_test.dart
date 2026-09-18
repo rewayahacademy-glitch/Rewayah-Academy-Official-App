@@ -44,12 +44,29 @@ Future<FauxServiceValidation> _monter(
 ///
 /// Necessaire parce que `ListView` ne construit pas ce qui est hors champ : un
 /// bouton plus bas que le pli n'existe pas encore dans l'arbre.
+///
+/// **`scrollUntilVisible` ne suffit pas** : elle s'arrete des que le widget est
+/// CONSTRUIT, pas des qu'il est visible. Le verdict pouvait ainsi se trouver
+/// huit pixels sous la fenetre de 800x600, construit mais intouchable, et le
+/// tap partait dans le vide. `ensureVisible` finit le travail.
 Future<void> _allerA(WidgetTester tester, String libelle) async {
+  final Finder cible = find.text(libelle);
   await tester.scrollUntilVisible(
-    find.text(libelle),
+    cible,
     200,
     scrollable: find.byType(Scrollable).first,
   );
+  await tester.ensureVisible(cible);
+  await tester.pumpAndSettle();
+}
+
+/// Tape sur un libelle apres s'etre assure qu'il est bien a l'ecran.
+///
+/// C'est le geste reel de l'administrateur : il ne peut pas appuyer sur ce
+/// qu'il ne voit pas, et un test qui appuie quand meme ne prouve rien.
+Future<void> _taper(WidgetTester tester, String libelle) async {
+  await _allerA(tester, libelle);
+  await tester.tap(find.text(libelle));
   await tester.pumpAndSettle();
 }
 
@@ -127,8 +144,7 @@ void main() {
         FauxServiceValidation()..file = <DossierAValider>[_dossier()],
       );
 
-      await tester.tap(find.text(t.dossiers.approuver));
-      await tester.pumpAndSettle();
+      await _taper(tester, t.dossiers.approuver);
       expect(service.verdicts, isEmpty);
 
       for (final String point in <String>[
@@ -136,12 +152,10 @@ void main() {
         t.dossiers.pointNom,
         t.dossiers.pointValidite,
       ]) {
-        await tester.tap(find.text(point));
-        await tester.pumpAndSettle();
+        await _taper(tester, point);
       }
 
-      await tester.tap(find.text(t.dossiers.approuver));
-      await tester.pumpAndSettle();
+      await _taper(tester, t.dossiers.approuver);
 
       expect(service.verdicts, hasLength(1));
       expect(service.verdicts.single.approuve, isTrue);

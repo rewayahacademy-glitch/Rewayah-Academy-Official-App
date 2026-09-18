@@ -383,7 +383,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneQui,
           flex: 2,
-          texte: (JetonAgent j) => '${j.observePrenom} (${j.observeIdentifiant})',
+          texte: (JetonAgent j) => j.observeLibelle,
         ),
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneParcours,
@@ -522,7 +522,7 @@ class _ChoixPersonne extends StatelessWidget {
       children: <Widget>[
         for (final PersonneObservable p in personnes.take(40))
           FilterPill(
-            libelle: '${p.libelle} (${p.identifiant})',
+            libelle: p.libelle,
             retenue: choisie?.id == p.id,
             onPress: () => onChoix(p),
           ),

@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+﻿import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -120,28 +120,39 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
 
       // Compte. Cet espace est partage par les roles actifs, mais ses
       // capacites restent celles projetees par la session et le serveur.
+      //
+      // Le chrome du role l'entoure, **role lu dans la session** : c'est ici
+      // que vit « Se deconnecter », donc l'ecran que tout role finit par
+      // ouvrir, et il se rendait sans aucune navigation. On y entrait par le
+      // pied du tiroir et on n'en ressortait qu'avec le bouton precedent du
+      // navigateur.
       GoRoute(
         path: Routes.compte,
-        builder: (BuildContext _, GoRouterState _) => const ComptePage(),
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: ComptePage()),
       ),
       GoRoute(
         path: Routes.compteProfil,
         builder: (BuildContext _, GoRouterState _) =>
-            const ProfilPersonnelPage(),
+            const _CoquilleSecondaire(child: ProfilPersonnelPage()),
       ),
       GoRoute(
         path: Routes.compteReglages,
         builder: (BuildContext _, GoRouterState _) =>
-            const ReglagesComptePage(),
+            const _CoquilleSecondaire(child: ReglagesComptePage()),
       ),
       GoRoute(
         path: Routes.compteProfils,
-        builder: (BuildContext _, GoRouterState _) => const ProfilsComptePage(),
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: ProfilsComptePage()),
       ),
       GoRoute(
         path: '${Routes.compteProfilEnfant}/:profilId',
-        builder: (BuildContext _, GoRouterState etat) =>
-            ProfilEnfantPage(profilId: etat.pathParameters['profilId'] ?? ''),
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          child: ProfilEnfantPage(
+            profilId: etat.pathParameters['profilId'] ?? '',
+          ),
+        ),
       ),
 
       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce
@@ -334,7 +345,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.adminDemandes,
         builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleAdminSecondaire(child: DemandesPage()),
+            const _CoquilleSecondaire(role: AppRole.admin, child: DemandesPage()),
       ),
 
       // `ADM-07` : l'acces des agents IA (ADR-025). Hors de la barre, pour la
@@ -344,7 +355,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.adminAccesAgents,
         builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleAdminSecondaire(child: AccesAgentsPage()),
+            const _CoquilleSecondaire(role: AppRole.admin, child: AccesAgentsPage()),
       ),
 
       // `ADM-08` : les comptes. Hors de la barre pour la meme raison
@@ -355,7 +366,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.adminComptes,
         builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleAdminSecondaire(child: ComptesPage()),
+            const _CoquilleSecondaire(role: AppRole.admin, child: ComptesPage()),
       ),
 
       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
@@ -449,7 +460,7 @@ String racineDe(AppRole? role) =>
 /// a un seul role. Le mode d'interface, lui, est lu dans la session : un eleve
 /// en mode enfant obtient zero destination, `NavShell` rend alors l'ecran sans
 /// le moindre chrome, sur les memes branches (ADR-009).
-/// Le chrome de l'administration autour d'un ecran **hors** de la barre.
+/// Le chrome d'un role autour d'un ecran **hors** de sa barre.
 ///
 /// `ADM-06`, `ADM-07` et `ADM-08` ne sont pas des destinations de premier
 /// niveau — la barre est plafonnee a quatre — mais ils ont besoin de son chrome
@@ -458,27 +469,45 @@ String racineDe(AppRole? role) =>
 /// fait a l'interface le 18 septembre 2026, et `ADM-08` venait de le
 /// reproduire le jour meme de sa creation.
 ///
+/// **L'espace « Mon compte » est le meme cas, et il avait ete oublie** : c'est
+/// l'ecran ou vit « Se deconnecter », donc celui que tout role finit par
+/// ouvrir, et il se rendait sans le moindre chrome. On y arrivait par le pied
+/// du tiroir et on n'en ressortait plus. Comme il est partage par tous les
+/// roles, [role] y est lu dans la session plutot que câble par la route.
+///
 /// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
 /// rend alors ses entrees sans en surligner aucune.
-class _CoquilleAdminSecondaire extends StatelessWidget {
-  const _CoquilleAdminSecondaire({required this.child});
+class _CoquilleSecondaire extends ConsumerWidget {
+  const _CoquilleSecondaire({required this.child, this.role});
 
   final Widget child;
 
+  /// Le role dont on veut le chrome. Nul pour le lire dans la session, ce que
+  /// font les ecrans partages par plusieurs roles.
+  final AppRole? role;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     void aller(String chemin) => GoRouter.of(context).go(chemin);
+
+    final SessionState session = ref.watch(sessionProvider);
+    final AppRole? effectif = role ?? session.role;
+
+    // Sans role connu, il n'y a pas de chrome a rendre : l'ecran se suffit.
+    if (effectif == null) {
+      return child;
+    }
 
     return NavShell(
       destinations: destinationsPour(
-        role: AppRole.admin,
-        // Les destinations de l'admin ne dependent pas du mode d'interface :
-        // seul l'eleve en a deux formes (ADR-009).
-        mode: InterfaceMode.standard,
+        role: effectif,
+        // Seul l'eleve a deux formes de destinations (ADR-009) ; pour les
+        // autres roles le mode ne change rien.
+        mode: session.interfaceMode,
       ),
       indexActif: null,
       onAller: aller,
-      secondaires: secondairesPour(role: AppRole.admin),
+      secondaires: secondairesPour(role: effectif),
       onAllerSecondaire: aller,
       child: child,
     );
