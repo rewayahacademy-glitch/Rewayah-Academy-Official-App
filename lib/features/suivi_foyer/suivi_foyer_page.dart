@@ -126,18 +126,18 @@ class _SuiviFoyerPageEtat extends ConsumerState<SuiviFoyerPage> {
         enfantId: _enfantId,
         onEnfant: _changerEnfant,
       ),
-      child: Expanded(
-        child: _Corps(
-          vue: vue,
-          chargement: seances.isLoading,
-          // Seule la lecture des cours peut vider l'ecran. Une presence
-          // indisponible n'est pas une erreur d'ecran : elle a deja sa reponse,
-          // ligne par ligne, et l'historique reste lisible sans elle.
-          erreur: seances.hasError,
-          maintenant: _maintenant,
-          onReessayer: _relire,
-          onToutAfficher: _toutAfficher,
-        ),
+      // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
+      // contenu en mode `defilante: false`.
+      child: _Corps(
+        vue: vue,
+        chargement: seances.isLoading,
+        // Seule la lecture des cours peut vider l'ecran. Une presence
+        // indisponible n'est pas une erreur d'ecran : elle a deja sa reponse,
+        // ligne par ligne, et l'historique reste lisible sans elle.
+        erreur: seances.hasError,
+        maintenant: _maintenant,
+        onReessayer: _relire,
+        onToutAfficher: _toutAfficher,
       ),
     );
   }

@@ -208,6 +208,54 @@ dans `couverture-specs.md` §B, jamais replanifié depuis.
   agent recevait `403` sur chaque écran. Les fonctions d'écriture restent
   refusées à ce rôle, conformément à l'ADR-025. 👁 Vérifié à l'écran.
 
+- ✅ **La cause racine des écrans vides : `PageShell` dé-bornait la hauteur de
+  son contenu.** Il enveloppait le contenu de chaque écran dans son propre
+  `Column` pour ajouter une respiration de bas de page ; un `Column` donne à
+  ses enfants non flexibles une hauteur **non bornée**, donc tout écran en
+  `defilante: false` avec un `Expanded` échouait à se mesurer. En build release
+  les assertions de layout sont retirées : le corps disparaissait **sans une
+  ligne d'erreur, sans un appel réseau en échec, et sans qu'aucun test ne le
+  voie**. Cinq écrans de production, quatre rôles : `ADM-07`, `ADM-04`,
+  `CTR-01`, le suivi élève et `TUT-06`. Verrouillé par
+  `test/widgets/page_shell_test.dart`, **prouvé rouge avant le correctif et
+  vert après**.
+
+- ✅ **La déconnexion existe enfin.** Le mot n'apparaissait que dans le portail
+  d'attente — donc *avant* validation — et dans la salle. Un pied de coquille
+  dans `NavShell` (`secondairesPour`) porte désormais le compte, `ADM-06`,
+  `ADM-07` et `ADM-08`, sans toucher à la règle des quatre destinations.
+  ⚠ Limite : ce pied n'existe qu'à partir de 600 px ; sous 600, ces entrées
+  passent par les tuiles « Outils » du tableau de bord.
+
+- ✅ **`ADM-08 Comptes` créé**, avec sa fiche au catalogue et la migration
+  `0015`. `dossiers_en_attente()` rend une ligne par **personne** et non par
+  document ; `indicateurs_admin()` compte des personnes ; `ADM-02` affiche une
+  personne sans pièce en disant ce qui manque, au lieu de proposer deux
+  verdicts qui échoueraient.
+
+- ✅ **Les boutons « Réessayer » qui n'existaient pas.** `EmptyState` ne rend
+  son action que dans le registre `actionnable` ; deux états d'erreur le
+  déclaraient en registre `subi` **avec** un libellé d'action, donc sans aucun
+  bouton à l'écran.
+
+- ✅ **Le journal ne montre plus de clés brutes.** Les lots `AGT-01`, `CTR-01`
+  et `N2` avaient ajouté cinq événements sans libellé : la base en journalise
+  **19**, l'écran n'en nommait que 14.
+
+- ✅ **`ADM-01` respecte enfin le responsive.** Le diviseur de colonnes était
+  `2` en dur à toutes les largeurs ; la grille suit désormais le gabarit, avec
+  quatre chiffres sur desktop comme l'exige `05-regles-responsive.md` §3.
+
+- ✅ **Le journal d'audit ne se noie plus.** `read_kyc_documents()` journalise
+  chaque appel : le tableau de bord écrivait une entrée « dossier consulté » à
+  chaque ouverture, même sans pièce à lire (52 entrées pour zéro lecture
+  réelle). `dossiers_en_attente()` ne l'appelle plus que s'il y a à lire.
+
+**Reste faux dans ce document et corrigé depuis :** le §2 décrivait `ADM-05`
+comme cassé. Il ne l'était pas — son code est correct et il s'affiche
+parfaitement en local. Il était cassé **en production seulement**, ce qui
+restait à expliquer au moment de la rédaction.
+
 ---
 
 ## 8. Ce que ce relevé change

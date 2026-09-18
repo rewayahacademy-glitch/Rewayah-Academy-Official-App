@@ -75,14 +75,14 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
     return PageShell(
       titre: t.eleve.suivi.titre,
       defilante: false,
-      child: Expanded(
-        child: _Corps(
-          vue: vue,
-          chargement: seances.isLoading,
-          erreur: seances.hasError,
-          maintenant: _maintenant,
-          onReessayer: _relire,
-        ),
+      // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
+      // contenu en mode `defilante: false`.
+      child: _Corps(
+        vue: vue,
+        chargement: seances.isLoading,
+        erreur: seances.hasError,
+        maintenant: _maintenant,
+        onReessayer: _relire,
       ),
     );
   }

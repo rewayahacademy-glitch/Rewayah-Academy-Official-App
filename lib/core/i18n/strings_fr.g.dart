@@ -1027,6 +1027,24 @@ class Traductions$dossiers$fr {
 	/// fr: 'Déposé le {date}'
 	String deposeLe({required Object date}) => 'Déposé le ${date}';
 
+	/// fr: 'Inscrit depuis {jours} jours'
+	String inscritDepuis({required Object jours}) => 'Inscrit depuis ${jours} jours';
+
+	/// fr: 'Aucune pièce déposée'
+	String get sansPiece => 'Aucune pièce déposée';
+
+	/// fr: 'Cette personne a créé son compte et accepté les contrats, mais n'a pas encore envoyé sa pièce d'identité. Il n'y a donc rien à vérifier : le geste est chez elle.'
+	String get sansPieceDetail => 'Cette personne a créé son compte et accepté les contrats, mais n\'a pas encore envoyé sa pièce d\'identité. Il n\'y a donc rien à vérifier : le geste est chez elle.';
+
+	/// fr: 'Pièce hors de votre portée'
+	String get pieceNonVisible => 'Pièce hors de votre portée';
+
+	/// fr: 'Une pièce a bien été déposée, mais la règle de genre vous interdit de la consulter. Un membre du personnel du même genre que cette personne doit la vérifier.'
+	String get pieceNonVisibleDetail => 'Une pièce a bien été déposée, mais la règle de genre vous interdit de la consulter. Un membre du personnel du même genre que cette personne doit la vérifier.';
+
+	/// fr: 'Rien à trancher pour l'instant'
+	String get rienATrancher => 'Rien à trancher pour l\'instant';
+
 	/// fr: 'La pièce déposée'
 	String get apercu => 'La pièce déposée';
 
@@ -3541,6 +3559,12 @@ extension on Traductions {
 			'dossiers.aucunDetail' => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.',
 			'dossiers.restants' => ({required Object n}) => '${n} dossier(s) en attente',
 			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
+			'dossiers.inscritDepuis' => ({required Object jours}) => 'Inscrit depuis ${jours} jours',
+			'dossiers.sansPiece' => 'Aucune pièce déposée',
+			'dossiers.sansPieceDetail' => 'Cette personne a créé son compte et accepté les contrats, mais n\'a pas encore envoyé sa pièce d\'identité. Il n\'y a donc rien à vérifier : le geste est chez elle.',
+			'dossiers.pieceNonVisible' => 'Pièce hors de votre portée',
+			'dossiers.pieceNonVisibleDetail' => 'Une pièce a bien été déposée, mais la règle de genre vous interdit de la consulter. Un membre du personnel du même genre que cette personne doit la vérifier.',
+			'dossiers.rienATrancher' => 'Rien à trancher pour l\'instant',
 			'dossiers.apercu' => 'La pièce déposée',
 			'dossiers.apercuIndisponible' => 'Aperçu indisponible',
 			'dossiers.verifications' => 'Vérifications',
@@ -3779,14 +3803,14 @@ extension on Traductions {
 			'admin.agents.nePourraPasDetail' => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.',
 			'admin.agents.emissionEnCours' => 'Émission',
 			'admin.agents.emis' => 'Jeton émis',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
 			'admin.agents.copier' => 'Copier le lien',
 			'admin.agents.copie' => 'Lien copié',
 			'admin.agents.termine' => 'J\'ai copié le lien',
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
 			'admin.agents.colonneLibelle' => 'Jeton',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.colonneQui' => 'Observe',
 			'admin.agents.colonneParcours' => 'Parcours',
 			'admin.agents.colonneIdentite' => 'Prénoms',

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/service_comptes.dart' show EtatPiece;
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -15,6 +16,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
 
 /// `ADM-02` : la validation des dossiers.
 ///
@@ -63,6 +65,12 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
     DossierAValider dossier, {
     required bool approuve,
   }) async {
+    // Sans piece, il n'y a rien a trancher : l'ecran ne propose alors aucun
+    // verdict, et ce garde-fou ferme le chemin si un geste arrive quand meme.
+    final String? documentId = dossier.documentId;
+    if (documentId == null) {
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -71,7 +79,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
       await ref
           .read(serviceValidationProvider)
           .decider(
-            documentId: dossier.documentId,
+            documentId: documentId,
             approuve: approuve,
             motif: approuve ? null : _motif.text.trim(),
           );
@@ -187,6 +195,10 @@ class _Dossier extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Nulle quand aucune piece n'a ete deposee, ou quand la regle de genre
+    // interdit de la lire : depuis la migration `0015`, cette file contient des
+    // personnes, pas seulement des documents.
+    final String? cleObjet = dossier.cleObjet;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -206,63 +218,98 @@ class _Dossier extends StatelessWidget {
               ),
               Text(dossier.identifiantImmuable, style: textes.bodySmall),
               Ecart.vSm,
-              Text(
-                t.dossiers.deposeLe(date: _jour(dossier.deposeLe)),
-                style: textes.bodySmall,
-              ),
-              Ecart.vLg,
-              Text(t.dossiers.apercu, style: textes.bodyMedium),
-              Ecart.vSm,
-              _Apercu(cleObjet: dossier.cleObjet),
+              if (cleObjet != null) ...<Widget>[
+                Text(
+                  t.dossiers.deposeLe(date: _jour(dossier.deposeLe)),
+                  style: textes.bodySmall,
+                ),
+                Ecart.vLg,
+                Text(t.dossiers.apercu, style: textes.bodyMedium),
+                Ecart.vSm,
+                _Apercu(cleObjet: cleObjet),
+              ] else ...<Widget>[
+                // Faute de depot, il n'y a pas de date de depot a dire : c'est
+                // l'anciennete de l'inscription qui mesure l'attente, et c'est
+                // justement cette personne qui attend le plus longtemps.
+                Text(
+                  t.dossiers.inscritDepuis(
+                    jours: '${dossier.joursDAttente(DateTime.now())}',
+                  ),
+                  style: textes.bodySmall,
+                ),
+                Ecart.vMd,
+                StatusPill(
+                  libelle: dossier.etatPiece == EtatPiece.nonVisible
+                      ? t.dossiers.pieceNonVisible
+                      : t.dossiers.sansPiece,
+                  ton: TonEtat.avertissement,
+                ),
+              ],
             ],
           ),
         ),
         Ecart.vXxl,
 
-        // 2. LA CHECKLIST, separee du constat comme du jugement.
-        Text(t.dossiers.verifications, style: textes.titleMedium),
-        Ecart.vMd,
-        for (final String point in points)
-          _Case(
-            libelle: _libelle(point),
-            cochee: verifie.contains(point),
-            onPress: () => onCocher(point),
-          ),
-        Ecart.vXxl,
-
-        // 3. LE JUGEMENT, en dernier et jamais melange au reste.
-        Text(t.dossiers.verdict, style: textes.titleMedium),
-        Ecart.vMd,
-        if (refusEnCours) ...<Widget>[
-          TextField(
-            controller: motif,
-            // Le bouton de refus depend de ce champ : sans ce rappel, il
-            // resterait inerte alors que le motif est saisi.
-            onChanged: onMotifChange,
-            maxLines: 2,
-            decoration: InputDecoration(labelText: t.dossiers.motif),
-          ),
-          Ecart.vSm,
-          Text(t.dossiers.motifRequis, style: textes.bodySmall),
+        if (!dossier.jugeable) ...<Widget>[
+          // **Rien a constater, donc rien a trancher.** Afficher la checklist
+          // et deux verdicts sur un dossier sans piece proposerait un geste
+          // qui echouerait en base. L'ecran dit ce qui manque et chez qui se
+          // trouve le geste — c'est le meme choix que la carte « aucune heure
+          // proposee » d'`ADM-05`.
+          Text(t.dossiers.rienATrancher, style: textes.titleMedium),
           Ecart.vMd,
-          ActionPrincipale(
-            libelle: t.dossiers.refuser,
-            enCours: envoi,
-            niveau: NiveauAction.destructive,
-            onPress: motif.text.trim().isEmpty ? null : onRefuser,
+          Text(
+            dossier.etatPiece == EtatPiece.nonVisible
+                ? t.dossiers.pieceNonVisibleDetail
+                : t.dossiers.sansPieceDetail,
+            style: textes.bodyMedium,
           ),
         ] else ...<Widget>[
-          ActionPrincipale(
-            libelle: t.dossiers.approuver,
-            enCours: envoi,
-            onPress: tousVerifies ? onApprouver : null,
-          ),
+          // 2. LA CHECKLIST, separee du constat comme du jugement.
+          Text(t.dossiers.verifications, style: textes.titleMedium),
           Ecart.vMd,
-          ActionPrincipale(
-            libelle: t.dossiers.refuser,
-            onPress: onOuvrirRefus,
-            niveau: NiveauAction.secondaire,
-          ),
+          for (final String point in points)
+            _Case(
+              libelle: _libelle(point),
+              cochee: verifie.contains(point),
+              onPress: () => onCocher(point),
+            ),
+          Ecart.vXxl,
+
+          // 3. LE JUGEMENT, en dernier et jamais melange au reste.
+          Text(t.dossiers.verdict, style: textes.titleMedium),
+          Ecart.vMd,
+          if (refusEnCours) ...<Widget>[
+            TextField(
+              controller: motif,
+              // Le bouton de refus depend de ce champ : sans ce rappel, il
+              // resterait inerte alors que le motif est saisi.
+              onChanged: onMotifChange,
+              maxLines: 2,
+              decoration: InputDecoration(labelText: t.dossiers.motif),
+            ),
+            Ecart.vSm,
+            Text(t.dossiers.motifRequis, style: textes.bodySmall),
+            Ecart.vMd,
+            ActionPrincipale(
+              libelle: t.dossiers.refuser,
+              enCours: envoi,
+              niveau: NiveauAction.destructive,
+              onPress: motif.text.trim().isEmpty ? null : onRefuser,
+            ),
+          ] else ...<Widget>[
+            ActionPrincipale(
+              libelle: t.dossiers.approuver,
+              enCours: envoi,
+              onPress: tousVerifies ? onApprouver : null,
+            ),
+            Ecart.vMd,
+            ActionPrincipale(
+              libelle: t.dossiers.refuser,
+              onPress: onOuvrirRefus,
+              niveau: NiveauAction.secondaire,
+            ),
+          ],
         ],
         if (erreur != null) ...<Widget>[
           Ecart.vMd,

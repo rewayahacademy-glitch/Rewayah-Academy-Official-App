@@ -182,17 +182,17 @@ class _PlanningControleurPageEtat
           ),
         ],
       ),
-      child: Expanded(
-        child: _Corps(
-          vue: vue,
-          chargement: planning.isLoading,
-          erreur: planning.hasError,
-          maintenant: _maintenant,
-          entreeEnCours: _entreeEnCours,
-          onObserver: _observer,
-          onReessayer: () => ref.invalidate(planningGlobalProvider),
-          onToutAfficher: _toutAfficher,
-        ),
+      // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
+      // contenu en mode `defilante: false`.
+      child: _Corps(
+        vue: vue,
+        chargement: planning.isLoading,
+        erreur: planning.hasError,
+        maintenant: _maintenant,
+        entreeEnCours: _entreeEnCours,
+        onObserver: _observer,
+        onReessayer: () => ref.invalidate(planningGlobalProvider),
+        onToutAfficher: _toutAfficher,
       ),
     );
   }
