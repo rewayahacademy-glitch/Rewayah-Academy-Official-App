@@ -2832,7 +2832,72 @@ exclues par `pg_depend.deptype = 'e'`. Mesuré avant/après sur base neuve :
 | `pgrst.db_pre_request` | **posé**, `= public.agent_pre_request` |
 | Fonction Edge `agent-session` | **DÉPLOYÉE**, version 2, `ACTIVE` |
 | `SUPABASE_JWT_SECRET` | ⚠ **ABSENT** — voir §12.9 |
-| Code web | poussé sur `main`, déployé par la CI |
+| Code web | poussé (`bc8638f`) et **déployé à la main** — voir §12.8 bis |
+
+Routes vérifiées en ligne sur `rewayah-academy.vercel.app`, toutes en 200 et
+servant bien l'application : `/`, `/connexion`, `/agent`,
+`/agent?jeton=rag_test`, `/admin/acces-agents`. Bundle **4 577 Ko**, contenant
+`acces-agents`, `agent-session` et « Observation, lecture seule ».
+
+### 12.8 bis 🔴 Le déploiement continu ne marche pas, et il faut le savoir
+
+**Un push sur `main` ne déploie RIEN.** Vérifié : douze minutes après
+`bc8638f`, le bundle en ligne était inchangé, et Vercel ne montrait aucun
+déploiement nouveau. Deux causes se cumulent :
+
+1. `vercel.json` porte `"git": { "deploymentEnabled": { "main": false } }` :
+   l'intégration Vercel↔GitHub est **volontairement coupée** ;
+2. le seul chemin restant est `.github/workflows/flutter-deploy.yml`, qui a
+   besoin de `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`,
+   `SUPABASE_URL` et `SUPABASE_ANON_KEY` en secrets GitHub. Le §11 signalait
+   déjà qu'ils **n'avaient jamais été vérifiés**. Ils ne fonctionnent pas.
+
+Les deux derniers commits d'avant ce lot (`fdf5168`, `f879912`) n'ont eux non
+plus **jamais été déployés** : la production tournait encore sur `99c7b6a`.
+C'est la même leçon que le 11 septembre, sous une autre forme : **la prod peut
+être très en retard sur `main` sans que rien ne le signale.**
+
+**Le déploiement manuel qui marche, mesuré ce jour** (aucune de ces étapes n'est
+facultative) :
+
+```powershell
+# 1. NE JAMAIS construire depuis dart_define.json : il porte encore
+#    `cle-factice-playground-ne-jamais-utilisee` ET `PLAYGROUND=True`.
+cd "D:\RA _APP\RA -OFFICIAL-APP"
+flutter build web --release `
+  --dart-define=SUPABASE_URL=https://gggmtelinlpseweouyav.supabase.co `
+  --dart-define=SUPABASE_ANON_KEY=<la vraie cle anon> `
+  --dart-define=ENVIRONNEMENT=production
+
+# 2. CONTROLER LE BUNDLE, pas la commande. Quatre deploiements casses viennent
+#    de l'avoir sauté.
+#    build\web\main.dart.js doit contenir la vraie cle, et ne contenir
+#    ni « cle-factice » ni « Playground - choisir une personne ».
+
+# 3. Le depot n'a PAS de .vercel/project.json : sans ces deux variables,
+#    `vercel deploy --prod` cree un projet NEUF en disant « ready », et le
+#    site ne bouge pas.
+$env:VERCEL_ORG_ID="team_VfPE1KP6vCKUyTeeG6AtAV8B"
+$env:VERCEL_PROJECT_ID="prj_xDldWMLNH726BpwEVUlIAJUOSzPe"
+cd build\web ; vercel deploy --prod --yes
+
+# 4. VERIFIER L'URL PUBLIQUE, jamais le message du CLI.
+#    https://rewayah-academy.vercel.app/main.dart.js doit contenir « acces-agents ».
+```
+
+⚠ `build/web` contient déjà son propre `vercel.json` avec la réécriture SPA.
+**Sans elle, `/agent?jeton=...` rendrait 404** et tout le tunnel d'entrée serait
+mort. C'est la première chose à vérifier si un déploiement futur part de
+`build/web` reconstruit de zéro.
+
+### 12.8 ter Un reste ouvert du §11 qui est en fait fermé
+
+**`Env.configuree` EST durci** (commit `01edc81`) : `cleSupabaseValide()` valide
+la structure du JWT — `alg: HS256`, `iss: supabase`, `role: anon` — accepte les
+clés `sb_publishable_*` et rejette tout ce qui contient `factice`, `playground`,
+`dummy`, `fake`, `placeholder`, `example`. Le défaut qui a laissé une clé morte
+en production du 11 au 13 septembre **ne peut plus se reproduire en silence**.
+Les mémoires et le §11 qui le listent encore comme ouvert sont en retard.
 
 Mesures prises **sur la production réelle**, avant et après la migration :
 
