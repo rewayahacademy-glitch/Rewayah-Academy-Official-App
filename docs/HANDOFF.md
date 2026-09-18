@@ -3232,3 +3232,94 @@ près. La branche n'avait jamais été fusionnée parce que sa propre session av
 - ⚠ La contradiction « cinq indicateurs » / « quatre chiffres » / six dans le
   code n'est toujours pas arbitrée.
 - ⚠ Sous 600 px, l'admin n'a pas de déconnexion dans la coquille (§14.3).
+- ⚠ **« Mon compte » affiche l'UUID d'authentification** sous le rôle, libellé
+  « Identifiant ». Ce n'est pas l'identité d'une personne : c'est
+  `immutable_id` (`GUARDIAN-AS-000001`) qu'il faut, et la page enfant le fait
+  déjà. La session ne le porte pas ; le moins cher est d'ajouter
+  `immutable_id` au `select` que `source_session.dart` et
+  `source_session_agent.dart` font **déjà** sur `profiles` — un champ, zéro
+  aller-retour de plus. Repéré à l'écran le 18/09, non corrigé : ces deux
+  fichiers décident de la session entière, et ils ne se touchent pas la veille
+  d'un déploiement.
+
+---
+
+## 15. 🔴 Le masquage ne tenait que dans deux fonctions sur sept — 18 septembre
+
+### 15.1 Le défaut
+
+Sous la bannière « Observation, lecture seule . **Prénoms masqués** », l'écran
+`ADM-08` rendait bien `TEACHER-AS-000001` ; mais `ADM-02` affichait « Abdallah
+Sow » en titre de fiche, `ADM-01` « Dossier d'identité de Abdallah » dans sa
+file, `ADM-05` la carte « Salam », et `ADM-07` la pilule « Abdoulaye Sow ».
+
+**La cause n'est pas un oubli, c'est une forme.** Le masquage était un motif
+recopié à la main —
+`case when public.agent_identite_masquee() then null else p.first_name end` —
+donc présent uniquement dans les deux fonctions écrites **après** la bascule en
+mode observation (`comptes_admin`, `journal_audit_filtres`). Les cinq autres
+lectures lui sont antérieures et rendaient `first_name` tel quel.
+
+**Pourquoi aucun test ne pouvait le voir**, et c'est la leçon à garder : la
+fonction rend la bonne colonne, la RLS borne les bonnes lignes, et c'est la
+**colonne** qui trahit. C'est la même limite déjà payée ailleurs dans ce
+dépôt : *une RLS borne les LIGNES, pas les COLONNES.*
+
+### 15.2 Le cas d'`ADM-07`, qui n'était pas du tout le même défaut
+
+`ADM-07` ne passait par **aucune** fonction. Il lisait la table en direct :
+
+```dart
+_client.from('profiles').select('id, immutable_id, first_name, last_name, role')
+```
+
+Il n'existait donc aucun endroit où appliquer le masquage, et la borne d'admin
+était déléguée à une policy RLS écrite pour un autre usage. D'où la fonction
+**nouvelle** `personnes_observables()` : le masquage a un endroit, la borne
+d'admin est explicite, et le tri reste fait en base — deux rendus successifs ne
+doivent pas proposer deux ordres.
+
+⚠ **Le tri aussi.** `eleves_sans_enseignant` et `enseignants_pour` triaient par
+`first_name` : trier une liste par un prénom qu'on ne montre pas laisse lire
+l'ordre alphabétique des prénoms, ce qui est déjà plus que rien. Le tri passe
+sur `immutable_id` quand l'identité est masquée.
+
+⚠ **Côté Dart, un masquage sans repli fabrique un écran vide.** Chaque modèle
+gagne un `libelle` qui retombe sur l'identifiant immuable, sinon la fiche rend
+un titre vide au-dessus de l'identifiant, et `ADM-07` affichait « (IDENT) » :
+une parenthèse ouverte sur rien. Deux libellés là où le nom de famille a un
+sens : `libelle` (complet) sur la fiche `ADM-02`, où l'un des trois constats
+porte justement sur le nom, et `libelleCourt` (prénom seul) dans les phrases
+(ADR-008).
+
+### 15.3 Le piège de mesure qui a failli me faire inventer trois défauts
+
+Dans un navigateur piloté, **le canevas Flutter ne repeint que sur une
+entrée**. Une capture prise sans bouger la souris rend une image figée à
+mi-animation. Trois faux défauts en une heure :
+
+- l'indicateur du tiroir figé **en vol** entre deux destinations, donc la
+  pastille sur « Journal » et l'encre d'accent sur « Tableau de bord » ;
+- un menu de filtre qui a l'air de se rouvrir après chaque choix ;
+- `ADM-05` et `ADM-01` qui ont l'air **vides** alors qu'ils chargent.
+
+**Il faut provoquer un mouvement de souris avant chaque capture.** Une capture
+n'est une preuve que si le rendu est **établi**. Et un clic posé d'après une
+capture périmée tombe à côté : c'est ce qui m'a fait croire que les entrées de
+menu ne répondaient pas.
+
+### 15.4 La police d'icônes se sonde, elle ne se devine pas
+
+Le chevron du `MenuFiltre` pointait à droite alors que le menu s'ouvre en
+dessous. Il fallait un caret vers le bas, dont le point de code n'est écrit
+nulle part : la police Phosphor embarquée n'a **pas** de noms de glyphes
+(table `post` version 3.0), et la police **livrée dans `build/web` est élaguée**
+aux seuls points de code cités dans `app_icons.dart`. La méthode qui marche :
+copier la police **source** dans le dossier servi, injecter une grille de
+points de code dans la page par `javascript_tool`, et lire à l'écran. Relevé
+ainsi : `0xe136` = caret bas, `0xe134` = sa variante barrée, `0xe13a` = celui
+déjà utilisé, vers la droite.
+
+⚠ `AppIcons.menuDeroulant` **ne porte pas** `matchTextDirection` : le bas est
+le même dans les deux sens de lecture, alors qu'un chevron « qui mène ailleurs »
+se miroite.
