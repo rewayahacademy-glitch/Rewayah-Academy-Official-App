@@ -3323,3 +3323,39 @@ déjà utilisé, vers la droite.
 ⚠ `AppIcons.menuDeroulant` **ne porte pas** `matchTextDirection` : le bas est
 le même dans les deux sens de lecture, alors qu'un chevron « qui mène ailleurs »
 se miroite.
+
+### 15.5 🔴 `cleanUrls: true` annule la réécriture attrape-tout — mesuré
+
+Le `vercel.json` **à la racine du dépôt** portait `cleanUrls: true`. Copié tel
+quel dans `build/web` avant un déploiement, il **annule** la réécriture
+`/(.*) → /index.html` : le déploiement passe, l'accueil répond 200, et **toutes
+les routes profondes tombent en 404** — `/agent`, `/connexion`,
+`/admin/comptes`. La production a servi cela une vingtaine de minutes le 18/09
+au soir, par ma faute.
+
+Prouvé par élimination, sur trois déploiements de prévisualisation :
+
+| `vercel.json` dans `build/web` | `/` | `/agent` | `/connexion` |
+| :--- | :--- | :--- | :--- |
+| celui de la racine (avec `cleanUrls`) | 200 | **404** | **404** |
+| aucun | 200 | **404** | **404** |
+| `rewrites` seules | 200 | **200** | **200** |
+
+⚠ **Sans aucun `vercel.json`, c'est 404 aussi** : le fichier est obligatoire
+dans le dossier téléversé, et il ne doit pas porter `cleanUrls`. Le fichier
+exact qui marche est celui que portent déjà `D:\ra-pwa-secure-deploy\build\web`
+et les trois autres worktrees de déploiement : `rewrites` + les trois en-têtes
+`max-age=0` (`index.html`, `flutter_service_worker.js`, `version.json`). Ces
+trois en-têtes ne sont pas décoratifs : sans eux le navigateur garde l'ancienne
+application, et l'opérateur voit un site inchangé après un déploiement réussi.
+
+`cleanUrls` a été **retiré du `vercel.json` du dépôt** pour que la copie soit
+désormais sans danger.
+
+⚠ **Deux pièges de plateforme rencontrés le même soir** : la file de
+construction Vercel a bloqué trois déploiements en `Queued` pendant 25 à 50
+minutes, alors que tous les déploiements de ce projet prennent **3 à 4
+secondes**. Et `vercel promote` d'une prévisualisation ne promeut rien : il
+**reconstruit**. Enfin `vercel rollback` au-delà du déploiement précédent est
+**refusé en 402** sur ce plan : il n'y a qu'**un seul cran** de retour arrière,
+donc ne jamais enchaîner deux déploiements douteux.
