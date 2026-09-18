@@ -13,6 +13,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/signal_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/stat_tile.dart';
@@ -199,6 +200,28 @@ class TableauDeBordPage extends ConsumerWidget {
           ],
           Ecart.vMd,
           Text(t.admin.tableau.aTraiterPortee, style: textes.bodySmall),
+          Ecart.vXxl,
+
+          // 3. LES OUTILS.
+          //
+          // **Une route enregistree dans le routeur mais qu'aucun ecran
+          // n'expose n'existe pas.** `ADM-07` a passe une semaine en production,
+          // atteignable seulement en tapant son URL a la main : l'operateur a
+          // signale, a juste titre, que « rien n'avait change sur l'interface ».
+          // C'etait exact, et le bundle contenait pourtant l'ecran.
+          //
+          // L'entree se pose ICI et pas dans la barre : celle-ci est plafonnee
+          // a quatre destinations pour l'admin (03-architecture-information,
+          // section 5), et une cinquieme en ferait un menu. C'est le meme
+          // traitement que les demandes d'`ADM-06`.
+          Text(t.admin.tableau.outils, style: textes.titleMedium),
+          Ecart.vMd,
+          SettingRow(
+            title: t.admin.tableau.outilsAccesAgents,
+            description: t.admin.tableau.outilsAccesAgentsDetail,
+            icon: AppIcons.controleQualite,
+            onPress: () => GoRouter.of(context).go(Routes.adminAccesAgents),
+          ),
         ],
       ),
     );
