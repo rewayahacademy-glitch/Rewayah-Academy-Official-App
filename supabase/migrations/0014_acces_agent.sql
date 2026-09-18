@@ -510,14 +510,23 @@ $$;
 --
 -- Elle ne fait que LIRE et, le cas echeant, refuser : PostgREST sert les GET
 -- dans une transaction READ ONLY, et toute ecriture ici casserait chaque
--- lecture de l'application entiere, pour tout le monde.
+-- lecture de l'application entiere, pour tout le monde. Elle est donc `stable`
+-- et non `volatile` -- ce qui la rend aussi conforme a l'invariant I2, qui
+-- interdit toute fonction volatile a `agent_ro`.
+--
+-- ⚠ ELLE S'EXECUTE SOUS LE ROLE DE LA REQUETE, pas sous `authenticator` :
+-- PostgREST bascule de role AVANT d'appeler `db_pre_request`. L'appelant est
+-- donc `anon`, `authenticated` ou `agent_ro`, et chacun des trois doit pouvoir
+-- l'executer. La lui refuser ferait echouer **toutes** les requetes de
+-- l'application, pour tout le monde. Les droits sont poses en section 8, et un
+-- controle d'invariant les verifie.
 --
 -- Elle rend la main immediatement pour une session humaine : un seul acces a
 -- un champ JSON deja parse, aucun acces disque.
 
 create function public.agent_pre_request()
 returns void
-language plpgsql volatile security definer
+language plpgsql stable security definer
 set search_path = ''
 as $$
 declare
@@ -679,6 +688,16 @@ revoke all on all sequences in schema public from agent_ro;
 -- `authenticated` et `service_role`, c'est-a-dire par les trois seuls roles
 -- clients du projet. Les proprietaires et les roles d'administration de
 -- Supabase ne passent pas par PUBLIC.
+--
+-- ⚠ LES FONCTIONS D'EXTENSION SONT EXCLUES, et ce n'est pas un detail. En
+-- production, `btree_gist` est installe dans `public` : ses 188 fonctions de
+-- support d'index (`gbt_*`, `gbtreekey*`, `*_dist`) y sont ouvertes a PUBLIC
+-- comme toutes les fonctions d'extension. Les refermer toucherait la
+-- machinerie d'index -- dont la contrainte d'exclusion qui empeche deux
+-- seances de se chevaucher -- pour un benefice nul : ces fonctions n'ecrivent
+-- aucune donnee du projet et n'ouvrent aucune porte a `agent_ro`. Le trou
+-- qu'on ferme ici est celui des fonctions DU PROJET, `security definer`
+-- comprises. `pg_depend.deptype = 'e'` les distingue exactement.
 
 do $$
 declare
@@ -691,6 +710,10 @@ begin
     where n.nspname = 'public'
       and p.prokind = 'f'
       and has_function_privilege('public', p.oid, 'EXECUTE')
+      and not exists (
+        select 1 from pg_depend d
+        where d.objid = p.oid and d.deptype = 'e'
+      )
   loop
     execute format('revoke execute on function %s from public', r.signature);
     execute format(
@@ -725,6 +748,12 @@ begin
       and p.prokind = 'f'
       and p.provolatile in ('s', 'i')
       and has_function_privilege('authenticated', p.oid, 'EXECUTE')
+      -- Les fonctions d'extension restent ouvertes a PUBLIC (8.a) : `agent_ro`
+      -- y accede deja par la, il n'y a rien a lui accorder.
+      and not exists (
+        select 1 from pg_depend d
+        where d.objid = p.oid and d.deptype = 'e'
+      )
   loop
     execute format('grant execute on function %s to agent_ro', r.signature);
   end loop;
@@ -751,9 +780,18 @@ grant execute on function public.revoquer_jeton_agent(uuid) to authenticated;
 revoke execute on function public.jetons_agent_actifs() from public, anon;
 grant execute on function public.jetons_agent_actifs() to authenticated;
 
--- Le garde central s'execute pour le compte de `authenticator`, jamais appele
--- par un client.
-revoke execute on function public.agent_pre_request() from public, anon, authenticated, agent_ro;
+-- Le garde central, et le piege qu'il porte : PostgREST bascule de role AVANT
+-- d'appeler `db_pre_request`. La fonction s'execute donc sous `anon`,
+-- `authenticated` ou `agent_ro` selon la requete, jamais sous `authenticator`.
+-- Les TROIS doivent pouvoir l'appeler : leur refuser ce droit ferait echouer
+-- chaque requete de l'application, pour tout le monde.
+--
+-- L'ouvrir ne donne rien : la fonction ne prend aucun parametre, ne rend aucune
+-- donnee, et ne lit que le jeton de l'appelant lui-meme. L'appeler a la main ne
+-- fait donc rien d'autre que ce qu'elle fait deja a chaque requete.
+revoke execute on function public.agent_pre_request() from public;
+grant execute on function public.agent_pre_request()
+  to anon, authenticated, service_role, agent_ro;
 do $$
 begin
   if exists (select 1 from pg_roles where rolname = 'authenticator') then
@@ -1028,7 +1066,11 @@ begin
     raise exception 'I1 : agent_ro peut ecrire sur % objet(s) : %', v_n, v_detail;
   end if;
 
-  -- I2 : aucune fonction volatile appelable.
+  -- I2 : aucune fonction volatile DU PROJET n'est appelable.
+  --
+  -- Les fonctions d'extension sont hors sujet et restent ouvertes a PUBLIC
+  -- (section 8.a) : elles n'ecrivent aucune donnee du projet, et les refermer
+  -- couterait la machinerie d'index sans rien fermer.
   select count(*), string_agg(p.proname, ', ')
     into v_n, v_detail
   from pg_proc p
@@ -1036,7 +1078,10 @@ begin
   where n.nspname = 'public'
     and p.prokind = 'f'
     and p.provolatile = 'v'
-    and has_function_privilege('agent_ro', p.oid, 'EXECUTE');
+    and has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+    and not exists (
+      select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e'
+    );
   if v_n > 0 then
     raise exception 'I2 : agent_ro peut appeler % fonction(s) volatile(s) : %',
       v_n, v_detail;
@@ -1060,6 +1105,24 @@ begin
   where schemaname = 'public' and tablename = 'jetons_agent';
   if v_n <> 1 then
     raise exception 'I4 : jetons_agent porte % policies, 1 attendue', v_n;
+  end if;
+
+  -- I5 : le garde central est appelable par TOUS les roles de requete.
+  --
+  -- C'est l'invariant le plus important de ce fichier, et le moins evident :
+  -- PostgREST appelle `db_pre_request` APRES avoir bascule de role. Si l'un
+  -- des trois roles ne peut pas l'executer, **toutes** les requetes de
+  -- l'application echouent, pour tout le monde. Ce controle existe parce que
+  -- le defaut a ete ecrit une fois, et qu'aucun harnais Postgres nu ne peut le
+  -- voir : il n'y a pas de PostgREST dedans.
+  select string_agg(r, ', ') into v_detail
+  from unnest(array['anon', 'authenticated', 'agent_ro']) as r
+  where not has_function_privilege(
+    r, 'public.agent_pre_request()', 'EXECUTE');
+  if v_detail is not null then
+    raise exception
+      'I5 : le garde central est refuse a % -- toute requete de ces roles echouerait',
+      v_detail;
   end if;
 end;
 $$;

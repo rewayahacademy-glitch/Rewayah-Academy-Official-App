@@ -15,9 +15,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:rewayah_academy/app.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/_dev/playground/faux.dart';
 import 'package:rewayah_academy/features/_dev/playground/persona.dart';
 
@@ -42,12 +46,12 @@ class _PlaygroundRacineState extends State<PlaygroundRacine> {
     final Persona? montee = _montage;
     if (montee == null) {
       return MaterialApp(
-        title: 'Rewayah — Playground',
+        title: 'Rewayah - Playground',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
-        ),
+        // Le theme du produit, et non une palette inventee pour l'occasion :
+        // un menu de developpement peint avec ses propres couleurs finit par
+        // servir de reference a quelqu'un.
+        theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
         home: _Menu(
           personas: _personas,
           onChoisir: (Persona personne) =>
@@ -99,18 +103,24 @@ class _Menu extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Playground — choisir une personne')),
+      appBar: AppBar(title: const Text('Playground - choisir une personne')),
       body: ListView.separated(
         itemCount: personas.length,
         separatorBuilder: (_, _) => const Divider(height: 1),
         itemBuilder: (BuildContext context, int index) {
           final Persona personne = personas[index];
-          return ListTile(
-            leading: const Icon(Icons.person_outline),
-            title: Text(personne.libelle),
-            subtitle: Text(personne.id),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => onChoisir(personne),
+          // `Pressable` plutot qu'un `onTap` nu : c'est la regle du kit, et
+          // elle vaut ici aussi -- une prise sans etats est une prise dont
+          // personne ne sait si elle a repondu.
+          return Pressable(
+            onPress: () => onChoisir(personne),
+            libelleSemantique: personne.libelle,
+            child: ListTile(
+              leading: Icon(AppIcons.profil.repos),
+              title: Text(personne.libelle),
+              subtitle: Text(personne.id),
+              trailing: Icon(AppIcons.chevron.repos),
+            ),
           );
         },
       ),

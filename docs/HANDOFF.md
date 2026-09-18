@@ -2802,25 +2802,95 @@ Vérifié en remisant les modifications et en rejouant les fichiers sur `main` n
   développement, non compilé en production. Correctifs mécaniques, non faits ici
   pour ne pas mêler deux sujets dans un même lot.
 
-### 12.7 ⚠ Ce qui reste à la main de l'opérateur, dans cet ordre
+### 12.7 Les deux pièges de production, trouvés avant d'appliquer
 
-**Rien de tout cela n'a été fait : la production n'a pas été touchée.**
+Aucun des deux n'était visible dans le harnais Docker. Les deux auraient cassé
+la production. Ils sont écrits ici parce qu'ils se reproduiront.
 
-1. **Le secret JWT**, sans lequel `agent-session` refuse de signer :
-   `supabase secrets set SUPABASE_JWT_SECRET=<JWT Secret du projet>`
-   (tableau de bord → Settings → API). **Aucun repli n'est prévu** : un repli
-   sur une valeur publique ne dégrade pas un sceau, il le publie.
-2. **La migration `0014`.** ⚠ C'est la plus sensible du lot : sa section 8
-   retire `EXECUTE` à `PUBLIC` sur les fonctions de `public` et le rend à
-   `anon`, `authenticated`, `service_role`. Le périmètre est préservé, mais
-   c'est une modification de droits qui touche **tous** les utilisateurs.
-   Elle s'applique et se prouve sur une base neuve ; la rejouer sur la
-   production demande une décision explicite.
-3. **La fonction Edge** : `supabase functions deploy agent-session`.
-4. **Le déploiement web**, et jamais `flutter build web --release` nu :
-   `--dart-define-from-file=dart_define.json`, après avoir **lu** ce fichier
-   (celui du dépôt porte encore `cle-factice-playground-ne-jamais-utilisee`).
+**1. ⚠ PostgREST appelle `db_pre_request` APRÈS avoir basculé de rôle.**
+La fonction s'exécute donc sous `anon` / `authenticated` / `agent_ro`, **jamais
+sous `authenticator`**. La première version de `0014` leur retirait justement ce
+droit : appliquée telle quelle, **chaque requête de l'application aurait
+échoué, pour tout le monde**. Aucun harnais Postgres nu ne peut voir ce défaut,
+il n'y a pas de PostgREST dedans. L'invariant **I5** le vérifie désormais, et il
+a été prouvé en le faisant échouer sur la base qui portait l'ancienne version
+(`has_function_privilege('authenticated', …)` rendait `f`).
 
-**Comment défaire, si le doute s'installe** : `revoke agent_ro from
+**2. ⚠ `btree_gist` est installé dans `public`** (par `0005`, sans schéma). Ses
+**188** fonctions de support d'index y sont ouvertes à `PUBLIC` comme toutes les
+fonctions d'extension. La section 8 les aurait refermées : la machinerie
+d'index, dont la contrainte d'exclusion qui empêche deux séances de se
+chevaucher, pour un bénéfice nul. Les fonctions d'extension sont maintenant
+exclues par `pg_depend.deptype = 'e'`. Mesuré avant/après sur base neuve :
+**188 → 188** intactes, et **0** fonction du projet encore ouverte à `PUBLIC`.
+
+### 12.8 État de la production au 18 septembre 2026
+
+| Geste | État |
+| :--- | :--- |
+| Migration `0014` | **APPLIQUÉE**, les cinq invariants `I1`–`I5` passés |
+| `pgrst.db_pre_request` | **posé**, `= public.agent_pre_request` |
+| Fonction Edge `agent-session` | **DÉPLOYÉE**, version 2, `ACTIVE` |
+| `SUPABASE_JWT_SECRET` | ⚠ **ABSENT** — voir §12.9 |
+| Code web | poussé sur `main`, déployé par la CI |
+
+Mesures prises **sur la production réelle**, avant et après la migration :
+
+```
+AVANT  /rest/v1/sourate     200      APRES (x3)  200
+AVANT  /auth/v1/health      200      APRES (x3)  200
+policies ouvertes a agent_ro                      75
+fonctions DU PROJET encore ouvertes a PUBLIC       0
+fonctions d'extension intactes                   188
+```
+
+Les conseillers de sécurité Supabase ne signalent **rien de neuf** : les dix
+vues `SECURITY DEFINER`, `btree_gist` dans `public` et les fonctions
+`security definer` exposées sont des constats antérieurs à ce lot.
+
+### 12.9 ⚠ Le seul geste qui reste, et il n'appartient qu'à l'opérateur
+
+```
+supabase secrets set SUPABASE_JWT_SECRET=<JWT Secret du projet>
+```
+
+(tableau de bord Supabase → Project Settings → API → JWT Settings → JWT Secret.)
+
+**Aucun repli n'est prévu** si le secret manque : un repli sur une valeur
+publique ne dégrade pas un sceau, il le publie. Tant qu'il est absent, un jeton
+peut être émis mais **aucune session ne peut s'ouvrir**.
+
+**Comment le vérifier à tout moment, sans jamais révéler la valeur** — la
+fonction le dit elle-même, sur le modèle de `videoConfiguree()` (ADR-001) :
+
+```
+GET https://gggmtelinlpseweouyav.supabase.co/functions/v1/agent-session
+    apikey: <cle anon>        Authorization: Bearer <cle anon>
+
+-> {"service":"agent-session","configure":false,
+    "detail":"SUPABASE_JWT_SECRET absent : aucun jeton ne peut ouvrir de session."}
+```
+
+Mesuré le 18 septembre 2026 : **`configure: false`**. Ce garde-fou existe parce
+que le défaut inverse a déjà coûté cher : une clé factice est restée en
+production du 11 au 13 septembre **sans un bruit**, faute d'un endroit qui dise
+si la configuration tient.
+
+**Comment défaire tout le lot, si le doute s'installe** : `revoke agent_ro from
 authenticator` ferme la porte sans rien toucher d'autre. Aucune session d'agent
 ne peut plus s'ouvrir, et l'application humaine ne s'en aperçoit pas.
+
+### 12.10 Ce que la production contient réellement, au 18 septembre
+
+Relevé en passant, et il éclaire la raison d'être du lot : **six profils**.
+
+| Parcours | Nombre | État |
+| :--- | :-: | :--- |
+| Enseignant | 3 | **tous `pending_kyc`** |
+| Administration | 1 | `active` (l'opérateur) |
+| Tuteur | 1 | `active` |
+| Élève | 1 | `active` |
+
+Aucune séance, aucune affectation n'a été comptée ici. C'est précisément ce que
+les jetons d'observation doivent permettre de constater écran par écran, plutôt
+que de le déduire d'un tableau.

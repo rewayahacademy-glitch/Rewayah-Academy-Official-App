@@ -1,11 +1,18 @@
 // Echange un jeton d'observation (`rag_...`) contre une session d'agent
 // (ADR-025). C'est le SEUL endroit du systeme qui fabrique une session d'agent.
 //
+// **Volontairement autonome**, alors que les autres fonctions Edge partagent
+// `_shared/clients.ts` : c'est la seule fonction du projet qui signe une
+// identite. Un changement dans un fichier partage pourrait en modifier la
+// signature sans que personne ne relise ce fichier-ci. Meme raison que la regle
+// de l'ADR-001 pour LiveKit -- on concentre, pour que la regle se verifie d'un
+// seul `grep` plutot que par relecture.
+//
 // Ce que cette fonction signe, et pourquoi chaque claim y est :
 //
 //   * `sub` = **la personne observee**, pas un compte de service. C'est tout
-//     l'edifice : les 105 policies et les dix vues de ce depot se bornent deja
-//     par `auth.uid()`, `app_household_id()` et `app_role()`. En signant avec
+//     l'edifice : les policies et les vues de ce depot se bornent deja par
+//     `auth.uid()`, `app_household_id()` et `app_role()`. En signant avec
 //     l'identifiant de la personne observee, l'agent herite de son ecran --
 //     exactement, ni plus ni moins -- sans qu'une seule regle de securite soit
 //     reecrite pour lui. Une deuxieme regle serait une regle a maintenir, et
@@ -30,12 +37,46 @@
 // indefiniment, et revoquer la ligne ne coupe alors plus rien.
 
 import { SignJWT } from 'npm:jose@5.9.6'
-import { clientService, enTetesCors, json, refus } from '../_shared/clients.ts'
+import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2'
 
 /// Duree d'une session signee. Volontairement courte : c'est le delai maximal
 /// entre une revocation et sa prise d'effet dans le pire cas ou le garde
 /// central ne serait pas atteint.
 const DUREE_SESSION_SECONDES = 15 * 60
+
+const enTetesCors = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+}
+
+function json(corps: unknown, statut = 200): Response {
+  return new Response(JSON.stringify(corps), {
+    status: statut,
+    headers: { ...enTetesCors, 'Content-Type': 'application/json' },
+  })
+}
+
+/// Un refus. Le message reste court et ne dit jamais pourquoi une valeur est
+/// invalide : « jeton inconnu » et « jeton expire » se distinguent pour le
+/// porteur legitime, pas pour celui qui essaie.
+function refus(message: string, statut = 400): Response {
+  return json({ error: message }, statut)
+}
+
+/// Le client qui detient la cle de service. Jamais expose au navigateur.
+///
+/// Regle non negociable de l'etape 1 : **une fonction qui emploie la cle de
+/// service reverifie l'autorisation metier explicitement.** Ici, c'est
+/// `remettre_session_agent()` qui la tient, en base.
+function clientService(): SupabaseClient {
+  const url = Deno.env.get('SUPABASE_URL')
+  const cle = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  if (!url || !cle) {
+    throw new Error('configuration absente : SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY')
+  }
+  return createClient(url, cle, { auth: { persistSession: false } })
+}
 
 interface Remise {
   jeton_id: string
@@ -60,6 +101,29 @@ Deno.serve(async (requete) => {
   if (requete.method === 'OPTIONS') {
     return new Response('ok', { headers: enTetesCors })
   }
+
+  // Etat de configuration, sur le modele de `videoConfiguree()` (ADR-001) : il
+  // dit si le sceau est en place, **jamais sa valeur**. Sans lui, une erreur de
+  // configuration ne se decouvrirait qu'au premier jeton emis, c'est-a-dire au
+  // pire moment -- exactement le defaut qui a laisse une cle factice en
+  // production du 11 au 13 septembre sans un bruit.
+  if (requete.method === 'GET') {
+    let configure = false
+    try {
+      secretJwt()
+      configure = true
+    } catch {
+      configure = false
+    }
+    return json({
+      service: 'agent-session',
+      configure,
+      detail: configure
+        ? 'Le sceau est en place : un jeton peut etre echange.'
+        : 'SUPABASE_JWT_SECRET absent : aucun jeton ne peut ouvrir de session.',
+    })
+  }
+
   if (requete.method !== 'POST') {
     return refus('methode non permise', 405)
   }

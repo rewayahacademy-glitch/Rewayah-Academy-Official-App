@@ -562,7 +562,14 @@ begin
   where n.nspname = 'public'
     and p.prokind = 'f'
     and p.provolatile = 'v'
-    and has_function_privilege('agent_ro', p.oid, 'EXECUTE');
+    and has_function_privilege('agent_ro', p.oid, 'EXECUTE')
+    -- Les fonctions d'extension sont hors sujet : `btree_gist` est installe
+    -- dans `public` par 0005, et ses 188 fonctions de support d'index restent
+    -- ouvertes a PUBLIC. Les refermer couterait la contrainte d'exclusion des
+    -- seances sans fermer la moindre porte d'ecriture.
+    and not exists (
+      select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e'
+    );
   if v_n > 0 then
     raise exception 'A12 : agent_ro peut appeler % fonction(s) volatile(s) : %',
       v_n, v_detail;
