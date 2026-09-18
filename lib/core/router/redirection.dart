@@ -37,6 +37,13 @@ String? deciderRedirection({
     // La connexion a deux entrees : celle de l'adulte, et celle de l'enfant qui
     // arrive avec un code. Le sous-arbre entier est donc public.
     case PorteAcces.deconnecte:
+      // L'entree d'un agent IA (ADR-025) est publique par construction : un
+      // porteur de jeton n'a, par definition, aucune session. La renvoyer sur
+      // `/connexion` lui presenterait un ecran de connexion humaine sur lequel
+      // il n'a rien a faire -- et lui ferait perdre le jeton passe dans l'URL.
+      if (_dansLeSousArbre(cheminDemande, Routes.agentEntree)) {
+        return null;
+      }
       return _dansLeSousArbre(cheminDemande, Routes.connexion)
           ? null
           : Routes.connexion;
@@ -69,9 +76,12 @@ String? deciderRedirection({
 
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,
       // l'inscription ou le portail d'attente, sous-arbres compris.
+      // Une session d'agent resolue quitte `/agent` comme un compte connecte
+      // quitte `/connexion` : le tunnel d'entree a fini son travail.
       if (cheminDemande == Routes.racine ||
           _dansLeSousArbre(cheminDemande, Routes.connexion) ||
           _dansLeSousArbre(cheminDemande, Routes.inscription) ||
+          _dansLeSousArbre(cheminDemande, Routes.agentEntree) ||
           _dansLeSousArbre(cheminDemande, Routes.attente)) {
         return racine;
       }

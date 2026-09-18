@@ -125,6 +125,27 @@ abstract final class Routes {
   /// Journal d'audit, lecture seule.
   static const String adminJournal = '/admin/journal';
 
+  /// Acces des agents IA : emission et revocation des jetons d'observation
+  /// (`ADM-07`, ADR-025).
+  static const String adminAccesAgents = '/admin/acces-agents';
+
+  // --- Observation par un agent IA -----------------------------------------
+
+  /// Entree d'un agent IA (`AGT-00`, ADR-025).
+  ///
+  /// **Publique par construction** : un agent qui arrive avec un jeton n'a, par
+  /// definition, aucune session. Le jeton voyage en parametre d'URL et n'est
+  /// jamais range : fermer l'onglet met fin a l'observation.
+  ///
+  /// Ce n'est pas une porte derobee. Sans jeton vivant, cette route ne rend
+  /// qu'un formulaire ; avec un jeton, elle n'ouvre que ce que la base accorde
+  /// deja au role `agent_ro`, c'est-a-dire de la lecture, et seulement celle de
+  /// la personne observee.
+  static const String agentEntree = '/agent';
+
+  /// Le lien a remettre a un agent pour ce jeton.
+  static String entreePour(String jeton) => '$agentEntree?jeton=$jeton';
+
   // --- Comptable ----------------------------------------------------------
 
   /// Le role existe dans le modele de donnees, son interface arrive en V1
@@ -170,7 +191,7 @@ abstract final class Routes {
       '$compteProfilEnfant/$profilId';
 
   /// Routes atteignables sans session resolue.
-  static const Set<String> publiques = <String>{connexion, galerie};
+  static const Set<String> publiques = <String>{connexion, galerie, agentEntree};
 
   /// La racine de chaque role, ou une redirection renvoie toujours.
   static String racinePour(AppRole role) => switch (role) {

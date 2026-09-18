@@ -22,6 +22,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `TUT-00c/a` | Accusé enregistrement et contrôle | Tuteur, enseignant | C | 1 | `/attente/accuse` | Page | Page centrée | **repris (R0)**, fiche §6 |
 | `TUT-00c/b` | Contrat | Tuteur, enseignant | C | 1 | `/attente/contrat` | Page | Page centrée | **repris (R0)**, fiche §6 |
 | `TUT-00c/c` | Dépôt de la pièce | Tuteur, enseignant | C | 1 | `/attente/piece` | Page | Page centrée | **repris (R0)**, fiche §6 |
+| `AGT-00` | Entrée d'un agent | Agent IA | A | 0 | `/agent` | Page | Page centrée | **construit (18/09)**, fiche §6 |
 
 ### Zone Foyer
 
@@ -69,6 +70,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ADM-02` | Validation des dossiers | Admin | E | 1 | `/admin/dossiers` | Un dossier à la fois | File à gauche, dossier à droite | **repris (R4)**, fiche §6 |
 | `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/demandes` | Liste de demandes | Liste + feuille de règles | **repris (R4)**, fiche §6 |
 | `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/journal` | Cartes | Tableau dense | **construit (12/09)**, fiche §6 |
+| `ADM-07` | Accès des agents IA | Admin | E | 1 | `/admin/acces-agents` | Formulaire puis cartes | Formulaire + tableau dense | **construit (18/09)**, fiche §6 |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
 
@@ -2299,3 +2301,130 @@ filtre client** — un `select()` nu rend au tuteur son foyer et rien d'autre.
   de corriger ce qui compte pour la paie de l'enseignant.
 
 Construit le 13 septembre 2026, lot `TUT-06`.
+
+### `ADM-07` Accès des agents IA
+
+```
+CODE              ADM-07
+Nom               Accès des agents IA
+Rôle              Admin
+Zone              Administration
+Niveau de charge  E
+Écran parent      ADM-01
+Profondeur        1
+Question          Qui observe l'application en ce moment, et sous quels yeux ?
+
+Priorités         P0  émettre un jeton : à quoi il sert, qui il observe,
+                      pendant combien de temps, avec ou sans les prénoms
+                  P0  le lien à remettre, montré UNE seule fois
+                  P0  la liste des jetons, l'actif d'abord, et sa révocation
+                  P1  « Pourra » et « Ne pourra pas », de rang égal
+                  P2  le compteur d'ouvertures, et la mention « jamais utilisé »
+
+Action principale     Émettre un jeton
+Actions secondaires   Copier le lien
+Action tertiaire      aucune
+Destructif            Révoquer un jeton (confirmation, irréversible)
+
+Mobile            formulaire en pile, puis une carte par jeton
+Tablette          idem, colonne plus large
+Desktop           formulaire pleine largeur, puis tableau dense
+
+États             loading   squelette de liste sous le formulaire
+                  content   nominal
+                  empty     « Aucun jeton d'observation », registre bonne
+                            nouvelle : personne n'a accès, ce n'est pas un manque
+                  error     message sur la liste seule, le formulaire reste
+                            utilisable
+                  offline   l'émission échoue et le dit ; rien n'est mis en file :
+                            un jeton émis hors ligne serait un secret perdu
+
+Mouvement         aucun. Un écran d'accès ne s'anime pas : la carte du secret
+                  apparaît à la place du formulaire, sans transition qui
+                  détournerait l'œil du seul moment où le lien est lisible
+
+Invariants        le secret n'apparaît qu'une fois, et l'écran le dit AVANT
+                  l'état d'un jeton vient de la base, jamais d'une comparaison
+                  entre son expiration et l'horloge du poste
+                  la durée proposée est une commodité : le plafond de 24 h est
+                  tenu par la base, qui refuse l'appel direct
+                  la portée ne se modifie pas : il n'existe aucun geste
+                  d'édition, parce qu'il n'existe aucune écriture en base
+                  le libellé est obligatoire : un jeton anonyme ne se révoque pas
+
+Accessibilité     le lien est sélectionnable au clavier, jamais seulement
+                  copiable par un bouton ; l'état de chaque jeton est porté par
+                  un mot, jamais par la seule couleur de sa pastille
+```
+
+**Un seul écran, pas un parcours en quatre étapes.** La console de l'autre
+produit de l'opérateur guidait l'émission en quatre écrans successifs ; ici les
+quatre champs se voient ensemble, et la liste est juste en dessous. Un assistant
+se justifie quand une étape dépend de la précédente : aucune ne dépend ici d'une
+autre.
+
+Ce que cet écran garde de la console précédente, parce que c'en était la bonne
+idée : **« Pourra » et « Ne pourra pas » de rang égal**. Quand on accorde un
+droit d'accès, la question utile n'est pas ce qu'il ouvre, c'est ce qu'il
+n'ouvre pas.
+
+Construit le 18 septembre 2026, lot `AGT-01` (ADR-025).
+
+### `AGT-00` Entrée d'un agent
+
+```
+CODE              AGT-00
+Nom               Entrée d'un agent
+Rôle              Agent IA
+Zone              Accès
+Niveau de charge  A
+Écran parent      aucun
+Profondeur        0
+Question          Ce lien m'ouvre-t-il l'application, et sinon pourquoi ?
+
+Priorités         P0  dire pourquoi une entrée a échoué
+                  P0  fabriquer l'adresse à ouvrir quand on arrive sans jeton
+                  P1  rappeler que l'observation est en lecture seule
+
+Action principale     aucune
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            page
+Tablette          page centrée
+Desktop           page centrée
+
+États             loading   aucun : l'ouverture a déjà eu lieu, ou échoué,
+                            avant que cet écran existe
+                  content   le formulaire, et l'adresse fabriquée
+                  empty     confondu avec content : sans jeton, l'écran EST son
+                            formulaire
+                  error     la carte de refus, en tête
+                  offline   non traité : sans réseau, l'amorçage a déjà échoué
+                            et l'écran affiche « service indisponible »
+
+Mouvement         aucun.
+
+Invariants        cet écran n'ouvre AUCUNE session : l'ouverture se décide dans
+                  `main()`, avant que le premier écran existe
+                  le jeton n'est rangé nulle part, ni disque ni stockage du
+                  navigateur : fermer l'onglet met fin à l'observation
+                  le refus ne distingue jamais « inconnu », « révoqué » et
+                  « expiré » : la base rend déjà le même message pour les trois
+                  on ne navigue pas vers l'adresse fabriquée, on la montre : une
+                  navigation interne ne relancerait pas l'amorçage, et l'agent
+                  croirait être entré sans l'être
+
+Accessibilité     l'adresse fabriquée est sélectionnable ; la carte de refus
+                  porte son titre et sa cause en texte, jamais en icône seule
+```
+
+**Publique par construction, et ce n'est pas une porte dérobée.** Un porteur de
+jeton n'a, par définition, aucune session : le renvoyer sur `/connexion` lui
+présenterait un écran de connexion humaine et lui ferait perdre le jeton passé
+dans l'URL. Sans jeton vivant, cette route ne rend qu'un formulaire ; avec un
+jeton, elle n'ouvre que ce que la base accorde déjà au rôle `agent_ro`,
+c'est-à-dire de la lecture, et seulement celle de la personne observée.
+
+Construit le 18 septembre 2026, lot `AGT-01` (ADR-025).

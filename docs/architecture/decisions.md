@@ -1171,6 +1171,149 @@ API, se fait en changeant `ServiceCoran` — une classe — sans toucher à l'é
 
 ---
 
+## ADR-025 - Un agent IA observe l'application par les yeux d'une personne, et ne peut rien écrire
+
+**Décision de l'opérateur, 18 septembre 2026.** Elle ouvre un besoin neuf :
+faire entrer des agents IA dans l'application **déployée**, en temps réel,
+après que l'opérateur a lui-même remis un jeton et choisi un parcours.
+
+Quatre choix ont été tranchés à l'ouverture du lot :
+
+| Question | Choix de l'opérateur |
+| :--- | :--- |
+| Par quelle porte l'agent entre-t-il | **L'application dans un navigateur**, pas une API ni un serveur MCP |
+| Que voit un parcours | **Le point de vue d'une personne désignée**, pas le rôle sur toute l'académie |
+| Les données personnelles | **Masquées par défaut**, avec un jeton nominatif possible |
+| Où s'émet un jeton | **Un écran d'administration**, « plus simple que celui de PISI » |
+
+### Le problème que ce canal pose, et qui commande toute l'architecture
+
+Rewayah **n'a pas de serveur applicatif**. Flutter parle directement à
+PostgREST ; la RLS est la barrière, le routeur n'est qu'une commodité. Un agent
+qui pilote l'application déployée détient donc une vraie session Supabase, et
+tout ce que cette session peut faire, il peut le faire — en cliquant, ou en
+rejouant la requête à la main. « Lecture seule » ne peut donc pas être une
+propriété de l'interface : masquer un bouton n'a jamais empêché d'appeler
+l'action.
+
+Ce constat exclut d'emblée la solution qui vient à l'esprit — ouvrir une session
+sur le compte de la personne, ou sur un compte de service dédié. C'est
+exactement la faute payée sur l'autre produit de l'opérateur le 5 août 2026 :
+dès qu'on remet une session complète à un tiers, **tout privilège attaché au
+compte devient un privilège attaché au porteur, hors de l'application**.
+
+### Ce qui est décidé
+
+Le jeton d'observation est échangé contre une session signée dont **trois
+claims** portent toute l'architecture :
+
+1. **`sub` = la personne observée.** Les 105 policies et les dix vues de ce
+   dépôt se bornent déjà par `auth.uid()`, `app_household_id()` et
+   `app_role()`. En signant avec l'identifiant de la personne observée, l'agent
+   hérite de son écran — exactement, ni plus ni moins — **sans qu'une seule
+   règle de sécurité soit réécrite pour lui**. C'est le point central : une
+   deuxième règle serait une règle à maintenir, donc une règle qui finirait par
+   diverger de la première.
+
+2. **`role` = `agent_ro`**, un rôle Postgres créé par `0014` qui ne détient
+   **aucun** droit d'écriture. La lecture seule est un défaut de privilège du
+   moteur, pas une politesse de l'interface.
+
+3. **`app_metadata.agent_token_id` = un identifiant opaque**, jamais des
+   droits. La portée — qui est observé, sous quel parcours, avec ou sans
+   identité — se relit **en base à chaque requête**, par le garde
+   `agent_pre_request()` branché sur `pgrst.db_pre_request`. Révoquer la ligne
+   coupe l'accès à la requête suivante, sans attendre l'expiration de la
+   signature.
+
+La session signée vit **quinze minutes** et il n'existe **aucun jeton de
+rafraîchissement** : pour continuer, le porteur repasse par la fonction Edge,
+donc par la base, donc par la vérification de vivacité. Le jeton lui-même est
+plafonné à **24 heures côté serveur**, et sa portée est **figée à l'émission** —
+un déclencheur refuse toute écriture de `parcours`, `profil_observe`,
+`identite_masquee` ou `expire_le`. Pour changer de portée, on émet un autre
+jeton.
+
+### Ce que la migration a mesuré, et qui n'était pas su avant
+
+- **Les 105 policies du dépôt sont toutes `to authenticated`.** Elles ne
+  s'appliquent donc pas à `agent_ro` : le défaut d'un agent est de **ne rien
+  voir**, et chaque table lui est ouverte explicitement. Un oubli fait échouer
+  une lecture ; il ne peut pas ouvrir une écriture. **C'est le bon sens de
+  panne**, et c'est ce qui rend cette architecture tenable dans la durée.
+- **L'écriture est barrée par deux couches indépendantes**, vérifié par test de
+  mutation : il faut à la fois accorder le privilège **et** écrire une policy
+  nommant `agent_ro` pour qu'une écriture passe. Ouvrir une seule des deux ne
+  suffit pas.
+- **Les dix vues portent `security_barrier`, jamais `security_invoker`** : elles
+  appartiennent à `postgres` et ignorent la RLS des tables qu'elles lisent. Leur
+  seule borne est le `where ... = auth.uid()` écrit dans leur corps — la leçon
+  que `0011` a payée pour `presence_seance_v`. Toutes les dix ont été
+  auditées : **toutes sont bornées relativement à l'appelant**. C'est ce qui
+  rend le choix du `sub` sûr, et ce qui aurait rendu n'importe quel autre choix
+  dangereux.
+- **Le vrai trou était ailleurs, et il était invisible** : en PostgreSQL,
+  `EXECUTE` sur une fonction est accordé à `PUBLIC` **par défaut**. `agent_ro`,
+  membre de `PUBLIC` comme tout le monde, aurait hérité du droit d'appeler
+  toute fonction dont personne n'a retiré ce défaut — dont des fonctions
+  `security definer` qui écrivent. `0014` retire ce défaut en préservant
+  l'existant, puis n'ouvre à l'agent que l'intersection de deux critères
+  **mécaniques** : la fonction est `stable` ou `immutable` (PostgreSQL interdit
+  au moteur toute modification de données dans une fonction non `volatile`) et
+  elle est déjà appelable par `authenticated`. Jamais une liste tenue à la
+  main : une liste s'oublie.
+
+### Le masquage, et la limite que ce canal ne peut pas franchir
+
+Une RLS borne les **lignes**, jamais les **colonnes**. Le masquage ne pouvait
+donc pas s'y loger. Il est appliqué là où il est **dur** — dans les huit vues
+qui portent un prénom, où l'identifiant immuable le remplace — et la table
+`profiles` ne rend à un agent masquant qu'**une seule ligne** : celle de la
+personne observée, dont l'application a besoin pour savoir qui elle est.
+
+Reste la limite propre au canal choisi, et elle doit être dite : **ce que
+l'écran de la personne observée affiche légitimement voyage dans la charge
+réseau**. Un agent ne voit jamais plus que la personne qu'il observe — c'est le
+plafond, et il est net — mais il voit tout ce qu'elle voit. Le masquage dur
+au-delà de ce plafond exigerait le canal écarté (serveur MCP ou couche de vues
+dédiée), où les données ne quittent jamais la base.
+
+Trois tables ne sont ouvertes **à aucun agent, jamais** : `kyc_documents` (des
+pièces d'identité de mineurs), `devices` (des empreintes d'appareil) et
+`audit_logs` (la trace des autres). La table des jetons elle-même non plus : un
+agent n'inventorie pas les accès de la maison.
+
+### Les alternatives examinées, et pourquoi elles sont écartées
+
+- **Un serveur MCP en lecture** aurait donné le masquage dur complet et une
+  surface choisie outil par outil. Écarté par l'opérateur : il ne montre pas
+  l'application, or c'est l'application qu'il s'agit de faire observer. Reste
+  la bonne réponse le jour où le besoin devient « analyser », et non « voir ».
+- **Un compte de service partagé** aurait été le plus rapide. Écarté : c'est la
+  faute du 5 août 2026, et `auth.uid()` rendrait alors le compte de service, pas
+  la personne — les dix vues ne renverraient rien.
+- **Interdire l'écriture par une condition ajoutée à chaque policy d'écriture**
+  a été écarté au profit des privilèges : durcir un garde en laisse deux
+  ouverts, et surtout un oubli, dans ce sens-là, **échoue ouvert**.
+
+### Ce qui reste à la main de l'opérateur
+
+`SUPABASE_JWT_SECRET` doit être posé dans les secrets des fonctions Edge : la
+fonction `agent-session` signe avec le secret JWT hérité du projet (encore
+actif, les clés `legacy` du projet sont en HS256). **Aucun repli n'est prévu**
+si le secret manque — un repli sur une valeur publique ne dégrade pas un sceau,
+il le publie.
+
+### Comment défaire
+
+`revoke agent_ro from authenticator` suffit à fermer la porte sans toucher à
+quoi que ce soit d'autre : aucune session d'agent ne peut plus être ouverte, et
+l'application humaine ne s'en aperçoit pas. Le masquage dans les vues est inerte
+hors session d'agent — `agent_identite_masquee()` rend `false` — et le garde
+central rend la main immédiatement pour toute session humaine.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |

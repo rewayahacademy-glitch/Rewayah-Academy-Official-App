@@ -16,7 +16,7 @@ import 'package:flutter/foundation.dart';
 /// navigation, jamais a autoriser un acces. La barriere reste la RLS.
 @immutable
 class ClaimsJwt {
-  const ClaimsJwt._({this.role, this.householdId});
+  const ClaimsJwt._({this.role, this.householdId, this.sujet});
 
   /// Aucune revendication : jeton absent ou illisible.
   const ClaimsJwt.vide() : this._();
@@ -26,6 +26,14 @@ class ClaimsJwt {
 
   /// L'identifiant du foyer, tel qu'ecrit par le hook.
   final String? householdId;
+
+  /// Le `sub` du jeton, c'est-a-dire l'identite sous laquelle la base repondra.
+  ///
+  /// Pour une session humaine, c'est le compte connecte, et `Session.user.id`
+  /// dit la meme chose. Pour une session d'observation (ADR-025), c'est **la
+  /// personne observee** : il n'y a alors aucun `Session` gotrue d'ou le tirer,
+  /// et c'est le seul endroit ou cette identite se lit.
+  final String? sujet;
 
   /// Decode la charge utile d'un jeton d'acces.
   ///
@@ -59,6 +67,7 @@ class ClaimsJwt {
       return ClaimsJwt._(
         role: metadonnees['role'] as String?,
         householdId: metadonnees['household_id'] as String?,
+        sujet: decode['sub'] as String?,
       );
     } on FormatException {
       return const ClaimsJwt.vide();
@@ -69,8 +78,9 @@ class ClaimsJwt {
   bool operator ==(Object other) =>
       other is ClaimsJwt &&
       other.role == role &&
-      other.householdId == householdId;
+      other.householdId == householdId &&
+      other.sujet == sujet;
 
   @override
-  int get hashCode => Object.hash(role, householdId);
+  int get hashCode => Object.hash(role, householdId, sujet);
 }

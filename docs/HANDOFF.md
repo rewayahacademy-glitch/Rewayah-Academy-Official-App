@@ -2698,3 +2698,129 @@ Project Settings → `web` → Advanced → Delete. Le correctif : placer (ou
   corrigé.
 - **`Env.configuree` reste durci depuis le 14 septembre**, non retouché ici.
 - Le projet Vercel orphelin `web` (ci-dessus).
+
+## 12. Lot `AGT-01` — l'accès des agents IA — 18 septembre 2026
+
+Demande de l'opérateur : *« créer un scope d'accès pour permettre aux agents IA
+d'accéder à l'app en temps réel, après que moi-même j'ai fourni le token et
+choisi le/les parcours ; pour l'instant tout en lecture seule. »* Quatre choix
+tranchés à l'ouverture, consignés dans **ADR-025** : canal = l'application dans
+un navigateur ; périmètre = le point de vue d'**une personne désignée** ;
+identités = **masquées par défaut** ; émission = un écran d'administration.
+
+### 12.1 Ce qui a été livré
+
+| Couche | Fichier |
+| :--- | :--- |
+| Décision | `docs/architecture/decisions.md`, **ADR-025** |
+| Base | `supabase/migrations/0014_acces_agent.sql` |
+| Preuve | `supabase/tests/scenarios_agt01.sql` (13 contrôles), inscrit dans `ci.yml` **avant** `ADM-04` |
+| Session | `supabase/functions/agent-session/index.ts` |
+| Client | `lib/core/agent/` (3 fichiers), `lib/core/session/source_session_agent.dart` |
+| Écrans | `ADM-07` `/admin/acces-agents`, `AGT-00` `/agent`, fiches au catalogue §6 |
+| Composant | `BandeauObservation`, déclaré aux **trois** endroits (document, liste du test, galerie) |
+| Tests | `test/agent/acces_agent_test.dart`, 18 contrôles |
+
+### 12.2 L'idée qui tient tout, et pourquoi elle est bon marché
+
+Le jeton est échangé contre une session signée dont **`sub` est la personne
+observée** et dont le claim `role` vaut **`agent_ro`**, un rôle Postgres sans
+aucun droit d'écriture. Conséquence : les 105 policies et les dix vues du dépôt,
+qui se bornent déjà par `auth.uid()`, `app_household_id()` et `app_role()`,
+s'appliquent **telles quelles**. Aucune règle de sécurité n'a été réécrite pour
+l'occasion — c'est ce qui évite d'en maintenir une deuxième, qui divergerait.
+
+### 12.3 Ce que la migration a mesuré, et qu'il ne faut pas réapprendre
+
+- **Les 105 policies sont toutes `to authenticated`.** Elles ne s'appliquent
+  donc pas à `agent_ro` : le défaut d'un agent est de **ne rien voir**. Une
+  table ajoutée plus tard lui sera invisible jusqu'à décision explicite. **Un
+  oubli fait échouer une lecture, jamais fuir une écriture.**
+- **L'écriture est barrée par deux couches indépendantes**, prouvé par test de
+  mutation : il faut accorder le privilège **et** écrire une policy nommant
+  `agent_ro` pour qu'une écriture passe. Ouvrir une seule des deux ne suffit
+  pas.
+- ⚠ **Les dix vues portent `security_barrier`, jamais `security_invoker`** :
+  elles appartiennent à `postgres` et **ignorent la RLS**. Leur seule borne est
+  le `where ... = auth.uid()` écrit dans leur corps. Les dix ont été auditées,
+  les dix sont bornées relativement à l'appelant — c'est ce qui rend le choix du
+  `sub` sûr, et ce qui aurait rendu tout autre choix dangereux.
+- ⚠ **Le vrai trou était invisible** : en PostgreSQL, `EXECUTE` est accordé à
+  `PUBLIC` **par défaut**. `agent_ro` aurait hérité du droit d'appeler toute
+  fonction dont personne n'a retiré ce défaut, `security definer` qui écrit
+  comprise. `0014` retire ce défaut en préservant l'existant, puis n'ouvre à
+  l'agent que l'intersection de deux critères **mécaniques** : fonction `stable`
+  ou `immutable` (le moteur y interdit toute écriture) **et** déjà appelable par
+  `authenticated`. Jamais une liste tenue à la main.
+- ⚠ **Rien n'écrit pendant une lecture.** PostgREST sert les `GET` dans une
+  transaction **READ ONLY** : un compteur d'usage incrémenté dans
+  `db_pre_request` aurait cassé *toutes* les lectures de l'application, pour
+  tout le monde. L'usage se compte à la remise du jeton, pas au coup par coup.
+
+### 12.4 La limite du canal choisi, écrite plutôt que tue
+
+Le masquage est **dur** là où il peut l'être : substitué dans les huit vues qui
+portent un prénom, et `profiles` ne rend qu'**une ligne** à un agent masquant.
+Mais avec le canal navigateur, **ce que l'écran de la personne observée affiche
+légitimement voyage dans la charge réseau**. Le plafond est net — un agent ne
+voit jamais plus que la personne qu'il observe — mais il voit tout ce qu'elle
+voit. Aller au-delà exigerait le canal écarté (serveur MCP ou couche de vues
+dédiée), où la donnée ne quitte pas la base.
+
+Trois tables ne sont ouvertes **à aucun agent** : `kyc_documents`, `devices`,
+`audit_logs`. La table des jetons non plus.
+
+### 12.5 Mesures réelles de la session
+
+```
+dart analyze --fatal-infos     0 issue
+flutter test                   645 passent, 11 echouent (voir 12.6)
+test/agent/acces_agent_test    18/18
+dart run tool/verifier_jetons  6 violations, TOUTES preexistantes
+SQL, chaine CI complete        10/10 fichiers, scenarios_adm04 compris
+```
+
+La chaîne SQL a été rejouée **dans l'ordre exact de `ci.yml`, sur une base
+neuve**, migrations `0001` à `0014` : `scenarios_adm04` passe, donc la chaîne de
+hachage du journal reste intacte après les écritures de `AGT-01`.
+
+### 12.6 Ce qui était déjà rouge sur `main`, et qui l'est resté
+
+Vérifié en remisant les modifications et en rejouant les fichiers sur `main` nu :
+**les mêmes échecs, aux mêmes noms.**
+
+- 7 échecs préexistants : `dossiers_admin_test` (1), `dossier_test` (3),
+  `inscription_test` (2), `salle_test` (1).
+- 4 échecs de `connexion_test.dart` **rendus visibles par ce lot** : le fichier
+  ne compilait pas (les clés obsolètes signalées en §11). Les clés ont été
+  alignées sur celles de l'écran (`envoyerLien`, `erreurEnvoi`) ; les quatre
+  tests qui restent rouges portent sur un **« mode démo »** que l'écran de
+  connexion actuel n'implémente pas. C'est une divergence de produit, pas un
+  défaut de ce lot : la trancher demande de décider si ce mode doit exister.
+- 6 violations de jetons dans `lib/features/_dev/playground/playground_racine.dart`
+  (tiret cadratin, couleur nue, icônes hors catalogue, `onTap` nu). Fichier de
+  développement, non compilé en production. Correctifs mécaniques, non faits ici
+  pour ne pas mêler deux sujets dans un même lot.
+
+### 12.7 ⚠ Ce qui reste à la main de l'opérateur, dans cet ordre
+
+**Rien de tout cela n'a été fait : la production n'a pas été touchée.**
+
+1. **Le secret JWT**, sans lequel `agent-session` refuse de signer :
+   `supabase secrets set SUPABASE_JWT_SECRET=<JWT Secret du projet>`
+   (tableau de bord → Settings → API). **Aucun repli n'est prévu** : un repli
+   sur une valeur publique ne dégrade pas un sceau, il le publie.
+2. **La migration `0014`.** ⚠ C'est la plus sensible du lot : sa section 8
+   retire `EXECUTE` à `PUBLIC` sur les fonctions de `public` et le rend à
+   `anon`, `authenticated`, `service_role`. Le périmètre est préservé, mais
+   c'est une modification de droits qui touche **tous** les utilisateurs.
+   Elle s'applique et se prouve sur une base neuve ; la rejouer sur la
+   production demande une décision explicite.
+3. **La fonction Edge** : `supabase functions deploy agent-session`.
+4. **Le déploiement web**, et jamais `flutter build web --release` nu :
+   `--dart-define-from-file=dart_define.json`, après avoir **lu** ce fichier
+   (celui du dépôt porte encore `cle-factice-playground-ne-jamais-utilisee`).
+
+**Comment défaire, si le doute s'installe** : `revoke agent_ro from
+authenticator` ferme la porte sans rien toucher d'autre. Aucune session d'agent
+ne peut plus s'ouvrir, et l'application humaine ne s'en aperçoit pas.

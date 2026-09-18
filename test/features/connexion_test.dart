@@ -85,7 +85,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
       );
       bouton.onPress!();
       await tester.pumpAndSettle();
@@ -230,7 +230,7 @@ void main() {
       expect(carte.dominante, isTrue);
 
       final ActionPrincipale connexion = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
       );
       expect(connexion.niveau, NiveauAction.principale);
       expect(find.text(t.connexion.envoyerLien), findsNothing);
@@ -261,7 +261,7 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
       );
       expect(bouton.onPress, isNotNull);
       bouton.onPress!();
@@ -298,13 +298,13 @@ void main() {
       );
       await tester.pump();
       final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, t.connexion.seConnecter),
+        find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
       );
       expect(bouton.onPress, isNotNull);
       bouton.onPress!();
       await tester.pumpAndSettle();
 
-      expect(find.text(t.connexion.erreurConnexion), findsOneWidget);
+      expect(find.text(t.connexion.erreurEnvoi), findsOneWidget);
       expect(
         find.byKey(const ValueKey<String>('connexion-courriel')),
         findsOneWidget,

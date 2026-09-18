@@ -71,6 +71,7 @@ class SessionState {
     this.accountStatus,
     this.interfaceMode = InterfaceMode.standard,
     this.lectureProfil = LectureProfil.enAttente,
+    this.observation,
   });
 
   /// L'etat initial, avant toute resolution.
@@ -102,8 +103,20 @@ class SessionState {
   /// Ce que la lecture du profil a appris.
   final LectureProfil lectureProfil;
 
+  /// Presente quand cette session est une **observation** par un agent IA
+  /// (ADR-025), absente pour toute session humaine.
+  ///
+  /// Elle ne borne rien : la lecture seule est imposee par les privileges du
+  /// role Postgres `agent_ro`, et l'agent recevrait le meme refus en rejouant
+  /// la requete a la main. Ce champ ne sert qu'a **le dire** a l'ecran -- un
+  /// bouton qui echouera est une promesse non tenue, pas une securite.
+  final Observation? observation;
+
   /// Vrai quand une session existe.
   bool get connecte => profileId != null;
+
+  /// La capacite d'ecrire. **Un widget lit une capacite, jamais un role.**
+  bool get peutEcrire => observation == null;
 
   /// La porte a appliquer dans le routeur.
   PorteAcces get porte {
@@ -156,6 +169,7 @@ class SessionState {
     AccountStatus? accountStatus,
     InterfaceMode? interfaceMode,
     LectureProfil? lectureProfil,
+    Observation? observation,
   }) {
     return SessionState(
       resolue: resolue ?? this.resolue,
@@ -165,6 +179,7 @@ class SessionState {
       accountStatus: accountStatus ?? this.accountStatus,
       interfaceMode: interfaceMode ?? this.interfaceMode,
       lectureProfil: lectureProfil ?? this.lectureProfil,
+      observation: observation ?? this.observation,
     );
   }
 
@@ -177,7 +192,8 @@ class SessionState {
       other.profileId == profileId &&
       other.accountStatus == accountStatus &&
       other.interfaceMode == interfaceMode &&
-      other.lectureProfil == lectureProfil;
+      other.lectureProfil == lectureProfil &&
+      other.observation == observation;
 
   @override
   int get hashCode => Object.hash(
@@ -188,5 +204,35 @@ class SessionState {
     accountStatus,
     interfaceMode,
     lectureProfil,
+    observation,
   );
+}
+
+/// Ce qu'une session d'observation porte, et que l'ecran doit dire.
+///
+/// Volontairement minuscule : une observation n'a pas d'etat propre, elle a un
+/// **contexte a annoncer**. Tout ce qui borne reellement l'agent vit en base
+/// (ADR-025, migration `0014`).
+@immutable
+class Observation {
+  /// Cree un contexte d'observation.
+  const Observation({required this.identiteMasquee, this.jetonExpireLe});
+
+  /// Vrai quand les prenoms sont remplaces par l'identifiant immuable. La
+  /// substitution est faite **par les vues**, pas par l'affichage : ce booleen
+  /// ne la produit pas, il l'explique.
+  final bool identiteMasquee;
+
+  /// Quand le jeton d'observation expire, pour que le bandeau le dise plutot
+  /// que de laisser l'agent decouvrir un ecran vide.
+  final DateTime? jetonExpireLe;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Observation &&
+      other.identiteMasquee == identiteMasquee &&
+      other.jetonExpireLe == jetonExpireLe;
+
+  @override
+  int get hashCode => Object.hash(identiteMasquee, jetonExpireLe);
 }

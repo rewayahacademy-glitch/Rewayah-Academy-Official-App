@@ -8,6 +8,7 @@ import 'core/router/app_router.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/bandeau_observation.dart';
 
 /// Racine de l'application.
 ///
@@ -47,7 +48,24 @@ class RewayahApp extends ConsumerWidget {
       theme: AppTheme.pour(session.interfaceMode, Brightness.light),
       darkTheme: AppTheme.pour(session.interfaceMode, Brightness.dark),
       themeMode: themeMode,
-      builder: builder,
+      // Le bandeau d'observation coiffe TOUS les ecrans, et il est pose ici
+      // plutot que dans `PageShell` pour deux raisons : il doit survivre aux
+      // ecrans qui n'emploient pas la coquille (la salle est immersive), et il
+      // ne doit exister qu'une fois a l'ecran, quel que soit l'empilement.
+      // Le passe-vole du Playground reste compose, jamais remplace.
+      builder: (BuildContext context, Widget? child) {
+        final Widget? rendu = builder == null ? child : builder!(context, child);
+        final Observation? observation = session.observation;
+        if (observation == null) {
+          return rendu ?? const SizedBox.shrink();
+        }
+        return Column(
+          children: <Widget>[
+            BandeauObservation(observation: observation),
+            Expanded(child: rendu ?? const SizedBox.shrink()),
+          ],
+        );
+      },
       routerConfig: routeur,
       locale: TranslationProvider.of(context).flutterLocale,
       supportedLocales: AppLocaleUtils.supportedLocales,

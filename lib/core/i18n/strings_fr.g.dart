@@ -61,6 +61,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$eleveConnexion$fr eleveConnexion = Traductions$eleveConnexion$fr.internal(_root);
 	late final Traductions$dossiers$fr dossiers = Traductions$dossiers$fr.internal(_root);
 	late final Traductions$admin$fr admin = Traductions$admin$fr.internal(_root);
+	late final Traductions$agent$fr agent = Traductions$agent$fr.internal(_root);
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
@@ -1080,6 +1081,58 @@ class Traductions$admin$fr {
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
 	late final Traductions$admin$attribution$fr attribution = Traductions$admin$attribution$fr.internal(_root);
 	late final Traductions$admin$journal$fr journal = Traductions$admin$journal$fr.internal(_root);
+	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
+}
+
+// Path: agent
+class Traductions$agent$fr {
+	Traductions$agent$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Entrée d'un agent'
+	String get titre => 'Entrée d\'un agent';
+
+	/// fr: 'Cette page ouvre l'application en lecture seule, avec le jeton remis par l'académie.'
+	String get intro => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.';
+
+	/// fr: 'Jeton d'observation'
+	String get jeton => 'Jeton d\'observation';
+
+	/// fr: 'rag_...'
+	String get jetonExemple => 'rag_...';
+
+	/// fr: 'Ouvrir l'application'
+	String get entrer => 'Ouvrir l\'application';
+
+	/// fr: 'Ouverture'
+	String get ouverture => 'Ouverture';
+
+	/// fr: 'Jeton refusé'
+	String get refus => 'Jeton refusé';
+
+	/// fr: 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l'académie.'
+	String get refusDetail => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.';
+
+	/// fr: 'Service indisponible'
+	String get indisponible => 'Service indisponible';
+
+	/// fr: 'L'ouverture de session n'a pas répondu. Réessayez dans un instant.'
+	String get indisponibleDetail => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Observation, lecture seule'
+	String get bandeau => 'Observation, lecture seule';
+
+	/// fr: 'Prénoms masqués'
+	String get bandeauMasque => 'Prénoms masqués';
+
+	/// fr: 'jusqu'à {heure}'
+	String bandeauExpire({required Object heure}) => 'jusqu\'à ${heure}';
 }
 
 // Path: vide
@@ -2003,6 +2056,189 @@ class Traductions$admin$journal$fr {
 
 	/// fr: 'Vous êtes remonté jusqu'à la première entrée du journal.'
 	String get fin => 'Vous êtes remonté jusqu\'à la première entrée du journal.';
+}
+
+// Path: admin.agents
+class Traductions$admin$agents$fr {
+	Traductions$admin$agents$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accès des agents IA'
+	String get titre => 'Accès des agents IA';
+
+	/// fr: 'Un jeton laisse un agent IA ouvrir l'application et lire ce qu'une personne y lit. Il ne peut rien écrire, rien annuler, rien modifier : la base le lui refuse, pas l'interface.'
+	String get intro => 'Un jeton laisse un agent IA ouvrir l\'application et lire ce qu\'une personne y lit. Il ne peut rien écrire, rien annuler, rien modifier : la base le lui refuse, pas l\'interface.';
+
+	/// fr: 'Émettre un jeton'
+	String get emettre => 'Émettre un jeton';
+
+	/// fr: 'À quoi sert ce jeton'
+	String get libelle => 'À quoi sert ce jeton';
+
+	/// fr: 'Obligatoire. Un jeton sans nom est un jeton que personne n'ose révoquer.'
+	String get libelleAide => 'Obligatoire. Un jeton sans nom est un jeton que personne n\'ose révoquer.';
+
+	/// fr: 'Relecture du suivi de Maryam'
+	String get libelleExemple => 'Relecture du suivi de Maryam';
+
+	/// fr: 'Qui l'agent observe'
+	String get qui => 'Qui l\'agent observe';
+
+	/// fr: 'L'agent verra exactement l'écran de cette personne, et son parcours sera le sien.'
+	String get quiAide => 'L\'agent verra exactement l\'écran de cette personne, et son parcours sera le sien.';
+
+	/// fr: 'Choisir une personne'
+	String get quiVide => 'Choisir une personne';
+
+	/// fr: 'Chercher un nom ou un identifiant'
+	String get chercher => 'Chercher un nom ou un identifiant';
+
+	/// fr: 'Pendant combien de temps'
+	String get duree => 'Pendant combien de temps';
+
+	/// fr: '{nombre} h'
+	String dureeHeure({required Object nombre}) => '${nombre} h';
+
+	/// fr: 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.'
+	String get dureePlafond => 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.';
+
+	/// fr: 'Les prénoms'
+	String get identite => 'Les prénoms';
+
+	/// fr: 'Masqués'
+	String get identiteMasquee => 'Masqués';
+
+	/// fr: 'L'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.'
+	String get identiteMasqueeDetail => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.';
+
+	/// fr: 'Visibles'
+	String get identiteVisible => 'Visibles';
+
+	/// fr: 'L'agent lit les prénoms, comme la personne observée les voit.'
+	String get identiteVisibleDetail => 'L\'agent lit les prénoms, comme la personne observée les voit.';
+
+	/// fr: 'Pourra'
+	String get pourra => 'Pourra';
+
+	/// fr: 'Ouvrir l'application, naviguer, et lire tout ce que cette personne lit.'
+	String get pourraDetail => 'Ouvrir l\'application, naviguer, et lire tout ce que cette personne lit.';
+
+	/// fr: 'Ne pourra pas'
+	String get nePourraPas => 'Ne pourra pas';
+
+	/// fr: 'Écrire quoi que ce soit, voir une pièce d'identité, un appareil, le journal d'audit, ni sortir du périmètre de cette personne.'
+	String get nePourraPasDetail => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.';
+
+	/// fr: 'Émission'
+	String get emissionEnCours => 'Émission';
+
+	/// fr: 'Jeton émis'
+	String get emis => 'Jeton émis';
+
+	/// fr: 'Remettez ce lien à l'agent. Il n'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.'
+	String get emisDetail => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.';
+
+	/// fr: 'Copier le lien'
+	String get copier => 'Copier le lien';
+
+	/// fr: 'Lien copié'
+	String get copie => 'Lien copié';
+
+	/// fr: 'J'ai copié le lien'
+	String get termine => 'J\'ai copié le lien';
+
+	/// fr: 'Le jeton n'a pas pu être émis. Réessayez dans un instant.'
+	String get erreurEmission => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.';
+
+	/// fr: 'Jeton'
+	String get colonneLibelle => 'Jeton';
+
+	/// fr: 'Observe'
+	String get colonneQui => 'Observe';
+
+	/// fr: 'Parcours'
+	String get colonneParcours => 'Parcours';
+
+	/// fr: 'Prénoms'
+	String get colonneIdentite => 'Prénoms';
+
+	/// fr: 'Jusqu'à'
+	String get colonneExpire => 'Jusqu\'à';
+
+	/// fr: 'Ouvertures'
+	String get colonneUsage => 'Ouvertures';
+
+	/// fr: 'État'
+	String get colonneEtat => 'État';
+
+	/// fr: 'Élève'
+	String get parcoursEleve => 'Élève';
+
+	/// fr: 'Tuteur'
+	String get parcoursTuteur => 'Tuteur';
+
+	/// fr: 'Enseignant'
+	String get parcoursEnseignant => 'Enseignant';
+
+	/// fr: 'Contrôle qualité'
+	String get parcoursControleur => 'Contrôle qualité';
+
+	/// fr: 'Administration'
+	String get parcoursAdmin => 'Administration';
+
+	/// fr: 'Comptable'
+	String get parcoursComptable => 'Comptable';
+
+	/// fr: 'Parcours inconnu'
+	String get parcoursInconnu => 'Parcours inconnu';
+
+	/// fr: 'Actif'
+	String get etatActif => 'Actif';
+
+	/// fr: 'Révoqué'
+	String get etatRevoque => 'Révoqué';
+
+	/// fr: 'Expiré'
+	String get etatExpire => 'Expiré';
+
+	/// fr: 'Jamais utilisé'
+	String get jamaisServi => 'Jamais utilisé';
+
+	/// fr: '{nombre} fois, la dernière {quand}'
+	String usage({required Object nombre, required Object quand}) => '${nombre} fois, la dernière ${quand}';
+
+	/// fr: 'Révoquer'
+	String get revoquer => 'Révoquer';
+
+	/// fr: 'Révoquer ce jeton ?'
+	String get revoquerTitre => 'Révoquer ce jeton ?';
+
+	/// fr: 'L'agent perdra l'accès à sa requête suivante. C'est définitif : un jeton révoqué ne se réactive pas.'
+	String get revoquerDetail => 'L\'agent perdra l\'accès à sa requête suivante. C\'est définitif : un jeton révoqué ne se réactive pas.';
+
+	/// fr: 'Révoquer'
+	String get revoquerConfirmer => 'Révoquer';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Jeton révoqué'
+	String get revoque => 'Jeton révoqué';
+
+	/// fr: 'La révocation n'a pas abouti. Réessayez.'
+	String get erreurRevocation => 'La révocation n\'a pas abouti. Réessayez.';
+
+	/// fr: 'Aucun jeton d'observation'
+	String get vide => 'Aucun jeton d\'observation';
+
+	/// fr: 'Aucun agent IA n'a accès à l'application pour l'instant.'
+	String get videDetail => 'Aucun agent IA n\'a accès à l\'application pour l\'instant.';
+
+	/// fr: 'La liste des jetons n'a pas pu être lue.'
+	String get erreur => 'La liste des jetons n\'a pas pu être lue.';
 }
 
 // Path: nav.eleve
@@ -3316,10 +3552,84 @@ extension on Traductions {
 			'admin.journal.erreurSuite' => 'Les entrées plus anciennes n\'ont pas pu être lues.',
 			'admin.journal.chargerSuite' => 'Charger les entrées plus anciennes',
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
+			'admin.agents.titre' => 'Accès des agents IA',
+			'admin.agents.intro' => 'Un jeton laisse un agent IA ouvrir l\'application et lire ce qu\'une personne y lit. Il ne peut rien écrire, rien annuler, rien modifier : la base le lui refuse, pas l\'interface.',
+			'admin.agents.emettre' => 'Émettre un jeton',
+			'admin.agents.libelle' => 'À quoi sert ce jeton',
+			'admin.agents.libelleAide' => 'Obligatoire. Un jeton sans nom est un jeton que personne n\'ose révoquer.',
+			'admin.agents.libelleExemple' => 'Relecture du suivi de Maryam',
+			'admin.agents.qui' => 'Qui l\'agent observe',
+			'admin.agents.quiAide' => 'L\'agent verra exactement l\'écran de cette personne, et son parcours sera le sien.',
+			'admin.agents.quiVide' => 'Choisir une personne',
+			'admin.agents.chercher' => 'Chercher un nom ou un identifiant',
+			'admin.agents.duree' => 'Pendant combien de temps',
+			'admin.agents.dureeHeure' => ({required Object nombre}) => '${nombre} h',
+			'admin.agents.dureePlafond' => 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.',
+			'admin.agents.identite' => 'Les prénoms',
+			'admin.agents.identiteMasquee' => 'Masqués',
+			'admin.agents.identiteMasqueeDetail' => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.',
+			'admin.agents.identiteVisible' => 'Visibles',
+			'admin.agents.identiteVisibleDetail' => 'L\'agent lit les prénoms, comme la personne observée les voit.',
+			'admin.agents.pourra' => 'Pourra',
+			'admin.agents.pourraDetail' => 'Ouvrir l\'application, naviguer, et lire tout ce que cette personne lit.',
+			'admin.agents.nePourraPas' => 'Ne pourra pas',
+			'admin.agents.nePourraPasDetail' => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.',
+			'admin.agents.emissionEnCours' => 'Émission',
+			'admin.agents.emis' => 'Jeton émis',
+			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
+			'admin.agents.copier' => 'Copier le lien',
+			'admin.agents.copie' => 'Lien copié',
+			'admin.agents.termine' => 'J\'ai copié le lien',
+			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
+			'admin.agents.colonneLibelle' => 'Jeton',
+			'admin.agents.colonneQui' => 'Observe',
+			'admin.agents.colonneParcours' => 'Parcours',
+			'admin.agents.colonneIdentite' => 'Prénoms',
+			'admin.agents.colonneExpire' => 'Jusqu\'à',
+			'admin.agents.colonneUsage' => 'Ouvertures',
+			'admin.agents.colonneEtat' => 'État',
+			'admin.agents.parcoursEleve' => 'Élève',
+			'admin.agents.parcoursTuteur' => 'Tuteur',
+			'admin.agents.parcoursEnseignant' => 'Enseignant',
+			'admin.agents.parcoursControleur' => 'Contrôle qualité',
+			'admin.agents.parcoursAdmin' => 'Administration',
+			'admin.agents.parcoursComptable' => 'Comptable',
+			'admin.agents.parcoursInconnu' => 'Parcours inconnu',
+			'admin.agents.etatActif' => 'Actif',
+			'admin.agents.etatRevoque' => 'Révoqué',
+			'admin.agents.etatExpire' => 'Expiré',
+			'admin.agents.jamaisServi' => 'Jamais utilisé',
+			'admin.agents.usage' => ({required Object nombre, required Object quand}) => '${nombre} fois, la dernière ${quand}',
+			'admin.agents.revoquer' => 'Révoquer',
+			'admin.agents.revoquerTitre' => 'Révoquer ce jeton ?',
+			'admin.agents.revoquerDetail' => 'L\'agent perdra l\'accès à sa requête suivante. C\'est définitif : un jeton révoqué ne se réactive pas.',
+			'admin.agents.revoquerConfirmer' => 'Révoquer',
+			'admin.agents.annuler' => 'Annuler',
+			'admin.agents.revoque' => 'Jeton révoqué',
+			'admin.agents.erreurRevocation' => 'La révocation n\'a pas abouti. Réessayez.',
+			'admin.agents.vide' => 'Aucun jeton d\'observation',
+			'admin.agents.videDetail' => 'Aucun agent IA n\'a accès à l\'application pour l\'instant.',
+			'admin.agents.erreur' => 'La liste des jetons n\'a pas pu être lue.',
+			'agent.titre' => 'Entrée d\'un agent',
+			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
+			'agent.jeton' => 'Jeton d\'observation',
+			'agent.jetonExemple' => 'rag_...',
+			'agent.entrer' => 'Ouvrir l\'application',
+			'agent.ouverture' => 'Ouverture',
+			'agent.refus' => 'Jeton refusé',
+			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
+			'agent.indisponible' => 'Service indisponible',
+			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
+			'agent.reessayer' => 'Réessayer',
+			'agent.bandeau' => 'Observation, lecture seule',
+			'agent.bandeauMasque' => 'Prénoms masqués',
+			'agent.bandeauExpire' => ({required Object heure}) => 'jusqu\'à ${heure}',
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',
 			'vide.aucunRapport' => 'Aucun cahier de transmission pour l\'instant',
+			_ => null,
+		} ?? switch (path) {
 			'vide.aucunAppareil' => 'Aucun appareil appairé',
 			'pin.titre' => 'Entre ton code',
 			'pin.erreur' => 'Ce code ne correspond pas',
@@ -3392,8 +3702,6 @@ extension on Traductions {
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
 			'compte.arabe' => 'Arabe',
-			_ => null,
-		} ?? switch (path) {
 			'compte.arabeDetail' => 'Bientôt disponible',
 			'compte.fuseauDetail' => 'Détecté automatiquement',
 			'compte.notifications' => 'Notifications',

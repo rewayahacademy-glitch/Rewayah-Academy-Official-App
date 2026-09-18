@@ -78,6 +78,13 @@ const List<String> composantsDuCatalogue = <String>[
   // pour les technologies d'assistance, parce qu'un numero de verset est un
   // repere de mise en page et non du texte a epeler au milieu d'une phrase.
   'RosaceVerset',
+  // Section 2 : le composant que le lot AGT-01 produit (ADR-025). Il ne protege
+  // rien -- la lecture seule vient des privileges du role Postgres `agent_ro`,
+  // et un agent recevrait le meme refus en rejouant la requete a la main.
+  // C'est precisement pour cela qu'il est au catalogue : un composant dont on
+  // pourrait croire qu'il applique une regle est un composant qu'il faut
+  // relire.
+  'BandeauObservation',
 ];
 
 /// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.

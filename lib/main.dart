@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// Riverpod 3 a sorti `Override` de l'export principal.
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/agent/amorce_agent.dart';
+import 'core/agent/session_agent.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/observabilite/supervision.dart';
+import 'core/session/session_controleur.dart';
+import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
 
 /// Point d'entree unique de l'application.
@@ -35,6 +41,16 @@ Future<void> main() async {
     return;
   }
 
+  // L'observation par un agent IA (ADR-025) se decide ICI et nulle part
+  // ailleurs : l'identite sous laquelle le client parle a la base est une
+  // decision d'amorcage. Un ecran ne peut pas la prendre apres coup, puisque le
+  // client est deja construit quand le premier ecran s'affiche.
+  final String? jetonAgent = jetonAgentDeLUrl();
+  if (jetonAgent != null) {
+    await _demarrerObservation(jetonAgent);
+    return;
+  }
+
   await Supabase.initialize(
     url: Env.supabaseUrl,
     publishableKey: Env.supabaseAnonKey,
@@ -50,4 +66,68 @@ Future<void> main() async {
   }
 
   runApp(ProviderScope(child: TranslationProvider(child: const RewayahApp())));
+}
+
+/// Demarre l'application en session d'observation.
+///
+/// L'echange du jeton se fait AVANT `Supabase.initialize`, pour deux raisons.
+/// La premiere : le client s'initialise avec le passe-vole `accessToken`, donc
+/// il faut deja savoir que l'observation est possible. La seconde, plus
+/// importante : un jeton refuse doit le rester **avant** que le moindre ecran
+/// metier existe. Ouvrir l'application puis echouer a la premiere requete
+/// afficherait une coquille vide au lieu d'un refus.
+///
+/// Quand la remise echoue, on demarre l'application **normalement**, sur
+/// `AGT-00`, qui dit ce qui s'est passe. Pas d'ecran d'erreur separe : un agent
+/// qui a un jeton valide sous la main doit pouvoir s'en servir tout de suite.
+Future<void> _demarrerObservation(String jeton) async {
+  final PorteurSessionAgent porteur = PorteurSessionAgent(
+    jeton: jeton,
+    url: Env.supabaseUrl,
+    cleAnon: Env.supabaseAnonKey,
+  );
+
+  EchecAgent? echec;
+  try {
+    await porteur.ouvrir();
+  } on ErreurAgent catch (e) {
+    echec = e.cause;
+  } on Object {
+    echec = EchecAgent.serviceIndisponible;
+  }
+
+  if (echec != null) {
+    await Supabase.initialize(
+      url: Env.supabaseUrl,
+      publishableKey: Env.supabaseAnonKey,
+    );
+    runApp(
+      ProviderScope(
+        overrides: <Override>[echecAgentProvider.overrideWithValue(echec)],
+        child: TranslationProvider(child: const RewayahApp()),
+      ),
+    );
+    return;
+  }
+
+  // `accessToken` remplace l'authentification gotrue : `client.auth` devient
+  // inutilisable, et c'est exactement ce qu'on veut. Une session d'observation
+  // ne se connecte pas, ne se deconnecte pas, et ne porte aucun jeton de
+  // rafraichissement -- le porteur repasse par la base a chaque renouvellement.
+  await Supabase.initialize(
+    url: Env.supabaseUrl,
+    publishableKey: Env.supabaseAnonKey,
+    accessToken: porteur.jetonFrais,
+  );
+
+  runApp(
+    ProviderScope(
+      overrides: <Override>[
+        sourceSessionProvider.overrideWithValue(
+          SourceSessionAgent(porteur, Supabase.instance.client),
+        ),
+      ],
+      child: TranslationProvider(child: const RewayahApp()),
+    ),
+  );
 }

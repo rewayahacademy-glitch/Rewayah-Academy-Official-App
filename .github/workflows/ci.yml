@@ -119,6 +119,19 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_ctr01.sql
 
+      # Acces des agents IA : ce que le jeton d'observation ouvre, ce qu'il
+      # refuse, et de qui. `A6` est le controle du lot -- l'agent ne peut RIEN
+      # ecrire, et c'est le moteur qui le refuse, pas l'interface. `A8` mesure
+      # que le masquage des prenoms est DUR (substitue dans les vues) et non un
+      # rendu, `A11` que la revocation mord a la requete suivante, et `A13` que
+      # les huit vues reecrites par 0014 n'ont rien coute a une session humaine.
+      #
+      # Comme `CTR-01`, il doit rester AVANT `ADM-04` : l'emission et la remise
+      # d'un jeton ecrivent dans `audit_logs`, et `J4` relit la chaine entiere.
+      - name: Scenarios d'acceptation SQL de AGT-01 (acces agent)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_agt01.sql
+
       # Journal d'audit : lecture reservee a l'administration, pagination par
       # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
       # verifiee -- y compris en la falsifiant volontairement (J5, J6).

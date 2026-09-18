@@ -10,6 +10,7 @@ import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -18,6 +19,7 @@ import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
 import '../../../core/widgets/avatar_tile.dart';
+import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
@@ -1026,6 +1028,39 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'hors ligne : la forme',
         (BuildContext _) => const _BandeauHorsLigneFige(),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BandeauObservation',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // Les deux portees que `ADM-07` sait emettre. Le masquage est la valeur
+      // par defaut, et c'est celle qu'il faut voir en premier.
+      EtatGalerie(
+        'prenoms masques',
+        (BuildContext _) => BandeauObservation(
+          observation: Observation(
+            identiteMasquee: true,
+            jetonExpireLe: DateTime(2026, 9, 18, 19, 30),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'nominatif',
+        (BuildContext _) => BandeauObservation(
+          observation: Observation(
+            identiteMasquee: false,
+            jetonExpireLe: DateTime(2026, 9, 18, 19, 30),
+          ),
+        ),
+      ),
+      // Un jeton dont on ignore le terme : le bandeau se tait plutot que
+      // d'inventer une heure.
+      EtatGalerie(
+        'sans terme connu',
+        (BuildContext _) =>
+            const BandeauObservation(observation: Observation(identiteMasquee: true)),
       ),
     ],
   ),

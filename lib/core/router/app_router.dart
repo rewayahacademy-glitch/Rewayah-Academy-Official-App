@@ -6,11 +6,13 @@ import '../../features/_dev/galerie/compte_galerie.dart';
 import '../../features/_dev/galerie/galerie_page.dart';
 import '../../features/accueil_eleve/accueil_eleve_page.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
+import '../../features/admin_acces_agents/acces_agents_page.dart';
 import '../../features/admin_attribution/attribution_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
+import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
@@ -88,6 +90,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.inscription,
         builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
+      ),
+      // `AGT-00` : l'entree d'un agent IA (ADR-025). Publique, puisqu'un
+      // porteur de jeton n'a par definition aucune session ; elle n'ouvre rien
+      // par elle-meme, l'observation se decide dans `main()`.
+      GoRoute(
+        path: Routes.agentEntree,
+        builder: (BuildContext _, GoRouterState _) => const AgentEntreePage(),
       ),
       // Le portail d'attente et ses trois pages. Le sous-arbre entier est
       // ouvert a un compte en attente, la racine seule ne suffirait pas.
@@ -324,6 +333,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.adminDemandes,
         builder: (BuildContext _, GoRouterState _) => const DemandesPage(),
+      ),
+
+      // `ADM-07` : l'acces des agents IA (ADR-025). Hors de la barre, pour la
+      // meme raison que `ADM-06` : une cinquieme entree ferait une barre-menu,
+      // et emettre un jeton d'observation n'est pas une destination
+      // quotidienne.
+      GoRoute(
+        path: Routes.adminAccesAgents,
+        builder: (BuildContext _, GoRouterState _) => const AccesAgentsPage(),
       ),
 
       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
