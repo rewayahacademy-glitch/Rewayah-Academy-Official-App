@@ -2990,3 +2990,157 @@ Relevé en passant, et il éclaire la raison d'être du lot : **six profils**.
 Aucune séance, aucune affectation n'a été comptée ici. C'est précisément ce que
 les jetons d'observation doivent permettre de constater écran par écran, plutôt
 que de le déduire d'un tableau.
+
+---
+
+## 13. 🔴 AGT-01 EST BLOQUÉ — LA TÂCHE DE LA PROCHAINE SESSION
+
+> **À lire en premier.** HEAD = `583494b`. L'opérateur a dit, mot pour mot :
+> **« ça marche pas »** et **« je ne peux rien créer jusqu'à présent »**.
+> Il n'a pas réussi à émettre un seul jeton. `public.jetons_agent` contenait
+> **0 ligne**. **Le livrable de la prochaine session est qu'il y arrive, lui.**
+
+### 13.1 Ce qui EST fait et vérifié — ne pas le refaire
+
+| Élément | État | Preuve |
+| :--- | :--- | :--- |
+| Migration `0014` | appliquée | invariants `I1`–`I5` passés |
+| Rôle `agent_ro` | en place | 75 policies ouvertes |
+| Fonction `agent-session` | **v4, `ACTIVE`, `verify_jwt: true`** | déployée |
+| Sceau `ISSUPABASE_JWT_SECRET` | **posé** | `GET` → `{"configure":true}` |
+| Refus d'un faux jeton | correct | `POST` → `401 jeton refuse` |
+| Écran `ADM-07` en ligne | oui | bundle public contient `Ouvrir un acc…` |
+| Entrée de navigation | **ajoutée** (`e1b3008`) | Centre de commande → *Outils* |
+
+⚠ Le sceau ne s'appelle **pas** `SUPABASE_JWT_SECRET` mais
+**`ISSUPABASE_JWT_SECRET`** : la plateforme refuse ce préfixe. Voir §12.9.
+
+### 13.2 Le symptôme n'est PAS qualifié — le trancher AVANT de coder
+
+« Ça marche pas » recouvre trois pannes distinctes. **Ne rien modifier avant
+d'avoir mesuré laquelle.**
+
+1. **L'opérateur n'a jamais vu la nouvelle version.** L'app est une PWA, le
+   service worker ressert l'ancien bundle. L'entrée de navigation a été déployée
+   en toute fin de session et rien ne prouve qu'il ait rechargé de force
+   (`Ctrl+Shift+R`). **Hypothèse la plus probable, à éliminer en premier.**
+2. **L'écran s'ouvre mais ne lit pas** : `jetons_agent_actifs()` refusée, ou la
+   liste des personnes observables reste vide.
+3. **L'écran s'ouvre mais l'émission échoue** : `creer_jeton_agent()` lève
+   `42501 emission reservee a l administration`. Elle exige
+   `app_role() = 'admin'` **ET** `app_account_valid()` — vérifier **les deux**,
+   la seconde est facile à oublier.
+
+**La requête qui tranche**, puisque les trois fonctions du lot journalisent :
+
+```sql
+select action, created_at, meta
+from public.audit_logs
+where action like 'agent_%'
+order by created_at desc limit 20;
+-- agent_token_issued present -> l'emission a REUSSI, le blocage est en aval
+-- rien                       -> l'emission n'a jamais ete atteinte (cas 1 ou 2)
+```
+
+Puis `select count(*) from public.jetons_agent;`.
+
+**Demander à l'opérateur ce qu'il voit exactement** — écran blanc, message
+d'erreur, bouton sans effet, ou section *Outils* absente — coûte une phrase et
+élimine deux hypothèses sur trois.
+
+### 13.3 Émettre le premier jeton
+
+La voie normale et la seule qui prouve quelque chose : **l'opérateur ouvre
+`/admin/acces-agents` et émet.** C'est cela qu'il faut faire marcher ; un jeton
+fabriqué autrement démarre l'inventaire mais laisse `ADM-07` cassé, donc ne
+clôt pas le lot.
+
+La fonction officielle, à préférer à toute écriture directe — elle applique le
+contrôle d'administration **et** écrit la ligne de journal :
+
+```sql
+select * from public.creer_jeton_agent(
+  p_libelle          => 'inventaire ecran par ecran',
+  p_profil_observe   => '<un id du §13.4>',
+  p_duree_heures     => 8,      -- borne : 1 a 24
+  p_identite_masquee => true
+);
+-- rend : jeton (le secret, affiche UNE fois), jeton_id, expire_le
+```
+
+⚠ Appelée hors d'une session d'administration, elle refuse — c'est voulu.
+**Si un contournement par la base devient nécessaire pour débloquer
+l'inventaire, en parler à l'opérateur d'abord** : il a lui-même désigné l'accès
+`postgres` du MCP comme « la pire vulnérabilité », tolérée provisoirement. Ne
+pas l'employer en silence, et ne pas perdre la ligne de journal.
+
+**Vérifier ensuite la chaîne complète :**
+
+```
+POST https://gggmtelinlpseweouyav.supabase.co/functions/v1/agent-session
+     apikey: <cle anon>   Authorization: Bearer <cle anon>
+     corps : {"jeton":"<le secret>"}
+-> access_token, parcours, identite_masquee, jeton_expire_le
+```
+
+Puis ouvrir `https://rewayah-academy.vercel.app/agent?jeton=<le secret>`.
+
+⚠ Un jeton vit de 1 à 24 h (8 par défaut), la session signée **15 minutes**,
+renouvelée en repassant par la fonction. Révocation immédiate :
+`select public.revoquer_jeton_agent('<jeton_id>');`
+
+### 13.4 Les six profils de production, pour choisir qui observer
+
+| Parcours | `profiles.id` | État |
+| :--- | :--- | :--- |
+| **Administration** | `06a05adc-e580-4909-a688-17b5071a2def` | `active` |
+| **Tuteur** | `a024035f-7eea-4d0a-b329-dd24a51c26e2` | `active` |
+| **Élève** | `c7bac8a8-49ce-4115-b1e5-4a66c7b19b6e` | `active` |
+| Enseignant | `ffad1edb-bc6f-4087-b95e-f247b980aefc` | ⚠ `pending_kyc` |
+| Enseignant | `ae6f4cbe-409d-4fe5-b507-8c94649e9b60` | ⚠ `pending_kyc` |
+| Enseignant | `8fda19ad-db75-45cb-bfe1-0ba31922b323` | ⚠ `pending_kyc` |
+
+⚠ **Les trois enseignants seront refusés par l'émission** : elle n'accepte que
+`account_status in ('active','provisional_active')`. Inventorier le parcours
+enseignant suppose donc de valider un dossier d'abord — ou de consigner ce
+blocage, qui est en soi un résultat d'inventaire.
+
+Ordre conseillé : **administration**, puis tuteur, puis élève.
+
+### 13.5 Deux affirmations de la session à corriger
+
+1. 🔴 **« L'émission d'un jeton n'est pas journalisée » est FAUX.** Les trois
+   fonctions appellent `log_sensitive_access` : `creer_jeton_agent` →
+   `agent_token_issued`, `revoquer_jeton_agent` → `agent_token_revoked`,
+   `remettre_session_agent` → `agent_session_opened`. L'erreur venait d'un test
+   grossier (`ilike '%audit%'`) sur un corps qui nomme `log_sensitive_access`,
+   pas « audit ». **Ne pas conclure d'un `ilike` sur du source.**
+2. **Le balayage des routes ne trouve QU'UN orphelin, pas cinq.** Sur 38 routes,
+   le test brut en signalait 5 ; 4 étaient des faux positifs, atteints par une
+   fonction intermédiaire (`appairerPour`, `compteProfilEnfantPour`) ou par
+   `Routes.racinePour(role)` — qui vit dans `routes.dart`, le fichier exclu du
+   balayage. Seul `adminAccesAgents` l'était vraiment ; il est branché depuis
+   `e1b3008`.
+
+### 13.6 Ce qui reste ouvert, dans l'ordre
+
+1. **Que l'opérateur puisse émettre depuis l'écran.** Tant que non, `ADM-07`
+   n'est pas livré, quoi qu'en disent les tests.
+2. **Restreindre ou débrancher le MCP Supabase** (rôle `postgres` sur la
+   production) — la vulnérabilité que l'opérateur a nommée et acceptée de
+   reporter, pas de classer.
+3. Le déploiement continu, toujours cassé — §12.8 bis.
+4. Les 11 tests rouges préexistants (7 véritables ; 4 sur un « mode démo » que
+   l'écran de connexion n'implémente pas — question produit, pas défaut).
+
+### 13.7 Ce qu'il ne faut pas refaire
+
+- ⚠ **Ne pas conclure « livré » de « déployé ».** `ADM-07` a passé une semaine
+  en production sans qu'aucune navigation n'y mène : tests verts, bundle
+  correct, URL en 200, écran inexistant pour l'utilisateur. Compter les
+  références à la route **hors** `routes.dart` et `app_router.dart`.
+- ⚠ **Ne pas déployer `agent-session` avec `--no-verify-jwt`** : elle *fabrique*
+  un jeton, elle n'en vérifie pas. Voir §12.9.
+- ⚠ **Ne pas construire depuis `dart_define.json`** : clé factice + `PLAYGROUND`.
+- ⚠ **Ne pas lire ce fichier avec `Get-Content`** : PowerShell 5.1 en détruit
+  l'UTF-8, et son comptage de lignes diverge de celui des outils d'édition.
