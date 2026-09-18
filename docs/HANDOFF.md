@@ -2830,8 +2830,8 @@ exclues par `pg_depend.deptype = 'e'`. Mesuré avant/après sur base neuve :
 | :--- | :--- |
 | Migration `0014` | **APPLIQUÉE**, les cinq invariants `I1`–`I5` passés |
 | `pgrst.db_pre_request` | **posé**, `= public.agent_pre_request` |
-| Fonction Edge `agent-session` | **DÉPLOYÉE**, version 2, `ACTIVE` |
-| `SUPABASE_JWT_SECRET` | ⚠ **ABSENT** — voir §12.9 |
+| Fonction Edge `agent-session` | **DÉPLOYÉE**, version 4, `ACTIVE`, `verify_jwt: true` |
+| `ISSUPABASE_JWT_SECRET` | ✅ **POSÉ** le 18/09 — nom volontaire, voir §12.9 |
 | Code web | poussé (`bc8638f`) et **déployé à la main** — voir §12.8 bis |
 
 Routes vérifiées en ligne sur `rewayah-academy.vercel.app`, toutes en 200 et
@@ -2913,13 +2913,23 @@ Les conseillers de sécurité Supabase ne signalent **rien de neuf** : les dix
 vues `SECURITY DEFINER`, `btree_gist` dans `public` et les fonctions
 `security definer` exposées sont des constats antérieurs à ce lot.
 
-### 12.9 ⚠ Le seul geste qui reste, et il n'appartient qu'à l'opérateur
+### 12.9 Le sceau — et pourquoi son nom n'est pas une faute de frappe
 
-```
-supabase secrets set SUPABASE_JWT_SECRET=<JWT Secret du projet>
-```
+⚠ **Le secret s'appelle `ISSUPABASE_JWT_SECRET`, et ce nom est volontaire.**
+La plateforme **refuse** d'enregistrer un secret de fonction Edge dont le nom
+commence par `SUPABASE_` : ce préfixe lui est réservé pour les variables qu'elle
+injecte elle-même (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`…). Quiconque
+« corrigera » ce nom vers `SUPABASE_JWT_SECRET` rendra la variable impossible à
+enregistrer, et la fonction retombera **silencieusement** sur « non configuré ».
 
-(tableau de bord Supabase → Project Settings → API → JWT Settings → JWT Secret.)
+**Où le prendre** : tableau de bord → Project Settings → **JWT Keys** →
+*Legacy JWT Secret*. Surtout **pas** l'onglet *API Keys*, qui ne contient que les
+clés d'entrée. ⚠ Ne jamais révoquer ce secret hérité depuis cette page : la clé
+`anon` de l'application est signée avec lui et mourrait du même coup.
+
+**Où le déposer** : tableau de bord → Edge Functions → **Secrets**. Pas besoin de
+CLI, et la valeur ne passe alors ni par un historique de commandes ni par un
+fichier.
 
 **Aucun repli n'est prévu** si le secret manque : un repli sur une valeur
 publique ne dégrade pas un sceau, il le publie. Tant qu'il est absent, un jeton
@@ -2929,17 +2939,38 @@ peut être émis mais **aucune session ne peut s'ouvrir**.
 fonction le dit elle-même, sur le modèle de `videoConfiguree()` (ADR-001) :
 
 ```
-GET https://gggmtelinlpseweouyav.supabase.co/functions/v1/agent-session
-    apikey: <cle anon>        Authorization: Bearer <cle anon>
-
--> {"service":"agent-session","configure":false,
-    "detail":"SUPABASE_JWT_SECRET absent : aucun jeton ne peut ouvrir de session."}
+GET  /functions/v1/agent-session   -> {"configure":true,
+                                       "detail":"Le sceau est en place ..."}
+POST /functions/v1/agent-session   -> {"error":"jeton refuse"}   (faux jeton)
+     {"jeton":"rag_ceci_nexiste_pas"}
 ```
 
-Mesuré le 18 septembre 2026 : **`configure: false`**. Ce garde-fou existe parce
-que le défaut inverse a déjà coûté cher : une clé factice est restée en
-production du 11 au 13 septembre **sans un bruit**, faute d'un endroit qui dise
-si la configuration tient.
+Mesuré le 18 septembre 2026, après dépôt : **`configure: true`**, et le `POST`
+d'un faux jeton rend bien `401` — donc l'aller-retour vers
+`remettre_session_agent()` s'exécute. Ce garde-fou existe parce que le défaut
+inverse a déjà coûté cher : une clé factice est restée en production du 11 au
+13 septembre **sans un bruit**, faute d'un endroit qui dise si la configuration
+tient.
+
+**⚠ Ce que dit la plateforme sur l'avenir de ce sceau.** Le projet signe
+désormais ses jetons en **ES256** (clé asymétrique ; le JWKS de
+`/auth/v1/.well-known/jwks.json` en publie une, `kid`
+`191eeb40-a620-476a-abe6-c923007a99a5`). L'ancien secret HS256 reste **accepté en
+vérification** — mesuré : un `GET /rest/v1/profiles` portant la clé `anon`
+héritée rend `42501 permission denied`, une erreur **Postgres** et non une erreur
+de signature, donc le jeton a bien été décodé. Le jour où Supabase retirera la
+vérification HS256, **deux choses tomberont ensemble** : la clé `anon` de
+l'application et les sessions d'agent. Il n'existe pas de remplacement
+immédiat — la partie privée de la clé ES256 n'est pas exposée, donc rien ne peut
+signer à sa place côté projet.
+
+**⚠ Ce qu'il ne faut PAS faire**, malgré ce qu'on lit en ligne : déployer cette
+fonction avec `--no-verify-jwt`. Ce conseil vise les fonctions qui **vérifient**
+un jeton entrant ; celle-ci en **fabrique** un. Elle est déployée avec
+`verify_jwt: true`, la passerelle exige donc une clé pour l'atteindre. La passer
+à `--no-verify-jwt` la rendrait **appelable par n'importe qui sans aucune clé**.
+Pour la même raison, `auth.getClaims()` ne remplace pas ce code : cette méthode
+valide une signature, elle n'en produit pas.
 
 **Comment défaire tout le lot, si le doute s'installe** : `revoke agent_ro from
 authenticator` ferme la porte sans rien toucher d'autre. Aucune session d'agent

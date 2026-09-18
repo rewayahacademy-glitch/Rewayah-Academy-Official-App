@@ -87,12 +87,21 @@ interface Remise {
   expire_le: string
 }
 
+/// Le nom du secret n'est PAS une coquille. La plateforme **refuse** tout secret
+/// de fonction Edge dont le nom commence par `SUPABASE_` : ce prefixe lui est
+/// reserve pour les variables qu'elle injecte elle-meme (`SUPABASE_URL`,
+/// `SUPABASE_SERVICE_ROLE_KEY`, ...). Le sceau est donc depose sous
+/// `ISSUPABASE_JWT_SECRET`. Ne pas « corriger » ce nom : le renommer en
+/// `SUPABASE_...` rend la variable impossible a enregistrer, et la fonction
+/// retomberait silencieusement sur « non configure ».
+const NOM_SECRET = 'ISSUPABASE_JWT_SECRET'
+
 function secretJwt(): Uint8Array {
-  const secret = Deno.env.get('SUPABASE_JWT_SECRET')
+  const secret = Deno.env.get(NOM_SECRET)
   // Un repli sur une valeur publique ne degrade pas un sceau, il le publie :
   // pas de valeur par defaut, pas de repli sur la cle anon.
   if (!secret || secret.length < 32) {
-    throw new Error('configuration absente : SUPABASE_JWT_SECRET')
+    throw new Error(`configuration absente : ${NOM_SECRET}`)
   }
   return new TextEncoder().encode(secret)
 }
@@ -120,7 +129,7 @@ Deno.serve(async (requete) => {
       configure,
       detail: configure
         ? 'Le sceau est en place : un jeton peut etre echange.'
-        : 'SUPABASE_JWT_SECRET absent : aucun jeton ne peut ouvrir de session.',
+        : `${NOM_SECRET} absent : aucun jeton ne peut ouvrir de session.`,
     })
   }
 

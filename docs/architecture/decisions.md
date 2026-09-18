@@ -1298,11 +1298,19 @@ agent n'inventorie pas les accès de la maison.
 
 ### Ce qui reste à la main de l'opérateur
 
-`SUPABASE_JWT_SECRET` doit être posé dans les secrets des fonctions Edge : la
-fonction `agent-session` signe avec le secret JWT hérité du projet (encore
-actif, les clés `legacy` du projet sont en HS256). **Aucun repli n'est prévu**
-si le secret manque — un repli sur une valeur publique ne dégrade pas un sceau,
-il le publie.
+Le secret JWT hérité du projet doit être posé dans les secrets des fonctions
+Edge, **sous le nom `ISSUPABASE_JWT_SECRET`** : la plateforme refuse tout nom
+commençant par `SUPABASE_`, qu'elle se réserve. Ce nom n'est donc pas une
+coquille, et le « corriger » casserait la fonction en silence. **Aucun repli
+n'est prévu** si le secret manque — un repli sur une valeur publique ne dégrade
+pas un sceau, il le publie. Posé et vérifié le 18 septembre 2026
+(`configure: true`).
+
+Le projet signe maintenant en **ES256**, mais la vérification **HS256 reste
+active** — c'est ce qui rend ce montage possible, et c'est aussi sa date de
+péremption : le jour où la plateforme la retirera, la clé `anon` de
+l'application tombera en même temps que les sessions d'agent. Signer en ES256 à
+la place n'est pas une option : la partie privée n'est pas exposée au projet.
 
 ### Comment défaire
 
