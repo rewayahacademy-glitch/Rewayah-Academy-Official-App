@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
+import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_journal/journal_page.dart';
 
@@ -210,9 +211,13 @@ void main() {
       await _monter(tester, service: service);
       service.lectures.clear();
 
-      await tester.tap(
-        find.widgetWithText(FilterPill, t.admin.journal.evtProfilCree),
-      );
+      // Le filtre d'evenement est un menu depuis la correction d'ergonomie du
+      // 18 septembre 2026 : le vocabulaire vit en base et grandit a chaque
+      // migration, donc une vingtaine de pastilles repoussaient le journal
+      // sous le pli. On ouvre le menu, puis on choisit son entree.
+      await tester.tap(find.byType(MenuFiltre<String>).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.admin.journal.evtProfilCree).last);
       await tester.pumpAndSettle();
 
       // Une seule lecture, sans curseur : garder les entrees deja lues
@@ -261,6 +266,12 @@ void main() {
         t.admin.journal.chargerSuite,
       );
       await tester.scrollUntilVisible(suite, 400);
+      // `scrollUntilVisible` s'arrete des que le finder **trouve** le widget,
+      // c'est-a-dire des qu'il est construit — or une `ListView` construit
+      // au-dela de son viewport. Le pied de page peut donc etre bati quelques
+      // pixels sous le bord, et le tap manquerait sa cible.
+      await tester.ensureVisible(suite);
+      await tester.pumpAndSettle();
       await tester.tap(suite);
       await tester.pumpAndSettle();
 

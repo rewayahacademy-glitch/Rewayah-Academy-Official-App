@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 
 import '../support/harnais.dart';
@@ -140,7 +141,11 @@ void main() {
     expect(find.text('Réessayer'), findsOneWidget);
   });
 
-  testWidgets('un filtre qui ne laisse rien passer le dit', (
+  // La correction d'ergonomie du 18 septembre 2026 : rendre les quatre etats
+  // et les six roles produisait onze pastilles qui repoussaient la liste sous
+  // le pli. Seuls les etats **presents dans les donnees** sont proposes, et
+  // l'axe des roles passe dans un menu deroulant.
+  testWidgets('un etat absent des donnees n est pas propose comme filtre', (
     WidgetTester tester,
   ) async {
     await monter(
@@ -155,7 +160,44 @@ void main() {
       ]),
     );
 
-    await tester.tap(find.text('Suspendu'));
+    expect(tester.takeException(), isNull);
+    expect(find.text('Actif'), findsWidgets);
+    // Aucun compte suspendu ni provisoire : leurs pastilles n'existent pas.
+    expect(find.text('Suspendu'), findsNothing);
+    expect(find.text('Provisoire'), findsNothing);
+    expect(find.text('En attente'), findsNothing);
+    // Un seul role present : le menu ne sert a rien et n'est pas rendu. Un
+    // controle qui n'offre qu'un choix n'est pas un choix. L'assertion porte
+    // sur le type et non sur le texte : « Rôle » nomme aussi une colonne.
+    expect(find.byType(MenuFiltre<AppRole>), findsNothing);
+  });
+
+  testWidgets('un filtre croise qui ne laisse rien passer le dit', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(identifiant: 'TEACHER-AS-000001', etat: AccountStatus.pendingKyc),
+        _compte(
+          identifiant: 'GUARDIAN-SR-000002',
+          etat: AccountStatus.active,
+          role: AppRole.guardian,
+          piece: EtatPiece.validee,
+        ),
+      ]),
+    );
+
+    // « En attente » ne contient qu'un enseignant.
+    await tester.tap(find.text('En attente'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+
+    // Croise avec le role tuteur, il ne reste rien. Le menu se cible par son
+    // type : « Rôle » nomme aussi une colonne du tableau.
+    await tester.tap(find.byType(MenuFiltre<AppRole>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tuteur').last);
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);

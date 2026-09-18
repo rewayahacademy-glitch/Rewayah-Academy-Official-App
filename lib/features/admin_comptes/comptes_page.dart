@@ -6,10 +6,10 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -126,66 +126,105 @@ class _Corps extends StatelessWidget {
         )
         .toList(growable: false);
 
+    // Les etats et les roles **presents dans les donnees**, avec leur compte.
+    // Rendre les quatre etats et les six roles produisait onze pastilles qui
+    // repoussaient la liste sous le pli : l'accent doit porter la selection,
+    // pas decorer un inventaire de possibilites (registre produit d'Impeccable).
+    final Map<AccountStatus, int> parEtat = <AccountStatus, int>{};
+    final Set<AppRole> rolesPresents = <AppRole>{};
+    for (final CompteAdmin compte in comptes) {
+      final AccountStatus? e = compte.etat;
+      if (e != null) {
+        parEtat[e] = (parEtat[e] ?? 0) + 1;
+      }
+      final AppRole? r = compte.role;
+      if (r != null) {
+        rolesPresents.add(r);
+      }
+    }
+
+    // Quand l'identite est masquee, le prenom est nul et le libelle se replie
+    // sur l'identifiant : les colonnes « Personne » et « Identifiant »
+    // afficheraient alors deux fois la meme valeur.
+    final bool identitesConnues = comptes.any(
+      (CompteAdmin c) => c.prenom != null,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // Le fait d'abord, et en toutes lettres. C'est exactement ce que
-        // l'ancien « 0 » cachait.
+        // Le fait d'abord, en une phrase et sans cadre. Une carte bordee pour
+        // une seule ligne de texte est du poids visuel sans information.
         if (attendent.isNotEmpty) ...<Widget>[
-          AppCard(
-            contourFort: true,
-            child: Text(
-              attendent.length == 1
-                  ? t.admin.comptes.attenteUne(
-                      jours: '${attendent.first.joursDAttente(maintenant)}',
-                    )
-                  : t.admin.comptes.attentePlusieurs(
-                      nombre: '${attendent.length}',
-                    ),
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+          Text(
+            attendent.length == 1
+                ? t.admin.comptes.attenteUne(
+                    jours: '${attendent.first.joursDAttente(maintenant)}',
+                  )
+                : t.admin.comptes.attentePlusieurs(
+                    nombre: '${attendent.length}',
+                  ),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          Ecart.vXl,
+          Ecart.vLg,
         ],
 
-        // Filtres : l'etat d'abord, parce que c'est lui qui appelle un geste.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
+        // Une seule rangee : l'etat, parce que c'est lui qui appelle un geste.
+        // Le role, axe secondaire, passe dans un menu deroulant Material
+        // standard — un affordance connu, pas un controle invente.
+        Row(
           children: <Widget>[
-            FilterPill(
-              libelle: t.admin.comptes.filtreTousEtats,
-              retenue: etat == null,
-              onPress: () => onEtat(null),
-            ),
-            for (final AccountStatus valeur in AccountStatus.values)
-              FilterPill(
-                libelle: _nomEtat(valeur),
-                retenue: etat == valeur,
-                onPress: () => onEtat(valeur),
+            Expanded(
+              child: Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: <Widget>[
+                  FilterPill(
+                    libelle: t.admin.comptes.filtreTousEtats,
+                    compteur: comptes.length,
+                    retenue: etat == null,
+                    onPress: () => onEtat(null),
+                  ),
+                  for (final AccountStatus valeur in AccountStatus.values)
+                    if (parEtat.containsKey(valeur))
+                      FilterPill(
+                        libelle: _nomEtat(valeur),
+                        compteur: parEtat[valeur],
+                        retenue: etat == valeur,
+                        onPress: () => onEtat(valeur),
+                      ),
+                ],
               ),
-          ],
-        ),
-        Ecart.vMd,
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            FilterPill(
-              libelle: t.admin.comptes.filtreTousRoles,
-              retenue: role == null,
-              onPress: () => onRole(null),
             ),
-            for (final AppRole valeur in AppRole.values)
-              if (comptes.any((CompteAdmin c) => c.role == valeur))
-                FilterPill(
-                  libelle: _nomRole(valeur),
-                  retenue: role == valeur,
-                  onPress: () => onRole(valeur),
-                ),
+            // Un seul role present : le menu n'offrirait aucun choix, et un
+            // controle sans choix n'est pas un controle.
+            if (rolesPresents.length > 1) ...<Widget>[
+              Ecart.hLg,
+              MenuFiltre<AppRole>(
+                libelle: t.admin.comptes.filtreRole,
+                valeur: role,
+                onChoix: onRole,
+                entrees: <EntreeFiltre<AppRole>>[
+                  EntreeFiltre<AppRole>(
+                    valeur: null,
+                    libelle: t.admin.comptes.filtreTousRoles,
+                    compteur: comptes.length,
+                  ),
+                  for (final AppRole valeur in AppRole.values)
+                    if (rolesPresents.contains(valeur))
+                      EntreeFiltre<AppRole>(
+                        valeur: valeur,
+                        libelle: _nomRole(valeur),
+                        compteur: comptes
+                            .where((CompteAdmin c) => c.role == valeur)
+                            .length,
+                      ),
+                ],
+              ),
+            ],
           ],
         ),
-        Ecart.vXl,
+        Ecart.vLg,
 
         if (visibles.isEmpty)
           EmptyState(
@@ -205,10 +244,13 @@ class _Corps extends StatelessWidget {
                   flex: 2,
                   texte: (CompteAdmin c) => c.libelle,
                 ),
-                ColonneDonnees<CompteAdmin>(
-                  titre: t.admin.comptes.colonneIdentifiant,
-                  texte: (CompteAdmin c) => c.identifiant,
-                ),
+                // Sous masquage, `libelle` **est** l'identifiant : la colonne
+                // dediee afficherait deux fois la meme valeur cote a cote.
+                if (identitesConnues)
+                  ColonneDonnees<CompteAdmin>(
+                    titre: t.admin.comptes.colonneIdentifiant,
+                    texte: (CompteAdmin c) => c.identifiant,
+                  ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonneRole,
                   texte: (CompteAdmin c) => c.role == null

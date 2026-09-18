@@ -12,6 +12,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -259,42 +260,59 @@ class _Entete extends ConsumerWidget {
         // Les getters, jamais le type d'execution : Riverpod 3 relance un
         // provider en echec tout seul, et l'etat repasse par `AsyncLoading` en
         // conservant `hasError`.
-        if (filtres case AsyncValue<FiltresJournal>(hasValue: true)) ...<Widget>[
-          Ecart.vSm,
-          _Rangee(
-            pilules: <Widget>[
-              FilterPill(
-                libelle: t.admin.journal.tousTypes,
-                retenue: type == null,
-                onPress: () => onType(null),
+        if (filtres case AsyncValue<FiltresJournal>(
+          hasValue: true,
+        )) ...<Widget>[
+          Ecart.vMd,
+          // **Deux menus, et non deux rangees de pastilles.** Le vocabulaire
+          // d'evenements et la liste des acteurs vivent en base et grandissent
+          // a chaque migration : les rendre en pastilles produisait une
+          // vingtaine de boutons qui repoussaient le journal sous le pli, et
+          // l'accent y decorait un inventaire au lieu de porter la selection.
+          // La periode, elle, a trois valeurs fixes : c'est un vrai selecteur,
+          // elle reste en pastilles.
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              MenuFiltre<String>(
+                libelle: t.admin.journal.filtreEvenement,
+                valeur: type,
+                onChoix: onType,
+                entrees: <EntreeFiltre<String>>[
+                  EntreeFiltre<String>(
+                    valeur: null,
+                    libelle: t.admin.journal.tousTypes,
+                    compteur: filtres.requireValue.total,
+                  ),
+                  for (final ValeurFiltre v in filtres.requireValue.actions)
+                    EntreeFiltre<String>(
+                      valeur: v.valeur,
+                      libelle: libelleEvenement(v.valeur),
+                      compteur: v.nombre,
+                    ),
+                ],
               ),
-              for (final ValeurFiltre v in filtres.requireValue.actions)
-                FilterPill(
-                  libelle: libelleEvenement(v.valeur),
-                  compteur: v.nombre,
-                  retenue: type == v.valeur,
-                  onPress: () => onType(type == v.valeur ? null : v.valeur),
-                ),
-            ],
-          ),
-          Ecart.vSm,
-          _Rangee(
-            pilules: <Widget>[
-              FilterPill(
-                libelle: t.admin.journal.tousActeurs,
-                retenue: acteur == null,
-                onPress: () => onActeur(null),
+              MenuFiltre<String>(
+                libelle: t.admin.journal.filtreActeur,
+                valeur: acteur,
+                onChoix: onActeur,
+                entrees: <EntreeFiltre<String>>[
+                  EntreeFiltre<String>(
+                    valeur: null,
+                    libelle: t.admin.journal.tousActeurs,
+                    compteur: filtres.requireValue.total,
+                  ),
+                  for (final ValeurFiltre v in filtres.requireValue.acteurs)
+                    EntreeFiltre<String>(
+                      valeur: v.valeur,
+                      libelle: v.libelle.isEmpty
+                          ? t.admin.journal.acteurInconnu
+                          : v.libelle,
+                      compteur: v.nombre,
+                    ),
+                ],
               ),
-              for (final ValeurFiltre v in filtres.requireValue.acteurs)
-                FilterPill(
-                  libelle: v.libelle.isEmpty
-                      ? t.admin.journal.acteurInconnu
-                      : v.libelle,
-                  compteur: v.nombre,
-                  retenue: acteur == v.valeur,
-                  onPress: () =>
-                      onActeur(acteur == v.valeur ? null : v.valeur),
-                ),
             ],
           ),
         ],
@@ -329,19 +347,20 @@ class _BandeauChaine extends ConsumerWidget {
     final AsyncValue<EtatChaine> chaine = ref.watch(chaineJournalProvider);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    final (String libelle, TonEtat ton, String phrase) contenu = switch (chaine) {
-      AsyncValue<EtatChaine>(hasValue: true) => _lire(chaine.requireValue),
-      AsyncValue<EtatChaine>(hasError: true) => (
-        t.admin.journal.chaineInconnue,
-        TonEtat.neutre,
-        t.admin.journal.chaineInconnueDetail,
-      ),
-      _ => (
-        t.admin.journal.chaineEnCours,
-        TonEtat.neutre,
-        t.admin.journal.chaineEnCoursDetail,
-      ),
-    };
+    final (String libelle, TonEtat ton, String phrase) contenu =
+        switch (chaine) {
+          AsyncValue<EtatChaine>(hasValue: true) => _lire(chaine.requireValue),
+          AsyncValue<EtatChaine>(hasError: true) => (
+            t.admin.journal.chaineInconnue,
+            TonEtat.neutre,
+            t.admin.journal.chaineInconnueDetail,
+          ),
+          _ => (
+            t.admin.journal.chaineEnCours,
+            TonEtat.neutre,
+            t.admin.journal.chaineEnCoursDetail,
+          ),
+        };
 
     return AppCard(
       child: Row(
@@ -349,7 +368,10 @@ class _BandeauChaine extends ConsumerWidget {
           StatusPill(libelle: contenu.$1, ton: contenu.$2),
           Ecart.hMd,
           Expanded(
-            child: Text(contenu.$3, style: textes.bodySmall ?? const TextStyle()),
+            child: Text(
+              contenu.$3,
+              style: textes.bodySmall ?? const TextStyle(),
+            ),
           ),
         ],
       ),
@@ -504,8 +526,10 @@ List<ColonneDonnees<EntreeJournal>> colonnesJournal() =>
     <ColonneDonnees<EntreeJournal>>[
       ColonneDonnees<EntreeJournal>(
         titre: t.admin.journal.colonneQuand,
-        texte: (EntreeJournal e) =>
-            t.admin.journal.horodatage(date: _date(e.survenuLe), heure: _heure(e.survenuLe)),
+        texte: (EntreeJournal e) => t.admin.journal.horodatage(
+          date: _date(e.survenuLe),
+          heure: _heure(e.survenuLe),
+        ),
         tabulaire: true,
         flex: 3,
       ),
@@ -584,8 +608,7 @@ String libelleEvenement(String type) => switch (type) {
   'agent_token_issued' => t.admin.journal.evtAgentJetonEmis,
   'agent_token_revoked' => t.admin.journal.evtAgentJetonRevoque,
   'agent_session_opened' => t.admin.journal.evtAgentSessionOuverte,
-  'controller_observation_started' =>
-    t.admin.journal.evtObservationControleur,
+  'controller_observation_started' => t.admin.journal.evtObservationControleur,
   'video_token_issued' => t.admin.journal.evtJetonVideo,
   _ => type,
 };

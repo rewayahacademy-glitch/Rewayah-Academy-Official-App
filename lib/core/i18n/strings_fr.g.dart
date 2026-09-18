@@ -2067,6 +2067,12 @@ class Traductions$admin$journal$fr {
 	/// fr: 'Règle close'
 	String get evtRegleClose => 'Règle close';
 
+	/// fr: 'Événement'
+	String get filtreEvenement => 'Événement';
+
+	/// fr: 'Acteur'
+	String get filtreActeur => 'Acteur';
+
 	/// fr: 'Accès d'agent IA émis'
 	String get evtAgentJetonEmis => 'Accès d\'agent IA émis';
 
@@ -2130,11 +2136,14 @@ class Traductions$admin$comptes$fr {
 	/// fr: '{nombre} personnes attendent une décision.'
 	String attentePlusieurs({required Object nombre}) => '${nombre} personnes attendent une décision.';
 
-	/// fr: 'Tous les états'
-	String get filtreTousEtats => 'Tous les états';
+	/// fr: 'Tous'
+	String get filtreTousEtats => 'Tous';
 
 	/// fr: 'Tous les rôles'
 	String get filtreTousRoles => 'Tous les rôles';
+
+	/// fr: 'Rôle'
+	String get filtreRole => 'Rôle';
 
 	/// fr: 'Aucun compte avec ce filtre'
 	String get aucunAvecCeFiltre => 'Aucun compte avec ce filtre';
@@ -3729,6 +3738,8 @@ extension on Traductions {
 			'admin.journal.evtDemandeTranchee' => 'Demande tranchée',
 			'admin.journal.evtReglePosee' => 'Règle posée',
 			'admin.journal.evtRegleClose' => 'Règle close',
+			'admin.journal.filtreEvenement' => 'Événement',
+			'admin.journal.filtreActeur' => 'Acteur',
 			'admin.journal.evtAgentJetonEmis' => 'Accès d\'agent IA émis',
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
@@ -3747,8 +3758,9 @@ extension on Traductions {
 			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
 			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '${nombre} personnes attendent une décision.',
-			'admin.comptes.filtreTousEtats' => 'Tous les états',
+			'admin.comptes.filtreTousEtats' => 'Tous',
 			'admin.comptes.filtreTousRoles' => 'Tous les rôles',
+			'admin.comptes.filtreRole' => 'Rôle',
 			'admin.comptes.aucunAvecCeFiltre' => 'Aucun compte avec ce filtre',
 			'admin.comptes.aucunAvecCeFiltreDetail' => 'Retirez un filtre pour élargir la liste.',
 			'admin.comptes.erreur' => 'Les comptes n\'ont pas pu être lus. Réessayez dans un instant.',
@@ -3800,11 +3812,11 @@ extension on Traductions {
 			'admin.agents.pourra' => 'Pourra',
 			'admin.agents.pourraDetail' => 'Ouvrir l\'application, naviguer, et lire tout ce que cette personne lit.',
 			'admin.agents.nePourraPas' => 'Ne pourra pas',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.nePourraPasDetail' => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.',
 			'admin.agents.emissionEnCours' => 'Émission',
 			'admin.agents.emis' => 'Jeton émis',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
 			'admin.agents.copier' => 'Copier le lien',
 			'admin.agents.copie' => 'Lien copié',
