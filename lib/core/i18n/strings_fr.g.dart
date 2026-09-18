@@ -1604,6 +1604,15 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Les foyers sans enseignant s'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.'
 	String get aTraiterPortee => 'Les foyers sans enseignant s\'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.';
 
+	/// fr: 'Outils'
+	String get outils => 'Outils';
+
+	/// fr: 'Accès des agents IA'
+	String get outilsAccesAgents => 'Accès des agents IA';
+
+	/// fr: 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d'une personne.'
+	String get outilsAccesAgentsDetail => 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d\'une personne.';
+
 	/// fr: 'La liste n'a pas pu être lue en entier. Les compteurs, eux, restent justes.'
 	String get listeErreur => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.';
 
@@ -3410,6 +3419,9 @@ extension on Traductions {
 			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
 			'admin.tableau.aTraiterAucunDetail' => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.',
 			'admin.tableau.aTraiterPortee' => 'Les foyers sans enseignant s\'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
+			'admin.tableau.outils' => 'Outils',
+			'admin.tableau.outilsAccesAgents' => 'Accès des agents IA',
+			'admin.tableau.outilsAccesAgentsDetail' => 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d\'une personne.',
 			'admin.tableau.listeErreur' => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.',
 			'admin.tableau.ligneDossier' => ({required Object prenom}) => 'Dossier d\'identité de ${prenom}',
 			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'Changement d\'enseignant pour ${prenom}',
@@ -3625,11 +3637,11 @@ extension on Traductions {
 			'agent.bandeauMasque' => 'Prénoms masqués',
 			'agent.bandeauExpire' => ({required Object heure}) => 'jusqu\'à ${heure}',
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
+			_ => null,
+		} ?? switch (path) {
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',
 			'vide.aucunRapport' => 'Aucun cahier de transmission pour l\'instant',
-			_ => null,
-		} ?? switch (path) {
 			'vide.aucunAppareil' => 'Aucun appareil appairé',
 			'pin.titre' => 'Entre ton code',
 			'pin.erreur' => 'Ce code ne correspond pas',
