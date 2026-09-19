@@ -59,12 +59,12 @@ défaire :
 | Domaine | Item | Route canonique | État du schéma | Statut d'activation |
 | :--- | :--- | :--- | :--- | :--- |
 | Configuration | Académie | `/admin/configuration/academie` | Aucun — nom/contact codés en dur (`app.dart`, i18n) | **À modéliser** avant écran (pas de table) |
-| Configuration | Règles | `/admin/configuration/regles` | `app_config` (existe, RLS admin déjà posée) + `rule_overrides` | **Prêt à construire** |
-| Configuration | Fonctionnalités | `/admin/configuration/fonctionnalites` | `app_config` (existe, RLS admin déjà posée) | **Prêt à construire** |
+| Configuration | Règles | `/admin/configuration/regles` | `app_config` (existe, RLS admin déjà posée) + `rule_overrides` | **Construit** (`ADM-15`, 19/09) |
+| Configuration | Fonctionnalités | `/admin/configuration/fonctionnalites` | `app_config` (existe, RLS admin déjà posée) | **Construit** (`ADM-16`, 19/09) |
 | Configuration | Classe en ligne | `/admin/configuration/classe-en-ligne` | `video_config` (existe) ; `video_config_lire()` existe, **aucune fonction d'écriture** | **Prêt côté lecture, RPC d'écriture à créer** |
 | Configuration | Notifications | `/admin/configuration/notifications` | Aucun — pas de table de modèles | **À modéliser** avant écran |
 | Configuration | Localisation | `/admin/configuration/localisation` | Aucun défaut plateforme ; seuls des champs par foyer/récurrence existent (`households.timezone`, `recurrence_rules.timezone_iana`) | **À modéliser** avant écran |
-| Configuration | Conservation des données | `/admin/configuration/conservation-donnees` | `app_config.recording_retention_days` (existe) ; `kyc_documents.purge_at` (existe) | **Prêt à construire** |
+| Configuration | Conservation des données | `/admin/configuration/conservation-donnees` | `app_config.recording_retention_days` (existe) ; `kyc_retention_days` / `kyc_documents.purge_at` (existent) | **Construit** (`ADM-17`, 19/09) |
 | Finance | Vue d'ensemble | `/admin/finance` | Agrégation de ce qui suit | Attend que les items sous-jacents existent |
 | Finance | Tarification | `/admin/finance/tarification` | Aucun — pas de catalogue de prix versionné trouvé | **Bloqué ADR-003** (module finance reporté V1) |
 | Finance | Bourses | `/admin/finance/bourses` | Aucun | **Bloqué ADR-003** |
@@ -107,9 +107,15 @@ document.
 
 ## Suite proposée, non déclenchée par ce document
 
-- **Lot CFG-01** (buildable maintenant) : Règles, Fonctionnalités, Conservation
-  des données — trois écrans branchés sur `app_config` existant, RLS déjà
-  posée, aucun risque financier.
+- **Lot CFG-01 — construit (19/09)** : Règles (`ADM-15`), Fonctionnalités
+  (`ADM-16`), Conservation des données (`ADM-17`) — trois écrans branchés sur
+  `app_config` existant, RLS déjà posée, aucun risque financier. Active
+  `AdminDomaine.configuration` (`chemin` non nul) et
+  `ongletsConfiguration()` dans `lib/core/admin/admin_domaine.dart`. Service
+  partagé `lib/core/admin/service_configuration.dart`, widgets d'édition
+  `lib/core/admin/config_edition.dart`. Règles édite le défaut de plateforme,
+  jamais la surcharge par profil (`ADM-06`, `rule_overrides`) — deux routes
+  canoniques distinctes, aucun doublon.
 - **Lot CFG-02** : Classe en ligne — nécessite d'abord une fonction d'écriture
   `video_config` côté serveur (aucune n'existe), avec la même prudence que
   l'audit ADR-023 sur le risque de couper une salle en cours de séance.

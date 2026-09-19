@@ -79,6 +79,9 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ADM-12` | Évaluations | Admin | E | 1 | `/admin/pedagogie/evaluations` | Cartes | Tableau dense | **construit (19/09)**, fiche §6 |
 | `ADM-13` | Programmes | Admin | E | 1 | `/admin/pedagogie/programmes` | Liste de versions | Liste + détail de niveaux | **construit (19/09)**, fiche §6 |
 | `ADM-14` | Qualité | Admin | E | 1 | `/admin/pedagogie/qualite` | Cartes groupées par type | Tableau dense groupé | **construit (19/09)**, fiche §6 |
+| `ADM-15` | Règles | Admin | E | 1 | `/admin/configuration/regles` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fonction primaire de Configuration, fiche §6 |
+| `ADM-16` | Fonctionnalités | Admin | E | 1 | `/admin/configuration/fonctionnalites` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fiche §6 |
+| `ADM-17` | Conservation des données | Admin | E | 1 | `/admin/configuration/conservation-donnees` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fiche §6 |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
 
@@ -2873,3 +2876,156 @@ Cinquième et dernier lot du domaine Pédagogie. Raccorde enfin le compteur
 « rapports manquants » d'`ADM-01`, présent depuis la migration `0001` mais
 jamais consommé par aucun écran (audit, ligne 134). Câble aussi la
 sous-navigation des cinq écrans et active `AdminDomaine.pedagogie`.
+
+### `ADM-15` Règles
+
+```
+CODE              ADM-15
+Nom               Regles
+Role              Admin
+Zone              Administration > Configuration
+Niveau de charge  E
+Ecran parent      aucun (fonction primaire de Configuration)
+Profondeur        1
+Question          Quelles valeurs par defaut regissent toute la plateforme ?
+
+Priorites         P0  les dix reglages de app_config lisibles et modifiables
+                  P1  le rappel que la surcharge par profil (ADM-06) est un
+                       ecran distinct, jamais le meme reglage ici
+
+Action principale     aucune : chaque ligne s'edite individuellement, une
+                      feuille a la fois
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            liste de SettingRow, pleine largeur
+Tablette          identique
+Desktop           identique -- pas de tableau, dix lignes ne le justifient
+                  pas
+
+Etats             loading   squelette de liste, cinq lignes
+                  content   dix SettingRow, valeur courante affichee
+                  empty     jamais -- les dix cles sont toujours seedees
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+
+Mouvement         AppBottomSheet a l'ouverture de chaque edition (280/200 ms)
+
+Invariants        edite le defaut de plateforme (app_config), jamais une
+                  surcharge de profil (rule_overrides, ADM-06) -- deux
+                  routes canoniques distinctes
+                  app_config_history journalise chaque ecriture par le
+                  trigger existant, rien a faire cote ecran
+                  une saisie non entiere ou negative est refusee avant tout
+                  appel reseau
+
+Accessibilite     cibles a 44 ; chaque ligne porte titre et description au
+                  lecteur d'ecran ; le champ de la feuille recoit le focus a
+                  l'ouverture ; la page se lit de droite a gauche en arabe
+```
+
+Première fonction du domaine Configuration, contrat métier reçu le 19
+septembre 2026 au soir (`docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
+Active `AdminDomaine.configuration` et câble la sous-navigation des trois
+écrans construits (`ongletsConfiguration()`). Académie, Classe en ligne,
+Notifications et Localisation restent à construire.
+
+### `ADM-16` Fonctionnalités
+
+```
+CODE              ADM-16
+Nom               Fonctionnalites
+Role              Admin
+Zone              Administration > Configuration
+Niveau de charge  E
+Ecran parent      aucun (atteint depuis la sous-navigation Configuration)
+Profondeur        1
+Question          Quelles fonctionnalites changent le comportement de toute
+                  la plateforme ?
+
+Priorites         P0  l'interrupteur des seances multi-participants
+                  P0  le plafond de participants qui l'accompagne
+
+Action principale     aucune : l'interrupteur ecrit immediatement, le
+                      plafond s'edite par feuille
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            liste de SettingRow, pleine largeur
+Tablette          identique
+Desktop           identique
+
+Etats             loading   squelette de liste, deux lignes
+                  content   un interrupteur puis un reglage entier
+                  empty     jamais -- les deux cles sont toujours seedees
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+
+Mouvement         AppBottomSheet a l'ouverture de l'edition du plafond
+
+Invariants        l'interrupteur ecrit sans confirmation, l'echec s'affiche
+                  sous la ligne plutot que de rester silencieux
+                  meme regle de separation Finance/Configuration que
+                  ADM-15
+
+Accessibilite     cibles a 44 ; l'interrupteur porte titre et description au
+                  lecteur d'ecran ; la page se lit de droite a gauche en
+                  arabe
+```
+
+Deuxième fonction du domaine Configuration. Reprend l'exemple donné par le
+contrat métier lui-même : « Activer les cours multi-participants ->
+Configuration > Fonctionnalités ».
+
+### `ADM-17` Conservation des données
+
+```
+CODE              ADM-17
+Nom               ConservationDonnees
+Role              Admin
+Zone              Administration > Configuration
+Niveau de charge  E
+Ecran parent      aucun (atteint depuis la sous-navigation Configuration)
+Profondeur        1
+Question          Combien de temps ces donnees restent-elles accessibles
+                  avant suppression automatique ?
+
+Priorites         P0  le delai des enregistrements de seance
+                  P0  le delai des documents d'identite deposes
+
+Action principale     aucune : chaque ligne s'edite individuellement
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun -- ces reglages allongent ou raccourcissent un
+                      delai, ils ne suppriment rien eux-memes
+
+Mobile            liste de SettingRow, pleine largeur
+Tablette          identique
+Desktop           identique
+
+Etats             loading   squelette de liste, deux lignes
+                  content   deux reglages entiers, en jours
+                  empty     jamais -- les deux cles sont toujours seedees
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+
+Mouvement         AppBottomSheet a l'ouverture de chaque edition
+
+Invariants        `recording_retention_days` et `kyc_retention_days` sont
+                  les deux seuls delais de conservation qui existent en
+                  base -- aucun autre a modeliser sans nouvelle migration
+
+Accessibilite     cibles a 44 ; chaque ligne porte titre et description au
+                  lecteur d'ecran ; la page se lit de droite a gauche en
+                  arabe
+```
+
+Troisième et dernière fonction construite du domaine Configuration pour ce
+lot. `kyc_documents.purge_at` (migration `0004`) se déduit de
+`kyc_retention_days` à chaque dépôt ; cet écran édite le réglage, jamais la
+colonne calculée.

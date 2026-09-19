@@ -9,6 +9,9 @@ import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
 import '../../features/admin_attribution/attribution_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
+import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
+import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
+import '../../features/admin_configuration_regles/regles_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
@@ -423,6 +426,36 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
           child: QualitePage(),
+        ),
+      ),
+      // Domaine Configuration : la racine redirige vers Regles, sa fonction
+      // primaire -- meme mecanique que Pedagogie plus haut. Academie, Classe
+      // en ligne, Notifications et Localisation n'ont pas de route : aucune
+      // fonction reelle derriere elles, voir `ongletsConfiguration()`.
+      GoRoute(
+        path: Routes.adminConfiguration,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminConfigurationRegles,
+      ),
+      GoRoute(
+        path: Routes.adminConfigurationRegles,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.configuration,
+          child: ReglesPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminConfigurationFonctionnalites,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.configuration,
+          child: FonctionnalitesPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminConfigurationConservationDonnees,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.configuration,
+          child: ConservationDonneesPage(),
         ),
       ),
       GoRoute(

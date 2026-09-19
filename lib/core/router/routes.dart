@@ -161,6 +161,23 @@ abstract final class Routes {
   /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
 
+  /// Domaine Configuration -- regles globales du systeme, contrat metier du
+  /// 19 septembre 2026 (`docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
+  static const String adminConfiguration = '/admin/configuration';
+
+  /// Regles (`ADM-15`), fonction primaire de Configuration : les defauts de
+  /// plateforme, jamais les surcharges par profil (`ADM-06`).
+  static const String adminConfigurationRegles =
+      '/admin/configuration/regles';
+
+  /// Fonctionnalites (`ADM-16`), sous Configuration.
+  static const String adminConfigurationFonctionnalites =
+      '/admin/configuration/fonctionnalites';
+
+  /// Conservation des donnees (`ADM-17`), sous Configuration.
+  static const String adminConfigurationConservationDonnees =
+      '/admin/configuration/conservation-donnees';
+
   /// Domaine Securite et audit.
   static const String adminSecuriteAudit = '/admin/securite-audit';
 

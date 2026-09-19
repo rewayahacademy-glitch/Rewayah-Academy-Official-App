@@ -1124,6 +1124,9 @@ class Traductions$admin$fr {
 	late final Traductions$admin$groupes$fr groupes = Traductions$admin$groupes$fr.internal(_root);
 	late final Traductions$admin$diagnostics$fr diagnostics = Traductions$admin$diagnostics$fr.internal(_root);
 	late final Traductions$admin$qualite$fr qualite = Traductions$admin$qualite$fr.internal(_root);
+	late final Traductions$admin$regles$fr regles = Traductions$admin$regles$fr.internal(_root);
+	late final Traductions$admin$fonctionnalites$fr fonctionnalites = Traductions$admin$fonctionnalites$fr.internal(_root);
+	late final Traductions$admin$conservationDonnees$fr conservationDonnees = Traductions$admin$conservationDonnees$fr.internal(_root);
 	late final Traductions$admin$evaluations$fr evaluations = Traductions$admin$evaluations$fr.internal(_root);
 	late final Traductions$admin$progression$fr progression = Traductions$admin$progression$fr.internal(_root);
 	late final Traductions$admin$programmes$fr programmes = Traductions$admin$programmes$fr.internal(_root);
@@ -2306,6 +2309,195 @@ class Traductions$admin$qualite$fr {
 
 	/// fr: 'Le traitement n'a pas abouti : {message}'
 	String traiterErreur({required Object message}) => 'Le traitement n\'a pas abouti : ${message}';
+}
+
+// Path: admin.regles
+class Traductions$admin$regles$fr {
+	Traductions$admin$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Règles'
+	String get titre => 'Règles';
+
+	/// fr: 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.'
+	String get intro => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.';
+
+	/// fr: 'Les règles n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'L'enregistrement n'a pas abouti : {message}'
+	String erreurEcriture({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
+
+	/// fr: 'Entrez un nombre valide.'
+	String get valeurInvalide => 'Entrez un nombre valide.';
+
+	/// fr: 'Enregistrer'
+	String get envoyer => 'Enregistrer';
+
+	/// fr: 'Valeur'
+	String get champValeur => 'Valeur';
+
+	/// fr: 'Seuil d'absence'
+	String get absenceSeuil => 'Seuil d\'absence';
+
+	/// fr: 'Au-delà de ce nombre de minutes sans rejoindre la séance, l'élève est marqué absent.'
+	String get absenceSeuilDetail => 'Au-delà de ce nombre de minutes sans rejoindre la séance, l\'élève est marqué absent.';
+
+	/// fr: 'Durée de séance'
+	String get dureeSeance => 'Durée de séance';
+
+	/// fr: 'La durée par défaut d'une séance, avant toute exception individuelle.'
+	String get dureeSeanceDetail => 'La durée par défaut d\'une séance, avant toute exception individuelle.';
+
+	/// fr: 'Durée minimale payée'
+	String get dureeMinimalePayee => 'Durée minimale payée';
+
+	/// fr: 'En dessous de cette durée, une séance écourtée reste payée en entier.'
+	String get dureeMinimalePayeeDetail => 'En dessous de cette durée, une séance écourtée reste payée en entier.';
+
+	/// fr: 'Pause entre deux séances'
+	String get pauseEntreSeances => 'Pause entre deux séances';
+
+	/// fr: 'Le temps minimum laissé à un enseignant entre deux séances consécutives.'
+	String get pauseEntreSeancesDetail => 'Le temps minimum laissé à un enseignant entre deux séances consécutives.';
+
+	/// fr: 'Élèves par enseignant'
+	String get elevesParEnseignant => 'Élèves par enseignant';
+
+	/// fr: 'Le nombre maximal d'élèves qu'un enseignant peut suivre en parallèle.'
+	String get elevesParEnseignantDetail => 'Le nombre maximal d\'élèves qu\'un enseignant peut suivre en parallèle.';
+
+	/// fr: 'Horizon d'affectation'
+	String get horizonAffectation => 'Horizon d\'affectation';
+
+	/// fr: 'Le nombre de semaines à l'avance sur lesquelles l'affectation cherche un enseignant disponible.'
+	String get horizonAffectationDetail => 'Le nombre de semaines à l\'avance sur lesquelles l\'affectation cherche un enseignant disponible.';
+
+	/// fr: 'Âge minimum caméra automatique'
+	String get ageCameraAuto => 'Âge minimum caméra automatique';
+
+	/// fr: 'En dessous de cet âge, l'activation de la caméra reste soumise à l'accord du tuteur.'
+	String get ageCameraAutoDetail => 'En dessous de cet âge, l\'activation de la caméra reste soumise à l\'accord du tuteur.';
+
+	/// fr: 'Âge maximum interface enfant'
+	String get ageInterfaceEnfant => 'Âge maximum interface enfant';
+
+	/// fr: 'En dessous de cet âge, un profil bascule sur l'interface simplifiée à sa création.'
+	String get ageInterfaceEnfantDetail => 'En dessous de cet âge, un profil bascule sur l\'interface simplifiée à sa création.';
+
+	/// fr: 'Appareils par élève'
+	String get appareilsParEleve => 'Appareils par élève';
+
+	/// fr: 'Le nombre d'appareils qu'un élève peut avoir actifs en même temps.'
+	String get appareilsParEleveDetail => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.';
+
+	/// fr: 'Séances simultanées par profil'
+	String get seancesSimultanees => 'Séances simultanées par profil';
+
+	/// fr: 'Le nombre de séances qu'un même profil peut suivre en même temps.'
+	String get seancesSimultaneesDetail => 'Le nombre de séances qu\'un même profil peut suivre en même temps.';
+
+	/// fr: '{n} min'
+	String uniteMinutes({required Object n}) => '${n} min';
+
+	/// fr: '{n} sem.'
+	String uniteSemaines({required Object n}) => '${n} sem.';
+
+	/// fr: '{n}'
+	String uniteNombre({required Object n}) => '${n}';
+}
+
+// Path: admin.fonctionnalites
+class Traductions$admin$fonctionnalites$fr {
+	Traductions$admin$fonctionnalites$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fonctionnalités'
+	String get titre => 'Fonctionnalités';
+
+	/// fr: 'Les fonctionnalités qui changent le comportement de toute la plateforme.'
+	String get intro => 'Les fonctionnalités qui changent le comportement de toute la plateforme.';
+
+	/// fr: 'Les fonctionnalités n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'L'enregistrement n'a pas abouti : {message}'
+	String erreurEcriture({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
+
+	/// fr: 'Entrez un nombre valide.'
+	String get valeurInvalide => 'Entrez un nombre valide.';
+
+	/// fr: 'Enregistrer'
+	String get envoyer => 'Enregistrer';
+
+	/// fr: 'Valeur'
+	String get champValeur => 'Valeur';
+
+	/// fr: 'Séances multi-participants'
+	String get multiParticipants => 'Séances multi-participants';
+
+	/// fr: 'Autorise plusieurs élèves dans une même séance de visioconférence.'
+	String get multiParticipantsDetail => 'Autorise plusieurs élèves dans une même séance de visioconférence.';
+
+	/// fr: 'Participants maximum'
+	String get participantsMax => 'Participants maximum';
+
+	/// fr: 'Le nombre de participants autorisés quand les séances multi-participants sont actives.'
+	String get participantsMaxDetail => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.';
+
+	/// fr: '{n}'
+	String uniteNombre({required Object n}) => '${n}';
+}
+
+// Path: admin.conservationDonnees
+class Traductions$admin$conservationDonnees$fr {
+	Traductions$admin$conservationDonnees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Conservation des données'
+	String get titre => 'Conservation des données';
+
+	/// fr: 'Depuis combien de temps ces éléments restent accessibles avant leur suppression automatique.'
+	String get intro => 'Depuis combien de temps ces éléments restent accessibles avant leur suppression automatique.';
+
+	/// fr: 'Les délais de conservation n'ont pas pu être lus. Réessayez dans un instant.'
+	String get erreur => 'Les délais de conservation n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'L'enregistrement n'a pas abouti : {message}'
+	String erreurEcriture({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
+
+	/// fr: 'Entrez un nombre valide.'
+	String get valeurInvalide => 'Entrez un nombre valide.';
+
+	/// fr: 'Enregistrer'
+	String get envoyer => 'Enregistrer';
+
+	/// fr: 'Valeur'
+	String get champValeur => 'Valeur';
+
+	/// fr: 'Enregistrements de séance'
+	String get enregistrements => 'Enregistrements de séance';
+
+	/// fr: 'Le nombre de jours pendant lesquels un enregistrement de séance reste accessible.'
+	String get enregistrementsDetail => 'Le nombre de jours pendant lesquels un enregistrement de séance reste accessible.';
+
+	/// fr: 'Documents d'identité'
+	String get documentsIdentite => 'Documents d\'identité';
+
+	/// fr: 'Le nombre de jours pendant lesquels un document d'identité déposé reste accessible avant sa purge.'
+	String get documentsIdentiteDetail => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.';
+
+	/// fr: '{n} j'
+	String uniteJours({required Object n}) => '${n} j';
 }
 
 // Path: admin.evaluations
@@ -4655,14 +4847,68 @@ extension on Traductions {
 			'admin.qualite.champNote' => 'Note (optionnelle)',
 			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
+			'admin.regles.titre' => 'Règles',
+			'admin.regles.intro' => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.',
+			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'admin.regles.valeurInvalide' => 'Entrez un nombre valide.',
+			'admin.regles.envoyer' => 'Enregistrer',
+			_ => null,
+		} ?? switch (path) {
+			'admin.regles.champValeur' => 'Valeur',
+			'admin.regles.absenceSeuil' => 'Seuil d\'absence',
+			'admin.regles.absenceSeuilDetail' => 'Au-delà de ce nombre de minutes sans rejoindre la séance, l\'élève est marqué absent.',
+			'admin.regles.dureeSeance' => 'Durée de séance',
+			'admin.regles.dureeSeanceDetail' => 'La durée par défaut d\'une séance, avant toute exception individuelle.',
+			'admin.regles.dureeMinimalePayee' => 'Durée minimale payée',
+			'admin.regles.dureeMinimalePayeeDetail' => 'En dessous de cette durée, une séance écourtée reste payée en entier.',
+			'admin.regles.pauseEntreSeances' => 'Pause entre deux séances',
+			'admin.regles.pauseEntreSeancesDetail' => 'Le temps minimum laissé à un enseignant entre deux séances consécutives.',
+			'admin.regles.elevesParEnseignant' => 'Élèves par enseignant',
+			'admin.regles.elevesParEnseignantDetail' => 'Le nombre maximal d\'élèves qu\'un enseignant peut suivre en parallèle.',
+			'admin.regles.horizonAffectation' => 'Horizon d\'affectation',
+			'admin.regles.horizonAffectationDetail' => 'Le nombre de semaines à l\'avance sur lesquelles l\'affectation cherche un enseignant disponible.',
+			'admin.regles.ageCameraAuto' => 'Âge minimum caméra automatique',
+			'admin.regles.ageCameraAutoDetail' => 'En dessous de cet âge, l\'activation de la caméra reste soumise à l\'accord du tuteur.',
+			'admin.regles.ageInterfaceEnfant' => 'Âge maximum interface enfant',
+			'admin.regles.ageInterfaceEnfantDetail' => 'En dessous de cet âge, un profil bascule sur l\'interface simplifiée à sa création.',
+			'admin.regles.appareilsParEleve' => 'Appareils par élève',
+			'admin.regles.appareilsParEleveDetail' => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.',
+			'admin.regles.seancesSimultanees' => 'Séances simultanées par profil',
+			'admin.regles.seancesSimultaneesDetail' => 'Le nombre de séances qu\'un même profil peut suivre en même temps.',
+			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
+			'admin.regles.uniteSemaines' => ({required Object n}) => '${n} sem.',
+			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
+			'admin.fonctionnalites.titre' => 'Fonctionnalités',
+			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
+			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'admin.fonctionnalites.valeurInvalide' => 'Entrez un nombre valide.',
+			'admin.fonctionnalites.envoyer' => 'Enregistrer',
+			'admin.fonctionnalites.champValeur' => 'Valeur',
+			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
+			'admin.fonctionnalites.multiParticipantsDetail' => 'Autorise plusieurs élèves dans une même séance de visioconférence.',
+			'admin.fonctionnalites.participantsMax' => 'Participants maximum',
+			'admin.fonctionnalites.participantsMaxDetail' => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.',
+			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '${n}',
+			'admin.conservationDonnees.titre' => 'Conservation des données',
+			'admin.conservationDonnees.intro' => 'Depuis combien de temps ces éléments restent accessibles avant leur suppression automatique.',
+			'admin.conservationDonnees.erreur' => 'Les délais de conservation n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.conservationDonnees.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'admin.conservationDonnees.valeurInvalide' => 'Entrez un nombre valide.',
+			'admin.conservationDonnees.envoyer' => 'Enregistrer',
+			'admin.conservationDonnees.champValeur' => 'Valeur',
+			'admin.conservationDonnees.enregistrements' => 'Enregistrements de séance',
+			'admin.conservationDonnees.enregistrementsDetail' => 'Le nombre de jours pendant lesquels un enregistrement de séance reste accessible.',
+			'admin.conservationDonnees.documentsIdentite' => 'Documents d\'identité',
+			'admin.conservationDonnees.documentsIdentiteDetail' => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.',
+			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '${n} j',
 			'admin.evaluations.titre' => 'Évaluations',
 			'admin.evaluations.intro' => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.',
 			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.evaluations.aucune' => 'Aucune évaluation',
 			'admin.evaluations.aucuneDetail' => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.',
 			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
@@ -5121,6 +5367,8 @@ extension on Traductions {
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
 			'eleve.coran.chargement' => 'Le texte arrive',
 			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
 			'eleve.coran.reessayer' => 'Réessayer',
 			'eleve.coran.absent' => 'Cette page est vide',
@@ -5175,8 +5423,6 @@ extension on Traductions {
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',

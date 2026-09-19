@@ -39,13 +39,15 @@ void main() {
 
   group('AdminDomaine.chemin : nul pour un domaine sans fonction livree', () {
     test(
-      'Accueil, Operations, Personnes, Pedagogie et Securite ont une route reelle',
+      'Accueil, Operations, Personnes, Pedagogie, Configuration et Securite '
+      'ont une route reelle',
       () {
         for (final AdminDomaine domaine in <AdminDomaine>[
           AdminDomaine.accueil,
           AdminDomaine.operations,
           AdminDomaine.personnes,
           AdminDomaine.pedagogie,
+          AdminDomaine.configuration,
           AdminDomaine.securite,
         ]) {
           expect(domaine.chemin, isNotNull, reason: domaine.name);
@@ -55,10 +57,9 @@ void main() {
       },
     );
 
-    test('Finance, Configuration et Direction n ont aucune route', () {
+    test('Finance et Direction n ont aucune route', () {
       for (final AdminDomaine domaine in <AdminDomaine>[
         AdminDomaine.finance,
-        AdminDomaine.configuration,
         AdminDomaine.direction,
       ]) {
         expect(domaine.chemin, isNull, reason: domaine.name);
@@ -80,7 +81,7 @@ void main() {
       final List<({String libelle, String chemin})> cibles =
           ciblesRechercheAdmin(voitDirection: true);
 
-      expect(cibles.length, 5);
+      expect(cibles.length, 6);
       for (final ({String libelle, String chemin}) cible in cibles) {
         expect(cible.libelle, isNotEmpty);
         expect(cible.chemin, startsWith('/admin'));

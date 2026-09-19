@@ -28,10 +28,16 @@ enum AdminDomaine {
   /// domaine.
   pedagogie,
 
-  /// Reserve. Hors MVP-0, module finance (ADR-003).
+  /// Reserve. Hors MVP-0, module finance (ADR-003), voir
+  /// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`.
   finance,
 
-  /// Reserve. Aucune configuration organisationnelle livree.
+  /// Regles globales du systeme -- distinctes de Finance par nature, jamais
+  /// par ecran d'origine (contrat metier du 19 septembre 2026,
+  /// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`). Trois fonctions
+  /// livrees le 19 septembre 2026 : Regles, Fonctionnalites, Conservation
+  /// des donnees. Academie, Classe en ligne, Notifications et Localisation
+  /// restent a construire (schema absent ou RPC d'ecriture manquante).
   configuration,
 
   /// Journal d'audit et acces des agents IA.
@@ -76,22 +82,21 @@ extension AdminDomaineX on AdminDomaine {
   /// reelle. La sidebar montre le libelle, inerte, jusqu'a ce qu'un ecran
   /// existe -- voir `AdminShell`.
   ///
-  /// Pour Operations, Personnes, Pedagogie et Securite et audit, cette route
-  /// est la racine du domaine : elle redirige vers sa fonction primaire
-  /// (jamais une seconde page) -- voir les redirections d'`app_router.dart`.
-  /// Pour Operations, Personnes et Securite et audit, la fonction secondaire
-  /// reste atteinte depuis l'Accueil ; Pedagogie, elle, montre ses cinq
-  /// fonctions pairs via `SousNavigationDomaine`, jamais depuis un second
-  /// niveau de la sidebar.
+  /// Pour Operations, Personnes, Pedagogie, Configuration et Securite et
+  /// audit, cette route est la racine du domaine : elle redirige vers sa
+  /// fonction primaire (jamais une seconde page) -- voir les redirections
+  /// d'`app_router.dart`. Pour Operations, Personnes et Securite et audit,
+  /// la fonction secondaire reste atteinte depuis l'Accueil ; Pedagogie et
+  /// Configuration, elles, montrent leurs fonctions pairs via
+  /// `SousNavigationDomaine`, jamais depuis un second niveau de la sidebar.
   String? get chemin => switch (this) {
     AdminDomaine.accueil => Routes.admin,
     AdminDomaine.operations => Routes.adminOperations,
     AdminDomaine.personnes => Routes.adminPersonnes,
     AdminDomaine.pedagogie => Routes.adminPedagogie,
+    AdminDomaine.configuration => Routes.adminConfiguration,
     AdminDomaine.securite => Routes.adminSecuriteAudit,
-    AdminDomaine.finance ||
-    AdminDomaine.configuration ||
-    AdminDomaine.direction => null,
+    AdminDomaine.finance || AdminDomaine.direction => null,
   };
 
   /// Vrai quand le domaine a une fonction reelle, livree et atteignable.
@@ -105,10 +110,11 @@ extension AdminDomaineX on AdminDomaine {
 /// [voitDirection] ne l'accorde pas -- « ni la route ni le libelle ne sont
 /// exposes » (regle 6 de l'audit) -- fixe a `false` aujourd'hui, faute de
 /// toute fondation de permission (`SessionState.peutVoirDirection`). Les
-/// autres domaines reserves (Finance, Configuration), eux, **restent
-/// visibles** mais inertes : l'audit ne demande de les masquer, seulement de
-/// ne rien construire derriere. Pedagogie a quitte cette liste le 19
-/// septembre 2026, ses cinq fonctions livrees.
+/// domaine reserve restant (Finance), lui, **reste visible** mais inerte :
+/// l'audit ne demande pas de le masquer, seulement de ne rien construire
+/// derriere. Pedagogie a quitte cette liste le 19 septembre 2026, ses cinq
+/// fonctions livrees ; Configuration l'a quittee le meme jour (soir), ses
+/// trois premieres fonctions livrees.
 List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
     <AdminDomaine>[
       AdminDomaine.accueil,
@@ -150,4 +156,25 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
       (libelle: t.admin.evaluations.titre, chemin: Routes.adminPedagogieEvaluations),
       (libelle: t.admin.programmes.titre, chemin: Routes.adminPedagogieProgrammes),
       (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
+    ];
+
+/// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat
+/// metier (`docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`) parmi les
+/// sept qu'il liste. **Seules celles construites y figurent** : Academie,
+/// Classe en ligne, Notifications et Localisation n'ont ni route ni ecran --
+/// les y lister ferait echouer la navigation au clic, exactement ce que
+/// l'audit interdit pour un domaine sans fonction reelle. Cette liste
+/// grandit lot par lot (`CFG-02`, `CFG-03`), jamais d'un coup comme
+/// Pedagogie.
+List<({String libelle, String chemin})> ongletsConfiguration() =>
+    <({String libelle, String chemin})>[
+      (libelle: t.admin.regles.titre, chemin: Routes.adminConfigurationRegles),
+      (
+        libelle: t.admin.fonctionnalites.titre,
+        chemin: Routes.adminConfigurationFonctionnalites,
+      ),
+      (
+        libelle: t.admin.conservationDonnees.titre,
+        chemin: Routes.adminConfigurationConservationDonnees,
+      ),
     ];
