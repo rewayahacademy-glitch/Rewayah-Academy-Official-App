@@ -602,7 +602,8 @@ Action principale     aucune : chaque signal EST son propre bouton, il n'y a
                       pas d'action qui prime sur les autres
 Actions secondaires   Ouvrir la validation des dossiers (ADM-02), ouvrir les
                       demandes et regles (ADM-06) : depuis le compteur comme
-                      depuis la ligne
+                      depuis la ligne ; ouvrir la qualite pedagogique (ADM-14)
+                      depuis le compteur "rapports manquants"
 Action tertiaire      aucune
 Destructif            aucun
 
@@ -631,9 +632,11 @@ Mouvement         aucun propre a l'ecran
 
 Invariants        le zero s'affiche comme les autres valeurs, jamais masque
                   le tri est par anciennete d'attente, jamais alphabetique
-                  deux compteurs menent a leur ecran (dossiers, demandes) ;
-                  les quatre autres sont des rapports sans onPress, jusqu'a
-                  ce qu'ADM-05 et le journal existent
+                  trois compteurs menent a leur ecran (dossiers, demandes,
+                  rapports manquants -> ADM-14 depuis le 19 septembre 2026) ;
+                  les deux restants (incidents, comptes echus) sont des
+                  rapports sans onPress, jusqu'a ce qu'une fonction
+                  Securite/Personnes reelle existe pour les filtrer
                   un signal mene directement a son ecran d'action, jamais a
                   un menu (02-regles-ux.md section 2)
                   l'anciennete se lit en jours, tous les jours lus sur le
@@ -658,10 +661,11 @@ que la reprise a corrigé :
   en discret quand la valeur passait au-dessus de zéro — une couleur portée
   par la seule valeur, que le catalogue de composants interdit (« le ton ne se
   lit pas sur la valeur », `stat_tile.dart`). Ils passent par `StatTile` :
-  chiffres tabulaires, libellé parlé, et le ton neutre partout. Deux d'entre
+  chiffres tabulaires, libellé parlé, et le ton neutre partout. Trois d'entre
   eux tiennent des compteurs actionnables (dossiers → `ADM-02`, demandes →
-  `ADM-06`) ; les quatre autres sont des rapports sans `onPress`, jusqu'à ce
-  que `ADM-05` et le journal existent ;
+  `ADM-06`, rapports manquants → `ADM-14` depuis le 19 septembre 2026) ; les
+  deux restants sont des rapports sans `onPress`, jusqu'à ce qu'une fonction
+  Sécurité ou Personnes réelle existe pour les filtrer ;
 - les lignes à traiter étaient un `BentoTile` local `_Ligne`. Elles passent
   par `SignalRow` : icône, phrase, ancienneté, chevron, et un libellé parlé
   qui lie la phrase à l'ancienneté.
@@ -2826,7 +2830,9 @@ Nom               Qualite
 Role              Admin
 Zone              Administration > Pedagogie
 Niveau de charge  E
-Ecran parent      aucun (atteint depuis la sous-navigation Pedagogie)
+Ecran parent      ADM-01 (compteur "rapports manquants", branche le 19
+                  septembre 2026), aussi atteint depuis la sous-navigation
+                  Pedagogie
 Profondeur        1
 Question          Quelles anomalies pedagogiques attendent une action ?
 

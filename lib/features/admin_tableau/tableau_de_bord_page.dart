@@ -240,13 +240,14 @@ class TableauDeBordPage extends ConsumerWidget {
 
 /// Les six compteurs, en deux colonnes.
 ///
-/// Trois portent vers un ecran d'action (dossiers, demandes, attribution) : un
-/// chiffre qui mene a sa file se charge d'un coup de pouce. « Foyers sans
-/// enseignant » a rejoint les deux autres le jour ou `ADM-05` a existe : c'est
-/// tout l'interet d'un compteur que de mener a son geste. Les trois restants
-/// sont des rapports, et ne menent nulle part tant que le journal et le cahier
-/// de transmission ne suivent pas : une tuile sans [onPress] est un rapport,
-/// jamais un bouton grise.
+/// Quatre portent vers un ecran d'action (dossiers, demandes, attribution,
+/// rapports manquants) : un chiffre qui mene a sa file se charge d'un coup de
+/// pouce. « Foyers sans enseignant » a rejoint les deux premiers le jour ou
+/// `ADM-05` a existe ; « Rapports manquants » a rejoint le groupe le 19
+/// septembre 2026, des que Pedagogie > Qualite (`ADM-14`) a existe pour
+/// l'accueillir. Les deux restants (incidents, comptes echus) n'ont encore
+/// aucune fonction Securite/Personnes reelle a filtrer : une tuile sans
+/// [onPress] est un rapport, jamais un bouton grise.
 class _Compteurs extends StatelessWidget {
   const _Compteurs({required this.indicateurs});
 
@@ -273,6 +274,12 @@ class _Compteurs extends StatelessWidget {
       StatTile(
         valeur: indicateurs.rapportsManquants,
         libelle: t.admin.tableau.rapports,
+        // Branche le 19 septembre 2026 (mission Securite/Direction/Accueil) :
+        // Pedagogie > Qualite (ADM-14) existe depuis la nuit precedente et
+        // affiche deja le groupe « Rapport manquant » ouvert par defaut. Le
+        // compteur restait mort depuis la toute premiere migration -- voir
+        // le commentaire de tete de fichier de `qualite_page.dart`.
+        onPress: () => GoRouter.of(context).go(Routes.adminPedagogieQualite),
       ),
       StatTile(
         valeur: indicateurs.incidents24h,

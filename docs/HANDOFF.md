@@ -1,5 +1,59 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🚀 **19 septembre 2026, soir (session suivante) — contrat métier
+> Sécurité/Direction/Accueil reçu et cartographié, un compteur mort de plus
+> raccordé.** Mission reçue : finaliser la hiérarchie Admin sur trois fronts —
+> Sécurité et audit (Journal, Accès sensibles, Exports, Sessions et appareils,
+> Incidents sécurité), Direction (sept fonctions, uniquement si autorisé) et
+> Accueil (aucune seconde navigation, chaque signal ouvre sa fonction réelle).
+> Addendum écrit avant tout code, même format que
+> `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md` :
+> **[docs/architecture/ADMIN_SECURITE_DIRECTION.md](architecture/ADMIN_SECURITE_DIRECTION.md)**.
+> ✅ **Schéma Supabase relu en entier avant d'écrire une ligne du contrat**
+> ([[feedback_verifier_document_officiel_avant_audit]]) : `Sessions et
+> appareils` est **prêt à construire sans migration** — `public.devices`
+> (`0001`), sa policy `devices_admin_all` et `revoquer_appareil()` sont déjà
+> `admin`-capables, jamais raccordés à un écran ; `Incidents sécurité` est
+> **prêt côté données** — `indicateurs_admin().incidents_24h` compte déjà les
+> séances en échec sur 24 h, mais aucune fonction n'en liste le détail ;
+> `Exports` (`ADM-03`) reste **bloqué**, contradiction de périmètre avec
+> `CTR-03` jamais tranchée (§10.4/10.5 plus bas) ; `Accès sensibles` est
+> **ambigu** — `log_sensitive_access()` alimente déjà le Journal (`ADM-04`)
+> depuis une quarantaine de sites d'appel, donc soit c'est déjà cet écran sous
+> un autre nom, soit c'est un concept neuf (trace de lecture) que
+> `0009_journal_audit.sql` avait explicitement laissé à trancher par
+> l'opérateur (question 27, `decisions.md`) — rien construit tant que ce choix
+> n'est pas fait. `Direction` **n'a rien à construire** : le code respecte
+> déjà « uniquement si autorisé » (`AdminDomaine.direction.chemin` nul,
+> absent de `domainesAdmin()` tant que `voitDirection` est faux, aucune
+> capacité serveur `peutVoirDirection` n'existe) — le contrat ne fait que
+> nommer ses sept futures routes.
+> ✅ **Un écart de duplication trouvé et corrigé, exactement l'exemple donné
+> par le contrat.** Le compteur « rapports manquants » d'`ADM-01` — mort
+> depuis la toute première migration — restait sans `onPress` alors que
+> `Pédagogie > Qualité` (`ADM-14`) l'alimente depuis la nuit précédente
+> (`e3faea8`). Raccordé vers `/admin/pedagogie/qualite`, sans nouvelle page ni
+> filtre à construire : la vue par défaut de `ADM-14` (« ouvertes », groupée
+> par type) montre déjà « Rapport manquant » en premier groupe. Les deux
+> compteurs restants (incidents, comptes échus) restent correctement inertes
+> (règle 5 du gel d'architecture) jusqu'à `SEC-02` et un filtre « accès échu »
+> respectivement. `flutter test --no-pub test/features/tableau_de_bord_test.dart` :
+> 11/11 vert (un test ajouté) ; `dart analyze --fatal-infos` propre sur les
+> deux fichiers touchés ; `tool/verifier_jetons.dart` : les 11 violations
+> restantes sont toutes pré-existantes, aucune dans les fichiers de ce lot.
+> ⚠️ **Trouvaille de processus, pas de code** : le commit `6a323b5` (lot
+> `CFG-01`, Configuration — Règles/Fonctionnalités/Conservation des données,
+> `ADM-15..17`, construit et poussé le 19/09 dans la session précédente)
+> **n'avait jamais mis à jour ce fichier** — seuls `docs/architecture/
+> ADMIN_FINANCE_CONFIGURATION.md` et `docs/design/08-catalogue-ecrans.md`
+> avaient été touchés. `CFG-01` est bien en production (vérifié par
+> `git log`/`git show --stat`), seule la trace manquait ici ; corrigé en le
+> notant à cet endroit plutôt qu'en réécrivant un faux historique daté.
+> ⏭ **Reste hors de ce lot, explicitement** : `SEC-01` (Sessions et
+> appareils) et `SEC-02` (Incidents sécurité), tous deux prêts à construire ;
+> la décision opérateur sur `Accès sensibles` et sur le périmètre `ADM-03`/
+> `CTR-03` ; toute capacité serveur pour Direction.
+>
 > 🚀 **19 septembre 2026, nuit — le domaine Pédagogie est peuplé : cinq écrans,
 > cinq migrations, mesuré de bout en bout, pas seulement compilé.** Mission
 > reçue : structurer `AdminDomaine.pedagogie` (jusque-là réservé, gel

@@ -293,6 +293,44 @@ void main() {
       expect(find.text('ADM-06'), findsOneWidget);
     });
 
+    testWidgets('un tap sur le compteur rapports manquants ouvre la qualite', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceAdmin admin = FauxServiceAdmin()
+        ..indicateursRendus = _indicateurs(rapports: 7);
+
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.admin,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.admin,
+              builder: (BuildContext _, GoRouterState _) =>
+                  TableauDeBordPage(horloge: () => _maintenant),
+            ),
+            GoRoute(
+              path: Routes.adminPedagogieQualite,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Scaffold(body: Text('ADM-14')),
+            ),
+          ],
+          surcharges: <Override>[
+            serviceAdminProvider.overrideWithValue(admin),
+            serviceValidationProvider.overrideWithValue(
+              FauxServiceValidation(),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await _allerA(tester, find.text(t.admin.tableau.rapports));
+      await tester.tap(find.text(t.admin.tableau.rapports));
+      await tester.pumpAndSettle();
+
+      expect(find.text('ADM-14'), findsOneWidget);
+    });
+
     testWidgets('rien a traiter est une invitation, pas un ecran mort', (
       WidgetTester tester,
     ) async {
