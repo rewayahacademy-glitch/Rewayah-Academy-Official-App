@@ -258,8 +258,8 @@ void main() {
     test('elle n ouvre aucune autre route a un visiteur sans session', () {
       // La porte publique ne doit pas devenir un sous-arbre public.
       for (final String route in <String>[
-        Routes.adminAccesAgents,
-        Routes.adminTableauDeBord,
+        Routes.adminSecuriteAuditAccesAgents,
+        Routes.admin,
         Routes.eleve,
         Routes.tuteurAccueil,
       ]) {
@@ -281,7 +281,7 @@ void main() {
       expect(
         deciderRedirection(
           session: _sessionActive(role: AppRole.teacher),
-          cheminDemande: Routes.adminAccesAgents,
+          cheminDemande: Routes.adminSecuriteAuditAccesAgents,
           maintenant: maintenant,
         ),
         Routes.enseignantJournee,
@@ -289,7 +289,7 @@ void main() {
       expect(
         deciderRedirection(
           session: _sessionActive(role: AppRole.admin),
-          cheminDemande: Routes.adminAccesAgents,
+          cheminDemande: Routes.adminSecuriteAuditAccesAgents,
           maintenant: maintenant,
         ),
         isNull,

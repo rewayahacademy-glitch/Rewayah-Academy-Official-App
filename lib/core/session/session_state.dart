@@ -118,6 +118,17 @@ class SessionState {
   /// La capacite d'ecrire. **Un widget lit une capacite, jamais un role.**
   bool get peutEcrire => observation == null;
 
+  /// La capacite de voir le domaine Direction du panneau admin, meme regle
+  /// que [peutEcrire] : un widget lit une capacite, jamais un role.
+  ///
+  /// **Fixee a `false`** : ni `AppRole` (plat -- `admin`, `accountant`,
+  /// `controller`, `teacher`, `guardian`, `student`), ni le jeton (`role`,
+  /// `householdId`, `sujet`) ne portent de permission infra-role
+  /// (`docs/architecture/ADMIN_IA_AUDIT.md`). Direction reste dans la sidebar comme
+  /// domaine reserve tant qu'aucune decision de modele de permission n'a ete
+  /// prise ; le jour ou elle le sera, cette seule ligne changera.
+  bool get peutVoirDirection => false;
+
   /// La porte a appliquer dans le routeur.
   PorteAcces get porte {
     if (!resolue) {

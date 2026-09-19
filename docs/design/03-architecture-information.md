@@ -102,6 +102,17 @@ quatre, et il faut que ça reste vrai : c'est la seule chose qui empêche la bar
 basse de devenir un menu. Le « Plus » est autorisé **seulement** comme quatrième
 entrée quand un rôle dépasse, jamais comme cinquième.
 
+> ⚠ **Exception, lot IA-01, 19 septembre 2026.** Cette règle reste vraie pour
+> tous les rôles ci-dessous, mais l'opérateur a tranché qu'elle ne suffit plus
+> au panneau admin, appelé à grandir avec un RBAC à plusieurs rôles. L'admin
+> ne passe plus par `NavShell` : il a sa propre coquille, `AdminShell`
+> (`lib/core/widgets/admin_shell.dart`), plafonnée à **huit** domaines de
+> premier niveau, jamais plus granulaire (`AdminShell.maxDomaines`, un
+> `assert` vivant comme celui-ci). Le détail des huit domaines et leur
+> cartographie sur les écrans existants vivent dans
+> `docs/architecture/ADMIN_IA_AUDIT.md` et `lib/core/admin/admin_domaine.dart`,
+> pas ici.
+
 | Rôle | Destinations | Ce qu'elles sont |
 | :--- | :-: | :--- |
 | Élève, mode enfant | 0 | Aucune navigation. Deux blocs, retour automatique après le cours |
@@ -109,11 +120,11 @@ entrée quand un rôle dépasse, jamais comme cinquième.
 | Tuteur | 4 | Foyer, Disponibilités, Réglages, Suivi |
 | Enseignant | 3 | Journée, Créneaux, Profil |
 | Contrôleur | 1 | Une liste. Pas de barre |
-| Admin | 4 | Tableau de bord, Dossiers, Attribution, Journal |
+| Admin | 8 (exception) | Accueil, Opérations, Personnes, Pédagogie, Finance, Configuration, Sécurité et audit, Direction (`AdminShell`, voir note ci-dessus) |
 | Comptable | — | Aucun écran en MVP-0 |
 
 Ces destinations sont déjà celles de `lib/core/router/routes.dart`. La refonte ne
-les change pas.
+les change pas, hors l'exception admin ci-dessus.
 
 ### La forme change avec la largeur, pas la structure
 

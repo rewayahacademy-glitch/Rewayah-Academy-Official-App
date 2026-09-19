@@ -475,6 +475,62 @@
       "erreur": "L'attribution n'a pas abouti : {message}"
     },
 
+    "groupes": {
+      "titre": "Groupes",
+      "intro": "Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.",
+      "colonneGroupe": "Groupe",
+      "colonneEnseignant": "Enseignant",
+      "colonneType": "Public",
+      "colonneMembres": "Membres",
+      "colonneCreneau": "Créneau",
+      "colonneEtat": "État",
+      "typeEnfant": "Enfants",
+      "typeAdulte": "Adultes",
+      "filtreTousTypes": "Tous les publics",
+      "etatActif": "Actif",
+      "etatCloture": "Clôturé",
+      "membresSur": "{actifs} / {seuil}",
+      "aucun": "Aucun groupe créé",
+      "aucunDetail": "Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.",
+      "aucunAvecCeFiltre": "Aucun groupe avec ce filtre",
+      "aucunAvecCeFiltreDetail": "Changez de filtre pour voir les autres groupes.",
+      "erreur": "Les groupes n'ont pas pu être lus. Réessayez dans un instant.",
+      "creer": "Créer un groupe",
+      "creerTitre": "Créer un groupe",
+      "champLibelle": "Nom du groupe",
+      "champEnseignantId": "Identifiant de l'enseignant",
+      "champType": "Public",
+      "champJour": "Jour",
+      "champHeure": "Heure (0-23)",
+      "champSeuil": "Seuil maximal",
+      "creerEnvoyer": "Créer le groupe",
+      "creerErreur": "La création n'a pas abouti : {message}",
+      "detailTitre": "Groupe {libelle}",
+      "detailMembres": "Membres",
+      "detailAucunMembre": "Aucun élève dans ce groupe pour l'instant.",
+      "actionAjouter": "Ajouter un élève",
+      "actionRetirer": "Retirer",
+      "actionModifierSeuil": "Modifier le seuil",
+      "actionCloturer": "Clôturer le groupe",
+      "ajouterTitre": "Ajouter un élève à {libelle}",
+      "champEleveId": "Identifiant de l'élève",
+      "champMotif": "Motif",
+      "motifRequis": "Un motif est requis, il s'inscrit au journal d'audit.",
+      "ajouterEnvoyer": "Ajouter",
+      "ajouterErreur": "L'ajout n'a pas abouti : {message}",
+      "retirerTitre": "Retirer {prenom} de {libelle}",
+      "retirerEnvoyer": "Retirer",
+      "retirerErreur": "Le retrait n'a pas abouti : {message}",
+      "modifierSeuilTitre": "Seuil maximal de {libelle}",
+      "modifierSeuilEnvoyer": "Enregistrer",
+      "modifierSeuilErreur": "La modification n'a pas abouti : {message}",
+      "cloturerTitre": "Clôturer {libelle}",
+      "cloturerDetail": "Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.",
+      "cloturerEnvoyer": "Clôturer",
+      "cloturerErreur": "La clôture n'a pas abouti : {message}",
+      "journalisation": "Chaque création, ajout, retrait et clôture est inscrit au journal d'audit."
+    },
+
     "journal": {
       "titre": "Journal",
 
@@ -647,6 +703,12 @@
       "vide": "Aucun jeton d'observation",
       "videDetail": "Aucun agent IA n'a accès à l'application pour l'instant.",
       "erreur": "La liste des jetons n'a pas pu être lue."
+    },
+
+    "notifications": {
+      "titre": "Notifications",
+      "vide": "Aucune notification",
+      "videDetail": "Rien à signaler pour l'instant."
     }
   },
 
@@ -721,7 +783,19 @@
       "attribution": "Attribution",
       "journal": "Journal",
       "comptes": "Comptes",
-      "accesAgents": "Accès des agents"
+      "accesAgents": "Accès des agents",
+      "accueil": "Accueil",
+      "operations": "Opérations",
+      "personnes": "Personnes",
+      "pedagogie": "Pédagogie",
+      "finance": "Finance",
+      "configuration": "Configuration",
+      "securite": "Sécurité et audit",
+      "direction": "Direction",
+      "recherche": "Recherche",
+      "rechercheIndication": "Rechercher un écran",
+      "notificationsTitre": "Notifications",
+      "menu": "Menu"
     },
     "compte": "Mon compte"
   },

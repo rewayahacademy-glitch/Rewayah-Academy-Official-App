@@ -1121,9 +1121,11 @@ class Traductions$admin$fr {
 	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
 	late final Traductions$admin$attribution$fr attribution = Traductions$admin$attribution$fr.internal(_root);
+	late final Traductions$admin$groupes$fr groupes = Traductions$admin$groupes$fr.internal(_root);
 	late final Traductions$admin$journal$fr journal = Traductions$admin$journal$fr.internal(_root);
 	late final Traductions$admin$comptes$fr comptes = Traductions$admin$comptes$fr.internal(_root);
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
+	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
 }
 
 // Path: agent
@@ -1989,6 +1991,174 @@ class Traductions$admin$attribution$fr {
 	String erreur({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}';
 }
 
+// Path: admin.groupes
+class Traductions$admin$groupes$fr {
+	Traductions$admin$groupes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Groupes'
+	String get titre => 'Groupes';
+
+	/// fr: 'Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.'
+	String get intro => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.';
+
+	/// fr: 'Groupe'
+	String get colonneGroupe => 'Groupe';
+
+	/// fr: 'Enseignant'
+	String get colonneEnseignant => 'Enseignant';
+
+	/// fr: 'Public'
+	String get colonneType => 'Public';
+
+	/// fr: 'Membres'
+	String get colonneMembres => 'Membres';
+
+	/// fr: 'Créneau'
+	String get colonneCreneau => 'Créneau';
+
+	/// fr: 'État'
+	String get colonneEtat => 'État';
+
+	/// fr: 'Enfants'
+	String get typeEnfant => 'Enfants';
+
+	/// fr: 'Adultes'
+	String get typeAdulte => 'Adultes';
+
+	/// fr: 'Tous les publics'
+	String get filtreTousTypes => 'Tous les publics';
+
+	/// fr: 'Actif'
+	String get etatActif => 'Actif';
+
+	/// fr: 'Clôturé'
+	String get etatCloture => 'Clôturé';
+
+	/// fr: '{actifs} / {seuil}'
+	String membresSur({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}';
+
+	/// fr: 'Aucun groupe créé'
+	String get aucun => 'Aucun groupe créé';
+
+	/// fr: 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.'
+	String get aucunDetail => 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.';
+
+	/// fr: 'Aucun groupe avec ce filtre'
+	String get aucunAvecCeFiltre => 'Aucun groupe avec ce filtre';
+
+	/// fr: 'Changez de filtre pour voir les autres groupes.'
+	String get aucunAvecCeFiltreDetail => 'Changez de filtre pour voir les autres groupes.';
+
+	/// fr: 'Les groupes n'ont pas pu être lus. Réessayez dans un instant.'
+	String get erreur => 'Les groupes n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'Créer un groupe'
+	String get creer => 'Créer un groupe';
+
+	/// fr: 'Créer un groupe'
+	String get creerTitre => 'Créer un groupe';
+
+	/// fr: 'Nom du groupe'
+	String get champLibelle => 'Nom du groupe';
+
+	/// fr: 'Identifiant de l'enseignant'
+	String get champEnseignantId => 'Identifiant de l\'enseignant';
+
+	/// fr: 'Public'
+	String get champType => 'Public';
+
+	/// fr: 'Jour'
+	String get champJour => 'Jour';
+
+	/// fr: 'Heure (0-23)'
+	String get champHeure => 'Heure (0-23)';
+
+	/// fr: 'Seuil maximal'
+	String get champSeuil => 'Seuil maximal';
+
+	/// fr: 'Créer le groupe'
+	String get creerEnvoyer => 'Créer le groupe';
+
+	/// fr: 'La création n'a pas abouti : {message}'
+	String creerErreur({required Object message}) => 'La création n\'a pas abouti : ${message}';
+
+	/// fr: 'Groupe {libelle}'
+	String detailTitre({required Object libelle}) => 'Groupe ${libelle}';
+
+	/// fr: 'Membres'
+	String get detailMembres => 'Membres';
+
+	/// fr: 'Aucun élève dans ce groupe pour l'instant.'
+	String get detailAucunMembre => 'Aucun élève dans ce groupe pour l\'instant.';
+
+	/// fr: 'Ajouter un élève'
+	String get actionAjouter => 'Ajouter un élève';
+
+	/// fr: 'Retirer'
+	String get actionRetirer => 'Retirer';
+
+	/// fr: 'Modifier le seuil'
+	String get actionModifierSeuil => 'Modifier le seuil';
+
+	/// fr: 'Clôturer le groupe'
+	String get actionCloturer => 'Clôturer le groupe';
+
+	/// fr: 'Ajouter un élève à {libelle}'
+	String ajouterTitre({required Object libelle}) => 'Ajouter un élève à ${libelle}';
+
+	/// fr: 'Identifiant de l'élève'
+	String get champEleveId => 'Identifiant de l\'élève';
+
+	/// fr: 'Motif'
+	String get champMotif => 'Motif';
+
+	/// fr: 'Un motif est requis, il s'inscrit au journal d'audit.'
+	String get motifRequis => 'Un motif est requis, il s\'inscrit au journal d\'audit.';
+
+	/// fr: 'Ajouter'
+	String get ajouterEnvoyer => 'Ajouter';
+
+	/// fr: 'L'ajout n'a pas abouti : {message}'
+	String ajouterErreur({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}';
+
+	/// fr: 'Retirer {prenom} de {libelle}'
+	String retirerTitre({required Object prenom, required Object libelle}) => 'Retirer ${prenom} de ${libelle}';
+
+	/// fr: 'Retirer'
+	String get retirerEnvoyer => 'Retirer';
+
+	/// fr: 'Le retrait n'a pas abouti : {message}'
+	String retirerErreur({required Object message}) => 'Le retrait n\'a pas abouti : ${message}';
+
+	/// fr: 'Seuil maximal de {libelle}'
+	String modifierSeuilTitre({required Object libelle}) => 'Seuil maximal de ${libelle}';
+
+	/// fr: 'Enregistrer'
+	String get modifierSeuilEnvoyer => 'Enregistrer';
+
+	/// fr: 'La modification n'a pas abouti : {message}'
+	String modifierSeuilErreur({required Object message}) => 'La modification n\'a pas abouti : ${message}';
+
+	/// fr: 'Clôturer {libelle}'
+	String cloturerTitre({required Object libelle}) => 'Clôturer ${libelle}';
+
+	/// fr: 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.'
+	String get cloturerDetail => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.';
+
+	/// fr: 'Clôturer'
+	String get cloturerEnvoyer => 'Clôturer';
+
+	/// fr: 'La clôture n'a pas abouti : {message}'
+	String cloturerErreur({required Object message}) => 'La clôture n\'a pas abouti : ${message}';
+
+	/// fr: 'Chaque création, ajout, retrait et clôture est inscrit au journal d'audit.'
+	String get journalisation => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.';
+}
+
 // Path: admin.journal
 class Traductions$admin$journal$fr {
 	Traductions$admin$journal$fr.internal(this._root);
@@ -2490,6 +2660,24 @@ class Traductions$admin$agents$fr {
 	String get erreur => 'La liste des jetons n\'a pas pu être lue.';
 }
 
+// Path: admin.notifications
+class Traductions$admin$notifications$fr {
+	Traductions$admin$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Notifications'
+	String get titre => 'Notifications';
+
+	/// fr: 'Aucune notification'
+	String get vide => 'Aucune notification';
+
+	/// fr: 'Rien à signaler pour l'instant.'
+	String get videDetail => 'Rien à signaler pour l\'instant.';
+}
+
 // Path: nav.eleve
 class Traductions$nav$eleve$fr {
 	Traductions$nav$eleve$fr.internal(this._root);
@@ -2596,6 +2784,42 @@ class Traductions$nav$admin$fr {
 
 	/// fr: 'Accès des agents'
 	String get accesAgents => 'Accès des agents';
+
+	/// fr: 'Accueil'
+	String get accueil => 'Accueil';
+
+	/// fr: 'Opérations'
+	String get operations => 'Opérations';
+
+	/// fr: 'Personnes'
+	String get personnes => 'Personnes';
+
+	/// fr: 'Pédagogie'
+	String get pedagogie => 'Pédagogie';
+
+	/// fr: 'Finance'
+	String get finance => 'Finance';
+
+	/// fr: 'Configuration'
+	String get configuration => 'Configuration';
+
+	/// fr: 'Sécurité et audit'
+	String get securite => 'Sécurité et audit';
+
+	/// fr: 'Direction'
+	String get direction => 'Direction';
+
+	/// fr: 'Recherche'
+	String get recherche => 'Recherche';
+
+	/// fr: 'Rechercher un écran'
+	String get rechercheIndication => 'Rechercher un écran';
+
+	/// fr: 'Notifications'
+	String get notificationsTitre => 'Notifications';
+
+	/// fr: 'Menu'
+	String get menu => 'Menu';
 }
 
 // Path: compte.roles
@@ -3782,6 +4006,59 @@ extension on Traductions {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
+			'admin.groupes.titre' => 'Groupes',
+			'admin.groupes.intro' => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
+			'admin.groupes.colonneGroupe' => 'Groupe',
+			'admin.groupes.colonneEnseignant' => 'Enseignant',
+			'admin.groupes.colonneType' => 'Public',
+			'admin.groupes.colonneMembres' => 'Membres',
+			'admin.groupes.colonneCreneau' => 'Créneau',
+			'admin.groupes.colonneEtat' => 'État',
+			'admin.groupes.typeEnfant' => 'Enfants',
+			'admin.groupes.typeAdulte' => 'Adultes',
+			'admin.groupes.filtreTousTypes' => 'Tous les publics',
+			'admin.groupes.etatActif' => 'Actif',
+			'admin.groupes.etatCloture' => 'Clôturé',
+			'admin.groupes.membresSur' => ({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}',
+			'admin.groupes.aucun' => 'Aucun groupe créé',
+			'admin.groupes.aucunDetail' => 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.',
+			'admin.groupes.aucunAvecCeFiltre' => 'Aucun groupe avec ce filtre',
+			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres groupes.',
+			'admin.groupes.erreur' => 'Les groupes n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.groupes.creer' => 'Créer un groupe',
+			'admin.groupes.creerTitre' => 'Créer un groupe',
+			'admin.groupes.champLibelle' => 'Nom du groupe',
+			'admin.groupes.champEnseignantId' => 'Identifiant de l\'enseignant',
+			'admin.groupes.champType' => 'Public',
+			'admin.groupes.champJour' => 'Jour',
+			'admin.groupes.champHeure' => 'Heure (0-23)',
+			'admin.groupes.champSeuil' => 'Seuil maximal',
+			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
+			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
+			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Groupe ${libelle}',
+			'admin.groupes.detailMembres' => 'Membres',
+			'admin.groupes.detailAucunMembre' => 'Aucun élève dans ce groupe pour l\'instant.',
+			'admin.groupes.actionAjouter' => 'Ajouter un élève',
+			'admin.groupes.actionRetirer' => 'Retirer',
+			'admin.groupes.actionModifierSeuil' => 'Modifier le seuil',
+			'admin.groupes.actionCloturer' => 'Clôturer le groupe',
+			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Ajouter un élève à ${libelle}',
+			'admin.groupes.champEleveId' => 'Identifiant de l\'élève',
+			'admin.groupes.champMotif' => 'Motif',
+			'admin.groupes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'admin.groupes.ajouterEnvoyer' => 'Ajouter',
+			'admin.groupes.ajouterErreur' => ({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}',
+			'admin.groupes.retirerTitre' => ({required Object prenom, required Object libelle}) => 'Retirer ${prenom} de ${libelle}',
+			'admin.groupes.retirerEnvoyer' => 'Retirer',
+			'admin.groupes.retirerErreur' => ({required Object message}) => 'Le retrait n\'a pas abouti : ${message}',
+			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Seuil maximal de ${libelle}',
+			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
+			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
+			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
+			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
+			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
+			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
+			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
@@ -3830,6 +4107,8 @@ extension on Traductions {
 			'admin.journal.filtreEvenement' => 'Événement',
 			'admin.journal.filtreActeur' => 'Acteur',
 			'admin.journal.evtAgentJetonEmis' => 'Accès d\'agent IA émis',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
@@ -3883,8 +4162,6 @@ extension on Traductions {
 			'admin.comptes.attendUnJour' => '1 jour',
 			'admin.comptes.attendJours' => ({required Object jours}) => '${jours} jours',
 			'admin.agents.titre' => 'Accès des agents IA',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.intro' => 'Un jeton laisse un agent IA ouvrir l\'application et lire ce qu\'une personne y lit. Il ne peut rien écrire, rien annuler, rien modifier : la base le lui refuse, pas l\'interface.',
 			'admin.agents.emettre' => 'Émettre un jeton',
 			'admin.agents.libelle' => 'À quoi sert ce jeton',
@@ -3942,6 +4219,9 @@ extension on Traductions {
 			'admin.agents.vide' => 'Aucun jeton d\'observation',
 			'admin.agents.videDetail' => 'Aucun agent IA n\'a accès à l\'application pour l\'instant.',
 			'admin.agents.erreur' => 'La liste des jetons n\'a pas pu être lue.',
+			'admin.notifications.titre' => 'Notifications',
+			'admin.notifications.vide' => 'Aucune notification',
+			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -3989,6 +4269,18 @@ extension on Traductions {
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
+			'nav.admin.accueil' => 'Accueil',
+			'nav.admin.operations' => 'Opérations',
+			'nav.admin.personnes' => 'Personnes',
+			'nav.admin.pedagogie' => 'Pédagogie',
+			'nav.admin.finance' => 'Finance',
+			'nav.admin.configuration' => 'Configuration',
+			'nav.admin.securite' => 'Sécurité et audit',
+			'nav.admin.direction' => 'Direction',
+			'nav.admin.recherche' => 'Recherche',
+			'nav.admin.rechercheIndication' => 'Rechercher un écran',
+			'nav.admin.notificationsTitre' => 'Notifications',
+			'nav.admin.menu' => 'Menu',
 			'nav.compte' => 'Mon compte',
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',

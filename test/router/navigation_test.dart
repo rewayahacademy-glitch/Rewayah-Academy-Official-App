@@ -33,15 +33,13 @@ void main() {
           Routes.enseignantProfil,
           Routes.compte,
         ],
-        AppRole.admin: <String>[
-          Routes.adminTableauDeBord,
-          Routes.adminDossiers,
-          Routes.adminAttribution,
-          Routes.adminJournal,
-        ],
-        // Le controleur et le comptable n ont pas de barre.
+        // Le controleur et le comptable n ont pas de barre. L'admin non plus
+        // depuis le lot IA-01 (19 septembre 2026) : ses huit domaines vivent
+        // dans `AdminShell`, qui ne partage pas la limite de quatre de
+        // `NavShell` (voir `admin_domaine_test.dart`).
         AppRole.controller: <String>[],
         AppRole.accountant: <String>[],
+        AppRole.admin: <String>[],
       };
 
       for (final MapEntry<AppRole, List<String>> attente in attendus.entries) {

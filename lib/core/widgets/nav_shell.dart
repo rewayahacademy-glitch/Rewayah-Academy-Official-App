@@ -119,34 +119,19 @@ List<Destination> destinationsPour({
         chemin: Routes.compte,
       ),
     ],
-    // L'admin tient quatre destinations : les demandes (ADM-06) restent
-    // atteintes depuis leur compteur et la liste a traiter, jamais depuis la
-    // barre, ou cinq entrees feraient un menu (section 5).
-    AppRole.admin => <Destination>[
-      Destination(
-        libelle: t.nav.admin.tableauDeBord,
-        icone: AppIcons.tableauDeBord,
-        chemin: Routes.adminTableauDeBord,
-      ),
-      Destination(
-        libelle: t.nav.admin.dossiers,
-        icone: AppIcons.dossiers,
-        chemin: Routes.adminDossiers,
-      ),
-      Destination(
-        libelle: t.nav.admin.attribution,
-        icone: AppIcons.attribution,
-        chemin: Routes.adminAttribution,
-      ),
-      Destination(
-        libelle: t.nav.admin.journal,
-        icone: AppIcons.journal,
-        chemin: Routes.adminJournal,
-      ),
-    ],
     // Le controleur observe et signale : une seule destination, qui ne monte
     // pas de barre. Le comptable est hors de l'arborescence en MVP-0 (ADR-003).
-    AppRole.controller || AppRole.accountant => const <Destination>[],
+    //
+    // **L'admin n'en tient plus aucune ici depuis le lot IA-01** (19 septembre
+    // 2026) : l'operateur a impose une architecture a huit domaines, au dela
+    // de ce que `maxDestinations` peut rendre en barre physique. L'admin a
+    // desormais sa propre coquille, `AdminShell`
+    // (`lib/core/widgets/admin_shell.dart`, `lib/core/admin/admin_domaine.dart`),
+    // qui ne partage pas cette limite de quatre : elle est nee pour un role a
+    // barre courte, et huit domaines en feraient un menu si on les y forcait.
+    AppRole.controller ||
+    AppRole.accountant ||
+    AppRole.admin => const <Destination>[],
   };
 
   assert(
@@ -171,28 +156,6 @@ List<Destination> destinationsPour({
 /// compte : ils n'ont donc pas besoin de doublon ici.
 List<Destination> secondairesPour({required AppRole role}) =>
     switch (role) {
-      AppRole.admin => <Destination>[
-        Destination(
-          libelle: t.nav.admin.comptes,
-          icone: AppIcons.profil,
-          chemin: Routes.adminComptes,
-        ),
-        Destination(
-          libelle: t.nav.admin.demandes,
-          icone: AppIcons.reglages,
-          chemin: Routes.adminDemandes,
-        ),
-        Destination(
-          libelle: t.nav.admin.accesAgents,
-          icone: AppIcons.controleQualite,
-          chemin: Routes.adminAccesAgents,
-        ),
-        Destination(
-          libelle: t.nav.compte,
-          icone: AppIcons.sortie,
-          chemin: Routes.compte,
-        ),
-      ],
       AppRole.guardian => <Destination>[
         Destination(
           libelle: t.nav.compte,
@@ -202,10 +165,13 @@ List<Destination> secondairesPour({required AppRole role}) =>
       ],
       // L'eleve et l'enseignant portent deja le compte dans leurs
       // destinations ; le controleur et le comptable n'ont pas de coquille.
+      // L'admin a sa propre coquille depuis le lot IA-01, voir
+      // `destinationsPour` ci-dessus.
       AppRole.student ||
       AppRole.teacher ||
       AppRole.controller ||
-      AppRole.accountant => const <Destination>[],
+      AppRole.accountant ||
+      AppRole.admin => const <Destination>[],
     };
 
 /// La navigation de premier niveau, dans ses trois formes.

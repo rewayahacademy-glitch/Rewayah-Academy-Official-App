@@ -218,13 +218,13 @@ void main() {
 
       expect(
         lignes
-            .where((ATraiter l) => l.destination == Routes.adminDemandes)
+            .where((ATraiter l) => l.destination == Routes.adminOperationsDemandes)
             .length,
         2,
       );
       expect(
         lignes
-            .where((ATraiter l) => l.destination == Routes.adminDossiers)
+            .where((ATraiter l) => l.destination == Routes.adminPersonnesDossiers)
             .length,
         1,
       );
@@ -258,15 +258,15 @@ void main() {
 
       await tester.pumpWidget(
         hoteRoutant(
-          depart: Routes.adminTableauDeBord,
+          depart: Routes.admin,
           routes: <RouteBase>[
             GoRoute(
-              path: Routes.adminTableauDeBord,
+              path: Routes.admin,
               builder: (BuildContext _, GoRouterState _) =>
                   TableauDeBordPage(horloge: () => _maintenant),
             ),
             GoRoute(
-              path: Routes.adminDemandes,
+              path: Routes.adminOperationsDemandes,
               builder: (BuildContext _, GoRouterState _) =>
                   const Scaffold(body: Text('ADM-06')),
             ),

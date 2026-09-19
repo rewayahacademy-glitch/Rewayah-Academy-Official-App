@@ -41,7 +41,7 @@ avec la Configuration de l'académie.
 | Domaine | Route de domaine cible | Fonctions actuelles à y raccorder | État actuel |
 | :--- | :--- | :--- | :--- |
 | Accueil | `/admin` | Centre de commande, indicateurs, file prioritaire | Existe sous `/admin/tableau-de-bord` |
-| Opérations | `/admin/operations` | Attribution, demandes | Deux écrans distincts, sans parent de domaine |
+| Opérations | `/admin/operations` | Groupes (fonction primaire), attribution, demandes | Groupes livré le 19/09/2026 (migration `0017`, pivot 1-à-1 → groupe) ; attribution et demandes restent secondaires |
 | Personnes | `/admin/personnes` | Comptes, dossiers d'identité | Deux écrans distincts, dispersés entre barre, pied et accueil |
 | Pédagogie | `/admin/pedagogie` | Aucune surface admin livrée | Domaine réservé, pas de route à activer maintenant |
 | Finance | `/admin/finance` | Aucune surface admin livrée | Finance reportée ; `/comptable` ne constitue pas un écran Admin |

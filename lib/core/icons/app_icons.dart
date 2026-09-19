@@ -133,6 +133,50 @@ abstract final class AppIcons {
     IconData(0xeb7a, fontFamily: _actif),
   );
 
+  // --- Navigation, domaines admin (lot IA-01) -----------------------------
+
+  /// Domaine Pedagogie : feuille de regles par eleve.
+  static const AppIcon pedagogie = AppIcon._(
+    IconData(0xe62c, fontFamily: _repos),
+    IconData(0xe62c, fontFamily: _actif),
+  );
+
+  /// Domaine Finance. Reserve, aucun ecran construit (ADR-003).
+  static const AppIcon finance = AppIcon._(
+    IconData(0xe68a, fontFamily: _repos),
+    IconData(0xe68a, fontFamily: _actif),
+  );
+
+  /// Domaine Direction. Reserve, aucune fondation de permission encore posee.
+  static const AppIcon direction = AppIcon._(
+    IconData(0xe1c8, fontFamily: _repos),
+    IconData(0xe1c8, fontFamily: _actif),
+  );
+
+  /// Recherche globale, barre superieure du panneau admin.
+  static const AppIcon recherche = AppIcon._(
+    IconData(0xe30c, fontFamily: _repos),
+    IconData(0xe30c, fontFamily: _actif),
+  );
+
+  /// Notifications, barre superieure du panneau admin.
+  static const AppIcon notifications = AppIcon._(
+    IconData(0xe0ce, fontFamily: _repos),
+    IconData(0xe0ce, fontFamily: _actif),
+  );
+
+  /// Ouverture du tiroir de navigation, sur telephone.
+  static const AppIcon menu = AppIcon._(
+    IconData(0xe2f0, fontFamily: _repos),
+    IconData(0xe2f0, fontFamily: _actif),
+  );
+
+  /// Changement d'enseignant (reaffectation), tuile du renvoi Operations.
+  static const AppIcon reaffectation = AppIcon._(
+    IconData(0xe0a0, fontFamily: _repos),
+    IconData(0xe0a0, fontFamily: _actif),
+  );
+
   // --- Salle de cours ----------------------------------------------------
 
   /// Micro ouvert.

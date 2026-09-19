@@ -66,18 +66,32 @@ réellement dans `lib/`, au 7 septembre 2026.
 
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `ADM-01` | Centre de commande | Admin | E | 0 | `/admin/tableau-de-bord` | Signaux puis chiffres | 4 chiffres + liste pleine largeur | **repris (R3)**, fiche §6 |
-| `ADM-02` | Validation des dossiers | Admin | E | 1 | `/admin/dossiers` | Un dossier à la fois | File à gauche, dossier à droite | **repris (R4)**, fiche §6 |
-| `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/demandes` | Liste de demandes | Liste + feuille de règles | **repris (R4)**, fiche §6 |
-| `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/journal` | Cartes | Tableau dense | **construit (12/09)**, fiche §6 |
-| `ADM-07` | Accès des agents IA | Admin | E | 1 | `/admin/acces-agents` | Formulaire puis cartes | Formulaire + tableau dense | **construit (18/09)**, fiche §6 |
-| `ADM-08` | Comptes | Admin | E | 1 | `/admin/comptes` | Cartes | Tableau dense | **construit (18/09)**, fiche §6 |
+| `ADM-01` | Centre de commande | Admin | E | 0 | `/admin` | Signaux puis chiffres | 4 chiffres + liste pleine largeur | **repris (19/09, gel d'architecture)**, fiche §6 |
+| `ADM-02` | Validation des dossiers | Admin | E | 1 | `/admin/personnes/dossiers` | Un dossier à la fois | File à gauche, dossier à droite | **repris (19/09, gel d'architecture)**, fiche §6 |
+| `ADM-06` | Demandes et règles | Admin | E | 1 | `/admin/operations/demandes` | Liste de demandes | Liste + feuille de règles | **repris (19/09, gel d'architecture)**, fiche §6 |
+| `ADM-04` | Journal d'audit | Admin | E | 1 | `/admin/securite-audit/journal` | Cartes | Tableau dense | **repris (19/09, gel d'architecture)**, fiche §6 |
+| `ADM-05` | Attribution manuelle | Admin | E | 1 | `/admin/operations/attributions` | Deux listes empilées | Deux listes côte à côte | **repris (19/09, gel d'architecture)**, fiche §6 |
+| `ADM-07` | Accès des agents IA | Admin | E | 1 | `/admin/securite-audit/acces-agents` | Formulaire puis cartes | Formulaire + tableau dense | **repris (19/09, gel d'architecture)**, fiche §6 |
+| `ADM-08` | Comptes | Admin | E | 1 | `/admin/personnes/comptes` | Cartes | Tableau dense | **repris (19/09, gel d'architecture)**, fiche §6 |
+| `ADM-09` | Groupes | Admin | E | 1 | `/admin/operations/groupes` | Cartes | Tableau dense | **construit (19/09, pivot 1-à-1 → groupe)**, fonction primaire d'Opérations |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
 
 **Codes nouveaux introduits par ce catalogue** : `ENS-05` et `CPT-01`, qui
 existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 `/c`, qui étaient décrits sans être nommés. Aucun code existant n'est renommé.
+
+**Gel d'architecture du 19 septembre 2026** (`docs/architecture/ADMIN_IA_AUDIT.md`) :
+la sidebar admin passe à huit domaines (Accueil, Opérations, Personnes,
+Pédagogie, Finance, Configuration, Sécurité et audit, Direction), avec des
+routes NESTED par domaine. Les sept écrans admin existants sont **déplacés**,
+pas dupliqués : leurs anciennes routes plates (`/admin/tableau-de-bord`,
+`/admin/dossiers`, `/admin/comptes`, `/admin/attribution`, `/admin/demandes`,
+`/admin/journal`, `/admin/acces-agents`) restent en redirection permanente
+vers leur route canonique ci-dessus. Aucun code `ADM-xx` n'est ajouté : quatre
+des huit domaines (Pédagogie, Finance, Configuration, Direction) n'ont aucune
+fonction livrée et **ne reçoivent ni route ni écran** -- l'audit interdit
+explicitement une page construite pour remplir un domaine vide.
 
 ## 2. Ce que le registre révèle
 

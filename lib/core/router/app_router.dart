@@ -11,6 +11,7 @@ import '../../features/admin_attribution/attribution_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
+import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
@@ -34,11 +35,13 @@ import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
+import '../admin/admin_domaine.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
+import '../widgets/admin_shell.dart';
 import '../widgets/nav_shell.dart';
 import 'billet_salle.dart';
 import 'ecran_a_construire.dart';
@@ -298,75 +301,136 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const PlanningControleurPage(),
       ),
 
-      // Admin. Quatre barres : les demandes (ADM-06) restent derriere leur
-      // compteur, une cinquieme entree ferait une barre-menu.
-      StatefulShellRoute.indexedStack(
-        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
-            _CoquilleNavigation(role: AppRole.admin, navigationShell: n),
-        branches: <StatefulShellBranch>[
-          StatefulShellBranch(
-            routes: <GoRoute>[
-              GoRoute(
-                path: Routes.adminTableauDeBord,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const TableauDeBordPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: <GoRoute>[
-              GoRoute(
-                path: Routes.adminDossiers,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const DossiersPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: <GoRoute>[
-              GoRoute(
-                path: Routes.adminAttribution,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const AttributionPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: <GoRoute>[
-              GoRoute(
-                path: Routes.adminJournal,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const JournalPage(),
-              ),
-            ],
-          ),
-        ],
+      // Admin. Huit domaines (gel d'architecture,
+      // `docs/architecture/ADMIN_IA_AUDIT.md`), routes NESTED par domaine.
+      // Chaque route porte son domaine explicitement, comme
+      // `_CoquilleSecondaire` portait deja son role -- ni l'un ni l'autre ne
+      // devine depuis le chemin courant. Pedagogie, Finance, Configuration et
+      // Direction n'ont **aucune route ici** : l'audit interdit une page
+      // construite pour un domaine sans fonction reelle
+      // (`AdminDomaine.chemin` y est nul, `AdminShell` les rend inertes).
+      GoRoute(
+        path: Routes.admin,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.accueil,
+          child: TableauDeBordPage(),
+        ),
+      ),
+      // La racine du domaine Operations n'est pas une page : elle renvoie a
+      // sa fonction primaire, jamais une seconde implementation. Groupes en
+      // est la fonction primaire depuis le pivot du 19 septembre 2026
+      // (migration `0017`) : c'est le noyau du produit, l'Attribution et les
+      // Demandes restent des fonctions secondaires atteignables depuis
+      // l'Accueil.
+      GoRoute(
+        path: Routes.adminOperations,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminOperationsGroupes,
       ),
       GoRoute(
-        path: Routes.adminDemandes,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(role: AppRole.admin, child: DemandesPage()),
+        path: Routes.adminOperationsGroupes,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: GroupesPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminOperationsAttributions,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AttributionPage(),
+        ),
+      ),
+      // La reaffectation (demandes) reste atteinte depuis l'Accueil, jamais
+      // depuis un second niveau de la sidebar
+      // (docs/architecture/ADMIN_IA_AUDIT.md).
+      GoRoute(
+        path: Routes.adminOperationsDemandes,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: DemandesPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPersonnes,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminPersonnesDossiers,
+      ),
+      GoRoute(
+        path: Routes.adminPersonnesDossiers,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: DossiersPage(),
+        ),
+      ),
+      // `ADM-08` : les comptes, atteints depuis l'Accueil
+      // (docs/architecture/ADMIN_IA_AUDIT.md).
+      // Sans cet ecran, l'administration n'avait aucun moyen de voir une
+      // personne inscrite qui n'a pas encore depose sa piece : c'est le
+      // defaut mesure le 18 septembre 2026.
+      GoRoute(
+        path: Routes.adminPersonnesComptes,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ComptesPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminSecuriteAudit,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminSecuriteAuditJournal,
+      ),
+      GoRoute(
+        path: Routes.adminSecuriteAuditJournal,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: JournalPage(),
+        ),
+      ),
+      // `ADM-07` : l'acces des agents IA (ADR-025), atteint depuis l'Accueil.
+      GoRoute(
+        path: Routes.adminSecuriteAuditAccesAgents,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: AccesAgentsPage(),
+        ),
       ),
 
-      // `ADM-07` : l'acces des agents IA (ADR-025). Hors de la barre, pour la
-      // meme raison que `ADM-06` : une cinquieme entree ferait une barre-menu,
-      // et emettre un jeton d'observation n'est pas une destination
-      // quotidienne.
+      // Anciennes routes plates : des redirections, jamais une seconde page
+      // (docs/architecture/ADMIN_IA_AUDIT.md, table de compatibilite).
       GoRoute(
-        path: Routes.adminAccesAgents,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(role: AppRole.admin, child: AccesAgentsPage()),
+        path: '/admin/tableau-de-bord',
+        redirect: (BuildContext _, GoRouterState _) => Routes.admin,
       ),
-
-      // `ADM-08` : les comptes. Hors de la barre pour la meme raison
-      // qu'`ADM-06` et `ADM-07`, et atteignable par le pied de la coquille
-      // ainsi que par le tableau de bord. Sans cet ecran, l'administration
-      // n'avait aucun moyen de voir une personne inscrite qui n'a pas encore
-      // depose sa piece : c'est le defaut mesure le 18 septembre 2026.
       GoRoute(
-        path: Routes.adminComptes,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(role: AppRole.admin, child: ComptesPage()),
+        path: '/admin/dossiers',
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminPersonnesDossiers,
+      ),
+      GoRoute(
+        path: '/admin/comptes',
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminPersonnesComptes,
+      ),
+      GoRoute(
+        path: '/admin/attribution',
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminOperationsAttributions,
+      ),
+      GoRoute(
+        path: '/admin/demandes',
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminOperationsDemandes,
+      ),
+      GoRoute(
+        path: '/admin/journal',
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminSecuriteAuditJournal,
+      ),
+      GoRoute(
+        path: '/admin/acces-agents',
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminSecuriteAuditAccesAgents,
       ),
 
       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
@@ -472,30 +536,43 @@ String racineDe(AppRole? role) =>
 /// **L'espace « Mon compte » est le meme cas, et il avait ete oublie** : c'est
 /// l'ecran ou vit « Se deconnecter », donc celui que tout role finit par
 /// ouvrir, et il se rendait sans le moindre chrome. On y arrivait par le pied
-/// du tiroir et on n'en ressortait plus. Comme il est partage par tous les
-/// roles, [role] y est lu dans la session plutot que câble par la route.
+/// du tiroir et on n'en ressortait plus. Il est partage par tous les roles, le
+/// role s'y lit donc toujours dans la session, jamais câble par la route.
 ///
 /// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
 /// rend alors ses entrees sans en surligner aucune.
 class _CoquilleSecondaire extends ConsumerWidget {
-  const _CoquilleSecondaire({required this.child, this.role});
+  const _CoquilleSecondaire({required this.child});
 
   final Widget child;
-
-  /// Le role dont on veut le chrome. Nul pour le lire dans la session, ce que
-  /// font les ecrans partages par plusieurs roles.
-  final AppRole? role;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void aller(String chemin) => GoRouter.of(context).go(chemin);
 
     final SessionState session = ref.watch(sessionProvider);
-    final AppRole? effectif = role ?? session.role;
+    final AppRole? effectif = session.role;
 
     // Sans role connu, il n'y a pas de chrome a rendre : l'ecran se suffit.
     if (effectif == null) {
       return child;
+    }
+
+    // L'admin n'a plus de coquille `NavShell` depuis le lot IA-01 : « Mon
+    // compte » reste transverse aux huit domaines
+    // (`docs/architecture/ADMIN_IA_AUDIT.md`), donc aucun domaine n'y est actif.
+    // Sans ce branchement, un admin qui ouvrait `/compte` retombait sur
+    // `destinationsPour(role: AppRole.admin)`, videe par ce meme lot, et
+    // perdait tout chrome -- exactement le defaut mesure le 18 septembre
+    // 2026 sur ce meme ecran.
+    if (effectif == AppRole.admin) {
+      return AdminShell(
+        domaines: domainesAdmin(voitDirection: session.peutVoirDirection),
+        domaineActif: null,
+        onAller: aller,
+        onCompte: () => aller(Routes.compte),
+        child: child,
+      );
     }
 
     return NavShell(
@@ -559,6 +636,46 @@ class _CoquilleNavigation extends ConsumerWidget {
       // ne connait que les branches.
       onAllerSecondaire: (String chemin) => GoRouter.of(context).go(chemin),
       child: navigationShell,
+    );
+  }
+}
+
+/// Le chrome du panneau admin, huit domaines (lot IA-01, 19 septembre 2026).
+///
+/// Remplace `_CoquilleNavigation`/`_CoquilleSecondaire` pour le role admin :
+/// `AdminShell` ne partage pas la limite de quatre destinations de
+/// `NavShell`, l'operateur a tranche que le panneau grandira avec un RBAC a
+/// plusieurs roles (`docs/architecture/ADMIN_IA_AUDIT.md`). Chaque route porte explicitement
+/// son domaine, exactement comme `_CoquilleSecondaire` porte deja son role :
+/// ni l'un ni l'autre ne devine depuis le chemin courant.
+///
+/// **Perd l'IndexedStack** que les quatre premiers ecrans avaient hier : huit
+/// domaines ne se rangent plus dans quatre branches d'onglets, la plupart des
+/// ecrans admin redemarrent donc leur etat a chaque navigation, comme le
+/// faisaient deja `ADM-06`, `ADM-07` et `ADM-08` avant ce lot. C'est le prix
+/// assume de la restructuration, pas un oubli.
+class _CoquilleAdmin extends ConsumerWidget {
+  const _CoquilleAdmin({required this.domaine, required this.child});
+
+  /// Le domaine que revendique cette route.
+  final AdminDomaine domaine;
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    void aller(String chemin) => GoRouter.of(context).go(chemin);
+
+    final bool voitDirection = ref.watch(
+      sessionProvider.select((SessionState s) => s.peutVoirDirection),
+    );
+
+    return AdminShell(
+      domaines: domainesAdmin(voitDirection: voitDirection),
+      domaineActif: domaine,
+      onAller: aller,
+      onCompte: () => aller(Routes.compte),
+      child: child,
     );
   }
 }

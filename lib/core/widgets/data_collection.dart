@@ -6,6 +6,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 import 'app_card.dart';
+import 'pressable.dart';
 
 /// Ce qu'une colonne devient quand le tableau se replie en cartes.
 ///
@@ -42,6 +43,7 @@ class ColonneDonnees<T> {
     this.flex = 1,
     this.tabulaire = false,
     this.rendu,
+    this.rendreMemeSiTexteVide = false,
   });
 
   /// L'en-tete de colonne, en rendu tableau. Il sert aussi de libelle parle en
@@ -66,6 +68,14 @@ class ColonneDonnees<T> {
   /// Un rendu riche facultatif : une pastille d'etat, une puce. Le texte reste
   /// obligatoire a cote, il ne le remplace pas.
   final Widget Function(BuildContext context, T ligne)? rendu;
+
+  /// Pour une colonne [RoleColonne.aPart] dont [rendu] ne depend pas de
+  /// [texte] : `false` (par defaut) garde le comportement existant, ou un
+  /// [texte] vide fait disparaitre la cellule entiere en rendu carte -- c'est
+  /// ce qui masque la cellule « Observer » de `CTR-01` quand la ligne ne
+  /// l'est pas. `true` rend [rendu] meme si [texte] est vide : c'est le cas
+  /// d'un menu d'actions, qui n'a rien a dire en texte.
+  final bool rendreMemeSiTexteVide;
 }
 
 /// Un tableau dense sur desktop, une liste de cartes ailleurs.
@@ -91,6 +101,7 @@ class DataCollection<T> extends StatelessWidget {
     super.key,
     this.piedDePage,
     this.cle,
+    this.onSelectionner,
   });
 
   /// Les colonnes, dans l'ordre d'affichage.
@@ -107,6 +118,10 @@ class DataCollection<T> extends StatelessWidget {
   /// en fin de liste reconstruit tout.
   final Key Function(T ligne)? cle;
 
+  /// Ce qui se passe quand une ligne ou une carte est choisie. `null` laisse
+  /// la collection en pure lecture, comme avant l'ajout de ce parametre.
+  final void Function(T ligne)? onSelectionner;
+
   @override
   Widget build(BuildContext context) {
     final bool tableau = AppGabarit.de(context) == Gabarit.desktop;
@@ -117,8 +132,11 @@ class DataCollection<T> extends StatelessWidget {
         piedDePage: piedDePage,
         cle: cle,
         espacement: AppSpacing.md,
-        constructeur: (BuildContext contexte, T ligne) =>
-            _Carte<T>(colonnes: colonnes, ligne: ligne),
+        constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
+          colonnes: colonnes,
+          ligne: ligne,
+          onSelectionner: onSelectionner,
+        ),
       );
     }
 
@@ -147,7 +165,11 @@ class DataCollection<T> extends StatelessWidget {
                 cle: cle,
                 espacement: 0,
                 constructeur: (BuildContext contexte, T ligne) =>
-                    _LigneTableau<T>(colonnes: colonnes, ligne: ligne),
+                    _LigneTableau<T>(
+                      colonnes: colonnes,
+                      ligne: ligne,
+                      onSelectionner: onSelectionner,
+                    ),
               ),
             ),
           ],
@@ -255,10 +277,15 @@ class _EnTeteTableau<T> extends StatelessWidget {
 
 /// Une ligne du tableau dense.
 class _LigneTableau<T> extends StatelessWidget {
-  const _LigneTableau({required this.colonnes, required this.ligne});
+  const _LigneTableau({
+    required this.colonnes,
+    required this.ligne,
+    this.onSelectionner,
+  });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
+  final void Function(T ligne)? onSelectionner;
 
   @override
   Widget build(BuildContext context) {
@@ -266,37 +293,43 @@ class _LigneTableau<T> extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle base = textes.bodySmall ?? const TextStyle();
 
+    final Widget contenu = Padding(
+      padding: const EdgeInsetsDirectional.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          for (final ColonneDonnees<T> colonne in colonnes)
+            Expanded(
+              flex: colonne.flex,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.only(end: AppSpacing.md),
+                child: _Cellule<T>(
+                  colonne: colonne,
+                  ligne: ligne,
+                  style: colonne.tabulaire
+                      ? AppTypography.tabulaire(base)
+                      : base,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(bottom: palette.borderHairline.asBorderSide()),
       ),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            for (final ColonneDonnees<T> colonne in colonnes)
-              Expanded(
-                flex: colonne.flex,
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                    end: AppSpacing.md,
-                  ),
-                  child: _Cellule<T>(
-                    colonne: colonne,
-                    ligne: ligne,
-                    style: colonne.tabulaire
-                        ? AppTypography.tabulaire(base)
-                        : base,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
+      child: onSelectionner == null
+          ? contenu
+          : Pressable(
+              onPress: () => onSelectionner!(ligne),
+              respecterCibleTactile: false,
+              child: contenu,
+            ),
     );
   }
 }
@@ -333,10 +366,15 @@ class _Cellule<T> extends StatelessWidget {
 
 /// Une ligne repliee en carte.
 class _Carte<T> extends StatelessWidget {
-  const _Carte({required this.colonnes, required this.ligne});
+  const _Carte({
+    required this.colonnes,
+    required this.ligne,
+    this.onSelectionner,
+  });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
+  final void Function(T ligne)? onSelectionner;
 
   @override
   Widget build(BuildContext context) {
@@ -371,6 +409,7 @@ class _Carte<T> extends StatelessWidget {
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
     return MergeSemantics(
       child: AppCard(
+        onPress: onSelectionner == null ? null : () => onSelectionner!(ligne),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -390,7 +429,8 @@ class _Carte<T> extends StatelessWidget {
                 ),
               ),
             for (final ColonneDonnees<T> colonne in aPart)
-              if (colonne.texte(ligne).isNotEmpty) ...<Widget>[
+              if (colonne.rendreMemeSiTexteVide ||
+                  colonne.texte(ligne).isNotEmpty) ...<Widget>[
                 Ecart.vSm,
                 colonne.rendu?.call(context, ligne) ??
                     Text(

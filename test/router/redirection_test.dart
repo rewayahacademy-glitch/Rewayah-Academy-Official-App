@@ -36,10 +36,10 @@ void main() {
       Routes.enseignantCreneaux,
       Routes.enseignantProfil,
       Routes.controleur,
-      Routes.adminTableauDeBord,
-      Routes.adminDossiers,
-      Routes.adminAttribution,
-      Routes.adminJournal,
+      Routes.admin,
+      Routes.adminPersonnesDossiers,
+      Routes.adminOperationsAttributions,
+      Routes.adminSecuriteAuditJournal,
       Routes.comptable,
       Routes.compte,
       Routes.compteProfil,
@@ -79,7 +79,7 @@ void main() {
         expect(
           deciderRedirection(
             session: sansStatut,
-            cheminDemande: Routes.adminJournal,
+            cheminDemande: Routes.adminSecuriteAuditJournal,
             maintenant: maintenant,
           ),
           Routes.attente,
@@ -107,7 +107,7 @@ void main() {
       expect(
         deciderRedirection(
           session: _session(role: AppRole.student),
-          cheminDemande: Routes.adminJournal,
+          cheminDemande: Routes.adminSecuriteAuditJournal,
           maintenant: maintenant,
         ),
         Routes.eleve,
@@ -213,7 +213,7 @@ void main() {
       expect(
         deciderRedirection(
           session: const SessionState.chargement(),
-          cheminDemande: Routes.adminJournal,
+          cheminDemande: Routes.adminSecuriteAuditJournal,
           maintenant: maintenant,
         ),
         isNull,
@@ -253,7 +253,7 @@ void main() {
       Routes.eleve,
       Routes.tuteurFoyer,
       Routes.enseignantJournee,
-      Routes.adminJournal,
+      Routes.adminSecuriteAuditJournal,
       Routes.salle,
     ]) {
       test('$chemin renvoie sur l inscription', () {
@@ -344,7 +344,7 @@ void main() {
       expect(
         deciderRedirection(
           session: pasEncoreLue,
-          cheminDemande: Routes.adminJournal,
+          cheminDemande: Routes.adminSecuriteAuditJournal,
           maintenant: maintenant,
         ),
         isNull,
@@ -387,7 +387,7 @@ void main() {
         Routes.eleve,
         Routes.eleveCoran,
         Routes.eleveSuivi,
-        Routes.adminJournal,
+        Routes.adminSecuriteAuditJournal,
         Routes.salle,
       ]) {
         expect(

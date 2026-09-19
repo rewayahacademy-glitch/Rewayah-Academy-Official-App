@@ -104,39 +104,52 @@ abstract final class Routes {
   /// Planning global. Une seule destination, pas de barre de navigation.
   static const String controleur = '/controleur';
 
-  // --- Admin --------------------------------------------------------------
+  // --- Admin, huit domaines (gel d'architecture,
+  // docs/architecture/ADMIN_IA_AUDIT.md) ------------------------------------
+  //
+  // Racine imposee par domaine, jamais par ecran : les routes ci-dessous sont
+  // NESTED sous leur domaine, et les anciennes routes plates deviennent des
+  // redirections dans `app_router.dart`, jamais une seconde page. Un domaine
+  // sans fonction livree (Pedagogie, Finance, Configuration, Direction) ne
+  // recoit ni route ni page : `AdminDomaine.chemin` y est nul, et la sidebar
+  // le montre inerte, jamais avec un ecran vide construit pour l'occasion.
 
-  /// Centre de commande.
-  static const String adminTableauDeBord = '/admin/tableau-de-bord';
+  /// Domaine Accueil : le centre de commande (`ADM-01`).
+  static const String admin = '/admin';
 
-  /// Validation des dossiers d'identite.
-  static const String adminDossiers = '/admin/dossiers';
+  /// Domaine Operations.
+  static const String adminOperations = '/admin/operations';
 
-  /// Demandes des quatre parties, et feuille de regles de l'eleve concerne.
-  ///
-  /// **La seule route que l'etape 4 avait annoncee**, `ADM-06` etant le seul
-  /// ecran vraiment nouveau de l'etape : la notion de regle par eleve n'existait
-  /// dans aucune spec d'origine, elle nait de l'ADR-017.
-  static const String adminDemandes = '/admin/demandes';
+  /// Les groupes pedagogiques, fonction primaire d'Operations depuis le
+  /// pivot du 19 septembre 2026 (migration `0017`).
+  static const String adminOperationsGroupes = '/admin/operations/groupes';
 
-  /// Attribution manuelle.
-  static const String adminAttribution = '/admin/attribution';
+  /// Attribution manuelle (`ADM-05`), sous Operations.
+  static const String adminOperationsAttributions =
+      '/admin/operations/attributions';
 
-  /// Journal d'audit, lecture seule.
-  static const String adminJournal = '/admin/journal';
+  /// Demandes et regles (`ADM-06`), sous Operations.
+  static const String adminOperationsDemandes = '/admin/operations/demandes';
 
-  /// Acces des agents IA : emission et revocation des jetons d'observation
-  /// (`ADM-07`, ADR-025).
-  static const String adminAccesAgents = '/admin/acces-agents';
+  /// Domaine Personnes.
+  static const String adminPersonnes = '/admin/personnes';
 
-  /// Les comptes du produit (`ADM-08`).
-  ///
-  /// Ecran cree le 18 septembre 2026, apres un defaut mesure en production :
-  /// trois enseignants inscrits attendaient depuis sept jours et **aucun ecran
-  /// de l'administration ne les montrait**. `ADM-02` ne listait que les pieces
-  /// d'identite deposees, `ADM-05` que les eleves sans enseignant. Aucun ecran
-  /// ne repondait a « qui s'est inscrit ? ».
-  static const String adminComptes = '/admin/comptes';
+  /// Validation des dossiers d'identite (`ADM-02`), sous Personnes.
+  static const String adminPersonnesDossiers = '/admin/personnes/dossiers';
+
+  /// Les comptes du produit (`ADM-08`), sous Personnes.
+  static const String adminPersonnesComptes = '/admin/personnes/comptes';
+
+  /// Domaine Securite et audit.
+  static const String adminSecuriteAudit = '/admin/securite-audit';
+
+  /// Journal d'audit (`ADM-04`), sous Securite et audit.
+  static const String adminSecuriteAuditJournal =
+      '/admin/securite-audit/journal';
+
+  /// Acces des agents IA (`ADM-07`, ADR-025), sous Securite et audit.
+  static const String adminSecuriteAuditAccesAgents =
+      '/admin/securite-audit/acces-agents';
 
   // --- Observation par un agent IA -----------------------------------------
 
@@ -208,7 +221,7 @@ abstract final class Routes {
     AppRole.guardian => tuteurAccueil,
     AppRole.teacher => enseignantJournee,
     AppRole.controller => controleur,
-    AppRole.admin => adminTableauDeBord,
+    AppRole.admin => admin,
     AppRole.accountant => comptable,
   };
 
