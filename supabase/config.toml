@@ -342,6 +342,28 @@ skip_nonce_check = false
 # If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
 email_optional = false
 
+# Google est le seul fournisseur externe reellement ouvert, et il est declare ici
+# pour une raison precise : `supabase config push` envoie l'etat COMPLET des
+# fournisseurs. Un fournisseur absent de ce fichier est pousse a `enabled=false`.
+# Sans cette section, un push desactiverait Google en silence -- ce qui est deja
+# arrive une fois aux reglages Auth (HANDOFF SS10.3). Les deux valeurs viennent
+# de l'environnement : un push sans elles echoue bruyamment, ce qui est le bon
+# comportement. Le client attendu est celui du projet Google dont l'URI de rappel
+# est `https://gggmtelinlpseweouyav.supabase.co/auth/v1/callback` -- **propre a
+# ce projet Supabase**, donc distinct de celui de PISI meme si le client est
+# partage entre les deux applications.
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+# DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+# Laisse vide : le rappel par defaut derive de auth.external_url et c'est lui qui
+# est declare cote Google.
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+email_optional = false
+
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.
 [auth.web3.solana]

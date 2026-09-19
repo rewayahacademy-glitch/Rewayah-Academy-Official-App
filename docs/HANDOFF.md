@@ -1,5 +1,67 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🚀 **19 septembre 2026, fin de journée — `TUT-00` EST EN PRODUCTION, et Google
+> marche pour de vrai.** Session courte et entièrement vérificatrice : rien de
+> neuf n'a été codé côté application, les trois restes ouverts de la session du
+> matin ont été mesurés puis refermés — sauf le SMTP, qui n'est pas refermable
+> depuis le dépôt.
+> ✅ **Google est fermé côté web, et c'est mesuré, pas rapporté.** L'opérateur a
+> collé le vrai Client ID dans Supabase. Contrôlé sans supposer : un `GET` sur
+> `/auth/v1/authorize?provider=google` sans suivre la redirection rend
+> maintenant `client_id=637243531228-…apps.googleusercontent.com` — **un vrai
+> identifiant Google là où il y avait un nom de domaine** — et
+> `redirect_uri=https%3A%2F%2Fgggmtelinlpseweouyav.supabase.co%2Fauth%2Fv1%2Fcallback`,
+> le bon projet. `auth.identities` porte **deux identités `google`**, créées le
+> 19/09 à 03:25:04 et 03:25:29 UTC. Les logs Auth des 24 h montrent 24 `login`,
+> 10 « Redirecting to external provider » et **aucune erreur de configuration**.
+> ⚠ **Ce que la mesure dit aussi, et qu'il ne faut pas confondre avec une
+> preuve** : les deux identités se sont **rattachées à des comptes e-mail qui
+> existaient déjà** (`rewayahacademy@gmail.com`, `millionsdr@gmail.com`). **Un
+> compte Google entièrement neuf n'a jamais été exercé.** Le code le supporte —
+> `auth.users` n'a **aucun trigger**, et `source_session.dart` distingue
+> explicitement le profil **absent** (→ inscription) de la lecture **refusée**
+> (→ portail d'attente) — mais tant que personne n'est entré par ce chemin, il
+> reste non prouvé.
+> ✅ **`31a385a` est déployé, et le bundle servi a été contrôlé octet pour
+> octet.** Avant : **4 749 103** o, sans le marqueur `TUT-00`. Après :
+> **4 763 288** o, **exactement la taille du fichier sur disque** — donc la même
+> version, pas un cache. Contient la vraie clé `anon` et le marqueur `TUT-00` ;
+> ne contient **ni** `cle-factice`, **ni** le Playground, **ni** `_galerie` ; et
+> `acces-agents` (`AGT-01`) **n'a pas régressé**. Routes vérifiées en 200 : `/`,
+> `/connexion`, `/agent`, `/tuteur/suivi`, `/admin/acces-agents`.
+> ⚠ **Un contrôle de plus, que §12.8 bis ne demandait pas et qui aurait dû y
+> être** : `sqlite3.wasm` est servi en **`application/wasm`** et
+> `drift_worker.js` en `application/javascript`. Le correctif du bouton élève ne
+> dépend pas seulement de la **présence** de ces deux fichiers : un `.wasm` servi
+> en `application/octet-stream` casse `instantiateStreaming` et **ramènerait
+> exactement la panne qu'on vient de réparer**, sans que rien d'autre ne bouge.
+> 🔴 **Un piège fermé, qui menaçait le travail de l'opérateur lui-même.**
+> `supabase/config.toml` déclarait `[auth.external.apple] enabled = false` et
+> **aucune section `google`** : c'était encore le fichier par défaut de la CLI.
+> Or `supabase config push` envoie l'état **complet** des fournisseurs — un
+> fournisseur absent du fichier est poussé à `enabled = false`. Le premier
+> `config push` venu **aurait donc désactivé Google en silence**, quelques heures
+> après qu'il a été réparé. C'est déjà arrivé une fois aux réglages Auth (§10.3).
+> La section est maintenant déclarée, `enabled = true`, les deux valeurs en
+> `env(…)` pour qu'un push sans elles **échoue bruyamment** au lieu de casser.
+> ⚠ **Le même fichier porte `email_sent = 2` et un `[auth.email.smtp]` commenté**
+> : le jour où un SMTP externe sera réglé au tableau de bord, un `config push`
+> **le retirera aussi**. Le corriger demande de décider du fournisseur d'abord —
+> donc ce piège-là reste ouvert, mais il est écrit.
+> ⚠ **SMTP : rien n'est mesurable depuis ici.** Le MCP Supabase n'expose pas les
+> réglages Auth, et le seul moyen d'éprouver l'envoi serait d'envoyer un vrai
+> courriel à un vrai destinataire. **Aucun envoi n'apparaît dans les logs des
+> 24 h**, donc ni preuve ni contre-preuve. Ce qui est certain est structurel : le
+> SMTP intégré de Supabase plafonne à **2 courriels par heure** et **ne livre
+> qu'aux membres de l'organisation**. Tant qu'il est en place, **un tuteur
+> inconnu ne recevra jamais son lien** — et l'application n'aura aucun moyen de
+> le lui dire.
+> ⚠ **Android/iOS, constat de dépôt** : `AndroidManifest.xml` ne porte qu'**un
+> seul `intent-filter`** (le lanceur), sans `<data android:scheme=…>`, et
+> `ios/Runner/Info.plist` n'a **aucun `CFBundleURLSchemes`**. Le retour OAuth
+> mobile n'a donc **rien où atterrir**. Non ouvert dans cette session : §10.3
+> pose que la PWA reste le chemin réel tant que le natif n'est pas publié.
+>
 > 🚪 **19 septembre 2026 — la porte d'entrée : trois moyens d'entrer, dont deux
 > ne marchaient pas.** L'opérateur a rapporté trois choses ; les trois étaient
 > exactes, et aucune n'avait la cause qu'on lui prêtait.
@@ -2906,6 +2968,12 @@ servant bien l'application : `/`, `/connexion`, `/agent`,
 `/agent?jeton=rag_test`, `/admin/acces-agents`. Bundle **4 577 Ko**, contenant
 `acces-agents`, `agent-session` et « Observation, lecture seule ».
 
+**Mise à jour du 19 septembre au soir** : la production porte désormais
+`31a385a` (lot `TUT-00`), déployée à la main selon §12.8 bis. Bundle servi
+**4 763 288** o — identique au fichier de `build\web`. Le déploiement précédent
+datait du **18/09 21:24 UTC** : la session du matin n'avait effectivement rien
+déployé.
+
 ### 12.8 bis 🔴 Le déploiement continu ne marche pas, et il faut le savoir
 
 **Un push sur `main` ne déploie RIEN.** Vérifié : douze minutes après
@@ -2950,6 +3018,14 @@ cd build\web ; vercel deploy --prod --yes
 
 # 4. VERIFIER L'URL PUBLIQUE, jamais le message du CLI.
 #    https://rewayah-academy.vercel.app/main.dart.js doit contenir « acces-agents ».
+#    Sa TAILLE doit valoir celle de build\web\main.dart.js : egales, c'est la
+#    meme version ; differentes, c'est un cache ou un projet parasite.
+
+# 5. AJOUTE LE 19/09 -- CONTROLER LE TYPE MIME DE sqlite3.wasm.
+#    /sqlite3.wasm doit repondre en « application/wasm » et /drift_worker.js en
+#    « application/javascript ». Servi en octet-stream, le .wasm casse
+#    instantiateStreaming et le bouton eleve retombe dans le chargement sans fin
+#    repare par TUT-00 -- sans qu'aucun autre signal ne bouge.
 ```
 
 ⚠ `build/web` contient déjà son propre `vercel.json` avec la réécriture SPA.
