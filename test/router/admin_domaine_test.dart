@@ -38,33 +38,33 @@ void main() {
   });
 
   group('AdminDomaine.chemin : nul pour un domaine sans fonction livree', () {
-    test('Accueil, Operations, Personnes et Securite ont une route reelle', () {
-      for (final AdminDomaine domaine in <AdminDomaine>[
-        AdminDomaine.accueil,
-        AdminDomaine.operations,
-        AdminDomaine.personnes,
-        AdminDomaine.securite,
-      ]) {
-        expect(domaine.chemin, isNotNull, reason: domaine.name);
-        expect(domaine.chemin, startsWith('/admin'), reason: domaine.name);
-        expect(domaine.actif, isTrue, reason: domaine.name);
-      }
-    });
-
     test(
-      'Pedagogie, Finance, Configuration et Direction n ont aucune route',
+      'Accueil, Operations, Personnes, Pedagogie et Securite ont une route reelle',
       () {
         for (final AdminDomaine domaine in <AdminDomaine>[
+          AdminDomaine.accueil,
+          AdminDomaine.operations,
+          AdminDomaine.personnes,
           AdminDomaine.pedagogie,
-          AdminDomaine.finance,
-          AdminDomaine.configuration,
-          AdminDomaine.direction,
+          AdminDomaine.securite,
         ]) {
-          expect(domaine.chemin, isNull, reason: domaine.name);
-          expect(domaine.actif, isFalse, reason: domaine.name);
+          expect(domaine.chemin, isNotNull, reason: domaine.name);
+          expect(domaine.chemin, startsWith('/admin'), reason: domaine.name);
+          expect(domaine.actif, isTrue, reason: domaine.name);
         }
       },
     );
+
+    test('Finance, Configuration et Direction n ont aucune route', () {
+      for (final AdminDomaine domaine in <AdminDomaine>[
+        AdminDomaine.finance,
+        AdminDomaine.configuration,
+        AdminDomaine.direction,
+      ]) {
+        expect(domaine.chemin, isNull, reason: domaine.name);
+        expect(domaine.actif, isFalse, reason: domaine.name);
+      }
+    });
 
     test('aucune route n est partagee entre deux domaines actifs', () {
       final List<String> chemins = <String>[
@@ -80,7 +80,7 @@ void main() {
       final List<({String libelle, String chemin})> cibles =
           ciblesRechercheAdmin(voitDirection: true);
 
-      expect(cibles.length, 4);
+      expect(cibles.length, 5);
       for (final ({String libelle, String chemin}) cible in cibles) {
         expect(cible.libelle, isNotEmpty);
         expect(cible.chemin, startsWith('/admin'));

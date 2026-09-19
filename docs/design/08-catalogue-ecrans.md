@@ -74,6 +74,11 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ADM-07` | Accès des agents IA | Admin | E | 1 | `/admin/securite-audit/acces-agents` | Formulaire puis cartes | Formulaire + tableau dense | **repris (19/09, gel d'architecture)**, fiche §6 |
 | `ADM-08` | Comptes | Admin | E | 1 | `/admin/personnes/comptes` | Cartes | Tableau dense | **repris (19/09, gel d'architecture)**, fiche §6 |
 | `ADM-09` | Groupes | Admin | E | 1 | `/admin/operations/groupes` | Cartes | Tableau dense | **construit (19/09, pivot 1-à-1 → groupe)**, fonction primaire d'Opérations |
+| `ADM-10` | Diagnostics | Admin | E | 1 | `/admin/pedagogie/diagnostics` | File puis décision | File à gauche, décision à droite | **construit (19/09)**, fonction primaire de Pédagogie, fiche §6 |
+| `ADM-11` | Progression | Admin | E | 1 | `/admin/pedagogie/progression` | Cartes groupées | Tableau dense groupé | **construit (19/09)**, fiche §6 |
+| `ADM-12` | Évaluations | Admin | E | 1 | `/admin/pedagogie/evaluations` | Cartes | Tableau dense | **construit (19/09)**, fiche §6 |
+| `ADM-13` | Programmes | Admin | E | 1 | `/admin/pedagogie/programmes` | Liste de versions | Liste + détail de niveaux | **construit (19/09)**, fiche §6 |
+| `ADM-14` | Qualité | Admin | E | 1 | `/admin/pedagogie/qualite` | Cartes groupées par type | Tableau dense groupé | **construit (19/09)**, fiche §6 |
 | `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
 
@@ -2575,3 +2580,296 @@ n'avait jamais été prévu.
 
 Construit le 18 septembre 2026, avec la migration `0015`, qui corrige aussi
 `dossiers_en_attente()` pour qu'elle rende une ligne par **personne**.
+
+### `ADM-13` Programmes
+
+```
+CODE              ADM-13
+Nom               Programmes
+Role              Admin
+Zone              Administration > Pedagogie
+Niveau de charge  E
+Ecran parent      aucun (racine de sa sous-navigation)
+Profondeur        1
+Question          Que contient le curriculum publie, et qu'est-ce qui est en
+                  brouillon ?
+
+Priorites         P0  la version publiee courante et ses niveaux
+                  P0  le statut brouillon/publiee/archivee, sans ambiguite
+                  P1  creer un niveau dans une version brouillon
+                  P1  publier une version (confirmation, motif)
+
+Action principale     publier la version en brouillon (confirmation + motif)
+Actions secondaires   creer un niveau, modifier un niveau (brouillon
+                      seulement), creer une nouvelle version a partir de la
+                      publiee courante
+Action tertiaire      aucune
+Destructif            supprimer un niveau d'une version brouillon (motif
+                      requis, jamais sur une version publiee)
+
+Mobile            une carte par niveau, groupee par cycle
+Tablette          identique
+Desktop           liste de versions a gauche, niveaux de la version
+                  selectionnee a droite, groupes par cycle
+
+Etats             loading   squelette de liste, cinq lignes
+                  content   liste des versions puis niveaux de la version
+                             selectionnee
+                  empty     "Aucune version de programme" -- creer la
+                             premiere version brouillon
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        le code technique (ex. F1-PHO-01) n'est jamais un titre : le
+                  nom humain seul est affiche en premier plan, le code reste
+                  en sous-texte technique discret
+                  une version au statut publiee ne peut plus etre modifiee ni
+                  en RPC ni en UI -- toute modification academique cree une
+                  nouvelle version brouillon
+                  publier exige un motif, journalise via
+                  log_sensitive_access
+                  la version active pour Diagnostics/Progression/Evaluations
+                  est la publiee la plus recente, jamais un brouillon
+
+Accessibilite     cibles a 44 ; chaque niveau porte son libelle parle nom +
+                  cycle ; la page se lit de droite a gauche en arabe
+```
+
+Fondation du domaine Pédagogie : les quatre autres écrans (`ADM-10`
+Diagnostics, `ADM-11` Progression, `ADM-12` Évaluations, `ADM-14` Qualité)
+référencent `programme_niveaux` d'une version publiée. Construit en premier
+dans l'ordre technique du lot, bien qu'affiché en dernier dans la
+sous-navigation (Diagnostics, Progression, Évaluations, Programmes, Qualité),
+qui reste l'ordre demandé par la mission.
+
+### `ADM-10` Diagnostics
+
+```
+CODE              ADM-10
+Nom               Diagnostics
+Role              Admin
+Zone              Administration > Pedagogie
+Niveau de charge  E
+Ecran parent      aucun (fonction primaire du domaine)
+Profondeur        1
+Question          Quel niveau reel donner au prochain eleve non place ?
+
+Priorites         P0  l'eleve qui attend depuis le plus longtemps, en premier
+                  P0  le programme doit avoir une version publiee, sinon rien
+                       n'est decidable
+                  P1  le motif de la decision
+
+Action principale     decider le placement (niveau + motif obligatoire)
+Actions secondaires   aucune
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            un eleve a la fois, meme discipline qu'ADM-02
+Tablette          identique
+Desktop           identique -- une decision a la fois, jamais une file
+                  parcourue en grille
+
+Etats             loading   squelette de liste, quatre lignes
+                  content   un eleve, un selecteur de niveau groupe par
+                             cycle, un motif, une action
+                  empty     "Aucun eleve a diagnostiquer", registre BONNE
+                             NOUVELLE : personne n'attend
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+                  (etat supplementaire) aucun programme publie : registre
+                  subi, oriente vers Pedagogie > Programmes plutot que
+                  d'inventer un choix
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        la file est calculee (eleves actifs absents de
+                  progression_historique), jamais une colonne d'etat
+                  separee a garder synchronisee
+                  le niveau propose vient uniquement de la version publiee
+                  la plus recente, jamais d'un brouillon
+                  un eleve deja diagnostique ne peut pas etre re-diagnostique
+                  ici -- une correction passe par Progression (ADM-11)
+                  motif obligatoire, journalise via log_sensitive_access
+
+Accessibilite     cibles a 44 ; chaque niveau proposé porte son libelle
+                  parle ; la page se lit de droite a gauche en arabe
+```
+
+Deuxième lot du domaine Pédagogie. Nécessite `ADM-13` (une version du
+programme publiée) pour proposer un niveau réel.
+
+### `ADM-11` Progression
+
+```
+CODE              ADM-11
+Nom               Progression
+Role              Admin
+Zone              Administration > Pedagogie
+Niveau de charge  E
+Ecran parent      aucun (atteint depuis la sous-navigation Pedagogie)
+Profondeur        1
+Question          Ou en est chaque eleve, et qui est bloque ?
+
+Priorites         P0  le niveau courant et le groupe de chaque eleve
+                  P0  les exceptions actives (blocage/derogation), visibles
+                       sans ouvrir chaque fiche
+                  P1  le filtre par cycle
+
+Action principale     aucune : cet ecran constate d'abord. Poser/clore une
+                      exception et changer de niveau restent des actions de
+                      ligne, via le menu contextuel
+Actions secondaires   filtrer par cycle
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            une carte par eleve (DataCollection replie le tableau)
+Tablette          identique
+Desktop           tableau dense, sa forme naturelle au niveau E
+
+Etats             loading   squelette de liste, cinq lignes
+                  content   filtres par cycle, puis le tableau
+                  empty     "Aucun eleve actif", registre subi
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        un eleve sans groupe actif ou sans niveau decide reste
+                  VISIBLE et dit ce qui manque -- meme discipline qu'ADM-08
+                  au plus une exception active par type et par eleve
+                  (contrainte posee par poser_exception_progression)
+                  progression_exceptions est un catalogue distinct de
+                  rule_overrides/matching_requests (ADM-06) : jamais
+                  fusionne avec les regles operationnelles
+                  changer de niveau hors evaluation est une decision
+                  manuelle, journalisee au meme titre qu'un diagnostic
+
+Accessibilite     cibles a 44 ; chaque ligne porte son libelle parle nom,
+                  groupe, niveau et exception ensemble ; chiffres tabulaires
+                  sur l'anciennete ; la page se lit de droite a gauche en
+                  arabe
+```
+
+Troisième lot du domaine Pédagogie. Le niveau courant vient de la dernière
+ligne de `progression_historique` (`ADM-10`), jamais d'une colonne d'état
+séparée.
+
+### `ADM-12` Évaluations
+
+```
+CODE              ADM-12
+Nom               Évaluations
+Role              Admin
+Zone              Administration > Pedagogie
+Niveau de charge  E
+Ecran parent      aucun (atteint depuis la sous-navigation Pedagogie)
+Profondeur        1
+Question          Qu'est-ce qui est prevu, passe, et certifie ?
+
+Priorites         P0  les evaluations planifiees, visibles en premier
+                  P0  le resultat d'une evaluation realisee
+                  P1  le filtre par statut, et un filtre dedie
+                       « Certifications »
+
+Action principale     planifier une evaluation
+Actions secondaires   filtrer par statut/type, enregistrer un resultat,
+                      annuler une evaluation planifiee (actions de ligne)
+Action tertiaire      aucune
+Destructif            annuler une evaluation planifiee (motif requis)
+
+Mobile            une carte par evaluation (DataCollection replie le
+                  tableau)
+Tablette          identique
+Desktop           tableau dense, sa forme naturelle au niveau E
+
+Etats             loading   squelette de liste, cinq lignes
+                  content   filtres, puis le tableau
+                  empty     "Aucune evaluation" / "Aucune evaluation avec ce
+                             filtre", registre subi
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        une certification est une evaluation de type
+                  `certification` reussie -- jamais un objet separe, le
+                  filtre "Certifications" lit les memes lignes
+                  une reevaluation est une nouvelle evaluation planifiee sur
+                  le meme niveau apres un echec, jamais un objet a part
+                  une reussite en reevaluation ou certification ajoute une
+                  ligne a progression_historique, jamais une nouvelle
+                  source de verite sur le niveau courant
+                  seule une evaluation planifiee peut recevoir un resultat
+                  ou etre annulee
+
+Accessibilite     cibles a 44 ; chaque ligne porte son libelle parle eleve,
+                  niveau, type et statut ensemble ; chiffres tabulaires sur
+                  la date ; la page se lit de droite a gauche en arabe
+```
+
+Quatrième lot du domaine Pédagogie.
+
+### `ADM-14` Qualité
+
+```
+CODE              ADM-14
+Nom               Qualite
+Role              Admin
+Zone              Administration > Pedagogie
+Niveau de charge  E
+Ecran parent      aucun (atteint depuis la sous-navigation Pedagogie)
+Profondeur        1
+Question          Quelles anomalies pedagogiques attendent une action ?
+
+Priorites         P0  les anomalies ouvertes, groupees par type
+                  P0  le rapport manquant raccorde enfin le compteur mort
+                       d'ADM-01
+                  P1  le filtre ouvertes/traitees
+
+Action principale     aucune : cet ecran constate d'abord. Marquer traite
+                      reste une action de ligne
+Actions secondaires   filtrer ouvertes/traitees/toutes
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            cartes groupees par type d'anomalie
+Tablette          identique
+Desktop           tableau dense par groupe, meme composant que les autres
+                  ecrans du domaine
+
+Etats             loading   squelette de liste, cinq lignes
+                  content   filtres, puis un tableau par type d'anomalie
+                             present
+                  empty     "Aucune anomalie detectee", registre BONNE
+                             NOUVELLE quand aucun filtre n'exclut rien ;
+                             registre subi si le filtre choisi exclut tout
+                  error     phrase + "Reessayer", registre actionnable
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                             page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        chaque anomalie est calculee a la lecture
+                  (anomalies_qualite()), jamais stockee -- seul le controle
+                  (traite ou non) est retenu en base
+                  marquer traite est idempotent : re-traiter met a jour la
+                  note, ne duplique jamais la ligne de controle
+                  le suivi enseignant se lit sur la colonne « Concerne » du
+                  groupe Rapports manquants, pas un agregat separe
+
+Accessibilite     cibles a 44 ; chaque ligne porte son libelle parle
+                  personne, anciennete et statut ensemble ; chiffres
+                  tabulaires sur l'anciennete ; la page se lit de droite a
+                  gauche en arabe
+```
+
+Cinquième et dernier lot du domaine Pédagogie. Raccorde enfin le compteur
+« rapports manquants » d'`ADM-01`, présent depuis la migration `0001` mais
+jamais consommé par aucun écran (audit, ligne 134). Câble aussi la
+sous-navigation des cinq écrans et active `AdminDomaine.pedagogie`.

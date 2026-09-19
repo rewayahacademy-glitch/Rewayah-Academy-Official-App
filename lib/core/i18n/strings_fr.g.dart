@@ -1122,6 +1122,11 @@ class Traductions$admin$fr {
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
 	late final Traductions$admin$attribution$fr attribution = Traductions$admin$attribution$fr.internal(_root);
 	late final Traductions$admin$groupes$fr groupes = Traductions$admin$groupes$fr.internal(_root);
+	late final Traductions$admin$diagnostics$fr diagnostics = Traductions$admin$diagnostics$fr.internal(_root);
+	late final Traductions$admin$qualite$fr qualite = Traductions$admin$qualite$fr.internal(_root);
+	late final Traductions$admin$evaluations$fr evaluations = Traductions$admin$evaluations$fr.internal(_root);
+	late final Traductions$admin$progression$fr progression = Traductions$admin$progression$fr.internal(_root);
+	late final Traductions$admin$programmes$fr programmes = Traductions$admin$programmes$fr.internal(_root);
 	late final Traductions$admin$journal$fr journal = Traductions$admin$journal$fr.internal(_root);
 	late final Traductions$admin$comptes$fr comptes = Traductions$admin$comptes$fr.internal(_root);
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
@@ -2157,6 +2162,555 @@ class Traductions$admin$groupes$fr {
 
 	/// fr: 'Chaque création, ajout, retrait et clôture est inscrit au journal d'audit.'
 	String get journalisation => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.';
+}
+
+// Path: admin.diagnostics
+class Traductions$admin$diagnostics$fr {
+	Traductions$admin$diagnostics$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Diagnostics'
+	String get titre => 'Diagnostics';
+
+	/// fr: 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c'est ici que ce placement se décide.'
+	String get intro => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.';
+
+	/// fr: 'Aucun programme publié'
+	String get aucunProgramme => 'Aucun programme publié';
+
+	/// fr: 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.'
+	String get aucunProgrammeDetail => 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.';
+
+	/// fr: 'La file n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreur => 'La file n\'a pas pu être lue. Réessayez dans un instant.';
+
+	/// fr: '{n} élèves restants'
+	String restants({required Object n}) => '${n} élèves restants';
+
+	/// fr: '1 élève restant'
+	String get restantUn => '1 élève restant';
+
+	/// fr: 'Inscrit aujourd'hui'
+	String get inscritAujourdhui => 'Inscrit aujourd\'hui';
+
+	/// fr: 'Inscrit depuis 1 jour'
+	String get inscritDepuisUnJour => 'Inscrit depuis 1 jour';
+
+	/// fr: 'Inscrit depuis {jours} jours'
+	String inscritDepuis({required Object jours}) => 'Inscrit depuis ${jours} jours';
+
+	/// fr: 'Aucun élève à diagnostiquer'
+	String get aucun => 'Aucun élève à diagnostiquer';
+
+	/// fr: 'Tous les élèves inscrits ont déjà un niveau décidé.'
+	String get aucunDetail => 'Tous les élèves inscrits ont déjà un niveau décidé.';
+
+	/// fr: 'Niveau de placement'
+	String get champNiveau => 'Niveau de placement';
+
+	/// fr: 'Motif'
+	String get champMotif => 'Motif';
+
+	/// fr: 'Un motif est requis, il s'inscrit au journal d'audit.'
+	String get motifRequis => 'Un motif est requis, il s\'inscrit au journal d\'audit.';
+
+	/// fr: 'Décider le placement'
+	String get decider => 'Décider le placement';
+
+	/// fr: 'La décision n'a pas abouti : {message}'
+	String deciderErreur({required Object message}) => 'La décision n\'a pas abouti : ${message}';
+
+	/// fr: 'Chaque placement décidé est inscrit au journal d'audit.'
+	String get journalisation => 'Chaque placement décidé est inscrit au journal d\'audit.';
+}
+
+// Path: admin.qualite
+class Traductions$admin$qualite$fr {
+	Traductions$admin$qualite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qualité'
+	String get titre => 'Qualité';
+
+	/// fr: 'Les anomalies pédagogiques détectées : rapports manquants, blocages sans suivi, évaluations en retard.'
+	String get intro => 'Les anomalies pédagogiques détectées : rapports manquants, blocages sans suivi, évaluations en retard.';
+
+	/// fr: 'Les anomalies n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Les anomalies n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Aucune anomalie détectée'
+	String get aucune => 'Aucune anomalie détectée';
+
+	/// fr: 'Tout est à jour : rapports rédigés, blocages suivis, évaluations à l'heure.'
+	String get aucuneDetail => 'Tout est à jour : rapports rédigés, blocages suivis, évaluations à l\'heure.';
+
+	/// fr: 'Toutes'
+	String get filtreToutes => 'Toutes';
+
+	/// fr: 'Ouvertes'
+	String get filtreOuvertes => 'Ouvertes';
+
+	/// fr: 'Traitées'
+	String get filtreTraitees => 'Traitées';
+
+	/// fr: 'Rapports de séance manquants'
+	String get groupeRapportManquant => 'Rapports de séance manquants';
+
+	/// fr: 'Blocages sans suivi'
+	String get groupeBlocageSansSuivi => 'Blocages sans suivi';
+
+	/// fr: 'Évaluations en retard'
+	String get groupeEvaluationEnRetard => 'Évaluations en retard';
+
+	/// fr: 'Concerne'
+	String get colonnePersonne => 'Concerne';
+
+	/// fr: 'Depuis'
+	String get colonneDepuis => 'Depuis';
+
+	/// fr: 'Statut'
+	String get colonneStatut => 'Statut';
+
+	/// fr: 'Ouverte'
+	String get statutOuvert => 'Ouverte';
+
+	/// fr: 'Traitée'
+	String get statutTraite => 'Traitée';
+
+	/// fr: 'Aujourd'hui'
+	String get depuisAujourdhui => 'Aujourd\'hui';
+
+	/// fr: '1 jour'
+	String get depuisUnJour => '1 jour';
+
+	/// fr: '{jours} jours'
+	String depuisJours({required Object jours}) => '${jours} jours';
+
+	/// fr: 'Marquer traité'
+	String get actionTraiter => 'Marquer traité';
+
+	/// fr: 'Marquer traité : {personne}'
+	String traiterTitre({required Object personne}) => 'Marquer traité : ${personne}';
+
+	/// fr: 'Note (optionnelle)'
+	String get champNote => 'Note (optionnelle)';
+
+	/// fr: 'Marquer traité'
+	String get traiterEnvoyer => 'Marquer traité';
+
+	/// fr: 'Le traitement n'a pas abouti : {message}'
+	String traiterErreur({required Object message}) => 'Le traitement n\'a pas abouti : ${message}';
+}
+
+// Path: admin.evaluations
+class Traductions$admin$evaluations$fr {
+	Traductions$admin$evaluations$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Évaluations'
+	String get titre => 'Évaluations';
+
+	/// fr: 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.'
+	String get intro => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.';
+
+	/// fr: 'Les évaluations n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Aucune évaluation'
+	String get aucune => 'Aucune évaluation';
+
+	/// fr: 'Planifiez une première évaluation pour un élève déjà diagnostiqué.'
+	String get aucuneDetail => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.';
+
+	/// fr: 'Aucune évaluation avec ce filtre'
+	String get aucuneAvecCeFiltre => 'Aucune évaluation avec ce filtre';
+
+	/// fr: 'Changez de filtre pour voir les autres évaluations.'
+	String get aucuneAvecCeFiltreDetail => 'Changez de filtre pour voir les autres évaluations.';
+
+	/// fr: 'Toutes'
+	String get filtreToutes => 'Toutes';
+
+	/// fr: 'Planifiées'
+	String get filtrePlanifiees => 'Planifiées';
+
+	/// fr: 'Réalisées'
+	String get filtreRealisees => 'Réalisées';
+
+	/// fr: 'Annulées'
+	String get filtreAnnulees => 'Annulées';
+
+	/// fr: 'Certifications'
+	String get filtreCertifications => 'Certifications';
+
+	/// fr: 'Élève'
+	String get colonneEleve => 'Élève';
+
+	/// fr: 'Niveau'
+	String get colonneNiveau => 'Niveau';
+
+	/// fr: 'Type'
+	String get colonneType => 'Type';
+
+	/// fr: 'Prévue le'
+	String get colonneDatePrevue => 'Prévue le';
+
+	/// fr: 'Statut'
+	String get colonneStatut => 'Statut';
+
+	/// fr: 'Résultat'
+	String get colonneResultat => 'Résultat';
+
+	/// fr: 'Initiale'
+	String get typeInitiale => 'Initiale';
+
+	/// fr: 'Périodique'
+	String get typePeriodique => 'Périodique';
+
+	/// fr: 'Réévaluation'
+	String get typeReevaluation => 'Réévaluation';
+
+	/// fr: 'Certification'
+	String get typeCertification => 'Certification';
+
+	/// fr: 'Planifiée'
+	String get statutPlanifiee => 'Planifiée';
+
+	/// fr: 'Réalisée'
+	String get statutRealisee => 'Réalisée';
+
+	/// fr: 'Annulée'
+	String get statutAnnulee => 'Annulée';
+
+	/// fr: 'Réussi'
+	String get resultatReussi => 'Réussi';
+
+	/// fr: 'Échec'
+	String get resultatEchec => 'Échec';
+
+	/// fr: 'À revoir'
+	String get resultatARevoir => 'À revoir';
+
+	/// fr: 'Planifier une évaluation'
+	String get planifier => 'Planifier une évaluation';
+
+	/// fr: 'Planifier une évaluation'
+	String get planifierTitre => 'Planifier une évaluation';
+
+	/// fr: 'Identifiant de l'élève'
+	String get champEleveId => 'Identifiant de l\'élève';
+
+	/// fr: 'Niveau évalué'
+	String get champNiveau => 'Niveau évalué';
+
+	/// fr: 'Type'
+	String get champType => 'Type';
+
+	/// fr: 'Date prévue (JJ/MM/AAAA)'
+	String get champDatePrevue => 'Date prévue (JJ/MM/AAAA)';
+
+	/// fr: 'Planifier'
+	String get planifierEnvoyer => 'Planifier';
+
+	/// fr: 'La planification n'a pas abouti : {message}'
+	String planifierErreur({required Object message}) => 'La planification n\'a pas abouti : ${message}';
+
+	/// fr: 'Enregistrer le résultat'
+	String get actionEnregistrerResultat => 'Enregistrer le résultat';
+
+	/// fr: 'Annuler l'évaluation'
+	String get actionAnnuler => 'Annuler l\'évaluation';
+
+	/// fr: 'Résultat de {eleve}'
+	String resultatTitre({required Object eleve}) => 'Résultat de ${eleve}';
+
+	/// fr: 'Notes (optionnelles)'
+	String get champNotes => 'Notes (optionnelles)';
+
+	/// fr: 'Enregistrer'
+	String get resultatEnvoyer => 'Enregistrer';
+
+	/// fr: 'L'enregistrement n'a pas abouti : {message}'
+	String resultatErreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
+
+	/// fr: 'Annuler l'évaluation de {eleve}'
+	String annulerTitre({required Object eleve}) => 'Annuler l\'évaluation de ${eleve}';
+
+	/// fr: 'Annuler'
+	String get annulerEnvoyer => 'Annuler';
+
+	/// fr: 'L'annulation n'a pas abouti : {message}'
+	String annulerErreur({required Object message}) => 'L\'annulation n\'a pas abouti : ${message}';
+
+	/// fr: 'Motif'
+	String get champMotif => 'Motif';
+
+	/// fr: 'Un motif est requis, il s'inscrit au journal d'audit.'
+	String get motifRequis => 'Un motif est requis, il s\'inscrit au journal d\'audit.';
+
+	/// fr: 'Chaque planification, résultat et annulation est inscrit au journal d'audit.'
+	String get journalisation => 'Chaque planification, résultat et annulation est inscrit au journal d\'audit.';
+}
+
+// Path: admin.progression
+class Traductions$admin$progression$fr {
+	Traductions$admin$progression$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Progression'
+	String get titre => 'Progression';
+
+	/// fr: 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.'
+	String get intro => 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.';
+
+	/// fr: 'La progression n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreur => 'La progression n\'a pas pu être lue. Réessayez dans un instant.';
+
+	/// fr: 'Aucun élève actif'
+	String get aucun => 'Aucun élève actif';
+
+	/// fr: 'Les élèves apparaîtront ici dès leur premier diagnostic de placement.'
+	String get aucunDetail => 'Les élèves apparaîtront ici dès leur premier diagnostic de placement.';
+
+	/// fr: 'Élève'
+	String get colonneEleve => 'Élève';
+
+	/// fr: 'Groupe'
+	String get colonneGroupe => 'Groupe';
+
+	/// fr: 'Niveau'
+	String get colonneNiveau => 'Niveau';
+
+	/// fr: 'Depuis'
+	String get colonneDepuis => 'Depuis';
+
+	/// fr: 'Exception'
+	String get colonneException => 'Exception';
+
+	/// fr: 'Sans groupe'
+	String get sansGroupe => 'Sans groupe';
+
+	/// fr: 'Non diagnostiqué'
+	String get sansNiveau => 'Non diagnostiqué';
+
+	/// fr: 'Tous les cycles'
+	String get filtreTousCycles => 'Tous les cycles';
+
+	/// fr: 'Aujourd'hui'
+	String get depuisAujourdhui => 'Aujourd\'hui';
+
+	/// fr: '1 jour'
+	String get depuisUnJour => '1 jour';
+
+	/// fr: '{jours} jours'
+	String depuisJours({required Object jours}) => '${jours} jours';
+
+	/// fr: 'Blocage'
+	String get typeBlocage => 'Blocage';
+
+	/// fr: 'Dérogation'
+	String get typeDerogation => 'Dérogation';
+
+	/// fr: 'Poser un blocage'
+	String get actionPoserBlocage => 'Poser un blocage';
+
+	/// fr: 'Poser une dérogation'
+	String get actionPoserDerogation => 'Poser une dérogation';
+
+	/// fr: 'Clore l'exception'
+	String get actionCloreException => 'Clore l\'exception';
+
+	/// fr: 'Changer de niveau'
+	String get actionPromouvoir => 'Changer de niveau';
+
+	/// fr: '{type} pour {eleve}'
+	String poserExceptionTitre({required Object type, required Object eleve}) => '${type} pour ${eleve}';
+
+	/// fr: 'Poser l'exception'
+	String get poserExceptionEnvoyer => 'Poser l\'exception';
+
+	/// fr: 'La pose n'a pas abouti : {message}'
+	String poserExceptionErreur({required Object message}) => 'La pose n\'a pas abouti : ${message}';
+
+	/// fr: 'Clore l'exception de {eleve}'
+	String clorerExceptionTitre({required Object eleve}) => 'Clore l\'exception de ${eleve}';
+
+	/// fr: 'Clore'
+	String get clorerExceptionEnvoyer => 'Clore';
+
+	/// fr: 'La clôture n'a pas abouti : {message}'
+	String clorerExceptionErreur({required Object message}) => 'La clôture n\'a pas abouti : ${message}';
+
+	/// fr: 'Changer le niveau de {eleve}'
+	String promouvoirTitre({required Object eleve}) => 'Changer le niveau de ${eleve}';
+
+	/// fr: 'Nouveau niveau'
+	String get promouvoirChampNiveau => 'Nouveau niveau';
+
+	/// fr: 'Enregistrer'
+	String get promouvoirEnvoyer => 'Enregistrer';
+
+	/// fr: 'Le changement n'a pas abouti : {message}'
+	String promouvoirErreur({required Object message}) => 'Le changement n\'a pas abouti : ${message}';
+
+	/// fr: 'Motif'
+	String get champMotif => 'Motif';
+
+	/// fr: 'Un motif est requis, il s'inscrit au journal d'audit.'
+	String get motifRequis => 'Un motif est requis, il s\'inscrit au journal d\'audit.';
+
+	/// fr: 'Chaque exception posée, close, et chaque changement de niveau est inscrit au journal d'audit.'
+	String get journalisation => 'Chaque exception posée, close, et chaque changement de niveau est inscrit au journal d\'audit.';
+}
+
+// Path: admin.programmes
+class Traductions$admin$programmes$fr {
+	Traductions$admin$programmes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Programmes'
+	String get titre => 'Programmes';
+
+	/// fr: 'Le curriculum Rewayah, versionné : une version publiée ne peut plus être modifiée, toute évolution académique en crée une nouvelle.'
+	String get intro => 'Le curriculum Rewayah, versionné : une version publiée ne peut plus être modifiée, toute évolution académique en crée une nouvelle.';
+
+	/// fr: 'Aucune version de programme'
+	String get aucuneVersion => 'Aucune version de programme';
+
+	/// fr: 'Créez la première version, encore en brouillon, pour commencer à y ajouter des niveaux.'
+	String get aucuneVersionDetail => 'Créez la première version, encore en brouillon, pour commencer à y ajouter des niveaux.';
+
+	/// fr: 'Le programme n'a pas pu être lu. Réessayez dans un instant.'
+	String get erreur => 'Le programme n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Brouillon'
+	String get statutBrouillon => 'Brouillon';
+
+	/// fr: 'Publiée'
+	String get statutPubliee => 'Publiée';
+
+	/// fr: 'Archivée'
+	String get statutArchivee => 'Archivée';
+
+	/// fr: 'Version {numero}'
+	String versionNumero({required Object numero}) => 'Version ${numero}';
+
+	/// fr: '{nombre} niveaux'
+	String niveauxSur({required Object nombre}) => '${nombre} niveaux';
+
+	/// fr: 'Créer une version'
+	String get creerVersion => 'Créer une version';
+
+	/// fr: 'Créer une version vide'
+	String get creerVersionVide => 'Créer une version vide';
+
+	/// fr: 'Créer une nouvelle version à partir de celle-ci'
+	String get creerVersionDepuisPubliee => 'Créer une nouvelle version à partir de celle-ci';
+
+	/// fr: 'La création n'a pas abouti : {message}'
+	String creerVersionErreur({required Object message}) => 'La création n\'a pas abouti : ${message}';
+
+	/// fr: 'Niveaux'
+	String get niveauxTitre => 'Niveaux';
+
+	/// fr: 'Aucun niveau dans cette version'
+	String get niveauAucun => 'Aucun niveau dans cette version';
+
+	/// fr: 'Ajoutez un premier niveau pour commencer à composer cette version.'
+	String get niveauAucunDetail => 'Ajoutez un premier niveau pour commencer à composer cette version.';
+
+	/// fr: 'Code : {code}'
+	String codeTechnique({required Object code}) => 'Code : ${code}';
+
+	/// fr: 'Ajouter un niveau'
+	String get ajouterNiveau => 'Ajouter un niveau';
+
+	/// fr: 'Ajouter un niveau à {version}'
+	String ajouterNiveauTitre({required Object version}) => 'Ajouter un niveau à ${version}';
+
+	/// fr: 'Ajouter'
+	String get ajouterNiveauEnvoyer => 'Ajouter';
+
+	/// fr: 'L'ajout n'a pas abouti : {message}'
+	String ajouterNiveauErreur({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}';
+
+	/// fr: 'Modifier'
+	String get modifierNiveau => 'Modifier';
+
+	/// fr: 'Modifier {nom}'
+	String modifierNiveauTitre({required Object nom}) => 'Modifier ${nom}';
+
+	/// fr: 'Enregistrer'
+	String get modifierNiveauEnvoyer => 'Enregistrer';
+
+	/// fr: 'La modification n'a pas abouti : {message}'
+	String modifierNiveauErreur({required Object message}) => 'La modification n\'a pas abouti : ${message}';
+
+	/// fr: 'Supprimer'
+	String get supprimerNiveau => 'Supprimer';
+
+	/// fr: 'Supprimer {nom}'
+	String supprimerNiveauTitre({required Object nom}) => 'Supprimer ${nom}';
+
+	/// fr: 'Supprimer'
+	String get supprimerNiveauEnvoyer => 'Supprimer';
+
+	/// fr: 'La suppression n'a pas abouti : {message}'
+	String supprimerNiveauErreur({required Object message}) => 'La suppression n\'a pas abouti : ${message}';
+
+	/// fr: 'Publier la version'
+	String get publierVersion => 'Publier la version';
+
+	/// fr: 'Publier {version}'
+	String publierVersionTitre({required Object version}) => 'Publier ${version}';
+
+	/// fr: 'Une fois publiée, cette version ne pourra plus être modifiée. Toute évolution académique en créera une nouvelle.'
+	String get publierVersionDetail => 'Une fois publiée, cette version ne pourra plus être modifiée. Toute évolution académique en créera une nouvelle.';
+
+	/// fr: 'Publier'
+	String get publierVersionEnvoyer => 'Publier';
+
+	/// fr: 'La publication n'a pas abouti : {message}'
+	String publierVersionErreur({required Object message}) => 'La publication n\'a pas abouti : ${message}';
+
+	/// fr: 'Code technique (usage interne, jamais affiché à l'élève)'
+	String get champCodeTechnique => 'Code technique (usage interne, jamais affiché à l\'élève)';
+
+	/// fr: 'Nom affiché'
+	String get champNomHumain => 'Nom affiché';
+
+	/// fr: 'Cycle'
+	String get champCycle => 'Cycle';
+
+	/// fr: 'Ordre'
+	String get champOrdre => 'Ordre';
+
+	/// fr: 'Description (optionnelle)'
+	String get champDescription => 'Description (optionnelle)';
+
+	/// fr: 'Motif'
+	String get champMotif => 'Motif';
+
+	/// fr: 'Un motif est requis, il s'inscrit au journal d'audit.'
+	String get motifRequis => 'Un motif est requis, il s\'inscrit au journal d\'audit.';
+
+	/// fr: 'Chaque création, modification, suppression et publication est inscrite au journal d'audit.'
+	String get journalisation => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.';
 }
 
 // Path: admin.journal
@@ -4059,6 +4613,176 @@ extension on Traductions {
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
+			'admin.diagnostics.titre' => 'Diagnostics',
+			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.',
+			'admin.diagnostics.aucunProgramme' => 'Aucun programme publié',
+			'admin.diagnostics.aucunProgrammeDetail' => 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.',
+			'admin.diagnostics.erreur' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
+			'admin.diagnostics.restants' => ({required Object n}) => '${n} élèves restants',
+			'admin.diagnostics.restantUn' => '1 élève restant',
+			'admin.diagnostics.inscritAujourdhui' => 'Inscrit aujourd\'hui',
+			'admin.diagnostics.inscritDepuisUnJour' => 'Inscrit depuis 1 jour',
+			'admin.diagnostics.inscritDepuis' => ({required Object jours}) => 'Inscrit depuis ${jours} jours',
+			'admin.diagnostics.aucun' => 'Aucun élève à diagnostiquer',
+			'admin.diagnostics.aucunDetail' => 'Tous les élèves inscrits ont déjà un niveau décidé.',
+			'admin.diagnostics.champNiveau' => 'Niveau de placement',
+			'admin.diagnostics.champMotif' => 'Motif',
+			'admin.diagnostics.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'admin.diagnostics.decider' => 'Décider le placement',
+			'admin.diagnostics.deciderErreur' => ({required Object message}) => 'La décision n\'a pas abouti : ${message}',
+			'admin.diagnostics.journalisation' => 'Chaque placement décidé est inscrit au journal d\'audit.',
+			'admin.qualite.titre' => 'Qualité',
+			'admin.qualite.intro' => 'Les anomalies pédagogiques détectées : rapports manquants, blocages sans suivi, évaluations en retard.',
+			'admin.qualite.erreur' => 'Les anomalies n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.qualite.aucune' => 'Aucune anomalie détectée',
+			'admin.qualite.aucuneDetail' => 'Tout est à jour : rapports rédigés, blocages suivis, évaluations à l\'heure.',
+			'admin.qualite.filtreToutes' => 'Toutes',
+			'admin.qualite.filtreOuvertes' => 'Ouvertes',
+			'admin.qualite.filtreTraitees' => 'Traitées',
+			'admin.qualite.groupeRapportManquant' => 'Rapports de séance manquants',
+			'admin.qualite.groupeBlocageSansSuivi' => 'Blocages sans suivi',
+			'admin.qualite.groupeEvaluationEnRetard' => 'Évaluations en retard',
+			'admin.qualite.colonnePersonne' => 'Concerne',
+			'admin.qualite.colonneDepuis' => 'Depuis',
+			'admin.qualite.colonneStatut' => 'Statut',
+			'admin.qualite.statutOuvert' => 'Ouverte',
+			'admin.qualite.statutTraite' => 'Traitée',
+			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
+			'admin.qualite.depuisUnJour' => '1 jour',
+			'admin.qualite.depuisJours' => ({required Object jours}) => '${jours} jours',
+			'admin.qualite.actionTraiter' => 'Marquer traité',
+			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
+			'admin.qualite.champNote' => 'Note (optionnelle)',
+			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
+			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
+			'admin.evaluations.titre' => 'Évaluations',
+			'admin.evaluations.intro' => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.',
+			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.evaluations.aucune' => 'Aucune évaluation',
+			'admin.evaluations.aucuneDetail' => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.',
+			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
+			_ => null,
+		} ?? switch (path) {
+			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
+			'admin.evaluations.filtreToutes' => 'Toutes',
+			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
+			'admin.evaluations.filtreRealisees' => 'Réalisées',
+			'admin.evaluations.filtreAnnulees' => 'Annulées',
+			'admin.evaluations.filtreCertifications' => 'Certifications',
+			'admin.evaluations.colonneEleve' => 'Élève',
+			'admin.evaluations.colonneNiveau' => 'Niveau',
+			'admin.evaluations.colonneType' => 'Type',
+			'admin.evaluations.colonneDatePrevue' => 'Prévue le',
+			'admin.evaluations.colonneStatut' => 'Statut',
+			'admin.evaluations.colonneResultat' => 'Résultat',
+			'admin.evaluations.typeInitiale' => 'Initiale',
+			'admin.evaluations.typePeriodique' => 'Périodique',
+			'admin.evaluations.typeReevaluation' => 'Réévaluation',
+			'admin.evaluations.typeCertification' => 'Certification',
+			'admin.evaluations.statutPlanifiee' => 'Planifiée',
+			'admin.evaluations.statutRealisee' => 'Réalisée',
+			'admin.evaluations.statutAnnulee' => 'Annulée',
+			'admin.evaluations.resultatReussi' => 'Réussi',
+			'admin.evaluations.resultatEchec' => 'Échec',
+			'admin.evaluations.resultatARevoir' => 'À revoir',
+			'admin.evaluations.planifier' => 'Planifier une évaluation',
+			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
+			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
+			'admin.evaluations.champNiveau' => 'Niveau évalué',
+			'admin.evaluations.champType' => 'Type',
+			'admin.evaluations.champDatePrevue' => 'Date prévue (JJ/MM/AAAA)',
+			'admin.evaluations.planifierEnvoyer' => 'Planifier',
+			'admin.evaluations.planifierErreur' => ({required Object message}) => 'La planification n\'a pas abouti : ${message}',
+			'admin.evaluations.actionEnregistrerResultat' => 'Enregistrer le résultat',
+			'admin.evaluations.actionAnnuler' => 'Annuler l\'évaluation',
+			'admin.evaluations.resultatTitre' => ({required Object eleve}) => 'Résultat de ${eleve}',
+			'admin.evaluations.champNotes' => 'Notes (optionnelles)',
+			'admin.evaluations.resultatEnvoyer' => 'Enregistrer',
+			'admin.evaluations.resultatErreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'admin.evaluations.annulerTitre' => ({required Object eleve}) => 'Annuler l\'évaluation de ${eleve}',
+			'admin.evaluations.annulerEnvoyer' => 'Annuler',
+			'admin.evaluations.annulerErreur' => ({required Object message}) => 'L\'annulation n\'a pas abouti : ${message}',
+			'admin.evaluations.champMotif' => 'Motif',
+			'admin.evaluations.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'admin.evaluations.journalisation' => 'Chaque planification, résultat et annulation est inscrit au journal d\'audit.',
+			'admin.progression.titre' => 'Progression',
+			'admin.progression.intro' => 'Le niveau courant de chaque élève, son groupe, et les blocages ou dérogations en cours.',
+			'admin.progression.erreur' => 'La progression n\'a pas pu être lue. Réessayez dans un instant.',
+			'admin.progression.aucun' => 'Aucun élève actif',
+			'admin.progression.aucunDetail' => 'Les élèves apparaîtront ici dès leur premier diagnostic de placement.',
+			'admin.progression.colonneEleve' => 'Élève',
+			'admin.progression.colonneGroupe' => 'Groupe',
+			'admin.progression.colonneNiveau' => 'Niveau',
+			'admin.progression.colonneDepuis' => 'Depuis',
+			'admin.progression.colonneException' => 'Exception',
+			'admin.progression.sansGroupe' => 'Sans groupe',
+			'admin.progression.sansNiveau' => 'Non diagnostiqué',
+			'admin.progression.filtreTousCycles' => 'Tous les cycles',
+			'admin.progression.depuisAujourdhui' => 'Aujourd\'hui',
+			'admin.progression.depuisUnJour' => '1 jour',
+			'admin.progression.depuisJours' => ({required Object jours}) => '${jours} jours',
+			'admin.progression.typeBlocage' => 'Blocage',
+			'admin.progression.typeDerogation' => 'Dérogation',
+			'admin.progression.actionPoserBlocage' => 'Poser un blocage',
+			'admin.progression.actionPoserDerogation' => 'Poser une dérogation',
+			'admin.progression.actionCloreException' => 'Clore l\'exception',
+			'admin.progression.actionPromouvoir' => 'Changer de niveau',
+			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '${type} pour ${eleve}',
+			'admin.progression.poserExceptionEnvoyer' => 'Poser l\'exception',
+			'admin.progression.poserExceptionErreur' => ({required Object message}) => 'La pose n\'a pas abouti : ${message}',
+			'admin.progression.clorerExceptionTitre' => ({required Object eleve}) => 'Clore l\'exception de ${eleve}',
+			'admin.progression.clorerExceptionEnvoyer' => 'Clore',
+			'admin.progression.clorerExceptionErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
+			'admin.progression.promouvoirTitre' => ({required Object eleve}) => 'Changer le niveau de ${eleve}',
+			'admin.progression.promouvoirChampNiveau' => 'Nouveau niveau',
+			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
+			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
+			'admin.progression.champMotif' => 'Motif',
+			'admin.progression.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'admin.progression.journalisation' => 'Chaque exception posée, close, et chaque changement de niveau est inscrit au journal d\'audit.',
+			'admin.programmes.titre' => 'Programmes',
+			'admin.programmes.intro' => 'Le curriculum Rewayah, versionné : une version publiée ne peut plus être modifiée, toute évolution académique en crée une nouvelle.',
+			'admin.programmes.aucuneVersion' => 'Aucune version de programme',
+			'admin.programmes.aucuneVersionDetail' => 'Créez la première version, encore en brouillon, pour commencer à y ajouter des niveaux.',
+			'admin.programmes.erreur' => 'Le programme n\'a pas pu être lu. Réessayez dans un instant.',
+			'admin.programmes.statutBrouillon' => 'Brouillon',
+			'admin.programmes.statutPubliee' => 'Publiée',
+			'admin.programmes.statutArchivee' => 'Archivée',
+			'admin.programmes.versionNumero' => ({required Object numero}) => 'Version ${numero}',
+			'admin.programmes.niveauxSur' => ({required Object nombre}) => '${nombre} niveaux',
+			'admin.programmes.creerVersion' => 'Créer une version',
+			'admin.programmes.creerVersionVide' => 'Créer une version vide',
+			'admin.programmes.creerVersionDepuisPubliee' => 'Créer une nouvelle version à partir de celle-ci',
+			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
+			'admin.programmes.niveauxTitre' => 'Niveaux',
+			'admin.programmes.niveauAucun' => 'Aucun niveau dans cette version',
+			'admin.programmes.niveauAucunDetail' => 'Ajoutez un premier niveau pour commencer à composer cette version.',
+			'admin.programmes.codeTechnique' => ({required Object code}) => 'Code : ${code}',
+			'admin.programmes.ajouterNiveau' => 'Ajouter un niveau',
+			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'Ajouter un niveau à ${version}',
+			'admin.programmes.ajouterNiveauEnvoyer' => 'Ajouter',
+			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}',
+			'admin.programmes.modifierNiveau' => 'Modifier',
+			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Modifier ${nom}',
+			'admin.programmes.modifierNiveauEnvoyer' => 'Enregistrer',
+			'admin.programmes.modifierNiveauErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
+			'admin.programmes.supprimerNiveau' => 'Supprimer',
+			'admin.programmes.supprimerNiveauTitre' => ({required Object nom}) => 'Supprimer ${nom}',
+			'admin.programmes.supprimerNiveauEnvoyer' => 'Supprimer',
+			'admin.programmes.supprimerNiveauErreur' => ({required Object message}) => 'La suppression n\'a pas abouti : ${message}',
+			'admin.programmes.publierVersion' => 'Publier la version',
+			'admin.programmes.publierVersionTitre' => ({required Object version}) => 'Publier ${version}',
+			'admin.programmes.publierVersionDetail' => 'Une fois publiée, cette version ne pourra plus être modifiée. Toute évolution académique en créera une nouvelle.',
+			'admin.programmes.publierVersionEnvoyer' => 'Publier',
+			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
+			'admin.programmes.champCodeTechnique' => 'Code technique (usage interne, jamais affiché à l\'élève)',
+			'admin.programmes.champNomHumain' => 'Nom affiché',
+			'admin.programmes.champCycle' => 'Cycle',
+			'admin.programmes.champOrdre' => 'Ordre',
+			'admin.programmes.champDescription' => 'Description (optionnelle)',
+			'admin.programmes.champMotif' => 'Motif',
+			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
@@ -4107,8 +4831,6 @@ extension on Traductions {
 			'admin.journal.filtreEvenement' => 'Événement',
 			'admin.journal.filtreActeur' => 'Acteur',
 			'admin.journal.evtAgentJetonEmis' => 'Accès d\'agent IA émis',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
@@ -4453,6 +5175,8 @@ extension on Traductions {
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',

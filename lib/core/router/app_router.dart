@@ -13,6 +13,11 @@ import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_journal/journal_page.dart';
+import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart';
+import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
+import '../../features/admin_pedagogie_programmes/programmes_page.dart';
+import '../../features/admin_pedagogie_progression/progression_page.dart';
+import '../../features/admin_pedagogie_qualite/qualite_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
@@ -373,6 +378,51 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: ComptesPage(),
+        ),
+      ),
+      // Domaine Pedagogie : cinq fonctions pairs, jamais une secondaire
+      // atteinte seulement depuis l'Accueil comme Operations/Personnes --
+      // voir `SousNavigationDomaine`. Diagnostics est la fonction primaire,
+      // meme pattern que Groupes pour Operations : la file la plus
+      // actionnable du domaine.
+      GoRoute(
+        path: Routes.adminPedagogie,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminPedagogieDiagnostics,
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieDiagnostics,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: DiagnosticsPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieProgression,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: ProgressionPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieEvaluations,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: EvaluationsPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieProgrammes,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: ProgrammesPage(),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminPedagogieQualite,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: QualitePage(),
         ),
       ),
       GoRoute(

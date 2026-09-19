@@ -1,5 +1,69 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🚀 **19 septembre 2026, nuit — le domaine Pédagogie est peuplé : cinq écrans,
+> cinq migrations, mesuré de bout en bout, pas seulement compilé.** Mission
+> reçue : structurer `AdminDomaine.pedagogie` (jusque-là réservé, gel
+> d'architecture `docs/architecture/ADMIN_IA_AUDIT.md`) en 5 sous-fonctions :
+> Diagnostics (`ADM-10`), Progression (`ADM-11`), Évaluations (`ADM-12`),
+> Programmes (`ADM-13`), Qualité (`ADM-14`). Construit dans l'ordre de
+> dépendance technique (Programmes d'abord, fondation du curriculum versionné ;
+> Qualité en dernier, câble aussi la sous-navigation et active le domaine),
+> affiché dans l'ordre demandé par la mission.
+> ✅ **Aucune donnée pédagogique n'existait avant ce lot** — vérifié par lecture
+> exhaustive des 19 migrations précédentes avant d'écrire une ligne de schéma
+> (leçon [[feedback_verifier_document_officiel_avant_audit]]) : ni niveau, ni
+> diagnostic, ni évaluation, ni curriculum versionné. Seule trouvaille
+> réutilisable : `lesson_reports`/`makharij_findings` (migration `0001`),
+> écrites en théorie par l'enseignant mais consommées par aucun écran depuis le
+> tout début — c'est elles qui alimentent maintenant Qualité (rapports
+> manquants), raccordant enfin le compteur mort d'`ADM-01` (audit, ligne 134).
+> ✅ **Migrations `0020`-`0024`, rejouées sur Postgres nu et vérifiées par des
+> scénarios manuels (`SMOKE ... TOUT VERT` par lot)** : `programme_versions`/
+> `programme_niveaux` (versionné, une version publiée ne se modifie plus jamais,
+> imposé en base) ; `progression_historique` (append-only, le niveau courant est
+> la dernière ligne) ; `progression_exceptions` (blocage/dérogation, catalogue
+> distinct de `rule_overrides`/`ADM-06`, jamais fusionné) ; `evaluations`
+> (planifiée/réalisée/annulée, une certification est une évaluation
+> `certification` réussie, pas un objet séparé) ; `controles_qualite`
+> (idempotent, re-traiter une anomalie met à jour la note sans dupliquer).
+> Chaque RPC d'écriture suit le pattern durci de `0019` (Groupes) dès l'écriture
+> initiale : jamais `agent_ro` sur une fonction volatile — vérifié
+> explicitement par `has_function_privilege()` pour les 17 fonctions neuves.
+> ✅ **Comparé octet pour octet contre un conteneur sans ces migrations** :
+> les trois échecs relevés par les scénarios officiels (`scenarios_agt01.sql`
+> A12 — sept fonctions pré-existantes `journal_audit`/`indicateurs_admin`/etc.
+> exécutables par `agent_ro` alors que Postgres les catégorise `volatile`,
+> faute du mot-clé `stable` ; `scenarios_etape3.sql`/`etape4.sql` — comptage de
+> dossiers en attente incohérent) sont **identiques avec et sans ce lot** —
+> donc pré-existants, aucun rapport avec Pédagogie, non corrigés ici (hors
+> mission, code de sécurité/KYC déjà en production).
+> ✅ **`flutter test` : 683/-7, exactement la référence connue du lot Groupes**
+> (`8f10686`/`b3be532`). Deux tests corrigés parce qu'ils codaient en dur
+> « Pédagogie = domaine inerte » (`test/router/admin_domaine_test.dart`,
+> `test/widgets/admin_shell_test.dart`) — invariant que ce lot change
+> légitimement. Le septième échec restant
+> (`catalogue_galerie_test.dart: chaque fichier de lib/core/widgets a son
+> entree`) est pré-existant : `AdminShell`/`MenuActions`/`MenuFiltre` (lots
+> IA-01/Groupes) manquaient déjà d'entrée de galerie avant ce lot ; les deux
+> composants neufs (`SelecteurNiveauProgramme`, `SousNavigationDomaine`)
+> s'ajoutent à ce même trou plutôt que d'en ouvrir un nouveau — non corrigé,
+> même raisonnement que les échecs de scénarios SQL.
+> ✅ **`dart analyze --fatal-infos` : aucun problème sur les 15 fichiers neufs
+> et les 9 fichiers modifiés.** `tool/verifier_jetons.dart` : une seule
+> nouvelle entrée (`ontap-nu` sur `SousNavigationDomaine`), un faux positif de
+> même nature que `nav_shell.dart:504` déjà toléré — `TabBar.onTap` est le
+> paramètre propre du widget Flutter, pas un geste construit à la main hors
+> `Pressable`.
+> 🗂️ **Catalogue et fiches** (`docs/design/08-catalogue-ecrans.md`) : cinq
+> nouvelles entrées `ADM-10`…`ADM-14` avec fiche complète, avant l'ouverture du
+> premier fichier `.dart` de chaque lot, comme l'exige `CLAUDE.md`.
+> ⏭ **Reste hors de ce lot, explicitement** : l'import du contenu réel du
+> curriculum (les niveaux existent déjà en dehors de l'app, à vérifier avant
+> import — décision utilisateur) ; les trois échecs pré-existants relevés
+> ci-dessus (sécurité `agent_ro`, comptage dossiers, galerie) ; toute UI
+> enseignant pour remplir `lesson_reports` (Qualité ne fait que constater son
+> absence).
+>
 > 🚀 **19 septembre 2026, fin de journée — `TUT-00` EST EN PRODUCTION, et Google
 > marche pour de vrai.** Session courte et entièrement vérificatrice : rien de
 > neuf n'a été codé côté application, les trois restes ouverts de la session du

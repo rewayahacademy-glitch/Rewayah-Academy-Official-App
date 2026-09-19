@@ -110,9 +110,12 @@ abstract final class Routes {
   // Racine imposee par domaine, jamais par ecran : les routes ci-dessous sont
   // NESTED sous leur domaine, et les anciennes routes plates deviennent des
   // redirections dans `app_router.dart`, jamais une seconde page. Un domaine
-  // sans fonction livree (Pedagogie, Finance, Configuration, Direction) ne
-  // recoit ni route ni page : `AdminDomaine.chemin` y est nul, et la sidebar
-  // le montre inerte, jamais avec un ecran vide construit pour l'occasion.
+  // sans fonction livree (Finance, Configuration, Direction) ne recoit ni
+  // route ni page : `AdminDomaine.chemin` y est nul, et la sidebar le montre
+  // inerte, jamais avec un ecran vide construit pour l'occasion. Pedagogie
+  // a recu ses cinq fonctions (Diagnostics, Progression, Evaluations,
+  // Programmes, Qualite) par la mission du 19 septembre 2026 qui a peuple ce
+  // domaine reserve.
 
   /// Domaine Accueil : le centre de commande (`ADM-01`).
   static const String admin = '/admin';
@@ -139,6 +142,24 @@ abstract final class Routes {
 
   /// Les comptes du produit (`ADM-08`), sous Personnes.
   static const String adminPersonnesComptes = '/admin/personnes/comptes';
+
+  /// Domaine Pedagogie.
+  static const String adminPedagogie = '/admin/pedagogie';
+
+  /// Diagnostics de placement (`ADM-10`), fonction primaire de Pedagogie.
+  static const String adminPedagogieDiagnostics = '/admin/pedagogie/diagnostics';
+
+  /// Suivi de progression (`ADM-11`), sous Pedagogie.
+  static const String adminPedagogieProgression = '/admin/pedagogie/progression';
+
+  /// Evaluations (`ADM-12`), sous Pedagogie.
+  static const String adminPedagogieEvaluations = '/admin/pedagogie/evaluations';
+
+  /// Le programme pedagogique versionne (`ADM-13`), sous Pedagogie.
+  static const String adminPedagogieProgrammes = '/admin/pedagogie/programmes';
+
+  /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
+  static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
 
   /// Domaine Securite et audit.
   static const String adminSecuriteAudit = '/admin/securite-audit';

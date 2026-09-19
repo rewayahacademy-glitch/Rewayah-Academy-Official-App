@@ -21,9 +21,11 @@ enum AdminDomaine {
   /// Dossiers d'identite et registre des comptes.
   personnes,
 
-  /// Reserve. Aucune surface admin livree (l'audit reserve le nom, pas un
-  /// ecran : les regles par eleve restent sous Operations tant qu'aucun
-  /// catalogue de regles distinct n'existe).
+  /// Diagnostics de placement, progression, evaluations, programme
+  /// pedagogique versionne et controle qualite -- cinq fonctions livrees le
+  /// 19 septembre 2026. Les regles individuelles operationnelles (ADM-06)
+  /// restent sous Operations, distinctes des exceptions pedagogiques de ce
+  /// domaine.
   pedagogie,
 
   /// Reserve. Hors MVP-0, module finance (ADR-003).
@@ -74,17 +76,19 @@ extension AdminDomaineX on AdminDomaine {
   /// reelle. La sidebar montre le libelle, inerte, jusqu'a ce qu'un ecran
   /// existe -- voir `AdminShell`.
   ///
-  /// Pour Operations, Personnes et Securite et audit, cette route est la
-  /// racine du domaine : elle redirige vers sa fonction primaire (jamais une
-  /// seconde page) -- voir les redirections d'`app_router.dart`. La fonction
-  /// secondaire de chacun de ces domaines reste atteinte depuis l'Accueil,
-  /// jamais depuis un second niveau de la sidebar.
+  /// Pour Operations, Personnes, Pedagogie et Securite et audit, cette route
+  /// est la racine du domaine : elle redirige vers sa fonction primaire
+  /// (jamais une seconde page) -- voir les redirections d'`app_router.dart`.
+  /// Pour Operations, Personnes et Securite et audit, la fonction secondaire
+  /// reste atteinte depuis l'Accueil ; Pedagogie, elle, montre ses cinq
+  /// fonctions pairs via `SousNavigationDomaine`, jamais depuis un second
+  /// niveau de la sidebar.
   String? get chemin => switch (this) {
     AdminDomaine.accueil => Routes.admin,
     AdminDomaine.operations => Routes.adminOperations,
     AdminDomaine.personnes => Routes.adminPersonnes,
+    AdminDomaine.pedagogie => Routes.adminPedagogie,
     AdminDomaine.securite => Routes.adminSecuriteAudit,
-    AdminDomaine.pedagogie ||
     AdminDomaine.finance ||
     AdminDomaine.configuration ||
     AdminDomaine.direction => null,
@@ -101,9 +105,10 @@ extension AdminDomaineX on AdminDomaine {
 /// [voitDirection] ne l'accorde pas -- « ni la route ni le libelle ne sont
 /// exposes » (regle 6 de l'audit) -- fixe a `false` aujourd'hui, faute de
 /// toute fondation de permission (`SessionState.peutVoirDirection`). Les
-/// autres domaines reserves (Pedagogie, Finance, Configuration), eux,
-/// **restent visibles** mais inertes : l'audit ne demande de les masquer,
-/// seulement de ne rien construire derriere.
+/// autres domaines reserves (Finance, Configuration), eux, **restent
+/// visibles** mais inertes : l'audit ne demande de les masquer, seulement de
+/// ne rien construire derriere. Pedagogie a quitte cette liste le 19
+/// septembre 2026, ses cinq fonctions livrees.
 List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
     <AdminDomaine>[
       AdminDomaine.accueil,
@@ -122,8 +127,8 @@ List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
 /// **Une recherche de navigation, pas une recherche metier** : aucune donnee
 /// n'est interrogee, seulement des libelles fixes et leurs routes -- ce
 /// qu'une coquille a le droit de faire, rien de plus. Un domaine sans
-/// fonction (Pedagogie, Finance, Configuration) n'y figure pas : il n'a pas
-/// de route a trouver.
+/// fonction (Finance, Configuration) n'y figure pas : il n'a pas de route a
+/// trouver.
 List<({String libelle, String chemin})> ciblesRechercheAdmin({
   required bool voitDirection,
 }) => <({String libelle, String chemin})>[
@@ -131,3 +136,18 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
     if (domaine.chemin case final String chemin)
       (libelle: domaine.libelle, chemin: chemin),
 ];
+
+/// Les cinq fonctions pairs du domaine Pedagogie, dans l'ordre d'affichage
+/// impose par la mission -- Diagnostics, Progression, Evaluations,
+/// Programmes, Qualite -- jamais l'ordre de construction technique (qui a
+/// suivi la dependance au programme : Programmes d'abord, Qualite en
+/// dernier). Consommee par `SousNavigationDomaine` dans chacun des cinq
+/// ecrans.
+List<({String libelle, String chemin})> ongletsPedagogie() =>
+    <({String libelle, String chemin})>[
+      (libelle: t.admin.diagnostics.titre, chemin: Routes.adminPedagogieDiagnostics),
+      (libelle: t.admin.progression.titre, chemin: Routes.adminPedagogieProgression),
+      (libelle: t.admin.evaluations.titre, chemin: Routes.adminPedagogieEvaluations),
+      (libelle: t.admin.programmes.titre, chemin: Routes.adminPedagogieProgrammes),
+      (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
+    ];
