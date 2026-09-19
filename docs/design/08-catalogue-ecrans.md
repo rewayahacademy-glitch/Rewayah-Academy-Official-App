@@ -685,18 +685,23 @@ Priorites         P0  envoyer un lien de connexion par courriel
                   P1  rejoindre l'entree eleve (ELV-01), un parcours different,
                       jamais une variante de celui-ci
 
-Action principale     Envoyer le lien : inerte tant que l'adresse saisie n'est
-                      pas plausible, jamais grisee sans raison dite
-Actions secondaires   Se connecter avec Google ; entrer un code eleve
-Action tertiaire      aucune
+Action principale     Recevoir le lien : actif des le premier affichage. Il
+                      verifie l'adresse au moment ou l'on appuie et dit sous le
+                      champ ce qui ne va pas
+Actions secondaires   Se connecter avec Google, avec le logo Google. La SEULE
+                      action a filet de l'ecran
+Action tertiaire      Connecter l'appareil d'un eleve : ouvre une feuille
+                      d'explication avant ELV-01, jamais l'ecran directement
 Destructif            aucun
 
 Mobile            Page centree, une carte
 Tablette          Identique
 Desktop           Identique, colonne centree et bornee a 1200
+                  La carte se centre verticalement quand la hauteur le permet,
+                  et redevient defilante des qu'elle ne le permet plus
 
-Etats             saisie      carte avec le champ courriel, bouton inerte tant
-                              que l'adresse n'est pas plausible
+Etats             saisie      carte avec le champ courriel, etiquette AU DESSUS
+                              du champ et texte d'invite a l'interieur
                   envoi       bouton en cours
                   lien envoye la carte est remplacee par la confirmation et un
                               bouton "changer d'adresse". Ne se ferme jamais
@@ -726,6 +731,44 @@ et que la reprise a corrigé :
 - une zone de marque (`MarquePage`, nouveau composant partagé) précède la
   carte : le nom du produit seul, en `inkAccent`, faute d'un asset de logo
   dans le dépôt.
+
+Reprise faite le 19 septembre 2026. Trois défauts rapportés par l'opérateur, et
+ce que la fiche change en conséquence :
+
+- **« il y a des bordures sur chaque bouton ».** Les trois moyens d'entrer se
+  lisaient au même poids : deux secondaires à filet de 2 points, et surtout le
+  bouton principal **désactivé**, dont le filet fait 3 points — le plus épais de
+  l'écran, sur l'action la plus importante, au premier affichage. La hiérarchie
+  de la section 4 de `02-regles-ux.md` existait dans le composant mais pas sur
+  l'écran. Elle y est : un aplat plein, **un seul filet**, un texte seul.
+  L'entrée élève descend donc de secondaire à tertiaire — elle dit ainsi ce que
+  le code affirmait déjà en commentaire, que c'est un parcours différent.
+- **le bouton principal n'est plus inerte au repos.** La fiche demandait « jamais
+  grisée sans raison dite » ; il était grisé et la raison ne s'affichait nulle
+  part. Pire, la vérification d'adresse écrite dans l'écran ne pouvait jamais
+  s'exécuter, le bouton étant mort avant d'être touché : c'était du code mort.
+  Elle parle maintenant sous le champ, au moment de l'appui.
+- **« le placeholder pour l'email semble désactivé ».** Deux causes, toutes deux
+  dans le thème et non dans l'écran : l'étiquette flottante de Material se pose
+  à l'intérieur du champ vide, en gris, là où l'œil attend une invite ; et
+  `enabledBorder` et `disabledBorder` étaient **le même appel**, donc rien ne
+  distinguait un champ qui attend une frappe d'un champ qui n'en acceptera
+  jamais. L'étiquette monte au-dessus, l'invite descend dedans, et le filet
+  inerte passe au plus faible de la rampe. Le correctif est global : le défaut
+  l'était.
+- **« J'ai un code ne veut rien dire ».** Le libellé ne disait ni à qui il
+  s'adressait ni où trouver ce code. Il devient « Connecter l'appareil d'un
+  élève » — verbe et objet, et le vocabulaire de rôle du produit. Le clic ouvre
+  une feuille adressée au **tuteur** (`AppBottomSheet`) : pour qui, où générer le
+  code — Foyer et appareils, puis le profil de l'élève, puis « Ajouter un
+  appareil » —, sa validité de dix minutes et le plafond de deux appareils. Elle
+  ne promet **jamais** de scanner : aucun lecteur n'existe dans cette version.
+  `ELV-01`, lui, tutoie l'enfant ; les deux voix ne pouvaient pas tenir sur le
+  même écran.
+
+Le bouton Google porte désormais le logo Google (`LogoGoogle`, tracés officiels,
+fichier propriétaire de ses couleurs de marque). Il ne se miroite pas en RTL,
+comme tout logo (`06-accessibilite.md` section 5).
 
 ### `ELV-01` Connexion élève
 

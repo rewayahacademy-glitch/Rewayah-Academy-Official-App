@@ -48,6 +48,18 @@ const Set<String> echelleEspacement = <String>{
 /// (`docs/design/01-systeme-visuel.md` section 9).
 const String _fichierPalette = 'core/theme/app_palette.dart';
 const String _fichierRayons = 'core/theme/app_radius.dart';
+
+/// Les deux seuls fichiers qui posent une couleur litterale.
+///
+/// `app_palette.dart` porte les jetons du produit. `logo_google.dart` porte les
+/// quatre couleurs de la marque Google, qui n'en sont pas : un logo tiers se
+/// pose tel quel, ne se decline pas et ne suit pas le theme. C'est une
+/// exemption NOMINATIVE, pas une exemption de dossier : toute autre couleur
+/// nue reste une violation, y compris dans `core/marque/`.
+const List<String> _fichiersCouleur = <String>[
+  _fichierPalette,
+  'core/marque/logo_google.dart',
+];
 const String _fichierElevation = 'core/theme/app_elevation.dart';
 const String _fichierTypographie = 'core/theme/app_typography.dart';
 const String _fichierMouvement = 'core/theme/app_mouvement.dart';
@@ -260,9 +272,9 @@ void main() {
       final int numero = i + 1;
       final String code = _sansCommentaireDeLigne(ligne);
 
-      // 1. Aucune couleur nue hors du fichier de palette.
+      // 1. Aucune couleur nue hors des fichiers qui detiennent des couleurs.
       if (_couleurLitterale.hasMatch(code) &&
-          !chemin.endsWith(_fichierPalette)) {
+          !_fichiersCouleur.any(chemin.endsWith)) {
         violations.add(Violation(chemin, numero, 'couleur-nue', ligne));
       }
 

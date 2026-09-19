@@ -486,6 +486,12 @@ class Traductions$connexion$fr {
 	/// fr: 'Votre adresse électronique'
 	String get courriel => 'Votre adresse électronique';
 
+	/// fr: 'vous@exemple.com'
+	String get courrielIndice => 'vous@exemple.com';
+
+	/// fr: 'Mot de passe de démonstration'
+	String get motDePasseDemo => 'Mot de passe de démonstration';
+
 	/// fr: 'Recevoir le lien'
 	String get envoyerLien => 'Recevoir le lien';
 
@@ -509,6 +515,14 @@ class Traductions$connexion$fr {
 
 	/// fr: 'L'envoi n'a pas abouti. Réessayez dans un instant.'
 	String get erreurEnvoi => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.';
+
+	/// fr: 'Vous êtes tuteur et vous préparez l'appareil d'un élève ?'
+	String get appareilEleveAide => 'Vous êtes tuteur et vous préparez l\'appareil d\'un élève ?';
+
+	/// fr: 'Connecter l'appareil d'un élève'
+	String get appareilEleve => 'Connecter l\'appareil d\'un élève';
+
+	late final Traductions$connexion$feuilleAppareil$fr feuilleAppareil = Traductions$connexion$feuilleAppareil$fr.internal(_root);
 }
 
 // Path: inscription
@@ -1589,6 +1603,42 @@ class Traductions$galerie$fr {
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
+}
+
+// Path: connexion.feuilleAppareil
+class Traductions$connexion$feuilleAppareil$fr {
+	Traductions$connexion$feuilleAppareil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.'
+	String get pourQui => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.';
+
+	/// fr: 'Où trouver le code'
+	String get etapesTitre => 'Où trouver le code';
+
+	/// fr: 'Sur votre propre appareil, ouvrez Foyer et appareils.'
+	String get etape1 => 'Sur votre propre appareil, ouvrez Foyer et appareils.';
+
+	/// fr: 'Ouvrez le profil de l'élève, puis Ajouter un appareil.'
+	String get etape2 => 'Ouvrez le profil de l\'élève, puis Ajouter un appareil.';
+
+	/// fr: 'Un code de six caractères s'affiche. Il reste valable dix minutes.'
+	String get etape3 => 'Un code de six caractères s\'affiche. Il reste valable dix minutes.';
+
+	/// fr: 'Saisissez-le ici, sur l'appareil de l'élève.'
+	String get etape4 => 'Saisissez-le ici, sur l\'appareil de l\'élève.';
+
+	/// fr: 'Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.'
+	String get plafond => 'Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.';
+
+	/// fr: 'Saisir le code'
+	String get saisir => 'Saisir le code';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
 }
 
 // Path: admin.tableau
@@ -3434,6 +3484,8 @@ extension on Traductions {
 			'connexion.titre' => 'Se connecter',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
 			'connexion.courriel' => 'Votre adresse électronique',
+			'connexion.courrielIndice' => 'vous@exemple.com',
+			'connexion.motDePasseDemo' => 'Mot de passe de démonstration',
 			'connexion.envoyerLien' => 'Recevoir le lien',
 			'connexion.avecGoogle' => 'Continuer avec Google',
 			'connexion.ou' => 'ou',
@@ -3442,6 +3494,17 @@ extension on Traductions {
 			'connexion.changerAdresse' => 'Utiliser une autre adresse',
 			'connexion.erreurCourriel' => 'Cette adresse ne semble pas valide.',
 			'connexion.erreurEnvoi' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
+			'connexion.appareilEleveAide' => 'Vous êtes tuteur et vous préparez l\'appareil d\'un élève ?',
+			'connexion.appareilEleve' => 'Connecter l\'appareil d\'un élève',
+			'connexion.feuilleAppareil.pourQui' => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.',
+			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
+			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer et appareils.',
+			'connexion.feuilleAppareil.etape2' => 'Ouvrez le profil de l\'élève, puis Ajouter un appareil.',
+			'connexion.feuilleAppareil.etape3' => 'Un code de six caractères s\'affiche. Il reste valable dix minutes.',
+			'connexion.feuilleAppareil.etape4' => 'Saisissez-le ici, sur l\'appareil de l\'élève.',
+			'connexion.feuilleAppareil.plafond' => 'Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.',
+			'connexion.feuilleAppareil.saisir' => 'Saisir le code',
+			'connexion.feuilleAppareil.fermer' => 'Fermer',
 			'inscription.titre' => 'Créer votre compte',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'Environ ${minutes} min',
@@ -3820,6 +3883,8 @@ extension on Traductions {
 			'admin.comptes.attendUnJour' => '1 jour',
 			'admin.comptes.attendJours' => ({required Object jours}) => '${jours} jours',
 			'admin.agents.titre' => 'Accès des agents IA',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.intro' => 'Un jeton laisse un agent IA ouvrir l\'application et lire ce qu\'une personne y lit. Il ne peut rien écrire, rien annuler, rien modifier : la base le lui refuse, pas l\'interface.',
 			'admin.agents.emettre' => 'Émettre un jeton',
 			'admin.agents.libelle' => 'À quoi sert ce jeton',
@@ -3833,8 +3898,6 @@ extension on Traductions {
 			'admin.agents.dureeHeure' => ({required Object nombre}) => '${nombre} h',
 			'admin.agents.dureePlafond' => 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.',
 			'admin.agents.identite' => 'Les prénoms',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.identiteMasquee' => 'Masqués',
 			'admin.agents.identiteMasqueeDetail' => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.',
 			'admin.agents.identiteVisible' => 'Visibles',

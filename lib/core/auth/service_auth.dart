@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -36,9 +37,19 @@ class ServiceAuthSupabase implements ServiceAuth {
 
   final SupabaseClient _client;
 
+  /// L'adresse ou le fournisseur doit ramener l'usager.
+  ///
+  /// **Sur le web, c'est l'origine servie, pas le reglage du serveur.** Sans
+  /// elle, Supabase retombe sur son propre « Site URL » : une valeur reglee une
+  /// fois dans un tableau de bord, invisible depuis le depot, et qui renvoie
+  /// tout le monde au meme endroit quel que soit le domaine d'ou l'on est
+  /// parti -- une preproduction comprise. Sur mobile, il n'y a pas d'origine :
+  /// le schema d'application reste celui que le paquet declare, donc `null`.
+  String? get _retour => kIsWeb ? Uri.base.origin : null;
+
   @override
   Future<void> envoyerLienCourriel(String courriel) =>
-      _client.auth.signInWithOtp(email: courriel.trim());
+      _client.auth.signInWithOtp(email: courriel.trim(), emailRedirectTo: _retour);
 
   @override
   Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
@@ -50,7 +61,7 @@ class ServiceAuthSupabase implements ServiceAuth {
 
   @override
   Future<void> connexionGoogle() =>
-      _client.auth.signInWithOAuth(OAuthProvider.google);
+      _client.auth.signInWithOAuth(OAuthProvider.google, redirectTo: _retour);
 
   @override
   Future<void> deconnexion() => _client.auth.signOut();

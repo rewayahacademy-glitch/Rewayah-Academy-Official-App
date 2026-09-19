@@ -81,10 +81,28 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     super.dispose();
   }
 
+  /// Ce que cet appareil connait deja, quand il sait le dire.
+  ///
+  /// **Un echec ici ne bloque pas l'entree.** La base locale s'ouvre sur un
+  /// moteur propre a la plateforme, et sur le web il lui faut deux fichiers
+  /// servis a la racine (`sqlite3.wasm` et `drift_worker.js`). Quand ils
+  /// manquaient, l'ouverture echouait, cette methode n'avait pas de `catch`, et
+  /// comme elle est lancee en `unawaited` l'echec partait dans le vide :
+  /// `setState` n'etait jamais appele et l'ecran restait indefiniment sur son
+  /// indicateur de chargement. L'operateur voyait un ecran qui ne chargeait
+  /// jamais, sans un message, sans une erreur.
+  ///
+  /// La memoire des profils est un **confort**, pas une condition d'entree :
+  /// sans elle, on demande un code, ce qui est exactement l'etat d'un appareil
+  /// qui n'a jamais ete appaire. C'est le pire cas acceptable ; un chargement
+  /// sans fin ne l'est pas.
   Future<void> _charger() async {
-    final List<ProfilLocal> profils = await ref
-        .read(profilsLocauxProvider)
-        .lister();
+    List<ProfilLocal> profils = const <ProfilLocal>[];
+    try {
+      profils = await ref.read(profilsLocauxProvider).lister();
+    } on Object {
+      profils = const <ProfilLocal>[];
+    }
     if (!mounted) {
       return;
     }

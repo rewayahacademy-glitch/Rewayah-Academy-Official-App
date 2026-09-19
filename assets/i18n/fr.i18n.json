@@ -143,6 +143,8 @@
     "titre": "Se connecter",
     "intro": "Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.",
     "courriel": "Votre adresse électronique",
+    "courrielIndice": "vous@exemple.com",
+    "motDePasseDemo": "Mot de passe de démonstration",
     "envoyerLien": "Recevoir le lien",
     "avecGoogle": "Continuer avec Google",
     "ou": "ou",
@@ -150,7 +152,20 @@
     "lienEnvoyeDetail": "Ouvrez le message envoyé à {courriel}, puis suivez le lien. Vous pouvez laisser cette page ouverte.",
     "changerAdresse": "Utiliser une autre adresse",
     "erreurCourriel": "Cette adresse ne semble pas valide.",
-    "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant."
+    "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "appareilEleveAide": "Vous êtes tuteur et vous préparez l'appareil d'un élève ?",
+    "appareilEleve": "Connecter l'appareil d'un élève",
+    "feuilleAppareil": {
+      "pourQui": "Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.",
+      "etapesTitre": "Où trouver le code",
+      "etape1": "Sur votre propre appareil, ouvrez Foyer et appareils.",
+      "etape2": "Ouvrez le profil de l'élève, puis Ajouter un appareil.",
+      "etape3": "Un code de six caractères s'affiche. Il reste valable dix minutes.",
+      "etape4": "Saisissez-le ici, sur l'appareil de l'élève.",
+      "plafond": "Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.",
+      "saisir": "Saisir le code",
+      "fermer": "Fermer"
+    }
   },
 
   "inscription": {

@@ -53,6 +53,7 @@ class ActionPrincipale extends StatelessWidget {
     this.niveau = NiveauAction.principale,
     this.enCours = false,
     this.pleineLargeur = true,
+    this.prefixe,
   });
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
@@ -70,6 +71,18 @@ class ActionPrincipale extends StatelessWidget {
 
   /// Faux pour que le bouton ne prenne que la largeur de son libelle.
   final bool pleineLargeur;
+
+  /// Un element pose avant le libelle, dans le meme alignement.
+  ///
+  /// **Reserve a ce que le libelle ne peut pas dire** : aujourd'hui le seul
+  /// usage est le logo Google du bouton de connexion, qu'une marque tierce
+  /// impose de montrer tel quel. Ce n'est pas une porte d'entree pour
+  /// l'iconographie du produit : une action du produit se nomme, elle ne
+  /// s'illustre pas (`docs/design/02-regles-ux.md` section 9).
+  ///
+  /// L'indicateur d'activite le remplace tant que [enCours] vaut vrai : les
+  /// deux occuperaient la meme place, et c'est l'attente qui prime.
+  final Widget? prefixe;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +143,7 @@ class ActionPrincipale extends StatelessWidget {
                 ),
               ),
               Ecart.hSm,
-            ],
+            ] else if (prefixe != null) ...<Widget>[prefixe!, Ecart.hSm],
             Flexible(
               child: Text(
                 libelle,

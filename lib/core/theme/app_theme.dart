@@ -57,6 +57,8 @@ abstract final class AppTheme {
                 ? scheme.error
                 : source == AppInkColorSource.focus
                 ? palette.inkAccent.asBorderSide().color
+                : source == AppInkColorSource.contourInerte
+                ? scheme.outlineVariant
                 : scheme.outline,
             width: largeur,
           ),
@@ -143,9 +145,23 @@ abstract final class AppTheme {
         filled: true,
         fillColor: palette.surfaceSunken.background,
         contentPadding: const EdgeInsets.all(AppSpacing.lg),
+        // Le texte d'invite est une invite, pas une valeur : il se pose en
+        // `inkFaint`, la seule encre du produit qui ne pretend pas etre du
+        // contenu. Sans ce style, il heritait de l'encre du corps et un champ
+        // vide se lisait comme un champ deja rempli.
+        hintStyle: palette.inkFaint.applyTo(
+          texte.bodyLarge ?? const TextStyle(),
+        ),
         border: bord(AppInkColorSource.contour),
         enabledBorder: bord(AppInkColorSource.contour),
-        disabledBorder: bord(AppInkColorSource.contour),
+        // **Un champ inerte et un champ actif ne peuvent pas porter le meme
+        // filet.** Les deux appelaient `contour` a l'identique : rien, a
+        // l'ecran, ne distinguait un champ qui attend une frappe d'un champ qui
+        // n'en acceptera jamais. Sur un fond `surfaceSunken`, deja creux, le
+        // champ courriel de `TUT-00` se lisait donc comme desactive. L'inerte
+        // passe au filet le plus faible de la rampe, l'actif garde le filet
+        // porteur de sens (`01-systeme-visuel.md` section 2).
+        disabledBorder: bord(AppInkColorSource.contourInerte),
         focusedBorder: bord(AppInkColorSource.focus, largeur: 2),
         errorBorder: bord(AppInkColorSource.erreur, largeur: 2),
         focusedErrorBorder: bord(AppInkColorSource.erreur, largeur: 2),
@@ -196,4 +212,4 @@ abstract final class AppTheme {
   );
 }
 
-enum AppInkColorSource { contour, focus, erreur }
+enum AppInkColorSource { contour, contourInerte, focus, erreur }

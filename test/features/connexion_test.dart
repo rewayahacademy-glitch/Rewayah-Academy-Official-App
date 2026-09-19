@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/marque/logo_google.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -136,9 +137,13 @@ void main() {
   });
 
   group('TUT-00 : la connexion', () {
-    testWidgets('le bouton reste inerte tant que l adresse est incomplete', (
+    testWidgets('une adresse incomplete n envoie rien et le dit', (
       WidgetTester tester,
     ) async {
+      // Le bouton n'est plus inerte au repos : il l'etait sans jamais dire
+      // pourquoi, et son filet d'inertie -- le plus epais de l'ecran -- ecrasait
+      // la hierarchie des trois actions. Ce qui compte n'a pas change : une
+      // adresse incomplete ne part pas. La raison, elle, s'affiche desormais.
       final FauxServiceAuth auth = await _monter(tester);
 
       await tester.enterText(find.byType(TextField), 'fatou');
@@ -147,6 +152,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(auth.liensEnvoyes, isEmpty);
+      expect(find.text(t.connexion.erreurCourriel), findsOneWidget);
     });
 
     testWidgets('une adresse valide declenche l envoi et change d etat', (
@@ -206,6 +212,81 @@ void main() {
       expect(champs.single.obscureText, isFalse);
     });
 
+    testWidgets('trois rangs d action, et une seule bordure a l ecran', (
+      WidgetTester tester,
+    ) async {
+      // Le defaut rapporte par l'operateur : « il y a des bordures sur chaque
+      // bouton ». Les trois moyens d'entrer se lisaient au meme poids. Ils se
+      // lisent maintenant en trois rangs, et le filet ne reste qu'a un seul --
+      // c'est ce qui le rend porteur de sens (`02-regles-ux.md` section 4).
+      await _monter(tester);
+
+      final List<NiveauAction> rangs = tester
+          .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+          .map((ActionPrincipale a) => a.niveau)
+          .toList();
+
+      expect(rangs, <NiveauAction>[
+        NiveauAction.principale,
+        NiveauAction.secondaire,
+        NiveauAction.tertiaire,
+      ]);
+      expect(
+        rangs.where((NiveauAction n) => n == NiveauAction.secondaire),
+        hasLength(1),
+        reason: 'le filet ne vaut que s il est seul',
+      );
+    });
+
+    testWidgets('le bouton Google porte le logo Google', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+
+      final ActionPrincipale google = tester.widget<ActionPrincipale>(
+        find.widgetWithText(ActionPrincipale, t.connexion.avecGoogle),
+      );
+      expect(google.prefixe, isA<LogoGoogle>());
+      expect(find.byType(LogoGoogle), findsOneWidget);
+    });
+
+    testWidgets('l entree eleve dit a qui elle s adresse avant de naviguer', (
+      WidgetTester tester,
+    ) async {
+      // « J'ai un code » ne disait ni pour qui ni ou trouver ce code. La
+      // feuille porte l'explication, adressee au tuteur -- l'ecran de saisie
+      // qui suit, lui, tutoie l'enfant.
+      await _monter(tester);
+
+      final Finder entree = find.text(t.connexion.appareilEleve);
+      await tester.ensureVisible(entree);
+      await tester.pumpAndSettle();
+      await tester.tap(entree);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.connexion.feuilleAppareil.pourQui), findsOneWidget);
+      expect(find.text(t.connexion.feuilleAppareil.etape2), findsOneWidget);
+      expect(find.text(t.connexion.feuilleAppareil.plafond), findsOneWidget);
+      expect(find.text(t.connexion.feuilleAppareil.saisir), findsOneWidget);
+    });
+
+    testWidgets('la feuille ne promet jamais de scanner un code', (
+      WidgetTester tester,
+    ) async {
+      // Aucun lecteur de code n'existe dans cette version (report assume,
+      // ADR-016). Une feuille qui proposerait de scanner echouerait apres le
+      // geste, ce qui coute plus cher qu'une fonction absente.
+      await _monter(tester);
+
+      final Finder entree = find.text(t.connexion.appareilEleve);
+      await tester.ensureVisible(entree);
+      await tester.pumpAndSettle();
+      await tester.tap(entree);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.eleveConnexion.scanner), findsNothing);
+    });
+
     testWidgets('le mode demo ne propose aucun parcours Supabase', (
       WidgetTester tester,
     ) async {
@@ -233,8 +314,18 @@ void main() {
         find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
       );
       expect(connexion.niveau, NiveauAction.principale);
-      expect(find.text(t.connexion.envoyerLien), findsNothing);
+
+      // Cette ligne demandait auparavant `findsNothing` sur le libelle du
+      // bouton qu'elle venait de trouver trois lignes plus haut : les deux
+      // assertions ne pouvaient pas etre vraies ensemble, et le test echouait
+      // par construction. Ce qu'elle voulait dire est ce qui suit -- le mode de
+      // demonstration n'ouvre aucun chemin vers un vrai compte.
+      expect(
+        find.byKey(const ValueKey<String>('connexion-mot-de-passe')),
+        findsOneWidget,
+      );
       expect(find.text(t.connexion.avecGoogle), findsNothing);
+      expect(find.text(t.connexion.appareilEleve), findsNothing);
       expect(find.text(t.eleveConnexion.entrerCode), findsNothing);
       expect(tester.takeException(), isNull);
     });

@@ -1,5 +1,72 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🚪 **19 septembre 2026 — la porte d'entrée : trois moyens d'entrer, dont deux
+> ne marchaient pas.** L'opérateur a rapporté trois choses ; les trois étaient
+> exactes, et aucune n'avait la cause qu'on lui prêtait.
+> 🔴 **« Google ne marche pas, alors que j'ai fait le nécessaire sur Supabase. »**
+> Mesuré en direct, sans supposer : un `GET` sur `/auth/v1/authorize?provider=google`
+> sans suivre la redirection rend un `Location` qui porte
+> `client_id=portail.rewayahacademy.com` — **un nom de domaine, pas un
+> identifiant Google**. Et `select provider, count(*) from auth.identities` ne
+> rend que `email` : **aucune identité Google n'a jamais existé**. ⚠ **Le code
+> Flutter était correct depuis le début** — il appelait bien `signInWithOAuth`.
+> Le défaut est serveur, et **il ne se répare pas depuis le dépôt** : il faut
+> coller le vrai Client ID dans Supabase → Authentication → Providers → Google,
+> et ajouter `https://gggmtelinlpseweouyav.supabase.co/auth/v1/callback` aux
+> *Authorized redirect URIs* du client Google. ⚠ **C'est là que se joue le « j'ai
+> activé la même chose que sur PISI »** : un même client Google sert deux
+> applications, mais **l'URI de rappel est propre à chaque projet Supabase**.
+> 🔴 **« Le bouton “J'ai un code” ne charge jamais, on attend 24 h et rien. »**
+> Cause trouvée, en deux morceaux. `EleveConnexionPage` ouvre la base locale
+> Drift au montage ; **sur le web, Drift exige `sqlite3.wasm` et
+> `drift_worker.js` servis à la racine**, et `web/` n'en contenait aucun.
+> L'ouverture échouait — et `_charger()` n'avait **aucun `try`/`catch`** tout en
+> étant lancé en `unawaited` : l'échec partait dans le vide, `setState` n'était
+> jamais appelé, l'écran restait sur son indicateur de chargement pour
+> toujours. ⚠ **Drift n'est consommé que par cet écran**, ce qui explique que
+> tout le reste de l'application fonctionnait. Les deux fichiers sont
+> maintenant dans `web/` — pris dans le cache pub de drift 2.34.4, **et
+> recoupés octet pour octet avec la version officielle** (748 686 o, en-tête
+> `00 61 73 6D`) —, et la lecture des profils dégrade désormais vers la saisie
+> de code. **La mémoire des profils est un confort, pas une condition
+> d'entrée ; un chargement sans fin n'est jamais acceptable.**
+> 🔴 **« Des bordures sur chaque bouton, et le champ e-mail semble désactivé. »**
+> Les deux vrais, et les deux causés ailleurs que là où ça se voyait. Le filet
+> le plus épais de l'écran (3 points) était celui du bouton **principal
+> désactivé**, au premier affichage, sur l'action la plus importante. Et le
+> champ paraissait inerte parce que `enabledBorder` et `disabledBorder`
+> appelaient **exactement la même chose** dans `app_theme.dart`, et que
+> l'étiquette flottante de Material se pose **dans** le champ vide, là où l'œil
+> attend une invite. ⚠ **Les deux correctifs sont dans le thème, pas dans
+> l'écran** — le défaut était global, et `tool/verifier_jetons.dart` interdit de
+> toute façon une couleur littérale dans `lib/features/`.
+> ✅ **Ce que le lot livre** : trois rangs d'action et **une seule bordure** ;
+> le **vrai logo Google** (`lib/core/marque/logo_google.dart`, tracés officiels
+> recopiés mot pour mot et lus par un analyseur réduit — **second et dernier
+> fichier autorisé à poser une couleur littérale**, déclaré nommément dans le
+> vérificateur) ; « J'ai un code » devient **« Connecter l'appareil d'un
+> élève »** et ouvre une **feuille adressée au tuteur** qui dit pour qui, où
+> générer le code, ses dix minutes de validité et le plafond de deux appareils.
+> ⚠ **Elle ne promet jamais de scanner** : aucun lecteur n'existe dans cette
+> version. ⚠ `ELV-01` **tutoie l'enfant** — les deux voix ne pouvaient pas tenir
+> sur le même écran, et c'est toute la raison d'être de la feuille.
+> 🧪 **Ce que le lot a trouvé sans le chercher** : `test/features/connexion_test.dart`
+> était **déjà rouge avant toute intervention** — commité le 18/09, après
+> l'écran, il exerçait un mode démonstration courriel/mot de passe que le
+> `build()` n'avait jamais implémenté, et il portait une assertion
+> **impossible** (`findsNothing` sur le libellé qu'elle venait de trouver trois
+> lignes plus haut). Le mode démonstration est donc construit, et l'assertion
+> corrigée. **16/16** sur ce fichier.
+> 📊 **Mesuré** : `flutter analyze` propre ; base de départ **657 tests, 11
+> échecs** ; après le lot **667 tests, 7 échecs**, et ces 7 sont **prouvés
+> antérieurs** — reproduits à l'identique dans un worktree sur `HEAD`
+> (`D:\ra-verif-base`), sur `dossier_test` et `inscription_test`, deux fichiers
+> que ce lot ne touche pas. ⚠ Le vérificateur de jetons rend **10 violations,
+> toutes hors du diff** (tirets cadratins, `IconButton` et `onTap` nu dans
+> `nav_shell.dart`) : dette préexistante, pas une régression.
+> ⚠ **Rien n'est déployé par ce lot**, et le déploiement continu reste coupé :
+> `vercel.json` porte `"git": {"deploymentEnabled": {"main": false}}`.
+>
 > 👪 **13 septembre 2026, neuvième session — `TUT-06` est fait, et un cours
 > annulé ne dit plus rien de l'enfant.** Le tuteur ouvre `/tuteur/suivi` et lit
 > les cours de ses enfants, du plus récent au plus ancien : la date, l'enfant,
