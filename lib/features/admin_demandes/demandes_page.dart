@@ -9,10 +9,10 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/regles/service_regles.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
@@ -476,11 +476,17 @@ class _LigneRegle extends StatelessWidget {
     );
   }
 
+  // `AppBottomSheet.ouvrir` est le seul point d'entree d'une surface modale
+  // du produit (`core/widgets/app_bottom_sheet.dart`) : poignee de
+  // glissement, courbes et durees du budget de mouvement, voile et
+  // `useSafeArea` garantis. Un appel direct a `showModalBottomSheet` en
+  // etait prive, seul ecran des seize du panneau Admin dans ce cas
+  // (audit de placement UX, 19 septembre 2026).
   Future<void> _ouvrir(BuildContext context, FeuilleRegle feuille) =>
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext _) => feuille,
+      AppBottomSheet.ouvrir<void>(
+        context,
+        titre: feuille.titre,
+        constructeur: (BuildContext _) => feuille,
       );
 }
 
@@ -517,6 +523,12 @@ class FeuilleRegle extends ConsumerStatefulWidget {
   /// La surcharge a clore. Quand il est fourni, la feuille clot au lieu de
   /// poser.
   final String? surchargeId;
+
+  /// Le titre de la feuille, porte par `AppBottomSheet` -- jamais redit dans
+  /// le corps, qui commence directement a la valeur effective.
+  String get titre => surchargeId != null
+      ? t.admin.demandes.cloreTitre(prenom: prenom)
+      : t.admin.demandes.poserTitre(regle: _libelleRegle(cle), prenom: prenom);
 
   /// Les valeurs proposees pour chaque regle, en minutes ou en eleves.
   ///
@@ -602,88 +614,73 @@ class _FeuilleRegleEtat extends ConsumerState<FeuilleRegle> {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: metriques.marge,
-        end: metriques.marge,
-        top: metriques.marge,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            _clot
-                ? t.admin.demandes.cloreTitre(prenom: widget.prenom)
-                : t.admin.demandes.poserTitre(
-                    regle: _libelleRegle(widget.cle),
-                    prenom: widget.prenom,
-                  ),
-            style: textes.titleMedium,
+    // Ni marge ni retrait de clavier ici : `AppBottomSheet` les porte deja
+    // pour tout appelant, meme regle que `_FeuilleMotif`
+    // (`admin_groupes/groupes_page.dart`). Le titre, lui, est porte par
+    // `AppBottomSheet` via `FeuilleRegle.titre`, jamais redit ici.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(
+          t.admin.demandes.effective(
+            valeur: _valeur(widget.cle, widget.valeurCourante),
           ),
+          style: textes.bodySmall,
+        ),
+        Ecart.vMd,
+        if (!_clot) ...<Widget>[
+          ChoiceCardGroup(
+            options: <OptionChoix>[
+              for (final int propose in FeuilleRegle.proposees(widget.cle))
+                OptionChoix(
+                  valeur: '$propose',
+                  libelle: _valeur(widget.cle, propose),
+                ),
+            ],
+            onChange: (ReponseChoix reponse) => setState(() {
+              _valeurChoisie = int.tryParse(
+                reponse.valeurs.isEmpty
+                    ? reponse.saisieLibre ?? ''
+                    : reponse.valeurs.first,
+              );
+            }),
+          ),
+          Ecart.vMd,
+        ],
+        TextField(
+          controller: _motif,
+          decoration: InputDecoration(labelText: t.admin.demandes.poserMotif),
+          // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
+          // inerte alors que le motif est saisi (piege de l'etape 3).
+          onChanged: (String _) => setState(() {}),
+          maxLines: 2,
+        ),
+        if (_motif.text.trim().isEmpty) ...<Widget>[
+          Ecart.vSm,
+          Text(t.admin.demandes.poserMotifRequis, style: textes.bodySmall),
+        ],
+        if (_erreur != null) ...<Widget>[
           Ecart.vSm,
           Text(
-            t.admin.demandes.effective(
-              valeur: _valeur(widget.cle, widget.valeurCourante),
+            _erreur!,
+            style: palette.inkAlert.applyTo(
+              textes.bodySmall ?? const TextStyle(),
             ),
-            style: textes.bodySmall,
-          ),
-          Ecart.vMd,
-          if (!_clot) ...<Widget>[
-            ChoiceCardGroup(
-              options: <OptionChoix>[
-                for (final int propose in FeuilleRegle.proposees(widget.cle))
-                  OptionChoix(
-                    valeur: '$propose',
-                    libelle: _valeur(widget.cle, propose),
-                  ),
-              ],
-              onChange: (ReponseChoix reponse) => setState(() {
-                _valeurChoisie = int.tryParse(
-                  reponse.valeurs.isEmpty
-                      ? reponse.saisieLibre ?? ''
-                      : reponse.valeurs.first,
-                );
-              }),
-            ),
-            Ecart.vMd,
-          ],
-          TextField(
-            controller: _motif,
-            decoration: InputDecoration(labelText: t.admin.demandes.poserMotif),
-            // Sans ceci, le bouton ne se reconstruit pas a la frappe et reste
-            // inerte alors que le motif est saisi (piege de l'etape 3).
-            onChanged: (String _) => setState(() {}),
-            maxLines: 2,
-          ),
-          if (_motif.text.trim().isEmpty) ...<Widget>[
-            Ecart.vSm,
-            Text(t.admin.demandes.poserMotifRequis, style: textes.bodySmall),
-          ],
-          if (_erreur != null) ...<Widget>[
-            Ecart.vSm,
-            Text(
-              _erreur!,
-              style: palette.inkAlert.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ],
-          Ecart.vMd,
-          ActionPrincipale(
-            libelle: _clot
-                ? t.admin.demandes.cloreEnvoyer
-                : t.admin.demandes.poserEnvoyer,
-            enCours: _enCours,
-            onPress: _pret ? _envoyer : null,
           ),
         ],
-      ),
+        Ecart.vMd,
+        ActionPrincipale(
+          libelle: _clot
+              ? t.admin.demandes.cloreEnvoyer
+              : t.admin.demandes.poserEnvoyer,
+          enCours: _enCours,
+          onPress: _pret ? _envoyer : null,
+        ),
+      ],
     );
   }
 }

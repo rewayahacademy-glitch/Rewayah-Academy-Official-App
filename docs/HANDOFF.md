@@ -1,5 +1,52 @@
 # HANDOFF — à lire en premier, avant toute action
 
+> 🚀 **19 septembre 2026, soir (session suivante) — audit final de placement
+> UX du panneau Admin, un écart trouvé et corrigé.** Mission reçue : contrôle
+> final UX, classification de chaque élément visible de l'espace Admin selon
+> la grille domaine/sous-domaine/tab/configuration/donnée
+> opérationnelle/KPI/action/filtre/action critique, puis vérification des dix
+> critères transverses (routes dupliquées, réglages dupliqués, fonctionnalité
+> perdue dans Settings, page en Dialog, sous-fonction en destination globale,
+> onglet qui devrait être une section, sidebar incohérente, navigation
+> concurrente, permissions, cohérence desktop/tablet/mobile). Rapport complet :
+> **[docs/architecture/ADMIN_UX_PLACEMENT_AUDIT.md](architecture/ADMIN_UX_PLACEMENT_AUDIT.md)**.
+> ✅ **Neuf critères sur dix déjà tenus**, vérifiés par lecture des 16 écrans
+> Admin (pas seulement des trois documents d'architecture déjà écrits) :
+> sidebar unique consommée par les trois formes adaptatives d'`AdminShell`,
+> aucune seconde coquille de navigation pour le rôle admin
+> (`destinationsPour`/`secondairesPour` vides), garde de permission unique par
+> préfixe de chemin couvrant les 16 routes sans exception, `max_participants_per_session`
+> (Configuration) confirmé distinct de `seuil_max` (Groupes) par lecture de
+> `supabase/migrations/0017_groupes_pedagogiques.sql`, pas seulement par
+> déduction.
+> ⚠️ **Une violation prouvée et corrigée** : `Operations > Demandes` (`ADM-06`)
+> ouvrait sa feuille de règle (`FeuilleRegle`) par un `showModalBottomSheet`
+> direct, seul cas sur les 16 écrans à contourner le point d'entrée modal
+> unique `AppBottomSheet.ouvrir()` — donc sans poignée de glissement, sans les
+> courbes/durées du budget de mouvement, sans voile ni `useSafeArea` garantis.
+> Corrigé dans `lib/features/admin_demandes/demandes_page.dart` : `_ouvrir()`
+> passe maintenant par `AppBottomSheet.ouvrir()`, le titre (auparavant
+> recopié) devient un getter `FeuilleRegle.titre` lu par l'appelant, et la
+> marge/le retrait clavier posés à la main dans le corps de la feuille sont
+> retirés (`AppBottomSheet` les porte déjà, même motif que `_FeuilleMotif`
+> dans `admin_groupes/groupes_page.dart`).
+> ⚠️ **Un écart relevé, non corrigé — décision déjà actée, pas un oubli** :
+> Opérations/Personnes/Sécurité et audit n'ont aucune navigation locale entre
+> leurs fonctions pairs (contrairement à Pédagogie/Configuration via
+> `SousNavigationDomaine`) ; documenté comme délibéré trois fois
+> (`ADMIN_IA_AUDIT.md`, `admin_domaine.dart:85-91`,
+> `sous_navigation_domaine.dart:6-12`) — non corrigé sans décision opérateur
+> explicite ([[feedback_verifier_document_officiel_avant_audit]]). Détail et
+> une note hors périmètre (constantes `Routes.compteProfils`/`compteProfilEnfant`
+> identiques, côté Tuteur) dans le rapport.
+> ✅ **Mesuré, pas supposé** : `flutter test` **684/691** (7 échecs, socle
+> pré-existant déjà documenté ligne 94 de ce fichier : `dossier_test.dart`
+> ×3, `inscription_test.dart` ×2, `salle_test.dart` ×1,
+> `catalogue_galerie_test.dart` ×1 — aucun dans les fichiers de ce lot),
+> `dart analyze --fatal-infos` propre sur tout le dépôt,
+> `tool/verifier_jetons.dart` : 11 violations, toutes pré-existantes, aucune
+> dans `demandes_page.dart`.
+
 > 🚀 **19 septembre 2026, soir (session suivante) — contrat métier
 > Sécurité/Direction/Accueil reçu et cartographié, un compteur mort de plus
 > raccordé.** Mission reçue : finaliser la hiérarchie Admin sur trois fronts —
