@@ -1,0 +1,63 @@
+{
+  "_lisez_moi": [
+    "Libelles du moteur Coran (Agent C), sous-arbre reserve tc.coran.*",
+    "",
+    "Mecanisme : decision D-03. Aucun agent Teaching Core n'ecrit dans",
+    "assets/i18n/fr.i18n.json ni dans lib/core/i18n/strings*.g.dart. Agent Z",
+    "fusionne les neuf JSON, regenere slang, remplace les constantes de la",
+    "facade et supprime le fichier de facade.",
+    "",
+    "Facade correspondante : lib/features/tc_mushaf/libelles_tc_c.dart.",
+    "Chaque constante y porte son commentaire // TC-I18N: cle=...",
+    "",
+    "CE QUI N'EST PAS ICI, ET C'EST VOULU : le sous-arbre eleve.coran existe",
+    "deja et porte le titre, la pagination, le juz, la reprise personnelle, les",
+    "quatre etats du lecteur, l'attribution Tanzil, les deux commandes de",
+    "taille et les deux commandes de page. Le moteur les lit par t.eleve.coran.*",
+    "et ne les recopie pas : les dupliquer ferait diverger les deux ecrans."
+  ],
+  "tc": {
+    "coran": {
+      "modes": {
+        "mushaf": "Page du mushaf",
+        "verset": "Lecture agrandie",
+        "focus": "Focus",
+        "choisir": "Mode de lecture"
+      },
+      "mushaf": {
+        "coteDroite": "Page de droite",
+        "coteGauche": "Page de gauche",
+        "ouverture": "Ouverture, pages {droite} et {gauche}"
+      },
+      "fidelite": {
+        "approchee": "Composition approchée",
+        "approcheeDetail": "Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l'édition n'est pas encore importé.",
+        "fidele": "Composition de l'édition"
+      },
+      "zoom": {
+        "bride": "Grossissement limité par la largeur : au-delà, un mot serait coupé.",
+        "valeur": "{pourcent} %",
+        "renvoiLectureAgrandie": "Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie."
+      },
+      "navigation": {
+        "titre": "Aller à",
+        "ouvrir": "Aller à une page",
+        "champ": "Page, sourate, juz ou référence",
+        "indice": "Par exemple 18, Al-Kahf, juz 15, 2:255",
+        "limite": "La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n'est pas encore disponible.",
+        "aucunResultat": "Aucune référence trouvée",
+        "aucunResultatDetail": "Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.",
+        "pageNumero": "Page {page}"
+      },
+      "reprise": {
+        "groupe": "Reprendre le cours",
+        "groupeDetail": "Le groupe en était page {page}"
+      },
+      "focus": {
+        "aucunePlage": "Aucun passage mis en avant",
+        "aucunePlageDetail": "Le focus suit le passage que l'enseignant désigne. Hors classe, il centre la page ouverte.",
+        "quitter": "Quitter le focus"
+      }
+    }
+  }
+}

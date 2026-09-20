@@ -1,0 +1,201 @@
+{
+  "_lisez_moi": [
+    "Corpus de reference des goldens du moteur Coran (Agent C).",
+    "",
+    "CE QUE CE FICHIER EST : un corpus REDUIT, de six pages, qui sert a verifier",
+    "la COMPOSITION que le moteur produit -- quels versets sur quelle page, ou",
+    "tombe un changement de sourate, de quel cote se pose une page, quelle",
+    "ouverture la porte. Ce sont les seules choses que les donnees du depot",
+    "permettent de verifier exactement.",
+    "",
+    "CE QUE CE FICHIER N'EST PAS : une copie du texte coranique. Les champs",
+    "'texte' portent des marqueurs neutres, jamais du texte revele. Recopier de",
+    "memoire du texte sacre dans une fixture de test serait exactement le genre",
+    "d'improvisation que la specification interdit -- et la licence Tanzil",
+    "interdit par ailleurs toute modification du texte. Aucun golden de ce lot",
+    "ne depend du contenu des versets.",
+    "",
+    "PROVENANCE DES DEUX PREMIERES PAGES : la page 1 porte Al-Faatiha 1-7 et la",
+    "page 2 porte Al-Baqara 1-5 dans l'edition madina-hafs-604. Ce sont des",
+    "limites de page reelles.",
+    "PROVENANCE DES QUATRE AUTRES : elles sont CONSTRUITES pour exercer la page",
+    "dense, le changement de sourate et la derniere page du corpus reduit. Elles",
+    "ne pretendent pas reproduire les pages 3 a 6 de l'edition : la pagination",
+    "reelle vit dans 'verset.page_numero', en base, et aucun test hors ligne n'y",
+    "a acces.",
+    "",
+    "Les comptes declares par 'sourates' correspondent a ce corpus reduit, pas",
+    "aux 6236 versets du corpus complet."
+  ],
+  "edition": "madina-hafs-604",
+  "nombrePages": 6,
+  "sourates": [
+    {
+      "numero": 1,
+      "nomArabe": "الفاتحة",
+      "nomTranslittere": "Al-Faatiha",
+      "mecquoise": true,
+      "nombreVersets": 7
+    },
+    {
+      "numero": 2,
+      "nomArabe": "البقرة",
+      "nomTranslittere": "Al-Baqara",
+      "mecquoise": false,
+      "nombreVersets": 20
+    },
+    {
+      "numero": 3,
+      "nomArabe": "آل عمران",
+      "nomTranslittere": "Aal-`Imraan",
+      "mecquoise": false,
+      "nombreVersets": 14
+    }
+  ],
+  "pages": [
+    {
+      "numero": 1,
+      "juz": 1,
+      "role": "premiere page",
+      "versets": [
+        { "sourate": 1, "numero": 1 },
+        { "sourate": 1, "numero": 2 },
+        { "sourate": 1, "numero": 3 },
+        { "sourate": 1, "numero": 4 },
+        { "sourate": 1, "numero": 5 },
+        { "sourate": 1, "numero": 6 },
+        { "sourate": 1, "numero": 7 }
+      ]
+    },
+    {
+      "numero": 2,
+      "juz": 1,
+      "role": "ouverture de sourate",
+      "versets": [
+        { "sourate": 2, "numero": 1 },
+        { "sourate": 2, "numero": 2 },
+        { "sourate": 2, "numero": 3 },
+        { "sourate": 2, "numero": 4 },
+        { "sourate": 2, "numero": 5 }
+      ]
+    },
+    {
+      "numero": 3,
+      "juz": 1,
+      "role": "page dense",
+      "versets": [
+        { "sourate": 2, "numero": 6 },
+        { "sourate": 2, "numero": 7 },
+        { "sourate": 2, "numero": 8 },
+        { "sourate": 2, "numero": 9 },
+        { "sourate": 2, "numero": 10 },
+        { "sourate": 2, "numero": 11 },
+        { "sourate": 2, "numero": 12 },
+        { "sourate": 2, "numero": 13 },
+        { "sourate": 2, "numero": 14 },
+        { "sourate": 2, "numero": 15 },
+        { "sourate": 2, "numero": 16 }
+      ]
+    },
+    {
+      "numero": 4,
+      "juz": 1,
+      "role": "changement de sourate",
+      "versets": [
+        { "sourate": 2, "numero": 17 },
+        { "sourate": 2, "numero": 18 },
+        { "sourate": 2, "numero": 19 },
+        { "sourate": 2, "numero": 20 },
+        { "sourate": 3, "numero": 1 },
+        { "sourate": 3, "numero": 2 },
+        { "sourate": 3, "numero": 3 }
+      ]
+    },
+    {
+      "numero": 5,
+      "juz": 2,
+      "role": "page courante",
+      "versets": [
+        { "sourate": 3, "numero": 4 },
+        { "sourate": 3, "numero": 5 },
+        { "sourate": 3, "numero": 6 },
+        { "sourate": 3, "numero": 7 },
+        { "sourate": 3, "numero": 8 },
+        { "sourate": 3, "numero": 9 },
+        { "sourate": 3, "numero": 10 }
+      ]
+    },
+    {
+      "numero": 6,
+      "juz": 2,
+      "role": "derniere page",
+      "versets": [
+        { "sourate": 3, "numero": 11 },
+        { "sourate": 3, "numero": 12 },
+        { "sourate": 3, "numero": 13 },
+        { "sourate": 3, "numero": 14 }
+      ]
+    }
+  ],
+  "compositionAttendue": [
+    {
+      "page": 1,
+      "cote": "droite",
+      "ouvertureAvec": 2,
+      "sections": [
+        { "sourate": 1, "commenceLaSourate": true, "premier": 1, "dernier": 7 }
+      ]
+    },
+    {
+      "page": 2,
+      "cote": "gauche",
+      "ouvertureAvec": 1,
+      "sections": [
+        { "sourate": 2, "commenceLaSourate": true, "premier": 1, "dernier": 5 }
+      ]
+    },
+    {
+      "page": 3,
+      "cote": "droite",
+      "ouvertureAvec": 4,
+      "sections": [
+        { "sourate": 2, "commenceLaSourate": false, "premier": 6, "dernier": 16 }
+      ]
+    },
+    {
+      "page": 4,
+      "cote": "gauche",
+      "ouvertureAvec": 3,
+      "sections": [
+        {
+          "sourate": 2,
+          "commenceLaSourate": false,
+          "premier": 17,
+          "dernier": 20
+        },
+        { "sourate": 3, "commenceLaSourate": true, "premier": 1, "dernier": 3 }
+      ]
+    },
+    {
+      "page": 5,
+      "cote": "droite",
+      "ouvertureAvec": 6,
+      "sections": [
+        { "sourate": 3, "commenceLaSourate": false, "premier": 4, "dernier": 10 }
+      ]
+    },
+    {
+      "page": 6,
+      "cote": "gauche",
+      "ouvertureAvec": 5,
+      "sections": [
+        {
+          "sourate": 3,
+          "commenceLaSourate": false,
+          "premier": 11,
+          "dernier": 14
+        }
+      ]
+    }
+  ]
+}
