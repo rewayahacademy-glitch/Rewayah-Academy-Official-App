@@ -184,7 +184,11 @@ void main() {
         <ContentPosition>[ayah1, ayah2],
       );
 
-      final ContentRange plageCourte = ContentRange.ponctuelle(ayah2);
+      final ContentRange plageCourte = ContentRange(
+        resourceId: ressourceTest,
+        debut: ayah2,
+        fin: ayah2,
+      );
       expect(
         blocsDansPlage(carte, plageCourte).map((BlocAncre b) => b.position),
         <ContentPosition>[ayah2],

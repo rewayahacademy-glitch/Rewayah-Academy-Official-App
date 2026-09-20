@@ -40,7 +40,7 @@ plages, et **aucun des trois ne touche a la ressource d'origine**.
 | `port_assignations.dart` | `PortAssignations` (contrat D) + `AssignationsMemoire` (double local) + provider. |
 | `libelles_tc_outils.dart` | La facade de libelles `tc.outils.*` (decision D-03), chaque constante annotee `// TC-I18N:`. |
 | `ports_externes/content_position.dart` | Stub d'Agent B, **recopie a l'identique du canonique**. Aucune divergence, voir l'erratum CONTRACT_REQUEST section 0. |
-| `ports_externes/content_range.dart` | Stub d'Agent B. Corps de `contient`/`chevauche` ecrits localement, voir CONTRACT_REQUEST section 1. |
+| `ports_externes/content_range.dart` | Stub d'Agent B, **recopie a l'identique du canonique**. Aucune divergence, voir l'erratum CONTRACT_REQUEST section 1. |
 | `ports_externes/library_resource.dart` | Stub d'Agent B, **volontairement partiel** : seules les `CapaciteRessource` sont employees. |
 | `ports_externes/port_realtime_pedagogique.dart` | Stub d'Agent F + **double local** de `MessagePedagogique`, voir CONTRACT_REQUEST section 2. |
 
@@ -149,9 +149,11 @@ enregistrees alors qu'elles disparaitraient au redemarrage.
 9. **Le rendu d'un marqueur est une bande teintee sous le texte.** La puce qui
    le **nomme** (`PuceIntention`) existe, mais c'est l'hote qui decide ou la
    poser : D ne connait pas la mise en page de l'ecran d'accueil.
-10. **`ContentRange` sur des sections ne sait pas comparer deux sections
-    differentes** (aucun ordre n'est defini par le contrat). Documente dans le
-    stub et au CONTRACT_REQUEST.
+10. **`ContentRange` ordonne les sections par leur identifiant**, comme le fait
+    le canonique d'Agent B (`_rangTexte`, huit premiers caracteres). Une plage
+    de sections est donc une vraie plage. Quand les identifiants d'un corpus ne
+    suivent pas l'ordre de lecture, la plage ne doit pas etre construite sur des
+    sections — c'est la regle ecrite par B, D ne fait que la suivre.
 
 ---
 
@@ -162,10 +164,10 @@ enregistrees alors qu'elles disparaitraient au redemarrage.
    Supabase, en surchargeant les deux providers.
 2. **Les deux stubs de B** (`content_position.dart`, `content_range.dart`) et le
    **stub de F** (`port_realtime_pedagogique.dart`) : les supprimer, pointer sur
-   les canoniques. `content_position.dart` est une recopie a l'identique du
-   canonique : sa suppression ne demande **aucun arbitrage** et ne change aucun
-   site d'appel de D. Reste a trancher, pour `content_range.dart`, l'ordre
-   naturel d'un ancrage `section` (CONTRACT_REQUEST section 1).
+   les canoniques. Les deux stubs de B sont des recopies a l'identique des
+   canoniques, en dehors de leur en-tete `TC-STUB-PORT` : leur suppression ne
+   demande **aucun arbitrage** et ne change aucun site d'appel de D
+   (CONTRACT_REQUEST sections 0 et 1).
 3. **La fusion i18n** : `docs/teaching-core/i18n/tc_i18n_D.json` -> sous-arbre
    `tc.outils.*`, regeneration slang, remplacement des constantes de
    `libelles_tc_outils.dart`, suppression du fichier de facade.

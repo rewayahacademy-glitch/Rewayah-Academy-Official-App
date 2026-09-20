@@ -39,30 +39,30 @@
 
 ---
 
-## 1. `ContentRange` : deux methodes sans corps, et un ordre indefini
+## 1. ERRATUM — `ContentRange` n'a jamais eu d'ordre a trancher
 
-**Chemin canonique** : `lib/core/tc_bibliotheque/content_range.dart`,
-section 8 du contrat.
-
-`contient(ContentPosition)` et `chevauche(ContentRange)` sont declarees sans
-corps et sans definition de l'ordre naturel. Le stub de D en donne une
-implementation minimale, qui doit etre validee :
-
-| Type d'ancrage | Ordre retenu par le double local |
-|---|---|
-| `page` | le numero de page |
-| `ayah` | `sourate * 1000 + ayah` |
-| `fraction` | la fraction, arrondie au millionieme |
-| `section` | **aucun ordre total connu.** `contient` ne repond vrai que sur l'egalite d'une borne |
-
-**Ce que D demande** : soit une definition d'ordre pour les sections (par
-exemple un `ordre` porte par la section), soit la confirmation ecrite qu'une
-plage de sections ne sert qu'a designer **une** section.
-
-Le multiplicateur `1000` suppose qu'aucune sourate ne depasse 999 versets : la
-plus longue en compte 286. C'est vrai pour le Coran, et faux pour un support
-quelconque. A confirmer, ou a remplacer par une comparaison lexicographique
-`(sourate, ayah)`.
+> Une version precedente de ce document portait ici une demande d'arbitrage sur
+> l'ordre naturel d'un ancrage `section`, et un tableau d'options. **Il n'y
+> avait rien a trancher** : le canonique d'Agent B
+> (`lib/core/tc_bibliotheque/content_range.dart`) donne bel et bien le corps de
+> `contient` et de `chevauche`, ainsi qu'un ordre total pour les quatre types
+> d'ancrage — les sections y sont ordonnees par `_rangTexte`, un rang monotone
+> tire des huit premiers caracteres de l'identifiant. Une plage de sections y
+> est donc une **vraie plage**, pas seulement ses deux bornes.
+>
+> Le stub de D divergeait sur trois points, tous annules :
+> il ajoutait un constructeur `ContentRange.ponctuelle` absent du canonique
+> (AMENDEMENT 1 : « n'ajoute, ne retire et ne renomme AUCUN champ ») ; il
+> portait un jeu d'assertions different, auquel manquait
+> `_rang(debut) <= _rang(fin)` ; et son `contient` ne repondait vrai, sur une
+> section, que sur l'egalite avec une borne — deux plages de sections se
+> seraient donc comportees differemment selon le fichier utilise.
+>
+> `lib/core/tc_outils/ports_externes/content_range.dart` est desormais une
+> recopie a l'identique du canonique, en dehors de son en-tete `TC-STUB-PORT`.
+> L'unique appelant de `ContentRange.ponctuelle` (`ancrage_reflow_test.dart`)
+> passe par le constructeur canonique avec `debut` et `fin` egaux. Agent B n'a
+> rien a verser a son contrat.
 
 ---
 
