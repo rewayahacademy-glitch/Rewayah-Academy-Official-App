@@ -1,10 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_navigation_coran.dart';
-import 'package:rewayah_academy/core/tc_coran/ports_externes/content_position.dart';
 import 'package:rewayah_academy/core/tc_coran/ports_externes/marqueur_semantique.dart';
 import 'package:rewayah_academy/core/tc_coran/ports_externes/port_etat_partage.dart';
 

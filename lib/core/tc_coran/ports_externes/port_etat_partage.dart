@@ -5,7 +5,8 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'content_position.dart';
+import '../../tc_bibliotheque/content_position.dart';
+import '../../tc_bibliotheque/content_range.dart';
 import 'marqueur_semantique.dart';
 
 /// Le mode d'affichage impose a la classe.

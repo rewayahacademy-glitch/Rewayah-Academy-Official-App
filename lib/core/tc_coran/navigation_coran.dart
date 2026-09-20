@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../coran/service_coran.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
+import '../tc_bibliotheque/content_position.dart';
 import 'corpus_service_coran.dart';
 import 'port_corpus_coran.dart';
 import 'port_navigation_coran.dart';
-import 'ports_externes/content_position.dart';
 import 'ports_externes/port_etat_partage.dart';
 
 /// La navigation du mushaf, posee au-dessus du corpus et de l'etat partage.

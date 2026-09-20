@@ -169,6 +169,52 @@ class FauxServiceCoranGolden implements ServiceCoran {
     positionEnregistree = position;
     return true;
   }
+
+  @override
+  Future<({int sourate, int verset})?> debutDeJuz(int juz) async {
+    if (echoue) {
+      return null;
+    }
+    for (final PageCorpus p in reference.pages) {
+      if (p.juzNumero != juz || p.versets.isEmpty) {
+        continue;
+      }
+      final VersetCorpus premier = p.versets.first;
+      return (sourate: premier.sourate, verset: premier.numero);
+    }
+    return null;
+  }
+
+  @override
+  Future<List<VersetCoran>?> rechercher(
+    String requete, {
+    int limite = 50,
+  }) async {
+    if (echoue) {
+      return null;
+    }
+    final String aiguille = requete.toLowerCase();
+    final List<VersetCoran> trouves = <VersetCoran>[];
+    for (final PageCorpus p in reference.pages) {
+      for (final VersetCorpus v in p.versets) {
+        if (!v.texte.toLowerCase().contains(aiguille)) {
+          continue;
+        }
+        trouves.add(
+          VersetCoran(
+            sourateNumero: v.sourate,
+            numero: v.numero,
+            texte: v.texte,
+            pageNumero: v.pageNumero,
+          ),
+        );
+        if (trouves.length >= limite) {
+          return trouves;
+        }
+      }
+    }
+    return trouves;
+  }
 }
 
 /// Une navigation en memoire, pour monter un ecran sans session ni Supabase.

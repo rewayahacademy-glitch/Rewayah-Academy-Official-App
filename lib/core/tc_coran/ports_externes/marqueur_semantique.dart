@@ -8,7 +8,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'content_position.dart';
+import '../../tc_bibliotheque/content_range.dart';
 
 /// L'intention pedagogique d'un marqueur.
 ///

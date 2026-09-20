@@ -1,6 +1,6 @@
 import '../coran/service_coran.dart';
+import '../tc_bibliotheque/content_position.dart';
 import 'port_corpus_coran.dart';
-import 'ports_externes/content_position.dart';
 
 /// L'identifiant de ressource du Coran dans la Bibliotheque.
 ///
