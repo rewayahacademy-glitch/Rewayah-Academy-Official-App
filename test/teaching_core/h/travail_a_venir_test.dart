@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // dans `misc.dart`, alors que `ProviderContainer.overrides` en attend une liste.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/content_position.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/content_range.dart';
 import 'package:rewayah_academy/core/tc_parcours/ports_externes/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_parcours/ports_externes/learning_assignment.dart';
 import 'package:rewayah_academy/core/tc_parcours/ports_externes/slot_action.dart';

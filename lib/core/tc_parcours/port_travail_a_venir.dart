@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `misc.dart` (meme convention que `service_planning.dart`).
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../tc_bibliotheque/content_position.dart';
 import 'libelles_tc_parcours.dart';
 import 'plage_lisible.dart';
-import 'ports_externes/content_position.dart';
 import 'ports_externes/learning_assignment.dart';
 import 'ports_externes/port_assignations.dart';
 import 'ports_externes/slot_action.dart';

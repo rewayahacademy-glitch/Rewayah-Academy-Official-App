@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
 import 'ports_externes/learning_assignment.dart';
 import 'ports_externes/teacher_student_projection.dart';
 

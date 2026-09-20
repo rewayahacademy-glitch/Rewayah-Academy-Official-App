@@ -1,5 +1,5 @@
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
 
 /// Ce que le lot H a besoin de savoir du contenu presente en classe.
 ///

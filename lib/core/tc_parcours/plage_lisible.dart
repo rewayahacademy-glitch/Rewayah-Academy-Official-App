@@ -1,6 +1,6 @@
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
 import 'libelles_tc_parcours.dart';
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
 
 /// Comment une position se dit a un humain.
 ///

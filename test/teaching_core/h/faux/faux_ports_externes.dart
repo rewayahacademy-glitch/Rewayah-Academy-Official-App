@@ -1,5 +1,5 @@
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/content_position.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/content_range.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_parcours/ports_externes/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_parcours/ports_externes/learning_assignment.dart';
 import 'package:rewayah_academy/core/tc_parcours/ports_externes/port_assignations.dart';

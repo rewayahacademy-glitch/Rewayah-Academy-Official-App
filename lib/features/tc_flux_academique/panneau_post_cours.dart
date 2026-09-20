@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/enseignant/depot_cahiers.dart';
+import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_parcours/libelles_tc_parcours.dart';
 import '../../core/tc_parcours/plage_lisible.dart';
 import '../../core/tc_parcours/port_post_cours.dart';
-import '../../core/tc_parcours/ports_externes/content_position.dart';
 import '../../core/tc_parcours/ports_externes/learning_assignment.dart';
 import '../../core/tc_parcours/ports_externes/teacher_student_projection.dart';
 import '../../core/tc_parcours/post_cours_vm.dart';

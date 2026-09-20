@@ -11,7 +11,7 @@
 // Agent Z supprime ce fichier a l'integration et pointe sur le canonique.
 import 'package:flutter/foundation.dart';
 
-import 'content_position.dart';
+import '../../tc_bibliotheque/content_position.dart';
 import 'learning_assignment.dart';
 
 /// L'etat d'un eleve dans la seance, projete pour l'enseignant.

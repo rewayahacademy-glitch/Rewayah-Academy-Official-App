@@ -4,7 +4,7 @@
 // **La classe abstraite seule.** L'implementation en memoire d'Agent D et son
 // provider ne sont pas recopies : un stub ne porte jamais d'implementation.
 // Agent Z supprime ce fichier a l'integration et pointe sur le canonique.
-import 'content_range.dart';
+import '../../tc_bibliotheque/content_range.dart';
 import 'intention_pedagogique.dart';
 import 'learning_assignment.dart';
 

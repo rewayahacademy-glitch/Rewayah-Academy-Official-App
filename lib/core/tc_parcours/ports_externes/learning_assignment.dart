@@ -4,7 +4,7 @@
 // Agent Z supprime ce fichier a l'integration et pointe sur le canonique.
 import 'package:flutter/foundation.dart';
 
-import 'content_range.dart';
+import '../../tc_bibliotheque/content_range.dart';
 import 'intention_pedagogique.dart';
 
 /// Ou en est un travail a preparer.
