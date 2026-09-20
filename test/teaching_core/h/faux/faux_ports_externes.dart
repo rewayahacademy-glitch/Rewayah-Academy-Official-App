@@ -77,11 +77,18 @@ class FauxAssignations implements PortAssignations {
   @override
   Future<List<LearningAssignment>> aVenir({
     required String groupId,
+    String? studentId,
     int limite = 3,
   }) async {
     derniereLimite = limite;
     return travaux
-        .where((LearningAssignment t) => t.groupId == groupId)
+        .where(
+          (LearningAssignment t) =>
+              t.groupId == groupId &&
+              (studentId == null ||
+                  t.studentId == null ||
+                  t.studentId == studentId),
+        )
         .take(limite < 0 ? 0 : limite)
         .toList(growable: false);
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
@@ -42,7 +41,7 @@ class PanneauPostCours extends ConsumerStatefulWidget {
   ///
   /// Recoit le sort du compte rendu : parti, ou en file jusqu'au retour du
   /// reseau. `null` laisse le panneau afficher lui-meme le resultat.
-  final void Function(SortCahier sort)? onTermine;
+  final void Function(SortPostCours sort)? onTermine;
 
   @override
   ConsumerState<PanneauPostCours> createState() => _PanneauPostCoursState();
@@ -52,7 +51,7 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
   final TextEditingController _notes = TextEditingController();
 
   bool _envoi = false;
-  SortCahier? _sort;
+  SortPostCours? _sort;
   String? _erreur;
 
   @override
@@ -125,9 +124,9 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         ),
         Ecart.vLg,
 
-        if (_sort case final SortCahier sort) ...<Widget>[
+        if (_sort case final SortPostCours sort) ...<Widget>[
           Text(
-            sort == SortCahier.enFile
+            sort == SortPostCours.enFile
                 ? t.tc.parcours.postCours.enFile
                 : t.tc.parcours.postCours.envoye,
             textAlign: TextAlign.center,
@@ -163,10 +162,7 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
     final PortPostCours port = ref.read(portPostCoursProvider);
     final PostCoursVM saisie = postCours.avecNotes(_notes.text);
     try {
-      // La surface riche quand elle existe : elle seule sait dire « en file ».
-      final SortCahier sort = port is PostCoursDepuisCahier
-          ? await port.deposer(saisie)
-          : await _enregistrerSansSort(port, saisie);
+      final SortPostCours sort = await port.enregistrer(saisie);
       if (!mounted) {
         return;
       }
@@ -183,17 +179,6 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         });
       }
     }
-  }
-
-  /// Le chemin du contrat nu : `enregistrer` rend `void`, donc on ne sait pas
-  /// si le compte rendu est parti ou s'il attend le reseau. On annonce alors
-  /// le cas le plus sur -- il est enregistre -- sans promettre un envoi.
-  Future<SortCahier> _enregistrerSansSort(
-    PortPostCours port,
-    PostCoursVM saisie,
-  ) async {
-    await port.enregistrer(saisie);
-    return SortCahier.enFile;
   }
 }
 

@@ -370,14 +370,15 @@ void main() {
       expect(await adaptateur.rechercher('الرحمن'), isEmpty);
     });
 
-    test('les trente debuts de juz sont declares', () {
-      expect(DebutsDeJuz.table.length, DebutsDeJuz.nombre);
-      expect(DebutsDeJuz.table.first, (sourate: 1, verset: 1));
-      expect(DebutsDeJuz.table.last, (sourate: 78, verset: 1));
-      for (final ({int sourate, int verset}) debut in DebutsDeJuz.table) {
-        expect(debut.sourate, inInclusiveRange(1, 114));
-        expect(debut.verset, greaterThan(0));
-      }
+    test('le debut de juz se lit desormais via ServiceCoran.debutDeJuz', () async {
+      // Amendement §4 de TC_CONTRACT_REQUEST_C.md, entérine le 21/09 par Agent
+      // Z : plus de table locale, la lecture passe par le service PROTECTED.
+      final CorpusDepuisServiceCoran adaptateur = CorpusDepuisServiceCoran(
+        service,
+      );
+
+      expect(await adaptateur.pageDeDebutDeJuz(1), 1);
+      expect(await adaptateur.pageDeDebutDeJuz(2), 5);
     });
 
     test('un juz hors bornes ne resout rien', () async {

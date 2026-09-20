@@ -77,25 +77,20 @@ class TravailAVenir implements PortTravailAVenir {
       );
     }
 
+    // Le filtre par eleve se pose a la source depuis l'amendement §2.1 de
+    // TC_CONTRACT_REQUEST_H.md (entérine le 21/09 par Agent Z) : sans lui, les
+    // trois candidats demandes ici pouvaient etre nominatifs pour quelqu'un
+    // d'autre, et un filtrage apres coup rendait alors moins de trois actions
+    // alors que le groupe en portait assez pour cet eleve.
     final List<LearningAssignment> travaux = await _assignations.aVenir(
       groupId: groupeId,
+      studentId: studentId,
       limite: plafondActionsAvantCours,
     );
 
     for (final LearningAssignment travail in travaux) {
       if (actions.length >= plafondActionsAvantCours) {
         break;
-      }
-      // `PortAssignations.aVenir` ne sait pas filtrer par eleve : le filtre est
-      // donc pose ici, apres coup. Consequence assumee et declaree -- la liste
-      // peut contenir moins de trois actions quand le groupe porte du travail
-      // nominatif pour quelqu'un d'autre. La demande d'un parametre
-      // `studentId` sur `aVenir` est en section 5 de
-      // `docs/teaching-core/TC_CONTRACT_REQUEST_H.md`.
-      if (studentId != null &&
-          travail.studentId != null &&
-          travail.studentId != studentId) {
-        continue;
       }
       actions.add(
         SlotAction(

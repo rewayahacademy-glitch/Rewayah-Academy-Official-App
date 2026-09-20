@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/pressable.dart';
@@ -36,7 +37,7 @@ class BarreCoursEnCours extends ConsumerWidget {
     // l'absence de barre.
     final EtatSessionPersistante etat =
         ref.watch(etatSessionProvider).value ?? EtatSessionPersistante.aucun;
-    final CoursOuvert? cours = etat.cours;
+    final SessionEnCours? cours = etat.cours;
     if (cours == null) {
       return const SizedBox.shrink();
     }

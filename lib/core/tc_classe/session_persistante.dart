@@ -10,86 +10,6 @@ import '../video/service_video.dart';
 import '../video/video_session_provider.dart';
 import 'port_session_persistante.dart';
 
-/// Le cours ouvert, tel que le controleur applicatif le connait.
-///
-/// **Ce n'est pas [SessionEnCours], et la difference est un manque declare.**
-/// Le contrat (`TEACHING_CORE_CONTRACTS.md` section 12) rend `horloge`
-/// **obligatoire** dans [SessionEnCours]. Or l'horloge vient de
-/// `PortHorlogeSeance` (Agent A), lui-meme adosse a une horloge serveur qui
-/// **n'existe pas encore en base** : `maintenantServeurUtc()` est un manque nomme
-/// au contrat. Un cours peut donc etre ouvert, la salle connectee, et l'horloge
-/// indisponible.
-///
-/// Trois issues etaient possibles, deux sont fausses :
-///
-/// 1. fabriquer une horloge locale a partir de `DateTime.now()` -- interdit,
-///    c'est exactement l'invariant 9 de l'annexe des decisions ;
-/// 2. ne rien declarer tant que l'horloge manque -- le cours tournerait sans que
-///    la barre « Cours en cours » n'existe, donc sans retour possible ;
-/// 3. tenir l'etat reel ici, avec une horloge **facultative**, et ne le projeter
-///    sur le contrat que lorsqu'il est complet. C'est ce qui est fait.
-///
-/// L'amendement demande -- `SessionClockVM? horloge` -- est en section 3 de
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_E.md`.
-@immutable
-class CoursOuvert {
-  /// Declare un cours ouvert.
-  const CoursOuvert({
-    required this.sessionId,
-    required this.groupeId,
-    required this.libelleGroupe,
-    this.horloge,
-  });
-
-  /// La seance ouverte.
-  final String sessionId;
-
-  /// Le groupe dont elle est l'etat temporaire.
-  ///
-  /// **Le Groupe est permanent, la Classe Live est un etat du Groupe**
-  /// (decision D-19) : c'est pour cela que le groupe est requis ici.
-  final String groupeId;
-
-  /// Le nom familier du groupe, jamais un code backend.
-  final String libelleGroupe;
-
-  /// L'horloge de la seance. `null` tant qu'aucune horloge serveur ne la donne.
-  final SessionClockVM? horloge;
-
-  /// La projection sur le contrat, ou `null` quand l'horloge manque.
-  SessionEnCours? get versContrat {
-    final SessionClockVM? h = horloge;
-    if (h == null) {
-      return null;
-    }
-    return SessionEnCours(
-      sessionId: sessionId,
-      groupeId: groupeId,
-      libelleGroupe: libelleGroupe,
-      horloge: h,
-    );
-  }
-
-  /// Le meme cours, avec une autre horloge.
-  CoursOuvert avecHorloge(SessionClockVM? nouvelle) => CoursOuvert(
-    sessionId: sessionId,
-    groupeId: groupeId,
-    libelleGroupe: libelleGroupe,
-    horloge: nouvelle,
-  );
-
-  @override
-  bool operator ==(Object other) =>
-      other is CoursOuvert &&
-      other.sessionId == sessionId &&
-      other.groupeId == groupeId &&
-      other.libelleGroupe == libelleGroupe &&
-      other.horloge == horloge;
-
-  @override
-  int get hashCode => Object.hash(sessionId, groupeId, libelleGroupe, horloge);
-}
-
 /// Ce que l'application sait de la classe en cours, a un instant donne.
 ///
 /// **Une seule source, et non une sixieme machine a etats.** Elle porte les
@@ -113,7 +33,7 @@ class EtatSessionPersistante {
   static const EtatSessionPersistante aucun = EtatSessionPersistante();
 
   /// Le cours ouvert. `null` tant que la salle n'est pas rejointe.
-  final CoursOuvert? cours;
+  final SessionEnCours? cours;
 
   /// Vrai quand le systeme a reellement suspendu l'application.
   ///
@@ -257,10 +177,10 @@ class ControleurSessionPersistante
 
   @override
   Stream<SessionEnCours?> suivre() =>
-      _sortie.stream.map((EtatSessionPersistante e) => e.cours?.versContrat);
+      _sortie.stream.map((EtatSessionPersistante e) => e.cours);
 
   @override
-  Future<SessionEnCours?> courante() async => _etat.cours?.versContrat;
+  Future<SessionEnCours?> courante() async => _etat.cours;
 
   /// Ouvre la salle : materiel, jeton, connexion. **Idempotent.**
   ///
@@ -278,7 +198,7 @@ class ControleurSessionPersistante
   /// sa valeur en cache, et c'est l'appelant qui sait s'il faut remesurer -- un
   /// casque branche entre deux essais ne compterait pas autrement.
   Future<void> ouvrir({
-    required CoursOuvert cours,
+    required SessionEnCours cours,
     required Future<ResultatPreVol> Function() preVol,
   }) async {
     if (_ouvertureEnCours || _dejaEnSalle(cours.sessionId)) {
@@ -365,7 +285,7 @@ class ControleurSessionPersistante
   /// Ignore une mise a jour qui designerait une autre seance : la barre suivrait
   /// alors un cours qu'on n'a pas rejoint.
   void rafraichirHorloge(String sessionId, SessionClockVM? horloge) {
-    final CoursOuvert? cours = _etat.cours;
+    final SessionEnCours? cours = _etat.cours;
     if (cours == null || cours.sessionId != sessionId) {
       return;
     }
@@ -385,7 +305,7 @@ class ControleurSessionPersistante
 
   @override
   Future<void> quitter() async {
-    final CoursOuvert? cours = _etat.cours;
+    final SessionEnCours? cours = _etat.cours;
     // Poser l'etat AVANT les appels reseau : l'interface doit refermer la barre
     // compacte sans attendre le serveur, et un second appui sur « Quitter »
     // pendant l'attente ne doit pas relancer l'annonce.

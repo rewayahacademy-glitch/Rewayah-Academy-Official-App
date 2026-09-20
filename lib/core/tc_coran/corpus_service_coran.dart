@@ -3,60 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../coran/service_coran.dart';
 import 'port_corpus_coran.dart';
 
-/// Les debuts de juz, en attendant que la base les expose.
-///
-/// **Double local declare, pas une donnee inventee.** La table `public.juz`
-/// (migration `0007`) porte deja `sourate_depart` et `verset_depart` pour les
-/// trente juz, et `0013` les a remplis. Mais `ServiceCoran` est **PROTECTED**
-/// et n'expose aucune lecture de `juz` : le moteur ne peut donc pas les lire
-/// aujourd'hui sans ouvrir une seconde voie d'acces au corpus, ce que
-/// `TEACHING_CORE_EXISTING_MAPPING.md` section 9.3 interdit.
-///
-/// La demande `ServiceCoran.debutDeJuz(int)` est ecrite dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_C.md`. **Ce tableau disparait le
-/// jour ou elle aboutit** : il n'est la que pour que la navigation par juz ne
-/// soit pas absente du lot.
-abstract final class DebutsDeJuz {
-  /// Le verset d'ouverture de chaque juz, du premier au trentieme.
-  ///
-  /// Decoupage Hafs, celui de l'edition `madina-hafs-604`.
-  static const List<({int sourate, int verset})> table =
-      <({int sourate, int verset})>[
-        (sourate: 1, verset: 1),
-        (sourate: 2, verset: 142),
-        (sourate: 2, verset: 253),
-        (sourate: 3, verset: 92),
-        (sourate: 4, verset: 24),
-        (sourate: 4, verset: 148),
-        (sourate: 5, verset: 82),
-        (sourate: 6, verset: 111),
-        (sourate: 7, verset: 88),
-        (sourate: 8, verset: 41),
-        (sourate: 9, verset: 93),
-        (sourate: 11, verset: 6),
-        (sourate: 12, verset: 53),
-        (sourate: 15, verset: 1),
-        (sourate: 17, verset: 1),
-        (sourate: 18, verset: 75),
-        (sourate: 21, verset: 1),
-        (sourate: 23, verset: 1),
-        (sourate: 25, verset: 21),
-        (sourate: 27, verset: 56),
-        (sourate: 29, verset: 46),
-        (sourate: 33, verset: 31),
-        (sourate: 36, verset: 28),
-        (sourate: 39, verset: 32),
-        (sourate: 41, verset: 47),
-        (sourate: 46, verset: 1),
-        (sourate: 51, verset: 31),
-        (sourate: 58, verset: 1),
-        (sourate: 67, verset: 1),
-        (sourate: 78, verset: 1),
-      ];
-
-  /// Le nombre de juz du mushaf.
-  static const int nombre = 30;
-}
+/// Le nombre de juz du mushaf.
+const int nombreDeJuz = 30;
 
 /// L'adaptateur LECTURE SEULE au-dessus de `ServiceCoran`.
 ///
@@ -138,11 +86,15 @@ class CorpusDepuisServiceCoran implements PortCorpusCoran {
   }
 
   @override
-  Future<int?> pageDeDebutDeJuz(int juz) {
-    if (juz < 1 || juz > DebutsDeJuz.nombre) {
-      return Future<int?>.value();
+  Future<int?> pageDeDebutDeJuz(int juz) async {
+    // `ServiceCoran.debutDeJuz` lit `public.juz` (sourate_depart, verset_depart,
+    // migration 0007, remplie par 0013) depuis la demande §4 de
+    // TC_CONTRACT_REQUEST_C.md, entérinée le 21/09 par Agent Z. Un juz hors
+    // bornes n'a simplement aucune ligne : `null` traverse naturellement.
+    final ({int sourate, int verset})? debut = await _service.debutDeJuz(juz);
+    if (debut == null) {
+      return null;
     }
-    final ({int sourate, int verset}) debut = DebutsDeJuz.table[juz - 1];
     return _service.pageDe(debut.sourate, debut.verset);
   }
 
@@ -176,7 +128,7 @@ class CorpusDepuisServiceCoran implements PortCorpusCoran {
     }
 
     final int? juz = lireNombreApresMot(propre, 'juz');
-    if (juz != null && juz >= 1 && juz <= DebutsDeJuz.nombre) {
+    if (juz != null && juz >= 1 && juz <= nombreDeJuz) {
       final int? page = await pageDeDebutDeJuz(juz);
       if (page != null) {
         resultats.add(

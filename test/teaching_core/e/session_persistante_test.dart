@@ -14,7 +14,7 @@ import 'faux/faux_classe.dart';
 /// [ControleurSessionPersistante.quitter] n'est atteint que par un geste
 /// explicite.
 void main() {
-  const CoursOuvert cours = CoursOuvert(
+  const SessionEnCours cours = SessionEnCours(
     sessionId: 's1',
     groupeId: 'g1',
     libelleGroupe: 'Groupe Al-Fatiha',
@@ -203,18 +203,19 @@ void main() {
   });
 
   group('projection sur le contrat', () {
-    test('sans horloge, le port reste muet, et le cours reste ouvert', () async {
-      // Le contrat rend `SessionEnCours.horloge` obligatoire, et l'horloge
-      // serveur n'existe pas encore. Plutot que de fabriquer une horloge locale
-      // -- interdit -- le controleur tient l'etat reel et ne projette que ce
-      // qui est complet. L'amendement est demande en section 3 du
-      // CONTRACT_REQUEST.
+    test('sans horloge, le port rend un SessionEnCours a horloge nulle', () async {
+      // `SessionEnCours.horloge` est nullable depuis l'amendement §3 de
+      // TC_CONTRACT_REQUEST_E.md : l'horloge serveur n'existe pas encore, et
+      // fabriquer une horloge locale resterait interdit, mais taire tout le
+      // cours privait la barre « Cours en cours » de tout retour possible.
       final _Banc t = monter();
 
       await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
 
       expect(t.controleur.etatCourant.cours, isNotNull);
-      expect(await t.controleur.courante(), isNull);
+      final SessionEnCours? rendu = await t.controleur.courante();
+      expect(rendu, isNotNull);
+      expect(rendu!.horloge, isNull);
     });
 
     test('avec horloge, le port rend un SessionEnCours', () async {
@@ -227,7 +228,7 @@ void main() {
       expect(rendu, isNotNull);
       expect(rendu!.sessionId, 's1');
       expect(rendu.libelleGroupe, 'Groupe Al-Fatiha');
-      expect(rendu.horloge.restant, const Duration(minutes: 47));
+      expect(rendu.horloge?.restant, const Duration(minutes: 47));
     });
 
     test('une horloge d une autre seance est ignoree', () async {

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/session_live_vm.dart';
@@ -214,7 +215,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
   Future<void> _entrer() async {
     setState(() => _materielMesureBloque = false);
     await _controleur.ouvrir(
-      cours: CoursOuvert(
+      cours: SessionEnCours(
         sessionId: widget.contexte.sessionId,
         groupeId: widget.contexte.groupeId,
         libelleGroupe: widget.contexte.libelleGroupe,

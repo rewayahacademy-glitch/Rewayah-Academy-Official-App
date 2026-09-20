@@ -16,13 +16,21 @@ abstract class PortAssignations {
     String? studentId,
   });
 
-  /// Le travail a venir, **au maximum trois**.
+  /// Le travail a venir, **au maximum trois**, filtre pour un eleve quand il
+  /// est donne.
+  ///
+  /// **`studentId` filtre a la source depuis l'amendement §2.1 de
+  /// `TC_CONTRACT_REQUEST_H.md`** (entérine le 21/09 par Agent Z) : sans lui, un
+  /// appelant qui filtrerait apres coup pouvait recevoir moins de trois
+  /// actions alors que le groupe en portait assez pour cet eleve.
+  /// `null` = le groupe entier, comme [LearningAssignment.studentId].
   ///
   /// Le plafond est garanti par l'implementation, jamais par l'appelant : un
   /// slot « Avant le prochain cours » qui afficherait sept lignes serait un
   /// defaut de contrat, pas un defaut d'ecran (invariant 2 de la section 11).
   Future<List<LearningAssignment>> aVenir({
     required String groupId,
+    String? studentId,
     int limite = 3,
   });
 
@@ -81,6 +89,7 @@ class AssignationsMemoire implements PortAssignations {
   @override
   Future<List<LearningAssignment>> aVenir({
     required String groupId,
+    String? studentId,
     int limite = 3,
   }) async {
     final List<LearningAssignment> ouverts =
@@ -88,6 +97,9 @@ class AssignationsMemoire implements PortAssignations {
             .where(
               (LearningAssignment travail) =>
                   travail.groupId == groupId &&
+                  (studentId == null ||
+                      travail.studentId == null ||
+                      travail.studentId == studentId) &&
                   (travail.status == StatutAssignation.aFaire ||
                       travail.status == StatutAssignation.enCours),
             )

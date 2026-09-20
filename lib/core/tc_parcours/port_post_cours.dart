@@ -50,6 +50,20 @@ class EchecPostCours implements Exception {
   String toString() => 'EchecPostCours($motif)';
 }
 
+/// Ce qu'il est advenu d'un post-cours qu'on vient de valider.
+///
+/// **Amendement §2.2 de `TC_CONTRACT_REQUEST_H.md`, entérine le 21/09 par
+/// Agent Z.** Meme forme que `SortCahier` (`depot_cahiers.dart`), dont ce
+/// contrat s'inspire sans le reexposer : un ecran generique du post-cours ne
+/// depend pas d'un type du module enseignant.
+enum SortPostCours {
+  /// Parti, et le serveur l'a accepte.
+  envoye,
+
+  /// Enregistre localement, il partira au retour du reseau.
+  enFile,
+}
+
 /// Le post-cours enseignant (`TEACHING_CORE_CONTRACTS.md` section 16).
 ///
 /// **Contrat produit par Agent H**, consomme par H et Q.
@@ -58,8 +72,9 @@ abstract class PortPostCours {
   /// plages. **Cible : moins de 45 secondes pour l'enseignant.**
   Future<PostCoursVM> preparer(String sessionId);
 
-  /// Enregistre ce que l'enseignant a valide.
-  Future<void> enregistrer(PostCoursVM saisie);
+  /// Enregistre ce que l'enseignant a valide, et dit ce qu'il en est advenu :
+  /// parti, ou en file jusqu'au retour du reseau.
+  Future<SortPostCours> enregistrer(PostCoursVM saisie);
 }
 
 /// Le post-cours, compose au-dessus du cahier de transmission existant.
@@ -146,17 +161,15 @@ class PostCoursDepuisCahier implements PortPostCours {
   }
 
   @override
-  Future<void> enregistrer(PostCoursVM saisie) async {
-    await deposer(saisie);
+  Future<SortPostCours> enregistrer(PostCoursVM saisie) async {
+    final SortCahier sort = await deposer(saisie);
+    return sort == SortCahier.enFile
+        ? SortPostCours.enFile
+        : SortPostCours.envoye;
   }
 
-  /// Enregistre, et dit **ce qu'il est advenu** du compte rendu.
-  ///
-  /// Le contrat rend `void` : une surface plus riche y aurait ete une
-  /// divergence. Mais l'ecran, lui, doit pouvoir ecrire « il partira des le
-  /// retour du reseau » plutot que « envoye », et c'est ce que cette methode
-  /// permet. L'amendement du contrat est demande en section 5 de
-  /// `docs/teaching-core/TC_CONTRACT_REQUEST_H.md`.
+  /// Enregistre, et dit **ce qu'il est advenu** du compte rendu, dans le
+  /// vocabulaire du cahier de transmission existant.
   Future<SortCahier> deposer(PostCoursVM saisie) async {
     final BrouillonCahier constat = await _constatPour(saisie.sessionId);
 

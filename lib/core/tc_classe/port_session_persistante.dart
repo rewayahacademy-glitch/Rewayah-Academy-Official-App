@@ -13,7 +13,7 @@ class SessionEnCours {
     required this.sessionId,
     required this.groupeId,
     required this.libelleGroupe,
-    required this.horloge,
+    this.horloge,
   });
 
   /// La seance ouverte.
@@ -26,17 +26,34 @@ class SessionEnCours {
   final String libelleGroupe;
 
   /// L'horloge de la seance, pour le temps restant.
-  final SessionClockVM horloge;
+  ///
+  /// **Nullable depuis l'amendement §3 de `TC_CONTRACT_REQUEST_E.md`.**
+  /// `maintenantServeurUtc()` (Agent A, CONTRACTS section 3) n'existe pas
+  /// encore en base : un cours peut donc etre ouvert, la salle connectee, et
+  /// l'horloge indisponible. Fabriquer une horloge locale serait l'invariant 9
+  /// interdit ; taire tout le cours priverait la barre « Cours en cours » de
+  /// tout retour possible. `null` se rend donc sans le temps restant, jamais
+  /// en cachant le cours lui-meme.
+  final SessionClockVM? horloge;
+
+  /// Le meme cours, avec une autre horloge.
+  SessionEnCours avecHorloge(SessionClockVM? nouvelle) => SessionEnCours(
+    sessionId: sessionId,
+    groupeId: groupeId,
+    libelleGroupe: libelleGroupe,
+    horloge: nouvelle,
+  );
 
   @override
   bool operator ==(Object other) =>
       other is SessionEnCours &&
       other.sessionId == sessionId &&
       other.groupeId == groupeId &&
-      other.libelleGroupe == libelleGroupe;
+      other.libelleGroupe == libelleGroupe &&
+      other.horloge == horloge;
 
   @override
-  int get hashCode => Object.hash(sessionId, groupeId, libelleGroupe);
+  int get hashCode => Object.hash(sessionId, groupeId, libelleGroupe, horloge);
 }
 
 /// La session live, au niveau **applicatif**.
