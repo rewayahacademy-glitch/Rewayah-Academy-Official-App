@@ -135,14 +135,10 @@ class VignetteRessource extends StatelessWidget {
   /// L'icone de coin d'un type de ressource.
   static AppIcon iconeDe(TypeRessource type) => switch (type) {
     TypeRessource.quran => AppIcons.coran,
-    // TC-ICONE: article (texte structure)
-    TypeRessource.texteStructure => AppIcons.cahier,
-    // TC-ICONE: fichier-pdf
-    TypeRessource.pdf => AppIcons.dossiers,
-    // TC-ICONE: image
-    TypeRessource.image => AppIcons.qr,
-    // TC-ICONE: lecon
-    TypeRessource.lecon => AppIcons.pedagogie,
+    TypeRessource.texteStructure => AppIcons.texteStructure,
+    TypeRessource.pdf => AppIcons.fichierPdf,
+    TypeRessource.image => AppIcons.image,
+    TypeRessource.lecon => AppIcons.lecon,
   };
 }
 

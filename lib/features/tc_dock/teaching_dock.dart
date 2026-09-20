@@ -96,8 +96,7 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
       // c'est le seul bouton qui doit rester joignable meme quand la bande
       // defile.
       BoutonOutil(
-        // TC-ICONE: deplacer le dock (poignee a six points)
-        icone: AppIcons.menuDeroulant,
+        icone: AppIcons.poigneeDock,
         libelle: t.tc.outils.dock.deplacer,
         avecLibelle: avecLibelle,
         onPress: () => ref
@@ -352,20 +351,13 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
   };
 
   static AppIcon _icone(OutilDock outil) => switch (outil) {
-    // TC-ICONE: bibliotheque (etagere de livres)
-    OutilDock.bibliotheque => AppIcons.cahier,
-    // TC-ICONE: focus (cible)
-    OutilDock.focus => AppIcons.recherche,
-    // TC-ICONE: marquer (etiquette)
-    OutilDock.marquer => AppIcons.pedagogie,
-    // TC-ICONE: masquer (oeil barre)
-    OutilDock.masquer => AppIcons.cameraCoupee,
-    // TC-ICONE: stylet (stylo)
-    OutilDock.stylet => AppIcons.journal,
-    // TC-ICONE: pointeur (main qui designe)
-    OutilDock.pointeur => AppIcons.suivant,
-    // TC-ICONE: revision (fleche circulaire)
-    OutilDock.revision => AppIcons.enAttenteEnvoi,
+    OutilDock.bibliotheque => AppIcons.bibliotheque,
+    OutilDock.focus => AppIcons.focus,
+    OutilDock.marquer => AppIcons.marqueur,
+    OutilDock.masquer => AppIcons.masquer,
+    OutilDock.stylet => AppIcons.stylet,
+    OutilDock.pointeur => AppIcons.pointeur,
+    OutilDock.revision => AppIcons.revision,
   };
 }
 

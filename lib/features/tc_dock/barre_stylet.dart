@@ -65,13 +65,11 @@ class BarreStylet extends ConsumerWidget {
                 onPress: () => controleur.choisirOutilTrait(outil),
               ),
             BoutonOutil(
-              // TC-ICONE: annuler (fleche qui revient en arriere)
-              icone: AppIcons.reaffectation,
+              icone: AppIcons.annuler,
               libelle: t.tc.outils.trait.annuler,
               onPress: peutAnnuler ? onAnnuler : null,
             ),
             BoutonOutil(
-              // TC-ICONE: plus (trois points)
               icone: AppIcons.menu,
               libelle: t.tc.outils.trait.plus,
               onPress: () => unawaited(_choisirPortee(context, controleur, etat)),
@@ -99,11 +97,8 @@ class BarreStylet extends ConsumerWidget {
   }
 
   static AppIcon _icone(OutilTrait outil) => switch (outil) {
-    // TC-ICONE: stylet (stylo)
-    OutilTrait.stylet => AppIcons.journal,
-    // TC-ICONE: surligneur (marqueur large)
-    OutilTrait.surligneur => AppIcons.pedagogie,
-    // TC-ICONE: gomme
+    OutilTrait.stylet => AppIcons.stylet,
+    OutilTrait.surligneur => AppIcons.surligneur,
     OutilTrait.gomme => AppIcons.effacer,
   };
 }

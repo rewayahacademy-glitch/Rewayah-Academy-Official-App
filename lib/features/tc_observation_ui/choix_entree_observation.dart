@@ -123,15 +123,8 @@ class ChoixEntreeObservation extends StatelessWidget {
       t.tc.observation.entree.modeVisibleDetail,
   };
 
-  /// Deux icones empruntees au catalogue, faute des leurs.
-  ///
-  /// `app_icons.dart` est un fichier unique et partage : un agent n'y ecrit
-  /// pas (decision D-05). Les deux souhaits sont listes sous « ICONES
-  /// DEMANDEES » du `TC_CONTRACT_REQUEST_G.md`.
   static AppIcon _icone(ModeEntreeAdmin mode) => switch (mode) {
-    // TC-ICONE: observation-incognito
-    ModeEntreeAdmin.observerDiscretement => AppIcons.controleQualite,
-    // TC-ICONE: administration-visible
-    ModeEntreeAdmin.rejoindreLaClasse => AppIcons.camera,
+    ModeEntreeAdmin.observerDiscretement => AppIcons.observationIncognito,
+    ModeEntreeAdmin.rejoindreLaClasse => AppIcons.administrationVisible,
   };
 }

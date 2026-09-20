@@ -309,9 +309,7 @@ class _ConseilAppareil extends StatelessWidget {
               color: palette.inkMuted.applyTo(const TextStyle()).color,
               size: AppSpacing.xl,
             ),
-            // TC-ICONE: un pictogramme « tablette ou ordinateur » manque au
-            // catalogue. `appareil` est le plus proche et sert de placeholder.
-            child: Icon(AppIcons.appareil.repos),
+            child: Icon(AppIcons.tabletteOuOrdinateur.repos),
           ),
           Ecart.hSm,
           Expanded(

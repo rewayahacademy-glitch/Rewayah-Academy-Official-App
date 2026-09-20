@@ -90,20 +90,17 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
             OptionChoix(
               valeur: SourcePolitique.academie.valeurSql,
               libelle: t.tc.observation.reglages.heriter,
-              // TC-ICONE: heritage
-              icone: AppIcons.reglages,
+              icone: AppIcons.heritage,
             ),
             OptionChoix(
               valeur: SourcePolitique.groupe.valeurSql,
               libelle: t.tc.observation.reglages.personnaliser,
-              // TC-ICONE: personnalisation-groupe
-              icone: AppIcons.foyer,
+              icone: AppIcons.personnalisationGroupe,
             ),
             OptionChoix(
               valeur: SourcePolitique.desactivee.valeurSql,
               libelle: t.tc.observation.reglages.desactiver,
-              // TC-ICONE: observation-fermee
-              icone: AppIcons.cameraCoupee,
+              icone: AppIcons.observationFermee,
             ),
           ],
           onChange: _choisirSource,
