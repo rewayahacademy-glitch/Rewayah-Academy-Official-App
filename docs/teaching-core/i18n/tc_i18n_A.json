@@ -1,0 +1,123 @@
+{
+  "_meta": {
+    "agent": "A",
+    "sousArbre": "tc.groupe.*",
+    "facade": "lib/core/tc_groupe/libelles_tc_groupe.dart",
+    "decision": "D-03 : aucun agent Teaching Core ne modifie assets/i18n/fr.i18n.json, lib/core/i18n/strings*.g.dart, slang.yaml ni build.yaml. Agent Z fusionne les neuf JSON, regenere, remplace les appels a la facade et supprime le fichier de facade.",
+    "fusion": "Le bloc `fr` se greffe sous la racine `tc` de assets/i18n/fr.i18n.json. Le bloc `ar` se greffe de la meme facon dans assets/i18n/ar.i18n.json.",
+    "arabe": "Les deux seules valeurs arabes de ce lot sont les titres Sayyid et Sayyida. C'est l'exception nommee par la decision D-02 a la regle 'aucun agent ne produit de traduction arabe'. Tout le reste du sous-arbre arabe reste absent, et retombe sur le francais par fallback_strategy: base_locale.",
+    "notes": [
+      "`carte.capacite` n'est jamais une constante : les deux nombres viennent du serveur. La phrase `carte.capacitePhrase` existe pour les technologies d'assistance, qui liraient '4 barre oblique 5' sans elle.",
+      "`cours.coursEtNiveau` est un gabarit de jonction : la facade omet le separateur quand l'un des deux fragments manque, et ne laisse jamais un separateur orphelin.",
+      "`temps.prolongee` ne porte AUCUN nombre, et c'est une regle : un compte a rebours negatif est un mensonge.",
+      "`enseignant.photoManquante` est un etat d'erreur explicite, jamais un avatar generique (decision D-01).",
+      "`espace.reprendreLeCours` est une action contextuelle, jamais un intitule de section permanente."
+    ]
+  },
+
+  "fr": {
+    "tc": {
+      "groupe": {
+        "mesGroupes": {
+          "titre": "Mes groupes",
+          "aucun": "Aucun groupe pour le moment",
+          "aucunDetail": "L'académie vous placera dans un groupe dès qu'un créneau vous correspond."
+        },
+
+        "commun": {
+          "erreur": "Vos groupes n'ont pas pu être lus",
+          "reessayer": "Réessayer"
+        },
+
+        "carte": {
+          "ouvrir": "Ouvrir le groupe {libelle}",
+          "capacite": "{membres} / {seuil}",
+          "capacitePhrase": "{membres} élèves sur {seuil} places",
+          "complet": "Complet",
+          "prochainCours": "Prochain cours",
+          "aucuneSeance": "Aucune séance planifiée",
+          "aucuneSeanceDetail": "Le planning de ce groupe n'est pas encore posé.",
+          "duree": "Durée {valeur}",
+          "dureeLibelle": "Durée",
+          "rejoindre": "Rejoindre"
+        },
+
+        "enseignant": {
+          "sayyid": "Sayyid",
+          "sayyida": "Sayyida",
+          "photoManquante": "Photo à fournir",
+          "photoManquanteDetail": "La photo de l'enseignant n'a pas encore été enregistrée."
+        },
+
+        "cours": {
+          "coursEtNiveau": "{cours} · {niveau}"
+        },
+
+        "temps": {
+          "dansMinutes": "Cours dans {minutes} min",
+          "dansHeures": "Cours dans {heures} h {minutes}",
+          "imminent": "Cours imminent",
+          "salleOuverte": "Salle ouverte · {reste}",
+          "salleOuverteCourt": "Salle ouverte",
+          "attente": "Vous êtes dans la salle. Le cours n'a pas encore commencé.",
+          "attenteDetail": "Ce temps d'attente ne compte pas dans votre présence.",
+          "enSalle": "En salle",
+          "resteMinutes": "Reste {minutes} min",
+          "resteHeures": "Reste {heures} h {minutes}",
+          "enCours": "Cours en cours · {reste}",
+          "enDirect": "En direct",
+          "prolongee": "Cours toujours en cours",
+          "depassement": "En dépassement",
+          "terminee": "Cours terminé"
+        },
+
+        "horloges": {
+          "votreHeure": "Votre heure",
+          "chezEnseignant": "Chez {nomme}",
+          "heureGroupe": "Heure du groupe",
+          "heureEtVille": "{heure} {ville}"
+        },
+
+        "dst": {
+          "j30": "Changement d'heure dans un mois",
+          "j7": "Changement d'heure la semaine prochaine",
+          "j1": "Changement d'heure demain",
+          "detail": "Votre cours passera de {avant} à {apres}."
+        },
+
+        "session": {
+          "conseilAppareil": "Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge."
+        },
+
+        "espace": {
+          "retour": "Mes groupes",
+          "avantProchainCours": "Avant le prochain cours",
+          "aucuneAction": "Rien à préparer pour l'instant",
+          "bibliotheque": "Bibliothèque",
+          "bibliothequeVoirTout": "Voir tout",
+          "progression": "Progression",
+          "roster": "Élèves du groupe",
+          "reprendreLeCours": "Reprendre le cours",
+          "introuvable": "Ce groupe ne vous est pas ouvert",
+          "introuvableDetail": "Il a peut-être été clôturé, ou il appartient à une autre classe."
+        },
+
+        "emplacement": {
+          "nonBranche": "Bientôt disponible",
+          "nonBrancheDetail": "Ce contenu sera rattaché à cet espace prochainement."
+        }
+      }
+    }
+  },
+
+  "ar": {
+    "tc": {
+      "groupe": {
+        "enseignant": {
+          "sayyid": "سيد",
+          "sayyida": "سيدة"
+        }
+      }
+    }
+  }
+}
