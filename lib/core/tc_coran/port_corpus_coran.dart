@@ -141,12 +141,23 @@ class ResultatRechercheCoran {
 
 /// Par quoi un resultat de recherche a ete trouve.
 ///
-/// **La recherche plein texte n'existe pas.** Aucun index texte n'a ete pose
-/// sur `verset` (ni `tsvector`, ni `pg_trgm`, ni colonne sans diacritiques), et
-/// `ServiceCoran` est PROTECTED : l'ajouter est une demande, pas une
-/// initiative. La valeur [texte] est donc declaree mais **jamais produite**
-/// aujourd'hui, et l'ecran le dit a l'usager au lieu de rendre une liste vide
-/// qui ressemblerait a « aucun resultat ».
+/// **La recherche plein texte n'est pas livree cote application.** L'infra SQL,
+/// elle, existe : mesure en production le 21/09/2026, l'extension `pg_trgm`
+/// 1.6 est installee dans le schema `extensions`, la colonne generee
+/// `verset.texte_recherche` porte le texte sans diacritiques, et l'index
+/// trigramme `verset_recherche_idx` est pose dessus (1616 kB pour 6236
+/// versets), par la migration `0030_tc_socle`. Ce qui manque, c'est le code
+/// qui l'interroge : aucune RPC, aucun appel. C'est un lot produit a part
+/// entiere, et `ServiceCoran` est PROTECTED -- le brancher est une demande,
+/// pas une initiative. La valeur [texte] reste donc declaree mais **jamais
+/// produite** aujourd'hui, et l'ecran le dit a l'usager au lieu de rendre une
+/// liste vide qui ressemblerait a « aucun resultat ».
+///
+/// **Le piege, le jour ou quelqu'un branchera la recherche** : le depot fige
+/// `set search_path = ''` sur ses fonctions (voir
+/// `supabase/migrations/0030_tc_socle_durcissement_search_path.sql:12`). Toute
+/// future fonction SQL devra donc ecrire `extensions.similarity(...)`
+/// schema-qualifie, sinon elle ne verra pas l'extension.
 enum TypeResultatRecherche {
   /// Une reference « sourate:verset », « 2:255 ».
   reference,

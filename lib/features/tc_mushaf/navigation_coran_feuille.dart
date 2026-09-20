@@ -19,10 +19,11 @@ import '../../core/widgets/empty_state.dart';
 /// tri se fait a la lecture de ce qu'il a tape, pas par quatre onglets.
 ///
 /// **Ce qu'elle ne sait pas faire, elle le dit.** La recherche dans le texte du
-/// Coran demanderait un index que la base n'a pas : ni `tsvector`, ni
-/// `pg_trgm`, ni colonne normalisee sans diacritiques. Afficher « aucun
-/// resultat » a un lecteur qui cherche un mot du Coran serait faux : il
-/// croirait que le mot n'y est pas.
+/// Coran n'est pas branchee. L'index existe pourtant en base (mesure le
+/// 21/09/2026 : `pg_trgm` installee, colonne generee `verset.texte_recherche`,
+/// index trigramme `verset_recherche_idx`), mais aucun code ne l'interroge
+/// encore. Afficher « aucun resultat » a un lecteur qui cherche un mot du Coran
+/// serait faux : il croirait que le mot n'y est pas.
 class FeuilleNavigationCoran extends ConsumerStatefulWidget {
   /// Cree la feuille.
   const FeuilleNavigationCoran({required this.onAller, super.key});

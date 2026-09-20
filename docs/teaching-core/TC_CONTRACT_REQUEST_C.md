@@ -251,9 +251,18 @@ chose.
 
 ## 5. DEMANDE SQL — l'index de recherche texte
 
-Aucun index texte n'existe sur `verset` : **ni `tsvector`, ni `pg_trgm`, ni colonne normalisée sans
-diacritiques**. Une recherche `ilike` sur `verset.texte` est inutilisable en pratique, parce que le
-tracé uthmani porte des diacritiques que personne ne tape au clavier.
+**État au 21/09/2026 : cette demande est SATISFAITE en production.** Mesuré sur le projet
+`gggmtelinlpseweouyav` : l'extension `pg_trgm` 1.6 est installée dans le schéma `extensions`, la
+colonne générée `verset.texte_recherche` existe, et l'index trigramme `verset_recherche_idx` est
+posé dessus (1616 kB pour 6236 versets). C'est la migration `0030_tc_socle` (version
+`20260920151343`, appliquée) qui l'a posé. Le bloc SQL ci-dessous est conservé comme **trace de ce
+qui a été appliqué** : ne le rejoue pas.
+
+Ce qui reste ouvert est côté application, pas côté base : **aucun code n'interroge cet index**, donc
+la recherche plein texte n'est toujours pas livrée à l'usager. C'est un lot produit à part entière.
+
+Rappel du problème que cet index résout : une recherche `ilike` sur `verset.texte` est inutilisable
+en pratique, parce que le tracé uthmani porte des diacritiques que personne ne tape au clavier.
 
 ```sql
 -- Colonne normalisee + index. Elle ne MODIFIE PAS `texte` : la licence Tanzil
@@ -265,7 +274,11 @@ alter table public.verset
   ) stored;
 
 create index verset_recherche_idx on public.verset using gin (texte_recherche gin_trgm_ops);
--- extension requise : pg_trgm (absente du projet, a verifier avant).
+-- extension requise : pg_trgm. INSTALLEE en production (1.6, schema
+-- `extensions`), verifie le 21/09/2026 : ne rejoue PAS `create extension`.
+-- Piege : le depot fige `set search_path = ''` sur ses fonctions, donc toute
+-- future fonction SQL de recherche doit ecrire `extensions.similarity(...)`
+-- schema-qualifie.
 -- RLS : la colonne suit celle de `verset`, aucune policy nouvelle.
 -- Role appelant : identique a `verset`.
 -- Table existante etendue : `public.verset`. Aucune table neuve.
