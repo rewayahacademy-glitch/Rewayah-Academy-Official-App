@@ -280,6 +280,12 @@ arabe, ce qui ferait croire que le mot n'est pas dans le Coran.
 
 ## 6. AMENDEMENT DE CONTRAT (Agent B) — l'identifiant de ressource du Coran
 
+> **Les types eux-mêmes ne sont plus une demande.** Le stub
+> `lib/core/tc_coran/ports_externes/content_position.dart` a d'abord été recopié des §7 et §8 de
+> `CONTRACTS`, que l'AMENDEMENT 1 a ensuite déclarées périmées. Il reprend désormais **à l'identique**
+> les déclarations canoniques d'Agent B (`lib/core/tc_bibliotheque/content_position.dart` et
+> `content_range.dart`). Écart clos, rien à trancher. Seul l'identifiant ci-dessous reste ouvert.
+
 `ContentPosition` et `ContentRange` exigent un `resourceId`. La table des ressources d'Agent B est
 **neuve** : aucun identifiant réel n'existe.
 

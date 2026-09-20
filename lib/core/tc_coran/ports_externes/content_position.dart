@@ -1,35 +1,65 @@
 // TC-STUB-PORT: canonique = lib/core/tc_bibliotheque/content_position.dart (Agent B)
 // TC-STUB-PORT: canonique = lib/core/tc_bibliotheque/content_range.dart (Agent B)
-// Signatures copiees depuis TEACHING_CORE_CONTRACTS.md sections 7 et 8.
+// Declarations recopiees A L'IDENTIQUE depuis ces deux fichiers du worktree
+// D:\RA_TC\b, conformement a l'AMENDEMENT 1 de TEACHING_CORE_CONTRACTS.md, qui
+// prevaut sur les sections 7 et 8 du meme document et les declare perimees.
 // Agent Z supprime ce fichier a l'integration et pointe sur le canonique.
 //
-// ECART ASSUME, declare dans TC_AGENT_C_REPORT.md : le contrat ecrit
-// `const ContentPosition._();` sans initialiser ses champs finaux, et declare
-// `contient` / `chevauche` sans corps. Tel quel, il ne compile pas. Le stub
-// garde les champs, leurs types et leurs noms **a l'identique**, et donne aux
-// quatre constructeurs nommes que le contrat annonce le seul corps possible.
-// Aucun champ, aucune methode n'a ete ajoute.
+// Les deux fichiers d'Agent B sont reunis ici en un seul, pour ne pas multiplier
+// les ports d'un stub appele a disparaitre. Aucune declaration n'est modifiee :
+// memes champs, memes constructeurs, memes assertions, meme constness.
 
 import 'package:flutter/foundation.dart';
 
-/// La nature de l'ancrage d'une position dans un support.
+/// La nature de l'ancrage d'une position (CONTRACTS section 7).
 enum TypeAncrage {
-  /// Une page d'un support pagine.
-  page,
+  /// Une page, pour un support pagine.
+  page('page'),
 
-  /// Un verset, dans le corpus coranique.
-  ayah,
+  /// Un verset, pour le Coran.
+  ayah('ayah'),
 
-  /// Une section identifiee d'un texte structure.
-  section,
+  /// Une section nommee, pour un texte structure ou une lecon.
+  section('section'),
 
-  /// Un repli proportionnel, de 0 a 1.
-  fraction,
+  /// Une fraction du support, **repli** quand rien de semantique n'existe.
+  fraction('fraction');
+
+  const TypeAncrage(this.valeurSql);
+
+  /// La valeur telle que la base l'attend.
+  final String valeurSql;
+
+  /// Lit un ancrage depuis sa valeur SQL. `null` sur valeur inconnue.
+  static TypeAncrage? depuisSql(String? valeur) {
+    for (final TypeAncrage a in TypeAncrage.values) {
+      if (a.valeurSql == valeur) return a;
+    }
+    return null;
+  }
 }
 
-/// La position canonique dans un support.
+/// La position canonique dans un support, tous types confondus.
+///
+/// **Un seul ancrage a la fois.** Les champs qui ne concernent pas
+/// [typeAncrage] valent `null`, et une assertion le garantit a la
+/// construction : une position qui porterait a la fois une page et un verset
+/// laisserait chaque consommateur choisir, donc diverger.
+///
+/// **Le zoom n'en fait pas partie.** Le zoom est local a chaque personne, il
+/// ne fait pas partie de la position pedagogique partagee (decision D-21).
+///
+/// Sur un rendu reflowable, l'ancrage semantique ([ayah], [section]) est
+/// **prefere** a [fraction] : une fraction se decale des que la largeur change.
 @immutable
 class ContentPosition {
+  /// Le constructeur interne. Les quatre fabriques nommees passent par lui.
+  ///
+  /// Le contrat ecrit `const ContentPosition._();` sans parametre ; des champs
+  /// `final` ne peuvent pas etre initialises ainsi. La forme retenue garde la
+  /// surface publique exacte -- quatre constructeurs nommes -- et rend le
+  /// constructeur prive utilisable. Ecart signale dans
+  /// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
   const ContentPosition._({
     required this.resourceId,
     required this.typeAncrage,
@@ -39,9 +69,46 @@ class ContentPosition {
     this.ayah,
     this.sectionId,
     this.fraction,
-  });
+  }) : assert(
+         typeAncrage != TypeAncrage.page ||
+             (page != null &&
+                 sourate == null &&
+                 ayah == null &&
+                 sectionId == null &&
+                 fraction == null),
+         'ancrage page : seul page est renseigne',
+       ),
+       assert(
+         typeAncrage != TypeAncrage.ayah ||
+             (sourate != null &&
+                 ayah != null &&
+                 page == null &&
+                 sectionId == null &&
+                 fraction == null),
+         'ancrage ayah : seuls sourate et ayah sont renseignes',
+       ),
+       assert(
+         typeAncrage != TypeAncrage.section ||
+             (sectionId != null &&
+                 page == null &&
+                 sourate == null &&
+                 ayah == null &&
+                 fraction == null),
+         'ancrage section : seul sectionId est renseigne',
+       ),
+       assert(
+         typeAncrage != TypeAncrage.fraction ||
+             (fraction != null &&
+                 fraction >= 0 &&
+                 fraction <= 1 &&
+                 page == null &&
+                 sourate == null &&
+                 ayah == null &&
+                 sectionId == null),
+         'ancrage fraction : seul fraction est renseigne, entre 0 et 1',
+       );
 
-  /// Une position de page.
+  /// Une position sur une page.
   const ContentPosition.page({
     required String resourceId,
     required int page,
@@ -53,7 +120,7 @@ class ContentPosition {
          page: page,
        );
 
-  /// Une position de verset.
+  /// Une position sur un verset.
   const ContentPosition.ayah({
     required String resourceId,
     required int sourate,
@@ -67,7 +134,7 @@ class ContentPosition {
          ayah: ayah,
        );
 
-  /// Une position de section.
+  /// Une position sur une section nommee.
   const ContentPosition.section({
     required String resourceId,
     required String sectionId,
@@ -79,7 +146,7 @@ class ContentPosition {
          sectionId: sectionId,
        );
 
-  /// Une position proportionnelle, employee en dernier recours.
+  /// Une position par fraction du support. **Repli seulement.**
   const ContentPosition.fraction({
     required String resourceId,
     required double fraction,
@@ -91,28 +158,28 @@ class ContentPosition {
          fraction: fraction,
        );
 
-  /// La ressource visee.
+  /// La ressource concernee.
   final String resourceId;
 
-  /// La version de la ressource, quand elle est connue.
+  /// La version concernee. `null` quand la position vaut pour toute version.
   final String? resourceVersionId;
 
-  /// L'ancrage retenu. Un seul a la fois.
+  /// La nature de l'ancrage.
   final TypeAncrage typeAncrage;
 
-  /// La page, si [typeAncrage] vaut [TypeAncrage.page].
+  /// Le numero de page, pour [TypeAncrage.page].
   final int? page;
 
-  /// La sourate, si [typeAncrage] vaut [TypeAncrage.ayah].
+  /// Le numero de sourate, pour [TypeAncrage.ayah].
   final int? sourate;
 
-  /// Le verset, si [typeAncrage] vaut [TypeAncrage.ayah].
+  /// Le numero de verset, pour [TypeAncrage.ayah].
   final int? ayah;
 
-  /// La section, si [typeAncrage] vaut [TypeAncrage.section].
+  /// L'identifiant de section, pour [TypeAncrage.section].
   final String? sectionId;
 
-  /// La fraction, si [typeAncrage] vaut [TypeAncrage.fraction].
+  /// La fraction du support, pour [TypeAncrage.fraction].
   final double? fraction;
 
   @override
@@ -140,63 +207,116 @@ class ContentPosition {
   );
 }
 
-/// La plage de travail dans un support.
+/// Une plage de travail dans un support (CONTRACTS section 8).
+///
+/// **Une plage est une metadonnee, jamais un dessin.** Les marqueurs
+/// pedagogiques d'Agent D s'y accrochent ; ils ne recopient pas le support.
+///
+/// Les deux bornes partagent la ressource et le type d'ancrage : une plage qui
+/// irait d'une page a un verset n'aurait pas d'ordre, donc pas de milieu.
 @immutable
 class ContentRange {
-  /// Cree une plage.
-  const ContentRange({
+  /// Cree une plage. [fin] est **inclusive**.
+  ///
+  /// Le constructeur n'est pas `const` : les assertions comparent les bornes
+  /// par [_rang], et une fonction ne s'evalue pas a la compilation.
+  ContentRange({
     required this.resourceId,
     required this.debut,
     required this.fin,
     this.resourceVersionId,
-  });
+  }) : assert(
+         debut.resourceId == resourceId && fin.resourceId == resourceId,
+         'les deux bornes portent la ressource de la plage',
+       ),
+       assert(
+         debut.typeAncrage == fin.typeAncrage,
+         'les deux bornes partagent le type d ancrage',
+       ),
+       assert(
+         _rang(debut) <= _rang(fin),
+         'debut avant fin dans l ordre naturel de l ancrage',
+       );
 
-  /// La ressource visee.
+  /// La ressource concernee.
   final String resourceId;
 
-  /// La version de la ressource, quand elle est connue.
+  /// La version concernee, quand la plage n'est valable que pour elle.
   final String? resourceVersionId;
 
-  /// La borne de debut.
+  /// La borne basse.
   final ContentPosition debut;
 
-  /// La borne de fin, incluse.
+  /// La borne haute, **incluse**.
   final ContentPosition fin;
 
+  /// La nature de l'ancrage de la plage.
+  TypeAncrage get typeAncrage => debut.typeAncrage;
+
   /// Vrai quand [p] tombe dans la plage.
+  ///
+  /// Une position d'une autre ressource ou d'un autre type d'ancrage n'y tombe
+  /// **jamais** : elle n'est pas comparable, et repondre `true` ou `false` par
+  /// defaut reviendrait a inventer un ordre.
   bool contient(ContentPosition p) {
-    if (p.resourceId != resourceId || p.typeAncrage != debut.typeAncrage) {
-      return false;
-    }
-    final int? rang = _rang(p);
-    final int? bas = _rang(debut);
-    final int? haut = _rang(fin);
-    if (rang == null || bas == null || haut == null) {
-      return false;
-    }
-    return rang >= bas && rang <= haut;
+    if (p.resourceId != resourceId) return false;
+    if (p.typeAncrage != typeAncrage) return false;
+    final double rang = _rang(p);
+    return rang >= _rang(debut) && rang <= _rang(fin);
   }
 
-  /// Vrai quand les deux plages se recouvrent, meme partiellement.
-  bool chevauche(ContentRange autre) =>
-      contient(autre.debut) ||
-      contient(autre.fin) ||
-      autre.contient(debut) ||
-      autre.contient(fin);
+  /// Vrai quand deux plages se recouvrent, ne serait-ce que d'une borne.
+  bool chevauche(ContentRange autre) {
+    if (autre.resourceId != resourceId) return false;
+    if (autre.typeAncrage != typeAncrage) return false;
+    return _rang(debut) <= _rang(autre.fin) &&
+        _rang(autre.debut) <= _rang(fin);
+  }
 
-  /// L'ordre naturel du type d'ancrage, reduit a un entier comparable.
-  ///
-  /// Une reference « sourate:verset » se compare comme un nombre a six
-  /// chiffres : la sourate pese plus que le verset, et aucune sourate ne
-  /// depasse 286 versets.
-  static int? _rang(ContentPosition p) => switch (p.typeAncrage) {
-    TypeAncrage.page => p.page,
-    TypeAncrage.ayah => p.sourate == null || p.ayah == null
-        ? null
-        : p.sourate! * 1000 + p.ayah!,
-    TypeAncrage.fraction => p.fraction == null
-        ? null
-        : (p.fraction! * 1000000).round(),
-    TypeAncrage.section => null,
-  };
+  @override
+  bool operator ==(Object other) =>
+      other is ContentRange &&
+      other.resourceId == resourceId &&
+      other.resourceVersionId == resourceVersionId &&
+      other.debut == debut &&
+      other.fin == fin;
+
+  @override
+  int get hashCode => Object.hash(resourceId, resourceVersionId, debut, fin);
+}
+
+/// L'ordre naturel d'une position, dans son propre type d'ancrage.
+///
+/// Fonction privee et non methode publique : l'ordre est un detail de la
+/// plage, et [ContentPosition] est un contrat consomme par six agents. Lui
+/// ajouter une methode ferait diverger les stubs locaux du contrat canonique.
+///
+/// Pour [TypeAncrage.section], l'ordre est celui des identifiants : un
+/// identifiant de section est deja un ordre de lecture dans les corpus
+/// structures du produit. Quand ce n'est pas vrai, la plage ne doit pas etre
+/// construite sur des sections.
+double _rang(ContentPosition p) => switch (p.typeAncrage) {
+  TypeAncrage.page => (p.page ?? 0).toDouble(),
+  // Un verset se range apres tous ceux de la sourate precedente. 1000 borne
+  // large : la plus longue sourate compte 286 versets.
+  TypeAncrage.ayah => (p.sourate ?? 0) * 1000.0 + (p.ayah ?? 0),
+  TypeAncrage.section => _rangTexte(p.sectionId ?? ''),
+  TypeAncrage.fraction => p.fraction ?? 0,
+};
+
+/// Un rang monotone tire des huit premiers caracteres d'un identifiant.
+///
+/// Huit caracteres suffisent : au dela, un `double` perdrait les bits de poids
+/// faible et deux sections voisines deviendraient egales sans que rien ne le
+/// dise.
+double _rangTexte(String valeur) {
+  double rang = 0;
+  final int n = valeur.length < 8 ? valeur.length : 8;
+  for (int i = 0; i < n; i++) {
+    rang = rang * 128 + (valeur.codeUnitAt(i) & 0x7f);
+  }
+  for (int i = n; i < 8; i++) {
+    rang = rang * 128;
+  }
+  return rang;
 }

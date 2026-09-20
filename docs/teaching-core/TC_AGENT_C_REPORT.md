@@ -53,7 +53,7 @@ effet de bord de l'outillage Windows.
 | `navigation_coran.dart` | `NavigationCoran` + providers. Porte la barrière de l'invariant J2 |
 | `etat_lecture_coran.dart` | `EtatLectureCoran` + `ControleurLectureCoran`. Le zoom local vit ici |
 | `moteur_mushaf.dart` | Les providers d'assemblage : corpus + sourates + layout → `PageMushafVM` |
-| `ports_externes/content_position.dart` | **STUB** `ContentPosition`, `TypeAncrage`, `ContentRange` (Agent B) |
+| `ports_externes/content_position.dart` | **STUB** `ContentPosition`, `TypeAncrage`, `ContentRange` (Agent B) — déclarations recopiées à l'identique des deux fichiers canoniques d'Agent B, par l'AMENDEMENT 1 de `CONTRACTS` |
 | `ports_externes/marqueur_semantique.dart` | **STUB** `MarqueurSemantique`, `IntentionPedagogique` (Agent D) |
 | `ports_externes/port_etat_partage.dart` | **STUB** `SharedContentState`, `ModeAffichagePartage`, `PortEtatPartage` (Agent F) |
 
@@ -158,7 +158,7 @@ qui couvre d'un coup le paquet dupliqué et le paquet arrivé en désordre. Six 
 | Élément | État réel |
 |---|---|
 | `PortEtatPartage` (Agent F) | **Stub de contrat** copié depuis `CONTRACTS` §9. `portEtatPartageCoranProvider` rend `null` par défaut — ce qui est le comportement **correct** hors classe, pas un repli. Aucune implémentation |
-| `ContentPosition` / `ContentRange` (Agent B) | **Stubs de contrat**. `ContentRange.contient` / `chevauche` sont implémentés (le contrat les déclare sans corps) : écart déclaré en tête du fichier stub |
+| `ContentPosition` / `ContentRange` (Agent B) | **Stubs de contrat, alignés sur le canonique d'Agent B.** Les déclarations sont recopiées à l'identique depuis `lib/core/tc_bibliotheque/content_position.dart` et `content_range.dart` du worktree `D:\RA_TC\b`, comme l'exige l'AMENDEMENT 1 de `CONTRACTS`. **Plus aucun écart** : `valeurSql` / `depuisSql`, `typeAncrage` sur la plage, les quatre assertions d'ancrage et le constructeur non-`const` de `ContentRange` sont ceux d'Agent B |
 | `MarqueurSemantique` (Agent D) | **Stub de contrat**, non consommé par l'UI de ce lot : le moteur affichera les marqueurs quand le dock existera |
 | Identifiant `LibraryResource` du Coran | **Double local** `'quran:madina-hafs-604'`. Demande n°6 |
 | Les trente débuts de juz | **Double local** `DebutsDeJuz.table`. La base les porte (`public.juz`), `ServiceCoran` ne les expose pas. Demande n°4 |
@@ -277,7 +277,7 @@ Les deux défauts déjà nommés par `BASELINE_ADDENDUM.md` (migration `0029` é
 | Aucune migration | Aucune. Tout en « DEMANDE SQL » |
 | i18n | Façade + JSON. `fr.i18n.json` et `strings*.g.dart` intacts. Les libellés qui existaient déjà sont **lus**, pas recopiés |
 | Routes | `routesTcC()` retourne des routes. Aucun `GoRouter` dans `lib/`. Celui des tests vit dans `test/teaching_core/c/support/` |
-| Stubs de port | 3 fichiers sous `ports_externes/`, en-tête `// TC-STUB-PORT:`, signatures copiées, un écart déclaré |
+| Stubs de port | 3 fichiers sous `ports_externes/`, en-tête `// TC-STUB-PORT:`, signatures copiées. `content_position.dart` suit le canonique d'Agent B (AMENDEMENT 1), **aucun écart restant** |
 | Capacité codée en dur | Aucune. Le moteur ne manipule aucune capacité |
 | Offset UTC | Aucun. Le moteur ne convertit aucun fuseau |
 | Commande vocale | Aucune |
