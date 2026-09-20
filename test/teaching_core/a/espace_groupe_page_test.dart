@@ -6,6 +6,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
+import 'package:rewayah_academy/core/tc_groupe/ports_externes/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -38,6 +39,21 @@ Future<void> _poser(
   );
   await tester.pump();
   await tester.pump();
+}
+
+/// Un port **branche** qui n'a reellement rien a rendre.
+///
+/// Il n'existe que pour prouver la seconde moitie de la regle semantique : la
+/// liste vide d'un port branche autorise l'interface a dire qu'il n'y a rien a
+/// preparer, ce que `null` ne permettra jamais.
+class _TravailBrancheEtVide implements PortTravailAVenir {
+  const _TravailBrancheEtVide();
+
+  @override
+  Future<List<SlotAction>> avantProchainCours({
+    required String groupeId,
+    String? studentId,
+  }) async => const <SlotAction>[];
 }
 
 void main() {
@@ -259,6 +275,70 @@ void main() {
             );
         expect(bloc.portBranche, isFalse);
         expect(bloc.actions, isEmpty);
+      });
+    });
+
+    // La regle semantique arbitree sur `portTravailAVenirProvider` : `null` dit
+    // « non branche », un port branche qui rend une liste vide dit « rien a
+    // preparer ». Les deux etats doivent produire DEUX rendus differents, et le
+    // second seul a le droit d'annoncer qu'il n'y a rien a faire.
+    testWidgets('port non branche : il dit « non branche », jamais « rien »', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await _poser(tester);
+        expect(
+          find.descendant(
+            of: find.byType(BlocAvantProchainCours),
+            matching: find.text(LibellesGroupe.emplacementNonBranche),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byType(BlocAvantProchainCours),
+            matching: find.text(LibellesGroupe.aucuneAction),
+          ),
+          findsNothing,
+        );
+      });
+    });
+
+    testWidgets('port branche et liste vide : il dit « rien a preparer »', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await _poser(
+          tester,
+          surcharges: <Override>[
+            ...surchargesDemonstration(),
+            portTravailAVenirProvider.overrideWithValue(
+              const _TravailBrancheEtVide(),
+            ),
+          ],
+        );
+
+        final BlocAvantProchainCours bloc = tester
+            .widget<BlocAvantProchainCours>(
+              find.byType(BlocAvantProchainCours),
+            );
+        expect(bloc.portBranche, isTrue);
+        expect(bloc.actions, isEmpty);
+
+        expect(
+          find.descendant(
+            of: find.byType(BlocAvantProchainCours),
+            matching: find.text(LibellesGroupe.aucuneAction),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byType(BlocAvantProchainCours),
+            matching: find.text(LibellesGroupe.emplacementNonBranche),
+          ),
+          findsNothing,
+        );
       });
     });
   });

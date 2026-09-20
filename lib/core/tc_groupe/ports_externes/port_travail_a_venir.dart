@@ -24,7 +24,22 @@ abstract class PortTravailAVenir {
 /// Le travail a venir affiche par l'Espace Groupe.
 ///
 /// Declare **sans implementation** : Agent H le produit, Agent Z le branche.
-/// Tant qu'il vaut `null`, le bloc « Avant le prochain cours » affiche son etat
-/// « non branche » plutot qu'une liste inventee.
+///
+/// **Forme canonique arbitree, commune a Agent A et a Agent H.** Le provider est
+/// nullable et rend `null` par defaut ; il ne leve pas. Lever des le premier
+/// build ferait passer l'Espace Groupe d'un etat vide propre a un crash, sans
+/// qu'aucun compilateur n'ait averti. Rendre `null` sans regle laisserait le
+/// consommateur confondre « pas branche » et « rien a faire ».
+///
+/// **La regle semantique, qui est le coeur de l'arbitrage :**
+///
+/// - `null` = port **NON BRANCHE**. Le consommateur affiche un etat explicite
+///   « non branche », **JAMAIS** « aucun travail a faire ».
+/// - non-`null` + liste vide = port branche, et il n'y a **reellement** aucun
+///   travail. C'est le **seul** cas ou l'interface a le droit de dire qu'il n'y
+///   a rien a preparer.
+///
+/// Les deux cas produisent donc deux rendus differents, jamais le meme : voir
+/// `BlocAvantProchainCours`, qui teste `portBranche` avant `actions.isEmpty`.
 final Provider<PortTravailAVenir?> portTravailAVenirProvider =
     Provider<PortTravailAVenir?>((Ref ref) => null);

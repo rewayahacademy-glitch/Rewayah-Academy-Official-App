@@ -684,7 +684,18 @@ capacité.
 
 ---
 
-## 6. ÉCART DE CONTRAT — `ContentPosition` n'est pas compilable tel qu'écrit
+## 6. ÉCART DE CONTRAT — `ContentPosition` n'est pas compilable tel qu'écrit — ✅ **RÉPONDU, DEMANDE CLOSE**
+
+> **Réponse reçue : AMENDEMENT 1 de `TEACHING_CORE_CONTRACTS.md`.** La section est conservée telle
+> quelle — elle documente pourquoi l'écart a été signalé — mais **ce n'est plus une demande ouverte**.
+> L'amendement, publié en tête du document CONTRACTS, prévaut sur les §7 et §8 et désigne le canonique :
+> `lib/core/tc_bibliotheque/content_position.dart` (Agent B). Ma forme et la sienne divergeaient sur
+> cinq points : `valeurSql` sur chaque membre de `TypeAncrage`, `depuisSql(String?)`, `operator ==`,
+> `hashCode`, et les quatre assertions qui tiennent l'invariant « un seul ancrage à la fois ».
+> **Comme annoncé ci-dessous, c'est la sienne qui prime** : mon stub a été resynchronisé et recopie
+> désormais le canonique à l'identique, en-tête `TC-STUB-PORT` pointant vers ce chemin et vers
+> l'AMENDEMENT 1. `ContentRange` reste non stubé, faute d'usage (position utilisée uniquement comme
+> type de champ, `port_catalogue.dart`). Rien d'autre à arbitrer ici.
 
 `TEACHING_CORE_CONTRACTS.md` §7 déclare :
 
