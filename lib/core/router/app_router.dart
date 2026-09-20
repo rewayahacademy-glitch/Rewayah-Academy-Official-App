@@ -31,7 +31,6 @@ import '../../features/cahier/cahier_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/controleur/planning_page.dart';
-import '../../features/coran/coran_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/disponibilites/disponibilites_page.dart';
 import '../../features/dossier/attente_page.dart';
@@ -47,12 +46,19 @@ import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
+import '../../features/tc_catalogue/routes_tc_b.dart';
+import '../../features/tc_classe_live/routes_tc_e.dart';
+import '../../features/tc_mes_groupes/routes_tc_a.dart';
+import '../../features/tc_mushaf/mushaf_page.dart';
+import '../../features/tc_mushaf/routes_tc_c.dart';
+import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
+import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
 import '../widgets/admin_shell.dart';
 import '../widgets/nav_shell.dart';
 import 'billet_salle.dart';
@@ -76,6 +82,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
   ref.onDispose(rafraichisseur.dispose);
+
+  // Lu une fois, a la construction du routeur : un role ne change pas sans
+  // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
+  // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
+  // redirection, elle, s'appuie sur le role frais lu a chaque decision.
+  final RoleEspaceGroupe sessionRole = _roleEspaceGroupePour(
+    ref.read(sessionProvider).role,
+  );
 
   return GoRouter(
     initialLocation: Routes.racine,
@@ -192,7 +206,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.eleveCoran,
-                builder: (BuildContext _, GoRouterState _) => const CoranPage(),
+                // Pointe sur le nouveau moteur Mushaf (Teaching Core, lot C) :
+                // arbitrage entérine au plan d'integration section 3.1 point
+                // 1, « la destination /eleve/coran existante pointe sur le
+                // nouveau moteur ». `sessionId` reste nul : hors classe.
+                builder: (BuildContext _, GoRouterState _) =>
+                    const MushafPage(),
               ),
             ],
           ),
@@ -559,6 +578,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const ComptePage(),
       ),
 
+      // Teaching Core (plan d'integration, etape 7). Cinq lots, cinq
+      // fonctions qui RETOURNENT des routes sans jamais construire de
+      // `GoRouter` (decision D-04) : `routesTcA`, `routesTcB`, `routesTcC`,
+      // `routesTcE`, `routesTcG`. Chaque chemin porte son autorisation de
+      // role dans `redirection.dart` (`_teachingCoreAutorise`), sans quoi
+      // `/tc/` serait inatteignable pour tous les roles.
+      ...routesTcA(role: sessionRole),
+      ...routesTcB(),
+      ...routesTcC(),
+      ...routesTcE(),
+      ...routesTcG(),
+
       // Salle. Le billet passe par `extra`, jamais par l'URL (ADR-005).
       //
       // `deciderRedirection` a deja refuse l'entree sans billet presentable :
@@ -636,6 +667,26 @@ List<String> cheminsDeclares(GoRouter routeur) {
 @visibleForTesting
 String racineDe(AppRole? role) =>
     role == null ? Routes.connexion : Routes.racinePour(role);
+
+/// Traduit le role de session en role d'Espace Groupe (Teaching Core, lot A).
+///
+/// **Un role different, pas un doublon** : `AppRole` vient du JWT et porte
+/// six valeurs, `RoleEspaceGroupe` n'en porte que quatre et decide
+/// uniquement de ce que l'Espace Groupe affiche. Le controleur et le
+/// comptable n'atteignent jamais `/tc/groupes` (`_teachingCoreAutorise` dans
+/// `redirection.dart` le refuse), le repli `eleve` ici ne sert donc qu'a
+/// satisfaire le type : aucun de ces deux roles ne le lit jamais.
+@visibleForTesting
+RoleEspaceGroupe roleEspaceGroupePour(AppRole? role) =>
+    _roleEspaceGroupePour(role);
+
+RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
+  AppRole.guardian => RoleEspaceGroupe.tuteur,
+  AppRole.teacher => RoleEspaceGroupe.enseignant,
+  AppRole.admin => RoleEspaceGroupe.admin,
+  AppRole.student || AppRole.controller || AppRole.accountant || null =>
+    RoleEspaceGroupe.eleve,
+};
 
 /// La coquille de navigation d'un role, autour des branches qui sont ses
 /// destinations.

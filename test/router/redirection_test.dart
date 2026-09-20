@@ -474,4 +474,48 @@ void main() {
       }
     });
   });
+
+  group(
+    'Scenario 7 : le Teaching Core sous /tc/, autorisation par sous-arbre',
+    () {
+      // Plan d'integration Teaching Core, section 8.2 point 4 : chaque
+      // sous-arbre `/tc/` porte ses propres roles, contrairement au prefixe
+      // unique de `Routes.prefixePour`. Sans cette autorisation, les sept
+      // chemins sont inatteignables pour tous les roles : `/tc/` n'appartient
+      // a aucun.
+      const Map<String, List<AppRole>> autorises = <String, List<AppRole>>{
+        '/tc/groupes': <AppRole>[AppRole.student, AppRole.guardian],
+        '/tc/groupes/g1': <AppRole>[AppRole.student, AppRole.guardian],
+        '/tc/bibliotheque': <AppRole>[AppRole.student, AppRole.guardian],
+        '/tc/classe': <AppRole>[AppRole.teacher, AppRole.student],
+        '/tc/mushaf': <AppRole>[AppRole.student],
+        '/tc/observation/s1': <AppRole>[
+          AppRole.guardian,
+          AppRole.admin,
+          AppRole.controller,
+        ],
+      };
+
+      for (final MapEntry<String, List<AppRole>> entree in autorises.entries) {
+        for (final AppRole role in AppRole.values) {
+          final bool doitPasser = entree.value.contains(role);
+          test(
+            '${entree.key} ${doitPasser ? "s ouvre" : "se refuse"} a ${role.valeurSql}',
+            () {
+              final String? decision = deciderRedirection(
+                session: _session(role: role),
+                cheminDemande: entree.key,
+                maintenant: maintenant,
+              );
+              if (doitPasser) {
+                expect(decision, isNull);
+              } else {
+                expect(decision, Routes.racinePour(role));
+              }
+            },
+          );
+        }
+      }
+    },
+  );
 }

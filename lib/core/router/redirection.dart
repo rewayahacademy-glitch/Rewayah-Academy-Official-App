@@ -101,6 +101,14 @@ String? deciderRedirection({
         return null;
       }
 
+      // Le Teaching Core vit sous `/tc/`, hors du prefixe unique de chaque
+      // role (plan d'integration Teaching Core, etape 7 section 8.2 point 4).
+      // Sans cette autorisation explicite, les sept chemins seraient tous
+      // inatteignables : `/tc/` n'appartient a aucun role.
+      if (_teachingCoreAutorise(cheminDemande, role)) {
+        return null;
+      }
+
       // Une route d'un autre role demandee directement par URL renvoie chez
       // soi, sur le Web comme ailleurs.
       final String prefixe = Routes.prefixePour(role);
@@ -114,3 +122,29 @@ String? deciderRedirection({
 /// `/attentes-du-tuteur` passerait pour une page de `/attente`.
 bool _dansLeSousArbre(String chemin, String racine) =>
     chemin == racine || chemin.startsWith('$racine/');
+
+/// Autorise un role a entrer dans un sous-arbre `/tc/` precis.
+///
+/// **Chaque sous-arbre porte ses propres roles**, contrairement au prefixe
+/// unique de [Routes.prefixePour] : `/tc/groupes` s'ouvre a l'eleve et au
+/// tuteur, `/tc/classe` a l'enseignant et a l'eleve, `/tc/mushaf` au seul
+/// eleve, `/tc/observation/...` au tuteur, a l'admin et au controleur. La
+/// table vient du plan d'integration Teaching Core, section 8.2.
+bool _teachingCoreAutorise(String chemin, AppRole role) {
+  if (_dansLeSousArbre(chemin, Routes.tcGroupes) ||
+      _dansLeSousArbre(chemin, Routes.tcBibliotheque)) {
+    return role == AppRole.student || role == AppRole.guardian;
+  }
+  if (_dansLeSousArbre(chemin, Routes.tcClasse)) {
+    return role == AppRole.teacher || role == AppRole.student;
+  }
+  if (_dansLeSousArbre(chemin, Routes.tcMushaf)) {
+    return role == AppRole.student;
+  }
+  if (_dansLeSousArbre(chemin, '/tc/observation')) {
+    return role == AppRole.guardian ||
+        role == AppRole.admin ||
+        role == AppRole.controller;
+  }
+  return false;
+}

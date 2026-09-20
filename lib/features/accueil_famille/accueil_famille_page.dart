@@ -12,6 +12,7 @@ import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -447,6 +448,17 @@ class _GererLeFoyer extends StatelessWidget {
           titre: t.tuteur.accueil.blocReglages,
           detail: t.tuteur.accueil.blocReglagesDetail,
           destination: Routes.tuteurReglages,
+        ),
+        const Divider(height: 1),
+        // Mes groupes (Teaching Core, lot A) : plafond de quatre destinations
+        // deja tenu par la barre, l'entree se pose ici plutot que d'en
+        // forcer une cinquieme (meme motif que ce bloc lui-meme pour les
+        // appareils et les reglages).
+        _LigneMenu(
+          icone: AppIcons.cours,
+          titre: LibellesGroupe.mesGroupesTitre,
+          detail: t.tuteur.accueil.blocGroupesDetail,
+          destination: Routes.tcGroupes,
         ),
       ],
     ),

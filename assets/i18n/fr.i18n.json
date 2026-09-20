@@ -1198,6 +1198,7 @@
       "blocAppareilsDetail": "Ajouter un appareil, ou en retirer un.",
       "blocReglages": "Réglages par enfant",
       "blocReglagesDetail": "Photo, caméra et affichage, enfant par enfant.",
+      "blocGroupesDetail": "Le groupe, l'enseignant et le prochain cours de chaque enfant.",
       "acces": "Accès",
       "accesJusqua": "Accès de {prenom} jusqu'au {date}",
       "accesSansFin": "Accès de {prenom} sans date de fin",

@@ -290,6 +290,37 @@ abstract final class Routes {
   static String compteProfilEnfantPour(String profilId) =>
       '$compteProfilEnfant/$profilId';
 
+  // --- Teaching Core, sous le prefixe reserve `/tc/` -----------------------
+  //
+  // Promues depuis les cinq fichiers de chemins des lots A, B, C, E, G
+  // (plan d'integration Teaching Core, etape 7). Les constantes d'origine
+  // (`CheminsTcA`, `RoutesTcB`, `RoutesCoran`, `RoutesTcE`, `RoutesTcG`)
+  // restent la source geometrique (segments, parametres) ; celles-ci ne
+  // duplquent que les chemins qu'un ecran hors Teaching Core a besoin de
+  // nommer (navigation, redirection).
+
+  /// Mes groupes (A). Roles autorises : eleve, tuteur.
+  static const String tcGroupes = '/tc/groupes';
+
+  /// L'Espace Groupe d'un groupe donne (A).
+  static String tcEspaceGroupe(String groupeId) => '$tcGroupes/$groupeId';
+
+  /// La Bibliotheque (B). Roles autorises : eleve, tuteur.
+  static const String tcBibliotheque = '/tc/bibliotheque';
+
+  /// Le moteur Coran hors classe (C). Route interne : la destination
+  /// `/eleve/coran` pointe directement sur ce moteur, voir `app_router.dart`.
+  static const String tcMushaf = '/tc/mushaf';
+
+  /// La Classe Live (E). Roles autorises : enseignant, eleve. Atteinte par le
+  /// bouton « Rejoindre » et la barre « Cours en cours », jamais par URL
+  /// tapee (ADR-005).
+  static const String tcClasse = '/tc/classe';
+
+  /// La porte d'observation d'une seance (G). Roles autorises : tuteur,
+  /// admin, controleur.
+  static String tcObservation(String seanceId) => '/tc/observation/$seanceId';
+
   /// Routes atteignables sans session resolue.
   static const Set<String> publiques = <String>{connexion, galerie, agentEntree};
 

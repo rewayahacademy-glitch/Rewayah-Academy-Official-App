@@ -3942,6 +3942,9 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Photo, caméra et affichage, enfant par enfant.'
 	String get blocReglagesDetail => 'Photo, caméra et affichage, enfant par enfant.';
 
+	/// fr: 'Le groupe, l'enseignant et le prochain cours de chaque enfant.'
+	String get blocGroupesDetail => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.';
+
 	/// fr: 'Accès'
 	String get acces => 'Accès';
 
@@ -8129,6 +8132,7 @@ extension on Traductions {
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
+			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
 			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'Accès de ${prenom} sans date de fin',
@@ -8581,9 +8585,9 @@ extension on Traductions {
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
-			'tc.coran.navigation.titre' => 'Aller à',
 			_ => null,
 		} ?? switch (path) {
+			'tc.coran.navigation.titre' => 'Aller à',
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
 			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',

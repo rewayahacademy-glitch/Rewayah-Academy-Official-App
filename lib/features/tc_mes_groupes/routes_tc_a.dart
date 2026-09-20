@@ -1,6 +1,11 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/routes.dart';
+import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart';
+import '../tc_classe_live/classe_live_page.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
 import '../tc_espace_groupe/roster_enseignant_slot.dart';
 import 'chemins_tc_a.dart';
@@ -32,16 +37,47 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
         routes: <RouteBase>[
           GoRoute(
             path: CheminsTcA.segmentEspaceGroupe,
-            builder: (_, GoRouterState etat) {
+            builder: (BuildContext contexte, GoRouterState etat) {
               final String groupeId =
                   etat.pathParameters[CheminsTcA.parametreGroupe] ?? '';
               return EspaceGroupePage(
                 groupeId: groupeId,
                 role: role,
                 contenuRoster: RosterEnseignantSlot(groupeId: groupeId),
+                onRejoindre: (GroupSummaryVM groupe) =>
+                    _rejoindre(contexte, groupe),
               );
             },
           ),
         ],
       ),
     ];
+
+/// Ouvre la Classe Live du groupe, avec son contexte.
+///
+/// **Silencieux sans seance materialisee.** Le bouton « Rejoindre » de
+/// `CarteSession` ne se rend deja que fenetre ouverte -- horloge, jamais
+/// l'ecran -- donc `prochaineSeance?.sessionId` est nul seulement si
+/// l'occurrence n'a pas ete materialisee cote serveur : `ContexteClasseLive`
+/// exige un `sessionId`, on ne navigue pas plutot que d'en inventer un.
+void _rejoindre(BuildContext contexte, GroupSummaryVM groupe) {
+  final String? sessionId = groupe.prochaineSeance?.sessionId;
+  if (sessionId == null) {
+    return;
+  }
+  GoRouter.of(contexte).go(
+    Routes.tcClasse,
+    extra: ContexteClasseLive(
+      sessionId: sessionId,
+      groupeId: groupe.groupeId,
+      libelleGroupe: groupe.libelle,
+      enseignant: EnseignantDeClasse(
+        nomAffichage: groupe.enseignant.nomAffichage,
+        titre: groupe.enseignant.titre,
+        photoCleOuUrl: groupe.enseignant.photoUrlOuCle,
+      ),
+      horloge: groupe.horloge,
+      seuilMax: groupe.seuilMax,
+    ),
+  );
+}
