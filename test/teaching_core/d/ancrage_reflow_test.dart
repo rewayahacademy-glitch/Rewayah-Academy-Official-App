@@ -2,11 +2,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart'
+    show ModeAffichagePartage;
 import 'package:rewayah_academy/core/tc_outils/ancrage_annotation.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/port_realtime_pedagogique.dart'
-    show ModeAffichagePartage;
 
 import 'support/hote_d.dart';
 

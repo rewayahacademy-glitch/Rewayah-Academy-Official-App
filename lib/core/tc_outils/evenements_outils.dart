@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
+import '../tc_realtime/port_realtime_pedagogique.dart';
 import 'annotation_layer.dart';
 import 'intention_pedagogique.dart';
 import 'masquage.dart';
-import 'ports_externes/port_realtime_pedagogique.dart';
 
 /// Ce que les outils pedagogiques ont a dire au reste de la classe.
 ///

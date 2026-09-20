@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:rewayah_academy/core/tc_outils/ports_externes/port_realtime_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 
 /// Un transport pedagogique qui note ce qu'on lui confie.
 ///

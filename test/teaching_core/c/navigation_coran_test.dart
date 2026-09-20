@@ -6,7 +6,8 @@ import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/port_navigation_coran.dart';
-import 'package:rewayah_academy/core/tc_coran/ports_externes/port_etat_partage.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/port_etat_partage.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 
 import 'faux/faux_corpus_coran.dart';

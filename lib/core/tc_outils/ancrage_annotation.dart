@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
+import '../tc_etat_partage/shared_content_state.dart' show ModeAffichagePartage;
 import 'annotation_layer.dart';
-import 'ports_externes/port_realtime_pedagogique.dart' show ModeAffichagePartage;
 
 /// Pourquoi tel ancrage a ete retenu.
 ///

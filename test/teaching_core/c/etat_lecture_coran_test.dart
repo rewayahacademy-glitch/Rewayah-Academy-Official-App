@@ -5,7 +5,7 @@ import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_coran/etat_lecture_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/page_mushaf_vm.dart';
 import 'package:rewayah_academy/core/tc_coran/port_navigation_coran.dart';
-import 'package:rewayah_academy/core/tc_coran/ports_externes/port_etat_partage.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 
 SharedContentState _partage({

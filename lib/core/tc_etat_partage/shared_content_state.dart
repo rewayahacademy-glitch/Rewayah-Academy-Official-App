@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
-import 'ports_externes/marqueur_semantique.dart';
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
+import '../tc_outils/annotation_layer.dart';
 
 /// Le mode d'affichage impose a la classe (CONTRACTS section 9).
 ///

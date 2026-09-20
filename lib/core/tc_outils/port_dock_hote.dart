@@ -3,9 +3,10 @@ import 'package:flutter/foundation.dart';
 import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
 import '../tc_bibliotheque/library_resource.dart';
+import '../tc_etat_partage/shared_content_state.dart' show ModeAffichagePartage;
+import '../tc_realtime/port_realtime_pedagogique.dart'
+    show CapacitesPedagogiques;
 import 'ancrage_annotation.dart';
-import 'ports_externes/port_realtime_pedagogique.dart'
-    show CapacitesPedagogiques, ModeAffichagePartage;
 
 /// Les sept outils du Teaching Dock, dans l'ordre de la spec (section 8).
 enum OutilDock {

@@ -18,9 +18,10 @@
 /// casse rien, et surtout pas le canal pour le reste de la seance.
 library;
 
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
-import 'ports_externes/marqueur_semantique.dart';
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
+import '../tc_outils/annotation_layer.dart';
+import '../tc_outils/intention_pedagogique.dart';
 import 'shared_content_state.dart';
 
 /// Ecrit une position.

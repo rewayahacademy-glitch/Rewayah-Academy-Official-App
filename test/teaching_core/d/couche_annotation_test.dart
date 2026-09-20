@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart'
+    show ModeAffichagePartage;
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/evenements_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/port_realtime_pedagogique.dart'
-    show CanalFiabilite, ModeAffichagePartage;
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
+    show CanalFiabilite;
 import 'package:rewayah_academy/features/tc_dock/couche_annotation.dart';
 
 import 'support/hote_d.dart';

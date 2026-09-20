@@ -1,7 +1,8 @@
-import 'package:rewayah_academy/core/tc_etat_partage/ports_externes/content_position.dart';
-import 'package:rewayah_academy/core/tc_etat_partage/ports_externes/content_range.dart';
-import 'package:rewayah_academy/core/tc_etat_partage/ports_externes/marqueur_semantique.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
+import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
+import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';

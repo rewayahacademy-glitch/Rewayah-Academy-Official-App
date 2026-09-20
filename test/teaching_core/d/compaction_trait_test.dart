@@ -3,7 +3,7 @@ import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/compaction_trait.dart';
 import 'package:rewayah_academy/core/tc_outils/evenements_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/port_realtime_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 
 import 'faux/faux_realtime.dart';
 import 'support/hote_d.dart';

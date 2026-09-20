@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../coran/service_coran.dart';
 import '../tc_bibliotheque/content_range.dart';
+import '../tc_etat_partage/shared_content_state.dart';
 import 'page_mushaf_vm.dart';
 import 'port_navigation_coran.dart';
-import 'ports_externes/port_etat_partage.dart';
 
 /// Ce que le lecteur regarde, ici, sur cet appareil.
 ///

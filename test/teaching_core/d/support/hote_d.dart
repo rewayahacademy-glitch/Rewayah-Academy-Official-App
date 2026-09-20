@@ -7,9 +7,10 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart'
+    show ModeAffichagePartage;
 import 'package:rewayah_academy/core/tc_outils/ancrage_annotation.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 
 /// L'hote minimal d'un widget du lot D.

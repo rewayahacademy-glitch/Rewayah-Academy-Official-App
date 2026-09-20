@@ -1,5 +1,5 @@
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/port_realtime_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 
 /// Un hote de dock pilotable depuis un test.
 ///

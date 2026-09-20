@@ -81,4 +81,19 @@ class FauxMoteurSalle implements VideoSessionProvider {
 
   @override
   Future<void> liberer() => fermer();
+
+  @override
+  Stream<PaquetDonnees> get donneesRecues =>
+      const Stream<PaquetDonnees>.empty();
+
+  @override
+  AccesSalle? get accesCourant => null;
+
+  @override
+  Future<void> publierDonnees({
+    required String sujet,
+    required List<int> charge,
+    required bool fiable,
+    List<String> destinataires = const <String>[],
+  }) async {}
 }

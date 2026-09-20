@@ -1,9 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/codec_etat_partage.dart';
-import 'package:rewayah_academy/core/tc_etat_partage/ports_externes/content_position.dart';
-import 'package:rewayah_academy/core/tc_etat_partage/ports_externes/content_range.dart';
-import 'package:rewayah_academy/core/tc_etat_partage/ports_externes/marqueur_semantique.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
+import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
+import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 
 import 'support/fabriques.dart';
 
