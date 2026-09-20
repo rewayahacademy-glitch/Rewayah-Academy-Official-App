@@ -1,0 +1,86 @@
+{
+  "enseignant": {
+    "profil": {
+      "intro": "Ce que l'académie sait de vous, et ce que vous pouvez y changer.",
+
+      "identite": "Identité professionnelle",
+      "identifiantDetail": "C'est ce que les familles voient de vous. Il ne change jamais.",
+      "pays": "Pays",
+      "langues": "Langues",
+      "fuseau": "Fuseau de mes cours",
+      "fuseauDetail": "C'est lui qui décide de l'heure de vos créneaux, pas l'heure de cet appareil.",
+      "plafond": "Plafond hebdomadaire",
+      "plafondValeur": "{nombre} h par semaine",
+      "plafondDetail": "Fixé par l'académie.",
+      "nonRenseigne": "Non renseigné",
+
+      "statutSection": "Statut du compte",
+      "statutValideDetail": "Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.",
+      "statutEnAttente": "Dossier en cours de vérification",
+      "statutEnAttenteDetail": "L'académie vérifie vos pièces. Vous n'avez rien de plus à faire.",
+      "statutProvisoire": "Accès provisoire",
+      "statutProvisoireDetail": "Vous enseignez déjà. Votre dossier reste à compléter, sans coupure automatique.",
+      "statutSuspendu": "Compte suspendu",
+      "statutSuspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
+      "statutInconnu": "Statut non disponible",
+      "statutInconnuDetail": "Nous n'avons pas pu lire votre statut. Il n'est pas supposé pour autant.",
+      "statutDivergent": "Ce statut vient de changer. Rouvrez l'application pour que votre accès suive.",
+      "verification": "Vérification du dossier",
+      "verificationEnAttente": "En attente",
+      "verificationValidee": "Validée",
+      "verificationRefusee": "À reprendre",
+
+      "contratSection": "Contrat et accusés",
+      "contratEnseignant": "Contrat enseignant",
+      "contratConditions": "Conditions d'utilisation",
+      "contratAccuse": "Enregistrement audio et visite de contrôle",
+      "contratDetail": "Version {version}, accepté le {date}",
+      "contratAucun": "Aucun contrat enregistré",
+      "contratAucunDetail": "Votre dossier n'est pas encore passé par la signature.",
+      "contratErreur": "Vos contrats n'ont pas pu être lus.",
+      "contratLectureSeule": "Ces pièces sont en lecture seule : un contrat qui s'édite depuis l'écran de la personne qu'il engage n'est plus un contrat.",
+
+      "personnel": "Mes réglages",
+      "deconnexionQuestion": "Se déconnecter de cet appareil ?",
+      "deconnexionConfirmer": "Me déconnecter maintenant",
+      "deconnexionConsequence": "Votre journée, vos créneaux et vos cahiers restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.",
+
+      "erreur": "Votre profil n'a pas pu être lu. Réessayez dans un instant.",
+      "vide": "Aucun profil enseignant",
+      "videDetail": "Ce compte n'a pas de profil enseignant. Seule l'académie peut en créer un.",
+      "horsLigne": "Pas de réseau : rien ne peut être modifié ici pour l'instant.",
+
+      "modifierPays": "Modifier le pays",
+      "modifierLangues": "Modifier les langues",
+      "languesIndice": "Séparez les langues par une virgule",
+      "enregistrer": "Enregistrer",
+      "enregistre": "Modification enregistrée",
+      "editionErreur": "La modification n'a pas abouti. Réessayez dans un instant."
+    },
+
+    "bienvenue": {
+      "titre": "Premiers pas",
+      "salutation": "Bienvenue, {prenom}.",
+      "salutationSansNom": "Bienvenue.",
+      "dossierValide": "Votre dossier est validé.",
+
+      "suite": "Ce qui vient maintenant",
+      "pas1": "Vous déclarez vos heures d'enseignement, par créneaux d'une heure.",
+      "pas2": "L'académie vous confie des élèves sur ces heures, en groupes de cinq enfants ou six adultes.",
+      "pas3": "Après chaque cours, vous remplissez un cahier de transmission. Il est prérempli : vous ne corrigez que les exceptions.",
+
+      "rappels": "Deux choses à ne pas découvrir en cours de route",
+      "rappelDejaAccepte": "Vous les avez accusées à l'inscription. Elles sont rappelées ici, et la salle les rappelle en permanence.",
+
+      "declarer": "Déclarer mes disponibilités",
+      "versJournee": "Aller à ma journée",
+      "horsLigne": "Sans réseau, vos créneaux ne pourront pas être enregistrés.",
+
+      "dossierIncomplet": "Votre dossier n'est pas encore validé.",
+      "dossierIncompletDetail": "Le portail d'attente vous dit ce qu'il reste à fournir.",
+      "versAttente": "Voir mon dossier",
+
+      "erreur": "Votre profil n'a pas pu être lu. Réessayez dans un instant."
+    }
+  }
+}

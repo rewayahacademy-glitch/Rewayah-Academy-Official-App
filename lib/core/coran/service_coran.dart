@@ -226,6 +226,23 @@ abstract interface class ServiceCoran {
   /// Une page du mushaf, versets compris.
   Future<PageCoran?> page(int numero);
 
+  /// La page du mushaf ou se trouve un verset donne.
+  ///
+  /// **C'est la seule facon d'atteindre « 2:255 ».** Une page ne s'ouvre que par
+  /// son numero, et rien dans le corpus ne le donnait a partir d'une reference :
+  /// un enseignant qui voulait presenter un verset n'avait aucune API, et une
+  /// conversion faite a l'ecran aurait demande de charger les 604 pages.
+  ///
+  /// La reponse se LIT dans `verset.page_numero`, la colonne que la migration
+  /// `0007` a posee et que `0013` a remplie depuis Tanzil. Elle ne se calcule
+  /// pas : la pagination appartient a une edition, et une formule la ferait
+  /// mentir des le premier mushaf different.
+  ///
+  /// Rend `null` quand le verset n'existe pas ou que la lecture echoue -- « je
+  /// ne sais pas », jamais « page 1 » : presenter la premiere page a une classe
+  /// parce qu'une requete a echoue serait pire que ne rien presenter.
+  Future<int?> pageDe(int sourate, int verset);
+
   /// La position de lecture de l'eleve, ou `null` s'il n'en a aucune.
   Future<PositionLecture?> position(String profilId);
 
@@ -315,6 +332,30 @@ class ServiceCoranSupabase implements ServiceCoran {
   }
 
   @override
+  Future<int?> pageDe(int sourate, int verset) async {
+    final String? edition = await editionCourante();
+    if (edition == null) {
+      return null;
+    }
+    try {
+      // `maybeSingle` et non `limit(1)` : la contrainte `verset_unique` porte
+      // exactement ce triplet, donc deux lignes signifieraient un corpus
+      // corrompu -- et il vaut mieux le voir que l'arrondir a la premiere.
+      final Map<String, dynamic>? ligne = await _client
+          .from('verset')
+          .select('page_numero')
+          .eq('mushaf_id', edition)
+          .eq('sourate_numero', sourate)
+          .eq('numero', verset)
+          .maybeSingle();
+      return ligne?['page_numero'] as int?;
+    } catch (erreur) {
+      debugPrint('page de $sourate:$verset indisponible : $erreur');
+      return null;
+    }
+  }
+
+  @override
   Future<PositionLecture?> position(String profilId) async {
     final String? edition = await editionCourante();
     if (edition == null) {
@@ -386,3 +427,20 @@ final FutureProviderFamily<PageCoran?, int> pageCoranProvider =
     FutureProvider.family<PageCoran?, int>(
       (Ref ref, int numero) => ref.watch(serviceCoranProvider).page(numero),
     );
+
+/// La page du mushaf ou se trouve une reference « sourate:verset ».
+///
+/// La cle de famille est un **enregistrement nomme** et non une classe : un
+/// enregistrement compare ses champs tout seul, ce qu'une famille Riverpod
+/// exige, et cela evite un modele de deux entiers dont personne d'autre
+/// n'aurait besoin. Lecture : `ref.watch(pageDuVersetProvider((sourate: 2,
+/// verset: 255)))`.
+///
+/// C'est par la que l'enseignant transforme « 2:255 » en page presentable, sans
+/// jamais toucher a la position de lecture de qui que ce soit (invariant J2).
+final FutureProviderFamily<int?, ({int sourate, int verset})>
+pageDuVersetProvider = FutureProvider.family<int?, ({int sourate, int verset})>(
+  (Ref ref, ({int sourate, int verset}) reference) => ref
+      .watch(serviceCoranProvider)
+      .pageDe(reference.sourate, reference.verset),
+);

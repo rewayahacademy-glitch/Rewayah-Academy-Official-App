@@ -99,6 +99,46 @@ abstract final class Routes {
   /// Profil de l'enseignant.
   static const String enseignantProfil = '/enseignant/profil';
 
+  // Les quatre routes suivantes ne sont **pas** des destinations de premier
+  // niveau : la barre de l'enseignant en tient exactement trois, Journee,
+  // Creneaux et Profil (`docs/architecture/TEACHER_PARALLEL_BASELINE.md` §3).
+  // Ce sont des poses, atteintes depuis un ecran puis quittees
+  // (`03-architecture-information.md` section 5).
+  //
+  // Toutes vivent sous le prefixe `/enseignant`, et ce n'est pas un detail :
+  // `prefixePour(AppRole.teacher)` vaut `'/enseignant'`, et `deciderRedirection`
+  // renvoie chez lui tout chemin hors prefixe. Un cahier pose a `/cahier`
+  // serait refuse a l'enseignant par sa propre garde.
+
+  /// Bienvenue (`ENS-01`) : le premier pas, une fois le dossier valide.
+  ///
+  /// Se traverse une seule fois et mene a la premiere declaration de
+  /// disponibilites, qui vit dans `ENS-06` et non ici : deux grilles de semaine
+  /// finiraient par diverger.
+  static const String enseignantBienvenue = '/enseignant/bienvenue';
+
+  /// Racine des ecrans contextuels d'une seance.
+  static const String enseignantSeance = '/enseignant/seance';
+
+  /// Le cahier de transmission (`ENS-04`) d'une seance.
+  ///
+  /// **Ecran de sortie obligatoire de seance**, pas un onglet : on y arrive en
+  /// quittant la salle, et la Journee le rappelle tant qu'il manque.
+  static String cahierPour(String seanceId) =>
+      '$enseignantSeance/$seanceId/cahier';
+
+  /// Racine des ecrans contextuels d'un groupe.
+  static const String enseignantGroupe = '/enseignant/groupe';
+
+  /// La fiche d'un groupe (`ENS-07`), ouverte depuis la Journee.
+  static String groupePour(String groupeId) =>
+      '$enseignantGroupe/$groupeId';
+
+  /// La revue courte d'un groupe (`ENS-08`), ouverte depuis sa fiche ou depuis
+  /// une anomalie de la Journee.
+  static String revuePour(String groupeId) =>
+      '$enseignantGroupe/$groupeId/revue';
+
   // --- Controleur ---------------------------------------------------------
 
   /// Planning global. Une seule destination, pas de barre de navigation.

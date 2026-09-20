@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 
@@ -164,6 +168,101 @@ void main() {
         permissionRefusee: false,
       );
       expect(sansSortie.peutEntrer, isTrue);
+    });
+  });
+
+  group('ContenuPresente, un pointeur et rien de plus', () {
+    final ContenuPresente ayatAlKursi = ContenuPresente(
+      page: 42,
+      sourate: 2,
+      verset: 255,
+      presentePar: 't1',
+      emisLe: DateTime.fromMillisecondsSinceEpoch(1758300000000, isUtc: true),
+    );
+
+    test('il ne porte AUCUN texte de verset', () {
+      // **Le test le plus important du groupe** (invariant J6) : le jour ou
+      // quelqu'un ajoutera le texte au paquet pour « eviter un aller-retour »,
+      // le Coran deviendra une donnee de transport, et une edition figee
+      // voyagera de client en client. Ce que le paquet porte est une ADRESSE.
+      final Map<String, dynamic> paquet = ayatAlKursi.versJson();
+      expect(paquet.keys.toSet(), <String>{'p', 's', 'v', 'q', 't'});
+      // La seule chaine du paquet est l'identite du presentateur. Tout le reste
+      // est numerique : une adresse, jamais un contenu.
+      expect(paquet['q'], 't1');
+      expect(
+        paquet.values.whereType<String>().length,
+        1,
+        reason: 'une seule chaine, et c est l identite',
+      );
+    });
+
+    test('il survit a l aller-retour JSON sans rien perdre', () {
+      final Object? decode = jsonDecode(jsonEncode(ayatAlKursi.versJson()));
+      final ContenuPresente relu = ContenuPresente.depuisJson(
+        decode! as Map<String, dynamic>,
+      );
+
+      expect(relu.page, 42);
+      expect(relu.sourate, 2);
+      expect(relu.verset, 255);
+      expect(relu.presentePar, 't1');
+      expect(relu.reference, '2:255');
+      // L'horodatage voyage en UTC et revient a l'heure locale : c'est lui qui
+      // permet de ne pas reculer d'une page quand deux paquets se croisent.
+      expect(
+        relu.emisLe.toUtc().millisecondsSinceEpoch,
+        ayatAlKursi.emisLe.toUtc().millisecondsSinceEpoch,
+      );
+    });
+
+    test('le paquet reste court : il part a chaque tour de page', () {
+      // Cinq ou six appareils, dont certains en 3G. Les cles d'une lettre ne
+      // sont pas une coquetterie, elles sont la moitie du paquet.
+      expect(jsonEncode(ayatAlKursi.versJson()).length, lessThan(96));
+    });
+
+    test('un paquet tronque ouvre la premiere page, il ne leve pas', () {
+      // Il vient du reseau, donc d'une version d'application qu'on ne controle
+      // pas. Une exception ici couperait le canal pour toute la seance.
+      final ContenuPresente vide = ContenuPresente.depuisJson(
+        const <String, dynamic>{},
+      );
+      expect(vide.page, 1);
+      expect(vide.reference, '1:1');
+      expect(vide.presentePar, isEmpty);
+    });
+  });
+
+  group('Le moteur refuse de presenter sans jeton qui l autorise', () {
+    test('hors salle, presenter ne fait rien et ne leve pas', () async {
+      // Le refus est SILENCIEUX : lever obligerait chaque appelant a rattraper
+      // une exception qui ne dirait rien de plus que ses capacites.
+      final LiveKitSessionProvider moteur = LiveKitSessionProvider();
+
+      final List<ContenuPresente> recus = <ContenuPresente>[];
+      final StreamSubscription<ContenuPresente> abonnement = moteur
+          .contenusPresentes
+          .listen(recus.add);
+
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 1,
+          sourate: 1,
+          verset: 1,
+          presentePar: 'e1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      // Annule DANS le corps, jamais par `addTearDown` : attendre un `cancel`
+      // apres la sortie du test bloque sans message des que la zone de temps est
+      // simulee (mesure le 20 septembre 2026 sur `salle_test.dart`).
+      await abonnement.cancel();
+      await moteur.liberer();
+
+      expect(recus, isEmpty);
     });
   });
 }

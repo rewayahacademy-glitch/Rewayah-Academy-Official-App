@@ -23,6 +23,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `TUT-00c/b` | Contrat | Tuteur, enseignant | C | 1 | `/attente/contrat` | Page | Page centrée | **repris (R0)**, fiche §6 |
 | `TUT-00c/c` | Dépôt de la pièce | Tuteur, enseignant | C | 1 | `/attente/piece` | Page | Page centrée | **repris (R0)**, fiche §6 |
 | `AGT-00` | Entrée d'un agent | Agent IA | A | 0 | `/agent` | Page | Page centrée | **construit (18/09)**, fiche §6 |
+| `ENS-01` | Onboarding et bienvenue | Enseignant | C | 1 | `/enseignant/bienvenue` (+ les cinq surfaces partagées ci-dessus) | Parcours court, une carte par pas | Parcours centré | **partiel** : le tunnel `/attente/*` existe, la bienvenue est **à construire** (lot Enseignant), fiche §7 |
 
 ### Zone Foyer
 
@@ -39,7 +40,7 @@ réellement dans `lib/`, au 7 septembre 2026.
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `TUT-04` | Disponibilités du foyer | Tuteur | C | 1 | `/tuteur/disponibilites` | Grille défilante | Grille entière | **repris (R4)**, fiche §6 |
-| `ENS-06` | Disponibilités et matching | Enseignant | D | 1 | `/enseignant/creneaux` | Deux onglets | Grille + feed côte à côte | **repris (R4)**, fiche §6 |
+| `ENS-06` | Disponibilités et matching | Enseignant | D | 1 | `/enseignant/creneaux` | Deux onglets | Grille + feed côte à côte | **repris (R4)**, fiche §6 ; **en reprise, lot Enseignant** (Agent D) |
 | `ADM-05` | Attribution manuelle | Admin | E | 1 | `/admin/attribution` | Deux listes empilées | Deux listes côte à côte | **construit (12/09)**, fiche §6 |
 
 ### Zone Journée et salle
@@ -47,10 +48,11 @@ réellement dans `lib/`, au 7 septembre 2026.
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `ELV-02` | Accueil élève | Élève | B / C | 0 | `/eleve` | Deux blocs | Deux blocs centrés, **rien de plus** | **repris (R1)**, fiche §6 |
-| `ENS-02` | Journée | Enseignant | D | 0 | `/enseignant/journee` | Une colonne | Colonne + panneau de détail | **repris (R3)**, fiche §6 |
+| `ENS-02` | Journée | Enseignant | D | 0 | `/enseignant/journee` | Une colonne | Colonne + panneau de détail | **repris (R3)**, fiche §6 ; **en reprise, lot Enseignant** (Agent A) |
+| `ENS-07` | Fiche groupe | Enseignant | D | 1 | `/enseignant/groupe/:groupeId` | Page contextuelle | Page contextuelle, deux colonnes | **à construire**, lot Enseignant (Agent A), fiche §7 |
 | `CTR-01` | Planning global | Contrôleur | D | 0 | `/controleur` | Liste | Tableau dense | **construit (13/09)**, fiche §6 |
 | `ELV-03` | Salle, élève | Élève | B / C | hors arbre | `/salle` | Plein écran | Vidéo + contenu | **construit (12/09)**, fiche §6 |
-| `ENS-03` | Salle, enseignant | Enseignant | D | hors arbre | `/salle` | Plein écran | Vidéo + contenu + participants | **construit (12/09)**, fiche §6 |
+| `ENS-03` | Salle, enseignant | Enseignant | D | hors arbre | `/salle` | Plein écran | Vidéo + contenu + participants | **construit (12/09)**, fiche §6 ; **en reprise, lot Enseignant** (Agent B) |
 | `CTR-02` | Observation invisible | Contrôleur | D | hors arbre | `/salle` | Plein écran | Idem, bandeau de contrôle permanent | **construit (12/09)**, fiche §6 |
 
 ### Zone Contenu et transmission
@@ -58,9 +60,10 @@ réellement dans `lib/`, au 7 septembre 2026.
 | Code | Écran | Rôle | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
 | `ELV-04` | Coran | Élève, enseignant | B / C | 1 | `/eleve/coran` | Lecteur plein écran | Colonne de lecture bornée | **construit (13/09)**, lot N5 |
-| `ENS-04` | Cahier de transmission | Enseignant | D | 2 | depuis la salle | Page, une main, 45 s | Panneau | **à construire**, étape 6 |
+| `ENS-04` | Cahier de transmission | Enseignant | D | 2 | `/enseignant/seance/:seanceId/cahier`, depuis la sortie de salle | Page, une main, 45 s | Panneau | **à construire**, lot Enseignant (Agent C), fiche §7 |
+| `ENS-08` | Revue de groupe | Enseignant | D | 2 | `/enseignant/groupe/:groupeId/revue` | Page contextuelle, liste d'anomalies | Page contextuelle, liste + détail | **à construire**, lot Enseignant (Agent C), fiche §7 |
 | `TUT-06` | Suivi du foyer | Tuteur | C | 1 | `/tuteur/suivi` | Une carte par cours | Tableau dense | **construit (13/09)**, fiche §6 |
-| — | Suivi élève | Élève standard | C | 1 | `/eleve/suivi` | Liste | Liste + détail | **à construire** |
+| — | Suivi élève | Élève standard | C | 1 | `/eleve/suivi` | Liste | Liste + détail | **à construire** — ⚠ état périmé, voir §2 : `SuiviElevePage` est branchée depuis, sans fiche |
 
 ### Zone Administration
 
@@ -82,12 +85,30 @@ réellement dans `lib/`, au 7 septembre 2026.
 | `ADM-15` | Règles | Admin | E | 1 | `/admin/configuration/regles` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fonction primaire de Configuration, fiche §6 |
 | `ADM-16` | Fonctionnalités | Admin | E | 1 | `/admin/configuration/fonctionnalites` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fiche §6 |
 | `ADM-17` | Conservation des données | Admin | E | 1 | `/admin/configuration/conservation-donnees` | Liste de réglages | Liste de réglages, pleine largeur | **construit (19/09, contrat Finance/Configuration)**, fiche §6 |
-| `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page | Page + colonnes | **à construire** |
+| `ENS-05` | Profil enseignant | Enseignant | D | 0 | `/enseignant/profil` | Page, liste de sections | Page + colonnes | **à construire** (talon branché), lot Enseignant (Agent E), fiche §7. **Report ADR-003 levé** par ADR-027 |
 | `CPT-01` | Espace comptable | Comptable | E | 0 | `/comptable` | Cartes | Tableaux | **hors MVP-0** (ADR-003) |
+
+`ENS-05` figure dans la zone Administration par héritage du registre d'origine,
+qui y a rangé les écrans sans zone propre. Sa zone réelle est la **surface
+personnelle de l'enseignant**, et sa fiche §7 l'écrit ainsi. La ligne n'est pas
+déplacée : un code d'écran change de place dans un tableau et six documents
+continuent de citer l'ancienne.
 
 **Codes nouveaux introduits par ce catalogue** : `ENS-05` et `CPT-01`, qui
 existaient comme routes sans code, et les trois sous-écrans `TUT-00c/a`, `/b`,
 `/c`, qui étaient décrits sans être nommés. Aucun code existant n'est renommé.
+
+**Codes nouveaux introduits par le lot Enseignant, le 20 septembre 2026** :
+`ENS-07` **Fiche groupe** et `ENS-08` **Revue de groupe**. Ils étaient libres :
+le registre tenait déjà `ENS-02` à `ENS-06`, et `ENS-01` était nommé sans fiche
+dans `docs/historique/couverture-specs.md` ligne 64 (« Portail KYC et
+onboarding »). Les deux codes sont la conséquence directe du **pivot du
+19 septembre 2026** — les cours se donnent par groupe de cinq enfants ou six
+adultes, avec une seule visio commune (migration `0017`) — et l'enseignant
+n'avait jusqu'ici aucune surface pour lire un groupe autrement qu'élève par
+élève. Aucun code existant n'est renommé, et aucun des cinq écrans du lot ne
+devient une destination de premier niveau
+(`docs/architecture/TEACHER_PARALLEL_BASELINE.md` §3.2).
 
 **Gel d'architecture du 19 septembre 2026** (`docs/architecture/ADMIN_IA_AUDIT.md`) :
 la sidebar admin passe à huit domaines (Accueil, Opérations, Personnes,
@@ -132,8 +153,40 @@ explicitement une page construite pour remplir un domaine vide.
 > `ENS-04`. **Aucune colonne vide n'est posée en attendant** : une colonne
 > « ce qui a été travaillé » remplie de tirets serait une promesse non tenue à
 > chaque ligne.
+>
+> 🔴 **Mise à jour du 20 septembre 2026, lot Enseignant, et elle corrige aussi
+> la méthode de comptage.** Le compte ci-dessus ne se lit **plus** dans
+> `lib/core/router/app_router.dart` : il n'y reste **qu'un seul**
+> `EcranAConstruire` (ligne 91), et c'est celui que la ligne précédente nomme
+> déjà comme l'état de chargement de la racine, pas un écran manquant. Toutes
+> les autres routes rendent désormais une page. **Mesuré le 20 septembre 2026**
+> par `Select-String -Path lib/core/router/app_router.dart -Pattern
+> EcranAConstruire`, qui rend une occurrence. La méthode de comptage est donc
+> désormais la colonne **État** de ce registre, et rien d'autre.
+>
+> **Le compte juste après ce lot de fiches.** Le catalogue inscrit cinq fiches
+> neuves (`ENS-01`, `ENS-04`, `ENS-05`, `ENS-07`, `ENS-08`) : deux étaient déjà
+> des lignes du registre sans fiche (`ENS-04`, `ENS-05`), trois sont des codes
+> nouveaux dont un partiellement construit (`ENS-01`, dont le tunnel `/attente/*`
+> existe). Écrans encore à construire, au sens de la constitution — une route
+> qui rend un écran fini, avec sa fiche : **six dans le MVP-0** (`ENS-01`
+> bienvenue, `ENS-04`, `ENS-05`, `ENS-07`, `ENS-08`, et le suivi élève),
+> plus `CPT-01` hors MVP-0. Le compte est passé de deux à six **parce que le
+> catalogue a rattrapé le produit**, pas parce que le produit a reculé : cinq de
+> ces six écrans étaient déjà dus, quatre sans aucune fiche pour les décrire.
+>
+> ⚠ **Un état de ligne périmé, mesuré et non corrigé faute de fiche.** La ligne
+> « Suivi élève » de la zone Contenu et transmission porte encore
+> « à construire », alors que `lib/features/suivi_eleve/` existe et que
+> `app_router.dart` ligne 198-200 branche `SuiviElevePage` sur
+> `Routes.eleveSuivi`. Cet écran **n'a pas de fiche dans ce fichier** : au sens
+> de la constitution il n'est donc pas fini, et sa ligne n'est pas passée à
+> « construit » sur la seule preuve qu'une route rend quelque chose. C'est le
+> seul écran du produit dans cet état, et la fiche est à écrire hors du lot
+> Enseignant.
 
-Onze écrans sont encore `EcranAConstruire`, et quatre de ceux qui existent
+Un seul `EcranAConstruire` subsiste au routeur (l'état de chargement de la
+racine), et quatre des écrans qui existent
 étaient à reprendre par le lot R. Le lot R les a repris tous les quatre :
 `ELV-02` (fait, R1), `TUT-01` (fait, R2), `ENS-02` et `ADM-01` (fait, R3).
 
@@ -206,6 +259,11 @@ Accessibilité     cases de grille à 44 minimum, label parlé « Lundi 17 heure
 Les fiches des écrans à construire se remplissent au moment de leur lot. Les
 fiches des écrans déjà construits se remplissent au lot R, **à partir du code
 existant**, ce qui sert aussi de relecture.
+
+Deux sections portent donc les fiches, et la distinction n'est pas cosmétique :
+la **section 6** rassemble celles qui ont été remplies à partir du code, la
+**section 7** celles du lot Enseignant, écrites **avant** le code et qui le
+commandent. Une fiche de la section 7 ne décrit pas ce qui existe.
 
 ## 4. Invariants déjà acquis, à ne pas casser en reprenant un écran
 
@@ -494,15 +552,26 @@ Question          Quel est mon prochain cours, et qui attend un enseignant ?
 
 Priorites         P0  l'etat du cours : en cours ou prochain, en une carte
                       dominante
+                  P0  les alertes du cours dominant (un eleve qui n'est pas
+                      entre, un cours annule aujourd'hui), JUSTE SOUS la carte
+                      et non dans les exceptions : a 390 de large, une absence
+                      annoncee sous la colonne serait lue apres le cours
                   P0  la colonne de la journee, cours, pauses et prieres
                       comme entrees de meme nature
+                  P1  les rapports en attente, en SignalRow, qui menent au
+                      cahier de la seance concernee (ENS-04)
                   P1  le feed des eleves en attente, porte vers la grille
                       des creneaux (ENS-06)
+                  P2  l'acces contextuel a la fiche du groupe (ENS-07)
 
-Action principale     aucune : le lancement d'une seance est l'etape 5, et une
-                      phrase prend sa place. Meme la porte vers la grille est
-                      un bloc secondaire, pas une action
-Actions secondaires   Ouvrir la grille des creneaux, par le bloc matching
+Action principale     « Lancer le cours », et seulement dans la fenetre ou elle
+                      peut aboutir : de dix minutes avant le debut jusqu'a la
+                      fin. Hors fenetre, une phrase dit quand elle s'ouvrira,
+                      jamais un bouton grise. Le materiel est verifie AVANT par
+                      preVolProvider : sans micro, il n'y a pas de bouton, il y
+                      a la raison. Hors ligne, le bouton disparait et le dit
+Actions secondaires   Ouvrir le cahier d'un rapport en retard ; ouvrir la fiche
+                      du groupe ; ouvrir la grille des creneaux
 Action tertiaire      aucune
 Destructif            aucun
 
@@ -526,10 +595,21 @@ Etats
   aucun cours       EmptyState registre subi : l'enseignant ne quitte pas
                     l'ecran pour agir, le bloc matching en dessous le fait
   journee finie     une phrase sous la colonne, singulier ou pluriel
-  loading / error   pas d'etat dedic : une lecture qui tarde retombe sur la
-                    colonne vide, une lecture en echec dit une phrase d'erreur
-                    sous la carte dominante. Meme dette qu'ELV-02
-  hors ligne        le bandeau OfflineBanner de PageShell coiffe la page
+  loading           Skeleton.tuileBento puis Skeleton.ligneTimeline, par UN
+                    SEUL chemin : le second squelette, inatteignable, a ete
+                    supprime et non repare (lot Enseignant, agent A)
+  error             EmptyState et « Reessayer » qui relit vraiment
+  error partielle   quand prieres, pause, rapports ou feed echouent seuls :
+                    une phrase en inkAlert, et l'ecran reste utilisable. Une
+                    pause illisible ferait disparaitre toutes les pauses en
+                    silence
+  preflight echoue  pas de bouton, et la raison distincte : micro absent, ou
+                    permission refusee. « Reessayer » remesure le materiel
+  presence inconnue aucune alerte : invariant J3, inconnu n'est pas absent
+  seance sans groupe ni nom invente ni tiret, et aucun acces groupe
+  hors ligne        le bandeau OfflineBanner de PageShell coiffe la page, et
+                    dans la fenetre de lancement le CTA disparait avec sa
+                    raison
 
 Mouvement         aucun propre a l'ecran
 
@@ -538,6 +618,18 @@ Invariants        pauses et prieres sont des entrees de la meme colonne,
                   dans le deroule
                   une seule colonne, une entree par evenement, aucune
                   statistique decorative
+                  UNE ENTREE PAR SEANCE, jamais une par eleve : depuis le pivot
+                  du 19 septembre 2026 l'ecran lit seancesEnseignantProvider,
+                  et non seancesProvider qui afficherait cinq fois le cours
+                  d'un groupe de cinq enfants
+                  le bloc dominant porte le NOM DU GROUPE et son effectif, pas
+                  un prenom : cinq prenoms avant un cours seraient cinq choses
+                  a lire, et ils se lisent sur ENS-07
+                  les alertes individuelles restent RARES : deux au plus, puis
+                  une phrase qui dit combien d'autres attendent
+                  l'objectif commun de la seance n'est PAS affiche : aucune
+                  couche ne le porte, et se taire coute moins cher qu'un tiret
+                  a chaque ligne (CONTRACT_REQUEST_A.md §4)
                   la colonne est portee par TimelineRow, qui decide lui-meme
                   du libelle et de l'icone de chaque sorte
                   les heures affichees sont celles de l'appareil, sans
@@ -3035,3 +3127,616 @@ Troisième et dernière fonction construite du domaine Configuration pour ce
 lot. `kyc_documents.purge_at` (migration `0004`) se déduit de
 `kyc_retention_days` à chaque dépôt ; cet écran édite le réglage, jamais la
 colonne calculée.
+
+---
+
+## 7. Fiches du lot Enseignant (20 septembre 2026)
+
+Cinq fiches écrites **avant** l'implémentation, en exécution du gel
+`docs/architecture/TEACHER_PARALLEL_BASELINE.md` et de la règle de `CLAUDE.md`
+ligne 74 : aucun écran ne s'implémente s'il n'est pas inscrit ici. Elles ne
+décrivent donc pas du code existant, contrairement aux fiches de la section 6 —
+elles le commandent. Un champ resté ouvert est écrit comme ouvert, et un agent
+qui le comble sans décision opérateur invente une UX.
+
+### `ENS-01` Onboarding et bienvenue
+
+```
+CODE              ENS-01
+Nom               Onboarding et bienvenue
+Role              Enseignant
+Zone              Acces
+Niveau de charge  C
+Ecran parent      aucun : c'est la porte d'entree du role
+Profondeur        0 pour les surfaces partagees, 1 pour la bienvenue
+Question          Ou en est mon dossier, et que dois-je faire maintenant ?
+
+Priorites         P0  l'etat du dossier, dit en une phrase et sans jargon
+                  P0  le seul pas qui reste a faire, en une action
+                  P0  les deux accuses obligatoires : enregistrement audio et
+                      visite de controle (ADR-011), puis le contrat
+                      `teacher_nda`
+                  P1  la bienvenue une fois le dossier valide, et le chemin
+                      vers la premiere declaration de disponibilites
+                  P2  rien d'autre : un enseignant en attente n'a aucune
+                      decision utile a prendre ici
+
+Action principale     le pas suivant du dossier, un seul a la fois : accuser,
+                      signer, deposer la piece. Une fois le dossier valide,
+                      "Declarer mes disponibilites", qui mene a ENS-06
+Actions secondaires   aucune sur les surfaces d'attente : une deuxieme action
+                      ferait croire a un choix qui n'existe pas
+Action tertiaire      la deconnexion, deja portee par le portail d'attente
+Destructif            aucun
+
+Mobile            un parcours, une carte par pas, jamais un formulaire long
+                  (ADR-013). La bienvenue est une page courte, une colonne
+Tablette          identique, gouttiere du gabarit
+Desktop           parcours centre et borne, comme le reste de la zone Acces
+
+Surfaces traversees, et elles se REUTILISENT toutes
+  /connexion            TUT-00, partagee avec le tuteur
+  /attente              TUT-00b, le portail : il porte l'etat du dossier
+  /attente/accuse       TUT-00c/a, l'accuse enregistrement audio + visite de
+                        controle (ADR-011). Il PRECEDE le contrat, decision
+                        ADR-016
+  /attente/contrat      TUT-00c/b, le contrat `teacher_nda` pour l'enseignant,
+                        `guardian_terms` pour le tuteur : c'est
+                        `0004_inscription_kyc_appairage.sql` ligne 463 qui
+                        choisit, jamais l'ecran
+  /attente/piece        TUT-00c/c, le depot KYC
+  /enseignant/bienvenue ECRAN NEUF, traverse UNE SEULE FOIS apres validation
+
+Etats du compte a couvrir, et le nom exact que la base leur donne
+  incomplet          EtapeDossier.incomplet : il manque des pieces, une liste
+                     courte, chacune avec son bouton
+  en attente         EtapeDossier.enVerification : tout est depose, l'academie
+                     verifie. Aucun bouton : l'enseignant ne peut rien faire
+                     de plus, et un bouton inerte serait un mensonge
+  valide             AccountStatus.active : le portail ne s'affiche plus, la
+                     bienvenue s'affiche une fois, puis la Journee
+  correction         EtapeDossier.refuse porte AUSSI ce cas : la base ne
+  demandee           distingue pas "refuse definitivement" de "a corriger".
+                     L'ecran rend le motif et de quoi corriger. QUESTION
+                     OUVERTE : un refus definitif et une demande de correction
+                     ne se disent pas de la meme facon, et rien en base ne
+                     permet aujourd'hui de les separer
+  refuse             meme etat que ci-dessus, meme limite
+  suspendu           EtapeDossier.suspendu / AccountStatus.disabled : aucun
+                     acces, et aucune action
+  expire             N'EXISTE PAS comme etat. Le cas voisin est
+                     AccountStatus.provisionalActive, avec
+                     `profiles.kyc_completion_deadline` : acces complet, profil
+                     a completer sous 30 jours, AUCUNE coupure automatique
+                     (ADR-014). L'echeance s'affiche, elle ne bloque rien
+
+Etats d'ecran     loading   squelette du portail, le temps que l'etat du
+                            dossier arrive
+                  content   nominal, un seul pas visible
+                  empty     n'existe pas : un dossier a toujours un etat
+                  error     la lecture de l'etat echoue : une phrase et
+                            "Reessayer". Ne JAMAIS retomber sur "en attente"
+                            par defaut, ce serait inventer un verdict
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                            page ; le depot de piece n'est pas propose
+
+Mouvement         aucun propre a l'ecran. Rien ne se ferme sur minuterie, et la
+                  bienvenue ne defile pas toute seule
+
+Invariants        les deux accuses de l'ADR-011 sont OBLIGATOIRES et se
+                  signent une seule fois : un enseignant qui decouvre
+                  l'enregistrement audio ou la visite de controle apres coup
+                  est un litige
+                  l'accuse precede le contrat, jamais l'inverse (ADR-016)
+                  la bienvenue ne porte AUCUNE grille de semaine : la
+                  declaration des disponibilites vit dans ENS-06, et deux
+                  grilles jumelles finiraient par diverger
+                  la bienvenue se traverse une seule fois : elle ne devient
+                  jamais une destination, et ne se retrouve pas depuis la barre
+                  un bouton qui ne peut pas aboutir n'est pas rendu, et une
+                  phrase prend sa place
+                  le role declare a l'inscription est borne par la base, pas
+                  par l'ecran (ADR-016)
+
+Accessibilite     cibles a 44
+                  chaque pas du parcours porte son intitule au lecteur d'ecran
+                  le parcours se lit de droite a gauche en arabe
+                  a 200 % de taille de texte, aucun texte rogne, et les cartes
+                  de choix grandissent au lieu de couper
+```
+
+Ce que cette fiche **n'autorise pas** : construire un second tunnel d'entree. Les
+cinq surfaces partagées existent, sont testées (`test/features/dossier_test.dart`,
+`test/features/inscription_test.dart`, `test/features/attente_test.dart`) et
+servent le tuteur autant que l'enseignant. Le seul fichier neuf de cette fiche
+est la bienvenue.
+
+Trois des sept échecs de test antérieurs au lot tombent sur
+`dossier_test.dart` et deux sur `inscription_test.dart`, tous pour la même
+cause mesurée : un `tap()` hors du viewport (`TEACHER_PARALLEL_BASELINE.md` §7).
+Ce sont des défauts de **mise en page mobile** de ces surfaces partagées, pas
+des défauts du parcours : les corriger est dans le périmètre de cette fiche,
+changer le parcours du tuteur ne l'est pas.
+
+Reste ouvert, et ne s'invente pas : la distinction entre un refus définitif et
+une demande de correction n'existe **ni en base ni dans l'énumération
+`EtapeDossier`**. Les deux se disent aujourd'hui par le même état, avec le motif
+pour seule différence. C'est une décision opérateur, pas une décision d'agent.
+
+### `ENS-04` Cahier de transmission
+
+```
+CODE              ENS-04
+Nom               Cahier de transmission
+Role              Enseignant
+Zone              Contenu et transmission
+Niveau de charge  D
+Ecran parent      ENS-03, la salle : c'est son ECRAN DE SORTIE
+Profondeur        2
+Question          Ce cours s'est-il passe comme prevu, et sinon, en quoi ?
+
+Le principe qui commande tout le reste
+  L'ecran est PREREMPLI. Tout vaut "Continuer" par defaut. L'enseignant ne
+  modifie que les exceptions. Cible : moins de 45 secondes pour la seance
+  entiere, sur un telephone d'entree de gamme, a une main, hors ligne.
+  Corollaire : aucune saisie manuelle de ce que le systeme sait deduire. Un
+  champ vide a remplir est un echec de conception, pas un choix de l'operateur.
+
+Priorites         P0  le constat prerempli, lisible d'un coup d'oeil
+                  P0  le bouton unique qui l'accepte tel quel
+                  P1  signaler une exception, par exception et non en bloc
+                  P1  le point phonetique, en puces geantes a cocher
+                  P2  l'objectif personnel et le travail maison
+                  P2  la note libre, facultative
+
+Ce que le SYSTEME deduit, et que l'enseignant n'a jamais a saisir
+  presence          par `etat_presence()`, quatorze etats. Un etat
+                    indisponible se dit `inconnu`, JAMAIS `absente`
+                    (invariant J3)
+  duree             de la seance, mesuree
+  contenu presente  ce qui a ete pousse en salle
+  unite du          quand elle existe : rien n'est affiche si le curriculum
+  curriculum        ne rend pas d'unite pour cette seance
+  evenements        de seance, tels que la salle les a produits
+  ces cinq elements arrivent par `brouillon_cahier(uuid)`, RPC stable de la
+  migration 0025
+
+Ce que l'enseignant PEUT faire
+  confirmer le constat tel quel, en une action
+  signaler une exception sur un element precis du constat
+  noter un point phonetique
+  definir ou ajuster un objectif personnel d'eleve
+  ajuster le travail maison
+  suspendre le nouveau contenu dans la marge autorisee
+
+Ce que l'enseignant NE PEUT PAS faire, et ou l'ecran ne pose meme pas le geste
+  modifier le curriculum institutionnel (invariant 8 du gel)
+  changer un cycle fixe pour un eleve seul
+  valider un gate hors des regles
+  inventer un programme parallele a celui de l'academie
+
+Action principale     un bouton UNIQUE de validation. Il accepte le constat
+                      prerempli, exceptions comprises si l'enseignant en a
+                      pose
+Actions secondaires   poser une exception, cocher une paire phonetique
+Action tertiaire      la note libre, facultative
+Destructif            aucun. Un cahier depose ne se supprime pas depuis ici
+
+Mobile            Page, une main, 45 s. Trois zones empilees : le constat
+                  prerempli, la matrice de phonetique en puces geantes (quatre
+                  paires par defaut), la note libre. Le bouton de validation en
+                  bas, atteignable au pouce
+Tablette          identique, gouttiere elargie
+Desktop           Panneau : le registre l'ecrit ainsi, et la raison est que la
+                  sortie de salle ne doit pas faire perdre le contexte du cours
+
+Etats             loading     squelette des trois zones, le temps que
+                              `brouillon_cahier` rende le constat
+                  content     nominal, prerempli
+                  empty       le brouillon revient sans presence ni contenu :
+                              le cahier reste depossable, et l'ecran DIT que le
+                              constat n'a pas pu etre deduit. Il ne presente
+                              pas un formulaire vide comme si c'etait normal
+                  error       la lecture du brouillon echoue : phrase +
+                              "Reessayer". La validation reste possible sans
+                              prerempli, parce qu'un cahier tardif vaut mieux
+                              qu'un cahier perdu
+                  offline     le cahier part en FILE LOCALE avec sa cle
+                              d'idempotence, et l'ecran dit "sera envoye des le
+                              retour du reseau". Il ne bloque pas l'enseignant
+                              sur son cours suivant
+                  deja depose un cahier existe pour cette seance : l'ecran le
+                              rend en lecture et ne propose pas un second
+                              depot. La cle d'idempotence rend le double envoi
+                              inoffensif, mais l'ecran ne doit pas le
+                              provoquer
+
+Mouvement         aucun propre a l'ecran : chaque milliseconde d'animation est
+                  prise sur les 45 secondes. Le retour haptique des puces
+                  phonetiques vient de Pressable
+
+Invariants        la sortie de salle mene ICI, et nulle part ailleurs
+                  (invariant 6 du gel) : le cahier n'est pas facultatif, il est
+                  l'ecran de sortie
+                  ce n'est JAMAIS une destination de la barre basse
+                  la cle d'idempotence est generee A LA REDACTION, jamais a
+                  l'envoi (invariant 7 du gel) : une file qui genere sa cle au
+                  moment d'emettre depose deux fois le meme cahier apres une
+                  coupure
+                  la file hors ligne est celle qui EXISTE (`FileRapports`,
+                  `DepotRapports`, `RapportEnAttente`, table drift
+                  `RapportsEnAttente`). Il lui manque une implementation et un
+                  branchement, PAS une refonte, et `AppDatabase` garde quatre
+                  tables (invariant 12)
+                  `inconnu` n'est jamais rendu "Absence" (invariant J3)
+                  le curriculum institutionnel n'est pas modifiable d'ici
+                  (invariant 8)
+                  aucune coordonnee privee de famille : prenom et identifiant
+                  immuable, jamais de nom de famille (ADR-008, invariant 4)
+                  rien ne se ferme sur minuterie, et surtout pas cet ecran :
+                  un cahier qui se valide tout seul est un faux temoignage
+
+Accessibilite     cibles a 44 au minimum, et les puces phonetiques sont
+                  DELIBEREMENT plus grandes : elles se cochent a une main, en
+                  marchant, sur un telephone tenu par le pouce
+                  chaque element du constat porte son libelle parle, y compris
+                  l'etat de presence deduit
+                  la page se lit de droite a gauche en arabe
+                  a 200 % de taille de texte, les trois zones grandissent et
+                  le bouton de validation reste atteignable sans defilement
+                  horizontal
+```
+
+Pourquoi le préremplissage n'est pas un confort mais la condition de
+l'existence de l'écran : un cahier à remplir de zéro après cinq cours d'affilée
+ne se remplit pas. Le produit le sait depuis l'audit initial
+(`docs/architecture/audit-initial.md` ligne 537), et les 45 secondes sont
+écrites à quatre endroits du dépôt. Ce qui n'était écrit nulle part, et que
+cette fiche pose : **la règle « aucune saisie manuelle de ce qui est
+déductible », avec la liste exacte des cinq champs déductibles**. Sans cette
+liste, « prérempli » est une intention ; avec elle, c'est vérifiable.
+
+Reste ouvert, et il faut le dire avant que l'écran ne soit construit : les
+décisions **D05 et D06** de `docs/parallel-reports/01-decisions.md` — qui peut
+corriger ou excuser une présence, avec quel motif obligatoire et dans quel
+délai — sont encore `BLOCKED`, sans décision opérateur écrite. Tout
+préremplissage de présence s'appuie donc sur une règle métier non tranchée. Le
+piège connu, déjà payé une fois : `etat_presence()` déduit « absente » d'un
+cours que l'académie n'a pas donné. Un cahier qui affirme une absence que
+l'académie a causée est pire qu'un cahier vide.
+
+Reste ouvert également : `0025_role_enseignant.sql` crée bien
+`brouillon_cahier(uuid)`, mais **pas** `deposer_cahier(uuid, text, jsonb)`,
+qui est la seule RPC d'écriture promise par le gel (§5.1). Sans elle, l'écran
+n'a aucun moyen d'écrire `lesson_reports`, et la validation ne peut pas
+aboutir. C'est un préalable de l'Agent Z, pas une dette de l'écran.
+
+### `ENS-05` Profil enseignant
+
+```
+CODE              ENS-05
+Nom               Profil enseignant
+Role              Enseignant
+Zone              Surface personnelle de l'enseignant (rangee sous
+                  Administration dans le registre, par heritage)
+Niveau de charge  D
+Ecran parent      aucun : DESTINATION DE PREMIER NIVEAU, troisieme et derniere
+                  de la barre de l'enseignant
+Profondeur        0
+Question          Qui suis-je pour l'academie, et ou reglo-je ce qui
+                  m'appartient ?
+
+Priorites         P0  l'identite professionnelle autorisee
+                  P0  le statut du compte, dit en une phrase
+                  P0  l'acces aux parametres reellement personnels,
+                      DECONNEXION COMPRISE
+                  P1  le contrat : sa nature, sa version, sa date
+                      d'acceptation, en LECTURE SEULE
+                  P1  les langues et les pays declares
+                  P2  les preferences personnelles autorisees
+
+Contenu, et rien de plus
+  identite professionnelle autorisee : ce que l'academie affiche de
+  l'enseignant, tel que le produit le montre deja aux familles -- prenom et
+  identifiant immuable (ADR-008)
+  statut du compte : `AccountStatus`, dit en une phrase et sans code
+  contrat : `contract_acceptances` rend la sorte (`teacher_nda`), la version
+  et la date. LECTURE SEULE, sans exception : un contrat qui s'edite depuis
+  l'ecran de la personne qu'il engage n'est plus un contrat
+  langues et pays declares
+  preferences personnelles autorisees
+  acces aux surfaces personnelles, DECONNEXION COMPRISE
+
+Ce qui n'y va PAS, et ou ca vit
+  disponibilites operationnelles  ENS-06, et nulle part ailleurs
+  planning                        ENS-02
+  rapports                        ENS-04, et le bloc "rapports en attente" de
+                                  ENS-02
+  reglages LiveKit globaux        exploitation, jamais un ecran d'enseignant
+  politiques Academie            administration
+  paie detaillee                  HORS PERIMETRE, voir ci-dessous
+
+Action principale     aucune au sens du bouton plein : un profil se consulte,
+                      il ne se valide pas. Chaque ligne s'edite
+                      individuellement, sur le motif de SettingRow
+Actions secondaires   editer une preference personnelle
+Action tertiaire      aucune
+Destructif            la deconnexion. Elle se confirme, et elle est la SEULE
+                      action de cet ecran qui perd quelque chose
+
+Mobile            une page, une liste de sections, chaque reglage sur sa ligne
+Tablette          identique, gouttiere elargie
+Desktop           page + colonnes : l'identite et le statut d'un cote, les
+                  reglages de l'autre
+
+Etats             loading   squelette de liste, le temps que la session et le
+                            contrat arrivent
+                  content   nominal
+                  empty     n'existe pas : un enseignant connecte a toujours
+                            un profil et un statut
+                  error     phrase + "Reessayer" sur la section qui a echoue,
+                            les autres restent lisibles. La DECONNEXION reste
+                            accessible meme si tout le reste echoue : c'est la
+                            seule chose que l'enseignant doit toujours pouvoir
+                            faire
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                            page ; l'edition d'une preference est impossible et
+                            dite, la deconnexion reste possible
+
+Mouvement         AppBottomSheet a l'ouverture de chaque edition, comme les
+                  ecrans de reglages deja construits. Rien d'autre
+
+Invariants        TROIS destinations au niveau 1 pour l'enseignant, pas
+                  quatre : "Compte" DISPARAIT (invariant 1 du gel) et c'est
+                  ENS-05 qui reprend l'acces aux surfaces personnelles
+                  la deconnexion est atteignable depuis CET ecran, sur
+                  telephone : la barre basse Material 3 n'accepte aucune entree
+                  hors destination, donc sans ENS-05 un enseignant sur
+                  telephone n'a plus AUCUN chemin vers la deconnexion
+                  les informations contractuelles sensibles sont en lecture
+                  seule
+                  aucune donnee de paie, aucun solde, aucun montant : ni
+                  affiche, ni promis, ni grise
+                  un widget ne lit jamais un role, il lit une capacite
+                  rien ne se ferme sur minuterie
+
+Accessibilite     cibles a 44
+                  chaque ligne porte son titre et sa description au lecteur
+                  d'ecran
+                  la page se lit de droite a gauche en arabe
+                  a 200 % de taille de texte, les lignes de reglage grandissent
+                  et aucun libelle n'est rogne
+```
+
+**Le report est levé, et c'est écrit ici parce que le registre disait le
+contraire.** Le registre marquait `ENS-05` « reporté avec l'ensemble du module
+finance (ADR-003) », et la raison de ce report était que le profil devait
+porter la paie détaillée. Le contrat du lot Enseignant **retire la paie
+détaillée du périmètre** : le profil se construit sans elle, et il n'y a plus
+rien à attendre de la finance pour le construire. Décision consignée en
+**ADR-027**.
+
+**Le point de cette fiche qu'il ne faut pas rater**, parce qu'il est la seule
+raison pour laquelle cet écran est urgent et non simplement dû : la barre de
+l'enseignant passe de **quatre destinations à trois**. `destinationsPour(role:
+AppRole.teacher)` en rend quatre aujourd'hui (`nav_shell.dart`), dont
+« Compte » — et c'est `lib/features/compte/compte_page.dart` qui porte
+aujourd'hui la déconnexion (ligne 104-108). « Compte » et « Profil » sont deux
+destinations pour la même question, *moi* ; « Compte » sort donc, et `ENS-05`
+reprend l'accès aux surfaces personnelles. **Si `ENS-05` ne porte pas la
+déconnexion, un enseignant sur téléphone n'a plus aucun chemin pour se
+déconnecter** : la barre basse Material 3 n'accepte aucune entrée hors
+destination, et `secondairesPour(role: AppRole.teacher)` reste vide. Ce n'est
+pas un détail de confort, c'est une porte murée.
+
+État réel au moment où cette fiche est écrite : la route
+`/enseignant/profil` rend déjà `ProfilEnseignantPage`, un talon qui affiche le
+statut du compte, la charge pédagogique (élèves actifs, heures disponibles) et
+un renvoi vers les réglages d'heures. Il n'a **qu'un test de dix-huit lignes**,
+qui vérifie un titre. Cette fiche ne décrit donc pas un écran neuf mais un
+talon à finir.
+
+⚠ **Une seconde implémentation de `ENS-05` existe ailleurs, et il faut la
+trancher avant d'écrire une ligne.** Le worktree
+`C:\Users\dell\AppData\Local\Programs\WindowsTerminal\rewayah-r2`, branche
+`codex/r2-adaptive-shell`, porte une version divergente de
+`profil_enseignant_page.dart` et un `lib/core/profil/service_profil_enseignant.dart`.
+Détail mesuré et conséquences dans `docs/parallel-reports/SOCLE_CATALOGUE_REPORT.md`.
+
+### `ENS-07` Fiche groupe
+
+```
+CODE              ENS-07
+Nom               Fiche groupe
+Role              Enseignant
+Zone              Journee et salle
+Niveau de charge  D
+Ecran parent      ENS-02, la Journee
+Profondeur        1
+Question          Qui est dans ce groupe, quand se reunit-il, et y reste-t-il
+                  de la place ?
+
+Priorites         P0  les membres du groupe
+                  P0  le creneau hebdomadaire du groupe
+                  P1  les places libres sur le seuil
+                  P2  l'acces a la revue courte (ENS-08)
+
+Contenu
+  le groupe          son nom tel que l'administration l'a pose, son type
+  son creneau        hebdomadaire : le jour et l'heure de la seule visio
+                     commune du groupe
+  ses membres        prenom + identifiant immuable + niveau. JAMAIS de nom de
+                     famille, de courriel, de telephone ni d'adresse
+                     (ADR-008). C'est `mon_groupe_detail(uuid)` qui borne, pas
+                     l'ecran : `groupe_detail` est admin seul et rend
+                     `student_nom`
+  places libres      sur le seuil du groupe : cinq enfants ou six adultes
+  revue courte       le chemin vers ENS-08, en action tertiaire
+
+Action principale     aucune : une fiche se lit. Un enseignant ne compose pas
+                      son groupe, l'administration le fait (ADM-09)
+Actions secondaires   aucune
+Action tertiaire      Ouvrir la revue du groupe (ENS-08)
+Destructif            aucun
+
+Mobile            page contextuelle : l'en-tete du groupe et son creneau, puis
+                  la liste des membres, puis les places libres
+Tablette          identique, gouttiere elargie
+Desktop           deux colonnes : le groupe et son creneau a gauche, les
+                  membres a droite
+
+Etats             loading   squelette : en-tete + trois lignes de membres
+                  content   nominal
+                  empty     un groupe sans aucun membre : l'ecran le DIT,
+                            sans bouton, parce que l'enseignant ne peut pas y
+                            remedier. C'est un etat subi, pas une invitation
+                  error     phrase + "Reessayer"
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                            page ; la fiche reste consultable si elle a ete
+                            lue
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        ce n'est JAMAIS une destination : elle s'ouvre depuis la
+                  Journee, contextuellement
+                  aucun nom de famille, aucun courriel, aucun telephone, aucune
+                  adresse (ADR-008, invariant 4 du gel)
+                  l'enseignant ne modifie pas la composition du groupe
+                  le seuil affiche est celui du groupe, jamais un chiffre
+                  calcule a l'ecran
+                  les heures affichees sont celles de l'appareil, sans mention
+                  de fuseau (invariant 11 du gel)
+                  le zero s'affiche comme les autres valeurs : "0 place libre"
+                  se lit, il ne se masque pas
+
+Accessibilite     cibles a 44
+                  chaque membre porte son libelle parle : prenom, identifiant,
+                  niveau
+                  la liste se lit de droite a gauche en arabe
+                  a 200 % de taille de texte, les lignes de membre grandissent
+                  et l'identifiant immuable ne se coupe pas -- c'est le seul
+                  moyen de nommer un eleve sans nom de famille
+```
+
+Cet écran est la conséquence directe du **pivot du 19 septembre 2026** : les
+cours se donnent par groupe de cinq enfants ou six adultes, avec **une seule
+visio commune**, et non plus en 1-à-1. Avant le pivot, « le groupe » n'était pas
+une chose qu'un enseignant pouvait regarder — il voyait une liste d'élèves. La
+fiche groupe est l'endroit où le groupe devient un objet.
+
+Ses sources sont `mes_groupes_v` et `mon_groupe_detail(uuid)`, créées par la
+migration `0025`, et `sessions.groupe_id`, qui est la colonne sans laquelle la
+fiche ne s'ouvre pas depuis une séance. Elle est nullable : les séances 1-à-1
+antérieures au pivot restent valides.
+
+Deux choses que cette fiche ne fait pas, et pour de bonnes raisons. Elle
+n'ouvre pas de destination « Groupes » : l'enseignant a trois destinations, et
+il atteint un groupe par le cours qu'il donne, pas par un annuaire. Et elle ne
+réconcilie pas les plafonds : `ADR-004` dit encore « groupes jusqu'à 6, plafond
+à 2 imposé par trigger tant que `allow_multi_participant_sessions` est faux »,
+ce qui ne s'accorde pas avec cinq enfants et six adultes. **Cette contradiction
+est réelle et n'appartient pas à cette fiche** : elle demande un ADR du pivot
+groupes, signalé dans le rapport de socle.
+
+### `ENS-08` Revue de groupe
+
+```
+CODE              ENS-08
+Nom               Revue de groupe
+Role              Enseignant
+Zone              Contenu et transmission
+Niveau de charge  D
+Ecran parent      ENS-07, la fiche groupe
+Profondeur        2
+Question          Quelque chose demande-t-il mon attention sur ce groupe ?
+
+Rythme            mensuel ou fin de cycle. JAMAIS un rapport narratif
+                  obligatoire, et jamais une echeance qui rappelle : un
+                  enseignant a qui l'on demande un texte chaque mois cesse
+                  d'ecrire des textes utiles au troisieme mois
+
+Priorites         P0  les anomalies, et rien qu'elles
+                  P1  l'etat vide, qui est l'etat NORMAL et frequent
+                  P2  aucune priorite de plus : cet ecran ne resume pas le
+                      groupe, ENS-07 le fait
+
+N'affiche QUE les anomalies produites par le systeme
+  gate a venir              un palier de programme approche pour un eleve
+  eleve hors corridor       un eleve sort de la marge de progression attendue
+  proposition de transfert  le systeme propose de deplacer un eleve de groupe
+  proposition de            le systeme propose de revoir le niveau ou le
+  reorientation             parcours d'un eleve
+
+Action principale     aucune : la revue se lit. Une anomalie porte sa propre
+                      suite, et l'enseignant n'est pas celui qui tranche un
+                      transfert ou une reorientation
+Actions secondaires   ouvrir l'anomalie pour en lire le detail
+Action tertiaire      aucune
+Destructif            aucun
+
+Mobile            page contextuelle, une liste d'anomalies, une carte chacune
+Tablette          identique, gouttiere elargie
+Desktop           liste a gauche, detail de l'anomalie selectionnee a droite
+
+Etats             loading   squelette de liste, trois lignes
+                  content   une carte par anomalie
+                  empty     "Rien ne demande votre attention." C'est l'etat
+                            NORMAL et FREQUENT de cet ecran, en registre subi,
+                            SANS bouton : il n'y a rien a faire, et une
+                            invitation a agir serait une invitation a inventer
+                            un probleme
+                  error     phrase + "Reessayer"
+                  offline   le bandeau OfflineBanner de PageShell coiffe la
+                            page
+
+Mouvement         aucun propre a l'ecran
+
+Invariants        ce n'est JAMAIS une destination : elle s'ouvre depuis la
+                  fiche groupe ou depuis une anomalie de la Journee
+                  aucun rapport narratif obligatoire, aucune echeance qui
+                  rappelle
+                  l'enseignant ne modifie pas le curriculum institutionnel, ne
+                  change pas un cycle fixe individuellement, ne valide pas un
+                  gate hors regles (invariant 8 du gel)
+                  aucun nom de famille (ADR-008)
+                  AUCUNE COLONNE DE TIRETS : tant qu'une source de donnees est
+                  absente, son bloc est absent, jamais rempli de tirets ni de
+                  zeros. C'est la regle que TUT-06 a posee le 13 septembre
+                  2026, pour la meme raison
+                  le zero s'affiche comme les autres valeurs quand il est un
+                  vrai zero -- ce qui n'est pas le cas d'une donnee absente
+
+Accessibilite     cibles a 44
+                  chaque anomalie porte son libelle parle, et son type se dit
+                  par un mot, jamais par une couleur seule
+                  la liste se lit de droite a gauche en arabe
+                  a 200 % de taille de texte, les cartes d'anomalie
+                  grandissent et aucun libelle de type n'est rogne
+```
+
+**Ce que cette fiche doit dire honnêtement, et qui conditionne tout son
+contenu.** Les sources de données de cet écran — le programme, la progression,
+les évaluations — sont posées par les migrations **`0020` à `0024`**
+(`0020_programme_pedagogique`, `0021_diagnostics_placement`,
+`0022_progression_suivi`, `0023_evaluations`, `0024_qualite_pedagogique`). Ces
+cinq migrations sont **committées sur `main`** et **ne sont PAS appliquées à la
+base**. Mesuré le 20 septembre 2026 : la base s'arrête à
+`0019_groupes_durcissement`. L'écran est donc **complet** — sa mise en page, ses
+états, ses invariants sont décidés ici — mais **ses blocs restent vides jusqu'à
+ce que ces migrations soient poussées**, et il ne pose **aucune colonne de
+tirets en attendant**. Un écran qui affiche des tirets promet une donnée à
+chaque ligne ; un bloc absent ne promet rien.
+
+**Un écart de vocabulaire, qui est une question ouverte et non un oubli.** Les
+quatre anomalies que le contrat du lot nomme — gate à venir, élève hors
+corridor, proposition de transfert, proposition de réorientation — **n'existent
+sous aucun de ces noms dans la base**. Ce que `0020`-`0024` savent produire
+aujourd'hui : `anomalies_qualite()` avec trois types
+(`rapport_manquant`, `blocage_sans_suivi`, `evaluation_en_retard`, table
+`controles_qualite` de `0024`) et `progression_exceptions.type` à deux valeurs
+(`blocage`, `derogation`, table de `0022`). De plus, `anomalies_qualite()` est
+**réservée à l'administration** (`app_role() = 'admin'`), et **aucune RPC
+d'anomalies bornée à l'enseignant n'existe**. La correspondance entre les quatre
+anomalies de la fiche et ce que la base sait calculer est donc **ouverte**, et
+elle ne s'invente pas : soit une RPC enseignant est écrite, soit les quatre noms
+sont remplacés par ceux que la base porte déjà. C'est une décision de socle.

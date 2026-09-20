@@ -31,6 +31,7 @@ import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
+import '../salle_enseignant/panneau_enseignant.dart';
 import 'vue_salle.dart';
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
@@ -51,10 +52,12 @@ import 'vue_salle.dart';
 ///   que l'appelant a le droit de savoir. L'ecran les **montre**, il ne les
 ///   decide pas -- et il ne dit jamais « absent » quand il ne sait pas
 ///   (invariant J3) ;
-/// - il **ne partage aucun document** : le Coran n'est pas importe et le canal
-///   de diffusion de l'etat partage n'est pas tranche (question `e` de
-///   `docs/architecture/etape-5-salle-coran-presence.md` section 10). Le bouton
-///   « Ouvrir le Coran » n'existe donc pas, plutot que d'etre grise.
+/// - il **ne presente aucun contenu lui-meme** : le transport existe depuis le
+///   20 septembre 2026 -- `ContenuPresente`, `VideoSessionProvider.presenterContenu`
+///   et `contenusPresentes`, sur le canal de donnees LiveKit -- mais la surface
+///   qui l'emploie est celle de l'enseignant (`lib/features/salle_enseignant/`),
+///   posee par-dessus cet ecran en un seul point. Le bouton « Ouvrir le Coran »
+///   n'existe donc toujours pas ici, plutot que d'etre grise.
 class SallePage extends ConsumerStatefulWidget {
   /// Cree la salle pour une seance.
   const SallePage({required this.seanceId, super.key});
@@ -136,9 +139,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       _acces = null;
     });
 
-    final ResultatPreVol preVol = await ref
-        .read(servicePreVolProvider)
-        .verifier();
+    // **Un seul chemin vers le pre-vol dans tout le produit** : `preVolProvider`.
+    // Deux existaient -- ce provider, que personne n'employait, et un appel
+    // imperatif a `servicePreVolProvider` -- et un ecran de plus en aurait
+    // choisi un au hasard. `refresh` et non `read` : le materiel a pu changer
+    // depuis la derniere mesure, et un casque branche apres un « Reessayer » ne
+    // servirait a rien si l'on relisait une valeur en cache.
+    final ResultatPreVol preVol = await ref.refresh(preVolProvider.future);
     if (!mounted) {
       return;
     }
@@ -176,7 +183,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   }
 
   /// La sortie volontaire, confirmee une fois.
-  Future<void> _quitter() async {
+  ///
+  /// [vue] est passee plutot que relue : la decision de sortie se prend sur
+  /// l'etat d'AVANT la deconnexion. Apres `_moteur.quitter()`, la phase est
+  /// retombee et `dansLaSalle` serait faux pour tout le monde.
+  Future<void> _quitter(VueSalle vue) async {
     final bool confirme = await ConfirmDestructive.demander(
       context,
       question: t.salle.confirmerSortie,
@@ -187,6 +198,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       return;
     }
 
+    // Le cours a-t-il eu lieu ? La reponse se lit maintenant, pas apres.
+    final bool versLeCahier =
+        vue.role == RoleSalle.enseignant && vue.dansLaSalle;
+
     // **L'annonce precede la deconnexion, et cet ordre porte une information
     // que rien d'autre ne porte.** LiveKit envoie le meme evenement `left` dans
     // les deux cas ; seule cette ecriture distingue une sortie volontaire d'une
@@ -194,18 +209,28 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // arriver le premier et inscrire une deconnexion.
     await ref.read(serviceVideoProvider).annoncerSortie(widget.seanceId);
     await _moteur.quitter();
-    if (mounted) {
-      _rentrer();
+    if (!mounted) {
+      return;
     }
+    if (versLeCahier) {
+      // **L'invariant du catalogue est enfin tenu** : la sortie de `ENS-03`
+      // mene a `ENS-04` et a rien d'autre. L'ecart inscrit ici depuis le lot N3
+      // -- « `ENS-04` n'a pas de route, on renvoie donc chez soi » -- est leve :
+      // le cahier existe (`Routes.cahierPour`) et il est l'ecran de sortie de
+      // seance, pas un onglet. `go` et non `push` : la salle ne doit rester
+      // sous aucune pile, l'ADR-005 lui interdit d'etre revenue en arriere.
+      GoRouter.of(context).go(Routes.cahierPour(widget.seanceId));
+      return;
+    }
+    _rentrer();
   }
 
   /// Retour a la racine de son role.
   ///
-  /// **Ecart connu et assume** : l'invariant du catalogue veut que la sortie de
-  /// `ENS-03` mene a `ENS-04`, le cahier de transmission, et a rien d'autre.
-  /// `ENS-04` est l'etape 6 et n'a pas de route. Renvoyer vers un ecran vide
-  /// pour tenir la lettre de l'invariant serait pire que l'ecart : on renvoie
-  /// donc chez soi, et l'ecart est ecrit au catalogue.
+  /// C'est la sortie de qui n'a rien a transmettre : les trois autres roles, et
+  /// l'enseignant qui n'est jamais entre -- une impasse ou un abandon pendant la
+  /// connexion. Envoyer celui-la au cahier lui demanderait le compte rendu d'un
+  /// cours qui n'a pas eu lieu.
   void _rentrer() {
     final AppRole? role = ref.read(sessionProvider).role;
     GoRouter.of(
@@ -274,7 +299,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         // place de la garder ouverte. Ailleurs il ferait doublon avec la
         // colonne, et un doublon finit par diverger.
         onVoirPresence:
-            vue.voitLesParticipants && !_colonneOuverte(context, vue)
+            vue.voitLesParticipants && !_colonneDePresence(context, vue)
             ? () => unawaited(_voirPresence(lignes))
             : null,
       ),
@@ -289,21 +314,27 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               vue: vue,
               onMicro: _basculerMicro,
               onCamera: _basculerCamera,
-              onQuitter: _quitter,
+              onQuitter: () => _quitter(vue),
             ),
       child: enImpasse
           ? _Impasse(cause: vue.cause, onReessayer: _entrer, onRentrer: _rentrer)
+          // `ENS-03` : la surface de presentation de l'enseignant, en UN SEUL
+          // point. Les deux conditions comptent. Le role vient du **jeton**
+          // (`vue.role`), jamais de `sessionProvider.role` : c'est le jeton qui
+          // decide ce qu'on peut faire dans une salle. Et `peutPresenter`
+          // conditionne l'affichage, plutot que de montrer des commandes que le
+          // moteur refuserait en silence -- `presenterContenu` refuse sans rien
+          // dire quand `can_publish_data` est absent.
+          : _panneauEnseignant(vue)
+          ? _CorpsEnseignant(
+              vue: vue,
+              lignes: lignes,
+              seanceId: widget.seanceId,
+            )
           : _Corps(vue: vue, lignes: lignes),
     );
   }
 
-  /// Vrai quand la presence tient en colonne a cote de la scene.
-  ///
-  /// La meme condition que `_Corps`, et elle est ici pour que l'entete sache
-  /// s'il doit offrir le bouton : deux facons d'ouvrir la meme liste sur un
-  /// meme ecran, c'est une de trop.
-  bool _colonneOuverte(BuildContext context, VueSalle vue) =>
-      AppGabarit.de(context).estLarge && vue.voitLesParticipants;
 }
 
 /// La ligne de contexte : ou l'on en est, ce que vaut le lien, et -- pour
@@ -335,12 +366,40 @@ class _Entete extends StatelessWidget {
       PhaseSalle.materiel => t.salle.verificationMateriel,
       PhaseSalle.ouverture => t.salle.ouverture,
       PhaseSalle.connexion => t.salle.connexion,
-      PhaseSalle.enSalle || PhaseSalle.reconnexion || PhaseSalle.refus => null,
+      PhaseSalle.enSalle ||
+      PhaseSalle.instable ||
+      PhaseSalle.reconnexion ||
+      PhaseSalle.retabli ||
+      PhaseSalle.refus => null,
     };
 
     if (attente != null) {
       return Text(attente, style: textes.labelLarge ?? const TextStyle());
     }
+
+    // **Chaque etat porte son mot** (invariant J7) : une pastille jaune sans
+    // libelle ne dirait rien a qui ne distingue pas les couleurs, et rien du
+    // tout a qui ecoute l'ecran. Les cinq etats du protocole sont donc cinq
+    // libelles, et « instable » reprend le mot que la qualite du lien emploie
+    // deja plutot que d'en inventer un jumeau.
+    final (String, TonEtat) etatDuLien = switch (vue.phase) {
+      PhaseSalle.reconnexion => (
+        t.salle.reconnexionCourt,
+        TonEtat.avertissement,
+      ),
+      PhaseSalle.instable => (
+        vue.qualite == QualiteLien.perdue
+            ? t.salle.lienPerdu
+            : t.salle.lienMediocre,
+        TonEtat.avertissement,
+      ),
+      PhaseSalle.retabli => (t.reseau.retabli, TonEtat.succes),
+      PhaseSalle.enSalle ||
+      PhaseSalle.materiel ||
+      PhaseSalle.ouverture ||
+      PhaseSalle.connexion ||
+      PhaseSalle.refus => (t.etat.enDirect, TonEtat.succes),
+    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -348,18 +407,15 @@ class _Entete extends StatelessWidget {
       children: <Widget>[
         Row(
           children: <Widget>[
-            if (vue.phase == PhaseSalle.reconnexion)
-              // Une reconnexion n'est pas une absence : la seance continue, et
-              // l'ecran le dit sans dramatiser.
-              StatusPill(
-                libelle: t.salle.reconnexionCourt,
-                ton: TonEtat.avertissement,
-              )
-            else
-              StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+            // Une reconnexion n'est pas une absence, et un retablissement n'est
+            // pas un silence : la seance continue, et l'ecran le dit sans
+            // dramatiser.
+            StatusPill(libelle: etatDuLien.$1, ton: etatDuLien.$2),
             // La qualite du lien se dit en MOTS. Une pastille de couleur seule
-            // ne represente jamais un etat critique (invariant J7).
-            if (vue.lienADire) ...<Widget>[
+            // ne represente jamais un etat critique (invariant J7). La pastille
+            // porte deja le mot quand la phase est `instable` : on ne le repete
+            // pas a cote d'elle.
+            if (vue.lienADire && vue.phase != PhaseSalle.instable) ...<Widget>[
               Ecart.hSm,
               Flexible(
                 child: Text(
@@ -492,6 +548,154 @@ class _Rappel extends StatelessWidget {
   }
 }
 
+/// Vrai quand la salle rend la surface de presentation de l'enseignant.
+///
+/// Les deux conditions ensemble, en un seul endroit, parce que trois endroits
+/// s'en servent et qu'une seule des trois qui se tromperait suffirait a rendre
+/// la presence injoignable.
+bool _panneauEnseignant(VueSalle vue) =>
+    vue.role == RoleSalle.enseignant && vue.peutPresenter;
+
+/// Vrai quand la liste de presence est REELLEMENT posee a cote du contenu.
+///
+/// **Deux facons d'ouvrir la meme liste sur un meme ecran, c'est une de trop** :
+/// l'entete n'offre son bouton que si cette fonction est fausse, et la liste
+/// n'est posee que si elle est vraie. Elles doivent donc repondre ensemble, et
+/// c'est pour cela que la reponse est ici et non recalculee de chaque cote.
+///
+/// L'enseignant qui presente l'a TOUJOURS sous les yeux, quel que soit le
+/// gabarit : sa colonne defile, donc la liste y tient meme sur un telephone, la
+/// ou `_Corps` doit renoncer a la poser faute de largeur. C'est la bonne reponse
+/// pour lui, et pas un effet de bord : savoir qui manque est la premiere chose
+/// qu'on regarde en ouvrant un cours de groupe.
+bool _colonneDePresence(BuildContext context, VueSalle vue) {
+  if (!vue.voitLesParticipants) {
+    return false;
+  }
+  return _panneauEnseignant(vue) || AppGabarit.de(context).estLarge;
+}
+
+/// La salle de l'enseignant : le document d'abord, la scene ensuite.
+///
+/// **La hierarchie de `ENS-03` en une classe.** Le contenu pedagogique est le
+/// premier niveau, le media le deuxieme : c'est l'ordre du protocole, et il ne
+/// se lit nulle part ailleurs dans ce fichier parce que les trois autres roles
+/// n'ont pas de document a presenter.
+///
+/// `[RESPONSIVE]` Sur telephone ET sur tablette, le document prend la plus
+/// grande part et la scene garde la sienne DESSOUS -- jamais par-dessus : aucune
+/// barre d'outils ne couvre le Coran. Au desktop seulement, les trois surfaces
+/// se posent cote a cote, le document en tete parce qu'il est le premier niveau
+/// de la hierarchie.
+///
+/// Elle compose `_Scene` et `_ListePresence` directement plutot que `_Corps` :
+/// `_Corps` reserve 256 px fixes a la presence, et les lui laisser prendre sur
+/// une demi-largeur est exactement ce qui etranglait la scene.
+class _CorpsEnseignant extends StatelessWidget {
+  const _CorpsEnseignant({
+    required this.vue,
+    required this.lignes,
+    required this.seanceId,
+  });
+
+  final VueSalle vue;
+  final List<_Presence> lignes;
+  final String seanceId;
+
+  /// La hauteur minimale du document, en dessous de laquelle la colonne defile.
+  ///
+  /// **Mesuree, pas choisie.** Deux etats du panneau ne defilent pas d'eux-memes
+  /// -- ce sont des `EmptyState`, c'est-a-dire un `Center` sur une colonne de
+  /// taille minimale : « rien n'est presente » demande un peu plus de quatre
+  /// respirations et huit suffisent au plus haut des deux, celui du corpus
+  /// absent, qui porte en plus un bouton. La page elle-meme, quand le corpus
+  /// existe, defile dans son propre `ListView` et ne pese donc rien ici.
+  ///
+  /// **Le partage en fractions ne pouvait pas marcher, et c'est ce que la mesure
+  /// a montre.** A 800 sur 600 -- la surface par defaut de `flutter_test`, donc
+  /// une tablette en paysage -- trois cinquiemes de la place donnaient 269 points
+  /// au document pour 464 demandes. Un plancher repond a la question une fois
+  /// pour toutes, la ou une fraction la repose a chaque gabarit et a chaque
+  /// echelle de texte.
+  static const double _hauteurPlancherDocument = AppSpacing.respiration * 8;
+
+  /// La bande reservee a la scene sous le document.
+  ///
+  /// Elle est FIXE et non proportionnelle, parce que le media est le deuxieme
+  /// niveau de la hierarchie : il lui faut de quoi reconnaitre qui parle, pas une
+  /// part de l'ecran. Trois respirations et non deux -- le plancher de la galerie
+  /// -- parce que la vignette locale flotte a deux respirations de haut et se pose
+  /// a `lg` du bord : une bande au plancher exact la ferait deborder de sa propre
+  /// marge. Au dela de quatre visages la galerie defile a l'interieur, ce qu'elle
+  /// sait faire seule (`_Galerie`, physique de defilement sous son plancher).
+  static const double _hauteurScene = AppSpacing.respiration * 3;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget panneau = Padding(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: PanneauEnseignantSalle(seanceId: seanceId),
+    );
+
+    if (AppGabarit.de(context) == Gabarit.desktop) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(flex: 3, child: panneau),
+          Expanded(flex: 2, child: _Scene(vue: vue)),
+          if (_colonneDePresence(context, vue))
+            SizedBox(
+              // La meme largeur que `_Corps` : une seule mesure de colonne de
+              // presence dans ce fichier.
+              width: AppGabarit.largeurBarreLaterale,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: _ListePresence(lignes: lignes, entete: true),
+              ),
+            ),
+        ],
+      );
+    }
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) {
+        // Le document prend tout ce qui reste sous la bande de la scene, sans
+        // jamais descendre sous son plancher. Sur un telephone de reference --
+        // 390 sur 844 -- le compte est juste et rien ne defile : le groupe reste
+        // visible sans un geste. Sur une surface courte, c'est la scene qui passe
+        // sous la ligne de flottaison, et non le Coran qui se rogne.
+        final double reste = contraintes.hasBoundedHeight
+            ? contraintes.maxHeight - _hauteurScene
+            : _hauteurPlancherDocument;
+        final double document = reste < _hauteurPlancherDocument
+            ? _hauteurPlancherDocument
+            : reste;
+        // Le defilement est toujours pose, et ne defile que s'il le faut : quand
+        // la place suffit, la colonne fait exactement la hauteur offerte et rien
+        // ne bouge. C'est ce qui met l'echelle de texte a 200 % hors de danger --
+        // le contenu grandit, la colonne defile, rien ne se rogne.
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SizedBox(height: document, child: panneau),
+              SizedBox(height: _hauteurScene, child: _Scene(vue: vue)),
+              // La presence sous la scene, et non en feuille : la colonne defile
+              // deja, elle a donc la place que `_Corps` n'a pas en largeur.
+              // `_ListePresence` est une colonne de taille minimale, elle vit
+              // sans hauteur bornee.
+              if (_colonneDePresence(context, vue))
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: _ListePresence(lignes: lignes, entete: true),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 /// La scene, et la presence quand l'ecran a la place de la garder ouverte.
 class _Corps extends StatelessWidget {
   const _Corps({required this.vue, required this.lignes});
@@ -526,7 +730,15 @@ class _Corps extends StatelessWidget {
   }
 }
 
-/// Le grand cadre, les vignettes, et ce qui s'affiche quand on est seul.
+/// La scene : les autres en galerie, soi-meme en vignette, et ce qui s'affiche
+/// quand on est seul.
+///
+/// **Elle etait dimensionnee pour deux, et le pivot du 19 septembre 2026 en
+/// demande six.** La version precedente posait les vignettes dans une `Row` non
+/// defilante de 96 points chacune : six participants demandaient 624 points
+/// contre 390 de large sur un telephone, donc un debordement certain -- et il
+/// etait deja mesure a deux, par le test d'invisibilite du controleur, ou une
+/// vignette de 96x128 ne contenait pas son propre bloc « sans image ».
 class _Scene extends StatelessWidget {
   const _Scene({required this.vue});
 
@@ -534,45 +746,46 @@ class _Scene extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ParticipantSalle? grand = vue.dominant;
+    // Les distants dans l'ordre de lecture que la vue a decide : le role
+    // attendu d'abord, les autres ensuite. L'ordre ne bouge pas quand quelqu'un
+    // ouvre son micro.
+    final List<ParticipantSalle> distants = <ParticipantSalle>[
+      if (vue.dominant case final ParticipantSalle premier) premier,
+      ...vue.autres,
+    ];
 
     // La vignette locale n'apparait que quand la camera publie : la fiche
     // produit le demande explicitement (« elle disparait si sa camera est
-    // coupee »), et l'etat du micro est deja dans les commandes.
-    final List<ParticipantSalle> vignettes = <ParticipantSalle>[
-      ...vue.autres,
-      if (vue.moi case final ParticipantSalle local when local.camera) local,
-    ];
+    // coupee »), et l'etat du micro est deja dans les commandes. Elle reste
+    // FLOTTANTE et seule -- un seul cadre de 96 points tient partout, et se
+    // voir parmi les autres serait se compter comme un eleve.
+    final ParticipantSalle? moi = switch (vue.moi) {
+      final ParticipantSalle local when local.camera => local,
+      _ => null,
+    };
 
     return Stack(
       children: <Widget>[
         Positioned.fill(
-          child: grand == null
+          child: distants.isEmpty
               ? _Seul(role: vue.role)
-              : _Cadre(participant: grand, moi: false),
+              : _Galerie(participants: distants),
         ),
-        if (vignettes.isNotEmpty)
+        if (moi case final ParticipantSalle local)
           PositionedDirectional(
             bottom: AppSpacing.lg,
             end: AppSpacing.lg,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                for (final ParticipantSalle vignette in vignettes) ...<Widget>[
-                  Ecart.hSm,
-                  SizedBox(
-                    // Derive de l'echelle, jamais posee : une vignette vaut une
-                    // respiration et demie de haut.
-                    width: AppSpacing.respiration * 1.5,
-                    height: AppSpacing.respiration * 2,
-                    child: _Cadre(
-                      key: ValueKey<String>(vignette.identite),
-                      participant: vignette,
-                      moi: vignette.estLocal,
-                    ),
-                  ),
-                ],
-              ],
+            child: SizedBox(
+              // Derive de l'echelle, jamais posee : une vignette vaut une
+              // respiration et demie de large.
+              width: AppSpacing.respiration * 1.5,
+              height: AppSpacing.respiration * 2,
+              child: _Cadre(
+                key: ValueKey<String>(local.identite),
+                participant: local,
+                moi: true,
+                compact: true,
+              ),
             ),
           ),
       ],
@@ -580,12 +793,104 @@ class _Scene extends StatelessWidget {
   }
 }
 
+/// Les participants distants, tous visibles, aucun rogne.
+///
+/// **La hauteur d'une tuile se deduit de la place reelle, elle ne se pose
+/// jamais** : c'est la seule maniere de garantir qu'a un comme a six, rien ne
+/// sort de l'ecran. En dessous d'un plancher -- au dela de six personnes, ce que
+/// le seuil de groupe interdit deja en base -- la galerie prefere defiler
+/// plutot que de reduire les visages a rien.
+///
+/// `[RESPONSIVE]` Le nombre de colonnes vient du gabarit, jamais d'une
+/// comparaison de largeur : `AppGabarit` est le seul fichier du depot autorise
+/// a comparer une largeur a un nombre.
+class _Galerie extends StatelessWidget {
+  const _Galerie({required this.participants});
+
+  final List<ParticipantSalle> participants;
+
+  /// La hauteur en dessous de laquelle une tuile ne montre plus rien d'utile.
+  static const double _hauteurPlancher = AppSpacing.respiration * 2;
+
+  @override
+  Widget build(BuildContext context) {
+    // Un seul distant : il occupe tout, exactement comme avant le pivot. C'est
+    // le cas du cours a deux, et la raison pedagogique tient toujours -- les
+    // makharij se lisent sur une bouche, pas sur une mosaique.
+    if (participants.length == 1) {
+      return _Cadre(
+        key: ValueKey<String>(participants.first.identite),
+        participant: participants.first,
+        moi: false,
+      );
+    }
+
+    final Gabarit gabarit = AppGabarit.de(context);
+    final int total = participants.length;
+    final int colonnes = switch (total) {
+      2 => gabarit.estLarge ? 2 : 1,
+      3 || 4 => 2,
+      _ => gabarit.estLarge ? 3 : 2,
+    };
+    final int lignes = (total + colonnes - 1) ~/ colonnes;
+
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final double largeur =
+            (contraintes.maxWidth - AppSpacing.sm * (colonnes - 1)) / colonnes;
+        final double disponible =
+            (contraintes.maxHeight - AppSpacing.sm * (lignes - 1)) / lignes;
+        final double hauteur = disponible < _hauteurPlancher
+            ? _hauteurPlancher
+            : disponible;
+
+        return GridView.count(
+          crossAxisCount: colonnes,
+          mainAxisSpacing: AppSpacing.sm,
+          crossAxisSpacing: AppSpacing.sm,
+          childAspectRatio: largeur / hauteur,
+          // Tant que tout tient, la galerie ne defile pas : un geste vertical
+          // dans une salle doit rester sans effet, sous peine de faire croire
+          // qu'on a raccroche.
+          physics: disponible < _hauteurPlancher
+              ? const ClampingScrollPhysics()
+              : const NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            for (final ParticipantSalle personne in participants)
+              _Cadre(
+                key: ValueKey<String>(personne.identite),
+                participant: personne,
+                moi: personne.estLocal,
+                // Une tuile de galerie a six est deja courte : la legende
+                // « sans image » n'y tiendrait pas a cote de l'avatar.
+                compact: hauteur <= _hauteurPlancher,
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 /// Le cadre d'un participant : son image si elle existe, son nom sinon.
 class _Cadre extends ConsumerWidget {
-  const _Cadre({required this.participant, required this.moi, super.key});
+  const _Cadre({
+    required this.participant,
+    required this.moi,
+    super.key,
+    this.compact = false,
+  });
 
   final ParticipantSalle participant;
   final bool moi;
+
+  /// Vrai dans un cadre trop court pour porter une legende sous l'avatar.
+  ///
+  /// C'est ce qui manquait : le bloc « sans image » etait dessine a l'identique
+  /// dans le grand cadre et dans une vignette de 96x128, ou il depassait de huit
+  /// points -- et c'est cet ecart, et rien d'autre, qui faisait echouer le test
+  /// d'invisibilite du controleur depuis le pivot.
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -611,7 +916,9 @@ class _Cadre extends ConsumerWidget {
         child: Stack(
           children: <Widget>[
             Positioned.fill(
-              child: image ?? _SansImage(nom: participant.nom),
+              child:
+                  image ??
+                  _SansImage(nom: participant.nom, avecLegende: !compact),
             ),
             PositionedDirectional(
               start: AppSpacing.sm,
@@ -656,10 +963,19 @@ class _Cadre extends ConsumerWidget {
 }
 
 /// Ce qui occupe un cadre sans image.
+///
+/// **La legende cede avant l'avatar, et pas l'inverse.** Dans un cadre court,
+/// l'avatar porte deja le prenom et le cadre porte deja le nom en bas : la
+/// phrase « Sans image » y serait la troisieme fois qu'on dit la meme chose, et
+/// c'est elle qui debordait. Elle reste annoncee aux technologies d'assistance,
+/// pour qui rien ne se voit.
 class _SansImage extends StatelessWidget {
-  const _SansImage({required this.nom});
+  const _SansImage({required this.nom, this.avecLegende = true});
 
   final String nom;
+
+  /// Vrai quand le cadre a la place d'ecrire « Sans image » sous l'avatar.
+  final bool avecLegende;
 
   @override
   Widget build(BuildContext context) {
@@ -667,20 +983,25 @@ class _SansImage extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          AvatarTile(prenom: nom),
-          Ecart.vSm,
-          Text(
-            t.salle.sansImage,
-            textAlign: TextAlign.center,
-            style: palette.surfaceSunken.applyTo(
-              textes.labelSmall ?? const TextStyle(),
-            ),
-          ),
-        ],
+      child: Semantics(
+        label: avecLegende ? null : t.salle.sansImage,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            AvatarTile(prenom: nom),
+            if (avecLegende) ...<Widget>[
+              Ecart.vSm,
+              Text(
+                t.salle.sansImage,
+                textAlign: TextAlign.center,
+                style: palette.surfaceSunken.applyTo(
+                  textes.labelSmall ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -895,9 +1216,9 @@ class _Commandes extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool microOuvert = vue.moi?.micro ?? false;
     final bool cameraOuverte = vue.moi?.camera ?? false;
-    final bool enSalle =
-        vue.phase == PhaseSalle.enSalle ||
-        vue.phase == PhaseSalle.reconnexion;
+    // Les quatre phases ou la seance continue, reunies par la vue : un lien
+    // instable ou un retour de coupure ne ferme pas un micro.
+    final bool enSalle = vue.dansLaSalle;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

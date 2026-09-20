@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 
 import '../support/harnais.dart';
@@ -99,6 +100,15 @@ PresenceParticipant _presence(
   debutSeance: DateTime.now().subtract(const Duration(minutes: 15)),
 );
 
+/// Le pointeur qu'un enseignant pousse a sa classe : l'ayat al-Kursi.
+ContenuPresente _contenu() => ContenuPresente(
+  page: 42,
+  sourate: 2,
+  verset: 255,
+  presentePar: 'p1',
+  emisLe: DateTime.now(),
+);
+
 /// Une commande de la salle, retrouvee par le libelle de son ACTE.
 ///
 /// Par une expression et non par une egalite : le libelle parle du bouton
@@ -140,6 +150,16 @@ Future<void> _monterSalle(
           path: Routes.controleur,
           builder: (BuildContext _, GoRouterState _) =>
               const Text('planning controleur'),
+        ),
+        // L'ecran de sortie de seance de l'enseignant, pose comme un talon
+        // nomme et non avec la vraie `CahierPage` : ce qui se mesure ici est
+        // **ou mene la sortie**, pas ce que le cahier montre --
+        // `test/features/cahier_test.dart` s'en charge, et le brancher pour de
+        // vrai obligerait ce fichier a surcharger les lectures du cahier.
+        GoRoute(
+          path: '${Routes.enseignantSeance}/:seanceId/cahier',
+          builder: (BuildContext _, GoRouterState etat) =>
+              Text('cahier de ${etat.pathParameters['seanceId']}'),
         ),
       ],
     ),
@@ -483,6 +503,225 @@ void main() {
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
       expect(find.text(t.salle.refusReseau), findsNothing);
     });
+
+    testWidgets('un lien instable porte son mot, et garde les commandes', (
+      WidgetTester tester,
+    ) async {
+      // Le quatrieme des cinq etats du protocole. **Un etat ne se dit jamais
+      // par la couleur seule** (invariant J7) : la pastille porte un libelle, et
+      // la seance continue -- le micro reste utilisable.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      moteur
+        ..publier(<ParticipantSalle>[
+          _personne(identite: 'p1', role: 'student', local: true),
+        ])
+        ..poser(EtatSalle.instable);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.salle.lienMediocre), findsOneWidget);
+      await tester.tap(_commande(t.salle.ouvrirMicro));
+      await tester.pumpAndSettle();
+      expect(moteur.microDemande, <bool>[true]);
+    });
+
+    testWidgets('un retablissement se dit, plutot que de se taire', (
+      WidgetTester tester,
+    ) async {
+      // Le cinquieme etat. Quelqu'un qui a vu « Reconnexion » a besoin de lire
+      // qu'elle a abouti : sans mot de fin, il reste a se demander si le cours
+      // l'entend.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      moteur.poser(EtatSalle.reconnexion);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.reconnexionCourt), findsOneWidget);
+
+      moteur.poser(EtatSalle.retabli);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.reseau.retabli), findsOneWidget);
+      expect(find.text(t.salle.reconnexionCourt), findsNothing);
+      expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+    });
+  });
+
+  group('La scene tient un groupe, pas seulement un duo', () {
+    testWidgets('six participants tiennent sur un telephone, sans rognage', (
+      WidgetTester tester,
+    ) async {
+      // **Le pivot du 19 septembre 2026 mesure a l'ecran.** La version
+      // precedente posait les vignettes dans une `Row` non defilante de 96
+      // points chacune : six participants demandaient 624 points contre 390 de
+      // large. Le debordement etait certain, et il n'etait pas theorique -- il
+      // faisait deja echouer un test a deux personnes.
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+
+      moteur.publier(<ParticipantSalle>[
+        _personne(
+          identite: 't1',
+          role: 'teacher',
+          nom: 'Omar',
+          local: true,
+          camera: true,
+        ),
+        for (int i = 1; i <= 5; i++)
+          _personne(identite: 'e$i', role: 'student', nom: 'Eleve $i'),
+      ]);
+      await tester.pumpAndSettle();
+
+      // Aucune exception de rendu : `pumpAndSettle` les leve, un debordement
+      // compris. Et les cinq eleves sont tous a l'ecran, aucun rogne.
+      for (int i = 1; i <= 5; i++) {
+        expect(find.text('Eleve $i'), findsWidgets, reason: 'Eleve $i');
+      }
+      final Size ecran = tester.view.physicalSize;
+      for (final Element cadre in find.byType(AvatarTile).evaluate()) {
+        final RenderBox boite = cadre.renderObject! as RenderBox;
+        final Offset coin = boite.localToGlobal(Offset.zero);
+        expect(coin.dx, greaterThanOrEqualTo(0));
+        expect(coin.dx + boite.size.width, lessThanOrEqualTo(ecran.width));
+      }
+    });
+
+    testWidgets('a deux, l autre occupe toujours le cadre entier', (
+      WidgetTester tester,
+    ) async {
+      // La raison pedagogique de l'ADR-001 tient toujours a deux : les makharij
+      // se lisent sur une bouche, pas sur une mosaique. La galerie ne s'ouvre
+      // qu'a partir de deux distants.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Khadija'),
+      ]);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(GridView), findsNothing);
+      expect(find.text('Khadija'), findsWidgets);
+    });
+  });
+
+  group('Le contenu presente : un pointeur, jamais du contenu', () {
+    testWidgets('l enseignant publie, et son propre ecran le recoit', (
+      WidgetTester tester,
+    ) async {
+      // Le presentateur lit son contenu par le MEME flux que la classe : un seul
+      // chemin de rendu, donc aucune divergence entre ce qu'il croit montrer et
+      // ce qui est montre.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+
+      await moteur.presenterContenu(_contenu());
+      await tester.pumpAndSettle();
+
+      expect(moteur.contenusPresentesDemandes.length, 1);
+      // Le flux rejoue le dernier contenu a tout abonne : c'est donc bien par
+      // lui que le presentateur lit ce qu'il vient de publier.
+      final ContenuPresente vu = await moteur.contenusPresentes.first;
+      expect(vu.reference, '2:255');
+      expect(vu.page, 42);
+    });
+
+    testWidgets('un eleve qui tenterait de presenter est refuse en silence', (
+      WidgetTester tester,
+    ) async {
+      // La barriere reelle est le jeton : `can_publish_data` vaut faux pour un
+      // eleve, et le serveur LiveKit rejetterait le paquet. Le client refuse
+      // d'abord, sans lever -- une exception n'apprendrait rien de plus que ses
+      // capacites.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      await moteur.presenterContenu(_contenu());
+      await tester.pumpAndSettle();
+
+      // L'appel a bien eu lieu, et rien n'est parti : les deux faits se
+      // mesurent separement, sinon un refus se confondrait avec un ecran muet.
+      expect(moteur.contenusPresentesDemandes.length, 1);
+      expect(moteur.dernierContenuPresente, isNull);
+    });
+
+    testWidgets('un abonne tardif retrouve la page ouverte', (
+      WidgetTester tester,
+    ) async {
+      // **L'exigence de reconnexion sans perte d'etat pedagogique.** Un ecran
+      // remonte au milieu d'une seance -- rotation, retour de veille -- doit
+      // retrouver la page, et pas attendre que l'enseignant la tourne a nouveau.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      moteur.publierContenu(_contenu());
+      await tester.pumpAndSettle();
+
+      // L'abonnement arrive APRES la publication, et il recoit quand meme.
+      final ContenuPresente vu = await moteur.contenusPresentes.first;
+
+      expect(vu.reference, '2:255');
+      expect(vu.page, 42);
+    });
   });
 
   group('Les impasses, une par cause', () {
@@ -630,6 +869,80 @@ void main() {
 
       expect(video.sorties, isEmpty);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+    });
+
+    testWidgets('l enseignant qui a fait cours sort vers SON cahier', (
+      WidgetTester tester,
+    ) async {
+      // **L'invariant du catalogue, enfin tenu.** La sortie de `ENS-03` mene a
+      // `ENS-04` et a rien d'autre : le cahier de transmission est un ecran de
+      // SORTIE de seance, pas un onglet, et c'est ce qui fait qu'un compte rendu
+      // ne s'oublie pas. L'ecart inscrit ici depuis le lot N3 -- « `ENS-04` n'a
+      // pas de route, on renvoie donc chez soi » -- est leve.
+      //
+      // Le cahier recoit l'identifiant de LA seance qu'on vient de quitter, et
+      // non un cahier generique : c'est la cle d'idempotence qui en depend.
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('teacher'),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+
+      await tester.tap(_commande(t.salle.quitterLeCours));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.quitterLeCours).last);
+      await tester.pumpAndSettle();
+
+      expect(video.sorties, <String>[_seance]);
+      expect(find.text('cahier de $_seance'), findsOneWidget);
+      expect(find.text('journee enseignant'), findsNothing);
+    });
+
+    testWidgets('celui qui n est jamais entre rentre chez lui, sans cahier', (
+      WidgetTester tester,
+    ) async {
+      // Un cours qui n'a pas eu lieu n'a pas de compte rendu. Demander son
+      // cahier a un enseignant qui a abandonne pendant la connexion serait lui
+      // demander le recit d'un cours qui n'existe pas -- et le deposer
+      // consommerait la cle d'idempotence de la vraie seance.
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('teacher'),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+
+      // Le moteur retombe en `connexion` : la phase n'est plus `enSalle`, donc
+      // `dansLaSalle` est faux, mais on n'est pas en impasse -- les commandes
+      // sont la, et « quitter » est encore offert. C'est exactement l'etat d'un
+      // enseignant qui renonce pendant que la salle s'ouvre.
+      moteur.poser(EtatSalle.connexion);
+      await tester.pumpAndSettle();
+
+      await tester.tap(_commande(t.salle.quitterLeCours));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.quitterLeCours).last);
+      await tester.pumpAndSettle();
+
+      expect(find.text('journee enseignant'), findsOneWidget);
+      expect(find.text('cahier de $_seance'), findsNothing);
     });
   });
 

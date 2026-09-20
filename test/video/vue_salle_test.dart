@@ -102,6 +102,64 @@ void main() {
       expect(_vue(acces: acces, etat: EtatSalle.echec).phase, PhaseSalle.refus);
     });
 
+    test('les cinq etats du protocole ont chacun leur phase', () {
+      // Le protocole impose connected / unstable / reconnecting / restored /
+      // failed. Avant le 20 septembre 2026, « instable » et « retabli »
+      // n'existaient pas : un retour de reconnexion reposait `connecte` et
+      // devenait indiscernable d'une premiere connexion.
+      final AccesSalle acces = _acces('teacher');
+      expect(
+        _vue(acces: acces, etat: EtatSalle.instable).phase,
+        PhaseSalle.instable,
+      );
+      expect(
+        _vue(acces: acces, etat: EtatSalle.retabli).phase,
+        PhaseSalle.retabli,
+      );
+      // Et les cinq se distinguent deux a deux : aucune paire ne partage une
+      // phase, sans quoi l'ecran n'aurait pas cinq mots a dire.
+      final Set<PhaseSalle> phases = <PhaseSalle>{
+        for (final EtatSalle etat in <EtatSalle>[
+          EtatSalle.connecte,
+          EtatSalle.instable,
+          EtatSalle.reconnexion,
+          EtatSalle.retabli,
+          EtatSalle.echec,
+        ])
+          _vue(acces: acces, etat: etat).phase,
+      };
+      expect(phases.length, 5);
+    });
+
+    test('les quatre phases ou la seance continue se reunissent', () {
+      // Un lien instable ou un retour de coupure ne ferme pas un micro : c'est
+      // `dansLaSalle` qui porte ce fait, une fois, plutot que chaque widget.
+      final AccesSalle acces = _acces('student');
+      for (final EtatSalle etat in <EtatSalle>[
+        EtatSalle.connecte,
+        EtatSalle.instable,
+        EtatSalle.reconnexion,
+        EtatSalle.retabli,
+      ]) {
+        expect(
+          _vue(acces: acces, etat: etat).dansLaSalle,
+          isTrue,
+          reason: etat.name,
+        );
+      }
+      for (final EtatSalle etat in <EtatSalle>[
+        EtatSalle.absent,
+        EtatSalle.connexion,
+        EtatSalle.echec,
+      ]) {
+        expect(
+          _vue(acces: acces, etat: etat).dansLaSalle,
+          isFalse,
+          reason: etat.name,
+        );
+      }
+    });
+
     test('une impasse connue passe devant un moteur qui se croit connecte', () {
       // L'ordre compte : un jeton refuse alors qu'une connexion precedente
       // tient encore afficherait sinon une salle ou l'on n'est plus.
@@ -212,9 +270,13 @@ void main() {
     });
 
     test('l eleve et l observateur ne voient pas la liste', () {
-      // Une seance est plafonnee a deux participants en MVP-0 (ADR-004) : une
-      // liste de deux lignes dont une est soi-meme n'apprend rien, et le mode
-      // enfant n'a droit qu'a deux commandes.
+      // **Le droit n'a pas change, le motif si.** L'ancien -- « une seance est
+      // plafonnee a deux participants (ADR-004) » -- est invalide depuis le
+      // pivot groupes du 19 septembre 2026. Ce qui tient : le mode enfant n'a
+      // droit qu'a deux commandes, et donner a un mineur la liste nominative de
+      // ses camarades est une decision de protection des mineurs, qui appartient
+      // a l'operateur. Ce test verrouille donc l'etat actuel, il ne le justifie
+      // plus par un plafond disparu.
       expect(_vue(acces: _acces('student')).voitLesParticipants, isFalse);
       expect(
         _vue(acces: _acces('guardian_observer')).voitLesParticipants,

@@ -26,6 +26,8 @@ import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/bienvenue_enseignant/bienvenue_page.dart';
+import '../../features/cahier/cahier_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/controleur/planning_page.dart';
@@ -36,10 +38,12 @@ import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
 import '../../features/dossier/signature_page.dart';
 import '../../features/eleve_connexion/eleve_connexion_page.dart';
+import '../../features/fiche_groupe/fiche_groupe_page.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/reglages_enfant/reglages_enfant_page.dart';
+import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
@@ -298,6 +302,39 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             ],
           ),
         ],
+      ),
+
+      // Les quatre poses de l'enseignant, HORS de la coquille et c'est le
+      // point : une `GoRoute` posee dans une `StatefulShellBranch` devient une
+      // destination de la barre, et la barre de l'enseignant en tient
+      // exactement trois (`TEACHER_PARALLEL_BASELINE.md` §3.1, ADR-027). Une
+      // pose s'atteint depuis un ecran puis se quitte, comme les trois poses du
+      // tuteur juste au-dessus.
+      //
+      // La forme des chemins est ecrite ici avec ses parametres, et calculee
+      // ailleurs par `Routes.cahierPour`, `groupePour` et `revuePour` : les deux
+      // doivent rester d'accord, et `test/router/redirection_test.dart` mesure
+      // les deux cotes -- que chaque constructeur produise bien un chemin sous
+      // `/enseignant`, et qu'un tuteur qui le demande reparte chez lui.
+      GoRoute(
+        path: Routes.enseignantBienvenue,
+        builder: (BuildContext _, GoRouterState _) =>
+            const BienvenueEnseignantPage(),
+      ),
+      GoRoute(
+        path: '${Routes.enseignantSeance}/:seanceId/cahier',
+        builder: (BuildContext _, GoRouterState etat) =>
+            CahierPage(seanceId: etat.pathParameters['seanceId'] ?? ''),
+      ),
+      GoRoute(
+        path: '${Routes.enseignantGroupe}/:groupeId',
+        builder: (BuildContext _, GoRouterState etat) =>
+            FicheGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
+      ),
+      GoRoute(
+        path: '${Routes.enseignantGroupe}/:groupeId/revue',
+        builder: (BuildContext _, GoRouterState etat) =>
+            RevueGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
       ),
 
       // Controleur : une seule destination, pas de barre de navigation.
@@ -610,10 +647,11 @@ String racineDe(AppRole? role) =>
 /// Le chrome d'un role autour d'un ecran **hors** de sa barre.
 ///
 /// `ADM-06`, `ADM-07` et `ADM-08` ne sont pas des destinations de premier
-/// niveau — la barre est plafonnee a quatre — mais ils ont besoin de son chrome
-/// pour qu'on puisse en **sortir**. Sans lui, on y entre et on n'en revient
-/// qu'avec le bouton precedent du navigateur : c'est precisement le reproche
-/// fait a l'interface le 18 septembre 2026, et `ADM-08` venait de le
+/// niveau, la barre etant plafonnee a quatre entrees (et gelee a trois pour
+/// l'enseignant, `TEACHER_PARALLEL_BASELINE.md` §3.1), mais ils ont besoin de
+/// son chrome pour qu'on puisse en **sortir**. Sans lui, on y entre et on n'en
+/// revient qu'avec le bouton precedent du navigateur : c'est precisement le
+/// reproche fait a l'interface le 18 septembre 2026, et `ADM-08` venait de le
 /// reproduire le jour meme de sa creation.
 ///
 /// **L'espace « Mon compte » est le meme cas, et il avait ete oublie** : c'est

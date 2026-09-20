@@ -1,0 +1,25 @@
+{
+  "enseignant": {
+    "creneaux": {
+      "heureLibelle": "{jour} {heure} h",
+      "aucuneHeure": "Vous n'avez proposé aucune heure. Sans créneau, aucune famille ne peut vous être proposée.",
+      "heureEnregistree": "{heure} enregistré",
+      "heureRetiree": "{heure} retiré",
+      "retraitEngage": "{heure} retiré. Le cours déjà attribué sur cette heure continue : demandez une réaffectation pour l'arrêter.",
+      "grilleErreur": "Vos heures n'ont pas pu être lues",
+      "grilleErreurDetail": "Le serveur n'a pas répondu. Les heures que vous avez déjà posées ne sont pas perdues.",
+      "horsLigneGrille": "Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.",
+      "heureEngagee": "Vous avez déjà un élève sur {heures}. Retirer cette heure ne met pas fin au cours : il faut une réaffectation.",
+      "heuresEngagees": "Vous avez déjà un élève sur {heures}. Retirer ces heures ne met pas fin aux cours : il faut une réaffectation.",
+      "feedErreur": "Les familles en attente n'ont pas pu être lues",
+      "feedErreurDetail": "Rien n'est perdu : personne n'a été pris, et vos heures restent posées.",
+      "horsLignePrise": "Sans réseau, vous ne pouvez pas prendre d'élève. Les demandes ci-dessous restent consultables.",
+      "horsLigneDemande": "Sans réseau, cette demande ne partirait pas. Réessayez au retour de la connexion.",
+      "refusDejaPris": "Cet élève vient d'être pris par un autre enseignant. La liste ci-dessous est à jour.",
+      "refusDejaSuivi": "Cet élève a déjà un enseignant. La liste ci-dessous est à jour.",
+      "refusCreneauRetire": "Cette famille ne propose plus ce créneau. La liste ci-dessous est à jour.",
+      "refusHorsMesHeures": "Ce créneau ne figure plus dans vos heures. Reposez-le dans Mes heures pour pouvoir le prendre.",
+      "refusPlafond": "Vous avez atteint votre maximum d'élèves. Demandez une augmentation pour en suivre un de plus."
+    }
+  }
+}

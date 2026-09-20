@@ -13,12 +13,15 @@ import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
+import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
 import 'package:rewayah_academy/core/controle/service_controle.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/journal/service_journal.dart';
 import 'package:rewayah_academy/core/matching/service_attribution.dart';
@@ -1109,11 +1112,21 @@ class FauxMoteurSalle implements VideoSessionProvider {
       StreamController<List<ParticipantSalle>>.broadcast();
   final StreamController<QualiteLien> _qualite =
       StreamController<QualiteLien>.broadcast();
+  final StreamController<ContenuPresente> _contenus =
+      StreamController<ContenuPresente>.broadcast();
 
   EtatSalle _etat = EtatSalle.absent;
+  ContenuPresente? _dernierContenu;
 
   /// Les acces avec lesquels on a rejoint, dans l'ordre.
   final List<AccesSalle> entrees = <AccesSalle>[];
+
+  /// Les contenus que l'ecran a demande a presenter, dans l'ordre.
+  ///
+  /// **Tout est enregistre, y compris ce que le faux refuse ensuite de
+  /// publier** : c'est ce qui permet de mesurer les deux faits separement --
+  /// l'ecran a bien appele, et le moteur a bien refuse.
+  final List<ContenuPresente> contenusPresentesDemandes = <ContenuPresente>[];
 
   /// Le nombre de sorties du moteur.
   int departs = 0;
@@ -1142,6 +1155,26 @@ class FauxMoteurSalle implements VideoSessionProvider {
   /// Publie une qualite de lien.
   void publierQualite(QualiteLien lien) => _qualite.add(lien);
 
+  /// Le dernier contenu connu du moteur, emis ou recu.
+  ///
+  /// Il se lit sans s'abonner, et ce n'est pas une commodite : **un
+  /// `addTearDown(abonnement.cancel)` dans un `testWidgets` ne se termine
+  /// jamais**. Le `cancel` est attendu apres la sortie de la zone de temps
+  /// simule, et la micro-tache qui le resoudrait n'est plus drainee par
+  /// personne : le test se bloque sans message, hors de son propre delai. Lu
+  /// une fois, le 20 septembre 2026, contre un abonnement de trois lignes.
+  ContenuPresente? get dernierContenuPresente => _dernierContenu;
+
+  /// Fait arriver un contenu presente, comme s'il venait du canal de donnees.
+  ///
+  /// C'est par elle qu'un ecran de RECEPTEUR se teste : un eleve ne presente
+  /// rien, il recoit -- et sans ce point d'entree il faudrait un serveur
+  /// LiveKit pour mesurer ce que son ecran fait de la page qu'on lui pousse.
+  void publierContenu(ContenuPresente contenu) {
+    _dernierContenu = contenu;
+    _contenus.add(contenu);
+  }
+
   @override
   EtatSalle get etatCourant => _etat;
 
@@ -1153,6 +1186,32 @@ class FauxMoteurSalle implements VideoSessionProvider {
 
   @override
   Stream<QualiteLien> get qualite => _qualite.stream;
+
+  @override
+  Stream<ContenuPresente> get contenusPresentes async* {
+    // Le meme contrat que le vrai moteur, et c'est la raison d'etre du faux :
+    // le dernier contenu connu d'abord, le flux ensuite. Un ecran qui s'abonne
+    // apres le tour de page doit retrouver la page ouverte.
+    final ContenuPresente? dernier = _dernierContenu;
+    if (dernier != null) {
+      yield dernier;
+    }
+    yield* _contenus.stream;
+  }
+
+  @override
+  Future<void> presenterContenu(ContenuPresente contenu) async {
+    contenusPresentesDemandes.add(contenu);
+    // **Le meme refus silencieux que le vrai moteur**, lu au meme endroit : les
+    // capacites du jeton avec lequel on est entre. Un faux plus permissif
+    // laisserait passer un ecran d'eleve qui presente, et le defaut ne se
+    // verrait qu'en production, contre un serveur qui, lui, refuserait.
+    final AccesSalle? acces = entrees.isEmpty ? null : entrees.last;
+    if (acces == null || !acces.capacites.peutPublierDonnees) {
+      return;
+    }
+    publierContenu(contenu);
+  }
 
   @override
   Future<void> rejoindre(AccesSalle acces) async {
@@ -1169,6 +1228,9 @@ class FauxMoteurSalle implements VideoSessionProvider {
   @override
   Future<void> quitter() async {
     departs++;
+    // Comme le vrai moteur : quitter efface l'etat pedagogique, une coupure ne
+    // l'efface pas.
+    _dernierContenu = null;
     poser(EtatSalle.absent);
   }
 
@@ -1195,6 +1257,7 @@ class FauxMoteurSalle implements VideoSessionProvider {
     await _etats.close();
     await _participants.close();
     await _qualite.close();
+    await _contenus.close();
   }
 }
 
@@ -1318,3 +1381,215 @@ class FauxServiceSuivi implements ServiceSuivi {
   @override
   Future<List<PresenceParticipant>?> presences() async => presencesRendues;
 }
+
+/// Le service du role Enseignant, en memoire.
+///
+/// Le huitieme service a recevoir un faux, et il en fallait un : le lot
+/// « role Enseignant » construit cinq ecrans sur ce seul contrat, et aucun
+/// d'entre eux ne peut se monter en test contre Supabase.
+///
+/// **Aucun agent metier ne modifie ce faux.** Un besoin non couvert se demande
+/// par `CONTRACT_REQUEST_<AGENT>.md`
+/// (`docs/architecture/TEACHER_FILE_OWNERSHIP.md`).
+class FauxServiceEnseignant implements ServiceEnseignant {
+  /// Les seances rendues.
+  List<SeanceEnseignant> seancesRendues = const <SeanceEnseignant>[];
+
+  /// Les rosters rendus, par identifiant de seance.
+  Map<String, List<MembreSeance>> rostersRendus =
+      const <String, List<MembreSeance>>{};
+
+  /// Les groupes rendus.
+  List<GroupeEnseignant> groupesRendus = const <GroupeEnseignant>[];
+
+  /// Les membres rendus, par identifiant de groupe.
+  Map<String, List<MembreSeance>> membresRendus =
+      const <String, List<MembreSeance>>{};
+
+  /// Les cahiers en retard rendus.
+  List<CahierEnRetard> retardsRendus = const <CahierEnRetard>[];
+
+  /// Le brouillon rendu. Nul pour jouer une seance introuvable.
+  BrouillonCahier? brouillonRendu;
+
+  /// Les cahiers deposes, dans l'ordre. C'est par eux qu'un test verifie
+  /// **qu'une seule** ecriture part pour une cle donnee.
+  final List<({String cle, String seanceId, Map<String, dynamic> contenu})>
+  cahiersDeposes =
+      <({String cle, String seanceId, Map<String, dynamic> contenu})>[];
+
+  /// Ce que la prochaine lecture doit jeter.
+  Object? erreurLecture;
+
+  /// Ce que le prochain depot doit jeter.
+  Object? erreurDepot;
+
+  /// Combien de temps une lecture met a repondre.
+  ///
+  /// Nul par defaut. Sans delai, un faux resout son futur dans la micro-tache
+  /// que le premier `pump` vide, et l'etat de chargement n'existe jamais : c'est
+  /// la meme raison qu'a [FauxServiceAttribution].
+  Duration? delai;
+
+  /// Combien de fois les seances ont ete lues.
+  int lecturesSeances = 0;
+
+  Future<void> _preparer() async {
+    final Duration? attente = delai;
+    if (attente != null) {
+      await Future<void>.delayed(attente);
+    }
+    final Object? erreur = erreurLecture;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+  }
+
+  @override
+  Future<List<SeanceEnseignant>> seances() async {
+    lecturesSeances++;
+    await _preparer();
+    return seancesRendues;
+  }
+
+  @override
+  Future<List<MembreSeance>> rosterDeSeance(String seanceId) async {
+    await _preparer();
+    return rostersRendus[seanceId] ?? const <MembreSeance>[];
+  }
+
+  @override
+  Future<List<GroupeEnseignant>> groupes() async {
+    await _preparer();
+    return groupesRendus;
+  }
+
+  @override
+  Future<List<MembreSeance>> membresDuGroupe(String groupeId) async {
+    await _preparer();
+    return membresRendus[groupeId] ?? const <MembreSeance>[];
+  }
+
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async {
+    await _preparer();
+    return retardsRendus;
+  }
+
+  @override
+  Future<BrouillonCahier?> brouillon(String seanceId) async {
+    await _preparer();
+    return brouillonRendu;
+  }
+
+  @override
+  Future<void> deposerCahier({
+    required String cleIdempotence,
+    required Map<String, dynamic> contenu,
+    required String seanceId,
+  }) async {
+    final Object? erreur = erreurDepot;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    cahiersDeposes.add((
+      cle: cleIdempotence,
+      seanceId: seanceId,
+      contenu: contenu,
+    ));
+  }
+}
+
+/// La file locale des cahiers en attente, en memoire.
+///
+/// Elle **respecte l'idempotence pour de vrai** plutot que d'empiler : un
+/// cahier redepose sous la meme cle ne cree pas de seconde ligne. Un faux qui
+/// ignorerait la cle laisserait le rejeu hors ligne non mesure, alors que c'est
+/// precisement la garantie que le protocole exige.
+class FauxDepotRapports implements DepotRapports {
+  final Map<String, RapportEnAttente> _lignes = <String, RapportEnAttente>{};
+
+  /// Ce que la prochaine ecriture doit jeter.
+  Object? erreurAJeter;
+
+  /// Les cles presentes, du plus ancien au plus recent.
+  List<String> get cles => (_lignes.values.toList()
+        ..sort(
+          (RapportEnAttente a, RapportEnAttente b) =>
+              a.redigeA.compareTo(b.redigeA),
+        ))
+      .map((RapportEnAttente r) => r.cleIdempotence)
+      .toList(growable: false);
+
+  @override
+  Future<List<RapportEnAttente>> enAttente() async =>
+      _lignes.values.toList(growable: false)..sort(
+        (RapportEnAttente a, RapportEnAttente b) =>
+            a.redigeA.compareTo(b.redigeA),
+      );
+
+  @override
+  Future<void> deposer(RapportEnAttente rapport) async {
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    _lignes.putIfAbsent(rapport.cleIdempotence, () => rapport);
+  }
+
+  @override
+  Future<void> retirer(String cleIdempotence) async {
+    _lignes.remove(cleIdempotence);
+  }
+
+  @override
+  Future<void> majApresEchec(RapportEnAttente rapport) async {
+    _lignes[rapport.cleIdempotence] = rapport;
+  }
+}
+
+/// Une seance d'enseignant prete a l'emploi dans un test.
+///
+/// Le modele porte douze champs, dont neuf ont un defaut sensé : les ecrire a
+/// chaque cas de test noierait ce que le test mesure vraiment.
+SeanceEnseignant seanceDeTest({
+  String id = 's1',
+  required DateTime debut,
+  Duration duree = const Duration(minutes: 45),
+  StatutSeance? statut = StatutSeance.planifiee,
+  int nbParticipants = 1,
+  bool cahierDepose = false,
+  String? groupeId,
+  String? groupeLibelle,
+  int? seuilMax,
+  int minutesInterruption = 0,
+}) => SeanceEnseignant(
+  id: id,
+  debut: debut,
+  fin: debut.add(duree),
+  statut: statut,
+  nbParticipants: nbParticipants,
+  cahierDepose: cahierDepose,
+  groupeId: groupeId,
+  groupeLibelle: groupeLibelle,
+  seuilMax: seuilMax,
+  minutesInterruption: minutesInterruption,
+);
+
+/// Un eleve pret a l'emploi dans un test.
+MembreSeance membreDeTest({
+  String studentId = 'e1',
+  String identifiant = 'RA-0001',
+  String? prenom = 'Khadija',
+  String? niveau,
+  String? riwaya,
+}) => MembreSeance(
+  studentId: studentId,
+  identifiantImmuable: identifiant,
+  prenom: prenom,
+  niveau: niveau,
+  riwaya: riwaya,
+);

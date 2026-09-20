@@ -97,6 +97,13 @@ List<Destination> destinationsPour({
         chemin: Routes.tuteurSuivi,
       ),
     ],
+    // **Exactement trois destinations**, et pas quatre : le gel d'architecture
+    // du role Enseignant l'impose (`TEACHER_PARALLEL_BASELINE.md` §3.1). La
+    // quatrieme etait « Compte », et c'etait un doublon : « Compte » et
+    // « Profil » repondaient a la meme question, *moi*. `ENS-05` porte
+    // desormais l'identite professionnelle, le contrat, le statut **et**
+    // l'acces aux parametres reellement personnels, deconnexion comprise ; il
+    // n'y a donc plus rien a atteindre par une destination de plus.
     AppRole.teacher => <Destination>[
       Destination(
         libelle: t.nav.enseignant.journee,
@@ -112,11 +119,6 @@ List<Destination> destinationsPour({
         libelle: t.nav.enseignant.profil,
         icone: AppIcons.profil,
         chemin: Routes.enseignantProfil,
-      ),
-      Destination(
-        libelle: t.nav.enseignant.compte,
-        icone: AppIcons.reglages,
-        chemin: Routes.compte,
       ),
     ],
     // Le controleur observe et signale : une seule destination, qui ne monte
@@ -163,10 +165,17 @@ List<Destination> secondairesPour({required AppRole role}) =>
           chemin: Routes.compte,
         ),
       ],
-      // L'eleve et l'enseignant portent deja le compte dans leurs
-      // destinations ; le controleur et le comptable n'ont pas de coquille.
-      // L'admin a sa propre coquille depuis le lot IA-01, voir
-      // `destinationsPour` ci-dessus.
+      // L'eleve porte deja le compte dans ses destinations ; le controleur et
+      // le comptable n'ont pas de coquille. L'admin a sa propre coquille depuis
+      // le lot IA-01, voir `destinationsPour` ci-dessus.
+      //
+      // **L'enseignant n'en a pas besoin non plus, et surtout il ne pourrait
+      // pas s'en servir** : ce pied de coquille n'est rendu qu'a partir de 600,
+      // une barre basse Material 3 n'acceptant aucune entree hors destination.
+      // Une entree « Compte » posee ici serait donc invisible sur telephone,
+      // c'est-a-dire exactement la ou l'enseignant travaille. C'est `ENS-05`,
+      // une destination de plein droit, qui porte ses parametres personnels et
+      // sa deconnexion (`TEACHER_PARALLEL_BASELINE.md` §3.1).
       AppRole.student ||
       AppRole.teacher ||
       AppRole.controller ||

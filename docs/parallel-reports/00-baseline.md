@@ -1,3 +1,42 @@
+> # ⛔ DOCUMENT PÉRIMÉ — NE PAS SUIVRE SA MATRICE DE PROPRIÉTÉ
+>
+> **Périmé depuis le 20 septembre 2026.** Ce fichier a été écrit le
+> **14 septembre 2026** et sa carte de propriété de fichiers **n'a plus cours**.
+>
+> **La matrice qui fait loi est
+> `docs/architecture/TEACHER_FILE_OWNERSHIP.md`**, complétée par le gel
+> `docs/architecture/TEACHER_PARALLEL_BASELINE.md`. Si les deux documents se
+> contredisent sur qui possède un fichier, c'est `TEACHER_FILE_OWNERSHIP.md` qui
+> gagne, sans discussion.
+>
+> Ce qui est faux ici, et qui ferait travailler un agent contre le lot en cours :
+>
+> - la **propriété** de `lib/core/router/app_router.dart`, de l'i18n
+>   (`assets/i18n/*.json`, `lib/core/i18n/strings*.g.dart`), de
+>   `ligne_presence.dart` et de `docs/design/08-catalogue-ecrans.md` est attribuée
+>   ici à d'autres propriétaires que ceux du lot en cours ;
+> - les **migrations `0014` à `0016` sont réservées** par les sections
+>   ci-dessous, alors que le dépôt en est à `0025` et que `0014`, `0015` et
+>   `0016` sont écrites et poussées depuis le 18 septembre 2026 ;
+> - le **commit de base** annoncé (`cbc4ff8...`) n'est plus le point de départ :
+>   le lot en cours gèle `BASELINE_SHA = 550e6059654843274e5039e203ad296c565a08b6` ;
+> - le **modèle de coexistence** a changé : le lot en cours travaille dans un
+>   **arbre unique** avec propriété exclusive des fichiers, et non dans cinq
+>   worktrees (`TEACHER_PARALLEL_BASELINE.md` §4, avec les trois raisons
+>   mesurées).
+>
+> **Le contenu n'est pas supprimé.** C'est un document historique, et le dépôt
+> garde son historique : il reste la seule trace écrite de l'état des worktrees
+> au 14 septembre 2026, et sa section 2 est encore utile pour savoir **ce qui
+> dort dans quel worktree** — y compris une seconde implémentation de `ENS-05`
+> (lignes 93 et 117), vérifiée toujours présente le 20 septembre 2026 et
+> documentée dans
+> `docs/parallel-reports/SOCLE_CATALOGUE_REPORT.md`.
+>
+> Lisez-le comme un relevé daté, jamais comme une consigne.
+
+---
+
 # Baseline de coordination des worktrees
 
 Date d'inspection : 2026-09-14 22:18:32 +03:00

@@ -11,9 +11,27 @@ import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 import '../support/harnais.dart';
 
 /// Monte le parcours d'inscription sur des services en memoire.
+///
+/// **Mesure sur 390 x 844, jamais sur la surface par defaut.** Les deux echecs
+/// anterieurs a ce lot -- `tap()` sur les cartes « Enseignant » et « Autre » --
+/// n'etaient pas des defauts de l'ecran : `flutter_test` monte tout sur
+/// 800 x 600, une fenetre plus COURTE que n'importe quel telephone du marche. La
+/// question du role porte quatre cartes de 112 points chacune, soit 484 points
+/// de choix ; il en restait 294 sous l'en-tete de parcours. Les deux dernieres
+/// cartes tombaient donc hors cadre, `tap()` derivait un offset qui atteignait
+/// la zone d'action collee, et « Continuer » etait presse a la place. Le meme
+/// ecran tient a 390 x 844.
+///
+/// La difference avec `dossier_test.dart`, ou la cause etait l'inverse, est ce
+/// qui rendait le diagnostic trompeur : deux tests rouges, le meme symptome, et
+/// deux causes opposees.
 Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   WidgetTester tester,
 ) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+
   final FauxServiceDossier dossier = FauxServiceDossier();
   final FausseSourceSession source = FausseSourceSession();
 
@@ -35,6 +53,21 @@ ActionPrincipale _action(WidgetTester tester) =>
 
 Future<void> _taper(WidgetTester tester, String libelle) async {
   await tester.tap(find.text(libelle));
+  await tester.pumpAndSettle();
+}
+
+/// Tape une carte de choix, apres l'avoir amenee dans le cadre.
+///
+/// Les cartes vivent dans le corps defilant, et la quatrieme d'une liste de
+/// quatre frole le bas de l'ecran a 390 x 844 : deux points de marge, qu'un
+/// libelle plus long ou une echelle de texte suffiraient a manger. On amene donc
+/// la cible plutot que de compter sur cette marge -- c'est le geste qu'une
+/// personne ferait.
+Future<void> _taperCarte(WidgetTester tester, String libelle) async {
+  final Finder cible = find.text(libelle);
+  await tester.ensureVisible(cible);
+  await tester.pumpAndSettle();
+  await tester.tap(cible);
   await tester.pumpAndSettle();
 }
 
@@ -70,7 +103,7 @@ void main() {
       final (FauxServiceDossier dossier, FausseSourceSession source) =
           await _monter(tester);
 
-      await _taper(tester, t.inscription.roleEleveAdulte);
+      await _taperCarte(tester, t.inscription.roleEleveAdulte);
       await _taper(tester, t.commun.continuer);
 
       await tester.enterText(find.byType(TextField).first, 'Moussa');
@@ -78,7 +111,7 @@ void main() {
       await tester.pumpAndSettle();
       await _taper(tester, t.commun.continuer);
 
-      await _taper(tester, t.inscription.genreHomme);
+      await _taperCarte(tester, t.inscription.genreHomme);
       await _taper(tester, t.commun.continuer);
       await _taper(tester, t.inscription.creer);
 
@@ -105,13 +138,13 @@ void main() {
     ) async {
       final (FauxServiceDossier dossier, _) = await _monter(tester);
 
-      await _taper(tester, t.inscription.roleEnseignant);
+      await _taperCarte(tester, t.inscription.roleEnseignant);
       await _taper(tester, t.commun.continuer);
       await tester.enterText(find.byType(TextField).first, 'Aicha');
       await tester.enterText(find.byType(TextField).last, 'Sow');
       await tester.pumpAndSettle();
       await _taper(tester, t.commun.continuer);
-      await _taper(tester, t.inscription.genreFemme);
+      await _taperCarte(tester, t.inscription.genreFemme);
       await _taper(tester, t.commun.continuer);
       await _taper(tester, t.inscription.creer);
 
@@ -127,7 +160,7 @@ void main() {
       // deux. Elle doit donc mener quelque part, sans rien fabriquer.
       final (FauxServiceDossier dossier, _) = await _monter(tester);
 
-      await _taper(tester, t.choix.autre);
+      await _taperCarte(tester, t.choix.autre);
 
       expect(find.text(t.inscription.autreAide), findsOneWidget);
       expect(
@@ -143,7 +176,7 @@ void main() {
     ) async {
       await _monter(tester);
 
-      await _taper(tester, t.inscription.roleTuteur);
+      await _taperCarte(tester, t.inscription.roleTuteur);
       await _taper(tester, t.commun.continuer);
       expect(find.text(t.inscription.identiteQuestion), findsOneWidget);
 
@@ -158,13 +191,13 @@ void main() {
           await _monter(tester);
       dossier.erreurAJeter = StateError('refus du serveur');
 
-      await _taper(tester, t.inscription.roleTuteur);
+      await _taperCarte(tester, t.inscription.roleTuteur);
       await _taper(tester, t.commun.continuer);
       await tester.enterText(find.byType(TextField).first, 'Fatou');
       await tester.enterText(find.byType(TextField).last, 'Diallo');
       await tester.pumpAndSettle();
       await _taper(tester, t.commun.continuer);
-      await _taper(tester, t.inscription.genreFemme);
+      await _taperCarte(tester, t.inscription.genreFemme);
       await _taper(tester, t.commun.continuer);
       await _taper(tester, t.inscription.creer);
 

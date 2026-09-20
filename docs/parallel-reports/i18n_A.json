@@ -1,0 +1,44 @@
+{
+  "enseignant": {
+    "journee": {
+      "coursIndividuel": "Cours individuel",
+      "effectif": "{nombre} élèves",
+      "effectifUn": "1 élève",
+      "voirGroupe": "Voir le groupe",
+      "preflightOk": "Micro prêt",
+      "preflightBloque": "Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.",
+      "preflightSansMicro": "Aucun micro n'est détecté. Branchez-en un pour lancer le cours.",
+      "preflightIndisponible": "La vérification du matériel n'a pas abouti. Réessayez avant de lancer le cours.",
+      "lancerHorsLigne": "Sans réseau, la salle ne peut pas s'ouvrir. Reconnectez-vous pour lancer le cours.",
+      "erreurPartielle": "Une partie de la journée n'a pas pu être lue : prières, pauses ou rapports peuvent manquer.",
+      "absenceDetectee": "{eleve} n'est pas entré en salle.",
+      "coupureDetectee": "{eleve} a perdu la connexion.",
+      "autresAbsences": "et {nombre} autres élèves.",
+      "coursAnnule": "Le cours de {heure} est annulé.",
+      "rapportsTitre": "Rapports en attente",
+      "rapportLigne": "Cours du {jour} à {heure}",
+      "rapportAttente": "À déposer depuis {heures} h",
+      "rapportRetard": "En retard de {heures} h",
+      "enAttenteTitre": "Élèves en attente",
+      "enAttenteLibelle": "élèves en attente sur vos heures",
+      "enAttenteLibelleUn": "élève en attente sur vos heures"
+    },
+    "ficheGroupe": {
+      "titre": "Fiche du groupe",
+      "retour": "Retour à la journée",
+      "creneauTitre": "Le rendez-vous du groupe",
+      "creneauHebdo": "{jour} à {heure}, chaque semaine",
+      "complet": "Groupe complet",
+      "placesLibres": "places libres",
+      "placesLibresUn": "place libre",
+      "membresTitre": "Les élèves du groupe",
+      "niveauIndique": "Niveau indiqué : {niveau}",
+      "aucunMembre": "Aucun élève dans ce groupe",
+      "aucunMembreDetail": "L'administration compose les groupes : celui-ci n'a pas encore d'élève.",
+      "erreur": "Ce groupe n'a pas pu être lu. Réessayez dans un instant.",
+      "introuvable": "Ce groupe n'est pas l'un des vôtres",
+      "introuvableDetail": "Il a peut-être été clôturé, ou il appartient à un autre enseignant.",
+      "revue": "Ouvrir la revue du groupe"
+    }
+  }
+}

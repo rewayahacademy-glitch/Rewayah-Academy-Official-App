@@ -153,13 +153,24 @@ void main() {
       WidgetTester tester,
       PieceAEnvoyer? choisie,
     ) async {
-      // Mesure sur un telephone reel, jamais sur la surface par defaut.
-      // `flutter_test` monte tout sur 800 x 600, plus court que n'importe quel
-      // telephone : `TUT-00c/c` porte la marque, une carte, trois choix et
-      // deux boutons, et son bouton « Choisir le fichier » tombait donc sous
-      // la ligne de flottaison de cette fenetre-la. Les `tap` atteignaient la
-      // zone d'action collee au lieu du bouton, et les trois tests echouaient
-      // en accusant l'ecran. 390 x 844 est le gabarit de reference du produit.
+      // Mesure sur un telephone reel, jamais sur la surface par defaut :
+      // 390 x 844 est le gabarit de reference du produit.
+      //
+      // **Ces trois tests ont echoue longtemps, et le commentaire qui etait ici
+      // accusait la fenetre de `flutter_test`. C'etait faux.** Passer a
+      // 390 x 844 ne suffisait pas : `tap()` derivait toujours un
+      // `Offset(195, 971)`, donc 127 points SOUS le bas de l'ecran. La cause
+      // etait l'ecran lui-meme -- « Choisir la photo » etait pose en bas d'une
+      // carte qui depasse la hauteur d'un telephone, sous la ligne de
+      // flottaison, tandis que « Envoyer ma piece » occupait seul la zone collee
+      // en bas, inerte. Le premier geste du depot etait donc invisible sans
+      // defilement, et rien ne le signalait.
+      //
+      // Corrige dans `depot_piece_page.dart` en posant les deux gestes dans la
+      // zone d'action collee, dans l'ordre ou on les fait. Le test ne fait
+      // toujours aucun defilement, **et c'est ce qui le rend utile** : s'il
+      // redevient rouge, c'est que le bouton est reparti sous la ligne de
+      // flottaison.
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -186,6 +197,36 @@ void main() {
       await tester.pumpAndSettle();
       return (dossier, selecteur);
     }
+
+    testWidgets('les deux gestes tiennent dans un telephone, sans defiler', (
+      WidgetTester tester,
+    ) async {
+      // L'invariant que les trois echecs mesuraient sans le dire : sur le
+      // gabarit ou le depot se fait vraiment, les deux boutons sont a l'ecran.
+      // On mesure leur rectangle, pas leur presence dans l'arbre : un bouton
+      // present et hors cadre est un bouton absent pour la personne qui tient
+      // le telephone.
+      await monter(tester, _piece());
+
+      for (final String libelle in <String>[
+        t.kyc.choisirFichier,
+        t.kyc.envoyer,
+      ]) {
+        final Rect zone = tester.getRect(find.text(libelle));
+        expect(
+          zone.top,
+          greaterThanOrEqualTo(0),
+          reason: '$libelle sort par le haut du viewport 390 x 844.',
+        );
+        expect(
+          zone.bottom,
+          lessThanOrEqualTo(844),
+          reason:
+              '$libelle tombe sous la ligne de flottaison a 390 x 844 : c est '
+              'le defaut mesure a Offset(195, 971).',
+        );
+      }
+    });
 
     testWidgets('rien ne part tant que le type de piece n est pas choisi', (
       WidgetTester tester,

@@ -100,12 +100,24 @@ enum PhaseSalle {
   /// La connexion au serveur temps reel est en cours.
   connexion,
 
-  /// En salle.
+  /// En salle, lien sain.
   enSalle,
 
-  /// Le lien est instable, le SDK retablit la connexion. **Ce n'est pas une
+  /// En salle, lien degrade. **La seance continue** : c'est un avertissement,
+  /// pas une coupure, et il se dit par un mot -- jamais par la seule couleur
+  /// d'une pastille (invariant J7).
+  instable,
+
+  /// Le lien est perdu, le SDK retablit la connexion. **Ce n'est pas une
   /// absence** : la seance continue, l'ecran ne se demonte pas.
   reconnexion,
+
+  /// En salle, apres une coupure qui vient d'etre refermee.
+  ///
+  /// Une phase a elle seule, et non un retour silencieux a [enSalle] : quelqu'un
+  /// qui a vu l'ecran annoncer une reconnexion a besoin de lire qu'elle a
+  /// abouti. Sans mot de fin, il reste a se demander si le cours l'entend.
+  retabli,
 
   /// Une impasse, avec sa cause. C'est le seul etat qui offre une sortie.
   refus,
@@ -125,6 +137,7 @@ class VueSalle {
     required this.role,
     required this.peutParler,
     required this.peutMontrer,
+    required this.peutPresenter,
     required this.invisible,
     required this.moi,
     required this.dominant,
@@ -158,11 +171,11 @@ class VueSalle {
     } else {
       phase = switch (etatMoteur) {
         EtatSalle.connecte => PhaseSalle.enSalle,
+        EtatSalle.instable => PhaseSalle.instable,
         EtatSalle.reconnexion => PhaseSalle.reconnexion,
+        EtatSalle.retabli => PhaseSalle.retabli,
         EtatSalle.echec => PhaseSalle.refus,
-        EtatSalle.absent ||
-        EtatSalle.preVol ||
-        EtatSalle.connexion => PhaseSalle.connexion,
+        EtatSalle.absent || EtatSalle.connexion => PhaseSalle.connexion,
       };
     }
 
@@ -186,6 +199,7 @@ class VueSalle {
       role: role,
       peutParler: capacites?.peutPublier ?? false,
       peutMontrer: capacites?.peutPublierVideo ?? false,
+      peutPresenter: capacites?.peutPublierDonnees ?? false,
       invisible: invisible,
       moi: moi,
       dominant: dominant,
@@ -206,12 +220,17 @@ class VueSalle {
     return null;
   }
 
-  /// Qui occupe le grand cadre.
+  /// Qui vient en premier.
   ///
   /// Pour l'eleve, c'est l'enseignant : la fiche produit l'ecrit, et l'ADR-001
   /// en donne la raison pedagogique -- les makharij se lisent sur une bouche.
   /// Pour l'enseignant, c'est l'eleve, pour la meme raison, en sens inverse.
   /// Pour qui observe, l'enseignant d'abord, faute de quoi le premier venu.
+  ///
+  /// Depuis le pivot groupes, « en premier » ne veut plus dire « en grand » :
+  /// avec cinq eleves, la scene est une galerie et personne n'occupe seul le
+  /// cadre. Ce que ce choix decide est donc l'**ordre de lecture**, ce qui
+  /// revient au meme a deux et reste juste a six.
   static ParticipantSalle? _dominant(
     List<ParticipantSalle> distants,
     RoleSalle moi,
@@ -247,6 +266,19 @@ class VueSalle {
   /// l'interdit, ce qui est le defaut d'un mineur.
   final bool peutMontrer;
 
+  /// Le jeton autorise la diffusion du contenu presente (`can_publish_data`).
+  ///
+  /// Reserve a l'enseignant : c'est lui qui presente le Coran. Un enseignant
+  /// sans ce droit ne doit voir AUCUNE commande de presentation, plutot qu'un
+  /// bouton que le moteur refuserait en silence -- l'invariant J7 vaut ici comme
+  /// ailleurs : un etat ne se dit jamais par l'absence de reaction.
+  ///
+  /// C'est la premiere consommation de `CapacitesSalle.peutPublierDonnees` du
+  /// depot : la capacite existait cote jeton depuis le lot N2, sans lecteur.
+  /// Elle est derivee en booleen plutot que d'ouvrir l'`AccesSalle` -- donc le
+  /// jeton signe -- a toutes les features (`CONTRACT_REQUEST_B` §1).
+  final bool peutPresenter;
+
   /// Personne ne voit ce participant, et il ne se voit pas lui-meme.
   final bool invisible;
 
@@ -265,14 +297,33 @@ class VueSalle {
   /// Vrai quand on est le seul dans la salle.
   bool get seulEnSalle => dominant == null && autres.isEmpty;
 
+  /// Vrai des que l'entree a abouti, quel que soit l'etat du lien.
+  ///
+  /// Les quatre phases qui suivent l'entree -- en salle, instable, reconnexion,
+  /// retabli -- ont une chose en commun : **la seance continue.** Les commandes
+  /// restent actives, l'ecran ne se demonte pas, le bandeau reste la. Reunir ce
+  /// fait ici plutot que dans chaque widget evite qu'une cinquieme phase n'en
+  /// oublie une au passage.
+  bool get dansLaSalle =>
+      phase == PhaseSalle.enSalle ||
+      phase == PhaseSalle.instable ||
+      phase == PhaseSalle.reconnexion ||
+      phase == PhaseSalle.retabli;
+
   /// La liste des participants est-elle montree a ce role ?
   ///
-  /// L'enseignant en a besoin pour savoir qui est la. Le controleur l'a comme
-  /// **test de sa propre invisibilite** : il doit y lire exactement ce que
-  /// l'enseignant y lit. L'eleve ne la voit pas : en MVP-0 une seance est
-  /// plafonnee a deux participants (ADR-004), une liste de deux lignes dont une
-  /// est soi-meme n'apprend rien, et le mode enfant n'a droit qu'a deux
-  /// commandes.
+  /// L'enseignant en a besoin pour savoir qui est la -- et depuis le pivot du
+  /// 19 septembre 2026, ce sont cinq ou six enfants, pas un seul. Le controleur
+  /// l'a comme **test de sa propre invisibilite** : il doit y lire exactement ce
+  /// que l'enseignant y lit.
+  ///
+  /// L'eleve ne la voit pas, et le motif a change. **L'ancien -- « une seance
+  /// est plafonnee a deux participants (ADR-004) » -- est invalide depuis le
+  /// pivot groupes** : une liste de six lignes apprendrait quelque chose. Ce qui
+  /// tient encore : un enfant en mode enfant n'a droit qu'a deux commandes, et
+  /// donner a un mineur la liste nominative de ses camarades est une decision de
+  /// protection des mineurs, pas un choix d'interface. Elle appartient a
+  /// l'operateur ; elle n'est donc pas prise ici.
   bool get voitLesParticipants =>
       role == RoleSalle.enseignant || role == RoleSalle.controleur;
 

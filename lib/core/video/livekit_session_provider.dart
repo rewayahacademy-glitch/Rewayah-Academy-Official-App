@@ -7,11 +7,21 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 
 import 'video_session_provider.dart';
 
-/// Le **seul** fichier du produit autorise a importer `livekit_client`.
+/// La seule implementation du contrat, et le seul endroit ou le SDK est
+/// **traduit**.
 ///
-/// La regle vient de l'ADR-001 et elle se verifie d'un `grep` : si un ecran
-/// importait le SDK, la promesse de portabilite s'evanouirait, et changer de
-/// moteur temps reel demanderait de rouvrir chaque salle.
+/// La regle de l'ADR-001 porte sur le peripherique, pas sur le nombre de
+/// fichiers : `livekit_client` ne s'importe que sous `lib/core/video/`, jamais
+/// dans `lib/features/`. Deux fichiers l'importent donc, et c'est correct --
+/// celui-ci et `pre_vol.dart`, qui enumere le materiel par `lk.Hardware`.
+///
+/// **Ce commentaire disait « le seul fichier du produit autorise a importer
+/// livekit_client », et c'etait faux depuis le lot N2** : `pre_vol.dart:3`
+/// l'importait deja. Corrige le 20 septembre 2026 plutot que de deplacer le
+/// pre-vol : le SDK y fait exactement ce qu'on lui demande partout ailleurs --
+/// enumerer six plateformes a notre place -- et le reecrire serait le seul vrai
+/// moyen de trahir l'ADR-001. Ce qui compte se verifie toujours d'un `grep` :
+/// aucun `import 'package:livekit_client` hors de `lib/core/video/`.
 ///
 /// Ce que cette classe **ne fait pas**, et c'est l'essentiel (specification
 /// sections 2 et 47) : elle ne reimplemente ni WebRTC, ni ICE, ni la
@@ -31,9 +41,21 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       StreamController<List<ParticipantSalle>>.broadcast();
   final StreamController<QualiteLien> _qualite =
       StreamController<QualiteLien>.broadcast();
+  final StreamController<ContenuPresente> _contenus =
+      StreamController<ContenuPresente>.broadcast();
 
   EtatSalle _etat = EtatSalle.absent;
   bool _audioSeul = false;
+
+  /// Le dernier contenu presente, cote emetteur comme cote recepteur.
+  ///
+  /// **C'est la totalite de l'etat pedagogique qui survit a une coupure.** Il
+  /// vit ici et non dans l'etat d'un ecran parce que ce provider vit aussi
+  /// longtemps que l'application, la ou un `State` meurt a chaque demontage :
+  /// une rotation d'appareil suffirait a perdre la page ouverte devant la
+  /// classe. Il n'est efface que par une sortie volontaire, jamais par une
+  /// deconnexion.
+  ContenuPresente? _dernierContenu;
 
   /// La camera etait-elle ouverte avant que le reseau ne la fasse ceder ?
   ///
@@ -54,6 +76,20 @@ class LiveKitSessionProvider implements VideoSessionProvider {
 
   @override
   Stream<QualiteLien> get qualite => _qualite.stream;
+
+  @override
+  Stream<ContenuPresente> get contenusPresentes async* {
+    // Le dernier contenu connu d'abord, le flux ensuite : un abonne qui arrive
+    // apres le tour de page -- ecran remonte, onglet reveille -- doit retrouver
+    // la page ouverte, et pas une salle vide. Un `StreamController.broadcast`
+    // ne rejoue rien, c'est donc ici que cela se fait, une fois, plutot que
+    // dans chaque ecran.
+    final ContenuPresente? dernier = _dernierContenu;
+    if (dernier != null) {
+      yield dernier;
+    }
+    yield* _contenus.stream;
+  }
 
   void _poser(EtatSalle etat) {
     if (_etat == etat) {
@@ -141,8 +177,16 @@ class LiveKitSessionProvider implements VideoSessionProvider {
         _poser(EtatSalle.reconnexion);
       })
       ..on<lk.RoomReconnectedEvent>((_) {
-        _poser(EtatSalle.connecte);
+        // `retabli` et non `connecte` : le protocole exige que le retour d'une
+        // coupure se distingue d'une premiere connexion, faute de quoi l'ecran
+        // ne peut ni le dire ni rien en deduire.
+        _poser(EtatSalle.retabli);
         _publierParticipants();
+        // **La reconnexion sans perte de l'etat pedagogique.** Le serveur n'a
+        // garde aucun paquet de donnees : si l'on presentait, il faut le
+        // republier, sinon les eleves qui se reconnectent restent sur une salle
+        // sans page. Un recepteur, lui, garde simplement ce qu'il avait.
+        unawaited(_republierContenu());
       })
       ..on<lk.RoomDisconnectedEvent>((_) {
         _poser(EtatSalle.absent);
@@ -158,6 +202,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       ..on<lk.TrackMutedEvent>((_) => _publierParticipants())
       ..on<lk.TrackUnmutedEvent>((_) => _publierParticipants())
       ..on<lk.ActiveSpeakersChangedEvent>((_) => _publierParticipants())
+      ..on<lk.DataReceivedEvent>(_recevoirDonnees)
       ..on<lk.ParticipantConnectionQualityUpdatedEvent>((
         lk.ParticipantConnectionQualityUpdatedEvent e,
       ) {
@@ -166,10 +211,116 @@ class LiveKitSessionProvider implements VideoSessionProvider {
           if (!_qualite.isClosed) {
             _qualite.add(lien);
           }
+          _direLeLien(lien);
           unawaited(_degrader(lien));
         }
         _publierParticipants();
       });
+  }
+
+  /// Traduit la qualite du lien en etat de salle, quand elle change d'etage.
+  ///
+  /// La qualite voyage deja par son propre flux ; cet etat-la existe pour une
+  /// autre raison : le protocole impose cinq etats de salle, dont « instable »,
+  /// et un ecran qui devrait croiser lui-meme un etat et une qualite finirait
+  /// par les afficher en contradiction.
+  void _direLeLien(QualiteLien lien) {
+    final bool mauvais =
+        lien == QualiteLien.mediocre || lien == QualiteLien.perdue;
+    if (mauvais) {
+      // Jamais depuis `reconnexion` ni `echec` : ces deux etats en disent plus,
+      // et les ecraser par un avertissement serait une regression d'information.
+      if (_etat == EtatSalle.connecte || _etat == EtatSalle.retabli) {
+        _poser(EtatSalle.instable);
+      }
+      return;
+    }
+    if (_etat == EtatSalle.instable) {
+      _poser(EtatSalle.connecte);
+    }
+  }
+
+  /// Lit un paquet du canal de donnees.
+  ///
+  /// **Un paquet illisible ne casse rien.** Il vient du reseau, donc d'une
+  /// version d'application qu'on ne controle pas : le rattraper ici evite qu'un
+  /// client plus recent ne fasse tomber le canal d'un client plus ancien pour
+  /// tout le reste de la seance.
+  void _recevoirDonnees(lk.DataReceivedEvent evenement) {
+    if (evenement.topic != sujetContenuPresente) {
+      return;
+    }
+    try {
+      final Object? decode = jsonDecode(utf8.decode(evenement.data));
+      if (decode is! Map<String, dynamic>) {
+        return;
+      }
+      final ContenuPresente contenu = ContenuPresente.depuisJson(decode);
+      // Un canal non fiable peut livrer un paquet apres un plus recent : sans
+      // ce test, la classe reculerait d'une page sans que personne n'ait rien
+      // demande.
+      if (_dernierContenu case final ContenuPresente connu
+          when contenu.emisLe.isBefore(connu.emisLe)) {
+        return;
+      }
+      _dernierContenu = contenu;
+      if (!_contenus.isClosed) {
+        _contenus.add(contenu);
+      }
+    } catch (e) {
+      debugPrint('contenu presente illisible : $e');
+    }
+  }
+
+  @override
+  Future<void> presenterContenu(ContenuPresente contenu) async {
+    final AccesSalle? acces = _acces;
+    if (acces == null || !acces.capacites.peutPublierDonnees) {
+      // Refus silencieux : un eleve ne presente pas. Lever ici obligerait
+      // chaque appelant a rattraper une exception qui ne dit rien de plus que
+      // ce que ses capacites disaient deja.
+      return;
+    }
+    _dernierContenu = contenu;
+    // Le presentateur lit son propre contenu par le meme flux que la classe :
+    // un seul chemin de rendu, donc aucune divergence entre ce qu'il croit
+    // montrer et ce qui est montre.
+    if (!_contenus.isClosed) {
+      _contenus.add(contenu);
+    }
+    await _envoyerContenu(contenu);
+  }
+
+  /// Republie le contenu courant apres une reconnexion, si l'on presente.
+  Future<void> _republierContenu() async {
+    final ContenuPresente? contenu = _dernierContenu;
+    if (contenu == null || !(_acces?.capacites.peutPublierDonnees ?? false)) {
+      return;
+    }
+    await _envoyerContenu(contenu);
+  }
+
+  /// Pose le paquet sur le canal de donnees.
+  ///
+  /// `reliable` parce qu'une page perdue est une classe qui ne suit plus : le
+  /// mode non fiable convient a un curseur qui bouge trente fois par seconde,
+  /// pas a un tour de page qui arrive une fois par minute.
+  Future<void> _envoyerContenu(ContenuPresente contenu) async {
+    final lk.LocalParticipant? local = _salle?.localParticipant;
+    if (local == null) {
+      return;
+    }
+    try {
+      await local.publishData(
+        utf8.encode(jsonEncode(contenu.versJson())),
+        reliable: true,
+        topic: sujetContenuPresente,
+      );
+    } catch (e) {
+      // Un paquet perdu n'interrompt pas un cours : l'enseignant tournera la
+      // page a nouveau, et la reconnexion republie de toute facon.
+      debugPrint('contenu presente non publie : $e');
+    }
   }
 
   /// La degradation controlee de la specification section 17 : **l'audio ne
@@ -388,6 +539,11 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     _acces = null;
     _degradee = false;
     _cameraAvantDegradation = false;
+    // **Ici, et seulement ici.** Quitter est un acte volontaire : la seance est
+    // finie pour soi. Une deconnexion, elle, laisse le contenu en place --
+    // c'est toute la difference entre « la seance est terminee » et « le
+    // reseau a lache ».
+    _dernierContenu = null;
     _poser(EtatSalle.absent);
   }
 
@@ -397,6 +553,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     await _etats.close();
     await _participants.close();
     await _qualite.close();
+    await _contenus.close();
   }
 }
 

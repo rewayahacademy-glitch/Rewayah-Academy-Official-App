@@ -97,6 +97,21 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
     final TextTheme textes = Theme.of(context).textTheme;
 
     return PageShell(
+      // Les DEUX gestes du depot vivent ici, dans l'ordre ou on les fait.
+      //
+      // Defaut mesure le 20 septembre 2026, et c'en etait un vrai : « Choisir la
+      // photo » etait pose en bas de la carte, donc **sous la ligne de
+      // flottaison d'un telephone**. A 390 x 844, son centre tombait a 971, hors
+      // du viewport. Un enseignant comme un tuteur voyait donc un « Envoyer ma
+      // piece » inerte, colle en bas, et devait deviner qu'il fallait faire
+      // defiler pour trouver le geste qui vient avant. Les trois tests rouges de
+      // `dossier_test.dart` mesuraient exactement cela, et accusaient le test.
+      //
+      // Le remede n'est pas de faire defiler le test : c'est de mettre le
+      // premier geste la ou il est toujours atteignable. Le corps defilant garde
+      // ce qui se lit -- le texte et le choix du type -- et la zone collee garde
+      // ce qui s'actionne. Rien n'est renomme, aucune etape n'est ajoutee : le
+      // parcours du tuteur est inchange.
       actions: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -114,6 +129,12 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
             ),
             Ecart.vMd,
           ],
+          ActionPrincipale(
+            libelle: _piece == null ? t.kyc.choisirFichier : t.kyc.fichierChoisi,
+            onPress: _type == null ? null : () => unawaited(_choisir()),
+            niveau: NiveauAction.secondaire,
+          ),
+          Ecart.vMd,
           ActionPrincipale(
             libelle: t.kyc.envoyer,
             enCours: _envoi,
@@ -162,14 +183,6 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                         : TypePiece.depuisSql(valeur);
                     _piece = null;
                   }),
-                ),
-                Ecart.vXxl,
-                ActionPrincipale(
-                  libelle: _piece == null
-                      ? t.kyc.choisirFichier
-                      : t.kyc.fichierChoisi,
-                  onPress: _type == null ? null : () => unawaited(_choisir()),
-                  niveau: NiveauAction.secondaire,
                 ),
               ],
             ),

@@ -23,7 +23,9 @@ void main() {
   group('Scenario 3 : un compte en portail d attente ne passe nulle part', () {
     // Toutes les routes protegees de l'application, y compris celles d'autres
     // roles : le test vaut aussi pour une URL tapee directement sur le Web.
-    const List<String> protegees = <String>[
+    // Non `const` : les cinq poses de l'enseignant se construisent par
+    // fonction, un identifiant faisant partie du chemin.
+    final List<String> protegees = <String>[
       Routes.eleve,
       Routes.eleveCoran,
       Routes.eleveSuivi,
@@ -35,6 +37,13 @@ void main() {
       Routes.enseignantJournee,
       Routes.enseignantCreneaux,
       Routes.enseignantProfil,
+      // Les cinq ecrans hors barre du role Enseignant. Un dossier non valide
+      // ne doit pas davantage atteindre un cahier de transmission qu'une
+      // journee : le cahier porte des prenoms d'enfants.
+      Routes.enseignantBienvenue,
+      Routes.cahierPour('s1'),
+      Routes.groupePour('g1'),
+      Routes.revuePour('g1'),
       Routes.controleur,
       Routes.admin,
       Routes.adminPersonnesDossiers,
@@ -163,6 +172,65 @@ void main() {
           ),
           isNull,
           reason: 'le role ${role.valeurSql} doit atteindre ses reglages',
+        );
+      }
+    });
+  });
+
+  group('Les ecrans hors barre de l enseignant vivent sous son prefixe', () {
+    // Ces cinq ecrans ne sont pas des destinations : ce sont des poses, ouvertes
+    // depuis un ecran puis quittees. Ils n'en sont pas moins gouvernes par la
+    // garde de prefixe, et c'est la raison pour laquelle ils portent tous
+    // `/enseignant`. Ce groupe gele ce choix : un cahier pose a `/cahier`
+    // passerait ces tests a l'envers.
+    final List<String> poses = <String>[
+      Routes.enseignantBienvenue,
+      Routes.cahierPour('seance-1'),
+      Routes.groupePour('groupe-1'),
+      Routes.revuePour('groupe-1'),
+    ];
+
+    for (final String chemin in poses) {
+      test('un enseignant atteint $chemin', () {
+        expect(
+          deciderRedirection(
+            session: _session(role: AppRole.teacher),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: '$chemin doit etre sous le prefixe du role enseignant',
+        );
+      });
+
+      test('un tuteur qui demande $chemin repart chez lui', () {
+        expect(
+          deciderRedirection(
+            session: _session(role: AppRole.guardian),
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ),
+          Routes.tuteurAccueil,
+        );
+      });
+    }
+
+    test('la garde de prefixe est bien ce qui les autorise', () {
+      // Preuve directe : le meme ecran pose hors du prefixe serait refuse a
+      // l'enseignant lui-meme. C'est le piege que documente `routes.dart`.
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.teacher),
+          cheminDemande: '/cahier/seance-1',
+          maintenant: maintenant,
+        ),
+        Routes.enseignantJournee,
+      );
+      for (final String chemin in poses) {
+        expect(
+          chemin.startsWith(Routes.prefixePour(AppRole.teacher)),
+          isTrue,
+          reason: '$chemin sort du prefixe de l enseignant',
         );
       }
     });

@@ -27,11 +27,17 @@ void main() {
           Routes.tuteurReglages,
           Routes.tuteurSuivi,
         ],
+        // L'enseignant a TROIS destinations, pas quatre, et c'est un contrat
+        // du protocole du role Enseignant, pas une economie de place :
+        // « Compte » et « Profil » repondaient a la meme question, moi. Le
+        // quatrieme onglet est donc retire et `ENS-05` reprend les reglages
+        // personnels et la deconnexion (`TEACHER_PARALLEL_BASELINE.md` §3.1,
+        // ADR-027). Ne pas remettre `Routes.compte` ici : sur telephone, il
+        // serait le seul chemin de deconnexion et le doublon reviendrait.
         AppRole.teacher: <String>[
           Routes.enseignantJournee,
           Routes.enseignantCreneaux,
           Routes.enseignantProfil,
-          Routes.compte,
         ],
         // Le controleur et le comptable n ont pas de barre. L'admin non plus
         // depuis le lot IA-01 (19 septembre 2026) : ses huit domaines vivent

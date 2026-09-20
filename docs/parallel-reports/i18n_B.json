@@ -1,0 +1,27 @@
+{
+  "enseignant": {
+    "salle": {
+      "reference": "Présenté : page {page} sur {total} · {reference}",
+      "rien": "Rien n'est présenté",
+      "rienInvitation": "Ouvrez le Coran pour montrer une page à votre groupe.",
+      "attenteSalle": "Vous n'êtes pas encore dans la salle",
+      "attenteSalleDetail": "Les commandes de présentation s'ouvrent dès que le cours est connecté.",
+      "lienFaibleDetail": "le tour de page peut arriver en retard chez votre groupe",
+      "presentationConservee": "la page présentée est conservée, elle repartira au retour du lien",
+      "presentationSuspendue": "présentation suspendue",
+      "precedente": "Présenter la page précédente",
+      "suivante": "Présenter la page suivante",
+      "bibliotheque": "Choisir une sourate",
+      "presenterSourate": "Présenter le début de {sourate}",
+      "sourateDetail": "Sourate {numero} · {versets} versets",
+      "souratesIndisponibles": "La liste des sourates n'a pas pu être lue",
+      "souratesIndisponiblesDetail": "Ce que votre groupe voit n'a pas changé. Réessayez.",
+      "pageIndisponible": "Cette page n'a pas pu être lue",
+      "pageIndisponibleDetail": "Le texte n'est pas arrivé jusqu'ici. Votre groupe voit toujours la page présentée.",
+      "corpusAbsent": "Le texte du Coran n'est pas installé",
+      "corpusAbsentDetail": "Le corpus n'a pas été importé dans cet environnement. Il n'y a rien à présenter.",
+      "echecPresentation": "Ce verset n'a pas pu être situé dans le mushaf. Rien n'a été envoyé à votre groupe.",
+      "sansDroitPresentation": "Votre accès à cette séance ne permet pas de présenter un contenu."
+    }
+  }
+}

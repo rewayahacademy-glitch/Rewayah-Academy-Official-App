@@ -1,0 +1,58 @@
+-- 0028 — Fermer `maj_profil_enseignant` a `anon`
+--
+-- ECRITE APRES COUP, comme `0027` et pour la meme raison : appliquee sur
+-- `gggmtelinlpseweouyav` le 19 septembre 2026 (version `20260919235944`) par
+-- l'agent E, deposee ici par l'Agent Z a l'integration.
+--
+-- ============================================================
+-- LA LECON, ET ELLE CORRIGE CE QUE `0026` AFFIRMAIT
+-- ============================================================
+--
+-- `0026` a conclu que « `revoke ... from anon` ne retire RIEN ». C'etait vrai de
+-- ce qu'elle mesurait, et faux comme regle generale. La mesure complete, faite
+-- sur `pg_default_acl` le 20 septembre 2026, dit ceci :
+--
+--   type_objet = 'f', schema = 'public', pose_par = 'postgres'
+--   droits_par_defaut = {postgres=X/postgres, anon=X/postgres,
+--                        authenticated=X/postgres, service_role=X/postgres}
+--
+-- Une fonction creee dans `public` sur ce projet recoit donc EXECUTE par DEUX
+-- chemins independants :
+--
+--   1. le defaut de PostgreSQL, qui accorde EXECUTE a `PUBLIC` (grantee 0) ;
+--   2. un `alter default privileges ... grant execute on functions to anon,
+--      authenticated, service_role` pose par Supabase sur le schema `public`,
+--      qui donne a `anon` un droit NOMINAL.
+--
+-- `revoke ... from public` ferme (1) et laisse (2). `revoke ... from anon`
+-- ferme (2) et laisse (1). **Aucune des deux formules ne suffit seule, et les
+-- deux sont necessaires.** `0025` portait le revoke `anon` et `0026` le revoke
+-- `public` : le lot Enseignant est ferme parce que les deux ont ete ecrits, pas
+-- parce que l'un etait le bon. `0027` ne portait que `from public`, d'ou ce
+-- fichier.
+--
+-- Mesure apres `0027` seule, sur une fonction dont le `revoke all ... from
+-- public` etait pourtant correctement ecrit :
+--
+--   proacl    = {postgres=X/postgres,anon=X/postgres,
+--                authenticated=X/postgres,service_role=X/postgres}
+--   anon_peut = true
+--
+-- ============================================================
+-- LE SEUL CONTROLE QUI VAUT
+-- ============================================================
+--
+-- `has_function_privilege('anon', '<fonction>(<types>)', 'execute')`, apres
+-- chaque creation de fonction. Jamais la relecture du `revoke` ecrit dans le
+-- fichier : les deux fautes ci-dessus se lisent comme du code correct. Ni
+-- `get_advisors` ni une relecture attentive ne les voient — seule la mesure les
+-- voit.
+--
+-- Etat apres ce fichier, mesure : anon = false, authenticated = true,
+-- agent_ro = false, service_role = true.
+--
+-- Aucune donnee n'a ete exposee dans l'intervalle : la fonction leve
+-- `authentification requise` quand `auth.uid()` est nul, et un appelant `anon`
+-- n'a pas d'`auth.uid()`. C'etait une surface d'appel de trop, pas une fuite.
+
+revoke execute on function public.maj_profil_enseignant(text, text[], text) from anon;

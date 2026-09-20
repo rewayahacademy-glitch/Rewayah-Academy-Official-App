@@ -2,6 +2,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 
+/// A partir de quand la salle s'ouvre a l'enseignant.
+///
+/// Le meme seuil que la base (ADR-005 : `debut - 10 minutes`), pose ici pour
+/// **ne pas proposer** un geste dont on sait qu'il serait refuse. Ce n'est pas
+/// une barriere : c'est `autoriser_jeton_video()` qui refuse, et elle refuserait
+/// aussi bien si ce seuil etait faux.
+///
+/// L'enseignant l'obtient avant l'eleve, dont l'accueil n'offre « Rejoindre »
+/// qu'en direct : c'est lui qui ouvre la salle, verifie son micro et accueille.
+///
+/// **Elle vit a cote du pre-vol, et ce n'est pas un rangement arbitraire** : les
+/// deux repondent a la meme question, « ce geste peut-il aboutir maintenant ? ».
+/// L'un interroge le materiel, l'autre l'horloge, et un ecran qui offre d'entrer
+/// en salle a besoin des deux reponses. Remontee de `journee_page.dart` a
+/// l'integration du lot Enseignant (`CONTRACT_REQUEST_A.md` §1) : une constante
+/// que tout ecran offrant l'entree doit respecter n'a pas sa place dans le
+/// fichier de l'un d'eux.
+const Duration seuilOuvertureSalle = Duration(minutes: 10);
+
 /// Ce que le pre-vol a trouve.
 ///
 /// Le pre-vol existe pour une raison precise : **une salle qui echoue apres
@@ -104,7 +123,26 @@ final Provider<ServicePreVol> servicePreVolProvider = Provider<ServicePreVol>(
   (Ref ref) => const ServicePreVolLiveKit(),
 );
 
-/// Le resultat du pre-vol, recalcule a chaque ecoute.
+/// Le resultat du pre-vol. **Le seul chemin du produit vers l'inspection du
+/// materiel.**
+///
+/// Deux chemins existaient : celui-ci, que personne n'employait, et un appel
+/// imperatif a [servicePreVolProvider] depuis la salle. Le prochain ecran qui en
+/// aurait besoin -- la Journee, avant d'ouvrir une salle -- en aurait choisi un
+/// au hasard, et deux mesures du meme materiel auraient fini par ne pas dire la
+/// meme chose. Depuis le 20 septembre 2026, tout passe par ce provider.
+///
+/// **Il ne recalcule PAS a chaque ecoute**, contrairement a ce que disait ce
+/// commentaire : un `FutureProvider` garde sa valeur tant qu'il vit, et celui-ci
+/// vit aussi longtemps que l'application. C'est voulu -- enumerer les
+/// peripheriques coute un aller-retour a la plateforme -- et cela impose deux
+/// usages distincts :
+///
+/// - pour **savoir** ou l'on en est, on l'ecoute (`ref.watch`) ;
+/// - pour **mesurer a nouveau**, on le rafraichit
+///   (`ref.refresh(preVolProvider.future)`). C'est ce que fait la salle a chaque
+///   entree et a chaque « Reessayer » : un casque branche entre deux essais ne
+///   servirait a rien si l'on relisait le cache.
 final FutureProvider<ResultatPreVol> preVolProvider =
     FutureProvider<ResultatPreVol>(
       (Ref ref) => ref.watch(servicePreVolProvider).verifier(),

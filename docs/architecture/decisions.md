@@ -149,6 +149,12 @@ Effets à intégrer :
 
 ### Décisions complémentaires
 
+> ⚠ **Cette section est remplacée par ADR-028** (pivot du 19 septembre 2026). Le
+> groupe est désormais le mode par défaut et la clé est ouverte. Le modèle
+> `session_participants` plusieurs-à-plusieurs ci-dessus, lui, reste en vigueur :
+> c'est la décision qui a rendu le pivot gratuit. Ne pas appliquer le plafond de
+> deux participants décrit ci-dessous.
+
 **Le duo enseignant-élève reste le mode par défaut.** Le multi-participants existe dans le schéma mais reste fermé tant qu'un administrateur ne l'ouvre pas.
 
 Clé de configuration : `allow_multi_participant_sessions`, **désactivée par défaut**. Point d'application obligatoire : **en base**, par un trigger qui plafonne à 2 participants tant que la clé est fausse. Pas dans l'interface. Une règle appliquée seulement à l'écran n'est pas une règle.
@@ -1322,6 +1328,298 @@ central rend la main immédiatement pour toute session humaine.
 
 ---
 
+## ADR-026 - Le contenu présenté voyage par le canal de données LiveKit, jamais par une table
+
+**Décision prise le 20 septembre 2026**, au gel du lot Enseignant. Elle ferme la
+question `e` laissée ouverte par `docs/architecture/etape-5-salle-coran-presence.md`
+section 10 : « Canal de diffusion de l'état partagé de séance (LiveKit data
+channel, Supabase Realtime, autre) ».
+
+La spécification d'étape 5 avait raison de ne pas la trancher — elle l'appelait
+« un arbitrage technique de latence et de coût, pas une question de
+conception ». Elle devient tranchable maintenant, parce que le lot Enseignant a
+besoin du bouton « Pousser la page suivante », qui est un bouton de premier
+niveau et non une action cachée dans un menu.
+
+### Ce qui est décidé
+
+Le **pointeur pédagogique** — page du mushaf, sourate, verset — voyage par le
+**canal de données LiveKit**, publié par l'enseignant aux participants
+connectés. Ni une table, ni Supabase Realtime.
+
+### Trois raisons, toutes vérifiables dans le dépôt
+
+1. **Le jeton porte déjà la capacité, et elle est déjà réservée à
+   l'enseignant.** `can_publish_data` est une colonne de `session_video_route`
+   (`0010_video_jeton_presence.sql` ligne 119), écrite à l'émission du jeton
+   (ligne 372) et lue côté Flutter comme `CapacitesSalle.peutPublierDonnees`
+   (`lib/core/video/video_session_provider.dart` lignes 34, 43, 57).
+   `supabase/tests/scenarios_n2.sql` mesure déjà les deux sens : l'enseignant
+   l'a (ligne 279), l'élève ne l'a pas (ligne 299). **Le contrôle d'accès du
+   canal existe donc, il est en base, et il n'est pas à écrire.** C'est
+   exactement la règle d'ADR-005 : chaque règle de la salle est appliquée par le
+   jeton ou par le serveur, jamais par l'écran.
+
+2. **Aucune migration n'est nécessaire.** Une table d'état partagé de séance
+   demanderait une table, sa RLS, ses policies par rôle, sa purge, et un
+   mécanisme de diffusion par-dessus. Le canal de données n'en demande aucun :
+   il est éphémère par nature, ce que l'état partagé de séance est aussi
+   (section 4.2 de l'étape 5 : « une ligne par séance en cours, éphémère »).
+
+3. **Le produit n'emploie aucun Realtime.** Vérifié le 20 septembre 2026 :
+   `grep -E 'realtime|RealtimeChannel'` sur `lib/` rend **zéro**. Choisir
+   Supabase Realtime ici, ce serait introduire un second mécanisme de temps réel
+   dans une application qui en a déjà un, ouvert et authentifié, pour la durée
+   exacte de la séance. Deux mécanismes de temps réel finissent par ne plus
+   dire la même chose.
+
+### Ce qui voyage est un pointeur, et jamais du contenu
+
+Le canal transporte **une position dans le corpus**, pas le corpus. Chaque
+client rend le Coran avec son propre lecteur, à partir des versets qu'il lit
+lui-même en base (ADR-024 : le corpus est importé, jamais appelé par API).
+
+Cette formulation n'est pas une élégance : c'est ce qui **rend
+mécaniquement impossible** de transformer le Coran en PDF, en image ou en vidéo
+poussée. Un canal qui transporterait un rendu serait la première marche vers un
+partage d'écran, et l'invariant du produit — « le Coran reste le Coran »
+(invariant 3 du gel Enseignant, Bible section 23, `0007_coran_structure_position_presence.sql`
+invariant 1) — n'aurait plus qu'un garde-fou de relecture. Ici il a un garde-fou
+de forme : il n'y a pas de place pour un fichier dans un pointeur.
+
+### Conséquence utile : l'état présenté survit à une reconnexion
+
+L'enseignant republie le pointeur courant à l'arrivée de chaque participant. Un
+élève dont l'application se reconnecte reçoit donc la page présentée sans que
+personne ne la tourne à nouveau, et sans qu'un état ait eu à être stocké nulle
+part. C'est la propriété qu'une table aurait donnée, obtenue sans la table.
+
+### Et surtout : l'invariant J2 est préservé, par construction
+
+**La position de lecture d'un élève lui appartient.** Une page tournée par
+l'enseignant pour tout le groupe **ne l'écrase jamais**. Ce sont deux états
+distincts :
+
+| État | Où il vit | Qui l'écrit |
+| :--- | :--- | :--- |
+| État partagé de séance (page présentée) | le canal de données LiveKit, éphémère | l'enseignant, pour la durée de la séance |
+| État personnel de l'élève (position de lecture) | `student_reading_position` | **l'élève seul** |
+
+C'est précisément pourquoi `student_reading_position` **n'est pas** le
+transport. `0007_coran_structure_position_presence.sql` l'écrit dans son
+en-tête, invariant 2 : « `student_reading_position` n'appartient qu'à l'élève :
+aucune policy n'autorise un enseignant à y écrire. » L'invariant **J2** de
+l'étape 5 (« Une action partagée de l'enseignant n'écrase jamais silencieusement
+`student_reading_position` ») dit la même chose côté produit.
+
+Prendre `student_reading_position` comme canal aurait donc demandé d'ouvrir une
+policy d'écriture à l'enseignant, c'est-à-dire de **casser J2 pour implémenter
+un bouton**. Le défaut aurait été silencieux et durable : un élève qui rouvre
+le Coran après le cours retrouverait la page de l'enseignant à la place de la
+sienne, sans aucune erreur, et personne ne saurait dire quand son marque-page a
+été perdu. La fiche `ELV-04` du catalogue nomme déjà la variante de ce défaut
+commise par l'écran lui-même : ouvrir le Coran n'écrase pas le marque-page par
+la page d'ouverture.
+
+### Ce qui reste ouvert
+
+- Le **format exact du message** de pointeur (noms de champs, version) n'est pas
+  figé ici : il appartient à la couche vidéo partagée, et il se gèle au moment
+  où le premier écran le publie.
+- Le **mode suivi enseignant** (étape 5, section 4.4) — un élève qui choisit de
+  suivre l'enseignant plutôt que d'explorer — reste ce qu'il était : une
+  préférence d'affichage locale. Cet ADR ne la modélise pas et ne la préempte
+  pas.
+- La **granularité mot-à-mot** reste fermée (question `f` de l'étape 5). Le
+  pointeur va au verset, pas au mot.
+
+### Comment défaire
+
+Le canal n'ayant ni table ni migration, il n'y a rien à retirer : on cesse de
+publier. Le jour où un état partagé devrait **survivre à la fin de la séance**
+— ce qu'aucun besoin actuel ne demande — c'est le signe qu'il n'est plus un état
+de séance, et il faudrait alors une table, avec sa RLS, et **jamais**
+`student_reading_position`.
+
+---
+
+## ADR-027 - Le profil enseignant se construit sans la paie, et reprend l'accès aux paramètres personnels
+
+**Décision prise le 20 septembre 2026**, au gel du lot Enseignant. Elle lève un
+report inscrit dans `docs/design/08-catalogue-ecrans.md`.
+
+### Le report, et la raison qui le tenait
+
+Le registre des écrans marquait `ENS-05` **Profil enseignant** « reporté avec
+l'ensemble du module finance (ADR-003) ». Le motif était juste : le profil devait
+porter la **paie détaillée**, et la finance est entièrement reportée en V1
+(ADR-003, et ADR-007 depuis que Flutterwave est écarté). Un écran qui attend une
+brique reportée est reporté avec elle.
+
+### Ce qui est décidé
+
+La **paie détaillée sort du périmètre du profil enseignant**. Le profil se
+construit sans elle, et le report est donc levé — non pas parce que la finance
+est arrivée, mais parce que le profil n'en a plus besoin.
+
+Ce que le profil porte : identité professionnelle autorisée, statut du compte,
+contrat en **lecture seule** (`contract_acceptances`, sorte `teacher_nda`,
+version et date), langues et pays déclarés, préférences personnelles autorisées,
+et l'accès aux surfaces réellement personnelles.
+
+Ce qu'il ne porte pas : disponibilités opérationnelles (`ENS-06`), planning
+(`ENS-02`), rapports (`ENS-04`), réglages LiveKit globaux, politiques Académie,
+**et aucune donnée de paie** — ni affichée, ni promise, ni grisée. `ENS-02`
+posait déjà la règle en MVP-0 : « pas de bloc solde ni de paie »
+(`docs/produit/parcours-utilisateurs.md` section 3).
+
+### La deuxième moitié de la décision, et c'est elle qui rend l'écran urgent
+
+**La barre de l'enseignant passe de quatre destinations à trois, et « Compte »
+disparaît.**
+
+`destinationsPour(role: AppRole.teacher)` en rend quatre aujourd'hui
+(`lib/core/widgets/nav_shell.dart`) : Journée, Créneaux, Profil, **Compte**. La
+raison de retirer la quatrième n'est pas cosmétique : « Compte » et « Profil »
+sont deux destinations pour **la même question**, *moi*. Un produit qui pose deux
+portes sur la même pièce finit par mettre la moitié des meubles derrière
+chacune.
+
+`ENS-05` reprend donc l'accès aux surfaces personnelles, **déconnexion
+comprise**, et `secondairesPour(role: AppRole.teacher)` reste vide.
+
+**Ce qui aurait été cassé sans cette moitié-là.** C'est
+`lib/features/compte/compte_page.dart` qui porte aujourd'hui la déconnexion
+(lignes 104-108, `serviceAuthProvider.deconnexion()`). Retirer « Compte » des
+destinations **sans** donner la déconnexion à `ENS-05` laisserait un enseignant
+sur téléphone **sans aucun chemin pour se déconnecter** : la barre basse
+Material 3 n'accepte aucune entrée hors destination, et l'entrée de pied de
+coquille est vide pour ce rôle. Le report levé et la barre à trois destinations
+sont donc **une seule décision**, pas deux ; les séparer produit une porte
+murée.
+
+### Ce que cette décision ne tranche pas
+
+- **Le sort de `lib/features/compte/` pour les autres rôles.** « Compte » sort
+  des destinations de **l'enseignant** seulement. Les routes `/compte`,
+  `/compte/profil`, `/compte/reglages` et `/compte/profils` existent
+  (`lib/core/router/routes.dart` lignes 275-290) et servent d'autres rôles. Rien
+  n'est supprimé ici.
+- **La paie de l'enseignant en V1.** Elle reste dans ADR-003 et ADR-007, et le
+  jour où elle arrive, elle n'a aucune raison d'atterrir dans le profil : un
+  solde et un contrat ne se lisent pas au même moment, ni par la même personne.
+- **La décision D01 de `docs/parallel-reports/01-decisions.md`** (« périmètre de
+  `ENS-05` : profil MVP-0 ou payout V1 ») y est encore marquée `BLOCKED`. Cet
+  ADR est **une décision d'agent, à confirmer par l'opérateur** ; il l'écrit
+  plutôt que de laisser un prompt d'agent tenir lieu de décision opérateur.
+
+### Comment défaire
+
+Remettre `Routes.compte` dans `destinationsPour(role: AppRole.teacher)` et
+retirer les surfaces personnelles de `ENS-05`. Une demi-heure de travail, et le
+test `test/router/navigation_test.dart` (qui code en dur quatre destinations
+enseignant, lignes 30-35) redevient vert sans modification — c'est d'ailleurs le
+test qui mesure cette décision.
+
+---
+
+## ADR-028 - Le cours en groupe est la norme, et ADR-004 est remplacé sur ce point
+
+**Décision prise le 19 septembre 2026**, appliquée par le lot G-01 (`b3be532`),
+**écrite le 20 septembre 2026** au gel du lot Enseignant. Cet ADR arrive après le
+code, et c'est précisément pourquoi il faut l'écrire : le pivot le plus
+structurant du produit a été mis en œuvre sans décision consignée, et il
+**contredit une décision qui, elle, est écrite**.
+
+### Ce qui est décidé
+
+Le cours de Rewayah est un **cours de groupe** : un enseignant, une visio
+commune, **au plus 5 enfants ou 6 adultes**. Le duo enseignant-élève n'est plus
+le mode par défaut ; c'est le cas particulier d'un groupe à un seul membre.
+
+L'unité de planification devient le **groupe** (`public.groupes`), pas
+l'affectation d'un élève à un enseignant. Une séance est la réunion hebdomadaire
+d'un groupe.
+
+### Ce que cela remplace dans ADR-004
+
+ADR-004 « Modèle de session : groupes jusqu'à 6 » avait deux moitiés. La
+première tient toujours, et c'est elle qui rend ce pivot possible à coût nul :
+le modèle `session_participants` plusieurs-à-plusieurs dès l'étape 1. Elle est
+**confirmée**, et elle a exactement produit l'effet annoncé — « coût d'une
+migration ultérieure : élevé » — que nous n'avons pas eu à payer.
+
+La seconde moitié est **remplacée** :
+
+| ADR-004 disait | ADR-028 décide |
+| :--- | :--- |
+| « Le duo enseignant-élève reste le mode par défaut. » | Le groupe est le mode par défaut. |
+| « Le multi-participants reste fermé tant qu'un administrateur ne l'ouvre pas. » | Il est ouvert, et le rester est la configuration normale. |
+| `allow_multi_participant_sessions` **désactivée par défaut** | Elle vaut `true`. Mesure du 20 septembre 2026 sur `public.app_config` : `allow_multi_participant_sessions = true`, `max_participants_per_session = 7`, tous deux posés le 19 septembre à 11h50. |
+
+`max_participants_per_session = 7`, et non 6 : le plafond compte l'enseignant.
+Six adultes plus leur enseignant font sept personnes dans la salle.
+
+### Un écart mesuré que cette décision ne comble pas
+
+Le garde-fou en base est `guard_session_participant_cap`, déclenché par
+`session_participants_cap`. Sa lecture, le 20 septembre 2026, donne ceci :
+`max_participants_per_session` **n'est consulté que dans la branche
+`if not allow_multi`**. La clé étant désormais vraie, le trigger **n'applique
+plus aucun plafond** sur le nombre de participants d'une séance.
+
+Le seuil du groupe (`groupes.seuil_max`, vérifié par `guard_groupe_membre_cap`)
+borne **l'adhésion à un groupe**, pas la **participation à une séance**. Insérer
+directement une septième ligne dans `session_participants` passe donc.
+
+Ce n'est pas un défaut du rôle Enseignant, qui ne crée aucun participant : il
+lit. C'est le garde-fou du pivot, et il revient au **lot G-02**, qui a déjà pour
+mission l'audit RLS complet avant de retirer `teacher_student_assignments`. La
+correction attendue est que le plafond s'applique **aussi** quand le
+multi-participants est ouvert, et qu'il se lise sur le seuil du groupe de la
+séance plutôt que sur une clé globale — un groupe d'enfants et un groupe
+d'adultes n'ont pas le même seuil, et une clé unique ne peut pas dire les deux.
+
+### Une contradiction à trancher par l'opérateur, pas ici
+
+ADR-004 décide que les co-participants s'affichent « prénom seul, suivi de
+l'identifiant immuable », par la vue dédiée `session_peers_v`. Le code de la
+salle, lui, **refuse la liste des participants à un élève**
+(`voitLesParticipants`, `lib/features/salle/vue_salle.dart`).
+
+Les deux ne peuvent pas être vrais. Le socle du 20 septembre a **verrouillé
+l'état actuel** — l'élève ne voit pas la liste — et corrigé le motif invoqué,
+qui citait à tort le plafond de deux participants d'ADR-004. Le droit lui-même
+n'a pas été touché, délibérément : donner à un mineur la liste nominative de ses
+camarades est une décision de protection des mineurs, pas un choix d'interface.
+`session_peers_v` existe et n'a aucun appelant côté élève.
+
+### Ce que le rôle Enseignant en a tiré
+
+- `sessions.groupe_id` (migration `0025`), **nullable** : une séance sans groupe
+  est un cours individuel d'avant le pivot, jamais une donnée incomplète.
+- `mes_seances_enseignant_v` rend **une ligne par séance**. `mes_seances_v`
+  joint `session_participants` et rend une ligne par élève : juste pour un
+  tuteur ou un élève qui ne voient que la leur, faux pour un enseignant de
+  groupe, dont le même cours reviendrait cinq fois. La vue partagée n'a pas été
+  modifiée, une vue propre à l'enseignant a été ajoutée à côté.
+- `mon_groupe_detail(uuid)` ne rend **jamais** de nom de famille, contrairement
+  à `groupe_detail(uuid)` qui est réservé à l'administration (ADR-008).
+- La scène de la salle est devenue une galerie : la rangée non défilante de
+  vignettes demandait 624 points pour six participants contre 390 disponibles
+  sur téléphone (ADR-026, `SOCLE_SALLE_REPORT.md` §3.5).
+
+### Comment défaire
+
+Poser `allow_multi_participant_sessions = false` dans `app_config`. Le trigger
+replafonne aussitôt à `max_participants_per_session`, **en base et non à
+l'écran** — c'est la propriété d'ADR-004 qu'il faut conserver quoi qu'il arrive.
+Les groupes existants survivraient, mais leurs séances ne pourraient plus
+accueillir que deux personnes : le pivot se défait par la configuration, pas par
+une migration.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |
@@ -1375,5 +1673,11 @@ Ce tableau est la seule liste à consulter. Il remplace les listes qui figuraien
 
 | 29 | Quand faut-il basculer une part réelle du trafic sur le serveur auto-hébergé, et sur quel hébergeur | Lot N2, à trancher sur des chiffres de charge | **Ouverte, et volontairement non préemptée** (ADR-023, 12 septembre 2026). L'aiguillage est construit et testé, les deux trousseaux de secrets sont prévus, mais aucun serveur auto-hébergé n'existe encore. La bascule est une décision d'exploitation qui demande trois chiffres qu'on n'a pas : le nombre d'élèves réels, la consommation mensuelle en minutes-participant, et le coût de la bande passante sortante chez l'hébergeur retenu. **Ce qu'il ne faut surtout pas oublier le jour venu** : TURN en TCP 443. LiveKit Cloud le fournit, un VPS nu non — et c'est la première cause d'échec des migrations self-host, parce qu'elle ne se voit qu'en production, chez les élèves derrière un réseau restrictif, jamais sur le poste de développement |
 | 30 | Le heartbeat applicatif de la section 28 de la spécification d'intégration n'est pas construit | Lot N4 | **Ouverte, et sans dette tant que N4 n'est pas fait.** N2 pose les deux sources serveur (émission de jeton, webhooks) qui suffisent à dériver treize des quatorze états. Le heartbeat sert un cas qu'elles ne couvrent pas : une application tuée par le système sans que LiveKit n'émette `participant_left`, laissant un participant « présent » jusqu'à l'expiration côté serveur. Le seuil `presence.fenetre_reconnexion_secondes` le masque aujourd'hui. À mesurer contre le comportement réel avant d'ajouter un mécanisme de plus |
+
+| 31 | Par quel canal l'état partagé de séance (page présentée, verset ciblé) est-il diffusé | Lot Enseignant, `ENS-03` | **Tranchée par ADR-026, 20 septembre 2026.** Le canal de données LiveKit, jamais une table ni Supabase Realtime. Ferme la question `e` de `etape-5-salle-coran-presence.md` section 10. Reste ouvert dans l'ADR : le format exact du message de pointeur, qui se gèle au premier écran qui le publie |
+| 32 | Le profil enseignant (`ENS-05`) doit-il porter la paie détaillée, et donc attendre le module finance | Lot Enseignant, `ENS-05` | **Tranchée par ADR-027, 20 septembre 2026, à confirmer par l'opérateur.** Non : la paie sort du périmètre, le report d'ADR-003 est levé, et la barre de l'enseignant passe à trois destinations — `ENS-05` reprend l'accès aux paramètres personnels, déconnexion comprise. ⚠ La décision **D01** de `docs/parallel-reports/01-decisions.md` reste marquée `BLOCKED` : c'est cette ligne qui la remplace, et elle attend une confirmation opérateur |
+| 33 | Les plafonds de groupe d'ADR-004 (« jusqu'à 6 », plafond effectif à 2 imposé par trigger tant que `allow_multi_participant_sessions` est faux) ne s'accordent pas avec le pivot du 19 septembre 2026 (cinq enfants, six adultes, une seule visio commune, migration `0017`) | Lot Enseignant, `ENS-03`, `ENS-07` | **Ouverte, et c'est une contradiction active entre deux documents de rang supérieur**, relevée le 20 septembre 2026 en écrivant les fiches `ENS-07` et `ENS-08`. Le pivot ne vit aujourd'hui que dans la migration `0017`, dans la fiche `ADM-09` et dans `TEACHER_PARALLEL_BASELINE.md` §2.1 : il n'a **aucun ADR**. À écrire (ADR-028) avec : les plafonds réels, le sort de `allow_multi_participant_sessions` et du trigger à 2 participants, la conséquence sur la salle (galerie de flux, alors que `etape-5-salle-coran-presence.md` dit encore que ses écrans valent pour le 1-à-1) et sur `mes_seances_v` (une ligne par élève). La ligne 20 de ce même tableau (« Faut-il modéliser une entité groupe ») est de fait dépassée par le pivot et se referme avec ce futur ADR |
+| 34 | Les quatre anomalies que `ENS-08` doit afficher (gate à venir, élève hors corridor, proposition de transfert, proposition de réorientation) n'existent sous aucun de ces noms en base, et aucune RPC d'anomalies bornée à l'enseignant n'existe | Lot Enseignant, `ENS-08` | **Ouverte**, relevée et mesurée le 20 septembre 2026. Ce que `0020`-`0024` savent produire : `anomalies_qualite()` avec trois types (`rapport_manquant`, `blocage_sans_suivi`, `evaluation_en_retard`) et `progression_exceptions.type` à deux valeurs (`blocage`, `derogation`) — et `anomalies_qualite()` est réservée à `app_role() = 'admin'`. Deux issues, à trancher : écrire une RPC d'anomalies bornée à l'enseignant, ou remplacer les quatre noms par ceux que la base porte déjà. **Non bloquante dans l'immédiat**, parce que `0020` à `0024` ne sont pas appliquées à la base (ligne 35) |
+| 35 | Les migrations `0020` à `0024` (programme, diagnostics, progression, évaluations, qualité) sont committées sur `main` et **ne sont pas appliquées à la base** | Domaine Pédagogie, `ADM-10` à `ADM-14`, `ENS-08` | **Ouverte, mesurée le 20 septembre 2026** : la base s'arrête à `0019_groupes_durcissement`. Conséquence assumée et écrite dans la fiche `ENS-08` : l'écran est complet, ses blocs restent vides jusqu'au push, et **il ne pose aucune colonne de tirets en attendant**. Même règle que `TUT-06` le 13 septembre 2026. C'est une action d'exploitation, pas une décision de conception |
 
 Toute nouvelle décision prise en cours de développement s'ajoute à ce même tableau, jamais dans un nouveau document séparé.
