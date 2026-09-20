@@ -1,0 +1,76 @@
+{
+  "_commentaire": "Agent B, sous-arbre tc.bibliotheque.*. Chaque cle correspond a une constante de lib/features/tc_catalogue/libelles_tc_b.dart annotee // TC-I18N. Agent Z fusionne ce fichier dans assets/i18n/fr.i18n.json, regenere slang, remplace les constantes et supprime la facade. Aucun agent Teaching Core n'ecrit dans fr.i18n.json (decision D-03).",
+  "tc": {
+    "bibliotheque": {
+      "titre": "Bibliothèque",
+      "rechercheIndication": "Titre, niveau, sourate ou page",
+      "rechercheLibelle": "Rechercher un support",
+      "effacerRecherche": "Tout afficher",
+      "filtre": {
+        "type": "Type",
+        "disponibilite": "Disponibilité"
+      },
+      "sections": {
+        "continuer": "Continuer",
+        "pourCeGroupe": "Pour ce groupe",
+        "recents": "Récents",
+        "tousLesSupports": "Tous les supports",
+        "resultats": "Résultats"
+      },
+      "vide": {
+        "message": "Aucun support publié pour le moment",
+        "invitation": "Vos enseignants déposeront ici les supports de vos cours."
+      },
+      "aucunResultat": {
+        "message": "Aucun support ne correspond",
+        "invitation": "Essayez un autre mot, ou relâchez les filtres."
+      },
+      "indisponible": {
+        "message": "La bibliothèque est momentanément indisponible",
+        "action": "Réessayer"
+      },
+      "introuvable": {
+        "message": "Ce support ne vous est pas ouvert",
+        "invitation": "Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir."
+      },
+      "offline": {
+        "aTelecharger": "À télécharger",
+        "enCours": "Téléchargement",
+        "enCache": "En cache",
+        "telecharge": "Téléchargé",
+        "indisponible": "Hors ligne indisponible"
+      },
+      "type": {
+        "quran": "Coran",
+        "texteStructure": "Texte",
+        "pdf": "PDF",
+        "image": "Image",
+        "lecon": "Leçon"
+      },
+      "detail": {
+        "titre": "Support",
+        "capacites": "Ce que ce support permet",
+        "niveaux": "Niveaux",
+        "sansVersion": "Aucune version publiée : rien à ouvrir pour le moment.",
+        "apercuIndisponible": "L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.",
+        "renduCoran": "Le Coran s’ouvre dans le lecteur dédié."
+      },
+      "action": {
+        "telecharger": "Rendre disponible hors ligne",
+        "liberer": "Libérer la place",
+        "enregistrerCopie": "Enregistrer une copie"
+      },
+      "message": {
+        "copieEnregistree": "Copie enregistrée",
+        "copieImpossible": "Cette copie n’est pas disponible pour le moment",
+        "telechargementImpossible": "Ce support n’est pas encore disponible hors ligne",
+        "horsLigneNonTelecharge": "Disponible une fois téléchargé ou de retour en ligne",
+        "aucunTelechargement": "Aucun fichier à télécharger pour cette version."
+      },
+      "classe": {
+        "titre": "Choisir un support",
+        "sousTitre": "Le support choisi remplace celui affiché. Le cours continue."
+      }
+    }
+  }
+}
