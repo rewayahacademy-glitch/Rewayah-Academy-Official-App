@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_bibliotheque/donnees_catalogue.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_bibliotheque/port_catalogue.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
-import '../../core/tc_groupe/ports_externes/port_catalogue.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -88,7 +90,9 @@ class BlocAvantProchainCours extends StatelessWidget {
 ///
 /// **Une seule Bibliotheque** (decision `D-20`) : ce bloc n'en implemente
 /// aucune. Il lit `PortCatalogue`, produit par Agent B, et se contente de poser
-/// les couvertures a l'endroit prevu. Tant que le port est nul, il le dit.
+/// les couvertures a l'endroit prevu. Le port est toujours branche
+/// (`donneesCatalogueProvider` rend `CatalogueLocal`, jamais `null`) ;
+/// `_Couvertures` dit deja l'etat vide quand le groupe n'a aucune ressource.
 class BlocBibliotheque extends ConsumerWidget {
   /// Cree l'emplacement.
   const BlocBibliotheque({
@@ -105,23 +109,18 @@ class BlocBibliotheque extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final PortCatalogue? catalogue = ref.watch(portCatalogueProvider);
+    final PortCatalogue catalogue = ref.watch(portCatalogueProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         SectionHeader(
           titre: LibellesGroupe.bibliotheque,
-          libelleAction: catalogue == null
-              ? null
-              : LibellesGroupe.bibliothequeVoirTout,
+          libelleAction: LibellesGroupe.bibliothequeVoirTout,
           onAction: onVoirTout,
         ),
         Ecart.vMd,
-        if (catalogue == null)
-          const EmplacementNonBranche()
-        else
-          _Couvertures(catalogue: catalogue, groupeId: emplacement.groupeId),
+        _Couvertures(catalogue: catalogue, groupeId: emplacement.groupeId),
       ],
     );
   }
