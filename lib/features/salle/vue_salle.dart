@@ -29,19 +29,37 @@ enum RoleSalle {
   /// Le controleur qualite. Invisible, muet, et inscrit au journal (ADR-011).
   controleur,
 
+  /// L'administration en observation incognito (`admin_masked`, D-15).
+  ///
+  /// Invisible aux participants, jamais invisible a l'audit : la visite est
+  /// journalisee comme toutes les autres.
+  administrateurIncognito,
+
+  /// L'administration qui rejoint visiblement (`admin_visible`, D-15).
+  ///
+  /// Micro et camera permis, annonce faite sous un nom institutionnel clair
+  /// ("Administration Rewayah").
+  administrateurVisible,
+
   /// Un role que cette version de l'application ne connait pas.
   ///
   /// **Le repli est le plus ferme, pas le plus ouvert** : le jour ou la base
-  /// gagnera un cinquieme role, une application non mise a jour donnera une
+  /// gagnera un role de plus, une application non mise a jour donnera une
   /// salle en lecture seule plutot qu'un jeu de commandes devine.
   inconnu;
 
   /// Lit la valeur de `participant_role` rendue par le backend.
+  ///
+  /// `admin_masked` et `admin_visible` sont ajoutees par la migration `0031`
+  /// (Teaching Core, palier 3) : deux valeurs d'enum de plus que les quatre
+  /// d'origine, demandees par Agent G (`TC_CONTRACT_REQUEST_G.md` §1.4 point 6).
   static RoleSalle depuis(String? valeur) => switch (valeur) {
     'teacher' => RoleSalle.enseignant,
     'student' => RoleSalle.eleve,
     'guardian_observer' => RoleSalle.tuteurObservateur,
     'masked_controller' => RoleSalle.controleur,
+    'admin_masked' => RoleSalle.administrateurIncognito,
+    'admin_visible' => RoleSalle.administrateurVisible,
     _ => RoleSalle.inconnu,
   };
 }

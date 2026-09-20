@@ -80,6 +80,15 @@ class _FauxCoran implements ServiceCoran {
     positionsEcrites.add(position);
     return true;
   }
+
+  @override
+  Future<({int sourate, int verset})?> debutDeJuz(int juz) async => null;
+
+  @override
+  Future<List<VersetCoran>?> rechercher(
+    String requete, {
+    int limite = 50,
+  }) async => const <VersetCoran>[];
 }
 
 VersetCoran _verset({

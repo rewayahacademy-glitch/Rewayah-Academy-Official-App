@@ -43,6 +43,15 @@ class _FauxServiceCoran implements ServiceCoran {
     String profilId,
     PositionLecture position,
   ) async => true;
+
+  @override
+  Future<({int sourate, int verset})?> debutDeJuz(int juz) async => null;
+
+  @override
+  Future<List<VersetCoran>?> rechercher(
+    String requete, {
+    int limite = 50,
+  }) async => const <VersetCoran>[];
 }
 
 void main() {

@@ -237,6 +237,21 @@ class ParticipantSalle {
   final QualiteLien qualite;
 }
 
+/// Le suffixe qui marque un sujet comme ephemere (non fiable) a la reception.
+///
+/// **Arbitrage Agent Z, `TC_CONTRACT_REQUEST_F.md` §1.4 Q1.** LiveKit ne
+/// remonte pas `DataPacket_Kind` au recepteur (verifie sur `livekit_client
+/// 2.12.0` : `DataReceivedEvent` ne porte que `participant`, `data`, `topic`).
+/// La seule facon de reconstituer la fiabilite d'un paquet recu est donc de la
+/// porter dans le sujet lui-meme. Convention : tout sujet qui se termine par
+/// ce suffixe a ete publie en mode non fiable ; tout le reste, y compris
+/// [sujetContenuPresente], est traite comme fiable. Un protocole applicatif
+/// qui a besoin d'un canal ephemere nomme donc son sujet fiable `xxx` et son
+/// sujet ephemere `xxx-l` (c'est le choix deja fait par Agent F,
+/// `tc-pedagogique` / `tc-pedagogique-l`) : le socle n'a besoin de connaitre
+/// aucun nom de sujet particulier, seulement ce suffixe.
+const String suffixeSujetEphemere = '-l';
+
 /// Le sujet du canal de donnees qui porte le contenu presente.
 ///
 /// **Un sujet nomme, jamais le canal nu.** LiveKit laisse passer n'importe quel
@@ -325,6 +340,75 @@ class ContenuPresente {
   };
 }
 
+/// Un paquet de donnees applicatif recu de la salle.
+///
+/// Le socle ne le decode pas : il transporte des octets sous un sujet nomme.
+/// Ajoute a la demande d'Agent F (`TC_CONTRACT_REQUEST_F.md` §1.1) pour
+/// generaliser le canal de donnees que [presenterContenu] avait ouvert en
+/// premier : le protocole pedagogique a besoin de son propre sujet, d'un
+/// canal non fiable et de destinataires cibles, que [ContenuPresente] ne
+/// porte pas.
+@immutable
+class PaquetDonnees {
+  /// Cree un paquet.
+  const PaquetDonnees({
+    required this.sujet,
+    required this.charge,
+    required this.fiable,
+    this.emetteurIdentite,
+  });
+
+  /// Le sujet nomme du paquet. Chaine vide quand l'emetteur n'en a pose aucun.
+  final String sujet;
+
+  /// Les octets recus, tels quels.
+  final List<int> charge;
+
+  /// Vrai quand le paquet est arrive par le canal fiable.
+  ///
+  /// Derive du suffixe du sujet : voir [suffixeSujetEphemere].
+  final bool fiable;
+
+  /// L'identite du participant emetteur, telle que le jeton l'a inscrite.
+  /// `null` quand le paquet vient du serveur ou que le SDK ne la donne pas.
+  /// **Elle ne decide d'aucun droit** : la barriere est le jeton signe.
+  final String? emetteurIdentite;
+}
+
+/// Pourquoi une publication de donnees n'a pas eu lieu.
+enum MotifEchecPublication {
+  /// Le jeton signe n'accorde pas `can_publish_data` a l'appelant.
+  droitRefuse,
+
+  /// Aucune salle ouverte.
+  horsSalle,
+
+  /// Le transport a refuse le paquet.
+  transport,
+}
+
+/// L'echec d'une publication de donnees.
+///
+/// **Toujours levee, jamais avalee** : c'est la seule difference de contrat
+/// avec [VideoSessionProvider.presenterContenu], qui refuse en silence. Un
+/// appelant qui a besoin de savoir qu'un envoi a echoue (`PortRappelDiscret`,
+/// CONTRACTS section 12 : « un message n'apparait QUE si l'envoi echoue ») ne
+/// peut pas le savoir si la primitive se tait.
+class EchecPublicationDonnees implements Exception {
+  /// Cree l'echec.
+  const EchecPublicationDonnees(this.motif, [this.detail]);
+
+  /// Ce qui a empeche la publication.
+  final MotifEchecPublication motif;
+
+  /// Detail technique, pour le journal de developpement uniquement.
+  final String? detail;
+
+  @override
+  String toString() =>
+      'EchecPublicationDonnees($motif${detail == null ? '' : ', $detail'})';
+}
+
 /// Le moteur temps reel de la salle, vu par le produit.
 ///
 /// Cette abstraction existe pour une seule raison, et la specification
@@ -410,4 +494,41 @@ abstract interface class VideoSessionProvider {
 
   /// Libere les ressources.
   Future<void> liberer();
+
+  /// Pose un paquet de donnees applicatif sur le canal de la salle.
+  ///
+  /// [fiable] a `true` : ordonne et garanti. A `false` : perte acceptee, pour
+  /// ce qui doit etre FRAIS plutot que complet -- un pointeur, un apercu de
+  /// trait. Exiger une garantie de livraison pour trente paquets par seconde
+  /// encombrerait le canal qui porte les tours de page.
+  ///
+  /// [destinataires] vide vaut diffusion a toute la salle ; sinon le paquet
+  /// n'est remis qu'a ces identites (rappel discret).
+  ///
+  /// **Leve [EchecPublicationDonnees]. N'avale JAMAIS.**
+  Future<void> publierDonnees({
+    required String sujet,
+    required List<int> charge,
+    required bool fiable,
+    List<String> destinataires = const <String>[],
+  });
+
+  /// Les paquets de donnees recus, **tous sujets confondus**.
+  ///
+  /// Flux de diffusion, **sans rejeu** : contrairement a [contenusPresentes],
+  /// il ne rend pas le dernier paquet a un nouvel abonne. La reprise d'etat
+  /// d'un protocole applicatif ne passe pas par le realtime mais par un port
+  /// backend qui lui est propre.
+  ///
+  /// Il livre aussi les paquets de sujet [sujetContenuPresente] : chaque
+  /// consommateur filtre son propre sujet. Un paquet vu sur deux flux
+  /// distincts ne gene personne ; un paquet jete silencieusement, si.
+  Stream<PaquetDonnees> get donneesRecues;
+
+  /// L'acces courant, ou `null` hors salle.
+  ///
+  /// Permet a un adaptateur feature-level de lire les capacites signees sans
+  /// se faire repasser l'`AccesSalle` par l'ecran, ce qui multiplierait les
+  /// endroits ou il pourrait diverger.
+  AccesSalle? get accesCourant;
 }

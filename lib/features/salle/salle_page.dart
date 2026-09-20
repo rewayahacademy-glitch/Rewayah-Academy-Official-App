@@ -1025,6 +1025,8 @@ class _Seul extends StatelessWidget {
       RoleSalle.enseignant => (t.salle.seulEleve, t.salle.seulEleveDetail),
       RoleSalle.tuteurObservateur ||
       RoleSalle.controleur ||
+      RoleSalle.administrateurIncognito ||
+      RoleSalle.administrateurVisible ||
       RoleSalle.inconnu => (
         t.salle.seulObservation,
         t.salle.seulObservationDetail,
@@ -1123,11 +1125,18 @@ class _Presence {
 
   /// Le role de seance, en mots. Un role inconnu ne s'affiche pas du tout
   /// plutot que de s'afficher faux : le vocabulaire vit en base et grandira.
+  // TC-Z-SUIVI : `administrateurVisible` doit porter un nom institutionnel
+  // clair ("Administration Rewayah", D-15) une fois l'entree Admin de G
+  // cablee ; laisse vide comme `controleur`/`inconnu` en attendant ce lot,
+  // pour ne pas ajouter un libelle i18n hors du perimetre du Lot PROTECTED.
   static String _libelleRole(String brut) => switch (RoleSalle.depuis(brut)) {
     RoleSalle.enseignant => t.salle.roleEnseignant,
     RoleSalle.eleve => t.salle.roleEleve,
     RoleSalle.tuteurObservateur => t.salle.roleTuteur,
-    RoleSalle.controleur || RoleSalle.inconnu => '',
+    RoleSalle.controleur ||
+    RoleSalle.administrateurIncognito ||
+    RoleSalle.administrateurVisible ||
+    RoleSalle.inconnu => '',
   };
 
   final String nom;

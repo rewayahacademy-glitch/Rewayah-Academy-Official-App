@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -11,6 +12,16 @@ abstract interface class CacheMedia {
 
   /// Les cles actuellement conservees.
   Future<Set<String>> clesConservees();
+
+  /// Depose des octets sous une cle.
+  ///
+  /// Ajoute a la demande d'Agent B (`TC_CONTRACT_REQUEST_B.md` §3) : le
+  /// hors-ligne de la Bibliotheque a besoin d'ecrire un support telecharge,
+  /// ce que l'interface ne savait pas faire.
+  Future<void> deposer(String cle, List<int> octets);
+
+  /// Relit les octets d'une cle. `null` quand rien n'est conserve.
+  Future<List<int>?> obtenir(String cle);
 }
 
 /// Un evenement de synchronisation venu du serveur.
@@ -106,4 +117,23 @@ class CacheMediaFichiers implements CacheMedia {
 
   @override
   Future<Set<String>> clesConservees() async => Set<String>.of(_cles);
+
+  @override
+  Future<void> deposer(String cle, List<int> octets) async {
+    await _gestionnaire.putFile(
+      cle,
+      Uint8List.fromList(octets),
+      key: cle,
+    );
+    noter(cle);
+  }
+
+  @override
+  Future<List<int>?> obtenir(String cle) async {
+    final FileInfo? info = await _gestionnaire.getFileFromCache(cle);
+    if (info == null) {
+      return null;
+    }
+    return info.file.readAsBytes();
+  }
 }

@@ -1114,9 +1114,14 @@ class FauxMoteurSalle implements VideoSessionProvider {
       StreamController<QualiteLien>.broadcast();
   final StreamController<ContenuPresente> _contenus =
       StreamController<ContenuPresente>.broadcast();
+  final StreamController<PaquetDonnees> _donnees =
+      StreamController<PaquetDonnees>.broadcast();
 
   EtatSalle _etat = EtatSalle.absent;
   ContenuPresente? _dernierContenu;
+
+  /// Les paquets que l'ecran a demande de publier, dans l'ordre.
+  final List<PaquetDonnees> donneesPubliees = <PaquetDonnees>[];
 
   /// Les acces avec lesquels on a rejoint, dans l'ordre.
   final List<AccesSalle> entrees = <AccesSalle>[];
@@ -1173,6 +1178,38 @@ class FauxMoteurSalle implements VideoSessionProvider {
   void publierContenu(ContenuPresente contenu) {
     _dernierContenu = contenu;
     _contenus.add(contenu);
+  }
+
+  /// Fait arriver un paquet de donnees applicatif, comme un vrai recepteur.
+  void recevoirDonnees(PaquetDonnees paquet) {
+    if (!_donnees.isClosed) {
+      _donnees.add(paquet);
+    }
+  }
+
+  @override
+  Stream<PaquetDonnees> get donneesRecues => _donnees.stream;
+
+  @override
+  AccesSalle? get accesCourant => entrees.isEmpty ? null : entrees.last;
+
+  @override
+  Future<void> publierDonnees({
+    required String sujet,
+    required List<int> charge,
+    required bool fiable,
+    List<String> destinataires = const <String>[],
+  }) async {
+    final AccesSalle? acces = accesCourant;
+    if (acces == null) {
+      throw const EchecPublicationDonnees(MotifEchecPublication.horsSalle);
+    }
+    if (!acces.capacites.peutPublierDonnees) {
+      throw const EchecPublicationDonnees(MotifEchecPublication.droitRefuse);
+    }
+    donneesPubliees.add(
+      PaquetDonnees(sujet: sujet, charge: charge, fiable: fiable),
+    );
   }
 
   @override
@@ -1258,6 +1295,7 @@ class FauxMoteurSalle implements VideoSessionProvider {
     await _participants.close();
     await _qualite.close();
     await _contenus.close();
+    await _donnees.close();
   }
 }
 

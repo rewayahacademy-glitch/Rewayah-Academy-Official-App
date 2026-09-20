@@ -43,6 +43,8 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       StreamController<QualiteLien>.broadcast();
   final StreamController<ContenuPresente> _contenus =
       StreamController<ContenuPresente>.broadcast();
+  final StreamController<PaquetDonnees> _donnees =
+      StreamController<PaquetDonnees>.broadcast();
 
   EtatSalle _etat = EtatSalle.absent;
   bool _audioSeul = false;
@@ -90,6 +92,12 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     }
     yield* _contenus.stream;
   }
+
+  @override
+  Stream<PaquetDonnees> get donneesRecues => _donnees.stream;
+
+  @override
+  AccesSalle? get accesCourant => _acces;
 
   void _poser(EtatSalle etat) {
     if (_etat == etat) {
@@ -247,7 +255,20 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   /// client plus recent ne fasse tomber le canal d'un client plus ancien pour
   /// tout le reste de la seance.
   void _recevoirDonnees(lk.DataReceivedEvent evenement) {
-    if (evenement.topic != sujetContenuPresente) {
+    final String sujet = evenement.topic ?? '';
+    // Tout paquet est relaye sur le canal generalise, avant le traitement
+    // specifique du socle qui suit : voir `TC_CONTRACT_REQUEST_F.md` §1.
+    if (!_donnees.isClosed) {
+      _donnees.add(
+        PaquetDonnees(
+          sujet: sujet,
+          charge: evenement.data,
+          fiable: !sujet.endsWith(suffixeSujetEphemere),
+          emetteurIdentite: evenement.participant?.identity,
+        ),
+      );
+    }
+    if (sujet != sujetContenuPresente) {
       return;
     }
     try {
@@ -320,6 +341,36 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       // Un paquet perdu n'interrompt pas un cours : l'enseignant tournera la
       // page a nouveau, et la reconnexion republie de toute facon.
       debugPrint('contenu presente non publie : $e');
+    }
+  }
+
+  @override
+  Future<void> publierDonnees({
+    required String sujet,
+    required List<int> charge,
+    required bool fiable,
+    List<String> destinataires = const <String>[],
+  }) async {
+    final AccesSalle? acces = _acces;
+    if (acces == null) {
+      throw const EchecPublicationDonnees(MotifEchecPublication.horsSalle);
+    }
+    if (!acces.capacites.peutPublierDonnees) {
+      throw const EchecPublicationDonnees(MotifEchecPublication.droitRefuse);
+    }
+    final lk.LocalParticipant? local = _salle?.localParticipant;
+    if (local == null) {
+      throw const EchecPublicationDonnees(MotifEchecPublication.horsSalle);
+    }
+    try {
+      await local.publishData(
+        charge,
+        reliable: fiable,
+        topic: sujet,
+        destinationIdentities: destinataires.isEmpty ? null : destinataires,
+      );
+    } catch (e) {
+      throw EchecPublicationDonnees(MotifEchecPublication.transport, '$e');
     }
   }
 
@@ -554,6 +605,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     await _participants.close();
     await _qualite.close();
     await _contenus.close();
+    await _donnees.close();
   }
 }
 

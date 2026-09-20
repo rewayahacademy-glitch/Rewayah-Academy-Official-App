@@ -16,6 +16,12 @@ class _CacheMemoire implements CacheMedia {
 
   @override
   Future<Set<String>> clesConservees() async => Set<String>.of(_cles);
+
+  @override
+  Future<void> deposer(String cle, List<int> octets) async => _cles.add(cle);
+
+  @override
+  Future<List<int>?> obtenir(String cle) async => null;
 }
 
 void main() {

@@ -251,6 +251,20 @@ abstract interface class ServiceCoran {
   /// Rend `false` quand l'ecriture a echoue, et l'ecran n'en fait rien de
   /// visible : perdre un marque-page n'interrompt pas une lecture.
   Future<bool> enregistrerPosition(String profilId, PositionLecture position);
+
+  /// Le verset ou commence un juz, ou `null` si le juz n'existe pas.
+  ///
+  /// Ajoute a la demande d'Agent C (`TC_CONTRACT_REQUEST_C.md` §4) : la table
+  /// `public.juz` (migration `0007`) porte deja `sourate_depart` et
+  /// `verset_depart` pour les trente juz, remplis par `0013`. Aucune donnee
+  /// nouvelle n'est demandee, seulement une lecture.
+  Future<({int sourate, int verset})?> debutDeJuz(int juz);
+
+  /// Les versets dont le texte contient [requete].
+  ///
+  /// Rend `null` quand la lecture echoue, comme [sourates] : une liste vide
+  /// dirait « ce mot n'est pas dans le Coran », ce qui serait faux.
+  Future<List<VersetCoran>?> rechercher(String requete, {int limite = 50});
 }
 
 /// L'implementation reelle, au-dessus de PostgREST.
@@ -403,6 +417,52 @@ class ServiceCoranSupabase implements ServiceCoran {
       // l'ecran et se dit seulement au journal de developpement.
       debugPrint('position de lecture non enregistree : $erreur');
       return false;
+    }
+  }
+
+  @override
+  Future<({int sourate, int verset})?> debutDeJuz(int juz) async {
+    try {
+      final Map<String, dynamic>? ligne = await _client
+          .from('juz')
+          .select('sourate_depart, verset_depart')
+          .eq('numero', juz)
+          .maybeSingle();
+      if (ligne == null) {
+        return null;
+      }
+      return (
+        sourate: ligne['sourate_depart'] as int,
+        verset: ligne['verset_depart'] as int,
+      );
+    } catch (erreur) {
+      debugPrint('debut du juz $juz indisponible : $erreur');
+      return null;
+    }
+  }
+
+  @override
+  Future<List<VersetCoran>?> rechercher(
+    String requete, {
+    int limite = 50,
+  }) async {
+    final String? edition = await editionCourante();
+    if (edition == null) {
+      return null;
+    }
+    try {
+      final List<Map<String, dynamic>> lignes = await _client
+          .from('verset')
+          .select()
+          .eq('mushaf_id', edition)
+          .ilike('texte', '%$requete%')
+          .order('sourate_numero')
+          .order('numero')
+          .limit(limite);
+      return lignes.map(VersetCoran.depuisJson).toList();
+    } catch (erreur) {
+      debugPrint('recherche "$requete" indisponible : $erreur');
+      return null;
     }
   }
 }
