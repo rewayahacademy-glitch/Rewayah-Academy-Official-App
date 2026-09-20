@@ -264,7 +264,7 @@ class _Dossier extends StatelessWidget {
           // **Rien a constater, donc rien a trancher.** Afficher la checklist
           // et deux verdicts sur un dossier sans piece proposerait un geste
           // qui echouerait en base. L'ecran dit ce qui manque et chez qui se
-          // trouve le geste — c'est le meme choix que la carte « aucune heure
+          // trouve le geste -- c'est le meme choix que la carte « aucune heure
           // proposee » d'`ADM-05`.
           Text(t.dossiers.rienATrancher, style: textes.titleMedium),
           Ecart.vMd,

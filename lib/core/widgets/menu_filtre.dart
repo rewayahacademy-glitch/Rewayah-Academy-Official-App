@@ -39,10 +39,10 @@ class EntreeFiltre<T> {
 ///
 /// La regle qui en sort, et qui vaut pour tout ecran d'administration :
 ///
-///   * **un axe ferme se rend en pastilles** — la periode a trois valeurs, un
+///   * **un axe ferme se rend en pastilles** -- la periode a trois valeurs, un
 ///     etat de compte en a quatre : ce sont de vrais selecteurs, tout se voit
 ///     d'un coup d'oeil et un tap suffit ;
-///   * **un axe ouvert se rend en menu** — une liste qui grandit avec les
+///   * **un axe ouvert se rend en menu** -- une liste qui grandit avec les
 ///     donnees ne peut pas s'etaler, sinon l'accent finit par decorer un
 ///     inventaire au lieu de porter la selection (registre produit : « accent
 ///     color used for primary actions, current selection, and state

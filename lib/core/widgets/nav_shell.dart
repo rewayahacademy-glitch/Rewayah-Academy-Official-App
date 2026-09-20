@@ -9,6 +9,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'pressable.dart';
 
 /// Une destination de premier niveau.
 @immutable
@@ -243,7 +244,7 @@ class NavShell extends StatelessWidget {
   /// **Nul sur un ecran secondaire** : `ADM-06`, `ADM-07` et `ADM-08` sont
   /// volontairement hors de la barre, mais ils ont besoin de son chrome pour
   /// qu'on puisse en sortir. Sans cela, on y entre et on n'en revient qu'avec
-  /// le bouton precedent du navigateur — c'est exactement le reproche fait a
+  /// le bouton precedent du navigateur -- c'est exactement le reproche fait a
   /// l'interface le 18 septembre 2026.
   final int? indexActif;
 
@@ -261,8 +262,8 @@ class NavShell extends StatelessWidget {
   ///
   /// Defaut mesure le 18 septembre 2026 : sans ce pied de coquille, un admin
   /// ou un tuteur valide n'avait **aucun moyen de se deconnecter**. Le mot
-  /// « deconnexion » n'existait que dans le portail d'attente — donc avant
-  /// validation — et dans la salle de cours. Vider le cache du navigateur
+  /// « deconnexion » n'existait que dans le portail d'attente -- donc avant
+  /// validation -- et dans la salle de cours. Vider le cache du navigateur
   /// etait le seul chemin de sortie.
   ///
   /// **Limite assumee** : ce pied n'est rendu que par le rail et la barre
@@ -458,11 +459,14 @@ class _Cote extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         for (final Destination entree in secondaires)
-                          IconButton(
-                            icon: Icon(entree.icone.repos),
-                            tooltip: entree.libelle,
-                            onPressed: () =>
-                                onAllerSecondaire?.call(entree.chemin),
+                          Tooltip(
+                            message: entree.libelle,
+                            child: Pressable(
+                              libelleSemantique: entree.libelle,
+                              onPress: () =>
+                                  onAllerSecondaire?.call(entree.chemin),
+                              child: Icon(entree.icone.repos),
+                            ),
                           ),
                       ],
                     ),
@@ -506,11 +510,27 @@ class _Cote extends StatelessWidget {
                   child: Divider(height: 1),
                 ),
                 for (final Destination entree in secondaires)
-                  ListTile(
-                    leading: Icon(entree.icone.repos),
-                    title: Text(entree.libelle),
-                    minTileHeight: AppMetriques.of(context).cibleTactile,
-                    onTap: () => onAllerSecondaire?.call(entree.chemin),
+                  Pressable(
+                    onPress: () => onAllerSecondaire?.call(entree.chemin),
+                    libelleSemantique: entree.libelle,
+                    respecterCibleTactile: false,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: AppMetriques.of(context).cibleTactile,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(entree.icone.repos),
+                            Ecart.hMd,
+                            Expanded(child: Text(entree.libelle)),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
               ],
             ],

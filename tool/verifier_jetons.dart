@@ -106,6 +106,14 @@ final RegExp _iconeHorsCatalogue = RegExp(
 );
 final RegExp _onTapNu = RegExp(r'\bonTap\s*:');
 
+/// Exemption NOMINATIVE, jamais de dossier : `TabBar.onTap` est le callback
+/// structure du composant Material lui-meme -- il ne construit aucune zone
+/// pressable ad hoc, `TabBar` porte deja sa propre ondulation et son propre
+/// retour visuel. Ce n'est pas le geste nu que la regle vise (un
+/// `GestureDetector`/`InkWell.onTap` pose a la main autour d'un widget
+/// quelconque). Entérinée le 21/09 par Agent Z (plan §10, défaut 1).
+const String _fichierTabBarOnTap = 'core/widgets/sous_navigation_domaine.dart';
+
 /// Les boutons de Material.
 ///
 /// Ajoutee au lot C, en meme temps que les quatre niveaux d'`ActionPrincipale`
@@ -329,7 +337,8 @@ void main() {
 
       // 3. Aucun onTap nu : tout passe par Pressable.
       if (_onTapNu.hasMatch(code) &&
-          !chemin.endsWith('core/widgets/pressable.dart')) {
+          !chemin.endsWith('core/widgets/pressable.dart') &&
+          !chemin.endsWith(_fichierTabBarOnTap)) {
         violations.add(Violation(chemin, numero, 'ontap-nu', ligne));
       }
 

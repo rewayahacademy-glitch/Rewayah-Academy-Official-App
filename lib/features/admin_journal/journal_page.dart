@@ -195,7 +195,7 @@ class _JournalPageEtat extends ConsumerState<JournalPage> {
       // Plus d'`Expanded` ici : `PageShell` en mode `defilante: false` borne
       // desormais la hauteur de son contenu lui-meme. L'`Expanded` d'avant
       // n'avait de parent `Flex` que par accident, parce que `PageShell`
-      // enveloppait le contenu dans son propre `Column` — le meme `Column` qui
+      // enveloppait le contenu dans son propre `Column` -- le meme `Column` qui
       // de-bornait la hauteur et faisait disparaitre le corps des ecrans qui,
       // eux, geraient correctement leur defilement.
       child: _Corps(
