@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../core/tc_outils/couleur_intention.dart';
 import '../../core/tc_outils/intention_pedagogique.dart';
-import '../../core/tc_outils/libelles_tc_outils.dart';
+import '../../core/tc_outils/libelles_outils.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// Le nom d'une intention, avec sa couleur.
@@ -26,7 +26,7 @@ class PuceIntention extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => StatusPill(
-    libelle: LibellesOutils.intention(intention),
+    libelle: libelleIntentionPedagogique(intention),
     ton: CouleurIntention.ton(intention),
   );
 }

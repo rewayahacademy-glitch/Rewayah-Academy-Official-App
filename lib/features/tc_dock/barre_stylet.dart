@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/etat_outils.dart';
-import '../../core/tc_outils/libelles_tc_outils.dart';
+import '../../core/tc_outils/libelles_outils.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -59,20 +60,20 @@ class BarreStylet extends ConsumerWidget {
             for (final OutilTrait outil in OutilTrait.values)
               BoutonOutil(
                 icone: _icone(outil),
-                libelle: LibellesOutils.outilTrait(outil),
+                libelle: libelleOutilTrait(outil),
                 retenu: etat.outilTrait == outil,
                 onPress: () => controleur.choisirOutilTrait(outil),
               ),
             BoutonOutil(
               // TC-ICONE: annuler (fleche qui revient en arriere)
               icone: AppIcons.reaffectation,
-              libelle: LibellesOutils.traitAnnuler,
+              libelle: t.tc.outils.trait.annuler,
               onPress: peutAnnuler ? onAnnuler : null,
             ),
             BoutonOutil(
               // TC-ICONE: plus (trois points)
               icone: AppIcons.menu,
-              libelle: LibellesOutils.traitPlus,
+              libelle: t.tc.outils.trait.plus,
               onPress: () => unawaited(_choisirPortee(context, controleur, etat)),
             ),
           ],
@@ -88,8 +89,8 @@ class BarreStylet extends ConsumerWidget {
   ) async {
     final PorteeAnnotation? portee = await FeuilleChoix.ouvrirPortee(
       context,
-      titre: LibellesOutils.outilStylet,
-      aide: LibellesOutils.porteeAide,
+      titre: t.tc.outils.dock.stylet,
+      aide: t.tc.outils.portee.aide,
       porteeInitiale: etat.portee,
     );
     if (portee != null) {

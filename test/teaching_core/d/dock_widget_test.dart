@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/etat_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/evenements_outils.dart';
-import 'package:rewayah_academy/core/tc_outils/libelles_tc_outils.dart';
+import 'package:rewayah_academy/core/tc_outils/libelles_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_assignations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
@@ -76,9 +77,9 @@ void main() {
 
       for (final OutilDock outil in OutilDock.values) {
         expect(
-          boutonNomme(LibellesOutils.outil(outil)),
+          boutonNomme(libelleOutilDock(outil)),
           findsOneWidget,
-          reason: 'outil manquant : ${LibellesOutils.outil(outil)}',
+          reason: 'outil manquant : ${libelleOutilDock(outil)}',
         );
       }
     });
@@ -103,12 +104,12 @@ void main() {
       faux.selection = null;
       await tester.pumpWidget(hoteD(dock(), surcharges: surcharges()));
 
-      expect(boutonNomme(LibellesOutils.outilBibliotheque), findsOneWidget);
-      expect(boutonNomme(LibellesOutils.outilFocus), findsNothing);
-      expect(boutonNomme(LibellesOutils.outilMarquer), findsNothing);
+      expect(boutonNomme(t.tc.outils.dock.bibliotheque), findsOneWidget);
+      expect(boutonNomme(t.tc.outils.dock.focus), findsNothing);
+      expect(boutonNomme(t.tc.outils.dock.marquer), findsNothing);
       // Le stylet, lui, n'a pas besoin d'une selection : on ecrit la ou on
       // pose la pointe.
-      expect(boutonNomme(LibellesOutils.outilStylet), findsOneWidget);
+      expect(boutonNomme(t.tc.outils.dock.stylet), findsOneWidget);
     });
 
     testWidgets('un support non annotable ne propose ni stylet ni marqueur', (
@@ -122,9 +123,9 @@ void main() {
       );
       await tester.pumpWidget(hoteD(dock(), surcharges: surcharges()));
 
-      expect(boutonNomme(LibellesOutils.outilStylet), findsNothing);
-      expect(boutonNomme(LibellesOutils.outilMarquer), findsNothing);
-      expect(boutonNomme(LibellesOutils.outilFocus), findsOneWidget);
+      expect(boutonNomme(t.tc.outils.dock.stylet), findsNothing);
+      expect(boutonNomme(t.tc.outils.dock.marquer), findsNothing);
+      expect(boutonNomme(t.tc.outils.dock.focus), findsOneWidget);
     });
 
     testWidgets('sans groupe, aucune revision ne peut etre posee', (
@@ -136,7 +137,7 @@ void main() {
       );
       await tester.pumpWidget(hoteD(dock(), surcharges: surcharges()));
 
-      expect(boutonNomme(LibellesOutils.outilRevision), findsNothing);
+      expect(boutonNomme(t.tc.outils.dock.revision), findsNothing);
     });
   });
 
@@ -145,7 +146,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(hoteD(dock(), surcharges: surcharges()));
-      await tester.tap(boutonNomme(LibellesOutils.outilBibliotheque));
+      await tester.tap(boutonNomme(t.tc.outils.dock.bibliotheque));
       await tester.pump();
 
       expect(faux.ouverturesBibliotheque, 1);
@@ -159,7 +160,7 @@ void main() {
         tester.element(find.byType(TeachingDock)),
       );
 
-      await tester.tap(boutonNomme(LibellesOutils.outilFocus));
+      await tester.tap(boutonNomme(t.tc.outils.dock.focus));
       await tester.pump();
 
       expect(conteneur.read(etatOutilsProvider).focus, plageTest());
@@ -167,7 +168,7 @@ void main() {
       expect(emis.single, isA<EvenementFocus>());
       expect((emis.single as EvenementFocus).plage, plageTest());
 
-      await tester.tap(boutonNomme(LibellesOutils.outilFocus));
+      await tester.tap(boutonNomme(t.tc.outils.dock.focus));
       await tester.pump();
 
       expect(conteneur.read(etatOutilsProvider).focus, isNull);
@@ -182,11 +183,11 @@ void main() {
         tester.element(find.byType(TeachingDock)),
       );
 
-      await tester.tap(boutonNomme(LibellesOutils.outilMasquer));
+      await tester.tap(boutonNomme(t.tc.outils.dock.masquer));
       await tester.pump();
       expect(conteneur.read(etatOutilsProvider).masquage.estMasque(ayah1), isTrue);
 
-      await tester.tap(boutonNomme(LibellesOutils.outilMasquer));
+      await tester.tap(boutonNomme(t.tc.outils.dock.masquer));
       await tester.pump();
       expect(
         conteneur.read(etatOutilsProvider).masquage.estMasque(ayah1),
@@ -205,11 +206,11 @@ void main() {
     ) async {
       await tester.pumpWidget(hoteD(dock(), surcharges: surcharges()));
 
-      await tester.tap(boutonNomme(LibellesOutils.outilMarquer));
+      await tester.tap(boutonNomme(t.tc.outils.dock.marquer));
       await tester.pumpAndSettle();
-      expect(find.text(LibellesOutils.marquerTitre), findsOneWidget);
+      expect(find.text(t.tc.outils.marquer.titre), findsOneWidget);
 
-      await tester.tap(find.text(LibellesOutils.intentionARenforcer));
+      await tester.tap(find.text(t.tc.outils.intention.aRenforcer));
       await tester.pumpAndSettle();
 
       final AnnotationLayer couche = annotations.couches.single;
@@ -224,15 +225,15 @@ void main() {
     ) async {
       await tester.pumpWidget(hoteD(dock(), surcharges: surcharges()));
 
-      await tester.tap(boutonNomme(LibellesOutils.outilRevision));
+      await tester.tap(boutonNomme(t.tc.outils.dock.revision));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(LibellesOutils.intentionAApprendre));
+      await tester.tap(find.text(t.tc.outils.intention.aApprendre));
       await tester.pumpAndSettle();
 
       expect((await assignations.pourGroupe('groupe-1')).single.purpose.valeurSql, 'learn');
-      expect(find.text(LibellesOutils.revisionPosee), findsOneWidget);
+      expect(find.text(t.tc.outils.revision.posee), findsOneWidget);
 
-      await tester.tap(find.text(LibellesOutils.traitAnnuler));
+      await tester.tap(find.text(t.tc.outils.trait.annuler));
       await tester.pumpAndSettle();
       expect(
         (await assignations.pourGroupe('groupe-1')).single.status.valeurSql,
@@ -245,24 +246,24 @@ void main() {
     ) async {
       await tester.pumpWidget(hoteD(dock(), surcharges: surcharges()));
 
-      expect(boutonNomme(LibellesOutils.traitGomme), findsNothing);
+      expect(boutonNomme(t.tc.outils.trait.gomme), findsNothing);
 
-      await tester.tap(boutonNomme(LibellesOutils.outilStylet));
+      await tester.tap(boutonNomme(t.tc.outils.dock.stylet));
       await tester.pump();
 
       // Cinq boutons, pas un de plus : stylet, surligner, gomme, annuler, plus.
       for (final String libelle in <String>[
-        LibellesOutils.traitSurligneur,
-        LibellesOutils.traitGomme,
-        LibellesOutils.traitAnnuler,
-        LibellesOutils.traitPlus,
+        t.tc.outils.trait.surligneur,
+        t.tc.outils.trait.gomme,
+        t.tc.outils.trait.annuler,
+        t.tc.outils.trait.plus,
       ]) {
         expect(boutonNomme(libelle), findsOneWidget);
       }
       // « Stylet » nomme deux boutons : celui du dock qui arme l'outil, et
       // celui de la barre qui choisit l'encre. Le mot est le bon des deux
       // cotes, et la barre n'existe que si le premier est arme.
-      expect(boutonNomme(LibellesOutils.traitStylet), findsNWidgets(2));
+      expect(boutonNomme(t.tc.outils.trait.stylet), findsNWidgets(2));
     });
   });
 
@@ -277,7 +278,7 @@ void main() {
 
       expect(conteneur.read(etatOutilsProvider).position, PositionDock.bas);
 
-      await tester.tap(boutonNomme(LibellesOutils.dockDeplacer));
+      await tester.tap(boutonNomme(t.tc.outils.dock.deplacer));
       await tester.pump();
 
       expect(conteneur.read(etatOutilsProvider).position, PositionDock.droite);
@@ -396,13 +397,13 @@ void main() {
 
     for (final OutilDock outil in OutilDock.values) {
       expect(
-        find.bySemanticsLabel(LibellesOutils.outil(outil)),
+        find.bySemanticsLabel(libelleOutilDock(outil)),
         findsOneWidget,
         reason: 'une icone sans nom ne dit rien a un lecteur d ecran',
       );
     }
     expect(
-      find.bySemanticsLabel(LibellesOutils.dockDeplacer),
+      find.bySemanticsLabel(t.tc.outils.dock.deplacer),
       findsOneWidget,
     );
 

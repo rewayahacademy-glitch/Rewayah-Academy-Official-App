@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_outils/couleur_intention.dart';
 import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
-import 'package:rewayah_academy/core/tc_outils/libelles_tc_outils.dart';
+import 'package:rewayah_academy/core/tc_outils/libelles_outils.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/tc_dock/puce_intention.dart';
@@ -61,7 +61,7 @@ void main() {
         <String>[
           for (final IntentionPedagogique intention
               in IntentionPedagogique.values)
-            LibellesOutils.intention(intention),
+            libelleIntentionPedagogique(intention),
         ],
         <String>[
           'À apprendre',
@@ -101,7 +101,7 @@ void main() {
     // Le mot est present pour chacune des cinq : c'est l'invariant J7, et il
     // est tenu par construction puisque `StatusPill` exige un libelle.
     for (final IntentionPedagogique intention in IntentionPedagogique.values) {
-      expect(find.text(LibellesOutils.intention(intention)), findsOneWidget);
+      expect(find.text(libelleIntentionPedagogique(intention)), findsOneWidget);
     }
   });
 }

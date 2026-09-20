@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/intention_pedagogique.dart';
-import '../../core/tc_outils/libelles_tc_outils.dart';
+import '../../core/tc_outils/libelles_outils.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -65,7 +65,7 @@ class FeuilleChoix extends StatelessWidget {
             in IntentionPedagogique.values)
           OptionChoix(
             valeur: intention.valeurSql,
-            libelle: LibellesOutils.intention(intention),
+            libelle: libelleIntentionPedagogique(intention),
           ),
       ],
     );
@@ -89,7 +89,7 @@ class FeuilleChoix extends StatelessWidget {
         for (final PorteeAnnotation portee in PorteeAnnotation.values)
           OptionChoix(
             valeur: portee.valeurSql,
-            libelle: LibellesOutils.portee(portee),
+            libelle: libellePorteeAnnotation(portee),
           ),
       ],
     );

@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/intention_pedagogique.dart';
 import '../../core/tc_outils/learning_assignment.dart';
-import '../../core/tc_outils/libelles_tc_outils.dart';
+import '../../core/tc_outils/libelles_outils.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/tc_outils/port_assignations.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
@@ -97,7 +98,7 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
       BoutonOutil(
         // TC-ICONE: deplacer le dock (poignee a six points)
         icone: AppIcons.menuDeroulant,
-        libelle: LibellesOutils.dockDeplacer,
+        libelle: t.tc.outils.dock.deplacer,
         avecLibelle: avecLibelle,
         onPress: () => ref
             .read(etatOutilsProvider.notifier)
@@ -106,7 +107,7 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
       for (final OutilDock outil in outils)
         BoutonOutil(
           icone: _icone(outil),
-          libelle: LibellesOutils.outil(outil),
+          libelle: libelleOutilDock(outil),
           retenu: _estRetenu(outil, etat),
           avecLibelle: avecLibelle,
           onPress: () => _declencher(outil, etat, support, selection, contexte),
@@ -147,7 +148,7 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
         if (_message != null)
           LocalFeedback(
             message: _message,
-            libelleAnnuler: LibellesOutils.traitAnnuler,
+            libelleAnnuler: t.tc.outils.trait.annuler,
             onAnnuler: _annulerDernierTravail,
           ),
         if (etat.styletArme) ...<Widget>[
@@ -224,8 +225,8 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     final IntentionPedagogique? intention =
         await FeuilleChoix.ouvrirIntention(
           context,
-          titre: LibellesOutils.marquerTitre,
-          aide: LibellesOutils.marquerAide,
+          titre: t.tc.outils.marquer.titre,
+          aide: t.tc.outils.marquer.aide,
           intentionInitiale: etat.intention,
         );
     if (intention == null || !mounted) {
@@ -269,8 +270,8 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     final IntentionPedagogique? intention =
         await FeuilleChoix.ouvrirIntention(
           context,
-          titre: LibellesOutils.revisionTitre,
-          aide: LibellesOutils.revisionAide,
+          titre: t.tc.outils.revision.titre,
+          aide: t.tc.outils.revision.aide,
           intentionInitiale: etat.intention,
         );
     if (intention == null || !mounted) {
@@ -292,7 +293,7 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     // retour local. Et il propose d'annuler plutot que de faire confirmer.
     setState(() {
       _dernierTravail = travail;
-      _message = LibellesOutils.revisionPosee;
+      _message = t.tc.outils.revision.posee;
     });
   }
 
