@@ -309,6 +309,9 @@ class Traductions$salle$fr {
 	/// fr: 'Tuteur, en observation'
 	String get roleTuteur => 'Tuteur, en observation';
 
+	/// fr: 'Administration Rewayah'
+	String get roleAdministration => 'Administration Rewayah';
+
 	/// fr: 'Vous assistez au cours. Vous n'êtes pas entendu.'
 	String get observationMuette => 'Vous assistez au cours. Vous n\'êtes pas entendu.';
 
@@ -5073,6 +5076,7 @@ extension on Traductions {
 			'salle.roleEnseignant' => 'Enseignant',
 			'salle.roleEleve' => 'Élève',
 			'salle.roleTuteur' => 'Tuteur, en observation',
+			'salle.roleAdministration' => 'Administration Rewayah',
 			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
 			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
 			'presence.titre' => 'Présence',
@@ -5521,9 +5525,9 @@ extension on Traductions {
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.regles.valeurInvalide' => 'Entrez un nombre valide.',
-			'admin.regles.envoyer' => 'Enregistrer',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regles.envoyer' => 'Enregistrer',
 			'admin.regles.champValeur' => 'Valeur',
 			'admin.regles.absenceSeuil' => 'Seuil d\'absence',
 			'admin.regles.absenceSeuilDetail' => 'Au-delà de ce nombre de minutes sans rejoindre la séance, l\'élève est marqué absent.',
@@ -6035,9 +6039,9 @@ extension on Traductions {
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
 			'eleve.coran.chargement' => 'Le texte arrive',
 			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
-			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
 			'eleve.coran.reessayer' => 'Réessayer',
 			'eleve.coran.absent' => 'Cette page est vide',
 			'eleve.coran.absentDetail' => 'Le texte n\'a pas été installé sur cette page. Signale-le : ce n\'est pas toi.',

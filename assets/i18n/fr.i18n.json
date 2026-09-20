@@ -81,6 +81,7 @@
     "roleEnseignant": "Enseignant",
     "roleEleve": "Élève",
     "roleTuteur": "Tuteur, en observation",
+    "roleAdministration": "Administration Rewayah",
 
     "observationMuette": "Vous assistez au cours. Vous n'êtes pas entendu.",
     "bandeauControle": "Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal."
