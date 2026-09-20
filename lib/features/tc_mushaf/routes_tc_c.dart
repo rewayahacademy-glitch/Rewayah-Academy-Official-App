@@ -1,0 +1,29 @@
+import 'package:go_router/go_router.dart';
+
+import 'mushaf_page.dart';
+
+/// Les chemins du moteur Coran, sous le prefixe reserve `/tc/`.
+abstract final class RoutesCoran {
+  /// Le moteur Coran, hors classe.
+  static const String mushaf = '/tc/mushaf';
+}
+
+/// Les routes du moteur Coran.
+///
+/// **Cette fonction ne construit jamais un `GoRouter`, elle en retourne les
+/// routes** (decision D-04). `lib/core/router/app_router.dart` est PROTECTED,
+/// et `tool/verifier_jetons.dart` fait echouer la CI sur tout second `GoRouter`
+/// construit dans `lib/`. Agent Z appelle cette fonction depuis `app_router`,
+/// promeut la constante dans `routes.dart` et ajuste `redirection.dart` --
+/// sans quoi la route sera redirigee vers la racine du role.
+///
+/// **Une route sans entree de navigation n'existe pas.** L'entree reste a
+/// arbitrer : `nav_shell.dart` est PROTECTED et plafonne a quatre destinations
+/// par assertion, et le Coran en a deja une (`/eleve/coran`). Le detail est
+/// dans `docs/teaching-core/TC_CONTRACT_REQUEST_C.md`.
+List<RouteBase> routesTcC() => <RouteBase>[
+  GoRoute(
+    path: RoutesCoran.mushaf,
+    builder: (_, _) => const MushafPage(),
+  ),
+];
