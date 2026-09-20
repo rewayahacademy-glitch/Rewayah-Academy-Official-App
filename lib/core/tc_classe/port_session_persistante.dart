@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'ports_externes/session_clock_vm.dart';
+import '../tc_horloge/session_clock_vm.dart';
 
 /// Le cours en cours, independamment de l'ecran affiche.
 ///

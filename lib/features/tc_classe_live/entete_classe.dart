@@ -2,10 +2,10 @@
 
 import '../../core/tc_classe/libelles_tc_classe.dart';
 import '../../core/tc_classe/ports_externes/port_annonce_observation.dart';
-import '../../core/tc_classe/ports_externes/session_clock_vm.dart';
-import '../../core/tc_classe/ports_externes/titre_enseignant.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/session_live_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/status_pill.dart';

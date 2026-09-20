@@ -68,10 +68,14 @@ class VuePreCours {
     final DetailPreCours detail = switch (role) {
       RoleSalle.enseignant => DetailPreCours.complet,
       RoleSalle.eleve => DetailPreCours.silencieux,
-      // Le tuteur observateur et le controleur n'ouvrent ni micro ni camera :
-      // leur jeton le leur interdit. Le controleur, en plus, est invisible.
+      // Le tuteur observateur, le controleur et les deux roles d admin
+      // n ouvrent ni micro ni camera : leur jeton le leur interdit
+      // (autoriser_jeton_video, capacites d observateur). Controleur et
+      // administrateur incognito sont en plus invisibles.
       RoleSalle.tuteurObservateur ||
       RoleSalle.controleur ||
+      RoleSalle.administrateurIncognito ||
+      RoleSalle.administrateurVisible ||
       RoleSalle.inconnu => DetailPreCours.aucun,
     };
 

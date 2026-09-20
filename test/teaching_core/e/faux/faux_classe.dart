@@ -186,6 +186,33 @@ class FauxMoteurClasse implements VideoSessionProvider {
     await _participants.close();
     await _qualite.close();
     await _contenus.close();
+    await _donnees.close();
+  }
+
+  final StreamController<PaquetDonnees> _donnees =
+      StreamController<PaquetDonnees>.broadcast();
+
+  /// Les paquets publies, dans l'ordre. La Classe Live ne s'en sert pas
+  /// directement : c'est l'adaptateur du lot F qui s'y branche, teste
+  /// separement.
+  final List<PaquetDonnees> donneesPubliees = <PaquetDonnees>[];
+
+  @override
+  Stream<PaquetDonnees> get donneesRecues => _donnees.stream;
+
+  @override
+  AccesSalle? get accesCourant => entrees.isEmpty ? null : entrees.last;
+
+  @override
+  Future<void> publierDonnees({
+    required String sujet,
+    required List<int> charge,
+    required bool fiable,
+    List<String> destinataires = const <String>[],
+  }) async {
+    donneesPubliees.add(
+      PaquetDonnees(sujet: sujet, charge: charge, fiable: fiable),
+    );
   }
 }
 

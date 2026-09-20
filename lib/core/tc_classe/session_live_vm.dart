@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
+import '../tc_groupe/group_summary_vm.dart';
+import '../tc_horloge/session_clock_vm.dart';
 import '../video/video_session_provider.dart';
-import 'ports_externes/session_clock_vm.dart';
-import 'ports_externes/titre_enseignant.dart';
 
 /// Qui enseigne, tel que l'en-tete de la Classe Live le nomme.
 ///

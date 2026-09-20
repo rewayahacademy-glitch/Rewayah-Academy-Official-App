@@ -1,8 +1,8 @@
 ﻿import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/tc_classe/ports_externes/titre_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_classe_vm.dart';
 import 'package:rewayah_academy/core/tc_classe/session_live_vm.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/tc_classe_live/vue_classe_live.dart';

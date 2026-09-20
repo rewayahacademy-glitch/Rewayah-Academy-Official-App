@@ -1,8 +1,8 @@
 ﻿import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_classe/port_session_persistante.dart';
-import 'package:rewayah_academy/core/tc_classe/ports_externes/session_clock_vm.dart';
 import 'package:rewayah_academy/core/tc_classe/session_persistante.dart';
+import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 
 import 'faux/faux_classe.dart';

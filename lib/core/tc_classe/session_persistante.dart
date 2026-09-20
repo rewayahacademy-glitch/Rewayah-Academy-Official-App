@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../tc_horloge/session_clock_vm.dart';
 import '../video/livekit_session_provider.dart';
 import '../video/pre_vol.dart';
 import '../video/service_video.dart';
 import '../video/video_session_provider.dart';
 import 'port_session_persistante.dart';
-import 'ports_externes/session_clock_vm.dart';
 
 /// Le cours ouvert, tel que le controleur applicatif le connait.
 ///

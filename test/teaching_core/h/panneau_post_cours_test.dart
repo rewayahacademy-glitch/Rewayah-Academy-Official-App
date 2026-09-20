@@ -7,9 +7,9 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
+import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_parcours/libelles_tc_parcours.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_post_cours.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/teacher_student_projection.dart';
 import 'package:rewayah_academy/features/tc_flux_academique/panneau_post_cours.dart';
 
 import 'faux/faux_enseignant.dart';

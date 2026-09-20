@@ -1,10 +1,10 @@
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
+import 'package:rewayah_academy/core/tc_classe/port_roster_enseignant.dart';
+import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_outils/learning_assignment.dart';
 import 'package:rewayah_academy/core/tc_outils/port_assignations.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/port_roster_enseignant.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_parcours/source_contenu_seance.dart';
 
 /// Le roster d'Agent E, en memoire.

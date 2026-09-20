@@ -10,12 +10,12 @@ import '../enseignant/modeles_enseignant.dart';
 import '../enseignant/service_enseignant.dart';
 import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
+import '../tc_classe/port_roster_enseignant.dart';
+import '../tc_classe/teacher_student_projection.dart';
 import '../tc_outils/intention_pedagogique.dart';
 import '../tc_outils/learning_assignment.dart';
 import '../tc_outils/port_assignations.dart';
 import 'port_travail_a_venir.dart';
-import 'ports_externes/port_roster_enseignant.dart';
-import 'ports_externes/teacher_student_projection.dart';
 import 'post_cours_vm.dart';
 import 'source_contenu_seance.dart';
 
