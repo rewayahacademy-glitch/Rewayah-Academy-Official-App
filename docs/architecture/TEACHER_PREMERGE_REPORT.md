@@ -23,8 +23,8 @@ parallèle sur des périmètres de fichiers exclusifs, après deux phases de soc
 | `flutter analyze --no-pub` | **No issues found!** (149 s) | No issues found! |
 | `flutter test --no-pub` | **857 passés, 1 échec** | 708 passés, 7 échecs |
 | Écritures hors périmètre par A–E | **zéro** | — |
-| Migrations appliquées sur `gggmtelinlpseweouyav` | `0025`, `0026`, `0027`, `0028`, `0029` | `0025`, `0026` |
-| Migrations écrites non appliquées | `0021`–`0024` (`create table` refusé, cf. §7) | `0020`–`0024` sauf `0020` |
+| Migrations appliquées sur `gggmtelinlpseweouyav` | `0021`–`0029` **au complet** (cf. §7) | `0025`, `0026` |
+| Migrations écrites non appliquées | **aucune** | `0020`–`0024` sauf `0020` |
 
 Les six tests rouges qui étaient **dans** le périmètre Enseignant sont revenus au
 vert : `dossier_test.dart` ×3 et `inscription_test.dart` ×2 par l'agent E,
@@ -287,7 +287,7 @@ routeur et `sous_navigation_domaine` un domaine. C'est un lot, pas une ligne.
 
 ---
 
-## 7. État de la base, et la migration qui attend
+## 7. État de la base : plus rien n'attend
 
 | Migration | Fichier au dépôt | Appliquée | Par qui |
 | :--- | :--- | :--- | :--- |
@@ -297,14 +297,49 @@ routeur et `sous_navigation_domaine` un domaine. C'est un lot, pas une ligne.
 | `0028_maj_profil_enseignant_revoke_anon` | ✅ **écrit à l'intégration** | ✅ `20260919235944` | agent E |
 | `0029_fermeture_dossiers_en_attente_anon` | ✅ | ✅ `20260920025402` | Z |
 | `0020_programme_pedagogique` | ✅ (lot Pédagogie) | ✅ `20260919232916` | agent C |
-| `0021`–`0024` | ✅ (lot Pédagogie) | ❌ `create table` refusé | — |
+| `0021_diagnostics_placement` | ✅ (lot Pédagogie) | ✅ `20260920033433` | Z |
+| `0022_progression_suivi` | ✅ (lot Pédagogie) | ✅ `20260920033522` | Z |
+| `0023_evaluations` | ✅ (lot Pédagogie) | ✅ `20260920033612` | Z |
+| `0024_qualite_pedagogique` | ✅ (lot Pédagogie) | ✅ `20260920033657` | Z |
 
-Le dépôt et la base racontent donc la même histoire pour tout ce lot. Il reste
-`0021`–`0024`, du lot Pédagogie : le classificateur laisse passer un
-`create or replace function` mais refuse un `create table`. Leurs huit portes ont
-été réécrites en exigence positive **avant** toute application — ces fichiers
-n'étant pas appliqués, les corriger est permis, et il aurait été absurde de poser
-en base huit exemplaires du défaut que `0029` vient de fermer.
+Le dépôt et la base racontent la même histoire, sans exception. `0021`–`0024`
+sont appliquées sur autorisation explicite de l'opérateur, après un contrôle
+préalable prouvant les 4 tables et les 12 fonctions **absentes** — donc aucune
+collision, et aucun risque de régresser le lot Enseignant appliqué avant elles
+(aucune des quatre n'emploie `or replace` : une collision aurait échoué fort).
+
+Leurs huit portes avaient été réécrites en exigence positive **avant**
+l'application — ces fichiers n'étant pas appliqués, les corriger était permis, et
+il aurait été absurde de poser en base huit exemplaires du défaut que `0029`
+venait de fermer. La mesure prouve que la correction porte : appelées en rôle
+`authenticated` **sans jeton** (`app_role()` vaut donc NULL), les huit écritures
+refusent en `P0001` avec leur propre message. Sous la forme en refus, ce `if` ne
+se serait pas déclenché et l'appel aurait continué jusqu'à l'insertion.
+
+| Mesure sur les 12 nouvelles RPC | Résultat |
+| :--- | :--- |
+| En rôle `anon` | `42501 permission denied for function` — les 12 |
+| En `authenticated` sans jeton, les 8 écritures (plpgsql, `if`) | `P0001`, message de la porte — les 8 |
+| En `authenticated` sans jeton, les 4 lectures (`sql`, `where`) | passent, **0 ligne** — les 4 |
+| `has_function_privilege('agent_ro', …)` sur les 8 volatiles | `false` — les 8 |
+| `has_function_privilege('agent_ro', …)` sur les 4 stables | `true` — les 4 |
+| RLS active + policy de lecture sur les 4 tables | oui, 1 chacune |
+| `insert`/`update`/`delete` pour `authenticated` sur les 4 tables | `false` partout |
+| `get_advisors` : nouvel objet sous l'avis `anon_…` | **aucun** |
+
+La dernière ligne des lectures est la loi `where` contre `if` en action : une
+porte dans un `where` échoue **fermée** (0 ligne), une porte en `if … then raise`
+échoue **ouverte** si elle est écrite en refus. Les 12 fonctions n'apparaissent
+chez `get_advisors` que sous `authenticated_security_definer_function_executable`,
+avis attendu par conception — c'est ainsi que toute l'application fonctionne, et
+c'est la porte interne, mesurée ci-dessus, qui protège.
+
+**Conséquence tenue :** `unite_curriculum()` s'allume, comme annoncé. Son garde
+`to_regclass` est franchi, la requête dynamique se compile (vérifié à nu : une
+colonne absente aurait été avalée en `null` par son `exception when
+undefined_column`), et sur un élève réel elle rend désormais `null` **parce
+qu'aucun placement n'est décidé**, non plus parce que la table manque. Le bloc
+curriculum du cahier se remplira au premier diagnostic, sans une ligne de Dart.
 
 ### 7.1 La leçon de privilèges, corrigée deux fois
 

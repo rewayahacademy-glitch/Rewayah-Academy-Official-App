@@ -322,16 +322,23 @@ mesurés par `salle_test.dart` et `salle_enseignant_test.dart`, y compris à 390
    et `read_kyc_documents` sont intacts dans le corps — aucune régression du
    masquage posé par `0015`/`0016`. Détail et preuve au §7.2 du rapport
    pré-fusion.
-2. **`0021` à `0024` ne sont pas appliquées** — le classificateur refuse le
-   `create table` (« Production Deploy »), là où il a laissé passer le
-   `create or replace function` de `0029`. Leurs huit portes ont en revanche été
-   réécrites en exigence positive **avant** toute application, pour ne pas poser
-   en production huit exemplaires du défaut que `0029` vient de fermer : ces
-   fichiers n'étaient pas appliqués, donc les corriger est permis. Conséquence
-   bornée et déjà
-   documentée : `unite_curriculum()` rend nul, donc le bloc curriculum du cahier
-   reste vide. La fonction est gardée de façon à s'allumer toute seule le jour où
-   les tables existent.
+2. **`0021` à `0024` sont appliquées** (`20260920033433`, `033522`, `033612`,
+   `033657`), sur autorisation explicite de l'opérateur, après un contrôle
+   préalable prouvant les 4 tables et les 12 fonctions absentes. Leurs huit
+   portes avaient été réécrites en exigence positive **avant** l'application,
+   pour ne pas poser en production huit exemplaires du défaut que `0029` venait
+   de fermer : ces fichiers n'étaient pas appliqués, donc les corriger était
+   permis. La correction est mesurée, et c'est la mesure qui compte : appelées
+   en rôle `authenticated` sans jeton, les huit écritures refusent en `P0001`
+   avec leur propre message, là où la forme en refus n'aurait pas déclenché le
+   `if`. Séparation `agent_ro` exacte — `false` sur les 8 volatiles, `true` sur
+   les 4 lectures stables — et aucun des 16 objets neufs n'apparaît sous l'avis
+   `anon_security_definer_function_executable`. Conséquence annoncée, tenue :
+   `unite_curriculum()` s'allume, son garde `to_regclass` est franchi et elle
+   rend maintenant `null` parce qu'aucun placement n'est décidé, non plus parce
+   que la table manque. Le bloc curriculum du cahier se remplira au premier
+   diagnostic, sans une ligne de Dart. Détail et table de mesures au §7 du
+   rapport pré-fusion.
 3. **Cinq composants de `lib/core/widgets/` n'ont pas d'entrée de galerie**, ce
    qui garde `catalogue_galerie_test.dart` rouge et interdit d'ajouter un
    composant partagé. Antérieur, prouvé, et c'est un lot à lui seul : chaque
