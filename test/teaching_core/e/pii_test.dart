@@ -207,7 +207,7 @@ void main() {
     testWidgets('aucune UI n ecrit « mode enfant »', (
       WidgetTester tester,
     ) async {
-      // Decision D-07 : le nom visible est « Interface guidee ». La valeur SQL
+      // Decision D-07 : le nom visible est « Interface guidée ». La valeur SQL
       // reste `'child'`, et ce n'est pas un renommage de donnee.
       const TeacherStudentProjection fiche = TeacherStudentProjection(
         firstName: 'Ilyas',
@@ -231,7 +231,7 @@ void main() {
 
       final String tout = motsRendus(tester).join(' | ').toLowerCase();
       expect(tout.contains('mode enfant'), isFalse);
-      expect(tout.contains('interface guidee'), isTrue);
+      expect(tout.contains('interface guidée'), isTrue);
     });
   });
 }

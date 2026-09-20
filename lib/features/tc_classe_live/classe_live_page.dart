@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
-import '../../core/tc_classe/libelles_tc_classe.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/session_live_vm.dart';
@@ -237,9 +237,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
   Future<void> _quitter() async {
     final bool confirme = await ConfirmDestructive.demander(
       context,
-      question: LibellesClasse.quitterQuestion,
-      consequence: LibellesClasse.quitterConsequence,
-      libelleConfirmer: LibellesClasse.quitter,
+      question: t.tc.classe.commandes.quitterQuestion,
+      consequence: t.tc.classe.commandes.quitterConsequence,
+      libelleConfirmer: t.tc.classe.commandes.quitter,
     );
     if (!confirme || !mounted) {
       return;
@@ -254,7 +254,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
 
   Future<void> _voirRoster(RosterClasseVM roster) => AppBottomSheet.ouvrir<void>(
     context,
-    titre: LibellesClasse.rosterTitre,
+    titre: t.tc.classe.roster.titre,
     constructeur: (BuildContext _) => PanneauRoster(
       roster: roster,
       onOuvrirFiche: (String academyId) {
@@ -298,7 +298,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     }
     await AppBottomSheet.ouvrir<void>(
       context,
-      titre: LibellesClasse.ouvrirBibliotheque,
+      titre: t.tc.classe.support.bibliotheque,
       constructeur: (BuildContext _) => SurfaceBibliotheque(slot: slot),
     );
   }
@@ -469,17 +469,17 @@ class _Attente extends StatelessWidget {
       return PreCours(vue: vue, onReessayer: onReessayer);
     }
     final String mot = switch (phase) {
-      PhaseSalle.materiel => LibellesClasse.attenteMateriel,
-      PhaseSalle.ouverture => LibellesClasse.attenteOuverture,
+      PhaseSalle.materiel => t.tc.classe.attente.materiel,
+      PhaseSalle.ouverture => t.tc.classe.attente.ouverture,
       PhaseSalle.connexion ||
       PhaseSalle.enSalle ||
       PhaseSalle.instable ||
       PhaseSalle.reconnexion ||
-      PhaseSalle.retabli => LibellesClasse.attenteConnexion,
+      PhaseSalle.retabli => t.tc.classe.attente.connexion,
       // Une impasse qui n'est pas materielle : le backend a refuse, et il ne
       // dit jamais pourquoi -- ni « seance inconnue », ni « pas inscrit », ni
       // « trop tot ». Un seul message, et c'est voulu.
-      PhaseSalle.refus => LibellesClasse.entreeRefusee,
+      PhaseSalle.refus => t.tc.classe.attente.refus,
     };
     return Center(
       child: Padding(
@@ -497,7 +497,7 @@ class _Attente extends StatelessWidget {
             if (phase == PhaseSalle.refus) ...<Widget>[
               Ecart.vLg,
               ActionPrincipale(
-                libelle: LibellesClasse.prevolReessayer,
+                libelle: t.tc.classe.prevol.reessayer,
                 onPress: onReessayer,
                 niveau: NiveauAction.secondaire,
                 pleineLargeur: false,
@@ -589,7 +589,7 @@ class _Corps extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ActionPrincipale(
-              libelle: LibellesClasse.fermerBibliotheque,
+              libelle: t.tc.classe.commandes.fermerBibliotheque,
               onPress: onFermerBibliotheque,
               niveau: NiveauAction.tertiaire,
             ),
@@ -666,8 +666,8 @@ class _Commandes extends StatelessWidget {
         if (salle.peutParler)
           ActionPrincipale(
             libelle: microOuvert
-                ? LibellesClasse.microFermer
-                : LibellesClasse.microOuvrir,
+                ? t.tc.classe.commandes.microFermer
+                : t.tc.classe.commandes.micro,
             onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
             niveau: NiveauAction.secondaire,
             pleineLargeur: false,
@@ -675,15 +675,15 @@ class _Commandes extends StatelessWidget {
         if (salle.peutMontrer)
           ActionPrincipale(
             libelle: cameraOuverte
-                ? LibellesClasse.cameraFermer
-                : LibellesClasse.cameraOuvrir,
+                ? t.tc.classe.commandes.cameraFermer
+                : t.tc.classe.commandes.camera,
             onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null,
             niveau: NiveauAction.secondaire,
             pleineLargeur: false,
           ),
         if (peutOuvrirBibliotheque)
           ActionPrincipale(
-            libelle: LibellesClasse.ouvrirBibliotheque,
+            libelle: t.tc.classe.support.bibliotheque,
             onPress: enSalle ? onBibliotheque : null,
             niveau: NiveauAction.secondaire,
             pleineLargeur: false,
@@ -693,7 +693,7 @@ class _Commandes extends StatelessWidget {
         if (_reseau(qualite) case final (String, TonEtat) dit)
           StatusPill(libelle: dit.$1, ton: dit.$2),
         ActionPrincipale(
-          libelle: LibellesClasse.quitter,
+          libelle: t.tc.classe.commandes.quitter,
           onPress: onQuitter,
           niveau: NiveauAction.destructive,
           pleineLargeur: false,
@@ -706,11 +706,11 @@ class _Commandes extends StatelessWidget {
   static (String, TonEtat)? _reseau(QualiteLien qualite) => switch (qualite) {
     QualiteLien.inconnue => null,
     QualiteLien.excellente ||
-    QualiteLien.bonne => (LibellesClasse.reseauBon, TonEtat.succes),
+    QualiteLien.bonne => (t.tc.classe.reseau.bon, TonEtat.succes),
     QualiteLien.mediocre => (
-      LibellesClasse.reseauMediocre,
+      t.tc.classe.reseau.mediocre,
       TonEtat.avertissement,
     ),
-    QualiteLien.perdue => (LibellesClasse.reseauPerdu, TonEtat.alerte),
+    QualiteLien.perdue => (t.tc.classe.reseau.perdu, TonEtat.alerte),
   };
 }

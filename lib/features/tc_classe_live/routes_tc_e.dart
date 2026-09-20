@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/tc_classe/libelles_tc_classe.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/page_immersive.dart';
 import 'classe_live_page.dart';
 
@@ -57,7 +57,7 @@ class _ClasseSansContexte extends StatelessWidget {
     registre: RegistreImmersif.salle,
     child: Center(
       child: Text(
-        LibellesClasse.entreeRefusee,
+        t.tc.classe.attente.refus,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
       ),

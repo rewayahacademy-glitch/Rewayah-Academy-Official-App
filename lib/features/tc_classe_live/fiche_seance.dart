@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
-import '../../core/tc_classe/libelles_tc_classe.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/rappel_discret.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
@@ -95,16 +95,17 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
   /// l'action redeviendra possible.
   String _messageEchec(EchecRappel echec, PortRappelDiscret rappel) =>
       switch (echec.motif) {
-        MotifEchecRappel.cooldown => LibellesClasse.rappelCooldown(
-          (rappel.cooldownRestant(
-                    sessionId: widget.sessionId,
-                    academyId: widget.eleve.academyId,
-                  ) ??
-                  rappel.cooldown)
-              .inSeconds,
+        MotifEchecRappel.cooldown => t.tc.classe.rappel.cooldown(
+          secondes:
+              (rappel.cooldownRestant(
+                        sessionId: widget.sessionId,
+                        academyId: widget.eleve.academyId,
+                      ) ??
+                      rappel.cooldown)
+                  .inSeconds,
         ),
-        MotifEchecRappel.droitRefuse => LibellesClasse.rappelEchecDroit,
-        MotifEchecRappel.transport => LibellesClasse.rappelEchec,
+        MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
+        MotifEchecRappel.transport => t.tc.classe.rappel.echec,
       };
 
   void _donnerLaParole() {
@@ -138,8 +139,8 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
             // « Interface guidee », JAMAIS « mode enfant » (decision D-07).
             if (eleve.interfaceGuidee) ...<Widget>[
               Ecart.hSm,
-              const StatusPill(
-                libelle: LibellesClasse.ficheInterfaceGuidee,
+              StatusPill(
+                libelle: t.tc.classe.fiche.interfaceGuidee,
                 ton: TonEtat.accent,
               ),
             ],
@@ -155,9 +156,9 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
           // lecture a l'enseignant. Une fiche blanche laisserait croire que
           // l'eleve n'a pas de parcours ; ce texte dit que la donnee n'est pas
           // ouverte. Demande en section 1 de `TC_CONTRACT_REQUEST_E.md`.
-          const EmptyState(
-            message: LibellesClasse.ficheSansPedagogie,
-            invitation: LibellesClasse.ficheSansPedagogieDetail,
+          EmptyState(
+            message: t.tc.classe.fiche.sansPedagogie,
+            invitation: t.tc.classe.fiche.sansPedagogieDetail,
             registre: RegistreVide.subi,
           ),
         Ecart.vLg,
@@ -197,32 +198,32 @@ class _Faits extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (eleve.level case final String niveau)
-          _Fait(intitule: LibellesClasse.ficheNiveau, valeur: niveau),
+          _Fait(intitule: t.tc.classe.fiche.niveau, valeur: niveau),
         if (eleve.activeGoals.isNotEmpty)
           _Fait(
-            intitule: LibellesClasse.ficheObjectif,
+            intitule: t.tc.classe.fiche.objectif,
             valeur: eleve.activeGoals.first,
           ),
         if (derniere?.positionAtteinte?.page case final int page)
           _Fait(
-            intitule: LibellesClasse.ficheDerniereSeance,
-            valeur: LibellesClasse.fichePage(page),
+            intitule: t.tc.classe.fiche.derniereSeance,
+            valeur: t.tc.classe.fiche.page(page: page),
           ),
         if (derniere?.pointARevoir case final String point)
-          _Fait(intitule: LibellesClasse.ficheAReprendre, valeur: point),
+          _Fait(intitule: t.tc.classe.fiche.aReprendre, valeur: point),
         if (assiduite != null)
           _Fait(
-            intitule: LibellesClasse.fichePresenceRecente,
-            valeur: LibellesClasse.ficheAssiduite(
-              assiduite.presences,
-              assiduite.total,
+            intitule: t.tc.classe.fiche.presenceRecente,
+            valeur: t.tc.classe.fiche.assiduite(
+              presences: assiduite.presences,
+              total: assiduite.total,
             ),
           ),
         if (eleve.currentAssignments.isNotEmpty)
           _Fait(
-            intitule: LibellesClasse.ficheTravailActuel,
-            valeur: LibellesClasse.ficheTravauxEnCours(
-              eleve.currentAssignments.length,
+            intitule: t.tc.classe.fiche.travailActuel,
+            valeur: t.tc.classe.fiche.travailEnCours(
+              nombre: eleve.currentAssignments.length,
             ),
           ),
       ],
@@ -286,13 +287,13 @@ class _Actions extends StatelessWidget {
       runSpacing: AppSpacing.sm,
       children: <Widget>[
         ActionPrincipale(
-          libelle: LibellesClasse.actionRappel,
+          libelle: t.tc.classe.action.rappel,
           onPress: onRappel,
           niveau: NiveauAction.secondaire,
           pleineLargeur: false,
         ),
         ActionPrincipale(
-          libelle: LibellesClasse.actionReciter,
+          libelle: t.tc.classe.action.reciter,
           // Rendre la parole n'est pas une action de la fiche : on la reprend
           // en la donnant a quelqu'un d'autre, ou on l'arrete depuis la file.
           onPress: recite ? null : onReciter,
@@ -301,21 +302,21 @@ class _Actions extends StatelessWidget {
         ),
         if (onNoter != null)
           ActionPrincipale(
-            libelle: LibellesClasse.actionNoter,
+            libelle: t.tc.classe.action.noter,
             onPress: onNoter,
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
           ),
         if (onSignaler != null)
           ActionPrincipale(
-            libelle: LibellesClasse.actionSignaler,
+            libelle: t.tc.classe.action.signaler,
             onPress: onSignaler,
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
           ),
         if (onOuvrirContexte != null)
           ActionPrincipale(
-            libelle: LibellesClasse.actionContexte,
+            libelle: t.tc.classe.action.contexte,
             onPress: onOuvrirContexte,
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,

@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 
-import '../../core/tc_classe/libelles_tc_classe.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/theme/app_spacing.dart';
@@ -14,15 +14,15 @@ import '../../core/widgets/status_pill.dart';
 /// **Toujours un mot** (invariant J7) : une pastille sans libelle ne dit rien a
 /// qui ne distingue pas les couleurs, et rien du tout a qui ecoute l'ecran.
 String libelleEtatProjete(EtatPresenceProjete etat) => switch (etat) {
-  EtatPresenceProjete.inconnu => LibellesClasse.etatInconnu,
-  EtatPresenceProjete.attendu => LibellesClasse.etatAttendu,
-  EtatPresenceProjete.enConnexion => LibellesClasse.etatEnConnexion,
-  EtatPresenceProjete.present => LibellesClasse.etatPresent,
-  EtatPresenceProjete.enRetard => LibellesClasse.etatEnRetard,
-  EtatPresenceProjete.deconnecte => LibellesClasse.etatDeconnecte,
-  EtatPresenceProjete.enReconnexion => LibellesClasse.etatEnReconnexion,
-  EtatPresenceProjete.sorti => LibellesClasse.etatSorti,
-  EtatPresenceProjete.absent => LibellesClasse.etatAbsent,
+  EtatPresenceProjete.inconnu => t.tc.classe.etat.inconnu,
+  EtatPresenceProjete.attendu => t.tc.classe.etat.attendu,
+  EtatPresenceProjete.enConnexion => t.tc.classe.etat.enConnexion,
+  EtatPresenceProjete.present => t.tc.classe.etat.present,
+  EtatPresenceProjete.enRetard => t.tc.classe.etat.enRetard,
+  EtatPresenceProjete.deconnecte => t.tc.classe.etat.deconnecte,
+  EtatPresenceProjete.enReconnexion => t.tc.classe.etat.enReconnexion,
+  EtatPresenceProjete.sorti => t.tc.classe.etat.sorti,
+  EtatPresenceProjete.absent => t.tc.classe.etat.absent,
 };
 
 /// La famille semantique d'un etat projete.
@@ -110,8 +110,8 @@ class LigneRoster extends StatelessWidget {
                 // lisere ou un fond colore seul serait invisible a qui ecoute
                 // l'ecran.
                 if (recite)
-                  const StatusPill(
-                    libelle: LibellesClasse.recite,
+                  StatusPill(
+                    libelle: t.tc.classe.recitation.pastille,
                     ton: TonEtat.accent,
                   ),
                 StatusPill(
@@ -130,7 +130,9 @@ class LigneRoster extends StatelessWidget {
     }
     return Pressable(
       onPress: onOuvrirFiche,
-      libelleSemantique: LibellesClasse.ouvrirFiche(eleve.firstName),
+      libelleSemantique: t.tc.classe.roster.ouvrirFiche(
+        prenom: eleve.firstName,
+      ),
       child: corps,
     );
   }
@@ -165,15 +167,15 @@ class PanneauRoster extends StatelessWidget {
     // dit « personne n'est inscrit » ; l'indisponibilite dit « je ne sais pas ».
     // Les confondre ferait croire a un enseignant que sa classe est deserte.
     if (!roster.disponible) {
-      return const _RosterVide(
-        message: LibellesClasse.rosterIndisponible,
-        invitation: LibellesClasse.rosterIndisponibleDetail,
+      return _RosterVide(
+        message: t.tc.classe.roster.indisponible,
+        invitation: t.tc.classe.roster.indisponibleDetail,
       );
     }
     if (roster.eleves.isEmpty) {
-      return const _RosterVide(
-        message: LibellesClasse.rosterVide,
-        invitation: LibellesClasse.rosterVideDetail,
+      return _RosterVide(
+        message: t.tc.classe.roster.vide,
+        invitation: t.tc.classe.roster.videDetail,
       );
     }
 
@@ -184,7 +186,7 @@ class PanneauRoster extends StatelessWidget {
       children: <Widget>[
         if (entete) ...<Widget>[
           SectionHeader(
-            titre: LibellesClasse.rosterTitre,
+            titre: t.tc.classe.roster.titre,
             compteur: roster.eleves.length,
           ),
           // **Le plafond vient du serveur, jamais d'une constante.** Il vaut 5
@@ -193,7 +195,10 @@ class PanneauRoster extends StatelessWidget {
           // second, et deux plafonds finissent par ne plus dire la meme chose.
           if (roster.seuilMax case final int plafond)
             Text(
-              LibellesClasse.rosterPlaces(roster.attendus, plafond),
+              t.tc.classe.roster.places(
+                inscrits: roster.attendus,
+                plafond: plafond,
+              ),
               style: Theme.of(context).textTheme.labelSmall ??
                   const TextStyle(),
             ),
@@ -275,7 +280,10 @@ class BoutonRoster extends StatelessWidget {
     // d'ecran doit annoncer. Le premier sans le second serait illisible.
     return Pressable(
       onPress: onOuvrir,
-      libelleSemantique: LibellesClasse.rosterCompteurParle(presents, attendus),
+      libelleSemantique: t.tc.classe.roster.compteur(
+        presents: presents,
+        attendus: attendus,
+      ),
       child: Text(compteur, style: textes.labelLarge ?? const TextStyle()),
     );
   }

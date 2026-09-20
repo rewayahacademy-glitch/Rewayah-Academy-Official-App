@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/tc_classe/libelles_tc_classe.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/tc_classe_live/pre_vol_classe.dart';
@@ -144,10 +144,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(LibellesClasse.prevolMicroOk), findsOneWidget);
-      expect(find.text(LibellesClasse.prevolCameraAbsente), findsOneWidget);
+      expect(find.text(t.tc.classe.prevol.microOk), findsOneWidget);
+      expect(find.text(t.tc.classe.prevol.cameraAbsente), findsOneWidget);
       // Rien ne bloque : aucun bouton de reparation.
-      expect(find.text(LibellesClasse.prevolReessayer), findsNothing);
+      expect(find.text(t.tc.classe.prevol.reessayer), findsNothing);
     });
 
     testWidgets('un eleve sans probleme ne voit rien du tout', (
@@ -186,8 +186,11 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(LibellesClasse.prevolPermissionRefusee), findsOneWidget);
-      await tester.tap(find.text(LibellesClasse.prevolReessayer));
+      expect(
+        find.text(t.tc.classe.prevol.permissionRefusee),
+        findsOneWidget,
+      );
+      await tester.tap(find.text(t.tc.classe.prevol.reessayer));
       await tester.pump();
       expect(mesures, 1);
     });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/tc_classe/libelles_tc_classe.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/pressable.dart';
@@ -51,13 +51,15 @@ class BarreCoursEnCours extends ConsumerWidget {
       ),
       child: Pressable(
         onPress: onRevenir,
-        libelleSemantique: LibellesClasse.barreRevenir(cours.libelleGroupe),
+        libelleSemantique: t.tc.classe.barre.revenir(
+          groupe: cours.libelleGroupe,
+        ),
         child: MergeSemantics(
           child: Row(
             children: <Widget>[
               // Le mot porte l'etat, jamais la seule couleur (invariant J7).
-              const StatusPill(
-                libelle: LibellesClasse.barreCoursEnCours,
+              StatusPill(
+                libelle: t.tc.classe.barre.titre,
                 ton: TonEtat.succes,
               ),
               Ecart.hSm,

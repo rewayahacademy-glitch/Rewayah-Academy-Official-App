@@ -17,6 +17,12 @@ import 'roster_classe_vm.dart';
 /// d'academie : changer d'eleve ne peut pas, structurellement, deplacer la page,
 /// le focus, le stylet ou le support presente (spec section 10.3). Le professeur
 /// corrige en parlant a son micro.
+///
+/// TC-Z-SUIVI : `t.tc.classe.recitation.titre`/`.suivants`/`.personne`/
+/// `.arreter` (et `.actif` via `reciteEnCeMoment`) n'ont encore aucun widget --
+/// seule la pastille par ligne du roster (`t.tc.classe.recitation.pastille`,
+/// voir `roster_classe.dart`) est branchee. Le bloc dedie "qui recite, qui est
+/// ensuite, arreter la file" reste a construire.
 class ControleurRecitation extends Notifier<FileRecitation> {
   @override
   FileRecitation build() => FileRecitation.vide;

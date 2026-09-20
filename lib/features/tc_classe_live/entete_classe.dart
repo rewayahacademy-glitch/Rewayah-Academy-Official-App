@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 
-import '../../core/tc_classe/libelles_tc_classe.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -28,7 +28,7 @@ String? libelleTempsRestant(SessionClockVM? horloge) {
     return null;
   }
   if (horloge.phase == PhaseSeance.prolongee) {
-    return LibellesClasse.coursToujoursEnCours;
+    return t.tc.classe.entete.coursEnCours;
   }
   final Duration? restant = horloge.restant;
   if (restant == null) {
@@ -37,8 +37,11 @@ String? libelleTempsRestant(SessionClockVM? horloge) {
   final int heures = restant.inHours;
   final int minutes = restant.inMinutes % Duration.minutesPerHour;
   return heures == 0
-      ? LibellesClasse.resteMinutes(restant.inMinutes)
-      : LibellesClasse.resteHeuresMinutes(heures, minutes);
+      ? t.tc.classe.entete.resteMinutes(minutes: restant.inMinutes)
+      : t.tc.classe.entete.resteHeuresMinutes(
+          heures: heures,
+          minutes: minutes.toString().padLeft(2, '0'),
+        );
 }
 
 /// Le nom de l'enseignant, precede de son titre.
@@ -46,12 +49,18 @@ String? libelleTempsRestant(SessionClockVM? horloge) {
 /// **Sayyid / Sayyida, jamais Ustaz** (decision D-02). Le titre manquant n'est
 /// pas une faute : la base ne le porte pas encore, et l'ecrire au hasard serait
 /// pire que de ne pas l'ecrire.
+///
+/// Les formes arabes (سيد / سيدة) sont fournies par Agent A dans
+/// `tc.groupe.enseignant.*`, pas ici : ce sous-arbre `tc.classe.entete.*` ne
+/// porte que le francais.
 String nomAvecTitre(EnseignantDeClasse enseignant) =>
     switch (enseignant.titre) {
       TitreEnseignant.sayyid =>
-        '${LibellesClasse.titreSayyid} ${enseignant.nomAffichage}',
+        '${t.tc.classe.entete.titreEnseignant.sayyid} '
+            '${enseignant.nomAffichage}',
       TitreEnseignant.sayyida =>
-        '${LibellesClasse.titreSayyida} ${enseignant.nomAffichage}',
+        '${t.tc.classe.entete.titreEnseignant.sayyida} '
+            '${enseignant.nomAffichage}',
       null => enseignant.nomAffichage,
     };
 
@@ -151,8 +160,8 @@ class EnteteClasse extends StatelessWidget {
         ),
         if (session.enseignant.photoCleOuUrl == null) ...<Widget>[
           Ecart.vSm,
-          const StatusPill(
-            libelle: LibellesClasse.photoEnseignantManquante,
+          StatusPill(
+            libelle: t.tc.classe.entete.photoManquante,
             ton: TonEtat.avertissement,
           ),
         ],
@@ -166,7 +175,7 @@ class EnteteClasse extends StatelessWidget {
           // aucune machine de reconnexion ne peut tenir parole : la phrase dit
           // le risque, elle n'annonce pas une coupure qui n'a pas eu lieu.
           Text(
-            LibellesClasse.lienArrierePlan,
+            t.tc.classe.lien.retourDeSuspension,
             style: textes.labelMedium ?? const TextStyle(),
           ),
         ],
@@ -185,10 +194,10 @@ class EnteteClasse extends StatelessWidget {
   /// disent.
   static String? _motDuLien(MotLien mot) => switch (mot) {
     MotLien.aucun => null,
-    MotLien.instable => LibellesClasse.lienInstable,
-    MotLien.reconnexion => LibellesClasse.lienReconnexion,
-    MotLien.retabli => LibellesClasse.lienRetabli,
-    MotLien.echec => LibellesClasse.lienEchec,
+    MotLien.instable => t.tc.classe.lien.instable,
+    MotLien.reconnexion => t.tc.classe.lien.reconnexion,
+    MotLien.retabli => t.tc.classe.lien.retabli,
+    MotLien.echec => t.tc.classe.lien.echec,
   };
 
   static TonEtat _tonDuLien(MotLien mot) => switch (mot) {
@@ -227,7 +236,7 @@ class _Annonce extends StatelessWidget {
           if (restant != null) ...<Widget>[
             Ecart.hSm,
             Text(
-              LibellesClasse.observationRestant(restant.inSeconds),
+              t.tc.classe.observation.restant(secondes: restant.inSeconds),
               style: textes.labelMedium ?? const TextStyle(),
             ),
           ],

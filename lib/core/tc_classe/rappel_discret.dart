@@ -18,6 +18,10 @@ import 'port_rappel_discret.dart';
 ///
 /// Leve pour signaler un echec. **Ne rend rien** : un transport qui rendrait un
 /// accuse ferait naitre la boucle de notifications que la spec interdit.
+///
+/// TC-Z-SUIVI : `t.tc.classe.rappel.recu` (« Le professeur vous appelle »,
+/// lu par l'eleve qui recoit le rappel) n'est encore affiche par aucun ecran --
+/// ce fichier ne construit que le cote emetteur (`fiche_seance.dart`).
 typedef TransportRappel =
     Future<void> Function({required String sessionId, required String academyId});
 

@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/widgets.dart';
 
-import '../../core/tc_classe/libelles_tc_classe.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/empty_state.dart';
 
 /// Une enveloppe que la Classe Live pose, et qu'un autre agent remplit.
@@ -75,9 +75,9 @@ class SurfaceSupport extends StatelessWidget {
     // Aucun support n'est presente : on le dit, et on dit ce qu'il faut faire.
     // `RegistreVide.subi` serait faux ici -- l'enseignant PEUT agir, il lui
     // manque seulement la Bibliotheque.
-    return const EmptyState(
-      message: LibellesClasse.supportAucun,
-      invitation: LibellesClasse.supportAucunDetail,
+    return EmptyState(
+      message: t.tc.classe.support.aucun,
+      invitation: t.tc.classe.support.aucunDetail,
       registre: RegistreVide.subi,
     );
   }
@@ -124,9 +124,9 @@ class SurfaceBibliotheque extends StatelessWidget {
     if (contenu != null) {
       return contenu(context);
     }
-    return const EmptyState(
-      message: LibellesClasse.bibliothequeAbsente,
-      invitation: LibellesClasse.bibliothequeAbsenteDetail,
+    return EmptyState(
+      message: t.tc.classe.support.bibliothequeAbsente,
+      invitation: t.tc.classe.support.bibliothequeAbsenteDetail,
       registre: RegistreVide.subi,
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/tc_classe/libelles_tc_classe.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -50,7 +50,7 @@ class SceneClasse extends StatelessWidget {
     if (participants.isEmpty) {
       return Center(
         child: Text(
-          LibellesClasse.sceneVide,
+          t.tc.classe.scene.vide,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
         ),
@@ -169,7 +169,7 @@ class _Cadre extends ConsumerWidget {
                     if (!participant.micro) ...<Widget>[
                       Ecart.hXs,
                       Text(
-                        LibellesClasse.microCoupeCourt,
+                        t.tc.classe.commandes.microCoupe,
                         style: palette.surfaceSunken.applyTo(
                           textes.labelSmall ?? const TextStyle(),
                         ),
@@ -200,7 +200,7 @@ class _SansImage extends StatelessWidget {
 
     return Center(
       child: Semantics(
-        label: avecLegende ? null : LibellesClasse.sansImage,
+        label: avecLegende ? null : t.tc.classe.scene.sansImage,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -209,7 +209,7 @@ class _SansImage extends StatelessWidget {
             if (avecLegende) ...<Widget>[
               Ecart.vSm,
               Text(
-                LibellesClasse.sansImage,
+                t.tc.classe.scene.sansImage,
                 textAlign: TextAlign.center,
                 style: palette.surfaceSunken.applyTo(
                   textes.labelSmall ?? const TextStyle(),

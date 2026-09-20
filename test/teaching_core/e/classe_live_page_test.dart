@@ -1,8 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
-import 'package:rewayah_academy/core/tc_classe/libelles_tc_classe.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/session_live_vm.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
@@ -192,7 +192,7 @@ void main() {
         ecran: LargeurEcran.tablette,
       );
 
-      expect(find.text(LibellesClasse.supportAucun), findsOneWidget);
+      expect(find.text(t.tc.classe.support.aucun), findsOneWidget);
       expect(find.byType(EmptyState), findsWidgets);
     });
 
@@ -217,7 +217,7 @@ void main() {
       );
 
       expect(
-        find.text(LibellesClasse.photoEnseignantManquante),
+        find.text(t.tc.classe.entete.photoManquante),
         findsOneWidget,
       );
       // Sayyid / Sayyida, jamais Ustaz (decision D-02).
@@ -238,8 +238,8 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      expect(find.text(LibellesClasse.rosterIndisponible), findsOneWidget);
-      expect(find.text(LibellesClasse.rosterVide), findsNothing);
+      expect(find.text(t.tc.classe.roster.indisponible), findsOneWidget);
+      expect(find.text(t.tc.classe.roster.vide), findsNothing);
     });
 
     testWidgets('un roster vide le dit autrement', (
@@ -253,7 +253,7 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      expect(find.text(LibellesClasse.rosterVide), findsOneWidget);
+      expect(find.text(t.tc.classe.roster.vide), findsOneWidget);
     });
 
     testWidgets('l eleve ne voit pas la liste de ses camarades', (
@@ -338,7 +338,7 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      await tester.tap(find.text(LibellesClasse.ouvrirBibliotheque));
+      await tester.tap(find.text(t.tc.classe.support.bibliotheque));
       await tester.pumpAndSettle();
 
       expect(find.text('catalogue'), findsOneWidget);
@@ -372,12 +372,12 @@ void main() {
 
       expect(banc0.moteur.departs, 0);
       // Le doute est dit, et il tient : rien ne promet que le lien a survecu.
-      expect(find.text(LibellesClasse.lienArrierePlan), findsOneWidget);
+      expect(find.text(t.tc.classe.lien.retourDeSuspension), findsOneWidget);
 
       // Le moteur reconfirme : le doute tombe, sans que personne n ait a agir.
       banc0.moteur.poser(EtatSalle.connecte);
       await tester.pumpAndSettle();
-      expect(find.text(LibellesClasse.lienArrierePlan), findsNothing);
+      expect(find.text(t.tc.classe.lien.retourDeSuspension), findsNothing);
     });
 
     testWidgets('quitter annonce la sortie AVANT de deconnecter', (
@@ -392,10 +392,10 @@ void main() {
       );
       banc0.journal.clear();
 
-      await tester.tap(find.text(LibellesClasse.quitter).last);
+      await tester.tap(find.text(t.tc.classe.commandes.quitter).last);
       await tester.pumpAndSettle();
       // La confirmation, une seule fois.
-      await tester.tap(find.text(LibellesClasse.quitter).last);
+      await tester.tap(find.text(t.tc.classe.commandes.quitter).last);
       await tester.pumpAndSettle();
 
       expect(banc0.journal, <String>['annonce', 'deconnexion']);
@@ -421,7 +421,7 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.text(LibellesClasse.lienReconnexion), findsOneWidget);
+      expect(find.text(t.tc.classe.lien.reconnexion), findsOneWidget);
       // La seance continue : le support reste a l'ecran.
       expect(find.text('support presente'), findsOneWidget);
       expect(banc0.moteur.departs, 0);
@@ -436,8 +436,8 @@ void main() {
         ecran: LargeurEcran.tablette,
       );
 
-      expect(find.text(LibellesClasse.lienReconnexion), findsNothing);
-      expect(find.text(LibellesClasse.lienInstable), findsNothing);
+      expect(find.text(t.tc.classe.lien.reconnexion), findsNothing);
+      expect(find.text(t.tc.classe.lien.instable), findsNothing);
     });
   });
 
@@ -461,13 +461,13 @@ void main() {
 
       await tester.tap(find.text('Amina'));
       await tester.pumpAndSettle();
-      expect(find.text(LibellesClasse.actionRappel), findsOneWidget);
+      expect(find.text(t.tc.classe.action.rappel), findsOneWidget);
 
-      await tester.tap(find.text(LibellesClasse.actionRappel));
+      await tester.tap(find.text(t.tc.classe.action.rappel));
       await tester.pump();
       await tester.pump();
 
-      expect(find.text(LibellesClasse.rappelEchec), findsOneWidget);
+      expect(find.text(t.tc.classe.rappel.echec), findsOneWidget);
       // Le temps passe : le retour local disparait tout seul.
       await tester.pump(const Duration(seconds: 5));
     });
@@ -488,14 +488,14 @@ void main() {
 
       await tester.tap(find.text('Amina'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(LibellesClasse.actionRappel));
+      await tester.tap(find.text(t.tc.classe.action.rappel));
       await tester.pump();
       await tester.pump();
 
       // Reussite silencieuse : aucun message, aucun accuse. La seule preuve est
       // hors de l'ecran.
       expect(banc0.rappel.appels, <(String, String)>[(seance, 'RA-Amina')]);
-      expect(find.text(LibellesClasse.rappelEchec), findsNothing);
+      expect(find.text(t.tc.classe.rappel.echec), findsNothing);
     });
 
     testWidgets('choisir pour reciter ne change pas le support', (
@@ -516,7 +516,7 @@ void main() {
 
       await tester.tap(find.text('Amina'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(LibellesClasse.actionReciter));
+      await tester.tap(find.text(t.tc.classe.action.reciter));
       await tester.pumpAndSettle();
 
       expect(find.text('support presente'), findsOneWidget);
@@ -546,7 +546,10 @@ void main() {
       );
 
       expect(find.text('Tuteur d Amina observe'), findsOneWidget);
-      expect(find.text(LibellesClasse.observationRestant(90)), findsOneWidget);
+      expect(
+        find.text(t.tc.classe.observation.restant(secondes: 90)),
+        findsOneWidget,
+      );
     });
   });
 }

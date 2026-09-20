@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/tc_classe/libelles_tc_classe.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
@@ -153,7 +153,7 @@ class PreCours extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Text(
-              LibellesClasse.prevolTitre,
+              t.tc.classe.prevol.titre,
               textAlign: TextAlign.center,
               style: textes.titleMedium ?? const TextStyle(),
             ),
@@ -161,8 +161,8 @@ class PreCours extends StatelessWidget {
             if (vue.detail == DetailPreCours.complet) ...<Widget>[
               StatusPill(
                 libelle: vue.microPresent
-                    ? LibellesClasse.prevolMicroOk
-                    : LibellesClasse.prevolMicroAbsent,
+                    ? t.tc.classe.prevol.microOk
+                    : t.tc.classe.prevol.microAbsent,
                 ton: vue.microPresent ? TonEtat.succes : TonEtat.alerte,
               ),
               Ecart.vSm,
@@ -171,8 +171,8 @@ class PreCours extends StatelessWidget {
               // alerte.
               StatusPill(
                 libelle: vue.cameraPresente
-                    ? LibellesClasse.prevolCameraOk
-                    : LibellesClasse.prevolCameraAbsente,
+                    ? t.tc.classe.prevol.cameraOk
+                    : t.tc.classe.prevol.cameraAbsente,
                 ton: vue.cameraPresente
                     ? TonEtat.succes
                     : TonEtat.avertissement,
@@ -183,16 +183,15 @@ class PreCours extends StatelessWidget {
               Text(
                 switch (motif) {
                   MotifPreCours.permissionRefusee =>
-                    LibellesClasse.prevolPermissionRefusee,
-                  MotifPreCours.microAbsent =>
-                    LibellesClasse.prevolMicroAbsent,
+                    t.tc.classe.prevol.permissionRefusee,
+                  MotifPreCours.microAbsent => t.tc.classe.prevol.microAbsent,
                 },
                 textAlign: TextAlign.center,
                 style: textes.bodyMedium ?? const TextStyle(),
               ),
               Ecart.vLg,
               ActionPrincipale(
-                libelle: LibellesClasse.prevolReessayer,
+                libelle: t.tc.classe.prevol.reessayer,
                 onPress: onReessayer,
                 niveau: NiveauAction.secondaire,
               ),
