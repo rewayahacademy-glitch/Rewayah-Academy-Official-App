@@ -67,22 +67,46 @@ class SessionsAVenir extends Table {
   Set<Column<Object>> get primaryKey => <Column<Object>>{id};
 }
 
-/// Index des pages du mushaf deja consultees.
+/// Index local des ressources conservees hors ligne (Teaching Core, Agent B).
 ///
-/// L'index seulement : les octets de la page vivent dans le cache media, pas
-/// en base locale.
-class PagesMushafConsultees extends Table {
-  /// Numero de page du mushaf.
-  IntColumn get numeroPage => integer()();
+/// Persiste ce que `CacheMediaFichiers` ne pouvait garder qu'en memoire : sans
+/// cette table, une ressource "Telechargee" repassait a "A telecharger" au
+/// lancement suivant, parce qu'aucune cle ne survivait au redemarrage.
+class RessourcesHorsLigne extends Table {
+  /// Identifiant de la ressource (`library_resource.id`).
+  TextColumn get resourceId => text()();
+
+  /// Version telechargee (`resource_version.id`).
+  TextColumn get versionId => text()();
 
   /// Cle du fichier dans le cache media.
   TextColumn get cleCache => text()();
 
-  /// Derniere consultation. Sert a la purge par anciennete.
-  DateTimeColumn get consulteeA => dateTime()();
+  /// Epinglee : ne participe pas a la purge automatique.
+  BoolColumn get epinglee => boolean().withDefault(const Constant(false))();
+
+  /// Date de depot local.
+  DateTimeColumn get deposeeA => dateTime()();
 
   @override
-  Set<Column<Object>> get primaryKey => <Column<Object>>{numeroPage};
+  Set<Column<Object>> get primaryKey => <Column<Object>>{resourceId};
+}
+
+/// Preferences locales durables, en clef/valeur (Teaching Core, Agent D).
+///
+/// Remplace la discussion "table dediee ou `shared_preferences`" : D n'a pas
+/// demande la dependance, et ce mecanisme existe deja. Premier usage : la
+/// position du dock d'outils (bas/gauche/droite) ; ouvert a tout autre
+/// agent qui a besoin d'une preference d'affichage durable et non sensible.
+class PreferenceLocale extends Table {
+  /// La clef, par exemple `dock.position`.
+  TextColumn get clef => text()();
+
+  /// La valeur, en texte brut.
+  TextColumn get valeur => text()();
+
+  @override
+  Set<Column<Object>> get primaryKey => <Column<Object>>{clef};
 }
 
 /// File d'attente des cahiers de transmission non encore synchronises.
@@ -116,16 +140,23 @@ class RapportsEnAttente extends Table {
 
 /// La base locale.
 ///
-/// **Exactement quatre tables, ni plus ni moins**
-/// (`docs/architecture/etape-2-core-flutter.md` section 4). Toute table
-/// supplementaire doit d'abord etre justifiee dans la specification : un cache
-/// qui grossit sans regle finit par recopier la base et par en heriter les
-/// obligations de protection.
+/// Cinq tables (`docs/architecture/etape-2-core-flutter.md` section 4, mis a
+/// jour au schema 2). Toute table supplementaire doit d'abord etre justifiee
+/// dans la specification : un cache qui grossit sans regle finit par recopier
+/// la base et par en heriter les obligations de protection.
+///
+/// Schema 2 (Teaching Core) : `PagesMushafConsultees` est supprimee -- table
+/// generee mais jamais lue ni ecrite depuis sa creation, et son modele
+/// page-image est de toute facon incompatible avec le rendu texte structure
+/// retenu pour le Coran (arbitrage produit du 20/09, aucune police QCF).
+/// `RessourcesHorsLigne` (Agent B) et `PreferenceLocale` (Agent D) la
+/// remplacent dans le schema, sans rapport l'une a l'autre.
 @DriftDatabase(
   tables: <Type>[
     ProfilsFoyer,
     SessionsAVenir,
-    PagesMushafConsultees,
+    RessourcesHorsLigne,
+    PreferenceLocale,
     RapportsEnAttente,
   ],
 )
@@ -137,5 +168,19 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.surExecuteur(super.executeur);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from < 2) {
+        await m.deleteTable('pages_mushaf_consultees');
+        await m.createTable(ressourcesHorsLigne);
+        await m.createTable(preferenceLocale);
+      }
+    },
+  );
 }

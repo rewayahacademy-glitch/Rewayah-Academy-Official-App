@@ -991,22 +991,33 @@ class SessionsAVenirCompanion extends UpdateCompanion<SessionsAVenirData> {
   }
 }
 
-class $PagesMushafConsulteesTable extends PagesMushafConsultees
-    with TableInfo<$PagesMushafConsulteesTable, PagesMushafConsultee> {
+class $RessourcesHorsLigneTable extends RessourcesHorsLigne
+    with TableInfo<$RessourcesHorsLigneTable, RessourcesHorsLigneData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $PagesMushafConsulteesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _numeroPageMeta = const VerificationMeta(
-    'numeroPage',
+  $RessourcesHorsLigneTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _resourceIdMeta = const VerificationMeta(
+    'resourceId',
   );
   @override
-  late final GeneratedColumn<int> numeroPage = GeneratedColumn<int>(
-    'numero_page',
+  late final GeneratedColumn<String> resourceId = GeneratedColumn<String>(
+    'resource_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionIdMeta = const VerificationMeta(
+    'versionId',
+  );
+  @override
+  late final GeneratedColumn<String> versionId = GeneratedColumn<String>(
+    'version_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _cleCacheMeta = const VerificationMeta(
     'cleCache',
@@ -1019,36 +1030,67 @@ class $PagesMushafConsulteesTable extends PagesMushafConsultees
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _consulteeAMeta = const VerificationMeta(
-    'consulteeA',
+  static const VerificationMeta _epingleeMeta = const VerificationMeta(
+    'epinglee',
   );
   @override
-  late final GeneratedColumn<DateTime> consulteeA = GeneratedColumn<DateTime>(
-    'consultee_a',
+  late final GeneratedColumn<bool> epinglee = GeneratedColumn<bool>(
+    'epinglee',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("epinglee" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _deposeeAMeta = const VerificationMeta(
+    'deposeeA',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deposeeA = GeneratedColumn<DateTime>(
+    'deposee_a',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [numeroPage, cleCache, consulteeA];
+  List<GeneratedColumn> get $columns => [
+    resourceId,
+    versionId,
+    cleCache,
+    epinglee,
+    deposeeA,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'pages_mushaf_consultees';
+  static const String $name = 'ressources_hors_ligne';
   @override
   VerificationContext validateIntegrity(
-    Insertable<PagesMushafConsultee> instance, {
+    Insertable<RessourcesHorsLigneData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('numero_page')) {
+    if (data.containsKey('resource_id')) {
       context.handle(
-        _numeroPageMeta,
-        numeroPage.isAcceptableOrUnknown(data['numero_page']!, _numeroPageMeta),
+        _resourceIdMeta,
+        resourceId.isAcceptableOrUnknown(data['resource_id']!, _resourceIdMeta),
       );
+    } else if (isInserting) {
+      context.missing(_resourceIdMeta);
+    }
+    if (data.containsKey('version_id')) {
+      context.handle(
+        _versionIdMeta,
+        versionId.isAcceptableOrUnknown(data['version_id']!, _versionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionIdMeta);
     }
     if (data.containsKey('cle_cache')) {
       context.handle(
@@ -1058,200 +1100,492 @@ class $PagesMushafConsulteesTable extends PagesMushafConsultees
     } else if (isInserting) {
       context.missing(_cleCacheMeta);
     }
-    if (data.containsKey('consultee_a')) {
+    if (data.containsKey('epinglee')) {
       context.handle(
-        _consulteeAMeta,
-        consulteeA.isAcceptableOrUnknown(data['consultee_a']!, _consulteeAMeta),
+        _epingleeMeta,
+        epinglee.isAcceptableOrUnknown(data['epinglee']!, _epingleeMeta),
+      );
+    }
+    if (data.containsKey('deposee_a')) {
+      context.handle(
+        _deposeeAMeta,
+        deposeeA.isAcceptableOrUnknown(data['deposee_a']!, _deposeeAMeta),
       );
     } else if (isInserting) {
-      context.missing(_consulteeAMeta);
+      context.missing(_deposeeAMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {numeroPage};
+  Set<GeneratedColumn> get $primaryKey => {resourceId};
   @override
-  PagesMushafConsultee map(Map<String, dynamic> data, {String? tablePrefix}) {
+  RessourcesHorsLigneData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return PagesMushafConsultee(
-      numeroPage: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}numero_page'],
+    return RessourcesHorsLigneData(
+      resourceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resource_id'],
+      )!,
+      versionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}version_id'],
       )!,
       cleCache: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}cle_cache'],
       )!,
-      consulteeA: attachedDatabase.typeMapping.read(
+      epinglee: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}epinglee'],
+      )!,
+      deposeeA: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}consultee_a'],
+        data['${effectivePrefix}deposee_a'],
       )!,
     );
   }
 
   @override
-  $PagesMushafConsulteesTable createAlias(String alias) {
-    return $PagesMushafConsulteesTable(attachedDatabase, alias);
+  $RessourcesHorsLigneTable createAlias(String alias) {
+    return $RessourcesHorsLigneTable(attachedDatabase, alias);
   }
 }
 
-class PagesMushafConsultee extends DataClass
-    implements Insertable<PagesMushafConsultee> {
-  /// Numero de page du mushaf.
-  final int numeroPage;
+class RessourcesHorsLigneData extends DataClass
+    implements Insertable<RessourcesHorsLigneData> {
+  /// Identifiant de la ressource (`library_resource.id`).
+  final String resourceId;
+
+  /// Version telechargee (`resource_version.id`).
+  final String versionId;
 
   /// Cle du fichier dans le cache media.
   final String cleCache;
 
-  /// Derniere consultation. Sert a la purge par anciennete.
-  final DateTime consulteeA;
-  const PagesMushafConsultee({
-    required this.numeroPage,
+  /// Epinglee : ne participe pas a la purge automatique.
+  final bool epinglee;
+
+  /// Date de depot local.
+  final DateTime deposeeA;
+  const RessourcesHorsLigneData({
+    required this.resourceId,
+    required this.versionId,
     required this.cleCache,
-    required this.consulteeA,
+    required this.epinglee,
+    required this.deposeeA,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['numero_page'] = Variable<int>(numeroPage);
+    map['resource_id'] = Variable<String>(resourceId);
+    map['version_id'] = Variable<String>(versionId);
     map['cle_cache'] = Variable<String>(cleCache);
-    map['consultee_a'] = Variable<DateTime>(consulteeA);
+    map['epinglee'] = Variable<bool>(epinglee);
+    map['deposee_a'] = Variable<DateTime>(deposeeA);
     return map;
   }
 
-  PagesMushafConsulteesCompanion toCompanion(bool nullToAbsent) {
-    return PagesMushafConsulteesCompanion(
-      numeroPage: Value(numeroPage),
+  RessourcesHorsLigneCompanion toCompanion(bool nullToAbsent) {
+    return RessourcesHorsLigneCompanion(
+      resourceId: Value(resourceId),
+      versionId: Value(versionId),
       cleCache: Value(cleCache),
-      consulteeA: Value(consulteeA),
+      epinglee: Value(epinglee),
+      deposeeA: Value(deposeeA),
     );
   }
 
-  factory PagesMushafConsultee.fromJson(
+  factory RessourcesHorsLigneData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return PagesMushafConsultee(
-      numeroPage: serializer.fromJson<int>(json['numeroPage']),
+    return RessourcesHorsLigneData(
+      resourceId: serializer.fromJson<String>(json['resourceId']),
+      versionId: serializer.fromJson<String>(json['versionId']),
       cleCache: serializer.fromJson<String>(json['cleCache']),
-      consulteeA: serializer.fromJson<DateTime>(json['consulteeA']),
+      epinglee: serializer.fromJson<bool>(json['epinglee']),
+      deposeeA: serializer.fromJson<DateTime>(json['deposeeA']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'numeroPage': serializer.toJson<int>(numeroPage),
+      'resourceId': serializer.toJson<String>(resourceId),
+      'versionId': serializer.toJson<String>(versionId),
       'cleCache': serializer.toJson<String>(cleCache),
-      'consulteeA': serializer.toJson<DateTime>(consulteeA),
+      'epinglee': serializer.toJson<bool>(epinglee),
+      'deposeeA': serializer.toJson<DateTime>(deposeeA),
     };
   }
 
-  PagesMushafConsultee copyWith({
-    int? numeroPage,
+  RessourcesHorsLigneData copyWith({
+    String? resourceId,
+    String? versionId,
     String? cleCache,
-    DateTime? consulteeA,
-  }) => PagesMushafConsultee(
-    numeroPage: numeroPage ?? this.numeroPage,
+    bool? epinglee,
+    DateTime? deposeeA,
+  }) => RessourcesHorsLigneData(
+    resourceId: resourceId ?? this.resourceId,
+    versionId: versionId ?? this.versionId,
     cleCache: cleCache ?? this.cleCache,
-    consulteeA: consulteeA ?? this.consulteeA,
+    epinglee: epinglee ?? this.epinglee,
+    deposeeA: deposeeA ?? this.deposeeA,
   );
-  PagesMushafConsultee copyWithCompanion(PagesMushafConsulteesCompanion data) {
-    return PagesMushafConsultee(
-      numeroPage: data.numeroPage.present
-          ? data.numeroPage.value
-          : this.numeroPage,
+  RessourcesHorsLigneData copyWithCompanion(RessourcesHorsLigneCompanion data) {
+    return RessourcesHorsLigneData(
+      resourceId: data.resourceId.present
+          ? data.resourceId.value
+          : this.resourceId,
+      versionId: data.versionId.present ? data.versionId.value : this.versionId,
       cleCache: data.cleCache.present ? data.cleCache.value : this.cleCache,
-      consulteeA: data.consulteeA.present
-          ? data.consulteeA.value
-          : this.consulteeA,
+      epinglee: data.epinglee.present ? data.epinglee.value : this.epinglee,
+      deposeeA: data.deposeeA.present ? data.deposeeA.value : this.deposeeA,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('PagesMushafConsultee(')
-          ..write('numeroPage: $numeroPage, ')
+    return (StringBuffer('RessourcesHorsLigneData(')
+          ..write('resourceId: $resourceId, ')
+          ..write('versionId: $versionId, ')
           ..write('cleCache: $cleCache, ')
-          ..write('consulteeA: $consulteeA')
+          ..write('epinglee: $epinglee, ')
+          ..write('deposeeA: $deposeeA')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(numeroPage, cleCache, consulteeA);
+  int get hashCode =>
+      Object.hash(resourceId, versionId, cleCache, epinglee, deposeeA);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is PagesMushafConsultee &&
-          other.numeroPage == this.numeroPage &&
+      (other is RessourcesHorsLigneData &&
+          other.resourceId == this.resourceId &&
+          other.versionId == this.versionId &&
           other.cleCache == this.cleCache &&
-          other.consulteeA == this.consulteeA);
+          other.epinglee == this.epinglee &&
+          other.deposeeA == this.deposeeA);
 }
 
-class PagesMushafConsulteesCompanion
-    extends UpdateCompanion<PagesMushafConsultee> {
-  final Value<int> numeroPage;
+class RessourcesHorsLigneCompanion
+    extends UpdateCompanion<RessourcesHorsLigneData> {
+  final Value<String> resourceId;
+  final Value<String> versionId;
   final Value<String> cleCache;
-  final Value<DateTime> consulteeA;
-  const PagesMushafConsulteesCompanion({
-    this.numeroPage = const Value.absent(),
+  final Value<bool> epinglee;
+  final Value<DateTime> deposeeA;
+  final Value<int> rowid;
+  const RessourcesHorsLigneCompanion({
+    this.resourceId = const Value.absent(),
+    this.versionId = const Value.absent(),
     this.cleCache = const Value.absent(),
-    this.consulteeA = const Value.absent(),
+    this.epinglee = const Value.absent(),
+    this.deposeeA = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
-  PagesMushafConsulteesCompanion.insert({
-    this.numeroPage = const Value.absent(),
+  RessourcesHorsLigneCompanion.insert({
+    required String resourceId,
+    required String versionId,
     required String cleCache,
-    required DateTime consulteeA,
-  }) : cleCache = Value(cleCache),
-       consulteeA = Value(consulteeA);
-  static Insertable<PagesMushafConsultee> custom({
-    Expression<int>? numeroPage,
+    this.epinglee = const Value.absent(),
+    required DateTime deposeeA,
+    this.rowid = const Value.absent(),
+  }) : resourceId = Value(resourceId),
+       versionId = Value(versionId),
+       cleCache = Value(cleCache),
+       deposeeA = Value(deposeeA);
+  static Insertable<RessourcesHorsLigneData> custom({
+    Expression<String>? resourceId,
+    Expression<String>? versionId,
     Expression<String>? cleCache,
-    Expression<DateTime>? consulteeA,
+    Expression<bool>? epinglee,
+    Expression<DateTime>? deposeeA,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (numeroPage != null) 'numero_page': numeroPage,
+      if (resourceId != null) 'resource_id': resourceId,
+      if (versionId != null) 'version_id': versionId,
       if (cleCache != null) 'cle_cache': cleCache,
-      if (consulteeA != null) 'consultee_a': consulteeA,
+      if (epinglee != null) 'epinglee': epinglee,
+      if (deposeeA != null) 'deposee_a': deposeeA,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
-  PagesMushafConsulteesCompanion copyWith({
-    Value<int>? numeroPage,
+  RessourcesHorsLigneCompanion copyWith({
+    Value<String>? resourceId,
+    Value<String>? versionId,
     Value<String>? cleCache,
-    Value<DateTime>? consulteeA,
+    Value<bool>? epinglee,
+    Value<DateTime>? deposeeA,
+    Value<int>? rowid,
   }) {
-    return PagesMushafConsulteesCompanion(
-      numeroPage: numeroPage ?? this.numeroPage,
+    return RessourcesHorsLigneCompanion(
+      resourceId: resourceId ?? this.resourceId,
+      versionId: versionId ?? this.versionId,
       cleCache: cleCache ?? this.cleCache,
-      consulteeA: consulteeA ?? this.consulteeA,
+      epinglee: epinglee ?? this.epinglee,
+      deposeeA: deposeeA ?? this.deposeeA,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (numeroPage.present) {
-      map['numero_page'] = Variable<int>(numeroPage.value);
+    if (resourceId.present) {
+      map['resource_id'] = Variable<String>(resourceId.value);
+    }
+    if (versionId.present) {
+      map['version_id'] = Variable<String>(versionId.value);
     }
     if (cleCache.present) {
       map['cle_cache'] = Variable<String>(cleCache.value);
     }
-    if (consulteeA.present) {
-      map['consultee_a'] = Variable<DateTime>(consulteeA.value);
+    if (epinglee.present) {
+      map['epinglee'] = Variable<bool>(epinglee.value);
+    }
+    if (deposeeA.present) {
+      map['deposee_a'] = Variable<DateTime>(deposeeA.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('PagesMushafConsulteesCompanion(')
-          ..write('numeroPage: $numeroPage, ')
+    return (StringBuffer('RessourcesHorsLigneCompanion(')
+          ..write('resourceId: $resourceId, ')
+          ..write('versionId: $versionId, ')
           ..write('cleCache: $cleCache, ')
-          ..write('consulteeA: $consulteeA')
+          ..write('epinglee: $epinglee, ')
+          ..write('deposeeA: $deposeeA, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PreferenceLocaleTable extends PreferenceLocale
+    with TableInfo<$PreferenceLocaleTable, PreferenceLocaleData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PreferenceLocaleTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _clefMeta = const VerificationMeta('clef');
+  @override
+  late final GeneratedColumn<String> clef = GeneratedColumn<String>(
+    'clef',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valeurMeta = const VerificationMeta('valeur');
+  @override
+  late final GeneratedColumn<String> valeur = GeneratedColumn<String>(
+    'valeur',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [clef, valeur];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'preference_locale';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PreferenceLocaleData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('clef')) {
+      context.handle(
+        _clefMeta,
+        clef.isAcceptableOrUnknown(data['clef']!, _clefMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_clefMeta);
+    }
+    if (data.containsKey('valeur')) {
+      context.handle(
+        _valeurMeta,
+        valeur.isAcceptableOrUnknown(data['valeur']!, _valeurMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valeurMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {clef};
+  @override
+  PreferenceLocaleData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PreferenceLocaleData(
+      clef: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clef'],
+      )!,
+      valeur: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}valeur'],
+      )!,
+    );
+  }
+
+  @override
+  $PreferenceLocaleTable createAlias(String alias) {
+    return $PreferenceLocaleTable(attachedDatabase, alias);
+  }
+}
+
+class PreferenceLocaleData extends DataClass
+    implements Insertable<PreferenceLocaleData> {
+  /// La clef, par exemple `dock.position`.
+  final String clef;
+
+  /// La valeur, en texte brut.
+  final String valeur;
+  const PreferenceLocaleData({required this.clef, required this.valeur});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['clef'] = Variable<String>(clef);
+    map['valeur'] = Variable<String>(valeur);
+    return map;
+  }
+
+  PreferenceLocaleCompanion toCompanion(bool nullToAbsent) {
+    return PreferenceLocaleCompanion(clef: Value(clef), valeur: Value(valeur));
+  }
+
+  factory PreferenceLocaleData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PreferenceLocaleData(
+      clef: serializer.fromJson<String>(json['clef']),
+      valeur: serializer.fromJson<String>(json['valeur']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'clef': serializer.toJson<String>(clef),
+      'valeur': serializer.toJson<String>(valeur),
+    };
+  }
+
+  PreferenceLocaleData copyWith({String? clef, String? valeur}) =>
+      PreferenceLocaleData(
+        clef: clef ?? this.clef,
+        valeur: valeur ?? this.valeur,
+      );
+  PreferenceLocaleData copyWithCompanion(PreferenceLocaleCompanion data) {
+    return PreferenceLocaleData(
+      clef: data.clef.present ? data.clef.value : this.clef,
+      valeur: data.valeur.present ? data.valeur.value : this.valeur,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PreferenceLocaleData(')
+          ..write('clef: $clef, ')
+          ..write('valeur: $valeur')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(clef, valeur);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PreferenceLocaleData &&
+          other.clef == this.clef &&
+          other.valeur == this.valeur);
+}
+
+class PreferenceLocaleCompanion extends UpdateCompanion<PreferenceLocaleData> {
+  final Value<String> clef;
+  final Value<String> valeur;
+  final Value<int> rowid;
+  const PreferenceLocaleCompanion({
+    this.clef = const Value.absent(),
+    this.valeur = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PreferenceLocaleCompanion.insert({
+    required String clef,
+    required String valeur,
+    this.rowid = const Value.absent(),
+  }) : clef = Value(clef),
+       valeur = Value(valeur);
+  static Insertable<PreferenceLocaleData> custom({
+    Expression<String>? clef,
+    Expression<String>? valeur,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (clef != null) 'clef': clef,
+      if (valeur != null) 'valeur': valeur,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PreferenceLocaleCompanion copyWith({
+    Value<String>? clef,
+    Value<String>? valeur,
+    Value<int>? rowid,
+  }) {
+    return PreferenceLocaleCompanion(
+      clef: clef ?? this.clef,
+      valeur: valeur ?? this.valeur,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (clef.present) {
+      map['clef'] = Variable<String>(clef.value);
+    }
+    if (valeur.present) {
+      map['valeur'] = Variable<String>(valeur.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PreferenceLocaleCompanion(')
+          ..write('clef: $clef, ')
+          ..write('valeur: $valeur, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1702,8 +2036,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ProfilsFoyerTable profilsFoyer = $ProfilsFoyerTable(this);
   late final $SessionsAVenirTable sessionsAVenir = $SessionsAVenirTable(this);
-  late final $PagesMushafConsulteesTable pagesMushafConsultees =
-      $PagesMushafConsulteesTable(this);
+  late final $RessourcesHorsLigneTable ressourcesHorsLigne =
+      $RessourcesHorsLigneTable(this);
+  late final $PreferenceLocaleTable preferenceLocale = $PreferenceLocaleTable(
+    this,
+  );
   late final $RapportsEnAttenteTable rapportsEnAttente =
       $RapportsEnAttenteTable(this);
   @override
@@ -1713,7 +2050,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     profilsFoyer,
     sessionsAVenir,
-    pagesMushafConsultees,
+    ressourcesHorsLigne,
+    preferenceLocale,
     rapportsEnAttente,
   ];
 }
@@ -2232,30 +2570,41 @@ typedef $$SessionsAVenirTableProcessedTableManager =
       SessionsAVenirData,
       PrefetchHooks Function()
     >;
-typedef $$PagesMushafConsulteesTableCreateCompanionBuilder =
-    PagesMushafConsulteesCompanion Function({
-      Value<int> numeroPage,
+typedef $$RessourcesHorsLigneTableCreateCompanionBuilder =
+    RessourcesHorsLigneCompanion Function({
+      required String resourceId,
+      required String versionId,
       required String cleCache,
-      required DateTime consulteeA,
+      Value<bool> epinglee,
+      required DateTime deposeeA,
+      Value<int> rowid,
     });
-typedef $$PagesMushafConsulteesTableUpdateCompanionBuilder =
-    PagesMushafConsulteesCompanion Function({
-      Value<int> numeroPage,
+typedef $$RessourcesHorsLigneTableUpdateCompanionBuilder =
+    RessourcesHorsLigneCompanion Function({
+      Value<String> resourceId,
+      Value<String> versionId,
       Value<String> cleCache,
-      Value<DateTime> consulteeA,
+      Value<bool> epinglee,
+      Value<DateTime> deposeeA,
+      Value<int> rowid,
     });
 
-class $$PagesMushafConsulteesTableFilterComposer
-    extends Composer<_$AppDatabase, $PagesMushafConsulteesTable> {
-  $$PagesMushafConsulteesTableFilterComposer({
+class $$RessourcesHorsLigneTableFilterComposer
+    extends Composer<_$AppDatabase, $RessourcesHorsLigneTable> {
+  $$RessourcesHorsLigneTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get numeroPage => $composableBuilder(
-    column: $table.numeroPage,
+  ColumnFilters<String> get resourceId => $composableBuilder(
+    column: $table.resourceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get versionId => $composableBuilder(
+    column: $table.versionId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2264,23 +2613,33 @@ class $$PagesMushafConsulteesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get consulteeA => $composableBuilder(
-    column: $table.consulteeA,
+  ColumnFilters<bool> get epinglee => $composableBuilder(
+    column: $table.epinglee,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deposeeA => $composableBuilder(
+    column: $table.deposeeA,
     builder: (column) => ColumnFilters(column),
   );
 }
 
-class $$PagesMushafConsulteesTableOrderingComposer
-    extends Composer<_$AppDatabase, $PagesMushafConsulteesTable> {
-  $$PagesMushafConsulteesTableOrderingComposer({
+class $$RessourcesHorsLigneTableOrderingComposer
+    extends Composer<_$AppDatabase, $RessourcesHorsLigneTable> {
+  $$RessourcesHorsLigneTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get numeroPage => $composableBuilder(
-    column: $table.numeroPage,
+  ColumnOrderings<String> get resourceId => $composableBuilder(
+    column: $table.resourceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get versionId => $composableBuilder(
+    column: $table.versionId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2289,110 +2648,128 @@ class $$PagesMushafConsulteesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get consulteeA => $composableBuilder(
-    column: $table.consulteeA,
+  ColumnOrderings<bool> get epinglee => $composableBuilder(
+    column: $table.epinglee,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deposeeA => $composableBuilder(
+    column: $table.deposeeA,
     builder: (column) => ColumnOrderings(column),
   );
 }
 
-class $$PagesMushafConsulteesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $PagesMushafConsulteesTable> {
-  $$PagesMushafConsulteesTableAnnotationComposer({
+class $$RessourcesHorsLigneTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RessourcesHorsLigneTable> {
+  $$RessourcesHorsLigneTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get numeroPage => $composableBuilder(
-    column: $table.numeroPage,
+  GeneratedColumn<String> get resourceId => $composableBuilder(
+    column: $table.resourceId,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get versionId =>
+      $composableBuilder(column: $table.versionId, builder: (column) => column);
 
   GeneratedColumn<String> get cleCache =>
       $composableBuilder(column: $table.cleCache, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get consulteeA => $composableBuilder(
-    column: $table.consulteeA,
-    builder: (column) => column,
-  );
+  GeneratedColumn<bool> get epinglee =>
+      $composableBuilder(column: $table.epinglee, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deposeeA =>
+      $composableBuilder(column: $table.deposeeA, builder: (column) => column);
 }
 
-class $$PagesMushafConsulteesTableTableManager
+class $$RessourcesHorsLigneTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $PagesMushafConsulteesTable,
-          PagesMushafConsultee,
-          $$PagesMushafConsulteesTableFilterComposer,
-          $$PagesMushafConsulteesTableOrderingComposer,
-          $$PagesMushafConsulteesTableAnnotationComposer,
-          $$PagesMushafConsulteesTableCreateCompanionBuilder,
-          $$PagesMushafConsulteesTableUpdateCompanionBuilder,
+          $RessourcesHorsLigneTable,
+          RessourcesHorsLigneData,
+          $$RessourcesHorsLigneTableFilterComposer,
+          $$RessourcesHorsLigneTableOrderingComposer,
+          $$RessourcesHorsLigneTableAnnotationComposer,
+          $$RessourcesHorsLigneTableCreateCompanionBuilder,
+          $$RessourcesHorsLigneTableUpdateCompanionBuilder,
           (
-            PagesMushafConsultee,
+            RessourcesHorsLigneData,
             BaseReferences<
               _$AppDatabase,
-              $PagesMushafConsulteesTable,
-              PagesMushafConsultee
+              $RessourcesHorsLigneTable,
+              RessourcesHorsLigneData
             >,
           ),
-          PagesMushafConsultee,
+          RessourcesHorsLigneData,
           PrefetchHooks Function()
         > {
-  $$PagesMushafConsulteesTableTableManager(
+  $$RessourcesHorsLigneTableTableManager(
     _$AppDatabase db,
-    $PagesMushafConsulteesTable table,
+    $RessourcesHorsLigneTable table,
   ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$PagesMushafConsulteesTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
+              $$RessourcesHorsLigneTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$PagesMushafConsulteesTableOrderingComposer(
+              $$RessourcesHorsLigneTableOrderingComposer(
                 $db: db,
                 $table: table,
               ),
           createComputedFieldComposer: () =>
-              $$PagesMushafConsulteesTableAnnotationComposer(
+              $$RessourcesHorsLigneTableAnnotationComposer(
                 $db: db,
                 $table: table,
               ),
           updateCompanionCallback:
               ({
-                Value<int> numeroPage = const Value.absent(),
+                Value<String> resourceId = const Value.absent(),
+                Value<String> versionId = const Value.absent(),
                 Value<String> cleCache = const Value.absent(),
-                Value<DateTime> consulteeA = const Value.absent(),
-              }) => PagesMushafConsulteesCompanion(
-                numeroPage: numeroPage,
+                Value<bool> epinglee = const Value.absent(),
+                Value<DateTime> deposeeA = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RessourcesHorsLigneCompanion(
+                resourceId: resourceId,
+                versionId: versionId,
                 cleCache: cleCache,
-                consulteeA: consulteeA,
+                epinglee: epinglee,
+                deposeeA: deposeeA,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> numeroPage = const Value.absent(),
+                required String resourceId,
+                required String versionId,
                 required String cleCache,
-                required DateTime consulteeA,
-              }) => PagesMushafConsulteesCompanion.insert(
-                numeroPage: numeroPage,
+                Value<bool> epinglee = const Value.absent(),
+                required DateTime deposeeA,
+                Value<int> rowid = const Value.absent(),
+              }) => RessourcesHorsLigneCompanion.insert(
+                resourceId: resourceId,
+                versionId: versionId,
                 cleCache: cleCache,
-                consulteeA: consulteeA,
+                epinglee: epinglee,
+                deposeeA: deposeeA,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
                   e.readTable<
-                    $PagesMushafConsulteesTable,
-                    PagesMushafConsultee
+                    $RessourcesHorsLigneTable,
+                    RessourcesHorsLigneData
                   >(table),
                   BaseReferences<
                     _$AppDatabase,
-                    $PagesMushafConsulteesTable,
-                    PagesMushafConsultee
+                    $RessourcesHorsLigneTable,
+                    RessourcesHorsLigneData
                   >(db, table, e),
                 ),
               )
@@ -2402,25 +2779,189 @@ class $$PagesMushafConsulteesTableTableManager
       );
 }
 
-typedef $$PagesMushafConsulteesTableProcessedTableManager =
+typedef $$RessourcesHorsLigneTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $PagesMushafConsulteesTable,
-      PagesMushafConsultee,
-      $$PagesMushafConsulteesTableFilterComposer,
-      $$PagesMushafConsulteesTableOrderingComposer,
-      $$PagesMushafConsulteesTableAnnotationComposer,
-      $$PagesMushafConsulteesTableCreateCompanionBuilder,
-      $$PagesMushafConsulteesTableUpdateCompanionBuilder,
+      $RessourcesHorsLigneTable,
+      RessourcesHorsLigneData,
+      $$RessourcesHorsLigneTableFilterComposer,
+      $$RessourcesHorsLigneTableOrderingComposer,
+      $$RessourcesHorsLigneTableAnnotationComposer,
+      $$RessourcesHorsLigneTableCreateCompanionBuilder,
+      $$RessourcesHorsLigneTableUpdateCompanionBuilder,
       (
-        PagesMushafConsultee,
+        RessourcesHorsLigneData,
         BaseReferences<
           _$AppDatabase,
-          $PagesMushafConsulteesTable,
-          PagesMushafConsultee
+          $RessourcesHorsLigneTable,
+          RessourcesHorsLigneData
         >,
       ),
-      PagesMushafConsultee,
+      RessourcesHorsLigneData,
+      PrefetchHooks Function()
+    >;
+typedef $$PreferenceLocaleTableCreateCompanionBuilder =
+    PreferenceLocaleCompanion Function({
+      required String clef,
+      required String valeur,
+      Value<int> rowid,
+    });
+typedef $$PreferenceLocaleTableUpdateCompanionBuilder =
+    PreferenceLocaleCompanion Function({
+      Value<String> clef,
+      Value<String> valeur,
+      Value<int> rowid,
+    });
+
+class $$PreferenceLocaleTableFilterComposer
+    extends Composer<_$AppDatabase, $PreferenceLocaleTable> {
+  $$PreferenceLocaleTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get clef => $composableBuilder(
+    column: $table.clef,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get valeur => $composableBuilder(
+    column: $table.valeur,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PreferenceLocaleTableOrderingComposer
+    extends Composer<_$AppDatabase, $PreferenceLocaleTable> {
+  $$PreferenceLocaleTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get clef => $composableBuilder(
+    column: $table.clef,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get valeur => $composableBuilder(
+    column: $table.valeur,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PreferenceLocaleTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PreferenceLocaleTable> {
+  $$PreferenceLocaleTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get clef =>
+      $composableBuilder(column: $table.clef, builder: (column) => column);
+
+  GeneratedColumn<String> get valeur =>
+      $composableBuilder(column: $table.valeur, builder: (column) => column);
+}
+
+class $$PreferenceLocaleTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PreferenceLocaleTable,
+          PreferenceLocaleData,
+          $$PreferenceLocaleTableFilterComposer,
+          $$PreferenceLocaleTableOrderingComposer,
+          $$PreferenceLocaleTableAnnotationComposer,
+          $$PreferenceLocaleTableCreateCompanionBuilder,
+          $$PreferenceLocaleTableUpdateCompanionBuilder,
+          (
+            PreferenceLocaleData,
+            BaseReferences<
+              _$AppDatabase,
+              $PreferenceLocaleTable,
+              PreferenceLocaleData
+            >,
+          ),
+          PreferenceLocaleData,
+          PrefetchHooks Function()
+        > {
+  $$PreferenceLocaleTableTableManager(
+    _$AppDatabase db,
+    $PreferenceLocaleTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PreferenceLocaleTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PreferenceLocaleTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PreferenceLocaleTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> clef = const Value.absent(),
+                Value<String> valeur = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PreferenceLocaleCompanion(
+                clef: clef,
+                valeur: valeur,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String clef,
+                required String valeur,
+                Value<int> rowid = const Value.absent(),
+              }) => PreferenceLocaleCompanion.insert(
+                clef: clef,
+                valeur: valeur,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PreferenceLocaleTable, PreferenceLocaleData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PreferenceLocaleTable,
+                    PreferenceLocaleData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PreferenceLocaleTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PreferenceLocaleTable,
+      PreferenceLocaleData,
+      $$PreferenceLocaleTableFilterComposer,
+      $$PreferenceLocaleTableOrderingComposer,
+      $$PreferenceLocaleTableAnnotationComposer,
+      $$PreferenceLocaleTableCreateCompanionBuilder,
+      $$PreferenceLocaleTableUpdateCompanionBuilder,
+      (
+        PreferenceLocaleData,
+        BaseReferences<
+          _$AppDatabase,
+          $PreferenceLocaleTable,
+          PreferenceLocaleData
+        >,
+      ),
+      PreferenceLocaleData,
       PrefetchHooks Function()
     >;
 typedef $$RapportsEnAttenteTableCreateCompanionBuilder =
@@ -2680,8 +3221,10 @@ class $AppDatabaseManager {
       $$ProfilsFoyerTableTableManager(_db, _db.profilsFoyer);
   $$SessionsAVenirTableTableManager get sessionsAVenir =>
       $$SessionsAVenirTableTableManager(_db, _db.sessionsAVenir);
-  $$PagesMushafConsulteesTableTableManager get pagesMushafConsultees =>
-      $$PagesMushafConsulteesTableTableManager(_db, _db.pagesMushafConsultees);
+  $$RessourcesHorsLigneTableTableManager get ressourcesHorsLigne =>
+      $$RessourcesHorsLigneTableTableManager(_db, _db.ressourcesHorsLigne);
+  $$PreferenceLocaleTableTableManager get preferenceLocale =>
+      $$PreferenceLocaleTableTableManager(_db, _db.preferenceLocale);
   $$RapportsEnAttenteTableTableManager get rapportsEnAttente =>
       $$RapportsEnAttenteTableTableManager(_db, _db.rapportsEnAttente);
 }
