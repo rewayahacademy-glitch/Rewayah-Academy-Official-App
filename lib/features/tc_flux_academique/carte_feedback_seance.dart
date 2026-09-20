@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/tc_parcours/libelles_tc_parcours.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_parcours/port_feedback.dart';
 import '../../core/tc_parcours/session_feedback.dart';
 import '../../core/theme/app_spacing.dart';
@@ -61,7 +61,7 @@ class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
 
     if (_repondu) {
       return AppCard(
-        child: Text(LibellesParcours.feedbackMerci, style: textes.bodyMedium),
+        child: Text(t.tc.parcours.feedback.merci, style: textes.bodyMedium),
       );
     }
 

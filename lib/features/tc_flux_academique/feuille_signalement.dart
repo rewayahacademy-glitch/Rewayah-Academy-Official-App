@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/tc_parcours/libelles_tc_parcours.dart';
+import '../../core/i18n/strings.g.dart';
+import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/port_signalement.dart';
 import '../../core/tc_parcours/student_concern.dart';
 import '../../core/theme/app_palette.dart';
@@ -38,6 +39,11 @@ class FeuilleSignalement extends ConsumerStatefulWidget {
   ///
   /// `AppBottomSheet.ouvrir` est le seul point d'entree d'une surface modale du
   /// produit : le depot n'ouvre pas de boite de dialogue Material.
+  ///
+  /// TC-Z-SUIVI : `t.tc.parcours.signalement.envoye` (« Signalement transmis a
+  /// l'administration. ») n'est encore affiche par aucun appelant -- cette
+  /// feuille se contente de rendre le signalement depose, la confirmation
+  /// reste a poser cote appelant.
   static Future<StudentConcern?> ouvrir(
     BuildContext context, {
     required String groupeId,
@@ -46,7 +52,7 @@ class FeuilleSignalement extends ConsumerStatefulWidget {
     String? sessionId,
   }) => AppBottomSheet.ouvrir<StudentConcern>(
     context,
-    titre: LibellesParcours.signalementTitre,
+    titre: t.tc.parcours.signalement.titre,
     constructeur: (BuildContext _) => FeuilleSignalement(
       groupeId: groupeId,
       academyId: academyId,
@@ -98,14 +104,14 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         // les quatre champs d'identifiants que le professeur aurait eu a
         // retaper.
         Text(
-          LibellesParcours.signalementContexte(eleve: widget.prenomEleve),
+          t.tc.parcours.signalement.contexte(eleve: widget.prenomEleve),
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
         Ecart.vLg,
 
-        Text(LibellesParcours.signalementCategorie, style: textes.titleSmall),
+        Text(t.tc.parcours.signalement.categorie, style: textes.titleSmall),
         Ecart.vSm,
         ChoiceCardGroup(
           autoriserSaisieLibre: false,
@@ -117,7 +123,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
                 in CategorieSignalement.values)
               OptionChoix(
                 valeur: categorie.valeurSql,
-                libelle: LibellesParcours.categorie(categorie),
+                libelle: libelleCategorieSignalement(categorie),
               ),
           ],
           onChange: _changerCategorie,
@@ -130,13 +136,13 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
           // Le bouton depend de ce champ : sans ce rappel, il resterait inerte
           // alors que la note est saisie.
           onChanged: (String _) => setState(() {}),
-          decoration: const InputDecoration(
-            labelText: LibellesParcours.signalementInterne,
+          decoration: InputDecoration(
+            labelText: t.tc.parcours.signalement.interne,
           ),
         ),
         Ecart.vXs,
         Text(
-          LibellesParcours.signalementInterneAide,
+          t.tc.parcours.signalement.interneAide,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
@@ -146,13 +152,13 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         TextField(
           controller: _famille,
           maxLines: 3,
-          decoration: const InputDecoration(
-            labelText: LibellesParcours.signalementFamille,
+          decoration: InputDecoration(
+            labelText: t.tc.parcours.signalement.famille,
           ),
         ),
         Ecart.vXs,
         Text(
-          LibellesParcours.signalementFamilleAide,
+          t.tc.parcours.signalement.familleAide,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
@@ -160,14 +166,14 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
         Ecart.vXl,
 
         ActionPrincipale(
-          libelle: LibellesParcours.signalementEnvoyer,
+          libelle: t.tc.parcours.signalement.envoyer,
           enCours: _envoi,
           onPress: _interne.text.trim().isEmpty ? null : _envoyer,
         ),
         if (_interne.text.trim().isEmpty) ...<Widget>[
           Ecart.vSm,
           Text(
-            LibellesParcours.signalementInterneRequis,
+            t.tc.parcours.signalement.interneRequis,
             textAlign: TextAlign.center,
             style: textes.bodySmall,
           ),
@@ -229,7 +235,7 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
       if (mounted) {
         setState(() {
           _envoi = false;
-          _erreur = LibellesParcours.signalementEchec;
+          _erreur = t.tc.parcours.signalement.echec;
         });
       }
     }

@@ -1,6 +1,6 @@
+import '../i18n/strings.g.dart';
 import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
-import 'libelles_tc_parcours.dart';
 
 /// Comment une position se dit a un humain.
 ///
@@ -16,19 +16,19 @@ import 'libelles_tc_parcours.dart';
 /// semantique pour cette raison exacte. On nomme alors le support entier.
 String positionLisible(ContentPosition position) => switch (position
     .typeAncrage) {
-  TypeAncrage.page => LibellesParcours.plagePages(
+  TypeAncrage.page => _plagePages(
     premiere: position.page ?? 0,
     derniere: position.page ?? 0,
   ),
-  TypeAncrage.ayah => LibellesParcours.plageVersets(
+  TypeAncrage.ayah => _plageVersets(
     sourate: position.sourate ?? 0,
     premier: position.ayah ?? 0,
     dernier: position.ayah ?? 0,
   ),
-  TypeAncrage.section => LibellesParcours.plageSection(
-    position.sectionId ?? '',
+  TypeAncrage.section => t.tc.parcours.plage.section(
+    section: position.sectionId ?? '',
   ),
-  TypeAncrage.fraction => LibellesParcours.plageRessource,
+  TypeAncrage.fraction => t.tc.parcours.plage.ressource,
 };
 
 /// Comment une plage de travail se dit a un humain.
@@ -38,27 +38,48 @@ String positionLisible(ContentPosition position) => switch (position
 String plageLisible(ContentRange plage) {
   switch (plage.typeAncrage) {
     case TypeAncrage.page:
-      return LibellesParcours.plagePages(
+      return _plagePages(
         premiere: plage.debut.page ?? 0,
         derniere: plage.fin.page ?? 0,
       );
     case TypeAncrage.ayah:
       if (plage.debut.sourate != plage.fin.sourate) {
-        return LibellesParcours.plageVersetsCroisee(
+        return t.tc.parcours.plage.versetsCroisee(
           sourateDebut: plage.debut.sourate ?? 0,
           versetDebut: plage.debut.ayah ?? 0,
           sourateFin: plage.fin.sourate ?? 0,
           versetFin: plage.fin.ayah ?? 0,
         );
       }
-      return LibellesParcours.plageVersets(
+      return _plageVersets(
         sourate: plage.debut.sourate ?? 0,
         premier: plage.debut.ayah ?? 0,
         dernier: plage.fin.ayah ?? 0,
       );
     case TypeAncrage.section:
-      return LibellesParcours.plageSection(plage.debut.sectionId ?? '');
+      return t.tc.parcours.plage.section(
+        section: plage.debut.sectionId ?? '',
+      );
     case TypeAncrage.fraction:
-      return LibellesParcours.plageRessource;
+      return t.tc.parcours.plage.ressource;
   }
 }
+
+/// Une page, ou un intervalle de pages quand elles different.
+String _plagePages({required int premiere, required int derniere}) =>
+    premiere == derniere
+    ? t.tc.parcours.plage.pageUnique(premiere: premiere)
+    : t.tc.parcours.plage.pages(premiere: premiere, derniere: derniere);
+
+/// Un verset, ou un intervalle de versets quand ils different.
+String _plageVersets({
+  required int sourate,
+  required int premier,
+  required int dernier,
+}) => premier == dernier
+    ? t.tc.parcours.plage.versetUnique(sourate: sourate, premier: premier)
+    : t.tc.parcours.plage.versets(
+        sourate: sourate,
+        premier: premier,
+        dernier: dernier,
+      );

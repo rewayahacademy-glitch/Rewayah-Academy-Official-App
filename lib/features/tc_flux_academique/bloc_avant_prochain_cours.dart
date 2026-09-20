@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
-import '../../core/tc_parcours/libelles_tc_parcours.dart';
+import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -62,7 +63,7 @@ class BlocAvantProchainCours extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const SectionHeader(titre: LibellesParcours.avantTitre),
+        SectionHeader(titre: t.tc.parcours.avant.titre),
         Ecart.vMd,
         _corps(context, ref, lecture),
       ],
@@ -88,7 +89,7 @@ class BlocAvantProchainCours extends ConsumerWidget {
         // Un travail a venir illisible n'est pas un travail absent : on ne
         // remplace jamais une panne par « rien a preparer ».
         return Text(
-          LibellesParcours.avantRienDetail,
+          t.tc.parcours.avant.rienDetail,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
@@ -103,8 +104,8 @@ class BlocAvantProchainCours extends ConsumerWidget {
       // absence de travail que personne n'a mesuree.
       return _deuxLignes(
         context,
-        LibellesParcours.avantNonBranche,
-        LibellesParcours.avantNonBrancheDetail,
+        t.tc.parcours.avant.nonBranche,
+        t.tc.parcours.avant.nonBrancheDetail,
       );
     }
     if (actions.isEmpty) {
@@ -112,8 +113,8 @@ class BlocAvantProchainCours extends ConsumerWidget {
       // droit de le dire.
       return _deuxLignes(
         context,
-        LibellesParcours.avantRien,
-        LibellesParcours.avantRienDetail,
+        t.tc.parcours.avant.rien,
+        t.tc.parcours.avant.rienDetail,
       );
     }
 
@@ -181,7 +182,7 @@ class _Action extends StatelessWidget {
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: StatusPill(
-                libelle: LibellesParcours.intention(action.intention!),
+                libelle: libelleIntentionParcours(action.intention!),
                 ton: TonEtat.neutre,
               ),
             ),

@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_outils/learning_assignment.dart';
-import 'package:rewayah_academy/core/tc_parcours/libelles_tc_parcours.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/tc_parcours/source_contenu_seance.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -64,9 +64,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesParcours.avantNonBranche), findsOneWidget);
+      expect(find.text(t.tc.parcours.avant.nonBranche), findsOneWidget);
       expect(
-        find.text(LibellesParcours.avantRien),
+        find.text(t.tc.parcours.avant.rien),
         findsNothing,
         reason:
             'un port non branche ne prouve aucune absence de travail : le dire '
@@ -88,9 +88,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesParcours.avantRien), findsOneWidget);
+      expect(find.text(t.tc.parcours.avant.rien), findsOneWidget);
       expect(
-        find.text(LibellesParcours.avantNonBranche),
+        find.text(t.tc.parcours.avant.nonBranche),
         findsNothing,
         reason: 'le port est branche ici : l absence de travail est mesuree',
       );
@@ -136,9 +136,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesParcours.intentionApprendre), findsOneWidget);
-      expect(find.text(LibellesParcours.intentionRevoir), findsNWidgets(2));
-      expect(find.text(LibellesParcours.avantRien), findsNothing);
+      expect(find.text(t.tc.parcours.intention.apprendre), findsOneWidget);
+      expect(find.text(t.tc.parcours.intention.revoir), findsNWidgets(2));
+      expect(find.text(t.tc.parcours.avant.rien), findsNothing);
       expect(
         find.textContaining('Sourate 2, versets 255'),
         findsOneWidget,
@@ -161,7 +161,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining(LibellesParcours.avantReprendre), findsOneWidget);
+      expect(
+        find.textContaining(t.tc.parcours.avant.reprendre),
+        findsOneWidget,
+      );
       expect(find.textContaining('Page 12'), findsOneWidget);
     });
 

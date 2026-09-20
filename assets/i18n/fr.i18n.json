@@ -2036,7 +2036,7 @@
         "nonBranche": "Le travail à préparer n'est pas encore relié à cet espace.",
         "nonBrancheDetail": "Cela ne veut pas dire qu'il n'y a rien à préparer : cet écran ne sait pas encore le lire.",
         "reprendre": "Reprendre le cours",
-        "reprendreDepuis": "Reprendre le cours à $position"
+        "reprendreDepuis": "Reprendre le cours à {position}"
       },
       "intention": {
         "apprendre": "À apprendre",
@@ -2046,12 +2046,12 @@
         "evaluation": "Pour l'évaluation"
       },
       "plage": {
-        "versets": "Sourate $sourate, versets $premier à $dernier",
-        "versetUnique": "Sourate $sourate, verset $premier",
-        "versetsCroisee": "Sourate $sourateDebut, verset $versetDebut jusqu'à sourate $sourateFin, verset $versetFin",
-        "pages": "Pages $premiere à $derniere",
-        "pageUnique": "Page $premiere",
-        "section": "Section $section",
+        "versets": "Sourate {sourate}, versets {premier} à {dernier}",
+        "versetUnique": "Sourate {sourate}, verset {premier}",
+        "versetsCroisee": "Sourate {sourateDebut}, verset {versetDebut} jusqu'à sourate {sourateFin}, verset {versetFin}",
+        "pages": "Pages {premiere} à {derniere}",
+        "pageUnique": "Page {premiere}",
+        "section": "Section {section}",
         "ressource": "Tout le support"
       },
       "feedback": {
@@ -2106,7 +2106,7 @@
         "interneAide": "Lue par l'administration seulement. Elle ne part jamais automatiquement à la famille.",
         "famille": "Message pour la famille",
         "familleAide": "Facultatif. L'administration décide seule de le transmettre, en un clic.",
-        "contexte": "Élève $eleve. La séance, le groupe et votre nom sont déjà joints.",
+        "contexte": "Élève {eleve}. La séance, le groupe et votre nom sont déjà joints.",
         "envoyer": "Envoyer le signalement",
         "envoye": "Signalement transmis à l'administration.",
         "interneRequis": "Écrivez au moins ce que l'administration doit savoir.",
@@ -2114,7 +2114,7 @@
       },
       "postCours": {
         "titre": "Après le cours",
-        "duree": "Durée réelle $minutes min",
+        "duree": "Durée réelle {minutes} min",
         "exceptions": "À confirmer",
         "toutEstNominal": "Rien ne demande votre attention.",
         "reprise": "Reprise proposée",

@@ -1,4 +1,4 @@
-import 'libelles_tc_parcours.dart';
+import '../i18n/strings.g.dart';
 import 'port_feedback.dart';
 import 'session_feedback.dart';
 
@@ -25,52 +25,52 @@ const int cadenceFeedbackParDefaut = 4;
 /// C'est ce qui distingue une rotation d'un decor.
 abstract final class CatalogueFeedback {
   /// Les cinq questions, dans l'ordre ou elles sont posees.
-  static const List<QuestionFeedback> questions = <QuestionFeedback>[
+  static List<QuestionFeedback> get questions => <QuestionFeedback>[
     QuestionFeedback(
       id: 'cours',
-      intitule: LibellesParcours.feedbackCoursIntitule,
+      intitule: t.tc.parcours.feedback.cours.intitule,
       libelles: <ReponseFeedback, String>{
-        ReponseFeedback.difficile: LibellesParcours.feedbackCoursDifficile,
-        ReponseFeedback.bien: LibellesParcours.feedbackCoursBien,
-        ReponseFeedback.tresBien: LibellesParcours.feedbackCoursTresBien,
+        ReponseFeedback.difficile: t.tc.parcours.feedback.cours.difficile,
+        ReponseFeedback.bien: t.tc.parcours.feedback.cours.bien,
+        ReponseFeedback.tresBien: t.tc.parcours.feedback.cours.tresBien,
       },
     ),
     QuestionFeedback(
       id: 'comprehension',
-      intitule: LibellesParcours.feedbackComprehensionIntitule,
+      intitule: t.tc.parcours.feedback.comprehension.intitule,
       libelles: <ReponseFeedback, String>{
         ReponseFeedback.difficile:
-            LibellesParcours.feedbackComprehensionDifficile,
-        ReponseFeedback.bien: LibellesParcours.feedbackComprehensionBien,
+            t.tc.parcours.feedback.comprehension.difficile,
+        ReponseFeedback.bien: t.tc.parcours.feedback.comprehension.bien,
         ReponseFeedback.tresBien:
-            LibellesParcours.feedbackComprehensionTresBien,
+            t.tc.parcours.feedback.comprehension.tresBien,
       },
     ),
     QuestionFeedback(
       id: 'rythme',
-      intitule: LibellesParcours.feedbackRythmeIntitule,
+      intitule: t.tc.parcours.feedback.rythme.intitule,
       libelles: <ReponseFeedback, String>{
-        ReponseFeedback.difficile: LibellesParcours.feedbackRythmeDifficile,
-        ReponseFeedback.bien: LibellesParcours.feedbackRythmeBien,
-        ReponseFeedback.tresBien: LibellesParcours.feedbackRythmeTresBien,
+        ReponseFeedback.difficile: t.tc.parcours.feedback.rythme.difficile,
+        ReponseFeedback.bien: t.tc.parcours.feedback.rythme.bien,
+        ReponseFeedback.tresBien: t.tc.parcours.feedback.rythme.tresBien,
       },
     ),
     QuestionFeedback(
       id: 'technique',
-      intitule: LibellesParcours.feedbackTechniqueIntitule,
+      intitule: t.tc.parcours.feedback.technique.intitule,
       libelles: <ReponseFeedback, String>{
-        ReponseFeedback.difficile: LibellesParcours.feedbackTechniqueDifficile,
-        ReponseFeedback.bien: LibellesParcours.feedbackTechniqueBien,
-        ReponseFeedback.tresBien: LibellesParcours.feedbackTechniqueTresBien,
+        ReponseFeedback.difficile: t.tc.parcours.feedback.technique.difficile,
+        ReponseFeedback.bien: t.tc.parcours.feedback.technique.bien,
+        ReponseFeedback.tresBien: t.tc.parcours.feedback.technique.tresBien,
       },
     ),
     QuestionFeedback(
       id: 'confiance',
-      intitule: LibellesParcours.feedbackConfianceIntitule,
+      intitule: t.tc.parcours.feedback.confiance.intitule,
       libelles: <ReponseFeedback, String>{
-        ReponseFeedback.difficile: LibellesParcours.feedbackConfianceDifficile,
-        ReponseFeedback.bien: LibellesParcours.feedbackConfianceBien,
-        ReponseFeedback.tresBien: LibellesParcours.feedbackConfianceTresBien,
+        ReponseFeedback.difficile: t.tc.parcours.feedback.confiance.difficile,
+        ReponseFeedback.bien: t.tc.parcours.feedback.confiance.bien,
+        ReponseFeedback.tresBien: t.tc.parcours.feedback.confiance.tresBien,
       },
     ),
   ];

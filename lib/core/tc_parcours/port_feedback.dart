@@ -58,6 +58,10 @@ abstract class PortFeedback {
   });
 
   /// Cote enseignant : **l'agregat seulement**, et seulement au-dessus du seuil.
+  ///
+  /// TC-Z-SUIVI : `t.tc.parcours.feedback.tendance.*` (titre, sousSeuil,
+  /// anonyme) n'est encore consomme par aucun ecran -- ce port et son
+  /// provider existent, mais rien ne les affiche cote enseignant.
   Future<TendanceFeedback> tendance({required String groupeId});
 }
 

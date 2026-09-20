@@ -4,11 +4,11 @@ import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
-import 'package:rewayah_academy/core/tc_parcours/libelles_tc_parcours.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_post_cours.dart';
 import 'package:rewayah_academy/features/tc_flux_academique/panneau_post_cours.dart';
 
@@ -97,18 +97,21 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesParcours.postCoursDuree(52)), findsOneWidget);
       expect(
-        find.text(LibellesParcours.postCoursToutEstNominal),
+        find.text(t.tc.parcours.postCours.duree(minutes: 52)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.tc.parcours.postCours.toutEstNominal),
         findsOneWidget,
       );
       // Rien n'est invente : ni position de reprise, ni travail.
       expect(
-        find.text(LibellesParcours.postCoursRepriseInconnue),
+        find.text(t.tc.parcours.postCours.repriseInconnue),
         findsOneWidget,
       );
       expect(
-        find.text(LibellesParcours.postCoursTravailAucun),
+        find.text(t.tc.parcours.postCours.travailAucun),
         findsOneWidget,
       );
     });
@@ -154,7 +157,7 @@ void main() {
 
       expect(find.text('Sourate 2, verset 257'), findsOneWidget);
       expect(find.text('Sourate 2, versets 255 à 257'), findsOneWidget);
-      expect(find.text(LibellesParcours.intentionRevoir), findsOneWidget);
+      expect(find.text(t.tc.parcours.intention.revoir), findsOneWidget);
     });
 
     testWidgets('valider cloture le cours en un seul tap', (
@@ -171,10 +174,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(LibellesParcours.postCoursValider));
+      await tester.tap(find.text(t.tc.parcours.postCours.valider));
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesParcours.postCoursEnvoye), findsOneWidget);
+      expect(find.text(t.tc.parcours.postCours.envoye), findsOneWidget);
       expect(montage.service.cahiersDeposes, hasLength(1));
     });
 
@@ -197,10 +200,10 @@ void main() {
         ..envoiIndisponible = true
         ..lectureIndisponible = true;
 
-      await tester.tap(find.text(LibellesParcours.postCoursValider));
+      await tester.tap(find.text(t.tc.parcours.postCours.valider));
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesParcours.postCoursEnFile), findsOneWidget);
+      expect(find.text(t.tc.parcours.postCours.enFile), findsOneWidget);
       expect(montage.service.cahiersDeposes, isEmpty);
     });
   });

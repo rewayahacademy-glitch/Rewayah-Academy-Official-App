@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `misc.dart` (meme convention que `service_planning.dart`).
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../i18n/strings.g.dart';
 import '../tc_bibliotheque/content_position.dart';
 import '../tc_groupe/group_home_vm.dart';
 import '../tc_outils/learning_assignment.dart';
 import '../tc_outils/port_assignations.dart';
-import 'libelles_tc_parcours.dart';
+import 'libelles_parcours.dart';
 import 'plage_lisible.dart';
 import 'source_contenu_seance.dart';
 
@@ -65,8 +66,8 @@ class TravailAVenir implements PortTravailAVenir {
       actions.add(
         SlotAction(
           id: 'tc.parcours.reprendre',
-          libelle: LibellesParcours.avantReprendreDepuis(
-            positionLisible(reprise),
+          libelle: t.tc.parcours.avant.reprendreDepuis(
+            position: positionLisible(reprise),
           ),
           // Aucune intention pedagogique : reprendre n'est pas un travail a
           // preparer, c'est un raccourci vers l'endroit ou le groupe s'est
@@ -119,13 +120,13 @@ class TravailAVenir implements PortTravailAVenir {
   /// courte de l'enseignant, quand elle existe, remplace l'endroit : il a ecrit
   /// quelque chose de plus precis que ce que nous saurions formuler.
   String _libelle(LearningAssignment travail) {
-    final String intention = LibellesParcours.intention(travail.purpose);
+    final String intention = libelleIntentionParcours(travail.purpose);
     final String? consigne = travail.instructions?.trim();
     if (consigne != null && consigne.isNotEmpty) {
       return '$intention : $consigne';
     }
     final String ou = travail.contentRange == null
-        ? LibellesParcours.plageRessource
+        ? t.tc.parcours.plage.ressource
         : plageLisible(travail.contentRange!);
     return '$intention : $ou';
   }

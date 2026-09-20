@@ -6691,8 +6691,8 @@ class Traductions$tc$parcours$avant$fr {
 	/// fr: 'Reprendre le cours'
 	String get reprendre => 'Reprendre le cours';
 
-	/// fr: 'Reprendre le cours à $position'
-	String get reprendreDepuis => 'Reprendre le cours à \$position';
+	/// fr: 'Reprendre le cours à {position}'
+	String reprendreDepuis({required Object position}) => 'Reprendre le cours à ${position}';
 }
 
 // Path: tc.parcours.intention
@@ -6727,23 +6727,23 @@ class Traductions$tc$parcours$plage$fr {
 
 	// Translations
 
-	/// fr: 'Sourate $sourate, versets $premier à $dernier'
-	String get versets => 'Sourate \$sourate, versets \$premier à \$dernier';
+	/// fr: 'Sourate {sourate}, versets {premier} à {dernier}'
+	String versets({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}';
 
-	/// fr: 'Sourate $sourate, verset $premier'
-	String get versetUnique => 'Sourate \$sourate, verset \$premier';
+	/// fr: 'Sourate {sourate}, verset {premier}'
+	String versetUnique({required Object sourate, required Object premier}) => 'Sourate ${sourate}, verset ${premier}';
 
-	/// fr: 'Sourate $sourateDebut, verset $versetDebut jusqu'à sourate $sourateFin, verset $versetFin'
-	String get versetsCroisee => 'Sourate \$sourateDebut, verset \$versetDebut jusqu\'à sourate \$sourateFin, verset \$versetFin';
+	/// fr: 'Sourate {sourateDebut}, verset {versetDebut} jusqu'à sourate {sourateFin}, verset {versetFin}'
+	String versetsCroisee({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Sourate ${sourateDebut}, verset ${versetDebut} jusqu\'à sourate ${sourateFin}, verset ${versetFin}';
 
-	/// fr: 'Pages $premiere à $derniere'
-	String get pages => 'Pages \$premiere à \$derniere';
+	/// fr: 'Pages {premiere} à {derniere}'
+	String pages({required Object premiere, required Object derniere}) => 'Pages ${premiere} à ${derniere}';
 
-	/// fr: 'Page $premiere'
-	String get pageUnique => 'Page \$premiere';
+	/// fr: 'Page {premiere}'
+	String pageUnique({required Object premiere}) => 'Page ${premiere}';
 
-	/// fr: 'Section $section'
-	String get section => 'Section \$section';
+	/// fr: 'Section {section}'
+	String section({required Object section}) => 'Section ${section}';
 
 	/// fr: 'Tout le support'
 	String get ressource => 'Tout le support';
@@ -6796,8 +6796,8 @@ class Traductions$tc$parcours$signalement$fr {
 	/// fr: 'Facultatif. L'administration décide seule de le transmettre, en un clic.'
 	String get familleAide => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.';
 
-	/// fr: 'Élève $eleve. La séance, le groupe et votre nom sont déjà joints.'
-	String get contexte => 'Élève \$eleve. La séance, le groupe et votre nom sont déjà joints.';
+	/// fr: 'Élève {eleve}. La séance, le groupe et votre nom sont déjà joints.'
+	String contexte({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.';
 
 	/// fr: 'Envoyer le signalement'
 	String get envoyer => 'Envoyer le signalement';
@@ -6823,8 +6823,8 @@ class Traductions$tc$parcours$postCours$fr {
 	/// fr: 'Après le cours'
 	String get titre => 'Après le cours';
 
-	/// fr: 'Durée réelle $minutes min'
-	String get duree => 'Durée réelle \$minutes min';
+	/// fr: 'Durée réelle {minutes} min'
+	String duree({required Object minutes}) => 'Durée réelle ${minutes} min';
 
 	/// fr: 'À confirmer'
 	String get exceptions => 'À confirmer';
@@ -8790,18 +8790,18 @@ extension on Traductions {
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
-			'tc.parcours.avant.reprendreDepuis' => 'Reprendre le cours à \$position',
+			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
 			'tc.parcours.intention.entretenir' => 'À entretenir',
 			'tc.parcours.intention.evaluation' => 'Pour l\'évaluation',
-			'tc.parcours.plage.versets' => 'Sourate \$sourate, versets \$premier à \$dernier',
-			'tc.parcours.plage.versetUnique' => 'Sourate \$sourate, verset \$premier',
-			'tc.parcours.plage.versetsCroisee' => 'Sourate \$sourateDebut, verset \$versetDebut jusqu\'à sourate \$sourateFin, verset \$versetFin',
-			'tc.parcours.plage.pages' => 'Pages \$premiere à \$derniere',
-			'tc.parcours.plage.pageUnique' => 'Page \$premiere',
-			'tc.parcours.plage.section' => 'Section \$section',
+			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}',
+			'tc.parcours.plage.versetUnique' => ({required Object sourate, required Object premier}) => 'Sourate ${sourate}, verset ${premier}',
+			'tc.parcours.plage.versetsCroisee' => ({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Sourate ${sourateDebut}, verset ${versetDebut} jusqu\'à sourate ${sourateFin}, verset ${versetFin}',
+			'tc.parcours.plage.pages' => ({required Object premiere, required Object derniere}) => 'Pages ${premiere} à ${derniere}',
+			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
+			'tc.parcours.plage.section' => ({required Object section}) => 'Section ${section}',
 			'tc.parcours.plage.ressource' => 'Tout le support',
 			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
@@ -8838,13 +8838,13 @@ extension on Traductions {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
-			'tc.parcours.signalement.contexte' => 'Élève \$eleve. La séance, le groupe et votre nom sont déjà joints.',
+			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
-			'tc.parcours.postCours.duree' => 'Durée réelle \$minutes min',
+			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',

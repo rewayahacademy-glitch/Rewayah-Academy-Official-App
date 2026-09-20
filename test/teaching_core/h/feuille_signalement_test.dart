@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/tc_parcours/libelles_tc_parcours.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_signalement.dart';
 import 'package:rewayah_academy/core/tc_parcours/student_concern.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -42,7 +42,7 @@ Future<void> _ouvrirLaFeuille(WidgetTester tester, List<Override> s) async {
 /// Un test qui toucherait un bouton hors champ mesurerait une feuille qui n'existe
 /// que sur une tablette.
 Future<void> _envoyer(WidgetTester tester) async {
-  final Finder bouton = find.text(LibellesParcours.signalementEnvoyer);
+  final Finder bouton = find.text(t.tc.parcours.signalement.envoyer);
   await tester.ensureVisible(bouton);
   await tester.pumpAndSettle();
   await tester.tap(bouton);
@@ -62,14 +62,14 @@ void main() {
       ]);
 
       expect(
-        find.text(LibellesParcours.signalementContexte(eleve: 'Amina')),
+        find.text(t.tc.parcours.signalement.contexte(eleve: 'Amina')),
         findsOneWidget,
       );
       // Deux champs, et deux seulement : aucun champ d'identifiant a retaper.
       expect(find.byType(TextField), findsNWidgets(2));
       // La regle est ecrite sous le champ concerne, pas dans une page d'aide.
       expect(
-        find.text(LibellesParcours.signalementInterneAide),
+        find.text(t.tc.parcours.signalement.interneAide),
         findsOneWidget,
       );
     });
@@ -88,7 +88,7 @@ void main() {
       );
       expect(bouton.onPress, isNull);
       expect(
-        find.text(LibellesParcours.signalementInterneRequis),
+        find.text(t.tc.parcours.signalement.interneRequis),
         findsOneWidget,
       );
     });

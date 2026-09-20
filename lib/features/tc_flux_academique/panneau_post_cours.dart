@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/enseignant/depot_cahiers.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_outils/learning_assignment.dart';
-import '../../core/tc_parcours/libelles_tc_parcours.dart';
+import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/plage_lisible.dart';
 import '../../core/tc_parcours/port_post_cours.dart';
 import '../../core/tc_parcours/post_cours_vm.dart';
@@ -69,7 +70,7 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const SectionHeader(titre: LibellesParcours.postCoursTitre),
+        SectionHeader(titre: t.tc.parcours.postCours.titre),
         Ecart.vMd,
         _corps(context, lecture),
       ],
@@ -81,8 +82,8 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
     if (!lecture.hasValue) {
       if (lecture.hasError) {
         return EmptyState(
-          message: LibellesParcours.postCoursRepriseInconnue,
-          libelleAction: LibellesParcours.postCoursValider,
+          message: t.tc.parcours.postCours.repriseInconnue,
+          libelleAction: t.tc.parcours.postCours.valider,
           onAction: () =>
               ref.invalidate(postCoursProvider(widget.sessionId)),
         );
@@ -99,7 +100,9 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
       children: <Widget>[
         // 1. CE QUE LE SYSTEME SAIT DEJA, en premier et sans champ.
         Text(
-          LibellesParcours.postCoursDuree(postCours.dureeReelle.inMinutes),
+          t.tc.parcours.postCours.duree(
+            minutes: postCours.dureeReelle.inMinutes,
+          ),
           style: textes.bodyMedium,
         ),
         Ecart.vMd,
@@ -116,8 +119,8 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         TextField(
           controller: _notes,
           maxLines: 2,
-          decoration: const InputDecoration(
-            labelText: LibellesParcours.postCoursExceptions,
+          decoration: InputDecoration(
+            labelText: t.tc.parcours.postCours.exceptions,
           ),
         ),
         Ecart.vLg,
@@ -125,14 +128,14 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         if (_sort case final SortCahier sort) ...<Widget>[
           Text(
             sort == SortCahier.enFile
-                ? LibellesParcours.postCoursEnFile
-                : LibellesParcours.postCoursEnvoye,
+                ? t.tc.parcours.postCours.enFile
+                : t.tc.parcours.postCours.envoye,
             textAlign: TextAlign.center,
             style: textes.bodyMedium,
           ),
         ] else
           ActionPrincipale(
-            libelle: LibellesParcours.postCoursValider,
+            libelle: t.tc.parcours.postCours.valider,
             enCours: _envoi,
             onPress: () => _valider(postCours),
           ),
@@ -176,7 +179,7 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
       if (mounted) {
         setState(() {
           _envoi = false;
-          _erreur = LibellesParcours.signalementEchec;
+          _erreur = t.tc.parcours.signalement.echec;
         });
       }
     }
@@ -208,7 +211,7 @@ class _Exceptions extends StatelessWidget {
       // Le chemin des 45 secondes, dit explicitement : l'enseignant n'a rien a
       // lire de plus, le bouton du bas suffit.
       return Text(
-        LibellesParcours.postCoursToutEstNominal,
+        t.tc.parcours.postCours.toutEstNominal,
         style: textes.bodyMedium,
       );
     }
@@ -223,7 +226,7 @@ class _Exceptions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(LibellesParcours.postCoursExceptions, style: textes.titleSmall),
+        Text(t.tc.parcours.postCours.exceptions, style: textes.titleSmall),
         Ecart.vSm,
         for (final TeacherStudentProjection eleve in exceptions) ...<Widget>[
           AppCard(
@@ -267,11 +270,11 @@ class _Reprise extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(LibellesParcours.postCoursReprise, style: textes.titleSmall),
+        Text(t.tc.parcours.postCours.reprise, style: textes.titleSmall),
         Ecart.vSm,
         Text(
           position == null
-              ? LibellesParcours.postCoursRepriseInconnue
+              ? t.tc.parcours.postCours.repriseInconnue
               : positionLisible(position),
           style: position == null
               ? palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle())
@@ -296,11 +299,11 @@ class _Travail extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(LibellesParcours.postCoursTravail, style: textes.titleSmall),
+        Text(t.tc.parcours.postCours.travail, style: textes.titleSmall),
         Ecart.vSm,
         if (travaux.isEmpty)
           Text(
-            LibellesParcours.postCoursTravailAucun,
+            t.tc.parcours.postCours.travailAucun,
             style: palette.inkMuted.applyTo(
               textes.bodySmall ?? const TextStyle(),
             ),
@@ -314,14 +317,14 @@ class _Travail extends StatelessWidget {
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: StatusPill(
-                      libelle: LibellesParcours.intention(travail.purpose),
+                      libelle: libelleIntentionParcours(travail.purpose),
                       ton: TonEtat.neutre,
                     ),
                   ),
                   Ecart.vSm,
                   Text(
                     travail.contentRange == null
-                        ? LibellesParcours.plageRessource
+                        ? t.tc.parcours.plage.ressource
                         : plageLisible(travail.contentRange!),
                     style: textes.bodyMedium,
                   ),
