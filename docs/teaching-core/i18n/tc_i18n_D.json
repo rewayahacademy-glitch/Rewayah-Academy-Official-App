@@ -1,0 +1,69 @@
+{
+  "_comment": "Agent D - Teaching Tools. Sous-arbre reserve tc.outils.*, decision D-03. Agent Z fusionne ce fichier dans assets/i18n/fr.i18n.json, regenere slang, puis remplace les constantes de lib/core/tc_outils/libelles_tc_outils.dart (annotees TC-I18N) par t.tc.outils.*. Aucune cle ne sort de tc.outils.",
+  "tc": {
+    "outils": {
+      "dock": {
+        "titre": "Outils",
+        "deplacer": "Déplacer les outils",
+        "position": {
+          "bas": "En bas",
+          "gauche": "À gauche",
+          "droite": "À droite"
+        },
+        "bibliotheque": "Bibliothèque",
+        "focus": "Focus",
+        "marquer": "Marquer",
+        "masquer": "Masquer",
+        "stylet": "Stylet",
+        "pointeur": "Pointeur",
+        "revision": "Révision"
+      },
+      "intention": {
+        "aApprendre": "À apprendre",
+        "aRevoir": "À revoir",
+        "aRenforcer": "À renforcer",
+        "aEntretenir": "À entretenir",
+        "pourEvaluation": "Pour l'évaluation"
+      },
+      "trait": {
+        "stylet": "Stylet",
+        "surligneur": "Surligner",
+        "gomme": "Gomme",
+        "annuler": "Annuler",
+        "plus": "Plus"
+      },
+      "portee": {
+        "temporaire": "Le temps d'expliquer",
+        "seance": "Jusqu'à la fin du cours",
+        "enregistree": "Enregistrer",
+        "aide": "Combien de temps garder ces annotations ?"
+      },
+      "marquer": {
+        "titre": "Marquer ce passage",
+        "aide": "Choisissez ce que ce passage demande.",
+        "retirer": "Retirer le marqueur"
+      },
+      "revision": {
+        "titre": "À préparer",
+        "aide": "Le passage sélectionné devient un travail à préparer.",
+        "groupeEntier": "Tout le groupe",
+        "consigne": "Consigne courte (facultatif)",
+        "creer": "Poser le travail",
+        "posee": "Travail à préparer posé"
+      },
+      "masquer": {
+        "reveler": "Révéler",
+        "refermer": "Masquer de nouveau",
+        "tout": "Tout démasquer"
+      },
+      "focus": {
+        "quitter": "Quitter le focus"
+      },
+      "annotation": {
+        "ancrageDegrade": "Ce passage n'a pas de repère de texte : l'annotation suivra la page, pas les mots.",
+        "horsPage": "Annotations masquées : leur passage n'est pas à l'écran.",
+        "aucuneSelection": "Sélectionnez d'abord un passage."
+      }
+    }
+  }
+}
