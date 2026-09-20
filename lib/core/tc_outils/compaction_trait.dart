@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
+import '../tc_bibliotheque/content_position.dart';
 import 'annotation_layer.dart';
 import 'intention_pedagogique.dart';
-import 'ports_externes/content_position.dart';
 
 /// Simplifie une ligne polygonale en gardant sa forme.
 ///

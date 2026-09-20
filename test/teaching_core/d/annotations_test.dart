@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/content_range.dart';
 
 import 'support/hote_d.dart';
 

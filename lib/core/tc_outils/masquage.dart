@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
 
 /// Ce qui est masque du support, et ce qui a ete revele.
 ///

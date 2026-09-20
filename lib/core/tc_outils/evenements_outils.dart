@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
 import 'annotation_layer.dart';
 import 'intention_pedagogique.dart';
 import 'masquage.dart';
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
 import 'ports_externes/port_realtime_pedagogique.dart';
 
 /// Ce que les outils pedagogiques ont a dire au reste de la classe.
@@ -305,7 +305,7 @@ Map<String, dynamic> _positionJson(ContentPosition position) =>
     <String, dynamic>{
       'resource_id': position.resourceId,
       'resource_version_id': position.resourceVersionId,
-      'type_ancrage': position.typeAncrage.name,
+      'type_ancrage': position.typeAncrage.valeurSql,
       'page': position.page,
       'sourate': position.sourate,
       'ayah': position.ayah,

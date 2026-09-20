@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../tc_bibliotheque/content_range.dart';
 import 'intention_pedagogique.dart';
-import 'ports_externes/content_range.dart';
 
 /// Ou en est un travail a preparer.
 enum StatutAssignation {

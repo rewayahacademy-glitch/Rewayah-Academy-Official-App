@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
+import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_outils/learning_assignment.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/intention_pedagogique.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/learning_assignment.dart';
-import 'package:rewayah_academy/core/tc_parcours/ports_externes/slot_action.dart';
 import 'package:rewayah_academy/core/tc_parcours/source_contenu_seance.dart';
 
 import 'faux/faux_ports_externes.dart';

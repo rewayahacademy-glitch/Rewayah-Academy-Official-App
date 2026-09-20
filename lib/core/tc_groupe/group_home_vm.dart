@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../tc_horloge/session_clock_vm.dart';
+import '../tc_outils/intention_pedagogique.dart';
 import 'group_summary_vm.dart';
-import 'ports_externes/intention_pedagogique.dart';
 
 /// Qui regarde l'Espace Groupe.
 ///

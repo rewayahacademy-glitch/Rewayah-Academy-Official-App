@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../tc_bibliotheque/content_position.dart';
+import '../tc_groupe/group_home_vm.dart';
+import '../tc_outils/learning_assignment.dart';
+import '../tc_outils/port_assignations.dart';
 import 'libelles_tc_parcours.dart';
 import 'plage_lisible.dart';
-import 'ports_externes/learning_assignment.dart';
-import 'ports_externes/port_assignations.dart';
-import 'ports_externes/slot_action.dart';
 import 'source_contenu_seance.dart';
 
 /// Le travail a venir, tel que l'Espace Groupe l'affiche.

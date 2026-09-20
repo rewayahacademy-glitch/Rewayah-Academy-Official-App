@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../tc_bibliotheque/content_range.dart';
 import 'intention_pedagogique.dart';
 import 'learning_assignment.dart';
-import 'ports_externes/content_range.dart';
 
 /// La lecture et l'ecriture du travail a preparer.
 ///

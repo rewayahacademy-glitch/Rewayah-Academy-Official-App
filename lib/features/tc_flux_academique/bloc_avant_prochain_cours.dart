@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_parcours/libelles_tc_parcours.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
-import '../../core/tc_parcours/ports_externes/slot_action.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';

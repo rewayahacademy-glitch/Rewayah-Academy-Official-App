@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../tc_bibliotheque/content_position.dart';
 import '../tc_bibliotheque/content_range.dart';
-import 'ports_externes/learning_assignment.dart';
+import '../tc_outils/learning_assignment.dart';
 import 'ports_externes/teacher_student_projection.dart';
 
 /// Le post-cours de l'enseignant (`TEACHING_CORE_CONTRACTS.md` section 16).

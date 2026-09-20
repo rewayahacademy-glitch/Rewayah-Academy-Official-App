@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_outils/ancrage_annotation.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/content_position.dart';
-import 'package:rewayah_academy/core/tc_outils/ports_externes/library_resource.dart';
 import 'package:rewayah_academy/core/tc_outils/ports_externes/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 

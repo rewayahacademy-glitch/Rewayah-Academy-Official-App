@@ -12,7 +12,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../tc_bibliotheque/content_position.dart';
-import 'learning_assignment.dart';
+import '../../tc_outils/learning_assignment.dart';
 
 /// L'etat d'un eleve dans la seance, projete pour l'enseignant.
 ///

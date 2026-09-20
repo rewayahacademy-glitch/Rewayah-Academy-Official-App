@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_outils/ancrage_annotation.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/compaction_trait.dart';
@@ -14,7 +15,6 @@ import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/intention_pedagogique.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/tc_outils/port_dock_hote.dart';
-import '../../core/tc_outils/ports_externes/content_position.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 

@@ -1,4 +1,4 @@
-import 'ports_externes/intention_pedagogique.dart';
+import '../tc_outils/intention_pedagogique.dart';
 import 'student_concern.dart';
 
 /// La facade de libelles du lot H, en attendant slang.

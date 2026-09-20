@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
 import 'annotation_layer.dart';
 import 'intention_pedagogique.dart';
 import 'masquage.dart';
 import 'port_dock_hote.dart';
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
 
 /// Ou le dock est pose.
 ///

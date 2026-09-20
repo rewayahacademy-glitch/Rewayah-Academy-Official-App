@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
+import '../tc_bibliotheque/content_position.dart';
+import '../tc_bibliotheque/content_range.dart';
+import '../tc_bibliotheque/library_resource.dart';
 import 'ancrage_annotation.dart';
-import 'ports_externes/content_position.dart';
-import 'ports_externes/content_range.dart';
-import 'ports_externes/library_resource.dart';
 import 'ports_externes/port_realtime_pedagogique.dart'
     show CapacitesPedagogiques, ModeAffichagePartage;
 
