@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/tc_observation/libelles_tc_g.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -38,7 +38,7 @@ bool enfantConcerneParObservation(
 /// l'annonce.
 ///
 /// L'enseignant n'apprend jamais **quel** tuteur observe : voir
-/// `LibellesTcG.tuteurObserve`.
+/// `t.tc.observation.annonce.tuteurObserve`.
 class IndicateurObservation extends StatelessWidget {
   /// Cree l'indicateur.
   const IndicateurObservation({required this.annonces, super.key});
@@ -78,7 +78,9 @@ class IndicateurObservation extends StatelessWidget {
                 if (annonce.tempsRestant case final Duration restant) ...<Widget>[
                   Ecart.hSm,
                   StatusPill(
-                    libelle: LibellesTcG.annonceRestant(restant.inSeconds),
+                    libelle: t.tc.observation.annonce.restant(
+                      secondes: restant.inSeconds,
+                    ),
                     ton: TonEtat.neutre,
                   ),
                 ],
@@ -117,7 +119,7 @@ class IndicateurObservationEnfant extends StatelessWidget {
         Ecart.hSm,
         Flexible(
           child: Text(
-            LibellesTcG.annonceEnfantIndicateur,
+            t.tc.observation.annonce.enfantIndicateur,
             style: palette.inkMuted.applyTo(
               Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
             ),

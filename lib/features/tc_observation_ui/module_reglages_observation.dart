@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_observation/guardian_observation_policy.dart';
-import '../../core/tc_observation/libelles_tc_g.dart';
+import '../../core/tc_observation/libelles_observation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -78,9 +79,9 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const SectionHeader(titre: LibellesTcG.reglagesTitre),
+        SectionHeader(titre: t.tc.observation.reglages.titre),
         Ecart.vSm,
-        Text(LibellesTcG.reglagesIntro, style: textes.bodyMedium),
+        Text(t.tc.observation.reglages.intro, style: textes.bodyMedium),
         Ecart.vXl,
         // Trois choix fermes : `ChoiceCardGroup` sans saisie libre est le seul
         // point d'entree d'un choix propose a l'utilisateur (ADR-013).
@@ -88,19 +89,19 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
           options: <OptionChoix>[
             OptionChoix(
               valeur: SourcePolitique.academie.valeurSql,
-              libelle: LibellesTcG.reglagesHeriter,
+              libelle: t.tc.observation.reglages.heriter,
               // TC-ICONE: heritage
               icone: AppIcons.reglages,
             ),
             OptionChoix(
               valeur: SourcePolitique.groupe.valeurSql,
-              libelle: LibellesTcG.reglagesPersonnaliser,
+              libelle: t.tc.observation.reglages.personnaliser,
               // TC-ICONE: personnalisation-groupe
               icone: AppIcons.foyer,
             ),
             OptionChoix(
               valeur: SourcePolitique.desactivee.valeurSql,
-              libelle: LibellesTcG.reglagesDesactiver,
+              libelle: t.tc.observation.reglages.desactiver,
               // TC-ICONE: observation-fermee
               icone: AppIcons.cameraCoupee,
             ),
@@ -114,28 +115,30 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
         if (_etat.editable) ...<Widget>[
           Ecart.vXl,
           SettingRow(
-            title: LibellesTcG.reglagesMaxVisites,
-            description: LibellesTcG.valeurHeritee(
-              LibellesTcG.uniteVisites(
+            title: t.tc.observation.reglages.maxVisites,
+            description: t.tc.observation.reglages.valeurHeritee(
+              valeur: uniteVisitesObservation(
                 widget.politiqueAcademie.maxVisitsPerSession,
               ),
             ),
             icon: AppIcons.foyer,
-            value: LibellesTcG.uniteVisites(_etat.maxVisites),
+            value: uniteVisitesObservation(_etat.maxVisites),
             controle: _Pas(
               onMoins: () => _changer(_etat.deplacerVisites(-1)),
               onPlus: () => _changer(_etat.deplacerVisites(1)),
             ),
           ),
           SettingRow(
-            title: LibellesTcG.reglagesTempsTotal,
-            description: LibellesTcG.valeurHeritee(
-              LibellesTcG.uniteSecondes(
-                widget.politiqueAcademie.maxTotalObservationTime.inSeconds,
+            title: t.tc.observation.reglages.tempsTotal,
+            description: t.tc.observation.reglages.valeurHeritee(
+              valeur: t.tc.observation.reglages.uniteSecondes(
+                n: widget.politiqueAcademie.maxTotalObservationTime.inSeconds,
               ),
             ),
             icon: AppIcons.pause,
-            value: LibellesTcG.uniteSecondes(_etat.tempsTotal.inSeconds),
+            value: t.tc.observation.reglages.uniteSecondes(
+              n: _etat.tempsTotal.inSeconds,
+            ),
             controle: _Pas(
               onMoins: () => _changer(_etat.deplacerTemps(-1)),
               onPlus: () => _changer(_etat.deplacerTemps(1)),
@@ -144,23 +147,25 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
         ],
         if (problemes.contains(InvaliditeReglages.visitesTropBas)) ...<Widget>[
           Ecart.vSm,
-          Text(LibellesTcG.reglagesInvalideVisites, style: discret),
+          Text(t.tc.observation.reglages.invalideVisites, style: discret),
         ],
         if (problemes.contains(InvaliditeReglages.tempsTropBas)) ...<Widget>[
           Ecart.vSm,
-          Text(LibellesTcG.reglagesInvalideTemps, style: discret),
+          Text(t.tc.observation.reglages.invalideTemps, style: discret),
         ],
         Ecart.vLg,
         // La version de politique est affichee parce qu'elle est journalisee
         // avec chaque visite : six mois plus tard, c'est elle qui explique
         // pourquoi une visite avait droit a cent vingt secondes.
         Text(
-          LibellesTcG.versionPolitique(widget.politiqueGroupe.policyVersion),
+          t.tc.observation.reglages.versionPolitique(
+            version: widget.politiqueGroupe.policyVersion,
+          ),
           style: discret,
         ),
         Ecart.vLg,
         ActionPrincipale(
-          libelle: LibellesTcG.reglagesEnregistrer,
+          libelle: t.tc.observation.reglages.enregistrer,
           enCours: widget.enCours,
           onPress: _etat.valide
               ? () => widget.onEnregistrer(
@@ -188,14 +193,14 @@ class _Pas extends StatelessWidget {
     mainAxisSize: MainAxisSize.min,
     children: <Widget>[
       ActionPrincipale(
-        libelle: LibellesTcG.reglagesDiminuer,
+        libelle: t.tc.observation.reglages.diminuer,
         onPress: onMoins,
         niveau: NiveauAction.tertiaire,
         pleineLargeur: false,
       ),
       Ecart.hSm,
       ActionPrincipale(
-        libelle: LibellesTcG.reglagesAugmenter,
+        libelle: t.tc.observation.reglages.augmenter,
         onPress: onPlus,
         niveau: NiveauAction.tertiaire,
         pleineLargeur: false,

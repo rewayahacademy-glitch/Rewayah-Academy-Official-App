@@ -18,6 +18,10 @@ enum ModeEntreeAdmin {
   observerDiscretement(RoleObservateur.adminIncognito),
 
   /// Visible de tous, sous un nom institutionnel clair.
+  ///
+  /// TC-Z-SUIVI : `t.tc.observation.entree.nomInstitutionnel` (« Administration
+  /// Rewayah ») n'est encore branche dans aucun ecran -- aucune surface ne
+  /// nomme l'intervenant sous ce mode visible.
   rejoindreLaClasse(RoleObservateur.adminVisible);
 
   const ModeEntreeAdmin(this.role);

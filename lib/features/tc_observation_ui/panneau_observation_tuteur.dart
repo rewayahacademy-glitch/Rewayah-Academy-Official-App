@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/tc_observation/libelles_tc_g.dart';
 import '../../core/tc_observation/vue_budget_observation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -66,34 +66,34 @@ class PanneauObservationTuteur extends StatelessWidget {
         _Compteur(vue: vue),
         if (budgetIncertain) ...<Widget>[
           Ecart.vSm,
-          Text(LibellesTcG.visiteBudgetIncertain, style: discret),
+          Text(t.tc.observation.visite.budgetIncertain, style: discret),
         ],
         Ecart.vLg,
         supportPartage ??
-            const EmptyState(
-              message: LibellesTcG.visiteSupportIndisponible,
+            EmptyState(
+              message: t.tc.observation.visite.supportIndisponible,
               icone: AppIcons.coran,
               registre: RegistreVide.subi,
             ),
         Ecart.vLg,
         _Vignette(
-          etiquette: LibellesTcG.visiteEnseignant,
+          etiquette: t.tc.observation.visite.enseignant,
           prenom: vue.enseignant?.nom,
         ),
         Ecart.vMd,
         _Vignette(
-          etiquette: LibellesTcG.visiteMonEnfant,
+          etiquette: t.tc.observation.visite.monEnfant,
           prenom: vue.monEnfant?.nom,
-          absent: LibellesTcG.visiteEnfantAbsent,
+          absent: t.tc.observation.visite.enfantAbsent,
         ),
         Ecart.vLg,
         // Le rappel des interdictions est permanent, pas conditionnel : le
         // tuteur n'a aucune commande de media a l'ecran, et un ecran sans
         // commande ne dit pas de lui-meme pourquoi.
-        Text(LibellesTcG.visiteMediaFerme, style: discret),
+        Text(t.tc.observation.visite.mediaFerme, style: discret),
         Ecart.vXl,
         ActionPrincipale(
-          libelle: LibellesTcG.visiteQuitter,
+          libelle: t.tc.observation.visite.quitter,
           onPress: onQuitter,
           niveau: NiveauAction.secondaire,
         ),
@@ -117,19 +117,24 @@ class _Compteur extends StatelessWidget {
     return Row(
       children: <Widget>[
         Expanded(
-          child: Text(LibellesTcG.visiteTitre, style: textes.titleMedium),
+          child: Text(t.tc.observation.visite.titre, style: textes.titleMedium),
         ),
         if (budget != null) ...<Widget>[
           Ecart.hSm,
           Text(
-            LibellesTcG.rangVisite(budget.rangVisite, budget.visitesMax),
+            t.tc.observation.visite.visites(
+              rang: budget.rangVisite,
+              total: budget.visitesMax,
+            ),
             style: palette.inkMuted.applyTo(
               textes.bodySmall ?? const TextStyle(),
             ),
           ),
           Ecart.hSm,
           StatusPill(
-            libelle: LibellesTcG.tempsRestant(budget.secondesRestantes),
+            libelle: t.tc.observation.visite.restant(
+              secondes: budget.secondesRestantes,
+            ),
             ton: budget.restantAffiche <= seuilFinProcheObservation
                 ? TonEtat.avertissement
                 : TonEtat.accent,

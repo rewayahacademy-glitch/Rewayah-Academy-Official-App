@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
-import '../../core/tc_observation/libelles_tc_g.dart';
 import '../../core/tc_observation/mode_entree_admin.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -90,11 +90,11 @@ class ChoixEntreeObservation extends StatelessWidget {
           // L'incognito est invisible aux participants, jamais invisible a
           // l'audit : le rappel est permanent, y compris pour celui qui
           // l'accepte chaque jour.
-          Text(LibellesTcG.visiteJournalisee, style: discret),
+          Text(t.tc.observation.entree.visiteJournalisee, style: discret),
         ],
         Ecart.vXl,
         ActionPrincipale(
-          libelle: LibellesTcG.entreeAction,
+          libelle: t.tc.observation.entree.entrer,
           onPress: options.observationPossible ? onEntrer : null,
           enCours: enCours,
         ),
@@ -112,13 +112,15 @@ class ChoixEntreeObservation extends StatelessWidget {
   }
 
   static String _libelle(ModeEntreeAdmin mode) => switch (mode) {
-    ModeEntreeAdmin.observerDiscretement => LibellesTcG.modeDiscret,
-    ModeEntreeAdmin.rejoindreLaClasse => LibellesTcG.modeVisible,
+    ModeEntreeAdmin.observerDiscretement => t.tc.observation.entree.modeDiscret,
+    ModeEntreeAdmin.rejoindreLaClasse => t.tc.observation.entree.modeVisible,
   };
 
   static String _detail(ModeEntreeAdmin mode) => switch (mode) {
-    ModeEntreeAdmin.observerDiscretement => LibellesTcG.modeDiscretDetail,
-    ModeEntreeAdmin.rejoindreLaClasse => LibellesTcG.modeVisibleDetail,
+    ModeEntreeAdmin.observerDiscretement =>
+      t.tc.observation.entree.modeDiscretDetail,
+    ModeEntreeAdmin.rejoindreLaClasse =>
+      t.tc.observation.entree.modeVisibleDetail,
   };
 
   /// Deux icones empruntees au catalogue, faute des leurs.

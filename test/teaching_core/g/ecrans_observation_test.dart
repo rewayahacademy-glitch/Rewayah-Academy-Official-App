@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
-import 'package:rewayah_academy/core/tc_observation/libelles_tc_g.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/vue_budget_observation.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
@@ -61,12 +61,12 @@ void main() {
         ),
       );
 
-      expect(find.text(LibellesTcG.modeDiscret), findsNothing);
-      expect(find.text(LibellesTcG.modeVisible), findsNothing);
+      expect(find.text(t.tc.observation.entree.modeDiscret), findsNothing);
+      expect(find.text(t.tc.observation.entree.modeVisible), findsNothing);
       // Ce qu'il voit en revanche, et en permanence : sa visite est
       // journalisee.
-      expect(find.text(LibellesTcG.visiteJournalisee), findsOneWidget);
-      expect(find.text(LibellesTcG.entreeAction), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.visiteJournalisee), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.entrer), findsOneWidget);
     });
 
     testWidgets('l\'administration voit ses deux modes', (
@@ -82,8 +82,8 @@ void main() {
         ),
       );
 
-      expect(find.text(LibellesTcG.modeDiscret), findsOneWidget);
-      expect(find.text(LibellesTcG.modeVisible), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.modeDiscret), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.modeVisible), findsOneWidget);
     });
 
     testWidgets('le tuteur n\'a ni mode ni bandeau d\'incognito', (
@@ -99,10 +99,10 @@ void main() {
         ),
       );
 
-      expect(find.text(LibellesTcG.modeDiscret), findsNothing);
-      expect(find.text(LibellesTcG.entreeTuteurIntro), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.modeDiscret), findsNothing);
+      expect(find.text(t.tc.observation.entree.tuteurIntro), findsOneWidget);
       // Le tuteur est visible : l'enseignant doit savoir qu'un parent regarde.
-      expect(find.text(LibellesTcG.visiteJournalisee), findsNothing);
+      expect(find.text(t.tc.observation.entree.visiteJournalisee), findsNothing);
     });
 
     testWidgets('un compte qui n\'observe pas n\'a pas d\'action active', (
@@ -119,8 +119,8 @@ void main() {
         ),
       );
 
-      expect(find.text(LibellesTcG.roleSansObservation), findsOneWidget);
-      await tester.tap(find.text(LibellesTcG.entreeAction));
+      expect(find.text(t.tc.observation.entree.roleSansObservation), findsOneWidget);
+      await tester.tap(find.text(t.tc.observation.entree.entrer));
       await tester.pump();
       expect(entre, isFalse);
     });
@@ -149,14 +149,17 @@ void main() {
         hoteTcG(PanneauObservationTuteur(vue: vue, onQuitter: () {})),
       );
 
-      expect(find.text(LibellesTcG.tempsRestant(120)), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.visite.restant(secondes: 120)),
+        findsOneWidget,
+      );
       expect(find.text('prof-1'), findsOneWidget);
       expect(find.text('enfant-1'), findsOneWidget);
       // Les camarades ne sont nulle part : aucun roster, aucune fiche.
       expect(find.text('enfant-2'), findsNothing);
       expect(find.text('enfant-3'), findsNothing);
       // Le rappel des interdictions est permanent.
-      expect(find.text(LibellesTcG.visiteMediaFerme), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.mediaFerme), findsOneWidget);
     });
 
     testWidgets('un temps restant non confirme se dit', (
@@ -182,7 +185,7 @@ void main() {
         ),
       );
 
-      expect(find.text(LibellesTcG.visiteBudgetIncertain), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.budgetIncertain), findsOneWidget);
     });
   });
 
@@ -208,7 +211,9 @@ void main() {
           IndicateurObservation(
             annonces: <AnnonceObservation>[
               AnnonceObservation(
-                libelle: LibellesTcG.tuteurObserve('Amina'),
+                libelle: t.tc.observation.annonce.tuteurObserve(
+                  prenomEnfant: 'Amina',
+                ),
                 tempsRestant: const Duration(seconds: 80),
                 enfantConcerneId: 'enfant-1',
               ),
@@ -218,7 +223,10 @@ void main() {
       );
 
       expect(find.text('Tuteur de Amina observe'), findsOneWidget);
-      expect(find.text(LibellesTcG.annonceRestant(80)), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.annonce.restant(secondes: 80)),
+        findsOneWidget,
+      );
     });
 
     test('seul l\'enfant concerne recoit l\'indicateur discret', () {
@@ -246,7 +254,7 @@ void main() {
         hoteTcG(const IndicateurObservationEnfant(visible: false)),
       );
 
-      expect(find.text(LibellesTcG.annonceEnfantIndicateur), findsNothing);
+      expect(find.text(t.tc.observation.annonce.enfantIndicateur), findsNothing);
     });
   });
 
@@ -267,10 +275,10 @@ void main() {
         ),
       );
 
-      expect(find.text(LibellesTcG.reglagesHeriter), findsOneWidget);
-      expect(find.text(LibellesTcG.reglagesPersonnaliser), findsOneWidget);
-      expect(find.text(LibellesTcG.reglagesDesactiver), findsOneWidget);
-      expect(find.text(LibellesTcG.reglagesMaxVisites), findsNothing);
+      expect(find.text(t.tc.observation.reglages.heriter), findsOneWidget);
+      expect(find.text(t.tc.observation.reglages.personnaliser), findsOneWidget);
+      expect(find.text(t.tc.observation.reglages.desactiver), findsOneWidget);
+      expect(find.text(t.tc.observation.reglages.maxVisites), findsNothing);
     });
 
     testWidgets('personnaliser ouvre les quotas et produit la politique', (
@@ -287,12 +295,12 @@ void main() {
         ),
       );
 
-      await _presser(tester, find.text(LibellesTcG.reglagesPersonnaliser));
-      expect(find.text(LibellesTcG.reglagesMaxVisites), findsOneWidget);
-      expect(find.text(LibellesTcG.reglagesTempsTotal), findsOneWidget);
+      await _presser(tester, find.text(t.tc.observation.reglages.personnaliser));
+      expect(find.text(t.tc.observation.reglages.maxVisites), findsOneWidget);
+      expect(find.text(t.tc.observation.reglages.tempsTotal), findsOneWidget);
 
-      await _presser(tester, find.text(LibellesTcG.reglagesAugmenter).first);
-      await _presser(tester, find.text(LibellesTcG.reglagesEnregistrer));
+      await _presser(tester, find.text(t.tc.observation.reglages.augmenter).first);
+      await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
 
       expect(recue?.source, SourcePolitique.groupe);
       expect(recue?.maxVisitsPerSession, 2);
@@ -313,12 +321,12 @@ void main() {
         ),
       );
 
-      await _presser(tester, find.text(LibellesTcG.reglagesDesactiver));
-      await _presser(tester, find.text(LibellesTcG.reglagesEnregistrer));
+      await _presser(tester, find.text(t.tc.observation.reglages.desactiver));
+      await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
 
       expect(recue?.source, SourcePolitique.desactivee);
       expect(recue?.observationActivee, isFalse);
-      expect(find.text(LibellesTcG.reglagesMaxVisites), findsNothing);
+      expect(find.text(t.tc.observation.reglages.maxVisites), findsNothing);
     });
   });
 
@@ -336,7 +344,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(EntreeObservationPage), findsOneWidget);
-      expect(find.text(LibellesTcG.entreeTuteurIntro), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.tuteurIntro), findsOneWidget);
     });
   });
 }

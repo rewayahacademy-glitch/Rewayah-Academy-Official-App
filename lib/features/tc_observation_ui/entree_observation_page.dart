@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_observation/echec_observation.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
-import '../../core/tc_observation/libelles_tc_g.dart';
+import '../../core/tc_observation/libelles_observation.dart';
 import '../../core/tc_observation/mode_entree_admin.dart';
 import '../../core/tc_observation/moteur_visite_observation.dart';
 import '../../core/video/video_session_provider.dart';
@@ -57,14 +58,14 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     );
 
     return PageShell(
-      titre: LibellesTcG.entreeTitre,
+      titre: t.tc.observation.entree.titre,
       child: switch (etat) {
         AsyncValue<EtatVisiteObservation>(hasValue: true) => _corps(
           options,
           etat.requireValue,
         ),
-        AsyncValue<EtatVisiteObservation>(hasError: true) => const EmptyState(
-          message: LibellesTcG.refusIndisponible,
+        AsyncValue<EtatVisiteObservation>(hasError: true) => EmptyState(
+          message: t.tc.observation.refus.indisponible,
           icone: AppIcons.avertissement,
           registre: RegistreVide.subi,
         ),
@@ -92,19 +93,17 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       budgetIncertain: etat.budgetIncertain,
     ),
     PhaseVisite.terminee => EmptyState(
-      message: LibellesTcG.messageFin(
-        etat.fin ?? FinDeVisite.sortieVolontaire,
-      ),
+      message: libelleFinVisite(etat.fin ?? FinDeVisite.sortieVolontaire),
       invitation: etat.sortieConfirmee
           ? null
-          : LibellesTcG.visiteSortieNonConfirmee,
+          : t.tc.observation.visite.sortieNonConfirmee,
       icone: AppIcons.pause,
       registre: RegistreVide.subi,
     ),
     PhaseVisite.refusee => EmptyState(
       message: etat.motifRefus == null
-          ? LibellesTcG.refusIndisponible
-          : LibellesTcG.refus(etat.motifRefus!),
+          ? t.tc.observation.refus.indisponible
+          : libelleRefusObservation(etat.motifRefus!),
       icone: AppIcons.avertissement,
       registre: RegistreVide.subi,
     ),
@@ -124,11 +123,11 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final bool reessayable = echec?.seReessaye ?? false;
     return EmptyState(
       message: echec?.motif == MotifEchecObservation.capaciteAbsente
-          ? LibellesTcG.refusCapaciteAbsente
-          : LibellesTcG.refusIndisponible,
+          ? t.tc.observation.refus.capaciteAbsente
+          : t.tc.observation.refus.indisponible,
       icone: AppIcons.avertissement,
       registre: reessayable ? RegistreVide.actionnable : RegistreVide.subi,
-      libelleAction: reessayable ? LibellesTcG.entreeAction : null,
+      libelleAction: reessayable ? t.tc.observation.entree.entrer : null,
       onAction: reessayable ? () => _entrer(options) : null,
     );
   }

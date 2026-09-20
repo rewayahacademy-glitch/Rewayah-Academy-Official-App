@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../i18n/strings.g.dart';
 import 'echec_observation.dart';
-import 'libelles_tc_g.dart';
 import 'port_politique_observation.dart';
 
 /// Ce que l'enseignant lit quand un tuteur observe sa classe.
@@ -130,8 +130,8 @@ class AnnonceObservationSupabase implements PortAnnonceObservation {
 AnnonceObservation annonceDepuisJson(Map<String, dynamic> json) {
   final int? restant = (json['restant_secondes'] as num?)?.toInt();
   return AnnonceObservation(
-    libelle: LibellesTcG.tuteurObserve(
-      json['enfant_prenom'] as String? ?? '',
+    libelle: t.tc.observation.annonce.tuteurObserve(
+      prenomEnfant: json['enfant_prenom'] as String? ?? '',
     ),
     tempsRestant: restant == null ? null : Duration(seconds: restant),
     enfantConcerneId: json['enfant_profile_id'] as String?,
