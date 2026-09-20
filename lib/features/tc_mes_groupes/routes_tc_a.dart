@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
+import '../tc_espace_groupe/roster_enseignant_slot.dart';
 import 'chemins_tc_a.dart';
 import 'mes_groupes_page.dart';
 
@@ -31,10 +32,15 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
         routes: <RouteBase>[
           GoRoute(
             path: CheminsTcA.segmentEspaceGroupe,
-            builder: (_, GoRouterState etat) => EspaceGroupePage(
-              groupeId: etat.pathParameters[CheminsTcA.parametreGroupe] ?? '',
-              role: role,
-            ),
+            builder: (_, GoRouterState etat) {
+              final String groupeId =
+                  etat.pathParameters[CheminsTcA.parametreGroupe] ?? '';
+              return EspaceGroupePage(
+                groupeId: groupeId,
+                role: role,
+                contenuRoster: RosterEnseignantSlot(groupeId: groupeId),
+              );
+            },
           ),
         ],
       ),

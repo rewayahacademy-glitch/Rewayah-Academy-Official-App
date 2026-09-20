@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/roster_enseignant_slot.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/chemins_tc_a.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
@@ -53,6 +55,32 @@ void main() {
       expect(espace.groupeId, GroupesDemonstration.alFatiha);
     });
   });
+
+  testWidgets(
+    'le slot roster est branche sur PortRosterEnseignant, pas laisse nul',
+    (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await tester.pumpWidget(
+          hoteRoutantTcA(
+            depart: CheminsTcA.espaceGroupe(GroupesDemonstration.alFatiha),
+            routes: routesTcA(role: RoleEspaceGroupe.enseignant),
+            surcharges: surchargesDemonstration(),
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
+
+        final EspaceGroupePage espace = tester.widget<EspaceGroupePage>(
+          find.byType(EspaceGroupePage),
+        );
+        expect(espace.contenuRoster, isA<RosterEnseignantSlot>());
+        expect(
+          (espace.contenuRoster! as RosterEnseignantSlot).groupeId,
+          GroupesDemonstration.alFatiha,
+        );
+      });
+    },
+  );
 
   testWidgets('l Espace Groupe porte son propre chemin de sortie', (
     WidgetTester tester,

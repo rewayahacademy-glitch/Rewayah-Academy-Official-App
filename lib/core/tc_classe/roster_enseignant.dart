@@ -295,6 +295,20 @@ final Provider<PortRosterEnseignant> portRosterEnseignantProvider =
       (Ref ref) => RosterEnseignantSupabase(Supabase.instance.client),
     );
 
+/// Le roster d'une seance, pour l'emplacement roster de l'Espace Groupe
+/// (Agent A) hors Classe Live.
+///
+/// **Ne catch pas `EchecRoster`**, contrairement a [fichesSeanceProvider] :
+/// ici la distinction disponible/indisponible EST l'invariant a tenir
+/// (`RosterClasseVM.indisponible` face a une liste vide, J3), pas un detail a
+/// absorber en silence.
+final FutureProviderFamily<List<TeacherStudentProjection>, String>
+rosterSeanceEnseignantProvider =
+    FutureProvider.family<List<TeacherStudentProjection>, String>(
+      (Ref ref, String sessionId) =>
+          ref.watch(portRosterEnseignantProvider).rosterDeSeance(sessionId),
+    );
+
 /// Les fiches pedagogiques d'une seance, lues une fois.
 ///
 /// Une seule lecture suffit : le prenom, l'identifiant d'academie et le niveau
