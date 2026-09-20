@@ -1,0 +1,74 @@
+{
+  "tc": {
+    "observation": {
+      "entree": {
+        "titre": "Observer la séance",
+        "tuteurIntro": "Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.",
+        "adminIntro": "Choisissez votre mode avant d'entrer. Il ne change plus ensuite.",
+        "controleurIntro": "Vous entrez en observation invisible. Aucun micro, aucune caméra.",
+        "entrer": "Entrer",
+        "modeDiscret": "Observer discrètement",
+        "modeDiscretDetail": "Invisible pour les participants. Sans micro ni caméra, sans annonce.",
+        "modeVisible": "Rejoindre la classe",
+        "modeVisibleDetail": "Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.",
+        "nomInstitutionnel": "Administration Rewayah",
+        "visiteJournalisee": "Visite journalisée : identité, séance, entrée, sortie et durée.",
+        "roleSansObservation": "Votre compte n'observe pas les séances."
+      },
+      "refus": {
+        "politiqueDesactivee": "L'observation est désactivée pour ce groupe.",
+        "quotaVisites": "Vous avez déjà utilisé vos visites pour cette séance.",
+        "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",
+        "lienTuteur": "Vous n'êtes rattaché à aucun élève de cette séance.",
+        "seanceNonActive": "La séance n'est pas en cours.",
+        "horsFenetre": "La salle n'est pas ouverte à cette heure.",
+        "indisponible": "L'observation n'est pas disponible pour le moment.",
+        "capaciteAbsente": "L'observation n'est pas encore activée sur cette installation."
+      },
+      "visite": {
+        "titre": "Observation en cours",
+        "quitter": "Quitter",
+        "mediaFerme": "Micro et caméra fermés pendant l'observation.",
+        "supportIndisponible": "Le support partagé par l'enseignant s'affiche ici.",
+        "enseignant": "Enseignant",
+        "monEnfant": "Votre enfant",
+        "enfantAbsent": "Votre enfant n'a pas d'image ouverte.",
+        "budgetIncertain": "Temps restant non confirmé par le serveur.",
+        "sortieNonConfirmee": "La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.",
+        "restant": "{secondes} s restantes",
+        "visites": "Visite {rang} sur {total}"
+      },
+      "fin": {
+        "sortieVolontaire": "Vous avez quitté l'observation.",
+        "quotaAtteint": "Votre temps d'observation est écoulé.",
+        "seanceTerminee": "La séance est terminée.",
+        "revocationServeur": "Votre observation a été interrompue.",
+        "deconnexion": "La connexion a été perdue."
+      },
+      "annonce": {
+        "tuteurObserve": "Tuteur de {prenomEnfant} observe",
+        "restant": "{secondes} s",
+        "enfantIndicateur": "Ton tuteur regarde le cours"
+      },
+      "reglages": {
+        "titre": "Observation par les tuteurs",
+        "intro": "Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s'applique à ce groupe.",
+        "heriter": "Hériter de l'Académie",
+        "personnaliser": "Personnaliser pour ce groupe",
+        "desactiver": "Désactiver pour ce groupe",
+        "maxVisites": "Visites par séance",
+        "tempsTotal": "Temps total par séance",
+        "diminuer": "Diminuer",
+        "augmenter": "Augmenter",
+        "enregistrer": "Enregistrer",
+        "invalideVisites": "Au moins une visite par séance.",
+        "invalideTemps": "Au moins trente secondes par séance.",
+        "valeurHeritee": "Académie : {valeur}",
+        "uniteVisiteUne": "{n} visite",
+        "uniteVisites": "{n} visites",
+        "uniteSecondes": "{n} s",
+        "versionPolitique": "Version {version}"
+      }
+    }
+  }
+}
