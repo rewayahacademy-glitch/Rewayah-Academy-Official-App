@@ -312,13 +312,23 @@ mesurés par `salle_test.dart` et `salle_enseignant_test.dart`, y compris à 390
 
 ### Ce qui bloque quelqu'un d'autre
 
-1. **`0029_fermeture_dossiers_en_attente_anon.sql` est écrite et non appliquée.**
-   Le classificateur a refusé l'appel. Tant qu'elle n'est pas passée,
-   `public.dossiers_en_attente()` livre à un appelant **anonyme** le prénom, le
-   **nom de famille** et l'identifiant immuable de toute personne en attente de
-   vérification — mesuré, 4 lignes. C'est antérieur à ce lot, mais c'est vivant.
-   Détail et preuve au §7.2 du rapport pré-fusion.
-2. **`0021` à `0024` ne sont pas appliquées.** Conséquence bornée et déjà
+1. ✅ **`0029_fermeture_dossiers_en_attente_anon.sql` est appliquée**
+   (`20260920025402`), sur autorisation explicite de l'opérateur. La fuite est
+   fermée et les **deux** défenses sont mesurées séparément : `anon` est arrêté
+   dès le droit d'EXECUTE (`42501 permission denied for function`, et `anon` a
+   disparu du `proacl`), et la porte elle-même refuse désormais un rôle NULL
+   (`42501 validation des dossiers reservee a l'administration`, mesuré sur le
+   rôle `authenticated` sans jeton, qui passait avant). `agent_identite_masquee`
+   et `read_kyc_documents` sont intacts dans le corps — aucune régression du
+   masquage posé par `0015`/`0016`. Détail et preuve au §7.2 du rapport
+   pré-fusion.
+2. **`0021` à `0024` ne sont pas appliquées** — le classificateur refuse le
+   `create table` (« Production Deploy »), là où il a laissé passer le
+   `create or replace function` de `0029`. Leurs huit portes ont en revanche été
+   réécrites en exigence positive **avant** toute application, pour ne pas poser
+   en production huit exemplaires du défaut que `0029` vient de fermer : ces
+   fichiers n'étaient pas appliqués, donc les corriger est permis. Conséquence
+   bornée et déjà
    documentée : `unite_curriculum()` rend nul, donc le bloc curriculum du cahier
    reste vide. La fonction est gardée de façon à s'allumer toute seule le jour où
    les tables existent.

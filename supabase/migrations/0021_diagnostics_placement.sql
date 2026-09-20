@@ -61,7 +61,7 @@ as $function$
 declare
   v_id uuid;
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'decision de placement reservee a l''administration';
   end if;
 

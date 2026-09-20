@@ -73,7 +73,7 @@ as $function$
 declare
   v_id uuid;
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'planification d''une evaluation reservee a l''administration';
   end if;
 
@@ -118,7 +118,7 @@ declare
   v_student_id uuid;
   v_niveau_id uuid;
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'enregistrement d''un resultat reserve a l''administration';
   end if;
 
@@ -165,7 +165,7 @@ returns void
 language plpgsql security definer set search_path = ''
 as $function$
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'annulation d''une evaluation reservee a l''administration';
   end if;
 

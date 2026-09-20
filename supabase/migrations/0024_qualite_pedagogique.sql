@@ -70,7 +70,7 @@ declare
   v_id uuid;
   v_table text;
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'traitement d''une anomalie qualite reserve a l''administration';
   end if;
 

@@ -23,8 +23,8 @@ parallèle sur des périmètres de fichiers exclusifs, après deux phases de soc
 | `flutter analyze --no-pub` | **No issues found!** (149 s) | No issues found! |
 | `flutter test --no-pub` | **857 passés, 1 échec** | 708 passés, 7 échecs |
 | Écritures hors périmètre par A–E | **zéro** | — |
-| Migrations appliquées sur `gggmtelinlpseweouyav` | `0025`, `0026`, `0027`, `0028` | `0025`, `0026` |
-| Migrations écrites non appliquées | `0029` (refus du classificateur, cf. §7) | `0020`–`0024` sauf `0020` |
+| Migrations appliquées sur `gggmtelinlpseweouyav` | `0025`, `0026`, `0027`, `0028`, `0029` | `0025`, `0026` |
+| Migrations écrites non appliquées | `0021`–`0024` (`create table` refusé, cf. §7) | `0020`–`0024` sauf `0020` |
 
 Les six tests rouges qui étaient **dans** le périmètre Enseignant sont revenus au
 vert : `dossier_test.dart` ×3 et `inscription_test.dart` ×2 par l'agent E,
@@ -295,12 +295,16 @@ routeur et `sous_navigation_domaine` un domaine. C'est un lot, pas une ligne.
 | `0026_durcissement_execute_enseignant` | ✅ | ✅ `20260919224844` | Z |
 | `0027_maj_profil_enseignant` | ✅ **écrit à l'intégration** | ✅ `20260919235846` | agent E |
 | `0028_maj_profil_enseignant_revoke_anon` | ✅ **écrit à l'intégration** | ✅ `20260919235944` | agent E |
-| `0029_fermeture_dossiers_en_attente_anon` | ✅ | ❌ **refusée par le classificateur** | — |
+| `0029_fermeture_dossiers_en_attente_anon` | ✅ | ✅ `20260920025402` | Z |
 | `0020_programme_pedagogique` | ✅ (lot Pédagogie) | ✅ `20260919232916` | agent C |
-| `0021`–`0024` | ✅ (lot Pédagogie) | ❌ | — |
+| `0021`–`0024` | ✅ (lot Pédagogie) | ❌ `create table` refusé | — |
 
-Le dépôt et la base racontent donc la même histoire pour tout ce lot, sauf
-`0029`, qui est écrite et attend l'autorisation de l'opérateur.
+Le dépôt et la base racontent donc la même histoire pour tout ce lot. Il reste
+`0021`–`0024`, du lot Pédagogie : le classificateur laisse passer un
+`create or replace function` mais refuse un `create table`. Leurs huit portes ont
+été réécrites en exigence positive **avant** toute application — ces fichiers
+n'étant pas appliqués, les corriger est permis, et il aurait été absurde de poser
+en base huit exemplaires du défaut que `0029` vient de fermer.
 
 ### 7.1 La leçon de privilèges, corrigée deux fois
 
@@ -338,7 +342,7 @@ relecture attentive ne voient ces deux fautes.
 
 `agent_ro` n'a **aucune** fonction volatile. La règle de la mémoire projet tient.
 
-### 7.2 Une fuite trouvée hors périmètre, fermée dans un fichier, pas encore en base
+### 7.2 Une fuite trouvée hors périmètre, et fermée
 
 En cherchant si la leçon de `0028` avait des cousines, le contrôle a trouvé
 `public.dossiers_en_attente()` — posée par `0015`, donc **antérieure à
@@ -372,9 +376,58 @@ ce que le dépôt croit avoir**. Dette inscrite au lot G-02.
 devient une exigence positive enveloppée de `coalesce(…, false)`, et EXECUTE est
 retiré à `anon` **et** à `PUBLIC`. Aucun écran ne change de comportement :
 `admin_dossiers` appelle la RPC en `authenticated` avec `app_role() = 'admin'`.
-**Elle n'est pas appliquée** — le classificateur a refusé l'appel. La fuite reste
-donc ouverte en production jusqu'à ce que l'opérateur autorise l'application ou
-que la CI rejoue le fichier.
+
+**Elle est appliquée** (`20260920025402`), sur autorisation explicite de
+l'opérateur. Les deux défenses sont mesurées **séparément**, parce qu'une seule
+mesure ne dirait pas laquelle des deux travaille :
+
+| Mesure | Avant | Après |
+| :--- | :--- | :--- |
+| `anon` appelle la RPC | **PASSE, 4 lignes** | `42501 permission denied for function` |
+| La porte seule (`authenticated` sans jeton, donc `app_role()` NULL) | passait | `42501 validation des dossiers reservee a l'administration` |
+| `has_function_privilege('anon', …, 'execute')` | `true` | **`false`** |
+| `proacl` | `… \| anon=X/postgres \| …` | `anon` **absent** |
+| `authenticated` / `agent_ro` / `service_role` | `true` | `true` |
+| `agent_identite_masquee` + `read_kyc_documents` dans le corps | oui | **oui** |
+
+La deuxième ligne est celle qui compte : ce n'est pas seulement le `revoke` qui
+arrête l'anonyme, c'est la porte qui refuse désormais un rôle NULL.
+
+### 7.3 Le balayage qui explique pourquoi une seule des 31 fuyait
+
+La fuite avait été trouvée par hasard. Le balayage a donc été refait en entier,
+sur ce qu'un appelant anonyme peut **atteindre**, et non sur ce que le code a
+l'air de dire — chaque cible appelée en rôle `anon`, avec de vraies clés prises
+sur la base :
+
+| Cible joignable par `anon` | Mesure |
+| :--- | :--- |
+| `mes_appareils_v`, `mes_codes_appairage_v`, `presence_seance_v`, `profils_du_foyer_v` | **0 ligne** chacune |
+| `comptes_admin()` — identités, foyer, contrats | **0 ligne** |
+| `personnes_observables()` — identités | **0 ligne** |
+| `etat_presence(vraie séance, vrai profil)` | `NULL` — n'apprend rien (invariant J3) |
+| `profil_de_mon_foyer(vrai profil)` | `false` |
+| `app_config_int('session_duration_minutes', -1)` | **rend `60`** |
+
+Et cela donne la loi qui manquait : **une porte posée dans un `where` échoue
+fermée, une porte posée en `if … then raise` échoue ouverte.** `NULL = 'admin'`
+dans un `where` ne rend aucune ligne ; `if NULL then raise` ne se déclenche pas.
+Les 31 fonctions portent la forme fragile, mais 30 la portent **dans un `where`** :
+elles sont sûres par construction, pas par chance. `dossiers_en_attente()` était
+la seule dont la porte était un `if` en plpgsql — c'est ce qui en faisait la seule
+qui fuyait, pas le hasard de son `revoke`.
+
+Deux dettes mesurées restent, aucune n'étant une fuite d'identité :
+
+1. Les quatre vues portent `security_barrier=true` mais **pas
+   `security_invoker=true`** : elles lisent avec les droits de leur propriétaire,
+   RLS contournée. Elles ne rendent rien à `anon` parce que leur `where` filtre
+   sur `app_user_id()`/`app_household_id()`, NULL pour un anonyme — donc sûres,
+   mais par leur `where` seul, et `anon` ne devrait pas avoir le `select` dessus.
+2. `app_config_int(clé, défaut)` rend `60` à un appelant anonyme. C'est un
+   paramètre produit, pas une donnée personnelle ; à borner par hygiène.
+
+Dette inscrite au lot G-02.
 
 ---
 

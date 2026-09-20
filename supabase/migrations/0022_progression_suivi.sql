@@ -63,7 +63,7 @@ as $function$
 declare
   v_id uuid;
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'pose d''une exception de progression reservee a l''administration';
   end if;
 
@@ -109,7 +109,7 @@ returns void
 language plpgsql security definer set search_path = ''
 as $function$
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'cloture d''une exception de progression reservee a l''administration';
   end if;
 
@@ -147,7 +147,7 @@ as $function$
 declare
   v_id uuid;
 begin
-  if public.app_role() <> 'admin' or not public.app_account_valid() then
+  if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'promotion de progression reservee a l''administration';
   end if;
 
