@@ -1,0 +1,12 @@
+{
+  "tc": {
+    "realtime": {
+      "transport": {
+        "partage_indisponible": "Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page."
+      },
+      "etat": {
+        "restauration_impossible": "Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau."
+      }
+    }
+  }
+}
