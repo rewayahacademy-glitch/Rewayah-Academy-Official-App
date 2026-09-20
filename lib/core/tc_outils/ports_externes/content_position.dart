@@ -1,41 +1,59 @@
 // TC-STUB-PORT: canonique = lib/core/tc_bibliotheque/content_position.dart (Agent B)
-// Signature copiee depuis TEACHING_CORE_CONTRACTS.md section 7.
+// RECOPIE A L'IDENTIQUE du canonique publie par Agent B. Aucune divergence :
+// ni un nom, ni un champ, ni un membre n'a ete ajoute, retire ou renomme.
 // Agent Z supprime ce fichier a l'integration et pointe sur le canonique.
-//
-// DIVERGENCE DECLAREE, voir TC_CONTRACT_REQUEST_D.md section 1 : la declaration
-// canonique ne compile pas telle quelle. Elle nomme des constructeurs `.page(...)`
-// et `.fraction(...)` alors que la classe porte deja des champs `page` et
-// `fraction` -- en Dart, un constructeur nomme ne peut pas porter le nom d'un
-// membre. Les CHAMPS sont donc repris a l'identique, et les constructeurs sont
-// prefixes `sur...` en attendant l'arbitrage d'Agent 0 ou d'Agent B. Aucun champ
-// n'a ete ajoute, retire ni renomme.
 
 import 'package:flutter/foundation.dart';
 
-/// La nature de l'ancrage d'une position dans un support.
+/// La nature de l'ancrage d'une position (CONTRACTS section 7).
 enum TypeAncrage {
-  /// Une page, au sens de l'edition.
-  page,
+  /// Une page, pour un support pagine.
+  page('page'),
 
-  /// Un verset, donc un couple sourate + ayah.
-  ayah,
+  /// Un verset, pour le Coran.
+  ayah('ayah'),
 
-  /// Une section identifiee du support.
-  section,
+  /// Une section nommee, pour un texte structure ou une lecon.
+  section('section'),
 
-  /// Une fraction du support, de 0 a 1. Repli spatial.
-  fraction,
+  /// Une fraction du support, **repli** quand rien de semantique n'existe.
+  fraction('fraction');
+
+  const TypeAncrage(this.valeurSql);
+
+  /// La valeur telle que la base l'attend.
+  final String valeurSql;
+
+  /// Lit un ancrage depuis sa valeur SQL. `null` sur valeur inconnue.
+  static TypeAncrage? depuisSql(String? valeur) {
+    for (final TypeAncrage a in TypeAncrage.values) {
+      if (a.valeurSql == valeur) return a;
+    }
+    return null;
+  }
 }
 
-/// La position canonique dans un support.
+/// La position canonique dans un support, tous types confondus.
 ///
-/// **Un seul ancrage a la fois.** Les champs non pertinents sont `null`, et une
-/// assertion le garantit (invariant 1 du contrat).
+/// **Un seul ancrage a la fois.** Les champs qui ne concernent pas
+/// [typeAncrage] valent `null`, et une assertion le garantit a la
+/// construction : une position qui porterait a la fois une page et un verset
+/// laisserait chaque consommateur choisir, donc diverger.
 ///
-/// Une position est valable **independamment du zoom** : le zoom est local a
-/// chaque personne et ne fait pas partie de la position pedagogique partagee.
+/// **Le zoom n'en fait pas partie.** Le zoom est local a chaque personne, il
+/// ne fait pas partie de la position pedagogique partagee (decision D-21).
+///
+/// Sur un rendu reflowable, l'ancrage semantique ([ayah], [section]) est
+/// **prefere** a [fraction] : une fraction se decale des que la largeur change.
 @immutable
 class ContentPosition {
+  /// Le constructeur interne. Les quatre fabriques nommees passent par lui.
+  ///
+  /// Le contrat ecrit `const ContentPosition._();` sans parametre ; des champs
+  /// `final` ne peuvent pas etre initialises ainsi. La forme retenue garde la
+  /// surface publique exacte -- quatre constructeurs nommes -- et rend le
+  /// constructeur prive utilisable. Ecart signale dans
+  /// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
   const ContentPosition._({
     required this.resourceId,
     required this.typeAncrage,
@@ -45,98 +63,118 @@ class ContentPosition {
     this.ayah,
     this.sectionId,
     this.fraction,
-  });
+  }) : assert(
+         typeAncrage != TypeAncrage.page ||
+             (page != null &&
+                 sourate == null &&
+                 ayah == null &&
+                 sectionId == null &&
+                 fraction == null),
+         'ancrage page : seul page est renseigne',
+       ),
+       assert(
+         typeAncrage != TypeAncrage.ayah ||
+             (sourate != null &&
+                 ayah != null &&
+                 page == null &&
+                 sectionId == null &&
+                 fraction == null),
+         'ancrage ayah : seuls sourate et ayah sont renseignes',
+       ),
+       assert(
+         typeAncrage != TypeAncrage.section ||
+             (sectionId != null &&
+                 page == null &&
+                 sourate == null &&
+                 ayah == null &&
+                 fraction == null),
+         'ancrage section : seul sectionId est renseigne',
+       ),
+       assert(
+         typeAncrage != TypeAncrage.fraction ||
+             (fraction != null &&
+                 fraction >= 0 &&
+                 fraction <= 1 &&
+                 page == null &&
+                 sourate == null &&
+                 ayah == null &&
+                 sectionId == null),
+         'ancrage fraction : seul fraction est renseigne, entre 0 et 1',
+       );
 
-  /// Une position ancree a une page de l'edition.
-  factory ContentPosition.surPage({
+  /// Une position sur une page.
+  const ContentPosition.page({
     required String resourceId,
     required int page,
     String? resourceVersionId,
-  }) {
-    assert(page > 0, 'une page se compte a partir de 1');
-    return ContentPosition._(
-      resourceId: resourceId,
-      resourceVersionId: resourceVersionId,
-      typeAncrage: TypeAncrage.page,
-      page: page,
-    );
-  }
+  }) : this._(
+         resourceId: resourceId,
+         resourceVersionId: resourceVersionId,
+         typeAncrage: TypeAncrage.page,
+         page: page,
+       );
 
-  /// Une position ancree a un verset.
-  factory ContentPosition.surAyah({
+  /// Une position sur un verset.
+  const ContentPosition.ayah({
     required String resourceId,
     required int sourate,
     required int ayah,
     String? resourceVersionId,
-  }) {
-    assert(sourate > 0 && ayah > 0, 'sourate et ayah se comptent a partir de 1');
-    return ContentPosition._(
-      resourceId: resourceId,
-      resourceVersionId: resourceVersionId,
-      typeAncrage: TypeAncrage.ayah,
-      sourate: sourate,
-      ayah: ayah,
-    );
-  }
+  }) : this._(
+         resourceId: resourceId,
+         resourceVersionId: resourceVersionId,
+         typeAncrage: TypeAncrage.ayah,
+         sourate: sourate,
+         ayah: ayah,
+       );
 
-  /// Une position ancree a une section identifiee.
-  factory ContentPosition.surSection({
+  /// Une position sur une section nommee.
+  const ContentPosition.section({
     required String resourceId,
     required String sectionId,
     String? resourceVersionId,
-  }) => ContentPosition._(
-    resourceId: resourceId,
-    resourceVersionId: resourceVersionId,
-    typeAncrage: TypeAncrage.section,
-    sectionId: sectionId,
-  );
+  }) : this._(
+         resourceId: resourceId,
+         resourceVersionId: resourceVersionId,
+         typeAncrage: TypeAncrage.section,
+         sectionId: sectionId,
+       );
 
-  /// Une position ancree a une fraction du support. **Repli spatial** : sur un
-  /// rendu reflowable, elle se decale quand le texte se recompose.
-  factory ContentPosition.surFraction({
+  /// Une position par fraction du support. **Repli seulement.**
+  const ContentPosition.fraction({
     required String resourceId,
     required double fraction,
     String? resourceVersionId,
-  }) {
-    assert(fraction >= 0 && fraction <= 1, 'une fraction vit entre 0 et 1');
-    return ContentPosition._(
-      resourceId: resourceId,
-      resourceVersionId: resourceVersionId,
-      typeAncrage: TypeAncrage.fraction,
-      fraction: fraction,
-    );
-  }
+  }) : this._(
+         resourceId: resourceId,
+         resourceVersionId: resourceVersionId,
+         typeAncrage: TypeAncrage.fraction,
+         fraction: fraction,
+       );
 
   /// La ressource concernee.
   final String resourceId;
 
-  /// La version de la ressource, quand elle est connue.
+  /// La version concernee. `null` quand la position vaut pour toute version.
   final String? resourceVersionId;
 
   /// La nature de l'ancrage.
   final TypeAncrage typeAncrage;
 
-  /// La page, quand [typeAncrage] vaut [TypeAncrage.page].
+  /// Le numero de page, pour [TypeAncrage.page].
   final int? page;
 
-  /// La sourate, quand [typeAncrage] vaut [TypeAncrage.ayah].
+  /// Le numero de sourate, pour [TypeAncrage.ayah].
   final int? sourate;
 
-  /// Le verset, quand [typeAncrage] vaut [TypeAncrage.ayah].
+  /// Le numero de verset, pour [TypeAncrage.ayah].
   final int? ayah;
 
-  /// La section, quand [typeAncrage] vaut [TypeAncrage.section].
+  /// L'identifiant de section, pour [TypeAncrage.section].
   final String? sectionId;
 
-  /// La fraction, quand [typeAncrage] vaut [TypeAncrage.fraction].
+  /// La fraction du support, pour [TypeAncrage.fraction].
   final double? fraction;
-
-  /// Vrai quand l'ancrage designe une unite de SENS, et non un emplacement.
-  ///
-  /// C'est la distinction qui decide du sort d'une annotation apres un reflow :
-  /// un ancrage semantique suit le texte, un ancrage spatial reste ou il est.
-  bool get estSemantique =>
-      typeAncrage == TypeAncrage.ayah || typeAncrage == TypeAncrage.section;
 
   @override
   bool operator ==(Object other) =>

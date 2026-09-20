@@ -46,15 +46,15 @@ const String ressourceTest = 'res-coran';
 
 /// La position du premier verset de la Fatiha.
 ContentPosition get ayah1 =>
-    ContentPosition.surAyah(resourceId: ressourceTest, sourate: 1, ayah: 1);
+    const ContentPosition.ayah(resourceId: ressourceTest, sourate: 1, ayah: 1);
 
 /// La position du deuxieme verset de la Fatiha.
 ContentPosition get ayah2 =>
-    ContentPosition.surAyah(resourceId: ressourceTest, sourate: 1, ayah: 2);
+    const ContentPosition.ayah(resourceId: ressourceTest, sourate: 1, ayah: 2);
 
 /// La page courante, ancrage spatial de repli.
 ContentPosition get pageCourante =>
-    ContentPosition.surPage(resourceId: ressourceTest, page: 1);
+    const ContentPosition.page(resourceId: ressourceTest, page: 1);
 
 /// Un support presente, avec deux versets places.
 ///

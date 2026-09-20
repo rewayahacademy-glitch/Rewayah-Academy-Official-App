@@ -187,7 +187,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
     final BlocAncre? bloc = widget.support.blocs.blocA(point);
     final ResultatAncrage ancrage = choisirAncrage(
       mode: widget.support.modeAffichage,
-      semantique: bloc != null && bloc.position.estSemantique
+      semantique: bloc != null && estSemantique(bloc.position)
           ? bloc.position
           : null,
       spatial: widget.support.ancrageCadre,

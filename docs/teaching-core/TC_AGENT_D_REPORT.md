@@ -39,8 +39,8 @@ plages, et **aucun des trois ne touche a la ressource d'origine**.
 | `port_annotations.dart` | `PortAnnotations` (contrat D) + `AnnotationsMemoire` (double local) + provider. |
 | `port_assignations.dart` | `PortAssignations` (contrat D) + `AssignationsMemoire` (double local) + provider. |
 | `libelles_tc_outils.dart` | La facade de libelles `tc.outils.*` (decision D-03), chaque constante annotee `// TC-I18N:`. |
-| `ports_externes/content_position.dart` | Stub d'Agent B. **Divergence declaree**, voir CONTRACT_REQUEST section 1.1. |
-| `ports_externes/content_range.dart` | Stub d'Agent B. Corps de `contient`/`chevauche` ecrits localement, voir 1.2. |
+| `ports_externes/content_position.dart` | Stub d'Agent B, **recopie a l'identique du canonique**. Aucune divergence, voir l'erratum CONTRACT_REQUEST section 0. |
+| `ports_externes/content_range.dart` | Stub d'Agent B. Corps de `contient`/`chevauche` ecrits localement, voir CONTRACT_REQUEST section 1. |
 | `ports_externes/library_resource.dart` | Stub d'Agent B, **volontairement partiel** : seules les `CapaciteRessource` sont employees. |
 | `ports_externes/port_realtime_pedagogique.dart` | Stub d'Agent F + **double local** de `MessagePedagogique`, voir CONTRACT_REQUEST section 2. |
 
@@ -162,8 +162,10 @@ enregistrees alors qu'elles disparaitraient au redemarrage.
    Supabase, en surchargeant les deux providers.
 2. **Les deux stubs de B** (`content_position.dart`, `content_range.dart`) et le
    **stub de F** (`port_realtime_pedagogique.dart`) : les supprimer, pointer sur
-   les canoniques. **Trancher d'abord la collision `ContentPosition`** (section
-   1.1), qui empeche le contrat canonique de compiler.
+   les canoniques. `content_position.dart` est une recopie a l'identique du
+   canonique : sa suppression ne demande **aucun arbitrage** et ne change aucun
+   site d'appel de D. Reste a trancher, pour `content_range.dart`, l'ordre
+   naturel d'un ancrage `section` (CONTRACT_REQUEST section 1).
 3. **La fusion i18n** : `docs/teaching-core/i18n/tc_i18n_D.json` -> sous-arbre
    `tc.outils.*`, regeneration slang, remplacement des constantes de
    `libelles_tc_outils.dart`, suppression du fichier de facade.

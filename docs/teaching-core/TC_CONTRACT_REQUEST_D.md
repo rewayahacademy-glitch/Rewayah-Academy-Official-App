@@ -10,44 +10,36 @@
 
 ---
 
-## 1. Deux contrats d'Agent B ne compilent pas tels qu'ils sont ecrits
+## 0. ERRATUM — la « collision `ContentPosition` » n'existait pas
 
-### 1.1 `ContentPosition` : collision entre un champ et un constructeur
+> Une version precedente de ce document portait ici une section 1.1 affirmant
+> qu'« en Dart, un constructeur nomme ne peut pas porter le nom d'un membre de
+> sa classe », et citait un message `The name 'page' is already used as a class
+> member`. **C'est faux, et la section a ete retiree.** La restriction de Dart
+> porte sur les membres **statiques** ; un constructeur nomme peut porter le nom
+> d'un champ d'instance. `const ContentPosition.page({required int page})`
+> coexiste sans erreur avec `final int? page;` — reproduit et compile,
+> `dart analyze` ne signale rien.
+>
+> Le canonique d'Agent B etait donc correct, et **rien n'etait a trancher**. Le
+> stub de D avait renomme les quatre constructeurs en `.surPage` / `.surAyah` /
+> `.surSection` / `.surFraction`, transforme les `const` en `factory`, retire
+> `valeurSql` et `depuisSql` de `TypeAncrage`, et ajoute un membre
+> `estSemantique` absent du canonique. **Tout cela a ete annule** :
+> `lib/core/tc_outils/ports_externes/content_position.dart` est desormais une
+> recopie a l'identique du canonique.
+>
+> `estSemantique` n'etait pas une addition benigne : elle etait appelee par du
+> code de production (`ancrage_annotation.dart`, `couche_annotation.dart`), qui
+> aurait cesse de compiler le jour ou Agent Z remplace le stub par le canonique.
+> Elle vit maintenant comme **fonction libre** dans le namespace de D,
+> `bool estSemantique(ContentPosition p)` dans
+> `lib/core/tc_outils/ancrage_annotation.dart`. Agent B n'a donc rien a verser a
+> son contrat : il reste sans comportement, comme il l'a voulu.
 
-**Chemin canonique** : `lib/core/tc_bibliotheque/content_position.dart` (Agent B),
-`TEACHING_CORE_CONTRACTS.md` section 7.
+---
 
-Le contrat declare les champs `page` et `fraction`, **et** annonce les
-constructeurs nommes `.page(...)` et `.fraction(...)`. En Dart, un constructeur
-nomme ne peut pas porter le nom d'un membre de sa classe :
-
-```
-Error: The name 'page' is already used as a class member.
-```
-
-Le contrat, tel qu'ecrit, n'est donc pas implementable. Deux sorties possibles,
-**a trancher par Agent 0 ou Agent B** :
-
-| Option | Consequence |
-|---|---|
-| **A. Renommer les constructeurs** : `.surPage`, `.surAyah`, `.surSection`, `.surFraction` | Les champs restent ceux du contrat. **C'est l'option retenue par le stub de D**, parce qu'elle ne change aucun nom de donnee. |
-| B. Renommer les champs : `numeroPage`, `fractionApprochee` | Les constructeurs gardent les noms annonces, mais tous les consommateurs (C, D, E, F, H) lisent des champs differents de ceux du contrat. |
-
-Trois points de plus, decides localement et a confirmer :
-
-1. **Egalite de valeur.** Le contrat ne dit pas si `ContentPosition` porte
-   `operator ==`. Le stub de D l'implemente : sans elle, une plage ne peut pas
-   etre comparee, un marqueur ne peut pas etre remplace, et aucun test de
-   reflow n'est ecrivable.
-2. **Assertions de coherence.** Le stub assert `page > 0`, `sourate > 0 && ayah > 0`
-   et `0 <= fraction <= 1`. A confirmer.
-3. **`bool get estSemantique`** (vrai pour `ayah` et `section`) a ete ajoute au
-   stub : **c'est la seule addition de D a ce contrat**, et elle est centrale
-   pour lui (voir section 8.3 de la spec). A verser dans le canonique, ou a
-   deplacer dans `lib/core/tc_outils/` si Agent B prefere un contrat sans
-   comportement.
-
-### 1.2 `ContentRange` : deux methodes sans corps, et un ordre indefini
+## 1. `ContentRange` : deux methodes sans corps, et un ordre indefini
 
 **Chemin canonique** : `lib/core/tc_bibliotheque/content_range.dart`,
 section 8 du contrat.

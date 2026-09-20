@@ -135,7 +135,7 @@ void main() {
 
     test('un trait dont l ancrage n est pas rendu n est pas peint ailleurs', () {
       final TraitVectoriel trait = traitSur(
-        ContentPosition.surAyah(
+        const ContentPosition.ayah(
           resourceId: ressourceTest,
           sourate: 2,
           ayah: 255,

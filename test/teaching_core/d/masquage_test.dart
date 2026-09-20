@@ -6,7 +6,7 @@ import 'package:rewayah_academy/core/tc_outils/ports_externes/content_range.dart
 import 'support/hote_d.dart';
 
 void main() {
-  ContentPosition ayah(int numero) => ContentPosition.surAyah(
+  ContentPosition ayah(int numero) => ContentPosition.ayah(
     resourceId: ressourceTest,
     sourate: 1,
     ayah: numero,
@@ -84,7 +84,7 @@ void main() {
 
     test('un masquage ne deborde pas sur une autre ressource', () {
       final PlanMasquage plan = PlanMasquage.aucun.masquer(plage(2, 4));
-      final ContentPosition ailleurs = ContentPosition.surAyah(
+      const ContentPosition ailleurs = ContentPosition.ayah(
         resourceId: 'res-autre',
         sourate: 1,
         ayah: 3,

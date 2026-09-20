@@ -54,6 +54,19 @@ class ResultatAncrage {
   int get hashCode => Object.hash(position, raison);
 }
 
+/// Vrai quand l'ancrage de [p] designe une unite de SENS, et non un emplacement.
+///
+/// C'est la distinction qui decide du sort d'une annotation apres un reflow :
+/// un ancrage semantique suit le texte, un ancrage spatial reste ou il est.
+///
+/// **Fonction libre, et non membre de [ContentPosition].** Le contrat canonique
+/// d'Agent B ne porte aucun comportement : lui en attacher un ferait diverger
+/// ce stub du canonique, et le code de D cesserait de compiler le jour ou Agent
+/// Z le remplace. Le predicat vit donc dans le namespace de D, qui est le seul
+/// a en avoir besoin.
+bool estSemantique(ContentPosition p) =>
+    p.typeAncrage == TypeAncrage.ayah || p.typeAncrage == TypeAncrage.section;
+
 /// Choisit l'ancrage d'un geste selon le mode de rendu du support.
 ///
 /// - En mode **page** (Mushaf fidele), la mise en page est figee : l'ancrage
@@ -70,11 +83,11 @@ ResultatAncrage choisirAncrage({
   ContentPosition? spatial,
 }) {
   assert(
-    semantique == null || semantique.estSemantique,
+    semantique == null || estSemantique(semantique),
     'un ancrage semantique est un ayah ou une section',
   );
   assert(
-    spatial == null || !spatial.estSemantique,
+    spatial == null || !estSemantique(spatial),
     'un ancrage spatial est une page ou une fraction',
   );
 
@@ -182,7 +195,7 @@ class CarteDesBlocs {
     // Un ancrage spatial se resout sur le cadre du support, jamais sur un bloc
     // de texte : c'est exactement ce qui le fait rester en place quand le texte
     // bouge.
-    return position.estSemantique ? null : cadre;
+    return estSemantique(position) ? null : cadre;
   }
 
   /// Vrai quand la carte sait placer cette position.
