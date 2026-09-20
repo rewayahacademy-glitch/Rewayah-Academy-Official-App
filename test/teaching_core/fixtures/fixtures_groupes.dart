@@ -4,34 +4,10 @@
 // PROPRIETE : Agent Q (test/teaching_core/fixtures/). Aucune ligne de
 // production.
 
-import 'contrats/contrats_a_groupe.dart';
-import 'contrats/contrats_a_horloge.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
+
 import 'fixtures_horloge.dart';
-
-/// L'etat de la photo d'un enseignant.
-///
-/// **Ce n'est PAS un type de contrat.** C'est la forme executable de la
-/// decision D-01 : l'absence de photo declenche un etat d'erreur ou de
-/// migration EXPLICITE. L'enumeration ne compte volontairement que deux
-/// valeurs : il n'existe aucun `avatarGenerique`, et c'est tout le sujet.
-///
-/// Le type canonique manque cote production : demande ouverte dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_Q.md`.
-enum EtatPhotoEnseignant {
-  /// La cle de photo est presente et exploitable.
-  presente,
-
-  /// La cle manque : etat d'erreur ou de migration, jamais un avatar par
-  /// defaut.
-  manquante,
-}
-
-/// Lit l'etat de la photo d'un enseignant.
-EtatPhotoEnseignant etatPhoto(EnseignantVM enseignant) {
-  final String? cle = enseignant.photoUrlOuCle;
-  if (cle == null || cle.trim().isEmpty) return EtatPhotoEnseignant.manquante;
-  return EtatPhotoEnseignant.presente;
-}
 
 /// Le libelle d'effectif, **toujours derive de la donnee serveur**.
 ///
@@ -42,8 +18,18 @@ String libelleEffectif(GroupSummaryVM groupe) =>
     '${groupe.nombreMembres} / ${groupe.seuilMax}';
 
 /// Le nom complet d'un enseignant dans le contexte cours : « Sayyid Yacine ».
-String libelleEnseignant(EnseignantVM enseignant) =>
-    '${enseignant.titre.libelleFr} ${enseignant.nomAffichage}';
+///
+/// Le canonique `TitreEnseignant` ne garde que `valeurSql` ; le libelle
+/// francais vit dans `LibellesGroupe.enseignantNomme`, que ce fichier de
+/// fixtures ne peut pas importer sans faire remonter une dependance UI dans
+/// les tests de contrat. On rejoue donc la meme table, en dur.
+String libelleEnseignant(EnseignantVM enseignant) {
+  final String titre = switch (enseignant.titre) {
+    TitreEnseignant.sayyid => 'Sayyid',
+    TitreEnseignant.sayyida => 'Sayyida',
+  };
+  return '$titre ${enseignant.nomAffichage}';
+}
 
 /// Un enseignant avec photo.
 const EnseignantVM enseignantAvecPhoto = EnseignantVM(

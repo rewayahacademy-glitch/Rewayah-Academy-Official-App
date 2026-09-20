@@ -10,7 +10,7 @@
 // facon ni `timezone` ni `intl`. Aucune fonction d'ici ne convertit un fuseau,
 // et aucune n'ajoute une `Duration(hours: 1)` pour changer de fuseau.
 
-import 'contrats/contrats_a_horloge.dart';
+import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 
 /// Le fuseau de reference du groupe dans nos scenarios.
 const String fuseauParis = 'Europe/Paris';
@@ -143,29 +143,6 @@ Duration? restantDe({
   PhaseSeance.prolongee || PhaseSeance.terminee => null,
 };
 
-/// La duree **academique** reellement creditee a un participant.
-///
-/// C'est la forme executable de la correction demandee par la decision D-13 :
-/// borner le depart a `max(entreLe, debutSeance)`. Sans elle, un eleve entre a
-/// T-20 dans un cours commence depuis 18 minutes se verrait crediter 38
-/// minutes.
-///
-/// Rend `Duration.zero` -- jamais une duree negative -- quand l'entree est
-/// posterieure a l'instant d'observation, ou quand rien n'a ete lu.
-Duration dureeAcademique({
-  required DateTime? entreLe,
-  required DateTime debutSeance,
-  required DateTime maintenant,
-  DateTime? finSeance,
-}) {
-  if (entreLe == null) return Duration.zero;
-  final DateTime depart = entreLe.isAfter(debutSeance) ? entreLe : debutSeance;
-  final DateTime arrivee = finSeance != null && finSeance.isBefore(maintenant)
-      ? finSeance
-      : maintenant;
-  if (!arrivee.isAfter(depart)) return Duration.zero;
-  return arrivee.difference(depart);
-}
 
 /// Une horloge affichee, telle que le serveur la rend.
 ///

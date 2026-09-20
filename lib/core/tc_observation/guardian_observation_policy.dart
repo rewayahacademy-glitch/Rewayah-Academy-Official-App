@@ -61,7 +61,7 @@ class GuardianObservationPolicy {
     this.cameraAutorisee = false,
     this.publicationDataAutorisee = false,
     this.admissionEnseignantRequise = false,
-  });
+  }) : assert(policyVersion != '', 'policyVersion est obligatoire');
 
   /// Les valeurs normatives de la specification, section 11.1.
   ///

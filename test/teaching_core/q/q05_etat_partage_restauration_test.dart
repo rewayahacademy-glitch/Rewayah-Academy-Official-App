@@ -12,8 +12,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
 
-import '../fixtures/contrats/contrats_f_etat_partage.dart';
 import '../fixtures/fixtures_etat_partage.dart';
 import 'faux/faux_etat_partage.dart';
 import 'support/lecture_sources.dart';

@@ -12,9 +12,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 
-import '../fixtures/contrats/contrats_b_ressources.dart';
 import '../fixtures/fixtures_ressources.dart';
 import 'faux/faux_moteur_salle.dart';
 import 'support/hote_navigation.dart';

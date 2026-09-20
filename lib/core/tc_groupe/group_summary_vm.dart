@@ -299,3 +299,28 @@ class GroupSummaryVM {
   /// lui-meme proposerait une porte que `autoriser_jeton_video()` refuserait.
   bool get rejoindreOuvert => horloge?.rejoindreOuvert ?? false;
 }
+
+/// L'etat de la photo d'un enseignant.
+///
+/// **Ce n'est PAS un type de contrat.** C'est la forme executable de la
+/// decision D-01 : l'absence de photo declenche un etat d'erreur ou de
+/// migration EXPLICITE. L'enumeration ne compte volontairement que deux
+/// valeurs : il n'existe aucun `avatarGenerique`, et c'est tout le sujet.
+///
+/// Promu par Agent Q depuis son double de contrat (TC_CONTRACT_REQUEST_Q.md) :
+/// aucun type canonique ne couvrait ce besoin avant l'integration.
+enum EtatPhotoEnseignant {
+  /// La cle de photo est presente et exploitable.
+  presente,
+
+  /// La cle manque : etat d'erreur ou de migration, jamais un avatar par
+  /// defaut.
+  manquante,
+}
+
+/// Lit l'etat de la photo d'un enseignant.
+EtatPhotoEnseignant etatPhoto(EnseignantVM enseignant) {
+  final String? cle = enseignant.photoUrlOuCle;
+  if (cle == null || cle.trim().isEmpty) return EtatPhotoEnseignant.manquante;
+  return EtatPhotoEnseignant.presente;
+}

@@ -9,7 +9,8 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+
 import 'contrats_d_outils.dart';
 
 /// L'etat de presence projete vers l'enseignant.

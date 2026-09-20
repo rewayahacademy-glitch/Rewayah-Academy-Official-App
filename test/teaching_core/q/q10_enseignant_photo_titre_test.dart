@@ -14,8 +14,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 
-import '../fixtures/contrats/contrats_a_groupe.dart';
 import '../fixtures/fixtures_groupes.dart';
 import 'support/lecture_sources.dart';
 
@@ -46,13 +46,24 @@ Widget _carteGroupe(GroupSummaryVM g) => MaterialApp(
   ),
 );
 
+/// Les deux libelles, francais puis arabe, tels que
+/// `docs/teaching-core/i18n/tc_i18n_A.json` les porte -- le canonique
+/// `TitreEnseignant` ne garde que `valeurSql`, la traduction vit dans la
+/// facade i18n (`LibellesGroupe.sayyid`/`sayyida` pour le francais ; l arabe
+/// n a pas encore de facade tant que la fusion i18n n a pas eu lieu).
+const Map<TitreEnseignant, (String, String)> _libelles =
+    <TitreEnseignant, (String, String)>{
+      TitreEnseignant.sayyid: ('Sayyid', 'سيد'),
+      TitreEnseignant.sayyida: ('Sayyida', 'سيدة'),
+    };
+
 void main() {
   group('Q-10 : le titre est Sayyid ou Sayyida, jamais Ustaz', () {
     test('les deux titres portent leur libelle francais et arabe', () {
-      expect(TitreEnseignant.sayyid.libelleFr, 'Sayyid');
-      expect(TitreEnseignant.sayyida.libelleFr, 'Sayyida');
-      expect(TitreEnseignant.sayyid.libelleAr, 'سيد');
-      expect(TitreEnseignant.sayyida.libelleAr, 'سيدة');
+      expect(_libelles[TitreEnseignant.sayyid]?.$1, 'Sayyid');
+      expect(_libelles[TitreEnseignant.sayyida]?.$1, 'Sayyida');
+      expect(_libelles[TitreEnseignant.sayyid]?.$2, 'سيد');
+      expect(_libelles[TitreEnseignant.sayyida]?.$2, 'سيدة');
       expect(TitreEnseignant.values, hasLength(2));
     });
 

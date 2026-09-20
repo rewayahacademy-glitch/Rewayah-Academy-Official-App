@@ -8,7 +8,8 @@
 // magasins distincts rendent la faute **possible a commettre** dans le
 // double -- et donc detectable par le test.
 
-import '../../fixtures/contrats/contrats_b_ressources.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
+
 import '../../fixtures/contrats/contrats_d_outils.dart';
 
 /// Le magasin des versions publiees. **Personne ne les modifie.**

@@ -7,8 +7,8 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'content_position.dart';
-import 'content_range.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
 
 /// L'intention pedagogique. **La couleur en derive, jamais l'inverse.**
 ///

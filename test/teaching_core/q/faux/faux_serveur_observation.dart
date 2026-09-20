@@ -8,7 +8,11 @@
 // porter la decision au client testerait exactement ce qu'il faut interdire.
 // Celui-ci tient donc l'etat, decide seul, et ferme lui-meme l'intervalle.
 
-import '../../fixtures/contrats/contrats_g_observation.dart';
+import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
+import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart';
+import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
+import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
+
 import '../../fixtures/fixtures_observation.dart';
 
 /// Le compte a rebours que le CLIENT affiche.

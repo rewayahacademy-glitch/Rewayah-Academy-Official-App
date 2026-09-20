@@ -10,7 +10,8 @@
 
 import 'dart:async';
 
-import '../../fixtures/contrats/contrats_f_etat_partage.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
+
 import '../../fixtures/fixtures_etat_partage.dart';
 
 /// Le magasin backend : **l'etat durable minimal**, un enregistrement par

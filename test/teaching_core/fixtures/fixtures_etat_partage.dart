@@ -4,10 +4,10 @@
 // PROPRIETE : Agent Q (test/teaching_core/fixtures/). Aucune ligne de
 // production.
 
-import 'contrats/content_position.dart';
-import 'contrats/content_range.dart';
-import 'contrats/contrats_d_outils.dart';
-import 'contrats/contrats_f_etat_partage.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
+import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
+import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 
 /// La seance de reference des fixtures d'etat partage.
 const String seancePartagee = 'seance-1';

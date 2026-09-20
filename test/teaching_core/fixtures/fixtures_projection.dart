@@ -11,7 +11,8 @@
 // seconde ligne de defense : qu'aucun code client ne reconstitue, ne recopie
 // ni ne laisse passer une donnee interdite qui arriverait quand meme.
 
-import 'contrats/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+
 import 'contrats/contrats_d_outils.dart';
 import 'contrats/contrats_e_classe.dart';
 

@@ -4,16 +4,17 @@
 // PROPRIETE : Agent Q (test/teaching_core/fixtures/). Aucune ligne de
 // production.
 
-import 'contrats/contrats_g_observation.dart';
+import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
+import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 
 /// La politique **heritee de l'Academie** : les defauts normatifs, intacts.
 ///
 /// Observation activee, 1 visite, 120 secondes, micro et camera interdits,
 /// aucune admission enseignant (spec 1.1 et 11.1).
-const GuardianObservationPolicy politiqueHeritee = GuardianObservationPolicy(
-  policyVersion: 'acad-2026-09-01',
-  source: SourcePolitique.academie,
-);
+const GuardianObservationPolicy politiqueHeritee =
+    GuardianObservationPolicy.defautsNormatifs(
+      policyVersion: 'acad-2026-09-01',
+    );
 
 /// La politique **personnalisee par groupe** : deux visites, 300 secondes.
 ///
@@ -24,6 +25,7 @@ const GuardianObservationPolicy politiquePersonnalisee =
     GuardianObservationPolicy(
       policyVersion: 'grp-lanternes-v3',
       source: SourcePolitique.groupe,
+      observationActivee: true,
       maxVisitsPerSession: 2,
       maxTotalObservationTime: Duration(seconds: 300),
       maxParVisite: Duration(seconds: 180),
@@ -47,7 +49,9 @@ const GuardianObservationPolicy politiqueQuotaTempsCourt =
     GuardianObservationPolicy(
       policyVersion: 'grp-sources-v2',
       source: SourcePolitique.groupe,
+      observationActivee: true,
       maxVisitsPerSession: 3,
+      maxTotalObservationTime: Duration(seconds: 120),
     );
 
 /// Une politique dont le plafond **par visite depasse le plafond total**.
@@ -58,6 +62,9 @@ const GuardianObservationPolicy politiquePlafondIncoherent =
     GuardianObservationPolicy(
       policyVersion: 'grp-piege-v1',
       source: SourcePolitique.groupe,
+      observationActivee: true,
+      maxVisitsPerSession: 1,
+      maxTotalObservationTime: Duration(seconds: 120),
       maxParVisite: Duration(seconds: 180),
     );
 
@@ -83,87 +90,6 @@ const BudgetObservation budgetTempsEpuise = BudgetObservation(
   peutEntrer: false,
   motifRefus: MotifRefusObservation.tempsEpuise,
 );
-
-/// Ce qu'un observateur peut faire une fois entre.
-///
-/// **Ce n'est PAS un type de contrat.** C'est la forme executable des
-/// decisions D-14, D-15 et D-16 : la verite est le jeton serveur
-/// (`autoriser_jeton_video`), et aucune capacite ne se calcule cote client.
-/// Ce double sert a verifier que la table des roles est la bonne, pas a la
-/// faire appliquer.
-class CapacitesObservateur {
-  /// Cree un jeu de capacites.
-  const CapacitesObservateur({
-    required this.micro,
-    required this.camera,
-    required this.publicationData,
-    required this.visibleDesParticipants,
-    required this.annonceFaite,
-    required this.auditee,
-  });
-
-  /// Le micro est-il autorise.
-  final bool micro;
-
-  /// La camera est-elle autorisee.
-  final bool camera;
-
-  /// La publication de donnees est-elle autorisee.
-  final bool publicationData;
-
-  /// Apparait-il dans la liste des participants.
-  final bool visibleDesParticipants;
-
-  /// Une annonce est-elle faite dans la classe.
-  final bool annonceFaite;
-
-  /// La visite est-elle journalisee. **Toujours vrai.**
-  final bool auditee;
-}
-
-/// La table des capacites, par role d'observateur.
-///
-/// - Le **tuteur** observe, muet et sans camera, et l'enseignant est prevenu.
-/// - L'**Admin incognito** est invisible aux participants, sans micro, sans
-///   camera, sans annonce -- mais jamais invisible a l'audit.
-/// - L'**Admin visible** rejoint la classe sous un nom institutionnel, avec
-///   micro et camera, et l'annonce est faite.
-/// - Le **Controleur** est incognito uniquement (decision D-16) : aucune
-///   variante visible n'existe dans ce chantier.
-CapacitesObservateur capacitesDe(RoleObservateur role) => switch (role) {
-  RoleObservateur.tuteur => const CapacitesObservateur(
-    micro: false,
-    camera: false,
-    publicationData: false,
-    visibleDesParticipants: false,
-    annonceFaite: true,
-    auditee: true,
-  ),
-  RoleObservateur.adminIncognito => const CapacitesObservateur(
-    micro: false,
-    camera: false,
-    publicationData: false,
-    visibleDesParticipants: false,
-    annonceFaite: false,
-    auditee: true,
-  ),
-  RoleObservateur.adminVisible => const CapacitesObservateur(
-    micro: true,
-    camera: true,
-    publicationData: true,
-    visibleDesParticipants: true,
-    annonceFaite: true,
-    auditee: true,
-  ),
-  RoleObservateur.controleur => const CapacitesObservateur(
-    micro: false,
-    camera: false,
-    publicationData: false,
-    visibleDesParticipants: false,
-    annonceFaite: false,
-    auditee: true,
-  ),
-};
 
 /// Le nom institutionnel sous lequel un Admin visible rejoint une classe.
 const String nomInstitutionnelAdmin = 'Administration Rewayah';

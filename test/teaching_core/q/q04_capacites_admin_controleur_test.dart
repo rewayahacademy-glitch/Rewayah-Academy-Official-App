@@ -12,9 +12,10 @@
 // la confronte au SQL. C est une specification executable, pas une barriere.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_observation/capacites_observateur.dart';
+import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 
-import '../fixtures/contrats/contrats_f_etat_partage.dart';
-import '../fixtures/contrats/contrats_g_observation.dart';
 import '../fixtures/fixtures_observation.dart';
 import 'faux/faux_serveur_observation.dart';
 

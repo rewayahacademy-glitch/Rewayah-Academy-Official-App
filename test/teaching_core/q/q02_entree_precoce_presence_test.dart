@@ -17,8 +17,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
+import 'package:rewayah_academy/core/tc_horloge/duree_academique.dart';
+import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 
-import '../fixtures/contrats/contrats_a_horloge.dart';
 import '../fixtures/fixtures_horloge.dart';
 
 void main() {

@@ -6,7 +6,7 @@
 // fois a la publication, puis reutilise. Jamais a chaque clic » (CONTRACTS
 // section 6, invariant 1). Un double sans compteur ne pourrait pas le dire.
 
-import '../../fixtures/contrats/contrats_b_ressources.dart';
+import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
 
 /// Le magasin d'artefacts, avec ses deux compteurs.
 class FauxDepotTelechargement {

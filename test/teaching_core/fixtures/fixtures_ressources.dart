@@ -4,9 +4,11 @@
 // PROPRIETE : Agent Q (test/teaching_core/fixtures/). Aucune ligne de
 // production.
 
-import 'contrats/content_position.dart';
-import 'contrats/content_range.dart';
-import 'contrats/contrats_b_ressources.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_range.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
+import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
 
 /// L'instant de reference des fixtures de ressource.
 final DateTime publicationReference = DateTime.utc(2026, 9, 1, 8);

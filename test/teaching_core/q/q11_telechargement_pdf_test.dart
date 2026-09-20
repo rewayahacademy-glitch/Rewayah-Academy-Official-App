@@ -12,8 +12,9 @@
 // nombres qui ne doivent pas evoluer ensemble.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
+import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
 
-import '../fixtures/contrats/contrats_b_ressources.dart';
 import '../fixtures/fixtures_ressources.dart';
 import 'faux/faux_telechargement.dart';
 

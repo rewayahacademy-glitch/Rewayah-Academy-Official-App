@@ -12,8 +12,9 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import '../fixtures/contrats/content_position.dart';
-import '../fixtures/contrats/contrats_b_ressources.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
+
 import '../fixtures/contrats/contrats_d_outils.dart';
 import '../fixtures/fixtures_ressources.dart';
 import 'faux/faux_annotations.dart';

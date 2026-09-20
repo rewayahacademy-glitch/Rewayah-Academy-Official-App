@@ -87,10 +87,6 @@ abstract final class CheminsDoubles {
   static const String outils =
       'test/teaching_core/fixtures/contrats/contrats_d_outils.dart';
 
-  /// Le double des contrats de Groupe.
-  static const String groupe =
-      'test/teaching_core/fixtures/contrats/contrats_a_groupe.dart';
-
   /// Le repertoire des fixtures.
   static const String repertoireFixtures = 'test/teaching_core/fixtures';
 }

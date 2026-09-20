@@ -10,8 +10,11 @@
 // compilerait plus -- ce qui est exactement le signal voulu.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
+import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart';
+import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
+import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
 
-import '../fixtures/contrats/contrats_g_observation.dart';
 import '../fixtures/fixtures_observation.dart';
 import 'faux/faux_serveur_observation.dart';
 
@@ -202,9 +205,13 @@ void main() {
 
     test('policyVersion est obligatoire et non vide', () {
       expect(
+        // ignore: prefer_const_constructors
         () => GuardianObservationPolicy(
           policyVersion: '',
           source: SourcePolitique.academie,
+          observationActivee: true,
+          maxVisitsPerSession: 1,
+          maxTotalObservationTime: const Duration(seconds: 120),
         ),
         throwsA(isA<AssertionError>()),
       );

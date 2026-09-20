@@ -96,7 +96,25 @@ class FauxMoteurSalle implements VideoSessionProvider {
     await _participants.close();
     await _qualite.close();
     await _contenus.close();
+    await _donnees.close();
   }
+
+  final StreamController<PaquetDonnees> _donnees =
+      StreamController<PaquetDonnees>.broadcast();
+
+  @override
+  Stream<PaquetDonnees> get donneesRecues => _donnees.stream;
+
+  @override
+  AccesSalle? get accesCourant => null;
+
+  @override
+  Future<void> publierDonnees({
+    required String sujet,
+    required List<int> charge,
+    required bool fiable,
+    List<String> destinataires = const <String>[],
+  }) async {}
 }
 
 /// Le double du transport qui annonce une sortie au serveur.
