@@ -26,7 +26,7 @@ class EmplacementNonBranche extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const EmptyState(
+    return EmptyState(
       message: LibellesGroupe.emplacementNonBranche,
       invitation: LibellesGroupe.emplacementNonBrancheDetail,
       icone: AppIcons.rienAAfficher,
@@ -60,12 +60,12 @@ class BlocAvantProchainCours extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const SectionHeader(titre: LibellesGroupe.avantProchainCours),
+        SectionHeader(titre: LibellesGroupe.avantProchainCours),
         Ecart.vMd,
         if (!portBranche)
           const EmplacementNonBranche()
         else if (actions.isEmpty)
-          const EmptyState(
+          EmptyState(
             message: LibellesGroupe.aucuneAction,
             icone: AppIcons.succes,
             registre: RegistreVide.bonneNouvelle,
@@ -181,12 +181,12 @@ class BlocProgression extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         SectionHeader(titre: LibellesGroupe.progression),
         Ecart.vMd,
-        EmplacementNonBranche(),
+        const EmplacementNonBranche(),
       ],
     );
   }
@@ -217,7 +217,7 @@ class BlocRoster extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const SectionHeader(titre: LibellesGroupe.roster),
+        SectionHeader(titre: LibellesGroupe.roster),
         Ecart.vMd,
         contenu ?? const EmplacementNonBranche(),
       ],

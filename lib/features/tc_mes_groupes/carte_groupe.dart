@@ -222,14 +222,14 @@ class _Enseignant extends StatelessWidget {
                 Ecart.vSm,
                 // Un etat, pas une couleur : `StatusPill` refuse par
                 // construction une pastille sans libelle.
-                const StatusPill(
+                StatusPill(
                   libelle: LibellesGroupe.photoManquante,
                   ton: TonEtat.avertissement,
                 ),
               ],
               if (groupe.complet) ...<Widget>[
                 Ecart.vSm,
-                const StatusPill(
+                StatusPill(
                   libelle: LibellesGroupe.complet,
                   ton: TonEtat.neutre,
                 ),

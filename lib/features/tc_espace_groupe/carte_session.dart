@@ -41,7 +41,7 @@ class CarteSession extends StatelessWidget {
     final OccurrenceSeance? occurrence = espace.identite.prochaineSeance;
 
     if (horloge == null || occurrence == null) {
-      return const AppCard(
+      return AppCard(
         dominante: true,
         child: EmptyState(
           message: LibellesGroupe.aucuneSeance,

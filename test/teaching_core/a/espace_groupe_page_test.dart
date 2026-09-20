@@ -97,7 +97,7 @@ void main() {
         expect(find.text('Sayyid Youssouf'), findsWidgets);
         expect(find.text('Lecture du Coran · Niveau 2'), findsOneWidget);
         // La capacite reelle, en toutes lettres dans la pastille.
-        expect(find.text('4 eleves sur 5 places'), findsOneWidget);
+        expect(find.text('4 élèves sur 5 places'), findsOneWidget);
       });
     });
   });

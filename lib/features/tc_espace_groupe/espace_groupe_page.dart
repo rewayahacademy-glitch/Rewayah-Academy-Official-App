@@ -157,7 +157,7 @@ class _Corps extends ConsumerWidget {
       // `mesGroupes()` ne rend que ce que l'appelant a le droit de voir : une
       // absence n'est pas une erreur de lecture, c'est un groupe cloture ou
       // celui d'une autre classe. Un etat subi, donc aucun bouton.
-      return const EmptyState(
+      return EmptyState(
         message: LibellesGroupe.groupeIntrouvable,
         invitation: LibellesGroupe.groupeIntrouvableDetail,
         icone: AppIcons.rienAAfficher,
@@ -373,7 +373,7 @@ class IdentiteGroupe extends StatelessWidget {
                           : TonEtat.neutre,
                     ),
                     if (groupe.enseignant.photoManquante)
-                      const StatusPill(
+                      StatusPill(
                         libelle: LibellesGroupe.photoManquante,
                         ton: TonEtat.avertissement,
                       ),

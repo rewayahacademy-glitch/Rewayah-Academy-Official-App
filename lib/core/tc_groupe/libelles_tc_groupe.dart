@@ -1,93 +1,74 @@
+import '../i18n/strings.g.dart';
 import '../tc_horloge/session_clock_vm.dart';
 import 'group_summary_vm.dart';
 
-/// La facade de libelles du domaine Groupe.
+/// Les libelles et la mise en forme du domaine Groupe.
 ///
-/// **Provisoire, et remplacee par Agent Z.** Le pipeline slang du depot est
-/// mono-fichier : une seule source `assets/i18n/fr.i18n.json` et une seule
-/// sortie generee et versionnee de 244 Ko. Neuf agents qui y ecriraient en
-/// parallele produiraient neuf conflits sur du code genere qu'on ne fusionne
-/// pas a la main. La decision `D-03` impose donc ce mecanisme : chaque agent
-/// depose ses libelles dans `docs/teaching-core/i18n/tc_i18n_<X>.json` et ecrit
-/// son interface contre une facade annotee.
-///
-/// Chaque constante porte sa cle finale en commentaire `// TC-I18N:`. Agent Z
-/// fusionne les JSON, regenere, remplace les appels et supprime ce fichier.
-///
-/// Le sous-arbre d'Agent A est `tc.groupe.*`, et rien d'autre.
+/// **Module permanent, pas une facade.** A la difference des huit autres
+/// facades `// TC-I18N:` du chantier Teaching Core, ce fichier porte de la
+/// logique de presentation reelle -- `ligneEtat`, `compteARebours`,
+/// `dureeLisible` -- que plusieurs ecrans partagent explicitement (« Un seul
+/// endroit decide de cette phrase »). Le supprimer et repeter cette logique a
+/// chaque site d'appel referait diverger ce que la carte de « Mes groupes »
+/// et la Session Card de l'Espace Groupe affichent pour le meme instant.
+/// Seule sa source change : les libelles viennent desormais de
+/// `t.tc.groupe.*`, fusionnes depuis `docs/teaching-core/i18n/tc_i18n_A.json`.
 abstract final class LibellesGroupe {
-  // TC-I18N: tc.groupe.mesGroupes.titre
   /// Le titre de l'ecran « Mes groupes ».
-  static const String mesGroupesTitre = 'Mes groupes';
+  static String get mesGroupesTitre => t.tc.groupe.mesGroupes.titre;
 
-  // TC-I18N: tc.groupe.mesGroupes.aucun
   /// Aucun groupe.
-  static const String aucunGroupe = 'Aucun groupe pour le moment';
+  static String get aucunGroupe => t.tc.groupe.mesGroupes.aucun;
 
-  // TC-I18N: tc.groupe.mesGroupes.aucunDetail
   /// Ce que cela veut dire.
-  static const String aucunGroupeDetail =
-      "L'academie vous placera dans un groupe des qu'un creneau vous "
-      'correspond.';
+  static String get aucunGroupeDetail => t.tc.groupe.mesGroupes.aucunDetail;
 
-  // TC-I18N: tc.groupe.commun.erreur
   /// L'echec de lecture.
-  static const String erreur = 'Vos groupes n ont pas pu etre lus';
+  static String get erreur => t.tc.groupe.commun.erreur;
 
-  // TC-I18N: tc.groupe.commun.reessayer
   /// Reessayer.
-  static const String reessayer = 'Reessayer';
+  static String get reessayer => t.tc.groupe.commun.reessayer;
 
-  // TC-I18N: tc.groupe.carte.ouvrir
   /// Le libelle d'accessibilite de la carte entiere.
-  static String ouvrirGroupe(String libelle) => 'Ouvrir le groupe $libelle';
+  static String ouvrirGroupe(String libelle) =>
+      t.tc.groupe.carte.ouvrir(libelle: libelle);
 
-  // TC-I18N: tc.groupe.carte.capacite
   /// La capacite reelle, toujours lue de la donnee serveur.
   static String capacite({required int membres, required int seuil}) =>
-      '$membres / $seuil';
+      t.tc.groupe.carte.capacite(membres: membres, seuil: seuil);
 
-  // TC-I18N: tc.groupe.carte.capacitePhrase
   /// La capacite, dite en toutes lettres pour les technologies d'assistance.
   static String capacitePhrase({required int membres, required int seuil}) =>
-      '$membres eleves sur $seuil places';
+      t.tc.groupe.carte.capacitePhrase(membres: membres, seuil: seuil);
 
-  // TC-I18N: tc.groupe.carte.complet
   /// Le groupe est au plafond.
-  static const String complet = 'Complet';
+  static String get complet => t.tc.groupe.carte.complet;
 
-  // TC-I18N: tc.groupe.carte.prochainCours
   /// L'intitule du bloc de prochaine seance.
-  static const String prochainCours = 'Prochain cours';
+  static String get prochainCours => t.tc.groupe.carte.prochainCours;
 
-  // TC-I18N: tc.groupe.carte.aucuneSeance
   /// Aucune occurrence connue.
-  static const String aucuneSeance = 'Aucune seance planifiee';
+  static String get aucuneSeance => t.tc.groupe.carte.aucuneSeance;
 
-  // TC-I18N: tc.groupe.carte.aucuneSeanceDetail
   /// Pourquoi, sans accuser l'utilisateur.
-  static const String aucuneSeanceDetail =
-      "Le planning de ce groupe n'est pas encore pose.";
+  static String get aucuneSeanceDetail =>
+      t.tc.groupe.carte.aucuneSeanceDetail;
 
-  // TC-I18N: tc.groupe.carte.duree
   /// La duree prevue.
-  static String duree(String valeur) => 'Duree $valeur';
+  static String duree(String valeur) =>
+      t.tc.groupe.carte.duree(valeur: valeur);
 
-  // TC-I18N: tc.groupe.carte.dureeLibelle
   /// L'intitule seul, pour une ligne libelle/valeur.
-  static const String dureeLibelle = 'Duree';
+  static String get dureeLibelle => t.tc.groupe.carte.dureeLibelle;
 
-  // TC-I18N: tc.groupe.carte.rejoindre
   /// Le bouton d'entree en classe.
-  static const String rejoindre = 'Rejoindre';
+  static String get rejoindre => t.tc.groupe.carte.rejoindre;
 
-  // TC-I18N: tc.groupe.enseignant.sayyid
   /// Titre masculin.
-  static const String sayyid = 'Sayyid';
+  static String get sayyid => t.tc.groupe.enseignant.sayyid;
 
-  // TC-I18N: tc.groupe.enseignant.sayyida
   /// Titre feminin.
-  static const String sayyida = 'Sayyida';
+  static String get sayyida => t.tc.groupe.enseignant.sayyida;
 
   /// Le nom de l'enseignant, precede de son titre.
   static String enseignantNomme(EnseignantVM enseignant) {
@@ -98,14 +79,12 @@ abstract final class LibellesGroupe {
     return '$titre ${enseignant.nomAffichage}';
   }
 
-  // TC-I18N: tc.groupe.enseignant.photoManquante
   /// La photo obligatoire manque.
-  static const String photoManquante = 'Photo a fournir';
+  static String get photoManquante => t.tc.groupe.enseignant.photoManquante;
 
-  // TC-I18N: tc.groupe.enseignant.photoManquanteDetail
   /// Ce que cela signifie, sans accuser l'enseignant devant les familles.
-  static const String photoManquanteDetail =
-      "La photo de l'enseignant n'a pas encore ete enregistree.";
+  static String get photoManquanteDetail =>
+      t.tc.groupe.enseignant.photoManquanteDetail;
 
   /// Le separateur du produit entre deux fragments d'une meme ligne.
   ///
@@ -123,58 +102,55 @@ abstract final class LibellesGroupe {
     return morceaux.join(separateur);
   }
 
-  // TC-I18N: tc.groupe.cours.coursEtNiveau
   /// Le cours et le niveau, en langage humain.
   static String coursEtNiveau({String? cours, String? niveau}) =>
       joindre(cours, niveau);
 
-  // TC-I18N: tc.groupe.temps.dansMinutes
   /// Compte a rebours court.
-  static String dansMinutes(int minutes) => 'Cours dans $minutes min';
+  static String dansMinutes(int minutes) =>
+      t.tc.groupe.temps.dansMinutes(minutes: minutes);
 
-  // TC-I18N: tc.groupe.temps.dansHeures
   /// Compte a rebours long.
   static String dansHeures({required int heures, required int minutes}) =>
-      'Cours dans $heures h ${minutes.toString().padLeft(2, '0')}';
+      t.tc.groupe.temps.dansHeures(
+        heures: heures,
+        minutes: minutes.toString().padLeft(2, '0'),
+      );
 
-  // TC-I18N: tc.groupe.temps.imminent
   /// Moins d'une minute.
-  static const String imminent = 'Cours imminent';
+  static String get imminent => t.tc.groupe.temps.imminent;
 
-  // TC-I18N: tc.groupe.temps.salleOuverte
   /// La salle est ouverte, le cours n'a pas commence.
-  static String salleOuverte(String reste) => 'Salle ouverte · $reste';
+  static String salleOuverte(String reste) =>
+      t.tc.groupe.temps.salleOuverte(reste: reste);
 
-  // TC-I18N: tc.groupe.temps.attente
   /// Connecte avant l'heure.
-  static const String attenteAvantDebut =
-      "Vous etes dans la salle. Le cours n'a pas encore commence.";
+  static String get attenteAvantDebut => t.tc.groupe.temps.attente;
 
-  // TC-I18N: tc.groupe.temps.attenteDetail
   /// L'invariant de presence, dit simplement.
-  static const String attenteAvantDebutDetail =
-      'Ce temps d attente ne compte pas dans votre presence.';
+  static String get attenteAvantDebutDetail =>
+      t.tc.groupe.temps.attenteDetail;
 
-  // TC-I18N: tc.groupe.temps.resteMinutes
   /// Le temps restant, court.
-  static String resteMinutes(int minutes) => 'Reste $minutes min';
+  static String resteMinutes(int minutes) =>
+      t.tc.groupe.temps.resteMinutes(minutes: minutes);
 
-  // TC-I18N: tc.groupe.temps.resteHeures
   /// Le temps restant, long.
   static String resteHeures({required int heures, required int minutes}) =>
-      'Reste $heures h ${minutes.toString().padLeft(2, '0')}';
+      t.tc.groupe.temps.resteHeures(
+        heures: heures,
+        minutes: minutes.toString().padLeft(2, '0'),
+      );
 
-  // TC-I18N: tc.groupe.temps.enCours
   /// Le cours se tient.
-  static String enCours(String reste) => 'Cours en cours · $reste';
+  static String enCours(String reste) =>
+      t.tc.groupe.temps.enCours(reste: reste);
 
-  // TC-I18N: tc.groupe.temps.prolongee
   /// La seance deborde. **Jamais un nombre negatif.**
-  static const String prolongee = 'Cours toujours en cours';
+  static String get prolongee => t.tc.groupe.temps.prolongee;
 
-  // TC-I18N: tc.groupe.temps.terminee
   /// La seance est finie.
-  static const String terminee = 'Cours termine';
+  static String get terminee => t.tc.groupe.temps.terminee;
 
   /// Le mot d'etat d'une phase, pour la pastille de la carte.
   static String phase(PhaseSeance phase) => switch (phase) {
@@ -189,50 +165,40 @@ abstract final class LibellesGroupe {
     PhaseSeance.terminee => terminee,
   };
 
-  // TC-I18N: tc.groupe.temps.depassement
   /// Forme courte pour une pastille : la seance deborde.
-  static const String depassement = 'En depassement';
+  static String get depassement => t.tc.groupe.temps.depassement;
 
-  // TC-I18N: tc.groupe.temps.salleOuverteCourt
   /// Forme courte pour une pastille.
-  static const String salleOuverteCourt = 'Salle ouverte';
+  static String get salleOuverteCourt => t.tc.groupe.temps.salleOuverteCourt;
 
-  // TC-I18N: tc.groupe.temps.enSalle
   /// Forme courte pour une pastille.
-  static const String enSalle = 'En salle';
+  static String get enSalle => t.tc.groupe.temps.enSalle;
 
-  // TC-I18N: tc.groupe.temps.enDirect
   /// Forme courte pour une pastille.
-  static const String enDirect = 'En direct';
+  static String get enDirect => t.tc.groupe.temps.enDirect;
 
-  // TC-I18N: tc.groupe.horloges.votreHeure
   /// L'heure de la personne qui regarde.
-  static const String votreHeure = 'Votre heure';
+  static String get votreHeure => t.tc.groupe.horloges.votreHeure;
 
-  // TC-I18N: tc.groupe.horloges.chezEnseignant
   /// L'heure de l'enseignant, cote eleve et tuteur.
-  static String chezEnseignant(String nomme) => 'Chez $nomme';
+  static String chezEnseignant(String nomme) =>
+      t.tc.groupe.horloges.chezEnseignant(nomme: nomme);
 
-  // TC-I18N: tc.groupe.horloges.heureGroupe
   /// L'heure de reference du groupe, cote enseignant.
-  static const String heureGroupe = 'Heure du groupe';
+  static String get heureGroupe => t.tc.groupe.horloges.heureGroupe;
 
-  // TC-I18N: tc.groupe.horloges.heureEtVille
   /// Une heure et sa ville, par exemple « 18:00 Riyad ».
   static String heureEtVille({required String heure, required String ville}) =>
-      '$heure $ville';
+      t.tc.groupe.horloges.heureEtVille(heure: heure, ville: ville);
 
-  // TC-I18N: tc.groupe.dst.j30
   /// Anticipation a trente jours.
-  static const String dstJ30 = 'Changement d heure dans un mois';
+  static String get dstJ30 => t.tc.groupe.dst.j30;
 
-  // TC-I18N: tc.groupe.dst.j7
   /// Anticipation a sept jours.
-  static const String dstJ7 = 'Changement d heure la semaine prochaine';
+  static String get dstJ7 => t.tc.groupe.dst.j7;
 
-  // TC-I18N: tc.groupe.dst.j1
   /// Anticipation a la veille.
-  static const String dstJ1 = 'Changement d heure demain';
+  static String get dstJ1 => t.tc.groupe.dst.j1;
 
   /// L'intitule d'une notice de changement d'heure.
   static String dstEcheance(EcheanceDst echeance) => switch (echeance) {
@@ -241,66 +207,53 @@ abstract final class LibellesGroupe {
     EcheanceDst.j1 => dstJ1,
   };
 
-  // TC-I18N: tc.groupe.dst.detail
   /// Le detail du deplacement, avec deux heures deja rendues.
   static String dstDetail({required String avant, required String apres}) =>
-      'Votre cours passera de $avant a $apres.';
+      t.tc.groupe.dst.detail(avant: avant, apres: apres);
 
-  // TC-I18N: tc.groupe.session.conseilAppareil
   /// Le conseil d'appareil, discret et sans jugement.
-  static const String conseilAppareil =
-      'Tablette ou ordinateur conseille pour le cours. Le telephone reste '
-      'pris en charge.';
+  static String get conseilAppareil => t.tc.groupe.session.conseilAppareil;
 
-  // TC-I18N: tc.groupe.espace.avantProchainCours
   /// L'intitule du bloc de travail a venir.
-  static const String avantProchainCours = 'Avant le prochain cours';
+  static String get avantProchainCours =>
+      t.tc.groupe.espace.avantProchainCours;
 
-  // TC-I18N: tc.groupe.espace.aucuneAction
   /// Rien a preparer.
-  static const String aucuneAction = 'Rien a preparer pour l instant';
+  static String get aucuneAction => t.tc.groupe.espace.aucuneAction;
 
-  // TC-I18N: tc.groupe.espace.bibliotheque
   /// L'intitule de la bibliotheque du groupe.
-  static const String bibliotheque = 'Bibliotheque';
+  static String get bibliotheque => t.tc.groupe.espace.bibliotheque;
 
-  // TC-I18N: tc.groupe.espace.bibliothequeVoirTout
   /// L'acces au catalogue complet.
-  static const String bibliothequeVoirTout = 'Voir tout';
+  static String get bibliothequeVoirTout =>
+      t.tc.groupe.espace.bibliothequeVoirTout;
 
-  // TC-I18N: tc.groupe.espace.progression
   /// L'intitule du bloc de progression.
-  static const String progression = 'Progression';
+  static String get progression => t.tc.groupe.espace.progression;
 
-  // TC-I18N: tc.groupe.espace.roster
   /// L'intitule de la liste pedagogique.
-  static const String roster = 'Eleves du groupe';
+  static String get roster => t.tc.groupe.espace.roster;
 
-  // TC-I18N: tc.groupe.espace.reprendreLeCours
   /// L'action contextuelle de reprise, jamais une section permanente.
-  static const String reprendreLeCours = 'Reprendre le cours';
+  static String get reprendreLeCours => t.tc.groupe.espace.reprendreLeCours;
 
-  // TC-I18N: tc.groupe.espace.retour
   /// Le chemin de sortie vers « Mes groupes ».
-  static const String retour = 'Mes groupes';
+  static String get retour => t.tc.groupe.espace.retour;
 
-  // TC-I18N: tc.groupe.espace.introuvable
   /// Le groupe n'est pas visible par l'appelant.
-  static const String groupeIntrouvable = 'Ce groupe ne vous est pas ouvert';
+  static String get groupeIntrouvable => t.tc.groupe.espace.introuvable;
 
-  // TC-I18N: tc.groupe.espace.introuvableDetail
   /// Pourquoi.
-  static const String groupeIntrouvableDetail =
-      'Il a peut-etre ete cloture, ou il appartient a une autre classe.';
+  static String get groupeIntrouvableDetail =>
+      t.tc.groupe.espace.introuvableDetail;
 
-  // TC-I18N: tc.groupe.emplacement.nonBranche
   /// Un emplacement dont le port n'est pas encore branche.
-  static const String emplacementNonBranche = 'Bientot disponible';
+  static String get emplacementNonBranche =>
+      t.tc.groupe.emplacement.nonBranche;
 
-  // TC-I18N: tc.groupe.emplacement.nonBrancheDetail
   /// Ce qui manque, dit sans jargon.
-  static const String emplacementNonBrancheDetail =
-      'Ce contenu sera rattache a cet espace prochainement.';
+  static String get emplacementNonBrancheDetail =>
+      t.tc.groupe.emplacement.nonBrancheDetail;
 
   /// Le compte a rebours avant le debut, en clair.
   ///

@@ -81,7 +81,7 @@ class _Corps extends ConsumerWidget {
     final List<GroupSummaryVM> liste = groupes.requireValue;
     if (liste.isEmpty) {
       // Un etat subi : ce n'est pas l'eleve qui se place dans un groupe.
-      return const EmptyState(
+      return EmptyState(
         message: LibellesGroupe.aucunGroupe,
         invitation: LibellesGroupe.aucunGroupeDetail,
         icone: AppIcons.rienAAfficher,
