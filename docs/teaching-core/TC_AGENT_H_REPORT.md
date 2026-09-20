@@ -11,13 +11,18 @@
 ## 0. Etat en une ligne
 
 `flutter analyze lib test` : **propre, zero issue** sur le depot entier.
-`flutter test test/teaching_core/h` : **71 tests, tous verts.**
+`flutter test test/teaching_core/h` : **75 tests, tous verts.**
 `git status --porcelain` : **quatre entrees, toutes dans l'ownership du lot H.**
 `dart run tool/verifier_jetons.dart` : **10 violations, toutes pre-existantes, zero dans mes fichiers.**
 
-Ce qui est **reellement branche sur le serveur** : rien, et c'est declare partout. Les quatre ports du
-lot H echouent en production avec un message qui dit quoi composer, parce qu'aucune des trois tables
-dont ils dependent n'existe. Le detail est dans `TC_CONTRACT_REQUEST_H.md`.
+Ce qui est **reellement branche sur le serveur** : rien, et c'est declare partout. Trois des quatre
+ports du lot H echouent en production avec un message qui dit quoi composer, parce qu'aucune des trois
+tables dont ils dependent n'existe. Le detail est dans `TC_CONTRACT_REQUEST_H.md`.
+
+**`portTravailAVenirProvider` fait exception depuis l'arbitrage pre-merge** : il rend `null` au lieu
+de lever, parce qu'Agent A lit ce meme symbole en nullable et que lever ferait planter l'Espace Groupe
+des le premier build. La crainte qui justifiait l'exception est honoree par le type : `null` dit
+**non branche**, une liste vide dit **aucun travail**, et l'ecran ne confond jamais les deux.
 
 ---
 
@@ -38,7 +43,7 @@ dont ils dependent n'existe. Le detail est dans `TC_CONTRACT_REQUEST_H.md`.
 | `port_travail_a_venir.dart` | `PortTravailAVenir` + `TravailAVenir` + le plafond de trois + provider de famille |
 | `source_contenu_seance.dart` | `SourceContenuSeance` et `ContenuSeanceIndisponible` : la surface etroite vers Agent F |
 | `plage_lisible.dart` | `positionLisible` / `plageLisible` : un `ContentPosition` ne s'affiche jamais brut |
-| `libelles_tc_parcours.dart` | La facade `tc.parcours.*` (decision `D-03`), 66 libelles annotes `TC-I18N` |
+| `libelles_tc_parcours.dart` | La facade `tc.parcours.*` (decision `D-03`), 68 libelles annotes `TC-I18N` |
 
 ### 1.2 Stubs de ports — `lib/core/tc_parcours/ports_externes/` (8 fichiers)
 
@@ -66,7 +71,7 @@ d'Agent D et son provider ne sont pas recopies.
 
 **Aucun ecran, donc aucun `routes_tc_h.dart`.** C'est un choix, explique en section 5.
 
-### 1.4 Tests — `test/teaching_core/h/` (12 fichiers, 71 tests)
+### 1.4 Tests — `test/teaching_core/h/` (12 fichiers, 75 tests)
 
 `support/hote_h.dart` (hote propre au lot, decision `D-06`), `faux/faux_enseignant.dart`,
 `faux/faux_ports_externes.dart`, puis neuf fichiers de test :
@@ -77,8 +82,8 @@ d'Agent D et son provider ne sont pas recopies.
 | `feedback_test.dart` | 10 |
 | `signalement_test.dart` | 10 |
 | `rotation_feedback_test.dart` | 9 |
-| `travail_a_venir_test.dart` | 9 |
-| `bloc_avant_prochain_cours_test.dart` | 4 |
+| `travail_a_venir_test.dart` | 12 |
+| `bloc_avant_prochain_cours_test.dart` | 5 |
 | `feuille_signalement_test.dart` | 4 |
 | `panneau_post_cours_test.dart` | 4 |
 | `carte_feedback_test.dart` | 3 |
@@ -162,11 +167,20 @@ signalement avec ses deux champs separes et son bouton inerte tant que la note i
 | `FeedbackMemoire` | `lib/core/tc_parcours/feedback_memoire.dart` | table `session_feedback`, vue d'agregat, RPC d'echantillonnage |
 | `SignalementMemoire` | `lib/core/tc_parcours/port_signalement.dart` | table `student_concern` et sa vue famille |
 | `ContenuSeanceIndisponible` | `lib/core/tc_parcours/source_contenu_seance.dart` | persistance de `SharedContentState` (Agent F) et lecture **par groupe** |
-| Les quatre providers | chacun dans son fichier | ils **echouent** avec un message d'assemblage, ils ne rendent pas un double |
+| Trois des quatre providers | chacun dans son fichier | ils **echouent** avec un message d'assemblage, ils ne rendent pas un double |
+| `portTravailAVenirProvider` | `lib/core/tc_parcours/port_travail_a_venir.dart` | il rend **`null`**, c'est-a-dire « non branche », et l'ecran le dit en toutes lettres |
 
 **Le choix de faire echouer les providers est delibere.** Un double en memoire rendu en production
 ferait croire a une collecte de feedback, a un signalement transmis ou a un cours cloture qui n'ont pas
 eu lieu. Un `UnimplementedError` qui nomme la composition attendue est plus honnete qu'un silence.
+
+**`portTravailAVenirProvider` atteint le meme but par le type, et c'est voulu.** Il est le seul des
+quatre a etre lu par un autre lot -- Agent A le declare en nullable pour afficher son etat « non
+branche » -- et lever y ferait planter l'Espace Groupe des le premier build, sans un mot du
+compilateur. Il rend donc `null`, avec la regle ecrite au-dessus de lui : `null` = **non branche**, le
+consommateur n'a pas le droit de dire « aucun travail » ; non-`null` + liste vide = branche et
+reellement vide, le seul cas ou l'interface peut dire qu'il n'y a rien a preparer. La confusion que
+l'exception interdisait reste interdite ; elle l'est maintenant a la compilation.
 
 En revanche, **le post-cours n'est pas un double** : `PostCoursDepuisCahier` lit le vrai
 `brouillon_cahier()` par `ServiceEnseignant` et ecrit par le vrai `SoumissionCahier`. Sa partie
@@ -317,7 +331,7 @@ et le pluriel dans une seule fonction (`plageVersets`, `plagePages`), la ou slan
 ```powershell
 cd D:\RA_TC\h
 flutter analyze lib test          # No issues found!
-flutter test test/teaching_core/h # 71 tests, All tests passed!
+flutter test test/teaching_core/h # 75 tests, All tests passed!
 dart run tool/verifier_jetons.dart # 10 violations, aucune dans tc_parcours/ ni tc_flux_academique/
 git status --porcelain            # docs/teaching-core/, lib/core/tc_parcours/,
                                   # lib/features/tc_flux_academique/, test/teaching_core/

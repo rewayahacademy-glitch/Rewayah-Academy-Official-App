@@ -1,3 +1,7 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// `Override` n'est pas exporte par l'entree principale de Riverpod 3 : il vit
+// dans `misc.dart`, alors que `ProviderContainer.overrides` en attend une liste.
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/tc_parcours/ports_externes/content_position.dart';
@@ -163,6 +167,50 @@ void main() {
       );
 
       expect(actions.map((SlotAction a) => a.id), <String>['groupe']);
+    });
+  });
+
+  group('non branche n est pas vide', () {
+    test('le provider canonique rend null, et ne leve pas', () {
+      final ProviderContainer conteneur = ProviderContainer();
+      addTearDown(conteneur.dispose);
+
+      // Il levait, autrefois, pour ne pas laisser croire a un groupe sans
+      // travail. La crainte est honoree par le type : `null` dit « non
+      // branche », et l'Espace Groupe d'Agent A l'affiche au lieu de planter.
+      expect(conteneur.read(portTravailAVenirProvider), isNull);
+    });
+
+    test('sans port branche, le travail a venir vaut null, pas []', () async {
+      final ProviderContainer conteneur = ProviderContainer();
+      addTearDown(conteneur.dispose);
+
+      final List<SlotAction>? actions = await conteneur.read(
+        travailAVenirProvider((groupeId: _groupe, studentId: null)).future,
+      );
+
+      expect(
+        actions,
+        isNull,
+        reason: 'une liste vide affirmerait qu il n y a rien a preparer',
+      );
+    });
+
+    test('port branche et sans travail : une liste vide, pas null', () async {
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: <Override>[
+          portTravailAVenirProvider.overrideWithValue(
+            TravailAVenir(FauxAssignations(), const ContenuSeanceIndisponible()),
+          ),
+        ],
+      );
+      addTearDown(conteneur.dispose);
+
+      final List<SlotAction>? actions = await conteneur.read(
+        travailAVenirProvider((groupeId: _groupe, studentId: null)).future,
+      );
+
+      expect(actions, isEmpty);
     });
   });
 

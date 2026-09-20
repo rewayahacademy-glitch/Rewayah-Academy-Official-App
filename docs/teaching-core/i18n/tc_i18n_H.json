@@ -5,6 +5,8 @@
         "titre": "Avant le prochain cours",
         "rien": "Rien à préparer pour le prochain cours.",
         "rienDetail": "Votre enseignant proposera le travail à la fin de la prochaine séance.",
+        "nonBranche": "Le travail à préparer n'est pas encore relié à cet espace.",
+        "nonBrancheDetail": "Cela ne veut pas dire qu'il n'y a rien à préparer : cet écran ne sait pas encore le lire.",
         "reprendre": "Reprendre le cours",
         "reprendreDepuis": "Reprendre le cours à $position"
       },

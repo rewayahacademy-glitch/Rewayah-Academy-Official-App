@@ -51,6 +51,30 @@ List<Override> _surcharges({
 
 void main() {
   group('bloc « Avant le prochain cours »', () {
+    testWidgets('port non branche : le bloc le dit, et ne dit pas « rien »', (
+      WidgetTester tester,
+    ) async {
+      telephone(tester);
+
+      // Aucune surcharge : le provider canonique rend `null`, c'est-a-dire
+      // « non branche ». Il ne leve pas -- l'Espace Groupe d'Agent A monte ce
+      // bloc et planterait des le premier build.
+      await tester.pumpWidget(
+        hoteH(const BlocAvantProchainCours(groupeId: _groupe)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(LibellesParcours.avantNonBranche), findsOneWidget);
+      expect(
+        find.text(LibellesParcours.avantRien),
+        findsNothing,
+        reason:
+            'un port non branche ne prouve aucune absence de travail : le dire '
+            'serait mentir a la famille',
+      );
+      expect(find.byType(AppCard), findsNothing);
+    });
+
     testWidgets('aucune tache : un etat vide qui ne propose rien', (
       WidgetTester tester,
     ) async {
@@ -65,6 +89,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(LibellesParcours.avantRien), findsOneWidget);
+      expect(
+        find.text(LibellesParcours.avantNonBranche),
+        findsNothing,
+        reason: 'le port est branche ici : l absence de travail est mesuree',
+      );
       // Aucun bouton, aucune carte : il n'y a rien a faire, et proposer une
       // action serait inviter a inventer une tache.
       expect(find.byType(ActionPrincipale), findsNothing);

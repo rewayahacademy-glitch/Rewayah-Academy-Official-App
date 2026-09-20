@@ -31,6 +31,20 @@ abstract final class LibellesParcours {
   static const String avantRienDetail =
       'Votre enseignant proposera le travail à la fin de la prochaine séance.';
 
+  /// TC-I18N: cle=tc.parcours.avant.nonBranche
+  ///
+  /// **Jamais confondu avec `avantRien`.** Celui-ci dit que la source du travail
+  /// n'est pas encore lue ; l'autre affirme qu'il n'y a rien a preparer. Dire le
+  /// second a la place du premier serait affirmer une absence que personne n'a
+  /// mesuree.
+  static const String avantNonBranche =
+      "Le travail à préparer n'est pas encore relié à cet espace.";
+
+  /// TC-I18N: cle=tc.parcours.avant.nonBrancheDetail
+  static const String avantNonBrancheDetail =
+      "Cela ne veut pas dire qu'il n'y a rien à préparer : cet écran ne sait "
+      'pas encore le lire.';
+
   /// TC-I18N: cle=tc.parcours.avant.reprendre
   static const String avantReprendre = 'Reprendre le cours';
 

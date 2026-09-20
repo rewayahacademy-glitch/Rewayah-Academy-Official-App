@@ -133,18 +133,30 @@ class TravailAVenir implements PortTravailAVenir {
 
 /// Le travail a venir employe par l'application.
 ///
-/// Il se compose de deux morceaux qui n'ont, aujourd'hui, **aucune source
+/// **`null` et liste vide ne disent pas la meme chose, et c'est le TYPE qui
+/// tient la difference** :
+///
+/// * `null` = port **NON BRANCHE**. Le consommateur affiche un etat explicite
+///   « non branche » ; il n'a **pas** le droit de dire « aucun travail ».
+/// * non-`null` + liste **vide** = port branche, et il n'y a reellement aucun
+///   travail. La, et la seulement, l'interface peut dire qu'il n'y a rien a
+///   preparer.
+///
+/// Le lot H levait autrefois ici, par crainte -- juste -- qu'un bloc vide fasse
+/// croire a un groupe sans travail. La crainte demeure, la forme change : lever
+/// faisait planter l'Espace Groupe des le premier build, parce qu'Agent A lit ce
+/// meme symbole en nullable pour afficher son etat « non branche » et que
+/// l'affectation compile sans un mot du compilateur. Rendre `null` dit
+/// exactement la meme chose, sans mentir a l'utilisateur et sans faire tomber la
+/// page.
+///
+/// Il reste compose de deux morceaux qui n'ont, aujourd'hui, **aucune source
 /// serveur** : les assignations (table absente, demande d'Agent D) et la
-/// position de reprise de groupe (persistance absente, demande du lot H). Le
-/// provider echoue donc plutot que de rendre un bloc vide qui ferait croire a un
-/// groupe sans travail.
-final Provider<PortTravailAVenir> portTravailAVenirProvider =
-    Provider<PortTravailAVenir>(
-      (Ref ref) => throw UnimplementedError(
-        'PortTravailAVenir : composer TravailAVenir avec le PortAssignations '
-        "d'Agent D et un adaptateur de SourceContenuSeance.",
-      ),
-    );
+/// position de reprise de groupe (persistance absente, demande du lot H). Agent
+/// Z le branchera sur `TravailAVenir(PortAssignations d'Agent D, adaptateur de
+/// SourceContenuSeance)` ; jusque-la il vaut `null`, et l'ecran le dit.
+final Provider<PortTravailAVenir?> portTravailAVenirProvider =
+    Provider<PortTravailAVenir?>((Ref ref) => null);
 
 /// Le groupe, et eventuellement l'eleve, dont on lit le travail a venir.
 ///
@@ -154,13 +166,20 @@ final Provider<PortTravailAVenir> portTravailAVenirProvider =
 typedef ContexteTravailAVenir = ({String groupeId, String? studentId});
 
 /// Les actions du bloc « Avant le prochain cours », pour un groupe donne.
-final FutureProviderFamily<List<SlotAction>, ContexteTravailAVenir>
+///
+/// **Rend `null` tant que le port n'est pas branche**, et une liste -- vide ou
+/// non -- des qu'il l'est : la distinction du port se propage jusqu'a l'ecran,
+/// au lieu de s'y perdre. Une liste vide reste donc une reponse, jamais une
+/// absence de reponse.
+final FutureProviderFamily<List<SlotAction>?, ContexteTravailAVenir>
 travailAVenirProvider =
-    FutureProvider.family<List<SlotAction>, ContexteTravailAVenir>(
-      (Ref ref, ContexteTravailAVenir contexte) => ref
-          .watch(portTravailAVenirProvider)
-          .avantProchainCours(
-            groupeId: contexte.groupeId,
-            studentId: contexte.studentId,
-          ),
-    );
+    FutureProvider.family<List<SlotAction>?, ContexteTravailAVenir>((
+      Ref ref,
+      ContexteTravailAVenir contexte,
+    ) {
+      final PortTravailAVenir? port = ref.watch(portTravailAVenirProvider);
+      return port?.avantProchainCours(
+        groupeId: contexte.groupeId,
+        studentId: contexte.studentId,
+      );
+    });

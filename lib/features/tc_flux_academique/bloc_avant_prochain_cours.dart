@@ -26,6 +26,12 @@ import '../../core/widgets/status_pill.dart';
 /// a preparer est un groupe qui va bien. Il le dit d'une phrase et ne propose
 /// aucun bouton -- il n'y a rien a faire, et offrir une action serait inviter a
 /// inventer une tache.
+///
+/// **« Non branche » et « rien a preparer » sont deux etats distincts**, et le
+/// bloc ne les confond jamais : `travailAVenirProvider` rend `null` quand le
+/// port n'est pas branche, et une liste -- vide ou non -- des qu'il l'est. Un
+/// ecran qui dirait « rien a preparer » parce qu'il ne sait pas lire affirmerait
+/// a une famille une absence de travail que personne n'a mesuree.
 class BlocAvantProchainCours extends ConsumerWidget {
   /// Cree le bloc pour un groupe, et eventuellement pour un eleve.
   const BlocAvantProchainCours({
@@ -49,7 +55,7 @@ class BlocAvantProchainCours extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<SlotAction>> lecture = ref.watch(
+    final AsyncValue<List<SlotAction>?> lecture = ref.watch(
       travailAVenirProvider((groupeId: groupeId, studentId: studentId)),
     );
 
@@ -63,7 +69,7 @@ class BlocAvantProchainCours extends ConsumerWidget {
     );
   }
 
-  /// Les quatre etats, lus par `hasValue` / `hasError`.
+  /// Les cinq etats, lus par `hasValue` / `hasError`.
   ///
   /// Jamais par le type d'execution de l'`AsyncValue` : Riverpod 3 relance un
   /// provider en echec de lui-meme et l'etat repasse par `AsyncLoading` en
@@ -72,7 +78,7 @@ class BlocAvantProchainCours extends ConsumerWidget {
   Widget _corps(
     BuildContext context,
     WidgetRef ref,
-    AsyncValue<List<SlotAction>> lecture,
+    AsyncValue<List<SlotAction>?> lecture,
   ) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
@@ -91,20 +97,23 @@ class BlocAvantProchainCours extends ConsumerWidget {
       return const Skeleton.liste(lignes: 2);
     }
 
-    final List<SlotAction> actions = lecture.requireValue;
+    final List<SlotAction>? actions = lecture.requireValue;
+    if (actions == null) {
+      // Port non branche. Dire « rien a preparer » ici serait affirmer une
+      // absence de travail que personne n'a mesuree.
+      return _deuxLignes(
+        context,
+        LibellesParcours.avantNonBranche,
+        LibellesParcours.avantNonBrancheDetail,
+      );
+    }
     if (actions.isEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(LibellesParcours.avantRien, style: textes.bodyMedium),
-          Ecart.vXs,
-          Text(
-            LibellesParcours.avantRienDetail,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
+      // Port branche, et il n'y a reellement rien : le seul cas ou le bloc a le
+      // droit de le dire.
+      return _deuxLignes(
+        context,
+        LibellesParcours.avantRien,
+        LibellesParcours.avantRienDetail,
       );
     }
 
@@ -115,6 +124,29 @@ class BlocAvantProchainCours extends ConsumerWidget {
           _Action(action: action, onAction: onAction),
           Ecart.vSm,
         ],
+      ],
+    );
+  }
+
+  /// Un etat qui se dit en une phrase et sa nuance, sans aucun bouton.
+  ///
+  /// La meme forme pour « non branche » et pour « rien a preparer » : ils se
+  /// distinguent par leurs mots, jamais par leur mise en page. Aucune action
+  /// n'est proposee dans un cas comme dans l'autre -- il n'y a rien a faire, et
+  /// offrir un bouton serait inviter a inventer une tache.
+  Widget _deuxLignes(BuildContext context, String phrase, String detail) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(phrase, style: textes.bodyMedium),
+        Ecart.vXs,
+        Text(
+          detail,
+          style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+        ),
       ],
     );
   }

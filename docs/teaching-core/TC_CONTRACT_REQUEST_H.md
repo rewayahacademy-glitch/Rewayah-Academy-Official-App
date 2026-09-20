@@ -300,9 +300,15 @@ la RPC demandee en 1.5. Le lot H n'a **pas** ajoute la methode au stub : il a ex
 
 ## 3. WIRING ATTENDU D'AGENT Z
 
-Aucun des quatre ports du lot H n'a de provider fonctionnel : tous echouent avec un message qui dit
+Aucun des quatre ports du lot H n'a de provider fonctionnel. Trois echouent avec un message qui dit
 quoi composer. C'est un choix -- un double en memoire rendu en production ferait croire a une collecte,
 a un signalement ou a une cloture qui n'ont pas eu lieu.
+
+**`portTravailAVenirProvider` rend `null` au lieu de lever** (arbitrage pre-merge) : Agent A lit ce
+symbole en nullable, et lever ferait planter l'Espace Groupe des le premier build. Tant qu'Agent Z ne
+l'a pas compose, `travailAVenirProvider` rend `null` et le bloc affiche « non branche ». **Une liste
+vide reste reservee au port branche et reellement sans travail** : c'est la seule forme qui autorise
+l'interface a dire qu'il n'y a rien a preparer.
 
 | Provider | A composer avec |
 |---|---|
