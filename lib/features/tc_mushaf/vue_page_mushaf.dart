@@ -22,7 +22,6 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
-import 'libelles_tc_c.dart';
 
 /// Le rendu « page du mushaf ».
 ///
@@ -217,9 +216,9 @@ class OuvertureMushaf extends ConsumerWidget {
           ),
           child: Semantics(
             label: planche != null && planche.estDouble
-                ? LibellesCoran.ouverture(
-                    planche.droite.numero,
-                    planche.gauche!.numero,
+                ? t.tc.coran.mushaf.ouverture(
+                    droite: planche.droite.numero,
+                    gauche: planche.gauche!.numero,
                   )
                 : null,
             child: Row(
@@ -312,8 +311,8 @@ class CadrePageMushaf extends StatelessWidget {
 
     return Semantics(
       label: vue.cote == CoteDePage.droite
-          ? LibellesCoran.coteDroite
-          : LibellesCoran.coteGauche,
+          ? t.tc.coran.mushaf.coteDroite
+          : t.tc.coran.mushaf.coteGauche,
       child: AppCard(
         surface: palette.surfaceRaised,
         child: ConstrainedBox(
@@ -604,8 +603,8 @@ class _PiedDePage extends StatelessWidget {
             ),
             if (vue.juzNumero != null) t.eleve.coran.juz(juz: '${vue.juzNumero}'),
             vue.cote == CoteDePage.droite
-                ? LibellesCoran.coteDroite
-                : LibellesCoran.coteGauche,
+                ? t.tc.coran.mushaf.coteDroite
+                : t.tc.coran.mushaf.coteGauche,
           ].join(' . '),
           textAlign: TextAlign.center,
           style: palette.inkFaint.applyTo(
@@ -636,7 +635,7 @@ class NoticeComposition extends StatelessWidget {
 
     if (fidelite == DisponibiliteLayout.fidele) {
       return Text(
-        LibellesCoran.compositionFidele,
+        t.tc.coran.fidelite.fidele,
         textAlign: TextAlign.center,
         style: palette.inkFaint.applyTo(
           textes.labelSmall ?? const TextStyle(),
@@ -657,13 +656,13 @@ class NoticeComposition extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Text(
-              LibellesCoran.compositionApprochee,
+              t.tc.coran.fidelite.approchee,
               textAlign: TextAlign.center,
               style: fond.applyTo(textes.labelMedium ?? const TextStyle()),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              LibellesCoran.compositionApprocheeDetail,
+              t.tc.coran.fidelite.approcheeDetail,
               textAlign: TextAlign.center,
               style: fond.applyTo(textes.labelSmall ?? const TextStyle()),
             ),

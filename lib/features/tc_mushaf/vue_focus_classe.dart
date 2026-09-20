@@ -11,7 +11,6 @@ import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
-import 'libelles_tc_c.dart';
 import 'vue_verset_agrandi.dart';
 
 /// Le rendu « focus », pret pour la classe.
@@ -101,8 +100,8 @@ class _SansPlage extends StatelessWidget {
         vertical: AppSpacing.sm,
       ),
       child: Text(
-        '${LibellesCoran.focusAucunePlage}. '
-        '${LibellesCoran.focusAucunePlageDetail}',
+        '${t.tc.coran.focus.aucunePlage}. '
+        '${t.tc.coran.focus.aucunePlageDetail}',
         textAlign: TextAlign.center,
         style: palette.inkMuted.applyTo(
           textes.labelSmall ?? const TextStyle(),

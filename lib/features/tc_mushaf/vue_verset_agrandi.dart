@@ -17,7 +17,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
-import 'libelles_tc_c.dart';
 
 /// Le rendu « lecture agrandie » : un verset a la fois, reflowable.
 ///
@@ -250,8 +249,8 @@ class _NoticeZoomBride extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Text(
-      '${LibellesCoran.zoomBride} '
-      '${LibellesCoran.zoomValeur((metrique.zoomApplique * 100).round())}',
+      '${t.tc.coran.zoom.bride} '
+      '${t.tc.coran.zoom.valeur(pourcent: (metrique.zoomApplique * 100).round())}',
       textAlign: TextAlign.center,
       style: palette.inkMuted.applyTo(textes.labelSmall ?? const TextStyle()),
     );

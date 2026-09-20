@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/port_corpus_coran.dart';
@@ -10,7 +11,6 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
-import 'libelles_tc_c.dart';
 
 /// La feuille « Aller a » : page, sourate, juz, reference.
 ///
@@ -36,7 +36,7 @@ class FeuilleNavigationCoran extends ConsumerStatefulWidget {
     required void Function(int page) onAller,
   }) => AppBottomSheet.ouvrir<void>(
     context,
-    titre: LibellesCoran.navigationTitre,
+    titre: t.tc.coran.navigation.titre,
     constructeur: (BuildContext context) =>
         FeuilleNavigationCoran(onAller: onAller),
   );
@@ -84,9 +84,9 @@ class _FeuilleNavigationCoranEtat
           controller: _saisie,
           autofocus: true,
           textInputAction: TextInputAction.search,
-          decoration: const InputDecoration(
-            labelText: LibellesCoran.navigationChamp,
-            helperText: LibellesCoran.navigationIndice,
+          decoration: InputDecoration(
+            labelText: t.tc.coran.navigation.champ,
+            helperText: t.tc.coran.navigation.indice,
             helperMaxLines: 2,
           ),
           onChanged: _chercher,
@@ -94,16 +94,16 @@ class _FeuilleNavigationCoranEtat
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          LibellesCoran.navigationLimite,
+          t.tc.coran.navigation.limite,
           style: palette.inkMuted.applyTo(
             textes.labelSmall ?? const TextStyle(),
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
         if (_resultats.isEmpty && _aCherche)
-          const EmptyState(
-            message: LibellesCoran.navigationAucunResultat,
-            invitation: LibellesCoran.navigationAucunResultatDetail,
+          EmptyState(
+            message: t.tc.coran.navigation.aucunResultat,
+            invitation: t.tc.coran.navigation.aucunResultatDetail,
             icone: AppIcons.recherche,
           )
         else
@@ -150,7 +150,7 @@ class _LigneResultat extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  LibellesCoran.pageNumero(resultat.page),
+                  t.tc.coran.navigation.pageNumero(page: resultat.page),
                   style: palette.inkMuted.applyTo(
                     AppTypography.tabulaire(
                       textes.bodySmall ?? const TextStyle(),

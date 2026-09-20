@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/etat_lecture_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
@@ -10,7 +11,6 @@ import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/page_mushaf_vm.dart';
 import 'package:rewayah_academy/core/tc_coran/port_layout_mushaf.dart';
 import 'package:rewayah_academy/core/tc_coran/port_navigation_coran.dart';
-import 'package:rewayah_academy/features/tc_mushaf/libelles_tc_c.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_verset_agrandi.dart';
@@ -85,8 +85,8 @@ void main() {
       await tester.pumpWidget(ecran());
       await poser(tester);
 
-      expect(find.text(LibellesCoran.compositionApprochee), findsOneWidget);
-      expect(find.textContaining("l'edition"), findsWidgets);
+      expect(find.text(t.tc.coran.fidelite.approchee), findsOneWidget);
+      expect(find.textContaining("l'édition"), findsWidgets);
     });
 
     testWidgets('avec de vraies lignes, la notice change de discours', (
@@ -116,8 +116,8 @@ void main() {
       );
       await poser(tester);
 
-      expect(find.text(LibellesCoran.compositionFidele), findsOneWidget);
-      expect(find.text(LibellesCoran.compositionApprochee), findsNothing);
+      expect(find.text(t.tc.coran.fidelite.fidele), findsOneWidget);
+      expect(find.text(t.tc.coran.fidelite.approchee), findsNothing);
       expect(find.byType(LigneComposee), findsOneWidget);
     });
 
@@ -129,7 +129,7 @@ void main() {
       await poser(tester);
 
       expect(
-        find.text(LibellesCoran.zoomRenvoiLectureAgrandie),
+        find.text(t.tc.coran.zoom.renvoiLectureAgrandie),
         findsOneWidget,
       );
     });
@@ -174,7 +174,7 @@ void main() {
       conteneur.read(lectureCoranProvider.notifier).definirZoom(4);
       await poser(tester);
 
-      expect(find.textContaining(LibellesCoran.zoomBride), findsOneWidget);
+      expect(find.textContaining(t.tc.coran.zoom.bride), findsOneWidget);
     });
 
     testWidgets('il rend les versets de la page ouverte', (
@@ -214,7 +214,7 @@ void main() {
       await poser(tester);
 
       expect(
-        find.textContaining(LibellesCoran.focusAucunePlage),
+        find.textContaining(t.tc.coran.focus.aucunePlage),
         findsOneWidget,
       );
       expect(find.byType(ColonneVersetsReflow), findsOneWidget);

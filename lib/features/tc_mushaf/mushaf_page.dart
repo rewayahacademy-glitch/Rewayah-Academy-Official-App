@@ -17,7 +17,6 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/page_immersive.dart';
-import 'libelles_tc_c.dart';
 import 'navigation_coran_feuille.dart';
 import 'vue_focus_classe.dart';
 import 'vue_page_mushaf.dart';
@@ -248,7 +247,7 @@ class _ChoixMode extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Semantics(
-      label: LibellesCoran.choisirMode,
+      label: t.tc.coran.modes.choisir,
       // Trois pastilles qui passeraient a la ligne sur un ecran de 320 points
       // mangeraient la hauteur du texte. Le choix de rendu est un chrome : il
       // defile, il ne repousse pas le contenu.
@@ -273,9 +272,9 @@ class _ChoixMode extends ConsumerWidget {
   }
 
   static String _libelle(ModeRenduCoran mode) => switch (mode) {
-    ModeRenduCoran.mushaf => LibellesCoran.modeMushaf,
-    ModeRenduCoran.versetAgrandi => LibellesCoran.modeVerset,
-    ModeRenduCoran.focus => LibellesCoran.modeFocus,
+    ModeRenduCoran.mushaf => t.tc.coran.modes.mushaf,
+    ModeRenduCoran.versetAgrandi => t.tc.coran.modes.verset,
+    ModeRenduCoran.focus => t.tc.coran.modes.focus,
   };
 }
 
@@ -311,8 +310,8 @@ class _Reprises extends StatelessWidget {
         ),
       if (groupe != null && groupe!.page != pageAffichee)
         _BandeReprise(
-          titre: LibellesCoran.repriseGroupe,
-          detail: LibellesCoran.repriseGroupeDetail(groupe!.page),
+          titre: t.tc.coran.reprise.groupe,
+          detail: t.tc.coran.reprise.groupeDetail(page: groupe!.page),
           onPress: () => onReprendre(groupe!.page),
         ),
     ];
@@ -442,7 +441,7 @@ class _Commandes extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: Text(
-              LibellesCoran.zoomRenvoiLectureAgrandie,
+              t.tc.coran.zoom.renvoiLectureAgrandie,
               textAlign: TextAlign.center,
               style: palette.inkFaint.applyTo(
                 textes.labelSmall ?? const TextStyle(),
@@ -471,7 +470,7 @@ class _Commandes extends StatelessWidget {
                   onPress: () => onZoom(-0.2),
                 ),
                 Text(
-                  LibellesCoran.zoomValeur((zoom * 100).round()),
+                  t.tc.coran.zoom.valeur(pourcent: (zoom * 100).round()),
                   style: palette.inkMuted.applyTo(
                     AppTypography.tabulaire(
                       textes.labelMedium ?? const TextStyle(),
@@ -499,7 +498,7 @@ class _Commandes extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: ActionPrincipale(
-                libelle: LibellesCoran.navigationOuvrir,
+                libelle: t.tc.coran.navigation.ouvrir,
                 niveau: NiveauAction.tertiaire,
                 onPress: onNavigation,
               ),
