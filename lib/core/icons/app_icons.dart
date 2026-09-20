@@ -350,4 +350,144 @@ abstract final class AppIcons {
     IconData(0xe3b4, fontFamily: _repos),
     IconData(0xe3b4, fontFamily: _actif),
   );
+
+  // --- Teaching Core -------------------------------------------------------
+  //
+  // Vingt icones, issues du recensement `grep -rn 'TC-ICONE:' lib/` sur les
+  // neuf branches teaching-core/*. Chaque site d'appel portait un placeholder
+  // emprunte au catalogue existant ; ces vingt entrees le remplacent au moment
+  // du merge de leur lot producteur. Voir TEACHING_CORE_INTEGRATION_CONTRACT_PLAN.md §9.1.
+
+  /// Espace Groupe (A) : conseil « rejoignez depuis une tablette ou un
+  /// ordinateur ». Remplace le placeholder [appareil].
+  static const AppIcon tabletteOuOrdinateur = AppIcon._(
+    IconData(0xeba4, fontFamily: _repos),
+    IconData(0xeba4, fontFamily: _actif),
+  );
+
+  /// Bibliotheque (B) : vignette d'une ressource PDF. Remplace [dossiers].
+  static const AppIcon fichierPdf = AppIcon._(
+    IconData(0xe702, fontFamily: _repos),
+    IconData(0xe702, fontFamily: _actif),
+  );
+
+  /// Bibliotheque (B) : vignette d'un texte structure. Remplace [cahier].
+  static const AppIcon texteStructure = AppIcon._(
+    IconData(0xe0a8, fontFamily: _repos),
+    IconData(0xe0a8, fontFamily: _actif),
+  );
+
+  /// Bibliotheque (B) : vignette d'une image. Remplace [qr].
+  static const AppIcon image = AppIcon._(
+    IconData(0xe2ca, fontFamily: _repos),
+    IconData(0xe2ca, fontFamily: _actif),
+  );
+
+  /// Bibliotheque (B) : vignette d'une lecon. Remplace [pedagogie].
+  static const AppIcon lecon = AppIcon._(
+    IconData(0xe0e6, fontFamily: _repos),
+    IconData(0xe0e6, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : outil bibliotheque. Remplace [cahier].
+  static const AppIcon bibliotheque = AppIcon._(
+    IconData(0xe758, fontFamily: _repos),
+    IconData(0xe758, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : outil focus. Remplace [recherche].
+  static const AppIcon focus = AppIcon._(
+    IconData(0xe47c, fontFamily: _repos),
+    IconData(0xe47c, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : outil marqueur semantique. **Collision de placeholder
+  /// avec [surligneur]** (les deux empruntaient [pedagogie]) : les deux
+  /// entrees sont livrees ensemble. Remplace [pedagogie].
+  static const AppIcon marqueur = AppIcon._(
+    IconData(0xe478, fontFamily: _repos),
+    IconData(0xe478, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : masquer un calque, oeil barre. **Collision de
+  /// placeholder avec [observationFermee]** (les deux empruntaient
+  /// [cameraCoupee]) : les deux entrees sont livrees ensemble, avec des
+  /// glyphes distincts (oeil barre ici, oeil ferme pour l'autre). Remplace
+  /// [cameraCoupee].
+  static const AppIcon masquer = AppIcon._(
+    IconData(0xe224, fontFamily: _repos),
+    IconData(0xe224, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : outil stylet. Remplace [journal].
+  static const AppIcon stylet = AppIcon._(
+    IconData(0xe3aa, fontFamily: _repos),
+    IconData(0xe3aa, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : outil surligneur. Voir la note de collision sur
+  /// [marqueur]. Remplace [pedagogie].
+  static const AppIcon surligneur = AppIcon._(
+    IconData(0xe632, fontFamily: _repos),
+    IconData(0xe632, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : outil pointeur, main qui designe. Remplace [suivant].
+  static const AppIcon pointeur = AppIcon._(
+    IconData(0xe29a, fontFamily: _repos),
+    IconData(0xe29a, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : annuler le dernier trait. Remplace [reaffectation].
+  static const AppIcon annuler = AppIcon._(
+    IconData(0xe038, fontFamily: _repos),
+    IconData(0xe038, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : poignee de deplacement, six points. Remplace
+  /// [menuDeroulant].
+  static const AppIcon poigneeDock = AppIcon._(
+    IconData(0xeae2, fontFamily: _repos),
+    IconData(0xeae2, fontFamily: _actif),
+  );
+
+  /// Teaching Dock (D) : revision, fleche circulaire. Remplace
+  /// [enAttenteEnvoi].
+  static const AppIcon revision = AppIcon._(
+    IconData(0xe036, fontFamily: _repos),
+    IconData(0xe036, fontFamily: _actif),
+  );
+
+  /// Observation (G) : entree admin en mode incognito. Remplace
+  /// [controleQualite].
+  static const AppIcon observationIncognito = AppIcon._(
+    IconData(0xe83e, fontFamily: _repos),
+    IconData(0xe83e, fontFamily: _actif),
+  );
+
+  /// Observation (G) : entree admin visible, rejoint la classe a decouvert.
+  /// Remplace [camera].
+  static const AppIcon administrationVisible = AppIcon._(
+    IconData(0xec38, fontFamily: _repos),
+    IconData(0xec38, fontFamily: _actif),
+  );
+
+  /// Observation (G) : politique heritee de l'Academie. Remplace [reglages].
+  static const AppIcon heritage = AppIcon._(
+    IconData(0xe6ec, fontFamily: _repos),
+    IconData(0xe6ec, fontFamily: _actif),
+  );
+
+  /// Observation (G) : politique personnalisee par groupe. Remplace [foyer].
+  static const AppIcon personnalisationGroupe = AppIcon._(
+    IconData(0xe434, fontFamily: _repos),
+    IconData(0xe434, fontFamily: _actif),
+  );
+
+  /// Observation (G) : observation desactivee pour le groupe. Voir la note de
+  /// collision sur [masquer]. Remplace [cameraCoupee].
+  static const AppIcon observationFermee = AppIcon._(
+    IconData(0xe222, fontFamily: _repos),
+    IconData(0xe222, fontFamily: _actif),
+  );
 }
