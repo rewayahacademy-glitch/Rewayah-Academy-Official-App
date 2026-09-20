@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -252,7 +253,16 @@ class _Colonnes extends StatelessWidget {
     ];
 
     final List<Widget> suite = <Widget>[
-      BlocBibliotheque(emplacement: espace.bibliotheque),
+      BlocBibliotheque(
+        emplacement: espace.bibliotheque,
+        // Ouvre la Bibliotheque generique (Teaching Core, lot B). La section
+        // « Pour ce groupe » qu'espere `TC_CONTRACT_REQUEST_B.md` §6
+        // suppose un `groupeId` connu au niveau de la route, or
+        // `routesTcB` ne l'accepte qu'une fois, a la construction du
+        // routeur (meme contrainte que `sessionRole` sur `routesTcA`) :
+        // reste a filer par `extra`, comme `ContexteClasseLive`.
+        onVoirTout: () => GoRouter.of(context).go(Routes.tcBibliotheque),
+      ),
       if (roster != null) ...<Widget>[
         Ecart.vSection,
         BlocRoster(emplacement: roster, contenu: contenuRoster),
