@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:rewayah_academy/core/cache/media/cache_media.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
@@ -9,7 +10,30 @@ import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
 import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
 import 'package:rewayah_academy/core/tc_telechargement/port_enregistrement_fichier.dart';
-import 'package:rewayah_academy/core/tc_telechargement/port_etat_offline.dart';
+
+/// Un cache media en memoire, pour mesurer l'etat hors ligne sans disque.
+///
+/// `CacheMediaFichiers` (la vraie implementation) passe par
+/// `flutter_cache_manager`, indisponible sans plateforme dans ces tests.
+class FauxCacheMedia implements CacheMedia {
+  final Map<String, List<int>> _octets = <String, List<int>>{};
+
+  @override
+  Future<void> deposer(String cle, List<int> octets) async {
+    _octets[cle] = List<int>.unmodifiable(octets);
+  }
+
+  @override
+  Future<List<int>?> obtenir(String cle) async => _octets[cle];
+
+  @override
+  Future<void> retirer(String cle) async {
+    _octets.remove(cle);
+  }
+
+  @override
+  Future<Set<String>> clesConservees() async => Set<String>.of(_octets.keys);
+}
 
 /// Un service de reseau en memoire.
 ///
@@ -208,7 +232,7 @@ List<Override> surchargesCatalogue({
   Map<String, List<DownloadAsset>> artefacts =
       const <String, List<DownloadAsset>>{},
   Map<String, List<int>> octets = const <String, List<int>>{},
-  DepotOctetsLocal? depot,
+  CacheMedia? depot,
   ServiceReseau? reseau,
   PortCatalogue? catalogue,
   PortEnregistrementFichier? enregistrement,
@@ -236,7 +260,7 @@ List<Override> surchargesCatalogue({
     ),
     portTelechargementProvider.overrideWithValue(depotArtefacts),
     lecteurArtefactProvider.overrideWithValue(depotArtefacts),
-    depotOctetsProvider.overrideWithValue(depot ?? DepotOctetsMemoire()),
+    depotOctetsProvider.overrideWithValue(depot ?? FauxCacheMedia()),
     serviceReseauProvider.overrideWithValue(reseau ?? FauxServiceReseau()),
     portEnregistrementFichierProvider.overrideWithValue(
       enregistrement ?? FauxEnregistrementFichier(),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `flutter_riverpod` (meme convention que `service_groupes.dart`).
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../cache/media/cache_media.dart';
 import '../tc_telechargement/download_asset.dart';
 import '../tc_telechargement/port_etat_offline.dart';
 import '../tc_telechargement/port_telechargement.dart';
@@ -56,9 +57,11 @@ final Provider<LecteurArtefact> lecteurArtefactProvider =
 /// Le depot local d'octets.
 ///
 /// Un seul par application : deux depots feraient diverger l'etat hors ligne
-/// affiche et les octets reellement conserves.
-final Provider<DepotOctetsLocal> depotOctetsProvider = Provider<DepotOctetsLocal>(
-  (Ref ref) => DepotOctetsMemoire(),
+/// affiche et les octets reellement conserves. `CacheMediaFichiers`, le cache
+/// media reel du produit -- pas un double en memoire -- pour que le hors
+/// ligne de la Bibliotheque survive effectivement a un redemarrage.
+final Provider<CacheMedia> depotOctetsProvider = Provider<CacheMedia>(
+  (Ref ref) => CacheMediaFichiers(),
 );
 
 /// L'etat hors ligne par ressource.

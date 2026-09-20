@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/cache/media/cache_media.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
 import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
 import 'package:rewayah_academy/core/tc_telechargement/port_etat_offline.dart';
@@ -15,14 +16,14 @@ EtatOfflineCache module({
   Map<String, List<DownloadAsset>> artefacts =
       const <String, List<DownloadAsset>>{},
   Map<String, List<int>> octets = const <String, List<int>>{},
-  DepotOctetsLocal? depot,
+  CacheMedia? depot,
 }) {
   final ArtefactsLocaux depotArtefacts = ArtefactsLocaux(
     parVersion: artefacts,
     octetsParCle: octets,
   );
   return EtatOfflineCache(
-    depot: depot ?? DepotOctetsMemoire(),
+    depot: depot ?? FauxCacheMedia(),
     telechargement: depotArtefacts,
     lecteur: depotArtefacts,
     resoudre: (String resourceId) async => DescripteurOffline(
@@ -50,7 +51,7 @@ void main() {
     });
 
     test('des octets presents sans demande valent en cache', () async {
-      final DepotOctetsMemoire depot = DepotOctetsMemoire();
+      final FauxCacheMedia depot = FauxCacheMedia();
       await depot.deposer(
         EtatOfflineCache.cleCache('r1', 'v1'),
         <int>[1, 2, 3],
@@ -65,7 +66,7 @@ void main() {
 
     test('une cle porte la version : une version neuve repart de zero',
         () async {
-      final DepotOctetsMemoire depot = DepotOctetsMemoire();
+      final FauxCacheMedia depot = FauxCacheMedia();
       await depot.deposer(
         EtatOfflineCache.cleCache('r1', 'v1'),
         <int>[1, 2, 3],

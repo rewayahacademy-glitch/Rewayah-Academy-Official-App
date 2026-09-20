@@ -62,54 +62,6 @@ class DescripteurOffline {
 typedef ResolutionOffline =
     Future<DescripteurOffline?> Function(String resourceId);
 
-/// La moitie manquante de `CacheMedia`.
-///
-/// `CacheMedia` sait **retirer** un fichier et **lister** ses cles ; il ne sait
-/// ni en deposer un, ni en relire un. Le PROMPT B interdit d'editer
-/// `lib/core/cache/media/cache_media.dart` et impose de l'etendre par un port :
-/// c'est ce port.
-///
-/// Il **herite** du contrat existant plutot que de le doubler : le jour ou
-/// Agent Z ajoute `deposer` et `obtenir` a `CacheMedia`, `CacheMediaFichiers`
-/// satisfera cette interface sans une ligne de changement ici, et le fichier
-/// disparaitra. Les deux signatures attendues sont dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
-abstract interface class DepotOctetsLocal implements CacheMedia {
-  /// Depose des octets sous une cle.
-  Future<void> deposer(String cle, List<int> octets);
-
-  /// Relit les octets d'une cle. `null` quand rien n'est conserve.
-  Future<List<int>?> obtenir(String cle);
-}
-
-/// Le depot local en memoire.
-///
-/// **Limite assumee, ecrite ici plutot que decouverte a l'usage** : rien ne
-/// survit a un redemarrage. Ce n'est pas une regression par rapport a
-/// l'existant -- `CacheMediaFichiers` tient deja ses cles dans un `Set` en
-/// memoire -- mais ce n'est pas non plus le hors ligne durable que la spec
-/// demande. La persistance exige une table locale, donc une migration Drift 1
-/// vers 2 qui n'existe pas : c'est une demande d'Agent Z.
-class DepotOctetsMemoire implements DepotOctetsLocal {
-  final Map<String, List<int>> _octets = <String, List<int>>{};
-
-  @override
-  Future<void> deposer(String cle, List<int> octets) async {
-    _octets[cle] = List<int>.unmodifiable(octets);
-  }
-
-  @override
-  Future<List<int>?> obtenir(String cle) async => _octets[cle];
-
-  @override
-  Future<void> retirer(String cle) async {
-    _octets.remove(cle);
-  }
-
-  @override
-  Future<Set<String>> clesConservees() async => Set<String>.of(_octets.keys);
-}
-
 /// Un telechargement qui ne peut pas aboutir.
 ///
 /// Un port n'avale jamais une erreur en silence (CONTRACTS section 0) : une
@@ -163,7 +115,13 @@ class EtatOfflineCache implements PortEtatOffline {
   });
 
   /// Le depot d'octets local.
-  final DepotOctetsLocal depot;
+  ///
+  /// `CacheMedia`, directement : depuis que `deposer`/`obtenir` y ont rejoint
+  /// `retirer`/`clesConservees` (`TC_CONTRACT_REQUEST_B.md` §3, Lot PROTECTED),
+  /// `CacheMediaFichiers` satisfait ce besoin sans intermediaire. L'ancien
+  /// port `DepotOctetsLocal` n'ajoutait plus rien et a disparu avec son double
+  /// en memoire `DepotOctetsMemoire`, qui ne survivait pas a un redemarrage.
+  final CacheMedia depot;
 
   /// Comment retrouver le descripteur d'une ressource.
   final ResolutionOffline resoudre;
