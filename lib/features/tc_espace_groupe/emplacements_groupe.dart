@@ -35,13 +35,21 @@ class EmplacementNonBranche extends StatelessWidget {
   }
 }
 
-/// Le bloc « Avant le prochain cours ».
+/// L'emplacement « Avant le prochain cours ».
+///
+/// **Coquille d'Agent A.** Le vrai bloc, celui qui lit `PortTravailAVenir`,
+/// est `BlocAvantProchainCours` d'Agent H
+/// (`lib/features/tc_flux_academique/bloc_avant_prochain_cours.dart`) --
+/// deux lots ont choisi le meme nom independamment. Renomme au cablage des
+/// slots (plan d'integration Teaching Core section 5.5) pour lever la
+/// collision : c'est toujours la coquille qui change de nom, jamais
+/// l'implementation reelle.
 ///
 /// **Trois actions au maximum**, tous roles confondus. Le contenu vient
 /// d'Agent H par `PortTravailAVenir` ; ce bloc ne fabrique aucune tache.
-class BlocAvantProchainCours extends StatelessWidget {
+class EmplacementAvantProchainCours extends StatelessWidget {
   /// Cree le bloc.
-  const BlocAvantProchainCours({
+  const EmplacementAvantProchainCours({
     required this.actions,
     super.key,
     this.portBranche = false,

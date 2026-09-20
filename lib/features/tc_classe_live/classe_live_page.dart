@@ -299,7 +299,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     await AppBottomSheet.ouvrir<void>(
       context,
       titre: t.tc.classe.support.bibliotheque,
-      constructeur: (BuildContext _) => SurfaceBibliotheque(slot: slot),
+      constructeur: (BuildContext _) => EmplacementBibliothequeEnClasse(slot: slot),
     );
   }
 
@@ -594,7 +594,7 @@ class _Corps extends StatelessWidget {
               niveau: NiveauAction.tertiaire,
             ),
             Ecart.vMd,
-            Expanded(child: SurfaceBibliotheque(slot: bibliotheque)),
+            Expanded(child: EmplacementBibliothequeEnClasse(slot: bibliotheque)),
           ],
         ),
       ),

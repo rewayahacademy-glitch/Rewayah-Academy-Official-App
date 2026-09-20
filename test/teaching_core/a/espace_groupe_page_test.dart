@@ -268,10 +268,10 @@ void main() {
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
-        expect(find.byType(BlocAvantProchainCours), findsOneWidget);
-        final BlocAvantProchainCours bloc = tester
-            .widget<BlocAvantProchainCours>(
-              find.byType(BlocAvantProchainCours),
+        expect(find.byType(EmplacementAvantProchainCours), findsOneWidget);
+        final EmplacementAvantProchainCours bloc = tester
+            .widget<EmplacementAvantProchainCours>(
+              find.byType(EmplacementAvantProchainCours),
             );
         expect(bloc.portBranche, isFalse);
         expect(bloc.actions, isEmpty);
@@ -289,14 +289,14 @@ void main() {
         await _poser(tester);
         expect(
           find.descendant(
-            of: find.byType(BlocAvantProchainCours),
+            of: find.byType(EmplacementAvantProchainCours),
             matching: find.text(LibellesGroupe.emplacementNonBranche),
           ),
           findsOneWidget,
         );
         expect(
           find.descendant(
-            of: find.byType(BlocAvantProchainCours),
+            of: find.byType(EmplacementAvantProchainCours),
             matching: find.text(LibellesGroupe.aucuneAction),
           ),
           findsNothing,
@@ -318,23 +318,23 @@ void main() {
           ],
         );
 
-        final BlocAvantProchainCours bloc = tester
-            .widget<BlocAvantProchainCours>(
-              find.byType(BlocAvantProchainCours),
+        final EmplacementAvantProchainCours bloc = tester
+            .widget<EmplacementAvantProchainCours>(
+              find.byType(EmplacementAvantProchainCours),
             );
         expect(bloc.portBranche, isTrue);
         expect(bloc.actions, isEmpty);
 
         expect(
           find.descendant(
-            of: find.byType(BlocAvantProchainCours),
+            of: find.byType(EmplacementAvantProchainCours),
             matching: find.text(LibellesGroupe.aucuneAction),
           ),
           findsOneWidget,
         );
         expect(
           find.descendant(
-            of: find.byType(BlocAvantProchainCours),
+            of: find.byType(EmplacementAvantProchainCours),
             matching: find.text(LibellesGroupe.emplacementNonBranche),
           ),
           findsNothing,

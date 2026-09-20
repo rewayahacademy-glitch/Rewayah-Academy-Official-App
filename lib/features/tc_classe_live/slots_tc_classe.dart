@@ -108,12 +108,19 @@ class HoteDock extends StatelessWidget {
 
 /// La Bibliotheque ouverte **dans** la classe.
 ///
+/// **Coquille d'Agent E.** La vraie surface, celle qui lit le catalogue, est
+/// `SurfaceBibliotheque` d'Agent B
+/// (`lib/features/tc_catalogue/surface_bibliotheque.dart`) -- deux lots ont
+/// choisi le meme nom independamment. Renomme au cablage des slots (plan
+/// d'integration Teaching Core section 5.5) pour lever la collision : c'est
+/// toujours la coquille qui change de nom, jamais l'implementation reelle.
+///
 /// **La room reste connectee** (decision D-20) : cette surface s'ouvre comme un
 /// panneau ou une feuille par-dessus la Classe Live, jamais comme une
 /// navigation. Rien ici n'appelle le routeur, et c'est verifiable d'un `grep`.
-class SurfaceBibliotheque extends StatelessWidget {
+class EmplacementBibliothequeEnClasse extends StatelessWidget {
   /// Pose la surface de la Bibliotheque en classe.
-  const SurfaceBibliotheque({required this.slot, super.key});
+  const EmplacementBibliothequeEnClasse({required this.slot, super.key});
 
   /// Le slot a rendre.
   final SlotClasse slot;

@@ -245,7 +245,7 @@ class _Colonnes extends StatelessWidget {
       session,
       if (reprise != null) ...<Widget>[Ecart.vLg, reprise],
       Ecart.vSection,
-      BlocAvantProchainCours(
+      EmplacementAvantProchainCours(
         actions: espace.avantProchainCours,
         portBranche: portTravailBranche,
       ),
