@@ -1,5 +1,0 @@
-{
-  "_note": "Agent Q ne produit aucune interface : son sous-arbre i18n est vide, et c'est voulu. TEACHING_CORE_FILE_OWNERSHIP.md section 2 lui attribue explicitement 'aucun' sous-arbre. Ce fichier existe parce que la mission d'Agent Q le nomme parmi ses livrables ; il n'entre en collision avec aucun autre agent, la preuve de disjonction section 5.1 ne l'attribuant a personne. Ecart declare dans TC_CONTRACT_REQUEST_Q.md section 7.",
-  "_pour_agent_z": "Rien a fusionner. Ce fichier peut etre supprime a l'integration sans consequence. Les rares chaines francaises presentes dans les tests d'Agent Q sont des donnees de fixture ou des libelles attendus (par exemple 'Sayyid Yacine', 'Cours en cours - Les Lanternes') : elles verifient un libellage produit, elles ne le declarent pas.",
-  "tc": {}
-}

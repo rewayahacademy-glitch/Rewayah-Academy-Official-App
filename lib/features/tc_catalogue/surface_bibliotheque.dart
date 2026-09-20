@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
@@ -17,7 +18,7 @@ import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import 'carte_ressource.dart';
-import 'libelles_tc_b.dart';
+import 'libelles_bibliotheque.dart';
 
 /// Ce qu'un appelant fait d'une ressource choisie.
 ///
@@ -141,7 +142,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Semantics(
-          label: LibellesTcB.rechercheLibelle,
+          label: t.tc.bibliotheque.rechercheLibelle,
           textField: true,
           child: TextField(
             controller: _recherche,
@@ -149,7 +150,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               isDense: true,
-              hintText: LibellesTcB.rechercheIndication,
+              hintText: t.tc.bibliotheque.rechercheIndication,
               prefixIcon: Icon(AppIcons.recherche.repos),
             ),
           ),
@@ -161,24 +162,24 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
             children: <Widget>[
               for (final TypeRessource type in TypeRessource.values) ...<Widget>[
                 FilterPill(
-                  libelle: LibellesTcB.type(type),
+                  libelle: libelleTypeRessource(type),
                   retenue: _filtre.types?.contains(type) ?? false,
                   onPress: () => _basculerType(type),
                 ),
                 Ecart.hSm,
               ],
               MenuFiltre<EtatOffline>(
-                libelle: LibellesTcB.filtreDisponibilite,
+                libelle: t.tc.bibliotheque.filtre.disponibilite,
                 valeur: _filtre.etatOffline,
                 entrees: <EntreeFiltre<EtatOffline>>[
-                  const EntreeFiltre<EtatOffline>(
+                  EntreeFiltre<EtatOffline>(
                     valeur: null,
-                    libelle: LibellesTcB.effacerRecherche,
+                    libelle: t.tc.bibliotheque.effacerRecherche,
                   ),
                   for (final EtatOffline e in EtatOffline.values)
                     EntreeFiltre<EtatOffline>(
                       valeur: e,
-                      libelle: LibellesTcB.offline(e),
+                      libelle: libelleOffline(e),
                     ),
                 ],
                 onChoix: (EtatOffline? valeur) => setState(() {
@@ -205,9 +206,9 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
         return <Widget>[
           SliverToBoxAdapter(
             child: EmptyState(
-              message: LibellesTcB.indisponibleMessage,
+              message: t.tc.bibliotheque.indisponible.message,
               icone: AppIcons.avertissement,
-              libelleAction: LibellesTcB.indisponibleAction,
+              libelleAction: t.tc.bibliotheque.indisponible.action,
               onAction: () =>
                   ref.invalidate(donneesCatalogueProvider(widget.groupeId)),
             ),
@@ -216,11 +217,11 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
       case EtatCatalogue.vide:
         // Un catalogue vide n'est pas une panne et ne propose rien : la
         // personne ne peut pas publier un support elle-meme.
-        return const <Widget>[
+        return <Widget>[
           SliverToBoxAdapter(
             child: EmptyState(
-              message: LibellesTcB.videMessage,
-              invitation: LibellesTcB.videInvitation,
+              message: t.tc.bibliotheque.vide.message,
+              invitation: t.tc.bibliotheque.vide.invitation,
               registre: RegistreVide.subi,
             ),
           ),
@@ -230,9 +231,9 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
         return <Widget>[
           SliverToBoxAdapter(
             child: EmptyState(
-              message: LibellesTcB.aucunResultatMessage,
-              invitation: LibellesTcB.aucunResultatInvitation,
-              libelleAction: LibellesTcB.effacerRecherche,
+              message: t.tc.bibliotheque.aucunResultat.message,
+              invitation: t.tc.bibliotheque.aucunResultat.invitation,
+              libelleAction: t.tc.bibliotheque.effacerRecherche,
               onAction: _relacher,
             ),
           ),
@@ -253,10 +254,10 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
   List<Widget> _sectionReprise(BuildContext context, VueCatalogue vue) {
     final ReprisLecture reprise = vue.reprise!;
     return <Widget>[
-      const SliverToBoxAdapter(
+      SliverToBoxAdapter(
         child: Padding(
-          padding: EdgeInsets.only(bottom: AppSpacing.md),
-          child: SectionHeader(titre: LibellesTcB.sectionContinuer),
+          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          child: SectionHeader(titre: t.tc.bibliotheque.sections.continuer),
         ),
       ),
       SliverToBoxAdapter(
@@ -277,7 +278,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.md),
         child: SectionHeader(
-          titre: LibellesTcB.section(section.id),
+          titre: libelleSection(section.id),
           compteur: section.ressources.length,
         ),
       ),
@@ -312,8 +313,8 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
       raisonIndisponible: ouvrable
           ? null
           : (r.publiee
-                ? LibellesTcB.messageHorsLigneNonTelecharge
-                : LibellesTcB.detailSansVersion),
+                ? t.tc.bibliotheque.message.horsLigneNonTelecharge
+                : t.tc.bibliotheque.detail.sansVersion),
     );
   }
 

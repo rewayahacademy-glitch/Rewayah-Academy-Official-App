@@ -8,7 +8,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/status_pill.dart';
-import 'libelles_tc_b.dart';
+import 'libelles_bibliotheque.dart';
 import 'vignette_ressource.dart';
 
 /// La carte d'une ressource.
@@ -96,8 +96,8 @@ class CarteRessource extends StatelessWidget {
   /// jamais annonce.
   String get libelleSemantique {
     final String base =
-        '${ressource.title}, ${LibellesTcB.type(ressource.resourceType)}, '
-        '${LibellesTcB.offline(etatOffline)}';
+        '${ressource.title}, ${libelleTypeRessource(ressource.resourceType)}, '
+        '${libelleOffline(etatOffline)}';
     final String? raison = raisonIndisponible;
     return raison == null ? base : '$base. $raison';
   }
@@ -106,7 +106,7 @@ class CarteRessource extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String sousTitre = <String>[
-      LibellesTcB.type(ressource.resourceType),
+      libelleTypeRessource(ressource.resourceType),
       if (ressource.category.isNotEmpty) ressource.category,
     ].join(' · ');
 
@@ -135,7 +135,7 @@ class CarteRessource extends StatelessWidget {
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: StatusPill(
-            libelle: LibellesTcB.offline(etatOffline),
+            libelle: libelleOffline(etatOffline),
             ton: tonDe(etatOffline),
           ),
         ),

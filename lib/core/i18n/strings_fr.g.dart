@@ -74,6 +74,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$controleur$fr controleur = Traductions$controleur$fr.internal(_root);
 	late final Traductions$aConstruire$fr aConstruire = Traductions$aConstruire$fr.internal(_root);
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
+	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
 }
 
 // Path: commun
@@ -1622,6 +1623,23 @@ class Traductions$galerie$fr {
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
+}
+
+// Path: tc
+class Traductions$tc$fr {
+	Traductions$tc$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$groupe$fr groupe = Traductions$tc$groupe$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$fr bibliotheque = Traductions$tc$bibliotheque$fr.internal(_root);
+	late final Traductions$tc$coran$fr coran = Traductions$tc$coran$fr.internal(_root);
+	late final Traductions$tc$outils$fr outils = Traductions$tc$outils$fr.internal(_root);
+	late final Traductions$tc$classe$fr classe = Traductions$tc$classe$fr.internal(_root);
+	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
+	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
+	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
 }
 
 // Path: connexion.feuilleAppareil
@@ -5005,6 +5023,2017 @@ class Traductions$controleur$planning$fr {
 	String get finUne => '1 séance au planning.';
 }
 
+// Path: tc.groupe
+class Traductions$tc$groupe$fr {
+	Traductions$tc$groupe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$groupe$mesGroupes$fr mesGroupes = Traductions$tc$groupe$mesGroupes$fr.internal(_root);
+	late final Traductions$tc$groupe$commun$fr commun = Traductions$tc$groupe$commun$fr.internal(_root);
+	late final Traductions$tc$groupe$carte$fr carte = Traductions$tc$groupe$carte$fr.internal(_root);
+	late final Traductions$tc$groupe$enseignant$fr enseignant = Traductions$tc$groupe$enseignant$fr.internal(_root);
+	late final Traductions$tc$groupe$cours$fr cours = Traductions$tc$groupe$cours$fr.internal(_root);
+	late final Traductions$tc$groupe$temps$fr temps = Traductions$tc$groupe$temps$fr.internal(_root);
+	late final Traductions$tc$groupe$horloges$fr horloges = Traductions$tc$groupe$horloges$fr.internal(_root);
+	late final Traductions$tc$groupe$dst$fr dst = Traductions$tc$groupe$dst$fr.internal(_root);
+	late final Traductions$tc$groupe$session$fr session = Traductions$tc$groupe$session$fr.internal(_root);
+	late final Traductions$tc$groupe$espace$fr espace = Traductions$tc$groupe$espace$fr.internal(_root);
+	late final Traductions$tc$groupe$emplacement$fr emplacement = Traductions$tc$groupe$emplacement$fr.internal(_root);
+}
+
+// Path: tc.bibliotheque
+class Traductions$tc$bibliotheque$fr {
+	Traductions$tc$bibliotheque$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bibliothèque'
+	String get titre => 'Bibliothèque';
+
+	/// fr: 'Titre, niveau, sourate ou page'
+	String get rechercheIndication => 'Titre, niveau, sourate ou page';
+
+	/// fr: 'Rechercher un support'
+	String get rechercheLibelle => 'Rechercher un support';
+
+	/// fr: 'Tout afficher'
+	String get effacerRecherche => 'Tout afficher';
+
+	late final Traductions$tc$bibliotheque$filtre$fr filtre = Traductions$tc$bibliotheque$filtre$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$sections$fr sections = Traductions$tc$bibliotheque$sections$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$vide$fr vide = Traductions$tc$bibliotheque$vide$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$aucunResultat$fr aucunResultat = Traductions$tc$bibliotheque$aucunResultat$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$indisponible$fr indisponible = Traductions$tc$bibliotheque$indisponible$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$introuvable$fr introuvable = Traductions$tc$bibliotheque$introuvable$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$offline$fr offline = Traductions$tc$bibliotheque$offline$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$type$fr type = Traductions$tc$bibliotheque$type$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$detail$fr detail = Traductions$tc$bibliotheque$detail$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$action$fr action = Traductions$tc$bibliotheque$action$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$message$fr message = Traductions$tc$bibliotheque$message$fr.internal(_root);
+	late final Traductions$tc$bibliotheque$classe$fr classe = Traductions$tc$bibliotheque$classe$fr.internal(_root);
+}
+
+// Path: tc.coran
+class Traductions$tc$coran$fr {
+	Traductions$tc$coran$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$coran$modes$fr modes = Traductions$tc$coran$modes$fr.internal(_root);
+	late final Traductions$tc$coran$mushaf$fr mushaf = Traductions$tc$coran$mushaf$fr.internal(_root);
+	late final Traductions$tc$coran$fidelite$fr fidelite = Traductions$tc$coran$fidelite$fr.internal(_root);
+	late final Traductions$tc$coran$zoom$fr zoom = Traductions$tc$coran$zoom$fr.internal(_root);
+	late final Traductions$tc$coran$navigation$fr navigation = Traductions$tc$coran$navigation$fr.internal(_root);
+	late final Traductions$tc$coran$reprise$fr reprise = Traductions$tc$coran$reprise$fr.internal(_root);
+	late final Traductions$tc$coran$focus$fr focus = Traductions$tc$coran$focus$fr.internal(_root);
+}
+
+// Path: tc.outils
+class Traductions$tc$outils$fr {
+	Traductions$tc$outils$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$outils$dock$fr dock = Traductions$tc$outils$dock$fr.internal(_root);
+	late final Traductions$tc$outils$intention$fr intention = Traductions$tc$outils$intention$fr.internal(_root);
+	late final Traductions$tc$outils$trait$fr trait = Traductions$tc$outils$trait$fr.internal(_root);
+	late final Traductions$tc$outils$portee$fr portee = Traductions$tc$outils$portee$fr.internal(_root);
+	late final Traductions$tc$outils$marquer$fr marquer = Traductions$tc$outils$marquer$fr.internal(_root);
+	late final Traductions$tc$outils$revision$fr revision = Traductions$tc$outils$revision$fr.internal(_root);
+	late final Traductions$tc$outils$masquer$fr masquer = Traductions$tc$outils$masquer$fr.internal(_root);
+	late final Traductions$tc$outils$focus$fr focus = Traductions$tc$outils$focus$fr.internal(_root);
+	late final Traductions$tc$outils$annotation$fr annotation = Traductions$tc$outils$annotation$fr.internal(_root);
+}
+
+// Path: tc.classe
+class Traductions$tc$classe$fr {
+	Traductions$tc$classe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$classe$entete$fr entete = Traductions$tc$classe$entete$fr.internal(_root);
+	late final Traductions$tc$classe$roster$fr roster = Traductions$tc$classe$roster$fr.internal(_root);
+	late final Traductions$tc$classe$etat$fr etat = Traductions$tc$classe$etat$fr.internal(_root);
+	late final Traductions$tc$classe$fiche$fr fiche = Traductions$tc$classe$fiche$fr.internal(_root);
+	late final Traductions$tc$classe$action$fr action = Traductions$tc$classe$action$fr.internal(_root);
+	late final Traductions$tc$classe$rappel$fr rappel = Traductions$tc$classe$rappel$fr.internal(_root);
+	late final Traductions$tc$classe$recitation$fr recitation = Traductions$tc$classe$recitation$fr.internal(_root);
+	late final Traductions$tc$classe$support$fr support = Traductions$tc$classe$support$fr.internal(_root);
+	late final Traductions$tc$classe$commandes$fr commandes = Traductions$tc$classe$commandes$fr.internal(_root);
+	late final Traductions$tc$classe$scene$fr scene = Traductions$tc$classe$scene$fr.internal(_root);
+	late final Traductions$tc$classe$reseau$fr reseau = Traductions$tc$classe$reseau$fr.internal(_root);
+	late final Traductions$tc$classe$attente$fr attente = Traductions$tc$classe$attente$fr.internal(_root);
+	late final Traductions$tc$classe$lien$fr lien = Traductions$tc$classe$lien$fr.internal(_root);
+	late final Traductions$tc$classe$barre$fr barre = Traductions$tc$classe$barre$fr.internal(_root);
+	late final Traductions$tc$classe$prevol$fr prevol = Traductions$tc$classe$prevol$fr.internal(_root);
+	late final Traductions$tc$classe$observation$fr observation = Traductions$tc$classe$observation$fr.internal(_root);
+}
+
+// Path: tc.realtime
+class Traductions$tc$realtime$fr {
+	Traductions$tc$realtime$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$realtime$transport$fr transport = Traductions$tc$realtime$transport$fr.internal(_root);
+	late final Traductions$tc$realtime$etat$fr etat = Traductions$tc$realtime$etat$fr.internal(_root);
+}
+
+// Path: tc.observation
+class Traductions$tc$observation$fr {
+	Traductions$tc$observation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$observation$entree$fr entree = Traductions$tc$observation$entree$fr.internal(_root);
+	late final Traductions$tc$observation$refus$fr refus = Traductions$tc$observation$refus$fr.internal(_root);
+	late final Traductions$tc$observation$visite$fr visite = Traductions$tc$observation$visite$fr.internal(_root);
+	late final Traductions$tc$observation$fin$fr fin = Traductions$tc$observation$fin$fr.internal(_root);
+	late final Traductions$tc$observation$annonce$fr annonce = Traductions$tc$observation$annonce$fr.internal(_root);
+	late final Traductions$tc$observation$reglages$fr reglages = Traductions$tc$observation$reglages$fr.internal(_root);
+}
+
+// Path: tc.parcours
+class Traductions$tc$parcours$fr {
+	Traductions$tc$parcours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$parcours$avant$fr avant = Traductions$tc$parcours$avant$fr.internal(_root);
+	late final Traductions$tc$parcours$intention$fr intention = Traductions$tc$parcours$intention$fr.internal(_root);
+	late final Traductions$tc$parcours$plage$fr plage = Traductions$tc$parcours$plage$fr.internal(_root);
+	late final Traductions$tc$parcours$feedback$fr feedback = Traductions$tc$parcours$feedback$fr.internal(_root);
+	late final Traductions$tc$parcours$signalement$fr signalement = Traductions$tc$parcours$signalement$fr.internal(_root);
+	late final Traductions$tc$parcours$postCours$fr postCours = Traductions$tc$parcours$postCours$fr.internal(_root);
+}
+
+// Path: tc.groupe.mesGroupes
+class Traductions$tc$groupe$mesGroupes$fr {
+	Traductions$tc$groupe$mesGroupes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes groupes'
+	String get titre => 'Mes groupes';
+
+	/// fr: 'Aucun groupe pour le moment'
+	String get aucun => 'Aucun groupe pour le moment';
+
+	/// fr: 'L'académie vous placera dans un groupe dès qu'un créneau vous correspond.'
+	String get aucunDetail => 'L\'académie vous placera dans un groupe dès qu\'un créneau vous correspond.';
+}
+
+// Path: tc.groupe.commun
+class Traductions$tc$groupe$commun$fr {
+	Traductions$tc$groupe$commun$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos groupes n'ont pas pu être lus'
+	String get erreur => 'Vos groupes n\'ont pas pu être lus';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+}
+
+// Path: tc.groupe.carte
+class Traductions$tc$groupe$carte$fr {
+	Traductions$tc$groupe$carte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir le groupe {libelle}'
+	String ouvrir({required Object libelle}) => 'Ouvrir le groupe ${libelle}';
+
+	/// fr: '{membres} / {seuil}'
+	String capacite({required Object membres, required Object seuil}) => '${membres} / ${seuil}';
+
+	/// fr: '{membres} élèves sur {seuil} places'
+	String capacitePhrase({required Object membres, required Object seuil}) => '${membres} élèves sur ${seuil} places';
+
+	/// fr: 'Complet'
+	String get complet => 'Complet';
+
+	/// fr: 'Prochain cours'
+	String get prochainCours => 'Prochain cours';
+
+	/// fr: 'Aucune séance planifiée'
+	String get aucuneSeance => 'Aucune séance planifiée';
+
+	/// fr: 'Le planning de ce groupe n'est pas encore posé.'
+	String get aucuneSeanceDetail => 'Le planning de ce groupe n\'est pas encore posé.';
+
+	/// fr: 'Durée {valeur}'
+	String duree({required Object valeur}) => 'Durée ${valeur}';
+
+	/// fr: 'Durée'
+	String get dureeLibelle => 'Durée';
+
+	/// fr: 'Rejoindre'
+	String get rejoindre => 'Rejoindre';
+}
+
+// Path: tc.groupe.enseignant
+class Traductions$tc$groupe$enseignant$fr {
+	Traductions$tc$groupe$enseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sayyid'
+	String get sayyid => 'Sayyid';
+
+	/// fr: 'Sayyida'
+	String get sayyida => 'Sayyida';
+
+	/// fr: 'Photo à fournir'
+	String get photoManquante => 'Photo à fournir';
+
+	/// fr: 'La photo de l'enseignant n'a pas encore été enregistrée.'
+	String get photoManquanteDetail => 'La photo de l\'enseignant n\'a pas encore été enregistrée.';
+}
+
+// Path: tc.groupe.cours
+class Traductions$tc$groupe$cours$fr {
+	Traductions$tc$groupe$cours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{cours} · {niveau}'
+	String coursEtNiveau({required Object cours, required Object niveau}) => '${cours} · ${niveau}';
+}
+
+// Path: tc.groupe.temps
+class Traductions$tc$groupe$temps$fr {
+	Traductions$tc$groupe$temps$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cours dans {minutes} min'
+	String dansMinutes({required Object minutes}) => 'Cours dans ${minutes} min';
+
+	/// fr: 'Cours dans {heures} h {minutes}'
+	String dansHeures({required Object heures, required Object minutes}) => 'Cours dans ${heures} h ${minutes}';
+
+	/// fr: 'Cours imminent'
+	String get imminent => 'Cours imminent';
+
+	/// fr: 'Salle ouverte · {reste}'
+	String salleOuverte({required Object reste}) => 'Salle ouverte · ${reste}';
+
+	/// fr: 'Salle ouverte'
+	String get salleOuverteCourt => 'Salle ouverte';
+
+	/// fr: 'Vous êtes dans la salle. Le cours n'a pas encore commencé.'
+	String get attente => 'Vous êtes dans la salle. Le cours n\'a pas encore commencé.';
+
+	/// fr: 'Ce temps d'attente ne compte pas dans votre présence.'
+	String get attenteDetail => 'Ce temps d\'attente ne compte pas dans votre présence.';
+
+	/// fr: 'En salle'
+	String get enSalle => 'En salle';
+
+	/// fr: 'Reste {minutes} min'
+	String resteMinutes({required Object minutes}) => 'Reste ${minutes} min';
+
+	/// fr: 'Reste {heures} h {minutes}'
+	String resteHeures({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}';
+
+	/// fr: 'Cours en cours · {reste}'
+	String enCours({required Object reste}) => 'Cours en cours · ${reste}';
+
+	/// fr: 'En direct'
+	String get enDirect => 'En direct';
+
+	/// fr: 'Cours toujours en cours'
+	String get prolongee => 'Cours toujours en cours';
+
+	/// fr: 'En dépassement'
+	String get depassement => 'En dépassement';
+
+	/// fr: 'Cours terminé'
+	String get terminee => 'Cours terminé';
+}
+
+// Path: tc.groupe.horloges
+class Traductions$tc$groupe$horloges$fr {
+	Traductions$tc$groupe$horloges$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre heure'
+	String get votreHeure => 'Votre heure';
+
+	/// fr: 'Chez {nomme}'
+	String chezEnseignant({required Object nomme}) => 'Chez ${nomme}';
+
+	/// fr: 'Heure du groupe'
+	String get heureGroupe => 'Heure du groupe';
+
+	/// fr: '{heure} {ville}'
+	String heureEtVille({required Object heure, required Object ville}) => '${heure} ${ville}';
+}
+
+// Path: tc.groupe.dst
+class Traductions$tc$groupe$dst$fr {
+	Traductions$tc$groupe$dst$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Changement d'heure dans un mois'
+	String get j30 => 'Changement d\'heure dans un mois';
+
+	/// fr: 'Changement d'heure la semaine prochaine'
+	String get j7 => 'Changement d\'heure la semaine prochaine';
+
+	/// fr: 'Changement d'heure demain'
+	String get j1 => 'Changement d\'heure demain';
+
+	/// fr: 'Votre cours passera de {avant} à {apres}.'
+	String detail({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.';
+}
+
+// Path: tc.groupe.session
+class Traductions$tc$groupe$session$fr {
+	Traductions$tc$groupe$session$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.'
+	String get conseilAppareil => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.';
+}
+
+// Path: tc.groupe.espace
+class Traductions$tc$groupe$espace$fr {
+	Traductions$tc$groupe$espace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes groupes'
+	String get retour => 'Mes groupes';
+
+	/// fr: 'Avant le prochain cours'
+	String get avantProchainCours => 'Avant le prochain cours';
+
+	/// fr: 'Rien à préparer pour l'instant'
+	String get aucuneAction => 'Rien à préparer pour l\'instant';
+
+	/// fr: 'Bibliothèque'
+	String get bibliotheque => 'Bibliothèque';
+
+	/// fr: 'Voir tout'
+	String get bibliothequeVoirTout => 'Voir tout';
+
+	/// fr: 'Progression'
+	String get progression => 'Progression';
+
+	/// fr: 'Élèves du groupe'
+	String get roster => 'Élèves du groupe';
+
+	/// fr: 'Reprendre le cours'
+	String get reprendreLeCours => 'Reprendre le cours';
+
+	/// fr: 'Ce groupe ne vous est pas ouvert'
+	String get introuvable => 'Ce groupe ne vous est pas ouvert';
+
+	/// fr: 'Il a peut-être été clôturé, ou il appartient à une autre classe.'
+	String get introuvableDetail => 'Il a peut-être été clôturé, ou il appartient à une autre classe.';
+}
+
+// Path: tc.groupe.emplacement
+class Traductions$tc$groupe$emplacement$fr {
+	Traductions$tc$groupe$emplacement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bientôt disponible'
+	String get nonBranche => 'Bientôt disponible';
+
+	/// fr: 'Ce contenu sera rattaché à cet espace prochainement.'
+	String get nonBrancheDetail => 'Ce contenu sera rattaché à cet espace prochainement.';
+}
+
+// Path: tc.bibliotheque.filtre
+class Traductions$tc$bibliotheque$filtre$fr {
+	Traductions$tc$bibliotheque$filtre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Type'
+	String get type => 'Type';
+
+	/// fr: 'Disponibilité'
+	String get disponibilite => 'Disponibilité';
+}
+
+// Path: tc.bibliotheque.sections
+class Traductions$tc$bibliotheque$sections$fr {
+	Traductions$tc$bibliotheque$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Continuer'
+	String get continuer => 'Continuer';
+
+	/// fr: 'Pour ce groupe'
+	String get pourCeGroupe => 'Pour ce groupe';
+
+	/// fr: 'Récents'
+	String get recents => 'Récents';
+
+	/// fr: 'Tous les supports'
+	String get tousLesSupports => 'Tous les supports';
+
+	/// fr: 'Résultats'
+	String get resultats => 'Résultats';
+}
+
+// Path: tc.bibliotheque.vide
+class Traductions$tc$bibliotheque$vide$fr {
+	Traductions$tc$bibliotheque$vide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun support publié pour le moment'
+	String get message => 'Aucun support publié pour le moment';
+
+	/// fr: 'Vos enseignants déposeront ici les supports de vos cours.'
+	String get invitation => 'Vos enseignants déposeront ici les supports de vos cours.';
+}
+
+// Path: tc.bibliotheque.aucunResultat
+class Traductions$tc$bibliotheque$aucunResultat$fr {
+	Traductions$tc$bibliotheque$aucunResultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun support ne correspond'
+	String get message => 'Aucun support ne correspond';
+
+	/// fr: 'Essayez un autre mot, ou relâchez les filtres.'
+	String get invitation => 'Essayez un autre mot, ou relâchez les filtres.';
+}
+
+// Path: tc.bibliotheque.indisponible
+class Traductions$tc$bibliotheque$indisponible$fr {
+	Traductions$tc$bibliotheque$indisponible$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La bibliothèque est momentanément indisponible'
+	String get message => 'La bibliothèque est momentanément indisponible';
+
+	/// fr: 'Réessayer'
+	String get action => 'Réessayer';
+}
+
+// Path: tc.bibliotheque.introuvable
+class Traductions$tc$bibliotheque$introuvable$fr {
+	Traductions$tc$bibliotheque$introuvable$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce support ne vous est pas ouvert'
+	String get message => 'Ce support ne vous est pas ouvert';
+
+	/// fr: 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.'
+	String get invitation => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.';
+}
+
+// Path: tc.bibliotheque.offline
+class Traductions$tc$bibliotheque$offline$fr {
+	Traductions$tc$bibliotheque$offline$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À télécharger'
+	String get aTelecharger => 'À télécharger';
+
+	/// fr: 'Téléchargement'
+	String get enCours => 'Téléchargement';
+
+	/// fr: 'En cache'
+	String get enCache => 'En cache';
+
+	/// fr: 'Téléchargé'
+	String get telecharge => 'Téléchargé';
+
+	/// fr: 'Hors ligne indisponible'
+	String get indisponible => 'Hors ligne indisponible';
+}
+
+// Path: tc.bibliotheque.type
+class Traductions$tc$bibliotheque$type$fr {
+	Traductions$tc$bibliotheque$type$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Coran'
+	String get quran => 'Coran';
+
+	/// fr: 'Texte'
+	String get texteStructure => 'Texte';
+
+	/// fr: 'PDF'
+	String get pdf => 'PDF';
+
+	/// fr: 'Image'
+	String get image => 'Image';
+
+	/// fr: 'Leçon'
+	String get lecon => 'Leçon';
+}
+
+// Path: tc.bibliotheque.detail
+class Traductions$tc$bibliotheque$detail$fr {
+	Traductions$tc$bibliotheque$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Support'
+	String get titre => 'Support';
+
+	/// fr: 'Ce que ce support permet'
+	String get capacites => 'Ce que ce support permet';
+
+	/// fr: 'Niveaux'
+	String get niveaux => 'Niveaux';
+
+	/// fr: 'Aucune version publiée : rien à ouvrir pour le moment.'
+	String get sansVersion => 'Aucune version publiée : rien à ouvrir pour le moment.';
+
+	/// fr: 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.'
+	String get apercuIndisponible => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.';
+
+	/// fr: 'Le Coran s’ouvre dans le lecteur dédié.'
+	String get renduCoran => 'Le Coran s’ouvre dans le lecteur dédié.';
+}
+
+// Path: tc.bibliotheque.action
+class Traductions$tc$bibliotheque$action$fr {
+	Traductions$tc$bibliotheque$action$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rendre disponible hors ligne'
+	String get telecharger => 'Rendre disponible hors ligne';
+
+	/// fr: 'Libérer la place'
+	String get liberer => 'Libérer la place';
+
+	/// fr: 'Enregistrer une copie'
+	String get enregistrerCopie => 'Enregistrer une copie';
+}
+
+// Path: tc.bibliotheque.message
+class Traductions$tc$bibliotheque$message$fr {
+	Traductions$tc$bibliotheque$message$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Copie enregistrée'
+	String get copieEnregistree => 'Copie enregistrée';
+
+	/// fr: 'Cette copie n’est pas disponible pour le moment'
+	String get copieImpossible => 'Cette copie n’est pas disponible pour le moment';
+
+	/// fr: 'Ce support n’est pas encore disponible hors ligne'
+	String get telechargementImpossible => 'Ce support n’est pas encore disponible hors ligne';
+
+	/// fr: 'Disponible une fois téléchargé ou de retour en ligne'
+	String get horsLigneNonTelecharge => 'Disponible une fois téléchargé ou de retour en ligne';
+
+	/// fr: 'Aucun fichier à télécharger pour cette version.'
+	String get aucunTelechargement => 'Aucun fichier à télécharger pour cette version.';
+}
+
+// Path: tc.bibliotheque.classe
+class Traductions$tc$bibliotheque$classe$fr {
+	Traductions$tc$bibliotheque$classe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisir un support'
+	String get titre => 'Choisir un support';
+
+	/// fr: 'Le support choisi remplace celui affiché. Le cours continue.'
+	String get sousTitre => 'Le support choisi remplace celui affiché. Le cours continue.';
+}
+
+// Path: tc.coran.modes
+class Traductions$tc$coran$modes$fr {
+	Traductions$tc$coran$modes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Page du mushaf'
+	String get mushaf => 'Page du mushaf';
+
+	/// fr: 'Lecture agrandie'
+	String get verset => 'Lecture agrandie';
+
+	/// fr: 'Focus'
+	String get focus => 'Focus';
+
+	/// fr: 'Mode de lecture'
+	String get choisir => 'Mode de lecture';
+}
+
+// Path: tc.coran.mushaf
+class Traductions$tc$coran$mushaf$fr {
+	Traductions$tc$coran$mushaf$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Page de droite'
+	String get coteDroite => 'Page de droite';
+
+	/// fr: 'Page de gauche'
+	String get coteGauche => 'Page de gauche';
+
+	/// fr: 'Ouverture, pages {droite} et {gauche}'
+	String ouverture({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}';
+}
+
+// Path: tc.coran.fidelite
+class Traductions$tc$coran$fidelite$fr {
+	Traductions$tc$coran$fidelite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Composition approchée'
+	String get approchee => 'Composition approchée';
+
+	/// fr: 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l'édition n'est pas encore importé.'
+	String get approcheeDetail => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.';
+
+	/// fr: 'Composition de l'édition'
+	String get fidele => 'Composition de l\'édition';
+}
+
+// Path: tc.coran.zoom
+class Traductions$tc$coran$zoom$fr {
+	Traductions$tc$coran$zoom$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Grossissement limité par la largeur : au-delà, un mot serait coupé.'
+	String get bride => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.';
+
+	/// fr: '{pourcent} %'
+	String valeur({required Object pourcent}) => '${pourcent} %';
+
+	/// fr: 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.'
+	String get renvoiLectureAgrandie => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.';
+}
+
+// Path: tc.coran.navigation
+class Traductions$tc$coran$navigation$fr {
+	Traductions$tc$coran$navigation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aller à'
+	String get titre => 'Aller à';
+
+	/// fr: 'Aller à une page'
+	String get ouvrir => 'Aller à une page';
+
+	/// fr: 'Page, sourate, juz ou référence'
+	String get champ => 'Page, sourate, juz ou référence';
+
+	/// fr: 'Par exemple 18, Al-Kahf, juz 15, 2:255'
+	String get indice => 'Par exemple 18, Al-Kahf, juz 15, 2:255';
+
+	/// fr: 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n'est pas encore disponible.'
+	String get limite => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.';
+
+	/// fr: 'Aucune référence trouvée'
+	String get aucunResultat => 'Aucune référence trouvée';
+
+	/// fr: 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.'
+	String get aucunResultatDetail => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.';
+
+	/// fr: 'Page {page}'
+	String pageNumero({required Object page}) => 'Page ${page}';
+}
+
+// Path: tc.coran.reprise
+class Traductions$tc$coran$reprise$fr {
+	Traductions$tc$coran$reprise$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reprendre le cours'
+	String get groupe => 'Reprendre le cours';
+
+	/// fr: 'Le groupe en était page {page}'
+	String groupeDetail({required Object page}) => 'Le groupe en était page ${page}';
+}
+
+// Path: tc.coran.focus
+class Traductions$tc$coran$focus$fr {
+	Traductions$tc$coran$focus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun passage mis en avant'
+	String get aucunePlage => 'Aucun passage mis en avant';
+
+	/// fr: 'Le focus suit le passage que l'enseignant désigne. Hors classe, il centre la page ouverte.'
+	String get aucunePlageDetail => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.';
+
+	/// fr: 'Quitter le focus'
+	String get quitter => 'Quitter le focus';
+}
+
+// Path: tc.outils.dock
+class Traductions$tc$outils$dock$fr {
+	Traductions$tc$outils$dock$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Outils'
+	String get titre => 'Outils';
+
+	/// fr: 'Déplacer les outils'
+	String get deplacer => 'Déplacer les outils';
+
+	late final Traductions$tc$outils$dock$position$fr position = Traductions$tc$outils$dock$position$fr.internal(_root);
+
+	/// fr: 'Bibliothèque'
+	String get bibliotheque => 'Bibliothèque';
+
+	/// fr: 'Focus'
+	String get focus => 'Focus';
+
+	/// fr: 'Marquer'
+	String get marquer => 'Marquer';
+
+	/// fr: 'Masquer'
+	String get masquer => 'Masquer';
+
+	/// fr: 'Stylet'
+	String get stylet => 'Stylet';
+
+	/// fr: 'Pointeur'
+	String get pointeur => 'Pointeur';
+
+	/// fr: 'Révision'
+	String get revision => 'Révision';
+}
+
+// Path: tc.outils.intention
+class Traductions$tc$outils$intention$fr {
+	Traductions$tc$outils$intention$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À apprendre'
+	String get aApprendre => 'À apprendre';
+
+	/// fr: 'À revoir'
+	String get aRevoir => 'À revoir';
+
+	/// fr: 'À renforcer'
+	String get aRenforcer => 'À renforcer';
+
+	/// fr: 'À entretenir'
+	String get aEntretenir => 'À entretenir';
+
+	/// fr: 'Pour l'évaluation'
+	String get pourEvaluation => 'Pour l\'évaluation';
+}
+
+// Path: tc.outils.trait
+class Traductions$tc$outils$trait$fr {
+	Traductions$tc$outils$trait$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Stylet'
+	String get stylet => 'Stylet';
+
+	/// fr: 'Surligner'
+	String get surligneur => 'Surligner';
+
+	/// fr: 'Gomme'
+	String get gomme => 'Gomme';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Plus'
+	String get plus => 'Plus';
+}
+
+// Path: tc.outils.portee
+class Traductions$tc$outils$portee$fr {
+	Traductions$tc$outils$portee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le temps d'expliquer'
+	String get temporaire => 'Le temps d\'expliquer';
+
+	/// fr: 'Jusqu'à la fin du cours'
+	String get seance => 'Jusqu\'à la fin du cours';
+
+	/// fr: 'Enregistrer'
+	String get enregistree => 'Enregistrer';
+
+	/// fr: 'Combien de temps garder ces annotations ?'
+	String get aide => 'Combien de temps garder ces annotations ?';
+}
+
+// Path: tc.outils.marquer
+class Traductions$tc$outils$marquer$fr {
+	Traductions$tc$outils$marquer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Marquer ce passage'
+	String get titre => 'Marquer ce passage';
+
+	/// fr: 'Choisissez ce que ce passage demande.'
+	String get aide => 'Choisissez ce que ce passage demande.';
+
+	/// fr: 'Retirer le marqueur'
+	String get retirer => 'Retirer le marqueur';
+}
+
+// Path: tc.outils.revision
+class Traductions$tc$outils$revision$fr {
+	Traductions$tc$outils$revision$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À préparer'
+	String get titre => 'À préparer';
+
+	/// fr: 'Le passage sélectionné devient un travail à préparer.'
+	String get aide => 'Le passage sélectionné devient un travail à préparer.';
+
+	/// fr: 'Tout le groupe'
+	String get groupeEntier => 'Tout le groupe';
+
+	/// fr: 'Consigne courte (facultatif)'
+	String get consigne => 'Consigne courte (facultatif)';
+
+	/// fr: 'Poser le travail'
+	String get creer => 'Poser le travail';
+
+	/// fr: 'Travail à préparer posé'
+	String get posee => 'Travail à préparer posé';
+}
+
+// Path: tc.outils.masquer
+class Traductions$tc$outils$masquer$fr {
+	Traductions$tc$outils$masquer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Révéler'
+	String get reveler => 'Révéler';
+
+	/// fr: 'Masquer de nouveau'
+	String get refermer => 'Masquer de nouveau';
+
+	/// fr: 'Tout démasquer'
+	String get tout => 'Tout démasquer';
+}
+
+// Path: tc.outils.focus
+class Traductions$tc$outils$focus$fr {
+	Traductions$tc$outils$focus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quitter le focus'
+	String get quitter => 'Quitter le focus';
+}
+
+// Path: tc.outils.annotation
+class Traductions$tc$outils$annotation$fr {
+	Traductions$tc$outils$annotation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce passage n'a pas de repère de texte : l'annotation suivra la page, pas les mots.'
+	String get ancrageDegrade => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.';
+
+	/// fr: 'Annotations masquées : leur passage n'est pas à l'écran.'
+	String get horsPage => 'Annotations masquées : leur passage n\'est pas à l\'écran.';
+
+	/// fr: 'Sélectionnez d'abord un passage.'
+	String get aucuneSelection => 'Sélectionnez d\'abord un passage.';
+}
+
+// Path: tc.classe.entete
+class Traductions$tc$classe$entete$fr {
+	Traductions$tc$classe$entete$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$classe$entete$titreEnseignant$fr titreEnseignant = Traductions$tc$classe$entete$titreEnseignant$fr.internal(_root);
+
+	/// fr: 'Reste {minutes} min'
+	String resteMinutes({required Object minutes}) => 'Reste ${minutes} min';
+
+	/// fr: 'Reste {heures} h {minutes}'
+	String resteHeuresMinutes({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}';
+
+	/// fr: 'Cours toujours en cours'
+	String get coursEnCours => 'Cours toujours en cours';
+
+	/// fr: 'Photo enseignant manquante'
+	String get photoManquante => 'Photo enseignant manquante';
+}
+
+// Path: tc.classe.roster
+class Traductions$tc$classe$roster$fr {
+	Traductions$tc$classe$roster$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Élèves'
+	String get titre => 'Élèves';
+
+	/// fr: 'Élèves : {presents} présents sur {attendus} attendus'
+	String compteur({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus';
+
+	/// fr: 'Roster indisponible'
+	String get indisponible => 'Roster indisponible';
+
+	/// fr: 'Les états de vos élèves n'ont pas pu être lus. Le cours continue.'
+	String get indisponibleDetail => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.';
+
+	/// fr: 'Aucun élève inscrit'
+	String get vide => 'Aucun élève inscrit';
+
+	/// fr: 'Cette séance n'a aucun élève inscrit. Vérifiez le groupe.'
+	String get videDetail => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.';
+
+	/// fr: 'Ouvrir la fiche de {prenom}'
+	String ouvrirFiche({required Object prenom}) => 'Ouvrir la fiche de ${prenom}';
+
+	/// fr: '{inscrits} / {plafond} places'
+	String places({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places';
+}
+
+// Path: tc.classe.etat
+class Traductions$tc$classe$etat$fr {
+	Traductions$tc$classe$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'État inconnu'
+	String get inconnu => 'État inconnu';
+
+	/// fr: 'Attendu'
+	String get attendu => 'Attendu';
+
+	/// fr: 'En connexion'
+	String get enConnexion => 'En connexion';
+
+	/// fr: 'Présent'
+	String get present => 'Présent';
+
+	/// fr: 'En retard'
+	String get enRetard => 'En retard';
+
+	/// fr: 'Déconnecté'
+	String get deconnecte => 'Déconnecté';
+
+	/// fr: 'En reconnexion'
+	String get enReconnexion => 'En reconnexion';
+
+	/// fr: 'Sorti'
+	String get sorti => 'Sorti';
+
+	/// fr: 'Absent'
+	String get absent => 'Absent';
+}
+
+// Path: tc.classe.fiche
+class Traductions$tc$classe$fiche$fr {
+	Traductions$tc$classe$fiche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Niveau'
+	String get niveau => 'Niveau';
+
+	/// fr: 'Objectif actuel'
+	String get objectif => 'Objectif actuel';
+
+	/// fr: 'Dernière séance'
+	String get derniereSeance => 'Dernière séance';
+
+	/// fr: 'Page {page}'
+	String page({required Object page}) => 'Page ${page}';
+
+	/// fr: '{nombre} élément(s)'
+	String travailEnCours({required Object nombre}) => '${nombre} élément(s)';
+
+	/// fr: 'À reprendre'
+	String get aReprendre => 'À reprendre';
+
+	/// fr: 'Présence récente'
+	String get presenceRecente => 'Présence récente';
+
+	/// fr: '{presences} / {total} cours'
+	String assiduite({required Object presences, required Object total}) => '${presences} / ${total} cours';
+
+	/// fr: 'Travail actuel'
+	String get travailActuel => 'Travail actuel';
+
+	/// fr: 'Interface guidée'
+	String get interfaceGuidee => 'Interface guidée';
+
+	/// fr: 'Suivi pédagogique indisponible'
+	String get sansPedagogie => 'Suivi pédagogique indisponible';
+
+	/// fr: 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant.'
+	String get sansPedagogieDetail => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.';
+}
+
+// Path: tc.classe.action
+class Traductions$tc$classe$action$fr {
+	Traductions$tc$classe$action$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rappel discret'
+	String get rappel => 'Rappel discret';
+
+	/// fr: 'Choisir pour réciter'
+	String get reciter => 'Choisir pour réciter';
+
+	/// fr: 'Noter'
+	String get noter => 'Noter';
+
+	/// fr: 'Signaler un besoin'
+	String get signaler => 'Signaler un besoin';
+
+	/// fr: 'Ouvrir le contexte'
+	String get contexte => 'Ouvrir le contexte';
+}
+
+// Path: tc.classe.rappel
+class Traductions$tc$classe$rappel$fr {
+	Traductions$tc$classe$rappel$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le professeur vous appelle'
+	String get recu => 'Le professeur vous appelle';
+
+	/// fr: 'Le rappel n'a pas pu être envoyé'
+	String get echec => 'Le rappel n\'a pas pu être envoyé';
+
+	/// fr: 'Votre accès à cette séance ne permet pas d'appeler un élève'
+	String get echecDroit => 'Votre accès à cette séance ne permet pas d\'appeler un élève';
+
+	/// fr: 'Déjà appelé. À nouveau dans {secondes} s'
+	String cooldown({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s';
+}
+
+// Path: tc.classe.recitation
+class Traductions$tc$classe$recitation$fr {
+	Traductions$tc$classe$recitation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Récitation'
+	String get titre => 'Récitation';
+
+	/// fr: '{prenom} récite'
+	String actif({required Object prenom}) => '${prenom} récite';
+
+	/// fr: 'Récite'
+	String get pastille => 'Récite';
+
+	/// fr: 'Ensuite'
+	String get suivants => 'Ensuite';
+
+	/// fr: 'Personne ne récite'
+	String get personne => 'Personne ne récite';
+
+	/// fr: 'Arrêter la récitation'
+	String get arreter => 'Arrêter la récitation';
+}
+
+// Path: tc.classe.support
+class Traductions$tc$classe$support$fr {
+	Traductions$tc$classe$support$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun support présenté'
+	String get aucun => 'Aucun support présenté';
+
+	/// fr: 'Ouvrez la Bibliothèque pour présenter un support au groupe.'
+	String get aucunDetail => 'Ouvrez la Bibliothèque pour présenter un support au groupe.';
+
+	/// fr: 'Bibliothèque'
+	String get bibliotheque => 'Bibliothèque';
+
+	/// fr: 'Bibliothèque non branchée'
+	String get bibliothequeAbsente => 'Bibliothèque non branchée';
+
+	/// fr: 'Le choix de support sera disponible dès l'intégration du catalogue.'
+	String get bibliothequeAbsenteDetail => 'Le choix de support sera disponible dès l\'intégration du catalogue.';
+}
+
+// Path: tc.classe.commandes
+class Traductions$tc$classe$commandes$fr {
+	Traductions$tc$classe$commandes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir le micro'
+	String get micro => 'Ouvrir le micro';
+
+	/// fr: 'Fermer le micro'
+	String get microFermer => 'Fermer le micro';
+
+	/// fr: 'Ouvrir la caméra'
+	String get camera => 'Ouvrir la caméra';
+
+	/// fr: 'Fermer la caméra'
+	String get cameraFermer => 'Fermer la caméra';
+
+	/// fr: 'Micro fermé'
+	String get microCoupe => 'Micro fermé';
+
+	/// fr: 'Quitter'
+	String get quitter => 'Quitter';
+
+	/// fr: 'Quitter le cours ?'
+	String get quitterQuestion => 'Quitter le cours ?';
+
+	/// fr: 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.'
+	String get quitterConsequence => 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.';
+
+	/// fr: 'Fermer la Bibliothèque'
+	String get fermerBibliotheque => 'Fermer la Bibliothèque';
+}
+
+// Path: tc.classe.scene
+class Traductions$tc$classe$scene$fr {
+	Traductions$tc$classe$scene$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous êtes seul dans la salle pour le moment'
+	String get vide => 'Vous êtes seul dans la salle pour le moment';
+
+	/// fr: 'Sans image'
+	String get sansImage => 'Sans image';
+}
+
+// Path: tc.classe.reseau
+class Traductions$tc$classe$reseau$fr {
+	Traductions$tc$classe$reseau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réseau bon'
+	String get bon => 'Réseau bon';
+
+	/// fr: 'Réseau instable'
+	String get mediocre => 'Réseau instable';
+
+	/// fr: 'Réseau perdu'
+	String get perdu => 'Réseau perdu';
+}
+
+// Path: tc.classe.attente
+class Traductions$tc$classe$attente$fr {
+	Traductions$tc$classe$attente$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérification de votre micro'
+	String get materiel => 'Vérification de votre micro';
+
+	/// fr: 'Ouverture du cours'
+	String get ouverture => 'Ouverture du cours';
+
+	/// fr: 'Connexion au cours'
+	String get connexion => 'Connexion au cours';
+
+	/// fr: 'Le cours n'est pas accessible pour le moment'
+	String get refus => 'Le cours n\'est pas accessible pour le moment';
+}
+
+// Path: tc.classe.lien
+class Traductions$tc$classe$lien$fr {
+	Traductions$tc$classe$lien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connexion instable'
+	String get instable => 'Connexion instable';
+
+	/// fr: 'Reconnexion en cours'
+	String get reconnexion => 'Reconnexion en cours';
+
+	/// fr: 'Connexion rétablie'
+	String get retabli => 'Connexion rétablie';
+
+	/// fr: 'Connexion perdue'
+	String get echec => 'Connexion perdue';
+
+	/// fr: 'Le cours a été mis en pause par le système. Vérification du lien en cours.'
+	String get retourDeSuspension => 'Le cours a été mis en pause par le système. Vérification du lien en cours.';
+}
+
+// Path: tc.classe.barre
+class Traductions$tc$classe$barre$fr {
+	Traductions$tc$classe$barre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cours en cours'
+	String get titre => 'Cours en cours';
+
+	/// fr: 'Revenir au cours de {groupe}'
+	String revenir({required Object groupe}) => 'Revenir au cours de ${groupe}';
+}
+
+// Path: tc.classe.prevol
+class Traductions$tc$classe$prevol$fr {
+	Traductions$tc$classe$prevol$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avant d'ouvrir le cours'
+	String get titre => 'Avant d\'ouvrir le cours';
+
+	/// fr: 'Micro détecté'
+	String get microOk => 'Micro détecté';
+
+	/// fr: 'Aucun micro utilisable'
+	String get microAbsent => 'Aucun micro utilisable';
+
+	/// fr: 'Caméra détectée'
+	String get cameraOk => 'Caméra détectée';
+
+	/// fr: 'Aucune caméra. Le cours reste possible.'
+	String get cameraAbsente => 'Aucune caméra. Le cours reste possible.';
+
+	/// fr: 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.'
+	String get permissionRefusee => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.';
+
+	/// fr: 'Vérifier à nouveau'
+	String get reessayer => 'Vérifier à nouveau';
+}
+
+// Path: tc.classe.observation
+class Traductions$tc$classe$observation$fr {
+	Traductions$tc$classe$observation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reste {secondes} s'
+	String restant({required Object secondes}) => 'Reste ${secondes} s';
+}
+
+// Path: tc.realtime.transport
+class Traductions$tc$realtime$transport$fr {
+	Traductions$tc$realtime$transport$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.'
+	String get partage_indisponible => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.';
+}
+
+// Path: tc.realtime.etat
+class Traductions$tc$realtime$etat$fr {
+	Traductions$tc$realtime$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.'
+	String get restauration_impossible => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.';
+}
+
+// Path: tc.observation.entree
+class Traductions$tc$observation$entree$fr {
+	Traductions$tc$observation$entree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Observer la séance'
+	String get titre => 'Observer la séance';
+
+	/// fr: 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.'
+	String get tuteurIntro => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.';
+
+	/// fr: 'Choisissez votre mode avant d'entrer. Il ne change plus ensuite.'
+	String get adminIntro => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.';
+
+	/// fr: 'Vous entrez en observation invisible. Aucun micro, aucune caméra.'
+	String get controleurIntro => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.';
+
+	/// fr: 'Entrer'
+	String get entrer => 'Entrer';
+
+	/// fr: 'Observer discrètement'
+	String get modeDiscret => 'Observer discrètement';
+
+	/// fr: 'Invisible pour les participants. Sans micro ni caméra, sans annonce.'
+	String get modeDiscretDetail => 'Invisible pour les participants. Sans micro ni caméra, sans annonce.';
+
+	/// fr: 'Rejoindre la classe'
+	String get modeVisible => 'Rejoindre la classe';
+
+	/// fr: 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.'
+	String get modeVisibleDetail => 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.';
+
+	/// fr: 'Administration Rewayah'
+	String get nomInstitutionnel => 'Administration Rewayah';
+
+	/// fr: 'Visite journalisée : identité, séance, entrée, sortie et durée.'
+	String get visiteJournalisee => 'Visite journalisée : identité, séance, entrée, sortie et durée.';
+
+	/// fr: 'Votre compte n'observe pas les séances.'
+	String get roleSansObservation => 'Votre compte n\'observe pas les séances.';
+}
+
+// Path: tc.observation.refus
+class Traductions$tc$observation$refus$fr {
+	Traductions$tc$observation$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'observation est désactivée pour ce groupe.'
+	String get politiqueDesactivee => 'L\'observation est désactivée pour ce groupe.';
+
+	/// fr: 'Vous avez déjà utilisé vos visites pour cette séance.'
+	String get quotaVisites => 'Vous avez déjà utilisé vos visites pour cette séance.';
+
+	/// fr: 'Votre temps d'observation est épuisé pour cette séance.'
+	String get tempsEpuise => 'Votre temps d\'observation est épuisé pour cette séance.';
+
+	/// fr: 'Vous n'êtes rattaché à aucun élève de cette séance.'
+	String get lienTuteur => 'Vous n\'êtes rattaché à aucun élève de cette séance.';
+
+	/// fr: 'La séance n'est pas en cours.'
+	String get seanceNonActive => 'La séance n\'est pas en cours.';
+
+	/// fr: 'La salle n'est pas ouverte à cette heure.'
+	String get horsFenetre => 'La salle n\'est pas ouverte à cette heure.';
+
+	/// fr: 'L'observation n'est pas disponible pour le moment.'
+	String get indisponible => 'L\'observation n\'est pas disponible pour le moment.';
+
+	/// fr: 'L'observation n'est pas encore activée sur cette installation.'
+	String get capaciteAbsente => 'L\'observation n\'est pas encore activée sur cette installation.';
+}
+
+// Path: tc.observation.visite
+class Traductions$tc$observation$visite$fr {
+	Traductions$tc$observation$visite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Observation en cours'
+	String get titre => 'Observation en cours';
+
+	/// fr: 'Quitter'
+	String get quitter => 'Quitter';
+
+	/// fr: 'Micro et caméra fermés pendant l'observation.'
+	String get mediaFerme => 'Micro et caméra fermés pendant l\'observation.';
+
+	/// fr: 'Le support partagé par l'enseignant s'affiche ici.'
+	String get supportIndisponible => 'Le support partagé par l\'enseignant s\'affiche ici.';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Votre enfant'
+	String get monEnfant => 'Votre enfant';
+
+	/// fr: 'Votre enfant n'a pas d'image ouverte.'
+	String get enfantAbsent => 'Votre enfant n\'a pas d\'image ouverte.';
+
+	/// fr: 'Temps restant non confirmé par le serveur.'
+	String get budgetIncertain => 'Temps restant non confirmé par le serveur.';
+
+	/// fr: 'La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.'
+	String get sortieNonConfirmee => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.';
+
+	/// fr: '{secondes} s restantes'
+	String restant({required Object secondes}) => '${secondes} s restantes';
+
+	/// fr: 'Visite {rang} sur {total}'
+	String visites({required Object rang, required Object total}) => 'Visite ${rang} sur ${total}';
+}
+
+// Path: tc.observation.fin
+class Traductions$tc$observation$fin$fr {
+	Traductions$tc$observation$fin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez quitté l'observation.'
+	String get sortieVolontaire => 'Vous avez quitté l\'observation.';
+
+	/// fr: 'Votre temps d'observation est écoulé.'
+	String get quotaAtteint => 'Votre temps d\'observation est écoulé.';
+
+	/// fr: 'La séance est terminée.'
+	String get seanceTerminee => 'La séance est terminée.';
+
+	/// fr: 'Votre observation a été interrompue.'
+	String get revocationServeur => 'Votre observation a été interrompue.';
+
+	/// fr: 'La connexion a été perdue.'
+	String get deconnexion => 'La connexion a été perdue.';
+}
+
+// Path: tc.observation.annonce
+class Traductions$tc$observation$annonce$fr {
+	Traductions$tc$observation$annonce$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tuteur de {prenomEnfant} observe'
+	String tuteurObserve({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe';
+
+	/// fr: '{secondes} s'
+	String restant({required Object secondes}) => '${secondes} s';
+
+	/// fr: 'Ton tuteur regarde le cours'
+	String get enfantIndicateur => 'Ton tuteur regarde le cours';
+}
+
+// Path: tc.observation.reglages
+class Traductions$tc$observation$reglages$fr {
+	Traductions$tc$observation$reglages$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Observation par les tuteurs'
+	String get titre => 'Observation par les tuteurs';
+
+	/// fr: 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s'applique à ce groupe.'
+	String get intro => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.';
+
+	/// fr: 'Hériter de l'Académie'
+	String get heriter => 'Hériter de l\'Académie';
+
+	/// fr: 'Personnaliser pour ce groupe'
+	String get personnaliser => 'Personnaliser pour ce groupe';
+
+	/// fr: 'Désactiver pour ce groupe'
+	String get desactiver => 'Désactiver pour ce groupe';
+
+	/// fr: 'Visites par séance'
+	String get maxVisites => 'Visites par séance';
+
+	/// fr: 'Temps total par séance'
+	String get tempsTotal => 'Temps total par séance';
+
+	/// fr: 'Diminuer'
+	String get diminuer => 'Diminuer';
+
+	/// fr: 'Augmenter'
+	String get augmenter => 'Augmenter';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Au moins une visite par séance.'
+	String get invalideVisites => 'Au moins une visite par séance.';
+
+	/// fr: 'Au moins trente secondes par séance.'
+	String get invalideTemps => 'Au moins trente secondes par séance.';
+
+	/// fr: 'Académie : {valeur}'
+	String valeurHeritee({required Object valeur}) => 'Académie : ${valeur}';
+
+	/// fr: '{n} visite'
+	String uniteVisiteUne({required Object n}) => '${n} visite';
+
+	/// fr: '{n} visites'
+	String uniteVisites({required Object n}) => '${n} visites';
+
+	/// fr: '{n} s'
+	String uniteSecondes({required Object n}) => '${n} s';
+
+	/// fr: 'Version {version}'
+	String versionPolitique({required Object version}) => 'Version ${version}';
+}
+
+// Path: tc.parcours.avant
+class Traductions$tc$parcours$avant$fr {
+	Traductions$tc$parcours$avant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avant le prochain cours'
+	String get titre => 'Avant le prochain cours';
+
+	/// fr: 'Rien à préparer pour le prochain cours.'
+	String get rien => 'Rien à préparer pour le prochain cours.';
+
+	/// fr: 'Votre enseignant proposera le travail à la fin de la prochaine séance.'
+	String get rienDetail => 'Votre enseignant proposera le travail à la fin de la prochaine séance.';
+
+	/// fr: 'Le travail à préparer n'est pas encore relié à cet espace.'
+	String get nonBranche => 'Le travail à préparer n\'est pas encore relié à cet espace.';
+
+	/// fr: 'Cela ne veut pas dire qu'il n'y a rien à préparer : cet écran ne sait pas encore le lire.'
+	String get nonBrancheDetail => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.';
+
+	/// fr: 'Reprendre le cours'
+	String get reprendre => 'Reprendre le cours';
+
+	/// fr: 'Reprendre le cours à $position'
+	String get reprendreDepuis => 'Reprendre le cours à \$position';
+}
+
+// Path: tc.parcours.intention
+class Traductions$tc$parcours$intention$fr {
+	Traductions$tc$parcours$intention$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À apprendre'
+	String get apprendre => 'À apprendre';
+
+	/// fr: 'À revoir'
+	String get revoir => 'À revoir';
+
+	/// fr: 'À renforcer'
+	String get renforcer => 'À renforcer';
+
+	/// fr: 'À entretenir'
+	String get entretenir => 'À entretenir';
+
+	/// fr: 'Pour l'évaluation'
+	String get evaluation => 'Pour l\'évaluation';
+}
+
+// Path: tc.parcours.plage
+class Traductions$tc$parcours$plage$fr {
+	Traductions$tc$parcours$plage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sourate $sourate, versets $premier à $dernier'
+	String get versets => 'Sourate \$sourate, versets \$premier à \$dernier';
+
+	/// fr: 'Sourate $sourate, verset $premier'
+	String get versetUnique => 'Sourate \$sourate, verset \$premier';
+
+	/// fr: 'Sourate $sourateDebut, verset $versetDebut jusqu'à sourate $sourateFin, verset $versetFin'
+	String get versetsCroisee => 'Sourate \$sourateDebut, verset \$versetDebut jusqu\'à sourate \$sourateFin, verset \$versetFin';
+
+	/// fr: 'Pages $premiere à $derniere'
+	String get pages => 'Pages \$premiere à \$derniere';
+
+	/// fr: 'Page $premiere'
+	String get pageUnique => 'Page \$premiere';
+
+	/// fr: 'Section $section'
+	String get section => 'Section \$section';
+
+	/// fr: 'Tout le support'
+	String get ressource => 'Tout le support';
+}
+
+// Path: tc.parcours.feedback
+class Traductions$tc$parcours$feedback$fr {
+	Traductions$tc$parcours$feedback$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$tc$parcours$feedback$cours$fr cours = Traductions$tc$parcours$feedback$cours$fr.internal(_root);
+	late final Traductions$tc$parcours$feedback$comprehension$fr comprehension = Traductions$tc$parcours$feedback$comprehension$fr.internal(_root);
+	late final Traductions$tc$parcours$feedback$rythme$fr rythme = Traductions$tc$parcours$feedback$rythme$fr.internal(_root);
+	late final Traductions$tc$parcours$feedback$technique$fr technique = Traductions$tc$parcours$feedback$technique$fr.internal(_root);
+	late final Traductions$tc$parcours$feedback$confiance$fr confiance = Traductions$tc$parcours$feedback$confiance$fr.internal(_root);
+
+	/// fr: 'Merci.'
+	String get merci => 'Merci.';
+
+	late final Traductions$tc$parcours$feedback$tendance$fr tendance = Traductions$tc$parcours$feedback$tendance$fr.internal(_root);
+}
+
+// Path: tc.parcours.signalement
+class Traductions$tc$parcours$signalement$fr {
+	Traductions$tc$parcours$signalement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Signaler un besoin'
+	String get titre => 'Signaler un besoin';
+
+	/// fr: 'De quoi s'agit-il ?'
+	String get categorie => 'De quoi s\'agit-il ?';
+
+	late final Traductions$tc$parcours$signalement$categorieValeur$fr categorieValeur = Traductions$tc$parcours$signalement$categorieValeur$fr.internal(_root);
+
+	/// fr: 'Note interne'
+	String get interne => 'Note interne';
+
+	/// fr: 'Lue par l'administration seulement. Elle ne part jamais automatiquement à la famille.'
+	String get interneAide => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.';
+
+	/// fr: 'Message pour la famille'
+	String get famille => 'Message pour la famille';
+
+	/// fr: 'Facultatif. L'administration décide seule de le transmettre, en un clic.'
+	String get familleAide => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.';
+
+	/// fr: 'Élève $eleve. La séance, le groupe et votre nom sont déjà joints.'
+	String get contexte => 'Élève \$eleve. La séance, le groupe et votre nom sont déjà joints.';
+
+	/// fr: 'Envoyer le signalement'
+	String get envoyer => 'Envoyer le signalement';
+
+	/// fr: 'Signalement transmis à l'administration.'
+	String get envoye => 'Signalement transmis à l\'administration.';
+
+	/// fr: 'Écrivez au moins ce que l'administration doit savoir.'
+	String get interneRequis => 'Écrivez au moins ce que l\'administration doit savoir.';
+
+	/// fr: 'Le signalement n'a pas pu être transmis. Réessayez.'
+	String get echec => 'Le signalement n\'a pas pu être transmis. Réessayez.';
+}
+
+// Path: tc.parcours.postCours
+class Traductions$tc$parcours$postCours$fr {
+	Traductions$tc$parcours$postCours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Après le cours'
+	String get titre => 'Après le cours';
+
+	/// fr: 'Durée réelle $minutes min'
+	String get duree => 'Durée réelle \$minutes min';
+
+	/// fr: 'À confirmer'
+	String get exceptions => 'À confirmer';
+
+	/// fr: 'Rien ne demande votre attention.'
+	String get toutEstNominal => 'Rien ne demande votre attention.';
+
+	/// fr: 'Reprise proposée'
+	String get reprise => 'Reprise proposée';
+
+	/// fr: 'Aucune position de reprise connue pour cette séance.'
+	String get repriseInconnue => 'Aucune position de reprise connue pour cette séance.';
+
+	/// fr: 'Travail proposé'
+	String get travail => 'Travail proposé';
+
+	/// fr: 'Aucun travail proposé pour l'instant.'
+	String get travailAucun => 'Aucun travail proposé pour l\'instant.';
+
+	/// fr: 'Valider'
+	String get valider => 'Valider';
+
+	/// fr: 'Enregistré. Il partira dès le retour du réseau.'
+	String get enFile => 'Enregistré. Il partira dès le retour du réseau.';
+
+	/// fr: 'Cours clôturé.'
+	String get envoye => 'Cours clôturé.';
+}
+
+// Path: tc.outils.dock.position
+class Traductions$tc$outils$dock$position$fr {
+	Traductions$tc$outils$dock$position$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En bas'
+	String get bas => 'En bas';
+
+	/// fr: 'À gauche'
+	String get gauche => 'À gauche';
+
+	/// fr: 'À droite'
+	String get droite => 'À droite';
+}
+
+// Path: tc.classe.entete.titreEnseignant
+class Traductions$tc$classe$entete$titreEnseignant$fr {
+	Traductions$tc$classe$entete$titreEnseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sayyid'
+	String get sayyid => 'Sayyid';
+
+	/// fr: 'Sayyida'
+	String get sayyida => 'Sayyida';
+}
+
+// Path: tc.parcours.feedback.cours
+class Traductions$tc$parcours$feedback$cours$fr {
+	Traductions$tc$parcours$feedback$cours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment était le cours aujourd'hui ?'
+	String get intitule => 'Comment était le cours aujourd\'hui ?';
+
+	/// fr: 'Difficile'
+	String get difficile => 'Difficile';
+
+	/// fr: 'Bien'
+	String get bien => 'Bien';
+
+	/// fr: 'Très bien'
+	String get tresBien => 'Très bien';
+}
+
+// Path: tc.parcours.feedback.comprehension
+class Traductions$tc$parcours$feedback$comprehension$fr {
+	Traductions$tc$parcours$feedback$comprehension$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Avez-vous compris ce qui a été travaillé ?'
+	String get intitule => 'Avez-vous compris ce qui a été travaillé ?';
+
+	/// fr: 'Pas vraiment'
+	String get difficile => 'Pas vraiment';
+
+	/// fr: 'Plutôt oui'
+	String get bien => 'Plutôt oui';
+
+	/// fr: 'Tout à fait'
+	String get tresBien => 'Tout à fait';
+}
+
+// Path: tc.parcours.feedback.rythme
+class Traductions$tc$parcours$feedback$rythme$fr {
+	Traductions$tc$parcours$feedback$rythme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le rythme du cours vous a-t-il convenu ?'
+	String get intitule => 'Le rythme du cours vous a-t-il convenu ?';
+
+	/// fr: 'Trop rapide'
+	String get difficile => 'Trop rapide';
+
+	/// fr: 'Convenable'
+	String get bien => 'Convenable';
+
+	/// fr: 'Très confortable'
+	String get tresBien => 'Très confortable';
+}
+
+// Path: tc.parcours.feedback.technique
+class Traductions$tc$parcours$feedback$technique$fr {
+	Traductions$tc$parcours$feedback$technique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le son et l'image étaient-ils confortables ?'
+	String get intitule => 'Le son et l\'image étaient-ils confortables ?';
+
+	/// fr: 'Gênants'
+	String get difficile => 'Gênants';
+
+	/// fr: 'Corrects'
+	String get bien => 'Corrects';
+
+	/// fr: 'Très bons'
+	String get tresBien => 'Très bons';
+}
+
+// Path: tc.parcours.feedback.confiance
+class Traductions$tc$parcours$feedback$confiance$fr {
+	Traductions$tc$parcours$feedback$confiance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous sentez-vous prêt pour le prochain cours ?'
+	String get intitule => 'Vous sentez-vous prêt pour le prochain cours ?';
+
+	/// fr: 'Pas encore'
+	String get difficile => 'Pas encore';
+
+	/// fr: 'Plutôt'
+	String get bien => 'Plutôt';
+
+	/// fr: 'Tout à fait'
+	String get tresBien => 'Tout à fait';
+}
+
+// Path: tc.parcours.feedback.tendance
+class Traductions$tc$parcours$feedback$tendance$fr {
+	Traductions$tc$parcours$feedback$tendance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retour des élèves'
+	String get titre => 'Retour des élèves';
+
+	/// fr: 'Pas encore assez de retours pour dégager une tendance.'
+	String get sousSeuil => 'Pas encore assez de retours pour dégager une tendance.';
+
+	/// fr: 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.'
+	String get anonyme => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.';
+}
+
+// Path: tc.parcours.signalement.categorieValeur
+class Traductions$tc$parcours$signalement$categorieValeur$fr {
+	Traductions$tc$parcours$signalement$categorieValeur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pédagogique'
+	String get pedagogique => 'Pédagogique';
+
+	/// fr: 'Présence'
+	String get presence => 'Présence';
+
+	/// fr: 'Technique'
+	String get technique => 'Technique';
+
+	/// fr: 'Changement'
+	String get changement => 'Changement';
+
+	/// fr: 'Autre'
+	String get autre => 'Autre';
+}
+
 /// The flat map containing all translations for locale <fr>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -6438,6 +8467,393 @@ extension on Traductions {
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Mode enfant',
 			'galerie.modeStandard' => 'Mode standard',
+			'tc.groupe.mesGroupes.titre' => 'Mes groupes',
+			'tc.groupe.mesGroupes.aucun' => 'Aucun groupe pour le moment',
+			'tc.groupe.mesGroupes.aucunDetail' => 'L\'académie vous placera dans un groupe dès qu\'un créneau vous correspond.',
+			'tc.groupe.commun.erreur' => 'Vos groupes n\'ont pas pu être lus',
+			'tc.groupe.commun.reessayer' => 'Réessayer',
+			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir le groupe ${libelle}',
+			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '${membres} / ${seuil}',
+			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '${membres} élèves sur ${seuil} places',
+			'tc.groupe.carte.complet' => 'Complet',
+			'tc.groupe.carte.prochainCours' => 'Prochain cours',
+			'tc.groupe.carte.aucuneSeance' => 'Aucune séance planifiée',
+			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de ce groupe n\'est pas encore posé.',
+			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
+			'tc.groupe.carte.dureeLibelle' => 'Durée',
+			'tc.groupe.carte.rejoindre' => 'Rejoindre',
+			'tc.groupe.enseignant.sayyid' => 'Sayyid',
+			'tc.groupe.enseignant.sayyida' => 'Sayyida',
+			'tc.groupe.enseignant.photoManquante' => 'Photo à fournir',
+			'tc.groupe.enseignant.photoManquanteDetail' => 'La photo de l\'enseignant n\'a pas encore été enregistrée.',
+			'tc.groupe.cours.coursEtNiveau' => ({required Object cours, required Object niveau}) => '${cours} · ${niveau}',
+			'tc.groupe.temps.dansMinutes' => ({required Object minutes}) => 'Cours dans ${minutes} min',
+			'tc.groupe.temps.dansHeures' => ({required Object heures, required Object minutes}) => 'Cours dans ${heures} h ${minutes}',
+			'tc.groupe.temps.imminent' => 'Cours imminent',
+			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Salle ouverte · ${reste}',
+			'tc.groupe.temps.salleOuverteCourt' => 'Salle ouverte',
+			'tc.groupe.temps.attente' => 'Vous êtes dans la salle. Le cours n\'a pas encore commencé.',
+			'tc.groupe.temps.attenteDetail' => 'Ce temps d\'attente ne compte pas dans votre présence.',
+			'tc.groupe.temps.enSalle' => 'En salle',
+			'tc.groupe.temps.resteMinutes' => ({required Object minutes}) => 'Reste ${minutes} min',
+			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}',
+			'tc.groupe.temps.enCours' => ({required Object reste}) => 'Cours en cours · ${reste}',
+			'tc.groupe.temps.enDirect' => 'En direct',
+			'tc.groupe.temps.prolongee' => 'Cours toujours en cours',
+			'tc.groupe.temps.depassement' => 'En dépassement',
+			'tc.groupe.temps.terminee' => 'Cours terminé',
+			'tc.groupe.horloges.votreHeure' => 'Votre heure',
+			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
+			'tc.groupe.horloges.heureGroupe' => 'Heure du groupe',
+			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
+			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
+			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
+			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
+			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
+			'tc.groupe.espace.retour' => 'Mes groupes',
+			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
+			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
+			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
+			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
+			'tc.groupe.espace.progression' => 'Progression',
+			'tc.groupe.espace.roster' => 'Élèves du groupe',
+			'tc.groupe.espace.reprendreLeCours' => 'Reprendre le cours',
+			'tc.groupe.espace.introuvable' => 'Ce groupe ne vous est pas ouvert',
+			'tc.groupe.espace.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à une autre classe.',
+			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
+			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
+			'tc.bibliotheque.titre' => 'Bibliothèque',
+			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
+			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
+			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
+			'tc.bibliotheque.filtre.type' => 'Type',
+			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
+			'tc.bibliotheque.sections.continuer' => 'Continuer',
+			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour ce groupe',
+			'tc.bibliotheque.sections.recents' => 'Récents',
+			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
+			'tc.bibliotheque.sections.resultats' => 'Résultats',
+			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
+			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
+			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
+			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
+			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
+			'tc.bibliotheque.indisponible.action' => 'Réessayer',
+			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
+			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
+			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
+			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
+			'tc.bibliotheque.offline.enCache' => 'En cache',
+			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
+			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
+			'tc.bibliotheque.type.quran' => 'Coran',
+			'tc.bibliotheque.type.texteStructure' => 'Texte',
+			'tc.bibliotheque.type.pdf' => 'PDF',
+			'tc.bibliotheque.type.image' => 'Image',
+			'tc.bibliotheque.type.lecon' => 'Leçon',
+			'tc.bibliotheque.detail.titre' => 'Support',
+			'tc.bibliotheque.detail.capacites' => 'Ce que ce support permet',
+			'tc.bibliotheque.detail.niveaux' => 'Niveaux',
+			'tc.bibliotheque.detail.sansVersion' => 'Aucune version publiée : rien à ouvrir pour le moment.',
+			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
+			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
+			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
+			'tc.bibliotheque.action.liberer' => 'Libérer la place',
+			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
+			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
+			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
+			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
+			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
+			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
+			'tc.bibliotheque.classe.titre' => 'Choisir un support',
+			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
+			'tc.coran.modes.mushaf' => 'Page du mushaf',
+			'tc.coran.modes.verset' => 'Lecture agrandie',
+			'tc.coran.modes.focus' => 'Focus',
+			'tc.coran.modes.choisir' => 'Mode de lecture',
+			'tc.coran.mushaf.coteDroite' => 'Page de droite',
+			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
+			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
+			'tc.coran.fidelite.approchee' => 'Composition approchée',
+			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
+			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
+			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
+			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
+			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
+			'tc.coran.navigation.titre' => 'Aller à',
+			_ => null,
+		} ?? switch (path) {
+			'tc.coran.navigation.ouvrir' => 'Aller à une page',
+			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
+			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',
+			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
+			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
+			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
+			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
+			'tc.coran.reprise.groupe' => 'Reprendre le cours',
+			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'Le groupe en était page ${page}',
+			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
+			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
+			'tc.coran.focus.quitter' => 'Quitter le focus',
+			'tc.outils.dock.titre' => 'Outils',
+			'tc.outils.dock.deplacer' => 'Déplacer les outils',
+			'tc.outils.dock.position.bas' => 'En bas',
+			'tc.outils.dock.position.gauche' => 'À gauche',
+			'tc.outils.dock.position.droite' => 'À droite',
+			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
+			'tc.outils.dock.focus' => 'Focus',
+			'tc.outils.dock.marquer' => 'Marquer',
+			'tc.outils.dock.masquer' => 'Masquer',
+			'tc.outils.dock.stylet' => 'Stylet',
+			'tc.outils.dock.pointeur' => 'Pointeur',
+			'tc.outils.dock.revision' => 'Révision',
+			'tc.outils.intention.aApprendre' => 'À apprendre',
+			'tc.outils.intention.aRevoir' => 'À revoir',
+			'tc.outils.intention.aRenforcer' => 'À renforcer',
+			'tc.outils.intention.aEntretenir' => 'À entretenir',
+			'tc.outils.intention.pourEvaluation' => 'Pour l\'évaluation',
+			'tc.outils.trait.stylet' => 'Stylet',
+			'tc.outils.trait.surligneur' => 'Surligner',
+			'tc.outils.trait.gomme' => 'Gomme',
+			'tc.outils.trait.annuler' => 'Annuler',
+			'tc.outils.trait.plus' => 'Plus',
+			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
+			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
+			'tc.outils.portee.enregistree' => 'Enregistrer',
+			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
+			'tc.outils.marquer.titre' => 'Marquer ce passage',
+			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
+			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
+			'tc.outils.revision.titre' => 'À préparer',
+			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
+			'tc.outils.revision.groupeEntier' => 'Tout le groupe',
+			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
+			'tc.outils.revision.creer' => 'Poser le travail',
+			'tc.outils.revision.posee' => 'Travail à préparer posé',
+			'tc.outils.masquer.reveler' => 'Révéler',
+			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
+			'tc.outils.masquer.tout' => 'Tout démasquer',
+			'tc.outils.focus.quitter' => 'Quitter le focus',
+			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
+			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
+			'tc.outils.annotation.aucuneSelection' => 'Sélectionnez d\'abord un passage.',
+			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
+			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
+			'tc.classe.entete.resteMinutes' => ({required Object minutes}) => 'Reste ${minutes} min',
+			'tc.classe.entete.resteHeuresMinutes' => ({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}',
+			'tc.classe.entete.coursEnCours' => 'Cours toujours en cours',
+			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
+			'tc.classe.roster.titre' => 'Élèves',
+			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
+			'tc.classe.roster.indisponible' => 'Roster indisponible',
+			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
+			'tc.classe.roster.vide' => 'Aucun élève inscrit',
+			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.',
+			'tc.classe.roster.ouvrirFiche' => ({required Object prenom}) => 'Ouvrir la fiche de ${prenom}',
+			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places',
+			'tc.classe.etat.inconnu' => 'État inconnu',
+			'tc.classe.etat.attendu' => 'Attendu',
+			'tc.classe.etat.enConnexion' => 'En connexion',
+			'tc.classe.etat.present' => 'Présent',
+			'tc.classe.etat.enRetard' => 'En retard',
+			'tc.classe.etat.deconnecte' => 'Déconnecté',
+			'tc.classe.etat.enReconnexion' => 'En reconnexion',
+			'tc.classe.etat.sorti' => 'Sorti',
+			'tc.classe.etat.absent' => 'Absent',
+			'tc.classe.fiche.niveau' => 'Niveau',
+			'tc.classe.fiche.objectif' => 'Objectif actuel',
+			'tc.classe.fiche.derniereSeance' => 'Dernière séance',
+			'tc.classe.fiche.page' => ({required Object page}) => 'Page ${page}',
+			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => '${nombre} élément(s)',
+			'tc.classe.fiche.aReprendre' => 'À reprendre',
+			'tc.classe.fiche.presenceRecente' => 'Présence récente',
+			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
+			'tc.classe.fiche.travailActuel' => 'Travail actuel',
+			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
+			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
+			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
+			'tc.classe.action.rappel' => 'Rappel discret',
+			'tc.classe.action.reciter' => 'Choisir pour réciter',
+			'tc.classe.action.noter' => 'Noter',
+			'tc.classe.action.signaler' => 'Signaler un besoin',
+			'tc.classe.action.contexte' => 'Ouvrir le contexte',
+			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
+			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
+			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
+			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
+			'tc.classe.recitation.titre' => 'Récitation',
+			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
+			'tc.classe.recitation.pastille' => 'Récite',
+			'tc.classe.recitation.suivants' => 'Ensuite',
+			'tc.classe.recitation.personne' => 'Personne ne récite',
+			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
+			'tc.classe.support.aucun' => 'Aucun support présenté',
+			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support au groupe.',
+			'tc.classe.support.bibliotheque' => 'Bibliothèque',
+			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
+			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
+			'tc.classe.commandes.micro' => 'Ouvrir le micro',
+			'tc.classe.commandes.microFermer' => 'Fermer le micro',
+			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
+			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',
+			'tc.classe.commandes.microCoupe' => 'Micro fermé',
+			'tc.classe.commandes.quitter' => 'Quitter',
+			'tc.classe.commandes.quitterQuestion' => 'Quitter le cours ?',
+			'tc.classe.commandes.quitterConsequence' => 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.',
+			'tc.classe.commandes.fermerBibliotheque' => 'Fermer la Bibliothèque',
+			'tc.classe.scene.vide' => 'Vous êtes seul dans la salle pour le moment',
+			'tc.classe.scene.sansImage' => 'Sans image',
+			'tc.classe.reseau.bon' => 'Réseau bon',
+			'tc.classe.reseau.mediocre' => 'Réseau instable',
+			'tc.classe.reseau.perdu' => 'Réseau perdu',
+			'tc.classe.attente.materiel' => 'Vérification de votre micro',
+			'tc.classe.attente.ouverture' => 'Ouverture du cours',
+			'tc.classe.attente.connexion' => 'Connexion au cours',
+			'tc.classe.attente.refus' => 'Le cours n\'est pas accessible pour le moment',
+			'tc.classe.lien.instable' => 'Connexion instable',
+			'tc.classe.lien.reconnexion' => 'Reconnexion en cours',
+			'tc.classe.lien.retabli' => 'Connexion rétablie',
+			'tc.classe.lien.echec' => 'Connexion perdue',
+			'tc.classe.lien.retourDeSuspension' => 'Le cours a été mis en pause par le système. Vérification du lien en cours.',
+			'tc.classe.barre.titre' => 'Cours en cours',
+			'tc.classe.barre.revenir' => ({required Object groupe}) => 'Revenir au cours de ${groupe}',
+			'tc.classe.prevol.titre' => 'Avant d\'ouvrir le cours',
+			'tc.classe.prevol.microOk' => 'Micro détecté',
+			'tc.classe.prevol.microAbsent' => 'Aucun micro utilisable',
+			'tc.classe.prevol.cameraOk' => 'Caméra détectée',
+			'tc.classe.prevol.cameraAbsente' => 'Aucune caméra. Le cours reste possible.',
+			'tc.classe.prevol.permissionRefusee' => 'Accès au micro refusé. Autorisez-le pour ouvrir le cours.',
+			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
+			'tc.classe.observation.restant' => ({required Object secondes}) => 'Reste ${secondes} s',
+			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
+			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
+			'tc.observation.entree.titre' => 'Observer la séance',
+			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
+			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
+			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
+			'tc.observation.entree.entrer' => 'Entrer',
+			'tc.observation.entree.modeDiscret' => 'Observer discrètement',
+			'tc.observation.entree.modeDiscretDetail' => 'Invisible pour les participants. Sans micro ni caméra, sans annonce.',
+			'tc.observation.entree.modeVisible' => 'Rejoindre la classe',
+			'tc.observation.entree.modeVisibleDetail' => 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.',
+			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
+			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
+			'tc.observation.entree.roleSansObservation' => 'Votre compte n\'observe pas les séances.',
+			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour ce groupe.',
+			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
+			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
+			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
+			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
+			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
+			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
+			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
+			'tc.observation.visite.titre' => 'Observation en cours',
+			'tc.observation.visite.quitter' => 'Quitter',
+			'tc.observation.visite.mediaFerme' => 'Micro et caméra fermés pendant l\'observation.',
+			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
+			'tc.observation.visite.enseignant' => 'Enseignant',
+			'tc.observation.visite.monEnfant' => 'Votre enfant',
+			'tc.observation.visite.enfantAbsent' => 'Votre enfant n\'a pas d\'image ouverte.',
+			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
+			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
+			'tc.observation.visite.restant' => ({required Object secondes}) => '${secondes} s restantes',
+			'tc.observation.visite.visites' => ({required Object rang, required Object total}) => 'Visite ${rang} sur ${total}',
+			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
+			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
+			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',
+			'tc.observation.fin.revocationServeur' => 'Votre observation a été interrompue.',
+			'tc.observation.fin.deconnexion' => 'La connexion a été perdue.',
+			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
+			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
+			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
+			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
+			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',
+			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
+			'tc.observation.reglages.personnaliser' => 'Personnaliser pour ce groupe',
+			'tc.observation.reglages.desactiver' => 'Désactiver pour ce groupe',
+			'tc.observation.reglages.maxVisites' => 'Visites par séance',
+			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
+			'tc.observation.reglages.diminuer' => 'Diminuer',
+			'tc.observation.reglages.augmenter' => 'Augmenter',
+			'tc.observation.reglages.enregistrer' => 'Enregistrer',
+			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
+			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
+			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
+			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
+			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
+			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
+			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
+			'tc.parcours.avant.titre' => 'Avant le prochain cours',
+			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
+			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
+			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
+			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
+			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
+			'tc.parcours.avant.reprendreDepuis' => 'Reprendre le cours à \$position',
+			'tc.parcours.intention.apprendre' => 'À apprendre',
+			'tc.parcours.intention.revoir' => 'À revoir',
+			'tc.parcours.intention.renforcer' => 'À renforcer',
+			'tc.parcours.intention.entretenir' => 'À entretenir',
+			'tc.parcours.intention.evaluation' => 'Pour l\'évaluation',
+			'tc.parcours.plage.versets' => 'Sourate \$sourate, versets \$premier à \$dernier',
+			'tc.parcours.plage.versetUnique' => 'Sourate \$sourate, verset \$premier',
+			'tc.parcours.plage.versetsCroisee' => 'Sourate \$sourateDebut, verset \$versetDebut jusqu\'à sourate \$sourateFin, verset \$versetFin',
+			'tc.parcours.plage.pages' => 'Pages \$premiere à \$derniere',
+			'tc.parcours.plage.pageUnique' => 'Page \$premiere',
+			'tc.parcours.plage.section' => 'Section \$section',
+			'tc.parcours.plage.ressource' => 'Tout le support',
+			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
+			'tc.parcours.feedback.cours.difficile' => 'Difficile',
+			'tc.parcours.feedback.cours.bien' => 'Bien',
+			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
+			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
+			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
+			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
+			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
+			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
+			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
+			'tc.parcours.feedback.rythme.bien' => 'Convenable',
+			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
+			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
+			'tc.parcours.feedback.technique.difficile' => 'Gênants',
+			'tc.parcours.feedback.technique.bien' => 'Corrects',
+			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
+			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
+			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
+			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
+			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
+			'tc.parcours.feedback.merci' => 'Merci.',
+			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
+			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
+			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
+			'tc.parcours.signalement.titre' => 'Signaler un besoin',
+			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
+			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
+			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
+			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
+			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
+			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
+			'tc.parcours.signalement.interne' => 'Note interne',
+			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
+			'tc.parcours.signalement.famille' => 'Message pour la famille',
+			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
+			'tc.parcours.signalement.contexte' => 'Élève \$eleve. La séance, le groupe et votre nom sont déjà joints.',
+			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
+			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
+			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
+			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
+			'tc.parcours.postCours.titre' => 'Après le cours',
+			'tc.parcours.postCours.duree' => 'Durée réelle \$minutes min',
+			'tc.parcours.postCours.exceptions' => 'À confirmer',
+			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
+			'tc.parcours.postCours.reprise' => 'Reprise proposée',
+			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
+			'tc.parcours.postCours.travail' => 'Travail proposé',
+			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
+			'tc.parcours.postCours.valider' => 'Valider',
+			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
+			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
 			_ => null,
 		};
 	}

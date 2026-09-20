@@ -40,6 +40,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 
 	// Translations
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
+	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
 }
 
 // Path: eleve
@@ -50,6 +51,16 @@ class _Traductions$eleve$ar extends Traductions$eleve$fr {
 
 	// Translations
 	@override late final _Traductions$eleve$suivi$ar suivi = _Traductions$eleve$suivi$ar._(_root);
+}
+
+// Path: tc
+class _Traductions$tc$ar extends Traductions$tc$fr {
+	_Traductions$tc$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
 }
 
 // Path: eleve.suivi
@@ -79,6 +90,27 @@ class _Traductions$eleve$suivi$ar extends Traductions$eleve$suivi$fr {
 	@override String get finUn => 'درس واحد في المتابعة.';
 }
 
+// Path: tc.groupe
+class _Traductions$tc$groupe$ar extends Traductions$tc$groupe$fr {
+	_Traductions$tc$groupe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$groupe$enseignant$ar enseignant = _Traductions$tc$groupe$enseignant$ar._(_root);
+}
+
+// Path: tc.groupe.enseignant
+class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseignant$fr {
+	_Traductions$tc$groupe$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get sayyid => 'سيد';
+	@override String get sayyida => 'سيدة';
+}
+
 /// The flat map containing all translations for locale <ar>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -105,6 +137,8 @@ extension on TraductionsAr {
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'تظهر أحدث ${nombre} دروس.',
 			'eleve.suivi.fin' => ({required Object nombre}) => 'عدد الدروس في المتابعة: ${nombre}.',
 			'eleve.suivi.finUn' => 'درس واحد في المتابعة.',
+			'tc.groupe.enseignant.sayyid' => 'سيد',
+			'tc.groupe.enseignant.sayyida' => 'سيدة',
 			_ => null,
 		};
 	}

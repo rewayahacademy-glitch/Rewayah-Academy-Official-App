@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart';
@@ -8,7 +9,6 @@ import 'package:rewayah_academy/core/tc_bibliotheque/vue_catalogue.dart';
 import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
 import 'package:rewayah_academy/features/tc_catalogue/carte_ressource.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
-import 'package:rewayah_academy/features/tc_catalogue/libelles_tc_b.dart';
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 import 'package:rewayah_academy/features/tc_catalogue/vignette_ressource.dart';
 
@@ -41,8 +41,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesTcB.videMessage), findsOneWidget);
-      expect(find.text(LibellesTcB.videInvitation), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.vide.message), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.vide.invitation), findsOneWidget);
       expect(find.byType(CarteRessource), findsNothing);
     });
 
@@ -68,7 +68,7 @@ void main() {
       // La couverture est calculee, pas une icone generique partagee.
       expect(find.byType(VignetteRessource), findsOneWidget);
       // L'etat hors ligne est un mot, pas seulement une couleur.
-      expect(find.text(LibellesTcB.offlineATelecharger), findsWidgets);
+      expect(find.text(t.tc.bibliotheque.offline.aTelecharger), findsWidgets);
     });
 
     testWidgets('couverture manquante : la vignette reste distincte', (
@@ -116,8 +116,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesTcB.indisponibleMessage), findsOneWidget);
-      expect(find.text(LibellesTcB.videMessage), findsNothing);
+      expect(find.text(t.tc.bibliotheque.indisponible.message), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.vide.message), findsNothing);
     });
   });
 
@@ -144,10 +144,10 @@ void main() {
       await tester.enterText(find.byType(TextField), 'biologie');
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesTcB.aucunResultatMessage), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.aucunResultat.message), findsOneWidget);
       expect(find.byType(CarteRessource), findsNothing);
 
-      await tester.tap(find.text(LibellesTcB.effacerRecherche).last);
+      await tester.tap(find.text(t.tc.bibliotheque.effacerRecherche).last);
       await tester.pumpAndSettle();
 
       expect(find.byType(CarteRessource), findsNWidgets(3));
@@ -186,7 +186,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(LibellesTcB.typePdf).first);
+      await tester.tap(find.text(t.tc.bibliotheque.type.pdf).first);
       await tester.pumpAndSettle();
 
       expect(find.byType(CarteRessource), findsOneWidget);
@@ -213,7 +213,7 @@ void main() {
 
         expect(find.byType(CarteRessource), findsOneWidget);
         expect(
-          find.text(LibellesTcB.messageHorsLigneNonTelecharge),
+          find.text(t.tc.bibliotheque.message.horsLigneNonTelecharge),
           findsOneWidget,
         );
 
@@ -294,8 +294,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesTcB.introuvableMessage), findsOneWidget);
-      expect(find.text(LibellesTcB.indisponibleMessage), findsNothing);
+      expect(find.text(t.tc.bibliotheque.introuvable.message), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.indisponible.message), findsNothing);
     });
 
     testWidgets('sans artefact, aucun bouton de copie n est rendu', (
@@ -320,8 +320,8 @@ void main() {
 
       // Le bouton n'est pas grise : il n'existe pas, et une phrase prend sa
       // place.
-      expect(find.text(LibellesTcB.actionEnregistrerCopie), findsNothing);
-      expect(find.text(LibellesTcB.messageAucunTelechargement), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.action.enregistrerCopie), findsNothing);
+      expect(find.text(t.tc.bibliotheque.message.aucunTelechargement), findsOneWidget);
     });
 
     testWidgets('un PDF annonce que son apercu n est pas encore disponible', (
@@ -344,7 +344,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesTcB.detailApercuIndisponible), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.detail.apercuIndisponible), findsOneWidget);
     });
 
     testWidgets('un telechargement impossible est dit, pas tu', (
@@ -362,11 +362,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(LibellesTcB.actionTelecharger));
+      await tester.tap(find.text(t.tc.bibliotheque.action.telecharger));
       await tester.pumpAndSettle();
 
       expect(
-        find.text(LibellesTcB.messageTelechargementImpossible),
+        find.text(t.tc.bibliotheque.message.telechargementImpossible),
         findsOneWidget,
       );
       // Le retour local se retire seul : on le laisse expirer pour ne pas
@@ -402,7 +402,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(LibellesTcB.actionEnregistrerCopie));
+      await tester.tap(find.text(t.tc.bibliotheque.action.enregistrerCopie));
       await tester.pumpAndSettle();
 
       // Le nom propose est celui du support, le type MIME celui du format, et
@@ -410,7 +410,7 @@ void main() {
       expect(selecteur.appels.single.nom, 'Règles du meem.pdf');
       expect(selecteur.appels.single.mime, 'application/pdf');
       expect(selecteur.appels.single.taille, 4);
-      expect(find.text(LibellesTcB.messageCopieEnregistree), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.message.copieEnregistree), findsOneWidget);
 
       await tester.pump(const Duration(seconds: 4));
       await tester.pumpAndSettle();
@@ -433,7 +433,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesTcB.detailSansVersion), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.detail.sansVersion), findsOneWidget);
     });
   });
 
@@ -466,10 +466,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final double yContinuer = tester
-          .getTopLeft(find.text(LibellesTcB.sectionContinuer))
+          .getTopLeft(find.text(t.tc.bibliotheque.sections.continuer))
           .dy;
       final double yGroupe = tester
-          .getTopLeft(find.text(LibellesTcB.sectionPourCeGroupe))
+          .getTopLeft(find.text(t.tc.bibliotheque.sections.pourCeGroupe))
           .dy;
 
       expect(yContinuer, lessThan(yGroupe));

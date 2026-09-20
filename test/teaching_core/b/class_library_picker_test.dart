@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/features/tc_catalogue/carte_ressource.dart';
 import 'package:rewayah_academy/features/tc_catalogue/class_library_picker.dart';
-import 'package:rewayah_academy/features/tc_catalogue/libelles_tc_b.dart';
 
 import 'faux/faux_ports_b.dart';
 import 'support/hote_b.dart';
@@ -17,7 +17,7 @@ const List<String> _fichiersDeLaSurface = <String>[
   'lib/features/tc_catalogue/surface_bibliotheque.dart',
   'lib/features/tc_catalogue/carte_ressource.dart',
   'lib/features/tc_catalogue/vignette_ressource.dart',
-  'lib/features/tc_catalogue/libelles_tc_b.dart',
+  'lib/features/tc_catalogue/libelles_bibliotheque.dart',
   'lib/core/tc_bibliotheque/vue_catalogue.dart',
   'lib/core/tc_bibliotheque/donnees_catalogue.dart',
   'lib/core/tc_bibliotheque/catalogue_local.dart',
@@ -95,10 +95,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final double yRecents = tester
-          .getTopLeft(find.text(LibellesTcB.sectionRecents))
+          .getTopLeft(find.text(t.tc.bibliotheque.sections.recents))
           .dy;
       final double yGroupe = tester
-          .getTopLeft(find.text(LibellesTcB.sectionPourCeGroupe))
+          .getTopLeft(find.text(t.tc.bibliotheque.sections.pourCeGroupe))
           .dy;
 
       expect(yRecents, lessThan(yGroupe));
@@ -194,7 +194,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(LibellesTcB.classeSousTitre), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.classe.sousTitre), findsOneWidget);
     });
   });
 }

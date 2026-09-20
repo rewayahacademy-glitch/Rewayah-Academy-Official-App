@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_bibliotheque/vue_catalogue.dart';
 import '../../core/widgets/page_shell.dart';
-import 'libelles_tc_b.dart';
 import 'routes_tc_b.dart';
 import 'surface_bibliotheque.dart';
 
@@ -31,7 +31,7 @@ class BibliothequePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PageShell(
-      titre: LibellesTcB.titre,
+      titre: t.tc.bibliotheque.titre,
       defilante: false,
       child: SurfaceBibliotheque(
         contexte: ContexteDecouverte.horsClasse,

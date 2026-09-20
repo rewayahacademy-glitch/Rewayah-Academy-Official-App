@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/vue_catalogue.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import 'libelles_tc_b.dart';
 import 'surface_bibliotheque.dart';
 
 /// La Bibliotheque ouverte **pendant un cours**.
@@ -62,7 +62,7 @@ class ClassLibraryPicker extends StatelessWidget {
     required ChoixRessource onChoisir,
   }) => AppBottomSheet.ouvrir<void>(
     context,
-    titre: LibellesTcB.classeTitre,
+    titre: t.tc.bibliotheque.classe.titre,
     constructeur: (BuildContext contexte) => ClassLibraryPicker(
       groupeId: groupeId,
       onChoisir: onChoisir,
@@ -86,7 +86,7 @@ class ClassLibraryPicker extends StatelessWidget {
         groupeId: groupeId,
         onChoisir: onChoisir,
         enTete: Text(
-          LibellesTcB.classeSousTitre,
+          t.tc.bibliotheque.classe.sousTitre,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),

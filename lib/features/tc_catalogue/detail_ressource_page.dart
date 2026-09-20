@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
@@ -19,7 +20,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'carte_ressource.dart';
-import 'libelles_tc_b.dart';
+import 'libelles_bibliotheque.dart';
 import 'vignette_ressource.dart';
 
 /// Le detail minimal d'une ressource.
@@ -51,16 +52,16 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
     );
 
     return PageShell(
-      titre: LibellesTcB.detailTitre,
+      titre: t.tc.bibliotheque.detail.titre,
       child: switch (detail) {
         AsyncValue<DetailRessource?>(hasValue: true) =>
           detail.requireValue == null
               // L'appelant ne voit pas cette ressource. La barriere est
               // serveur ; l'ecran ne fait que l'expliquer sans accuser la
               // personne d'avoir mal fait.
-              ? const EmptyState(
-                  message: LibellesTcB.introuvableMessage,
-                  invitation: LibellesTcB.introuvableInvitation,
+              ? EmptyState(
+                  message: t.tc.bibliotheque.introuvable.message,
+                  invitation: t.tc.bibliotheque.introuvable.invitation,
                   registre: RegistreVide.subi,
                 )
               : _Corps(
@@ -72,9 +73,9 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
                   onEnregistrerCopie: _enregistrerCopie,
                 ),
         AsyncValue<DetailRessource?>(hasError: true) => EmptyState(
-          message: LibellesTcB.indisponibleMessage,
+          message: t.tc.bibliotheque.indisponible.message,
           icone: AppIcons.avertissement,
-          libelleAction: LibellesTcB.indisponibleAction,
+          libelleAction: t.tc.bibliotheque.indisponible.action,
           onAction: () =>
               ref.invalidate(detailRessourceProvider(widget.resourceId)),
         ),
@@ -93,7 +94,7 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
       // L'echec est nomme et montre. Le taire laisserait la personne relancer
       // indefiniment un geste qui ne peut pas aboutir.
       if (mounted) {
-        setState(() => _message = LibellesTcB.messageTelechargementImpossible);
+        setState(() => _message = t.tc.bibliotheque.message.telechargementImpossible);
       }
     } finally {
       if (mounted) setState(() => _enCours = false);
@@ -123,7 +124,7 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
           .octets(asset);
       if (octets == null) {
         if (mounted) {
-          setState(() => _message = LibellesTcB.messageCopieImpossible);
+          setState(() => _message = t.tc.bibliotheque.message.copieImpossible);
         }
         return;
       }
@@ -138,7 +139,7 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
             typeMime: asset.format.typeMime,
           );
       if (mounted && destination != null) {
-        setState(() => _message = LibellesTcB.messageCopieEnregistree);
+        setState(() => _message = t.tc.bibliotheque.message.copieEnregistree);
       }
     } finally {
       if (mounted) setState(() => _enCours = false);
@@ -207,7 +208,7 @@ class _Corps extends StatelessWidget {
                     Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: StatusPill(
-                        libelle: LibellesTcB.offline(detail.etatOffline),
+                        libelle: libelleOffline(detail.etatOffline),
                         ton: CarteRessource.tonDe(detail.etatOffline),
                       ),
                     ),
@@ -221,14 +222,14 @@ class _Corps extends StatelessWidget {
         Text(_noticeRendu(r), style: textes.bodyMedium),
         if (r.levelScope.isNotEmpty) ...<Widget>[
           Ecart.vSection,
-          const SectionHeader(titre: LibellesTcB.detailNiveaux),
+          SectionHeader(titre: t.tc.bibliotheque.detail.niveaux),
           Ecart.vSm,
           Text(r.levelScope.join(' · '), style: textes.bodyMedium),
         ],
         if (r.capabilities.isNotEmpty) ...<Widget>[
           Ecart.vSection,
           SectionHeader(
-            titre: LibellesTcB.detailCapacites,
+            titre: t.tc.bibliotheque.detail.capacites,
             compteur: r.capabilities.length,
           ),
           Ecart.vSm,
@@ -261,7 +262,7 @@ class _Corps extends StatelessWidget {
       case EtatOffline.aTelecharger:
         sortie.add(
           ActionPrincipale(
-            libelle: LibellesTcB.actionTelecharger,
+            libelle: t.tc.bibliotheque.action.telecharger,
             niveau: NiveauAction.secondaire,
             enCours: enCours,
             onPress: onTelecharger,
@@ -270,15 +271,15 @@ class _Corps extends StatelessWidget {
       case EtatOffline.telecharge || EtatOffline.enCache:
         sortie.add(
           ActionPrincipale(
-            libelle: LibellesTcB.actionLiberer,
+            libelle: t.tc.bibliotheque.action.liberer,
             niveau: NiveauAction.tertiaire,
             onPress: onLiberer,
           ),
         );
       case EtatOffline.enCours:
         sortie.add(
-          const ActionPrincipale(
-            libelle: LibellesTcB.offlineEnCours,
+          ActionPrincipale(
+            libelle: t.tc.bibliotheque.offline.enCours,
             niveau: NiveauAction.secondaire,
             enCours: true,
             // Un telechargement en cours n'est pas une action : le bouton
@@ -294,7 +295,7 @@ class _Corps extends StatelessWidget {
     if (detail.copiePossible) {
       sortie.add(
         ActionPrincipale(
-          libelle: LibellesTcB.actionEnregistrerCopie,
+          libelle: t.tc.bibliotheque.action.enregistrerCopie,
           enCours: enCours,
           onPress: () => onEnregistrerCopie(detail),
         ),
@@ -303,7 +304,7 @@ class _Corps extends StatelessWidget {
       final AppPalette palette = AppPalette.of(context);
       sortie.add(
         Text(
-          LibellesTcB.messageAucunTelechargement,
+          t.tc.bibliotheque.message.aucunTelechargement,
           style: palette.inkMuted.applyTo(
             Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
           ),
@@ -314,7 +315,7 @@ class _Corps extends StatelessWidget {
   }
 
   static String _sousTitre(LibraryResource r) => <String>[
-    LibellesTcB.type(r.resourceType),
+    libelleTypeRessource(r.resourceType),
     if (r.category.isNotEmpty) r.category,
     if (r.edition != null) r.edition!,
     r.language,
@@ -322,10 +323,10 @@ class _Corps extends StatelessWidget {
 
   /// Ce que le produit sait faire de ce support aujourd'hui.
   static String _noticeRendu(LibraryResource r) {
-    if (!r.publiee) return LibellesTcB.detailSansVersion;
+    if (!r.publiee) return t.tc.bibliotheque.detail.sansVersion;
     if (r.resourceType == TypeRessource.quran) {
-      return LibellesTcB.detailRenduCoran;
+      return t.tc.bibliotheque.detail.renduCoran;
     }
-    return LibellesTcB.detailApercuIndisponible;
+    return t.tc.bibliotheque.detail.apercuIndisponible;
   }
 }

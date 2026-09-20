@@ -137,9 +137,14 @@ class ServiceEtatPartage implements PortEtatPartage {
   ///
   /// **L'echec de restauration se DIT.** « Rien n'est presente » et « je n'ai
   /// pas pu lire » conduisent a deux ecrans differents, et le second a son
-  /// libelle (`LibellesRealtime.restaurationImpossible`). Laisser l'erreur
+  /// libelle (`t.tc.realtime.etat.restauration_impossible`). Laisser l'erreur
   /// s'echapper d'un `unawaited` la rendrait invisible a l'ecran et bruyante
   /// dans la zone.
+  ///
+  /// TC-Z-SUIVI : ce libelle, comme
+  /// `t.tc.realtime.transport.partage_indisponible`, n'est encore affiche par
+  /// aucun ecran de la Classe Live -- le lot F les a produits pour que E les
+  /// pose dans sa coque, mais E ne l'a pas fait. A cabler avant Etape 8.
   Future<void> _demarrer(
     String sessionId,
     void Function(SharedContentState) relayer,
