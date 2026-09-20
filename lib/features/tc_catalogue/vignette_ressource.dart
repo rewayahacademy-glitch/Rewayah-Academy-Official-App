@@ -119,18 +119,11 @@ class VignetteRessource extends StatelessWidget {
   /// L'index 0 est celui du Coran : `surfaceQuran` n'est employee nulle part
   /// ailleurs dans le produit, et un mushaf qui changerait de couleur d'un
   /// catalogue a l'autre perdrait le seul repere qu'un enfant a avant de
-  /// savoir lire le titre.
-  ///
-  /// Les trois autres sont des paires **douces**. Aucune n'est `washAlert` ni
-  /// `washWarning` : une couverture n'annonce pas un probleme, et employer le
-  /// registre d'alerte pour decorer viderait ce registre de son sens partout
-  /// ailleurs.
-  static AppColorPair teinte(AppPalette palette, int index) => switch (index) {
-    0 => palette.surfaceQuran,
-    1 => palette.washAccent,
-    2 => palette.washFamily,
-    _ => palette.washSuccess,
-  };
+  /// savoir lire le titre. Les 32 autres viennent de la palette administree
+  /// `AppPalette.teintesIdentite` (decision D-18), partagee avec celle des
+  /// groupes.
+  static AppColorPair teinte(AppPalette palette, int index) =>
+      index == 0 ? palette.surfaceQuran : palette.teinteCouverture(index - 1);
 
   /// L'icone de coin d'un type de ressource.
   static AppIcon iconeDe(TypeRessource type) => switch (type) {

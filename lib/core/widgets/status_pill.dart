@@ -27,6 +27,26 @@ enum TonEtat {
   alerte,
 }
 
+/// L'accesseur du plan d'integration Teaching Core section 9.2 : centralise
+/// la paire douce d'un ton d'etat, jusque-la dupliquee entre `_fond` ici et
+/// `CouleurIntention.encre` (`lib/core/tc_outils/couleur_intention.dart`).
+///
+/// En extension plutot qu'en methode de [AppPalette] : [TonEtat] vit dans ce
+/// fichier de widgets, et `app_palette.dart` reste le fichier de jetons purs,
+/// sans dependance vers la couche widgets.
+extension PaireDeTonEtat on AppPalette {
+  /// La paire douce d'un ton : teinte pale, encre foncee de la meme famille.
+  /// Le neutre n'a pas de famille semantique, il prend la surface enfoncee de
+  /// la rampe.
+  AppColorPair paireDe(TonEtat ton) => switch (ton) {
+    TonEtat.neutre => surfaceSunken,
+    TonEtat.accent => washAccent,
+    TonEtat.succes => washSuccess,
+    TonEtat.avertissement => washWarning,
+    TonEtat.alerte => washAlert,
+  };
+}
+
 /// Un etat nomme : une pastille de couleur **et** un mot.
 ///
 /// **Jamais la couleur seule** (`docs/design/01-systeme-visuel.md` section 8).
@@ -92,16 +112,8 @@ class StatusPill extends StatelessWidget {
     );
   }
 
-  /// La paire douce de la famille : teinte pale, encre foncee de la meme
-  /// teinte. Le neutre n'a pas de famille semantique : il prend la surface
-  /// enfoncee de la rampe.
-  AppColorPair _fond(AppPalette palette) => switch (ton) {
-    TonEtat.neutre => palette.surfaceSunken,
-    TonEtat.accent => palette.washAccent,
-    TonEtat.succes => palette.washSuccess,
-    TonEtat.avertissement => palette.washWarning,
-    TonEtat.alerte => palette.washAlert,
-  };
+  /// La paire douce de la famille. Voir [PaireDeTonEtat.paireDe].
+  AppColorPair _fond(AppPalette palette) => palette.paireDe(ton);
 
   /// L'aplat sature de la pastille.
   ///

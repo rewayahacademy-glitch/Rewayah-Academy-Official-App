@@ -53,8 +53,9 @@ void main() {
         combinaisons.add('${c.indexTeinte}/${c.motif}');
       }
 
-      // Trois teintes ouvertes aux ressources non coraniques, quatre motifs :
-      // douze combinaisons possibles, et on les veut reellement employees.
+      // 32 teintes ouvertes aux ressources non coraniques, quatre motifs :
+      // on veut une repartition reellement employee, pas concentree sur
+      // quelques cases.
       expect(combinaisons.length, greaterThanOrEqualTo(10));
     });
 

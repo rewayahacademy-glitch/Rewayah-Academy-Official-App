@@ -33,6 +33,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.inkWarning,
     required this.inkAlert,
     required this.ombre,
+    required this.teintesIdentite,
     AppColorPair? surfaceOverlay,
   }) : surfaceOverlay = surfaceOverlay ?? surfaceRaised;
 
@@ -108,6 +109,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     inkWarning: AppInkColor(Color(0xFF755200)),
     inkAlert: AppInkColor(Color(0xFF921734)),
     ombre: AppShadowColor(Color(0xFF211E28)),
+    teintesIdentite: _teintesIdentiteClaires,
   );
 
   factory AppPalette.sombre() => const AppPalette(
@@ -182,6 +184,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     inkWarning: AppInkColor(Color(0xFFF4D480)),
     inkAlert: AppInkColor(Color(0xFFFFD9E0)),
     ombre: AppShadowColor(Color(0xFF211E28)),
+    teintesIdentite: _teintesIdentiteSombres,
   );
 
   final AppColorPair surfaceRaised;
@@ -210,6 +213,33 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final AppInkColor inkWarning;
   final AppInkColor inkAlert;
   final AppShadowColor ombre;
+
+  /// La table administree de teintes d'identite (decision D-18, plan
+  /// d'integration Teaching Core section 9.2).
+  ///
+  /// 32 paires, verifiees contraste (>= 4.5:1 AA, clair et sombre) et
+  /// distinguabilite sous protanopie/deuteranopie/tritanopie (script de
+  /// generation dans l'historique d'integration). Aucune ne reutilise une
+  /// teinte porteuse de sens (accent, succes, avertissement, alerte, Coran) :
+  /// ces identites sont decoratives, jamais le seul identifiant (invariant
+  /// `J7` -- toujours posees a cote d'un nom, jamais a sa place).
+  ///
+  /// Quatre paliers de luminosite x huit teintes. La distinguabilite reelle
+  /// sous daltonisme reste modeste au-dela d'une douzaine de teintes (la
+  /// simulation compresse fortement l'axe rouge-vert) : c'est mesure, pas
+  /// suppose, et c'est pour cela que la couleur ne porte jamais seule le
+  /// sens ici. Ne pas indexer directement : passer par [teinteGroupe] ou
+  /// [teinteCouverture].
+  final List<AppColorPair> teintesIdentite;
+
+  /// La teinte d'identite d'un groupe, par index stable (decision D-18).
+  AppColorPair teinteGroupe(int index) =>
+      teintesIdentite[index % teintesIdentite.length];
+
+  /// La teinte d'identite d'une couverture de ressource calculee (decision
+  /// D-18). Meme table que [teinteGroupe] : deux demandeurs, un seul lot.
+  AppColorPair teinteCouverture(int index) =>
+      teintesIdentite[index % teintesIdentite.length];
 
   bool get estSombre => surfaceCanvas.background.computeLuminance() < 0.5;
   AppInkColor get contourCarte => AppInkColor(
@@ -254,6 +284,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     AppInkColor? inkWarning,
     AppInkColor? inkAlert,
     AppShadowColor? ombre,
+    List<AppColorPair>? teintesIdentite,
   }) => AppPalette(
     surfaceRaised: surfaceRaised ?? this.surfaceRaised,
     surfaceCanvas: surfaceCanvas ?? this.surfaceCanvas,
@@ -281,6 +312,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     inkWarning: inkWarning ?? this.inkWarning,
     inkAlert: inkAlert ?? this.inkAlert,
     ombre: ombre ?? this.ombre,
+    teintesIdentite: teintesIdentite ?? this.teintesIdentite,
   );
 
   @override
@@ -333,6 +365,83 @@ class AppPalette extends ThemeExtension<AppPalette> {
       inkWarning: AppInkColor.lerp(inkWarning, other.inkWarning, t),
       inkAlert: AppInkColor.lerp(inkAlert, other.inkAlert, t),
       ombre: AppShadowColor.lerp(ombre, other.ombre, t),
+      teintesIdentite: <AppColorPair>[
+        for (int i = 0; i < teintesIdentite.length; i++)
+          AppColorPair.lerp(teintesIdentite[i], other.teintesIdentite[i], t),
+      ],
     );
   }
 }
+
+/// 32 teintes d'identite, theme clair. Voir [AppPalette.teintesIdentite].
+const List<AppColorPair> _teintesIdentiteClaires = <AppColorPair>[
+  AppColorPair(background: Color(0xFFEB7070), onBackground: Color(0xFF5B1313)),
+  AppColorPair(background: Color(0xFF7070EB), onBackground: Color(0xFF0C0C3B)),
+  AppColorPair(background: Color(0xFFE7CEF8), onBackground: Color(0xFF8729C7)),
+  AppColorPair(background: Color(0xFFA9EB70), onBackground: Color(0xFF3C6915)),
+  AppColorPair(background: Color(0xFFD98FEF), onBackground: Color(0xFF65197C)),
+  AppColorPair(background: Color(0xFF70EBC2), onBackground: Color(0xFF15684C)),
+  AppColorPair(background: Color(0xFFDDF4AF), onBackground: Color(0xFF547217)),
+  AppColorPair(background: Color(0xFFEF8FC2), onBackground: Color(0xFF78194C)),
+  AppColorPair(background: Color(0xFFEFB38F), onBackground: Color(0xFF7A3C19)),
+  AppColorPair(background: Color(0xFFAFF4EA), onBackground: Color(0xFF177367)),
+  AppColorPair(background: Color(0xFFEB70C6), onBackground: Color(0xFF5E1348)),
+  AppColorPair(background: Color(0xFFE1AFF4), onBackground: Color(0xFF7B209C)),
+  AppColorPair(background: Color(0xFFD270EB), onBackground: Color(0xFF4E135D)),
+  AppColorPair(background: Color(0xFFEB9570), onBackground: Color(0xFF672E15)),
+  AppColorPair(background: Color(0xFFF8F8CE), onBackground: Color(0xFF737318)),
+  AppColorPair(background: Color(0xFF93EF8F), onBackground: Color(0xFF196D16)),
+  AppColorPair(background: Color(0xFFF4C1AF), onBackground: Color(0xFF903C1D)),
+  AppColorPair(background: Color(0xFFF8D9CE), onBackground: Color(0xFFA44422)),
+  AppColorPair(background: Color(0xFFF4AFDF), onBackground: Color(0xFF911E6E)),
+  AppColorPair(background: Color(0xFFEB70A9), onBackground: Color(0xFF5D1336)),
+  AppColorPair(background: Color(0xFFCEE9F8), onBackground: Color(0xFF1F6B97)),
+  AppColorPair(background: Color(0xFFEF9F8F), onBackground: Color(0xFF7B2A19)),
+  AppColorPair(background: Color(0xFF8F8FEF), onBackground: Color(0xFF1D1D8C)),
+  AppColorPair(background: Color(0xFFEF8FDF), onBackground: Color(0xFF771867)),
+  AppColorPair(background: Color(0xFFAFF4B8), onBackground: Color(0xFF187424)),
+  AppColorPair(background: Color(0xFF8FA9EF), onBackground: Color(0xFF1C3888)),
+  AppColorPair(background: Color(0xFFCEF8EA), onBackground: Color(0xFF197A5A)),
+  AppColorPair(background: Color(0xFFF8CECE), onBackground: Color(0xFFB32525)),
+  AppColorPair(background: Color(0xFFF4B6AF), onBackground: Color(0xFF952A1E)),
+  AppColorPair(background: Color(0xFFF8CEED), onBackground: Color(0xFFA92385)),
+  AppColorPair(background: Color(0xFFAFBFF4), onBackground: Color(0xFF2444AE)),
+  AppColorPair(background: Color(0xFFCEF8CF), onBackground: Color(0xFF197B1D)),
+];
+
+/// 32 teintes d'identite, theme sombre. Meme ordre, meme teinte que
+/// [_teintesIdentiteClaires] a chaque index. Voir [AppPalette.teintesIdentite].
+const List<AppColorPair> _teintesIdentiteSombres = <AppColorPair>[
+  AppColorPair(background: Color(0xFF2D1515), onBackground: Color(0xFFCC6666)),
+  AppColorPair(background: Color(0xFF15152D), onBackground: Color(0xFF7878D2)),
+  AppColorPair(background: Color(0xFF55336C), onBackground: Color(0xFFC6A0DF)),
+  AppColorPair(background: Color(0xFF202D15), onBackground: Color(0xFF67A035)),
+  AppColorPair(background: Color(0xFF3A1F42), onBackground: Color(0xFFBC76D1)),
+  AppColorPair(background: Color(0xFF152D25), onBackground: Color(0xFF36A27E)),
+  AppColorPair(background: Color(0xFF475729), onBackground: Color(0xFFB2D174)),
+  AppColorPair(background: Color(0xFF421F32), onBackground: Color(0xFFD174A6)),
+  AppColorPair(background: Color(0xFF422C1F), onBackground: Color(0xFFCC8A65)),
+  AppColorPair(background: Color(0xFF295751), onBackground: Color(0xFF77D2C6)),
+  AppColorPair(background: Color(0xFF2D1526), onBackground: Color(0xFFCA60AA)),
+  AppColorPair(background: Color(0xFF4A2957), onBackground: Color(0xFFC48BD8)),
+  AppColorPair(background: Color(0xFF28152D), onBackground: Color(0xFFB764CB)),
+  AppColorPair(background: Color(0xFF2D1C15), onBackground: Color(0xFFC57350)),
+  AppColorPair(background: Color(0xFF6C6C33), onBackground: Color(0xFFEDEDC8)),
+  AppColorPair(background: Color(0xFF20421F), onBackground: Color(0xFF43BD3F)),
+  AppColorPair(background: Color(0xFF573529), onBackground: Color(0xFFD79B86)),
+  AppColorPair(background: Color(0xFF6C4233), onBackground: Color(0xFFE1B4A4)),
+  AppColorPair(background: Color(0xFF572949), onBackground: Color(0xFFD88AC1)),
+  AppColorPair(background: Color(0xFF2D1520), onBackground: Color(0xFFCB6293)),
+  AppColorPair(background: Color(0xFF33576C), onBackground: Color(0xFFA8CDE2)),
+  AppColorPair(background: Color(0xFF42251F), onBackground: Color(0xFFCF8070)),
+  AppColorPair(background: Color(0xFF1F1F42), onBackground: Color(0xFF8282D5)),
+  AppColorPair(background: Color(0xFF421F3C), onBackground: Color(0xFFD072C0)),
+  AppColorPair(background: Color(0xFF29572F), onBackground: Color(0xFF7AD386)),
+  AppColorPair(background: Color(0xFF1F2842), onBackground: Color(0xFF778FD2)),
+  AppColorPair(background: Color(0xFF336C59), onBackground: Color(0xFFBBE8D9)),
+  AppColorPair(background: Color(0xFF6C3333), onBackground: Color(0xFFE0A2A2)),
+  AppColorPair(background: Color(0xFF572D29), onBackground: Color(0xFFD8918A)),
+  AppColorPair(background: Color(0xFF6C335C), onBackground: Color(0xFFE0A3D0)),
+  AppColorPair(background: Color(0xFF293457), onBackground: Color(0xFF8A9DD8)),
+  AppColorPair(background: Color(0xFF336C34), onBackground: Color(0xFFB8E7BA)),
+];

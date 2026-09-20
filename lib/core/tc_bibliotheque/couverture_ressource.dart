@@ -40,11 +40,10 @@ enum MotifCouverture {
 /// mushaf qui changerait de couleur d'un catalogue a l'autre perdrait le seul
 /// repere que l'eleve a avant de savoir lire le titre.
 ///
-/// **Ce n'est pas la palette finale.** La spec veut des couvertures
-/// reconnaissables ; une palette de couvertures administree, sur le modele de
-/// celle des groupes (decision D-18), est demandee a Agent Z dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`. En attendant, les teintes
-/// sortent du theme existant, qui est READ-ONLY.
+/// **La palette administree existe.** `AppPalette.teintesIdentite` (decision
+/// D-18, plan d'integration Teaching Core section 9.2) fournit 32 teintes
+/// verifiees, partagees avec celle des groupes -- un seul lot ferme les deux
+/// demandes.
 @immutable
 class CouvertureRessource {
   /// Cree une couverture.
@@ -73,8 +72,9 @@ class CouvertureRessource {
     );
   }
 
-  /// Le nombre de teintes disponibles. L'index 0 est reserve au Coran.
-  static const int nombreTeintes = 4;
+  /// Le nombre de teintes disponibles. L'index 0 est reserve au Coran, les
+  /// 32 suivantes sont celles d'`AppPalette.teintesIdentite`.
+  static const int nombreTeintes = 33;
 
   /// La cle de la couverture deposee, quand il y en a une.
   final String? cleAsset;
