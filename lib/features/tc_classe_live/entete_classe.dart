@@ -184,6 +184,30 @@ class EnteteClasse extends StatelessWidget {
         // porte deja la regle : rien quand personne n'observe, et aucune
         // notification de sortie (decision D-14) -- la ligne disparait, et
         // c'est tout.
+        //
+        // **Cette ligne ne peut pas encore s'allumer, et ce n'est pas une
+        // panne.** La chaine, rejouee de bout en bout le 21/09/2026 :
+        // `annonces_observation` ne lit que `guardian_session_visit` ou
+        // `role = 'guardian_observer'` et `left_at is null`
+        // (`0033_tc_vues_rpc.sql:1292-1296`) ; la seule ecriture de cette
+        // table est `entrer_observation` (`0033:1172`) ; `entrer_observation`
+        // n'est appelee que par `VisiteObservationSupabase`
+        // (`lib/core/tc_observation/port_visite_observation.dart:97`), que
+        // seule `EntreeObservationPage` emprunte, laquelle n'est atteignable
+        // que par `/tc/observation/:seanceId` -- une route bien enregistree
+        // (`app_router.dart:591`) mais vers laquelle AUCUN fichier de `lib/`
+        // ne navigue : `RoutesTcG.versObservation` n'a aucun appelant. Le
+        // bouton « Assister » du tuteur passe encore par la porte d'avant,
+        // `assister_seance` (`accueil_famille_page.dart:181` ->
+        // `service_video.dart:131`).
+        //
+        // La bascule d'« Assister » vers la porte d'observation est en attente
+        // VOLONTAIRE : sans la migration `0037`, `entrer_observation` ne rend
+        // pas `enfant_profile_id`, et le panneau du tuteur lui dirait
+        // « Votre enfant n'a pas d'image ouverte » meme camera ouverte.
+        // `0037` n'est pas appliquee (derniere migration en base le
+        // 21/09/2026 : `0033_tc_vues_rpc_durcissement_grants`). Basculer
+        // avant, ce serait livrer au parent l'inverse du service promis.
         if (annonces.isNotEmpty) ...<Widget>[
           Ecart.vSm,
           IndicateurObservation(annonces: annonces),

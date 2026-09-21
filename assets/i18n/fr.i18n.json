@@ -518,7 +518,8 @@
       "cloturerErreur": "La clôture n'a pas abouti : {message}",
       "journalisation": "Chaque création, ajout, retrait et clôture est inscrit au journal d'audit.",
       "observationTitre": "Observation : {libelle}",
-      "observationErreur": "Le réglage n'a pas pu être enregistré."
+      "observationErreur": "Le réglage n'a pas pu être enregistré.",
+      "observationCapaciteAbsente": "Cette installation n'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n'y changera rien : elle doit d'abord être appliquée à la base."
     },
     "diagnostics": {
       "titre": "Diagnostics",
