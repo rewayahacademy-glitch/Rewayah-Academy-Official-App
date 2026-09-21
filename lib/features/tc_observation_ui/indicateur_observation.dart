@@ -235,13 +235,18 @@ class _BandeRepliable extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Pressable.selon(
         onPress: onPress,
-        // Le compte est ce que le lecteur d'ecran annonce : c'est exactement
-        // l'information que l'oeil et le nombre donnent a l'oeil nu quand les
-        // prenoms sont replies. Les prenoms sont une revelation VISUELLE, pas
-        // une information reservee.
-        libelleSemantique: t.tc.observation.annonce.tuteursObservent(
-          nombre: annonces.length,
-        ),
+        // **Le lecteur d'ecran recoit les PRENOMS, pas seulement le compte.**
+        // Le repli est une economie de PLACE, jamais une reserve
+        // d'information : a l'oeil nu les prenoms sont a un survol de distance,
+        // et savoir DE QUI le parent regarde est ce qui sert a l'enseignant.
+        // Les annoncer ici est le SEUL moyen de les rendre atteignables : ni le
+        // survol de la souris ni le focus clavier n'existent pour un lecteur
+        // d'ecran tactile, et un `Opacity` a zero retire son sous-arbre de
+        // l'arbre semantique (`RenderOpacity` ne le visite pas a alpha nul).
+        libelleSemantique: <String>[
+          t.tc.observation.annonce.tuteursObservent(nombre: annonces.length),
+          for (final AnnonceObservation annonce in annonces) annonce.libelle,
+        ].join('. '),
         // La zone est une ligne d'en-tete, pas un bouton : lui imposer la
         // cible tactile de 48 points la ferait pousser le contenu, ce que tout
         // ce composant existe pour eviter.
@@ -254,49 +259,54 @@ class _BandeRepliable extends StatelessWidget {
           final bool deploye =
               montreParMinuterie || etat.survole || etat.presse || etat.focus;
 
-          return Row(
-            children: <Widget>[
-              const _Oeil(),
-              Ecart.hSm,
-              Flexible(
-                child: TweenAnimationBuilder<double>(
-                  tween: Tween<double>(end: deploye ? 1 : 0),
-                  // `AppMouvement.duree` rend zero sous reduction du
-                  // mouvement : les prenoms apparaissent et disparaissent
-                  // alors d'un coup, sans glissement, et le composant garde
-                  // son sens.
-                  duration: AppMouvement.duree(
-                    context,
-                    deploye
-                        ? AppMouvement.apparition
-                        : AppMouvement.feuilleFermeture,
-                  ),
-                  curve: deploye ? AppMouvement.entree : AppMouvement.sortie,
-                  builder:
-                      (
-                        BuildContext context,
-                        double avancement,
-                        Widget? prenoms,
-                      ) => ClipRect(
-                        // Le repli se fait vers le DEBUT de la ligne, c'est-a-
-                        // dire vers l'oeil : a gauche en francais, a droite en
-                        // arabe. `AlignmentDirectional` est ce qui le garantit
-                        // dans les deux sens de lecture.
-                        child: Align(
-                          key: IndicateurObservation.cleBandePrenoms,
-                          alignment: AlignmentDirectional.centerStart,
-                          widthFactor: avancement,
-                          child: Opacity(opacity: avancement, child: prenoms),
+          // `ExcludeSemantics` : le libelle ci-dessus porte deja le compte ET
+          // les prenoms. Sans cela, l'etat deploye les annoncerait deux fois,
+          // une fois par le libelle et une fois par les `Text` eux-memes.
+          return ExcludeSemantics(
+            child: Row(
+              children: <Widget>[
+                const _Oeil(),
+                Ecart.hSm,
+                Flexible(
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween<double>(end: deploye ? 1 : 0),
+                    // `AppMouvement.duree` rend zero sous reduction du
+                    // mouvement : les prenoms apparaissent et disparaissent
+                    // alors d'un coup, sans glissement, et le composant garde
+                    // son sens.
+                    duration: AppMouvement.duree(
+                      context,
+                      deploye
+                          ? AppMouvement.apparition
+                          : AppMouvement.feuilleFermeture,
+                    ),
+                    curve: deploye ? AppMouvement.entree : AppMouvement.sortie,
+                    builder:
+                        (
+                          BuildContext context,
+                          double avancement,
+                          Widget? prenoms,
+                        ) => ClipRect(
+                          // Le repli se fait vers le DEBUT de la ligne, c'est-a-
+                          // dire vers l'oeil : a gauche en francais, a droite en
+                          // arabe. `AlignmentDirectional` est ce qui le garantit
+                          // dans les deux sens de lecture.
+                          child: Align(
+                            key: IndicateurObservation.cleBandePrenoms,
+                            alignment: AlignmentDirectional.centerStart,
+                            widthFactor: avancement,
+                            child: Opacity(opacity: avancement, child: prenoms),
+                          ),
                         ),
-                      ),
-                  child: _Prenoms(annonces: annonces, style: styleDiscret),
+                    child: _Prenoms(annonces: annonces, style: styleDiscret),
+                  ),
                 ),
-              ),
-              Ecart.hSm,
-              // Le nombre reste lisible repli ou non : c'est lui qui dit
-              // combien de prenoms sont caches derriere l'oeil.
-              Text('${annonces.length}', style: styleDiscret),
-            ],
+                Ecart.hSm,
+                // Le nombre reste lisible repli ou non : c'est lui qui dit
+                // combien de prenoms sont caches derriere l'oeil.
+                Text('${annonces.length}', style: styleDiscret),
+              ],
+            ),
           );
         },
       ),
@@ -315,22 +325,29 @@ class _Prenoms extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: <Widget>[
-      for (final (int rang, AnnonceObservation annonce) in annonces.indexed)
-        ...<Widget>[
-          if (rang > 0) Ecart.hSm,
-          // `Flexible` plutot qu'une largeur fixe : c'est la place disponible
-          // qui decide de la troncature, pas un nombre de caracteres. Deux
-          // prenoms tiennent entiers la ou cinq se coupent.
-          Flexible(
-            child: Text(
-              annonce.prenomEnfant,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              softWrap: false,
-              style: style,
-            ),
+      for (final (int rang, AnnonceObservation annonce)
+          in annonces.indexed) ...<Widget>[
+        if (rang > 0) Ecart.hSm,
+        // `Flexible` sans `flex` : chaque prenom recoit une part EGALE de la
+        // bande, pas la place dont il a besoin. `RenderFlex` calcule
+        // `spacePerFlex` une fois pour toutes avant de mesurer le moindre
+        // enfant, et la place qu'un prenom court n'utilise pas n'est PAS
+        // redistribuee au suivant. Consequence assumee : a cinq prenoms, un
+        // « Abdurrahman » se coupe alors qu'« Ali » laisse de la place a cote.
+        // C'est le comportement le plus previsible -- chaque prenom garde la
+        // meme largeur d'une lecture a l'autre -- et la bande est de toute
+        // facon un apercu : le libelle semantique, lui, porte les prenoms
+        // entiers.
+        Flexible(
+          child: Text(
+            annonce.prenomEnfant,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: style,
           ),
-        ],
+        ),
+      ],
     ],
   );
 }

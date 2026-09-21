@@ -351,6 +351,43 @@ void main() {
         expect(replisement(tester), 1);
         expect(find.text('3'), findsOneWidget);
       });
+
+      testWidgets('le lecteur d\'ecran atteint les PRENOMS, pas que le compte', (
+        WidgetTester tester,
+      ) async {
+        // Liberee a la MAIN en fin de corps, jamais par `addTearDown` : la
+        // verification de flutter_test s'execute avant les tear-downs et
+        // echouerait sur une poignee encore active.
+        final SemanticsHandle poignee = tester.ensureSemantics();
+
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        // On se place dans l'etat de REPOS, celui ou les prenoms sont replies :
+        // c'est la que le defaut se voit. Ni le survol de la souris ni le focus
+        // clavier n'existent pour un lecteur d'ecran tactile, et un `Opacity` a
+        // zero retire son sous-arbre de l'arbre semantique.
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+
+        expect(
+          find.bySemanticsLabel(
+            RegExp(
+              RegExp.escape(
+                t.tc.observation.annonce.tuteursObservent(nombre: 2),
+              ),
+            ),
+          ),
+          findsOneWidget,
+        );
+        // Savoir DE QUI le parent regarde est ce qui sert a l'enseignant : le
+        // repli est une economie de place, jamais une reserve d'information.
+        expect(find.bySemanticsLabel(RegExp('Amina')), findsOneWidget);
+        expect(find.bySemanticsLabel(RegExp('Youssef')), findsOneWidget);
+
+        poignee.dispose();
+      });
     });
 
     test('seul l\'enfant concerne recoit l\'indicateur discret', () {

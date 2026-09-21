@@ -131,6 +131,71 @@ Mesure faite en base, deux enfants de foyers differents dans le meme groupe :
 | `anon` (`auth.uid()` nul) | REFUS `42501` |
 | l'enseignant, sur `annonces_observation` | intacte, avec `enfant_prenom` |
 
+## `0041` : ce qu'une revue adversariale a trouve APRES `0040`
+
+`0040` ferme la galerie LiveKit. Elle ne fermait qu'ELLE. La meme liste a deux
+elements -- `('masked_controller', 'admin_masked')` -- est recopiee dans sept
+autres objets de la base, et `TC_CONTRACT_REQUEST_G.md` avait ecrit d'avance :
+« une surface oubliee est une fuite ». Elle l'etait.
+
+**Mesure de la fuite, faite sur la base** : un groupe, deux enfants, un tuteur en
+observation, un controleur masque. L'enfant lit `session_peers_v` et recoit
+TROIS pairs, dont `Staff  a024035f-...` -- **l'UUID et le PRENOM du tuteur**. Le
+controleur masque, lui, est bien absent : le masquage marche, le troisieme role
+n'y avait jamais ete ajoute. C'est pire que ce que `0040` corrigeait : la galerie
+montrait une presence, cette vue donne une identite.
+
+Ce que `0041` ferme, et ce qu'elle laisse -- chaque objet mesure avant d'etre
+touche ou laisse :
+
+| objet | lisible par un AUTRE enfant ? | ici |
+|---|---|---|
+| vue `session_peers_v` | **OUI** -- tout participant | **FERME** |
+| `est_observateur_masque` (3 policies `session_events`) | **OUI** -- un autre TUTEUR du groupe, via `family_read` | **FERME** |
+| vue `presence_seance_v` | non -- son WHERE n'admet que admin, controleur, enseignant de la seance, foyer, soi-meme | laisse |
+| `session_participants_{controller,teacher,family}_read` | non -- roles controleur / enseignant, foyer deja borne | laisse |
+| `rejoindre_observation` | non -- pas une liste | laisse |
+
+Les « laisse » ne sont pas des oublis : aucun n'expose un enfant a un autre
+foyer, et les rouvrir couterait un risque de regression sans gain de vie privee.
+
+**Mesure apres** : `session_peers_v` rend 2 pairs au lieu de 3, le tuteur a
+disparu ; `est_observateur_masque(tuteur)` passe de `f` a `t`.
+
+`0041` ferme deux autres choses trouvees par la meme revue :
+
+* **La seconde porte.** `assister_seance(uuid)` inscrit en `guardian_observer`
+  et s'arrete la : ni `budget_observation`, ni `politique_observation_effective`,
+  et AUCUNE ligne `guardian_session_visit`. Tant qu'elle restait ouverte a
+  `authenticated`, les quotas etaient contournes (`budget_observation` ne compte
+  que depuis les visites : sans visite, 0 visite et 0 seconde, `peut_entrer` vrai
+  a chaque appel) et l'observation devenait **silencieuse** -- ni l'enseignant ni
+  l'enfant n'apprenaient rien, pendant que `0040` posait `hidden = true`. Fermee
+  par un `revoke`, pas supprimee : un `drop` casserait les doubles de test.
+  Mesure : `authenticated` passe de `true` a `false`.
+* **Le second enfant d'un meme foyer.** `entrer_observation` choisit l'enfant
+  annonce par un `limit 1` SANS `order by`. Avec deux freres dans le groupe, le
+  temoin s'allumait chez l'un et JAMAIS chez l'autre. Corrige dans
+  `annonce_observation_pour_moi` et non dans `entrer_observation` : rendre le
+  `limit 1` deterministe rendrait la reponse stable, pas juste. La bonne question
+  n'est pas « suis-je l'enfant DESIGNE ? » mais « quelqu'un de MON foyer
+  observe-t-il ? ». Mesure, quatre cas : enfant designe `true`, **frere non
+  designe `true`** (etait `false`), meme enfant avec un AUTRE foyer au jeton
+  `false`, jeton SANS foyer `false` -- la porte echoue fermee.
+
+**Deux defauts Dart de ce lot, trouves par la meme revue et corriges :**
+
+1. **L'enseignant qui lance son cours depuis `ENS-02` n'apprenait rien.** Il y a
+   DEUX salles d'enseignant : `ClasseLivePage` (`/tc/classe`) et `SallePage`
+   (`/salle`), et le bouton « Lancer » de sa journee mene a la seconde.
+   L'annonce n'etait montee que sur la premiere : il enseignait deux minutes
+   devant un parent sans le savoir, **sur le chemin qu'il emprunte reellement**.
+   C'est la meme lecon que le temoin de l'enfant, appliquee a moitie.
+2. **Le lecteur d'ecran n'atteignait pas les prenoms.** Au repos, `Opacity` a
+   zero retire son sous-arbre de l'arbre semantique, et ni le survol ni le focus
+   clavier n'existent pour un lecteur d'ecran tactile : il n'entendait que le
+   compte. Le libelle semantique porte desormais le compte ET les phrases.
+
 ## Ce qui est livre cote application
 
 | Lot | Etat |
