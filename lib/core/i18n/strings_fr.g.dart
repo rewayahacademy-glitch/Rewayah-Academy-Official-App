@@ -6556,6 +6556,9 @@ class Traductions$tc$observation$visite$fr {
 	/// fr: 'Temps restant non confirmé par le serveur.'
 	String get budgetIncertain => 'Temps restant non confirmé par le serveur.';
 
+	/// fr: 'La vidéo de la séance n'a pas pu s'ouvrir. Votre temps d'observation continue de s'écouler.'
+	String get videoIndisponible => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.';
+
 	/// fr: 'La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.'
 	String get sortieNonConfirmee => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.';
 
@@ -8760,6 +8763,7 @@ extension on Traductions {
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.enfantAbsent' => 'Votre enfant n\'a pas d\'image ouverte.',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
+			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restant' => ({required Object secondes}) => '${secondes} s restantes',
 			'tc.observation.visite.visites' => ({required Object rang, required Object total}) => 'Visite ${rang} sur ${total}',

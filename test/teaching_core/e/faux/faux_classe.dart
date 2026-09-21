@@ -177,8 +177,14 @@ class FauxMoteurClasse implements VideoSessionProvider {
   @override
   Future<void> reglerAudioSeul({required bool actif}) async {}
 
+  /// Les images publiees, par identite.
+  ///
+  /// Le vrai moteur rend un widget deja monte, jamais une piste : un test n'a
+  /// donc rien a simuler de WebRTC pour verifier qu'une image atteint l'ecran.
+  final Map<String, Widget> videos = <String, Widget>{};
+
   @override
-  Widget? renduVideo(String identite) => null;
+  Widget? renduVideo(String identite) => videos[identite];
 
   @override
   Future<void> liberer() async {

@@ -1993,6 +1993,7 @@
         "monEnfant": "Votre enfant",
         "enfantAbsent": "Votre enfant n'a pas d'image ouverte.",
         "budgetIncertain": "Temps restant non confirmé par le serveur.",
+        "videoIndisponible": "La vidéo de la séance n'a pas pu s'ouvrir. Votre temps d'observation continue de s'écouler.",
         "sortieNonConfirmee": "La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.",
         "restant": "{secondes} s restantes",
         "visites": "Visite {rang} sur {total}"
