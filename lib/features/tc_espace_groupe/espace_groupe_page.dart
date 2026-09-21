@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
-import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -20,6 +19,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../tc_catalogue/routes_tc_b.dart';
 import '../tc_mes_groupes/carte_groupe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
@@ -255,13 +255,11 @@ class _Colonnes extends StatelessWidget {
     final List<Widget> suite = <Widget>[
       BlocBibliotheque(
         emplacement: espace.bibliotheque,
-        // Ouvre la Bibliotheque generique (Teaching Core, lot B). La section
-        // « Pour ce groupe » qu'espere `TC_CONTRACT_REQUEST_B.md` §6
-        // suppose un `groupeId` connu au niveau de la route, or
-        // `routesTcB` ne l'accepte qu'une fois, a la construction du
-        // routeur (meme contrainte que `sessionRole` sur `routesTcA`) :
-        // reste a filer par `extra`, comme `ContexteClasseLive`.
-        onVoirTout: () => GoRouter.of(context).go(Routes.tcBibliotheque),
+        // Ouvre la Bibliotheque sur ce groupe : l'identifiant voyage dans
+        // l'adresse, ce qui le fait survivre a un rechargement de page.
+        onVoirTout: () => GoRouter.of(
+          context,
+        ).go(RoutesTcB.avecGroupe(espace.bibliotheque.groupeId)),
       ),
       if (roster != null) ...<Widget>[
         Ecart.vSection,
