@@ -61,17 +61,21 @@ GuardianObservationPolicy politiqueAcademieDepuis(List<ValeurConfig> valeurs) {
 
 /// Le reglage d'observation d'un groupe, en feuille sur sa ligne.
 ///
-/// **C'est la route reelle du module de reglages**, et elle est par groupe
-/// parce que le serveur l'est : `definir_politique_observation_groupe` prend un
-/// `p_groupe_id` et n'ecrit que sur `public.groupes`. Elle vit sous
-/// `/admin/operations/groupes`, ou `deciderRedirection` n'admet que le role
-/// admin -- le meme role que la RPC exige, avec `app_account_valid()`. Aucun
-/// role que le serveur refuserait n'atteint donc cet ecran.
+/// **Aucune route n'est posee pour ce module, et c'est voulu.** Ni
+/// `lib/core/router/app_router.dart` ni `lib/features/tc_observation_ui/
+/// routes_tc_g.dart` ne le connaissent : le seul acces est l'action
+/// « Reglages d'observation » de la ligne du groupe, dans Admin > Operations >
+/// Groupes, qui ouvre cette feuille en `AppBottomSheet`. Toutes les actions de
+/// groupe du produit s'ouvrent ainsi (jamais une boite de dialogue Material), et
+/// un ecran de plus aurait demande une route, une entree de navigation et une
+/// place dans le gel des huit domaines pour le meme geste.
 ///
-/// La feuille plutot qu'un ecran : toutes les actions de groupe du produit
-/// s'ouvrent ainsi (`AppBottomSheet`, jamais une boite de dialogue Material),
-/// et un ecran de plus aurait demande une route, une entree de navigation et
-/// une place dans le gel des huit domaines pour le meme geste.
+/// **Depuis le groupe parce que le serveur est par groupe** :
+/// `definir_politique_observation_groupe` prend un `p_groupe_id` et n'ecrit que
+/// sur `public.groupes`. La page hote vit sous `/admin/operations/groupes`, ou
+/// `deciderRedirection` n'admet que le role admin -- le meme role que la RPC
+/// exige, avec `app_account_valid()`. Aucun role que le serveur refuserait
+/// n'atteint donc cette feuille.
 class FeuilleObservationGroupe extends ConsumerStatefulWidget {
   /// Cree la feuille.
   const FeuilleObservationGroupe({
@@ -146,7 +150,7 @@ class _FeuilleObservationGroupeEtat
   Widget _echec(Object? erreur) => EmptyState(
     message: erreur is EchecObservation &&
             erreur.motif == MotifEchecObservation.capaciteAbsente
-        ? t.tc.observation.refus.capaciteAbsente
+        ? t.admin.groupes.observationCapaciteAbsente
         : t.admin.groupes.erreur,
     icone: AppIcons.avertissement,
     registre: RegistreVide.subi,
@@ -172,10 +176,24 @@ class _FeuilleObservationGroupeEtat
         Navigator.of(context).pop();
       }
     } on EchecObservation catch (echec) {
+      // **Le motif exact, pas le motif generique du tuteur.**
+      // `t.tc.observation.refus.capaciteAbsente` (« L'observation n'est pas
+      // encore activee sur cette installation. ») est ecrit pour un tuteur a
+      // qui la salle se refuse ; servi a un administrateur, il est faux : la
+      // base porte bien les quatre fonctions d'observation de `0033`
+      // (verifie en production le 21/09/2026, `0033_tc_vues_rpc` est la
+      // derniere migration appliquee). Ce qui manque est la seule migration
+      // `0036`, qui ajoute le cinquieme argument `p_max_secondes_par_visite` :
+      // PostgREST resout par NOM d'argument, l'appel a cinq revient donc en
+      // `PGRST202` contre la fonction a quatre arguments encore en place
+      // (`pg_get_function_identity_arguments` rejoue le 21/09 : `p_groupe_id
+      // uuid, p_source text, p_max_visites smallint, p_max_secondes integer`).
+      // Un administrateur a qui l'on dit « l'observation n'est pas activee »
+      // ira la chercher dans Configuration et ne la trouvera jamais.
       if (mounted) {
         setState(
           () => _erreur = echec.motif == MotifEchecObservation.capaciteAbsente
-              ? t.tc.observation.refus.capaciteAbsente
+              ? t.admin.groupes.observationCapaciteAbsente
               : t.admin.groupes.observationErreur,
         );
       }

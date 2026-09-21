@@ -143,7 +143,20 @@ Future<void> _ouvrirDepuisLaListe(
 }
 
 void main() {
-  group('Le reglage d\'observation a une route reelle, et elle est par groupe', () {
+  // **Une feuille, pas une route -- et le nom de ce groupe le dit.** Le lot
+  // qui a livre ce module n'a ajoute AUCUN chemin : son diff ne touche ni
+  // `lib/core/router/app_router.dart` ni
+  // `lib/features/tc_observation_ui/routes_tc_g.dart`. Le seul acces est
+  // l'action « Reglages d'observation » de la ligne du groupe, qui ouvre
+  // `FeuilleObservationGroupe` en `AppBottomSheet`
+  // (`groupes_page.dart`, `_ouvrirObservation`). C'est cet acces que les cas
+  // ci-dessous rejouent, du menu de la ligne jusqu'a l'ecriture serveur.
+  //
+  // Le choix se defend, et ce n'est pas la meme chose que de le maquiller en
+  // route : `definir_politique_observation_groupe` prend un `p_groupe_id` et
+  // n'ecrit que sur `public.groupes`, donc le reglage vit sur le groupe, la ou
+  // l'administration le regarde deja.
+  group('Le reglage d\'observation s\'ouvre depuis la ligne du groupe', () {
     testWidgets('la ligne du groupe porte l\'action, et elle ouvre le module', (
       WidgetTester tester,
     ) async {
@@ -236,6 +249,12 @@ void main() {
       // arguments contre la fonction a quatre revient en `PGRST202`, traduit en
       // `capaciteAbsente`. L'ecran ne doit pas faire croire a un
       // enregistrement.
+      //
+      // Et il doit dire LE motif, pas celui du tuteur : les quatre fonctions
+      // d'observation de `0033` sont bien en base (mesure du 21/09/2026),
+      // seule `0036` manque. « L'observation n'est pas encore activee sur
+      // cette installation. » enverrait l'administrateur la chercher dans
+      // Configuration.
       final FauxPortPolitique port = FauxPortPolitique(
         politique: _politiqueGroupe,
       )..echecEcriture = const EchecObservation(
@@ -245,7 +264,11 @@ void main() {
       await _ouvrirDepuisLaListe(tester, port);
       await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
 
-      expect(find.text(t.tc.observation.refus.capaciteAbsente), findsOneWidget);
+      expect(
+        find.text(t.admin.groupes.observationCapaciteAbsente),
+        findsOneWidget,
+      );
+      expect(find.text(t.tc.observation.refus.capaciteAbsente), findsNothing);
     });
   });
 
