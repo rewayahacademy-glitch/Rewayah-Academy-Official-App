@@ -82,6 +82,18 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   bool _enSalle = false;
   bool _entreeSalleEnCours = false;
 
+  /// Vrai quand une sortie a ete demandee PENDANT que la connexion courait.
+  ///
+  /// **Une demande de sortie ne se perd pas dans une attente.** Entre la
+  /// demande de jeton et l'entree effective dans la salle, il y a deux `await`,
+  /// et le serveur peut epuiser le budget pendant ce temps : la visite passe a
+  /// `terminee`, `_quitterSalle` trouve `_enSalle` encore faux et n'a rien a
+  /// fermer, puis la connexion aboutit et ouvre la salle APRES la fin. L'ecran
+  /// dirait « visite terminee » pendant que le parent continue de voir et
+  /// d'entendre la classe, jusqu'au demontage de la page. Ce drapeau fait
+  /// survivre la demande a la connexion en cours.
+  bool _sortieDemandee = false;
+
   /// Vrai quand le jeton video a ete refuse, ou la connexion impossible.
   bool _salleIndisponible = false;
 
@@ -233,6 +245,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       return;
     }
     _entreeSalleEnCours = true;
+    // Une entree neuve ne herite pas de la demande de sortie de la precedente.
+    _sortieDemandee = false;
 
     final AccesSalle acces;
     try {
@@ -267,12 +281,37 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       unawaited(_moteur.quitter());
       return;
     }
+
+    // **La visite a pu se terminer pendant la connexion.** Deux temoins, et
+    // non un seul : la demande de sortie arrivee entre-temps, et la phase
+    // courante du moteur de visite -- la seule autorite sur la fin d'une
+    // visite. Entrer en salle ici poserait `_enSalle = true` apres que
+    // `_quitterSalle` est deja passe sans rien avoir a fermer, et la salle
+    // resterait jointe jusqu'au demontage de la page. Le quota serveur serait
+    // tenu sur le papier, jamais a l'ecran ni dans l'oreille du parent.
+    if (_sortieDemandee || !_visiteEnCours) {
+      setState(() {
+        _entreeSalleEnCours = false;
+        _participants = const <ParticipantSalle>[];
+      });
+      await _moteur.quitter();
+      return;
+    }
+
     setState(() {
       _entreeSalleEnCours = false;
       _enSalle = true;
       _salleIndisponible = false;
     });
   }
+
+  /// Vrai tant que le moteur de visite dit que la visite court encore.
+  ///
+  /// Lu au moteur et non a l'etat local : c'est le serveur qui termine une
+  /// visite, et l'ecran ne fait que suivre ce qu'il publie.
+  bool get _visiteEnCours =>
+      ref.read(moteurVisiteObservationProvider(widget.seanceId)).etat.phase ==
+      PhaseVisite.enVisite;
 
   void _poserEchecSalle() {
     if (!mounted) {
@@ -285,7 +324,15 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   }
 
   /// Ferme la salle video. Sans effet quand cet ecran ne l'a pas ouverte.
+  ///
+  /// **Demandee pendant une connexion, elle est memorisee, jamais perdue** :
+  /// il n'y a encore rien a fermer, et c'est `_rejoindreSalle` qui refermera
+  /// la salle des qu'elle sera ouverte.
   Future<void> _quitterSalle() async {
+    if (_entreeSalleEnCours) {
+      _sortieDemandee = true;
+      return;
+    }
     if (!_enSalle) {
       return;
     }

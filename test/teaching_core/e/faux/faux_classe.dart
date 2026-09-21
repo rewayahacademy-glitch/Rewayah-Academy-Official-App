@@ -116,6 +116,14 @@ class FauxMoteurClasse implements VideoSessionProvider {
   /// Ce que `rejoindre` doit lever, quand on teste un echec de connexion.
   Object? erreurEntree;
 
+  /// Suspend `rejoindre` jusqu'a ce que le test la relache.
+  ///
+  /// Une connexion a une salle n'est pas instantanee, et c'est PENDANT cette
+  /// attente que le budget d'observation peut tomber a zero. Sans prise sur ce
+  /// moment, cet enchainement ne se joue pas : `rejoindre` aboutirait toujours
+  /// avant que le serveur n'ait pu annoncer quoi que ce soit.
+  Completer<void>? entreeSuspendue;
+
   /// Pose un etat et le publie, comme le vrai moteur.
   void poser(EtatSalle etat) {
     _etat = etat;
@@ -148,6 +156,10 @@ class FauxMoteurClasse implements VideoSessionProvider {
 
   @override
   Future<void> rejoindre(AccesSalle acces) async {
+    final Completer<void>? attente = entreeSuspendue;
+    if (attente != null) {
+      await attente.future;
+    }
     final Object? erreur = erreurEntree;
     if (erreur != null) {
       poser(EtatSalle.echec);
