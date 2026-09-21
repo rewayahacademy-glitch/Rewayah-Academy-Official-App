@@ -76,36 +76,4 @@ void main() {
     expect(await groupeMonte(tester, '/tc/bibliotheque?groupe='), isNull);
     expect(await groupeMonte(tester, '/tc/bibliotheque?groupe=%20%20'), isNull);
   });
-
-  testWidgets('le parametre de construction sert de repli, et la requete prime', (
-    WidgetTester tester,
-  ) async {
-    fenetreTelephone(tester);
-
-    await tester.pumpWidget(
-      hoteRoutantB(
-        depart: RoutesTcB.bibliotheque,
-        routes: routesTcB(groupeId: 'repli'),
-        surcharges: surchargesCatalogue(),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(
-      tester.widget<BibliothequePage>(find.byType(BibliothequePage)).groupeId,
-      'repli',
-    );
-
-    await tester.pumpWidget(
-      hoteRoutantB(
-        depart: RoutesTcB.avecGroupe('g1'),
-        routes: routesTcB(groupeId: 'repli'),
-        surcharges: surchargesCatalogue(),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(
-      tester.widget<BibliothequePage>(find.byType(BibliothequePage)).groupeId,
-      'g1',
-    );
-  });
 }

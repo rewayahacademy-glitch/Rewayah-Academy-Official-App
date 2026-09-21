@@ -4,6 +4,7 @@ import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 
 SessionState _session({
   required AppRole role,
@@ -495,6 +496,18 @@ void main() {
           AppRole.controller,
         ],
       };
+
+      test('les deux constantes de la Bibliotheque designent la meme adresse', () {
+        // `/tc/bibliotheque` est ecrit en dur DEUX fois : `Routes.tcBibliotheque`,
+        // que lit le garde d'autorisation ci-dessus, et `RoutesTcB.bibliotheque`,
+        // que lisent la route et le compositeur `RoutesTcB.avecGroupe`. Rien
+        // dans `lib/` ne les relie, et rien ne peut le faire :
+        // `core/router/routes.dart` importerait alors `features/`, ce qui
+        // inverse le sens des dependances du depot. L'egalite se tient donc
+        // ici. Sans elle, le jour ou l'une bouge, l'adresse serait composee
+        // correctement puis rejetee par la redirection, sans rien de rouge.
+        expect(RoutesTcB.bibliotheque, Routes.tcBibliotheque);
+      });
 
       for (final MapEntry<String, List<AppRole>> entree in autorises.entries) {
         for (final AppRole role in AppRole.values) {

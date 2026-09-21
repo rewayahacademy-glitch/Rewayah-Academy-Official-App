@@ -144,9 +144,25 @@ final FutureProviderFamily<DonneesCatalogue, String?> donneesCatalogueProvider =
 
       final List<LibraryResource> tous = await catalogue.tous();
       final List<LibraryResource> recents = await catalogue.recents();
+      // Des quatre lectures, une seule peut etre REFUSEE : cote serveur,
+      // `ressources_du_groupe` (migration 0033) LEVE sur un groupe qui n'est
+      // pas celui de l'appelant, elle ne rend pas une liste vide. Et le groupe
+      // vient desormais de l'adresse (`?groupe=`), donc d'une valeur que
+      // n'importe qui peut ecrire. Sans cette garde, un identifiant falsifie
+      // emporterait `tous`, `recents` et `reprise` avec lui : toute la
+      // Bibliotheque tomberait pour une seule section. La garde prend tout
+      // echec, et pas seulement `EchecCatalogue` : aucun adaptateur serveur
+      // n'est encore ecrit, et rien ne garantit la forme de ce qu'il levera.
+      // Une section vide disparait, elle ne se remplit pas d'autre chose
+      // (`surface_bibliotheque.dart`).
       final List<LibraryResource> pourGroupe = groupeId == null
           ? const <LibraryResource>[]
-          : await catalogue.pourGroupe(groupeId);
+          : await catalogue
+                .pourGroupe(groupeId)
+                .onError<Object>(
+                  (Object erreur, StackTrace trace) =>
+                      const <LibraryResource>[],
+                );
       final ReprisLecture? reprise = await catalogue.derniereLecture();
 
       // L'etat hors ligne se mesure une fois par ressource citee, pas une fois

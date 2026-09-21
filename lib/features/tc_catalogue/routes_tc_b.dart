@@ -45,10 +45,21 @@ abstract final class RoutesTcB {
   /// parametre est alors celui de la bibliotheque standard.
   ///
   /// L'adresse est partageable et survit a un rechargement de page sur le Web,
-  /// ce qu'aucune autre forme de passage ne fait. Elle n'ouvre rien de plus a
-  /// celui qui la recoit : `ressources_du_groupe` (migration `0033`) refuse
-  /// l'appelant qui n'est ni membre, ni tuteur du foyer, ni enseignant, ni
-  /// admin du groupe demande.
+  /// ce qu'aucune autre forme de passage ne fait.
+  ///
+  /// Ce qu'elle n'ouvre pas, et rien de plus : un NON-MEMBRE n'obtient rien.
+  /// `ressources_du_groupe` (migration `0033`) refuse l'appelant qui n'est ni
+  /// membre, ni tuteur du foyer, ni enseignant, ni admin du groupe demande.
+  ///
+  /// Elle ne garantit PAS la visibilite ressource par ressource pour celui qui
+  /// passe cette porte. Cette fonction est `security definer`, aucune migration
+  /// du depot ne pose `force row level security` : elle s'execute en
+  /// proprietaire et contourne donc la RLS de `library_resource`. Son corps ne
+  /// filtre que l'appartenance au groupe, jamais `access_policy`, jamais
+  /// `app_account_valid()` -- la ou la policy `library_resource_lecture`
+  /// (migration `0032`) exige les deux et n'ouvre `enseignant_seul` qu'au
+  /// `teacher_id` du groupe. Une migration de correction est ecrite dans un lot
+  /// voisin ; tant qu'elle n'est pas appliquee, l'ecart reste ouvert.
   static String avecGroupe(String groupeId) => Uri(
     path: bibliotheque,
     queryParameters: <String, String>{parametreGroupe: groupeId},
@@ -57,18 +68,18 @@ abstract final class RoutesTcB {
 
 /// Les routes de la Bibliotheque.
 ///
-/// Le groupe de contexte vient d'abord de l'adresse, par le parametre de
-/// requete `?groupe=` (voir [RoutesTcB.avecGroupe]) : c'est la seule forme qui
-/// survive a un rechargement de page sur le Web. [groupeId] reste le repli
-/// quand l'adresse n'en porte pas, et garde la symetrie avec `routesTcA`.
+/// Le groupe de contexte vient de l'adresse, par le parametre de requete
+/// `?groupe=` (voir [RoutesTcB.avecGroupe]) : c'est la seule forme qui survive
+/// a un rechargement de page sur le Web, et elle suffit. Aucun parametre de
+/// construction ne la double : il ne serait appele par personne.
 ///
-/// Dans les deux cas c'est la meme Bibliotheque : seule la section
+/// Avec groupe ou sans, c'est la meme Bibliotheque : seule la section
 /// « Pour ce groupe » change.
-List<RouteBase> routesTcB({String? groupeId}) => <RouteBase>[
+List<RouteBase> routesTcB() => <RouteBase>[
   GoRoute(
     path: RoutesTcB.bibliotheque,
     builder: (BuildContext context, GoRouterState state) =>
-        BibliothequePage(groupeId: _groupeDe(state) ?? groupeId),
+        BibliothequePage(groupeId: _groupeDe(state)),
     routes: <RouteBase>[
       GoRoute(
         path: ':${RoutesTcB.parametreRessource}',
