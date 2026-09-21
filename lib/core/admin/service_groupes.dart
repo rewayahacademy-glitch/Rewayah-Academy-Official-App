@@ -7,6 +7,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../planning/service_planning.dart';
 
+/// Erreur de mutation sans SQL ni detail technique expose a l'interface.
+class ErreurMutationClasse implements Exception {
+  const ErreurMutationClasse();
+
+  @override
+  String toString() =>
+      'La classe n\u2019a pas pu etre enregistree. Actualisez puis reessayez.';
+}
+
 /// Le public d'un groupe : fixe le seuil par defaut (5 enfants, 6 adultes).
 enum TypePublicGroupe {
   /// Groupe d'enfants, seuil par defaut 5.
@@ -23,9 +32,8 @@ enum TypePublicGroupe {
   /// Lit un type depuis sa valeur SQL. Se replie sur `enfant`, le seuil le
   /// plus bas : un type mal lu ne doit jamais laisser passer plus de monde
   /// que prevu.
-  static TypePublicGroupe depuisSql(String? valeur) => valeur == 'adulte'
-      ? TypePublicGroupe.adulte
-      : TypePublicGroupe.enfant;
+  static TypePublicGroupe depuisSql(String? valeur) =>
+      valeur == 'adulte' ? TypePublicGroupe.adulte : TypePublicGroupe.enfant;
 }
 
 /// Un groupe pedagogique, vu par l'administration.
@@ -135,9 +143,7 @@ class MembreGroupe {
     prenom: json['student_prenom'] as String?,
     nom: json['student_nom'] as String?,
     rejointLe:
-        DateTime.tryParse(
-          json['joined_at'] as String? ?? '',
-        )?.toLocal() ??
+        DateTime.tryParse(json['joined_at'] as String? ?? '')?.toLocal() ??
         DateTime.now(),
   );
 
@@ -252,17 +258,24 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     required String libelle,
     required Creneau creneau,
     int? seuilMax,
-  }) => _client.rpc<String>(
-    'creer_groupe',
-    params: <String, dynamic>{
-      'p_teacher_profile_id': teacherId,
-      'p_type_public': type.valeurSql,
-      'p_libelle': libelle,
-      'p_weekday': creneau.jour,
-      'p_hour_local': creneau.heure,
-      'p_seuil_max': seuilMax,
-    },
-  );
+  }) async {
+    try {
+      return await _client.rpc<String>(
+        'creer_groupe',
+        params: <String, dynamic>{
+          'p_teacher_profile_id': teacherId,
+          'p_type_public': type.valeurSql,
+          'p_libelle': libelle,
+          'p_weekday': creneau.jour,
+          'p_hour_local': creneau.heure,
+          'p_seuil_max': seuilMax,
+          'p_timezone_iana': creneau.fuseau,
+        },
+      );
+    } on PostgrestException {
+      throw const ErreurMutationClasse();
+    }
+  }
 
   @override
   Future<void> modifier({
@@ -270,16 +283,23 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     required String libelle,
     required int seuilMax,
     required Creneau creneau,
-  }) => _client.rpc<void>(
-    'modifier_groupe',
-    params: <String, dynamic>{
-      'p_groupe_id': groupeId,
-      'p_libelle': libelle,
-      'p_seuil_max': seuilMax,
-      'p_weekday': creneau.jour,
-      'p_hour_local': creneau.heure,
-    },
-  );
+  }) async {
+    try {
+      await _client.rpc<void>(
+        'modifier_groupe',
+        params: <String, dynamic>{
+          'p_groupe_id': groupeId,
+          'p_libelle': libelle,
+          'p_seuil_max': seuilMax,
+          'p_weekday': creneau.jour,
+          'p_hour_local': creneau.heure,
+          'p_timezone_iana': creneau.fuseau,
+        },
+      );
+    } on PostgrestException {
+      throw const ErreurMutationClasse();
+    }
+  }
 
   @override
   Future<void> ajouterEleve({
