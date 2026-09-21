@@ -392,6 +392,30 @@ enabled = false
 # Obtain from https://clerk.com/setup/supabase
 # domain = "example.clerk.accounts.dev"
 
+# ============================================================================
+# Fonctions Edge -- qui exige un jeton, et qui ne peut pas en exiger
+# ============================================================================
+#
+# Ce fichier ne declarait aucune fonction, et `.github/workflows/deploy.yml`
+# rattrapait le seul cas particulier avec `--no-verify-jwt` -- une option qui
+# s'applique a TOUTES les fonctions du deploiement. Elle aurait ouvert les sept
+# autres aux appels anonymes pour n'en ouvrir qu'une. L'option est retiree du
+# workflow ; le cas particulier se declare ici, ou il est versionne et relu
+# avec le reste.
+#
+# Le defaut de Supabase est `verify_jwt = true`. Les sept fonctions qui ne sont
+# pas nommees ci-dessous en heritent, et c'est bien ce qu'elles veulent : elles
+# agissent au nom de l'appelant, et c'est son jeton qui decide ce qu'il obtient.
+
+# LiveKit signe ses webhooks lui-meme. Elle est appelee par LiveKit, pas par
+# une personne : aucun jeton Supabase n'existe pour cet appel, et exiger un
+# jeton rendrait 401 avant meme que la fonction s'execute. La signature est
+# verifiee dans le corps de la fonction
+# (supabase/functions/livekit-webhook/index.ts:26 et 45) : c'est la, et pas
+# dans la passerelle, que la confiance se gagne.
+[functions.livekit-webhook]
+verify_jwt = false
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality
