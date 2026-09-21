@@ -21,13 +21,15 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../classes/domaine/conformite.dart';
+import '../classes/domaine/providers.dart';
+import '../classes/porte_salle.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
 ///
@@ -349,7 +351,11 @@ class _CoursAVenir extends StatelessWidget {
 }
 
 /// Le cours commence, avec ou sans reseau pour y entrer.
-class _CoursEnDirect extends StatelessWidget {
+///
+/// Le bouton passe par la porte d'entree : un membre mineur sans photo
+/// d'identification lit pourquoi la photo est demandee, au lieu de voir le
+/// jeton refuse apres le clic. Inconnue, la precondition laisse le bouton.
+class _CoursEnDirect extends ConsumerWidget {
   const _CoursEnDirect({
     required this.seance,
     required this.paire,
@@ -363,8 +369,11 @@ class _CoursEnDirect extends StatelessWidget {
   final bool joignable;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final PreconditionSalle? precondition = ref
+        .watch(preconditionSalleProvider(null))
+        .value;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -391,9 +400,10 @@ class _CoursEnDirect extends StatelessWidget {
         // croire a l'enfant que son cours n'existe plus, alors qu'il attend le
         // reseau. `ActionPrincipale` signale l'inertie en changeant de PAIRE, et
         // non par de la transparence, qui ferait tomber son texte sous le seuil.
-        ActionPrincipale(
+        PorteSalle(
+          precondition: precondition,
           libelle: t.eleve.accueil.rejoindre,
-          onPress: joignable
+          onRejoindre: joignable
               ? () => GoRouter.of(context).go(
                   Routes.salle,
                   // Le billet passe par `extra`, jamais par l'URL (ADR-005).

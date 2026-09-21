@@ -67,6 +67,7 @@ class CarteGroupe extends StatelessWidget {
     this.onOuvrir,
     this.onRejoindre,
     this.urlPhotoEnseignant,
+    this.porte,
   });
 
   /// Le groupe montre.
@@ -81,6 +82,11 @@ class CarteGroupe extends StatelessWidget {
   /// L'URL signee de la photo, quand l'hote sait la resoudre.
   final String? urlPhotoEnseignant;
 
+  /// La porte d'entree rendue a la place du bouton « Rejoindre », quand
+  /// l'hote veut expliquer une precondition avant le clic (photo
+  /// d'identification d'un membre mineur). Nulle, le bouton seul est rendu.
+  final Widget? porte;
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -92,10 +98,11 @@ class CarteGroupe extends StatelessWidget {
       libelleSemantique: LibellesGroupe.ouvrirGroupe(groupe.libelle),
       entete: _Entete(groupe: groupe),
       actions: groupe.rejoindreOuvert
-          ? ActionPrincipale(
-              libelle: LibellesGroupe.rejoindre,
-              onPress: onRejoindre,
-            )
+          ? porte ??
+                ActionPrincipale(
+                  libelle: LibellesGroupe.rejoindre,
+                  onPress: onRejoindre,
+                )
           : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

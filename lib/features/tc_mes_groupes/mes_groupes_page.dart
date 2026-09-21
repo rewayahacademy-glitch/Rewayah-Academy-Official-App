@@ -12,6 +12,9 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../classes/domaine/conformite.dart';
+import '../classes/domaine/providers.dart';
+import '../classes/porte_salle.dart';
 import 'carte_groupe.dart';
 import 'chemins_tc_a.dart';
 
@@ -27,7 +30,7 @@ import 'chemins_tc_a.dart';
 /// en fermant la porte de la salle.
 class MesGroupesPage extends ConsumerWidget {
   /// Cree l'ecran.
-  const MesGroupesPage({super.key, this.onRejoindre});
+  const MesGroupesPage({super.key, this.onRejoindre, this.onAjouterPhoto});
 
   /// Ce que fait « Rejoindre ».
   ///
@@ -37,19 +40,27 @@ class MesGroupesPage extends ConsumerWidget {
   /// reste inactif : on ne fait pas semblant d'ouvrir une porte.
   final void Function(GroupSummaryVM groupe)? onRejoindre;
 
+  /// Ce que fait « Ajouter la photo », quand un membre mineur n'en a pas.
+  ///
+  /// Nul quand ce n'est pas cet appelant qui peut l'ajouter (un eleve sur son
+  /// appareil) : la porte dit alors ou cela se fait, au lieu de proposer un
+  /// geste qui echouerait.
+  final VoidCallback? onAjouterPhoto;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PageShell(
       titre: LibellesGroupe.mesGroupesTitre,
-      child: _Corps(onRejoindre: onRejoindre),
+      child: _Corps(onRejoindre: onRejoindre, onAjouterPhoto: onAjouterPhoto),
     );
   }
 }
 
 class _Corps extends ConsumerWidget {
-  const _Corps({this.onRejoindre});
+  const _Corps({this.onRejoindre, this.onAjouterPhoto});
 
   final void Function(GroupSummaryVM groupe)? onRejoindre;
+  final VoidCallback? onAjouterPhoto;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -96,6 +107,7 @@ class _Corps extends ConsumerWidget {
       groupes: liste,
       horsLigne: horsLigne,
       onRejoindre: onRejoindre,
+      onAjouterPhoto: onAjouterPhoto,
     );
   }
 }
@@ -110,11 +122,13 @@ class _Grille extends StatelessWidget {
     required this.groupes,
     required this.horsLigne,
     this.onRejoindre,
+    this.onAjouterPhoto,
   });
 
   final List<GroupSummaryVM> groupes;
   final bool horsLigne;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
+  final VoidCallback? onAjouterPhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +139,7 @@ class _Grille extends StatelessWidget {
           groupe: groupe,
           horsLigne: horsLigne,
           onRejoindre: onRejoindre,
+          onAjouterPhoto: onAjouterPhoto,
         ),
     ];
 
@@ -163,28 +178,47 @@ class _Grille extends StatelessWidget {
 }
 
 /// Une carte, et ce que ses deux gestes declenchent.
-class _CarteRoutee extends StatelessWidget {
+///
+/// **Le bouton « Rejoindre » passe par la porte d'entree** : pour un membre
+/// mineur sans photo d'identification, elle explique la condition avant le
+/// clic au lieu de laisser le jeton echouer apres. La precondition vient du
+/// serveur ; inconnue, le bouton reste et le serveur tranche seul.
+class _CarteRoutee extends ConsumerWidget {
   const _CarteRoutee({
     required this.groupe,
     required this.horsLigne,
     this.onRejoindre,
+    this.onAjouterPhoto,
   });
 
   final GroupSummaryVM groupe;
   final bool horsLigne;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
+  final VoidCallback? onAjouterPhoto;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final void Function(GroupSummaryVM groupe)? rappel = onRejoindre;
+    // Hors ligne, la carte reste lisible mais la porte de la salle est
+    // fermee : proposer une entree que le reseau ne peut pas honorer serait
+    // une promesse en l'air.
+    final VoidCallback? rejoindre = horsLigne || rappel == null
+        ? null
+        : () => rappel(groupe);
+    final PreconditionSalle? precondition = ref
+        .watch(preconditionSalleProvider(null))
+        .value;
     return CarteGroupe(
       groupe: groupe,
       onOuvrir: () =>
           GoRouter.of(context).go(CheminsTcA.espaceGroupe(groupe.groupeId)),
-      // Hors ligne, la carte reste lisible mais la porte de la salle est
-      // fermee : proposer une entree que le reseau ne peut pas honorer serait
-      // une promesse en l'air.
-      onRejoindre: horsLigne || rappel == null ? null : () => rappel(groupe),
+      onRejoindre: rejoindre,
+      porte: PorteSalle(
+        precondition: precondition,
+        onRejoindre: rejoindre,
+        onAjouterPhoto: onAjouterPhoto,
+        libelle: LibellesGroupe.rejoindre,
+      ),
     );
   }
 }

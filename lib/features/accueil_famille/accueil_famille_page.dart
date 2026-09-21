@@ -27,6 +27,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../classes/routes_core24.dart';
 
 /// La phase de vie d'un enfant du foyer, a un instant donne.
 ///
@@ -459,6 +460,15 @@ class _GererLeFoyer extends StatelessWidget {
           titre: LibellesGroupe.mesGroupesTitre,
           detail: t.tuteur.accueil.blocGroupesDetail,
           destination: Routes.tcGroupes,
+        ),
+        const Divider(height: 1),
+        // Les Classes disponibles (sprint noyau 24 h) : le tuteur choisit le
+        // membre du foyer, puis s'inscrit ou propose un creneau.
+        _LigneMenu(
+          icone: AppIcons.creneaux,
+          titre: t.classes.foyer.blocClasses,
+          detail: t.classes.foyer.blocClassesDetail,
+          destination: CheminsCore24.tuteurClasses,
         ),
       ],
     ),

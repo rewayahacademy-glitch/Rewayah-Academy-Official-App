@@ -18,6 +18,12 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../classes/domaine/conformite.dart';
+import '../classes/domaine/providers.dart';
+import '../classes/libelles_classes.dart';
+import '../classes/routes_core24.dart';
+import '../enseignant_classes/classes_enseignant_page.dart'
+    show EtapeConformite;
 
 /// `ENS-01` : la bienvenue, traversee une seule fois apres validation.
 ///
@@ -95,7 +101,7 @@ class BienvenueEnseignantPage extends ConsumerWidget {
 }
 
 /// Le corps de la bienvenue : ou l'on en est, ce qui vient, ce qui engage.
-class _Corps extends StatelessWidget {
+class _Corps extends ConsumerWidget {
   const _Corps({required this.prenom});
 
   /// Le prenom, quand la lecture du profil l'a rendu. Nul, la bienvenue reste
@@ -103,9 +109,15 @@ class _Corps extends StatelessWidget {
   final String? prenom;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final String nomme = prenom?.trim() ?? '';
+    // L'acces aux classes (KYC V2) : le contrat, l'identite, et une eventuelle
+    // dispense. Une lecture en echec ne bloque pas la bienvenue : le bloc
+    // s'absente, la bienvenue reste une bienvenue.
+    final AsyncValue<ConformiteCompte> conformite = ref.watch(
+      maConformiteProvider,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -134,6 +146,10 @@ class _Corps extends StatelessWidget {
             ],
           ),
         ),
+        if (conformite.hasValue) ...<Widget>[
+          Ecart.vSection,
+          _Acces(conformite: conformite.requireValue),
+        ],
         Ecart.vSection,
         SectionHeader(titre: t.enseignant.bienvenue.suite),
         _Pas(numero: 1, texte: t.enseignant.bienvenue.pas1),
@@ -164,6 +180,65 @@ class _Corps extends StatelessWidget {
             ],
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// L'acces aux classes : le contrat, l'identite, la dispense eventuelle.
+///
+/// **La dispense se lit comme une decision de l'academie**, jamais comme un
+/// contournement : la phrase la nomme, et la pastille dit « KYC dispense ».
+class _Acces extends StatelessWidget {
+  const _Acces({required this.conformite});
+
+  final ConformiteCompte conformite;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        SectionHeader(
+          titre: conformite.clearanceOperationnelle
+              ? t.classes.enseignant.clearanceOk
+              : t.classes.enseignant.clearanceAttente,
+        ),
+        Ecart.vMd,
+        EtapeConformite(
+          titre: t.classes.enseignant.etapeContrat,
+          detail: t.classes.enseignant.etapeContratDetail,
+          fait: conformite.contratAccepte,
+          libelleFait: t.classes.conformite.contratAccepte,
+          libelleAFaire: t.classes.conformite.contratManquant,
+          libelleAction: t.classes.enseignant.signerContrat,
+          onAction: () => GoRouter.of(context).go(Routes.attenteContrat),
+        ),
+        Ecart.vMd,
+        if (conformite.estDispense)
+          EtapeConformite(
+            titre: t.classes.enseignant.etapeKyc,
+            detail: t.classes.enseignant.etapeKycDispenseDetail,
+            fait: true,
+            libelleFait: t.classes.conformite.exigenceDispensee,
+            libelleAFaire: '',
+            sousTitre: t.classes.enseignant.etapeKycDispense,
+          )
+        else
+          EtapeConformite(
+            titre: t.classes.enseignant.etapeKyc,
+            detail: t.classes.enseignant.etapeKycDetail,
+            fait: conformite.kycSatisfait,
+            libelleFait: t.classes.conformite.etatVerifie,
+            libelleAFaire: LibellesClasses.etatKyc(conformite.etat),
+            tonAFaire: conformite.etat == EtatKyc.soumis
+                ? TonEtat.accent
+                : TonEtat.avertissement,
+            libelleAction: conformite.etat == EtatKyc.soumis
+                ? null
+                : t.classes.enseignant.deposerPiece,
+            onAction: () => GoRouter.of(context).go(Routes.attentePiece),
+          ),
       ],
     );
   }
@@ -228,6 +303,15 @@ class _Sorties extends StatelessWidget {
           libelle: t.enseignant.bienvenue.versJournee,
           niveau: NiveauAction.secondaire,
           onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
+        ),
+        Ecart.vSm,
+        // La troisieme sortie, tertiaire : les classes assignees et
+        // disponibles, ou l'onboarding si l'acces n'est pas encore ouvert.
+        ActionPrincipale(
+          libelle: t.classes.enseignant.voirClasses,
+          niveau: NiveauAction.tertiaire,
+          onPress: () =>
+              GoRouter.of(context).go(CheminsCore24.enseignantClasses),
         ),
       ],
     );

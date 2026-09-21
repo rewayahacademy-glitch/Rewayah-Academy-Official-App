@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/auth/service_auth.dart';
+import '../../core/domain/enums.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
@@ -106,6 +107,19 @@ class _Incomplet extends StatelessWidget {
 
   final EtatDossier etat;
 
+  /// Vrai quand seule la piece manque, pour un eleve ou un tuteur : le KYC
+  /// des familles est propose, jamais bloquant (contrat du sprint, section
+  /// 5.1). Un enseignant n'a pas cette sortie.
+  bool get _peutContinuerSansPiece {
+    final AppRole? role = etat.role;
+    if (role != AppRole.guardian && role != AppRole.student) {
+      return false;
+    }
+    final List<PieceManquante> manquants = etat.manquants;
+    return manquants.length == 1 &&
+        manquants.single == PieceManquante.pieceIdentite;
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -122,6 +136,17 @@ class _Incomplet extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: _AFournir(manquant: manquant),
           ),
+        if (_peutContinuerSansPiece) ...<Widget>[
+          Ecart.vSm,
+          Text(t.classes.kyc.plusTardDetail, style: textes.bodySmall),
+          Ecart.vMd,
+          ActionPrincipale(
+            libelle: t.classes.kyc.continuerSansPiece,
+            niveau: NiveauAction.tertiaire,
+            onPress: () =>
+                GoRouter.of(context).go(Routes.racinePour(etat.role!)),
+          ),
+        ],
       ],
     );
   }
