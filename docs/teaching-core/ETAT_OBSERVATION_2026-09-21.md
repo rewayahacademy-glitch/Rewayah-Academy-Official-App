@@ -194,6 +194,10 @@ fige en dur, il redevenait faux sans rien mesurer de plus.
 3. **`ServiceVideo.assisterEnTuteur`** n'a plus aucun appelant dans `lib/` depuis la bascule
    d'« Assister ». La methode et la RPC `assister_seance` restent en place : les retirer touche
    l'interface, ses doubles et leurs tests, et n'etait pas demande. A arbitrer.
-4. **`ar.i18n.json` porte un `tc.observation` VIDE** : tout le sous-arbre observation retombe deja en
+4. **`supabase/migrations/LISEZ-MOI-0035-0037-non-appliquees.md` est perime.** L'agent R2 y demandait
+   s'il devait appliquer `0035`-`0037` : elles le sont, ainsi que `0039` et `0040`. Le fichier n'est
+   pas supprime ici -- il appartient a son chantier, et deux agents qui se suppriment des fichiers
+   est exactement la collision que ce lot a appris a eviter. A retirer par lui.
+5. **`ar.i18n.json` porte un `tc.observation` VIDE** : tout le sous-arbre observation retombe deja en
    francais dans l'interface arabe, par `fallback_strategy: base_locale`. Pre-existant ; les cles
    ajoutees ici suivent le meme regime et ne creent pas de regression.

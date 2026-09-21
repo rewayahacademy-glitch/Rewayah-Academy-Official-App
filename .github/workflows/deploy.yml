@@ -1,14 +1,99 @@
 name: Deploy Supabase
 
+# DEUX TRAVAUX QUI N'ONT PLUS LE MEME DECLENCHEUR, et c'est le coeur de ce
+# fichier.
+#
+# CE QUI A ETE MESURE LE 21 SEPTEMBRE 2026. Les deux etapes vivaient dans un
+# seul job, migrations d'abord. `supabase db push` compare les versions des
+# fichiers locaux a `supabase_migrations.schema_migrations` : les fichiers du
+# depot sont numerotes `0001`..`0038`, mais la base distante enregistre des
+# versions HORODATEES (`20260912032421`, `20260921043922`, ...) parce que les
+# migrations y ont ete appliquees par le MCP Supabase et non par la CLI. Toutes
+# les versions locales a partir de `0009` sont donc vues comme « a inserer
+# avant la derniere migration distante » : `db push` s'arrete, le job meurt, et
+# l'etape suivante -- les fonctions Edge -- n'a jamais tourne.
+#
+# LA PREUVE, plutot que le raisonnement : origin/main a recu dix commits le
+# 21 septembre entre 01h43 et 04h56. Si l'etape des fonctions avait tourne,
+# les six fonctions deployees porteraient toutes un `updated_at` du 21. Elles
+# portent le 06, le 12 et le 18 septembre. Aucune n'a bouge. Et `verify_jwt`
+# vaut encore `true` sur cinq d'entre elles, ce qui serait impossible si
+# `--no-verify-jwt` avait seulement reussi une fois.
+#
+# CE QUI CHANGE.
+#   * Les FONCTIONS partent a chaque poussee sur `main` : c'est du code
+#     applicatif, il suit le depot.
+#   * Les MIGRATIONS ne partent plus toutes seules. Elles sont appliquees hors
+#     CI, et une application automatique depuis `main` entrerait en collision
+#     avec ce travail. Le declencheur manuel garde l'outil disponible sans le
+#     laisser partir dans le dos de qui tient la base.
+
 on:
   push:
     branches: [main]
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      appliquer_les_migrations:
+        description: "Appliquer les migrations (supabase db push) -- a n'activer que si la numerotation locale et l'historique distant concordent"
+        type: boolean
+        default: false
 
 jobs:
-  deploy:
-    name: Migrations + Edge Functions
+  fonctions:
+    name: Edge Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Refuse de partir si le jeton manque
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        shell: bash
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::error title=SUPABASE_ACCESS_TOKEN absent::a creer dans Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+
+      # `--no-verify-jwt` A ETE RETIRE, et ce n'est pas un detail de forme :
+      # l'option s'applique a TOUTES les fonctions du deploiement. Elle aurait
+      # ouvert `creer-profil-enfant`, `session-enfant`, `agent-session` et les
+      # quatre fonctions R2 a des appels non authentifies. Une seule fonction a
+      # besoin d'etre ouverte -- `livekit-webhook`, qui verifie elle-meme la
+      # signature du webhook (supabase/functions/livekit-webhook/index.ts:26,45)
+      # -- et cela se declare desormais par fonction dans `supabase/config.toml`,
+      # ou c'est versionne et relisible.
+      - name: Deploy Edge Functions
+        if: hashFiles('supabase/functions/**') != ''
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy --project-ref gggmtelinlpseweouyav
+
+      - name: Les fonctions attendues sont-elles en ligne ?
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        shell: bash
+        run: |
+          en_ligne=$(supabase functions list --project-ref gggmtelinlpseweouyav)
+          echo "$en_ligne"
+          manquantes=""
+          for d in supabase/functions/*/; do
+            nom=$(basename "$d")
+            [ "$nom" = "_shared" ] && continue
+            echo "$en_ligne" | grep -q "$nom" || manquantes="$manquantes $nom"
+          done
+          if [ -n "$manquantes" ]; then
+            echo "::error title=Fonctions non deployees::$manquantes"
+            exit 1
+          fi
+
+  migrations:
+    name: Migrations (manuel uniquement)
+    if: github.event_name == 'workflow_dispatch' && inputs.appliquer_les_migrations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,11 +103,5 @@ jobs:
 
       - name: Apply migrations
         # DIRECT (non poolé, port 5432) : la connexion via pooler (6543) rejette le DDL.
-        # Secret à créer (étape D) : postgresql://postgres.gggmtelinlpseweouyav:<MOT_DE_PASSE_DB>@<hôte>.pooler.supabase.com:5432/postgres?sslmode=require
+        # Secret : postgresql://postgres.gggmtelinlpseweouyav:<MOT_DE_PASSE_DB>@<hôte>.pooler.supabase.com:5432/postgres?sslmode=require
         run: supabase db push --db-url "${{ secrets.SUPABASE_DB_URL }}"
-
-      - name: Deploy Edge Functions
-        if: hashFiles('supabase/functions/**') != ''
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase functions deploy --project-ref gggmtelinlpseweouyav --no-verify-jwt

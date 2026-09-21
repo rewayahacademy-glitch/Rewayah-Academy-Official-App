@@ -1,9 +1,32 @@
 name: Flutter Web → Vercel
 
+# LA SEULE VOIE QUI MENE EN PRODUCTION.
+#
+# `vercel.json` porte `git.deploymentEnabled.main = false` depuis fdf5168 : le
+# deploiement Git zero-config de Vercel ne sait pas compiler du Flutter et
+# ecrasait la production avec un build vide de 292 ms, 404 sur toutes les
+# routes. Il est donc coupe, et tout passe par ici.
+#
+# Consequence, et c'est la lecon de fdf5168 : quand CE workflow echoue, rien ne
+# prend le relais. Entre le 18 et le 21 septembre 2026 il n'a rien livre -- la
+# production a ete tenue a la main par des `vercel deploy` successifs (tous les
+# deploiements de production de cette periode portent un `meta` vide, signature
+# de la CLI, aucun ne porte de commit) sans que rien ne le signale. D'ou les
+# deux gardes ajoutees ici : une AVANT (les secrets) et une APRES (le bundle
+# reellement servi). Un echec doit etre bruyant ; un silence doit vouloir dire
+# que ca marche.
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
+# Deux poussees rapprochees deployaient deux bundles dans un ordre non garanti.
+# `cancel-in-progress: false` : on ne tue pas un deploiement en cours, on
+# attend son tour.
+concurrency:
+  group: deploiement-web-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -12,9 +35,35 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      SITE: https://rewayah-academy.vercel.app
 
     steps:
       - uses: actions/checkout@v4
+
+      # GARDE AMONT. Un secret absent ne se voyait sinon que bien plus tard,
+      # sous la forme d'un bundle compile sans URL Supabase : `Env.configuree`
+      # (lib/core/config/env.dart:65-66) rend alors faux et l'application
+      # demarre sur son ecran de configuration manquante. Le workflow refuse de
+      # partir plutot que de livrer ca.
+      #
+      # SENTRY_DSN_FLUTTER n'est PAS exige : vide, il coupe la supervision
+      # (env.dart:43-51) sans rien casser d'autre.
+      - name: Refuse de partir si un secret manque
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        shell: bash
+        run: |
+          manquants=""
+          for nom in VERCEL_ORG_ID VERCEL_PROJECT_ID VERCEL_TOKEN SUPABASE_URL SUPABASE_ANON_KEY; do
+            if [ -z "${!nom}" ]; then manquants="$manquants $nom"; fi
+          done
+          if [ -n "$manquants" ]; then
+            echo "::error title=Secrets GitHub absents::$manquants -- a creer dans Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+          echo "Les cinq secrets exiges sont presents."
 
       - uses: subosito/flutter-action@v2
         with:
@@ -28,12 +77,51 @@ jobs:
           dart run slang
           dart run build_runner build --delete-conflicting-outputs
 
+      # Les trois bascules de developpement sont passees EXPLICITEMENT a false.
+      # Elles valent deja false par defaut (env.dart:27-41) ; les ecrire quand
+      # meme fait que la commande dit ce qu'elle produit, au lieu de s'en
+      # remettre a un defaut qu'un lot futur pourrait changer.
+      #
+      # ENVIRONNEMENT=production : sans lui, `Env.environnement` vaut
+      # `developpement` (env.dart:59-62) et les erreurs de la production
+      # arrivaient dans Sentry melangees a celles des postes.
       - name: Build Flutter Web (release)
         run: |
           flutter build web \
             --release \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=ENVIRONNEMENT=production \
+            --dart-define=SENTRY_DSN_FLUTTER=${{ secrets.SENTRY_DSN_FLUTTER }} \
+            --dart-define=GALERIE=false \
+            --dart-define=PLAYGROUND=false \
+            --dart-define=AUTH_PAR_MOT_DE_PASSE=false
+
+      # Le bundle doit porter les fichiers copies depuis `web/`. `sqlite3.wasm`
+      # et `drift_worker.js` ont deja manque une fois : sans eux, la base locale
+      # Drift ne demarre pas et le bouton eleve ne repond plus. `vercel.json`
+      # vient de `web/vercel.json` -- c'est LUI, et pas celui de la racine, qui
+      # accompagne `build/web` chez Vercel et qui porte la reecriture SPA.
+      - name: Le bundle construit est-il complet ?
+        shell: bash
+        run: |
+          manquants=""
+          for f in index.html main.dart.js sqlite3.wasm drift_worker.js vercel.json flutter_service_worker.js version.json; do
+            if [ ! -f "build/web/$f" ]; then manquants="$manquants $f"; fi
+          done
+          if [ -n "$manquants" ]; then
+            echo "::error title=Bundle incomplet::$manquants absent(s) de build/web"
+            exit 1
+          fi
+          # L'URL Supabase est une constante compilee : si elle n'est pas dans
+          # main.dart.js, le --dart-define n'a pas pris et l'application
+          # partirait sans dorsale. On cherche la chaine litterale, jamais la
+          # cle -- qui n'a rien a faire dans un journal de CI.
+          if ! grep -qF "${{ secrets.SUPABASE_URL }}" build/web/main.dart.js; then
+            echo "::error title=Bundle non configure::l URL Supabase n est pas compilee dans main.dart.js"
+            exit 1
+          fi
+          echo "Bundle complet et configure."
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -46,3 +134,44 @@ jobs:
           vercel deploy build/web \
             --prod \
             --token=${{ secrets.VERCEL_TOKEN }}
+
+      # GARDE AVAL. Le message de la CLI dit qu'elle a televerse, pas que le
+      # domaine sert le bon bundle : l'alias peut rester sur l'ancien
+      # deploiement, et une reecriture SPA absente ne se voit que sur une route
+      # profonde. On mesure donc ce que le DOMAINE rend, apres coup.
+      - name: Controle du bundle SERVI
+        shell: bash
+        run: |
+          echo "Attente de la propagation de l alias..."
+          sleep 20
+          echecs=""
+
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/")
+          [ "$code" = "200" ] || echecs="$echecs racine=$code"
+
+          # N'IMPORTE QUELLE route profonde fait l'affaire, et c'est le
+          # principe : la reecriture `/(.*)` -> `/index.html` doit rendre 200
+          # sur un chemin que le serveur ne connait pas. Sans elle, Vercel rend
+          # 404 et l'application est injoignable ailleurs que sur sa racine.
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/controle/reecriture-spa")
+          [ "$code" = "200" ] || echecs="$echecs reecriture_spa=$code"
+
+          # Le wasm DOIT etre servi en application/wasm : en text/plain, le
+          # navigateur refuse de l'instancier en streaming.
+          type=$(curl -s -o /dev/null -w '%{content_type}' "$SITE/sqlite3.wasm")
+          case "$type" in application/wasm*) ;; *) echecs="$echecs wasm_mime=$type" ;; esac
+
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$SITE/drift_worker.js")
+          [ "$code" = "200" ] || echecs="$echecs drift_worker=$code"
+
+          # Un bundle Flutter reel pese plusieurs mega-octets. Un build vide en
+          # rendrait quelques kilo-octets -- c'est exactement ce qui est arrive
+          # le 18 septembre, et rien ne l'avait signale.
+          taille=$(curl -s -o /dev/null -w '%{size_download}' "$SITE/main.dart.js")
+          [ "$taille" -gt 1000000 ] || echecs="$echecs main_dart_js=${taille}o"
+
+          if [ -n "$echecs" ]; then
+            echo "::error title=Le domaine ne sert pas le bundle attendu::$echecs"
+            exit 1
+          fi
+          echo "Le domaine sert un bundle complet (main.dart.js : $taille octets)."
