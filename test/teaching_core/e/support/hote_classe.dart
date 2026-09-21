@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
+import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -62,6 +63,7 @@ List<Override> surchargesClasse({
   FauxPresenceClasse? presence,
   FauxRosterEnseignant? roster,
   PortRappelDiscret? rappel,
+  FauxAnnonceObservation? annonces,
 }) => <Override>[
   servicePreVolProvider.overrideWithValue(preVol),
   serviceVideoProvider.overrideWithValue(video),
@@ -72,6 +74,12 @@ List<Override> surchargesClasse({
   servicePresenceProvider.overrideWithValue(presence ?? FauxPresenceClasse()),
   portRosterEnseignantProvider.overrideWithValue(
     roster ?? FauxRosterEnseignant(),
+  ),
+  // **Personne n'observe par defaut, et c'est le bon defaut** : le vrai port
+  // parlerait a Supabase, et un test qui ne dit rien de l'observation doit
+  // exercer l'en-tete sans annonce, pas une salle observee par commodite.
+  portAnnonceObservationProvider.overrideWithValue(
+    annonces ?? FauxAnnonceObservation(),
   ),
   if (rappel != null) portRappelDiscretProvider.overrideWithValue(rappel),
 ];

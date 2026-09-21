@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
 import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
 import 'package:rewayah_academy/features/tc_classe_live/scene_classe.dart';
+import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
 import 'faux/faux_classe.dart';
 import 'support/hote_classe.dart';
@@ -35,7 +36,6 @@ void main() {
 
   ContexteClasseLive contexte({
     String? support,
-    List<AnnonceObservation> annonces = const <AnnonceObservation>[],
     WidgetBuilder? bibliotheque,
     WidgetBuilder? dock,
     int? seuilMax,
@@ -54,7 +54,6 @@ void main() {
         : (BuildContext _) => const Text('support presente'),
     bibliotheque: bibliotheque,
     dock: dock,
-    annonces: annonces,
     seuilMax: seuilMax,
   );
 
@@ -80,6 +79,7 @@ void main() {
     FauxServiceVideoClasse video,
     FauxPreVolClasse preVol,
     FauxRappelDiscret rappel,
+    FauxAnnonceObservation annonces,
     List<Override> surcharges,
     List<String> journal,
   })
@@ -88,8 +88,12 @@ void main() {
     List<PresenceParticipant>? presence,
     List<TeacherStudentProjection>? fiches,
     EchecRappel? echecRappel,
+    List<AnnonceObservation> annonces = const <AnnonceObservation>[],
   }) {
     final List<String> journal = <String>[];
+    final FauxAnnonceObservation annonceur = FauxAnnonceObservation(
+      lignes: annonces,
+    );
     final FauxMoteurClasse moteur = FauxMoteurClasse(journal: journal);
     final FauxServiceVideoClasse video = FauxServiceVideoClasse(
       acces0: accesDe(role),
@@ -102,6 +106,7 @@ void main() {
       video: video,
       preVol: preVol,
       rappel: rappel,
+      annonces: annonceur,
       journal: journal,
       surcharges: surchargesClasse(
         moteur: moteur,
@@ -112,6 +117,7 @@ void main() {
           fiches: fiches ?? const <TeacherStudentProjection>[],
         ),
         rappel: rappel,
+        annonces: annonceur,
       ),
     );
   }
@@ -525,31 +531,57 @@ void main() {
   });
 
   group('observation', () {
+    const List<AnnonceObservation> uneVisite = <AnnonceObservation>[
+      AnnonceObservation(
+        libelle: 'Tuteur d Amina observe',
+        tempsRestant: Duration(seconds: 90),
+        enfantConcerneId: 'RA-Amina',
+      ),
+    ];
+
     testWidgets('une annonce de tuteur s affiche avec son temps restant', (
       WidgetTester tester,
     ) async {
-      final banc0 = banc(presence: troisEleves());
+      final banc0 = banc(presence: troisEleves(), annonces: uneVisite);
       await monterClasse(
         tester,
-        contexte: contexte(
-          support: 'r1',
-          annonces: const <AnnonceObservation>[
-            AnnonceObservation(
-              libelle: 'Tuteur d Amina observe',
-              tempsRestant: Duration(seconds: 90),
-              enfantConcerneId: 'RA-Amina',
-            ),
-          ],
-        ),
+        contexte: contexte(support: 'r1'),
         surcharges: banc0.surcharges,
         ecran: LargeurEcran.tablette,
       );
 
+      // Le flux est demande pour CETTE seance, et l'en-tete porte ce qu'il
+      // rend : c'est le cablage qui manquait, pas le composant.
+      expect(banc0.annonces.demandes, <String>[seance]);
+      expect(find.byType(IndicateurObservation), findsOneWidget);
       expect(find.text('Tuteur d Amina observe'), findsOneWidget);
       expect(
-        find.text(t.tc.classe.observation.restant(secondes: 90)),
+        find.text(t.tc.observation.annonce.restant(secondes: 90)),
         findsOneWidget,
       );
+    });
+
+    testWidgets('l eleve ne lit pas les annonces, et ne les demande meme pas', (
+      WidgetTester tester,
+    ) async {
+      // Le jeton dit « student » : la seule autorite sur le role.
+      final banc0 = banc(
+        role: 'student',
+        presence: troisEleves(),
+        annonces: uneVisite,
+      );
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.tablette,
+      );
+
+      // Un eleve qui apprendrait qu'un tuteur observe saurait aussi DE QUI :
+      // le libelle porte un prenom. Le flux n'est donc pas meme ouvert.
+      expect(banc0.annonces.demandes, isEmpty);
+      expect(find.byType(IndicateurObservation), findsNothing);
+      expect(find.text('Tuteur d Amina observe'), findsNothing);
     });
   });
 }

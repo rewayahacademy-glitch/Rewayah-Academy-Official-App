@@ -9,6 +9,7 @@ import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/status_pill.dart';
+import '../tc_observation_ui/indicateur_observation.dart';
 import 'roster_classe.dart';
 import 'vue_classe_live.dart';
 
@@ -179,9 +180,13 @@ class EnteteClasse extends StatelessWidget {
             style: textes.labelMedium ?? const TextStyle(),
           ),
         ],
-        for (final AnnonceObservation annonce in annonces) ...<Widget>[
+        // **Le composant d'Agent G, pas une seconde ecriture du meme.** Il
+        // porte deja la regle : rien quand personne n'observe, et aucune
+        // notification de sortie (decision D-14) -- la ligne disparait, et
+        // c'est tout.
+        if (annonces.isNotEmpty) ...<Widget>[
           Ecart.vSm,
-          _Annonce(annonce: annonce),
+          IndicateurObservation(annonces: annonces),
         ],
       ],
     );
@@ -207,41 +212,4 @@ class EnteteClasse extends StatelessWidget {
     MotLien.instable ||
     MotLien.reconnexion => TonEtat.avertissement,
   };
-}
-
-/// Une observation annoncee : « Tuteur d'Amina observe », et le temps restant.
-///
-/// **Pas de notification de sortie** (decision D-14) : la ligne disparait, et
-/// c'est tout. Les autres eleves ne sont pas interrompus.
-class _Annonce extends StatelessWidget {
-  const _Annonce({required this.annonce});
-
-  final AnnonceObservation annonce;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final Duration? restant = annonce.tempsRestant;
-
-    return MergeSemantics(
-      child: Row(
-        children: <Widget>[
-          Flexible(
-            child: Text(
-              annonce.libelle,
-              overflow: TextOverflow.ellipsis,
-              style: textes.labelMedium ?? const TextStyle(),
-            ),
-          ),
-          if (restant != null) ...<Widget>[
-            Ecart.hSm,
-            Text(
-              t.tc.classe.observation.restant(secondes: restant.inSeconds),
-              style: textes.labelMedium ?? const TextStyle(),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 }

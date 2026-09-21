@@ -5,6 +5,7 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/port_roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
+import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
@@ -323,6 +324,33 @@ class FauxPresenceClasse implements ServicePresence {
 
   @override
   Future<List<PresenceParticipant>?> presence(String seanceId) async => lignes;
+}
+
+/// Les annonces d'observation, en memoire.
+///
+/// **Il remplace le PORT, pas le provider de flux** : la Classe Live passe par
+/// `annoncesObservationProvider`, et c'est ce chemin-la que le test doit
+/// emprunter, sans quoi il verifierait un cablage qu'il aurait lui-meme pose.
+///
+/// Les seances qui ne sont pas les siennes rendent une liste vide, exactement
+/// comme le serveur : `annonces_observation` leve pour qui n'est pas
+/// l'enseignant de la seance, et `AnnonceObservationSupabase` traduit ce refus
+/// en « personne n'observe ».
+class FauxAnnonceObservation implements PortAnnonceObservation {
+  /// Cree le faux.
+  FauxAnnonceObservation({this.lignes = const <AnnonceObservation>[]});
+
+  /// Ce que le flux porte.
+  List<AnnonceObservation> lignes;
+
+  /// Les seances pour lesquelles un flux a ete demande.
+  final List<String> demandes = <String>[];
+
+  @override
+  Stream<List<AnnonceObservation>> annonces(String sessionId) {
+    demandes.add(sessionId);
+    return Stream<List<AnnonceObservation>>.value(lignes);
+  }
 }
 
 /// Le roster pedagogique, en memoire.
