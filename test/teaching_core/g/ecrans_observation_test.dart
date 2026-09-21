@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -487,6 +489,48 @@ void main() {
         find.text(t.tc.observation.fin.quotaAtteint),
         findsOneWidget,
       );
+    });
+
+    testWidgets('le budget epuise PENDANT la connexion ne laisse pas la salle jointe', (
+      WidgetTester tester,
+    ) async {
+      // **Le defaut que ce test tient fermee** : entre la demande de jeton et
+      // l'entree effective, il y a deux attentes. Si le serveur epuise le
+      // budget pendant ce temps, l'ecran affiche « visite terminee » alors que
+      // la salle finit tout de meme par etre jointe -- le parent continue de
+      // voir et d'entendre la classe apres la fin de son quota, sans que ni
+      // l'enseignant ni les enfants ne le sachent.
+      final Completer<void> connexion = Completer<void>();
+      final FauxMoteurClasse moteur = FauxMoteurClasse()
+        ..entreeSuspendue = connexion;
+      final FauxServiceVideoClasse video = FauxServiceVideoClasse(
+        acces0: accesDe('guardian_observer'),
+      );
+      final FauxPortPolitique politique = FauxPortPolitique();
+      addTearDown(politique.fermer);
+
+      await entrerEnVisite(
+        tester,
+        moteur: moteur,
+        video: video,
+        politique: politique,
+      );
+      // La connexion court encore : rien n'est joint a cet instant.
+      expect(moteur.entrees, isEmpty);
+
+      // Le serveur, et lui seul, epuise le budget -- pendant la connexion.
+      politique.flux.add(unBudget(restant: Duration.zero, peutEntrer: false));
+      await tester.pumpAndSettle();
+      expect(find.text(t.tc.observation.fin.quotaAtteint), findsOneWidget);
+
+      // La connexion aboutit APRES la fin de la visite.
+      connexion.complete();
+      await tester.pumpAndSettle();
+
+      expect(moteur.entrees, hasLength(1));
+      // La salle est refermee aussitot : la visite terminee a l'ecran est une
+      // visite terminee dans la salle.
+      expect(moteur.departs, 1);
     });
   });
 

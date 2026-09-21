@@ -25,18 +25,24 @@
 -- `on conflict (key) do update`.
 --
 -- POURQUOI 240 ET PAS 120 -- raisonnement relu dans le code avant d'ecrire, et
--- CONFIRME. public.budget_observation (0033_tc_vues_rpc.sql:1001-1075) ne
--- connait pas le plafond par visite : il ne lit que max_visits_per_session et
--- max_total_observation_seconds (0033:1026-1027), rend
--- `restant_secondes = max_total - consomme` et refuse l'entree avec
--- `temps_epuise` des que `consomme >= max_total`. Le plafond par visite est
--- applique cote client par GuardianObservationPolicy.plafondDeVisite
+-- CONFIRME. public.budget_observation, DANS SA VERSION APPLIQUEE
+-- (0033_tc_vues_rpc.sql:1001-1073), ne connait pas le plafond par visite : il
+-- ne lit que max_visits_per_session et max_total_observation_seconds
+-- (0033:1026-1027), rend `restant_secondes = max_total - consomme` et refuse
+-- l'entree avec `temps_epuise` des que `consomme >= max_total`. Le plafond par
+-- visite n'etait applique que cote client, par
+-- GuardianObservationPolicy.plafondDeVisite
 -- (lib/core/tc_observation/guardian_observation_policy.dart:161-167), qui
 -- retient TOUJOURS le minimum du plafond par visite et du RESTE total. Avec un
 -- total de 120 et un plafond de visite de 120, la premiere visite consomme
 -- tout : `restant_secondes` tombe a 0, la seconde visite est refusee pour
 -- `temps_epuise`, et la deuxieme visite promise naitrait vide. 240 = 2 x 120
 -- est le seul total qui rend la regle vraie.
+-- CE QUE CE TOTAL OUVRAIT, ET QUE LA SECTION C REFERME : porter le total a 240
+-- sans rien faire d'autre allongeait jusqu'a 240 secondes le JETON SIGNE d'une
+-- visite unique (le detail du calcul est en section C). La section C apprend
+-- donc le plafond par visite a budget_observation, pour que la borne « deux
+-- minutes par visite » soit tenue par le serveur et non par le client.
 --
 -- POURQUOI LA VERSION CHANGE. `policy_version` est journalisee avec chaque
 -- visite : sans bump, une visite relue plus tard ne dirait pas sous quelle
@@ -118,6 +124,64 @@
 -- personne d'autre. Aucun code Dart n'appelle encore cette RPC (verifie : zero
 -- occurrence de son nom dans lib/ et test/), donc le changement de signature ne
 -- casse aucun appel existant.
+--
+-- ============================================================================
+-- C. LE PLAFOND PAR VISITE, TENU PAR LE SERVEUR
+-- ============================================================================
+--
+-- CE QUI A ETE MESURE DANS LE CODE APPLIQUE, ligne a ligne, avant d'ecrire un
+-- mot de cette section :
+--   * public.budget_observation (0033_tc_vues_rpc.sql:1001-1073) ne lit que
+--     deux quotas (0033:1026-1027), max_visits_per_session et
+--     max_total_observation_seconds ; `max_seconds_per_visit` n'apparait nulle
+--     part dans son corps, et son `restant_secondes` (0033:1068) vaut
+--     `greatest(0, max_total - temps_consomme)` ;
+--   * public.autoriser_jeton_video (0033:1643-1781) borne l'expiration du
+--     jeton d'un guardian_observer a
+--     `least(token_ttl_seconds, restant_secondes)` (0033:1733), et
+--     public.video_config.token_ttl_seconds vaut 900 par defaut
+--     (0010_video_jeton_presence.sql:75).
+--   La seule borne PAR VISITE reellement tenue par le serveur etait donc une
+--   coincidence arithmetique : le total valant 120, `restant_secondes` ne
+--   pouvait pas depasser 120. La section A porte ce total a 240 ; le meme
+--   calcul emettrait desormais, pour UNE visite, un jeton signe valable 240
+--   secondes. La borne « deux minutes par visite » ne reposerait plus que sur
+--   le client, ce que la specification 11.4 refuse en une phrase : « le client
+--   ne peut pas prolonger sa visite en modifiant un timer ».
+--
+-- LA CORRECTION. `restant_secondes` devient le MINIMUM de deux restes :
+--   * le reste TOTAL, inchange : max_total moins le temps consomme sur la
+--     seance, intervalle ouvert compris ;
+--   * le reste de LA VISITE : le plafond par visite moins ce que l'intervalle
+--     OUVERT a deja consomme -- ou le plafond entier quand aucun intervalle
+--     n'est ouvert, c'est-a-dire pour la visite a venir.
+--   C'est mot pour mot l'invariant de plafondDeVisite
+--   (guardian_observation_policy.dart:161-167), ecrit une seconde fois la ou
+--   il est opposable. Un plafond par visite absent (NULL) ne borne rien : le
+--   reste total reste seul, exactement comme aujourd'hui.
+--
+-- CE QUI N'EST PAS TOUCHE, ET POURQUOI. public.autoriser_jeton_video n'est PAS
+-- reecrite. Elle prend deja le minimum de son TTL et de `restant_secondes`
+-- (0033:1733) : borner `restant_secondes` borne donc le jeton, sans rouvrir
+-- une fonction que quatre roles traversent (eleve, enseignant, controleur,
+-- administration) et qui a deja ete reecrite une fois en fusion A+G+Q. La plus
+-- petite modification qui tient l'invariant est aussi la seule qui ne risque
+-- rien pour ses autres appelants.
+--
+-- CONSEQUENCE VOULUE. Pendant une visite, `restant_secondes` peut tomber a 0
+-- alors que `peut_entrer` reste vrai. Ce n'est pas une contradiction : ce sont
+-- deux questions differentes -- « combien de temps reste-t-il A CETTE VISITE »
+-- et « une NOUVELLE visite serait-elle acceptee ». Le moteur client ferme la
+-- visite sur la premiere (moteur_visite_observation.dart:279-281) et le tuteur
+-- peut alors revenir pour sa seconde visite. C'est la regle produit, et c'est
+-- ce que `peut_entrer` doit continuer de repondre : ses trois motifs de refus
+-- ne bougent pas d'une ligne.
+--
+-- SIGNATURE INCHANGEE : `create or replace` de meme signature, donc aucun drop
+-- et aucun droit detruit. Les deux instructions de droits sont tout de meme
+-- reecrites a l'identique de 0033:1075-1076 : les repeter ne coute rien, et
+-- s'en remettre a ce qu'un `replace` conserve serait s'en remettre a un
+-- souvenir. La fonction reste `stable` : elle ne fait que lire.
 
 -- ============================================================================
 -- A. Defauts d'Academie
@@ -210,6 +274,134 @@ grant execute on function public.definir_politique_observation_groupe(uuid, text
   to authenticated;
 
 -- ============================================================================
+-- C. Le plafond par visite, applique par le serveur
+-- ============================================================================
+
+create or replace function public.budget_observation(p_session_id uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  v_seance  public.sessions%rowtype;
+  v_pol     jsonb;
+  v_ttl     int;
+  v_visites int;
+  v_temps   int;
+  v_max_v   int;
+  v_max_t   int;
+  v_max_pv  int;
+  v_ouverte int;
+  v_reste_t int;
+  v_reste_v int;
+  v_peut    boolean;
+  v_motif   text;
+begin
+  select * into v_seance from public.sessions s
+   where s.id = p_session_id and s.deleted_at is null;
+  if not found then
+    return jsonb_build_object('peut_entrer', false, 'motif_refus', 'seance_non_active');
+  end if;
+
+  v_pol   := public.politique_observation_effective(v_seance.groupe_id);
+  v_max_v := (v_pol->>'max_visits_per_session')::int;
+  v_max_t := (v_pol->>'max_total_observation_seconds')::int;
+  -- NULL quand la politique ne pose aucun plafond par visite : `->>` rend SQL
+  -- NULL sur un null JSON, et c'est ce cas-la qu'il faut distinguer de zero.
+  -- Zero voudrait dire « aucune seconde », NULL veut dire « pas de plafond ».
+  v_max_pv := (v_pol->>'max_seconds_per_visit')::int;
+
+  select vc.token_ttl_seconds into v_ttl from public.video_config vc where vc.id;
+  v_ttl := coalesce(v_ttl, 300);
+
+  select count(*) into v_visites
+    from public.guardian_session_visit v
+   where v.session_id = p_session_id
+     and v.observateur_profile_id = auth.uid()
+     and v.role = 'guardian_observer';
+
+  -- Intervalle ouvert compte, plafonne au TTL du jeton (arbitrage §1.7).
+  select coalesce(sum(
+    case
+      when v.left_at is not null
+        then coalesce(v.duration_seconds, extract(epoch from (v.left_at - v.entered_at))::int)
+      when now() - v.entered_at >= make_interval(secs => v_ttl) then v_ttl
+      else extract(epoch from (now() - v.entered_at))::int
+    end
+  ), 0) into v_temps
+    from public.guardian_session_visit v
+   where v.session_id = p_session_id
+     and v.observateur_profile_id = auth.uid()
+     and v.role = 'guardian_observer';
+
+  -- Ce que l'intervalle OUVERT a deja consomme, NULL quand il n'y en a pas.
+  -- `guardian_visit_ouvert_uidx` (0032_tc_catalogue.sql:478-480) garantit au
+  -- plus un intervalle ouvert par (seance, observateur) : le `limit 1` ne
+  -- choisit pas entre deux lignes, il lit la seule qui puisse exister. Le meme
+  -- plafonnement au TTL que ci-dessus, pour que les deux calculs disent la
+  -- meme chose d'un intervalle reste ouvert au-dela de son jeton.
+  select case
+           when now() - v.entered_at >= make_interval(secs => v_ttl) then v_ttl
+           else extract(epoch from (now() - v.entered_at))::int
+         end
+    into v_ouverte
+    from public.guardian_session_visit v
+   where v.session_id = p_session_id
+     and v.observateur_profile_id = auth.uid()
+     and v.role = 'guardian_observer'
+     and v.left_at is null
+   order by v.entered_at desc
+   limit 1;
+
+  v_reste_t := greatest(0, v_max_t - v_temps);
+  -- Le reste de la visite : sous le plafond par visite pour l'intervalle
+  -- ouvert, le plafond entier pour une visite a venir. Sans plafond par
+  -- visite, il n'y a rien a borner et le reste total vaut pour les deux.
+  v_reste_v := case
+                 when v_max_pv is null then v_reste_t
+                 else greatest(0, v_max_pv - coalesce(v_ouverte, 0))
+               end;
+
+  -- Les trois motifs de refus sont inchanges : `peut_entrer` repond toujours
+  -- « une NOUVELLE visite serait-elle acceptee », question a laquelle le
+  -- plafond PAR VISITE ne repond pas.
+  if not (v_pol->>'observation_activee')::boolean then
+    v_peut := false; v_motif := 'policy_desactivee';
+  elsif v_visites >= v_max_v then
+    v_peut := false; v_motif := 'quota_visites_atteint';
+  elsif v_temps >= v_max_t then
+    v_peut := false; v_motif := 'temps_epuise';
+  else
+    v_peut := true; v_motif := null;
+  end if;
+
+  return jsonb_build_object(
+    'policy_version', v_pol->>'policy_version',
+    'visites_utilisees', v_visites,
+    'visites_max', v_max_v,
+    'temps_consomme_secondes', v_temps,
+    'temps_total_max_secondes', v_max_t,
+    -- LE MINIMUM DES DEUX RESTES. C'est ce nombre que le client affiche en
+    -- compte a rebours (port_politique_observation.dart:85-87) ET celui qui
+    -- borne le jeton signe (0033:1733) : une seule verite, la meme des deux
+    -- cotes, decidee ici.
+    'restant_secondes', least(v_reste_t, v_reste_v),
+    'peut_entrer', v_peut,
+    'motif_refus', v_motif
+  );
+end;
+$$;
+
+-- Droits : a l'identique de 0033:1075-1076. `agent_ro` n'apparait que dans le
+-- revoke. La fonction est `stable`, mais elle lit sous `security definer` ce
+-- que l'appelant a le droit de lire, et pas davantage : un agent qui la
+-- lirait lirait le quota d'un tuteur qui n'est pas lui.
+revoke execute on function public.budget_observation(uuid) from public, anon, agent_ro;
+grant execute on function public.budget_observation(uuid) to authenticated;
+
+-- ============================================================================
 -- Controle de sortie -- modele 0030_tc_socle.sql:218-230. Une migration qui ne
 -- prend pas doit echouer bruyamment, jamais passer en silence. Chaque controle
 -- est ecrit en EXIGENCE POSITIVE : un `if valeur <> attendue` ne se declenche
@@ -217,8 +409,10 @@ grant execute on function public.definir_politique_observation_groupe(uuid, text
 -- ============================================================================
 do $$
 declare
-  v_oid oid;
-  v_nb  int;
+  v_oid    oid;
+  v_oid_b  oid;
+  v_nb     int;
+  v_source text;
 begin
   -- A. Les quatre valeurs d'Academie sont bien celles attendues.
   if (select count(*) from public.app_config
@@ -275,5 +469,51 @@ begin
   end if;
   if pg_catalog.has_function_privilege('agent_ro', v_oid, 'execute') then
     raise exception '0036 incomplete : agent_ro a EXECUTE sur une fonction volatile';
+  end if;
+
+  -- C. budget_observation borne desormais la visite, et pas seulement le
+  -- total. Chaque controle exige une presence : aucun ne se contente de ne pas
+  -- trouver de faute.
+  v_oid_b := to_regprocedure('public.budget_observation(uuid)')::oid;
+  if v_oid_b is null then
+    raise exception '0036 incomplete : public.budget_observation(uuid) est absente';
+  end if;
+
+  select count(*) into v_nb
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public'
+     and p.proname = 'budget_observation';
+  if v_nb <> 1 then
+    raise exception '0036 incomplete : % fonction(s) budget_observation, 1 attendue', v_nb;
+  end if;
+
+  -- Elle ne fait que lire : `stable` est ce qui le dit au planificateur.
+  if (select p.provolatile from pg_catalog.pg_proc p where p.oid = v_oid_b) <> 's' then
+    raise exception '0036 incomplete : budget_observation n''est plus stable';
+  end if;
+
+  -- Le corps doit lire le plafond par visite ET rendre le minimum des deux
+  -- restes. Les deux sont exiges separement : lire le plafond sans s'en servir
+  -- ne bornerait rien.
+  select p.prosrc into v_source from pg_catalog.pg_proc p where p.oid = v_oid_b;
+  if v_source not like '%max_seconds_per_visit%' then
+    raise exception '0036 incomplete : budget_observation ne lit pas le plafond par visite';
+  end if;
+  if v_source not like '%least(v_reste_t, v_reste_v)%' then
+    raise exception '0036 incomplete : restant_secondes n''est pas borne par la visite';
+  end if;
+
+  -- Les memes trois roles, verifies un par un : EXECUTE arrive par deux
+  -- chemins, et un `create or replace` conserve les droits de la fonction
+  -- remplacee -- raison de plus pour les constater plutot que les supposer.
+  if pg_catalog.has_function_privilege('anon', v_oid_b, 'execute') then
+    raise exception '0036 incomplete : anon garde EXECUTE sur budget_observation';
+  end if;
+  if not pg_catalog.has_function_privilege('authenticated', v_oid_b, 'execute') then
+    raise exception '0036 incomplete : authenticated n''a pas EXECUTE sur budget_observation';
+  end if;
+  if pg_catalog.has_function_privilege('agent_ro', v_oid_b, 'execute') then
+    raise exception '0036 incomplete : agent_ro a EXECUTE sur budget_observation';
   end if;
 end $$;
