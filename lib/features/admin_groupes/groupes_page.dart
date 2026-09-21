@@ -15,6 +15,7 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import 'feuille_observation_groupe.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
 /// septembre 2026.
@@ -73,6 +74,8 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                     _ouvrirAjout(context, ref, groupe),
                 onModifierSeuil: (GroupeAdmin groupe) =>
                     _ouvrirModifierSeuil(context, ref, groupe),
+                onObservation: (GroupeAdmin groupe) =>
+                    _ouvrirObservation(context, ref, groupe),
                 onCloturer: (GroupeAdmin groupe) =>
                     _ouvrirCloture(context, ref, groupe),
               ),
@@ -100,6 +103,7 @@ class _Corps extends StatelessWidget {
     required this.onSelectionner,
     required this.onAjouter,
     required this.onModifierSeuil,
+    required this.onObservation,
     required this.onCloturer,
   });
 
@@ -109,6 +113,7 @@ class _Corps extends StatelessWidget {
   final void Function(GroupeAdmin groupe) onSelectionner;
   final void Function(GroupeAdmin groupe) onAjouter;
   final void Function(GroupeAdmin groupe) onModifierSeuil;
+  final void Function(GroupeAdmin groupe) onObservation;
   final void Function(GroupeAdmin groupe) onCloturer;
 
   @override
@@ -218,6 +223,10 @@ class _Corps extends StatelessWidget {
                               onChoix: () => onModifierSeuil(g),
                             ),
                             EntreeAction(
+                              libelle: t.admin.groupes.actionObservation,
+                              onChoix: () => onObservation(g),
+                            ),
+                            EntreeAction(
                               libelle: t.admin.groupes.actionCloturer,
                               destructif: true,
                               onChoix: () => onCloturer(g),
@@ -324,6 +333,28 @@ void _ouvrirModifierSeuil(
     titre: t.admin.groupes.modifierSeuilTitre(libelle: groupe.libelle),
     constructeur: (BuildContext contexte) =>
         _FeuilleSeuil(groupe: groupe, onModifie: () => ref.invalidate(groupesProvider)),
+  );
+}
+
+/// Le reglage de l'observation par les tuteurs, groupe par groupe.
+///
+/// **Ici et pas dans Configuration** : la RPC `definir_politique_observation_
+/// groupe` prend un `p_groupe_id` et n'ecrit que sur `public.groupes`. Les
+/// defauts de l'Academie, eux, vivent dans `app_config` et n'ont aujourd'hui
+/// aucune fonction d'ecriture dediee -- les inscrire dans
+/// `ongletsConfiguration()` ferait un onglet sans geste possible.
+void _ouvrirObservation(
+  BuildContext context,
+  WidgetRef ref,
+  GroupeAdmin groupe,
+) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.groupes.observationTitre(libelle: groupe.libelle),
+    constructeur: (BuildContext contexte) => FeuilleObservationGroupe(
+      groupeId: groupe.id,
+      onEnregistre: () => ref.invalidate(groupesProvider),
+    ),
   );
 }
 
