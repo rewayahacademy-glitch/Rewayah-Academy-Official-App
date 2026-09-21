@@ -85,12 +85,13 @@ const List<String> composantsDuCatalogue = <String>[
   // pourrait croire qu'il applique une regle est un composant qu'il faut
   // relire.
   'BandeauObservation',
-  // Section 2 : les quatre composants d'administration que les lots `ADM-08`
-  // et Pedagogie ont produits sans passer par le catalogue. Le cinquieme
-  // surnumeraire, `AdminShell`, est traite a part : c'est le seul a etre une
-  // coquille complete, donc le seul dont les axes « 200 pour cent de texte »
-  // et « mode enfant » peuvent reellement deborder -- le grouper avec les
-  // petits rendrait un echec impossible a attribuer.
+  // Section 2 : les cinq composants d'administration que les lots `IA-01`,
+  // `ADM-08` et Pedagogie ont produits sans passer par le catalogue.
+  // `AdminShell` a ete inscrit a part, apres les quatre autres : c'est le seul
+  // a etre une coquille complete, donc le seul dont les axes « 200 pour cent
+  // de texte » et « mode enfant » peuvent reellement deborder -- le grouper
+  // avec les petits aurait rendu un echec impossible a attribuer.
+  'AdminShell',
   'MenuActions',
   'MenuFiltre',
   'SelecteurNiveauProgramme',

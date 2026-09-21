@@ -17,6 +17,7 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
@@ -1427,10 +1428,86 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
   ),
 
   // --- Les composants d'administration ------------------------------------
-  // Quatre des cinq surnumeraires que le test de comptage signalait. Le
-  // cinquieme, `AdminShell`, est traite a part : c'est le seul a etre une
-  // coquille complete, donc le seul dont les axes « 200 pour cent de texte »
-  // et « mode enfant » peuvent reellement deborder.
+  // Les cinq surnumeraires que le test de comptage signalait. `AdminShell`
+  // vient en tete parce que c'est le seul a etre une coquille complete : les
+  // quatre autres tiennent dans une ligne, lui rend les trois chromes.
+  EntreeGalerie(
+    nom: 'AdminShell',
+    // Structure, comme `PageShell` et `NavShell` : une coquille n'est ni un
+    // controle qu'on presse ni une zone de donnees, et n'a donc pas d'etat
+    // presse a montrer.
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      // La hauteur est bornee par la galerie, exactement comme pour `PageShell`
+      // et `NavShell` : le composant rend un `Scaffold`, qui veut toute la
+      // hauteur qu'on lui donne. Sans `_hauteurPage`, la colonne de la galerie
+      // n'en a aucune a donner.
+      //
+      // Aucune enveloppe n'est necessaire malgre le harnais sans `Material` :
+      // c'est le `Scaffold` du composant lui-meme qui en pose un, et c'est
+      // pourquoi la barre superieure -- qui porte un `TextField` -- se rend
+      // ici sans rien ajouter.
+      //
+      // Le chrome n'est PAS une dimension des etats : le composant le choisit
+      // sur la largeur, et le test rejoue d'office chaque etat a 390, 768 et
+      // 1440. Les decliner ici rendrait les trois formes trois fois chacune.
+      EtatGalerie(
+        'huit domaines, un actif',
+        (BuildContext _) => SizedBox(
+          height: _hauteurPage,
+          child: AdminShell(
+            domaines: domainesAdmin(voitDirection: true),
+            domaineActif: AdminDomaine.accueil,
+            onAller: _allerNullePart,
+            onCompte: _rien,
+            child: const PageShell(
+              titre: 'Tableau de bord',
+              child: _SurfaceDemonstration(),
+            ),
+          ),
+        ),
+      ),
+      // Huit, jamais neuf : au-dela, le constructeur leve une `AssertionError`
+      // (`AdminShell.maxDomaines`), et la galerie echouerait sur son propre
+      // exemple. La liste complete EST le maximum, il n'y a rien a montrer de
+      // plus grand.
+      //
+      // Aucun domaine actif : l'etat reel d'un ecran atteint par la recherche
+      // de la barre superieure, qui mene ou aucun libelle de domaine ne nomme.
+      // Aucun indicateur ne doit alors se poser sur une entree au hasard.
+      EtatGalerie(
+        'aucun domaine actif',
+        (BuildContext _) => SizedBox(
+          height: _hauteurPage,
+          child: AdminShell(
+            domaines: domainesAdmin(voitDirection: true),
+            domaineActif: null,
+            onAller: _allerNullePart,
+            onCompte: _rien,
+            child: const PageShell(child: _SurfaceDemonstration()),
+          ),
+        ),
+      ),
+      // Sept domaines : l'admin ordinaire, celui qui ne voit pas la Direction
+      // -- « ni la route ni le libelle ne sont exposes ». C'est la liste que
+      // le produit rend aujourd'hui, `voitDirection` valant `false` faute de
+      // fondation de permission ; l'etat a huit ci-dessus est celui qui
+      // n'existe pas encore.
+      EtatGalerie(
+        'sans la Direction',
+        (BuildContext _) => SizedBox(
+          height: _hauteurPage,
+          child: AdminShell(
+            domaines: domainesAdmin(voitDirection: false),
+            domaineActif: AdminDomaine.securite,
+            onAller: _allerNullePart,
+            onCompte: _rien,
+            child: const PageShell(child: _SurfaceDemonstration()),
+          ),
+        ),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'SousNavigationDomaine',
     // Structure : c'est un chrome de page, ni un controle qu'on presse ni une
