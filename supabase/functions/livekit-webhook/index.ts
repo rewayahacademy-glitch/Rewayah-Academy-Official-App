@@ -31,6 +31,7 @@
 
 import { clientService, json } from '../_shared/clients.ts'
 import { verifierWebhook } from '../_shared/livekit.ts'
+import { entrerArchiveSiEgressTermine } from '../_shared/r2/ingestion_archive.ts'
 
 Deno.serve(async (requete: Request) => {
   if (requete.method !== 'POST') {
@@ -95,5 +96,18 @@ Deno.serve(async (requete: Request) => {
     return new Response('enregistrement impossible', { status: 500 })
   }
 
-  return json({ applique: data === true })
+  // `egress_ended` annonce qu'une archive audio a ete deposee dans le seau R2.
+  // Jusqu'ici l'evenement etait journalise puis ignore, faute de producteur
+  // pour `session_recordings`. L'entree des metadonnees vit dans son propre
+  // module : ce fichier reste la porte des webhooks, pas la place ou le
+  // stockage se decide.
+  //
+  // Elle ne peut pas faire echouer la reponse. Un 200 est deja du a LiveKit
+  // pour l'evenement de presence traite plus haut, et repondre autre chose
+  // declencherait un renvoi de l'evenement ENTIER -- donc un doublon de
+  // presence pour rattraper une archive. Ce qui ne passe pas ici est consigne
+  // et reste rattrapable a la main.
+  const archive = await entrerArchiveSiEgressTermine(service, type, evenement)
+
+  return json({ applique: data === true, archive })
 })

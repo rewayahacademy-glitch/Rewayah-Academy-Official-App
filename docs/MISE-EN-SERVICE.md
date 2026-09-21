@@ -579,3 +579,90 @@ update public.app_config set value = '120'::jsonb
 
 Ils se mesurent contre le comportement reel des webhooks, ils ne se devinent
 pas. Les valeurs actuelles sont des points de depart.
+
+## 9. Cloudflare R2 : les vingt secrets a poser
+
+Les quatre seaux existent et leurs identifiants sont emis. Leur cycle complet
+(ecriture, relecture, comparaison octet a octet, suppression, verification
+d'absence) a ete mesure au vert sur les quatre le 21 septembre 2026. Il ne
+reste qu'a poser les trousseaux sur le serveur.
+
+L'architecture, les flux et les regles d'autorisation sont dans
+`docs/architecture/R2_STORAGE_IMPLEMENTATION.md`.
+
+### 9.1 Quatre groupes de cinq
+
+Chaque domaine metier a SON trousseau. Les quatre seaux vivent sur quatre
+comptes Cloudflare distincts : rien ne se recopie d'un groupe a l'autre, pas
+meme le point d'acces.
+
+| Prefixe | Seau |
+| :--- | :--- |
+| `R2_IDENTITY_VAULT_` | `rewayah-identity-vault` |
+| `R2_RECORDINGS_` | `rewayah-session-recordings` |
+| `R2_MESSAGING_` | `rewayah-message-attachments` |
+| `R2_APP_PRIVATE_` | `rewayah-app-private-storage` |
+
+Pour chaque prefixe, cinq valeurs :
+
+```
+supabase secrets set <PREFIXE>ACCOUNT_ID=<32 hexadecimaux> --project-ref gggmtelinlpseweouyav
+supabase secrets set <PREFIXE>ACCESS_KEY_ID=<32 hexadecimaux> --project-ref gggmtelinlpseweouyav
+supabase secrets set <PREFIXE>SECRET_ACCESS_KEY=<64 hexadecimaux> --project-ref gggmtelinlpseweouyav
+supabase secrets set <PREFIXE>BUCKET_NAME=<le nom exact du seau> --project-ref gggmtelinlpseweouyav
+supabase secrets set <PREFIXE>ENDPOINT=https://<ACCOUNT_ID>.eu.r2.cloudflarestorage.com --project-ref gggmtelinlpseweouyav
+```
+
+Soit **4 groupes x 5 valeurs = 20 secrets**. Aucun redeploiement de fonction
+n'est necessaire : les secrets sont lus a chaque appel.
+
+### 9.2 Les quatre pieges deja rencontres
+
+Ils ont coute une session entiere le 21 septembre. Le code les refuse
+desormais au premier appel, en nommant le secret fautif et jamais sa valeur.
+
+1. **Le segment `.eu.` n'est pas optionnel.** Les quatre seaux sont sous
+   juridiction europeenne : `https://<compte>.r2.cloudflarestorage.com` repond
+   `403`. Le point d'acces est LU depuis le secret, jamais reconstruit.
+2. **Une variable qui contient son propre nom.** `BUCKET_NAME` portait
+   `R2_..._BUCKET_NAME` au lieu du nom du seau.
+3. **Une affectation collee entiere.** `ENDPOINT` contenait `NOM = url`.
+4. **Un trousseau recopie d'un domaine a l'autre.** Le point d'acces doit
+   porter l'identifiant de compte de SON domaine, sinon la signature vise le
+   compte du voisin.
+
+> R2 repond `AccessDenied` la ou S3 dirait `NoSuchBucket`. Un `403` peut donc
+> signifier « mauvais point d'acces », « seau inexistant » ou « cle sans
+> droit » indifferemment, et `401` veut dire « cle inconnue ». Seul le
+> contraste a un parametre pres permet de trancher.
+
+### 9.3 Verifier que c'est pose, sans rien exposer
+
+Les points d'entree repondent `503 stockage indisponible` tant que leur
+trousseau est absent ou mal forme. C'est l'etat normal du produit avant cette
+etape, et non une panne.
+
+```powershell
+supabase secrets list --project-ref gggmtelinlpseweouyav | Select-String 'R2_'
+```
+
+La commande liste les NOMS. Les valeurs ne sont jamais reaffichees, et c'est
+voulu.
+
+⚠ Ces vingt valeurs ne vont **jamais** dans le depot, jamais dans
+`dart_define.json`, jamais dans Flutter. Le client n'obtient qu'une URL signee
+de courte duree, apres qu'une porte serveur a verifie son droit.
+
+### 9.4 Deux choses a savoir avant de deployer les fonctions
+
+1. **`supabase functions deploy` sans nom deploie TOUT**, et
+   `.github/workflows/deploy.yml` y ajoute `--no-verify-jwt`. Or
+   `livekit-webhook` doit rester a `verify_jwt = false` et les quatre autres a
+   `true`, ce qui est l'etat reel du projet. Deployer les nouvelles fonctions
+   une par une evite de renverser ce reglage pour les anciennes. Les quatre
+   points d'entree R2 ne dependent d'ailleurs pas de `verify_jwt` pour leur
+   securite : ils verifient le jeton eux-memes et repondent `401` sans lui.
+2. **`r2-selftest` est encore ACTIVE en production** (version 49), alors
+   qu'elle n'existe pas dans le depot : c'est le vestige des tests de
+   connexion, et son source deploye est un talon `HTTP 410`. Un deploiement ne
+   la supprimera pas, il faut la retirer a la main.
