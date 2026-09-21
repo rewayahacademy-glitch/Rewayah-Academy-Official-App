@@ -69,6 +69,19 @@ Deno.serve(async (requete: Request) => {
   })
 
   if (error || !data) {
+    // Codes metier limites a un participant verifie par la RPC. Aucun detail SQL.
+    if (error?.message === 'photo_identification_requise') {
+      return json({
+        error: 'Ajoutez la photo d’identification pour rejoindre le cours.',
+        code: 'photo_identification_requise',
+      }, 403)
+    }
+    if (error?.message === 'conformite_enseignant_requise') {
+      return json({
+        error: 'Completez la verification et acceptez le contrat enseignant.',
+        code: 'conformite_enseignant_requise',
+      }, 403)
+    }
     // Le motif exact reste dans les logs. Un appelant qui tente une salle qui
     // n'est pas la sienne n'a pas a apprendre si elle existe, si elle est
     // commencee, ou s'il est simplement en avance.

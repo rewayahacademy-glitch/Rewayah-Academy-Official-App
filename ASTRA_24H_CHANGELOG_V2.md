@@ -28,3 +28,25 @@ ajoute pour les migrations Teaching Core. Ce stub ne va jamais sur Supabase.
 Validation distante et recette globale non encore executees. La CLI Supabase
 repond Unauthorized ; la connexion SQL trouvee localement vise un autre projet
 que l'application. Aucun appel SQL n'a ete fait vers ce projet.
+
+## P0.2 : socle KYC local
+
+Table privee en ecriture `teacher_kyc_requirements`, RPC Admin idempotente et
+auditee, contrat teacher_nda toujours requis, photo mineur verifiee par son
+objet Storage avant le token. La fonction video historique est conservee dans
+un schema non expose, inaccessible aux roles applicatifs. Codes domaine dans
+l'Edge create-room-token. Le KYC famille ne ferme plus app_account_valid.
+
+La recette SQL transactionnelle passe : famille pending_kyc, teacher requis,
+auto-dispense et ecriture directe refusees, dispense sans contrat fermee,
+dispense avec contrat ouverte, reactivation fermee, KYC approuve ouvert,
+token mineur refuse avant upload et accepte apres, adulte sans photo accepte,
+non-participant refuse. Les raccords session/ports et l'audit des autres portes
+Teaching Core restent a terminer avant de declarer P0.2 livre.
+
+## Integration
+
+Fable a livre `ae59cd7` sur la base `ae61eb6`, descendante de `d5eb74c`.
+Les corrections intermediaires de main sont donc necessaires a son integration,
+notamment 0035 (visibilite Bibliotheque) et 0038 (hook de jeton).
+Ses changements non commites ne sont pas integres.
