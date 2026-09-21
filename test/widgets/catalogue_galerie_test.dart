@@ -85,6 +85,16 @@ const List<String> composantsDuCatalogue = <String>[
   // pourrait croire qu'il applique une regle est un composant qu'il faut
   // relire.
   'BandeauObservation',
+  // Section 2 : les quatre composants d'administration que les lots `ADM-08`
+  // et Pedagogie ont produits sans passer par le catalogue. Le cinquieme
+  // surnumeraire, `AdminShell`, est traite a part : c'est le seul a etre une
+  // coquille complete, donc le seul dont les axes « 200 pour cent de texte »
+  // et « mode enfant » peuvent reellement deborder -- le grouper avec les
+  // petits rendrait un echec impossible a attribuer.
+  'MenuActions',
+  'MenuFiltre',
+  'SelecteurNiveauProgramme',
+  'SousNavigationDomaine',
 ];
 
 /// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.

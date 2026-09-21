@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/admin/admin_domaine.dart';
+import '../../../core/admin/service_programme.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -30,6 +32,8 @@ import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
+import '../../../core/widgets/menu_actions.dart';
+import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/page_immersive.dart';
@@ -41,9 +45,11 @@ import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/selecteur_niveau_programme.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
+import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/timeline_row.dart';
@@ -1419,6 +1425,249 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+
+  // --- Les composants d'administration ------------------------------------
+  // Quatre des cinq surnumeraires que le test de comptage signalait. Le
+  // cinquieme, `AdminShell`, est traite a part : c'est le seul a etre une
+  // coquille complete, donc le seul dont les axes « 200 pour cent de texte »
+  // et « mode enfant » peuvent reellement deborder.
+  EntreeGalerie(
+    nom: 'SousNavigationDomaine',
+    // Structure : c'est un chrome de page, ni un controle qu'on presse ni une
+    // zone de donnees. Le `TabBar` porte lui-meme ses etats d'interaction.
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      // Mesure, pas supposition : le `TabBar` se rend sans ancetre `Material`,
+      // contrairement au `PopupMenuButton` des deux menus plus bas. Aucune
+      // enveloppe ici. `GoRouter` n'est appele que dans `onTap`, jamais dans
+      // `build` : une demo isolee ne le declenche pas, donc pas de routeur non
+      // plus.
+      //
+      // Les onglets sont les vrais, pris dans `admin_domaine.dart` : une
+      // galerie qui inventerait ses libelles ne montrerait pas la vraie
+      // longueur des mots, et c'est justement ce qui fait deborder un
+      // `TabBar`.
+      //
+      // **Une cle par etat, et elle est necessaire** : le composant construit
+      // son `TabController` dans un `late final`, sans `didUpdateWidget`.
+      // Comme la galerie rejoue ses etats l'un apres l'autre au meme endroit
+      // de l'arbre, Flutter reutilise le `State` et le controleur garde la
+      // longueur du precedent -- « Controller's length property (5) does not
+      // match the number of tabs (3) ». La cle force une instance neuve par
+      // etat, ce qui est de toute facon ce que la galerie veut dire. Le trou
+      // est reel mais reste theorique en production, ou chaque ecran monte le
+      // sien et ne change jamais sa liste d'onglets en place ; le combler
+      // demanderait un `didUpdateWidget`, hors du perimetre de ce lot.
+      EtatGalerie(
+        'cinq onglets, le premier actif',
+        (BuildContext _) => SousNavigationDomaine(
+          key: const ValueKey<String>('sous-nav-premier'),
+          onglets: ongletsPedagogie(),
+          indexActif: 0,
+        ),
+      ),
+      // Le dernier actif : l'indicateur se pose hors du premier ecran, et le
+      // `TabBar` scrollable doit s'y porter tout seul.
+      EtatGalerie(
+        'cinq onglets, le dernier actif',
+        (BuildContext _) => SousNavigationDomaine(
+          key: const ValueKey<String>('sous-nav-dernier'),
+          onglets: ongletsPedagogie(),
+          indexActif: 4,
+        ),
+      ),
+      EtatGalerie(
+        'trois onglets',
+        (BuildContext _) => SousNavigationDomaine(
+          key: const ValueKey<String>('sous-nav-trois'),
+          onglets: ongletsConfiguration(),
+          indexActif: 1,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'MenuFiltre',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // Le bouton ferme est tout ce que la galerie peut montrer, et c'est
+      // suffisant ici : c'est LUI qui varie. Relache, il dit l'axe en
+      // `surfaceRaised` + `borderHairline` + `inkStrong` ; retenu, il dit la
+      // valeur en `washAccent` + `borderStrong` + `inkAccent`.
+      EtatGalerie(
+        'relache',
+        (BuildContext _) => const _SousMaterial(
+          child: MenuFiltre<String>(
+            libelle: 'Acteur',
+            valeur: null,
+            entrees: _acteursExemple,
+            onChoix: _acteurIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'retenu',
+        (BuildContext _) => const _SousMaterial(
+          child: MenuFiltre<String>(
+            libelle: 'Acteur',
+            valeur: 'omar',
+            entrees: _acteursExemple,
+            onChoix: _acteurIgnore,
+          ),
+        ),
+      ),
+      // Une valeur plus longue que le bouton : le libelle doit s'abreger, pas
+      // pousser le chevron hors de l'ecran.
+      EtatGalerie(
+        'retenu, valeur trop longue',
+        (BuildContext _) => const _SousMaterial(
+          child: MenuFiltre<String>(
+            libelle: 'Acteur',
+            valeur: 'amina',
+            entrees: _acteursExemple,
+            onChoix: _acteurIgnore,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'MenuActions',
+    famille: FamilleComposant.composantEtat,
+    // ponytail: la galerie ne prouve QUE le bouton ferme. Tout ce qui varie
+    // vraiment -- les libelles, le ton `inkAlert` du destructif -- vit dans
+    // `itemBuilder`, donc dans l'overlay du menu OUVERT, et une `EtatGalerie`
+    // ne rend qu'un Widget, sans geste : la galerie ne peut pas ouvrir le
+    // menu. Plafond assume et verifie, pas suppose : `git grep -rn
+    // "MenuActions" test/` ne rend rien, le contenu du menu ouvert n'est
+    // couvert NULLE PART aujourd'hui. Le lever demande un test de widget
+    // dedie, qui tape le bouton et lit l'overlay, hors du harnais de galerie.
+    // Les deux etats ci-dessous sont donc les deux seules choses qui different
+    // honnetement a l'ecran : le bouton seul, et le bouton a sa place reelle.
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'seul',
+        (BuildContext _) => const _SousMaterial(
+          child: MenuActions(actions: _actionsExemple, tooltip: 'Actions'),
+        ),
+      ),
+      // Son contexte d'usage reel : colle en bout d'une ligne de liste, ou il
+      // doit garder sa cible tactile entiere sans repousser le nom.
+      EtatGalerie(
+        'en bout de ligne',
+        (BuildContext _) => const _SousMaterial(
+          child: Row(
+            children: <Widget>[
+              Expanded(child: Text('Amina Bah')),
+              MenuActions(actions: _actionsExemple, tooltip: 'Actions'),
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurNiveauProgramme',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'aucun niveau retenu',
+        (BuildContext _) => const SelecteurNiveauProgramme(
+          niveaux: _niveauxExemple,
+          selectionne: null,
+          onSelectionner: _niveauIgnore,
+        ),
+      ),
+      EtatGalerie(
+        'un niveau retenu',
+        (BuildContext _) => const SelecteurNiveauProgramme(
+          niveaux: _niveauxExemple,
+          selectionne: 'n-c1-taj-01',
+          onSelectionner: _niveauIgnore,
+        ),
+      ),
+      // Un seul cycle : le titre de cycle reste, et c'est voulu. Sans lui, un
+      // programme qui n'aurait qu'un cycle rendrait une rangee de pilules
+      // orphelines, impossible a rattacher.
+      EtatGalerie(
+        'un seul cycle',
+        (BuildContext _) => SelecteurNiveauProgramme(
+          niveaux: _niveauxExemple.take(2).toList(),
+          selectionne: null,
+          onSelectionner: _niveauIgnore,
+        ),
+      ),
+    ],
+  ),
+];
+
+/// Trois acteurs, pour le menu de filtre de la galerie.
+///
+/// Le troisieme porte un libelle volontairement long : c'est la seule facon de
+/// voir, dans la galerie, que le bouton ferme abrege au lieu de deborder.
+const List<EntreeFiltre<String>> _acteursExemple = <EntreeFiltre<String>>[
+  EntreeFiltre<String>(valeur: null, libelle: 'Tous', compteur: 48),
+  EntreeFiltre<String>(valeur: 'omar', libelle: 'Omar Sow', compteur: 12),
+  EntreeFiltre<String>(
+    valeur: 'amina',
+    libelle: 'Amina Bah, coordination pédagogique du cycle Fondations',
+    compteur: 3,
+  ),
+];
+
+/// Trois actions rares, dont une destructive, pour le menu contextuel.
+const List<EntreeAction> _actionsExemple = <EntreeAction>[
+  EntreeAction(libelle: 'Exporter la fiche', onChoix: _rien),
+  EntreeAction(libelle: 'Réinitialiser le mot de passe', onChoix: _rien),
+  EntreeAction(libelle: 'Clôturer le compte', onChoix: _rien, destructif: true),
+];
+
+/// Cinq niveaux sur trois cycles, pour le selecteur de niveau.
+///
+/// Des noms de cycles reels de l'academie et non du remplissage : c'est la
+/// longueur vraie des noms qui fait passer le `Wrap` a la ligne, et c'est
+/// exactement ce que la galerie doit montrer a 200 pour cent de texte.
+const List<NiveauProgramme> _niveauxExemple = <NiveauProgramme>[
+  NiveauProgramme(
+    id: 'n-f1-pho-01',
+    codeTechnique: 'F1-PHO-01',
+    nomHumain: 'Fondations de lecture',
+    cycle: 'Fondations',
+    ordre: 1,
+    description: null,
+  ),
+  NiveauProgramme(
+    id: 'n-f1-pho-02',
+    codeTechnique: 'F1-PHO-02',
+    nomHumain: 'Lecture fluide',
+    cycle: 'Fondations',
+    ordre: 2,
+    description: null,
+  ),
+  NiveauProgramme(
+    id: 'n-c1-taj-01',
+    codeTechnique: 'C1-TAJ-01',
+    nomHumain: 'Tajwid appliqué',
+    cycle: 'Consolidation',
+    ordre: 3,
+    description: null,
+  ),
+  NiveauProgramme(
+    id: 'n-c1-mem-01',
+    codeTechnique: 'C1-MEM-01',
+    nomHumain: 'Mémorisation guidée',
+    cycle: 'Consolidation',
+    ordre: 4,
+    description: null,
+  ),
+  NiveauProgramme(
+    id: 'n-a1-rec-01',
+    codeTechnique: 'A1-REC-01',
+    nomHumain: 'Récitation continue',
+    cycle: 'Approfondissement',
+    ordre: 5,
+    description: null,
+  ),
 ];
 
 /// La hauteur donnee a `DataCollection` dans la galerie.
@@ -1574,9 +1823,36 @@ class _SurfaceDemonstration extends StatelessWidget {
   }
 }
 
+/// L'ancetre `Material` que le harnais de galerie ne fournit pas.
+///
+/// **Mesure, pas supposition** : `test/support/harnais.dart` monte l'enfant
+/// dans `MaterialApp(home: enfant)`, sans `Scaffold` ni `Material`, alors
+/// qu'en production ces composants vivent sous `PageShell`, qui rend un
+/// `Scaffold`. Sondes du 21 septembre 2026 : le `TabBar` de
+/// `SousNavigationDomaine` se rend tres bien sans ; le `PopupMenuButton` de
+/// `MenuFiltre` et de `MenuActions` leve « No Material widget found. », parce
+/// qu'il enveloppe son enfant dans un `InkWell`.
+///
+/// L'enveloppe reste **dans l'entree de galerie**, jamais dans le composant :
+/// c'est la page qui porte sa coquille, et un composant qui poserait son
+/// propre `Material` en poserait un second sous `PageShell`.
+class _SousMaterial extends StatelessWidget {
+  const _SousMaterial({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      Material(type: MaterialType.transparency, child: child);
+}
+
 void _rien() {}
 
 void _allerNullePart(String chemin) {}
+
+void _acteurIgnore(String? acteur) {}
+
+void _niveauIgnore(String niveauId) {}
 
 void _codeIgnore(String code) {}
 
