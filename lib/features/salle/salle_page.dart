@@ -11,6 +11,7 @@ import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
@@ -32,6 +33,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
+import '../tc_observation_ui/indicateur_observation.dart';
 import 'vue_salle.dart';
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
@@ -287,10 +289,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       maintenant: DateTime.now(),
     );
 
+    // **Le tuteur de cet enfant observe-t-il ?** Question posee au serveur, qui
+    // ne rend que la ligne de l'appelant (`annonce_observation_pour_moi`,
+    // `0040`). La condition de role n'ajoute aucune securite -- le serveur
+    // refuse deja qui n'est pas membre du groupe -- elle evite de battre la RPC
+    // sur l'appareil de l'enseignant, du controleur et de l'observateur, qui
+    // montent tous cette meme salle.
+    final bool monTuteurObserve =
+        vue.role == RoleSalle.eleve &&
+        (ref.watch(monTuteurObserveProvider(widget.seanceId)).value ?? false);
+
     return PageImmersive(
       registre: RegistreImmersif.salle,
       entete: _Entete(
         vue: vue,
+        monTuteurObserve: monTuteurObserve,
         // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
         // et la vue en base le lui impose de toute facon. L'observateur, lui,
         // n'a aucun etat pedagogique a lire -- il assiste.
@@ -346,12 +359,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 /// etre parfaitement connecte et note « en retard », et on peut avoir perdu le
 /// lien depuis dix secondes sans etre encore note « deconnecte ».
 class _Entete extends StatelessWidget {
-  const _Entete({required this.vue, this.mienne, this.onVoirPresence});
+  const _Entete({
+    required this.vue,
+    this.mienne,
+    this.monTuteurObserve = false,
+    this.onVoirPresence,
+  });
 
   final VueSalle vue;
 
   /// Ma propre presence, pour l'eleve et lui seul. `null` ailleurs.
   final VuePresence? mienne;
+
+  /// Vrai quand le tuteur de l'eleve qui regarde cet ecran observe la seance.
+  /// Faux pour tout autre role : c'est une information sur SON foyer.
+  final bool monTuteurObserve;
 
   /// Ouvre la liste de presence, quand elle ne tient pas en colonne.
   final VoidCallback? onVoirPresence;
@@ -449,6 +471,19 @@ class _Entete extends StatelessWidget {
         if (mienne case final VuePresence etat) ...<Widget>[
           Ecart.vSm,
           LignePresence(nom: t.presence.mienne, vue: etat),
+        ],
+        // **L'enfant apprend que son tuteur regarde, ici aussi.** Il y a DEUX
+        // salles cote eleve : celle-ci, ou mene « Rejoindre » depuis l'accueil
+        // `ELV-02`, et `ClasseLivePage` (`/tc/classe`), ou mene « Rejoindre »
+        // depuis `/tc/groupes`. Ne poser le temoin que dans l'une laisserait
+        // l'autre chemin muet.
+        //
+        // La borne de vie privee est en base : `annonce_observation_pour_moi`
+        // (`0040`) porte `enfant_profile_id = auth.uid()` dans son WHERE, donc
+        // les quatre autres enfants du groupe ne lisent rien (spec 11.3).
+        if (monTuteurObserve) ...<Widget>[
+          Ecart.vSm,
+          const IndicateurObservationEnfant(visible: true),
         ],
       ],
     );

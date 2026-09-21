@@ -490,4 +490,22 @@ abstract final class AppIcons {
     IconData(0xe222, fontFamily: _repos),
     IconData(0xe222, fontFamily: _actif),
   );
+
+  /// Observation (G) : **un tuteur observe en ce moment**, oeil ouvert.
+  ///
+  /// L'indicateur de l'enseignant et celui de l'enfant observe portaient
+  /// jusqu'ici [foyer], un pictogramme de maison : il disait « famille », pas
+  /// « quelqu'un regarde ». La regle de visibilite du 21/09 demande un oeil.
+  ///
+  /// Point de code **releve en sondant la police**, jamais devine
+  /// (`docs/HANDOFF.md` section 15.4 : la police embarquee n'a pas de noms de
+  /// glyphes, sa table `post` est en version 3.0). La lecture est corroboree
+  /// par ses deux voisins immediats, deja au catalogue et deja nommes :
+  /// `0xe222` rend l'oeil ferme ([observationFermee]) et `0xe224` l'oeil barre
+  /// ([masquer]). Les trois se lisent donc comme une famille, et le glyphe est
+  /// present dans les DEUX graisses embarquees.
+  static const AppIcon observationEnCours = AppIcon._(
+    IconData(0xe220, fontFamily: _repos),
+    IconData(0xe220, fontFamily: _actif),
+  );
 }

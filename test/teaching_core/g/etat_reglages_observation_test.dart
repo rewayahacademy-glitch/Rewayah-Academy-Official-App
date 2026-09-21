@@ -24,8 +24,11 @@ void main() {
 
       expect(produite.source, SourcePolitique.academie);
       expect(produite.observationActivee, isTrue);
-      expect(produite.maxVisitsPerSession, 1);
-      expect(produite.maxTotalObservationTime, const Duration(seconds: 120));
+      // Les valeurs de l'Academie, pas celles saisies : heriter, c'est
+      // precisement ne pas les remplacer. Elles valent 2 visites et 240 s
+      // depuis la migration `0036`, appliquee le 21/09/2026.
+      expect(produite.maxVisitsPerSession, 2);
+      expect(produite.maxTotalObservationTime, const Duration(seconds: 240));
     });
 
     test('desactiver ferme la porte, et se journalise comme tel', () {
@@ -58,9 +61,9 @@ void main() {
           EtatReglagesObservation.depuis(_academie);
 
       expect(depuisHeritage.source, SourcePolitique.academie);
-      expect(depuisHeritage.maxVisites, 1);
-      expect(depuisHeritage.tempsTotal, const Duration(seconds: 120));
-      expect(depuisHeritage.avecSource(SourcePolitique.groupe).maxVisites, 1);
+      expect(depuisHeritage.maxVisites, 2);
+      expect(depuisHeritage.tempsTotal, const Duration(seconds: 240));
+      expect(depuisHeritage.avecSource(SourcePolitique.groupe).maxVisites, 2);
     });
   });
 
