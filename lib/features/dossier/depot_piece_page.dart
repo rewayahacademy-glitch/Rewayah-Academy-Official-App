@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
@@ -96,6 +97,14 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
+    // KYC V2 (contrat du sprint, section 5.1) : pour un eleve ou un tuteur, la
+    // piece est proposee, jamais imposee. « Faire plus tard » est un vrai
+    // bouton. L'enseignant, lui, n'a pas cette sortie : son KYC est requis
+    // par defaut, sauf dispense de l'academie.
+    final AsyncValue<EtatDossier> dossier = ref.watch(etatDossierProvider);
+    final AppRole? role = dossier.value?.role;
+    final bool plusTard = role == AppRole.guardian || role == AppRole.student;
+
     return PageShell(
       // Les DEUX gestes du depot vivent ici, dans l'ordre ou on les fait.
       //
@@ -140,6 +149,15 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
             enCours: _envoi,
             onPress: _piece == null ? null : () => unawaited(_envoyer()),
           ),
+          if (plusTard) ...<Widget>[
+            Ecart.vSm,
+            ActionPrincipale(
+              libelle: t.classes.kyc.plusTard,
+              niveau: NiveauAction.tertiaire,
+              onPress: () =>
+                  GoRouter.of(context).go(Routes.racinePour(role!)),
+            ),
+          ],
         ],
       ),
       child: Column(
@@ -154,6 +172,10 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                 Text(t.kyc.titre, style: textes.headlineSmall),
                 Ecart.vMd,
                 Text(t.kyc.intro, style: textes.bodyMedium),
+                if (plusTard) ...<Widget>[
+                  Ecart.vSm,
+                  Text(t.classes.kyc.plusTardDetail, style: textes.bodySmall),
+                ],
                 Ecart.vXxl,
                 Text(t.kyc.typeQuestion, style: textes.titleMedium),
                 Ecart.vMd,

@@ -31,6 +31,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../classes/routes_core24.dart';
 
 /// `ENS-05` : qui suis-je pour l'academie, et ou regle-je ce qui m'appartient.
 ///
@@ -601,6 +602,14 @@ class _Personnel extends StatelessWidget {
           description: t.compte.reglagesDetail,
           icon: AppIcons.reglages,
           onPress: () => context.push(Routes.compteReglages),
+        ),
+        // Mes classes et Classes disponibles (sprint noyau 24 h) : une pose
+        // hors de la barre, atteinte d'ici et depuis la bienvenue.
+        SettingRow(
+          title: t.classes.enseignant.mesClasses,
+          description: t.classes.enseignant.disponibles,
+          icon: AppIcons.cours,
+          onPress: () => context.push(CheminsCore24.enseignantClasses),
         ),
       ],
     );

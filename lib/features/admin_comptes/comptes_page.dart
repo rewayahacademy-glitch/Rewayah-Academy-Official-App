@@ -9,10 +9,16 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../classes/domaine/conformite.dart';
+import '../classes/domaine/providers.dart';
+import '../classes/feuille_dispense_kyc.dart';
+import '../classes/libelles_classes.dart';
 
 /// `ADM-08` : les comptes du produit.
 ///
@@ -47,10 +53,46 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   AccountStatus? _etat;
   AppRole? _role;
 
+  /// Le retour local apres un reglage d'exigence KYC.
+  String? _retour;
+
+  /// Dispense un enseignant du KYC, ou retablit l'exigence.
+  ///
+  /// Les garanties (autorisation, motif, audit, jamais le demandeur lui-meme,
+  /// recalcul de l'eligibilite) sont **serveur** ; l'ecran demande une
+  /// confirmation courte et un motif, et relit tout apres.
+  Future<void> _dispenser(CompteAdmin compte, ConformiteCompte conformite) {
+    final bool requise = conformite.exigence != ExigenceKyc.dispensee;
+    return FeuilleDispenseKyc.ouvrir(
+      context,
+      libelleCompte: compte.libelle,
+      requiseActuellement: requise,
+      onEnvoyer: (String motif) => ref
+          .read(portConformiteProvider)
+          .definirExigenceKyc(
+            profilId: compte.profilId,
+            requise: !requise,
+            motif: motif,
+          ),
+      onSucces: () {
+        ref.invalidate(conformiteComptesProvider);
+        ref.invalidate(comptesProvider);
+        if (mounted) {
+          setState(() => _retour = t.classes.conformite.enregistre);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AsyncValue<List<CompteAdmin>> comptes = ref.watch(comptesProvider);
+    // La conformite par compte (KYC V2). Une lecture en cours ou en echec ne
+    // retire rien au tableau : ses deux colonnes se vident, le reste se lit.
+    final Map<String, ConformiteCompte> conformites =
+        ref.watch(conformiteComptesProvider).value ??
+        const <String, ConformiteCompte>{};
 
     return PageShell(
       titre: t.admin.comptes.titre,
@@ -69,10 +111,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             AsyncValue<List<CompteAdmin>>(hasValue: true) => Expanded(
               child: _Corps(
                 comptes: comptes.requireValue,
+                conformites: conformites,
+                retour: _retour,
                 etat: _etat,
                 role: _role,
                 onEtat: (AccountStatus? etat) => setState(() => _etat = etat),
                 onRole: (AppRole? role) => setState(() => _role = role),
+                onDispenser: _dispenser,
               ),
             ),
             // Registre **actionnable**, et pas « subi » : `EmptyState` ne rend
@@ -99,17 +144,24 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
 class _Corps extends StatelessWidget {
   const _Corps({
     required this.comptes,
+    required this.conformites,
+    required this.retour,
     required this.etat,
     required this.role,
     required this.onEtat,
     required this.onRole,
+    required this.onDispenser,
   });
 
   final List<CompteAdmin> comptes;
+  final Map<String, ConformiteCompte> conformites;
+  final String? retour;
   final AccountStatus? etat;
   final AppRole? role;
   final void Function(AccountStatus? etat) onEtat;
   final void Function(AppRole? role) onRole;
+  final void Function(CompteAdmin compte, ConformiteCompte conformite)
+  onDispenser;
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +276,7 @@ class _Corps extends StatelessWidget {
           ],
         ),
         Ecart.vLg,
+        LocalFeedback(message: retour),
 
         if (visibles.isEmpty)
           EmptyState(
@@ -272,6 +325,34 @@ class _Corps extends StatelessWidget {
                   titre: t.admin.comptes.colonnePiece,
                   texte: (CompteAdmin c) => _nomPiece(c.piece),
                 ),
+                // KYC V2 : l'exigence et l'etat, separement. « KYC requis »
+                // est le defaut de tout enseignant ; une dispense se lit ici,
+                // et se defait ici (contrat du sprint, section 5.3).
+                ColonneDonnees<CompteAdmin>(
+                  titre: t.classes.conformite.colonneExigence,
+                  texte: (CompteAdmin c) => conformites[c.profilId] == null
+                      ? ''
+                      : LibellesClasses.exigenceKyc(
+                          conformites[c.profilId]!.exigence,
+                        ),
+                ),
+                ColonneDonnees<CompteAdmin>(
+                  titre: t.classes.conformite.colonneKyc,
+                  texte: (CompteAdmin c) => conformites[c.profilId] == null
+                      ? ''
+                      : LibellesClasses.etatKyc(conformites[c.profilId]!.etat),
+                  rendu: (BuildContext _, CompteAdmin c) =>
+                      conformites[c.profilId] == null
+                      ? const SizedBox.shrink()
+                      : StatusPill(
+                          libelle: LibellesClasses.etatKyc(
+                            conformites[c.profilId]!.etat,
+                          ),
+                          ton: LibellesClasses.tonEtatKyc(
+                            conformites[c.profilId]!.etat,
+                          ),
+                        ),
+                ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonneAttente,
                   tabulaire: true,
@@ -283,6 +364,36 @@ class _Corps extends StatelessWidget {
                   titre: t.admin.comptes.colonneContrats,
                   tabulaire: true,
                   texte: (CompteAdmin c) => '${c.contrats}',
+                ),
+                ColonneDonnees<CompteAdmin>(
+                  titre: '',
+                  role: RoleColonne.aPart,
+                  flex: 0,
+                  // Vide a dessein : un menu d'actions n'a rien a dire en
+                  // texte. `rendreMemeSiTexteVide` fait rendre `rendu` quand
+                  // meme, comme dans Operations > Classes.
+                  texte: (CompteAdmin _) => '',
+                  rendreMemeSiTexteVide: true,
+                  rendu: (BuildContext _, CompteAdmin c) {
+                    final ConformiteCompte? conformite = conformites[c.profilId];
+                    // Seul un enseignant porte une exigence KYC a regler : la
+                    // dispense n'a aucun sens pour un tuteur ou un eleve, dont
+                    // le KYC est facultatif par construction.
+                    if (c.role != AppRole.teacher || conformite == null) {
+                      return const SizedBox.shrink();
+                    }
+                    return MenuActions(
+                      tooltip: c.libelle,
+                      actions: <EntreeAction>[
+                        EntreeAction(
+                          libelle: conformite.estDispense
+                              ? t.classes.conformite.actionRetablir
+                              : t.classes.conformite.actionDispenser,
+                          onChoix: () => onDispenser(c, conformite),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),

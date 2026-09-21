@@ -33,7 +33,13 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
     <RouteBase>[
       GoRoute(
         path: CheminsTcA.mesGroupes,
-        builder: (_, _) => const MesGroupesPage(),
+        // Le tuteur ajoute la photo d'un membre depuis ses reglages ; un eleve
+        // sur son appareil ne le peut pas, et la porte le lui dit.
+        builder: (BuildContext contexte, _) => MesGroupesPage(
+          onAjouterPhoto: role == RoleEspaceGroupe.tuteur
+              ? () => GoRouter.of(contexte).go(Routes.tuteurReglages)
+              : null,
+        ),
         routes: <RouteBase>[
           GoRoute(
             path: CheminsTcA.segmentEspaceGroupe,

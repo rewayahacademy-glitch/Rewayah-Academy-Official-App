@@ -75,6 +75,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$aConstruire$fr aConstruire = Traductions$aConstruire$fr.internal(_root);
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
 	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
+	late final Traductions$classes$fr classes = Traductions$classes$fr.internal(_root);
 }
 
 // Path: commun
@@ -756,8 +757,8 @@ class Traductions$enfant$fr {
 
 	// Translations
 
-	/// fr: 'Ajouter un enfant'
-	String get titre => 'Ajouter un enfant';
+	/// fr: 'Ajouter un membre du foyer'
+	String get titre => 'Ajouter un membre du foyer';
 
 	/// fr: 'Son prénom'
 	String get prenom => 'Son prénom';
@@ -780,11 +781,11 @@ class Traductions$enfant$fr {
 	/// fr: 'L'ajout n'a pas abouti. Réessayez dans un instant.'
 	String get erreur => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.';
 
-	/// fr: 'Aucun enfant dans le foyer'
-	String get aucun => 'Aucun enfant dans le foyer';
+	/// fr: 'Aucun membre dans le foyer'
+	String get aucun => 'Aucun membre dans le foyer';
 
-	/// fr: 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.'
-	String get aucunDetail => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.';
+	/// fr: 'Ajoutez le premier membre du foyer pour pouvoir appairer son appareil.'
+	String get aucunDetail => 'Ajoutez le premier membre du foyer pour pouvoir appairer son appareil.';
 }
 
 // Path: disponibilites
@@ -795,8 +796,8 @@ class Traductions$disponibilites$fr {
 
 	// Translations
 
-	/// fr: 'Quand vos enfants peuvent-ils suivre un cours ?'
-	String get titre => 'Quand vos enfants peuvent-ils suivre un cours ?';
+	/// fr: 'Quand les membres du foyer peuvent-ils suivre un cours ?'
+	String get titre => 'Quand les membres du foyer peuvent-ils suivre un cours ?';
 
 	/// fr: 'Quand pouvez-vous donner cours ?'
 	String get titreEnseignant => 'Quand pouvez-vous donner cours ?';
@@ -1312,8 +1313,8 @@ class Traductions$compte$fr {
 	/// fr: 'Profils du foyer'
 	String get profils => 'Profils du foyer';
 
-	/// fr: 'Gérer les profils de vos enfants'
-	String get profilsDetail => 'Gérer les profils de vos enfants';
+	/// fr: 'Gérer les membres du foyer'
+	String get profilsDetail => 'Gérer les membres du foyer';
 
 	/// fr: 'Foyer'
 	String get appareils => 'Foyer';
@@ -1465,8 +1466,8 @@ class Traductions$compte$fr {
 	/// fr: 'Profils du foyer'
 	String get profilsTitre => 'Profils du foyer';
 
-	/// fr: 'Les enfants rattachés à votre foyer.'
-	String get profilsIntro => 'Les enfants rattachés à votre foyer.';
+	/// fr: 'Les membres rattachés à votre foyer.'
+	String get profilsIntro => 'Les membres rattachés à votre foyer.';
 
 	/// fr: 'Les profils n'ont pas pu être lus.'
 	String get erreurProfils => 'Les profils n\'ont pas pu être lus.';
@@ -1477,11 +1478,11 @@ class Traductions$compte$fr {
 	/// fr: 'Aucun profil pour l'instant'
 	String get aucunProfil => 'Aucun profil pour l\'instant';
 
-	/// fr: 'Ajoutez un enfant pour commencer'
-	String get aucunProfilDetail => 'Ajoutez un enfant pour commencer';
+	/// fr: 'Ajoutez un membre du foyer pour commencer'
+	String get aucunProfilDetail => 'Ajoutez un membre du foyer pour commencer';
 
-	/// fr: 'Ajouter un enfant'
-	String get ajouterEnfant => 'Ajouter un enfant';
+	/// fr: 'Ajouter un membre du foyer'
+	String get ajouterEnfant => 'Ajouter un membre du foyer';
 
 	/// fr: 'Ouvrir le profil'
 	String get ouvrirProfil => 'Ouvrir le profil';
@@ -1640,6 +1641,25 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+}
+
+// Path: classes
+class Traductions$classes$fr {
+	Traductions$classes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$classes$commun$fr commun = Traductions$classes$commun$fr.internal(_root);
+	late final Traductions$classes$erreur$fr erreur = Traductions$classes$erreur$fr.internal(_root);
+	late final Traductions$classes$carte$fr carte = Traductions$classes$carte$fr.internal(_root);
+	late final Traductions$classes$presence$fr presence = Traductions$classes$presence$fr.internal(_root);
+	late final Traductions$classes$porte$fr porte = Traductions$classes$porte$fr.internal(_root);
+	late final Traductions$classes$kyc$fr kyc = Traductions$classes$kyc$fr.internal(_root);
+	late final Traductions$classes$conformite$fr conformite = Traductions$classes$conformite$fr.internal(_root);
+	late final Traductions$classes$admin$fr admin = Traductions$classes$admin$fr.internal(_root);
+	late final Traductions$classes$enseignant$fr enseignant = Traductions$classes$enseignant$fr.internal(_root);
+	late final Traductions$classes$foyer$fr foyer = Traductions$classes$foyer$fr.internal(_root);
 }
 
 // Path: connexion.feuilleAppareil
@@ -2034,14 +2054,14 @@ class Traductions$admin$groupes$fr {
 
 	// Translations
 
-	/// fr: 'Groupes'
-	String get titre => 'Groupes';
+	/// fr: 'Classes'
+	String get titre => 'Classes';
 
-	/// fr: 'Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.'
-	String get intro => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.';
+	/// fr: 'Une classe réunit un enseignant et ses élèves autour d'un créneau hebdomadaire : c'est là que se donne le cours.'
+	String get intro => 'Une classe réunit un enseignant et ses élèves autour d\'un créneau hebdomadaire : c\'est là que se donne le cours.';
 
-	/// fr: 'Groupe'
-	String get colonneGroupe => 'Groupe';
+	/// fr: 'Classe'
+	String get colonneGroupe => 'Classe';
 
 	/// fr: 'Enseignant'
 	String get colonneEnseignant => 'Enseignant';
@@ -2049,8 +2069,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Public'
 	String get colonneType => 'Public';
 
-	/// fr: 'Membres'
-	String get colonneMembres => 'Membres';
+	/// fr: 'Inscrits'
+	String get colonneMembres => 'Inscrits';
 
 	/// fr: 'Créneau'
 	String get colonneCreneau => 'Créneau';
@@ -2076,29 +2096,29 @@ class Traductions$admin$groupes$fr {
 	/// fr: '{actifs} / {seuil}'
 	String membresSur({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}';
 
-	/// fr: 'Aucun groupe créé'
-	String get aucun => 'Aucun groupe créé';
+	/// fr: 'Aucune classe créée'
+	String get aucun => 'Aucune classe créée';
 
-	/// fr: 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.'
-	String get aucunDetail => 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.';
+	/// fr: 'Créez une première classe : le programme, le public, le créneau. Le reste est prérempli.'
+	String get aucunDetail => 'Créez une première classe : le programme, le public, le créneau. Le reste est prérempli.';
 
-	/// fr: 'Aucun groupe avec ce filtre'
-	String get aucunAvecCeFiltre => 'Aucun groupe avec ce filtre';
+	/// fr: 'Aucune classe avec ce filtre'
+	String get aucunAvecCeFiltre => 'Aucune classe avec ce filtre';
 
-	/// fr: 'Changez de filtre pour voir les autres groupes.'
-	String get aucunAvecCeFiltreDetail => 'Changez de filtre pour voir les autres groupes.';
+	/// fr: 'Changez de filtre pour voir les autres classes.'
+	String get aucunAvecCeFiltreDetail => 'Changez de filtre pour voir les autres classes.';
 
-	/// fr: 'Les groupes n'ont pas pu être lus. Réessayez dans un instant.'
-	String get erreur => 'Les groupes n\'ont pas pu être lus. Réessayez dans un instant.';
+	/// fr: 'Les classes n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.';
 
-	/// fr: 'Créer un groupe'
-	String get creer => 'Créer un groupe';
+	/// fr: 'Créer une classe'
+	String get creer => 'Créer une classe';
 
-	/// fr: 'Créer un groupe'
-	String get creerTitre => 'Créer un groupe';
+	/// fr: 'Nouvelle classe'
+	String get creerTitre => 'Nouvelle classe';
 
-	/// fr: 'Nom du groupe'
-	String get champLibelle => 'Nom du groupe';
+	/// fr: 'Nom de la classe'
+	String get champLibelle => 'Nom de la classe';
 
 	/// fr: 'Identifiant de l'enseignant'
 	String get champEnseignantId => 'Identifiant de l\'enseignant';
@@ -2112,41 +2132,41 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Heure (0-23)'
 	String get champHeure => 'Heure (0-23)';
 
-	/// fr: 'Seuil maximal'
-	String get champSeuil => 'Seuil maximal';
+	/// fr: 'Capacité (places)'
+	String get champSeuil => 'Capacité (places)';
 
-	/// fr: 'Créer le groupe'
-	String get creerEnvoyer => 'Créer le groupe';
+	/// fr: 'Publier la classe'
+	String get creerEnvoyer => 'Publier la classe';
 
 	/// fr: 'La création n'a pas abouti : {message}'
 	String creerErreur({required Object message}) => 'La création n\'a pas abouti : ${message}';
 
-	/// fr: 'Groupe {libelle}'
-	String detailTitre({required Object libelle}) => 'Groupe ${libelle}';
+	/// fr: 'Classe {libelle}'
+	String detailTitre({required Object libelle}) => 'Classe ${libelle}';
 
-	/// fr: 'Membres'
-	String get detailMembres => 'Membres';
+	/// fr: 'Inscrits'
+	String get detailMembres => 'Inscrits';
 
-	/// fr: 'Aucun élève dans ce groupe pour l'instant.'
-	String get detailAucunMembre => 'Aucun élève dans ce groupe pour l\'instant.';
+	/// fr: 'Aucun élève inscrit pour l'instant.'
+	String get detailAucunMembre => 'Aucun élève inscrit pour l\'instant.';
 
-	/// fr: 'Ajouter un élève'
-	String get actionAjouter => 'Ajouter un élève';
+	/// fr: 'Inscrire un élève'
+	String get actionAjouter => 'Inscrire un élève';
 
 	/// fr: 'Retirer'
 	String get actionRetirer => 'Retirer';
 
-	/// fr: 'Modifier le seuil'
-	String get actionModifierSeuil => 'Modifier le seuil';
+	/// fr: 'Modifier la capacité'
+	String get actionModifierSeuil => 'Modifier la capacité';
 
 	/// fr: 'Réglages d'observation'
 	String get actionObservation => 'Réglages d\'observation';
 
-	/// fr: 'Clôturer le groupe'
-	String get actionCloturer => 'Clôturer le groupe';
+	/// fr: 'Clôturer la classe'
+	String get actionCloturer => 'Clôturer la classe';
 
-	/// fr: 'Ajouter un élève à {libelle}'
-	String ajouterTitre({required Object libelle}) => 'Ajouter un élève à ${libelle}';
+	/// fr: 'Inscrire un élève à {libelle}'
+	String ajouterTitre({required Object libelle}) => 'Inscrire un élève à ${libelle}';
 
 	/// fr: 'Identifiant de l'élève'
 	String get champEleveId => 'Identifiant de l\'élève';
@@ -2172,8 +2192,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Le retrait n'a pas abouti : {message}'
 	String retirerErreur({required Object message}) => 'Le retrait n\'a pas abouti : ${message}';
 
-	/// fr: 'Seuil maximal de {libelle}'
-	String modifierSeuilTitre({required Object libelle}) => 'Seuil maximal de ${libelle}';
+	/// fr: 'Capacité de {libelle}'
+	String modifierSeuilTitre({required Object libelle}) => 'Capacité de ${libelle}';
 
 	/// fr: 'Enregistrer'
 	String get modifierSeuilEnvoyer => 'Enregistrer';
@@ -2184,8 +2204,8 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Clôturer {libelle}'
 	String cloturerTitre({required Object libelle}) => 'Clôturer ${libelle}';
 
-	/// fr: 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.'
-	String get cloturerDetail => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.';
+	/// fr: 'Tous les élèves inscrits seront retirés de la classe. Cette action ne peut pas être annulée.'
+	String get cloturerDetail => 'Tous les élèves inscrits seront retirés de la classe. Cette action ne peut pas être annulée.';
 
 	/// fr: 'Clôturer'
 	String get cloturerEnvoyer => 'Clôturer';
@@ -3948,14 +3968,14 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Ajouter un appareil, ou en retirer un.'
 	String get blocAppareilsDetail => 'Ajouter un appareil, ou en retirer un.';
 
-	/// fr: 'Réglages par enfant'
-	String get blocReglages => 'Réglages par enfant';
+	/// fr: 'Réglages par membre du foyer'
+	String get blocReglages => 'Réglages par membre du foyer';
 
-	/// fr: 'Photo, caméra et affichage, enfant par enfant.'
-	String get blocReglagesDetail => 'Photo, caméra et affichage, enfant par enfant.';
+	/// fr: 'Photo, caméra et affichage, membre par membre.'
+	String get blocReglagesDetail => 'Photo, caméra et affichage, membre par membre.';
 
-	/// fr: 'Le groupe, l'enseignant et le prochain cours de chaque enfant.'
-	String get blocGroupesDetail => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.';
+	/// fr: 'La classe, l'enseignant et le prochain cours de chaque membre du foyer.'
+	String get blocGroupesDetail => 'La classe, l\'enseignant et le prochain cours de chaque membre du foyer.';
 
 	/// fr: 'Accès'
 	String get acces => 'Accès';
@@ -3966,11 +3986,11 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Accès de {prenom} sans date de fin'
 	String accesSansFin({required Object prenom}) => 'Accès de ${prenom} sans date de fin';
 
-	/// fr: 'Aucun enfant dans le foyer'
-	String get aucunEnfant => 'Aucun enfant dans le foyer';
+	/// fr: 'Aucun membre dans le foyer'
+	String get aucunEnfant => 'Aucun membre dans le foyer';
 
-	/// fr: 'Ajoutez votre premier enfant pour commencer.'
-	String get aucunEnfantDetail => 'Ajoutez votre premier enfant pour commencer.';
+	/// fr: 'Ajoutez le premier membre du foyer pour commencer.'
+	String get aucunEnfantDetail => 'Ajoutez le premier membre du foyer pour commencer.';
 
 	/// fr: 'Le foyer n'a pas pu être lu en entier. Réessayez dans un instant.'
 	String get erreur => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.';
@@ -3984,8 +4004,8 @@ class Traductions$tuteur$reglages$fr {
 
 	// Translations
 
-	/// fr: 'Réglages par enfant'
-	String get titre => 'Réglages par enfant';
+	/// fr: 'Réglages par membre du foyer'
+	String get titre => 'Réglages par membre du foyer';
 
 	/// fr: 'Ces réglages s'appliquent à la séance suivante, jamais pendant un cours.'
 	String get intro => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.';
@@ -4080,11 +4100,11 @@ class Traductions$tuteur$reglages$fr {
 	/// fr: 'Demande envoyée. L'administration la tranchera.'
 	String get demandeEnvoyee => 'Demande envoyée. L\'administration la tranchera.';
 
-	/// fr: 'Aucun enfant dans le foyer'
-	String get aucunEnfant => 'Aucun enfant dans le foyer';
+	/// fr: 'Aucun membre dans le foyer'
+	String get aucunEnfant => 'Aucun membre dans le foyer';
 
-	/// fr: 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.'
-	String get aucunEnfantDetail => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.';
+	/// fr: 'Ajoutez un membre du foyer pour pouvoir régler son affichage et sa caméra.'
+	String get aucunEnfantDetail => 'Ajoutez un membre du foyer pour pouvoir régler son affichage et sa caméra.';
 
 	/// fr: 'L'enregistrement n'a pas abouti : {message}'
 	String erreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
@@ -4101,14 +4121,14 @@ class Traductions$tuteur$suivi$fr {
 	/// fr: 'Suivi du foyer'
 	String get titre => 'Suivi du foyer';
 
-	/// fr: 'Tous les enfants'
-	String get tousLesEnfants => 'Tous les enfants';
+	/// fr: 'Tous les membres du foyer'
+	String get tousLesEnfants => 'Tous les membres du foyer';
 
 	/// fr: 'Date'
 	String get colonneDate => 'Date';
 
-	/// fr: 'Enfant'
-	String get colonneEnfant => 'Enfant';
+	/// fr: 'Membre du foyer'
+	String get colonneEnfant => 'Membre du foyer';
 
 	/// fr: 'Enseignant'
 	String get colonneEnseignant => 'Enseignant';
@@ -4134,11 +4154,11 @@ class Traductions$tuteur$suivi$fr {
 	/// fr: 'Aucun cours pour l'instant'
 	String get vide => 'Aucun cours pour l\'instant';
 
-	/// fr: 'Les cours de vos enfants s'afficheront ici, du plus récent au plus ancien, avec leur présence.'
-	String get videDetail => 'Les cours de vos enfants s\'afficheront ici, du plus récent au plus ancien, avec leur présence.';
+	/// fr: 'Les cours des membres du foyer s'afficheront ici, du plus récent au plus ancien, avec leur présence.'
+	String get videDetail => 'Les cours des membres du foyer s\'afficheront ici, du plus récent au plus ancien, avec leur présence.';
 
-	/// fr: 'Aucun cours pour cet enfant'
-	String get videFiltre => 'Aucun cours pour cet enfant';
+	/// fr: 'Aucun cours pour ce membre du foyer'
+	String get videFiltre => 'Aucun cours pour ce membre du foyer';
 
 	/// fr: 'Relâchez le filtre pour retrouver le reste du foyer.'
 	String get videFiltreDetail => 'Relâchez le filtre pour retrouver le reste du foyer.';
@@ -5192,6 +5212,512 @@ class Traductions$tc$parcours$fr {
 	late final Traductions$tc$parcours$postCours$fr postCours = Traductions$tc$parcours$postCours$fr.internal(_root);
 }
 
+// Path: classes.commun
+class Traductions$classes$commun$fr {
+	Traductions$classes$commun$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Cette installation n'a pas encore la mise à jour serveur que cette action demande. Réessayer n'y changera rien : elle doit d'abord être appliquée à la base.'
+	String get capaciteAbsente => 'Cette installation n\'a pas encore la mise à jour serveur que cette action demande. Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.';
+
+	/// fr: 'Les classes n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreurLecture => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Enfants'
+	String get publicEnfants => 'Enfants';
+
+	/// fr: 'Adultes'
+	String get publicAdultes => 'Adultes';
+
+	/// fr: '{minutes} min'
+	String dureeMinutes({required Object minutes}) => '${minutes} min';
+
+	/// fr: '{heures} h {minutes}'
+	String dureeHeures({required Object heures, required Object minutes}) => '${heures} h ${minutes}';
+
+	/// fr: 'chaque semaine'
+	String get hebdomadaire => 'chaque semaine';
+
+	/// fr: 'Défaut de l'académie'
+	String get defautAcademie => 'Défaut de l\'académie';
+
+	/// fr: 'Modifier'
+	String get modifier => 'Modifier';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
+}
+
+// Path: classes.erreur
+class Traductions$classes$erreur$fr {
+	Traductions$classes$erreur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette installation n'a pas encore la mise à jour serveur que cette action demande. Réessayer n'y changera rien : elle doit d'abord être appliquée à la base.'
+	String get capaciteAbsente => 'Cette installation n\'a pas encore la mise à jour serveur que cette action demande. Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.';
+
+	/// fr: 'Cette action n'est pas autorisée pour votre compte.'
+	String get refuse => 'Cette action n\'est pas autorisée pour votre compte.';
+
+	/// fr: 'Ce créneau entre en conflit avec un cours existant.'
+	String get conflit => 'Ce créneau entre en conflit avec un cours existant.';
+
+	/// fr: 'Cette classe est complète.'
+	String get complet => 'Cette classe est complète.';
+
+	/// fr: 'Cette personne est déjà inscrite à cette classe.'
+	String get dejaInscrit => 'Cette personne est déjà inscrite à cette classe.';
+
+	/// fr: 'Vous avez déjà candidaté à cette classe.'
+	String get dejaCandidat => 'Vous avez déjà candidaté à cette classe.';
+
+	/// fr: 'Le réseau n'a pas répondu. Réessayez dans un instant.'
+	String get reseau => 'Le réseau n\'a pas répondu. Réessayez dans un instant.';
+
+	/// fr: 'L'action n'a pas abouti. Réessayez dans un instant.'
+	String get inconnu => 'L\'action n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: classes.carte
+class Traductions$classes$carte$fr {
+	Traductions$classes$carte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir la classe {libelle}'
+	String ouvrir({required Object libelle}) => 'Ouvrir la classe ${libelle}';
+
+	/// fr: '{inscrits} / {seuil}'
+	String capacite({required Object inscrits, required Object seuil}) => '${inscrits} / ${seuil}';
+
+	/// fr: '{inscrits} inscrits sur {seuil} places'
+	String capacitePhrase({required Object inscrits, required Object seuil}) => '${inscrits} inscrits sur ${seuil} places';
+
+	/// fr: '{places} places restantes'
+	String placesRestantes({required Object places}) => '${places} places restantes';
+
+	/// fr: '1 place restante'
+	String get placeRestante => '1 place restante';
+
+	/// fr: 'Complet'
+	String get complet => 'Complet';
+
+	/// fr: 'Enseignant à affecter'
+	String get enseignantAAffecter => 'Enseignant à affecter';
+
+	/// fr: 'Ouvre à partir de {seuil} inscrits'
+	String seuilMinimal({required Object seuil}) => 'Ouvre à partir de ${seuil} inscrits';
+
+	/// fr: 'Brouillon'
+	String get brouillon => 'Brouillon';
+
+	/// fr: 'Publiée'
+	String get publiee => 'Publiée';
+
+	/// fr: 'Clôturée'
+	String get cloturee => 'Clôturée';
+
+	/// fr: 'Prochaine séance'
+	String get prochaineSeance => 'Prochaine séance';
+
+	/// fr: 'Aucune séance planifiée'
+	String get aucuneSeance => 'Aucune séance planifiée';
+
+	/// fr: 'Voir le détail'
+	String get voirDetail => 'Voir le détail';
+
+	/// fr: 'Masquer le détail'
+	String get masquerDetail => 'Masquer le détail';
+
+	/// fr: '{jour} à {heure}'
+	String creneau({required Object jour, required Object heure}) => '${jour} à ${heure}';
+
+	/// fr: '{jour} à {heure}, heure de {ville}'
+	String creneauAvecVille({required Object jour, required Object heure, required Object ville}) => '${jour} à ${heure}, heure de ${ville}';
+
+	/// fr: 'Durée {valeur}'
+	String duree({required Object valeur}) => 'Durée ${valeur}';
+
+	/// fr: 'Programme'
+	String get programme => 'Programme';
+
+	/// fr: 'Niveau'
+	String get niveau => 'Niveau';
+
+	/// fr: 'Public'
+	String get public => 'Public';
+
+	/// fr: 'Fuseau'
+	String get fuseau => 'Fuseau';
+
+	/// fr: 'État'
+	String get etat => 'État';
+
+	/// fr: 'Inscrit'
+	String get inscrit => 'Inscrit';
+}
+
+// Path: classes.presence
+class Traductions$classes$presence$fr {
+	Traductions$classes$presence$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Présence'
+	String get titre => 'Présence';
+
+	/// fr: 'État calculé par le serveur, jamais par cet appareil.'
+	String get source => 'État calculé par le serveur, jamais par cet appareil.';
+
+	/// fr: 'Présence indisponible pour le moment'
+	String get indisponible => 'Présence indisponible pour le moment';
+
+	/// fr: 'Les états s'afficheront dès que le serveur répond. Aucune absence n'est déduite d'ici.'
+	String get indisponibleDetail => 'Les états s\'afficheront dès que le serveur répond. Aucune absence n\'est déduite d\'ici.';
+}
+
+// Path: classes.porte
+class Traductions$classes$porte$fr {
+	Traductions$classes$porte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une photo de {prenom} est nécessaire pour commencer la visio'
+	String photoTitre({required Object prenom}) => 'Une photo de ${prenom} est nécessaire pour commencer la visio';
+
+	/// fr: 'Elle permet à l'enseignant de reconnaître chaque élève en salle. Elle reste dans le foyer et n'est jamais montrée aux autres familles.'
+	String get photoRaison => 'Elle permet à l\'enseignant de reconnaître chaque élève en salle. Elle reste dans le foyer et n\'est jamais montrée aux autres familles.';
+
+	/// fr: 'Ajouter la photo'
+	String get ajouterPhoto => 'Ajouter la photo';
+
+	/// fr: 'La photo s'ajoute depuis le compte du tuteur, dans Réglages par membre du foyer.'
+	String get photoParTuteur => 'La photo s\'ajoute depuis le compte du tuteur, dans Réglages par membre du foyer.';
+
+	/// fr: 'Rejoindre'
+	String get rejoindre => 'Rejoindre';
+}
+
+// Path: classes.kyc
+class Traductions$classes$kyc$fr {
+	Traductions$classes$kyc$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Faire plus tard'
+	String get plusTard => 'Faire plus tard';
+
+	/// fr: 'Vous pourrez la déposer à tout moment depuis votre compte. Elle n'empêche ni de consulter les classes ni de s'inscrire.'
+	String get plusTardDetail => 'Vous pourrez la déposer à tout moment depuis votre compte. Elle n\'empêche ni de consulter les classes ni de s\'inscrire.';
+
+	/// fr: 'Continuer sans la pièce pour l'instant'
+	String get continuerSansPiece => 'Continuer sans la pièce pour l\'instant';
+
+	/// fr: 'Votre pièce d'identité peut attendre'
+	String get rappelTitre => 'Votre pièce d\'identité peut attendre';
+
+	/// fr: 'Vous pouvez consulter les classes et vous inscrire dès maintenant. La pièce se dépose quand vous voulez.'
+	String get rappelDetail => 'Vous pouvez consulter les classes et vous inscrire dès maintenant. La pièce se dépose quand vous voulez.';
+
+	/// fr: 'Déposer ma pièce'
+	String get rappelAction => 'Déposer ma pièce';
+}
+
+// Path: classes.conformite
+class Traductions$classes$conformite$fr {
+	Traductions$classes$conformite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'KYC requis'
+	String get exigenceRequise => 'KYC requis';
+
+	/// fr: 'KYC dispensé'
+	String get exigenceDispensee => 'KYC dispensé';
+
+	/// fr: 'KYC facultatif'
+	String get exigenceOptionnelle => 'KYC facultatif';
+
+	/// fr: 'Non commencé'
+	String get etatNonCommence => 'Non commencé';
+
+	/// fr: 'Soumis'
+	String get etatSoumis => 'Soumis';
+
+	/// fr: 'Vérifié'
+	String get etatVerifie => 'Vérifié';
+
+	/// fr: 'Correction demandée'
+	String get etatCorrection => 'Correction demandée';
+
+	/// fr: 'Refusé'
+	String get etatRefuse => 'Refusé';
+
+	/// fr: 'Dispensé'
+	String get etatDispense => 'Dispensé';
+
+	/// fr: 'Contrat accepté'
+	String get contratAccepte => 'Contrat accepté';
+
+	/// fr: 'Contrat à accepter'
+	String get contratManquant => 'Contrat à accepter';
+
+	/// fr: 'Dispensé par {acteur} le {date}'
+	String dispensePar({required Object acteur, required Object date}) => 'Dispensé par ${acteur} le ${date}';
+
+	/// fr: 'Motif : {motif}'
+	String dispenseMotif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'KYC'
+	String get colonneKyc => 'KYC';
+
+	/// fr: 'Exigence KYC'
+	String get colonneExigence => 'Exigence KYC';
+
+	/// fr: 'Dispenser du KYC'
+	String get actionDispenser => 'Dispenser du KYC';
+
+	/// fr: 'Rétablir l'exigence KYC'
+	String get actionRetablir => 'Rétablir l\'exigence KYC';
+
+	/// fr: 'Dispenser {libelle} du KYC'
+	String dispenserTitre({required Object libelle}) => 'Dispenser ${libelle} du KYC';
+
+	/// fr: 'Rétablir l'exigence KYC pour {libelle}'
+	String retablirTitre({required Object libelle}) => 'Rétablir l\'exigence KYC pour ${libelle}';
+
+	/// fr: '{libelle} accédera aux classes et à la salle dès que son contrat est accepté, sans pièce d'identité vérifiée. Cette décision est réversible et inscrite au journal d'audit.'
+	String dispenserConsequence({required Object libelle}) => '${libelle} accédera aux classes et à la salle dès que son contrat est accepté, sans pièce d\'identité vérifiée. Cette décision est réversible et inscrite au journal d\'audit.';
+
+	/// fr: '{libelle} devra fournir une pièce d'identité vérifiée avant tout accès opérationnel. Cette décision est inscrite au journal d'audit.'
+	String retablirConsequence({required Object libelle}) => '${libelle} devra fournir une pièce d\'identité vérifiée avant tout accès opérationnel. Cette décision est inscrite au journal d\'audit.';
+
+	/// fr: 'Motif'
+	String get motif => 'Motif';
+
+	/// fr: 'Un motif est requis, il s'inscrit au journal d'audit.'
+	String get motifRequis => 'Un motif est requis, il s\'inscrit au journal d\'audit.';
+
+	/// fr: 'Dispenser'
+	String get dispenserEnvoyer => 'Dispenser';
+
+	/// fr: 'Rétablir'
+	String get retablirEnvoyer => 'Rétablir';
+
+	/// fr: 'Enregistré. L'éligibilité est recalculée.'
+	String get enregistre => 'Enregistré. L\'éligibilité est recalculée.';
+
+	/// fr: 'Le réglage n'a pas abouti : {message}'
+	String echec({required Object message}) => 'Le réglage n\'a pas abouti : ${message}';
+}
+
+// Path: classes.admin
+class Traductions$classes$admin$fr {
+	Traductions$classes$admin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classes'
+	String get titre => 'Classes';
+
+	/// fr: 'Générer plusieurs classes'
+	String get genererEnLot => 'Générer plusieurs classes';
+
+	/// fr: 'Présence à la prochaine séance'
+	String get detailPresence => 'Présence à la prochaine séance';
+
+	/// fr: 'Aucune séance connue pour cette classe.'
+	String get detailAucuneSeance => 'Aucune séance connue pour cette classe.';
+
+	late final Traductions$classes$admin$creation$fr creation = Traductions$classes$admin$creation$fr.internal(_root);
+}
+
+// Path: classes.enseignant
+class Traductions$classes$enseignant$fr {
+	Traductions$classes$enseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes classes'
+	String get titre => 'Mes classes';
+
+	/// fr: 'Mes classes'
+	String get mesClasses => 'Mes classes';
+
+	/// fr: 'Classes disponibles'
+	String get disponibles => 'Classes disponibles';
+
+	/// fr: 'Aucune classe assignée pour l'instant'
+	String get aucuneAssignee => 'Aucune classe assignée pour l\'instant';
+
+	/// fr: 'Candidatez à une classe disponible : l'académie décide de l'affectation.'
+	String get aucuneAssigneeDetail => 'Candidatez à une classe disponible : l\'académie décide de l\'affectation.';
+
+	/// fr: 'Aucune classe disponible pour l'instant'
+	String get aucuneDisponible => 'Aucune classe disponible pour l\'instant';
+
+	/// fr: 'Les classes compatibles avec vos disponibilités apparaîtront ici.'
+	String get aucuneDisponibleDetail => 'Les classes compatibles avec vos disponibilités apparaîtront ici.';
+
+	/// fr: 'Candidater'
+	String get candidater => 'Candidater';
+
+	/// fr: 'Candidature envoyée. L'académie vous répondra.'
+	String get candidatureEnvoyee => 'Candidature envoyée. L\'académie vous répondra.';
+
+	/// fr: 'Ouvrir la fiche'
+	String get ouvrirFiche => 'Ouvrir la fiche';
+
+	/// fr: 'Avant vos premières classes'
+	String get onboardingTitre => 'Avant vos premières classes';
+
+	/// fr: 'Deux conditions ouvrent l'accès aux classes, aux contenus et à la salle.'
+	String get onboardingIntro => 'Deux conditions ouvrent l\'accès aux classes, aux contenus et à la salle.';
+
+	/// fr: 'Contrat accepté'
+	String get etapeContrat => 'Contrat accepté';
+
+	/// fr: 'Le contrat de confidentialité et de non-concurrence est obligatoire, pour tout le monde.'
+	String get etapeContratDetail => 'Le contrat de confidentialité et de non-concurrence est obligatoire, pour tout le monde.';
+
+	/// fr: 'Identité vérifiée'
+	String get etapeKyc => 'Identité vérifiée';
+
+	/// fr: 'Une pièce d'identité vérifiée est la barrière de sérieux de l'académie.'
+	String get etapeKycDetail => 'Une pièce d\'identité vérifiée est la barrière de sérieux de l\'académie.';
+
+	/// fr: 'L'académie vous a dispensé de cette étape.'
+	String get etapeKycDispense => 'L\'académie vous a dispensé de cette étape.';
+
+	/// fr: 'Cette décision est celle de l'académie, inscrite au journal. Elle peut être revue.'
+	String get etapeKycDispenseDetail => 'Cette décision est celle de l\'académie, inscrite au journal. Elle peut être revue.';
+
+	/// fr: 'Accès ouvert'
+	String get clearanceOk => 'Accès ouvert';
+
+	/// fr: 'Accès en attente'
+	String get clearanceAttente => 'Accès en attente';
+
+	/// fr: 'Tant que ces conditions ne sont pas remplies, les classes disponibles restent masquées.'
+	String get clearanceDetail => 'Tant que ces conditions ne sont pas remplies, les classes disponibles restent masquées.';
+
+	/// fr: 'Lire et signer le contrat'
+	String get signerContrat => 'Lire et signer le contrat';
+
+	/// fr: 'Déposer ma pièce'
+	String get deposerPiece => 'Déposer ma pièce';
+
+	/// fr: 'Voir les classes'
+	String get voirClasses => 'Voir les classes';
+
+	/// fr: 'Votre situation n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreurConformite => 'Votre situation n\'a pas pu être lue. Réessayez dans un instant.';
+}
+
+// Path: classes.foyer
+class Traductions$classes$foyer$fr {
+	Traductions$classes$foyer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classes'
+	String get titre => 'Classes';
+
+	/// fr: 'Pour qui ?'
+	String get pourQui => 'Pour qui ?';
+
+	/// fr: 'Membres du foyer'
+	String get membres => 'Membres du foyer';
+
+	/// fr: 'Aucun membre dans le foyer'
+	String get aucunMembre => 'Aucun membre dans le foyer';
+
+	/// fr: 'Ajoutez un membre du foyer pour choisir une classe.'
+	String get aucunMembreDetail => 'Ajoutez un membre du foyer pour choisir une classe.';
+
+	/// fr: 'Ajouter un membre'
+	String get ajouterMembre => 'Ajouter un membre';
+
+	/// fr: 'Classes du foyer'
+	String get classesDuFoyer => 'Classes du foyer';
+
+	/// fr: 'Classes disponibles pour {prenom}'
+	String disponiblesPour({required Object prenom}) => 'Classes disponibles pour ${prenom}';
+
+	/// fr: 'Aucune classe ne convient pour l'instant'
+	String get aucuneDisponible => 'Aucune classe ne convient pour l\'instant';
+
+	/// fr: 'Proposez un créneau : l'académie ouvre une classe dès que le seuil est atteint.'
+	String get aucuneDisponibleDetail => 'Proposez un créneau : l\'académie ouvre une classe dès que le seuil est atteint.';
+
+	/// fr: 'Proposer un créneau'
+	String get proposerCreneau => 'Proposer un créneau';
+
+	/// fr: 'Quel créneau conviendrait à {prenom} ?'
+	String proposerCreneauTitre({required Object prenom}) => 'Quel créneau conviendrait à ${prenom} ?';
+
+	/// fr: 'L'académie regroupe les demandes compatibles et ouvre une classe dès que le seuil est atteint.'
+	String get proposerCreneauAide => 'L\'académie regroupe les demandes compatibles et ouvre une classe dès que le seuil est atteint.';
+
+	/// fr: 'Envoyer la proposition'
+	String get proposerEnvoyer => 'Envoyer la proposition';
+
+	/// fr: 'Proposition enregistrée. L'académie vous préviendra.'
+	String get propositionEnvoyee => 'Proposition enregistrée. L\'académie vous préviendra.';
+
+	/// fr: 'Inscrire {prenom}'
+	String inscrire({required Object prenom}) => 'Inscrire ${prenom}';
+
+	/// fr: '{prenom} est inscrit. La première séance apparaîtra dans le planning.'
+	String inscriptionFaite({required Object prenom}) => '${prenom} est inscrit. La première séance apparaîtra dans le planning.';
+
+	/// fr: 'Planning de {prenom}'
+	String planning({required Object prenom}) => 'Planning de ${prenom}';
+
+	/// fr: 'Aucune séance planifiée pour {prenom}'
+	String planningVide({required Object prenom}) => 'Aucune séance planifiée pour ${prenom}';
+
+	/// fr: 'Elle apparaîtra ici dès l'inscription à une classe.'
+	String get planningVideDetail => 'Elle apparaîtra ici dès l\'inscription à une classe.';
+
+	/// fr: '{jour} {date} à {heure}'
+	String seance({required Object jour, required Object date, required Object heure}) => '${jour} ${date} à ${heure}';
+
+	/// fr: 'Classes disponibles'
+	String get blocClasses => 'Classes disponibles';
+
+	/// fr: 'Choisir une classe pour un membre du foyer, ou proposer un créneau.'
+	String get blocClassesDetail => 'Choisir une classe pour un membre du foyer, ou proposer un créneau.';
+}
+
 // Path: tc.groupe.mesGroupes
 class Traductions$tc$groupe$mesGroupes$fr {
 	Traductions$tc$groupe$mesGroupes$fr.internal(this._root);
@@ -5200,14 +5726,14 @@ class Traductions$tc$groupe$mesGroupes$fr {
 
 	// Translations
 
-	/// fr: 'Mes groupes'
-	String get titre => 'Mes groupes';
+	/// fr: 'Mes classes'
+	String get titre => 'Mes classes';
 
-	/// fr: 'Aucun groupe pour le moment'
-	String get aucun => 'Aucun groupe pour le moment';
+	/// fr: 'Aucune classe pour le moment'
+	String get aucun => 'Aucune classe pour le moment';
 
-	/// fr: 'L'académie vous placera dans un groupe dès qu'un créneau vous correspond.'
-	String get aucunDetail => 'L\'académie vous placera dans un groupe dès qu\'un créneau vous correspond.';
+	/// fr: 'Choisissez une classe disponible, ou l'académie vous en proposera une dès qu'un créneau vous correspond.'
+	String get aucunDetail => 'Choisissez une classe disponible, ou l\'académie vous en proposera une dès qu\'un créneau vous correspond.';
 }
 
 // Path: tc.groupe.commun
@@ -5218,8 +5744,8 @@ class Traductions$tc$groupe$commun$fr {
 
 	// Translations
 
-	/// fr: 'Vos groupes n'ont pas pu être lus'
-	String get erreur => 'Vos groupes n\'ont pas pu être lus';
+	/// fr: 'Vos classes n'ont pas pu être lues'
+	String get erreur => 'Vos classes n\'ont pas pu être lues';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -5233,8 +5759,8 @@ class Traductions$tc$groupe$carte$fr {
 
 	// Translations
 
-	/// fr: 'Ouvrir le groupe {libelle}'
-	String ouvrir({required Object libelle}) => 'Ouvrir le groupe ${libelle}';
+	/// fr: 'Ouvrir la classe {libelle}'
+	String ouvrir({required Object libelle}) => 'Ouvrir la classe ${libelle}';
 
 	/// fr: '{membres} / {seuil}'
 	String capacite({required Object membres, required Object seuil}) => '${membres} / ${seuil}';
@@ -5251,8 +5777,8 @@ class Traductions$tc$groupe$carte$fr {
 	/// fr: 'Aucune séance planifiée'
 	String get aucuneSeance => 'Aucune séance planifiée';
 
-	/// fr: 'Le planning de ce groupe n'est pas encore posé.'
-	String get aucuneSeanceDetail => 'Le planning de ce groupe n\'est pas encore posé.';
+	/// fr: 'Le planning de cette classe n'est pas encore posé.'
+	String get aucuneSeanceDetail => 'Le planning de cette classe n\'est pas encore posé.';
 
 	/// fr: 'Durée {valeur}'
 	String duree({required Object valeur}) => 'Durée ${valeur}';
@@ -5413,8 +5939,8 @@ class Traductions$tc$groupe$espace$fr {
 
 	// Translations
 
-	/// fr: 'Mes groupes'
-	String get retour => 'Mes groupes';
+	/// fr: 'Mes classes'
+	String get retour => 'Mes classes';
 
 	/// fr: 'Avant le prochain cours'
 	String get avantProchainCours => 'Avant le prochain cours';
@@ -5431,17 +5957,17 @@ class Traductions$tc$groupe$espace$fr {
 	/// fr: 'Progression'
 	String get progression => 'Progression';
 
-	/// fr: 'Élèves du groupe'
-	String get roster => 'Élèves du groupe';
+	/// fr: 'Élèves de la classe'
+	String get roster => 'Élèves de la classe';
 
 	/// fr: 'Reprendre le cours'
 	String get reprendreLeCours => 'Reprendre le cours';
 
-	/// fr: 'Ce groupe ne vous est pas ouvert'
-	String get introuvable => 'Ce groupe ne vous est pas ouvert';
+	/// fr: 'Cette classe ne vous est pas ouverte'
+	String get introuvable => 'Cette classe ne vous est pas ouverte';
 
-	/// fr: 'Il a peut-être été clôturé, ou il appartient à une autre classe.'
-	String get introuvableDetail => 'Il a peut-être été clôturé, ou il appartient à une autre classe.';
+	/// fr: 'Elle a peut-être été clôturée, ou elle appartient à un autre foyer.'
+	String get introuvableDetail => 'Elle a peut-être été clôturée, ou elle appartient à un autre foyer.';
 }
 
 // Path: tc.groupe.emplacement
@@ -6875,6 +7401,126 @@ class Traductions$tc$parcours$postCours$fr {
 	String get envoye => 'Cours clôturé.';
 }
 
+// Path: classes.admin.creation
+class Traductions$classes$admin$creation$fr {
+	Traductions$classes$admin$creation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle classe'
+	String get titre => 'Nouvelle classe';
+
+	/// fr: 'Générer plusieurs classes'
+	String get titreLot => 'Générer plusieurs classes';
+
+	/// fr: 'Programme et public'
+	String get etapeProgramme => 'Programme et public';
+
+	/// fr: 'Créneaux'
+	String get etapeCreneau => 'Créneaux';
+
+	/// fr: 'Aperçu'
+	String get etapeApercu => 'Aperçu';
+
+	/// fr: 'Quel programme ?'
+	String get programmeQuestion => 'Quel programme ?';
+
+	/// fr: 'Aucun programme publié pour l'instant : la classe portera un nom libre.'
+	String get programmeAucun => 'Aucun programme publié pour l\'instant : la classe portera un nom libre.';
+
+	/// fr: 'Pour qui ?'
+	String get publicQuestion => 'Pour qui ?';
+
+	/// fr: 'Nom de la classe'
+	String get nomQuestion => 'Nom de la classe';
+
+	/// fr: 'Prérempli depuis le programme. Modifiable.'
+	String get nomAide => 'Prérempli depuis le programme. Modifiable.';
+
+	/// fr: 'Quand ?'
+	String get creneauQuestion => 'Quand ?';
+
+	/// fr: 'Touchez une case : le jour et l'heure, chaque semaine.'
+	String get creneauAide => 'Touchez une case : le jour et l\'heure, chaque semaine.';
+
+	/// fr: 'Touchez autant de cases que de classes à créer : une case, une classe.'
+	String get creneauAideLot => 'Touchez autant de cases que de classes à créer : une case, une classe.';
+
+	/// fr: '{nombre} créneaux choisis'
+	String creneauxChoisis({required Object nombre}) => '${nombre} créneaux choisis';
+
+	/// fr: '1 créneau choisi'
+	String get creneauChoisi => '1 créneau choisi';
+
+	/// fr: 'Choisissez au moins un créneau pour continuer.'
+	String get aucunCreneau => 'Choisissez au moins un créneau pour continuer.';
+
+	/// fr: 'Enseignant (facultatif)'
+	String get enseignantQuestion => 'Enseignant (facultatif)';
+
+	/// fr: 'Vous pouvez publier sans enseignant : les enseignants éligibles candidateront.'
+	String get enseignantAide => 'Vous pouvez publier sans enseignant : les enseignants éligibles candidateront.';
+
+	/// fr: 'À affecter plus tard'
+	String get enseignantAucun => 'À affecter plus tard';
+
+	/// fr: 'Aucun enseignant éligible pour l'instant.'
+	String get enseignantAucunEligible => 'Aucun enseignant éligible pour l\'instant.';
+
+	/// fr: 'Réglages de l'académie'
+	String get reglesTitre => 'Réglages de l\'académie';
+
+	/// fr: 'Durée, capacité et seuil viennent des règles de l'académie. Modifiez-les seulement si cette classe fait exception.'
+	String get reglesAide => 'Durée, capacité et seuil viennent des règles de l\'académie. Modifiez-les seulement si cette classe fait exception.';
+
+	/// fr: 'Durée'
+	String get duree => 'Durée';
+
+	/// fr: 'Capacité'
+	String get capacite => 'Capacité';
+
+	/// fr: 'Seuil minimal d'ouverture'
+	String get seuilMinimal => 'Seuil minimal d\'ouverture';
+
+	/// fr: 'Ce qui sera publié'
+	String get apercuTitre => 'Ce qui sera publié';
+
+	/// fr: '{nombre} classes seront créées'
+	String apercuNombre({required Object nombre}) => '${nombre} classes seront créées';
+
+	/// fr: '1 classe sera créée'
+	String get apercuUne => '1 classe sera créée';
+
+	/// fr: 'Publier la classe'
+	String get publier => 'Publier la classe';
+
+	/// fr: 'Publier {nombre} classes'
+	String publierLot({required Object nombre}) => 'Publier ${nombre} classes';
+
+	/// fr: 'Continuer'
+	String get suivant => 'Continuer';
+
+	/// fr: 'Retour'
+	String get precedent => 'Retour';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Classe publiée.'
+	String get succes => 'Classe publiée.';
+
+	/// fr: '{nombre} classes publiées.'
+	String succesLot({required Object nombre}) => '${nombre} classes publiées.';
+
+	/// fr: 'La publication n'a pas abouti : {message}'
+	String echec({required Object message}) => 'La publication n\'a pas abouti : ${message}';
+
+	/// fr: '{faites} classes sur {total} ont été publiées. Le reste n'a pas abouti : {message}'
+	String echecPartiel({required Object faites, required Object total, required Object message}) => '${faites} classes sur ${total} ont été publiées. Le reste n\'a pas abouti : ${message}';
+}
+
 // Path: tc.outils.dock.position
 class Traductions$tc$outils$dock$position$fr {
 	Traductions$tc$outils$dock$position$fr.internal(this._root);
@@ -7256,7 +7902,7 @@ extension on Traductions {
 			'appareils.derniereUtilisation' => ({required Object quand}) => 'Utilisé ${quand}',
 			'appareils.jamaisUtilise' => 'Jamais utilisé',
 			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
-			'enfant.titre' => 'Ajouter un enfant',
+			'enfant.titre' => 'Ajouter un membre du foyer',
 			'enfant.prenom' => 'Son prénom',
 			'enfant.nom' => 'Son nom',
 			'enfant.age' => 'Son âge',
@@ -7264,9 +7910,9 @@ extension on Traductions {
 			'enfant.ageRaison' => 'L\'âge fixe le mode d\'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.',
 			'enfant.creer' => 'Ajouter au foyer',
 			'enfant.erreur' => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.',
-			'enfant.aucun' => 'Aucun enfant dans le foyer',
-			'enfant.aucunDetail' => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.',
-			'disponibilites.titre' => 'Quand vos enfants peuvent-ils suivre un cours ?',
+			'enfant.aucun' => 'Aucun membre dans le foyer',
+			'enfant.aucunDetail' => 'Ajoutez le premier membre du foyer pour pouvoir appairer son appareil.',
+			'disponibilites.titre' => 'Quand les membres du foyer peuvent-ils suivre un cours ?',
 			'disponibilites.titreEnseignant' => 'Quand pouvez-vous donner cours ?',
 			'disponibilites.consigne' => ({required Object prenom}) => 'Touchez les heures possibles pour ${prenom}.',
 			'disponibilites.consigneEnseignant' => 'Touchez les heures où vous êtes disponible.',
@@ -7475,12 +8121,12 @@ extension on Traductions {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
-			'admin.groupes.titre' => 'Groupes',
-			'admin.groupes.intro' => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
-			'admin.groupes.colonneGroupe' => 'Groupe',
+			'admin.groupes.titre' => 'Classes',
+			'admin.groupes.intro' => 'Une classe réunit un enseignant et ses élèves autour d\'un créneau hebdomadaire : c\'est là que se donne le cours.',
+			'admin.groupes.colonneGroupe' => 'Classe',
 			'admin.groupes.colonneEnseignant' => 'Enseignant',
 			'admin.groupes.colonneType' => 'Public',
-			'admin.groupes.colonneMembres' => 'Membres',
+			'admin.groupes.colonneMembres' => 'Inscrits',
 			'admin.groupes.colonneCreneau' => 'Créneau',
 			'admin.groupes.colonneEtat' => 'État',
 			'admin.groupes.typeEnfant' => 'Enfants',
@@ -7489,30 +8135,30 @@ extension on Traductions {
 			'admin.groupes.etatActif' => 'Actif',
 			'admin.groupes.etatCloture' => 'Clôturé',
 			'admin.groupes.membresSur' => ({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}',
-			'admin.groupes.aucun' => 'Aucun groupe créé',
-			'admin.groupes.aucunDetail' => 'Créez un premier groupe pour donner un enseignant et des élèves à un créneau commun.',
-			'admin.groupes.aucunAvecCeFiltre' => 'Aucun groupe avec ce filtre',
-			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres groupes.',
-			'admin.groupes.erreur' => 'Les groupes n\'ont pas pu être lus. Réessayez dans un instant.',
-			'admin.groupes.creer' => 'Créer un groupe',
-			'admin.groupes.creerTitre' => 'Créer un groupe',
-			'admin.groupes.champLibelle' => 'Nom du groupe',
+			'admin.groupes.aucun' => 'Aucune classe créée',
+			'admin.groupes.aucunDetail' => 'Créez une première classe : le programme, le public, le créneau. Le reste est prérempli.',
+			'admin.groupes.aucunAvecCeFiltre' => 'Aucune classe avec ce filtre',
+			'admin.groupes.aucunAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres classes.',
+			'admin.groupes.erreur' => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.groupes.creer' => 'Créer une classe',
+			'admin.groupes.creerTitre' => 'Nouvelle classe',
+			'admin.groupes.champLibelle' => 'Nom de la classe',
 			'admin.groupes.champEnseignantId' => 'Identifiant de l\'enseignant',
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
-			'admin.groupes.champSeuil' => 'Seuil maximal',
-			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
+			'admin.groupes.champSeuil' => 'Capacité (places)',
+			'admin.groupes.creerEnvoyer' => 'Publier la classe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
-			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Groupe ${libelle}',
-			'admin.groupes.detailMembres' => 'Membres',
-			'admin.groupes.detailAucunMembre' => 'Aucun élève dans ce groupe pour l\'instant.',
-			'admin.groupes.actionAjouter' => 'Ajouter un élève',
+			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Classe ${libelle}',
+			'admin.groupes.detailMembres' => 'Inscrits',
+			'admin.groupes.detailAucunMembre' => 'Aucun élève inscrit pour l\'instant.',
+			'admin.groupes.actionAjouter' => 'Inscrire un élève',
 			'admin.groupes.actionRetirer' => 'Retirer',
-			'admin.groupes.actionModifierSeuil' => 'Modifier le seuil',
+			'admin.groupes.actionModifierSeuil' => 'Modifier la capacité',
 			'admin.groupes.actionObservation' => 'Réglages d\'observation',
-			'admin.groupes.actionCloturer' => 'Clôturer le groupe',
-			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Ajouter un élève à ${libelle}',
+			'admin.groupes.actionCloturer' => 'Clôturer la classe',
+			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Inscrire un élève à ${libelle}',
 			'admin.groupes.champEleveId' => 'Identifiant de l\'élève',
 			'admin.groupes.champMotif' => 'Motif',
 			'admin.groupes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
@@ -7521,11 +8167,11 @@ extension on Traductions {
 			'admin.groupes.retirerTitre' => ({required Object prenom, required Object libelle}) => 'Retirer ${prenom} de ${libelle}',
 			'admin.groupes.retirerEnvoyer' => 'Retirer',
 			'admin.groupes.retirerErreur' => ({required Object message}) => 'Le retrait n\'a pas abouti : ${message}',
-			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Seuil maximal de ${libelle}',
+			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Capacité de ${libelle}',
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
-			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
+			'admin.groupes.cloturerDetail' => 'Tous les élèves inscrits seront retirés de la classe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
@@ -7984,7 +8630,7 @@ extension on Traductions {
 			'compte.reglages' => 'Réglages',
 			'compte.reglagesDetail' => 'Apparence, notifications et accessibilité',
 			'compte.profils' => 'Profils du foyer',
-			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
+			'compte.profilsDetail' => 'Gérer les membres du foyer',
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
 			'compte.confidentialite' => 'Confidentialité',
@@ -8035,12 +8681,12 @@ extension on Traductions {
 			'compte.lectureGrande' => 'Lecture en grand texte',
 			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
 			'compte.profilsTitre' => 'Profils du foyer',
-			'compte.profilsIntro' => 'Les enfants rattachés à votre foyer.',
+			'compte.profilsIntro' => 'Les membres rattachés à votre foyer.',
 			'compte.erreurProfils' => 'Les profils n\'ont pas pu être lus.',
 			'compte.reessayer' => 'Réessayer',
 			'compte.aucunProfil' => 'Aucun profil pour l\'instant',
-			'compte.aucunProfilDetail' => 'Ajoutez un enfant pour commencer',
-			'compte.ajouterEnfant' => 'Ajouter un enfant',
+			'compte.aucunProfilDetail' => 'Ajoutez un membre du foyer pour commencer',
+			'compte.ajouterEnfant' => 'Ajouter un membre du foyer',
 			'compte.ouvrirProfil' => 'Ouvrir le profil',
 			'compte.modeEnfant' => 'Mode enfant',
 			'compte.modeStandard' => 'Mode standard',
@@ -8152,16 +8798,16 @@ extension on Traductions {
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
-			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
-			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
-			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
+			'tuteur.accueil.blocReglages' => 'Réglages par membre du foyer',
+			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, membre par membre.',
+			'tuteur.accueil.blocGroupesDetail' => 'La classe, l\'enseignant et le prochain cours de chaque membre du foyer.',
 			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
 			'tuteur.accueil.accesSansFin' => ({required Object prenom}) => 'Accès de ${prenom} sans date de fin',
-			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
-			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
+			'tuteur.accueil.aucunEnfant' => 'Aucun membre dans le foyer',
+			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez le premier membre du foyer pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
-			'tuteur.reglages.titre' => 'Réglages par enfant',
+			'tuteur.reglages.titre' => 'Réglages par membre du foyer',
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
@@ -8193,13 +8839,13 @@ extension on Traductions {
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
-			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
-			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
+			'tuteur.reglages.aucunEnfant' => 'Aucun membre dans le foyer',
+			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un membre du foyer pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'tuteur.suivi.titre' => 'Suivi du foyer',
-			'tuteur.suivi.tousLesEnfants' => 'Tous les enfants',
+			'tuteur.suivi.tousLesEnfants' => 'Tous les membres du foyer',
 			'tuteur.suivi.colonneDate' => 'Date',
-			'tuteur.suivi.colonneEnfant' => 'Enfant',
+			'tuteur.suivi.colonneEnfant' => 'Membre du foyer',
 			'tuteur.suivi.colonneEnseignant' => 'Enseignant',
 			'tuteur.suivi.colonneEtat' => 'État',
 			'tuteur.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
@@ -8208,8 +8854,8 @@ extension on Traductions {
 			'tuteur.suivi.annule' => 'Cours annulé',
 			'tuteur.suivi.nonTenu' => 'Cours non tenu',
 			'tuteur.suivi.vide' => 'Aucun cours pour l\'instant',
-			'tuteur.suivi.videDetail' => 'Les cours de vos enfants s\'afficheront ici, du plus récent au plus ancien, avec leur présence.',
-			'tuteur.suivi.videFiltre' => 'Aucun cours pour cet enfant',
+			'tuteur.suivi.videDetail' => 'Les cours des membres du foyer s\'afficheront ici, du plus récent au plus ancien, avec leur présence.',
+			'tuteur.suivi.videFiltre' => 'Aucun cours pour ce membre du foyer',
 			'tuteur.suivi.videFiltreDetail' => 'Relâchez le filtre pour retrouver le reste du foyer.',
 			'tuteur.suivi.effacerFiltres' => 'Tout afficher',
 			'tuteur.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
@@ -8493,18 +9139,18 @@ extension on Traductions {
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Mode enfant',
 			'galerie.modeStandard' => 'Mode standard',
-			'tc.groupe.mesGroupes.titre' => 'Mes groupes',
-			'tc.groupe.mesGroupes.aucun' => 'Aucun groupe pour le moment',
-			'tc.groupe.mesGroupes.aucunDetail' => 'L\'académie vous placera dans un groupe dès qu\'un créneau vous correspond.',
-			'tc.groupe.commun.erreur' => 'Vos groupes n\'ont pas pu être lus',
+			'tc.groupe.mesGroupes.titre' => 'Mes classes',
+			'tc.groupe.mesGroupes.aucun' => 'Aucune classe pour le moment',
+			'tc.groupe.mesGroupes.aucunDetail' => 'Choisissez une classe disponible, ou l\'académie vous en proposera une dès qu\'un créneau vous correspond.',
+			'tc.groupe.commun.erreur' => 'Vos classes n\'ont pas pu être lues',
 			'tc.groupe.commun.reessayer' => 'Réessayer',
-			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir le groupe ${libelle}',
+			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir la classe ${libelle}',
 			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '${membres} / ${seuil}',
 			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '${membres} élèves sur ${seuil} places',
 			'tc.groupe.carte.complet' => 'Complet',
 			'tc.groupe.carte.prochainCours' => 'Prochain cours',
 			'tc.groupe.carte.aucuneSeance' => 'Aucune séance planifiée',
-			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de ce groupe n\'est pas encore posé.',
+			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de cette classe n\'est pas encore posé.',
 			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
 			'tc.groupe.carte.dureeLibelle' => 'Durée',
 			'tc.groupe.carte.rejoindre' => 'Rejoindre',
@@ -8537,16 +9183,16 @@ extension on Traductions {
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
-			'tc.groupe.espace.retour' => 'Mes groupes',
+			'tc.groupe.espace.retour' => 'Mes classes',
 			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
 			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
 			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
 			'tc.groupe.espace.progression' => 'Progression',
-			'tc.groupe.espace.roster' => 'Élèves du groupe',
+			'tc.groupe.espace.roster' => 'Élèves de la classe',
 			'tc.groupe.espace.reprendreLeCours' => 'Reprendre le cours',
-			'tc.groupe.espace.introuvable' => 'Ce groupe ne vous est pas ouvert',
-			'tc.groupe.espace.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à une autre classe.',
+			'tc.groupe.espace.introuvable' => 'Cette classe ne vous est pas ouverte',
+			'tc.groupe.espace.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle appartient à un autre foyer.',
 			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
 			'tc.bibliotheque.titre' => 'Bibliothèque',
@@ -8882,6 +9528,181 @@ extension on Traductions {
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
+			'classes.commun.classe' => 'Classe',
+			'classes.commun.capaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que cette action demande. Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
+			'classes.commun.erreurLecture' => 'Les classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'classes.commun.reessayer' => 'Réessayer',
+			'classes.commun.publicEnfants' => 'Enfants',
+			'classes.commun.publicAdultes' => 'Adultes',
+			'classes.commun.dureeMinutes' => ({required Object minutes}) => '${minutes} min',
+			'classes.commun.dureeHeures' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			'classes.commun.hebdomadaire' => 'chaque semaine',
+			'classes.commun.defautAcademie' => 'Défaut de l\'académie',
+			'classes.commun.modifier' => 'Modifier',
+			'classes.commun.fermer' => 'Fermer',
+			'classes.erreur.capaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que cette action demande. Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
+			'classes.erreur.refuse' => 'Cette action n\'est pas autorisée pour votre compte.',
+			'classes.erreur.conflit' => 'Ce créneau entre en conflit avec un cours existant.',
+			'classes.erreur.complet' => 'Cette classe est complète.',
+			'classes.erreur.dejaInscrit' => 'Cette personne est déjà inscrite à cette classe.',
+			'classes.erreur.dejaCandidat' => 'Vous avez déjà candidaté à cette classe.',
+			'classes.erreur.reseau' => 'Le réseau n\'a pas répondu. Réessayez dans un instant.',
+			'classes.erreur.inconnu' => 'L\'action n\'a pas abouti. Réessayez dans un instant.',
+			'classes.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir la classe ${libelle}',
+			'classes.carte.capacite' => ({required Object inscrits, required Object seuil}) => '${inscrits} / ${seuil}',
+			'classes.carte.capacitePhrase' => ({required Object inscrits, required Object seuil}) => '${inscrits} inscrits sur ${seuil} places',
+			'classes.carte.placesRestantes' => ({required Object places}) => '${places} places restantes',
+			'classes.carte.placeRestante' => '1 place restante',
+			'classes.carte.complet' => 'Complet',
+			'classes.carte.enseignantAAffecter' => 'Enseignant à affecter',
+			'classes.carte.seuilMinimal' => ({required Object seuil}) => 'Ouvre à partir de ${seuil} inscrits',
+			'classes.carte.brouillon' => 'Brouillon',
+			'classes.carte.publiee' => 'Publiée',
+			'classes.carte.cloturee' => 'Clôturée',
+			'classes.carte.prochaineSeance' => 'Prochaine séance',
+			'classes.carte.aucuneSeance' => 'Aucune séance planifiée',
+			'classes.carte.voirDetail' => 'Voir le détail',
+			'classes.carte.masquerDetail' => 'Masquer le détail',
+			'classes.carte.creneau' => ({required Object jour, required Object heure}) => '${jour} à ${heure}',
+			'classes.carte.creneauAvecVille' => ({required Object jour, required Object heure, required Object ville}) => '${jour} à ${heure}, heure de ${ville}',
+			'classes.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
+			'classes.carte.programme' => 'Programme',
+			'classes.carte.niveau' => 'Niveau',
+			'classes.carte.public' => 'Public',
+			'classes.carte.fuseau' => 'Fuseau',
+			'classes.carte.etat' => 'État',
+			'classes.carte.inscrit' => 'Inscrit',
+			'classes.presence.titre' => 'Présence',
+			'classes.presence.source' => 'État calculé par le serveur, jamais par cet appareil.',
+			'classes.presence.indisponible' => 'Présence indisponible pour le moment',
+			'classes.presence.indisponibleDetail' => 'Les états s\'afficheront dès que le serveur répond. Aucune absence n\'est déduite d\'ici.',
+			'classes.porte.photoTitre' => ({required Object prenom}) => 'Une photo de ${prenom} est nécessaire pour commencer la visio',
+			'classes.porte.photoRaison' => 'Elle permet à l\'enseignant de reconnaître chaque élève en salle. Elle reste dans le foyer et n\'est jamais montrée aux autres familles.',
+			'classes.porte.ajouterPhoto' => 'Ajouter la photo',
+			'classes.porte.photoParTuteur' => 'La photo s\'ajoute depuis le compte du tuteur, dans Réglages par membre du foyer.',
+			'classes.porte.rejoindre' => 'Rejoindre',
+			'classes.kyc.plusTard' => 'Faire plus tard',
+			'classes.kyc.plusTardDetail' => 'Vous pourrez la déposer à tout moment depuis votre compte. Elle n\'empêche ni de consulter les classes ni de s\'inscrire.',
+			'classes.kyc.continuerSansPiece' => 'Continuer sans la pièce pour l\'instant',
+			'classes.kyc.rappelTitre' => 'Votre pièce d\'identité peut attendre',
+			'classes.kyc.rappelDetail' => 'Vous pouvez consulter les classes et vous inscrire dès maintenant. La pièce se dépose quand vous voulez.',
+			'classes.kyc.rappelAction' => 'Déposer ma pièce',
+			'classes.conformite.exigenceRequise' => 'KYC requis',
+			'classes.conformite.exigenceDispensee' => 'KYC dispensé',
+			'classes.conformite.exigenceOptionnelle' => 'KYC facultatif',
+			'classes.conformite.etatNonCommence' => 'Non commencé',
+			'classes.conformite.etatSoumis' => 'Soumis',
+			'classes.conformite.etatVerifie' => 'Vérifié',
+			'classes.conformite.etatCorrection' => 'Correction demandée',
+			'classes.conformite.etatRefuse' => 'Refusé',
+			'classes.conformite.etatDispense' => 'Dispensé',
+			'classes.conformite.contratAccepte' => 'Contrat accepté',
+			'classes.conformite.contratManquant' => 'Contrat à accepter',
+			'classes.conformite.dispensePar' => ({required Object acteur, required Object date}) => 'Dispensé par ${acteur} le ${date}',
+			'classes.conformite.dispenseMotif' => ({required Object motif}) => 'Motif : ${motif}',
+			'classes.conformite.colonneKyc' => 'KYC',
+			'classes.conformite.colonneExigence' => 'Exigence KYC',
+			'classes.conformite.actionDispenser' => 'Dispenser du KYC',
+			'classes.conformite.actionRetablir' => 'Rétablir l\'exigence KYC',
+			'classes.conformite.dispenserTitre' => ({required Object libelle}) => 'Dispenser ${libelle} du KYC',
+			'classes.conformite.retablirTitre' => ({required Object libelle}) => 'Rétablir l\'exigence KYC pour ${libelle}',
+			'classes.conformite.dispenserConsequence' => ({required Object libelle}) => '${libelle} accédera aux classes et à la salle dès que son contrat est accepté, sans pièce d\'identité vérifiée. Cette décision est réversible et inscrite au journal d\'audit.',
+			'classes.conformite.retablirConsequence' => ({required Object libelle}) => '${libelle} devra fournir une pièce d\'identité vérifiée avant tout accès opérationnel. Cette décision est inscrite au journal d\'audit.',
+			'classes.conformite.motif' => 'Motif',
+			'classes.conformite.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'classes.conformite.dispenserEnvoyer' => 'Dispenser',
+			'classes.conformite.retablirEnvoyer' => 'Rétablir',
+			'classes.conformite.enregistre' => 'Enregistré. L\'éligibilité est recalculée.',
+			'classes.conformite.echec' => ({required Object message}) => 'Le réglage n\'a pas abouti : ${message}',
+			'classes.admin.titre' => 'Classes',
+			'classes.admin.genererEnLot' => 'Générer plusieurs classes',
+			'classes.admin.detailPresence' => 'Présence à la prochaine séance',
+			'classes.admin.detailAucuneSeance' => 'Aucune séance connue pour cette classe.',
+			'classes.admin.creation.titre' => 'Nouvelle classe',
+			'classes.admin.creation.titreLot' => 'Générer plusieurs classes',
+			'classes.admin.creation.etapeProgramme' => 'Programme et public',
+			'classes.admin.creation.etapeCreneau' => 'Créneaux',
+			'classes.admin.creation.etapeApercu' => 'Aperçu',
+			'classes.admin.creation.programmeQuestion' => 'Quel programme ?',
+			'classes.admin.creation.programmeAucun' => 'Aucun programme publié pour l\'instant : la classe portera un nom libre.',
+			'classes.admin.creation.publicQuestion' => 'Pour qui ?',
+			'classes.admin.creation.nomQuestion' => 'Nom de la classe',
+			'classes.admin.creation.nomAide' => 'Prérempli depuis le programme. Modifiable.',
+			'classes.admin.creation.creneauQuestion' => 'Quand ?',
+			'classes.admin.creation.creneauAide' => 'Touchez une case : le jour et l\'heure, chaque semaine.',
+			'classes.admin.creation.creneauAideLot' => 'Touchez autant de cases que de classes à créer : une case, une classe.',
+			'classes.admin.creation.creneauxChoisis' => ({required Object nombre}) => '${nombre} créneaux choisis',
+			'classes.admin.creation.creneauChoisi' => '1 créneau choisi',
+			'classes.admin.creation.aucunCreneau' => 'Choisissez au moins un créneau pour continuer.',
+			'classes.admin.creation.enseignantQuestion' => 'Enseignant (facultatif)',
+			'classes.admin.creation.enseignantAide' => 'Vous pouvez publier sans enseignant : les enseignants éligibles candidateront.',
+			'classes.admin.creation.enseignantAucun' => 'À affecter plus tard',
+			'classes.admin.creation.enseignantAucunEligible' => 'Aucun enseignant éligible pour l\'instant.',
+			'classes.admin.creation.reglesTitre' => 'Réglages de l\'académie',
+			'classes.admin.creation.reglesAide' => 'Durée, capacité et seuil viennent des règles de l\'académie. Modifiez-les seulement si cette classe fait exception.',
+			'classes.admin.creation.duree' => 'Durée',
+			'classes.admin.creation.capacite' => 'Capacité',
+			'classes.admin.creation.seuilMinimal' => 'Seuil minimal d\'ouverture',
+			'classes.admin.creation.apercuTitre' => 'Ce qui sera publié',
+			'classes.admin.creation.apercuNombre' => ({required Object nombre}) => '${nombre} classes seront créées',
+			'classes.admin.creation.apercuUne' => '1 classe sera créée',
+			'classes.admin.creation.publier' => 'Publier la classe',
+			'classes.admin.creation.publierLot' => ({required Object nombre}) => 'Publier ${nombre} classes',
+			'classes.admin.creation.suivant' => 'Continuer',
+			'classes.admin.creation.precedent' => 'Retour',
+			'classes.admin.creation.annuler' => 'Annuler',
+			'classes.admin.creation.succes' => 'Classe publiée.',
+			'classes.admin.creation.succesLot' => ({required Object nombre}) => '${nombre} classes publiées.',
+			'classes.admin.creation.echec' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
+			'classes.admin.creation.echecPartiel' => ({required Object faites, required Object total, required Object message}) => '${faites} classes sur ${total} ont été publiées. Le reste n\'a pas abouti : ${message}',
+			'classes.enseignant.titre' => 'Mes classes',
+			'classes.enseignant.mesClasses' => 'Mes classes',
+			'classes.enseignant.disponibles' => 'Classes disponibles',
+			'classes.enseignant.aucuneAssignee' => 'Aucune classe assignée pour l\'instant',
+			'classes.enseignant.aucuneAssigneeDetail' => 'Candidatez à une classe disponible : l\'académie décide de l\'affectation.',
+			'classes.enseignant.aucuneDisponible' => 'Aucune classe disponible pour l\'instant',
+			'classes.enseignant.aucuneDisponibleDetail' => 'Les classes compatibles avec vos disponibilités apparaîtront ici.',
+			'classes.enseignant.candidater' => 'Candidater',
+			'classes.enseignant.candidatureEnvoyee' => 'Candidature envoyée. L\'académie vous répondra.',
+			'classes.enseignant.ouvrirFiche' => 'Ouvrir la fiche',
+			'classes.enseignant.onboardingTitre' => 'Avant vos premières classes',
+			'classes.enseignant.onboardingIntro' => 'Deux conditions ouvrent l\'accès aux classes, aux contenus et à la salle.',
+			'classes.enseignant.etapeContrat' => 'Contrat accepté',
+			'classes.enseignant.etapeContratDetail' => 'Le contrat de confidentialité et de non-concurrence est obligatoire, pour tout le monde.',
+			'classes.enseignant.etapeKyc' => 'Identité vérifiée',
+			'classes.enseignant.etapeKycDetail' => 'Une pièce d\'identité vérifiée est la barrière de sérieux de l\'académie.',
+			'classes.enseignant.etapeKycDispense' => 'L\'académie vous a dispensé de cette étape.',
+			'classes.enseignant.etapeKycDispenseDetail' => 'Cette décision est celle de l\'académie, inscrite au journal. Elle peut être revue.',
+			'classes.enseignant.clearanceOk' => 'Accès ouvert',
+			'classes.enseignant.clearanceAttente' => 'Accès en attente',
+			'classes.enseignant.clearanceDetail' => 'Tant que ces conditions ne sont pas remplies, les classes disponibles restent masquées.',
+			'classes.enseignant.signerContrat' => 'Lire et signer le contrat',
+			'classes.enseignant.deposerPiece' => 'Déposer ma pièce',
+			'classes.enseignant.voirClasses' => 'Voir les classes',
+			'classes.enseignant.erreurConformite' => 'Votre situation n\'a pas pu être lue. Réessayez dans un instant.',
+			'classes.foyer.titre' => 'Classes',
+			'classes.foyer.pourQui' => 'Pour qui ?',
+			'classes.foyer.membres' => 'Membres du foyer',
+			'classes.foyer.aucunMembre' => 'Aucun membre dans le foyer',
+			'classes.foyer.aucunMembreDetail' => 'Ajoutez un membre du foyer pour choisir une classe.',
+			'classes.foyer.ajouterMembre' => 'Ajouter un membre',
+			'classes.foyer.classesDuFoyer' => 'Classes du foyer',
+			'classes.foyer.disponiblesPour' => ({required Object prenom}) => 'Classes disponibles pour ${prenom}',
+			'classes.foyer.aucuneDisponible' => 'Aucune classe ne convient pour l\'instant',
+			'classes.foyer.aucuneDisponibleDetail' => 'Proposez un créneau : l\'académie ouvre une classe dès que le seuil est atteint.',
+			'classes.foyer.proposerCreneau' => 'Proposer un créneau',
+			'classes.foyer.proposerCreneauTitre' => ({required Object prenom}) => 'Quel créneau conviendrait à ${prenom} ?',
+			'classes.foyer.proposerCreneauAide' => 'L\'académie regroupe les demandes compatibles et ouvre une classe dès que le seuil est atteint.',
+			'classes.foyer.proposerEnvoyer' => 'Envoyer la proposition',
+			'classes.foyer.propositionEnvoyee' => 'Proposition enregistrée. L\'académie vous préviendra.',
+			'classes.foyer.inscrire' => ({required Object prenom}) => 'Inscrire ${prenom}',
+			'classes.foyer.inscriptionFaite' => ({required Object prenom}) => '${prenom} est inscrit. La première séance apparaîtra dans le planning.',
+			'classes.foyer.planning' => ({required Object prenom}) => 'Planning de ${prenom}',
+			'classes.foyer.planningVide' => ({required Object prenom}) => 'Aucune séance planifiée pour ${prenom}',
+			'classes.foyer.planningVideDetail' => 'Elle apparaîtra ici dès l\'inscription à une classe.',
+			'classes.foyer.seance' => ({required Object jour, required Object date, required Object heure}) => '${jour} ${date} à ${heure}',
+			'classes.foyer.blocClasses' => 'Classes disponibles',
+			'classes.foyer.blocClassesDetail' => 'Choisir une classe pour un membre du foyer, ou proposer un créneau.',
 			_ => null,
 		};
 	}

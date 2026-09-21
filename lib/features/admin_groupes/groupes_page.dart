@@ -1,38 +1,54 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../classes/carte_classe.dart';
+import '../classes/domaine/classe_vm.dart';
+import '../classes/domaine/erreur_domaine.dart';
+import '../classes/domaine/providers.dart';
+import '../classes/libelles_classes.dart';
+import 'creation_classe_page.dart';
 import 'feuille_observation_groupe.dart';
 
-/// Operations > Groupes : le noyau du produit depuis le pivot du 19
-/// septembre 2026.
+/// Operations > Classes : le noyau du produit.
 ///
-/// **Un groupe, pas une affectation** : l'enseignant et jusqu'a
-/// [GroupeAdmin.seuilMax] eleves partagent un creneau commun, et c'est dans ce
-/// groupe que la visio se tiendra (migration `0017`). Cet ecran devient la
-/// fonction primaire du domaine Operations -- l'audit gele
-/// (`docs/architecture/ADMIN_IA_AUDIT.md`) y redirigeait jusqu'ici
-/// l'Attribution, qui reste atteignable comme fonction secondaire.
+/// **Une Classe, pas une affectation** : un enseignant, jusqu'a la capacite
+/// lue du serveur, un creneau hebdomadaire partage, et c'est la que la visio
+/// se tient. Le mot visible est **Classe** ; le backend `groupes` reste tel
+/// quel, sans migration de renommage (contrat du sprint, section 2).
+///
+/// Ce que cet ecran ne montre plus, depuis le sprint noyau 24 h : un champ
+/// d'identifiant d'enseignant, un « jour = 1 », une « heure = 16 », une erreur
+/// Postgres brute. La creation passe par `CreationClassePage`, page entiere
+/// sur toutes les largeurs ; l'inscription d'un eleve se choisit dans une
+/// liste, jamais par un identifiant saisi.
 ///
 /// Meme squelette liste+filtre que `ADM-08` (Comptes) : `FilterPill` pour
-/// l'axe ferme (le public), `DataCollection` pour les lignes. Le clic sur une
-/// ligne ouvre le detail en feuille, comme le reste du produit
-/// (`AppBottomSheet`, jamais une boite de dialogue Material).
+/// l'axe ferme (le public), `DataCollection` pour les lignes, un tableau dense
+/// sur bureau et des cartes ailleurs. Le clic sur une ligne ouvre le detail en
+/// feuille, comme le reste du produit.
 class GroupesPage extends ConsumerStatefulWidget {
-  /// Cree l'ecran des groupes.
+  /// Cree l'ecran des Classes.
   const GroupesPage({super.key});
 
   @override
@@ -41,12 +57,49 @@ class GroupesPage extends ConsumerStatefulWidget {
 
 class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   /// Le filtre courant. `null` veut dire « tous ».
-  TypePublicGroupe? _type;
+  PublicClasse? _public;
+
+  /// Le retour local apres une publication.
+  String? _retour;
+
+  Future<void> _ouvrirCreation({required bool lot}) async {
+    // Une page, poussee sur le navigateur : le bouton precedent du navigateur
+    // la ferme, et aucune feuille geante avec poignee ne porte un workflow
+    // long (contrat, section 12). La page rend le nombre de Classes publiees.
+    final int? publiees = await Navigator.of(context).push<int>(
+      MaterialPageRoute<int>(
+        builder: (BuildContext _) => CreationClassePage(lot: lot),
+      ),
+    );
+    if (publiees != null && mounted) {
+      ref.invalidate(classesAdminProvider);
+      setState(
+        () => _retour = publiees == 1
+            ? t.classes.admin.creation.succes
+            : t.classes.admin.creation.succesLot(nombre: publiees),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final AsyncValue<List<GroupeAdmin>> groupes = ref.watch(groupesProvider);
+    final AsyncValue<List<ClasseVM>> classes = ref.watch(classesAdminProvider);
+    final bool large = AppGabarit.de(context).estLarge;
+
+    final List<Widget> boutons = <Widget>[
+      ActionPrincipale(
+        libelle: t.admin.groupes.creer,
+        pleineLargeur: false,
+        onPress: () => unawaited(_ouvrirCreation(lot: false)),
+      ),
+      ActionPrincipale(
+        libelle: t.classes.admin.genererEnLot,
+        niveau: NiveauAction.secondaire,
+        pleineLargeur: false,
+        onPress: () => unawaited(_ouvrirCreation(lot: true)),
+      ),
+    ];
 
     return PageShell(
       titre: t.admin.groupes.titre,
@@ -56,35 +109,44 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
         children: <Widget>[
           Text(t.admin.groupes.intro, style: textes.bodyMedium),
           Ecart.vLg,
-          ActionPrincipale(
-            libelle: t.admin.groupes.creer,
-            pleineLargeur: false,
-            onPress: () => _ouvrirCreation(context, ref),
-          ),
-          Ecart.vXl,
-          switch (groupes) {
-            AsyncValue<List<GroupeAdmin>>(hasValue: true) => Expanded(
+          // [RESPONSIVE]
+          // Deux actions cote a cote quand la place le permet, l'une sous
+          // l'autre sur telephone : jamais un bouton etire.
+          if (large)
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              children: boutons,
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[boutons[0], Ecart.vSm, boutons[1]],
+            ),
+          Ecart.vMd,
+          LocalFeedback(message: _retour),
+          Ecart.vMd,
+          switch (classes) {
+            AsyncValue<List<ClasseVM>>(hasValue: true) => Expanded(
               child: _Corps(
-                groupes: groupes.requireValue,
-                type: _type,
-                onType: (TypePublicGroupe? type) => setState(() => _type = type),
-                onSelectionner: (GroupeAdmin groupe) =>
-                    _ouvrirDetail(context, ref, groupe),
-                onAjouter: (GroupeAdmin groupe) =>
-                    _ouvrirAjout(context, ref, groupe),
-                onModifierSeuil: (GroupeAdmin groupe) =>
-                    _ouvrirModifierSeuil(context, ref, groupe),
-                onObservation: (GroupeAdmin groupe) =>
-                    _ouvrirObservation(context, ref, groupe),
-                onCloturer: (GroupeAdmin groupe) =>
-                    _ouvrirCloture(context, ref, groupe),
+                classes: classes.requireValue,
+                publicClasse: _public,
+                onPublic: (PublicClasse? p) => setState(() => _public = p),
+                onSelectionner: (ClasseVM c) => _ouvrirDetail(context, ref, c),
+                onAjouter: (ClasseVM c) => _ouvrirAjout(context, ref, c),
+                onModifierSeuil: (ClasseVM c) =>
+                    _ouvrirModifierSeuil(context, ref, c),
+                onObservation: (ClasseVM c) =>
+                    _ouvrirObservation(context, ref, c),
+                onCloturer: (ClasseVM c) => _ouvrirCloture(context, ref, c),
               ),
             ),
-            AsyncValue<List<GroupeAdmin>>(hasError: true) => EmptyState(
+            AsyncValue<List<ClasseVM>>(hasError: true) => EmptyState(
               message: t.admin.groupes.erreur,
+              invitation: messageHumain(classes.error!),
               icone: AppIcons.avertissement,
               libelleAction: t.commun.reessayer,
-              onAction: () => ref.invalidate(groupesProvider),
+              onAction: () => ref.invalidate(classesAdminProvider),
             ),
             _ => const Skeleton.liste(lignes: 5),
           },
@@ -94,12 +156,12 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   }
 }
 
-/// Les filtres, puis le tableau des groupes.
+/// Les filtres, puis le tableau des Classes.
 class _Corps extends StatelessWidget {
   const _Corps({
-    required this.groupes,
-    required this.type,
-    required this.onType,
+    required this.classes,
+    required this.publicClasse,
+    required this.onPublic,
     required this.onSelectionner,
     required this.onAjouter,
     required this.onModifierSeuil,
@@ -107,19 +169,21 @@ class _Corps extends StatelessWidget {
     required this.onCloturer,
   });
 
-  final List<GroupeAdmin> groupes;
-  final TypePublicGroupe? type;
-  final void Function(TypePublicGroupe? type) onType;
-  final void Function(GroupeAdmin groupe) onSelectionner;
-  final void Function(GroupeAdmin groupe) onAjouter;
-  final void Function(GroupeAdmin groupe) onModifierSeuil;
-  final void Function(GroupeAdmin groupe) onObservation;
-  final void Function(GroupeAdmin groupe) onCloturer;
+  final List<ClasseVM> classes;
+  final PublicClasse? publicClasse;
+  final void Function(PublicClasse? publicClasse) onPublic;
+  final void Function(ClasseVM classe) onSelectionner;
+  final void Function(ClasseVM classe) onAjouter;
+  final void Function(ClasseVM classe) onModifierSeuil;
+  final void Function(ClasseVM classe) onObservation;
+  final void Function(ClasseVM classe) onCloturer;
 
   @override
   Widget build(BuildContext context) {
-    final List<GroupeAdmin> visibles = groupes
-        .where((GroupeAdmin g) => type == null || g.type == type)
+    final List<ClasseVM> visibles = classes
+        .where(
+          (ClasseVM c) => publicClasse == null || c.publicClasse == publicClasse,
+        )
         .toList(growable: false);
 
     return Column(
@@ -131,26 +195,28 @@ class _Corps extends StatelessWidget {
           children: <Widget>[
             FilterPill(
               libelle: t.admin.groupes.filtreTousTypes,
-              compteur: groupes.length,
-              retenue: type == null,
-              onPress: () => onType(null),
+              compteur: classes.length,
+              retenue: publicClasse == null,
+              onPress: () => onPublic(null),
             ),
-            for (final TypePublicGroupe valeur in TypePublicGroupe.values)
+            for (final PublicClasse p in PublicClasse.values)
               FilterPill(
-                libelle: _nomType(valeur),
-                compteur: groupes.where((GroupeAdmin g) => g.type == valeur).length,
-                retenue: type == valeur,
-                onPress: () => onType(valeur),
+                libelle: LibellesClasses.publicClasse(p),
+                compteur: classes
+                    .where((ClasseVM c) => c.publicClasse == p)
+                    .length,
+                retenue: publicClasse == p,
+                onPress: () => onPublic(p),
               ),
           ],
         ),
         Ecart.vLg,
         if (visibles.isEmpty)
           EmptyState(
-            message: groupes.isEmpty
+            message: classes.isEmpty
                 ? t.admin.groupes.aucun
                 : t.admin.groupes.aucunAvecCeFiltre,
-            invitation: groupes.isEmpty
+            invitation: classes.isEmpty
                 ? t.admin.groupes.aucunDetail
                 : t.admin.groupes.aucunAvecCeFiltreDetail,
             registre: RegistreVide.subi,
@@ -158,49 +224,49 @@ class _Corps extends StatelessWidget {
           )
         else
           Expanded(
-            child: DataCollection<GroupeAdmin>(
+            child: DataCollection<ClasseVM>(
               lignes: visibles,
-              cle: (GroupeAdmin g) => ValueKey<String>(g.id),
+              cle: (ClasseVM c) => ValueKey<String>(c.id),
               onSelectionner: onSelectionner,
-              colonnes: <ColonneDonnees<GroupeAdmin>>[
-                ColonneDonnees<GroupeAdmin>(
+              colonnes: <ColonneDonnees<ClasseVM>>[
+                ColonneDonnees<ClasseVM>(
                   titre: t.admin.groupes.colonneGroupe,
                   role: RoleColonne.identifiante,
                   flex: 2,
-                  texte: (GroupeAdmin g) => g.libelle,
+                  texte: (ClasseVM c) => c.libelle,
                 ),
-                ColonneDonnees<GroupeAdmin>(
+                ColonneDonnees<ClasseVM>(
                   titre: t.admin.groupes.colonneEnseignant,
-                  texte: (GroupeAdmin g) => g.teacherLibelle,
+                  texte: (ClasseVM c) => c.enseignant == null
+                      ? t.classes.carte.enseignantAAffecter
+                      : LibellesClasses.enseignantNomme(c.enseignant!),
                 ),
-                ColonneDonnees<GroupeAdmin>(
+                ColonneDonnees<ClasseVM>(
                   titre: t.admin.groupes.colonneType,
-                  texte: (GroupeAdmin g) => _nomType(g.type),
+                  texte: (ClasseVM c) =>
+                      LibellesClasses.publicClasse(c.publicClasse),
                 ),
-                ColonneDonnees<GroupeAdmin>(
+                ColonneDonnees<ClasseVM>(
                   titre: t.admin.groupes.colonneCreneau,
-                  texte: _creneau,
+                  texte: (ClasseVM c) => LibellesClasses.creneau(c.creneau),
                 ),
-                ColonneDonnees<GroupeAdmin>(
+                ColonneDonnees<ClasseVM>(
                   titre: t.admin.groupes.colonneMembres,
                   tabulaire: true,
-                  texte: (GroupeAdmin g) => t.admin.groupes.membresSur(
-                    actifs: '${g.nombreMembres}',
-                    seuil: '${g.seuilMax}',
+                  texte: (ClasseVM c) => LibellesClasses.capacite(
+                    inscrits: c.inscrits,
+                    seuil: c.capacite,
                   ),
                 ),
-                ColonneDonnees<GroupeAdmin>(
+                ColonneDonnees<ClasseVM>(
                   titre: t.admin.groupes.colonneEtat,
-                  texte: (GroupeAdmin g) =>
-                      g.actif ? t.admin.groupes.etatActif : t.admin.groupes.etatCloture,
-                  rendu: (BuildContext _, GroupeAdmin g) => StatusPill(
-                    libelle: g.actif
-                        ? t.admin.groupes.etatActif
-                        : t.admin.groupes.etatCloture,
-                    ton: g.actif ? TonEtat.succes : TonEtat.neutre,
+                  texte: (ClasseVM c) => LibellesClasses.etat(c.etat),
+                  rendu: (BuildContext _, ClasseVM c) => StatusPill(
+                    libelle: LibellesClasses.etat(c.etat),
+                    ton: LibellesClasses.tonEtat(c.etat),
                   ),
                 ),
-                ColonneDonnees<GroupeAdmin>(
+                ColonneDonnees<ClasseVM>(
                   titre: '',
                   role: RoleColonne.aPart,
                   flex: 0,
@@ -208,32 +274,33 @@ class _Corps extends StatelessWidget {
                   // texte. `rendreMemeSiTexteVide` fait rendre `rendu` quand
                   // meme, sans faire disparaitre la cellule comme le ferait
                   // un texte vide par defaut.
-                  texte: (GroupeAdmin _) => '',
+                  texte: (ClasseVM _) => '',
                   rendreMemeSiTexteVide: true,
-                  rendu: (BuildContext _, GroupeAdmin g) => g.actif
-                      ? MenuActions(
-                          tooltip: g.libelle,
+                  rendu: (BuildContext _, ClasseVM c) =>
+                      c.etat == EtatPublication.cloturee
+                      ? const SizedBox.shrink()
+                      : MenuActions(
+                          tooltip: c.libelle,
                           actions: <EntreeAction>[
                             EntreeAction(
                               libelle: t.admin.groupes.actionAjouter,
-                              onChoix: () => onAjouter(g),
+                              onChoix: () => onAjouter(c),
                             ),
                             EntreeAction(
                               libelle: t.admin.groupes.actionModifierSeuil,
-                              onChoix: () => onModifierSeuil(g),
+                              onChoix: () => onModifierSeuil(c),
                             ),
                             EntreeAction(
                               libelle: t.admin.groupes.actionObservation,
-                              onChoix: () => onObservation(g),
+                              onChoix: () => onObservation(c),
                             ),
                             EntreeAction(
                               libelle: t.admin.groupes.actionCloturer,
                               destructif: true,
-                              onChoix: () => onCloturer(g),
+                              onChoix: () => onCloturer(c),
                             ),
                           ],
-                        )
-                      : const SizedBox.shrink(),
+                        ),
                 ),
               ],
             ),
@@ -243,57 +310,27 @@ class _Corps extends StatelessWidget {
   }
 }
 
-String _nomType(TypePublicGroupe type) => switch (type) {
-  TypePublicGroupe.enfant => t.admin.groupes.typeEnfant,
-  TypePublicGroupe.adulte => t.admin.groupes.typeAdulte,
-};
-
-String _creneau(GroupeAdmin groupe) =>
-    '${t.disponibilites.joursLongs[(groupe.creneau.jour - 1).clamp(0, 6)]} '
-    '${groupe.creneau.heure}h';
-
-/// Le message metier d'une exception, sans son type.
-///
-/// Meme forme que `admin_attribution/attribution_page.dart` : les exceptions
-/// Postgrest portent le message metier en clair apres le premier « : ».
-String _message(Object erreur) {
-  final String brut = erreur.toString();
-  final int deuxPoints = brut.indexOf(': ');
-  return deuxPoints >= 0 && deuxPoints + 2 < brut.length
-      ? brut.substring(deuxPoints + 2)
-      : brut;
-}
-
-void _ouvrirCreation(BuildContext context, WidgetRef ref) {
+void _ouvrirDetail(BuildContext context, WidgetRef ref, ClasseVM classe) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.creerTitre,
-    constructeur: (BuildContext contexte) =>
-        _FeuilleCreation(onCree: () => ref.invalidate(groupesProvider)),
-  );
-}
-
-void _ouvrirDetail(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
-  AppBottomSheet.ouvrir<void>(
-    context,
-    titre: t.admin.groupes.detailTitre(libelle: groupe.libelle),
+    titre: t.admin.groupes.detailTitre(libelle: classe.libelle),
     constructeur: (BuildContext contexte) => _FeuilleDetail(
-      groupe: groupe,
+      classe: classe,
       onRetirer: (String studentId, String prenom) =>
-          _ouvrirRetrait(context, ref, groupe, studentId, prenom),
+          _ouvrirRetrait(context, ref, classe, studentId, prenom),
     ),
   );
 }
 
-void _ouvrirAjout(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
+void _ouvrirAjout(BuildContext context, WidgetRef ref, ClasseVM classe) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.ajouterTitre(libelle: groupe.libelle),
+    titre: t.admin.groupes.ajouterTitre(libelle: classe.libelle),
     constructeur: (BuildContext contexte) => _FeuilleAjout(
-      groupe: groupe,
+      classe: classe,
       onAjoute: () {
-        ref.invalidate(groupesProvider);
-        ref.invalidate(membresGroupeProvider(groupe.id));
+        ref.invalidate(classesAdminProvider);
+        ref.invalidate(membresClasseProvider(classe.id));
       },
     ),
   );
@@ -302,22 +339,22 @@ void _ouvrirAjout(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
 void _ouvrirRetrait(
   BuildContext context,
   WidgetRef ref,
-  GroupeAdmin groupe,
+  ClasseVM classe,
   String studentId,
   String prenom,
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.retirerTitre(prenom: prenom, libelle: groupe.libelle),
+    titre: t.admin.groupes.retirerTitre(prenom: prenom, libelle: classe.libelle),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.groupes.retirerEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceGroupesProvider)
-          .retirerEleve(groupeId: groupe.id, studentId: studentId, motif: motif),
+          .retirerEleve(groupeId: classe.id, studentId: studentId, motif: motif),
       messageErreur: t.admin.groupes.retirerErreur,
       onSucces: () {
-        ref.invalidate(groupesProvider);
-        ref.invalidate(membresGroupeProvider(groupe.id));
+        ref.invalidate(classesAdminProvider);
+        ref.invalidate(membresClasseProvider(classe.id));
       },
     ),
   );
@@ -326,223 +363,82 @@ void _ouvrirRetrait(
 void _ouvrirModifierSeuil(
   BuildContext context,
   WidgetRef ref,
-  GroupeAdmin groupe,
+  ClasseVM classe,
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.modifierSeuilTitre(libelle: groupe.libelle),
-    constructeur: (BuildContext contexte) =>
-        _FeuilleSeuil(groupe: groupe, onModifie: () => ref.invalidate(groupesProvider)),
+    titre: t.admin.groupes.modifierSeuilTitre(libelle: classe.libelle),
+    constructeur: (BuildContext contexte) => _FeuilleSeuil(
+      classe: classe,
+      onModifie: () => ref.invalidate(classesAdminProvider),
+    ),
   );
 }
 
-/// Le reglage de l'observation par les tuteurs, groupe par groupe.
+/// Le reglage de l'observation par les tuteurs, Classe par Classe.
 ///
 /// **Ici et pas dans Configuration** : la RPC `definir_politique_observation_
 /// groupe` prend un `p_groupe_id` et n'ecrit que sur `public.groupes`. Les
 /// defauts de l'Academie, eux, vivent dans `app_config` et n'ont aujourd'hui
-/// aucune fonction d'ecriture dediee -- les inscrire dans
-/// `ongletsConfiguration()` ferait un onglet sans geste possible.
-void _ouvrirObservation(
-  BuildContext context,
-  WidgetRef ref,
-  GroupeAdmin groupe,
-) {
+/// aucune fonction d'ecriture dediee.
+void _ouvrirObservation(BuildContext context, WidgetRef ref, ClasseVM classe) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.observationTitre(libelle: groupe.libelle),
+    titre: t.admin.groupes.observationTitre(libelle: classe.libelle),
     constructeur: (BuildContext contexte) => FeuilleObservationGroupe(
-      groupeId: groupe.id,
-      onEnregistre: () => ref.invalidate(groupesProvider),
+      groupeId: classe.id,
+      onEnregistre: () => ref.invalidate(classesAdminProvider),
     ),
   );
 }
 
-void _ouvrirCloture(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
+void _ouvrirCloture(BuildContext context, WidgetRef ref, ClasseVM classe) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.cloturerTitre(libelle: groupe.libelle),
+    titre: t.admin.groupes.cloturerTitre(libelle: classe.libelle),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.groupes.cloturerEnvoyer,
       detail: t.admin.groupes.cloturerDetail,
-      onEnvoyer: (String motif) =>
-          ref.read(serviceGroupesProvider).cloturer(groupeId: groupe.id, motif: motif),
+      onEnvoyer: (String motif) => ref
+          .read(serviceGroupesProvider)
+          .cloturer(groupeId: classe.id, motif: motif),
       messageErreur: t.admin.groupes.cloturerErreur,
-      onSucces: () => ref.invalidate(groupesProvider),
+      onSucces: () => ref.invalidate(classesAdminProvider),
     ),
   );
 }
 
-/// Le formulaire de creation d'un groupe.
-class _FeuilleCreation extends StatefulWidget {
-  const _FeuilleCreation({required this.onCree});
-
-  final VoidCallback onCree;
-
-  @override
-  State<_FeuilleCreation> createState() => _FeuilleCreationEtat();
-}
-
-class _FeuilleCreationEtat extends State<_FeuilleCreation> {
-  final TextEditingController _libelle = TextEditingController();
-  final TextEditingController _enseignantId = TextEditingController();
-  final TextEditingController _jour = TextEditingController(text: '1');
-  final TextEditingController _heure = TextEditingController(text: '16');
-  final TextEditingController _seuil = TextEditingController();
-  TypePublicGroupe _type = TypePublicGroupe.enfant;
-  bool _envoi = false;
-  String? _erreur;
-
-  @override
-  void dispose() {
-    _libelle.dispose();
-    _enseignantId.dispose();
-    _jour.dispose();
-    _heure.dispose();
-    _seuil.dispose();
-    super.dispose();
-  }
-
-  Future<void> _creer(WidgetRef ref) async {
-    setState(() {
-      _envoi = true;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(serviceGroupesProvider)
-          .creer(
-            teacherId: _enseignantId.text.trim(),
-            type: _type,
-            libelle: _libelle.text.trim(),
-            creneau: Creneau(
-              jour: int.tryParse(_jour.text) ?? 1,
-              heure: int.tryParse(_heure.text) ?? 0,
-              fuseau: 'Europe/Paris',
-            ),
-            seuilMax: int.tryParse(_seuil.text),
-          );
-      widget.onCree();
-      if (mounted) Navigator.of(context).pop();
-    } catch (erreur) {
-      setState(
-        () => _erreur = t.admin.groupes.creerErreur(message: _message(erreur)),
-      );
-    } finally {
-      if (mounted) setState(() => _envoi = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          TextField(
-            controller: _libelle,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champLibelle),
-          ),
-          Ecart.vMd,
-          TextField(
-            controller: _enseignantId,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(
-              labelText: t.admin.groupes.champEnseignantId,
-            ),
-          ),
-          Ecart.vMd,
-          Wrap(
-            spacing: AppSpacing.sm,
-            children: <Widget>[
-              for (final TypePublicGroupe valeur in TypePublicGroupe.values)
-                FilterPill(
-                  libelle: _nomType(valeur),
-                  retenue: _type == valeur,
-                  onPress: () => setState(() => _type = valeur),
-                ),
-            ],
-          ),
-          Ecart.vMd,
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: TextField(
-                  controller: _jour,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: t.admin.groupes.champJour,
-                  ),
-                ),
-              ),
-              Ecart.hMd,
-              Expanded(
-                child: TextField(
-                  controller: _heure,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: t.admin.groupes.champHeure,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Ecart.vMd,
-          TextField(
-            controller: _seuil,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: t.admin.groupes.champSeuil),
-          ),
-          if (_erreur != null) ...<Widget>[
-            Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-          ],
-          Ecart.vLg,
-          ActionPrincipale(
-            libelle: t.admin.groupes.creerEnvoyer,
-            enCours: _envoi,
-            onPress: _libelle.text.trim().isEmpty || _enseignantId.text.trim().isEmpty
-                ? null
-                : () => _creer(ref),
-          ),
-          Ecart.vMd,
-          Text(
-            t.admin.groupes.journalisation,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Le detail d'un groupe : ses membres.
+/// Le detail d'une Classe : sa carte, detail ouvert, puis ses inscrits.
 class _FeuilleDetail extends ConsumerWidget {
-  const _FeuilleDetail({required this.groupe, required this.onRetirer});
+  const _FeuilleDetail({required this.classe, required this.onRetirer});
 
-  final GroupeAdmin groupe;
+  final ClasseVM classe;
   final void Function(String studentId, String prenom) onRetirer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<MembreGroupe>> membres = ref.watch(
-      membresGroupeProvider(groupe.id),
+    final AsyncValue<List<MembreClasse>> membres = ref.watch(
+      membresClasseProvider(classe.id),
     );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(t.admin.groupes.detailMembres, style: Theme.of(context).textTheme.titleMedium),
+        CarteClasse(classe: classe, detailOuvert: true),
+        Ecart.vLg,
+        Text(
+          t.admin.groupes.detailMembres,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Ecart.vMd,
         switch (membres) {
-          AsyncValue<List<MembreGroupe>>(hasValue: true) =>
+          AsyncValue<List<MembreClasse>>(hasValue: true) =>
             membres.requireValue.isEmpty
                 ? Text(t.admin.groupes.detailAucunMembre)
                 : Column(
                     children: <Widget>[
-                      for (final MembreGroupe membre in membres.requireValue)
+                      for (final MembreClasse membre in membres.requireValue)
                         ListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text(membre.libelle),
@@ -553,14 +449,14 @@ class _FeuilleDetail extends ConsumerWidget {
                                 libelle: t.admin.groupes.actionRetirer,
                                 destructif: true,
                                 onChoix: () =>
-                                    onRetirer(membre.studentId, membre.libelle),
+                                    onRetirer(membre.id, membre.libelle),
                               ),
                             ],
                           ),
                         ),
                     ],
                   ),
-          AsyncValue<List<MembreGroupe>>(hasError: true) => Text(
+          AsyncValue<List<MembreClasse>>(hasError: true) => Text(
             t.admin.groupes.erreur,
           ),
           _ => const Skeleton.liste(lignes: 3),
@@ -570,31 +466,41 @@ class _FeuilleDetail extends ConsumerWidget {
   }
 }
 
-/// Le formulaire d'ajout d'un eleve a un groupe.
-class _FeuilleAjout extends StatefulWidget {
-  const _FeuilleAjout({required this.groupe, required this.onAjoute});
+/// L'inscription d'un eleve : un choix dans la liste des eleves, un motif.
+///
+/// **Aucun identifiant a saisir.** Les eleves viennent de `comptes_admin()`,
+/// filtres par un texte libre sur le prenom et le nom d'affichage. La base
+/// refuse toujours un eleve deja place ou une Classe au plafond : l'ecran le
+/// dit en langage humain, jamais avec le message Postgres.
+class _FeuilleAjout extends ConsumerStatefulWidget {
+  const _FeuilleAjout({required this.classe, required this.onAjoute});
 
-  final GroupeAdmin groupe;
+  final ClasseVM classe;
   final VoidCallback onAjoute;
 
   @override
-  State<_FeuilleAjout> createState() => _FeuilleAjoutEtat();
+  ConsumerState<_FeuilleAjout> createState() => _FeuilleAjoutEtat();
 }
 
-class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
-  final TextEditingController _eleveId = TextEditingController();
+class _FeuilleAjoutEtat extends ConsumerState<_FeuilleAjout> {
+  final TextEditingController _recherche = TextEditingController();
   final TextEditingController _motif = TextEditingController();
+  String? _eleveId;
   bool _envoi = false;
   String? _erreur;
 
   @override
   void dispose() {
-    _eleveId.dispose();
+    _recherche.dispose();
     _motif.dispose();
     super.dispose();
   }
 
-  Future<void> _ajouter(WidgetRef ref) async {
+  Future<void> _ajouter() async {
+    final String? eleveId = _eleveId;
+    if (eleveId == null) {
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -603,15 +509,17 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
       await ref
           .read(serviceGroupesProvider)
           .ajouterEleve(
-            groupeId: widget.groupe.id,
-            studentId: _eleveId.text.trim(),
+            groupeId: widget.classe.id,
+            studentId: eleveId,
             motif: _motif.text.trim(),
           );
       widget.onAjoute();
       if (mounted) Navigator.of(context).pop();
-    } catch (erreur) {
+    } on Object catch (erreur) {
       setState(
-        () => _erreur = t.admin.groupes.ajouterErreur(message: _message(erreur)),
+        () => _erreur = t.admin.groupes.ajouterErreur(
+          message: messageHumain(erreur),
+        ),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -620,52 +528,86 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          TextField(
-            controller: _eleveId,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champEleveId),
+    final AsyncValue<List<CompteAdmin>> comptes = ref.watch(comptesProvider);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final String requete = _recherche.text.trim().toLowerCase();
+
+    final List<CompteAdmin> eleves = (comptes.value ?? const <CompteAdmin>[])
+        .where((CompteAdmin c) => c.role == AppRole.student)
+        .where(
+          (CompteAdmin c) =>
+              requete.isEmpty || c.libelle.toLowerCase().contains(requete),
+        )
+        .toList(growable: false);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        TextField(
+          controller: _recherche,
+          onChanged: (String _) => setState(() {}),
+          decoration: InputDecoration(
+            labelText: t.admin.comptes.colonnePersonne,
+            prefixIcon: Icon(AppIcons.recherche.repos),
           ),
-          Ecart.vMd,
-          Text(t.admin.groupes.motifRequis, style: Theme.of(context).textTheme.bodySmall),
-          Ecart.vSm,
-          TextField(
-            controller: _motif,
-            maxLines: 2,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champMotif),
+        ),
+        Ecart.vMd,
+        if (!comptes.hasValue)
+          const Skeleton.texte(lignes: 2)
+        else if (eleves.isEmpty)
+          Text(t.admin.comptes.aucunAvecCeFiltre, style: textes.bodySmall)
+        else
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (final CompteAdmin eleve in eleves.take(20))
+                FilterPill(
+                  libelle: eleve.libelle,
+                  retenue: eleve.profilId == _eleveId,
+                  onPress: () => setState(() => _eleveId = eleve.profilId),
+                ),
+            ],
           ),
-          if (_erreur != null) ...<Widget>[
-            Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-          ],
-          Ecart.vLg,
-          ActionPrincipale(
-            libelle: t.admin.groupes.ajouterEnvoyer,
-            enCours: _envoi,
-            onPress: _eleveId.text.trim().isEmpty || _motif.text.trim().isEmpty
-                ? null
-                : () => _ajouter(ref),
-          ),
+        Ecart.vMd,
+        Text(t.admin.groupes.motifRequis, style: textes.bodySmall),
+        Ecart.vSm,
+        TextField(
+          controller: _motif,
+          maxLines: 2,
+          onChanged: (String _) => setState(() {}),
+          decoration: InputDecoration(labelText: t.admin.groupes.champMotif),
+        ),
+        if (_erreur != null) ...<Widget>[
           Ecart.vMd,
           Text(
-            t.admin.groupes.journalisation,
-            style: Theme.of(context).textTheme.bodySmall,
+            _erreur!,
+            style: palette.inkAlert.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
           ),
         ],
-      ),
+        Ecart.vLg,
+        ActionPrincipale(
+          libelle: t.admin.groupes.ajouterEnvoyer,
+          enCours: _envoi,
+          onPress: _eleveId == null || _motif.text.trim().isEmpty
+              ? null
+              : () => unawaited(_ajouter()),
+        ),
+        Ecart.vMd,
+        Text(t.admin.groupes.journalisation, style: textes.bodySmall),
+      ],
     );
   }
 }
 
-/// Le formulaire du seuil maximal.
+/// Le formulaire de la capacite.
 class _FeuilleSeuil extends StatefulWidget {
-  const _FeuilleSeuil({required this.groupe, required this.onModifie});
+  const _FeuilleSeuil({required this.classe, required this.onModifie});
 
-  final GroupeAdmin groupe;
+  final ClasseVM classe;
   final VoidCallback onModifie;
 
   @override
@@ -674,7 +616,7 @@ class _FeuilleSeuil extends StatefulWidget {
 
 class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
   late final TextEditingController _seuil = TextEditingController(
-    text: '${widget.groupe.seuilMax}',
+    text: '${widget.classe.capacite}',
   );
   bool _envoi = false;
   String? _erreur;
@@ -694,17 +636,22 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
       await ref
           .read(serviceGroupesProvider)
           .modifier(
-            groupeId: widget.groupe.id,
-            libelle: widget.groupe.libelle,
+            groupeId: widget.classe.id,
+            libelle: widget.classe.libelle,
             seuilMax: int.parse(_seuil.text.trim()),
-            creneau: widget.groupe.creneau,
+            creneau: Creneau(
+              jour: widget.classe.creneau.jourIso,
+              heure: widget.classe.creneau.heure,
+              fuseau: widget.classe.creneau.fuseauIana,
+            ),
           );
       widget.onModifie();
       if (mounted) Navigator.of(context).pop();
-    } catch (erreur) {
+    } on Object catch (erreur) {
       setState(
-        () =>
-            _erreur = t.admin.groupes.modifierSeuilErreur(message: _message(erreur)),
+        () => _erreur = t.admin.groupes.modifierSeuilErreur(
+          message: messageHumain(erreur),
+        ),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -713,6 +660,7 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
 
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -725,7 +673,12 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _erreur!,
+              style: palette.inkAlert.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
           ],
           Ecart.vLg,
           ActionPrincipale(
@@ -733,7 +686,7 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
             enCours: _envoi,
             onPress: int.tryParse(_seuil.text.trim()) == null
                 ? null
-                : () => _modifier(ref),
+                : () => unawaited(_modifier(ref)),
           ),
         ],
       ),
@@ -781,9 +734,9 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
       await widget.onEnvoyer(_motif.text.trim());
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
-    } catch (erreur) {
+    } on Object catch (erreur) {
       setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
+        () => _erreur = widget.messageErreur(message: messageHumain(erreur)),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -792,14 +745,16 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (widget.detail != null) ...<Widget>[
-          Text(widget.detail!, style: Theme.of(context).textTheme.bodyMedium),
+          Text(widget.detail!, style: textes.bodyMedium),
           Ecart.vMd,
         ],
-        Text(t.admin.groupes.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+        Text(t.admin.groupes.motifRequis, style: textes.bodySmall),
         Ecart.vSm,
         TextField(
           controller: _motif,
@@ -809,13 +764,20 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: palette.inkAlert.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
           libelle: widget.libelleEnvoyer,
           enCours: _envoi,
-          onPress: _motif.text.trim().isEmpty ? null : _envoyer,
+          onPress: _motif.text.trim().isEmpty
+              ? null
+              : () => unawaited(_envoyer()),
         ),
       ],
     );
