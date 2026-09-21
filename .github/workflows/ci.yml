@@ -132,6 +132,42 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_agt01.sql
 
+      # Hook de jeton d'acces : la chaine entiere, du hook jusqu'a l'insertion
+      # reelle. C'est le SEUL niveau auquel le defaut du 21 septembre 2026 etait
+      # visible -- le hook rendait NULL pour tout profil sans foyer, Auth emettait
+      # alors un jeton sans revendication, et `app_role()` fermait toutes les
+      # policies en silence. Quatre enseignants sont restes bloques neuf jours,
+      # alors que le seau, la policy et le declencheur etaient tous corrects pris
+      # separement. Corrige par 0038.
+      #
+      # `profiles_household_required` (0004) autorise un foyer NULL pour quatre
+      # roles -- admin, accountant, controller, teacher : H2 les couvre, parce
+      # que mesurer le seul enseignant laisserait croire a un cas particulier.
+      #
+      # Doit rester APRES scenarios_etape3, dont le controle ADM-02 compte les
+      # dossiers en attente de toute la base : H8 en cree un.
+      - name: Scenarios d'acceptation SQL du hook de jeton
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_hook_jeton.sql
+
+      # Stockage R2 : la PORTE des quatre seaux. Qui obtient le droit de faire
+      # signer une URL, et surtout qui ne l'obtient pas -- anonyme, role non
+      # autorise, cloisonnement de genre jusque dans l'ouverture d'UNE piece,
+      # relation a la seance pour une archive, archive expiree ou revoquee.
+      # Plus le gel de conservation exige par l'ADR-002, sans lequel une purge
+      # a trente jours effacerait une piece sous litige.
+      #
+      # Le routage des quatre domaines vers leurs quatre seaux et la forme des
+      # URL signees ne se mesurent pas ici mais en Deno
+      # (supabase/functions/_shared/r2/*_test.ts) : ils ne touchent pas la base.
+      # Aucun de ces controles n'appelle Cloudflare.
+      #
+      # Comme CTR-01 et AGT-01, il doit rester AVANT ADM-04 : chacune de ces
+      # portes ecrit dans audit_logs, et J4 relit la chaine entiere.
+      - name: Scenarios d'acceptation SQL du stockage R2
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_r2.sql
+
       # Journal d'audit : lecture reservee a l'administration, pagination par
       # keyset, trois filtres, et surtout la chaine de hachage de 0001 enfin
       # verifiee -- y compris en la falsifiant volontairement (J5, J6).
@@ -142,6 +178,76 @@ jobs:
       - name: Scenarios d'acceptation SQL de ADM-04
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_adm04.sql
+
+  edge-r2:
+    name: Fonctions Edge -- stockage R2 (Deno)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # Premier job Deno du depot. Avant lui, rien ne verifiait supabase/functions :
+      # le TypeScript des fonctions Edge n'etait ni compile ni teste par la CI.
+      #
+      # Ce que ces tests prouvent, et que la connectivite deja mesuree ne dit
+      # pas : chaque responsabilite metier atteint SON seau et aucun autre, un
+      # secret absent echoue sans exposer sa valeur, il n'existe aucun repli
+      # silencieux d'un domaine vers un autre, une cle d'objet ne porte aucune
+      # donnee lisible, et une URL signee est bornee en duree comme en methode.
+      # Aucun appel reseau vers Cloudflare : aws4fetch signe localement.
+      - name: Tests du stockage R2
+        run: deno test supabase/functions/_shared/r2/
+
+      # Le type-check s'arrete aux fichiers R2. `livekit-webhook` en est exclu
+      # volontairement : il importe `_shared/livekit.ts`, dont la ligne 104
+      # porte une erreur de type anterieure a ce lot (`canPublishSources`,
+      # introduite par e76a14e le 12 septembre). La corriger n'appartient pas
+      # au perimetre du stockage.
+      - name: Type-check des points d'entree R2
+        run: |
+          deno check \
+            supabase/functions/_shared/r2/ \
+            supabase/functions/piece-identite-acces/index.ts \
+            supabase/functions/piece-identite-depot/index.ts \
+            supabase/functions/piece-identite-confirme/index.ts \
+            supabase/functions/archive-seance-acces/index.ts
+
+      # Aucune valeur de secret ne doit exister dans le depot. Les NOMS des
+      # variables R2 ont le droit d'y etre, et y sont ; leurs valeurs jamais.
+      #
+      # Quatre gardes, de la plus ciblee a la plus large.
+      #
+      # La premiere est celle qui vise juste : un NOM de secret R2 suivi d'une
+      # valeur. C'est la forme exacte qu'aurait un trousseau colle par
+      # inadvertance, et elle porte sur tout le depot, documentation et tests
+      # compris. Chercher partout une simple chaine de 64 hexadecimaux ne
+      # marcherait pas : le depot en contient legitimement, ce sont les
+      # empreintes SHA-256 des fixtures du Teaching Core.
+      - name: Aucun secret R2 versionne
+        shell: bash
+        run: |
+          if git grep -nIE 'R2_[A-Z_]+ *[=:] *.{0,2}[0-9a-fA-F]{16}' ; then
+            echo "Un nom de secret R2 est suivi de ce qui ressemble a sa valeur."
+            echo "Les NOMS des variables R2 sont autorises ; leurs VALEURS jamais."
+            exit 1
+          fi
+          if git grep -nIE '\b[0-9a-f]{32}\.(eu\.)?r2\.cloudflarestorage\.com' ; then
+            echo "Un point d acces R2 reel est versionne."
+            exit 1
+          fi
+          if git grep -nI 'r2\.cloudflarestorage\.com' -- lib supabase/migrations ; then
+            echo "Un point d acces R2 n a rien a faire dans Flutter ni dans une migration."
+            exit 1
+          fi
+          # Et sur le perimetre du lot, la garde large reste tenable : aucune
+          # empreinte legitime n'y vit.
+          if git grep -nIE '\b[0-9a-f]{64}\b' -- \
+             supabase/functions supabase/migrations docs/architecture ; then
+            echo "Une chaine de 64 caracteres hexadecimaux ressemble a un secret R2."
+            exit 1
+          fi
 
   flutter:
     name: Flutter (${{ matrix.target }})

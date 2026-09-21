@@ -116,6 +116,20 @@ const List<String> clesFonctionnalites = <String>[
   'max_participants_per_session',
 ];
 
+/// Les defauts d'Academie de l'observation par les tuteurs.
+///
+/// **Aucun ecran de Configuration ne les edite aujourd'hui**, et cette liste ne
+/// les y inscrit pas : elle sert a les LIRE, pour qu'un groupe personnalise
+/// puisse afficher honnetement ce dont il herite. Le reglage par groupe, lui,
+/// passe par `definir_politique_observation_groupe` depuis Operations >
+/// Groupes -- deux natures differentes, jamais le meme reglage a deux endroits.
+const List<String> clesObservation = <String>[
+  'observation.policy_version',
+  'observation.max_visits_per_session',
+  'observation.max_total_seconds',
+  'observation.max_seconds_per_visit',
+];
+
 /// Les cles du domaine Configuration > Conservation des donnees.
 const List<String> clesConservationDonnees = <String>[
   'recording_retention_days',

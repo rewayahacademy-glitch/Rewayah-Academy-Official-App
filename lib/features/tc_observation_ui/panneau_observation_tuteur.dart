@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_observation/vue_budget_observation.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -37,7 +38,10 @@ class PanneauObservationTuteur extends StatelessWidget {
     required this.onQuitter,
     super.key,
     this.supportPartage,
+    this.videoEnseignant,
+    this.videoEnfant,
     this.budgetIncertain = false,
+    this.videoIndisponible = false,
   });
 
   /// Ce qui est expose au tuteur.
@@ -49,8 +53,29 @@ class PanneauObservationTuteur extends StatelessWidget {
   /// Le support partage, fourni par l'hote. `null` = pas encore branche.
   final Widget? supportPartage;
 
+  /// L'image de l'enseignant, deja montee par le moteur de salle.
+  ///
+  /// **Un widget, jamais une piste.** L'hote appelle `renduVideo(identite)` et
+  /// passe le resultat : c'est ainsi que la portabilite de l'ADR-001 survit au
+  /// rendu, et c'est ce qui laisse ce panneau sans provider ni SDK.
+  final Widget? videoEnseignant;
+
+  /// L'image de l'enfant du tuteur. `null` quand sa camera est fermee.
+  ///
+  /// C'est la raison meme de la visite : le parent vient voir si son enfant
+  /// participe. Une vignette de nom seul ne repond pas a cette question.
+  final Widget? videoEnfant;
+
   /// Vrai quand la derniere lecture de budget a echoue.
   final bool budgetIncertain;
+
+  /// Vrai quand la salle video n'a pas pu s'ouvrir.
+  ///
+  /// Meme idiome que [budgetIncertain] : une ligne discrete, pas un ecran de
+  /// remplacement. La visite continue de se consommer cote serveur, et un
+  /// panneau sans compte a rebours ni bouton « Quitter » empecherait le tuteur
+  /// de la refermer.
+  final bool videoIndisponible;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +93,10 @@ class PanneauObservationTuteur extends StatelessWidget {
           Ecart.vSm,
           Text(t.tc.observation.visite.budgetIncertain, style: discret),
         ],
+        if (videoIndisponible) ...<Widget>[
+          Ecart.vSm,
+          Text(t.tc.observation.visite.videoIndisponible, style: discret),
+        ],
         Ecart.vLg,
         supportPartage ??
             EmptyState(
@@ -79,12 +108,14 @@ class PanneauObservationTuteur extends StatelessWidget {
         _Vignette(
           etiquette: t.tc.observation.visite.enseignant,
           prenom: vue.enseignant?.nom,
+          video: videoEnseignant,
         ),
         Ecart.vMd,
         _Vignette(
           etiquette: t.tc.observation.visite.monEnfant,
           prenom: vue.monEnfant?.nom,
           absent: t.tc.observation.visite.enfantAbsent,
+          video: videoEnfant,
         ),
         Ecart.vLg,
         // Le rappel des interdictions est permanent, pas conditionnel : le
@@ -147,10 +178,22 @@ class _Compteur extends StatelessWidget {
 
 /// Une des deux seules vignettes que la visite expose.
 class _Vignette extends StatelessWidget {
-  const _Vignette({required this.etiquette, required this.prenom, this.absent});
+  const _Vignette({
+    required this.etiquette,
+    required this.prenom,
+    this.absent,
+    this.video,
+  });
 
   final String etiquette;
   final String? prenom;
+
+  /// L'image de cette personne, quand elle en publie une.
+  ///
+  /// Elle **s'ajoute** au nom, elle ne le remplace pas : un cadre video sans
+  /// legende obligerait le tuteur a deviner qui il regarde, et la retenue de la
+  /// visite tient justement a ce que chaque vignette soit nommee.
+  final Widget? video;
 
   /// Ce qui se dit quand la personne n'est pas la. `null` = ne rien dire.
   ///
@@ -181,28 +224,52 @@ class _Vignette extends StatelessWidget {
       );
     }
 
-    return AppCard(
-      child: Row(
-        children: <Widget>[
-          AvatarTile(prenom: nom),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  etiquette,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
+    final Widget ligne = Row(
+      children: <Widget>[
+        AvatarTile(prenom: nom),
+        Ecart.hMd,
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                etiquette,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
                 ),
-                Text(nom, style: textes.titleMedium),
-              ],
-            ),
+              ),
+              Text(nom, style: textes.titleMedium),
+            ],
           ),
+        ),
+      ],
+    );
+
+    final Widget? image = video;
+    if (image == null) {
+      return AppCard(child: ligne);
+    }
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: AppMetriques.of(context).arrondi,
+            // `AspectRatio` plutot qu'une hauteur fixe : le panneau se lit sur
+            // un telephone de 390 points comme sur un bureau, et un cadre video
+            // a hauteur figee y serait tantot ecrase, tantot demesure.
+            child: AspectRatio(aspectRatio: _formatVideo, child: image),
+          ),
+          Ecart.vSm,
+          ligne,
         ],
       ),
     );
   }
+
+  /// Le format d'un cadre video, celui que les cameras produisent.
+  static const double _formatVideo = 16 / 9;
 }

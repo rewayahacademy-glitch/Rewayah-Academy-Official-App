@@ -184,8 +184,12 @@ qui couvre d'un coup le paquet dupliqué et le paquet arrivé en désordre. Six 
    géométrie ; l'écran renvoie explicitement vers la lecture agrandie, qui existe pour cela. C'est un
    choix, pas un oubli — mais c'est un choix, et il peut être rediscuté.
 
-4. **La recherche plein texte est absente.** Aucun index texte n'existe en base et `ServiceCoran` est
-   PROTECTED. L'écran affiche une phrase qui dit exactement ce que la recherche sait faire, plutôt que
+4. **La recherche plein texte est absente côté application.** L'index, lui, existe en base : mesuré
+   le 21/09/2026 sur le projet `gggmtelinlpseweouyav`, `pg_trgm` 1.6 dans le schéma `extensions`,
+   colonne générée `verset.texte_recherche`, index `verset_recherche_idx`, posés par
+   `0030_tc_socle`. Ce qui manque est le code qui l'interroge : aucune RPC, aucun appel Dart, et
+   `ServiceCoran` est PROTECTED. L'écran affiche une phrase qui dit exactement ce que la recherche
+   sait faire, plutôt que
    de rendre « aucun résultat » sur un mot arabe — ce qui ferait croire que le mot n'est pas dans le
    Coran. Demandes n°4 et n°5.
 

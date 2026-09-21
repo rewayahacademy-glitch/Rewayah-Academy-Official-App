@@ -104,6 +104,54 @@ class CatalogueEnEchec implements PortCatalogue {
       Future<ReprisLecture?>.error(const EchecCatalogue('lecture refusee'));
 }
 
+/// Un catalogue dont SEULE la lecture par groupe echoue.
+///
+/// C'est le comportement exact du serveur : `ressources_du_groupe`
+/// (migration 0033) leve `insufficient_privilege` sur un groupe qui n'est pas
+/// celui de l'appelant, la ou les autres lectures rendent simplement ce que
+/// l'appelant voit. Le groupe venant de l'adresse, cette valeur est
+/// falsifiable : ce double sert a mesurer ce qui reste debout quand elle l'est.
+class CatalogueGroupeRefuse implements PortCatalogue {
+  /// Cree le double, avec le catalogue que voient les autres lectures.
+  CatalogueGroupeRefuse({
+    List<LibraryResource> ressources = const <LibraryResource>[],
+    List<String> recents = const <String>[],
+    ReprisLecture? reprise,
+  }) : _vu = CatalogueLocal(
+         ressources: ressources,
+         ordreRecents: recents,
+         reprise: reprise,
+       );
+
+  final CatalogueLocal _vu;
+
+  @override
+  Future<List<LibraryResource>> pourGroupe(String groupeId) =>
+      Future<List<LibraryResource>>.error(
+        const EchecCatalogue('insufficient_privilege'),
+      );
+
+  @override
+  Future<List<LibraryResource>> tous({FiltreCatalogue? filtre}) =>
+      _vu.tous(filtre: filtre);
+
+  @override
+  Future<List<LibraryResource>> recents({int limite = 10}) =>
+      _vu.recents(limite: limite);
+
+  @override
+  Future<LibraryResource?> parId(String resourceId) => _vu.parId(resourceId);
+
+  @override
+  Future<List<LibraryResource>> rechercher(
+    String requete, {
+    FiltreCatalogue? filtre,
+  }) => _vu.rechercher(requete, filtre: filtre);
+
+  @override
+  Future<ReprisLecture?> derniereLecture() => _vu.derniereLecture();
+}
+
 /// Un enregistrement de fichier qui n'ouvre aucune boite de dialogue.
 class FauxEnregistrementFichier implements PortEnregistrementFichier {
   /// Cree le faux.

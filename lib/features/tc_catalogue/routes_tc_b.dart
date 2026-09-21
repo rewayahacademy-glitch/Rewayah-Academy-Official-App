@@ -28,20 +28,58 @@ abstract final class RoutesTcB {
   /// Le nom du parametre de chemin de [ressource].
   static const String parametreRessource = 'resourceId';
 
+  /// Le nom du parametre de REQUETE qui porte le groupe de contexte.
+  ///
+  /// Une requete, et non un segment de chemin : [ressource] occupe deja le
+  /// segment suivant, et un second segment entrerait en collision avec elle.
+  static const String parametreGroupe = 'groupe';
+
   /// Le chemin de la fiche d'une ressource donnee.
   static String versRessource(String resourceId) =>
       '$bibliotheque/$resourceId';
+
+  /// L'adresse de la Bibliotheque vue depuis l'Espace d'un groupe.
+  ///
+  /// Ecrite ici pour que l'adresse ne soit jamais composee a la main ailleurs.
+  /// Elle passe par [Uri] plutot que par une concatenation : l'encodage du
+  /// parametre est alors celui de la bibliotheque standard.
+  ///
+  /// L'adresse est partageable et survit a un rechargement de page sur le Web,
+  /// ce qu'aucune autre forme de passage ne fait.
+  ///
+  /// Ce qu'elle n'ouvre pas, et rien de plus : un NON-MEMBRE n'obtient rien.
+  /// `ressources_du_groupe` (migration `0033`) refuse l'appelant qui n'est ni
+  /// membre, ni tuteur du foyer, ni enseignant, ni admin du groupe demande.
+  ///
+  /// Elle ne garantit PAS la visibilite ressource par ressource pour celui qui
+  /// passe cette porte. Cette fonction est `security definer`, aucune migration
+  /// du depot ne pose `force row level security` : elle s'execute en
+  /// proprietaire et contourne donc la RLS de `library_resource`. Son corps ne
+  /// filtre que l'appartenance au groupe, jamais `access_policy`, jamais
+  /// `app_account_valid()` -- la ou la policy `library_resource_lecture`
+  /// (migration `0032`) exige les deux et n'ouvre `enseignant_seul` qu'au
+  /// `teacher_id` du groupe. Une migration de correction est ecrite dans un lot
+  /// voisin ; tant qu'elle n'est pas appliquee, l'ecart reste ouvert.
+  static String avecGroupe(String groupeId) => Uri(
+    path: bibliotheque,
+    queryParameters: <String, String>{parametreGroupe: groupeId},
+  ).toString();
 }
 
 /// Les routes de la Bibliotheque.
 ///
-/// [groupeId] permet a Agent Z de monter la meme page depuis l'Espace Groupe :
-/// c'est la meme Bibliotheque, avec une section « Pour ce groupe » remplie.
-List<RouteBase> routesTcB({String? groupeId}) => <RouteBase>[
+/// Le groupe de contexte vient de l'adresse, par le parametre de requete
+/// `?groupe=` (voir [RoutesTcB.avecGroupe]) : c'est la seule forme qui survive
+/// a un rechargement de page sur le Web, et elle suffit. Aucun parametre de
+/// construction ne la double : il ne serait appele par personne.
+///
+/// Avec groupe ou sans, c'est la meme Bibliotheque : seule la section
+/// « Pour ce groupe » change.
+List<RouteBase> routesTcB() => <RouteBase>[
   GoRoute(
     path: RoutesTcB.bibliotheque,
     builder: (BuildContext context, GoRouterState state) =>
-        BibliothequePage(groupeId: groupeId),
+        BibliothequePage(groupeId: _groupeDe(state)),
     routes: <RouteBase>[
       GoRoute(
         path: ':${RoutesTcB.parametreRessource}',
@@ -54,3 +92,14 @@ List<RouteBase> routesTcB({String? groupeId}) => <RouteBase>[
     ],
   ),
 ];
+
+/// Le groupe porte par l'adresse, ou `null` quand elle n'en porte pas.
+///
+/// Une valeur vide ou blanche vaut absence : une adresse tapee a moitie
+/// (`?groupe=`) doit ouvrir la Bibliotheque generale, jamais demander au
+/// serveur les ressources d'un groupe dont l'identifiant est la chaine vide.
+String? _groupeDe(GoRouterState etat) {
+  final String? brut = etat.uri.queryParameters[RoutesTcB.parametreGroupe];
+  final String? propre = brut?.trim();
+  return (propre == null || propre.isEmpty) ? null : propre;
+}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3 : il vit
@@ -9,10 +11,18 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
+import 'package:rewayah_academy/core/tc_observation/moteur_visite_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
+import 'package:rewayah_academy/core/video/service_video.dart';
 
+// Les faux de salle d'Agent E, reutilises plutot que recopies : ils rejouent
+// exactement ce que le vrai moteur PUBLIE -- trois flux et une liste -- et
+// c'est tout ce dont l'ecran d'observation depend une fois entre en salle. En
+// ecrire un second ici le ferait diverger du premier.
+import '../../e/faux/faux_classe.dart';
 import '../faux/faux_observation.dart';
 
 /// L'hote minimal d'un composant d'observation sous test.
@@ -88,14 +98,43 @@ class FausseSourceSessionTcG implements SourceSession {
 }
 
 /// Les surcharges d'un ecran d'observation sous test.
+///
+/// Le moteur de salle et le service video sont TOUJOURS remplaces, meme quand
+/// le test ne parle pas de video : `EntreeObservationPage` lit
+/// `moteurSalleProvider` des son `initState`, et un test qui laisserait passer
+/// le vrai construirait un `LiveKitSessionProvider`.
 List<Override> surchargesTcG({
   AppRole? role,
   FauxPortVisite? visites,
   FauxPortPolitique? politique,
+  FauxMoteurClasse? moteur,
+  FauxServiceVideoClasse? video,
+  Stream<void>? battement,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(FausseSourceSessionTcG(role)),
+  // **Le battement d'affichage est coupe par defaut.** Le vrai vaut
+  // `Stream.periodic(1 s)` : dans un test de widget, c'est un Timer qui reste
+  // pendant apres le demontage de l'arbre, et le cadre de test echoue dessus.
+  // Le couper ne retire rien a ce qui se verifie ici : il ne fait que
+  // repeindre un chiffre, et la seule autorite sur la fin d'une visite est le
+  // flux de budget du serveur.
+  moteurVisiteObservationProvider.overrideWith(
+    (Ref ref, String sessionId) {
+      final MoteurVisiteObservation moteurVisite = MoteurVisiteObservation(
+        ref.watch(portVisiteObservationProvider),
+        ref.watch(portPolitiqueObservationProvider),
+        battement: battement ?? const Stream<void>.empty(),
+      );
+      ref.onDispose(() => unawaited(moteurVisite.dispose()));
+      return moteurVisite;
+    },
+  ),
   portVisiteObservationProvider.overrideWithValue(visites ?? FauxPortVisite()),
   portPolitiqueObservationProvider.overrideWithValue(
     politique ?? FauxPortPolitique(),
   ),
+  moteurSalleProvider.overrideWithValue(moteur ?? FauxMoteurClasse()),
+  // **Sans jeton par defaut, et c'est le bon defaut** : un test qui ne pose
+  // aucun acces doit exercer le refus, pas une salle ouverte par commodite.
+  serviceVideoProvider.overrideWithValue(video ?? FauxServiceVideoClasse()),
 ];

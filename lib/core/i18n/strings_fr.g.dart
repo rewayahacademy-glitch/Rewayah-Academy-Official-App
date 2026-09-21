@@ -2139,6 +2139,9 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Modifier le seuil'
 	String get actionModifierSeuil => 'Modifier le seuil';
 
+	/// fr: 'Réglages d'observation'
+	String get actionObservation => 'Réglages d\'observation';
+
 	/// fr: 'Clôturer le groupe'
 	String get actionCloturer => 'Clôturer le groupe';
 
@@ -2192,6 +2195,15 @@ class Traductions$admin$groupes$fr {
 
 	/// fr: 'Chaque création, ajout, retrait et clôture est inscrit au journal d'audit.'
 	String get journalisation => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.';
+
+	/// fr: 'Observation : {libelle}'
+	String observationTitre({required Object libelle}) => 'Observation : ${libelle}';
+
+	/// fr: 'Le réglage n'a pas pu être enregistré.'
+	String get observationErreur => 'Le réglage n\'a pas pu être enregistré.';
+
+	/// fr: 'Cette installation n'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n'y changera rien : elle doit d'abord être appliquée à la base.'
+	String get observationCapaciteAbsente => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.';
 }
 
 // Path: admin.diagnostics
@@ -6556,6 +6568,9 @@ class Traductions$tc$observation$visite$fr {
 	/// fr: 'Temps restant non confirmé par le serveur.'
 	String get budgetIncertain => 'Temps restant non confirmé par le serveur.';
 
+	/// fr: 'La vidéo de la séance n'a pas pu s'ouvrir. Votre temps d'observation continue de s'écouler.'
+	String get videoIndisponible => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.';
+
 	/// fr: 'La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.'
 	String get sortieNonConfirmee => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.';
 
@@ -6636,6 +6651,9 @@ class Traductions$tc$observation$reglages$fr {
 
 	/// fr: 'Temps total par séance'
 	String get tempsTotal => 'Temps total par séance';
+
+	/// fr: 'Durée maximale d'une visite'
+	String get plafondVisite => 'Durée maximale d\'une visite';
 
 	/// fr: 'Diminuer'
 	String get diminuer => 'Diminuer';
@@ -7492,6 +7510,7 @@ extension on Traductions {
 			'admin.groupes.actionAjouter' => 'Ajouter un élève',
 			'admin.groupes.actionRetirer' => 'Retirer',
 			'admin.groupes.actionModifierSeuil' => 'Modifier le seuil',
+			'admin.groupes.actionObservation' => 'Réglages d\'observation',
 			'admin.groupes.actionCloturer' => 'Clôturer le groupe',
 			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Ajouter un élève à ${libelle}',
 			'admin.groupes.champEleveId' => 'Identifiant de l\'élève',
@@ -7510,6 +7529,9 @@ extension on Traductions {
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
+			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
+			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
+			'admin.groupes.observationCapaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
 			'admin.diagnostics.titre' => 'Diagnostics',
 			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.',
 			'admin.diagnostics.aucunProgramme' => 'Aucun programme publié',
@@ -7553,12 +7575,12 @@ extension on Traductions {
 			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
 			'admin.regles.titre' => 'Règles',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.intro' => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.',
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.regles.valeurInvalide' => 'Entrez un nombre valide.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.envoyer' => 'Enregistrer',
 			'admin.regles.champValeur' => 'Valeur',
 			'admin.regles.absenceSeuil' => 'Seuil d\'absence',
@@ -8067,12 +8089,12 @@ extension on Traductions {
 			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
 			'eleve.coran.medinoise' => 'Révélée à Médine',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.reprendre' => 'Reprendre ta lecture',
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
 			'eleve.coran.chargement' => 'Le texte arrive',
 			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
 			'eleve.coran.reessayer' => 'Réessayer',
 			'eleve.coran.absent' => 'Cette page est vide',
@@ -8581,12 +8603,12 @@ extension on Traductions {
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.navigation.titre' => 'Aller à',
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
@@ -8760,6 +8782,7 @@ extension on Traductions {
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.enfantAbsent' => 'Votre enfant n\'a pas d\'image ouverte.',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
+			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restant' => ({required Object secondes}) => '${secondes} s restantes',
 			'tc.observation.visite.visites' => ({required Object rang, required Object total}) => 'Visite ${rang} sur ${total}',
@@ -8778,6 +8801,7 @@ extension on Traductions {
 			'tc.observation.reglages.desactiver' => 'Désactiver pour ce groupe',
 			'tc.observation.reglages.maxVisites' => 'Visites par séance',
 			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
+			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',
 			'tc.observation.reglages.diminuer' => 'Diminuer',
 			'tc.observation.reglages.augmenter' => 'Augmenter',
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',

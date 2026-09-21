@@ -498,6 +498,7 @@
       "actionAjouter": "Ajouter un élève",
       "actionRetirer": "Retirer",
       "actionModifierSeuil": "Modifier le seuil",
+      "actionObservation": "Réglages d'observation",
       "actionCloturer": "Clôturer le groupe",
       "ajouterTitre": "Ajouter un élève à {libelle}",
       "champEleveId": "Identifiant de l'élève",
@@ -515,7 +516,10 @@
       "cloturerDetail": "Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.",
       "cloturerEnvoyer": "Clôturer",
       "cloturerErreur": "La clôture n'a pas abouti : {message}",
-      "journalisation": "Chaque création, ajout, retrait et clôture est inscrit au journal d'audit."
+      "journalisation": "Chaque création, ajout, retrait et clôture est inscrit au journal d'audit.",
+      "observationTitre": "Observation : {libelle}",
+      "observationErreur": "Le réglage n'a pas pu être enregistré.",
+      "observationCapaciteAbsente": "Cette installation n'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n'y changera rien : elle doit d'abord être appliquée à la base."
     },
     "diagnostics": {
       "titre": "Diagnostics",
@@ -1993,6 +1997,7 @@
         "monEnfant": "Votre enfant",
         "enfantAbsent": "Votre enfant n'a pas d'image ouverte.",
         "budgetIncertain": "Temps restant non confirmé par le serveur.",
+        "videoIndisponible": "La vidéo de la séance n'a pas pu s'ouvrir. Votre temps d'observation continue de s'écouler.",
         "sortieNonConfirmee": "La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.",
         "restant": "{secondes} s restantes",
         "visites": "Visite {rang} sur {total}"
@@ -2017,6 +2022,7 @@
         "desactiver": "Désactiver pour ce groupe",
         "maxVisites": "Visites par séance",
         "tempsTotal": "Temps total par séance",
+        "plafondVisite": "Durée maximale d'une visite",
         "diminuer": "Diminuer",
         "augmenter": "Augmenter",
         "enregistrer": "Enregistrer",

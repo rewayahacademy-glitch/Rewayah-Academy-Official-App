@@ -54,7 +54,6 @@ class ContexteClasseLive {
     this.support,
     this.dock,
     this.bibliotheque,
-    this.annonces = const <AnnonceObservation>[],
     this.onNoter,
     this.onSignaler,
     this.onOuvrirContexte,
@@ -94,9 +93,6 @@ class ContexteClasseLive {
 
   /// Le `ClassLibraryPicker` d'Agent B.
   final WidgetBuilder? bibliotheque;
-
-  /// Les observateurs annonces, par `PortAnnonceObservation` (Agent G).
-  final List<AnnonceObservation> annonces;
 
   /// Ouvre le cahier de seance. Branche par Agent Z.
   final VoidCallback? onNoter;
@@ -329,6 +325,19 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       impasse: _impasse(etat),
     );
 
+    // **L'annonce d'observation est lue par l'enseignant, et par lui seul.**
+    // Le role vient du jeton signe, jamais d'un calcul local, et le serveur
+    // redit la meme chose de son cote : `annonces_observation` leve
+    // `insufficient_privilege` pour qui n'est pas l'enseignant de la seance
+    // (`supabase/migrations/0033_tc_vues_rpc.sql:1275`). La condition ici
+    // n'ajoute donc aucune securite -- elle evite seulement de battre toutes
+    // les dix secondes une RPC qui refusera, sur l'appareil de chaque eleve.
+    final List<AnnonceObservation> annonces =
+        salle.role == RoleSalle.enseignant
+        ? ref.watch(annoncesObservationProvider(contexte.sessionId)).value ??
+              const <AnnonceObservation>[]
+        : const <AnnonceObservation>[];
+
     final RosterClasseVM roster = ref
         .watch(rosterClasseProvider(contexte.sessionId))
         .avecFile(ref.watch(recitationProvider))
@@ -380,7 +389,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         session: session,
         vue: vue,
         roster: roster,
-        annonces: contexte.annonces,
+        annonces: annonces,
         // Le bouton compact n'existe que la ou le roster est replie : a cote
         // d'une colonne, il ferait doublon.
         onVoirRoster: vue.placeRoster == PlaceRoster.feuille

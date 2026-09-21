@@ -15,6 +15,12 @@ import '../../core/widgets/status_pill.dart';
 /// en evenement collectif.
 ///
 /// Fonction pure, testable sans arbre de widgets.
+///
+/// TC-Z-SUIVI : **non branchee, et pas par oubli.** Aucun fichier de `lib/` ne
+/// l'appelle (mesure du 21/09/2026, seul `test/teaching_core/g/
+/// ecrans_observation_test.dart` la reference). Voir
+/// [IndicateurObservationEnfant] pour la raison : la source de donnees qu'elle
+/// filtrerait n'est pas lisible par l'eleve cote serveur.
 bool enfantConcerneParObservation(
   List<AnnonceObservation> annonces,
   String? monProfilId,
@@ -96,6 +102,32 @@ class IndicateurObservation extends StatelessWidget {
 ///
 /// Un mot, sans action et sans bouton. Un enfant de sept ans n'a rien a decider
 /// ici : il a seulement le droit de savoir.
+///
+/// TC-Z-SUIVI : **le cote enfant n'est PAS livre, et il manque une capacite
+/// serveur, pas un cablage.** Ce composant n'est monte dans aucun ecran de
+/// `lib/` -- mesure du 21/09/2026 : la seule reference hors de ce fichier est
+/// `test/teaching_core/g/ecrans_observation_test.dart`. Le brancher
+/// aujourd'hui poserait un indicateur qui ne s'allumerait jamais, pour deux
+/// verrous independants :
+///
+/// 1. `annonces_observation(p_session_id)` -- l'unique lecture des visites en
+///    cours -- leve `insufficient_privilege` pour tout appelant qui n'est pas
+///    l'enseignant de la seance (`0033_tc_vues_rpc.sql:1275`). Un eleve n'en
+///    obtient donc jamais une ligne.
+/// 2. La RLS de `guardian_session_visit` ne donne le SELECT qu'a l'observateur
+///    lui-meme (`guardian_visit_self`) ou a un administrateur
+///    (`guardian_visit_admin`) -- `0032_tc_catalogue.sql:488-492`. L'eleve
+///    observe n'est ni l'un ni l'autre.
+///
+/// Ce qu'il faudrait d'abord : une RPC de lecture reservee a l'eleve concerne,
+/// qui ne rende QUE sa propre ligne. C'est une exigence de vie privee, pas un
+/// detail d'implementation : un enfant ne doit jamais apprendre que le parent
+/// d'un AUTRE enfant observe (specification 11.3, « les autres eleves n'ont pas
+/// besoin d'etre interrompus »). Le jour ou elle existe, l'indicateur se pose
+/// DANS un bloc deja present de l'accueil eleve ou dans la salle, jamais en
+/// troisieme bloc : `test/features/accueil_eleve_test.dart`, groupe « ELV-02 :
+/// deux blocs, rien d'autre », fige ce compte, et un ajout y a deja du etre
+/// reverte.
 class IndicateurObservationEnfant extends StatelessWidget {
   /// Cree l'indicateur.
   const IndicateurObservationEnfant({required this.visible, super.key});
