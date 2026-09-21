@@ -189,8 +189,11 @@ class CorpusDepuisServiceCoran implements PortCorpusCoran {
       return resultats;
     }
 
-    // Reste le nom d'une sourate. Au dela, il faudrait un index texte, qui
-    // n'existe pas : l'ecran le dit, il ne rend pas une liste vide muette.
+    // Reste le nom d'une sourate. Au dela, il faudrait interroger l'index
+    // texte. Il existe en base (mesure le 21/09/2026 : `pg_trgm` 1.6 dans le
+    // schema `extensions`, colonne generee `verset.texte_recherche`, index
+    // `verset_recherche_idx`), mais rien ici ne l'interroge : aucune RPC,
+    // aucun appel Dart. L'ecran le dit, il ne rend pas une liste vide muette.
     final String cle = normaliser(propre);
     if (cle.isEmpty) {
       return const <ResultatRechercheCoran>[];

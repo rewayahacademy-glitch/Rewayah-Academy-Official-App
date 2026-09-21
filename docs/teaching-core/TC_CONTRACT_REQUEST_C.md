@@ -255,8 +255,9 @@ chose.
 `gggmtelinlpseweouyav` : l'extension `pg_trgm` 1.6 est installée dans le schéma `extensions`, la
 colonne générée `verset.texte_recherche` existe, et l'index trigramme `verset_recherche_idx` est
 posé dessus (1616 kB pour 6236 versets). C'est la migration `0030_tc_socle` (version
-`20260920151343`, appliquée) qui l'a posé. Le bloc SQL ci-dessous est conservé comme **trace de ce
-qui a été appliqué** : ne le rejoue pas.
+`20260920151343`, appliquée) qui l'a posé. Le bloc SQL ci-dessous est la **demande d'origine,
+conservée pour mémoire** : ce qui a réellement été appliqué est `0030_tc_socle.sql:190-199`, qui
+diffère de ce bloc. Ne le rejoue pas.
 
 Ce qui reste ouvert est côté application, pas côté base : **aucun code n'interroge cet index**, donc
 la recherche plein texte n'est toujours pas livrée à l'usager. C'est un lot produit à part entière.

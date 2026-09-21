@@ -1615,10 +1615,12 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     // vraiment -- les libelles, le ton `inkAlert` du destructif -- vit dans
     // `itemBuilder`, donc dans l'overlay du menu OUVERT, et une `EtatGalerie`
     // ne rend qu'un Widget, sans geste : la galerie ne peut pas ouvrir le
-    // menu. Plafond assume et verifie, pas suppose : `git grep -rn
-    // "MenuActions" test/` ne rend rien, le contenu du menu ouvert n'est
-    // couvert NULLE PART aujourd'hui. Le lever demande un test de widget
-    // dedie, qui tape le bouton et lit l'overlay, hors du harnais de galerie.
+    // menu. Plafond assume, pas suppose : sous `test/`, la seule occurrence de
+    // `MenuActions` est son nom dans la liste d'inscriptions attendues de
+    // `catalogue_galerie_test.dart`. Aucun test ne monte le composant ni
+    // n'ouvre son menu, donc le contenu du menu ouvert n'est couvert NULLE
+    // PART aujourd'hui. Le lever demande un test de widget dedie, qui tape le
+    // bouton et lit l'overlay, hors du harnais de galerie.
     // Les deux etats ci-dessous sont donc les deux seules choses qui different
     // honnetement a l'ecran : le bouton seul, et le bouton a sa place reelle.
     etats: <EtatGalerie>[
@@ -1701,9 +1703,12 @@ const List<EntreeAction> _actionsExemple = <EntreeAction>[
 
 /// Cinq niveaux sur trois cycles, pour le selecteur de niveau.
 ///
-/// Des noms de cycles reels de l'academie et non du remplissage : c'est la
-/// longueur vraie des noms qui fait passer le `Wrap` a la ligne, et c'est
-/// exactement ce que la galerie doit montrer a 200 pour cent de texte.
+/// Des noms PLAUSIBLES, de la forme des exemples de
+/// `lib/core/admin/service_programme.dart` : ce ne sont pas les noms de cycles
+/// officiels de l'academie, parce que le catalogue reel n'est pas encore
+/// importe (`NiveauProgramme.cycle` le dit lui-meme, c'est du texte libre). Ce
+/// qui compte pour la galerie est leur longueur, qui fait passer le `Wrap` a la
+/// ligne : c'est exactement ce qu'il faut voir a 200 pour cent de texte.
 const List<NiveauProgramme> _niveauxExemple = <NiveauProgramme>[
   NiveauProgramme(
     id: 'n-f1-pho-01',

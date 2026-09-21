@@ -366,7 +366,9 @@ void main() {
         service,
       );
 
-      // Un mot arabe : aucun index texte n'existe en base, et l'ecran le dit.
+      // Un mot arabe : l'index texte existe en base (`verset_recherche_idx`,
+      // mesure le 21/09/2026) mais aucun code ne l'interroge, et l'ecran le
+      // dit.
       expect(await adaptateur.rechercher('الرحمن'), isEmpty);
     });
 
