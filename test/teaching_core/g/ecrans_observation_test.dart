@@ -259,6 +259,26 @@ void main() {
 
       expect(find.text(t.tc.observation.annonce.enfantIndicateur), findsNothing);
     });
+
+    testWidgets('l\'enfant concerne le lit, y compris en mode enfant', (
+      WidgetTester tester,
+    ) async {
+      // Le mode enfant change les metriques et la palette, pas le texte : c'est
+      // le seul des cinq axes que ce composant traverse, et il faut le
+      // constater plutot que le supposer.
+      await tester.pumpWidget(
+        hoteTcG(
+          const IndicateurObservationEnfant(visible: true),
+          mode: InterfaceMode.enfant,
+        ),
+      );
+
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('Le module de reglages, isole et non route', () {
