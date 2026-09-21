@@ -9,10 +9,12 @@ EtatReglagesObservation _etat({
   SourcePolitique source = SourcePolitique.academie,
   int visites = 1,
   Duration temps = const Duration(seconds: 120),
+  Duration? plafond,
 }) => EtatReglagesObservation(
   source: source,
   maxVisites: visites,
   tempsTotal: temps,
+  plafondParVisite: plafond,
 );
 
 void main() {
@@ -115,6 +117,92 @@ void main() {
 
       expect(depart.deplacerTemps(1).tempsTotal, const Duration(seconds: 150));
       expect(depart.deplacerTemps(-1).tempsTotal, const Duration(seconds: 90));
+    });
+  });
+
+  group('Le plafond par visite, cinquieme parametre de la migration 0036', () {
+    test('un groupe sans plafond propre retombe sur le temps total', () {
+      // C'est deja ce que `plafondDeVisite` fait a l'execution : un plafond nul
+      // ne veut pas dire zero seconde, il veut dire « tout le reste ».
+      expect(
+        _etat(temps: const Duration(seconds: 240)).plafondEffectif,
+        const Duration(seconds: 240),
+      );
+    });
+
+    test('un plafond au-dessus du total est ramene au total', () {
+      // Le meme invariant que `GuardianObservationPolicy.plafondDeVisite` et
+      // que le `least(...)` de la RPC : promettre deux minutes par visite sur
+      // un total d'une minute serait un compte a rebours qui ment.
+      expect(
+        _etat(
+          temps: const Duration(seconds: 60),
+          plafond: const Duration(seconds: 120),
+        ).plafondEffectif,
+        const Duration(seconds: 60),
+      );
+    });
+
+    test('les pas du plafond restent entre le plancher et le total', () {
+      final EtatReglagesObservation depart = _etat(
+        source: SourcePolitique.groupe,
+        temps: const Duration(seconds: 240),
+        plafond: const Duration(seconds: 120),
+      );
+
+      expect(depart.deplacerPlafond(1).plafondEffectif, const Duration(seconds: 150));
+      expect(
+        depart.deplacerPlafond(99).plafondEffectif,
+        const Duration(seconds: 240),
+        reason: 'le plafond ne depasse jamais le temps total',
+      );
+      expect(
+        depart.deplacerPlafond(-99).plafondEffectif,
+        EtatReglagesObservation.plafondMin,
+      );
+    });
+
+    test('un total au plancher ne fait pas exploser le pas du plafond', () {
+      // `clamp` leve une assertion si sa borne basse depasse sa borne haute, et
+      // trente secondes de total est un reglage licite.
+      final EtatReglagesObservation serre = _etat(
+        source: SourcePolitique.groupe,
+        temps: const Duration(seconds: 30),
+      );
+
+      expect(serre.deplacerPlafond(-1).plafondEffectif, const Duration(seconds: 30));
+    });
+
+    test('personnaliser envoie toujours un plafond, jamais nul', () {
+      // « Illimite par visite » n'est pas un reglage : la premiere visite
+      // consommerait tout et la seconde naitrait vide.
+      final GuardianObservationPolicy produite = _etat(
+        source: SourcePolitique.groupe,
+        temps: const Duration(seconds: 240),
+        plafond: const Duration(seconds: 120),
+      ).appliquerA(_academie);
+
+      expect(produite.maxParVisite, const Duration(seconds: 120));
+      expect(
+        produite.plafondDeVisite(const Duration(seconds: 240)),
+        const Duration(seconds: 120),
+      );
+    });
+
+    test('la politique de depart rapporte le plafond du groupe', () {
+      const GuardianObservationPolicy groupe = GuardianObservationPolicy(
+        policyVersion: 'groupe:4',
+        source: SourcePolitique.groupe,
+        observationActivee: true,
+        maxVisitsPerSession: 2,
+        maxTotalObservationTime: Duration(seconds: 240),
+        maxParVisite: Duration(seconds: 90),
+      );
+
+      expect(
+        EtatReglagesObservation.depuis(groupe).plafondParVisite,
+        const Duration(seconds: 90),
+      );
     });
   });
 }

@@ -139,10 +139,30 @@ class FauxPortPolitique implements PortPolitiqueObservation {
   /// Combien de fois le flux a ete ouvert.
   int abonnements = 0;
 
+  /// Les politiques ecrites, dans l'ordre, avec leur groupe.
+  final List<({String groupeId, GuardianObservationPolicy politique})> ecrites =
+      <({String groupeId, GuardianObservationPolicy politique})>[];
+
+  /// L'echec leve a l'ecriture, s'il y en a un.
+  EchecObservation? echecEcriture;
+
   @override
   Future<GuardianObservationPolicy> politiqueEffective({
     required String groupeId,
   }) async => politique;
+
+  @override
+  Future<GuardianObservationPolicy> definirPolitiqueGroupe({
+    required String groupeId,
+    required GuardianObservationPolicy politique,
+  }) async {
+    ecrites.add((groupeId: groupeId, politique: politique));
+    final EchecObservation? echec = echecEcriture;
+    if (echec != null) {
+      throw echec;
+    }
+    return this.politique = politique;
+  }
 
   @override
   Future<BudgetObservation> budget({required String sessionId}) async =>

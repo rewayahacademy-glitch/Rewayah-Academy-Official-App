@@ -167,12 +167,17 @@ class GuardianObservationPolicy {
   }
 
   /// La meme politique, avec d'autres valeurs de quota.
+  ///
+  /// [maxParVisite] omis CONSERVE le plafond par visite, il ne l'efface pas :
+  /// c'est le comportement dont depend l'apercu d'un groupe qui herite, lequel
+  /// promet que le plafond de l'Academie reste en vigueur.
   GuardianObservationPolicy copieAvec({
     String? policyVersion,
     SourcePolitique? source,
     bool? observationActivee,
     int? maxVisitsPerSession,
     Duration? maxTotalObservationTime,
+    Duration? maxParVisite,
   }) => GuardianObservationPolicy(
     policyVersion: policyVersion ?? this.policyVersion,
     source: source ?? this.source,
@@ -180,6 +185,6 @@ class GuardianObservationPolicy {
     maxVisitsPerSession: maxVisitsPerSession ?? this.maxVisitsPerSession,
     maxTotalObservationTime:
         maxTotalObservationTime ?? this.maxTotalObservationTime,
-    maxParVisite: maxParVisite,
+    maxParVisite: maxParVisite ?? this.maxParVisite,
   );
 }

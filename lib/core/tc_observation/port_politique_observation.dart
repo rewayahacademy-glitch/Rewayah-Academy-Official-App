@@ -138,6 +138,17 @@ abstract interface class PortPolitiqueObservation {
 
   /// Le meme budget, relu a intervalle regulier.
   Stream<BudgetObservation> suivreBudget({required String sessionId});
+
+  /// Ecrit la politique d'un groupe, et rend celle qui s'applique ensuite.
+  ///
+  /// **Reserve a l'administration** : le serveur exige `app_role() = 'admin'`
+  /// ET `app_account_valid()`, et ne croit pas le client sur parole. L'echec
+  /// sort en [EchecObservation], jamais en exception nue -- un ecran ne doit
+  /// pas avoir a connaitre PostgREST pour dire « ca n'a pas pu s'enregistrer ».
+  Future<GuardianObservationPolicy> definirPolitiqueGroupe({
+    required String groupeId,
+    required GuardianObservationPolicy politique,
+  });
 }
 
 /// A quelle cadence le budget est relu au serveur pendant une visite.
@@ -234,6 +245,41 @@ class PolitiqueObservationSupabase implements PortPolitiqueObservation {
         return sortie.close();
       };
     return sortie.stream;
+  }
+
+  @override
+  Future<GuardianObservationPolicy> definirPolitiqueGroupe({
+    required String groupeId,
+    required GuardianObservationPolicy politique,
+  }) async {
+    final Object? reponse = await _appeler(
+      'definir_politique_observation_groupe',
+      <String, dynamic>{
+        'p_groupe_id': groupeId,
+        'p_source': politique.source.valeurSql,
+        'p_max_visites': politique.maxVisitsPerSession,
+        'p_max_secondes': politique.maxTotalObservationTime.inSeconds,
+        // **Le cinquieme parametre n'existe qu'a partir de la migration
+        // `0036_observation_defauts_academie_et_plafond_visite_groupe.sql`, et
+        // cette migration n'est PAS appliquee en production au 21 septembre
+        // 2026.** PostgREST resout une RPC par le NOM de ses arguments : tant
+        // que la base porte la fonction a quatre arguments, cet appel a cinq
+        // ne resout rien et revient en `PGRST202`, que
+        // `motifDeErreurPostgrest` traduit en
+        // `MotifEchecObservation.capaciteAbsente`. Autrement dit ce chemin
+        // d'ecriture est INERTE jusqu'a l'application de `0036`, et l'ecran le
+        // dit en clair au lieu de faire croire a un enregistrement.
+        // ponytail: aucune double signature n'est tentee, et rien n'est a
+        // changer ici le jour ou `0036` passe. Plafond de ce raccourci :
+        // l'administration ne peut rien regler d'ici tant que la migration
+        // attend, et seul le message d'ecran l'en informe.
+        'p_max_secondes_par_visite': politique.maxParVisite?.inSeconds,
+      },
+    );
+    if (reponse is Map<String, dynamic>) {
+      return GuardianObservationPolicy.depuisJson(reponse);
+    }
+    throw const EchecObservation(MotifEchecObservation.reponseIllisible);
   }
 
   Future<Object?> _appeler(String fonction, Map<String, dynamic> params) async {

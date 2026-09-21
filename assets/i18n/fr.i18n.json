@@ -498,6 +498,7 @@
       "actionAjouter": "Ajouter un élève",
       "actionRetirer": "Retirer",
       "actionModifierSeuil": "Modifier le seuil",
+      "actionObservation": "Réglages d'observation",
       "actionCloturer": "Clôturer le groupe",
       "ajouterTitre": "Ajouter un élève à {libelle}",
       "champEleveId": "Identifiant de l'élève",
@@ -515,7 +516,9 @@
       "cloturerDetail": "Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.",
       "cloturerEnvoyer": "Clôturer",
       "cloturerErreur": "La clôture n'a pas abouti : {message}",
-      "journalisation": "Chaque création, ajout, retrait et clôture est inscrit au journal d'audit."
+      "journalisation": "Chaque création, ajout, retrait et clôture est inscrit au journal d'audit.",
+      "observationTitre": "Observation : {libelle}",
+      "observationErreur": "Le réglage n'a pas pu être enregistré."
     },
     "diagnostics": {
       "titre": "Diagnostics",
@@ -2018,6 +2021,7 @@
         "desactiver": "Désactiver pour ce groupe",
         "maxVisites": "Visites par séance",
         "tempsTotal": "Temps total par séance",
+        "plafondVisite": "Durée maximale d'une visite",
         "diminuer": "Diminuer",
         "augmenter": "Augmenter",
         "enregistrer": "Enregistrer",
