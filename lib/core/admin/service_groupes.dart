@@ -23,9 +23,8 @@ enum TypePublicGroupe {
   /// Lit un type depuis sa valeur SQL. Se replie sur `enfant`, le seuil le
   /// plus bas : un type mal lu ne doit jamais laisser passer plus de monde
   /// que prevu.
-  static TypePublicGroupe depuisSql(String? valeur) => valeur == 'adulte'
-      ? TypePublicGroupe.adulte
-      : TypePublicGroupe.enfant;
+  static TypePublicGroupe depuisSql(String? valeur) =>
+      valeur == 'adulte' ? TypePublicGroupe.adulte : TypePublicGroupe.enfant;
 }
 
 /// Un groupe pedagogique, vu par l'administration.
@@ -48,6 +47,9 @@ class GroupeAdmin {
     required this.creneau,
     required this.nombreMembres,
     required this.actif,
+    this.etat = 'active',
+    this.cohorteCode,
+    this.niveauId,
   });
 
   /// Lit une ligne rendue par `groupes_admin()`.
@@ -70,6 +72,11 @@ class GroupeAdmin {
       ),
       nombreMembres: entier('nombre_membres'),
       actif: json['actif'] as bool? ?? false,
+      etat:
+          json['etat'] as String? ??
+          ((json['actif'] as bool? ?? false) ? 'active' : 'cloturee'),
+      cohorteCode: json['cohorte'] as String?,
+      niveauId: json['niveau_id'] as String?,
     );
   }
 
@@ -106,6 +113,15 @@ class GroupeAdmin {
   /// Faux quand le groupe est cloture.
   final bool actif;
 
+  /// Etat explicite du lifecycle Core24, avec repli legacy pour les anciennes RPC.
+  final String etat;
+
+  /// Cohorte de dispatch, quand le groupe provient d'une offre.
+  final String? cohorteCode;
+
+  /// Niveau officiel de dispatch, quand il existe.
+  final String? niveauId;
+
   /// Ce qui s'affiche pour nommer l'enseignant.
   String get teacherLibelle {
     final String complet = <String?>[
@@ -135,9 +151,7 @@ class MembreGroupe {
     prenom: json['student_prenom'] as String?,
     nom: json['student_nom'] as String?,
     rejointLe:
-        DateTime.tryParse(
-          json['joined_at'] as String? ?? '',
-        )?.toLocal() ??
+        DateTime.tryParse(json['joined_at'] as String? ?? '')?.toLocal() ??
         DateTime.now(),
   );
 
