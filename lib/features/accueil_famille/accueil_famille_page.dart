@@ -10,19 +10,16 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
-import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/video/service_video.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/child_card.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
@@ -148,10 +145,6 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
   Timer? _minuteur;
   late DateTime _maintenant = widget.horloge();
 
-  /// Ce que dit l'ecran quand l'inscription du tuteur a echoue. `null` tant que
-  /// rien n'a echoue.
-  String? _echecAssistance;
-
   @override
   void initState() {
     super.initState();
@@ -169,32 +162,34 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
     super.dispose();
   }
 
-  /// Inscrit le tuteur comme temoin, PUIS ouvre la salle.
+  /// Ouvre la PORTE D'OBSERVATION de la seance.
   ///
-  /// Le geste etait un simple `go` jusqu'au lot `CTR-01`, et il ne pouvait pas
-  /// aboutir : `autoriser_jeton_video()` lit l'appartenance dans
-  /// `session_participants`, ou personne n'inscrivait le tuteur. Il arrivait
-  /// donc dans l'impasse d'acces de la salle, sans que rien ne dise pourquoi.
-  /// La migration `0012` ouvre la porte ; celle-ci la franchit avant de
-  /// naviguer, parce qu'un refus se dit ici, pas trois ecrans plus loin.
-  Future<void> _assister(String seanceId) async {
-    try {
-      await ref.read(serviceVideoProvider).assisterEnTuteur(seanceId);
-    } on Object {
-      if (mounted) {
-        setState(() => _echecAssistance = t.tuteur.accueil.assisterRefuse);
-      }
-      return;
-    }
-    if (!mounted) {
-      return;
-    }
-    GoRouter.of(context).go(
-      Routes.salle,
-      // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-      extra: BilletSalle(sessionId: seanceId, emisA: DateTime.now()),
-    );
-  }
+  /// **Ce geste menait a la salle, il mene desormais a `/tc/observation`.**
+  /// La salle traitait le tuteur comme un participant de plus ; la porte
+  /// d'observation le traite comme ce qu'il est : quelqu'un qui vient voir si
+  /// son enfant participe, deux fois, deux minutes, sans micro ni camera.
+  ///
+  /// **L'inscription prealable a ete RETIREE, et ce n'est pas un oubli.**
+  /// `assisterEnTuteur` (RPC `assister_seance`, lot `CTR-01`) existait parce
+  /// que `autoriser_jeton_video` lit l'appartenance dans
+  /// `session_participants`, ou personne n'inscrivait le tuteur. Mais
+  /// `entrer_observation` fait cette inscription elle-meme, et fait en plus ce
+  /// que l'autre ne faisait pas : elle verifie le lien tuteur-enfant DANS ce
+  /// groupe, la politique d'observation du groupe, et le quota de visites.
+  /// Garder les deux, c'etait inscrire par deux portes aux regles differentes,
+  /// et laisser la plus ancienne -- celle qui ne verifie rien -- decider si le
+  /// parent entre.
+  ///
+  /// **Le refus se dit mieux qu'avant.** L'echec local disait « Le cours n'a
+  /// pas pu etre rejoint », toujours la meme phrase. `EntreeObservationPage`
+  /// nomme la cause : quota de visites atteint, temps epuise, observation
+  /// desactivee pour ce groupe, lien tuteur absent.
+  ///
+  /// L'identifiant de seance passe par l'URL et non par `extra` : c'est le
+  /// regime de la route `/tc/observation/:seanceId`, qui survit a un
+  /// rechargement sur le Web la ou `BilletSalle` ne survit pas.
+  void _assister(String seanceId) =>
+      GoRouter.of(context).go(Routes.tcObservation(seanceId));
 
   @override
   Widget build(BuildContext context) {
@@ -255,9 +250,9 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
                   onAssister: _assister,
                 ),
               ),
-          // Pose sous les cartes, la ou le geste a eu lieu : un retour local ne
-          // se met jamais au centre de l'ecran (`02-regles-ux.md` section 7).
-          LocalFeedback(message: _echecAssistance),
+          // Le retour local a ete retire avec l'inscription prealable : le
+          // geste est desormais une navigation, qui n'echoue pas ici. Le refus
+          // d'observation se dit sur l'ecran d'observation, avec sa cause.
           if (enErreur) ...<Widget>[
             Ecart.vSm,
             Text(
@@ -305,9 +300,10 @@ class _CarteEnfant extends ConsumerWidget {
   final bool affecte;
   final DateTime maintenant;
 
-  /// Ce que fait « Assister » : inscrire, puis ouvrir la salle. La carte ne
-  /// connait ni l'un ni l'autre, elle rend le geste a l'ecran qui la porte.
-  final Future<void> Function(String seanceId) onAssister;
+  /// Ce que fait « Assister » : ouvrir la porte d'observation de la seance. La
+  /// carte ne connait ni la route ni le serveur, elle rend le geste a l'ecran
+  /// qui la porte.
+  final void Function(String seanceId) onAssister;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -351,7 +347,7 @@ class _CarteEnfant extends ConsumerWidget {
       // n'y a pas de salle a rejoindre, et un bouton qui echoue apres le geste
       // coute plus cher qu'un bouton absent.
       onAssister: phase == PhaseEnfant.enCours && prochain != null
-          ? () => unawaited(onAssister(prochain.id))
+          ? () => onAssister(prochain.id)
           : null,
     );
   }

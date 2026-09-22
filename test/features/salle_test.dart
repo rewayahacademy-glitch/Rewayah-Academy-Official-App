@@ -8,14 +8,18 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
 import '../support/harnais.dart';
+import '../teaching_core/e/faux/faux_classe.dart';
 
 const String _seance = 's1';
 
@@ -68,6 +72,8 @@ List<Override> _surcharges({
   required FauxServicePreVol preVol,
   AppRole role = AppRole.student,
   FauxServicePresence? presence,
+  bool monTuteurObserve = false,
+  List<AnnonceObservation> annonces = const <AnnonceObservation>[],
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(FausseSourceSession(_session(role))),
   servicePreVolProvider.overrideWithValue(preVol),
@@ -78,6 +84,17 @@ List<Override> _surcharges({
   // rempli par commodite.
   servicePresenceProvider.overrideWithValue(
     presence ?? FauxServicePresence(),
+  ),
+  // **Personne n'observe par defaut**, et surtout : sans cette surcharge, les
+  // quinze cas de ce fichier qui montent la salle en role eleve iraient
+  // chercher le VRAI port, c'est-a-dire `Supabase.instance.client`.
+  portAnnonceObservationEnfantProvider.overrideWithValue(
+    FauxAnnonceObservationEnfant(observe: monTuteurObserve),
+  ),
+  // Meme raison : sans surcharge, un enseignant monte ici irait chercher le
+  // vrai port, donc Supabase.
+  portAnnonceObservationProvider.overrideWithValue(
+    FauxAnnonceObservation(lignes: annonces),
   ),
 ];
 
@@ -1128,6 +1145,134 @@ void main() {
         find.textContaining(t.presence.consolide),
         findsOneWidget,
       );
+    });
+  });
+
+  group('L enfant apprend que son tuteur regarde', () {
+    testWidgets('l eleve observe lit la mention discrete, sans action', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          monTuteurObserve: true,
+        ),
+      );
+
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsOneWidget,
+      );
+      // Sans bouton : un enfant de sept ans n'a rien a decider ici.
+      expect(
+        find.descendant(
+          of: find.byType(IndicateurObservationEnfant),
+          matching: find.byType(ActionPrincipale),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('l eleve non observe ne lit rien du tout', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      // C'est le cas des quatre autres enfants du groupe : le serveur leur
+      // rend `observe: false`, et ils n'apprennent rien d'un autre foyer.
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
+    });
+
+    testWidgets('le controleur masque ne lit jamais la mention de l enfant', (
+      WidgetTester tester,
+    ) async {
+      // Le jeton dit `masked_controller` : la mention appartient a l'eleve, et
+      // elle parle de SON foyer. Meme surcharge « observe » que le premier cas,
+      // pour que le test mesure la condition de role et pas la donnee.
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('masked_controller')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          role: AppRole.controller,
+          monTuteurObserve: true,
+        ),
+      );
+
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
+    });
+
+    testWidgets('l enseignant lance son cours ICI et apprend qu un parent regarde', (
+      WidgetTester tester,
+    ) async {
+      // **Le chemin reel de l'enseignant.** Le bouton « Lancer » de sa journee
+      // (`ENS-02`) mene a cette salle, pas a `/tc/classe`. L'annonce n'etait
+      // montee que sur l'autre : il enseignait deux minutes devant un parent
+      // sans le savoir.
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          annonces: <AnnonceObservation>[
+            AnnonceObservation(
+              libelle: t.tc.observation.annonce.tuteurObserve(
+                prenomEnfant: 'Amina',
+              ),
+              prenomEnfant: 'Amina',
+              enfantConcerneId: 'enfant-1',
+            ),
+          ],
+        ),
+      );
+
+      expect(find.byType(IndicateurObservation), findsOneWidget);
+      expect(find.text('Tuteur de Amina observe'), findsOneWidget);
+    });
+
+    testWidgets('l eleve de cette meme salle ne lit pas l annonce enseignante', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+          annonces: <AnnonceObservation>[
+            AnnonceObservation(
+              libelle: t.tc.observation.annonce.tuteurObserve(
+                prenomEnfant: 'Amina',
+              ),
+              prenomEnfant: 'Amina',
+              enfantConcerneId: 'enfant-1',
+            ),
+          ],
+        ),
+      );
+
+      // Elle porte le prenom d'un enfant qui n'est pas forcement le sien.
+      expect(find.byType(IndicateurObservation), findsNothing);
+      expect(find.text('Tuteur de Amina observe'), findsNothing);
     });
   });
 }

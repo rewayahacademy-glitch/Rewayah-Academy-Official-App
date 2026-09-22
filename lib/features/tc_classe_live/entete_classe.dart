@@ -81,6 +81,7 @@ class EnteteClasse extends StatelessWidget {
     required this.roster,
     super.key,
     this.annonces = const <AnnonceObservation>[],
+    this.monTuteurObserve = false,
     this.onVoirRoster,
   });
 
@@ -94,7 +95,17 @@ class EnteteClasse extends StatelessWidget {
   final RosterClasseVM roster;
 
   /// Les observateurs annonces. Vide = personne n'observe.
+  ///
+  /// **Reserve a l'enseignant** : le serveur refuse cette lecture a tout autre
+  /// appelant, et elle porte les prenoms de TOUS les enfants observes.
   final List<AnnonceObservation> annonces;
+
+  /// Vrai quand le tuteur de l'eleve qui regarde cet ecran observe la seance.
+  ///
+  /// **A ne remplir que pour l'eleve lui-meme.** C'est une information sur SON
+  /// foyer : la faire circuler vers un autre role la transformerait en
+  /// information sur le foyer d'autrui.
+  final bool monTuteurObserve;
 
   /// Ouvre la feuille de roster. `null` quand le roster est deja en colonne.
   final VoidCallback? onVoirRoster;
@@ -185,32 +196,28 @@ class EnteteClasse extends StatelessWidget {
         // notification de sortie (decision D-14) -- la ligne disparait, et
         // c'est tout.
         //
-        // **Cette ligne ne peut pas encore s'allumer, et ce n'est pas une
-        // panne.** La chaine, rejouee de bout en bout le 21/09/2026 :
-        // `annonces_observation` ne lit que `guardian_session_visit` ou
-        // `role = 'guardian_observer'` et `left_at is null`
-        // (`0033_tc_vues_rpc.sql:1292-1296`) ; la seule ecriture de cette
-        // table est `entrer_observation` (`0033:1172`) ; `entrer_observation`
-        // n'est appelee que par `VisiteObservationSupabase`
-        // (`lib/core/tc_observation/port_visite_observation.dart:97`), que
-        // seule `EntreeObservationPage` emprunte, laquelle n'est atteignable
-        // que par `/tc/observation/:seanceId` -- une route bien enregistree
-        // (`app_router.dart:591`) mais vers laquelle AUCUN fichier de `lib/`
-        // ne navigue : `RoutesTcG.versObservation` n'a aucun appelant. Le
-        // bouton « Assister » du tuteur passe encore par la porte d'avant,
-        // `assister_seance` (`accueil_famille_page.dart:181` ->
-        // `service_video.dart:131`).
-        //
-        // La bascule d'« Assister » vers la porte d'observation est en attente
-        // VOLONTAIRE : sans la migration `0037`, `entrer_observation` ne rend
-        // pas `enfant_profile_id`, et le panneau du tuteur lui dirait
-        // « Votre enfant n'a pas d'image ouverte » meme camera ouverte.
-        // `0037` n'est pas appliquee (derniere migration en base le
-        // 21/09/2026 : `0033_tc_vues_rpc_durcissement_grants`). Basculer
-        // avant, ce serait livrer au parent l'inverse du service promis.
+        // **La chaine est desormais entiere**, rejouee de bout en bout le
+        // 21/09/2026 : `entrer_observation` (seule ecriture de
+        // `guardian_session_visit`) est appelee par `EntreeObservationPage`,
+        // atteignable par `/tc/observation/:seanceId`, vers laquelle le bouton
+        // « Assister » du tuteur navigue maintenant
+        // (`accueil_famille_page.dart`). Les migrations `0035` a `0037`, `0039`
+        // et `0040` sont appliquees ; `0037` fait rendre `enfant_profile_id`,
+        // sans quoi le panneau du tuteur aurait dit « Votre enfant n'a pas
+        // d'image ouverte » meme camera ouverte.
         if (annonces.isNotEmpty) ...<Widget>[
           Ecart.vSm,
           IndicateurObservation(annonces: annonces),
+        ],
+        // **La symetrie cote enfant, dans la MEME colonne** : une mention, pas
+        // un bloc. Elle ne s'allume que pour l'enfant reellement observe, et la
+        // borne est en base -- `annonce_observation_pour_moi` (`0040`) porte
+        // `enfant_profile_id = auth.uid()` dans son WHERE. Les quatre autres
+        // enfants du groupe recoivent `observe: false` et ne lisent rien
+        // (specification 11.3).
+        if (monTuteurObserve) ...<Widget>[
+          Ecart.vSm,
+          const IndicateurObservationEnfant(visible: true),
         ],
       ],
     );

@@ -365,6 +365,29 @@ class FauxAnnonceObservation implements PortAnnonceObservation {
   }
 }
 
+/// L'annonce cote ENFANT, en memoire.
+///
+/// Le vrai port interroge `annonce_observation_pour_moi` (`0040`), qui ne rend
+/// que la ligne de l'appelant. Ce faux rend un booleen unique pour la meme
+/// raison : un enfant n'a jamais acces qu'a SON propre etat, et rendre une
+/// liste ici laisserait croire le contraire.
+class FauxAnnonceObservationEnfant implements PortAnnonceObservationEnfant {
+  /// Cree le faux.
+  FauxAnnonceObservationEnfant({this.observe = false});
+
+  /// Ce que le flux porte : vrai quand le tuteur de cet enfant regarde.
+  bool observe;
+
+  /// Les seances pour lesquelles un flux a ete demande.
+  final List<String> demandes = <String>[];
+
+  @override
+  Stream<bool> monTuteurObserve(String sessionId) {
+    demandes.add(sessionId);
+    return Stream<bool>.value(observe);
+  }
+}
+
 /// Le roster pedagogique, en memoire.
 class FauxRosterEnseignant implements PortRosterEnseignant {
   /// Cree le faux.
