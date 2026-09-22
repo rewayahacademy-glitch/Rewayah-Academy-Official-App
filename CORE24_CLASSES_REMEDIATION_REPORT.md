@@ -14,7 +14,7 @@ du lot A n'est pas verte.
 | BASE BRANCH | `integration/core24-classes-v2` |
 | BASE HEAD | `e8beeb7a2b8ae8d15bab1aca621b594909675c93` |
 | REMEDIATION BRANCH | `integration/core24-classes-v2-remediation` |
-| COMMITS | `53eb702 fix(classes): reconcile data model and security` |
+| COMMITS AVANT REPRISE | `53eb702 fix(classes): reconcile data model and security` ; `ef4dfd5 docs(classes): record lot a gate blocker` |
 
 ## Avant / après
 
@@ -51,6 +51,31 @@ n'ont pas été ouverts et l'audit final n'a pas été exécuté.
 | FULL TEST SUITE | NOT RUN | Les lots dépendants et la recette globale ne sont pas ouverts. |
 | READY_FOR_INTEGRATION | NO | La preuve PostgreSQL/RLS manque. |
 
+## Reprise du 23 septembre : diagnostic du replay local
+
+- Docker Desktop 29.7.2 et Supabase CLI 2.116.0 sont installés. Le projet
+  Supabase local `gggmtelinlpseweouyav` possède déjà des conteneurs et des
+  ports 54321/54322/54324 ; aucun reset de ce projet n'a été fait.
+- L'API Docker Linux a répondu par intermittence avec HTTP 500, y compris sur
+  `_ping` et l'inspection des conteneurs. Docker Desktop et la distribution
+  WSL `docker-desktop` ont été relancés localement ; le moteur est redevenu
+  utilisable temporairement. Aucune action distante n'a été effectuée.
+- Un conteneur PostgreSQL 17 distinct a chargé `stub_auth.sql` et les migrations
+  `0001` à `0029` dans l'ordre. Le replay a échoué dans
+  `0030_tc_socle.sql:209` : `storage.buckets` n'existait pas.
+- Cause trouvée dans le dépôt : `.github/workflows/ci.yml` appelle
+  `supabase/tests/stub_storage.sql` avant les migrations, mais ce fichier
+  n'était pas versionné. Un stub Storage minimal a été ajouté pour ce harnais
+  PostgreSQL nu. Il reste à le valider sur une base neuve.
+- Le conteneur de test et son volume anonyme contenant le replay partiel ont
+  été supprimés. Ils ne sont pas récupérables. La tentative de recréation
+  suivante a été interrompue après blocage de l'API Docker ; une vérification
+  ciblée a confirmé qu'aucun conteneur de test de ce nom n'est resté créé.
+- `git diff --check` : PASS pour les changements de cette reprise.
+
+La gate A reste **FAIL** : le replay corrigé, les scénarios d'âge et les tests
+RLS n'ont pas passé sur une base neuve. Les lots B à E restent fermés.
+
 ## Sécurité de livraison
 
 - PRODUCTION MODIFIED: NO
@@ -62,8 +87,9 @@ n'ont pas été ouverts et l'audit final n'a pas été exécuté.
 
 ## Gaps restants
 
-1. Rétablir un moteur Docker/Supabase local répondant, puis rejouer toutes les
-   migrations et les scénarios du lot A.
+1. Rétablir un moteur Docker stable, puis rejouer `stub_auth.sql`,
+   `stub_storage.sql`, toutes les migrations et
+   les scénarios du lot A sur une base neuve.
 2. Ne commencer le lot B qu'après une gate A PASS : dispatch transactionnel,
    scénarios 7/8/12/13, concurrence, idempotence et absence de double
    affectation.
