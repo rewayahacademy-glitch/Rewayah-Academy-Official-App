@@ -65,6 +65,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
+	late final Traductions$parcours$fr parcours = Traductions$parcours$fr.internal(_root);
 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
 	late final Traductions$compte$fr compte = Traductions$compte$fr.internal(_root);
@@ -1249,6 +1250,222 @@ class Traductions$choix$fr {
 
 	/// fr: 'Plusieurs réponses possibles'
 	String get selectionMultiple => 'Plusieurs réponses possibles';
+}
+
+// Path: parcours
+class Traductions$parcours$fr {
+	Traductions$parcours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le parcours de {prenom}'
+	String titre({required Object prenom}) => 'Le parcours de ${prenom}';
+
+	/// fr: 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.'
+	String get intro => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.';
+
+	/// fr: 'Reprendre'
+	String get reprendre => 'Reprendre';
+
+	/// fr: 'Personnaliser le parcours'
+	String get commencer => 'Personnaliser le parcours';
+
+	/// fr: 'Modifier mes réponses'
+	String get modifier => 'Modifier mes réponses';
+
+	/// fr: 'Cette réponse n'a pas pu être enregistrée. Réessayez.'
+	String get erreur => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.';
+
+	/// fr: 'Nous préparons vos options.'
+	String get chargement => 'Nous préparons vos options.';
+
+	/// fr: 'Quel âge a {prenom} ?'
+	String ageQuestion({required Object prenom}) => 'Quel âge a ${prenom} ?';
+
+	/// fr: 'L'âge décide de la durée des séances et du nombre d'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.'
+	String get ageRaison => 'L\'âge décide de la durée des séances et du nombre d\'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.';
+
+	/// fr: 'Dans quelle langue le cours doit-il être donné ?'
+	String get langueQuestion => 'Dans quelle langue le cours doit-il être donné ?';
+
+	/// fr: 'C'est la langue que l'enseignant parlera pendant la séance. Elle est indépendante de la langue de l'application, que vous pouvez changer à tout moment dans vos réglages.'
+	String get langueRaison => 'C\'est la langue que l\'enseignant parlera pendant la séance. Elle est indépendante de la langue de l\'application, que vous pouvez changer à tout moment dans vos réglages.';
+
+	/// fr: 'Où vous trouvez-vous ?'
+	String get lieuQuestion => 'Où vous trouvez-vous ?';
+
+	/// fr: 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.'
+	String get lieuRaison => 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.';
+
+	/// fr: 'Proposé d'après l'heure de votre appareil'
+	String get lieuSuggere => 'Proposé d\'après l\'heure de votre appareil';
+
+	/// fr: 'Où en est {prenom} aujourd'hui ?'
+	String niveauQuestion({required Object prenom}) => 'Où en est ${prenom} aujourd\'hui ?';
+
+	/// fr: 'Votre réponse oriente les premières propositions. Elle ne fixe pas le niveau officiel : celui-ci est attribué par l'académie après un échange avec un enseignant.'
+	String get niveauRaison => 'Votre réponse oriente les premières propositions. Elle ne fixe pas le niveau officiel : celui-ci est attribué par l\'académie après un échange avec un enseignant.';
+
+	/// fr: 'Nous commençons par les lettres'
+	String get niveauDebutLettres => 'Nous commençons par les lettres';
+
+	/// fr: 'Les lettres sont reconnues, la lecture demande de l'aide'
+	String get niveauLettresAvecAide => 'Les lettres sont reconnues, la lecture demande de l\'aide';
+
+	/// fr: 'La lecture est possible, lentement'
+	String get niveauLectureLente => 'La lecture est possible, lentement';
+
+	/// fr: 'Le Coran se lit déjà couramment'
+	String get niveauLectureCourante => 'Le Coran se lit déjà couramment';
+
+	/// fr: 'Une partie est déjà mémorisée'
+	String get niveauMemorisationPartielle => 'Une partie est déjà mémorisée';
+
+	/// fr: 'Que souhaitez-vous d'abord ?'
+	String get objectifQuestion => 'Que souhaitez-vous d\'abord ?';
+
+	/// fr: 'Vous pourrez changer d'objectif plus tard : il oriente le travail de l'enseignant, il ne vous engage pas.'
+	String get objectifRaison => 'Vous pourrez changer d\'objectif plus tard : il oriente le travail de l\'enseignant, il ne vous engage pas.';
+
+	/// fr: 'Apprendre à lire'
+	String get objectifApprendreALire => 'Apprendre à lire';
+
+	/// fr: 'Lire plus couramment'
+	String get objectifDevenirFluide => 'Lire plus couramment';
+
+	/// fr: 'Mémoriser'
+	String get objectifMemoriser => 'Mémoriser';
+
+	/// fr: 'Je ne sais pas encore'
+	String get objectifIndecis => 'Je ne sais pas encore';
+
+	/// fr: 'Quels moments de la journée vous conviennent le mieux ?'
+	String get momentsQuestion => 'Quels moments de la journée vous conviennent le mieux ?';
+
+	/// fr: 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.'
+	String get momentsRaison => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.';
+
+	/// fr: 'Le matin'
+	String get momentMatin => 'Le matin';
+
+	/// fr: 'L'après-midi'
+	String get momentApresMidi => 'L\'après-midi';
+
+	/// fr: 'Le soir'
+	String get momentSoir => 'Le soir';
+
+	/// fr: 'Voici les horaires ouverts pour {prenom}'
+	String offresQuestion({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}';
+
+	/// fr: 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.'
+	String get offresRaison => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.';
+
+	/// fr: 'Le plus proche de vos réponses'
+	String get offreRecommandee => 'Le plus proche de vos réponses';
+
+	/// fr: 'Autres horaires possibles'
+	String get offresAutres => 'Autres horaires possibles';
+
+	/// fr: '{seances} séances par semaine, {duree} min'
+	String offreRecurrence({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min';
+
+	/// fr: '{seances} séances par semaine, {duree} min dont {pause} min de pause'
+	String offreRecurrencePause({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause';
+
+	/// fr: 'Cours en {langue}'
+	String offreLangue({required Object langue}) => 'Cours en ${langue}';
+
+	/// fr: 'Heure affichée pour {fuseau}'
+	String offreFuseau({required Object fuseau}) => 'Heure affichée pour ${fuseau}';
+
+	/// fr: 'Affiché à votre heure locale'
+	String get offreTraduite => 'Affiché à votre heure locale';
+
+	/// fr: '{jours}'
+	String offreJours({required Object jours}) => '${jours}';
+
+	/// fr: 'Choisir cet horaire'
+	String get offreChoisir => 'Choisir cet horaire';
+
+	/// fr: 'Horaire retenu'
+	String get offreChoisie => 'Horaire retenu';
+
+	/// fr: 'Aucun horaire ouvert ne correspond encore'
+	String get aucuneOffre => 'Aucun horaire ouvert ne correspond encore';
+
+	/// fr: 'L'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.'
+	String get aucuneOffreDetail => 'L\'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.';
+
+	/// fr: 'Aucun de ces horaires ne me convient'
+	String get refusAucun => 'Aucun de ces horaires ne me convient';
+
+	/// fr: 'Me prévenir si de nouveaux horaires ouvrent'
+	String get refusPrevenir => 'Me prévenir si de nouveaux horaires ouvrent';
+
+	/// fr: 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d'enseignant et ne promet aucun horaire futur.'
+	String get refusEffet => 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.';
+
+	/// fr: 'C'est noté. Nous vous préviendrons si un horaire correspondant ouvre.'
+	String get refusEnregistre => 'C\'est noté. Nous vous préviendrons si un horaire correspondant ouvre.';
+
+	/// fr: 'Parcours à personnaliser'
+	String get etatAPersonnaliser => 'Parcours à personnaliser';
+
+	/// fr: 'Quelques questions, et nous ne vous montrerons que ce qui convient à {prenom}.'
+	String etatAPersonnaliserDetail({required Object prenom}) => 'Quelques questions, et nous ne vous montrerons que ce qui convient à ${prenom}.';
+
+	/// fr: 'Horaire à choisir'
+	String get etatHoraireAChoisir => 'Horaire à choisir';
+
+	/// fr: 'Les horaires ouverts pour {prenom} vous attendent.'
+	String etatHoraireAChoisirDetail({required Object prenom}) => 'Les horaires ouverts pour ${prenom} vous attendent.';
+
+	/// fr: 'Cet horaire n'est plus proposé'
+	String get etatOffreIndisponible => 'Cet horaire n\'est plus proposé';
+
+	/// fr: 'L'horaire retenu pour {prenom} a été retiré avant qu'un groupe soit constitué. Choisissez-en un autre : rien n'est perdu.'
+	String etatOffreIndisponibleDetail({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'un groupe soit constitué. Choisissez-en un autre : rien n\'est perdu.';
+
+	/// fr: 'Préférence enregistrée'
+	String get etatDiagnosticRequis => 'Préférence enregistrée';
+
+	/// fr: 'Il reste un échange avec un enseignant pour situer le niveau de {prenom}. L'académie vous proposera un rendez-vous.'
+	String etatDiagnosticRequisDetail({required Object prenom}) => 'Il reste un échange avec un enseignant pour situer le niveau de ${prenom}. L\'académie vous proposera un rendez-vous.';
+
+	/// fr: 'Rendez-vous prévu'
+	String get etatDiagnosticEnAttente => 'Rendez-vous prévu';
+
+	/// fr: 'Un échange est prévu pour situer le niveau de {prenom}.'
+	String etatDiagnosticEnAttenteDetail({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.';
+
+	/// fr: 'Groupe en cours de constitution'
+	String get etatGroupeEnFormation => 'Groupe en cours de constitution';
+
+	/// fr: 'Un groupe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'il est confirmé.'
+	String etatGroupeEnFormationDetail({required Object minimum}) => 'Un groupe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'il est confirmé.';
+
+	/// fr: 'Groupe confirmé'
+	String get etatGroupeConfirme => 'Groupe confirmé';
+
+	/// fr: 'Le groupe de {prenom} est constitué. Vous retrouverez ses séances dans son espace.'
+	String etatGroupeConfirmeDetail({required Object prenom}) => 'Le groupe de ${prenom} est constitué. Vous retrouverez ses séances dans son espace.';
+
+	/// fr: 'Votre lieu a changé depuis ce choix'
+	String get fuseauChange => 'Votre lieu a changé depuis ce choix';
+
+	/// fr: 'L'horaire est le même pour l'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu'il vous convient toujours.'
+	String get fuseauChangeDetail => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.';
+
+	/// fr: 'Voir les horaires'
+	String get voirHoraires => 'Voir les horaires';
+
+	/// fr: 'Changer d'horaire'
+	String get changerHoraire => 'Changer d\'horaire';
+
+	/// fr: 'La famille a changé d'horaire depuis le parcours'
+	String get renoncerMotif => 'La famille a changé d\'horaire depuis le parcours';
 }
 
 // Path: avatar
@@ -7942,6 +8159,75 @@ extension on Traductions {
 			'choix.autre' => 'Autre',
 			'choix.autreInvite' => 'Précisez',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
+			'parcours.titre' => ({required Object prenom}) => 'Le parcours de ${prenom}',
+			'parcours.intro' => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.',
+			'parcours.reprendre' => 'Reprendre',
+			'parcours.commencer' => 'Personnaliser le parcours',
+			'parcours.modifier' => 'Modifier mes réponses',
+			'parcours.erreur' => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.',
+			'parcours.chargement' => 'Nous préparons vos options.',
+			'parcours.ageQuestion' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
+			'parcours.ageRaison' => 'L\'âge décide de la durée des séances et du nombre d\'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.',
+			'parcours.langueQuestion' => 'Dans quelle langue le cours doit-il être donné ?',
+			'parcours.langueRaison' => 'C\'est la langue que l\'enseignant parlera pendant la séance. Elle est indépendante de la langue de l\'application, que vous pouvez changer à tout moment dans vos réglages.',
+			'parcours.lieuQuestion' => 'Où vous trouvez-vous ?',
+			'parcours.lieuRaison' => 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.',
+			'parcours.lieuSuggere' => 'Proposé d\'après l\'heure de votre appareil',
+			'parcours.niveauQuestion' => ({required Object prenom}) => 'Où en est ${prenom} aujourd\'hui ?',
+			'parcours.niveauRaison' => 'Votre réponse oriente les premières propositions. Elle ne fixe pas le niveau officiel : celui-ci est attribué par l\'académie après un échange avec un enseignant.',
+			'parcours.niveauDebutLettres' => 'Nous commençons par les lettres',
+			'parcours.niveauLettresAvecAide' => 'Les lettres sont reconnues, la lecture demande de l\'aide',
+			'parcours.niveauLectureLente' => 'La lecture est possible, lentement',
+			'parcours.niveauLectureCourante' => 'Le Coran se lit déjà couramment',
+			'parcours.niveauMemorisationPartielle' => 'Une partie est déjà mémorisée',
+			'parcours.objectifQuestion' => 'Que souhaitez-vous d\'abord ?',
+			'parcours.objectifRaison' => 'Vous pourrez changer d\'objectif plus tard : il oriente le travail de l\'enseignant, il ne vous engage pas.',
+			'parcours.objectifApprendreALire' => 'Apprendre à lire',
+			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
+			'parcours.objectifMemoriser' => 'Mémoriser',
+			'parcours.objectifIndecis' => 'Je ne sais pas encore',
+			'parcours.momentsQuestion' => 'Quels moments de la journée vous conviennent le mieux ?',
+			'parcours.momentsRaison' => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.',
+			'parcours.momentMatin' => 'Le matin',
+			'parcours.momentApresMidi' => 'L\'après-midi',
+			'parcours.momentSoir' => 'Le soir',
+			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
+			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.',
+			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
+			'parcours.offresAutres' => 'Autres horaires possibles',
+			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
+			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
+			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
+			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
+			'parcours.offreTraduite' => 'Affiché à votre heure locale',
+			'parcours.offreJours' => ({required Object jours}) => '${jours}',
+			'parcours.offreChoisir' => 'Choisir cet horaire',
+			'parcours.offreChoisie' => 'Horaire retenu',
+			'parcours.aucuneOffre' => 'Aucun horaire ouvert ne correspond encore',
+			'parcours.aucuneOffreDetail' => 'L\'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.',
+			'parcours.refusAucun' => 'Aucun de ces horaires ne me convient',
+			'parcours.refusPrevenir' => 'Me prévenir si de nouveaux horaires ouvrent',
+			'parcours.refusEffet' => 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.',
+			'parcours.refusEnregistre' => 'C\'est noté. Nous vous préviendrons si un horaire correspondant ouvre.',
+			'parcours.etatAPersonnaliser' => 'Parcours à personnaliser',
+			'parcours.etatAPersonnaliserDetail' => ({required Object prenom}) => 'Quelques questions, et nous ne vous montrerons que ce qui convient à ${prenom}.',
+			'parcours.etatHoraireAChoisir' => 'Horaire à choisir',
+			'parcours.etatHoraireAChoisirDetail' => ({required Object prenom}) => 'Les horaires ouverts pour ${prenom} vous attendent.',
+			'parcours.etatOffreIndisponible' => 'Cet horaire n\'est plus proposé',
+			'parcours.etatOffreIndisponibleDetail' => ({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'un groupe soit constitué. Choisissez-en un autre : rien n\'est perdu.',
+			'parcours.etatDiagnosticRequis' => 'Préférence enregistrée',
+			'parcours.etatDiagnosticRequisDetail' => ({required Object prenom}) => 'Il reste un échange avec un enseignant pour situer le niveau de ${prenom}. L\'académie vous proposera un rendez-vous.',
+			'parcours.etatDiagnosticEnAttente' => 'Rendez-vous prévu',
+			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.',
+			'parcours.etatGroupeEnFormation' => 'Groupe en cours de constitution',
+			'parcours.etatGroupeEnFormationDetail' => ({required Object minimum}) => 'Un groupe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'il est confirmé.',
+			'parcours.etatGroupeConfirme' => 'Groupe confirmé',
+			'parcours.etatGroupeConfirmeDetail' => ({required Object prenom}) => 'Le groupe de ${prenom} est constitué. Vous retrouverez ses séances dans son espace.',
+			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
+			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
+			'parcours.voirHoraires' => 'Voir les horaires',
+			'parcours.changerHoraire' => 'Changer d\'horaire',
+			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
@@ -8020,6 +8306,8 @@ extension on Traductions {
 			'compte.langueRegion' => 'Langue et région',
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
+			_ => null,
+		} ?? switch (path) {
 			'compte.arabe' => 'Arabe',
 			'compte.arabeDetail' => 'Bientôt disponible',
 			'compte.fuseauDetail' => 'Détecté automatiquement',
@@ -8089,8 +8377,6 @@ extension on Traductions {
 			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
 			'eleve.coran.medinoise' => 'Révélée à Médine',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.reprendre' => 'Reprendre ta lecture',
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
 			'eleve.coran.chargement' => 'Le texte arrive',
@@ -8534,6 +8820,8 @@ extension on Traductions {
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
@@ -8603,8 +8891,6 @@ extension on Traductions {
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.fidelite.fidele' => 'Composition de l\'édition',
 			'tc.coran.zoom.bride' => 'Grossissement limité par la largeur : au-delà, un mot serait coupé.',
 			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent} %',

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,6 +40,7 @@ import '../../features/eleve_connexion/eleve_connexion_page.dart';
 import '../../features/fiche_groupe/fiche_groupe_page.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
@@ -286,6 +287,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: '${Routes.tuteurAppairer}/:eleveId',
         builder: (BuildContext _, GoRouterState etat) =>
             AppairagePage(eleveId: etat.pathParameters['eleveId'] ?? ''),
+      ),
+      // Le parcours de personnalisation et de choix d'horaire. Une pose, pas
+      // une destination de la barre : on y entre depuis l'accueil famille et on
+      // en ressort (`03-architecture-information.md` section 5).
+      GoRoute(
+        path: '${Routes.tuteurParcours}/:eleveId',
+        builder: (BuildContext _, GoRouterState etat) =>
+            ParcoursOffresPage(eleveId: etat.pathParameters['eleveId'] ?? ''),
       ),
 
       // Enseignant.
@@ -684,8 +693,10 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
   AppRole.guardian => RoleEspaceGroupe.tuteur,
   AppRole.teacher => RoleEspaceGroupe.enseignant,
   AppRole.admin => RoleEspaceGroupe.admin,
-  AppRole.student || AppRole.controller || AppRole.accountant || null =>
-    RoleEspaceGroupe.eleve,
+  AppRole.student ||
+  AppRole.controller ||
+  AppRole.accountant ||
+  null => RoleEspaceGroupe.eleve,
 };
 
 /// La coquille de navigation d'un role, autour des branches qui sont ses

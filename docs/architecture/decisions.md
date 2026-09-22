@@ -1620,6 +1620,170 @@ une migration.
 
 ---
 
+## ADR-029 - La langue du cours et la langue de l'interface sont deux axes, et ADR-015 ne gouverne que le second
+
+**Décision prise le 22 septembre 2026**, au lot « onboarding et offres horaires
+vitrines ».
+
+### La contradiction relevée
+
+ADR-015 a **retiré le poular** de l'application. La mission de ce lot **impose le
+poular** comme langue de cours. Les deux textes se contredisent frontalement si
+l'on suppose qu'il n'existe qu'une seule notion de « langue » dans le produit.
+
+### Ce qui est décidé
+
+Il y en a deux, et elles ne se mélangent jamais.
+
+| | Langue de l'**interface** | Langue du **cours** |
+| :--- | :--- | :--- |
+| Ce que c'est | la locale de l'application | la langue que l'enseignant parle en séance |
+| Source | `AppLocale` (slang), `assets/i18n/` | `public.langues_cours` |
+| Valeurs | français, arabe — **ADR-015 tient** | poular, français, english |
+| Qui décide | la personne, dans ses réglages | la famille, à l'onboarding |
+| Effet | cosmétique, réversible d'un tap | **critère dur** de compatibilité de groupe |
+
+**ADR-015 n'est pas renversé, il est borné.** Il portait sur les locales de
+l'interface, et cette décision reste bonne : traduire l'intégralité de
+l'application en poular n'a jamais été le besoin. Ce qui était réellement demandé
+— enseigner en poular — relève d'un autre axe, que le produit ne modélisait pas.
+
+### Pourquoi une table plutôt qu'une énumération
+
+`langues_cours` est une table avec `actif` et `ordre` : l'académie ouvre une
+langue d'enseignement quand elle recrute un enseignant qui la parle. Une
+énumération Dart aurait fait de chaque recrutement une livraison.
+
+### Conséquence assumée
+
+Une famille peut lire l'application en français et suivre son cours en poular.
+Inversement, changer la langue de son interface ne change **rien** à son groupe.
+Le nom d'une langue est rendu par le serveur et n'est jamais traduit : « Pulaar »
+s'écrit « Pulaar » dans toutes les locales.
+
+---
+
+## ADR-030 - La question d'horaire n'a pas de réponse libre, et c'est une exception bornée à ADR-013
+
+**Décision prise le 22 septembre 2026**, au même lot.
+
+### La contradiction relevée
+
+ADR-013 impose une carte « Autre » en saisie libre à **tout** choix proposé à
+l'utilisateur, et `ChoiceCardGroup` la rend systématiquement. La mission de ce
+lot **interdit** d'ouvrir un champ libre sur la question d'horaire.
+
+### Ce qui est décidé
+
+La règle d'ADR-013 vaut toujours **partout ailleurs**. Elle ne s'applique pas à
+la question d'horaire, et à elle seule.
+
+**Le raisonnement.** ADR-013 pose une carte « Autre » parce qu'un parcours qui
+n'offre aucune issue à celui qui ne se reconnaît dans aucune réponse perd cet
+utilisateur. C'est vrai — et cela suppose que la réponse libre soit
+**exploitable**. Sur un rôle, un genre ou un niveau, elle l'est : un humain lit,
+et agit. Sur un horaire, elle ne l'est pas : Rewayah ne vend pas de cours sur
+mesure, et une famille qui écrit « plutôt le mardi à 20 h » aurait créé une
+attente que l'académie ne peut pas tenir.
+
+**L'issue reste offerte**, et c'est ce qui rend l'exception acceptable plutôt
+que régressive :
+
+> « Aucun de ces horaires ne me convient » → « Me prévenir si de nouveaux
+> horaires ouvrent »
+
+Ce repli crée **un signal de demande non satisfaite** (`matching_requests`,
+dépouillé en `ADM-06`) et rien d'autre : ni groupe, ni recherche d'enseignant,
+ni promesse d'horaire futur, et **aucun créneau souhaité enregistré**. La phrase
+qui le dit est affichée avant le clic, pas après.
+
+### Le mécanisme existait déjà
+
+`ChoiceCardGroup.autoriserSaisieLibre`, avec ce commentaire dans le code
+antérieur à ce lot : « New scheduling choices use closed administrative
+proposals and pass false ». Cet ADR consigne une décision que le code avait
+anticipée sans qu'elle soit écrite.
+
+### Portée exacte de l'exception
+
+`autoriserSaisieLibre: false` est également passé aux cinq autres questions du
+parcours (âge, langue, lieu, niveau, objectif), pour une raison **différente** et
+plus faible : leurs listes sont fermées et viennent du serveur, donc « Autre »
+n'aurait désigné aucune valeur existante. Seule la question d'horaire relève de
+l'exception de principe décrite ici.
+
+---
+
+## ADR-031 - Rewayah vend une offre horaire vitrine, pas une classe
+
+**Décision prise le 22 septembre 2026**, au même lot. C'est la décision
+structurante du lot ; les deux précédentes en découlent.
+
+### Ce qui est décidé
+
+À l'inscription, Rewayah ne présente **aucune classe réelle**. Elle présente des
+**offres horaires vitrines** : des motifs stables (public, langue
+d'enseignement, fuseau, jours récurrents, heure locale, durée, rythme) que
+l'académie publie et s'engage à ouvrir **si assez de familles les choisissent**.
+
+**Interdiction absolue sur la carte publique** : nom d'enseignant, photo, badge,
+nombre d'inscrits, places restantes, identifiant de groupe interne.
+
+Ce n'est pas une règle d'affichage. C'est une contrainte de modèle :
+`offres_horaires` **n'a pas ces colonnes**, `OffreHoraire` ne les porte pas, et
+un test les interdit sur les quatre chaînes que la carte peut rendre.
+
+### Pourquoi une table séparée, et non `groupes`
+
+Trois obstacles mesurés le 22 septembre 2026 sur la base de production :
+
+| Obstacle | Ce qu'il aurait coûté |
+| :--- | :--- |
+| `groupes.teacher_id` est `NOT NULL` | Le relâcher traverse toute policy et toute RPC qui tient un groupe pour enseigné : jeton vidéo, observation, `mes_groupes_v`. Une refonte de sécurité pour un gain nul |
+| `groupes.weekday` est **un** jour | Trois lignes `groupes` pour trois séances hebdomadaires auraient découpé un même roster en trois et compté le plafond trois fois |
+| `groupes` n'a pas de langue | Le critère dur d'ADR-029 n'aurait eu nulle part où vivre |
+
+D'où : `offres_horaires` (la vitrine, sans enseignant), `intentions_horaire` (ce
+que la famille a choisi) et `groupe_creneaux` (les trois séances d'un vrai
+groupe, avec un trigger qui maintient l'ancre `groupes.weekday`/`hour_local`).
+**Aucune ligne de code existant ne change.**
+
+### Les cinq états, et l'interdiction de mentir
+
+Un parcours doit distinguer, et nommer :
+
+1. **préférence enregistrée** — un créneau est connu de l'académie ;
+2. **diagnostic à faire / rendez-vous prévu** ;
+3. **groupe en cours de constitution** — le vivier n'atteint pas le minimum ;
+4. **groupe confirmé** — le groupe existe ;
+5. **offre retirée** — et cet état **prime sur tous les autres**.
+
+> **Il est interdit d'écrire « Votre classe est réservée » tant qu'un groupe réel
+> n'existe pas.**
+
+L'ordre de priorité est tenu par une fonction pure unique, `etapeParcours`
+(`lib/core/offres/offre_horaire.dart`), partagée par l'accueil et par le
+parcours : un seul endroit décide de ce qui s'affiche, donc les deux écrans ne
+peuvent pas dire deux choses du même apprenant.
+
+### Les capacités ne sont écrites dans aucun widget
+
+Capacités (5 / 6), minimum de lancement (3), séances par semaine (3), durées
+(60 / 90 min) et pause (6 / 0 min) vivent dans `app_config` et sont servies par
+`regles_academie()`. Ce sont des décisions d'exploitation : elles changent sans
+livraison.
+
+### Ce que cet ADR ne tranche pas
+
+Le **dispatch** — remplir un groupe compatible jusqu'au plafond avant d'en ouvrir
+un nouveau — est posé côté serveur (`pool_offre`,
+`publier_groupe_depuis_offre`) mais reste **déclenché à la main par
+l'administration**. Aucune affectation automatique n'est livrée dans ce lot, et
+c'est délibéré : une affectation automatique qui se trompe met un enfant dans le
+mauvais groupe, et rien dans le produit ne sait encore la défaire proprement.
+
+---
+
 ## Impacts sur la roadmap
 
 | Étape | Changement |

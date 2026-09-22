@@ -27,6 +27,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../parcours_offres/bloc_parcours.dart';
 
 /// La phase de vie d'un enfant du foyer, a un instant donne.
 ///
@@ -228,6 +229,11 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // Ce qui se passe AVANT qu'un cours existe : personnalisation, choix
+          // d'horaire, constitution du groupe. Pose au-dessus des cartes parce
+          // que c'est ce qui attend un geste ; il se retire tout seul quand
+          // chaque apprenant du foyer a son groupe.
+          const BlocParcours(),
           if (chargementInitial)
             const Skeleton.liste(lignes: 4)
           else if (enfants.hasValue && foyer.isEmpty)

@@ -79,6 +79,21 @@ abstract final class Routes {
   /// Le chemin d'appairage d'un eleve.
   static String appairerPour(String eleveId) => '$tuteurAppairer/$eleveId';
 
+  /// Racine du parcours de personnalisation et de choix d'horaire.
+  ///
+  /// Sous le prefixe `/tuteur` et non sous `/attente` : le parcours se traverse
+  /// avec un dossier valide, et il se reprend -- une famille revient changer
+  /// d'horaire longtemps apres son inscription. `deciderRedirection` renvoie
+  /// chez lui tout chemin hors prefixe de role ; une page posee a `/parcours`
+  /// aurait ete refusee au tuteur par sa propre garde.
+  static const String tuteurParcours = '/tuteur/parcours';
+
+  /// Le parcours d'un apprenant donne.
+  ///
+  /// L'identifiant est dans le chemin et non dans `extra` : cet ecran n'a rien
+  /// d'ephemere et doit survivre a un rechargement, comme l'appairage.
+  static String parcoursPour(String eleveId) => '$tuteurParcours/$eleveId';
+
   /// Disponibilites du foyer.
   static const String tuteurDisponibilites = '/tuteur/disponibilites';
 
@@ -131,8 +146,7 @@ abstract final class Routes {
   static const String enseignantGroupe = '/enseignant/groupe';
 
   /// La fiche d'un groupe (`ENS-07`), ouverte depuis la Journee.
-  static String groupePour(String groupeId) =>
-      '$enseignantGroupe/$groupeId';
+  static String groupePour(String groupeId) => '$enseignantGroupe/$groupeId';
 
   /// La revue courte d'un groupe (`ENS-08`), ouverte depuis sa fiche ou depuis
   /// une anomalie de la Journee.
@@ -187,13 +201,16 @@ abstract final class Routes {
   static const String adminPedagogie = '/admin/pedagogie';
 
   /// Diagnostics de placement (`ADM-10`), fonction primaire de Pedagogie.
-  static const String adminPedagogieDiagnostics = '/admin/pedagogie/diagnostics';
+  static const String adminPedagogieDiagnostics =
+      '/admin/pedagogie/diagnostics';
 
   /// Suivi de progression (`ADM-11`), sous Pedagogie.
-  static const String adminPedagogieProgression = '/admin/pedagogie/progression';
+  static const String adminPedagogieProgression =
+      '/admin/pedagogie/progression';
 
   /// Evaluations (`ADM-12`), sous Pedagogie.
-  static const String adminPedagogieEvaluations = '/admin/pedagogie/evaluations';
+  static const String adminPedagogieEvaluations =
+      '/admin/pedagogie/evaluations';
 
   /// Le programme pedagogique versionne (`ADM-13`), sous Pedagogie.
   static const String adminPedagogieProgrammes = '/admin/pedagogie/programmes';
@@ -207,8 +224,7 @@ abstract final class Routes {
 
   /// Regles (`ADM-15`), fonction primaire de Configuration : les defauts de
   /// plateforme, jamais les surcharges par profil (`ADM-06`).
-  static const String adminConfigurationRegles =
-      '/admin/configuration/regles';
+  static const String adminConfigurationRegles = '/admin/configuration/regles';
 
   /// Fonctionnalites (`ADM-16`), sous Configuration.
   static const String adminConfigurationFonctionnalites =
@@ -322,7 +338,11 @@ abstract final class Routes {
   static String tcObservation(String seanceId) => '/tc/observation/$seanceId';
 
   /// Routes atteignables sans session resolue.
-  static const Set<String> publiques = <String>{connexion, galerie, agentEntree};
+  static const Set<String> publiques = <String>{
+    connexion,
+    galerie,
+    agentEntree,
+  };
 
   /// La racine de chaque role, ou une redirection renvoie toujours.
   static String racinePour(AppRole role) => switch (role) {
