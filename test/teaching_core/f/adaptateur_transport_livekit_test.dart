@@ -7,15 +7,13 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'faux/faux_moteur_salle.dart';
 import 'support/fabriques.dart';
 
-/// L'adaptateur au-dessus du moteur existant : ce qu'il sait faire, et ce
-/// qu'il ne sait pas.
+/// L'adaptateur au-dessus du moteur existant, complet depuis le lot 2.
 ///
-/// **Ce fichier est la preuve que `TC_CONTRACT_REQUEST_F.md` n'est pas une
-/// precaution.** Le socle expose une primitive de donnees -- `presenterContenu`,
-/// un pointeur coranique, un sujet, fiable, en diffusion -- et rien d'autre.
-/// Tant qu'Agent Z n'a pas ajoute la primitive demandee, tout envoi du
-/// protocole pedagogique leve [MotifEchecTransport.primitiveEnvoiAbsente],
-/// nomme explicitement, plutot que de reussir en silence.
+/// Le socle expose la primitive generale de donnees (`publierDonnees`,
+/// `donneesRecues`) ; l'adaptateur la traduit dans le vocabulaire du
+/// protocole -- sujet, canal, destinataires -- **sans jamais passer par la
+/// primitive coranique** `presenterContenu`, qui ne porterait ni le mode, ni
+/// la plage, ni les marqueurs.
 void main() {
   late FauxMoteurSalle moteur;
   late AdaptateurTransportLiveKit adaptateur;
@@ -34,8 +32,8 @@ void main() {
     await moteur.fermer();
   });
 
-  test('il se declare partiel, il ne se declare pas complet', () {
-    expect(adaptateur.disponibilite, DisponibiliteTransport.partiel);
+  test('il se declare complet : les deux canaux et le ciblage existent', () {
+    expect(adaptateur.disponibilite, DisponibiliteTransport.complet);
   });
 
   test('les capacites sont recopiees du jeton signe', () {
@@ -72,8 +70,6 @@ void main() {
         ..poser(EtatSalle.absent);
 
       expect(await recus, <EtatTransport>[
-        // `instable` est un avertissement, pas une coupure : le traiter comme
-        // une coupure declencherait une restauration a chaque sursaut reseau.
         EtatTransport.ouvert,
         EtatTransport.interrompu,
         EtatTransport.retabli,
@@ -105,6 +101,7 @@ void main() {
           ),
         ),
       );
+      expect(moteur.publies, isEmpty);
     });
 
     test('hors salle, l envoi est refuse comme tel', () async {
@@ -126,54 +123,122 @@ void main() {
       );
     });
 
+    test('le canal fiable part sous le sujet nu, en mode fiable', () async {
+      await adaptateur.envoyer(
+        sujet: 'tc-pedagogique',
+        charge: const <int>[1, 2],
+        canal: CanalFiabilite.fiable,
+      );
+
+      expect(moteur.publies, hasLength(1));
+      expect(moteur.publies.single.sujet, 'tc-pedagogique');
+      expect(moteur.publies.single.fiable, isTrue);
+      expect(moteur.publies.single.charge, <int>[1, 2]);
+    });
+
     test(
-      'en salle et avec le droit, la primitive manque, et cela se DIT',
+      'le canal ephemere porte le suffixe du socle, en mode non fiable',
       () async {
-        await expectLater(
-          adaptateur.envoyer(
-            sujet: 'tc-pedagogique',
-            charge: const <int>[1],
-            canal: CanalFiabilite.ephemere,
-          ),
-          throwsA(
-            isA<EchecTransport>().having(
-              (EchecTransport e) => e.motif,
-              'motif',
-              MotifEchecTransport.primitiveEnvoiAbsente,
-            ),
-          ),
+        await adaptateur.envoyer(
+          sujet: 'tc-pedagogique',
+          charge: const <int>[3],
+          canal: CanalFiabilite.ephemere,
         );
+
+        // **La convention est celle du socle**, pas une invention de
+        // l'adaptateur : LiveKit ne dit pas a la reception par quel canal un
+        // paquet est arrive, et `PaquetDonnees.fiable` se derive du suffixe.
+        expect(
+          moteur.publies.single.sujet,
+          'tc-pedagogique$suffixeSujetEphemere',
+        );
+        expect(moteur.publies.single.fiable, isFalse);
       },
     );
 
+    test('un envoi cible transmet ses destinataires', () async {
+      await adaptateur.envoyer(
+        sujet: 'tc-pedagogique',
+        charge: const <int>[4],
+        canal: CanalFiabilite.fiable,
+        destinataires: const <String>[profilEleve],
+      );
+
+      expect(moteur.publies.single.destinataires, <String>[profilEleve]);
+    });
+
     test('aucun paquet ne part par la primitive coranique du socle', () async {
-      try {
-        await adaptateur.envoyer(
+      await adaptateur.envoyer(
+        sujet: 'tc-pedagogique',
+        charge: const <int>[1],
+        canal: CanalFiabilite.fiable,
+      );
+
+      // Faire passer le protocole pedagogique par `presenterContenu` aurait
+      // ete possible et aurait ete une faute : le mode d'affichage, la plage
+      // de travail et les marqueurs n'y tiennent pas.
+      expect(moteur.presentes, isEmpty);
+    });
+
+    test('un refus du moteur devient un echec de transport nomme', () async {
+      moteur.refuserPublication = const EchecPublicationDonnees(
+        MotifEchecPublication.transport,
+        'ICE',
+      );
+
+      await expectLater(
+        adaptateur.envoyer(
           sujet: 'tc-pedagogique',
           charge: const <int>[1],
           canal: CanalFiabilite.fiable,
-        );
-      } on EchecTransport {
-        // Attendu : la primitive manque. Ce qui compte est ce qui suit.
-      }
-
-      // **Faire passer le protocole pedagogique par `presenterContenu` aurait
-      // ete possible et aurait ete une faute** : le mode d'affichage, la plage
-      // de travail, les plages masquees et les marqueurs n'y tiennent pas. La
-      // classe suivrait les tours de page en perdant le reste en silence.
-      expect(moteur.presentes, isEmpty);
+        ),
+        throwsA(
+          isA<EchecTransport>().having(
+            (EchecTransport e) => e.motif,
+            'motif',
+            MotifEchecTransport.reseau,
+          ),
+        ),
+      );
     });
   });
 
-  test('le flux de paquets ne livre rien, et ne leve pas', () async {
-    // Un abonne doit pouvoir s'abonner sans se proteger : c'est
-    // `disponibilite` qui dit l'etat des lieux, pas une exception au premier
-    // evenement.
-    final List<PaquetRealtime> recus = <PaquetRealtime>[];
-    adaptateur.paquets().listen(recus.add, onError: (Object e) => fail('$e'));
-    moteur.poser(EtatSalle.connecte);
-    await pumpEventQueue();
+  group('reception', () {
+    test('un paquet fiable arrive sous son sujet et son canal', () async {
+      final Future<PaquetRealtime> recu = adaptateur.paquets().first;
+      await pumpEventQueue();
 
-    expect(recus, isEmpty);
+      moteur.recevoir(
+        const PaquetDonnees(
+          sujet: 'tc-pedagogique',
+          charge: <int>[9],
+          fiable: true,
+          emetteurIdentite: profilEnseignant,
+        ),
+      );
+
+      final PaquetRealtime paquet = await recu;
+      expect(paquet.sujet, 'tc-pedagogique');
+      expect(paquet.canal, CanalFiabilite.fiable);
+      expect(paquet.charge, <int>[9]);
+      expect(paquet.emetteurIdentite, profilEnseignant);
+    });
+
+    test('un paquet ephemere perd son suffixe et garde son canal', () async {
+      final Future<PaquetRealtime> recu = adaptateur.paquets().first;
+      await pumpEventQueue();
+
+      moteur.recevoir(
+        const PaquetDonnees(
+          sujet: 'tc-pedagogique$suffixeSujetEphemere',
+          charge: <int>[8],
+          fiable: false,
+        ),
+      );
+
+      final PaquetRealtime paquet = await recu;
+      expect(paquet.sujet, 'tc-pedagogique');
+      expect(paquet.canal, CanalFiabilite.ephemere);
+    });
   });
 }

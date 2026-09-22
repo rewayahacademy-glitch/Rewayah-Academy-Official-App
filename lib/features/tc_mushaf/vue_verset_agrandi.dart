@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +18,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'selection_verset.dart';
 
 /// Le rendu « lecture agrandie » : un verset a la fois, reflowable.
 ///
@@ -170,7 +172,7 @@ class ColonneVersetsReflow extends StatelessWidget {
 }
 
 /// Un verset, avec sa reference et sa rosace.
-class BlocVerset extends StatelessWidget {
+class BlocVerset extends ConsumerStatefulWidget {
   /// Cree un bloc de verset.
   const BlocVerset({
     required this.verset,
@@ -189,9 +191,44 @@ class BlocVerset extends StatelessWidget {
   final bool debutDeSourate;
 
   @override
+  ConsumerState<BlocVerset> createState() => _BlocVersetEtat();
+}
+
+class _BlocVersetEtat extends ConsumerState<BlocVerset> {
+  /// Cree a la demande, seulement sous la portee de selection, et libere ici.
+  TapGestureRecognizer? _tap;
+
+  @override
+  void dispose() {
+    _tap?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final VersetCoran verset = widget.verset;
+    final MetriqueTexteCoran metrique = widget.metrique;
+
+    // [QURAN-STAGE] La selection est une lentille d'interface posee par la
+    // classe ; le texte ne change jamais. Hors portee : aucun reconnaisseur,
+    // aucun lavis, le bloc d'avant.
+    final bool selectionnable = PorteeSelectionVerset.activeDans(context);
+    final bool selectionne =
+        selectionnable &&
+        versetSelectionne(ref.watch(selectionVersetProvider), verset);
+    if (selectionnable) {
+      _tap ??= TapGestureRecognizer()
+        ..onTap = () =>
+            ref.read(selectionVersetProvider.notifier).basculer(widget.verset);
+    }
+    final TextStyle base = palette.inkStrong.applyTo(
+      AppTypography.document(
+        taille: metrique.tailleTexte,
+        interligne: metrique.interligne,
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -211,7 +248,22 @@ class BlocVerset extends StatelessWidget {
           child: Text.rich(
             TextSpan(
               children: <InlineSpan>[
-                TextSpan(text: '${verset.texte} '),
+                TextSpan(
+                  text: '${verset.texte} ',
+                  recognizer: selectionnable ? _tap : null,
+                  // Un lavis ET la semantique : jamais la couleur seule.
+                  style: selectionne
+                      ? base.copyWith(
+                          backgroundColor: palette.washAccent.background,
+                          decoration: TextDecoration.underline,
+                          decorationColor: palette.washAccent.onBackground,
+                        )
+                      : null,
+                  semanticsLabel: selectionne
+                      ? '${verset.texte} '
+                            '${t.tc.classe.support.versetSelectionne}'
+                      : null,
+                ),
                 WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
                   child: ExcludeSemantics(
@@ -224,12 +276,7 @@ class BlocVerset extends StatelessWidget {
               ],
             ),
             textAlign: TextAlign.justify,
-            style: palette.inkStrong.applyTo(
-              AppTypography.document(
-                taille: metrique.tailleTexte,
-                interligne: metrique.interligne,
-              ),
-            ),
+            style: base,
           ),
         ),
       ],

@@ -1,5 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../session/session_controleur.dart';
+import '../tc_classe/session_persistante.dart';
+import '../video/livekit_session_provider.dart';
+import '../video/video_session_provider.dart';
+import 'adaptateur_transport_livekit.dart';
 import 'port_realtime_pedagogique.dart';
 import 'port_transport_donnees.dart';
 import 'service_realtime_pedagogique.dart';
@@ -7,23 +14,44 @@ import 'transport_indisponible.dart';
 
 /// Le transport de donnees de la salle courante.
 ///
-/// **Le defaut est l'absence de salle**, et c'est la situation la plus
-/// frequente du produit : le Groupe, la Bibliotheque et l'Accueil n'ont aucun
-/// canal de donnees. [TransportIndisponible] dit non de facon nommee plutot que
-/// de rester muet.
+/// **Il suit la session persistante, et elle seule.** Hors salle -- le Groupe,
+/// la Bibliotheque, l'Accueil -- [TransportIndisponible] dit non de facon
+/// nommee. Des que `ControleurSessionPersistante` a obtenu un `AccesSalle`,
+/// le transport devient l'adaptateur pose sur `moteurSalleProvider` -- jamais
+/// sur une seconde `Room`. C'est le point de surcharge que le lot F avait
+/// reserve a la Classe Live ; il est tenu ici, une fois, plutot que dans un
+/// `ProviderScope` imbrique que chaque ecran de salle devrait reposer.
 ///
-/// **C'est le seul point que la Classe Live doit surcharger.** A l'entree en
-/// salle, Agent E remplace ce provider par un `AdaptateurTransportLiveKit`
-/// construit sur le `AccesSalle` que `ServiceVideo.acces()` vient d'emettre et
-/// sur `moteurSalleProvider` -- jamais sur une seconde `Room`. Tout le reste du
-/// lot F suit sans changer une ligne.
-///
-/// Il n'est pas construit ici parce que le lot F n'a pas de quoi le construire :
-/// l'acces est emis par le backend au moment de l'entree, et le lot F ne
-/// demande pas de jeton. Un provider qui irait le chercher lui-meme ouvrirait
-/// une seconde porte d'entree en salle.
+/// L'identite locale est lue **a l'usage et sous garde** : un conteneur de
+/// test sans backend n'a pas de `sessionProvider` utilisable, et une salle de
+/// test doit quand meme pouvoir transporter. Sans identite, les capacites
+/// signees du jeton continuent de decider ; seul le champ d'emetteur des
+/// messages est vide.
 final Provider<PortTransportDonnees> portTransportDonneesProvider =
-    Provider<PortTransportDonnees>((Ref ref) => const TransportIndisponible());
+    Provider<PortTransportDonnees>((Ref ref) {
+      final AccesSalle? acces = ref.watch(
+        etatSessionProvider.select(
+          (AsyncValue<EtatSessionPersistante> e) => e.value?.acces,
+        ),
+      );
+      if (acces == null) {
+        return const TransportIndisponible();
+      }
+      String profil = '';
+      try {
+        profil = ref.read(sessionProvider).profileId ?? '';
+      } on Object {
+        // Sans session lisible, l'emetteur reste anonyme : le droit d'emettre
+        // est de toute facon celui du jeton signe.
+      }
+      final AdaptateurTransportLiveKit transport = AdaptateurTransportLiveKit(
+        moteur: ref.watch(moteurSalleProvider),
+        acces: acces,
+        profilLocalId: profil,
+      );
+      ref.onDispose(() => unawaited(transport.liberer()));
+      return transport;
+    });
 
 /// Le protocole pedagogique de la seance courante.
 ///

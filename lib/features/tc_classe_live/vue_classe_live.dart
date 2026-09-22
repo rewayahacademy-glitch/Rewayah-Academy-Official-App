@@ -87,7 +87,14 @@ class VueClasseLive {
     required this.compteurCompact,
     required this.avertitSuspension,
     required this.dockFlottant,
+    required this.vignetteLaterale,
   });
+
+  /// En dessous de cette hauteur, l'ecran est « court » : un telephone en
+  /// paysage. La largeur y ment -- elle dit « tablette » -- et la composition
+  /// de tablette y etranglerait le Coran entre une colonne de roster et une
+  /// bande de visages. Ce seuil est le seul de ce fichier, et il est nomme.
+  static const double seuilHauteurCourte = 500;
 
   /// Calcule la composition de l'ecran.
   ///
@@ -106,6 +113,7 @@ class VueClasseLive {
     required bool voitLeRoster,
     required bool peutPiloterSupport,
     bool suspensionNonConfirmee = false,
+    bool hauteurCourte = false,
   }) {
     final bool avecSupport = session.avecSupport;
 
@@ -113,23 +121,28 @@ class VueClasseLive {
         ? CompositionClasse.supportDominant
         : CompositionClasse.videoDominante;
 
-    final PlaceRoster placeRoster = switch ((voitLeRoster, gabarit)) {
+    // [RESPONSIVE] Un telephone en paysage est large mais court : on le
+    // compose comme un telephone, pas comme une tablette (lot 2 section 6,
+    // « pas une simple rotation naive »).
+    final bool compact = gabarit == Gabarit.mobile || hauteurCourte;
+
+    final PlaceRoster placeRoster = switch ((voitLeRoster, compact)) {
       (false, _) => PlaceRoster.masque,
       // Sur telephone, la colonne prendrait la moitie de la largeur du Coran.
       // La feuille rend la place au texte et se resume a un bouton compact.
-      (true, Gabarit.mobile) => PlaceRoster.feuille,
-      (true, _) => PlaceRoster.colonne,
+      (true, true) => PlaceRoster.feuille,
+      (true, false) => PlaceRoster.colonne,
     };
 
-    final PoidsVideo poidsVideo = switch ((avecSupport, gabarit)) {
+    final PoidsVideo poidsVideo = switch ((avecSupport, compact)) {
       // Sans support, la video EST le contenu, a tous les gabarits.
       (false, _) => PoidsVideo.scene,
       // Avec support sur telephone, le support est plein ecran ou presque :
       // la video se reduit a une vignette.
-      (true, Gabarit.mobile) => PoidsVideo.vignette,
+      (true, true) => PoidsVideo.vignette,
       // Avec support sur tablette et bureau, il reste de la largeur pour une
       // bande de visages a cote du document.
-      (true, _) => PoidsVideo.bande,
+      (true, false) => PoidsVideo.bande,
     };
 
     return VueClasseLive._(
@@ -149,6 +162,9 @@ class VueClasseLive {
       // offert a qui n'a pas le droit d'emettre proposerait des gestes que le
       // serveur refuserait.
       dockFlottant: avecSupport && peutPiloterSupport,
+      // En paysage court, la vignette se pose a cote du support : en dessous,
+      // elle mangerait la seule dimension qui manque.
+      vignetteLaterale: hauteurCourte && gabarit != Gabarit.mobile,
     );
   }
 
@@ -157,8 +173,9 @@ class VueClasseLive {
     EtatSalle.reconnexion => MotLien.reconnexion,
     EtatSalle.retabli => MotLien.retabli,
     EtatSalle.echec => MotLien.echec,
-    EtatSalle.absent || EtatSalle.connexion || EtatSalle.connecte =>
-      MotLien.aucun,
+    EtatSalle.absent ||
+    EtatSalle.connexion ||
+    EtatSalle.connecte => MotLien.aucun,
   };
 
   /// Qui domine l'ecran.
@@ -187,6 +204,12 @@ class VueClasseLive {
 
   /// Le Teaching Dock a-t-il lieu d'etre pose sur cet ecran ?
   final bool dockFlottant;
+
+  /// La vignette video se pose-t-elle a cote du support plutot que dessous ?
+  ///
+  /// Ne vaut que pour [PoidsVideo.vignette]. Vrai en paysage court, ou la
+  /// hauteur manque et la largeur abonde.
+  final bool vignetteLaterale;
 
   /// Le support occupe-t-il la plus grande surface ?
   bool get supportDomine => composition == CompositionClasse.supportDominant;

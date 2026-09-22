@@ -20,6 +20,7 @@ class EnseignantDeClasse {
     required this.nomAffichage,
     this.titre,
     this.photoCleOuUrl,
+    this.photoInconnue = false,
   });
 
   /// Le nom d'affichage autorise. Prenom, ou prenom et nom d'affichage.
@@ -28,8 +29,17 @@ class EnseignantDeClasse {
   /// Le titre. `null` tant que la base ne le porte pas.
   final TitreEnseignant? titre;
 
-  /// La photo professionnelle publique. `null` = manquante, a signaler.
+  /// La photo professionnelle publique. `null` = manquante, a signaler --
+  /// sauf quand [photoInconnue] dit que l'appelant ne l'a pas lue.
   final String? photoCleOuUrl;
+
+  /// Vrai quand l'ecran d'entree n'a pas lu la photo (un billet de salle ne la
+  /// porte pas). On ne signale alors pas une photo « manquante » qu'on n'a
+  /// pas cherchee : ce serait accuser l'enseignant sur une ignorance.
+  final bool photoInconnue;
+
+  /// Vrai quand la photo manque **et** qu'on le sait.
+  bool get photoManquante => photoCleOuUrl == null && !photoInconnue;
 }
 
 /// La seance live, telle que la coque de classe et ses invites la lisent.
@@ -48,10 +58,10 @@ class SessionLiveVM {
   /// Cree la vue d'une seance live.
   const SessionLiveVM({
     required this.sessionId,
-    required this.groupeId,
     required this.libelleGroupe,
-    required this.enseignant,
     required this.etatLien,
+    this.groupeId,
+    this.enseignant,
     this.horloge,
     this.supportActifId,
   });
@@ -62,16 +72,19 @@ class SessionLiveVM {
   /// Le groupe dont cette seance est l'etat temporaire.
   ///
   /// **Le Groupe est permanent, la Classe Live est un etat du Groupe**
-  /// (decision D-19) : c'est pour cela que le groupe est un champ requis ici et
-  /// non une option. Une seance sans groupe serait un cours qui ne mene nulle
-  /// part.
-  final String groupeId;
+  /// (decision D-19). `null` quand la seance a ete rejointe par son billet
+  /// sans groupe connu de l'appelant (controleur, tuteur qui assiste, eleve
+  /// venu de l'Accueil) : le cours existe, il n'a pas d'Espace Groupe ou
+  /// revenir, et aucun travail ne peut y etre pose.
+  final String? groupeId;
 
   /// Le nom familier du groupe, jamais un code backend.
   final String libelleGroupe;
 
-  /// Qui enseigne.
-  final EnseignantDeClasse enseignant;
+  /// Qui enseigne. `null` quand l'appelant ne le sait pas encore : l'en-tete
+  /// n'ecrit alors ni nom ni « photo manquante », plutot qu'un enseignant
+  /// invente.
+  final EnseignantDeClasse? enseignant;
 
   /// L'horloge de la seance. `null` tant que le port d'Agent A n'est pas
   /// branche : l'en-tete affiche alors le groupe sans temps restant, plutot

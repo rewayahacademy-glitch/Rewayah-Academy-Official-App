@@ -11,8 +11,8 @@ class SessionEnCours {
   /// Declare un cours en cours.
   const SessionEnCours({
     required this.sessionId,
-    required this.groupeId,
     required this.libelleGroupe,
+    this.groupeId,
     this.horloge,
   });
 
@@ -20,7 +20,11 @@ class SessionEnCours {
   final String sessionId;
 
   /// Le groupe dont elle est l'etat temporaire.
-  final String groupeId;
+  ///
+  /// `null` quand la seance a ete rejointe par son billet sans que l'appelant
+  /// connaisse le groupe (un controleur, un tuteur qui assiste) : le cours
+  /// existe, il n'a simplement pas d'Espace Groupe ou revenir.
+  final String? groupeId;
 
   /// Le nom familier du groupe.
   final String libelleGroupe;

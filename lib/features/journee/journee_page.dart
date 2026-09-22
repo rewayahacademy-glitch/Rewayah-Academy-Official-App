@@ -191,15 +191,11 @@ class _Corps extends ConsumerWidget {
     // rien ne pouvait plus atteindre. Le chemin mort est supprime, et c'est sa
     // forme -- carte dominante puis lignes de colonne -- qui est gardee, parce
     // qu'un squelette ressemble a ce qui arrive.
-    final bool premiereCharge = <AsyncValue<Object?>>[
-      seances,
-      reglages,
-      pause,
-      retards,
-      feed,
-    ].any(
-      (AsyncValue<Object?> lecture) => !lecture.hasValue && lecture.isLoading,
-    );
+    final bool premiereCharge =
+        <AsyncValue<Object?>>[seances, reglages, pause, retards, feed].any(
+          (AsyncValue<Object?> lecture) =>
+              !lecture.hasValue && lecture.isLoading,
+        );
     if (premiereCharge) {
       return const Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -474,7 +470,7 @@ class _BlocDominant extends ConsumerWidget {
               style: textes.bodySmall ?? const TextStyle(),
             )
           else
-            _Lancement(seanceId: cours.id),
+            _Lancement(cours: cours),
           if (idGroupe != null) ...<Widget>[
             Ecart.vSm,
             Align(
@@ -501,9 +497,9 @@ class _BlocDominant extends ConsumerWidget {
 /// de l'Agent 0 a tranche pour le provider afin que la Journee et la salle
 /// lisent le meme resultat.
 class _Lancement extends ConsumerWidget {
-  const _Lancement({required this.seanceId});
+  const _Lancement({required this.cours});
 
-  final String seanceId;
+  final SeanceEnseignant cours;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -536,7 +532,15 @@ class _Lancement extends ConsumerWidget {
               Routes.salle,
               // Le billet passe par `extra`, jamais par l'URL (ADR-005) :
               // une adresse de salle copiee ne rouvre rien.
-              extra: BilletSalle(sessionId: seanceId, emisA: DateTime.now()),
+              // Ce que la Journee sait deja du cours voyage avec le billet :
+              // le groupe et son nom, pour l'en-tete et la Bibliotheque.
+              extra: BilletSalle(
+                sessionId: cours.id,
+                emisA: DateTime.now(),
+                groupeId: cours.groupeId,
+                libelleGroupe: cours.groupeLibelle,
+                seuilMax: cours.seuilMax,
+              ),
             ),
           ),
         ],
@@ -631,9 +635,7 @@ class _AlertesSeance extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: _LigneAlerte(
               phrase: ligne.etat == EtatPresence.absente
-                  ? t.enseignant.journee.absenceDetectee(
-                      eleve: _nommer(ligne),
-                    )
+                  ? t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne))
                   : t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
               icone: AppIcons.avertissement,
             ),
@@ -714,9 +716,8 @@ class _LigneRapport extends ConsumerWidget {
         // `push` et non `go` : au retour, la file se relit et la ligne
         // disparait d'elle-meme. Avec `go`, le provider garderait sa valeur en
         // cache et l'enseignant relirait un rapport qu'il vient de deposer.
-        await GoRouter.of(context).push<void>(
-          Routes.cahierPour(cahier.seanceId),
-        );
+        await GoRouter.of(context)
+            .push<void>(Routes.cahierPour(cahier.seanceId));
         if (context.mounted) {
           ref.invalidate(cahiersEnRetardProvider);
           ref.invalidate(seancesEnseignantProvider);
@@ -785,9 +786,7 @@ Seance _versSeance(SeanceEnseignant seance) {
     elevePrenom: libelle == null || libelle.isEmpty
         ? t.enseignant.journee.coursIndividuel
         : libelle,
-    eleveIdentifiant: seance.estGroupe
-        ? _effectif(seance.nbParticipants)
-        : '',
+    eleveIdentifiant: seance.estGroupe ? _effectif(seance.nbParticipants) : '',
     enseignantId: '',
     enseignantPrenom: '',
     enseignantIdentifiant: '',

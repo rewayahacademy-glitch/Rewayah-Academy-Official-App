@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -106,6 +106,10 @@ class EnteteClasse extends StatelessWidget {
     final String? compteur = vue.compteurCompact;
     final VoidCallback? voirRoster = onVoirRoster;
     final String? mot = _motDuLien(vue.motLien);
+    // `null` quand l'ecran d'entree ne connaissait pas l'enseignant : on
+    // n'ecrit alors ni nom ni « photo manquante », plutot qu'un enseignant
+    // invente.
+    final EnseignantDeClasse? enseignant = session.enseignant;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,12 +120,8 @@ class EnteteClasse extends StatelessWidget {
             // La photo enseignant est OBLIGATOIRE (decision D-01). Quand elle
             // manque, on ne pose pas un avatar generique : cela masquerait une
             // donnee absente au lieu de la signaler. On ecrit qu'elle manque.
-            if (session.enseignant.photoCleOuUrl case final String photo)
-              ...<Widget>[
-              AvatarTile(
-                prenom: session.enseignant.nomAffichage,
-                urlSignee: photo,
-              ),
+            if (enseignant?.photoCleOuUrl case final String photo) ...<Widget>[
+              AvatarTile(prenom: enseignant!.nomAffichage, urlSignee: photo),
               Ecart.hSm,
             ],
             Expanded(
@@ -135,11 +135,12 @@ class EnteteClasse extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: textes.titleSmall ?? const TextStyle(),
                     ),
-                    Text(
-                      nomAvecTitre(session.enseignant),
-                      overflow: TextOverflow.ellipsis,
-                      style: textes.labelMedium ?? const TextStyle(),
-                    ),
+                    if (enseignant != null)
+                      Text(
+                        nomAvecTitre(enseignant),
+                        overflow: TextOverflow.ellipsis,
+                        style: textes.labelMedium ?? const TextStyle(),
+                      ),
                   ],
                 ),
               ),
@@ -159,7 +160,7 @@ class EnteteClasse extends StatelessWidget {
             ],
           ],
         ),
-        if (session.enseignant.photoCleOuUrl == null) ...<Widget>[
+        if (enseignant != null && enseignant.photoManquante) ...<Widget>[
           Ecart.vSm,
           StatusPill(
             libelle: t.tc.classe.entete.photoManquante,

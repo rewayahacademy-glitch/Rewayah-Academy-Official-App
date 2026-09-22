@@ -18,7 +18,14 @@ import 'package:flutter/foundation.dart';
 @immutable
 class BilletSalle {
   /// Cree un billet pour une seance.
-  const BilletSalle({required this.sessionId, required this.emisA});
+  const BilletSalle({
+    required this.sessionId,
+    required this.emisA,
+    this.groupeId,
+    this.libelleGroupe,
+    this.enseignantPrenom,
+    this.seuilMax,
+  });
 
   /// La seance visee.
   final String sessionId;
@@ -26,6 +33,24 @@ class BilletSalle {
   /// Instant d'emission cote client. Sert uniquement a purger un billet reste
   /// en memoire trop longtemps, jamais a autoriser quoi que ce soit.
   final DateTime emisA;
+
+  /// Le groupe de la seance, quand l'ecran d'entree le connait.
+  ///
+  /// **Ce que l'ecran d'entree sait deja, et rien de plus.** La Journee de
+  /// l'enseignant lit `mes_seances_enseignant_v`, qui porte le groupe ;
+  /// l'Accueil de l'eleve lit `mes_seances_v`, qui ne le porte pas. Aucun de
+  /// ces champs n'autorise quoi que ce soit : la salle lit son role et ses
+  /// capacites dans le jeton signe, jamais ici.
+  final String? groupeId;
+
+  /// Le nom familier du groupe, quand l'ecran d'entree le connait.
+  final String? libelleGroupe;
+
+  /// Le prenom de l'enseignant, quand l'ecran d'entree le connait.
+  final String? enseignantPrenom;
+
+  /// Le plafond du groupe, lu du serveur, quand l'ecran d'entree le connait.
+  final int? seuilMax;
 
   /// Duree au-dela de laquelle un billet garde en memoire n'est plus presente.
   static const Duration duree = Duration(minutes: 20);

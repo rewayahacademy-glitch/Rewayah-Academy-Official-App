@@ -6577,6 +6577,9 @@ class Traductions$tc$classe$entete$fr {
 
 	/// fr: 'Photo enseignant manquante'
 	String get photoManquante => 'Photo enseignant manquante';
+
+	/// fr: 'Cours en direct'
+	String get sansGroupe => 'Cours en direct';
 }
 
 // Path: tc.classe.roster
@@ -6736,6 +6739,9 @@ class Traductions$tc$classe$rappel$fr {
 
 	/// fr: 'Déjà appelé. À nouveau dans {secondes} s'
 	String cooldown({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s';
+
+	/// fr: 'Vous observez en mode incognito. Cette visite est inscrite au journal.'
+	String get adminIncognito => 'Vous observez en mode incognito. Cette visite est inscrite au journal.';
 }
 
 // Path: tc.classe.recitation
@@ -6787,6 +6793,36 @@ class Traductions$tc$classe$support$fr {
 
 	/// fr: 'Le choix de support sera disponible dès l'intégration du catalogue.'
 	String get bibliothequeAbsenteDetail => 'Le choix de support sera disponible dès l\'intégration du catalogue.';
+
+	/// fr: 'L'enseignant n'a pas encore ouvert de support. Le cours continue.'
+	String get aucunDetailEleve => 'L\'enseignant n\'a pas encore ouvert de support. Le cours continue.';
+
+	/// fr: 'Présenter le Coran'
+	String get presenterCoran => 'Présenter le Coran';
+
+	/// fr: 'Le groupe suit la page que vous ouvrez.'
+	String get presenterCoranDetail => 'Le groupe suit la page que vous ouvrez.';
+
+	/// fr: 'Revenir à la page du professeur'
+	String get revenirProfesseur => 'Revenir à la page du professeur';
+
+	/// fr: 'Page {page}'
+	String revenirProfesseurDetail({required Object page}) => 'Page ${page}';
+
+	/// fr: 'La page n'a pas pu être partagée. Le cours continue, réessayez.'
+	String get publicationEchec => 'La page n\'a pas pu être partagée. Le cours continue, réessayez.';
+
+	/// fr: 'Ce support ne peut pas encore être affiché ici'
+	String get nonPrisEnCharge => 'Ce support ne peut pas encore être affiché ici';
+
+	/// fr: 'Seul le Coran est présenté dans la salle pour le moment.'
+	String get nonPrisEnChargeDetail => 'Seul le Coran est présenté dans la salle pour le moment.';
+
+	/// fr: 'verset sélectionné'
+	String get versetSelectionne => 'verset sélectionné';
+
+	/// fr: 'Affichage'
+	String get affichage => 'Affichage';
 }
 
 // Path: tc.classe.commandes
@@ -6811,6 +6847,30 @@ class Traductions$tc$classe$commandes$fr {
 
 	/// fr: 'Micro fermé'
 	String get microCoupe => 'Micro fermé';
+
+	/// fr: 'Micro'
+	String get microCourt => 'Micro';
+
+	/// fr: 'Caméra'
+	String get cameraCourt => 'Caméra';
+
+	/// fr: 'Aucun micro'
+	String get microAbsent => 'Aucun micro';
+
+	/// fr: 'Aucune caméra'
+	String get cameraAbsente => 'Aucune caméra';
+
+	/// fr: 'Accès refusé'
+	String get permissionRefusee => 'Accès refusé';
+
+	/// fr: 'Réglage en cours'
+	String get reglageEnCours => 'Réglage en cours';
+
+	/// fr: 'Indisponible'
+	String get indisponible => 'Indisponible';
+
+	/// fr: 'Ouvrir la Bibliothèque'
+	String get ouvrirBibliotheque => 'Ouvrir la Bibliothèque';
 
 	/// fr: 'Quitter'
 	String get quitter => 'Quitter';
@@ -9316,6 +9376,7 @@ extension on Traductions {
 			'tc.classe.entete.resteHeuresMinutes' => ({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}',
 			'tc.classe.entete.coursEnCours' => 'Cours toujours en cours',
 			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
+			'tc.classe.entete.sansGroupe' => 'Cours en direct',
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
@@ -9354,6 +9415,7 @@ extension on Traductions {
 			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
+			'tc.classe.rappel.adminIncognito' => 'Vous observez en mode incognito. Cette visite est inscrite au journal.',
 			'tc.classe.recitation.titre' => 'Récitation',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
@@ -9365,11 +9427,29 @@ extension on Traductions {
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
+			'tc.classe.support.aucunDetailEleve' => 'L\'enseignant n\'a pas encore ouvert de support. Le cours continue.',
+			'tc.classe.support.presenterCoran' => 'Présenter le Coran',
+			'tc.classe.support.presenterCoranDetail' => 'Le groupe suit la page que vous ouvrez.',
+			'tc.classe.support.revenirProfesseur' => 'Revenir à la page du professeur',
+			'tc.classe.support.revenirProfesseurDetail' => ({required Object page}) => 'Page ${page}',
+			'tc.classe.support.publicationEchec' => 'La page n\'a pas pu être partagée. Le cours continue, réessayez.',
+			'tc.classe.support.nonPrisEnCharge' => 'Ce support ne peut pas encore être affiché ici',
+			'tc.classe.support.nonPrisEnChargeDetail' => 'Seul le Coran est présenté dans la salle pour le moment.',
+			'tc.classe.support.versetSelectionne' => 'verset sélectionné',
+			'tc.classe.support.affichage' => 'Affichage',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',
 			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
 			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',
 			'tc.classe.commandes.microCoupe' => 'Micro fermé',
+			'tc.classe.commandes.microCourt' => 'Micro',
+			'tc.classe.commandes.cameraCourt' => 'Caméra',
+			'tc.classe.commandes.microAbsent' => 'Aucun micro',
+			'tc.classe.commandes.cameraAbsente' => 'Aucune caméra',
+			'tc.classe.commandes.permissionRefusee' => 'Accès refusé',
+			'tc.classe.commandes.reglageEnCours' => 'Réglage en cours',
+			'tc.classe.commandes.indisponible' => 'Indisponible',
+			'tc.classe.commandes.ouvrirBibliotheque' => 'Ouvrir la Bibliothèque',
 			'tc.classe.commandes.quitter' => 'Quitter',
 			'tc.classe.commandes.quitterQuestion' => 'Quitter le cours ?',
 			'tc.classe.commandes.quitterConsequence' => 'Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.',

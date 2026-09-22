@@ -410,6 +410,7 @@ class _CoursEnDirect extends ConsumerWidget {
                   extra: BilletSalle(
                     sessionId: seance.id,
                     emisA: DateTime.now(),
+                    enseignantPrenom: seance.enseignantPrenom,
                   ),
                 )
               : null,

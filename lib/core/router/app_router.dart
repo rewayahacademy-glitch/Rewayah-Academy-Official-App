@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,10 +43,10 @@ import '../../features/journee/journee_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
-import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
+import '../../features/tc_classe_live/entree_salle.dart';
 import '../../features/tc_classe_live/routes_tc_e.dart';
 import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart';
@@ -597,12 +597,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // repli sur une seance vide existe quand meme, et il est sur -- le
       // backend refusera le jeton, et l'ecran affichera son impasse d'acces
       // plutot que de lever.
+      //
+      // Depuis le lot 2 (Classroom Experience), `/salle` et `/tc/classe`
+      // rendent la meme coque : `ClasseLivePage`. Le billet porte ce que
+      // l'ecran d'entree savait du cours ; le role vient du jeton.
       GoRoute(
         path: Routes.salle,
-        builder: (BuildContext _, GoRouterState etat) => SallePage(
-          seanceId: etat.extra is BilletSalle
-              ? (etat.extra! as BilletSalle).sessionId
-              : '',
+        builder: (BuildContext _, GoRouterState etat) => EntreeSalle(
+          billet: etat.extra is BilletSalle
+              ? etat.extra! as BilletSalle
+              : BilletSalle(sessionId: '', emisA: DateTime.now()),
         ),
       ),
 
@@ -684,8 +688,10 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
   AppRole.guardian => RoleEspaceGroupe.tuteur,
   AppRole.teacher => RoleEspaceGroupe.enseignant,
   AppRole.admin => RoleEspaceGroupe.admin,
-  AppRole.student || AppRole.controller || AppRole.accountant || null =>
-    RoleEspaceGroupe.eleve,
+  AppRole.student ||
+  AppRole.controller ||
+  AppRole.accountant ||
+  null => RoleEspaceGroupe.eleve,
 };
 
 /// La coquille de navigation d'un role, autour des branches qui sont ses

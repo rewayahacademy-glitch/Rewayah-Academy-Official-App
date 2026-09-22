@@ -84,6 +84,10 @@ void _rejoindre(BuildContext contexte, GroupSummaryVM groupe) {
       ),
       horloge: groupe.horloge,
       seuilMax: groupe.seuilMax,
+      // Apres « Quitter », retour a l'Espace Groupe d'ou l'on vient : la coque
+      // ne navigue pas (decision D-04), c'est la route qui decide.
+      onSortie: (_) =>
+          GoRouter.of(contexte).go(CheminsTcA.espaceGroupe(groupe.groupeId)),
     ),
   );
 }

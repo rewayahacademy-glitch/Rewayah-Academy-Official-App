@@ -26,14 +26,18 @@ import 'surface_bibliotheque.dart';
 class ClassLibraryPicker extends StatelessWidget {
   /// Cree le selecteur.
   const ClassLibraryPicker({
-    required this.groupeId,
     required this.onChoisir,
     super.key,
+    this.groupeId,
     this.hauteurMaximale,
   });
 
   /// Le groupe en cours de cours.
-  final String groupeId;
+  ///
+  /// `null` quand la seance a ete rejointe sans groupe connu (billet sans
+  /// groupe) : la section « Ce groupe » n'est alors pas proposee, le reste de
+  /// la decouverte ne change pas.
+  final String? groupeId;
 
   /// Ce qui se passe quand un support est choisi.
   ///
@@ -58,15 +62,13 @@ class ClassLibraryPicker extends StatelessWidget {
   /// salle reste connecte.
   static Future<void> ouvrirEnFeuille(
     BuildContext context, {
-    required String groupeId,
     required ChoixRessource onChoisir,
+    String? groupeId,
   }) => AppBottomSheet.ouvrir<void>(
     context,
     titre: t.tc.bibliotheque.classe.titre,
-    constructeur: (BuildContext contexte) => ClassLibraryPicker(
-      groupeId: groupeId,
-      onChoisir: onChoisir,
-    ),
+    constructeur: (BuildContext contexte) =>
+        ClassLibraryPicker(groupeId: groupeId, onChoisir: onChoisir),
   );
 
   @override

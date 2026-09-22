@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
+import 'package:rewayah_academy/features/tc_classe_live/commandes_classe.dart';
 import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
 import 'package:rewayah_academy/features/tc_classe_live/scene_classe.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
@@ -222,10 +223,7 @@ void main() {
         ecran: LargeurEcran.tablette,
       );
 
-      expect(
-        find.text(t.tc.classe.entete.photoManquante),
-        findsOneWidget,
-      );
+      expect(find.text(t.tc.classe.entete.photoManquante), findsOneWidget);
       // Sayyid / Sayyida, jamais Ustaz (decision D-02).
       expect(find.text('Sayyida Youssouf'), findsOneWidget);
     });
@@ -248,9 +246,7 @@ void main() {
       expect(find.text(t.tc.classe.roster.vide), findsNothing);
     });
 
-    testWidgets('un roster vide le dit autrement', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('un roster vide le dit autrement', (WidgetTester tester) async {
       final banc0 = banc(presence: <PresenceParticipant>[]);
       await monterClasse(
         tester,
@@ -344,7 +340,15 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      await tester.tap(find.text(t.tc.classe.support.bibliotheque));
+      // Deux « Bibliotheque » a l'ecran, et c'est voulu : la commande ronde
+      // du bas et l'outil du dock menent au meme panneau. On presse la
+      // commande, par son acte lu.
+      await tester.tap(
+        find.descendant(
+          of: find.byType(CommandeRonde),
+          matching: find.text(t.tc.classe.support.bibliotheque),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('catalogue'), findsOneWidget);

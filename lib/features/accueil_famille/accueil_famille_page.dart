@@ -177,9 +177,9 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
   /// donc dans l'impasse d'acces de la salle, sans que rien ne dise pourquoi.
   /// La migration `0012` ouvre la porte ; celle-ci la franchit avant de
   /// naviguer, parce qu'un refus se dit ici, pas trois ecrans plus loin.
-  Future<void> _assister(String seanceId) async {
+  Future<void> _assister(Seance seance) async {
     try {
-      await ref.read(serviceVideoProvider).assisterEnTuteur(seanceId);
+      await ref.read(serviceVideoProvider).assisterEnTuteur(seance.id);
     } on Object {
       if (mounted) {
         setState(() => _echecAssistance = t.tuteur.accueil.assisterRefuse);
@@ -192,7 +192,11 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
     GoRouter.of(context).go(
       Routes.salle,
       // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-      extra: BilletSalle(sessionId: seanceId, emisA: DateTime.now()),
+      extra: BilletSalle(
+        sessionId: seance.id,
+        emisA: DateTime.now(),
+        enseignantPrenom: seance.enseignantPrenom,
+      ),
     );
   }
 
@@ -307,7 +311,7 @@ class _CarteEnfant extends ConsumerWidget {
 
   /// Ce que fait « Assister » : inscrire, puis ouvrir la salle. La carte ne
   /// connait ni l'un ni l'autre, elle rend le geste a l'ecran qui la porte.
-  final Future<void> Function(String seanceId) onAssister;
+  final Future<void> Function(Seance seance) onAssister;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -351,7 +355,7 @@ class _CarteEnfant extends ConsumerWidget {
       // n'y a pas de salle a rejoindre, et un bouton qui echoue apres le geste
       // coute plus cher qu'un bouton absent.
       onAssister: phase == PhaseEnfant.enCours && prochain != null
-          ? () => unawaited(onAssister(prochain.id))
+          ? () => unawaited(onAssister(prochain))
           : null,
     );
   }

@@ -134,7 +134,11 @@ class _PlanningControleurPageEtat
       Routes.salle,
       // Le billet passe par `extra`, jamais par l'URL (ADR-005) : une adresse
       // de salle copiee ne rouvre rien, pas meme pour un controleur.
-      extra: BilletSalle(sessionId: ligne.seance.id, emisA: DateTime.now()),
+      extra: BilletSalle(
+        sessionId: ligne.seance.id,
+        emisA: DateTime.now(),
+        enseignantPrenom: ligne.seance.enseignantPrenom,
+      ),
     );
   }
 

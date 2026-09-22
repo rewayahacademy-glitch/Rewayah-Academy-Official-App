@@ -3,22 +3,17 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 
-/// Un moteur de salle sans SDK, pilote a la main.
+/// Un moteur de salle en memoire, reduit a ce que l'adaptateur du lot F lit.
 ///
-/// **Le patron est celui de `test/features/salle_test.dart` (lignes 72-74)** :
-/// la salle se prouve avec un faux moteur injecte, jamais avec LiveKit. Ce faux
-/// vit sous `test/teaching_core/f/faux/` parce que `test/support/harnais.dart`
-/// est interdit aux agents Teaching Core (decision D-06).
-///
-/// Il n'implemente que ce que le lot F lit reellement du contrat : l'etat de
-/// connexion. Le reste rend des flux vides ou ne fait rien -- un faux qui
-/// simulerait ce que le test n'observe pas invite a croire qu'on l'a eprouve.
+/// **Il ne simule pas WebRTC** : il rejoue ce que le vrai moteur publie -- un
+/// etat, des paquets -- et enregistre ce qu'on lui demande de publier.
+/// Depuis le lot 2, il porte la primitive generale de donnees du socle
+/// (`publierDonnees`, `donneesRecues`), que l'adaptateur emploie.
 class FauxMoteurSalle implements VideoSessionProvider {
-  /// Cree un faux moteur, hors salle par defaut.
-  FauxMoteurSalle();
-
   final StreamController<EtatSalle> _etats =
       StreamController<EtatSalle>.broadcast();
+  final StreamController<PaquetDonnees> _donnees =
+      StreamController<PaquetDonnees>.broadcast();
 
   EtatSalle _etat = EtatSalle.absent;
 
@@ -28,6 +23,12 @@ class FauxMoteurSalle implements VideoSessionProvider {
   /// **prouver** qu'il ne passe jamais par cette primitive.
   final List<ContenuPresente> presentes = <ContenuPresente>[];
 
+  /// Les paquets publies par la primitive generale, dans l'ordre.
+  final List<PublicationEnregistree> publies = <PublicationEnregistree>[];
+
+  /// Ce que `publierDonnees` doit lever, quand on teste un refus du moteur.
+  EchecPublicationDonnees? refuserPublication;
+
   /// Pose un etat de salle et le publie.
   void poser(EtatSalle etat) {
     _etat = etat;
@@ -36,8 +37,18 @@ class FauxMoteurSalle implements VideoSessionProvider {
     }
   }
 
+  /// Fait arriver un paquet du canal de donnees, comme le ferait le reseau.
+  void recevoir(PaquetDonnees paquet) {
+    if (!_donnees.isClosed) {
+      _donnees.add(paquet);
+    }
+  }
+
   /// Ferme les flux.
-  Future<void> fermer() => _etats.close();
+  Future<void> fermer() async {
+    await _etats.close();
+    await _donnees.close();
+  }
 
   @override
   EtatSalle get etatCourant => _etat;
@@ -83,8 +94,7 @@ class FauxMoteurSalle implements VideoSessionProvider {
   Future<void> liberer() => fermer();
 
   @override
-  Stream<PaquetDonnees> get donneesRecues =>
-      const Stream<PaquetDonnees>.empty();
+  Stream<PaquetDonnees> get donneesRecues => _donnees.stream;
 
   @override
   AccesSalle? get accesCourant => null;
@@ -95,5 +105,41 @@ class FauxMoteurSalle implements VideoSessionProvider {
     required List<int> charge,
     required bool fiable,
     List<String> destinataires = const <String>[],
-  }) async {}
+  }) async {
+    final EchecPublicationDonnees? refus = refuserPublication;
+    if (refus != null) {
+      throw refus;
+    }
+    publies.add(
+      PublicationEnregistree(
+        sujet: sujet,
+        charge: charge,
+        fiable: fiable,
+        destinataires: destinataires,
+      ),
+    );
+  }
+}
+
+/// Une publication telle que le faux moteur l'a recue.
+class PublicationEnregistree {
+  /// Cree l'enregistrement.
+  const PublicationEnregistree({
+    required this.sujet,
+    required this.charge,
+    required this.fiable,
+    required this.destinataires,
+  });
+
+  /// Le sujet demande.
+  final String sujet;
+
+  /// Les octets.
+  final List<int> charge;
+
+  /// Le mode demande.
+  final bool fiable;
+
+  /// Les destinataires cibles, vide pour une diffusion.
+  final List<String> destinataires;
 }

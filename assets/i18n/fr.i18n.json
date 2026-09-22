@@ -1840,7 +1840,8 @@
         "resteMinutes": "Reste {minutes} min",
         "resteHeuresMinutes": "Reste {heures} h {minutes}",
         "coursEnCours": "Cours toujours en cours",
-        "photoManquante": "Photo enseignant manquante"
+        "photoManquante": "Photo enseignant manquante",
+        "sansGroupe": "Cours en direct"
       },
       "roster": {
         "titre": "Élèves",
@@ -1888,7 +1889,8 @@
         "recu": "Le professeur vous appelle",
         "echec": "Le rappel n'a pas pu être envoyé",
         "echecDroit": "Votre accès à cette séance ne permet pas d'appeler un élève",
-        "cooldown": "Déjà appelé. À nouveau dans {secondes} s"
+        "cooldown": "Déjà appelé. À nouveau dans {secondes} s",
+        "adminIncognito": "Vous observez en mode incognito. Cette visite est inscrite au journal."
       },
       "recitation": {
         "titre": "Récitation",
@@ -1903,7 +1905,17 @@
         "aucunDetail": "Ouvrez la Bibliothèque pour présenter un support au groupe.",
         "bibliotheque": "Bibliothèque",
         "bibliothequeAbsente": "Bibliothèque non branchée",
-        "bibliothequeAbsenteDetail": "Le choix de support sera disponible dès l'intégration du catalogue."
+        "bibliothequeAbsenteDetail": "Le choix de support sera disponible dès l'intégration du catalogue.",
+        "aucunDetailEleve": "L'enseignant n'a pas encore ouvert de support. Le cours continue.",
+        "presenterCoran": "Présenter le Coran",
+        "presenterCoranDetail": "Le groupe suit la page que vous ouvrez.",
+        "revenirProfesseur": "Revenir à la page du professeur",
+        "revenirProfesseurDetail": "Page {page}",
+        "publicationEchec": "La page n'a pas pu être partagée. Le cours continue, réessayez.",
+        "nonPrisEnCharge": "Ce support ne peut pas encore être affiché ici",
+        "nonPrisEnChargeDetail": "Seul le Coran est présenté dans la salle pour le moment.",
+        "versetSelectionne": "verset sélectionné",
+        "affichage": "Affichage"
       },
       "commandes": {
         "micro": "Ouvrir le micro",
@@ -1911,6 +1923,14 @@
         "camera": "Ouvrir la caméra",
         "cameraFermer": "Fermer la caméra",
         "microCoupe": "Micro fermé",
+        "microCourt": "Micro",
+        "cameraCourt": "Caméra",
+        "microAbsent": "Aucun micro",
+        "cameraAbsente": "Aucune caméra",
+        "permissionRefusee": "Accès refusé",
+        "reglageEnCours": "Réglage en cours",
+        "indisponible": "Indisponible",
+        "ouvrirBibliotheque": "Ouvrir la Bibliothèque",
         "quitter": "Quitter",
         "quitterQuestion": "Quitter le cours ?",
         "quitterConsequence": "Votre sortie sera enregistrée. Vous pourrez revenir tant que la séance est ouverte.",

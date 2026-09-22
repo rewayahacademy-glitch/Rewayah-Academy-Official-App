@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,6 +8,7 @@ import '../../core/coran/service_coran.dart';
 import '../../core/coran/vue_lecteur.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_bibliotheque/content_range.dart';
 import '../../core/tc_coran/etat_lecture_coran.dart';
 import '../../core/tc_coran/metrique_texte_coran.dart';
 import '../../core/tc_coran/moteur_mushaf.dart';
@@ -22,6 +24,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'selection_verset.dart';
 
 /// Le rendu « page du mushaf ».
 ///
@@ -103,15 +106,13 @@ class _FeuilleteurEtat extends ConsumerState<_Feuilleteur> {
     super.dispose();
   }
 
-  int _feuilletDe(int page) =>
-      widget.doublePage ? (page - 1) ~/ 2 : page - 1;
+  int _feuilletDe(int page) => widget.doublePage ? (page - 1) ~/ 2 : page - 1;
 
   int _pageDe(int feuillet) =>
       widget.doublePage ? feuillet * 2 + 1 : feuillet + 1;
 
-  int get _nombreFeuillets => widget.doublePage
-      ? (pagesMushafMedine / 2).ceil()
-      : pagesMushafMedine;
+  int get _nombreFeuillets =>
+      widget.doublePage ? (pagesMushafMedine / 2).ceil() : pagesMushafMedine;
 
   @override
   Widget build(BuildContext context) {
@@ -140,10 +141,7 @@ class _FeuilleteurEtat extends ConsumerState<_Feuilleteur> {
         itemCount: _nombreFeuillets,
         onPageChanged: (int feuillet) => ref
             .read(lectureCoranProvider.notifier)
-            .allerA(
-              _pageDe(feuillet),
-              origine: OrigineNavigation.personnelle,
-            ),
+            .allerA(_pageDe(feuillet), origine: OrigineNavigation.personnelle),
         itemBuilder: (BuildContext context, int feuillet) => OuvertureMushaf(
           pageDeDroite: _pageDe(feuillet),
           doublePage: widget.doublePage,
@@ -200,10 +198,7 @@ class OuvertureMushaf extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        final double utile = math.max(
-          0,
-          contraintes.maxWidth - gouttiere * 2,
-        );
+        final double utile = math.max(0, contraintes.maxWidth - gouttiere * 2);
         final bool deuxCadres = planche?.estDouble ?? numeroGauche != null;
         final double largeurCadre = deuxCadres
             ? math.max(0, (utile - AppSpacing.lg) / 2)
@@ -236,10 +231,7 @@ class OuvertureMushaf extends ConsumerWidget {
                       const SizedBox(width: AppSpacing.lg),
                     SizedBox(
                       width: largeurCadre,
-                      child: CadrePageMushaf(
-                        vue: page,
-                        largeur: largeurCadre,
-                      ),
+                      child: CadrePageMushaf(vue: page, largeur: largeurCadre),
                     ),
                   ],
               ],
@@ -461,7 +453,8 @@ class LigneComposee extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: <InlineSpan>[
-          for (final SegmentVersetLigne segment in ligne.segments) ...<InlineSpan>[
+          for (final SegmentVersetLigne segment
+              in ligne.segments) ...<InlineSpan>[
             TextSpan(text: segment.texte),
             if (segment.termineLAyah) ...<InlineSpan>[
               const TextSpan(text: ' '),
@@ -490,7 +483,7 @@ class LigneComposee extends StatelessWidget {
 /// **Un flux continu, et non une liste de cartes** : c'est la forme d'un
 /// mushaf. Les numeros de verset passent par la rosace **dessinee** de
 /// `RosaceVerset`, qui resout deja le piege U+06DD.
-class ParagrapheVersets extends StatelessWidget {
+class ParagrapheVersets extends ConsumerStatefulWidget {
   /// Cree un paragraphe de versets.
   const ParagrapheVersets({
     required this.versets,
@@ -509,12 +502,63 @@ class ParagrapheVersets extends StatelessWidget {
   final double echelleRosace;
 
   @override
+  ConsumerState<ParagrapheVersets> createState() => _ParagrapheVersetsEtat();
+}
+
+class _ParagrapheVersetsEtat extends ConsumerState<ParagrapheVersets> {
+  /// Un reconnaisseur par verset, **seulement sous la portee de selection**.
+  ///
+  /// Un `TapGestureRecognizer` dans un `TextSpan` doit etre libere par celui
+  /// qui l'a cree : c'est la seule raison d'etre de cet etat. Hors classe, la
+  /// carte reste vide et le paragraphe est exactement celui d'avant.
+  final Map<int, TapGestureRecognizer> _taps = <int, TapGestureRecognizer>{};
+
+  @override
+  void dispose() {
+    for (final TapGestureRecognizer tap in _taps.values) {
+      tap.dispose();
+    }
+    super.dispose();
+  }
+
+  TapGestureRecognizer _tapDe(VersetCoran verset) => _taps.putIfAbsent(
+    verset.numero * 1000 + verset.sourateNumero,
+    () =>
+        TapGestureRecognizer()
+          ..onTap = () =>
+              ref.read(selectionVersetProvider.notifier).basculer(verset),
+  );
+
+  @override
   Widget build(BuildContext context) {
+    // [QURAN-STAGE] La selection est une lentille d'interface posee par la
+    // classe ; le texte, lui, ne change jamais.
+    final bool selectionnable = PorteeSelectionVerset.activeDans(context);
+    final ContentRange? selection = selectionnable
+        ? ref.watch(selectionVersetProvider)
+        : null;
+    final AppPalette palette = AppPalette.of(context);
+    // Un lavis, ET la semantique « selectionne » : jamais la couleur seule.
+    final TextStyle styleSelection = widget.style.copyWith(
+      backgroundColor: palette.washAccent.background,
+      decoration: TextDecoration.underline,
+      decorationColor: palette.washAccent.onBackground,
+    );
+
     return Text.rich(
       TextSpan(
         children: <InlineSpan>[
-          for (final VersetCoran verset in versets) ...<InlineSpan>[
-            TextSpan(text: '${verset.texte} '),
+          for (final VersetCoran verset in widget.versets) ...<InlineSpan>[
+            TextSpan(
+              text: '${verset.texte} ',
+              style: versetSelectionne(selection, verset)
+                  ? styleSelection
+                  : null,
+              recognizer: selectionnable ? _tapDe(verset) : null,
+              semanticsLabel: versetSelectionne(selection, verset)
+                  ? '${verset.texte} ${t.tc.classe.support.versetSelectionne}'
+                  : null,
+            ),
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
               // La numerotation est un repere de mise en page, pas du texte
@@ -523,7 +567,7 @@ class ParagrapheVersets extends StatelessWidget {
               child: ExcludeSemantics(
                 child: RosaceVerset(
                   numero: verset.numero,
-                  echelle: echelleRosace,
+                  echelle: widget.echelleRosace,
                 ),
               ),
             ),
@@ -532,7 +576,7 @@ class ParagrapheVersets extends StatelessWidget {
         ],
       ),
       textAlign: TextAlign.justify,
-      style: style,
+      style: widget.style,
     );
   }
 }
@@ -601,7 +645,8 @@ class _PiedDePage extends StatelessWidget {
               page: '${vue.numero}',
               total: '${vue.nombrePages}',
             ),
-            if (vue.juzNumero != null) t.eleve.coran.juz(juz: '${vue.juzNumero}'),
+            if (vue.juzNumero != null)
+              t.eleve.coran.juz(juz: '${vue.juzNumero}'),
             vue.cote == CoteDePage.droite
                 ? t.tc.coran.mushaf.coteDroite
                 : t.tc.coran.mushaf.coteGauche,
@@ -637,9 +682,7 @@ class NoticeComposition extends StatelessWidget {
       return Text(
         t.tc.coran.fidelite.fidele,
         textAlign: TextAlign.center,
-        style: palette.inkFaint.applyTo(
-          textes.labelSmall ?? const TextStyle(),
-        ),
+        style: palette.inkFaint.applyTo(textes.labelSmall ?? const TextStyle()),
       );
     }
 
