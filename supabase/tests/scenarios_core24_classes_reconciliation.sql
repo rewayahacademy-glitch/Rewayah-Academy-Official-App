@@ -47,6 +47,30 @@ begin
     raise exception 'CLASSES SECURITE : le client peut modifier date_naissance';
   end if;
 
+  if has_column_privilege(
+    'authenticated', 'public.student_profiles', 'cohorte', 'UPDATE'
+  ) then
+    raise exception 'CLASSES SECURITE : le client peut modifier cohorte';
+  end if;
+
+  if has_column_privilege(
+    'authenticated', 'public.student_profiles', 'placement_basis', 'UPDATE'
+  ) then
+    raise exception 'CLASSES SECURITE : le client peut modifier placement_basis';
+  end if;
+
+  if has_column_privilege(
+    'authenticated', 'public.student_profiles', 'diagnostic_statut', 'UPDATE'
+  ) then
+    raise exception 'CLASSES SECURITE : le client peut modifier diagnostic_statut';
+  end if;
+
+  if has_column_privilege(
+    'authenticated', 'public.student_profiles', 'level', 'UPDATE'
+  ) then
+    raise exception 'CLASSES SECURITE : le client peut modifier le niveau officiel';
+  end if;
+
   if not exists (
     select 1 from information_schema.columns
     where table_schema = 'public'
@@ -61,7 +85,9 @@ end $$;
 insert into auth.users (id, email)
 values
   ('c2300000-0000-0000-0000-000000000001', 'classes-guardian@example.test'),
-  ('c2300000-0000-0000-0000-000000000002', 'classes-student@example.test')
+  ('c2300000-0000-0000-0000-000000000002', 'classes-student@example.test'),
+  ('c2300000-0000-0000-0000-000000000003', 'classes-legacy@example.test'),
+  ('c2300000-0000-0000-0000-000000000004', 'classes-admin@example.test')
 on conflict (id) do nothing;
 
 insert into public.households (id, timezone)
@@ -74,7 +100,11 @@ values
   ('c2300000-0000-0000-0000-000000000001', 'classes-guardian', 'guardian',
    'c2300000-0000-0000-0000-000000000010', 'Tuteur', 'Classes', 'active'),
   ('c2300000-0000-0000-0000-000000000002', 'classes-student', 'student',
-   'c2300000-0000-0000-0000-000000000010', 'Eleve', 'Classes', 'active')
+   'c2300000-0000-0000-0000-000000000010', 'Eleve', 'Classes', 'active'),
+  ('c2300000-0000-0000-0000-000000000003', 'classes-legacy', 'student',
+   'c2300000-0000-0000-0000-000000000010', 'Legacy', 'Classes', 'active'),
+  ('c2300000-0000-0000-0000-000000000004', 'classes-admin', 'admin',
+   null, 'Admin', 'Classes', 'active')
 on conflict (id) do nothing;
 
 update public.households
@@ -82,7 +112,9 @@ set primary_guardian_id = 'c2300000-0000-0000-0000-000000000001'
 where id = 'c2300000-0000-0000-0000-000000000010';
 
 insert into public.student_profiles (profile_id, student_type, interface_mode)
-values ('c2300000-0000-0000-0000-000000000002', 'minor', 'child')
+values
+  ('c2300000-0000-0000-0000-000000000002', 'minor', 'child'),
+  ('c2300000-0000-0000-0000-000000000003', 'minor', 'child')
 on conflict (profile_id) do nothing;
 
 select set_config('test.uid', 'c2300000-0000-0000-0000-000000000001', false);
@@ -124,6 +156,117 @@ begin
     raise exception 'CLASSES AGE : cohorte persistante incorrecte (%)', v_cohorte;
   end if;
 end $$;
+
+-- Les frontières sont des anniversaires réels, pas des cohortes historiques.
+set role authenticated;
+do $$
+declare
+  v_age smallint;
+  v_attendu text;
+  v_result jsonb;
+begin
+  for v_age, v_attendu in
+    select * from (values
+      (9::smallint, 'enfant_6_9'::text),
+      (10::smallint, 'enfant_10_13'::text),
+      (13::smallint, 'enfant_10_13'::text),
+      (14::smallint, 'ado_14_17'::text),
+      (17::smallint, 'ado_14_17'::text),
+      (5::smallint, null::text)
+    ) bornes(age, cohorte)
+  loop
+    v_result := public.definir_date_naissance_apprenant(
+      'c2300000-0000-0000-0000-000000000002',
+      (current_date - make_interval(years => v_age))::date
+    );
+    if v_result->>'cohorte' is distinct from v_attendu then
+      raise exception 'CLASSES AGE : borne % ans derivee en %, attendu %',
+        v_age, v_result->>'cohorte', v_attendu;
+    end if;
+  end loop;
+end $$;
+reset role;
+
+set role authenticated;
+select public.definir_date_naissance_apprenant(
+  'c2300000-0000-0000-0000-000000000002',
+  (current_date - interval '10 years')::date
+);
+reset role;
+
+-- Un profil legacy sans DOB ne peut pas entrer dans le nouveau dispatch.
+set role authenticated;
+do $$
+begin
+  begin
+    perform public.enregistrer_profil_apprentissage(
+      'c2300000-0000-0000-0000-000000000003',
+      'francais',
+      'enfant_10_13',
+      'debut_lettres',
+      'apprendre_a_lire',
+      'Europe/Paris'
+    );
+    raise exception 'CLASSES LEGACY : profil sans DOB accepte';
+  exception when others then
+    if sqlerrm not like '%date de naissance du mineur%' then
+      raise;
+    end if;
+  end;
+end $$;
+reset role;
+
+-- Le placement officiel vient de la porte Admin et rend sa provenance explicite.
+select set_config('test.uid', 'c2300000-0000-0000-0000-000000000004', false);
+select set_config(
+  'test.jwt',
+  '{"app_metadata":{"role":"admin"}}',
+  false
+);
+set role authenticated;
+do $$
+declare
+  v_version_id uuid;
+  v_niveau_id uuid;
+  v_placement_id uuid;
+begin
+  if not exists (
+    select 1 from public.diagnostics_a_traiter()
+    where student_id = 'c2300000-0000-0000-0000-000000000003'
+  ) then
+    raise exception 'CLASSES DIAGNOSTIC : eleve non debutant absent de la file';
+  end if;
+
+  v_version_id := public.creer_version_programme();
+  v_niveau_id := public.ajouter_niveau_programme(
+    v_version_id, 'CORE24-TEST', 'Niveau Core24 de test', 'debutant', 1
+  );
+  v_placement_id := public.decider_placement(
+    'c2300000-0000-0000-0000-000000000003',
+    v_niveau_id,
+    'Evaluation initiale Core24'
+  );
+
+  if v_placement_id is null then
+    raise exception 'CLASSES DIAGNOSTIC : placement non journalise';
+  end if;
+  if not exists (
+    select 1 from public.student_profiles
+    where profile_id = 'c2300000-0000-0000-0000-000000000003'
+      and diagnostic_statut = 'fait'
+      and placement_basis = 'diagnostic_academique'
+  ) then
+    raise exception 'CLASSES DIAGNOSTIC : etat/provenance non actualises';
+  end if;
+end $$;
+reset role;
+
+select set_config('test.uid', 'c2300000-0000-0000-0000-000000000001', false);
+select set_config(
+  'test.jwt',
+  '{"app_metadata":{"role":"guardian","household_id":"c2300000-0000-0000-0000-000000000010"}}',
+  false
+);
 
 -- L'ancienne signature ne peut pas forcer une cohorte adulte pour un mineur.
 set role authenticated;
