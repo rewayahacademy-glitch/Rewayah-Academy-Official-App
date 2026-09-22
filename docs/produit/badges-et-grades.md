@@ -1,13 +1,41 @@
 # Badges et grades — ce que chaque chose signifie, et ce qu'elle donne
 
-**Document de spécification, écrit le 22 septembre 2026. Rien de ce qui suit
-n'est implémenté.** Le lot « onboarding et offres horaires » s'arrête
-explicitement avant les badges ; ce document existe pour que la décision soit
-prise sur du papier avant d'être prise dans du code.
+> # ⛔ PROPOSITION NON VALIDÉE — NE PAS IMPLÉMENTER
+>
+> **Statut au 22 septembre 2026 : ce document est une proposition rejetée en
+> l'état par l'académie. Il est conservé comme trace de réflexion, pas comme
+> spécification.** Aucun agent ne doit en tirer une table, une colonne, une
+> policy ni un écran.
+>
+> **La politique retenue par l'académie comporte cinq niveaux : Certifié
+> Rewayah, Bronze, Argent, Or, Platine.** Ce ne sont pas les huit grades décrits
+> plus bas. Leurs privilèges, leur modèle de données et leurs règles
+> d'attribution **ne sont pas arrêtés** ; tant qu'ils ne le sont pas, aucun
+> système de badges ne doit être construit.
+>
+> ## 🔴 Contrainte non négociable sur `student_profiles.level`
+>
+> `student_profiles.level` est **le niveau académique d'un élève**, et rien
+> d'autre. Il **ne doit jamais** servir de stockage au grade professionnel d'un
+> enseignant. Le grade enseignant appellera son propre modèle métier, sur sa
+> propre table, avec ses propres droits — une décision qui reste à prendre.
+>
+> La recommandation de la section 4 (« brancher les politiques existantes sur
+> `student_profiles.level` ») est **retirée**. Elle visait les niveaux de
+> programme d'un élève, mais elle est retirée quand même, parce qu'un document
+> intitulé « badges et grades » ne doit laisser aucune phrase qui puisse se lire
+> comme une autorisation d'y ranger un grade d'enseignant.
+
+**Rien de ce qui suit n'est implémenté.** Le lot « onboarding et offres
+horaires » s'arrête explicitement avant les badges.
 
 Aucune table, aucune colonne, aucun écran de ce document n'existe en base au
 22 septembre 2026. Une recherche sur `badge`, `grade` dans le dépôt ne rend que
 des usages du mot « badge » au sens visuel (une pastille d'état), sans rapport.
+Vérifié le 22 septembre 2026 : **aucun code et aucune migration du dépôt
+n'écrit de grade enseignant dans `student_profiles.level`** — le seul usage
+côté enseignant, `lib/core/enseignant/modeles_enseignant.dart`, y lit le niveau
+d'un **élève** de son groupe.
 
 ---
 
@@ -70,6 +98,11 @@ Un badge de parcours reconnaît un comportement observable et vérifiable :
 
 ## 3. Les grades académiques
 
+⛔ **Cette échelle à huit degrés est une proposition NON RETENUE.** Elle décrit
+une progression d'élève dans le curriculum, pas les cinq niveaux de la politique
+retenue (Certifié Rewayah, Bronze, Argent, Or, Platine). Elle est conservée ici
+comme matériau de réflexion et ne doit être implémentée sous aucune forme.
+
 Les noms ci-dessous sont des **propositions**, à valider par l'académie au
 moment de l'import du curriculum. Ils suivent la règle déjà posée pour
 l'onboarding : **une appellation humaine, jamais un code de référentiel.** Un
@@ -127,9 +160,17 @@ est le certificat. Un système de badges complet — table de badges, règles
 d'attribution, moteur d'évaluation, écran de collection — serait donc du travail
 essentiellement décoratif posé sur un mécanisme d'autorisation qui existe déjà.
 
-**Recommandation** : ne pas construire de « système de badges ». Brancher les
+~~**Recommandation** : ne pas construire de « système de badges ». Brancher les
 politiques existantes sur `student_profiles.level`, et traiter les trois lignes
-restantes comme trois fonctions distinctes, chacune justifiée à part.
+restantes comme trois fonctions distinctes, chacune justifiée à part.~~
+
+⛔ **RECOMMANDATION RETIRÉE le 22 septembre 2026.** Ce qui subsiste de cette
+section est une observation, pas une consigne : plusieurs privilèges listés
+s'appuient sur des politiques qui existent déjà. Ce constat ne dit **pas** à
+quoi les rattacher. Le rattachement est une décision de modèle métier qui
+n'appartient pas à ce document, et `student_profiles.level` n'en est pas le
+support par défaut — c'est le niveau académique d'un élève, jamais le grade
+professionnel d'un enseignant.
 
 ---
 
@@ -162,6 +203,20 @@ rester de l'affichage**. Aucune des lignes ci-dessous n'ouvre de porte.
 ---
 
 ## 6. Ce qui reste à trancher par l'académie
+
+La politique retenue étant à cinq niveaux — **Certifié Rewayah, Bronze, Argent,
+Or, Platine** — les questions bloquantes sont d'abord celles-ci, et aucune n'est
+tranchée dans ce document :
+
+| Question ouverte | Pourquoi rien ne peut être construit avant |
+| :--- | :--- |
+| Ces cinq niveaux qualifient-ils un **enseignant**, un **élève**, ou les deux ? | Ils n'ont ni le même porteur, ni les mêmes droits, ni la même table |
+| Quel modèle métier dédié les porte ? | Ce ne sera **pas** `student_profiles.level`, qui est le niveau académique d'un élève |
+| Quels privilèges chaque niveau ouvre-t-il ? | Un privilège est une porte serveur ; sans la liste, il n'y a rien à sécuriser |
+| Qui attribue, sur quel critère, et un niveau peut-il se perdre ? | Détermine s'il faut un acte d'administration journalisé ou un calcul |
+
+Les questions ci-dessous restaient ouvertes dans la proposition non retenue et
+n'ont de sens que si elle est un jour reprise :
 
 | Question | Pourquoi elle bloque |
 | :--- | :--- |

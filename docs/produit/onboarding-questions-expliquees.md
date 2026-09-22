@@ -156,7 +156,12 @@ premières propositions.
 | Colonne | `student_profiles.niveau_declare` | `student_profiles.level` |
 | Qui l'écrit | la famille, ici | l'académie, après diagnostic |
 | Le client peut-il l'écrire ? | **oui** | **non** — pas de `UPDATE` accordé |
-| Visible comme un grade ? | jamais | oui, voir `badges-et-grades.md` |
+| Visible comme un grade ? | jamais | oui, quand l'académie l'aura tranché |
+
+`student_profiles.level` est **le niveau académique d'un élève**, et seulement
+cela : il ne porte jamais le grade professionnel d'un enseignant. La forme sous
+laquelle ce niveau s'affichera n'est pas arrêtée — `badges-et-grades.md` en
+discute, mais c'est une **proposition non validée**, pas une spécification.
 
 **Les deux colonnes sont distinctes en base**, ce qui rend la confusion
 impossible plutôt que déconseillée. Aucune écriture du parcours ne peut toucher
@@ -342,6 +347,7 @@ niveau du `GRANT`, pas seulement de l'écran.
 - `lib/features/parcours_offres/` — le parcours
 - `lib/core/offres/offre_horaire.dart` — le modèle, et `etapeParcours`
 - `supabase/migrations/0043_offres_horaires_et_intentions.sql` — le socle serveur
-- `docs/produit/badges-et-grades.md` — la séparation auto-déclaration / grade
+- `docs/produit/badges-et-grades.md` — ⛔ **proposition non validée**, à ne pas
+  implémenter ; consultable seulement pour la séparation auto-déclaration / grade
 - ADR-029 (langue de cours ≠ locale), ADR-030 (exception à ADR-013),
   ADR-031 (l'offre vitrine)

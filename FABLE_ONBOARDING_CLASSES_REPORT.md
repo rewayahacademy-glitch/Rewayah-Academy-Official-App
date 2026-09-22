@@ -233,7 +233,7 @@ Aucun HEX local, aucun composant nouveau, aucun « mode enfant » séparé.
 | Fichier | Contenu |
 | :--- | :--- |
 | `docs/produit/onboarding-questions-expliquees.md` | **Chaque question expliquée**, en particulier les trois qui prêtent à confusion : langue du cours ≠ langue de l'interface, niveau déclaré ≠ grade, « moments » qui classent sans filtrer |
-| `docs/produit/badges-et-grades.md` | Les badges : 8 grades, leurs noms humains, **le tableau des privilèges**. Conclusion : 5 des 8 privilèges reposent déjà sur des mécanismes existants ; recommandation de **ne pas construire** de système de badges mais de brancher les politiques existantes sur `student_profiles.level` |
+| `docs/produit/badges-et-grades.md` | ⛔ **PROPOSITION NON VALIDÉE, rejetée en l'état le 22/09/2026** — voir la bannière en tête du fichier. La politique retenue compte **cinq** niveaux (Certifié Rewayah, Bronze, Argent, Or, Platine), pas huit grades, et **`student_profiles.level` ne doit jamais porter le grade professionnel d'un enseignant** : c'est le niveau académique d'un élève. La recommandation de rattachement qui figurait ici est **retirée**. Rien ne doit être implémenté avant validation d'un modèle métier dédié |
 | `docs/architecture/decisions.md` | ADR-029, ADR-030, ADR-031 |
 | `FABLE_BACKEND_CONTRACT_ONBOARDING_CLASSES.md` | Le contrat serveur |
 
