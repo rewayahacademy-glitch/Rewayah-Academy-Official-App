@@ -2292,6 +2292,62 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Public'
 	String get colonneType => 'Public';
 
+	String get sansTitulaire => 'À affecter';
+
+	String get actionAffecterTitulaire => 'Affecter un titulaire';
+
+	String get actionPasserReady => 'Valider le groupe';
+
+	String get actionPublier => 'Publier le groupe';
+
+	String get actionActiver => 'Activer le groupe';
+
+	String get creerOffre => 'Créer une offre horaire';
+
+	String get creerOffreTitre => 'Créer une offre horaire';
+
+	String get offreType => 'Public';
+
+	String get offreLangue => 'Langue du cours';
+
+	String get offreFuseau => 'Fuseau IANA';
+
+	String get offreJours => 'Jours ISO (ex. 1,3,5)';
+
+	String get offreHeure => 'Heure locale';
+
+	String get offreDuree => 'Durée en minutes';
+
+	String get offreLanguePoular => 'Poular';
+
+	String get offreLangueFrancais => 'Français';
+
+	String get offreLangueEnglish => 'English';
+
+	String get creerOffreEnvoyer => 'Créer l\'offre';
+
+	String creerOffreErreur({required Object message}) => 'La création de l\'offre n\'a pas abouti : ${message}';
+
+	String get parametresInvalides => 'Vérifiez les jours, l\'heure et la durée.';
+
+	String get pilotageTitre => 'Pilotage des offres et du pool';
+
+	String get offresAucune => 'Aucune offre horaire à piloter.';
+
+	String offresErreur({required Object message}) => 'Les offres n\'ont pas pu être lues : ${message}';
+
+	String get offrePublier => 'Publier l\'offre';
+
+	String get offreDispatcher => 'Préparer les groupes';
+
+	String get offreRetirer => 'Retirer l\'offre';
+
+	String get poolTitre => 'Candidats en attente';
+
+	String get poolAucun => 'Aucun candidat n\'attend dans le pool.';
+
+	String poolLigne({required Object langue, required Object cohorte, required Object diagnostic}) => '${langue} · ${cohorte} · diagnostic ${diagnostic}';
+
 	/// fr: 'Membres'
 	String get colonneMembres => 'Membres';
 
@@ -2312,6 +2368,12 @@ class Traductions$admin$groupes$fr {
 
 	/// fr: 'Actif'
 	String get etatActif => 'Actif';
+
+	String get etatBrouillon => 'Brouillon';
+
+	String get etatReady => 'Prêt à publier';
+
+	String get etatPubliee => 'Publiée';
 
 	/// fr: 'Clôturé'
 	String get etatCloture => 'Clôturé';
@@ -2366,6 +2428,20 @@ class Traductions$admin$groupes$fr {
 
 	/// fr: 'Groupe {libelle}'
 	String detailTitre({required Object libelle}) => 'Groupe ${libelle}';
+
+	String affecterTitre({required Object libelle}) => 'Choisir un titulaire pour ${libelle}';
+
+	String get affecterIntro => 'Seuls les enseignants admissibles pour ce groupe sont proposés.';
+
+	String get affecterAucun => 'Aucun enseignant admissible pour ce groupe.';
+
+	String get affecterMotif => 'Pourquoi cette affectation ?';
+
+	String get affecterEnvoyer => 'Affecter le titulaire';
+
+	String affecterErreur({required Object message}) => 'L\'affectation n\'a pas abouti : ${message}';
+
+	String transitionErreur({required Object message}) => 'La validation n\'a pas abouti : ${message}';
 
 	/// fr: 'Membres'
 	String get detailMembres => 'Membres';

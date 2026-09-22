@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/service_classes_admin.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -57,17 +57,20 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
           Text(t.admin.groupes.intro, style: textes.bodyMedium),
           Ecart.vLg,
           ActionPrincipale(
-            libelle: t.admin.groupes.creer,
+            libelle: t.admin.groupes.creerOffre,
             pleineLargeur: false,
-            onPress: () => _ouvrirCreation(context, ref),
+            onPress: () => _ouvrirCreationOffre(context, ref),
           ),
+          Ecart.vMd,
+          const _PilotageClasses(),
           Ecart.vXl,
           switch (groupes) {
             AsyncValue<List<GroupeAdmin>>(hasValue: true) => Expanded(
               child: _Corps(
                 groupes: groupes.requireValue,
                 type: _type,
-                onType: (TypePublicGroupe? type) => setState(() => _type = type),
+                onType: (TypePublicGroupe? type) =>
+                    setState(() => _type = type),
                 onSelectionner: (GroupeAdmin groupe) =>
                     _ouvrirDetail(context, ref, groupe),
                 onAjouter: (GroupeAdmin groupe) =>
@@ -78,6 +81,10 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                     _ouvrirObservation(context, ref, groupe),
                 onCloturer: (GroupeAdmin groupe) =>
                     _ouvrirCloture(context, ref, groupe),
+                onAffecterTitulaire: (GroupeAdmin groupe) =>
+                    _ouvrirAffectation(context, ref, groupe),
+                onTransitionner: (GroupeAdmin groupe, String etat) =>
+                    _ouvrirTransition(context, ref, groupe, etat),
               ),
             ),
             AsyncValue<List<GroupeAdmin>>(hasError: true) => EmptyState(
@@ -105,6 +112,8 @@ class _Corps extends StatelessWidget {
     required this.onModifierSeuil,
     required this.onObservation,
     required this.onCloturer,
+    required this.onAffecterTitulaire,
+    required this.onTransitionner,
   });
 
   final List<GroupeAdmin> groupes;
@@ -115,6 +124,8 @@ class _Corps extends StatelessWidget {
   final void Function(GroupeAdmin groupe) onModifierSeuil;
   final void Function(GroupeAdmin groupe) onObservation;
   final void Function(GroupeAdmin groupe) onCloturer;
+  final void Function(GroupeAdmin groupe) onAffecterTitulaire;
+  final void Function(GroupeAdmin groupe, String etat) onTransitionner;
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +149,9 @@ class _Corps extends StatelessWidget {
             for (final TypePublicGroupe valeur in TypePublicGroupe.values)
               FilterPill(
                 libelle: _nomType(valeur),
-                compteur: groupes.where((GroupeAdmin g) => g.type == valeur).length,
+                compteur: groupes
+                    .where((GroupeAdmin g) => g.type == valeur)
+                    .length,
                 retenue: type == valeur,
                 onPress: () => onType(valeur),
               ),
@@ -171,7 +184,9 @@ class _Corps extends StatelessWidget {
                 ),
                 ColonneDonnees<GroupeAdmin>(
                   titre: t.admin.groupes.colonneEnseignant,
-                  texte: (GroupeAdmin g) => g.teacherLibelle,
+                  texte: (GroupeAdmin g) => g.teacherId == null
+                      ? t.admin.groupes.sansTitulaire
+                      : g.teacherLibelle,
                 ),
                 ColonneDonnees<GroupeAdmin>(
                   titre: t.admin.groupes.colonneType,
@@ -191,13 +206,12 @@ class _Corps extends StatelessWidget {
                 ),
                 ColonneDonnees<GroupeAdmin>(
                   titre: t.admin.groupes.colonneEtat,
-                  texte: (GroupeAdmin g) =>
-                      g.actif ? t.admin.groupes.etatActif : t.admin.groupes.etatCloture,
+                  texte: _etatLibelle,
                   rendu: (BuildContext _, GroupeAdmin g) => StatusPill(
-                    libelle: g.actif
-                        ? t.admin.groupes.etatActif
-                        : t.admin.groupes.etatCloture,
-                    ton: g.actif ? TonEtat.succes : TonEtat.neutre,
+                    libelle: _etatLibelle(g),
+                    ton: g.actif && g.etat != 'brouillon'
+                        ? TonEtat.succes
+                        : TonEtat.neutre,
                   ),
                 ),
                 ColonneDonnees<GroupeAdmin>(
@@ -214,6 +228,27 @@ class _Corps extends StatelessWidget {
                       ? MenuActions(
                           tooltip: g.libelle,
                           actions: <EntreeAction>[
+                            if (g.teacherId == null)
+                              EntreeAction(
+                                libelle:
+                                    t.admin.groupes.actionAffecterTitulaire,
+                                onChoix: () => onAffecterTitulaire(g),
+                              ),
+                            if (g.etat == 'brouillon' && g.teacherId != null)
+                              EntreeAction(
+                                libelle: t.admin.groupes.actionPasserReady,
+                                onChoix: () => onTransitionner(g, 'ready'),
+                              ),
+                            if (g.etat == 'ready')
+                              EntreeAction(
+                                libelle: t.admin.groupes.actionPublier,
+                                onChoix: () => onTransitionner(g, 'publiee'),
+                              ),
+                            if (g.etat == 'publiee')
+                              EntreeAction(
+                                libelle: t.admin.groupes.actionActiver,
+                                onChoix: () => onTransitionner(g, 'active'),
+                              ),
                             EntreeAction(
                               libelle: t.admin.groupes.actionAjouter,
                               onChoix: () => onAjouter(g),
@@ -243,6 +278,151 @@ class _Corps extends StatelessWidget {
   }
 }
 
+class _PilotageClasses extends ConsumerStatefulWidget {
+  const _PilotageClasses();
+
+  @override
+  ConsumerState<_PilotageClasses> createState() => _PilotageClassesEtat();
+}
+
+class _PilotageClassesEtat extends ConsumerState<_PilotageClasses> {
+  bool _ouvert = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_ouvert) {
+      return Card(
+        child: ExpansionTile(
+          title: Text(t.admin.groupes.pilotageTitre),
+          onExpansionChanged: (bool ouvert) => setState(() => _ouvert = ouvert),
+        ),
+      );
+    }
+    final AsyncValue<List<OffreHoraireAdmin>> offres = ref.watch(
+      offresHoraireAdminProvider,
+    );
+    final AsyncValue<List<IntentionPoolAdmin>> pool = ref.watch(
+      intentionsPoolAdminProvider,
+    );
+    return Card(
+      child: ExpansionTile(
+        title: Text(t.admin.groupes.pilotageTitre),
+        initiallyExpanded: true,
+        onExpansionChanged: (bool ouvert) => setState(() => _ouvert = ouvert),
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            child: switch (offres) {
+              AsyncValue<List<OffreHoraireAdmin>>(hasValue: true) =>
+                offres.requireValue.isEmpty
+                    ? Text(t.admin.groupes.offresAucune)
+                    : Column(
+                        children: <Widget>[
+                          for (final OffreHoraireAdmin offre
+                              in offres.requireValue)
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Text(
+                                '${offre.langueNom} · ${offre.typePublic} · ${offre.heureLocale}h',
+                              ),
+                              subtitle: Text(
+                                '${offre.etat} · ${offre.candidats}',
+                              ),
+                              trailing: MenuActions(
+                                tooltip: offre.langueNom,
+                                actions: <EntreeAction>[
+                                  if (offre.etat == 'brouillon')
+                                    EntreeAction(
+                                      libelle: t.admin.groupes.offrePublier,
+                                      onChoix: () => _ouvrirOffreOperation(
+                                        context,
+                                        ref,
+                                        offre,
+                                        'publier',
+                                      ),
+                                    ),
+                                  if (offre.etat == 'publiee')
+                                    EntreeAction(
+                                      libelle: t.admin.groupes.offreDispatcher,
+                                      onChoix: () => _ouvrirOffreOperation(
+                                        context,
+                                        ref,
+                                        offre,
+                                        'dispatcher',
+                                      ),
+                                    ),
+                                  if (offre.etat != 'retiree')
+                                    EntreeAction(
+                                      libelle: t.admin.groupes.offreRetirer,
+                                      destructif: true,
+                                      onChoix: () => _ouvrirRetraitOffre(
+                                        context,
+                                        ref,
+                                        offre,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+              AsyncValue<List<OffreHoraireAdmin>>(hasError: true) => Text(
+                t.admin.groupes.offresErreur(
+                  message: _message(offres.error!),
+                ),
+              ),
+              _ => const Skeleton.liste(lignes: 2),
+            },
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md,
+              AppSpacing.md,
+            ),
+            child: switch (pool) {
+              AsyncValue<List<IntentionPoolAdmin>>(hasValue: true) =>
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Text(
+                      t.admin.groupes.poolTitre,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    Ecart.vSm,
+                    if (pool.requireValue.isEmpty)
+                      Text(t.admin.groupes.poolAucun)
+                    else
+                      for (final IntentionPoolAdmin intention
+                          in pool.requireValue)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          title: Text(intention.eleveLibelle),
+                          subtitle: Text(
+                            t.admin.groupes.poolLigne(
+                              langue: intention.langueCode,
+                              cohorte: intention.cohorte,
+                              diagnostic: intention.diagnosticStatut,
+                            ),
+                          ),
+                        ),
+                  ],
+                ),
+              AsyncValue<List<IntentionPoolAdmin>>(hasError: true) => Text(
+                t.admin.groupes.offresErreur(message: _message(pool.error!)),
+              ),
+              _ => const Skeleton.liste(lignes: 2),
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 String _nomType(TypePublicGroupe type) => switch (type) {
   TypePublicGroupe.enfant => t.admin.groupes.typeEnfant,
   TypePublicGroupe.adulte => t.admin.groupes.typeAdulte,
@@ -251,6 +431,14 @@ String _nomType(TypePublicGroupe type) => switch (type) {
 String _creneau(GroupeAdmin groupe) =>
     '${t.disponibilites.joursLongs[(groupe.creneau.jour - 1).clamp(0, 6)]} '
     '${groupe.creneau.heure}h';
+
+String _etatLibelle(GroupeAdmin groupe) => switch (groupe.etat) {
+  'brouillon' => t.admin.groupes.etatBrouillon,
+  'ready' => t.admin.groupes.etatReady,
+  'publiee' => t.admin.groupes.etatPubliee,
+  'active' => t.admin.groupes.etatActif,
+  _ => groupe.actif ? t.admin.groupes.etatActif : t.admin.groupes.etatCloture,
+};
 
 /// Le message metier d'une exception, sans son type.
 ///
@@ -262,15 +450,6 @@ String _message(Object erreur) {
   return deuxPoints >= 0 && deuxPoints + 2 < brut.length
       ? brut.substring(deuxPoints + 2)
       : brut;
-}
-
-void _ouvrirCreation(BuildContext context, WidgetRef ref) {
-  AppBottomSheet.ouvrir<void>(
-    context,
-    titre: t.admin.groupes.creerTitre,
-    constructeur: (BuildContext contexte) =>
-        _FeuilleCreation(onCree: () => ref.invalidate(groupesProvider)),
-  );
 }
 
 void _ouvrirDetail(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
@@ -308,12 +487,19 @@ void _ouvrirRetrait(
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.retirerTitre(prenom: prenom, libelle: groupe.libelle),
+    titre: t.admin.groupes.retirerTitre(
+      prenom: prenom,
+      libelle: groupe.libelle,
+    ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.groupes.retirerEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceGroupesProvider)
-          .retirerEleve(groupeId: groupe.id, studentId: studentId, motif: motif),
+          .retirerEleve(
+            groupeId: groupe.id,
+            studentId: studentId,
+            motif: motif,
+          ),
       messageErreur: t.admin.groupes.retirerErreur,
       onSucces: () {
         ref.invalidate(groupesProvider);
@@ -331,8 +517,10 @@ void _ouvrirModifierSeuil(
   AppBottomSheet.ouvrir<void>(
     context,
     titre: t.admin.groupes.modifierSeuilTitre(libelle: groupe.libelle),
-    constructeur: (BuildContext contexte) =>
-        _FeuilleSeuil(groupe: groupe, onModifie: () => ref.invalidate(groupesProvider)),
+    constructeur: (BuildContext contexte) => _FeuilleSeuil(
+      groupe: groupe,
+      onModifie: () => ref.invalidate(groupesProvider),
+    ),
   );
 }
 
@@ -365,69 +553,164 @@ void _ouvrirCloture(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.groupes.cloturerEnvoyer,
       detail: t.admin.groupes.cloturerDetail,
-      onEnvoyer: (String motif) =>
-          ref.read(serviceGroupesProvider).cloturer(groupeId: groupe.id, motif: motif),
+      onEnvoyer: (String motif) => ref
+          .read(serviceGroupesProvider)
+          .cloturer(groupeId: groupe.id, motif: motif),
       messageErreur: t.admin.groupes.cloturerErreur,
       onSucces: () => ref.invalidate(groupesProvider),
     ),
   );
 }
 
-/// Le formulaire de creation d'un groupe.
-class _FeuilleCreation extends StatefulWidget {
-  const _FeuilleCreation({required this.onCree});
-
-  final VoidCallback onCree;
-
-  @override
-  State<_FeuilleCreation> createState() => _FeuilleCreationEtat();
+void _ouvrirAffectation(
+  BuildContext context,
+  WidgetRef ref,
+  GroupeAdmin groupe,
+) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.groupes.affecterTitre(libelle: groupe.libelle),
+    constructeur: (BuildContext contexte) => _FeuilleAffectation(
+      groupe: groupe,
+      onAffecte: () {
+        ref.invalidate(groupesProvider);
+        ref.invalidate(enseignantsAdmissiblesProvider(groupe.id));
+      },
+    ),
+  );
 }
 
-class _FeuilleCreationEtat extends State<_FeuilleCreation> {
-  final TextEditingController _libelle = TextEditingController();
-  final TextEditingController _enseignantId = TextEditingController();
-  final TextEditingController _jour = TextEditingController(text: '1');
-  final TextEditingController _heure = TextEditingController(text: '16');
-  final TextEditingController _seuil = TextEditingController();
-  TypePublicGroupe _type = TypePublicGroupe.enfant;
-  bool _envoi = false;
+void _ouvrirTransition(
+  BuildContext context,
+  WidgetRef ref,
+  GroupeAdmin groupe,
+  String etat,
+) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: groupe.libelle,
+    constructeur: (BuildContext contexte) => _FeuilleTransition(
+      groupe: groupe,
+      etat: etat,
+      onTransitionne: () => ref.invalidate(groupesProvider),
+    ),
+  );
+}
+
+void _ouvrirCreationOffre(BuildContext context, WidgetRef ref) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.groupes.creerOffreTitre,
+    constructeur: (BuildContext contexte) => _FeuilleCreationOffre(
+      onCree: () => _rafraichirPilotage(ref),
+    ),
+  );
+}
+
+void _rafraichirPilotage(WidgetRef ref) {
+  ref.invalidate(offresHoraireAdminProvider);
+  ref.invalidate(intentionsPoolAdminProvider);
+  ref.invalidate(groupesProvider);
+}
+
+void _ouvrirOffreOperation(
+  BuildContext context,
+  WidgetRef ref,
+  OffreHoraireAdmin offre,
+  String operation,
+) {
+  final String libelle = operation == 'publier'
+      ? t.admin.groupes.offrePublier
+      : t.admin.groupes.offreDispatcher;
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: libelle,
+    constructeur: (BuildContext contexte) => _FeuilleOperation(
+      libelleEnvoyer: libelle,
+      onEnvoyer: () async {
+        final ServiceClassesAdmin service = ref.read(
+          serviceClassesAdminProvider,
+        );
+        if (operation == 'publier') {
+          await service.publierOffre(offre.id);
+        } else {
+          await service.dispatcherOffre(offre.id);
+        }
+      },
+      messageErreur: ({required String message}) =>
+          t.admin.groupes.offresErreur(message: message),
+      onSucces: () => _rafraichirPilotage(ref),
+    ),
+  );
+}
+
+void _ouvrirRetraitOffre(
+  BuildContext context,
+  WidgetRef ref,
+  OffreHoraireAdmin offre,
+) {
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.groupes.offreRetirer,
+    constructeur: (BuildContext contexte) => _FeuilleMotif(
+      libelleEnvoyer: t.admin.groupes.offreRetirer,
+      onEnvoyer: (String motif) => ref
+          .read(serviceClassesAdminProvider)
+          .retirerOffre(offreId: offre.id, motif: motif),
+      messageErreur: ({required String message}) =>
+          t.admin.groupes.offresErreur(message: message),
+      onSucces: () => _rafraichirPilotage(ref),
+    ),
+  );
+}
+
+class _FeuilleAffectation extends ConsumerStatefulWidget {
+  const _FeuilleAffectation({required this.groupe, required this.onAffecte});
+
+  final GroupeAdmin groupe;
+  final VoidCallback onAffecte;
+
+  @override
+  ConsumerState<_FeuilleAffectation> createState() => _FeuilleAffectationEtat();
+}
+
+class _FeuilleAffectationEtat extends ConsumerState<_FeuilleAffectation> {
+  final TextEditingController _motif = TextEditingController();
+  String? _teacherId;
   String? _erreur;
+  bool _envoi = false;
 
   @override
   void dispose() {
-    _libelle.dispose();
-    _enseignantId.dispose();
-    _jour.dispose();
-    _heure.dispose();
-    _seuil.dispose();
+    _motif.dispose();
     super.dispose();
   }
 
-  Future<void> _creer(WidgetRef ref) async {
+  Future<void> _affecter() async {
+    final String? teacherId = _teacherId;
+    if (teacherId == null || _motif.text.trim().isEmpty) return;
     setState(() {
       _envoi = true;
       _erreur = null;
     });
     try {
       await ref
-          .read(serviceGroupesProvider)
-          .creer(
-            teacherId: _enseignantId.text.trim(),
-            type: _type,
-            libelle: _libelle.text.trim(),
-            creneau: Creneau(
-              jour: int.tryParse(_jour.text) ?? 1,
-              heure: int.tryParse(_heure.text) ?? 0,
-              fuseau: 'Europe/Paris',
-            ),
-            seuilMax: int.tryParse(_seuil.text),
+          .read(serviceClassesAdminProvider)
+          .affecterTitulaire(
+            groupeId: widget.groupe.id,
+            teacherId: teacherId,
+            motif: _motif.text.trim(),
           );
-      widget.onCree();
+      widget.onAffecte();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = t.admin.groupes.creerErreur(message: _message(erreur)),
-      );
+      if (mounted) {
+        setState(
+          () => _erreur = t.admin.groupes.affecterErreur(
+            message: _message(erreur),
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -435,86 +718,136 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          TextField(
-            controller: _libelle,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champLibelle),
-          ),
-          Ecart.vMd,
-          TextField(
-            controller: _enseignantId,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(
-              labelText: t.admin.groupes.champEnseignantId,
+    final AsyncValue<List<EnseignantAdmissible>> enseignants = ref.watch(
+      enseignantsAdmissiblesProvider(widget.groupe.id),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(t.admin.groupes.affecterIntro),
+        Ecart.vMd,
+        switch (enseignants) {
+          AsyncValue<List<EnseignantAdmissible>>(hasValue: true) =>
+            enseignants.requireValue.isEmpty
+                ? Text(t.admin.groupes.affecterAucun)
+                : RadioGroup<String>(
+                    groupValue: _teacherId,
+                    onChanged: (String? value) =>
+                        setState(() => _teacherId = value),
+                    child: Column(
+                      children: <Widget>[
+                        for (final EnseignantAdmissible enseignant
+                            in enseignants.requireValue)
+                          RadioListTile<String>(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(enseignant.libelle),
+                            subtitle: Text(
+                              '${enseignant.groupesActifs}/${enseignant.maxPrimaryGroups}',
+                            ),
+                            value: enseignant.id,
+                          ),
+                      ],
+                    ),
+                  ),
+          AsyncValue<List<EnseignantAdmissible>>(hasError: true) => Text(
+            t.admin.groupes.affecterErreur(
+              message: _message(enseignants.error!),
             ),
           ),
-          Ecart.vMd,
-          Wrap(
-            spacing: AppSpacing.sm,
-            children: <Widget>[
-              for (final TypePublicGroupe valeur in TypePublicGroupe.values)
-                FilterPill(
-                  libelle: _nomType(valeur),
-                  retenue: _type == valeur,
-                  onPress: () => setState(() => _type = valeur),
-                ),
-            ],
-          ),
-          Ecart.vMd,
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: TextField(
-                  controller: _jour,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: t.admin.groupes.champJour,
-                  ),
-                ),
-              ),
-              Ecart.hMd,
-              Expanded(
-                child: TextField(
-                  controller: _heure,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: t.admin.groupes.champHeure,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Ecart.vMd,
-          TextField(
-            controller: _seuil,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: t.admin.groupes.champSeuil),
-          ),
-          if (_erreur != null) ...<Widget>[
-            Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-          ],
-          Ecart.vLg,
-          ActionPrincipale(
-            libelle: t.admin.groupes.creerEnvoyer,
-            enCours: _envoi,
-            onPress: _libelle.text.trim().isEmpty || _enseignantId.text.trim().isEmpty
-                ? null
-                : () => _creer(ref),
-          ),
+          _ => const Skeleton.liste(lignes: 3),
+        },
+        Ecart.vMd,
+        TextField(
+          controller: _motif,
+          maxLines: 2,
+          onChanged: (String _) => setState(() {}),
+          decoration: InputDecoration(labelText: t.admin.groupes.affecterMotif),
+        ),
+        if (_erreur != null) ...<Widget>[
           Ecart.vMd,
           Text(
-            t.admin.groupes.journalisation,
-            style: Theme.of(context).textTheme.bodySmall,
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         ],
-      ),
+        Ecart.vLg,
+        ActionPrincipale(
+          libelle: t.admin.groupes.affecterEnvoyer,
+          enCours: _envoi,
+          onPress: _teacherId == null || _motif.text.trim().isEmpty
+              ? null
+              : _affecter,
+        ),
+      ],
     );
   }
+}
+
+class _FeuilleTransition extends ConsumerStatefulWidget {
+  const _FeuilleTransition({
+    required this.groupe,
+    required this.etat,
+    required this.onTransitionne,
+  });
+
+  final GroupeAdmin groupe;
+  final String etat;
+  final VoidCallback onTransitionne;
+
+  @override
+  ConsumerState<_FeuilleTransition> createState() => _FeuilleTransitionEtat();
+}
+
+class _FeuilleTransitionEtat extends ConsumerState<_FeuilleTransition> {
+  bool _envoi = false;
+  String? _erreur;
+
+  String get _libelle => switch (widget.etat) {
+    'ready' => t.admin.groupes.actionPasserReady,
+    'publiee' => t.admin.groupes.actionPublier,
+    _ => t.admin.groupes.actionActiver,
+  };
+
+  Future<void> _envoyer() async {
+    setState(() {
+      _envoi = true;
+      _erreur = null;
+    });
+    try {
+      await ref
+          .read(serviceClassesAdminProvider)
+          .transitionner(groupeId: widget.groupe.id, etat: widget.etat);
+      widget.onTransitionne();
+      if (mounted) Navigator.of(context).pop();
+    } catch (erreur) {
+      if (mounted) {
+        setState(
+          () => _erreur = t.admin.groupes.transitionErreur(
+            message: _message(erreur),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _envoi = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      Text(widget.groupe.libelle),
+      if (_erreur != null) ...<Widget>[
+        Ecart.vMd,
+        Text(
+          _erreur!,
+          style: TextStyle(color: Theme.of(context).colorScheme.error),
+        ),
+      ],
+      Ecart.vLg,
+      ActionPrincipale(libelle: _libelle, enCours: _envoi, onPress: _envoyer),
+    ],
+  );
 }
 
 /// Le detail d'un groupe : ses membres.
@@ -534,7 +867,10 @@ class _FeuilleDetail extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(t.admin.groupes.detailMembres, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          t.admin.groupes.detailMembres,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Ecart.vMd,
         switch (membres) {
           AsyncValue<List<MembreGroupe>>(hasValue: true) =>
@@ -611,7 +947,8 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
       setState(
-        () => _erreur = t.admin.groupes.ajouterErreur(message: _message(erreur)),
+        () =>
+            _erreur = t.admin.groupes.ajouterErreur(message: _message(erreur)),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -627,10 +964,15 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
           TextField(
             controller: _eleveId,
             onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champEleveId),
+            decoration: InputDecoration(
+              labelText: t.admin.groupes.champEleveId,
+            ),
           ),
           Ecart.vMd,
-          Text(t.admin.groupes.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            t.admin.groupes.motifRequis,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           Ecart.vSm,
           TextField(
             controller: _motif,
@@ -640,7 +982,10 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _erreur!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           Ecart.vLg,
           ActionPrincipale(
@@ -703,8 +1048,9 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
       setState(
-        () =>
-            _erreur = t.admin.groupes.modifierSeuilErreur(message: _message(erreur)),
+        () => _erreur = t.admin.groupes.modifierSeuilErreur(
+          message: _message(erreur),
+        ),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -725,7 +1071,10 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _erreur!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           Ecart.vLg,
           ActionPrincipale(
@@ -739,6 +1088,234 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
       ),
     );
   }
+}
+
+class _FeuilleCreationOffre extends ConsumerStatefulWidget {
+  const _FeuilleCreationOffre({required this.onCree});
+
+  final VoidCallback onCree;
+
+  @override
+  ConsumerState<_FeuilleCreationOffre> createState() =>
+      _FeuilleCreationOffreEtat();
+}
+
+class _FeuilleCreationOffreEtat
+    extends ConsumerState<_FeuilleCreationOffre> {
+  final TextEditingController _fuseau = TextEditingController(
+    text: 'Europe/Paris',
+  );
+  final TextEditingController _jours = TextEditingController(text: '1,3,5');
+  final TextEditingController _heure = TextEditingController(text: '18');
+  final TextEditingController _duree = TextEditingController(text: '60');
+  String _typePublic = 'enfant';
+  String _langueCode = 'francais';
+  bool _envoi = false;
+  String? _erreur;
+
+  @override
+  void dispose() {
+    _fuseau.dispose();
+    _jours.dispose();
+    _heure.dispose();
+    _duree.dispose();
+    super.dispose();
+  }
+
+  Future<void> _creer() async {
+    final List<String> tokens = _jours.text.split(',');
+    final List<int?> valeurs = tokens
+        .map((String jour) => int.tryParse(jour.trim()))
+        .toList(growable: false);
+    final int? heure = int.tryParse(_heure.text.trim());
+    final int? duree = int.tryParse(_duree.text.trim());
+    if (valeurs.isEmpty || valeurs.any((int? jour) => jour == null) ||
+        heure == null || duree == null) {
+      setState(
+        () => _erreur = t.admin.groupes.creerOffreErreur(
+          message: t.admin.groupes.parametresInvalides,
+        ),
+      );
+      return;
+    }
+    final List<int> jours = valeurs.whereType<int>().toList(growable: false);
+    setState(() {
+      _envoi = true;
+      _erreur = null;
+    });
+    try {
+      await ref.read(serviceClassesAdminProvider).creerOffre(
+        typePublic: _typePublic,
+        langueCode: _langueCode,
+        fuseauIana: _fuseau.text.trim(),
+        jours: jours,
+        heureLocale: heure,
+        dureeMinutes: duree,
+      );
+      widget.onCree();
+      if (mounted) Navigator.of(context).pop();
+    } catch (erreur) {
+      if (mounted) {
+        setState(
+          () => _erreur = t.admin.groupes.creerOffreErreur(
+            message: _message(erreur),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _envoi = false);
+    }
+  }
+
+  String _langueLibelle(String code) => switch (code) {
+    'poular' => t.admin.groupes.offreLanguePoular,
+    'english' => t.admin.groupes.offreLangueEnglish,
+    _ => t.admin.groupes.offreLangueFrancais,
+  };
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      DropdownButtonFormField<String>(
+        initialValue: _typePublic,
+        decoration: InputDecoration(labelText: t.admin.groupes.offreType),
+        items: <DropdownMenuItem<String>>[
+          DropdownMenuItem<String>(
+            value: 'enfant',
+            child: Text(t.admin.groupes.typeEnfant),
+          ),
+          DropdownMenuItem<String>(
+            value: 'adulte',
+            child: Text(t.admin.groupes.typeAdulte),
+          ),
+        ],
+        onChanged: (String? value) {
+          if (value != null) setState(() => _typePublic = value);
+        },
+      ),
+      Ecart.vMd,
+      DropdownButtonFormField<String>(
+        initialValue: _langueCode,
+        decoration: InputDecoration(labelText: t.admin.groupes.offreLangue),
+        items: <String>['poular', 'francais', 'english']
+            .map(
+              (String code) => DropdownMenuItem<String>(
+                value: code,
+                child: Text(_langueLibelle(code)),
+              ),
+            )
+            .toList(growable: false),
+        onChanged: (String? value) {
+          if (value != null) setState(() => _langueCode = value);
+        },
+      ),
+      Ecart.vMd,
+      TextField(
+        controller: _fuseau,
+        decoration: InputDecoration(labelText: t.admin.groupes.offreFuseau),
+      ),
+      Ecart.vMd,
+      TextField(
+        controller: _jours,
+        decoration: InputDecoration(labelText: t.admin.groupes.offreJours),
+      ),
+      Ecart.vMd,
+      Row(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              controller: _heure,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: t.admin.groupes.offreHeure),
+            ),
+          ),
+          Ecart.hMd,
+          Expanded(
+            child: TextField(
+              controller: _duree,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: t.admin.groupes.offreDuree),
+            ),
+          ),
+        ],
+      ),
+      if (_erreur != null) ...<Widget>[
+        Ecart.vMd,
+        Text(
+          _erreur!,
+          style: TextStyle(color: Theme.of(context).colorScheme.error),
+        ),
+      ],
+      Ecart.vLg,
+      ActionPrincipale(
+        libelle: t.admin.groupes.creerOffreEnvoyer,
+        enCours: _envoi,
+        onPress: _creer,
+      ),
+    ],
+  );
+}
+
+class _FeuilleOperation extends StatefulWidget {
+  const _FeuilleOperation({
+    required this.libelleEnvoyer,
+    required this.onEnvoyer,
+    required this.messageErreur,
+    required this.onSucces,
+  });
+
+  final String libelleEnvoyer;
+  final Future<void> Function() onEnvoyer;
+  final String Function({required String message}) messageErreur;
+  final VoidCallback onSucces;
+
+  @override
+  State<_FeuilleOperation> createState() => _FeuilleOperationEtat();
+}
+
+class _FeuilleOperationEtat extends State<_FeuilleOperation> {
+  bool _envoi = false;
+  String? _erreur;
+
+  Future<void> _envoyer() async {
+    setState(() {
+      _envoi = true;
+      _erreur = null;
+    });
+    try {
+      await widget.onEnvoyer();
+      widget.onSucces();
+      if (mounted) Navigator.of(context).pop();
+    } catch (erreur) {
+      if (mounted) {
+        setState(
+          () => _erreur = widget.messageErreur(message: _message(erreur)),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _envoi = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      if (_erreur != null) ...<Widget>[
+        Text(
+          _erreur!,
+          style: TextStyle(color: Theme.of(context).colorScheme.error),
+        ),
+        Ecart.vMd,
+      ],
+      ActionPrincipale(
+        libelle: widget.libelleEnvoyer,
+        enCours: _envoi,
+        onPress: _envoyer,
+      ),
+    ],
+  );
 }
 
 /// Une feuille generique « motif requis, un bouton » : retrait ou cloture.
@@ -782,9 +1359,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
-      );
+      setState(() => _erreur = widget.messageErreur(message: _message(erreur)));
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -799,7 +1374,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           Text(widget.detail!, style: Theme.of(context).textTheme.bodyMedium),
           Ecart.vMd,
         ],
-        Text(t.admin.groupes.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          t.admin.groupes.motifRequis,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         Ecart.vSm,
         TextField(
           controller: _motif,
@@ -809,7 +1387,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(

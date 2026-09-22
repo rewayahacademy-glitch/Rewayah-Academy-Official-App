@@ -221,9 +221,9 @@ ClasseVM classeDepuisGroupeAdmin(
     'cloturee' => EtatPublication.cloturee,
     _ => EtatPublication.publiee,
   },
-  enseignant: g.teacherId.isEmpty
+  enseignant: g.teacherId == null || g.teacherId!.isEmpty
       ? null
-      : EnseignantClasse(id: g.teacherId, nomAffichage: g.teacherLibelle),
+      : EnseignantClasse(id: g.teacherId!, nomAffichage: g.teacherLibelle),
 );
 
 /// Une Classe lue depuis `mes_groupes_v`, cote enseignant.

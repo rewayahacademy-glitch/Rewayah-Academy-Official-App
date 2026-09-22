@@ -61,7 +61,7 @@ class GroupeAdmin {
       libelle: json['libelle'] as String? ?? '',
       type: TypePublicGroupe.depuisSql(json['type_public'] as String?),
       seuilMax: entier('seuil_max'),
-      teacherId: json['teacher_id'] as String,
+      teacherId: json['teacher_id'] as String?,
       teacherIdentifiant: json['teacher_immutable_id'] as String? ?? '',
       teacherPrenom: json['teacher_prenom'] as String?,
       teacherNom: json['teacher_nom'] as String?,
@@ -93,7 +93,7 @@ class GroupeAdmin {
   final int seuilMax;
 
   /// L'identifiant technique de l'enseignant.
-  final String teacherId;
+  final String? teacherId;
 
   /// L'identifiant immuable de l'enseignant.
   final String teacherIdentifiant;
