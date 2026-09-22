@@ -140,6 +140,13 @@ begin
     raise exception 'ce profil n''est pas le votre ni celui de votre foyer';
   end if;
 
+  -- Deux gestes simultanes du meme foyer doivent observer le meme etat avant
+  -- de tester l'intention vivante ; l'index unique reste la barriere finale.
+  perform 1
+  from public.student_profiles
+  where profile_id = p_membre_id and deleted_at is null
+  for update;
+
   select * into v_existante
   from public.intentions_horaire i
   where i.eleve_id = p_membre_id and i.etat <> 'retiree'
