@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,6 +29,7 @@ import '../../features/appareils/appareils_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
 import '../../features/compte/compte_page.dart';
+import '../../features/classes/routes_core24.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
@@ -585,6 +586,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // role dans `redirection.dart` (`_teachingCoreAutorise`), sans quoi
       // `/tc/` serait inatteignable pour tous les roles.
       ...routesTcA(role: sessionRole),
+      ...routesCore24(),
       ...routesTcB(),
       ...routesTcC(),
       ...routesTcE(),
@@ -684,8 +686,10 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
   AppRole.guardian => RoleEspaceGroupe.tuteur,
   AppRole.teacher => RoleEspaceGroupe.enseignant,
   AppRole.admin => RoleEspaceGroupe.admin,
-  AppRole.student || AppRole.controller || AppRole.accountant || null =>
-    RoleEspaceGroupe.eleve,
+  AppRole.student ||
+  AppRole.controller ||
+  AppRole.accountant ||
+  null => RoleEspaceGroupe.eleve,
 };
 
 /// La coquille de navigation d'un role, autour des branches qui sont ses

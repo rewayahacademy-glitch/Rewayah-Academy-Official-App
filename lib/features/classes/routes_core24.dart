@@ -18,6 +18,9 @@ abstract final class CheminsCore24 {
   /// eleve adulte autonome est son propre tuteur (ADR-009) : le meme ecran le
   /// sert.
   static const String tuteurClasses = '/tuteur/classes';
+
+  /// L'eleve autonome retrouve ses Classes sous son propre prefixe de role.
+  static const String eleveClasses = '/eleve/classes';
 }
 
 /// Les routes du sprint noyau 24 h.
@@ -33,11 +36,14 @@ abstract final class CheminsCore24 {
 List<RouteBase> routesCore24() => <RouteBase>[
   GoRoute(
     path: CheminsCore24.enseignantClasses,
-    builder: (BuildContext _, GoRouterState _) =>
-        const ClassesEnseignantPage(),
+    builder: (BuildContext _, GoRouterState _) => const ClassesEnseignantPage(),
   ),
   GoRoute(
     path: CheminsCore24.tuteurClasses,
+    builder: (BuildContext _, GoRouterState _) => const ClassesFoyerPage(),
+  ),
+  GoRoute(
+    path: CheminsCore24.eleveClasses,
     builder: (BuildContext _, GoRouterState _) => const ClassesFoyerPage(),
   ),
 ];

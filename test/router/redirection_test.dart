@@ -15,6 +15,7 @@ SessionState _session({
   householdId: 'h1',
   role: role,
   accountStatus: statut,
+  teacherOperational: role == AppRole.teacher && statut == AccountStatus.active,
   lectureProfil: LectureProfil.presente,
 );
 
@@ -66,7 +67,7 @@ void main() {
         test('$chemin est refuse a un compte ${statut.valeurSql}', () {
           expect(
             deciderRedirection(
-              session: _session(role: AppRole.guardian, statut: statut),
+              session: _session(role: AppRole.teacher, statut: statut),
               cheminDemande: chemin,
               maintenant: maintenant,
             ),
@@ -101,7 +102,7 @@ void main() {
       expect(
         deciderRedirection(
           session: _session(
-            role: AppRole.guardian,
+            role: AppRole.teacher,
             statut: AccountStatus.pendingKyc,
           ),
           cheminDemande: Routes.attente,

@@ -69,6 +69,7 @@ class SessionState {
     this.householdId,
     this.profileId,
     this.accountStatus,
+    this.teacherOperational = false,
     this.interfaceMode = InterfaceMode.standard,
     this.lectureProfil = LectureProfil.enAttente,
     this.observation,
@@ -95,6 +96,9 @@ class SessionState {
 
   /// Statut de compte lu dans `profiles`.
   final AccountStatus? accountStatus;
+
+  /// Autorisation operationnelle renvoyee par le serveur apres KYC et contrat.
+  final bool teacherOperational;
 
   /// Mode d'interface, porte par le profil eleve. Change ce qu'un ecran
   /// affiche, jamais l'arborescence de navigation (ADR-009).
@@ -161,12 +165,20 @@ class SessionState {
           return PorteAcces.attente;
         }
         return switch (accountStatus) {
-          AccountStatus.active ||
-          AccountStatus.provisionalActive => PorteAcces.actif,
+          AccountStatus.active || AccountStatus.provisionalActive =>
+            role == AppRole.teacher && !teacherOperational
+                ? PorteAcces.attente
+                : PorteAcces.actif,
           AccountStatus.disabled => PorteAcces.suspendu,
           // Un statut absent ou illisible se traite comme une attente : on ne
           // laisse jamais passer par defaut ce qu'on n'a pas su lire.
-          AccountStatus.pendingKyc || null => PorteAcces.attente,
+          AccountStatus.pendingKyc =>
+            role == AppRole.student ||
+                    role == AppRole.guardian ||
+                    (role == AppRole.teacher && teacherOperational)
+                ? PorteAcces.actif
+                : PorteAcces.attente,
+          null => PorteAcces.attente,
         };
     }
   }
@@ -178,6 +190,7 @@ class SessionState {
     String? householdId,
     String? profileId,
     AccountStatus? accountStatus,
+    bool? teacherOperational,
     InterfaceMode? interfaceMode,
     LectureProfil? lectureProfil,
     Observation? observation,
@@ -188,6 +201,7 @@ class SessionState {
       householdId: householdId ?? this.householdId,
       profileId: profileId ?? this.profileId,
       accountStatus: accountStatus ?? this.accountStatus,
+      teacherOperational: teacherOperational ?? this.teacherOperational,
       interfaceMode: interfaceMode ?? this.interfaceMode,
       lectureProfil: lectureProfil ?? this.lectureProfil,
       observation: observation ?? this.observation,
@@ -202,6 +216,7 @@ class SessionState {
       other.householdId == householdId &&
       other.profileId == profileId &&
       other.accountStatus == accountStatus &&
+      other.teacherOperational == teacherOperational &&
       other.interfaceMode == interfaceMode &&
       other.lectureProfil == lectureProfil &&
       other.observation == observation;
@@ -213,6 +228,7 @@ class SessionState {
     householdId,
     profileId,
     accountStatus,
+    teacherOperational,
     interfaceMode,
     lectureProfil,
     observation,

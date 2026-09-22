@@ -39,13 +39,14 @@ returns boolean language sql stable security definer set search_path = '' as $$
   select exists (
     select 1 from public.profiles p
     where p.id = auth.uid() and p.deleted_at is null
+      and p.role = public.app_role()
       and (p.access_until is null or p.access_until > now())
       and (
         p.account_status in ('active', 'provisional_active')
         or (p.account_status = 'pending_kyc'
-            and public.app_role() in ('guardian', 'student', 'teacher'))
+            and p.role in ('guardian', 'student', 'teacher'))
       )
-      and (public.app_role() is distinct from 'teacher'::public.app_role
+      and (p.role <> 'teacher'::public.app_role
            or core24_private.enseignant_autorise(p.id))
   );
 $$;
@@ -103,18 +104,22 @@ $$;
 create function public.conformite_classe(p_profile_id uuid default null)
 returns jsonb language plpgsql stable security definer set search_path = '' as $$
 declare v_id uuid := coalesce(p_profile_id, auth.uid()); v_profil public.profiles;
-  v_requis boolean; v_kyc text; v_contrat boolean; v_mineur boolean; v_photo boolean;
+  v_requis boolean; v_kyc text; v_doc public.kyc_doc_status;
+  v_contrat boolean; v_mineur boolean; v_photo boolean;
 begin
-  if auth.uid() is null or not (
+  if auth.uid() is null or not coalesce((
     v_id = auth.uid()
     or (public.app_role() = 'admin' and public.app_account_valid())
     or (public.app_role() = 'guardian' and public.app_account_valid() and public.est_du_foyer(v_id))
-  ) then raise exception 'acces refuse' using errcode = '42501'; end if;
+  ), false) then raise exception 'acces refuse' using errcode = '42501'; end if;
   select * into v_profil from public.profiles where id = v_id and deleted_at is null;
   if not found then raise exception 'profil introuvable' using errcode = '42501'; end if;
   select coalesce(k.required, true), t.kyc_status into v_requis, v_kyc
     from public.teacher_profiles t left join public.teacher_kyc_requirements k on k.teacher_id = t.profile_id
     where t.profile_id = v_id and t.deleted_at is null;
+  select d.status into v_doc from public.kyc_documents d
+    where d.profile_id = v_id and d.deleted_at is null
+    order by d.created_at desc limit 1;
   select exists (select 1 from public.contract_acceptances
     where profile_id = v_id and contract_kind = 'teacher_nda') into v_contrat;
   select exists (select 1 from public.student_profiles
@@ -124,9 +129,18 @@ begin
     'account_status', v_profil.account_status,
     'kyc_requirement', case when v_profil.role <> 'teacher' then 'optional'
       when coalesce(v_requis, true) then 'required' else 'waived' end,
-    'kyc_status', coalesce(v_kyc, 'pending'), 'teacher_contract_accepted', v_contrat,
+    'kyc_status', case when v_profil.role = 'teacher' and v_kyc = 'approved' then 'verified'
+      when v_doc is null then 'not_started'
+      when v_doc = 'approved' then 'verified'
+      when v_doc = 'rejected' then 'rejected' else 'submitted' end,
+    'teacher_kyc_status', v_kyc,
+    'teacher_contract_accepted', v_contrat,
     'teacher_operational', core24_private.enseignant_autorise(v_id),
-    'live_photo_required', v_mineur, 'live_photo_uploaded', v_photo);
+    'live_photo_required', v_mineur, 'live_photo_uploaded', v_photo,
+    'waiver', (select jsonb_build_object('actor', p.first_name,
+      'changed_at', k.changed_at, 'reason', k.reason)
+      from public.teacher_kyc_requirements k join public.profiles p on p.id = k.changed_by
+      where k.teacher_id = v_id and not k.required));
 end;
 $$;
 revoke all on function public.conformite_classe(uuid) from public, anon, agent_ro;
@@ -134,6 +148,20 @@ grant execute on function public.conformite_classe(uuid) to authenticated;
 
 -- Conserver le moteur existant, le rendre inaccessible par RPC directe.
 alter function public.autoriser_jeton_video(uuid, uuid, text, text) set schema core24_private;
+-- 0042 verifiait auth.uid(), absent sous service_role. Le wrapper ci-dessous
+-- verifie le profil cible authentifie par l'Edge, sans changer le JWT/role.
+do $migration$
+declare v_definition text;
+begin
+  select pg_get_functiondef('core24_private.autoriser_jeton_video(uuid,uuid,text,text)'::regprocedure)
+    into v_definition;
+  v_definition := replace(v_definition,
+    'if not public.app_account_valid() then',
+    'if not exists (select 1 from public.profiles p where p.id = p_profile_id
+      and p.deleted_at is null and p.account_status <> ''disabled''
+      and (p.access_until is null or p.access_until > now())) then');
+  execute v_definition;
+end $migration$;
 revoke all on function core24_private.autoriser_jeton_video(uuid, uuid, text, text)
   from public, anon, authenticated, agent_ro, service_role;
 create function public.autoriser_jeton_video(
@@ -168,5 +196,16 @@ revoke all on function public.autoriser_jeton_video(uuid, uuid, text, text)
   from public, anon, authenticated, agent_ro;
 grant execute on function public.autoriser_jeton_video(uuid, uuid, text, text) to service_role;
 revoke all on all functions in schema core24_private from public, anon, authenticated, agent_ro, service_role;
+-- Conserver exactement les projections deployees et leur masquage ; ajouter
+-- le gate au niveau externe avant toute ligne exploitable par un enseignant.
+do $migration$
+declare v_name text; v_definition text;
+begin
+  foreach v_name in array array['teacher_roster_v','tendance_feedback_v'] loop
+    v_definition := rtrim(pg_get_viewdef(('public.' || v_name)::regclass, true), E';\n ');
+    execute format('create or replace view public.%I with (security_barrier=true) as
+      select * from (%s) core24_source where public.app_account_valid()', v_name, v_definition);
+  end loop;
+end $migration$;
 notify pgrst, 'reload schema';
 commit;

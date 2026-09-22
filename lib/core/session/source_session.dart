@@ -62,13 +62,26 @@ class SourceSessionSupabase implements SourceSession {
     // et household_id) : il demande une lecture, autorisee par la policy
     // `profiles_self_select`.
     final _ProfilLu profil = await _lireProfil(profileId);
+    final AppRole? role = AppRole.depuisSql(claims.role);
+    bool teacherOperational = false;
+    if (role == AppRole.teacher && profil.lecture == LectureProfil.presente) {
+      try {
+        final Object? result = await _client.rpc('conformite_classe');
+        if (result is Map<String, dynamic>) {
+          teacherOperational = result['teacher_operational'] == true;
+        }
+      } on Object {
+        // Une conformite illisible ferme le domaine enseignant.
+      }
+    }
 
     return SessionState(
       resolue: true,
       profileId: profileId,
-      role: AppRole.depuisSql(claims.role),
+      role: role,
       householdId: claims.householdId,
       accountStatus: profil.statut,
+      teacherOperational: teacherOperational,
       interfaceMode: profil.mode,
       lectureProfil: profil.lecture,
     );

@@ -39,6 +39,29 @@ do $$ begin
 end $$;
 reset role;
 
+-- Ancien JWT sans claim role : aucun acces a la conformite d'un tiers.
+select set_config('test.jwt','{}',true);
+set local role authenticated;
+do $$ begin
+  begin
+    perform public.conformite_classe('c2400000-0000-0000-0000-000000000002');
+    raise exception 'JWT sans role lit un tiers';
+  exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+update public.profiles set account_status = 'active'
+ where id = 'c2400000-0000-0000-0000-000000000002';
+select set_config('test.uid','c2400000-0000-0000-0000-000000000002',true);
+select pg_temp.verifier(not public.app_account_valid(), 'ancien JWT enseignant ne contourne pas KYC');
+select set_config('test.jwt','{"app_metadata":{"role":"admin"}}',true);
+select pg_temp.verifier(not public.app_account_valid(), 'claim admin ne remplace pas le role du profil');
+select set_config('test.jwt','{}',true);
+set local role authenticated;
+select pg_temp.verifier(not exists(select 1 from public.teacher_roster_v), 'roster ferme sans clearance');
+reset role;
+update public.profiles set account_status = 'pending_kyc'
+ where id = 'c2400000-0000-0000-0000-000000000002';
+
 select set_config('test.uid','c2400000-0000-0000-0000-000000000004',true);
 select set_config('test.jwt','{"app_metadata":{"role":"guardian"}}',true);
 select pg_temp.verifier(public.app_account_valid(), 'KYC tuteur ne bloque pas la navigation');

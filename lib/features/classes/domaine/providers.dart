@@ -2,17 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Le type d'une famille de providers n'est pas exporte par l'entree
 // principale de Riverpod 3 : meme convention que `service_planning.dart`.
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/admin/service_comptes.dart';
 import '../../../core/admin/service_configuration.dart';
 import '../../../core/admin/service_groupes.dart';
 import '../../../core/admin/service_programme.dart';
 import '../../../core/appairage/service_appairage.dart';
-import '../../../core/dossier/service_dossier.dart';
 import '../../../core/enseignant/service_enseignant.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/tc_groupe/port_groupes.dart';
 import 'adaptateurs_existants.dart';
+import 'conformite_serveur.dart';
 import 'classe_vm.dart';
 import 'conformite.dart';
 import 'ports.dart';
@@ -50,8 +51,8 @@ final Provider<PortMarketplaceClasses> portMarketplaceProvider =
 /// La conformite employee par l'application.
 final Provider<PortConformite> portConformiteProvider =
     Provider<PortConformite>(
-      (Ref ref) => ConformiteDepuisExistant(
-        dossier: () => ref.read(serviceDossierProvider),
+      (Ref ref) => ConformiteDepuisServeur(
+        client: () => Supabase.instance.client,
         comptes: () => ref.read(serviceComptesProvider),
       ),
     );
@@ -61,6 +62,7 @@ final Provider<PortPreconditionSalle> portPreconditionSalleProvider =
     Provider<PortPreconditionSalle>(
       (Ref ref) => PreconditionDepuisFoyer(
         appairage: () => ref.read(serviceAppairageProvider),
+        client: () => Supabase.instance.client,
         // Lu a l'appel, jamais a la construction : une session qui ne peut
         // pas se resoudre (aucun backend, comme en test) ne doit pas fermer
         // la porte avant qu'on l'ait demandee.
@@ -102,8 +104,9 @@ final FutureProvider<List<ClasseVM>> mesClassesProvider =
 /// Les Classes disponibles, pour l'appelant (`null`) ou un membre du foyer.
 final FutureProviderFamily<List<ClasseVM>, String?> classesDisponiblesProvider =
     FutureProvider.family<List<ClasseVM>, String?>(
-      (Ref ref, String? membreId) =>
-          ref.watch(portMarketplaceProvider).classesDisponibles(membreId: membreId),
+      (Ref ref, String? membreId) => ref
+          .watch(portMarketplaceProvider)
+          .classesDisponibles(membreId: membreId),
     );
 
 /// La conformite de l'appelant.
@@ -128,7 +131,9 @@ preconditionSalleProvider = FutureProvider.family<PreconditionSalle, String?>((
   String? membreId,
 ) async {
   try {
-    return await ref.watch(portPreconditionSalleProvider).pour(membreId: membreId);
+    return await ref
+        .watch(portPreconditionSalleProvider)
+        .pour(membreId: membreId);
   } on Object {
     return const PreconditionSalle.inconnue();
   }

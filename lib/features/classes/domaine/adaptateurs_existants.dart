@@ -9,6 +9,9 @@ import '../../../core/dossier/service_dossier.dart';
 import '../../../core/enseignant/modeles_enseignant.dart';
 import '../../../core/enseignant/service_enseignant.dart';
 import '../../../core/planning/service_planning.dart' show Creneau;
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../core/tc_groupe/group_summary_vm.dart';
 import '../../../core/tc_groupe/port_groupes.dart';
 import 'classe_vm.dart';
@@ -186,34 +189,38 @@ class ClassesAdminDepuisExistant implements PortClassesAdmin {
   Future<List<MembreClasse>> membres(String classeId) async {
     final List<MembreGroupe> lignes = await groupes().membres(classeId);
     return lignes
-        .map((MembreGroupe m) => MembreClasse(id: m.studentId, libelle: m.libelle))
+        .map(
+          (MembreGroupe m) => MembreClasse(id: m.studentId, libelle: m.libelle),
+        )
         .toList(growable: false);
   }
 }
 
 /// Une Classe lue depuis `groupes_admin()`.
-ClasseVM classeDepuisGroupeAdmin(GroupeAdmin g, {required ReglesClasse regles}) =>
-    ClasseVM(
-      id: g.id,
-      libelle: g.libelle,
-      publicClasse: g.type == TypePublicGroupe.enfant
-          ? PublicClasse.enfants
-          : PublicClasse.adultes,
-      creneau: CreneauClasse(
-        jourIso: g.creneau.jour.clamp(1, 7),
-        heure: g.creneau.heure.clamp(0, 23),
-        fuseauIana: g.creneau.fuseau,
-      ),
-      duree: regles.dureeMinutes == null
-          ? null
-          : Duration(minutes: regles.dureeMinutes!),
-      capacite: g.seuilMax < 1 ? 1 : g.seuilMax,
-      inscrits: g.nombreMembres,
-      etat: g.actif ? EtatPublication.publiee : EtatPublication.cloturee,
-      enseignant: g.teacherId.isEmpty
-          ? null
-          : EnseignantClasse(id: g.teacherId, nomAffichage: g.teacherLibelle),
-    );
+ClasseVM classeDepuisGroupeAdmin(
+  GroupeAdmin g, {
+  required ReglesClasse regles,
+}) => ClasseVM(
+  id: g.id,
+  libelle: g.libelle,
+  publicClasse: g.type == TypePublicGroupe.enfant
+      ? PublicClasse.enfants
+      : PublicClasse.adultes,
+  creneau: CreneauClasse(
+    jourIso: g.creneau.jour.clamp(1, 7),
+    heure: g.creneau.heure.clamp(0, 23),
+    fuseauIana: g.creneau.fuseau,
+  ),
+  duree: regles.dureeMinutes == null
+      ? null
+      : Duration(minutes: regles.dureeMinutes!),
+  capacite: g.seuilMax < 1 ? 1 : g.seuilMax,
+  inscrits: g.nombreMembres,
+  etat: g.actif ? EtatPublication.publiee : EtatPublication.cloturee,
+  enseignant: g.teacherId.isEmpty
+      ? null
+      : EnseignantClasse(id: g.teacherId, nomAffichage: g.teacherLibelle),
+);
 
 /// Une Classe lue depuis `mes_groupes_v`, cote enseignant.
 ClasseVM classeDepuisGroupeEnseignant(GroupeEnseignant g) => ClasseVM(
@@ -359,7 +366,10 @@ class MarketplaceDepuisExistant implements PortMarketplaceClasses {
 /// n'a **aucune** source serveur aujourd'hui et n'est donc jamais inventee.
 class ConformiteDepuisExistant implements PortConformite {
   /// Cree l'adaptateur.
-  const ConformiteDepuisExistant({required this.dossier, required this.comptes});
+  const ConformiteDepuisExistant({
+    required this.dossier,
+    required this.comptes,
+  });
 
   /// Le dossier de l'appelant (`etat_dossier`).
   final ServiceDossier Function() dossier;
@@ -430,7 +440,11 @@ ConformiteCompte conformiteDepuisCompte(CompteAdmin c) => ConformiteCompte(
 /// tranchera seul a l'emission du jeton.
 class PreconditionDepuisFoyer implements PortPreconditionSalle {
   /// Cree l'adaptateur.
-  const PreconditionDepuisFoyer({required this.appairage, this.monProfilId});
+  const PreconditionDepuisFoyer({
+    required this.appairage,
+    this.monProfilId,
+    this.client,
+  });
 
   /// Le service du foyer (`profils_du_foyer_v`).
   final ServiceAppairage Function() appairage;
@@ -440,6 +454,9 @@ class PreconditionDepuisFoyer implements PortPreconditionSalle {
   /// precondition inconnue, jamais une erreur.
   final String? Function()? monProfilId;
 
+  /// La RPC confirme le type mineur et l'objet Storage reel.
+  final SupabaseClient Function()? client;
+
   @override
   Future<PreconditionSalle> pour({String? membreId}) async {
     try {
@@ -447,13 +464,33 @@ class PreconditionDepuisFoyer implements PortPreconditionSalle {
       if (cible == null) {
         return const PreconditionSalle.inconnue();
       }
+      if (client != null) {
+        final Map<String, dynamic> json = await client!().rpc(
+          'conformite_classe',
+          params: <String, dynamic>{'p_profile_id': cible},
+        ) as Map<String, dynamic>;
+        final List<EleveDuFoyer> membres = await appairage().eleves();
+        String prenom = '';
+        for (final EleveDuFoyer membre in membres) {
+          if (membre.id == cible) {
+            prenom = membre.prenom;
+            break;
+          }
+        }
+        return PreconditionSalle(
+          prenom: prenom,
+          photoRequise: json['live_photo_required'] as bool?,
+          photoPresente: json['live_photo_uploaded'] as bool?,
+        );
+      }
       final List<EleveDuFoyer> membres = await appairage().eleves();
       for (final EleveDuFoyer m in membres) {
         if (m.id == cible) {
           return PreconditionSalle(
             prenom: m.prenom,
             photoRequise: m.mode == InterfaceMode.enfant,
-            photoPresente: m.cleAvatar != null && m.cleAvatar!.trim().isNotEmpty,
+            photoPresente:
+                m.cleAvatar != null && m.cleAvatar!.trim().isNotEmpty,
           );
         }
       }

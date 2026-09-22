@@ -63,6 +63,8 @@ void main() {
           profileId: 'ens-1',
           householdId: 'h1',
           accountStatus: statut,
+          teacherOperational:
+              role == AppRole.teacher && statut == AccountStatus.active,
           lectureProfil: LectureProfil.presente,
         ),
       ),
