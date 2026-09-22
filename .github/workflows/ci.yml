@@ -34,10 +34,18 @@ jobs:
           # ont besoin de pouvoir se faire passer pour un appelant donne, et un
           # stub qui differe entre la CI et le poste ne prouve rien.
           psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql
+          # Les migrations Teaching Core utilisent les objets/buckets Storage.
+          psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/stub_storage.sql
           for f in supabase/migrations/*.sql; do
             echo "--- $f"
             psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f "$f"
           done
+
+      # Tester les restrictions de droits AVANT les grants larges des anciens
+      # scenarios, qui simulent leurs propres privileges Supabase.
+      - name: Presence academique Core24
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_core24_presence.sql
 
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
@@ -200,11 +208,6 @@ jobs:
       - name: Tests du stockage R2
         run: deno test supabase/functions/_shared/r2/
 
-      # Le type-check s'arrete aux fichiers R2. `livekit-webhook` en est exclu
-      # volontairement : il importe `_shared/livekit.ts`, dont la ligne 104
-      # porte une erreur de type anterieure a ce lot (`canPublishSources`,
-      # introduite par e76a14e le 12 septembre). La corriger n'appartient pas
-      # au perimetre du stockage.
       - name: Type-check des points d'entree R2
         run: |
           deno check \
@@ -213,6 +216,12 @@ jobs:
             supabase/functions/piece-identite-depot/index.ts \
             supabase/functions/piece-identite-confirme/index.ts \
             supabase/functions/archive-seance-acces/index.ts
+
+      - name: Type-check webhook LiveKit
+        run: deno check --node-modules-dir=none supabase/functions/livekit-webhook/index.ts
+
+      - name: Sources autorisees du jeton LiveKit
+        run: deno test --node-modules-dir=none --allow-env supabase/functions/_shared/livekit_test.ts
 
       # Aucune valeur de secret ne doit exister dans le depot. Les NOMS des
       # variables R2 ont le droit d'y etre, et y sont ; leurs valeurs jamais.

@@ -57,21 +57,27 @@ Deno.serve(async (requete: Request) => {
   // signe cote serveur. Un participant sans identite exploitable est enregistre
   // pour l'exploitation mais n'ecrit aucune presence.
   const identite = participant?.identity ? String(participant.identity) : null
-  const profil = identite && /^[0-9a-f-]{36}$/i.test(identite) ? identite : null
+  const profil = identite && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identite)
+    ? identite
+    : null
 
   // LiveKit horodate en secondes ; `createdAt` peut arriver en chaine.
   const horodatage = Number(evenement.createdAt ?? 0)
-  const survenuLe = horodatage > 0
+  const horodatageFiable = Number.isFinite(horodatage) && horodatage > 0 &&
+    Number.isFinite(new Date(horodatage * 1000).getTime())
+  const survenuLe = horodatageFiable
     ? new Date(horodatage * 1000).toISOString()
     : new Date().toISOString()
 
-  // `id` est l'identifiant d'evenement LiveKit. C'est lui qui fait
-  // l'idempotence ; sans lui, un repli sur le triplet (type, salle, instant)
-  // vaut mieux que rien, mais deux evenements identiques a la meme seconde
-  // fusionneraient. On le dit dans le journal plutot que de le taire.
+  // `id` est l'identifiant LiveKit. Sans lui, l'empreinte du corps signe
+  // distingue deux evenements differents survenus a la meme seconde.
+  const empreinte = evenement.id ? null : Array.from(
+    new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(corps))),
+    (octet: number) => octet.toString(16).padStart(2, '0'),
+  ).join('')
   const identifiant = evenement.id
     ? String(evenement.id)
-    : `sans_id:${type}:${salle ?? '?'}:${identite ?? '?'}:${horodatage}`
+    : `sans_id:${empreinte}`
 
   const service = clientService()
   const { data, error } = await service.rpc('enregistrer_webhook_livekit', {
@@ -83,6 +89,7 @@ Deno.serve(async (requete: Request) => {
     p_detail: {
       sans_id_livekit: !evenement.id,
       identite_non_exploitable: identite !== null && profil === null,
+      horodatage_reception: !horodatageFiable,
     },
   })
 
