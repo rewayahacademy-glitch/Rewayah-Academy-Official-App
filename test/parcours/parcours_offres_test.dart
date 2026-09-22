@@ -26,6 +26,7 @@ ParcoursApprenant _personnalise({
   bool offreIndisponible = false,
   bool fuseauChange = false,
 }) => apprenantDeTest(
+  dateNaissance: DateTime(2016, 9, 20),
   cohorte: 'enfant_8_10',
   langue: 'francais',
   onboardingFaitLe: _fait,
@@ -70,6 +71,18 @@ void main() {
       expect(
         etapeParcours(_personnalise(intention: EtatIntention.enregistree)),
         EtapeParcours.diagnosticRequis,
+      );
+    });
+
+    test('je debute saute le diagnostic sans le declarer termine', () {
+      expect(
+        etapeParcours(
+          _personnalise(
+            intention: EtatIntention.enregistree,
+            diagnostic: StatutDiagnostic.nonRequis,
+          ),
+        ),
+        EtapeParcours.groupeEnFormation,
       );
     });
 
@@ -497,10 +510,17 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      await repondre('8 à 10 ans');
+      await tester.tap(find.text(t.parcours.dateNaissanceChoisir).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('10').last);
+      await tester.tap(find.text('OK').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.continuer).last);
+      await tester.pumpAndSettle();
+      expect(faux.datesDefinies, isEmpty);
       expect(faux.profilsEnregistres, isEmpty);
-      await repondre('Français');
-      await repondre('France, Belgique, Espagne');
+      await repondre(faux.languesRendues.first.nom);
+      await repondre(fuseauxProposes.first.libelle);
       await repondre(libelleNiveau(NiveauDeclare.debutLettres));
       await repondre(libelleObjectif(ObjectifApprentissage.apprendreALire));
       // Rien n'est parti avant la derniere question.
@@ -509,8 +529,9 @@ void main() {
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();
 
+      expect(faux.datesDefinies.length, 1);
       expect(faux.profilsEnregistres.length, 1);
-      expect(faux.profilsEnregistres.single.cohorteCode, 'enfant_8_10');
+      expect(faux.profilsEnregistres.single.cohorteCode, isEmpty);
       expect(faux.profilsEnregistres.single.langueCode, 'francais');
       expect(faux.profilsEnregistres.single.fuseau, 'Europe/Paris');
       expect(faux.profilsEnregistres.single.niveau, NiveauDeclare.debutLettres);
@@ -531,7 +552,11 @@ void main() {
         hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('8 à 10 ans'));
+      await tester.tap(find.text(t.parcours.dateNaissanceChoisir).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('10').last);
+      await tester.tap(find.text('OK').last);
+      await tester.pumpAndSettle();
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.continuer));
       await tester.pumpAndSettle();

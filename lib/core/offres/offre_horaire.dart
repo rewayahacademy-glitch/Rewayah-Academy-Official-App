@@ -420,6 +420,7 @@ class ParcoursApprenant {
     required this.eleveId,
     required this.prenom,
     required this.diagnostic,
+    this.dateNaissance,
     this.cohorteCode,
     this.cohorteNom,
     this.public,
@@ -427,6 +428,7 @@ class ParcoursApprenant {
     this.langueNom,
     this.niveauDeclare,
     this.objectif,
+    this.placementBasis,
     this.onboardingFaitLe,
     this.fuseauFoyer,
     this.intentionEtat,
@@ -448,6 +450,7 @@ class ParcoursApprenant {
     diagnostic: StatutDiagnostic.depuisSql(
       json['diagnostic_statut'] as String?,
     ),
+    dateNaissance: DateTime.tryParse(json['date_naissance'] as String? ?? ''),
     cohorteCode: json['cohorte'] as String?,
     cohorteNom: json['cohorte_nom'] as String?,
     public: json['type_public'] == null
@@ -457,6 +460,7 @@ class ParcoursApprenant {
     langueNom: json['langue_nom'] as String?,
     niveauDeclare: NiveauDeclare.depuisSql(json['niveau_declare'] as String?),
     objectif: ObjectifApprentissage.depuisSql(json['objectif'] as String?),
+    placementBasis: json['placement_basis'] as String?,
     onboardingFaitLe: DateTime.tryParse(
       json['onboarding_fait_le'] as String? ?? '',
     )?.toLocal(),
@@ -479,6 +483,10 @@ class ParcoursApprenant {
 
   /// Son prenom.
   final String prenom;
+
+  /// Date de naissance confiee par le tuteur, source serveur du calcul d'age.
+  /// Elle n'est jamais saisie par le profil eleve lui-meme.
+  final DateTime? dateNaissance;
 
   /// Ou en est son diagnostic academique.
   final StatutDiagnostic diagnostic;
@@ -503,6 +511,9 @@ class ParcoursApprenant {
 
   /// Son objectif.
   final ObjectifApprentissage? objectif;
+
+  /// Base explicable du placement initial, jamais un faux diagnostic termine.
+  final String? placementBasis;
 
   /// Quand l'onboarding a ete rempli.
   final DateTime? onboardingFaitLe;
@@ -536,7 +547,10 @@ class ParcoursApprenant {
 
   /// Vrai quand les questions de personnalisation sont repondues.
   bool get profilRempli =>
-      cohorteCode != null && langueCode != null && onboardingFaitLe != null;
+      cohorteCode != null &&
+      langueCode != null &&
+      onboardingFaitLe != null &&
+      (public != PublicOffre.enfants || dateNaissance != null);
 
   /// Vrai quand une preference horaire vit.
   bool get aUnePreference =>
@@ -591,6 +605,10 @@ EtapeParcours etapeParcours(ParcoursApprenant p) {
     EtatIntention.affectee => EtapeParcours.groupeConfirme,
     EtatIntention.enFormation => EtapeParcours.groupeEnFormation,
     EtatIntention.diagnosticPlanifie => EtapeParcours.diagnosticEnAttente,
+    // « Je débute » saute D0 sans fabriquer un diagnostic termine. Le serveur
+    // porte `diagnostic_statut = non_requis` et `placement_basis` l'explique.
+    EtatIntention.enregistree when p.diagnostic == StatutDiagnostic.nonRequis =>
+      EtapeParcours.groupeEnFormation,
     // Une preference enregistree renvoie a ce qu'il reste a faire, et ce qu'il
     // reste a faire est le diagnostic : c'est lui qui debloque l'affectation.
     _ =>

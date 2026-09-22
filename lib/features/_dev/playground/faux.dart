@@ -277,6 +277,24 @@ class FauxServiceAppairage implements ServiceAppairage {
           ),
     ];
   }
+
+  @override
+  Future<void> repondreDemandeAffichageStandard({
+    required String eleveId,
+    required bool accepter,
+  }) async {
+    _peutEchouer();
+  }
+
+  @override
+  Future<void> activerAffichageStandard(String eleveId) async {
+    _peutEchouer();
+  }
+
+  @override
+  Future<void> repasserInterfaceGuidee(String eleveId) async {
+    _peutEchouer();
+  }
 }
 
 /// Un service de photos en memoire.
@@ -664,10 +682,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -677,8 +692,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(

@@ -20,6 +20,8 @@ EleveDuFoyer _enfant({
   String prenom = 'Amina',
   InterfaceMode mode = InterfaceMode.enfant,
   CameraPolicy camera = CameraPolicy.forbidden,
+  DemandeAffichageStandard demandeAffichageStandard =
+      DemandeAffichageStandard.aucune,
   String? cleAvatar,
 }) => EleveDuFoyer(
   id: id,
@@ -27,6 +29,7 @@ EleveDuFoyer _enfant({
   identifiantImmuable: 'STUD-AD-000001',
   mode: mode,
   camera: camera,
+  demandeAffichageStandard: demandeAffichageStandard,
   cleAvatar: cleAvatar,
 );
 
@@ -186,6 +189,38 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets(
+      'une demande enfant ajoute le refus sans masquer l activation du tuteur',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: FauxServiceAppairage()
+            ..elevesRendus = <EleveDuFoyer>[
+              _enfant(
+                demandeAffichageStandard: DemandeAffichageStandard.enAttente,
+              ),
+            ],
+        );
+
+        expect(
+          find.text(
+            t.tuteur.reglages.demandeAffichageStandardEnAttente(
+              prenom: 'Amina',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.tuteur.reglages.modePasserStandard(prenom: 'Amina')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.tuteur.reglages.demandeAffichageStandardRefuser),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('basculer le mode n envoie que le mode', (
       WidgetTester tester,

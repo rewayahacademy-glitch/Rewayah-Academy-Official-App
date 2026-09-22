@@ -28,6 +28,7 @@ import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
+import '../../features/classes/routes_core24.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/controleur/planning_page.dart';
@@ -594,6 +595,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // role dans `redirection.dart` (`_teachingCoreAutorise`), sans quoi
       // `/tc/` serait inatteignable pour tous les roles.
       ...routesTcA(role: sessionRole),
+      ...routesCore24(),
       ...routesTcB(),
       ...routesTcC(),
       ...routesTcE(),

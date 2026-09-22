@@ -77,6 +77,10 @@ class FauxServiceOffres implements ServiceOffres {
         })
       >[];
 
+  /// Les dates de naissance transmises au serveur, dans l'ordre.
+  final List<({String membreId, DateTime date})> datesDefinies =
+      <({String membreId, DateTime date})>[];
+
   /// Les choix d'offre, dans l'ordre.
   final List<({String membreId, String offreId, String fuseau})> choix =
       <({String membreId, String offreId, String fuseau})>[];
@@ -129,7 +133,6 @@ class FauxServiceOffres implements ServiceOffres {
   Future<void> enregistrerProfil({
     required String membreId,
     required String langueCode,
-    required String cohorteCode,
     required NiveauDeclare niveau,
     required ObjectifApprentissage objectif,
     required String fuseau,
@@ -138,11 +141,25 @@ class FauxServiceOffres implements ServiceOffres {
     profilsEnregistres.add((
       membreId: membreId,
       langueCode: langueCode,
-      cohorteCode: cohorteCode,
+      cohorteCode:
+          parcoursRendu
+              .where((ParcoursApprenant p) => p.eleveId == membreId)
+              .firstOrNull
+              ?.cohorteCode ??
+          '',
       niveau: niveau,
       objectif: objectif,
       fuseau: fuseau,
     ));
+  }
+
+  @override
+  Future<void> definirDateNaissance({
+    required String membreId,
+    required DateTime date,
+  }) async {
+    _peutEchouer();
+    datesDefinies.add((membreId: membreId, date: date));
   }
 
   @override
@@ -181,6 +198,8 @@ class FauxServiceOffres implements ServiceOffres {
 ParcoursApprenant apprenantDeTest({
   String eleveId = 'e1',
   String prenom = 'Amina',
+  DateTime? dateNaissance,
+  PublicOffre? public = PublicOffre.enfants,
   String? cohorte,
   String? langue,
   DateTime? onboardingFaitLe,
@@ -193,6 +212,8 @@ ParcoursApprenant apprenantDeTest({
   eleveId: eleveId,
   prenom: prenom,
   diagnostic: diagnostic,
+  dateNaissance: dateNaissance,
+  public: public,
   cohorteCode: cohorte,
   langueCode: langue,
   onboardingFaitLe: onboardingFaitLe,

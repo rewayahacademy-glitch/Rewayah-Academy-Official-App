@@ -147,6 +147,53 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
     }
   }
 
+  /// Active l'affichage standard par l'un des deux chemins autorises :
+  /// acceptation d'une demande enfant en attente, ou activation directe par
+  /// le tuteur quand aucune demande n'a ete deposee.
+  Future<void> _activerAffichageStandard() async {
+    setState(() {
+      _reglageEnCours = true;
+      _erreur = null;
+    });
+    try {
+      final ServiceAppairage service = ref.read(serviceAppairageProvider);
+      if (_enfant.demandeAffichageStandard ==
+          DemandeAffichageStandard.enAttente) {
+        await service.repondreDemandeAffichageStandard(
+          eleveId: _enfant.id,
+          accepter: true,
+        );
+      } else {
+        await service.activerAffichageStandard(_enfant.id);
+      }
+      ref.invalidate(elevesDuFoyerProvider);
+    } on Object catch (erreur) {
+      if (mounted) setState(() => _erreur = _message(erreur));
+    } finally {
+      if (mounted) setState(() => _reglageEnCours = false);
+    }
+  }
+
+  Future<void> _repondreDemande({required bool accepter}) async {
+    setState(() {
+      _reglageEnCours = true;
+      _erreur = null;
+    });
+    try {
+      await ref
+          .read(serviceAppairageProvider)
+          .repondreDemandeAffichageStandard(
+            eleveId: _enfant.id,
+            accepter: accepter,
+          );
+      ref.invalidate(elevesDuFoyerProvider);
+    } on Object catch (erreur) {
+      if (mounted) setState(() => _erreur = _message(erreur));
+    } finally {
+      if (mounted) setState(() => _reglageEnCours = false);
+    }
+  }
+
   Future<void> _changerPhoto() async {
     setState(() {
       _photoEnCours = true;
@@ -272,16 +319,46 @@ class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
             style: textes.bodySmall,
           ),
           Ecart.vSm,
-          ActionPrincipale(
-            libelle: modeEnfant
-                ? t.tuteur.reglages.modePasserStandard(prenom: _enfant.prenom)
-                : t.tuteur.reglages.modePasserEnfant(prenom: _enfant.prenom),
-            niveau: NiveauAction.secondaire,
-            enCours: _reglageEnCours,
-            onPress: () => _ecrire(
-              mode: modeEnfant ? InterfaceMode.standard : InterfaceMode.enfant,
+          if (modeEnfant) ...<Widget>[
+            if (_enfant.demandeAffichageStandard ==
+                DemandeAffichageStandard.enAttente) ...<Widget>[
+              Text(
+                t.tuteur.reglages.demandeAffichageStandardEnAttente(
+                  prenom: _enfant.prenom,
+                ),
+                style: textes.bodySmall,
+              ),
+              Ecart.vSm,
+            ],
+            // Cette action reste visible meme sans demande enfant : le tuteur
+            // peut toujours decider lui-meme de l'activation.
+            ActionPrincipale(
+              libelle: t.tuteur.reglages.modePasserStandard(
+                prenom: _enfant.prenom,
+              ),
+              niveau: NiveauAction.secondaire,
+              enCours: _reglageEnCours,
+              onPress: _activerAffichageStandard,
             ),
-          ),
+            if (_enfant.demandeAffichageStandard ==
+                DemandeAffichageStandard.enAttente) ...<Widget>[
+              Ecart.vSm,
+              ActionPrincipale(
+                libelle: t.tuteur.reglages.demandeAffichageStandardRefuser,
+                niveau: NiveauAction.tertiaire,
+                enCours: _reglageEnCours,
+                onPress: () => _repondreDemande(accepter: false),
+              ),
+            ],
+          ] else
+            ActionPrincipale(
+              libelle: t.tuteur.reglages.modePasserEnfant(
+                prenom: _enfant.prenom,
+              ),
+              niveau: NiveauAction.secondaire,
+              enCours: _reglageEnCours,
+              onPress: () => _ecrire(mode: InterfaceMode.enfant),
+            ),
 
           if (_erreur != null) ...<Widget>[
             Ecart.vSm,

@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../core/admin/service_comptes.dart';
 import '../../../core/admin/service_configuration.dart';
 import '../../../core/admin/service_groupes.dart';
@@ -9,8 +11,6 @@ import '../../../core/dossier/service_dossier.dart';
 import '../../../core/enseignant/modeles_enseignant.dart';
 import '../../../core/enseignant/service_enseignant.dart';
 import '../../../core/planning/service_planning.dart' show Creneau;
-
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/tc_groupe/group_summary_vm.dart';
 import '../../../core/tc_groupe/port_groupes.dart';
@@ -469,10 +469,11 @@ class PreconditionDepuisFoyer implements PortPreconditionSalle {
         return const PreconditionSalle.inconnue();
       }
       if (client != null) {
-        final Map<String, dynamic> json = await client!().rpc(
-          'conformite_classe',
-          params: <String, dynamic>{'p_profile_id': cible},
-        ) as Map<String, dynamic>;
+        final Map<String, dynamic> json = await client!()
+            .rpc<Map<String, dynamic>>(
+              'conformite_classe',
+              params: <String, dynamic>{'p_profile_id': cible},
+            );
         final List<EleveDuFoyer> membres = await appairage().eleves();
         String prenom = '';
         for (final EleveDuFoyer membre in membres) {

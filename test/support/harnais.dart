@@ -336,6 +336,80 @@ class FauxServiceAppairage implements ServiceAppairage {
           ),
     ];
   }
+
+  @override
+  Future<void> repondreDemandeAffichageStandard({
+    required String eleveId,
+    required bool accepter,
+  }) async {
+    _peutEchouer();
+    elevesRendus = <EleveDuFoyer>[
+      for (final EleveDuFoyer eleve in elevesRendus)
+        if (eleve.id != eleveId)
+          eleve
+        else
+          EleveDuFoyer(
+            id: eleve.id,
+            prenom: eleve.prenom,
+            identifiantImmuable: eleve.identifiantImmuable,
+            mode: accepter ? InterfaceMode.standard : InterfaceMode.enfant,
+            camera: eleve.camera,
+            demandeAffichageStandard: accepter
+                ? DemandeAffichageStandard.aucune
+                : DemandeAffichageStandard.refusee,
+            cleAvatar: eleve.cleAvatar,
+            finAcces: eleve.finAcces,
+          ),
+    ];
+  }
+
+  @override
+  Future<void> activerAffichageStandard(String eleveId) async {
+    _peutEchouer();
+    reglagesEcrits.add((
+      eleveId: eleveId,
+      mode: InterfaceMode.standard,
+      camera: null,
+      cleAvatar: null,
+    ));
+    elevesRendus = <EleveDuFoyer>[
+      for (final EleveDuFoyer eleve in elevesRendus)
+        if (eleve.id != eleveId)
+          eleve
+        else
+          EleveDuFoyer(
+            id: eleve.id,
+            prenom: eleve.prenom,
+            identifiantImmuable: eleve.identifiantImmuable,
+            mode: InterfaceMode.standard,
+            camera: eleve.camera,
+            demandeAffichageStandard: DemandeAffichageStandard.aucune,
+            cleAvatar: eleve.cleAvatar,
+            finAcces: eleve.finAcces,
+          ),
+    ];
+  }
+
+  @override
+  Future<void> repasserInterfaceGuidee(String eleveId) async {
+    _peutEchouer();
+    elevesRendus = <EleveDuFoyer>[
+      for (final EleveDuFoyer eleve in elevesRendus)
+        if (eleve.id != eleveId)
+          eleve
+        else
+          EleveDuFoyer(
+            id: eleve.id,
+            prenom: eleve.prenom,
+            identifiantImmuable: eleve.identifiantImmuable,
+            mode: InterfaceMode.enfant,
+            camera: eleve.camera,
+            demandeAffichageStandard: DemandeAffichageStandard.aucune,
+            cleAvatar: eleve.cleAvatar,
+            finAcces: eleve.finAcces,
+          ),
+    ];
+  }
 }
 
 /// Un service de photos en memoire.
@@ -614,7 +688,9 @@ class FauxServiceAttribution implements ServiceAttribution {
     ({String eleveId, String enseignantId, Creneau creneau, String? motif})
   >
   attributions =
-      <({String eleveId, String enseignantId, Creneau creneau, String? motif})>[];
+      <
+        ({String eleveId, String enseignantId, Creneau creneau, String? motif})
+      >[];
 
   /// Ce que la lecture de la file doit jeter.
   Object? erreurFoyers;
@@ -709,7 +785,14 @@ class FauxServiceJournal implements ServiceJournal {
     ({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})
   >
   lectures =
-      <({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})>[];
+      <
+        ({
+          String? acteur,
+          String? type,
+          DateTime? depuis,
+          CurseurJournal? curseur,
+        })
+      >[];
 
   /// Ce que la lecture doit jeter.
   Object? erreurEntrees;
@@ -753,7 +836,9 @@ class FauxServiceJournal implements ServiceJournal {
       );
     }
     if (depuis != null) {
-      retenues = retenues.where((EntreeJournal e) => !e.survenuLe.isBefore(depuis));
+      retenues = retenues.where(
+        (EntreeJournal e) => !e.survenuLe.isBefore(depuis),
+      );
     }
     if (curseur != null) {
       // Le meme keyset que la base : strictement avant le couple donne.
@@ -933,10 +1018,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -946,8 +1028,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(
@@ -1553,13 +1634,13 @@ class FauxDepotRapports implements DepotRapports {
   Object? erreurAJeter;
 
   /// Les cles presentes, du plus ancien au plus recent.
-  List<String> get cles => (_lignes.values.toList()
-        ..sort(
-          (RapportEnAttente a, RapportEnAttente b) =>
-              a.redigeA.compareTo(b.redigeA),
-        ))
-      .map((RapportEnAttente r) => r.cleIdempotence)
-      .toList(growable: false);
+  List<String> get cles =>
+      (_lignes.values.toList()..sort(
+            (RapportEnAttente a, RapportEnAttente b) =>
+                a.redigeA.compareTo(b.redigeA),
+          ))
+          .map((RapportEnAttente r) => r.cleIdempotence)
+          .toList(growable: false);
 
   @override
   Future<List<RapportEnAttente>> enAttente() async =>

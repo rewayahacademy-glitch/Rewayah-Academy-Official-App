@@ -57,10 +57,16 @@ abstract interface class ServiceOffres {
   Future<void> enregistrerProfil({
     required String membreId,
     required String langueCode,
-    required String cohorteCode,
     required NiveauDeclare niveau,
     required ObjectifApprentissage objectif,
     required String fuseau,
+  });
+
+  /// Enregistre la date fiable du mineur, puis laisse le serveur recalculer
+  /// l'age et la cohorte. Cette action est reservee au tuteur par la RPC.
+  Future<void> definirDateNaissance({
+    required String membreId,
+    required DateTime date,
   });
 
   /// Les offres compatibles avec cet apprenant, exprimees dans [fuseau].
@@ -138,7 +144,6 @@ class ServiceOffresSupabase implements ServiceOffres {
   Future<void> enregistrerProfil({
     required String membreId,
     required String langueCode,
-    required String cohorteCode,
     required NiveauDeclare niveau,
     required ObjectifApprentissage objectif,
     required String fuseau,
@@ -147,10 +152,21 @@ class ServiceOffresSupabase implements ServiceOffres {
     params: <String, dynamic>{
       'p_membre_id': membreId,
       'p_langue_code': langueCode,
-      'p_cohorte': cohorteCode,
       'p_niveau_declare': niveau.valeurSql,
       'p_objectif': objectif.valeurSql,
       'p_fuseau_iana': fuseau,
+    },
+  );
+
+  @override
+  Future<void> definirDateNaissance({
+    required String membreId,
+    required DateTime date,
+  }) => _client.rpc<void>(
+    'definir_date_naissance_apprenant',
+    params: <String, dynamic>{
+      'p_membre_id': membreId,
+      'p_date_naissance': _dateSql(date),
     },
   );
 
@@ -248,3 +264,8 @@ offresCompatiblesProvider =
       (Ref ref, CleOffres cle) =>
           ref.watch(serviceOffresProvider).offresCompatibles(cle),
     );
+
+String _dateSql(DateTime date) =>
+    '${date.year.toString().padLeft(4, '0')}-'
+    '${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';

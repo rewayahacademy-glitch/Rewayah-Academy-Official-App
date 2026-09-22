@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/interface_guidee/service_interface_guidee.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/priere/horaires_priere.dart';
@@ -223,6 +224,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                   interruptions: interruptions,
                   maintenant: _maintenant,
                 ),
+                const InterfaceGuideeNotice(),
                 Ecart.vXl,
                 const _BlocCoran(),
               ],

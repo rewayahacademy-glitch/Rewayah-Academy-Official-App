@@ -12,6 +12,7 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
@@ -27,9 +28,10 @@ import 'libelles_parcours.dart';
 /// (`ChoiceCardGroup`) : ce parcours n'invente aucun composant.
 ///
 /// **Ce que ce parcours ne demande jamais** : ni « quel horaire voulez-vous »,
-/// ni champ libre pour un cours sur mesure, ni date de naissance, ni position
-/// precise. Les horaires proposes sont ceux que l'academie publie, et
-/// seulement eux.
+/// ni champ libre pour un cours sur mesure, ni position precise. La date de
+/// naissance est demandee au tuteur uniquement, puis l'age et la cohorte sont
+/// calcules par le serveur. Les horaires proposes sont ceux que l'academie
+/// publie, et seulement eux.
 ///
 /// **Ce qu'il ne promet jamais** : aucune place reservee, aucun enseignant,
 /// aucun groupe. Le dernier ecran enregistre une preference et le dit avec ce
@@ -67,7 +69,7 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   String? _erreur;
   bool _demandeEnregistree = false;
 
-  String? _cohorteTouchee;
+  DateTime? _dateNaissanceTouchee;
   String? _langueTouchee;
   String? _fuseauTouche;
   NiveauDeclare? _niveauTouche;
@@ -77,7 +79,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   // Chaque reponse se lit « ce que la personne vient de toucher, sinon ce que
   // la fiche sait deja ». C'est ce qui permet de revenir corriger une seule
   // question sans devoir toutes les retaper.
-  String? get _cohorte => _cohorteTouchee ?? _apprenant?.cohorteCode;
+  DateTime? get _dateNaissance =>
+      _dateNaissanceTouchee ?? _apprenant?.dateNaissance;
+  String? get _cohorte => _apprenant?.cohorteCode;
   String? get _langue => _langueTouchee ?? _apprenant?.langueCode;
   String? get _fuseau => _fuseauTouche ?? _apprenant?.fuseauFoyer;
   NiveauDeclare? get _niveau => _niveauTouche ?? _apprenant?.niveauDeclare;
@@ -109,11 +113,11 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   /// serait consideree « personnalisee » par `profilRempli` et ferait sauter
   /// l'accueil a l'etape suivante alors que la famille n'a rien fini.
   Future<void> _enregistrerProfil() async {
-    final String? cohorte = _cohorte;
+    final DateTime? dateNaissance = _dateNaissance;
     final String? langue = _langue;
     final NiveauDeclare? niveau = _niveau;
     final ObjectifApprentissage? objectif = _objectif;
-    if (cohorte == null ||
+    if (dateNaissance == null ||
         langue == null ||
         niveau == null ||
         objectif == null) {
@@ -124,12 +128,19 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       _erreur = null;
     });
     try {
+      if (_dateNaissanceTouchee != null || _apprenant?.dateNaissance == null) {
+        await ref
+            .read(serviceOffresProvider)
+            .definirDateNaissance(
+              membreId: widget.eleveId,
+              date: dateNaissance,
+            );
+      }
       await ref
           .read(serviceOffresProvider)
           .enregistrerProfil(
             membreId: widget.eleveId,
             langueCode: langue,
-            cohorteCode: cohorte,
             niveau: niveau,
             objectif: objectif,
             fuseau: _fuseauVu,
@@ -244,13 +255,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
 
   String get _prenom => _apprenant?.prenom ?? '';
 
-  // --- 1. L'age, jamais une date de naissance ------------------------------
+  // --- 1. L'age, date fournie par le tuteur -------------------------------
 
   Widget _pageAge() {
-    final AsyncValue<List<CohorteAge>> cohortes = ref.watch(
-      cohortesAgeProvider,
-    );
-
     return PageParcours(
       numero: 1,
       total: _pages,
@@ -258,28 +265,49 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       question: t.parcours.ageQuestion(prenom: _prenom),
       explication: t.parcours.ageRaison,
       libelleAction: t.commun.continuer,
-      onAction: _cohorte == null ? null : _avancer,
-      enfant: cohortes.hasValue
-          ? ChoiceCardGroup(
-              // La liste des tranches est fermee et vient du serveur : aucune
-              // reponse « Autre » n'aurait de sens, puisqu'il n'existe pas de
-              // tranche que l'academie ne connaisse pas.
-              autoriserSaisieLibre: false,
-              valeurInitiale: _cohorte == null
-                  ? null
-                  : ReponseChoix(valeurs: <String>{_cohorte!}),
-              options: <OptionChoix>[
-                for (final CohorteAge c in cohortes.requireValue)
-                  OptionChoix(valeur: c.code, libelle: c.nom),
-              ],
-              onChange: (ReponseChoix r) => setState(
-                () => _cohorteTouchee = r.valeurs.isEmpty
-                    ? null
-                    : r.valeurs.first,
-              ),
-            )
-          : const Skeleton.liste(lignes: 4),
+      onAction: _dateNaissance == null ? null : _avancer,
+      enfant: AppCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              _dateNaissance == null
+                  ? t.parcours.dateNaissanceChoisir
+                  : t.parcours.dateNaissanceApercu(
+                      date: MaterialLocalizations.of(context)
+                          .formatMediumDate(_dateNaissance!),
+                    ),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Ecart.vMd,
+            ActionPrincipale(
+              libelle: t.parcours.dateNaissanceChoisir,
+              niveau: NiveauAction.secondaire,
+              onPress: () => unawaited(_choisirDateNaissance()),
+            ),
+          ],
+        ),
+      ),
     );
+  }
+
+  Future<void> _choisirDateNaissance() async {
+    final DateTime aujourdHui = DateTime.now();
+    final DateTime? choisie = await showDatePicker(
+      context: context,
+      initialDate:
+          _dateNaissance ??
+          DateTime(aujourdHui.year - 10, aujourdHui.month, aujourdHui.day),
+      firstDate: DateTime(
+        aujourdHui.year - 18,
+        aujourdHui.month,
+        aujourdHui.day,
+      ),
+      lastDate: aujourdHui,
+    );
+    if (choisie != null && mounted) {
+      setState(() => _dateNaissanceTouchee = DateUtils.dateOnly(choisie));
+    }
   }
 
   // --- 2. La langue du COURS, pas celle de l'interface ---------------------

@@ -6,6 +6,25 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
 
+/// Etat d'une demande enfant d'affichage standard.
+enum DemandeAffichageStandard {
+  aucune('none'),
+  enAttente('pending'),
+  refusee('declined');
+
+  const DemandeAffichageStandard(this.valeurSql);
+
+  final String valeurSql;
+
+  static DemandeAffichageStandard depuisSql(String? valeur) {
+    for (final DemandeAffichageStandard etat
+        in DemandeAffichageStandard.values) {
+      if (etat.valeurSql == valeur) return etat;
+    }
+    return DemandeAffichageStandard.aucune;
+  }
+}
+
 /// Un code d'appairage, tel que le tuteur le voit.
 ///
 /// Il n'existe qu'ici et a l'ecran : la base n'en garde que l'empreinte, et
@@ -96,6 +115,7 @@ class EleveDuFoyer {
     required this.identifiantImmuable,
     required this.mode,
     required this.camera,
+    this.demandeAffichageStandard = DemandeAffichageStandard.aucune,
     this.cleAvatar,
     this.finAcces,
   });
@@ -107,6 +127,9 @@ class EleveDuFoyer {
     identifiantImmuable: json['immutable_id'] as String? ?? '',
     mode: InterfaceMode.depuisSql(json['interface_mode'] as String?),
     camera: CameraPolicy.depuisSql(json['camera_policy'] as String?),
+    demandeAffichageStandard: DemandeAffichageStandard.depuisSql(
+      json['interface_standard_request_status'] as String?,
+    ),
     cleAvatar: json['avatar_storage_key'] as String?,
     finAcces: DateTime.tryParse(json['access_until'] as String? ?? '')
         ?.toLocal(),
@@ -126,6 +149,9 @@ class EleveDuFoyer {
 
   /// Politique camera.
   final CameraPolicy camera;
+
+  /// Demande enfant, sans exposer la date de naissance dans la vue foyer.
+  final DemandeAffichageStandard demandeAffichageStandard;
 
   /// Cle de l'avatar dans le stockage.
   final String? cleAvatar;
@@ -180,6 +206,19 @@ abstract interface class ServiceAppairage {
     CameraPolicy? camera,
     String? cleAvatar,
   });
+
+  /// Accepte ou refuse une demande d'affichage standard d'un enfant.
+  Future<void> repondreDemandeAffichageStandard({
+    required String eleveId,
+    required bool accepter,
+  });
+
+  /// Active l'affichage standard directement depuis le compte tuteur, même
+  /// si l'enfant n'a déposé aucune demande.
+  Future<void> activerAffichageStandard(String eleveId);
+
+  /// Replace un enfant dans l'Interface guidee, sur decision du tuteur.
+  Future<void> repasserInterfaceGuidee(String eleveId);
 
   /// Le plafond d'appareils affiche a l'ecran.
   ///
@@ -265,8 +304,15 @@ class ServiceAppairageSupabase implements ServiceAppairage {
     CameraPolicy? camera,
     String? cleAvatar,
   }) async {
+    if (mode != null) {
+      if (mode == InterfaceMode.standard) {
+        await activerAffichageStandard(eleveId);
+      } else {
+        await repasserInterfaceGuidee(eleveId);
+      }
+    }
+
     final Map<String, dynamic> champs = <String, dynamic>{
-      'interface_mode': ?mode?.valeurSql,
       'camera_policy': ?camera?.valeurSql,
       'avatar_storage_key': ?cleAvatar,
     };
@@ -281,6 +327,32 @@ class ServiceAppairageSupabase implements ServiceAppairage {
         .update(champs)
         .eq('profile_id', eleveId);
   }
+
+  @override
+  Future<void> repondreDemandeAffichageStandard({
+    required String eleveId,
+    required bool accepter,
+  }) async {
+    await _client.rpc<void>(
+      'repondre_demande_affichage_standard',
+      params: <String, dynamic>{
+        'p_student_profile_id': eleveId,
+        'p_accepter': accepter,
+      },
+    );
+  }
+
+  @override
+  Future<void> activerAffichageStandard(String eleveId) => _client.rpc<void>(
+    'activer_affichage_standard_tuteur',
+    params: <String, dynamic>{'p_student_profile_id': eleveId},
+  );
+
+  @override
+  Future<void> repasserInterfaceGuidee(String eleveId) => _client.rpc<void>(
+    'repasser_interface_guidee',
+    params: <String, dynamic>{'p_student_profile_id': eleveId},
+  );
 }
 
 /// Le service d'appairage employe par l'application.
