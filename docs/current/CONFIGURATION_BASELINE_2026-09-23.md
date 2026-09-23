@@ -72,7 +72,7 @@ Base : `origin/main` = `4a7aa2b`. Sauvegarde des fichiers non commités : `D:\RA
 
 ### 3.2 Worktrees dont la branche est conservée mais le dossier est retirable (fichiers uniques déjà archivés)
 
-`rewayah-astra-core24` (6 fichiers archivés), `rewayah-login` (1), `rewayah-presence-ui` (0), `rewayah-prod-release` (13), `rewayah-r1` (0), `rewayah-r2` (23), `rewayah-review-20260915` (0), `rewayah-vague5-integration` (0), `D:\RA_OBS` (1 : la `0043` jeton vidéo), `D:\RA_ONBOARD` (1 : arbitrage CORE24 divergent). Commande par cible : `git worktree remove --force <chemin>`.
+`rewayah-astra-core24` (6 fichiers archivés), `rewayah-login` (1), `rewayah-presence-ui` (0), `rewayah-r1` (0), `rewayah-r2` (23), `rewayah-vague5-integration` (0), `D:\RA_OBS` (1 : la `0043` jeton vidéo), `D:\RA_ONBOARD` (1 : arbitrage CORE24 divergent). Commande par cible : `git worktree remove --force <chemin>`. Les worktrees `rewayah-prod-release` et `rewayah-review-20260915` portent des branches de la liste 3.3 et y sont désormais décrits.
 
 ### 3.3 Cibles exactes de suppression proposées (0 commit unique, contenu entièrement dans `main`)
 
@@ -80,7 +80,9 @@ Base : `origin/main` = `4a7aa2b`. Sauvegarde des fichiers non commités : `D:\RA
 |---|---|---|---|
 | branche `admin-complet` | `b19c8d3` | `git merge-base --is-ancestor` vrai | `git branch admin-complet b19c8d3` |
 | branche `starlit-surge-glides-04h50` + worktree `.gemini/antigravity/.../starlit-surge-glides-04h50` | `9d0229b` | idem | idem |
-| branches `codex/release-all-20260915`, `codex/review-visible-20260915`, `codex/production-google-auth-20260916` | `b02ea98` | idem | idem |
+| branche `codex/release-all-20260915` | `b02ea98` | idem | idem |
+| branche `codex/review-visible-20260915` + worktree `WindowsTerminal\rewayah-review-20260915` (propre) | `b02ea98`, **locale seulement** (pas de `origin/`) | idem | `git branch codex/review-visible-20260915 b02ea98` |
+| branche `codex/production-google-auth-20260916` + worktree `WindowsTerminal\rewayah-prod-release` | `b02ea98`, **locale seulement** | idem ; le worktree porte 16 fichiers non commités (11 modifiés hors générés) = retrait du parcours `DEMO_AUTH`/mot de passe, **non repris dans `main`** qui conserve ce parcours compilé à faux ; la validation de clé Supabase (`cleSupabaseValide`, test `supabase_key_validation_test.dart`) est, elle, dans `main`. 16/16 fichiers archivés sous `_archive/2026-09-23_worktrees/codex-prod-release/` | idem ; travail non commité restaurable depuis l'archive |
 | branche `integration/teaching-core` + worktree `D:\RA_TC\z` | `d5eb74c` | idem | idem |
 | branches `teaching-core/{a,b,c,d,e,f,g,h,q}` + worktrees `D:\RA_TC\{a..q}` (1,6 Go) | `28c2238`, `d5bc5bf`, `e60c5b4`, `bc40b4a`, `4e65e50`, `bf01953`, `3545f8c`, `a9b295b`, `8337531` | idem, 0 fichier unique | idem |
 | worktrees détachés `D:\ra-pwa-build`, `D:\ra-pwa-ctr`, `D:\ra-pwa-deploy-20260918`, `D:\ra-pwa-fix`, `D:\ra-pwa-secure-deploy` | `e76a14e`, `f1855de`, `99c7b6a`, `090ae6f`, `cbc4ff8` (tous dans `main`) | fichiers modifiés vérifiés présents dans l'historique (`git log --find-object`), 2 inédits archivés | `git worktree add` |
@@ -88,6 +90,8 @@ Base : `origin/main` = `4a7aa2b`. Sauvegarde des fichiers non commités : `D:\RA
 | clones orphelins `rewayah-release-20260915` (+ `rewayah-audit-20260915`), `rewayah-review-all-20260915` (dépôt sans commit) | `b02ea98` | copie de `main` du 15/09 ; contenu archivé | archive |
 | profils navigateur QA `qa-*`, `chrome-*` (12 dossiers, ~40 Mo) | | artefacts de test du 14 et 15/09 | aucun |
 | `D:\RA _APP\RA -OFFICIAL-APP\build\` (276 Mo) | | régénéré par `flutter build` | aucun |
+
+**Vérification finale du 23/09 soir (15 branches, avant retrait).** Les 15 branches sont ancêtres de `origin/main` = `4a7aa2b` (`git merge-base --is-ancestor` vrai pour chacune), 0 commit en avance. 13 ont un SHA local égal au distant ; `codex/review-visible-20260915` et `codex/production-google-auth-20260916` n'ont pas de distant (locales). Worktrees associés : 13 propres (`starlit`, `D:\RA_TC\{z,a,b,c,d,e,f,g,h,q}`, `rewayah-review-20260915`), 1 avec travail non commité archivé (`rewayah-prod-release`, voir ligne ci-dessus). Décision du directeur : principe de retrait des 15 branches validé, worktrees à contrôler un par un avant retrait ; branches à commits uniques, stashes, `v0/verite-produit` et `c0/configuration-baseline-2026-09-23` conservés ; clones, profils navigateur et `build\` traités à part. Rien n'a encore été supprimé.
 
 ## 5. Réconciliation des migrations appliquées en production (lecture seule, 23/09)
 
