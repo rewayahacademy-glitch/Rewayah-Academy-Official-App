@@ -10,7 +10,7 @@ import 'offline_banner.dart';
 /// Le gabarit de page du produit. **Tout ecran passe par lui.**
 ///
 /// Ce qu'il tient, et qu'aucun ecran ne refait
-/// (`docs/design/07-catalogue-composants.md` section 2) :
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2) :
 ///
 /// - le fond creme, qui vient du theme ;
 /// - la **gouttiere du gabarit courant** : 20 sur mobile, 32 sur tablette, 48
@@ -68,7 +68,7 @@ class PageShell extends StatelessWidget {
     // La tete ne defile pas : le titre d'ecran, puis l'en-tete (un onglet, le
     // selecteur d'enfant de `TUT-01`, une ligne de contexte). C'est une zone
     // distincte de la zone defilante, au meme titre que la zone d'action
-    // collee en bas (`docs/design/07-catalogue-composants.md` section 2).
+    // collee en bas (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2).
     final List<Widget> tete = <Widget>[
       if (titre != null) ...<Widget>[
         // 48 au dessus d'un titre d'ecran, c'est le rythme de page

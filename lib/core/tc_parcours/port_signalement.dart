@@ -49,7 +49,7 @@ abstract class PortSignalement {
 ///
 /// **DOUBLE LOCAL ASSUME.** Aucune table `student_concern` n'existe en base :
 /// la demande SQL est en section 2 de
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_H.md`. La forme a reprendre est celle
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_H.md`. La forme a reprendre est celle
 /// de `matching_requests` (demande -> decision admin -> audit), **pas la table
 /// elle-meme** : `0022_progression_suivi.sql` interdit explicitement de
 /// l'etendre avec des clefs pedagogiques.

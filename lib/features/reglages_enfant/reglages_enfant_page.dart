@@ -28,7 +28,7 @@ import '../../core/widgets/setting_row.dart';
 /// **Un enfant par carte, trois reglages : photo, camera, mode d'interface.**
 /// Le texte dit la consequence en clair, avec le prenom de l'enfant, jamais un
 /// libelle abstrait : « Le bouton camera n'apparaitra pas pour Ibrahim » et non
-/// « camera : desactivee » (`docs/produit/parcours-utilisateurs.md`, ADR-009).
+/// « camera : desactivee » (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, ADR-009).
 ///
 /// Ces reglages s'appliquent a la seance suivante, jamais pendant un cours :
 /// l'ecran le dit une fois, en tete, plutot que de le repeter sur chaque carte.

@@ -3,7 +3,7 @@ import '../icons/app_icons.dart';
 import '../router/routes.dart';
 
 /// Un domaine de premier niveau du panneau admin (gel d'architecture,
-/// `docs/architecture/ADMIN_IA_AUDIT.md`).
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`).
 ///
 /// Huit domaines fixes : la sidebar admin ne contient jamais rien de plus
 /// granulaire que cette liste, quel que soit le nombre d'ecrans qu'elle
@@ -29,12 +29,12 @@ enum AdminDomaine {
   pedagogie,
 
   /// Reserve. Hors MVP-0, module finance (ADR-003), voir
-  /// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`.
+  /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`.
   finance,
 
   /// Regles globales du systeme -- distinctes de Finance par nature, jamais
   /// par ecran d'origine (contrat metier du 19 septembre 2026,
-  /// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`). Trois fonctions
+  /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`). Trois fonctions
   /// livrees le 19 septembre 2026 : Regles, Fonctionnalites, Conservation
   /// des donnees. Academie, Classe en ligne, Notifications et Localisation
   /// restent a construire (schema absent ou RPC d'ecriture manquante).
@@ -159,7 +159,7 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
     ];
 
 /// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat
-/// metier (`docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`) parmi les
+/// metier (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`) parmi les
 /// sept qu'il liste. **Seules celles construites y figurent** : Academie,
 /// Classe en ligne, Notifications et Localisation n'ont ni route ni ecran --
 /// les y lister ferait echouer la navigation au clic, exactement ce que

@@ -51,7 +51,7 @@ String? deciderRedirection({
     // Session valide, aucun profil : l'inscription est la seule destination.
     // Sans cette porte, ce compte retombait en `deconnecte` et repartait sur
     // l'ecran de connexion en boucle
-    // (`docs/architecture/etape-3-auth-kyc.md` section 2.1).
+    // (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md` section 2.1).
     case PorteAcces.inscription:
       return _dansLeSousArbre(cheminDemande, Routes.inscription)
           ? null

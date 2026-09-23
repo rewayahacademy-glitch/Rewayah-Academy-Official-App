@@ -5,7 +5,7 @@ import '../tc_horloge/session_clock_vm.dart';
 /// Le titre d'un enseignant dans le contexte cours.
 ///
 /// **Sayyid / Sayyida, jamais Ustaz** (decision `D-02`). Les deux formes arabes
-/// vivent dans `docs/teaching-core/i18n/tc_i18n_A.json` : c'est la seule
+/// vivent dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/i18n/tc_i18n_A.json` : c'est la seule
 /// exception a la regle « aucun agent ne produit de traduction arabe ».
 ///
 /// Aucune colonne de la base ne porte ce titre aujourd'hui : il est demande en

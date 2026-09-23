@@ -49,7 +49,7 @@ extension PaireDeTonEtat on AppPalette {
 
 /// Un etat nomme : une pastille de couleur **et** un mot.
 ///
-/// **Jamais la couleur seule** (`docs/design/01-systeme-visuel.md` section 8).
+/// **Jamais la couleur seule** (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 8).
 /// Une pastille sans mot ne dit rien a qui ne distingue pas le vert du rouge,
 /// et rien du tout a un lecteur d'ecran.
 ///

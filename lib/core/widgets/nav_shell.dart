@@ -188,7 +188,7 @@ List<Destination> secondairesPour({required AppRole role}) =>
 ///
 /// **Une seule liste de destinations alimente les trois formes** : barre basse
 /// sous 600, rail de 600 a 1199, barre laterale a partir de 1200
-/// (`docs/design/03-architecture-information.md` section 5). Trois listes
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-information.md` section 5). Trois listes
 /// finiraient par diverger.
 ///
 /// Deux regles portees par l'API :

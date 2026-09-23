@@ -14,7 +14,7 @@ import '../tc_bibliotheque/content_range.dart';
 /// Les trois lectures ci-dessous sont exactement ce que le post-cours et le bloc
 /// « Avant le prochain cours » consomment. Agent Z ecrit l'adaptateur au-dessus
 /// de `PortEtatPartage` a l'integration ; la correspondance est donnee en
-/// section 4 de `docs/teaching-core/TC_CONTRACT_REQUEST_H.md`.
+/// section 4 de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_H.md`.
 ///
 /// **Une lecture manque cote serveur**, et elle est demandee : [repriseDeGroupe]
 /// raisonne par **groupe**, alors que `PortEtatPartage` raisonne par **seance**.

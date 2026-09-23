@@ -10,7 +10,7 @@ enum MotifEchecObservation {
   /// La capacite serveur n'est pas en place sur ce deploiement.
   ///
   /// Etat attendu tant que la migration demandee dans
-  /// `docs/teaching-core/TC_CONTRACT_REQUEST_G.md` n'est pas appliquee : les
+  /// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_G.md` n'est pas appliquee : les
   /// fonctions `politique_observation_effective`, `budget_observation`,
   /// `entrer_observation` et `sortir_observation` n'existent pas encore.
   capaciteAbsente,

@@ -9,7 +9,7 @@ import 'pressable.dart';
 
 /// Les quatre niveaux d'action, pas cinq.
 ///
-/// Source : `docs/design/02-regles-ux.md` section 4. Le nombre par ecran est
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 4. Le nombre par ecran est
 /// une regle d'ecran, pas une regle de composant : elle se tient en revue, et
 /// c'est `08-catalogue-ecrans.md` qui la porte.
 enum NiveauAction {
@@ -78,7 +78,7 @@ class ActionPrincipale extends StatelessWidget {
   /// usage est le logo Google du bouton de connexion, qu'une marque tierce
   /// impose de montrer tel quel. Ce n'est pas une porte d'entree pour
   /// l'iconographie du produit : une action du produit se nomme, elle ne
-  /// s'illustre pas (`docs/design/02-regles-ux.md` section 9).
+  /// s'illustre pas (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 9).
   ///
   /// L'indicateur d'activite le remplace tant que [enCours] vaut vrai : les
   /// deux occuperaient la meme place, et c'est l'attente qui prime.

@@ -87,7 +87,7 @@ final class EnfantSeanceAnnulee extends EtatEnfant {
 ///
 /// **C'est elle qui porte la valeur de `TUT-01`** : un parent y lit d'un coup
 /// d'oeil comment va chacun de ses enfants, et ce qu'il doit confirmer
-/// (`docs/design/07-catalogue-composants.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 3).
 ///
 /// Deux regles qui ne se devinent pas :
 ///

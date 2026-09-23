@@ -25,7 +25,7 @@ import '../../core/widgets/status_pill.dart';
 ///
 /// **Separation stricte du constat et du jugement** : l'apercu du document en
 /// haut, la checklist au milieu, les deux verdicts en bas, dans cet ordre et
-/// jamais melanges (`docs/produit/parcours-utilisateurs.md`).
+/// jamais melanges (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
 ///
 /// Le cloisonnement de genre n'est pas applique ici : il vit dans
 /// `read_kyc_documents()`, sur laquelle la file et le verdict sont tous deux

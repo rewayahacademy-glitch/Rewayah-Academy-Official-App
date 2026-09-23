@@ -211,7 +211,7 @@ class TableauDeBordPage extends ConsumerWidget {
           // et Acces des agents restent atteints depuis l'Accueil, puisque
           // Personnes et Securite et audit ne portent que leur fonction
           // primaire dans la sidebar (dossiers, journal), jamais un second
-          // niveau (docs/architecture/ADMIN_IA_AUDIT.md, cartographie ADM-07
+          // niveau (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md, cartographie ADM-07
           // et ADM-08).
           //
           // `ADM-08` en premier, et pas par gout : c'est le seul ecran qui

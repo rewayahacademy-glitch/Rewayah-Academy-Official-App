@@ -1,7 +1,7 @@
 -- 0025 — Le role Enseignant : lecture de groupe, cahier de transmission
 --
 -- Migration coordonnee du lot « role Enseignant » (protocole multi-agents du
--- 19 septembre 2026, `docs/architecture/TEACHER_PARALLEL_BASELINE.md`). Elle est
+-- 19 septembre 2026, `docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_PARALLEL_BASELINE.md`). Elle est
 -- ecrite par l'Agent Z, seul autorise a toucher le schema pendant ce lot.
 --
 -- Trois manques mesures sur la base, que ce lot comble :

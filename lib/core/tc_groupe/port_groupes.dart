@@ -16,7 +16,7 @@ import 'group_summary_vm.dart';
 /// l'appelant a le droit de voir. Aujourd'hui, la seule lecture de groupes du
 /// depot est `groupes_admin()`, **reservee a l'administration** et qui ne rend
 /// ni le fuseau, ni la prochaine occurrence. Une variante par role est demandee
-/// en section 2 de `docs/teaching-core/TC_CONTRACT_REQUEST_A.md`.
+/// en section 2 de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md`.
 abstract class PortGroupes {
   /// Les groupes visibles par l'appelant, selon son role serveur.
   Future<List<GroupSummaryVM>> mesGroupes();

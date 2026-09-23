@@ -13,7 +13,7 @@ import 'pressable.dart';
 /// `elevation1`, arrondi du mode courant.
 ///
 /// **Seul point d'entree d'une surface de contenu.** Aucun ecran ne compose sa
-/// propre [BoxDecoration] : `docs/design/07-catalogue-composants.md` section 6
+/// propre [BoxDecoration] : `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6
 /// dit que les surfaces viennent d'`AppCard` et de `PageShell`.
 ///
 /// Deux regles portees par le composant et non par la vigilance :

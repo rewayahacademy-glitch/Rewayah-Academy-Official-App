@@ -17,7 +17,7 @@ import 'session_clock_vm.dart';
 ///
 /// Les trois capacites serveur dont ce port a besoin **n'existent pas encore** :
 /// `join_opens_at` configurable, horloge serveur, et rendu des conversions.
-/// Elles sont chiffrees dans `docs/teaching-core/TC_CONTRACT_REQUEST_A.md`.
+/// Elles sont chiffrees dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md`.
 abstract class PortHorlogeSeance {
   /// L'horloge d'une occurrence, resolue cote serveur (conversions incluses).
   Future<SessionClockVM?> horlogeDe({

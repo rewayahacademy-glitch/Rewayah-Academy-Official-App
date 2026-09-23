@@ -72,7 +72,7 @@ import 'routes.dart';
 /// **Un seul routeur, pour toutes les plateformes**, puisque le Web est ouvert
 /// a tous les roles (ADR-008). Aucune branche de navigation par plateforme,
 /// aucune arborescence dupliquee entre le mode enfant et le mode standard
-/// (`docs/architecture/etape-2-core-flutter.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 3).
 ///
 /// `tool/verifier_jetons.dart` echoue si un second fichier du depot construit
 /// un `GoRouter`.
@@ -375,7 +375,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Admin. Huit domaines (gel d'architecture,
-      // `docs/architecture/ADMIN_IA_AUDIT.md`), routes NESTED par domaine.
+      // `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`), routes NESTED par domaine.
       // Chaque route porte son domaine explicitement, comme
       // `_CoquilleSecondaire` portait deja son role -- ni l'un ni l'autre ne
       // devine depuis le chemin courant. Pedagogie, Finance, Configuration et
@@ -416,7 +416,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // La reaffectation (demandes) reste atteinte depuis l'Accueil, jamais
       // depuis un second niveau de la sidebar
-      // (docs/architecture/ADMIN_IA_AUDIT.md).
+      // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md).
       GoRoute(
         path: Routes.adminOperationsDemandes,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
@@ -437,7 +437,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       // `ADM-08` : les comptes, atteints depuis l'Accueil
-      // (docs/architecture/ADMIN_IA_AUDIT.md).
+      // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md).
       // Sans cet ecran, l'administration n'avait aucun moyen de voir une
       // personne inscrite qui n'a pas encore depose sa piece : c'est le
       // defaut mesure le 18 septembre 2026.
@@ -545,7 +545,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Anciennes routes plates : des redirections, jamais une seconde page
-      // (docs/architecture/ADMIN_IA_AUDIT.md, table de compatibilite).
+      // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md, table de compatibilite).
       GoRoute(
         path: '/admin/tableau-de-bord',
         redirect: (BuildContext _, GoRouterState _) => Routes.admin,
@@ -743,7 +743,7 @@ class _CoquilleSecondaire extends ConsumerWidget {
 
     // L'admin n'a plus de coquille `NavShell` depuis le lot IA-01 : « Mon
     // compte » reste transverse aux huit domaines
-    // (`docs/architecture/ADMIN_IA_AUDIT.md`), donc aucun domaine n'y est actif.
+    // (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`), donc aucun domaine n'y est actif.
     // Sans ce branchement, un admin qui ouvrait `/compte` retombait sur
     // `destinationsPour(role: AppRole.admin)`, videe par ce meme lot, et
     // perdait tout chrome -- exactement le defaut mesure le 18 septembre
@@ -828,7 +828,7 @@ class _CoquilleNavigation extends ConsumerWidget {
 /// Remplace `_CoquilleNavigation`/`_CoquilleSecondaire` pour le role admin :
 /// `AdminShell` ne partage pas la limite de quatre destinations de
 /// `NavShell`, l'operateur a tranche que le panneau grandira avec un RBAC a
-/// plusieurs roles (`docs/architecture/ADMIN_IA_AUDIT.md`). Chaque route porte explicitement
+/// plusieurs roles (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`). Chaque route porte explicitement
 /// son domaine, exactement comme `_CoquilleSecondaire` porte deja son role :
 /// ni l'un ni l'autre ne devine depuis le chemin courant.
 ///

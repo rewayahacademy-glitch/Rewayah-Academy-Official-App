@@ -26,7 +26,7 @@ import 'catalogue_galerie.dart';
 /// propre, et `tool/verifier_jetons.dart` le verifie comme le reste de `lib/`.
 ///
 /// **Le lot C en fait la preuve du catalogue** et non plus une page de
-/// demonstration (`docs/design/07-catalogue-composants.md` section 5). Les
+/// demonstration (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 5). Les
 /// cinq axes que la section exige sont les cinq bascules de la barre de
 /// reglages : largeur, langue, taille de texte, mouvement, mode d'interface.
 ///

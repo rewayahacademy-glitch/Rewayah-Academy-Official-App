@@ -44,7 +44,7 @@ enum _Moment {
 ///
 /// **Sur un appareil deja appaire, l'ecran de code ne reapparait jamais** :
 /// l'enfant voit directement le choix de profil
-/// (`docs/produit/parcours-utilisateurs.md`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
 ///
 /// Le code personnel se cree ici, sur l'appareil, juste apres l'appairage, en
 /// presence du tuteur qui vient de montrer le code. **Il n'est jamais transmis**

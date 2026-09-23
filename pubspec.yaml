@@ -30,7 +30,7 @@ dependencies:
   # Les icones Phosphor sont integrees en assets, pas en dependance : le paquet
   # phosphor_flutter 2.1.0 ne compile plus avec Flutter 3.47 (IconData y est
   # devenue une classe `final`, il ne peut plus l'etendre) et aucune version
-  # corrigee n'existe. Voir docs/architecture/etape-2-journal.md.
+  # corrigee n'existe. Voir docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-journal.md.
 
   # Internationalisation, cles en points (section 5)
   slang: ^4.19.1

@@ -35,7 +35,7 @@ import '../../core/widgets/status_pill.dart';
 /// peut le retenir -- `AppDatabase` est gelee a quatre tables et
 /// `PreferencesLocales` ne vaut que pour l'appareil courant. C'est le routeur
 /// qui decide quand y mener, et la demande est ecrite dans
-/// `docs/parallel-reports/CONTRACT_REQUEST_E.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/parallel-reports/CONTRACT_REQUEST_E.md`.
 class BienvenueEnseignantPage extends ConsumerWidget {
   /// Cree l'ecran de bienvenue de l'enseignant.
   const BienvenueEnseignantPage({super.key});

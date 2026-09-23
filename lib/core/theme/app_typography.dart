@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Les quatre familles de l'application, pas une de plus.
 ///
-/// Source : `docs/produit/design-tokens.md` section 2. Si un style manque, on
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 2. Si un style manque, on
 /// etend l'une des quatre par une variation d'axe, on n'en ajoute pas une
 /// cinquieme.
 ///
@@ -63,7 +63,7 @@ abstract final class AppFontAxis {
 /// 20 pour cent pour le mode enfant. L'agrandissement se decide **ici et nulle
 /// part ailleurs** : aucun ecran n'applique de multiplicateur de son cote,
 /// sinon les deux echelles divergent silencieusement
-/// (`docs/architecture/etape-2-core-flutter.md` section 1).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 1).
 ///
 /// **C'est le seul fichier du depot autorise a poser un `letterSpacing`** :
 /// `tool/verifier_jetons.dart` echoue partout ailleurs. Le crenage se calcule a
@@ -87,7 +87,7 @@ abstract final class AppTypography {
 
   /// Le crenage optique d'une taille rendue, en pixels logiques.
   ///
-  /// Bareme de `docs/produit/design-tokens.md` section 10, exprime en em et
+  /// Bareme de `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 10, exprime en em et
   /// converti ici : negatif au dessus de 18, neutre au corps, positif en
   /// dessous de 15.
   ///

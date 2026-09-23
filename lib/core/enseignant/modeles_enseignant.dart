@@ -3,7 +3,7 @@
 /// Contrat partage du lot « role Enseignant » (protocole multi-agents du
 /// 19 septembre 2026). **Ecrit par l'Agent Z, consomme par les agents A a E,
 /// modifie par personne d'autre** : voir
-/// `docs/architecture/TEACHER_FILE_OWNERSHIP.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md`.
 ///
 /// Rien ici ne duplique un modele existant. [Creneau], [TypePublicGroupe],
 /// [PositionLecture] et [EtatPresence] sont importes plutot que recrees.

@@ -2,7 +2,7 @@
 #
 # Convention de cle stable des l'etape 2 : `role.ecran.element`, en points,
 # par exemple `eleve.accueil.rejoindre`
-# (docs/architecture/etape-2-core-flutter.md section 5).
+# (docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md section 5).
 #
 # `flat_map` est indispensable : le composant AudioLabel resout un fichier son
 # a partir de la MEME chaine de cle que le texte, pour que les deux ne puissent

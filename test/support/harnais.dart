@@ -1428,7 +1428,7 @@ class FauxServiceSuivi implements ServiceSuivi {
 ///
 /// **Aucun agent metier ne modifie ce faux.** Un besoin non couvert se demande
 /// par `CONTRACT_REQUEST_<AGENT>.md`
-/// (`docs/architecture/TEACHER_FILE_OWNERSHIP.md`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md`).
 class FauxServiceEnseignant implements ServiceEnseignant {
   /// Les seances rendues.
   List<SeanceEnseignant> seancesRendues = const <SeanceEnseignant>[];

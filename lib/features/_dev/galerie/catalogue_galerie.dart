@@ -58,7 +58,7 @@ import '../../disponibilites/grille_semaine.dart';
 
 /// Les familles d'etats obligatoires.
 ///
-/// Reprises telles quelles de `docs/design/07-catalogue-composants.md`
+/// Reprises telles quelles de `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md`
 /// section 4. Les deux dernieres n'ont pas de liste fixe, et c'est voulu :
 ///
 /// - un **composant d'etat** porte les etats de son metier, qui ne se
@@ -257,7 +257,7 @@ VuePresence _presence(
 
 /// **Le catalogue, et la preuve du catalogue.**
 ///
-/// `docs/design/07-catalogue-composants.md` section 5 : « Un composant absent
+/// `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 5 : « Un composant absent
 /// de la galerie est un composant dont personne ne peut verifier les etats sans
 /// lancer un ecran metier. » Cette liste est donc comparee, par
 /// `test/widgets/catalogue_galerie_test.dart`, a la liste des composants du

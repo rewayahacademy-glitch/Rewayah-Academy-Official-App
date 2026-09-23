@@ -10,7 +10,7 @@ import 'pressable.dart';
 
 /// Ce qu'une colonne devient quand le tableau se replie en cartes.
 ///
-/// C'est la regle de transformation de `docs/design/05-regles-responsive.md`
+/// C'est la regle de transformation de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md`
 /// section 4, portee par le type plutot que par la vigilance : « la colonne
 /// identifiante devient le titre, deux a trois colonnes deviennent la ligne
 /// secondaire, le reste passe dans le detail ».

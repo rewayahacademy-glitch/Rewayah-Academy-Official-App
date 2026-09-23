@@ -93,7 +93,7 @@ class EtatDossier {
   /// Ce qu'il reste a fournir, dans l'ordre ou l'ecran le proposera.
   ///
   /// Deux ou trois elements au maximum, chacun avec son bouton : jamais un
-  /// formulaire long (`docs/produit/parcours-utilisateurs.md`, `TUT-00b`).
+  /// formulaire long (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, `TUT-00b`).
   ///
   /// L'accuse vient **avant** le contrat, et non l'inverse : il dit en langage
   /// clair ce que le contrat formalisera ensuite. Une clause signee au milieu

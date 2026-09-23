@@ -8,7 +8,7 @@
 /// **Piege nomme** : `redirection.dart` renvoie toute route hors prefixe de
 /// role vers la racine du role. Un ecran pose sans cet ajustement sera
 /// inatteignable. Et une route sans entree de navigation n'existe pas : voir la
-/// section 7 de `docs/teaching-core/TC_CONTRACT_REQUEST_A.md`.
+/// section 7 de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md`.
 abstract final class CheminsTcA {
   /// La liste des groupes de l'appelant.
   static const String mesGroupes = '/tc/groupes';

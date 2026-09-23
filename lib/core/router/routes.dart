@@ -6,7 +6,7 @@ import '../domain/enums.dart';
 /// d'interface.** Le mode enfant ne cree pas de routes distinctes : il change ce
 /// qu'un meme ecran affiche. Deux arborescences dupliquees finissent toujours
 /// par diverger silencieusement
-/// (`docs/architecture/etape-2-core-flutter.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 3).
 abstract final class Routes {
   /// Racine. Redirige selon le role.
   static const String racine = '/';
@@ -116,7 +116,7 @@ abstract final class Routes {
 
   // Les quatre routes suivantes ne sont **pas** des destinations de premier
   // niveau : la barre de l'enseignant en tient exactement trois, Journee,
-  // Creneaux et Profil (`docs/architecture/TEACHER_PARALLEL_BASELINE.md` §3).
+  // Creneaux et Profil (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_PARALLEL_BASELINE.md` §3).
   // Ce sont des poses, atteintes depuis un ecran puis quittees
   // (`03-architecture-information.md` section 5).
   //
@@ -159,7 +159,7 @@ abstract final class Routes {
   static const String controleur = '/controleur';
 
   // --- Admin, huit domaines (gel d'architecture,
-  // docs/architecture/ADMIN_IA_AUDIT.md) ------------------------------------
+  // docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md) ------------------------------------
   //
   // Racine imposee par domaine, jamais par ecran : les routes ci-dessous sont
   // NESTED sous leur domaine, et les anciennes routes plates deviennent des
@@ -219,7 +219,7 @@ abstract final class Routes {
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
 
   /// Domaine Configuration -- regles globales du systeme, contrat metier du
-  /// 19 septembre 2026 (`docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
+  /// 19 septembre 2026 (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
   static const String adminConfiguration = '/admin/configuration';
 
   /// Regles (`ADM-15`), fonction primaire de Configuration : les defauts de

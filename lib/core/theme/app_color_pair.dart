@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 /// Le theme n'expose jamais une couleur seule : il expose des paires, pour que
 /// l'erreur de contraste devienne structurellement impossible plutot que
 /// dependante de la vigilance de qui ecrit l'ecran.
-/// Voir `docs/produit/design-tokens.md` section 1.
+/// Voir `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 1.
 ///
 /// Un widget qui prend `background` sans `onBackground`, ou l'inverse, est un
 /// signal de revue de code a corriger avant fusion.

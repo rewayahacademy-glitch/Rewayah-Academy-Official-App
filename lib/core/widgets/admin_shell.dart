@@ -15,7 +15,7 @@ import 'empty_state.dart';
 import 'pressable.dart';
 
 /// La coquille de navigation du panneau admin : huit domaines, jamais plus
-/// granulaire (gel d'architecture, `docs/architecture/ADMIN_IA_AUDIT.md`).
+/// granulaire (gel d'architecture, `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`).
 ///
 /// **Distincte de `NavShell`**, qui plafonne a quatre destinations pour les
 /// autres roles (`03-architecture-information.md` section 5) -- une limite

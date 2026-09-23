@@ -10,7 +10,7 @@ import 'app_bottom_sheet.dart';
 ///
 /// **Seul point d'entree d'une confirmation destructive.** Jamais
 /// `clic vers suppression`, et jamais une `AlertDialog` posee dans un ecran :
-/// `docs/design/07-catalogue-composants.md` section 6 interdit tout autre
+/// `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6 interdit tout autre
 /// chemin.
 ///
 /// Trois regles portees par l'API elle-meme, et non par la relecture

@@ -24,7 +24,7 @@ class AppIcon {
 /// **C'est le seul fichier du depot autorise a construire un [IconData].** Une
 /// seule librairie d'icones dans tout le projet, pas de melange Material,
 /// Font Awesome ou autre, et zero emoji
-/// (`docs/produit/design-tokens.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 3).
 /// `tool/verifier_jetons.dart` echoue si un autre fichier de `lib/` en
 /// construit un.
 ///
@@ -325,7 +325,7 @@ abstract final class AppIcons {
   /// **Meme glyphe que [suivant], et pourtant une entree separee** : celle-ci
   /// porte `matchTextDirection`, donc elle se miroite en arabe, alors que
   /// [suivant] designe la progression du temps, qui ne se miroite pas
-  /// (`docs/design/06-accessibilite.md` section 5). Les deux ne peuvent donc
+  /// (`docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md` section 5). Les deux ne peuvent donc
   /// pas etre la meme icone, malgre le meme dessin.
   static const AppIcon chevron = AppIcon._(
     IconData(0xe13a, fontFamily: _repos, matchTextDirection: true),
@@ -339,7 +339,7 @@ abstract final class AppIcons {
   /// et rend la main sur place. Et [chevron] porte `matchTextDirection`, donc
   /// en arabe il finirait par pointer a gauche : une direction cardinale
   /// fausse pour un menu, qui ne s'ouvre pas plus a gauche qu'a droite. Le bas
-  /// ne se miroite pas (`docs/design/06-accessibilite.md` section 5).
+  /// ne se miroite pas (`docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md` section 5).
   static const AppIcon menuDeroulant = AppIcon._(
     IconData(0xe136, fontFamily: _repos),
     IconData(0xe136, fontFamily: _actif),

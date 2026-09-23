@@ -239,7 +239,7 @@ void main() {
       // Comme le bloc en direct d'`ELV-02` repris : la carte redevient une
       // surface posee, seul le bouton porte l'aplat sature. Deux enfants en
       // cours ne font donc plus deux zones pleines
-      // (`docs/design/01-systeme-visuel.md` section 3).
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3).
       expect(_decoCarte(tester).color, palette.surfaceRaised.background);
       expect(
         _decoCarte(tester).color,

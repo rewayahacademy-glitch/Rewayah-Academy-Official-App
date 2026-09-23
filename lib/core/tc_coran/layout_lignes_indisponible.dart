@@ -10,7 +10,7 @@ import 'port_layout_mushaf.dart';
 /// documenter le manque. Il ne doit pas improviser une composition. »
 ///
 /// **Trois manques mesures, chacun suffisant** (chiffres dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_C.md`) :
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_C.md`) :
 ///
 /// 1. `verset.ligne` est NULL sur les 6236 versets. La colonne existe depuis
 ///    `0007`, l'index `verset_page_idx (mushaf_id, page_numero, ligne)` la

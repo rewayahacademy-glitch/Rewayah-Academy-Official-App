@@ -7,7 +7,7 @@ import '../domain/enums.dart';
 /// Cette porte est une **commodite d'experience**, pas une barriere de
 /// securite : la protection reelle reste la RLS de l'etape 1. Un compte qui
 /// contournerait cette redirection ne lirait rien de plus en base
-/// (`docs/architecture/etape-2-core-flutter.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 3).
 enum PorteAcces {
   /// La session n'est pas encore resolue. Aucune redirection tant qu'on ne
   /// sait pas : rediriger sur un etat inconnu ferait clignoter l'ecran.
@@ -21,7 +21,7 @@ enum PorteAcces {
   /// Sans cette porte, un compte tout juste cree n'avait ni role ni foyer dans
   /// son jeton, tombait en [deconnecte] et repartait sur l'ecran de connexion :
   /// le produit n'avait aucune porte d'entree
-  /// (`docs/architecture/etape-3-auth-kyc.md` section 2.1).
+  /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md` section 2.1).
   inscription,
 
   /// Dossier non valide. Portail d'attente uniquement, quelle que soit l'URL
@@ -124,7 +124,7 @@ class SessionState {
   /// **Fixee a `false`** : ni `AppRole` (plat -- `admin`, `accountant`,
   /// `controller`, `teacher`, `guardian`, `student`), ni le jeton (`role`,
   /// `householdId`, `sujet`) ne portent de permission infra-role
-  /// (`docs/architecture/ADMIN_IA_AUDIT.md`). Direction reste dans la sidebar comme
+  /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`). Direction reste dans la sidebar comme
   /// domaine reserve tant qu'aucune decision de modele de permission n'a ete
   /// prise ; le jour ou elle le sera, cette seule ligne changera.
   bool get peutVoirDirection => false;

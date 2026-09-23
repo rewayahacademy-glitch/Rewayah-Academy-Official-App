@@ -12,7 +12,7 @@ import 'group_summary_vm.dart';
 /// chaque site d'appel referait diverger ce que la carte de « Mes groupes »
 /// et la Session Card de l'Espace Groupe affichent pour le meme instant.
 /// Seule sa source change : les libelles viennent desormais de
-/// `t.tc.groupe.*`, fusionnes depuis `docs/teaching-core/i18n/tc_i18n_A.json`.
+/// `t.tc.groupe.*`, fusionnes depuis `docs/archive/2026-09-pre-remise-a-plat/teaching-core/i18n/tc_i18n_A.json`.
 abstract final class LibellesGroupe {
   /// Le titre de l'ecran « Mes groupes ».
   static String get mesGroupesTitre => t.tc.groupe.mesGroupes.titre;

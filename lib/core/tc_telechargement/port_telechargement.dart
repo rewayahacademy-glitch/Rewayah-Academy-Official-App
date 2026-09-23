@@ -23,7 +23,7 @@ abstract class PortTelechargement {
 /// « Enregistrer une copie » a besoin d'octets, que `PortTelechargement` rend
 /// une URL et non un corps, et qu'aucun client HTTP n'est expose dans `lib/`.
 /// Sa promotion en contrat partage est demandee dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
 abstract interface class LecteurArtefact {
   /// Les octets d'un artefact, ou `null` quand ils ne sont pas obtenables.
   ///

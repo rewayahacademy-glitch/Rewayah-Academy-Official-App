@@ -20,7 +20,7 @@ import 'core/widgets/bandeau_observation.dart';
 /// `decisions.md`) suit `ThemeMode.system` : l'application respecte le
 /// reglage clair/sombre du systeme d'exploitation. Aucune bascule manuelle
 /// n'existe encore dans un ecran du produit, faute d'entree au catalogue
-/// (`docs/design/08-catalogue-ecrans.md`) -- ce lot ferme le mecanisme du
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md`) -- ce lot ferme le mecanisme du
 /// theme, pas une preference utilisateur dediee.
 class RewayahApp extends ConsumerWidget {
   /// Cree la racine.

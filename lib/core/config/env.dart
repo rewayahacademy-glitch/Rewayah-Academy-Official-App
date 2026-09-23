@@ -4,7 +4,7 @@ import 'dart:convert';
 ///
 /// **Aucune valeur reelle n'est ecrite dans le depot.** Les cles vivent dans
 /// les secrets GitHub et Supabase, jamais en dur
-/// (`docs/agent-onboarding.md` etape D). Voir `dart_define.example.json` pour
+/// (`docs/archive/2026-09-pre-remise-a-plat/agent-onboarding.md` etape D). Voir `dart_define.example.json` pour
 /// la forme attendue.
 ///
 /// Lancement local :

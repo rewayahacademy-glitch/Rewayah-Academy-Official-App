@@ -17,7 +17,7 @@ enum RegistreImmersif {
 
   /// La lecture du Coran. Fond plus chaud que le reste de l'application, pour
   /// signaler qu'on entre dans un espace different du produit
-  /// (`docs/produit/parcours-utilisateurs.md`, direction artistique `ELV-04`).
+  /// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, direction artistique `ELV-04`).
   lecture,
 }
 

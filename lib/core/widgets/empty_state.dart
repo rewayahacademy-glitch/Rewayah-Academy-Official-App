@@ -11,7 +11,7 @@ import 'action_principale.dart';
 ///
 /// **Le troisieme est celui qu'on oublie** : un tableau de bord
 /// d'administration vide veut dire que tout va bien, et ne doit pas ressembler
-/// a une panne (`docs/design/02-regles-ux.md` section 6).
+/// a une panne (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 6).
 enum RegistreVide {
   /// L'utilisateur peut agir : le constat, l'invitation, et le bouton.
   actionnable,
@@ -34,7 +34,7 @@ enum RegistreVide {
 /// Obligatoire des qu'une liste peut etre vide. Un etat vide est une
 /// **invitation**, pas une excuse : « Aucun cours aujourd'hui, ton prochain
 /// cours est jeudi », jamais « Aucune donnee »
-/// (`docs/produit/parcours-utilisateurs.md`, regles communes).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, regles communes).
 ///
 /// D'ou l'API : [message] est obligatoire et [invitation] fortement attendue.
 /// Un appel qui ne donne qu'un constat produit un ecran mort.

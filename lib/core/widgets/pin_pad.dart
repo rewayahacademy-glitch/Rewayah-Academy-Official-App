@@ -52,7 +52,7 @@ class _PinPadState extends State<PinPad> {
       return;
     }
     // Le passage d'un cran, l'un des trois seuls usages haptiques du produit
-    // (`docs/design/04-systeme-mouvement.md` section 6). Il double la pastille
+    // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 6). Il double la pastille
     // qui se remplit : un enfant qui ne regarde pas l'ecran sait qu'un chiffre
     // est entre.
     unawaited(HapticFeedback.selectionClick());
@@ -168,7 +168,7 @@ class _Touche extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     // Registre doux, et non l'aplat violet d'origine : dix touches pleines
     // faisaient dix zones saturees sur un meme ecran, la ou la regle n'en
-    // autorise qu'une (`docs/design/01-systeme-visuel.md` section 3). Le
+    // autorise qu'une (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3). Le
     // contour fort porte la lisibilite du bouton, la teinte porte son
     // appartenance a l'accent.
     final AppColorPair paire = palette.washAccent;

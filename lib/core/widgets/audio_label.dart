@@ -19,7 +19,7 @@ import 'pressable.dart';
 ///
 /// Le composant consomme une [CleAudio], jamais un chemin de fichier libre :
 /// la meme cle designe le texte et le son, donc les deux ne peuvent pas
-/// diverger (`docs/architecture/etape-2-core-flutter.md` section 5).
+/// diverger (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 5).
 class AudioLabel extends StatefulWidget {
   /// Cree un libelle audio.
   const AudioLabel({

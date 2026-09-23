@@ -77,7 +77,7 @@ abstract interface class PortVisiteObservation {
 /// L'implementation reelle.
 ///
 /// **Aucune des trois fonctions appelees ici n'existe encore en base** : voir
-/// la section DEMANDE SQL de `docs/teaching-core/TC_CONTRACT_REQUEST_G.md`.
+/// la section DEMANDE SQL de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_G.md`.
 /// Elles etendent `rejoindre_observation()` et `assister_seance()` (migration
 /// `0012`) plutot que d'ouvrir une troisieme porte : deux portes qui
 /// refuseraient des seances differentes finiraient par se contredire, et

@@ -24,7 +24,7 @@ import '../theme/app_palette.dart';
 /// faisaient quatre aplats pleins, la ou la regle n'en autorise qu'un par
 /// ecran. Il prend desormais la teinte du domaine foyer, `washFamily`, et un
 /// contour `borderStrong` qui le detache de la carte
-/// (`docs/design/07-catalogue-composants.md` section 1).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1).
 class AvatarTile extends StatelessWidget {
   /// Cree une tuile d'avatar.
   const AvatarTile({

@@ -19,7 +19,7 @@ import '../../core/widgets/page_shell.dart';
 ///
 /// **Liste dense, pas de grandes cartes.** C'est un ecran de gestion, pas un
 /// ecran de suivi affectif, et le registre visuel doit le dire
-/// (`docs/produit/parcours-utilisateurs.md`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
 ///
 /// A la limite de deux appareils, le bouton d'ajout **est remplace par un
 /// message** au lieu de rester actif puis d'echouer : un bouton qui echoue

@@ -34,7 +34,7 @@ const double _largeurCarte = 460;
 ///
 /// L'etat « lien envoye » ne se ferme pas tout seul et ne compte pas a rebours :
 /// rien ne se ferme sur minuterie dans ce produit
-/// (`docs/produit/parcours-utilisateurs.md`, regles communes).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, regles communes).
 ///
 /// ## Trois poids d'action, une seule bordure
 ///

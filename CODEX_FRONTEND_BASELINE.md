@@ -53,7 +53,7 @@ Git ne prouve pas l'identité de l'auteur d'un changement non validé. Tous les 
 
 Au premier relevé : `dart_define.example.json`, `lib/app.dart`, `lib/main.dart`, `lib/core/config/env.dart`, `pubspec.yaml`, `pubspec.lock`, `lib/core/cache/db/app_database.g.dart`, `windows/flutter/generated_plugin_registrant.cc`, `windows/flutter/generated_plugins.cmake` ; non suivis : `CODEX.md`, `lib/core/observabilite/`, `lib/features/_dev/playground/`, `test/observabilite/`.
 
-Pendant l'audit, de nouveaux changements sont apparus : `docs/design/08-catalogue-ecrans.md` (TUT-06), `assets/i18n/fr.i18n.json`, `lib/core/presence/service_presence.dart`, `lib/core/suivi/`, `lib/features/suivi_foyer/`. **Le dépôt est activement modifié.** Le routeur peut devenir un point d'intégration du suivi et reste donc hors du lot Codex.
+Pendant l'audit, de nouveaux changements sont apparus : `docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md` (TUT-06), `assets/i18n/fr.i18n.json`, `lib/core/presence/service_presence.dart`, `lib/core/suivi/`, `lib/features/suivi_foyer/`. **Le dépôt est activement modifié.** Le routeur peut devenir un point d'intégration du suivi et reste donc hors du lot Codex.
 
 Protection permanente : Supabase et tous ses SQL/RLS/Edge Functions, repositories, entités et providers métier, finances/paiements, présence, LiveKit, Coran, synchronisation et auth, quels que soient leurs dossiers. `main.dart`, `app.dart`, `env.dart`, routeur, manifestes, traductions générées, catalogue d'écrans et fichiers ci-dessus restent intacts dans le checkout partagé.
 

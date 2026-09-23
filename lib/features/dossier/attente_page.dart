@@ -23,7 +23,7 @@ import '../../core/widgets/skeleton.dart';
 ///
 /// **Il ne montre jamais l'application derriere un voile.** Un portail qui
 /// laisse deviner ce qu'on rate cree de la frustration ; celui-ci dit ce qui
-/// manque et rien d'autre (`docs/produit/parcours-utilisateurs.md`).
+/// manque et rien d'autre (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
 ///
 /// Quatre etats, calcules en base par `etat_dossier()` et non ici : le portail
 /// doit dire exactement ce que l'administration voit, et deux calculs finissent

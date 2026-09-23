@@ -55,7 +55,7 @@ const Duration cadenceAnnonceObservation = Duration(seconds: 10);
 /// L'implementation reelle.
 ///
 /// La fonction `annonces_observation` n'existe pas encore : voir la section
-/// DEMANDE SQL de `docs/teaching-core/TC_CONTRACT_REQUEST_G.md`. Elle ne rend
+/// DEMANDE SQL de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_G.md`. Elle ne rend
 /// **que** les visites de role `guardian_observer` : une visite incognito qui
 /// apparaitrait ici cesserait d'etre incognito.
 class AnnonceObservationSupabase implements PortAnnonceObservation {

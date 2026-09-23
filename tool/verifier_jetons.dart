@@ -2,7 +2,7 @@
 //
 // Ces regles sont ecrites ici plutot que confiees a la relecture, parce qu'une
 // relecture les laisse passer un jour ou l'autre
-// (docs/architecture/etape-2-core-flutter.md section 7).
+// (docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md section 7).
 //
 // Lancement : dart run tool/verifier_jetons.dart
 
@@ -25,7 +25,7 @@ class Violation {
 ///
 /// Etendue vers le haut par la refonte : 40, 48 et 64 servent le rythme de
 /// page, la ou les paliers courts servaient l'interieur des composants
-/// (`docs/produit/design-tokens.md` section 7).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 7).
 const Set<String> echelleEspacement = <String>{
   '4',
   '8',
@@ -45,7 +45,7 @@ const Set<String> echelleEspacement = <String>{
 ///
 /// Une regle de style qui n'est pas verifiee par un outil n'est pas une regle :
 /// c'est un souhait, et l'etape suivante la contredit
-/// (`docs/design/01-systeme-visuel.md` section 9).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 9).
 const String _fichierPalette = 'core/theme/app_palette.dart';
 const String _fichierRayons = 'core/theme/app_radius.dart';
 
@@ -88,7 +88,7 @@ final RegExp _rayonLitteral = RegExp(
 ///
 /// Le renommage des jetons s'est fait en une passe au lot T. Sans cette regle,
 /// les deux vocabulaires cohabiteraient, et le mauvais serait recopie
-/// (`docs/produit/design-tokens.md` section 1.8).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 1.8).
 const Map<String, String> vocabulairePerime = <String, String>{
   'surfaceBase': 'surfaceCanvas',
   'borderDefault': 'borderHairline, borderResting ou borderStrong',
@@ -117,7 +117,7 @@ const String _fichierTabBarOnTap = 'core/widgets/sous_navigation_domaine.dart';
 /// Les boutons de Material.
 ///
 /// Ajoutee au lot C, en meme temps que les quatre niveaux d'`ActionPrincipale`
-/// (`docs/design/07-catalogue-composants.md` section 6). Un bouton Material
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). Un bouton Material
 /// rapporterait la palette de Material avec lui, et son etat desactive
 /// travaille par transparence, ce qui fait tomber le texte sous le seuil de
 /// contraste. **Verifiee en la faisant echouer** sur un fichier piege.
@@ -135,7 +135,7 @@ final RegExp _constructeurGoRouter = RegExp(r'\bGoRouter\s*\(');
 final RegExp _mDash = RegExp('—');
 
 /// Trois regles ajoutees au lot B0, adoption de la Bible Frontend V2
-/// (ADR-019, `docs/design/00-bible-frontend-v2.md`).
+/// (ADR-019, `docs/archive/2026-09-pre-remise-a-plat/design/00-bible-frontend-v2.md`).
 
 /// `EdgeInsets.fromLTRB` est directionnel par construction : ses quatre
 /// arguments positionnels sont gauche/haut/droite/bas, jamais debut/fin. Toute
@@ -351,7 +351,7 @@ void main() {
       // 3 bis (suite). Aucun showDialog hors de ConfirmDestructive : une
       // confirmation destructive passe par ce composant, jamais par une
       // AlertDialog posee dans un ecran
-      // (`docs/design/07-catalogue-composants.md` section 6). Zero occurrence
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). Zero occurrence
       // aujourd'hui ; la regle garde la porte fermee. Ajoutee au lot R.
       if (_showDialog.hasMatch(code) &&
           !chemin.endsWith(_fichierConfirmDestructif)) {
@@ -427,7 +427,7 @@ void main() {
 
     // 5 bis. Aucun `Container` porteur d'une `decoration` sous `lib/features/` :
     // les surfaces d'un ecran viennent d'`AppCard` et de `PageShell`
-    // (`docs/design/07-catalogue-composants.md` section 6). La regle nomme
+    // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). La regle nomme
     // `Container`, pas `DecoratedBox` : le seul `DecoratedBox` de `features/`
     // est celui de `GrilleSemaine`, composant partage que l'arborescence a
     // laisse la. Ajoutee au lot R avec la reprise de `TUT-01`, premiere a

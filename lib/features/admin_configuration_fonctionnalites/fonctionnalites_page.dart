@@ -14,7 +14,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 
 /// `ADM-16` : Configuration > Fonctionnalites, deuxieme fonction du domaine
 /// (contrat metier reçu le 19 septembre 2026,
-/// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
 ///
 /// Exemple donne par le contrat lui-meme : « Activer les cours
 /// multi-participants -> Configuration > Fonctionnalites ». Le plafond de

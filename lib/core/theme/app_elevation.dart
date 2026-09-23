@@ -5,13 +5,13 @@ import 'app_palette.dart';
 
 /// Les quatre niveaux d'elevation, pas un de plus.
 ///
-/// Source : `docs/produit/design-tokens.md` section 9.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 9.
 /// **C'est le seul fichier du depot autorise a construire une [BoxShadow]** :
 /// `tool/verifier_jetons.dart` echoue si une ombre est composee ailleurs.
 ///
 /// L'absence totale d'elevation etait l'un des deux defauts qui dataient le
 /// plus le premier rendu, avec l'absence de crenage
-/// (`docs/design/01-systeme-visuel.md` section 1).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 1).
 ///
 /// Deux regles d'emploi, et elles se tiennent :
 ///

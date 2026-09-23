@@ -191,7 +191,7 @@ class _Carte extends StatelessWidget {
     // aplat violet plein : sur une page de parcours qui porte deja son bouton
     // « Continuer » en `surfacePrimary`, deux aplats satures se disputaient
     // l'ecran, ce que la regle de la zone pleine unique interdit
-    // (`docs/design/01-systeme-visuel.md` section 3). La selection se dit
+    // (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3). La selection se dit
     // maintenant par la teinte douce et par le contour fort, qui est la seule
     // bordure porteuse de sens.
     final AppColorPair paire = retenue

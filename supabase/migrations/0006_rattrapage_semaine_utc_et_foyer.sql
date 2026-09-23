@@ -5,7 +5,7 @@
 -- reel et inscrites dans supabase_migrations. La convention « 0005 se corrige
 -- sur place » n'a plus cours a partir de la : une base qui a deja joue 0005 ne
 -- la rejouera jamais, donc toute correction posee dedans resterait invisible en
--- production. Voir docs/MISE-EN-SERVICE.md.
+-- production. Voir docs/archive/2026-09-pre-remise-a-plat/MISE-EN-SERVICE.md.
 --
 -- Les deux objets ci-dessous sont deja corriges dans 0005 pour une base neuve.
 -- Ce fichier ne sert qu'aux bases qui ont joue 0005 avant le lot L8. Les rejouer

@@ -32,7 +32,7 @@ import '../parcours_offres/bloc_parcours.dart';
 /// La phase de vie d'un enfant du foyer, a un instant donne.
 ///
 /// Cinq phases, celles que la fiche produit tabule
-/// (`docs/produit/parcours-utilisateurs.md`, fiche `TUT-01`) : en cours, cours a
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, fiche `TUT-01`) : en cours, cours a
 /// venir aujourd'hui, rien aujourd'hui, en recherche d'enseignant, seance
 /// annulee.
 ///
@@ -112,10 +112,10 @@ DateTime? attendDepuis(List<Creneau> creneaux) {
 /// `TUT-01` : l'accueil du foyer.
 ///
 /// **Bloc dominant : l'etat en direct de chaque enfant, une carte par enfant**,
-/// portee par `ChildCard` (`docs/design/07-catalogue-composants.md` section 3).
+/// portee par `ChildCard` (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 3).
 /// Le bouton « Assister » n'est cable que pendant une seance en cours ; il entre
 /// en observateur muet, et c'est la fonction de confiance la plus forte du
-/// produit (`docs/produit/parcours-utilisateurs.md`).
+/// produit (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
 ///
 /// Sous les cartes, une section « Gerer le foyer » : les appareils, les reglages
 /// par enfant, et la date de fin d'acces de chaque enfant, qui tient lieu de
@@ -127,7 +127,7 @@ DateTime? attendDepuis(List<Creneau> creneaux) {
 /// par la carte. La consequence de fond, la meme qu'a `ELV-02` : le cours en
 /// direct n'est plus un aplat `surfacePrimary` plein mais une carte posee, seul
 /// son bouton porte l'aplat sature, et deux enfants en cours ne font donc plus
-/// deux zones pleines (`docs/design/01-systeme-visuel.md` section 3).
+/// deux zones pleines (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3).
 class AccueilFamillePage extends ConsumerStatefulWidget {
   /// Cree l'accueil du foyer.
   const AccueilFamillePage({super.key, this.horloge = DateTime.now});
@@ -348,7 +348,7 @@ class _CarteEnfant extends ConsumerWidget {
       // `TUT-01` n'a pas d'ecran de detail par enfant : la carte n'est pas
       // cliquable et ne porte pas de chevron, comme avant la reprise. Le chevron
       // de la ligne « Normal » du catalogue attend un ecran de suivi par enfant
-      // (`docs/design/07-catalogue-composants.md` section 3).
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 3).
       onPoserHoraire: sansPlanning
           ? () => GoRouter.of(context).go(Routes.tuteurDisponibilites)
           : null,

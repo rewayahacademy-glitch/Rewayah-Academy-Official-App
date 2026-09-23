@@ -18,7 +18,7 @@ import '../support/harnais.dart';
 /// lieu de le contredire, et un composant ajoute sans entree de galerie ne
 /// serait jamais signale.
 ///
-/// Source : `docs/design/07-catalogue-composants.md`, sections 1 et 2.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md`, sections 1 et 2.
 const List<String> composantsDuCatalogue = <String>[
   // Section 2 : les douze P0.
   'PageShell',
@@ -98,7 +98,7 @@ const List<String> composantsDuCatalogue = <String>[
   'SousNavigationDomaine',
 ];
 
-/// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.
+/// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
 ///
 /// Une valeur au milieu de chaque plage, jamais sa borne : un composant qui ne
 /// tiendrait qu'a 599 passerait sinon pour bon.

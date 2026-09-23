@@ -1,8 +1,8 @@
 -- 0010 : N2, la video. Aiguillage de fournisseur, emission de jeton,
 -- reception des webhooks, et l'etat `en_connexion` que N1 refusait de deviner.
 --
--- Perimetre fixe par ADR-001 (docs/architecture/decisions.md) et par
--- docs/architecture/etape-5-salle-coran-presence.md sections 6.2, 6.3 et 12.
+-- Perimetre fixe par ADR-001 (docs/archive/2026-09-pre-remise-a-plat/architecture/decisions.md) et par
+-- docs/archive/2026-09-pre-remise-a-plat/architecture/etape-5-salle-coran-presence.md sections 6.2, 6.3 et 12.
 --
 -- Ce fichier n'ouvre AUCUNE policy d'ecriture au client. Tout ce qu'il cree
 -- s'ecrit par la cle de service, depuis les fonctions Edge, et se lit par des

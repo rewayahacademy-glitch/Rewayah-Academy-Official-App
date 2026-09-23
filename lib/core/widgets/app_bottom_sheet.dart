@@ -13,7 +13,7 @@ import '../theme/app_spacing.dart';
 /// boite de dialogue Material : une feuille se prend au pouce sur un telephone,
 /// une boite de dialogue non.
 ///
-/// Le motif de mouvement est celui de `docs/design/04-systeme-mouvement.md`
+/// Le motif de mouvement est celui de `docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md`
 /// section 3 : 280 ms a l'ouverture, 200 ms a la fermeture, voile a 0,32
 /// d'opacite, et **la feuille suit le doigt pendant le glissement**. Elle ne se
 /// referme que si la vitesse ou la distance depasse le seuil : une feuille qui

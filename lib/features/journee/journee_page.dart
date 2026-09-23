@@ -38,7 +38,7 @@
 /// **L'objectif commun de la seance n'est pas affiche, et c'est volontaire** :
 /// aucune couche ne le porte (ni `sessions`, ni `SeanceEnseignant`). Se taire
 /// coute moins cher qu'un tiret a chaque ligne. La demande est ecrite dans
-/// `docs/parallel-reports/CONTRACT_REQUEST_A.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/parallel-reports/CONTRACT_REQUEST_A.md`.
 ///
 /// Les heures affichees sont celles de l'appareil. Aucune mention de fuseau
 /// n'est posee ici, contrairement a la grille de `ENS-06` : les seances et les
@@ -115,7 +115,7 @@ class JourneePage extends ConsumerWidget {
 ///
 /// Il vit dans un widget a part pour que [JourneePage] reste un
 /// `ConsumerWidget` : c'est la declaration exacte que le routeur attend
-/// (`docs/architecture/TEACHER_FILE_OWNERSHIP.md` section 3), et une page
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md` section 3), et une page
 /// devenue `ConsumerStatefulWidget` pour porter une horloge serait un ecart de
 /// contrat pour une raison purement interne.
 class _Cadence extends StatefulWidget {

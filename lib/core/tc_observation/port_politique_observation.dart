@@ -171,7 +171,7 @@ const Duration cadenceBudgetObservation = Duration(seconds: 5);
 ///
 /// **Aucune des quatre fonctions appelees ici n'existe encore en base.** Elles
 /// sont decrites une a une, avec leurs colonnes et leur RLS, dans la section
-/// DEMANDE SQL de `docs/teaching-core/TC_CONTRACT_REQUEST_G.md`. Tant que la
+/// DEMANDE SQL de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_G.md`. Tant que la
 /// migration n'est pas appliquee, chaque appel rend
 /// `MotifEchecObservation.capaciteAbsente`, et l'ecran le dit en clair plutot
 /// que d'afficher un budget invente.

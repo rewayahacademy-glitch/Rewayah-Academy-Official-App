@@ -14,7 +14,7 @@ import 'resource_version.dart';
 /// `download_asset` n'est en base : les migrations `0001` a `0029` ont ete
 /// relues, et aucun bucket Storage n'existe en dehors de `kyc` et `avatars`.
 /// La demande SQL correspondante est dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
 ///
 /// Il n'est pas une maquette pour autant : c'est **le** point d'implementation
 /// des regles de tri, de recherche et de reprise, et il applique exactement
