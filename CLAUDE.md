@@ -9,8 +9,8 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Tâche | Lire |
 | :--- | :--- |
 | Toujours, en premier | `docs/current/00_LIRE_D_ABORD.md` (autorité, invariants, contradictions résolues) |
-| Toujours, en second | `docs/current/08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` version 2 (gel fonctionnel, **gate C0 de configuration**, décisions datées, registre d'avancement) |
-| Pendant C0, la seule mission exécutable | `docs/current/09_PROMPT_REPRISE_VERTICALE.md` (configuration de départ uniquement ; aucun lot produit V0–V6 avant clôture de C0) |
+| Toujours, en second | `docs/current/08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` version 2 (gate C0 de configuration, décisions datées, **§5 bis = dernières décisions**, qui prévalent sur le §0 quand elles l'amendent) |
+| Configuration de départ (C0) | `docs/current/09_PROMPT_REPRISE_VERTICALE.md` ; depuis le 23/09 (soir), **le travail UI isolé sur branche dédiée est autorisé sur ordre explicite du directeur, un écran à la fois** (`08` §5 bis) ; V0, V1, CORE24 restent suspendus ; fusion dans `main` et déploiement restent soumis aux contrôles CI, migrations et sécurité encore bloqués |
 | Bilan C0 | `docs/current/CONFIGURATION_BASELINE_2026-09-23.md` (PASS / BLOCKED / INCONNU par point, avec preuves) |
 | Produit, rôles, parcours, recette | `docs/current/01_PRODUIT_ET_PARCOURS.md` |
 | Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
