@@ -27,7 +27,7 @@
     "irreversible": "Cette action ne peut pas être annulée."
   },
   "salle": {
-    "bandeauPermanent": "Cours enregistré, visite de contrôle possible.",
+    "bandeauPermanent": "Visite de contrôle possible. Le cours n'est pas enregistré.",
     "micro": "Micro",
     "microCoupe": "Micro coupé",
     "camera": "Caméra",
@@ -177,7 +177,7 @@
   "contrat": {
     "titre": "Ce que vous signez",
     "intro": "Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.",
-    "pointEnregistrement": "Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.",
+    "pointEnregistrement": "Aucun cours n'est enregistré aujourd'hui. Si un enregistrement audio devait être mis en place, il vous serait annoncé à l'avance et demanderait votre accord.",
     "pointControle": "Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.",
     "pointCoordonnees": "Vous ne voyez jamais les coordonnées d'une famille : ni nom complet, ni courriel, ni téléphone.",
     "lireTexte": "Lire le texte complet",
@@ -1534,7 +1534,7 @@
       "contratSection": "Contrat et accusés",
       "contratEnseignant": "Contrat enseignant",
       "contratConditions": "Conditions d'utilisation",
-      "contratAccuse": "Enregistrement audio et visite de contrôle",
+      "contratAccuse": "Visite de contrôle et enregistrement",
       "contratDetail": "Version {version}, accepté le {date}",
       "contratAucun": "Aucun contrat enregistré",
       "contratAucunDetail": "Votre dossier n'est pas encore passé par la signature.",

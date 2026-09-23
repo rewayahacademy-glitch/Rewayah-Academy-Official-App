@@ -179,8 +179,8 @@ class Traductions$salle$fr {
 
 	// Translations
 
-	/// fr: 'Cours enregistré, visite de contrôle possible.'
-	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
+	/// fr: 'Visite de contrôle possible. Le cours n'est pas enregistré.'
+	String get bandeauPermanent => 'Visite de contrôle possible. Le cours n\'est pas enregistré.';
 
 	/// fr: 'Micro'
 	String get micro => 'Micro';
@@ -613,8 +613,8 @@ class Traductions$contrat$fr {
 	/// fr: 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu'au milieu d'un texte long.'
 	String get intro => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.';
 
-	/// fr: 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.'
-	String get pointEnregistrement => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.';
+	/// fr: 'Aucun cours n'est enregistré aujourd'hui. Si un enregistrement audio devait être mis en place, il vous serait annoncé à l'avance et demanderait votre accord.'
+	String get pointEnregistrement => 'Aucun cours n\'est enregistré aujourd\'hui. Si un enregistrement audio devait être mis en place, il vous serait annoncé à l\'avance et demanderait votre accord.';
 
 	/// fr: 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.'
 	String get pointControle => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.';
@@ -4939,8 +4939,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Conditions d'utilisation'
 	String get contratConditions => 'Conditions d\'utilisation';
 
-	/// fr: 'Enregistrement audio et visite de contrôle'
-	String get contratAccuse => 'Enregistrement audio et visite de contrôle';
+	/// fr: 'Visite de contrôle et enregistrement'
+	String get contratAccuse => 'Visite de contrôle et enregistrement';
 
 	/// fr: 'Version {version}, accepté le {date}'
 	String contratDetail({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}';
@@ -7299,7 +7299,7 @@ extension on Traductions {
 			'etat.enRetard' => 'En retard',
 			'etat.termine' => 'Terminé',
 			'destructif.irreversible' => 'Cette action ne peut pas être annulée.',
-			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
+			'salle.bandeauPermanent' => 'Visite de contrôle possible. Le cours n\'est pas enregistré.',
 			'salle.micro' => 'Micro',
 			'salle.microCoupe' => 'Micro coupé',
 			'salle.camera' => 'Caméra',
@@ -7437,7 +7437,7 @@ extension on Traductions {
 			'inscription.champRequis' => 'Cette réponse est nécessaire pour continuer.',
 			'contrat.titre' => 'Ce que vous signez',
 			'contrat.intro' => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.',
-			'contrat.pointEnregistrement' => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
+			'contrat.pointEnregistrement' => 'Aucun cours n\'est enregistré aujourd\'hui. Si un enregistrement audio devait être mis en place, il vous serait annoncé à l\'avance et demanderait votre accord.',
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
@@ -8675,7 +8675,7 @@ extension on Traductions {
 			'enseignant.profil.contratSection' => 'Contrat et accusés',
 			'enseignant.profil.contratEnseignant' => 'Contrat enseignant',
 			'enseignant.profil.contratConditions' => 'Conditions d\'utilisation',
-			'enseignant.profil.contratAccuse' => 'Enregistrement audio et visite de contrôle',
+			'enseignant.profil.contratAccuse' => 'Visite de contrôle et enregistrement',
 			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}',
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',

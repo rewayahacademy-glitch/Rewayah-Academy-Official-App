@@ -9,6 +9,8 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Tâche | Lire |
 | :--- | :--- |
 | Toujours, en premier | `docs/current/00_LIRE_D_ABORD.md` (autorité, invariants, contradictions résolues) |
+| Toujours, en second | `docs/current/08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` (décisions de direction postérieures à `00`–`07`, tranches verticales V0–V6, registre d'avancement à tenir à chaque lot) |
+| Reprise d'une session | `docs/current/09_PROMPT_REPRISE_VERTICALE.md` |
 | Produit, rôles, parcours, recette | `docs/current/01_PRODUIT_ET_PARCOURS.md` |
 | Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
 | Écran, composant, thème, accessibilité | `docs/current/03_DESIGN_SYSTEM_ET_UX.md` puis `lib/CLAUDE.md` |
