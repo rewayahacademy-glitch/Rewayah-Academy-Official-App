@@ -35,10 +35,12 @@ passée nommément, et une règle archivée qui contredit `docs/current/` est ca
   `testé sur staging` / `déployé`. Aucun `PASS` inventé.
 - Aucun déploiement, migration distante, suppression de branche ou de mémoire sans
   inventaire, sauvegarde et feu vert explicite sur la liste précise.
-- **Pousser sur `main` déclenche le déploiement production** (`.github/workflows/flutter-deploy.yml`).
-  Au 23/09/2026 le workflow s'arrête faute des secrets Actions (bilan C0 §1), mais dès qu'ils
-  existent le push déploie : traiter tout push sur `main` comme une mise en production.
-  Travailler sur une branche, ne fusionner qu'un lot prouvé.
+- **Pousser sur `main` déploie réellement en production** (`.github/workflows/flutter-deploy.yml`,
+  secrets Actions présents depuis le 24/09/2026, bilan C0 §1). Toute fusion dans `main` est une
+  mise en production. Travailler sur une branche, ne fusionner qu'un lot prouvé.
+- **Pour voir une branche « en live », ouvrir une pull request vers `main`** : le même workflow
+  déploie un aperçu Vercel (URL unique, `staging`) et l'écrit en commentaire de la PR. Jamais de
+  `vercel deploy --prod` à la main depuis un poste.
 - Aucun fichier de `.claude/agents/` ou `.claude/commands/` n'est actif dans ce dépôt ; seuls
   `.claude/settings.local.json` (hooks de protection) et `.claude/hooks/` le sont.
 
