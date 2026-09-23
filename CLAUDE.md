@@ -9,6 +9,9 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Tâche | Lire |
 | :--- | :--- |
 | Toujours, en premier | `docs/current/00_LIRE_D_ABORD.md` (autorité, invariants, contradictions résolues) |
+| Toujours, en second | `docs/current/08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` version 2 (gel fonctionnel, **gate C0 de configuration**, décisions datées, registre d'avancement) |
+| Pendant C0, la seule mission exécutable | `docs/current/09_PROMPT_REPRISE_VERTICALE.md` (configuration de départ uniquement ; aucun lot produit V0–V6 avant clôture de C0) |
+| Bilan C0 | `docs/current/CONFIGURATION_BASELINE_2026-09-23.md` (PASS / BLOCKED / INCONNU par point, avec preuves) |
 | Produit, rôles, parcours, recette | `docs/current/01_PRODUIT_ET_PARCOURS.md` |
 | Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
 | Écran, composant, thème, accessibilité | `docs/current/03_DESIGN_SYSTEM_ET_UX.md` puis `lib/CLAUDE.md` |
