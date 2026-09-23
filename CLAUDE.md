@@ -35,8 +35,12 @@ passée nommément, et une règle archivée qui contredit `docs/current/` est ca
   `testé sur staging` / `déployé`. Aucun `PASS` inventé.
 - Aucun déploiement, migration distante, suppression de branche ou de mémoire sans
   inventaire, sauvegarde et feu vert explicite sur la liste précise.
-- **Pousser sur `main` déploie en production** (`.github/workflows/flutter-deploy.yml`).
+- **Pousser sur `main` déclenche le déploiement production** (`.github/workflows/flutter-deploy.yml`).
+  Au 23/09/2026 le workflow s'arrête faute des secrets Actions (bilan C0 §1), mais dès qu'ils
+  existent le push déploie : traiter tout push sur `main` comme une mise en production.
   Travailler sur une branche, ne fusionner qu'un lot prouvé.
+- Aucun fichier de `.claude/agents/` ou `.claude/commands/` n'est actif dans ce dépôt ; seuls
+  `.claude/settings.local.json` (hooks de protection) et `.claude/hooks/` le sont.
 
 ## Vérifier avant de dire que c'est fait
 
