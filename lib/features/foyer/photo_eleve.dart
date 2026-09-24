@@ -111,9 +111,17 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
       _refus = null;
       _succes = false;
     });
-    final PhotoEnfant? photo = await ref
-        .read(selecteurPhotoProvider)
-        .choisirPhoto();
+    final PhotoEnfant? photo;
+    try {
+      photo = await ref.read(selecteurPhotoProvider).choisirPhoto();
+    } on Object {
+      // Permission refusee, fichier illisible, erreur de la plateforme : le
+      // selecteur n'a rien rendu, et l'ecran le dit au lieu de se taire.
+      if (mounted) {
+        setState(() => _refus = t.ficheEleve.informations.selectionEchec);
+      }
+      return;
+    }
     if (!mounted || photo == null) {
       return;
     }
@@ -263,6 +271,15 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
           Ecart.vSm,
           const LinearProgressIndicator(),
         ] else if (avecApercu) ...<Widget>[
+          if (_refus != null) ...<Widget>[
+            Text(
+              _refus!,
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vMd,
+          ],
           if (_phase == _Phase.echecEnvoi ||
               _phase == _Phase.echecEnregistrement) ...<Widget>[
             Semantics(

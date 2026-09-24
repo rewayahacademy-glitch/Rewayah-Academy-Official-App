@@ -22,19 +22,22 @@ import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/skeleton.dart';
 
 /// La porte d'acces du titulaire, qui decide de ce qui est creable (K3).
 ///
-/// Une session illisible (source absente) vaut chargement : rien n'est
-/// creable, aucune carte ne ment. Le serveur refait de toute facon le
-/// controle (`creer_profil_enfant`, compte actif exige).
-final Provider<PorteAcces> porteAjoutProfilProvider = Provider<PorteAcces>((
+/// `null` : la session est illisible (source absente, lecture en echec). Le
+/// formulaire le dit comme une erreur, jamais comme un dossier en attente ;
+/// `chargement` se dit comme un chargement, `horsLigne` comme hors ligne. Le
+/// serveur refait de toute facon le controle (`creer_profil_enfant`, compte
+/// actif exige).
+final Provider<PorteAcces?> porteAjoutProfilProvider = Provider<PorteAcces?>((
   Ref ref,
 ) {
   try {
     return ref.watch(sessionProvider).porte;
   } on Object {
-    return PorteAcces.chargement;
+    return null;
   }
 });
 
@@ -110,6 +113,15 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
   /// La colonne du formulaire (bornee sur bureau).
   static const Key colonneKey = Key('profilEleve.colonne');
 
+  /// La session n'est pas encore lue.
+  static const Key porteChargementKey = Key('profilEleve.porte.chargement');
+
+  /// La session ne peut pas etre lue.
+  static const Key porteIllisibleKey = Key('profilEleve.porte.illisible');
+
+  /// Le compte est hors ligne.
+  static const Key porteHorsLigneKey = Key('profilEleve.porte.horsLigne');
+
   @override
   ConsumerState<FormulaireProfilEleve> createState() =>
       _FormulaireProfilEleveState();
@@ -148,10 +160,15 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
     return age == null ? base : base.copyWith(age: age);
   }
 
-  PorteAcces get _porte => ref.read(porteAjoutProfilProvider);
+  PorteAcces? get _porte => ref.read(porteAjoutProfilProvider);
 
-  bool _creable(PourQui choix) =>
-      ref.read(portCreationProfilEleveProvider).peutCreer(choix, porte: _porte);
+  bool _creable(PourQui choix) {
+    final PorteAcces? porte = _porte;
+    return porte != null &&
+        ref
+            .read(portCreationProfilEleveProvider)
+            .peutCreer(choix, porte: porte);
+  }
 
   void _retour() {
     if (_envoi) {
@@ -270,7 +287,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
     ref.watch(elevesDuFoyerProvider);
     // La porte decide de ce qui est creable : un changement de session
     // redessine les cartes.
-    ref.watch(porteAjoutProfilProvider);
+    final PorteAcces? porte = ref.watch(porteAjoutProfilProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final bool identite = _etape == EtapeProfilEleve.identite;
     final int numero = identite ? 2 : 1;
@@ -322,9 +339,50 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
         ),
         child: _Colonne(
           cle: FormulaireProfilEleve.colonneKey,
-          child: identite ? _pageIdentite(context) : _pagePourQui(context),
+          child: identite
+              ? _pageIdentite(context)
+              : _pagePourQuiSelon(context, porte),
         ),
       ),
+    );
+  }
+
+  /// La premiere page selon la porte : tant que la session n'est pas lue,
+  /// ou qu'elle ne peut pas l'etre, aucune carte n'est montree desactivee
+  /// avec la raison d'un dossier en attente, qui serait fausse.
+  Widget _pagePourQuiSelon(BuildContext context, PorteAcces? porte) {
+    void relire() => ref.invalidate(porteAjoutProfilProvider);
+    final Widget? etat = switch (porte) {
+      null => EtatSysteme(
+        key: FormulaireProfilEleve.porteIllisibleKey,
+        nature: NatureEtat.echecServeur,
+        titre: t.foyer.ajout.porte.illisibleTitre,
+        phrase: t.foyer.ajout.porte.illisiblePhrase,
+        onAction: relire,
+      ),
+      PorteAcces.chargement => const Skeleton.liste(
+        key: FormulaireProfilEleve.porteChargementKey,
+      ),
+      PorteAcces.horsLigne => EtatSysteme(
+        key: FormulaireProfilEleve.porteHorsLigneKey,
+        nature: NatureEtat.horsLigne,
+        onAction: relire,
+      ),
+      _ => null,
+    };
+    if (etat == null) {
+      return _pagePourQui(context);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _Question(
+          question: t.foyer.ajout.pourQui.question,
+          sousTitre: t.foyer.ajout.pourQui.sousTitre,
+        ),
+        Ecart.vXxl,
+        etat,
+      ],
     );
   }
 

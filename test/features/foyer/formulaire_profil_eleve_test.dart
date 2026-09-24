@@ -478,6 +478,45 @@ void main() {
       },
     );
 
+    // Revue du lot B : une session pas encore lue, illisible ou hors ligne ne
+    // se dit jamais « Possible des que votre dossier est valide ».
+    for (final (String nom, PorteAcces? porte, Key cle)
+        in <(String, PorteAcces?, Key)>[
+          (
+            'session en chargement : squelette',
+            PorteAcces.chargement,
+            FormulaireProfilEleve.porteChargementKey,
+          ),
+          (
+            'session illisible : erreur et relecture',
+            null,
+            FormulaireProfilEleve.porteIllisibleKey,
+          ),
+          (
+            'session hors ligne : hors ligne',
+            PorteAcces.horsLigne,
+            FormulaireProfilEleve.porteHorsLigneKey,
+          ),
+        ]) {
+      testWidgets('$nom, jamais la raison du dossier en attente', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          appairage: _AppairageCreant(),
+          autres: <Override>[porteAjoutProfilProvider.overrideWithValue(porte)],
+        );
+        await _ouvrirAjout(tester);
+
+        expect(find.byKey(cle), findsOneWidget);
+        expect(find.text(t.foyer.ajout.pourQui.enfantAttente), findsNothing);
+        expect(find.byKey(FormulaireProfilEleve.choixEnfantKey), findsNothing);
+        expect(_action(tester), isNull);
+        // Le retour reste visible : aucune impasse.
+        expect(find.byType(DisqueRetour), findsOneWidget);
+      });
+    }
+
     testWidgets('vocabulaire : aucun libelle interdit sur les deux pages', (
       WidgetTester tester,
     ) async {

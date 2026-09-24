@@ -57,6 +57,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$kyc$fr kyc = Traductions$kyc$fr.internal(_root);
 	late final Traductions$appareils$fr appareils = Traductions$appareils$fr.internal(_root);
 	late final Traductions$enfant$fr enfant = Traductions$enfant$fr.internal(_root);
+	late final Traductions$reglagesEnfant$fr reglagesEnfant = Traductions$reglagesEnfant$fr.internal(_root);
 	late final Traductions$foyer$fr foyer = Traductions$foyer$fr.internal(_root);
 	late final Traductions$ficheEleve$fr ficheEleve = Traductions$ficheEleve$fr.internal(_root);
 	late final Traductions$disponibilites$fr disponibilites = Traductions$disponibilites$fr.internal(_root);
@@ -798,11 +799,32 @@ class Traductions$enfant$fr {
 	/// fr: 'Ajouter un profil élève'
 	String get titre => 'Ajouter un profil élève';
 
-	/// fr: 'Aucun enfant dans le foyer'
-	String get aucun => 'Aucun enfant dans le foyer';
+	/// fr: 'Aucun profil élève dans le foyer'
+	String get aucun => 'Aucun profil élève dans le foyer';
 
-	/// fr: 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.'
-	String get aucunDetail => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.';
+	/// fr: 'Ajoutez d'abord un profil élève depuis le Foyer.'
+	String get aucunDetail => 'Ajoutez d\'abord un profil élève depuis le Foyer.';
+}
+
+// Path: reglagesEnfant
+class Traductions$reglagesEnfant$fr {
+	Traductions$reglagesEnfant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réglages par profil élève'
+	String get titre => 'Réglages par profil élève';
+
+	/// fr: 'La photo, la caméra et l'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l'administration restent ici.'
+	String get intro => 'La photo, la caméra et l\'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l\'administration restent ici.';
+
+	/// fr: 'Photo, caméra et interface'
+	String get renvoi => 'Photo, caméra et interface';
+
+	/// fr: 'Dans la fiche de {prenom}'
+	String renvoiLegende({required Object prenom}) => 'Dans la fiche de ${prenom}';
 }
 
 // Path: foyer
@@ -830,6 +852,15 @@ class Traductions$foyer$fr {
 
 	/// fr: 'La classe de chaque élève ne s'affiche pas encore sur cette page.'
 	String get classesIndisponibles => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.';
+
+	/// fr: 'La classe de certains élèves n'a pas pu être lue.'
+	String get classesEchec => 'La classe de certains élèves n\'a pas pu être lue.';
+
+	/// fr: 'Relire les classes'
+	String get relireClasses => 'Relire les classes';
+
+	/// fr: 'L'inscription en cours de chaque élève ne s'affiche pas encore sur cette page.'
+	String get inscriptionIllisible => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.';
 
 	/// fr: 'Appareils partagés'
 	String get appareilsPartages => 'Appareils partagés';
@@ -2208,6 +2239,9 @@ class Traductions$foyer$membre$fr {
 	/// fr: 'Pas encore de classe'
 	String get sansClasse => 'Pas encore de classe';
 
+	/// fr: 'Classe non lue'
+	String get classeEchec => 'Classe non lue';
+
 	/// fr: 'Accès sans échéance'
 	String get accesSansEcheance => 'Accès sans échéance';
 
@@ -2262,6 +2296,7 @@ class Traductions$foyer$ajout$fr {
 	/// fr: 'Créer le profil'
 	String get creer => 'Créer le profil';
 
+	late final Traductions$foyer$ajout$porte$fr porte = Traductions$foyer$ajout$porte$fr.internal(_root);
 	late final Traductions$foyer$ajout$pourQui$fr pourQui = Traductions$foyer$ajout$pourQui$fr.internal(_root);
 	late final Traductions$foyer$ajout$identite$fr identite = Traductions$foyer$ajout$identite$fr.internal(_root);
 	late final Traductions$foyer$ajout$erreurs$fr erreurs = Traductions$foyer$ajout$erreurs$fr.internal(_root);
@@ -2412,6 +2447,9 @@ class Traductions$ficheEleve$informations$fr {
 	/// fr: 'Réessayer'
 	String get reprendre => 'Réessayer';
 
+	/// fr: 'La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.'
+	String get selectionEchec => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.';
+
 	/// fr: 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.'
 	String get horsLigne => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.';
 }
@@ -2468,6 +2506,12 @@ class Traductions$ficheEleve$inscription$fr {
 
 	/// fr: 'La classe ne s'affiche pas encore ici. Choisir une classe'
 	String get classeIndisponible => 'La classe ne s\'affiche pas encore ici. Choisir une classe';
+
+	/// fr: 'La classe n'a pas pu être lue.'
+	String get classeEchec => 'La classe n\'a pas pu être lue.';
+
+	/// fr: 'Relire la classe'
+	String get relireClasse => 'Relire la classe';
 }
 
 // Path: ficheEleve.interface
@@ -2510,6 +2554,9 @@ class Traductions$ficheEleve$interface$fr {
 
 	/// fr: 'Le changement n'a pas été enregistré. Réessayez.'
 	String get echec => 'Le changement n\'a pas été enregistré. Réessayez.';
+
+	/// fr: 'Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra.'
+	String get horsLigne => 'Vous êtes hors ligne. L\'interface pourra être changée quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.camera
@@ -2540,6 +2587,9 @@ class Traductions$ficheEleve$camera$fr {
 
 	/// fr: 'Le changement n'a pas été enregistré. Réessayez.'
 	String get echec => 'Le changement n\'a pas été enregistré. Réessayez.';
+
+	/// fr: 'Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra.'
+	String get horsLigne => 'Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.acces
@@ -6340,6 +6390,21 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: foyer.ajout.porte
+class Traductions$foyer$ajout$porte$fr {
+	Traductions$foyer$ajout$porte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre compte n'a pas pu être lu'
+	String get illisibleTitre => 'Votre compte n\'a pas pu être lu';
+
+	/// fr: 'Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant.'
+	String get illisiblePhrase => 'Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant.';
+}
+
 // Path: foyer.ajout.pourQui
 class Traductions$foyer$ajout$pourQui$fr {
 	Traductions$foyer$ajout$pourQui$fr.internal(this._root);
@@ -8627,8 +8692,12 @@ extension on Traductions {
 			'appareils.jamaisUtilise' => 'Jamais utilisé',
 			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
 			'enfant.titre' => 'Ajouter un profil élève',
-			'enfant.aucun' => 'Aucun enfant dans le foyer',
-			'enfant.aucunDetail' => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.',
+			'enfant.aucun' => 'Aucun profil élève dans le foyer',
+			'enfant.aucunDetail' => 'Ajoutez d\'abord un profil élève depuis le Foyer.',
+			'reglagesEnfant.titre' => 'Réglages par profil élève',
+			'reglagesEnfant.intro' => 'La photo, la caméra et l\'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l\'administration restent ici.',
+			'reglagesEnfant.renvoi' => 'Photo, caméra et interface',
+			'reglagesEnfant.renvoiLegende' => ({required Object prenom}) => 'Dans la fiche de ${prenom}',
 			'foyer.titre' => 'Foyer',
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
 			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
@@ -8636,11 +8705,15 @@ extension on Traductions {
 			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
 			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
 			'foyer.membre.sansClasse' => 'Pas encore de classe',
+			'foyer.membre.classeEchec' => 'Classe non lue',
 			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'Accès jusqu\'au ${date}',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'Accès expiré depuis le ${date}',
 			'foyer.membre.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'foyer.classesIndisponibles' => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.',
+			'foyer.classesEchec' => 'La classe de certains élèves n\'a pas pu être lue.',
+			'foyer.relireClasses' => 'Relire les classes',
+			'foyer.inscriptionIllisible' => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.',
 			'foyer.appareilsPartages' => 'Appareils partagés',
 			'foyer.appareilsFoyer' => 'Appareils du foyer',
 			'foyer.appareilsFoyerLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
@@ -8653,6 +8726,8 @@ extension on Traductions {
 			'foyer.ajout.etapeSurLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'foyer.ajout.suivant' => 'Suivant',
 			'foyer.ajout.creer' => 'Créer le profil',
+			'foyer.ajout.porte.illisibleTitre' => 'Votre compte n\'a pas pu être lu',
+			'foyer.ajout.porte.illisiblePhrase' => 'Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant.',
 			'foyer.ajout.pourQui.question' => 'Pour qui est ce profil élève ?',
 			'foyer.ajout.pourQui.sousTitre' => 'Choisissez la personne qui suivra les cours.',
 			'foyer.ajout.pourQui.requis' => 'Choisissez pour qui est ce profil pour continuer.',
@@ -8725,6 +8800,7 @@ extension on Traductions {
 			'ficheEleve.informations.echecEnvoi' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'ficheEleve.informations.echecEnregistrement' => 'La photo est envoyée, mais elle n\'a pas pu être enregistrée sur le profil.',
 			'ficheEleve.informations.reprendre' => 'Réessayer',
+			'ficheEleve.informations.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'ficheEleve.informations.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
 			'ficheEleve.inscription.titre' => 'Parcours et inscription',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'Où en est ${prenom} : questionnaire et classe.',
@@ -8741,6 +8817,8 @@ extension on Traductions {
 			'ficheEleve.inscription.classeConfirmee' => 'Classe confirmée',
 			'ficheEleve.inscription.classeAucune' => 'Pas encore de classe. Choisir une classe',
 			'ficheEleve.inscription.classeIndisponible' => 'La classe ne s\'affiche pas encore ici. Choisir une classe',
+			'ficheEleve.inscription.classeEchec' => 'La classe n\'a pas pu être lue.',
+			'ficheEleve.inscription.relireClasse' => 'Relire la classe',
 			'ficheEleve.interface.titre' => 'Interface',
 			'ficheEleve.interface.intro' => ({required Object prenom}) => 'Comment Rewayah s\'affiche sur l\'appareil de ${prenom}.',
 			'ficheEleve.interface.guidee' => 'Interface guidée',
@@ -8752,6 +8830,7 @@ extension on Traductions {
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
 			'ficheEleve.interface.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
+			'ficheEleve.interface.horsLigne' => 'Vous êtes hors ligne. L\'interface pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',
 			'ficheEleve.camera.autorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant les séances.',
@@ -8759,6 +8838,7 @@ extension on Traductions {
 			'ficheEleve.camera.application' => ({required Object prenom}) => 'Le changement compte à la prochaine entrée de ${prenom} en séance.',
 			'ficheEleve.camera.distincte' => 'Ce réglage ne change pas l\'autorisation caméra de l\'appareil, celle que le téléphone demande pour lire un QR code.',
 			'ficheEleve.camera.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
+			'ficheEleve.camera.horsLigne' => 'Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra.',
 			'ficheEleve.acces.titre' => 'Accès Rewayah',
 			'ficheEleve.acces.ligne' => ({required Object prenom}) => 'Accès de ${prenom}',
 			'ficheEleve.acces.pastilleSansEcheance' => 'Sans échéance',
@@ -8864,6 +8944,8 @@ extension on Traductions {
 			'dossiers.pointNom' => 'Le nom correspond à celui du compte',
 			'dossiers.pointValidite' => 'La pièce n\'est pas expirée',
 			'dossiers.verdict' => 'Décision',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.approuver' => 'Valider le dossier',
 			'dossiers.refuser' => 'Refuser',
 			'dossiers.motif' => 'Ce qui ne va pas, en une phrase',
@@ -8879,8 +8961,6 @@ extension on Traductions {
 			'admin.tableau.comptes' => 'Accès échus',
 			'admin.tableau.demandes' => 'Demandes à trancher',
 			'admin.tableau.compteursErreur' => 'Les compteurs n\'ont pas pu être lus. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tableau.aTraiter' => 'À traiter en premier',
 			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
 			'admin.tableau.aTraiterAucunDetail' => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.',
@@ -9378,6 +9458,8 @@ extension on Traductions {
 			'admin.agents.dureePlafond' => 'Vingt-quatre heures au maximum, et la base le vérifie elle-même.',
 			'admin.agents.identite' => 'Les prénoms',
 			'admin.agents.identiteMasquee' => 'Masqués',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.identiteMasqueeDetail' => 'L\'agent lit les identifiants (ELV-0042) à la place des prénoms. La substitution est faite par la base : le prénom ne sort pas.',
 			'admin.agents.identiteVisible' => 'Visibles',
 			'admin.agents.identiteVisibleDetail' => 'L\'agent lit les prénoms, comme la personne observée les voit.',
@@ -9393,8 +9475,6 @@ extension on Traductions {
 			'admin.agents.termine' => 'J\'ai copié le lien',
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
 			'admin.agents.colonneLibelle' => 'Jeton',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.colonneQui' => 'Observe',
 			'admin.agents.colonneParcours' => 'Parcours',
 			'admin.agents.colonneIdentite' => 'Prénoms',
@@ -9892,6 +9972,8 @@ extension on Traductions {
 			'enseignant.salle.corpusAbsentDetail' => 'Le corpus n\'a pas été importé dans cet environnement. Il n\'y a rien à présenter.',
 			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre groupe.',
 			'enseignant.salle.sansDroitPresentation' => 'Votre accès à cette séance ne permet pas de présenter un contenu.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.titre' => 'Cahier de transmission',
 			'enseignant.cahier.duree' => ({required Object minutes}) => '${minutes} min de cours',
 			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '${minutes} min de cours, dont ${interruption} min d\'interruption',
@@ -9907,8 +9989,6 @@ extension on Traductions {
 			'enseignant.cahier.noteGroupe' => 'Note pour le groupe',
 			'enseignant.cahier.noteGroupeDetail' => 'Facultative. Aucun texte n\'est attendu.',
 			'enseignant.cahier.valider' => 'Valider le cahier',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
 			'enseignant.cahier.retourJournee' => 'Retour à la journée',
@@ -10406,6 +10486,8 @@ extension on Traductions {
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
@@ -10421,8 +10503,6 @@ extension on Traductions {
 			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}',
 			'tc.parcours.plage.versetUnique' => ({required Object sourate, required Object premier}) => 'Sourate ${sourate}, verset ${premier}',
 			'tc.parcours.plage.versetsCroisee' => ({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Sourate ${sourateDebut}, verset ${versetDebut} jusqu\'à sourate ${sourateFin}, verset ${versetFin}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.plage.pages' => ({required Object premiere, required Object derniere}) => 'Pages ${premiere} à ${derniere}',
 			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
 			'tc.parcours.plage.section' => ({required Object section}) => 'Section ${section}',

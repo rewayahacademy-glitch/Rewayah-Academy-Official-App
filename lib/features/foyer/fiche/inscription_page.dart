@@ -10,6 +10,7 @@ import '../../../core/offres/offre_horaire.dart';
 import '../../../core/offres/service_offres.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../fiche_eleve_page.dart';
 import '../foyer_page.dart';
 import '../ligne_membre.dart';
@@ -36,6 +37,9 @@ class InscriptionElevePage extends StatelessWidget {
   /// L'eleve concerne.
   final String eleveId;
 
+  /// Le lien « Relire la classe » apres un echec de lecture.
+  static const Key relireClasseKey = Key('ficheEleve.inscription.relire');
+
   @override
   Widget build(BuildContext context) {
     return PageFiche(
@@ -47,18 +51,6 @@ class InscriptionElevePage extends StatelessWidget {
     );
   }
 }
-
-/// Ce que la ligne « Questionnaire » dit d'une etape du parcours.
-String libelleEtapeFiche(EtapeParcours etape) => switch (etape) {
-  EtapeParcours.aPersonnaliser => t.ficheEleve.inscription.aRemplir,
-  EtapeParcours.horaireAChoisir => t.ficheEleve.inscription.horaireAChoisir,
-  EtapeParcours.offreIndisponible => t.ficheEleve.inscription.horaireRetire,
-  EtapeParcours.diagnosticRequis => t.ficheEleve.inscription.echangeAPrevoir,
-  EtapeParcours.diagnosticEnAttente => t.ficheEleve.inscription.echangePrevu,
-  EtapeParcours.groupeEnFormation =>
-    t.ficheEleve.inscription.classeEnConstitution,
-  EtapeParcours.groupeConfirme => t.ficheEleve.inscription.classeConfirmee,
-};
 
 class _Synthese extends ConsumerWidget {
   const _Synthese({required this.profil});
@@ -102,9 +94,15 @@ class _Synthese extends ConsumerWidget {
         lectureClasses.hasValue && !lectureClasses.hasError
         ? lectureClasses.requireValue
         : const <ClasseFoyer>[];
+    // Un echec de lecture n'est pas une fonction absente : il se dit comme
+    // tel, avec un moyen de relire (annexe), jamais « ne s'affiche pas
+    // encore ».
+    final bool echecClasses = classeEnEchec(classe);
     final String legendeClasse = classes.isNotEmpty
         ? texteClasse(classe)!
-        : classeIndisponible(classe) || lectureClasses.hasError
+        : echecClasses
+        ? t.ficheEleve.inscription.classeEchec
+        : classeIndisponible(classe)
         ? t.ficheEleve.inscription.classeIndisponible
         : lectureClasses.isLoading
         ? t.ficheEleve.inscription.lecture
@@ -120,7 +118,23 @@ class _Synthese extends ConsumerWidget {
           ).toString();
 
     return ColonnesFiche(
-      annexe: NoteFiche(t.ficheEleve.inscription.intro(prenom: profil.prenom)),
+      annexe: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          NoteFiche(t.ficheEleve.inscription.intro(prenom: profil.prenom)),
+          if (echecClasses)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: InscriptionElevePage.relireClasseKey,
+                libelle: t.ficheEleve.inscription.relireClasse,
+                onPress: () =>
+                    ref.invalidate(classesMembreProvider(profil.eleveId)),
+              ),
+            ),
+        ],
+      ),
       principal: GroupeReglages(
         lignes: <LigneRubrique>[
           LigneRubrique(

@@ -6,6 +6,7 @@ import '../../../core/domain/enums.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/reseau/service_reseau.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../fiche_eleve_page.dart';
@@ -37,6 +38,9 @@ class InterfaceElevePage extends StatelessWidget {
 
   /// La carte « Interface standard ».
   static const Key standardKey = Key('ficheEleve.interface.standard');
+
+  /// La phrase hors ligne.
+  static const Key horsLigneKey = Key('ficheEleve.interface.horsLigne');
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +96,9 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final ProfilEleveFoyer profil = widget.profil;
+    // Hors ligne, l'ecriture ne peut pas aboutir : les cartes ne se pressent
+    // plus et une phrase dit pourquoi (comme l'editeur de photo).
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
     return ColonnesFiche(
       principal: Column(
@@ -106,7 +113,7 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
             titre: t.ficheEleve.interface.guidee,
             description: t.ficheEleve.interface.guideeDescription,
             retenue: profil.mode == InterfaceMode.enfant,
-            disponible: true,
+            disponible: !horsLigne,
             onPress: () => _choisir(InterfaceMode.enfant),
           ),
           Ecart.vMd,
@@ -116,10 +123,19 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
             titre: t.ficheEleve.interface.standard,
             description: t.ficheEleve.interface.standardDescription,
             retenue: profil.mode == InterfaceMode.standard,
-            disponible: true,
+            disponible: !horsLigne,
             onPress: () => _choisir(InterfaceMode.standard),
           ),
-          if (_enCours || _echec) ...<Widget>[
+          if (horsLigne) ...<Widget>[
+            Ecart.vMd,
+            Text(
+              key: InterfaceElevePage.horsLigneKey,
+              t.ficheEleve.interface.horsLigne,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ] else if (_enCours || _echec) ...<Widget>[
             Ecart.vMd,
             Semantics(
               liveRegion: true,

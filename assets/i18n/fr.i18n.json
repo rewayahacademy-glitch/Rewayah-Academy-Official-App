@@ -334,8 +334,14 @@
   },
   "enfant": {
     "titre": "Ajouter un profil élève",
-    "aucun": "Aucun enfant dans le foyer",
-    "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
+    "aucun": "Aucun profil élève dans le foyer",
+    "aucunDetail": "Ajoutez d'abord un profil élève depuis le Foyer."
+  },
+  "reglagesEnfant": {
+    "titre": "Réglages par profil élève",
+    "intro": "La photo, la caméra et l'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l'administration restent ici.",
+    "renvoi": "Photo, caméra et interface",
+    "renvoiLegende": "Dans la fiche de {prenom}"
   },
   "foyer": {
     "titre": "Foyer",
@@ -348,12 +354,16 @@
     },
     "membre": {
       "sansClasse": "Pas encore de classe",
+      "classeEchec": "Classe non lue",
       "accesSansEcheance": "Accès sans échéance",
       "accesJusquau": "Accès jusqu'au {date}",
       "accesExpire": "Accès expiré depuis le {date}",
       "date": "{jour} {mois} {annee}"
     },
     "classesIndisponibles": "La classe de chaque élève ne s'affiche pas encore sur cette page.",
+    "classesEchec": "La classe de certains élèves n'a pas pu être lue.",
+    "relireClasses": "Relire les classes",
+    "inscriptionIllisible": "L'inscription en cours de chaque élève ne s'affiche pas encore sur cette page.",
     "appareilsPartages": "Appareils partagés",
     "appareilsFoyer": "Appareils du foyer",
     "appareilsFoyerLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
@@ -369,6 +379,10 @@
       "etapeSurLue": "Étape {n} sur {total}",
       "suivant": "Suivant",
       "creer": "Créer le profil",
+      "porte": {
+        "illisibleTitre": "Votre compte n'a pas pu être lu",
+        "illisiblePhrase": "Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant."
+      },
       "pourQui": {
         "question": "Pour qui est ce profil élève ?",
         "sousTitre": "Choisissez la personne qui suivra les cours.",
@@ -459,6 +473,7 @@
       "echecEnvoi": "La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.",
       "echecEnregistrement": "La photo est envoyée, mais elle n'a pas pu être enregistrée sur le profil.",
       "reprendre": "Réessayer",
+      "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
       "horsLigne": "Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra."
     },
     "inscription": {
@@ -476,7 +491,9 @@
       "classeEnConstitution": "Classe en cours de constitution",
       "classeConfirmee": "Classe confirmée",
       "classeAucune": "Pas encore de classe. Choisir une classe",
-      "classeIndisponible": "La classe ne s'affiche pas encore ici. Choisir une classe"
+      "classeIndisponible": "La classe ne s'affiche pas encore ici. Choisir une classe",
+      "classeEchec": "La classe n'a pas pu être lue.",
+      "relireClasse": "Relire la classe"
     },
     "interface": {
       "titre": "Interface",
@@ -489,7 +506,8 @@
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
-      "echec": "Le changement n'a pas été enregistré. Réessayez."
+      "echec": "Le changement n'a pas été enregistré. Réessayez.",
+      "horsLigne": "Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra."
     },
     "camera": {
       "titre": "Caméra en cours",
@@ -498,7 +516,8 @@
       "interdite": "Le bouton caméra n'apparaîtra pas pour {prenom} pendant les séances.",
       "application": "Le changement compte à la prochaine entrée de {prenom} en séance.",
       "distincte": "Ce réglage ne change pas l'autorisation caméra de l'appareil, celle que le téléphone demande pour lire un QR code.",
-      "echec": "Le changement n'a pas été enregistré. Réessayez."
+      "echec": "Le changement n'a pas été enregistré. Réessayez.",
+      "horsLigne": "Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra."
     },
     "acces": {
       "titre": "Accès Rewayah",

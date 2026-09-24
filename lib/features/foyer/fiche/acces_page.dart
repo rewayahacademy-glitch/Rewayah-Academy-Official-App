@@ -5,7 +5,8 @@ import '../../../core/capacites/port_acces_foyer.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
-import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../fiche_eleve_page.dart';
 import '../foyer_page.dart';
@@ -29,6 +30,12 @@ class AccesElevePage extends StatelessWidget {
 
   /// L'eleve concerne.
   final String eleveId;
+
+  /// La carte d'acces (un seul rectangle).
+  static const Key carteKey = Key('ficheEleve.acces.carte');
+
+  /// Le medaillon de la carte.
+  static const Key medaillonKey = Key('ficheEleve.acces.medaillon');
 
   @override
   Widget build(BuildContext context) {
@@ -73,17 +80,71 @@ class _Acces extends ConsumerWidget {
       ),
     };
 
-    return ColonnesFiche(
-      principal: GroupeReglages(
-        lignes: <LigneRubrique>[
-          LigneRubrique(
-            icone: AppIcons.verrou,
-            libelle: t.ficheEleve.acces.ligne(prenom: profil.prenom),
-            legende: legende,
-            controle: StatusPill(libelle: pastille, ton: ton),
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+
+    // L'en-tete de la carte « Abonnement et acces » du Compte : medaillon,
+    // titre, echeance reelle, pastille a droite, dans UN rectangle.
+    final Widget carte = SurfaceFiche(
+      key: AccesElevePage.carteKey,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ExcludeSemantics(
+            child: SizedBox.square(
+              key: AccesElevePage.medaillonKey,
+              dimension: AppTouchTarget.standard,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: palette.washAccent.background,
+                  shape: BoxShape.circle,
+                  border: Border.fromBorderSide(
+                    palette.contourCarte.asBorderSide(),
+                  ),
+                ),
+                child: IconTheme(
+                  data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                  child: Icon(AppIcons.verrou.repos),
+                ),
+              ),
+            ),
+          ),
+          Ecart.hLg,
+          Expanded(
+            child: Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              alignment: WrapAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      t.ficheEleve.acces.ligne(prenom: profil.prenom),
+                      style: palette.inkStrong.applyTo(
+                        textes.titleMedium ?? const TextStyle(),
+                      ),
+                    ),
+                    Ecart.vXs,
+                    Text(
+                      legende,
+                      style: palette.inkMuted.applyTo(
+                        textes.bodyMedium ?? const TextStyle(),
+                      ),
+                    ),
+                  ],
+                ),
+                StatusPill(libelle: pastille, ton: ton),
+              ],
+            ),
           ),
         ],
       ),
+    );
+
+    return ColonnesFiche(
+      principal: carte,
       annexe: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

@@ -83,6 +83,31 @@ class _AppairagePilote extends FauxServiceAppairage {
 _AppairagePilote _foyerA() =>
     _AppairagePilote()..elevesRendus = FoyersFictifs.foyerA;
 
+/// Un selecteur de photos qui leve (permission refusee, fichier illisible).
+class _SelecteurQuiLeve implements SelecteurPhoto {
+  @override
+  Future<PhotoEnfant?> choisirPhoto() async =>
+      throw Exception('permission refusee');
+}
+
+/// Un port des classes dont la lecture echoue tant que [echoue] est vrai
+/// (service present : ce n'est pas `CapaciteIndisponible`).
+class _ClassesEnEchec extends FauxClassesFoyer {
+  _ClassesEnEchec({super.classes});
+
+  bool echoue = true;
+  int lectures = 0;
+
+  @override
+  Future<List<ClasseFoyer>> classesDe(String eleveId) async {
+    lectures++;
+    if (echoue) {
+      throw Exception('lecture des classes refusee');
+    }
+    return super.classesDe(eleveId);
+  }
+}
+
 Future<GoRouter> _monter(
   WidgetTester tester, {
   required ServiceAppairage appairage,
@@ -761,6 +786,140 @@ void main() {
       await monterAcces(tester, null);
       expect(pastille(tester), t.ficheEleve.acces.pastilleSansEcheance);
       expect(find.text(t.ficheEleve.acces.sansEcheance), findsOneWidget);
+    });
+  });
+
+  group('Revue du lot B : etats honnetes des pages d ecriture', () {
+    List<Override> horsLigne() => <Override>[
+      horsLigneProvider.overrideWith((Ref ref) => Stream<bool>.value(true)),
+    ];
+
+    testWidgets('camera hors ligne : interrupteur inactif, phrase hors '
+        'ligne, aucune ecriture', (WidgetTester tester) async {
+      final _AppairagePilote appairage = _foyerA();
+      await _monter(
+        tester,
+        appairage: appairage,
+        depart: Routes.ficheEleveSousPage(a1, 'camera'),
+        autres: horsLigne(),
+      );
+      expect(find.byKey(CameraElevePage.horsLigneKey), findsOneWidget);
+      expect(find.text(t.ficheEleve.camera.horsLigne), findsOneWidget);
+      expect(
+        tester
+            .widget<Switch>(find.byKey(CameraElevePage.interrupteurKey))
+            .onChanged,
+        isNull,
+      );
+      await tester.tap(find.byKey(CameraElevePage.interrupteurKey));
+      await stabiliser(tester);
+      expect(appairage.reglagesEcrits, isEmpty);
+      expect(find.text(t.ficheEleve.camera.echec), findsNothing);
+    });
+
+    testWidgets('interface hors ligne : cartes inactives, phrase hors '
+        'ligne, aucune ecriture', (WidgetTester tester) async {
+      final _AppairagePilote appairage = _foyerA();
+      await _monter(
+        tester,
+        appairage: appairage,
+        depart: Routes.ficheEleveSousPage(a1, 'interface'),
+        autres: horsLigne(),
+      );
+      expect(find.byKey(InterfaceElevePage.horsLigneKey), findsOneWidget);
+      await tester.tap(find.byKey(InterfaceElevePage.standardKey));
+      await stabiliser(tester);
+      expect(appairage.reglagesEcrits, isEmpty);
+      expect(find.text(t.ficheEleve.interface.echec), findsNothing);
+    });
+
+    testWidgets('selecteur de photo qui leve : refus lisible, rien envoye', (
+      WidgetTester tester,
+    ) async {
+      final _AppairagePilote appairage = _foyerA();
+      await _monter(
+        tester,
+        appairage: appairage,
+        autres: <Override>[
+          selecteurPhotoProvider.overrideWithValue(_SelecteurQuiLeve()),
+        ],
+      );
+      final FauxServiceAvatar avatar =
+          _conteneur(tester).read(serviceAvatarProvider) as FauxServiceAvatar;
+      await _ouvrirFicheA1(tester);
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.informations);
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+
+      expect(
+        find.text(t.ficheEleve.informations.selectionEchec),
+        findsOneWidget,
+      );
+      expect(find.byKey(EditeurPhotoEleve.apercuKey), findsNothing);
+      expect(avatar.depots, isEmpty);
+      expect(appairage.reglagesEcrits, isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('classes en echec (service present) : « n a pas pu etre '
+        'lue », Relire la classe relit', (WidgetTester tester) async {
+      final _ClassesEnEchec classes = _ClassesEnEchec(
+        classes: <ClasseFoyer>[
+          ClasseFoyer(eleveId: a1, classe: classeFictive()),
+        ],
+      );
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[portClassesFoyerProvider.overrideWithValue(classes)],
+      );
+      await _ouvrirFicheA1(tester);
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.inscription);
+
+      expect(find.text(t.ficheEleve.inscription.classeEchec), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.inscription.classeIndisponible),
+        findsNothing,
+      );
+      // Le lien relit : une nouvelle lecture part a chaque geste.
+      final int avant = classes.lectures;
+      await _toucher(tester, find.byKey(InscriptionElevePage.relireClasseKey));
+      expect(classes.lectures, greaterThan(avant));
+      expect(find.byKey(InscriptionElevePage.relireClasseKey), findsOneWidget);
+
+      // Le service repond de nouveau : le geste suivant rend la classe.
+      classes.echoue = false;
+      await tester.tap(find.byKey(InscriptionElevePage.relireClasseKey));
+      await stabiliser(tester);
+      expect(find.text('Classe fictive A'), findsWidgets);
+      expect(find.byKey(InscriptionElevePage.relireClasseKey), findsNothing);
+    });
+
+    testWidgets('acces : medaillon, titre, echeance et pastille dans UN '
+        'rectangle', (WidgetTester tester) async {
+      await _monter(tester, appairage: _foyerA());
+      await _ouvrirFicheA1(tester);
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.acces);
+
+      final Finder carte = find.byKey(AccesElevePage.carteKey);
+      expect(carte, findsOneWidget);
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.byKey(AccesElevePage.medaillonKey),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: carte, matching: find.byType(StatusPill)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(t.ficheEleve.acces.ligne(prenom: 'Eleve A1')),
+        ),
+        findsOneWidget,
+      );
     });
   });
 

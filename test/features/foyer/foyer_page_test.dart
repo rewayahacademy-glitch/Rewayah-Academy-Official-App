@@ -16,10 +16,13 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -32,6 +35,7 @@ import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
+import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
 
@@ -132,6 +136,24 @@ List<String> _textesVisibles(WidgetTester tester) => <String>[
 
 _AppairagePilote _foyerA() =>
     _AppairagePilote()..elevesRendus = FoyersFictifs.foyerA;
+
+/// Un port des classes dont la lecture echoue tant que [echoue] est vrai
+/// (service present : ce n'est pas `CapaciteIndisponible`).
+class _ClassesEnEchec extends FauxClassesFoyer {
+  _ClassesEnEchec({super.classes});
+
+  bool echoue = true;
+  int lectures = 0;
+
+  @override
+  Future<List<ClasseFoyer>> classesDe(String eleveId) async {
+    lectures++;
+    if (echoue) {
+      throw Exception('lecture des classes refusee');
+    }
+    return super.classesDe(eleveId);
+  }
+}
 
 void main() {
   group('Foyer : atteint depuis la navigation', () {
@@ -365,6 +387,126 @@ void main() {
         expect(find.text(t.foyer.classesIndisponibles), findsNothing);
       },
     );
+
+    testWidgets('sans classe : l inscription en cours est dite a la place de '
+        '« Pas encore de classe »', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.tuteurFoyer,
+        autres: <Override>[
+          portClassesFoyerProvider.overrideWithValue(
+            FauxClassesFoyer(
+              classes: <ClasseFoyer>[
+                ClasseFoyer(
+                  eleveId: FoyersFictifs.a1.id,
+                  classe: classeFictive(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(MaterialApp)),
+      );
+      (conteneur.read(
+        serviceOffresProvider,
+      ) as FauxServiceOffres).parcoursRendu = <ParcoursApprenant>[
+        for (final EleveDuFoyer e in FoyersFictifs.foyerA)
+          ParcoursApprenant(
+            eleveId: e.id,
+            prenom: e.prenom,
+            diagnostic: StatutDiagnostic.nonRequis,
+          ),
+      ];
+      conteneur.invalidate(parcoursFoyerProvider);
+      await stabiliser(tester);
+
+      // La classe connue reste la classe ; les autres disent leur etape.
+      expect(
+        find.text('Classe fictive A · ${t.foyer.membre.accesSansEcheance}'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(t.ficheEleve.inscription.aRemplir),
+        findsWidgets,
+      );
+      expect(find.textContaining(t.foyer.membre.sansClasse), findsNothing);
+      expect(find.byKey(FoyerPage.inscriptionIllisibleKey), findsNothing);
+    });
+
+    testWidgets('inscription illisible (0043 absente) : une phrase, aucune '
+        'etape inventee', (WidgetTester tester) async {
+      await _monter(tester, appairage: _foyerA(), depart: Routes.tuteurFoyer);
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(MaterialApp)),
+      );
+      (conteneur.read(
+        serviceOffresProvider,
+      ) as FauxServiceOffres).erreurParcours = Exception(
+        '0043 absente',
+      );
+      conteneur.invalidate(parcoursFoyerProvider);
+      await stabiliser(tester);
+
+      expect(find.byKey(FoyerPage.inscriptionIllisibleKey), findsOneWidget);
+      expect(
+        find.textContaining(t.ficheEleve.inscription.aRemplir),
+        findsNothing,
+      );
+    });
+
+    testWidgets('classes en echec (service present) : « Classe non lue », '
+        '« Relire les classes » relit', (WidgetTester tester) async {
+      final _ClassesEnEchec classes = _ClassesEnEchec(
+        classes: <ClasseFoyer>[
+          ClasseFoyer(eleveId: FoyersFictifs.a1.id, classe: classeFictive()),
+        ],
+      );
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.tuteurFoyer,
+        autres: <Override>[portClassesFoyerProvider.overrideWithValue(classes)],
+      );
+
+      expect(
+        find.textContaining(t.foyer.membre.classeEchec),
+        findsNWidgets(FoyersFictifs.foyerA.length),
+      );
+      expect(find.text(t.foyer.classesEchec), findsOneWidget);
+      // Ce n'est pas une fonction absente.
+      expect(find.text(t.foyer.classesIndisponibles), findsNothing);
+
+      // Le lien relit : une nouvelle lecture part a chaque geste.
+      final int avant = classes.lectures;
+      await _toucher(tester, find.byKey(FoyerPage.relireClassesKey));
+      expect(classes.lectures, greaterThan(avant));
+      expect(find.byKey(FoyerPage.relireClassesKey), findsOneWidget);
+
+      // Le service repond de nouveau : le geste suivant rend la classe.
+      classes.echoue = false;
+      await tester.tap(find.byKey(FoyerPage.relireClassesKey));
+      await stabiliser(tester);
+      expect(
+        find.text('Classe fictive A · ${t.foyer.membre.accesSansEcheance}'),
+        findsOneWidget,
+      );
+      expect(find.byKey(FoyerPage.relireClassesKey), findsNothing);
+    });
+
+    testWidgets('« Ajouter un profil eleve » : CTA dominant libelle + fleche', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, appairage: _foyerA(), depart: Routes.tuteurFoyer);
+      expect(
+        tester
+            .widget<ActionPrincipale>(find.byKey(FoyerPage.ajouterKey))
+            .fleche,
+        isTrue,
+      );
+    });
 
     testWidgets('acces : echeance a venir et echeance passee, en texte', (
       WidgetTester tester,

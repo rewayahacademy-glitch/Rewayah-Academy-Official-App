@@ -9,6 +9,8 @@ import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/service_offres.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -67,6 +69,12 @@ class FoyerPage extends ConsumerWidget {
   /// Le lien « Creer mon profil eleve ».
   static const Key monProfilKey = Key('foyer.monProfil');
 
+  /// Le lien « Relire les classes » apres un echec de lecture.
+  static const Key relireClassesKey = Key('foyer.relireClasses');
+
+  /// La phrase qui dit que l'inscription en cours ne se lit pas.
+  static const Key inscriptionIllisibleKey = Key('foyer.inscriptionIllisible');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
@@ -107,10 +115,12 @@ class FoyerPage extends ConsumerWidget {
     // 1200, le titre, la bascule de theme, la cloche et le libelle complet
     // ne tiennent pas toujours sur une ligne (358 sur telephone) : elle passe
     // juste sous le titre, hors de la zone defilante, toujours visible. Une
-    // seule action, un seul endroit.
+    // seule action, un seul endroit. CTA dominant « libelle + fleche »
+    // (03, section 3 point 3).
     final Widget ajouter = ActionPrincipale(
       key: ajouterKey,
       libelle: t.foyer.ajouterProfil,
+      fleche: true,
       pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
       onPress: () => routeur.go(Routes.tuteurAjouterEnfant),
     );
@@ -199,32 +209,41 @@ class _ListeMembres extends ConsumerWidget {
     final AppPalette palette = AppPalette.of(context);
     final DateTime maintenant = ref.watch(horlogeFoyerProvider)();
     final GoRouter routeur = GoRouter.of(context);
+    // L'inscription en cours de chaque membre sans classe connue
+    // (`v_parcours_onboarding`, 0043). Non appliquee en production : la
+    // lecture echoue, et la page le dit une fois au lieu d'inventer une
+    // etape.
+    final AsyncValue<List<ParcoursApprenant>> parcours = ref.watch(
+      parcoursFoyerProvider,
+    );
 
     bool classesIndisponibles = false;
+    final List<String> classesEnEchec = <String>[];
     final List<LigneRubrique> lignes = <LigneRubrique>[];
     for (final ProfilEleveFoyer profil in profils) {
-      final AsyncValue<List<ClasseFoyer>> lecture = ref.watch(
-        classesMembreProvider(profil.eleveId),
+      final ClasseMembre classe = classeMembreLue(
+        ref.watch(classesMembreProvider(profil.eleveId)),
       );
-      final ClasseMembre classe;
-      if (lecture.hasValue && !lecture.hasError) {
-        classe = ClasseMembre.depuis(lecture.requireValue);
-      } else if (lecture.error is CapaciteIndisponible) {
-        classe = ClasseMembre.indisponible;
+      if (classeIndisponible(classe)) {
         classesIndisponibles = true;
-      } else {
-        classe = ClasseMembre.inconnue;
+      }
+      if (classeEnEchec(classe)) {
+        classesEnEchec.add(profil.eleveId);
       }
       lignes.add(
         ligneMembre(
           profil: profil,
           classe: classe,
           maintenant: maintenant,
+          inscription: etapeInscriptionLue(parcours, profil.eleveId),
           onPress: () => routeur.go(Routes.ficheElevePour(profil.eleveId)),
         ),
       );
     }
 
+    final TextStyle note = palette.inkMuted.applyTo(
+      Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -232,10 +251,29 @@ class _ListeMembres extends ConsumerWidget {
         GroupeReglages(titre: t.foyer.membres, lignes: lignes),
         if (classesIndisponibles) ...<Widget>[
           Ecart.vSm,
+          Text(t.foyer.classesIndisponibles, style: note),
+        ],
+        if (parcours.hasError) ...<Widget>[
+          Ecart.vSm,
           Text(
-            t.foyer.classesIndisponibles,
-            style: palette.inkMuted.applyTo(
-              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+            key: FoyerPage.inscriptionIllisibleKey,
+            t.foyer.inscriptionIllisible,
+            style: note,
+          ),
+        ],
+        if (classesEnEchec.isNotEmpty) ...<Widget>[
+          Ecart.vSm,
+          Text(t.foyer.classesEchec, style: note),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: FoyerPage.relireClassesKey,
+              libelle: t.foyer.relireClasses,
+              onPress: () {
+                for (final String id in classesEnEchec) {
+                  ref.invalidate(classesMembreProvider(id));
+                }
+              },
             ),
           ),
         ],

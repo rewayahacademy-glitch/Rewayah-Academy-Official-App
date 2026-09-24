@@ -249,6 +249,20 @@ void main() {
         );
       });
 
+      testWidgets('1440x900 @1, classes indisponibles (production), '
+          '${mode.name}', (WidgetTester tester) async {
+        fixerVueCapture(tester, const Size(1440, 900), 1);
+        await _monter(
+          tester,
+          Routes.tuteurFoyer,
+          mode: mode,
+          avecClasses: false,
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'foyer_classes_indisponibles_1440x900@1_${mode.name}')}',
+        );
+      });
+
       for (final (String nom, Size taille, double densite) format
           in <(String, Size, double)>[
             ('390x844@3', const Size(390, 844), 3),

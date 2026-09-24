@@ -6,6 +6,7 @@ import '../../../core/domain/enums.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/reseau/service_reseau.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/groupe_reglages.dart';
@@ -34,6 +35,9 @@ class CameraElevePage extends StatelessWidget {
 
   /// L'interrupteur.
   static const Key interrupteurKey = Key('ficheEleve.camera.interrupteur');
+
+  /// La phrase hors ligne.
+  static const Key horsLigneKey = Key('ficheEleve.camera.horsLigne');
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +94,9 @@ class _ReglageCameraState extends ConsumerState<_ReglageCamera> {
     final TextTheme textes = Theme.of(context).textTheme;
     final ProfilEleveFoyer profil = widget.profil;
     final bool autorisee = profil.camera == CameraPolicy.allowed;
+    // Hors ligne, l'ecriture ne peut pas aboutir : l'interrupteur ne se
+    // presse plus et une phrase dit pourquoi (comme l'editeur de photo).
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
     return ColonnesFiche(
       principal: Column(
@@ -107,12 +114,21 @@ class _ReglageCameraState extends ConsumerState<_ReglageCamera> {
                 controle: Switch.adaptive(
                   key: CameraElevePage.interrupteurKey,
                   value: autorisee,
-                  onChanged: _enCours ? null : _basculer,
+                  onChanged: _enCours || horsLigne ? null : _basculer,
                 ),
               ),
             ],
           ),
-          if (_echec) ...<Widget>[
+          if (horsLigne) ...<Widget>[
+            Ecart.vMd,
+            Text(
+              key: CameraElevePage.horsLigneKey,
+              t.ficheEleve.camera.horsLigne,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ] else if (_echec) ...<Widget>[
             Ecart.vMd,
             Semantics(
               liveRegion: true,

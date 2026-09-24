@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/foyer/selection_eleve.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
@@ -93,6 +94,49 @@ void main() {
           maintenant: maintenant,
         ),
         'Classe B, Classe C · ${t.foyer.membre.accesSansEcheance}',
+      );
+    });
+
+    test('lecture en echec : « Classe non lue », jamais « pas encore »', () {
+      expect(
+        legendeMembre(
+          profil: _profil(),
+          classe: ClasseMembre.echec,
+          maintenant: maintenant,
+        ),
+        '${t.foyer.membre.classeEchec} · ${t.foyer.membre.accesSansEcheance}',
+      );
+      expect(classeEnEchec(ClasseMembre.echec), isTrue);
+      expect(classeIndisponible(ClasseMembre.echec), isFalse);
+    });
+
+    test('sans classe, inscription connue : l etape de l inscription', () {
+      expect(
+        legendeMembre(
+          profil: _profil(),
+          classe: ClasseMembre.depuis(const <ClasseFoyer>[]),
+          maintenant: maintenant,
+          inscription: EtapeParcours.groupeEnFormation,
+        ),
+        '${t.ficheEleve.inscription.classeEnConstitution} · '
+        '${t.foyer.membre.accesSansEcheance}',
+      );
+    });
+
+    test('classe connue : la classe prime sur l inscription', () {
+      expect(
+        legendeMembre(
+          profil: _profil(),
+          classe: ClasseMembre.depuis(<ClasseFoyer>[
+            ClasseFoyer(
+              eleveId: 'foyer-a-eleve-1',
+              classe: classeFictive(libelle: 'Classe B'),
+            ),
+          ]),
+          maintenant: maintenant,
+          inscription: EtapeParcours.groupeConfirme,
+        ),
+        'Classe B · ${t.foyer.membre.accesSansEcheance}',
       );
     });
   });
