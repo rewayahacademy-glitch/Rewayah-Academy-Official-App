@@ -88,14 +88,16 @@ class Seance {
   });
 
   /// Lit une ligne de la vue.
+  ///
+  /// **Parsing strict des bornes** : un `started_at` ou un `ended_at` absent ou
+  /// illisible leve une `FormatException`, il ne devient jamais
+  /// `DateTime.now()`. L'ancien repli fabriquait une seance « en cours » a
+  /// l'instant de la lecture. Pour ecarter une ligne illisible d'une liste
+  /// plutot que de faire echouer toute la lecture, voir [Seance.lire].
   factory Seance.depuisJson(Map<String, dynamic> json) => Seance(
     id: json['session_id'] as String,
-    debut:
-        DateTime.tryParse(json['started_at'] as String? ?? '')?.toLocal() ??
-        DateTime.now(),
-    fin:
-        DateTime.tryParse(json['ended_at'] as String? ?? '')?.toLocal() ??
-        DateTime.now(),
+    debut: _instant(json, 'started_at'),
+    fin: _instant(json, 'ended_at'),
     statut: StatutSeance.depuisSql(json['status'] as String?),
     eleveId: json['student_id'] as String? ?? '',
     elevePrenom: json['student_first_name'] as String? ?? '',
@@ -105,6 +107,31 @@ class Seance {
     enseignantIdentifiant: json['teacher_immutable_id'] as String? ?? '',
     minutesInterruption: (json['prayer_pause_minutes'] as num?)?.toInt() ?? 0,
   );
+
+  /// Lit une ligne de la vue, ou rend `null` si elle est illisible.
+  ///
+  /// Une ligne sans identifiant ou sans bornes lisibles est **ecartee**, jamais
+  /// completee : une seance dont on ne sait pas quand elle a lieu ne peut ni
+  /// s'afficher, ni decider d'un etat.
+  static Seance? lire(Map<String, dynamic> json) {
+    if (json['session_id'] is! String) {
+      return null;
+    }
+    try {
+      return Seance.depuisJson(json);
+    } on FormatException {
+      return null;
+    }
+  }
+
+  static DateTime _instant(Map<String, dynamic> json, String cle) {
+    final Object? valeur = json[cle];
+    final DateTime? lu = valeur is String ? DateTime.tryParse(valeur) : null;
+    if (lu == null) {
+      throw FormatException('borne de seance illisible : $cle');
+    }
+    return lu.toLocal();
+  }
 
   /// Identifiant de la seance.
   final String id;
@@ -302,7 +329,7 @@ class ServicePlanningSupabase implements ServicePlanning {
         .from('mes_seances_v')
         .select()
         .order('started_at');
-    return lignes.map(Seance.depuisJson).toList();
+    return lignes.map(Seance.lire).nonNulls.toList();
   }
 
   @override
