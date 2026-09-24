@@ -21,3 +21,9 @@
 - **Constat 2** : `ChoiceCardGroup` n'a ni description sous le libelle, ni option desactivee expliquee, ni radio (V5 §6 « style liste avec description », V6 §6 E1) ; K3 exige des choix visibles mais indisponibles.
 - **Signature voulue** : `OptionChoix({..., String? description, bool disponible = true, String? raisonIndisponible})` et un radio dessine (anneau >= 3:1).
 - **Contournement en place** (LB-2, `ui/tuteur-v1-b` @ 2ccb990) : rangee d'etape et carte de choix locales et privees dans `lib/features/foyer/formulaire_profil_eleve.dart` (`_RangeeEtape`, `_CarteChoix`, `_Radio`) ; a remplacer par le composant partage des qu'il existe.
+
+## B-4 (24/09, LB-3) : rediriger `/tuteur/reglages` vers le Foyer (C6)
+
+- **Fichier** : `lib/core/router/app_router.dart` (COORD), route `Routes.tuteurReglages` qui rend encore `ReglagesEnfantPage`.
+- **Constat** : depuis LB-3 (`ui/tuteur-v1-b` @ d7b006f), la fiche eleve porte la photo (`.../informations`), la camera (`.../camera`) et l'interface (`.../interface`). `/tuteur/reglages` offre les memes reglages ailleurs : une fonction a deux endroits (`03` §1 ter-1), et libelles « Grand affichage / Affichage courant » non conformes.
+- **Besoin** : redirection `/tuteur/reglages` -> `/tuteur/foyer` (mapping C6), comme deja fait pour `/compte/profils/:id` -> fiche. Le lot B n'importe ni ne modifie `reglages_enfant_page.dart` d'ici la.
