@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/theme/app_typography.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
@@ -406,6 +407,17 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.enseignant.journee.lancer), findsOneWidget);
+
+      // L'heure se lit en chiffres tabulaires : DM Sans n'a pas de `tnum`,
+      // le style bascule sur Plus Jakarta Sans (revue phase 0, jetons D4).
+      final Text heure = tester.widget<Text>(
+        find.text(t.enseignant.journee.jusqua(heure: _hhmm(seance.fin))),
+      );
+      expect(
+        heure.style!.fontFeatures,
+        contains(const FontFeature.tabularFigures()),
+      );
+      expect(heure.style!.fontFamily, AppFontFamily.corps);
     });
 
     testWidgets('une seance sans groupe ne promet aucun nom', (

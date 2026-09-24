@@ -7,6 +7,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
@@ -192,7 +193,10 @@ class _LigneValeur extends StatelessWidget {
             child: Text(
               valeur,
               textAlign: TextAlign.end,
-              style: textes.titleSmall ?? const TextStyle(),
+              // Une heure : chiffres tabulaires (revue phase 0, jetons D4).
+              style: AppTypography.tabulaire(
+                textes.titleSmall ?? const TextStyle(),
+              ),
             ),
           ),
         ],
@@ -219,7 +223,11 @@ class _EtatDuTemps extends StatelessWidget {
         children: <Widget>[
           Text(
             LibellesGroupe.ligneEtat(horloge),
-            style: textes.titleMedium ?? const TextStyle(),
+            // « Dans 12 min » : un compte a rebours, en chiffres tabulaires
+            // (revue phase 0, jetons D4).
+            style: AppTypography.tabulaire(
+              textes.titleMedium ?? const TextStyle(),
+            ),
           ),
           // Entrer vingt minutes en avance prouve qu'on etait pret ; cela ne
           // credite aucune minute de presence academique. On le dit a la
