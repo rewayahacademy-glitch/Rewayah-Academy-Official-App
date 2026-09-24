@@ -242,7 +242,17 @@
     "toutEstDepose": "Tout est déposé.",
     "corriger": "Reprendre mon dossier",
     "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
-    "seDeconnecter": "Se déconnecter"
+    "seDeconnecter": "Se déconnecter",
+    "titreDossier": "Votre dossier",
+    "reste": {
+      "one": "Il reste un élément à fournir.",
+      "other": "Il reste {n} éléments à fournir."
+    },
+    "etatAFournir": "À fournir",
+    "prochaineEtape": "Prochaine étape : {etape}",
+    "refuseDetail": "Déposez une nouvelle pièce pour relancer la vérification.",
+    "illisible": "L'état de votre dossier ne s'affiche pas pour le moment.",
+    "horsLigne": "Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau."
   },
   "connexion": {
     "titre": "Se connecter",
@@ -323,14 +333,59 @@
     "lireTexte": "Lire le texte complet",
     "accepter": "J'ai lu et j'accepte",
     "accepteLe": "Accepté le {date}",
-    "erreur": "La signature n'a pas abouti. Réessayez dans un instant."
+    "erreur": "La signature n'a pas abouti. Réessayez dans un instant.",
+    "horsLigne": "Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
+    "caseRequise": "Cochez la case pour continuer."
   },
   "accuse": {
     "titre": "À savoir avant de commencer",
     "compris": "J'ai compris"
   },
   "consentement": {
-    "titre": "Consentements"
+    "titre": "Consentements",
+    "texte": {
+      "titre": "Les visites des parents",
+      "quiResponsable": "Les parents des élèves présents peuvent observer brièvement la séance.",
+      "quiResponsableDetail": "Ils entendent l'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.",
+      "quiAdulte": "Les parents des autres élèves présents peuvent observer brièvement la séance.",
+      "quiAdulteDetail": "Ils entendent l'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.",
+      "pourquoi": "Pour suivre l'apprentissage sans interrompre la classe.",
+      "pourquoiDetail": "Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu'une visite est possible.",
+      "limites": "Des visites courtes, en nombre limité.",
+      "limitesDetail": "Chaque parent a un petit nombre de visites par séance, fixé par l'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.",
+      "caseResponsable": "J'accepte ces modalités pour mon enfant",
+      "caseAdulte": "J'accepte ces modalités",
+      "continuer": "Continuer",
+      "retour": "Retour"
+    },
+    "comment": {
+      "titre": "Comment ça marche ?",
+      "visites": {
+        "one": "Une visite de {minutes} min par séance.",
+        "other": "{n} visites de {minutes} min par séance."
+      },
+      "visitesSansDuree": {
+        "one": "Une visite courte par séance.",
+        "other": "{n} visites courtes par séance."
+      },
+      "parParent": "Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.",
+      "ecourtee": "Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu'à la dernière.",
+      "ecouter": "Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.",
+      "sansMicro": "Votre micro et votre caméra restent désactivés pendant la visite.",
+      "valeursIndisponibles": "Le nombre de visites et leur durée s'affichent depuis la classe de votre enfant, selon les règles de sa classe.",
+      "fermee": "Les visites d'observation ne sont pas ouvertes pour cette classe."
+    },
+    "compte": {
+      "intro": "L'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n'est considéré comme accepté tant que vous ne l'avez pas fait.",
+      "accepteLe": "Vous avez accepté ces modalités le {date}.",
+      "merci": "Merci, votre accord est enregistré.",
+      "chargement": "Lecture de vos accords",
+      "erreur": "Vos accords ne s'affichent pas pour le moment.",
+      "horsLigne": "Vous êtes hors ligne. Vos accords s'afficheront dès le retour du réseau.",
+      "sansProfil": "Aucun compte connecté : reconnectez-vous pour lire vos accords.",
+      "invite": "Une nouvelle version à lire : les visites des parents",
+      "inviteAction": "Lire"
+    }
   },
   "kyc": {
     "titre": "Votre pièce d'identité",

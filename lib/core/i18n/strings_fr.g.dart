@@ -531,6 +531,30 @@ class Traductions$attente$fr {
 
 	/// fr: 'Se déconnecter'
 	String get seDeconnecter => 'Se déconnecter';
+
+	/// fr: 'Votre dossier'
+	String get titreDossier => 'Votre dossier';
+
+	/// fr: '(one) {Il reste un élément à fournir.} (other) {Il reste {n} éléments à fournir.}'
+	String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Il reste un élément à fournir.',
+		other: 'Il reste ${n} éléments à fournir.',
+	);
+
+	/// fr: 'À fournir'
+	String get etatAFournir => 'À fournir';
+
+	/// fr: 'Prochaine étape : {etape}'
+	String prochaineEtape({required Object etape}) => 'Prochaine étape : ${etape}';
+
+	/// fr: 'Déposez une nouvelle pièce pour relancer la vérification.'
+	String get refuseDetail => 'Déposez une nouvelle pièce pour relancer la vérification.';
+
+	/// fr: 'L'état de votre dossier ne s'affiche pas pour le moment.'
+	String get illisible => 'L\'état de votre dossier ne s\'affiche pas pour le moment.';
+
+	/// fr: 'Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau.'
+	String get horsLigne => 'Vous êtes hors ligne. L\'état de votre dossier s\'affichera dès le retour du réseau.';
 }
 
 // Path: connexion
@@ -711,6 +735,12 @@ class Traductions$contrat$fr {
 
 	/// fr: 'La signature n'a pas abouti. Réessayez dans un instant.'
 	String get erreur => 'La signature n\'a pas abouti. Réessayez dans un instant.';
+
+	/// fr: 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.'
+	String get horsLigne => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.';
+
+	/// fr: 'Cochez la case pour continuer.'
+	String get caseRequise => 'Cochez la case pour continuer.';
 }
 
 // Path: accuse
@@ -738,6 +768,10 @@ class Traductions$consentement$fr {
 
 	/// fr: 'Consentements'
 	String get titre => 'Consentements';
+
+	late final Traductions$consentement$texte$fr texte = Traductions$consentement$texte$fr.internal(_root);
+	late final Traductions$consentement$comment$fr comment = Traductions$consentement$comment$fr.internal(_root);
+	late final Traductions$consentement$compte$fr compte = Traductions$consentement$compte$fr.internal(_root);
 }
 
 // Path: kyc
@@ -2272,6 +2306,132 @@ class Traductions$connexion$feuilleAppareil$fr {
 
 	/// fr: 'Fermer'
 	String get fermer => 'Fermer';
+}
+
+// Path: consentement.texte
+class Traductions$consentement$texte$fr {
+	Traductions$consentement$texte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les visites des parents'
+	String get titre => 'Les visites des parents';
+
+	/// fr: 'Les parents des élèves présents peuvent observer brièvement la séance.'
+	String get quiResponsable => 'Les parents des élèves présents peuvent observer brièvement la séance.';
+
+	/// fr: 'Ils entendent l'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.'
+	String get quiResponsableDetail => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.';
+
+	/// fr: 'Les parents des autres élèves présents peuvent observer brièvement la séance.'
+	String get quiAdulte => 'Les parents des autres élèves présents peuvent observer brièvement la séance.';
+
+	/// fr: 'Ils entendent l'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.'
+	String get quiAdulteDetail => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.';
+
+	/// fr: 'Pour suivre l'apprentissage sans interrompre la classe.'
+	String get pourquoi => 'Pour suivre l\'apprentissage sans interrompre la classe.';
+
+	/// fr: 'Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu'une visite est possible.'
+	String get pourquoiDetail => 'Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu\'une visite est possible.';
+
+	/// fr: 'Des visites courtes, en nombre limité.'
+	String get limites => 'Des visites courtes, en nombre limité.';
+
+	/// fr: 'Chaque parent a un petit nombre de visites par séance, fixé par l'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.'
+	String get limitesDetail => 'Chaque parent a un petit nombre de visites par séance, fixé par l\'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.';
+
+	/// fr: 'J'accepte ces modalités pour mon enfant'
+	String get caseResponsable => 'J\'accepte ces modalités pour mon enfant';
+
+	/// fr: 'J'accepte ces modalités'
+	String get caseAdulte => 'J\'accepte ces modalités';
+
+	/// fr: 'Continuer'
+	String get continuer => 'Continuer';
+
+	/// fr: 'Retour'
+	String get retour => 'Retour';
+}
+
+// Path: consentement.comment
+class Traductions$consentement$comment$fr {
+	Traductions$consentement$comment$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment ça marche ?'
+	String get titre => 'Comment ça marche ?';
+
+	/// fr: '(one) {Une visite de {minutes} min par séance.} (other) {{n} visites de {minutes} min par séance.}'
+	String visites({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Une visite de ${minutes} min par séance.',
+		other: '${n} visites de ${minutes} min par séance.',
+	);
+
+	/// fr: '(one) {Une visite courte par séance.} (other) {{n} visites courtes par séance.}'
+	String visitesSansDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Une visite courte par séance.',
+		other: '${n} visites courtes par séance.',
+	);
+
+	/// fr: 'Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.'
+	String get parParent => 'Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.';
+
+	/// fr: 'Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu'à la dernière.'
+	String get ecourtee => 'Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu\'à la dernière.';
+
+	/// fr: 'Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.'
+	String get ecouter => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.';
+
+	/// fr: 'Votre micro et votre caméra restent désactivés pendant la visite.'
+	String get sansMicro => 'Votre micro et votre caméra restent désactivés pendant la visite.';
+
+	/// fr: 'Le nombre de visites et leur durée s'affichent depuis la classe de votre enfant, selon les règles de sa classe.'
+	String get valeursIndisponibles => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.';
+
+	/// fr: 'Les visites d'observation ne sont pas ouvertes pour cette classe.'
+	String get fermee => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.';
+}
+
+// Path: consentement.compte
+class Traductions$consentement$compte$fr {
+	Traductions$consentement$compte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n'est considéré comme accepté tant que vous ne l'avez pas fait.'
+	String get intro => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.';
+
+	/// fr: 'Vous avez accepté ces modalités le {date}.'
+	String accepteLe({required Object date}) => 'Vous avez accepté ces modalités le ${date}.';
+
+	/// fr: 'Merci, votre accord est enregistré.'
+	String get merci => 'Merci, votre accord est enregistré.';
+
+	/// fr: 'Lecture de vos accords'
+	String get chargement => 'Lecture de vos accords';
+
+	/// fr: 'Vos accords ne s'affichent pas pour le moment.'
+	String get erreur => 'Vos accords ne s\'affichent pas pour le moment.';
+
+	/// fr: 'Vous êtes hors ligne. Vos accords s'afficheront dès le retour du réseau.'
+	String get horsLigne => 'Vous êtes hors ligne. Vos accords s\'afficheront dès le retour du réseau.';
+
+	/// fr: 'Aucun compte connecté : reconnectez-vous pour lire vos accords.'
+	String get sansProfil => 'Aucun compte connecté : reconnectez-vous pour lire vos accords.';
+
+	/// fr: 'Une nouvelle version à lire : les visites des parents'
+	String get invite => 'Une nouvelle version à lire : les visites des parents';
+
+	/// fr: 'Lire'
+	String get inviteAction => 'Lire';
 }
 
 // Path: admin.tableau
@@ -8112,6 +8272,13 @@ extension on Traductions {
 			'attente.corriger' => 'Reprendre mon dossier',
 			'attente.suspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.seDeconnecter' => 'Se déconnecter',
+			'attente.titreDossier' => 'Votre dossier',
+			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
+			'attente.etatAFournir' => 'À fournir',
+			'attente.prochaineEtape' => ({required Object etape}) => 'Prochaine étape : ${etape}',
+			'attente.refuseDetail' => 'Déposez une nouvelle pièce pour relancer la vérification.',
+			'attente.illisible' => 'L\'état de votre dossier ne s\'affiche pas pour le moment.',
+			'attente.horsLigne' => 'Vous êtes hors ligne. L\'état de votre dossier s\'affichera dès le retour du réseau.',
 			'connexion.titre' => 'Se connecter',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
 			'connexion.courriel' => 'Votre adresse électronique',
@@ -8183,9 +8350,42 @@ extension on Traductions {
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
+			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
+			'contrat.caseRequise' => 'Cochez la case pour continuer.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
+			'consentement.texte.titre' => 'Les visites des parents',
+			'consentement.texte.quiResponsable' => 'Les parents des élèves présents peuvent observer brièvement la séance.',
+			'consentement.texte.quiResponsableDetail' => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.',
+			'consentement.texte.quiAdulte' => 'Les parents des autres élèves présents peuvent observer brièvement la séance.',
+			'consentement.texte.quiAdulteDetail' => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.',
+			'consentement.texte.pourquoi' => 'Pour suivre l\'apprentissage sans interrompre la classe.',
+			'consentement.texte.pourquoiDetail' => 'Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu\'une visite est possible.',
+			'consentement.texte.limites' => 'Des visites courtes, en nombre limité.',
+			'consentement.texte.limitesDetail' => 'Chaque parent a un petit nombre de visites par séance, fixé par l\'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.',
+			'consentement.texte.caseResponsable' => 'J\'accepte ces modalités pour mon enfant',
+			'consentement.texte.caseAdulte' => 'J\'accepte ces modalités',
+			'consentement.texte.continuer' => 'Continuer',
+			'consentement.texte.retour' => 'Retour',
+			'consentement.comment.titre' => 'Comment ça marche ?',
+			'consentement.comment.visites' => ({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une visite de ${minutes} min par séance.', other: '${n} visites de ${minutes} min par séance.', ), 
+			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une visite courte par séance.', other: '${n} visites courtes par séance.', ), 
+			'consentement.comment.parParent' => 'Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.',
+			'consentement.comment.ecourtee' => 'Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu\'à la dernière.',
+			'consentement.comment.ecouter' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
+			'consentement.comment.sansMicro' => 'Votre micro et votre caméra restent désactivés pendant la visite.',
+			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
+			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
+			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
+			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
+			'consentement.compte.merci' => 'Merci, votre accord est enregistré.',
+			'consentement.compte.chargement' => 'Lecture de vos accords',
+			'consentement.compte.erreur' => 'Vos accords ne s\'affichent pas pour le moment.',
+			'consentement.compte.horsLigne' => 'Vous êtes hors ligne. Vos accords s\'afficheront dès le retour du réseau.',
+			'consentement.compte.sansProfil' => 'Aucun compte connecté : reconnectez-vous pour lire vos accords.',
+			'consentement.compte.invite' => 'Une nouvelle version à lire : les visites des parents',
+			'consentement.compte.inviteAction' => 'Lire',
 			'kyc.titre' => 'Votre pièce d\'identité',
 			'kyc.intro' => 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.',
 			'kyc.typeQuestion' => 'Quelle pièce déposez-vous ?',
@@ -8397,6 +8597,8 @@ extension on Traductions {
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}',
 			'admin.demandes.sansSurcharge' => 'Cet élève suit la règle de la plateforme.',
 			'admin.demandes.changer' => 'Changer',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.clore' => 'Revenir à la règle de la plateforme',
 			'admin.demandes.historique' => 'Surcharges closes',
 			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '${valeur}, du ${debut} au ${fin}',
@@ -8437,8 +8639,6 @@ extension on Traductions {
 			'admin.attribution.motif' => 'Pourquoi passer outre ?',
 			'admin.attribution.motifRequis' => ({required Object prenom}) => '${prenom} n\'a pas posé cette heure. L\'attribuer quand même peut se justifier, et cela s\'inscrit au journal.',
 			'admin.attribution.attribuer' => ({required Object eleve, required Object enseignant}) => 'Attribuer ${eleve} à ${enseignant}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
@@ -8911,6 +9111,8 @@ extension on Traductions {
 			'choix.autre' => 'Autre',
 			'choix.autreInvite' => 'Précisez',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.titre' => ({required Object prenom}) => 'Le parcours de ${prenom}',
 			'parcours.intro' => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.',
 			'parcours.reprendre' => 'Reprendre',
@@ -8951,8 +9153,6 @@ extension on Traductions {
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.offreTraduite' => 'Affiché à votre heure locale',
 			'parcours.offreJours' => ({required Object jours}) => '${jours}',
 			'parcours.offreChoisir' => 'Choisir cet horaire',
@@ -9425,6 +9625,8 @@ extension on Traductions {
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
 			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.',
@@ -9465,8 +9667,6 @@ extension on Traductions {
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune famille ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',
