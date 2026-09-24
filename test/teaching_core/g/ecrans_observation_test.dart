@@ -328,7 +328,11 @@ void main() {
       await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
 
       expect(recue?.source, SourcePolitique.groupe);
-      expect(recue?.maxVisitsPerSession, 2);
+      // Ecrit RELATIVEMENT a ce dont le groupe herite, et non en dur : ce que
+      // ce cas mesure est « augmenter ajoute une visite a la valeur heritee ».
+      // Fige a 2, il redevenait faux le jour ou l'Academie est passee de 1 a 2
+      // visites (migration `0036`), sans rien mesurer de plus.
+      expect(recue?.maxVisitsPerSession, academie.maxVisitsPerSession + 1);
       expect(recue?.observationActivee, isTrue);
     });
 

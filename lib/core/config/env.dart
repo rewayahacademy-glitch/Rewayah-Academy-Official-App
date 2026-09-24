@@ -40,6 +40,37 @@ abstract final class Env {
     'AUTH_PAR_MOT_DE_PASSE',
   );
 
+  /// Active l'observation reelle par le tuteur (visite d'une seance en
+  /// direct, contrat K4).
+  ///
+  /// **Faux par defaut, et force a faux en production quoi qu'on passe** (point
+  /// P3 du chantier Tuteur V1) : l'observation ne s'ouvre pas sur une
+  /// protection locale tant que le serveur ne garantit ni la presence de
+  /// l'enfant, ni la fin de visite, ni l'emission du jeton video (dependances
+  /// DB-OBS-01, 02, 03, 05). Faux, le bloc Observation dit « pas encore
+  /// ouverte » ; le parcours complet se montre en simulation (tests,
+  /// Playground). Le forcage vit ici, dans le code, et non dans la seule
+  /// commande de deploiement : une compilation de production qui passerait
+  /// `OBSERVATION_TUTEUR_REELLE=true` n'ouvrirait rien.
+  static const bool observationTuteurReelle = bool.fromEnvironment(
+    'OBSERVATION_TUTEUR_REELLE',
+  );
+
+  /// L'interrupteur d'observation reelle effectivement applique.
+  ///
+  /// Toujours faux quand [environnement] vaut `production`, quelle que soit
+  /// la valeur compilee de [observationTuteurReelle].
+  static bool get observationTuteurReelleActive => observationTuteurReelleSelon(
+    demandee: observationTuteurReelle,
+    environnement: environnement,
+  );
+
+  /// La regle de forcage, pure pour etre verifiee sans compilation dediee.
+  static bool observationTuteurReelleSelon({
+    required bool demandee,
+    required String environnement,
+  }) => demandee && environnement != 'production';
+
   /// DSN Sentry du projet Flutter (onboarding etape F, critere 0.6).
   ///
   /// Vide par defaut, et c'est voulu : **sans DSN, la supervision ne demarre
