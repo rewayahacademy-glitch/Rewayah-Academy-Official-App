@@ -330,6 +330,19 @@ abstract final class AppIcons {
     IconData(0xe06c, fontFamily: _actif, matchTextDirection: true),
   );
 
+  /// Theme clair de la bascule soleil / lune de l'en-tete : Phosphor `sun`
+  /// (0xe472, releve dans `phosphor_flutter` 2.1.0 comme [flecheAction]).
+  static const AppIcon themeClair = AppIcon._(
+    IconData(0xe472, fontFamily: _repos),
+    IconData(0xe472, fontFamily: _actif),
+  );
+
+  /// Theme sombre de la meme bascule : Phosphor `moon` (0xe330).
+  static const AppIcon themeSombre = AppIcon._(
+    IconData(0xe330, fontFamily: _repos),
+    IconData(0xe330, fontFamily: _actif),
+  );
+
   /// Le chevron d'une ligne qui mene ailleurs : `SignalRow`, `ChildCard`,
   /// lignes de liste.
   ///

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/i18n/strings.g.dart';
+import 'core/preferences/preferences_locales.dart';
 import 'core/router/app_router.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
@@ -16,23 +17,26 @@ import 'core/widgets/bandeau_observation.dart';
 /// l'arborescence de navigation (ADR-009) : c'est pour cela que le mode est lu
 /// ici, une seule fois, et non dans chaque ecran.
 ///
-/// Le theme sombre (lot T3, Bible V2 section 7.3, ADR-019, ecart 23 de
-/// `decisions.md`) suit `ThemeMode.system` : l'application respecte le
-/// reglage clair/sombre du systeme d'exploitation. Aucune bascule manuelle
-/// n'existe encore dans un ecran du produit, faute d'entree au catalogue
-/// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md`) -- ce lot ferme le mecanisme du
-/// theme, pas une preference utilisateur dediee.
+/// Le theme clair/sombre suit **la preference Apparence** de l'appareil
+/// (`preferencesLocalesProvider`, Systeme par defaut) : la page Compte >
+/// Reglages > Apparence et la bascule soleil / lune de l'en-tete ecrivent la
+/// meme preference, et elle est lue ici, une seule fois pour toute
+/// l'application (decisions du coordinateur du 24/09/2026, section 3,
+/// point 5). Avant ce branchement, la page Reglages ecrivait une preference
+/// que rien ne lisait. Le choix est persiste sur l'appareil par
+/// [persistanceApparenceProvider].
 class RewayahApp extends ConsumerWidget {
   /// Cree la racine.
   ///
-  /// [themeMode] force le mode clair/sombre : le Playground developpement
-  /// s'en sert pour la preview, la valeur par defaut suit le systeme. [builder]
-  /// est le passe-vole du meme nom de `MaterialApp` : le Playground force par
-  /// la un gabarit d'apercu, la production n'en a aucun usage.
-  const RewayahApp({super.key, this.themeMode = ThemeMode.system, this.builder});
+  /// [themeMode] force le mode clair/sombre, au-dessus de la preference :
+  /// reserve au Playground et aux tests ; `null` (defaut) laisse la preference
+  /// decider. [builder] est le passe-vole du meme nom de `MaterialApp` : le
+  /// Playground force par la un gabarit d'apercu, la production n'en a aucun
+  /// usage.
+  const RewayahApp({super.key, this.themeMode, this.builder});
 
-  /// Mode clair/sombre de l'application.
-  final ThemeMode themeMode;
+  /// Mode clair/sombre force, ou `null` pour suivre la preference Apparence.
+  final ThemeMode? themeMode;
 
   /// Coupe le rendu sous la navigation, s'il y en a une.
   final Widget Function(BuildContext context, Widget? child)? builder;
@@ -41,13 +45,16 @@ class RewayahApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final GoRouter routeur = ref.watch(routeurProvider);
     final SessionState session = ref.watch(sessionProvider);
+    // Lecture du theme persiste au montage, ecriture a chaque changement.
+    ref.watch(persistanceApparenceProvider);
+    final ThemeMode mode = themeMode ?? ref.watch(modeThemeProvider);
 
     return MaterialApp.router(
       title: 'Rewayah Academy',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.pour(session.interfaceMode, Brightness.light),
       darkTheme: AppTheme.pour(session.interfaceMode, Brightness.dark),
-      themeMode: themeMode,
+      themeMode: mode,
       // Le bandeau d'observation coiffe TOUS les ecrans, et il est pose ici
       // plutot que dans `PageShell` pour deux raisons : il doit survivre aux
       // ecrans qui n'emploient pas la coquille (la salle est immersive), et il
