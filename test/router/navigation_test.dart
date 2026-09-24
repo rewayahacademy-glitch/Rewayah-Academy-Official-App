@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
@@ -322,6 +323,43 @@ void main() {
           reason: chemin,
         );
       }
+    });
+
+    testWidgets(
+      'les preferences, tache focalisee, sortent par le disque retour',
+      (WidgetTester tester) async {
+        // Revue phase 0 (routes D4) : la barre basse s'efface sur les
+        // preferences ; sans disque retour, la cloche etait la seule sortie.
+        final GoRouter routeur = await _monter(
+          tester,
+          Routes.tuteurComptePreferences,
+        );
+        expect(find.byKey(NavShell.barreBasseKey), findsNothing);
+        expect(find.byType(DisqueRetour), findsOneWidget);
+
+        await tester.tap(find.byType(DisqueRetour));
+        await _stabiliser(tester);
+        expect(_lieu(routeur), Routes.tuteurCompte);
+        expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets('la ligne des profils du Compte allume le Foyer', (
+      WidgetTester tester,
+    ) async {
+      // Revue phase 0 (routes D7) : un `push` de `/compte/profils` empilait
+      // le Foyer dans la branche Compte, Compte reste actif.
+      final GoRouter routeur = await _monter(tester, Routes.tuteurCompte);
+      final Finder ligne = find.text(t.compte.profils);
+      await tester.ensureVisible(ligne);
+      await _stabiliser(tester);
+      await tester.tap(ligne);
+      await _stabiliser(tester);
+
+      expect(_lieu(routeur), Routes.tuteurFoyer);
+      expect(find.byType(FoyerPage), findsOneWidget);
+      expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 1);
     });
 
     testWidgets('la cloche mene aux notifications ; bascule des la tablette', (
