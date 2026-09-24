@@ -1,217 +1,511 @@
+// Appareils du foyer et appareils d'un profil eleve (lot D, sous-paquet 3) :
+// contenu, tri explicite, vide, erreur, chargement, hors ligne, introuvable,
+// retrait confirme (reponse du service, echec, annulation, hors ligne),
+// aucune limite figee, retours, composition bureau.
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/features/appareils/appairage_page.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/appareils/appareils_eleve_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_page.dart';
+import 'package:rewayah_academy/features/appareils/liste_appareils_eleve.dart';
 
 import '../support/harnais.dart';
+import 'appareils/faux_appareils.dart';
 
-EleveDuFoyer _eleve({String id = 'e1', String prenom = 'Amina'}) =>
-    EleveDuFoyer(
-      id: id,
-      prenom: prenom,
-      identifiantImmuable: 'STUDENT-AD-000001',
-      mode: InterfaceMode.enfant,
-      camera: CameraPolicy.forbidden,
-    );
+class _Montage {
+  _Montage(this.routeur, this.service);
 
-AppareilAppaire _appareil({
-  String id = 'd1',
-  String profilId = 'e1',
-  DateTime? revoque,
-}) => AppareilAppaire(
-  id: id,
-  profilId: profilId,
-  prenom: 'Amina',
-  plateforme: 'android',
-  appaireA: DateTime(2026, 9, 1),
-  revoqueA: revoque,
-);
+  final GoRouter routeur;
+  final FauxAppairagePilote service;
 
-Future<FauxServiceAppairage> _monter(
-  WidgetTester tester,
-  FauxServiceAppairage service,
-) async {
-  await tester.pumpWidget(
-    hoteRoutant(
-      depart: Routes.tuteurFoyer,
-      routes: <RouteBase>[
-        GoRoute(
-          path: Routes.tuteurFoyer,
-          builder: (BuildContext _, GoRouterState _) => const AppareilsPage(),
-        ),
-        GoRoute(
-          path: '${Routes.tuteurAppairer}/:eleveId',
-          builder: (BuildContext _, GoRouterState etat) =>
-              AppairagePage(eleveId: etat.pathParameters['eleveId'] ?? ''),
-        ),
-      ],
-      surcharges: <Override>[
-        serviceAppairageProvider.overrideWithValue(service),
-      ],
-    ),
-  );
-  await tester.pumpAndSettle();
-  return service;
+  String get lieu => routeur.routerDelegate.currentConfiguration.uri.toString();
 }
 
+Future<_Montage> _monter(
+  WidgetTester tester, {
+  required FauxAppairagePilote service,
+  String depart = Routes.tuteurFoyerAppareils,
+  bool horsLigne = false,
+  Size taille = const Size(390, 844),
+}) async {
+  tester.view.physicalSize = taille;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final GoRouter routeur = GoRouter(
+    initialLocation: depart,
+    routes: <RouteBase>[
+      GoRoute(
+        path: Routes.tuteurFoyer,
+        builder: (BuildContext _, GoRouterState _) => const Text('FOYER'),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'ajouter',
+            builder: (BuildContext _, GoRouterState _) =>
+                const Text('AJOUTER UN PROFIL'),
+          ),
+          GoRoute(
+            path: 'appareils',
+            builder: (BuildContext _, GoRouterState _) => const AppareilsPage(),
+          ),
+          GoRoute(
+            path: 'appairer/:eleveId',
+            builder: (BuildContext _, GoRouterState etat) =>
+                Text('EMETTEUR ${etat.pathParameters['eleveId']}'),
+          ),
+          GoRoute(
+            path: ':eleveId',
+            builder: (BuildContext _, GoRouterState etat) =>
+                Text('FICHE ${etat.pathParameters['eleveId']}'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'appareils',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    AppareilsElevePage(
+                      eleveId: etat.pathParameters['eleveId'] ?? '',
+                    ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        serviceAppairageProvider.overrideWithValue(service),
+        serviceReseauProvider.overrideWithValue(
+          FauxServiceReseau(horsLigneRendu: horsLigne),
+        ),
+      ],
+      child: TranslationProvider(
+        child: MaterialApp.router(
+          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          routerConfig: routeur,
+        ),
+      ),
+    ),
+  );
+  await _stabiliser(tester);
+  return _Montage(routeur, service);
+}
+
+Future<void> _stabiliser(WidgetTester tester) async {
+  for (int i = 0; i < 6; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+Future<void> _taper(WidgetTester tester, Finder cible) async {
+  await tester.ensureVisible(cible);
+  await tester.pump();
+  await tester.tap(cible);
+  await _stabiliser(tester);
+}
+
+FauxAppairagePilote _foyer() => FauxAppairagePilote()
+  ..elevesRendus = <EleveDuFoyer>[
+    eleveDeTest(id: 'e2', prenom: 'Yusuf'),
+    eleveDeTest(),
+  ]
+  ..appareilsRendus = <AppareilAppaire>[
+    appareilDeTest(
+      id: 'd2',
+      plateforme: 'web',
+      appaireA: DateTime(2026, 9, 20, 9, 5),
+      derniereUtilisation: DateTime(2026, 9, 22, 14, 20),
+    ),
+    appareilDeTest(),
+    appareilDeTest(id: 'd3', plateforme: 'ios', revoqueA: DateTime(2026, 9, 3)),
+  ];
+
+String _page(String eleveId) => Routes.ficheEleveSousPage(eleveId, 'appareils');
+
 void main() {
-  group('Scenario 11 : a la limite, le bouton disparait au lieu d echouer', () {
-    testWidgets('un appareil sur deux : le bouton d ajout est la', (
+  group('Appareils du foyer', () {
+    testWidgets(
+      'contenu : UN groupe, profils par prenom, appareils actifs nommes',
+      (WidgetTester tester) async {
+        await _monter(tester, service: _foyer());
+
+        expect(find.text(t.appareils.foyer.titre), findsOneWidget);
+        expect(find.byType(GroupeReglages), findsOneWidget);
+        // Tri explicite par prenom : Amina avant Yusuf, quel que soit l ordre
+        // de la vue.
+        final double amina = tester.getTopLeft(find.text('Amina')).dy;
+        final double yusuf = tester.getTopLeft(find.text('Yusuf')).dy;
+        expect(amina, lessThan(yusuf));
+        // L appareil retire (d3) ne compte plus.
+        expect(
+          find.text(
+            t.appareils.foyer.plusieursAppareils(
+              nombre: 2,
+              noms:
+                  '${t.appareils.plateforme.android}, '
+                  '${t.appareils.plateforme.web}',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(t.appareils.foyer.aucunAppareil), findsOneWidget);
+        // Aucune limite figee, aucun compteur decoratif.
+        expect(find.textContaining('maximum'), findsNothing);
+        expect(find.textContaining('/2'), findsNothing);
+        expect(find.text(t.appareils.foyer.partageTitre), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'toucher un profil ouvre ses appareils ; le retour mene au Foyer',
+      (WidgetTester tester) async {
+        final _Montage m = await _monter(tester, service: _foyer());
+
+        await _taper(tester, find.text('Yusuf'));
+        expect(m.lieu, _page('e2'));
+        expect(find.byType(AppareilsElevePage), findsOneWidget);
+
+        await _taper(tester, find.byType(DisqueRetour));
+        expect(m.lieu, Routes.tuteurFoyerAppareils);
+        await _taper(tester, find.byType(DisqueRetour));
+        expect(m.lieu, Routes.tuteurFoyer);
+      },
+    );
+
+    testWidgets('vide : aucun profil, invitation au meme flux d ajout', (
+      WidgetTester tester,
+    ) async {
+      final _Montage m = await _monter(tester, service: FauxAppairagePilote());
+
+      expect(find.text(t.appareils.foyer.videTitre), findsOneWidget);
+      expect(find.byType(GroupeReglages), findsNothing);
+      await _taper(tester, find.text(t.appareils.foyer.videAction));
+      expect(m.lieu, Routes.tuteurAjouterEnfant);
+    });
+
+    testWidgets('chargement : un squelette, aucun contenu invente', (
+      WidgetTester tester,
+    ) async {
+      final FauxAppairagePilote service = _foyer()
+        ..attenteLecture = Completer<void>();
+      await _monter(tester, service: service);
+
+      expect(find.byType(Skeleton), findsWidgets);
+      expect(find.text('Amina'), findsNothing);
+      service.attenteLecture!.complete();
+      await _stabiliser(tester);
+      expect(find.text('Amina'), findsOneWidget);
+    });
+
+    testWidgets('erreur : Reessayer relit et affiche le contenu', (
+      WidgetTester tester,
+    ) async {
+      final FauxAppairagePilote service = _foyer()
+        ..erreurLecture = StateError('panne');
+      await _monter(tester, service: service);
+
+      expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+      service.erreurLecture = null;
+      await _taper(tester, find.text(t.commun.etats.actions.reessayer));
+      expect(find.text('Amina'), findsOneWidget);
+    });
+
+    testWidgets('hors ligne sans donnees : etat hors ligne', (
       WidgetTester tester,
     ) async {
       await _monter(
         tester,
-        FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_eleve()]
-          ..appareilsRendus = <AppareilAppaire>[_appareil()],
+        service: _foyer()..attenteLecture = Completer<void>(),
+        horsLigne: true,
       );
-
-      expect(find.text(t.appareils.ajouter), findsOneWidget);
-      expect(find.textContaining('Amina'), findsWidgets);
+      expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
     });
 
-    testWidgets('deux appareils sur deux : un message, et plus de bouton', (
+    testWidgets('bureau 1440 : le groupe a gauche, l explication a droite', (
       WidgetTester tester,
     ) async {
-      await _monter(
-        tester,
-        FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_eleve()]
-          ..appareilsRendus = <AppareilAppaire>[
-            _appareil(),
-            _appareil(id: 'd2'),
-          ],
+      await _monter(tester, service: _foyer(), taille: const Size(1440, 900));
+      final Offset groupe = tester.getTopLeft(find.byType(GroupeReglages));
+      final Offset partage = tester.getTopLeft(
+        find.text(t.appareils.foyer.partageTitre),
       );
-
-      expect(find.text(t.appareils.ajouter), findsNothing);
-      expect(
-        find.text(t.appareils.limiteAtteinte(prenom: 'Amina')),
-        findsOneWidget,
-        reason:
-            'La limite doit s expliquer. Un bouton qui echoue apres le geste '
-            'coute plus cher en confiance qu un bouton absent.',
-      );
-    });
-
-    testWidgets('un appareil revoque ne compte plus dans le plafond', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_eleve()]
-          ..appareilsRendus = <AppareilAppaire>[
-            _appareil(),
-            _appareil(id: 'd2', revoque: DateTime(2026, 9, 3)),
-          ],
-      );
-
-      expect(find.text(t.appareils.ajouter), findsOneWidget);
-    });
-
-    testWidgets('la regle des deux appareils est affichee en clair', (
-      WidgetTester tester,
-    ) async {
-      // ADR-010 : « deux appareils au maximum, un seul en seance a la fois ».
-      // Une regle que l utilisateur decouvre en la heurtant est une mauvaise
-      // surprise.
-      await _monter(
-        tester,
-        FauxServiceAppairage()..elevesRendus = <EleveDuFoyer>[_eleve()],
-      );
-      expect(find.text(t.appareils.regle), findsOneWidget);
-    });
-
-    testWidgets('sans enfant, l ecran invite a en ajouter un', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, FauxServiceAppairage());
-      expect(find.text(t.enfant.aucun), findsOneWidget);
-      expect(find.text(t.enfant.aucunDetail), findsOneWidget);
-    });
-
-    testWidgets('la revocation passe par le service, pas par l ecran', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAppairage service = await _monter(
-        tester,
-        FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_eleve()]
-          ..appareilsRendus = <AppareilAppaire>[_appareil()],
-      );
-
-      await tester.tap(find.text(t.appareils.revoquer));
-      await tester.pumpAndSettle();
-
-      expect(service.revocations, <String>['d1']);
+      expect(partage.dx, greaterThan(groupe.dx + 300));
+      expect(tester.takeException(), isNull);
     });
   });
 
-  group('L ecran d appairage', () {
-    testWidgets('le code est demande a l entree, et affiche avec son delai', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAppairage service = await _monter(
-        tester,
-        FauxServiceAppairage()
-          ..elevesRendus = <EleveDuFoyer>[_eleve()]
-          ..appareilsRendus = <AppareilAppaire>[],
-      );
+  group('Appareils d un profil eleve', () {
+    testWidgets(
+      'contenu : appareils actifs du plus ancien au plus recent, dates lisibles',
+      (WidgetTester tester) async {
+        await _monter(tester, service: _foyer(), depart: _page('e1'));
 
-      await tester.tap(find.text(t.appareils.ajouter));
-      await tester.pumpAndSettle();
-
-      expect(service.codesDemandes, <String>['e1']);
-      // Le code est espace pour etre lu a voix haute sans se tromper.
-      expect(find.text('A B 2 3 C D'), findsOneWidget);
-      expect(find.textContaining('Encore 9:'), findsOneWidget);
-    });
-
-    testWidgets('un code expire propose d en generer un autre', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAppairage service = FauxServiceAppairage()
-        ..elevesRendus = <EleveDuFoyer>[_eleve()]
-        ..code = CodeAppairage(
-          code: 'AB23CD',
-          expireA: DateTime.now().subtract(const Duration(seconds: 1)),
+        expect(
+          find.text(t.appareils.eleve.sousTitre(prenom: 'Amina')),
+          findsOneWidget,
         );
-      await _monter(tester, service);
+        expect(find.byKey(ListeAppareilsEleve.groupeKey), findsOneWidget);
+        // d1 (1er septembre) avant d2 (20 septembre), alors que la vue les
+        // rend dans l autre ordre : tri croissant explicite.
+        final double android = tester
+            .getTopLeft(find.text(t.appareils.plateforme.android))
+            .dy;
+        final double web = tester
+            .getTopLeft(find.text(t.appareils.plateforme.web))
+            .dy;
+        expect(android, lessThan(web));
+        // L appareil retire n est pas liste.
+        expect(find.text(t.appareils.plateforme.ios), findsNothing);
+        expect(
+          find.textContaining(
+            t.appareils.eleve.utiliseLe(date: '22 septembre 2026, 14:20'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining(t.appareils.eleve.jamaisUtilise),
+          findsOneWidget,
+        );
+        expect(find.text(t.appareils.revoquer), findsNWidgets(2));
+        expect(find.text(t.appareils.eleve.connecter), findsOneWidget);
+        expect(find.text(t.appareils.eleve.partageTitre), findsOneWidget);
+      },
+    );
 
-      await tester.tap(find.text(t.appareils.ajouter));
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.appareils.emetteur.expire.titre), findsOneWidget);
-      expect(find.text(t.appareils.regenerer), findsOneWidget);
+    test('tri croissant explicite, meme si la vue rend autre chose', () {
+      final List<AppareilAppaire> tries = appareilsActifsDe(
+        'e1',
+        <AppareilAppaire>[
+          appareilDeTest(id: 'c', appaireA: DateTime(2026, 9, 3)),
+          appareilDeTest(id: 'a', appaireA: DateTime(2026, 9, 1)),
+          appareilDeTest(id: 'b', appaireA: DateTime(2026, 9, 1)),
+          appareilDeTest(id: 'z', profilId: 'e2'),
+          appareilDeTest(id: 'r', revoqueA: DateTime(2026, 9, 2)),
+        ],
+      );
+      expect(tries.map((AppareilAppaire a) => a.id).toList(), <String>[
+        'a',
+        'b',
+        'c',
+      ]);
+      expect(
+        elevesParPrenom(<EleveDuFoyer>[
+          eleveDeTest(id: 'x', prenom: 'yusuf'),
+          eleveDeTest(id: 'y', prenom: 'Amina'),
+        ]).map((EleveDuFoyer e) => e.prenom).toList(),
+        <String>['Amina', 'yusuf'],
+      );
     });
 
-    testWidgets('un refus de plafond de la base se dit, sans texte brut', (
+    testWidgets(
+      'retrait : confirmation qui dit la limite, service appele, liste relue',
+      (WidgetTester tester) async {
+        final FauxAppairagePilote service = _foyer();
+        await _monter(tester, service: service, depart: _page('e1'));
+
+        await _taper(tester, find.byKey(ListeAppareilsEleve.retirerKey('d1')));
+        expect(find.text(t.appareils.retrait.question), findsOneWidget);
+        expect(
+          find.text(
+            t.appareils.retrait.consequence(
+              appareil: t.appareils.plateforme.android,
+              prenom: 'Amina',
+            ),
+          ),
+          findsOneWidget,
+          reason: 'DB-APP-03 : une connexion ouverte n est pas fermee',
+        );
+        expect(service.revocations, isEmpty, reason: 'rien avant le geste');
+
+        await _taper(tester, find.text(t.appareils.retrait.confirmer));
+        expect(service.revocations, <String>['d1']);
+        expect(find.text(t.appareils.retrait.reussi), findsOneWidget);
+        // La liste est relue : d1 n y est plus, d2 reste.
+        expect(find.text(t.appareils.plateforme.android), findsNothing);
+        expect(find.text(t.appareils.plateforme.web), findsOneWidget);
+      },
+    );
+
+    testWidgets('retrait annule : rien n est envoye', (
       WidgetTester tester,
     ) async {
-      // Le plafond est verifie EN BASE : deux ecrans ouverts en meme temps ne
-      // doivent pas pouvoir creer un troisieme appareil.
-      final FauxServiceAppairage service = FauxServiceAppairage()
-        ..elevesRendus = <EleveDuFoyer>[_eleve()]
-        ..erreurAJeter = StateError('plafond d appareils atteint');
-      await _monter(tester, service);
+      final FauxAppairagePilote service = _foyer();
+      await _monter(tester, service: service, depart: _page('e1'));
 
-      await tester.tap(find.text(t.appareils.ajouter));
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text(t.appareils.emetteur.erreur.plafondTitre),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.appareils.emetteur.erreur.plafondAction),
-        findsOneWidget,
-      );
+      await _taper(tester, find.byKey(ListeAppareilsEleve.retirerKey('d1')));
+      await _taper(tester, find.text(t.commun.annuler));
+      expect(service.revocations, isEmpty);
+      expect(find.text(t.appareils.plateforme.android), findsOneWidget);
     });
+
+    testWidgets(
+      'retrait en attente : bouton en cours, aucun second retrait ; puis echec dit',
+      (WidgetTester tester) async {
+        final FauxAppairagePilote service = _foyer()
+          ..attenteRetrait = Completer<void>()
+          ..erreurRetrait = StateError('refus');
+        await _monter(tester, service: service, depart: _page('e1'));
+
+        await _taper(tester, find.byKey(ListeAppareilsEleve.retirerKey('d1')));
+        await _taper(tester, find.text(t.appareils.retrait.confirmer));
+        // Le second bouton ne part pas pendant l attente.
+        await tester.tap(
+          find.byKey(ListeAppareilsEleve.retirerKey('d2')),
+          warnIfMissed: false,
+        );
+        await _stabiliser(tester);
+        expect(find.text(t.appareils.retrait.question), findsNothing);
+
+        service.attenteRetrait!.complete();
+        await _stabiliser(tester);
+        expect(find.text(t.appareils.retrait.echec), findsOneWidget);
+        expect(service.revocations, isEmpty);
+        expect(find.text(t.appareils.plateforme.android), findsOneWidget);
+      },
+    );
+
+    testWidgets('hors ligne : aucun bouton Retirer, la raison est dite', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        service: _foyer(),
+        depart: _page('e1'),
+        horsLigne: true,
+      );
+      expect(find.text(t.appareils.revoquer), findsNothing);
+      expect(find.text(t.appareils.eleve.horsLigne), findsOneWidget);
+      expect(find.text(t.appareils.plateforme.android), findsOneWidget);
+    });
+
+    testWidgets('vide : aucun appareil, une seule action : Connecter', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, service: _foyer(), depart: _page('e2'));
+      expect(find.text(t.appareils.eleve.videTitre), findsOneWidget);
+      expect(find.text(t.appareils.revoquer), findsNothing);
+      expect(find.text(t.appareils.eleve.connecter), findsOneWidget);
+    });
+
+    testWidgets(
+      'aucune limite codee : avec trois appareils, Connecter reste propose',
+      (WidgetTester tester) async {
+        final FauxAppairagePilote service = _foyer()
+          ..appareilsRendus = <AppareilAppaire>[
+            appareilDeTest(),
+            appareilDeTest(id: 'd4', appaireA: DateTime(2026, 9, 2)),
+            appareilDeTest(id: 'd5', appaireA: DateTime(2026, 9, 3)),
+          ];
+        await _monter(tester, service: service, depart: _page('e1'));
+        expect(find.text(t.appareils.revoquer), findsNWidgets(3));
+        expect(find.text(t.appareils.eleve.connecter), findsOneWidget);
+      },
+    );
+
+    testWidgets('introuvable : profil hors du foyer, retour aux appareils', (
+      WidgetTester tester,
+    ) async {
+      final _Montage m = await _monter(
+        tester,
+        service: _foyer(),
+        depart: _page('inconnu'),
+      );
+      expect(find.text(t.appareils.eleve.introuvableTitre), findsOneWidget);
+      expect(find.text(t.appareils.eleve.connecter), findsNothing);
+      await _taper(tester, find.text(t.appareils.eleve.introuvableAction));
+      expect(m.lieu, Routes.tuteurFoyerAppareils);
+    });
+
+    testWidgets('chargement puis erreur puis Reessayer', (
+      WidgetTester tester,
+    ) async {
+      final FauxAppairagePilote service = _foyer()
+        ..attenteLecture = Completer<void>();
+      await _monter(tester, service: service, depart: _page('e1'));
+      expect(find.byType(Skeleton), findsWidgets);
+
+      service
+        ..erreurLecture = StateError('panne')
+        ..attenteLecture!.complete();
+      await _stabiliser(tester);
+      expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+
+      service
+        ..erreurLecture = null
+        ..attenteLecture = null;
+      await _taper(tester, find.text(t.commun.etats.actions.reessayer));
+      expect(find.text(t.appareils.plateforme.android), findsOneWidget);
+    });
+
+    testWidgets('Connecter un appareil ouvre l emetteur avec son retour', (
+      WidgetTester tester,
+    ) async {
+      final _Montage m = await _monter(
+        tester,
+        service: _foyer(),
+        depart: _page('e1'),
+      );
+      await _taper(tester, find.byKey(AppareilsElevePage.connecterKey));
+      expect(find.text('EMETTEUR e1'), findsOneWidget);
+      final Uri uri = Uri.parse(m.lieu);
+      expect(uri.path, Routes.appairerPour('e1'));
+      expect(uri.queryParameters['retour'], _page('e1'));
+    });
+
+    testWidgets(
+      'retour : vers le chemin demande, sinon les appareils du foyer',
+      (WidgetTester tester) async {
+        final _Montage m = await _monter(
+          tester,
+          service: _foyer(),
+          depart: '${_page('e1')}?retour=${Routes.ficheElevePour('e1')}',
+        );
+        await _taper(tester, find.byType(DisqueRetour));
+        expect(m.lieu, Routes.ficheElevePour('e1'));
+        expect(find.text('FICHE e1'), findsOneWidget);
+
+        m.routeur.go('${_page('e1')}?retour=https://exemple.test');
+        await _stabiliser(tester);
+        await _taper(tester, find.byType(DisqueRetour));
+        expect(m.lieu, Routes.tuteurFoyerAppareils);
+      },
+    );
+
+    testWidgets(
+      'bureau 1440 : liste et action a gauche, explications a droite',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          service: _foyer(),
+          depart: _page('e1'),
+          taille: const Size(1440, 900),
+        );
+        final Offset liste = tester.getTopLeft(
+          find.byKey(ListeAppareilsEleve.groupeKey),
+        );
+        final Offset explication = tester.getTopLeft(
+          find.text(t.appareils.eleve.partageTitre),
+        );
+        final Offset action = tester.getTopLeft(
+          find.byKey(AppareilsElevePage.connecterKey),
+        );
+        expect(explication.dx, greaterThan(liste.dx + 300));
+        expect(action.dx, closeTo(liste.dx, 1));
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 }

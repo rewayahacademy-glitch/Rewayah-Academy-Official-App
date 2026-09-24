@@ -547,7 +547,10 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
           titre: t.appareils.emetteur.erreur.plafondTitre,
           phrase: t.appareils.emetteur.erreur.plafondPhrase,
           libelleAction: t.appareils.emetteur.erreur.plafondAction,
-          onAction: () => GoRouter.of(context).go(Routes.tuteurFoyerAppareils),
+          // Le retrait vit sur la page des appareils de cet eleve (LD-3).
+          onAction: () =>
+              GoRouter.of(context)
+                  .go(Routes.ficheEleveSousPage(widget.eleveId, 'appareils')),
         );
       case MotifErreurEmetteur.horsFoyer:
         return _Resultat(

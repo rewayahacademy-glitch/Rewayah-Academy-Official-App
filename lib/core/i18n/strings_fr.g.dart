@@ -747,15 +747,10 @@ class Traductions$appareils$fr {
 	/// fr: 'Appareils'
 	String get titre => 'Appareils';
 
-	/// fr: 'Deux appareils au maximum par enfant, un seul en cours à la fois.'
-	String get regle => 'Deux appareils au maximum par enfant, un seul en cours à la fois.';
-
-	/// fr: 'Ajouter un appareil'
-	String get ajouter => 'Ajouter un appareil';
-
-	/// fr: 'Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.'
-	String limiteAtteinte({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.';
-
+	late final Traductions$appareils$foyer$fr foyer = Traductions$appareils$foyer$fr.internal(_root);
+	late final Traductions$appareils$eleve$fr eleve = Traductions$appareils$eleve$fr.internal(_root);
+	late final Traductions$appareils$plateforme$fr plateforme = Traductions$appareils$plateforme$fr.internal(_root);
+	late final Traductions$appareils$retrait$fr retrait = Traductions$appareils$retrait$fr.internal(_root);
 	late final Traductions$appareils$emetteur$fr emetteur = Traductions$appareils$emetteur$fr.internal(_root);
 
 	/// fr: 'Générer un nouveau code'
@@ -764,14 +759,8 @@ class Traductions$appareils$fr {
 	/// fr: 'Retirer'
 	String get revoquer => 'Retirer';
 
-	/// fr: 'Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.'
-	String get revoquerConfirmation => 'Retirer cet appareil ? L\'enfant devra le réappairer pour s\'en resservir.';
-
-	/// fr: 'Utilisé {quand}'
-	String derniereUtilisation({required Object quand}) => 'Utilisé ${quand}';
-
-	/// fr: 'Jamais utilisé'
-	String get jamaisUtilise => 'Jamais utilisé';
+	/// fr: 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code.'
+	String get revoquerConfirmation => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.';
 
 	/// fr: 'L'opération n'a pas abouti. Réessayez dans un instant.'
 	String get erreur => 'L\'opération n\'a pas abouti. Réessayez dans un instant.';
@@ -1068,24 +1057,11 @@ class Traductions$eleveConnexion$fr {
 	/// fr: 'Scanner le carré'
 	String get scanner => 'Scanner le carré';
 
-	/// fr: 'Ce code est trop vieux. Demande-en un nouveau.'
-	String get codeExpire => 'Ce code est trop vieux. Demande-en un nouveau.';
-
 	/// fr: 'Qui es-tu ?'
 	String get choisirProfil => 'Qui es-tu ?';
 
-	/// fr: 'Choisis ton code secret'
-	String get nouveauCode => 'Choisis ton code secret';
-
-	/// fr: 'Entre-le encore une fois'
-	String get nouveauCodeConfirmer => 'Entre-le encore une fois';
-
-	/// fr: 'Les deux codes ne sont pas les mêmes'
-	String get codeDifferent => 'Les deux codes ne sont pas les mêmes';
-
-	/// fr: 'Code enregistré'
-	String get codeEnregistre => 'Code enregistré';
-
+	late final Traductions$eleveConnexion$profils$fr profils = Traductions$eleveConnexion$profils$fr.internal(_root);
+	late final Traductions$eleveConnexion$pin$fr pin = Traductions$eleveConnexion$pin$fr.internal(_root);
 	late final Traductions$eleveConnexion$saisie$fr saisie = Traductions$eleveConnexion$saisie$fr.internal(_root);
 	late final Traductions$eleveConnexion$lecteur$fr lecteur = Traductions$eleveConnexion$lecteur$fr.internal(_root);
 	late final Traductions$eleveConnexion$refus$fr refus = Traductions$eleveConnexion$refus$fr.internal(_root);
@@ -2143,11 +2119,11 @@ class Traductions$connexion$feuilleAppareil$fr {
 	/// fr: 'Où trouver le code'
 	String get etapesTitre => 'Où trouver le code';
 
-	/// fr: 'Sur votre propre appareil, ouvrez Foyer et appareils.'
-	String get etape1 => 'Sur votre propre appareil, ouvrez Foyer et appareils.';
+	/// fr: 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.'
+	String get etape1 => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.';
 
-	/// fr: 'Ouvrez le profil de l'élève, puis Ajouter un appareil.'
-	String get etape2 => 'Ouvrez le profil de l\'élève, puis Ajouter un appareil.';
+	/// fr: 'Touchez le profil de l'élève, puis Connecter un appareil.'
+	String get etape2 => 'Touchez le profil de l\'élève, puis Connecter un appareil.';
 
 	/// fr: 'Un QR code et un code de six caractères s'affichent, avec leur heure de fin.'
 	String get etape3 => 'Un QR code et un code de six caractères s\'affichent, avec leur heure de fin.';
@@ -2155,14 +2131,170 @@ class Traductions$connexion$feuilleAppareil$fr {
 	/// fr: 'Sur l'appareil de l'élève, scannez le QR code ou saisissez le code.'
 	String get etape4 => 'Sur l\'appareil de l\'élève, scannez le QR code ou saisissez le code.';
 
-	/// fr: 'Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer et appareils.'
-	String get plafond => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer et appareils.';
+	/// fr: 'Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.'
+	String get plafond => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.';
 
 	/// fr: 'Saisir le code'
 	String get saisir => 'Saisir le code';
 
 	/// fr: 'Fermer'
 	String get fermer => 'Fermer';
+}
+
+// Path: appareils.foyer
+class Traductions$appareils$foyer$fr {
+	Traductions$appareils$foyer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Appareils du foyer'
+	String get titre => 'Appareils du foyer';
+
+	/// fr: 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.'
+	String get phrase => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.';
+
+	/// fr: 'Profils élèves'
+	String get groupeProfils => 'Profils élèves';
+
+	/// fr: 'Aucun appareil connecté'
+	String get aucunAppareil => 'Aucun appareil connecté';
+
+	/// fr: '1 appareil connecté : {nom}'
+	String unAppareil({required Object nom}) => '1 appareil connecté : ${nom}';
+
+	/// fr: '{nombre} appareils connectés : {noms}'
+	String plusieursAppareils({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}';
+
+	/// fr: 'Appareil partagé'
+	String get partageTitre => 'Appareil partagé';
+
+	/// fr: 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.'
+	String get partage => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.';
+
+	/// fr: 'Aucun profil élève'
+	String get videTitre => 'Aucun profil élève';
+
+	/// fr: 'Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.'
+	String get vide => 'Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.';
+
+	/// fr: 'Ajouter un profil élève'
+	String get videAction => 'Ajouter un profil élève';
+}
+
+// Path: appareils.eleve
+class Traductions$appareils$eleve$fr {
+	Traductions$appareils$eleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Gérez les appareils autorisés pour {prenom}.'
+	String sousTitre({required Object prenom}) => 'Gérez les appareils autorisés pour ${prenom}.';
+
+	/// fr: 'Appareils connectés'
+	String get groupe => 'Appareils connectés';
+
+	/// fr: 'Connecter un appareil'
+	String get connecter => 'Connecter un appareil';
+
+	/// fr: 'Aucun appareil connecté'
+	String get videTitre => 'Aucun appareil connecté';
+
+	/// fr: 'Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.'
+	String vide({required Object prenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur de ${prenom} avec le code affiché par le bouton ci-dessous.';
+
+	/// fr: 'Profil élève introuvable'
+	String get introuvableTitre => 'Profil élève introuvable';
+
+	/// fr: 'Ce profil élève n'est pas rattaché à votre foyer.'
+	String get introuvable => 'Ce profil élève n\'est pas rattaché à votre foyer.';
+
+	/// fr: 'Voir les appareils du foyer'
+	String get introuvableAction => 'Voir les appareils du foyer';
+
+	/// fr: 'Connecté le {date}'
+	String connecteLe({required Object date}) => 'Connecté le ${date}';
+
+	/// fr: 'Dernière utilisation : {date}'
+	String utiliseLe({required Object date}) => 'Dernière utilisation : ${date}';
+
+	/// fr: 'Pas encore utilisé'
+	String get jamaisUtilise => 'Pas encore utilisé';
+
+	/// fr: 'Retirer {appareil}'
+	String retirerLibelle({required Object appareil}) => 'Retirer ${appareil}';
+
+	/// fr: 'Retirer ou connecter un appareil demande une connexion internet.'
+	String get horsLigne => 'Retirer ou connecter un appareil demande une connexion internet.';
+
+	/// fr: 'Choix du profil et code personnel'
+	String get partageTitre => 'Choix du profil et code personnel';
+
+	/// fr: 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d'un autre élève.'
+	String get partage => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d\'un autre élève.';
+
+	/// fr: 'Retirer un appareil'
+	String get retraitTitre => 'Retirer un appareil';
+
+	/// fr: 'Un appareil retiré ne peut plus se reconnecter. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
+	String get retrait => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
+}
+
+// Path: appareils.plateforme
+class Traductions$appareils$plateforme$fr {
+	Traductions$appareils$plateforme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Téléphone ou tablette Android'
+	String get android => 'Téléphone ou tablette Android';
+
+	/// fr: 'iPhone ou iPad'
+	String get ios => 'iPhone ou iPad';
+
+	/// fr: 'Navigateur web'
+	String get web => 'Navigateur web';
+
+	/// fr: 'Ordinateur'
+	String get windows => 'Ordinateur';
+
+	/// fr: 'Appareil'
+	String get inconnue => 'Appareil';
+}
+
+// Path: appareils.retrait
+class Traductions$appareils$retrait$fr {
+	Traductions$appareils$retrait$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retirer cet appareil ?'
+	String get question => 'Retirer cet appareil ?';
+
+	/// fr: '{appareil} ne pourra plus se connecter au profil de {prenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
+	String consequence({required Object appareil, required Object prenom}) => '${appareil} ne pourra plus se connecter au profil de ${prenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
+
+	/// fr: 'Retirer l'appareil'
+	String get confirmer => 'Retirer l\'appareil';
+
+	/// fr: 'Retrait en cours'
+	String get enCours => 'Retrait en cours';
+
+	/// fr: 'Appareil retiré. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
+	String get reussi => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
+
+	/// fr: 'Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.'
+	String get echec => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.';
+
+	/// fr: 'Pas de connexion internet : l'appareil n'a pas été retiré.'
+	String get horsLigne => 'Pas de connexion internet : l\'appareil n\'a pas été retiré.';
 }
 
 // Path: appareils.emetteur
@@ -2216,6 +2348,84 @@ class Traductions$appareils$emetteur$fr {
 	late final Traductions$appareils$emetteur$dejaActif$fr dejaActif = Traductions$appareils$emetteur$dejaActif$fr.internal(_root);
 	late final Traductions$appareils$emetteur$horsLigne$fr horsLigne = Traductions$appareils$emetteur$horsLigne$fr.internal(_root);
 	late final Traductions$appareils$emetteur$erreur$fr erreur = Traductions$appareils$emetteur$erreur$fr.internal(_root);
+}
+
+// Path: eleveConnexion.profils
+class Traductions$eleveConnexion$profils$fr {
+	Traductions$eleveConnexion$profils$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Touche ton prénom pour continuer.'
+	String get phrase => 'Touche ton prénom pour continuer.';
+
+	/// fr: 'Ajouter un profil sur cet appareil'
+	String get ajouter => 'Ajouter un profil sur cet appareil';
+
+	/// fr: 'Avec le code affiché par le tuteur'
+	String get ajouterLegende => 'Avec le code affiché par le tuteur';
+
+	/// fr: 'Continuer en tant que {prenom}'
+	String profilLibelle({required Object prenom}) => 'Continuer en tant que ${prenom}';
+
+	/// fr: 'Aucun profil sur cet appareil'
+	String get videTitre => 'Aucun profil sur cet appareil';
+
+	/// fr: 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.'
+	String get vide => 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.';
+
+	/// fr: 'Saisir un code'
+	String get videAction => 'Saisir un code';
+
+	/// fr: 'Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.'
+	String retire({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.';
+}
+
+// Path: eleveConnexion.pin
+class Traductions$eleveConnexion$pin$fr {
+	Traductions$eleveConnexion$pin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bonjour {prenom}'
+	String bonjour({required Object prenom}) => 'Bonjour ${prenom}';
+
+	/// fr: 'Choisis ton code personnel'
+	String get creer => 'Choisis ton code personnel';
+
+	/// fr: 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.'
+	String get creerPhrase => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.';
+
+	/// fr: 'Entre-le encore une fois'
+	String get confirmer => 'Entre-le encore une fois';
+
+	/// fr: 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.'
+	String get different => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.';
+
+	/// fr: 'Connexion en cours'
+	String get ouverture => 'Connexion en cours';
+
+	/// fr: 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.'
+	String get horsLigne => 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.';
+
+	/// fr: 'Trop d'essais. Patiente un instant avant de réessayer.'
+	String get tropDEssais => 'Trop d\'essais. Patiente un instant avant de réessayer.';
+
+	/// fr: 'La connexion n'a pas abouti. Réessaie dans un instant.'
+	String get echec => 'La connexion n\'a pas abouti. Réessaie dans un instant.';
+
+	/// fr: 'Changer de profil'
+	String get changerProfil => 'Changer de profil';
+
+	/// fr: 'Code oublié ?'
+	String get oublie => 'Code oublié ?';
+
+	/// fr: 'Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel.'
+	String get oubliePhrase => 'Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel.';
 }
 
 // Path: eleveConnexion.saisie
@@ -8362,11 +8572,11 @@ extension on Traductions {
 			'connexion.appareilEleve' => 'Connecter l\'appareil d\'un élève',
 			'connexion.feuilleAppareil.pourQui' => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.',
 			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
-			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer et appareils.',
-			'connexion.feuilleAppareil.etape2' => 'Ouvrez le profil de l\'élève, puis Ajouter un appareil.',
+			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.',
+			'connexion.feuilleAppareil.etape2' => 'Touchez le profil de l\'élève, puis Connecter un appareil.',
 			'connexion.feuilleAppareil.etape3' => 'Un QR code et un code de six caractères s\'affichent, avec leur heure de fin.',
 			'connexion.feuilleAppareil.etape4' => 'Sur l\'appareil de l\'élève, scannez le QR code ou saisissez le code.',
-			'connexion.feuilleAppareil.plafond' => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer et appareils.',
+			'connexion.feuilleAppareil.plafond' => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.',
 			'connexion.feuilleAppareil.saisir' => 'Saisir le code',
 			'connexion.feuilleAppareil.fermer' => 'Fermer',
 			'inscription.titre' => 'Créer votre compte',
@@ -8415,9 +8625,46 @@ extension on Traductions {
 			'kyc.erreur' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'appareils.titre' => 'Appareils',
-			'appareils.regle' => 'Deux appareils au maximum par enfant, un seul en cours à la fois.',
-			'appareils.ajouter' => 'Ajouter un appareil',
-			'appareils.limiteAtteinte' => ({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.',
+			'appareils.foyer.titre' => 'Appareils du foyer',
+			'appareils.foyer.phrase' => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.',
+			'appareils.foyer.groupeProfils' => 'Profils élèves',
+			'appareils.foyer.aucunAppareil' => 'Aucun appareil connecté',
+			'appareils.foyer.unAppareil' => ({required Object nom}) => '1 appareil connecté : ${nom}',
+			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}',
+			'appareils.foyer.partageTitre' => 'Appareil partagé',
+			'appareils.foyer.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.',
+			'appareils.foyer.videTitre' => 'Aucun profil élève',
+			'appareils.foyer.vide' => 'Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.',
+			'appareils.foyer.videAction' => 'Ajouter un profil élève',
+			'appareils.eleve.sousTitre' => ({required Object prenom}) => 'Gérez les appareils autorisés pour ${prenom}.',
+			'appareils.eleve.groupe' => 'Appareils connectés',
+			'appareils.eleve.connecter' => 'Connecter un appareil',
+			'appareils.eleve.videTitre' => 'Aucun appareil connecté',
+			'appareils.eleve.vide' => ({required Object prenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur de ${prenom} avec le code affiché par le bouton ci-dessous.',
+			'appareils.eleve.introuvableTitre' => 'Profil élève introuvable',
+			'appareils.eleve.introuvable' => 'Ce profil élève n\'est pas rattaché à votre foyer.',
+			'appareils.eleve.introuvableAction' => 'Voir les appareils du foyer',
+			'appareils.eleve.connecteLe' => ({required Object date}) => 'Connecté le ${date}',
+			'appareils.eleve.utiliseLe' => ({required Object date}) => 'Dernière utilisation : ${date}',
+			'appareils.eleve.jamaisUtilise' => 'Pas encore utilisé',
+			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'Retirer ${appareil}',
+			'appareils.eleve.horsLigne' => 'Retirer ou connecter un appareil demande une connexion internet.',
+			'appareils.eleve.partageTitre' => 'Choix du profil et code personnel',
+			'appareils.eleve.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d\'un autre élève.',
+			'appareils.eleve.retraitTitre' => 'Retirer un appareil',
+			'appareils.eleve.retrait' => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			'appareils.plateforme.android' => 'Téléphone ou tablette Android',
+			'appareils.plateforme.ios' => 'iPhone ou iPad',
+			'appareils.plateforme.web' => 'Navigateur web',
+			'appareils.plateforme.windows' => 'Ordinateur',
+			'appareils.plateforme.inconnue' => 'Appareil',
+			'appareils.retrait.question' => 'Retirer cet appareil ?',
+			'appareils.retrait.consequence' => ({required Object appareil, required Object prenom}) => '${appareil} ne pourra plus se connecter au profil de ${prenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			'appareils.retrait.confirmer' => 'Retirer l\'appareil',
+			'appareils.retrait.enCours' => 'Retrait en cours',
+			'appareils.retrait.reussi' => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			'appareils.retrait.echec' => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.',
+			'appareils.retrait.horsLigne' => 'Pas de connexion internet : l\'appareil n\'a pas été retiré.',
 			'appareils.emetteur.titre' => 'Connecter un appareil',
 			'appareils.emetteur.pourEleve' => ({required Object prenom}) => 'Pour ${prenom}',
 			'appareils.emetteur.consigneTitre' => 'Sur l\'autre appareil',
@@ -8456,9 +8703,7 @@ extension on Traductions {
 			'appareils.emetteur.erreur.generiquePhrase' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
-			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? L\'enfant devra le réappairer pour s\'en resservir.',
-			'appareils.derniereUtilisation' => ({required Object quand}) => 'Utilisé ${quand}',
-			'appareils.jamaisUtilise' => 'Jamais utilisé',
+			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.',
 			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
 			'enfant.titre' => 'Ajouter un enfant',
 			'enfant.prenom' => 'Son prénom',
@@ -8544,12 +8789,27 @@ extension on Traductions {
 			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
-			'eleveConnexion.codeExpire' => 'Ce code est trop vieux. Demande-en un nouveau.',
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
-			'eleveConnexion.nouveauCode' => 'Choisis ton code secret',
-			'eleveConnexion.nouveauCodeConfirmer' => 'Entre-le encore une fois',
-			'eleveConnexion.codeDifferent' => 'Les deux codes ne sont pas les mêmes',
-			'eleveConnexion.codeEnregistre' => 'Code enregistré',
+			'eleveConnexion.profils.phrase' => 'Touche ton prénom pour continuer.',
+			'eleveConnexion.profils.ajouter' => 'Ajouter un profil sur cet appareil',
+			'eleveConnexion.profils.ajouterLegende' => 'Avec le code affiché par le tuteur',
+			'eleveConnexion.profils.profilLibelle' => ({required Object prenom}) => 'Continuer en tant que ${prenom}',
+			'eleveConnexion.profils.videTitre' => 'Aucun profil sur cet appareil',
+			'eleveConnexion.profils.vide' => 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.',
+			'eleveConnexion.profils.videAction' => 'Saisir un code',
+			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.',
+			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
+			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
+			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
+			'eleveConnexion.pin.confirmer' => 'Entre-le encore une fois',
+			'eleveConnexion.pin.different' => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.',
+			'eleveConnexion.pin.ouverture' => 'Connexion en cours',
+			'eleveConnexion.pin.horsLigne' => 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.',
+			'eleveConnexion.pin.tropDEssais' => 'Trop d\'essais. Patiente un instant avant de réessayer.',
+			'eleveConnexion.pin.echec' => 'La connexion n\'a pas abouti. Réessaie dans un instant.',
+			'eleveConnexion.pin.changerProfil' => 'Changer de profil',
+			'eleveConnexion.pin.oublie' => 'Code oublié ?',
+			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel.',
 			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
 			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
 			'eleveConnexion.saisie.champ' => 'Code',
@@ -8631,6 +8891,8 @@ extension on Traductions {
 			'admin.tableau.incidents' => 'Incidents (24 h)',
 			'admin.tableau.comptes' => 'Accès échus',
 			'admin.tableau.demandes' => 'Demandes à trancher',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tableau.compteursErreur' => 'Les compteurs n\'ont pas pu être lus. Réessayez dans un instant.',
 			'admin.tableau.aTraiter' => 'À traiter en premier',
 			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
@@ -8681,8 +8943,6 @@ extension on Traductions {
 			'admin.demandes.reglePause' => 'Pause entre deux cours',
 			'admin.demandes.reglePlafond' => 'Plafond d\'élèves',
 			'admin.demandes.regleInconnue' => 'Règle non reconnue',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.plateforme' => ({required Object valeur}) => 'Plateforme : ${valeur}',
 			'admin.demandes.effective' => ({required Object valeur}) => 'Appliquée : ${valeur}',
 			'admin.demandes.minutes' => ({required Object valeur}) => '${valeur} min',
@@ -9145,6 +9405,8 @@ extension on Traductions {
 			'admin.agents.copie' => 'Lien copié',
 			'admin.agents.termine' => 'J\'ai copié le lien',
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.colonneLibelle' => 'Jeton',
 			'admin.agents.colonneQui' => 'Observe',
 			'admin.agents.colonneParcours' => 'Parcours',
@@ -9195,8 +9457,6 @@ extension on Traductions {
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',
 			'vide.aucunRapport' => 'Aucun cahier de transmission pour l\'instant',
-			_ => null,
-		} ?? switch (path) {
 			'vide.aucunAppareil' => 'Aucun appareil appairé',
 			'pin.titre' => 'Entre ton code',
 			'pin.erreur' => 'Ce code ne correspond pas',
@@ -9659,6 +9919,8 @@ extension on Traductions {
 			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier.',
 			'enseignant.cahier.noteGroupe' => 'Note pour le groupe',
 			'enseignant.cahier.noteGroupeDetail' => 'Facultative. Aucun texte n\'est attendu.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.valider' => 'Valider le cahier',
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
@@ -9709,8 +9971,6 @@ extension on Traductions {
 			'enseignant.profil.intro' => 'Ce que l\'académie sait de vous, et ce que vous pouvez y changer.',
 			'enseignant.profil.identite' => 'Identité professionnelle',
 			'enseignant.profil.identifiantDetail' => 'C\'est ce que les familles voient de vous. Il ne change jamais.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.pays' => 'Pays',
 			'enseignant.profil.langues' => 'Langues',
 			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
@@ -10173,6 +10433,8 @@ extension on Traductions {
 			'tc.parcours.intention.evaluation' => 'Pour l\'évaluation',
 			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}',
 			'tc.parcours.plage.versetUnique' => ({required Object sourate, required Object premier}) => 'Sourate ${sourate}, verset ${premier}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.plage.versetsCroisee' => ({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Sourate ${sourateDebut}, verset ${versetDebut} jusqu\'à sourate ${sourateFin}, verset ${versetFin}',
 			'tc.parcours.plage.pages' => ({required Object premiere, required Object derniere}) => 'Pages ${premiere} à ${derniere}',
 			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
@@ -10223,8 +10485,6 @@ extension on Traductions {
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',

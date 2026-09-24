@@ -138,7 +138,19 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
     }
   }
 
-  void _retour() => GoRouter.of(context).go(Routes.connexion);
+  /// Le retour : au choix des profils quand on en vient (`?depuis=profils`,
+  /// appareil partage), sinon a la connexion. Sans profil, `/connexion/eleve`
+  /// renverrait ici : ce serait une impasse.
+  void _retour() {
+    String? depuis;
+    try {
+      depuis = GoRouterState.of(context).uri.queryParameters['depuis'];
+    } on Object {
+      depuis = null;
+    }
+    GoRouter.of(context)
+        .go(depuis == 'profils' ? Routes.connexionEleve : Routes.connexion);
+  }
 
   @override
   Widget build(BuildContext context) {

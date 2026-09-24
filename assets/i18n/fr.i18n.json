@@ -252,11 +252,11 @@
     "feuilleAppareil": {
       "pourQui": "Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.",
       "etapesTitre": "Où trouver le code",
-      "etape1": "Sur votre propre appareil, ouvrez Foyer et appareils.",
-      "etape2": "Ouvrez le profil de l'élève, puis Ajouter un appareil.",
+      "etape1": "Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.",
+      "etape2": "Touchez le profil de l'élève, puis Connecter un appareil.",
       "etape3": "Un QR code et un code de six caractères s'affichent, avec leur heure de fin.",
       "etape4": "Sur l'appareil de l'élève, scannez le QR code ou saisissez le code.",
-      "plafond": "Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer et appareils.",
+      "plafond": "Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.",
       "saisir": "Saisir le code",
       "fermer": "Fermer"
     }
@@ -318,9 +318,54 @@
   },
   "appareils": {
     "titre": "Appareils",
-    "regle": "Deux appareils au maximum par enfant, un seul en cours à la fois.",
-    "ajouter": "Ajouter un appareil",
-    "limiteAtteinte": "Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.",
+    "foyer": {
+      "titre": "Appareils du foyer",
+      "phrase": "Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.",
+      "groupeProfils": "Profils élèves",
+      "aucunAppareil": "Aucun appareil connecté",
+      "unAppareil": "1 appareil connecté : {nom}",
+      "plusieursAppareils": "{nombre} appareils connectés : {noms}",
+      "partageTitre": "Appareil partagé",
+      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.",
+      "videTitre": "Aucun profil élève",
+      "vide": "Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.",
+      "videAction": "Ajouter un profil élève"
+    },
+    "eleve": {
+      "sousTitre": "Gérez les appareils autorisés pour {prenom}.",
+      "groupe": "Appareils connectés",
+      "connecter": "Connecter un appareil",
+      "videTitre": "Aucun appareil connecté",
+      "vide": "Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.",
+      "introuvableTitre": "Profil élève introuvable",
+      "introuvable": "Ce profil élève n'est pas rattaché à votre foyer.",
+      "introuvableAction": "Voir les appareils du foyer",
+      "connecteLe": "Connecté le {date}",
+      "utiliseLe": "Dernière utilisation : {date}",
+      "jamaisUtilise": "Pas encore utilisé",
+      "retirerLibelle": "Retirer {appareil}",
+      "horsLigne": "Retirer ou connecter un appareil demande une connexion internet.",
+      "partageTitre": "Choix du profil et code personnel",
+      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d'un autre élève.",
+      "retraitTitre": "Retirer un appareil",
+      "retrait": "Un appareil retiré ne peut plus se reconnecter. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion."
+    },
+    "plateforme": {
+      "android": "Téléphone ou tablette Android",
+      "ios": "iPhone ou iPad",
+      "web": "Navigateur web",
+      "windows": "Ordinateur",
+      "inconnue": "Appareil"
+    },
+    "retrait": {
+      "question": "Retirer cet appareil ?",
+      "consequence": "{appareil} ne pourra plus se connecter au profil de {prenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.",
+      "confirmer": "Retirer l'appareil",
+      "enCours": "Retrait en cours",
+      "reussi": "Appareil retiré. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.",
+      "echec": "Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.",
+      "horsLigne": "Pas de connexion internet : l'appareil n'a pas été retiré."
+    },
     "emetteur": {
       "titre": "Connecter un appareil",
       "pourEleve": "Pour {prenom}",
@@ -375,9 +420,7 @@
     },
     "regenerer": "Générer un nouveau code",
     "revoquer": "Retirer",
-    "revoquerConfirmation": "Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.",
-    "derniereUtilisation": "Utilisé {quand}",
-    "jamaisUtilise": "Jamais utilisé",
+    "revoquerConfirmation": "Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code.",
     "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
   },
   "enfant": {
@@ -481,12 +524,31 @@
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
     "scanner": "Scanner le carré",
-    "codeExpire": "Ce code est trop vieux. Demande-en un nouveau.",
     "choisirProfil": "Qui es-tu ?",
-    "nouveauCode": "Choisis ton code secret",
-    "nouveauCodeConfirmer": "Entre-le encore une fois",
-    "codeDifferent": "Les deux codes ne sont pas les mêmes",
-    "codeEnregistre": "Code enregistré",
+    "profils": {
+      "phrase": "Touche ton prénom pour continuer.",
+      "ajouter": "Ajouter un profil sur cet appareil",
+      "ajouterLegende": "Avec le code affiché par le tuteur",
+      "profilLibelle": "Continuer en tant que {prenom}",
+      "videTitre": "Aucun profil sur cet appareil",
+      "vide": "Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.",
+      "videAction": "Saisir un code",
+      "retire": "Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code."
+    },
+    "pin": {
+      "bonjour": "Bonjour {prenom}",
+      "creer": "Choisis ton code personnel",
+      "creerPhrase": "Quatre chiffres, rien que pour toi. Il reste sur cet appareil.",
+      "confirmer": "Entre-le encore une fois",
+      "different": "Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.",
+      "ouverture": "Connexion en cours",
+      "horsLigne": "Pas de connexion internet. Ton code est bon : réessaie quand internet revient.",
+      "tropDEssais": "Trop d'essais. Patiente un instant avant de réessayer.",
+      "echec": "La connexion n'a pas abouti. Réessaie dans un instant.",
+      "changerProfil": "Changer de profil",
+      "oublie": "Code oublié ?",
+      "oubliePhrase": "Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel."
+    },
     "saisie": {
       "titre": "Connecter cet appareil",
       "phrase": "Saisissez le code de six caractères affiché sous le QR code, sur l'appareil du tuteur.",

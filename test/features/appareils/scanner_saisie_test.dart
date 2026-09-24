@@ -143,7 +143,7 @@ void main() {
         expect(m.service.codesRecus, <String>['AB23CD']);
         expect(m.lecteur.arrets, greaterThanOrEqualTo(1));
         expect(m.lieu, Routes.connexionEleve);
-        expect(find.text(t.eleveConnexion.nouveauCode), findsOneWidget);
+        expect(find.text(t.eleveConnexion.pin.creer), findsOneWidget);
         // Le jeton est range, le profil retenu, aucune session ouverte avant
         // le code personnel.
         expect(m.coffre.jetons['e1'], 'jeton-test');
@@ -198,7 +198,7 @@ void main() {
 
       expect(m.service.codesRecus, <String>['AB23CD']);
       expect(m.lieu, Routes.connexionEleve);
-      expect(find.text(t.eleveConnexion.nouveauCode), findsOneWidget);
+      expect(find.text(t.eleveConnexion.pin.creer), findsOneWidget);
       expect(m.coffre.jetons['e1'], 'jeton-test');
     });
   });

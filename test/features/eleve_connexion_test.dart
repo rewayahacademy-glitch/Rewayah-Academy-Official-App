@@ -147,7 +147,7 @@ void main() {
         );
 
         expect(_lieu(routeur), Routes.connexionEleve);
-        expect(find.text(t.eleveConnexion.nouveauCode), findsOneWidget);
+        expect(find.text(t.eleveConnexion.pin.creer), findsOneWidget);
       },
     );
   });

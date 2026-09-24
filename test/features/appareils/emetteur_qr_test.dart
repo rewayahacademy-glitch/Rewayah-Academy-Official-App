@@ -96,6 +96,12 @@ Future<void> _monter(
                   eleveId: etat.pathParameters['eleveId'] ?? '',
                 ),
               ),
+              GoRoute(
+                path: '${Routes.tuteurFoyer}/:eleveId/appareils',
+                builder: (BuildContext _, GoRouterState etat) => Text(
+                  'ECRAN APPAREILS DE ${etat.pathParameters['eleveId']}',
+                ),
+              ),
             ],
           ),
         ),
@@ -112,7 +118,8 @@ Finder _liveRegion() => find.byWidgetPredicate(
 void main() {
   group('Parcours depuis la navigation (vrai routeur)', () {
     testWidgets(
-      'Foyer puis « Ajouter un appareil » ouvre l emetteur ; le retour ramene',
+      'Foyer puis profil puis « Connecter un appareil » ouvre l emetteur ; '
+      'le retour ramene',
       (WidgetTester tester) async {
         tester.view.physicalSize = const Size(390, 844);
         tester.view.devicePixelRatio = 1;
@@ -161,8 +168,14 @@ void main() {
         await stabiliser(tester);
         expect(lieu(routeur), Routes.tuteurFoyer);
 
-        // 2. « Ajouter un appareil » sur la ligne de l eleve.
-        final Finder ajouter = find.text(t.appareils.ajouter);
+        // 2. La ligne de l eleve, puis « Connecter un appareil » sur ses
+        // appareils (LD-3).
+        final Finder ligne = find.text('Amina');
+        await tester.ensureVisible(ligne);
+        await tester.tap(ligne);
+        await stabiliser(tester);
+        expect(lieu(routeur), Routes.ficheEleveSousPage('e1', 'appareils'));
+        final Finder ajouter = find.text(t.appareils.eleve.connecter);
         await tester.ensureVisible(ajouter);
         await tester.tap(ajouter);
         await stabiliser(tester);
@@ -179,10 +192,10 @@ void main() {
         // Tache focalisee : pas de barre basse sur telephone.
         expect(find.byKey(NavShell.barreBasseKey), findsNothing);
 
-        // 3. Le disque retour ramene au Foyer d ou l on vient.
+        // 3. Le disque retour ramene aux appareils de l eleve d ou l on vient.
         await tester.tap(find.byType(DisqueRetour));
         await stabiliser(tester);
-        expect(lieu(routeur), Routes.tuteurFoyer);
+        expect(lieu(routeur), Routes.ficheEleveSousPage('e1', 'appareils'));
         expect(find.byType(EmetteurQr), findsNothing);
         expect(tester.takeException(), isNull);
       },
@@ -390,7 +403,8 @@ void main() {
       );
       await tester.tap(find.text(t.appareils.emetteur.erreur.plafondAction));
       await stabiliser(tester);
-      expect(find.text('ECRAN APPAREILS'), findsOneWidget);
+      // Le retrait vit sur la page des appareils de cet eleve (LD-3).
+      expect(find.text('ECRAN APPAREILS DE e1'), findsOneWidget);
     });
 
     testWidgets('erreur generale : Reessayer relance la demande', (
