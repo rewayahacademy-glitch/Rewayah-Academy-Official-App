@@ -4407,8 +4407,127 @@ class Traductions$tuteur$accueil$fr {
 
 	// Translations
 
-	/// fr: 'Votre foyer'
-	String get titre => 'Votre foyer';
+	/// fr: 'Accueil'
+	String get titre => 'Accueil';
+
+	/// fr: 'Voir la classe'
+	String get voirLaClasse => 'Voir la classe';
+
+	/// fr: 'Prochaine séance'
+	String get prochaineSeance => 'Prochaine séance';
+
+	/// fr: 'Heure de {ville}'
+	String heureDe({required Object ville}) => 'Heure de ${ville}';
+
+	/// fr: 'Heure de cet appareil'
+	String get heureAppareil => 'Heure de cet appareil';
+
+	/// fr: '{date} · {fuseau}'
+	String dateEtFuseau({required Object date, required Object fuseau}) => '${date} · ${fuseau}';
+
+	/// fr: 'Heure de la classe : {heure} {ville}'
+	String heureClasse({required Object heure, required Object ville}) => 'Heure de la classe : ${heure} ${ville}';
+
+	/// fr: 'Séance en direct'
+	String get seanceEnDirect => 'Séance en direct';
+
+	/// fr: 'Séance terminée'
+	String get seanceTerminee => 'Séance terminée';
+
+	/// fr: 'Cette séance n'aura pas lieu.'
+	String get seanceAnnulee => 'Cette séance n\'aura pas lieu.';
+
+	/// fr: 'Cette séance n'a pas pu se tenir.'
+	String get seanceNonTenue => 'Cette séance n\'a pas pu se tenir.';
+
+	/// fr: 'Ouverture de la salle non confirmée pour l'instant'
+	String get horaireIncertain => 'Ouverture de la salle non confirmée pour l\'instant';
+
+	/// fr: 'Annulée'
+	String get pastilleAnnulee => 'Annulée';
+
+	/// fr: 'Non tenue'
+	String get pastilleNonTenue => 'Non tenue';
+
+	/// fr: 'Terminée'
+	String get pastilleTerminee => 'Terminée';
+
+	/// fr: 'Aucune séance planifiée'
+	String get aucuneSeance => 'Aucune séance planifiée';
+
+	/// fr: 'La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.'
+	String aucuneSeanceDetail({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.';
+
+	/// fr: 'La prochaine séance n'a pas pu être lue.'
+	String get seanceIllisible => 'La prochaine séance n\'a pas pu être lue.';
+
+	/// fr: 'Le détail de la classe n'est pas encore disponible ici.'
+	String get classeIndisponible => 'Le détail de la classe n\'est pas encore disponible ici.';
+
+	/// fr: 'La classe n'a pas pu être lue.'
+	String get classeIllisible => 'La classe n\'a pas pu être lue.';
+
+	/// fr: 'Aucune classe pour {prenom}'
+	String sansClasseTitre({required Object prenom}) => 'Aucune classe pour ${prenom}';
+
+	/// fr: 'Choisissez une classe pour que {prenom} puisse commencer les cours.'
+	String sansClassePhrase({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.';
+
+	/// fr: 'Aucun profil élève pour l'instant'
+	String get foyerVideTitre => 'Aucun profil élève pour l\'instant';
+
+	/// fr: 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.'
+	String get foyerVidePhrase => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.';
+
+	/// fr: 'Ajouter un profil élève'
+	String get ajouterProfil => 'Ajouter un profil élève';
+
+	/// fr: 'Les profils du foyer n'ont pas pu être lus.'
+	String get profilsIllisibles => 'Les profils du foyer n\'ont pas pu être lus.';
+
+	/// fr: 'Aucun appareil prêt pour {prenom}'
+	String blocageAppareilTitre({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}';
+
+	/// fr: 'Sans appareil connecté, {prenom} ne pourra pas entrer en classe.'
+	String blocageAppareilPhrase({required Object prenom}) => 'Sans appareil connecté, ${prenom} ne pourra pas entrer en classe.';
+
+	/// fr: 'Connecter un appareil'
+	String get connecterAppareil => 'Connecter un appareil';
+
+	/// fr: 'Avant le prochain cours'
+	String get avantProchainCours => 'Avant le prochain cours';
+
+	/// fr: 'Voir tout'
+	String get voirTout => 'Voir tout';
+
+	/// fr: 'Le travail à préparer n'est pas encore relié à cet espace.'
+	String get travailIndisponible => 'Le travail à préparer n\'est pas encore relié à cet espace.';
+
+	/// fr: 'Le travail à préparer n'a pas pu être lu.'
+	String get travailIllisible => 'Le travail à préparer n\'a pas pu être lu.';
+
+	/// fr: 'Rien à préparer pour l'instant'
+	String get rienAPreparer => 'Rien à préparer pour l\'instant';
+
+	/// fr: 'Dernière séance'
+	String get derniereSeance => 'Dernière séance';
+
+	/// fr: 'Voir l'historique'
+	String get voirHistorique => 'Voir l\'historique';
+
+	/// fr: 'Détails de la séance'
+	String get detailsSeance => 'Détails de la séance';
+
+	/// fr: 'Aucune séance passée pour l'instant'
+	String get aucuneDerniere => 'Aucune séance passée pour l\'instant';
+
+	/// fr: 'La dernière séance n'a pas pu être lue.'
+	String get derniereIllisible => 'La dernière séance n\'a pas pu être lue.';
+
+	/// fr: '{date} · {duree}'
+	String dateEtDuree({required Object date, required Object duree}) => '${date} · ${duree}';
+
+	late final Traductions$tuteur$accueil$etatCourt$fr etatCourt = Traductions$tuteur$accueil$etatCourt$fr.internal(_root);
 
 	/// fr: 'Assister'
 	String get assister => 'Assister';
@@ -5585,6 +5704,7 @@ class Traductions$tc$groupe$fr {
 	late final Traductions$tc$groupe$enseignant$fr enseignant = Traductions$tc$groupe$enseignant$fr.internal(_root);
 	late final Traductions$tc$groupe$cours$fr cours = Traductions$tc$groupe$cours$fr.internal(_root);
 	late final Traductions$tc$groupe$temps$fr temps = Traductions$tc$groupe$temps$fr.internal(_root);
+	late final Traductions$tc$groupe$duree$fr duree = Traductions$tc$groupe$duree$fr.internal(_root);
 	late final Traductions$tc$groupe$horloges$fr horloges = Traductions$tc$groupe$horloges$fr.internal(_root);
 	late final Traductions$tc$groupe$dst$fr dst = Traductions$tc$groupe$dst$fr.internal(_root);
 	late final Traductions$tc$groupe$session$fr session = Traductions$tc$groupe$session$fr.internal(_root);
@@ -5954,6 +6074,48 @@ class Traductions$admin$journal$evenements$fr {
 	String get observationPolitiqueGroupeModifiee => 'Règles d\'observation du groupe modifiées';
 }
 
+// Path: tuteur.accueil.etatCourt
+class Traductions$tuteur$accueil$etatCourt$fr {
+	Traductions$tuteur$accueil$etatCourt$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En direct'
+	String get enDirect => 'En direct';
+
+	/// fr: 'Salle ouverte'
+	String get salleOuverte => 'Salle ouverte';
+
+	/// fr: 'Dans {minutes} min'
+	String dansMinutes({required Object minutes}) => 'Dans ${minutes} min';
+
+	/// fr: 'Dans {heures} h {minutes}'
+	String dansHeures({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}';
+
+	/// fr: 'Dans {jours} j'
+	String dansJours({required Object jours}) => 'Dans ${jours} j';
+
+	/// fr: 'Séance prévue'
+	String get prevue => 'Séance prévue';
+
+	/// fr: 'Séance annulée'
+	String get annulee => 'Séance annulée';
+
+	/// fr: 'Séance non tenue'
+	String get nonTenue => 'Séance non tenue';
+
+	/// fr: 'Séance terminée'
+	String get terminee => 'Séance terminée';
+
+	/// fr: 'Aucune séance'
+	String get aucune => 'Aucune séance';
+
+	/// fr: 'Non disponible'
+	String get illisible => 'Non disponible';
+}
+
 // Path: tc.groupe.mesGroupes
 class Traductions$tc$groupe$mesGroupes$fr {
 	Traductions$tc$groupe$mesGroupes$fr.internal(this._root);
@@ -6097,20 +6259,38 @@ class Traductions$tc$groupe$temps$fr {
 	/// fr: 'Reste {heures} h {minutes}'
 	String resteHeures({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}';
 
-	/// fr: 'Cours en cours · {reste}'
-	String enCours({required Object reste}) => 'Cours en cours · ${reste}';
+	/// fr: 'Séance en direct · {reste}'
+	String enCours({required Object reste}) => 'Séance en direct · ${reste}';
 
 	/// fr: 'En direct'
 	String get enDirect => 'En direct';
 
-	/// fr: 'Cours toujours en cours'
-	String get prolongee => 'Cours toujours en cours';
+	/// fr: 'Séance toujours en direct'
+	String get prolongee => 'Séance toujours en direct';
 
 	/// fr: 'En dépassement'
 	String get depassement => 'En dépassement';
 
 	/// fr: 'Cours terminé'
 	String get terminee => 'Cours terminé';
+}
+
+// Path: tc.groupe.duree
+class Traductions$tc$groupe$duree$fr {
+	Traductions$tc$groupe$duree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{minutes} min'
+	String minutes({required Object minutes}) => '${minutes} min';
+
+	/// fr: '{heures} h'
+	String heures({required Object heures}) => '${heures} h';
+
+	/// fr: '{heures} h {minutes}'
+	String heuresMinutes({required Object heures, required Object minutes}) => '${heures} h ${minutes}';
 }
 
 // Path: tc.groupe.horloges
@@ -9050,7 +9230,57 @@ extension on Traductions {
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
 			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
 			'eleve.suivi.finUn' => '1 cours au suivi.',
-			'tuteur.accueil.titre' => 'Votre foyer',
+			'tuteur.accueil.titre' => 'Accueil',
+			'tuteur.accueil.voirLaClasse' => 'Voir la classe',
+			'tuteur.accueil.prochaineSeance' => 'Prochaine séance',
+			'tuteur.accueil.heureDe' => ({required Object ville}) => 'Heure de ${ville}',
+			'tuteur.accueil.heureAppareil' => 'Heure de cet appareil',
+			'tuteur.accueil.dateEtFuseau' => ({required Object date, required Object fuseau}) => '${date} · ${fuseau}',
+			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'Heure de la classe : ${heure} ${ville}',
+			'tuteur.accueil.seanceEnDirect' => 'Séance en direct',
+			'tuteur.accueil.seanceTerminee' => 'Séance terminée',
+			'tuteur.accueil.seanceAnnulee' => 'Cette séance n\'aura pas lieu.',
+			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
+			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
+			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
+			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
+			'tuteur.accueil.pastilleTerminee' => 'Terminée',
+			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
+			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
+			'tuteur.accueil.seanceIllisible' => 'La prochaine séance n\'a pas pu être lue.',
+			'tuteur.accueil.classeIndisponible' => 'Le détail de la classe n\'est pas encore disponible ici.',
+			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
+			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
+			'tuteur.accueil.sansClassePhrase' => ({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.',
+			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
+			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
+			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
+			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
+			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}',
+			'tuteur.accueil.blocageAppareilPhrase' => ({required Object prenom}) => 'Sans appareil connecté, ${prenom} ne pourra pas entrer en classe.',
+			'tuteur.accueil.connecterAppareil' => 'Connecter un appareil',
+			'tuteur.accueil.avantProchainCours' => 'Avant le prochain cours',
+			'tuteur.accueil.voirTout' => 'Voir tout',
+			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
+			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
+			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
+			'tuteur.accueil.derniereSeance' => 'Dernière séance',
+			'tuteur.accueil.voirHistorique' => 'Voir l\'historique',
+			'tuteur.accueil.detailsSeance' => 'Détails de la séance',
+			'tuteur.accueil.aucuneDerniere' => 'Aucune séance passée pour l\'instant',
+			'tuteur.accueil.derniereIllisible' => 'La dernière séance n\'a pas pu être lue.',
+			'tuteur.accueil.dateEtDuree' => ({required Object date, required Object duree}) => '${date} · ${duree}',
+			'tuteur.accueil.etatCourt.enDirect' => 'En direct',
+			'tuteur.accueil.etatCourt.salleOuverte' => 'Salle ouverte',
+			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
+			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
+			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'Dans ${jours} j',
+			'tuteur.accueil.etatCourt.prevue' => 'Séance prévue',
+			'tuteur.accueil.etatCourt.annulee' => 'Séance annulée',
+			'tuteur.accueil.etatCourt.nonTenue' => 'Séance non tenue',
+			'tuteur.accueil.etatCourt.terminee' => 'Séance terminée',
+			'tuteur.accueil.etatCourt.aucune' => 'Aucune séance',
+			'tuteur.accueil.etatCourt.illisible' => 'Non disponible',
 			'tuteur.accueil.assister' => 'Assister',
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
@@ -9318,6 +9548,8 @@ extension on Traductions {
 			'enseignant.profil.contratSection' => 'Contrat et accusés',
 			'enseignant.profil.contratEnseignant' => 'Contrat enseignant',
 			'enseignant.profil.contratConditions' => 'Conditions d\'utilisation',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.contratAccuse' => 'Enregistrement audio et visite de contrôle',
 			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}',
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
@@ -9368,8 +9600,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les groupes : celui-ci n\'a pas encore d\'élève.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.erreur' => 'Ce groupe n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Ce groupe n\'est pas l\'un des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
@@ -9454,11 +9684,14 @@ extension on Traductions {
 			'tc.groupe.temps.enSalle' => 'En salle',
 			'tc.groupe.temps.resteMinutes' => ({required Object minutes}) => 'Reste ${minutes} min',
 			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}',
-			'tc.groupe.temps.enCours' => ({required Object reste}) => 'Cours en cours · ${reste}',
+			'tc.groupe.temps.enCours' => ({required Object reste}) => 'Séance en direct · ${reste}',
 			'tc.groupe.temps.enDirect' => 'En direct',
-			'tc.groupe.temps.prolongee' => 'Cours toujours en cours',
+			'tc.groupe.temps.prolongee' => 'Séance toujours en direct',
 			'tc.groupe.temps.depassement' => 'En dépassement',
 			'tc.groupe.temps.terminee' => 'Cours terminé',
+			'tc.groupe.duree.minutes' => ({required Object minutes}) => '${minutes} min',
+			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
+			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
 			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure du groupe',

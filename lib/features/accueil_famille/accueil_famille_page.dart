@@ -2,140 +2,115 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// Comme partout ailleurs : le type d'une famille de providers n'est pas exporte
+// par l'entree principale de Riverpod 3, il vit dans `misc.dart`.
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
-import '../../core/domain/enums.dart';
+import '../../core/appairage/service_avatar.dart';
+import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
-import '../../core/planning/journee.dart';
-import '../../core/planning/service_planning.dart';
+import '../../core/presence/service_presence.dart';
+import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
-import '../../core/tc_groupe/libelles_tc_groupe.dart';
-import '../../core/tc_observation/activation_observation.dart';
-import '../../core/theme/app_metriques.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
+import '../../core/seance_famille/port_seances_famille.dart';
+import '../../core/seance_famille/seance_famille.dart';
+import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_parcours/port_travail_a_venir.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/bento_tile.dart';
-import '../../core/widgets/child_card.dart';
-import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pressable.dart';
-import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
-import '../parcours_offres/bloc_parcours.dart';
+import 'bandeau_blocage.dart';
+import 'bloc_seance.dart';
+import 'carte_classe_seance.dart';
+import 'ligne_derniere_seance.dart';
+import 'liste_preparation.dart';
 
-/// La phase de vie d'un enfant du foyer, a un instant donne.
+/// L'instant serveur lu a l'ouverture de l'Accueil (`maintenant_serveur()`,
+/// contrat K2), ou `null` quand aucune horloge serveur ne repond.
 ///
-/// Cinq phases, celles que la fiche produit tabule
-/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, fiche `TUT-01`) : en cours, cours a
-/// venir aujourd'hui, rien aujourd'hui, en recherche d'enseignant, seance
-/// annulee.
-///
-/// Le nom evite la collision avec `EtatEnfant` de `child_card.dart`, et la
-/// distinction est reelle : `PhaseEnfant` **decide** de ce qui se passe,
-/// `EtatEnfant` **affiche** avec les phrases deja mises en forme. Le passage de
-/// l'une a l'autre est [_CarteEnfant._etat].
-enum PhaseEnfant {
-  /// Le cours se tient maintenant. Seule phase qui porte « Assister ».
-  enCours,
+/// `null` n'est pas une panne : chaque seance passe alors en
+/// `horaireIncertain`, sans « Salle ouverte » ni compte a rebours affirme.
+/// **Jamais `DateTime.now()` a sa place.**
+final FutureProvider<DateTime?> ancreServeurAccueilProvider =
+    FutureProvider<DateTime?>((Ref ref) async {
+      try {
+        return (await ref
+                .watch(portSeancesFamilleProvider)
+                .maintenantServeurUtc())
+            .toUtc();
+      } on Object {
+        return null;
+      }
+    });
 
-  /// Un cours plus tard dans la journee.
-  coursAujourdhui,
-
-  /// Rien aujourd'hui. Le prochain cours se dit avec sa date, ou, quand la
-  /// semaine n'est pas encore posee, sans date.
-  rienAujourdhui,
-
-  /// Aucun enseignant ne suit encore cet enfant.
-  enRecherche,
-
-  /// Le cours attendu n'aura pas lieu.
-  seanceAnnulee,
-}
-
-/// La phase d'un enfant, a un instant donne.
+/// La classe courante d'un eleve (contrat K6), `null` s'il n'en a pas.
 ///
-/// Fonction pure, comme `etatAccueilEleve` : les cinq phases se verifient sans
-/// monter d'ecran. [prochain] vient de `prochainCours`, qui ecarte deja les
-/// seances annulees, et [annulee] de `seanceAnnuleeDuJour`. Les deux ecrans
-/// lisent donc la meme seance par les memes fonctions : `ELV-02` et `TUT-01`
-/// disent ainsi la meme chose du meme cours, l'un a l'enfant et l'autre a
-/// l'adulte.
-///
-/// **L'affectation ne passe devant que lorsqu'il n'y a rien a annoncer.** Un
-/// enfant dont l'enseignant vient de changer garde des seances planifiees :
-/// afficher « en recherche d'un enseignant » au-dessus d'un cours qui commence
-/// dans dix minutes serait faux, et inquietant.
-PhaseEnfant phaseEnfant({
-  required Seance? prochain,
-  required Seance? annulee,
-  required bool affecte,
-  required DateTime maintenant,
-}) {
-  if (annulee != null &&
-      (prochain == null || annulee.debut.isBefore(prochain.debut))) {
-    return PhaseEnfant.seanceAnnulee;
-  }
-  if (prochain == null) {
-    return affecte ? PhaseEnfant.rienAujourdhui : PhaseEnfant.enRecherche;
-  }
-  if (prochain.enCoursA(maintenant)) {
-    return PhaseEnfant.enCours;
-  }
-  return _memeJour(prochain.debut, maintenant)
-      ? PhaseEnfant.coursAujourdhui
-      : PhaseEnfant.rienAujourdhui;
-}
+/// Un eleve n'a qu'une classe active a la fois (`groupe_membres_actif_uidx`,
+/// `0017`) : la premiere suffit.
+final FutureProviderFamily<ClasseFoyer?, String> classeDeLEleveProvider =
+    FutureProvider.family<ClasseFoyer?, String>((
+      Ref ref,
+      String eleveId,
+    ) async {
+      final List<ClasseFoyer> classes = await ref
+          .watch(portClassesFoyerProvider)
+          .classesDe(eleveId);
+      return classes.isEmpty ? null : classes.first;
+    });
 
-/// Depuis quand ce foyer attend un enseignant.
-///
-/// C'est la date de la premiere heure proposee, et **la meme grandeur que celle
-/// sur laquelle `ENS-06` trie son feed** : le foyer et l'enseignant lisent la
-/// meme anciennete. `null` quand aucune heure n'est proposee, ou quand la
-/// source ne date pas ses lignes.
-DateTime? attendDepuis(List<Creneau> creneaux) {
-  DateTime? plusAncien;
-  for (final Creneau creneau in creneaux) {
-    final DateTime? pose = creneau.poseLe;
-    if (pose != null && (plusAncien == null || pose.isBefore(plusAncien))) {
-      plusAncien = pose;
-    }
-  }
-  return plusAncien;
-}
+/// La cle de lecture d'une presence : une seance, un eleve.
+typedef ClePresenceEleve = ({String seanceId, String eleveId});
 
-/// `TUT-01` : l'accueil du foyer.
+/// La presence d'un eleve a une seance passee, lue **une fois** (une seance
+/// close ne change plus d'etat toutes les vingt secondes, contrairement a la
+/// salle). `null` : presence illisible ou absente, affichee comme inconnue.
+final FutureProviderFamily<PresenceParticipant?, ClePresenceEleve>
+presenceEleveProvider =
+    FutureProvider.family<PresenceParticipant?, ClePresenceEleve>((
+      Ref ref,
+      ClePresenceEleve cle,
+    ) async {
+      final List<PresenceParticipant>? lignes = await ref
+          .watch(servicePresenceProvider)
+          .presence(cle.seanceId);
+      return maPresence(lignes, cle.eleveId);
+    });
+
+/// L'Accueil du tuteur (`/tuteur`, lot C, sous-paquet 1).
 ///
-/// **Bloc dominant : l'etat en direct de chaque enfant, une carte par enfant**,
-/// portee par `ChildCard` (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 3).
-/// Le bouton « Assister » n'est cable que pendant une seance en cours ; il entre
-/// en observateur muet, et c'est la fonction de confiance la plus forte du
-/// produit (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
+/// Ordre de lecture du mandat et des maquettes V1 / V2 : titre et
+/// notifications (portes par la coquille), selecteur des profils eleves,
+/// prochaine seance du profil selectionne, blocage eventuel, « Avant le
+/// prochain cours », « Derniere seance ».
 ///
-/// Sous les cartes, une section « Gerer le foyer » : les appareils, les reglages
-/// par enfant, et la date de fin d'acces de chaque enfant, qui tient lieu de
-/// portefeuille en MVP-0.
+/// Trois compositions, un seul arbre de donnees (manifeste : seul le format
+/// change la composition, jamais le theme) :
 ///
-/// Repris au lot R (sous-lot R2) : l'ecran passe par `PageShell` au lieu de son
-/// `Scaffold` propre, ses lignes deviennent des `ChildCard`, et la pastille
-/// « en direct » qui etait un `Container` decore passe par `StatusPill`, portee
-/// par la carte. La consequence de fond, la meme qu'a `ELV-02` : le cours en
-/// direct n'est plus un aplat `surfacePrimary` plein mais une carte posee, seul
-/// son bouton porte l'aplat sature, et deux enfants en cours ne font donc plus
-/// deux zones pleines (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3).
+/// - telephone : une colonne, cartes separees (V1) ;
+/// - tablette : la carte classe, puis une carte groupee (V2 B) ;
+/// - bureau : deux colonnes, carte classe a gauche, carte groupee a droite
+///   (V2 A, C).
+///
+/// **Ce que l'ecran ne fait plus**, et ou la fonction vit desormais (une
+/// fonction = un seul endroit) : « Assister » (l'observation se fait depuis
+/// la classe, lot O) ; « Gerer le foyer » et les dates d'acces (Foyer, lot B ;
+/// Compte, lot E) ; le lien « Mes groupes » (remplace par « Voir la
+/// classe »).
 class AccueilFamillePage extends ConsumerStatefulWidget {
-  /// Cree l'accueil du foyer.
+  /// Cree l'Accueil.
   const AccueilFamillePage({super.key, this.horloge = DateTime.now});
 
-  /// D'ou vient l'instant courant.
-  ///
-  /// Injectable pour la meme raison que sur `ELV-02` : le minuteur ecoule et le
-  /// partage entre « aujourd'hui » et « un autre jour » se comptent en minutes,
-  /// et un test cale sur l'horloge de la machine changerait de resultat selon
-  /// l'heure a laquelle la CI le lance.
+  /// L'horloge de l'appareil, **pour mesurer un ecoulement seulement** :
+  /// l'instant affiche est l'instant serveur lu a l'ouverture, avance du
+  /// temps ecoule depuis cette lecture. Injectable pour les tests.
   final DateTime Function() horloge;
 
   @override
@@ -143,18 +118,18 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
 }
 
 class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
+  /// La cadence de rafraichissement du compte a rebours. Trente secondes :
+  /// la ligne se lit a la minute, comme le reste du produit.
+  static const Duration _cadence = Duration(seconds: 30);
+
   Timer? _minuteur;
-  late DateTime _maintenant = widget.horloge();
+  DateTime? _ancre;
+  DateTime? _appareilALAncre;
 
   @override
   void initState() {
     super.initState();
-    // Le minuteur ecoule se lit en minutes, comme celui de `ENS-02` : le
-    // rafraichir a la seconde ferait travailler l'ecran soixante fois pour rien.
-    _minuteur = Timer.periodic(
-      const Duration(minutes: 1),
-      (Timer _) => setState(() => _maintenant = widget.horloge()),
-    );
+    _minuteur = Timer.periodic(_cadence, (Timer _) => setState(() {}));
   }
 
   @override
@@ -163,432 +138,317 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
     super.dispose();
   }
 
-  /// Ouvre la PORTE D'OBSERVATION de la seance.
+  /// L'instant serveur courant : l'ancre lue, plus l'ecoulement mesure par
+  /// l'appareil depuis sa lecture. `null` sans horloge serveur.
   ///
-  /// **Ce geste menait a la salle, il mene desormais a `/tc/observation`.**
-  /// La salle traitait le tuteur comme un participant de plus ; la porte
-  /// d'observation le traite comme ce qu'il est : quelqu'un qui vient voir si
-  /// son enfant participe, deux fois, deux minutes, sans micro ni camera.
-  ///
-  /// **L'inscription prealable a ete RETIREE, et ce n'est pas un oubli.**
-  /// `assisterEnTuteur` (RPC `assister_seance`, lot `CTR-01`) existait parce
-  /// que `autoriser_jeton_video` lit l'appartenance dans
-  /// `session_participants`, ou personne n'inscrivait le tuteur. Mais
-  /// `entrer_observation` fait cette inscription elle-meme, et fait en plus ce
-  /// que l'autre ne faisait pas : elle verifie le lien tuteur-enfant DANS ce
-  /// groupe, la politique d'observation du groupe, et le quota de visites.
-  /// Garder les deux, c'etait inscrire par deux portes aux regles differentes,
-  /// et laisser la plus ancienne -- celle qui ne verifie rien -- decider si le
-  /// parent entre.
-  ///
-  /// **Le refus se dit mieux qu'avant.** L'echec local disait « Le cours n'a
-  /// pas pu etre rejoint », toujours la meme phrase. `EntreeObservationPage`
-  /// nomme la cause : quota de visites atteint, temps epuise, observation
-  /// desactivee pour ce groupe, lien tuteur absent.
-  ///
-  /// L'identifiant de seance passe par l'URL et non par `extra` : c'est le
-  /// regime de la route `/tc/observation/:seanceId`, qui survit a un
-  /// rechargement sur le Web la ou `BilletSalle` ne survit pas.
-  void _assister(String seanceId) =>
-      GoRouter.of(context).go(Routes.tcObservation(seanceId));
+  /// ponytail: une seule lecture de l'horloge serveur par ouverture de
+  /// l'Accueil ; plafond : une derive de l'horloge de l'appareil pendant une
+  /// tres longue ouverture. Relire l'ancre periodiquement si cela se mesure.
+  DateTime? _maintenantServeur(DateTime? ancre) {
+    if (ancre == null) {
+      return null;
+    }
+    if (_ancre != ancre || _appareilALAncre == null) {
+      _ancre = ancre;
+      _appareilALAncre = widget.horloge();
+    }
+    return ancre.add(widget.horloge().difference(_appareilALAncre!));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    final AsyncValue<List<EleveDuFoyer>> enfants = ref.watch(
-      elevesDuFoyerProvider,
+    final AsyncValue<List<ProfilEleveFoyer>> profils = ref.watch(
+      profilsElevesFoyerProvider,
     );
-    final AsyncValue<List<Seance>> seances = ref.watch(seancesProvider);
-    final AsyncValue<List<Affectation>> affectations = ref.watch(
-      affectationsProvider,
+    final DateTime? maintenant = _maintenantServeur(
+      ref.watch(ancreServeurAccueilProvider).value,
     );
 
-    final List<EleveDuFoyer> foyer = enfants.value ?? const <EleveDuFoyer>[];
-    final List<Seance> toutes = seances.value ?? const <Seance>[];
-    final List<Affectation> liens = affectations.value ?? const <Affectation>[];
-
-    final bool enErreur =
-        seances.hasError || enfants.hasError || affectations.hasError;
-
-    final bool chargementInitial =
-        (!enfants.hasValue && enfants.isLoading) ||
-        (!seances.hasValue && seances.isLoading) ||
-        (!affectations.hasValue && affectations.isLoading);
-
-    // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
-    // colonne centree et bornee a 1200, le titre d'ecran et le bandeau hors
-    // ligne. L'ecran ne rend plus que son contenu.
     return PageShell(
       titre: t.tuteur.accueil.titre,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Ce qui se passe AVANT qu'un cours existe : personnalisation, choix
-          // d'horaire, constitution du groupe. Pose au-dessus des cartes parce
-          // que c'est ce qui attend un geste ; il se retire tout seul quand
-          // chaque apprenant du foyer a son groupe.
-          const BlocParcours(),
-          if (chargementInitial)
-            const Skeleton.liste(lignes: 4)
-          else if (enfants.hasValue && foyer.isEmpty)
-            EmptyState(
-              message: t.tuteur.accueil.aucunEnfant,
-              invitation: t.tuteur.accueil.aucunEnfantDetail,
-              libelleAction: t.enfant.titre,
-              onAction: () =>
-                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-            )
-          else
-            for (final EleveDuFoyer enfant in foyer)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                child: _CarteEnfant(
-                  enfant: enfant,
-                  seances: toutes
-                      .where((Seance s) => s.eleveId == enfant.id)
-                      .toList(),
-                  affecte: liens.any(
-                    (Affectation a) => a.active && a.eleveId == enfant.id,
-                  ),
-                  maintenant: _maintenant,
-                  onAssister: _assister,
-                ),
-              ),
-          // Le retour local a ete retire avec l'inscription prealable : le
-          // geste est desormais une navigation, qui n'echoue pas ici. Le refus
-          // d'observation se dit sur l'ecran d'observation, avec sa cause.
-          if (enErreur) ...<Widget>[
-            Ecart.vSm,
-            Text(
-              t.tuteur.accueil.erreur,
-              // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
-              // blanc, illisible sur le fond de page.
-              style: palette.inkAlert.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ],
-          Ecart.vXl,
-          SectionHeader(titre: t.tuteur.accueil.gererLeFoyer),
-          Ecart.vLg,
-          const _GererLeFoyer(),
-          if (foyer.isNotEmpty) ...<Widget>[
-            Ecart.vMd,
-            _BlocAcces(enfants: foyer),
-          ],
-        ],
+      child: BlocAsynchrone<List<ProfilEleveFoyer>>(
+        valeur: profils,
+        squelette: const _Squelette(),
+        onReessayer: () => ref.invalidate(elevesDuFoyerProvider),
+        vide: EtatSysteme(
+          nature: NatureEtat.aucunResultat,
+          titre: t.tuteur.accueil.foyerVideTitre,
+          phrase: t.tuteur.accueil.foyerVidePhrase,
+          libelleAction: t.tuteur.accueil.ajouterProfil,
+          onAction: () => GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+        ),
+        construire: (List<ProfilEleveFoyer> liste) =>
+            _Contenu(profils: liste, maintenantServeurUtc: maintenant),
       ),
     );
   }
 }
 
-/// Une carte par enfant, dans l'une de ses cinq phases.
-///
-/// `ConsumerWidget` parce que la phase « en recherche » a besoin des creneaux
-/// proposes pour l'enfant, et qu'ils vivent dans leur propre provider
-/// (`disponibilitesProvider`). Les quatre autres phases ne le lisent pas.
-class _CarteEnfant extends ConsumerWidget {
-  const _CarteEnfant({
-    required this.enfant,
-    required this.seances,
-    required this.affecte,
-    required this.maintenant,
-    required this.onAssister,
-  });
-
-  final EleveDuFoyer enfant;
-
-  /// Les seances de cet enfant, deja filtrees par l'ecran.
-  final List<Seance> seances;
-
-  final bool affecte;
-  final DateTime maintenant;
-
-  /// Ce que fait « Assister » : ouvrir la porte d'observation de la seance. La
-  /// carte ne connait ni la route ni le serveur, elle rend le geste a l'ecran
-  /// qui la porte.
-  final void Function(String seanceId) onAssister;
+/// La forme de l'Accueil pendant la premiere lecture.
+class _Squelette extends StatelessWidget {
+  const _Squelette();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final Seance? prochain = prochainCours(seances, maintenant);
-    final Seance? annulee = seanceAnnuleeDuJour(seances, maintenant);
-    final PhaseEnfant phase = phaseEnfant(
-      prochain: prochain,
-      annulee: annulee,
-      affecte: affecte,
-      maintenant: maintenant,
-    );
-
-    // Les creneaux ne sont lus que par la phase qui s'en sert : sans heure
-    // proposee, la recherche ne peut pas aboutir, et l'ecran le dit autrement.
-    final AsyncValue<List<Creneau>>? creneaux = phase == PhaseEnfant.enRecherche
-        ? ref.watch(disponibilitesProvider(enfant.id))
-        : null;
-    final List<Creneau> poses = creneaux?.value ?? const <Creneau>[];
-    final bool sansPlanning =
-        phase == PhaseEnfant.enRecherche &&
-        (creneaux?.hasValue ?? false) &&
-        poses.isEmpty;
-
-    return ChildCard(
-      prenom: enfant.prenom,
-      etat: _etat(
-        phase: phase,
-        prochain: prochain,
-        annulee: annulee,
-        poses: poses,
-        sansPlanning: sansPlanning,
-      ),
-      // `TUT-01` n'a pas d'ecran de detail par enfant : la carte n'est pas
-      // cliquable et ne porte pas de chevron, comme avant la reprise. Le chevron
-      // de la ligne « Normal » du catalogue attend un ecran de suivi par enfant
-      // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 3).
-      onPoserHoraire: sansPlanning
-          ? () => GoRouter.of(context).go(Routes.tuteurDisponibilites)
-          : null,
-      // Le bouton n'est cable que pendant une seance en cours : ailleurs, il
-      // n'y a pas de salle a rejoindre, et un bouton qui echoue apres le geste
-      // coute plus cher qu'un bouton absent. Meme regle quand l'observation
-      // reelle est fermee sur cette compilation (point P3,
-      // `observationTuteurReelleProvider`) : la porte ne pourrait pas s'ouvrir.
-      onAssister:
-          phase == PhaseEnfant.enCours &&
-              prochain != null &&
-              ref.watch(observationTuteurReelleProvider)
-          ? () => onAssister(prochain.id)
-          : null,
-    );
-  }
-
-  /// Traduit une [PhaseEnfant] en `EtatEnfant`, l'etat visuel scelle de
-  /// `ChildCard`, avec les phrases mises en forme pour un adulte.
-  EtatEnfant _etat({
-    required PhaseEnfant phase,
-    required Seance? prochain,
-    required Seance? annulee,
-    required List<Creneau> poses,
-    required bool sansPlanning,
-  }) => switch (phase) {
-    PhaseEnfant.enCours => EnfantEnCours(
-      // Le prenom de l'enseignant, jamais son nom de famille (ADR-008).
-      enseignant: prochain!.enseignantPrenom,
-      depuis: _ecoule(maintenant.difference(prochain.debut)),
-    ),
-    PhaseEnfant.coursAujourdhui => EnfantProchainCours(
-      t.tuteur.accueil.aujourdhui(
-        heure: _hhmm(prochain!.debut),
-        prenom: prochain.enseignantPrenom,
-      ),
-    ),
-    // Date et heure, contrairement a `ELV-02` qui compte en jours : le parent
-    // organise sa semaine. La reprise laisse tomber le preambule « Rien
-    // aujourd'hui » : la carte affiche directement le prochain rendez-vous, ce
-    // que le catalogue nomme « Rien aujourd'hui : prochain cours date ».
-    PhaseEnfant.rienAujourdhui => EnfantProchainCours(
-      prochain == null
-          ? t.tuteur.accueil.aucunCoursPrevu
-          : t.tuteur.accueil.unAutreJour(
-              jour: t.disponibilites.joursLongs[prochain.debut.weekday - 1],
-              heure: _hhmm(prochain.debut),
-              prenom: prochain.enseignantPrenom,
-            ),
-    ),
-    PhaseEnfant.enRecherche =>
-      sansPlanning ? const EnfantSansPlanning() : _enRecherche(poses),
-    PhaseEnfant.seanceAnnulee => EnfantSeanceAnnulee(
-      // Le motif tenait sur deux registres : un libelle de statut et une
-      // phrase. `ChildCard` porte le statut dans sa pastille « Annule » ; la
-      // phrase va dans `motif`. L'annulation tardive garde sa phrase a elle,
-      // la seule difference qui compte pour un parent.
-      motif: annulee!.statut == StatutSeance.annuleeTard
-          ? t.tuteur.accueil.motifAnnuleeTard
-          : t.tuteur.accueil.annulee(heure: _hhmm(annulee.debut)),
-      propose: prochain == null
-          ? t.tuteur.accueil.proposeAucun
-          : t.tuteur.accueil.proposeApres(
-              jour: t.disponibilites.joursLongs[prochain.debut.weekday - 1],
-              heure: _hhmm(prochain.debut),
-            ),
-    ),
-  };
-
-  /// L'enfant attend un enseignant, et des heures sont bien proposees : depuis
-  /// quand. La plus ancienne des heures, pas la derniere, parce que c'est
-  /// l'anciennete sur laquelle `ENS-06` trie son feed.
-  EtatEnfant _enRecherche(List<Creneau> poses) {
-    final DateTime? depuis = attendDepuis(poses);
-    return EnfantEnRecherche(
-      depuis == null
-          ? t.tuteur.accueil.enRechercheSansDate(prenom: enfant.prenom)
-          : t.tuteur.accueil.enRechercheDepuis(date: _jour(depuis)),
-    );
-  }
-}
-
-/// Le bloc « Gerer le foyer » : une seule carte elevee, deux lignes de menu.
-///
-/// Avant ce lot, chaque lien etait sa propre `BentoTile` : deux surfaces
-/// elevees empilees, du meme poids visuel que les `ChildCard` au dessus,
-/// exactement la « decoration universelle » que `00-bible-frontend-v2.md`
-/// section 11 bis interdit a `BentoTile`. Une seule `AppCard` les regroupe
-/// desormais, chaque ligne restant pressable pour sa propre destination
-/// (constat du 11 septembre 2026, capture d'ecran a l'appui).
-class _GererLeFoyer extends StatelessWidget {
-  const _GererLeFoyer();
-
-  @override
-  Widget build(BuildContext context) => AppCard(
-    marge: 0,
-    child: Column(
-      children: <Widget>[
-        _LigneMenu(
-          icone: AppIcons.appareil,
-          titre: t.tuteur.accueil.blocAppareils,
-          detail: t.tuteur.accueil.blocAppareilsDetail,
-          destination: Routes.tuteurFoyer,
-        ),
-        const Divider(height: 1),
-        _LigneMenu(
-          icone: AppIcons.reglages,
-          titre: t.tuteur.accueil.blocReglages,
-          detail: t.tuteur.accueil.blocReglagesDetail,
-          destination: Routes.tuteurReglages,
-        ),
-        const Divider(height: 1),
-        // Mes groupes (Teaching Core, lot A) : plafond de quatre destinations
-        // deja tenu par la barre, l'entree se pose ici plutot que d'en
-        // forcer une cinquieme (meme motif que ce bloc lui-meme pour les
-        // appareils et les reglages).
-        _LigneMenu(
-          icone: AppIcons.cours,
-          titre: LibellesGroupe.mesGroupesTitre,
-          detail: t.tuteur.accueil.blocGroupesDetail,
-          destination: Routes.tcGroupes,
-        ),
-      ],
-    ),
+  Widget build(BuildContext context) => const Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Skeleton(hauteur: AppSpacing.respiration + AppSpacing.xxxl),
+      Ecart.vXl,
+      Skeleton(hauteur: AppSpacing.respiration * 4),
+    ],
   );
 }
 
-/// Une ligne de menu vers un ecran : icone, titre, detail, chevron.
-class _LigneMenu extends StatelessWidget {
-  const _LigneMenu({
-    required this.icone,
-    required this.titre,
-    required this.detail,
-    required this.destination,
-  });
+/// L'Accueil, une fois les profils lus.
+class _Contenu extends ConsumerWidget {
+  const _Contenu({required this.profils, required this.maintenantServeurUtc});
 
-  final AppIcon icone;
-  final String titre;
-  final String detail;
-  final String destination;
+  final List<ProfilEleveFoyer> profils;
+  final DateTime? maintenantServeurUtc;
 
   @override
-  Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Gabarit gabarit = AppGabarit.de(context);
+    final bool compact = gabarit == Gabarit.mobile;
+    final ProfilEleveFoyer profil = profilRetenu(
+      profils,
+      ref.watch(selectionEleveProvider),
+    )!;
+    final String eleveId = profil.eleveId;
+    final GoRouter routeur = GoRouter.of(context);
 
-    return Pressable(
-      onPress: () => GoRouter.of(context).go(destination),
-      libelleSemantique: '$titre, $detail',
-      respecterCibleTactile: false,
-      arrondiFocus: AppRadius.arrondiSm,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: metriques.cibleTactile),
-        child: Padding(
-          padding: EdgeInsets.all(metriques.marge),
-          child: Row(
-            children: <Widget>[
-              IconTheme(
-                data: palette.inkAccent.asIconTheme(
-                  size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-                ),
-                child: Icon(icone.repos),
-              ),
-              Ecart.hMd,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(titre, style: textes.titleMedium),
-                    Text(detail, style: textes.bodySmall),
-                  ],
-                ),
-              ),
-              Ecart.hSm,
-              IconTheme(
-                data: palette.inkFaint.asIconTheme(size: AppSpacing.xl),
-                // Le chevron se miroite en arabe : une direction de lecture,
-                // pas une progression du temps (meme registre que
-                // `SignalRow`).
-                child: Icon(AppIcons.chevron.repos),
-              ),
-            ],
-          ),
-        ),
-      ),
+    final AsyncValue<ClasseFoyer?> classe = ref.watch(
+      classeDeLEleveProvider(eleveId),
     );
-  }
-}
+    final AsyncValue<SeanceFamille?> prochaine = ref.watch(
+      prochaineSeanceProvider(eleveId),
+    );
+    final AsyncValue<SeanceFamille?> derniere = ref.watch(
+      derniereSeanceProvider(eleveId),
+    );
+    final AsyncValue<List<AppareilAppaire>> appareils = ref.watch(
+      appareilsDuFoyerProvider,
+    );
+    final String? groupeId = classe.value?.classe.groupeId;
+    final AsyncValue<List<SlotAction>?>? travail = groupeId == null
+        ? null
+        : ref.watch(
+            travailAVenirProvider((groupeId: groupeId, studentId: eleveId)),
+          );
+    final String? derniereId = derniere.value?.seanceId;
+    final AsyncValue<PresenceParticipant?>? presence = derniereId == null
+        ? null
+        : ref.watch(
+            presenceEleveProvider((seanceId: derniereId, eleveId: eleveId)),
+          );
 
-/// Bloc secondaire : la date de fin d'acces de chaque enfant.
-///
-/// Elle tient lieu de portefeuille en MVP-0 : le produit n'a pas de solde, il a
-/// une echeance, et c'est elle que le parent veut voir sans la chercher.
-class _BlocAcces extends StatelessWidget {
-  const _BlocAcces({required this.enfants});
+    final Widget selecteur = SelecteurProfils(
+      profils: <ProfilSelectionnable>[
+        for (final ProfilEleveFoyer p in profils) _selectionnable(ref, p),
+      ],
+      selectionId: eleveId,
+      onSelection: (String id) =>
+          ref.read(selectionEleveProvider.notifier).choisir(id),
+      onAjouter: () => routeur.go(Routes.tuteurAjouterEnfant),
+    );
 
-  final List<EleveDuFoyer> enfants;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return BentoTile(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    final bool sansClasse =
+        classe.hasValue &&
+        classe.value == null &&
+        prochaine.hasValue &&
+        prochaine.value == null;
+    if (sansClasse) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(t.tuteur.accueil.acces, style: textes.titleMedium),
-          Ecart.vXs,
-          for (final EleveDuFoyer enfant in enfants)
-            Text(
-              enfant.finAcces == null
-                  ? t.tuteur.accueil.accesSansFin(prenom: enfant.prenom)
-                  : t.tuteur.accueil.accesJusqua(
-                      prenom: enfant.prenom,
-                      date: _jour(enfant.finAcces!),
-                    ),
-              style: textes.bodySmall,
+          selecteur,
+          Ecart.vXl,
+          EtatSysteme(
+            nature: NatureEtat.aucunResultat,
+            titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
+            phrase: t.tuteur.accueil.sansClassePhrase(prenom: profil.prenom),
+            libelleAction: t.classe.catalogue,
+            onAction: () => routeur.go(
+              Uri(
+                path: Routes.tuteurClassesCatalogue,
+                queryParameters: <String, String>{'eleve': eleveId},
+              ).toString(),
             ),
+          ),
+        ],
+      );
+    }
+
+    final bool inscrit = classe.value != null || prochaine.value != null;
+    final bool blocage =
+        inscrit &&
+        appareils.hasValue &&
+        !appareils.hasError &&
+        aucunAppareilPret(appareils.requireValue, eleveId);
+
+    final String? cleAvatar = profil.cleAvatar;
+    final Widget carte = CarteClasseSeance(
+      profil: profil,
+      urlPhotoEleve: cleAvatar == null
+          ? null
+          : ref.watch(avatarUrlProvider(cleAvatar)).value,
+      classe: classe,
+      seance: prochaine,
+      maintenantServeurUtc: maintenantServeurUtc,
+      compact: compact,
+      onVoirClasse: (String id) =>
+          routeur.go(Routes.classePour(id, eleveId: eleveId)),
+      onReessayerClasse: () => ref.invalidate(classeDeLEleveProvider(eleveId)),
+      onReessayerSeance: () => ref.invalidate(prochaineSeanceProvider(eleveId)),
+    );
+
+    final Widget? bandeau = blocage
+        ? BandeauBlocage(
+            prenom: profil.prenom,
+            compact: compact,
+            onConnecter: () => routeur.go(Routes.appairerPour(eleveId)),
+          )
+        : null;
+
+    final Widget preparation = ListePreparation(
+      travail: travail,
+      onVoirTout: groupeId == null
+          ? null
+          : () => routeur.go(
+              Uri(
+                path: Routes.classeSousPage(groupeId, 'travail'),
+                queryParameters: <String, String>{'eleve': eleveId},
+              ).toString(),
+            ),
+    );
+
+    final Widget derniereSeance = LigneDerniereSeance(
+      derniere: derniere,
+      presence: presence,
+      maintenantServeurUtc: maintenantServeurUtc,
+      onVoirHistorique: () => routeur.go(
+        Uri(
+          path: Routes.tuteurSuivi,
+          queryParameters: <String, String>{'eleve': eleveId},
+        ).toString(),
+      ),
+      onDetails: (String seanceId) => routeur.go(Routes.seancePour(seanceId)),
+      onReessayer: () => ref.invalidate(derniereSeanceProvider(eleveId)),
+    );
+
+    if (compact) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          selecteur,
+          Ecart.vXl,
+          carte,
+          if (bandeau != null) ...<Widget>[Ecart.vLg, bandeau],
+          Ecart.vLg,
+          AppCard(marge: AppSpacing.lg, child: preparation),
+          Ecart.vLg,
+          AppCard(marge: AppSpacing.lg, child: derniereSeance),
+        ],
+      );
+    }
+
+    // Tablette et bureau : blocage, preparation et derniere seance dans UNE
+    // carte groupee, sujets separes par un filet (decisions 1 ter, point 3).
+    final Widget carteGroupee = AppCard(
+      marge: AppSpacing.xxl,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (bandeau != null) ...<Widget>[
+            bandeau,
+            Ecart.vXl,
+            const FiletHorizontal(),
+            Ecart.vXl,
+          ],
+          preparation,
+          Ecart.vXl,
+          const FiletHorizontal(),
+          Ecart.vXl,
+          derniereSeance,
         ],
       ),
     );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        selecteur,
+        Ecart.vXl,
+        if (gabarit == Gabarit.desktop)
+          // Deux colonnes de hauteur egale, environ 62 / 38 (V2 A).
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(flex: 62, child: carte),
+                Ecart.hLg,
+                Expanded(flex: 38, child: carteGroupee),
+              ],
+            ),
+          )
+        else ...<Widget>[carte, Ecart.vLg, carteGroupee],
+      ],
+    );
+  }
+
+  /// Un profil du selecteur : prenom, portrait, et l'etat court calcule
+  /// **par la meme fonction** que la carte ([AffichageSeance]).
+  ProfilSelectionnable _selectionnable(WidgetRef ref, ProfilEleveFoyer p) {
+    final AsyncValue<SeanceFamille?> seance = ref.watch(
+      prochaineSeanceProvider(p.eleveId),
+    );
+    final String? cle = p.cleAvatar;
+    final String? photo = cle == null
+        ? null
+        : ref.watch(avatarUrlProvider(cle)).value;
+    final e = t.tuteur.accueil.etatCourt;
+
+    if (seance.hasError) {
+      return ProfilSelectionnable(
+        id: p.eleveId,
+        prenom: p.prenom,
+        etat: e.illisible,
+        urlPhoto: photo,
+      );
+    }
+    if (!seance.hasValue) {
+      return ProfilSelectionnable(
+        id: p.eleveId,
+        prenom: p.prenom,
+        etat: t.commun.chargement,
+        urlPhoto: photo,
+      );
+    }
+    final SeanceFamille? prochaine = seance.value;
+    if (prochaine == null) {
+      return ProfilSelectionnable(
+        id: p.eleveId,
+        prenom: p.prenom,
+        etat: e.aucune,
+        urlPhoto: photo,
+        point: PointStatut.neutre,
+      );
+    }
+    final AffichageSeance affichage = AffichageSeance.depuis(
+      prochaine,
+      maintenantServeurUtc: maintenantServeurUtc,
+    );
+    return ProfilSelectionnable(
+      id: p.eleveId,
+      prenom: p.prenom,
+      etat: affichage.etatCourt,
+      urlPhoto: photo,
+      point: affichage.point,
+    );
   }
 }
-
-/// Le temps ecoule depuis le debut du cours, dit a un adulte.
-String _ecoule(Duration depuis) {
-  final int minutes = depuis.inMinutes;
-  return minutes <= 0
-      ? t.tuteur.accueil.depuisInstant
-      : t.tuteur.accueil.depuisMinutes(minutes: '$minutes');
-}
-
-/// L'heure locale d'un instant, sur deux chiffres.
-String _hhmm(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:'
-    '${quand.minute.toString().padLeft(2, '0')}';
-
-/// Une date civile, telle que le reste des ecrans du tuteur l'ecrit.
-String _jour(DateTime quand) =>
-    '${quand.day.toString().padLeft(2, '0')}/'
-    '${quand.month.toString().padLeft(2, '0')}/${quand.year}';
-
-/// Vrai quand deux instants tombent le meme jour civil local.
-bool _memeJour(DateTime a, DateTime b) =>
-    a.year == b.year && a.month == b.month && a.day == b.day;
