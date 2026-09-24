@@ -6,6 +6,10 @@ Outil de capture fidèle pour comparer un écran aux maquettes du directeur
 - `outil_capture.dart` : les fonctions (polices réelles, vue fixée, capture PNG,
   planche maquette | capture).
 - `exemple_capture_test.dart` : un exemple complet, à copier pour un écran.
+- `coquille_capture_test.dart` : la coquille du tuteur sur le vrai routeur
+  (390x844 et 1440x900, clair et sombre, rail replié en 1024x768), et deux
+  planches si `CAPTURE_MAQUETTE_BUREAU` (Accueil bureau clair) et
+  `CAPTURE_MAQUETTE_MOBILE` (Mon compte mobile clair) désignent les maquettes.
 
 ## Sauté par défaut
 
