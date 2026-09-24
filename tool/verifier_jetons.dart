@@ -89,14 +89,62 @@ final RegExp _rayonLitteral = RegExp(
 /// Le renommage des jetons s'est fait en une passe au lot T. Sans cette regle,
 /// les deux vocabulaires cohabiteraient, et le mauvais serait recopie
 /// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 1.8).
+///
+/// Les deux familles francaises de la refonte, Instrument Sans et Bricolage
+/// Grotesque, sont retirees des assets depuis le 24/09/2026 (chantier Tuteur
+/// V1, decisions du coordinateur section 3.4) : elles rejoignent la liste.
+/// `\bNotoSans\b` n'attrape pas `NotoSansArabic` (pas de frontiere de mot).
 const Map<String, String> vocabulairePerime = <String, String>{
   'surfaceBase': 'surfaceCanvas',
   'borderDefault': 'borderHairline, borderResting ou borderStrong',
   'textOnLightAccent': 'inkAccent',
   'textOnLightAlert': 'inkAlert',
-  'VarelaRound': 'BricolageGrotesque',
-  'NotoSans': 'InstrumentSans',
+  'VarelaRound': 'DMSans (titres) ou PlusJakartaSans (corps)',
+  'NotoSans': 'PlusJakartaSans',
+  'InstrumentSans': 'PlusJakartaSans (AppFontFamily.corps)',
+  'BricolageGrotesque': 'DMSans (AppFontFamily.titre)',
 };
+
+/// Les familles de police autorisees : quatre de texte (deux arabes, deux
+/// francaises) et les deux graisses d'icones Phosphor, pas une de plus.
+///
+/// Miroir de `AppFontFamily.texte` et du `pubspec.yaml` (decisions du
+/// coordinateur du 24/09/2026, section 3.4). Toute famille declaree au
+/// `pubspec.yaml` ou nommee dans le code hors de cette liste est une
+/// violation, et chacune doit y etre declaree.
+const Set<String> famillesAutorisees = <String>{
+  'UthmanTahaNaskh',
+  'NotoSansArabic',
+  'PlusJakartaSans',
+  'DMSans',
+  'Phosphor',
+  'PhosphorFill',
+};
+
+/// Les deux seuls fichiers qui nomment une famille de police : la
+/// typographie (texte) et le catalogue d'icones (Phosphor). Partout ailleurs,
+/// un texte prend un role du theme ou un style d'`AppTypography`, jamais un
+/// `fontFamily` pose a la main : c'est ce qui garde la bascule d'une famille
+/// a un seul fichier.
+const List<String> _fichiersPolice = <String>[
+  _fichierTypographie,
+  'core/icons/app_icons.dart',
+];
+
+/// `fontFamily:` en argument nomme. `fontFamilyFallback:` n'est pas vise.
+final RegExp _familleDePolice = RegExp(r'\bfontFamily\s*:');
+
+/// Un nom de famille ecrit en toutes lettres : argument `fontFamily: '...'`,
+/// ou constante `static const String x = '...'` des fichiers de police.
+final RegExp _familleLitterale = RegExp(
+  r'''\bfontFamily\s*:\s*['"]([^'"]+)['"]''',
+);
+final RegExp _constanteChaine = RegExp(
+  r'''\bstatic\s+const\s+String\s+\w+\s*=\s*['"]([^'"]+)['"]''',
+);
+
+/// Une declaration de famille du `pubspec.yaml`.
+final RegExp _familleDuPubspec = RegExp(r'^\s*-\s*family:\s*(\S+)\s*$');
 
 /// Les icones se declarent en un seul endroit : `AppIcons`. Les polices
 /// Phosphor sont integrees en assets, il n'y a donc aucun paquet a importer,
@@ -327,6 +375,34 @@ void main() {
         }
       }
 
+      // 1 quinquies. Aucune famille de police posee hors de la typographie et
+      // du catalogue d'icones, et aucune famille hors de la liste fermee.
+      if (_familleDePolice.hasMatch(code) &&
+          !_fichiersPolice.any(chemin.endsWith)) {
+        violations.add(
+          Violation(chemin, numero, 'police-hors-typographie', ligne),
+        );
+      }
+      final List<String> famillesNommees = <String>[
+        for (final RegExpMatch m in _familleLitterale.allMatches(code))
+          m.group(1)!,
+        if (_fichiersPolice.any(chemin.endsWith))
+          for (final RegExpMatch m in _constanteChaine.allMatches(code))
+            m.group(1)!,
+      ];
+      for (final String famille in famillesNommees) {
+        if (!famillesAutorisees.contains(famille)) {
+          violations.add(
+            Violation(
+              chemin,
+              numero,
+              'famille-non-autorisee',
+              '$famille : familles autorisees ${famillesAutorisees.join(', ')}',
+            ),
+          );
+        }
+      }
+
       // 2. Une seule librairie d'icones, un seul point d'entree.
       if (_iconeHorsCatalogue.hasMatch(code) &&
           !chemin.endsWith('core/icons/app_icons.dart')) {
@@ -471,6 +547,37 @@ void main() {
           1,
           'arborescence-dupliquee',
           'un fichier de routes par mode existe',
+        ),
+      );
+    }
+  }
+
+  // 7 bis. Le `pubspec.yaml` ne declare que les familles autorisees, et
+  // toutes. Une police ajoutee sans passer par cette liste serait une
+  // cinquieme famille de texte, ce que la charte refuse.
+  final File pubspec = File('${racine.path}/pubspec.yaml');
+  if (pubspec.existsSync()) {
+    final List<String> lignes = pubspec.readAsLinesSync();
+    final Set<String> declarees = <String>{};
+    for (int i = 0; i < lignes.length; i++) {
+      final RegExpMatch? m = _familleDuPubspec.firstMatch(lignes[i]);
+      if (m == null) {
+        continue;
+      }
+      declarees.add(m.group(1)!);
+      if (!famillesAutorisees.contains(m.group(1))) {
+        violations.add(
+          Violation('pubspec.yaml', i + 1, 'famille-non-autorisee', lignes[i]),
+        );
+      }
+    }
+    for (final String attendue in famillesAutorisees.difference(declarees)) {
+      violations.add(
+        Violation(
+          'pubspec.yaml',
+          1,
+          'famille-absente',
+          '$attendue autorisee mais non declaree',
         ),
       );
     }
