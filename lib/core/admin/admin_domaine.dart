@@ -178,3 +178,23 @@ List<({String libelle, String chemin})> ongletsConfiguration() =>
         chemin: Routes.adminConfigurationConservationDonnees,
       ),
     ];
+
+/// Les deux fonctions pairs du domaine Securite et audit : le Journal et
+/// l'historique des observations (complement observation du mandat Tuteur
+/// V1, section 8 ; mapping des routes, ligne C4). Les acces des agents IA
+/// restent une fonction secondaire atteinte depuis l'Accueil.
+///
+/// Consommee par `SousNavigationDomaine` dans l'en-tete des deux ecrans : le
+/// Journal (lot E, `journal_page.dart`) et l'historique des observations (lot
+/// E, `observations_admin_page.dart`).
+List<({String libelle, String chemin})> ongletsSecurite() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.admin.journal.titre,
+        chemin: Routes.adminSecuriteAuditJournal,
+      ),
+      (
+        libelle: t.admin.observations.titre,
+        chemin: Routes.adminSecuriteAuditObservations,
+      ),
+    ];

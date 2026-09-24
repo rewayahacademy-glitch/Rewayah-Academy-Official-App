@@ -34,19 +34,19 @@ String? deciderRedirection({
     case PorteAcces.chargement:
       return null;
 
-    // La connexion a deux entrees : celle de l'adulte, et celle de l'enfant qui
-    // arrive avec un code. Le sous-arbre entier est donc public.
+    // Les sous-arbres publics, lus dans UNE liste (`Routes.publiques`) : la
+    // connexion (celle de l'adulte, et celle de l'enfant qui arrive avec un
+    // code, scanner et saisie compris), la recuperation d'acces, l'accueil
+    // public, et l'entree d'un agent IA (ADR-025), publique par construction :
+    // un porteur de jeton n'a, par definition, aucune session, et la renvoyer
+    // sur `/connexion` lui ferait perdre le jeton passe dans l'URL.
     case PorteAcces.deconnecte:
-      // L'entree d'un agent IA (ADR-025) est publique par construction : un
-      // porteur de jeton n'a, par definition, aucune session. La renvoyer sur
-      // `/connexion` lui presenterait un ecran de connexion humaine sur lequel
-      // il n'a rien a faire -- et lui ferait perdre le jeton passe dans l'URL.
-      if (_dansLeSousArbre(cheminDemande, Routes.agentEntree)) {
-        return null;
+      for (final String publique in Routes.publiques) {
+        if (_dansLeSousArbre(cheminDemande, publique)) {
+          return null;
+        }
       }
-      return _dansLeSousArbre(cheminDemande, Routes.connexion)
-          ? null
-          : Routes.connexion;
+      return Routes.connexion;
 
     // Session valide, aucun profil : l'inscription est la seule destination.
     // Sans cette porte, ce compte retombait en `deconnecte` et repartait sur
@@ -80,10 +80,23 @@ String? deciderRedirection({
       // quitte `/connexion` : le tunnel d'entree a fini son travail.
       if (cheminDemande == Routes.racine ||
           _dansLeSousArbre(cheminDemande, Routes.connexion) ||
+          _dansLeSousArbre(cheminDemande, Routes.bienvenue) ||
           _dansLeSousArbre(cheminDemande, Routes.inscription) ||
           _dansLeSousArbre(cheminDemande, Routes.agentEntree) ||
           _dansLeSousArbre(cheminDemande, Routes.attente)) {
         return racine;
+      }
+
+      // Le tuteur a son propre compte, quatrieme branche de sa coquille, et
+      // ses classes sous `/tuteur/classes` : ses anciennes adresses communes
+      // (`/compte*`, `/tc/groupes*`) le rejoignent la ou il a sa barre
+      // (mapping des routes Tuteur V1, section 2). Les autres roles gardent
+      // les leurs.
+      if (role == AppRole.guardian) {
+        final String? alias = _aliasTuteur(cheminDemande);
+        if (alias != null) {
+          return alias;
+        }
       }
 
       // La salle n'est ni partageable ni memorisable en favori (ADR-005). Le
@@ -114,6 +127,51 @@ String? deciderRedirection({
       final String prefixe = Routes.prefixePour(role);
       return _dansLeSousArbre(cheminDemande, prefixe) ? null : racine;
   }
+}
+
+/// La nouvelle adresse d'un chemin commun pour le tuteur, ou `null`.
+///
+/// - `/compte` et ses pages rejoignent `/tuteur/compte` : profil vers
+///   `informations`, reglages vers `preferences` ; les profils du foyer
+///   rejoignent le Foyer et la fiche d'un eleve ;
+/// - `/tc/groupes` rejoint l'Accueil (la classe se choisit depuis lui), et
+///   `/tc/groupes/:id` la classe `/tuteur/classes/:id`, dans la branche
+///   Accueil.
+String? _aliasTuteur(String chemin) {
+  if (chemin == Routes.compte) {
+    return Routes.tuteurCompte;
+  }
+  if (chemin == Routes.compteProfil) {
+    return Routes.compteTuteurSousPage('informations');
+  }
+  if (chemin == Routes.compteReglages) {
+    return Routes.tuteurComptePreferences;
+  }
+  if (chemin == Routes.compteProfils) {
+    return Routes.tuteurFoyer;
+  }
+  if (chemin.startsWith('${Routes.compteProfils}/')) {
+    final String reste = chemin.substring(Routes.compteProfils.length + 1);
+    return reste.isEmpty || reste.contains('/')
+        ? Routes.tuteurFoyer
+        : Routes.ficheElevePour(reste);
+  }
+  if (_dansLeSousArbre(chemin, Routes.compte)) {
+    // Une page de compte inconnue garde son nom sous `/tuteur/compte` : si
+    // elle n'y existe pas non plus, la page introuvable le dit.
+    return '${Routes.tuteurCompte}${chemin.substring(Routes.compte.length)}';
+  }
+  if (chemin == Routes.tcGroupes) {
+    return Routes.tuteurAccueil;
+  }
+  if (chemin.startsWith('${Routes.tcGroupes}/')) {
+    final String groupe = chemin
+        .substring(Routes.tcGroupes.length + 1)
+        .split('/')
+        .first;
+    return groupe.isEmpty ? Routes.tuteurAccueil : Routes.classePour(groupe);
+  }
+  return null;
 }
 
 /// Vrai quand [chemin] est [racine] ou l'une de ses pages filles.

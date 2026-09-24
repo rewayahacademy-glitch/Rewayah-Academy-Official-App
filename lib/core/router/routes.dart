@@ -20,12 +20,39 @@ abstract final class Routes {
   /// arrive avec un code n'a par construction aucune session.
   static const String connexionEleve = '/connexion/eleve';
 
+  /// Le scanner du QR d'appairage, sur l'appareil de l'eleve. Public comme
+  /// tout le sous-arbre de la connexion (contrainte R3) ; le code lu ne passe
+  /// jamais par l'URL (R7).
+  static const String connexionEleveScanner = '/connexion/eleve/scanner';
+
+  /// La saisie du code d'appairage, retour du scanner compris.
+  static const String connexionEleveCode = '/connexion/eleve/code';
+
+  /// La recuperation d'acces : un nouveau lien, jamais un mot de passe.
+  static const String connexionRecuperation = '/connexion/recuperation';
+
+  /// L'accueil public avant connexion.
+  static const String bienvenue = '/bienvenue';
+
   /// Inscription : le compte existe, le profil reste a creer.
   ///
   /// Atteignable uniquement depuis [PorteAcces.inscription], donc avec une
   /// session valide et aucune ligne `profiles`. Un compte deja profile ne peut
   /// pas y revenir.
   static const String inscription = '/inscription';
+
+  /// Les quatre etapes de l'inscription, sous le sous-arbre de la porte
+  /// `inscription` (contrainte R4 : aucun prefixe `/onboarding`).
+  static const String inscriptionUsage = '/inscription/usage';
+
+  /// Identite.
+  static const String inscriptionIdentite = '/inscription/identite';
+
+  /// Genre.
+  static const String inscriptionGenre = '/inscription/genre';
+
+  /// Recapitulatif, avant la creation du profil.
+  static const String inscriptionRecapitulatif = '/inscription/recapitulatif';
 
   /// Portail d'attente : dossier en verification, refuse, ou compte suspendu.
   static const String attente = '/attente';
@@ -64,11 +91,54 @@ abstract final class Routes {
   /// sur un ecran d'administration du foyer plutot que sur son suivi.
   static const String tuteurAccueil = '/tuteur';
 
-  /// Foyer et appareils.
+  /// Alias de l'Accueil (arbre du mandat) : redirige vers [tuteurAccueil].
+  ///
+  /// **La racine reste `/tuteur`** : `prefixePour(guardian)` en depend, et
+  /// changer sa valeur reduirait le prefixe de garde de tout `/tuteur/*`
+  /// (contrainte R2).
+  static const String tuteurAccueilAlias = '/tuteur/accueil';
+
+  /// Le Foyer, deuxieme destination du tuteur.
   static const String tuteurFoyer = '/tuteur/foyer';
 
-  /// Ajout d'un enfant au foyer.
-  static const String tuteurAjouterEnfant = '/tuteur/foyer/ajouter-enfant';
+  /// L'ajout d'un profil eleve, depuis l'Accueil, le Foyer ou le Compte.
+  ///
+  /// Le chemin est `/tuteur/foyer/ajouter` depuis le 24/09/2026 : l'ancien
+  /// `ajouter-enfant` portait une regle devenue fausse (un profil eleve peut
+  /// etre celui d'un adulte), et redirige ici. Le nom de la constante est
+  /// garde pour ses appelants.
+  static const String tuteurAjouterEnfant = '/tuteur/foyer/ajouter';
+
+  /// L'ancien chemin d'ajout, garde en redirection vers [tuteurAjouterEnfant].
+  static const String tuteurAjouterEnfantAncien =
+      '/tuteur/foyer/ajouter-enfant';
+
+  /// L'ajout du profil eleve du titulaire lui-meme (`?pour=moi`, parametre
+  /// non sensible) : ecran d'indisponibilite du lot B tant que DB-FOY-01
+  /// manque.
+  static const String tuteurAjouterPourMoi = '$tuteurAjouterEnfant?pour=moi';
+
+  /// Les appareils du foyer (ecran `AppareilsPage`), sur un chemin statique
+  /// declare avant `:eleveId` (contrainte R5).
+  static const String tuteurFoyerAppareils = '/tuteur/foyer/appareils';
+
+  /// La fiche d'un profil eleve du foyer.
+  static String ficheElevePour(String eleveId) => '$tuteurFoyer/$eleveId';
+
+  /// Une sous-page de la fiche : `informations`, `inscription`, `interface`,
+  /// `camera`, `acces` ou `appareils`.
+  static String ficheEleveSousPage(String eleveId, String segment) =>
+      '${ficheElevePour(eleveId)}/$segment';
+
+  /// Les segments des sous-pages de la fiche, dans l'ordre de la fiche.
+  static const List<String> segmentsFicheEleve = <String>[
+    'informations',
+    'inscription',
+    'interface',
+    'camera',
+    'acces',
+    'appareils',
+  ];
 
   /// Appairage d'un appareil pour un eleve donne.
   ///
@@ -105,8 +175,86 @@ abstract final class Routes {
   /// section 2).
   static const String tuteurSuivi = '/tuteur/suivi';
 
+  /// Le segment Observations de l'Historique.
+  static const String tuteurSuiviObservations = '/tuteur/suivi/observations';
+
+  /// Alias de l'Historique (arbre du mandat) : redirige vers [tuteurSuivi].
+  static const String tuteurHistoriqueAlias = '/tuteur/historique';
+
+  /// Racine du detail des seances, deuxieme racine de la branche Historique.
+  static const String tuteurSeances = '/tuteur/seances';
+
+  /// Le detail d'une seance passee.
+  static String seancePour(String seanceId) => '$tuteurSeances/$seanceId';
+
+  /// Le detail des visites d'observation d'une seance, pour un eleve donne.
+  static String observationsSeancePour(String seanceId, {String? eleveId}) =>
+      Uri(
+        path: '${seancePour(seanceId)}/observations',
+        queryParameters: eleveId == null
+            ? null
+            : <String, String>{'eleve': eleveId},
+      ).toString();
+
+  /// Racine des classes du tuteur, dans la branche Accueil. Pas de page a
+  /// cette adresse : une classe se choisit depuis l'Accueil.
+  static const String tuteurClasses = '/tuteur/classes';
+
+  /// Le choix d'une classe, statique et declare avant `:classeId` (R5).
+  static const String tuteurClassesCatalogue = '/tuteur/classes/catalogue';
+
+  /// La classe d'un eleve du foyer.
+  static String classePour(String classeId, {String? eleveId}) => Uri(
+    path: '$tuteurClasses/$classeId',
+    queryParameters: eleveId == null
+        ? null
+        : <String, String>{'eleve': eleveId},
+  ).toString();
+
+  /// Une sous-page de la classe : `planning`, `travail`, `ressources`,
+  /// `progression` ou `observer`.
+  static String classeSousPage(String classeId, String segment) =>
+      '$tuteurClasses/$classeId/$segment';
+
+  /// Les segments des sous-pages de la classe.
+  static const List<String> segmentsClasse = <String>[
+    'planning',
+    'travail',
+    'ressources',
+    'progression',
+  ];
+
   /// Le compte du tuteur, quatrieme destination de sa coquille.
   static const String tuteurCompte = '/tuteur/compte';
+
+  /// Une sous-page du compte : `informations`, `securite`, `acces`,
+  /// `paiements`, `preferences`, `aide`, `informations-legales`,
+  /// `consentements`.
+  static String compteTuteurSousPage(String segment) =>
+      '$tuteurCompte/$segment';
+
+  /// Les segments des sous-pages du compte du tuteur.
+  static const List<String> segmentsCompteTuteur = <String>[
+    'informations',
+    'securite',
+    'acces',
+    'paiements',
+    'preferences',
+    'aide',
+    'informations-legales',
+    'consentements',
+  ];
+
+  /// Les preferences du titulaire.
+  static const String tuteurComptePreferences = '/tuteur/compte/preferences';
+
+  /// L'apparence (Systeme, Clair, Sombre), sous-page des preferences.
+  static const String tuteurCompteApparence =
+      '/tuteur/compte/preferences/apparence';
+
+  /// Le consentement aux visites d'observation des comptes existants.
+  static const String tuteurCompteConsentements =
+      '/tuteur/compte/consentements';
 
   /// Les notifications du tuteur, ouvertes par la cloche de l'en-tete.
   static const String tuteurNotifications = '/tuteur/notifications';
@@ -116,11 +264,15 @@ abstract final class Routes {
   /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).
   ///
   /// Une tache focalisee se termine ou s'abandonne : ajout de profil,
-  /// emetteur QR d'appairage, questionnaire du parcours.
+  /// emetteur QR d'appairage, questionnaire du parcours, preferences et leur
+  /// sous-page, consentement.
   static bool estTacheFocalisee(String chemin) =>
       chemin == tuteurAjouterEnfant ||
       chemin.startsWith('$tuteurAppairer/') ||
-      chemin.startsWith('$tuteurParcours/');
+      chemin.startsWith('$tuteurParcours/') ||
+      chemin == tuteurComptePreferences ||
+      chemin.startsWith('$tuteurComptePreferences/') ||
+      chemin == tuteurCompteConsentements;
 
   // --- Enseignant ---------------------------------------------------------
 
@@ -264,6 +416,11 @@ abstract final class Routes {
   static const String adminSecuriteAuditAccesAgents =
       '/admin/securite-audit/acces-agents';
 
+  /// L'historique des visites d'observation, onglet pair du Journal
+  /// (complement observation du mandat Tuteur V1, section 8).
+  static const String adminSecuriteAuditObservations =
+      '/admin/securite-audit/observations';
+
   // --- Observation par un agent IA -----------------------------------------
 
   /// Entree d'un agent IA (`AGT-00`, ADR-025).
@@ -356,10 +513,13 @@ abstract final class Routes {
   /// admin, controleur.
   static String tcObservation(String seanceId) => '/tc/observation/$seanceId';
 
-  /// Routes atteignables sans session resolue.
+  /// Les sous-arbres atteignables sans session : **la liste unique que lit la
+  /// garde** d'un visiteur deconnecte (`deciderRedirection`, G-PUB). La
+  /// galerie de developpement a sa propre porte, compilee seulement sous
+  /// `GALERIE`.
   static const Set<String> publiques = <String>{
     connexion,
-    galerie,
+    bienvenue,
     agentEntree,
   };
 

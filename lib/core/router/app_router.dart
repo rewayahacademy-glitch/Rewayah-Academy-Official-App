@@ -16,6 +16,7 @@ import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_journal/journal_page.dart';
+import '../../features/admin_observations/observations_admin_page.dart';
 import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart';
 import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
 import '../../features/admin_pedagogie_programmes/programmes_page.dart';
@@ -25,27 +26,63 @@ import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
+import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/bienvenue/bienvenue_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
+import '../../features/classe_tuteur/catalogue_classes_page.dart';
+import '../../features/classe_tuteur/classe_tuteur_page.dart';
+import '../../features/classe_tuteur/planning_classe_page.dart';
+import '../../features/classe_tuteur/progression_classe_page.dart';
+import '../../features/classe_tuteur/ressources_classe_page.dart';
+import '../../features/classe_tuteur/travail_classe_page.dart';
+import '../../features/compte/acces_page.dart';
+import '../../features/compte/aide_page.dart';
+import '../../features/compte/apparence_page.dart';
 import '../../features/compte/compte_page.dart';
+import '../../features/compte/compte_tuteur_page.dart';
+import '../../features/compte/informations_legales_page.dart';
+import '../../features/compte/informations_page.dart';
+import '../../features/compte/paiements_page.dart';
+import '../../features/compte/preferences_page.dart';
+import '../../features/compte/securite_page.dart';
 import '../../features/connexion/connexion_page.dart';
+import '../../features/connexion/recuperation_page.dart';
+import '../../features/consentements/consentement_observation_page.dart';
 import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
-import '../../features/disponibilites/disponibilites_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
 import '../../features/dossier/signature_page.dart';
 import '../../features/eleve_connexion/eleve_connexion_page.dart';
+import '../../features/eleve_connexion/saisie_code_page.dart';
+import '../../features/eleve_connexion/scanner_page.dart';
 import '../../features/fiche_groupe/fiche_groupe_page.dart';
+import '../../features/foyer/creer_mon_profil_indisponible.dart';
+import '../../features/foyer/fiche/acces_page.dart';
+import '../../features/foyer/fiche/camera_page.dart';
+import '../../features/foyer/fiche/informations_page.dart';
+import '../../features/foyer/fiche/inscription_page.dart';
+import '../../features/foyer/fiche/interface_page.dart';
+import '../../features/foyer/fiche_eleve_page.dart';
+import '../../features/foyer/foyer_page.dart';
+import '../../features/inscription/etapes/genre_etape.dart';
+import '../../features/inscription/etapes/identite_etape.dart';
+import '../../features/inscription/etapes/recapitulatif_etape.dart';
+import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
+import '../../features/notifications/notifications_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
+import '../../features/suivi_foyer/detail_observations_page.dart';
+import '../../features/suivi_foyer/detail_seance_page.dart';
+import '../../features/suivi_foyer/observations_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
 import '../../features/tc_classe_live/routes_tc_e.dart';
@@ -122,9 +159,52 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) =>
             const EleveConnexionPage(),
       ),
+      // Le sous-arbre public de la connexion (contrainte R3) : l'appareil de
+      // l'eleve (scanner, saisie du code) et la recuperation d'acces n'ont,
+      // par construction, aucune session. Aucun code ni jeton dans l'URL (R7).
+      GoRoute(
+        path: Routes.connexionEleveScanner,
+        builder: (BuildContext _, GoRouterState _) => const ScannerPage(),
+      ),
+      GoRoute(
+        path: Routes.connexionEleveCode,
+        builder: (BuildContext _, GoRouterState _) => const SaisieCodePage(),
+      ),
+      GoRoute(
+        path: Routes.connexionRecuperation,
+        builder: (BuildContext _, GoRouterState _) => const RecuperationPage(),
+      ),
+      // L'accueil public. Le visiteur deconnecte est encore renvoye sur la
+      // connexion : la bascule vers `/bienvenue` suivra la livraison de
+      // l'ecran par le lot A (une redirection vers un ecran indisponible
+      // fermerait la porte d'entree).
+      GoRoute(
+        path: Routes.bienvenue,
+        builder: (BuildContext _, GoRouterState _) => const BienvenuePage(),
+      ),
       GoRoute(
         path: Routes.inscription,
         builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
+      ),
+      // Les quatre etapes de l'inscription, sous la porte `inscription` (R4).
+      // `/inscription` garde son ecran existant tant que le lot A n'a pas
+      // livre les etapes.
+      GoRoute(
+        path: Routes.inscriptionUsage,
+        builder: (BuildContext _, GoRouterState _) => const UsageEtape(),
+      ),
+      GoRoute(
+        path: Routes.inscriptionIdentite,
+        builder: (BuildContext _, GoRouterState _) => const IdentiteEtape(),
+      ),
+      GoRoute(
+        path: Routes.inscriptionGenre,
+        builder: (BuildContext _, GoRouterState _) => const GenreEtape(),
+      ),
+      GoRoute(
+        path: Routes.inscriptionRecapitulatif,
+        builder: (BuildContext _, GoRouterState _) =>
+            const RecapitulatifEtape(),
       ),
       // `AGT-00` : l'entree d'un agent IA (ADR-025). Publique, puisqu'un
       // porteur de jeton n'a par definition aucune session ; elle n'ouvre rien
@@ -237,12 +317,63 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ],
       ),
 
+      // Les alias du tuteur (arbre du mandat, mapping des routes sections 3
+      // et 4) : des redirections, jamais une seconde page. Declares AVANT la
+      // coquille, ils passent en premier ; la garde de role s'applique avant
+      // eux, un autre role n'y entre donc pas.
+      GoRoute(
+        path: Routes.tuteurAccueilAlias,
+        redirect: (BuildContext _, GoRouterState _) => Routes.tuteurAccueil,
+      ),
+      GoRoute(
+        path: Routes.tuteurHistoriqueAlias,
+        redirect: (BuildContext _, GoRouterState _) => Routes.tuteurSuivi,
+      ),
+      GoRoute(
+        path: '${Routes.tuteurHistoriqueAlias}/observations',
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.tuteurSuiviObservations,
+      ),
+      GoRoute(
+        path: Routes.tuteurAjouterEnfantAncien,
+        redirect: (BuildContext _, GoRouterState etat) => Uri(
+          path: Routes.tuteurAjouterEnfant,
+          queryParameters: etat.uri.queryParameters.isEmpty
+              ? null
+              : etat.uri.queryParameters,
+        ).toString(),
+      ),
+      // Le matching par disponibilites est remplace (`docs/current/00`) : la
+      // page reste dans le code, sa route mene au Foyer.
+      GoRoute(
+        path: Routes.tuteurDisponibilites,
+        redirect: (BuildContext _, GoRouterState _) => Routes.tuteurFoyer,
+      ),
+      GoRoute(
+        path: '${Routes.tuteurFoyer}/:eleveId/appareils/connexion',
+        redirect: (BuildContext _, GoRouterState etat) =>
+            Routes.appairerPour(_parametre(etat, 'eleveId')),
+      ),
+      // L'observation se rejoint par la seance, pas par la classe
+      // (`/tc/observation/:seanceId`) : tant que la classe ne sait pas
+      // resoudre la seance en cours (lots C et C-obs), cette adresse ramene a
+      // la classe, qui porte le bloc d'observation.
+      GoRoute(
+        path: '${Routes.tuteurClasses}/:classeId/observer',
+        redirect: (BuildContext _, GoRouterState etat) => Routes.classePour(
+          _parametre(etat, 'classeId'),
+          eleveId: etat.uri.queryParameters['eleve'],
+        ),
+      ),
+
       // Tuteur. Quatre branches, quatre destinations : Accueil, Foyer,
       // Historique, Compte (mandat Tuteur V1 section 4 ; structure du mapping
       // des routes, section 5). Une sous-page vit dans la branche de sa
       // destination : la barre reste visible, la destination parente reste
       // active, et le retour systeme revient en arriere au lieu de fermer
-      // l'application (contrainte R6).
+      // l'application (contrainte R6). Un segment statique est toujours
+      // declare avant son frere dynamique (R5). Aucun secret dans un chemin
+      // ni un parametre (R7) : des identifiants, que la RLS borne.
       StatefulShellRoute.indexedStack(
         builder:
             (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
@@ -252,46 +383,155 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   chemin: etat.uri.path,
                 ),
         branches: <StatefulShellBranch>[
+          // Accueil : notifications, choix d'une classe, classe et ses pages.
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurAccueil,
                 builder: (BuildContext _, GoRouterState _) =>
                     const AccueilFamillePage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'notifications',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const NotificationsPage(),
+                  ),
+                  GoRoute(
+                    path: 'classes/catalogue',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        CatalogueClassesPage(eleveId: _eleve(etat)),
+                  ),
+                  GoRoute(
+                    path: 'classes/:classeId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        ClasseTuteurPage(
+                          classeId: _parametre(etat, 'classeId'),
+                          eleveId: _eleve(etat),
+                        ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'planning',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            PlanningClassePage(
+                              classeId: _parametre(etat, 'classeId'),
+                              eleveId: _eleve(etat),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'travail',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            TravailClassePage(
+                              classeId: _parametre(etat, 'classeId'),
+                              eleveId: _eleve(etat),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'ressources',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            RessourcesClassePage(
+                              classeId: _parametre(etat, 'classeId'),
+                              eleveId: _eleve(etat),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'progression',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            ProgressionClassePage(
+                              classeId: _parametre(etat, 'classeId'),
+                              eleveId: _eleve(etat),
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
+          // Foyer : ajout de profil, appareils, emetteur QR, fiche et ses
+          // pages ; puis le parcours et les reglages par eleve, qui
+          // rejoindront la fiche quand le lot B l'aura livree (C6, C7).
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurFoyer,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const AppareilsPage(),
-              ),
-              GoRoute(
-                path: Routes.tuteurAjouterEnfant,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const AjouterEnfantPage(),
-              ),
-              GoRoute(
-                path: '${Routes.tuteurAppairer}/:eleveId',
-                builder: (BuildContext _, GoRouterState etat) => AppairagePage(
-                  eleveId: etat.pathParameters['eleveId'] ?? '',
-                ),
+                builder: (BuildContext _, GoRouterState _) => const FoyerPage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'ajouter',
+                    // `?pour=moi` : le profil eleve du titulaire lui-meme,
+                    // indisponible tant que DB-FOY-01 manque (mapping 7.1).
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        etat.uri.queryParameters['pour'] == 'moi'
+                        ? const CreerMonProfilIndisponible()
+                        : const AjouterEnfantPage(),
+                  ),
+                  GoRoute(
+                    path: 'appareils',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const AppareilsPage(),
+                  ),
+                  GoRoute(
+                    path: 'appairer/:eleveId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        AppairagePage(eleveId: _parametre(etat, 'eleveId')),
+                  ),
+                  GoRoute(
+                    path: ':eleveId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        FicheElevePage(eleveId: _parametre(etat, 'eleveId')),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'informations',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            InformationsElevePage(
+                              eleveId: _parametre(etat, 'eleveId'),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'inscription',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            InscriptionElevePage(
+                              eleveId: _parametre(etat, 'eleveId'),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'interface',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            InterfaceElevePage(
+                              eleveId: _parametre(etat, 'eleveId'),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'camera',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            CameraElevePage(
+                              eleveId: _parametre(etat, 'eleveId'),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'acces',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            AccesElevePage(
+                              eleveId: _parametre(etat, 'eleveId'),
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'appareils',
+                        builder: (BuildContext _, GoRouterState etat) =>
+                            AppareilsElevePage(
+                              eleveId: _parametre(etat, 'eleveId'),
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               // Le parcours de personnalisation et de choix d'horaire : une
               // tache focalisee de la branche Foyer.
               GoRoute(
                 path: '${Routes.tuteurParcours}/:eleveId',
                 builder: (BuildContext _, GoRouterState etat) =>
-                    ParcoursOffresPage(
-                      eleveId: etat.pathParameters['eleveId'] ?? '',
-                    ),
-              ),
-              GoRoute(
-                path: Routes.tuteurDisponibilites,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const DisponibilitesPage(),
+                    ParcoursOffresPage(eleveId: _parametre(etat, 'eleveId')),
               ),
               GoRoute(
                 path: Routes.tuteurReglages,
@@ -300,21 +540,95 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ),
             ],
           ),
+          // Historique : seances et observations, puis le detail d'une seance
+          // (deuxieme racine de la branche).
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurSuivi,
                 builder: (BuildContext _, GoRouterState _) =>
                     const SuiviFoyerPage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'observations',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const ObservationsPage(),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: '${Routes.tuteurSeances}/:seanceId',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    DetailSeancePage(seanceId: _parametre(etat, 'seanceId')),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'observations',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        DetailObservationsPage(
+                          seanceId: _parametre(etat, 'seanceId'),
+                          eleveId: _eleve(etat),
+                        ),
+                  ),
+                ],
               ),
             ],
           ),
+          // Compte.
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurCompte,
                 builder: (BuildContext _, GoRouterState _) =>
-                    const ComptePage(),
+                    const CompteTuteurPage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'informations',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const InformationsComptePage(),
+                  ),
+                  GoRoute(
+                    path: 'securite',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const SecuriteComptePage(),
+                  ),
+                  GoRoute(
+                    path: 'acces',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const AccesComptePage(),
+                  ),
+                  GoRoute(
+                    path: 'paiements',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PaiementsComptePage(),
+                  ),
+                  GoRoute(
+                    path: 'preferences',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PreferencesComptePage(),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'apparence',
+                        builder: (BuildContext _, GoRouterState _) =>
+                            const ApparenceComptePage(),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'aide',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const AideComptePage(),
+                  ),
+                  GoRoute(
+                    path: 'informations-legales',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const InformationsLegalesComptePage(),
+                  ),
+                  GoRoute(
+                    path: 'consentements',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const ConsentementObservationPage(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -571,6 +885,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: AccesAgentsPage(),
         ),
       ),
+      // L'historique des observations (complement observation du mandat
+      // Tuteur V1, section 8), onglet pair du Journal (`ongletsSecurite()`).
+      GoRoute(
+        path: Routes.adminSecuriteAuditObservations,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: ObservationsAdminPage(),
+        ),
+      ),
 
       // Anciennes routes plates : des redirections, jamais une seconde page
       // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md, table de compatibilite).
@@ -659,6 +982,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   );
 });
 
+/// Un parametre de chemin, ou la chaine vide (jamais une exception : un
+/// identifiant absent donne un ecran « introuvable », pas un plantage).
+String _parametre(GoRouterState etat, String nom) =>
+    etat.pathParameters[nom] ?? '';
+
+/// L'eleve concerne (`?eleve=`), s'il est donne. **Jamais une
+/// autorisation** : la selection se replie sur un profil du foyer (contrat
+/// K1), la RLS decide.
+String? _eleve(GoRouterState etat) {
+  final String? brut = etat.uri.queryParameters['eleve'];
+  return brut == null || brut.isEmpty ? null : brut;
+}
+
 /// Reveille go_router quand la session change.
 ///
 /// go_router attend un [Listenable] ; Riverpod fournit un flux d'etats. Ce pont
@@ -692,6 +1028,10 @@ List<String> cheminsDeclares(GoRouter routeur) {
             : '$prefixe/${route.path}';
         chemins.add(complet);
         parcourir(route.routes, complet);
+      } else if (route is ShellRouteBase) {
+        // Les branches d'une coquille : leurs routes sont des routes de
+        // premier niveau comme les autres.
+        parcourir(route.routes, prefixe);
       }
     }
   }
