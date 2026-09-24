@@ -7,7 +7,7 @@ Commit : `0fc023d` sur `ui/tuteur-v1-d` (base `cefab7f`). Statut : UI realisee, 
 | Fonction | Ecran unique | Route | Place |
 |---|---|---|---|
 | Afficher QR + code d'un eleve | Emetteur QR | `/tuteur/foyer/appairer/:eleveId` | colonne centree (M5) ; bureau : QR a gauche, consigne et code a droite |
-| Entree | Foyer > ligne eleve > « Ajouter un appareil » | depuis `/tuteur/foyer` (et `/tuteur/foyer/appareils`) | bouton de la ligne eleve (`appareils_page.dart`) |
+| Entree (REMPLACEE en LD-3, voir RAPPORT.md section 2) | ~~Foyer > ligne eleve > « Ajouter un appareil »~~ : bouton et cle supprimes en LD-3. Entree actuelle : Appareils d'un profil eleve > « Connecter un appareil » | `/tuteur/foyer/:eleveId/appareils` vers `/tuteur/foyer/appairer/:eleveId?retour=...` | action sous la liste (`appareils_eleve_page.dart`) |
 | Regenerer un code | Emetteur QR (etats expire, remplace, deja valable) | meme route | action dominante de l'ecran resultat |
 | Retour | disque retour 48 de l'en-tete | `retour` valide sinon `/tuteur/foyer/appareils` | en-tete |
 
