@@ -210,7 +210,18 @@
     "attenteMinutes": "le cours a commencé il y a {minutes} min"
   },
   "bienvenue": {
-    "titre": "Bienvenue"
+    "titre": "Bienvenue",
+    "accroche": "Apprendre le Coran en classe, avec un enseignant attitré",
+    "phrase": "Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.",
+    "pointsTitre": "Comment ça se passe",
+    "pointClasseTitre": "Une classe stable",
+    "pointClasse": "Les mêmes camarades et le même horaire, chaque semaine.",
+    "pointEnseignantTitre": "Un enseignant attitré",
+    "pointEnseignant": "Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.",
+    "pointFoyerTitre": "Un seul compte pour le foyer",
+    "pointFoyer": "Les séances de chaque élève du foyer se suivent depuis votre compte.",
+    "commencer": "Commencer",
+    "dejaCompte": "J'ai déjà un compte"
   },
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
@@ -249,6 +260,26 @@
     "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant.",
     "appareilEleveAide": "Vous êtes tuteur et vous préparez l'appareil d'un élève ?",
     "appareilEleve": "Connecter l'appareil d'un élève",
+    "renvoyer": "Renvoyer le lien",
+    "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
+    "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
+    "horsLigne": "Vous êtes hors ligne : le lien ne peut pas partir pour l'instant.",
+    "probleme": "Lien expiré ou jamais reçu ?",
+    "decouvrir": "Découvrir Rewayah Academy",
+    "recuperation": {
+      "titre": "Retrouver mon accès",
+      "intro": "Il n'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.",
+      "lienExpireTitre": "Ce lien n'est plus valable",
+      "lienExpire": "Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.",
+      "lienRefuseTitre": "La connexion n'a pas abouti",
+      "lienRefuse": "Ce lien n'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.",
+      "envoyer": "Recevoir un nouveau lien",
+      "envoyeTitre": "Nouveau lien envoyé",
+      "envoye": "Ouvrez le message envoyé à {courriel}, puis suivez le lien.",
+      "envoyeEncart": "Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.",
+      "autreAdresse": "Utiliser une autre adresse",
+      "revenirConnexion": "Revenir à la connexion"
+    },
     "feuilleAppareil": {
       "pourQui": "Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.",
       "etapesTitre": "Où trouver le code",

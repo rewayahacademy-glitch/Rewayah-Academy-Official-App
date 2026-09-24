@@ -432,6 +432,39 @@ class Traductions$bienvenue$fr {
 
 	/// fr: 'Bienvenue'
 	String get titre => 'Bienvenue';
+
+	/// fr: 'Apprendre le Coran en classe, avec un enseignant attitré'
+	String get accroche => 'Apprendre le Coran en classe, avec un enseignant attitré';
+
+	/// fr: 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.'
+	String get phrase => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.';
+
+	/// fr: 'Comment ça se passe'
+	String get pointsTitre => 'Comment ça se passe';
+
+	/// fr: 'Une classe stable'
+	String get pointClasseTitre => 'Une classe stable';
+
+	/// fr: 'Les mêmes camarades et le même horaire, chaque semaine.'
+	String get pointClasse => 'Les mêmes camarades et le même horaire, chaque semaine.';
+
+	/// fr: 'Un enseignant attitré'
+	String get pointEnseignantTitre => 'Un enseignant attitré';
+
+	/// fr: 'Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.'
+	String get pointEnseignant => 'Un Sayyid ou une Sayyida qui suit chaque élève d\'une séance à l\'autre.';
+
+	/// fr: 'Un seul compte pour le foyer'
+	String get pointFoyerTitre => 'Un seul compte pour le foyer';
+
+	/// fr: 'Les séances de chaque élève du foyer se suivent depuis votre compte.'
+	String get pointFoyer => 'Les séances de chaque élève du foyer se suivent depuis votre compte.';
+
+	/// fr: 'Commencer'
+	String get commencer => 'Commencer';
+
+	/// fr: 'J'ai déjà un compte'
+	String get dejaCompte => 'J\'ai déjà un compte';
 }
 
 // Path: attente
@@ -553,6 +586,25 @@ class Traductions$connexion$fr {
 	/// fr: 'Connecter l'appareil d'un élève'
 	String get appareilEleve => 'Connecter l\'appareil d\'un élève';
 
+	/// fr: 'Renvoyer le lien'
+	String get renvoyer => 'Renvoyer le lien';
+
+	/// fr: 'Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.'
+	String renvoye({required Object courriel}) => 'Un nouveau lien est parti à ${courriel}. Utilisez celui du message le plus récent.';
+
+	/// fr: 'Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.'
+	String get erreurTropTot => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.';
+
+	/// fr: 'Vous êtes hors ligne : le lien ne peut pas partir pour l'instant.'
+	String get horsLigne => 'Vous êtes hors ligne : le lien ne peut pas partir pour l\'instant.';
+
+	/// fr: 'Lien expiré ou jamais reçu ?'
+	String get probleme => 'Lien expiré ou jamais reçu ?';
+
+	/// fr: 'Découvrir Rewayah Academy'
+	String get decouvrir => 'Découvrir Rewayah Academy';
+
+	late final Traductions$connexion$recuperation$fr recuperation = Traductions$connexion$recuperation$fr.internal(_root);
 	late final Traductions$connexion$feuilleAppareil$fr feuilleAppareil = Traductions$connexion$feuilleAppareil$fr.internal(_root);
 }
 
@@ -2139,6 +2191,51 @@ class Traductions$commun$dates$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+}
+
+// Path: connexion.recuperation
+class Traductions$connexion$recuperation$fr {
+	Traductions$connexion$recuperation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retrouver mon accès'
+	String get titre => 'Retrouver mon accès';
+
+	/// fr: 'Il n'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.'
+	String get intro => 'Il n\'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.';
+
+	/// fr: 'Ce lien n'est plus valable'
+	String get lienExpireTitre => 'Ce lien n\'est plus valable';
+
+	/// fr: 'Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.'
+	String get lienExpire => 'Un lien de connexion ne sert qu\'une fois et expire au bout d\'un moment. Demandez-en un nouveau ci-dessous.';
+
+	/// fr: 'La connexion n'a pas abouti'
+	String get lienRefuseTitre => 'La connexion n\'a pas abouti';
+
+	/// fr: 'Ce lien n'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.'
+	String get lienRefuse => 'Ce lien n\'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.';
+
+	/// fr: 'Recevoir un nouveau lien'
+	String get envoyer => 'Recevoir un nouveau lien';
+
+	/// fr: 'Nouveau lien envoyé'
+	String get envoyeTitre => 'Nouveau lien envoyé';
+
+	/// fr: 'Ouvrez le message envoyé à {courriel}, puis suivez le lien.'
+	String envoye({required Object courriel}) => 'Ouvrez le message envoyé à ${courriel}, puis suivez le lien.';
+
+	/// fr: 'Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.'
+	String get envoyeEncart => 'Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.';
+
+	/// fr: 'Utiliser une autre adresse'
+	String get autreAdresse => 'Utiliser une autre adresse';
+
+	/// fr: 'Revenir à la connexion'
+	String get revenirConnexion => 'Revenir à la connexion';
 }
 
 // Path: connexion.feuilleAppareil
@@ -7985,6 +8082,17 @@ extension on Traductions {
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
 			'bienvenue.titre' => 'Bienvenue',
+			'bienvenue.accroche' => 'Apprendre le Coran en classe, avec un enseignant attitré',
+			'bienvenue.phrase' => 'Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.',
+			'bienvenue.pointsTitre' => 'Comment ça se passe',
+			'bienvenue.pointClasseTitre' => 'Une classe stable',
+			'bienvenue.pointClasse' => 'Les mêmes camarades et le même horaire, chaque semaine.',
+			'bienvenue.pointEnseignantTitre' => 'Un enseignant attitré',
+			'bienvenue.pointEnseignant' => 'Un Sayyid ou une Sayyida qui suit chaque élève d\'une séance à l\'autre.',
+			'bienvenue.pointFoyerTitre' => 'Un seul compte pour le foyer',
+			'bienvenue.pointFoyer' => 'Les séances de chaque élève du foyer se suivent depuis votre compte.',
+			'bienvenue.commencer' => 'Commencer',
+			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.',
@@ -8019,6 +8127,24 @@ extension on Traductions {
 			'connexion.erreurEnvoi' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
 			'connexion.appareilEleveAide' => 'Vous êtes tuteur et vous préparez l\'appareil d\'un élève ?',
 			'connexion.appareilEleve' => 'Connecter l\'appareil d\'un élève',
+			'connexion.renvoyer' => 'Renvoyer le lien',
+			'connexion.renvoye' => ({required Object courriel}) => 'Un nouveau lien est parti à ${courriel}. Utilisez celui du message le plus récent.',
+			'connexion.erreurTropTot' => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.',
+			'connexion.horsLigne' => 'Vous êtes hors ligne : le lien ne peut pas partir pour l\'instant.',
+			'connexion.probleme' => 'Lien expiré ou jamais reçu ?',
+			'connexion.decouvrir' => 'Découvrir Rewayah Academy',
+			'connexion.recuperation.titre' => 'Retrouver mon accès',
+			'connexion.recuperation.intro' => 'Il n\'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.',
+			'connexion.recuperation.lienExpireTitre' => 'Ce lien n\'est plus valable',
+			'connexion.recuperation.lienExpire' => 'Un lien de connexion ne sert qu\'une fois et expire au bout d\'un moment. Demandez-en un nouveau ci-dessous.',
+			'connexion.recuperation.lienRefuseTitre' => 'La connexion n\'a pas abouti',
+			'connexion.recuperation.lienRefuse' => 'Ce lien n\'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.',
+			'connexion.recuperation.envoyer' => 'Recevoir un nouveau lien',
+			'connexion.recuperation.envoyeTitre' => 'Nouveau lien envoyé',
+			'connexion.recuperation.envoye' => ({required Object courriel}) => 'Ouvrez le message envoyé à ${courriel}, puis suivez le lien.',
+			'connexion.recuperation.envoyeEncart' => 'Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.',
+			'connexion.recuperation.autreAdresse' => 'Utiliser une autre adresse',
+			'connexion.recuperation.revenirConnexion' => 'Revenir à la connexion',
 			'connexion.feuilleAppareil.pourQui' => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.',
 			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
 			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer et appareils.',
@@ -8311,6 +8437,8 @@ extension on Traductions {
 			'admin.attribution.motif' => 'Pourquoi passer outre ?',
 			'admin.attribution.motifRequis' => ({required Object prenom}) => '${prenom} n\'a pas posé cette heure. L\'attribuer quand même peut se justifier, et cela s\'inscrit au journal.',
 			'admin.attribution.attribuer' => ({required Object eleve, required Object enseignant}) => 'Attribuer ${eleve} à ${enseignant}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
@@ -8340,8 +8468,6 @@ extension on Traductions {
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.champSeuil' => 'Seuil maximal',
 			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
@@ -8825,6 +8951,8 @@ extension on Traductions {
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.offreTraduite' => 'Affiché à votre heure locale',
 			'parcours.offreJours' => ({required Object jours}) => '${jours}',
 			'parcours.offreChoisir' => 'Choisir cet horaire',
@@ -8854,8 +8982,6 @@ extension on Traductions {
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
-			_ => null,
-		} ?? switch (path) {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
@@ -9339,6 +9465,8 @@ extension on Traductions {
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune famille ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',
@@ -9368,8 +9496,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les groupes : celui-ci n\'a pas encore d\'élève.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.erreur' => 'Ce groupe n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Ce groupe n\'est pas l\'un des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
