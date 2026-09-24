@@ -447,8 +447,10 @@ class _OngletBarre extends StatelessWidget {
         libelleSemantique: destination.libelle,
         arrondiFocus: AppRadius.arrondiSm,
         child: ExcludeSemantics(
+          // Le soulignement pose sur le bord bas de la pilule, comme la
+          // maquette de Mon compte mobile (planche 0c2 contre maquette).
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            padding: const EdgeInsets.only(top: AppSpacing.sm),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -468,9 +470,9 @@ class _OngletBarre extends StatelessWidget {
                     ),
                   ),
                 ),
-                Ecart.vXs,
+                Ecart.vSm,
                 SizedBox(
-                  width: AppSpacing.xxl,
+                  width: AppSpacing.section,
                   height: NavShell.epaisseurSoulignement,
                   child: actif
                       ? DecoratedBox(
@@ -672,15 +674,31 @@ class _EnteteColonne extends StatelessWidget {
         onPress: onBasculer,
         libelleSemantique: libelle,
         arrondiFocus: AppRadius.arrondiFull,
+        // Un disque de 40 dans une cible de 48 (maquette V2 : bouton rond
+        // cercle, manifeste 3.4 : cible jamais sous 48).
         child: SizedBox.square(
           dimension: AppTouchTarget.standard,
           child: Center(
-            child: IconTheme(
-              data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-              child: Icon(
-                repliee
-                    ? AppIcons.deplierNavigation.repos
-                    : AppIcons.replierNavigation.repos,
+            child: SizedBox.square(
+              dimension: AppSpacing.section,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: palette.surfaceOverlay.background,
+                  border: Border.fromBorderSide(
+                    palette.contourCarte.asBorderSide(),
+                  ),
+                ),
+                child: Center(
+                  child: IconTheme(
+                    data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                    child: Icon(
+                      repliee
+                          ? AppIcons.deplierNavigation.repos
+                          : AppIcons.replierNavigation.repos,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
