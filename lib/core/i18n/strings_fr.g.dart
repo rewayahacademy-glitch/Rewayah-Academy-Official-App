@@ -121,6 +121,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$entete$fr entete = Traductions$commun$entete$fr.internal(_root);
 	late final Traductions$commun$selecteurProfils$fr selecteurProfils = Traductions$commun$selecteurProfils$fr.internal(_root);
 	late final Traductions$commun$theme$fr theme = Traductions$commun$theme$fr.internal(_root);
+	late final Traductions$commun$demarrage$fr demarrage = Traductions$commun$demarrage$fr.internal(_root);
 }
 
 // Path: reseau
@@ -2029,6 +2030,9 @@ class Traductions$commun$etats$fr {
 	/// fr: 'Toujours sans réponse. Réessayez un peu plus tard.'
 	String get reessaisEpuises => 'Toujours sans réponse. Réessayez un peu plus tard.';
 
+	/// fr: 'Rewayah a besoin d'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.'
+	String get horsLigneDemarrage => 'Rewayah a besoin d\'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.';
+
 	late final Traductions$commun$etats$actions$fr actions = Traductions$commun$etats$actions$fr.internal(_root);
 }
 
@@ -2087,6 +2091,18 @@ class Traductions$commun$theme$fr {
 
 	/// fr: 'Thème sombre'
 	String get sombre => 'Thème sombre';
+}
+
+// Path: commun.demarrage
+class Traductions$commun$demarrage$fr {
+	Traductions$commun$demarrage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouverture de Rewayah'
+	String get ouverture => 'Ouverture de Rewayah';
 }
 
 // Path: connexion.feuilleAppareil
@@ -5868,6 +5884,9 @@ class Traductions$commun$etats$actions$fr {
 	/// fr: 'Retour à l'accueil'
 	String get retourAccueil => 'Retour à l\'accueil';
 
+	/// fr: 'Se connecter'
+	String get seConnecter => 'Se connecter';
+
 	/// fr: 'Se reconnecter'
 	String get seReconnecter => 'Se reconnecter';
 
@@ -7803,8 +7822,10 @@ extension on Traductions {
 			'commun.etats.indisponible.titre' => 'Pas encore disponible',
 			'commun.etats.indisponible.phrase' => 'Cette fonction n\'est pas encore ouverte.',
 			'commun.etats.reessaisEpuises' => 'Toujours sans réponse. Réessayez un peu plus tard.',
+			'commun.etats.horsLigneDemarrage' => 'Rewayah a besoin d\'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.',
 			'commun.etats.actions.reessayer' => 'Réessayer',
 			'commun.etats.actions.retourAccueil' => 'Retour à l\'accueil',
+			'commun.etats.actions.seConnecter' => 'Se connecter',
 			'commun.etats.actions.seReconnecter' => 'Se reconnecter',
 			'commun.etats.actions.voirDossier' => 'Voir mon dossier',
 			'commun.etats.actions.reinitialiserFiltres' => 'Réinitialiser les filtres',
@@ -7819,6 +7840,7 @@ extension on Traductions {
 			'commun.theme.groupe' => 'Apparence',
 			'commun.theme.clair' => 'Thème clair',
 			'commun.theme.sombre' => 'Thème sombre',
+			'commun.demarrage.ouverture' => 'Ouverture de Rewayah',
 			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
@@ -8279,11 +8301,11 @@ extension on Traductions {
 			'admin.groupes.retirerTitre' => ({required Object prenom, required Object libelle}) => 'Retirer ${prenom} de ${libelle}',
 			'admin.groupes.retirerEnvoyer' => 'Retirer',
 			'admin.groupes.retirerErreur' => ({required Object message}) => 'Le retrait n\'a pas abouti : ${message}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Seuil maximal de ${libelle}',
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
@@ -8793,11 +8815,11 @@ extension on Traductions {
 			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.attribution' => 'Attribution',
+			_ => null,
+		} ?? switch (path) {
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
-			_ => null,
-		} ?? switch (path) {
 			'nav.admin.accueil' => 'Accueil',
 			'nav.admin.operations' => 'Opérations',
 			'nav.admin.personnes' => 'Personnes',
@@ -9307,11 +9329,11 @@ extension on Traductions {
 			'controleur.planning.etatEnCours' => 'En cours',
 			'controleur.planning.etatAVenir' => 'À venir',
 			'controleur.planning.etatIncident' => 'À vérifier',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.planning.tousEnseignants' => 'Tous les enseignants',
 			'controleur.planning.colonneEnseignant' => 'Enseignant',
 			'controleur.planning.colonneEleve' => 'Élève',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.planning.colonneHeure' => 'Heure locale',
 			'controleur.planning.colonneUtc' => 'UTC',
 			'controleur.planning.colonneEtat' => 'État',

@@ -2,6 +2,7 @@ import '../config/env.dart';
 import '../domain/enums.dart';
 import '../session/session_state.dart';
 import 'billet_salle.dart';
+import 'chemin_retour.dart';
 import 'routes.dart';
 
 /// Decide de la redirection a appliquer, ou `null` pour laisser passer.
@@ -13,11 +14,32 @@ import 'routes.dart';
 /// Rappel de cadrage : **ceci n'est pas une barriere de securite.** La
 /// protection reelle reste la RLS de l'etape 1. Une route atteinte malgre cette
 /// fonction ne donnerait acces a aucune donnee supplementaire.
+///
+/// Les etats transverses (mandat Tuteur V1 section 8) :
+///
+/// - [routeConnue] faux (aucune route ne correspond) : on laisse passer, et
+///   le routeur rend la page « introuvable », qui ne montre aucune donnee et
+///   ramene a l'accueil ou a la connexion selon la session ;
+/// - une route connue d'un autre role, ou un sous-arbre `/tc/` qui lui est
+///   ferme : la page « acces refuse » ([Routes.accesRefuse]), qui ramene a la
+///   racine du role ;
+/// - une route protegee demandee sans session : la connexion, avec le chemin
+///   demande en `retour` s'il est un chemin interne valide
+///   (`cheminRetourValide`) ; une fois connecte, on y retourne s'il est ouvert
+///   au role, sinon a la racine ;
+/// - aucune reponse du serveur a la lecture du profil : la page hors ligne
+///   ([Routes.horsLigne]), qui n'ouvre rien.
+///
+/// [cheminComplet] est l'adresse demandee avec sa requete (le `retour`), et
+/// [retour] le parametre `retour` de cette adresse.
 String? deciderRedirection({
   required SessionState session,
   required String cheminDemande,
   required DateTime maintenant,
   BilletSalle? billet,
+  bool routeConnue = true,
+  String? cheminComplet,
+  String? retour,
 }) {
   // La galerie de developpement echappe a la porte : elle ne montre que des
   // composants, aucune donnee. Elle n'est de toute facon pas compilee en
@@ -34,6 +56,11 @@ String? deciderRedirection({
     case PorteAcces.chargement:
       return null;
 
+    // Le serveur n'a pas repondu : une seule page, qui n'ouvre rien et
+    // relance la lecture. Jamais le portail d'attente, jamais un acces.
+    case PorteAcces.horsLigne:
+      return cheminDemande == Routes.horsLigne ? null : Routes.horsLigne;
+
     // Les sous-arbres publics, lus dans UNE liste (`Routes.publiques`) : la
     // connexion (celle de l'adulte, et celle de l'enfant qui arrive avec un
     // code, scanner et saisie compris), la recuperation d'acces, l'accueil
@@ -46,14 +73,28 @@ String? deciderRedirection({
           return null;
         }
       }
-      return Routes.connexion;
+      if (!routeConnue) {
+        return null;
+      }
+      // Session expiree, ou lien profond ouvert sans session : la connexion
+      // garde la destination, si c'en est une (R7 : un chemin interne valide,
+      // jamais la salle, la classe ni l'entree d'agent).
+      final String? destination = cheminDemande == Routes.racine
+          ? null
+          : cheminRetourValide(cheminComplet ?? cheminDemande);
+      return destination == null
+          ? Routes.connexion
+          : Uri(
+              path: Routes.connexion,
+              queryParameters: <String, String>{'retour': destination},
+            ).toString();
 
     // Session valide, aucun profil : l'inscription est la seule destination.
     // Sans cette porte, ce compte retombait en `deconnecte` et repartait sur
     // l'ecran de connexion en boucle
     // (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md` section 2.1).
     case PorteAcces.inscription:
-      return _dansLeSousArbre(cheminDemande, Routes.inscription)
+      return _dansLeSousArbre(cheminDemande, Routes.inscription) || !routeConnue
           ? null
           : Routes.inscription;
 
@@ -63,7 +104,7 @@ String? deciderRedirection({
     // entier qui est ouvert, pas la seule racine.
     case PorteAcces.attente:
     case PorteAcces.suspendu:
-      return _dansLeSousArbre(cheminDemande, Routes.attente)
+      return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null
           : Routes.attente;
 
@@ -75,15 +116,24 @@ String? deciderRedirection({
       final String racine = Routes.racinePour(role);
 
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,
-      // l'inscription ou le portail d'attente, sous-arbres compris.
-      // Une session d'agent resolue quitte `/agent` comme un compte connecte
-      // quitte `/connexion` : le tunnel d'entree a fini son travail.
+      // l'inscription, le portail d'attente ou la page hors ligne,
+      // sous-arbres compris. Une session d'agent resolue quitte `/agent`
+      // comme un compte connecte quitte `/connexion` : le tunnel d'entree a
+      // fini son travail. Au sortir de la connexion, la destination gardee
+      // en `retour` est reprise si elle est valide et ouverte au role.
       if (cheminDemande == Routes.racine ||
+          cheminDemande == Routes.horsLigne ||
           _dansLeSousArbre(cheminDemande, Routes.connexion) ||
           _dansLeSousArbre(cheminDemande, Routes.bienvenue) ||
           _dansLeSousArbre(cheminDemande, Routes.inscription) ||
           _dansLeSousArbre(cheminDemande, Routes.agentEntree) ||
           _dansLeSousArbre(cheminDemande, Routes.attente)) {
+        if (cheminDemande == Routes.connexion) {
+          final String? reprise = _reprise(session, retour, maintenant);
+          if (reprise != null) {
+            return reprise;
+          }
+        }
         return racine;
       }
 
@@ -99,6 +149,12 @@ String? deciderRedirection({
         }
       }
 
+      // Aucune route ne correspond : la page introuvable le dit, sans rien
+      // montrer, et ramene a l'accueil du role.
+      if (!routeConnue) {
+        return null;
+      }
+
       // La salle n'est ni partageable ni memorisable en favori (ADR-005). Le
       // billet ne transite pas par l'URL : une adresse copiee, rouverte dans un
       // autre onglet ou le lendemain, arrive sans billet et repart d'ou elle
@@ -109,8 +165,10 @@ String? deciderRedirection({
       }
 
       // Le compte est un espace commun : chaque role actif peut consulter ses
-      // informations et ses preferences sans changer d'espace metier.
-      if (_dansLeSousArbre(cheminDemande, Routes.compte)) {
+      // informations et ses preferences sans changer d'espace metier. La page
+      // « acces refuse » est ouverte a tous, par construction.
+      if (_dansLeSousArbre(cheminDemande, Routes.compte) ||
+          cheminDemande == Routes.accesRefuse) {
         return null;
       }
 
@@ -122,11 +180,39 @@ String? deciderRedirection({
         return null;
       }
 
-      // Une route d'un autre role demandee directement par URL renvoie chez
-      // soi, sur le Web comme ailleurs.
+      // Une route d'un autre role demandee directement par URL n'ouvre rien,
+      // sur le Web comme ailleurs : la page « acces refuse » le dit, et
+      // ramene a la racine du role.
       final String prefixe = Routes.prefixePour(role);
-      return _dansLeSousArbre(cheminDemande, prefixe) ? null : racine;
+      return _dansLeSousArbre(cheminDemande, prefixe)
+          ? null
+          : Routes.accesRefuse;
   }
+}
+
+/// La destination gardee en `retour`, si elle est un chemin interne valide et
+/// **ouverte a cette session** ; sinon `null` (la racine du role).
+String? _reprise(SessionState session, String? retour, DateTime maintenant) {
+  final String? cible = cheminRetourValide(retour);
+  if (cible == null) {
+    return null;
+  }
+  final String chemin = Uri.parse(cible).path;
+  // Jamais de retour vers le tunnel d'entree lui-meme : ce serait une boucle.
+  if (chemin == Routes.racine ||
+      _dansLeSousArbre(chemin, Routes.connexion) ||
+      _dansLeSousArbre(chemin, Routes.inscription) ||
+      _dansLeSousArbre(chemin, Routes.attente)) {
+    return null;
+  }
+  return deciderRedirection(
+            session: session,
+            cheminDemande: chemin,
+            maintenant: maintenant,
+          ) ==
+          null
+      ? cible
+      : null;
 }
 
 /// La nouvelle adresse d'un chemin commun pour le tuteur, ou `null`.

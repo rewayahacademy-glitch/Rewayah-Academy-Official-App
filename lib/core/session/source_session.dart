@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
+import '../theme/app_delais.dart';
 import 'claims_jwt.dart';
 import 'session_state.dart';
 
@@ -76,11 +77,14 @@ class SourceSessionSupabase implements SourceSession {
 
   Future<_ProfilLu> _lireProfil(String profileId) async {
     try {
+      // Borne : sans elle, une requete sans reponse laissait l'ecran de
+      // demarrage indefiniment (C01 section 4).
       final Map<String, dynamic>? ligne = await _client
           .from('profiles')
           .select('account_status, student_profiles(interface_mode)')
           .eq('id', profileId)
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(AppDelais.requeteMax);
 
       // Aucune ligne, mais la requete a abouti : le compte existe et son profil
       // reste a creer. C'est une inscription a terminer, pas un dossier a
@@ -113,12 +117,21 @@ class SourceSessionSupabase implements SourceSession {
         InterfaceMode.standard,
         LectureProfil.echouee,
       );
-    } on Object {
-      // Meme raisonnement pour une panne reseau : on ferme.
+    } on TypeError {
+      // Une ligne illisible : le serveur a repondu, autrement qu'attendu.
       return const _ProfilLu(
         null,
         InterfaceMode.standard,
         LectureProfil.echouee,
+      );
+    } on Object {
+      // Aucune reponse exploitable du serveur : reseau coupe, delai depasse,
+      // transport en echec. On ferme aussi, mais sur l'etat hors ligne, qui
+      // n'ouvre rien et le dit (mandat Tuteur V1 section 8, X21).
+      return const _ProfilLu(
+        null,
+        InterfaceMode.standard,
+        LectureProfil.injoignable,
       );
     }
   }

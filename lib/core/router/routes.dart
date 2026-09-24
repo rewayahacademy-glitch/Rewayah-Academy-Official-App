@@ -513,6 +513,14 @@ abstract final class Routes {
   /// admin, controleur.
   static String tcObservation(String seanceId) => '/tc/observation/$seanceId';
 
+  /// La page « acces refuse » : une route connue d'un autre role, demandee
+  /// par URL. Ouverte a tout compte actif ; elle ramene a la racine du role.
+  static const String accesRefuse = '/acces-refuse';
+
+  /// La page « hors ligne » du demarrage : la session existe, mais le serveur
+  /// n'a pas repondu a la lecture du profil. Elle n'ouvre rien.
+  static const String horsLigne = '/hors-ligne';
+
   /// Les sous-arbres atteignables sans session : **la liste unique que lit la
   /// garde** d'un visiteur deconnecte (`deciderRedirection`, G-PUB). La
   /// galerie de developpement a sa propre porte, compilee seulement sous

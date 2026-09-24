@@ -93,7 +93,6 @@ import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
-import '../i18n/strings.g.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -104,7 +103,7 @@ import '../widgets/entete_page.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
-import 'ecran_a_construire.dart';
+import 'etats_routeur.dart';
 import 'redirection.dart';
 import 'routes.dart';
 
@@ -142,13 +141,33 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         cheminDemande: etat.matchedLocation,
         billet: etat.extra is BilletSalle ? etat.extra! as BilletSalle : null,
         maintenant: DateTime.now(),
+        // Aucune route ne correspond : la page introuvable, pas un renvoi
+        // silencieux (mandat Tuteur V1 section 8).
+        routeConnue: etat.error == null,
+        cheminComplet: etat.uri.toString(),
+        retour: etat.uri.queryParameters['retour'],
       );
     },
+    // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui
+    // ramene a l'accueil ou a la connexion selon la session. Jamais l'ecran
+    // anglais de go_router ni l'exception brute.
+    errorBuilder: (BuildContext _, GoRouterState _) => const PageIntrouvable(),
     routes: <RouteBase>[
+      // L'ecran neutre du demarrage, le temps de resoudre la session.
       GoRoute(
         path: Routes.racine,
-        builder: (BuildContext _, GoRouterState _) =>
-            EcranAConstruire(destination: t.commun.chargement),
+        builder: (BuildContext _, GoRouterState _) => const EcranDemarrage(),
+      ),
+      // Les etats transverses qui sont des pages : l'acces refuse (ouvert a
+      // tout compte actif) et le hors ligne du demarrage (la seule page d'une
+      // session dont le profil n'a pas pu etre lu).
+      GoRoute(
+        path: Routes.accesRefuse,
+        builder: (BuildContext _, GoRouterState _) => const PageAccesRefuse(),
+      ),
+      GoRoute(
+        path: Routes.horsLigne,
+        builder: (BuildContext _, GoRouterState _) => const PageHorsLigne(),
       ),
       GoRoute(
         path: Routes.connexion,

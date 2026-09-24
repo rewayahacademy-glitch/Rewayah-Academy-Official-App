@@ -58,9 +58,11 @@
         "phrase": "Cette fonction n'est pas encore ouverte."
       },
       "reessaisEpuises": "Toujours sans réponse. Réessayez un peu plus tard.",
+      "horsLigneDemarrage": "Rewayah a besoin d'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.",
       "actions": {
         "reessayer": "Réessayer",
         "retourAccueil": "Retour à l'accueil",
+        "seConnecter": "Se connecter",
         "seReconnecter": "Se reconnecter",
         "voirDossier": "Voir mon dossier",
         "reinitialiserFiltres": "Réinitialiser les filtres",
@@ -82,6 +84,9 @@
       "groupe": "Apparence",
       "clair": "Thème clair",
       "sombre": "Thème sombre"
+    },
+    "demarrage": {
+      "ouverture": "Ouverture de Rewayah"
     }
   },
   "reseau": {

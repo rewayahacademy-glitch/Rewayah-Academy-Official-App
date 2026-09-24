@@ -31,6 +31,12 @@ enum PorteAcces {
   /// Compte suspendu. Portail d'attente, avec un motif different.
   suspendu,
 
+  /// La session existe, mais le serveur n'a pas repondu a la lecture du
+  /// profil (reseau coupe, delai depasse) : **rien n'est ouvert**, et
+  /// l'ecran dit « hors ligne » au lieu d'afficher le portail d'un dossier
+  /// qui n'est pas en attente (mandat Tuteur V1 section 8, contradiction X21).
+  horsLigne,
+
   /// Acces complet aux routes du role.
   actif,
 }
@@ -51,8 +57,12 @@ enum LectureProfil {
   /// Lue, une ligne.
   presente,
 
-  /// La lecture a echoue, reseau ou refus. On ne devine pas.
+  /// Le serveur a repondu par un refus ou une erreur. On ne devine pas.
   echouee,
+
+  /// Le serveur n'a pas repondu : reseau coupe ou delai depasse. Ni une
+  /// absence, ni un refus : on ferme, et on le dit.
+  injoignable,
 }
 
 /// L'etat de session dont depend toute la navigation.
@@ -148,10 +158,15 @@ class SessionState {
       case LectureProfil.absente:
         return PorteAcces.inscription;
 
-      // Refus ou reseau : on ferme. Ouvrir l'inscription ici laisserait un
-      // compte suspendu s'en refabriquer un.
+      // Refus : on ferme. Ouvrir l'inscription ici laisserait un compte
+      // suspendu s'en refabriquer un.
       case LectureProfil.echouee:
         return PorteAcces.attente;
+
+      // Aucune reponse : on ferme aussi, mais sur l'etat hors ligne, pas sur
+      // le portail d'un dossier qui n'attend rien.
+      case LectureProfil.injoignable:
+        return PorteAcces.horsLigne;
 
       case LectureProfil.presente:
         // Le profil existe mais le jeton ne porte pas encore son role : c'est
