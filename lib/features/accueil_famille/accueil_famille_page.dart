@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Comme partout ailleurs : le type d'une famille de providers n'est pas exporte
@@ -27,29 +25,12 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
+import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
-
-/// L'instant serveur lu a l'ouverture de l'Accueil (`maintenant_serveur()`,
-/// contrat K2), ou `null` quand aucune horloge serveur ne repond.
-///
-/// `null` n'est pas une panne : chaque seance passe alors en
-/// `horaireIncertain`, sans « Salle ouverte » ni compte a rebours affirme.
-/// **Jamais `DateTime.now()` a sa place.**
-final FutureProvider<DateTime?> ancreServeurAccueilProvider =
-    FutureProvider<DateTime?>((Ref ref) async {
-      try {
-        return (await ref
-                .watch(portSeancesFamilleProvider)
-                .maintenantServeurUtc())
-            .toUtc();
-      } on Object {
-        return null;
-      }
-    });
 
 /// La classe courante d'un eleve (contrat K6), `null` s'il n'en a pas.
 ///
@@ -117,52 +98,17 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
   ConsumerState<AccueilFamillePage> createState() => _AccueilFamillePageEtat();
 }
 
-class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage> {
-  /// La cadence de rafraichissement du compte a rebours. Trente secondes :
-  /// la ligne se lit a la minute, comme le reste du produit.
-  static const Duration _cadence = Duration(seconds: 30);
-
-  Timer? _minuteur;
-  DateTime? _ancre;
-  DateTime? _appareilALAncre;
-
+class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
+    with AncreHorlogeServeur<AccueilFamillePage> {
   @override
-  void initState() {
-    super.initState();
-    _minuteur = Timer.periodic(_cadence, (Timer _) => setState(() {}));
-  }
-
-  @override
-  void dispose() {
-    _minuteur?.cancel();
-    super.dispose();
-  }
-
-  /// L'instant serveur courant : l'ancre lue, plus l'ecoulement mesure par
-  /// l'appareil depuis sa lecture. `null` sans horloge serveur.
-  ///
-  /// ponytail: une seule lecture de l'horloge serveur par ouverture de
-  /// l'Accueil ; plafond : une derive de l'horloge de l'appareil pendant une
-  /// tres longue ouverture. Relire l'ancre periodiquement si cela se mesure.
-  DateTime? _maintenantServeur(DateTime? ancre) {
-    if (ancre == null) {
-      return null;
-    }
-    if (_ancre != ancre || _appareilALAncre == null) {
-      _ancre = ancre;
-      _appareilALAncre = widget.horloge();
-    }
-    return ancre.add(widget.horloge().difference(_appareilALAncre!));
-  }
+  DateTime Function() get horlogeAppareil => widget.horloge;
 
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<ProfilEleveFoyer>> profils = ref.watch(
       profilsElevesFoyerProvider,
     );
-    final DateTime? maintenant = _maintenantServeur(
-      ref.watch(ancreServeurAccueilProvider).value,
-    );
+    final DateTime? maintenant = maintenantServeur();
 
     return PageShell(
       titre: t.tuteur.accueil.titre,
