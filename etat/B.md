@@ -1,6 +1,9 @@
 # Avancement du poste B
 
-(aucune ligne pour l'instant)
+## DIRECTIVE DU DIRECTEUR (24/09, 22 h 40) : pour les DEUX postes, à reporter dans COORDINATION.md par A
+
+Interdit désormais de lancer une tâche d'agent trop grosse. Tout est découpé pour que **chaque agent (avec ses sous-agents) finisse sa tâche en moins de 40 minutes**. Motif : l'ordinateur peut s'éteindre, et il ne doit pas tourner 24 h ; une coupure ne doit jamais faire perdre des heures de travail.
+Application sur le poste B dès le lot A : chaque agent note l'heure de départ, et au plus tard à 35 min il committe et pousse ce qui est fait (même incomplet), écrit dans etat/B.md où il s'arrête et ce qui reste, puis s'arrête ; un nouvel agent reprend. Un sous-paquet est coupé en tâches courtes (code, puis tests et captures, puis preuve et tableau). Poste A : merci d'appliquer la même règle à C, E, O et de la confirmer dans ETAT_A.md.
 
 ## Lot B
 
