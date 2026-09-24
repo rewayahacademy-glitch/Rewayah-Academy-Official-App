@@ -159,6 +159,27 @@ void main() {
       expect(find.byIcon(AppIcons.flecheAction.repos), findsNothing);
     });
 
+    testWidgets('en Interface guidee, le CTA garde l aplat qui se detache', (
+      WidgetTester tester,
+    ) async {
+      // Revue phase 0 (jetons D3) : la lavande douce ne se detache de sa
+      // carte qu'a 1,5:1. Tant que le directeur n'a pas tranche, le CTA guide
+      // reste `surfacePrimary`, a 3:1 au moins contre chaque surface.
+      await tester.pumpWidget(
+        hoteComposant(
+          const ActionPrincipale(libelle: 'Rejoindre', onPress: _rien),
+          mode: InterfaceMode.enfant,
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.color, palette.surfacePrimary.background);
+      final Text libelle = tester.widget<Text>(find.text('Rejoindre'));
+      expect(libelle.style!.color, palette.surfacePrimary.onBackground);
+    });
+
     testWidgets('fleche et pilule : l anatomie du CTA des maquettes', (
       WidgetTester tester,
     ) async {

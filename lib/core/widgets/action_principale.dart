@@ -126,7 +126,12 @@ class ActionPrincipale extends StatelessWidget {
     EtatPression etat, {
     required bool actif,
   }) {
-    final _Peinture peinture = _peinturePour(palette, actif: actif, etat: etat);
+    final _Peinture peinture = _peinturePour(
+      palette,
+      actif: actif,
+      etat: etat,
+      guidee: metriques.estEnfant,
+    );
 
     return Container(
       width: pleineLargeur ? double.infinity : null,
@@ -210,6 +215,7 @@ class ActionPrincipale extends StatelessWidget {
     AppPalette palette, {
     required bool actif,
     required EtatPression etat,
+    required bool guidee,
   }) {
     if (!actif) {
       return _Peinture(
@@ -225,9 +231,19 @@ class ActionPrincipale extends StatelessWidget {
         // coordinateur, section 3.1 et 3.3) : lavande doux et encre
         // `inkStrong` en clair, accent plein et encre sombre en sombre. Plus
         // aucun aplat violet sature en clair : aucune maquette n'en montre.
+        //
+        // **Sauf en Interface guidee** : la lavande douce ne se detache de sa
+        // carte qu'a 1,5:1, et c'est souvent la seule action de l'ecran d'un
+        // enfant. Tant que le directeur n'a pas tranche sur capture, le CTA
+        // guide garde l'aplat `surfacePrimary`, a 3:1 au moins contre chaque
+        // surface (teste), comme avant le chantier (revue phase 0, jetons D3).
+        // En sombre, les deux paires sont identiques.
+        final AppColorPair paireCta = guidee
+            ? palette.surfacePrimary
+            : palette.surfaceActionDouce;
         return _Peinture(
-          fond: palette.surfaceActionDouce.background,
-          encre: palette.surfaceActionDouce.applyTo,
+          fond: paireCta.background,
+          encre: paireCta.applyTo,
           // Au survol, l'aplat plein ne change pas de teinte : il gagne le
           // filet fort. Une seconde nuance de violet serait une couleur de
           // plus, hors palette.
