@@ -24,6 +24,20 @@ Constatés par le directeur le 24/09 :
 
 Pistes à instruire (sans décision) : police et données de mise en page officielles (KFGQPC / QPC, données de lignes par page), vérification du corpus chargé (6 236 versets, `0013`) et de sa normalisation Unicode (les harakat peuvent être perdus à l'import ou par la police), `layout_lignes_indisponible.dart:51-52` (mise en page fidèle désactivée), gestes de page et boutons en sens contraires (registre §4). Règle permanente : le texte canonique n'est jamais modifié ; sans mise en page de référence, afficher honnêtement le mode verset, jamais une fausse page « Mushaf ».
 
+## Réponses du directeur sur le registre (24/09, soir)
+
+- **Vocabulaire** : à l'écran on dit « Classe », jamais « groupe » (règle déjà imposée aux lots du chantier Tuteur).
+- **Deux salles** (`/salle` et `/tc/classe`) : garder la plus complète, y combiner le meilleur de l'autre, puis supprimer le doublon (vague Classe et visio).
+- **Lecteur du Coran en double** (`/tc/mushaf` et `/eleve/coran`) : même règle : compléter, combiner, supprimer le doublon.
+- **Anciens lots Codex (13-15/09)** : abandon autorisé, mais examiner d'abord ce qui est récupérable comme inspiration (Codex jugé meilleur dans certains domaines).
+- **Décision « badges à cinq niveaux »** : OUI, à intégrer aux specs (`docs/current`).
+
+## Points du directeur restés sans réponse dans l'audit (à traiter)
+
+- **Rôle enseignant inaccessible** : bloqué par le KYC, car l'administration n'a pas d'écran pour revoir et accepter les dossiers. À traiter en tête de la vague Classe et visio (sans enseignant validé, pas de rencontre élève-enseignant).
+- **Accès de test sans parcours complet** : voir chaque rôle sans créer plusieurs comptes. Réponse retenue : mode démonstration par rôle sur l'aperçu (jamais en production) pour VOIR ; pour tester en vrai, comptes de test par rôle créés et validés par l'admin une fois l'écran de validation livré.
+- **Système de jetons d'accès pour agents (comme PISI)** : jamais fonctionnel ; remplacé par l'aperçu de PR, le mode démonstration et les captures ; à ne pas relancer sans décision.
+
 ## Autres points consignés pour les vagues suivantes
 
 - Outils de classe de l'enseignant, après-cours, signalement, micro-avis élève, bibliothèque en classe : présents sur `main`, jamais branchés (registre, groupe A).
