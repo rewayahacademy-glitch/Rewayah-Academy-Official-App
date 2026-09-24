@@ -193,7 +193,20 @@ class _Touche extends StatelessWidget {
         // Le style chiffre, et non `headlineMedium` : ce role est un titre en
         // DM Sans, police sans chiffres tabulaires. Un chiffre de touche se
         // lit en Plus Jakarta Sans, comme tous les codes du produit.
-        child: Text('$chiffre', style: paire.applyTo(AppTypography.chiffre())),
+        //
+        // La touche a une taille fixe : a 200 % de texte, le chiffre
+        // debordait sur l'anneau (capture 0b du 24/09/2026). Il remplit
+        // desormais la touche au plus, sans jamais etre coupe.
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              '$chiffre',
+              style: paire.applyTo(AppTypography.chiffre()),
+            ),
+          ),
+        ),
       ),
     );
   }

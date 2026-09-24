@@ -124,10 +124,21 @@ class _Initiales extends StatelessWidget {
     // Le style chiffre, a la taille de la tuile : une initiale n'est pas un
     // titre, et retailler un style DM Sans par `copyWith(fontSize:)` laisserait
     // son axe `opsz` cale sur l'ancienne taille.
+    //
+    // Le disque a un diametre fixe : a 200 % de texte, deux initiales
+    // debordaient et le cercle les coupait (« MA » lu « M », capture 0b du
+    // 24/09/2026). Elles tiennent desormais dans le carre inscrit du disque,
+    // reduites seulement si elles n'y tiennent pas.
     return Center(
-      child: Text(
-        _lettres,
-        style: paire.applyTo(AppTypography.chiffre(taille: taille * 0.36)),
+      child: SizedBox.square(
+        dimension: taille * 0.7,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            _lettres,
+            style: paire.applyTo(AppTypography.chiffre(taille: taille * 0.36)),
+          ),
+        ),
       ),
     );
   }
