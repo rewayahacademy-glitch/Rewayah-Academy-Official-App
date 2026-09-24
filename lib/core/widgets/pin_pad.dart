@@ -11,6 +11,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 import 'audio_label.dart';
 import 'pressable.dart';
 
@@ -189,12 +190,10 @@ class _Touche extends StatelessWidget {
               ? palette.borderStrong.asBorderSide(width: 2)
               : palette.borderResting.asBorderSide(width: 2),
         ),
-        child: Text(
-          '$chiffre',
-          style: paire.applyTo(
-            Theme.of(contexte).textTheme.headlineMedium ?? const TextStyle(),
-          ),
-        ),
+        // Le style chiffre, et non `headlineMedium` : ce role est un titre en
+        // DM Sans, police sans chiffres tabulaires. Un chiffre de touche se
+        // lit en Plus Jakarta Sans, comme tous les codes du produit.
+        child: Text('$chiffre', style: paire.applyTo(AppTypography.chiffre())),
       ),
     );
   }

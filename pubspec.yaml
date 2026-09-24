@@ -90,7 +90,10 @@ flutter:
   assets:
     - assets/audio/fr/
 
-  # Quatre familles, pas une de plus (design-tokens.md section 2).
+  # Quatre familles de texte, pas une de plus : deux arabes, deux francaises
+  # (decision du coordinateur du 24/09/2026, chantier Tuteur V1), plus les deux
+  # graisses d'icones Phosphor. La liste est fermee et verifiee par
+  # test/theme/typographie_test.dart.
   # Fichiers versionnes dans le depot : aucune police n'est chargee au reseau,
   # sinon le budget de demarrage a froid et le mode hors ligne tombent.
   fonts:
@@ -105,27 +108,30 @@ flutter:
       fonts:
         - asset: assets/fonts/NotoSansArabic-Variable.ttf
 
-    # Francais, corps de texte, labels, navigation, boutons, tableaux.
-    # Police variable, axes releves sur le binaire : wght 400 a 700 (defaut
-    # 400), wdth 75 a 100. Il n'y a pas de graisse plus fine que 400 dans ce
-    # produit : la hierarchie du texte se fait par la couleur, jamais par un
-    # gris clair obtenu en amaigrissant la police. Licence OFL, voir
-    # assets/fonts/LICENSE-InstrumentSans.txt.
+    # Francais, corps : texte, libelles, navigation, boutons, champs, legendes,
+    # statuts, et tous les chiffres (horaires, codes, PIN, chronometre).
+    # Plus Jakarta Sans, police variable. Table `fvar` relue sur le binaire le
+    # 24/09/2026 : un seul axe, wght 200 a 800 (defaut 400). Fonction `tnum`
+    # presente dans la table GSUB : c'est la seule famille francaise qui sait
+    # aligner des chiffres en colonne. Licence OFL, voir
+    # assets/fonts/LICENSE-PlusJakartaSans.txt.
     # L'italique est un fichier separe, non embarque : aucun style du produit
-    # ne le demande, et l'embarquer couterait 190 Ko pour rien.
-    - family: InstrumentSans
+    # ne le demande.
+    - family: PlusJakartaSans
       fonts:
-        - asset: assets/fonts/InstrumentSans-Variable.ttf
+        - asset: assets/fonts/PlusJakartaSans-Variable.ttf
 
-    # Francais, titres, en-tetes, chiffres de tuile.
-    # Axes releves sur le binaire : opsz 12 a 96 (defaut 96), wght 200 a 800
-    # (defaut 800), wdth 75 a 100. Les deux defauts sont des pieges : un titre
-    # qui ne declare pas ses axes sort en extra-gras dessine pour 96 points.
-    # AppTypography les pilote tous les deux. Licence OFL, voir
-    # assets/fonts/LICENSE-BricolageGrotesque.txt.
-    - family: BricolageGrotesque
+    # Francais, titres : headline* et title* (page, section, carte).
+    # DM Sans, police variable. Table `fvar` relue sur le binaire le 24/09/2026 :
+    # opsz 9 a 40 (defaut 9), wght 100 a 1000 (defaut 400). Le defaut d'opsz
+    # est un piege : un titre qui ne pose pas l'axe sort avec le dessin prevu
+    # pour 9 points, plus large et plus lache. AppTypography pose wght ET opsz
+    # dans chaque style DM Sans. **Aucune fonction `tnum`** dans la table GSUB :
+    # jamais de chiffre de colonne ou de minuteur en DM Sans. Licence OFL, voir
+    # assets/fonts/LICENSE-DMSans.txt.
+    - family: DMSans
       fonts:
-        - asset: assets/fonts/BricolageGrotesque-Variable.ttf
+        - asset: assets/fonts/DMSans-Variable.ttf
 
     # Icones Phosphor, deux graisses seulement : `regular` par defaut, `fill`
     # pour les etats actifs (design-tokens.md section 3). Les quatre autres

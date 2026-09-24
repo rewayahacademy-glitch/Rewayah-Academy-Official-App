@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_typography.dart';
 
 /// Photo de profil d'un eleve, avec repli sur les initiales.
 ///
@@ -120,12 +121,13 @@ class _Initiales extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle base =
-        Theme.of(context).textTheme.headlineMedium ?? const TextStyle();
+    // Le style chiffre, a la taille de la tuile : une initiale n'est pas un
+    // titre, et retailler un style DM Sans par `copyWith(fontSize:)` laisserait
+    // son axe `opsz` cale sur l'ancienne taille.
     return Center(
       child: Text(
         _lettres,
-        style: paire.applyTo(base).copyWith(fontSize: taille * 0.36),
+        style: paire.applyTo(AppTypography.chiffre(taille: taille * 0.36)),
       ),
     );
   }
