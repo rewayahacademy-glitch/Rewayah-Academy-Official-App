@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_observation/activation_observation.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -76,10 +77,15 @@ List<Override> _surcharges({
   required FauxServiceAppairage appairage,
   required FauxServicePlanning planning,
   FauxServiceVideo? video,
+  bool observationReelle = true,
 }) => <Override>[
   serviceAppairageProvider.overrideWithValue(appairage),
   servicePlanningProvider.overrideWithValue(planning),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+  // L'interrupteur P3 est ouvert par defaut ici : ces tests decrivent le
+  // parcours d'« Assister » tel qu'il sera ouvert. Le test « interrupteur
+  // ferme » le coupe, comme en production.
+  observationTuteurReelleProvider.overrideWithValue(observationReelle),
   // Depuis le lot `CTR-01`, « Assister » ecrit avant de naviguer : il inscrit
   // le tuteur comme temoin de la seance. Sans ce faux, le premier tap tenterait
   // d'atteindre Supabase.
@@ -108,6 +114,7 @@ Future<void> _monter(
   required FauxServiceAppairage appairage,
   required FauxServicePlanning planning,
   FauxServiceVideo? video,
+  bool observationReelle = true,
 }) async {
   _fenetreHaute(tester);
   await tester.pumpWidget(
@@ -152,6 +159,7 @@ Future<void> _monter(
         appairage: appairage,
         planning: planning,
         video: video,
+        observationReelle: observationReelle,
       ),
     ),
   );
@@ -348,6 +356,34 @@ void main() {
 
       expect(find.text('TC-G/s1'), findsOneWidget);
       expect(find.text(t.tuteur.accueil.assisterRefuse), findsNothing);
+    });
+
+    testWidgets('interrupteur P3 ferme : Assister n est pas rendu', (
+      WidgetTester tester,
+    ) async {
+      // La production compile `OBSERVATION_TUTEUR_REELLE` ferme : un cours en
+      // direct ne propose aucune porte qui ne pourrait pas s'ouvrir.
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[_enfant()],
+        planning: FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(
+              debut: _maintenant.subtract(const Duration(minutes: 12)),
+              statut: StatutSeance.enCours,
+            ),
+          ]
+          ..affectationsRendues = <Affectation>[_affectation()],
+        observationReelle: false,
+      );
+
+      expect(
+        find.text(t.tuteur.accueil.enCours(prenom: 'Aminata')),
+        findsOneWidget,
+      );
+      expect(find.text(t.tuteur.accueil.assister), findsNothing);
+      expect(find.byType(ActionPrincipale), findsNothing);
     });
 
     testWidgets('hors seance, Assister n est pas rendu du tout', (

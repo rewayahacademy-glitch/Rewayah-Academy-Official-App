@@ -43,33 +43,40 @@ abstract final class Env {
   /// Active l'observation reelle par le tuteur (visite d'une seance en
   /// direct, contrat K4).
   ///
-  /// **Faux par defaut, et force a faux en production quoi qu'on passe** (point
-  /// P3 du chantier Tuteur V1) : l'observation ne s'ouvre pas sur une
+  /// **Faux par defaut, et force a faux hors developpement quoi qu'on passe**
+  /// (point P3 du chantier Tuteur V1) : l'observation ne s'ouvre pas sur une
   /// protection locale tant que le serveur ne garantit ni la presence de
   /// l'enfant, ni la fin de visite, ni l'emission du jeton video (dependances
   /// DB-OBS-01, 02, 03, 05). Faux, le bloc Observation dit « pas encore
   /// ouverte » ; le parcours complet se montre en simulation (tests,
   /// Playground). Le forcage vit ici, dans le code, et non dans la seule
-  /// commande de deploiement : une compilation de production qui passerait
-  /// `OBSERVATION_TUTEUR_REELLE=true` n'ouvrirait rien.
+  /// commande de deploiement : une compilation de production ou d'apercu qui
+  /// passerait `OBSERVATION_TUTEUR_REELLE=true` n'ouvrirait rien.
   static const bool observationTuteurReelle = bool.fromEnvironment(
     'OBSERVATION_TUTEUR_REELLE',
   );
 
   /// L'interrupteur d'observation reelle effectivement applique.
   ///
-  /// Toujours faux quand [environnement] vaut `production`, quelle que soit
-  /// la valeur compilee de [observationTuteurReelle].
+  /// Faux partout sauf en `developpement`, quelle que soit la valeur compilee
+  /// de [observationTuteurReelle]. Les ecrans le lisent par
+  /// `observationTuteurReelleProvider`, jamais ici.
   static bool get observationTuteurReelleActive => observationTuteurReelleSelon(
     demandee: observationTuteurReelle,
     environnement: environnement,
   );
 
   /// La regle de forcage, pure pour etre verifiee sans compilation dediee.
+  ///
+  /// **Liste d'autorisation, pas d'exclusion** : les apercus de pull request
+  /// sont compiles avec `ENVIRONNEMENT=staging` et les memes cles Supabase que
+  /// la production (`flutter-deploy.yml`), et une valeur mal orthographiee
+  /// (`Production`) passerait une liste d'exclusion. Seul `developpement`
+  /// ouvre l'interrupteur.
   static bool observationTuteurReelleSelon({
     required bool demandee,
     required String environnement,
-  }) => demandee && environnement != 'production';
+  }) => demandee && environnement == 'developpement';
 
   /// DSN Sentry du projet Flutter (onboarding etape F, critere 0.6).
   ///

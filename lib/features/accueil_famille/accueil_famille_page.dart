@@ -12,6 +12,7 @@ import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_observation/activation_observation.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -350,8 +351,13 @@ class _CarteEnfant extends ConsumerWidget {
           : null,
       // Le bouton n'est cable que pendant une seance en cours : ailleurs, il
       // n'y a pas de salle a rejoindre, et un bouton qui echoue apres le geste
-      // coute plus cher qu'un bouton absent.
-      onAssister: phase == PhaseEnfant.enCours && prochain != null
+      // coute plus cher qu'un bouton absent. Meme regle quand l'observation
+      // reelle est fermee sur cette compilation (point P3,
+      // `observationTuteurReelleProvider`) : la porte ne pourrait pas s'ouvrir.
+      onAssister:
+          phase == PhaseEnfant.enCours &&
+              prochain != null &&
+              ref.watch(observationTuteurReelleProvider)
           ? () => onAssister(prochain.id)
           : null,
     );

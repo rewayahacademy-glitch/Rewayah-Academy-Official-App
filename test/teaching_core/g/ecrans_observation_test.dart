@@ -71,7 +71,10 @@ void main() {
       expect(find.text(t.tc.observation.entree.modeVisible), findsNothing);
       // Ce qu'il voit en revanche, et en permanence : sa visite est
       // journalisee.
-      expect(find.text(t.tc.observation.entree.visiteJournalisee), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.entree.visiteJournalisee),
+        findsOneWidget,
+      );
       expect(find.text(t.tc.observation.entree.entrer), findsOneWidget);
     });
 
@@ -108,7 +111,10 @@ void main() {
       expect(find.text(t.tc.observation.entree.modeDiscret), findsNothing);
       expect(find.text(t.tc.observation.entree.tuteurIntro), findsOneWidget);
       // Le tuteur est visible : l'enseignant doit savoir qu'un parent regarde.
-      expect(find.text(t.tc.observation.entree.visiteJournalisee), findsNothing);
+      expect(
+        find.text(t.tc.observation.entree.visiteJournalisee),
+        findsNothing,
+      );
     });
 
     testWidgets('un compte qui n\'observe pas n\'a pas d\'action active', (
@@ -125,7 +131,10 @@ void main() {
         ),
       );
 
-      expect(find.text(t.tc.observation.entree.roleSansObservation), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.entree.roleSansObservation),
+        findsOneWidget,
+      );
       await tester.tap(find.text(t.tc.observation.entree.entrer));
       await tester.pump();
       expect(entre, isFalse);
@@ -191,7 +200,10 @@ void main() {
         ),
       );
 
-      expect(find.text(t.tc.observation.visite.budgetIncertain), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.visite.budgetIncertain),
+        findsOneWidget,
+      );
     });
   });
 
@@ -200,9 +212,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        hoteTcG(
-          const IndicateurObservation(annonces: <AnnonceObservation>[]),
-        ),
+        hoteTcG(const IndicateurObservation(annonces: <AnnonceObservation>[])),
       );
 
       expect(find.byType(IndicateurObservation), findsOneWidget);
@@ -235,10 +245,7 @@ void main() {
       );
       // Un seul observateur ne se replie pas : une ligne ne merite pas une
       // animation, et il n'y a rien a compter.
-      expect(
-        find.byKey(IndicateurObservation.cleBandePrenoms),
-        findsNothing,
-      );
+      expect(find.byKey(IndicateurObservation.cleBandePrenoms), findsNothing);
     });
 
     group('Plusieurs tuteurs : l\'oeil, les prenoms, et leur nombre', () {
@@ -400,10 +407,7 @@ void main() {
       expect(enfantConcerneParObservation(annonces, 'enfant-2'), isFalse);
       expect(enfantConcerneParObservation(annonces, null), isFalse);
       expect(
-        enfantConcerneParObservation(
-          const <AnnonceObservation>[],
-          'enfant-1',
-        ),
+        enfantConcerneParObservation(const <AnnonceObservation>[], 'enfant-1'),
         isFalse,
       );
     });
@@ -415,7 +419,10 @@ void main() {
         hoteTcG(const IndicateurObservationEnfant(visible: false)),
       );
 
-      expect(find.text(t.tc.observation.annonce.enfantIndicateur), findsNothing);
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
     });
 
     testWidgets('l\'enfant concerne le lit, y compris en mode enfant', (
@@ -457,7 +464,10 @@ void main() {
       );
 
       expect(find.text(t.tc.observation.reglages.heriter), findsOneWidget);
-      expect(find.text(t.tc.observation.reglages.personnaliser), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.reglages.personnaliser),
+        findsOneWidget,
+      );
       expect(find.text(t.tc.observation.reglages.desactiver), findsOneWidget);
       expect(find.text(t.tc.observation.reglages.maxVisites), findsNothing);
     });
@@ -476,11 +486,17 @@ void main() {
         ),
       );
 
-      await _presser(tester, find.text(t.tc.observation.reglages.personnaliser));
+      await _presser(
+        tester,
+        find.text(t.tc.observation.reglages.personnaliser),
+      );
       expect(find.text(t.tc.observation.reglages.maxVisites), findsOneWidget);
       expect(find.text(t.tc.observation.reglages.tempsTotal), findsOneWidget);
 
-      await _presser(tester, find.text(t.tc.observation.reglages.augmenter).first);
+      await _presser(
+        tester,
+        find.text(t.tc.observation.reglages.augmenter).first,
+      );
       await _presser(tester, find.text(t.tc.observation.reglages.enregistrer));
 
       expect(recue?.source, SourcePolitique.groupe);
@@ -544,43 +560,44 @@ void main() {
       await _presser(tester, find.text(t.tc.observation.entree.entrer));
     }
 
-    testWidgets('l\'enseignant et son enfant, avec leur image, et personne d\'autre', (
-      WidgetTester tester,
-    ) async {
-      final FauxMoteurClasse moteur = FauxMoteurClasse();
-      moteur.videos['enfant-1'] = const Text('image de l\'enfant');
-      moteur.videos['enfant-2'] = const Text('image d\'un camarade');
-      final FauxServiceVideoClasse video = FauxServiceVideoClasse(
-        acces0: accesDe('guardian_observer'),
-      );
+    testWidgets(
+      'l\'enseignant et son enfant, avec leur image, et personne d\'autre',
+      (WidgetTester tester) async {
+        final FauxMoteurClasse moteur = FauxMoteurClasse();
+        moteur.videos['enfant-1'] = const Text('image de l\'enfant');
+        moteur.videos['enfant-2'] = const Text('image d\'un camarade');
+        final FauxServiceVideoClasse video = FauxServiceVideoClasse(
+          acces0: accesDe('guardian_observer'),
+        );
 
-      await entrerEnVisite(tester, moteur: moteur, video: video);
+        await entrerEnVisite(tester, moteur: moteur, video: video);
 
-      // La salle est rejointe avec le jeton du role d'observation, et une
-      // seule fois.
-      expect(video.demandes, <String>['s1']);
-      expect(moteur.entrees.single.role, 'guardian_observer');
-      // Aucune capacite de publication n'est ouverte : ni micro, ni camera.
-      expect(moteur.microDemande, isEmpty);
-      expect(moteur.cameraDemandee, isEmpty);
+        // La salle est rejointe avec le jeton du role d'observation, et une
+        // seule fois.
+        expect(video.demandes, <String>['s1']);
+        expect(moteur.entrees.single.role, 'guardian_observer');
+        // Aucune capacite de publication n'est ouverte : ni micro, ni camera.
+        expect(moteur.microDemande, isEmpty);
+        expect(moteur.cameraDemandee, isEmpty);
 
-      moteur.publier(<ParticipantSalle>[
-        participantDe(identite: 'prof-1', role: 'teacher', camera: true),
-        participantDe(identite: 'enfant-1', role: 'student', camera: true),
-        participantDe(identite: 'enfant-2', role: 'student', camera: true),
-        participantDe(identite: 'enfant-3', role: 'student'),
-      ]);
-      await tester.pumpAndSettle();
+        moteur.publier(<ParticipantSalle>[
+          participantDe(identite: 'prof-1', role: 'teacher', camera: true),
+          participantDe(identite: 'enfant-1', role: 'student', camera: true),
+          participantDe(identite: 'enfant-2', role: 'student', camera: true),
+          participantDe(identite: 'enfant-3', role: 'student'),
+        ]);
+        await tester.pumpAndSettle();
 
-      expect(find.text('prof-1'), findsOneWidget);
-      expect(find.text('enfant-1'), findsOneWidget);
-      expect(find.text('image de l\'enfant'), findsOneWidget);
-      // Les camarades ne sortent pas de `VueObservationTuteur` : ni leur nom,
-      // ni -- surtout -- leur image.
-      expect(find.text('enfant-2'), findsNothing);
-      expect(find.text('image d\'un camarade'), findsNothing);
-      expect(find.text('enfant-3'), findsNothing);
-    });
+        expect(find.text('prof-1'), findsOneWidget);
+        expect(find.text('enfant-1'), findsOneWidget);
+        expect(find.text('image de l\'enfant'), findsOneWidget);
+        // Les camarades ne sortent pas de `VueObservationTuteur` : ni leur nom,
+        // ni -- surtout -- leur image.
+        expect(find.text('enfant-2'), findsNothing);
+        expect(find.text('image d\'un camarade'), findsNothing);
+        expect(find.text('enfant-3'), findsNothing);
+      },
+    );
 
     testWidgets('un jeton d\'un autre role n\'ouvre aucune salle', (
       WidgetTester tester,
@@ -645,53 +662,51 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(moteur.departs, 1);
-      expect(
-        find.text(t.tc.observation.fin.quotaAtteint),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('le budget epuise PENDANT la connexion ne laisse pas la salle jointe', (
-      WidgetTester tester,
-    ) async {
-      // **Le defaut que ce test tient fermee** : entre la demande de jeton et
-      // l'entree effective, il y a deux attentes. Si le serveur epuise le
-      // budget pendant ce temps, l'ecran affiche « visite terminee » alors que
-      // la salle finit tout de meme par etre jointe -- le parent continue de
-      // voir et d'entendre la classe apres la fin de son quota, sans que ni
-      // l'enseignant ni les enfants ne le sachent.
-      final Completer<void> connexion = Completer<void>();
-      final FauxMoteurClasse moteur = FauxMoteurClasse()
-        ..entreeSuspendue = connexion;
-      final FauxServiceVideoClasse video = FauxServiceVideoClasse(
-        acces0: accesDe('guardian_observer'),
-      );
-      final FauxPortPolitique politique = FauxPortPolitique();
-      addTearDown(politique.fermer);
-
-      await entrerEnVisite(
-        tester,
-        moteur: moteur,
-        video: video,
-        politique: politique,
-      );
-      // La connexion court encore : rien n'est joint a cet instant.
-      expect(moteur.entrees, isEmpty);
-
-      // Le serveur, et lui seul, epuise le budget -- pendant la connexion.
-      politique.flux.add(unBudget(restant: Duration.zero, peutEntrer: false));
-      await tester.pumpAndSettle();
       expect(find.text(t.tc.observation.fin.quotaAtteint), findsOneWidget);
-
-      // La connexion aboutit APRES la fin de la visite.
-      connexion.complete();
-      await tester.pumpAndSettle();
-
-      expect(moteur.entrees, hasLength(1));
-      // La salle est refermee aussitot : la visite terminee a l'ecran est une
-      // visite terminee dans la salle.
-      expect(moteur.departs, 1);
     });
+
+    testWidgets(
+      'le budget epuise PENDANT la connexion ne laisse pas la salle jointe',
+      (WidgetTester tester) async {
+        // **Le defaut que ce test tient fermee** : entre la demande de jeton et
+        // l'entree effective, il y a deux attentes. Si le serveur epuise le
+        // budget pendant ce temps, l'ecran affiche « visite terminee » alors que
+        // la salle finit tout de meme par etre jointe -- le parent continue de
+        // voir et d'entendre la classe apres la fin de son quota, sans que ni
+        // l'enseignant ni les enfants ne le sachent.
+        final Completer<void> connexion = Completer<void>();
+        final FauxMoteurClasse moteur = FauxMoteurClasse()
+          ..entreeSuspendue = connexion;
+        final FauxServiceVideoClasse video = FauxServiceVideoClasse(
+          acces0: accesDe('guardian_observer'),
+        );
+        final FauxPortPolitique politique = FauxPortPolitique();
+        addTearDown(politique.fermer);
+
+        await entrerEnVisite(
+          tester,
+          moteur: moteur,
+          video: video,
+          politique: politique,
+        );
+        // La connexion court encore : rien n'est joint a cet instant.
+        expect(moteur.entrees, isEmpty);
+
+        // Le serveur, et lui seul, epuise le budget -- pendant la connexion.
+        politique.flux.add(unBudget(restant: Duration.zero, peutEntrer: false));
+        await tester.pumpAndSettle();
+        expect(find.text(t.tc.observation.fin.quotaAtteint), findsOneWidget);
+
+        // La connexion aboutit APRES la fin de la visite.
+        connexion.complete();
+        await tester.pumpAndSettle();
+
+        expect(moteur.entrees, hasLength(1));
+        // La salle est refermee aussitot : la visite terminee a l'ecran est une
+        // visite terminee dans la salle.
+        expect(moteur.departs, 1);
+      },
+    );
   });
 
   group('La route se monte sans toucher au routeur global', () {
@@ -709,6 +724,50 @@ void main() {
 
       expect(find.byType(EntreeObservationPage), findsOneWidget);
       expect(find.text(t.tc.observation.entree.tuteurIntro), findsOneWidget);
+    });
+
+    testWidgets(
+      'interrupteur P3 ferme : le tuteur lit « pas encore disponible », sans appel',
+      (WidgetTester tester) async {
+        final FauxPortVisite visites = FauxPortVisite();
+        await tester.pumpWidget(
+          hoteRoutantTcG(
+            depart: RoutesTcG.versObservation('s1'),
+            routes: routesTcG(),
+            surcharges: surchargesTcG(
+              role: AppRole.guardian,
+              visites: visites,
+              observationReelle: false,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(EntreeObservationPage), findsOneWidget);
+        expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+        expect(find.text(t.tc.observation.entree.tuteurIntro), findsNothing);
+        expect(find.text(t.tc.observation.entree.entrer), findsNothing);
+        expect(visites.rolesDemandes, isEmpty);
+      },
+    );
+
+    testWidgets('interrupteur P3 ferme : l administration garde sa porte', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteRoutantTcG(
+          depart: RoutesTcG.versObservation('s1'),
+          routes: routesTcG(),
+          surcharges: surchargesTcG(
+            role: AppRole.admin,
+            observationReelle: false,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.tc.observation.entree.adminIntro), findsOneWidget);
+      expect(find.text(t.commun.etats.indisponible.titre), findsNothing);
     });
   });
 }

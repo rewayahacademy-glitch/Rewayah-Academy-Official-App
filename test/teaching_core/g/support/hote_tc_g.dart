@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
+import 'package:rewayah_academy/core/tc_observation/activation_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/moteur_visite_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
@@ -110,25 +111,28 @@ List<Override> surchargesTcG({
   FauxMoteurClasse? moteur,
   FauxServiceVideoClasse? video,
   Stream<void>? battement,
+  bool observationReelle = true,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(FausseSourceSessionTcG(role)),
+  // L'interrupteur P3 est ouvert par defaut : ces tests decrivent la visite
+  // telle qu'elle sera ouverte. Ferme, le tuteur ne voit que « pas encore
+  // disponible » (test dedie).
+  observationTuteurReelleProvider.overrideWithValue(observationReelle),
   // **Le battement d'affichage est coupe par defaut.** Le vrai vaut
   // `Stream.periodic(1 s)` : dans un test de widget, c'est un Timer qui reste
   // pendant apres le demontage de l'arbre, et le cadre de test echoue dessus.
   // Le couper ne retire rien a ce qui se verifie ici : il ne fait que
   // repeindre un chiffre, et la seule autorite sur la fin d'une visite est le
   // flux de budget du serveur.
-  moteurVisiteObservationProvider.overrideWith(
-    (Ref ref, String sessionId) {
-      final MoteurVisiteObservation moteurVisite = MoteurVisiteObservation(
-        ref.watch(portVisiteObservationProvider),
-        ref.watch(portPolitiqueObservationProvider),
-        battement: battement ?? const Stream<void>.empty(),
-      );
-      ref.onDispose(() => unawaited(moteurVisite.dispose()));
-      return moteurVisite;
-    },
-  ),
+  moteurVisiteObservationProvider.overrideWith((Ref ref, String sessionId) {
+    final MoteurVisiteObservation moteurVisite = MoteurVisiteObservation(
+      ref.watch(portVisiteObservationProvider),
+      ref.watch(portPolitiqueObservationProvider),
+      battement: battement ?? const Stream<void>.empty(),
+    );
+    ref.onDispose(() => unawaited(moteurVisite.dispose()));
+    return moteurVisite;
+  }),
   portVisiteObservationProvider.overrideWithValue(visites ?? FauxPortVisite()),
   portPolitiqueObservationProvider.overrideWithValue(
     politique ?? FauxPortPolitique(),

@@ -6,7 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/router/page_etat.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/echec_observation.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/libelles_observation.dart';
@@ -16,6 +18,7 @@ import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'choix_entree_observation.dart';
@@ -128,6 +131,21 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   @override
   Widget build(BuildContext context) {
     final AppRole? role = ref.watch(sessionProvider).role;
+
+    // **Interrupteur P3 ferme : le tuteur n'appelle aucune porte serveur.**
+    // Ni budget, ni `entrer_observation`, ni jeton video : la page dit que
+    // l'observation n'est pas encore ouverte et ramene a l'accueil. La valeur
+    // est fixee a la compilation, la branche ne bascule donc jamais entre deux
+    // constructions. L'administration et le controle qualite ne sont pas
+    // concernes.
+    if (role == AppRole.guardian &&
+        !ref.watch(observationTuteurReelleProvider)) {
+      return const PageEtat(
+        nature: NatureEtat.indisponible,
+        dependance: 'DB-OBS-01',
+      );
+    }
+
     final OptionsEntreeObservation options = OptionsEntreeObservation.pour(
       role,
     );
@@ -142,7 +160,10 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     // locale ne ferme rien ici : elle ne fait que repeindre un chiffre.
     ref.listen<AsyncValue<EtatVisiteObservation>>(
       etatVisiteObservationProvider(widget.seanceId),
-      (AsyncValue<EtatVisiteObservation>? _, AsyncValue<EtatVisiteObservation> suivant) {
+      (
+        AsyncValue<EtatVisiteObservation>? _,
+        AsyncValue<EtatVisiteObservation> suivant,
+      ) {
         final EtatVisiteObservation? valeur = suivant.value;
         if (valeur == null) {
           return;
@@ -172,30 +193,28 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     );
   }
 
-  Widget _corps(
-    OptionsEntreeObservation options,
-    EtatVisiteObservation etat,
-  ) => switch (etat.phase) {
-    PhaseVisite.horsVisite => _choix(options),
-    PhaseVisite.demande => _choix(options, enCours: true),
-    PhaseVisite.enVisite => _panneau(etat),
-    PhaseVisite.terminee => EmptyState(
-      message: libelleFinVisite(etat.fin ?? FinDeVisite.sortieVolontaire),
-      invitation: etat.sortieConfirmee
-          ? null
-          : t.tc.observation.visite.sortieNonConfirmee,
-      icone: AppIcons.pause,
-      registre: RegistreVide.subi,
-    ),
-    PhaseVisite.refusee => EmptyState(
-      message: etat.motifRefus == null
-          ? t.tc.observation.refus.indisponible
-          : libelleRefusObservation(etat.motifRefus!),
-      icone: AppIcons.avertissement,
-      registre: RegistreVide.subi,
-    ),
-    PhaseVisite.indisponible => _indisponible(options, etat.echec),
-  };
+  Widget _corps(OptionsEntreeObservation options, EtatVisiteObservation etat) =>
+      switch (etat.phase) {
+        PhaseVisite.horsVisite => _choix(options),
+        PhaseVisite.demande => _choix(options, enCours: true),
+        PhaseVisite.enVisite => _panneau(etat),
+        PhaseVisite.terminee => EmptyState(
+          message: libelleFinVisite(etat.fin ?? FinDeVisite.sortieVolontaire),
+          invitation: etat.sortieConfirmee
+              ? null
+              : t.tc.observation.visite.sortieNonConfirmee,
+          icone: AppIcons.pause,
+          registre: RegistreVide.subi,
+        ),
+        PhaseVisite.refusee => EmptyState(
+          message: etat.motifRefus == null
+              ? t.tc.observation.refus.indisponible
+              : libelleRefusObservation(etat.motifRefus!),
+          icone: AppIcons.avertissement,
+          registre: RegistreVide.subi,
+        ),
+        PhaseVisite.indisponible => _indisponible(options, etat.echec),
+      };
 
   /// Le panneau de visite, alimente par la salle reellement rejointe.
   ///
@@ -352,7 +371,10 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         enCours: enCours,
       );
 
-  Widget _indisponible(OptionsEntreeObservation options, EchecObservation? echec) {
+  Widget _indisponible(
+    OptionsEntreeObservation options,
+    EchecObservation? echec,
+  ) {
     final bool reessayable = echec?.seReessaye ?? false;
     return EmptyState(
       message: echec?.motif == MotifEchecObservation.capaciteAbsente

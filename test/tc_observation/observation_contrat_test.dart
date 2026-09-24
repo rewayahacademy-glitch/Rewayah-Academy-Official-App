@@ -6,6 +6,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/config/env.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
+import 'package:rewayah_academy/core/tc_observation/activation_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/disponibilite_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/echec_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
@@ -74,20 +75,30 @@ void main() {
   );
 
   group('K4 : interrupteur OBSERVATION_TUTEUR_REELLE', () {
-    test('faux par defaut, et toujours faux en production', () {
+    test('faux par defaut, et faux partout hors developpement', () {
       expect(Env.observationTuteurReelle, isFalse);
       expect(Env.observationTuteurReelleActive, isFalse);
+      // Liste d'autorisation : production, apercu (`staging`, compile avec
+      // les cles de production) et toute valeur inattendue restent fermes.
+      for (final String environnement in <String>[
+        'production',
+        'staging',
+        'Production',
+        '',
+      ]) {
+        expect(
+          Env.observationTuteurReelleSelon(
+            demandee: true,
+            environnement: environnement,
+          ),
+          isFalse,
+          reason: environnement,
+        );
+      }
       expect(
         Env.observationTuteurReelleSelon(
           demandee: true,
-          environnement: 'production',
-        ),
-        isFalse,
-      );
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: true,
-          environnement: 'staging',
+          environnement: 'developpement',
         ),
         isTrue,
       );
@@ -98,6 +109,12 @@ void main() {
         ),
         isFalse,
       );
+    });
+
+    test('les ecrans lisent l interrupteur par son provider, ferme ici', () {
+      final ProviderContainer conteneur = ProviderContainer();
+      addTearDown(conteneur.dispose);
+      expect(conteneur.read(observationTuteurReelleProvider), isFalse);
     });
   });
 
