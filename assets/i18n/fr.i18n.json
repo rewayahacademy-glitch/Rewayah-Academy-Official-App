@@ -1192,7 +1192,11 @@
       "notificationsTitre": "Notifications",
       "menu": "Menu"
     },
-    "compte": "Mon compte"
+    "compte": "Mon compte",
+    "principale": "Navigation principale",
+    "motSymbole": "Rewayah",
+    "replier": "Replier la navigation",
+    "deplier": "Déplier la navigation"
   },
   "compte": {
     "titre": "Mon compte",

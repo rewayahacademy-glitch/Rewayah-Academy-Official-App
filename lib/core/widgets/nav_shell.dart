@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../preferences/preferences_locales.dart';
 import '../router/routes.dart';
+import '../theme/app_color_pair.dart';
+import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
-import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -19,6 +22,7 @@ class Destination {
     required this.libelle,
     required this.icone,
     required this.chemin,
+    this.enPied = false,
   });
 
   /// Le libelle affiche et lu.
@@ -30,6 +34,13 @@ class Destination {
 
   /// Le chemin de la route. C'est ce que [NavShell] rend a l'appelant.
   final String chemin;
+
+  /// Vrai quand la destination est **epinglee en bas** du rail et de la barre
+  /// laterale (le Compte du tuteur, manifeste visuel Tuteur V1 section 4.2).
+  ///
+  /// L'ordre de la barre basse ne change pas : elle y reste a sa place dans la
+  /// liste. Seule la colonne laterale la separe des autres.
+  final bool enPied;
 }
 
 /// Les destinations de premier niveau d'un role, dans l'ordre de la barre.
@@ -76,26 +87,34 @@ List<Destination> destinationsPour({
                 chemin: Routes.compte,
               ),
             ],
+    // **Accueil, Foyer, Historique, Compte**, dans cet ordre et sur tous les
+    // formats (mandat Tuteur V1 section 4 ; decisions du coordinateur du
+    // 24/09/2026, section 3 point 6). Chacune est une branche de la coquille
+    // tuteur, Compte compris : c'est ce qui donne enfin au tuteur une
+    // deconnexion sur telephone. Disponibilites et Reglages quittent la
+    // barre : le matching individuel est remplace, les reglages par eleve
+    // rejoignent la fiche du Foyer.
     AppRole.guardian => <Destination>[
       Destination(
         libelle: t.nav.tuteur.accueil,
-        icone: AppIcons.foyer,
+        icone: AppIcons.accueil,
         chemin: Routes.tuteurAccueil,
       ),
       Destination(
-        libelle: t.nav.tuteur.disponibilites,
-        icone: AppIcons.disponibilites,
-        chemin: Routes.tuteurDisponibilites,
+        libelle: t.nav.tuteur.foyer,
+        icone: AppIcons.foyer,
+        chemin: Routes.tuteurFoyer,
       ),
       Destination(
-        libelle: t.nav.tuteur.reglages,
-        icone: AppIcons.reglages,
-        chemin: Routes.tuteurReglages,
-      ),
-      Destination(
-        libelle: t.nav.tuteur.suivi,
-        icone: AppIcons.suivi,
+        libelle: t.nav.tuteur.historique,
+        icone: AppIcons.historique,
         chemin: Routes.tuteurSuivi,
+      ),
+      Destination(
+        libelle: t.nav.tuteur.compte,
+        icone: AppIcons.profil,
+        chemin: Routes.tuteurCompte,
+        enPied: true,
       ),
     ],
     // **Exactement trois destinations**, et pas quatre : le gel d'architecture
@@ -145,50 +164,25 @@ List<Destination> destinationsPour({
   return destinations;
 }
 
-/// Les entrees secondaires d'un role : le compte, et les ecrans hors barre.
+/// Les entrees secondaires d'un role : les ecrans hors barre qu'un pied de
+/// coquille doit encore exposer.
 ///
-/// **Elles ne sont pas des destinations**, et ne comptent donc pas dans les
-/// quatre : le compte appartient a la zone Acces
-/// (`03-architecture-information.md` section 4), et `ADM-06`/`ADM-07` sont
-/// volontairement hors de la barre, ce que le routeur ecrit deja.
-///
-/// Ce que cette fonction repare, mesure le 18 septembre 2026 : un admin et un
-/// tuteur valides n'avaient **aucun chemin vers la deconnexion**, et `ADM-06`
-/// comme `ADM-07` n'etaient atteignables qu'en tapant leur URL. L'eleve et
-/// l'enseignant, eux, depensaient deja une de leurs quatre destinations sur le
-/// compte : ils n'ont donc pas besoin de doublon ici.
+/// **Vide pour tous les roles depuis le 24/09/2026.** Le tuteur y portait
+/// « Mon compte », seule sortie vers la deconnexion, et invisible sous 600 :
+/// Compte est desormais sa quatrieme destination, et le laisser ici le
+/// ferait apparaitre deux fois (mandat Tuteur V1 section 4). L'eleve et
+/// l'enseignant portent deja leur compte dans leurs destinations ; le
+/// controleur et le comptable n'ont pas de coquille ; l'admin a la sienne.
 List<Destination> secondairesPour({required AppRole role}) =>
-    switch (role) {
-      AppRole.guardian => <Destination>[
-        Destination(
-          libelle: t.nav.compte,
-          icone: AppIcons.sortie,
-          chemin: Routes.compte,
-        ),
-      ],
-      // L'eleve porte deja le compte dans ses destinations ; le controleur et
-      // le comptable n'ont pas de coquille. L'admin a sa propre coquille depuis
-      // le lot IA-01, voir `destinationsPour` ci-dessus.
-      //
-      // **L'enseignant n'en a pas besoin non plus, et surtout il ne pourrait
-      // pas s'en servir** : ce pied de coquille n'est rendu qu'a partir de 600,
-      // une barre basse Material 3 n'acceptant aucune entree hors destination.
-      // Une entree « Compte » posee ici serait donc invisible sur telephone,
-      // c'est-a-dire exactement la ou l'enseignant travaille. C'est `ENS-05`,
-      // une destination de plein droit, qui porte ses parametres personnels et
-      // sa deconnexion (`TEACHER_PARALLEL_BASELINE.md` §3.1).
-      AppRole.student ||
-      AppRole.teacher ||
-      AppRole.controller ||
-      AppRole.accountant ||
-      AppRole.admin => const <Destination>[],
-    };
+    const <Destination>[];
 
 /// La navigation de premier niveau, dans ses trois formes.
 ///
 /// **Une seule liste de destinations alimente les trois formes** : barre basse
-/// sous 600, rail de 600 a 1199, barre laterale a partir de 1200
-/// (`docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-information.md` section 5). Trois listes
+/// flottante sous 600, colonne laterale a partir de 600, repliee en rail de
+/// 80 ou depliee en barre laterale de 256 avec le mot-symbole
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-information.md`
+/// section 5 ; manifeste visuel Tuteur V1 sections 3.4 et 4). Trois listes
 /// finiraient par diverger.
 ///
 /// Deux regles portees par l'API :
@@ -199,6 +193,13 @@ List<Destination> secondairesPour({required AppRole role}) =>
 /// - **zero destination est un cas legitime**, et meme deux : l'eleve en mode
 ///   enfant n'a aucune navigation, le controleur n'en a qu'une. Aucun chrome
 ///   n'est alors rendu, et l'ecran occupe toute la place.
+///
+/// **Zone sure** : la barre basse consomme l'encart bas, le contenu ne le
+/// recoit donc plus ; la barre ne recoit pas l'encart haut, qui appartient au
+/// contenu. Avant le 24/09/2026, la barre posee dans une `Column` sous un
+/// contenu en `SafeArea` complet appliquait l'encart bas deux fois et
+/// consommait aussi l'encart haut (recette C11, section 5.6). Meme regle
+/// pour la colonne laterale et l'encart de son cote.
 class NavShell extends StatelessWidget {
   /// Cles stables pour verifier les trois presentations adaptatives du shell.
   static const Key barreBasseKey = ValueKey<String>('nav-shell-barre-basse');
@@ -206,6 +207,9 @@ class NavShell extends StatelessWidget {
   static const Key barreLateraleKey = ValueKey<String>(
     'nav-shell-barre-laterale',
   );
+
+  /// Cle du bouton de repli ou de depli de la colonne laterale.
+  static const Key boutonRepliKey = ValueKey<String>('nav-shell-bouton-repli');
 
   /// Cree la coquille de navigation.
   ///
@@ -221,6 +225,7 @@ class NavShell extends StatelessWidget {
     required this.child,
     this.secondaires = const <Destination>[],
     this.onAllerSecondaire,
+    this.masquerBarreBasse = false,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -241,11 +246,8 @@ class NavShell extends StatelessWidget {
 
   /// L'index de la destination courante.
   ///
-  /// **Nul sur un ecran secondaire** : `ADM-06`, `ADM-07` et `ADM-08` sont
-  /// volontairement hors de la barre, mais ils ont besoin de son chrome pour
-  /// qu'on puisse en sortir. Sans cela, on y entre et on n'en revient qu'avec
-  /// le bouton precedent du navigateur -- c'est exactement le reproche fait a
-  /// l'interface le 18 septembre 2026.
+  /// **Nul sur un ecran secondaire** : aucune destination n'est alors
+  /// surlignee, mais le chrome reste la pour qu'on puisse en sortir.
   final int? indexActif;
 
   /// Ce qui se passe quand une destination est choisie. Recoit son chemin.
@@ -254,24 +256,12 @@ class NavShell extends StatelessWidget {
   /// L'ecran affiche.
   final Widget child;
 
-  /// Les entrees secondaires : le compte, et les ecrans hors de la barre.
+  /// Les entrees secondaires, sous les destinations de la colonne laterale.
   ///
-  /// **Elles ne comptent pas dans les quatre destinations.** La regle des
-  /// quatre porte sur le premier niveau, et le compte appartient a la zone
-  /// Acces (`03-architecture-information.md` section 4), pas aux destinations.
-  ///
-  /// Defaut mesure le 18 septembre 2026 : sans ce pied de coquille, un admin
-  /// ou un tuteur valide n'avait **aucun moyen de se deconnecter**. Le mot
-  /// « deconnexion » n'existait que dans le portail d'attente -- donc avant
-  /// validation -- et dans la salle de cours. Vider le cache du navigateur
-  /// etait le seul chemin de sortie.
-  ///
-  /// **Limite assumee** : ce pied n'est rendu que par le rail et la barre
-  /// laterale, donc a partir de 600. Une barre basse Material 3 n'accepte pas
-  /// d'entree hors destination, et en ajouter une ferait une cinquieme. Sous
-  /// 600, ces entrees se rejoignent par les tuiles « Outils » du tableau de
-  /// bord, ce qui est aussi la regle « un signal mene directement a son
-  /// ecran » (`02-regles-ux.md` section 2).
+  /// **Elles ne comptent pas dans les quatre destinations**, et ne sont
+  /// jamais rendues dans la barre basse. Aucun role n'en a plus depuis que
+  /// Compte est une destination du tuteur ([secondairesPour]) ; le parametre
+  /// reste pour un ecran hors barre qui en aurait besoin.
   final List<Destination> secondaires;
 
   /// Ce qui se passe quand une entree secondaire est choisie.
@@ -281,8 +271,26 @@ class NavShell extends StatelessWidget {
   /// secondaire est une route de premier niveau **hors** de la coquille.
   final void Function(String chemin)? onAllerSecondaire;
 
+  /// Vrai sur une **tache focalisee** (ajout de profil, questionnaire,
+  /// emetteur QR, sous-pages de preferences, consentement) : sur telephone,
+  /// la barre basse disparait et l'ecran porte son propre disque retour
+  /// (manifeste visuel Tuteur V1 section 4.2 point 5). La colonne laterale
+  /// reste visible sur tablette et bureau.
+  final bool masquerBarreBasse;
+
   /// Le nombre maximal de destinations de premier niveau.
   static const int maxDestinations = 4;
+
+  /// Hauteur minimale de la barre basse flottante, hors zone sure.
+  static const double hauteurBarre = 64;
+
+  /// Epaisseur du soulignement de la destination active de la barre basse.
+  static const double epaisseurSoulignement = 3;
+
+  /// Echelle de texte maximale des libelles de la barre basse : au-dela, un
+  /// libelle de quatre onglets ne tient plus dans sa colonne. Le libelle
+  /// reste lu en entier par le lecteur d'ecran.
+  static const double echelleTexteMaxBarre = 1.5;
 
   @override
   Widget build(BuildContext context) {
@@ -293,67 +301,65 @@ class NavShell extends StatelessWidget {
       return child;
     }
 
-    final int? actif = indexActif;
+    final Gabarit gabarit = AppGabarit.de(context);
+    if (gabarit.chrome == ChromeNavigation.barreBasse) {
+      if (masquerBarreBasse) {
+        return child;
+      }
+      final AppPalette palette = AppPalette.of(context);
+      return ColoredBox(
+        // Le fond de page passe sous la barre flottante et autour d'elle.
+        color: palette.surfaceCanvas.background,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: MediaQuery.removePadding(
+                context: context,
+                removeBottom: true,
+                child: child,
+              ),
+            ),
+            MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: _BarreFlottante(
+                destinations: destinations,
+                indexActif: indexActif,
+                onAller: onAller,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
-    return switch (AppGabarit.de(context).chrome) {
-      // `NavigationBar` de Material exige un index valide : il n'a aucune
-      // forme « rien de selectionne ». Sur un ecran secondaire, la barre
-      // basse est donc omise plutot que de surligner une destination ou l'on
-      // n'est pas. Le retour se fait par le bouton precedent, et l'entree par
-      // les tuiles « Outils » du tableau de bord.
-      ChromeNavigation.barreBasse when actif == null => child,
-      ChromeNavigation.barreBasse => Column(
-        children: <Widget>[
-          Expanded(child: child),
-          _Barre(
-            destinations: destinations,
-            indexActif: actif ?? 0,
-            onAller: onAller,
-          ),
-        ],
-      ),
-      ChromeNavigation.rail => Row(
-        children: <Widget>[
-          _Cote(
-            destinations: destinations,
-            indexActif: indexActif,
-            onAller: onAller,
-            secondaires: secondaires,
-            onAllerSecondaire: onAllerSecondaire,
-            largeur: AppGabarit.largeurRail,
-            enColonne: true,
-          ),
-          Expanded(child: child),
-        ],
-      ),
-      ChromeNavigation.barreLaterale => Row(
-        children: <Widget>[
-          _Cote(
-            destinations: destinations,
-            indexActif: indexActif,
-            onAller: onAller,
-            secondaires: secondaires,
-            onAllerSecondaire: onAllerSecondaire,
-            largeur: AppGabarit.largeurBarreLaterale,
-            enColonne: false,
-          ),
-          Expanded(child: child),
-        ],
-      ),
-    };
+    return _AvecColonne(
+      gabarit: gabarit,
+      destinations: destinations,
+      indexActif: indexActif,
+      onAller: onAller,
+      secondaires: secondaires,
+      onAllerSecondaire: onAllerSecondaire,
+      child: child,
+    );
   }
 }
 
-/// La barre basse Material 3 : une surface elevee, collee sous le contenu.
-class _Barre extends StatelessWidget {
-  const _Barre({
+/// La barre basse flottante : une pilule arrondie posee au-dessus de la zone
+/// sure (manifeste visuel Tuteur V1 section 3.4, maquette V3).
+///
+/// Destination active : icone pleine, libelle en accent et soulignement de
+/// trois points. Inactive : icone au trait et encre attenuee. Jamais la
+/// couleur seule : l'etat « selectionne » est aussi annonce.
+class _BarreFlottante extends StatelessWidget {
+  const _BarreFlottante({
     required this.destinations,
     required this.indexActif,
     required this.onAller,
   });
 
   final List<Destination> destinations;
-  final int indexActif;
+  final int? indexActif;
   final void Function(String chemin) onAller;
 
   @override
@@ -362,35 +368,50 @@ class _Barre extends StatelessWidget {
 
     return KeyedSubtree(
       key: NavShell.barreBasseKey,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: palette.surfaceRaised.background,
-          border: Border(top: palette.borderHairline.asBorderSide()),
-        ),
-        child: NavigationBarTheme(
-          data: NavigationBarThemeData(
-            labelTextStyle: _stylesLibelleNavigation(context, palette),
-            iconTheme: _stylesIconeNavigation(palette),
+      child: SafeArea(
+        top: false,
+        minimum: const EdgeInsets.only(bottom: AppSpacing.md),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            0,
           ),
-          child: NavigationBar(
-            selectedIndex: indexActif,
-            onDestinationSelected: (int index) {
-              onAller(destinations[index].chemin);
-            },
-            backgroundColor: palette.surfaceRaised.background,
-            indicatorColor: palette.washAccent.background,
-            indicatorShape: const RoundedRectangleBorder(
-              borderRadius: AppRadius.arrondiSm,
-            ),
-            labelPadding: const EdgeInsets.only(top: AppSpacing.xs),
-            destinations: <Widget>[
-              for (final Destination destination in destinations)
-                NavigationDestination(
-                  icon: Icon(destination.icone.repos),
-                  selectedIcon: Icon(destination.icone.actif),
-                  label: destination.libelle,
+          child: Semantics(
+            container: true,
+            explicitChildNodes: true,
+            label: t.nav.principale,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: palette.surfaceRaised.background,
+                borderRadius: AppRadius.arrondiMd,
+                border: Border.fromBorderSide(
+                  palette.contourCarte.asBorderSide(),
                 ),
-            ],
+                boxShadow: AppElevation.niveau1(palette.ombre),
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: NavShell.hauteurBarre,
+                ),
+                child: MediaQuery.withClampedTextScaling(
+                  maxScaleFactor: NavShell.echelleTexteMaxBarre,
+                  child: Row(
+                    children: <Widget>[
+                      for (int i = 0; i < destinations.length; i++)
+                        Expanded(
+                          child: _OngletBarre(
+                            destination: destinations[i],
+                            actif: i == indexActif,
+                            onAller: onAller,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -398,206 +419,411 @@ class _Barre extends StatelessWidget {
   }
 }
 
-/// Le rail Material 3 : la meme liste de destinations que la barre basse.
-class _Cote extends StatelessWidget {
-  const _Cote({
+class _OngletBarre extends StatelessWidget {
+  const _OngletBarre({
+    required this.destination,
+    required this.actif,
+    required this.onAller,
+  });
+
+  final Destination destination;
+  final bool actif;
+  final void Function(String chemin) onAller;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppInkColor encre = actif ? palette.inkAccent : palette.inkMuted;
+    final TextStyle base = textes.labelMedium ?? const TextStyle();
+
+    // Un seul noeud par onglet : bouton, libelle, etat selectionne. Le dessin
+    // (icone, texte, soulignement) ne se relit pas une seconde fois.
+    return Semantics(
+      container: true,
+      selected: actif,
+      child: Pressable(
+        onPress: () => onAller(destination.chemin),
+        libelleSemantique: destination.libelle,
+        arrondiFocus: AppRadius.arrondiSm,
+        child: ExcludeSemantics(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconTheme(
+                  data: encre.asIconTheme(size: AppSpacing.xxl),
+                  child: Icon(destination.icone.resoudre(selectionne: actif)),
+                ),
+                Ecart.vXs,
+                Text(
+                  destination.libelle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: encre.applyTo(
+                    base.copyWith(
+                      fontWeight: actif ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Ecart.vXs,
+                SizedBox(
+                  width: AppSpacing.xxl,
+                  height: NavShell.epaisseurSoulignement,
+                  child: actif
+                      ? DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: palette.inkAccent.asBorderSide().color,
+                            borderRadius: AppRadius.arrondiFull,
+                          ),
+                        )
+                      : null,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La colonne laterale et le contenu, cote a cote.
+///
+/// Repliee (rail de 80, icones seules, infobulles) ou depliee (barre laterale
+/// de 256, mot-symbole, libelles) : par defaut selon la largeur, repliee sur
+/// tablette et depliee sur bureau ; le bouton de repli en fait un **choix de
+/// cet appareil** (`navigationReplieeProvider`, persiste par `RewayahApp`).
+class _AvecColonne extends ConsumerWidget {
+  const _AvecColonne({
+    required this.gabarit,
     required this.destinations,
     required this.indexActif,
     required this.onAller,
     required this.secondaires,
     required this.onAllerSecondaire,
-    required this.largeur,
-    required this.enColonne,
+    required this.child,
   });
 
+  final Gabarit gabarit;
   final List<Destination> destinations;
   final int? indexActif;
   final void Function(String chemin) onAller;
   final List<Destination> secondaires;
   final void Function(String chemin)? onAllerSecondaire;
-  final double largeur;
-  final bool enColonne;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool? choix = ref.watch(navigationReplieeProvider);
+    final bool repliee = choix ?? gabarit == Gabarit.tablette;
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+
+    return Row(
+      children: <Widget>[
+        _Colonne(
+          repliee: repliee,
+          destinations: destinations,
+          indexActif: indexActif,
+          onAller: onAller,
+          secondaires: secondaires,
+          onAllerSecondaire: onAllerSecondaire,
+          onBasculer: () => ref
+              .read(navigationReplieeProvider.notifier)
+              .choisir(repliee: !repliee),
+        ),
+        Expanded(
+          // La colonne consomme l'encart de son cote (debut de lecture) : le
+          // contenu ne le recoit plus.
+          child: MediaQuery.removePadding(
+            context: context,
+            removeLeft: !rtl,
+            removeRight: rtl,
+            child: child,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Colonne extends StatelessWidget {
+  const _Colonne({
+    required this.repliee,
+    required this.destinations,
+    required this.indexActif,
+    required this.onAller,
+    required this.secondaires,
+    required this.onAllerSecondaire,
+    required this.onBasculer,
+  });
+
+  final bool repliee;
+  final List<Destination> destinations;
+  final int? indexActif;
+  final void Function(String chemin) onAller;
+  final List<Destination> secondaires;
+  final void Function(String chemin)? onAllerSecondaire;
+  final VoidCallback onBasculer;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
 
-    final Widget chrome = enColonne
-        ? NavigationRail(
-            selectedIndex: indexActif,
-            onDestinationSelected: (int index) {
-              onAller(destinations[index].chemin);
-            },
-            backgroundColor: palette.surfaceRaised.background,
-            minWidth: AppGabarit.largeurRail,
-            labelType: NavigationRailLabelType.all,
-            scrollable: true,
-            groupAlignment: -1,
-            useIndicator: true,
-            indicatorColor: palette.washAccent.background,
-            indicatorShape: const RoundedRectangleBorder(
-              borderRadius: AppRadius.arrondiSm,
-            ),
-            selectedLabelTextStyle: _styleLibelleSelectionne(context, palette),
-            unselectedLabelTextStyle: _styleLibelleNonSelectionne(
-              context,
-              palette,
-            ),
-            selectedIconTheme: palette.inkAccent.asIconTheme(
-              size: AppSpacing.xxl,
-            ),
-            unselectedIconTheme: palette.inkMuted.asIconTheme(
-              size: AppSpacing.xxl,
-            ),
-            // Le rail n'a que la largeur d'une icone : les entrees secondaires
-            // s'y disent par leur infobulle et leur libelle parle, jamais par
-            // une icone muette.
-            trailing: secondaires.isEmpty
-                ? null
-                : Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.lg),
-                    child: Column(
-                      children: <Widget>[
-                        for (final Destination entree in secondaires)
-                          Tooltip(
-                            message: entree.libelle,
-                            child: Pressable(
-                              libelleSemantique: entree.libelle,
-                              onPress: () =>
-                                  onAllerSecondaire?.call(entree.chemin),
-                              child: Icon(entree.icone.repos),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-            destinations: <NavigationRailDestination>[
-              for (final Destination destination in destinations)
-                NavigationRailDestination(
-                  icon: Icon(destination.icone.repos),
-                  selectedIcon: Icon(destination.icone.actif),
-                  label: Text(destination.libelle),
-                ),
-            ],
-          )
-        : NavigationDrawer(
-            selectedIndex: indexActif,
-            onDestinationSelected: (int index) {
-              onAller(destinations[index].chemin);
-            },
-            backgroundColor: palette.surfaceRaised.background,
-            indicatorColor: palette.washAccent.background,
-            indicatorShape: const RoundedRectangleBorder(
-              borderRadius: AppRadius.arrondiSm,
-            ),
-            tilePadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            children: <Widget>[
-              for (final Destination destination in destinations)
-                NavigationDrawerDestination(
-                  icon: Icon(destination.icone.repos),
-                  selectedIcon: Icon(destination.icone.actif),
-                  label: Text(destination.libelle),
-                ),
-              // `NavigationDrawer` n'indexe que ses `NavigationDrawerDestination` :
-              // un `ListTile` peut donc vivre ici sans decaler la selection, et
-              // sans compter dans les quatre destinations.
-              if (secondaires.isNotEmpty) ...<Widget>[
-                const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.sm,
-                  ),
-                  child: Divider(height: 1),
-                ),
-                for (final Destination entree in secondaires)
-                  Pressable(
-                    onPress: () => onAllerSecondaire?.call(entree.chemin),
-                    libelleSemantique: entree.libelle,
-                    respecterCibleTactile: false,
+    Widget item(Destination d, {required bool actif, required bool entree}) =>
+        _ItemColonne(
+          destination: d,
+          actif: actif,
+          repliee: repliee,
+          onPress: () =>
+              entree ? onAllerSecondaire?.call(d.chemin) : onAller(d.chemin),
+        );
+
+    final List<Widget> haut = <Widget>[
+      for (int i = 0; i < destinations.length; i++)
+        if (!destinations[i].enPied)
+          item(destinations[i], actif: i == indexActif, entree: false),
+      if (secondaires.isNotEmpty) ...<Widget>[
+        const Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
+          child: Divider(height: 1),
+        ),
+        for (final Destination entree in secondaires)
+          item(entree, actif: false, entree: true),
+      ],
+    ];
+    final List<Widget> pied = <Widget>[
+      for (int i = 0; i < destinations.length; i++)
+        if (destinations[i].enPied)
+          item(destinations[i], actif: i == indexActif, entree: false),
+    ];
+
+    return SizedBox(
+      key: repliee ? NavShell.railKey : NavShell.barreLateraleKey,
+      width: repliee ? AppGabarit.largeurRail : AppGabarit.largeurBarreLaterale,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: palette.surfaceRaised.background,
+          // Directionnel : en arabe, la colonne passe a droite et son filet
+          // avec elle.
+          border: BorderDirectional(end: palette.contourCarte.asBorderSide()),
+        ),
+        child: SafeArea(
+          child: Semantics(
+            container: true,
+            explicitChildNodes: true,
+            label: t.nav.principale,
+            child: LayoutBuilder(
+              builder: (BuildContext _, BoxConstraints contraintes) =>
+                  SingleChildScrollView(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight: AppMetriques.of(context).cibleTactile,
+                        minHeight: contraintes.maxHeight,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.lg,
-                        ),
-                        child: Row(
+                      child: IntrinsicHeight(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-                            Icon(entree.icone.repos),
-                            Ecart.hMd,
-                            Expanded(child: Text(entree.libelle)),
+                            _EnteteColonne(
+                              repliee: repliee,
+                              onBasculer: onBasculer,
+                            ),
+                            Ecart.vLg,
+                            ...haut,
+                            const Spacer(),
+                            ...pied,
+                            Ecart.vLg,
                           ],
                         ),
                       ),
                     ),
                   ),
-              ],
-            ],
-          );
-
-    return SizedBox(
-      key: enColonne ? NavShell.railKey : NavShell.barreLateraleKey,
-      width: largeur,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: palette.surfaceRaised.background,
-          // Directionnel : en arabe, le rail passe a droite et son filet
-          // avec lui.
-          border: BorderDirectional(end: palette.borderHairline.asBorderSide()),
+            ),
+          ),
         ),
-        child: enColonne
-            ? SafeArea(child: chrome)
-            : DrawerTheme(
-                data: const DrawerThemeData(
-                  width: AppGabarit.largeurBarreLaterale,
-                ),
-                child: NavigationDrawerTheme(
-                  data: NavigationDrawerThemeData(
-                    tileHeight: AppMetriques.of(context).cibleTactile,
-                    labelTextStyle: _stylesLibelleNavigation(context, palette),
-                    iconTheme: _stylesIconeNavigation(palette),
-                  ),
-                  child: chrome,
-                ),
-              ),
       ),
     );
   }
 }
 
-WidgetStateProperty<TextStyle?> _stylesLibelleNavigation(
-  BuildContext context,
-  AppPalette palette,
-) {
-  final TextStyle base =
-      Theme.of(context).textTheme.labelMedium ?? const TextStyle();
-  return WidgetStateProperty.resolveWith<TextStyle?>(
-    (Set<WidgetState> states) => states.contains(WidgetState.selected)
-        ? _styleLibelleSelectionne(context, palette)
-        : base.copyWith(color: palette.inkMuted.asBorderSide().color),
-  );
+/// La tete de la colonne : mot-symbole et bouton de repli quand elle est
+/// depliee, bouton de depli seul quand elle est repliee.
+class _EnteteColonne extends StatelessWidget {
+  const _EnteteColonne({required this.repliee, required this.onBasculer});
+
+  final bool repliee;
+  final VoidCallback onBasculer;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String libelle = repliee ? t.nav.deplier : t.nav.replier;
+
+    final Widget bouton = Tooltip(
+      message: libelle,
+      child: Pressable(
+        key: NavShell.boutonRepliKey,
+        onPress: onBasculer,
+        libelleSemantique: libelle,
+        arrondiFocus: AppRadius.arrondiFull,
+        child: SizedBox.square(
+          dimension: AppTouchTarget.standard,
+          child: Center(
+            child: IconTheme(
+              data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+              child: Icon(
+                repliee
+                    ? AppIcons.deplierNavigation.repos
+                    : AppIcons.replierNavigation.repos,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (repliee) {
+      return Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.lg),
+        child: Center(child: bouton),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.xl,
+        AppSpacing.lg,
+        AppSpacing.sm,
+        0,
+      ),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(
+                t.nav.motSymbole,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: palette.inkStrong.applyTo(
+                  (textes.titleLarge ?? const TextStyle()).copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          bouton,
+        ],
+      ),
+    );
+  }
 }
 
-TextStyle _styleLibelleSelectionne(BuildContext context, AppPalette palette) {
-  final TextStyle base =
-      Theme.of(context).textTheme.labelMedium ?? const TextStyle();
-  return base.copyWith(color: palette.inkAccent.asBorderSide().color);
-}
+/// Une destination de la colonne laterale.
+///
+/// Active : pastille `washAccent`, icone pleine et libelle d'accent en
+/// clair ; aplat `surfacePrimary` et encre posee dessus en sombre (manifeste
+/// visuel section 3.4, maquettes V2 A et C). Inactive : icone au trait en
+/// encre attenuee, libelle en encre forte. Repliee, l'item n'est qu'une icone
+/// de 48 : son nom passe par l'infobulle et le lecteur d'ecran.
+class _ItemColonne extends StatelessWidget {
+  const _ItemColonne({
+    required this.destination,
+    required this.actif,
+    required this.repliee,
+    required this.onPress,
+  });
 
-TextStyle _styleLibelleNonSelectionne(
-  BuildContext context,
-  AppPalette palette,
-) {
-  final TextStyle base =
-      Theme.of(context).textTheme.labelMedium ?? const TextStyle();
-  return base.copyWith(color: palette.inkMuted.asBorderSide().color);
-}
+  final Destination destination;
+  final bool actif;
+  final bool repliee;
+  final VoidCallback onPress;
 
-WidgetStateProperty<IconThemeData?> _stylesIconeNavigation(AppPalette palette) {
-  return WidgetStateProperty.resolveWith<IconThemeData?>(
-    (Set<WidgetState> states) => states.contains(WidgetState.selected)
-        ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
-        : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
-  );
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final bool sombre = palette.estSombre;
+
+    final Color? fond = !actif
+        ? null
+        : sombre
+        ? palette.surfacePrimary.background
+        : palette.washAccent.background;
+    final Color couleurIcone = !actif
+        ? palette.inkMuted.asBorderSide().color
+        : sombre
+        ? palette.surfacePrimary.onBackground
+        : palette.inkAccent.asBorderSide().color;
+    final Color couleurLibelle = !actif
+        ? palette.inkStrong.asBorderSide().color
+        : sombre
+        ? palette.surfacePrimary.onBackground
+        : palette.inkAccent.asBorderSide().color;
+
+    final Widget icone = IconTheme(
+      data: IconThemeData(color: couleurIcone, size: AppSpacing.xxl),
+      child: Icon(destination.icone.resoudre(selectionne: actif)),
+    );
+
+    final Widget pastille = DecoratedBox(
+      decoration: BoxDecoration(color: fond, borderRadius: AppRadius.arrondiSm),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minHeight: AppTouchTarget.standard,
+          minWidth: AppTouchTarget.standard,
+        ),
+        child: repliee
+            ? Center(child: icone)
+            : Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    icone,
+                    Ecart.hMd,
+                    Expanded(
+                      child: Text(
+                        destination.libelle,
+                        style: (textes.bodyLarge ?? const TextStyle()).copyWith(
+                          color: couleurLibelle,
+                          fontWeight: actif ? FontWeight.w600 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      ),
+    );
+
+    final Widget pressable = Semantics(
+      container: true,
+      selected: actif,
+      child: Pressable(
+        onPress: onPress,
+        libelleSemantique: destination.libelle,
+        arrondiFocus: AppRadius.arrondiSm,
+        child: ExcludeSemantics(child: pastille),
+      ),
+    );
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: repliee ? AppSpacing.lg : AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
+      child: repliee
+          ? Tooltip(message: destination.libelle, child: pressable)
+          : pressable,
+    );
+  }
 }

@@ -1574,6 +1574,18 @@ class Traductions$nav$fr {
 
 	/// fr: 'Mon compte'
 	String get compte => 'Mon compte';
+
+	/// fr: 'Navigation principale'
+	String get principale => 'Navigation principale';
+
+	/// fr: 'Rewayah'
+	String get motSymbole => 'Rewayah';
+
+	/// fr: 'Replier la navigation'
+	String get replier => 'Replier la navigation';
+
+	/// fr: 'Déplier la navigation'
+	String get deplier => 'Déplier la navigation';
 }
 
 // Path: compte
@@ -8799,6 +8811,10 @@ extension on Traductions {
 			'nav.admin.notificationsTitre' => 'Notifications',
 			'nav.admin.menu' => 'Menu',
 			'nav.compte' => 'Mon compte',
+			'nav.principale' => 'Navigation principale',
+			'nav.motSymbole' => 'Rewayah',
+			'nav.replier' => 'Replier la navigation',
+			'nav.deplier' => 'Déplier la navigation',
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
 			'compte.informations' => 'Informations',
@@ -9294,12 +9310,12 @@ extension on Traductions {
 			'controleur.planning.tousEnseignants' => 'Tous les enseignants',
 			'controleur.planning.colonneEnseignant' => 'Enseignant',
 			'controleur.planning.colonneEleve' => 'Élève',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.planning.colonneHeure' => 'Heure locale',
 			'controleur.planning.colonneUtc' => 'UTC',
 			'controleur.planning.colonneEtat' => 'État',
 			'controleur.planning.colonneEntree' => 'Entrée',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.planning.avec' => ({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}',
 			'controleur.planning.plage' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.planning.plageAutreJour' => ({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}',

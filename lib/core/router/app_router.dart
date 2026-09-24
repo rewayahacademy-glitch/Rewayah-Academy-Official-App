@@ -60,8 +60,12 @@ import '../i18n/strings.g.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
+import '../theme/app_gabarit.dart';
 import '../widgets/admin_shell.dart';
+import '../widgets/bascule_theme.dart';
+import '../widgets/entete_page.dart';
 import '../widgets/nav_shell.dart';
+import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
 import 'ecran_a_construire.dart';
 import 'redirection.dart';
@@ -191,8 +195,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // `destinationsPour` decide ce qui est rendu, les branches existent dans
       // les deux modes.
       StatefulShellRoute.indexedStack(
-        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
-            _CoquilleNavigation(role: AppRole.student, navigationShell: n),
+        builder:
+            (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
+                _CoquilleNavigation(
+                  role: AppRole.student,
+                  navigationShell: n,
+                  chemin: etat.uri.path,
+                ),
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <GoRoute>[
@@ -228,14 +237,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ],
       ),
 
-      // Tuteur. `TUT-01` est la racine du role : c'est le suivi du foyer, et
-      // non l'ecran de gestion des appareils, qui accueille le parent. Les
-      // routes foyer, ajout d'enfant et appairage restent hors de la barre,
-      // atteintes depuis l'ecran puis quittees : ce sont des poses, pas des
-      // etages (`03-architecture-information.md` section 5).
+      // Tuteur. Quatre branches, quatre destinations : Accueil, Foyer,
+      // Historique, Compte (mandat Tuteur V1 section 4 ; structure du mapping
+      // des routes, section 5). Une sous-page vit dans la branche de sa
+      // destination : la barre reste visible, la destination parente reste
+      // active, et le retour systeme revient en arriere au lieu de fermer
+      // l'application (contrainte R6).
       StatefulShellRoute.indexedStack(
-        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
-            _CoquilleNavigation(role: AppRole.guardian, navigationShell: n),
+        builder:
+            (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
+                _CoquilleNavigation(
+                  role: AppRole.guardian,
+                  navigationShell: n,
+                  chemin: etat.uri.path,
+                ),
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <GoRoute>[
@@ -249,14 +264,35 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
+                path: Routes.tuteurFoyer,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const AppareilsPage(),
+              ),
+              GoRoute(
+                path: Routes.tuteurAjouterEnfant,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const AjouterEnfantPage(),
+              ),
+              GoRoute(
+                path: '${Routes.tuteurAppairer}/:eleveId',
+                builder: (BuildContext _, GoRouterState etat) => AppairagePage(
+                  eleveId: etat.pathParameters['eleveId'] ?? '',
+                ),
+              ),
+              // Le parcours de personnalisation et de choix d'horaire : une
+              // tache focalisee de la branche Foyer.
+              GoRoute(
+                path: '${Routes.tuteurParcours}/:eleveId',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    ParcoursOffresPage(
+                      eleveId: etat.pathParameters['eleveId'] ?? '',
+                    ),
+              ),
+              GoRoute(
                 path: Routes.tuteurDisponibilites,
                 builder: (BuildContext _, GoRouterState _) =>
                     const DisponibilitesPage(),
               ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurReglages,
                 builder: (BuildContext _, GoRouterState _) =>
@@ -273,34 +309,27 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ),
             ],
           ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.tuteurCompte,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const ComptePage(),
+              ),
+            ],
+          ),
         ],
-      ),
-      GoRoute(
-        path: Routes.tuteurFoyer,
-        builder: (BuildContext _, GoRouterState _) => const AppareilsPage(),
-      ),
-      GoRoute(
-        path: Routes.tuteurAjouterEnfant,
-        builder: (BuildContext _, GoRouterState _) => const AjouterEnfantPage(),
-      ),
-      GoRoute(
-        path: '${Routes.tuteurAppairer}/:eleveId',
-        builder: (BuildContext _, GoRouterState etat) =>
-            AppairagePage(eleveId: etat.pathParameters['eleveId'] ?? ''),
-      ),
-      // Le parcours de personnalisation et de choix d'horaire. Une pose, pas
-      // une destination de la barre : on y entre depuis l'accueil famille et on
-      // en ressort (`03-architecture-information.md` section 5).
-      GoRoute(
-        path: '${Routes.tuteurParcours}/:eleveId',
-        builder: (BuildContext _, GoRouterState etat) =>
-            ParcoursOffresPage(eleveId: etat.pathParameters['eleveId'] ?? ''),
       ),
 
       // Enseignant.
       StatefulShellRoute.indexedStack(
-        builder: (BuildContext _, GoRouterState _, StatefulNavigationShell n) =>
-            _CoquilleNavigation(role: AppRole.teacher, navigationShell: n),
+        builder:
+            (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
+                _CoquilleNavigation(
+                  role: AppRole.teacher,
+                  navigationShell: n,
+                  chemin: etat.uri.path,
+                ),
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: <GoRoute>[
@@ -333,11 +362,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Les quatre poses de l'enseignant, HORS de la coquille et c'est le
-      // point : une `GoRoute` posee dans une `StatefulShellBranch` devient une
-      // destination de la barre, et la barre de l'enseignant en tient
-      // exactement trois (`TEACHER_PARALLEL_BASELINE.md` §3.1, ADR-027). Une
-      // pose s'atteint depuis un ecran puis se quitte, comme les trois poses du
-      // tuteur juste au-dessus.
+      // point : la barre de l'enseignant en tient exactement trois
+      // (`TEACHER_PARALLEL_BASELINE.md` §3.1, ADR-027), et le cahier est
+      // l'ecran de sortie de seance, sans barre qui offrirait de partir
+      // ailleurs. Une pose s'atteint depuis un ecran puis se quitte.
       //
       // La forme des chemins est ecrite ici avec ses parametres, et calculee
       // ailleurs par `Routes.cahierPour`, `groupePour` et `revuePour` : les deux
@@ -758,14 +786,22 @@ class _CoquilleSecondaire extends ConsumerWidget {
       );
     }
 
+    final List<Destination> destinations = destinationsPour(
+      role: effectif,
+      // Seul l'eleve a deux formes de destinations (ADR-009) ; pour les
+      // autres roles le mode ne change rien.
+      mode: session.interfaceMode,
+    );
+    // Toutes les pages de cette coquille sont des pages `/compte*` : quand le
+    // role porte le compte parmi ses destinations (l'eleve), c'est elle qui
+    // est active, et la barre basse reste la pour en sortir.
+    final int compte = destinations.indexWhere(
+      (Destination d) => d.chemin == Routes.compte,
+    );
+
     return NavShell(
-      destinations: destinationsPour(
-        role: effectif,
-        // Seul l'eleve a deux formes de destinations (ADR-009) ; pour les
-        // autres roles le mode ne change rien.
-        mode: session.interfaceMode,
-      ),
-      indexActif: null,
+      destinations: destinations,
+      indexActif: compte == -1 ? null : compte,
       onAller: aller,
       secondaires: secondairesPour(role: effectif),
       onAllerSecondaire: aller,
@@ -779,6 +815,7 @@ class _CoquilleNavigation extends ConsumerWidget {
   const _CoquilleNavigation({
     required this.role,
     required this.navigationShell,
+    required this.chemin,
   });
 
   /// Le role dont cette coquille tient les destinations.
@@ -786,6 +823,9 @@ class _CoquilleNavigation extends ConsumerWidget {
 
   /// Les branches de la coquille, pilotées par `go_router`.
   final StatefulNavigationShell navigationShell;
+
+  /// Le chemin courant : il dit si l'ecran est une tache focalisee.
+  final String chemin;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -797,14 +837,24 @@ class _CoquilleNavigation extends ConsumerWidget {
       mode: mode,
     );
 
-    return NavShell(
+    final Widget coquille = NavShell(
       destinations: destinations,
-      indexActif: navigationShell.currentIndex,
-      onAller: (String chemin) {
+      indexActif: navigationShell.currentIndex < destinations.length
+          ? navigationShell.currentIndex
+          : null,
+      masquerBarreBasse: Routes.estTacheFocalisee(chemin),
+      onAller: (String destination) {
         final int index = destinations.indexWhere(
-          (Destination d) => d.chemin == chemin,
+          (Destination d) => d.chemin == destination,
         );
         if (index == -1) {
+          return;
+        }
+        // Une destination sans branche (le Compte de l'eleve, `/compte`) se
+        // rejoint par `go` : `goBranch` sur un index absent violait
+        // l'assertion de go_router puis lisait hors de la liste (C01, 3.3-6).
+        if (index >= navigationShell.route.branches.length) {
+          GoRouter.of(context).go(destination);
           return;
         }
         navigationShell.goBranch(
@@ -817,8 +867,27 @@ class _CoquilleNavigation extends ConsumerWidget {
       // Les entrees secondaires sont des routes de premier niveau **hors** de
       // la coquille : elles se rejoignent par `go`, jamais par `goBranch`, qui
       // ne connait que les branches.
-      onAllerSecondaire: (String chemin) => GoRouter.of(context).go(chemin),
+      onAllerSecondaire: (String destination) =>
+          GoRouter.of(context).go(destination),
       child: navigationShell,
+    );
+
+    if (role != AppRole.guardian) {
+      return coquille;
+    }
+    // Le tuteur porte, sur chaque page de sa coquille, la cloche des
+    // notifications et, a partir de la tablette, la bascule clair / sombre
+    // (manifeste visuel Tuteur V1 section 4.2). La cloche n'a pas de point
+    // tant qu'aucune source de notifications n'existe (DB-CPT-04).
+    final bool large = AppGabarit.de(context).estLarge;
+    return ActionsEnteteCoquille(
+      actions: <Widget>[
+        if (large) const BasculeTheme(),
+        ClocheNotifications(
+          onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
+        ),
+      ],
+      child: coquille,
     );
   }
 }

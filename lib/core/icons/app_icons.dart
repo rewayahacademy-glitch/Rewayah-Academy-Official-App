@@ -81,6 +81,31 @@ abstract final class AppIcons {
     IconData(0xe272, fontFamily: _actif),
   );
 
+  /// Historique du tuteur (seances et observations passees) : Phosphor
+  /// `clock-counter-clockwise` (0xe1a0, releve dans `phosphor_flutter` 2.1.0,
+  /// `phosphor_icons_regular.dart` et `phosphor_icons_fill.dart` ; present
+  /// dans les tables `cmap` des deux polices embarquees, verifie le 24/09).
+  /// Une horloge ne se miroite pas en arabe (`06-accessibilite.md` section 5).
+  static const AppIcon historique = AppIcon._(
+    IconData(0xe1a0, fontFamily: _repos),
+    IconData(0xe1a0, fontFamily: _actif),
+  );
+
+  /// Replier la navigation laterale : Phosphor `caret-double-left` (0xe128,
+  /// meme releve). Directionnelle : en arabe, la barre est a droite et se
+  /// replie vers la droite.
+  static const AppIcon replierNavigation = AppIcon._(
+    IconData(0xe128, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe128, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Deplier la navigation laterale : Phosphor `caret-double-right` (0xe12a,
+  /// meme releve), miroitee comme [replierNavigation].
+  static const AppIcon deplierNavigation = AppIcon._(
+    IconData(0xe12a, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe12a, fontFamily: _actif, matchTextDirection: true),
+  );
+
   // --- Navigation, enseignant --------------------------------------------
 
   /// La journee de cours.

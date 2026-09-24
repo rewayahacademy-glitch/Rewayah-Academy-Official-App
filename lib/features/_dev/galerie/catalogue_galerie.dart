@@ -11,7 +11,6 @@ import '../../../core/planning/service_planning.dart';
 import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
-import '../../../core/router/routes.dart';
 import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
@@ -194,28 +193,14 @@ final List<EntreeJournee> _entreesJournee = <EntreeJournee>[
   ),
 ];
 
-/// Trois destinations, pour les trois formes du chrome de navigation.
+/// Les quatre destinations du tuteur, pour les trois formes du chrome de
+/// navigation (Compte epingle en bas de la colonne laterale).
 ///
-/// Celles du tuteur, prises telles quelles dans les libelles du produit : une
-/// galerie qui inventerait ses propres libelles ne montrerait pas la vraie
-/// longueur des mots, et c'est justement ce qui casse un rail.
-List<Destination> _destinationsExemple() => <Destination>[
-  Destination(
-    libelle: t.nav.tuteur.foyer,
-    icone: AppIcons.foyer,
-    chemin: Routes.tuteurAccueil,
-  ),
-  Destination(
-    libelle: t.nav.tuteur.disponibilites,
-    icone: AppIcons.disponibilites,
-    chemin: Routes.tuteurDisponibilites,
-  ),
-  Destination(
-    libelle: t.nav.tuteur.reglages,
-    icone: AppIcons.reglages,
-    chemin: Routes.tuteurReglages,
-  ),
-];
+/// Prises telles quelles dans le produit : une galerie qui inventerait ses
+/// propres libelles ne montrerait pas la vraie longueur des mots, et c'est
+/// justement ce qui casse un rail.
+List<Destination> _destinationsExemple() =>
+    destinationsPour(role: AppRole.guardian, mode: InterfaceMode.standard);
 
 /// Hauteur allouee a un composant qui prend toute une page.
 const double _hauteurPage = AppSpacing.respiration * 6;
@@ -306,7 +291,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     famille: FamilleComposant.structure,
     etats: <EtatGalerie>[
       EtatGalerie(
-        'trois destinations',
+        'quatre destinations',
         (BuildContext _) => SizedBox(
           height: _hauteurPage,
           child: NavShell(

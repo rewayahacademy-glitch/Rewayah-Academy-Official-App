@@ -47,6 +47,8 @@ class RewayahApp extends ConsumerWidget {
     final SessionState session = ref.watch(sessionProvider);
     // Lecture du theme persiste au montage, ecriture a chaque changement.
     ref.watch(persistanceApparenceProvider);
+    // Meme regle pour le repli de la navigation laterale (bouton de repli).
+    ref.watch(persistanceNavigationProvider);
     final ThemeMode mode = themeMode ?? ref.watch(modeThemeProvider);
 
     return MaterialApp.router(

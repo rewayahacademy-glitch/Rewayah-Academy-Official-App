@@ -100,8 +100,27 @@ abstract final class Routes {
   /// Reglages par enfant.
   static const String tuteurReglages = '/tuteur/reglages';
 
-  /// Suivi des cahiers de transmission.
+  /// L'Historique du tuteur (destination « Historique ») : l'identifiant
+  /// `suivi` est garde, avec ses tests et son ecran (mapping des routes,
+  /// section 2).
   static const String tuteurSuivi = '/tuteur/suivi';
+
+  /// Le compte du tuteur, quatrieme destination de sa coquille.
+  static const String tuteurCompte = '/tuteur/compte';
+
+  /// Les notifications du tuteur, ouvertes par la cloche de l'en-tete.
+  static const String tuteurNotifications = '/tuteur/notifications';
+
+  /// Vrai quand [chemin] est une **tache focalisee** : sur telephone, la
+  /// barre basse s'efface et l'ecran porte son disque retour (manifeste
+  /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).
+  ///
+  /// Une tache focalisee se termine ou s'abandonne : ajout de profil,
+  /// emetteur QR d'appairage, questionnaire du parcours.
+  static bool estTacheFocalisee(String chemin) =>
+      chemin == tuteurAjouterEnfant ||
+      chemin.startsWith('$tuteurAppairer/') ||
+      chemin.startsWith('$tuteurParcours/');
 
   // --- Enseignant ---------------------------------------------------------
 

@@ -294,3 +294,80 @@ final Provider<ThemeMode> modeThemeProvider = Provider<ThemeMode>(
     preferencesLocalesProvider.select((PreferencesLocales p) => p.theme.mode),
   ),
 );
+
+/// Clef de la preference de repli de la navigation laterale.
+const String clefNavigationRepliee = 'navigation.repliee';
+
+/// Le choix de repli de la navigation laterale **sur cet appareil**
+/// (manifeste visuel Tuteur V1, section 4.2 point 4).
+///
+/// `null` suit la largeur : rail replie sur tablette, barre laterale depliee
+/// sur bureau. `true` ou `false` est le choix du bouton de repli, garde tant
+/// que l'appareil n'en fait pas un autre. Sur telephone, il n'a aucun effet :
+/// la navigation y est une barre basse.
+final NotifierProvider<NavigationReplieeControleur, bool?>
+navigationReplieeProvider =
+    NotifierProvider<NavigationReplieeControleur, bool?>(
+      NavigationReplieeControleur.new,
+    );
+
+/// Porte le choix du bouton de repli.
+class NavigationReplieeControleur extends Notifier<bool?> {
+  /// Vrai des qu'un choix a ete fait pendant cette session : la lecture du
+  /// stockage, qui peut arriver apres, ne l'ecrase jamais.
+  bool _choisi = false;
+
+  @override
+  bool? build() => null;
+
+  /// Replie (`true`) ou deplie (`false`) la navigation laterale.
+  void choisir({required bool repliee}) {
+    _choisi = true;
+    state = repliee;
+  }
+
+  /// Restaure le choix persiste au lancement, sauf si un choix a deja ete
+  /// fait entre-temps.
+  void restaurer({required bool repliee}) {
+    if (_choisi) {
+      return;
+    }
+    state = repliee;
+  }
+}
+
+/// Relie le choix de repli a son stockage, comme [persistanceApparenceProvider]
+/// le fait pour le theme : une lecture au montage, une ecriture a chaque
+/// changement. **Monte par `RewayahApp` seulement.**
+final Provider<void> persistanceNavigationProvider = Provider<void>((Ref ref) {
+  final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
+  final NavigationReplieeControleur controleur = ref.read(
+    navigationReplieeProvider.notifier,
+  );
+
+  Future<void> restaurer() async {
+    try {
+      final String? lu = await stockage.lire(clefNavigationRepliee);
+      if (ref.mounted && (lu == 'true' || lu == 'false')) {
+        controleur.restaurer(repliee: lu == 'true');
+      }
+    } on Object catch (erreur) {
+      debugPrint('Repli de navigation illisible, reste en memoire : $erreur');
+    }
+  }
+
+  Future<void> ecrire(bool repliee) async {
+    try {
+      await stockage.ecrire(clefNavigationRepliee, '$repliee');
+    } on Object catch (erreur) {
+      debugPrint('Repli de navigation non ecrit, reste en memoire : $erreur');
+    }
+  }
+
+  unawaited(restaurer());
+  ref.listen<bool?>(navigationReplieeProvider, (bool? avant, bool? apres) {
+    if (apres != null && avant != apres) {
+      unawaited(ecrire(apres));
+    }
+  });
+});

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 import '../theme/app_elevation.dart';
@@ -5,6 +6,7 @@ import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import 'entete_page.dart';
 import 'offline_banner.dart';
 
 /// Le gabarit de page du produit. **Tout ecran passe par lui.**
@@ -21,6 +23,10 @@ import 'offline_banner.dart';
 ///   d'un desert (`05-regles-responsive.md` section 2) ;
 /// - le bandeau hors ligne, en tete et sans gouttiere, parce qu'un bandeau de
 ///   pleine largeur se lit comme un etat de l'application et non de la page ;
+/// - l'**en-tete** : le titre, et, quand il y en a, le disque retour, un
+///   sous-titre et les actions a droite. Les actions viennent de la page
+///   ([actionsEntete]) et de la coquille du role ([ActionsEnteteCoquille] :
+///   la cloche et la bascule de theme du tuteur) ;
 /// - la zone d'action **collee en bas**, qui flotte au dessus du contenu et
 ///   porte donc le niveau 2 d'elevation.
 ///
@@ -28,12 +34,19 @@ import 'offline_banner.dart';
 /// les premiers viennent de `Skeleton` et d'`EmptyState`, la seconde de
 /// `NavShell`. Un gabarit qui saurait tout finirait par etre la seule chose que
 /// personne n'ose modifier.
+///
+/// **Zone sure** : le corps est en `SafeArea`, et c'est la coquille qui retire
+/// de son `MediaQuery` l'encart deja consomme par sa barre ou sa colonne
+/// (`NavShell`) : aucun encart n'est applique deux fois.
 class PageShell extends StatelessWidget {
   /// Cree une page.
   const PageShell({
     required this.child,
     super.key,
     this.titre,
+    this.sousTitre,
+    this.onRetour,
+    this.actionsEntete = const <Widget>[],
     this.entete,
     this.actions,
     this.defilante = true,
@@ -46,6 +59,17 @@ class PageShell extends StatelessWidget {
   /// pas « Bienvenue sur votre tableau de bord »
   /// (`02-regles-ux.md` section 9).
   final String? titre;
+
+  /// Une ligne sous le titre, en encre attenuee.
+  final String? sousTitre;
+
+  /// Le retour d'une page de niveau 2 ou d'une tache focalisee : sans lui,
+  /// aucun disque retour n'est rendu.
+  final VoidCallback? onRetour;
+
+  /// Les actions propres a la page, a droite du titre, **avant** celles de la
+  /// coquille.
+  final List<Widget> actionsEntete;
 
   /// Ce qui suit immediatement le titre et ne defile pas : un onglet, un
   /// selecteur d'enfant, une ligne de contexte.
@@ -64,6 +88,12 @@ class PageShell extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     final Gabarit gabarit = AppGabarit.de(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final List<Widget> actionsTete = <Widget>[
+      ...actionsEntete,
+      ...ActionsEnteteCoquille.de(context),
+    ];
+    final bool enteteRiche =
+        onRetour != null || sousTitre != null || actionsTete.isNotEmpty;
 
     // La tete ne defile pas : le titre d'ecran, puis l'en-tete (un onglet, le
     // selecteur d'enfant de `TUT-01`, une ligne de contexte). C'est une zone
@@ -73,14 +103,40 @@ class PageShell extends StatelessWidget {
       if (titre != null) ...<Widget>[
         // 48 au dessus d'un titre d'ecran, c'est le rythme de page
         // (`01-systeme-visuel.md` section 6). En mode enfant, la marge de
-        // respiration prend le relais.
+        // respiration prend le relais. Un en-tete a actions (cloche, disque
+        // retour) porte deja sa cible de 48 : il ne prend que 24.
         SizedBox(
           height: metriques.estEnfant
               ? AppSpacing.respiration
+              : enteteRiche
+              ? AppSpacing.xxl
               : AppSpacing.titreEcran,
         ),
-        Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
+        if (enteteRiche)
+          EntetePage(
+            titre: titre!,
+            sousTitre: sousTitre,
+            onRetour: onRetour,
+            actions: actionsTete,
+          )
+        else
+          Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
         Ecart.vXxl,
+      ] else if (enteteRiche) ...<Widget>[
+        // Sans titre, la page garde son disque retour et les actions de la
+        // coquille : une ligne, retour au debut, actions a la fin.
+        Ecart.vLg,
+        Row(
+          children: <Widget>[
+            if (onRetour != null) DisqueRetour(onPress: onRetour!),
+            const Spacer(),
+            for (final Widget action in actionsTete) ...<Widget>[
+              Ecart.hXs,
+              action,
+            ],
+          ],
+        ),
+        Ecart.vLg,
       ] else
         Ecart.vXxl,
       if (entete != null) ...<Widget>[entete!, Ecart.vXl],
@@ -140,6 +196,36 @@ class PageShell extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Les actions d'en-tete qu'une **coquille de role** pose sur chacune de ses
+/// pages : la cloche des notifications, et, a partir de la tablette, la
+/// bascule clair / sombre (manifeste visuel Tuteur V1 section 4.2).
+///
+/// Posee par la coquille au-dessus de ses branches, lue par [PageShell] :
+/// aucun ecran n'a a savoir qu'elles existent, et un role sans cloche n'en
+/// recoit aucune. Hors de toute coquille, la liste est vide.
+class ActionsEnteteCoquille extends InheritedWidget {
+  /// Pose les actions pour tout le sous-arbre.
+  const ActionsEnteteCoquille({
+    required this.actions,
+    required super.child,
+    super.key,
+  });
+
+  /// Les actions, dans l'ordre de lecture (la cloche en dernier).
+  final List<Widget> actions;
+
+  /// Les actions posees au-dessus de [context], ou une liste vide.
+  static List<Widget> de(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
+          ?.actions ??
+      const <Widget>[];
+
+  @override
+  bool updateShouldNotify(ActionsEnteteCoquille ancien) =>
+      !listEquals(actions, ancien.actions);
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.
