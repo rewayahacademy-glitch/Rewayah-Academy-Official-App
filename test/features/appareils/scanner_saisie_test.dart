@@ -57,13 +57,15 @@ Future<_Montage> _monter(
   bool disponible = true,
   bool horsLigne = false,
   Size taille = const Size(390, 844),
+  FauxStockageSecurise? coffre,
+  double echelleTexte = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final List<FauxLecteurQr> lecteurs = <FauxLecteurQr>[];
   final FauxServiceEnfantPilote s = service ?? FauxServiceEnfantPilote();
-  final FauxStockageSecurise coffre = FauxStockageSecurise();
+  final FauxStockageSecurise c = coffre ?? FauxStockageSecurise();
   final FauxProfilsLocaux profils = FauxProfilsLocaux();
   late GoRouter routeur;
   await tester.pumpWidget(
@@ -71,7 +73,7 @@ Future<_Montage> _monter(
       overrides: <Override>[
         ...surchargesRouteur(FausseSourceSession()),
         serviceEnfantProvider.overrideWithValue(s),
-        stockageSecuriseProvider.overrideWithValue(coffre),
+        stockageSecuriseProvider.overrideWithValue(c),
         profilsLocauxProvider.overrideWithValue(profils),
         lecteurQrDisponibleProvider.overrideWithValue(disponible),
         fabriqueLecteurQrProvider.overrideWithValue(() {
@@ -89,6 +91,12 @@ Future<_Montage> _monter(
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
               routerConfig: routeur,
+              builder: (BuildContext contexte, Widget? enfant) => MediaQuery(
+                data: MediaQuery.of(
+                  contexte,
+                ).copyWith(textScaler: TextScaler.linear(echelleTexte)),
+                child: enfant ?? const SizedBox.shrink(),
+              ),
             );
           },
         ),
@@ -98,7 +106,7 @@ Future<_Montage> _monter(
   await stabiliser(tester);
   routeur.go(depart ?? Routes.connexion);
   await stabiliser(tester);
-  return _Montage(routeur, lecteurs, s, coffre, profils);
+  return _Montage(routeur, lecteurs, s, c, profils);
 }
 
 Future<void> _taper(WidgetTester tester, Finder cible) async {
@@ -595,6 +603,138 @@ void main() {
     });
   });
 
+  group('Revue LD-R : coffre en echec, compositions, texte a 200 %', () {
+    testWidgets(
+      'scanner : coffre qui refuse le jeton -> refus dit, jamais bloque en '
+      'verification',
+      (WidgetTester tester) async {
+        final _Montage m = await _monter(
+          tester,
+          depart: Routes.connexionEleveScanner,
+          coffre: _CoffreQuiRefuseLeJeton(),
+        );
+        m.lecteur.lire('AB23CD');
+        await stabiliser(tester);
+
+        final r = t.eleveConnexion.refus;
+        expect(find.text(r.nonEnregistreTitre), findsOneWidget);
+        expect(find.text(r.nonEnregistre), findsOneWidget);
+        expect(
+          find.text(t.eleveConnexion.lecteur.verificationTitre),
+          findsNothing,
+        );
+        expect(m.lieu, Routes.connexionEleveScanner);
+        // Deux issues : scanner a nouveau, ou saisir un code.
+        expect(_action(t.eleveConnexion.lecteur.scannerANouveau), findsOneWidget);
+        expect(_action(t.eleveConnexion.lecteur.saisir), findsOneWidget);
+      },
+    );
+
+    testWidgets('saisie : coffre qui refuse le jeton -> message sous le champ', (
+      WidgetTester tester,
+    ) async {
+      final _Montage m = await _monter(
+        tester,
+        depart: Routes.connexionEleveCode,
+        coffre: _CoffreQuiRefuseLeJeton(),
+      );
+      await tester.enterText(find.byKey(SaisieCodePage.champKey), 'AB23CD');
+      await stabiliser(tester);
+      await _taper(tester, _action(t.eleveConnexion.saisie.valider));
+
+      expect(m.lieu, Routes.connexionEleveCode);
+      final TextField champ = tester.widget<TextField>(
+        find.byKey(SaisieCodePage.champKey),
+      );
+      expect(champ.decoration!.errorText, t.eleveConnexion.refus.nonEnregistre);
+      expect(champ.enabled, isTrue);
+    });
+
+    for (final String route in <String>[
+      Routes.connexionEleveScanner,
+      Routes.connexionEleveCode,
+    ]) {
+      testWidgets('bureau 1440 ($route) : retour et titre alignes sur le '
+          'panneau centre', (WidgetTester tester) async {
+        await _monter(tester, depart: route, taille: const Size(1440, 900));
+        final Rect panneau = tester.getRect(
+          find.byKey(PanneauAppareilEleve.panneauKey),
+        );
+        expect(panneau.width, lessThanOrEqualTo(560));
+        expect(panneau.center.dx, closeTo(720, 1));
+        final Rect retour = tester.getRect(find.byType(DisqueRetour));
+        expect(retour.left, closeTo(panneau.left, 1));
+        final Rect titre = tester.getRect(
+          find.text(
+            route == Routes.connexionEleveScanner
+                ? t.eleveConnexion.lecteur.titre
+                : t.eleveConnexion.saisie.titre,
+          ),
+        );
+        expect(titre.left, greaterThan(panneau.left));
+        expect(titre.right, lessThanOrEqualTo(panneau.right));
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets(
+      'telephone : camera sur tout le corps, retour et Saisir le code poses '
+      'dessus',
+      (WidgetTester tester) async {
+        await _monter(tester, depart: Routes.connexionEleveScanner);
+        final Rect viseur = tester.getRect(find.byKey(ScannerPage.viseurKey));
+        // Tout le corps de la page, gouttiere du gabarit comprise (20).
+        expect(viseur.left, lessThanOrEqualTo(20));
+        expect(viseur.right, greaterThanOrEqualTo(370));
+        expect(viseur.height, greaterThan(844 * 0.8));
+        // Aucune zone d'action separee sous le cadre.
+        expect(find.text(t.eleveConnexion.lecteur.consigne), findsOneWidget);
+        expect(
+          viseur.contains(
+            tester.getCenter(find.text(t.eleveConnexion.lecteur.consigne)),
+          ),
+          isTrue,
+        );
+        final Rect retour = tester.getRect(find.byType(DisqueRetour));
+        final Rect saisir = tester.getRect(
+          _action(t.eleveConnexion.lecteur.saisir),
+        );
+        expect(viseur.contains(retour.center), isTrue);
+        expect(viseur.contains(saisir.center), isTrue);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    for (final String route in <String>[
+      Routes.connexionEleveScanner,
+      Routes.connexionEleveCode,
+    ]) {
+      testWidgets('texte a 200 % ($route, 390x844) : aucun debordement, '
+          'action et retour touchables', (WidgetTester tester) async {
+        final _Montage m = await _monter(
+          tester,
+          depart: route,
+          echelleTexte: 2,
+        );
+        expect(tester.takeException(), isNull);
+        final Finder action = _action(
+          route == Routes.connexionEleveScanner
+              ? t.eleveConnexion.lecteur.saisir
+              : t.eleveConnexion.saisie.valider,
+        );
+        expect(action.hitTestable(), findsOneWidget);
+        expect(find.byType(DisqueRetour).hitTestable(), findsOneWidget);
+        if (route == Routes.connexionEleveScanner) {
+          await _taper(tester, action);
+          expect(m.lieu, Routes.connexionEleveCode);
+        }
+        await _taper(tester, find.byType(DisqueRetour));
+        expect(m.lieu, Routes.connexion);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
   group('Regles pures', () {
     test('format : normalise, refuse tout le reste sans l ouvrir', () {
       expect(FormatCodeAppairage.normaliser(' ab23cd '), 'AB23CD');
@@ -658,6 +798,46 @@ void main() {
       expect(service.sessionsOuvertes, 0);
     });
 
+    test(
+      'connecter : un nouveau jeton efface l ancien code personnel du profil',
+      () async {
+        final FauxStockageSecurise coffre = FauxStockageSecurise()
+          ..jetons['e1'] = 'ancien-jeton'
+          ..empreintes['e1'] = 'ancienne-empreinte'
+          ..empreintes['e2'] = 'empreinte-e2';
+        await connecterCetAppareil(
+          service: FauxServiceEnfantPilote(),
+          coffre: coffre,
+          profils: FauxProfilsLocaux(),
+          code: 'AB23CD',
+        );
+        expect(coffre.jetons['e1'], 'jeton-test');
+        expect(coffre.empreintes.containsKey('e1'), isFalse);
+        // Les autres profils de l'appareil gardent leur code.
+        expect(coffre.empreintes['e2'], 'empreinte-e2');
+      },
+    );
+
+    test('connecter : coffre qui refuse le jeton -> refus nonEnregistre', () async {
+      final FauxProfilsLocaux profils = FauxProfilsLocaux();
+      await expectLater(
+        connecterCetAppareil(
+          service: FauxServiceEnfantPilote(),
+          coffre: _CoffreQuiRefuseLeJeton(),
+          profils: profils,
+          code: 'AB23CD',
+        ),
+        throwsA(
+          isA<AppairageRefuse>().having(
+            (AppairageRefuse r) => r.motif,
+            'motif',
+            MotifRefusAppairage.nonEnregistre,
+          ),
+        ),
+      );
+      expect(profils.profils, isEmpty);
+    });
+
     test('connecter : un refus ne range rien', () async {
       final FauxServiceEnfantPilote service = FauxServiceEnfantPilote()
         ..refus = MotifRefusAppairage.expire;
@@ -700,4 +880,13 @@ void main() {
       );
     });
   });
+}
+
+/// Un coffre qui refuse d'ecrire le jeton d'appareil (stockage securise en
+/// echec), apres que le serveur a accepte le code (REVUE R-02).
+class _CoffreQuiRefuseLeJeton extends FauxStockageSecurise {
+  @override
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
+    throw StateError('coffre indisponible');
+  }
 }

@@ -346,7 +346,7 @@
       "retirerLibelle": "Retirer {appareil}",
       "horsLigne": "Retirer ou connecter un appareil demande une connexion internet.",
       "partageTitre": "Choix du profil et code personnel",
-      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d'un autre élève.",
+      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.",
       "retraitTitre": "Retirer un appareil",
       "retrait": "Un appareil retiré ne peut plus se reconnecter. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion."
     },
@@ -371,7 +371,7 @@
       "pourEleve": "Pour {prenom}",
       "consigneTitre": "Sur l'autre appareil",
       "consigne": "Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.",
-      "libelleQr": "QR de connexion. Le même code est écrit en dessous.",
+      "libelleQr": "QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l'appareil ne lit pas le QR.",
       "codeManuel": "Code à saisir",
       "codeLu": "Code à saisir : {code}",
       "valableJusqua": "Valable jusqu'à {heure}",
@@ -420,8 +420,7 @@
     },
     "regenerer": "Générer un nouveau code",
     "revoquer": "Retirer",
-    "revoquerConfirmation": "Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code.",
-    "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
+    "revoquerConfirmation": "Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code."
   },
   "enfant": {
     "titre": "Ajouter un enfant",
@@ -533,7 +532,8 @@
       "videTitre": "Aucun profil sur cet appareil",
       "vide": "Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.",
       "videAction": "Saisir un code",
-      "retire": "Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code."
+      "retire": "Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.",
+      "jetonAbsent": "Cet appareil ne retrouve plus la connexion de {prenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici."
     },
     "pin": {
       "bonjour": "Bonjour {prenom}",
@@ -547,7 +547,8 @@
       "echec": "La connexion n'a pas abouti. Réessaie dans un instant.",
       "changerProfil": "Changer de profil",
       "oublie": "Code oublié ?",
-      "oubliePhrase": "Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel."
+      "oubliePhrase": "Demande au tuteur d'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.",
+      "oublieAction": "Saisir un nouveau code"
     },
     "saisie": {
       "titre": "Connecter cet appareil",
@@ -598,6 +599,8 @@
       "tropDEssais": "Patientez un instant avant de réessayer.",
       "horsLigneTitre": "Pas de connexion",
       "horsLigne": "Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.",
+      "nonEnregistreTitre": "Connexion non enregistrée",
+      "nonEnregistre": "Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.",
       "generiqueTitre": "Connexion non aboutie",
       "generique": "La vérification du code n'a pas abouti. Réessayez dans un instant."
     }

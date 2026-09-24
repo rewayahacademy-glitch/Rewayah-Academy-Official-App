@@ -21,6 +21,7 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pin_pad.dart';
+import 'saisie_code_page.dart';
 
 /// Les moments successifs de `ELV-01`.
 enum MomentConnexionEleve {
@@ -67,7 +68,8 @@ enum MomentConnexionEleve {
 /// Les erreurs du pave sont toutes dites : code faux (sous les pastilles),
 /// deux codes differents, appareil retire par le tuteur (le profil est alors
 /// oublie sur cet appareil), pas de reseau, trop d'essais, echec general
-/// (C05 3.1 point 3). Pendant l'ouverture, le pave est fige et l'attente dite.
+/// (C05 3.1 point 3). Pendant l'ouverture, le pave est fige et l'attente dite,
+/// bornee par [delaiOuverture] : au-dela, le pave et le retour reviennent.
 class EleveConnexionPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de connexion de l'eleve.
   const EleveConnexionPage({super.key});
@@ -78,6 +80,10 @@ class EleveConnexionPage extends ConsumerStatefulWidget {
 
   /// La cle du message d'erreur du moment courant.
   static const Key messageKey = ValueKey<String>('eleve-connexion-message');
+
+  /// Attente maximale de l'ouverture de la connexion (fonction Edge puis
+  /// `verifyOTP`) : au-dela, le pave revient avec le message d'echec.
+  static const Duration delaiOuverture = Duration(seconds: 20);
 
   @override
   ConsumerState<EleveConnexionPage> createState() => _EleveConnexionPageState();
@@ -281,7 +287,15 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
       return;
     }
     final StockageSecurise coffre = ref.read(stockageSecuriseProvider);
-    final String? scelle = await coffre.empreintePin(profil.id);
+    final String? scelle;
+    try {
+      scelle = await coffre.empreintePin(profil.id);
+    } on Object {
+      if (mounted) {
+        setState(() => _message = t.eleveConnexion.pin.echec);
+      }
+      return;
+    }
 
     // La comparaison est LOCALE : aucun appel reseau ne recoit la saisie.
     if (!CodeLocal.correspond(saisie, scelle)) {
@@ -308,18 +322,45 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
       _moment = MomentConnexionEleve.ouverture;
     });
 
-    final String? jeton = await coffre.jetonAppareil(profil.id);
+    // La lecture du coffre peut echouer : le pave revient, avec le message
+    // d'echec, au lieu de rester fige sur « Connexion en cours ».
+    final String? jeton;
+    try {
+      jeton = await coffre.jetonAppareil(profil.id);
+    } on Object {
+      if (mounted) {
+        setState(() {
+          _moment = MomentConnexionEleve.saisieCodePersonnel;
+          _message = t.eleveConnexion.pin.echec;
+        });
+      }
+      return;
+    }
     if (jeton == null) {
-      await _oublier(profil);
+      // Le jeton n'est plus sur cet appareil (coffre vide, sauvegarde
+      // restauree) : rien ne dit que le tuteur l'a retire, l'ecran ne
+      // l'affirme donc pas.
+      await _oublier(
+        profil,
+        message: t.eleveConnexion.profils.jetonAbsent(prenom: profil.prenom),
+      );
       return;
     }
     try {
-      await ref.read(serviceEnfantProvider).ouvrirSession(jeton);
+      // Borne : sans reponse du serveur, le pave revient avec le message
+      // d'echec au lieu d'une attente sans issue.
+      await ref
+          .read(serviceEnfantProvider)
+          .ouvrirSession(jeton)
+          .timeout(EleveConnexionPage.delaiOuverture);
       // Succes : le routeur quitte `/connexion` des que la session est la.
     } on Object catch (erreur) {
       final MotifRefusAppairage motif = MotifRefusAppairage.depuis(erreur);
       if (motif == MotifRefusAppairage.revoque) {
-        await _oublier(profil);
+        await _oublier(
+          profil,
+          message: t.eleveConnexion.profils.retire(prenom: profil.prenom),
+        );
         return;
       }
       if (!mounted) {
@@ -337,9 +378,11 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     }
   }
 
-  /// Le tuteur a retire cet appareil pour [profil] : le profil, son jeton et
-  /// l'empreinte de son code quittent cet appareil, et l'ecran le dit.
-  Future<void> _oublier(ProfilLocal profil) async {
+  /// [profil] ne peut plus se connecter depuis cet appareil (le serveur dit
+  /// l'appareil retire, ou son jeton n'est plus dans le coffre) : le profil,
+  /// son jeton et l'empreinte de son code quittent cet appareil, et l'ecran
+  /// dit [message], propre a chaque cause.
+  Future<void> _oublier(ProfilLocal profil, {required String message}) async {
     final StockageSecurise coffre = ref.read(stockageSecuriseProvider);
     try {
       await ref.read(profilsLocauxProvider).oublier(profil.id);
@@ -352,7 +395,7 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
       return;
     }
     _profils = _profils.where((ProfilLocal p) => p.id != profil.id).toList();
-    _versChoix(message: t.eleveConnexion.profils.retire(prenom: profil.prenom));
+    _versChoix(message: message);
   }
 
   @override
@@ -403,45 +446,27 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
         ),
         onChangerProfil: _versChoix,
         onOubli: () => setState(() => _aideOubli = !_aideOubli),
+        // Le nouveau code d'appairage efface l'ancien code personnel
+        // (`connecterCetAppareil`) : l'eleve en choisit un nouveau.
+        onNouveauCode: () => _versSaisie(depuisProfils: true),
       ),
     };
 
-    // Telephone : a meme la page. Tablette et bureau : un panneau centre,
-    // jamais une feuille mobile etiree.
-    // Sur tablette et bureau, le titre entre dans le panneau : il reste
-    // aligne sur son contenu (ecart releve sur la capture 1440).
+    // Telephone : a meme la page. Tablette et bureau : le panneau centre
+    // commun aux trois taches de l'appareil eleve (saisie, scanner, ici), dont
+    // le disque retour et le titre sont alignes sur le panneau (REVUE R-07).
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
+    final VoidCallback? retour =
+        _moment == MomentConnexionEleve.ouverture ? null : _retour;
+    if (mobile) {
+      return PageShell(titre: titre, onRetour: retour, child: contenu);
+    }
     return PageShell(
-      titre: mobile ? titre : null,
-      onRetour: _moment == MomentConnexionEleve.ouverture ? null : _retour,
-      child: mobile
-          ? contenu
-          : Align(
-              alignment: Alignment.topCenter,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: AppPage.largeurDialogue,
-                ),
-                child: AppCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      if (titre != null) ...<Widget>[
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            titre,
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                        ),
-                        Ecart.vXl,
-                      ],
-                      contenu,
-                    ],
-                  ),
-                ),
-              ),
-            ),
+      child: PanneauAppareilEleve(
+        titre: titre,
+        onRetour: retour,
+        child: contenu,
+      ),
     );
   }
 }
@@ -600,6 +625,7 @@ class _Pave extends StatelessWidget {
     required this.onComplet,
     required this.onChangerProfil,
     required this.onOubli,
+    required this.onNouveauCode,
   });
 
   final ProfilLocal? profil;
@@ -611,6 +637,7 @@ class _Pave extends StatelessWidget {
   final void Function(String code) onComplet;
   final VoidCallback onChangerProfil;
   final VoidCallback onOubli;
+  final VoidCallback onNouveauCode;
 
   @override
   Widget build(BuildContext context) {
@@ -688,7 +715,7 @@ class _Pave extends StatelessWidget {
               niveau: NiveauAction.tertiaire,
               onPress: onOubli,
             ),
-            if (aideOubli)
+            if (aideOubli) ...<Widget>[
               Semantics(
                 liveRegion: true,
                 child: Text(
@@ -699,6 +726,14 @@ class _Pave extends StatelessWidget {
                   ),
                 ),
               ),
+              Ecart.vSm,
+              ActionPrincipale(
+                libelle: p.oublieAction,
+                niveau: NiveauAction.secondaire,
+                onPress: onNouveauCode,
+              ),
+              Ecart.vSm,
+            ],
           ],
           if (plusieursProfils)
             ActionPrincipale(

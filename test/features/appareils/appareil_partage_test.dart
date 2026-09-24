@@ -6,6 +6,8 @@
 //   codes differents, appareil retire, hors ligne, echec), code oublie,
 //   changer de profil, repli en pile a 200 %, panneau centre sur bureau.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -59,12 +61,13 @@ Future<_Eleve> _monterAppareil(
   bool deuxProfils = true,
   Size taille = const Size(390, 844),
   double echelleTexte = 1,
+  FauxStockageSecurise? coffre,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final FauxEnfantOuverture s = service ?? FauxEnfantOuverture();
-  final FauxStockageSecurise coffre = FauxStockageSecurise()
+  final FauxStockageSecurise c = (coffre ?? FauxStockageSecurise())
     ..jetons['e1'] = 'jeton-e1'
     ..empreintes['e1'] = CodeLocal.sceller(_codeAmina);
   final FauxProfilsLocaux profils = FauxProfilsLocaux()
@@ -74,7 +77,7 @@ Future<_Eleve> _monterAppareil(
       const ProfilLocal(id: 'e1', prenom: 'Amina', identifiantImmuable: ''),
     ];
   if (deuxProfils) {
-    coffre
+    c
       ..jetons['e2'] = 'jeton-e2'
       ..empreintes['e2'] = CodeLocal.sceller(_codeYusuf);
   }
@@ -84,7 +87,7 @@ Future<_Eleve> _monterAppareil(
       overrides: <Override>[
         ...surchargesRouteur(FausseSourceSession()),
         serviceEnfantProvider.overrideWithValue(s),
-        stockageSecuriseProvider.overrideWithValue(coffre),
+        stockageSecuriseProvider.overrideWithValue(c),
         profilsLocauxProvider.overrideWithValue(profils),
         lecteurQrDisponibleProvider.overrideWithValue(false),
       ],
@@ -109,7 +112,7 @@ Future<_Eleve> _monterAppareil(
   await stabiliser(tester);
   routeur.go(Routes.connexion);
   await stabiliser(tester);
-  return _Eleve(routeur, s, coffre, profils);
+  return _Eleve(routeur, s, c, profils);
 }
 
 Future<void> _taper(WidgetTester tester, Finder cible) async {
@@ -374,20 +377,129 @@ void main() {
       },
     );
 
-    testWidgets('jeton absent : meme traitement qu un appareil retire', (
-      WidgetTester tester,
-    ) async {
-      final _Eleve m = await _monterAppareil(tester);
-      m.coffre.jetons.remove('e1');
-      await _versChoix(tester);
-      await _taper(tester, find.byKey(EleveConnexionPage.carteKey('e1')));
-      await _composer(tester, _codeAmina);
-      expect(
-        _message(t.eleveConnexion.profils.retire(prenom: 'Amina')),
-        findsOneWidget,
-      );
-      expect(m.service.jetonsOuverts, isEmpty);
-    });
+    testWidgets(
+      'jeton absent : profil oublie, message propre qui n accuse pas le tuteur',
+      (WidgetTester tester) async {
+        final _Eleve m = await _monterAppareil(tester);
+        m.coffre.jetons.remove('e1');
+        await _versChoix(tester);
+        await _taper(tester, find.byKey(EleveConnexionPage.carteKey('e1')));
+        await _composer(tester, _codeAmina);
+        expect(
+          _message(t.eleveConnexion.profils.jetonAbsent(prenom: 'Amina')),
+          findsOneWidget,
+        );
+        // Rien ne dit que le tuteur a retire l'appareil : l'ecran ne
+        // l'affirme pas.
+        expect(
+          find.text(t.eleveConnexion.profils.retire(prenom: 'Amina')),
+          findsNothing,
+        );
+        expect(m.service.jetonsOuverts, isEmpty);
+        expect(m.coffre.empreintes.containsKey('e1'), isFalse);
+      },
+    );
+
+    testWidgets(
+      'coffre illisible a l ouverture : le pave revient avec l echec, retour '
+      'visible',
+      (WidgetTester tester) async {
+        final _Eleve m = await _monterAppareil(
+          tester,
+          coffre: _CoffreJetonIllisible(),
+        );
+        await _versChoix(tester);
+        await _taper(tester, find.byKey(EleveConnexionPage.carteKey('e1')));
+        await _composer(tester, _codeAmina);
+
+        expect(_message(t.eleveConnexion.pin.echec), findsOneWidget);
+        expect(find.byType(PinPad), findsOneWidget);
+        expect(find.text(t.eleveConnexion.pin.ouverture), findsNothing);
+        expect(find.byType(DisqueRetour), findsOneWidget);
+        expect(m.service.jetonsOuverts, isEmpty);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'serveur muet a l ouverture : apres le delai, le pave revient avec '
+      'l echec et le retour',
+      (WidgetTester tester) async {
+        final _Eleve m = await _monterAppareil(
+          tester,
+          service: FauxEnfantOuverture()
+            ..attenteOuverture = Completer<void>(),
+        );
+        await _versChoix(tester);
+        await _taper(tester, find.byKey(EleveConnexionPage.carteKey('e1')));
+        await _composer(tester, _codeAmina);
+        expect(find.text(t.eleveConnexion.pin.ouverture), findsOneWidget);
+        expect(m.service.jetonsOuverts, <String>['jeton-e1']);
+
+        await tester.pump(EleveConnexionPage.delaiOuverture);
+        await stabiliser(tester);
+        expect(_message(t.eleveConnexion.pin.echec), findsOneWidget);
+        expect(find.byType(PinPad), findsOneWidget);
+        expect(find.byType(DisqueRetour), findsOneWidget);
+        await _taper(tester, find.byType(DisqueRetour));
+        expect(find.text(t.eleveConnexion.choisirProfil), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'code oublie de bout en bout : Saisir un nouveau code -> code du tuteur '
+      '-> Choisis ton code personnel',
+      (WidgetTester tester) async {
+        final _Eleve m = await _monterAppareil(
+          tester,
+          service: FauxEnfantOuverture()
+            ..reponse = const AppairageReussi(
+              profilId: 'e1',
+              prenom: 'Amina',
+              jetonAppareil: 'jeton-e1-neuf',
+            ),
+        );
+        await _versChoix(tester);
+        await _taper(tester, find.byKey(EleveConnexionPage.carteKey('e1')));
+
+        // Amina a oublie son code : l'aide mene a la saisie d'un nouveau code.
+        await _taper(tester, find.text(t.eleveConnexion.pin.oublie));
+        expect(find.text(t.eleveConnexion.pin.oubliePhrase), findsOneWidget);
+        await _taper(
+          tester,
+          find.widgetWithText(ActionPrincipale, t.eleveConnexion.pin.oublieAction),
+        );
+        expect(Uri.parse(m.lieu).path, Routes.connexionEleveCode);
+
+        // Le tuteur affiche un nouveau code ; il est saisi ici.
+        await tester.enterText(find.byKey(SaisieCodePage.champKey), 'ab23cd');
+        await stabiliser(tester);
+        await _taper(
+          tester,
+          find.widgetWithText(
+            ActionPrincipale,
+            t.eleveConnexion.saisie.valider,
+          ),
+        );
+
+        // L'ancien code personnel est efface : Amina en choisit un nouveau.
+        expect(m.lieu, Routes.connexionEleve);
+        expect(
+          find.text(t.eleveConnexion.pin.bonjour(prenom: 'Amina')),
+          findsOneWidget,
+        );
+        expect(find.text(t.eleveConnexion.pin.creer), findsOneWidget);
+        expect(m.coffre.jetons['e1'], 'jeton-e1-neuf');
+        expect(m.coffre.empreintes.containsKey('e1'), isFalse);
+        // Le code de Yusuf, lui, reste.
+        expect(m.coffre.empreintes['e2'], isNotNull);
+
+        await _composer(tester, '9753');
+        await _composer(tester, '9753');
+        expect(CodeLocal.correspond('9753', m.coffre.empreintes['e1']), isTrue);
+        expect(m.service.jetonsOuverts, <String>['jeton-e1-neuf']);
+      },
+    );
 
     for (final (MotifRefusAppairage motif, String Function() attendu)
         in <(MotifRefusAppairage, String Function())>[
@@ -468,7 +580,29 @@ void main() {
       final Rect r = tester.getRect(panneau);
       expect(r.width, lessThanOrEqualTo(560));
       expect(r.center.dx, closeTo(720, 40));
+      // Meme composition que la saisie et le scanner : le disque retour et le
+      // titre sont alignes sur le panneau, pas en haut a gauche de la page.
+      final Rect cadre = tester.getRect(
+        find.byKey(PanneauAppareilEleve.panneauKey),
+      );
+      expect(
+        tester.getRect(find.byType(DisqueRetour)).left,
+        closeTo(cadre.left, 1),
+      );
+      final Rect titre = tester.getRect(
+        find.text(t.eleveConnexion.choisirProfil),
+      );
+      expect(titre.left, greaterThan(cadre.left));
+      expect(titre.right, lessThanOrEqualTo(cadre.right));
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+/// Un coffre dont la lecture du jeton d'appareil echoue (REVUE R-03).
+class _CoffreJetonIllisible extends FauxStockageSecurise {
+  @override
+  Future<String?> jetonAppareil(String profilId) async {
+    throw StateError('coffre illisible');
+  }
 }

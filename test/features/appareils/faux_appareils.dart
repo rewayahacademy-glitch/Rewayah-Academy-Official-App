@@ -131,9 +131,17 @@ class FauxEnfantOuverture implements ServiceEnfant {
     return reponse;
   }
 
+  /// Quand il est pose, [ouvrirSession] attend sa fin (jamais, s'il n'est
+  /// jamais complete : serveur muet).
+  Completer<void>? attenteOuverture;
+
   @override
   Future<void> ouvrirSession(String jetonAppareil) async {
     jetonsOuverts.add(jetonAppareil);
+    final Completer<void>? attente = attenteOuverture;
+    if (attente != null) {
+      await attente.future;
+    }
     final Object? refus = refusOuverture;
     if (refus != null) {
       // ignore: only_throw_errors

@@ -19,6 +19,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/page_shell.dart';
 
 /// Le titre et la phrase d'un refus, dits simplement, jamais le texte brut du
@@ -44,6 +45,10 @@ import '../../core/widgets/page_shell.dart';
       titre: r.horsLigneTitre,
       phrase: r.horsLigne,
     ),
+    MotifRefusAppairage.nonEnregistre => (
+      titre: r.nonEnregistreTitre,
+      phrase: r.nonEnregistre,
+    ),
     MotifRefusAppairage.generique => (
       titre: r.generiqueTitre,
       phrase: r.generique,
@@ -64,6 +69,63 @@ Future<ProfilLocal> connecterDepuisEcran(WidgetRef ref, String code) =>
       profils: ref.read(profilsLocauxProvider),
       code: code,
     );
+
+/// La composition tablette et bureau des trois taches focalisees de
+/// l'appareil eleve (saisie du code, scanner, choix du profil et code
+/// personnel) : un panneau centre de 560 au plus (manifeste section 2, D1
+/// #24), dont l'en-tete (disque retour 48 et titre) est aligne sur le
+/// panneau, jamais laisse en haut a gauche de la page (REVUE R-07).
+///
+/// Une seule composition pour les trois ecrans : la page n'a alors ni titre ni
+/// retour propres (`PageShell` sans `titre` ni `onRetour`).
+class PanneauAppareilEleve extends StatelessWidget {
+  /// Cree le panneau.
+  const PanneauAppareilEleve({
+    required this.child,
+    super.key,
+    this.titre,
+    this.onRetour,
+  });
+
+  /// La cle du panneau, pour les tests et les captures.
+  static const Key panneauKey = ValueKey<String>('panneau-appareil-eleve');
+
+  /// Le titre de la tache, au-dessus de la carte.
+  final String? titre;
+
+  /// Le retour ; sans lui, pas de disque retour.
+  final VoidCallback? onRetour;
+
+  /// Le contenu de la carte.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final String? titrePanneau = titre;
+    final VoidCallback? retour = onRetour;
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        key: panneauKey,
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (titrePanneau != null)
+              EntetePage(titre: titrePanneau, onRetour: retour)
+            else if (retour != null)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: DisqueRetour(onPress: retour),
+              ),
+            if (titrePanneau != null || retour != null) Ecart.vXl,
+            AppCard(child: child),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 /// `/connexion/eleve/code` : la saisie du code d'appairage, sur l'appareil de
 /// l'eleve (sans session).
@@ -131,6 +193,16 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
         return;
       }
       setState(() => _erreur = libellesRefusAppairage(refus.motif).phrase);
+    } on Object {
+      // Filet : tout autre echec est dit sous le champ, jamais tu.
+      if (!mounted || generation != _generation) {
+        return;
+      }
+      setState(
+        () => _erreur = libellesRefusAppairage(
+          MotifRefusAppairage.generique,
+        ).phrase,
+      );
     } finally {
       if (mounted) {
         setState(() => _enCours = false);
@@ -179,23 +251,23 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
           : null,
     );
 
+    // Telephone : l'action est ancree en bas (champ E3, manifeste #14).
+    // Tablette et bureau : le panneau centre commun, qui porte son en-tete et
+    // son action, jamais une feuille mobile etiree.
+    if (mobile) {
+      return PageShell(
+        titre: t.eleveConnexion.saisie.titre,
+        onRetour: _retour,
+        actions: action,
+        child: formulaire,
+      );
+    }
     return PageShell(
-      titre: t.eleveConnexion.saisie.titre,
-      onRetour: _retour,
-      // Telephone : l'action est ancree en bas (champ E3, manifeste #14).
-      // Tablette et bureau : un panneau centre qui porte son action, jamais
-      // une feuille mobile etiree.
-      actions: mobile ? action : null,
-      child: mobile
-          ? formulaire
-          : Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: AppPage.largeurDialogue,
-                ),
-                child: AppCard(child: formulaire),
-              ),
-            ),
+      child: PanneauAppareilEleve(
+        titre: t.eleveConnexion.saisie.titre,
+        onRetour: _retour,
+        child: formulaire,
+      ),
     );
   }
 }

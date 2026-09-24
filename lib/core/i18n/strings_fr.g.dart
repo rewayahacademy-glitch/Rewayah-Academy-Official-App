@@ -761,9 +761,6 @@ class Traductions$appareils$fr {
 
 	/// fr: 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code.'
 	String get revoquerConfirmation => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.';
-
-	/// fr: 'L'opération n'a pas abouti. Réessayez dans un instant.'
-	String get erreur => 'L\'opération n\'a pas abouti. Réessayez dans un instant.';
 }
 
 // Path: enfant
@@ -2233,8 +2230,8 @@ class Traductions$appareils$eleve$fr {
 	/// fr: 'Choix du profil et code personnel'
 	String get partageTitre => 'Choix du profil et code personnel';
 
-	/// fr: 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d'un autre élève.'
-	String get partage => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d\'un autre élève.';
+	/// fr: 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.'
+	String get partage => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.';
 
 	/// fr: 'Retirer un appareil'
 	String get retraitTitre => 'Retirer un appareil';
@@ -2317,8 +2314,8 @@ class Traductions$appareils$emetteur$fr {
 	/// fr: 'Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.'
 	String get consigne => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.';
 
-	/// fr: 'QR de connexion. Le même code est écrit en dessous.'
-	String get libelleQr => 'QR de connexion. Le même code est écrit en dessous.';
+	/// fr: 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l'appareil ne lit pas le QR.'
+	String get libelleQr => 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l\'appareil ne lit pas le QR.';
 
 	/// fr: 'Code à saisir'
 	String get codeManuel => 'Code à saisir';
@@ -2381,6 +2378,9 @@ class Traductions$eleveConnexion$profils$fr {
 
 	/// fr: 'Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.'
 	String retire({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.';
+
+	/// fr: 'Cet appareil ne retrouve plus la connexion de {prenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici.'
+	String jetonAbsent({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.';
 }
 
 // Path: eleveConnexion.pin
@@ -2424,8 +2424,11 @@ class Traductions$eleveConnexion$pin$fr {
 	/// fr: 'Code oublié ?'
 	String get oublie => 'Code oublié ?';
 
-	/// fr: 'Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel.'
-	String get oubliePhrase => 'Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel.';
+	/// fr: 'Demande au tuteur d'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.'
+	String get oubliePhrase => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.';
+
+	/// fr: 'Saisir un nouveau code'
+	String get oublieAction => 'Saisir un nouveau code';
 }
 
 // Path: eleveConnexion.saisie
@@ -2585,6 +2588,12 @@ class Traductions$eleveConnexion$refus$fr {
 
 	/// fr: 'Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.'
 	String get horsLigne => 'Le code n\'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.';
+
+	/// fr: 'Connexion non enregistrée'
+	String get nonEnregistreTitre => 'Connexion non enregistrée';
+
+	/// fr: 'Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.'
+	String get nonEnregistre => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.';
 
 	/// fr: 'Connexion non aboutie'
 	String get generiqueTitre => 'Connexion non aboutie';
@@ -8650,7 +8659,7 @@ extension on Traductions {
 			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'Retirer ${appareil}',
 			'appareils.eleve.horsLigne' => 'Retirer ou connecter un appareil demande une connexion internet.',
 			'appareils.eleve.partageTitre' => 'Choix du profil et code personnel',
-			'appareils.eleve.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel, pour ne jamais ouvrir le compte d\'un autre élève.',
+			'appareils.eleve.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.',
 			'appareils.eleve.retraitTitre' => 'Retirer un appareil',
 			'appareils.eleve.retrait' => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.plateforme.android' => 'Téléphone ou tablette Android',
@@ -8669,7 +8678,7 @@ extension on Traductions {
 			'appareils.emetteur.pourEleve' => ({required Object prenom}) => 'Pour ${prenom}',
 			'appareils.emetteur.consigneTitre' => 'Sur l\'autre appareil',
 			'appareils.emetteur.consigne' => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.',
-			'appareils.emetteur.libelleQr' => 'QR de connexion. Le même code est écrit en dessous.',
+			'appareils.emetteur.libelleQr' => 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l\'appareil ne lit pas le QR.',
 			'appareils.emetteur.codeManuel' => 'Code à saisir',
 			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
 			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
@@ -8704,7 +8713,6 @@ extension on Traductions {
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
 			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.',
-			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
 			'enfant.titre' => 'Ajouter un enfant',
 			'enfant.prenom' => 'Son prénom',
 			'enfant.nom' => 'Son nom',
@@ -8798,6 +8806,7 @@ extension on Traductions {
 			'eleveConnexion.profils.vide' => 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.',
 			'eleveConnexion.profils.videAction' => 'Saisir un code',
 			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.',
+			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
 			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
 			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
@@ -8809,7 +8818,8 @@ extension on Traductions {
 			'eleveConnexion.pin.echec' => 'La connexion n\'a pas abouti. Réessaie dans un instant.',
 			'eleveConnexion.pin.changerProfil' => 'Changer de profil',
 			'eleveConnexion.pin.oublie' => 'Code oublié ?',
-			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur : il retire cet appareil dans Foyer, puis affiche un nouveau code. Tu choisiras alors un nouveau code personnel.',
+			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.',
+			'eleveConnexion.pin.oublieAction' => 'Saisir un nouveau code',
 			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
 			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
 			'eleveConnexion.saisie.champ' => 'Code',
@@ -8854,6 +8864,8 @@ extension on Traductions {
 			'eleveConnexion.refus.tropDEssais' => 'Patientez un instant avant de réessayer.',
 			'eleveConnexion.refus.horsLigneTitre' => 'Pas de connexion',
 			'eleveConnexion.refus.horsLigne' => 'Le code n\'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.',
+			'eleveConnexion.refus.nonEnregistreTitre' => 'Connexion non enregistrée',
+			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
@@ -8888,11 +8900,11 @@ extension on Traductions {
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.foyers' => 'Foyers sans enseignant',
 			'admin.tableau.rapports' => 'Cahiers manquants',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tableau.incidents' => 'Incidents (24 h)',
 			'admin.tableau.comptes' => 'Accès échus',
 			'admin.tableau.demandes' => 'Demandes à trancher',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tableau.compteursErreur' => 'Les compteurs n\'ont pas pu être lus. Réessayez dans un instant.',
 			'admin.tableau.aTraiter' => 'À traiter en premier',
 			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
@@ -9402,11 +9414,11 @@ extension on Traductions {
 			'admin.agents.emis' => 'Jeton émis',
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
 			'admin.agents.copier' => 'Copier le lien',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.copie' => 'Lien copié',
 			'admin.agents.termine' => 'J\'ai copié le lien',
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.colonneLibelle' => 'Jeton',
 			'admin.agents.colonneQui' => 'Observe',
 			'admin.agents.colonneParcours' => 'Parcours',
@@ -9916,11 +9928,11 @@ extension on Traductions {
 			'enseignant.cahier.uneException' => '1 élève demande un regard.',
 			'enseignant.cahier.plusieursExceptions' => ({required Object nombre}) => '${nombre} élèves demandent un regard.',
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier.',
 			'enseignant.cahier.noteGroupe' => 'Note pour le groupe',
 			'enseignant.cahier.noteGroupeDetail' => 'Facultative. Aucun texte n\'est attendu.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.valider' => 'Valider le cahier',
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
@@ -10430,11 +10442,11 @@ extension on Traductions {
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
 			'tc.parcours.intention.entretenir' => 'À entretenir',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.intention.evaluation' => 'Pour l\'évaluation',
 			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}',
 			'tc.parcours.plage.versetUnique' => ({required Object sourate, required Object premier}) => 'Sourate ${sourate}, verset ${premier}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.plage.versetsCroisee' => ({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Sourate ${sourateDebut}, verset ${versetDebut} jusqu\'à sourate ${sourateFin}, verset ${versetFin}',
 			'tc.parcours.plage.pages' => ({required Object premiere, required Object derniere}) => 'Pages ${premiere} à ${derniere}',
 			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',

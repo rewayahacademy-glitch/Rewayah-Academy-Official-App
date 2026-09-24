@@ -64,6 +64,11 @@ enum MotifRefusAppairage {
   /// Aucune reponse : la requete n'est pas partie.
   horsLigne,
 
+  /// Le serveur a accepte le code, mais cet appareil n'a pas pu ranger le
+  /// jeton dans son coffre. Le code est a usage unique : il a sans doute deja
+  /// servi, un nouveau code est necessaire.
+  nonEnregistre,
+
   /// Tout le reste.
   generique;
 
@@ -285,10 +290,19 @@ String plateformeAppareil() {
 ///
 /// Dans cet ordre : le serveur consomme le code et rend le jeton d'appareil ;
 /// le jeton est ecrit dans le coffre **avant toute autre chose** (il n'est
-/// rendu qu'une fois) ; le profil est retenu localement pour le choix de
-/// profil. Aucune session n'est ouverte ici.
+/// rendu qu'une fois) ; l'empreinte d'un ancien code personnel de ce profil
+/// est effacee ; le profil est retenu localement pour le choix de profil.
+/// Aucune session n'est ouverte ici.
 ///
-/// Leve [AppairageRefuse]. Le code n'est ecrit nulle part.
+/// **Nouveau jeton, nouveau code personnel.** Un eleve qui a oublie son code
+/// ne peut pas le prouver (la comparaison est locale) : sa seule issue est un
+/// nouveau code d'appairage affiche par le tuteur. Effacer l'empreinte ici fait
+/// passer l'ecran suivant a « Choisis ton code personnel » au lieu de
+/// redemander le code oublie.
+///
+/// Leve [AppairageRefuse], y compris quand le coffre refuse le jeton
+/// ([MotifRefusAppairage.nonEnregistre]) : le code est alors deja consomme et
+/// l'ecran doit le dire. Le code n'est ecrit nulle part.
 Future<ProfilLocal> connecterCetAppareil({
   required ServiceEnfant service,
   required StockageSecurise coffre,
@@ -307,10 +321,20 @@ Future<ProfilLocal> connecterCetAppareil({
   } on Object catch (erreur) {
     throw AppairageRefuse(MotifRefusAppairage.depuis(erreur));
   }
-  await coffre.enregistrerJetonAppareil(
-    resultat.profilId,
-    resultat.jetonAppareil,
-  );
+  try {
+    await coffre.enregistrerJetonAppareil(
+      resultat.profilId,
+      resultat.jetonAppareil,
+    );
+  } on Object {
+    throw const AppairageRefuse(MotifRefusAppairage.nonEnregistre);
+  }
+  try {
+    await coffre.effacerEmpreintePin(resultat.profilId);
+  } on Object {
+    // Au pire, l'ancien code personnel reste demande : l'appairage, lui, est
+    // fait et son jeton range.
+  }
   final ProfilLocal profil = ProfilLocal(
     id: resultat.profilId,
     prenom: resultat.prenom,

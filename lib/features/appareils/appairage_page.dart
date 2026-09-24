@@ -194,7 +194,22 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
       // qu'il ne peut pas confirmer la connexion.
       _suiviIndisponible = true;
     } on Object {
-      vivant = null;
+      // Lecture en echec (serveur, delai, reseau) : impossible de savoir si un
+      // code est deja valable. En creer un en silence perimerait celui qui est
+      // peut-etre en train d'etre saisi sur l'autre appareil : l'ecran le dit
+      // et propose de reessayer la lecture (« Reessayer » relance `_demarrer`).
+      if (!mounted || generation != _generation) {
+        return;
+      }
+      _poser(() {
+        if (_horsLigne) {
+          _etape = EtapeEmetteur.horsLigne;
+        } else {
+          _motif = MotifErreurEmetteur.generique;
+          _etape = EtapeEmetteur.erreur;
+        }
+      });
+      return;
     }
     if (!mounted || generation != _generation) {
       return;

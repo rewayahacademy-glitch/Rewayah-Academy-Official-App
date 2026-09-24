@@ -41,6 +41,7 @@ Future<_Montage> _monter(
   String depart = Routes.tuteurFoyerAppareils,
   bool horsLigne = false,
   Size taille = const Size(390, 844),
+  double echelleTexte = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -96,6 +97,12 @@ Future<_Montage> _monter(
         child: MaterialApp.router(
           theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
           routerConfig: routeur,
+          builder: (BuildContext contexte, Widget? enfant) => MediaQuery(
+            data: MediaQuery.of(
+              contexte,
+            ).copyWith(textScaler: TextScaler.linear(echelleTexte)),
+            child: enfant ?? const SizedBox.shrink(),
+          ),
         ),
       ),
     ),
@@ -504,6 +511,31 @@ void main() {
         );
         expect(explication.dx, greaterThan(liste.dx + 300));
         expect(action.dx, closeTo(liste.dx, 1));
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'texte a 200 % (390x844) : aucun debordement, Retirer, Connecter et '
+      'retour touchables',
+      (WidgetTester tester) async {
+        final _Montage m = await _monter(
+          tester,
+          service: _foyer(),
+          depart: _page('e1'),
+          echelleTexte: 2,
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.byType(DisqueRetour).hitTestable(), findsOneWidget);
+        await tester.ensureVisible(find.byKey(ListeAppareilsEleve.retirerKey('d1')));
+        await tester.pump();
+        expect(
+          find.byKey(ListeAppareilsEleve.retirerKey('d1')).hitTestable(),
+          findsOneWidget,
+        );
+        await _taper(tester, find.byKey(AppareilsElevePage.connecterKey));
+        expect(find.text('EMETTEUR e1'), findsOneWidget);
+        expect(Uri.parse(m.lieu).path, Routes.appairerPour('e1'));
         expect(tester.takeException(), isNull);
       },
     );

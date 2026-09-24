@@ -492,6 +492,33 @@ void main() {
       },
     );
 
+    testWidgets(
+      'lecture du code vivant en echec : aucun code cree en silence, '
+      'erreur dite puis Reessayer relit',
+      (WidgetTester tester) async {
+        final FauxServiceAppairage service = _service();
+        final FauxStatutCode statut = FauxStatutCode()
+          ..erreurVivant = Exception('delai depasse');
+        await _monter(tester, service: service, statut: statut);
+
+        // Rien n'a ete demande : un nouveau code perimerait celui qui est
+        // peut-etre en train d'etre saisi sur l'autre appareil.
+        expect(service.codesDemandes, isEmpty);
+        expect(find.byType(EmetteurQr), findsNothing);
+        expect(
+          find.text(t.appareils.emetteur.erreur.generiqueTitre),
+          findsOneWidget,
+        );
+
+        // La lecture repasse : aucun code vivant, le code est alors cree.
+        statut.erreurVivant = null;
+        await tester.tap(find.text(t.commun.reessayer));
+        await stabiliser(tester);
+        expect(service.codesDemandes, <String>['e1']);
+        expect(find.byType(EmetteurQr), findsOneWidget);
+      },
+    );
+
     testWidgets('arriere-plan : code masque, puis reverifie a la reprise', (
       WidgetTester tester,
     ) async {
@@ -585,6 +612,41 @@ void main() {
       expect(qr.right, lessThan(consigne.left));
       expect(tester.takeException(), isNull);
     });
+
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1440, 900),
+    ]) {
+      testWidgets(
+        'libelle du QR (${taille.width.toInt()}) : sans position, juste sur '
+        'les deux compositions',
+        (WidgetTester tester) async {
+          final SemanticsHandle semantique = tester.ensureSemantics();
+          await _monter(
+            tester,
+            service: _service(),
+            statut: FauxStatutCode(),
+            taille: taille,
+          );
+          final String libelle = t.appareils.emetteur.libelleQr;
+          expect(find.bySemanticsLabel(libelle), findsOneWidget);
+          // Sur bureau, le code est a DROITE du QR ; sur telephone, en
+          // dessous : le libelle ne nomme aucune position.
+          for (final String position in <String>[
+            'dessous',
+            'dessus',
+            'droite',
+            'gauche',
+            'côté',
+          ]) {
+            expect(libelle, isNot(contains(position)));
+          }
+          // Le code dit par le libelle est bien a l'ecran.
+          expect(find.text(t.appareils.emetteur.codeManuel), findsOneWidget);
+          semantique.dispose();
+        },
+      );
+    }
   });
 
   group('Regles pures', () {

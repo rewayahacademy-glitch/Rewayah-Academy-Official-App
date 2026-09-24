@@ -18,8 +18,8 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/ecran_resultat.dart';
+import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import 'saisie_code_page.dart';
@@ -179,6 +179,15 @@ class _ScannerPageState extends ConsumerState<ScannerPage>
         _etape = EtapeScanner.refus;
         _motif = refus.motif;
       });
+    } on Object {
+      // Filet : aucun echec ne laisse l'ecran sur « Verification du code ».
+      if (!mounted || generation != _generation) {
+        return;
+      }
+      _poser(() {
+        _etape = EtapeScanner.refus;
+        _motif = MotifRefusAppairage.generique;
+      });
     } finally {
       _enVol = false;
     }
@@ -219,24 +228,8 @@ class _ScannerPageState extends ConsumerState<ScannerPage>
     final bool viseurVisible =
         _etape == EtapeScanner.demarrage || _etape == EtapeScanner.lecture;
 
-    final Widget viseur = _Viseur(
-      apercu: _lecteur.apercu(),
-      etape: _etape,
-      contenuInvalide: _contenuInvalide,
-      horsLigne: horsLigne,
-      mobile: mobile,
-    );
+    final Widget viseur = _Viseur(apercu: _lecteur.apercu(), mobile: mobile);
     final Widget etat = _etatHorsViseur();
-
-    // Le viseur reste monte (hors scene) dans tous les etats : la camera
-    // s'attache a lui avant chaque demarrage, relance comprise.
-    final Widget contenu = Stack(
-      fit: mobile ? StackFit.expand : StackFit.loose,
-      children: <Widget>[
-        Offstage(offstage: !viseurVisible, child: viseur),
-        if (!viseurVisible) etat,
-      ],
-    );
 
     final Widget saisir = ActionPrincipale(
       libelle: t.eleveConnexion.lecteur.saisir,
@@ -245,31 +238,56 @@ class _ScannerPageState extends ConsumerState<ScannerPage>
     );
 
     if (mobile) {
+      // Telephone : plein cadre sombre (salle M3, manifeste section 2). La
+      // camera va bord a bord ; le disque retour 48, le titre, la consigne et
+      // « Saisir le code » se posent sur le cadre (REVUE R-08). Le viseur
+      // reste monte (hors scene) dans tous les etats : la camera s'attache a
+      // lui avant chaque demarrage, relance comprise.
       final AppMetriques metriques = AppMetriques.of(context);
       return Theme(
         data: AppTheme.pour(metriques.mode, Brightness.dark),
-        child: PageShell(
-          titre: t.eleveConnexion.lecteur.titre,
+        child: _PleinCadre(
+          viseur: Offstage(offstage: !viseurVisible, child: viseur),
+          etat: viseurVisible ? null : etat,
+          consigne: viseurVisible
+              ? _Consigne(
+                  etape: _etape,
+                  contenuInvalide: _contenuInvalide,
+                  horsLigne: horsLigne,
+                )
+              : null,
           onRetour: _versSaisie,
-          defilante: false,
-          actions: saisir,
-          child: contenu,
+          saisir: saisir,
         ),
       );
     }
 
+    // Tablette et bureau : le panneau centre commun aux taches de l'appareil
+    // eleve (D1 #24), en-tete aligne sur le panneau (REVUE R-07).
     return PageShell(
-      titre: t.eleveConnexion.lecteur.titre,
-      onRetour: _versSaisie,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
-          child: AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[contenu, Ecart.vXl, saisir],
+      child: PanneauAppareilEleve(
+        titre: t.eleveConnexion.lecteur.titre,
+        onRetour: _versSaisie,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Stack(
+              children: <Widget>[
+                Offstage(offstage: !viseurVisible, child: viseur),
+                if (!viseurVisible) etat,
+              ],
             ),
-          ),
+            if (viseurVisible) ...<Widget>[
+              Ecart.vLg,
+              _Consigne(
+                etape: _etape,
+                contenuInvalide: _contenuInvalide,
+                horsLigne: horsLigne,
+              ),
+            ],
+            Ecart.vXl,
+            saisir,
+          ],
         ),
       ),
     );
@@ -409,21 +427,196 @@ class _Etat extends StatelessWidget {
   }
 }
 
-/// Le viseur : la camera dans un cadre arrondi, un carre de visee, la
-/// consigne et, s'il y a lieu, le refus d'un QR qui n'est pas un code.
-class _Viseur extends StatelessWidget {
-  const _Viseur({
-    required this.apercu,
+/// Le plein cadre du telephone (salle M3 #20) : la camera occupe tout le
+/// corps de la page, dans un cadre sombre ; le disque retour 48 et le titre
+/// se posent en haut du cadre, la consigne et « Saisir le code » dans une
+/// barre posee en bas du cadre (REVUE R-08). Hors lecture, l'etat (refus,
+/// camera, verification) prend le milieu du cadre, entre les deux barres.
+///
+/// La page passe par `PageShell` (bandeau hors ligne, zone sure, gouttiere) :
+/// le cadre s'arrete donc a la gouttiere du gabarit, comme le contenu de M3.
+class _PleinCadre extends StatelessWidget {
+  const _PleinCadre({
+    required this.viseur,
+    required this.etat,
+    required this.consigne,
+    required this.onRetour,
+    required this.saisir,
+  });
+
+  /// La cle du cadre, pour les tests et les captures.
+  static const Key cadreKey = ValueKey<String>('scanner-plein-cadre');
+
+  final Widget viseur;
+  final Widget? etat;
+  final Widget? consigne;
+  final VoidCallback onRetour;
+  final Widget saisir;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget? etatCourant = etat;
+    final Widget? consigneCourante = consigne;
+
+    return PageShell(
+      defilante: false,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+        child: ClipRRect(
+          key: cadreKey,
+          borderRadius: AppRadius.arrondiLg,
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              DecoratedBox(decoration: palette.surfaceSunken.decoration()),
+              viseur,
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    DecoratedBox(
+                      decoration: palette.surfaceRaised.decoration(
+                        borderRadius: AppRadius.arrondiMd,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xs),
+                        child: Row(
+                          children: <Widget>[
+                            DisqueRetour(onPress: onRetour),
+                            Ecart.hMd,
+                            Expanded(
+                              child: Semantics(
+                                header: true,
+                                child: Text(
+                                  t.eleveConnexion.lecteur.titre,
+                                  style: palette.inkStrong.applyTo(
+                                    textes.titleLarge ?? const TextStyle(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: etatCourant == null
+                          ? const SizedBox.shrink()
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppSpacing.md,
+                              ),
+                              child: etatCourant,
+                            ),
+                    ),
+                    DecoratedBox(
+                      decoration: palette.surfaceRaised.decoration(
+                        borderRadius: AppRadius.arrondiMd,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            if (consigneCourante != null) ...<Widget>[
+                              consigneCourante,
+                              Ecart.vLg,
+                            ],
+                            saisir,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La consigne sous le viseur et, s'il y a lieu, le refus d'un QR qui n'est
+/// pas un code et la phrase hors ligne.
+class _Consigne extends StatelessWidget {
+  const _Consigne({
     required this.etape,
     required this.contenuInvalide,
     required this.horsLigne,
-    required this.mobile,
   });
 
-  final Widget apercu;
   final EtapeScanner etape;
   final bool contenuInvalide;
   final bool horsLigne;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final l = t.eleveConnexion.lecteur;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            etape == EtapeScanner.demarrage ? l.demarrage : l.consigne,
+            textAlign: TextAlign.center,
+            style: palette.inkStrong.applyTo(
+              textes.bodyLarge ?? const TextStyle(),
+            ),
+          ),
+        ),
+        if (contenuInvalide) ...<Widget>[
+          Ecart.vMd,
+          Semantics(
+            liveRegion: true,
+            child: DecoratedBox(
+              decoration: palette.washWarning.decoration(
+                borderRadius: AppRadius.arrondiSm,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Text(
+                  l.contenuInvalide,
+                  textAlign: TextAlign.center,
+                  style: palette.washWarning.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+        if (horsLigne) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            t.eleveConnexion.saisie.horsLigne,
+            textAlign: TextAlign.center,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Le viseur : la camera et un carre de visee. Bord a bord sur telephone,
+/// dans un cadre arrondi de hauteur fixe sur tablette et bureau.
+class _Viseur extends StatelessWidget {
+  const _Viseur({required this.apercu, required this.mobile});
+
+  final Widget apercu;
   final bool mobile;
 
   /// Hauteur du viseur sur tablette et bureau (panneau centre).
@@ -436,113 +629,55 @@ class _Viseur extends StatelessWidget {
   static const double coteViseeMax = 280;
 
   @override
+  @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     final l = t.eleveConnexion.lecteur;
 
-    final Widget cadre = ClipRRect(
-      borderRadius: AppRadius.arrondiLg,
-      child: DecoratedBox(
-        decoration: palette.surfaceSunken.decoration(),
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            Semantics(
-              key: ScannerPage.viseurKey,
-              label: l.libelleApercu,
-              image: true,
-              child: ExcludeSemantics(child: apercu),
-            ),
-            // Le carre de visee : un filet, rien sur l'image elle-meme.
-            LayoutBuilder(
-              builder: (BuildContext _, BoxConstraints contraintes) {
-                final double cote =
-                    (contraintes.biggest.shortestSide * proportionVisee)
-                        .clamp(0, coteViseeMax)
-                        .toDouble();
-                return Center(
-                  child: SizedBox.square(
-                    dimension: cote,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: AppRadius.arrondiMd,
-                        border: Border.fromBorderSide(
-                          palette.borderStrong.asBorderSide(width: 2),
-                        ),
+    final Widget image = DecoratedBox(
+      decoration: palette.surfaceSunken.decoration(),
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Semantics(
+            key: ScannerPage.viseurKey,
+            label: l.libelleApercu,
+            image: true,
+            child: ExcludeSemantics(child: apercu),
+          ),
+          // Le carre de visee : un filet, rien sur l'image elle-meme.
+          LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints contraintes) {
+              final double cote =
+                  (contraintes.biggest.shortestSide * proportionVisee)
+                      .clamp(0, coteViseeMax)
+                      .toDouble();
+              return Center(
+                child: SizedBox.square(
+                  dimension: cote,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: AppRadius.arrondiMd,
+                      border: Border.fromBorderSide(
+                        palette.borderStrong.asBorderSide(width: 2),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ],
-        ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
 
-    final List<Widget> textesSous = <Widget>[
-      Semantics(
-        liveRegion: true,
-        child: Text(
-          etape == EtapeScanner.demarrage ? l.demarrage : l.consigne,
-          textAlign: TextAlign.center,
-          style: palette.inkStrong.applyTo(
-            textes.bodyLarge ?? const TextStyle(),
-          ),
-        ),
-      ),
-      if (contenuInvalide) ...<Widget>[
-        Ecart.vMd,
-        Semantics(
-          liveRegion: true,
-          child: DecoratedBox(
-            decoration: palette.washWarning.decoration(
-              borderRadius: AppRadius.arrondiSm,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Text(
-                l.contenuInvalide,
-                textAlign: TextAlign.center,
-                style: palette.washWarning.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-      if (horsLigne) ...<Widget>[
-        Ecart.vSm,
-        Text(
-          t.eleveConnexion.saisie.horsLigne,
-          textAlign: TextAlign.center,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
-        ),
-      ],
-    ];
-
+    // Telephone : bord a bord, sans arrondi ni marge.
     if (mobile) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(child: cadre),
-          Ecart.vLg,
-          ...textesSous,
-          Ecart.vLg,
-        ],
-      );
+      return image;
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        SizedBox(height: hauteurPanneau, child: cadre),
-        Ecart.vLg,
-        ...textesSous,
-      ],
+    return SizedBox(
+      height: hauteurPanneau,
+      child: ClipRRect(borderRadius: AppRadius.arrondiLg, child: image),
     );
   }
 }
