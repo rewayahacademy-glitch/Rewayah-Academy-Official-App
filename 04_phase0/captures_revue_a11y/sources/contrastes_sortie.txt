@@ -1,0 +1,188 @@
+﻿==================== claire ====================
+--- 1. Paires fond/texte (seuil 4,5) : base -> head
+      surfaceRaised #FFFFFF/#110E20 : 16.39 -> 18.96
+      surfaceCanvas #F8F7FA/#110E20 : 15.36 -> 17.77
+      surfaceSunken #F0EDF4/#110E20 : 14.15 -> 16.37
+      surfaceOverlay #FFFFFF/#110E20 : 16.39 -> 18.96
+      surfaceMiseEnAvant #F7F5FE/#110E20 : nouveau -> 17.56
+      surfaceActionDouce #DCCAFD/#110E20 : nouveau -> 12.56
+      surfacePrimary #8652E6/#FFFFFF : 4.81 -> 4.81
+      surfaceSuccess #70EE9C/#1C1D21 : 11.55 -> 11.55
+      surfaceWarning #FFB703/#1C1D21 : 9.64 -> 9.64
+      surfaceAlert #B01B3C/#FFFFFF : 6.84 -> 6.84
+      surfaceInverse #211E28/#F5F2FA : 14.80 -> 14.80
+      washAccent #EEE6FA/#4E2983 : 8.80 -> 8.80
+      washSuccess #E4F4EB/#175D3A : 6.92 -> 6.92
+      washWarning #FEF5E4/#755200 : 6.36 -> 6.55
+      washAlert #FCE8ED/#921734 : 7.48 -> 7.48
+      washFamily #F0EDF4/#110E20 : 14.15 -> 16.37
+      surfaceQuran #F3EAD9/#1C1D21 : 14.10 -> 14.10
+--- 2. Encres x surfaces (texte 4,5) : seulement < 4,5 a HEAD, avec la valeur base
+  inkMuted #655E70 sur surfaceActionDouce #DCCAFD : base n/a -> head 4.11
+  inkFaint #6A687E sur washAccent #EEE6FA : base 3.39 -> head 4.45
+  inkFaint #6A687E sur surfaceActionDouce #DCCAFD : base n/a -> head 3.57
+  inkAccent #6538E4 sur surfaceActionDouce #DCCAFD : base n/a -> head 4.29
+  inkAlert #C21D3D sur surfaceActionDouce #DCCAFD : base n/a -> head 3.93
+--- 3. Encres x surfaces : regressions (base >= 4,5, head < 4,5) ou baisses > 0,5
+  inkAccent sur surfaceCanvas : 7.57 -> 6.07
+  inkAccent sur surfaceRaised : 8.08 -> 6.48
+  inkAccent sur surfaceSunken : 6.97 -> 5.60
+  inkAccent sur surfaceOverlay : 8.08 -> 6.48
+  inkAccent sur washFamily : 6.97 -> 5.60
+  inkAccent sur washAccent : 6.67 -> 5.35
+  inkAccent sur washSuccess : 7.09 -> 5.69
+  inkAccent sur washWarning : 7.25 -> 5.99
+  inkAccent sur washAlert : 6.89 -> 5.53
+  inkAccent sur surfaceQuran : 6.76 -> 5.43
+  inkAlert sur surfaceCanvas : 8.22 -> 5.56
+  inkAlert sur surfaceRaised : 8.77 -> 5.94
+  inkAlert sur surfaceSunken : 7.57 -> 5.12
+  inkAlert sur surfaceOverlay : 8.77 -> 5.94
+  inkAlert sur washFamily : 7.57 -> 5.12
+  inkAlert sur washAccent : 7.24 -> 4.90
+  inkAlert sur washSuccess : 7.70 -> 5.21
+  inkAlert sur washWarning : 7.87 -> 5.48
+  inkAlert sur washAlert : 7.48 -> 5.06
+  inkAlert sur surfaceQuran : 7.34 -> 4.97
+--- 4. Composants (3:1) : borderStrong, borderResting, surfacePrimary, surfaceActionDouce, inkAccent(focus) sur les fonds
+  borderStrong #84798F sur surfaceActionDouce #DCCAFD : 2.72
+  borderResting #84798F sur surfaceActionDouce #DCCAFD : 2.72
+  borderHairline #E3DEE9 sur surfaceCanvas #F8F7FA : 1.24
+  borderHairline #E3DEE9 sur surfaceRaised #FFFFFF : 1.32
+  borderHairline #E3DEE9 sur surfaceSunken #F0EDF4 : 1.14
+  borderHairline #E3DEE9 sur surfaceOverlay #FFFFFF : 1.32
+  borderHairline #E3DEE9 sur surfaceMiseEnAvant #F7F5FE : 1.22
+  borderHairline #E3DEE9 sur washFamily #F0EDF4 : 1.14
+  borderHairline #E3DEE9 sur washAccent #EEE6FA : 1.09
+  borderHairline #E3DEE9 sur washSuccess #E4F4EB : 1.16
+  borderHairline #E3DEE9 sur washWarning #FEF5E4 : 1.22
+  borderHairline #E3DEE9 sur washAlert #FCE8ED : 1.13
+  borderHairline #E3DEE9 sur surfaceActionDouce #DCCAFD : 1.14
+  borderHairline #E3DEE9 sur surfaceQuran #F3EAD9 : 1.11
+     surfacePrimary #8652E6 contre surfaceCanvas #F8F7FA : 4.51
+     surfacePrimary #8652E6 contre surfaceRaised #FFFFFF : 4.81
+     surfacePrimary #8652E6 contre surfaceSunken #F0EDF4 : 4.15
+     surfacePrimary #8652E6 contre surfaceOverlay #FFFFFF : 4.81
+     surfacePrimary #8652E6 contre surfaceMiseEnAvant #F7F5FE : 4.46
+     surfacePrimary #8652E6 contre surfaceInverse #211E28 : 3.41
+  <3 surfaceActionDouce #DCCAFD contre surfaceCanvas #F8F7FA : 1.41
+  <3 surfaceActionDouce #DCCAFD contre surfaceRaised #FFFFFF : 1.51
+  <3 surfaceActionDouce #DCCAFD contre surfaceSunken #F0EDF4 : 1.30
+  <3 surfaceActionDouce #DCCAFD contre surfaceOverlay #FFFFFF : 1.51
+  <3 surfaceActionDouce #DCCAFD contre surfaceMiseEnAvant #F7F5FE : 1.40
+     surfaceActionDouce #DCCAFD contre surfaceInverse #211E28 : 10.86
+     inkAccent (anneau de focus / soulignement) sur surfaceCanvas : 6.07
+     inkAccent (anneau de focus / soulignement) sur surfaceRaised : 6.48
+     inkAccent (anneau de focus / soulignement) sur surfaceActionDouce : 4.29
+     inkAccent (anneau de focus / soulignement) sur washAccent : 5.35
+--- 5. Points de statut (3:1) sur toutes les surfaces
+  point succes #199C55 sur washAccent #EEE6FA : 2.92
+  point succes #199C55 sur surfaceActionDouce #DCCAFD : 2.35
+  point succes #199C55 sur surfaceQuran #F3EAD9 : 2.97
+  point attention #B38000 sur washAccent #EEE6FA : 2.89
+  point attention #B38000 sur washAlert #FCE8ED : 2.98
+  point attention #B38000 sur surfaceActionDouce #DCCAFD : 2.32
+  point attention #B38000 sur surfaceQuran #F3EAD9 : 2.93
+  point alerte #E0375A sur surfaceActionDouce #DCCAFD : 2.86
+  point neutre #8685A5 sur washAccent #EEE6FA : 2.93
+  point neutre #8685A5 sur surfaceActionDouce #DCCAFD : 2.35
+  point neutre #8685A5 sur surfaceQuran #F3EAD9 : 2.97
+--- 6. Valeurs figees : surfaceQuran base #F3EAD9/#1C1D21 head #F3EAD9/#1C1D21
+==================== sombre ====================
+--- 1. Paires fond/texte (seuil 4,5) : base -> head
+      surfaceRaised #22222E/#F5F2FA : 15.88 -> 14.19
+      surfaceCanvas #1A1A25/#F5F2FA : 17.11 -> 15.56
+      surfaceSunken #262534/#F5F2FA : 14.29 -> 13.58
+      surfaceOverlay #2B2B39/#F5F2FA : 12.99 -> 12.58
+      surfaceMiseEnAvant #2B2B39/#F5F2FA : nouveau -> 12.58
+      surfaceActionDouce #BA98FB/#25113F : nouveau -> 7.29
+      surfacePrimary #BA98FB/#25113F : 8.92 -> 7.29
+      surfaceSuccess #70EE9C/#1C1D21 : 11.55 -> 11.55
+      surfaceWarning #FFB703/#1C1D21 : 9.64 -> 9.64
+      surfaceAlert #FFB1BD/#570D22 : 8.26 -> 8.26
+      surfaceInverse #F5F2FA/#211E28 : 14.80 -> 14.80
+      washAccent #332643/#E8D8FF : 10.47 -> 10.47
+      washSuccess #173B2B/#9DDEB5 : 7.98 -> 7.98
+      washWarning #44361A/#F4D480 : 8.15 -> 8.15
+      washAlert #4A2030/#FFD9E0 : 10.55 -> 10.55
+      washFamily #262534/#F5F2FA : 14.29 -> 13.58
+      surfaceQuran #2E2417/#F5F1E9 : 13.50 -> 13.50
+--- 2. Encres x surfaces (texte 4,5) : seulement < 4,5 a HEAD, avec la valeur base
+  inkStrong #F5F2FA sur surfaceActionDouce #BA98FB : base n/a -> head 2.11
+  inkMuted #AEB1CE sur surfaceActionDouce #BA98FB : base n/a -> head 1.11
+  inkFaint #9194B0 sur washSuccess #173B2B : base 3.75 -> head 4.16
+  inkFaint #9194B0 sur washWarning #44361A : base 3.55 -> head 3.95
+  inkFaint #9194B0 sur surfaceActionDouce #BA98FB : base n/a -> head 1.27
+  inkAccent #C9AEFF sur surfaceActionDouce #BA98FB : base n/a -> head 1.22
+  inkAlert #F4777D sur washWarning #44361A : base 9.09 -> head 4.35
+  inkAlert #F4777D sur surfaceActionDouce #BA98FB : base n/a -> head 1.15
+  inkSuccess #9DDEB5 sur surfaceActionDouce #BA98FB : base n/a -> head 1.51
+  inkWarning #F4D480 sur surfaceActionDouce #BA98FB : base n/a -> head 1.62
+--- 3. Encres x surfaces : regressions (base >= 4,5, head < 4,5) ou baisses > 0,5
+  inkStrong sur surfaceCanvas : 17.11 -> 15.56
+  inkStrong sur surfaceRaised : 15.88 -> 14.19
+  inkStrong sur surfaceSunken : 14.29 -> 13.58
+  inkStrong sur washFamily : 14.29 -> 13.58
+  inkMuted sur surfaceCanvas : 9.33 -> 8.19
+  inkMuted sur surfaceRaised : 8.66 -> 7.47
+  inkMuted sur surfaceSunken : 7.79 -> 7.15
+  inkMuted sur washFamily : 7.79 -> 7.15
+  inkAccent sur surfaceCanvas : 9.91 -> 9.01
+  inkAccent sur surfaceRaised : 9.19 -> 8.22
+  inkAlert sur surfaceCanvas : 14.67 -> 6.39
+  inkAlert sur surfaceRaised : 13.61 -> 5.82
+  inkAlert sur surfaceSunken : 12.24 -> 5.57
+  inkAlert sur surfaceOverlay : 11.13 -> 5.16
+  inkAlert sur washFamily : 12.24 -> 5.57
+  inkAlert sur washAccent : 10.84 -> 5.19
+  inkAlert sur washSuccess : 9.58 -> 4.59
+  inkAlert sur washWarning : 9.09 -> 4.35
+  inkAlert sur washAlert : 10.55 -> 5.05
+  inkAlert sur surfaceQuran : 11.77 -> 5.64
+  inkSuccess sur surfaceCanvas : 12.23 -> 11.12
+  inkSuccess sur surfaceRaised : 11.34 -> 10.14
+  inkSuccess sur surfaceSunken : 10.21 -> 9.70
+  inkSuccess sur washFamily : 10.21 -> 9.70
+  inkWarning sur surfaceCanvas : 13.15 -> 11.96
+  inkWarning sur surfaceRaised : 12.20 -> 10.91
+  inkWarning sur surfaceSunken : 10.98 -> 10.44
+  inkWarning sur washFamily : 10.98 -> 10.44
+--- 4. Composants (3:1) : borderStrong, borderResting, surfacePrimary, surfaceActionDouce, inkAccent(focus) sur les fonds
+  borderStrong #95899F sur surfaceActionDouce #BA98FB : 1.41
+  borderResting #95899F sur surfaceActionDouce #BA98FB : 1.41
+  borderHairline #32323F sur surfaceCanvas #1A1A25 : 1.37
+  borderHairline #32323F sur surfaceRaised #22222E : 1.24
+  borderHairline #32323F sur surfaceSunken #262534 : 1.19
+  borderHairline #32323F sur surfaceOverlay #2B2B39 : 1.10
+  borderHairline #32323F sur surfaceMiseEnAvant #2B2B39 : 1.10
+  borderHairline #32323F sur washFamily #262534 : 1.19
+  borderHairline #32323F sur washAccent #332643 : 1.11
+  borderHairline #32323F sur washSuccess #173B2B : 1.02
+  borderHairline #32323F sur washWarning #44361A : 1.07
+  borderHairline #32323F sur washAlert #4A2030 : 1.08
+  borderHairline #32323F sur surfaceQuran #2E2417 : 1.20
+     surfacePrimary #BA98FB contre surfaceCanvas #1A1A25 : 7.36
+     surfacePrimary #BA98FB contre surfaceRaised #22222E : 6.71
+     surfacePrimary #BA98FB contre surfaceSunken #262534 : 6.42
+     surfacePrimary #BA98FB contre surfaceOverlay #2B2B39 : 5.95
+     surfacePrimary #BA98FB contre surfaceMiseEnAvant #2B2B39 : 5.95
+  <3 surfacePrimary #BA98FB contre surfaceInverse #F5F2FA : 2.11
+     surfaceActionDouce #BA98FB contre surfaceCanvas #1A1A25 : 7.36
+     surfaceActionDouce #BA98FB contre surfaceRaised #22222E : 6.71
+     surfaceActionDouce #BA98FB contre surfaceSunken #262534 : 6.42
+     surfaceActionDouce #BA98FB contre surfaceOverlay #2B2B39 : 5.95
+     surfaceActionDouce #BA98FB contre surfaceMiseEnAvant #2B2B39 : 5.95
+  <3 surfaceActionDouce #BA98FB contre surfaceInverse #F5F2FA : 2.11
+     inkAccent (anneau de focus / soulignement) sur surfaceCanvas : 9.01
+     inkAccent (anneau de focus / soulignement) sur surfaceRaised : 8.22
+     inkAccent (anneau de focus / soulignement) sur surfaceActionDouce : 1.22
+     inkAccent (anneau de focus / soulignement) sur washAccent : 7.33
+--- 5. Points de statut (3:1) sur toutes les surfaces
+  point succes #70EE9C sur surfaceActionDouce #BA98FB : 1.60
+  point attention #FFB703 sur surfaceActionDouce #BA98FB : 1.34
+  point alerte #F9505E sur surfaceActionDouce #BA98FB : 1.42
+  point neutre #7F7D9E sur washWarning #44361A : 2.98
+  point neutre #7F7D9E sur surfaceActionDouce #BA98FB : 1.68
+--- 6. Valeurs figees : surfaceQuran base #2E2417/#F5F1E9 head #2E2417/#F5F1E9
+--- teintes _teintesIdentiteClaires : 32 paires, identiques a la base : true, min 4.57
+--- teintes _teintesIdentiteSombres : 32 paires, identiques a la base : true, min 4.55
