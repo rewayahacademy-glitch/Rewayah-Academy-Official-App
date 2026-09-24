@@ -68,6 +68,7 @@ class BudgetObservation {
     required this.restant,
     required this.peutEntrer,
     this.motifRefus,
+    this.visiteEnCours = false,
   });
 
   /// Lit le budget rendu par le serveur.
@@ -89,6 +90,7 @@ class BudgetObservation {
         motifRefus: MotifRefusObservation.depuisSql(
           json['motif_refus'] as String?,
         ),
+        visiteEnCours: json['visite_en_cours'] as bool? ?? false,
       );
 
   /// La version de politique sous laquelle ce budget a ete calcule.
@@ -114,6 +116,13 @@ class BudgetObservation {
 
   /// Pourquoi elle ne le serait pas. `null` quand [peutEntrer] est vrai.
   final MotifRefusObservation? motifRefus;
+
+  /// Vrai quand un intervalle de cet observateur est deja ouvert sur la
+  /// seance (cle `visite_en_cours`, migration `0039`, purement informative).
+  ///
+  /// Faux quand la cle manque : un serveur anterieur a `0039` ne le dit pas,
+  /// et l'entree le decidera de toute facon.
+  final bool visiteEnCours;
 
   /// Vrai quand il ne reste plus une seconde.
   bool get epuise => restant <= Duration.zero;
@@ -169,12 +178,11 @@ const Duration cadenceBudgetObservation = Duration(seconds: 5);
 
 /// L'implementation reelle.
 ///
-/// **Aucune des quatre fonctions appelees ici n'existe encore en base.** Elles
-/// sont decrites une a une, avec leurs colonnes et leur RLS, dans la section
-/// DEMANDE SQL de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_G.md`. Tant que la
-/// migration n'est pas appliquee, chaque appel rend
-/// `MotifEchecObservation.capaciteAbsente`, et l'ecran le dit en clair plutot
-/// que d'afficher un budget invente.
+/// Les quatre fonctions appelees ici sont posees par les migrations `0033`,
+/// `0036` et `0039`, que le bilan C0 du 23/09/2026 et la cartographie du
+/// 24/09/2026 disent presentes en production. Sur un deploiement ou l'une
+/// manquerait, l'appel rend `MotifEchecObservation.capaciteAbsente`, et
+/// l'ecran le dit en clair plutot que d'afficher un budget invente.
 class PolitiqueObservationSupabase implements PortPolitiqueObservation {
   /// Cree le service.
   const PolitiqueObservationSupabase(this._client);
@@ -259,20 +267,14 @@ class PolitiqueObservationSupabase implements PortPolitiqueObservation {
         'p_source': politique.source.valeurSql,
         'p_max_visites': politique.maxVisitsPerSession,
         'p_max_secondes': politique.maxTotalObservationTime.inSeconds,
-        // **Le cinquieme parametre n'existe qu'a partir de la migration
-        // `0036_observation_defauts_academie_et_plafond_visite_groupe.sql`, et
-        // cette migration n'est PAS appliquee en production au 21 septembre
-        // 2026.** PostgREST resout une RPC par le NOM de ses arguments : tant
-        // que la base porte la fonction a quatre arguments, cet appel a cinq
-        // ne resout rien et revient en `PGRST202`, que
+        // Le cinquieme parametre existe depuis la migration
+        // `0036_observation_defauts_academie_et_plafond_visite_groupe.sql`,
+        // appliquee en production le 21/09/2026. PostgREST resout une RPC par
+        // le NOM de ses arguments : sur une base anterieure a `0036`, cet
+        // appel a cinq arguments reviendrait en `PGRST202`, que
         // `motifDeErreurPostgrest` traduit en
-        // `MotifEchecObservation.capaciteAbsente`. Autrement dit ce chemin
-        // d'ecriture est INERTE jusqu'a l'application de `0036`, et l'ecran le
-        // dit en clair au lieu de faire croire a un enregistrement.
-        // ponytail: aucune double signature n'est tentee, et rien n'est a
-        // changer ici le jour ou `0036` passe. Plafond de ce raccourci :
-        // l'administration ne peut rien regler d'ici tant que la migration
-        // attend, et seul le message d'ecran l'en informe.
+        // `MotifEchecObservation.capaciteAbsente`, et l'ecran le dirait en
+        // clair au lieu de faire croire a un enregistrement.
         'p_max_secondes_par_visite': politique.maxParVisite?.inSeconds,
       },
     );
@@ -298,10 +300,16 @@ class PolitiqueObservationSupabase implements PortPolitiqueObservation {
 /// `42883` est le code PostgreSQL d'une fonction inconnue et `PGRST202` celui
 /// d'une fonction absente du cache de schema : les deux disent la meme chose --
 /// la capacite serveur n'est pas installee sur ce deploiement.
+///
+/// `23505` est la violation d'unicite que `guardian_visit_ouvert_uidx` leve
+/// quand une visite de cet observateur est deja ouverte : ce n'est pas une
+/// panne reseau, et « Reessayer » echouerait a l'identique (DB-OBS-06).
 MotifEchecObservation motifDeErreurPostgrest(PostgrestException erreur) =>
-    erreur.code == '42883' || erreur.code == 'PGRST202'
-    ? MotifEchecObservation.capaciteAbsente
-    : MotifEchecObservation.reseau;
+    switch (erreur.code) {
+      '42883' || 'PGRST202' => MotifEchecObservation.capaciteAbsente,
+      '23505' => MotifEchecObservation.visiteDejaOuverte,
+      _ => MotifEchecObservation.reseau,
+    };
 
 /// Le service de politique d'observation employe par l'application.
 final Provider<PortPolitiqueObservation> portPolitiqueObservationProvider =

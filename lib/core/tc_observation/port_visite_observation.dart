@@ -76,9 +76,10 @@ abstract interface class PortVisiteObservation {
 
 /// L'implementation reelle.
 ///
-/// **Aucune des trois fonctions appelees ici n'existe encore en base** : voir
-/// la section DEMANDE SQL de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_G.md`.
-/// Elles etendent `rejoindre_observation()` et `assister_seance()` (migration
+/// Les trois fonctions appelees ici (`entrer_observation`,
+/// `sortir_observation`, `visites_observation`) sont posees par `0033`, `0037`
+/// et `0039`, dites presentes en production depuis le 21/09/2026. Elles
+/// etendent `rejoindre_observation()` et `assister_seance()` (migration
 /// `0012`) plutot que d'ouvrir une troisieme porte : deux portes qui
 /// refuseraient des seances differentes finiraient par se contredire, et
 /// l'en-tete de `0012` le dit deja.
@@ -117,8 +118,9 @@ class VisiteObservationSupabase implements PortVisiteObservation {
     // qui le fait volontairement. La difference est nommee dans le contrat :
     // avaler un echec est acceptable pour une trace, inacceptable quand c'est
     // ce geste qui doit fermer un quota. L'appelant doit pouvoir dire que la
-    // sortie n'a pas ete confirmee -- et le serveur, lui, referme l'intervalle
-    // a l'expiration du jeton sans rien attendre du client.
+    // sortie n'a pas ete confirmee. **Aucun code serveur ne referme un
+    // intervalle abandonne** (dependance DB-OBS-03) : sans cet appel, la
+    // visite reste ouverte et brule la suivante.
     await _appeler('sortir_observation', <String, dynamic>{
       'p_session_id': sessionId,
     });
