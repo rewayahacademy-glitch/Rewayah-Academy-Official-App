@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_outils/learning_assignment.dart';
 import '../../core/tc_outils/port_assignations.dart';
@@ -83,9 +84,9 @@ travailClasseProvider =
 ///
 /// Meme composant que « Avant le prochain cours » de l'Accueil (cercles,
 /// filets en retrait), **sans limite de trois** (manifeste, section 2) ; le
-/// statut vient du service. Les cercles restent decoratifs : aucune coche
-/// locale, marquer fait attend le serveur (DB-CRS-10), et « fait » ne vaut
-/// pas competence acquise.
+/// statut vient du service. Les cercles ne se touchent pas : coches seulement
+/// quand le service dit « fait », aucune coche locale, marquer fait attend le
+/// serveur (DB-CRS-10), et « fait » ne vaut pas competence acquise.
 class TravailClassePage extends ConsumerWidget {
   /// Cree la page.
   const TravailClassePage({required this.classeId, super.key, this.eleveId});
@@ -142,29 +143,22 @@ class _Liste extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        AppCard(
-          marge: AppSpacing.lg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              for (int i = 0; i < travaux.length; i++)
-                _Ligne(travail: travaux[i], filet: i < travaux.length - 1),
-            ],
-          ),
+    return ColonnesSousPage(
+      principal: AppCard(
+        marge: AppSpacing.lg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            for (int i = 0; i < travaux.length; i++)
+              _Ligne(travail: travaux[i], filet: i < travaux.length - 1),
+          ],
         ),
-        Ecart.vLg,
-        Text(
-          t.classe.pageTravail.nonCochable,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
-        ),
-      ],
+      ),
+      precisions: Text(
+        t.classe.pageTravail.nonCochable,
+        style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+      ),
     );
   }
 }
@@ -185,20 +179,31 @@ class _Ligne extends StatelessWidget {
       travail.status,
     );
     final DateTime? echeance = travail.dueAtUtc;
+    final bool large = classeEnColonnes(context);
+    // Le cercle dit le statut RENDU PAR LE SERVICE (fait : coche), jamais une
+    // coche locale ; le mot de la pastille le double.
+    final bool fait = travail.status == StatutAssignation.fait;
     return MergeSemantics(
       child: Row(
         children: <Widget>[
           ExcludeSemantics(
             child: SizedBox.square(
               dimension: AppSpacing.xxl,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.fromBorderSide(
-                    palette.borderStrong.asBorderSide(),
-                  ),
-                ),
-              ),
+              child: fait
+                  ? IconTheme(
+                      data: palette.inkSuccess.asIconTheme(
+                        size: AppSpacing.xxl,
+                      ),
+                      child: Icon(AppIcons.succes.actif),
+                    )
+                  : DecoratedBox(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.fromBorderSide(
+                          palette.borderStrong.asBorderSide(),
+                        ),
+                      ),
+                    ),
             ),
           ),
           Ecart.hMd,
@@ -225,7 +230,10 @@ class _Ligne extends StatelessWidget {
                             Text(
                               libelleTravail(travail),
                               style: palette.inkStrong.applyTo(
-                                textes.bodyMedium ?? const TextStyle(),
+                                (large
+                                        ? textes.bodyLarge
+                                        : textes.bodyMedium) ??
+                                    const TextStyle(),
                               ),
                             ),
                             if (echeance != null) ...<Widget>[
@@ -235,7 +243,10 @@ class _Ligne extends StatelessWidget {
                                   date: dateDeLAppareil(echeance.toLocal()),
                                 ),
                                 style: palette.inkMuted.applyTo(
-                                  textes.bodySmall ?? const TextStyle(),
+                                  (large
+                                          ? textes.bodyMedium
+                                          : textes.bodySmall) ??
+                                      const TextStyle(),
                                 ),
                               ),
                             ],

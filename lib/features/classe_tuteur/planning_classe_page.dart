@@ -154,7 +154,8 @@ class _Planning extends ConsumerWidget {
     final DateTime? maintenant = ref.watch(ancreServeurProvider).value;
     return LectureClasse<List<SeanceFamille>>(
       valeur: ref.watch(planningClasseProvider(cle)),
-      phraseIndisponible: t.classe.pagePlanning.aucune,
+      // Source absente : jamais « aucune seance » (on ne sait pas).
+      phraseIndisponible: t.classe.pagePlanning.indisponible,
       onReessayer: () => ref.invalidate(planningClasseProvider(cle)),
       vide: EtatSysteme(
         nature: NatureEtat.aucunResultat,
@@ -191,40 +192,44 @@ class _Liste extends StatelessWidget {
     };
     final bool fuseauUnique = fuseaux.length == 1;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Semantics(
-          header: true,
-          child: Text(
-            t.classe.pagePlanning.prochaines,
-            style: palette.inkStrong.applyTo(
-              textes.titleMedium ?? const TextStyle(),
+    return ColonnesSousPage(
+      principal: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Semantics(
+            header: true,
+            child: Text(
+              t.classe.pagePlanning.prochaines,
+              style: palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
             ),
           ),
-        ),
-        if (fuseauUnique) ...<Widget>[
-          Ecart.vXs,
-          Text(fuseaux.single, style: discret),
-        ],
-        Ecart.vMd,
-        AppCard(
-          marge: AppSpacing.lg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              for (int i = 0; i < affichages.length; i++) ...<Widget>[
-                if (i > 0) const FiletHorizontal(),
-                _Ligne(affichage: affichages[i], avecFuseau: !fuseauUnique),
+          if (fuseauUnique) ...<Widget>[
+            Ecart.vXs,
+            Text(fuseaux.single, style: discret),
+          ],
+          Ecart.vMd,
+          AppCard(
+            marge: AppSpacing.lg,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                for (int i = 0; i < affichages.length; i++) ...<Widget>[
+                  if (i > 0) const FiletHorizontal(),
+                  _Ligne(affichage: affichages[i], avecFuseau: !fuseauUnique),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-        Ecart.vLg,
-        Text(t.classe.pagePlanning.habituelIndisponible, style: discret),
-      ],
+        ],
+      ),
+      precisions: Text(
+        t.classe.pagePlanning.habituelIndisponible,
+        style: discret,
+      ),
     );
   }
 }
@@ -242,6 +247,7 @@ class _Ligne extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final ({String libelle, TonEtat ton})? pastille = affichage.pastille;
+    final bool large = classeEnColonnes(context);
     return MergeSemantics(
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: AppTouchTarget.standard),
@@ -257,7 +263,8 @@ class _Ligne extends StatelessWidget {
                     Text(
                       affichage.date,
                       style: palette.inkStrong.applyTo(
-                        textes.titleSmall ?? const TextStyle(),
+                        (large ? textes.titleMedium : textes.titleSmall) ??
+                            const TextStyle(),
                       ),
                     ),
                     Ecart.vXs,
@@ -274,7 +281,8 @@ class _Ligne extends StatelessWidget {
                             ),
                       style: AppTypography.tabulaire(
                         palette.inkMuted.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
+                          (large ? textes.bodyLarge : textes.bodyMedium) ??
+                              const TextStyle(),
                         ),
                       ),
                     ),

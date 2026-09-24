@@ -101,61 +101,64 @@ class _Contenu extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? niveau = progression.niveauHumain;
-    return AppCard(
-      marge: AppSpacing.lg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (niveau != null && niveau.trim().isNotEmpty)
-            LigneCleValeur(
-              cle: t.classe.pageProgression.niveau,
-              valeur: niveau,
-            ),
-          if (progression.jalons.isNotEmpty) ...<Widget>[
-            if (niveau != null && niveau.trim().isNotEmpty) ...<Widget>[
-              Ecart.vSm,
-              const FiletHorizontal(),
-              Ecart.vMd,
+    // Bureau : largeur de lecture, jamais une fiche etiree sur 1 100 px.
+    return ColonnesSousPage(
+      principal: AppCard(
+        marge: AppSpacing.lg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (niveau != null && niveau.trim().isNotEmpty)
+              LigneCleValeur(
+                cle: t.classe.pageProgression.niveau,
+                valeur: niveau,
+              ),
+            if (progression.jalons.isNotEmpty) ...<Widget>[
+              if (niveau != null && niveau.trim().isNotEmpty) ...<Widget>[
+                Ecart.vSm,
+                const FiletHorizontal(),
+                Ecart.vMd,
+              ],
+              Semantics(
+                header: true,
+                child: Text(
+                  t.classe.pageProgression.jalons,
+                  style: palette.inkStrong.applyTo(
+                    textes.titleSmall ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              for (final String jalon in progression.jalons)
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minHeight: AppTouchTarget.standard,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      ExcludeSemantics(
+                        child: IconTheme(
+                          data: palette.inkAccent.asIconTheme(
+                            size: AppSpacing.xl,
+                          ),
+                          child: Icon(AppIcons.succes.repos),
+                        ),
+                      ),
+                      Ecart.hMd,
+                      Expanded(
+                        child: Text(
+                          jalon,
+                          style: palette.inkStrong.applyTo(
+                            textes.bodyMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
-            Semantics(
-              header: true,
-              child: Text(
-                t.classe.pageProgression.jalons,
-                style: palette.inkStrong.applyTo(
-                  textes.titleSmall ?? const TextStyle(),
-                ),
-              ),
-            ),
-            for (final String jalon in progression.jalons)
-              ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: AppTouchTarget.standard,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    ExcludeSemantics(
-                      child: IconTheme(
-                        data: palette.inkAccent.asIconTheme(
-                          size: AppSpacing.xl,
-                        ),
-                        child: Icon(AppIcons.succes.repos),
-                      ),
-                    ),
-                    Ecart.hMd,
-                    Expanded(
-                      child: Text(
-                        jalon,
-                        style: palette.inkStrong.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
           ],
-        ],
+        ),
       ),
     );
   }

@@ -12,6 +12,7 @@ import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -164,6 +165,62 @@ class CadreClasse extends ConsumerWidget {
       sousTitre: contexte == null ? null : sousTitre?.call(contexte),
       onRetour: onRetour,
       child: corps,
+    );
+  }
+}
+
+/// Vrai a partir de 840 de large (tablette large et bureau) : les ecrans de
+/// classe passent en colonnes (vraie version desktop, jamais une colonne de
+/// telephone etiree).
+bool classeEnColonnes(BuildContext context) =>
+    AppGabarit.classe(MediaQuery.sizeOf(context).width).index >=
+    ClasseLargeur.etendue.index;
+
+/// La composition d'une sous-page de classe.
+///
+/// Telephone et tablette etroite : une colonne, les precisions sous le
+/// contenu. A partir de 840 : le contenu a gauche (environ 62 %), les
+/// precisions a droite (environ 38 %), comme la Classe ; sans precisions, le
+/// contenu garde une largeur de lecture (`AppPage.largeurLecture`).
+class ColonnesSousPage extends StatelessWidget {
+  /// Cree la composition.
+  const ColonnesSousPage({required this.principal, super.key, this.precisions});
+
+  /// Le contenu de la rubrique.
+  final Widget principal;
+
+  /// Ce qu'il faut savoir a cote : limites, fuseau, dependances dites.
+  final Widget? precisions;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget? aCote = precisions;
+    if (!classeEnColonnes(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          principal,
+          if (aCote != null) ...<Widget>[Ecart.vLg, aCote],
+        ],
+      );
+    }
+    if (aCote == null) {
+      return Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+          child: principal,
+        ),
+      );
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(flex: 62, child: principal),
+        Ecart.hLg,
+        Expanded(flex: 38, child: aCote),
+      ],
     );
   }
 }

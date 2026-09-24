@@ -86,27 +86,29 @@ class _Ressources extends ConsumerWidget {
         titre: t.classe.pageRessources.aucune,
         phrase: t.classe.pageRessources.aucuneDetail,
       ),
-      construire: (List<LibraryResource> ressources) => GroupeReglages(
-        lignes: <LigneRubrique>[
-          for (final LibraryResource r in ressources)
-            LigneRubrique(
-              icone: VignetteRessource.iconeDe(r.resourceType),
-              libelle: r.title,
-              legende: libelleTypeRessource(r.resourceType),
-              onPress: () => GoRouter.of(context).go(
-                Uri(
-                  path: RoutesTcB.versRessource(r.id),
-                  queryParameters: <String, String>{
-                    'retour': cheminClasse(
-                      classeId,
-                      contexte.eleveId,
-                      'ressources',
-                    ),
-                  },
-                ).toString(),
+      construire: (List<LibraryResource> ressources) => ColonnesSousPage(
+        principal: GroupeReglages(
+          lignes: <LigneRubrique>[
+            for (final LibraryResource r in ressources)
+              LigneRubrique(
+                icone: VignetteRessource.iconeDe(r.resourceType),
+                libelle: r.title,
+                legende: libelleTypeRessource(r.resourceType),
+                onPress: () => GoRouter.of(context).go(
+                  Uri(
+                    path: RoutesTcB.versRessource(r.id),
+                    queryParameters: <String, String>{
+                      'retour': cheminClasse(
+                        classeId,
+                        contexte.eleveId,
+                        'ressources',
+                      ),
+                    },
+                  ).toString(),
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

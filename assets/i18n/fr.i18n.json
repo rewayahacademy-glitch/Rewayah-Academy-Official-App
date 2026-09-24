@@ -1605,7 +1605,8 @@
       "ligneFuseau": "{heure} ({fuseau}) · {duree}",
       "aucune": "Aucune séance à venir pour l'instant",
       "aucuneDetail": "Les prochaines séances de {prenom} apparaîtront ici dès qu'elles seront programmées.",
-      "habituelIndisponible": "Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent."
+      "habituelIndisponible": "Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.",
+      "indisponible": "Le planning de la classe n'est pas encore relié à cet espace."
     },
     "pageTravail": {
       "aucun": "Rien à préparer pour l'instant",

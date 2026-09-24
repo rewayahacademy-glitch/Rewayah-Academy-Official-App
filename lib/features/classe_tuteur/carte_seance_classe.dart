@@ -196,9 +196,10 @@ class CarteSeanceClasse extends ConsumerWidget {
         gauche: bandeau.gauche,
         droite: bandeau.droite,
         ton: bandeau.ton,
+        compact: compact,
       ),
       Ecart.vLg,
-      _Heures(affichage: affichage),
+      _Heures(affichage: affichage, compact: compact),
       if (affichage.heureClasse != null) ...<Widget>[
         Ecart.vSm,
         Text(affichage.heureClasse!, style: discret),
@@ -285,11 +286,13 @@ class _Bandeau extends StatelessWidget {
     required this.gauche,
     required this.droite,
     required this.ton,
+    required this.compact,
   });
 
   final String gauche;
   final String? droite;
   final TonEtat ton;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -321,30 +324,38 @@ class _Bandeau extends StatelessWidget {
                 child: DecoratedBox(decoration: point),
               ),
               Ecart.hSm,
+              // L'etat au debut, l'accompagnement au bout de la ligne ; quand
+              // les deux ne tiennent pas (texte agrandi, colonne etroite),
+              // l'accompagnement passe dessous, sans rien couper.
               Expanded(
-                child: Text(
-                  gauche,
-                  style: paire.applyTo(
-                    AppTypography.tabulaire(
-                      textes.labelLarge ?? const TextStyle(),
-                    ),
-                  ),
-                ),
-              ),
-              if (droite != null) ...<Widget>[
-                Ecart.hSm,
-                Flexible(
-                  child: Text(
-                    droite!,
-                    textAlign: TextAlign.end,
-                    style: paire.applyTo(
-                      AppTypography.tabulaire(
-                        textes.bodySmall ?? const TextStyle(),
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
+                  children: <Widget>[
+                    Text(
+                      gauche,
+                      style: paire.applyTo(
+                        AppTypography.tabulaire(
+                          (compact ? textes.labelLarge : textes.titleSmall) ??
+                              const TextStyle(),
+                        ),
                       ),
                     ),
-                  ),
+                    if (droite != null)
+                      Text(
+                        droite!,
+                        style: paire.applyTo(
+                          AppTypography.tabulaire(
+                            (compact ? textes.bodySmall : textes.bodyMedium) ??
+                                const TextStyle(),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ],
           ),
         ),
@@ -358,9 +369,10 @@ class _Bandeau extends StatelessWidget {
 /// fuseau du foyer ; sans horloge serveur, celle de l'appareil, **dite comme
 /// telle** (jamais un fuseau devine).
 class _Heures extends StatelessWidget {
-  const _Heures({required this.affichage});
+  const _Heures({required this.affichage, required this.compact});
 
   final AffichageSeance affichage;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -380,6 +392,7 @@ class _Heures extends StatelessWidget {
                       ville: affichage.ville!,
                     ),
               complement: affichage.ville == null ? affichage.fuseau : null,
+              compact: compact,
             ),
           ),
           Expanded(
@@ -401,6 +414,7 @@ class _Heures extends StatelessWidget {
                     icone: AppIcons.attente,
                     libelle: LibellesGroupe.dureeLibelle,
                     valeur: affichage.duree,
+                    compact: compact,
                   ),
                 ),
               ),
@@ -417,6 +431,7 @@ class _Colonne extends StatelessWidget {
     required this.icone,
     required this.libelle,
     required this.valeur,
+    required this.compact,
     this.complement,
   });
 
@@ -424,13 +439,16 @@ class _Colonne extends StatelessWidget {
   final String libelle;
   final String valeur;
   final String? complement;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Tablette et bureau : le corps a 14 et la valeur a 22 (manifeste,
+    // typographie : legende et chiffre d'horaire du bureau).
     final TextStyle discret = palette.inkMuted.applyTo(
-      textes.bodySmall ?? const TextStyle(),
+      (compact ? textes.bodySmall : textes.bodyMedium) ?? const TextStyle(),
     );
     return MergeSemantics(
       child: Row(
@@ -464,7 +482,8 @@ class _Colonne extends StatelessWidget {
                   valeur,
                   style: AppTypography.tabulaire(
                     palette.inkStrong.applyTo(
-                      textes.titleMedium ?? const TextStyle(),
+                      (compact ? textes.titleMedium : textes.titleLarge) ??
+                          const TextStyle(),
                     ),
                   ),
                 ),

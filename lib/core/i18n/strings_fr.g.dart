@@ -4924,6 +4924,9 @@ class Traductions$classe$pagePlanning$fr {
 
 	/// fr: 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.'
 	String get habituelIndisponible => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.';
+
+	/// fr: 'Le planning de la classe n'est pas encore relié à cet espace.'
+	String get indisponible => 'Le planning de la classe n\'est pas encore relié à cet espace.';
 }
 
 // Path: classe.pageTravail
@@ -9669,6 +9672,7 @@ extension on Traductions {
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
 			'classe.pagePlanning.aucuneDetail' => ({required Object prenom}) => 'Les prochaines séances de ${prenom} apparaîtront ici dès qu\'elles seront programmées.',
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
+			'classe.pagePlanning.indisponible' => 'Le planning de la classe n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.aucun' => 'Rien à préparer pour l\'instant',
 			'classe.pageTravail.aucunDetail' => 'Le travail donné par l\'enseignant apparaîtra ici.',
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
@@ -9801,9 +9805,9 @@ extension on Traductions {
 			'enseignant.cahier.enFileDetail' => 'L\'envoi n\'a pas abouti : il repartira tout seul, sans que vous ayez à revenir ici.',
 			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
 			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Ajuster · ${eleve}',
-			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
 			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
@@ -10315,9 +10319,9 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
-			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',

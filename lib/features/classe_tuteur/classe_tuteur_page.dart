@@ -101,9 +101,7 @@ class _Contenu extends ConsumerWidget {
         : lue;
 
     final Gabarit gabarit = AppGabarit.de(context);
-    final bool large =
-        AppGabarit.classe(MediaQuery.sizeOf(context).width).index >=
-        ClasseLargeur.etendue.index;
+    final bool large = classeEnColonnes(context);
 
     final Widget carte = CarteSeanceClasse(
       contexte: contexte,
