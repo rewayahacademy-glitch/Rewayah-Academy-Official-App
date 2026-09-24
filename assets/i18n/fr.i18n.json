@@ -1558,7 +1558,80 @@
     "travail": "Travail à préparer",
     "ressources": "Bibliothèque",
     "progression": "Progression",
-    "observer": "Observer la séance"
+    "observer": "Observer la séance",
+    "titre": "Classe",
+    "historique": "Historique",
+    "sousTitre": "{prenom} · {enseignant}",
+    "indisponiblePhrase": "Le détail de la classe n'est pas encore disponible ici.",
+    "introuvableTitre": "Cette classe n'est pas ouverte à ce profil",
+    "introuvablePhrase": "Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.",
+    "seance": {
+      "aucune": "Aucune séance planifiée",
+      "aucuneDetail": "La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.",
+      "illisible": "La prochaine séance n'a pas pu être lue.",
+      "presence": "{prenom} : {etat}"
+    },
+    "observation": {
+      "commentCaMarche": "Comment ça marche ?",
+      "uneVisite": "1 visite disponible",
+      "visites": "{nombre} visites disponibles",
+      "resume": "{visites} · {duree} par visite",
+      "restanteAucune": "Aucune visite restante pour cette séance",
+      "restanteUne": "1 visite restante pour cette séance",
+      "restantes": "{nombre} visites restantes pour cette séance",
+      "minutes": "{minutes} min",
+      "minutesSecondes": "{minutes} min {secondes} s",
+      "secondes": "{secondes} s",
+      "motif": {
+        "visitesEpuisees": "Vous avez utilisé vos visites pour cette séance.",
+        "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",
+        "seanceNonCommencee": "L'observation ouvre quand la séance commence.",
+        "seanceTerminee": "La séance est terminée.",
+        "seanceNonTenue": "Cette séance n'a pas lieu : il n'y a rien à observer.",
+        "horsFenetre": "La salle n'est pas ouverte à cette heure.",
+        "observationDesactivee": "L'observation est fermée pour cette classe.",
+        "lienAbsent": "Aucun élève de votre foyer n'est rattaché à cette séance.",
+        "enfantAbsent": "L'observation attend l'arrivée de {prenom}.",
+        "presenceEnVerification": "La présence de {prenom} est en cours de vérification.",
+        "visiteDejaOuverte": "Une visite est déjà ouverte, sur cet appareil ou sur un autre.",
+        "garantieServeurAbsente": "L'observation des séances n'est pas encore ouverte.",
+        "reseau": "La disponibilité de l'observation n'a pas pu être vérifiée.",
+        "capaciteAbsente": "L'observation n'est pas disponible pour le moment."
+      }
+    },
+    "pagePlanning": {
+      "prochaines": "Prochaines séances",
+      "ligne": "{heure} · {duree}",
+      "ligneFuseau": "{heure} ({fuseau}) · {duree}",
+      "aucune": "Aucune séance à venir pour l'instant",
+      "aucuneDetail": "Les prochaines séances de {prenom} apparaîtront ici dès qu'elles seront programmées.",
+      "habituelIndisponible": "Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent."
+    },
+    "pageTravail": {
+      "aucun": "Rien à préparer pour l'instant",
+      "aucunDetail": "Le travail donné par l'enseignant apparaîtra ici.",
+      "indisponible": "Le travail à préparer n'est pas encore relié à cet espace.",
+      "echeance": "Échéance : {date}",
+      "nonCochable": "Marquer un travail comme fait n'est pas encore possible ici.",
+      "statut": {
+        "aFaire": "À faire",
+        "enCours": "Commencé",
+        "fait": "Fait",
+        "expire": "Échéance passée"
+      }
+    },
+    "pageRessources": {
+      "aucune": "Aucune ressource pour cette classe pour l'instant",
+      "aucuneDetail": "Les supports choisis par l'enseignant apparaîtront ici.",
+      "indisponible": "La bibliothèque de la classe n'est pas encore reliée à cet espace."
+    },
+    "pageProgression": {
+      "indisponible": "La progression de {prenom} n'est pas encore partagée ici.",
+      "niveau": "Niveau",
+      "jalons": "Étapes franchies",
+      "aucune": "Aucune étape partagée pour l'instant",
+      "aucuneDetail": "Les progrès que l'enseignant partage avec la famille apparaîtront ici."
+    }
   },
   "enseignant": {
     "bienvenue": {

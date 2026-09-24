@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/router/chemin_retour.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
@@ -53,6 +55,7 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
 
     return PageShell(
       titre: t.tc.bibliotheque.detail.titre,
+      onRetour: _retour(context),
       child: switch (detail) {
         AsyncValue<DetailRessource?>(hasValue: true) =>
           detail.requireValue == null
@@ -84,6 +87,24 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
     );
   }
 
+  /// Le disque retour : d'abord le chemin `?retour=` de l'adresse (la
+  /// bibliotheque d'une classe, cote tuteur), **valide comme chemin interne**
+  /// (`cheminRetourValide`) ; sinon l'ecran d'en dessous (la Bibliotheque,
+  /// route parente, cote eleve). Sans l'un ni l'autre : pas de disque.
+  VoidCallback? _retour(BuildContext context) {
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (routeur == null) {
+      return null;
+    }
+    final String? retour = cheminRetourValide(
+      GoRouterState.of(context).uri.queryParameters['retour'],
+    );
+    if (retour != null) {
+      return () => routeur.go(retour);
+    }
+    return routeur.canPop() ? routeur.pop : null;
+  }
+
   Future<void> _telecharger() async {
     setState(() => _enCours = true);
     try {
@@ -94,7 +115,9 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
       // L'echec est nomme et montre. Le taire laisserait la personne relancer
       // indefiniment un geste qui ne peut pas aboutir.
       if (mounted) {
-        setState(() => _message = t.tc.bibliotheque.message.telechargementImpossible);
+        setState(
+          () => _message = t.tc.bibliotheque.message.telechargementImpossible,
+        );
       }
     } finally {
       if (mounted) setState(() => _enCours = false);
