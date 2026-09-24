@@ -839,6 +839,32 @@ class Traductions$foyer$fr {
 
 	/// fr: 'Ajouter un profil élève'
 	String get ajouterProfil => 'Ajouter un profil élève';
+
+	/// fr: 'Les profils élèves de votre foyer'
+	String get sousTitre => 'Les profils élèves de votre foyer';
+
+	/// fr: 'Profils élèves'
+	String get membres => 'Profils élèves';
+
+	late final Traductions$foyer$vide$fr vide = Traductions$foyer$vide$fr.internal(_root);
+	late final Traductions$foyer$membre$fr membre = Traductions$foyer$membre$fr.internal(_root);
+
+	/// fr: 'La classe de chaque élève ne s'affiche pas encore sur cette page.'
+	String get classesIndisponibles => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.';
+
+	/// fr: 'Appareils partagés'
+	String get appareilsPartages => 'Appareils partagés';
+
+	/// fr: 'Appareils du foyer'
+	String get appareilsFoyer => 'Appareils du foyer';
+
+	/// fr: 'Connecter un appareil, voir ceux qui sont reliés, en retirer un'
+	String get appareilsFoyerLegende => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un';
+
+	/// fr: 'Créer mon profil élève'
+	String get creerMonProfil => 'Créer mon profil élève';
+
+	late final Traductions$foyer$monProfil$fr monProfil = Traductions$foyer$monProfil$fr.internal(_root);
 }
 
 // Path: ficheEleve
@@ -2175,6 +2201,66 @@ class Traductions$connexion$feuilleAppareil$fr {
 
 	/// fr: 'Fermer'
 	String get fermer => 'Fermer';
+}
+
+// Path: foyer.vide
+class Traductions$foyer$vide$fr {
+	Traductions$foyer$vide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun profil élève pour l'instant'
+	String get titre => 'Aucun profil élève pour l\'instant';
+
+	/// fr: 'Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil.'
+	String get phrase => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.';
+}
+
+// Path: foyer.membre
+class Traductions$foyer$membre$fr {
+	Traductions$foyer$membre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pas encore de classe'
+	String get sansClasse => 'Pas encore de classe';
+
+	/// fr: 'Accès sans échéance'
+	String get accesSansEcheance => 'Accès sans échéance';
+
+	/// fr: 'Accès jusqu'au {date}'
+	String accesJusquau({required Object date}) => 'Accès jusqu\'au ${date}';
+
+	/// fr: 'Accès expiré depuis le {date}'
+	String accesExpire({required Object date}) => 'Accès expiré depuis le ${date}';
+
+	/// fr: '{jour} {mois} {annee}'
+	String date({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}';
+}
+
+// Path: foyer.monProfil
+class Traductions$foyer$monProfil$fr {
+	Traductions$foyer$monProfil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Créer mon profil élève'
+	String get titre => 'Créer mon profil élève';
+
+	/// fr: 'Pas encore possible'
+	String get indisponibleTitre => 'Pas encore possible';
+
+	/// fr: 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.'
+	String get indisponiblePhrase => 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu\'il est.';
+
+	/// fr: 'Retour au foyer'
+	String get retour => 'Retour au foyer';
 }
 
 // Path: admin.tableau
@@ -8099,6 +8185,24 @@ extension on Traductions {
 			'enfant.aucunDetail' => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.',
 			'foyer.titre' => 'Foyer',
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
+			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
+			'foyer.membres' => 'Profils élèves',
+			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
+			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
+			'foyer.membre.sansClasse' => 'Pas encore de classe',
+			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
+			'foyer.membre.accesJusquau' => ({required Object date}) => 'Accès jusqu\'au ${date}',
+			'foyer.membre.accesExpire' => ({required Object date}) => 'Accès expiré depuis le ${date}',
+			'foyer.membre.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
+			'foyer.classesIndisponibles' => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.',
+			'foyer.appareilsPartages' => 'Appareils partagés',
+			'foyer.appareilsFoyer' => 'Appareils du foyer',
+			'foyer.appareilsFoyerLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
+			'foyer.creerMonProfil' => 'Créer mon profil élève',
+			'foyer.monProfil.titre' => 'Créer mon profil élève',
+			'foyer.monProfil.indisponibleTitre' => 'Pas encore possible',
+			'foyer.monProfil.indisponiblePhrase' => 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu\'il est.',
+			'foyer.monProfil.retour' => 'Retour au foyer',
 			'ficheEleve.informations' => 'Informations de l\'élève',
 			'ficheEleve.inscription' => 'Parcours et inscription',
 			'ficheEleve.interface' => 'Interface',
@@ -8322,6 +8426,8 @@ extension on Traductions {
 			'admin.groupes.colonneMembres' => 'Membres',
 			'admin.groupes.colonneCreneau' => 'Créneau',
 			'admin.groupes.colonneEtat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.typeEnfant' => 'Enfants',
 			'admin.groupes.typeAdulte' => 'Adultes',
 			'admin.groupes.filtreTousTypes' => 'Tous les publics',
@@ -8340,8 +8446,6 @@ extension on Traductions {
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.champSeuil' => 'Seuil maximal',
 			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
@@ -8836,6 +8940,8 @@ extension on Traductions {
 			'parcours.refusEffet' => 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.',
 			'parcours.refusEnregistre' => 'C\'est noté. Nous vous préviendrons si un horaire correspondant ouvre.',
 			'parcours.etatAPersonnaliser' => 'Parcours à personnaliser',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.etatAPersonnaliserDetail' => ({required Object prenom}) => 'Quelques questions, et nous ne vous montrerons que ce qui convient à ${prenom}.',
 			'parcours.etatHoraireAChoisir' => 'Horaire à choisir',
 			'parcours.etatHoraireAChoisirDetail' => ({required Object prenom}) => 'Les horaires ouverts pour ${prenom} vous attendent.',
@@ -8854,8 +8960,6 @@ extension on Traductions {
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
-			_ => null,
-		} ?? switch (path) {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
@@ -9350,6 +9454,8 @@ extension on Traductions {
 			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà un élève sur ${heures}. Retirer ces heures ne met pas fin aux cours : il faut une réaffectation.',
 			'enseignant.creneaux.feedErreur' => 'Les familles en attente n\'ont pas pu être lues',
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.horsLignePrise' => 'Sans réseau, vous ne pouvez pas prendre d\'élève. Les demandes ci-dessous restent consultables.',
 			'enseignant.creneaux.horsLigneDemande' => 'Sans réseau, cette demande ne partirait pas. Réessayez au retour de la connexion.',
 			'enseignant.creneaux.refusDejaPris' => 'Cet élève vient d\'être pris par un autre enseignant. La liste ci-dessous est à jour.',
@@ -9368,8 +9474,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les groupes : celui-ci n\'a pas encore d\'élève.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.erreur' => 'Ce groupe n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Ce groupe n\'est pas l\'un des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',

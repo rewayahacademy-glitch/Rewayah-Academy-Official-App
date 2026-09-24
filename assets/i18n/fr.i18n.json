@@ -346,7 +346,31 @@
   },
   "foyer": {
     "titre": "Foyer",
-    "ajouterProfil": "Ajouter un profil élève"
+    "ajouterProfil": "Ajouter un profil élève",
+    "sousTitre": "Les profils élèves de votre foyer",
+    "membres": "Profils élèves",
+    "vide": {
+      "titre": "Aucun profil élève pour l'instant",
+      "phrase": "Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil."
+    },
+    "membre": {
+      "sansClasse": "Pas encore de classe",
+      "accesSansEcheance": "Accès sans échéance",
+      "accesJusquau": "Accès jusqu'au {date}",
+      "accesExpire": "Accès expiré depuis le {date}",
+      "date": "{jour} {mois} {annee}"
+    },
+    "classesIndisponibles": "La classe de chaque élève ne s'affiche pas encore sur cette page.",
+    "appareilsPartages": "Appareils partagés",
+    "appareilsFoyer": "Appareils du foyer",
+    "appareilsFoyerLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
+    "creerMonProfil": "Créer mon profil élève",
+    "monProfil": {
+      "titre": "Créer mon profil élève",
+      "indisponibleTitre": "Pas encore possible",
+      "indisponiblePhrase": "Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.",
+      "retour": "Retour au foyer"
+    }
   },
   "ficheEleve": {
     "informations": "Informations de l'élève",
