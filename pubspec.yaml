@@ -50,6 +50,14 @@ dependencies:
   cupertino_icons: ^1.0.9
   crypto: ^3.0.7
   qr_flutter: ^4.1.0
+  # Lecture du QR d'appairage par la camera (lot D, port K6 `LecteurQr`),
+  # ajoutee en phase 0c1 du chantier Tuteur V1 (recommandation C05 section 6).
+  # Android, iOS, macOS et web ; ni Windows ni Linux, ou le port rend son
+  # implementation « indisponible ». Sur le web : `BarcodeDetector` du
+  # navigateur s'il existe, sinon le script zxing-wasm, charge par le paquet
+  # depuis cdn.jsdelivr.net au premier scan (auto-hebergement : decision a
+  # prendre, `MobileScannerPlatform.instance.setBarcodeLibraryScriptUrl`).
+  mobile_scanner: ^7.4.2
   file_picker: ^12.2.0
   adhan: ^2.0.0+1
   livekit_client: ^2.12.0
