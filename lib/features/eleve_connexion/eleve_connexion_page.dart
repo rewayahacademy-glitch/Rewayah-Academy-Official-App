@@ -1,20 +1,18 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/code_local.dart';
 import '../../core/appairage/profils_locaux.dart';
 import '../../core/appairage/service_enfant.dart';
 import '../../core/cache/secure/stockage_securise.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/marque_page.dart';
@@ -27,7 +25,9 @@ enum _Moment {
   /// On regarde ce que cet appareil connait deja.
   chargement,
 
-  /// Aucun profil : il faut un code.
+  /// Aucun profil : il faut un code. La saisie vit sur sa propre route
+  /// (`/connexion/eleve/code`, une fonction a un seul endroit) : l'ecran y
+  /// renvoie.
   saisieCode,
 
   /// Des profils existent : l'enfant choisit le sien.
@@ -59,13 +59,10 @@ class EleveConnexionPage extends ConsumerStatefulWidget {
 }
 
 class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
-  final TextEditingController _code = TextEditingController();
-
   _Moment _moment = _Moment.chargement;
   List<ProfilLocal> _profils = const <ProfilLocal>[];
   ProfilLocal? _choisi;
   String? _premierEssai;
-  bool _enCours = false;
   bool _erreurCode = false;
   String? _message;
 
@@ -75,10 +72,23 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     unawaited(_charger());
   }
 
-  @override
-  void dispose() {
-    _code.dispose();
-    super.dispose();
+  /// Le profil que la saisie ou le scanner vient de connecter, passe en
+  /// `extra` (jamais dans l'adresse). Absent hors de ce parcours.
+  ProfilLocal? _profilQuiArrive() {
+    try {
+      final Object? extra = GoRouterState.of(context).extra;
+      return extra is ProfilLocal ? extra : null;
+    } on Object {
+      return null;
+    }
+  }
+
+  /// Sans profil, la saisie du code est sur sa propre route.
+  void _versSaisie() {
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (routeur != null) {
+      routeur.go(Routes.connexionEleveCode);
+    }
   }
 
   /// Ce que cet appareil connait deja, quand il sait le dire.
@@ -106,56 +116,26 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     if (!mounted) {
       return;
     }
+
+    // Arrivee depuis la saisie ou le scanner (`connecterCetAppareil`) : le
+    // jeton est deja range, on passe droit au code personnel de ce profil,
+    // meme si la base locale n'a pas pu le retenir.
+    final ProfilLocal? arrive = _profilQuiArrive();
+    if (arrive != null) {
+      if (!profils.any((ProfilLocal p) => p.id == arrive.id)) {
+        profils = <ProfilLocal>[...profils, arrive];
+      }
+      setState(() => _profils = profils);
+      await _choisirProfil(arrive);
+      return;
+    }
+
     setState(() {
       _profils = profils;
       _moment = profils.isEmpty ? _Moment.saisieCode : _Moment.choixProfil;
     });
-  }
-
-  Future<void> _appairer() async {
-    setState(() {
-      _enCours = true;
-      _message = null;
-    });
-    try {
-      final StockageSecurise coffre = ref.read(stockageSecuriseProvider);
-      final AppairageReussi resultat = await ref
-          .read(serviceEnfantProvider)
-          .appairer(
-            code: _code.text.trim().toUpperCase(),
-            empreinteAppareil: await coffre.empreinteAppareil(),
-            plateforme: _plateforme(),
-          );
-
-      // Le jeton n'est rendu qu'une fois : il est ecrit avant toute autre
-      // chose, sinon l'appairage serait a refaire.
-      await coffre.enregistrerJetonAppareil(
-        resultat.profilId,
-        resultat.jetonAppareil,
-      );
-      final ProfilLocal profil = ProfilLocal(
-        id: resultat.profilId,
-        prenom: resultat.prenom,
-        identifiantImmuable: '',
-      );
-      await ref.read(profilsLocauxProvider).enregistrer(profil);
-
-      if (mounted) {
-        setState(() {
-          _profils = <ProfilLocal>[..._profils, profil];
-          _choisi = profil;
-          _code.clear();
-          _moment = _Moment.creationCode;
-        });
-      }
-    } on Object {
-      if (mounted) {
-        setState(() => _message = t.eleveConnexion.codeErreur);
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _enCours = false);
-      }
+    if (profils.isEmpty) {
+      _versSaisie();
     }
   }
 
@@ -240,23 +220,19 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
           _moment = _profils.isEmpty ? _Moment.saisieCode : _Moment.choixProfil;
           _message = t.eleveConnexion.codeExpire;
         });
+        if (_profils.isEmpty) {
+          _versSaisie();
+        }
       }
       return;
     }
 
-    setState(() {
-      _enCours = true;
-      _erreurCode = false;
-    });
+    setState(() => _erreurCode = false);
     try {
       await ref.read(serviceEnfantProvider).ouvrirSession(jeton);
     } on Object {
       if (mounted) {
         setState(() => _message = t.eleveConnexion.codeExpire);
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _enCours = false);
       }
     }
   }
@@ -276,7 +252,8 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
               child: AppCard(
                 child: switch (_moment) {
                   _Moment.chargement => Center(child: Text(t.commun.chargement)),
-                  _Moment.saisieCode => _saisieCode(),
+                  // Le temps que la route de saisie prenne le relais.
+                  _Moment.saisieCode => Center(child: Text(t.commun.chargement)),
                   _Moment.choixProfil => _choixProfil(),
                   _Moment.creationCode => _pave(
                     titre: _premierEssai == null
@@ -294,45 +271,6 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _saisieCode() {
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(t.eleveConnexion.entrerCode, style: textes.headlineSmall),
-        Ecart.vMd,
-        Text(t.eleveConnexion.codeInvite, style: textes.bodyLarge),
-        Ecart.vXxl,
-        TextField(
-          controller: _code,
-          onChanged: (String _) => setState(() {}),
-          textCapitalization: TextCapitalization.characters,
-          textAlign: TextAlign.center,
-          maxLength: 6,
-          style: textes.headlineMedium,
-          inputFormatters: <TextInputFormatter>[
-            const UpperCaseTextFormatter(),
-            FilteringTextInputFormatter.allow(RegExp('[A-Z2-9]')),
-          ],
-          decoration: InputDecoration(errorText: _message),
-        ),
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.commun.valider,
-          enCours: _enCours,
-          onPress: _code.text.trim().length == 6
-              ? () => unawaited(_appairer())
-              : null,
-        ),
-        // Le bloc « scanner le carre » n'apparait pas : aucun lecteur de code
-        // n'est disponible sur cette version. Un bouton qui echoue apres le
-        // geste coute plus cher qu'un bouton absent, exactement comme le bouton
-        // d'ajout d'appareil de TUT-02.
-      ],
     );
   }
 
@@ -419,33 +357,4 @@ class _TuileProfil extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Met la saisie en majuscules : le code est affiche en majuscules chez le
-/// tuteur, et la base le compare en majuscules.
-class UpperCaseTextFormatter extends TextInputFormatter {
-  /// Cree le formateur.
-  const UpperCaseTextFormatter();
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue _,
-    TextEditingValue apres,
-  ) => TextEditingValue(
-    text: apres.text.toUpperCase(),
-    selection: apres.selection,
-  );
-}
-
-String _plateforme() {
-  if (kIsWeb) {
-    return 'web';
-  }
-  if (Platform.isAndroid) {
-    return 'android';
-  }
-  if (Platform.isIOS) {
-    return 'ios';
-  }
-  return 'windows';
 }
