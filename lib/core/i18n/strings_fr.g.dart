@@ -47,14 +47,18 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$destructif$fr destructif = Traductions$destructif$fr.internal(_root);
 	late final Traductions$salle$fr salle = Traductions$salle$fr.internal(_root);
 	late final Traductions$presence$fr presence = Traductions$presence$fr.internal(_root);
+	late final Traductions$bienvenue$fr bienvenue = Traductions$bienvenue$fr.internal(_root);
 	late final Traductions$attente$fr attente = Traductions$attente$fr.internal(_root);
 	late final Traductions$connexion$fr connexion = Traductions$connexion$fr.internal(_root);
 	late final Traductions$inscription$fr inscription = Traductions$inscription$fr.internal(_root);
 	late final Traductions$contrat$fr contrat = Traductions$contrat$fr.internal(_root);
 	late final Traductions$accuse$fr accuse = Traductions$accuse$fr.internal(_root);
+	late final Traductions$consentement$fr consentement = Traductions$consentement$fr.internal(_root);
 	late final Traductions$kyc$fr kyc = Traductions$kyc$fr.internal(_root);
 	late final Traductions$appareils$fr appareils = Traductions$appareils$fr.internal(_root);
 	late final Traductions$enfant$fr enfant = Traductions$enfant$fr.internal(_root);
+	late final Traductions$foyer$fr foyer = Traductions$foyer$fr.internal(_root);
+	late final Traductions$ficheEleve$fr ficheEleve = Traductions$ficheEleve$fr.internal(_root);
 	late final Traductions$disponibilites$fr disponibilites = Traductions$disponibilites$fr.internal(_root);
 	late final Traductions$creneaux$fr creneaux = Traductions$creneaux$fr.internal(_root);
 	late final Traductions$priere$fr priere = Traductions$priere$fr.internal(_root);
@@ -69,8 +73,11 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
 	late final Traductions$compte$fr compte = Traductions$compte$fr.internal(_root);
+	late final Traductions$historique$fr historique = Traductions$historique$fr.internal(_root);
+	late final Traductions$notifications$fr notifications = Traductions$notifications$fr.internal(_root);
 	late final Traductions$eleve$fr eleve = Traductions$eleve$fr.internal(_root);
 	late final Traductions$tuteur$fr tuteur = Traductions$tuteur$fr.internal(_root);
+	late final Traductions$classe$fr classe = Traductions$classe$fr.internal(_root);
 	late final Traductions$enseignant$fr enseignant = Traductions$enseignant$fr.internal(_root);
 	late final Traductions$controleur$fr controleur = Traductions$controleur$fr.internal(_root);
 	late final Traductions$aConstruire$fr aConstruire = Traductions$aConstruire$fr.internal(_root);
@@ -109,6 +116,11 @@ class Traductions$commun$fr {
 
 	/// fr: 'Chargement'
 	String get chargement => 'Chargement';
+
+	late final Traductions$commun$etats$fr etats = Traductions$commun$etats$fr.internal(_root);
+	late final Traductions$commun$entete$fr entete = Traductions$commun$entete$fr.internal(_root);
+	late final Traductions$commun$selecteurProfils$fr selecteurProfils = Traductions$commun$selecteurProfils$fr.internal(_root);
+	late final Traductions$commun$theme$fr theme = Traductions$commun$theme$fr.internal(_root);
 }
 
 // Path: reseau
@@ -408,6 +420,18 @@ class Traductions$presence$fr {
 	String attenteMinutes({required Object minutes}) => 'le cours a commencé il y a ${minutes} min';
 }
 
+// Path: bienvenue
+class Traductions$bienvenue$fr {
+	Traductions$bienvenue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bienvenue'
+	String get titre => 'Bienvenue';
+}
+
 // Path: attente
 class Traductions$attente$fr {
 	Traductions$attente$fr.internal(this._root);
@@ -650,6 +674,18 @@ class Traductions$accuse$fr {
 	String get compris => 'J\'ai compris';
 }
 
+// Path: consentement
+class Traductions$consentement$fr {
+	Traductions$consentement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Consentements'
+	String get titre => 'Consentements';
+}
+
 // Path: kyc
 class Traductions$kyc$fr {
 	Traductions$kyc$fr.internal(this._root);
@@ -786,6 +822,48 @@ class Traductions$enfant$fr {
 
 	/// fr: 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.'
 	String get aucunDetail => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.';
+}
+
+// Path: foyer
+class Traductions$foyer$fr {
+	Traductions$foyer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Foyer'
+	String get titre => 'Foyer';
+
+	/// fr: 'Ajouter un profil élève'
+	String get ajouterProfil => 'Ajouter un profil élève';
+}
+
+// Path: ficheEleve
+class Traductions$ficheEleve$fr {
+	Traductions$ficheEleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Informations de l'élève'
+	String get informations => 'Informations de l\'élève';
+
+	/// fr: 'Parcours et inscription'
+	String get inscription => 'Parcours et inscription';
+
+	/// fr: 'Interface'
+	String get interface => 'Interface';
+
+	/// fr: 'Caméra en cours'
+	String get camera => 'Caméra en cours';
+
+	/// fr: 'Accès Rewayah'
+	String get acces => 'Accès Rewayah';
+
+	/// fr: 'Appareils'
+	String get appareils => 'Appareils';
 }
 
 // Path: disponibilites
@@ -1136,6 +1214,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$progression$fr progression = Traductions$admin$progression$fr.internal(_root);
 	late final Traductions$admin$programmes$fr programmes = Traductions$admin$programmes$fr.internal(_root);
 	late final Traductions$admin$journal$fr journal = Traductions$admin$journal$fr.internal(_root);
+	late final Traductions$admin$observations$fr observations = Traductions$admin$observations$fr.internal(_root);
 	late final Traductions$admin$comptes$fr comptes = Traductions$admin$comptes$fr.internal(_root);
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
 	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
@@ -1740,6 +1819,35 @@ class Traductions$compte$fr {
 	late final Traductions$compte$roleDetail$fr roleDetail = Traductions$compte$roleDetail$fr.internal(_root);
 }
 
+// Path: historique
+class Traductions$historique$fr {
+	Traductions$historique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Historique'
+	String get titre => 'Historique';
+
+	/// fr: 'Détail de la séance'
+	String get detailSeance => 'Détail de la séance';
+
+	late final Traductions$historique$segments$fr segments = Traductions$historique$segments$fr.internal(_root);
+}
+
+// Path: notifications
+class Traductions$notifications$fr {
+	Traductions$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Notifications'
+	String get titre => 'Notifications';
+}
+
 // Path: eleve
 class Traductions$eleve$fr {
 	Traductions$eleve$fr.internal(this._root);
@@ -1762,6 +1870,33 @@ class Traductions$tuteur$fr {
 	late final Traductions$tuteur$accueil$fr accueil = Traductions$tuteur$accueil$fr.internal(_root);
 	late final Traductions$tuteur$reglages$fr reglages = Traductions$tuteur$reglages$fr.internal(_root);
 	late final Traductions$tuteur$suivi$fr suivi = Traductions$tuteur$suivi$fr.internal(_root);
+}
+
+// Path: classe
+class Traductions$classe$fr {
+	Traductions$classe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisir une classe'
+	String get catalogue => 'Choisir une classe';
+
+	/// fr: 'Planning'
+	String get planning => 'Planning';
+
+	/// fr: 'Travail à préparer'
+	String get travail => 'Travail à préparer';
+
+	/// fr: 'Bibliothèque'
+	String get ressources => 'Bibliothèque';
+
+	/// fr: 'Progression'
+	String get progression => 'Progression';
+
+	/// fr: 'Observer la séance'
+	String get observer => 'Observer la séance';
 }
 
 // Path: enseignant
@@ -1857,6 +1992,89 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+}
+
+// Path: commun.etats
+class Traductions$commun$etats$fr {
+	Traductions$commun$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$commun$etats$chargementProlonge$fr chargementProlonge = Traductions$commun$etats$chargementProlonge$fr.internal(_root);
+	late final Traductions$commun$etats$horsLigne$fr horsLigne = Traductions$commun$etats$horsLigne$fr.internal(_root);
+	late final Traductions$commun$etats$reconnexion$fr reconnexion = Traductions$commun$etats$reconnexion$fr.internal(_root);
+	late final Traductions$commun$etats$echecServeur$fr echecServeur = Traductions$commun$etats$echecServeur$fr.internal(_root);
+	late final Traductions$commun$etats$introuvable$fr introuvable = Traductions$commun$etats$introuvable$fr.internal(_root);
+	late final Traductions$commun$etats$accesRefuse$fr accesRefuse = Traductions$commun$etats$accesRefuse$fr.internal(_root);
+	late final Traductions$commun$etats$sessionExpiree$fr sessionExpiree = Traductions$commun$etats$sessionExpiree$fr.internal(_root);
+	late final Traductions$commun$etats$dossierEnAttente$fr dossierEnAttente = Traductions$commun$etats$dossierEnAttente$fr.internal(_root);
+	late final Traductions$commun$etats$aucunResultat$fr aucunResultat = Traductions$commun$etats$aucunResultat$fr.internal(_root);
+	late final Traductions$commun$etats$permissionRefusee$fr permissionRefusee = Traductions$commun$etats$permissionRefusee$fr.internal(_root);
+	late final Traductions$commun$etats$ressourceExpiree$fr ressourceExpiree = Traductions$commun$etats$ressourceExpiree$fr.internal(_root);
+	late final Traductions$commun$etats$indisponible$fr indisponible = Traductions$commun$etats$indisponible$fr.internal(_root);
+
+	/// fr: 'Toujours sans réponse. Réessayez un peu plus tard.'
+	String get reessaisEpuises => 'Toujours sans réponse. Réessayez un peu plus tard.';
+
+	late final Traductions$commun$etats$actions$fr actions = Traductions$commun$etats$actions$fr.internal(_root);
+}
+
+// Path: commun.entete
+class Traductions$commun$entete$fr {
+	Traductions$commun$entete$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retour'
+	String get retour => 'Retour';
+
+	/// fr: 'Notifications'
+	String get notifications => 'Notifications';
+
+	/// fr: 'Notifications, une non lue'
+	String get notificationsUneNonLue => 'Notifications, une non lue';
+
+	/// fr: 'Notifications, {nombre} non lues'
+	String notificationsNonLues({required Object nombre}) => 'Notifications, ${nombre} non lues';
+}
+
+// Path: commun.selecteurProfils
+class Traductions$commun$selecteurProfils$fr {
+	Traductions$commun$selecteurProfils$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{prenom}, {etat}'
+	String etiquette({required Object prenom, required Object etat}) => '${prenom}, ${etat}';
+
+	/// fr: 'Ajouter'
+	String get ajouter => 'Ajouter';
+
+	/// fr: 'Ajouter un profil élève'
+	String get ajouterSemantique => 'Ajouter un profil élève';
+}
+
+// Path: commun.theme
+class Traductions$commun$theme$fr {
+	Traductions$commun$theme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Apparence'
+	String get groupe => 'Apparence';
+
+	/// fr: 'Thème clair'
+	String get clair => 'Thème clair';
+
+	/// fr: 'Thème sombre'
+	String get sombre => 'Thème sombre';
 }
 
 // Path: connexion.feuilleAppareil
@@ -3351,6 +3569,20 @@ class Traductions$admin$journal$fr {
 
 	/// fr: 'Vous êtes remonté jusqu'à la première entrée du journal.'
 	String get fin => 'Vous êtes remonté jusqu\'à la première entrée du journal.';
+
+	late final Traductions$admin$journal$evenements$fr evenements = Traductions$admin$journal$evenements$fr.internal(_root);
+}
+
+// Path: admin.observations
+class Traductions$admin$observations$fr {
+	Traductions$admin$observations$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Observations'
+	String get titre => 'Observations';
 }
 
 // Path: admin.comptes
@@ -3723,6 +3955,12 @@ class Traductions$nav$tuteur$fr {
 
 	/// fr: 'Suivi'
 	String get suivi => 'Suivi';
+
+	/// fr: 'Historique'
+	String get historique => 'Historique';
+
+	/// fr: 'Compte'
+	String get compte => 'Compte';
 }
 
 // Path: nav.enseignant
@@ -3873,6 +4111,21 @@ class Traductions$compte$roleDetail$fr {
 
 	/// fr: 'Suit ses cours et son Coran'
 	String get student => 'Suit ses cours et son Coran';
+}
+
+// Path: historique.segments
+class Traductions$historique$segments$fr {
+	Traductions$historique$segments$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séances'
+	String get seances => 'Séances';
+
+	/// fr: 'Observations'
+	String get observations => 'Observations';
 }
 
 // Path: eleve.accueil
@@ -4456,8 +4709,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Prochain cours'
 	String get prochainCours => 'Prochain cours';
 
-	/// fr: 'Cours en cours'
-	String get coursEnCours => 'Cours en cours';
+	/// fr: 'Séance en direct'
+	String get coursEnCours => 'Séance en direct';
 
 	/// fr: 'Dans {heures} h {minutes}'
 	String minuteurHeures({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}';
@@ -5409,6 +5662,231 @@ class Traductions$tc$parcours$fr {
 	late final Traductions$tc$parcours$postCours$fr postCours = Traductions$tc$parcours$postCours$fr.internal(_root);
 }
 
+// Path: commun.etats.chargementProlonge
+class Traductions$commun$etats$chargementProlonge$fr {
+	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La connexion prend plus de temps que prévu'
+	String get titre => 'La connexion prend plus de temps que prévu';
+
+	/// fr: 'Vous pouvez patienter encore un peu ou réessayer.'
+	String get phrase => 'Vous pouvez patienter encore un peu ou réessayer.';
+}
+
+// Path: commun.etats.horsLigne
+class Traductions$commun$etats$horsLigne$fr {
+	Traductions$commun$etats$horsLigne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous êtes hors ligne'
+	String get titre => 'Vous êtes hors ligne';
+
+	/// fr: 'Vérifiez votre connexion. Ce qui est déjà affiché reste consultable.'
+	String get phrase => 'Vérifiez votre connexion. Ce qui est déjà affiché reste consultable.';
+}
+
+// Path: commun.etats.reconnexion
+class Traductions$commun$etats$reconnexion$fr {
+	Traductions$commun$etats$reconnexion$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reconnexion en cours'
+	String get titre => 'Reconnexion en cours';
+
+	/// fr: 'Une nouvelle tentative de connexion est en cours.'
+	String get phrase => 'Une nouvelle tentative de connexion est en cours.';
+}
+
+// Path: commun.etats.echecServeur
+class Traductions$commun$etats$echecServeur$fr {
+	Traductions$commun$etats$echecServeur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Impossible de charger ces informations'
+	String get titre => 'Impossible de charger ces informations';
+
+	/// fr: 'Le chargement n'a pas abouti. Réessayez dans un instant.'
+	String get phrase => 'Le chargement n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: commun.etats.introuvable
+class Traductions$commun$etats$introuvable$fr {
+	Traductions$commun$etats$introuvable$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette page est introuvable'
+	String get titre => 'Cette page est introuvable';
+
+	/// fr: 'Le lien est peut-être incomplet, ou la page n'existe plus.'
+	String get phrase => 'Le lien est peut-être incomplet, ou la page n\'existe plus.';
+}
+
+// Path: commun.etats.accesRefuse
+class Traductions$commun$etats$accesRefuse$fr {
+	Traductions$commun$etats$accesRefuse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous n'avez pas accès à cette page'
+	String get titre => 'Vous n\'avez pas accès à cette page';
+
+	/// fr: 'Ce contenu n'est pas ouvert à votre compte.'
+	String get phrase => 'Ce contenu n\'est pas ouvert à votre compte.';
+}
+
+// Path: commun.etats.sessionExpiree
+class Traductions$commun$etats$sessionExpiree$fr {
+	Traductions$commun$etats$sessionExpiree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre session a expiré'
+	String get titre => 'Votre session a expiré';
+
+	/// fr: 'Reconnectez-vous pour continuer.'
+	String get phrase => 'Reconnectez-vous pour continuer.';
+}
+
+// Path: commun.etats.dossierEnAttente
+class Traductions$commun$etats$dossierEnAttente$fr {
+	Traductions$commun$etats$dossierEnAttente$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre dossier est en attente'
+	String get titre => 'Votre dossier est en attente';
+
+	/// fr: 'Une étape reste à franchir avant d'ouvrir cet espace.'
+	String get phrase => 'Une étape reste à franchir avant d\'ouvrir cet espace.';
+}
+
+// Path: commun.etats.aucunResultat
+class Traductions$commun$etats$aucunResultat$fr {
+	Traductions$commun$etats$aucunResultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun résultat'
+	String get titre => 'Aucun résultat';
+
+	/// fr: 'Rien ne correspond pour le moment.'
+	String get phrase => 'Rien ne correspond pour le moment.';
+}
+
+// Path: commun.etats.permissionRefusee
+class Traductions$commun$etats$permissionRefusee$fr {
+	Traductions$commun$etats$permissionRefusee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Autorisation refusée'
+	String get titre => 'Autorisation refusée';
+
+	/// fr: 'Sans cette autorisation, cette fonction ne peut pas s'ouvrir. Vous pouvez la modifier dans les réglages de votre appareil.'
+	String get phrase => 'Sans cette autorisation, cette fonction ne peut pas s\'ouvrir. Vous pouvez la modifier dans les réglages de votre appareil.';
+}
+
+// Path: commun.etats.ressourceExpiree
+class Traductions$commun$etats$ressourceExpiree$fr {
+	Traductions$commun$etats$ressourceExpiree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce contenu n'est plus disponible'
+	String get titre => 'Ce contenu n\'est plus disponible';
+
+	/// fr: 'Il a été retiré, ou son accès a pris fin.'
+	String get phrase => 'Il a été retiré, ou son accès a pris fin.';
+}
+
+// Path: commun.etats.indisponible
+class Traductions$commun$etats$indisponible$fr {
+	Traductions$commun$etats$indisponible$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pas encore disponible'
+	String get titre => 'Pas encore disponible';
+
+	/// fr: 'Cette fonction n'est pas encore ouverte.'
+	String get phrase => 'Cette fonction n\'est pas encore ouverte.';
+}
+
+// Path: commun.etats.actions
+class Traductions$commun$etats$actions$fr {
+	Traductions$commun$etats$actions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Retour à l'accueil'
+	String get retourAccueil => 'Retour à l\'accueil';
+
+	/// fr: 'Se reconnecter'
+	String get seReconnecter => 'Se reconnecter';
+
+	/// fr: 'Voir mon dossier'
+	String get voirDossier => 'Voir mon dossier';
+
+	/// fr: 'Réinitialiser les filtres'
+	String get reinitialiserFiltres => 'Réinitialiser les filtres';
+
+	/// fr: 'Revenir en arrière'
+	String get revenir => 'Revenir en arrière';
+}
+
+// Path: admin.journal.evenements
+class Traductions$admin$journal$evenements$fr {
+	Traductions$admin$journal$evenements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Visite d'observation commencée'
+	String get observationEntree => 'Visite d\'observation commencée';
+
+	/// fr: 'Visite d'observation terminée'
+	String get observationSortie => 'Visite d\'observation terminée';
+
+	/// fr: 'Règles d'observation du groupe modifiées'
+	String get observationPolitiqueGroupeModifiee => 'Règles d\'observation du groupe modifiées';
+}
+
 // Path: tc.groupe.mesGroupes
 class Traductions$tc$groupe$mesGroupes$fr {
 	Traductions$tc$groupe$mesGroupes$fr.internal(this._root);
@@ -6263,8 +6741,8 @@ class Traductions$tc$classe$entete$fr {
 	/// fr: 'Reste {heures} h {minutes}'
 	String resteHeuresMinutes({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}';
 
-	/// fr: 'Cours toujours en cours'
-	String get coursEnCours => 'Cours toujours en cours';
+	/// fr: 'Séance toujours en direct'
+	String get coursEnCours => 'Séance toujours en direct';
 
 	/// fr: 'Photo enseignant manquante'
 	String get photoManquante => 'Photo enseignant manquante';
@@ -6602,8 +7080,8 @@ class Traductions$tc$classe$barre$fr {
 
 	// Translations
 
-	/// fr: 'Cours en cours'
-	String get titre => 'Cours en cours';
+	/// fr: 'Séance en direct'
+	String get titre => 'Séance en direct';
 
 	/// fr: 'Revenir au cours de {groupe}'
 	String revenir({required Object groupe}) => 'Revenir au cours de ${groupe}';
@@ -7288,6 +7766,47 @@ extension on Traductions {
 			'commun.fermer' => 'Fermer',
 			'commun.reessayer' => 'Réessayer',
 			'commun.chargement' => 'Chargement',
+			'commun.etats.chargementProlonge.titre' => 'La connexion prend plus de temps que prévu',
+			'commun.etats.chargementProlonge.phrase' => 'Vous pouvez patienter encore un peu ou réessayer.',
+			'commun.etats.horsLigne.titre' => 'Vous êtes hors ligne',
+			'commun.etats.horsLigne.phrase' => 'Vérifiez votre connexion. Ce qui est déjà affiché reste consultable.',
+			'commun.etats.reconnexion.titre' => 'Reconnexion en cours',
+			'commun.etats.reconnexion.phrase' => 'Une nouvelle tentative de connexion est en cours.',
+			'commun.etats.echecServeur.titre' => 'Impossible de charger ces informations',
+			'commun.etats.echecServeur.phrase' => 'Le chargement n\'a pas abouti. Réessayez dans un instant.',
+			'commun.etats.introuvable.titre' => 'Cette page est introuvable',
+			'commun.etats.introuvable.phrase' => 'Le lien est peut-être incomplet, ou la page n\'existe plus.',
+			'commun.etats.accesRefuse.titre' => 'Vous n\'avez pas accès à cette page',
+			'commun.etats.accesRefuse.phrase' => 'Ce contenu n\'est pas ouvert à votre compte.',
+			'commun.etats.sessionExpiree.titre' => 'Votre session a expiré',
+			'commun.etats.sessionExpiree.phrase' => 'Reconnectez-vous pour continuer.',
+			'commun.etats.dossierEnAttente.titre' => 'Votre dossier est en attente',
+			'commun.etats.dossierEnAttente.phrase' => 'Une étape reste à franchir avant d\'ouvrir cet espace.',
+			'commun.etats.aucunResultat.titre' => 'Aucun résultat',
+			'commun.etats.aucunResultat.phrase' => 'Rien ne correspond pour le moment.',
+			'commun.etats.permissionRefusee.titre' => 'Autorisation refusée',
+			'commun.etats.permissionRefusee.phrase' => 'Sans cette autorisation, cette fonction ne peut pas s\'ouvrir. Vous pouvez la modifier dans les réglages de votre appareil.',
+			'commun.etats.ressourceExpiree.titre' => 'Ce contenu n\'est plus disponible',
+			'commun.etats.ressourceExpiree.phrase' => 'Il a été retiré, ou son accès a pris fin.',
+			'commun.etats.indisponible.titre' => 'Pas encore disponible',
+			'commun.etats.indisponible.phrase' => 'Cette fonction n\'est pas encore ouverte.',
+			'commun.etats.reessaisEpuises' => 'Toujours sans réponse. Réessayez un peu plus tard.',
+			'commun.etats.actions.reessayer' => 'Réessayer',
+			'commun.etats.actions.retourAccueil' => 'Retour à l\'accueil',
+			'commun.etats.actions.seReconnecter' => 'Se reconnecter',
+			'commun.etats.actions.voirDossier' => 'Voir mon dossier',
+			'commun.etats.actions.reinitialiserFiltres' => 'Réinitialiser les filtres',
+			'commun.etats.actions.revenir' => 'Revenir en arrière',
+			'commun.entete.retour' => 'Retour',
+			'commun.entete.notifications' => 'Notifications',
+			'commun.entete.notificationsUneNonLue' => 'Notifications, une non lue',
+			'commun.entete.notificationsNonLues' => ({required Object nombre}) => 'Notifications, ${nombre} non lues',
+			'commun.selecteurProfils.etiquette' => ({required Object prenom, required Object etat}) => '${prenom}, ${etat}',
+			'commun.selecteurProfils.ajouter' => 'Ajouter',
+			'commun.selecteurProfils.ajouterSemantique' => 'Ajouter un profil élève',
+			'commun.theme.groupe' => 'Apparence',
+			'commun.theme.clair' => 'Thème clair',
+			'commun.theme.sombre' => 'Thème sombre',
 			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
@@ -7372,6 +7891,7 @@ extension on Traductions {
 			'presence.silenceMinutes' => ({required Object minutes}) => 'sans nouvelles depuis ${minutes} min',
 			'presence.attenteInstant' => 'le cours vient de commencer',
 			'presence.attenteMinutes' => ({required Object minutes}) => 'le cours a commencé il y a ${minutes} min',
+			'bienvenue.titre' => 'Bienvenue',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
 			'attente.enVerification' => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.',
@@ -7446,6 +7966,7 @@ extension on Traductions {
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
+			'consentement.titre' => 'Consentements',
 			'kyc.titre' => 'Votre pièce d\'identité',
 			'kyc.intro' => 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.',
 			'kyc.typeQuestion' => 'Quelle pièce déposez-vous ?',
@@ -7483,6 +8004,14 @@ extension on Traductions {
 			'enfant.erreur' => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.',
 			'enfant.aucun' => 'Aucun enfant dans le foyer',
 			'enfant.aucunDetail' => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.',
+			'foyer.titre' => 'Foyer',
+			'foyer.ajouterProfil' => 'Ajouter un profil élève',
+			'ficheEleve.informations' => 'Informations de l\'élève',
+			'ficheEleve.inscription' => 'Parcours et inscription',
+			'ficheEleve.interface' => 'Interface',
+			'ficheEleve.camera' => 'Caméra en cours',
+			'ficheEleve.acces' => 'Accès Rewayah',
+			'ficheEleve.appareils' => 'Appareils',
 			'disponibilites.titre' => 'Quand vos enfants peuvent-ils suivre un cours ?',
 			'disponibilites.titreEnseignant' => 'Quand pouvez-vous donner cours ?',
 			'disponibilites.consigne' => ({required Object prenom}) => 'Touchez les heures possibles pour ${prenom}.',
@@ -7741,6 +8270,8 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Seuil maximal de ${libelle}',
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
@@ -7792,8 +8323,6 @@ extension on Traductions {
 			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
 			'admin.regles.titre' => 'Règles',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.intro' => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.',
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
@@ -8034,6 +8563,10 @@ extension on Traductions {
 			'admin.journal.erreurSuite' => 'Les entrées plus anciennes n\'ont pas pu être lues.',
 			'admin.journal.chargerSuite' => 'Charger les entrées plus anciennes',
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
+			'admin.journal.evenements.observationEntree' => 'Visite d\'observation commencée',
+			'admin.journal.evenements.observationSortie' => 'Visite d\'observation terminée',
+			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Règles d\'observation du groupe modifiées',
+			'admin.observations.titre' => 'Observations',
 			'admin.comptes.titre' => 'Comptes',
 			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
@@ -8238,6 +8771,8 @@ extension on Traductions {
 			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',
 			'nav.tuteur.suivi' => 'Suivi',
+			'nav.tuteur.historique' => 'Historique',
+			'nav.tuteur.compte' => 'Compte',
 			'nav.enseignant.journee' => 'Journée',
 			'nav.enseignant.creneaux' => 'Créneaux',
 			'nav.enseignant.profil' => 'Profil',
@@ -8249,6 +8784,8 @@ extension on Traductions {
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
+			_ => null,
+		} ?? switch (path) {
 			'nav.admin.accueil' => 'Accueil',
 			'nav.admin.operations' => 'Opérations',
 			'nav.admin.personnes' => 'Personnes',
@@ -8306,8 +8843,6 @@ extension on Traductions {
 			'compte.langueRegion' => 'Langue et région',
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
-			_ => null,
-		} ?? switch (path) {
 			'compte.arabe' => 'Arabe',
 			'compte.arabeDetail' => 'Bientôt disponible',
 			'compte.fuseauDetail' => 'Détecté automatiquement',
@@ -8353,6 +8888,11 @@ extension on Traductions {
 			'compte.roleDetail.teacher' => 'Donne les cours et suit ses créneaux',
 			'compte.roleDetail.guardian' => 'Suit le foyer et ses enfants',
 			'compte.roleDetail.student' => 'Suit ses cours et son Coran',
+			'historique.titre' => 'Historique',
+			'historique.detailSeance' => 'Détail de la séance',
+			'historique.segments.seances' => 'Séances',
+			'historique.segments.observations' => 'Observations',
+			'notifications.titre' => 'Notifications',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
 			'eleve.accueil.coranDetail' => 'À lire quand tu veux',
@@ -8502,6 +9042,12 @@ extension on Traductions {
 			'tuteur.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
 			'tuteur.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
 			'tuteur.suivi.finUn' => '1 cours au suivi.',
+			'classe.catalogue' => 'Choisir une classe',
+			'classe.planning' => 'Planning',
+			'classe.travail' => 'Travail à préparer',
+			'classe.ressources' => 'Bibliothèque',
+			'classe.progression' => 'Progression',
+			'classe.observer' => 'Observer la séance',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
@@ -8523,7 +9069,7 @@ extension on Traductions {
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
 			'enseignant.journee.titre' => 'Votre journée',
 			'enseignant.journee.prochainCours' => 'Prochain cours',
-			'enseignant.journee.coursEnCours' => 'Cours en cours',
+			'enseignant.journee.coursEnCours' => 'Séance en direct',
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
 			'enseignant.journee.minuteurImminent' => 'Ça commence',
@@ -8752,6 +9298,8 @@ extension on Traductions {
 			'controleur.planning.colonneUtc' => 'UTC',
 			'controleur.planning.colonneEtat' => 'État',
 			'controleur.planning.colonneEntree' => 'Entrée',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.planning.avec' => ({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}',
 			'controleur.planning.plage' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.planning.plageAutreJour' => ({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}',
@@ -8820,8 +9368,6 @@ extension on Traductions {
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
@@ -8954,7 +9500,7 @@ extension on Traductions {
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
 			'tc.classe.entete.resteMinutes' => ({required Object minutes}) => 'Reste ${minutes} min',
 			'tc.classe.entete.resteHeuresMinutes' => ({required Object heures, required Object minutes}) => 'Reste ${heures} h ${minutes}',
-			'tc.classe.entete.coursEnCours' => 'Cours toujours en cours',
+			'tc.classe.entete.coursEnCours' => 'Séance toujours en direct',
 			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
@@ -9028,7 +9574,7 @@ extension on Traductions {
 			'tc.classe.lien.retabli' => 'Connexion rétablie',
 			'tc.classe.lien.echec' => 'Connexion perdue',
 			'tc.classe.lien.retourDeSuspension' => 'Le cours a été mis en pause par le système. Vérification du lien en cours.',
-			'tc.classe.barre.titre' => 'Cours en cours',
+			'tc.classe.barre.titre' => 'Séance en direct',
 			'tc.classe.barre.revenir' => ({required Object groupe}) => 'Revenir au cours de ${groupe}',
 			'tc.classe.prevol.titre' => 'Avant d\'ouvrir le cours',
 			'tc.classe.prevol.microOk' => 'Micro détecté',

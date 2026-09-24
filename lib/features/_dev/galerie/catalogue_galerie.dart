@@ -60,6 +60,7 @@ import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/timeline_row.dart';
 import '../../disponibilites/grille_semaine.dart';
+import 'entrees_etats_tuteur.dart';
 
 /// Les familles d'etats obligatoires.
 ///
@@ -1871,6 +1872,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  ...entreesEtatsTuteur(),
 ];
 
 /// Les deux segments de l'Historique, pour la galerie.

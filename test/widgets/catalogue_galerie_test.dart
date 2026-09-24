@@ -103,6 +103,12 @@ const List<String> composantsDuCatalogue = <String>[
   'LigneCleValeur',
   'GroupeReglages',
   'ControleSegmente',
+  // Les cinq qui lisent des cles `commun.*` (meme phase).
+  'EtatSysteme',
+  'BlocAsynchrone',
+  'SelecteurProfils',
+  'EntetePage',
+  'BasculeTheme',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

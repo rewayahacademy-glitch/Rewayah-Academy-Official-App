@@ -7,7 +7,82 @@
     "annuler": "Annuler",
     "fermer": "Fermer",
     "reessayer": "Réessayer",
-    "chargement": "Chargement"
+    "chargement": "Chargement",
+    "etats": {
+      "chargementProlonge": {
+        "titre": "La connexion prend plus de temps que prévu",
+        "phrase": "Vous pouvez patienter encore un peu ou réessayer."
+      },
+      "horsLigne": {
+        "titre": "Vous êtes hors ligne",
+        "phrase": "Vérifiez votre connexion. Ce qui est déjà affiché reste consultable."
+      },
+      "reconnexion": {
+        "titre": "Reconnexion en cours",
+        "phrase": "Une nouvelle tentative de connexion est en cours."
+      },
+      "echecServeur": {
+        "titre": "Impossible de charger ces informations",
+        "phrase": "Le chargement n'a pas abouti. Réessayez dans un instant."
+      },
+      "introuvable": {
+        "titre": "Cette page est introuvable",
+        "phrase": "Le lien est peut-être incomplet, ou la page n'existe plus."
+      },
+      "accesRefuse": {
+        "titre": "Vous n'avez pas accès à cette page",
+        "phrase": "Ce contenu n'est pas ouvert à votre compte."
+      },
+      "sessionExpiree": {
+        "titre": "Votre session a expiré",
+        "phrase": "Reconnectez-vous pour continuer."
+      },
+      "dossierEnAttente": {
+        "titre": "Votre dossier est en attente",
+        "phrase": "Une étape reste à franchir avant d'ouvrir cet espace."
+      },
+      "aucunResultat": {
+        "titre": "Aucun résultat",
+        "phrase": "Rien ne correspond pour le moment."
+      },
+      "permissionRefusee": {
+        "titre": "Autorisation refusée",
+        "phrase": "Sans cette autorisation, cette fonction ne peut pas s'ouvrir. Vous pouvez la modifier dans les réglages de votre appareil."
+      },
+      "ressourceExpiree": {
+        "titre": "Ce contenu n'est plus disponible",
+        "phrase": "Il a été retiré, ou son accès a pris fin."
+      },
+      "indisponible": {
+        "titre": "Pas encore disponible",
+        "phrase": "Cette fonction n'est pas encore ouverte."
+      },
+      "reessaisEpuises": "Toujours sans réponse. Réessayez un peu plus tard.",
+      "actions": {
+        "reessayer": "Réessayer",
+        "retourAccueil": "Retour à l'accueil",
+        "seReconnecter": "Se reconnecter",
+        "voirDossier": "Voir mon dossier",
+        "reinitialiserFiltres": "Réinitialiser les filtres",
+        "revenir": "Revenir en arrière"
+      }
+    },
+    "entete": {
+      "retour": "Retour",
+      "notifications": "Notifications",
+      "notificationsUneNonLue": "Notifications, une non lue",
+      "notificationsNonLues": "Notifications, {nombre} non lues"
+    },
+    "selecteurProfils": {
+      "etiquette": "{prenom}, {etat}",
+      "ajouter": "Ajouter",
+      "ajouterSemantique": "Ajouter un profil élève"
+    },
+    "theme": {
+      "groupe": "Apparence",
+      "clair": "Thème clair",
+      "sombre": "Thème sombre"
+    }
   },
   "reseau": {
     "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
@@ -103,6 +178,9 @@
     "attenteInstant": "le cours vient de commencer",
     "attenteMinutes": "le cours a commencé il y a {minutes} min"
   },
+  "bienvenue": {
+    "titre": "Bienvenue"
+  },
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
     "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
@@ -189,6 +267,9 @@
     "titre": "À savoir avant de commencer",
     "compris": "J'ai compris"
   },
+  "consentement": {
+    "titre": "Consentements"
+  },
   "kyc": {
     "titre": "Votre pièce d'identité",
     "intro": "Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.",
@@ -231,6 +312,18 @@
     "erreur": "L'ajout n'a pas abouti. Réessayez dans un instant.",
     "aucun": "Aucun enfant dans le foyer",
     "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
+  },
+  "foyer": {
+    "titre": "Foyer",
+    "ajouterProfil": "Ajouter un profil élève"
+  },
+  "ficheEleve": {
+    "informations": "Informations de l'élève",
+    "inscription": "Parcours et inscription",
+    "interface": "Interface",
+    "camera": "Caméra en cours",
+    "acces": "Accès Rewayah",
+    "appareils": "Appareils"
   },
   "disponibilites": {
     "titre": "Quand vos enfants peuvent-ils suivre un cours ?",
@@ -820,7 +913,15 @@
       "erreur": "Le journal n'a pas pu être lu. Réessayez dans un instant.",
       "erreurSuite": "Les entrées plus anciennes n'ont pas pu être lues.",
       "chargerSuite": "Charger les entrées plus anciennes",
-      "fin": "Vous êtes remonté jusqu'à la première entrée du journal."
+      "fin": "Vous êtes remonté jusqu'à la première entrée du journal.",
+      "evenements": {
+        "observationEntree": "Visite d'observation commencée",
+        "observationSortie": "Visite d'observation terminée",
+        "observationPolitiqueGroupeModifiee": "Règles d'observation du groupe modifiées"
+      }
+    },
+    "observations": {
+      "titre": "Observations"
     },
     "comptes": {
       "titre": "Comptes",
@@ -1058,7 +1159,9 @@
       "foyer": "Foyer",
       "disponibilites": "Disponibilités",
       "reglages": "Réglages",
-      "suivi": "Suivi"
+      "suivi": "Suivi",
+      "historique": "Historique",
+      "compte": "Compte"
     },
     "enseignant": {
       "journee": "Journée",
@@ -1185,6 +1288,17 @@
       "guardian": "Suit le foyer et ses enfants",
       "student": "Suit ses cours et son Coran"
     }
+  },
+  "historique": {
+    "titre": "Historique",
+    "detailSeance": "Détail de la séance",
+    "segments": {
+      "seances": "Séances",
+      "observations": "Observations"
+    }
+  },
+  "notifications": {
+    "titre": "Notifications"
   },
   "eleve": {
     "accueil": {
@@ -1351,6 +1465,14 @@
       "finUn": "1 cours au suivi."
     }
   },
+  "classe": {
+    "catalogue": "Choisir une classe",
+    "planning": "Planning",
+    "travail": "Travail à préparer",
+    "ressources": "Bibliothèque",
+    "progression": "Progression",
+    "observer": "Observer la séance"
+  },
   "enseignant": {
     "bienvenue": {
       "titre": "Premiers pas",
@@ -1376,7 +1498,7 @@
       "preflight": "Vérifier avant le cours",
       "titre": "Votre journée",
       "prochainCours": "Prochain cours",
-      "coursEnCours": "Cours en cours",
+      "coursEnCours": "Séance en direct",
       "minuteurHeures": "Dans {heures} h {minutes}",
       "minuteurMinutes": "Dans {minutes} min",
       "minuteurImminent": "Ça commence",
@@ -1920,7 +2042,7 @@
         },
         "resteMinutes": "Reste {minutes} min",
         "resteHeuresMinutes": "Reste {heures} h {minutes}",
-        "coursEnCours": "Cours toujours en cours",
+        "coursEnCours": "Séance toujours en direct",
         "photoManquante": "Photo enseignant manquante"
       },
       "roster": {
@@ -2020,7 +2142,7 @@
         "retourDeSuspension": "Le cours a été mis en pause par le système. Vérification du lien en cours."
       },
       "barre": {
-        "titre": "Cours en cours",
+        "titre": "Séance en direct",
         "revenir": "Revenir au cours de {groupe}"
       },
       "prevol": {
