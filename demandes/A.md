@@ -18,3 +18,12 @@
 - **Constat** : l'adaptateur reel est livre (`ui/tuteur-v1-a` @ 9a5c3a6, `lib/core/capacites/consentements_supabase.dart`, `ConsentementsSupabase` + `consentementsLotAProvider`) ; aucun bouton hors routeur ne mene a `/tuteur/compte/consentements` (seul le routeur la connait).
 - **Besoin** : (1) `portConsentementsProvider` rend `ref.watch(consentementsLotAProvider)` ; (2) le Compte tuteur (lot E) pose `InviteConsentementObservation()` (`lib/features/consentements/consentement_observation_page.dart`, s'affiche seulement si la version `2026-09-obs` n'est pas signee) et/ou une ligne « Consentements » vers `Routes.tuteurCompteConsentements`.
 - **Contournement en place** : les ecrans du lot A lisent `consentementsLotAProvider` directement ; tant que (2) n'est pas fait, la page n'est atteignable que par URL (critere « fait » non rempli pour elle).
+
+## A-4 (25/09, LA-2) : test clavier de l'inscription a adapter
+
+- **Fichier** : `test/accessibilite/clavier_test.dart:43-51` (COORD, tests transverses).
+- **Constat** : l'inscription est passee en etapes routees (`ui/tuteur-v1-a` @ df8c97c) ; `/inscription` montre l'etape d'usage (deux cartes, plus de carte roleTuteur). Le test tape `t.inscription.roleTuteur` puis attend la page identite : il echoue.
+- **Besoin** : monter `IdentiteEtape` (`lib/features/inscription/etapes/identite_etape.dart`) avec un brouillon dont l'usage est choisi (`brouillonInscriptionProvider`) sous `hoteRoutant`, ou taper `Key('inscription-usage-moi')` puis Continuer ; les champs portent `Key('inscription-prenom')` et `Key('inscription-nom')`.
+- **Contournement** : aucun cote lot A (fichier COORD) ; le test reste rouge sur la branche du lot A.
+
+Signature : Poste B, executant LA-2.
