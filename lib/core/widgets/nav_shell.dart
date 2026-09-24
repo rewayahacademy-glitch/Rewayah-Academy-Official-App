@@ -12,6 +12,7 @@ import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -477,8 +478,9 @@ class _OngletBarre extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: encre.applyTo(
-                    base.copyWith(
-                      fontWeight: actif ? FontWeight.w600 : FontWeight.w500,
+                    AppTypography.graisse(
+                      base,
+                      actif ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
                 ),
@@ -747,8 +749,9 @@ class _EnteteColonne extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: palette.inkStrong.applyTo(
-                  (textes.titleLarge ?? const TextStyle()).copyWith(
-                    fontWeight: FontWeight.w700,
+                  AppTypography.graisse(
+                    textes.titleLarge ?? const TextStyle(),
+                    FontWeight.w700,
                   ),
                 ),
               ),
@@ -834,10 +837,10 @@ class _ItemColonne extends StatelessWidget {
                     Expanded(
                       child: Text(
                         destination.libelle,
-                        style: (textes.bodyLarge ?? const TextStyle()).copyWith(
-                          color: couleurLibelle,
-                          fontWeight: actif ? FontWeight.w600 : FontWeight.w500,
-                        ),
+                        style: AppTypography.graisse(
+                          textes.bodyLarge ?? const TextStyle(),
+                          actif ? FontWeight.w600 : FontWeight.w500,
+                        ).copyWith(color: couleurLibelle),
                       ),
                     ),
                   ],

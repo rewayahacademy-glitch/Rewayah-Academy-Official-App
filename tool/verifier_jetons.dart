@@ -78,6 +78,13 @@ const List<String> _fichiersOmbre = <String>[
 final RegExp _couleurLitterale = RegExp(r'Color\(0x|Colors\.[a-zA-Z]');
 final RegExp _ombreLitterale = RegExp(r'\bBoxShadow\s*\(');
 final RegExp _crenageLitteral = RegExp(r'\bletterSpacing\s*:');
+
+/// `fontWeight:` en argument nomme. Les polices du produit sont variables :
+/// une graisse posee sans l'axe `wght` ne change pas le dessin, Flutter
+/// synthetise au mieux un faux gras (revue phase 0 du chantier Tuteur V1,
+/// mesure a 40 px). Hors d'`app_typography.dart`, une graisse passe par
+/// `AppTypography.graisse`, qui pose les deux.
+final RegExp _graisseLitterale = RegExp(r'\bfontWeight\s*:');
 final RegExp _dureeAnimation = RegExp(r'\bDuration\s*\(\s*milliseconds\s*:');
 final RegExp _courbeNommee = RegExp(r'\bCurves\.[a-zA-Z]');
 final RegExp _rayonLitteral = RegExp(
@@ -350,6 +357,12 @@ void main() {
       if (_crenageLitteral.hasMatch(code) &&
           !chemin.endsWith(_fichierTypographie)) {
         violations.add(Violation(chemin, numero, 'crenage-litteral', ligne));
+      }
+      if (_graisseLitterale.hasMatch(code) &&
+          !chemin.endsWith(_fichierTypographie)) {
+        violations.add(
+          Violation(chemin, numero, 'graisse-hors-typographie', ligne),
+        );
       }
       if (_dureeAnimation.hasMatch(code) &&
           !chemin.endsWith(_fichierMouvement)) {

@@ -21,9 +21,9 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 /// phase 0b).
 
 Future<void> _chargerPolicesDuDepot() async {
-  final List<Object?> familles =
-      jsonDecode(await rootBundle.loadString('FontManifest.json'))
-          as List<Object?>;
+  final List<Object?> familles = jsonDecode(
+    await rootBundle.loadString('FontManifest.json'),
+  ) as List<Object?>;
   for (final Object? entree in familles) {
     final Map<String, Object?> famille = entree! as Map<String, Object?>;
     final FontLoader chargeur = FontLoader(famille['family']! as String);
@@ -106,6 +106,23 @@ void main() {
         _largeur(maigre, 'Réglages'),
         lessThan(_largeur(gras, 'Réglages')),
         reason: s.fontFamily,
+      );
+    }
+  });
+
+  test('AppTypography.graisse change reellement le rendu', () {
+    // Revue phase 0 (jetons D1) : `copyWith(fontWeight:)` seul rendait la
+    // meme largeur que le style d'origine. La graisse passe par l'axe.
+    for (final (TextStyle base, FontWeight poids) cas
+        in <(TextStyle, FontWeight)>[
+          (AppTypography.standard.labelMedium!, FontWeight.w600),
+          (AppTypography.standard.bodyLarge!, FontWeight.w600),
+          (AppTypography.standard.titleLarge!, FontWeight.w700),
+        ]) {
+      expect(
+        _largeur(AppTypography.graisse(cas.$1, cas.$2), 'Réglages Rewayah'),
+        greaterThan(_largeur(cas.$1, 'Réglages Rewayah')),
+        reason: '${cas.$1.fontFamily} ${cas.$2}',
       );
     }
   });

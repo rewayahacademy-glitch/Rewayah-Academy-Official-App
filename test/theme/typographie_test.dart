@@ -106,7 +106,10 @@ void main() {
           expect(_axe(s, 'opsz'), isNull, reason: '$role : Jakarta sans opsz');
           expect(
             _axe(s, 'wght'),
-            inInclusiveRange(AppFontAxis.wghtCorpsMin, AppFontAxis.wghtCorpsMax),
+            inInclusiveRange(
+              AppFontAxis.wghtCorpsMin,
+              AppFontAxis.wghtCorpsMax,
+            ),
           );
         }
       });
@@ -159,6 +162,42 @@ void main() {
       );
       expect(AppTypography.document().fontFamily, AppFontFamily.arabeDocument);
       expect(AppTypography.document().height, 2);
+    });
+  });
+
+  group('graisse : fontWeight ET axe wght, jamais l un sans l autre', () {
+    test('un style Jakarta change de graisse par son axe', () {
+      final TextStyle base = AppTypography.standard.labelMedium!;
+      final TextStyle actif = AppTypography.graisse(base, FontWeight.w600);
+      expect(actif.fontWeight, FontWeight.w600);
+      expect(_axe(actif, 'wght'), 600);
+      expect(actif.fontFamily, base.fontFamily);
+      expect(actif.fontSize, base.fontSize);
+      expect(
+        actif.fontVariations!.where((FontVariation v) => v.axis == 'wght'),
+        hasLength(1),
+      );
+    });
+
+    test('un style DM Sans garde son opsz, sa graisse suit l axe', () {
+      final TextStyle base = AppTypography.standard.titleLarge!;
+      final TextStyle gras = AppTypography.graisse(base, FontWeight.w700);
+      expect(gras.fontWeight, FontWeight.w700);
+      expect(_axe(gras, 'wght'), 700);
+      expect(_axe(gras, 'opsz'), _axe(base, 'opsz'));
+    });
+
+    test('la valeur est bornee a l axe de la famille', () {
+      expect(
+        _axe(
+          AppTypography.graisse(
+            AppTypography.standard.bodyLarge!,
+            FontWeight.w900,
+          ),
+          'wght',
+        ),
+        AppFontAxis.wghtCorpsMax,
+      );
     });
   });
 
@@ -232,8 +271,7 @@ void main() {
     });
 
     test('les deux familles couvrent accents et ponctuation du francais', () {
-      const String francais =
-          'àâäçéèêëîïôöùûüÿœæÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒÆ«»’ ';
+      const String francais = 'àâäçéèêëîïôöùûüÿœæÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒÆ«»’ ';
       for (final String fichier in <String>[_fichierTitre, _fichierCorps]) {
         final Set<int> couverture = LecteurPolice(fichier).couverture;
         final String manquants = String.fromCharCodes(

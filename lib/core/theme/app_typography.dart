@@ -182,6 +182,33 @@ abstract final class AppTypography {
     );
   }
 
+  /// Le meme style a une autre graisse : `fontWeight` **et** l'axe `wght`.
+  ///
+  /// **Le seul moyen de changer une graisse hors de ce fichier.** Un
+  /// `copyWith(fontWeight: ...)` laisse l'axe `wght` du style d'origine :
+  /// Flutter rend alors la graisse d'origine (400, 500, 600), et synthetise
+  /// au besoin un faux gras par-dessus (revue phase 0, mesure a 40 px avec les
+  /// vraies polices). Les autres axes (`opsz` de DM Sans) sont conserves, la
+  /// valeur est bornee a l'axe de la famille. `tool/verifier_jetons.dart`
+  /// refuse tout `fontWeight:` pose ailleurs.
+  static TextStyle graisse(TextStyle base, FontWeight poids) {
+    final bool titre = base.fontFamily == AppFontFamily.titre;
+    final FontVariation wght = FontVariation(
+      'wght',
+      poids.value.toDouble().clamp(
+        titre ? AppFontAxis.wghtTitreMin : AppFontAxis.wghtCorpsMin,
+        titre ? AppFontAxis.wghtTitreMax : AppFontAxis.wghtCorpsMax,
+      ),
+    );
+    return base.copyWith(
+      fontWeight: poids,
+      fontVariations: <FontVariation>[
+        wght,
+        ...?base.fontVariations?.where((FontVariation v) => v.axis != 'wght'),
+      ],
+    );
+  }
+
   /// Le style des chiffres : horaires, codes d'appairage, PIN, chronometre,
   /// compte a rebours, initiales d'avatar.
   ///
