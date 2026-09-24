@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -85,14 +87,33 @@ String legendeMembre({
   required ClasseMembre classe,
   required DateTime maintenant,
 }) {
-  final String? texteClasse = switch (classe) {
-    _Classes(:final List<String> libelles) => libelles.join(', '),
-    _SansClasse() => t.foyer.membre.sansClasse,
-    _Inconnue() || _Indisponible() => null,
-  };
+  final String? classeLue = texteClasse(classe);
   final String acces = statutAcces(profil, maintenant);
-  return texteClasse == null ? acces : '$texteClasse · $acces';
+  return classeLue == null ? acces : '$classeLue · $acces';
 }
+
+/// Ce que la lecture du port des classes dit d'un membre.
+ClasseMembre classeMembreLue(AsyncValue<List<ClasseFoyer>> lecture) {
+  if (lecture.hasValue && !lecture.hasError) {
+    return ClasseMembre.depuis(lecture.requireValue);
+  }
+  if (lecture.error is CapaciteIndisponible) {
+    return ClasseMembre.indisponible;
+  }
+  return ClasseMembre.inconnue;
+}
+
+/// Vrai quand le port des classes n'a pas de service (contrat K5).
+bool classeIndisponible(ClasseMembre classe) => classe is _Indisponible;
+
+/// Ce que l'ecran dit de la classe d'un membre, ou `null` quand il n'en sait
+/// rien (lecture en cours, en echec ou sans service) : jamais « pas de
+/// classe » faute de savoir. Partage par le Foyer et la fiche eleve.
+String? texteClasse(ClasseMembre classe) => switch (classe) {
+  _Classes(:final List<String> libelles) => libelles.join(', '),
+  _SansClasse() => t.foyer.membre.sansClasse,
+  _Inconnue() || _Indisponible() => null,
+};
 
 /// La ligne d'un membre du foyer dans le groupe des profils eleves.
 ///

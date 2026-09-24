@@ -33,6 +33,19 @@ class PhotoEnfant {
     }
     return nomFichier.substring(point + 1).toLowerCase();
   }
+
+  /// Le type de contenu annonce au stockage, deduit de l'extension.
+  ///
+  /// Sans lui, le seau range la photo en `application/octet-stream` et un
+  /// navigateur la telecharge au lieu de l'afficher. Une extension inconnue
+  /// garde ce type generique plutot que d'en inventer un.
+  String get typeMime => switch (extension) {
+    'jpg' || 'jpeg' => 'image/jpeg',
+    'png' => 'image/png',
+    'webp' => 'image/webp',
+    'heic' => 'image/heic',
+    _ => 'application/octet-stream',
+  };
 }
 
 /// D'ou vient la photo d'un enfant.
@@ -139,7 +152,11 @@ class ServiceAvatarSupabase implements ServiceAvatar {
 
     await _client.storage
         .from(ServiceAvatarSupabase.seauAvatars)
-        .uploadBinary(cle, photo.octets);
+        .uploadBinary(
+          cle,
+          photo.octets,
+          fileOptions: FileOptions(contentType: photo.typeMime),
+        );
 
     return cle;
   }

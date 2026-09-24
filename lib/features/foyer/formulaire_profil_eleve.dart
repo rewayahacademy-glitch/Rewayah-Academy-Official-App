@@ -344,7 +344,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           sousTitre: t.foyer.ajout.pourQui.sousTitre,
         ),
         Ecart.vXxl,
-        _CarteChoix(
+        CarteChoixFoyer(
           key: FormulaireProfilEleve.choixEnfantKey,
           icone: AppIcons.profil,
           titre: t.foyer.ajout.pourQui.enfantTitre,
@@ -356,7 +356,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           onPress: () => setState(() => _pourQui = PourQui.enfantOuMineur),
         ),
         Ecart.vMd,
-        _CarteChoix(
+        CarteChoixFoyer(
           key: FormulaireProfilEleve.choixProcheKey,
           icone: AppIcons.foyer,
           titre: t.foyer.ajout.pourQui.procheTitre,
@@ -366,7 +366,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           onPress: () => setState(() => _pourQui = PourQui.procheAdulte),
         ),
         Ecart.vMd,
-        _CarteChoix(
+        CarteChoixFoyer(
           key: FormulaireProfilEleve.choixMoiKey,
           icone: AppIcons.avatarSansPhoto,
           titre: t.foyer.ajout.pourQui.moiTitre,
@@ -631,9 +631,11 @@ class _Precision extends StatelessWidget {
 /// « Indisponible » en texte et ne se presse pas.
 ///
 /// Locale au lot B tant que `ChoiceCardGroup` (composant partage) ne porte ni
-/// description ni option desactivee (demande B-3 au coordinateur).
-class _CarteChoix extends StatelessWidget {
-  const _CarteChoix({
+/// description ni option desactivee (demande B-3 au coordinateur). Servie
+/// aussi par la page Interface de la fiche eleve (options a radio).
+class CarteChoixFoyer extends StatelessWidget {
+  /// Cree une carte.
+  const CarteChoixFoyer({
     required this.icone,
     required this.titre,
     required this.description,
@@ -643,11 +645,22 @@ class _CarteChoix extends StatelessWidget {
     super.key,
   });
 
+  /// L'icone de la pastille.
   final AppIcon icone;
+
+  /// Le titre de l'option.
   final String titre;
+
+  /// Une phrase qui dit ce que l'option change.
   final String description;
+
+  /// Vrai quand l'option est celle retenue.
   final bool retenue;
+
+  /// Faux pour une option visible mais indisponible.
   final bool disponible;
+
+  /// Le geste de choix.
   final VoidCallback onPress;
 
   @override
