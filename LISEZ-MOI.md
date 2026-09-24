@@ -20,6 +20,7 @@ Branche `projet/ressources` du dépôt `https://github.com/rewayahacademy-glitch
 | Registre du code produit mais jamais livré | ici : `registre/00_REGISTRE.md` | avant de recoder quoi que ce soit : chercher s'il existe déjà |
 | Index des vagues, de leurs branches et dossiers de pilotage | ici : `VAGUES.md` | |
 | Dossier de pilotage de la vague Tuteur V1 (mandats, décisions, manifeste, cartographie, recette) | branche `pilotage/tuteur-v1` | worktree dédié |
+| Spécifications verticales de TOUS les rôles, rédigées par ChatGPT (guides UX/UI et copywriting, tuteur, classe et visio, admin, enseignant, élèves, contrôle, finance, bibliothèque, Coran, landing, publication) | ici : `specs/<N°>_<nom>/`, publiées par le coordinateur APRÈS contrôle ; le prompt et le dossier qui les produisent sont dans `chatgpt/` | une spec n'entre en construction qu'une fois sa ligne `S-NN` du tableau cochée « fait » par le coordinateur ; ses mentions PROPOSITION et CONFLIT attendent la décision du directeur |
 
 Cloner : `git clone <dépôt> <dossier>` puis, pour chaque branche de ressources, `git -C <dossier> worktree add <chemin> <branche>`. Jamais de `git push` vers une branche que ta session ne possède pas (tableau de suivi et `COORDINATION.md` de la vague).
 
