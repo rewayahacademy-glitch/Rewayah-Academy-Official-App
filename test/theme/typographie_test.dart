@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/theme/app_typography.dart';
 
 import 'support/lecteur_police.dart';
@@ -163,6 +165,20 @@ void main() {
       expect(AppTypography.document().fontFamily, AppFontFamily.arabeDocument);
       expect(AppTypography.document().height, 2);
     });
+  });
+
+  test('les onglets (TabBar) sont en Plus Jakarta Sans, pas en DM Sans', () {
+    // Revue phase 0 (jetons D5) : Material 3 pose `titleSmall` par defaut.
+    for (final InterfaceMode mode in InterfaceMode.values) {
+      for (final Brightness luminosite in Brightness.values) {
+        final TabBarThemeData onglets = AppTheme.pour(
+          mode,
+          luminosite,
+        ).tabBarTheme;
+        expect(onglets.labelStyle?.fontFamily, AppFontFamily.corps);
+        expect(onglets.unselectedLabelStyle?.fontFamily, AppFontFamily.corps);
+      }
+    }
   });
 
   group('graisse : fontWeight ET axe wght, jamais l un sans l autre', () {

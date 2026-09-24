@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_elevation.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
@@ -18,6 +19,7 @@ import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_radius.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/theme/app_typography.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -26,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/child_card.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/local_feedback.dart';
+import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -35,6 +38,7 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../support/harnais.dart';
+import '../theme/support/contraste.dart';
 
 /// L'hote des composants, avec un reseau fige.
 Widget hoteComposant(
@@ -962,6 +966,50 @@ void main() {
       );
       expect(d.border, isNotNull);
       expect(d.boxShadow, AppElevation.niveau3(palette.ombre));
+    });
+  });
+
+  group('Revue phase 0 : jetons de la marque et des pastilles', () {
+    testWidgets('le mot-marque est un titre DM Sans (jetons D6)', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(hoteComposant(const MarquePage()));
+      final Text marque = tester.widget<Text>(find.text(t.commun.marque));
+      expect(marque.style!.fontFamily, AppFontFamily.titre);
+    });
+
+    testWidgets('StatusPill pose le point de statut, a 3:1 sur son fond doux', (
+      WidgetTester tester,
+    ) async {
+      // Jetons D8 : l'aplat `surfaceSuccess` clair mesurait 1,28:1 sur
+      // `washSuccess` ; les points de statut sont valides a 3:1.
+      for (final (TonEtat ton, AppIndicatorColor point)
+          in <(TonEtat, AppIndicatorColor)>[
+            (TonEtat.succes, palette.pointsStatut.succes),
+            (TonEtat.avertissement, palette.pointsStatut.attention),
+            (TonEtat.alerte, palette.pointsStatut.alerte),
+            (TonEtat.neutre, palette.pointsStatut.neutre),
+          ]) {
+        await tester.pumpWidget(
+          hoteComposant(StatusPill(libelle: 'En direct', ton: ton)),
+        );
+        // Le dernier `DecoratedBox` : le premier est la pilule elle-meme.
+        final DecoratedBox disque = tester
+            .widgetList<DecoratedBox>(
+              find.descendant(
+                of: find.byType(StatusPill),
+                matching: find.byType(DecoratedBox),
+              ),
+            )
+            .last;
+        final Color couleur = (disque.decoration as BoxDecoration).color!;
+        expect(couleur, point.debugValue, reason: '$ton');
+        expect(
+          contraste(couleur, palette.paireDe(ton).background),
+          greaterThanOrEqualTo(seuilComposant),
+          reason: '$ton',
+        );
+      }
     });
   });
 }

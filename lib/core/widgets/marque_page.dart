@@ -19,13 +19,16 @@ class MarquePage extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
+    // Le mot-marque est un titre : DM Sans (`headlineLarge`, 36/44, 700),
+    // comme le mot-symbole de la colonne laterale. `display*` porte les
+    // valeurs chiffrees en Jakarta tabulaire (revue phase 0, jetons D6).
     return Semantics(
       header: true,
       child: Text(
         t.commun.marque,
         textAlign: TextAlign.center,
         style: palette.inkAccent.applyTo(
-          textes.displaySmall ?? const TextStyle(),
+          textes.headlineLarge ?? const TextStyle(),
         ),
       ),
     );

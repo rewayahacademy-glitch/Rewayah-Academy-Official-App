@@ -135,6 +135,13 @@ abstract final class AppTheme {
         shape: formeCarte,
         margin: EdgeInsets.zero,
       ),
+      // Un onglet est un libelle de navigation : Plus Jakarta Sans
+      // (`labelLarge`), pas le `titleSmall` DM Sans que Material 3 pose par
+      // defaut (decisions du coordinateur 3.4, revue phase 0, jetons D5).
+      tabBarTheme: TabBarThemeData(
+        labelStyle: texte.labelLarge,
+        unselectedLabelStyle: texte.labelLarge,
+      ),
       dialogTheme: DialogThemeData(
         backgroundColor: palette.surfaceOverlay.background,
         barrierColor: palette.voile,

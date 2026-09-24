@@ -74,7 +74,7 @@ class StatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair fond = _fond(palette);
-    final Color pastille = _pastille(palette);
+    final BoxDecoration pastille = _pastille(palette);
 
     return Semantics(
       label: libelle,
@@ -90,12 +90,7 @@ class StatusPill extends StatelessWidget {
           children: <Widget>[
             SizedBox.square(
               dimension: diametrePastille,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: pastille,
-                ),
-              ),
+              child: DecoratedBox(decoration: pastille),
             ),
             Ecart.hSm,
             Flexible(
@@ -115,16 +110,21 @@ class StatusPill extends StatelessWidget {
   /// La paire douce de la famille. Voir [PaireDeTonEtat.paireDe].
   AppColorPair _fond(AppPalette palette) => palette.paireDe(ton);
 
-  /// L'aplat sature de la pastille.
+  /// Le disque de la pastille.
   ///
-  /// Le neutre prend `borderStrong`, la seule encre neutre qui passe le seuil
-  /// de 3:1 des elements porteurs de sens : une pastille grise decorative
-  /// serait invisible sur la surface enfoncee.
-  Color _pastille(AppPalette palette) => switch (ton) {
-    TonEtat.neutre => palette.borderStrong.asBorderSide().color,
-    TonEtat.accent => palette.surfacePrimary.background,
-    TonEtat.succes => palette.surfaceSuccess.background,
-    TonEtat.avertissement => palette.surfaceWarning.background,
-    TonEtat.alerte => palette.surfaceAlert.background,
+  /// Succes, attention, alerte et neutre prennent les **points de statut**
+  /// (`palette.pointsStatut`), valides a 3:1 contre leur fond doux et les
+  /// surfaces par `test/theme` : l'aplat `surfaceSuccess` clair (`#70EE9C`)
+  /// ne mesurait que 1,28:1 sur `washSuccess` (revue phase 0, jetons D8).
+  /// L'accent, sans point dedie, garde `surfacePrimary`.
+  BoxDecoration _pastille(AppPalette palette) => switch (ton) {
+    TonEtat.neutre => palette.pointsStatut.neutre.pastille(),
+    TonEtat.accent => BoxDecoration(
+      shape: BoxShape.circle,
+      color: palette.surfacePrimary.background,
+    ),
+    TonEtat.succes => palette.pointsStatut.succes.pastille(),
+    TonEtat.avertissement => palette.pointsStatut.attention.pastille(),
+    TonEtat.alerte => palette.pointsStatut.alerte.pastille(),
   };
 }
