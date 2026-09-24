@@ -1,40 +1,82 @@
-# Reprise du chantier frontend Tuteur V1 (à lire en premier après un /clear ou une nouvelle session)
+# PASSAGE DE RELAIS : coordinateur du chantier frontend Tuteur V1 (poste A)
 
-Mis à jour : 24/09/2026.
+Écrit le 24/09/2026 à 22 h 20 par la session coordinatrice sortante (Claude Code, poste A, ~24 h d'activité). À lire EN ENTIER par la session qui reprend la coordination, avant toute action.
 
-## Où en est le chantier
-- Lot 0 inventaire : TERMINÉ. Manifeste visuel `01_visuel/00_MANIFESTE.md` ; cartographie `02_code/00_MAPPING_ROUTES.md`, `00_CONTRATS_PARTAGES.md`, `00_OWNERSHIP.md`, `00_DEPENDANCES_BACKEND.md`, `00_CONTRADICTIONS.md` (+ rapports détaillés `02_code/C01..C11`).
-- Décisions du coordinateur et RÉPONSES DU DIRECTEUR : `03_DECISIONS_COORDINATEUR.md` (le §1 bis prime).
-- Phase 0 (fondations) : workflow `tuteur-v1-phase0-fondations`, run `wf_ab30aa4b-e67`, lancé le 24/09. Rapports dans `04_phase0/` (0a_base, 0b_jetons, 0d_contrats, 0c1_composants, 0c2_coquille_routeur, revue_*, 0e_corrections, 0f_verification). Vérifier ce qui existe avant de relancer quoi que ce soit.
-- Git : worktree d'intégration `D:\RA_TUTEUR\integration`, branche locale `ui/tuteur-v1` (base `3cf3544`, branche C0). Worktree de contrats `D:\RA_TUTEUR\p0d`, branche `ui/tuteur-v1-p0d` (fusionnée par l'étape 0c1). AUCUN push, aucune PR, aucun merge main.
+## 0. Prompt de reprise (à coller dans la nouvelle session, sur le poste A)
 
-## Contrôle à faire à la reprise
-1. `git -C D:\RA_TUTEUR\integration log --oneline 3cf3544..HEAD` et `git status` : quelles étapes de phase 0 ont committé.
-2. Lire les rapports présents dans `04_phase0/`.
-3. Vérifier que `salle.bandeauPermanent` vaut « Cours enregistré, visite de contrôle possible. » dans `assets/i18n/fr.i18n.json` du worktree d'intégration (la reprise de `33503fe` l'avait changé à tort ; directeur : l'audio est réellement enregistré sur R2). Idem `contrat.pointEnregistrement`, `enseignant.profil.contratAccuse` = valeurs de `3cf3544`.
-4. Frontière : `git diff --stat 3cf3544...HEAD -- supabase .github vercel.json web/vercel.json .firebaserc` vide.
-5. Si la phase 0 est incomplète : terminer les étapes manquantes (le script est `C:\Users\dell\.claude\projects\C--Users-dell-AppData-Local-Programs-WindowsTerminal\fdb7e1de-cc9a-4b71-bb67-78d8572a5917\workflows\scripts\tuteur-v1-phase0-fondations-wf_ab30aa4b-e67.js`).
+```text
+ultracode Tu reprends la coordination du chantier frontend Tuteur V1 de Rewayah Academy sur le POSTE A. Lis en entier D:\RA _APP\pilotage-tuteur-v1\00_REPRISE.md (passage de relais), puis D:\RA _APP\pilotage-tuteur-v1\03_DECISIONS_COORDINATEUR.md (§1 bis à 1 quater = décisions du directeur), COORDINATION.md, ETAT_A.md, 05_LOTS_PHASE1.md, et le point d'entrée des agents D:\RA_TUTEUR\ressources-git\LISEZ-MOI.md. Ouvre le tableau de suivi https://claude.ai/artifact/XMVyZJiLTcmMKTnhsbp3sU (outil ArtifactData) et inscris ta session. Fais les contrôles du §3 de 00_REPRISE.md, puis poursuis les étapes du §5 dans l'ordre. Réponds en français, brièvement, au directeur (non développeur).
+```
 
-## Étapes suivantes prévues
-- Phase 1 : six lots en worktrees `D:\RA_TUTEUR\lot-<a|b|c|cobs|d|e>` (branches `ui/tuteur-v1-<lot>` issues de `ui/tuteur-v1`), découpés en sous-parcours (A Admission 4 paquets, B Foyer 2, C Cours 3, C-obs Observation 3, D Appareils 3, E Compte/Historique 3), chacun suivi d'une revue indépendante (fidélité high-fi + honnêteté/sécurité) et d'une correction. Deux workflows en parallèle (cap 2 agents chacun, machine 4 cœurs / 7,9 Go).
-- Phase 2 : intégration des branches de lot dans `ui/tuteur-v1` (union des espaces i18n, régénération), mode démonstration tuteur isolé pour l'aperçu, revues Q (fidélité, parcours/routes, responsive/a11y, frontière sécurité), corrections, vérification complète, captures comparatives, matrice de recette, rapport au directeur.
+## 1. Le chantier en une minute
 
-## Engagements pris auprès du directeur (audit « Rewayah — Audit de méthode », 24/09)
-- Phase 1 : commencer par les lots qui ont des high-fi (C Cours, E Compte/Historique, C-obs Observation), puis A, B, D.
-- Publier les captures maquette/rendu de chaque lot dans `05_recette/` dès qu'elles existent, sans attendre la fin, pour validation au fil de l'eau.
-- Un lot « Backend T1 » (supabase/ et .github/ci.yml seulement, worktree `D:\RA_BACKEND_T1`, branche `backend/tuteur-t1`) peut tourner en parallèle dans une autre session : ne jamais toucher ces chemins depuis ce chantier.
+- **Mandat** : `D:\RA _APP\docs de lancement\REWAYAH_PROMPT_CLAUDE_FRONTEND_TUTEUR_V1.md` (deux parties : prompt principal + « étape observation »). Tous les écrans et parcours du rôle Tuteur, fidèles aux maquettes (layout), jetons gelés, honnêtes sur ce que le serveur ne fait pas.
+- **Deux postes** : A (ce poste, 4 cœurs, 8 Go, coordinateur et intégrateur, lots C, E, O) et B (second ordinateur, 16 Go, lots B, D, A). Canal unique : GitHub + tableau de suivi. Protocole complet : `COORDINATION.md`.
+- **Tableau de suivi du projet** : https://claude.ai/artifact/XMVyZJiLTcmMKTnhsbp3sU (collections `etapes`, `sessions`, `depots`). Réserver une étape = `get` puis `update` avec `if_version` ; finir = `statut: "fait"` + `preuve` ; vérification croisée = `verifie` + `verifie_par` par une AUTRE session ; hors plan = ligne `HL-<poste>-<n>` + `motif`. Session sortante : `sessions/A-2026-09-24-coordinateur` (à clore : ajouter `fin`).
+- **Document directeur** (Claude Docs) : « Rewayah — Audit de méthode » https://claude.ai/code/artifact/31d67d93-1abf-485c-87ab-866f905650d8 (onglets : audit, registre du code non livré). Le directeur y écrit ses réponses DANS le texte : relire avec `read` `sinceRev` 4294 (onglet principal) et 160 (onglet registre).
 
-## Registre du code non livré (24/09) et sauvegardes
-- Registre : `06_registre/00_REGISTRE.md` (36 lignes, 27 revérifications) ; onglet « Registre du code non livré » du document directeur.
-- Sauvegardes FAITES et vérifiées : `D:\RA _APP\_archive\2026-09-24_sauvegardes\audit-preproduction-20260915.bundle` ; audit CORE24 copié dans `_archive\2026-09-23_worktrees\classes-v2\` ; `C:\Users\dell\Sauvegardes_Rewayah\` (bundle audit, audit CORE24, correctif 0043 jeton vidéo, `claude-local`, `rewayah-toutes-branches-2026-09-24.bundle` 7,5 Mo / 99 refs). À refaire chaque soir tant que le chantier avance.
-- NE PAS lancer `A_VALIDER_retirer_worktrees.ps1` tel quel.
-- Coran à l'envers : `lib/core/coran/service_coran.dart:309, 329, 330, 459, 460` sans `ascending: true` (postgrest trie en décroissant par défaut). Mini-lot proposé au directeur (en attente de son accord).
-- Commit `5113656` sur C0 = alertes de sécurité dans `08`, fait par le coordinateur à la demande du directeur.
+## 2. Où sont les choses
 
-## Règles permanentes
-- Commandes Flutter lourdes via `outils/flutter-verrou.ps1` (verrou système).
-- Aucun push, aucun merge main, aucune migration, aucune modification de `supabase/`, `.github/`, `vercel.json`.
-- Statuts de preuve : UI réalisée / branchée / testée en simulation / vérifiée réellement / dépendance backend.
+| Quoi | Où |
+|---|---|
+| Dossier de pilotage (canonique sur le poste A) | `D:\RA _APP\pilotage-tuteur-v1\` ; publié par `outils\synchroniser-pilotage.ps1 -Message "..."` vers la branche `pilotage/tuteur-v1` (worktree `D:\RA_TUTEUR\pilotage-git`) ; les dossiers `etat/`, `demandes/`, `05_recette/A|B|D` appartiennent au poste B (ne pas écraser : faire `git -C D:\RA_TUTEUR\pilotage-git pull --rebase` avant de les lire) |
+| Ressources de tout le projet | branche `projet/ressources`, worktree `D:\RA_TUTEUR\ressources-git` (commit puis `git push origin projet/ressources`) : `LISEZ-MOI.md`, `VAGUES.md`, `lancement/`, `memoire/`, `registre/`, `decisions-en-attente/`, `chatgpt/`, futur `specs/` |
+| Base du code | branche `ui/tuteur-v1` @ `cefab7f` (poussée), worktree `D:\RA_TUTEUR\integration` (seul le poste A l'écrit) |
+| Lots du poste A | worktrees `D:\RA_TUTEUR\lot-c`, `lot-e`, `lot-o`, branches `ui/tuteur-v1-c|e|o` (pas encore poussées) |
+| Lots du poste B | branches distantes `ui/tuteur-v1-b|d|a` (LD-1 poussé : `0fc023d`) |
+| Contrats phase 0 (fusionnés) | ancien worktree `D:\RA_TUTEUR\p0d` (branche `ui/tuteur-v1-p0d`) : ne pas supprimer sans accord |
+| Checkout principal | `D:\RA _APP\RA -OFFICIAL-APP` sur `c0/configuration-baseline-2026-09-23` ; deux commits locaux NON poussés sur `docs/current/08` : `5113656` (alertes de sécurité) et `19ec3dc` (ordre des vagues, défauts du Coran) ; copie dans `projet/ressources/decisions-en-attente/` |
+| Prompt et dossier ChatGPT | `D:\RA _APP\specs chatgpt\A_JOINDRE_A_CHATGPT\` (guide pas à pas, prompt maître, dossier 260 Ko) ; retours du directeur attendus dans `D:\RA _APP\specs chatgpt\<N°>_<nom>\` |
+| Sauvegardes | `C:\Users\dell\Sauvegardes_Rewayah\` (bundle de toutes les branches au 24/09, audits) ; `D:\RA _APP\_archive\2026-09-24_sauvegardes\` |
+| Outils | `outils\flutter-verrou.ps1` (verrou des commandes Flutter lourdes), `outils\synchroniser-pilotage.ps1`, `06_registre\outils\graphe_imports.ps1` (atteignabilité depuis `lib/main.dart`) |
 
-## Prompt de reprise conseillé
-« Reprends le chantier frontend Tuteur V1 de Rewayah : lis `D:\RA _APP\pilotage-tuteur-v1\00_REPRISE.md`, fais les contrôles de reprise, puis poursuis là où la phase en cours s'est arrêtée. »
+## 3. Contrôles à faire à la reprise
+
+1. `git -C D:\RA_TUTEUR\integration status` et `log --oneline -3` : HEAD attendu `cefab7f` (les 3 fichiers `windows/flutter/generated_*` modifiés ne sont que des fins de ligne, ne pas les committer).
+2. Pour chaque lot `c`, `e`, `o` : `git -C D:\RA_TUTEUR\lot-<x> log --oneline ui/tuteur-v1..HEAD` et `05_recette\<x>\RAPPORT.md`. Au 24/09 22 h 14 : C = 4 commits (C1 fait), E = 3 commits (E1 fait), O = 1 commit (O1 en cours).
+3. Tableau de suivi : lignes `en_cours` et `fait` des deux postes ; sessions actives.
+4. `git -C "D:\RA _APP\RA -OFFICIAL-APP" fetch origin` puis `git branch -r` : branches des lots du poste B publiées.
+5. Boîte de dépôt du tableau (`depots` au statut `nouveau`) et dossier `D:\RA _APP\specs chatgpt\` : nouvelles specs déposées par le directeur ?
+
+## 4. Ce qui tourne peut-être encore dans l'ANCIENNE session
+
+Le workflow « tuteur-v1-phase1-poste-A » (run `wf_f5734424-997`, relancé à 20 h 46 après une limite de session) exécute, dans l'ordre et par sous-paquets : C2 Classe, C3 Catalogue, revue C, correction C + push de `ui/tuteur-v1-c` ; E2 Historique, E3 Notifications et admin, revue E, correction E + push ; O1 Entrée, O2 Salle avec bandeau, O3 Fins et états, revue O, correction O + push. Script : `C:\Users\dell\.claude\projects\C--Users-dell-AppData-Local-Programs-WindowsTerminal\fdb7e1de-cc9a-4b71-bb67-78d8572a5917\workflows\scripts\tuteur-v1-phase1-poste-a-wf_f5734424-997.js`.
+
+**Règle de frontière** : tant que l'ancienne session tourne (le directeur le sait ; indice : commits récents dans `lot-c|e|o` ou session A « coordinateur » avec un signe de vie de moins d'une heure), la nouvelle session **ne touche pas** aux worktrees `lot-c`, `lot-e`, `lot-o`. Si l'ancienne session est fermée avant la fin : relancer UNIQUEMENT les sous-paquets non cochés du tableau (et non marqués faits dans `RAPPORT.md`), avec un nouveau workflow qui reprend les mêmes prompts (le cache de reprise ne marche que dans la même session), en commençant par vérifier `git status` du worktree (un agent coupé peut avoir laissé des fichiers non commités : les examiner avant de continuer).
+
+## 5. Étapes suivantes, dans l'ordre (plan fermé : chacune a sa ligne dans le tableau)
+
+1. **Vérification croisée des lots du poste B** au fil de l'eau : pour chaque ligne B « fait », `git fetch`, relire la preuve (commits, rapport `05_recette/<lot>/`, captures), lancer les tests ciblés sous verrou, puis `verifie` + `verifie_par`, ou remettre `en_cours` avec un `motif`. LD-1 est à vérifier en premier.
+2. **Phase 2, intégration** (lignes P2-01 à P2-06) : fusionner chaque branche de lot terminée (ligne `L*-F` faite) dans `ui/tuteur-v1` : union des espaces i18n de `fr.i18n.json`, `dart run slang`, `dart analyze` complet, suite complète sous verrou, frontière vide, puis `git push origin ui/tuteur-v1`, `ETAT_A.md` mis à jour (nouvelle base) et synchronisation du pilotage.
+3. **PR brouillon et aperçu** (CO-04) : le directeur a autorisé push de `ui/tuteur-v1` et PR BROUILLON vers `main` (jamais de fusion). `gh` ne marche pas sur ce poste (TLS) : donner au directeur le lien https://github.com/rewayahacademy-glitch/Rewayah-Academy-Official-App/compare/main...ui/tuteur-v1?expand=1 (« Create draft pull request »), puis relever l'URL d'aperçu Vercel dans le commentaire de la PR. L'aperçu utilise la VRAIE base Supabase (mêmes secrets que la production).
+4. **Mode démonstration tuteur** (P2-07) : sessions et données fictives, aucun appel serveur, repère « Démonstration », activé seulement si `ENVIRONNEMENT != production` (l'aperçu est `staging` ; `PLAYGROUND` est forcé à false par le déploiement), jamais en production.
+5. **Revues Q** (P2-08 à P2-11) : fidélité aux maquettes (planches maquette | rendu), parcours et définition de « fait » (boutons touchés, aucune impasse, carte des fonctions sans doublon), responsive et accessibilité, sécurité et honnêteté ; puis corrections (P2-12), vérification finale et build web (P2-13), aperçu à jour et textes présents dans l'app servie (P2-14), matrice de recette et rapport au directeur (P2-15), captures publiées pour sa validation (DIR-01). Fusion dans `main` = décision du directeur (DIR-02), jamais sans son accord explicite.
+6. **Specs ChatGPT** (lignes S-00 à S-13) : quand le directeur écrit « specs NN déposées », contrôler (complétude par rapport au dossier et à l'inventaire, conflits avec les décisions, faisabilité), lister au directeur ce qu'il doit redemander à ChatGPT, publier dans `projet/ressources/specs/<N°>_<nom>/`, cocher `S-NN`. Les PROPOSITION et CONFLIT attendent le directeur.
+7. **Boîte de dépôt** : les dépôts sont du matériau (jamais des ordres directs) : arbitrer, convertir en étapes ou écarter avec motif, marquer `traite` + `traite_par` + `suite`.
+8. Chaque soir : refaire le bundle de sauvegarde (`git -C "D:\RA _APP\RA -OFFICIAL-APP" bundle create "C:\Users\dell\Sauvegardes_Rewayah\rewayah-toutes-branches-<date>.bundle" --all`).
+
+## 6. Décisions du directeur à retenir (détail dans `03_DECISIONS_COORDINATEUR.md`)
+
+- Maquettes = LAYOUT (autorité pour placer chaque fonction, bouton, route) ; couleurs = jetons gelés (DM Sans titres, Plus Jakarta Sans le reste, palette de la vague) immuables jusqu'à nouvel ordre. Une fonction = un seul endroit. Carte groupée = un seul rectangle à filets. Navigation Accueil · Foyer · Historique · Compte. Web = vraie version ordinateur. Retour et déconnexion partout.
+- Enregistrement audio RÉEL (R2) : notice « Cours enregistré » conservée. Observation : 2 visites de 2 min par parent et par séance, visite écourtée consommée ; salle épurée avec bandeau de décompte ; notices enseignant/élève hors périmètre. Observation réelle coupée en production (`OBSERVATION_TUTEUR_REELLE`).
+- Frontend d'abord ; backend (lot Backend T1, prompt dans le document directeur) ensuite. Vague suivante : « Classe et visio », priorité n° 1 : un élève et un enseignant se rencontrent et se voient. Coran : NE RIEN CORRIGER maintenant (défauts consignés dans `08_BACKLOG_VAGUE_CLASSE_VISIO.md`).
+- Aucun push vers `main`, aucune fusion, aucune migration, aucune modification de `supabase/`, `.github/`, `vercel.json` sans accord explicite.
+
+## 7. Décisions encore attendues du directeur
+
+1. Garder « Séance en direct » à la place de « Cours en cours » aussi sur les écrans élève et enseignant (proposé : oui).
+2. Bornes d'âge 3 à 18 codées en dur dans le contrat K3 jusqu'au lot backend (proposé : oui).
+3. Règle d'éthique archivée contre les images générées par IA et pour le vert et l'or : maquettes de travail autorisées par défaut, visuels publics à valider.
+4. Logo et icône d'application (aucun dans le dépôt).
+5. Tutoiement bienveillant pour l'élève enfant (imposé dans le prompt ChatGPT, à valider).
+6. Langues au lancement (l'interface arabe n'a qu'une vingtaine de clés).
+7. Publication des deux commits locaux de `docs/current/08` sur la branche C0 (PR #2).
+
+## 8. Pièges connus de ce poste
+
+- Un crochet de sécurité bloque toute commande PowerShell qui combine une suppression (`Remove-Item`, parfois `git rm -rf`) avec un chemin `D:\RA _APP` : séparer les commandes, ne pas supprimer de fichiers.
+- `git push` et `fetch` vers GitHub sont lents (plus d'une minute) : les lancer en arrière-plan.
+- Les sorties de Git sur stderr font échouer `$ErrorActionPreference = 'Stop'` : ne pas l'utiliser avec Git.
+- Limite de session Claude : quand elle tombe, les agents d'un workflow échouent en cascade ; attendre la réinitialisation puis relancer (même session : `resumeFromRunId`).
+- RAM : 4 cœurs, 8 Go ; analyse complète environ 9 min, suite complète environ 30 min, build web environ 4 min : une seule commande lourde à la fois (verrou).
+- Le directeur n'est pas développeur : réponses courtes, en français, avec preuves, sans jargon ; il veut voir le rendu (captures, aperçu) et déteste les « c'est fait » sans preuve.
