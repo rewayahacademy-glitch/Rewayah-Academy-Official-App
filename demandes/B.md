@@ -12,3 +12,12 @@
 - **Fichier** : `lib/core/appairage/service_appairage.dart:212` (COORD, source partagée B et D).
 - **Constat** : `mes_appareils_v` est lu avec `.order('paired_at')` sans `ascending:` ; PostgREST trie alors en décroissant (`03` §1 ter bis-2). LB-1 ne consomme pas cette lecture (le Foyer mène à `/tuteur/foyer/appareils`, écran du lot D) ; signalé pour le lot D et le coordinateur.
 - **Signature voulue** : `.order('paired_at', ascending: true)` (ou `false` si l'ordre voulu est « plus récent d'abord »), avec un test d'ordre.
+
+## B-3 (24/09, LB-2) : gabarit d'etape partage (ajout de profil, admission)
+
+- **Fichiers** : `lib/core/widgets/page_shell.dart`, `lib/core/widgets/choice_card_group.dart`, `lib/core/widgets/page_parcours.dart` (COORD).
+- **Constat 1** : sur `/tuteur/foyer/ajouter`, `PageShell` sans titre rend quand meme une ligne avec les actions de la coquille (cloche, bascule) au-dessus de la rangee d'etape (`page_shell.dart`, branche `titre == null && enteteRiche`) : la planche V6 (#12, #14) met la rangee d'etape (disque retour, progression, « n sur N ») en premiere ligne, parcours plein ecran. Ecart visible sur `05_recette/B/captures/ajout_pour_qui_contre_E1.png` et `ajout_identite_contre_E3.png`.
+- **Signature voulue** : `PageShell({... bool actionsCoquille = true})` (faux = pas de cloche ni bascule pour une tache focalisee) ; ou un gabarit `PageEtape({required int numero, required int total, required VoidCallback onRetour, ...})` qui pose la rangee d'etape V6 en tete. Le lot A (inscription par etapes, sous-paquet A-2) a le meme besoin : un seul composant.
+- **Constat 2** : `ChoiceCardGroup` n'a ni description sous le libelle, ni option desactivee expliquee, ni radio (V5 §6 « style liste avec description », V6 §6 E1) ; K3 exige des choix visibles mais indisponibles.
+- **Signature voulue** : `OptionChoix({..., String? description, bool disponible = true, String? raisonIndisponible})` et un radio dessine (anneau >= 3:1).
+- **Contournement en place** (LB-2, `ui/tuteur-v1-b` @ 2ccb990) : rangee d'etape et carte de choix locales et privees dans `lib/features/foyer/formulaire_profil_eleve.dart` (`_RangeeEtape`, `_CarteChoix`, `_Radio`) ; a remplacer par le composant partage des qu'il existe.
