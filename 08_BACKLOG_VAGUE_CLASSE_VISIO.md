@@ -43,3 +43,5 @@ Pistes à instruire (sans décision) : police et données de mise en page offici
 - Outils de classe de l'enseignant, après-cours, signalement, micro-avis élève, bibliothèque en classe : présents sur `main`, jamais branchés (registre, groupe A).
 - Écran de bienvenue enseignant sans bouton ; liste des élèves de l'enseignant refusée par la porte d'accès ; Coran hors salle absent pour l'enseignant (registre, groupes B et C).
 - 11 autres appels `.order(...)` sans sens écrit (appareils, séances, créneaux, offres) : à vérifier dans chaque lot qui les consomme.
+- [lot C, 24/09] `mes_groupes_famille_v` (`0033:140-170`) : jointure `m` (tous les eleves du foyer) croisee avec `m2`, `count(m2.id)` probablement multiplie quand deux enfants d'un meme foyer sont dans la meme classe (effectif gonfle). Lecture seule, non mesure. Backend.
+- [lot C, 24/09] `groupeDepuisLigne` (`groupes_supabase.dart:48-50`) replie un titre absent sur Sayyid : le mandat interdit de deviner le titre ; `EnseignantVM.titre` non nullable (fichiers du coordinateur, demande C-3).
