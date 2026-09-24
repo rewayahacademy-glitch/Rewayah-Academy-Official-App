@@ -263,28 +263,28 @@ void main() {
         Routes.eleve,
         Routes.tuteurAccueil,
       ]) {
-        expect(
-          deciderRedirection(
-            session: const SessionState.deconnecte(),
-            cheminDemande: route,
-            maintenant: maintenant,
-          ),
-          Routes.connexion,
-          reason: route,
+        // Vers la connexion humaine, la destination gardee en `retour`
+        // (chemin interne valide, jamais un jeton).
+        final String? decision = deciderRedirection(
+          session: const SessionState.deconnecte(),
+          cheminDemande: route,
+          maintenant: maintenant,
         );
+        expect(Uri.parse(decision!).path, Routes.connexion, reason: route);
       }
     });
 
     test('l ecran d emission reste dans l espace d administration', () {
       // Il est sous `/admin`, donc borne par le prefixe de role comme les
-      // autres : un enseignant qui taperait l'adresse rentre chez lui.
+      // autres : un enseignant qui taperait l'adresse voit l'acces refuse,
+      // qui le ramene chez lui.
       expect(
         deciderRedirection(
           session: _sessionActive(role: AppRole.teacher),
           cheminDemande: Routes.adminSecuriteAuditAccesAgents,
           maintenant: maintenant,
         ),
-        Routes.enseignantJournee,
+        Routes.accesRefuse,
       );
       expect(
         deciderRedirection(

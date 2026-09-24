@@ -12,10 +12,12 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/etats_routeur.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
@@ -169,9 +171,13 @@ void main() {
       // Trois libelles de destination, et le quatrieme ne doit pas revenir :
       // « Compte » et « Profil » repondaient a la meme question (ADR-027), et
       // sur telephone le quatrieme onglet serait le seul chemin de deconnexion.
-      expect(find.text(t.nav.enseignant.journee), findsWidgets);
-      expect(find.text(t.nav.enseignant.creneaux), findsWidgets);
-      expect(find.text(t.nav.enseignant.profil), findsWidgets);
+      // A cette largeur (tablette), le rail est replie : chaque destination
+      // porte son nom en infobulle et en libelle lu.
+      final NavShell coquille = tester.widget<NavShell>(find.byType(NavShell));
+      expect(coquille.destinations, hasLength(3));
+      expect(find.byTooltip(t.nav.enseignant.journee), findsOneWidget);
+      expect(find.byTooltip(t.nav.enseignant.creneaux), findsOneWidget);
+      expect(find.byTooltip(t.nav.enseignant.profil), findsOneWidget);
     });
 
     testWidgets('une pose ne fait pas apparaitre la barre', (
@@ -189,7 +195,7 @@ void main() {
   });
 
   group('La garde tient sur les poses comme sur les destinations', () {
-    testWidgets('un tuteur qui demande le cahier repart chez lui', (
+    testWidgets('un tuteur qui demande le cahier voit l acces refuse', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await monter(
@@ -198,7 +204,10 @@ void main() {
         avec: surcharges(role: AppRole.guardian),
       );
 
-      expect(routeur.state.matchedLocation, Routes.tuteurAccueil);
+      // Une page qui le dit et ramene a sa racine, plus un renvoi muet
+      // (mandat Tuteur V1 section 8).
+      expect(routeur.state.matchedLocation, Routes.accesRefuse);
+      expect(find.byType(PageAccesRefuse), findsOneWidget);
       expect(find.byType(CahierPage), findsNothing);
     });
 

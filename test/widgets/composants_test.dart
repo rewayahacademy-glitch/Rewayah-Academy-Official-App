@@ -488,7 +488,8 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(coquille(768, 3));
-      final Offset rail = tester.getCenter(find.text('D0'));
+      // Replie, le rail ne porte que l'icone : le nom passe par l'infobulle.
+      final Offset rail = tester.getCenter(find.byTooltip('D0'));
       final Offset contenu = tester.getCenter(find.text('contenu'));
       expect(rail.dx, lessThan(contenu.dx));
     });
@@ -497,9 +498,11 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(coquille(768, 3));
-      final double rail = tester.getSize(find.byType(SizedBox).first).width;
+      final double rail = tester.getSize(find.byKey(NavShell.railKey)).width;
       await tester.pumpWidget(coquille(1440, 3));
-      final double laterale = tester.getSize(find.byType(SizedBox).first).width;
+      final double laterale = tester
+          .getSize(find.byKey(NavShell.barreLateraleKey))
+          .width;
       expect(rail, AppGabarit.largeurRail);
       expect(laterale, AppGabarit.largeurBarreLaterale);
       expect(laterale, greaterThan(rail));
