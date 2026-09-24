@@ -249,8 +249,10 @@ class MoteurVisiteObservation {
   /// Ferme le moteur. A appeler quand l'ecran disparait.
   ///
   /// **Ne ferme pas l'intervalle cote serveur** : une page demontee n'est pas
-  /// une sortie. Le serveur referme l'intervalle a l'expiration du jeton, et
-  /// c'est bien lui qui doit le faire (contrat 14, invariant 2).
+  /// une sortie. Et **aucun code serveur ne le referme a l'expiration du
+  /// jeton** (cartographie C07, fait 8) : un intervalle laisse ouvert compte
+  /// comme une visite et bloque la suivante jusqu'a `temps_epuise`
+  /// (dependances DB-OBS-03 et DB-OBS-06).
   Future<void> dispose() async {
     await _arreterEcoutes();
     await _sortie.close();

@@ -557,7 +557,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await _presser(tester, find.text(t.tc.observation.entree.entrer));
+      // Le tuteur passe par le vestibule (lot O, sous-paquet 1) : premiere
+      // utilisation, l'explication, puis « Observer maintenant ».
+      await _presser(tester, find.text(t.tc.observation.explication.observer));
     }
 
     testWidgets(
@@ -720,10 +722,13 @@ void main() {
           surcharges: surchargesTcG(role: AppRole.guardian),
         ),
       );
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.byType(EntreeObservationPage), findsOneWidget);
-      expect(find.text(t.tc.observation.entree.tuteurIntro), findsOneWidget);
+      // Le tuteur arrive sur le vestibule : l'explication de premiere
+      // utilisation, pas l'ancienne phrase d'introduction.
+      expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
+      expect(find.text(t.tc.observation.entree.tuteurIntro), findsNothing);
     });
 
     testWidgets(
@@ -744,9 +749,13 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(EntreeObservationPage), findsOneWidget);
-        expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+        expect(
+          find.text(t.tc.observation.disponibilite.fermeeTitre),
+          findsOneWidget,
+        );
         expect(find.text(t.tc.observation.entree.tuteurIntro), findsNothing);
         expect(find.text(t.tc.observation.entree.entrer), findsNothing);
+        expect(find.text(t.tc.observation.explication.observer), findsNothing);
         expect(visites.rolesDemandes, isEmpty);
       },
     );

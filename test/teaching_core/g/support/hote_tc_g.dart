@@ -6,8 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // dans `misc.dart`, alors que `ProviderScope.overrides` en attend une liste.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
@@ -23,6 +27,8 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 // exactement ce que le vrai moteur PUBLIE -- trois flux et une liste -- et
 // c'est tout ce dont l'ecran d'observation depend une fois entre en salle. En
 // ecrire un second ici le ferait diverger du premier.
+import '../../../support/harnais.dart'
+    show FauxServiceAppairage, FauxServicePresence, FauxServiceReseau;
 import '../../e/faux/faux_classe.dart';
 import '../faux/faux_observation.dart';
 
@@ -75,6 +81,20 @@ Widget hoteRoutantTcG({
   ),
 );
 
+/// Une ligne de presence de `presence_seance_v`, ecrite court : l'enfant
+/// `enfant-1`, present par defaut.
+PresenceParticipant presenceDe({
+  String profilId = 'enfant-1',
+  EtatPresence etat = EtatPresence.presente,
+}) => PresenceParticipant(
+  profilId: profilId,
+  role: 'student',
+  prenom: 'Mariam',
+  identifiantImmuable: 'STUD-TC-000001',
+  etat: etat,
+  consolide: false,
+);
+
 /// Une source de session en memoire, resolue d'emblee.
 class FausseSourceSessionTcG implements SourceSession {
   /// Cree la source pour un role donne.
@@ -112,8 +132,36 @@ List<Override> surchargesTcG({
   FauxServiceVideoClasse? video,
   Stream<void>? battement,
   bool observationReelle = true,
+  FauxServicePresence? presence,
+  StockagePreferences? stockage,
+  bool horsLigne = false,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(FausseSourceSessionTcG(role)),
+  // La verification prealable du tuteur lit la presence de l'enfant, le foyer
+  // (quand l'adresse ne nomme pas l'eleve) et la memoire « explication deja
+  // vue » : tous en memoire, aucun Supabase ni base locale.
+  servicePresenceProvider.overrideWithValue(
+    presence ??
+        FauxServicePresence(lignes: <PresenceParticipant>[presenceDe()]),
+  ),
+  serviceAppairageProvider.overrideWithValue(
+    FauxServiceAppairage()
+      ..elevesRendus = const <EleveDuFoyer>[
+        EleveDuFoyer(
+          id: 'enfant-1',
+          prenom: 'Mariam',
+          identifiantImmuable: 'STUD-TC-000001',
+          mode: InterfaceMode.standard,
+          camera: CameraPolicy.forbidden,
+        ),
+      ],
+  ),
+  stockagePreferencesProvider.overrideWithValue(
+    stockage ?? StockagePreferencesMemoire(),
+  ),
+  serviceReseauProvider.overrideWithValue(
+    FauxServiceReseau(horsLigneRendu: horsLigne),
+  ),
   // L'interrupteur P3 est ouvert par defaut : ces tests decrivent la visite
   // telle qu'elle sera ouverte. Ferme, le tuteur ne voit que « pas encore
   // disponible » (test dedie).

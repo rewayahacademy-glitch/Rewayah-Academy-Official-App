@@ -5704,6 +5704,10 @@ class Traductions$tc$observation$fr {
 
 	// Translations
 	late final Traductions$tc$observation$entree$fr entree = Traductions$tc$observation$entree$fr.internal(_root);
+	late final Traductions$tc$observation$explication$fr explication = Traductions$tc$observation$explication$fr.internal(_root);
+	late final Traductions$tc$observation$disponibilite$fr disponibilite = Traductions$tc$observation$disponibilite$fr.internal(_root);
+	late final Traductions$tc$observation$connexion$fr connexion = Traductions$tc$observation$connexion$fr.internal(_root);
+	late final Traductions$tc$observation$duree$fr duree = Traductions$tc$observation$duree$fr.internal(_root);
 	late final Traductions$tc$observation$refus$fr refus = Traductions$tc$observation$refus$fr.internal(_root);
 	late final Traductions$tc$observation$visite$fr visite = Traductions$tc$observation$visite$fr.internal(_root);
 	late final Traductions$tc$observation$fin$fr fin = Traductions$tc$observation$fin$fr.internal(_root);
@@ -7263,6 +7267,213 @@ class Traductions$tc$observation$entree$fr {
 
 	/// fr: 'Votre compte n'observe pas les séances.'
 	String get roleSansObservation => 'Votre compte n\'observe pas les séances.';
+
+	/// fr: 'Retour à la classe'
+	String get retourClasse => 'Retour à la classe';
+}
+
+// Path: tc.observation.explication
+class Traductions$tc$observation$explication$fr {
+	Traductions$tc$observation$explication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un aperçu de son apprentissage'
+	String get titre => 'Un aperçu de son apprentissage';
+
+	/// fr: '{n} visite de {duree}'
+	String regleUne({required Object n, required Object duree}) => '${n} visite de ${duree}';
+
+	/// fr: '{n} visites de {duree}'
+	String regle({required Object n, required Object duree}) => '${n} visites de ${duree}';
+
+	/// fr: 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.'
+	String get regleDetail => 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.';
+
+	/// fr: 'Écoutez l'enseignant et les élèves'
+	String get ecoute => 'Écoutez l\'enseignant et les élèves';
+
+	/// fr: 'Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.'
+	String get ecouteDetail => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.';
+
+	/// fr: 'Sans micro ni caméra'
+	String get sansMedia => 'Sans micro ni caméra';
+
+	/// fr: 'Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.'
+	String get sansMediaDetail => 'Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.';
+
+	/// fr: 'Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.'
+	String get revenir => 'Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.';
+
+	/// fr: 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.'
+	String get ecourtee => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
+
+	/// fr: 'Pour préserver la concentration, vous observez sans intervenir.'
+	String get sansIntervenir => 'Pour préserver la concentration, vous observez sans intervenir.';
+
+	/// fr: 'Votre enfant et son enseignant sont informés.'
+	String get informes => 'Votre enfant et son enseignant sont informés.';
+
+	/// fr: 'Observer maintenant'
+	String get observer => 'Observer maintenant';
+
+	/// fr: 'Pas maintenant'
+	String get pasMaintenant => 'Pas maintenant';
+
+	/// fr: '{restantes}/{max} visite restante pour cette séance'
+	String restanteUne({required Object restantes, required Object max}) => '${restantes}/${max} visite restante pour cette séance';
+
+	/// fr: '{restantes}/{max} visites restantes pour cette séance'
+	String restantes({required Object restantes, required Object max}) => '${restantes}/${max} visites restantes pour cette séance';
+
+	/// fr: 'Aucune visite restante pour cette séance'
+	String get aucuneRestante => 'Aucune visite restante pour cette séance';
+}
+
+// Path: tc.observation.disponibilite
+class Traductions$tc$observation$disponibilite$fr {
+	Traductions$tc$observation$disponibilite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune visite restante pour cette séance'
+	String get visitesEpuiseesTitre => 'Aucune visite restante pour cette séance';
+
+	/// fr: 'Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.'
+	String get visitesEpuisees => 'Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.';
+
+	/// fr: 'Temps d'observation écoulé'
+	String get tempsEpuiseTitre => 'Temps d\'observation écoulé';
+
+	/// fr: 'Votre temps d'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.'
+	String get tempsEpuise => 'Votre temps d\'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.';
+
+	/// fr: 'La séance n'a pas encore commencé'
+	String get seanceNonCommenceeTitre => 'La séance n\'a pas encore commencé';
+
+	/// fr: 'L'observation s'ouvre pendant la séance.'
+	String get seanceNonCommencee => 'L\'observation s\'ouvre pendant la séance.';
+
+	/// fr: 'La séance est terminée'
+	String get seanceTermineeTitre => 'La séance est terminée';
+
+	/// fr: 'Vous pourrez observer la prochaine séance.'
+	String get seanceTerminee => 'Vous pourrez observer la prochaine séance.';
+
+	/// fr: 'Cette séance n'a pas lieu'
+	String get seanceNonTenueTitre => 'Cette séance n\'a pas lieu';
+
+	/// fr: 'Elle a été annulée, reportée ou n'a pas été tenue.'
+	String get seanceNonTenue => 'Elle a été annulée, reportée ou n\'a pas été tenue.';
+
+	/// fr: 'La séance n'est pas ouverte en ce moment'
+	String get horsFenetreTitre => 'La séance n\'est pas ouverte en ce moment';
+
+	/// fr: 'L'observation est possible seulement pendant la séance.'
+	String get horsFenetre => 'L\'observation est possible seulement pendant la séance.';
+
+	/// fr: 'Observation fermée pour cette classe'
+	String get desactiveeTitre => 'Observation fermée pour cette classe';
+
+	/// fr: 'L'administration a fermé l'observation de cette classe.'
+	String get desactivee => 'L\'administration a fermé l\'observation de cette classe.';
+
+	/// fr: 'Aucun de vos enfants dans cette séance'
+	String get lienAbsentTitre => 'Aucun de vos enfants dans cette séance';
+
+	/// fr: 'L'observation est réservée aux parents des élèves de la séance.'
+	String get lienAbsent => 'L\'observation est réservée aux parents des élèves de la séance.';
+
+	/// fr: 'Votre enfant n'est pas dans la séance'
+	String get enfantAbsentTitre => 'Votre enfant n\'est pas dans la séance';
+
+	/// fr: 'L'observation s'ouvre quand votre enfant est présent.'
+	String get enfantAbsent => 'L\'observation s\'ouvre quand votre enfant est présent.';
+
+	/// fr: 'Présence en cours de vérification'
+	String get presenceTitre => 'Présence en cours de vérification';
+
+	/// fr: 'L'observation s'ouvre dès que la présence de votre enfant est confirmée.'
+	String get presence => 'L\'observation s\'ouvre dès que la présence de votre enfant est confirmée.';
+
+	/// fr: 'Une visite est déjà ouverte'
+	String get visiteOuverteTitre => 'Une visite est déjà ouverte';
+
+	/// fr: 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.'
+	String get visiteOuverte => 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.';
+
+	/// fr: 'Observation pas encore ouverte'
+	String get fermeeTitre => 'Observation pas encore ouverte';
+
+	/// fr: 'L'observation des séances par les parents n'est pas encore ouverte. Elle sera proposée ici dès son ouverture.'
+	String get fermee => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.';
+
+	/// fr: 'Vérification impossible'
+	String get reseauTitre => 'Vérification impossible';
+
+	/// fr: 'La disponibilité de l'observation n'a pas pu être vérifiée. Aucune visite n'a commencé.'
+	String get reseau => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.';
+
+	/// fr: 'Observation indisponible'
+	String get capaciteTitre => 'Observation indisponible';
+
+	/// fr: 'L'observation n'est pas disponible pour le moment.'
+	String get capacite => 'L\'observation n\'est pas disponible pour le moment.';
+}
+
+// Path: tc.observation.connexion
+class Traductions$tc$observation$connexion$fr {
+	Traductions$tc$observation$connexion$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connexion et vérification'
+	String get titre => 'Connexion et vérification';
+
+	/// fr: 'Vos visites restantes sont vérifiées. La visite commence dès que l'entrée est acceptée, connexion vidéo comprise.'
+	String get phrase => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.';
+
+	/// fr: 'Connexion et vérification en cours'
+	String get enCours => 'Connexion et vérification en cours';
+
+	/// fr: 'La vérification prend plus de temps que prévu. Restez sur cette page.'
+	String get prolongee => 'La vérification prend plus de temps que prévu. Restez sur cette page.';
+
+	/// fr: 'Connexion impossible'
+	String get impossibleTitre => 'Connexion impossible';
+
+	/// fr: 'L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.'
+	String get impossible => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.';
+}
+
+// Path: tc.observation.duree
+class Traductions$tc$observation$duree$fr {
+	Traductions$tc$observation$duree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{n} seconde'
+	String secondeUne({required Object n}) => '${n} seconde';
+
+	/// fr: '{n} secondes'
+	String secondes({required Object n}) => '${n} secondes';
+
+	/// fr: '{n} minute'
+	String minuteUne({required Object n}) => '${n} minute';
+
+	/// fr: '{n} minutes'
+	String minutes({required Object n}) => '${n} minutes';
+
+	/// fr: '{m} min {s} s'
+	String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
 }
 
 // Path: tc.observation.refus
@@ -9695,6 +9906,63 @@ extension on Traductions {
 			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
 			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
 			'tc.observation.entree.roleSansObservation' => 'Votre compte n\'observe pas les séances.',
+			'tc.observation.entree.retourClasse' => 'Retour à la classe',
+			'tc.observation.explication.titre' => 'Un aperçu de son apprentissage',
+			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visite de ${duree}',
+			'tc.observation.explication.regle' => ({required Object n, required Object duree}) => '${n} visites de ${duree}',
+			'tc.observation.explication.regleDetail' => 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.',
+			'tc.observation.explication.ecoute' => 'Écoutez l\'enseignant et les élèves',
+			'tc.observation.explication.ecouteDetail' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
+			'tc.observation.explication.sansMedia' => 'Sans micro ni caméra',
+			'tc.observation.explication.sansMediaDetail' => 'Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.',
+			'tc.observation.explication.revenir' => 'Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.',
+			'tc.observation.explication.ecourtee' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
+			'tc.observation.explication.sansIntervenir' => 'Pour préserver la concentration, vous observez sans intervenir.',
+			'tc.observation.explication.informes' => 'Votre enfant et son enseignant sont informés.',
+			'tc.observation.explication.observer' => 'Observer maintenant',
+			'tc.observation.explication.pasMaintenant' => 'Pas maintenant',
+			'tc.observation.explication.restanteUne' => ({required Object restantes, required Object max}) => '${restantes}/${max} visite restante pour cette séance',
+			'tc.observation.explication.restantes' => ({required Object restantes, required Object max}) => '${restantes}/${max} visites restantes pour cette séance',
+			'tc.observation.explication.aucuneRestante' => 'Aucune visite restante pour cette séance',
+			'tc.observation.disponibilite.visitesEpuiseesTitre' => 'Aucune visite restante pour cette séance',
+			'tc.observation.disponibilite.visitesEpuisees' => 'Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.',
+			'tc.observation.disponibilite.tempsEpuiseTitre' => 'Temps d\'observation écoulé',
+			'tc.observation.disponibilite.tempsEpuise' => 'Votre temps d\'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.',
+			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
+			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
+			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
+			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
+			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
+			'tc.observation.disponibilite.seanceNonTenue' => 'Elle a été annulée, reportée ou n\'a pas été tenue.',
+			'tc.observation.disponibilite.horsFenetreTitre' => 'La séance n\'est pas ouverte en ce moment',
+			'tc.observation.disponibilite.horsFenetre' => 'L\'observation est possible seulement pendant la séance.',
+			'tc.observation.disponibilite.desactiveeTitre' => 'Observation fermée pour cette classe',
+			'tc.observation.disponibilite.desactivee' => 'L\'administration a fermé l\'observation de cette classe.',
+			'tc.observation.disponibilite.lienAbsentTitre' => 'Aucun de vos enfants dans cette séance',
+			'tc.observation.disponibilite.lienAbsent' => 'L\'observation est réservée aux parents des élèves de la séance.',
+			'tc.observation.disponibilite.enfantAbsentTitre' => 'Votre enfant n\'est pas dans la séance',
+			'tc.observation.disponibilite.enfantAbsent' => 'L\'observation s\'ouvre quand votre enfant est présent.',
+			'tc.observation.disponibilite.presenceTitre' => 'Présence en cours de vérification',
+			'tc.observation.disponibilite.presence' => 'L\'observation s\'ouvre dès que la présence de votre enfant est confirmée.',
+			'tc.observation.disponibilite.visiteOuverteTitre' => 'Une visite est déjà ouverte',
+			'tc.observation.disponibilite.visiteOuverte' => 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.',
+			'tc.observation.disponibilite.fermeeTitre' => 'Observation pas encore ouverte',
+			'tc.observation.disponibilite.fermee' => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.',
+			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
+			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
+			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
+			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
+			'tc.observation.connexion.titre' => 'Connexion et vérification',
+			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
+			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
+			'tc.observation.connexion.prolongee' => 'La vérification prend plus de temps que prévu. Restez sur cette page.',
+			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
+			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
+			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
+			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
+			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
+			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
+			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour ce groupe.',
 			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',

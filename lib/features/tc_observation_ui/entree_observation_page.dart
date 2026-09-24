@@ -2,28 +2,41 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/router/page_etat.dart';
+import '../../core/preferences/preferences_locales.dart';
+import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_observation/activation_observation.dart';
+import '../../core/tc_observation/disponibilite_observation.dart';
 import '../../core/tc_observation/echec_observation.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/libelles_observation.dart';
 import '../../core/tc_observation/mode_entree_admin.dart';
 import '../../core/tc_observation/moteur_visite_observation.dart';
+import '../../core/theme/app_delais.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/video_session_provider.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'choix_entree_observation.dart';
+import 'explication_premiere_visite.dart';
 import 'options_entree_observation.dart';
+import 'ouverture_observation.dart';
 import 'panneau_observation_tuteur.dart';
+import 'verification_prealable.dart';
 import 'vue_observation_tuteur.dart';
 
 /// La porte d'une seance, pour qui l'observe.
@@ -51,6 +64,13 @@ import 'vue_observation_tuteur.dart';
 /// encore -- `ContexteClasseLive.support` n'est construit nulle part, pas meme
 /// pour l'enseignant. Le panneau le dit en clair plutot que d'ouvrir une
 /// seconde surface de rendu.
+///
+/// **Pour le tuteur, la porte commence par un vestibule** (lot O, sous-paquet
+/// 1) : verification prealable en lecture seule (budget, politique, presence),
+/// puis l'explication de premiere utilisation (maquette V8 M2), ou, quand elle
+/// est deja lue et que la classe a transmis le geste
+/// ([DemandeEntreeObservation]), directement « Connexion et verification ».
+/// Aucune visite ne s'ouvre sans geste ; un rechargement n'en ouvre jamais.
 class EntreeObservationPage extends ConsumerStatefulWidget {
   /// Cree l'ecran.
   const EntreeObservationPage({required this.seanceId, super.key});
@@ -65,6 +85,15 @@ class EntreeObservationPage extends ConsumerStatefulWidget {
 
 class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   ModeEntreeAdmin? _mode;
+
+  /// Vrai quand la verification d'entree par le serveur tarde.
+  bool _connexionProlongee = false;
+  Timer? _minuteurConnexion;
+
+  /// Un identifiant de requete : lettres, chiffres, tiret, souligne. Tout le
+  /// reste est ignore (jamais une URL, jamais un chemin : `?classe=` sert a
+  /// construire le retour, et un `../compte` ne doit mener nulle part).
+  static final RegExp _identifiant = RegExp(r'^[A-Za-z0-9_-]{1,64}$');
 
   /// Le moteur, capture une fois.
   ///
@@ -116,13 +145,16 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
 
   @override
   void dispose() {
+    _minuteurConnexion?.cancel();
     unawaited(_sParticipants?.cancel());
     if (_enSalle) {
       // Quitter au demontage, quelle que soit la raison : sans cela, une visite
       // fermee a l'ecran continuerait a recevoir l'image d'une classe.
-      // L'intervalle serveur, lui, n'est PAS referme ici -- une page demontee
-      // n'est pas une sortie, et c'est le serveur qui le referme a l'expiration
-      // du jeton (contrat 14, invariant 2).
+      // L'intervalle serveur, lui, n'est PAS referme ici -- et **aucun code
+      // serveur ne le referme a l'expiration du jeton** (cartographie C07,
+      // fait 8) : une visite quittee sans « Quitter » reste ouverte et compte
+      // (dependances DB-OBS-03 et DB-OBS-06). La sortie propre de la salle
+      // releve du sous-paquet 2 du lot O.
       unawaited(_moteur.quitter());
     }
     super.dispose();
@@ -130,19 +162,22 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final AppRole? role = ref.watch(sessionProvider).role;
+    final SessionState session = ref.watch(sessionProvider);
+    final AppRole? role = session.role;
+    _lireNavigation(context);
 
     // **Interrupteur P3 ferme : le tuteur n'appelle aucune porte serveur.**
-    // Ni budget, ni `entrer_observation`, ni jeton video : la page dit que
-    // l'observation n'est pas encore ouverte et ramene a l'accueil. La valeur
-    // est fixee a la compilation, la branche ne bascule donc jamais entre deux
-    // constructions. L'administration et le controle qualite ne sont pas
-    // concernes.
+    // Ni budget, ni presence, ni `entrer_observation`, ni jeton video : la page
+    // dit que l'observation n'est pas encore ouverte et ramene a la classe. La
+    // valeur est fixee a la compilation, la branche ne bascule donc jamais
+    // entre deux constructions. L'administration et le controle qualite ne
+    // sont pas concernes.
     if (role == AppRole.guardian &&
         !ref.watch(observationTuteurReelleProvider)) {
-      return const PageEtat(
-        nature: NatureEtat.indisponible,
-        dependance: 'DB-OBS-01',
+      return _cadreTuteur(
+        titre: t.tc.observation.entree.titre,
+        retourPossible: true,
+        child: _etatBloquant(MotifIndisponibilite.garantieServeurAbsente),
       );
     }
 
@@ -168,6 +203,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         if (valeur == null) {
           return;
         }
+        _suivreConnexion(valeur.phase);
         if (valeur.phase == PhaseVisite.enVisite) {
           unawaited(_rejoindreSalle(options));
         } else {
@@ -175,6 +211,10 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         }
       },
     );
+
+    if (role == AppRole.guardian) {
+      return _parcoursTuteur(options, etat, session);
+    }
 
     return PageShell(
       titre: t.tc.observation.entree.titre,
@@ -215,6 +255,451 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         ),
         PhaseVisite.indisponible => _indisponible(options, etat.echec),
       };
+
+  // --- Le parcours du tuteur (lot O, sous-paquet 1 : entree et explication) --
+
+  String? _classeId;
+  String? _eleveId;
+
+  /// Vrai quand le geste « Observer la seance » a ete lu dans la navigation.
+  /// Lu une seule fois : l'`extra` survit aux reconstructions de la page, pas
+  /// le geste.
+  bool _gesteLu = false;
+
+  /// Vrai quand une entree est voulue sans nouvelle pression sur cette page :
+  /// le geste « Observer la seance » de la classe
+  /// ([DemandeEntreeObservation]), ou « Reessayer » apres une connexion
+  /// impossible. Consomme par la premiere entree lancee.
+  bool _entreeVoulue = false;
+
+  /// Vrai quand l'entree a ete lancee sans l'explication (deja lue) : la page
+  /// montre « Connexion et verification » plutot que l'explication.
+  bool _modeConnexion = false;
+
+  /// Lit la navigation : `?classe=` et `?eleve=` (le retour a la classe, avec
+  /// le contexte de l'enfant) et, une fois, le geste d'entree. **Des
+  /// identifiants seulement**, filtres par [_identifiant] : aucun ne vaut
+  /// autorisation, la RLS decide.
+  void _lireNavigation(BuildContext context) {
+    final GoRouterState etat = GoRouterState.of(context);
+    final Map<String, String> requete = etat.uri.queryParameters;
+    String? identifiant(String cle) {
+      final String? valeur = requete[cle];
+      return valeur != null && _identifiant.hasMatch(valeur) ? valeur : null;
+    }
+
+    _classeId = identifiant('classe');
+    _eleveId = identifiant('eleve');
+    if (!_gesteLu) {
+      _gesteLu = true;
+      _entreeVoulue = etat.extra is DemandeEntreeObservation;
+    }
+  }
+
+  /// « Retour a la classe » quand la classe est connue, sinon « Retour a
+  /// l'accueil » : le libelle dit ou l'on va.
+  String get _libelleRetour => _classeId != null
+      ? t.tc.observation.entree.retourClasse
+      : t.commun.etats.actions.retourAccueil;
+
+  /// Le retour, **sans rien consommer** : aucune visite n'est ouverte avant
+  /// l'entree. La classe, avec l'eleve, quand l'entree les a donnes ; sinon
+  /// l'ecran precedent ; sinon la racine, que la garde renvoie a l'accueil du
+  /// role. Aucune impasse.
+  void _retour() {
+    final GoRouter routeur = GoRouter.of(context);
+    final String? classe = _classeId;
+    if (classe != null) {
+      routeur.go(Routes.classePour(classe, eleveId: _eleveId));
+    } else if (routeur.canPop()) {
+      routeur.pop();
+    } else {
+      routeur.go(Routes.racine);
+    }
+  }
+
+  /// Arme la phrase « la verification prend plus de temps » pendant la
+  /// demande d'entree, et la retire des qu'une reponse arrive.
+  void _suivreConnexion(PhaseVisite phase) {
+    if (phase == PhaseVisite.demande) {
+      _minuteurConnexion ??= Timer(AppDelais.chargementProlonge, () {
+        if (mounted) {
+          setState(() => _connexionProlongee = true);
+        }
+      });
+      return;
+    }
+    _minuteurConnexion?.cancel();
+    _minuteurConnexion = null;
+    if (_connexionProlongee && mounted) {
+      setState(() => _connexionProlongee = false);
+    }
+  }
+
+  DemandeVerification _demande(SessionState session) => DemandeVerification(
+    seanceId: widget.seanceId,
+    observateurId: session.profileId ?? '',
+    classeId: _classeId,
+    eleveId: _eleveId,
+  );
+
+  /// Le parcours du tuteur, de la verification prealable a la visite.
+  ///
+  /// **Le compteur ne demarre qu'apres l'entree confirmee** : la verification
+  /// prealable et l'explication ne font que lire ; seule l'entree appelle
+  /// `entrer_observation()`, et le compte a rebours ne s'affiche que dans la
+  /// salle, une fois le serveur d'accord.
+  Widget _parcoursTuteur(
+    OptionsEntreeObservation options,
+    AsyncValue<EtatVisiteObservation> etat,
+    SessionState session,
+  ) {
+    if (!_identifiant.hasMatch(widget.seanceId)) {
+      return _cadreTuteur(
+        titre: t.tc.observation.entree.titre,
+        retourPossible: true,
+        child: EtatSysteme(
+          nature: NatureEtat.introuvable,
+          portee: PorteeEtat.page,
+          libelleAction: _libelleRetour,
+          onAction: _retour,
+        ),
+      );
+    }
+    final DemandeVerification demande = _demande(session);
+    final EtatVisiteObservation? valeur = etat.value;
+    return switch (valeur?.phase) {
+      // La salle et la fin de visite sont les sous-paquets 2 et 3 du lot O :
+      // leur rendu reste celui de la base, avec une sortie vers la classe.
+      PhaseVisite.enVisite => PageShell(
+        titre: t.tc.observation.entree.titre,
+        child: _panneau(valeur!),
+      ),
+      PhaseVisite.terminee => PageShell(
+        titre: t.tc.observation.entree.titre,
+        child: EmptyState(
+          message: libelleFinVisite(
+            valeur!.fin ?? FinDeVisite.sortieVolontaire,
+          ),
+          invitation: valeur.sortieConfirmee
+              ? null
+              : t.tc.observation.visite.sortieNonConfirmee,
+          icone: AppIcons.pause,
+          libelleAction: _libelleRetour,
+          onAction: _retour,
+        ),
+      ),
+      PhaseVisite.refusee => _cadreTuteur(
+        titre: t.tc.observation.entree.titre,
+        retourPossible: true,
+        child: _etatBloquant(motifDepuisRefus(valeur!.motifRefus)),
+      ),
+      PhaseVisite.indisponible => _cadreTuteur(
+        titre: t.tc.observation.entree.titre,
+        retourPossible: true,
+        child: _echecEntree(valeur!.echec, demande),
+      ),
+      PhaseVisite.horsVisite || PhaseVisite.demande || null => _vestibule(
+        options,
+        demande,
+        enCours: valeur?.phase == PhaseVisite.demande,
+      ),
+    };
+  }
+
+  /// La page du tuteur hors salle : en-tete a disque retour (tache focalisee,
+  /// hors coquille), colonne de lecture centree et bornee a
+  /// [AppPage.largeurDialogue], comme M2 ; sur ordinateur, une colonne de
+  /// lecture, jamais la feuille mobile etiree (manifeste section 6.1).
+  Widget _cadreTuteur({
+    required String titre,
+    required bool retourPossible,
+    required Widget child,
+  }) => PageShell(
+    child: Align(
+      alignment: AlignmentDirectional.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            EntetePage(titre: titre, onRetour: retourPossible ? _retour : null),
+            Ecart.vXxl,
+            child,
+          ],
+        ),
+      ),
+    ),
+  );
+
+  /// Vrai quand l'explication s'affiche : sans geste d'entree (lien « Comment
+  /// ca marche ? », lien direct, rechargement), ou tant qu'elle n'a pas ete
+  /// lue. Jamais sans la regle (aucun chiffre invente).
+  bool _afficheExplication(VerificationPrealable verification) =>
+      verification.regleConnue &&
+      !_modeConnexion &&
+      (!_entreeVoulue || !verification.explicationVue);
+
+  /// Le vestibule : verification prealable, puis explication, ou connexion
+  /// directe quand l'explication est deja lue et l'entree voulue.
+  Widget _vestibule(
+    OptionsEntreeObservation options,
+    DemandeVerification demande, {
+    required bool enCours,
+  }) {
+    final AsyncValue<VerificationPrealable> verification = ref.watch(
+      verificationPrealableProvider(demande),
+    );
+    final VerificationPrealable? lue = verification.value;
+    final bool explication = lue == null
+        ? !_entreeVoulue && !_modeConnexion
+        : _afficheExplication(lue);
+
+    return PopScope(
+      // Le retour systeme suit le disque retour : la classe, sans rien
+      // consommer. Pendant la demande d'entree, il attend la reponse.
+      canPop: false,
+      onPopInvokedWithResult: (bool fait, Object? _) {
+        if (!fait && !enCours) {
+          _retour();
+        }
+      },
+      child: _cadreTuteur(
+        titre: explication
+            ? t.tc.observation.explication.titre
+            : t.tc.observation.entree.titre,
+        retourPossible: !enCours,
+        child: BlocAsynchrone<VerificationPrealable>(
+          valeur: verification,
+          squelette: const Skeleton.liste(lignes: 3),
+          onReessayer: () =>
+              ref.invalidate(verificationPrealableProvider(demande)),
+          construire: (VerificationPrealable v) =>
+              _contenuVestibule(options, demande, v, enCours: enCours),
+        ),
+      ),
+    );
+  }
+
+  Widget _contenuVestibule(
+    OptionsEntreeObservation options,
+    DemandeVerification demande,
+    VerificationPrealable v, {
+    required bool enCours,
+  }) {
+    final DisponibiliteObservation disponibilite = v.disponibilite;
+    final ObservationPossible? ouverte =
+        v.regleConnue && disponibilite is ObservationPossible
+        ? disponibilite
+        : null;
+    final bool possible = ouverte != null;
+
+    // L'entree voulue, explication deja lue : directement « Connexion et
+    // verification » (logigramme V7). Lancee apres cette construction, une
+    // seule fois : le drapeau est consomme ici.
+    if (possible && _entreeVoulue && v.explicationVue && !enCours) {
+      _entreeVoulue = false;
+      _modeConnexion = true;
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          _entrer(options);
+        }
+      });
+    }
+    if (possible && _modeConnexion) {
+      return _connexion();
+    }
+
+    if (ouverte != null) {
+      return ExplicationPremiereVisite(
+        regle: regleVisitesObservation(v.visitesMax!, v.dureeParVisite!),
+        restantes: ouverte.visitesUtilisees > 0
+            ? visitesRestantesLisible(
+                restantes: ouverte.visitesRestantes,
+                max: ouverte.visitesMax,
+              )
+            : null,
+        afficherRevenir: ouverte.visitesRestantes > 1,
+        onObserver: () => _observer(options, demande),
+        onPasMaintenant: _retour,
+        libelleRetour: _libelleRetour,
+        enCours: enCours,
+        connexionProlongee: _connexionProlongee ? _prolongee() : null,
+      );
+    }
+
+    final MotifIndisponibilite motif = switch (disponibilite) {
+      ObservationIndisponible(:final MotifIndisponibilite motif) => motif,
+      // Possible sans regle lisible (budget incoherent) : rien d'invente.
+      ObservationPossible() => MotifIndisponibilite.capaciteAbsente,
+    };
+    if (_afficheExplication(v)) {
+      // L'explication reste lisible quand elle est demandee (« Comment ca
+      // marche ? »), meme si l'entree n'est pas possible : le motif prend la
+      // place de l'action.
+      return ExplicationPremiereVisite(
+        regle: regleVisitesObservation(v.visitesMax!, v.dureeParVisite!),
+        afficherRevenir: v.visitesRestantes > 1,
+        onPasMaintenant: _retour,
+        libelleRetour: _libelleRetour,
+        indisponibilite: _blocIndisponible(motif, demande),
+      );
+    }
+    return _etatBloquant(motif, demande: demande);
+  }
+
+  /// « Connexion et verification » (logigramme V7, noeud N13) : l'entree est
+  /// demandee au serveur. Le compteur de visite n'existe pas encore a l'ecran.
+  Widget _connexion() {
+    final c = t.tc.observation.connexion;
+    return Semantics(
+      liveRegion: true,
+      child: EcranResultat(
+        icone: AppIcons.observationEnCours,
+        titre: c.titre,
+        phrase: _connexionProlongee ? c.prolongee : c.phrase,
+        // L'action attend : elle dit que l'entree est en cours et refuse une
+        // seconde pression.
+        libelleAction: t.tc.observation.explication.observer,
+        onAction: () {},
+        actionEnCours: true,
+      ),
+    );
+  }
+
+  Widget _prolongee() => EtatSysteme(
+    nature: NatureEtat.chargementProlonge,
+    phrase: t.tc.observation.connexion.prolongee,
+  );
+
+  /// Vrai quand relire la disponibilite peut changer la reponse sans que le
+  /// parent fasse autre chose qu'attendre : le reseau, la presence.
+  static bool _seReverifie(MotifIndisponibilite motif) =>
+      motif == MotifIndisponibilite.reseau ||
+      motif == MotifIndisponibilite.presenceEnVerification;
+
+  NatureEtat _natureDe(MotifIndisponibilite motif) {
+    if (motif != MotifIndisponibilite.reseau) {
+      return NatureEtat.indisponible;
+    }
+    return (ref.watch(horsLigneProvider).value ?? false)
+        ? NatureEtat.horsLigne
+        : NatureEtat.echecServeur;
+  }
+
+  /// Le titre et la phrase d'un motif. Hors ligne, ceux de l'etat systeme
+  /// (« Vous etes hors ligne ») : le motif `reseau` dit « verification
+  /// impossible », l'appareil sans reseau dit pourquoi.
+  ({String? titre, String? phrase}) _textesDe(MotifIndisponibilite motif) {
+    if (_natureDe(motif) == NatureEtat.horsLigne) {
+      return (titre: null, phrase: null);
+    }
+    final ({String titre, String phrase}) textes = textesIndisponibilite(motif);
+    return (titre: textes.titre, phrase: textes.phrase);
+  }
+
+  /// Ce qui manque cote serveur pour ce motif, pour la trace et les tests :
+  /// jamais affiche.
+  static String? _dependanceDe(MotifIndisponibilite motif) => switch (motif) {
+    MotifIndisponibilite.garantieServeurAbsente ||
+    MotifIndisponibilite.capaciteAbsente => 'DB-OBS-01',
+    MotifIndisponibilite.presenceEnVerification ||
+    MotifIndisponibilite.enfantAbsent => 'DB-OBS-05',
+    MotifIndisponibilite.visiteDejaOuverte => 'DB-OBS-06',
+    _ => null,
+  };
+
+  /// Le motif, en bloc, a la place de l'action d'entree (explication ouverte).
+  Widget _blocIndisponible(
+    MotifIndisponibilite motif,
+    DemandeVerification demande,
+  ) {
+    final ({String? titre, String? phrase}) textes = _textesDe(motif);
+    final bool reverifier = _seReverifie(motif);
+    return EtatSysteme(
+      nature: _natureDe(motif),
+      titre: textes.titre,
+      phrase: textes.phrase,
+      onAction: reverifier ? () => _reverifier(demande) : null,
+      dependance: _dependanceDe(motif),
+    );
+  }
+
+  /// Le motif, en page : ecran resultat (manifeste section 6.3), l'action
+  /// qui peut aboutir, et toujours le retour.
+  Widget _etatBloquant(
+    MotifIndisponibilite motif, {
+    DemandeVerification? demande,
+  }) {
+    final ({String? titre, String? phrase}) textes = _textesDe(motif);
+    final bool reverifier = demande != null && _seReverifie(motif);
+    return EtatSysteme(
+      nature: _natureDe(motif),
+      portee: PorteeEtat.page,
+      titre: textes.titre,
+      phrase: textes.phrase,
+      libelleAction: reverifier ? null : _libelleRetour,
+      onAction: reverifier ? () => _reverifier(demande) : _retour,
+      libelleSecondaire: reverifier ? _libelleRetour : null,
+      onSecondaire: reverifier ? _retour : null,
+      dependance: _dependanceDe(motif),
+    );
+  }
+
+  /// L'entree a echoue avant la salle : « Connexion impossible » pour une
+  /// panne, le motif sinon. Reessayer revient a la verification prealable :
+  /// les visites restantes sont relues, jamais supposees.
+  Widget _echecEntree(EchecObservation? echec, DemandeVerification demande) {
+    final MotifIndisponibilite motif = echec == null
+        ? MotifIndisponibilite.capaciteAbsente
+        : motifDepuisEchec(echec);
+    if (motif != MotifIndisponibilite.reseau) {
+      return _etatBloquant(motif);
+    }
+    final c = t.tc.observation.connexion;
+    return EtatSysteme(
+      nature: _natureDe(motif),
+      portee: PorteeEtat.page,
+      titre: c.impossibleTitre,
+      phrase: c.impossible,
+      onAction: () => _recommencer(demande),
+      libelleSecondaire: _libelleRetour,
+      onSecondaire: _retour,
+    );
+  }
+
+  /// Relit la disponibilite, sans rien ouvrir.
+  void _reverifier(DemandeVerification demande) =>
+      ref.invalidate(verificationPrealableProvider(demande));
+
+  /// « Reessayer » apres une connexion impossible : un moteur neuf (aucune
+  /// visite en cours a son sens), un budget relu, puis l'entree relancee si
+  /// elle est encore possible. La pression sur « Reessayer » est le geste.
+  void _recommencer(DemandeVerification demande) {
+    setState(() {
+      _entreeVoulue = true;
+      _modeConnexion = false;
+    });
+    ref
+      ..invalidate(moteurVisiteObservationProvider(widget.seanceId))
+      ..invalidate(verificationPrealableProvider(demande));
+  }
+
+  /// « Observer maintenant » : l'explication est retenue comme lue, puis
+  /// l'entree est demandee au serveur. C'est, avec le geste de la classe, le
+  /// seul geste qui ouvre une visite.
+  void _observer(
+    OptionsEntreeObservation options,
+    DemandeVerification demande,
+  ) {
+    unawaited(
+      marquerExplicationVue(
+        ref.read(stockagePreferencesProvider),
+        demande.observateurId,
+      ),
+    );
+    _entrer(options);
+  }
 
   /// Le panneau de visite, alimente par la salle reellement rejointe.
   ///
