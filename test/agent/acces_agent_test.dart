@@ -276,15 +276,14 @@ void main() {
 
     test('l ecran d emission reste dans l espace d administration', () {
       // Il est sous `/admin`, donc borne par le prefixe de role comme les
-      // autres : un enseignant qui taperait l'adresse voit l'acces refuse,
-      // qui le ramene chez lui.
+      // autres : un enseignant qui taperait l'adresse rentre chez lui.
       expect(
         deciderRedirection(
           session: _sessionActive(role: AppRole.teacher),
           cheminDemande: Routes.adminSecuriteAuditAccesAgents,
           maintenant: maintenant,
         ),
-        Routes.accesRefuse,
+        Routes.enseignantJournee,
       );
       expect(
         deciderRedirection(

@@ -21,8 +21,9 @@ import 'routes.dart';
 ///   le routeur rend la page « introuvable », qui ne montre aucune donnee et
 ///   ramene a l'accueil ou a la connexion selon la session ;
 /// - une route connue d'un autre role, ou un sous-arbre `/tc/` qui lui est
-///   ferme : la page « acces refuse » ([Routes.accesRefuse]), qui ramene a la
-///   racine du role ;
+///   ferme : pour le tuteur, la page « acces refuse » ([Routes.accesRefuse]),
+///   qui ramene a sa racine ; pour les autres roles, leur racine, comme
+///   avant le chantier Tuteur V1 ;
 /// - une route protegee demandee sans session : la connexion, avec le chemin
 ///   demande en `retour` s'il est un chemin interne valide
 ///   (`cheminRetourValide`) ; une fois connecte, on y retourne s'il est ouvert
@@ -181,12 +182,16 @@ String? deciderRedirection({
       }
 
       // Une route d'un autre role demandee directement par URL n'ouvre rien,
-      // sur le Web comme ailleurs : la page « acces refuse » le dit, et
-      // ramene a la racine du role.
+      // sur le Web comme ailleurs. Le tuteur voit la page « acces refuse »,
+      // qui le dit et ramene a sa racine (mandat Tuteur V1 section 8). Les
+      // autres roles gardent le renvoi a leur racine d'avant le chantier :
+      // leur navigation ne change pas sans decision du directeur (revue
+      // phase 0, routes D3).
       final String prefixe = Routes.prefixePour(role);
-      return _dansLeSousArbre(cheminDemande, prefixe)
-          ? null
-          : Routes.accesRefuse;
+      if (_dansLeSousArbre(cheminDemande, prefixe)) {
+        return null;
+      }
+      return role == AppRole.guardian ? Routes.accesRefuse : racine;
   }
 }
 
@@ -199,7 +204,12 @@ String? _reprise(SessionState session, String? retour, DateTime maintenant) {
   }
   final String chemin = Uri.parse(cible).path;
   // Jamais de retour vers le tunnel d'entree lui-meme : ce serait une boucle.
+  // Jamais non plus vers une page d'etat (acces refuse, hors ligne) : elle
+  // n'est pas une destination, et l'utilisateur qui se reconnecte y
+  // atterrirait sans raison (revue phase 0, routes D6).
   if (chemin == Routes.racine ||
+      chemin == Routes.accesRefuse ||
+      chemin == Routes.horsLigne ||
       _dansLeSousArbre(chemin, Routes.connexion) ||
       _dansLeSousArbre(chemin, Routes.inscription) ||
       _dansLeSousArbre(chemin, Routes.attente)) {

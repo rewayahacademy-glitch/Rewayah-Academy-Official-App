@@ -90,23 +90,6 @@ void main() {
   });
 
   group('Acces refuse : une page, et le retour a la racine du role', () {
-    testWidgets('un enseignant sur le foyer d un tuteur', (
-      WidgetTester tester,
-    ) async {
-      final GoRouter routeur = await monterRouteur(
-        tester,
-        Routes.tuteurFoyer,
-        source: FausseSourceSession(sessionActive(AppRole.teacher)),
-      );
-      expect(lieu(routeur), Routes.accesRefuse);
-      expect(find.byType(PageAccesRefuse), findsOneWidget);
-      expect(etat(NatureEtat.accesRefuse), findsOneWidget);
-
-      await tester.tap(find.text(t.commun.etats.actions.retourAccueil));
-      await stabiliser(tester);
-      expect(lieu(routeur), Routes.enseignantJournee);
-    });
-
     testWidgets('un tuteur sur une page d administration', (
       WidgetTester tester,
     ) async {
@@ -115,9 +98,26 @@ void main() {
         Routes.adminSecuriteAuditObservations,
       );
       expect(lieu(routeur), Routes.accesRefuse);
+      expect(find.byType(PageAccesRefuse), findsOneWidget);
+      expect(etat(NatureEtat.accesRefuse), findsOneWidget);
+
       await tester.tap(find.text(t.commun.etats.actions.retourAccueil));
       await stabiliser(tester);
       expect(lieu(routeur), Routes.tuteurAccueil);
+    });
+
+    testWidgets('un enseignant sur le foyer d un tuteur repart chez lui', (
+      WidgetTester tester,
+    ) async {
+      // Les autres roles gardent le renvoi d'avant le chantier Tuteur V1,
+      // sans page intermediaire (revue phase 0, routes D3).
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        Routes.tuteurFoyer,
+        source: FausseSourceSession(sessionActive(AppRole.teacher)),
+      );
+      expect(lieu(routeur), Routes.enseignantJournee);
+      expect(find.byType(PageAccesRefuse), findsNothing);
     });
   });
 

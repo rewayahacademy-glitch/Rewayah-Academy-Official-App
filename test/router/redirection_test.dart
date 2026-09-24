@@ -123,30 +123,41 @@ void main() {
   });
 
   group('Chaque role reste dans son espace', () {
-    test('un eleve qui demande une route admin voit l acces refuse', () {
+    // Les autres roles gardent le renvoi a leur racine d'avant le chantier
+    // Tuteur V1 : la page « acces refuse » est reservee au tuteur tant que le
+    // directeur n'a pas decide de l'etendre (revue phase 0, routes D3).
+    test('un eleve qui demande une route admin repart chez lui', () {
       expect(
         deciderRedirection(
           session: _session(role: AppRole.student),
           cheminDemande: Routes.adminSecuriteAuditJournal,
           maintenant: maintenant,
         ),
-        Routes.accesRefuse,
+        Routes.eleve,
       );
     });
 
-    test(
-      'un enseignant qui demande le foyer d un tuteur voit l acces refuse',
-      () {
-        expect(
-          deciderRedirection(
-            session: _session(role: AppRole.teacher),
-            cheminDemande: Routes.tuteurFoyer,
-            maintenant: maintenant,
-          ),
-          Routes.accesRefuse,
-        );
-      },
-    );
+    test('un enseignant qui demande le foyer d un tuteur repart chez lui', () {
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.teacher),
+          cheminDemande: Routes.tuteurFoyer,
+          maintenant: maintenant,
+        ),
+        Routes.enseignantJournee,
+      );
+    });
+
+    test('un tuteur qui demande une route admin voit l acces refuse', () {
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.guardian),
+          cheminDemande: Routes.adminSecuriteAuditJournal,
+          maintenant: maintenant,
+        ),
+        Routes.accesRefuse,
+      );
+    });
 
     test('la page d acces refuse est ouverte a chaque role actif', () {
       for (final AppRole role in AppRole.values) {
@@ -283,7 +294,7 @@ void main() {
           cheminDemande: Routes.tuteurAccueilAlias,
           maintenant: maintenant,
         ),
-        Routes.accesRefuse,
+        Routes.enseignantJournee,
       );
     });
   });
@@ -330,7 +341,7 @@ void main() {
           cheminDemande: '/cahier/seance-1',
           maintenant: maintenant,
         ),
-        Routes.accesRefuse,
+        Routes.enseignantJournee,
       );
       for (final String chemin in poses) {
         expect(
@@ -523,6 +534,27 @@ void main() {
           Routes.tuteurAccueil,
           reason: retour,
         );
+      }
+    });
+
+    test('une page d etat n est pas une destination a reprendre', () {
+      // Revue phase 0 (routes D6) : `retour=/acces-refuse` faisait atterrir
+      // sur « Acces refuse » juste apres la connexion.
+      for (final AppRole role in <AppRole>[
+        AppRole.guardian,
+        AppRole.teacher,
+        AppRole.student,
+      ]) {
+        for (final String retour in <String>[
+          Routes.accesRefuse,
+          Routes.horsLigne,
+        ]) {
+          expect(
+            apresConnexion(role, retour),
+            Routes.racinePour(role),
+            reason: '${role.valeurSql} $retour',
+          );
+        }
       }
     });
   });
@@ -829,8 +861,11 @@ void main() {
                 entree.key.startsWith(Routes.tcGroupes)) {
               // Le tuteur n'est pas refuse : il est conduit a sa classe.
               expect(decision, startsWith(Routes.tuteurAccueil));
-            } else {
+            } else if (role == AppRole.guardian) {
               expect(decision, Routes.accesRefuse);
+            } else {
+              // Les autres roles repartent chez eux, comme avant le chantier.
+              expect(decision, Routes.racinePour(role));
             }
           },
         );
