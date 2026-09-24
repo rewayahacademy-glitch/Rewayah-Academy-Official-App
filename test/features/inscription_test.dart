@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -29,17 +31,37 @@ class _SourceCapricieuse extends FausseSourceSession {
   }
 }
 
+/// Un dossier dont la creation reste en attente jusqu'a ce qu'on la libere,
+/// pour surprendre un second appui pendant que le premier est encore en vol.
+class _DossierLent extends FauxServiceDossier {
+  final Completer<void> _porte = Completer<void>();
+
+  void libere() => _porte.complete();
+
+  @override
+  Future<void> creerProfil({
+    required AppRole role,
+    required String prenom,
+    required String nom,
+    Genre? genre,
+  }) async {
+    await _porte.future;
+    await super.creerProfil(role: role, prenom: prenom, nom: nom, genre: genre);
+  }
+}
+
 /// Monte le parcours sur un routeur minimal portant les cinq routes du lot
 /// et une page d'arrivee `/attente`. Mesure sur 390 x 844.
 Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   WidgetTester tester, {
   FausseSourceSession? source,
+  FauxServiceDossier? dossierFourni,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  final FauxServiceDossier dossier = FauxServiceDossier();
+  final FauxServiceDossier dossier = dossierFourni ?? FauxServiceDossier();
   final FausseSourceSession session = source ?? FausseSourceSession();
 
   await tester.pumpWidget(
@@ -244,6 +266,78 @@ void main() {
       await _taper(tester, find.text(t.inscription.creer));
       expect(find.text(t.inscription.erreur), findsOneWidget);
       expect(find.text('4 sur 4'), findsOneWidget);
+    });
+
+    testWidgets('double soumission bloquee : un second appui pendant '
+        'l-envoi ne cree pas de second profil', (WidgetTester tester) async {
+      final _DossierLent dossier = _DossierLent();
+      final (_, FausseSourceSession source) = await _monter(
+        tester,
+        dossierFourni: dossier,
+      );
+      await _jusquAuRecap(tester);
+
+      final Finder cta = find.text(t.inscription.creer);
+      await tester.tap(cta);
+      await tester.pump();
+      // Le premier envoi est toujours en vol (la porte n'est pas liberee) :
+      // le CTA doit deja etre desactive, et un second appui ne rien faire.
+      expect(_cta(tester).onPress, isNull);
+      await tester.tap(cta, warnIfMissed: false);
+      await tester.pump();
+
+      dossier.libere();
+      await tester.pumpAndSettle();
+
+      expect(dossier.profilsCrees, hasLength(1));
+      expect(source.rafraichissements, 1);
+      expect(find.text('ATTENTE'), findsOneWidget);
+    });
+
+    testWidgets('le « Modifier » de l-usage et du genre ramenent au bon '
+        'endroit', (WidgetTester tester) async {
+      await _monter(tester);
+      await _jusquAuRecap(tester);
+
+      await _taper(
+        tester,
+        find.byKey(const Key('inscription-modifier-usage')),
+      );
+      expect(find.text('1 sur 4'), findsOneWidget);
+      await _taper(tester, find.byKey(const Key('inscription-usage-famille')));
+      await _continuer(tester);
+      expect(find.text('4 sur 4'), findsOneWidget);
+
+      await _taper(
+        tester,
+        find.byKey(const Key('inscription-modifier-genre')),
+      );
+      expect(find.text('3 sur 4'), findsOneWidget);
+      await _taper(tester, find.byKey(const Key('inscription-genre-homme')));
+      await _continuer(tester);
+      expect(find.text('4 sur 4'), findsOneWidget);
+    });
+
+    testWidgets('une fois le profil cree, « Modifier » et le retour '
+        'disparaissent : aucune impasse mais aucun doublon', (
+      WidgetTester tester,
+    ) async {
+      final _SourceCapricieuse source = _SourceCapricieuse();
+      await _monter(tester, source: source);
+      await _jusquAuRecap(tester);
+      await _taper(tester, find.text(t.inscription.creer));
+
+      expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
+      expect(
+        tester
+            .widget<ActionPrincipale>(
+              find.byKey(const Key('inscription-modifier-identite')),
+            )
+            .onPress,
+        isNull,
+      );
+      expect(find.byKey(const Key('inscription-retour')), findsNothing);
+      expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
     });
   });
 }
