@@ -7,7 +7,7 @@
 // **Controle lexical, volontairement simple.** Il lit le corps de chaque
 // provider declare dans `lib/` (hors `lib/features/_dev/` et hors fichiers
 // generes) et refuse toute instanciation d'un nom en `Faux*`,
-// `*Demonstration*` ou `*Memoire`, sauf si ce corps passe par
+// `*Demonstration*`, `*Memoire` ou `*Local(e)(s)`, sauf si ce corps passe par
 // `Env.playgroundActif`. Limites connues : un double instancie dans le
 // `build()` d'un `Notifier`, ou dans une fonction appelee par le provider, lui
 // echappe ; le patron du depot (selecteur `...Selon(demo: Env.playgroundActif)`
@@ -18,8 +18,13 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Les noms qui designent un double.
+///
+/// `*Local`, `*Locale(s)` ajoutes par la revue phase 0 (routes D9) :
+/// `CatalogueLocal()` servait une liste vide trompeuse a la production sans
+/// etre releve.
 final RegExp _double = RegExp(
-  r'(?<![\w.])(Faux\w*|\w*Demonstration\w*|\w*Memoire)\s*(?:<[^()]*>)?\s*\(',
+  r'(?<![\w.])(Faux\w*|\w*Demonstration\w*|\w*Memoire|\w*Locale?s?)'
+  r'\s*(?:<[^()]*>)?\s*\(',
 );
 
 /// Le debut d'une declaration de provider Riverpod.
@@ -47,14 +52,23 @@ const Map<String, String> _memoiresLegitimes = <String, String>{
   'StockagePreferencesMemoire': 'lib/core/preferences/preferences_locales.dart',
 };
 
-/// Dette connue : doubles encore servis sans condition a la production.
+/// Dette connue : doubles encore servis sans condition a la production, par
+/// nom et fichier. Exemption NOMINATIVE et temporaire : une entree doit etre
+/// retiree des que sa dette est resorbee, le second test l'exige.
 ///
-/// **Vide depuis la reprise de `33503fe`** (phase 0, point P8) : les deux
-/// entrees d'origine (`GroupesDemonstrationLocale` de `port_groupes.dart`,
-/// `HorlogeSeanceDemonstration` de `port_horloge_seance.dart`) sont passees
-/// derriere `Env.playgroundActif`. Une entree ajoutee ici doit etre retiree
-/// des que sa dette est resorbee : le second test l'exige.
-const Map<String, String> _detteConnue = <String, String>{};
+/// Les deux entrees d'origine (`GroupesDemonstrationLocale` de
+/// `port_groupes.dart`, `HorlogeSeanceDemonstration` de
+/// `port_horloge_seance.dart`) sont resorbees par la reprise de `33503fe`
+/// (phase 0, point P8).
+const Map<String, String> _detteConnue = <String, String>{
+  // La Bibliotheque sert un catalogue local vide et ses versions en
+  // production (`portCatalogueProvider`, `portVersionsProvider`) : une liste
+  // vide trompeuse, que les principes de `00_CONTRATS_PARTAGES` interdisent.
+  // Releve par la revue phase 0 (routes D9) ; a remplacer par une
+  // implementation `Indisponible` ou l'adaptateur reel (lot C).
+  'CatalogueLocal': 'lib/core/tc_bibliotheque/donnees_catalogue.dart',
+  'VersionsLocales': 'lib/core/tc_bibliotheque/donnees_catalogue.dart',
+};
 
 /// Une instanciation de double relevee dans le corps d'un provider.
 typedef Releve = ({String fichier, int ligne, String nom});
@@ -126,10 +140,18 @@ final FutureProvider<List<int>> listeProvider = FutureProvider<List<int>>(
 );
 final Provider<PortY> portYProvider =
     Provider<PortY>((Ref ref) => PortYMemoire());
+final Provider<PortZ> portZProvider = Provider<PortZ>(
+  (Ref ref) => CatalogueLocal(),
+);
 ''';
       expect(
         doublesDansLesProviders('piege.dart', piege).map((Releve r) => r.nom),
-        <String>['FauxPortX', 'SourceDemonstration', 'PortYMemoire'],
+        <String>[
+          'FauxPortX',
+          'SourceDemonstration',
+          'PortYMemoire',
+          'CatalogueLocal',
+        ],
       );
     });
 
@@ -167,11 +189,11 @@ final Provider<PortZ> portZProvider = Provider<PortZ>(
       );
     }
 
-    test('hors Playground, aucun Faux, Demonstration ni Memoire', () {
+    test('hors Playground, aucun Faux, Demonstration, Memoire ni Local', () {
       final List<String> violations = <String>[
         for (final Releve r in releves)
           if (_memoiresLegitimes[r.nom] != r.fichier &&
-              _detteConnue[r.fichier] != r.nom)
+              _detteConnue[r.nom] != r.fichier)
             '${r.fichier}:${r.ligne} ${r.nom}',
       ];
       expect(violations, isEmpty, reason: violations.join('\n'));
@@ -187,9 +209,9 @@ final Provider<PortZ> portZProvider = Provider<PortZ>(
             'memoire legitime ${e.key} (${e.value})',
         for (final MapEntry<String, String> e in _detteConnue.entries)
           if (!releves.any(
-            (Releve r) => r.fichier == e.key && r.nom == e.value,
+            (Releve r) => r.nom == e.key && r.fichier == e.value,
           ))
-            'dette resorbee ${e.value} (${e.key}) : retirer l entree',
+            'dette resorbee ${e.key} (${e.value}) : retirer l entree',
       ];
       expect(perimees, isEmpty, reason: perimees.join('\n'));
     });
