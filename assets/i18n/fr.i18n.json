@@ -1462,6 +1462,105 @@
     "segments": {
       "seances": "Séances",
       "observations": "Observations"
+    },
+    "moisCourts": ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."],
+    "dateCourte": "{jour} {mois} {annee}",
+    "dateLongue": "{jourSemaine} {jour} {mois} {annee}",
+    "plage": "{debut} - {fin}",
+    "duree": {
+      "secondes": "{s} s",
+      "minutes": "{m} min",
+      "minutesSecondes": "{m} min {s} s",
+      "heures": "{h} h",
+      "heuresMinutes": "{h} h {m}"
+    },
+    "fuseauListe": "Heures affichées à l'heure de cet appareil.",
+    "fuseauDetail": "Heures affichées à l'heure de cet appareil (UTC{decalage}).",
+    "classeInconnue": "Classe non disponible",
+    "selecteur": {
+      "aucune": "Aucune séance",
+      "une": "1 séance",
+      "plusieurs": "{n} séances"
+    },
+    "filtres": {
+      "classe": "Classe",
+      "toutesClasses": "Toutes les classes",
+      "periode": "Période",
+      "toutePeriode": "Toute la période",
+      "septJours": "7 derniers jours",
+      "trenteJours": "30 derniers jours",
+      "troisMois": "3 derniers mois",
+      "statut": "Statut",
+      "tousStatuts": "Tous les statuts"
+    },
+    "retour": "Retour à l'historique",
+    "etat": {
+      "presence": "Présence",
+      "retard": "Retard {minutes} min",
+      "retardSansDuree": "Retard",
+      "verification": "En cours de vérification",
+      "annule": "Cours annulé",
+      "nonTenu": "Cours non tenu"
+    },
+    "presenceIllisible": "La présence n'a pas pu être lue : les états restent inconnus pour le moment.",
+    "seances": {
+      "videTitre": "Aucune séance passée",
+      "videPhrase": "Les séances passées de {prenom} s'afficheront ici.",
+      "videPhraseFoyer": "Les séances passées des profils élèves s'afficheront ici.",
+      "filtreVideTitre": "Aucune séance ne correspond",
+      "filtreVidePhrase": "Changez les filtres pour retrouver les autres séances.",
+      "tronquee": "Les {nombre} séances les plus récentes sont affichées.",
+      "ouvrir": "Séance du {date}, {classe}, {etat}"
+    },
+    "observations": {
+      "indisponibleTitre": "Historique des observations indisponible",
+      "indisponiblePhrase": "Les visites enregistrées ne peuvent pas encore être lues dans l'application.",
+      "videTitre": "Aucune observation",
+      "videPhrase": "Les visites que vous faites pendant les séances de {prenom} s'afficheront ici.",
+      "videPhraseFoyer": "Vos visites pendant les séances s'afficheront ici.",
+      "filtreVideTitre": "Aucune observation ne correspond",
+      "filtreVidePhrase": "Changez les filtres pour retrouver les autres visites.",
+      "visiteUne": "1 visite",
+      "visites": "{n} visites",
+      "dureeNonConfirmee": "Durée non confirmée",
+      "terminee": "Terminée",
+      "nonRefermee": "Sortie non enregistrée",
+      "eleveInconnu": "Élève",
+      "tronquee": "Seules les visites les plus récentes sont affichées.",
+      "ouvrir": "Observations du {date}, {classe}, {etat}"
+    },
+    "seance": {
+      "titreSansClasse": "Séance du {date}",
+      "blocSeance": "La séance",
+      "blocPresence": "Présence de {prenom}",
+      "date": "Date",
+      "horaire": "Horaire",
+      "dureePrevue": "Durée prévue",
+      "classe": "Classe",
+      "enseignant": "Enseignant",
+      "presence": "Présence",
+      "arrivee": "Arrivée",
+      "interruption": "Interruption",
+      "verificationPhrase": "La présence n'est pas encore confirmée pour cette séance.",
+      "nonTenuPhrase": "La séance n'a pas eu lieu : ce n'est pas le fait de l'élève.",
+      "annulePhrase": "La séance a été annulée.",
+      "introuvableTitre": "Séance introuvable",
+      "introuvablePhrase": "Cette séance ne figure pas dans l'historique de votre foyer."
+    },
+    "observation": {
+      "titreSansClasse": "Observations du {date}",
+      "blocResume": "Résumé",
+      "blocVisites": "Visites",
+      "observateur": "Observateur",
+      "vous": "Vous",
+      "eleve": "Élève",
+      "enseignant": "Enseignant",
+      "dureeTotale": "Durée totale",
+      "visite": "Visite {n}",
+      "plageOuverte": "Entrée à {debut}",
+      "terminee": "Visite terminée",
+      "introuvableTitre": "Aucune visite pour cette séance",
+      "introuvablePhrase": "Aucune visite enregistrée ne correspond à cette séance."
     }
   },
   "notifications": {
@@ -1608,28 +1707,6 @@
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.",
       "erreur": "L'enregistrement n'a pas abouti : {message}"
-    },
-    "suivi": {
-      "titre": "Suivi du foyer",
-      "tousLesEnfants": "Tous les enfants",
-      "colonneDate": "Date",
-      "colonneEnfant": "Enfant",
-      "colonneEnseignant": "Enseignant",
-      "colonneEtat": "État",
-      "aujourdhui": "Aujourd'hui, {heure}",
-      "hier": "Hier, {heure}",
-      "date": "{date}, {heure}",
-      "annule": "Cours annulé",
-      "nonTenu": "Cours non tenu",
-      "vide": "Aucun cours pour l'instant",
-      "videDetail": "Les cours de vos enfants s'afficheront ici, du plus récent au plus ancien, avec leur présence.",
-      "videFiltre": "Aucun cours pour cet enfant",
-      "videFiltreDetail": "Relâchez le filtre pour retrouver le reste du foyer.",
-      "effacerFiltres": "Tout afficher",
-      "erreur": "Le suivi n'a pas pu être lu. Réessayez dans un instant.",
-      "tronquee": "Les {nombre} cours les plus récents sont affichés.",
-      "fin": "{nombre} cours au suivi.",
-      "finUn": "1 cours au suivi."
     }
   },
   "classe": {

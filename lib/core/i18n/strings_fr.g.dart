@@ -1849,6 +1849,56 @@ class Traductions$historique$fr {
 	String get detailSeance => 'Détail de la séance';
 
 	late final Traductions$historique$segments$fr segments = Traductions$historique$segments$fr.internal(_root);
+	List<String> get moisCourts => [
+		'janv.',
+		'févr.',
+		'mars',
+		'avr.',
+		'mai',
+		'juin',
+		'juil.',
+		'août',
+		'sept.',
+		'oct.',
+		'nov.',
+		'déc.',
+	];
+
+	/// fr: '{jour} {mois} {annee}'
+	String dateCourte({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}';
+
+	/// fr: '{jourSemaine} {jour} {mois} {annee}'
+	String dateLongue({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}';
+
+	/// fr: '{debut} - {fin}'
+	String plage({required Object debut, required Object fin}) => '${debut} - ${fin}';
+
+	late final Traductions$historique$duree$fr duree = Traductions$historique$duree$fr.internal(_root);
+
+	/// fr: 'Heures affichées à l'heure de cet appareil.'
+	String get fuseauListe => 'Heures affichées à l\'heure de cet appareil.';
+
+	/// fr: 'Heures affichées à l'heure de cet appareil (UTC{decalage}).'
+	String fuseauDetail({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).';
+
+	/// fr: 'Classe non disponible'
+	String get classeInconnue => 'Classe non disponible';
+
+	late final Traductions$historique$selecteur$fr selecteur = Traductions$historique$selecteur$fr.internal(_root);
+	late final Traductions$historique$filtres$fr filtres = Traductions$historique$filtres$fr.internal(_root);
+
+	/// fr: 'Retour à l'historique'
+	String get retour => 'Retour à l\'historique';
+
+	late final Traductions$historique$etat$fr etat = Traductions$historique$etat$fr.internal(_root);
+
+	/// fr: 'La présence n'a pas pu être lue : les états restent inconnus pour le moment.'
+	String get presenceIllisible => 'La présence n\'a pas pu être lue : les états restent inconnus pour le moment.';
+
+	late final Traductions$historique$seances$fr seances = Traductions$historique$seances$fr.internal(_root);
+	late final Traductions$historique$observations$fr observations = Traductions$historique$observations$fr.internal(_root);
+	late final Traductions$historique$seance$fr seance = Traductions$historique$seance$fr.internal(_root);
+	late final Traductions$historique$observation$fr observation = Traductions$historique$observation$fr.internal(_root);
 }
 
 // Path: notifications
@@ -1884,7 +1934,6 @@ class Traductions$tuteur$fr {
 	// Translations
 	late final Traductions$tuteur$accueil$fr accueil = Traductions$tuteur$accueil$fr.internal(_root);
 	late final Traductions$tuteur$reglages$fr reglages = Traductions$tuteur$reglages$fr.internal(_root);
-	late final Traductions$tuteur$suivi$fr suivi = Traductions$tuteur$suivi$fr.internal(_root);
 }
 
 // Path: classe
@@ -4224,6 +4273,300 @@ class Traductions$historique$segments$fr {
 	String get observations => 'Observations';
 }
 
+// Path: historique.duree
+class Traductions$historique$duree$fr {
+	Traductions$historique$duree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{s} s'
+	String secondes({required Object s}) => '${s} s';
+
+	/// fr: '{m} min'
+	String minutes({required Object m}) => '${m} min';
+
+	/// fr: '{m} min {s} s'
+	String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
+
+	/// fr: '{h} h'
+	String heures({required Object h}) => '${h} h';
+
+	/// fr: '{h} h {m}'
+	String heuresMinutes({required Object h, required Object m}) => '${h} h ${m}';
+}
+
+// Path: historique.selecteur
+class Traductions$historique$selecteur$fr {
+	Traductions$historique$selecteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune séance'
+	String get aucune => 'Aucune séance';
+
+	/// fr: '1 séance'
+	String get une => '1 séance';
+
+	/// fr: '{n} séances'
+	String plusieurs({required Object n}) => '${n} séances';
+}
+
+// Path: historique.filtres
+class Traductions$historique$filtres$fr {
+	Traductions$historique$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Toutes les classes'
+	String get toutesClasses => 'Toutes les classes';
+
+	/// fr: 'Période'
+	String get periode => 'Période';
+
+	/// fr: 'Toute la période'
+	String get toutePeriode => 'Toute la période';
+
+	/// fr: '7 derniers jours'
+	String get septJours => '7 derniers jours';
+
+	/// fr: '30 derniers jours'
+	String get trenteJours => '30 derniers jours';
+
+	/// fr: '3 derniers mois'
+	String get troisMois => '3 derniers mois';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Tous les statuts'
+	String get tousStatuts => 'Tous les statuts';
+}
+
+// Path: historique.etat
+class Traductions$historique$etat$fr {
+	Traductions$historique$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Présence'
+	String get presence => 'Présence';
+
+	/// fr: 'Retard {minutes} min'
+	String retard({required Object minutes}) => 'Retard ${minutes} min';
+
+	/// fr: 'Retard'
+	String get retardSansDuree => 'Retard';
+
+	/// fr: 'En cours de vérification'
+	String get verification => 'En cours de vérification';
+
+	/// fr: 'Cours annulé'
+	String get annule => 'Cours annulé';
+
+	/// fr: 'Cours non tenu'
+	String get nonTenu => 'Cours non tenu';
+}
+
+// Path: historique.seances
+class Traductions$historique$seances$fr {
+	Traductions$historique$seances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune séance passée'
+	String get videTitre => 'Aucune séance passée';
+
+	/// fr: 'Les séances passées de {prenom} s'afficheront ici.'
+	String videPhrase({required Object prenom}) => 'Les séances passées de ${prenom} s\'afficheront ici.';
+
+	/// fr: 'Les séances passées des profils élèves s'afficheront ici.'
+	String get videPhraseFoyer => 'Les séances passées des profils élèves s\'afficheront ici.';
+
+	/// fr: 'Aucune séance ne correspond'
+	String get filtreVideTitre => 'Aucune séance ne correspond';
+
+	/// fr: 'Changez les filtres pour retrouver les autres séances.'
+	String get filtreVidePhrase => 'Changez les filtres pour retrouver les autres séances.';
+
+	/// fr: 'Les {nombre} séances les plus récentes sont affichées.'
+	String tronquee({required Object nombre}) => 'Les ${nombre} séances les plus récentes sont affichées.';
+
+	/// fr: 'Séance du {date}, {classe}, {etat}'
+	String ouvrir({required Object date, required Object classe, required Object etat}) => 'Séance du ${date}, ${classe}, ${etat}';
+}
+
+// Path: historique.observations
+class Traductions$historique$observations$fr {
+	Traductions$historique$observations$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Historique des observations indisponible'
+	String get indisponibleTitre => 'Historique des observations indisponible';
+
+	/// fr: 'Les visites enregistrées ne peuvent pas encore être lues dans l'application.'
+	String get indisponiblePhrase => 'Les visites enregistrées ne peuvent pas encore être lues dans l\'application.';
+
+	/// fr: 'Aucune observation'
+	String get videTitre => 'Aucune observation';
+
+	/// fr: 'Les visites que vous faites pendant les séances de {prenom} s'afficheront ici.'
+	String videPhrase({required Object prenom}) => 'Les visites que vous faites pendant les séances de ${prenom} s\'afficheront ici.';
+
+	/// fr: 'Vos visites pendant les séances s'afficheront ici.'
+	String get videPhraseFoyer => 'Vos visites pendant les séances s\'afficheront ici.';
+
+	/// fr: 'Aucune observation ne correspond'
+	String get filtreVideTitre => 'Aucune observation ne correspond';
+
+	/// fr: 'Changez les filtres pour retrouver les autres visites.'
+	String get filtreVidePhrase => 'Changez les filtres pour retrouver les autres visites.';
+
+	/// fr: '1 visite'
+	String get visiteUne => '1 visite';
+
+	/// fr: '{n} visites'
+	String visites({required Object n}) => '${n} visites';
+
+	/// fr: 'Durée non confirmée'
+	String get dureeNonConfirmee => 'Durée non confirmée';
+
+	/// fr: 'Terminée'
+	String get terminee => 'Terminée';
+
+	/// fr: 'Sortie non enregistrée'
+	String get nonRefermee => 'Sortie non enregistrée';
+
+	/// fr: 'Élève'
+	String get eleveInconnu => 'Élève';
+
+	/// fr: 'Seules les visites les plus récentes sont affichées.'
+	String get tronquee => 'Seules les visites les plus récentes sont affichées.';
+
+	/// fr: 'Observations du {date}, {classe}, {etat}'
+	String ouvrir({required Object date, required Object classe, required Object etat}) => 'Observations du ${date}, ${classe}, ${etat}';
+}
+
+// Path: historique.seance
+class Traductions$historique$seance$fr {
+	Traductions$historique$seance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séance du {date}'
+	String titreSansClasse({required Object date}) => 'Séance du ${date}';
+
+	/// fr: 'La séance'
+	String get blocSeance => 'La séance';
+
+	/// fr: 'Présence de {prenom}'
+	String blocPresence({required Object prenom}) => 'Présence de ${prenom}';
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'Horaire'
+	String get horaire => 'Horaire';
+
+	/// fr: 'Durée prévue'
+	String get dureePrevue => 'Durée prévue';
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Présence'
+	String get presence => 'Présence';
+
+	/// fr: 'Arrivée'
+	String get arrivee => 'Arrivée';
+
+	/// fr: 'Interruption'
+	String get interruption => 'Interruption';
+
+	/// fr: 'La présence n'est pas encore confirmée pour cette séance.'
+	String get verificationPhrase => 'La présence n\'est pas encore confirmée pour cette séance.';
+
+	/// fr: 'La séance n'a pas eu lieu : ce n'est pas le fait de l'élève.'
+	String get nonTenuPhrase => 'La séance n\'a pas eu lieu : ce n\'est pas le fait de l\'élève.';
+
+	/// fr: 'La séance a été annulée.'
+	String get annulePhrase => 'La séance a été annulée.';
+
+	/// fr: 'Séance introuvable'
+	String get introuvableTitre => 'Séance introuvable';
+
+	/// fr: 'Cette séance ne figure pas dans l'historique de votre foyer.'
+	String get introuvablePhrase => 'Cette séance ne figure pas dans l\'historique de votre foyer.';
+}
+
+// Path: historique.observation
+class Traductions$historique$observation$fr {
+	Traductions$historique$observation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Observations du {date}'
+	String titreSansClasse({required Object date}) => 'Observations du ${date}';
+
+	/// fr: 'Résumé'
+	String get blocResume => 'Résumé';
+
+	/// fr: 'Visites'
+	String get blocVisites => 'Visites';
+
+	/// fr: 'Observateur'
+	String get observateur => 'Observateur';
+
+	/// fr: 'Vous'
+	String get vous => 'Vous';
+
+	/// fr: 'Élève'
+	String get eleve => 'Élève';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Durée totale'
+	String get dureeTotale => 'Durée totale';
+
+	/// fr: 'Visite {n}'
+	String visite({required Object n}) => 'Visite ${n}';
+
+	/// fr: 'Entrée à {debut}'
+	String plageOuverte({required Object debut}) => 'Entrée à ${debut}';
+
+	/// fr: 'Visite terminée'
+	String get terminee => 'Visite terminée';
+
+	/// fr: 'Aucune visite pour cette séance'
+	String get introuvableTitre => 'Aucune visite pour cette séance';
+
+	/// fr: 'Aucune visite enregistrée ne correspond à cette séance.'
+	String get introuvablePhrase => 'Aucune visite enregistrée ne correspond à cette séance.';
+}
+
 // Path: eleve.accueil
 class Traductions$eleve$accueil$fr {
 	Traductions$eleve$accueil$fr.internal(this._root);
@@ -4654,75 +4997,6 @@ class Traductions$tuteur$reglages$fr {
 
 	/// fr: 'L'enregistrement n'a pas abouti : {message}'
 	String erreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
-}
-
-// Path: tuteur.suivi
-class Traductions$tuteur$suivi$fr {
-	Traductions$tuteur$suivi$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Suivi du foyer'
-	String get titre => 'Suivi du foyer';
-
-	/// fr: 'Tous les enfants'
-	String get tousLesEnfants => 'Tous les enfants';
-
-	/// fr: 'Date'
-	String get colonneDate => 'Date';
-
-	/// fr: 'Enfant'
-	String get colonneEnfant => 'Enfant';
-
-	/// fr: 'Enseignant'
-	String get colonneEnseignant => 'Enseignant';
-
-	/// fr: 'État'
-	String get colonneEtat => 'État';
-
-	/// fr: 'Aujourd'hui, {heure}'
-	String aujourdhui({required Object heure}) => 'Aujourd\'hui, ${heure}';
-
-	/// fr: 'Hier, {heure}'
-	String hier({required Object heure}) => 'Hier, ${heure}';
-
-	/// fr: '{date}, {heure}'
-	String date({required Object date, required Object heure}) => '${date}, ${heure}';
-
-	/// fr: 'Cours annulé'
-	String get annule => 'Cours annulé';
-
-	/// fr: 'Cours non tenu'
-	String get nonTenu => 'Cours non tenu';
-
-	/// fr: 'Aucun cours pour l'instant'
-	String get vide => 'Aucun cours pour l\'instant';
-
-	/// fr: 'Les cours de vos enfants s'afficheront ici, du plus récent au plus ancien, avec leur présence.'
-	String get videDetail => 'Les cours de vos enfants s\'afficheront ici, du plus récent au plus ancien, avec leur présence.';
-
-	/// fr: 'Aucun cours pour cet enfant'
-	String get videFiltre => 'Aucun cours pour cet enfant';
-
-	/// fr: 'Relâchez le filtre pour retrouver le reste du foyer.'
-	String get videFiltreDetail => 'Relâchez le filtre pour retrouver le reste du foyer.';
-
-	/// fr: 'Tout afficher'
-	String get effacerFiltres => 'Tout afficher';
-
-	/// fr: 'Le suivi n'a pas pu être lu. Réessayez dans un instant.'
-	String get erreur => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.';
-
-	/// fr: 'Les {nombre} cours les plus récents sont affichés.'
-	String tronquee({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.';
-
-	/// fr: '{nombre} cours au suivi.'
-	String fin({required Object nombre}) => '${nombre} cours au suivi.';
-
-	/// fr: '1 cours au suivi.'
-	String get finUn => '1 cours au suivi.';
 }
 
 // Path: enseignant.bienvenue
@@ -9550,6 +9824,100 @@ extension on Traductions {
 			'historique.detailSeance' => 'Détail de la séance',
 			'historique.segments.seances' => 'Séances',
 			'historique.segments.observations' => 'Observations',
+			'historique.moisCourts.0' => 'janv.',
+			'historique.moisCourts.1' => 'févr.',
+			'historique.moisCourts.2' => 'mars',
+			'historique.moisCourts.3' => 'avr.',
+			'historique.moisCourts.4' => 'mai',
+			'historique.moisCourts.5' => 'juin',
+			'historique.moisCourts.6' => 'juil.',
+			'historique.moisCourts.7' => 'août',
+			'historique.moisCourts.8' => 'sept.',
+			'historique.moisCourts.9' => 'oct.',
+			'historique.moisCourts.10' => 'nov.',
+			'historique.moisCourts.11' => 'déc.',
+			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
+			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
+			'historique.plage' => ({required Object debut, required Object fin}) => '${debut} - ${fin}',
+			'historique.duree.secondes' => ({required Object s}) => '${s} s',
+			'historique.duree.minutes' => ({required Object m}) => '${m} min',
+			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			'historique.duree.heures' => ({required Object h}) => '${h} h',
+			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
+			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
+			'historique.fuseauDetail' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
+			'historique.classeInconnue' => 'Classe non disponible',
+			'historique.selecteur.aucune' => 'Aucune séance',
+			'historique.selecteur.une' => '1 séance',
+			'historique.selecteur.plusieurs' => ({required Object n}) => '${n} séances',
+			'historique.filtres.classe' => 'Classe',
+			'historique.filtres.toutesClasses' => 'Toutes les classes',
+			'historique.filtres.periode' => 'Période',
+			'historique.filtres.toutePeriode' => 'Toute la période',
+			'historique.filtres.septJours' => '7 derniers jours',
+			'historique.filtres.trenteJours' => '30 derniers jours',
+			'historique.filtres.troisMois' => '3 derniers mois',
+			'historique.filtres.statut' => 'Statut',
+			'historique.filtres.tousStatuts' => 'Tous les statuts',
+			'historique.retour' => 'Retour à l\'historique',
+			'historique.etat.presence' => 'Présence',
+			'historique.etat.retard' => ({required Object minutes}) => 'Retard ${minutes} min',
+			'historique.etat.retardSansDuree' => 'Retard',
+			'historique.etat.verification' => 'En cours de vérification',
+			'historique.etat.annule' => 'Cours annulé',
+			'historique.etat.nonTenu' => 'Cours non tenu',
+			'historique.presenceIllisible' => 'La présence n\'a pas pu être lue : les états restent inconnus pour le moment.',
+			'historique.seances.videTitre' => 'Aucune séance passée',
+			'historique.seances.videPhrase' => ({required Object prenom}) => 'Les séances passées de ${prenom} s\'afficheront ici.',
+			'historique.seances.videPhraseFoyer' => 'Les séances passées des profils élèves s\'afficheront ici.',
+			'historique.seances.filtreVideTitre' => 'Aucune séance ne correspond',
+			'historique.seances.filtreVidePhrase' => 'Changez les filtres pour retrouver les autres séances.',
+			'historique.seances.tronquee' => ({required Object nombre}) => 'Les ${nombre} séances les plus récentes sont affichées.',
+			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Séance du ${date}, ${classe}, ${etat}',
+			'historique.observations.indisponibleTitre' => 'Historique des observations indisponible',
+			'historique.observations.indisponiblePhrase' => 'Les visites enregistrées ne peuvent pas encore être lues dans l\'application.',
+			'historique.observations.videTitre' => 'Aucune observation',
+			'historique.observations.videPhrase' => ({required Object prenom}) => 'Les visites que vous faites pendant les séances de ${prenom} s\'afficheront ici.',
+			'historique.observations.videPhraseFoyer' => 'Vos visites pendant les séances s\'afficheront ici.',
+			'historique.observations.filtreVideTitre' => 'Aucune observation ne correspond',
+			'historique.observations.filtreVidePhrase' => 'Changez les filtres pour retrouver les autres visites.',
+			'historique.observations.visiteUne' => '1 visite',
+			'historique.observations.visites' => ({required Object n}) => '${n} visites',
+			'historique.observations.dureeNonConfirmee' => 'Durée non confirmée',
+			'historique.observations.terminee' => 'Terminée',
+			'historique.observations.nonRefermee' => 'Sortie non enregistrée',
+			'historique.observations.eleveInconnu' => 'Élève',
+			'historique.observations.tronquee' => 'Seules les visites les plus récentes sont affichées.',
+			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations du ${date}, ${classe}, ${etat}',
+			'historique.seance.titreSansClasse' => ({required Object date}) => 'Séance du ${date}',
+			'historique.seance.blocSeance' => 'La séance',
+			'historique.seance.blocPresence' => ({required Object prenom}) => 'Présence de ${prenom}',
+			'historique.seance.date' => 'Date',
+			'historique.seance.horaire' => 'Horaire',
+			'historique.seance.dureePrevue' => 'Durée prévue',
+			'historique.seance.classe' => 'Classe',
+			'historique.seance.enseignant' => 'Enseignant',
+			'historique.seance.presence' => 'Présence',
+			'historique.seance.arrivee' => 'Arrivée',
+			'historique.seance.interruption' => 'Interruption',
+			'historique.seance.verificationPhrase' => 'La présence n\'est pas encore confirmée pour cette séance.',
+			'historique.seance.nonTenuPhrase' => 'La séance n\'a pas eu lieu : ce n\'est pas le fait de l\'élève.',
+			'historique.seance.annulePhrase' => 'La séance a été annulée.',
+			'historique.seance.introuvableTitre' => 'Séance introuvable',
+			'historique.seance.introuvablePhrase' => 'Cette séance ne figure pas dans l\'historique de votre foyer.',
+			'historique.observation.titreSansClasse' => ({required Object date}) => 'Observations du ${date}',
+			'historique.observation.blocResume' => 'Résumé',
+			'historique.observation.blocVisites' => 'Visites',
+			'historique.observation.observateur' => 'Observateur',
+			'historique.observation.vous' => 'Vous',
+			'historique.observation.eleve' => 'Élève',
+			'historique.observation.enseignant' => 'Enseignant',
+			'historique.observation.dureeTotale' => 'Durée totale',
+			'historique.observation.visite' => ({required Object n}) => 'Visite ${n}',
+			'historique.observation.plageOuverte' => ({required Object debut}) => 'Entrée à ${debut}',
+			'historique.observation.terminee' => 'Visite terminée',
+			'historique.observation.introuvableTitre' => 'Aucune visite pour cette séance',
+			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
 			'notifications.titre' => 'Notifications',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
@@ -9680,26 +10048,6 @@ extension on Traductions {
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
-			'tuteur.suivi.titre' => 'Suivi du foyer',
-			'tuteur.suivi.tousLesEnfants' => 'Tous les enfants',
-			'tuteur.suivi.colonneDate' => 'Date',
-			'tuteur.suivi.colonneEnfant' => 'Enfant',
-			'tuteur.suivi.colonneEnseignant' => 'Enseignant',
-			'tuteur.suivi.colonneEtat' => 'État',
-			'tuteur.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
-			'tuteur.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
-			'tuteur.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
-			'tuteur.suivi.annule' => 'Cours annulé',
-			'tuteur.suivi.nonTenu' => 'Cours non tenu',
-			'tuteur.suivi.vide' => 'Aucun cours pour l\'instant',
-			'tuteur.suivi.videDetail' => 'Les cours de vos enfants s\'afficheront ici, du plus récent au plus ancien, avec leur présence.',
-			'tuteur.suivi.videFiltre' => 'Aucun cours pour cet enfant',
-			'tuteur.suivi.videFiltreDetail' => 'Relâchez le filtre pour retrouver le reste du foyer.',
-			'tuteur.suivi.effacerFiltres' => 'Tout afficher',
-			'tuteur.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
-			'tuteur.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
-			'tuteur.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
-			'tuteur.suivi.finUn' => '1 cours au suivi.',
 			'classe.catalogue' => 'Choisir une classe',
 			'classe.planning' => 'Planning',
 			'classe.travail' => 'Travail à préparer',
@@ -9755,6 +10103,8 @@ extension on Traductions {
 			'enseignant.journee.preflightBloque' => 'Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.',
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
 			'enseignant.journee.erreurPartielle' => 'Une partie de la journée n\'a pas pu être lue : prières, pauses ou rapports peuvent manquer.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
@@ -9829,8 +10179,6 @@ extension on Traductions {
 			'enseignant.cahier.objectif' => 'Objectif personnel',
 			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
 			'enseignant.cahier.travailMaison' => 'Travail à la maison',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau contenu',
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
@@ -10269,6 +10617,8 @@ extension on Traductions {
 			'tc.observation.visite.mediaFerme' => 'Micro et caméra fermés pendant l\'observation.',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.enfantAbsent' => 'Votre enfant n\'a pas d\'image ouverte.',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
@@ -10343,8 +10693,6 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
