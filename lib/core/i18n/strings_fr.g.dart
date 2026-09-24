@@ -795,29 +795,8 @@ class Traductions$enfant$fr {
 
 	// Translations
 
-	/// fr: 'Ajouter un enfant'
-	String get titre => 'Ajouter un enfant';
-
-	/// fr: 'Son prénom'
-	String get prenom => 'Son prénom';
-
-	/// fr: 'Son nom'
-	String get nom => 'Son nom';
-
-	/// fr: 'Son âge'
-	String get age => 'Son âge';
-
-	/// fr: 'Indiquez un âge entre 3 et 18 ans.'
-	String get ageInvalide => 'Indiquez un âge entre 3 et 18 ans.';
-
-	/// fr: 'L'âge fixe le mode d'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.'
-	String get ageRaison => 'L\'âge fixe le mode d\'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.';
-
-	/// fr: 'Ajouter au foyer'
-	String get creer => 'Ajouter au foyer';
-
-	/// fr: 'L'ajout n'a pas abouti. Réessayez dans un instant.'
-	String get erreur => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.';
+	/// fr: 'Ajouter un profil élève'
+	String get titre => 'Ajouter un profil élève';
 
 	/// fr: 'Aucun enfant dans le foyer'
 	String get aucun => 'Aucun enfant dans le foyer';
@@ -865,6 +844,7 @@ class Traductions$foyer$fr {
 	String get creerMonProfil => 'Créer mon profil élève';
 
 	late final Traductions$foyer$monProfil$fr monProfil = Traductions$foyer$monProfil$fr.internal(_root);
+	late final Traductions$foyer$ajout$fr ajout = Traductions$foyer$ajout$fr.internal(_root);
 }
 
 // Path: ficheEleve
@@ -2261,6 +2241,36 @@ class Traductions$foyer$monProfil$fr {
 
 	/// fr: 'Retour au foyer'
 	String get retour => 'Retour au foyer';
+}
+
+// Path: foyer.ajout
+class Traductions$foyer$ajout$fr {
+	Traductions$foyer$ajout$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{n} sur {total}'
+	String etapeSur({required Object n, required Object total}) => '${n} sur ${total}';
+
+	/// fr: 'Étape {n} sur {total}'
+	String etapeSurLue({required Object n, required Object total}) => 'Étape ${n} sur ${total}';
+
+	/// fr: 'Suivant'
+	String get suivant => 'Suivant';
+
+	/// fr: 'Créer le profil'
+	String get creer => 'Créer le profil';
+
+	late final Traductions$foyer$ajout$pourQui$fr pourQui = Traductions$foyer$ajout$pourQui$fr.internal(_root);
+	late final Traductions$foyer$ajout$identite$fr identite = Traductions$foyer$ajout$identite$fr.internal(_root);
+	late final Traductions$foyer$ajout$erreurs$fr erreurs = Traductions$foyer$ajout$erreurs$fr.internal(_root);
+	late final Traductions$foyer$ajout$refus$fr refus = Traductions$foyer$ajout$refus$fr.internal(_root);
+	late final Traductions$foyer$ajout$incertaine$fr incertaine = Traductions$foyer$ajout$incertaine$fr.internal(_root);
+
+	/// fr: 'Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra.'
+	String get horsLigne => 'Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra.';
 }
 
 // Path: admin.tableau
@@ -6022,6 +6032,141 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: foyer.ajout.pourQui
+class Traductions$foyer$ajout$pourQui$fr {
+	Traductions$foyer$ajout$pourQui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour qui est ce profil élève ?'
+	String get question => 'Pour qui est ce profil élève ?';
+
+	/// fr: 'Choisissez la personne qui suivra les cours.'
+	String get sousTitre => 'Choisissez la personne qui suivra les cours.';
+
+	/// fr: 'Choisissez pour qui est ce profil pour continuer.'
+	String get requis => 'Choisissez pour qui est ce profil pour continuer.';
+
+	/// fr: 'Indisponible'
+	String get indisponible => 'Indisponible';
+
+	/// fr: 'Un enfant ou un mineur'
+	String get enfantTitre => 'Un enfant ou un mineur';
+
+	/// fr: 'Un profil rattaché à votre foyer, que vous gérez pour lui.'
+	String get enfantDescription => 'Un profil rattaché à votre foyer, que vous gérez pour lui.';
+
+	/// fr: 'Possible dès que votre dossier est validé.'
+	String get enfantAttente => 'Possible dès que votre dossier est validé.';
+
+	/// fr: 'Un proche adulte'
+	String get procheTitre => 'Un proche adulte';
+
+	/// fr: 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.'
+	String get procheDescription => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.';
+
+	/// fr: 'Moi-même'
+	String get moiTitre => 'Moi-même';
+
+	/// fr: 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.'
+	String get moiDescription => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.';
+}
+
+// Path: foyer.ajout.identite
+class Traductions$foyer$ajout$identite$fr {
+	Traductions$foyer$ajout$identite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qui est l'élève ?'
+	String get question => 'Qui est l\'élève ?';
+
+	/// fr: 'Son prénom, son nom et son âge.'
+	String get sousTitre => 'Son prénom, son nom et son âge.';
+
+	/// fr: 'Prénom'
+	String get prenom => 'Prénom';
+
+	/// fr: 'Nom'
+	String get nom => 'Nom';
+
+	/// fr: 'Le nom de famille n'est jamais montré à l'enseignant.'
+	String get nomAide => 'Le nom de famille n\'est jamais montré à l\'enseignant.';
+
+	/// fr: 'Âge'
+	String get age => 'Âge';
+
+	/// fr: 'ans'
+	String get ageSuffixe => 'ans';
+
+	/// fr: 'L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.'
+	String get ageAide => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.';
+}
+
+// Path: foyer.ajout.erreurs
+class Traductions$foyer$ajout$erreurs$fr {
+	Traductions$foyer$ajout$erreurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Indiquez le prénom de l'élève.'
+	String get prenomRequis => 'Indiquez le prénom de l\'élève.';
+
+	/// fr: 'Indiquez le nom de l'élève.'
+	String get nomRequis => 'Indiquez le nom de l\'élève.';
+
+	/// fr: 'Indiquez l'âge, en chiffres.'
+	String get ageRequis => 'Indiquez l\'âge, en chiffres.';
+
+	/// fr: 'Indiquez un âge entre {min} et {max} ans.'
+	String ageHorsBornes({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.';
+}
+
+// Path: foyer.ajout.refus
+class Traductions$foyer$ajout$refus$fr {
+	Traductions$foyer$ajout$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre dossier doit être validé avant d'ajouter un profil élève.'
+	String get compteNonValide => 'Votre dossier doit être validé avant d\'ajouter un profil élève.';
+
+	/// fr: 'Cet âge n'est pas accepté. Vérifiez-le puis réessayez.'
+	String get ageHorsBornes => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.';
+
+	/// fr: 'La création n'a pas été acceptée. Vérifiez les informations puis réessayez.'
+	String get refuse => 'La création n\'a pas été acceptée. Vérifiez les informations puis réessayez.';
+}
+
+// Path: foyer.ajout.incertaine
+class Traductions$foyer$ajout$incertaine$fr {
+	Traductions$foyer$ajout$incertaine$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le profil a peut-être été créé'
+	String get titre => 'Le profil a peut-être été créé';
+
+	/// fr: 'La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.'
+	String get phrase => 'La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.';
+
+	/// fr: 'Voir le foyer'
+	String get voirFoyer => 'Voir le foyer';
+
+	/// fr: 'Réessayer quand même'
+	String get reessayer => 'Réessayer quand même';
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -8173,14 +8318,7 @@ extension on Traductions {
 			'appareils.derniereUtilisation' => ({required Object quand}) => 'Utilisé ${quand}',
 			'appareils.jamaisUtilise' => 'Jamais utilisé',
 			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
-			'enfant.titre' => 'Ajouter un enfant',
-			'enfant.prenom' => 'Son prénom',
-			'enfant.nom' => 'Son nom',
-			'enfant.age' => 'Son âge',
-			'enfant.ageInvalide' => 'Indiquez un âge entre 3 et 18 ans.',
-			'enfant.ageRaison' => 'L\'âge fixe le mode d\'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.',
-			'enfant.creer' => 'Ajouter au foyer',
-			'enfant.erreur' => 'L\'ajout n\'a pas abouti. Réessayez dans un instant.',
+			'enfant.titre' => 'Ajouter un profil élève',
 			'enfant.aucun' => 'Aucun enfant dans le foyer',
 			'enfant.aucunDetail' => 'Ajoutez votre premier enfant pour pouvoir appairer son appareil.',
 			'foyer.titre' => 'Foyer',
@@ -8203,6 +8341,41 @@ extension on Traductions {
 			'foyer.monProfil.indisponibleTitre' => 'Pas encore possible',
 			'foyer.monProfil.indisponiblePhrase' => 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu\'il est.',
 			'foyer.monProfil.retour' => 'Retour au foyer',
+			'foyer.ajout.etapeSur' => ({required Object n, required Object total}) => '${n} sur ${total}',
+			'foyer.ajout.etapeSurLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
+			'foyer.ajout.suivant' => 'Suivant',
+			'foyer.ajout.creer' => 'Créer le profil',
+			'foyer.ajout.pourQui.question' => 'Pour qui est ce profil élève ?',
+			'foyer.ajout.pourQui.sousTitre' => 'Choisissez la personne qui suivra les cours.',
+			'foyer.ajout.pourQui.requis' => 'Choisissez pour qui est ce profil pour continuer.',
+			'foyer.ajout.pourQui.indisponible' => 'Indisponible',
+			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
+			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
+			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre dossier est validé.',
+			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
+			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
+			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
+			'foyer.ajout.pourQui.moiDescription' => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.',
+			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
+			'foyer.ajout.identite.sousTitre' => 'Son prénom, son nom et son âge.',
+			'foyer.ajout.identite.prenom' => 'Prénom',
+			'foyer.ajout.identite.nom' => 'Nom',
+			'foyer.ajout.identite.nomAide' => 'Le nom de famille n\'est jamais montré à l\'enseignant.',
+			'foyer.ajout.identite.age' => 'Âge',
+			'foyer.ajout.identite.ageSuffixe' => 'ans',
+			'foyer.ajout.identite.ageAide' => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.',
+			'foyer.ajout.erreurs.prenomRequis' => 'Indiquez le prénom de l\'élève.',
+			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
+			'foyer.ajout.erreurs.ageRequis' => 'Indiquez l\'âge, en chiffres.',
+			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.',
+			'foyer.ajout.refus.compteNonValide' => 'Votre dossier doit être validé avant d\'ajouter un profil élève.',
+			'foyer.ajout.refus.ageHorsBornes' => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.',
+			'foyer.ajout.refus.refuse' => 'La création n\'a pas été acceptée. Vérifiez les informations puis réessayez.',
+			'foyer.ajout.incertaine.titre' => 'Le profil a peut-être été créé',
+			'foyer.ajout.incertaine.phrase' => 'La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.',
+			'foyer.ajout.incertaine.voirFoyer' => 'Voir le foyer',
+			'foyer.ajout.incertaine.reessayer' => 'Réessayer quand même',
+			'foyer.ajout.horsLigne' => 'Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra.',
 			'ficheEleve.informations' => 'Informations de l\'élève',
 			'ficheEleve.inscription' => 'Parcours et inscription',
 			'ficheEleve.interface' => 'Interface',
@@ -8398,6 +8571,8 @@ extension on Traductions {
 			'admin.attribution.attendUnJour' => 'Attend depuis 1 jour',
 			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
 			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
@@ -8426,8 +8601,6 @@ extension on Traductions {
 			'admin.groupes.colonneMembres' => 'Membres',
 			'admin.groupes.colonneCreneau' => 'Créneau',
 			'admin.groupes.colonneEtat' => 'État',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.typeEnfant' => 'Enfants',
 			'admin.groupes.typeAdulte' => 'Adultes',
 			'admin.groupes.filtreTousTypes' => 'Tous les publics',
@@ -8912,6 +9085,8 @@ extension on Traductions {
 			'parcours.niveauMemorisationPartielle' => 'Une partie est déjà mémorisée',
 			'parcours.objectifQuestion' => 'Que souhaitez-vous d\'abord ?',
 			'parcours.objectifRaison' => 'Vous pourrez changer d\'objectif plus tard : il oriente le travail de l\'enseignant, il ne vous engage pas.',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
 			'parcours.objectifMemoriser' => 'Mémoriser',
@@ -8940,8 +9115,6 @@ extension on Traductions {
 			'parcours.refusEffet' => 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.',
 			'parcours.refusEnregistre' => 'C\'est noté. Nous vous préviendrons si un horaire correspondant ouvre.',
 			'parcours.etatAPersonnaliser' => 'Parcours à personnaliser',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.etatAPersonnaliserDetail' => ({required Object prenom}) => 'Quelques questions, et nous ne vous montrerons que ce qui convient à ${prenom}.',
 			'parcours.etatHoraireAChoisir' => 'Horaire à choisir',
 			'parcours.etatHoraireAChoisirDetail' => ({required Object prenom}) => 'Les horaires ouverts pour ${prenom} vous attendent.',
@@ -9426,6 +9599,8 @@ extension on Traductions {
 			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepté le ${date}',
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.contratErreur' => 'Vos contrats n\'ont pas pu être lus.',
 			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule : un contrat qui s\'édite depuis l\'écran de la personne qu\'il engage n\'est plus un contrat.',
 			'enseignant.profil.personnel' => 'Mes réglages',
@@ -9454,8 +9629,6 @@ extension on Traductions {
 			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà un élève sur ${heures}. Retirer ces heures ne met pas fin aux cours : il faut une réaffectation.',
 			'enseignant.creneaux.feedErreur' => 'Les familles en attente n\'ont pas pu être lues',
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.horsLignePrise' => 'Sans réseau, vous ne pouvez pas prendre d\'élève. Les demandes ci-dessous restent consultables.',
 			'enseignant.creneaux.horsLigneDemande' => 'Sans réseau, cette demande ne partirait pas. Réessayez au retour de la connexion.',
 			'enseignant.creneaux.refusDejaPris' => 'Cet élève vient d\'être pris par un autre enseignant. La liste ci-dessous est à jour.',

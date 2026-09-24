@@ -333,14 +333,7 @@
     "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
   },
   "enfant": {
-    "titre": "Ajouter un enfant",
-    "prenom": "Son prénom",
-    "nom": "Son nom",
-    "age": "Son âge",
-    "ageInvalide": "Indiquez un âge entre 3 et 18 ans.",
-    "ageRaison": "L'âge fixe le mode d'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.",
-    "creer": "Ajouter au foyer",
-    "erreur": "L'ajout n'a pas abouti. Réessayez dans un instant.",
+    "titre": "Ajouter un profil élève",
     "aucun": "Aucun enfant dans le foyer",
     "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
   },
@@ -370,6 +363,53 @@
       "indisponibleTitre": "Pas encore possible",
       "indisponiblePhrase": "Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.",
       "retour": "Retour au foyer"
+    },
+    "ajout": {
+      "etapeSur": "{n} sur {total}",
+      "etapeSurLue": "Étape {n} sur {total}",
+      "suivant": "Suivant",
+      "creer": "Créer le profil",
+      "pourQui": {
+        "question": "Pour qui est ce profil élève ?",
+        "sousTitre": "Choisissez la personne qui suivra les cours.",
+        "requis": "Choisissez pour qui est ce profil pour continuer.",
+        "indisponible": "Indisponible",
+        "enfantTitre": "Un enfant ou un mineur",
+        "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
+        "enfantAttente": "Possible dès que votre dossier est validé.",
+        "procheTitre": "Un proche adulte",
+        "procheDescription": "Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.",
+        "moiTitre": "Moi-même",
+        "moiDescription": "Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement."
+      },
+      "identite": {
+        "question": "Qui est l'élève ?",
+        "sousTitre": "Son prénom, son nom et son âge.",
+        "prenom": "Prénom",
+        "nom": "Nom",
+        "nomAide": "Le nom de famille n'est jamais montré à l'enseignant.",
+        "age": "Âge",
+        "ageSuffixe": "ans",
+        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite."
+      },
+      "erreurs": {
+        "prenomRequis": "Indiquez le prénom de l'élève.",
+        "nomRequis": "Indiquez le nom de l'élève.",
+        "ageRequis": "Indiquez l'âge, en chiffres.",
+        "ageHorsBornes": "Indiquez un âge entre {min} et {max} ans."
+      },
+      "refus": {
+        "compteNonValide": "Votre dossier doit être validé avant d'ajouter un profil élève.",
+        "ageHorsBornes": "Cet âge n'est pas accepté. Vérifiez-le puis réessayez.",
+        "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez."
+      },
+      "incertaine": {
+        "titre": "Le profil a peut-être été créé",
+        "phrase": "La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.",
+        "voirFoyer": "Voir le foyer",
+        "reessayer": "Réessayer quand même"
+      },
+      "horsLigne": "Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra."
     }
   },
   "ficheEleve": {
