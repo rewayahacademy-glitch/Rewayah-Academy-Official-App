@@ -47,15 +47,14 @@ const Map<String, String> _memoiresLegitimes = <String, String>{
   'StockagePreferencesMemoire': 'lib/core/preferences/preferences_locales.dart',
 };
 
-/// Dette connue au moment ou ce controle est pose : les deux doubles servis
-/// sans condition a la production (`00_CONTRATS_PARTAGES.md`, K7). La reprise
-/// de `33503fe` (phase 0a, point P8) les place derriere
-/// `Env.playgroundActif` ; **ce test echoue alors pour demander le retrait de
-/// l'entree**, pour qu'aucune exemption ne survive a sa raison d'etre.
-const Map<String, String> _detteConnue = <String, String>{
-  'lib/core/tc_groupe/port_groupes.dart': 'GroupesDemonstrationLocale',
-  'lib/core/tc_horloge/port_horloge_seance.dart': 'HorlogeSeanceDemonstration',
-};
+/// Dette connue : doubles encore servis sans condition a la production.
+///
+/// **Vide depuis la reprise de `33503fe`** (phase 0, point P8) : les deux
+/// entrees d'origine (`GroupesDemonstrationLocale` de `port_groupes.dart`,
+/// `HorlogeSeanceDemonstration` de `port_horloge_seance.dart`) sont passees
+/// derriere `Env.playgroundActif`. Une entree ajoutee ici doit etre retiree
+/// des que sa dette est resorbee : le second test l'exige.
+const Map<String, String> _detteConnue = <String, String>{};
 
 /// Une instanciation de double relevee dans le corps d'un provider.
 typedef Releve = ({String fichier, int ligne, String nom});

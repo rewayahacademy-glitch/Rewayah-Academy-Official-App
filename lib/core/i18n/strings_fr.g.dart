@@ -122,6 +122,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$selecteurProfils$fr selecteurProfils = Traductions$commun$selecteurProfils$fr.internal(_root);
 	late final Traductions$commun$theme$fr theme = Traductions$commun$theme$fr.internal(_root);
 	late final Traductions$commun$demarrage$fr demarrage = Traductions$commun$demarrage$fr.internal(_root);
+	late final Traductions$commun$dates$fr dates = Traductions$commun$dates$fr.internal(_root);
 }
 
 // Path: reseau
@@ -2103,6 +2104,41 @@ class Traductions$commun$demarrage$fr {
 
 	/// fr: 'Ouverture de Rewayah'
 	String get ouverture => 'Ouverture de Rewayah';
+}
+
+// Path: commun.dates
+class Traductions$commun$dates$fr {
+	Traductions$commun$dates$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	List<String> get jours => [
+		'Lundi',
+		'Mardi',
+		'Mercredi',
+		'Jeudi',
+		'Vendredi',
+		'Samedi',
+		'Dimanche',
+	];
+	List<String> get mois => [
+		'janvier',
+		'février',
+		'mars',
+		'avril',
+		'mai',
+		'juin',
+		'juillet',
+		'août',
+		'septembre',
+		'octobre',
+		'novembre',
+		'décembre',
+	];
+
+	/// fr: '{jour} {numero} {mois}'
+	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
 }
 
 // Path: connexion.feuilleAppareil
@@ -7841,6 +7877,26 @@ extension on Traductions {
 			'commun.theme.clair' => 'Thème clair',
 			'commun.theme.sombre' => 'Thème sombre',
 			'commun.demarrage.ouverture' => 'Ouverture de Rewayah',
+			'commun.dates.jours.0' => 'Lundi',
+			'commun.dates.jours.1' => 'Mardi',
+			'commun.dates.jours.2' => 'Mercredi',
+			'commun.dates.jours.3' => 'Jeudi',
+			'commun.dates.jours.4' => 'Vendredi',
+			'commun.dates.jours.5' => 'Samedi',
+			'commun.dates.jours.6' => 'Dimanche',
+			'commun.dates.mois.0' => 'janvier',
+			'commun.dates.mois.1' => 'février',
+			'commun.dates.mois.2' => 'mars',
+			'commun.dates.mois.3' => 'avril',
+			'commun.dates.mois.4' => 'mai',
+			'commun.dates.mois.5' => 'juin',
+			'commun.dates.mois.6' => 'juillet',
+			'commun.dates.mois.7' => 'août',
+			'commun.dates.mois.8' => 'septembre',
+			'commun.dates.mois.9' => 'octobre',
+			'commun.dates.mois.10' => 'novembre',
+			'commun.dates.mois.11' => 'décembre',
+			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
@@ -8281,6 +8337,8 @@ extension on Traductions {
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.champSeuil' => 'Seuil maximal',
 			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
@@ -8301,8 +8359,6 @@ extension on Traductions {
 			'admin.groupes.retirerTitre' => ({required Object prenom, required Object libelle}) => 'Retirer ${prenom} de ${libelle}',
 			'admin.groupes.retirerEnvoyer' => 'Retirer',
 			'admin.groupes.retirerErreur' => ({required Object message}) => 'Le retrait n\'a pas abouti : ${message}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Seuil maximal de ${libelle}',
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
@@ -8795,6 +8851,8 @@ extension on Traductions {
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
+			_ => null,
+		} ?? switch (path) {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
@@ -8815,8 +8873,6 @@ extension on Traductions {
 			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.attribution' => 'Attribution',
-			_ => null,
-		} ?? switch (path) {
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
@@ -9309,6 +9365,8 @@ extension on Traductions {
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les groupes : celui-ci n\'a pas encore d\'élève.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.erreur' => 'Ce groupe n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Ce groupe n\'est pas l\'un des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
@@ -9329,8 +9387,6 @@ extension on Traductions {
 			'controleur.planning.etatEnCours' => 'En cours',
 			'controleur.planning.etatAVenir' => 'À venir',
 			'controleur.planning.etatIncident' => 'À vérifier',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.planning.tousEnseignants' => 'Tous les enseignants',
 			'controleur.planning.colonneEnseignant' => 'Enseignant',
 			'controleur.planning.colonneEleve' => 'Élève',
