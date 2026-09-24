@@ -373,10 +373,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         redirect: (BuildContext _, GoRouterState etat) =>
             Routes.appairerPour(_parametre(etat, 'eleveId')),
       ),
+      // STUB PHASE 0 : propriété du lot C-obs, à remplacer
+      //
       // L'observation se rejoint par la seance, pas par la classe
       // (`/tc/observation/:seanceId`) : tant que la classe ne sait pas
       // resoudre la seance en cours (lots C et C-obs), cette adresse ramene a
-      // la classe, qui porte le bloc d'observation.
+      // la classe. **La classe deleguee (`EspaceGroupePage`) ne porte encore
+      // aucun bloc d'observation** : le lot C-obs l'y pose et fait de cet
+      // alias une vraie entree (ligne 31 de l'arbre ; revue phase 0, routes
+      // D8).
       GoRoute(
         path: '${Routes.tuteurClasses}/:classeId/observer',
         redirect: (BuildContext _, GoRouterState etat) => Routes.classePour(

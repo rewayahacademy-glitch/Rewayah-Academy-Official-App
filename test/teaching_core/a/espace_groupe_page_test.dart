@@ -178,6 +178,21 @@ void main() {
       });
     });
 
+    testWidgets('a T-20, le tuteur n a pas de bouton Rejoindre', (
+      WidgetTester tester,
+    ) async {
+      // Revue phase 0 (routes D8) : le tuteur ne rejoint pas la classe de son
+      // enfant, il l'observe par la porte d'observation.
+      await avecLargeur(tester, largeurMobile, () async {
+        await _poser(
+          tester,
+          groupeId: GroupesDemonstration.anNour,
+          role: RoleEspaceGroupe.tuteur,
+        );
+        expect(find.text(LibellesGroupe.rejoindre), findsNothing);
+      });
+    });
+
     testWidgets('connecte avant T0, l attente est dite et expliquee', (
       WidgetTester tester,
     ) async {

@@ -56,7 +56,10 @@ class CarteSession extends StatelessWidget {
     return AppCard(
       dominante: true,
       entete: _EnteteSession(horloge: horloge),
-      actions: horloge.rejoindreOuvert
+      // Le tuteur ne rejoint pas la classe de son enfant : il l'observe, par
+      // la porte d'observation (lot C-obs). Aucun « Rejoindre » ne lui est
+      // rendu, meme fenetre ouverte (revue phase 0, routes D8).
+      actions: horloge.rejoindreOuvert && espace.role != RoleEspaceGroupe.tuteur
           ? ActionPrincipale(
               libelle: LibellesGroupe.rejoindre,
               onPress: onRejoindre,
