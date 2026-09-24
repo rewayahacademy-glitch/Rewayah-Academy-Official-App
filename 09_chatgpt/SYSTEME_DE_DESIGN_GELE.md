@@ -72,7 +72,7 @@ Valeurs dérivées (`app_palette.dart:317-328`) :
 | `contourCarte` | encre à 8 % : `#211E28` à 8 % en clair (≈ `#EDEDEE` sur blanc), blanc à 8 % en sombre (≈ `#34343F` sur `#22222E`) | Filet de 1 px de toute carte, carte groupée, filet en retrait entre lignes, barre basse, bord de la colonne latérale, disque retour. Les séparateurs du tuteur consomment `contourCarte`, pas `borderHairline` (manifeste §3.1, ligne « Contour de carte ») |
 | `voile` | noir à 32 % (clair), 56 % (sombre) | Voile sous une feuille ou une boîte de dialogue |
 | `calqueInteraction` | `inkAccent` à 4 % (survol, focus), 10 % (pressé) | Survol et pression des lignes et cartes |
-| `ombre` | `#211E28` dans les deux thèmes | Couleur de toutes les ombres |
+| `ombre` | `#211E28` dans les deux thèmes | Couleur de toutes les ombres rendues à `cefab7f`. [critique] Une seconde couleur existe : `ombreDialogue` = noir `#000000` (`app_palette.dart:325`), consommée seulement par `AppElevation.dialogue()`, que rien n'appelle (voir §5) |
 
 ### 1.4 Points de statut (`app_palette.dart:144-149`, `:239-244`)
 
@@ -244,7 +244,7 @@ Règle : le rayon d'un enfant est plus petit que celui de son parent (`app_radiu
 | `niveau1` | y 2, flou 8, 4 % + y 8, flou 24, 6 %, étalement -4 | Barre basse flottante ; carte « dominante » en clair seulement |
 | `niveau2` | y 4, flou 12, 8 % + y 16, flou 40, 10 %, étalement -8 | Zone d'action collée en bas, menus, popovers, retour local |
 | `niveau3` | y 12, flou 32, 22 % | Feuille, boîte de dialogue |
-| `dialogue()` | `niveau2` en clair, **aucune ombre en sombre** | Dialogues et menus en sombre : surface plus claire au lieu d'une ombre |
+| `dialogue()` | `niveau2` en clair (couleur `#000000`, `ombreDialogue`), **aucune ombre en sombre** | [critique] **Aucun emploi réel** : la fonction n'est appelée nulle part dans `lib/` à `cefab7f`. La feuille ET la boîte de dialogue d'`AppBottomSheet` rendent `niveau3` en `#211E28` dans les deux thèmes, sombre compris, avec le filet `borderHairline` ; la boîte de dialogue prend `surfaceOverlay`, rayon 24 (`app_bottom_sheet.dart:189-208`). À dessiner selon ce rendu, ou à trancher |
 
 Règles : une carte n'est jamais posée sur une carte (deux plans suffisent) (`:18-20`). **ÉCART** : le commentaire annonce des opacités « remontées à 0,10 / 0,09 » (`:38-40`) et une règle « filet ET ombre » (`:21-23`) ; le code rend 0,04 / 0,06 et, par défaut, un filet sans ombre.
 
@@ -405,7 +405,8 @@ Mise en garde : ce même fichier d'archive (`design-tokens.md`) porte les **anci
 | Logo | Aucun fichier ; la marque est le texte « Rewayah Academy » (`commun.marque`) ou « Rewayah » (mot-symbole du rail) | `marque_page.dart:8-12` ; `fr.i18n.json:3` ; `nav` `motSymbole` |
 | Icône d'application | `web/icons/Icon-192.png` est l'icône Flutter par défaut (vue) ; icônes Android et iOS de tailles typiques du gabarit Flutter, À VÉRIFIER à l'œil | `web/icons/`, `android/app/src/main/res/mipmap-*`, `ios/Runner/Assets.xcassets/AppIcon.appiconset` |
 | Illustrations | Aucune image dans `assets/` (seulement `audio`, `fonts`, `i18n`) ; les états vides emploient une icône Phosphor de 64 | `assets/` ; `empty_state.dart:95-103` |
-| Maquettes existantes | 19 fichiers dans `docs de lancement/tutuor image/` (10 dans `mobile/`), inventoriés et corrigés par le manifeste §1 et §5 ; écrans du tuteur encore sans maquette : `09_chatgpt/TUTEUR_ECRANS_SANS_MAQUETTE.md` | manifeste §1 |
+| Couleur de démarrage [critique] | **ÉCART** : le fond affiché pendant le chargement web vaut `#F8F4EE`, l'ancien crème archivé, et non `surfaceCanvas` `#F8F7FA` (`web/index.html:49` ; `web/manifest.json`, `background_color`), sans variante sombre : éclair clair au démarrage en thème sombre. `theme_color` = `#8652E6`. Android : fond de lancement du gabarit Flutter, couleur système `?android:colorBackground` (`android/app/src/main/res/drawable-v21/launch_background.xml:4`), pas un jeton | `web/index.html:40-49` (le commentaire renvoie à l'ancien `design-tokens.md`) |
+| Maquettes existantes | 19 fichiers dans `docs de lancement/tutuor image/` ([critique] 9 dans `mobile/` et 10 à la racine, et non 10 dans `mobile/`), inventoriés et corrigés par le manifeste §1 et §5 ; écrans du tuteur encore sans maquette : `09_chatgpt/TUTEUR_ECRANS_SANS_MAQUETTE.md` | manifeste §1 |
 
 ## 13. Écarts et décisions en attente qui touchent le dessin
 
@@ -415,3 +416,5 @@ Mise en garde : ce même fichier d'archive (`design-tokens.md`) porte les **anci
 4. `lib/CLAUDE.md:45-46` dit encore « `inkFaint` interdit sur `surfaceSunken` (4,48) » : valeur périmée, mesure actuelle 4,65 (`04_phase0/0b_jetons.md:82`, `:121`).
 5. Préférence clair / sombre non persistée sur le web : perdue à chaque rechargement (`revue_jetons_a11y.md:36`, D10).
 6. Quatre commentaires du code annoncent des valeurs que le code n'applique pas : gouttières (§3.3), opacités d'ombre et « filet ET ombre » (§5), durées de feuille (§6). Les valeurs du code font foi.
+7. [critique] Ombre des dialogues en sombre : la règle « aucune ombre en sombre » (`AppElevation.dialogue()`) n'est appliquée par aucun composant ; `AppBottomSheet` rend `niveau3` dans les deux thèmes (§5).
+8. [critique] Fond de démarrage web `#F8F4EE` hors palette gelée, sans version sombre (§12). À aligner sur `surfaceCanvas` clair et sombre par décision, puisque le gel exige une décision datée pour toute valeur.

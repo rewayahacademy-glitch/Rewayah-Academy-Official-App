@@ -2,6 +2,12 @@
 
 Consigné le 24/09/2026 sur ordre du directeur : **ne rien corriger maintenant**, ne pas sortir du chantier Tuteur en cours.
 
+## BLOQUANT constaté le 24/09 (critique du dossier ChatGPT, sur `cefab7f`)
+
+- **Permission micro absente** : `RECORD_AUDIO` n'est déclaré dans aucun manifeste Android (ni debug, ni profile, ni paquets vidéo), et `Info.plist` iOS n'a pas `NSMicrophoneUsageDescription`. Sans elles, élève et enseignant ne peuvent pas se parler sur mobile. Premier point de la vague Classe et visio (fichiers plateforme, propriété du coordinateur).
+- **Trois fenêtres d'entrée différentes** : élève à l'heure du début, enseignant 10 minutes avant, serveur 20 minutes avant. À unifier sur la fenêtre serveur.
+- **Validation des dossiers bloquée** si le genre de l'administrateur manque, et aucun écran ne permet de le renseigner.
+
 ## Priorité n° 1 de la vague suivante
 
 **Permettre à un élève et à un enseignant de se rencontrer et de se voir** : une seule salle, visio LiveKit fonctionnelle, jeton vidéo délivré par le serveur, entrée depuis la classe pour l'élève et pour l'enseignant, présence. Tout le reste (outils pédagogiques, Coran fidèle) vient après que ce parcours marche réellement.
