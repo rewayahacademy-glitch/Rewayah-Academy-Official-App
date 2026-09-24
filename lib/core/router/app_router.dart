@@ -1164,6 +1164,8 @@ class _CoquilleSecondaire extends ConsumerWidget {
       onAller: aller,
       secondaires: secondairesPour(role: effectif),
       onAllerSecondaire: aller,
+      // Rail a libelles hors tuteur, comme avant le chantier Tuteur V1.
+      libellesDansLeRail: effectif != AppRole.guardian,
       child: child,
     );
   }
@@ -1202,6 +1204,10 @@ class _CoquilleNavigation extends ConsumerWidget {
           ? navigationShell.currentIndex
           : null,
       masquerBarreBasse: Routes.estTacheFocalisee(chemin),
+      // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
+      // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
+      // le chantier (revue phase 0, jetons D2, routes D3).
+      libellesDansLeRail: role != AppRole.guardian,
       onAller: (String destination) {
         final int index = destinations.indexWhere(
           (Destination d) => d.chemin == destination,

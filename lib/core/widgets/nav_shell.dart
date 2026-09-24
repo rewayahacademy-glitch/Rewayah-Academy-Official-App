@@ -226,6 +226,7 @@ class NavShell extends StatelessWidget {
     this.secondaires = const <Destination>[],
     this.onAllerSecondaire,
     this.masquerBarreBasse = false,
+    this.libellesDansLeRail = false,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -277,6 +278,16 @@ class NavShell extends StatelessWidget {
   /// (manifeste visuel Tuteur V1 section 4.2 point 5). La colonne laterale
   /// reste visible sur tablette et bureau.
   final bool masquerBarreBasse;
+
+  /// Vrai quand le rail replie garde le **nom visible** de chaque
+  /// destination, sous son icone, au lieu de l'infobulle seule.
+  ///
+  /// C'est la forme d'avant le chantier Tuteur V1 (rail Material a libelles),
+  /// gardee pour l'eleve et l'enseignant : le rail a icones seules est une
+  /// decision de la maquette du tuteur, et la navigation des autres roles ne
+  /// change pas sans decision du directeur (revue phase 0, jetons D2 et
+  /// routes D3).
+  final bool libellesDansLeRail;
 
   /// Le nombre maximal de destinations de premier niveau.
   static const int maxDestinations = 4;
@@ -340,6 +351,7 @@ class NavShell extends StatelessWidget {
       onAller: onAller,
       secondaires: secondaires,
       onAllerSecondaire: onAllerSecondaire,
+      libellesDansLeRail: libellesDansLeRail,
       child: child,
     );
   }
@@ -506,6 +518,7 @@ class _AvecColonne extends ConsumerWidget {
     required this.onAller,
     required this.secondaires,
     required this.onAllerSecondaire,
+    required this.libellesDansLeRail,
     required this.child,
   });
 
@@ -515,6 +528,7 @@ class _AvecColonne extends ConsumerWidget {
   final void Function(String chemin) onAller;
   final List<Destination> secondaires;
   final void Function(String chemin)? onAllerSecondaire;
+  final bool libellesDansLeRail;
   final Widget child;
 
   @override
@@ -527,6 +541,7 @@ class _AvecColonne extends ConsumerWidget {
       children: <Widget>[
         _Colonne(
           repliee: repliee,
+          libellesDansLeRail: libellesDansLeRail,
           destinations: destinations,
           indexActif: indexActif,
           onAller: onAller,
@@ -554,6 +569,7 @@ class _AvecColonne extends ConsumerWidget {
 class _Colonne extends StatelessWidget {
   const _Colonne({
     required this.repliee,
+    required this.libellesDansLeRail,
     required this.destinations,
     required this.indexActif,
     required this.onAller,
@@ -563,6 +579,7 @@ class _Colonne extends StatelessWidget {
   });
 
   final bool repliee;
+  final bool libellesDansLeRail;
   final List<Destination> destinations;
   final int? indexActif;
   final void Function(String chemin) onAller;
@@ -579,6 +596,7 @@ class _Colonne extends StatelessWidget {
           destination: d,
           actif: actif,
           repliee: repliee,
+          libelleSousIcone: libellesDansLeRail,
           onPress: () =>
               entree ? onAllerSecondaire?.call(d.chemin) : onAller(d.chemin),
         );
@@ -755,12 +773,17 @@ class _ItemColonne extends StatelessWidget {
     required this.destination,
     required this.actif,
     required this.repliee,
+    required this.libelleSousIcone,
     required this.onPress,
   });
 
   final Destination destination;
   final bool actif;
   final bool repliee;
+
+  /// Replie, le nom reste visible sous l'icone (eleve, enseignant), au lieu
+  /// de l'infobulle seule (tuteur). Sans effet quand la colonne est depliee.
+  final bool libelleSousIcone;
   final VoidCallback onPress;
 
   @override
@@ -822,6 +845,60 @@ class _ItemColonne extends StatelessWidget {
               ),
       ),
     );
+
+    if (repliee && libelleSousIcone) {
+      // Le rail a libelles : pastille d'icone, puis le nom en dessous, dans
+      // toute la largeur du rail. Le nom reste lu en entier par le lecteur
+      // d'ecran ; a l'ecran il est borne comme celui de la barre basse.
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xs,
+        ),
+        child: Semantics(
+          container: true,
+          selected: actif,
+          child: Pressable(
+            onPress: onPress,
+            libelleSemantique: destination.libelle,
+            arrondiFocus: AppRadius.arrondiSm,
+            child: ExcludeSemantics(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: fond,
+                      borderRadius: AppRadius.arrondiSm,
+                    ),
+                    child: SizedBox(
+                      width: AppTouchTarget.standard,
+                      height: AppSpacing.xxxl,
+                      child: Center(child: icone),
+                    ),
+                  ),
+                  Ecart.vXs,
+                  MediaQuery.withClampedTextScaling(
+                    maxScaleFactor: NavShell.echelleTexteMaxBarre,
+                    child: Text(
+                      destination.libelle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: (textes.labelMedium ?? const TextStyle()).copyWith(
+                        color: !actif
+                            ? palette.inkMuted.asBorderSide().color
+                            : palette.inkAccent.asBorderSide().color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     final Widget pressable = Semantics(
       container: true,

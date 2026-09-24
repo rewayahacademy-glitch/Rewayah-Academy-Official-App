@@ -32,6 +32,7 @@ const List<Destination> _destinations = <Destination>[
 Widget _shell({
   required void Function(String chemin) onAller,
   bool masquerBarreBasse = false,
+  bool libellesDansLeRail = false,
   int? indexActif = 0,
   Widget? contenu,
 }) => NavShell(
@@ -39,6 +40,7 @@ Widget _shell({
   indexActif: indexActif,
   onAller: onAller,
   masquerBarreBasse: masquerBarreBasse,
+  libellesDansLeRail: libellesDansLeRail,
   child: contenu ?? const PageShell(child: SizedBox(key: Key('contenu'))),
 );
 
@@ -209,6 +211,57 @@ void main() {
     // Epingle en bas : bien plus bas que les autres destinations.
     expect(compte - reglages, greaterThan(AppSpacing.respiration * 4));
   });
+
+  testWidgets(
+    'rail a libelles (eleve, enseignant) : les noms restent visibles',
+    (WidgetTester tester) async {
+      // Revue phase 0 (jetons D2) : hors tuteur, le rail replie garde la forme
+      // d'avant le chantier, un nom lisible sous chaque icone, jusqu'a 200 %.
+      for (final double echelle in <double>[1, 2]) {
+        const Size taille = Size(768, 1024);
+        _vue(tester, taille);
+        final SemanticsHandle semantique = tester.ensureSemantics();
+        await tester.pumpWidget(
+          hote(
+            MediaQuery(
+              data: MediaQueryData(
+                size: taille,
+                textScaler: TextScaler.linear(echelle),
+              ),
+              child: _shell(
+                onAller: (_) {},
+                indexActif: 2,
+                libellesDansLeRail: true,
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.byKey(NavShell.railKey), findsOneWidget);
+        expect(
+          tester.getSize(find.byKey(NavShell.railKey)).width,
+          AppGabarit.largeurRail,
+        );
+        for (final Destination d in _destinations) {
+          expect(
+            find.descendant(
+              of: find.byKey(NavShell.railKey),
+              matching: find.text(d.libelle),
+            ),
+            findsOneWidget,
+            reason: '${d.libelle} a $echelle',
+          );
+        }
+        expect(
+          tester.getSemantics(find.bySemanticsLabel('Réglages')),
+          isSemantics(isSelected: true, isButton: true),
+        );
+        expect(tester.takeException(), isNull, reason: '$echelle');
+        semantique.dispose();
+      }
+    },
+  );
 
   testWidgets('barre laterale : mot-symbole, bouton de repli, choix garde', (
     WidgetTester tester,

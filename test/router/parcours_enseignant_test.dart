@@ -142,10 +142,7 @@ void main() {
     testWidgets('le parcours s enchaine sans remonter a la racine', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await monter(
-        tester,
-        Routes.enseignantBienvenue,
-      );
+      final GoRouter routeur = await monter(tester, Routes.enseignantBienvenue);
 
       // Chaque saut est fait par le routeur reel, l'un apres l'autre, sur la
       // MEME instance : c'est ce qui distingue « la route existe » de « on peut
@@ -171,13 +168,26 @@ void main() {
       // Trois libelles de destination, et le quatrieme ne doit pas revenir :
       // « Compte » et « Profil » repondaient a la meme question (ADR-027), et
       // sur telephone le quatrieme onglet serait le seul chemin de deconnexion.
-      // A cette largeur (tablette), le rail est replie : chaque destination
-      // porte son nom en infobulle et en libelle lu.
+      // A cette largeur (tablette), le rail est replie mais garde ses
+      // libelles visibles, comme avant le chantier Tuteur V1 : le rail a
+      // icones seules est reserve au tuteur (revue phase 0, jetons D2).
       final NavShell coquille = tester.widget<NavShell>(find.byType(NavShell));
       expect(coquille.destinations, hasLength(3));
-      expect(find.byTooltip(t.nav.enseignant.journee), findsOneWidget);
-      expect(find.byTooltip(t.nav.enseignant.creneaux), findsOneWidget);
-      expect(find.byTooltip(t.nav.enseignant.profil), findsOneWidget);
+      expect(coquille.libellesDansLeRail, isTrue);
+      for (final String libelle in <String>[
+        t.nav.enseignant.journee,
+        t.nav.enseignant.creneaux,
+        t.nav.enseignant.profil,
+      ]) {
+        expect(
+          find.descendant(
+            of: find.byKey(NavShell.railKey),
+            matching: find.text(libelle),
+          ),
+          findsOneWidget,
+          reason: libelle,
+        );
+      }
     });
 
     testWidgets('une pose ne fait pas apparaitre la barre', (
