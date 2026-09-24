@@ -56,3 +56,5 @@ Constats hors perimetre (LD-3) :
 - D-2 (demandes/D.md) reste ouverte : l'ecran trie lui-meme, la lecture garde un .order sans sens.
 - Scanner -> saisie : le parametre ?depuis=profils n'est pas transmis par le scanner (LD-2) ; depuis le scanner, le retour de la saisie mene a /connexion (pas d'impasse).
 - Le constat LB-2/LB-3 sur `appareils_page.dart:64` (`enfant.aucun`) est leve par LD-3 (cle propre appareils.foyer.vide*).
+
+LD-R | fait | ed31bd0 (pilotage/tuteur-v1) | Revue independante du lot D consignee : 14 constats (0 bloquant, 2 majeurs, 12 mineurs ; 16 bruts, 2 doublons fusionnes) ; majeurs : R-01 « Code oublie ? » sans issue (l'empreinte du code personnel survit a une nouvelle connexion, LD-3), R-02 echec du coffre apres un code consomme non traite (scanner bloque en verification, saisie muette, LD-2) : LD-2 et LD-3 a redeclarer apres correction ; RAPPORT.md du lot et carte des fonctions a jour manquent (R-06) | 05_recette/D/REVUE.md
