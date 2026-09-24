@@ -290,11 +290,16 @@ final RegExp _argumentDecoration = RegExp(r'^\s*decoration\s*:');
 /// `showDialog`, avec ou sans argument de type.
 final RegExp _showDialog = RegExp(r'\bshowDialog\s*(?:<[^>]*>)?\s*\(');
 
-/// Le seul fichier autorise a ouvrir une boite de dialogue : celui du composant
-/// de confirmation destructive. Il n'en ouvre aucune aujourd'hui (il passe par
-/// une feuille), mais s'il en ouvrait une un jour, c'est la qu'elle vivrait.
-const String _fichierConfirmDestructif =
-    'core/widgets/confirm_destructive.dart';
+/// Les deux seuls fichiers autorises a ouvrir une boite de dialogue : le point
+/// d'entree unique des surfaces modales, `AppBottomSheet.ouvrir`, qui ouvre
+/// une boite de dialogue centree sur bureau au lieu d'une feuille de telephone
+/// etiree (contrat K5 du chantier Tuteur V1, phase 0c1 du 24/09/2026), et le
+/// composant de confirmation destructive, qui passe par lui. Exemption
+/// NOMINATIVE : un ecran n'ouvre jamais de dialogue lui-meme.
+const Set<String> _fichiersDialogue = <String>{
+  'core/widgets/app_bottom_sheet.dart',
+  'core/widgets/confirm_destructive.dart',
+};
 
 void main() {
   final Directory racine = Directory.current;
@@ -424,13 +429,14 @@ void main() {
         violations.add(Violation(chemin, numero, 'bouton-material', ligne));
       }
 
-      // 3 bis (suite). Aucun showDialog hors de ConfirmDestructive : une
-      // confirmation destructive passe par ce composant, jamais par une
+      // 3 bis (suite). Aucun showDialog hors du point d'entree des surfaces
+      // modales : une confirmation destructive passe par ConfirmDestructive,
+      // une surface modale par AppBottomSheet.ouvrir, jamais par une
       // AlertDialog posee dans un ecran
-      // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). Zero occurrence
-      // aujourd'hui ; la regle garde la porte fermee. Ajoutee au lot R.
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6). Ajoutee au lot
+      // R ; AppBottomSheet admis le 24/09/2026 pour sa forme de bureau.
       if (_showDialog.hasMatch(code) &&
-          !chemin.endsWith(_fichierConfirmDestructif)) {
+          !_fichiersDialogue.any(chemin.endsWith)) {
         violations.add(
           Violation(chemin, numero, 'showdialog-hors-confirmation', ligne),
         );
@@ -459,15 +465,11 @@ void main() {
       // _violationsPositionDirectionnelle.
       if (_edgeInsetsFromLTRB.hasMatch(code) &&
           !chemin.contains(_dossierTheme)) {
-        violations.add(
-          Violation(chemin, numero, 'direction-non-geree', ligne),
-        );
+        violations.add(Violation(chemin, numero, 'direction-non-geree', ligne));
       }
       if (_alignementNonDirectionnel.hasMatch(code) &&
           !chemin.contains(_dossierTheme)) {
-        violations.add(
-          Violation(chemin, numero, 'direction-non-geree', ligne),
-        );
+        violations.add(Violation(chemin, numero, 'direction-non-geree', ligne));
       }
 
       // 4 ter. Un ecran de lib/features/ passe par une coquille (PageShell,
@@ -724,9 +726,8 @@ List<Violation> _violationsPositionDirectionnelle(
       }
 
       final String arguments = code.substring(ouverture + 1, fin);
-      final bool porteLeftOuRight = _decouperNiveauUn(
-        arguments,
-      ).any(_argumentLeftOuRight.hasMatch);
+      final bool porteLeftOuRight = _decouperNiveauUn(arguments)
+          .any(_argumentLeftOuRight.hasMatch);
       if (!porteLeftOuRight) {
         continue;
       }

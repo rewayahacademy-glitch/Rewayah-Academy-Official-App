@@ -343,6 +343,62 @@ abstract final class AppIcons {
     IconData(0xe330, fontFamily: _actif),
   );
 
+  /// Le retour de l'en-tete de page (disque de 48) : Phosphor `arrow-left`
+  /// (0xe058, releve dans `phosphor_flutter` 2.1.0,
+  /// `phosphor_icons_regular.dart` et `phosphor_icons_fill.dart`).
+  ///
+  /// Elle porte `matchTextDirection` : revenir, c'est aller vers le debut de
+  /// la lecture, donc a droite en arabe.
+  static const AppIcon retour = AppIcon._(
+    IconData(0xe058, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe058, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  // --- Etats systeme (contrat K5) ------------------------------------------
+  //
+  // Points de code releves dans `phosphor_flutter` 2.1.0
+  // (`phosphor_icons_regular.dart`), jamais devines ; leur presence dans les
+  // deux polices embarquees est verifiee par test (`test/icons/`).
+
+  /// Chargement prolonge, dossier en attente : Phosphor `hourglass-medium`
+  /// (0xe2b8).
+  static const AppIcon attente = AppIcon._(
+    IconData(0xe2b8, fontFamily: _repos),
+    IconData(0xe2b8, fontFamily: _actif),
+  );
+
+  /// Reconnexion en cours : Phosphor `arrows-clockwise` (0xe094). Une
+  /// rotation, pas une direction de lecture : elle ne se miroite pas.
+  static const AppIcon reconnexion = AppIcon._(
+    IconData(0xe094, fontFamily: _repos),
+    IconData(0xe094, fontFamily: _actif),
+  );
+
+  /// Acces refuse : Phosphor `lock` (0xe2fa).
+  static const AppIcon verrou = AppIcon._(
+    IconData(0xe2fa, fontFamily: _repos),
+    IconData(0xe2fa, fontFamily: _actif),
+  );
+
+  /// Session expiree, se reconnecter : Phosphor `sign-in` (0xe428).
+  static const AppIcon seReconnecter = AppIcon._(
+    IconData(0xe428, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe428, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Autorisation refusee (camera, notifications) : Phosphor `prohibit`
+  /// (0xe3de).
+  static const AppIcon interdit = AppIcon._(
+    IconData(0xe3de, fontFamily: _repos),
+    IconData(0xe3de, fontFamily: _actif),
+  );
+
+  /// Ressource retiree ou expiree : Phosphor `file-x` (0xe23c).
+  static const AppIcon ressourceRetiree = AppIcon._(
+    IconData(0xe23c, fontFamily: _repos),
+    IconData(0xe23c, fontFamily: _actif),
+  );
+
   /// Le chevron d'une ligne qui mene ailleurs : `SignalRow`, `ChildCard`,
   /// lignes de liste.
   ///

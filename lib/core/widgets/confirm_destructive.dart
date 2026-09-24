@@ -65,6 +65,11 @@ class ConfirmDestructive extends StatelessWidget {
   ///
   /// Rend `false` en cas d'annulation **comme en cas de fermeture par le
   /// glissement ou par `Echap`** : une feuille fermee n'a rien confirme.
+  ///
+  /// Sur bureau, la meme confirmation s'ouvre en boite de dialogue centree
+  /// (`AppBottomSheet.ouvrir`, `FormeModale.dialogue`) : memes actions, meme
+  /// ordre de lecture et de tabulation, « Annuler » toujours avant le
+  /// destructif au clavier.
   static Future<bool> demander(
     BuildContext context, {
     required String question,

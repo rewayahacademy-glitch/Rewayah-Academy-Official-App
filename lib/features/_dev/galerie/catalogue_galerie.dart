@@ -27,9 +27,14 @@ import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/confirm_destructive.dart';
+import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
+import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/filter_pill.dart';
+import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/lien_fleche.dart';
+import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
@@ -639,6 +644,17 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           child: const Text('Le corps de la feuille.'),
         ),
       ),
+      // La forme de bureau : memes titre, corps et actions, quatre coins
+      // arrondis, sans poignee (contrat K5, phase 0c1 du chantier Tuteur V1).
+      EtatGalerie(
+        'dialogue (bureau)',
+        (BuildContext _) => AppBottomSheet(
+          titre: 'Changer d enseignant',
+          forme: FormeModale.dialogue,
+          actions: ActionPrincipale(libelle: t.commun.valider, onPress: _rien),
+          child: const Text('Le corps de la feuille.'),
+        ),
+      ),
     ],
   ),
   EntreeGalerie(
@@ -1066,8 +1082,9 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       // d'inventer une heure.
       EtatGalerie(
         'sans terme connu',
-        (BuildContext _) =>
-            const BandeauObservation(observation: Observation(identiteMasquee: true)),
+        (BuildContext _) => const BandeauObservation(
+          observation: Observation(identiteMasquee: true),
+        ),
       ),
     ],
   ),
@@ -1678,7 +1695,191 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+
+  // --- Composants partages du chantier Tuteur V1 (phase 0c1) ---------------
+  EntreeGalerie(
+    nom: 'EcranResultat',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'succes, action et lien',
+        (BuildContext _) => const EcranResultat(
+          icone: AppIcons.succes,
+          titre: 'Appareil connecté',
+          phrase: 'Le profil peut maintenant se connecter sur cet appareil.',
+          ton: TonEtat.succes,
+          libelleAction: 'Revenir au foyer',
+          onAction: _rien,
+          libelleSecondaire: 'Connecter un autre appareil',
+          onSecondaire: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'encart, action en cours',
+        (BuildContext _) => const EcranResultat(
+          icone: AppIcons.attente,
+          titre: 'Visite terminée',
+          phrase: 'La visite a atteint sa durée.',
+          encart: 'Une visite reste possible pour cette séance.',
+          libelleAction: 'Retour à la classe',
+          onAction: _rien,
+          actionEnCours: true,
+        ),
+      ),
+      EtatGalerie(
+        'alerte, sans action',
+        (BuildContext _) => const EcranResultat(
+          icone: AppIcons.avertissement,
+          titre: 'Impossible de charger ces informations',
+          ton: TonEtat.alerte,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LienFleche',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'avec fleche',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: LienFleche(libelle: 'Voir tout', onPress: _rien),
+        ),
+      ),
+      EtatGalerie(
+        'survol',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: PressionForcee(
+            etat: EtatPression(survole: true),
+            child: LienFleche(libelle: 'Voir l historique', onPress: _rien),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'sans fleche',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: LienFleche(
+            libelle: 'Détails de la séance',
+            onPress: _rien,
+            fleche: false,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneCleValeur',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'texte',
+        (BuildContext _) =>
+            const LigneCleValeur(cle: 'Classe', valeur: 'Classe An-Nour'),
+      ),
+      EtatGalerie(
+        'chiffres',
+        (BuildContext _) => const LigneCleValeur(
+          cle: 'Horaire',
+          valeur: '18:00, heure de Paris',
+          chiffres: true,
+        ),
+      ),
+      EtatGalerie(
+        'avec complement',
+        (BuildContext _) => const LigneCleValeur(
+          cle: 'Présence',
+          valeur: 'Confirmée',
+          complement: StatusPill(libelle: 'Présente', ton: TonEtat.succes),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'GroupeReglages',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'avec titre',
+        (BuildContext _) => const GroupeReglages(
+          titre: 'Compte',
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: 'Informations personnelles',
+              legende: 'Nom, courriel, fuseau',
+              onPress: _rien,
+            ),
+            LigneRubrique(
+              icone: AppIcons.reglages,
+              libelle: 'Préférences',
+              valeur: 'Système',
+              onPress: _rien,
+            ),
+            LigneRubrique(
+              icone: AppIcons.foyer,
+              libelle: 'Membres du foyer',
+              valeur: '3',
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'ligne survolee',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(survole: true),
+          child: GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                icone: AppIcons.verrou,
+                libelle: 'Connexion et sécurité',
+                onPress: _rien,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ControleSegmente',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'premier choisi',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ControleSegmente<String>(
+            segments: _segmentsExemple,
+            valeur: 'seances',
+            onChange: _segmentIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'second choisi',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ControleSegmente<String>(
+            segments: _segmentsExemple,
+            valeur: 'observations',
+            onChange: _segmentIgnore,
+          ),
+        ),
+      ),
+    ],
+  ),
 ];
+
+/// Les deux segments de l'Historique, pour la galerie.
+const List<Segment<String>> _segmentsExemple = <Segment<String>>[
+  Segment<String>(valeur: 'seances', libelle: 'Séances'),
+  Segment<String>(valeur: 'observations', libelle: 'Observations'),
+];
+
+void _segmentIgnore(String segment) {}
 
 /// Trois acteurs, pour le menu de filtre de la galerie.
 ///
