@@ -1,4 +1,4 @@
-﻿# Avancement du poste B
+# Avancement du poste B
 
 ## DIRECTIVE DU DIRECTEUR (24/09, 22 h 40) : pour les DEUX postes, à reporter dans COORDINATION.md par A
 
