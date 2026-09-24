@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +15,9 @@ import 'package:rewayah_academy/core/theme/app_elevation.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/theme/app_radius.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -135,7 +138,7 @@ void main() {
   });
 
   group('ActionPrincipale : quatre niveaux, pas cinq', () {
-    testWidgets('le niveau principal est le seul aplat sature', (
+    testWidgets('le niveau principal est le CTA doux, au rayon des boutons', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -147,7 +150,64 @@ void main() {
         tester,
         find.byType(ActionPrincipale),
       );
-      expect(d.color, palette.surfacePrimary.background);
+      // Decisions du coordinateur du 24/09 (3.1, 3.3) : lavande doux et encre
+      // `inkStrong` en clair, plus d'aplat violet sature.
+      expect(d.color, palette.surfaceActionDouce.background);
+      expect(d.borderRadius, AppRadius.arrondiSm);
+      final Text libelle = tester.widget<Text>(find.text('Continuer'));
+      expect(libelle.style!.color, palette.surfaceActionDouce.onBackground);
+      expect(find.byIcon(AppIcons.flecheAction.repos), findsNothing);
+    });
+
+    testWidgets('fleche et pilule : l anatomie du CTA des maquettes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteComposant(
+          const ActionPrincipale(
+            libelle: 'Voir la classe',
+            onPress: _rien,
+            fleche: true,
+            pilule: true,
+          ),
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.borderRadius, AppRadius.arrondiFull);
+      expect(find.byIcon(AppIcons.flecheAction.repos), findsOneWidget);
+      // La fleche est decorative : elle n'ajoute aucune etiquette.
+      final Icon fleche = tester.widget<Icon>(
+        find.byIcon(AppIcons.flecheAction.repos),
+      );
+      expect(fleche.semanticLabel, isNull);
+    });
+
+    testWidgets('en sombre, le CTA principal est l accent plein', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+          child: TranslationProvider(
+            child: MaterialApp(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              home: const Scaffold(
+                body: ActionPrincipale(libelle: 'Continuer', onPress: _rien),
+              ),
+            ),
+          ),
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.color, AppPalette.sombre().surfacePrimary.background);
     });
 
     testWidgets('le destructif n a jamais de fond rouge plein', (

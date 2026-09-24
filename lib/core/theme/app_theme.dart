@@ -21,7 +21,13 @@ abstract final class AppTheme {
               displayColor: palette.surfaceCanvas.onBackground,
             );
     final scheme = _schemaDepuisPalette(palette, brightness);
-    const forme = RoundedRectangleBorder(borderRadius: AppRadius.arrondiMd);
+    // Boutons et champs au rayon `sm` (12), comme le documente `AppRadius` et
+    // comme le mesurent les maquettes (decisions du coordinateur, section 3,
+    // point 2). Les cartes gardent `md` (16).
+    const forme = RoundedRectangleBorder(borderRadius: AppRadius.arrondiSm);
+    const formeCarte = RoundedRectangleBorder(
+      borderRadius: AppRadius.arrondiMd,
+    );
     final bouton = ButtonStyle(
       minimumSize: WidgetStatePropertyAll(
         Size(
@@ -51,7 +57,7 @@ abstract final class AppTheme {
     );
     OutlineInputBorder bord(AppInkColorSource source, {double largeur = 1}) =>
         OutlineInputBorder(
-          borderRadius: AppRadius.arrondiMd,
+          borderRadius: AppRadius.arrondiSm,
           borderSide: BorderSide(
             color: source == AppInkColorSource.erreur
                 ? scheme.error
@@ -90,17 +96,21 @@ abstract final class AppTheme {
         centerTitle: false,
         titleTextStyle: texte.titleLarge,
       ),
+      // Le bouton plein est le CTA dominant : `surfaceActionDouce` (lavande
+      // doux et encre `inkStrong` en clair, accent plein et encre sombre en
+      // sombre), jamais l'aplat violet sature qu'aucune maquette claire ne
+      // montre. `ActionPrincipale` peint la meme paire.
       filledButtonTheme: FilledButtonThemeData(
         style: bouton.copyWith(
           backgroundColor: WidgetStateProperty.resolveWith(
             (s) => s.contains(WidgetState.disabled)
                 ? palette.surfaceSunken.background
-                : scheme.primary,
+                : palette.surfaceActionDouce.background,
           ),
           foregroundColor: WidgetStateProperty.resolveWith(
             (s) => s.contains(WidgetState.disabled)
                 ? scheme.onSurfaceVariant
-                : scheme.onPrimary,
+                : palette.surfaceActionDouce.onBackground,
           ),
         ),
       ),
@@ -122,7 +132,7 @@ abstract final class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         color: scheme.surface,
-        shape: forme,
+        shape: formeCarte,
         margin: EdgeInsets.zero,
       ),
       dialogTheme: DialogThemeData(

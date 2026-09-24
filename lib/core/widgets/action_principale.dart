@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -13,8 +14,8 @@ import 'pressable.dart';
 /// une regle d'ecran, pas une regle de composant : elle se tient en revue, et
 /// c'est `08-catalogue-ecrans.md` qui la porte.
 enum NiveauAction {
-  /// Fond plein `surfacePrimary`. **Une seule par ecran**, zero si l'ecran est
-  /// en lecture.
+  /// Fond plein `surfaceActionDouce` (lavande doux en clair, accent plein en
+  /// sombre). **Une seule par ecran**, zero si l'ecran est en lecture.
   principale,
 
   /// Contour `borderStrong` sur `surfaceRaised`. Deux au plus.
@@ -54,6 +55,8 @@ class ActionPrincipale extends StatelessWidget {
     this.enCours = false,
     this.pleineLargeur = true,
     this.prefixe,
+    this.fleche = false,
+    this.pilule = false,
   });
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
@@ -84,6 +87,22 @@ class ActionPrincipale extends StatelessWidget {
   /// deux occuperaient la meme place, et c'est l'attente qui prime.
   final Widget? prefixe;
 
+  /// Pose une fleche apres le libelle : « Voir la classe -> ». C'est l'anatomie
+  /// du CTA dominant des maquettes Tuteur (decisions du coordinateur, section
+  /// 3, point 3). Decorative : le libelle seul porte le sens, l'etiquette
+  /// semantique ne change pas. Miroitee en arabe.
+  final bool fleche;
+
+  /// Forme pilule (`AppRadius.full`) au lieu du rayon `sm` des boutons.
+  ///
+  /// **Reservee au CTA des etapes d'admission**, seule exception retenue par
+  /// le coordinateur (decisions, section 3, point 2) ; partout ailleurs, un
+  /// bouton a le rayon `sm` (12).
+  final bool pilule;
+
+  BorderRadius get _arrondi =>
+      pilule ? AppRadius.arrondiFull : AppRadius.arrondiSm;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -94,7 +113,7 @@ class ActionPrincipale extends StatelessWidget {
       onPress: actif ? onPress : null,
       libelleSemantique: libelle,
       respecterCibleTactile: false,
-      arrondiFocus: AppRadius.arrondiMd,
+      arrondiFocus: _arrondi,
       constructeur: (BuildContext contexte, EtatPression etat) =>
           _corps(contexte, palette, metriques, etat, actif: actif),
     );
@@ -123,7 +142,7 @@ class ActionPrincipale extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: peinture.fond,
-        borderRadius: AppRadius.arrondiMd,
+        borderRadius: _arrondi,
         border: peinture.filet == null
             ? null
             : Border.fromBorderSide(peinture.filet!),
@@ -153,6 +172,16 @@ class ActionPrincipale extends StatelessWidget {
                 ),
               ),
             ),
+            if (fleche && !enCours) ...<Widget>[
+              Ecart.hSm,
+              IconTheme(
+                data: IconThemeData(
+                  color: peinture.encre(const TextStyle()).color,
+                  size: AppSpacing.xl,
+                ),
+                child: Icon(AppIcons.flecheAction.repos),
+              ),
+            ],
           ],
         ),
       ),
@@ -192,9 +221,13 @@ class ActionPrincipale extends StatelessWidget {
 
     switch (niveau) {
       case NiveauAction.principale:
+        // `surfaceActionDouce` depuis le 24/09/2026 (decisions du
+        // coordinateur, section 3.1 et 3.3) : lavande doux et encre
+        // `inkStrong` en clair, accent plein et encre sombre en sombre. Plus
+        // aucun aplat violet sature en clair : aucune maquette n'en montre.
         return _Peinture(
-          fond: palette.surfacePrimary.background,
-          encre: palette.surfacePrimary.applyTo,
+          fond: palette.surfaceActionDouce.background,
+          encre: palette.surfaceActionDouce.applyTo,
           // Au survol, l'aplat plein ne change pas de teinte : il gagne le
           // filet fort. Une seconde nuance de violet serait une couleur de
           // plus, hors palette.

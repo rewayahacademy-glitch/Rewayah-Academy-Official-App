@@ -411,8 +411,11 @@ class _Paires extends StatelessWidget {
       'surfaceRaised': palette.surfaceRaised,
       'surfaceCanvas': palette.surfaceCanvas,
       'surfaceSunken': palette.surfaceSunken,
+      'surfaceOverlay': palette.surfaceOverlay,
+      'surfaceMiseEnAvant': palette.surfaceMiseEnAvant,
     };
     final Map<String, AppColorPair> pleines = <String, AppColorPair>{
+      'surfaceActionDouce': palette.surfaceActionDouce,
       'surfacePrimary': palette.surfacePrimary,
       'surfaceSuccess': palette.surfaceSuccess,
       'surfaceWarning': palette.surfaceWarning,
@@ -465,6 +468,29 @@ class _Paires extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: Text(e.key, style: e.value.applyTo(base)),
+          ),
+        Ecart.vMd,
+        // Les points de statut, toujours doubles d'un libelle : c'est ainsi
+        // qu'ils se posent dans les ecrans.
+        for (final MapEntry<String, AppIndicatorColor> e
+            in <String, AppIndicatorColor>{
+              'point succes': palette.pointsStatut.succes,
+              'point attention': palette.pointsStatut.attention,
+              'point alerte': palette.pointsStatut.alerte,
+              'point neutre': palette.pointsStatut.neutre,
+            }.entries)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Row(
+              children: <Widget>[
+                SizedBox.square(
+                  dimension: AppSpacing.md,
+                  child: DecoratedBox(decoration: e.value.pastille()),
+                ),
+                Ecart.hSm,
+                Text(e.key, style: palette.surfaceCanvas.applyTo(base)),
+              ],
+            ),
           ),
         Ecart.vMd,
         // Les trois bordures, cote a cote : seule la troisieme porte du sens.

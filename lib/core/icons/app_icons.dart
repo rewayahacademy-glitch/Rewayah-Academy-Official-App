@@ -319,6 +319,17 @@ abstract final class AppIcons {
     IconData(0xe13a, fontFamily: _actif),
   );
 
+  /// La fleche du CTA dominant et des liens « Voir tout » : Phosphor
+  /// `arrow-right` (0xe06c, point de code releve dans `phosphor_flutter`
+  /// 2.1.0, dont les deux polices embarquees sont des copies a l'octet pres).
+  ///
+  /// Elle porte `matchTextDirection` : c'est une direction de lecture (« aller
+  /// vers »), elle pointe a gauche en arabe.
+  static const AppIcon flecheAction = AppIcon._(
+    IconData(0xe06c, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe06c, fontFamily: _actif, matchTextDirection: true),
+  );
+
   /// Le chevron d'une ligne qui mene ailleurs : `SignalRow`, `ChildCard`,
   /// lignes de liste.
   ///
