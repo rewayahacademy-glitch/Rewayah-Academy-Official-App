@@ -39,6 +39,12 @@ const Map<String, String> _memoiresLegitimes = <String, String>{
   // serveur reste a ecrire, et aucune donnee fictive n'y est semee.
   'EtatPartageMemoire':
       'lib/core/tc_etat_partage/providers_tc_etat_partage.dart',
+  // Stockage de la preference d'apparence sur le web (phase 0b) : la base
+  // locale Drift n'y est pas configuree, le theme choisi vit donc le temps de
+  // la session. Il part vide, aucune valeur fictive n'y est semee ; hors web,
+  // le meme provider sert `StockagePreferencesDrift`. Releve a la fusion de
+  // 0d dans `ui/tuteur-v1` (phase 0c1).
+  'StockagePreferencesMemoire': 'lib/core/preferences/preferences_locales.dart',
 };
 
 /// Dette connue au moment ou ce controle est pose : les deux doubles servis
