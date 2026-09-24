@@ -5,6 +5,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -39,15 +40,20 @@ class EnteteSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Telephone : titre `titleSmall` et icone de 20, pour que titre et lien
+    // tiennent sur une ligne a 390 comme sur la maquette V1.
+    final bool compact = AppGabarit.de(context) == Gabarit.mobile;
     return Row(
       children: <Widget>[
         ExcludeSemantics(
           child: IconTheme(
-            data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+            data: palette.inkAccent.asIconTheme(
+              size: compact ? AppSpacing.xl : AppSpacing.xxl,
+            ),
             child: Icon(icone.repos),
           ),
         ),
-        Ecart.hMd,
+        if (compact) Ecart.hSm else Ecart.hMd,
         // Titre et lien partagent la ligne tant qu'ils tiennent ; sinon le
         // lien passe dessous (texte agrandi, colonne etroite), sans rien
         // couper.
@@ -62,7 +68,8 @@ class EnteteSection extends StatelessWidget {
                 child: Text(
                   titre,
                   style: palette.inkStrong.applyTo(
-                    textes.titleMedium ?? const TextStyle(),
+                    (compact ? textes.titleSmall : textes.titleMedium) ??
+                        const TextStyle(),
                   ),
                 ),
               ),
