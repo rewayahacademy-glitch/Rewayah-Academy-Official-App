@@ -8,7 +8,20 @@ import 'support/contraste.dart';
 void main() {
   final AppPalette palette = AppPalette.sombre();
 
-  testsDeContraste('sombre', palette);
+  // Paires interdites mesurees le 24/09/2026 (revue phase 0, jetons D7) :
+  // `inkAlert #F4777D` sur `washWarning #44361A` = 4,35:1 (9,09 avant la
+  // palette ardoise), et `inkFaint` sur les fonds doux succes et attention.
+  // Aucun usage connu ; a ne pas creer. Corriger la teinte reste une
+  // decision de palette (decisions du coordinateur 3.1), pas de ce test.
+  testsDeContraste(
+    'sombre',
+    palette,
+    pairesInterditesSurFondsDoux: const <String>{
+      'inkFaint / washSuccess',
+      'inkFaint / washWarning',
+      'inkAlert / washWarning',
+    },
+  );
 
   test('le sombre est une ardoise bleu-violet (decisions, section 3.1)', () {
     expect(palette.surfaceCanvas.background, const Color(0xFF1A1A25));

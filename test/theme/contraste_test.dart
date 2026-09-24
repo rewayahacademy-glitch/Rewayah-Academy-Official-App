@@ -8,7 +8,13 @@ import 'support/contraste.dart';
 void main() {
   final AppPalette palette = AppPalette.claire();
 
-  testsDeContraste('clair', palette);
+  // Paires interdites mesurees le 24/09/2026 (revue phase 0, jetons D7) :
+  // `inkFaint` sur `washAccent` = 4,45:1. Aucun usage connu ; a ne pas creer.
+  testsDeContraste(
+    'clair',
+    palette,
+    pairesInterditesSurFondsDoux: const <String>{'inkFaint / washAccent'},
+  );
 
   test('les valeurs claires sont celles des decisions du 24/09 (3.1)', () {
     // Gardees.

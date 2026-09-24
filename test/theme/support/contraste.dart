@@ -22,7 +22,17 @@ const double seuilComposant = 3;
 /// themes : chaque paire, chaque encre sur chaque surface de texte, chaque
 /// composant porteur de sens et chaque point de statut sur les surfaces ou il
 /// se pose.
-void testsDeContraste(String theme, AppPalette p) {
+///
+/// [pairesInterditesSurFondsDoux] nomme, sous la forme `encre / wash`, les
+/// encres qui **n'atteignent pas** 4,5:1 sur un fond doux d'une autre famille :
+/// ces paires sont interdites a l'ecran (revue phase 0, jetons D7). La liste
+/// doit etre exacte : une paire nouvelle sous le seuil, ou une exemption qui
+/// n'en est plus une, fait echouer le test.
+void testsDeContraste(
+  String theme,
+  AppPalette p, {
+  Set<String> pairesInterditesSurFondsDoux = const <String>{},
+}) {
   final Map<String, AppColorPair> paires = <String, AppColorPair>{
     'surfaceRaised': p.surfaceRaised,
     'surfaceCanvas': p.surfaceCanvas,
@@ -83,6 +93,26 @@ void testsDeContraste(String theme, AppPalette p) {
           );
         });
       });
+    });
+
+    test('toute encre sur tout fond doux : 4,5:1, sauf paires interdites', () {
+      // Une encre de role ne se pose pas que sur SON fond doux : un libelle
+      // `inkFaint` ou un message `inkAlert` peut tomber dans une carte
+      // `washWarning`. Les paires sous le seuil sont nommees, donc interdites.
+      final Map<String, Color> fondsDoux = <String, Color>{
+        'washAccent': p.washAccent.background,
+        'washSuccess': p.washSuccess.background,
+        'washWarning': p.washWarning.background,
+        'washAlert': p.washAlert.background,
+        'washFamily': p.washFamily.background,
+      };
+      final Set<String> sousLeSeuil = <String>{
+        for (final MapEntry<String, AppInkColor> e in encres.entries)
+          for (final MapEntry<String, Color> f in fondsDoux.entries)
+            if (contraste(e.value.debugValue, f.value) < seuilTexte)
+              '${e.key} / ${f.key}',
+      };
+      expect(sousLeSeuil, pairesInterditesSurFondsDoux);
     });
 
     test('chaque encre de role atteint 4,5:1 sur le fond doux du role', () {
