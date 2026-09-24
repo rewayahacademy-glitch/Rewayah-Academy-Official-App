@@ -2,16 +2,14 @@
 // depuis la barre de navigation, sur le VRAI routeur, puis etats de chaque
 // ecran et fonctions pures.
 //
-// Donnees : fixtures isolees de `test/fixtures/tuteur/` et doubles locaux de
-// ce fichier (politique d'observation, catalogue, progression). Aucun service
-// reel.
+// Donnees : fixtures isolees de `test/fixtures/tuteur/` et doubles de
+// `support_classe.dart` (politique d'observation, catalogue, progression).
+// Aucun service reel.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -19,24 +17,17 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
-import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
-import 'package:rewayah_academy/core/tc_observation/activation_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/disponibilite_observation.dart';
-import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
-import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
-import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
-import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_outils/learning_assignment.dart';
 import 'package:rewayah_academy/core/tc_outils/port_assignations.dart';
-import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
@@ -55,178 +46,16 @@ import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/entree_observation_page.dart';
 
-import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/faux_observation.dart';
 import '../../fixtures/tuteur/faux_seances_famille.dart';
-import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart';
-import '../../support/harnais.dart';
+import 'support_classe.dart';
 
-/// Le premier profil retenu : « Eleve A1 » (tri par prenom, contrat K1).
-const String _a1 = 'foyer-a-eleve-1';
-const String _classe = 'classe-a';
+const String _a1 = eleveA1;
+const String _classe = classeA;
 
-/// Une seance a venir, salle ouverte (fenetre fictive de 20 min), dans 10 min
-/// et 30 s.
-SeanceFamille _salleOuverte({
-  StatutSeance? statut = StatutSeance.planifiee,
-  Duration avant = const Duration(minutes: 10, seconds: 30),
-  String seanceId = 's1',
-  bool avecHorloge = true,
-}) => seanceFictive(
-  seanceId: seanceId,
-  eleveId: _a1,
-  debutUtc: instantServeurFige.add(avant),
-  statut: statut,
-  avecHorloge: avecHorloge,
-  heureFoyer: heureRendue('Europe/Paris', 'Paris', '18:10'),
-);
-
-/// Une seance en direct depuis dix minutes.
-SeanceFamille _enDirect() => seanceFictive(
-  seanceId: 's1',
-  eleveId: _a1,
-  debutUtc: instantServeurFige.subtract(const Duration(minutes: 10)),
-  statut: StatutSeance.enCours,
-  heureFoyer: heureRendue('Europe/Paris', 'Paris', '17:50'),
-);
-
-/// La politique et le budget d'observation, en memoire.
-class _FauxPolitique implements PortPolitiqueObservation {
-  _FauxPolitique(this.budgetRendu);
-
-  final BudgetObservation budgetRendu;
-
-  @override
-  Future<BudgetObservation> budget({required String sessionId}) async =>
-      budgetRendu;
-
-  @override
-  Future<GuardianObservationPolicy> politiqueEffective({
-    required String groupeId,
-  }) async => politiqueA2;
-
-  @override
-  Stream<BudgetObservation> suivreBudget({required String sessionId}) =>
-      Stream<BudgetObservation>.value(budgetRendu);
-
-  @override
-  Future<GuardianObservationPolicy> definirPolitiqueGroupe({
-    required String groupeId,
-    required GuardianObservationPolicy politique,
-  }) => throw UnimplementedError();
-}
-
-/// Les visites, en memoire : rien n'est ouvert, rien ne s'ouvre ici.
-class _FausseVisite implements PortVisiteObservation {
-  @override
-  Future<ResultatEntreeObservation> entrer({
-    required String sessionId,
-    required RoleObservateur role,
-  }) => throw UnimplementedError();
-
-  @override
-  Future<void> sortir({required String sessionId}) async {}
-
-  @override
-  Future<List<GuardianSessionVisit>> visites({
-    required String sessionId,
-  }) async => const <GuardianSessionVisit>[];
-}
-
-/// Une ressource fictive.
-const LibraryResource _ressource = LibraryResource(
-  id: 'r1',
-  title: 'Support fictif 1',
-  shortTitle: 'Support 1',
-  resourceType: TypeRessource.pdf,
-  language: 'fr',
-  category: 'fictive',
-  accessPolicy: PolitiqueAcces.groupeAssigne,
-  offlinePolicy: PolitiqueOffline.jamais,
-);
-
-/// Un catalogue BRANCHE (pas le catalogue local), en memoire.
-class _FauxCatalogue implements PortCatalogue {
-  const _FauxCatalogue(this.ressources);
-
-  final List<LibraryResource> ressources;
-
-  @override
-  Future<List<LibraryResource>> tous({FiltreCatalogue? filtre}) async =>
-      ressources;
-
-  @override
-  Future<List<LibraryResource>> recents({int limite = 10}) async =>
-      const <LibraryResource>[];
-
-  @override
-  Future<List<LibraryResource>> pourGroupe(String groupeId) async =>
-      groupeId == _classe ? ressources : const <LibraryResource>[];
-
-  @override
-  Future<LibraryResource?> parId(String resourceId) async {
-    for (final LibraryResource r in ressources) {
-      if (r.id == resourceId) {
-        return r;
-      }
-    }
-    return null;
-  }
-
-  @override
-  Future<List<LibraryResource>> rechercher(
-    String requete, {
-    FiltreCatalogue? filtre,
-  }) async => ressources;
-
-  @override
-  Future<ReprisLecture?> derniereLecture() async => null;
-}
-
-/// La progression, en memoire.
-class _FausseProgression implements PortProgressionFamille {
-  const _FausseProgression(this.rendue);
-
-  final ProgressionEleve rendue;
-
-  @override
-  Future<ProgressionEleve> progression(String eleveId) async => rendue;
-}
-
-/// Deux travaux fictifs, dont un fait et un retire (jamais montre).
-Future<AssignationsMemoire> _travaux() async {
-  final AssignationsMemoire depot = AssignationsMemoire(
-    'enseignant-x',
-    maintenant: () => instantServeurFige,
-  );
-  await depot.creerDepuisSelection(
-    groupId: _classe,
-    resourceId: 'r1',
-    purpose: IntentionPedagogique.aRevoir,
-    instructions: 'Consigne fictive 1',
-    dueAtUtc: instantServeurFige.add(const Duration(days: 2)),
-  );
-  final LearningAssignment fait = await depot.creerDepuisSelection(
-    groupId: _classe,
-    studentId: _a1,
-    resourceId: 'r1',
-    purpose: IntentionPedagogique.aApprendre,
-    instructions: 'Consigne fictive 2',
-  );
-  await depot.changerStatut(fait.id, StatutAssignation.fait);
-  final LearningAssignment retire = await depot.creerDepuisSelection(
-    groupId: _classe,
-    resourceId: 'r1',
-    purpose: IntentionPedagogique.aEntretenir,
-    instructions: 'Consigne retiree',
-  );
-  await depot.changerStatut(retire.id, StatutAssignation.annule);
-  return depot;
-}
-
-/// Monte l'application sur son vrai routeur, tuteur actif, foyer fictif A,
-/// puis va a [depart].
+/// Monte l'application sur son vrai routeur (surcharges de
+/// `support_classe.dart`), puis va a [depart].
 Future<GoRouter> _monter(
   WidgetTester tester, {
   String depart = Routes.tuteurFoyer,
@@ -238,6 +67,8 @@ Future<GoRouter> _monter(
   PortAssignations? travail,
   PortCatalogue? catalogue,
   PortProgressionFamille? progression,
+  bool horsLigne = false,
+  bool seancesIndisponibles = false,
   Size taille = const Size(390, 844),
 }) async {
   tester.view.physicalSize = taille;
@@ -246,50 +77,18 @@ Future<GoRouter> _monter(
   late GoRouter routeur;
   await tester.pumpWidget(
     ProviderScope(
-      overrides: <Override>[
-        ...surchargesRouteur(
-          FausseSourceSession(sessionActive(AppRole.guardian)),
-          appairage: FauxServiceAppairage()
-            ..elevesRendus = FoyersFictifs.foyerA
-            ..appareilsRendus = <AppareilAppaire>[
-              AppareilAppaire(
-                id: 'app-1',
-                profilId: _a1,
-                prenom: 'Eleve A1',
-                plateforme: 'Android',
-                appaireA: DateTime.utc(2026, 9, 1),
-              ),
-            ],
-        ),
-        portSeancesFamilleProvider.overrideWithValue(
-          FauxSeancesFamille(
-            seances: seances ?? <SeanceFamille>[_salleOuverte()],
-          ),
-        ),
-        portClassesFoyerProvider.overrideWithValue(
-          portClasses ??
-              FauxClassesFoyer(
-                classes: <ClasseFoyer>[
-                  ClasseFoyer(eleveId: _a1, classe: classeFictive()),
-                ],
-              ),
-        ),
-        observationTuteurReelleProvider.overrideWithValue(observation),
-        portPolitiqueObservationProvider.overrideWithValue(
-          _FauxPolitique(budget ?? budgetDeuxVisites),
-        ),
-        portVisiteObservationProvider.overrideWithValue(_FausseVisite()),
-        moteurSalleProvider.overrideWithValue(FauxMoteurSalle()),
-        presenceSeanceProvider.overrideWith(
-          (Ref _, String _) =>
-              Stream<List<PresenceParticipant>?>.value(presence),
-        ),
-        assignationsFamilleProvider.overrideWithValue(travail),
-        if (catalogue != null)
-          portCatalogueProvider.overrideWithValue(catalogue),
-        if (progression != null)
-          portProgressionFamilleProvider.overrideWithValue(progression),
-      ],
+      overrides: surchargesClasse(
+        seances: seances,
+        portClasses: portClasses,
+        observation: observation,
+        budget: budget,
+        presence: presence,
+        travail: travail,
+        catalogue: catalogue,
+        progression: progression,
+        horsLigne: horsLigne,
+        seancesIndisponibles: seancesIndisponibles,
+      ),
       child: TranslationProvider(
         child: Consumer(
           builder: (BuildContext _, WidgetRef ref, Widget? _) {
@@ -346,15 +145,6 @@ Finder _rubrique(String libelle) => find.descendant(
 String _lieu(GoRouter routeur) =>
     routeur.routerDelegate.currentConfiguration.uri.toString();
 
-PresenceParticipant _presente() => const PresenceParticipant(
-  profilId: _a1,
-  role: 'student',
-  prenom: 'Eleve A1',
-  identifiantImmuable: 'STUD-FA-000001',
-  etat: EtatPresence.presente,
-  consolide: false,
-);
-
 void main() {
   group('Classe : parcours touches depuis la barre de navigation', () {
     testWidgets('la classe dit l enseignant, la seance et ses rubriques ; '
@@ -401,8 +191,8 @@ void main() {
       final GoRouter routeur = await _monter(
         tester,
         seances: <SeanceFamille>[
-          _salleOuverte(),
-          _salleOuverte(
+          seanceSalleOuverte(),
+          seanceSalleOuverte(
             seanceId: 's2',
             avant: const Duration(days: 2),
             statut: StatutSeance.annulee,
@@ -433,7 +223,7 @@ void main() {
         'trois, statut du service, jamais le travail retire', (
       WidgetTester tester,
     ) async {
-      final AssignationsMemoire travaux = await _travaux();
+      final AssignationsMemoire travaux = await travauxFictifs();
       final GoRouter routeur = await _monter(tester, travail: travaux);
       await _ouvrirLaClasse(tester);
 
@@ -462,7 +252,9 @@ void main() {
     ) async {
       final GoRouter routeur = await _monter(
         tester,
-        catalogue: const _FauxCatalogue(<LibraryResource>[_ressource]),
+        catalogue: FauxCatalogueClasse(<LibraryResource>[
+          ressourceFictive('r1', 'Support fictif 1'),
+        ]),
       );
       await _ouvrirLaClasse(tester);
 
@@ -491,7 +283,7 @@ void main() {
     ) async {
       final GoRouter routeur = await _monter(
         tester,
-        progression: const _FausseProgression(
+        progression: const FausseProgressionClasse(
           ProgressionEleve(
             eleveId: _a1,
             niveauHumain: 'Niveau fictif',
@@ -534,9 +326,9 @@ void main() {
     ) async {
       final GoRouter routeur = await _monter(
         tester,
-        seances: <SeanceFamille>[_enDirect()],
+        seances: <SeanceFamille>[seanceEnDirect()],
         observation: true,
-        presence: <PresenceParticipant>[_presente()],
+        presence: <PresenceParticipant>[presenceA1],
       );
       await _ouvrirLaClasse(tester);
 
@@ -564,9 +356,9 @@ void main() {
     ) async {
       final GoRouter routeur = await _monter(
         tester,
-        seances: <SeanceFamille>[_enDirect()],
+        seances: <SeanceFamille>[seanceEnDirect()],
         observation: true,
-        presence: <PresenceParticipant>[_presente()],
+        presence: <PresenceParticipant>[presenceA1],
       );
       await _ouvrirLaClasse(tester);
 
@@ -584,7 +376,7 @@ void main() {
       await _monter(
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
-        seances: <SeanceFamille>[_enDirect()],
+        seances: <SeanceFamille>[seanceEnDirect()],
       );
       expect(
         find.text(t.classe.observation.motif.garantieServeurAbsente),
@@ -599,10 +391,10 @@ void main() {
       await _monter(
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
-        seances: <SeanceFamille>[_enDirect()],
+        seances: <SeanceFamille>[seanceEnDirect()],
         observation: true,
         budget: budgetEpuise,
-        presence: <PresenceParticipant>[_presente()],
+        presence: <PresenceParticipant>[presenceA1],
       );
       expect(
         find.text(t.classe.observation.motif.visitesEpuisees),
@@ -617,7 +409,7 @@ void main() {
       await _monter(
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
-        seances: <SeanceFamille>[_enDirect()],
+        seances: <SeanceFamille>[seanceEnDirect()],
         observation: true,
       );
       expect(
@@ -636,7 +428,7 @@ void main() {
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
         seances: <SeanceFamille>[
-          _salleOuverte(
+          seanceSalleOuverte(
             avant: const Duration(hours: 3, minutes: 28, seconds: 30),
           ),
         ],
@@ -658,7 +450,9 @@ void main() {
         await _monter(
           tester,
           depart: Routes.classePour(_classe, eleveId: _a1),
-          seances: <SeanceFamille>[_salleOuverte(statut: StatutSeance.annulee)],
+          seances: <SeanceFamille>[
+            seanceSalleOuverte(statut: StatutSeance.annulee),
+          ],
         );
         expect(find.text(t.tuteur.accueil.seanceAnnulee), findsOneWidget);
         expect(find.text(LibellesGroupe.dansMinutes(10)), findsNothing);
@@ -671,7 +465,7 @@ void main() {
       await _monter(
         tester,
         depart: Routes.classePour(_classe, eleveId: _a1),
-        seances: <SeanceFamille>[_salleOuverte(avecHorloge: false)],
+        seances: <SeanceFamille>[seanceSalleOuverte(avecHorloge: false)],
       );
       expect(find.text(t.tuteur.accueil.horaireIncertain), findsOneWidget);
       expect(find.text(t.tuteur.accueil.heureAppareil), findsOneWidget);
@@ -724,6 +518,38 @@ void main() {
         depart: Routes.classePour(_classe, eleveId: 'foyer-b-eleve-1'),
       );
       expect(find.text(t.classe.introuvableTitre), findsOneWidget);
+    });
+
+    testWidgets('lecture en echec : echec de bloc, « Reessayer » relit et la '
+        'classe apparait', (WidgetTester tester) async {
+      final ClassesEnEchecPuisRendues port = ClassesEnEchecPuisRendues();
+      await _monter(
+        tester,
+        depart: Routes.classePour(_classe, eleveId: _a1),
+        portClasses: port,
+      );
+      final EtatSysteme etat = tester.widget<EtatSysteme>(
+        find.byType(EtatSysteme),
+      );
+      expect(etat.nature, NatureEtat.echecServeur);
+      expect(find.byType(DisqueRetour), findsOneWidget);
+
+      await _toucher(tester, find.text(t.commun.etats.actions.reessayer));
+      expect(port.lectures, greaterThanOrEqualTo(2));
+      expect(find.byType(CarteSeanceClasse), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('hors ligne : le bandeau de la coquille, la classe reste '
+        'lisible et le retour possible', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: Routes.classePour(_classe, eleveId: _a1),
+        horsLigne: true,
+      );
+      expect(find.text(t.reseau.horsLigne), findsOneWidget);
+      expect(find.byType(CarteSeanceClasse), findsOneWidget);
+      expect(find.byType(DisqueRetour), findsOneWidget);
     });
 
     testWidgets('bureau 1440 : deux colonnes, carte a gauche, rubriques a '
@@ -794,7 +620,7 @@ void main() {
       await _monter(
         tester,
         depart: '${Routes.classeSousPage(_classe, 'ressources')}?eleve=$_a1',
-        catalogue: const _FauxCatalogue(<LibraryResource>[]),
+        catalogue: const FauxCatalogueClasse(<LibraryResource>[]),
       );
       expect(find.text(t.classe.pageRessources.aucune), findsOneWidget);
     });
@@ -821,6 +647,56 @@ void main() {
         seances: const <SeanceFamille>[],
       );
       expect(find.text(t.classe.pagePlanning.aucune), findsOneWidget);
+    });
+
+    testWidgets('planning sans source : « pas encore relie », jamais « aucune '
+        'seance »', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: '${Routes.classeSousPage(_classe, 'planning')}?eleve=$_a1',
+        seancesIndisponibles: true,
+      );
+      expect(find.text(t.classe.pagePlanning.indisponible), findsOneWidget);
+      expect(find.text(t.classe.pagePlanning.aucune), findsNothing);
+      expect(find.byType(DisqueRetour), findsOneWidget);
+    });
+
+    testWidgets('bureau 1440 : la precision a droite de la liste, jamais une '
+        'colonne de telephone etiree', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: '${Routes.classeSousPage(_classe, 'planning')}?eleve=$_a1',
+        taille: const Size(1440, 900),
+      );
+      final Offset titre = tester.getTopLeft(
+        find.text(t.classe.pagePlanning.prochaines),
+      );
+      final Offset precision = tester.getTopLeft(
+        find.text(t.classe.pagePlanning.habituelIndisponible),
+      );
+      expect(precision.dx, greaterThan(titre.dx + 400));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('bureau 1440 : la progression garde une largeur de lecture', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        depart: '${Routes.classeSousPage(_classe, 'progression')}?eleve=$_a1',
+        taille: const Size(1440, 900),
+        progression: const FausseProgressionClasse(
+          ProgressionEleve(eleveId: _a1, niveauHumain: 'Niveau fictif'),
+        ),
+      );
+      final Rect carte = tester.getRect(
+        find.ancestor(
+          of: find.text('Niveau fictif'),
+          matching: find.byType(AppCard),
+        ),
+      );
+      expect(carte.width, lessThanOrEqualTo(AppPage.largeurLecture));
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('sous-page sans eleve dans l adresse : l eleve inscrit est '
@@ -876,7 +752,7 @@ void main() {
     test('bandeau : salle ouverte a droite le compte a rebours, en direct la '
         'presence', () {
       final AffichageSeance salle = AffichageSeance.depuis(
-        _salleOuverte(),
+        seanceSalleOuverte(),
         maintenantServeurUtc: instantServeurFige,
       );
       final ({String gauche, String? droite, TonEtat ton}) b1 = bandeauSeance(
@@ -887,7 +763,7 @@ void main() {
       expect(b1.ton, TonEtat.succes);
 
       final AffichageSeance direct = AffichageSeance.depuis(
-        _enDirect(),
+        seanceEnDirect(),
         maintenantServeurUtc: instantServeurFige,
       );
       final ({String gauche, String? droite, TonEtat ton}) b2 = bandeauSeance(
@@ -901,9 +777,9 @@ void main() {
     test('seances a venir : de la plus proche a la plus lointaine, closes et '
         'passees ecartees, autre classe ecartee', () {
       final List<SeanceFamille> seances = <SeanceFamille>[
-        _salleOuverte(seanceId: 'loin', avant: const Duration(days: 3)),
-        _salleOuverte(seanceId: 'proche'),
-        _salleOuverte(
+        seanceSalleOuverte(seanceId: 'loin', avant: const Duration(days: 3)),
+        seanceSalleOuverte(seanceId: 'proche'),
+        seanceSalleOuverte(
           seanceId: 'passee',
           avant: const Duration(days: -2),
           statut: StatutSeance.terminee,
@@ -930,7 +806,7 @@ void main() {
       'travaux : echeance la plus proche d abord, retires ecartes',
       () async {
         final List<LearningAssignment> travaux = travauxAffiches(
-          await (await _travaux()).pourGroupe(_classe, studentId: _a1),
+          await (await travauxFictifs()).pourGroupe(_classe, studentId: _a1),
         );
         expect(travaux, hasLength(2));
         expect(travaux.first.instructions, 'Consigne fictive 1');
