@@ -550,20 +550,30 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
 
   /// « Connexion et verification » (logigramme V7, noeud N13) : l'entree est
   /// demandee au serveur. Le compteur de visite n'existe pas encore a l'ecran.
+  ///
+  /// Grammaire de l'ecran resultat (manifeste section 6.3, « M5 ou M2 en
+  /// variante attente »), sans action : il n'y a rien a presser, seulement a
+  /// attendre, comme l'ecran de demarrage (`etats_routeur.dart`).
   Widget _connexion() {
     final c = t.tc.observation.connexion;
-    return Semantics(
-      liveRegion: true,
-      child: EcranResultat(
-        icone: AppIcons.observationEnCours,
-        titre: c.titre,
-        phrase: _connexionProlongee ? c.prolongee : c.phrase,
-        // L'action attend : elle dit que l'entree est en cours et refuse une
-        // seconde pression.
-        libelleAction: t.tc.observation.explication.observer,
-        onAction: () {},
-        actionEnCours: true,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        EcranResultat(
+          icone: AppIcons.observationEnCours,
+          titre: c.titre,
+          phrase: c.phrase,
+        ),
+        Ecart.vXxl,
+        Center(
+          child: Semantics(
+            label: c.enCours,
+            liveRegion: true,
+            child: const CircularProgressIndicator.adaptive(),
+          ),
+        ),
+        if (_connexionProlongee) ...<Widget>[Ecart.vXxl, _prolongee()],
+      ],
     );
   }
 
@@ -625,14 +635,48 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     );
   }
 
+  /// L'icone du cercle heros d'un motif : ce qui arrive a l'observation, pas
+  /// la nature generique « indisponible ».
+  static AppIcon _iconeDe(MotifIndisponibilite motif) => switch (motif) {
+    MotifIndisponibilite.presenceEnVerification ||
+    MotifIndisponibilite.seanceNonCommencee ||
+    MotifIndisponibilite.horsFenetre => AppIcons.attente,
+    MotifIndisponibilite.seanceTerminee ||
+    MotifIndisponibilite.seanceNonTenue => AppIcons.journee,
+    MotifIndisponibilite.lienAbsent ||
+    MotifIndisponibilite.enfantAbsent => AppIcons.foyer,
+    MotifIndisponibilite.visiteDejaOuverte => AppIcons.observationEnCours,
+    MotifIndisponibilite.visitesEpuisees ||
+    MotifIndisponibilite.tempsEpuise ||
+    MotifIndisponibilite.observationDesactivee ||
+    MotifIndisponibilite.garantieServeurAbsente ||
+    MotifIndisponibilite.capaciteAbsente ||
+    MotifIndisponibilite.reseau => AppIcons.observationFermee,
+  };
+
   /// Le motif, en page : ecran resultat (manifeste section 6.3), l'action
-  /// qui peut aboutir, et toujours le retour.
+  /// qui peut aboutir, et toujours le retour. Une panne (reseau, hors ligne)
+  /// passe par l'etat systeme ; un motif de l'observation garde son icone.
   Widget _etatBloquant(
     MotifIndisponibilite motif, {
     DemandeVerification? demande,
   }) {
     final ({String? titre, String? phrase}) textes = _textesDe(motif);
     final bool reverifier = demande != null && _seReverifie(motif);
+    if (motif != MotifIndisponibilite.reseau) {
+      final ({String titre, String phrase}) dits = textesIndisponibilite(motif);
+      return EcranResultat(
+        icone: _iconeDe(motif),
+        titre: dits.titre,
+        phrase: dits.phrase,
+        libelleAction: reverifier
+            ? t.commun.etats.actions.reessayer
+            : _libelleRetour,
+        onAction: reverifier ? () => _reverifier(demande) : _retour,
+        libelleSecondaire: reverifier ? _libelleRetour : null,
+        onSecondaire: reverifier ? _retour : null,
+      );
+    }
     return EtatSysteme(
       nature: _natureDe(motif),
       portee: PorteeEtat.page,

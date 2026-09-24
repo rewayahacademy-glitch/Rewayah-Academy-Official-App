@@ -7442,8 +7442,8 @@ class Traductions$tc$observation$connexion$fr {
 	/// fr: 'Connexion et vérification en cours'
 	String get enCours => 'Connexion et vérification en cours';
 
-	/// fr: 'La vérification prend plus de temps que prévu. Restez sur cette page.'
-	String get prolongee => 'La vérification prend plus de temps que prévu. Restez sur cette page.';
+	/// fr: 'Restez sur cette page : la vérification continue.'
+	String get prolongee => 'Restez sur cette page : la vérification continue.';
 
 	/// fr: 'Connexion impossible'
 	String get impossibleTitre => 'Connexion impossible';
@@ -9955,7 +9955,7 @@ extension on Traductions {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
-			'tc.observation.connexion.prolongee' => 'La vérification prend plus de temps que prévu. Restez sur cette page.',
+			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',

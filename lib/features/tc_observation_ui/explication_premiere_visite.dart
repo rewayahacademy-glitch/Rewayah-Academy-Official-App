@@ -248,25 +248,20 @@ class _Conseil extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        // Le petit medaillon s'aligne sous le grand : meme colonne d'icones.
-        SizedBox(
-          width: _Point.diametre,
-          child: Align(
-            alignment: AlignmentDirectional.topCenter,
-            child: ExcludeSemantics(
-              child: SizedBox.square(
-                dimension: diametre,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: palette.surfaceSunken.background,
-                  ),
-                  child: Center(
-                    child: IconTheme(
-                      data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
-                      child: Icon(icone.repos),
-                    ),
-                  ),
+        // Plus discret que les points : petit medaillon cale a gauche, texte
+        // qui commence plus tot (M2 : conseils en retrait moindre).
+        ExcludeSemantics(
+          child: SizedBox.square(
+            dimension: diametre,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: palette.surfaceSunken.background,
+              ),
+              child: Center(
+                child: IconTheme(
+                  data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
+                  child: Icon(icone.repos),
                 ),
               ),
             ),

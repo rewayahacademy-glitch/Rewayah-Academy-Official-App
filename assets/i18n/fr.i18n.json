@@ -2270,7 +2270,7 @@
         "titre": "Connexion et vérification",
         "phrase": "Vos visites restantes sont vérifiées. La visite commence dès que l'entrée est acceptée, connexion vidéo comprise.",
         "enCours": "Connexion et vérification en cours",
-        "prolongee": "La vérification prend plus de temps que prévu. Restez sur cette page.",
+        "prolongee": "Restez sur cette page : la vérification continue.",
         "impossibleTitre": "Connexion impossible",
         "impossible": "L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau."
       },
