@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/vue_budget_observation.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/choix_entree_observation.dart';
@@ -232,6 +233,161 @@ void main() {
         find.text(t.tc.observation.annonce.restant(secondes: 80)),
         findsOneWidget,
       );
+      // Un seul observateur ne se replie pas : une ligne ne merite pas une
+      // animation, et il n'y a rien a compter.
+      expect(
+        find.byKey(IndicateurObservation.cleBandePrenoms),
+        findsNothing,
+      );
+    });
+
+    group('Plusieurs tuteurs : l\'oeil, les prenoms, et leur nombre', () {
+      /// Deux observateurs de deux foyers differents, comme dans un groupe.
+      List<AnnonceObservation> deuxTuteurs() => <AnnonceObservation>[
+        AnnonceObservation(
+          libelle: t.tc.observation.annonce.tuteurObserve(
+            prenomEnfant: 'Amina',
+          ),
+          prenomEnfant: 'Amina',
+          enfantConcerneId: 'enfant-1',
+        ),
+        AnnonceObservation(
+          libelle: t.tc.observation.annonce.tuteurObserve(
+            prenomEnfant: 'Youssef',
+          ),
+          prenomEnfant: 'Youssef',
+          enfantConcerneId: 'enfant-2',
+        ),
+      ];
+
+      /// Le facteur de largeur de la bande : 1 deployee, 0 repliee derriere
+      /// l'oeil. MESURE plutot que devinee -- les prenoms restent dans l'arbre
+      /// une fois replies, donc `find.text` les trouverait encore.
+      double replisement(WidgetTester tester) => tester
+          .widget<Align>(find.byKey(IndicateurObservation.cleBandePrenoms))
+          .widthFactor!;
+
+      testWidgets('les prenoms se montrent, puis glissent derriere l\'oeil', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        await tester.pumpAndSettle();
+
+        // A l'arrivee : les deux prenoms sont sortis, et leur nombre est la.
+        expect(replisement(tester), 1);
+        expect(find.text('Amina'), findsOneWidget);
+        expect(find.text('Youssef'), findsOneWidget);
+        expect(find.text('2'), findsOneWidget);
+        // Jamais deux phrases empilees : c'est ce que ce repli evite.
+        expect(find.textContaining('observe'), findsNothing);
+
+        // Quelques secondes plus tard, ils sont rentres.
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+        // Le nombre, lui, reste lisible : c'est tout ce qui subsiste.
+        expect(find.text('2'), findsOneWidget);
+      });
+
+      testWidgets('une pression les fait ressortir, le relachement les rend', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+
+        final TestGesture doigt = await tester.startGesture(
+          tester.getCenter(find.byType(IndicateurObservation)),
+        );
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 1);
+
+        // Le relachement rouvre la fenetre d'affichage plutot que de replier
+        // sur-le-champ : au doigt, un appui bref ne laisserait rien lire.
+        await doigt.up();
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 1);
+
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+      });
+
+      testWidgets('un tuteur de plus rouvre la fenetre d\'affichage', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+
+        await tester.pumpWidget(
+          hoteTcG(
+            IndicateurObservation(
+              annonces: <AnnonceObservation>[
+                ...deuxTuteurs(),
+                AnnonceObservation(
+                  libelle: t.tc.observation.annonce.tuteurObserve(
+                    prenomEnfant: 'Bilal',
+                  ),
+                  prenomEnfant: 'Bilal',
+                  enfantConcerneId: 'enfant-3',
+                ),
+              ],
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Sans cela, le troisieme observateur arriverait deja replie et
+        // l'enseignant ne saurait jamais qu'il est entre.
+        expect(replisement(tester), 1);
+        expect(find.text('3'), findsOneWidget);
+      });
+
+      testWidgets('le lecteur d\'ecran atteint les PRENOMS, pas que le compte', (
+        WidgetTester tester,
+      ) async {
+        // Liberee a la MAIN en fin de corps, jamais par `addTearDown` : la
+        // verification de flutter_test s'execute avant les tear-downs et
+        // echouerait sur une poignee encore active.
+        final SemanticsHandle poignee = tester.ensureSemantics();
+
+        await tester.pumpWidget(
+          hoteTcG(IndicateurObservation(annonces: deuxTuteurs())),
+        );
+        // On se place dans l'etat de REPOS, celui ou les prenoms sont replies :
+        // c'est la que le defaut se voit. Ni le survol de la souris ni le focus
+        // clavier n'existent pour un lecteur d'ecran tactile, et un `Opacity` a
+        // zero retire son sous-arbre de l'arbre semantique.
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pumpAndSettle();
+        expect(replisement(tester), 0);
+
+        expect(
+          find.bySemanticsLabel(
+            RegExp(
+              RegExp.escape(
+                t.tc.observation.annonce.tuteursObservent(nombre: 2),
+              ),
+            ),
+          ),
+          findsOneWidget,
+        );
+        // Savoir DE QUI le parent regarde est ce qui sert a l'enseignant : le
+        // repli est une economie de place, jamais une reserve d'information.
+        expect(find.bySemanticsLabel(RegExp('Amina')), findsOneWidget);
+        expect(find.bySemanticsLabel(RegExp('Youssef')), findsOneWidget);
+
+        poignee.dispose();
+      });
     });
 
     test('seul l\'enfant concerne recoit l\'indicateur discret', () {

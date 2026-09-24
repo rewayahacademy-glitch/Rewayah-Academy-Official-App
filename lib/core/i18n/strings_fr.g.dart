@@ -7383,6 +7383,9 @@ class Traductions$tc$observation$annonce$fr {
 
 	/// fr: 'Ton tuteur regarde le cours'
 	String get enfantIndicateur => 'Ton tuteur regarde le cours';
+
+	/// fr: '{nombre} tuteurs observent'
+	String tuteursObservent({required Object nombre}) => '${nombre} tuteurs observent';
 }
 
 // Path: tc.observation.reglages
@@ -9720,6 +9723,7 @@ extension on Traductions {
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
+			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',

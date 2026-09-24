@@ -2250,7 +2250,8 @@
       "annonce": {
         "tuteurObserve": "Tuteur de {prenomEnfant} observe",
         "restant": "{secondes} s",
-        "enfantIndicateur": "Ton tuteur regarde le cours"
+        "enfantIndicateur": "Ton tuteur regarde le cours",
+        "tuteursObservent": "{nombre} tuteurs observent"
       },
       "reglages": {
         "titre": "Observation par les tuteurs",

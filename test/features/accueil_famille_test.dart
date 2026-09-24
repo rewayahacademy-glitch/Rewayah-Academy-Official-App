@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
+import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 
 import '../support/harnais.dart';
 
@@ -137,6 +138,15 @@ Future<void> _monter(
           path: Routes.salle,
           builder: (BuildContext _, GoRouterState _) => const Text('ELV-03'),
         ),
+        // La porte d'observation, destination d'« Assister » depuis le lot
+        // observation du 21/09. Le parametre de chemin est RENDU, pour que le
+        // test constate quel identifiant de seance y arrive plutot que de se
+        // contenter de voir le bon ecran.
+        GoRoute(
+          path: RoutesTcG.observation,
+          builder: (BuildContext _, GoRouterState etat) =>
+              Text('TC-G/${etat.pathParameters[RoutesTcG.parametreSeance]}'),
+        ),
       ],
       surcharges: _surcharges(
         appairage: appairage,
@@ -247,7 +257,7 @@ void main() {
       );
     });
 
-    testWidgets('Assister inscrit le tuteur AVANT d\'ouvrir la salle', (
+    testWidgets('Assister ouvre la porte d\'observation de CETTE seance', (
       WidgetTester tester,
     ) async {
       final FauxServiceVideo video = FauxServiceVideo();
@@ -269,17 +279,53 @@ void main() {
       await tester.tap(find.text(t.tuteur.accueil.assister));
       await tester.pumpAndSettle();
 
-      // L'ordre est tout le sujet : jusqu'au lot `CTR-01`, ce bouton faisait un
-      // simple `go` vers la salle, et le tuteur y arrivait dans l'impasse
-      // d'acces -- `autoriser_jeton_video()` lit l'appartenance dans
-      // `session_participants`, ou personne ne l'inscrivait.
-      expect(video.assistances, <String>['s1']);
-      expect(find.text('ELV-03'), findsOneWidget);
+      // La destination a change au lot observation du 21/09 : la salle
+      // traitait le tuteur comme un participant de plus, la porte
+      // d'observation le traite comme un observateur -- deux visites, deux
+      // minutes, sans micro ni camera.
+      expect(find.text('TC-G/s1'), findsOneWidget);
+      expect(find.text('ELV-03'), findsNothing);
     });
 
-    testWidgets('un refus d\'inscription n\'ouvre aucune salle et se dit', (
+    testWidgets('Assister n\'inscrit plus le tuteur par l\'ancienne porte', (
       WidgetTester tester,
     ) async {
+      final FauxServiceVideo video = FauxServiceVideo();
+      await _monter(
+        tester,
+        appairage: FauxServiceAppairage()
+          ..elevesRendus = <EleveDuFoyer>[_enfant()],
+        planning: FauxServicePlanning()
+          ..seancesRendues = <Seance>[
+            _cours(
+              debut: _maintenant.subtract(const Duration(minutes: 12)),
+              statut: StatutSeance.enCours,
+            ),
+          ]
+          ..affectationsRendues = <Affectation>[_affectation()],
+        video: video,
+      );
+
+      await tester.tap(find.text(t.tuteur.accueil.assister));
+      await tester.pumpAndSettle();
+
+      // `assister_seance` (lot `CTR-01`) inscrivait dans
+      // `session_participants` SANS rien verifier. `entrer_observation`, que
+      // la porte d'observation appelle, fait la meme inscription ET verifie le
+      // lien tuteur-enfant dans ce groupe, la politique du groupe et le quota
+      // de visites. Garder les deux, c'etait laisser la porte qui ne verifie
+      // rien decider si le parent entre.
+      expect(video.assistances, isEmpty);
+    });
+
+    testWidgets('un refus d\'observation ne se decide plus ici', (
+      WidgetTester tester,
+    ) async {
+      // L'ancienne porte refuserait : elle n'est plus empruntee, donc son
+      // refus n'a plus d'effet. Le refus appartient desormais au serveur, et
+      // `EntreeObservationPage` le nomme -- quota atteint, temps epuise,
+      // observation desactivee, lien tuteur absent -- la ou l'echec local
+      // disait toujours la meme phrase.
       final FauxServiceVideo video = FauxServiceVideo()
         ..refusInscription = StateError('seance close');
       await _monter(
@@ -300,9 +346,8 @@ void main() {
       await tester.tap(find.text(t.tuteur.accueil.assister));
       await tester.pumpAndSettle();
 
-      expect(find.text('ELV-03'), findsNothing);
-      // Le refus se dit la ou le geste a eu lieu, jamais au centre de l'ecran.
-      expect(find.text(t.tuteur.accueil.assisterRefuse), findsOneWidget);
+      expect(find.text('TC-G/s1'), findsOneWidget);
+      expect(find.text(t.tuteur.accueil.assisterRefuse), findsNothing);
     });
 
     testWidgets('hors seance, Assister n est pas rendu du tout', (
