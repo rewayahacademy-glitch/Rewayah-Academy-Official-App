@@ -163,8 +163,17 @@ class _BlocEleve extends StatelessWidget {
           else
             ActionPrincipale(
               libelle: t.appareils.ajouter,
-              onPress: () =>
-                  GoRouter.of(context).go(Routes.appairerPour(eleve.id)),
+              // L'emetteur revient d'ou l'on vient (Foyer ou liste des
+              // appareils) : le chemin courant voyage en `retour`.
+              onPress: () => GoRouter.of(context).go(
+                Uri(
+                  path: Routes.appairerPour(eleve.id),
+                  queryParameters: switch (_cheminCourant(context)) {
+                    final String chemin => <String, String>{'retour': chemin},
+                    null => null,
+                  },
+                ).toString(),
+              ),
             ),
         ],
       ),
@@ -212,6 +221,15 @@ class _LigneAppareil extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Le chemin de l'ecran courant, `null` hors routeur.
+String? _cheminCourant(BuildContext context) {
+  try {
+    return GoRouterState.of(context).uri.path;
+  } on GoError {
+    return null;
   }
 }
 

@@ -170,7 +170,7 @@ void main() {
       expect(service.codesDemandes, <String>['e1']);
       // Le code est espace pour etre lu a voix haute sans se tromper.
       expect(find.text('A B 2 3 C D'), findsOneWidget);
-      expect(find.textContaining('9:'), findsOneWidget);
+      expect(find.textContaining('Encore 9:'), findsOneWidget);
     });
 
     testWidgets('un code expire propose d en generer un autre', (
@@ -187,11 +187,11 @@ void main() {
       await tester.tap(find.text(t.appareils.ajouter));
       await tester.pumpAndSettle();
 
-      expect(find.text(t.appareils.expire), findsOneWidget);
+      expect(find.text(t.appareils.emetteur.expire.titre), findsOneWidget);
       expect(find.text(t.appareils.regenerer), findsOneWidget);
     });
 
-    testWidgets('un refus de la base se dit, et laisse reessayer', (
+    testWidgets('un refus de plafond de la base se dit, sans texte brut', (
       WidgetTester tester,
     ) async {
       // Le plafond est verifie EN BASE : deux ecrans ouverts en meme temps ne
@@ -204,8 +204,14 @@ void main() {
       await tester.tap(find.text(t.appareils.ajouter));
       await tester.pumpAndSettle();
 
-      expect(find.text(t.appareils.erreur), findsOneWidget);
-      expect(find.text(t.commun.reessayer), findsOneWidget);
+      expect(
+        find.text(t.appareils.emetteur.erreur.plafondTitre),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.appareils.emetteur.erreur.plafondAction),
+        findsOneWidget,
+      );
     });
   });
 }

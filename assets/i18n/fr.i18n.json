@@ -321,10 +321,58 @@
     "regle": "Deux appareils au maximum par enfant, un seul en cours à la fois.",
     "ajouter": "Ajouter un appareil",
     "limiteAtteinte": "Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.",
-    "codeTitre": "Sur l'appareil de l'enfant",
-    "codeInstruction": "Ouvrez l'application Rewayah, puis entrez ce code.",
-    "expireDans": "Expire dans {temps}",
-    "expire": "Ce code a expiré.",
+    "emetteur": {
+      "titre": "Connecter un appareil",
+      "pourEleve": "Pour {prenom}",
+      "consigneTitre": "Sur l'autre appareil",
+      "consigne": "Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.",
+      "libelleQr": "QR de connexion. Le même code est écrit en dessous.",
+      "codeManuel": "Code à saisir",
+      "codeLu": "Code à saisir : {code}",
+      "valableJusqua": "Valable jusqu'à {heure}",
+      "restant": "Encore {temps}",
+      "sortie": "Quitter cet écran n'annule pas le code : il reste valable jusqu'à {heure}.",
+      "suiviIndisponible": "Cet écran ne peut pas confirmer la connexion. Vérifiez sur l'appareil de l'élève.",
+      "preparation": "Préparation du code",
+      "verification": {
+        "titre": "Vérification du code",
+        "phrase": "Le code est masqué le temps de vérifier qu'il est toujours valable."
+      },
+      "confirme": {
+        "titre": "Appareil connecté",
+        "phrase": "L'appareil de {prenom} est prêt. Le code n'est plus affiché et ne peut plus servir.",
+        "phraseSansPrenom": "L'appareil de l'élève est prêt. Le code n'est plus affiché et ne peut plus servir.",
+        "action": "Terminé"
+      },
+      "expire": {
+        "titre": "Ce code a expiré",
+        "phrase": "Il ne peut plus servir. Générez-en un nouveau quand l'autre appareil est prêt."
+      },
+      "remplace": {
+        "titre": "Ce code a été remplacé",
+        "phrase": "Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus."
+      },
+      "dejaActif": {
+        "titre": "Un code est déjà valable",
+        "phrase": "Un code créé pour cet élève vaut jusqu'à {heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l'ancien inutilisable."
+      },
+      "horsLigne": {
+        "titre": "Connexion interrompue",
+        "phraseAvecCode": "Le code est masqué jusqu'au retour de la connexion. Il reste valable jusqu'à {heure}.",
+        "phraseSansCode": "Le code n'a pas pu être préparé. Il le sera dès le retour de la connexion."
+      },
+      "erreur": {
+        "plafondTitre": "Limite d'appareils atteinte",
+        "plafondPhrase": "Cet élève a déjà le nombre maximal d'appareils. Retirez-en un pour en connecter un autre.",
+        "plafondAction": "Voir les appareils",
+        "horsFoyerTitre": "Profil élève introuvable",
+        "horsFoyerPhrase": "Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.",
+        "compteTitre": "Connexion d'appareil pas encore ouverte",
+        "comptePhrase": "Votre compte doit être validé avant de connecter l'appareil d'un élève.",
+        "generiqueTitre": "Le code n'a pas pu être préparé",
+        "generiquePhrase": "La demande n'a pas abouti. Réessayez dans un instant."
+      }
+    },
     "regenerer": "Générer un nouveau code",
     "revoquer": "Retirer",
     "revoquerConfirmation": "Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.",

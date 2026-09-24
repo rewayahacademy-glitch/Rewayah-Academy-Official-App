@@ -756,17 +756,7 @@ class Traductions$appareils$fr {
 	/// fr: 'Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.'
 	String limiteAtteinte({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.';
 
-	/// fr: 'Sur l'appareil de l'enfant'
-	String get codeTitre => 'Sur l\'appareil de l\'enfant';
-
-	/// fr: 'Ouvrez l'application Rewayah, puis entrez ce code.'
-	String get codeInstruction => 'Ouvrez l\'application Rewayah, puis entrez ce code.';
-
-	/// fr: 'Expire dans {temps}'
-	String expireDans({required Object temps}) => 'Expire dans ${temps}';
-
-	/// fr: 'Ce code a expiré.'
-	String get expire => 'Ce code a expiré.';
+	late final Traductions$appareils$emetteur$fr emetteur = Traductions$appareils$emetteur$fr.internal(_root);
 
 	/// fr: 'Générer un nouveau code'
 	String get regenerer => 'Générer un nouveau code';
@@ -2175,6 +2165,59 @@ class Traductions$connexion$feuilleAppareil$fr {
 
 	/// fr: 'Fermer'
 	String get fermer => 'Fermer';
+}
+
+// Path: appareils.emetteur
+class Traductions$appareils$emetteur$fr {
+	Traductions$appareils$emetteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connecter un appareil'
+	String get titre => 'Connecter un appareil';
+
+	/// fr: 'Pour {prenom}'
+	String pourEleve({required Object prenom}) => 'Pour ${prenom}';
+
+	/// fr: 'Sur l'autre appareil'
+	String get consigneTitre => 'Sur l\'autre appareil';
+
+	/// fr: 'Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.'
+	String get consigne => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.';
+
+	/// fr: 'QR de connexion. Le même code est écrit en dessous.'
+	String get libelleQr => 'QR de connexion. Le même code est écrit en dessous.';
+
+	/// fr: 'Code à saisir'
+	String get codeManuel => 'Code à saisir';
+
+	/// fr: 'Code à saisir : {code}'
+	String codeLu({required Object code}) => 'Code à saisir : ${code}';
+
+	/// fr: 'Valable jusqu'à {heure}'
+	String valableJusqua({required Object heure}) => 'Valable jusqu\'à ${heure}';
+
+	/// fr: 'Encore {temps}'
+	String restant({required Object temps}) => 'Encore ${temps}';
+
+	/// fr: 'Quitter cet écran n'annule pas le code : il reste valable jusqu'à {heure}.'
+	String sortie({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.';
+
+	/// fr: 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l'appareil de l'élève.'
+	String get suiviIndisponible => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.';
+
+	/// fr: 'Préparation du code'
+	String get preparation => 'Préparation du code';
+
+	late final Traductions$appareils$emetteur$verification$fr verification = Traductions$appareils$emetteur$verification$fr.internal(_root);
+	late final Traductions$appareils$emetteur$confirme$fr confirme = Traductions$appareils$emetteur$confirme$fr.internal(_root);
+	late final Traductions$appareils$emetteur$expire$fr expire = Traductions$appareils$emetteur$expire$fr.internal(_root);
+	late final Traductions$appareils$emetteur$remplace$fr remplace = Traductions$appareils$emetteur$remplace$fr.internal(_root);
+	late final Traductions$appareils$emetteur$dejaActif$fr dejaActif = Traductions$appareils$emetteur$dejaActif$fr.internal(_root);
+	late final Traductions$appareils$emetteur$horsLigne$fr horsLigne = Traductions$appareils$emetteur$horsLigne$fr.internal(_root);
+	late final Traductions$appareils$emetteur$erreur$fr erreur = Traductions$appareils$emetteur$erreur$fr.internal(_root);
 }
 
 // Path: admin.tableau
@@ -5936,6 +5979,141 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: appareils.emetteur.verification
+class Traductions$appareils$emetteur$verification$fr {
+	Traductions$appareils$emetteur$verification$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérification du code'
+	String get titre => 'Vérification du code';
+
+	/// fr: 'Le code est masqué le temps de vérifier qu'il est toujours valable.'
+	String get phrase => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.';
+}
+
+// Path: appareils.emetteur.confirme
+class Traductions$appareils$emetteur$confirme$fr {
+	Traductions$appareils$emetteur$confirme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Appareil connecté'
+	String get titre => 'Appareil connecté';
+
+	/// fr: 'L'appareil de {prenom} est prêt. Le code n'est plus affiché et ne peut plus servir.'
+	String phrase({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.';
+
+	/// fr: 'L'appareil de l'élève est prêt. Le code n'est plus affiché et ne peut plus servir.'
+	String get phraseSansPrenom => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.';
+
+	/// fr: 'Terminé'
+	String get action => 'Terminé';
+}
+
+// Path: appareils.emetteur.expire
+class Traductions$appareils$emetteur$expire$fr {
+	Traductions$appareils$emetteur$expire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce code a expiré'
+	String get titre => 'Ce code a expiré';
+
+	/// fr: 'Il ne peut plus servir. Générez-en un nouveau quand l'autre appareil est prêt.'
+	String get phrase => 'Il ne peut plus servir. Générez-en un nouveau quand l\'autre appareil est prêt.';
+}
+
+// Path: appareils.emetteur.remplace
+class Traductions$appareils$emetteur$remplace$fr {
+	Traductions$appareils$emetteur$remplace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce code a été remplacé'
+	String get titre => 'Ce code a été remplacé';
+
+	/// fr: 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.'
+	String get phrase => 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.';
+}
+
+// Path: appareils.emetteur.dejaActif
+class Traductions$appareils$emetteur$dejaActif$fr {
+	Traductions$appareils$emetteur$dejaActif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un code est déjà valable'
+	String get titre => 'Un code est déjà valable';
+
+	/// fr: 'Un code créé pour cet élève vaut jusqu'à {heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l'ancien inutilisable.'
+	String phrase({required Object heure}) => 'Un code créé pour cet élève vaut jusqu\'à ${heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l\'ancien inutilisable.';
+}
+
+// Path: appareils.emetteur.horsLigne
+class Traductions$appareils$emetteur$horsLigne$fr {
+	Traductions$appareils$emetteur$horsLigne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connexion interrompue'
+	String get titre => 'Connexion interrompue';
+
+	/// fr: 'Le code est masqué jusqu'au retour de la connexion. Il reste valable jusqu'à {heure}.'
+	String phraseAvecCode({required Object heure}) => 'Le code est masqué jusqu\'au retour de la connexion. Il reste valable jusqu\'à ${heure}.';
+
+	/// fr: 'Le code n'a pas pu être préparé. Il le sera dès le retour de la connexion.'
+	String get phraseSansCode => 'Le code n\'a pas pu être préparé. Il le sera dès le retour de la connexion.';
+}
+
+// Path: appareils.emetteur.erreur
+class Traductions$appareils$emetteur$erreur$fr {
+	Traductions$appareils$emetteur$erreur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Limite d'appareils atteinte'
+	String get plafondTitre => 'Limite d\'appareils atteinte';
+
+	/// fr: 'Cet élève a déjà le nombre maximal d'appareils. Retirez-en un pour en connecter un autre.'
+	String get plafondPhrase => 'Cet élève a déjà le nombre maximal d\'appareils. Retirez-en un pour en connecter un autre.';
+
+	/// fr: 'Voir les appareils'
+	String get plafondAction => 'Voir les appareils';
+
+	/// fr: 'Profil élève introuvable'
+	String get horsFoyerTitre => 'Profil élève introuvable';
+
+	/// fr: 'Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.'
+	String get horsFoyerPhrase => 'Ce profil élève n\'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.';
+
+	/// fr: 'Connexion d'appareil pas encore ouverte'
+	String get compteTitre => 'Connexion d\'appareil pas encore ouverte';
+
+	/// fr: 'Votre compte doit être validé avant de connecter l'appareil d'un élève.'
+	String get comptePhrase => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.';
+
+	/// fr: 'Le code n'a pas pu être préparé'
+	String get generiqueTitre => 'Le code n\'a pas pu être préparé';
+
+	/// fr: 'La demande n'a pas abouti. Réessayez dans un instant.'
+	String get generiquePhrase => 'La demande n\'a pas abouti. Réessayez dans un instant.';
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -8077,10 +8255,42 @@ extension on Traductions {
 			'appareils.regle' => 'Deux appareils au maximum par enfant, un seul en cours à la fois.',
 			'appareils.ajouter' => 'Ajouter un appareil',
 			'appareils.limiteAtteinte' => ({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.',
-			'appareils.codeTitre' => 'Sur l\'appareil de l\'enfant',
-			'appareils.codeInstruction' => 'Ouvrez l\'application Rewayah, puis entrez ce code.',
-			'appareils.expireDans' => ({required Object temps}) => 'Expire dans ${temps}',
-			'appareils.expire' => 'Ce code a expiré.',
+			'appareils.emetteur.titre' => 'Connecter un appareil',
+			'appareils.emetteur.pourEleve' => ({required Object prenom}) => 'Pour ${prenom}',
+			'appareils.emetteur.consigneTitre' => 'Sur l\'autre appareil',
+			'appareils.emetteur.consigne' => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.',
+			'appareils.emetteur.libelleQr' => 'QR de connexion. Le même code est écrit en dessous.',
+			'appareils.emetteur.codeManuel' => 'Code à saisir',
+			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
+			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
+			'appareils.emetteur.restant' => ({required Object temps}) => 'Encore ${temps}',
+			'appareils.emetteur.sortie' => ({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.',
+			'appareils.emetteur.suiviIndisponible' => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.',
+			'appareils.emetteur.preparation' => 'Préparation du code',
+			'appareils.emetteur.verification.titre' => 'Vérification du code',
+			'appareils.emetteur.verification.phrase' => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.',
+			'appareils.emetteur.confirme.titre' => 'Appareil connecté',
+			'appareils.emetteur.confirme.phrase' => ({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.',
+			'appareils.emetteur.confirme.phraseSansPrenom' => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.',
+			'appareils.emetteur.confirme.action' => 'Terminé',
+			'appareils.emetteur.expire.titre' => 'Ce code a expiré',
+			'appareils.emetteur.expire.phrase' => 'Il ne peut plus servir. Générez-en un nouveau quand l\'autre appareil est prêt.',
+			'appareils.emetteur.remplace.titre' => 'Ce code a été remplacé',
+			'appareils.emetteur.remplace.phrase' => 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.',
+			'appareils.emetteur.dejaActif.titre' => 'Un code est déjà valable',
+			'appareils.emetteur.dejaActif.phrase' => ({required Object heure}) => 'Un code créé pour cet élève vaut jusqu\'à ${heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l\'ancien inutilisable.',
+			'appareils.emetteur.horsLigne.titre' => 'Connexion interrompue',
+			'appareils.emetteur.horsLigne.phraseAvecCode' => ({required Object heure}) => 'Le code est masqué jusqu\'au retour de la connexion. Il reste valable jusqu\'à ${heure}.',
+			'appareils.emetteur.horsLigne.phraseSansCode' => 'Le code n\'a pas pu être préparé. Il le sera dès le retour de la connexion.',
+			'appareils.emetteur.erreur.plafondTitre' => 'Limite d\'appareils atteinte',
+			'appareils.emetteur.erreur.plafondPhrase' => 'Cet élève a déjà le nombre maximal d\'appareils. Retirez-en un pour en connecter un autre.',
+			'appareils.emetteur.erreur.plafondAction' => 'Voir les appareils',
+			'appareils.emetteur.erreur.horsFoyerTitre' => 'Profil élève introuvable',
+			'appareils.emetteur.erreur.horsFoyerPhrase' => 'Ce profil élève n\'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.',
+			'appareils.emetteur.erreur.compteTitre' => 'Connexion d\'appareil pas encore ouverte',
+			'appareils.emetteur.erreur.comptePhrase' => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.',
+			'appareils.emetteur.erreur.generiqueTitre' => 'Le code n\'a pas pu être préparé',
+			'appareils.emetteur.erreur.generiquePhrase' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
 			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? L\'enfant devra le réappairer pour s\'en resservir.',
@@ -8308,6 +8518,8 @@ extension on Traductions {
 			'admin.attribution.sansHeureCommune' => 'Aucune heure commune',
 			'admin.attribution.quelleHeure' => 'Sur quelle heure ?',
 			'admin.attribution.creneau' => ({required Object jour, required Object heure}) => '${jour} à ${heure} h',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.motif' => 'Pourquoi passer outre ?',
 			'admin.attribution.motifRequis' => ({required Object prenom}) => '${prenom} n\'a pas posé cette heure. L\'attribuer quand même peut se justifier, et cela s\'inscrit au journal.',
 			'admin.attribution.attribuer' => ({required Object eleve, required Object enseignant}) => 'Attribuer ${eleve} à ${enseignant}',
@@ -8340,8 +8552,6 @@ extension on Traductions {
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.champSeuil' => 'Seuil maximal',
 			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
@@ -8822,6 +9032,8 @@ extension on Traductions {
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
@@ -8854,8 +9066,6 @@ extension on Traductions {
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
-			_ => null,
-		} ?? switch (path) {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
@@ -9336,6 +9546,8 @@ extension on Traductions {
 			'enseignant.profil.modifierLangues' => 'Modifier les langues',
 			'enseignant.profil.languesIndice' => 'Séparez les langues par une virgule',
 			'enseignant.profil.enregistrer' => 'Enregistrer',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
@@ -9368,8 +9580,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les groupes : celui-ci n\'a pas encore d\'élève.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.erreur' => 'Ce groupe n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Ce groupe n\'est pas l\'un des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
