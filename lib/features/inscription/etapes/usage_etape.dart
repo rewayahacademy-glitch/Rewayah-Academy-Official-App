@@ -1,21 +1,77 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/router/page_etat.dart';
-import '../../../core/widgets/etat_systeme.dart';
+import '../../../core/i18n/strings.g.dart';
+import '../../../core/icons/app_icons.dart';
+import '../../../core/router/routes.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/action_principale.dart';
+import '../brouillon_inscription.dart';
+import '../inscription_page.dart';
 
-// STUB PHASE 0 : propriété du lot A, à remplacer
-//
-// Route : `/inscription/usage`. Posee par le coordinateur en phase 0c2 (chantier Tuteur
-// V1) pour que la route, sa garde et ses tests existent avant le lot : le
-// lot remplace le contenu de ce fichier sans toucher au routeur. Aucun STUB
-// ne doit subsister a la fin du chantier.
-
-/// L'etape d'usage de l'inscription (Moi uniquement, Moi et ma famille).
-class UsageEtape extends StatelessWidget {
-  /// Cree la page.
+/// `/inscription/usage` : deux cartes exactement, aucune preselection, aucune
+/// carte « Autre » ; l'enseignant passe par un lien discret (mandat A,
+/// 05_LOTS_PHASE1.md section A, sous-paquet 2).
+class UsageEtape extends ConsumerWidget {
+  /// Cree l'etape.
   const UsageEtape({super.key});
 
+  static const String _route = Routes.inscriptionUsage;
+
   @override
-  Widget build(BuildContext context) =>
-      const PageEtat(nature: NatureEtat.indisponible, dependance: 'LOT-A');
+  Widget build(BuildContext context, WidgetRef ref) {
+    final UsageInscription? usage = ref.watch(
+      brouillonInscriptionProvider.select((BrouillonInscription b) => b.usage),
+    );
+    final BrouillonInscriptionControleur controleur = ref.read(
+      brouillonInscriptionProvider.notifier,
+    );
+
+    // Une carte deja choisie reste retenue au retour ; l'enseignant n'est pas
+    // une carte : on ne le montre pas comme une preselection.
+    final UsageInscription? retenu = usage == UsageInscription.enseignant
+        ? null
+        : usage;
+
+    return CoquilleEtape(
+      route: _route,
+      question: t.inscription.usage.question,
+      libelleAction: t.commun.continuer,
+      onAction: retenu == null ? null : () => avancerDepuis(context, _route),
+      complement: Center(
+        child: ActionPrincipale(
+          key: const Key('inscription-lien-enseignant'),
+          libelle: t.inscription.usage.enseignant,
+          niveau: NiveauAction.tertiaire,
+          pleineLargeur: false,
+          onPress: () {
+            controleur.choisirUsage(UsageInscription.enseignant);
+            avancerDepuis(context, _route);
+          },
+        ),
+      ),
+      enfant: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          CarteChoixInscription(
+            key: const Key('inscription-usage-moi'),
+            icone: AppIcons.profil,
+            titre: t.inscription.usage.moiTitre,
+            description: t.inscription.usage.moiDescription,
+            retenue: retenu == UsageInscription.moi,
+            onPress: () => controleur.choisirUsage(UsageInscription.moi),
+          ),
+          Ecart.vMd,
+          CarteChoixInscription(
+            key: const Key('inscription-usage-famille'),
+            icone: AppIcons.foyer,
+            titre: t.inscription.usage.familleTitre,
+            description: t.inscription.usage.familleDescription,
+            retenue: retenu == UsageInscription.famille,
+            onPress: () => controleur.choisirUsage(UsageInscription.famille),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -1,21 +1,108 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/router/page_etat.dart';
-import '../../../core/widgets/etat_systeme.dart';
+import '../../../core/i18n/strings.g.dart';
+import '../../../core/router/routes.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../brouillon_inscription.dart';
+import '../inscription_page.dart';
 
-// STUB PHASE 0 : propriété du lot A, à remplacer
-//
-// Route : `/inscription/identite`. Posee par le coordinateur en phase 0c2 (chantier Tuteur
-// V1) pour que la route, sa garde et ses tests existent avant le lot : le
-// lot remplace le contenu de ce fichier sans toucher au routeur. Aucun STUB
-// ne doit subsister a la fin du chantier.
-
-/// L'etape d'identite de l'inscription.
-class IdentiteEtape extends StatelessWidget {
-  /// Cree la page.
+/// `/inscription/identite` : prenom et nom, erreurs sous les champs.
+class IdentiteEtape extends ConsumerStatefulWidget {
+  /// Cree l'etape.
   const IdentiteEtape({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      const PageEtat(nature: NatureEtat.indisponible, dependance: 'LOT-A');
+  ConsumerState<IdentiteEtape> createState() => _IdentiteEtapeState();
+}
+
+class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
+  static const String _route = Routes.inscriptionIdentite;
+
+  late final TextEditingController _prenom;
+  late final TextEditingController _nom;
+
+  /// Les erreurs ne s'affichent qu'apres une premiere tentative.
+  bool _tente = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final BrouillonInscription brouillon = ref.read(
+      brouillonInscriptionProvider,
+    );
+    _prenom = TextEditingController(text: brouillon.prenom);
+    _nom = TextEditingController(text: brouillon.nom);
+  }
+
+  @override
+  void dispose() {
+    _prenom.dispose();
+    _nom.dispose();
+    super.dispose();
+  }
+
+  String? _erreur(TextEditingController champ) =>
+      _tente && champ.text.trim().isEmpty ? t.inscription.champRequis : null;
+
+  void _continuer() {
+    if (_prenom.text.trim().isEmpty || _nom.text.trim().isEmpty) {
+      setState(() => _tente = true);
+      return;
+    }
+    ref
+        .read(brouillonInscriptionProvider.notifier)
+        .saisirIdentite(prenom: _prenom.text, nom: _nom.text);
+    avancerDepuis(context, _route);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    exigerEtapesPrecedentes(
+      context,
+      ref.watch(brouillonInscriptionProvider),
+      _route,
+    );
+    return CoquilleEtape(
+      route: _route,
+      question: t.inscription.identiteQuestion,
+      explication: t.inscription.identiteRaison,
+      libelleAction: t.commun.continuer,
+      onAction: _continuer,
+      onRetour: () => reculerDepuis(context, _route),
+      enfant: AutofillGroup(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            TextField(
+              key: const Key('inscription-prenom'),
+              controller: _prenom,
+              onChanged: (String _) => setState(() {}),
+              textCapitalization: TextCapitalization.words,
+              textInputAction: TextInputAction.next,
+              autofillHints: const <String>[AutofillHints.givenName],
+              decoration: InputDecoration(
+                labelText: t.inscription.prenom,
+                errorText: _erreur(_prenom),
+              ),
+            ),
+            Ecart.vLg,
+            TextField(
+              key: const Key('inscription-nom'),
+              controller: _nom,
+              onChanged: (String _) => setState(() {}),
+              onSubmitted: (String _) => _continuer(),
+              textCapitalization: TextCapitalization.words,
+              textInputAction: TextInputAction.done,
+              autofillHints: const <String>[AutofillHints.familyName],
+              decoration: InputDecoration(
+                labelText: t.inscription.nom,
+                errorText: _erreur(_nom),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

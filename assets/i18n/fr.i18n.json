@@ -322,7 +322,27 @@
     "recapitulatif": "Avant de continuer",
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
-    "champRequis": "Cette réponse est nécessaire pour continuer."
+    "champRequis": "Cette réponse est nécessaire pour continuer.",
+    "etapeCourte": "{n} sur {total}",
+    "retourEtape": "Revenir à l'étape précédente",
+    "seDeconnecter": "Se déconnecter",
+    "modifier": "Modifier",
+    "reessayer": "Réessayer",
+    "erreurActualisation": "Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.",
+    "usage": {
+      "question": "Quel type de compte souhaitez-vous créer ?",
+      "moiTitre": "Moi uniquement",
+      "moiDescription": "Je souhaite suivre les cours avec mon propre profil élève.",
+      "familleTitre": "Moi et ma famille",
+      "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
+      "enseignant": "Je suis enseignant"
+    },
+    "recap": {
+      "usage": "Type de compte",
+      "identite": "Nom",
+      "genre": "Genre",
+      "enseignant": "Enseignant"
+    }
   },
   "contrat": {
     "titre": "Ce que vous signez",

@@ -1,21 +1,67 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/router/page_etat.dart';
-import '../../../core/widgets/etat_systeme.dart';
+import '../../../core/domain/enums.dart';
+import '../../../core/i18n/strings.g.dart';
+import '../../../core/icons/app_icons.dart';
+import '../../../core/router/routes.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../brouillon_inscription.dart';
+import '../inscription_page.dart';
 
-// STUB PHASE 0 : propriété du lot A, à remplacer
-//
-// Route : `/inscription/genre`. Posee par le coordinateur en phase 0c2 (chantier Tuteur
-// V1) pour que la route, sa garde et ses tests existent avant le lot : le
-// lot remplace le contenu de ce fichier sans toucher au routeur. Aucun STUB
-// ne doit subsister a la fin du chantier.
-
-/// L'etape de genre de l'inscription.
-class GenreEtape extends StatelessWidget {
-  /// Cree la page.
+/// `/inscription/genre` : deux cartes cote a cote, aucune preselection.
+class GenreEtape extends ConsumerWidget {
+  /// Cree l'etape.
   const GenreEtape({super.key});
 
+  static const String _route = Routes.inscriptionGenre;
+
   @override
-  Widget build(BuildContext context) =>
-      const PageEtat(nature: NatureEtat.indisponible, dependance: 'LOT-A');
+  Widget build(BuildContext context, WidgetRef ref) {
+    final BrouillonInscription brouillon = ref.watch(
+      brouillonInscriptionProvider,
+    );
+    exigerEtapesPrecedentes(context, brouillon, _route);
+    final BrouillonInscriptionControleur controleur = ref.read(
+      brouillonInscriptionProvider.notifier,
+    );
+    final Genre? genre = brouillon.genre;
+
+    return CoquilleEtape(
+      route: _route,
+      question: t.inscription.genreQuestion,
+      explication: t.inscription.genreRaison,
+      libelleAction: t.commun.continuer,
+      onAction: genre == null ? null : () => avancerDepuis(context, _route),
+      onRetour: () => reculerDepuis(context, _route),
+      enfant: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: CarteChoixInscription(
+                key: const Key('inscription-genre-homme'),
+                icone: AppIcons.profil,
+                titre: t.inscription.genreHomme,
+                verticale: true,
+                retenue: genre == Genre.homme,
+                onPress: () => controleur.choisirGenre(Genre.homme),
+              ),
+            ),
+            Ecart.hMd,
+            Expanded(
+              child: CarteChoixInscription(
+                key: const Key('inscription-genre-femme'),
+                icone: AppIcons.profil,
+                titre: t.inscription.genreFemme,
+                verticale: true,
+                retenue: genre == Genre.femme,
+                onPress: () => controleur.choisirGenre(Genre.femme),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

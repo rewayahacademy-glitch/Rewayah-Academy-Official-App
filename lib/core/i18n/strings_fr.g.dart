@@ -699,6 +699,27 @@ class Traductions$inscription$fr {
 
 	/// fr: 'Cette réponse est nécessaire pour continuer.'
 	String get champRequis => 'Cette réponse est nécessaire pour continuer.';
+
+	/// fr: '{n} sur {total}'
+	String etapeCourte({required Object n, required Object total}) => '${n} sur ${total}';
+
+	/// fr: 'Revenir à l'étape précédente'
+	String get retourEtape => 'Revenir à l\'étape précédente';
+
+	/// fr: 'Se déconnecter'
+	String get seDeconnecter => 'Se déconnecter';
+
+	/// fr: 'Modifier'
+	String get modifier => 'Modifier';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.'
+	String get erreurActualisation => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.';
+
+	late final Traductions$inscription$usage$fr usage = Traductions$inscription$usage$fr.internal(_root);
+	late final Traductions$inscription$recap$fr recap = Traductions$inscription$recap$fr.internal(_root);
 }
 
 // Path: contrat
@@ -2306,6 +2327,54 @@ class Traductions$connexion$feuilleAppareil$fr {
 
 	/// fr: 'Fermer'
 	String get fermer => 'Fermer';
+}
+
+// Path: inscription.usage
+class Traductions$inscription$usage$fr {
+	Traductions$inscription$usage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel type de compte souhaitez-vous créer ?'
+	String get question => 'Quel type de compte souhaitez-vous créer ?';
+
+	/// fr: 'Moi uniquement'
+	String get moiTitre => 'Moi uniquement';
+
+	/// fr: 'Je souhaite suivre les cours avec mon propre profil élève.'
+	String get moiDescription => 'Je souhaite suivre les cours avec mon propre profil élève.';
+
+	/// fr: 'Moi et ma famille'
+	String get familleTitre => 'Moi et ma famille';
+
+	/// fr: 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.'
+	String get familleDescription => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.';
+
+	/// fr: 'Je suis enseignant'
+	String get enseignant => 'Je suis enseignant';
+}
+
+// Path: inscription.recap
+class Traductions$inscription$recap$fr {
+	Traductions$inscription$recap$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Type de compte'
+	String get usage => 'Type de compte';
+
+	/// fr: 'Nom'
+	String get identite => 'Nom';
+
+	/// fr: 'Genre'
+	String get genre => 'Genre';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
 }
 
 // Path: consentement.texte
@@ -8341,6 +8410,22 @@ extension on Traductions {
 			'inscription.creer' => 'Créer mon compte',
 			'inscription.erreur' => 'La création du compte n\'a pas abouti. Réessayez dans un instant.',
 			'inscription.champRequis' => 'Cette réponse est nécessaire pour continuer.',
+			'inscription.etapeCourte' => ({required Object n, required Object total}) => '${n} sur ${total}',
+			'inscription.retourEtape' => 'Revenir à l\'étape précédente',
+			'inscription.seDeconnecter' => 'Se déconnecter',
+			'inscription.modifier' => 'Modifier',
+			'inscription.reessayer' => 'Réessayer',
+			'inscription.erreurActualisation' => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.',
+			'inscription.usage.question' => 'Quel type de compte souhaitez-vous créer ?',
+			'inscription.usage.moiTitre' => 'Moi uniquement',
+			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
+			'inscription.usage.familleTitre' => 'Moi et ma famille',
+			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
+			'inscription.usage.enseignant' => 'Je suis enseignant',
+			'inscription.recap.usage' => 'Type de compte',
+			'inscription.recap.identite' => 'Nom',
+			'inscription.recap.genre' => 'Genre',
+			'inscription.recap.enseignant' => 'Enseignant',
 			'contrat.titre' => 'Ce que vous signez',
 			'contrat.intro' => 'Deux points comptent plus que les autres. Ils sont écrits ici en clair plutôt qu\'au milieu d\'un texte long.',
 			'contrat.pointEnregistrement' => 'Chaque cours est enregistré en audio, conservé trente jours, puis effacé. Chaque écoute est inscrite au journal, avec le nom de qui écoute.',
@@ -8581,6 +8666,8 @@ extension on Traductions {
 			'admin.demandes.refuser' => 'Refuser',
 			'admin.demandes.motif' => 'Ce qui motive ce refus, en une phrase',
 			'admin.demandes.motifRequis' => 'Un refus doit dire pourquoi : c\'est la seule phrase que la partie recevra.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.effet' => 'Accorder applique l\'effet en base : l\'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.',
 			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
 			'admin.demandes.feuille' => ({required Object prenom}) => 'Les règles de ${prenom}',
@@ -8597,8 +8684,6 @@ extension on Traductions {
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}',
 			'admin.demandes.sansSurcharge' => 'Cet élève suit la règle de la plateforme.',
 			'admin.demandes.changer' => 'Changer',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.clore' => 'Revenir à la règle de la plateforme',
 			'admin.demandes.historique' => 'Surcharges closes',
 			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '${valeur}, du ${debut} au ${fin}',
@@ -9095,6 +9180,8 @@ extension on Traductions {
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
 			'agent.indisponible' => 'Service indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
 			'agent.reessayer' => 'Réessayer',
 			'agent.bandeau' => 'Observation, lecture seule',
@@ -9111,8 +9198,6 @@ extension on Traductions {
 			'choix.autre' => 'Autre',
 			'choix.autreInvite' => 'Précisez',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.titre' => ({required Object prenom}) => 'Le parcours de ${prenom}',
 			'parcours.intro' => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.',
 			'parcours.reprendre' => 'Reprendre',
@@ -9609,6 +9694,8 @@ extension on Traductions {
 			'enseignant.cahier.exceptionMotif' => 'Motif',
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire : il reste au dossier de la séance.',
 			'enseignant.cahier.exceptionEnCours' => 'Enregistrement…',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
 			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.',
@@ -9625,8 +9712,6 @@ extension on Traductions {
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
 			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.',
@@ -10123,6 +10208,8 @@ extension on Traductions {
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
