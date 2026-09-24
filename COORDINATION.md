@@ -2,6 +2,16 @@
 
 Mis à jour : 24/09/2026, 18 h. Canal unique : **GitHub** (`origin` = `https://github.com/rewayahacademy-glitch/Rewayah-Academy-Official-App.git`). Les deux postes ne se parlent QUE par des commits poussés. Le directeur relaie seulement si un poste le lui demande.
 
+## Tableau de suivi OBLIGATOIRE (décision du directeur, 24/09)
+
+Page : **https://claude.ai/artifact/XMVyZJiLTcmMKTnhsbp3sU** (« Chantier Tuteur V1 »). Une ligne par étape du plan, collection `etapes` de sa base, écrite avec l'outil **ArtifactData** (même compte claude.ai sur les deux postes).
+- **En commençant** une étape : `update` du document (ex. `LB-1`) avec `statut: "en_cours"`, `par` (poste et agent), `date`.
+- **En la finissant** : `update` avec `statut: "fait"` et `preuve` (hash de commit, fichier de rapport). Rien n'est « fait » sans preuve (définition de « fait » : `03_DECISIONS_COORDINATEUR.md` §1 ter bis).
+- **Étape absente de la liste** : AVANT de la faire, créer `etapes/HL-<poste>-<n>` avec `phase`, `titre`, `poste`, `hors_liste: true`, `motif` (pourquoi on dérive du plan). Si le motif n'est pas lié à l'objectif du lot, ne pas la faire : la consigner dans `08_BACKLOG_VAGUE_CLASSE_VISIO.md` (A) ou `etat/B.md` (B).
+- Jamais supprimer une ligne, jamais cocher l'étape d'un autre poste, jamais modifier `titre` ni `ordre` d'une étape du plan.
+- Un agent qui n'a pas l'outil ArtifactData écrit la même information dans `etat/B.md` (poste B) ou dans son rapport (poste A) ; la session principale du poste reporte dans le tableau.
+- Le plan est **fermé** : les lots s'arrêtent quand leurs étapes sont cochées. Aucune amélioration sans ligne dans le tableau.
+
 ## Qui fait quoi
 
 | Poste | Rôle | Lots | Branches qu'il écrit |
