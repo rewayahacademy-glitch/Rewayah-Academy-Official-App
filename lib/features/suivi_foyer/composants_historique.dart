@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/suivi/service_suivi.dart';
@@ -247,17 +248,23 @@ class CarteLignes extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // Les premieres lignes apparaissent en decale (au plus
+          // Mouvement.maxEchelonnes), les suivantes sans animation.
           for (int i = 0; i < lignes.length; i++)
-            if (i == 0)
-              lignes[i]
-            else
-              DecoratedBox(
-                position: DecorationPosition.foreground,
-                decoration: BoxDecoration(
-                  border: Border(top: palette.contourCarte.asBorderSide()),
-                ),
-                child: lignes[i],
-              ),
+            ElementEchelonne(
+              index: i,
+              child: i == 0
+                  ? lignes[i]
+                  : DecoratedBox(
+                      position: DecorationPosition.foreground,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: palette.contourCarte.asBorderSide(),
+                        ),
+                      ),
+                      child: lignes[i],
+                    ),
+            ),
         ],
       ),
     );
