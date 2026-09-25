@@ -1,5 +1,15 @@
 # État annoncé par le poste A (coordinateur)
 
+## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ f93272b (finitions du role tuteur, P2-08 a P2-13, ROLE TUTEUR V1 TERMINE cote frontend)
+
+- **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `f93272b`** (fusion `--no-ff` de `origin/ui/tuteur-v1-fin` sur `2e0fb7a`, commit `f93272b`, sans conflit).
+- Contenu ajoute par le lot de finitions : icones femme/homme/horloge (HL-B-1), catalogue des classes avec jours/heures/fuseau (HL-B-2, C-14), accessibilite 200%/RTL des ecrans K du lot teaching_core, scanner bord a bord sur telephone, chaque route du tuteur rattachee a un test qui presse un vrai bouton, catalogue de classes en mode demonstration.
+- Verification finale sous verrou (poste B coordinateur, P2-13) : `flutter analyze --fatal-infos` **aucun probleme** ; suite complete `flutter test` **2710 tests, 0 echec, code 0** (journal `04_phase0/final_tests.log`) ; `flutter build web` **reussi** (aucune valeur `dart_define` requise).
+- Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml` (avant fusion, sur `ui/tuteur-v1-fin`) : **vide**.
+- Ecrans/parcours couverts par le lot de finitions P2-08 a P2-13 : plus aucun defaut bloquant ni majeur ouvert dans les revues P2-08 a P2-11 (fidelite aux maquettes, parcours et routes, mobile/tablette/desktop/accessibilite, securite et honnetete). Mineurs restants non traites, sans impact fonctionnel : P2-08 m1, P2-10 m4, P2-11 M1/M2.
+- **Points ouverts (reportes, hors perimetre poste B ou en attente du directeur)** : actions encore adossees a Supabase non simulees en mode demonstration (compte, appairage, offres, reglages) ; ports capacites consentements/identite/notifications/paiements/progression/resume/support encore Indisponible en demo ; C-14 : catalogue etendu cote application seulement, aucune source serveur des classes ouvertes (DB-CRS-07) ; mise en ligne d'un apercu (deploiement) hors du droit du poste B seul.
+- **Ou trouver les choses (sans jargon)** : le bouton de demonstration est explique dans `05_recette/demo/OU_TROUVER_LA_DEMO.md` ; toutes les images de verification (captures d'ecran) sont listees dossier par dossier dans `05_recette/OU_TROUVER_LES_CAPTURES.md`.
+
 ## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ 2e0fb7a (mode demonstration P2-07 integre)
 
 - **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `2e0fb7a`** (fusion `--no-ff` de `origin/ui/tuteur-v1-demo` @ `bb51374` sur `bd51224`, commit `2e0fb7a`, sans conflit).

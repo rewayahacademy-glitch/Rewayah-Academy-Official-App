@@ -362,3 +362,19 @@ Statut : fini.
 - ui/tuteur-v1-fin : f69f7f9 (a11y ecrans K + debordement carte Seance + repere demo annonce), 68a83f5 (scanner bord a bord), bed2c2d (routes rattachees a leur test de bouton).
 - Captures regenerees : D\captures\scanner_*, B\captures\foyer_*/fiche_*/ajout_*.
 - Plus aucun bloquant ni majeur ouvert dans P2-08 a P2-11 (voir « Suite donnee »). Restent des mineurs non traites : P2-08 m1, P2-10 m4, P2-11 M1/M2.
+
+## P2-13 verification et build web : FAIT (25/09, B-2026-09-25-coord)
+
+Dans C:\RA\lot-fin (ui/tuteur-v1-fin @ bed2c2d) : `flutter analyze --fatal-infos` sous verrou -> aucun probleme. Suite complete `flutter test` sous verrou -> **2710 tests, 0 echec, code 0** (journal `04_phase0/final_tests.log`). `flutter build web` sous verrou -> reussi, `build\web` genere, aucune valeur `dart_define` requise (pas de `dart_define.json` utilise). Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml` : vide.
+
+Tout vert -> fusion faite dans C:\RA\depot : `git fetch` puis `git merge --ff-only origin/ui/tuteur-v1` (deja a jour), puis `git merge --no-ff origin/ui/tuteur-v1-fin -m "merge: finitions du role tuteur (P2-08 a P2-13)"` -> commit `f93272b`, **sans conflit** (21 fichiers, aucun fichier interdit). Pousse : `origin/ui/tuteur-v1` @ `f93272b`.
+
+`ETAT_A.md` mis a jour en tete (nouvelle base f93272b, role tuteur V1 termine cote frontend, points ouverts reportes, renvoi vers les guides « où trouver »). Tableau : P2-13 passe a fait avec preuve.
+
+Ajouts hors ligne de tache stricte, demandes par le directeur (mode non-developpeur) : `05_recette\OU_TROUVER_LES_CAPTURES.md` — guide en langage simple listant, dossier par dossier, où sont toutes les images de verification (captures d'ecran). Verifie aussi que les icones femme/homme (HL-B-1, deja fait le 25/09) utilisent un seul nom partout dans le code (`AppIcons.femme` / `AppIcons.homme`), pas de synonymes eparpilles.
+
+Rappel du directeur (a ne pas perdre) : la revue de code « cloud » (ultra) est reportee a apres l'implementation de tous les roles ; pour l'instant seules les revues faites par ce poste (et ses propres relectures) comptent. Ceci n'a pas change le travail de P2-13, note ici pour memoire.
+
+**Etape « role Tuteur » : terminee cote frontend** (P2-01 a P2-13 tous a `fait`/`verifie`). Prochaines etapes du tableau : P2-14 (apercu a jour et verification des textes dans l'app servie — bloque par le deploiement, hors droit du poste B seul) et P2-15 (matrice de recette et rapport au directeur).
+
+Statut : fini.
