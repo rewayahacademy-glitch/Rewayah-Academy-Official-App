@@ -313,12 +313,23 @@ void main() {
           hauteurPx = image.height;
           image.dispose();
         });
-        await monterJusquAuRecap(tester);
+        // Onboarding mobile 2.png est une planche de TROIS telephones
+        // (1806x871, ratio 2,07) : a 390 de large, la vue calee sur ce ratio
+        // ne fait que 188 de haut et l'en-tete deborde (58 px, constat REVUE
+        // LA-F). Le calage se fait donc a 1440 de large (vue 1440x694), seule
+        // largeur ou les proportions de la planche sont respectees sans
+        // ecraser l'ecran ; le rendu mobile reste prouve par les captures
+        // 390x844 ci-dessus.
+        const double largeurPlanche = 1440;
+        await monterJusquAuRecap(
+          tester,
+          taille: Size(largeurPlanche, largeurPlanche * hauteurPx / largeurPx),
+        );
         fixerVueMaquette(
           tester,
           largeurPx: largeurPx,
           hauteurPx: hauteurPx,
-          largeurLogique: _largeurLogique,
+          largeurLogique: largeurPlanche,
         );
         await stabiliser(tester);
         debugPrint(
