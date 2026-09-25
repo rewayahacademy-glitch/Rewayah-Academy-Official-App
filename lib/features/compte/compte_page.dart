@@ -20,6 +20,7 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_theme.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 
@@ -223,39 +224,7 @@ class ReglagesComptePage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           SectionHeader(titre: t.compte.apparence),
-          RadioGroup<PreferenceTheme>(
-            groupValue: preferences.theme,
-            onChanged: (PreferenceTheme? valeur) {
-              if (valeur != null) controleur.theme(valeur);
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                SettingRow(
-                  title: t.compte.themeSysteme,
-                  description: t.compte.themeSystemeDetail,
-                  icon: AppIcons.reglages,
-                  controle: const Radio<PreferenceTheme>(
-                    value: PreferenceTheme.systeme,
-                  ),
-                ),
-                SettingRow(
-                  title: t.compte.themeClair,
-                  icon: AppIcons.reglages,
-                  controle: const Radio<PreferenceTheme>(
-                    value: PreferenceTheme.clair,
-                  ),
-                ),
-                SettingRow(
-                  title: t.compte.themeSombre,
-                  icon: AppIcons.reglages,
-                  controle: const Radio<PreferenceTheme>(
-                    value: PreferenceTheme.sombre,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const SelecteurTheme(),
           Ecart.vSection,
           SectionHeader(titre: t.compte.accessibilite),
           SettingRow(

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../appairage/profils_locaux.dart' show baseLocaleProvider;
 import '../cache/db/app_database.dart';
+import 'stockage_navigateur.dart';
 
 /// Le choix local du theme. Il ne modifie aucune preference de profil distante.
 enum PreferenceTheme {
@@ -214,10 +215,9 @@ class StockagePreferencesDrift implements StockagePreferences {
 
 /// Le stockage en memoire, pour la vie de l'application seulement.
 ///
-/// Sert aux tests et au web : `AppDatabase` ouvre `driftDatabase` sans
-/// options web, ce qui leve une erreur des la construction dans un
-/// navigateur. Tant que la base locale n'est pas configuree pour le web, le
-/// theme choisi y vit le temps de la session.
+/// Sert aux tests. Sur le web, `AppDatabase` ne s'ouvre pas (`driftDatabase`
+/// sans options web) : le theme y est garde par le `localStorage` du
+/// navigateur (`stockage_navigateur.dart`).
 class StockagePreferencesMemoire implements StockagePreferences {
   /// Cree le stockage, avec des valeurs de depart facultatives.
   StockagePreferencesMemoire([Map<String, String>? valeurs])
@@ -239,7 +239,7 @@ class StockagePreferencesMemoire implements StockagePreferences {
 final Provider<StockagePreferences> stockagePreferencesProvider =
     Provider<StockagePreferences>(
       (Ref ref) => kIsWeb
-          ? StockagePreferencesMemoire()
+          ? stockageNavigateur()
           : StockagePreferencesDrift(ref.watch(baseLocaleProvider)),
     );
 

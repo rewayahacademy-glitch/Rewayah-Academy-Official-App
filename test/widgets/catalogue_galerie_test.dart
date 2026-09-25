@@ -108,7 +108,7 @@ const List<String> composantsDuCatalogue = <String>[
   'BlocAsynchrone',
   'SelecteurProfils',
   'EntetePage',
-  'BasculeTheme',
+  'SelecteurTheme',
   // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
   'PageEtape',
 ];

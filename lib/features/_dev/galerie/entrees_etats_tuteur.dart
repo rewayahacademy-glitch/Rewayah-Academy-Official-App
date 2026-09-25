@@ -4,17 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/bascule_theme.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
 import '../../../core/widgets/entete_page.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/selecteur_profils.dart';
+import '../../../core/widgets/selecteur_theme.dart';
 import '../../../core/widgets/skeleton.dart';
 import 'catalogue_galerie.dart';
 
 /// Les entrees de galerie des composants partages du chantier Tuteur V1 qui
 /// lisent des cles `commun.*` (phase 0c1) : etat systeme, bloc asynchrone,
-/// selecteur de profils, en-tete de page, bascule de theme.
+/// selecteur de profils, en-tete de page, selecteur de theme.
 ///
 /// Dans un fichier a part du catalogue : ces composants et leurs cles i18n
 /// arrivent ensemble, et le catalogue n'a qu'une ligne a changer.
@@ -150,7 +150,7 @@ List<EntreeGalerie> entreesEtatsTuteur() => <EntreeGalerie>[
           sousTitre: 'Apparence, langue et notifications',
           onRetour: _rien,
           actions: <Widget>[
-            BasculeTheme(),
+            SelecteurTheme.entete(),
             ClocheNotifications(onPress: _rien, nonLues: 2),
           ],
         ),
@@ -158,24 +158,25 @@ List<EntreeGalerie> entreesEtatsTuteur() => <EntreeGalerie>[
     ],
   ),
   EntreeGalerie(
-    nom: 'BasculeTheme',
+    nom: 'SelecteurTheme',
     famille: FamilleComposant.composantEtat,
     etats: <EtatGalerie>[
       EtatGalerie(
-        'theme clair affiche',
-        (BuildContext _) => const Align(
-          alignment: AlignmentDirectional.topStart,
-          child: BasculeTheme(),
+        'sur carte, theme clair affiche',
+        (BuildContext _) => const SelecteurTheme(),
+      ),
+      EtatGalerie(
+        'sur carte, theme sombre affiche',
+        (BuildContext _) => Theme(
+          data: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          child: const SelecteurTheme(),
         ),
       ),
       EtatGalerie(
-        'theme sombre affiche',
-        (BuildContext _) => Theme(
-          data: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
-          child: const Align(
-            alignment: AlignmentDirectional.topStart,
-            child: BasculeTheme(),
-          ),
+        'en-tete',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: SelecteurTheme.entete(),
         ),
       ),
     ],

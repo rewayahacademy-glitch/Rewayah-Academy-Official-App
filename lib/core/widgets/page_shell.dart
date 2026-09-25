@@ -207,7 +207,7 @@ class PageShell extends StatelessWidget {
 
 /// Les actions d'en-tete qu'une **coquille de role** pose sur chacune de ses
 /// pages : la cloche des notifications, et, a partir de la tablette, la
-/// bascule clair / sombre (manifeste visuel Tuteur V1 section 4.2).
+/// selecteur de theme (manifeste visuel Tuteur V1 section 4.2).
 ///
 /// Posee par la coquille au-dessus de ses branches, lue par [PageShell] :
 /// aucun ecran n'a a savoir qu'elles existent, et un role sans cloche n'en

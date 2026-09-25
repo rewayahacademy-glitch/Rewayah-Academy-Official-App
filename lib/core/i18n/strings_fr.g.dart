@@ -2367,6 +2367,9 @@ class Traductions$commun$theme$fr {
 
 	/// fr: 'Thème sombre'
 	String get sombre => 'Thème sombre';
+
+	/// fr: 'Thème selon le système'
+	String get systeme => 'Thème selon le système';
 }
 
 // Path: commun.demarrage
@@ -11225,6 +11228,7 @@ extension on Traductions {
 			'commun.theme.groupe' => 'Apparence',
 			'commun.theme.clair' => 'Thème clair',
 			'commun.theme.sombre' => 'Thème sombre',
+			'commun.theme.systeme' => 'Thème selon le système',
 			'commun.demarrage.ouverture' => 'Ouverture de Rewayah',
 			'commun.dates.jours.0' => 'Lundi',
 			'commun.dates.jours.1' => 'Mardi',
@@ -11682,9 +11686,9 @@ extension on Traductions {
 			'ficheEleve.informations.apercuPhrase' => 'Vérifiez la photo avant de l\'envoyer.',
 			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
 			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
-			'ficheEleve.informations.autre' => 'Choisir une autre photo',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.autre' => 'Choisir une autre photo',
 			'ficheEleve.informations.annuler' => 'Annuler',
 			'ficheEleve.informations.etapeEnvoi' => 'Envoi de la photo, étape 1 sur 2',
 			'ficheEleve.informations.etapeEnregistrement' => 'Enregistrement sur le profil, étape 2 sur 2',
@@ -12196,9 +12200,9 @@ extension on Traductions {
 			'admin.evaluations.resultatEchec' => 'Échec',
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
-			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			_ => null,
 		} ?? switch (path) {
+			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
@@ -12710,9 +12714,9 @@ extension on Traductions {
 			'compte.coursDonnees' => 'Cours et données',
 			'compte.economieDonnees' => 'Économie de données',
 			'compte.economieDonneesDetail' => 'Réduit la qualité vidéo sur réseau mobile',
-			'compte.lectureGrande' => 'Lecture en grand texte',
 			_ => null,
 		} ?? switch (path) {
+			'compte.lectureGrande' => 'Lecture en grand texte',
 			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
 			'compte.profilsTitre' => 'Profils du foyer',
 			'compte.profilsIntro' => 'Les enfants rattachés à votre foyer.',
@@ -13224,9 +13228,9 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.inscritTitre' => 'Inscription confirmée',
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
-			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
 			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
@@ -13738,9 +13742,9 @@ extension on Traductions {
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
-			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',
 			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
 			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',

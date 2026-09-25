@@ -98,10 +98,10 @@ import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
 import '../theme/app_gabarit.dart';
 import '../widgets/admin_shell.dart';
-import '../widgets/bascule_theme.dart';
 import '../widgets/entete_page.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
+import '../widgets/selecteur_theme.dart';
 import 'billet_salle.dart';
 import 'etats_routeur.dart';
 import 'redirection.dart';
@@ -1294,13 +1294,13 @@ class _CoquilleNavigation extends ConsumerWidget {
       return coquille;
     }
     // Le tuteur porte, sur chaque page de sa coquille, la cloche des
-    // notifications et, a partir de la tablette, la bascule clair / sombre
+    // notifications et, a partir de la tablette, le selecteur de theme
     // (manifeste visuel Tuteur V1 section 4.2). La cloche n'a pas de point
     // tant qu'aucune source de notifications n'existe (DB-CPT-04).
     final bool large = AppGabarit.de(context).estLarge;
     return ActionsEnteteCoquille(
       actions: <Widget>[
-        if (large) const BasculeTheme(),
+        if (large) const SelecteurTheme.entete(),
         ClocheNotifications(
           onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
         ),

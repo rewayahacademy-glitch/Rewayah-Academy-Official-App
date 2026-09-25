@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_theme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 
@@ -72,7 +73,7 @@ void main() {
     expect(find.text(t.compte.notifications), findsOneWidget);
     expect(find.text(t.compte.economieDonnees), findsOneWidget);
     expect(find.byType(Switch), findsNWidgets(6));
-    expect(find.byType(Radio<PreferenceTheme>), findsNWidgets(3));
+    expect(find.byType(SelecteurTheme), findsOneWidget);
   });
 
   testWidgets('les reglages restent lisibles en RTL a 200 pour cent', (
@@ -104,7 +105,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(Switch), findsNWidgets(6));
-    expect(find.byType(Radio<PreferenceTheme>), findsNWidgets(3));
+    expect(find.byType(SelecteurTheme), findsOneWidget);
   });
 
   testWidgets('un tuteur voit les profils rendus par le foyer', (

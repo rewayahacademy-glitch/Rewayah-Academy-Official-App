@@ -325,7 +325,7 @@ void main() {
         // Aucun interrupteur sans effet (C08 section 2.3).
         expect(find.byType(Switch), findsNothing);
 
-        await toucher(tester, _texte(t.compte.themeSombre));
+        await toucher(tester, find.byTooltip(t.commun.theme.sombre));
         expect(
           _conteneur(tester).read(preferencesLocalesProvider).theme,
           PreferenceTheme.sombre,

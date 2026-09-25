@@ -90,7 +90,8 @@
     "theme": {
       "groupe": "Apparence",
       "clair": "Thème clair",
-      "sombre": "Thème sombre"
+      "sombre": "Thème sombre",
+      "systeme": "Thème selon le système"
     },
     "demarrage": {
       "ouverture": "Ouverture de Rewayah"

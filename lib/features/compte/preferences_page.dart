@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
-import '../../core/preferences/preferences_locales.dart';
 import '../../core/router/routes.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
@@ -67,10 +66,3 @@ class PreferencesComptePage extends ConsumerWidget {
     );
   }
 }
-
-/// Le nom d'un choix de theme : « Systeme », « Clair », « Sombre ».
-String libelleTheme(PreferenceTheme theme) => switch (theme) {
-  PreferenceTheme.systeme => t.compte.themeSysteme,
-  PreferenceTheme.clair => t.compte.themeClair,
-  PreferenceTheme.sombre => t.compte.themeSombre,
-};

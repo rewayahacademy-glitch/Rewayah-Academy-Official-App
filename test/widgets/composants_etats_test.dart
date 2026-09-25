@@ -1,12 +1,13 @@
 // Composants partages du chantier Tuteur V1 qui lisent des cles `commun.*`
 // (phase 0c1) : etat systeme, bloc asynchrone, selecteur de profils, en-tete
-// de page et cloche, bascule de theme.
+// de page et cloche, selecteur de theme.
 //
 // Quatre axes pour chacun : semantique, cible de 48, texte a 200 % sans
 // debordement, theme clair et sombre.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -16,12 +17,12 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/bascule_theme.dart';
 import 'package:rewayah_academy/core/widgets/bloc_asynchrone.dart';
 import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_theme.dart';
 
 import '../support/hote_theme.dart';
 
@@ -487,85 +488,140 @@ void main() {
     }
   });
 
-  group('BasculeTheme : la meme preference qu Apparence', () {
-    Widget appli() => ProviderScope(
-      child: TranslationProvider(
-        child: Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? _) =>
-              MaterialApp(
-                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-                darkTheme: AppTheme.pour(
-                  InterfaceMode.standard,
-                  Brightness.dark,
-                ),
-                themeMode: ref.watch(modeThemeProvider),
-                home: const Scaffold(body: Center(child: BasculeTheme())),
-              ),
-        ),
-      ),
-    );
+  group('SelecteurTheme : soleil, lune, systeme', () {
+    Widget appli(Widget selecteur, [ProviderContainer? conteneur]) =>
+        UncontrolledProviderScope(
+          container: conteneur ?? ProviderContainer(),
+          child: TranslationProvider(
+            child: Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? _) =>
+                  MaterialApp(
+                    theme: AppTheme.pour(
+                      InterfaceMode.standard,
+                      Brightness.light,
+                    ),
+                    darkTheme: AppTheme.pour(
+                      InterfaceMode.standard,
+                      Brightness.dark,
+                    ),
+                    themeMode: ref.watch(modeThemeProvider),
+                    home: Scaffold(body: Center(child: selecteur)),
+                  ),
+            ),
+          ),
+        );
 
-    testWidgets('presser la lune passe l application en sombre', (
+    Brightness affichee(WidgetTester tester) =>
+        Theme.of(tester.element(find.byType(SelecteurTheme))).brightness;
+
+    for (final (String nom, Widget selecteur) in <(String, Widget)>[
+      ('sur carte', const SelecteurTheme()),
+      ('en-tete', const SelecteurTheme.entete()),
+    ]) {
+      testWidgets('$nom : « systeme » par defaut, chaque icone tapee '
+          's applique', (WidgetTester tester) async {
+        final SemanticsHandle semantique = tester.ensureSemantics();
+        fixerVue(tester, vueMobile);
+        tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+        addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+        final ProviderContainer conteneur = ProviderContainer();
+        addTearDown(conteneur.dispose);
+        await tester.pumpWidget(appli(selecteur, conteneur));
+
+        PreferenceTheme choix() =>
+            conteneur.read(preferencesLocalesProvider).theme;
+        expect(choix(), PreferenceTheme.systeme);
+        expect(
+          tester.getSemantics(find.bySemanticsLabel(t.commun.theme.systeme)),
+          isSemantics(isSelected: true, isButton: true),
+        );
+        expect(affichee(tester), Brightness.dark);
+
+        await tester.tap(find.bySemanticsLabel(t.commun.theme.clair));
+        await tester.pumpAndSettle();
+        expect(choix(), PreferenceTheme.clair);
+        expect(affichee(tester), Brightness.light);
+        expect(
+          tester.getSemantics(find.bySemanticsLabel(t.commun.theme.clair)),
+          isSemantics(isSelected: true),
+        );
+
+        await tester.tap(find.bySemanticsLabel(t.commun.theme.sombre));
+        await tester.pumpAndSettle();
+        expect(choix(), PreferenceTheme.sombre);
+        expect(affichee(tester), Brightness.dark);
+
+        await tester.tap(find.bySemanticsLabel(t.commun.theme.systeme));
+        await tester.pumpAndSettle();
+        expect(choix(), PreferenceTheme.systeme);
+        expect(affichee(tester), Brightness.dark);
+
+        await verifierCibles(tester);
+        expect(tester.takeException(), isNull);
+        semantique.dispose();
+      });
+    }
+
+    testWidgets('sur carte les icones sont empilees, en en-tete alignees', (
       WidgetTester tester,
     ) async {
       final SemanticsHandle semantique = tester.ensureSemantics();
-      fixerVue(tester, vueBureau);
-      tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
-      addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
-      await tester.pumpWidget(appli());
+      fixerVue(tester, vueMobile);
+      Offset centre(String libelle) =>
+          tester.getCenter(find.bySemanticsLabel(libelle));
 
+      await tester.pumpWidget(appli(const SelecteurTheme()));
+      expect(centre(t.commun.theme.clair).dx, centre(t.commun.theme.sombre).dx);
       expect(
-        tester.getSemantics(find.bySemanticsLabel(t.commun.theme.clair)),
-        isSemantics(isSelected: true, isButton: true),
+        centre(t.commun.theme.clair).dy,
+        lessThan(centre(t.commun.theme.sombre).dy),
       );
-      await tester.tap(find.bySemanticsLabel(t.commun.theme.sombre));
-      await tester.pumpAndSettle();
+      expect(
+        centre(t.commun.theme.sombre).dy,
+        lessThan(centre(t.commun.theme.systeme).dy),
+      );
 
-      final ProviderContainer conteneur = ProviderScope.containerOf(
-        tester.element(find.byType(BasculeTheme)),
-      );
+      await tester.pumpWidget(appli(const SelecteurTheme.entete()));
+      expect(centre(t.commun.theme.clair).dy, centre(t.commun.theme.sombre).dy);
       expect(
-        conteneur.read(preferencesLocalesProvider).theme,
-        PreferenceTheme.sombre,
+        centre(t.commun.theme.sombre).dx,
+        lessThan(centre(t.commun.theme.systeme).dx),
       );
-      expect(
-        Theme.of(tester.element(find.byType(BasculeTheme))).brightness,
-        Brightness.dark,
-      );
-      expect(
-        tester.getSemantics(find.bySemanticsLabel(t.commun.theme.sombre)),
-        isSemantics(isSelected: true),
-      );
-      await verifierCibles(tester);
       semantique.dispose();
     });
 
-    testWidgets('sous « Systeme » sombre, la lune est le segment actif', (
+    testWidgets('le choix tape est memorise, puis relu au lancement', (
       WidgetTester tester,
     ) async {
       final SemanticsHandle semantique = tester.ensureSemantics();
-      fixerVue(tester, vueBureau);
-      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
-      addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
-      await tester.pumpWidget(appli());
+      fixerVue(tester, vueMobile);
+      final StockagePreferencesMemoire stockage = StockagePreferencesMemoire();
+      ProviderContainer lancer() {
+        final ProviderContainer conteneur = ProviderContainer(
+          overrides: <Override>[
+            stockagePreferencesProvider.overrideWithValue(stockage),
+          ],
+        )..read(persistanceApparenceProvider);
+        addTearDown(conteneur.dispose);
+        return conteneur;
+      }
 
+      await tester.pumpWidget(appli(const SelecteurTheme(), lancer()));
+      await tester.tap(find.bySemanticsLabel(t.commun.theme.sombre));
+      await tester.pumpAndSettle();
+      expect(stockage.valeurs[clefPreferenceTheme], 'sombre');
+
+      final ProviderContainer relance = lancer();
+      await tester.pumpWidget(appli(const SelecteurTheme(), relance));
+      await tester.pumpAndSettle();
+      expect(
+        relance.read(preferencesLocalesProvider).theme,
+        PreferenceTheme.sombre,
+      );
       expect(
         tester.getSemantics(find.bySemanticsLabel(t.commun.theme.sombre)),
         isSemantics(isSelected: true),
       );
-      final AppPalette palette = AppPalette.of(
-        tester.element(find.byType(BasculeTheme)),
-      );
-      expect(palette, AppPalette.sombre());
-      final Iterable<Color?> fonds = tester
-          .widgetList<DecoratedBox>(
-            find.descendant(
-              of: find.byType(BasculeTheme),
-              matching: find.byType(DecoratedBox),
-            ),
-          )
-          .map((DecoratedBox d) => (d.decoration as BoxDecoration).color);
-      expect(fonds, contains(palette.surfacePrimary.background));
       semantique.dispose();
     });
   });
