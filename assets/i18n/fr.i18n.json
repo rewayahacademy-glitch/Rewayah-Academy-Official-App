@@ -1872,7 +1872,59 @@
   },
   "tuteur": {
     "accueil": {
-      "titre": "Votre foyer",
+      "titre": "Accueil",
+      "voirLaClasse": "Voir la classe",
+      "prochaineSeance": "Prochaine séance",
+      "heureDe": "Heure de {ville}",
+      "heureAppareil": "Heure de cet appareil",
+      "dateEtFuseau": "{date} · {fuseau}",
+      "heureClasse": "Heure de la classe : {heure} {ville}",
+      "seanceEnDirect": "Séance en direct",
+      "seanceTerminee": "Séance terminée",
+      "seanceAnnulee": "Cette séance n'aura pas lieu.",
+      "seanceNonTenue": "Cette séance n'a pas pu se tenir.",
+      "horaireIncertain": "Ouverture de la salle non confirmée pour l'instant",
+      "pastilleAnnulee": "Annulée",
+      "pastilleNonTenue": "Non tenue",
+      "pastilleTerminee": "Terminée",
+      "aucuneSeance": "Aucune séance planifiée",
+      "aucuneSeanceDetail": "La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.",
+      "seanceIllisible": "La prochaine séance n'a pas pu être lue.",
+      "classeIndisponible": "Le détail de la classe n'est pas encore disponible ici.",
+      "classeIllisible": "La classe n'a pas pu être lue.",
+      "sansClasseTitre": "Aucune classe pour {prenom}",
+      "sansClassePhrase": "Choisissez une classe pour que {prenom} puisse commencer les cours.",
+      "foyerVideTitre": "Aucun profil élève pour l'instant",
+      "foyerVidePhrase": "Ajoutez un profil élève pour choisir une classe et suivre ses séances.",
+      "ajouterProfil": "Ajouter un profil élève",
+      "profilsIllisibles": "Les profils du foyer n'ont pas pu être lus.",
+      "blocageAppareilTitre": "Aucun appareil prêt pour {prenom}",
+      "blocageAppareilPhrase": "Sans appareil connecté, {prenom} ne pourra pas entrer en classe.",
+      "connecterAppareil": "Connecter un appareil",
+      "avantProchainCours": "Avant le prochain cours",
+      "voirTout": "Voir tout",
+      "travailIndisponible": "Le travail à préparer n'est pas encore relié à cet espace.",
+      "travailIllisible": "Le travail à préparer n'a pas pu être lu.",
+      "rienAPreparer": "Rien à préparer pour l'instant",
+      "derniereSeance": "Dernière séance",
+      "voirHistorique": "Voir l'historique",
+      "detailsSeance": "Détails de la séance",
+      "aucuneDerniere": "Aucune séance passée pour l'instant",
+      "derniereIllisible": "La dernière séance n'a pas pu être lue.",
+      "dateEtDuree": "{date} · {duree}",
+      "etatCourt": {
+        "enDirect": "En direct",
+        "salleOuverte": "Salle ouverte",
+        "dansMinutes": "Dans {minutes} min",
+        "dansHeures": "Dans {heures} h {minutes}",
+        "dansJours": "Dans {jours} j",
+        "prevue": "Séance prévue",
+        "annulee": "Séance annulée",
+        "nonTenue": "Séance non tenue",
+        "terminee": "Séance terminée",
+        "aucune": "Aucune séance",
+        "illisible": "Non disponible"
+      },
       "assister": "Assister",
       "assisterRefuse": "Le cours n'a pas pu être rejoint. Il vient peut-être de se terminer.",
       "enCours": "En cours avec {prenom}",
@@ -1970,10 +2022,128 @@
   "classe": {
     "catalogue": "Choisir une classe",
     "planning": "Planning",
-    "travail": "Travail à préparer",
+    "travail": "Avant le prochain cours",
     "ressources": "Bibliothèque",
     "progression": "Progression",
-    "observer": "Observer la séance"
+    "observer": "Observer la séance",
+    "titre": "Classe",
+    "historique": "Historique",
+    "sousTitre": "{prenom} · {enseignant}",
+    "indisponiblePhrase": "Le détail de la classe n'est pas encore disponible ici.",
+    "introuvableTitre": "Cette classe n'est pas ouverte à ce profil",
+    "introuvablePhrase": "Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.",
+    "seance": {
+      "aucune": "Aucune séance planifiée",
+      "aucuneDetail": "La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.",
+      "illisible": "La prochaine séance n'a pas pu être lue.",
+      "presence": "{prenom} : {etat}"
+    },
+    "observation": {
+      "commentCaMarche": "Comment ça marche ?",
+      "uneVisite": "1 visite disponible",
+      "visites": "{nombre} visites disponibles",
+      "resume": "{visites} · {duree} par visite",
+      "restanteAucune": "Aucune visite restante pour cette séance",
+      "restanteUne": "1 visite restante pour cette séance",
+      "restantes": "{nombre} visites restantes pour cette séance",
+      "minutes": "{minutes} min",
+      "minutesSecondes": "{minutes} min {secondes} s",
+      "secondes": "{secondes} s",
+      "motif": {
+        "visitesEpuisees": "Vous avez utilisé vos visites pour cette séance.",
+        "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",
+        "seanceNonCommencee": "L'observation ouvre quand la séance commence.",
+        "seanceTerminee": "La séance est terminée.",
+        "seanceNonTenue": "Cette séance n'a pas lieu : il n'y a rien à observer.",
+        "horsFenetre": "La salle n'est pas ouverte à cette heure.",
+        "observationDesactivee": "L'observation est fermée pour cette classe.",
+        "lienAbsent": "Aucun élève de votre foyer n'est rattaché à cette séance.",
+        "enfantAbsent": "L'observation attend l'arrivée de {prenom}.",
+        "presenceEnVerification": "La présence de {prenom} est en cours de vérification.",
+        "visiteDejaOuverte": "Une visite est déjà ouverte, sur cet appareil ou sur un autre.",
+        "garantieServeurAbsente": "L'observation des séances n'est pas encore ouverte.",
+        "reseau": "La disponibilité de l'observation n'a pas pu être vérifiée.",
+        "capaciteAbsente": "L'observation n'est pas disponible pour le moment."
+      }
+    },
+    "pagePlanning": {
+      "prochaines": "Prochaines séances",
+      "ligne": "{heure} · {duree}",
+      "ligneFuseau": "{heure} ({fuseau}) · {duree}",
+      "aucune": "Aucune séance à venir pour l'instant",
+      "aucuneDetail": "Les prochaines séances de {prenom} apparaîtront ici dès qu'elles seront programmées.",
+      "habituelIndisponible": "Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.",
+      "indisponible": "Le planning de la classe n'est pas encore relié à cet espace."
+    },
+    "pageTravail": {
+      "aucun": "Rien à préparer pour l'instant",
+      "aucunDetail": "Le travail donné par l'enseignant apparaîtra ici.",
+      "indisponible": "Le travail à préparer n'est pas encore relié à cet espace.",
+      "echeance": "Échéance : {date}",
+      "nonCochable": "Marquer un travail comme fait n'est pas encore possible ici.",
+      "statut": {
+        "aFaire": "À faire",
+        "enCours": "Commencé",
+        "fait": "Fait",
+        "expire": "Échéance passée"
+      }
+    },
+    "pageRessources": {
+      "aucune": "Aucune ressource pour cette classe pour l'instant",
+      "aucuneDetail": "Les supports choisis par l'enseignant apparaîtront ici.",
+      "indisponible": "La bibliothèque de la classe n'est pas encore reliée à cet espace."
+    },
+    "pageProgression": {
+      "indisponible": "La progression de {prenom} n'est pas encore partagée ici.",
+      "niveau": "Niveau",
+      "jalons": "Étapes franchies",
+      "aucune": "Aucune étape partagée pour l'instant",
+      "aucuneDetail": "Les progrès que l'enseignant partage avec la famille apparaîtront ici."
+    },
+    "pageCatalogue": {
+      "pour": "Pour {prenom}",
+      "proposees": "Classes proposées",
+      "indisponible": "Le choix de classe en ligne n'est pas encore ouvert.",
+      "aucune": "Aucune classe ne convient pour l'instant",
+      "aucuneDetail": "Aucune classe ouverte ne correspond au profil de {prenom} en ce moment.",
+      "eleveInconnuTitre": "Ce profil n'est pas dans votre foyer",
+      "eleveInconnuPhrase": "Revenez à l'accueil et choisissez le profil élève concerné.",
+      "horairesAbsents": "Les jours et heures de cette classe ne sont pas encore affichés ici.",
+      "placeUne": "1 place restante",
+      "places": "{nombre} places restantes",
+      "etat": {
+        "ouverte": "Ouverte",
+        "complete": "Complète",
+        "listeAttente": "Liste d'attente"
+      },
+      "choisir": "Choisir cette classe",
+      "rejoindreAttente": "Rejoindre la liste d'attente",
+      "precisionsTitre": "Avant de choisir",
+      "precisionEnseignant": "Une classe garde le même enseignant pour toutes ses séances.",
+      "precisionPlaces": "Les places affichées sont celles de l'académie au moment de la lecture.",
+      "precisionReserve": "Rien n'est réservé avant votre confirmation.",
+      "confirmerTitre": "Confirmer la classe",
+      "confirmerPhrase": "Vous inscrivez {prenom} dans cette classe.",
+      "confirmerAttentePhrase": "Vous inscrivez {prenom} sur la liste d'attente de cette classe.",
+      "memeEnseignant": "Même classe et même enseignant pour toutes les séances de la semaine : {enseignant}.",
+      "confirmer": "Confirmer l'inscription",
+      "confirmerAttente": "Confirmer la liste d'attente",
+      "envoiIncertain": "La réponse de l'académie n'est pas arrivée. Réessayer ne crée pas de seconde inscription.",
+      "envoiIndisponible": "L'inscription en ligne n'est pas encore ouverte : aucune place n'a été réservée.",
+      "resultat": {
+        "inscritTitre": "Inscription confirmée",
+        "inscritPhrase": "{prenom} rejoint {classe}.",
+        "voirClasse": "Voir la classe",
+        "validationTitre": "Demande envoyée",
+        "validationPhrase": "L'académie doit encore valider l'inscription de {prenom} dans {classe}.",
+        "listeAttenteTitre": "Inscription sur liste d'attente",
+        "listeAttentePhrase": "{prenom} est sur la liste d'attente de {classe}. Aucune place n'est réservée pour l'instant.",
+        "refuseTitre": "Inscription non acceptée",
+        "refusePhrase": "Aucune place n'a été réservée pour {prenom}. Vous pouvez choisir une autre classe.",
+        "autresClasses": "Voir les autres classes",
+        "retourAccueil": "Retour à l'accueil"
+      }
+    }
   },
   "enseignant": {
     "bienvenue": {
@@ -2281,22 +2451,22 @@
   "tc": {
     "groupe": {
       "mesGroupes": {
-        "titre": "Mes groupes",
-        "aucun": "Aucun groupe pour le moment",
-        "aucunDetail": "L'académie vous placera dans un groupe dès qu'un créneau vous correspond."
+        "titre": "Mes classes",
+        "aucun": "Aucune classe pour le moment",
+        "aucunDetail": "L'académie vous placera dans une classe dès qu'un créneau vous correspond."
       },
       "commun": {
-        "erreur": "Vos groupes n'ont pas pu être lus",
+        "erreur": "Vos classes n'ont pas pu être lues",
         "reessayer": "Réessayer"
       },
       "carte": {
-        "ouvrir": "Ouvrir le groupe {libelle}",
+        "ouvrir": "Ouvrir la classe {libelle}",
         "capacite": "{membres} / {seuil}",
         "capacitePhrase": "{membres} élèves sur {seuil} places",
         "complet": "Complet",
         "prochainCours": "Prochain cours",
         "aucuneSeance": "Aucune séance planifiée",
-        "aucuneSeanceDetail": "Le planning de ce groupe n'est pas encore posé.",
+        "aucuneSeanceDetail": "Le planning de cette classe n'est pas encore posé.",
         "duree": "Durée {valeur}",
         "dureeLibelle": "Durée",
         "rejoindre": "Rejoindre"
@@ -2321,16 +2491,21 @@
         "enSalle": "En salle",
         "resteMinutes": "Reste {minutes} min",
         "resteHeures": "Reste {heures} h {minutes}",
-        "enCours": "Cours en cours · {reste}",
+        "enCours": "Séance en direct · {reste}",
         "enDirect": "En direct",
-        "prolongee": "Cours toujours en cours",
+        "prolongee": "Séance toujours en direct",
         "depassement": "En dépassement",
         "terminee": "Cours terminé"
+      },
+      "duree": {
+        "minutes": "{minutes} min",
+        "heures": "{heures} h",
+        "heuresMinutes": "{heures} h {minutes}"
       },
       "horloges": {
         "votreHeure": "Votre heure",
         "chezEnseignant": "Chez {nomme}",
-        "heureGroupe": "Heure du groupe",
+        "heureGroupe": "Heure de la classe",
         "heureEtVille": "{heure} {ville}"
       },
       "dst": {
@@ -2343,16 +2518,16 @@
         "conseilAppareil": "Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge."
       },
       "espace": {
-        "retour": "Mes groupes",
+        "retour": "Mes classes",
         "avantProchainCours": "Avant le prochain cours",
         "aucuneAction": "Rien à préparer pour l'instant",
         "bibliotheque": "Bibliothèque",
         "bibliothequeVoirTout": "Voir tout",
         "progression": "Progression",
-        "roster": "Élèves du groupe",
+        "roster": "Élèves de la classe",
         "reprendreLeCours": "Reprendre le cours",
-        "introuvable": "Ce groupe ne vous est pas ouvert",
-        "introuvableDetail": "Il a peut-être été clôturé, ou il appartient à une autre classe."
+        "introuvable": "Cette classe ne vous est pas ouverte",
+        "introuvableDetail": "Elle a peut-être été clôturée, ou elle concerne un autre profil."
       },
       "emplacement": {
         "nonBranche": "Bientôt disponible",

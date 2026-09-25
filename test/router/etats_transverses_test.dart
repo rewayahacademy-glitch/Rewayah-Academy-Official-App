@@ -6,7 +6,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/etats_routeur.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
-import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
@@ -78,7 +77,7 @@ void main() {
     testWidgets('une classe inconnue du foyer', (WidgetTester tester) async {
       await monterRouteur(tester, Routes.classePour('inconnue'));
       expect(find.byType(ClasseTuteurPage), findsOneWidget);
-      expect(find.text(LibellesGroupe.groupeIntrouvable), findsOneWidget);
+      // Introuvable ou pas encore relie selon le foyer : l'ecran le dit par un\n      // etat systeme, jamais par un plantage (demande C-9).\n      expect(find.byType(EtatSysteme), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
