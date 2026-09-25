@@ -345,10 +345,7 @@ void main() {
     await _ouvrirObservation(tester);
     await _presser(tester, find.text(t.tc.observation.explication.observer));
     await _presser(tester, find.text(t.tc.observation.visite.quitter));
-    await _presser(
-      tester,
-      find.text(t.tc.observation.visite.quitterConfirmer),
-    );
+    await _presser(tester, find.text(t.tc.observation.visite.quitterConfirmer));
     await tester.runAsync(() => Future<void>.delayed(Duration.zero));
     await stabiliser(tester);
 
