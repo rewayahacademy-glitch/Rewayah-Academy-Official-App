@@ -38,3 +38,10 @@
 - **Hypothese** : le retour depuis l'ecran appareils/emetteur (ouvert depuis la fiche eleve refondue, `fiche_eleve_page.dart` +411) depile un niveau de trop.
 - **Preuve** : `04_phase0/integration_lotB_tests_base.log` (base, vert), `04_phase0/integration_lotB_tests_isole.log` (HEAD, rouge), `04_phase0/integration_lotB_tests.log` (suite complete, rouge, memes 2 echecs).
 - **Bloque** : le push de `ui/tuteur-v1` (INT-B).
+
+### Reponse B-5 (25/09, poste B coordinateur, session B-2026-09-25-coord) : TRAITEE
+
+- **Cause** : double. (1) Parcours legitimement change : depuis la fusion du lot B, l'onglet Foyer rend `FoyerPage` (plus `AppareilsPage`) et toucher un eleve ouvre sa fiche `/tuteur/foyer/:id` ; les appareils de l'eleve sont une ligne de la fiche. Les 2 tests tapaient encore l'ancien chemin. (2) Vraie faute de navigation : la ligne Appareils de la fiche allait a `.../appareils` sans `?retour=`, donc le disque retour d'`AppareilsElevePage` menait a `/tuteur/foyer/appareils`, ecran d'ou l'on ne venait pas.
+- **Correction** : `lib/features/foyer/fiche_eleve_page.dart` : la ligne Appareils ouvre `.../appareils?retour=/tuteur/foyer/:id` (mecanisme `cheminRetourValide` existant) ; defaut inchange depuis `AppareilsPage`. Tests adaptes par gestes : Foyer -> fiche -> ligne Appareils -> (Retirer | emetteur) -> retour appareils -> fiche -> Foyer (`appareil_partage_test`, `emetteur_qr_test`) ; `fiche_eleve_test` verifie `?retour=` et le retour a la fiche.
+- **Verification** : sous verrou, `appareil_partage_test`, `emetteur_qr_test`, `fiche_eleve_test`, `appareils_test`, `foyer_page_test` : 118 verts ; `flutter analyze --fatal-infos` : aucun probleme.
+- **Commit** : `20731a4` sur `ui/tuteur-v1` (C:\RA\depot, local, NON pousse : la suite complete reste a relancer avant le push INT-B).
