@@ -5,7 +5,7 @@ import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/router/routes.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/choice_card_group.dart';
 import '../brouillon_inscription.dart';
 import '../inscription_page.dart';
 
@@ -34,33 +34,34 @@ class GenreEtape extends ConsumerWidget {
       libelleAction: t.commun.continuer,
       onAction: genre == null ? null : () => avancerDepuis(context, _route),
       onRetour: () => reculerDepuis(context, _route),
-      enfant: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              child: CarteChoixInscription(
-                key: const Key('inscription-genre-homme'),
-                icone: AppIcons.profil,
-                titre: t.inscription.genreHomme,
-                verticale: true,
-                retenue: genre == Genre.homme,
-                onPress: () => controleur.choisirGenre(Genre.homme),
-              ),
-            ),
-            Ecart.hMd,
-            Expanded(
-              child: CarteChoixInscription(
-                key: const Key('inscription-genre-femme'),
-                icone: AppIcons.profil,
-                titre: t.inscription.genreFemme,
-                verticale: true,
-                retenue: genre == Genre.femme,
-                onPress: () => controleur.choisirGenre(Genre.femme),
-              ),
-            ),
-          ],
-        ),
+      // Le groupe partage, sans carte « Autre ». Les cartes sont empilees :
+      // la disposition cote a cote de la maquette attend une variante du
+      // composant partage (demande A-5), pas une copie locale.
+      enfant: ChoiceCardGroup(
+        key: const Key('inscription-genre'),
+        autoriserSaisieLibre: false,
+        valeurInitiale: genre == null
+            ? null
+            : ReponseChoix(valeurs: <String>{genre.name}),
+        options: <OptionChoix>[
+          OptionChoix(
+            valeur: Genre.homme.name,
+            libelle: t.inscription.genreHomme,
+            icone: AppIcons.profil,
+          ),
+          OptionChoix(
+            valeur: Genre.femme.name,
+            libelle: t.inscription.genreFemme,
+            icone: AppIcons.profil,
+          ),
+        ],
+        onChange: (ReponseChoix reponse) {
+          for (final Genre g in <Genre>[Genre.homme, Genre.femme]) {
+            if (reponse.valeurs.contains(g.name)) {
+              controleur.choisirGenre(g);
+            }
+          }
+        },
       ),
     );
   }

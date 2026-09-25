@@ -155,14 +155,14 @@ Future<GoRouter> _monterEtape(
     taille: taille,
   );
   if (nom == 'usage') return routeur;
-  await _taper(tester, find.byKey(const Key('inscription-usage-moi')));
+  await _taper(tester, find.text(t.inscription.usage.moiTitre));
   await _continuer(tester);
   expect(find.byKey(const Key('inscription-prenom')), findsOneWidget);
   if (nom == 'identite') return routeur;
   await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Amina');
   await tester.enterText(find.byKey(const Key('inscription-nom')), 'Diallo');
   await _continuer(tester);
-  expect(find.byKey(const Key('inscription-genre-femme')), findsOneWidget);
+  expect(find.text(t.inscription.genreFemme), findsOneWidget);
   return routeur;
 }
 
@@ -256,7 +256,7 @@ void main() {
         dossier: dossier,
         session: session,
       );
-      await _taper(tester, find.byKey(const Key('inscription-usage-moi')));
+      await _taper(tester, find.text(t.inscription.usage.moiTitre));
       await _continuer(tester);
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),
@@ -267,7 +267,7 @@ void main() {
         'Diallo',
       );
       await _continuer(tester);
-      await _taper(tester, find.byKey(const Key('inscription-genre-femme')));
+      await _taper(tester, find.text(t.inscription.genreFemme));
       await _continuer(tester);
       return routeur;
     }
@@ -348,7 +348,7 @@ void main() {
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..erreurAJeter = StateError('reseau');
       await _monter(tester, depart: Routes.inscriptionUsage, dossier: dossier);
-      await _taper(tester, find.byKey(const Key('inscription-usage-moi')));
+      await _taper(tester, find.text(t.inscription.usage.moiTitre));
       await _continuer(tester);
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),
@@ -360,7 +360,7 @@ void main() {
       );
       dossier.erreurAJeter = null;
       await _continuer(tester);
-      await _taper(tester, find.byKey(const Key('inscription-genre-femme')));
+      await _taper(tester, find.text(t.inscription.genreFemme));
       dossier.erreurAJeter = StateError('reseau');
       await _continuer(tester);
       debugPrint(

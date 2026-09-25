@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/router/routes.dart';
-import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/choice_card_group.dart';
 import '../brouillon_inscription.dart';
 import '../inscription_page.dart';
 
@@ -50,27 +50,38 @@ class UsageEtape extends ConsumerWidget {
           },
         ),
       ),
-      enfant: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          CarteChoixInscription(
-            key: const Key('inscription-usage-moi'),
-            icone: AppIcons.profil,
-            titre: t.inscription.usage.moiTitre,
+      // Le groupe partage (ADR-013), sans carte « Autre » : deux cartes
+      // exactement, a description (demande B-3 levee par COORD).
+      enfant: ChoiceCardGroup(
+        key: const Key('inscription-usage'),
+        autoriserSaisieLibre: false,
+        valeurInitiale: retenu == null
+            ? null
+            : ReponseChoix(valeurs: <String>{retenu.name}),
+        options: <OptionChoix>[
+          OptionChoix(
+            valeur: UsageInscription.moi.name,
+            libelle: t.inscription.usage.moiTitre,
             description: t.inscription.usage.moiDescription,
-            retenue: retenu == UsageInscription.moi,
-            onPress: () => controleur.choisirUsage(UsageInscription.moi),
+            icone: AppIcons.profil,
           ),
-          Ecart.vMd,
-          CarteChoixInscription(
-            key: const Key('inscription-usage-famille'),
-            icone: AppIcons.foyer,
-            titre: t.inscription.usage.familleTitre,
+          OptionChoix(
+            valeur: UsageInscription.famille.name,
+            libelle: t.inscription.usage.familleTitre,
             description: t.inscription.usage.familleDescription,
-            retenue: retenu == UsageInscription.famille,
-            onPress: () => controleur.choisirUsage(UsageInscription.famille),
+            icone: AppIcons.foyer,
           ),
         ],
+        onChange: (ReponseChoix reponse) {
+          for (final UsageInscription u in <UsageInscription>[
+            UsageInscription.moi,
+            UsageInscription.famille,
+          ]) {
+            if (reponse.valeurs.contains(u.name)) {
+              controleur.choisirUsage(u);
+            }
+          }
+        },
       ),
     );
   }

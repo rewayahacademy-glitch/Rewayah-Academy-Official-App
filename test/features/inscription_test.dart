@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
@@ -56,6 +58,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   WidgetTester tester, {
   FausseSourceSession? source,
   FauxServiceDossier? dossierFourni,
+  FauxServiceAuth? auth,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -98,6 +101,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
       surcharges: <Override>[
         serviceDossierProvider.overrideWithValue(dossier),
         sourceSessionProvider.overrideWithValue(session),
+        serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
       ],
     ),
   );
@@ -121,12 +125,12 @@ Future<void> _continuer(WidgetTester tester) =>
     _taper(tester, find.text(t.commun.continuer));
 
 Future<void> _jusquAuRecap(WidgetTester tester) async {
-  await _taper(tester, find.byKey(const Key('inscription-usage-moi')));
+  await _taper(tester, find.text(t.inscription.usage.moiTitre));
   await _continuer(tester);
   await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Amina');
   await tester.enterText(find.byKey(const Key('inscription-nom')), 'Diallo');
   await _continuer(tester);
-  await _taper(tester, find.byKey(const Key('inscription-genre-femme')));
+  await _taper(tester, find.text(t.inscription.genreFemme));
   await _continuer(tester);
 }
 
@@ -192,7 +196,7 @@ void main() {
       );
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
       await _continuer(tester);
-      await _taper(tester, find.byKey(const Key('inscription-genre-homme')));
+      await _taper(tester, find.text(t.inscription.genreHomme));
       await _continuer(tester);
       await _taper(tester, find.text(t.inscription.creer));
       expect(dossier.profilsCrees.single.role, AppRole.teacher);
@@ -202,7 +206,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester);
-      await _taper(tester, find.byKey(const Key('inscription-usage-famille')));
+      await _taper(tester, find.text(t.inscription.usage.familleTitre));
       await _continuer(tester);
       await _continuer(tester);
       expect(find.text(t.inscription.champRequis), findsNWidgets(2));
@@ -228,10 +232,10 @@ void main() {
       expect(find.text('4 sur 4'), findsOneWidget);
       expect(find.text('Awa Diallo'), findsOneWidget);
 
-      await _taper(tester, find.byKey(const Key('inscription-retour')));
+      await _taper(tester, find.byType(DisqueRetour));
       expect(find.text('3 sur 4'), findsOneWidget);
       expect(
-        tester.getSize(find.byKey(const Key('inscription-retour'))).width,
+        tester.getSize(find.byType(DisqueRetour)).width,
         greaterThanOrEqualTo(48),
       );
     });
@@ -299,21 +303,15 @@ void main() {
       await _monter(tester);
       await _jusquAuRecap(tester);
 
-      await _taper(
-        tester,
-        find.byKey(const Key('inscription-modifier-usage')),
-      );
+      await _taper(tester, find.byKey(const Key('inscription-modifier-usage')));
       expect(find.text('1 sur 4'), findsOneWidget);
-      await _taper(tester, find.byKey(const Key('inscription-usage-famille')));
+      await _taper(tester, find.text(t.inscription.usage.familleTitre));
       await _continuer(tester);
       expect(find.text('4 sur 4'), findsOneWidget);
 
-      await _taper(
-        tester,
-        find.byKey(const Key('inscription-modifier-genre')),
-      );
+      await _taper(tester, find.byKey(const Key('inscription-modifier-genre')));
       expect(find.text('3 sur 4'), findsOneWidget);
-      await _taper(tester, find.byKey(const Key('inscription-genre-homme')));
+      await _taper(tester, find.text(t.inscription.genreHomme));
       await _continuer(tester);
       expect(find.text('4 sur 4'), findsOneWidget);
     });
@@ -323,7 +321,8 @@ void main() {
       WidgetTester tester,
     ) async {
       final _SourceCapricieuse source = _SourceCapricieuse();
-      await _monter(tester, source: source);
+      final FauxServiceAuth auth = FauxServiceAuth();
+      await _monter(tester, source: source, auth: auth);
       await _jusquAuRecap(tester);
       await _taper(tester, find.text(t.inscription.creer));
 
@@ -336,8 +335,12 @@ void main() {
             .onPress,
         isNull,
       );
-      expect(find.byKey(const Key('inscription-retour')), findsNothing);
       expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
+      // Le disque de la rangee d'etape reste (gabarit PageEtape) mais ne
+      // ramene plus a une etape : il sort du parcours, donc deconnecte.
+      await _taper(tester, find.byType(DisqueRetour));
+      expect(auth.deconnexions, 1);
+      expect(find.text('3 sur 4'), findsNothing);
     });
   });
 }
