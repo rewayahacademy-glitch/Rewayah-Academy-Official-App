@@ -461,3 +461,10 @@ Statut : a_suivre (attend telephone).
 - Piste : cable de charge seule ou mode USB « Charge uniquement » ; passer en « Transfert de fichiers » et accepter le debogage. Methode prete : 05_recette/P2-16/RAPPORT.md.
 - Tache suivante (directeur) : revue du questionnaire d'onboarding (tuteur et enfants), propositions sur un artifact AVANT code.
 
+
+## 25/09 19:47 : restes de la verification finale Tuteur (branche ui/tuteur-v1-fin2, commit 4da4c4f, NON integree)
+- LC-F m4 : AppIcons.info (Phosphor info 0xe2ce) devant « Comment ca marche ? » (LienFleche.icone facultative) ; horloge au lieu du sablier devant la duree (carte_seance_classe) et la ligne d'etat (bloc_seance). Test classe_tuteur_test verifie info present et sablier absent.
+- P2-10 m4 : ardoise (couche_annotation) nommee au lecteur d'ecran (« facultative »), action semantique et touches Suppr/Retour arriere « Effacer mon dernier trait ». Nouveau test de widget (clavier + action semantique).
+- P2-11 M1 : lib/core/observabilite/journal_dev.dart (journalDev, muet hors kDebugMode) remplace les 32 debugPrint de lib (16 fichiers) ; garde-fou test/observabilite/journal_dev_test.dart.
+- Preuves (sous verrou) : dart analyze --fatal-infos lib test : aucun probleme ; tests cibles +202 ~54 ; suite complete +2725 ~572, 0 echec.
+- A faire par le coordinateur : integrer ui/tuteur-v1-fin2 dans ui/tuteur-v1 ; captures Classe/Accueil a regenerer si besoin (icones changees). Libelles ar des 2 nouvelles cles : repli fr (slang base_locale).
