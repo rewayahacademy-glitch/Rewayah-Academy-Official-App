@@ -177,3 +177,22 @@ Debut ~07:48. Corrige : m8 (retire le libelle "STUB PHASE 0" de l'alias `/classe
 Commit `faa0a22` sur `ui/tuteur-v1-c`, pousse. `05_recette/c/REVUE.md` §6 et captures poussees dans pilotage.
 
 **LOT C TERMINE faa0a22**
+
+## LA-R2 (25/09 08:02-08:14, session B-2026-09-25-coord)
+
+Debut 08:02. Revue adversariale du diff `origin/ui/tuteur-v1..HEAD` dans `C:\RA\lot-a`
+(`ui/tuteur-v1-a` @ `4437614`), commits COORD recents `cba5263` et `4437614` : aucune
+regression trouvee dans PageEtape/ChoiceCardGroup/OptionChoix pour les autres lots
+(onRetour passe a nullable, cle/coteACote additifs facultatifs — verifie par grep des
+usages dans lot-b/c/d/e), aucun fichier interdit touche, tests ajoutes tapent bien le
+bouton. Suite complete `flutter test` sous verrou : `+2295 ~321`, code 0, All tests
+passed. Detail : `05_recette/A/REVUE2.md`.
+
+LA-3 : aucun bouton du lot A ne mene a `Routes.tuteurCompteConsentements` (seule la page
+elle-meme s'y refere) ; reste `en_cours`, motif inchange (entree Compte a l'integration
+E, texte signe a valider par le directeur, P2).
+
+Tableau : LA-F passe a `fait` (v6, preuve REVUE2.md + suite verte). LA-2 deja `fait`
+(session precedente), confirme conforme.
+
+**LOT A TERMINE 4437614**
