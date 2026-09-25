@@ -150,9 +150,11 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
     if (widget.motif != null) {
       return widget.motif;
     }
-    final String? brut = GoRouter.maybeOf(
-      context,
-    )?.routeInformationProvider.value.uri.queryParameters['motif'];
+    final String? brut = GoRouter.maybeOf(context)
+        ?.routeInformationProvider
+        .value
+        .uri
+        .queryParameters['motif'];
     for (final MotifRecuperation m in MotifRecuperation.values) {
       if (m.name == brut) {
         return m;
@@ -271,9 +273,8 @@ class _PhraseErreur extends StatelessWidget {
     child: Text(
       texte,
       key: const ValueKey<String>('recuperation-erreur'),
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Theme.of(context).colorScheme.error,
-      ),
+      style: Theme.of(context).textTheme.bodyMedium
+          ?.copyWith(color: Theme.of(context).colorScheme.error),
     ),
   );
 }
