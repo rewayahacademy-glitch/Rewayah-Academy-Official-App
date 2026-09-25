@@ -66,9 +66,16 @@ class VerifierRechargePage extends ConsumerStatefulWidget {
 }
 
 class _VerifierRechargePageState extends ConsumerState<VerifierRechargePage> {
-  /// Une cle par ecran, reprise a chaque nouvelle tentative : le serveur ne
-  /// paie jamais deux fois le meme devis.
-  final String _cle = const Uuid().v4();
+  /// Une cle par devis, et non par ecran (constat 15) : un S05 rouvert sur le
+  /// meme devis (historique du navigateur) reprend la meme cle, comme chaque
+  /// nouvelle tentative. ponytail: table en memoire de session, perdue au
+  /// rechargement de la page ; la reference du devis reste la garde du
+  /// serveur (DB-FIN-04). Une entree par devis ouvert : quelques octets.
+  static final Map<String, String> _clesParDevis = <String, String>{};
+
+  static String _cle(DevisRecharge devis) =>
+      _clesParDevis.putIfAbsent(devis.reference, () => const Uuid().v4());
+
   bool _enCours = false;
   Object? _echec;
 
@@ -83,7 +90,7 @@ class _VerifierRechargePageState extends ConsumerState<VerifierRechargePage> {
     try {
       final ResultatRecharge resultat = await ref
           .read(portFinanceFoyerProvider)
-          .payer(referenceDevis: devis.reference, cleIdempotence: _cle);
+          .payer(referenceDevis: devis.reference, cleIdempotence: _cle(devis));
       if (!mounted) {
         return;
       }

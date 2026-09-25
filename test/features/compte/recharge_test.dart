@@ -597,4 +597,48 @@ void main() {
     await stabiliser(tester);
     expect(find.byType(ResultatRechargePage), findsOneWidget);
   });
+
+  testWidgets('S05 rouvert sur le meme devis : meme cle ; autre devis : '
+      'autre cle (constat 15)', (WidgetTester tester) async {
+    final _PaiementLent port = _PaiementLent();
+    final GoRouter routeur = await _surVerifier(tester, port);
+    final Finder payer = find.byKey(VerifierRechargePage.payerKey);
+
+    await toucher(tester, payer);
+    port.attente.completeError(StateError('panne'));
+    await stabiliser(tester);
+
+    // On quitte S05, puis on y revient avec le meme devis (historique).
+    routeur.go(Routes.tuteurCompteSoldes);
+    await stabiliser(tester);
+    port.attente = Completer<ResultatRecharge>();
+    routeur.go(
+      Routes.tuteurCompteRechargeVerifier,
+      extra: _FinanceAvecDevis.devis,
+    );
+    await stabiliser(tester);
+    await toucher(tester, payer);
+    expect(port.cles, hasLength(2));
+    expect(port.cles.last, port.cles.first);
+    port.attente.completeError(StateError('panne'));
+    await stabiliser(tester);
+
+    port.attente = Completer<ResultatRecharge>();
+    routeur.go(
+      Routes.tuteurCompteRechargeVerifier,
+      extra: DevisRecharge(
+        reference: 'test-devis-autre',
+        lignes: _FinanceAvecDevis.devis.lignes,
+        totalMineur: _FinanceAvecDevis.devis.totalMineur,
+        devise: FinanceFoyerDemo.devise,
+        valableJusqua: _FinanceAvecDevis.devis.valableJusqua,
+      ),
+    );
+    await stabiliser(tester);
+    await toucher(tester, payer);
+    expect(port.cles, hasLength(3));
+    expect(port.cles.last, isNot(port.cles.first));
+    port.attente.completeError(StateError('panne'));
+    await stabiliser(tester);
+  });
 }
