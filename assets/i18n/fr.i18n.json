@@ -161,6 +161,7 @@
       "compteDe": "Compte de {nom}",
       "sortir": "Quitter la séance",
       "compteurEleves": "Élèves {connectes}/{inscrits}",
+      "parler": "Parler",
       "agrandir": "Agrandir",
       "reduire": "Réduire",
       "rienPartage":"{nom} n'a rien partagé pour l'instant.",
@@ -196,6 +197,15 @@
         "pasEncoreConnecte": "Pas encore connecté",
         "connexionInterrompue": "Connexion interrompue"
       }
+    },
+    "fin": {
+      "titre": "Séance terminée",
+      "phrase": "Vous pouvez retrouver votre travail dans votre Classe.",
+      "retourClasse": "Retour à la Classe",
+      "quitteTitre": "Vous avez quitté la séance.",
+      "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
+      "titreGuidee": "La séance est terminée.",
+      "retourAccueil": "Retour à l'accueil"
     },
     "micro": "Micro",
     "microCoupe": "Micro coupé",

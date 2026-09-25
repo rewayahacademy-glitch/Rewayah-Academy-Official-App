@@ -24,15 +24,34 @@ abstract final class MesuresVignette {
   /// Desktop : ≈ 208 x 190.
   static const double largeurLarge = 208;
 
+  /// Interface guidee, telephone : ≈ 160 x 145 (S CLV-05).
+  static const double largeurGuideeMobile = 160;
+
+  /// Interface guidee, web etroit : ≈ 180 x 164.
+  static const double largeurGuideeTablette = 180;
+
+  /// Interface guidee, desktop : ≈ 300 x 273, dans sa colonne (Q8).
+  static const double largeurGuideeLarge = 300;
+
   /// Le retrait depuis le coin du support.
   static const double retrait = AppSpacing.md;
 
-  /// La largeur pour un gabarit.
-  static double largeur(Gabarit gabarit) =>
-      gabarit == Gabarit.desktop ? largeurLarge : largeurEtroite;
+  /// La largeur pour un gabarit ; [guidee] : les mesures de l'Interface
+  /// guidee ([VueSeance.vignetteAgrandie]).
+  static double largeur(Gabarit gabarit, {bool guidee = false}) {
+    if (guidee) {
+      return switch (gabarit) {
+        Gabarit.mobile => largeurGuideeMobile,
+        Gabarit.tablette => largeurGuideeTablette,
+        Gabarit.desktop => largeurGuideeLarge,
+      };
+    }
+    return gabarit == Gabarit.desktop ? largeurLarge : largeurEtroite;
+  }
 
   /// La hauteur qui suit du ratio.
-  static double hauteur(Gabarit gabarit) => largeur(gabarit) / ratio;
+  static double hauteur(Gabarit gabarit, {bool guidee = false}) =>
+      largeur(gabarit, guidee: guidee) / ratio;
 }
 
 /// La video de l'enseignante en petite vignette.
@@ -116,7 +135,10 @@ class VignetteVideo extends StatelessWidget {
                         ),
                         if (vue.voitSignalVideo) ...<Widget>[
                           const Spacer(),
-                          _Signal(barres: vue.signalEnseignant),
+                          _Signal(
+                            key: const ValueKey<String>('signal-video'),
+                            barres: vue.signalEnseignant,
+                          ),
                         ],
                       ],
                     ),
@@ -133,7 +155,7 @@ class VignetteVideo extends StatelessWidget {
 
 /// Trois barres de signal (enseignant seulement).
 class _Signal extends StatelessWidget {
-  const _Signal({required this.barres});
+  const _Signal({required this.barres, super.key});
 
   final int barres;
 

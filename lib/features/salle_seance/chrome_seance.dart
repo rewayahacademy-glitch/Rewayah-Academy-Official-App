@@ -15,6 +15,7 @@ import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
+import 'dock_seance.dart';
 import 'mention_seance.dart';
 import 'vue_seance.dart';
 
@@ -381,7 +382,8 @@ class _CoinGuide extends StatelessWidget {
           _IconeEnTete(
             icone: AppIcons.sortie,
             libelle: t.salle.seance.sortir,
-            onPress: sortie,
+            // Meme confirmation que Quitter (dock).
+            onPress: () => confirmerQuitterSeance(context, sortie),
           ),
           Ecart.hMd,
         ],

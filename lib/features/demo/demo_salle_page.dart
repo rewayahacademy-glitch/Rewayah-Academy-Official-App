@@ -19,6 +19,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import 'mode_demonstration.dart';
@@ -207,6 +208,9 @@ class _SalleDemoState extends State<SalleDemo> {
 
   bool _micro = true;
   bool _camera = true;
+
+  /// L'eleve a quitte la salle avant la fin (apres confirmation).
+  bool _quittee = false;
   bool _agrandi = false;
   double _zoom = 1;
   late PanneauOuvert _panneau = DonneesSeanceDemo.vue(
@@ -233,6 +237,14 @@ class _SalleDemoState extends State<SalleDemo> {
       widget.etat,
     ).copyWith(panneau: _panneau);
     final bool enseignant = widget.role == RoleSeance.enseignant;
+    // Fin de seance ou sortie volontaire de l'eleve : CLV-09. La fin de
+    // l'enseignant (CLV-10) vient avec T7.
+    if (!enseignant && (vue.estFinie || _quittee)) {
+      return ResultatSeance(
+        issue: _quittee ? IssueSeance.quittee : IssueSeance.terminee,
+        onRetour: widget.onSortir,
+      );
+    }
     return SalleSeance(
       vue: vue,
       local: EtatLocalSeance(
@@ -243,7 +255,9 @@ class _SalleDemoState extends State<SalleDemo> {
       ),
       actions: ActionsSeance(
         onRetour: widget.onSortir,
-        onQuitter: widget.onSortir,
+        onQuitter: enseignant
+            ? widget.onSortir
+            : () => setState(() => _quittee = true),
         onMicro: () => setState(() => _micro = !_micro),
         onCamera: () => setState(() => _camera = !_camera),
         onAgrandir: () => setState(() => _agrandi = !_agrandi),

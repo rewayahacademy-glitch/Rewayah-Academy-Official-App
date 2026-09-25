@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
@@ -138,6 +139,79 @@ void main() {
             );
             await stabiliser(tester);
             await tester.pump(const Duration(milliseconds: 1400));
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    }
+  });
+
+  group('Capture : guidee et fin eleve (T3)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final _Taille taille in _tailles) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nom = 'cl_05_guidee_visite_${taille.nom}_${mode.name}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(
+            tester,
+            taille.logique,
+            taille.densite,
+            zoneSure: taille.zone,
+          );
+          await tester.pumpWidget(
+            hoteCapture(
+              SalleSeance(
+                vue: DonneesSeanceDemo.vue(
+                  RoleSeance.guidee,
+                  EtatDemoSalle.visite,
+                ),
+                actions: _actions,
+              ),
+              themeMode: mode,
+              interfaceMode: InterfaceMode.enfant,
+            ),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+
+    for (final _Taille taille in <_Taille>[_tailles.first, _tailles.last]) {
+      for (final bool guidee in <bool>[false, true]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String nom =
+              'cl_09_${guidee ? 'guidee' : 'eleve'}_fin_${taille.nom}_'
+              '${mode.name}';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(
+              tester,
+              taille.logique,
+              taille.densite,
+              zoneSure: taille.zone,
+            );
+            await tester.pumpWidget(
+              hoteCapture(
+                const ResultatSeance(
+                  issue: IssueSeance.terminee,
+                  onRetour: _rien,
+                ),
+                themeMode: mode,
+                interfaceMode: guidee
+                    ? InterfaceMode.enfant
+                    : InterfaceMode.standard,
+              ),
+            );
+            await stabiliser(tester);
             expect(tester.takeException(), isNull);
             debugPrint('PNG ${await capturer(tester, nom)}');
           });

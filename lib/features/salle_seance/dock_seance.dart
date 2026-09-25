@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -26,13 +27,46 @@ enum FondBoutonAppel {
 
   /// Disque plein d'alerte : Quitter.
   alerte,
+
+  /// Disque plein de la paire succes : Parler, en guidee (Q1).
+  succes,
+
+  /// Disque plein de la paire primaire : Camera, en guidee (Q1).
+  primaire,
+}
+
+/// Quitter la seance, apres confirmation : le dock (Quitter) et l'icone de
+/// sortie de l'en-tete guide passent par la meme question.
+Future<void> confirmerQuitterSeance(
+  BuildContext context,
+  VoidCallback quitter,
+) async {
+  final bool confirme = await ConfirmDestructive.demander(
+    context,
+    question: t.salle.seance.quitterQuestion,
+    consequence: t.salle.seance.quitterConsequence,
+    libelleConfirmer: t.salle.quitter,
+  );
+  if (confirme) quitter();
 }
 
 /// Le diametre commun des boutons d'appel : la cible tactile du mode
 /// d'interface, plus un palier, pour tenir la taille des images (≈ 56 en
 /// standard). Tous les cercles d'un dock ont ce diametre.
-double diametreBoutonAppel(BuildContext context) =>
-    AppMetriques.of(context).cibleTactile + AppSpacing.sm;
+/// En Interface guidee, le diametre est la cible tactile du mode enfant
+/// elle-meme (Q1, S CLV-05 : 72).
+double diametreBoutonAppel(BuildContext context) {
+  final AppMetriques metriques = AppMetriques.of(context);
+  return metriques.mode == InterfaceMode.enfant
+      ? metriques.cibleTactile
+      : metriques.cibleTactile + AppSpacing.sm;
+}
+
+/// La taille de l'icone dans le disque : plus grande en guidee (images).
+double _tailleIconeAppel(BuildContext context) =>
+    AppMetriques.of(context).mode == InterfaceMode.enfant
+    ? AppSpacing.xxxl
+    : AppSpacing.xxl;
 
 /// L'encre claire fixe de Quitter : l'encre de la paire d'alerte du theme
 /// clair (blanc), prise au jeton et non ecrite en dur.
@@ -60,16 +94,23 @@ class BoutonAppel extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final double diametre = diametreBoutonAppel(context);
+    final double tailleIcone = _tailleIconeAppel(context);
     final BoxDecoration disque = switch (fond) {
       FondBoutonAppel.surface => palette.surfaceOverlay.decoration(
         borderRadius: AppRadius.arrondiFull,
         side: palette.borderHairline.asBorderSide(),
       ),
       FondBoutonAppel.alerte => palette.pointsStatut.alerte.pastille(),
+      FondBoutonAppel.succes => palette.surfaceSuccess.decoration(
+        borderRadius: AppRadius.arrondiFull,
+      ),
+      FondBoutonAppel.primaire => palette.surfacePrimary.decoration(
+        borderRadius: AppRadius.arrondiFull,
+      ),
     };
     final IconThemeData encre = switch (fond) {
       FondBoutonAppel.surface => palette.inkStrong.asIconTheme(
-        size: AppSpacing.xxl,
+        size: tailleIcone,
       ),
       // Encre claire fixe, dans les deux themes (images : combine blanc sur
       // disque rouge). Le disque est un point d'alerte, pas la paire
@@ -78,7 +119,15 @@ class BoutonAppel extends StatelessWidget {
       // au-dessus du seuil de 3:1 d'un element graphique (WCAG 1.4.11).
       FondBoutonAppel.alerte => IconThemeData(
         color: _encreClaire,
-        size: AppSpacing.xxl,
+        size: tailleIcone,
+      ),
+      FondBoutonAppel.succes => IconThemeData(
+        color: palette.surfaceSuccess.onBackground,
+        size: tailleIcone,
+      ),
+      FondBoutonAppel.primaire => IconThemeData(
+        color: palette.surfacePrimary.onBackground,
+        size: tailleIcone,
       ),
     };
     return Pressable(
@@ -89,6 +138,7 @@ class BoutonAppel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           SizedBox.square(
+            key: const ValueKey<String>('disque-appel'),
             dimension: diametre,
             child: DecoratedBox(
               decoration: disque,
@@ -133,27 +183,22 @@ class DockSeance extends StatelessWidget {
   /// Le support occupe l'ecran : le bouton devient « Reduire ».
   final bool agrandi;
 
-  Future<void> _quitter(BuildContext context, VoidCallback quitter) async {
-    final bool confirme = await ConfirmDestructive.demander(
-      context,
-      question: t.salle.seance.quitterQuestion,
-      consequence: t.salle.seance.quitterConsequence,
-      libelleConfirmer: t.salle.quitter,
-    );
-    if (confirme) quitter();
-  }
-
   Widget? _bouton(BuildContext context, CommandeDock commande) {
+    // Guidee (Q1) : « Parler » et « Camera » en disques pleins.
+    final bool colore = vue.dockColore;
     switch (commande) {
       case CommandeDock.micro:
         final VoidCallback? micro = actions.onMicro;
         if (micro == null) return null;
         return BoutonAppel(
-          icone: (microOuvert ? AppIcons.micro : AppIcons.microCoupe).repos,
-          libelle: t.salle.micro,
+          icone: colore
+              ? (microOuvert ? AppIcons.micro : AppIcons.microCoupe).actif
+              : (microOuvert ? AppIcons.micro : AppIcons.microCoupe).repos,
+          libelle: colore ? t.salle.seance.parler : t.salle.micro,
           libelleSemantique: microOuvert
               ? t.salle.fermerMicro
               : t.salle.ouvrirMicro,
+          fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
           onPress: micro,
         );
       case CommandeDock.camera:
@@ -166,6 +211,7 @@ class DockSeance extends StatelessWidget {
           libelleSemantique: cameraAllumee
               ? t.salle.fermerCamera
               : t.salle.ouvrirCamera,
+          fond: colore ? FondBoutonAppel.primaire : FondBoutonAppel.surface,
           onPress: camera,
         );
       case CommandeDock.agrandir:
@@ -188,7 +234,7 @@ class DockSeance extends StatelessWidget {
           libelle: t.salle.quitter,
           libelleSemantique: t.salle.seance.sortir,
           fond: FondBoutonAppel.alerte,
-          onPress: () => _quitter(context, quitter),
+          onPress: () => confirmerQuitterSeance(context, quitter),
         );
     }
   }

@@ -14,7 +14,6 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -36,8 +35,16 @@ class ZoneSupport extends StatelessWidget {
     final SupportSeance? support = vue.support;
     if (support == null) return _RienPartage(vue: vue);
     final Gabarit gabarit = AppGabarit.de(context);
-    final InterfaceMode mode = AppMetriques.of(context).mode;
-    final AppPalette paletteEcran = AppPalette.of(context);
+    // Le support est le document de l'enseignante, le meme pour tous : il
+    // garde l'echelle standard, meme en guidee (images CLV-05 : texte de la
+    // taille de CLV-04). Seules les commandes de la guidee grandissent.
+    const InterfaceMode mode = InterfaceMode.standard;
+    // Guidee desktop (Q8) : la video a cote du support, jamais par-dessus.
+    final bool aCote = vue.videoACoteDuSupport(gabarit);
+    final double largeurVignette = MesuresVignette.largeur(
+      gabarit,
+      guidee: vue.vignetteAgrandie,
+    );
     // La carte lit le theme clair, quel que soit le theme de l'ecran.
     final Widget carte = Theme(
       data: AppTheme.pour(mode, Brightness.light),
@@ -65,23 +72,28 @@ class ZoneSupport extends StatelessWidget {
                         child: SingleChildScrollView(
                           key: const ValueKey<String>('support-defilement'),
                           padding: EdgeInsets.all(_marge(gabarit)),
-                          child: _Contenu(support: support, gabarit: gabarit),
+                          child: _Contenu(
+                            support: support,
+                            gabarit: gabarit,
+                            largeurVignette: aCote ? 0 : largeurVignette,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  PositionedDirectional(
-                    top: MesuresVignette.retrait,
-                    end: MesuresVignette.retrait,
-                    // La video garde le theme de l'ecran.
-                    child: Theme(
-                      data: Theme.of(context),
-                      child: VignetteVideo(
-                        vue: vue,
-                        largeur: MesuresVignette.largeur(gabarit),
+                  if (!aCote)
+                    PositionedDirectional(
+                      top: MesuresVignette.retrait,
+                      end: MesuresVignette.retrait,
+                      // La video garde le theme de l'ecran.
+                      child: Theme(
+                        data: Theme.of(context),
+                        child: VignetteVideo(
+                          vue: vue,
+                          largeur: largeurVignette,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -93,15 +105,45 @@ class ZoneSupport extends StatelessWidget {
     // Desktop : la carte est sertie dans un cadre du theme de l'ecran (le
     // lisere sombre de CLV-04), qui la detache du fond en clair comme en
     // sombre.
-    return DecoratedBox(
+    final Widget cadre = _Serti(
       key: const ValueKey<String>('cadre-support'),
-      decoration: paletteEcran.surfaceSunken.decoration(
+      child: carte,
+    );
+    if (!aCote) return cadre;
+    // La colonne de la video, a droite du support (image CLV-05) : sertie
+    // comme lui, en haut, le reste de la colonne laisse vide.
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(child: cadre),
+        Ecart.hLg,
+        _Serti(
+          key: const ValueKey<String>('colonne-video'),
+          child: VignetteVideo(vue: vue, largeur: largeurVignette),
+        ),
+      ],
+    );
+  }
+}
+
+/// Le cadre du theme de l'ecran qui sertit la carte en desktop (le lisere
+/// sombre de CLV-04), et la video de la guidee a cote d'elle (CLV-05).
+class _Serti extends StatelessWidget {
+  const _Serti({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return DecoratedBox(
+      decoration: palette.surfaceSunken.decoration(
         borderRadius: const BorderRadius.all(
           Radius.circular(AppRadius.lg + _serti),
         ),
-        side: paletteEcran.borderHairline.asBorderSide(),
+        side: palette.borderHairline.asBorderSide(),
       ),
-      child: Padding(padding: const EdgeInsets.all(_serti), child: carte),
+      child: Padding(padding: const EdgeInsets.all(_serti), child: child),
     );
   }
 }
@@ -141,10 +183,17 @@ double _marge(Gabarit gabarit) =>
     gabarit == Gabarit.desktop ? AppSpacing.section : AppSpacing.xl;
 
 class _Contenu extends StatelessWidget {
-  const _Contenu({required this.support, required this.gabarit});
+  const _Contenu({
+    required this.support,
+    required this.gabarit,
+    required this.largeurVignette,
+  });
 
   final SupportSeance support;
   final Gabarit gabarit;
+
+  /// La largeur de la vignette posee en coin ; 0 quand elle est a cote.
+  final double largeurVignette;
 
   @override
   Widget build(BuildContext context) {
@@ -154,13 +203,15 @@ class _Contenu extends StatelessWidget {
     // La place laissee a la vignette sur les premieres lignes : aucun texte
     // ne passe dessous au repos.
     // Au telephone, l'ecart titre-vignette se resserre (images : ≈ 10).
-    final double reserve = math.max(
-      0,
-      MesuresVignette.retrait +
-          MesuresVignette.largeur(gabarit) +
-          (gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.lg) -
-          _marge(gabarit),
-    );
+    final double reserve = largeurVignette <= 0
+        ? 0
+        : math.max(
+            0,
+            MesuresVignette.retrait +
+                largeurVignette +
+                (gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.lg) -
+                _marge(gabarit),
+          );
     final Widget entete = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -200,11 +251,14 @@ class _Contenu extends StatelessWidget {
             if (large) ...<Widget>[Ecart.hXxl, const _Illustration()],
             SizedBox(
               width: reserve,
-              height: large
+              height: large || largeurVignette <= 0
                   ? 0
-                  : MesuresVignette.hauteur(gabarit) +
-                        MesuresVignette.retrait -
-                        _marge(gabarit),
+                  : math.max(
+                      0,
+                      largeurVignette / MesuresVignette.ratio +
+                          MesuresVignette.retrait -
+                          _marge(gabarit),
+                    ),
             ),
           ],
         ),

@@ -200,6 +200,7 @@ class Traductions$salle$fr {
 	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
 
 	late final Traductions$salle$seance$fr seance = Traductions$salle$seance$fr.internal(_root);
+	late final Traductions$salle$fin$fr fin = Traductions$salle$fin$fr.internal(_root);
 
 	/// fr: 'Micro'
 	String get micro => 'Micro';
@@ -2483,6 +2484,9 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Élèves {connectes}/{inscrits}'
 	String compteurEleves({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}';
 
+	/// fr: 'Parler'
+	String get parler => 'Parler';
+
 	/// fr: 'Agrandir'
 	String get agrandir => 'Agrandir';
 
@@ -2524,6 +2528,36 @@ class Traductions$salle$seance$fr {
 
 	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
 	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
+}
+
+// Path: salle.fin
+class Traductions$salle$fin$fr {
+	Traductions$salle$fin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séance terminée'
+	String get titre => 'Séance terminée';
+
+	/// fr: 'Vous pouvez retrouver votre travail dans votre Classe.'
+	String get phrase => 'Vous pouvez retrouver votre travail dans votre Classe.';
+
+	/// fr: 'Retour à la Classe'
+	String get retourClasse => 'Retour à la Classe';
+
+	/// fr: 'Vous avez quitté la séance.'
+	String get quitteTitre => 'Vous avez quitté la séance.';
+
+	/// fr: 'Vous pourrez revenir tant qu'elle reste ouverte.'
+	String get quittePhrase => 'Vous pourrez revenir tant qu\'elle reste ouverte.';
+
+	/// fr: 'La séance est terminée.'
+	String get titreGuidee => 'La séance est terminée.';
+
+	/// fr: 'Retour à l'accueil'
+	String get retourAccueil => 'Retour à l\'accueil';
 }
 
 // Path: connexion.recuperation
@@ -11474,6 +11508,7 @@ extension on Traductions {
 			'salle.seance.compteDe' => ({required Object nom}) => 'Compte de ${nom}',
 			'salle.seance.sortir' => 'Quitter la séance',
 			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}',
+			'salle.seance.parler' => 'Parler',
 			'salle.seance.agrandir' => 'Agrandir',
 			'salle.seance.reduire' => 'Réduire',
 			'salle.seance.rienPartage' => ({required Object nom}) => '${nom} n\'a rien partagé pour l\'instant.',
@@ -11501,6 +11536,13 @@ extension on Traductions {
 			'salle.seance.statut.connecte' => 'Connecté',
 			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
 			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
+			'salle.fin.titre' => 'Séance terminée',
+			'salle.fin.phrase' => 'Vous pouvez retrouver votre travail dans votre Classe.',
+			'salle.fin.retourClasse' => 'Retour à la Classe',
+			'salle.fin.quitteTitre' => 'Vous avez quitté la séance.',
+			'salle.fin.quittePhrase' => 'Vous pourrez revenir tant qu\'elle reste ouverte.',
+			'salle.fin.titreGuidee' => 'La séance est terminée.',
+			'salle.fin.retourAccueil' => 'Retour à l\'accueil',
 			'salle.micro' => 'Micro',
 			'salle.microCoupe' => 'Micro coupé',
 			'salle.camera' => 'Caméra',
@@ -11872,6 +11914,8 @@ extension on Traductions {
 			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
 			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.pourQui.moiDescription' => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.',
 			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
 			'foyer.ajout.identite.sousTitre' => 'Son prénom, son nom et son âge.',
@@ -11880,8 +11924,6 @@ extension on Traductions {
 			'foyer.ajout.identite.nomAide' => 'Le nom de famille n\'est jamais montré à l\'enseignant.',
 			'foyer.ajout.identite.age' => 'Âge',
 			'foyer.ajout.identite.ageSuffixe' => 'ans',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.ajout.identite.ageAide' => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.',
 			'foyer.ajout.erreurs.prenomRequis' => 'Indiquez le prénom de l\'élève.',
 			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
@@ -12386,6 +12428,8 @@ extension on Traductions {
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
 			'admin.regles.uniteSemaines' => ({required Object n}) => '${n} sem.',
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -12394,8 +12438,6 @@ extension on Traductions {
 			'admin.fonctionnalites.envoyer' => 'Enregistrer',
 			'admin.fonctionnalites.champValeur' => 'Valeur',
 			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fonctionnalites.multiParticipantsDetail' => 'Autorise plusieurs élèves dans une même séance de visioconférence.',
 			'admin.fonctionnalites.participantsMax' => 'Participants maximum',
 			'admin.fonctionnalites.participantsMaxDetail' => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.',
@@ -12900,6 +12942,8 @@ extension on Traductions {
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
 			'compte.informations' => 'Informations',
+			_ => null,
+		} ?? switch (path) {
 			'compte.profil' => 'Profil',
 			'compte.profilDetail' => 'Voir et gérer vos informations',
 			'compte.reglages' => 'Réglages',
@@ -12908,8 +12952,6 @@ extension on Traductions {
 			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
-			_ => null,
-		} ?? switch (path) {
 			'compte.confidentialite' => 'Confidentialité',
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
 			'compte.espaces' => 'Espaces',
@@ -13414,6 +13456,8 @@ extension on Traductions {
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
 			'classe.pagePlanning.aucuneDetail' => ({required Object prenom}) => 'Les prochaines séances de ${prenom} apparaîtront ici dès qu\'elles seront programmées.',
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
@@ -13422,8 +13466,6 @@ extension on Traductions {
 			'classe.pageTravail.aucunDetail' => 'Le travail donné par l\'enseignant apparaîtra ici.',
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
 			'classe.pageTravail.statut.aFaire' => 'À faire',
 			'classe.pageTravail.statut.enCours' => 'Commencé',
@@ -13928,6 +13970,8 @@ extension on Traductions {
 			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
 			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
 			'tc.outils.annotation.aucuneSelection' => 'Sélectionnez d\'abord un passage.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
 			'tc.classe.entete.resteMinutes' => ({required Object minutes}) => 'Reste ${minutes} min',
@@ -13936,8 +13980,6 @@ extension on Traductions {
 			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',

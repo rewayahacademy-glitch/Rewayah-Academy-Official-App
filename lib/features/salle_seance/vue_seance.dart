@@ -362,6 +362,18 @@ class VueSeance {
   bool get voitOutils => _enseignant && support != null;
   bool get voitSignalVideo => _enseignant;
 
+  /// Guidee : la vignette est plus grande (S CLV-05, ≈ 160 a 300 de large).
+  bool get vignetteAgrandie => _guidee;
+
+  /// Q8 : guidee desktop, la video dans une colonne a droite du support,
+  /// jamais par-dessus. Ailleurs, la vignette reste en coin du support.
+  bool videoACoteDuSupport(Gabarit gabarit) =>
+      _guidee && optionQ8 && gabarit == Gabarit.desktop;
+
+  /// Guidee : le micro s'appelle « Parler » et les disques Parler et Camera
+  /// sont pleins (Q1).
+  bool get dockColore => _guidee && optionQ1;
+
   /// Connectes maintenant, derive de la liste (I-6).
   int get connectes => eleves
       .where((EleveSeance e) => e.statut == StatutEleveSeance.connecte)
