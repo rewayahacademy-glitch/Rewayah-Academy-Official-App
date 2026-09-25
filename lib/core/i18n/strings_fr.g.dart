@@ -2490,6 +2490,18 @@ class Traductions$finance$soldes$fr {
 
 	/// fr: 'Soldes'
 	String get rubriqueFoyer => 'Soldes';
+
+	/// fr: 'Voir les soldes du foyer'
+	String get voirSoldes => 'Voir les soldes du foyer';
+
+	/// fr: 'Dernière remise liée à une séance : {montant}, le {date}'
+	String derniereRemise({required Object montant, required Object date}) => 'Dernière remise liée à une séance : ${montant}, le ${date}';
+
+	/// fr: 'Non disponible pour le moment.'
+	String get indisponible => 'Non disponible pour le moment.';
+
+	/// fr: 'Soldes du foyer : {total}'
+	String ligneAccueil({required Object total}) => 'Soldes du foyer : ${total}';
 }
 
 // Path: finance.issues
@@ -11358,6 +11370,10 @@ extension on Traductions {
 			'finance.soldes.aucunProfilPhrase' => 'Le serveur n\'a rendu aucun solde de profil élève pour ce foyer.',
 			'finance.soldes.gererAcces' => 'Gérer les accès',
 			'finance.soldes.rubriqueFoyer' => 'Soldes',
+			'finance.soldes.voirSoldes' => 'Voir les soldes du foyer',
+			'finance.soldes.derniereRemise' => ({required Object montant, required Object date}) => 'Dernière remise liée à une séance : ${montant}, le ${date}',
+			'finance.soldes.indisponible' => 'Non disponible pour le moment.',
+			'finance.soldes.ligneAccueil' => ({required Object total}) => 'Soldes du foyer : ${total}',
 			'finance.issues.confirmee' => 'Confirmée',
 			'finance.issues.enAttente' => 'En attente',
 			'finance.issues.echouee' => 'Échouée',
@@ -11773,12 +11789,12 @@ extension on Traductions {
 			'ficheEleve.introuvable.retour' => 'Retour au foyer',
 			'ficheEleve.lignes.informations' => 'Informations',
 			'ficheEleve.lignes.informationsLegende' => 'Prénom et photo',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.lignes.inscription' => 'Parcours et inscription',
 			'ficheEleve.lignes.inscriptionLegende' => 'Questionnaire et classe',
 			'ficheEleve.lignes.interface' => 'Interface',
 			'ficheEleve.lignes.camera' => 'Caméra en cours',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.lignes.cameraAutorisee' => 'Autorisée',
 			'ficheEleve.lignes.cameraNonAutorisee' => 'Non autorisée',
 			'ficheEleve.lignes.acces' => 'Accès Rewayah',
@@ -12287,12 +12303,12 @@ extension on Traductions {
 			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.evaluations.aucune' => 'Aucune évaluation',
 			'admin.evaluations.aucuneDetail' => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.filtreRealisees' => 'Réalisées',
 			'admin.evaluations.filtreAnnulees' => 'Annulées',
 			'admin.evaluations.filtreCertifications' => 'Certifications',
@@ -12801,12 +12817,12 @@ extension on Traductions {
 			'compte.reglagesIntro' => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.',
 			'compte.apparence' => 'Apparence',
 			'compte.themeSysteme' => 'Système',
+			_ => null,
+		} ?? switch (path) {
 			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
 			'compte.themeClair' => 'Clair',
 			'compte.themeSombre' => 'Sombre',
 			'compte.accessibilite' => 'Accessibilité',
-			_ => null,
-		} ?? switch (path) {
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
 			'compte.effets' => 'Réduire les effets',
@@ -13315,12 +13331,12 @@ extension on Traductions {
 			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
@@ -13829,12 +13845,12 @@ extension on Traductions {
 			'tc.classe.fiche.aReprendre' => 'À reprendre',
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.action.rappel' => 'Rappel discret',
 			'tc.classe.action.reciter' => 'Choisir pour réciter',
 			'tc.classe.action.noter' => 'Noter',

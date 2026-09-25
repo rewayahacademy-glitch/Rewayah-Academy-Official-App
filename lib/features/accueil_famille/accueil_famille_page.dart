@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_finance_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
@@ -22,9 +23,11 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
+import '../compte/soldes_page.dart';
 import '../parcours_offres/bloc_parcours.dart';
 import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
@@ -124,8 +127,58 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
           libelleAction: t.tuteur.accueil.ajouterProfil,
           onAction: () => GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
         ),
-        construire: (List<ProfilEleveFoyer> liste) =>
+        construire: (List<ProfilEleveFoyer> liste) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
             _Contenu(profils: liste, maintenantServeurUtc: maintenant),
+            const LigneSoldesAccueil(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Le total des soldes du foyer en une ligne discrete (S02), qui mene a S01
+/// avec `?retour=` vers l'Accueil.
+///
+/// Rien n'est rendu tant que le total n'est pas lu, ni quand la lecture
+/// echoue ou que la capacite manque (production, DB-FIN-01) : pas de bruit
+/// sur l'Accueil. Jamais un « 0 » pour un total inconnu.
+class LigneSoldesAccueil extends ConsumerWidget {
+  /// Cree la ligne.
+  const LigneSoldesAccueil({super.key});
+
+  /// La ligne, quand elle est rendue.
+  static const Key cle = Key('accueil.soldes');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<SoldesFoyer> soldes = ref.watch(soldesFoyerProvider);
+    if (soldes.hasError ||
+        !soldes.hasValue ||
+        soldes.requireValue.profils.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final String? total = resumeTotalSoldes(soldes);
+    if (total == null) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.lg),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: LienFleche(
+          key: cle,
+          libelle: t.finance.soldes.ligneAccueil(total: total),
+          onPress: () => GoRouter.of(context).go(
+            Uri(
+              path: Routes.tuteurCompteSoldes,
+              queryParameters: <String, String>{'retour': Routes.tuteurAccueil},
+            ).toString(),
+          ),
+        ),
       ),
     );
   }

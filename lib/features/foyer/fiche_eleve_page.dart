@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_finance_foyer.dart';
 import '../../core/domain/enums.dart';
+import '../../core/finance/format_montant.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -18,8 +20,11 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/resume_solde.dart';
 import '../../core/widgets/skeleton.dart';
+import '../compte/soldes_page.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
@@ -235,9 +240,10 @@ String libelleInterface(InterfaceMode mode) => switch (mode) {
 /// Onglet actif : Foyer. Aucun age affiche : il n'est pas enregistre
 /// (DB-ADM-05).
 ///
-/// Place reservee, rien de construit : le futur solde par eleve (decision du
-/// directeur, section 1 ter point 9) prendra une ligne de ce groupe ou un
-/// groupe sous les appareils, sans refonte.
+/// Sous les appareils, le solde de l'eleve (S02, LT-5 ; decision du
+/// directeur, section 1 ter point 9) : lu dans `soldesFoyerProvider` (S01),
+/// il mene a S01 avec `?retour=` vers cette fiche. Tant que DB-FIN-01 manque,
+/// une phrase courte, sans action financiere.
 class FicheElevePage extends ConsumerWidget {
   /// Cree la page.
   const FicheElevePage({required this.eleveId, super.key});
@@ -254,6 +260,12 @@ class FicheElevePage extends ConsumerWidget {
 
   /// Le groupe des appareils.
   static const Key appareilsKey = Key('ficheEleve.appareils');
+
+  /// Le bloc du solde (S02).
+  static const Key soldeKey = Key('ficheEleve.solde');
+
+  /// L'action du bloc du solde, vers S01.
+  static const Key voirSoldesKey = Key('ficheEleve.voirSoldes');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -354,8 +366,98 @@ class _ContenuFiche extends ConsumerWidget {
           child: _Entete(profil: profil, classe: texteClasse(classe)),
         ),
         Ecart.vXxl,
-        ColonnesFiche(principal: parametres, annexe: appareils),
+        ColonnesFiche(
+          principal: parametres,
+          annexe: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              appareils,
+              Ecart.vXxl,
+              KeyedSubtree(
+                key: FicheElevePage.soldeKey,
+                child: _SoldeFiche(profil: profil),
+              ),
+            ],
+          ),
+        ),
       ],
+    );
+  }
+}
+
+/// Le solde de l'eleve (S02) : montant et derniere remise liee a une seance,
+/// tels que le serveur les rend, jamais recalcules ni remplaces par « 0 ».
+class _SoldeFiche extends ConsumerWidget {
+  const _SoldeFiche({required this.profil});
+
+  final ProfilEleveFoyer profil;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<SoldesFoyer> soldes = ref.watch(soldesFoyerProvider);
+    // Capacite absente (production, DB-FIN-01) : un etat court, sans bouton.
+    if (soldes.hasError && soldes.error is CapaciteIndisponible) {
+      return SurfaceFiche(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              t.finance.soldeDe(prenom: profil.prenom),
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vXs,
+            NoteFiche(t.finance.soldes.indisponible),
+          ],
+        ),
+      );
+    }
+    final GoRouter routeur = GoRouter.of(context);
+    return BlocAsynchrone<SoldesFoyer>(
+      valeur: soldes,
+      squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
+      onReessayer: () => ref.invalidate(soldesFoyerProvider),
+      construire: (SoldesFoyer lus) {
+        SoldeProfil solde = SoldeProfil(
+          profilId: profil.eleveId,
+          montantMineur: null,
+          devise: null,
+        );
+        for (final SoldeProfil s in lus.profils) {
+          if (s.profilId == profil.eleveId) {
+            solde = s;
+          }
+        }
+        final MouvementSolde? remise = solde.derniereRemise;
+        return ResumeSolde.profil(
+          prenom: profil.prenom,
+          solde: solde,
+          legende: remise == null || remise.seanceId == null
+              ? null
+              : t.finance.soldes.derniereRemise(
+                  montant: formaterMontant(
+                    remise.montantSigneMineur,
+                    remise.devise,
+                  ),
+                  date: dateEcheance(remise.date),
+                ),
+          action: LienFleche(
+            key: FicheElevePage.voirSoldesKey,
+            libelle: t.finance.soldes.voirSoldes,
+            onPress: () => routeur.go(
+              Uri(
+                path: Routes.tuteurCompteSoldes,
+                queryParameters: <String, String>{
+                  'retour': Routes.ficheElevePour(profil.eleveId),
+                },
+              ).toString(),
+            ),
+          ),
+        );
+      },
     );
   }
 }

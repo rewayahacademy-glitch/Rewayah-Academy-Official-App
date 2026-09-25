@@ -24,12 +24,16 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_finance_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/finance_demo.dart';
+import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
+import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 
@@ -94,6 +98,7 @@ Future<void> _monter(
   _Appairage? appairage,
   bool avecClasses = true,
   bool horsLigne = false,
+  bool financeDemo = false,
 }) async {
   late GoRouter routeur;
   final _Appairage service =
@@ -111,6 +116,8 @@ Future<void> _monter(
           FauxSelecteurPhoto(PhotoEnfant(octets: _png, nomFichier: 'a.png')),
         ),
         if (avecClasses) portClassesFoyerProvider.overrideWithValue(_classes),
+        if (financeDemo)
+          portFinanceFoyerProvider.overrideWithValue(const FinanceFoyerDemo()),
         if (horsLigne)
           horsLigneProvider.overrideWith((Ref ref) => Stream<bool>.value(true)),
       ],
@@ -239,6 +246,22 @@ void main() {
           debugPrint(
             'PNG ${await capturer(tester, 'fiche_inscription_classes_indisponibles_${format.$1}_${mode.name}')}',
           );
+          // S02 (LT-5) : le bloc du solde, en demonstration puis en
+          // production (DB-FIN-01 indisponible).
+          for (final bool demo in <bool>[true, false]) {
+            await _monter(
+              tester,
+              Routes.ficheElevePour(DonneesDemo.aichaId),
+              mode: mode,
+              appairage: _Appairage()..elevesRendus = DonneesDemo.eleves,
+              financeDemo: demo,
+            );
+            await tester.ensureVisible(find.byKey(FicheElevePage.soldeKey));
+            await stabiliser(tester);
+            debugPrint(
+              'PNG ${await capturer(tester, 'fiche_solde_${demo ? 'demo' : 'indisponible'}_${format.$1}_${mode.name}')}',
+            );
+          }
         });
 
         testWidgets('${format.$1}, etats, ${mode.name}', (
