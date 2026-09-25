@@ -2,9 +2,19 @@
 
 Les demandes C-1 à C-16 d'origine sont restées sur le poste A (`D:\RA _APP\pilotage-tuteur-v1\`), éteint. Suite donnée : `05_recette/c/REVUE.md` §5.
 
-## C-14 (ouverte, 25/09) : séances, fuseau et parcours d'une classe ouverte
+## C-14 (fermee, 25/09) : séances, fuseau et parcours d'une classe ouverte
 
 Le contrat `ClasseOuverte` (K6, `lib/core/capacites/port_catalogue_classes.dart`, gelé) ne porte ni les séances hebdomadaires, ni le fuseau de la classe, ni le parcours (cours, niveau), ni le motif de refus. Le mandat §C.3 les exige. Ressource manquante : décision du directeur pour étendre K6, et source serveur DB-CRS-07. Rien n'est inventé côté client : la carte garde sa phrase honnête.
+
+
+### Reponse C-14 (25/09, poste B, session B-2026-09-25-coord) : fait
+
+- Decision du directeur appliquee : le contrat K6 (`ClasseOuverte`, `lib/core/capacites/port_catalogue_classes.dart`) porte desormais les seances hebdomadaires (`CreneauHebdomadaire` : jour, heure, duree), le fuseau de la classe et le parcours (cours, niveau). Champs facultatifs : un adaptateur qui ne les connait pas les laisse vides.
+- Cote serveur : `supabase/migrations` lu en lecture seule, **aucune vue ni table de classes ouvertes** (DB-CRS-07 toujours absent ; `recurrence_rules` ne decrit pas une classe proposee). Donc aucun adaptateur Supabase : en production le catalogue reste « indisponible », honnetement. Aucun changement serveur.
+- Affichage : la carte du catalogue montre « Mardi a 18:30 · 45 min », « Heures de la classe (Europe/Paris) » et « Cours · Niveau » ; sans seances rendues, la phrase honnete reste. L'ecran Classe lisait deja seances (K2) et parcours (Espace Groupe) : inchange.
+- Mode demonstration : nouveau catalogue fictif (`lib/features/demo/catalogue_demo.dart`), trois classes avec jours, heures, fuseau et parcours.
+- Preuve : `ui/tuteur-v1-fin` @ `8bc5f2b` (poussee). analyze --fatal-infos propre ; tests `classe_tuteur` + `demo` + `capacites` sous verrou : +149 ~58, 0 echec (le test qui tape Accueil > profil > « Choisir une classe » verifie jour/heure, fuseau et parcours). Captures : `05_recette/c/captures/c14/` (390x844 et 1440x900, clair et sombre).
+- Non traite (hors demande C-14 telle que redigee par le coordinateur) : le motif de refus d'une inscription.
 
 ## C-INT-1 (25/09, INT-C, session B-2026-09-25-coord) : `portClassesFoyerProvider` par defaut casse 3 tests du lot B
 

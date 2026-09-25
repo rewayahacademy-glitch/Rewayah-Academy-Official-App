@@ -1,5 +1,8 @@
 # Avancement du poste B
 
+## C-14 seances et parcours (25/09, session B-2026-09-25-coord)
+
+Statut : **fini**. K6 etendu (seances hebdomadaires, fuseau, parcours), catalogue branche, mode demo alimente, aucune source serveur existante (production : indisponible honnete). `ui/tuteur-v1-fin` @ `8bc5f2b` poussee. Tests cibles verts, captures `05_recette/c/captures/c14/`. Reponse dans `demandes/C.md`. Tableau : ligne HL-B-2.
 ## O-INT-1 correction (25/09, session B-2026-09-25-coord)
 
 Statut : **fini (correction), pas de push depot**. `test/teaching_core/g/entree_observation_navigation_test.dart` reecrit pour partir de l'Accueil reel -> « Voir la classe » -> `t.classe.observer`, retours vers la classe. Fichier +5, `test/teaching_core/g` + `test/features/classe_tuteur` +269 ~109 verts, analyze --fatal-infos propre. Commits depot locaux `24f0b0f`, `bd51224` (au-dessus de `20731a4`). Detail : `demandes/O.md` (Reponse O-INT-1). Prochaine etape : suite complete sous verrou, puis push `origin/ui/tuteur-v1` si verte.
