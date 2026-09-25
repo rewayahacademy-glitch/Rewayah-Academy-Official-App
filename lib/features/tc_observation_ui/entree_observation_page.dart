@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -167,7 +168,9 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       // interruption : elle garde son message dans la salle.
       if (etat == EtatSalle.echec && _enSalle) {
         unawaited(
-          ref.read(moteurVisiteObservationProvider(widget.seanceId)).interrompre(),
+          ref
+              .read(moteurVisiteObservationProvider(widget.seanceId))
+              .interrompre(),
         );
       }
     });
@@ -353,9 +356,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final GoRouter routeur = GoRouter.of(context);
     final String? classe = _classeId;
     if (classe != null) {
-      routeur.go(
-        Routes.classePour(classe, eleveId: _eleveId ?? _enfantVisite),
-      );
+      routeur.go(Routes.classePour(classe, eleveId: _eleveId ?? _enfantVisite));
     } else if (routeur.canPop()) {
       routeur.pop();
     } else {
@@ -855,9 +856,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       context,
       rootNavigator: true,
     ).popUntil((Route<dynamic> route) => route is! PopupRoute<dynamic>);
-    Navigator.of(
-      context,
-    ).popUntil((Route<dynamic> route) => route is! PopupRoute<dynamic>);
+    Navigator.of(context)
+        .popUntil((Route<dynamic> route) => route is! PopupRoute<dynamic>);
   }
 
   /// L'Historique, segment Observations (maquette D2), pour l'enfant de la
@@ -867,7 +867,9 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     GoRouter.of(context).go(
       Uri(
         path: Routes.tuteurSuiviObservations,
-        queryParameters: eleve == null ? null : <String, String>{'eleve': eleve},
+        queryParameters: eleve == null
+            ? null
+            : <String, String>{'eleve': eleve},
       ).toString(),
     );
   }
@@ -881,9 +883,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final RestantesApresVisite restantes = switch (relue) {
       AsyncValue<VerificationPrealable>(isLoading: true) =>
         const RestantesEnLecture(),
-      AsyncValue<VerificationPrealable>(
-        :final VerificationPrealable value?,
-      ) when value.visitesMax != null =>
+      AsyncValue<VerificationPrealable>(:final VerificationPrealable value?)
+          when value.visitesMax != null =>
         RestantesLues(
           nombre: value.visitesRestantes,
           dureeParVisite: value.dureeParVisite,
@@ -984,13 +985,13 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     try {
       acces = await ref.read(serviceVideoProvider).acces(widget.seanceId);
     } on EchecSalle catch (echec) {
-      debugPrint('jeton video d\'observation refuse : ${echec.motif}');
+      journalDev('jeton video d\'observation refuse : ${echec.motif}');
       _poserEchecSalle();
       return;
     }
 
     if (acces.role != role.valeurSql) {
-      debugPrint(
+      journalDev(
         'jeton video de role inattendu : ${acces.role}, attendu ${role.valeurSql}',
       );
       _poserEchecSalle();
@@ -1002,7 +1003,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     } catch (erreur) {
       // Le moteur a deja pose son etat d'echec et tout libere. Aucun detail
       // technique ne remonte a l'ecran.
-      debugPrint('entree en salle d\'observation impossible : $erreur');
+      journalDev('entree en salle d\'observation impossible : $erreur');
       _poserEchecSalle();
       return;
     }

@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -31,6 +32,7 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
@@ -419,6 +421,24 @@ void main() {
         presence: <PresenceParticipant>[presenceA1],
       );
       await _ouvrirLaClasse(tester);
+
+      // Revue C m4 : icone info devant le lien, horloge (pas sablier)
+      // devant la duree.
+      expect(
+        find.descendant(
+          of: find.byType(LienFleche),
+          matching: find.byIcon(AppIcons.info.repos),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byIcon(AppIcons.horloge.repos), findsWidgets);
+      expect(
+        find.descendant(
+          of: find.byType(CarteSeanceClasse),
+          matching: find.byIcon(AppIcons.attente.repos),
+        ),
+        findsNothing,
+      );
 
       await _toucher(tester, find.text(t.classe.observation.commentCaMarche));
       expect(

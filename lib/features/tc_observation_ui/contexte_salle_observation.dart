@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 
 /// L'en-tete de la salle, lu depuis la classe du foyer (contrat K6) : le nom
@@ -64,7 +65,7 @@ contexteSalleObservationProvider =
           enseignant: enseignantAvecTitre(classe.classe.enseignant),
         );
       } on Object catch (erreur) {
-        debugPrint('Contexte de la salle d\'observation illisible : $erreur');
+        journalDev('Contexte de la salle d\'observation illisible : $erreur');
         return null;
       }
     }, isAutoDispose: true);

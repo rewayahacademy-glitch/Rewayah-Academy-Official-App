@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
 import 'service_suivi.dart';
 
 /// La classe de chaque seance du foyer, lue dans `sessions.groupe_id`
@@ -48,7 +49,7 @@ class ServiceGroupesSeancesSupabase implements ServiceGroupesSeances {
     } catch (erreur) {
       // Aucune exception ne remonte : la classe est un complement de la
       // ligne, pas une condition de son affichage.
-      debugPrint('classes des seances indisponibles : ${erreur.runtimeType}');
+      journalDev('classes des seances indisponibles : ${erreur.runtimeType}');
       return null;
     }
   }

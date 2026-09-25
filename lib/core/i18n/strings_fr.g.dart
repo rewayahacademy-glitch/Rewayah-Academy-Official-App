@@ -9714,6 +9714,12 @@ class Traductions$tc$outils$trait$fr {
 
 	/// fr: 'Plus'
 	String get plus => 'Plus';
+
+	/// fr: 'Ardoise d'annotation, facultative : le cours reste lisible sans elle'
+	String get ardoise => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle';
+
+	/// fr: 'Effacer mon dernier trait'
+	String get effacerDernier => 'Effacer mon dernier trait';
 }
 
 // Path: tc.outils.portee
@@ -13663,6 +13669,8 @@ extension on Traductions {
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
+			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
+			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
@@ -13737,10 +13745,10 @@ extension on Traductions {
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support au groupe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
-			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
-			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
+			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',
 			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
 			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',

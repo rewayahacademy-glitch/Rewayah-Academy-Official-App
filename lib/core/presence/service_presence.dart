@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
+
 /// Les quatorze etats de presence de la Bible section 29.1, plus l'inconnu.
 ///
 /// **Quatorze, ni un de plus ni un de moins** : l'invariant J4 de l'etape 5
@@ -143,15 +145,13 @@ class PresenceParticipant {
         identifiantImmuable: json['identifiant_immuable'] as String? ?? '',
         etat: EtatPresence.depuisSql(json['etat'] as String?),
         consolide: json['consolide'] as bool? ?? false,
-        entreLe: DateTime.tryParse(
-          json['entre_le'] as String? ?? '',
-        )?.toLocal(),
+        entreLe: DateTime.tryParse(json['entre_le'] as String? ?? '')
+            ?.toLocal(),
         derniereTraceLe: DateTime.tryParse(
           json['derniere_trace_le'] as String? ?? '',
         )?.toLocal(),
-        debutSeance: DateTime.tryParse(
-          json['started_at'] as String? ?? '',
-        )?.toLocal(),
+        debutSeance: DateTime.tryParse(json['started_at'] as String? ?? '')
+            ?.toLocal(),
       );
 
   /// La seance a laquelle cette ligne appartient.
@@ -237,7 +237,7 @@ class ServicePresenceSupabase implements ServicePresence {
       // Aucune exception ne remonte a l'ecran : une salle ne se ferme pas
       // parce qu'un tableau de presence n'a pas repondu. L'inconnu est un etat
       // affichable, pas une panne.
-      debugPrint('presence indisponible : $erreur');
+      journalDev('presence indisponible : $erreur');
       return null;
     }
   }

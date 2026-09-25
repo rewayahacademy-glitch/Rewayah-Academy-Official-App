@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -247,6 +248,7 @@ class _Possible extends StatelessWidget {
           child: LienFleche(
             libelle: t.classe.observation.commentCaMarche,
             fleche: false,
+            icone: AppIcons.info,
             onPress: onCommentCaMarche,
           ),
         ),

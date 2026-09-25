@@ -254,7 +254,7 @@ class BlocSeance extends StatelessWidget {
         : _HeuresLarges(affichage: affichage);
 
     final Widget ligneEtat = _LigneIcone(
-      icone: AppIcons.attente,
+      icone: AppIcons.horloge,
       texte: affichage.ligneEtat,
       style: AppTypography.tabulaire(
         palette.inkStrong.applyTo(textes.titleMedium ?? const TextStyle()),
