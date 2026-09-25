@@ -45,12 +45,37 @@ class ZoneSupport extends StatelessWidget {
       gabarit,
       guidee: vue.vignetteAgrandie,
     );
+    // Guidee web etroit (image CLV-04-05-06 web etroit) : la grande vignette
+    // descend jusqu'a l'encadre, qui se range a cote d'elle ; la carte
+    // s'arrete apres son contenu, un espace la separe du dock.
+    final bool colonneGuidee =
+        vue.vignetteAgrandie && gabarit == Gabarit.tablette && !aCote;
     // La carte lit le theme clair, quel que soit le theme de l'ecran.
     final Widget carte = Theme(
       data: AppTheme.pour(mode, Brightness.light),
       child: Builder(
         builder: (BuildContext contexte) {
           final AppPalette palette = AppPalette.of(contexte);
+          final Widget defilement = MediaQuery(
+            data: MediaQuery.of(contexte).copyWith(
+              textScaler: TextScaler.linear(
+                MediaQuery.textScalerOf(contexte).scale(1) * zoom,
+              ),
+            ),
+            child: _FonduBas(
+              couleur: palette.surfaceRaised.background,
+              child: SingleChildScrollView(
+                key: const ValueKey<String>('support-defilement'),
+                padding: EdgeInsets.all(_marge(gabarit)),
+                child: _Contenu(
+                  support: support,
+                  gabarit: gabarit,
+                  largeurVignette: aCote ? 0 : largeurVignette,
+                  encadreACote: colonneGuidee,
+                ),
+              ),
+            ),
+          );
           return DecoratedBox(
             key: const ValueKey<String>('zone-support'),
             decoration: palette.surfaceRaised
@@ -60,27 +85,12 @@ class ZoneSupport extends StatelessWidget {
               borderRadius: AppRadius.arrondiLg,
               child: Stack(
                 children: <Widget>[
-                  Positioned.fill(
-                    child: MediaQuery(
-                      data: MediaQuery.of(contexte).copyWith(
-                        textScaler: TextScaler.linear(
-                          MediaQuery.textScalerOf(contexte).scale(1) * zoom,
-                        ),
-                      ),
-                      child: _FonduBas(
-                        couleur: palette.surfaceRaised.background,
-                        child: SingleChildScrollView(
-                          key: const ValueKey<String>('support-defilement'),
-                          padding: EdgeInsets.all(_marge(gabarit)),
-                          child: _Contenu(
-                            support: support,
-                            gabarit: gabarit,
-                            largeurVignette: aCote ? 0 : largeurVignette,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Ajustee : la carte prend la hauteur de son contenu,
+                  // bornee par la place disponible (puis elle defile).
+                  if (colonneGuidee)
+                    defilement
+                  else
+                    Positioned.fill(child: defilement),
                   if (!aCote)
                     PositionedDirectional(
                       top: MesuresVignette.retrait,
@@ -101,6 +111,9 @@ class ZoneSupport extends StatelessWidget {
         },
       ),
     );
+    if (colonneGuidee) {
+      return Align(alignment: Alignment.topCenter, child: carte);
+    }
     if (gabarit != Gabarit.desktop) return carte;
     // Desktop : la carte est sertie dans un cadre du theme de l'ecran (le
     // lisere sombre de CLV-04), qui la detache du fond en clair comme en
@@ -187,6 +200,7 @@ class _Contenu extends StatelessWidget {
     required this.support,
     required this.gabarit,
     required this.largeurVignette,
+    this.encadreACote = false,
   });
 
   final SupportSeance support;
@@ -194,6 +208,10 @@ class _Contenu extends StatelessWidget {
 
   /// La largeur de la vignette posee en coin ; 0 quand elle est a cote.
   final double largeurVignette;
+
+  /// Guidee web etroit : les lignes et l'encadre restent dans la colonne a
+  /// cote de la grande vignette (image CLV-04-05-06 web etroit).
+  final bool encadreACote;
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +230,33 @@ class _Contenu extends StatelessWidget {
                 (gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.lg) -
                 _marge(gabarit),
           );
+    final Widget encadre = DecoratedBox(
+      key: const ValueKey<String>('encadre-support'),
+      decoration: palette.washAccent.decoration(
+        borderRadius: AppRadius.arrondiMd,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xxl,
+          vertical: AppSpacing.lg,
+        ),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _largeurEncadre),
+            child: Text(
+              support.encadre,
+              style: palette.inkAccent.applyTo(
+                (large
+                        ? theme.textTheme.titleLarge
+                        : theme.textTheme.bodyMedium) ??
+                    const TextStyle(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
     final Widget entete = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -239,6 +284,16 @@ class _Contenu extends StatelessWidget {
           Ecart.vMd,
           const _Ligne(fraction: 0.7),
         ],
+        if (encadreACote) ...<Widget>[
+          Ecart.vMd,
+          const _Ligne(fraction: 1),
+          Ecart.vMd,
+          const _Ligne(fraction: 0.94),
+          Ecart.vLg,
+          encadre,
+          Ecart.vLg,
+          const _Ligne(fraction: 1),
+        ],
       ],
     );
     return Column(
@@ -262,41 +317,18 @@ class _Contenu extends StatelessWidget {
             ),
           ],
         ),
-        if (!large) ...<Widget>[
+        if (!large && !encadreACote) ...<Widget>[
           Ecart.vMd,
           const _Ligne(fraction: 1),
           Ecart.vMd,
           const _Ligne(fraction: 0.7),
         ],
-        if (large) Ecart.vXxl else Ecart.vLg,
-        DecoratedBox(
-          decoration: palette.washAccent.decoration(
-            borderRadius: AppRadius.arrondiMd,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xxl,
-              vertical: AppSpacing.lg,
-            ),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: _largeurEncadre),
-                child: Text(
-                  support.encadre,
-                  style: palette.inkAccent.applyTo(
-                    (large
-                            ? theme.textTheme.titleLarge
-                            : theme.textTheme.bodyMedium) ??
-                        const TextStyle(),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        if (large) Ecart.vXxl else Ecart.vLg,
-        const _Ligne(fraction: 0.6),
+        if (!encadreACote) ...<Widget>[
+          if (large) Ecart.vXxl else Ecart.vLg,
+          encadre,
+          if (large) Ecart.vXxl else Ecart.vLg,
+          const _Ligne(fraction: 0.6),
+        ],
         Ecart.vLg,
         for (int i = 0; i < support.points.length; i++)
           Padding(

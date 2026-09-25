@@ -253,18 +253,33 @@ class DockSeance extends StatelessWidget {
       side: palette.borderHairline.asBorderSide(),
     );
     if (large) {
+      // Guidee desktop (image CLV-05) : des disques bien separes, centres
+      // a ≈ 130 l'un de l'autre, dans une pilule de ≈ 555 de large.
+      // Chaque bouton tient une case de largeur egale, centree : l'ecart
+      // entre les centres ne depend pas de la longueur des libelles.
+      final bool aere = vue.dockColore;
+      final double caseAeree =
+          diametreBoutonAppel(context) + AppSpacing.titreEcran + AppSpacing.sm;
       return DecoratedBox(
         key: const ValueKey<String>('dock-seance'),
         decoration: cadre,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xxl,
+          padding: EdgeInsets.symmetric(
+            horizontal: aere ? AppSpacing.xl : AppSpacing.xxl,
             vertical: AppSpacing.sm,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            spacing: AppSpacing.xl,
-            children: boutons,
+            spacing: aere ? 0 : AppSpacing.xl,
+            children: aere
+                ? <Widget>[
+                    for (final Widget bouton in boutons)
+                      SizedBox(
+                        width: caseAeree,
+                        child: Center(child: bouton),
+                      ),
+                  ]
+                : boutons,
           ),
         ),
       );

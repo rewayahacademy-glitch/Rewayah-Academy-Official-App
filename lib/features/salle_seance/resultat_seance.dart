@@ -45,6 +45,7 @@ class ResultatSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final bool guidee = AppMetriques.of(context).mode == InterfaceMode.enfant;
     final bool large = AppGabarit.de(context) == Gabarit.desktop;
+    final bool fin = guidee || issue == IssueSeance.terminee;
     // Guidee : une phrase courte, sans suite (S CLV-09, moins de 10 mots).
     final String titre = guidee
         ? t.salle.fin.titreGuidee
@@ -77,12 +78,11 @@ class ResultatSeance extends StatelessWidget {
                   ),
                   child: Center(
                     child: EcranResultat(
-                      icone: issue == IssueSeance.terminee
-                          ? AppIcons.succes
-                          : AppIcons.sortie,
-                      ton: issue == IssueSeance.terminee
-                          ? TonEtat.succes
-                          : TonEtat.neutre,
+                      // Guidee : un seul ecran de fin (« La seance est
+                      // terminee. »), donc la coche au ton succes, meme apres
+                      // Quitter : l'icone ne contredit jamais le texte.
+                      icone: fin ? AppIcons.succes : AppIcons.sortie,
+                      ton: fin ? TonEtat.succes : TonEtat.neutre,
                       titre: titre,
                       phrase: phrase,
                       libelleAction: guidee

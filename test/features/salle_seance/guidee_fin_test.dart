@@ -8,7 +8,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
@@ -250,6 +253,53 @@ void main() {
     });
   }
 
+  testWidgets('guidee web etroit : encadre a cote de la vignette, carte '
+      'ajustee au contenu', (WidgetTester tester) async {
+    await _monterGuidee(tester, const Size(640, 1000));
+    final Rect video = tester.getRect(
+      find.byKey(const ValueKey<String>('vignette-video')),
+    );
+    final Rect support = tester.getRect(
+      find.byKey(const ValueKey<String>('zone-support')),
+    );
+    final Rect encadre = tester.getRect(
+      find.byKey(const ValueKey<String>('encadre-support')),
+    );
+    final Rect dock = tester.getRect(
+      find.byKey(const ValueKey<String>('dock-seance')),
+    );
+    // Environ 41 % de la largeur du support (image), rapport garde.
+    expect(video.width / support.width, closeTo(0.41, 0.03));
+    expect(video.width / video.height, closeTo(MesuresVignette.ratio, 0.01));
+    // L'encadre se range a cote de la vignette, sans la toucher.
+    expect(encadre.right, lessThanOrEqualTo(video.left));
+    expect(encadre.overlaps(video), isFalse);
+    // Un espace separe la carte du dock.
+    expect(dock.top - support.bottom, greaterThan(40));
+  });
+
+  testWidgets('guidee desktop : dock aere comme l\'image', (
+    WidgetTester tester,
+  ) async {
+    await _monterGuidee(tester, const Size(1440, 900));
+    final Finder trouves = find.byKey(const ValueKey<String>('disque-appel'));
+    final List<Rect> disques = <Rect>[
+      for (int i = 0; i < trouves.evaluate().length; i++)
+        tester.getRect(trouves.at(i)),
+    ]..sort((Rect a, Rect b) => a.left.compareTo(b.left));
+    expect(disques.length, 4);
+    for (int i = 1; i < disques.length; i++) {
+      expect(
+        disques[i].center.dx - disques[i - 1].center.dx,
+        closeTo(130, 8),
+      );
+    }
+    final Rect dock = tester.getRect(
+      find.byKey(const ValueKey<String>('dock-seance')),
+    );
+    expect(dock.width, closeTo(555, 15));
+  });
+
   testWidgets('guidee desktop : la sortie de l\'en-tete demande confirmation', (
     WidgetTester tester,
   ) async {
@@ -333,6 +383,23 @@ void main() {
           findsOneWidget,
         );
         expect(find.text('Retour à la Classe'), findsOneWidget);
+      });
+
+      testWidgets('guidee, sortie avant la fin, ${taille.key} : meme ecran '
+          'que la fin, coche au ton succes', (WidgetTester tester) async {
+        await _monterFin(
+          tester,
+          taille.value,
+          IssueSeance.quittee,
+          guidee: true,
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.text('La séance est terminée.'), findsOneWidget);
+        final EcranResultat ecran = tester.widget<EcranResultat>(
+          find.byType(EcranResultat),
+        );
+        expect(ecran.icone, AppIcons.succes);
+        expect(ecran.ton, TonEtat.succes);
       });
     }
   });

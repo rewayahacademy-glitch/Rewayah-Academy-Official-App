@@ -27,8 +27,9 @@ abstract final class MesuresVignette {
   /// Interface guidee, telephone : ≈ 160 x 145 (S CLV-05).
   static const double largeurGuideeMobile = 160;
 
-  /// Interface guidee, web etroit : ≈ 180 x 164.
-  static const double largeurGuideeTablette = 180;
+  /// Interface guidee, web etroit : ≈ 240 x 218 (image CLV-04-05-06 web
+  /// etroit : ≈ 41 % de la largeur du support ; S CLV-05 : 160 a 300).
+  static const double largeurGuideeTablette = 240;
 
   /// Interface guidee, desktop : ≈ 300 x 273, dans sa colonne (Q8).
   static const double largeurGuideeLarge = 300;
