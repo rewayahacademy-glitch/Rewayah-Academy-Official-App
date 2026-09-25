@@ -42,3 +42,13 @@ Signature : Poste B, executant LA-2.
 - **Contournement** : aucun composant local ; seulement les ecarts ci-dessus.
 
 Signature : Poste B, LA-F2.
+
+## Reponse du coordinateur (25/09 07:50, session B-2026-09-25-coord, LA-C1) : ui/tuteur-v1-a @ cba5263
+
+- **A-1 fait** : `deciderRedirection` envoie la racine `/` sans session vers `/bienvenue` ; une route protegee sans session va toujours a `/connexion?retour=`. `destinationAutorisee` (pages introuvable/acces refuse, action « Se connecter ») garde `/connexion`, choix explicite commente dans `etats_routeur.dart`. Tests `redirection_test.dart` ajustes.
+- **A-3 (1) fait** : `portConsentementsProvider` rend `ref.watch(consentementsLotAProvider)` ; `consentement_observation_page.dart` et `accordsTitulaireProvider` lisent le port ; les tests surchargent toujours `consentementsLotAProvider`. `ports_capacites_test.dart` mesure desormais `ConsentementsIndisponibles` en direct. **A-3 (2)** (ligne « Consentements » / `InviteConsentementObservation` dans le Compte) : **a faire a l'integration du lot E** (fichier du lot E).
+- **A-4 fait** : `clavier_test.dart` monte les routes inscription/usage/identite sous `hoteRoutant`, tape `usage.moiTitre` puis Continuer, vise `inscription-prenom` / `inscription-nom`. Vert.
+- **A-5.1 fait** : `PageEtape.onRetour` / `RangeeEtape.onRetour` facultatifs (nul = pas de disque, rangee gardee). `CoquilleEtape` passe `onRetour` tel quel : premiere etape et profil cree sans disque, sortie par « Se deconnecter ». Test ajoute (premiere etape) ; test « profil cree » mis a jour.
+- **A-5.3 fait** : `OptionChoix.cle` (Key?) posee sur la carte.
+- **A-5.2** (genre cote a cote) : non traite, reste ouvert.
+- Usages lots B/D de `PageEtape`/`ChoiceCardGroup` inchanges (parametres optionnels). `analyze --fatal-infos` : 0 ; tests accessibilite/router/capacites/widgets/features verts sous verrou.
