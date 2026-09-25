@@ -1,5 +1,19 @@
 # Avancement du poste B
 
+## INT-E suite et push (25/09, session B-2026-09-25-coord, depart 08:57)
+
+Statut : **bloque, pas de push**. Fusion locale du lot E deja committee dans `C:\RA\depot` (`a5e8d94` "merge: integration du lot E", puis `e82ec66` A-3(2) ligne Consentements + test). Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` VIDE (verifiee).
+
+`flutter test` complet sous verrou : journal `04_phase0/integration_lotE_tests.log` (+2600 ~513 -5, code 1, duree 465 s). **5 echecs, tous deja connus, AUCUN nouveau lie a E** :
+1.+2. `test/features/appareils/appareil_partage_test.dart` et `test/features/appareils/emetteur_qr_test.dart` : regression **B-5** (`demandes/B.md`), apparue a la fusion du lot B (`ae8e2a0`), toujours pas corrigee, hors perimetre COORD.
+3.+4.+5. `test/features/foyer/fiche_eleve_test.dart` et `test/features/foyer/foyer_page_test.dart` (x2) : regression **C-INT-1** (`demandes/c.md`), deja identifiee a l'integration du lot C (P2-01) — `portClassesFoyerProvider` bascule au vrai adaptateur Supabase (revue C-M2), casse les scenarios "sans service" du lot B qui comptaient sur le defaut indisponible. Toujours pas corrigee (decision coordinateur/directeur en attente sur `port_classes_foyer.dart`).
+
+Verification : meme liste exacte que celle deja documentee pour P2-01 (2 + 3 = 5), comparaison des noms de fichiers/tests faite. Aucun test de `lib/features/compte`, `lib/features/historique`, `lib/features/notifications`, `lib/features/observations_admin` (perimetre du lot E) en echec.
+
+**Pas de push `origin/ui/tuteur-v1`** (regle : seulement si suite verte). `ETAT_A.md` non modifie (regle : uniquement si vert). Ligne P2-02 remise a `bloque` dans le tableau avec cette preuve (etait `fait` a tort, aucun push n'avait eu lieu : `origin/ui/tuteur-v1` reste a `1cbc760`, HEAD local a `e82ec66`). Lignes LE-1, LE-2, LE-3, LE-F laissees `fait` (pas de `verifie` : la regle "si vert" ne s'applique pas, meme condition que INT-C).
+
+Reprise : meme blocage que INT-C — decision a prendre sur `port_classes_foyer.dart` (garder le vrai adaptateur par defaut + surcharger explicitement dans les tests foyer "sans service") ET sur B-5 (navigation appareils apres retour de fiche eleve), puis re-suite complete, puis si verte : push `origin/ui/tuteur-v1` @ HEAD (couvre A, C, E), ETAT_A.md, LE-*/LC-* a `verifie`.
+
 ## INT-C suite et push (25/09, session B-2026-09-25-coord, depart 08:43)
 
 Statut : **bloque, pas de push**. Fusion locale du lot C deja committee (`0cd5041` "merge: integration du lot C", sur base `9f9d3bd` lot A). Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` VIDE (verifiee).
