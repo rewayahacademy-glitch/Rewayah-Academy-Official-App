@@ -41,7 +41,7 @@ Poste A : prend CL-4, CL-5, CL-7 **après** avoir terminé le lot T (Tuteur). S'
 ## 3. Décisions à demander au directeur (courtes, au bon moment)
 
 1. Valider les planches CL-1 (et D6 : Interface guidée en mode focus par défaut ?).
-2. Accord écrit pour CL-2 : fichiers plateforme micro/caméra, migration du jeton vidéo, contrats serveur de la spec §8.
+2. ~~Accord écrit pour CL-2~~ : **sans objet**. Décision du directeur (25/09, consigne K-28) : backend et configuration (micro/caméra, jeton vidéo, contrats §8, fenêtre d'entrée) sont reportés à l'étape BR-1 du tableau et branchés en une seule fois après validation de tous les visuels. CL-2 se limite au plan de fusion des deux salles côté écrans.
 Rien d'autre. Ne pas parler du questionnaire d'accueil (gelé).
 
 ## 4. Hors de cette vague (ne pas commencer)
