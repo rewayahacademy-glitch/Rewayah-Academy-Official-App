@@ -271,10 +271,14 @@ void main() {
         final QrImageView qr = tester.widget<QrImageView>(
           find.byType(QrImageView),
         );
-        final AppPalette claire = AppPalette.claire();
-        expect(qr.backgroundColor, claire.surfaceRaised.background);
-        expect(qr.dataModuleStyle.color, claire.surfaceRaised.onBackground);
-        expect(qr.eyeStyle.color, claire.surfaceRaised.onBackground);
+        // La paire dediee (demande D-1) : la meme en clair et en sombre.
+        final AppPalette palette = AppPalette.of(
+          tester.element(find.byType(EmetteurQr)),
+        );
+        expect(qr.backgroundColor, const Color(0xFFFFFFFF));
+        expect(qr.backgroundColor, palette.contenuQr.background);
+        expect(qr.dataModuleStyle.color, palette.contenuQr.onBackground);
+        expect(qr.eyeStyle.color, palette.contenuQr.onBackground);
         expect(
           tester.widget<EmetteurQr>(find.byType(EmetteurQr)).code,
           'AB23CD',

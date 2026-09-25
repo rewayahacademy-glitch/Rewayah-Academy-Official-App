@@ -11,10 +11,9 @@ import '../../core/theme/app_typography.dart';
 ///
 /// Un QR inverse (modules clairs sur fond sombre) n'est pas decode par une
 /// bonne partie des lecteurs (C05 section 3.2 point 9, manifeste section
-/// 3.5 : « le QR reste noir sur blanc pour le scan »). La paire est donc
-/// prise dans la palette CLAIRE quel que soit le theme affiche : fond
-/// `surfaceRaised` blanc, encre `#110E20`. Une paire dediee est demandee au
-/// coordinateur (`demandes/D.md`), sans changement de jeton ici.
+/// 3.5 : « le QR reste noir sur blanc pour le scan »). La paire est la paire
+/// dediee `AppPalette.contenuQr` (demande D-1), identique dans les deux
+/// themes : fond blanc, encre `#110E20`.
 ///
 /// Le QR ne porte que le code brut : ni adresse, ni identifiant de foyer. Ce
 /// qu'un tiers photographie ne lui apprend rien de plus que le code ecrit en
@@ -35,12 +34,9 @@ class EmetteurQr extends StatelessWidget {
   /// La marge de silence recommandee : quatre modules de chaque cote.
   static const int _modulesSilence = 4;
 
-  /// La paire du QR, identique en clair et en sombre.
-  static AppColorPair get paire => AppPalette.claire().surfaceRaised;
-
   @override
   Widget build(BuildContext context) {
-    final AppColorPair couleurs = paire;
+    final AppColorPair couleurs = AppPalette.of(context).contenuQr;
     final double marge =
         cote * _modulesSilence / (_modules + 2 * _modulesSilence);
 
