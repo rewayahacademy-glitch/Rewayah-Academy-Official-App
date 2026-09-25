@@ -357,3 +357,8 @@ en salle live ; ardoise (`tc_dock`) sans alternative au geste de dessin. Rapport
 preuve postee).
 
 Statut : fini.
+
+## P2-12 corrections 1 (25/09, B-2026-09-25-coord) : fait
+- ui/tuteur-v1-fin : f69f7f9 (a11y ecrans K + debordement carte Seance + repere demo annonce), 68a83f5 (scanner bord a bord), bed2c2d (routes rattachees a leur test de bouton).
+- Captures regenerees : D\captures\scanner_*, B\captures\foyer_*/fiche_*/ajout_*.
+- Plus aucun bloquant ni majeur ouvert dans P2-08 a P2-11 (voir « Suite donnee »). Restent des mineurs non traites : P2-08 m1, P2-10 m4, P2-11 M1/M2.
