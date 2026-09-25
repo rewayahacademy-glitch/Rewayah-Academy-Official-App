@@ -1,5 +1,13 @@
 # Avancement du poste B
 
+## Base suite et push (25/09, session B-2026-09-25-coord)
+
+Statut : **bloque, pas de push**. Reprise identique a INT-O suite ci-dessous (meme fusion locale `b817b7f`, meme frontiere vide). `flutter test` complet sous verrou : journal `04_phase0/integration_finale_25-09_tests.log`, `+2672 ~568 -5`, code 1. **B-5 confirme corrige** (`20731a4`, session precedente) : les 2 echecs appareils ont disparu (-7 -> -5). Restent les **5 memes echecs O-INT-1** (`test/teaching_core/g/entree_observation_navigation_test.dart`).
+
+Diagnostic ajoute (voir `demandes/O.md`, mis a jour) : ce n'est pas une interaction imprevue entre lots — l'Accueil du lot C dit explicitement dans son propre commentaire (`lib/features/accueil_famille/accueil_famille_page.dart:84-88`) qu'il "ne fait plus" Assister, l'entree ayant deplace vers `BlocObservationClasse` (`lib/features/classe_tuteur/bloc_observation_classe.dart`, CTA `t.classe.observer`), atteint depuis l'ecran de classe. Le test du lot O n'a pas ete mis a jour pour ce nouveau chemin (son propre en-tete le savait deja : "a l'integration, ce test part de la classe, demande O-3"). Correction non simple : reecrire la navigation de montage des 5 tests (route classe + providers) et revoir les assertions de retour ("Pas maintenant" va desormais a la classe, pas a `Routes.tuteurAccueil`). Hors budget de cette session.
+
+Pas de push `origin/ui/tuteur-v1`. Tableau : `P2-03` mis a jour avec cette preuve (toujours `bloque`). `ETAT_A.md` non modifie (regle : uniquement si vert). Reprise : tache dediee pour reecrire `test/teaching_core/g/entree_observation_navigation_test.dart` selon le nouveau chemin d'entree (classe_tuteur), puis re-suite complete, puis si verte : push + ETAT_A.md + lignes L*-* a `verifie`.
+
 ## INT-O suite et push (25/09, session B-2026-09-25-coord, depart 09:24)
 
 Statut : **bloque, pas de push**. Reprise : la fusion locale du lot O dans `C:\RA\depot` etait deja faite par l'agent precedent (`b817b7f merge: integration du lot O`, `git log -3` confirme). Frontiere verifiee vide (`git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme`).
