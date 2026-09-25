@@ -40,3 +40,15 @@ S07/S08 traduisent `natureServeur` et `statutServeur` depuis une liste FERMÉE (
 1. **DB-FIN-04, devis expiré** : S05 ne juge plus l'expiration à l'horloge locale (revue LT-R, constat 2) ; « Payer » reste proposé tant que le devis est présent, « valable jusqu'au » n'est qu'une information. Le port définit une erreur typée `DevisExpire` (`lib/core/capacites/port_finance_foyer.dart`) qui ouvre l'état « Ce devis a expiré ». Besoin : le code de refus que le serveur rendra pour un devis caduc, que l'adaptateur traduira en `DevisExpire`.
 2. **DB-FIN-05, disponibilité** : « Arrêter l'accès » s'affiche d'après `PortFinanceFoyer.annulationDisponible` (faux en production, vrai en démonstration) au lieu d'une lecture d'aperçu (constats 1 et 4). Besoin : que l'adaptateur réel dise cette disponibilité (indicateur de capacité ou configuration).
 3. **Constat 7 (quantité dans la devise du prix)** : non traité, en attente de l'arbitrage du directeur ; voir « Demande LT-7 » ci-dessus. Le `ponytail:` reste en place.
+## Demande LT-D (25/09) : champs de la maquette sans source serveur (DB-FIN-01/02, DB-CPT-07)
+
+Relecture des planches S01 bureau et S08 contre la maquette. Ce qui s'appuie sur une donnée réelle est fait (panneau « Profil sélectionné », solde actuel en tête de S08, statut en pastille, « Obtenir de l'aide »). Le reste n'est **pas affiché**, faute de source ; rien n'est inventé :
+
+1. **DB-FIN-02, S08** : motif d'une remise (« Absence de l'enseignant »), classe de la séance, type (« Compensation de solde »), date de traitement, et la phrase « Cette remise est incluse dans le solde affiché » (seul le serveur sait si elle l'est). Besoin : ces champs dans l'écriture rendue, avec une liste fermée de motifs et de types.
+2. **DB-FIN-01, S01 bureau** : photo des profils (URL signée courte) pour les avatars ; aujourd'hui l'initiale.
+3. **Maquette S01 bureau, « Recharger » sur chaque ligne et cases à cocher** : non repris, par simplicité (consigne du directeur, 25/09) : une ligne sélectionne le profil, le panneau porte « Recharger pour <prénom> », et « Recharger » (S03) garde le choix de plusieurs profils. À rouvrir si le directeur veut le tableau complet.
+4. **DB-CPT-07** : « Obtenir de l'aide » mène à la page Aide existante, qui dit aujourd'hui « pas encore disponible » (canal non fixé).
+
+## Signalement pour le poste B (25/09, 23 h 47) : test enseignant qui dépend de l'heure
+
+`test/features/journee_test.dart`, « ENS-02 : le bloc dominant un cours de groupe porte le nom du groupe et son effectif » : le cours est placé à `DateTime.now()` + 25 min. Après 23 h 35, il tombe le lendemain et « Dans 25 min » n'est plus affiché : échec. Passé à 23 h 07 dans la suite complète, échoue seul à 23 h 47 ; fichier hors lot T, non modifié. Parade proposée : une horloge fixe injectée (comme `horlogeFoyerProvider`) plutôt que l'heure réelle. Hors cet échec, suite complète de `ui/tuteur-v1-t` @ `d42ff45` : 2848 verts, 610 sautés.

@@ -84,11 +84,11 @@ Branche `ui/tuteur-v1-t`, HEAD `97ab61a` (poussée). Dernière suite complète s
 | 9 | corrigé | `e869aba` (filtre en `?profil=`, adresse complète de S07 en `?retour=` du détail ; tests filtre et retour) |
 | 10 | corrigé | `7a1bd06` (tête défilante au-delà de 130 % ; test 390 px à 200 % sur Soldes, Accès, Mouvements) |
 | 11 | corrigé | `05a6788` (`lib/core/widgets/colonnes_fiche.dart`, réexporté par la fiche ; galerie et `catalogue_galerie_test`) |
-| 12 | restant | faute de temps (lien « Voir les mouvements associés » à filtrer par `seanceId`) ; dette LT |
+| 12 | corrigé (LT-D) | `65b994a` (lien seulement si un mouvement porte la séance et l'élève ; un seul : son détail, plusieurs : liste filtrée ; tests) |
 | 13 | corrigé | `70a1398` (« Recharger » seulement si le profil figure dans les soldes lus ; test) |
 | 14 | corrigé | `9394725` (garde `_enCours` sur `_verifier` ; test double tap) |
-| 15 | restant | faute de temps ; le serveur reste l'ultime garde (référence du devis) ; dette LT |
+| 15 | corrigé (LT-D) | `d1de6f4` (clé liée à la référence du devis, table de session ; test S05 rouvert : même clé, autre devis : autre clé) |
 | 16 | restant | par décision de la revue : codes `demo_*` gardés jusqu'aux contrats DB-FIN-02/05 et DB-CPT-03 |
-| 17 | restant | faute de temps (`_Question` dupliqué dans deux fichiers) ; dette LT |
+| 17 | corrigé (LT-D) | `4d15926` (`QuestionEtape`, `lib/features/compte/question_etape.dart`, partagé par S03-S04 et S09-S10) |
 
 Hors revue : `5d9ef60` retire de K7 une exemption périmée (`StockagePreferencesMemoire`).
