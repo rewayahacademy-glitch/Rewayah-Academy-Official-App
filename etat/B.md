@@ -473,3 +473,11 @@ Statut : a_suivre (attend telephone).
 - ui/tuteur-v1-fin2 (4da4c4f) fusionnee : origin/ui/tuteur-v1 @ 3b41b12. flutter analyze --fatal-infos 0 ; suite complete 2725 verts, 572 sautes, code 0 (04_phase0/hlb5_suite.log). Frontiere vide.
 - Consentements : 09_consentements (HL-B-6), page directeur BJdXriWb3EoSnez4JCs5cR. Questionnaire gele jusqu'a la fin des roles (HL-B-4).
 
+
+## 25/09 soir : préparation de la vague Classe et visio (session B-2026-09-25-reprise)
+
+- Reçu du directeur : spec `02_CLASSE_ET_VISIO.md` + 10 images (sombre). Rangées dans `projet/ressources` (commit 7a1a427) : `specs/02_classe_et_visio/`, `lancement/classe image/` ; `VAGUES.md` à jour.
+- Branche `ui/classe-v1` créée depuis `ui/tuteur-v1` @ 3b41b12, poussée ; worktree `C:\RA\classe`, `flutter pub get` code 0.
+- `10_classe/00_REPRISE.md` (lots CL-1 à CL-F, attributions), `01_INVENTAIRE_CODE.md` (agent Sonnet), `02_DIRECTION_VISUELLE.md` (11 critiques du directeur, décisions D1-D10).
+- CLV-07 vérifié : contenu enseignant posé dans un cadre d'élève (bandeaux élève, compte « Mariam », navigation « Foyer ») ; le directeur a raison.
+- Reprise : lot CL-1 (planches), rien à configurer.
