@@ -1,5 +1,15 @@
 # Avancement du poste B
 
+## INT-O suite et push (25/09, session B-2026-09-25-coord, depart 09:24)
+
+Statut : **bloque, pas de push**. Reprise : la fusion locale du lot O dans `C:\RA\depot` etait deja faite par l'agent precedent (`b817b7f merge: integration du lot O`, `git log -3` confirme). Frontiere verifiee vide (`git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme`).
+
+`flutter test` complet sous verrou (35 min respectees, run seul ~7 min) : journal `04_phase0/integration_lotO_tests.log` (+2670 ~568 -7, code 1). 7 echecs :
+- 2 deja connus, **B-5** (regression appareils/foyer, hors perimetre COORD, confirmee des `integration_lotE_tests.log` avant le lot O) : `appareil_partage_test.dart`, `emetteur_qr_test.dart`. Rien de nouveau, pas de re-correction tentee (deja documente `demandes/B.md`, `P2-02`).
+- **5 nouveaux**, tous dans `test/teaching_core/g/entree_observation_navigation_test.dart` (verte en isolation sur `ui/tuteur-v1-o`, cf. `05_recette/o/REVUE.md`, donc regression de la combinaison avec la base, pas du code du lot O seul). Detail, erreur (`StateError: Bad state: No element` dans `ensureVisible`), et hypothese de cause dans `demandes/O.md` (O-INT-1). Pas assez de temps restant (limite 35 min) pour isoler quel autre lot masque le bouton attendu apres navigation reelle depuis `main.dart` : pas corrige, pas invente de correctif au hasard.
+
+Pas de push `origin/ui/tuteur-v1`. Tableau : `P2-05` cree a `bloque` avec cette preuve. Prochaine session : reprendre le diagnostic O-INT-1 (comparer le rendu de la route d'entree d'observation avec/sans les autres lots integres, ex. bisect par fusion partielle ou lecture du routeur reel).
+
 ## INT-E suite et push, reprise 3 -- verification (25/09, session B-2026-09-25-coord)
 
 Reprise depuis l'agent precedent (`7212a0d` depot local non pousse, `9b2a289` pilotage pousse). `git status`/`git log -5` (depot) et `git log -3` (pilotage) confirmes identiques a l'etat rendu : rien n'a change depuis. Frontiere toujours vide. Pas de nouvelle execution de `flutter test` (aucun changement de code depuis le dernier passage vert-partiel, economie de tokens) : les 2 echecs B-5 restent l'unique blocage, toujours hors perimetre COORD (`lib/features/foyer/fiche_eleve_page.dart`, `test/features/appareils/*`). Statut inchange : **bloque**, en attente de la decision du coordinateur/directeur sur B-5 (voir reprise 2 ci-dessous pour le detail et les deux options). Pas de push `origin/ui/tuteur-v1`.
