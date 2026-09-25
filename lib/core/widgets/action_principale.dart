@@ -159,7 +159,9 @@ class ActionPrincipale extends StatelessWidget {
             ? AppTouchTarget.enfant
             : AppPage.hauteurBouton,
       ),
-      alignment: Alignment.center,
+      // Un alignement ferait remplir au Container toute la largeur offerte :
+      // hors pleine largeur, le bouton epouse son libelle (K-36).
+      alignment: pleine ? Alignment.center : null,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xl,
         vertical: AppSpacing.md,

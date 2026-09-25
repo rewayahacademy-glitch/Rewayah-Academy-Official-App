@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import '../../capture/outil_capture.dart';
 import '../../router/support_routeur.dart' hide stabiliser;
 import '../../support/harnais.dart';
+import '../../support/pressable_de.dart';
 import 'support_compte.dart' hide toucher;
 
 /// Faux port des captures S11 : un arret rendu, deux issues.
@@ -95,7 +96,7 @@ Future<void> _monter(
 
 Future<void> _toucher(WidgetTester tester, Finder cible) async {
   await tester.ensureVisible(cible);
-  await tester.tap(cible);
+  await tester.tap(pressableDe(cible));
   await stabiliser(tester);
 }
 

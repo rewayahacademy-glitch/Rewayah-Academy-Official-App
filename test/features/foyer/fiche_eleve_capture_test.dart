@@ -41,6 +41,7 @@ import '../../capture/outil_capture.dart';
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../router/support_routeur.dart' hide stabiliser;
 import '../../support/harnais.dart';
+import '../../support/pressable_de.dart';
 
 final String? _maquetteProfil = Platform.environment['CAPTURE_MAQUETTE_PROFIL'];
 final String? _maquetteCompteMobile =
@@ -231,13 +232,17 @@ void main() {
           }
           // La photo choisie, en apercu avant envoi.
           await _monter(tester, pages['informations']!, mode: mode);
-          await tester.tap(find.byKey(EditeurPhotoEleve.choisirKey));
+          await tester.tap(
+            pressableDe(find.byKey(EditeurPhotoEleve.choisirKey)),
+          );
           await stabiliser(tester);
           // LT-11 : la feuille de choix (prendre, choisir, annuler, mention).
           debugPrint(
             'PNG ${await capturer(tester, 'fiche_informations_source_${format.$1}_${mode.name}')}',
           );
-          await tester.tap(find.byKey(EditeurPhotoEleve.sourceChoisirKey));
+          await tester.tap(
+            pressableDe(find.byKey(EditeurPhotoEleve.sourceChoisirKey)),
+          );
           await stabiliser(tester);
           debugPrint(
             'PNG ${await capturer(tester, 'fiche_informations_apercu_${format.$1}_${mode.name}')}',

@@ -32,6 +32,7 @@ import '../../fixtures/tuteur/faux_identite_titulaire.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/pressable_de.dart';
 
 /// L'instant de reference des acces : 24 septembre 2026, 12 h UTC.
 final DateTime maintenantCompte = DateTime.utc(2026, 9, 24, 12);
@@ -222,6 +223,6 @@ Future<void> monterEcran(
 Future<void> toucher(WidgetTester tester, Finder cible) async {
   await tester.ensureVisible(cible);
   await stabiliser(tester);
-  await tester.tap(cible);
+  await tester.tap(pressableDe(cible));
   await stabiliser(tester);
 }

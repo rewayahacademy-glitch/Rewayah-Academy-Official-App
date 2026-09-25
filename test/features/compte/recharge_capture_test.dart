@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import '../../capture/outil_capture.dart';
 import '../../router/support_routeur.dart' hide stabiliser;
 import '../../support/harnais.dart';
+import '../../support/pressable_de.dart';
 import 'support_compte.dart' hide toucher;
 
 /// Faux port des captures S05-S06 : un devis et un resultat rendus.
@@ -139,7 +140,7 @@ void main() {
           debugPrint(
             'PNG ${await capturer(tester, 'recharge1_${format.$1}_${mode.name}')}',
           );
-          await tester.tap(find.byKey(RechargePage.continuerKey));
+          await tester.tap(pressableDe(find.byKey(RechargePage.continuerKey)));
           await stabiliser(tester);
           await tester.tap(
             find.byKey(
@@ -179,7 +180,9 @@ void main() {
           debugPrint(
             'PNG ${await capturer(tester, 'recharge5_${format.$1}_${mode.name}')}',
           );
-          await tester.tap(find.byKey(VerifierRechargePage.payerKey));
+          await tester.tap(
+            pressableDe(find.byKey(VerifierRechargePage.payerKey)),
+          );
           await stabiliser(tester);
           debugPrint(
             'PNG ${await capturer(tester, 'recharge6_${format.$1}_${mode.name}')}',

@@ -34,6 +34,7 @@ import '../../fixtures/tuteur/faux_creation_profil_eleve.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart' hide stabiliser;
 import '../../support/harnais.dart';
+import '../../support/pressable_de.dart';
 
 final String? _maquetteE1 = Platform.environment['CAPTURE_MAQUETTE_E1'];
 final String? _maquetteE3 = Platform.environment['CAPTURE_MAQUETTE_E3'];
@@ -118,7 +119,7 @@ Future<void> _monter(
   await stabiliser(tester);
 
   Future<void> toucher(Key cle) async {
-    await tester.tap(find.byKey(cle));
+    await tester.tap(pressableDe(find.byKey(cle)));
     await stabiliser(tester);
   }
 
@@ -151,7 +152,7 @@ Future<void> _monter(
   if (etat == _Etat.identiteRemplie || etat == _Etat.horsLigne) {
     return;
   }
-  await tester.tap(find.byKey(FormulaireProfilEleve.actionKey));
+  await tester.tap(pressableDe(find.byKey(FormulaireProfilEleve.actionKey)));
   if (etat == _Etat.envoiEnCours) {
     await tester.pump();
     return;

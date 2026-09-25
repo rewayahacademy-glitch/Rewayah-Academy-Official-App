@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_demandes/demandes_page.dart';
 
 import '../support/harnais.dart';
+import '../support/pressable_de.dart';
 
 /// Une fenetre haute : une demande porte son constat, la feuille de regles de
 /// l'eleve et les deux verdicts, et un `ListView` ne construit pas ce qui n'est
@@ -197,7 +198,9 @@ void main() {
       await _monter(tester, admin: admin);
 
       await tester.tap(
-        find.widgetWithText(ActionPrincipale, t.admin.demandes.accorder),
+        pressableDe(
+          find.widgetWithText(ActionPrincipale, t.admin.demandes.accorder),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -214,7 +217,9 @@ void main() {
       await _monter(tester, admin: admin);
 
       await tester.tap(
-        find.widgetWithText(ActionPrincipale, t.admin.demandes.refuser),
+        pressableDe(
+          find.widgetWithText(ActionPrincipale, t.admin.demandes.refuser),
+        ),
       );
       await tester.pumpAndSettle();
 
@@ -232,7 +237,7 @@ void main() {
         'La duree actuelle a ete posee la semaine derniere.',
       );
       await tester.pumpAndSettle();
-      await tester.tap(refuser);
+      await tester.tap(pressableDe(refuser));
       await tester.pumpAndSettle();
 
       expect(admin.verdicts.single.accepte, isFalse);
