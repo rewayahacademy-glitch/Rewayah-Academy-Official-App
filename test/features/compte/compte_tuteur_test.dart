@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_theme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/aide_page.dart';
@@ -361,6 +362,35 @@ void main() {
         );
         expect(lieu(routeur), Routes.tuteurComptePreferences);
         expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
+      },
+    );
+
+    testWidgets(
+      'sur bureau, Apparence ne recopie pas le theme de l en-tete : '
+      'elle regle la barre laterale (directeur, 26/09)',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await monterCompte(
+          tester,
+          taille: const Size(1440, 900),
+        );
+        await toucher(
+          tester,
+          find.bySemanticsLabel(t.compte.tuteur.preferences),
+        );
+        await toucher(
+          tester,
+          _texte(t.compte.tuteur.pagePreferences.apparence),
+        );
+        expect(lieu(routeur), Routes.tuteurCompteApparence);
+        // Un seul selecteur de theme : celui de l'en-tete.
+        expect(find.byType(SelecteurTheme), findsOneWidget);
+        expect(_texte(t.compte.tuteur.pageApparence.theme), findsNothing);
+
+        await toucher(tester, find.byKey(ApparenceComptePage.barreReplieeKey));
+        expect(_conteneur(tester).read(navigationReplieeProvider), isTrue);
+        await toucher(tester, find.byKey(ApparenceComptePage.barreDeplieeKey));
+        expect(_conteneur(tester).read(navigationReplieeProvider), isFalse);
+        expect(tester.takeException(), isNull);
       },
     );
   });

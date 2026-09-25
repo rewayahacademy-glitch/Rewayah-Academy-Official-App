@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/mouvement/mouvement.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
@@ -393,7 +394,7 @@ void main() {
                   d.shape == BoxShape.circle &&
                   d.border is Border &&
                   (d.border! as Border).top.color ==
-                      palette.surfacePrimary.background,
+                      palette.inkStrong.asBorderSide().color,
             );
         expect(anneaux.length, 1);
       });
@@ -562,31 +563,37 @@ void main() {
       });
     }
 
-    testWidgets('sur carte les icones sont empilees, en en-tete alignees', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('soleil a gauche, lune au milieu, systeme a droite, sur '
+        'carte comme en en-tete ; sur telephone, systeme est un telephone '
+        '(directeur, 26/09)', (WidgetTester tester) async {
       final SemanticsHandle semantique = tester.ensureSemantics();
       fixerVue(tester, vueMobile);
       Offset centre(String libelle) =>
           tester.getCenter(find.bySemanticsLabel(libelle));
 
-      await tester.pumpWidget(appli(const SelecteurTheme()));
-      expect(centre(t.commun.theme.clair).dx, centre(t.commun.theme.sombre).dx);
-      expect(
-        centre(t.commun.theme.clair).dy,
-        lessThan(centre(t.commun.theme.sombre).dy),
+      for (final SelecteurTheme selecteur in const <SelecteurTheme>[
+        SelecteurTheme(),
+        SelecteurTheme.entete(),
+      ]) {
+        await tester.pumpWidget(appli(selecteur));
+        expect(
+          centre(t.commun.theme.clair).dy,
+          centre(t.commun.theme.sombre).dy,
+        );
+        expect(
+          centre(t.commun.theme.clair).dx,
+          lessThan(centre(t.commun.theme.sombre).dx),
+        );
+        expect(
+          centre(t.commun.theme.sombre).dx,
+          lessThan(centre(t.commun.theme.systeme).dx),
+        );
+      }
+      Finder glyphe(AppIcon icone) => find.byWidgetPredicate(
+        (Widget w) => w is Icon && w.icon?.codePoint == icone.repos.codePoint,
       );
-      expect(
-        centre(t.commun.theme.sombre).dy,
-        lessThan(centre(t.commun.theme.systeme).dy),
-      );
-
-      await tester.pumpWidget(appli(const SelecteurTheme.entete()));
-      expect(centre(t.commun.theme.clair).dy, centre(t.commun.theme.sombre).dy);
-      expect(
-        centre(t.commun.theme.sombre).dx,
-        lessThan(centre(t.commun.theme.systeme).dx),
-      );
+      expect(glyphe(AppIcons.appareil), findsOneWidget);
+      expect(glyphe(AppIcons.tabletteOuOrdinateur), findsNothing);
       semantique.dispose();
     });
 

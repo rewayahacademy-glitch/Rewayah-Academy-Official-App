@@ -167,12 +167,24 @@ class PageShell extends StatelessWidget {
     // change (captures identiques).
     final bool teteDefile =
         defilante && MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    // Sur ordinateur, l'action suit le contenu qu'elle concerne, a la largeur
+    // de son libelle ; collee en bas seulement sur telephone et tablette
+    // (decision du directeur, 26/09, consigne K-36).
+    final bool actionEnLigne =
+        actions != null && defilante && gabarit == Gabarit.desktop;
     final Widget corps = defilante
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               if (teteDefile) ...tete,
               child,
+              if (actionEnLigne) ...<Widget>[
+                Ecart.vXxl,
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: actions,
+                ),
+              ],
               // La respiration de bas de page : sans elle, le dernier element
               // colle au bord de l'ecran ou passe sous la zone d'action.
               Ecart.vSection,
@@ -202,7 +214,7 @@ class PageShell extends StatelessWidget {
                 ),
               ),
             ),
-            if (actions != null)
+            if (actions != null && !actionEnLigne)
               _ZoneAction(gouttiere: gabarit.gouttiere, child: actions!),
           ],
         ),

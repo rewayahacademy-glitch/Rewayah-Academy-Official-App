@@ -166,7 +166,7 @@ void main() {
     });
 
     for (final Brightness luminosite in Brightness.values) {
-      testWidgets('encre d accent du theme, $luminosite, texte 200 %', (
+      testWidgets('encre forte, sans accent (K-36), $luminosite, texte 200 %', (
         WidgetTester tester,
       ) async {
         fixerVue(tester, vueMobile);
@@ -187,7 +187,7 @@ void main() {
         );
         expect(
           texte.style!.color,
-          palette.inkAccent.applyTo(const TextStyle()).color,
+          palette.inkStrong.applyTo(const TextStyle()).color,
         );
       });
     }

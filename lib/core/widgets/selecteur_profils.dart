@@ -64,8 +64,8 @@ class ProfilSelectionnable {
 ///
 /// Une rangee d'avatars : initiale ou photo, point de statut cercle de la
 /// couleur du fond, prenom, sous-libelle d'etat ; le profil selectionne
-/// porte un anneau `surfacePrimary` de 2 et son sous-libelle passe en encre
-/// d'accent. Le dernier item, « Ajouter », ouvre l'ajout d'un profil eleve.
+/// porte un anneau `inkStrong` de 2 et son sous-libelle passe en encre
+/// forte, sans accent (K-36). Le dernier item, « Ajouter », ouvre l'ajout d'un profil eleve.
 /// Defilement horizontal sur telephone ; sur les grands ecrans, la meme
 /// rangee, alignee au debut, avec des avatars plus grands (56 contre 72).
 ///
@@ -198,7 +198,7 @@ class _Item extends StatelessWidget {
                     diametre: diametre,
                     anneau: selectionne
                         ? BorderSide(
-                            color: palette.surfacePrimary.background,
+                            color: palette.inkStrong.asBorderSide().color,
                             width: SelecteurProfils.epaisseurAnneau,
                           )
                         : null,
@@ -233,7 +233,7 @@ class _Item extends StatelessWidget {
               ),
               Text(
                 profil.etat,
-                style: (selectionne ? palette.inkAccent : palette.inkMuted)
+                style: (selectionne ? palette.inkStrong : palette.inkMuted)
                     .applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ],
@@ -281,14 +281,14 @@ class _Ajouter extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.fromBorderSide(
-                    palette.inkAccent.asBorderSide(
+                    palette.borderStrong.asBorderSide(
                       width: SelecteurProfils.epaisseurAnneau,
                     ),
                   ),
                 ),
                 child: Center(
                   child: IconTheme(
-                    data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                    data: palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
                     child: Icon(AppIcons.ajouter.repos),
                   ),
                 ),
@@ -297,7 +297,7 @@ class _Ajouter extends StatelessWidget {
             Ecart.vXs,
             Text(
               t.commun.selecteurProfils.ajouter,
-              style: palette.inkAccent.applyTo(
+              style: palette.inkStrong.applyTo(
                 textes.labelLarge ?? const TextStyle(),
               ),
             ),

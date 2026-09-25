@@ -278,7 +278,7 @@ class _Carte extends StatelessWidget {
     // maintenant par la teinte douce et par le contour fort, qui est la seule
     // bordure porteuse de sens.
     final AppColorPair paire = retenue
-        ? palette.washAccent
+        ? palette.surfaceSunken
         : palette.surfaceRaised;
 
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(
@@ -414,7 +414,7 @@ extension on _Carte {
   ) {
     const double disque = AppSpacing.respiration + AppSpacing.sm;
     final AppColorPair fondDisque = retenue
-        ? palette.surfaceActionDouce
+        ? palette.surfaceInverse
         : palette.surfaceSunken;
     return Stack(
       children: <Widget>[
@@ -502,7 +502,7 @@ extension on _Carte {
 
 /// Le radio dessine d'une carte de choix : anneau, point plein quand elle est
 /// retenue. L'anneau garde au moins 3:1 sur la carte (`borderStrong` au
-/// repos, `inkAccent` retenu) ; indisponible, il passe au filet de repos,
+/// repos, `inkStrong` retenu, sans accent : K-36) ; indisponible, il passe au filet de repos,
 /// comme tout controle inactif. Sans semantique propre : la carte porte
 /// l'etat coche.
 class RadioChoix extends StatelessWidget {
@@ -517,7 +517,7 @@ class RadioChoix extends StatelessWidget {
 
   /// La couleur de l'anneau dans [palette].
   AppInkColor anneau(AppPalette palette) => retenue
-      ? palette.inkAccent
+      ? palette.inkStrong
       : disponible
       ? palette.borderStrong
       : palette.borderResting;
@@ -542,7 +542,7 @@ class RadioChoix extends StatelessWidget {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: palette.surfacePrimary.background,
+                        color: palette.surfaceInverse.background,
                       ),
                     ),
                   ),

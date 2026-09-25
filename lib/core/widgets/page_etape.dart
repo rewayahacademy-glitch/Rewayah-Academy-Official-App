@@ -116,7 +116,8 @@ class RangeeEtape extends StatelessWidget {
                       alignment: AlignmentDirectional.centerStart,
                       widthFactor: numero / total,
                       child: ColoredBox(
-                        color: palette.surfacePrimary.background,
+                        // Neutre : le violet reste aux actions decisives (K-36).
+                        color: palette.surfaceInverse.background,
                       ),
                     ),
                   ],

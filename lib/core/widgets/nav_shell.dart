@@ -362,7 +362,7 @@ class NavShell extends StatelessWidget {
 /// La barre basse flottante : une pilule arrondie posee au-dessus de la zone
 /// sure (manifeste visuel Tuteur V1 section 3.4, maquette V3).
 ///
-/// Destination active : icone pleine, libelle en accent et soulignement de
+/// Destination active : icone pleine, libelle en encre forte et soulignement de
 /// trois points. Inactive : icone au trait et encre attenuee. Jamais la
 /// couleur seule : l'etat « selectionne » est aussi annonce.
 class _BarreFlottante extends StatelessWidget {
@@ -448,7 +448,8 @@ class _OngletBarre extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppInkColor encre = actif ? palette.inkAccent : palette.inkMuted;
+    // Aucune couleur d'accent dans la navigation (directeur, 26/09, K-36).
+    final AppInkColor encre = actif ? palette.inkStrong : palette.inkMuted;
     final TextStyle base = textes.labelMedium ?? const TextStyle();
 
     // Un seul noeud par onglet : bouton, libelle, etat selectionne. Le dessin
@@ -491,7 +492,7 @@ class _OngletBarre extends StatelessWidget {
                   height: NavShell.epaisseurSoulignement,
                   child: actif
                       ? _SoulignementAnime(
-                          couleur: palette.inkAccent.asBorderSide().color,
+                          couleur: palette.inkStrong.asBorderSide().color,
                         )
                       : null,
                 ),
@@ -796,9 +797,9 @@ class _EnteteColonne extends StatelessWidget {
 
 /// Une destination de la colonne laterale.
 ///
-/// Active : pastille `washAccent`, icone pleine et libelle d'accent en
-/// clair ; aplat `surfacePrimary` et encre posee dessus en sombre (manifeste
-/// visuel section 3.4, maquettes V2 A et C). Inactive : icone au trait en
+/// Active : fond `surfaceSunken` a peine teinte, icone pleine, libelle en
+/// encre forte et graisse 600, sans accent (directeur, 26/09, K-36).
+/// Inactive : icone au trait en
 /// encre attenuee, libelle en encre forte. Repliee, l'item n'est qu'une icone
 /// de 48 : son nom passe par l'infobulle et le lecteur d'ecran.
 class _ItemColonne extends StatelessWidget {
@@ -823,23 +824,14 @@ class _ItemColonne extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final bool sombre = palette.estSombre;
-
-    final Color? fond = !actif
-        ? null
-        : sombre
-        ? palette.surfacePrimary.background
-        : palette.washAccent.background;
-    final Color couleurIcone = !actif
-        ? palette.inkMuted.asBorderSide().color
-        : sombre
-        ? palette.surfacePrimary.onBackground
-        : palette.inkAccent.asBorderSide().color;
-    final Color couleurLibelle = !actif
+    // Aucune couleur d'accent dans la colonne (directeur, 26/09, K-36) :
+    // l'item actif n'a qu'un fond tres legerement teinte, `surfaceSunken`,
+    // et l'encre forte ; la graisse et l'icone pleine disent aussi l'etat.
+    final Color? fond = actif ? palette.surfaceSunken.background : null;
+    final Color couleurIcone = actif
         ? palette.inkStrong.asBorderSide().color
-        : sombre
-        ? palette.surfacePrimary.onBackground
-        : palette.inkAccent.asBorderSide().color;
+        : palette.inkMuted.asBorderSide().color;
+    final Color couleurLibelle = palette.inkStrong.asBorderSide().color;
 
     final Widget icone = IconTheme(
       data: IconThemeData(color: couleurIcone, size: AppSpacing.xxl),
@@ -921,7 +913,7 @@ class _ItemColonne extends StatelessWidget {
                       style: (textes.labelMedium ?? const TextStyle()).copyWith(
                         color: !actif
                             ? palette.inkMuted.asBorderSide().color
-                            : palette.inkAccent.asBorderSide().color,
+                            : palette.inkStrong.asBorderSide().color,
                       ),
                     ),
                   ),

@@ -59,11 +59,10 @@ class FilterPill extends StatelessWidget {
         libelleSemantique: compteur == null ? libelle : '$libelle, $compteur',
         arrondiFocus: AppRadius.arrondiFull,
         constructeur: (BuildContext contexte, EtatPression etat) {
-          // La paire douce d'accent quand le filtre porte, la surface elevee
-          // sinon : jamais un aplat sature, une pilule n'est pas l'action
-          // principale de l'ecran (`01-systeme-visuel.md` section 3).
+          // Le fond a peine teinte quand le filtre porte, la surface elevee
+          // sinon : aucun accent (directeur, 26/09, K-36).
           final AppColorPair fond = retenue
-              ? palette.washAccent
+              ? palette.surfaceSunken
               : palette.surfaceRaised;
           // Le filet porteur de sens des que la pilule dit quelque chose :
           // retenue, survolee ou pressee. Meme regle que `AppCard`.

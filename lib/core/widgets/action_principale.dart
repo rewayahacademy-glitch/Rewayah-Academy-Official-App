@@ -2,27 +2,34 @@ import 'package:flutter/material.dart';
 
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
 
-/// Les quatre niveaux d'action, pas cinq.
+/// Les cinq niveaux d'action (la decisive ajoutee le 26/09, K-36).
 ///
 /// Source : `docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 4. Le nombre par ecran est
 /// une regle d'ecran, pas une regle de composant : elle se tient en revue, et
 /// c'est `08-catalogue-ecrans.md` qui la porte.
 enum NiveauAction {
-  /// Fond plein `surfaceActionDouce` (lavande doux en clair, accent plein en
+  /// Fond plein neutre `surfaceInverse` (encre sombre en clair, claire en
   /// sombre). **Une seule par ecran**, zero si l'ecran est en lecture.
   principale,
+
+  /// Fond plein `surfacePrimary`, le violet. **Reservee aux rares actions
+  /// qu'on ne doit surtout pas rater** : payer, confirmer une annulation.
+  /// Remplace la principale de l'ecran, ne s'y ajoute pas (decision du
+  /// directeur, 26/09, consigne K-36 : interface presque monochrome).
+  decisive,
 
   /// Contour `borderStrong` sur `surfaceRaised`. Deux au plus.
   secondaire,
 
-  /// Texte `inkAccent`, sans contour. Autant que necessaire, mais jamais
-  /// alignees comme des boutons.
+  /// Texte `inkStrong` souligne, sans contour. Autant que necessaire, mais
+  /// jamais alignees comme des boutons.
   tertiaire,
 
   /// Texte `inkAlert`, **jamais un fond rouge plein**. Jamais dans la zone
@@ -108,15 +115,26 @@ class ActionPrincipale extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final bool actif = onPress != null && !enCours;
+    // Sur ordinateur, un bouton prend la largeur de son libelle (K-36).
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
 
-    return Pressable.selon(
+    final Widget bouton = Pressable.selon(
       onPress: actif ? onPress : null,
       libelleSemantique: libelle,
       respecterCibleTactile: false,
       arrondiFocus: _arrondi,
-      constructeur: (BuildContext contexte, EtatPression etat) =>
-          _corps(contexte, palette, metriques, etat, actif: actif),
+      constructeur: (BuildContext contexte, EtatPression etat) => _corps(
+        contexte,
+        palette,
+        metriques,
+        etat,
+        actif: actif,
+        pleine: pleineLargeur && !bureau,
+      ),
     );
+    return pleineLargeur && bureau
+        ? Align(alignment: AlignmentDirectional.centerStart, child: bouton)
+        : bouton;
   }
 
   Widget _corps(
@@ -125,6 +143,7 @@ class ActionPrincipale extends StatelessWidget {
     AppMetriques metriques,
     EtatPression etat, {
     required bool actif,
+    required bool pleine,
   }) {
     final _Peinture peinture = _peinturePour(
       palette,
@@ -134,7 +153,7 @@ class ActionPrincipale extends StatelessWidget {
     );
 
     return Container(
-      width: pleineLargeur ? double.infinity : null,
+      width: pleine ? double.infinity : null,
       constraints: BoxConstraints(
         minHeight: metriques.estEnfant
             ? AppTouchTarget.enfant
@@ -227,20 +246,19 @@ class ActionPrincipale extends StatelessWidget {
 
     switch (niveau) {
       case NiveauAction.principale:
-        // `surfaceActionDouce` depuis le 24/09/2026 (decisions du
-        // coordinateur, section 3.1 et 3.3) : lavande doux et encre
-        // `inkStrong` en clair, accent plein et encre sombre en sombre. Plus
-        // aucun aplat violet sature en clair : aucune maquette n'en montre.
+      case NiveauAction.decisive:
+        // Interface presque monochrome (directeur, 26/09, K-36) : la
+        // principale est un aplat neutre `surfaceInverse` ; le violet
+        // `surfacePrimary` ne sert qu'a la decisive, rare.
         //
-        // **Sauf en Interface guidee** : la lavande douce ne se detache de sa
-        // carte qu'a 1,5:1, et c'est souvent la seule action de l'ecran d'un
-        // enfant. Tant que le directeur n'a pas tranche sur capture, le CTA
-        // guide garde l'aplat `surfacePrimary`, a 3:1 au moins contre chaque
-        // surface (teste), comme avant le chantier (revue phase 0, jetons D3).
-        // En sombre, les deux paires sont identiques.
-        final AppColorPair paireCta = guidee
+        // **Sauf en Interface guidee** : c'est souvent la seule action de
+        // l'ecran d'un enfant, elle garde l'aplat `surfacePrimary`, a 3:1 au
+        // moins contre chaque surface (teste), comme avant le chantier (revue
+        // phase 0, jetons D3).
+        final AppColorPair paireCta =
+            guidee || niveau == NiveauAction.decisive
             ? palette.surfacePrimary
-            : palette.surfaceActionDouce;
+            : palette.surfaceInverse;
         return _Peinture(
           fond: paireCta.background,
           encre: paireCta.applyTo,
@@ -253,10 +271,10 @@ class ActionPrincipale extends StatelessWidget {
         );
       case NiveauAction.secondaire:
         {
-          // Le survol passe au registre doux de l'accent : la paire change en
+          // Le survol passe au fond enfonce, neutre : la paire change en
           // entier, le texte suit donc toujours son fond.
           final AppColorPair paire = etat.survole
-              ? palette.washAccent
+              ? palette.surfaceSunken
               : palette.surfaceRaised;
           return _Peinture(
             fond: paire.background,
@@ -266,8 +284,10 @@ class ActionPrincipale extends StatelessWidget {
         }
       case NiveauAction.tertiaire:
         return _Peinture(
-          fond: etat.survole ? palette.washAccent.background : null,
-          encre: palette.inkAccent.applyTo,
+          fond: etat.survole ? palette.surfaceSunken.background : null,
+          encre: (TextStyle base) => palette.inkStrong
+              .applyTo(base)
+              .copyWith(decoration: TextDecoration.underline),
         );
       case NiveauAction.destructive:
         return _Peinture(

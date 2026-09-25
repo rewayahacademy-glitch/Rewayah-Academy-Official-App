@@ -130,6 +130,25 @@ class _Case extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) =>
-      Material(type: MaterialType.transparency, child: child);
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    // Case cochee en aplat neutre inverse, sans accent (directeur, 26/09,
+    // K-36).
+    return Material(
+      type: MaterialType.transparency,
+      child: CheckboxTheme(
+        data: CheckboxThemeData(
+          fillColor: WidgetStateProperty.resolveWith(
+            (Set<WidgetState> etats) => etats.contains(WidgetState.selected)
+                ? palette.surfaceInverse.background
+                : null,
+          ),
+          checkColor: WidgetStatePropertyAll<Color>(
+            palette.surfaceInverse.onBackground,
+          ),
+        ),
+        child: child,
+      ),
+    );
+  }
 }

@@ -153,7 +153,7 @@ class ResumeSolde extends StatelessWidget {
           Ecart.hMd,
           ExcludeSemantics(
             child: IconTheme(
-              data: palette.inkAccent.asIconTheme(size: AppSpacing.xxxl),
+              data: palette.inkMuted.asIconTheme(size: AppSpacing.xxxl),
               child: Icon(
                 prenom == null ? AppIcons.foyer.repos : AppIcons.finance.repos,
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -36,7 +37,8 @@ class EcranResultat extends StatelessWidget {
     super.key,
     this.phrase,
     this.encart,
-    this.ton = TonEtat.accent,
+    // Neutre par defaut : le violet reste aux actions decisives (K-36).
+    this.ton = TonEtat.neutre,
     this.libelleAction,
     this.onAction,
     this.actionEnCours = false,
@@ -143,14 +145,14 @@ class EcranResultat extends StatelessWidget {
             if (encart != null) ...<Widget>[
               Ecart.vXl,
               DecoratedBox(
-                decoration: palette.washAccent.decoration(
+                decoration: palette.surfaceSunken.decoration(
                   borderRadius: AppRadius.arrondiSm,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Text(
                     encart!,
-                    style: palette.washAccent.applyTo(
+                    style: palette.surfaceSunken.applyTo(
                       textes.bodyMedium ?? const TextStyle(),
                     ),
                   ),
@@ -159,11 +161,15 @@ class EcranResultat extends StatelessWidget {
             ],
             if (avecAction) ...<Widget>[
               Ecart.vXxl,
-              ActionPrincipale(
-                libelle: libelleAction!,
-                onPress: onAction,
-                enCours: actionEnCours,
-                fleche: true,
+              // Centre, a la largeur du libelle sur ordinateur (K-36).
+              Center(
+                child: ActionPrincipale(
+                  libelle: libelleAction!,
+                  onPress: onAction,
+                  enCours: actionEnCours,
+                  fleche: true,
+                  pleineLargeur: AppGabarit.de(context) != Gabarit.desktop,
+                ),
               ),
             ],
             if (avecSecondaire) ...<Widget>[

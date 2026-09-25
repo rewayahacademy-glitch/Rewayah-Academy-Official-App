@@ -300,6 +300,8 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
           : ActionPrincipale(
               key: ArretAccesPage.confirmerKey,
               libelle: t.finance.arret.confirmer,
+              // Confirmer l'arret : l'action a ne pas rater (K-36).
+              niveau: NiveauAction.decisive,
               enCours: _enCours,
               onPress: confirmable ? () => _confirmer(lu) : null,
             ),

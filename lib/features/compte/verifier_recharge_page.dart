@@ -129,6 +129,8 @@ class _VerifierRechargePageState extends ConsumerState<VerifierRechargePage> {
           ? ActionPrincipale(
               key: VerifierRechargePage.payerKey,
               libelle: t.finance.recharge.verification.payer,
+              // Payer : l'action a ne pas rater, seul violet de l'ecran (K-36).
+              niveau: NiveauAction.decisive,
               enCours: _enCours,
               onPress: _enCours ? null : () => _payer(devis),
             )

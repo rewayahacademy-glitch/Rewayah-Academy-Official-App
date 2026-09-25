@@ -119,7 +119,7 @@ class DisqueRetour extends StatelessWidget {
             ),
             child: Center(
               child: IconTheme(
-                data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                data: palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
                 child: Icon(AppIcons.retour.repos),
               ),
             ),

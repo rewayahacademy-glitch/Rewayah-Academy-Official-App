@@ -9,7 +9,7 @@ import 'pressable.dart';
 /// Un lien de texte suivi d'une fleche : « Voir tout -> », « Voir
 /// l'historique -> » (manifeste visuel Tuteur V1, section 3.4).
 ///
-/// **Un lien, pas un bouton.** Il ne porte aucune surface : encre `inkAccent`,
+/// **Un lien, pas un bouton.** Il ne porte aucune surface : encre `inkStrong`,
 /// souligne au survol, et c'est tout. L'action dominante d'un ecran reste
 /// `ActionPrincipale` ; un lien fleche mene ailleurs, il n'engage rien.
 ///
@@ -57,7 +57,7 @@ class LienFleche extends StatelessWidget {
               Flexible(
                 child: Text(
                   libelle,
-                  style: palette.inkAccent
+                  style: palette.inkStrong
                       .applyTo(base)
                       .copyWith(
                         decoration: etat.survole || etat.focus
@@ -69,7 +69,7 @@ class LienFleche extends StatelessWidget {
               if (fleche) ...<Widget>[
                 Ecart.hXs,
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                  data: palette.inkStrong.asIconTheme(size: AppSpacing.lg),
                   child: Icon(AppIcons.flecheAction.repos),
                 ),
               ],

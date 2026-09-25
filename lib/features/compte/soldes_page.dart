@@ -331,7 +331,7 @@ class _Soldes extends ConsumerWidget {
     legende: r.legende,
     onPress: onPress,
     controle: retenue
-        ? StatusPill(libelle: t.finance.soldes.selectionne, ton: TonEtat.accent)
+        ? StatusPill(libelle: t.finance.soldes.selectionne, ton: TonEtat.neutre)
         : null,
   );
 }

@@ -141,8 +141,8 @@ void main() {
     });
   });
 
-  group('ActionPrincipale : quatre niveaux, pas cinq', () {
-    testWidgets('le niveau principal est le CTA doux, au rayon des boutons', (
+  group('ActionPrincipale : cinq niveaux, le violet rare', () {
+    testWidgets('le niveau principal est l aplat neutre, au rayon des boutons', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -154,12 +154,12 @@ void main() {
         tester,
         find.byType(ActionPrincipale),
       );
-      // Decisions du coordinateur du 24/09 (3.1, 3.3) : lavande doux et encre
-      // `inkStrong` en clair, plus d'aplat violet sature.
-      expect(d.color, palette.surfaceActionDouce.background);
+      // Directeur, 26/09 (K-36) : interface presque monochrome, la principale
+      // est l'aplat neutre `surfaceInverse`.
+      expect(d.color, palette.surfaceInverse.background);
       expect(d.borderRadius, AppRadius.arrondiSm);
       final Text libelle = tester.widget<Text>(find.text('Continuer'));
-      expect(libelle.style!.color, palette.surfaceActionDouce.onBackground);
+      expect(libelle.style!.color, palette.surfaceInverse.onBackground);
       expect(find.byIcon(AppIcons.flecheAction.repos), findsNothing);
     });
 
@@ -210,7 +210,7 @@ void main() {
       expect(fleche.semanticLabel, isNull);
     });
 
-    testWidgets('en sombre, le CTA principal est l accent plein', (
+    testWidgets('en sombre, le CTA principal est l aplat neutre clair', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -232,7 +232,26 @@ void main() {
         tester,
         find.byType(ActionPrincipale),
       );
-      expect(d.color, AppPalette.sombre().surfacePrimary.background);
+      expect(d.color, AppPalette.sombre().surfaceInverse.background);
+    });
+
+    testWidgets('la decisive, et elle seule, porte le violet (K-36)', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteComposant(
+          const ActionPrincipale(
+            libelle: 'Payer',
+            niveau: NiveauAction.decisive,
+            onPress: _rien,
+          ),
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.color, palette.surfacePrimary.background);
     });
 
     testWidgets('le destructif n a jamais de fond rouge plein', (

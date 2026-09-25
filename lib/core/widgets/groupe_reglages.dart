@@ -155,7 +155,7 @@ class _Ligne extends StatelessWidget {
           children: <Widget>[
             ligne.meneur ??
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                  data: palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
                   child: Icon(ligne.icone!.repos),
                 ),
             Ecart.hMd,

@@ -9282,6 +9282,24 @@ class Traductions$compte$tuteur$pageApparence$fr {
 	/// fr: 'Personnalisez l'apparence de Rewayah.'
 	String get themeDetail => 'Personnalisez l\'apparence de Rewayah.';
 
+	/// fr: 'Barre latérale'
+	String get barre => 'Barre latérale';
+
+	/// fr: 'Le thème se choisit en haut à droite. Ici, la place que prend le menu sur cet ordinateur.'
+	String get barreDetail => 'Le thème se choisit en haut à droite. Ici, la place que prend le menu sur cet ordinateur.';
+
+	/// fr: 'Dépliée'
+	String get barreDepliee => 'Dépliée';
+
+	/// fr: 'Icônes et noms des rubriques.'
+	String get barreDeplieeDetail => 'Icônes et noms des rubriques.';
+
+	/// fr: 'Repliée'
+	String get barreRepliee => 'Repliée';
+
+	/// fr: 'Icônes seules, plus de place pour le contenu.'
+	String get barreReplieeDetail => 'Icônes seules, plus de place pour le contenu.';
+
 	/// fr: 'Confort visuel'
 	String get confort => 'Confort visuel';
 
@@ -13580,6 +13598,12 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
+			'compte.tuteur.pageApparence.barre' => 'Barre latérale',
+			'compte.tuteur.pageApparence.barreDetail' => 'Le thème se choisit en haut à droite. Ici, la place que prend le menu sur cet ordinateur.',
+			'compte.tuteur.pageApparence.barreDepliee' => 'Dépliée',
+			'compte.tuteur.pageApparence.barreDeplieeDetail' => 'Icônes et noms des rubriques.',
+			'compte.tuteur.pageApparence.barreRepliee' => 'Repliée',
+			'compte.tuteur.pageApparence.barreReplieeDetail' => 'Icônes seules, plus de place pour le contenu.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
 			'compte.tuteur.pageApparence.animationsDetail' => 'Réduites quand votre appareil le demande',
@@ -13832,14 +13856,14 @@ extension on Traductions {
 			'tuteur.accueil.rienAujourdhui' => 'Rien aujourd\'hui',
 			'tuteur.accueil.aucunCoursPrevu' => 'Aucun cours programmé pour l\'instant',
 			'tuteur.accueil.aucunCoursPrevuDetail' => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
 			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'Demande déposée le ${date}',
 			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
 			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
 			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
 			'tuteur.accueil.poserDesHeures' => 'Proposer des heures',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.annulee' => ({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu',
 			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
@@ -14346,14 +14370,14 @@ extension on Traductions {
 			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',

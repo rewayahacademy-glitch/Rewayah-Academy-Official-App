@@ -4,18 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../preferences/preferences_locales.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'app_card.dart';
 import 'pressable.dart';
 
-/// Le seul selecteur de theme de l'application (lot T, decision du
-/// directeur du 25/09 : « simplifier au maximum », icones soleil, lune,
-/// systeme disposees verticalement).
+/// Le seul selecteur de theme de l'application (lot T, decisions du
+/// directeur des 25 et 26/09 : « simplifier au maximum », icones soleil,
+/// lune, systeme cote a cote, de gauche a droite).
 ///
-/// Trois icones dans une pilule `surfaceRaised` a filet, dans cet ordre :
-/// soleil (Clair), lune (Sombre), ecran (Selon le systeme). Il ecrit
+/// Trois icones dans une pilule horizontale `surfaceRaised` a filet, dans cet
+/// ordre : soleil (Clair), lune (Sombre), appareil (Selon le systeme : un
+/// telephone sur telephone, ecran et telephone ailleurs). Il ecrit
 /// `preferencesLocalesProvider`, lue par `RewayahApp` et persistee sur
 /// l'appareil ; « Selon le systeme » est le choix par defaut. Il reflete le
 /// **choix** (pas le theme affiche) : sous « Selon le systeme », c'est
@@ -23,9 +25,9 @@ import 'pressable.dart';
 ///
 /// Deux poses, un seul composant :
 /// - [SelecteurTheme.new] : sur une carte standard, le choix courant a
-///   gauche et la pilule verticale a droite (Compte > Preferences >
-///   Apparence, Reglages des autres roles) ;
-/// - [SelecteurTheme.entete] : la pilule seule, horizontale, a l'endroit
+///   gauche et la pilule a droite (Compte > Preferences > Apparence sur
+///   telephone et tablette, Reglages des autres roles) ;
+/// - [SelecteurTheme.entete] : la pilule seule, a l'endroit
 ///   familier de l'en-tete (tablette et bureau ; c'est l'ecran qui decide
 ///   de la poser).
 ///
@@ -33,10 +35,10 @@ import 'pressable.dart';
 /// ou « Theme selon le systeme » et annoncee « selectionne » ; une bulle
 /// donne le meme libelle au survol.
 class SelecteurTheme extends ConsumerWidget {
-  /// La pilule verticale sur une carte standard.
+  /// La pilule sur une carte standard.
   const SelecteurTheme({super.key}) : _entete = false;
 
-  /// La pilule seule, horizontale, pour l'en-tete.
+  /// La pilule seule, pour l'en-tete.
   const SelecteurTheme.entete({super.key}) : _entete = true;
 
   final bool _entete;
@@ -55,11 +57,16 @@ class SelecteurTheme extends ConsumerWidget {
     PreferenceTheme.systeme => t.commun.theme.systeme,
   };
 
-  static AppIcon _icone(PreferenceTheme theme) => switch (theme) {
-    PreferenceTheme.clair => AppIcons.themeClair,
-    PreferenceTheme.sombre => AppIcons.themeSombre,
-    PreferenceTheme.systeme => AppIcons.tabletteOuOrdinateur,
-  };
+  /// L'icone d'un choix ; « systeme » montre l'appareil ou l'on est.
+  static AppIcon _icone(PreferenceTheme theme, Gabarit gabarit) =>
+      switch (theme) {
+        PreferenceTheme.clair => AppIcons.themeClair,
+        PreferenceTheme.sombre => AppIcons.themeSombre,
+        PreferenceTheme.systeme =>
+          gabarit == Gabarit.mobile
+              ? AppIcons.appareil
+              : AppIcons.tabletteOuOrdinateur,
+      };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +75,6 @@ class SelecteurTheme extends ConsumerWidget {
     );
     final Widget pilule = _Pilule(
       choix: choix,
-      direction: _entete ? Axis.horizontal : Axis.vertical,
       onChoix: ref.read(preferencesLocalesProvider.notifier).theme,
     );
     if (_entete) {
@@ -99,20 +105,15 @@ class SelecteurTheme extends ConsumerWidget {
 }
 
 class _Pilule extends StatelessWidget {
-  const _Pilule({
-    required this.choix,
-    required this.direction,
-    required this.onChoix,
-  });
+  const _Pilule({required this.choix, required this.onChoix});
 
   final PreferenceTheme choix;
-  final Axis direction;
   final ValueChanged<PreferenceTheme> onChoix;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final bool sombre = Theme.of(context).brightness == Brightness.dark;
+    final Gabarit gabarit = AppGabarit.de(context);
     return Semantics(
       container: true,
       explicitChildNodes: true,
@@ -122,16 +123,14 @@ class _Pilule extends StatelessWidget {
           borderRadius: AppRadius.arrondiFull,
           side: palette.contourCarte.asBorderSide(),
         ),
-        child: Flex(
-          direction: direction,
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             for (final PreferenceTheme theme in SelecteurTheme.ordre)
               _Icone(
-                icone: SelecteurTheme._icone(theme),
+                icone: SelecteurTheme._icone(theme, gabarit),
                 libelle: SelecteurTheme.libelle(theme),
                 actif: theme == choix,
-                themeSombre: sombre,
                 onPress: () => onChoix(theme),
               ),
           ],
@@ -146,35 +145,23 @@ class _Icone extends StatelessWidget {
     required this.icone,
     required this.libelle,
     required this.actif,
-    required this.themeSombre,
     required this.onPress,
   });
 
   final AppIcon icone;
   final String libelle;
   final bool actif;
-  final bool themeSombre;
   final VoidCallback onPress;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    // Le role de l'accent s'echange d'un theme a l'autre (manifeste 6.2) :
-    // pastille douce et icone d'accent en clair, accent plein et icone
-    // sombre en sombre.
-    final Color? fond = !actif
-        ? null
-        : themeSombre
-        ? palette.surfacePrimary.background
-        : palette.washAccent.background;
-    final IconThemeData theme = !actif
-        ? palette.inkMuted.asIconTheme(size: AppSpacing.xl)
-        : themeSombre
-        ? IconThemeData(
-            color: palette.surfacePrimary.onBackground,
-            size: AppSpacing.xl,
-          )
-        : palette.inkAccent.asIconTheme(size: AppSpacing.xl);
+    // Sans accent (directeur, 26/09, K-36) : l'option active a un fond a
+    // peine teinte et l'encre forte, les autres l'encre attenuee.
+    final Color? fond = actif ? palette.surfaceSunken.background : null;
+    final IconThemeData theme = actif
+        ? palette.inkStrong.asIconTheme(size: AppSpacing.xl)
+        : palette.inkMuted.asIconTheme(size: AppSpacing.xl);
 
     // L'icone deja active reste un bouton actif (sinon elle serait annoncee
     // « desactivee ») ; la presser ne change rien.
