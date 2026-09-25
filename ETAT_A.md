@@ -1,5 +1,18 @@
 # État annoncé par le poste A (coordinateur)
 
+## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ bd51224 (lots B, A, C, E, O integres, coordination poste B)
+
+- **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `bd51224`** (tous les lots B, A, C, E, O fusionnes et integres).
+- Suite complete `flutter test` sous verrou (poste B coordinateur) : **+2677 tests, 0 echec, code 0**. Journal : `04_phase0/integration_finale_25-09_tests.log`.
+- Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` : **vide**.
+- Corrections integrees a cette base : B-5 (route perimee appareils, 20731a4), C-INT-1 (`portClassesFoyerProvider` revenu a l'indisponible par defaut, adaptateur Supabase branche dans `main.dart`, 7212a0d), O-INT-1 (`entree_observation_navigation_test.dart` reecrit depuis l'Accueil reel -> Voir la classe -> `t.classe.observer`, 24f0b0f + bd51224).
+- Tableau : P2-01, P2-02, P2-03, P2-04, P2-06 passes a `fait` avec preuve ; P2-05 deja `fait` (`ae34143`). Lignes L*-* `fait` par une session anterieure passees a `verifie` (`verifie_par` : `B-2026-09-25-coord`). LA-3 : motif reduit a « texte signe a valider par le directeur (P2) », la ligne Consentements (`e82ec66`) etant deja dans la base.
+- **Points ouverts** (non traites ici, hors perimetre ou en attente du directeur) :
+  - Texte de consentement a valider par le directeur (P2).
+  - C-14 : contrat K6 gele (seances/parcours d'une classe ouverte), decision directeur requise.
+  - O-4 : icone horloge/sablier non traitee (m4).
+  - Icone femme absente du catalogue (lot A, demandes/A.md).
+
 ## 25/09/2026 : lots C, E, O poussés par sécurité (demande du poste B)
 
 - `origin/ui/tuteur-v1-c` @ `4d37dc9` : 11 commits + 1 commit `wip(lot-c): EN COURS` (fichiers laissés par un agent coupé : non revus, non testés). `REVUE.md` du lot existe (5 majeurs M1–M5), corrections non faites.
