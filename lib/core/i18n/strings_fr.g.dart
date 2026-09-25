@@ -168,6 +168,7 @@ class Traductions$finance$fr {
 	String get profilSansPrenom => 'Profil';
 
 	late final Traductions$finance$soldes$fr soldes = Traductions$finance$soldes$fr.internal(_root);
+	late final Traductions$finance$mouvements$fr mouvements = Traductions$finance$mouvements$fr.internal(_root);
 	late final Traductions$finance$issues$fr issues = Traductions$finance$issues$fr.internal(_root);
 }
 
@@ -2502,6 +2503,43 @@ class Traductions$finance$soldes$fr {
 
 	/// fr: 'Soldes du foyer : {total}'
 	String ligneAccueil({required Object total}) => 'Soldes du foyer : ${total}';
+}
+
+// Path: finance.mouvements
+class Traductions$finance$mouvements$fr {
+	Traductions$finance$mouvements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mouvements de solde'
+	String get titre => 'Mouvements de solde';
+
+	/// fr: 'L'historique des mouvements de solde du foyer.'
+	String get sousTitre => 'L\'historique des mouvements de solde du foyer.';
+
+	/// fr: 'Voir les mouvements'
+	String get voir => 'Voir les mouvements';
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'Profil'
+	String get filtre => 'Profil';
+
+	/// fr: 'Aucun mouvement'
+	String get aucun => 'Aucun mouvement';
+
+	/// fr: 'Le serveur n'a rendu aucun mouvement pour ce choix.'
+	String get aucunPhrase => 'Le serveur n\'a rendu aucun mouvement pour ce choix.';
+
+	/// fr: '{prenom} · {date}'
+	String legende({required Object prenom, required Object date}) => '${prenom} · ${date}';
+
+	late final Traductions$finance$mouvements$natures$fr natures = Traductions$finance$mouvements$natures$fr.internal(_root);
+	late final Traductions$finance$mouvements$statuts$fr statuts = Traductions$finance$mouvements$statuts$fr.internal(_root);
+	late final Traductions$finance$mouvements$detail$fr detail = Traductions$finance$mouvements$detail$fr.internal(_root);
 }
 
 // Path: finance.issues
@@ -8173,6 +8211,81 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: finance.mouvements.natures
+class Traductions$finance$mouvements$natures$fr {
+	Traductions$finance$mouvements$natures$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Recharge'
+	String get recharge => 'Recharge';
+
+	/// fr: 'Séance'
+	String get seance => 'Séance';
+
+	/// fr: 'Remise liée à une séance'
+	String get remiseSeance => 'Remise liée à une séance';
+
+	/// fr: 'Mouvement'
+	String get inconnue => 'Mouvement';
+}
+
+// Path: finance.mouvements.statuts
+class Traductions$finance$mouvements$statuts$fr {
+	Traductions$finance$mouvements$statuts$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confirmé'
+	String get confirme => 'Confirmé';
+}
+
+// Path: finance.mouvements.detail
+class Traductions$finance$mouvements$detail$fr {
+	Traductions$finance$mouvements$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Détail du mouvement'
+	String get titre => 'Détail du mouvement';
+
+	/// fr: 'Nature'
+	String get nature => 'Nature';
+
+	/// fr: 'Montant'
+	String get montant => 'Montant';
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'Profil'
+	String get profil => 'Profil';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Séance liée'
+	String get seance => 'Séance liée';
+
+	/// fr: 'Voir la séance'
+	String get voirSeance => 'Voir la séance';
+
+	/// fr: '{date} à {heure}'
+	String dateHeure({required Object date, required Object heure}) => '${date} à ${heure}';
+
+	/// fr: 'Mouvement introuvable'
+	String get introuvable => 'Mouvement introuvable';
+
+	/// fr: 'Le serveur n'a rendu aucun mouvement à cette adresse.'
+	String get introuvablePhrase => 'Le serveur n\'a rendu aucun mouvement à cette adresse.';
+}
+
 // Path: appareils.emetteur.verification
 class Traductions$appareils$emetteur$verification$fr {
 	Traductions$appareils$emetteur$verification$fr.internal(this._root);
@@ -11374,6 +11487,30 @@ extension on Traductions {
 			'finance.soldes.derniereRemise' => ({required Object montant, required Object date}) => 'Dernière remise liée à une séance : ${montant}, le ${date}',
 			'finance.soldes.indisponible' => 'Non disponible pour le moment.',
 			'finance.soldes.ligneAccueil' => ({required Object total}) => 'Soldes du foyer : ${total}',
+			'finance.mouvements.titre' => 'Mouvements de solde',
+			'finance.mouvements.sousTitre' => 'L\'historique des mouvements de solde du foyer.',
+			'finance.mouvements.voir' => 'Voir les mouvements',
+			'finance.mouvements.tous' => 'Tous',
+			'finance.mouvements.filtre' => 'Profil',
+			'finance.mouvements.aucun' => 'Aucun mouvement',
+			'finance.mouvements.aucunPhrase' => 'Le serveur n\'a rendu aucun mouvement pour ce choix.',
+			'finance.mouvements.legende' => ({required Object prenom, required Object date}) => '${prenom} · ${date}',
+			'finance.mouvements.natures.recharge' => 'Recharge',
+			'finance.mouvements.natures.seance' => 'Séance',
+			'finance.mouvements.natures.remiseSeance' => 'Remise liée à une séance',
+			'finance.mouvements.natures.inconnue' => 'Mouvement',
+			'finance.mouvements.statuts.confirme' => 'Confirmé',
+			'finance.mouvements.detail.titre' => 'Détail du mouvement',
+			'finance.mouvements.detail.nature' => 'Nature',
+			'finance.mouvements.detail.montant' => 'Montant',
+			'finance.mouvements.detail.date' => 'Date',
+			'finance.mouvements.detail.profil' => 'Profil',
+			'finance.mouvements.detail.statut' => 'Statut',
+			'finance.mouvements.detail.seance' => 'Séance liée',
+			'finance.mouvements.detail.voirSeance' => 'Voir la séance',
+			'finance.mouvements.detail.dateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'finance.mouvements.detail.introuvable' => 'Mouvement introuvable',
+			'finance.mouvements.detail.introuvablePhrase' => 'Le serveur n\'a rendu aucun mouvement à cette adresse.',
 			'finance.issues.confirmee' => 'Confirmée',
 			'finance.issues.enAttente' => 'En attente',
 			'finance.issues.echouee' => 'Échouée',
@@ -11765,6 +11902,8 @@ extension on Traductions {
 			'foyer.ajout.identite.sousTitre' => 'Son prénom, son nom et son âge.',
 			'foyer.ajout.identite.prenom' => 'Prénom',
 			'foyer.ajout.identite.nom' => 'Nom',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.identite.nomAide' => 'Le nom de famille n\'est jamais montré à l\'enseignant.',
 			'foyer.ajout.identite.age' => 'Âge',
 			'foyer.ajout.identite.ageSuffixe' => 'ans',
@@ -11789,8 +11928,6 @@ extension on Traductions {
 			'ficheEleve.introuvable.retour' => 'Retour au foyer',
 			'ficheEleve.lignes.informations' => 'Informations',
 			'ficheEleve.lignes.informationsLegende' => 'Prénom et photo',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.lignes.inscription' => 'Parcours et inscription',
 			'ficheEleve.lignes.inscriptionLegende' => 'Questionnaire et classe',
 			'ficheEleve.lignes.interface' => 'Interface',
@@ -12279,6 +12416,8 @@ extension on Traductions {
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.fonctionnalites.valeurInvalide' => 'Entrez un nombre valide.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fonctionnalites.envoyer' => 'Enregistrer',
 			'admin.fonctionnalites.champValeur' => 'Valeur',
 			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
@@ -12303,8 +12442,6 @@ extension on Traductions {
 			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.evaluations.aucune' => 'Aucune évaluation',
 			'admin.evaluations.aucuneDetail' => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
@@ -12793,6 +12930,8 @@ extension on Traductions {
 			'compte.reglages' => 'Réglages',
 			'compte.reglagesDetail' => 'Apparence, notifications et accessibilité',
 			'compte.profils' => 'Gérer mon foyer',
+			_ => null,
+		} ?? switch (path) {
 			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
@@ -12817,8 +12956,6 @@ extension on Traductions {
 			'compte.reglagesIntro' => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.',
 			'compte.apparence' => 'Apparence',
 			'compte.themeSysteme' => 'Système',
-			_ => null,
-		} ?? switch (path) {
 			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
 			'compte.themeClair' => 'Clair',
 			'compte.themeSombre' => 'Sombre',
@@ -13307,6 +13444,8 @@ extension on Traductions {
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
 			'classe.pagePlanning.indisponible' => 'Le planning de la classe n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.aucun' => 'Rien à préparer pour l\'instant',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageTravail.aucunDetail' => 'Le travail donné par l\'enseignant apparaîtra ici.',
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
@@ -13331,8 +13470,6 @@ extension on Traductions {
 			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
@@ -13821,6 +13958,8 @@ extension on Traductions {
 			'tc.classe.entete.coursEnCours' => 'Séance toujours en direct',
 			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
 			'tc.classe.roster.titre' => 'Élèves',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
@@ -13845,8 +13984,6 @@ extension on Traductions {
 			'tc.classe.fiche.aReprendre' => 'À reprendre',
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',

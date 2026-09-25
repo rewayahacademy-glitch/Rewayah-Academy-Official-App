@@ -250,6 +250,14 @@ abstract final class Routes {
   /// (`?retour=` pour revenir au Foyer).
   static const String tuteurCompteSoldes = '/tuteur/compte/soldes';
 
+  /// S07 « Mouvements de solde » (LT-6), sous S01.
+  static const String tuteurCompteMouvements =
+      '/tuteur/compte/soldes/mouvements';
+
+  /// S08 : le detail d'un mouvement (identifiant encode dans le segment).
+  static String mouvementPour(String mouvementId) =>
+      '$tuteurCompteMouvements/${Uri.encodeComponent(mouvementId)}';
+
   /// Les preferences du titulaire.
   static const String tuteurComptePreferences = '/tuteur/compte/preferences';
 

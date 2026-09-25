@@ -147,6 +147,38 @@
       "indisponible": "Non disponible pour le moment.",
       "ligneAccueil": "Soldes du foyer : {total}"
     },
+    "mouvements": {
+      "titre": "Mouvements de solde",
+      "sousTitre": "L'historique des mouvements de solde du foyer.",
+      "voir": "Voir les mouvements",
+      "tous": "Tous",
+      "filtre": "Profil",
+      "aucun": "Aucun mouvement",
+      "aucunPhrase": "Le serveur n'a rendu aucun mouvement pour ce choix.",
+      "legende": "{prenom} · {date}",
+      "natures": {
+        "recharge": "Recharge",
+        "seance": "Séance",
+        "remiseSeance": "Remise liée à une séance",
+        "inconnue": "Mouvement"
+      },
+      "statuts": {
+        "confirme": "Confirmé"
+      },
+      "detail": {
+        "titre": "Détail du mouvement",
+        "nature": "Nature",
+        "montant": "Montant",
+        "date": "Date",
+        "profil": "Profil",
+        "statut": "Statut",
+        "seance": "Séance liée",
+        "voirSeance": "Voir la séance",
+        "dateHeure": "{date} à {heure}",
+        "introuvable": "Mouvement introuvable",
+        "introuvablePhrase": "Le serveur n'a rendu aucun mouvement à cette adresse."
+      }
+    },
     "issues": {
       "confirmee": "Confirmée",
       "enAttente": "En attente",

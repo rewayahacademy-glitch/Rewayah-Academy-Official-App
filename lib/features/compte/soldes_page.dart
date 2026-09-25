@@ -54,8 +54,9 @@ String? resumeTotalSoldes(AsyncValue<SoldesFoyer> soldes) {
 ///
 /// Le total par devise, puis une ligne par profil (solde et acces). Aucun
 /// calcul : montants et totaux sont ceux du serveur. « Recharger » n'est pas
-/// rendu tant que l'ecran de recharge (LT-7) n'existe pas ; « Gerer les
-/// acces » mene a la page d'acces existante. Le retour suit `?retour=`
+/// rendu tant que l'ecran de recharge (LT-7) n'existe pas ; « Voir les
+/// mouvements » mene a S07 (LT-6) ; « Gerer les acces » mene a la page
+/// d'acces existante. Le retour suit `?retour=`
 /// (depuis le Foyer), sinon le Compte.
 class SoldesComptePage extends ConsumerWidget {
   /// Cree la page.
@@ -104,6 +105,11 @@ class SoldesComptePage extends ConsumerWidget {
             GroupeReglages(
               key: gererAccesKey,
               lignes: <LigneRubrique>[
+                LigneRubrique(
+                  icone: AppIcons.historique,
+                  libelle: t.finance.mouvements.voir,
+                  onPress: () => routeur?.go(Routes.tuteurCompteMouvements),
+                ),
                 LigneRubrique(
                   icone: AppIcons.attente,
                   libelle: t.finance.soldes.gererAcces,

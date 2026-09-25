@@ -44,6 +44,7 @@ import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
+import '../../features/compte/mouvements_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
@@ -666,6 +667,24 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     pageBuilder: glissee(
                       (GoRouterState _) => const SoldesComptePage(),
                     ),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'mouvements',
+                        pageBuilder: glissee(
+                          (GoRouterState _) => const MouvementsComptePage(),
+                        ),
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: ':mouvementId',
+                            pageBuilder: glissee(
+                              (GoRouterState etat) => DetailMouvementPage(
+                                mouvementId: _parametre(etat, 'mouvementId'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'preferences',
