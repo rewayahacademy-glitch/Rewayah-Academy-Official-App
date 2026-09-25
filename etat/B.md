@@ -319,3 +319,9 @@ Reste : actions encore adossees a Supabase (serviceAppairageProvider, portStatut
 `ui/tuteur-v1-demo` @ `bb51374`, poussee. `lib/features/demo/racine_demonstrable.dart` : `RacineDemonstrable` (racine reelle de `main.dart`) fournit hors production un lanceur ; l'entree « Essayer la démonstration » (`/bienvenue` sous « J'ai déjà un compte », et sous la carte de `/connexion`) bascule la portee sur `surchargesDemoTuteur` + repere. Production : aucun lanceur, aucune entree. Test `test/features/demo/entree_demonstration_test.dart` (parcours Accueil/Foyer/Historique/Compte avec repere, absence en production). 20 captures 390x844/1440x900 clair/sombre dans `05_recette/demo/captures`. Suite complete sous verrou verte (+2691 ~572, code 0, 471 s, `05_recette/demo/suite_entree.log`), analyze --fatal-infos propre. Rapport : `05_recette/demo/RAPPORT.md`.
 
 Limites : repere `Banner` d'angle discret sur les captures ; actions encore adossees a Supabase non simulees ; controle visuel sur l'apercu deploye non fait.
+
+## P2-07 integration : TERMINE (25/09, session B-2026-09-25-coord)
+
+`git fetch` : `origin/ui/tuteur-v1` deja a `bd51224` (ff-only sans effet). Fusion `git merge --no-ff origin/ui/tuteur-v1-demo` (@ `bb51374`) -> `2e0fb7a`, sans conflit (pas de conflit i18n/slang). Frontiere `supabase/ .github/ vercel.json pubspec.yaml assets/fonts lib/core/theme dart_define.json` vide. Sous verrou : `flutter analyze --fatal-infos` aucun probleme ; suite complete `flutter test` +2691, 0 echec, code 0 (466 s). Push fait : `origin/ui/tuteur-v1` @ `2e0fb7a`. `ETAT_A.md` en-tete ecrite (nouvelle base, mode demo, points ouverts reportes). Pilotage pousse.
+
+Statut : fini.

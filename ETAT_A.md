@@ -1,5 +1,14 @@
 # État annoncé par le poste A (coordinateur)
 
+## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ 2e0fb7a (mode demonstration P2-07 integre)
+
+- **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `2e0fb7a`** (fusion `--no-ff` de `origin/ui/tuteur-v1-demo` @ `bb51374` sur `bd51224`, commit `2e0fb7a`, sans conflit).
+- Contenu ajoute : socle du mode demonstration tuteur (P2-07) — `lib/features/demo/mode_demonstration.dart`, `observation_demo.dart`, `presence_demo.dart`, `repere_demonstration.dart`, `racine_demonstrable.dart` ; entree « Essayer la démonstration » depuis `/bienvenue` et `/connexion` ; jamais actif en production (garde double : variable d'environnement hors « prod » ET `?demo=tuteur`).
+- Verification sous verrou (poste B coordinateur) : `flutter analyze --fatal-infos` **aucun probleme** ; suite complete `flutter test` **2691 tests, 0 echec, code 0** (466 s).
+- Frontiere `git diff --name-only 20731a4..HEAD` contre `supabase/ .github/ vercel.json pubspec.yaml assets/fonts lib/core/theme dart_define.json` : **vide**.
+- Aucun conflit i18n/slang a la fusion.
+- **Points ouverts (reportes du mode demo, non traites ici)** : actions encore adossees a Supabase non simulees en mode demo (serviceAppairageProvider, portStatutCodeAppairageProvider, serviceAuthProvider, services parcours_offres/reglages_enfant, avatarUrlProvider) ; ports capacites consentements/identite/notifications/paiements/progression/resume/support encore Indisponible en demo ; controle visuel de l'apercu deploye non fait.
+
 ## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ bd51224 (lots B, A, C, E, O integres, coordination poste B)
 
 - **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `bd51224`** (tous les lots B, A, C, E, O fusionnes et integres).
