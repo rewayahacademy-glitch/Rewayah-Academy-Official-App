@@ -79,3 +79,14 @@ Correction : les renommer en « Classe », ou confirmer par écrit qu'ils ne son
 - Base `origin/ui/tuteur-v1` @ `1cbc760` fusionnée ; aucun lien `Routes.tuteurReglages` dans `accueil_famille_page.dart` (seul reste : `compte_page.dart`, hors lot C).
 - Tests : suite complète `+2347 ~297`, 0 échec ; `flutter analyze` sans problème.
 - Reste ouvert : m1 (ligne de parcours de l'Accueil non capturée), m4, m8 (STUB dans `app_router.dart`), captures à refaire après M2/M3.
+
+## 6. Suite donnée (coordinateur, poste B, 25/09, commit `faa0a22` sur `ui/tuteur-v1-c`)
+
+- **M4 (C-14, C-15)** : le fuseau était déjà branché sur `monFuseauProvider` (§5). Les séances, le fuseau et le parcours d'une classe ouverte restent hors de portée : le contrat `ClasseOuverte` (K6) est gelé et ne les porte pas. C-14 reste ouverte dans `demandes/C.md`, en attente d'une décision du directeur pour étendre K6 et d'une source serveur DB-CRS-07. Aucun contrat gelé n'a été touché ici.
+- **M5** : déjà couvert par le wip intégré — `test/features/classe_tuteur/classe_echelle_texte_test.dart` teste les 7 écrans (Classe, Planning, Travail, Bibliothèque, Progression, Catalogue, Confirmation) à 390 et 1440, texte à 200 % sans débordement, et `textContrastGuideline` en clair et sombre. Vérifié vert sous verrou.
+- **m1** : déjà couvert — `test/features/accueil_famille_test.dart` fournit `niveauHumain` à la fixture et vérifie la ligne « Cours fictif • Niveau fictif » sous l'enseignant.
+- **m8** : corrigé — le commentaire « STUB PHASE 0 » de l'alias `/classes/:id/observer` dans `app_router.dart` est retiré ; la route reste un alias d'intégration documenté, propriété du lot C-obs, jusqu'à ce qu'`EspaceGroupePage` porte un bloc d'observation.
+- **m4** (icône info, sablier) : non traité, reporté (arbitrage visuel non trivial dans le temps imparti d'un agent).
+- `flutter analyze --fatal-infos` : aucun problème. Suite complète sous verrou : `+2347 ~297 skipped`, 0 échec.
+- Captures régénérées dans `05_recette/c/captures/` (Accueil, Classe, Catalogue).
+- **LC-R** : revue faite par le poste A, suites contrôlées ici → `verifie`. **LC-F** : faite, preuve ci-dessus.

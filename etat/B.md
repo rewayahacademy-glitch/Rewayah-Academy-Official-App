@@ -167,3 +167,13 @@ Constat : `git diff --stat origin/ui/tuteur-v1..HEAD -- test/features/appareils 
 ## LA-C1 (25/09 07:29-07:52, session B-2026-09-25-coord)
 
 Fait : `ui/tuteur-v1-a` @ `cba5263` pousse (base deja a jour). A-1, A-3(1), A-4, A-5.1, A-5.3 traites (reponse dans `demandes/A.md`). Reste : A-3(2) a l'integration du lot E ; A-5.2 (genre cote a cote) ouvert ; validation P2 du texte signe (directeur) pour LA-3. Tableau : LA-2, LA-3 mis a jour.
+
+## LC-F2 M4-M5, mineurs, captures (25/09 07:48-08:26, session B-2026-09-25-coord)
+
+Debut ~07:48. Corrige : m8 (retire le libelle "STUB PHASE 0" de l'alias `/classes/:id/observer` dans `lib/core/router/app_router.dart`, fichier COORD). Verifie deja couverts par le wip integre (6cc903f) : M5 (`test/features/classe_tuteur/classe_echelle_texte_test.dart`, texte 200% + contraste sur les 7 ecrans de la Classe/Catalogue), m1 (ligne "Cours fictif - Niveau fictif" testee dans `accueil_famille_test.dart`). M4 : fuseau deja branche (`monFuseauProvider`) ; seances/parcours d'une classe ouverte restent bloques par C-14 (contrat K6 gele, decision directeur requise) - non modifiable ici, deja consigne dans `demandes/C.md`. m4 (icone info, sablier) reporte, non traite (temps insuffisant).
+
+`flutter analyze --fatal-infos` : No issues found. Suite complete sous verrou : `+2347 ~297 skipped`, 0 echec. Captures Accueil/Classe/Catalogue regenerees dans `05_recette/c/captures/`. `git checkout -- windows/flutter` fait avant commit.
+
+Commit `faa0a22` sur `ui/tuteur-v1-c`, pousse. `05_recette/c/REVUE.md` §6 et captures poussees dans pilotage.
+
+**LOT C TERMINE faa0a22**
