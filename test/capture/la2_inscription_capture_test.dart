@@ -184,9 +184,7 @@ void main() {
           );
         });
 
-        testWidgets('$nom 1440x900, ${mode.name}', (
-          WidgetTester tester,
-        ) async {
+        testWidgets('$nom 1440x900, ${mode.name}', (WidgetTester tester) async {
           await _monterEtape(
             tester,
             nom,
@@ -269,10 +267,7 @@ void main() {
         'Diallo',
       );
       await _continuer(tester);
-      await _taper(
-        tester,
-        find.byKey(const Key('inscription-genre-femme')),
-      );
+      await _taper(tester, find.byKey(const Key('inscription-genre-femme')));
       await _continuer(tester);
       return routeur;
     }
@@ -305,7 +300,8 @@ void main() {
       'recapitulatif, maquette | capture (CAPTURE_MAQUETTE_LA2_RECAP)',
       skip: Platform.environment['CAPTURE_MAQUETTE_LA2_RECAP'] == null,
       (WidgetTester tester) async {
-        final String chemin = Platform.environment['CAPTURE_MAQUETTE_LA2_RECAP']!;
+        final String chemin =
+            Platform.environment['CAPTURE_MAQUETTE_LA2_RECAP']!;
         late final int largeurPx;
         late final int hauteurPx;
         await tester.runAsync(() async {

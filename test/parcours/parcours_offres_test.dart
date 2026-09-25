@@ -691,90 +691,93 @@ void main() {
     );
   });
 
-  group('le parcours s atteint par un geste depuis l accueil, pas par go()', () {
-    testWidgets(
-      'taper l action du bloc de l accueil ouvre le parcours de cet eleve',
-      (WidgetTester tester) async {
-        final FauxServiceOffres faux = FauxServiceOffres(
-          parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
-        );
+  group(
+    'le parcours s atteint par un geste depuis l accueil, pas par go()',
+    () {
+      testWidgets(
+        'taper l action du bloc de l accueil ouvre le parcours de cet eleve',
+        (WidgetTester tester) async {
+          final FauxServiceOffres faux = FauxServiceOffres(
+            parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
+          );
 
-        await tester.pumpWidget(
-          hoteRoutant(
-            depart: Routes.tuteurAccueil,
-            surcharges: _avec(faux),
-            routes: <RouteBase>[
-              GoRoute(
-                path: Routes.tuteurAccueil,
-                builder: (BuildContext _, GoRouterState _) => const Scaffold(
-                  body: SingleChildScrollView(child: BlocParcours()),
+          await tester.pumpWidget(
+            hoteRoutant(
+              depart: Routes.tuteurAccueil,
+              surcharges: _avec(faux),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: Routes.tuteurAccueil,
+                  builder: (BuildContext _, GoRouterState _) => const Scaffold(
+                    body: SingleChildScrollView(child: BlocParcours()),
+                  ),
                 ),
-              ),
-              GoRoute(
-                path: '${Routes.tuteurParcours}/:eleveId',
-                builder: (BuildContext _, GoRouterState etat) =>
-                    ParcoursOffresPage(
-                      eleveId: etat.pathParameters['eleveId'] ?? '',
-                    ),
-              ),
-            ],
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        // Le geste part du bloc de l'accueil, pas d'un `routeur.go()` ecrit
-        // par le test : c'est le bouton que la famille voit et touche.
-        expect(find.text(t.parcours.commencer), findsOneWidget);
-        await tester.ensureVisible(find.text(t.parcours.commencer));
-        await tester.tap(find.text(t.parcours.commencer));
-        await tester.pumpAndSettle();
-
-        expect(
-          find.text(t.parcours.ageQuestion(prenom: 'Amina')),
-          findsOneWidget,
-        );
-      },
-    );
-
-    testWidgets(
-      'un foyer avec horaire a choisir ouvre directement les horaires',
-      (WidgetTester tester) async {
-        final FauxServiceOffres faux = FauxServiceOffres(
-          parcoursRendu: <ParcoursApprenant>[_personnalise()],
-          offresRendues: <OffreHoraire>[offreDeTest()],
-        );
-
-        await tester.pumpWidget(
-          hoteRoutant(
-            depart: Routes.tuteurAccueil,
-            surcharges: _avec(faux),
-            routes: <RouteBase>[
-              GoRoute(
-                path: Routes.tuteurAccueil,
-                builder: (BuildContext _, GoRouterState _) => const Scaffold(
-                  body: SingleChildScrollView(child: BlocParcours()),
+                GoRoute(
+                  path: '${Routes.tuteurParcours}/:eleveId',
+                  builder: (BuildContext _, GoRouterState etat) =>
+                      ParcoursOffresPage(
+                        eleveId: etat.pathParameters['eleveId'] ?? '',
+                      ),
                 ),
-              ),
-              GoRoute(
-                path: '${Routes.tuteurParcours}/:eleveId',
-                builder: (BuildContext _, GoRouterState etat) =>
-                    ParcoursOffresPage(
-                      eleveId: etat.pathParameters['eleveId'] ?? '',
-                    ),
-              ),
-            ],
-          ),
-        );
-        await tester.pumpAndSettle();
+              ],
+            ),
+          );
+          await tester.pumpAndSettle();
 
-        await tester.ensureVisible(find.text(t.parcours.voirHoraires));
-        await tester.tap(find.text(t.parcours.voirHoraires));
-        await tester.pumpAndSettle();
+          // Le geste part du bloc de l'accueil, pas d'un `routeur.go()` ecrit
+          // par le test : c'est le bouton que la famille voit et touche.
+          expect(find.text(t.parcours.commencer), findsOneWidget);
+          await tester.ensureVisible(find.text(t.parcours.commencer));
+          await tester.tap(find.text(t.parcours.commencer));
+          await tester.pumpAndSettle();
 
-        expect(find.byType(ScheduleOption), findsOneWidget);
-      },
-    );
-  });
+          expect(
+            find.text(t.parcours.ageQuestion(prenom: 'Amina')),
+            findsOneWidget,
+          );
+        },
+      );
+
+      testWidgets(
+        'un foyer avec horaire a choisir ouvre directement les horaires',
+        (WidgetTester tester) async {
+          final FauxServiceOffres faux = FauxServiceOffres(
+            parcoursRendu: <ParcoursApprenant>[_personnalise()],
+            offresRendues: <OffreHoraire>[offreDeTest()],
+          );
+
+          await tester.pumpWidget(
+            hoteRoutant(
+              depart: Routes.tuteurAccueil,
+              surcharges: _avec(faux),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: Routes.tuteurAccueil,
+                  builder: (BuildContext _, GoRouterState _) => const Scaffold(
+                    body: SingleChildScrollView(child: BlocParcours()),
+                  ),
+                ),
+                GoRoute(
+                  path: '${Routes.tuteurParcours}/:eleveId',
+                  builder: (BuildContext _, GoRouterState etat) =>
+                      ParcoursOffresPage(
+                        eleveId: etat.pathParameters['eleveId'] ?? '',
+                      ),
+                ),
+              ],
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          await tester.ensureVisible(find.text(t.parcours.voirHoraires));
+          await tester.tap(find.text(t.parcours.voirHoraires));
+          await tester.pumpAndSettle();
+
+          expect(find.byType(ScheduleOption), findsOneWidget);
+        },
+      );
+    },
+  );
 
   group('les etats de lecture du parcours', () {
     testWidgets(
@@ -785,7 +788,10 @@ void main() {
         )..attenteParcours = Completer<void>();
 
         await tester.pumpWidget(
-          hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+          hote(
+            const ParcoursOffresPage(eleveId: 'e1'),
+            surcharges: _avec(faux),
+          ),
         );
         // Un seul pump : la lecture n'a pas encore abouti.
         await tester.pump();
@@ -878,39 +884,43 @@ void main() {
       expect(find.text(t.parcours.langueQuestion), findsOneWidget);
     });
 
-    testWidgets('choisir un horaire deux fois de suite n enregistre qu UN choix', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceOffres faux = FauxServiceOffres(
-        parcoursRendu: <ParcoursApprenant>[_personnalise()],
-        offresRendues: <OffreHoraire>[offreDeTest()],
-      )..attenteEcriture = Completer<void>();
+    testWidgets(
+      'choisir un horaire deux fois de suite n enregistre qu UN choix',
+      (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[_personnalise()],
+          offresRendues: <OffreHoraire>[offreDeTest()],
+        )..attenteEcriture = Completer<void>();
 
-      await tester.pumpWidget(
-        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          hote(
+            const ParcoursOffresPage(eleveId: 'e1'),
+            surcharges: _avec(faux),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      // Le premier geste part, mais son ecriture reste en attente : la carte
-      // doit se desactiver des ce moment (`enCours`/`enabled`), avant meme
-      // que le serveur ne reponde.
-      await tester.tap(find.byType(ScheduleOption));
-      await tester.pump();
+        // Le premier geste part, mais son ecriture reste en attente : la carte
+        // doit se desactiver des ce moment (`enCours`/`enabled`), avant meme
+        // que le serveur ne reponde.
+        await tester.tap(find.byType(ScheduleOption));
+        await tester.pump();
 
-      final ScheduleOption carte = tester.widget<ScheduleOption>(
-        find.byType(ScheduleOption),
-      );
-      expect(carte.enabled, isFalse);
+        final ScheduleOption carte = tester.widget<ScheduleOption>(
+          find.byType(ScheduleOption),
+        );
+        expect(carte.enabled, isFalse);
 
-      // Un second tap pendant cette fenetre n'a donc aucune prise.
-      await tester.tap(find.byType(ScheduleOption), warnIfMissed: false);
-      await tester.pump();
+        // Un second tap pendant cette fenetre n'a donc aucune prise.
+        await tester.tap(find.byType(ScheduleOption), warnIfMissed: false);
+        await tester.pump();
 
-      faux.attenteEcriture!.complete();
-      await tester.pumpAndSettle();
+        faux.attenteEcriture!.complete();
+        await tester.pumpAndSettle();
 
-      expect(faux.choix.length, 1);
-    });
+        expect(faux.choix.length, 1);
+      },
+    );
 
     testWidgets(
       'signaler un refus deux fois de suite n enregistre qu UN signal',
