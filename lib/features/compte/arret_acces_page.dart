@@ -32,6 +32,7 @@ import '../../core/widgets/status_pill.dart';
 import 'acces_page.dart' show echeanceAcces;
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
+import 'question_etape.dart';
 
 // S09 « Arreter l'acces », S10 « Consequences » et S11 « Resultat » (LT-9,
 // complement Tuteur section 5 ; planche « 01 Recharges, remises et acces »).
@@ -237,7 +238,7 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            _Question(
+            QuestionEtape(
               titre: t.finance.arret.pourQui,
               phrase: t.finance.arret.pourQuiPhrase,
             ),
@@ -306,7 +307,7 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _Question(
+          QuestionEtape(
             titre: t.finance.arret.consequences,
             phrase: t.finance.arret.consequencesPhrase,
           ),
@@ -411,33 +412,6 @@ class _AvecProfils extends StatelessWidget {
         ],
       ),
       annexe: consequences,
-    );
-  }
-}
-
-class _Question extends StatelessWidget {
-  const _Question({required this.titre, required this.phrase});
-
-  final String titre;
-  final String phrase;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Semantics(
-            header: true,
-            child: Text(titre, style: textes.headlineSmall),
-          ),
-          Ecart.vSm,
-          Text(phrase, style: textes.bodyMedium),
-        ],
-      ),
     );
   }
 }

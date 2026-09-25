@@ -19,6 +19,7 @@ import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/selection_profils.dart';
 import '../../core/widgets/skeleton.dart';
+import 'question_etape.dart';
 import 'soldes_page.dart';
 
 // S03 « Pour qui ? » et S04 « Quelle recharge ? » (LT-7, complement Tuteur
@@ -138,7 +139,7 @@ class _RechargePageState extends ConsumerState<RechargePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            _Question(
+            QuestionEtape(
               titre: t.finance.recharge.pourQui,
               phrase: t.finance.recharge.pourQuiPhrase,
             ),
@@ -200,7 +201,7 @@ class _RechargePageState extends ConsumerState<RechargePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _Question(
+          QuestionEtape(
             titre: t.finance.recharge.quelle,
             phrase: t.finance.recharge.quellePhrase,
           ),
@@ -238,33 +239,6 @@ class _RechargePageState extends ConsumerState<RechargePage> {
                 ],
               ),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Question extends StatelessWidget {
-  const _Question({required this.titre, required this.phrase});
-
-  final String titre;
-  final String phrase;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Semantics(
-            header: true,
-            child: Text(titre, style: textes.headlineSmall),
-          ),
-          Ecart.vSm,
-          Text(phrase, style: textes.bodyMedium),
         ],
       ),
     );
