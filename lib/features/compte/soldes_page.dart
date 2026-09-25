@@ -12,6 +12,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/chemin_retour.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -21,6 +22,7 @@ import '../../core/widgets/ligne_beneficiaire.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/resume_solde.dart';
 import '../../core/widgets/skeleton.dart';
+import '../foyer/fiche_eleve_page.dart' show ColonnesFiche;
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 
@@ -85,66 +87,77 @@ class SoldesComptePage extends ConsumerWidget {
         Routes.tuteurCompte;
     final AsyncValue<SoldesFoyer> soldes = ref.watch(soldesFoyerProvider);
 
+    final Widget liste = BlocAsynchrone<SoldesFoyer>(
+      valeur: soldes,
+      squelette: const Skeleton.liste(lignes: 3),
+      onReessayer: () => ref.invalidate(soldesFoyerProvider),
+      estVide: (SoldesFoyer s) => s.profils.isEmpty,
+      vide: EtatSysteme(
+        nature: NatureEtat.aucunResultat,
+        titre: t.finance.soldes.aucunProfil,
+        phrase: t.finance.soldes.aucunProfilPhrase,
+      ),
+      construire: _Soldes.new,
+    );
+    // Les actions : sous la liste sur telephone et tablette, dans la colonne
+    // laterale sur bureau (planche « 06 Web sombre, soldes »).
+    final List<Widget> actions = <Widget>[
+      // « Recharger » (LT-7) seulement sur des soldes lus : en
+      // production (DB-FIN-01 absent), aucun bouton financier.
+      if (soldes.hasValue &&
+          !soldes.hasError &&
+          soldes.requireValue.profils.isNotEmpty) ...<Widget>[
+        ActionPrincipale(
+          key: rechargerKey,
+          libelle: t.finance.recharge.action,
+          onPress: () => routeur?.go(
+            Uri(
+              path: Routes.tuteurCompteRecharge,
+              queryParameters: <String, String>{
+                'retour': Routes.tuteurCompteSoldes,
+              },
+            ).toString(),
+          ),
+        ),
+        Ecart.vLg,
+      ],
+      GroupeReglages(
+        key: gererAccesKey,
+        lignes: <LigneRubrique>[
+          LigneRubrique(
+            icone: AppIcons.historique,
+            libelle: t.finance.mouvements.voir,
+            onPress: () => routeur?.go(Routes.tuteurCompteMouvements),
+          ),
+          LigneRubrique(
+            icone: AppIcons.attente,
+            libelle: t.finance.soldes.gererAcces,
+            onPress: () => routeur?.go(Routes.compteTuteurSousPage('acces')),
+          ),
+        ],
+      ),
+    ];
+
     return PageShell(
       titre: t.finance.soldes.titre,
       sousTitre: t.finance.soldes.sousTitre,
       onRetour: () => routeur?.go(retour),
-      child: ColonneSousPage(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            BlocAsynchrone<SoldesFoyer>(
-              valeur: soldes,
-              squelette: const Skeleton.liste(lignes: 3),
-              onReessayer: () => ref.invalidate(soldesFoyerProvider),
-              estVide: (SoldesFoyer s) => s.profils.isEmpty,
-              vide: EtatSysteme(
-                nature: NatureEtat.aucunResultat,
-                titre: t.finance.soldes.aucunProfil,
-                phrase: t.finance.soldes.aucunProfilPhrase,
+      child: AppGabarit.de(context) == Gabarit.desktop
+          ? ColonnesFiche(
+              principal: liste,
+              annexe: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: actions,
               ),
-              construire: _Soldes.new,
-            ),
-            // « Recharger » (LT-7) seulement sur des soldes lus : en
-            // production (DB-FIN-01 absent), aucun bouton financier.
-            if (soldes.hasValue &&
-                !soldes.hasError &&
-                soldes.requireValue.profils.isNotEmpty) ...<Widget>[
-              Ecart.vLg,
-              ActionPrincipale(
-                key: rechargerKey,
-                libelle: t.finance.recharge.action,
-                onPress: () => routeur?.go(
-                  Uri(
-                    path: Routes.tuteurCompteRecharge,
-                    queryParameters: <String, String>{
-                      'retour': Routes.tuteurCompteSoldes,
-                    },
-                  ).toString(),
-                ),
+            )
+          : ColonneSousPage(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[liste, Ecart.vLg, ...actions],
               ),
-            ],
-            Ecart.vLg,
-            GroupeReglages(
-              key: gererAccesKey,
-              lignes: <LigneRubrique>[
-                LigneRubrique(
-                  icone: AppIcons.historique,
-                  libelle: t.finance.mouvements.voir,
-                  onPress: () => routeur?.go(Routes.tuteurCompteMouvements),
-                ),
-                LigneRubrique(
-                  icone: AppIcons.attente,
-                  libelle: t.finance.soldes.gererAcces,
-                  onPress: () =>
-                      routeur?.go(Routes.compteTuteurSousPage('acces')),
-                ),
-              ],
             ),
-          ],
-        ),
-      ),
     );
   }
 }

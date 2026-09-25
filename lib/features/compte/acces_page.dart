@@ -6,6 +6,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -14,6 +15,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../foyer/fiche_eleve_page.dart' show ColonnesFiche;
 import 'arret_acces_page.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
@@ -48,67 +50,77 @@ class AccesComptePage extends ConsumerWidget {
         for (final AccesBeneficiaire a in acces.requireValue) a.eleveId,
     ]);
 
+    final Widget liste = BlocAsynchrone<List<AccesBeneficiaire>>(
+      valeur: acces,
+      squelette: const Skeleton.liste(lignes: 2),
+      onReessayer: () => ref.invalidate(accesFoyerProvider),
+      vide: EtatSysteme(
+        nature: NatureEtat.aucunResultat,
+        titre: t.compte.tuteur.pageAcces.aucunTitre,
+        phrase: t.compte.tuteur.pageAcces.aucunePhrase,
+      ),
+      construire: (List<AccesBeneficiaire> acces) => GroupeReglages(
+        lignes: <LigneRubrique>[
+          for (final AccesBeneficiaire a in acces)
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: a.prenom,
+              legende: echeanceAcces(a),
+              controle: StatusPill(
+                libelle: a.etatAffiche == EtatAccesAffiche.expire
+                    ? t.compte.tuteur.pageAcces.pastilleExpire
+                    : t.compte.tuteur.pageAcces.pastilleActif,
+                ton: a.etatAffiche == EtatAccesAffiche.expire
+                    ? TonEtat.alerte
+                    : TonEtat.succes,
+              ),
+            ),
+        ],
+      ),
+    );
+    // Ce qui accompagne la liste : l'arret (et ses consequences, S09-S10),
+    // puis la note du titulaire. Colonne laterale sur bureau.
+    final List<Widget> annexe = <Widget>[
+      if (arretPossible) ...<Widget>[
+        GroupeReglages(
+          key: arreterKey,
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.verrou,
+              libelle: t.finance.arret.action,
+              onPress: () =>
+                  GoRouter.of(context).go(Routes.tuteurCompteArretAcces),
+            ),
+          ],
+        ),
+        Ecart.vLg,
+      ],
+      Text(
+        t.compte.tuteur.pageAcces.titulaire,
+        style: palette.inkMuted.applyTo(textes.bodyMedium ?? const TextStyle()),
+      ),
+    ];
+
     return PageShell(
       titre: t.compte.tuteur.pageAcces.titre,
       sousTitre: t.compte.tuteur.pageAcces.sousTitre,
       onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
-      child: ColonneSousPage(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            BlocAsynchrone<List<AccesBeneficiaire>>(
-              valeur: acces,
-              squelette: const Skeleton.liste(lignes: 2),
-              onReessayer: () => ref.invalidate(accesFoyerProvider),
-              vide: EtatSysteme(
-                nature: NatureEtat.aucunResultat,
-                titre: t.compte.tuteur.pageAcces.aucunTitre,
-                phrase: t.compte.tuteur.pageAcces.aucunePhrase,
+      child: AppGabarit.de(context) == Gabarit.desktop
+          ? ColonnesFiche(
+              principal: liste,
+              annexe: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: annexe,
               ),
-              construire: (List<AccesBeneficiaire> acces) => GroupeReglages(
-                lignes: <LigneRubrique>[
-                  for (final AccesBeneficiaire a in acces)
-                    LigneRubrique(
-                      icone: AppIcons.profil,
-                      libelle: a.prenom,
-                      legende: echeanceAcces(a),
-                      controle: StatusPill(
-                        libelle: a.etatAffiche == EtatAccesAffiche.expire
-                            ? t.compte.tuteur.pageAcces.pastilleExpire
-                            : t.compte.tuteur.pageAcces.pastilleActif,
-                        ton: a.etatAffiche == EtatAccesAffiche.expire
-                            ? TonEtat.alerte
-                            : TonEtat.succes,
-                      ),
-                    ),
-                ],
+            )
+          : ColonneSousPage(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[liste, Ecart.vLg, ...annexe],
               ),
             ),
-            if (arretPossible) ...<Widget>[
-              Ecart.vLg,
-              GroupeReglages(
-                key: arreterKey,
-                lignes: <LigneRubrique>[
-                  LigneRubrique(
-                    icone: AppIcons.verrou,
-                    libelle: t.finance.arret.action,
-                    onPress: () =>
-                        GoRouter.of(context).go(Routes.tuteurCompteArretAcces),
-                  ),
-                ],
-              ),
-            ],
-            Ecart.vLg,
-            Text(
-              t.compte.tuteur.pageAcces.titulaire,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

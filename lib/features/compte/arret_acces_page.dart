@@ -12,12 +12,14 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/chemin_retour.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
@@ -26,6 +28,7 @@ import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/selection_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../foyer/fiche_eleve_page.dart' show ColonnesFiche;
 import 'acces_page.dart' show echeanceAcces;
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
@@ -131,6 +134,9 @@ class ArretAccesPage extends ConsumerStatefulWidget {
 
   /// La carte des consequences d'un profil.
   static Key profilKey(String id) => Key('arret.profil.$id');
+
+  /// La liste des profils concernes, a cote des consequences (bureau).
+  static const Key profilsKey = Key('arret.profils');
 
   @override
   ConsumerState<ArretAccesPage> createState() => _ArretAccesPageState();
@@ -296,68 +302,107 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
             titre: t.finance.arret.consequences,
             phrase: t.finance.arret.consequencesPhrase,
           ),
-          BlocAsynchrone<ApercuAnnulation>(
-            valeur: apercu,
-            squelette: const Skeleton.liste(lignes: 3),
-            onReessayer: () => ref.invalidate(apercuAnnulationProvider),
-            construire: (ApercuAnnulation a) => Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                for (final ConsequencesAnnulation c in a.profils) ...<Widget>[
-                  _Consequences(
-                    key: ArretAccesPage.profilKey(c.profilId),
-                    consequences: c,
-                    prenom: prenoms[c.profilId] ?? t.finance.profilSansPrenom,
-                  ),
-                  Ecart.vMd,
-                ],
-                if (!complet)
-                  EtatSysteme(
-                    nature: NatureEtat.indisponible,
-                    titre: t.finance.arret.incomplet,
-                    phrase: t.finance.arret.incompletPhrase,
-                    onAction: () => ref.invalidate(apercuAnnulationProvider),
-                  )
-                else if (aucunEligible)
-                  EtatSysteme(
-                    nature: NatureEtat.aucunResultat,
-                    titre: t.finance.arret.aucunEligible,
-                    phrase: t.finance.arret.aucunEligiblePhrase,
-                  )
-                else ...<Widget>[
-                  Material(
-                    type: MaterialType.transparency,
-                    child: CheckboxListTile(
-                      key: ArretAccesPage.comprisKey,
-                      value: _compris,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(t.finance.arret.compris),
-                      onChanged: _enCours || indisponible
-                          ? null
-                          : (bool? v) => setState(() => _compris = v ?? false),
+          _AvecProfils(
+            profils: <AccesBeneficiaire>[
+              for (final AccesBeneficiaire a in lus)
+                if (_selection.contains(a.eleveId)) a,
+            ],
+            consequences: BlocAsynchrone<ApercuAnnulation>(
+              valeur: apercu,
+              squelette: const Skeleton.liste(lignes: 3),
+              onReessayer: () => ref.invalidate(apercuAnnulationProvider),
+              construire: (ApercuAnnulation a) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  for (final ConsequencesAnnulation c in a.profils) ...<Widget>[
+                    _Consequences(
+                      key: ArretAccesPage.profilKey(c.profilId),
+                      consequences: c,
+                      prenom: prenoms[c.profilId] ?? t.finance.profilSansPrenom,
                     ),
-                  ),
-                  if (echec is CapaciteIndisponible)
+                    Ecart.vMd,
+                  ],
+                  if (!complet)
                     EtatSysteme(
                       nature: NatureEtat.indisponible,
-                      titre: t.finance.arret.annulationIndisponible,
-                      phrase: t.finance.arret.annulationIndisponiblePhrase,
-                      dependance: echec.dependance,
+                      titre: t.finance.arret.incomplet,
+                      phrase: t.finance.arret.incompletPhrase,
+                      onAction: () => ref.invalidate(apercuAnnulationProvider),
                     )
-                  else if (echec != null)
+                  else if (aucunEligible)
                     EtatSysteme(
-                      nature: NatureEtat.echecServeur,
-                      onAction: _enCours ? null : () => _confirmer(a),
-                      actionEnCours: _enCours,
+                      nature: NatureEtat.aucunResultat,
+                      titre: t.finance.arret.aucunEligible,
+                      phrase: t.finance.arret.aucunEligiblePhrase,
+                    )
+                  else ...<Widget>[
+                    Material(
+                      type: MaterialType.transparency,
+                      child: CheckboxListTile(
+                        key: ArretAccesPage.comprisKey,
+                        value: _compris,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(t.finance.arret.compris),
+                        onChanged: _enCours || indisponible
+                            ? null
+                            : (bool? v) =>
+                                  setState(() => _compris = v ?? false),
+                      ),
                     ),
+                    if (echec is CapaciteIndisponible)
+                      EtatSysteme(
+                        nature: NatureEtat.indisponible,
+                        titre: t.finance.arret.annulationIndisponible,
+                        phrase: t.finance.arret.annulationIndisponiblePhrase,
+                        dependance: echec.dependance,
+                      )
+                    else if (echec != null)
+                      EtatSysteme(
+                        nature: NatureEtat.echecServeur,
+                        onAction: _enCours ? null : () => _confirmer(a),
+                        actionEnCours: _enCours,
+                      ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// S10 sur bureau : les profils concernes d'un cote, les consequences
+/// rendues par le serveur de l'autre (planche « 06 Web sombre, acces »).
+/// Telephone et tablette, ou profils non lus : les consequences seules,
+/// comme avant.
+class _AvecProfils extends StatelessWidget {
+  const _AvecProfils({required this.profils, required this.consequences});
+
+  final List<AccesBeneficiaire> profils;
+  final Widget consequences;
+
+  @override
+  Widget build(BuildContext context) {
+    if (profils.isEmpty || AppGabarit.de(context) != Gabarit.desktop) {
+      return consequences;
+    }
+    return ColonnesFiche(
+      principal: GroupeReglages(
+        key: ArretAccesPage.profilsKey,
+        lignes: <LigneRubrique>[
+          for (final AccesBeneficiaire a in profils)
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: a.prenom,
+              legende: echeanceAcces(a),
+            ),
+        ],
+      ),
+      annexe: consequences,
     );
   }
 }

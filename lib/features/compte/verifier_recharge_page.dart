@@ -10,6 +10,7 @@ import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -19,6 +20,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/resultat_par_profil.dart';
 import '../../core/widgets/status_pill.dart';
+import '../foyer/fiche_eleve_page.dart' show ColonnesFiche;
 import '../suivi_foyer/filtres_historique.dart' show dateCourte;
 import 'carte_rubriques.dart';
 import 'soldes_page.dart';
@@ -54,6 +56,9 @@ class VerifierRechargePage extends ConsumerStatefulWidget {
 
   /// Le lien « Reprendre la recharge ».
   static const Key reprendreKey = Key('recharge.reprendre');
+
+  /// Le recapitulatif rendu par le serveur (total, validite).
+  static const Key recapitulatifKey = Key('recharge.recapitulatif');
 
   @override
   ConsumerState<VerifierRechargePage> createState() =>
@@ -120,44 +125,76 @@ class _VerifierRechargePageState extends ConsumerState<VerifierRechargePage> {
               onPress: _enCours ? null : () => _payer(devis),
             )
           : null,
-      child: ColonneSousPage(
-        child: devis == null
-            ? _Reprendre(
+      child: devis == null
+          ? ColonneSousPage(
+              child: _Reprendre(
                 titre: t.finance.recharge.verification.perdu,
                 phrase: t.finance.recharge.verification.perduPhrase,
                 onPress: reprendre,
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  _Devis(devis: devis, prenoms: _prenoms(ref)),
-                  if (expire)
-                    _Reprendre(
-                      titre: t.finance.recharge.verification.expire,
-                      phrase: t.finance.recharge.verification.expirePhrase,
-                      onPress: reprendre,
-                    )
-                  else if (echec is CapaciteIndisponible)
-                    EtatSysteme(
-                      nature: NatureEtat.indisponible,
-                      titre:
-                          t.finance.recharge.verification.paiementIndisponible,
-                      phrase: t
-                          .finance
-                          .recharge
-                          .verification
-                          .paiementIndisponiblePhrase,
-                      dependance: echec.dependance,
-                    )
-                  else if (echec != null)
-                    EtatSysteme(
-                      nature: NatureEtat.echecServeur,
-                      onAction: _enCours ? null : () => _payer(devis),
-                      actionEnCours: _enCours,
-                    ),
-                ],
               ),
+            )
+          : _colonnes(
+              context,
+              devis: devis,
+              etat: <Widget>[
+                if (expire)
+                  _Reprendre(
+                    titre: t.finance.recharge.verification.expire,
+                    phrase: t.finance.recharge.verification.expirePhrase,
+                    onPress: reprendre,
+                  )
+                else if (echec is CapaciteIndisponible)
+                  EtatSysteme(
+                    nature: NatureEtat.indisponible,
+                    titre: t.finance.recharge.verification.paiementIndisponible,
+                    phrase: t
+                        .finance
+                        .recharge
+                        .verification
+                        .paiementIndisponiblePhrase,
+                    dependance: echec.dependance,
+                  )
+                else if (echec != null)
+                  EtatSysteme(
+                    nature: NatureEtat.echecServeur,
+                    onAction: _enCours ? null : () => _payer(devis),
+                    actionEnCours: _enCours,
+                  ),
+              ],
+            ),
+    );
+  }
+
+  /// Telephone et tablette : lignes, total, puis l'etat, en une colonne. Sur
+  /// bureau, le recapitulatif rendu par le serveur (total, validite) passe
+  /// dans la colonne laterale (planche « 06 Web sombre, recharge »).
+  Widget _colonnes(
+    BuildContext context, {
+    required DevisRecharge devis,
+    required List<Widget> etat,
+  }) {
+    final Map<String, String> prenoms = _prenoms(ref);
+    if (AppGabarit.de(context) == Gabarit.desktop) {
+      return ColonnesFiche(
+        principal: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _Devis(devis: devis, prenoms: prenoms, total: false),
+            ...etat,
+          ],
+        ),
+        annexe: _Devis(devis: devis, prenoms: prenoms, lignes: false),
+      );
+    }
+    return ColonneSousPage(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _Devis(devis: devis, prenoms: prenoms),
+          ...etat,
+        ],
       ),
     );
   }
@@ -187,10 +224,21 @@ class _Reprendre extends StatelessWidget {
 
 /// Les lignes par profil, puis le total et la validite, tels que rendus.
 class _Devis extends StatelessWidget {
-  const _Devis({required this.devis, required this.prenoms});
+  const _Devis({
+    required this.devis,
+    required this.prenoms,
+    this.lignes = true,
+    this.total = true,
+  });
 
   final DevisRecharge devis;
   final Map<String, String> prenoms;
+
+  /// Les cartes par profil.
+  final bool lignes;
+
+  /// Le recapitulatif : total et validite.
+  final bool total;
 
   @override
   Widget build(BuildContext context) {
@@ -201,66 +249,70 @@ class _Devis extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        for (final LigneDevis l in devis.lignes) ...<Widget>[
+        if (lignes)
+          for (final LigneDevis l in devis.lignes) ...<Widget>[
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      prenoms[l.profilId] ?? t.finance.profilSansPrenom,
+                      style: textes.titleSmall,
+                    ),
+                  ),
+                  Ecart.vSm,
+                  // ponytail: la quantite est ecrite dans la devise du devis,
+                  // faute de devise du solde dans `LigneDevis` (comme LT-7).
+                  LigneCleValeur(
+                    cle: v.quantite,
+                    valeur: formaterMontant(l.quantiteMineure, d),
+                    chiffres: true,
+                  ),
+                  LigneCleValeur(
+                    cle: v.prix,
+                    valeur: formaterMontant(l.prixMineur, d),
+                    chiffres: true,
+                  ),
+                  LigneCleValeur(
+                    cle: v.remise,
+                    valeur: l.remiseMineure == 0
+                        ? v.aucuneRemise
+                        : formaterMontant(l.remiseMineure, d),
+                    chiffres: l.remiseMineure != 0,
+                  ),
+                ],
+              ),
+            ),
+            Ecart.vMd,
+          ],
+        if (total) ...<Widget>[
           AppCard(
+            key: VerifierRechargePage.recapitulatifKey,
+            dominante: true,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Semantics(
-                  header: true,
-                  child: Text(
-                    prenoms[l.profilId] ?? t.finance.profilSansPrenom,
-                    style: textes.titleSmall,
-                  ),
+                LigneCleValeur(
+                  cle: v.total,
+                  valeur: formaterMontant(devis.totalMineur, d),
+                  chiffres: true,
                 ),
                 Ecart.vSm,
-                // ponytail: la quantite est ecrite dans la devise du devis,
-                // faute de devise du solde dans `LigneDevis` (comme LT-7).
-                LigneCleValeur(
-                  cle: v.quantite,
-                  valeur: formaterMontant(l.quantiteMineure, d),
-                  chiffres: true,
-                ),
-                LigneCleValeur(
-                  cle: v.prix,
-                  valeur: formaterMontant(l.prixMineur, d),
-                  chiffres: true,
-                ),
-                LigneCleValeur(
-                  cle: v.remise,
-                  valeur: l.remiseMineure == 0
-                      ? v.aucuneRemise
-                      : formaterMontant(l.remiseMineure, d),
-                  chiffres: l.remiseMineure != 0,
+                Text(
+                  v.valableJusqua(
+                    date: dateCourte(devis.valableJusqua.toLocal()),
+                  ),
+                  style: textes.bodySmall,
                 ),
               ],
             ),
           ),
-          Ecart.vMd,
+          Ecart.vLg,
         ],
-        AppCard(
-          dominante: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              LigneCleValeur(
-                cle: v.total,
-                valeur: formaterMontant(devis.totalMineur, d),
-                chiffres: true,
-              ),
-              Ecart.vSm,
-              Text(
-                v.valableJusqua(
-                  date: dateCourte(devis.valableJusqua.toLocal()),
-                ),
-                style: textes.bodySmall,
-              ),
-            ],
-          ),
-        ),
-        Ecart.vLg,
       ],
     );
   }
