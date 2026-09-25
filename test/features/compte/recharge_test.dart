@@ -115,6 +115,21 @@ class _DevisSansPaiement extends FinanceFoyerDemo {
   }
 }
 
+/// Un devis qui attend que le test le libere : garde de « Verifier »
+/// (constat 14).
+class _DevisLent extends FinanceFoyerDemo {
+  _DevisLent();
+
+  int appels = 0;
+  final Completer<DevisRecharge> attente = Completer<DevisRecharge>();
+
+  @override
+  Future<DevisRecharge> devisRecharge(List<ChoixRecharge> choix) {
+    appels++;
+    return attente.future;
+  }
+}
+
 /// Un paiement qui attend que le test le libere, puis echoue (hors
 /// indisponibilite) : double tap et reessai.
 class _PaiementLent extends FinanceFoyerDemo {
@@ -367,6 +382,35 @@ void main() {
       routeur.routerDelegate.currentConfiguration.extra,
       same(_FinanceAvecDevis.devis),
     );
+  });
+
+  testWidgets('« Verifier » en double tap : une seule demande de devis', (
+    WidgetTester tester,
+  ) async {
+    final _DevisLent finance = _DevisLent();
+    await monterCompte(
+      tester,
+      depart: Routes.tuteurCompteSoldes,
+      eleves: DonneesDemo.eleves,
+      surcharges: _finance(finance),
+    );
+    await toucher(tester, find.byKey(SoldesComptePage.rechargerKey));
+    await toucher(tester, _case(1));
+    await toucher(tester, find.byKey(RechargePage.continuerKey));
+    await toucher(
+      tester,
+      find.byKey(RechargePage.offreKey(_offre(DonneesDemo.aichaId))),
+    );
+    await tester.tap(find.byKey(RechargePage.verifierKey));
+    await tester.pump();
+    await tester.tap(find.byKey(RechargePage.verifierKey), warnIfMissed: false);
+    await tester.pump();
+    expect(finance.appels, 1);
+
+    finance.attente.complete(_FinanceAvecDevis.devis);
+    await stabiliser(tester);
+    expect(finance.appels, 1);
+    expect(tester.takeException(), isNull);
   });
 
   for (final Size taille in <Size>[

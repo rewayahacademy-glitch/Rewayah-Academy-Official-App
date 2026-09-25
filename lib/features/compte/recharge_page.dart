@@ -80,6 +80,10 @@ class _RechargePageState extends ConsumerState<RechargePage> {
   }
 
   Future<void> _verifier(List<String> ids) async {
+    // Une demande a la fois (double tap, reessai pendant l'attente).
+    if (_enCours) {
+      return;
+    }
     setState(() {
       _enCours = true;
       _echec = null;
