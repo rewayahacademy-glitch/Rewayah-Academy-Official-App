@@ -42,8 +42,20 @@ class BibliothequePage extends ConsumerWidget {
         // ferait rien donnerait l'illusion d'un saut qui n'existe pas. Le jour
         // ou le moteur d'Agent C et un moteur PDF sont la, elle passe en
         // `extra` de la route.
-        onChoisir: (LibraryResource r, ContentPosition? _) =>
-            context.go(RoutesTcB.versRessource(r.id)),
+        //
+        // Le detail porte `?retour=` (LT-11, revue C m5) : ouvert par `go`,
+        // il n'a rien a depiler, et son disque retour revient a CETTE liste,
+        // groupe de contexte compris, rechargement de page compris.
+        onChoisir: (LibraryResource r, ContentPosition? _) => context.go(
+          Uri(
+            path: RoutesTcB.versRessource(r.id),
+            queryParameters: <String, String>{
+              'retour': groupeId == null
+                  ? RoutesTcB.bibliotheque
+                  : RoutesTcB.avecGroupe(groupeId!),
+            },
+          ).toString(),
+        ),
       ),
     );
   }

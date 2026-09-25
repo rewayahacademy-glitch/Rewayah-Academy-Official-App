@@ -825,7 +825,13 @@
       "echecEnregistrement": "La photo est envoyée, mais elle n'a pas pu être enregistrée sur le profil.",
       "reprendre": "Réessayer",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
-      "horsLigne": "Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra."
+      "horsLigne": "Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.",
+      "sourceTitre": "Photo de l'élève",
+      "sourcePrendre": "Prendre une photo",
+      "sourcePrendreIndisponible": "L'appareil photo ne s'ouvre pas encore depuis l'application. Choisissez une photo déjà enregistrée.",
+      "sourceChoisir": "Choisir une photo",
+      "sourceChoisirDetail": "Une image déjà enregistrée sur cet appareil",
+      "sourceMention": "Ce n'est pas un document d'identité."
     },
     "inscription": {
       "titre": "Parcours et inscription",

@@ -3393,6 +3393,24 @@ class Traductions$ficheEleve$informations$fr {
 
 	/// fr: 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.'
 	String get horsLigne => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.';
+
+	/// fr: 'Photo de l'élève'
+	String get sourceTitre => 'Photo de l\'élève';
+
+	/// fr: 'Prendre une photo'
+	String get sourcePrendre => 'Prendre une photo';
+
+	/// fr: 'L'appareil photo ne s'ouvre pas encore depuis l'application. Choisissez une photo déjà enregistrée.'
+	String get sourcePrendreIndisponible => 'L\'appareil photo ne s\'ouvre pas encore depuis l\'application. Choisissez une photo déjà enregistrée.';
+
+	/// fr: 'Choisir une photo'
+	String get sourceChoisir => 'Choisir une photo';
+
+	/// fr: 'Une image déjà enregistrée sur cet appareil'
+	String get sourceChoisirDetail => 'Une image déjà enregistrée sur cet appareil';
+
+	/// fr: 'Ce n'est pas un document d'identité.'
+	String get sourceMention => 'Ce n\'est pas un document d\'identité.';
 }
 
 // Path: ficheEleve.inscription
@@ -12328,6 +12346,12 @@ extension on Traductions {
 			'ficheEleve.informations.reprendre' => 'Réessayer',
 			'ficheEleve.informations.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'ficheEleve.informations.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
+			'ficheEleve.informations.sourceTitre' => 'Photo de l\'élève',
+			'ficheEleve.informations.sourcePrendre' => 'Prendre une photo',
+			'ficheEleve.informations.sourcePrendreIndisponible' => 'L\'appareil photo ne s\'ouvre pas encore depuis l\'application. Choisissez une photo déjà enregistrée.',
+			'ficheEleve.informations.sourceChoisir' => 'Choisir une photo',
+			'ficheEleve.informations.sourceChoisirDetail' => 'Une image déjà enregistrée sur cet appareil',
+			'ficheEleve.informations.sourceMention' => 'Ce n\'est pas un document d\'identité.',
 			'ficheEleve.inscription.titre' => 'Parcours et inscription',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'Où en est ${prenom} : questionnaire et classe.',
 			'ficheEleve.inscription.questionnaire' => 'Questionnaire',
@@ -12702,14 +12726,14 @@ extension on Traductions {
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
 			'admin.groupes.observationCapaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
 			'admin.diagnostics.titre' => 'Diagnostics',
 			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.',
 			'admin.diagnostics.aucunProgramme' => 'Aucun programme publié',
 			'admin.diagnostics.aucunProgrammeDetail' => 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.diagnostics.erreur' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
 			'admin.diagnostics.restants' => ({required Object n}) => '${n} élèves restants',
 			'admin.diagnostics.restantUn' => '1 élève restant',
@@ -13216,14 +13240,14 @@ extension on Traductions {
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
 			'parcours.offreTraduite' => 'Affiché à votre heure locale',
 			'parcours.offreJours' => ({required Object jours}) => '${jours}',
 			'parcours.offreChoisir' => 'Choisir cet horaire',
 			'parcours.offreChoisie' => 'Horaire retenu',
 			'parcours.aucuneOffre' => 'Aucun horaire ouvert ne correspond encore',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.aucuneOffreDetail' => 'L\'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.',
 			'parcours.refusAucun' => 'Aucun de ces horaires ne me convient',
 			'parcours.refusPrevenir' => 'Me prévenir si de nouveaux horaires ouvrent',
@@ -13730,14 +13754,14 @@ extension on Traductions {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
 			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
 			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'tuteur.reglages.camera' => 'Caméra',
 			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.',
 			'tuteur.reglages.cameraAutoriser' => ({required Object prenom}) => 'Autoriser la caméra de ${prenom}',
 			'tuteur.reglages.cameraRetirer' => ({required Object prenom}) => 'Retirer la caméra de ${prenom}',
@@ -14244,14 +14268,14 @@ extension on Traductions {
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
 			'tc.bibliotheque.classe.titre' => 'Choisir un support',
 			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
 			'tc.coran.modes.verset' => 'Lecture agrandie',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',

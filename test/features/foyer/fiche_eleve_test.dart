@@ -167,6 +167,12 @@ Future<void> _ouvrirFicheA1(WidgetTester tester) async {
   await _toucher(tester, find.text('Eleve A1'));
 }
 
+/// Touche la photo puis « Choisir une photo » dans la feuille de choix.
+Future<void> _choisirPhoto(WidgetTester tester) async {
+  await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+  await _toucher(tester, find.byKey(EditeurPhotoEleve.sourceChoisirKey));
+}
+
 /// Depuis la fiche, la ligne d'une sous-page.
 Future<void> _ouvrirLigne(WidgetTester tester, String libelle) =>
     _toucher(tester, find.text(libelle));
@@ -421,7 +427,7 @@ void main() {
       final (_, FauxServiceAvatar avatar, _AppairagePilote appairage) =
           await monterPhoto(tester);
 
-      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _choisirPhoto(tester);
       expect(find.byKey(EditeurPhotoEleve.apercuKey), findsOneWidget);
       expect(find.text(t.ficheEleve.informations.apercuTitre), findsOneWidget);
       // Rien n'est parti avant le geste d'envoi.
@@ -443,11 +449,50 @@ void main() {
       expect(find.text(t.ficheEleve.informations.changer), findsOneWidget);
     });
 
+    testWidgets('la photo ouvre trois choix et la mention ; prendre est '
+        'indisponible et dit pourquoi', (WidgetTester tester) async {
+      final (_, FauxServiceAvatar avatar, _) = await monterPhoto(tester);
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      expect(
+        find.text(t.ficheEleve.informations.sourcePrendre),
+        findsOneWidget,
+      );
+      expect(find.byKey(EditeurPhotoEleve.sourceChoisirKey), findsOneWidget);
+      expect(find.byKey(EditeurPhotoEleve.sourceAnnulerKey), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.informations.sourceMention),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.ficheEleve.informations.sourcePrendreIndisponible),
+        findsOneWidget,
+      );
+      // « Prendre une photo » ne se presse pas : la feuille reste ouverte.
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.sourcePrendreKey));
+      expect(find.byKey(EditeurPhotoEleve.sourceMentionKey), findsOneWidget);
+      expect(find.byKey(EditeurPhotoEleve.apercuKey), findsNothing);
+      expect(avatar.depots, isEmpty);
+    });
+
+    testWidgets('annuler la feuille : elle se ferme, rien ne change', (
+      WidgetTester tester,
+    ) async {
+      final (_, FauxServiceAvatar avatar, _AppairagePilote appairage) =
+          await monterPhoto(tester);
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _toucher(tester, find.byKey(EditeurPhotoEleve.sourceAnnulerKey));
+      expect(find.byKey(EditeurPhotoEleve.sourceMentionKey), findsNothing);
+      expect(find.byKey(EditeurPhotoEleve.apercuKey), findsNothing);
+      expect(find.text(t.ficheEleve.informations.photoAucune), findsOneWidget);
+      expect(avatar.depots, isEmpty);
+      expect(appairage.reglagesEcrits, isEmpty);
+    });
+
     testWidgets('annuler l apercu : rien n est envoye', (
       WidgetTester tester,
     ) async {
       final (_, FauxServiceAvatar avatar, _) = await monterPhoto(tester);
-      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _choisirPhoto(tester);
       await _toucher(tester, find.text(t.ficheEleve.informations.annuler));
       expect(find.byKey(EditeurPhotoEleve.apercuKey), findsNothing);
       expect(avatar.depots, isEmpty);
@@ -463,7 +508,7 @@ void main() {
           nomFichier: 'lourde.jpg',
         ),
       );
-      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _choisirPhoto(tester);
       expect(
         find.text(t.ficheEleve.informations.tropLourde(taille: '4')),
         findsOneWidget,
@@ -479,7 +524,7 @@ void main() {
           await monterPhoto(tester);
       avatar.erreurAJeter = Exception('reseau');
 
-      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _choisirPhoto(tester);
       await _toucher(tester, find.byKey(EditeurPhotoEleve.envoyerKey));
       expect(find.text(t.ficheEleve.informations.echecEnvoi), findsOneWidget);
       expect(appairage.reglagesEcrits, isEmpty);
@@ -498,7 +543,7 @@ void main() {
           await monterPhoto(tester);
       appairage.erreurAJeter = Exception('refus');
 
-      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _choisirPhoto(tester);
       await _toucher(tester, find.byKey(EditeurPhotoEleve.envoyerKey));
       expect(
         find.text(t.ficheEleve.informations.echecEnregistrement),
@@ -525,7 +570,7 @@ void main() {
         tester,
         horsLigne: true,
       );
-      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _choisirPhoto(tester);
       expect(find.text(t.ficheEleve.informations.horsLigne), findsOneWidget);
       await tester.tap(find.byKey(EditeurPhotoEleve.envoyerKey));
       await stabiliser(tester);
@@ -859,7 +904,7 @@ void main() {
           _conteneur(tester).read(serviceAvatarProvider) as FauxServiceAvatar;
       await _ouvrirFicheA1(tester);
       await _ouvrirLigne(tester, t.ficheEleve.lignes.informations);
-      await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
+      await _choisirPhoto(tester);
 
       expect(
         find.text(t.ficheEleve.informations.selectionEchec),

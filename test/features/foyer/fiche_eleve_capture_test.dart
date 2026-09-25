@@ -233,6 +233,12 @@ void main() {
           await _monter(tester, pages['informations']!, mode: mode);
           await tester.tap(find.byKey(EditeurPhotoEleve.choisirKey));
           await stabiliser(tester);
+          // LT-11 : la feuille de choix (prendre, choisir, annuler, mention).
+          debugPrint(
+            'PNG ${await capturer(tester, 'fiche_informations_source_${format.$1}_${mode.name}')}',
+          );
+          await tester.tap(find.byKey(EditeurPhotoEleve.sourceChoisirKey));
+          await stabiliser(tester);
           debugPrint(
             'PNG ${await capturer(tester, 'fiche_informations_apercu_${format.$1}_${mode.name}')}',
           );

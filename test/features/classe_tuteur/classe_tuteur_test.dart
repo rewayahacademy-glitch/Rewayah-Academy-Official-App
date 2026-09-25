@@ -43,7 +43,9 @@ import 'package:rewayah_academy/features/classe_tuteur/progression_classe_page.d
 import 'package:rewayah_academy/features/classe_tuteur/ressources_classe_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/travail_classe_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
+import 'package:rewayah_academy/features/tc_catalogue/bibliotheque_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
+import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/entree_observation_page.dart';
 
 import '../../fixtures/tuteur/faux_observation.dart';
@@ -295,6 +297,63 @@ void main() {
       await _retour(tester);
       expect(_lieu(routeur), Routes.tcBibliotheque);
       expect(find.byType(DetailRessourcePage), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('Bibliotheque -> detail -> retour : revient a la liste, '
+        'groupe compris (LT-11, m5)', (WidgetTester tester) async {
+      final String liste = RoutesTcB.avecGroupe(_classe);
+      // Publiee (une version courante) : sans elle, la carte ne s'ouvre pas.
+      final LibraryResource brute = ressourceFictive('r1', 'Support fictif 1');
+      final GoRouter routeur = await _monter(
+        tester,
+        depart: liste,
+        catalogue: FauxCatalogueClasse(<LibraryResource>[
+          LibraryResource(
+            id: brute.id,
+            title: brute.title,
+            shortTitle: brute.shortTitle,
+            resourceType: brute.resourceType,
+            language: brute.language,
+            category: brute.category,
+            accessPolicy: brute.accessPolicy,
+            offlinePolicy: brute.offlinePolicy,
+            currentVersionId: 'v1',
+          ),
+        ]),
+      );
+      expect(find.byType(BibliothequePage), findsOneWidget);
+
+      await _toucher(tester, find.text('Support fictif 1').first);
+      expect(_lieu(routeur), startsWith('${Routes.tcBibliotheque}/r1?retour='));
+      expect(find.byType(DetailRessourcePage), findsOneWidget);
+
+      await _retour(tester);
+      expect(_lieu(routeur), liste);
+      expect(find.byType(BibliothequePage), findsOneWidget);
+      expect(find.byType(DetailRessourcePage), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('detail ouvert avec ?retour= venant d ailleurs : le retour y '
+        'mene', (WidgetTester tester) async {
+      final String ailleurs =
+          '${Routes.classeSousPage(_classe, 'ressources')}?eleve=$_a1';
+      final GoRouter routeur = await _monter(
+        tester,
+        depart: Uri(
+          path: '${Routes.tcBibliotheque}/r1',
+          queryParameters: <String, String>{'retour': ailleurs},
+        ).toString(),
+        catalogue: FauxCatalogueClasse(<LibraryResource>[
+          ressourceFictive('r1', 'Support fictif 1'),
+        ]),
+      );
+      expect(find.byType(DetailRessourcePage), findsOneWidget);
+
+      await _retour(tester);
+      expect(_lieu(routeur), ailleurs);
+      expect(find.byType(RessourcesClassePage), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

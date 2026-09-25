@@ -5,11 +5,14 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/choice_card_group.dart';
 
 /// La photo d'un profil eleve, par URL signee, avec repli sur les initiales.
 ///
@@ -93,6 +96,18 @@ class EditeurPhotoEleve extends ConsumerStatefulWidget {
   /// L'apercu de la photo choisie.
   static const Key apercuKey = Key('photoEleve.apercu');
 
+  /// L'option « Prendre une photo » de la feuille de choix.
+  static const Key sourcePrendreKey = Key('photoEleve.source.prendre');
+
+  /// L'option « Choisir une photo » de la feuille de choix.
+  static const Key sourceChoisirKey = Key('photoEleve.source.choisir');
+
+  /// L'action « Annuler » de la feuille de choix.
+  static const Key sourceAnnulerKey = Key('photoEleve.source.annuler');
+
+  /// La mention « Ce n'est pas un document d'identite ».
+  static const Key sourceMentionKey = Key('photoEleve.source.mention');
+
   @override
   ConsumerState<EditeurPhotoEleve> createState() => _EditeurPhotoEleveState();
 }
@@ -106,7 +121,67 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
 
   ProfilEleveFoyer get _profil => widget.profil;
 
+  /// La feuille « Prendre une photo » / « Choisir une photo » / « Annuler ».
+  ///
+  /// Rend [_sourceGalerie] quand une photo existante est demandee, `null` a
+  /// l'annulation. « Prendre une photo » est visible mais indisponible : le
+  /// seul paquet de selection present (`file_picker`) n'ouvre pas l'appareil
+  /// photo, et un bouton qui ne ferait rien est interdit (K3). Demande de
+  /// paquet ecrite dans `pilotage-git/demandes/T.md` (LT-11).
+  Future<String?> _demanderSource() => AppBottomSheet.ouvrir<String>(
+    context,
+    titre: t.ficheEleve.informations.sourceTitre,
+    constructeur: (BuildContext contexte) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ChoiceCardGroup(
+          autoriserSaisieLibre: false,
+          options: <OptionChoix>[
+            OptionChoix(
+              cle: EditeurPhotoEleve.sourcePrendreKey,
+              valeur: 'prendre',
+              libelle: t.ficheEleve.informations.sourcePrendre,
+              icone: AppIcons.camera,
+              disponible: false,
+              raisonIndisponible:
+                  t.ficheEleve.informations.sourcePrendreIndisponible,
+            ),
+            OptionChoix(
+              cle: EditeurPhotoEleve.sourceChoisirKey,
+              valeur: _sourceGalerie,
+              libelle: t.ficheEleve.informations.sourceChoisir,
+              description: t.ficheEleve.informations.sourceChoisirDetail,
+              icone: AppIcons.image,
+            ),
+          ],
+          onChange: (ReponseChoix reponse) =>
+              Navigator.of(contexte).pop(reponse.valeurs.firstOrNull),
+        ),
+        Text(
+          t.ficheEleve.informations.sourceMention,
+          key: EditeurPhotoEleve.sourceMentionKey,
+          style: AppPalette.of(contexte).inkMuted.applyTo(
+            Theme.of(contexte).textTheme.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+      ],
+    ),
+    actions: (BuildContext contexte) => ActionPrincipale(
+      key: EditeurPhotoEleve.sourceAnnulerKey,
+      libelle: t.commun.annuler,
+      niveau: NiveauAction.tertiaire,
+      onPress: () => Navigator.of(contexte).pop(),
+    ),
+  );
+
+  static const String _sourceGalerie = 'galerie';
+
   Future<void> _choisir() async {
+    final String? source = await _demanderSource();
+    if (!mounted || source != _sourceGalerie) {
+      return;
+    }
     setState(() {
       _refus = null;
       _succes = false;
