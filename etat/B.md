@@ -313,3 +313,9 @@ Reste : providers encore adosses a Supabase sur ecrans tuteur (actions ou pages 
 `ui/tuteur-v1-demo` @ `194c6eb`, poussee. Ajouts : `lib/features/demo/presence_demo.dart` (`servicePresenceProvider` surcharge : seances fictives passees = finalisee, a venir = planifiee, autre id = null/inconnu) -> Accueil et verification prealable sans serveur ; `acceptationsProvider` -> liste vide (Compte, informations legales). Tests demo : 11. Suite complete verte (+2688 ~568, code 0, 428 s), analyze propre, format applique.
 
 Reste : actions encore adossees a Supabase (serviceAppairageProvider, portStatutCodeAppairageProvider, serviceAuthProvider, services parcours_offres, reglages_enfant, avatarUrlProvider), ports capacites consentements/identite/notifications/paiements/progression/resume/support (Indisponible). Controle visuel sur l'apercu (`?demo=tuteur`) a faire.
+
+## P2-07 entree et preuves : FAIT (25/09, session B-2026-09-25-coord)
+
+`ui/tuteur-v1-demo` @ `bb51374`, poussee. `lib/features/demo/racine_demonstrable.dart` : `RacineDemonstrable` (racine reelle de `main.dart`) fournit hors production un lanceur ; l'entree « Essayer la démonstration » (`/bienvenue` sous « J'ai déjà un compte », et sous la carte de `/connexion`) bascule la portee sur `surchargesDemoTuteur` + repere. Production : aucun lanceur, aucune entree. Test `test/features/demo/entree_demonstration_test.dart` (parcours Accueil/Foyer/Historique/Compte avec repere, absence en production). 20 captures 390x844/1440x900 clair/sombre dans `05_recette/demo/captures`. Suite complete sous verrou verte (+2691 ~572, code 0, 471 s, `05_recette/demo/suite_entree.log`), analyze --fatal-infos propre. Rapport : `05_recette/demo/RAPPORT.md`.
+
+Limites : repere `Banner` d'angle discret sur les captures ; actions encore adossees a Supabase non simulees ; controle visuel sur l'apercu deploye non fait.
