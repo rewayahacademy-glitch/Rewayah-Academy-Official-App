@@ -17,6 +17,8 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
+import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
+import 'package:rewayah_academy/features/demo/notifications_demo.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
@@ -157,6 +159,75 @@ void main() {
       await stabiliser(tester);
       expect(lieu(routeur), Routes.tuteurSuivi);
       expect(find.byType(SuiviFoyerPage), findsOneWidget);
+    });
+
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1440, 900),
+    ]) {
+      testWidgets('demonstration (LT-12, ${taille.width.toInt()}) : « Non '
+          'lus » TOUCHE ne garde que les non lues ; la cible retiree dit sa '
+          'phrase sans naviguer', (WidgetTester tester) async {
+        final GoRouter routeur = await _monter(
+          tester,
+          port: const NotificationsDemo(),
+          taille: taille,
+        );
+        await _toucherCloche(tester);
+        final Finder retiree = find.byKey(
+          const ValueKey<String>(
+            'notification-${NotificationsDemo.idCibleRetiree}',
+          ),
+        );
+        expect(find.byType(LigneNotification), findsNWidgets(4));
+
+        await tester.tap(find.byKey(NotificationsPage.filtreKey(nonLus: true)));
+        await stabiliser(tester);
+        final List<LigneNotification> vues = tester
+            .widgetList<LigneNotification>(find.byType(LigneNotification))
+            .toList();
+        expect(vues, hasLength(2));
+        expect(
+          vues.every((LigneNotification l) => !l.notification.lue),
+          isTrue,
+        );
+        expect(retiree, findsNothing);
+
+        await tester.tap(
+          find.byKey(NotificationsPage.filtreKey(nonLus: false)),
+        );
+        await stabiliser(tester);
+        expect(find.byType(LigneNotification), findsNWidgets(4));
+        expect(find.text(t.notifications.cibleRetiree), findsNothing);
+
+        await tester.tap(retiree);
+        await stabiliser(tester);
+        expect(find.text(t.notifications.cibleRetiree), findsOneWidget);
+        expect(lieu(routeur), Routes.tuteurNotifications);
+        expect(find.byType(NotificationsPage), findsOneWidget);
+      });
+    }
+
+    testWidgets('production : pas de filtre', (WidgetTester tester) async {
+      await _monter(tester);
+      await _toucherCloche(tester);
+      expect(find.text(t.notifications.indisponibleTitre), findsOneWidget);
+      expect(
+        find.byKey(NotificationsPage.filtreKey(nonLus: true)),
+        findsNothing,
+      );
+      expect(find.text(t.notifications.nonLus), findsNothing);
+    });
+
+    test('la demonstration remplace le port indisponible', () async {
+      final ProviderContainer c = ProviderContainer(
+        overrides: surchargesDemoTuteur(environnement: 'preview'),
+      );
+      addTearDown(c.dispose);
+      final List<NotificationTuteur> l = await c
+          .read(portNotificationsProvider)
+          .liste();
+      expect(l.where((NotificationTuteur n) => n.cibleRetiree), hasLength(1));
     });
 
     testWidgets('vide : aucune notification, sans bouton', (

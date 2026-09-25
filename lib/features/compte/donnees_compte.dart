@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
@@ -36,6 +37,12 @@ final FutureProvider<List<AccesBeneficiaire>> accesFoyerProvider =
 final FutureProvider<List<PaiementFoyer>> paiementsFoyerProvider =
     FutureProvider<List<PaiementFoyer>>(
       (Ref ref) => ref.watch(portPaiementsFoyerProvider).historique(),
+    );
+
+/// Un paiement precis (LT-12), indisponible lui aussi sans DB-CPT-03.
+final FutureProviderFamily<PaiementFoyer?, String> paiementFoyerProvider =
+    FutureProvider.family<PaiementFoyer?, String>(
+      (Ref ref, String id) => ref.watch(portPaiementsFoyerProvider).detail(id),
     );
 
 /// Le canal d'aide de l'academie (indisponible tant que DB-CPT-07 manque).

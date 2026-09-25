@@ -2129,6 +2129,18 @@ class Traductions$notifications$fr {
 
 	/// fr: '{titre}, le {date} à {heure}'
 	String ligne({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}';
+
+	/// fr: '{ligne}, non lue'
+	String nonLue({required Object ligne}) => '${ligne}, non lue';
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'Non lus'
+	String get nonLus => 'Non lus';
+
+	/// fr: 'Ce contenu n'est plus disponible'
+	String get cibleRetiree => 'Ce contenu n\'est plus disponible';
 }
 
 // Path: eleve
@@ -6264,6 +6276,9 @@ class Traductions$historique$seance$fr {
 
 	/// fr: 'Cette séance ne figure pas dans l'historique de votre foyer.'
 	String get introuvablePhrase => 'Cette séance ne figure pas dans l\'historique de votre foyer.';
+
+	/// fr: 'Voir les mouvements associés'
+	String get voirMouvements => 'Voir les mouvements associés';
 }
 
 // Path: historique.observation
@@ -9191,6 +9206,9 @@ class Traductions$compte$tuteur$pagePaiements$fr {
 
 	/// fr: 'Justificatif disponible'
 	String get justificatif => 'Justificatif disponible';
+
+	late final Traductions$compte$tuteur$pagePaiements$statuts$fr statuts = Traductions$compte$tuteur$pagePaiements$statuts$fr.internal(_root);
+	late final Traductions$compte$tuteur$pagePaiements$detail$fr detail = Traductions$compte$tuteur$pagePaiements$detail$fr.internal(_root);
 }
 
 // Path: compte.tuteur.pagePreferences
@@ -11512,6 +11530,51 @@ class Traductions$tc$parcours$postCours$fr {
 	String get envoye => 'Cours clôturé.';
 }
 
+// Path: compte.tuteur.pagePaiements.statuts
+class Traductions$compte$tuteur$pagePaiements$statuts$fr {
+	Traductions$compte$tuteur$pagePaiements$statuts$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réglé'
+	String get regle => 'Réglé';
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'Statut non précisé'
+	String get inconnu => 'Statut non précisé';
+}
+
+// Path: compte.tuteur.pagePaiements.detail
+class Traductions$compte$tuteur$pagePaiements$detail$fr {
+	Traductions$compte$tuteur$pagePaiements$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Détail du paiement'
+	String get titre => 'Détail du paiement';
+
+	/// fr: 'Montant'
+	String get montant => 'Montant';
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Paiement introuvable'
+	String get introuvable => 'Paiement introuvable';
+
+	/// fr: 'Aucun paiement de votre foyer ne correspond à cette adresse.'
+	String get introuvablePhrase => 'Aucun paiement de votre foyer ne correspond à cette adresse.';
+}
+
 // Path: tc.outils.dock.position
 class Traductions$tc$outils$dock$position$fr {
 	Traductions$tc$outils$dock$position$fr.internal(this._root);
@@ -13469,6 +13532,15 @@ extension on Traductions {
 			'compte.tuteur.pagePaiements.aucunePhrase' => 'Les paiements enregistrés par l\'académie s\'afficheront ici.',
 			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Paiement du ${date}',
 			'compte.tuteur.pagePaiements.justificatif' => 'Justificatif disponible',
+			'compte.tuteur.pagePaiements.statuts.regle' => 'Réglé',
+			'compte.tuteur.pagePaiements.statuts.enAttente' => 'En attente',
+			'compte.tuteur.pagePaiements.statuts.inconnu' => 'Statut non précisé',
+			'compte.tuteur.pagePaiements.detail.titre' => 'Détail du paiement',
+			'compte.tuteur.pagePaiements.detail.montant' => 'Montant',
+			'compte.tuteur.pagePaiements.detail.date' => 'Date',
+			'compte.tuteur.pagePaiements.detail.statut' => 'Statut',
+			'compte.tuteur.pagePaiements.detail.introuvable' => 'Paiement introuvable',
+			'compte.tuteur.pagePaiements.detail.introuvablePhrase' => 'Aucun paiement de votre foyer ne correspond à cette adresse.',
 			'compte.tuteur.pagePreferences.titre' => 'Préférences',
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
@@ -13587,6 +13659,7 @@ extension on Traductions {
 			'historique.seance.annulePhrase' => 'La séance a été annulée.',
 			'historique.seance.introuvableTitre' => 'Séance introuvable',
 			'historique.seance.introuvablePhrase' => 'Cette séance ne figure pas dans l\'historique de votre foyer.',
+			'historique.seance.voirMouvements' => 'Voir les mouvements associés',
 			'historique.observation.titreSansClasse' => ({required Object date}) => 'Observations du ${date}',
 			'historique.observation.blocResume' => 'Résumé',
 			'historique.observation.blocVisites' => 'Visites',
@@ -13606,6 +13679,10 @@ extension on Traductions {
 			'notifications.videTitre' => 'Aucune notification',
 			'notifications.videPhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici.',
 			'notifications.ligne' => ({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}',
+			'notifications.nonLue' => ({required Object ligne}) => '${ligne}, non lue',
+			'notifications.tous' => 'Tous',
+			'notifications.nonLus' => 'Non lus',
+			'notifications.cibleRetiree' => 'Ce contenu n\'est plus disponible',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
 			'eleve.accueil.coranDetail' => 'À lire quand tu veux',
@@ -13740,6 +13817,8 @@ extension on Traductions {
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
@@ -13754,8 +13833,6 @@ extension on Traductions {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
 			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
@@ -14254,6 +14331,8 @@ extension on Traductions {
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.type.image' => 'Image',
 			'tc.bibliotheque.type.lecon' => 'Leçon',
 			'tc.bibliotheque.detail.titre' => 'Support',
@@ -14268,8 +14347,6 @@ extension on Traductions {
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
 			'tc.bibliotheque.classe.titre' => 'Choisir un support',

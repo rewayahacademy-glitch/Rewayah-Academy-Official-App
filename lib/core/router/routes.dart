@@ -268,6 +268,13 @@ abstract final class Routes {
   static const String tuteurCompteRechargeResultat =
       '/tuteur/compte/soldes/recharge/resultat';
 
+  /// Les paiements et recus du foyer (DB-CPT-03).
+  static const String tuteurComptePaiements = '/tuteur/compte/paiements';
+
+  /// Le detail d'un paiement (LT-12, identifiant encode dans le segment).
+  static String paiementPour(String paiementId) =>
+      '$tuteurComptePaiements/${Uri.encodeComponent(paiementId)}';
+
   /// La page des acces du foyer (S09, LT-4 puis LT-9).
   static const String tuteurCompteAcces = '/tuteur/compte/acces';
 

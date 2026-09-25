@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/acces_foyer_depuis_eleves.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
+import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
@@ -46,6 +47,44 @@ class FauxServiceAcceptations implements ServiceAcceptations {
   @override
   Future<List<Acceptation>> acceptations(String profilId) async => rendues;
 }
+
+/// Des paiements en memoire (LT-12) : un regle, un au statut inconnu.
+class FauxPaiements implements PortPaiementsFoyer {
+  /// Cree le faux.
+  FauxPaiements({List<PaiementFoyer>? rendus})
+    : rendus = rendus ?? paiementsFictifs;
+
+  /// Ce que la lecture rend.
+  final List<PaiementFoyer> rendus;
+
+  @override
+  Future<List<PaiementFoyer>> historique() async => rendus;
+
+  @override
+  Future<PaiementFoyer?> detail(String id) async =>
+      rendus.where((PaiementFoyer p) => p.id == id).firstOrNull;
+}
+
+/// Deux paiements fictifs : `p-regle` (regle, justificatif) et `p-inconnu`
+/// (code de statut que l'application ne connait pas).
+final List<PaiementFoyer> paiementsFictifs = <PaiementFoyer>[
+  PaiementFoyer(
+    id: 'p-regle',
+    montantMineur: 123450,
+    devise: 'EUR',
+    statutServeur: 'demo_regle',
+    date: DateTime.utc(2026, 9, 12, 10),
+    justificatifDisponible: true,
+  ),
+  PaiementFoyer(
+    id: 'p-inconnu',
+    montantMineur: 4000,
+    devise: 'EUR',
+    statutServeur: 'payment_status_brut',
+    date: DateTime.utc(2026, 8, 3, 10),
+    justificatifDisponible: false,
+  ),
+];
 
 /// Une identite dont la lecture n'aboutit jamais (etat de chargement).
 class IdentiteEnAttente implements PortIdentiteTitulaire {

@@ -2077,7 +2077,20 @@
         "aucunTitre": "Aucun paiement enregistré",
         "aucunePhrase": "Les paiements enregistrés par l'académie s'afficheront ici.",
         "paiementDu": "Paiement du {date}",
-        "justificatif": "Justificatif disponible"
+        "justificatif": "Justificatif disponible",
+        "statuts": {
+          "regle": "Réglé",
+          "enAttente": "En attente",
+          "inconnu": "Statut non précisé"
+        },
+        "detail": {
+          "titre": "Détail du paiement",
+          "montant": "Montant",
+          "date": "Date",
+          "statut": "Statut",
+          "introuvable": "Paiement introuvable",
+          "introuvablePhrase": "Aucun paiement de votre foyer ne correspond à cette adresse."
+        }
       },
       "pagePreferences": {
         "titre": "Préférences",
@@ -2211,7 +2224,8 @@
       "nonTenuPhrase": "La séance n'a pas eu lieu : ce n'est pas le fait de l'élève.",
       "annulePhrase": "La séance a été annulée.",
       "introuvableTitre": "Séance introuvable",
-      "introuvablePhrase": "Cette séance ne figure pas dans l'historique de votre foyer."
+      "introuvablePhrase": "Cette séance ne figure pas dans l'historique de votre foyer.",
+      "voirMouvements": "Voir les mouvements associés"
     },
     "observation": {
       "titreSansClasse": "Observations du {date}",
@@ -2235,7 +2249,11 @@
     "indisponiblePhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici dès qu'ils seront ouverts.",
     "videTitre": "Aucune notification",
     "videPhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici.",
-    "ligne": "{titre}, le {date} à {heure}"
+    "ligne": "{titre}, le {date} à {heure}",
+    "nonLue": "{ligne}, non lue",
+    "tous": "Tous",
+    "nonLus": "Non lus",
+    "cibleRetiree": "Ce contenu n'est plus disponible"
   },
   "eleve": {
     "accueil": {

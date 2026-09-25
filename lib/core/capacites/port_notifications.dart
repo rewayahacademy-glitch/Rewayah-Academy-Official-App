@@ -15,7 +15,16 @@ class NotificationTuteur {
     required this.titre,
     required this.date,
     String? destination,
+    this.lue = false,
+    this.cibleRetiree = false,
   }) : destination = cheminRetourValide(destination);
+
+  /// Vrai quand le serveur la dit deja lue.
+  final bool lue;
+
+  /// Vrai quand le serveur dit que sa cible n'existe plus : l'ecran le dit
+  /// au toucher, sans naviguer (LT-12).
+  final bool cibleRetiree;
 
   /// Identifiant.
   final String id;

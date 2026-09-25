@@ -689,6 +689,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     pageBuilder: glissee(
                       (GoRouterState _) => const PaiementsComptePage(),
                     ),
+                    routes: <RouteBase>[
+                      // LT-12 : le detail d'un paiement (`?retour=` filtre).
+                      GoRoute(
+                        path: ':paiementId',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => DetailPaiementPage(
+                            paiementId: _parametre(etat, 'paiementId'),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'soldes',

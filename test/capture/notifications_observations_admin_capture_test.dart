@@ -53,6 +53,16 @@ List<NotificationTuteur> _notifications() {
       titre: 'La classe An-Nour commence dans 1 heure',
       date: jour(1, 17, 0),
       destination: Routes.tuteurAccueil,
+      lue: true,
+    ),
+    // LT-12 : une notification dont la cible a ete retiree.
+    NotificationTuteur(
+      id: 'n4',
+      titre: 'Nouvelle ressource dans la classe An-Nour',
+      date: jour(2, 10, 0),
+      destination: Routes.tuteurSuivi,
+      lue: true,
+      cibleRetiree: true,
     ),
     NotificationTuteur(
       id: 'n3',

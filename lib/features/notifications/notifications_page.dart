@@ -13,6 +13,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
@@ -33,15 +34,42 @@ import '../suivi_foyer/filtres_historique.dart';
 /// sans point. La liste, le vide et l'echec ne se voient qu'en simulation.
 /// Pas de route de detail (mapping, ligne 9) : une notification ouvre sa
 /// destination interne, deja validee par le port, ou rien.
-class NotificationsPage extends ConsumerWidget {
+///
+/// LT-12 : filtre « Tous / Non lus » des que la liste se lit (jamais sur
+/// l'etat indisponible) ; une notification dont la cible n'existe plus dit
+/// « Ce contenu n'est plus disponible » au toucher, sans naviguer.
+class NotificationsPage extends ConsumerStatefulWidget {
   /// Cree la page.
   const NotificationsPage({super.key});
 
+  /// La cle d'un filtre : `false` = tous, `true` = non lus.
+  static Key filtreKey({required bool nonLus}) =>
+      Key('notifications.filtre.${nonLus ? 'nonLus' : 'tous'}');
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
+}
+
+class _NotificationsPageState extends ConsumerState<NotificationsPage> {
+  bool _nonLus = false;
+  final Set<String> _retireesTouchees = <String>{};
+
+  VoidCallback? _action(NotificationTuteur n) {
+    if (n.cibleRetiree) {
+      return () => setState(() => _retireesTouchees.add(n.id));
+    }
+    return switch (n.destination) {
+      final String chemin => () => GoRouter.of(context).go(chemin),
+      null => null,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<List<NotificationTuteur>> valeur = ref.watch(
       notificationsTuteurProvider,
     );
+    final bool lisible = valeur.hasValue && !valeur.hasError;
     return PageShell(
       titre: t.notifications.titre,
       onRetour: () => GoRouter.of(context).go(Routes.tuteurAccueil),
@@ -53,38 +81,77 @@ class NotificationsPage extends ConsumerWidget {
                 phrase: t.notifications.indisponiblePhrase,
                 dependance: (valeur.error! as CapaciteIndisponible).dependance,
               )
-            : BlocAsynchrone<List<NotificationTuteur>>(
-                valeur: valeur,
-                squelette: const Skeleton.liste(lignes: 4),
-                onReessayer: () => ref.invalidate(notificationsTuteurProvider),
-                vide: EtatSysteme(
-                  nature: NatureEtat.aucunResultat,
-                  titre: t.notifications.videTitre,
-                  phrase: t.notifications.videPhrase,
-                ),
-                construire: (List<NotificationTuteur> liste) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    CarteLignes(
-                      lignes: <Widget>[
-                        for (final NotificationTuteur n in liste)
-                          LigneNotification(
-                            key: ValueKey<String>('notification-${n.id}'),
-                            notification: n,
-                            onPress: switch (n.destination) {
-                              final String chemin => () => GoRouter.of(
-                                context,
-                              ).go(chemin),
-                              null => null,
-                            },
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (lisible && valeur.requireValue.isNotEmpty) ...<Widget>[
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: <Widget>[
+                        for (final bool nonLus in <bool>[false, true])
+                          FilterPill(
+                            key: NotificationsPage.filtreKey(nonLus: nonLus),
+                            libelle: nonLus
+                                ? t.notifications.nonLus
+                                : t.notifications.tous,
+                            retenue: _nonLus == nonLus,
+                            onPress: () => setState(() => _nonLus = nonLus),
                           ),
                       ],
                     ),
-                    Ecart.vMd,
-                    NoteHistorique(t.historique.fuseauListe),
+                    Ecart.vLg,
                   ],
-                ),
+                  BlocAsynchrone<List<NotificationTuteur>>(
+                    valeur: valeur,
+                    squelette: const Skeleton.liste(lignes: 4),
+                    onReessayer: () =>
+                        ref.invalidate(notificationsTuteurProvider),
+                    vide: EtatSysteme(
+                      nature: NatureEtat.aucunResultat,
+                      titre: t.notifications.videTitre,
+                      phrase: t.notifications.videPhrase,
+                    ),
+                    construire: (List<NotificationTuteur> liste) {
+                      final List<NotificationTuteur> vues = _nonLus
+                          ? liste
+                                .where((NotificationTuteur n) => !n.lue)
+                                .toList()
+                          : liste;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          if (vues.isEmpty)
+                            EtatSysteme(
+                              nature: NatureEtat.aucunResultat,
+                              titre: t.notifications.videTitre,
+                              phrase: t.notifications.videPhrase,
+                            )
+                          else
+                            CarteLignes(
+                              lignes: <Widget>[
+                                for (final NotificationTuteur n in vues)
+                                  LigneNotification(
+                                    key: ValueKey<String>(
+                                      'notification-${n.id}',
+                                    ),
+                                    notification: n,
+                                    onPress: _action(n),
+                                    note: _retireesTouchees.contains(n.id)
+                                        ? t.notifications.cibleRetiree
+                                        : null,
+                                  ),
+                              ],
+                            ),
+                          Ecart.vMd,
+                          NoteHistorique(t.historique.fuseauListe),
+                        ],
+                      );
+                    },
+                  ),
+                ],
               ),
       ),
     );
@@ -105,6 +172,7 @@ class LigneNotification extends StatelessWidget {
   const LigneNotification({
     required this.notification,
     required this.onPress,
+    this.note,
     super.key,
   });
 
@@ -114,14 +182,22 @@ class LigneNotification extends StatelessWidget {
   /// L'ouverture de sa destination, ou `null`.
   final VoidCallback? onPress;
 
+  /// Une phrase sous le titre (« Ce contenu n'est plus disponible »), ou
+  /// `null`.
+  final String? note;
+
   @override
   Widget build(BuildContext context) {
     final DateTime quand = notification.date.toLocal();
-    final String semantique = t.notifications.ligne(
+    final String ligne = t.notifications.ligne(
       titre: notification.titre,
       date: dateLongueHistorique(quand),
       heure: heureMinute(quand),
     );
+    final String lue = notification.lue
+        ? ligne
+        : t.notifications.nonLue(ligne: ligne);
+    final String semantique = note == null ? lue : '$lue. $note';
     if (onPress == null) {
       return Semantics(
         label: semantique,
@@ -197,14 +273,29 @@ class LigneNotification extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: Text(
-                      notification.titre,
-                      style: palette.inkStrong.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        // Non lue : le titre en gras, seul signe visuel.
+                        Text(
+                          notification.titre,
+                          style: palette.inkStrong.applyTo(
+                            (notification.lue
+                                    ? textes.bodyMedium
+                                    : textes.titleSmall) ??
+                                const TextStyle(),
+                          ),
+                        ),
+                        if (note case final String phrase) ...<Widget>[
+                          Ecart.vXs,
+                          Text(phrase, style: doux),
+                        ],
+                      ],
                     ),
                   ),
-                  if (onPress != null) ...<Widget>[
+                  if (onPress != null &&
+                      !notification.cibleRetiree) ...<Widget>[
                     Ecart.hXs,
                     IconTheme(
                       data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),

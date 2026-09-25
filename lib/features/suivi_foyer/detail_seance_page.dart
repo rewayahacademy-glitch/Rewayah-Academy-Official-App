@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_finance_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
@@ -13,11 +14,13 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
+import '../compte/mouvements_page.dart' show mouvementsProvider;
 import 'composants_historique.dart';
 import 'donnees_historique.dart';
 import 'filtres_historique.dart';
@@ -43,6 +46,9 @@ class DetailSeancePage extends ConsumerWidget {
 
   /// La seance affichee.
   final String seanceId;
+
+  /// Le lien « Voir les mouvements associes » (LT-12).
+  static const Key voirMouvementsKey = Key('seance.voirMouvements');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -127,6 +133,10 @@ class _Contenu extends ConsumerWidget {
       presenceDuSuiviProvider,
     );
     final List<PresenceParticipant>? presences = presence.value;
+    final AsyncValue<List<MouvementSolde>> mouvements = ref.watch(
+      mouvementsProvider(null),
+    );
+    final bool mouvementsLisibles = mouvements.hasValue && !mouvements.hasError;
     final bool presenceIllisible =
         !presence.isLoading && (presence.hasError || presences == null);
     final LigneSuivi ligne = VueSuiviFoyer.depuis(
@@ -232,6 +242,27 @@ class _Contenu extends ConsumerWidget {
               ),
             ),
         ]),
+        // LT-12 : seulement quand les mouvements se lisent (demonstration) ;
+        // en production (DB-FIN-02) aucun lien. La liste n'a pas de filtre
+        // par seance : le lien mene a la liste simple, retour a la seance.
+        if (mouvementsLisibles) ...<Widget>[
+          Ecart.vLg,
+          LienFleche(
+            key: DetailSeancePage.voirMouvementsKey,
+            libelle: t.historique.seance.voirMouvements,
+            onPress: () => GoRouter.of(context).go(
+              Uri(
+                path: Routes.tuteurCompteMouvements,
+                queryParameters: <String, String>{
+                  'retour': Uri(
+                    path: Routes.seancePour(seance.id),
+                    queryParameters: <String, String>{'eleve': seance.eleveId},
+                  ).toString(),
+                },
+              ).toString(),
+            ),
+          ),
+        ],
         Ecart.vMd,
         NoteHistorique(
           t.historique.fuseauDetail(decalage: decalageUtc(seance.debut)),

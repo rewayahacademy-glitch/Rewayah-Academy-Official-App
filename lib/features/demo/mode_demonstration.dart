@@ -17,6 +17,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/capacites/port_finance_foyer.dart';
+import '../../core/capacites/port_notifications.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
 import '../../core/offres/offre_horaire.dart';
@@ -38,6 +39,7 @@ import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
 import 'catalogue_demo.dart';
 import 'finance_demo.dart';
+import 'notifications_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
 
@@ -116,6 +118,8 @@ List<Override> surchargesDemoTuteur({String? environnement}) {
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
     // Finance fictive (LT-2) : paiement et annulation restent indisponibles.
     portFinanceFoyerProvider.overrideWithValue(const FinanceFoyerDemo()),
+    // Notifications fictives (LT-12), dont une a cible retiree.
+    portNotificationsProvider.overrideWithValue(const NotificationsDemo()),
   ];
 }
 
