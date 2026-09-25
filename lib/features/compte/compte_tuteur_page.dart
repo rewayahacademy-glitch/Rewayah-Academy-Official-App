@@ -128,6 +128,13 @@ class _Hub extends ConsumerWidget {
           valeur: lue == null ? null : valeurConnexion(lue.methodeConnexion),
           onPress: () => aller(Routes.compteTuteurSousPage('securite')),
         ),
+        // Le consentement aux visites d'observation, revu a tout moment
+        // depuis le Compte (A-3) : meme page que l'invite, route dediee.
+        LigneRubrique(
+          icone: AppIcons.controleQualite,
+          libelle: t.consentement.titre,
+          onPress: () => aller(Routes.tuteurCompteConsentements),
+        ),
       ],
     );
 

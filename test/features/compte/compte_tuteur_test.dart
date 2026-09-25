@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/preferences_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
+import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 
@@ -240,6 +241,22 @@ void main() {
           expect(tester.takeException(), isNull);
         });
       }
+    }
+
+    // A-3 : le consentement aux visites se revoit depuis le Compte.
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1440, 900),
+    ]) {
+      testWidgets('${taille.width.toInt()} : la ligne Consentements ouvre '
+          'le consentement aux visites', (WidgetTester tester) async {
+        final GoRouter routeur = await monterCompte(tester, taille: taille);
+        await toucher(tester, _texte(t.consentement.titre));
+
+        expect(lieu(routeur), Routes.tuteurCompteConsentements);
+        expect(find.byType(ConsentementObservationPage), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
     }
 
     testWidgets('« Gérer mon foyer » allume la destination Foyer', (
