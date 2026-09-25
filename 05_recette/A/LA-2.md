@@ -40,16 +40,26 @@ capture seule.
   discret, deconnexion). Aucune carte preselectionnee dans le rendu (exige
   par le mandat, la maquette montre une carte cochee a titre d'exemple) :
   ecart voulu, non corrige.
-- **Genre** vs `onboarding Mble d.png` : disposition conforme, memes elements
-  de coquille.
-- **Recapitulatif** vs `Onboarding mobile 2.png` : disposition conforme
-  (GroupeReglages, « Modifier » par ligne). Ecart observe et documente, non
-  corrige (hors budget de cette tache) : cale sur la hauteur logique deduite
-  de la maquette, le contenu deborde de 58 px (RenderFlex overflow) -- la
-  page recapitulative est plus longue et scrollable que la fenetre de la
-  maquette, cas prevu par `test/capture/LISEZ-MOI.md` (« Pieges connus »,
-  page longue = plusieurs captures ou vue plus haute). La capture 390x844 /
-  1440x900 (fenetre standard, sans ce calage) ne presente pas ce debordement.
+- **Genre** vs `onboarding Mble d.png` : CORRIGE le 25/09 (LA-F, commit lot-a 7b696ee).
+  La premiere planche comparait en fait l'ecran usage : le test montait
+  /inscription/genre en route directe, et exigerEtapesPrecedentes redirigeait
+  vers usage (brouillon vierge). Le test avance maintenant par gestes
+  (`_monterEtape`). Planche regeneree `la2_genre_contre_maquette.png` : vrai
+  ecran genre (« 3 sur 4 », « Vous etes », deux cartes cote a cote avec radio,
+  CTA pilule, deconnexion). Ecarts restants, non corriges : cartes moins
+  hautes et medaillon plus petit que la maquette ; CTA contour (desactive,
+  aucune preselection exigee) au lieu du CTA plein de la maquette ; palette
+  non normative (§1 ter.1).
+- **Recapitulatif** vs `Onboarding mobile 2.png` : CORRIGE le 25/09 (LA-F,
+  commit lot-a 3fde9ce). Le debordement de 58 px venait du calage : la
+  maquette est une planche de TROIS telephones (1806x871), la vue calee a 390
+  de large ne faisait que 188 de haut. Calage refait a 1440 de large (vue
+  1440x694) : plus de debordement, test vert. Ecart restant : la maquette
+  propose un seul lien « Modifier mes reponses », le rendu un « Modifier » par
+  ligne (exige par le mandat, le mandat prime).
+- Les 8 captures identite/genre (390x844 et 1440x900, clair et sombre) sont
+  regenerees par gestes et montrent les vrais ecrans (verifie par lecture
+  de la2_genre_390x844_light.png et la2_identite_1440x900_dark.png).
 - **Identite** : aucune maquette dans les references du lot A (memes
   ecrans deja constates absents pour LA-1) ; pas de planche produite.
 
@@ -58,6 +68,17 @@ capture seule.
 Verifie sur les captures 1440x900 : la carte de choix (usage), les champs
 (identite/genre) et le recapitulatif restent dans une colonne centrale sur
 fond desktop, conforme au manifeste V5/V6 (pas de pleine largeur).
+
+Nuance (LA-F, 25/09) : sur la2_identite_1440x900_dark.png la colonne fait
+environ 1136 px (gouttieres 152 px) et les champs en occupent toute la
+largeur ; la colonne vient de PageShell (lib/core/widgets, fichier COORD).
+A confirmer par COORD contre V5/V6, non corrige.
+
+Tests apres LA-F : flutter test test/capture/la2_inscription_capture_test.dart
+(CAPTURE_DIR + CAPTURE_MAQUETTE_LA2_USAGE/GENRE) : +20 ~2 All tests passed ;
+planche recapitulatif (CAPTURE_MAQUETTE_LA2_RECAP) : +1 All tests passed.
+Reste rouge hors lot A : test/accessibilite/clavier_test.dart (demande A-4,
+fichier COORD).
 
 ## Tests
 
