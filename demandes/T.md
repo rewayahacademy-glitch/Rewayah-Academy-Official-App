@@ -28,3 +28,6 @@ Port `PortFinanceFoyer` (`lib/core/capacites/port_finance_foyer.dart`, commit `4
 ## Demande LT-6 (25/09) : codes de nature et de statut des mouvements (DB-FIN-02)
 
 S07/S08 traduisent `natureServeur` et `statutServeur` depuis une liste FERMÉE (`libelleNature`, `libelleStatut` dans `lib/features/compte/mouvements_page.dart`). Aujourd'hui seuls les codes de la démonstration y figurent (`demo_recharge`, `demo_consommation`, `demo_remise_seance`, `demo_confirme`) ; tout autre code se dit « Mouvement » (nature) ou n'est pas affiché (statut), jamais brut. Besoin : la liste réelle des codes `nature` et `statut` de `wallet_entries` que DB-FIN-02 rendra, avec leur libellé validé, pour compléter la table sans rien inventer.
+## Demande LT-7 (25/09) : devise de la quantité d'une offre de recharge (DB-FIN-03)
+
+`OffreRecharge` porte `prixMineur` + `devise` (prix) et `quantiteMineure` (solde obtenu, distinct du prix, F4), mais **aucune devise pour la quantité**. S04 (`lib/features/compte/recharge_page.dart`, `_OffresProfil`) écrit donc provisoirement la quantité dans la devise de l'offre (commentaire `ponytail:`). Besoin : que DB-FIN-03 rende l'unité/devise du solde de chaque offre (ou confirme qu'elle est toujours celle du prix), pour afficher la quantité sans rien supposer.
