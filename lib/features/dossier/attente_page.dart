@@ -14,16 +14,20 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../connexion/recuperation_page.dart'
+    show IssueEnvoiLien, issueEchecEnvoi;
+import '../inscription/brouillon_inscription.dart';
 
-/// `TUT-00b` : le portail d'attente.
+/// `TUT-00b` : le portail d'attente, refondu (05 section A, sous-paquet 3).
 ///
-/// **Il ne montre jamais l'application derriere un voile.** Un portail qui
-/// laisse deviner ce qu'on rate cree de la frustration ; celui-ci dit ce qui
-/// manque et rien d'autre (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
+/// **Le statut exact et UNE prochaine action**, jamais des cartes empilees ni
+/// plusieurs boutons pleins : les pieces manquantes sont listees en une carte
+/// groupee, sans bouton par ligne, et la seule action pleine ouvre la premiere
+/// d'entre elles. La deconnexion reste toujours possible, en action discrete.
 ///
 /// Quatre etats, calcules en base par `etat_dossier()` et non ici : le portail
 /// doit dire exactement ce que l'administration voit, et deux calculs finissent
@@ -35,31 +39,60 @@ class AttentePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<EtatDossier> etat = ref.watch(etatDossierProvider);
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+
+    // Les getters, jamais le type d'execution : Riverpod 3 relance un provider
+    // en echec tout seul, et l'etat repasse alors par `AsyncLoading` en
+    // conservant `hasError`.
+    final _Prochaine? prochaine = etat.hasValue
+        ? _prochaine(
+              etat.requireValue,
+              adulte:
+                  ref.watch(brouillonInscriptionProvider).usage ==
+                  UsageInscription.moi,
+            )
+        : etat.hasError
+        ? _Prochaine(
+            t.commun.reessayer,
+            () => ref.invalidate(etatDossierProvider),
+          )
+        : null;
 
     return PageShell(
+      titre: t.attente.titreDossier,
+      actions: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (prochaine != null) ...<Widget>[
+            ActionPrincipale(
+              libelle: prochaine.libelle,
+              onPress: prochaine.chemin != null
+                  ? () => routeur?.go(prochaine.chemin!)
+                  : prochaine.geste,
+              fleche: prochaine.chemin != null,
+            ),
+            Ecart.vMd,
+          ],
+          ActionPrincipale(
+            libelle: t.attente.seDeconnecter,
+            onPress: () =>
+                unawaited(ref.read(serviceAuthProvider).deconnexion()),
+            niveau: NiveauAction.tertiaire,
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           const MarquePage(),
-          Ecart.vXxxl,
+          Ecart.vXxl,
           AppCard(
-            // Les getters, jamais le type d'execution : Riverpod 3 relance un
-            // provider en echec tout seul, et l'etat repasse alors par
-            // `AsyncLoading` en conservant `hasError`. Un `switch` sur
-            // `AsyncError<T>` rate donc l'erreur une fois sur deux, selon
-            // l'instant du rendu.
             child: etat.hasValue
-                ? _Contenu(etat: etat.requireValue)
+                ? _Statut(etat: etat.requireValue)
                 : etat.hasError
-                ? _Indisponible(
-                    onReessayer: () => ref.invalidate(etatDossierProvider),
-                  )
+                ? _Illisible(erreur: etat.error!)
                 : const _Patience(),
-          ),
-          Ecart.vXxxl,
-          _Deconnexion(
-            onDeconnexion: () =>
-                unawaited(ref.read(serviceAuthProvider).deconnexion()),
           ),
         ],
       ),
@@ -67,17 +100,98 @@ class AttentePage extends ConsumerWidget {
   }
 }
 
-class _Contenu extends StatelessWidget {
-  const _Contenu({required this.etat});
+/// La prochaine action : une route, ou un geste (reessayer).
+class _Prochaine {
+  const _Prochaine(this.libelle, this.geste) : chemin = null;
+  const _Prochaine.vers(this.libelle, String this.chemin) : geste = null;
+
+  final String libelle;
+  final String? chemin;
+  final VoidCallback? geste;
+}
+
+/// `adulte` : l'inscription vient de « Moi uniquement » (eleve adulte, son
+/// propre tuteur) ; le contrat s'ouvre alors en variante eleve adulte
+/// (`?pour=moi`). Sans brouillon (rechargement), variante responsable legal.
+_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) => switch (etat.etape) {
+  EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
+    _action(etat.manquants.first),
+    _chemin(etat.manquants.first, adulte: adulte),
+  ),
+  EtapeDossier.refuse => _Prochaine.vers(
+    t.attente.corriger,
+    Routes.attentePiece,
+  ),
+  _ => null,
+};
+
+String _libelle(PieceManquante piece) => switch (piece) {
+  PieceManquante.accuse => t.attente.carteAccuse,
+  PieceManquante.contrat => t.attente.signatureContrat,
+  PieceManquante.pieceIdentite => t.attente.pieceIdentite,
+};
+
+String _action(PieceManquante piece) => switch (piece) {
+  PieceManquante.accuse => t.attente.lireLaCarte,
+  PieceManquante.contrat => t.attente.signerLeContrat,
+  PieceManquante.pieceIdentite => t.attente.deposerLaPiece,
+};
+
+String _chemin(PieceManquante piece, {required bool adulte}) =>
+    switch (piece) {
+  PieceManquante.accuse => Routes.attenteAccuse,
+  PieceManquante.contrat =>
+    adulte ? '${Routes.attenteContrat}?pour=moi' : Routes.attenteContrat,
+  PieceManquante.pieceIdentite => Routes.attentePiece,
+};
+
+AppIcon _icone(PieceManquante piece) => switch (piece) {
+  PieceManquante.accuse => AppIcons.controleQualite,
+  PieceManquante.contrat => AppIcons.cahier,
+  PieceManquante.pieceIdentite => AppIcons.dossiers,
+};
+
+class _Statut extends StatelessWidget {
+  const _Statut({required this.etat});
 
   final EtatDossier etat;
 
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return switch (etat.etape) {
-      EtapeDossier.incomplet => _Incomplet(etat: etat),
+      EtapeDossier.incomplet => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(t.attente.dossierIncomplet, style: textes.headlineSmall),
+          Ecart.vMd,
+          Text(
+            t.attente.reste(n: etat.manquants.length),
+            style: textes.bodyMedium,
+          ),
+          if (etat.manquants.isNotEmpty) ...<Widget>[
+            Ecart.vXl,
+            GroupeReglages(
+              titre: t.attente.aFournir,
+              lignes: <LigneRubrique>[
+                for (final PieceManquante manquant in etat.manquants)
+                  LigneRubrique(
+                    icone: _icone(manquant),
+                    libelle: _libelle(manquant),
+                    valeur: t.attente.etatAFournir,
+                  ),
+              ],
+            ),
+            Ecart.vXl,
+            Text(
+              t.attente.prochaineEtape(etape: _libelle(etat.manquants.first)),
+              style: textes.titleMedium,
+            ),
+          ],
+        ],
+      ),
       EtapeDossier.enVerification => _Bloc(
         titre: t.attente.titre,
         message: t.attente.enVerification,
@@ -88,131 +202,41 @@ class _Contenu extends StatelessWidget {
         ].join('\n'),
         icone: AppIcons.dossiers,
       ),
-      EtapeDossier.refuse => _Refuse(etat: etat),
+      EtapeDossier.refuse => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(t.attente.refuse, style: textes.headlineSmall),
+          Ecart.vMd,
+          // La base refuse un verdict negatif sans motif : cette phrase existe
+          // toujours quand on arrive ici.
+          Text(
+            etat.motifRefus ?? '',
+            style: palette.inkAlert.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vMd,
+          Text(t.attente.refuseDetail, style: textes.bodyMedium),
+        ],
+      ),
       EtapeDossier.suspendu => _Bloc(
         titre: t.attente.suspendu,
         message: t.attente.suspenduDetail,
         icone: AppIcons.avertissement,
         alerte: true,
-        pied: Text(t.attente.contacterAcademie, style: textes.bodyMedium),
+        detail: t.attente.contacterAcademie,
       ),
     };
   }
 }
 
-/// Etat « dossier incomplet » : deux ou trois elements, chacun avec son bouton.
-class _Incomplet extends StatelessWidget {
-  const _Incomplet({required this.etat});
-
-  final EtatDossier etat;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(t.attente.dossierIncomplet, style: textes.headlineSmall),
-        Ecart.vXl,
-        Text(t.attente.aFournir, style: textes.bodySmall),
-        Ecart.vMd,
-        for (final PieceManquante manquant in etat.manquants)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: _AFournir(manquant: manquant),
-          ),
-      ],
-    );
-  }
-}
-
-/// Une ligne « il manque ceci », avec son bouton et rien d'autre.
-class _AFournir extends StatelessWidget {
-  const _AFournir({required this.manquant});
-
-  final PieceManquante manquant;
-
-  (String, String, String) get _textes => switch (manquant) {
-    PieceManquante.accuse => (
-      t.attente.carteAccuse,
-      t.attente.lireLaCarte,
-      Routes.attenteAccuse,
-    ),
-    PieceManquante.contrat => (
-      t.attente.signatureContrat,
-      t.attente.signerLeContrat,
-      Routes.attenteContrat,
-    ),
-    PieceManquante.pieceIdentite => (
-      t.attente.pieceIdentite,
-      t.attente.deposerLaPiece,
-      Routes.attentePiece,
-    ),
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final (String libelle, String action, String chemin) = _textes;
-
-    return BentoTile(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(libelle, style: Theme.of(context).textTheme.titleMedium),
-          Ecart.vMd,
-          ActionPrincipale(
-            libelle: action,
-            onPress: () => GoRouter.of(context).go(chemin),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Etat « refuse » : le motif en une phrase, et l'action pour corriger.
-class _Refuse extends StatelessWidget {
-  const _Refuse({required this.etat});
-
-  final EtatDossier etat;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(t.attente.refuse, style: textes.headlineSmall),
-        Ecart.vMd,
-        // La base refuse un verdict negatif sans motif : cette phrase existe
-        // toujours quand on arrive ici.
-        Text(
-          etat.motifRefus ?? '',
-          style: palette.inkAlert.applyTo(
-            textes.titleMedium ?? const TextStyle(),
-          ),
-        ),
-        Ecart.vXxl,
-        ActionPrincipale(
-          libelle: t.attente.corriger,
-          onPress: () => GoRouter.of(context).go(Routes.attentePiece),
-        ),
-      ],
-    );
-  }
-}
-
-/// Un etat du portail, en un bloc.
+/// Un etat sans action, en un bloc centre.
 class _Bloc extends StatelessWidget {
   const _Bloc({
     required this.titre,
     required this.message,
     required this.icone,
     this.detail,
-    this.pied,
     this.alerte = false,
   });
 
@@ -220,7 +244,6 @@ class _Bloc extends StatelessWidget {
   final String message;
   final String? detail;
   final AppIcon icone;
-  final Widget? pied;
   final bool alerte;
 
   @override
@@ -245,7 +268,6 @@ class _Bloc extends StatelessWidget {
           Ecart.vMd,
           Text(detail!, textAlign: TextAlign.center, style: textes.bodySmall),
         ],
-        if (pied != null) ...<Widget>[Ecart.vXxl, pied!],
       ],
     );
   }
@@ -261,42 +283,23 @@ class _Patience extends StatelessWidget {
   );
 }
 
-class _Indisponible extends StatelessWidget {
-  const _Indisponible({required this.onReessayer});
+/// Un etat de dossier illisible ne se devine pas : on le dit (hors ligne ou
+/// non), et l'unique action est de reessayer.
+class _Illisible extends StatelessWidget {
+  const _Illisible({required this.erreur});
 
-  final VoidCallback onReessayer;
-
-  @override
-  Widget build(BuildContext context) {
-    // Un etat de dossier illisible ne se devine pas : on le dit, et on laisse
-    // reessayer. C'est la contrepartie a l'ecran de la regle de session, ou un
-    // echec de lecture ferme au lieu d'ouvrir.
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          t.attente.titre,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        Ecart.vXxl,
-        ActionPrincipale(libelle: t.commun.reessayer, onPress: onReessayer),
-      ],
-    );
-  }
-}
-
-class _Deconnexion extends StatelessWidget {
-  const _Deconnexion({required this.onDeconnexion});
-
-  final VoidCallback onDeconnexion;
+  final Object erreur;
 
   @override
   Widget build(BuildContext context) {
-    return ActionPrincipale(
-      libelle: t.attente.seDeconnecter,
-      onPress: onDeconnexion,
-      niveau: NiveauAction.secondaire,
+    final bool horsLigne = issueEchecEnvoi(erreur) == IssueEnvoiLien.horsLigne;
+    return Semantics(
+      liveRegion: true,
+      child: Text(
+        horsLigne ? t.attente.horsLigne : t.attente.illisible,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
     );
   }
 }

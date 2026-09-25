@@ -337,4 +337,116 @@ void main() {
       );
     }
   });
+
+  group('ChoiceCardGroup.coteACote (A-5.2)', () {
+    List<OptionChoix> deux() => <OptionChoix>[
+      const OptionChoix(
+        valeur: 'homme',
+        libelle: 'Homme',
+        icone: AppIcons.profil,
+        cle: Key('opt-homme'),
+      ),
+      const OptionChoix(
+        valeur: 'femme',
+        libelle: 'Femme',
+        icone: AppIcons.profil,
+        cle: Key('opt-femme'),
+      ),
+    ];
+
+    testWidgets('par defaut, les cartes restent empilees', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, vueMobile);
+      await tester.pumpWidget(
+        hoteTheme(
+          ChoiceCardGroup(
+            options: deux(),
+            onChange: (ReponseChoix _) {},
+            autoriserSaisieLibre: false,
+          ),
+        ),
+      );
+      final Rect a = tester.getRect(find.byKey(const Key('opt-homme')));
+      final Rect b = tester.getRect(find.byKey(const Key('opt-femme')));
+      expect(a.left, b.left);
+      expect(b.top, greaterThan(a.bottom - 1));
+    });
+
+    for (final Brightness luminosite in Brightness.values) {
+      testWidgets(
+        'cote a cote : meme rangee, meme hauteur, icone au-dessus du titre, '
+        'radio en haut a droite, tape Femme, $luminosite',
+        (WidgetTester tester) async {
+          fixerVue(tester, vueMobile);
+          ReponseChoix? recue;
+          await tester.pumpWidget(
+            hoteTheme(
+              ChoiceCardGroup(
+                options: deux(),
+                onChange: (ReponseChoix r) => recue = r,
+                autoriserSaisieLibre: false,
+                coteACote: true,
+              ),
+              luminosite: luminosite,
+            ),
+          );
+          expect(tester.takeException(), isNull);
+          final Rect homme = tester.getRect(find.byKey(const Key('opt-homme')));
+          final Rect femme = tester.getRect(find.byKey(const Key('opt-femme')));
+          expect(homme.top, femme.top);
+          expect(homme.height, femme.height);
+          expect(femme.left, greaterThan(homme.right));
+          expect(homme.height, greaterThanOrEqualTo(AppTouchTarget.standard));
+
+          final Finder dansHomme = find.descendant(
+            of: find.byKey(const Key('opt-homme')),
+            matching: find.byType(Icon),
+          );
+          final Rect icone = tester.getRect(dansHomme.first);
+          final Rect titre = tester.getRect(find.text('Homme'));
+          expect(icone.bottom, lessThanOrEqualTo(titre.top));
+          expect(icone.center.dx, closeTo(titre.center.dx, 1));
+
+          final Rect radio = tester.getRect(
+            find.descendant(
+              of: find.byKey(const Key('opt-homme')),
+              matching: find.byType(RadioChoix),
+            ),
+          );
+          expect(radio.center.dx, greaterThan(homme.center.dx));
+          expect(radio.center.dy, lessThan(titre.top));
+
+          await tester.tap(find.byKey(const Key('opt-femme')));
+          await tester.pump();
+          expect(recue?.valeurs, <String>{'femme'});
+          final RadioChoix radioFemme = tester.widget<RadioChoix>(
+            find.descendant(
+              of: find.byKey(const Key('opt-femme')),
+              matching: find.byType(RadioChoix),
+            ),
+          );
+          expect(radioFemme.retenue, isTrue);
+        },
+      );
+    }
+
+    testWidgets('texte a 200 % : aucun debordement', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, vueMobile);
+      await tester.pumpWidget(
+        hoteTheme(
+          ChoiceCardGroup(
+            options: deux(),
+            onChange: (ReponseChoix _) {},
+            autoriserSaisieLibre: false,
+            coteACote: true,
+          ),
+          echelleTexte: 2,
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

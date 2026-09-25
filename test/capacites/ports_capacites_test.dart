@@ -128,22 +128,25 @@ void main() {
         (ProviderContainer c) => c.read(portSupportProvider).canal(),
         'DB-CPT-07',
       ),
+      // `portConsentementsProvider` rend l'adaptateur reel du lot A (demande
+      // A-3) : seule l'implementation de repli reste mesuree ici.
       (
-        'consentements signes',
-        (ProviderContainer c) => c.read(portConsentementsProvider).signees(),
+        'consentements signes (repli)',
+        (ProviderContainer _) => const ConsentementsIndisponibles().signees(),
         'LOT-A',
       ),
       (
-        'consentements a renouveler',
-        (ProviderContainer c) =>
-            c.read(portConsentementsProvider).aRenouveler(),
+        'consentements a renouveler (repli)',
+        (ProviderContainer _) =>
+            const ConsentementsIndisponibles().aRenouveler(),
         'DB-ADM-03',
       ),
       (
-        'acceptation d une version',
-        (ProviderContainer c) => c
-            .read(portConsentementsProvider)
-            .accepter(sorte: SorteContrat.conditionsTuteur, version: 'v'),
+        'acceptation d une version (repli)',
+        (ProviderContainer _) => const ConsentementsIndisponibles().accepter(
+          sorte: SorteContrat.conditionsTuteur,
+          version: 'v',
+        ),
         'DB-ADM-02',
       ),
       (

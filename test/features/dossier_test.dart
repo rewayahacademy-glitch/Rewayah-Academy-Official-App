@@ -140,6 +140,17 @@ void main() {
 
       expect(find.text(t.contrat.pointCoordonnees), findsNothing);
 
+      // Case d'observation jamais precochee : sans elle, rien n'est signe.
+      await tester.tap(find.text(t.contrat.accepter));
+      await tester.pumpAndSettle();
+      expect(dossier.contratsAcceptes, isEmpty);
+
+      final Finder caseAccord = find.text(
+        t.consentement.texte.caseResponsable,
+      );
+      await tester.ensureVisible(caseAccord);
+      await tester.tap(caseAccord);
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.contrat.accepter));
       await tester.pumpAndSettle();
       expect(dossier.contratsAcceptes, <SorteContrat>[

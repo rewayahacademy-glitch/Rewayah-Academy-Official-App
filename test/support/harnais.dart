@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
 import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
+import 'package:rewayah_academy/core/capacites/port_consentements.dart';
 import 'package:rewayah_academy/core/controle/service_controle.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
@@ -30,6 +31,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -1616,6 +1618,52 @@ SeanceEnseignant seanceDeTest({
   seuilMax: seuilMax,
   minutesInterruption: minutesInterruption,
 );
+
+/// Un port de consentements en memoire (contrat K6).
+class FauxPortConsentements implements PortConsentements {
+  /// Ce que [signees] renvoie.
+  List<Acceptation> signeesRendues = <Acceptation>[];
+
+  /// Ce que [aRenouveler] renvoie.
+  List<ConsentementRequis> aRenouvelerRendu = <ConsentementRequis>[];
+
+  /// Ce que la prochaine lecture ou ecriture doit jeter.
+  Object? erreurAJeter;
+
+  /// Les acceptations enregistrees par [accepter].
+  final List<({SorteContrat sorte, String version})> accepteEnregistre =
+      <({SorteContrat sorte, String version})>[];
+
+  @override
+  Future<List<Acceptation>> signees() async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return signeesRendues;
+  }
+
+  @override
+  Future<List<ConsentementRequis>> aRenouveler() async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return aRenouvelerRendu;
+  }
+
+  @override
+  Future<void> accepter({
+    required SorteContrat sorte,
+    required String version,
+  }) async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    accepteEnregistre.add((sorte: sorte, version: version));
+  }
+}
 
 /// Un eleve pret a l'emploi dans un test.
 MembreSeance membreDeTest({

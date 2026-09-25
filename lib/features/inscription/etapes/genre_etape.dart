@@ -1,21 +1,68 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/router/page_etat.dart';
-import '../../../core/widgets/etat_systeme.dart';
+import '../../../core/domain/enums.dart';
+import '../../../core/i18n/strings.g.dart';
+import '../../../core/icons/app_icons.dart';
+import '../../../core/router/routes.dart';
+import '../../../core/widgets/choice_card_group.dart';
+import '../brouillon_inscription.dart';
+import '../inscription_page.dart';
 
-// STUB PHASE 0 : propriété du lot A, à remplacer
-//
-// Route : `/inscription/genre`. Posee par le coordinateur en phase 0c2 (chantier Tuteur
-// V1) pour que la route, sa garde et ses tests existent avant le lot : le
-// lot remplace le contenu de ce fichier sans toucher au routeur. Aucun STUB
-// ne doit subsister a la fin du chantier.
-
-/// L'etape de genre de l'inscription.
-class GenreEtape extends StatelessWidget {
-  /// Cree la page.
+/// `/inscription/genre` : deux cartes cote a cote, aucune preselection.
+class GenreEtape extends ConsumerWidget {
+  /// Cree l'etape.
   const GenreEtape({super.key});
 
+  static const String _route = Routes.inscriptionGenre;
+
   @override
-  Widget build(BuildContext context) =>
-      const PageEtat(nature: NatureEtat.indisponible, dependance: 'LOT-A');
+  Widget build(BuildContext context, WidgetRef ref) {
+    final BrouillonInscription brouillon = ref.watch(
+      brouillonInscriptionProvider,
+    );
+    exigerEtapesPrecedentes(context, brouillon, _route);
+    final BrouillonInscriptionControleur controleur = ref.read(
+      brouillonInscriptionProvider.notifier,
+    );
+    final Genre? genre = brouillon.genre;
+
+    return CoquilleEtape(
+      route: _route,
+      question: t.inscription.genreQuestion,
+      explication: t.inscription.genreRaison,
+      libelleAction: t.commun.continuer,
+      onAction: genre == null ? null : () => avancerDepuis(context, _route),
+      onRetour: () => reculerDepuis(context, _route),
+      // Le groupe partage, sans carte « Autre », en disposition cote a cote
+      // (demande A-5.2, maquette « onboarding Mble d »).
+      enfant: ChoiceCardGroup(
+        key: const Key('inscription-genre'),
+        autoriserSaisieLibre: false,
+        coteACote: true,
+        valeurInitiale: genre == null
+            ? null
+            : ReponseChoix(valeurs: <String>{genre.name}),
+        options: <OptionChoix>[
+          OptionChoix(
+            valeur: Genre.homme.name,
+            libelle: t.inscription.genreHomme,
+            icone: AppIcons.profil,
+          ),
+          OptionChoix(
+            valeur: Genre.femme.name,
+            libelle: t.inscription.genreFemme,
+            icone: AppIcons.profil,
+          ),
+        ],
+        onChange: (ReponseChoix reponse) {
+          for (final Genre g in <Genre>[Genre.homme, Genre.femme]) {
+            if (reponse.valeurs.contains(g.name)) {
+              controleur.choisirGenre(g);
+            }
+          }
+        },
+      ),
+    );
+  }
 }

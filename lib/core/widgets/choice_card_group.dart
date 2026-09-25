@@ -21,7 +21,12 @@ class OptionChoix {
     this.description,
     this.disponible = true,
     this.raisonIndisponible,
+    this.cle,
   });
+
+  /// Une cle posee sur la carte de l'option, pour qu'un test la vise sans
+  /// dependre du libelle (demande A-5.3).
+  final Key? cle;
 
   /// La valeur transmise a l'appelant.
   final String valeur;
@@ -78,7 +83,15 @@ class ChoiceCardGroup extends StatefulWidget {
     this.selectionMultiple = false,
     this.valeurInitiale,
     this.autoriserSaisieLibre = true,
+    this.coteACote = false,
   });
+
+  /// Vrai pour poser les options **cote a cote** (demande A-5.2, maquette
+  /// « onboarding Mble d ») : cartes de meme hauteur, contenu centre, icone
+  /// dans un disque au-dessus du titre, radio en haut a droite. Faite pour
+  /// deux ou trois options courtes ; la carte « Autre », si elle est permise,
+  /// reste pleine largeur dessous. Faux par defaut : rendu en liste inchange.
+  final bool coteACote;
 
   /// Les reponses les plus courantes.
   final List<OptionChoix> options;
@@ -140,6 +153,20 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     );
   }
 
+  Widget _carteOption(OptionChoix option, {required bool verticale}) => _Carte(
+    key: option.cle,
+    libelle: option.libelle,
+    icone: option.icone,
+    description: option.description,
+    raisonIndisponible: option.disponible
+        ? null
+        : option.raisonIndisponible ?? t.commun.choix.indisponible,
+    retenue: _selection.contains(option.valeur),
+    radio: !widget.selectionMultiple,
+    verticale: verticale,
+    onPress: option.disponible ? () => _basculer(option.valeur) : null,
+  );
+
   @override
   Widget build(BuildContext context) {
     final AppMetriques metriques = AppMetriques.of(context);
@@ -154,23 +181,29 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
           ),
           Ecart.vMd,
         ],
-        for (final OptionChoix option in widget.options)
+        if (widget.coteACote)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: _Carte(
-              libelle: option.libelle,
-              icone: option.icone,
-              description: option.description,
-              raisonIndisponible: option.disponible
-                  ? null
-                  : option.raisonIndisponible ?? t.commun.choix.indisponible,
-              retenue: _selection.contains(option.valeur),
-              radio: !widget.selectionMultiple,
-              onPress: option.disponible
-                  ? () => _basculer(option.valeur)
-                  : null,
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  for (int i = 0; i < widget.options.length; i++) ...<Widget>[
+                    if (i > 0) Ecart.hMd,
+                    Expanded(
+                      child: _carteOption(widget.options[i], verticale: true),
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ),
+          )
+        else
+          for (final OptionChoix option in widget.options)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: _carteOption(option, verticale: false),
+            ),
         if (widget.autoriserSaisieLibre)
           _Carte(
             libelle: t.choix.autre,
@@ -201,10 +234,16 @@ class _Carte extends StatelessWidget {
     required this.retenue,
     required this.onPress,
     required this.radio,
+    super.key,
     this.icone,
     this.description,
     this.raisonIndisponible,
+    this.verticale = false,
   });
+
+  /// Vrai pour la disposition cote a cote : contenu centre, icone dans un
+  /// disque au-dessus du titre, radio (ou coche) en haut a droite.
+  final bool verticale;
 
   final String libelle;
   final bool retenue;
@@ -262,7 +301,11 @@ class _Carte extends StatelessWidget {
         libelleSemantique: lu,
         respecterCibleTactile: false,
         constructeur: (BuildContext contexte, EtatPression etat) => Container(
-          constraints: const BoxConstraints(minHeight: AppPage.hauteurChoix),
+          constraints: BoxConstraints(
+            minHeight: verticale
+                ? AppPage.hauteurChoix * 2
+                : AppPage.hauteurChoix,
+          ),
           padding: const EdgeInsets.all(AppSpacing.xl),
           decoration: AppElevation.avecFilet(
             surface: paire,
@@ -276,70 +319,171 @@ class _Carte extends StatelessWidget {
           // Le libelle lu est [lu] : les textes visibles ne sont pas relus
           // une seconde fois a sa suite.
           child: ExcludeSemantics(
-            child: Row(
-              children: <Widget>[
-                if (icone != null) ...<Widget>[
-                  IconTheme(
-                    data: _disponible
-                        ? IconThemeData(
+            child: verticale
+                ? _contenuVertical(palette, paire, textes, styleSecondaire)
+                : Row(
+                    children: <Widget>[
+                      if (icone != null) ...<Widget>[
+                        IconTheme(
+                          data: _disponible
+                              ? IconThemeData(
+                                  color: paire.onBackground,
+                                  size: AppSpacing.xxl,
+                                )
+                              : palette.inkMuted.asIconTheme(
+                                  size: AppSpacing.xxl,
+                                ),
+                          child: Icon(icone!.resoudre(selectionne: retenue)),
+                        ),
+                        Ecart.hMd,
+                      ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              libelle,
+                              style: _disponible
+                                  ? paire.applyTo(
+                                      textes.titleMedium ?? const TextStyle(),
+                                    )
+                                  : palette.inkMuted.applyTo(
+                                      textes.titleMedium ?? const TextStyle(),
+                                    ),
+                            ),
+                            if (description != null) ...<Widget>[
+                              Ecart.vXs,
+                              Text(description!, style: styleSecondaire),
+                            ],
+                            if (raisonIndisponible != null) ...<Widget>[
+                              Ecart.vSm,
+                              Text(
+                                raisonIndisponible!,
+                                style: palette.inkMuted.applyTo(
+                                  textes.labelMedium ?? const TextStyle(),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      // Le radio ou la coche doublent la couleur : une selection qui
+                      // ne se lirait qu'a la teinte n'existerait pas pour un
+                      // daltonien.
+                      if (radio) ...<Widget>[
+                        Ecart.hMd,
+                        RadioChoix(retenue: retenue, disponible: _disponible),
+                      ] else if (retenue)
+                        IconTheme(
+                          data: IconThemeData(
                             color: paire.onBackground,
                             size: AppSpacing.xxl,
-                          )
-                        : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
-                    child: Icon(icone!.resoudre(selectionne: retenue)),
-                  ),
-                  Ecart.hMd,
-                ],
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        libelle,
-                        style: _disponible
-                            ? paire.applyTo(
-                                textes.titleMedium ?? const TextStyle(),
-                              )
-                            : palette.inkMuted.applyTo(
-                                textes.titleMedium ?? const TextStyle(),
-                              ),
-                      ),
-                      if (description != null) ...<Widget>[
-                        Ecart.vXs,
-                        Text(description!, style: styleSecondaire),
-                      ],
-                      if (raisonIndisponible != null) ...<Widget>[
-                        Ecart.vSm,
-                        Text(
-                          raisonIndisponible!,
-                          style: palette.inkMuted.applyTo(
-                            textes.labelMedium ?? const TextStyle(),
                           ),
+                          child: Icon(AppIcons.succes.actif),
                         ),
-                      ],
                     ],
                   ),
-                ),
-                // Le radio ou la coche doublent la couleur : une selection qui
-                // ne se lirait qu'a la teinte n'existerait pas pour un
-                // daltonien.
-                if (radio) ...<Widget>[
-                  Ecart.hMd,
-                  RadioChoix(retenue: retenue, disponible: _disponible),
-                ] else if (retenue)
-                  IconTheme(
-                    data: IconThemeData(
-                      color: paire.onBackground,
-                      size: AppSpacing.xxl,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+extension on _Carte {
+  /// Le contenu de la carte cote a cote : radio ou coche en haut a droite,
+  /// icone dans un disque puis titre, centres.
+  Widget _contenuVertical(
+    AppPalette palette,
+    AppColorPair paire,
+    TextTheme textes,
+    TextStyle styleSecondaire,
+  ) {
+    const double disque = AppSpacing.respiration + AppSpacing.sm;
+    final AppColorPair fondDisque = retenue
+        ? palette.surfaceActionDouce
+        : palette.surfaceSunken;
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                if (icone != null) ...<Widget>[
+                  SizedBox.square(
+                    dimension: disque,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: fondDisque.background,
+                      ),
+                      child: Center(
+                        child: IconTheme(
+                          data: _disponible
+                              ? IconThemeData(
+                                  color: fondDisque.onBackground,
+                                  size: AppSpacing.xxxl,
+                                )
+                              : palette.inkMuted.asIconTheme(
+                                  size: AppSpacing.xxxl,
+                                ),
+                          child: Icon(icone!.resoudre(selectionne: retenue)),
+                        ),
+                      ),
                     ),
-                    child: Icon(AppIcons.succes.actif),
                   ),
+                  Ecart.vLg,
+                ],
+                Text(
+                  libelle,
+                  textAlign: TextAlign.center,
+                  style: _disponible
+                      ? paire.applyTo(textes.titleMedium ?? const TextStyle())
+                      : palette.inkMuted.applyTo(
+                          textes.titleMedium ?? const TextStyle(),
+                        ),
+                ),
+                if (description != null) ...<Widget>[
+                  Ecart.vXs,
+                  Text(
+                    description!,
+                    textAlign: TextAlign.center,
+                    style: styleSecondaire,
+                  ),
+                ],
+                if (raisonIndisponible != null) ...<Widget>[
+                  Ecart.vSm,
+                  Text(
+                    raisonIndisponible!,
+                    textAlign: TextAlign.center,
+                    style: palette.inkMuted.applyTo(
+                      textes.labelMedium ?? const TextStyle(),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
         ),
-      ),
+        PositionedDirectional(
+          top: 0,
+          end: 0,
+          child: radio
+              ? RadioChoix(retenue: retenue, disponible: _disponible)
+              : retenue
+              ? IconTheme(
+                  data: IconThemeData(
+                    color: paire.onBackground,
+                    size: AppSpacing.xxl,
+                  ),
+                  child: Icon(AppIcons.succes.actif),
+                )
+              : const SizedBox.shrink(),
+        ),
+      ],
     );
   }
 }

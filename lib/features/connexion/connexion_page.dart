@@ -18,6 +18,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 import 'feuille_appareil_eleve.dart';
+import 'recuperation_page.dart';
 
 /// Largeur de la carte d'entree.
 ///
@@ -56,13 +57,20 @@ const double _largeurCarte = 460;
 /// champ, au moment ou l'on appuie.
 class ConnexionPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de connexion.
-  const ConnexionPage({super.key, this.demoAuth});
+  const ConnexionPage({super.key, this.demoAuth, this.urlRetour});
 
   /// Force le mode demonstration, sans lire [demoAuthActiveProvider].
   ///
   /// Reserve aux tests de widget et au Playground. En production, c'est la
   /// compilation qui decide, par `DEMO_AUTH`.
   final bool? demoAuth;
+
+  /// L'URL d'arrivee a examiner, pour les tests ; par defaut [Uri.base].
+  ///
+  /// Quand le fournisseur ramene l'usager avec une erreur (lien expire, deja
+  /// utilise, refuse), la connexion l'envoie a la recuperation avec le motif
+  /// au lieu de le laisser sur un formulaire muet (C03 section 9).
+  final Uri? urlRetour;
 
   @override
   ConsumerState<ConnexionPage> createState() => _ConnexionPageState();
@@ -74,6 +82,24 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   bool _envoi = false;
   bool _envoye = false;
   String? _erreur;
+  bool _renvoi = false;
+  bool _renvoye = false;
+  String? _erreurRenvoi;
+
+  @override
+  void initState() {
+    super.initState();
+    final MotifRecuperation? motif = motifDepuisUrlRetour(
+      widget.urlRetour ?? Uri.base,
+    );
+    if (motif != null) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          GoRouter.of(context).go(cheminRecuperation(motif));
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -103,15 +129,47 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     try {
       await ref.read(serviceAuthProvider).envoyerLienCourriel(_courriel.text);
       if (mounted) {
-        setState(() => _envoye = true);
+        setState(() {
+          _envoye = true;
+          _renvoye = false;
+          _erreurRenvoi = null;
+        });
       }
-    } on Object {
+    } on Object catch (erreur) {
       if (mounted) {
-        setState(() => _erreur = t.connexion.erreurEnvoi);
+        setState(() => _erreur = phraseEchecEnvoi(issueEchecEnvoi(erreur)));
       }
     } finally {
       if (mounted) {
         setState(() => _envoi = false);
+      }
+    }
+  }
+
+  /// « Renvoyer le lien » : la meme demande, dite differemment une fois
+  /// partie (le message le plus recent est le seul a suivre).
+  Future<void> _renvoyerLien() async {
+    if (_renvoi) {
+      return;
+    }
+    setState(() {
+      _renvoi = true;
+      _erreurRenvoi = null;
+    });
+    try {
+      await ref.read(serviceAuthProvider).envoyerLienCourriel(_courriel.text);
+      if (mounted) {
+        setState(() => _renvoye = true);
+      }
+    } on Object catch (erreur) {
+      if (mounted) {
+        setState(
+          () => _erreurRenvoi = phraseEchecEnvoi(issueEchecEnvoi(erreur)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _renvoi = false);
       }
     }
   }
@@ -205,8 +263,18 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                         child: _envoye
                             ? _LienEnvoye(
                                 courriel: _courriel.text.trim(),
-                                onChangerAdresse: () =>
-                                    setState(() => _envoye = false),
+                                renvoi: _renvoi,
+                                renvoye: _renvoye,
+                                erreurRenvoi: _erreurRenvoi,
+                                onRenvoyer: () => unawaited(_renvoyerLien()),
+                                onChangerAdresse: () => setState(() {
+                                  _envoye = false;
+                                  _renvoye = false;
+                                  _erreurRenvoi = null;
+                                }),
+                                onProbleme: () => GoRouter.of(
+                                  context,
+                                ).go(Routes.connexionRecuperation),
                               )
                             : _Saisie(
                                 courriel: _courriel,
@@ -218,6 +286,11 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                 onSoumettre: () => unawaited(_soumettre()),
                                 onGoogle: () => unawaited(_google()),
                                 onEleve: () => unawaited(_entreeEleve()),
+                                onProbleme: () => GoRouter.of(
+                                  context,
+                                ).go(Routes.connexionRecuperation),
+                                onDecouvrir: () =>
+                                    GoRouter.of(context).go(Routes.bienvenue),
                               ),
                       ),
                     ),
@@ -241,8 +314,12 @@ class _Saisie extends StatelessWidget {
     required this.onSoumettre,
     required this.onGoogle,
     required this.onEleve,
+    required this.onProbleme,
+    required this.onDecouvrir,
   });
 
+  final VoidCallback onProbleme;
+  final VoidCallback onDecouvrir;
   final TextEditingController courriel;
   final TextEditingController motDePasse;
   final bool demo;
@@ -354,6 +431,32 @@ class _Saisie extends StatelessWidget {
               pleineLargeur: false,
             ),
           ),
+          Ecart.vLg,
+          const Divider(),
+          Ecart.vSm,
+          // Deux sorties discretes : la recuperation d'acces (lien expire ou
+          // jamais recu) et l'accueil public pour une premiere visite.
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            children: <Widget>[
+              ActionPrincipale(
+                key: const ValueKey<String>('connexion-probleme'),
+                libelle: t.connexion.probleme,
+                onPress: onProbleme,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
+              ActionPrincipale(
+                key: const ValueKey<String>('connexion-decouvrir'),
+                libelle: t.connexion.decouvrir,
+                onPress: onDecouvrir,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
+            ],
+          ),
         ],
       ],
     );
@@ -422,10 +525,23 @@ class _Champ extends StatelessWidget {
 }
 
 class _LienEnvoye extends StatelessWidget {
-  const _LienEnvoye({required this.courriel, required this.onChangerAdresse});
+  const _LienEnvoye({
+    required this.courriel,
+    required this.renvoi,
+    required this.renvoye,
+    required this.erreurRenvoi,
+    required this.onRenvoyer,
+    required this.onChangerAdresse,
+    required this.onProbleme,
+  });
 
   final String courriel;
+  final bool renvoi;
+  final bool renvoye;
+  final String? erreurRenvoi;
+  final VoidCallback onRenvoyer;
   final VoidCallback onChangerAdresse;
+  final VoidCallback onProbleme;
 
   @override
   Widget build(BuildContext context) {
@@ -437,17 +553,52 @@ class _LienEnvoye extends StatelessWidget {
       children: <Widget>[
         Text(t.connexion.lienEnvoye, style: textes.headlineMedium),
         Ecart.vMd,
-        Text(
-          t.connexion.lienEnvoyeDetail(courriel: courriel),
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            renvoye
+                ? t.connexion.renvoye(courriel: courriel)
+                : t.connexion.lienEnvoyeDetail(courriel: courriel),
+            key: const ValueKey<String>('connexion-envoye-detail'),
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
           ),
         ),
+        if (erreurRenvoi != null) ...<Widget>[
+          Ecart.vMd,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              erreurRenvoi!,
+              key: const ValueKey<String>('connexion-erreur-renvoi'),
+              style: textes.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+          ),
+        ],
         Ecart.vXxl,
+        ActionPrincipale(
+          key: const ValueKey<String>('connexion-renvoyer'),
+          libelle: t.connexion.renvoyer,
+          onPress: onRenvoyer,
+          enCours: renvoi,
+          niveau: NiveauAction.secondaire,
+        ),
+        Ecart.vLg,
         Align(
           child: ActionPrincipale(
             libelle: t.connexion.changerAdresse,
             onPress: onChangerAdresse,
+            niveau: NiveauAction.tertiaire,
+            pleineLargeur: false,
+          ),
+        ),
+        Align(
+          child: ActionPrincipale(
+            libelle: t.connexion.probleme,
+            onPress: onProbleme,
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
           ),

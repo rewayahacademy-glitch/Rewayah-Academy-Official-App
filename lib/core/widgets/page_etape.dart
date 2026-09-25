@@ -25,9 +25,9 @@ class PageEtape extends StatelessWidget {
   const PageEtape({
     required this.numero,
     required this.total,
-    required this.onRetour,
     required this.child,
     super.key,
+    this.onRetour,
     this.action,
     this.defilante = true,
   }) : assert(total > 0 && numero >= 1 && numero <= total, 'etape hors borne');
@@ -39,7 +39,10 @@ class PageEtape extends StatelessWidget {
   final int total;
 
   /// Le retour : etape precedente, ou sortie du parcours a la premiere.
-  final VoidCallback onRetour;
+  /// `null` quand il n'y a nulle part ou revenir (premiere etape d'un parcours
+  /// dont la sortie est ailleurs) : pas de disque, la rangee reste (demande
+  /// A-5.1).
+  final VoidCallback? onRetour;
 
   /// Le contenu de l'etape (question, consigne, choix, champs).
   final Widget child;
@@ -70,8 +73,8 @@ class RangeeEtape extends StatelessWidget {
   const RangeeEtape({
     required this.numero,
     required this.total,
-    required this.onRetour,
     super.key,
+    this.onRetour,
   });
 
   /// Le rang de l'etape, a partir de 1.
@@ -80,8 +83,8 @@ class RangeeEtape extends StatelessWidget {
   /// Le nombre d'etapes.
   final int total;
 
-  /// Le retour.
-  final VoidCallback onRetour;
+  /// Le retour ; `null` : pas de disque, progression et rang gardes.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +93,10 @@ class RangeeEtape extends StatelessWidget {
 
     return Row(
       children: <Widget>[
-        DisqueRetour(onPress: onRetour),
-        Ecart.hXl,
+        if (onRetour case final VoidCallback retour) ...<Widget>[
+          DisqueRetour(onPress: retour),
+          Ecart.hXl,
+        ],
         Expanded(
           child: Semantics(
             label: t.commun.etape.surLue(n: numero, total: total),

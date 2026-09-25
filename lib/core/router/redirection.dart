@@ -77,12 +77,18 @@ String? deciderRedirection({
       if (!routeConnue) {
         return null;
       }
+      // La racine d'un visiteur sans session : l'accueil public (premiere
+      // visite, demande A-1). `/bienvenue` mene a la connexion par
+      // « Commencer » et « J'ai deja un compte ».
+      if (cheminDemande == Routes.racine) {
+        return Routes.bienvenue;
+      }
       // Session expiree, ou lien profond ouvert sans session : la connexion
       // garde la destination, si c'en est une (R7 : un chemin interne valide,
       // jamais la salle, la classe ni l'entree d'agent).
-      final String? destination = cheminDemande == Routes.racine
-          ? null
-          : cheminRetourValide(cheminComplet ?? cheminDemande);
+      final String? destination = cheminRetourValide(
+        cheminComplet ?? cheminDemande,
+      );
       return destination == null
           ? Routes.connexion
           : Uri(

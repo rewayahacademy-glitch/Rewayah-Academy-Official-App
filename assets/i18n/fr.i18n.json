@@ -217,7 +217,18 @@
     "attenteMinutes": "le cours a commencé il y a {minutes} min"
   },
   "bienvenue": {
-    "titre": "Bienvenue"
+    "titre": "Bienvenue",
+    "accroche": "Apprendre le Coran en classe, avec un enseignant attitré",
+    "phrase": "Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.",
+    "pointsTitre": "Comment ça se passe",
+    "pointClasseTitre": "Une classe stable",
+    "pointClasse": "Les mêmes camarades et le même horaire, chaque semaine.",
+    "pointEnseignantTitre": "Un enseignant attitré",
+    "pointEnseignant": "Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.",
+    "pointFoyerTitre": "Un seul compte pour le foyer",
+    "pointFoyer": "Les séances de chaque élève du foyer se suivent depuis votre compte.",
+    "commencer": "Commencer",
+    "dejaCompte": "J'ai déjà un compte"
   },
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
@@ -238,7 +249,17 @@
     "toutEstDepose": "Tout est déposé.",
     "corriger": "Reprendre mon dossier",
     "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
-    "seDeconnecter": "Se déconnecter"
+    "seDeconnecter": "Se déconnecter",
+    "titreDossier": "Votre dossier",
+    "reste": {
+      "one": "Il reste un élément à fournir.",
+      "other": "Il reste {n} éléments à fournir."
+    },
+    "etatAFournir": "À fournir",
+    "prochaineEtape": "Prochaine étape : {etape}",
+    "refuseDetail": "Déposez une nouvelle pièce pour relancer la vérification.",
+    "illisible": "L'état de votre dossier ne s'affiche pas pour le moment.",
+    "horsLigne": "Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau."
   },
   "connexion": {
     "titre": "Se connecter",
@@ -256,6 +277,26 @@
     "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant.",
     "appareilEleveAide": "Vous êtes tuteur et vous préparez l'appareil d'un élève ?",
     "appareilEleve": "Connecter l'appareil d'un élève",
+    "renvoyer": "Renvoyer le lien",
+    "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
+    "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
+    "horsLigne": "Vous êtes hors ligne : le lien ne peut pas partir pour l'instant.",
+    "probleme": "Lien expiré ou jamais reçu ?",
+    "decouvrir": "Découvrir Rewayah Academy",
+    "recuperation": {
+      "titre": "Retrouver mon accès",
+      "intro": "Il n'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.",
+      "lienExpireTitre": "Ce lien n'est plus valable",
+      "lienExpire": "Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.",
+      "lienRefuseTitre": "La connexion n'a pas abouti",
+      "lienRefuse": "Ce lien n'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.",
+      "envoyer": "Recevoir un nouveau lien",
+      "envoyeTitre": "Nouveau lien envoyé",
+      "envoye": "Ouvrez le message envoyé à {courriel}, puis suivez le lien.",
+      "envoyeEncart": "Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.",
+      "autreAdresse": "Utiliser une autre adresse",
+      "revenirConnexion": "Revenir à la connexion"
+    },
     "feuilleAppareil": {
       "pourQui": "Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.",
       "etapesTitre": "Où trouver le code",
@@ -288,7 +329,27 @@
     "recapitulatif": "Avant de continuer",
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
-    "champRequis": "Cette réponse est nécessaire pour continuer."
+    "champRequis": "Cette réponse est nécessaire pour continuer.",
+    "etapeCourte": "{n} sur {total}",
+    "retourEtape": "Revenir à l'étape précédente",
+    "seDeconnecter": "Se déconnecter",
+    "modifier": "Modifier",
+    "reessayer": "Réessayer",
+    "erreurActualisation": "Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.",
+    "usage": {
+      "question": "Quel type de compte souhaitez-vous créer ?",
+      "moiTitre": "Moi uniquement",
+      "moiDescription": "Je souhaite suivre les cours avec mon propre profil élève.",
+      "familleTitre": "Moi et ma famille",
+      "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
+      "enseignant": "Je suis enseignant"
+    },
+    "recap": {
+      "usage": "Type de compte",
+      "identite": "Nom",
+      "genre": "Genre",
+      "enseignant": "Enseignant"
+    }
   },
   "contrat": {
     "titre": "Ce que vous signez",
@@ -299,14 +360,59 @@
     "lireTexte": "Lire le texte complet",
     "accepter": "J'ai lu et j'accepte",
     "accepteLe": "Accepté le {date}",
-    "erreur": "La signature n'a pas abouti. Réessayez dans un instant."
+    "erreur": "La signature n'a pas abouti. Réessayez dans un instant.",
+    "horsLigne": "Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
+    "caseRequise": "Cochez la case pour continuer."
   },
   "accuse": {
     "titre": "À savoir avant de commencer",
     "compris": "J'ai compris"
   },
   "consentement": {
-    "titre": "Consentements"
+    "titre": "Consentements",
+    "texte": {
+      "titre": "Les visites des parents",
+      "quiResponsable": "Les parents des élèves présents peuvent observer brièvement la séance.",
+      "quiResponsableDetail": "Ils entendent l'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.",
+      "quiAdulte": "Les parents des autres élèves présents peuvent observer brièvement la séance.",
+      "quiAdulteDetail": "Ils entendent l'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.",
+      "pourquoi": "Pour suivre l'apprentissage sans interrompre la classe.",
+      "pourquoiDetail": "Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu'une visite est possible.",
+      "limites": "Des visites courtes, en nombre limité.",
+      "limitesDetail": "Chaque parent a un petit nombre de visites par séance, fixé par l'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.",
+      "caseResponsable": "J'accepte ces modalités pour mon enfant",
+      "caseAdulte": "J'accepte ces modalités",
+      "continuer": "Continuer",
+      "retour": "Retour"
+    },
+    "comment": {
+      "titre": "Comment ça marche ?",
+      "visites": {
+        "one": "Une visite de {minutes} min par séance.",
+        "other": "{n} visites de {minutes} min par séance."
+      },
+      "visitesSansDuree": {
+        "one": "Une visite courte par séance.",
+        "other": "{n} visites courtes par séance."
+      },
+      "parParent": "Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.",
+      "ecourtee": "Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu'à la dernière.",
+      "ecouter": "Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.",
+      "sansMicro": "Votre micro et votre caméra restent désactivés pendant la visite.",
+      "valeursIndisponibles": "Le nombre de visites et leur durée s'affichent depuis la classe de votre enfant, selon les règles de sa classe.",
+      "fermee": "Les visites d'observation ne sont pas ouvertes pour cette classe."
+    },
+    "compte": {
+      "intro": "L'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n'est considéré comme accepté tant que vous ne l'avez pas fait.",
+      "accepteLe": "Vous avez accepté ces modalités le {date}.",
+      "merci": "Merci, votre accord est enregistré.",
+      "chargement": "Lecture de vos accords",
+      "erreur": "Vos accords ne s'affichent pas pour le moment.",
+      "horsLigne": "Vous êtes hors ligne. Vos accords s'afficheront dès le retour du réseau.",
+      "sansProfil": "Aucun compte connecté : reconnectez-vous pour lire vos accords.",
+      "invite": "Une nouvelle version à lire : les visites des parents",
+      "inviteAction": "Lire"
+    }
   },
   "kyc": {
     "titre": "Votre pièce d'identité",
@@ -1446,9 +1552,25 @@
     "modifier": "Modifier mes réponses",
     "erreur": "Cette réponse n'a pas pu être enregistrée. Réessayez.",
     "chargement": "Nous préparons vos options.",
+    "pourPrenom": "Pour {prenom}",
+    "retourAccueil": "Retour à l'accueil",
+    "retourFoyer": "Retour au Foyer",
+    "reessayer": "Réessayer",
+    "indisponibleTitre": "Le questionnaire n'est pas encore disponible",
+    "indisponibleDetail": "Cette étape n'est pas encore ouverte par l'académie. Vous n'avez rien à faire pour l'instant : rien n'est perdu, et vous pourrez la remplir dès qu'elle sera ouverte.",
+    "horsLigneTitre": "Pas de connexion",
+    "horsLigneDetail": "Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.",
+    "erreurChargement": "Le questionnaire n'a pas pu s'afficher",
+    "erreurChargementDetail": "Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.",
+    "introuvableTitre": "Ce profil élève est introuvable",
+    "introuvableDetail": "Il a peut-être été retiré du foyer. Revenez au Foyer pour choisir un profil élève.",
+    "finTitre": "Préférence enregistrée pour {prenom}",
+    "finDetail": "Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.",
+    "finAjouterDetail": "Une autre personne du foyer souhaite apprendre ?",
+    "finAjouterProfil": "Ajouter un profil élève",
 
     "ageQuestion": "Quel âge a {prenom} ?",
-    "ageRaison": "L'âge décide de la durée des séances et du nombre d'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.",
+    "ageRaison": "L'âge décide de la durée des séances et du nombre d'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.",
 
     "langueQuestion": "Dans quelle langue le cours doit-il être donné ?",
     "langueRaison": "C'est la langue que l'enseignant parlera pendant la séance. Elle est indépendante de la langue de l'application, que vous pouvez changer à tout moment dans vos réglages.",
@@ -1479,7 +1601,7 @@
     "momentSoir": "Le soir",
 
     "offresQuestion": "Voici les horaires ouverts pour {prenom}",
-    "offresRaison": "Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.",
+    "offresRaison": "Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.",
     "offreRecommandee": "Le plus proche de vos réponses",
     "offresAutres": "Autres horaires possibles",
     "offreRecurrence": "{seances} séances par semaine, {duree} min",
@@ -1495,7 +1617,7 @@
     "aucuneOffreDetail": "L'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.",
     "refusAucun": "Aucun de ces horaires ne me convient",
     "refusPrevenir": "Me prévenir si de nouveaux horaires ouvrent",
-    "refusEffet": "Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d'enseignant et ne promet aucun horaire futur.",
+    "refusEffet": "Nous enregistrons que la demande existe. Cela ne crée pas de classe, ne cherche pas d'enseignant et ne promet aucun horaire futur.",
     "refusEnregistre": "C'est noté. Nous vous préviendrons si un horaire correspondant ouvre.",
 
     "etatAPersonnaliser": "Parcours à personnaliser",
@@ -1503,15 +1625,16 @@
     "etatHoraireAChoisir": "Horaire à choisir",
     "etatHoraireAChoisirDetail": "Les horaires ouverts pour {prenom} vous attendent.",
     "etatOffreIndisponible": "Cet horaire n'est plus proposé",
-    "etatOffreIndisponibleDetail": "L'horaire retenu pour {prenom} a été retiré avant qu'un groupe soit constitué. Choisissez-en un autre : rien n'est perdu.",
+    "etatOffreIndisponibleDetail": "L'horaire retenu pour {prenom} a été retiré avant qu'une classe soit constituée. Choisissez-en un autre : rien n'est perdu.",
     "etatDiagnosticRequis": "Préférence enregistrée",
     "etatDiagnosticRequisDetail": "Il reste un échange avec un enseignant pour situer le niveau de {prenom}. L'académie vous proposera un rendez-vous.",
     "etatDiagnosticEnAttente": "Rendez-vous prévu",
     "etatDiagnosticEnAttenteDetail": "Un échange est prévu pour situer le niveau de {prenom}.",
-    "etatGroupeEnFormation": "Groupe en cours de constitution",
-    "etatGroupeEnFormationDetail": "Un groupe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'il est confirmé.",
-    "etatGroupeConfirme": "Groupe confirmé",
-    "etatGroupeConfirmeDetail": "Le groupe de {prenom} est constitué. Vous retrouverez ses séances dans son espace.",
+    "etatClasseEnFormation": "Classe en cours de constitution",
+    "etatClasseEnFormationDetail": "Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.",
+    "etatClasseEnFormationDetailSansMinimum": "Une classe démarre à partir d'un certain nombre d'élèves. Nous vous préviendrons dès qu'elle est confirmée.",
+    "etatClasseConfirmee": "Classe confirmée",
+    "etatClasseConfirmeeDetail": "La classe de {prenom} est constituée. Vous retrouverez ses séances dans son espace.",
 
     "fuseauChange": "Votre lieu a changé depuis ce choix",
     "fuseauChangeDetail": "L'horaire est le même pour l'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu'il vous convient toujours.",

@@ -42,7 +42,19 @@ class BlocParcours extends ConsumerWidget {
 
     // Silencieux tant qu'on ne sait pas : un bloc « parcours a personnaliser »
     // affiche par defaut dirait a une famille deja inscrite qu'il lui manque
-    // quelque chose. Idem en erreur -- l'accueil porte deja son propre message.
+    // quelque chose. Idem pour les autres erreurs -- l'accueil porte deja son
+    // propre message.
+    //
+    // Exception : backend du parcours absent sur ce serveur (0043 non
+    // appliquee, 42P01 ou PGRST205). Indisponible honnete (K5), jamais un bloc
+    // qui disparait sans rien dire. Aucune action : rien a faire ni a
+    // reessayer.
+    // (Pas de test isLoading : Riverpod 3 relance seul un fournisseur en
+    // echec, l'etat reste alors en chargement AVEC l'erreur precedente.)
+    if (parcours.hasError &&
+        classerPanneParcours(parcours.error!) == PanneParcours.indisponible) {
+      return const _CarteIndisponible();
+    }
     if (!parcours.hasValue) {
       return const SizedBox.shrink();
     }
@@ -58,7 +70,7 @@ class BlocParcours extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final int minimum = regles.value?.minimumLancement ?? 0;
+    final int? minimum = regles.value?.minimumLancement;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,11 +88,38 @@ class BlocParcours extends ConsumerWidget {
   }
 }
 
+/// Le questionnaire n'est pas encore ouvert par l'academie (K5).
+class _CarteIndisponible extends StatelessWidget {
+  const _CarteIndisponible();
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        BentoTile(
+          key: const Key('bloc-parcours-indisponible'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(t.parcours.indisponibleTitre, style: textes.titleMedium),
+              Ecart.vSm,
+              Text(t.parcours.indisponibleDetail, style: textes.bodyMedium),
+            ],
+          ),
+        ),
+        Ecart.vXl,
+      ],
+    );
+  }
+}
+
 class _Carte extends StatelessWidget {
   const _Carte({required this.apprenant, required this.minimumLancement});
 
   final ParcoursApprenant apprenant;
-  final int minimumLancement;
+  final int? minimumLancement;
 
   @override
   Widget build(BuildContext context) {

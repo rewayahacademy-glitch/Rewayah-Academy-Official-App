@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/enums.dart';
 import '../profil/service_acceptations.dart';
 import 'capacite_indisponible.dart';
+import 'consentements_supabase.dart';
 
 /// Un consentement a (re)signer, tel que le serveur le demandera.
 @immutable
@@ -73,8 +74,10 @@ class ConsentementsIndisponibles implements PortConsentements {
   }) => Future<void>.error(const CapaciteIndisponible('DB-ADM-02'));
 }
 
-/// Les consentements employes par l'application.
+/// Les consentements employes par l'application : l'adaptateur reel du lot A
+/// ([consentementsLotAProvider], demande A-3). [ConsentementsIndisponibles]
+/// reste la reponse honnete d'un contexte sans adaptateur.
 final Provider<PortConsentements> portConsentementsProvider =
     Provider<PortConsentements>(
-      (Ref ref) => const ConsentementsIndisponibles(),
+      (Ref ref) => ref.watch(consentementsLotAProvider),
     );
