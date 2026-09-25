@@ -455,3 +455,9 @@ Statut : fini.
 
 Statut : a_suivre (attend telephone).
 
+
+## 25/09 18:50 : mesure telephone ABANDONNEE pour l'instant (decision directeur)
+- Telephone dit branche, mais Windows ne voit rien (adb devices vide apres kill/start-server, aucun peripherique Android/MTP).
+- Piste : cable de charge seule ou mode USB « Charge uniquement » ; passer en « Transfert de fichiers » et accepter le debogage. Methode prete : 05_recette/P2-16/RAPPORT.md.
+- Tache suivante (directeur) : revue du questionnaire d'onboarding (tuteur et enfants), propositions sur un artifact AVANT code.
+
