@@ -25,6 +25,10 @@ import 'support/hote_tc_g.dart';
 
 final DateTime _instant = DateTime.utc(2026, 9, 20, 10);
 
+/// La salle remplit la hauteur qu'on lui donne (support dominant) : l'hote de
+/// test defile, il faut donc la borner.
+const double _hauteurSalle = 560;
+
 /// Amene la cible dans le cadre avant de la presser.
 ///
 /// Le module de reglages depasse les six cents points du cadre de test des que
@@ -161,20 +165,24 @@ void main() {
       );
 
       await tester.pumpWidget(
-        hoteTcG(PanneauObservationTuteur(vue: vue, onQuitter: () {})),
+        hoteTcG(
+          SizedBox(
+            height: _hauteurSalle,
+            child: PanneauObservationTuteur(vue: vue, onQuitter: () {}),
+          ),
+        ),
       );
 
-      expect(
-        find.text(t.tc.observation.visite.restant(secondes: 120)),
-        findsOneWidget,
-      );
+      expect(find.text('02:00'), findsOneWidget);
       expect(find.text('prof-1'), findsOneWidget);
       expect(find.text('enfant-1'), findsOneWidget);
       // Les camarades ne sont nulle part : aucun roster, aucune fiche.
       expect(find.text('enfant-2'), findsNothing);
       expect(find.text('enfant-3'), findsNothing);
-      // Le rappel des interdictions est permanent.
-      expect(find.text(t.tc.observation.visite.mediaFerme), findsOneWidget);
+      // Aucune commande de media : ni micro, ni camera (trois commandes).
+      expect(find.text(t.tc.observation.visite.quitter), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.agrandir), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.sonRecu), findsOneWidget);
     });
 
     testWidgets('un temps restant non confirme se dit', (
@@ -192,10 +200,13 @@ void main() {
 
       await tester.pumpWidget(
         hoteTcG(
-          PanneauObservationTuteur(
-            vue: vue,
-            onQuitter: () {},
-            budgetIncertain: true,
+          SizedBox(
+            height: _hauteurSalle,
+            child: PanneauObservationTuteur(
+              vue: vue,
+              onQuitter: () {},
+              budgetIncertain: true,
+            ),
           ),
         ),
       );

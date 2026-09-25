@@ -45,11 +45,10 @@ import 'support/hote_tc_g.dart';
 /// La memoire « explication deja lue » du compte de test (`p1`).
 final String _cleVue = clefExplicationVue('p1');
 
-/// La salle de la base (panneau PanneauObservationTuteur) deborde a 390 :
-/// sa refonte est le sous-paquet 2. Les tests qui ENTRENT en salle se font
-/// donc sur une fenetre de tablette ; l'entree et l'explication, elles, sont
-/// eprouvees a 390.
-const Size _tailleSalle = Size(800, 1000);
+/// Les tests qui ENTRENT en salle se font au format telephone : la salle
+/// refondue au sous-paquet 2 ne deborde plus a 390 (elle debordait de 49 px
+/// dans la base).
+const Size _tailleSalle = Size(390, 844);
 
 /// Libelle du lien « Comment ca marche ? » de la classe double (le vrai
 /// libelle appartient au lot C).

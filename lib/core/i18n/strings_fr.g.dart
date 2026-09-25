@@ -7523,9 +7523,6 @@ class Traductions$tc$observation$visite$fr {
 	/// fr: 'Quitter'
 	String get quitter => 'Quitter';
 
-	/// fr: 'Micro et caméra fermés pendant l'observation.'
-	String get mediaFerme => 'Micro et caméra fermés pendant l\'observation.';
-
 	/// fr: 'Le support partagé par l'enseignant s'affiche ici.'
 	String get supportIndisponible => 'Le support partagé par l\'enseignant s\'affiche ici.';
 
@@ -7534,9 +7531,6 @@ class Traductions$tc$observation$visite$fr {
 
 	/// fr: 'Votre enfant'
 	String get monEnfant => 'Votre enfant';
-
-	/// fr: 'Votre enfant n'a pas d'image ouverte.'
-	String get enfantAbsent => 'Votre enfant n\'a pas d\'image ouverte.';
 
 	/// fr: 'Temps restant non confirmé par le serveur.'
 	String get budgetIncertain => 'Temps restant non confirmé par le serveur.';
@@ -7547,11 +7541,59 @@ class Traductions$tc$observation$visite$fr {
 	/// fr: 'La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.'
 	String get sortieNonConfirmee => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.';
 
-	/// fr: '{secondes} s restantes'
-	String restant({required Object secondes}) => '${secondes} s restantes';
+	/// fr: 'restantes'
+	String get restantes => 'restantes';
 
-	/// fr: 'Visite {rang} sur {total}'
-	String visites({required Object rang, required Object total}) => 'Visite ${rang} sur ${total}';
+	/// fr: 'Temps restant : {duree}'
+	String decompteLu({required Object duree}) => 'Temps restant : ${duree}';
+
+	/// fr: 'En direct'
+	String get enDirect => 'En direct';
+
+	/// fr: 'Connexion'
+	String get connexion => 'Connexion';
+
+	/// fr: 'Reconnexion'
+	String get reconnexion => 'Reconnexion';
+
+	/// fr: 'Vidéo indisponible'
+	String get videoCoupee => 'Vidéo indisponible';
+
+	/// fr: 'La connexion est interrompue, reconnexion en cours. Votre temps d'observation continue de s'écouler.'
+	String get reconnexionDetail => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.';
+
+	/// fr: 'Son reçu'
+	String get sonRecu => 'Son reçu';
+
+	/// fr: 'Son interrompu'
+	String get sonInterrompu => 'Son interrompu';
+
+	/// fr: 'Agrandir'
+	String get agrandir => 'Agrandir';
+
+	/// fr: 'Réduire'
+	String get reduire => 'Réduire';
+
+	/// fr: 'Caméra fermée'
+	String get cameraFermee => 'Caméra fermée';
+
+	/// fr: 'Pas encore dans la salle'
+	String get pasEncoreLa => 'Pas encore dans la salle';
+
+	/// fr: '{nom} parle'
+	String parle({required Object nom}) => '${nom} parle';
+
+	/// fr: 'Quitter la visite ?'
+	String get quitterQuestion => 'Quitter la visite ?';
+
+	/// fr: 'Il vous reste {duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.'
+	String quitterConsequence({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
+
+	/// fr: 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.'
+	String get quitterConsequenceSansTemps => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.';
+
+	/// fr: 'Quitter la visite'
+	String get quitterConfirmer => 'Quitter la visite';
 }
 
 // Path: tc.observation.fin
@@ -9973,16 +10015,30 @@ extension on Traductions {
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
-			'tc.observation.visite.mediaFerme' => 'Micro et caméra fermés pendant l\'observation.',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
-			'tc.observation.visite.enfantAbsent' => 'Votre enfant n\'a pas d\'image ouverte.',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
-			'tc.observation.visite.restant' => ({required Object secondes}) => '${secondes} s restantes',
-			'tc.observation.visite.visites' => ({required Object rang, required Object total}) => 'Visite ${rang} sur ${total}',
+			'tc.observation.visite.restantes' => 'restantes',
+			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
+			'tc.observation.visite.enDirect' => 'En direct',
+			'tc.observation.visite.connexion' => 'Connexion',
+			'tc.observation.visite.reconnexion' => 'Reconnexion',
+			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
+			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
+			'tc.observation.visite.sonRecu' => 'Son reçu',
+			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
+			'tc.observation.visite.agrandir' => 'Agrandir',
+			'tc.observation.visite.reduire' => 'Réduire',
+			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
+			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
+			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
+			'tc.observation.visite.quitterQuestion' => 'Quitter la visite ?',
+			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
+			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
+			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
 			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
 			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
 			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',
@@ -10079,6 +10135,8 @@ extension on Traductions {
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
 			_ => null,
 		};

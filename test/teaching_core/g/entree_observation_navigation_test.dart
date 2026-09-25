@@ -47,6 +47,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/features/tc_observation_ui/compteur_visite.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_tuteur.dart';
 
 import '../../parcours/faux_service_offres.dart';
@@ -236,12 +237,47 @@ void main() {
     expect(visites.rolesDemandes, isEmpty);
   });
 
+  testWidgets('telephone : Assister, Observer maintenant, la salle, Agrandir, '
+      'Quitter et sa confirmation', (WidgetTester tester) async {
+    // Lot O, sous-paquet 2 : la salle refondue, atteinte en touchant depuis
+    // la vraie coquille du tuteur, au format telephone.
+    final FauxPortVisite visites = FauxPortVisite();
+    final FauxPortPolitique politique = FauxPortPolitique();
+    addTearDown(politique.fermer);
+    final GoRouter routeur = await _monter(
+      tester,
+      visites: visites,
+      politique: politique,
+    );
+
+    await _presser(tester, find.text(t.tuteur.accueil.assister));
+    await _presser(tester, find.text(t.tc.observation.explication.observer));
+
+    final v = t.tc.observation.visite;
+    expect(find.byType(PanneauObservationTuteur), findsOneWidget);
+    expect(find.byType(BandeauDecompteVisite), findsOneWidget);
+    expect(find.text(t.nav.tuteur.historique), findsNothing);
+    expect(tester.takeException(), isNull);
+
+    await _presser(tester, find.text(v.agrandir));
+    expect(find.text(v.reduire), findsOneWidget);
+
+    await _presser(tester, find.text(v.quitter));
+    expect(find.text(v.quitterQuestion), findsOneWidget);
+    await _presser(tester, find.text(v.quitterConfirmer));
+    // Le moteur attend l'annulation de ses abonnements (futur de la zone
+    // racine) avant d'appeler le serveur : un tour de la vraie boucle.
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await stabiliser(tester);
+
+    expect(visites.sorties, <String>['s1']);
+    expect(find.byType(PanneauObservationTuteur), findsNothing);
+    expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
+  });
+
   testWidgets(
     'bureau : Assister, l\'explication, Observer maintenant, la visite',
     (WidgetTester tester) async {
-      // La salle de la base deborde a 390 (refonte au sous-paquet 2) :
-      // l'entree jusqu'a la salle se prouve sur la composition de bureau,
-      // barre laterale depliee.
       final FauxPortVisite visites = FauxPortVisite();
       final FauxPortPolitique politique = FauxPortPolitique();
       addTearDown(politique.fermer);

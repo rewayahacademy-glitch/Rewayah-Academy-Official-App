@@ -19,12 +19,14 @@ import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/libelles_observation.dart';
 import '../../core/tc_observation/mode_entree_admin.dart';
 import '../../core/tc_observation/moteur_visite_observation.dart';
+import '../../core/tc_observation/vue_budget_observation.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/entete_page.dart';
@@ -32,6 +34,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'choix_entree_observation.dart';
+import 'contexte_salle_observation.dart';
 import 'explication_premiere_visite.dart';
 import 'options_entree_observation.dart';
 import 'ouverture_observation.dart';
@@ -105,6 +108,16 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   StreamSubscription<List<ParticipantSalle>>? _sParticipants;
   List<ParticipantSalle> _participants = const <ParticipantSalle>[];
 
+  /// L'etat du lien avec la salle video, tel que le moteur le publie : la
+  /// pastille de la salle le suit (aucun faux direct pendant une
+  /// reconnexion).
+  StreamSubscription<EtatSalle>? _sEtatSalle;
+  late EtatSalle _etatSalle = _moteur.etatCourant;
+
+  /// Vrai pendant que la confirmation de sortie est ouverte : un second appui
+  /// n'en ouvre pas une seconde.
+  bool _confirmationOuverte = false;
+
   /// Vrai des que [VideoSessionProvider.rejoindre] a abouti.
   ///
   /// **C'est lui qui autorise le `quitter()` du demontage**, et il n'est pas
@@ -141,21 +154,32 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         setState(() => _participants = liste);
       }
     });
+    _sEtatSalle = _moteur.etats.listen((EtatSalle etat) {
+      if (mounted) {
+        setState(() => _etatSalle = etat);
+      }
+    });
   }
 
   @override
   void dispose() {
     _minuteurConnexion?.cancel();
     unawaited(_sParticipants?.cancel());
+    unawaited(_sEtatSalle?.cancel());
     if (_enSalle) {
       // Quitter au demontage, quelle que soit la raison : sans cela, une visite
       // fermee a l'ecran continuerait a recevoir l'image d'une classe.
-      // L'intervalle serveur, lui, n'est PAS referme ici -- et **aucun code
-      // serveur ne le referme a l'expiration du jeton** (cartographie C07,
-      // fait 8) : une visite quittee sans « Quitter » reste ouverte et compte
-      // (dependances DB-OBS-03 et DB-OBS-06). La sortie propre de la salle
-      // releve du sous-paquet 2 du lot O.
       unawaited(_moteur.quitter());
+    }
+    // **Une visite quittee sans « Quitter » est refermee aussi** (lien direct,
+    // navigation du systeme, onglet ferme proprement) : aucun code serveur ne
+    // referme l'intervalle a l'expiration du jeton (cartographie C07, fait 8),
+    // et un intervalle laisse ouvert compterait et bloquerait la visite
+    // suivante (DB-OBS-03, DB-OBS-06). Sans effet hors visite. Un onglet tue
+    // ou une coupure reseau restent a la charge du serveur (DB-OBS-03).
+    final MoteurVisiteObservation? visite = _moteurVisite;
+    if (visite != null && visite.etat.phase == PhaseVisite.enVisite) {
+      unawaited(visite.sortir());
     }
     super.dispose();
   }
@@ -218,6 +242,9 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
 
     return PageShell(
       titre: t.tc.observation.entree.titre,
+      // La salle remplit la hauteur (support dominant) : elle ne defile pas
+      // dans la page, elle gere son propre defilement.
+      defilante: etat.value?.phase != PhaseVisite.enVisite,
       child: switch (etat) {
         AsyncValue<EtatVisiteObservation>(hasValue: true) => _corps(
           options,
@@ -369,11 +396,24 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final DemandeVerification demande = _demande(session);
     final EtatVisiteObservation? valeur = etat.value;
     return switch (valeur?.phase) {
-      // La salle et la fin de visite sont les sous-paquets 2 et 3 du lot O :
-      // leur rendu reste celui de la base, avec une sortie vers la classe.
-      PhaseVisite.enVisite => PageShell(
-        titre: t.tc.observation.entree.titre,
-        child: _panneau(valeur!),
+      // La salle (sous-paquet 2) : tache focalisee plein cadre, sans titre de
+      // page ni navigation. Le retour du systeme passe par « Quitter » et sa
+      // confirmation : jamais une navigation qui laisserait la visite ouverte.
+      // La fin de visite reste celle de la base (sous-paquet 3).
+      PhaseVisite.enVisite => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (bool fait, Object? _) {
+          if (!fait) {
+            unawaited(_demanderSortie());
+          }
+        },
+        child: PageShell(
+          defilante: false,
+          child: _panneau(
+            valeur!,
+            onQuitter: () => unawaited(_demanderSortie()),
+          ),
+        ),
       ),
       PhaseVisite.terminee => PageShell(
         titre: t.tc.observation.entree.titre,
@@ -752,15 +792,35 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   /// dans l'intervalle. Les camarades ne sont pas masques a l'affichage, ils ne
   /// sortent pas de la fonction -- et c'est pour cela que la liste brute du
   /// moteur peut lui etre passee telle quelle.
-  Widget _panneau(EtatVisiteObservation etat) {
+  Widget _panneau(EtatVisiteObservation etat, {VoidCallback? onQuitter}) {
     final VueObservationTuteur vue = VueObservationTuteur.depuis(
       participants: _participants,
       enfantProfilId: etat.visite?.enfantConcerneId,
       budget: etat.vueBudget,
     );
+    // L'en-tete : la classe et l'enseignant quand la classe du foyer se lit,
+    // sinon le titre generique et les noms portes par la salle.
+    final String? classe = _classeId;
+    final String? eleve = _eleveId ?? etat.visite?.enfantConcerneId;
+    final ContexteSalleObservation? contexte = classe == null || eleve == null
+        ? null
+        : ref
+              .watch(
+                contexteSalleObservationProvider((
+                  classeId: classe,
+                  eleveId: eleve,
+                )),
+              )
+              .value;
+    final String? enfant = vue.monEnfant?.nom;
     return PanneauObservationTuteur(
       vue: vue,
-      onQuitter: _quitter,
+      onQuitter: onQuitter ?? _quitter,
+      titre: contexte?.nomClasse,
+      sousTitre: contexte == null
+          ? null
+          : <String>[?enfant, contexte.enseignant].join(' · '),
+      etatSalle: _etatSalle,
       videoEnseignant: _video(vue.enseignant),
       // L'image de l'enfant n'est demandee que si sa camera est ouverte : la
       // politique camera d'un mineur vaut `forbidden` tant que personne ne l'a
@@ -930,14 +990,49 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     // Une nouvelle demande efface l'echec de la precedente : sans cela, un
     // tuteur qui reessaye lirait encore le mot d'un echec deja passe.
     setState(() => _salleIndisponible = false);
-    unawaited(
-      ref
-          .read(moteurVisiteObservationProvider(widget.seanceId))
-          .entrer(sessionId: widget.seanceId, role: role),
+    final MoteurVisiteObservation moteur = ref.read(
+      moteurVisiteObservationProvider(widget.seanceId),
     );
+    _moteurVisite = moteur;
+    unawaited(moteur.entrer(sessionId: widget.seanceId, role: role));
   }
+
+  /// Le moteur de la visite lancee par cet ecran, retenu pour la refermer au
+  /// demontage (un `ref.read` dans `dispose` arrive trop tard).
+  MoteurVisiteObservation? _moteurVisite;
 
   void _quitter() => unawaited(
     ref.read(moteurVisiteObservationProvider(widget.seanceId)).sortir(),
   );
+
+  /// « Quitter » du tuteur (barre de commandes, retour du systeme) : une
+  /// confirmation, parce qu'une visite ecourtee est consommee et n'est pas
+  /// reconduite (decision du directeur, `03` section 1 bis-4). Le decompte
+  /// continue pendant la question ; une visite terminee entre-temps par le
+  /// serveur ne se referme pas deux fois (`sortir` est sans effet hors visite).
+  Future<void> _demanderSortie() async {
+    if (_confirmationOuverte) {
+      return;
+    }
+    final v = t.tc.observation.visite;
+    final VueBudgetObservation? budget = ref
+        .read(moteurVisiteObservationProvider(widget.seanceId))
+        .etat
+        .vueBudget;
+    _confirmationOuverte = true;
+    final bool confirme = await ConfirmDestructive.demander(
+      context,
+      question: v.quitterQuestion,
+      consequence: budget == null
+          ? v.quitterConsequenceSansTemps
+          : v.quitterConsequence(
+              duree: dureeVisiteLisible(budget.restantAffiche),
+            ),
+      libelleConfirmer: v.quitterConfirmer,
+    );
+    _confirmationOuverte = false;
+    if (confirme && mounted) {
+      _quitter();
+    }
+  }
 }

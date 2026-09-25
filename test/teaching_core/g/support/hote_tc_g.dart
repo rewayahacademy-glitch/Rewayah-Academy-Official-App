@@ -131,6 +131,8 @@ List<Override> surchargesTcG({
   FauxMoteurClasse? moteur,
   FauxServiceVideoClasse? video,
   Stream<void>? battement,
+  DateTime Function()? horloge,
+  List<Override> autres = const <Override>[],
   bool observationReelle = true,
   FauxServicePresence? presence,
   StockagePreferences? stockage,
@@ -177,6 +179,7 @@ List<Override> surchargesTcG({
       ref.watch(portVisiteObservationProvider),
       ref.watch(portPolitiqueObservationProvider),
       battement: battement ?? const Stream<void>.empty(),
+      horloge: horloge,
     );
     ref.onDispose(() => unawaited(moteurVisite.dispose()));
     return moteurVisite;
@@ -189,4 +192,5 @@ List<Override> surchargesTcG({
   // **Sans jeton par defaut, et c'est le bon defaut** : un test qui ne pose
   // aucun acces doit exercer le refus, pas une salle ouverte par commodite.
   serviceVideoProvider.overrideWithValue(video ?? FauxServiceVideoClasse()),
+  ...autres,
 ];
