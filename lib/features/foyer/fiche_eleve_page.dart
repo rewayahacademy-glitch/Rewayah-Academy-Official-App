@@ -331,7 +331,16 @@ class _ContenuFiche extends ConsumerWidget {
             icone: AppIcons.appareil,
             libelle: t.ficheEleve.lignes.appareils(prenom: profil.prenom),
             legende: t.ficheEleve.lignes.appareilsLegende,
-            onPress: () => routeur.go(sousPage('appareils')),
+            // Le retour des appareils ramene a cette fiche (`?retour=`), pas
+            // aux appareils du foyer d'ou l'on ne vient pas (B-5).
+            onPress: () => routeur.go(
+              Uri(
+                path: sousPage('appareils'),
+                queryParameters: <String, String>{
+                  'retour': Routes.ficheElevePour(profil.eleveId),
+                },
+              ).toString(),
+            ),
           ),
         ],
       ),

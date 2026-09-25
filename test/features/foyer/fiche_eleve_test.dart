@@ -276,8 +276,16 @@ void main() {
         tester,
         t.ficheEleve.lignes.appareils(prenom: 'Eleve A1'),
       );
-      expect(lieu(routeur), Routes.ficheEleveSousPage(a1, 'appareils'));
+      final Uri adresse = Uri.parse(lieu(routeur));
+      expect(adresse.path, Routes.ficheEleveSousPage(a1, 'appareils'));
+      expect(adresse.queryParameters['retour'], Routes.ficheElevePour(a1));
       expect(find.byType(AppareilsElevePage), findsOneWidget);
+
+      // Le retour ramene a la fiche d ou l on vient (B-5).
+      await tester.tap(find.byType(DisqueRetour));
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.ficheElevePour(a1));
+      expect(find.byType(FicheElevePage), findsOneWidget);
     });
   });
 
@@ -629,7 +637,8 @@ void main() {
                 .ancestor(
                   of: find.text(libelle),
                   matching: find.byWidgetPredicate(
-                    (Widget w) => w is Semantics && w.properties.checked != null,
+                    (Widget w) =>
+                        w is Semantics && w.properties.checked != null,
                   ),
                 )
                 .first,

@@ -30,10 +30,11 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pin_pad.dart';
 import 'package:rewayah_academy/features/appareils/appareils_eleve_page.dart';
-import 'package:rewayah_academy/features/appareils/appareils_page.dart';
 import 'package:rewayah_academy/features/appareils/liste_appareils_eleve.dart';
 import 'package:rewayah_academy/features/eleve_connexion/eleve_connexion_page.dart';
 import 'package:rewayah_academy/features/eleve_connexion/saisie_code_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
+import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
@@ -182,7 +183,7 @@ void main() {
         routeur.go(Routes.tuteurAccueil);
         await stabiliser(tester);
 
-        // 1. Onglet Foyer de la barre basse : les appareils du foyer.
+        // 1. Onglet Foyer de la barre basse : le Foyer.
         await _taper(
           tester,
           find.descendant(
@@ -191,11 +192,20 @@ void main() {
           ),
         );
         expect(lieu(routeur), Routes.tuteurFoyer);
-        expect(find.byType(AppareilsPage), findsOneWidget);
+        expect(find.byType(FoyerPage), findsOneWidget);
 
-        // 2. La ligne du profil ouvre ses appareils (niveau 2, retour visible).
+        // 2. La ligne du profil ouvre sa fiche ; la ligne Appareils de la
+        // fiche ouvre ses appareils (retour visible).
         await _taper(tester, find.text('Amina'));
-        expect(lieu(routeur), Routes.ficheEleveSousPage('e1', 'appareils'));
+        expect(lieu(routeur), Routes.ficheElevePour('e1'));
+        await _taper(
+          tester,
+          find.text(t.ficheEleve.lignes.appareils(prenom: 'Amina')),
+        );
+        expect(
+          Uri.parse(lieu(routeur)).path,
+          Routes.ficheEleveSousPage('e1', 'appareils'),
+        );
         expect(find.byType(AppareilsElevePage), findsOneWidget);
         expect(find.byType(DisqueRetour), findsOneWidget);
 
@@ -206,11 +216,10 @@ void main() {
         expect(find.text(t.appareils.retrait.reussi), findsOneWidget);
         expect(find.text(t.appareils.eleve.videTitre), findsOneWidget);
 
-        // 4. Retour : les appareils du foyer, puis le Foyer.
+        // 4. Retour : la fiche d ou l on vient, puis le Foyer.
         await _taper(tester, find.byType(DisqueRetour));
-        expect(lieu(routeur), Routes.tuteurFoyerAppareils);
-        expect(find.byType(AppareilsPage), findsOneWidget);
-        expect(find.text(t.appareils.foyer.aucunAppareil), findsOneWidget);
+        expect(lieu(routeur), Routes.ficheElevePour('e1'));
+        expect(find.byType(FicheElevePage), findsOneWidget);
         await _taper(tester, find.byType(DisqueRetour));
         expect(lieu(routeur), Routes.tuteurFoyer);
         expect(tester.takeException(), isNull);
@@ -427,8 +436,7 @@ void main() {
       (WidgetTester tester) async {
         final _Eleve m = await _monterAppareil(
           tester,
-          service: FauxEnfantOuverture()
-            ..attenteOuverture = Completer<void>(),
+          service: FauxEnfantOuverture()..attenteOuverture = Completer<void>(),
         );
         await _versChoix(tester);
         await _taper(tester, find.byKey(EleveConnexionPage.carteKey('e1')));
@@ -467,7 +475,10 @@ void main() {
         expect(find.text(t.eleveConnexion.pin.oubliePhrase), findsOneWidget);
         await _taper(
           tester,
-          find.widgetWithText(ActionPrincipale, t.eleveConnexion.pin.oublieAction),
+          find.widgetWithText(
+            ActionPrincipale,
+            t.eleveConnexion.pin.oublieAction,
+          ),
         );
         expect(Uri.parse(m.lieu).path, Routes.connexionEleveCode);
 

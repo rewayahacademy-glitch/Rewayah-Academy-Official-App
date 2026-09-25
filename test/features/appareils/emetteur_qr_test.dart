@@ -168,13 +168,23 @@ void main() {
         await stabiliser(tester);
         expect(lieu(routeur), Routes.tuteurFoyer);
 
-        // 2. La ligne de l eleve, puis « Connecter un appareil » sur ses
-        // appareils (LD-3).
+        // 2. La ligne de l eleve ouvre sa fiche ; la ligne Appareils de la
+        // fiche, puis « Connecter un appareil » sur ses appareils (LD-3).
         final Finder ligne = find.text('Amina');
         await tester.ensureVisible(ligne);
         await tester.tap(ligne);
         await stabiliser(tester);
-        expect(lieu(routeur), Routes.ficheEleveSousPage('e1', 'appareils'));
+        expect(lieu(routeur), Routes.ficheElevePour('e1'));
+        final Finder appareils = find.text(
+          t.ficheEleve.lignes.appareils(prenom: 'Amina'),
+        );
+        await tester.ensureVisible(appareils);
+        await tester.tap(appareils);
+        await stabiliser(tester);
+        expect(
+          Uri.parse(lieu(routeur)).path,
+          Routes.ficheEleveSousPage('e1', 'appareils'),
+        );
         final Finder ajouter = find.text(t.appareils.eleve.connecter);
         await tester.ensureVisible(ajouter);
         await tester.tap(ajouter);
@@ -195,8 +205,19 @@ void main() {
         // 3. Le disque retour ramene aux appareils de l eleve d ou l on vient.
         await tester.tap(find.byType(DisqueRetour));
         await stabiliser(tester);
-        expect(lieu(routeur), Routes.ficheEleveSousPage('e1', 'appareils'));
+        expect(
+          Uri.parse(lieu(routeur)).path,
+          Routes.ficheEleveSousPage('e1', 'appareils'),
+        );
         expect(find.byType(EmetteurQr), findsNothing);
+
+        // 4. Puis la fiche, puis le Foyer : aucune impasse.
+        await tester.tap(find.byType(DisqueRetour));
+        await stabiliser(tester);
+        expect(lieu(routeur), Routes.ficheElevePour('e1'));
+        await tester.tap(find.byType(DisqueRetour));
+        await stabiliser(tester);
+        expect(lieu(routeur), Routes.tuteurFoyer);
         expect(tester.takeException(), isNull);
       },
     );
@@ -496,32 +517,29 @@ void main() {
       },
     );
 
-    testWidgets(
-      'lecture du code vivant en echec : aucun code cree en silence, '
-      'erreur dite puis Reessayer relit',
-      (WidgetTester tester) async {
-        final FauxServiceAppairage service = _service();
-        final FauxStatutCode statut = FauxStatutCode()
-          ..erreurVivant = Exception('delai depasse');
-        await _monter(tester, service: service, statut: statut);
+    testWidgets('lecture du code vivant en echec : aucun code cree en silence, '
+        'erreur dite puis Reessayer relit', (WidgetTester tester) async {
+      final FauxServiceAppairage service = _service();
+      final FauxStatutCode statut = FauxStatutCode()
+        ..erreurVivant = Exception('delai depasse');
+      await _monter(tester, service: service, statut: statut);
 
-        // Rien n'a ete demande : un nouveau code perimerait celui qui est
-        // peut-etre en train d'etre saisi sur l'autre appareil.
-        expect(service.codesDemandes, isEmpty);
-        expect(find.byType(EmetteurQr), findsNothing);
-        expect(
-          find.text(t.appareils.emetteur.erreur.generiqueTitre),
-          findsOneWidget,
-        );
+      // Rien n'a ete demande : un nouveau code perimerait celui qui est
+      // peut-etre en train d'etre saisi sur l'autre appareil.
+      expect(service.codesDemandes, isEmpty);
+      expect(find.byType(EmetteurQr), findsNothing);
+      expect(
+        find.text(t.appareils.emetteur.erreur.generiqueTitre),
+        findsOneWidget,
+      );
 
-        // La lecture repasse : aucun code vivant, le code est alors cree.
-        statut.erreurVivant = null;
-        await tester.tap(find.text(t.commun.reessayer));
-        await stabiliser(tester);
-        expect(service.codesDemandes, <String>['e1']);
-        expect(find.byType(EmetteurQr), findsOneWidget);
-      },
-    );
+      // La lecture repasse : aucun code vivant, le code est alors cree.
+      statut.erreurVivant = null;
+      await tester.tap(find.text(t.commun.reessayer));
+      await stabiliser(tester);
+      expect(service.codesDemandes, <String>['e1']);
+      expect(find.byType(EmetteurQr), findsOneWidget);
+    });
 
     testWidgets('arriere-plan : code masque, puis reverifie a la reprise', (
       WidgetTester tester,
