@@ -1,6 +1,6 @@
 ﻿# Banque de questions d'accueil (tous rôles)
 
-Statut : PROPOSITION du 25/09, en attente des décisions du directeur. Ne rien coder avant validation.
+Statut : PROPOSITION du 25/09, GELÉE. Le directeur finalise le système pédagogique (moteur de l'app), avec lequel elle se contredit en partie. Ne rien coder. À revoir à tout moment une fois ce système livré (ligne HL-B-4).
 Page de revue pour le directeur : https://claude.ai/artifact/UwExdHDgacg6b8ZJ4p4ikZ
 Tableau : ligne HL-B-4 ; consigne K-24.
 
@@ -37,4 +37,5 @@ Date de naissance ; test de lecture enregistré ; classe scolaire ; pratique rel
 ## Décision en attente sur l'objectif
 Si Tawhid, Fiqh, Sira, Éthique sont proposés dans l'app : ajouter l'objectif « Apprendre les bases de la religion ».
 Toute colonne « À CRÉER » = migration = accord écrit du directeur (K-19).
+
 
