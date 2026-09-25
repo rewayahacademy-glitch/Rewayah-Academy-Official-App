@@ -114,6 +114,25 @@ void main() {
         );
       });
 
+      testWidgets('bloc accueil 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
+        );
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: Routes.tuteurAccueil,
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_bloc_accueil_1440x900_${mode.name}')}',
+        );
+      });
+
       // Chargement : squelette avant la premiere reponse du foyer.
       testWidgets('chargement 390x844, ${mode.name}', (
         WidgetTester tester,
@@ -129,6 +148,24 @@ void main() {
         );
         debugPrint(
           'PNG ${await capturer(tester, 'la4_chargement_390x844_${mode.name}')}',
+        );
+      });
+
+      testWidgets('chargement 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        final FauxServiceOffres faux = FauxServiceOffres()
+          ..attenteParcours = Completer<void>();
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: '${Routes.tuteurParcours}/e1',
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_chargement_1440x900_${mode.name}')}',
         );
       });
 
@@ -195,6 +232,31 @@ void main() {
         );
       });
 
+      testWidgets('offres 1440x900, ${mode.name}', (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[
+            apprenantDeTest(
+              cohorte: 'enfant_8_10',
+              langue: 'francais',
+              onboardingFaitLe: DateTime(2026, 9, 20, 10),
+            ),
+          ],
+          offresRendues: <OffreHoraire>[offreDeTest()],
+        );
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: '${Routes.tuteurParcours}/e1',
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        expect(find.byType(ScheduleOption), findsOneWidget);
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_offres_1440x900_${mode.name}')}',
+        );
+      });
+
       // Fin d'admission : statut de diagnostic rendu par le serveur.
       testWidgets('fin admission 390x844, ${mode.name}', (
         WidgetTester tester,
@@ -221,6 +283,32 @@ void main() {
         );
       });
 
+      testWidgets('fin admission 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[
+            apprenantDeTest(
+              cohorte: 'enfant_8_10',
+              langue: 'francais',
+              onboardingFaitLe: DateTime(2026, 9, 20, 10),
+              intention: EtatIntention.enregistree,
+            ),
+          ],
+        );
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: '${Routes.tuteurParcours}/e1',
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_fin_admission_1440x900_${mode.name}')}',
+        );
+      });
+
       // Indisponible honnete : backend 0043 non applique (PGRST205).
       testWidgets('indisponible 390x844, ${mode.name}', (
         WidgetTester tester,
@@ -242,6 +330,27 @@ void main() {
         );
       });
 
+      testWidgets('indisponible 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        final FauxServiceOffres faux = FauxServiceOffres()
+          ..erreurParcours = const PostgrestException(
+            message: 'relation inconnue',
+            code: 'PGRST205',
+          );
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: '${Routes.tuteurParcours}/e1',
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_indisponible_1440x900_${mode.name}')}',
+        );
+      });
+
       // Hors ligne : reseau qui ne repond pas.
       testWidgets('hors ligne 390x844, ${mode.name}', (
         WidgetTester tester,
@@ -257,6 +366,24 @@ void main() {
         );
         debugPrint(
           'PNG ${await capturer(tester, 'la4_hors_ligne_390x844_${mode.name}')}',
+        );
+      });
+
+      testWidgets('hors ligne 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        final FauxServiceOffres faux = FauxServiceOffres()
+          ..erreurParcours = Exception('Failed host lookup');
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: '${Routes.tuteurParcours}/e1',
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_hors_ligne_1440x900_${mode.name}')}',
         );
       });
 
@@ -276,6 +403,22 @@ void main() {
         );
       });
 
+      testWidgets('erreur 1440x900, ${mode.name}', (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres()
+          ..erreurParcours = Exception('panne inattendue');
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: '${Routes.tuteurParcours}/e1',
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_erreur_1440x900_${mode.name}')}',
+        );
+      });
+
       // Profil introuvable ("vide") : eleve absent du foyer, retour au Foyer.
       testWidgets('profil introuvable 390x844, ${mode.name}', (
         WidgetTester tester,
@@ -292,6 +435,25 @@ void main() {
         );
         debugPrint(
           'PNG ${await capturer(tester, 'la4_introuvable_390x844_${mode.name}')}',
+        );
+      });
+
+      testWidgets('profil introuvable 1440x900, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: const <ParcoursApprenant>[],
+        );
+        await _monter(
+          tester,
+          routes: _routesParcours(),
+          depart: '${Routes.tuteurParcours}/introuvable',
+          mode: mode,
+          taille: const Size(1440, 900),
+          surcharges: <Override>[serviceOffresProvider.overrideWithValue(faux)],
+        );
+        debugPrint(
+          'PNG ${await capturer(tester, 'la4_introuvable_1440x900_${mode.name}')}',
         );
       });
     }
