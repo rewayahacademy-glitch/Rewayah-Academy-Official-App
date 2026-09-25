@@ -1,0 +1,150 @@
+﻿VERROU acquis 08:52:19 -> flutter test test/features/foyer/foyer_page_test.dart test/features/foyer/fiche_eleve_test.dart test/features/inscription_test.dart
+00:00 +0: loading C:/RA/depot/test/features/foyer/foyer_page_test.dart
+00:00 +0: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : atteint depuis la navigation l onglet Foyer ouvre le Foyer, membres tries par prenom
+00:01 +1: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation Foyer -> fiche : carte d identite, parametres, appareils, onglet Foyer actif, retour au Foyer
+00:02 +2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation Foyer -> fiche : carte d identite, parametres, appareils, onglet Foyer actif, retour au Foyer
+00:02 +3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation Foyer -> fiche : carte d identite, parametres, appareils, onglet Foyer actif, retour au Foyer
+00:02 +4: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation Foyer -> fiche : carte d identite, parametres, appareils, onglet Foyer actif, retour au Foyer
+00:03 +5: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation Foyer -> fiche : carte d identite, parametres, appareils, onglet Foyer actif, retour au Foyer
+00:03 +6: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation Foyer -> fiche : carte d identite, parametres, appareils, onglet Foyer actif, retour au Foyer
+00:03 +7: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : atteint depuis la navigation « Retour au foyer » de l ecran indisponible ramene au Foyer
+00:03 +8: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes le parcours complet cree le profil et part vers /attente
+00:04 +9: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes le parcours complet cree le profil et part vers /attente
+00:04 +10: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes le parcours complet cree le profil et part vers /attente
+00:04 +11: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes le parcours complet cree le profil et part vers /attente
+00:04 +12: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes le parcours complet cree le profil et part vers /attente
+00:04 +13: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation chaque ligne ouvre sa sous-page, son disque retour ramene a la fiche
+00:05 +14: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes classes sans service : aucune classe inventee, une phrase sous le groupe
+00:05 +15: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes classes sans service : aucune classe inventee, une phrase sous le groupe
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "La classe de chaque élève ne s'affiche pas
+encore sur cette page.": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/RA/depot/test/features/foyer/foyer_page_test.dart:349:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/RA/depot/test/features/foyer/foyer_page_test.dart line 349
+The test description was:
+  classes sans service : aucune classe inventee, une phrase sous le groupe
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +15 -1: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation la ligne Appareils ouvre l ecran des appareils de l eleve
+00:05 +15 -1: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes classes sans service : aucune classe inventee, une phrase sous le groupe [E]
+  Test failed. See exception logs above.
+  The test description was: classes sans service : aucune classe inventee, une phrase sous le groupe
+  
+00:05 +16 -1: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : atteinte depuis la navigation la ligne Appareils ouvre l ecran des appareils de l eleve
+00:05 +17 -1: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes classes connues : nom de classe, ou « Pas encore de classe »
+00:05 +18 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes retour 48 dp et « Modifier » ramenent au bon endroit
+00:06 +19 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes retour 48 dp et « Modifier » ramenent au bon endroit
+00:06 +20 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes retour 48 dp et « Modifier » ramenent au bon endroit
+00:06 +21 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes retour 48 dp et « Modifier » ramenent au bon endroit
+00:06 +22 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes retour 48 dp et « Modifier » ramenent au bon endroit
+00:06 +23 -1: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : etats hors ligne : dit hors ligne, pas echec du serveur
+00:06 +24 -1: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes classes en echec (service present) : « Classe non lue », « Relire les classes » relit
+00:06 +25 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes actualisation en echec : aucune impasse, aucun doublon
+00:07 +26 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes actualisation en echec : aucune impasse, aucun doublon
+00:07 +27 -1: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes « Ajouter un profil eleve » : CTA dominant libelle + fleche
+00:07 +28 -1: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Fiche : etats sous-page d un identifiant inconnu : introuvable aussi
+00:07 +29 -1: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes un echec de creation se dit, et ne fait pas avancer
+00:07 +30 -1: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes acces : echeance a venir et echeance passee, en texte
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Accès jusqu'au 30 octobre 2026": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/RA/depot/test/features/foyer/foyer_page_test.dart:535:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/RA/depot/test/features/foyer/foyer_page_test.dart line 535
+The test description was:
+  acces : echeance a venir et echeance passee, en texte
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +30 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo identite en lecture, sans code interne ni age invente
+00:07 +30 -2: C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes acces : echeance a venir et echeance passee, en texte [E]
+  Test failed. See exception logs above.
+  The test description was: acces : echeance a venir et echeance passee, en texte
+  
+00:08 +31 -2: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes double soumission bloquee : un second appui pendant l-envoi ne cree pas de second profil
+00:08 +32 -2: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes double soumission bloquee : un second appui pendant l-envoi ne cree pas de second profil
+00:08 +33 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo choisir, apercu, envoyer : deux etapes puis photo enregistree
+00:08 +34 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo choisir, apercu, envoyer : deux etapes puis photo enregistree
+00:08 +35 -2: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes le « Modifier » de l-usage et du genre ramenent au bon endroit
+00:08 +36 -2: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes le « Modifier » de l-usage et du genre ramenent au bon endroit
+00:08 +37 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo annuler l apercu : rien n est envoye
+00:09 +38 -2: C:/RA/depot/test/features/inscription_test.dart: LA-2 : inscription par etapes une fois le profil cree, « Modifier » et le retour disparaissent : aucune impasse mais aucun doublon
+00:09 +39 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo photo trop lourde : refus avant tout envoi
+00:09 +40 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo photo trop lourde : refus avant tout envoi
+00:09 +41 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo echec d envoi puis reprise : la photo choisie est gardee
+00:09 +42 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo echec d enregistrement puis reprise : le fichier n est pas renvoye
+00:10 +43 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Informations et photo hors ligne : l envoi ne se presse pas, une phrase le dit
+00:10 +44 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Parcours et inscription questionnaire : l etape de l eleve, la ligne ouvre le questionnaire
+00:10 +45 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Parcours et inscription lecture du parcours en echec : phrase honnete, aucune etape inventee
+00:10 +46 -2: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Parcours et inscription classes sans service : la ligne ouvre le choix de classe
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "La classe ne s'affiche pas encore ici.
+Choisir une classe": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/RA/depot/test/features/foyer/fiche_eleve_test.dart:567:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/RA/depot/test/features/foyer/fiche_eleve_test.dart line 567
+The test description was:
+  classes sans service : la ligne ouvre le choix de classe
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:11 +46 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Parcours et inscription classes sans service : la ligne ouvre le choix de classe [E]
+  Test failed. See exception logs above.
+  The test description was: classes sans service : la ligne ouvre le choix de classe
+  
+00:11 +46 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Parcours et inscription classe connue : son nom, la ligne ouvre la classe
+00:12 +47 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Parcours et inscription eleve sans classe : « Pas encore de classe »
+00:12 +48 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Interface Interface guidee retenue ; toucher « standard » l ecrit, la relecture la retient
+00:12 +49 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Interface echec d ecriture : phrase d erreur, aucun changement affiche
+00:12 +50 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Camera en cours l interrupteur ecrit la politique, la legende suit la relecture
+00:12 +51 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Camera en cours echec d ecriture : l interrupteur garde la valeur lue
+00:13 +52 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Acces Rewayah echeance passee : « Expire », jamais valide, aucun motif
+00:13 +53 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Acces Rewayah echeance a venir : « En cours » et la date
+00:13 +54 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Acces Rewayah sans echeance : dit sans echeance
+00:13 +55 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Revue du lot B : etats honnetes des pages d ecriture camera hors ligne : interrupteur inactif, phrase hors ligne, aucune ecriture
+00:13 +56 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Revue du lot B : etats honnetes des pages d ecriture interface hors ligne : cartes inactives, phrase hors ligne, aucune ecriture
+00:13 +57 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Revue du lot B : etats honnetes des pages d ecriture selecteur de photo qui leve : refus lisible, rien envoye
+00:13 +58 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Revue du lot B : etats honnetes des pages d ecriture classes en echec (service present) : « n a pas pu etre lue », Relire la classe relit
+00:14 +59 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Revue du lot B : etats honnetes des pages d ecriture acces : medaillon, titre, echeance et pastille dans UN rectangle
+00:14 +60 -3: C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Bureau 1440 : fiche en deux colonnes, parametres a gauche, appareils a droite
+00:14 +61 -3: Some tests failed.
+
+Failing tests:
+  C:/RA/depot/test/features/foyer/fiche_eleve_test.dart: Parcours et inscription classes sans service : la ligne ouvre le choix de classe
+  C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes acces : echeance a venir et echeance passee, en texte
+  C:/RA/depot/test/features/foyer/foyer_page_test.dart: Foyer : contenu des lignes classes sans service : aucune classe inventee, une phrase sous le groupe
+VERROU libéré, durée 24 s, code 1

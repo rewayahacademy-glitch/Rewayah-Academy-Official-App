@@ -1,5 +1,19 @@
 # Avancement du poste B
 
+## INT-C suite et push (25/09, session B-2026-09-25-coord, depart 08:43)
+
+Statut : **bloque, pas de push**. Fusion locale du lot C deja committee (`0cd5041` "merge: integration du lot C", sur base `9f9d3bd` lot A). Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` VIDE (verifiee).
+
+`flutter test` complet sous verrou : journal `04_phase0/integration_lotC_tests.log` (+2505 ~426 -5, code 1). 5 echecs :
+1. **`test/features/appareils/appareil_partage_test.dart`** et **2. `test/features/appareils/emetteur_qr_test.dart`** : **deja connus, deja bloquants avant lot C** — regression demande **B-5** (`demandes/B.md`), apparue a la fusion du lot B (`ae8e2a0`), confirmee non liee a A ni C (aucun diff sur `lib/features/appareils`, `lib/features/foyer` ni sur les cles i18n concernees entre `ae8e2a0`, `9f9d3bd` et `0cd5041`). Toujours hors perimetre COORD, toujours pas corrigee.
+3. **`test/features/foyer/fiche_eleve_test.dart`** ("classes sans service : la ligne ouvre le choix de classe") et **4.+5. `test/features/foyer/foyer_page_test.dart`** ("classes sans service : aucune classe inventee..." et "acces : echeance a venir et echeance passee") : **NOUVEAUX, cause identifiee**. Racine : `lib/core/capacites/port_classes_foyer.dart` (fichier COORD, `lib/core/capacites`) — le provider par defaut `portClassesFoyerProvider` a ete change par la revue du lot C (M2, commit avant `0cd5041`, demandes C-1/C-12) de `ClassesFoyerIndisponible()` vers `ClassesFoyerSupabase(Supabase.instance.client)` (branchement reel du backend). Les tests `foyer_page_test.dart`/`fiche_eleve_test.dart` scenario "sans service" ne surchargent pas ce provider : ils comptaient sur le comportement par defaut (indisponible honnete, message DB-TRV-07) pour simuler l'absence de service. Avec le vrai adaptateur Supabase par defaut, l'appel echoue autrement dans l'environnement de test (pas de `Supabase.instance` initialise dans ces widget tests) et le texte honnete attendu ne s'affiche plus. Reproduit aussi en isole (3 fichiers seuls, `04_phase0/isole_foyer_test.log`) : pas un flake d'ordre, un vrai effet de bord du branchement M2.
+   - **Pas corrige** : la reparation correcte n'est pas evidente en surface (deux options : (a) surcharger explicitement `portClassesFoyerProvider` avec `ClassesFoyerIndisponible()` dans ces tests foyer "sans service" — fichiers hors perimetre COORD, ou (b) revoir comment/ou le vrai adaptateur est injecte pour ne pas etre le defaut partage par les widget tests). Decision a prendre par le coordinateur/directeur avant de toucher `port_classes_foyer.dart` a nouveau ou les tests du lot B.
+   - Demande deposee : voir `demandes/c.md` (nouvelle entree C-INT-1).
+
+**Pas de push `origin/ui/tuteur-v1`** (regle : seulement si suite verte). `ETAT_A.md` non modifie (regle : uniquement si vert). Ligne P2-01 mise a `bloque` dans le tableau avec cette preuve. Lignes LC-1, LC-2, LC-3 laissees `fait` (pas de `verifie` : la regle "si vert" ne s'applique pas).
+
+Reprise : d'abord decision sur `port_classes_foyer.dart` (garder le vrai adaptateur par defaut et corriger les tests foyer avec surcharge explicite, la voie la plus simple et la plus sure), puis re-suite complete, puis si verte : push + ETAT_A.md + LC-* a `verifie`.
+
 ## INT-A suite (25/09, session B-2026-09-25-coord, depart 08:33)
 
 Statut : bloque. Fusion locale du lot A deja committee dans C:\RA\depot (9f9d3bd "merge: integration du lot A"), frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` VIDE (verifie). `flutter test` complet lance sous verrou (journal C:\RA\pilotage\04_phase0\integration_lotA_tests.log) : +2402 ~358 -2, 2 echecs :

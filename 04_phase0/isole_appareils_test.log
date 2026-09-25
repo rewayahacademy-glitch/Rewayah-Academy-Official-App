@@ -1,0 +1,103 @@
+﻿VERROU acquis 08:50:01 -> flutter test test/features/appareils/emetteur_qr_test.dart test/features/appareils/appareil_partage_test.dart
+00:00 +0: loading C:/RA/depot/test/features/appareils/emetteur_qr_test.dart
+00:00 +0: C:/RA/depot/test/features/appareils/emetteur_qr_test.dart: Parcours depuis la navigation (vrai routeur) Foyer puis profil puis « Connecter un appareil » ouvre l emetteur ; le retour ramene
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '/tuteur/foyer/e1/appareils'
+  Actual: '/tuteur/foyer/e1'
+   Which: is different. Both strings start the same, but the actual value is missing the following
+trailing characters: /appareils ...
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/RA/depot/test/features/appareils/emetteur_qr_test.dart:177:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/RA/depot/test/features/appareils/emetteur_qr_test.dart line 177
+The test description was:
+  Foyer puis profil puis « Connecter un appareil » ouvre l emetteur ; le retour ramene
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +0 -1: C:/RA/depot/test/features/appareils/emetteur_qr_test.dart: Parcours depuis la navigation (vrai routeur) Foyer puis profil puis « Connecter un appareil » ouvre l emetteur ; le retour ramene [E]
+  Test failed. See exception logs above.
+  The test description was: Foyer puis profil puis « Connecter un appareil » ouvre l emetteur ; le retour ramene
+  
+00:02 +1 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +2 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +3 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +4 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +5 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +6 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +7 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +8 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +9 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:02 +10 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +11 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +12 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +13 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +14 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +15 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +16 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +17 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +18 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +19 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +20 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +21 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +22 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +23 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +24 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +25 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +26 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+00:03 +27 -1: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TypeWidgetFinder:<Found 0 widgets with type "AppareilsPage": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/RA/depot/test/features/appareils/appareil_partage_test.dart:194:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/RA/depot/test/features/appareils/appareil_partage_test.dart line 194
+The test description was:
+  onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +27 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer [E]
+  Test failed. See exception logs above.
+  The test description was: onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+  
+00:04 +27 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) connexion -> feuille -> choix du profil -> code faux dit -> bon code -> connexion ouverte par le jeton du profil
+00:04 +28 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) deuxieme eleve : Ajouter un profil -> saisie (retour au choix) -> code -> creation du code personnel -> connexion sans le redemander
+00:05 +29 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) creation : deux codes differents, l erreur est dite
+00:06 +30 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) appareil retire par le tuteur : profil oublie ici, message sur le choix
+00:06 +31 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) dernier profil retire : etat vide, Saisir un code mene a la saisie
+00:06 +32 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) jeton absent : profil oublie, message propre qui n accuse pas le tuteur
+00:06 +33 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) coffre illisible a l ouverture : le pave revient avec l echec, retour visible
+00:07 +34 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) serveur muet a l ouverture : apres le delai, le pave revient avec l echec et le retour
+00:07 +35 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) code oublie de bout en bout : Saisir un nouveau code -> code du tuteur -> Choisis ton code personnel
+00:07 +36 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) ouverture refusee (horsLigne) : dit sous le titre
+00:08 +37 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) ouverture refusee (tropDEssais) : dit sous le titre
+00:08 +38 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) ouverture refusee (generique) : dit sous le titre
+00:08 +39 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) code oublie : explication ; changer de profil ; retours
+00:08 +40 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) texte a 200 % : les cartes passent en pile
+00:08 +41 -2: C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Eleve : appareil partage (vrai routeur, gestes) bureau 1440 : panneau centre, jamais une feuille etiree
+00:09 +42 -2: Some tests failed.
+
+Failing tests:
+  C:/RA/depot/test/features/appareils/appareil_partage_test.dart: Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer
+  C:/RA/depot/test/features/appareils/emetteur_qr_test.dart: Parcours depuis la navigation (vrai routeur) Foyer puis profil puis « Connecter un appareil » ouvre l emetteur ; le retour ramene
+VERROU libéré, durée 22 s, code 1
