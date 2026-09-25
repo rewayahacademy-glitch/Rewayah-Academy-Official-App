@@ -1,4 +1,4 @@
-# 09 - Textes révisés, version v2 (2026-10-v2)
+﻿# 09 - Textes révisés, version v2 (2026-10-v2)
 
 Statut : **projet, à valider par un juriste avant production** (voir CHARTE section 8).
 Langue : français facile. Phrases courtes. Pas de tiret cadratin. Traductions poular et anglais à faire par un traducteur humain, relues par un locuteur, avec la même version.
@@ -46,7 +46,7 @@ Remplace : `contrat.titre`, `contrat.intro`, `contrat.lireTexte`, `contrat.accep
 >
 > **Qui nous sommes.** Rewayah Academy Ltd, société de droit anglais, numéro {numero_societe}, {adresse_siege}. Nous sommes responsables de vos données.
 >
-> **Ce que nous faisons.** Nous donnons des cours de Coran en direct, en visio, avec un enseignant. Pour cela, nous gardons : votre nom, votre courriel ou téléphone, le prénom et la date de naissance de {prenom}, ses horaires, sa présence, ses progrès, et vos paiements.
+> **Ce que nous faisons.** Nous donnons des cours de Coran en direct, en visio, avec un enseignant. Pour cela, nous gardons : votre nom, votre courriel ou téléphone, le prénom et l'âge de {prenom} (jamais sa date de naissance), ses horaires, sa présence, ses progrès, et vos paiements.
 >
 > **Pourquoi.** Pour organiser les cours, suivre les progrès, vous facturer et protéger les enfants.
 >
@@ -220,3 +220,4 @@ Nouvelles clés : `accordsV2.messages.*`.
 ## Récapitulatif
 
 9 textes : A0 religion, A1 conditions (avec l'identité de Rewayah Academy Ltd), A1 bis rétractation, A2 caméra, A3 enregistrement et contrôle (plus E1 enseignant), A4 observation, A5 photo, A6 messages, A7 textes courts (kyc, reçus, nouvelle version).
+
