@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
-import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 
 import '../router/support_routeur.dart';
@@ -88,7 +87,7 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
-/// Monte l'application sur son vrai routeur, sur `/tuteur/reglages`.
+/// Monte l'application sur son vrai routeur et demande `/tuteur/reglages`.
 Future<GoRouter> _monterRouteur(
   WidgetTester tester,
   FauxServiceAppairage appairage,
@@ -160,24 +159,15 @@ void main() {
       });
 
       testWidgets(
-        'toucher le renvoi ouvre la fiche de l eleve (vrai routeur)',
+        'l adresse /tuteur/reglages mene au Foyer (C6, vrai routeur)',
         (WidgetTester tester) async {
           final GoRouter routeur = await _monterRouteur(
             tester,
             FauxServiceAppairage()..elevesRendus = <EleveDuFoyer>[_enfant()],
           );
 
-          final Finder renvoi = find.descendant(
-            of: find.byKey(ReglagesEnfantPage.renvoiKey('e1')),
-            matching: find.text(t.reglagesEnfant.renvoi),
-          );
-          await tester.ensureVisible(renvoi);
-          await stabiliser(tester);
-          await tester.tap(renvoi);
-          await stabiliser(tester);
-
-          expect(lieu(routeur), Routes.ficheElevePour('e1'));
-          expect(find.byType(FicheElevePage), findsOneWidget);
+          expect(lieu(routeur), Routes.tuteurFoyer);
+          expect(find.byType(ReglagesEnfantPage), findsNothing);
         },
       );
 
