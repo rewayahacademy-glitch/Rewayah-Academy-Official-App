@@ -5,27 +5,42 @@
 // milliers, sur des chiffres, sans jamais passer par un nombre flottant.
 // `intl` n'est pas une dependance du projet : ce formateur le remplace.
 
-/// Les devises dont l'exposant ISO 4217 n'est pas 2.
+/// Les devises dont l'exposant ISO 4217 n'est pas 2 (liste de la norme :
+/// exposant 0, 3 et 4).
 ///
-/// ponytail: table fermee et courte ; toute autre devise (XTS compris, dont
-/// l'exposant ISO est « sans objet ») est lue avec deux decimales. Quand le
-/// serveur rendra l'exposant avec le montant (DB-FIN-01), il remplacera cette
-/// table.
+/// ponytail: table fermee ; toute autre devise (XTS compris, dont l'exposant
+/// ISO est « sans objet ») est lue avec deux decimales. Quand le serveur
+/// rendra l'exposant avec le montant (DB-FIN-01), il remplacera cette table.
 const Map<String, int> _exposants = <String, int>{
-  'BHD': 3,
+  // Exposant 0.
+  'BIF': 0,
   'CLP': 0,
-  'IQD': 3,
+  'DJF': 0,
+  'GNF': 0,
   'ISK': 0,
-  'JOD': 3,
   'JPY': 0,
+  'KMF': 0,
   'KRW': 0,
+  'PYG': 0,
+  'RWF': 0,
+  'UGX': 0,
+  'UYI': 0,
+  'VND': 0,
+  'VUV': 0,
+  'XAF': 0,
+  'XOF': 0,
+  'XPF': 0,
+  // Exposant 3.
+  'BHD': 3,
+  'IQD': 3,
+  'JOD': 3,
   'KWD': 3,
   'LYD': 3,
   'OMR': 3,
   'TND': 3,
-  'VND': 0,
-  'XAF': 0,
-  'XOF': 0,
+  // Exposant 4.
+  'CLF': 4,
+  'UYW': 4,
 };
 
 /// Espace fine insecable, separateur des milliers en francais.
