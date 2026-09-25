@@ -142,3 +142,18 @@ Integration dans `C:\RA\depot` :
 - `git push origin ui/tuteur-v1` : **f93272b..92f5cf7**, reussi.
 
 **P2-16 integre dans `origin/ui/tuteur-v1` @ `92f5cf7`.**
+
+# Mesure sur telephone (tentative du 2026-09-25, NON aboutie)
+
+Aucun chiffre encore : l'APK de profil ne se construit pas sur le poste B.
+- Blocage 1 (leve) : `flutter_secure_storage` exige la plateforme Android 37 ; installee (`sdkmanager "platforms;android-37"`).
+- Blocage 2 (ouvert) : `:sentry_flutter:compileProfileKotlin` echoue, « Language version 1.6 is no longer supported; use version 2.0 or greater ». Le plugin sentry_flutter epingle est trop ancien pour le Kotlin du Gradle actuel. A trancher avant toute mesure : monter sentry_flutter (pubspec, decision coordinateur) ou forcer languageVersion 2.0 pour ce sous-projet dans android/build.gradle.kts (branche jetable ui/tuteur-v1-perf).
+- Premier build Gradle : 12 min (telechargements) ; suivant : 6 min.
+
+Methode prete (a reprendre telle quelle) :
+1. Build sous verrou : `flutter build apk --profile --target-platform android-arm64 --dart-define=SUPABASE_URL=https://mesureperf.invalid --dart-define=SUPABASE_ANON_KEY=sb_publishable_mesureperfsanssecret00000000 --dart-define=ENVIRONNEMENT=developpement` (valeurs non secretes qui passent `Env.configuree` ; la demo s'ouvre par le bouton « Essayer la demonstration » de l'ecran Bienvenue, aucun appel Supabase).
+2. `adb install -r`, lancer l'app, relever dans `adb logcat` l'adresse « Dart VM service is listening on http://127.0.0.1:PORT/xxx= », `adb forward tcp:PORT tcp:PORT`.
+3. `dart mesure/ecoute.dart ws://127.0.0.1:PORT/xxx=/ws <dossier>` : ecoute les evenements `Flutter.Frame` (build, raster en microsecondes) ; l'etiquette du parcours est lue dans `<dossier>/phase.txt`, arret par `<dossier>/stop`.
+4. Piloter les gestes par `adb shell input tap/swipe`, en changeant phase.txt a chaque parcours.
+5. `dart mesure/analyse.dart <dossier>/frames.csv` : moyenne et 90e centile build/raster, % d'images > 16,7 ms par parcours.
+6. `adb uninstall com.rewayahacademy.rewayah_academy` a la fin.
