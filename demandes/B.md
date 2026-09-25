@@ -29,3 +29,12 @@
 - **Constat** : depuis LB-3 (`ui/tuteur-v1-b` @ d7b006f), la fiche eleve porte la photo (`.../informations`), la camera (`.../camera`) et l'interface (`.../interface`). `/tuteur/reglages` offre les memes reglages ailleurs : une fonction a deux endroits (`03` §1 ter-1), et libelles « Grand affichage / Affichage courant » non conformes.
 - **Besoin** : redirection `/tuteur/reglages` -> `/tuteur/foyer` (mapping C6), comme deja fait pour `/compte/profils/:id` -> fiche.
 - **Mise a jour (24/09, LB-F, `ui/tuteur-v1-b` @ f258944)** : cote lot B, le doublon est retire. `reglages_enfant_page.dart` (fichier du lot B, `00_OWNERSHIP.md` §3) ne porte plus ni photo, ni camera, ni interface, ni identifiant interne : un seul renvoi par eleve vers `/tuteur/foyer/:eleveId` (teste par geste, `test/features/reglages_enfant_test.dart`) ; les demandes a l'administration restent. RESTE pour COORD : la redirection C6 dans `app_router.dart` ; pour les lots C et E : les liens `accueil_famille_page.dart:458` (`destination: Routes.tuteurReglages`) et `compte_page.dart:626` (`context.push(Routes.tuteurReglages)`).
+## B-5 (25/09, INT-B suite, session B-2026-09-25-coord) : regression navigation appareils apres fusion du lot B
+
+- **Fichiers concernes (hors perimetre COORD)** : `lib/features/appareils/*` (emetteur/AppareilsElevePage) et/ou `lib/features/foyer/fiche_eleve_page.dart`.
+- **Constat** : 2 tests passent sur `origin/ui/tuteur-v1` @ `1cbc760` et echouent sur `ui/tuteur-v1` @ `ae8e2a0` (apres fusion du lot B, `be96493`) :
+  - `test/features/appareils/appareil_partage_test.dart` "onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer" : `AppareilsPage` introuvable apres le geste.
+  - `test/features/appareils/emetteur_qr_test.dart` "Foyer puis profil puis Connecter un appareil ouvre l emetteur ; le retour ramene" : attendu `/tuteur/foyer/e1/appareils`, obtenu `/tuteur/foyer/e1`.
+- **Hypothese** : le retour depuis l'ecran appareils/emetteur (ouvert depuis la fiche eleve refondue, `fiche_eleve_page.dart` +411) depile un niveau de trop.
+- **Preuve** : `04_phase0/integration_lotB_tests_base.log` (base, vert), `04_phase0/integration_lotB_tests_isole.log` (HEAD, rouge), `04_phase0/integration_lotB_tests.log` (suite complete, rouge, memes 2 echecs).
+- **Bloque** : le push de `ui/tuteur-v1` (INT-B).
