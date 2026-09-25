@@ -89,25 +89,19 @@ class CaseAccordObservation extends StatelessWidget {
         : t.consentement.texte.caseResponsable;
     final ValueChanged<bool>? geste = onChanged;
     return AppCard(
-      child: MergeSemantics(
-        child: InkWell(
-          onTap: geste == null ? null : () => geste(!cochee),
-          child: Row(
-            children: <Widget>[
-              Checkbox(
-                value: cochee,
-                onChanged: geste == null
-                    ? null
-                    : (bool? valeur) => geste(valeur ?? false),
-              ),
-              Expanded(
-                child: Text(
-                  libelle,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-            ],
-          ),
+      // Toute la ligne est la cible (case et libelle), par le composant
+      // Material lui-meme : ni geste nu, ni case precochee.
+      // Material transparent : l'ondulation se peint au-dessus du fond de carte.
+      child: Material(
+        type: MaterialType.transparency,
+        child: CheckboxListTile(
+          value: cochee,
+          onChanged: geste == null
+              ? null
+              : (bool? valeur) => geste(valeur ?? false),
+          controlAffinity: ListTileControlAffinity.leading,
+          contentPadding: EdgeInsets.zero,
+          title: Text(libelle, style: Theme.of(context).textTheme.bodyLarge),
         ),
       ),
     );

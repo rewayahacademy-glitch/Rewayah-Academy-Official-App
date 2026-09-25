@@ -20,6 +20,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
+import '../inscription/brouillon_inscription.dart';
 
 /// `TUT-00b` : le portail d'attente, refondu (05 section A, sous-paquet 3).
 ///
@@ -44,7 +45,12 @@ class AttentePage extends ConsumerWidget {
     // en echec tout seul, et l'etat repasse alors par `AsyncLoading` en
     // conservant `hasError`.
     final _Prochaine? prochaine = etat.hasValue
-        ? _prochaine(etat.requireValue)
+        ? _prochaine(
+              etat.requireValue,
+              adulte:
+                  ref.watch(brouillonInscriptionProvider).usage ==
+                  UsageInscription.moi,
+            )
         : etat.hasError
         ? _Prochaine(
             t.commun.reessayer,
@@ -104,10 +110,13 @@ class _Prochaine {
   final VoidCallback? geste;
 }
 
-_Prochaine? _prochaine(EtatDossier etat) => switch (etat.etape) {
+/// `adulte` : l'inscription vient de « Moi uniquement » (eleve adulte, son
+/// propre tuteur) ; le contrat s'ouvre alors en variante eleve adulte
+/// (`?pour=moi`). Sans brouillon (rechargement), variante responsable legal.
+_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) => switch (etat.etape) {
   EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
     _action(etat.manquants.first),
-    _chemin(etat.manquants.first),
+    _chemin(etat.manquants.first, adulte: adulte),
   ),
   EtapeDossier.refuse => _Prochaine.vers(
     t.attente.corriger,
@@ -128,9 +137,11 @@ String _action(PieceManquante piece) => switch (piece) {
   PieceManquante.pieceIdentite => t.attente.deposerLaPiece,
 };
 
-String _chemin(PieceManquante piece) => switch (piece) {
+String _chemin(PieceManquante piece, {required bool adulte}) =>
+    switch (piece) {
   PieceManquante.accuse => Routes.attenteAccuse,
-  PieceManquante.contrat => Routes.attenteContrat,
+  PieceManquante.contrat =>
+    adulte ? '${Routes.attenteContrat}?pour=moi' : Routes.attenteContrat,
   PieceManquante.pieceIdentite => Routes.attentePiece,
 };
 
