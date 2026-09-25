@@ -388,3 +388,10 @@ Tableau : P2-15 passe a fait avec preuve. Relecture de toutes les lignes L*, P2-
 **Etape « role Tuteur » : entierement terminee cote frontend, poste B seul** (P2-01 a P2-15 tous a fait/verifie). Restent explicitement hors droit du poste B seul : P2-14 (apercu deploye) et CO-04 (PR brouillon), les deux motives « attend l'accord du directeur ». Prochaine etape prete : P2-16 (effets et animations modernes du role Tuteur, demande du directeur, statut a_faire).
 
 Statut : fini.
+
+## P2-16 etape 1 (socle et transitions) : FAIT (25/09, session B-2026-09-25-coord)
+
+Branche `ui/tuteur-v1-anim` @ 1b7a0c7 (worktree C:\RA\lot-anim). Socle `lib/core/mouvement/` (constantes, ApparitionDouce, ListeEchelonnee, BasculeEtat, pageGlissee, FonduOnglet), 34 routes de la coquille tuteur en glisse + fondu, fondu entre onglets tuteur. analyze --fatal-infos propre, tests router/navigation/ecrans tuteur/widgets verts. Rapport : `05_recette\P2-16\RAPPORT.md`.
+P2-16 reste en_cours. Prochaine etape : brancher le socle dans les ecrans tuteur (listes/cartes, etats de chargement), retour au toucher, barre animee, mesure de performance et captures.
+
+Statut : fini (etape 1).
