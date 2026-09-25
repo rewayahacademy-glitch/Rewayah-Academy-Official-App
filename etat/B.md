@@ -279,3 +279,7 @@ LOT E TERMINE bc6b0b3 (LE-F, 25/09 08:20 : fusion base, reglages enfant -> fiche
 
 LOT O TERMINE e45963e (LO-F, 25/09 08:36 : fusion base, revue RAS, suite verte +2313 ~284, analyze propre)
 
+
+## Reprise base suite et push (25/09, session B-2026-09-25-coord, reprise 5)
+
+Reprise confirmee (git status/log/etat lus, pas de refaire) : depot `ui/tuteur-v1` @ `20731a4` toujours non pousse (73 commits d'avance), frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` **vide** (reconfirme). Suite complete non relancee cette session : les 5 echecs O-INT-1 restants (`entree_observation_navigation_test.dart`) sont deja entierement diagnostiques (cf. `demandes/O.md`, pistes (a)/(b)) mais leur correction exige de reecrire coordonnee les 5 montages `_monter`/`_surcharges` du test (nouvelle instrumentation `rolesDemandes`/`sorties` a brancher sur `surchargesClasse`, puis 5 sequences de gestes a adapter au bouton `t.classe.observer` et aux retours vers la classe au lieu de l'Accueil), avec verification par suite complete (~384s) : pas simple au sens de la tache, confirme par lecture du code cette session (`bloc_observation_classe.dart`, `support_classe.dart`). **Statut : bloque, inchange.** Pas de push depot. Pilotage pousse.
