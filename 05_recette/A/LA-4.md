@@ -1,7 +1,8 @@
 # LA-4 — Questionnaire par eleve /tuteur/parcours/:eleveId
 
 Preuve de la tache 3/3 (captures et statut). Code : e356cd3, 8c0216b. Captures :
-dd82e7f (`test/capture/la4_parcours_capture_test.dart`).
+dd82e7f puis 750aab9 (`test/capture/la4_parcours_capture_test.dart`, 1440x900
+ajoute pour les 8 ecrans restants).
 
 ## Atteignabilite (graphe_imports, -Repo C:\RA\lot-a -Ref dd82e7f)
 
@@ -25,51 +26,52 @@ vert).
 
 Une seule fonction, un seul endroit : aucune duplication constatee.
 
-## Statut par ecran (captures 390x844 clair/sombre ; 1440x900 fait pour
-l'ecran principal seulement — voir "Reste")
+## Statut par ecran (390x844 ET 1440x900, clair et sombre)
 
-| Ecran | 390x844 clair/sombre | 1440x900 | Maquette rapprochee |
+| Ecran | 390x844 | 1440x900 | Maquette rapprochee |
 |---|---|---|---|
-| Bloc accueil | fait | non fait | aucune (composant interne, pas de maquette dediee) |
-| Chargement (squelette) | fait | non fait | — |
-| Question (age, prenom en contexte) | fait | **fait** | `onboarding mobile 1.png` (03/Age) — gabarit respecte : retour, barre de progression, "Étape n sur N", question, cartes, CTA pilule bas. Ecart : cartes sans icone ronde ni bouton radio explicite (`ChoiceCardGroup` existant, hors perimetre de cette tache 3/3, pas un defaut introduit par LA-4) |
-| Offres (ScheduleOption) | fait | non fait | pas de maquette horaires dediee dans le lot |
-| Fin d'admission (statut diagnostic serveur) | fait | non fait | aucune maquette dediee |
-| Indisponible (PGRST205, 0043 absent) | fait | non fait | — |
-| Hors ligne | fait | non fait | — |
-| Erreur (Reessayer) | fait | non fait | — |
-| Profil introuvable (retour Foyer) | fait | non fait | — |
+| Bloc accueil | fait | fait | aucune (composant interne, pas de maquette dediee) |
+| Chargement (squelette) | fait | fait | — |
+| Question (age, prenom en contexte) | fait | fait | `onboarding mobile 1.png` (03/Age) — gabarit respecte : retour, barre de progression, "Étape n sur N", question, cartes, CTA pilule bas ; en 1440x900 la question reste en colonne centrale (largeur ~1135px sur 1440, non pleine largeur), conforme V5/V6. Ecart : cartes sans icone ronde ni bouton radio explicite (`ChoiceCardGroup` existant, partage par tout le lot A, hors perimetre de cette tache 3/3, pas un defaut introduit par LA-4) |
+| Offres (ScheduleOption) | fait | fait | pas de maquette horaires dediee dans le lot |
+| Fin d'admission (statut diagnostic serveur) | fait | fait | aucune maquette dediee |
+| Indisponible (PGRST205, 0043 absent) | fait | fait | — |
+| Hors ligne | fait | fait | — |
+| Erreur (Reessayer) | fait | fait | — |
+| Profil introuvable (retour Foyer) | fait | fait | — |
 
-Fichiers : `C:\RA\pilotage\05_recette\A\captures\la4_*.png` (19 PNG : 9 ecrans
-x clair/sombre 390x844, + 1 paire 1440x900 pour l'ecran question).
+Fichiers : `C:\RA\pilotage\05_recette\A\captures\la4_*.png` (36 PNG : 9 ecrans
+x 2 tailles x clair/sombre).
 
-## Tests et resultats exacts (relance sous verrou, commit dd82e7f)
+Les autres maquettes de reference (`onboarding Mble.png`, `onboarding Mble
+d.png`, `Onboarding mobile 2.png`, `mobile/tuteur observation mobile
+light.png` M6) concernent LA-1/LA-2/LA-3 et l'ecran observation du lot D, pas
+LA-4 : aucun de leurs ecrans ne figure dans ce sous-paquet, donc aucune
+planche maquette|capture supplementaire n'etait possible au-dela de la
+question/age deja rapprochee du gabarit d'`onboarding mobile 1.png` (03/Age).
+
+## Tests et resultats exacts
 
 - `flutter test test/capture/la4_parcours_capture_test.dart` (CAPTURE_DIR
-  defini) : **20 tests, All tests passed** (voir sortie du run, VERROU
-  03:44:19, duree 16 s, code 0).
+  defini, sous verrou, commit 750aab9) : **36 tests, All tests passed**
+  (duree 19 s, code 0).
 - `flutter test test/parcours test/i18n` : deja verts a 8c0216b (49 + 8 tests,
-  documente dans `etat/B.md`, non rejoue dans cette tache car aucun fichier de
-  `lib/` n'a change ici — seul un fichier de test a ete ajoute).
+  documente dans `etat/B.md`, non rejoue ici car aucun fichier de `lib/` n'a
+  change dans cette tache — seul le fichier de capture a ete etendu).
 - `dart analyze --fatal-infos test/capture/la4_parcours_capture_test.dart` :
-  No issues found (apres correction de l'import `InterfaceMode` et de
-  l'import inutilise `harnais.dart`).
+  No issues found.
+- `graphe_imports.ps1 -Repo C:\RA\lot-a -Ref 750aab9` : `parcours_offres_page.dart`
+  et `bloc_parcours.dart` dans les 361 fichiers atteignables depuis
+  `lib/main.dart` (`r1_atteignables_750aab9.txt`).
 
-## Reste (definition de "fait" non entierement remplie)
+## Reste
 
-- 1440x900 clair/sombre non captures pour 8 des 9 ecrans (seul "question age"
-  les a). Point non couvert par le budget de cette tache (limite de temps
-  poste).
-- Les autres maquettes de reference (`onboarding Mble.png`, `onboarding Mble
-  d.png`, `Onboarding mobile 2.png`, `mobile/tuteur observation mobile
-  light.png`) concernent LA-1/LA-2/LA-3, pas LA-4 (aucun ecran du questionnaire
-  n'y figure) : aucune planche maquette|capture supplementaire n'etait
-  possible pour ce sous-paquet au-dela de la question/age deja rapprochee du
-  gabarit d'`onboarding mobile 1.png` (03/Age).
-- Ecart visuel note (cartes sans icone/radio) laisse en l'etat : composant
-  partage `ChoiceCardGroup`/carte de choix deja utilise par tout le lot A,
-  changement hors perimetre de la tache 3/3 (captures et preuve).
+Aucun pour ce sous-paquet. Point hors perimetre, deja consigne et a confirmer
+par COORD (non traite ici) : la branche debutant (niveau debut_lettres ->
+objectif apprendre_a_lire) est une regle appliquee cote client sur une valeur
+serveur ; 0043 (regles_academie:548-569) ne rend aucune regle de branchement
+explicite.
 
-Statut retenu sur le tableau : **en_cours** (captures faites pour tous les
-etats requis en 390x844 clair/sombre + reachabilite confirmee ; 1440x900
-incomplet empeche "fait" au sens strict de la definition).
+Statut retenu sur le tableau : **fait** (390x844 et 1440x900, clair et
+sombre, pour les 9 etats du sous-paquet ; atteignabilite confirmee ; tests
+verts ; ecart visuel mineur assume et documente, hors perimetre).
