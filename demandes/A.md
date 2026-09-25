@@ -52,3 +52,7 @@ Signature : Poste B, LA-F2.
 - **A-5.3 fait** : `OptionChoix.cle` (Key?) posee sur la carte.
 - **A-5.2** (genre cote a cote) : non traite, reste ouvert.
 - Usages lots B/D de `PageEtape`/`ChoiceCardGroup` inchanges (parametres optionnels). `analyze --fatal-infos` : 0 ; tests accessibilite/router/capacites/widgets/features verts sous verrou.
+
+## A-5.2 (LA-C2, 25/09) : icone femme
+La maquette 'onboarding Mble d' montre une silhouette feminine pour Femme. Aucune icone de ce type dans lib/core/icons/app_icons.dart : les deux cartes utilisent AppIcons.profil. Ressource a fournir (glyphe Phosphor + entree AppIcons) si le directeur la veut.
+
