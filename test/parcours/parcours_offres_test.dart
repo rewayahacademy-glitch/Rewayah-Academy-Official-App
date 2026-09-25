@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -5,7 +7,9 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/schedule_option.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/parcours_offres/bloc_parcours.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
@@ -644,6 +648,261 @@ void main() {
           find.text(t.parcours.ageQuestion(prenom: 'Amina')),
           findsNothing,
         );
+      },
+    );
+  });
+
+  group('le parcours s atteint par un geste depuis l accueil, pas par go()', () {
+    testWidgets(
+      'taper l action du bloc de l accueil ouvre le parcours de cet eleve',
+      (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
+        );
+
+        await tester.pumpWidget(
+          hoteRoutant(
+            depart: Routes.tuteurAccueil,
+            surcharges: _avec(faux),
+            routes: <RouteBase>[
+              GoRoute(
+                path: Routes.tuteurAccueil,
+                builder: (BuildContext _, GoRouterState _) => const Scaffold(
+                  body: SingleChildScrollView(child: BlocParcours()),
+                ),
+              ),
+              GoRoute(
+                path: '${Routes.tuteurParcours}/:eleveId',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    ParcoursOffresPage(
+                      eleveId: etat.pathParameters['eleveId'] ?? '',
+                    ),
+              ),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Le geste part du bloc de l'accueil, pas d'un `routeur.go()` ecrit
+        // par le test : c'est le bouton que la famille voit et touche.
+        expect(find.text(t.parcours.commencer), findsOneWidget);
+        await tester.ensureVisible(find.text(t.parcours.commencer));
+        await tester.tap(find.text(t.parcours.commencer));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(t.parcours.ageQuestion(prenom: 'Amina')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'un foyer avec horaire a choisir ouvre directement les horaires',
+      (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[_personnalise()],
+          offresRendues: <OffreHoraire>[offreDeTest()],
+        );
+
+        await tester.pumpWidget(
+          hoteRoutant(
+            depart: Routes.tuteurAccueil,
+            surcharges: _avec(faux),
+            routes: <RouteBase>[
+              GoRoute(
+                path: Routes.tuteurAccueil,
+                builder: (BuildContext _, GoRouterState _) => const Scaffold(
+                  body: SingleChildScrollView(child: BlocParcours()),
+                ),
+              ),
+              GoRoute(
+                path: '${Routes.tuteurParcours}/:eleveId',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    ParcoursOffresPage(
+                      eleveId: etat.pathParameters['eleveId'] ?? '',
+                    ),
+              ),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text(t.parcours.voirHoraires));
+        await tester.tap(find.text(t.parcours.voirHoraires));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ScheduleOption), findsOneWidget);
+      },
+    );
+  });
+
+  group('les etats de lecture du parcours', () {
+    testWidgets(
+      'pendant le chargement, un squelette, jamais une question a moitie',
+      (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
+        )..attenteParcours = Completer<void>();
+
+        await tester.pumpWidget(
+          hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+        );
+        // Un seul pump : la lecture n'a pas encore abouti.
+        await tester.pump();
+
+        expect(find.byType(Skeleton), findsWidgets);
+        expect(
+          find.text(t.parcours.ageQuestion(prenom: 'Amina')),
+          findsNothing,
+        );
+
+        faux.attenteParcours!.complete();
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(t.parcours.ageQuestion(prenom: 'Amina')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('hors ligne : etat hors ligne honnete, avec Reessayer', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres()
+        ..erreurParcours = Exception(
+          'SocketException: Failed host lookup: supabase.co',
+        );
+
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.parcours.horsLigneTitre), findsOneWidget);
+      expect(find.text(t.parcours.reessayer), findsOneWidget);
+      // Ce n'est PAS l'etat "backend absent" : ce sont deux pannes distinctes.
+      expect(find.text(t.parcours.indisponibleTitre), findsNothing);
+
+      faux.erreurParcours = null;
+      await tester.tap(find.text(t.parcours.reessayer));
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.parcours.introuvableTitre), findsOneWidget);
+    });
+
+    testWidgets('une erreur ordinaire propose aussi de reessayer', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres()
+        ..erreurParcours = Exception('boom');
+
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.parcours.erreurChargement), findsOneWidget);
+      expect(find.text(t.parcours.reessayer), findsOneWidget);
+    });
+  });
+
+  group('les regles dures du parcours', () {
+    testWidgets('aucune tranche d age n est presel ectionnee au depart', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[apprenantDeTest()],
+      );
+
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+
+      // Sans choix, Continuer n'avance pas : la question reste affichee.
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.parcours.ageQuestion(prenom: 'Amina')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('8 à 10 ans'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+
+      // Un choix fait, Continuer avance bien : la question n'etait donc
+      // desactivee que par l'absence de reponse.
+      expect(find.text(t.parcours.langueQuestion), findsOneWidget);
+    });
+
+    testWidgets('choisir un horaire deux fois de suite n enregistre qu UN choix', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[_personnalise()],
+        offresRendues: <OffreHoraire>[offreDeTest()],
+      )..attenteEcriture = Completer<void>();
+
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+
+      // Le premier geste part, mais son ecriture reste en attente : la carte
+      // doit se desactiver des ce moment (`enCours`/`enabled`), avant meme
+      // que le serveur ne reponde.
+      await tester.tap(find.byType(ScheduleOption));
+      await tester.pump();
+
+      final ScheduleOption carte = tester.widget<ScheduleOption>(
+        find.byType(ScheduleOption),
+      );
+      expect(carte.enabled, isFalse);
+
+      // Un second tap pendant cette fenetre n'a donc aucune prise.
+      await tester.tap(find.byType(ScheduleOption), warnIfMissed: false);
+      await tester.pump();
+
+      faux.attenteEcriture!.complete();
+      await tester.pumpAndSettle();
+
+      expect(faux.choix.length, 1);
+    });
+
+    testWidgets(
+      'signaler un refus deux fois de suite n enregistre qu UN signal',
+      (WidgetTester tester) async {
+        final FauxServiceOffres faux = FauxServiceOffres(
+          parcoursRendu: <ParcoursApprenant>[_personnalise()],
+        )..attenteEcriture = Completer<void>();
+
+        await tester.pumpWidget(
+          hote(
+            const ParcoursOffresPage(eleveId: 'e1'),
+            surcharges: _avec(faux),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text(t.parcours.refusPrevenir));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(t.parcours.refusPrevenir));
+        await tester.pump();
+        // L'ecriture n'a pas encore abouti : un second tap ne doit rien faire.
+        await tester.tap(
+          find.text(t.parcours.refusPrevenir),
+          warnIfMissed: false,
+        );
+        await tester.pump();
+
+        faux.attenteEcriture!.complete();
+        await tester.pumpAndSettle();
+
+        expect(faux.signaux.length, 1);
       },
     );
   });

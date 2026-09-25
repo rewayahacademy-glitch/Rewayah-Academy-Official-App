@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 
@@ -95,6 +97,18 @@ class FauxServiceOffres implements ServiceOffres {
   /// Ce que la lecture du parcours doit jeter.
   Object? erreurParcours;
 
+  /// Quand non nul, `parcours()` n'aboutit qu'a la completion de celui-ci :
+  /// permet a un test de regarder l'ecran PENDANT le chargement, avant de
+  /// laisser la lecture aboutir.
+  Completer<void>? attenteParcours;
+
+  /// Quand non nul, `choisirOffre` et `signalerHoraireInsatisfait` n'aboutissent
+  /// qu'a la completion de celui-ci : permet a un test de tenter un second
+  /// geste PENDANT l'envoi, pour verifier que la double soumission est
+  /// vraiment bloquee cote ecran et pas seulement gagnee de vitesse par un
+  /// faux qui repond trop tot.
+  Completer<void>? attenteEcriture;
+
   void _peutEchouer() {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
@@ -117,6 +131,10 @@ class FauxServiceOffres implements ServiceOffres {
 
   @override
   Future<List<ParcoursApprenant>> parcours() async {
+    final Completer<void>? attente = attenteParcours;
+    if (attente != null) {
+      await attente.future;
+    }
     final Object? erreur = erreurParcours;
     if (erreur != null) {
       // ignore: only_throw_errors
@@ -151,6 +169,10 @@ class FauxServiceOffres implements ServiceOffres {
 
   @override
   Future<String> choisirOffre(CleOffres cle, String offreId) async {
+    final Completer<void>? attente = attenteEcriture;
+    if (attente != null) {
+      await attente.future;
+    }
     _peutEchouer();
     choix.add((membreId: cle.membreId, offreId: offreId, fuseau: cle.fuseau));
     return 'intention-${choix.length}';
@@ -172,6 +194,10 @@ class FauxServiceOffres implements ServiceOffres {
     String? langueCode,
     String? cohorteCode,
   }) async {
+    final Completer<void>? attente = attenteEcriture;
+    if (attente != null) {
+      await attente.future;
+    }
     _peutEchouer();
     signaux.add((membreId: membreId, fuseau: fuseau));
   }
