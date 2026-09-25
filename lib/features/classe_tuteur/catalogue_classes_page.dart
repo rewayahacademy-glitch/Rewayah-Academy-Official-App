@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Comme partout ailleurs : le type d'une famille de providers n'est pas exporte
@@ -12,6 +14,7 @@ import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/planning/service_planning.dart' show monFuseauProvider;
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -35,13 +38,12 @@ import 'contexte_classe.dart';
 /// Le fuseau IANA dans lequel le catalogue rend les heures (contrat K6,
 /// `PortCatalogueClasses.compatibles`).
 ///
-/// ponytail: aucune lecture du fuseau du foyer n'existe cote Flutter
-/// (`profiles.timezone`, `0001`) et aucun fuseau d'appareil IANA n'est
-/// disponible sans dependance nouvelle : `null`, et le catalogue reste
-/// « pas encore ouvert » (demande C-15). Plafond : rien a deviner tant que la
-/// source du catalogue (DB-CRS-07) n'existe pas ; les tests le surchargent.
+/// Source : le fuseau de l'appelant (`monFuseauProvider`, `profiles.timezone`),
+/// c'est-a-dire celui du foyer pour un tuteur (demande C-15, revue C M4,
+/// branche par le coordinateur le 25/09). `null` tant qu'il n'est pas lu ou
+/// s'il est illisible : rien n'est devine. Les tests le surchargent.
 final Provider<String?> fuseauCatalogueProvider = Provider<String?>(
-  (Ref ref) => null,
+  (Ref ref) => ref.watch(monFuseauProvider).value,
 );
 
 /// Les classes proposees a un eleve, dans l'ordre rendu par le serveur.
@@ -56,6 +58,11 @@ classesProposeesProvider = FutureProvider.family<List<ClasseOuverte>, String>((
 ) {
   final String? fuseau = ref.watch(fuseauCatalogueProvider);
   if (fuseau == null) {
+    // Fuseau encore en lecture : rester en chargement plutot que dire
+    // « pas encore ouvert » une fraction de seconde.
+    if (ref.watch(monFuseauProvider).isLoading) {
+      return Completer<List<ClasseOuverte>>().future;
+    }
     throw const CapaciteIndisponible('DB-CRS-07');
   }
   return ref

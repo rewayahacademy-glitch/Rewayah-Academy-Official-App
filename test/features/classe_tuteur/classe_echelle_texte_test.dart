@@ -89,7 +89,7 @@ final List<_Ecran> _ecrans = <_Ecran>[
   _Ecran('Travail', _sousPage('travail'), TravailClassePage),
   _Ecran('Bibliotheque', _sousPage('ressources'), RessourcesClassePage),
   _Ecran('Progression', _sousPage('progression'), ProgressionClassePage),
-  _Ecran(
+  const _Ecran(
     'Catalogue',
     '${Routes.tuteurClassesCatalogue}?eleve=$eleveA2',
     CatalogueClassesPage,

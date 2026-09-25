@@ -53,13 +53,13 @@ void main() {
     expect(requetes, hasLength(2));
     final Uri appartenances = requetes[0];
     expect(appartenances.path, endsWith('/groupe_membres'));
-    expect(appartenances.queryParameters['order'], 'joined_at.asc');
+    expect(appartenances.queryParameters['order'], 'joined_at.asc.nullslast');
     expect(appartenances.queryParameters['student_id'], 'eq.foyer-a-eleve-1');
     expect(appartenances.queryParameters['left_at'], 'is.null');
 
     final Uri classes = requetes[1];
     expect(classes.path, endsWith('/$vueMesGroupesFamille'));
-    expect(classes.queryParameters['order'], 'libelle.asc');
+    expect(classes.queryParameters['order'], 'libelle.asc.nullslast');
   });
 
   test('aucune appartenance : une seule lecture, aucune classe', () async {
@@ -82,6 +82,6 @@ void main() {
 
     expect(await ClassesFoyerSupabase(client).classesDe('e'), isEmpty);
     expect(requetes, hasLength(1));
-    expect(requetes.single.queryParameters['order'], 'joined_at.asc');
+    expect(requetes.single.queryParameters['order'], 'joined_at.asc.nullslast');
   });
 }

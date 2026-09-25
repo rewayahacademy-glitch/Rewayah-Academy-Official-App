@@ -337,12 +337,30 @@ void main() {
         tester.getTopLeft(action).dy,
         lessThan(tester.getBottomLeft(find.byType(BandeauBlocage)).dy),
       );
+      expect(tester.takeException(), isNull);
 
-      tester.platformDispatcher.textScaleFactorTestValue = 2;
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      await stabiliser(tester);
-      await tester.ensureVisible(action);
-      await stabiliser(tester);
+      // Texte x2 : le bandeau seul, texte agrandi par son MediaQuery (la
+      // barre basse a texte x2 est couverte par test/accessibilite).
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          home: MediaQuery(
+            data: const MediaQueryData(
+              size: Size(390, 844),
+              textScaler: TextScaler.linear(2),
+            ),
+            child: Scaffold(
+              body: SingleChildScrollView(
+                child: BandeauBlocage(
+                  prenom: 'Eleve A1',
+                  compact: true,
+                  onConnecter: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
       expect(
         tester.getTopLeft(action).dy,
         greaterThan(tester.getBottomLeft(titre).dy),

@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../tc_groupe/group_summary_vm.dart';
 import 'capacite_indisponible.dart';
+import 'classes_foyer_supabase.dart';
 
 /// Une classe du foyer, vue pour un eleve precis.
 @immutable
@@ -57,6 +59,11 @@ class ClassesFoyerIndisponible implements PortClassesFoyer {
   }) => Future<ClasseFoyer?>.error(const CapaciteIndisponible('DB-TRV-07'));
 }
 
-/// Les classes du foyer employees par l'application.
+/// Les classes du foyer employees par l'application : l'adaptateur reel
+/// (lectures sous RLS, `0019`), branche par le coordinateur le 25/09 (revue C,
+/// M2 ; demandes C-1, C-12). [ClassesFoyerIndisponible] reste le double des
+/// tests qui veulent l'etat « pas encore relie ».
 final Provider<PortClassesFoyer> portClassesFoyerProvider =
-    Provider<PortClassesFoyer>((Ref ref) => const ClassesFoyerIndisponible());
+    Provider<PortClassesFoyer>(
+      (Ref ref) => ClassesFoyerSupabase(Supabase.instance.client),
+    );

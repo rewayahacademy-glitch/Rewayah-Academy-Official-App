@@ -45,17 +45,20 @@ void main() {
 
     final List<(String, Future<Object?> Function(ProviderContainer), String)>
     cas = <(String, Future<Object?> Function(ProviderContainer), String)>[
+      // Les classes du foyer ont leur adaptateur reel depuis le 25/09
+      // (revue C, M2) : le double indisponible est teste a part ci-dessous.
       (
-        'classes du foyer',
-        (ProviderContainer c) =>
-            c.read(portClassesFoyerProvider).classesDe('e1'),
+        'classes du foyer (double indisponible)',
+        (ProviderContainer _) =>
+            const ClassesFoyerIndisponible().classesDe('e1'),
         'DB-TRV-07',
       ),
       (
-        'classe d un eleve',
-        (ProviderContainer c) => c
-            .read(portClassesFoyerProvider)
-            .classe(groupeId: 'g1', eleveId: 'e1'),
+        'classe d un eleve (double indisponible)',
+        (ProviderContainer _) => const ClassesFoyerIndisponible().classe(
+          groupeId: 'g1',
+          eleveId: 'e1',
+        ),
         'DB-TRV-07',
       ),
       (

@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
@@ -139,9 +140,16 @@ Future<GoRouter> monterRouteur(
   late GoRouter routeur;
   await tester.pumpWidget(
     ProviderScope(
-      overrides: surchargesRouteur(
-        source ?? FausseSourceSession(sessionActive(AppRole.guardian)),
-      ),
+      overrides: <Override>[
+        ...surchargesRouteur(
+          source ?? FausseSourceSession(sessionActive(AppRole.guardian)),
+        ),
+        // Le port K6 est branche sur Supabase en production (revue C, M2) :
+        // le routeur des tests transverses garde l'etat « pas encore relie ».
+        portClassesFoyerProvider.overrideWithValue(
+          const ClassesFoyerIndisponible(),
+        ),
+      ],
       child: TranslationProvider(
         child: Consumer(
           builder: (BuildContext _, WidgetRef ref, Widget? _) {
