@@ -1,5 +1,9 @@
 # Avancement du poste B
 
+## O-INT-1 correction (25/09, session B-2026-09-25-coord)
+
+Statut : **fini (correction), pas de push depot**. `test/teaching_core/g/entree_observation_navigation_test.dart` reecrit pour partir de l'Accueil reel -> « Voir la classe » -> `t.classe.observer`, retours vers la classe. Fichier +5, `test/teaching_core/g` + `test/features/classe_tuteur` +269 ~109 verts, analyze --fatal-infos propre. Commits depot locaux `24f0b0f`, `bd51224` (au-dessus de `20731a4`). Detail : `demandes/O.md` (Reponse O-INT-1). Prochaine etape : suite complete sous verrou, puis push `origin/ui/tuteur-v1` si verte.
+
 ## Base suite et push, reprise 4 (25/09, session B-2026-09-25-coord)
 
 Reprise depuis l'agent precedent : `git status`/`git log -5` (depot, HEAD `20731a4`) et `git log -3`/fin de ce fichier (pilotage, `7e32767`) confirmes identiques a l'etat rendu -- rien n'a change depuis, aucune suite relancee (regle "continue sans refaire", aucun code modifie). Diagnostic O-INT-1 deja complet (voir ci-dessous et `demandes/O.md`) : pas refait.
