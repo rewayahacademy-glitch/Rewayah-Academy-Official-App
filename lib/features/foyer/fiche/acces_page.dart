@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/port_acces_foyer.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../../compte/arret_acces_page.dart' show apercuPossible;
 import '../fiche_eleve_page.dart';
 import '../foyer_page.dart';
 import '../ligne_membre.dart';
@@ -36,6 +40,9 @@ class AccesElevePage extends StatelessWidget {
 
   /// Le medaillon de la carte.
   static const Key medaillonKey = Key('ficheEleve.acces.medaillon');
+
+  /// « Arreter l'acces », vers S10 avec ce profil (LT-9).
+  static const Key arreterKey = Key('ficheEleve.acces.arreter');
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +159,25 @@ class _Acces extends ConsumerWidget {
           if (etat == EtatAccesAffiche.expire)
             NoteFiche(t.ficheEleve.acces.expirePhrase(prenom: profil.prenom)),
           NoteFiche(t.ficheEleve.acces.detailIndisponible),
+          // S10 avec ce profil (LT-9), seulement si le serveur sait en rendre
+          // les consequences (DB-FIN-05).
+          if (apercuPossible(ref, <String>[profil.eleveId]))
+            LienFleche(
+              key: AccesElevePage.arreterKey,
+              libelle: t.finance.arret.action,
+              onPress: () => GoRouter.of(context).go(
+                Uri(
+                  path: Routes.tuteurCompteArretAcces,
+                  queryParameters: <String, String>{
+                    'profil': profil.eleveId,
+                    'retour': Routes.ficheEleveSousPage(
+                      profil.eleveId,
+                      'acces',
+                    ),
+                  },
+                ).toString(),
+              ),
+            ),
         ],
       ),
     );

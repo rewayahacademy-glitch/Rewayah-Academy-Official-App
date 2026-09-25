@@ -30,6 +30,7 @@ import 'package:rewayah_academy/features/classe_tuteur/travail_classe_page.dart'
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/aide_page.dart';
 import 'package:rewayah_academy/features/compte/apparence_page.dart';
+import 'package:rewayah_academy/features/compte/arret_acces_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
 import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
@@ -268,6 +269,8 @@ void main() {
       (Routes.tuteurCompteRecharge, RechargePage, 3),
       (Routes.tuteurCompteRechargeVerifier, VerifierRechargePage, 3),
       (Routes.tuteurCompteRechargeResultat, ResultatRechargePage, 3),
+      (Routes.tuteurCompteArretAcces, ArretAccesPage, 3),
+      (Routes.tuteurCompteArretAccesResultat, ResultatArretAccesPage, 3),
       (Routes.tuteurCompteMouvements, MouvementsComptePage, 3),
       (Routes.mouvementPour('m1'), DetailMouvementPage, 3),
       (Routes.tuteurComptePreferences, PreferencesComptePage, 3),
@@ -328,6 +331,8 @@ void main() {
       RechargePage: 'test/features/compte/recharge_test.dart',
       VerifierRechargePage: 'test/features/compte/recharge_test.dart',
       ResultatRechargePage: 'test/features/compte/recharge_test.dart',
+      ArretAccesPage: 'test/features/compte/arret_acces_test.dart',
+      ResultatArretAccesPage: 'test/features/compte/arret_acces_test.dart',
       MouvementsComptePage: 'test/features/compte/mouvements_test.dart',
       DetailMouvementPage: 'test/features/compte/mouvements_test.dart',
       PreferencesComptePage: compte,

@@ -228,6 +228,48 @@
       "confirmee": "Confirmée",
       "enAttente": "En attente",
       "echouee": "Échouée"
+    },
+    "arret": {
+      "action": "Arrêter l'accès",
+      "pourQui": "Quels accès arrêter ?",
+      "pourQuiPhrase": "Choisissez les profils concernés. Les conséquences s'affichent avant toute confirmation.",
+      "continuer": "Voir les conséquences",
+      "consequences": "Conséquences",
+      "consequencesPhrase": "Vérifiez les conséquences rendues par le serveur avant de confirmer.",
+      "eligible": "Accès pouvant être arrêté",
+      "nonEligible": "Accès qui ne peut pas être arrêté",
+      "dateEffet": "Date d'effet",
+      "dateInconnue": "Inconnue pour le moment",
+      "soldeConserve": "Solde conservé",
+      "reprise": "Reprise",
+      "reprisePossible": "Possible",
+      "repriseNon": "Non proposée",
+      "motifs": {
+        "profilInconnu": "Ce profil ne fait pas partie du foyer.",
+        "inconnu": "L'accès de ce profil ne peut pas être arrêté pour le moment."
+      },
+      "effets": {
+        "seancesRetirees": "Les séances à venir seront retirées.",
+        "soldeConserve": "Le solde du profil est conservé.",
+        "inconnu": "Une conséquence n'a pas pu être lue."
+      },
+      "incomplet": "Conséquences incomplètes",
+      "incompletPhrase": "Le serveur n'a pas rendu toutes les conséquences. Vous pourrez confirmer lorsqu'elles seront connues.",
+      "aucunEligible": "Aucun accès à arrêter",
+      "aucunEligiblePhrase": "Aucun des profils choisis ne peut être arrêté pour le moment.",
+      "compris": "J'ai compris les conséquences pour les profils concernés.",
+      "confirmer": "Confirmer l'arrêt",
+      "annulationIndisponible": "Arrêt indisponible pour le moment",
+      "annulationIndisponiblePhrase": "Le serveur ne sait pas encore arrêter un accès. Rien n'a été modifié.",
+      "resultat": {
+        "titre": "Résultat de la demande",
+        "enregistre": "Demande transmise",
+        "phrase": "Voici l'issue rendue par le serveur pour chaque profil.",
+        "parProfil": "Issue par profil",
+        "retourAcces": "Voir les accès",
+        "perdu": "Ce résultat n'est plus affiché",
+        "perduPhrase": "Le résultat d'une demande n'est montré qu'une fois. La page des accès dit l'état actuel de chaque profil."
+      }
     }
   },
   "reseau": {

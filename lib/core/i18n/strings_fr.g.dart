@@ -171,6 +171,7 @@ class Traductions$finance$fr {
 	late final Traductions$finance$mouvements$fr mouvements = Traductions$finance$mouvements$fr.internal(_root);
 	late final Traductions$finance$recharge$fr recharge = Traductions$finance$recharge$fr.internal(_root);
 	late final Traductions$finance$issues$fr issues = Traductions$finance$issues$fr.internal(_root);
+	late final Traductions$finance$arret$fr arret = Traductions$finance$arret$fr.internal(_root);
 }
 
 // Path: reseau
@@ -2613,6 +2614,86 @@ class Traductions$finance$issues$fr {
 
 	/// fr: 'Échouée'
 	String get echouee => 'Échouée';
+}
+
+// Path: finance.arret
+class Traductions$finance$arret$fr {
+	Traductions$finance$arret$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Arrêter l'accès'
+	String get action => 'Arrêter l\'accès';
+
+	/// fr: 'Quels accès arrêter ?'
+	String get pourQui => 'Quels accès arrêter ?';
+
+	/// fr: 'Choisissez les profils concernés. Les conséquences s'affichent avant toute confirmation.'
+	String get pourQuiPhrase => 'Choisissez les profils concernés. Les conséquences s\'affichent avant toute confirmation.';
+
+	/// fr: 'Voir les conséquences'
+	String get continuer => 'Voir les conséquences';
+
+	/// fr: 'Conséquences'
+	String get consequences => 'Conséquences';
+
+	/// fr: 'Vérifiez les conséquences rendues par le serveur avant de confirmer.'
+	String get consequencesPhrase => 'Vérifiez les conséquences rendues par le serveur avant de confirmer.';
+
+	/// fr: 'Accès pouvant être arrêté'
+	String get eligible => 'Accès pouvant être arrêté';
+
+	/// fr: 'Accès qui ne peut pas être arrêté'
+	String get nonEligible => 'Accès qui ne peut pas être arrêté';
+
+	/// fr: 'Date d'effet'
+	String get dateEffet => 'Date d\'effet';
+
+	/// fr: 'Inconnue pour le moment'
+	String get dateInconnue => 'Inconnue pour le moment';
+
+	/// fr: 'Solde conservé'
+	String get soldeConserve => 'Solde conservé';
+
+	/// fr: 'Reprise'
+	String get reprise => 'Reprise';
+
+	/// fr: 'Possible'
+	String get reprisePossible => 'Possible';
+
+	/// fr: 'Non proposée'
+	String get repriseNon => 'Non proposée';
+
+	late final Traductions$finance$arret$motifs$fr motifs = Traductions$finance$arret$motifs$fr.internal(_root);
+	late final Traductions$finance$arret$effets$fr effets = Traductions$finance$arret$effets$fr.internal(_root);
+
+	/// fr: 'Conséquences incomplètes'
+	String get incomplet => 'Conséquences incomplètes';
+
+	/// fr: 'Le serveur n'a pas rendu toutes les conséquences. Vous pourrez confirmer lorsqu'elles seront connues.'
+	String get incompletPhrase => 'Le serveur n\'a pas rendu toutes les conséquences. Vous pourrez confirmer lorsqu\'elles seront connues.';
+
+	/// fr: 'Aucun accès à arrêter'
+	String get aucunEligible => 'Aucun accès à arrêter';
+
+	/// fr: 'Aucun des profils choisis ne peut être arrêté pour le moment.'
+	String get aucunEligiblePhrase => 'Aucun des profils choisis ne peut être arrêté pour le moment.';
+
+	/// fr: 'J'ai compris les conséquences pour les profils concernés.'
+	String get compris => 'J\'ai compris les conséquences pour les profils concernés.';
+
+	/// fr: 'Confirmer l'arrêt'
+	String get confirmer => 'Confirmer l\'arrêt';
+
+	/// fr: 'Arrêt indisponible pour le moment'
+	String get annulationIndisponible => 'Arrêt indisponible pour le moment';
+
+	/// fr: 'Le serveur ne sait pas encore arrêter un accès. Rien n'a été modifié.'
+	String get annulationIndisponiblePhrase => 'Le serveur ne sait pas encore arrêter un accès. Rien n\'a été modifié.';
+
+	late final Traductions$finance$arret$resultat$fr resultat = Traductions$finance$arret$resultat$fr.internal(_root);
 }
 
 // Path: connexion.recuperation
@@ -8434,6 +8515,69 @@ class Traductions$finance$recharge$resultat$fr {
 	String get perduPhrase => 'Le résultat d\'une recharge n\'est montré qu\'une fois. Les soldes et les mouvements disent ce qui a été attribué.';
 }
 
+// Path: finance.arret.motifs
+class Traductions$finance$arret$motifs$fr {
+	Traductions$finance$arret$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce profil ne fait pas partie du foyer.'
+	String get profilInconnu => 'Ce profil ne fait pas partie du foyer.';
+
+	/// fr: 'L'accès de ce profil ne peut pas être arrêté pour le moment.'
+	String get inconnu => 'L\'accès de ce profil ne peut pas être arrêté pour le moment.';
+}
+
+// Path: finance.arret.effets
+class Traductions$finance$arret$effets$fr {
+	Traductions$finance$arret$effets$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les séances à venir seront retirées.'
+	String get seancesRetirees => 'Les séances à venir seront retirées.';
+
+	/// fr: 'Le solde du profil est conservé.'
+	String get soldeConserve => 'Le solde du profil est conservé.';
+
+	/// fr: 'Une conséquence n'a pas pu être lue.'
+	String get inconnu => 'Une conséquence n\'a pas pu être lue.';
+}
+
+// Path: finance.arret.resultat
+class Traductions$finance$arret$resultat$fr {
+	Traductions$finance$arret$resultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Résultat de la demande'
+	String get titre => 'Résultat de la demande';
+
+	/// fr: 'Demande transmise'
+	String get enregistre => 'Demande transmise';
+
+	/// fr: 'Voici l'issue rendue par le serveur pour chaque profil.'
+	String get phrase => 'Voici l\'issue rendue par le serveur pour chaque profil.';
+
+	/// fr: 'Issue par profil'
+	String get parProfil => 'Issue par profil';
+
+	/// fr: 'Voir les accès'
+	String get retourAcces => 'Voir les accès';
+
+	/// fr: 'Ce résultat n'est plus affiché'
+	String get perdu => 'Ce résultat n\'est plus affiché';
+
+	/// fr: 'Le résultat d'une demande n'est montré qu'une fois. La page des accès dit l'état actuel de chaque profil.'
+	String get perduPhrase => 'Le résultat d\'une demande n\'est montré qu\'une fois. La page des accès dit l\'état actuel de chaque profil.';
+}
+
 // Path: appareils.emetteur.verification
 class Traductions$appareils$emetteur$verification$fr {
 	Traductions$appareils$emetteur$verification$fr.internal(this._root);
@@ -11701,6 +11845,40 @@ extension on Traductions {
 			'finance.issues.confirmee' => 'Confirmée',
 			'finance.issues.enAttente' => 'En attente',
 			'finance.issues.echouee' => 'Échouée',
+			'finance.arret.action' => 'Arrêter l\'accès',
+			'finance.arret.pourQui' => 'Quels accès arrêter ?',
+			'finance.arret.pourQuiPhrase' => 'Choisissez les profils concernés. Les conséquences s\'affichent avant toute confirmation.',
+			'finance.arret.continuer' => 'Voir les conséquences',
+			'finance.arret.consequences' => 'Conséquences',
+			'finance.arret.consequencesPhrase' => 'Vérifiez les conséquences rendues par le serveur avant de confirmer.',
+			'finance.arret.eligible' => 'Accès pouvant être arrêté',
+			'finance.arret.nonEligible' => 'Accès qui ne peut pas être arrêté',
+			'finance.arret.dateEffet' => 'Date d\'effet',
+			'finance.arret.dateInconnue' => 'Inconnue pour le moment',
+			'finance.arret.soldeConserve' => 'Solde conservé',
+			'finance.arret.reprise' => 'Reprise',
+			'finance.arret.reprisePossible' => 'Possible',
+			'finance.arret.repriseNon' => 'Non proposée',
+			'finance.arret.motifs.profilInconnu' => 'Ce profil ne fait pas partie du foyer.',
+			'finance.arret.motifs.inconnu' => 'L\'accès de ce profil ne peut pas être arrêté pour le moment.',
+			'finance.arret.effets.seancesRetirees' => 'Les séances à venir seront retirées.',
+			'finance.arret.effets.soldeConserve' => 'Le solde du profil est conservé.',
+			'finance.arret.effets.inconnu' => 'Une conséquence n\'a pas pu être lue.',
+			'finance.arret.incomplet' => 'Conséquences incomplètes',
+			'finance.arret.incompletPhrase' => 'Le serveur n\'a pas rendu toutes les conséquences. Vous pourrez confirmer lorsqu\'elles seront connues.',
+			'finance.arret.aucunEligible' => 'Aucun accès à arrêter',
+			'finance.arret.aucunEligiblePhrase' => 'Aucun des profils choisis ne peut être arrêté pour le moment.',
+			'finance.arret.compris' => 'J\'ai compris les conséquences pour les profils concernés.',
+			'finance.arret.confirmer' => 'Confirmer l\'arrêt',
+			'finance.arret.annulationIndisponible' => 'Arrêt indisponible pour le moment',
+			'finance.arret.annulationIndisponiblePhrase' => 'Le serveur ne sait pas encore arrêter un accès. Rien n\'a été modifié.',
+			'finance.arret.resultat.titre' => 'Résultat de la demande',
+			'finance.arret.resultat.enregistre' => 'Demande transmise',
+			'finance.arret.resultat.phrase' => 'Voici l\'issue rendue par le serveur pour chaque profil.',
+			'finance.arret.resultat.parProfil' => 'Issue par profil',
+			'finance.arret.resultat.retourAcces' => 'Voir les accès',
+			'finance.arret.resultat.perdu' => 'Ce résultat n\'est plus affiché',
+			'finance.arret.resultat.perduPhrase' => 'Le résultat d\'une demande n\'est montré qu\'une fois. La page des accès dit l\'état actuel de chaque profil.',
 			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
@@ -12016,6 +12194,8 @@ extension on Traductions {
 			'appareils.emetteur.verification.phrase' => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.',
 			'appareils.emetteur.confirme.titre' => 'Appareil connecté',
 			'appareils.emetteur.confirme.phrase' => ({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.emetteur.confirme.phraseSansPrenom' => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.',
 			'appareils.emetteur.confirme.action' => 'Terminé',
 			'appareils.emetteur.expire.titre' => 'Ce code a expiré',
@@ -12050,8 +12230,6 @@ extension on Traductions {
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
 			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
 			'foyer.membres' => 'Profils élèves',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
 			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
 			'foyer.membre.sansClasse' => 'Pas encore de classe',
@@ -12530,6 +12708,8 @@ extension on Traductions {
 			'admin.diagnostics.intro' => 'Chaque élève inscrit attend un premier niveau avant de rejoindre un groupe : c\'est ici que ce placement se décide.',
 			'admin.diagnostics.aucunProgramme' => 'Aucun programme publié',
 			'admin.diagnostics.aucunProgrammeDetail' => 'Publiez une première version du programme (Pédagogie > Programmes) avant de pouvoir décider un placement.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.diagnostics.erreur' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
 			'admin.diagnostics.restants' => ({required Object n}) => '${n} élèves restants',
 			'admin.diagnostics.restantUn' => '1 élève restant',
@@ -12564,8 +12744,6 @@ extension on Traductions {
 			'admin.qualite.depuisUnJour' => '1 jour',
 			'admin.qualite.depuisJours' => ({required Object jours}) => '${jours} jours',
 			'admin.qualite.actionTraiter' => 'Marquer traité',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
 			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
@@ -13044,6 +13222,8 @@ extension on Traductions {
 			'parcours.offreChoisir' => 'Choisir cet horaire',
 			'parcours.offreChoisie' => 'Horaire retenu',
 			'parcours.aucuneOffre' => 'Aucun horaire ouvert ne correspond encore',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.aucuneOffreDetail' => 'L\'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.',
 			'parcours.refusAucun' => 'Aucun de ces horaires ne me convient',
 			'parcours.refusPrevenir' => 'Me prévenir si de nouveaux horaires ouvrent',
@@ -13078,8 +13258,6 @@ extension on Traductions {
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',
-			_ => null,
-		} ?? switch (path) {
 			'nav.tuteur.suivi' => 'Suivi',
 			'nav.tuteur.historique' => 'Historique',
 			'nav.tuteur.compte' => 'Compte',
@@ -13558,6 +13736,8 @@ extension on Traductions {
 			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'tuteur.reglages.camera' => 'Caméra',
 			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.',
 			'tuteur.reglages.cameraAutoriser' => ({required Object prenom}) => 'Autoriser la caméra de ${prenom}',
 			'tuteur.reglages.cameraRetirer' => ({required Object prenom}) => 'Retirer la caméra de ${prenom}',
@@ -13592,8 +13772,6 @@ extension on Traductions {
 			'classe.titre' => 'Classe',
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
-			_ => null,
-		} ?? switch (path) {
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
@@ -14072,6 +14250,8 @@ extension on Traductions {
 			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
 			'tc.coran.modes.verset' => 'Lecture agrandie',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.modes.focus' => 'Focus',
 			'tc.coran.modes.choisir' => 'Mode de lecture',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
@@ -14106,8 +14286,6 @@ extension on Traductions {
 			'tc.outils.dock.marquer' => 'Marquer',
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
 			'tc.outils.intention.aApprendre' => 'À apprendre',

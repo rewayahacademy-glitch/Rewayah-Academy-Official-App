@@ -40,6 +40,7 @@ import '../../features/classe_tuteur/travail_classe_page.dart';
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
+import '../../features/compte/arret_acces_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/informations_legales_page.dart';
@@ -658,6 +659,30 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     pageBuilder: glissee(
                       (GoRouterState _) => const AccesComptePage(),
                     ),
+                    routes: <RouteBase>[
+                      // S09-S10 puis S11 (LT-9) : resultat par `extra`.
+                      GoRoute(
+                        path: 'arreter',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => ArretAccesPage(
+                            profilInitial: etat.uri.queryParameters['profil'],
+                            retour: retourArret(etat),
+                          ),
+                        ),
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'resultat',
+                            pageBuilder: glissee(
+                              (GoRouterState etat) => ResultatArretAccesPage(
+                                resultat: etat.extra is ResultatAnnulation
+                                    ? etat.extra! as ResultatAnnulation
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'paiements',

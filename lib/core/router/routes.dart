@@ -268,6 +268,18 @@ abstract final class Routes {
   static const String tuteurCompteRechargeResultat =
       '/tuteur/compte/soldes/recharge/resultat';
 
+  /// La page des acces du foyer (S09, LT-4 puis LT-9).
+  static const String tuteurCompteAcces = '/tuteur/compte/acces';
+
+  /// S09-S10 « Arreter l'acces » (LT-9), sous les acces : choix des profils
+  /// puis consequences rendues par le serveur (`?profil=`, `?retour=`).
+  static const String tuteurCompteArretAcces = '/tuteur/compte/acces/arreter';
+
+  /// S11 « Resultat » (LT-9) : le resultat passe par `extra` ; sans lui,
+  /// l'ecran renvoie aux acces.
+  static const String tuteurCompteArretAccesResultat =
+      '/tuteur/compte/acces/arreter/resultat';
+
   /// S08 : le detail d'un mouvement (identifiant encode dans le segment).
   static String mouvementPour(String mouvementId) =>
       '$tuteurCompteMouvements/${Uri.encodeComponent(mouvementId)}';
@@ -300,6 +312,8 @@ abstract final class Routes {
       chemin == tuteurComptePreferences ||
       chemin == tuteurCompteRecharge ||
       chemin.startsWith('$tuteurCompteRecharge/') ||
+      chemin == tuteurCompteArretAcces ||
+      chemin.startsWith('$tuteurCompteArretAcces/') ||
       chemin.startsWith('$tuteurComptePreferences/') ||
       chemin == tuteurCompteConsentements;
 

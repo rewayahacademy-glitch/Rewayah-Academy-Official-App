@@ -14,6 +14,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import 'arret_acces_page.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 
@@ -30,10 +31,22 @@ class AccesComptePage extends ConsumerWidget {
   /// Cree la page.
   const AccesComptePage({super.key});
 
+  /// « Arreter l'acces », vers S09 (LT-9).
+  static const Key arreterKey = Key('acces.arreter');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final AsyncValue<List<AccesBeneficiaire>> acces = ref.watch(
+      accesFoyerProvider,
+    );
+    // « Arreter l'acces » (S09, LT-9) seulement si le serveur sait en rendre
+    // les consequences (DB-FIN-05) ; en production, la lecture reste seule.
+    final bool arretPossible = apercuPossible(ref, <String>[
+      if (acces.hasValue && !acces.hasError)
+        for (final AccesBeneficiaire a in acces.requireValue) a.eleveId,
+    ]);
 
     return PageShell(
       titre: t.compte.tuteur.pageAcces.titre,
@@ -45,7 +58,7 @@ class AccesComptePage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             BlocAsynchrone<List<AccesBeneficiaire>>(
-              valeur: ref.watch(accesFoyerProvider),
+              valeur: acces,
               squelette: const Skeleton.liste(lignes: 2),
               onReessayer: () => ref.invalidate(accesFoyerProvider),
               vide: EtatSysteme(
@@ -59,7 +72,7 @@ class AccesComptePage extends ConsumerWidget {
                     LigneRubrique(
                       icone: AppIcons.profil,
                       libelle: a.prenom,
-                      legende: _echeance(a),
+                      legende: echeanceAcces(a),
                       controle: StatusPill(
                         libelle: a.etatAffiche == EtatAccesAffiche.expire
                             ? t.compte.tuteur.pageAcces.pastilleExpire
@@ -72,6 +85,20 @@ class AccesComptePage extends ConsumerWidget {
                 ],
               ),
             ),
+            if (arretPossible) ...<Widget>[
+              Ecart.vLg,
+              GroupeReglages(
+                key: arreterKey,
+                lignes: <LigneRubrique>[
+                  LigneRubrique(
+                    icone: AppIcons.verrou,
+                    libelle: t.finance.arret.action,
+                    onPress: () =>
+                        GoRouter.of(context).go(Routes.tuteurCompteArretAcces),
+                  ),
+                ],
+              ),
+            ],
             Ecart.vLg,
             Text(
               t.compte.tuteur.pageAcces.titulaire,
@@ -84,14 +111,15 @@ class AccesComptePage extends ConsumerWidget {
       ),
     );
   }
+}
 
-  static String _echeance(AccesBeneficiaire acces) {
-    final DateTime? fin = acces.finAcces;
-    if (fin == null) {
-      return t.compte.tuteur.pageAcces.sansEcheance;
-    }
-    return acces.etatAffiche == EtatAccesAffiche.expire
-        ? t.compte.tuteur.pageAcces.expire(date: dateLongue(fin))
-        : t.compte.tuteur.pageAcces.jusqua(date: dateLongue(fin));
+/// L'echeance d'un acces en mots (`access_until` reel, jamais un motif).
+String echeanceAcces(AccesBeneficiaire acces) {
+  final DateTime? fin = acces.finAcces;
+  if (fin == null) {
+    return t.compte.tuteur.pageAcces.sansEcheance;
   }
+  return acces.etatAffiche == EtatAccesAffiche.expire
+      ? t.compte.tuteur.pageAcces.expire(date: dateLongue(fin))
+      : t.compte.tuteur.pageAcces.jusqua(date: dateLongue(fin));
 }
