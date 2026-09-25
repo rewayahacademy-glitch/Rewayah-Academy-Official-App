@@ -1,5 +1,19 @@
 # Avancement du poste B
 
+## INT-E suite et push, reprise 2 (25/09, session B-2026-09-25-coord, depart 09:07)
+
+Statut : **bloque, pas de push** (progres : C-INT-1 corrige). Reprise depuis l'agent precedent (`fc27e24` pilotage, `e82ec66` depot local non pousse).
+
+Decision prise (autorite de coordinateur seul executant, fichier COORD) sur `lib/core/capacites/port_classes_foyer.dart` : option 2 de la demande C-INT-1 (revoir l'injection plutot que toucher les tests du lot B). `portClassesFoyerProvider` revient a `ClassesFoyerIndisponible()` par defaut (etat honnete, aucun appel reseau implicite dont un widget test ne se doute pas) ; l'adaptateur reel `ClassesFoyerSupabase(Supabase.instance.client)` est branche explicitement dans `lib/main.dart` (3 `ProviderScope` de l'app reelle : demarrage normal, agent en echec, agent ouvert), jamais dans `PlaygroundRacine` (mode demonstration, coherent avec `03` §1 bis-6 « aucun appel serveur »). `dart analyze --fatal-infos lib/core/capacites/port_classes_foyer.dart lib/main.dart` sous verrou : No issues found. Commit local `7212a0d` (non pousse tant que la suite n'est pas verte).
+
+`flutter test` complet sous verrou : journal `04_phase0/integration_lotE_tests_v2.log` (+2603 ~513 -2, code 1, 421 s). **3 echecs C-INT-1 corriges** (`foyer_page_test.dart` x2, `fiche_eleve_test.dart`). **2 echecs restants, B-5 seulement** (deja connu, `demandes/B.md`) :
+- `test/features/appareils/appareil_partage_test.dart` : le test attend encore `AppareilsPage` directement sur `Routes.tuteurFoyer` (l'ancienne route, avant la refonte Foyer du lot B) — perime, pas un simple oubli de parametre.
+- `test/features/appareils/emetteur_qr_test.dart` : `AppareilsElevePage.onPress` du groupe « Appareils » (`fiche_eleve_page.dart:334`, lot B) appelle `routeur.go(sousPage('appareils'))` sans `?retour=`, donc l'emetteur ne sait pas ou revenir apres confirmation ; racine identifiee mais fichier hors perimetre COORD (`lib/features/foyer/fiche_eleve_page.dart`).
+
+Ces deux fichiers (`test/features/appareils/*`, `lib/features/foyer/fiche_eleve_page.dart`) sont hors perimetre COORD (00_OWNERSHIP.md) : pas corriges ici. Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` VIDE. **Pas de push `origin/ui/tuteur-v1`** (regle : seulement si suite verte). `ETAT_A.md` non modifie. Tableau P2-02 mis a jour avec cette preuve, reste `bloque`. LE-*/LC-* laisses `fait` (pas `verifie`, regle "si vert" ne s'applique toujours pas).
+
+Reprise : decision a prendre par le coordinateur/directeur sur B-5 -- soit autoriser une correction dans `lib/features/foyer/fiche_eleve_page.dart` (ajouter `?retour=` au lien Appareils, fichier lot B) et une mise a jour de `test/features/appareils/appareil_partage_test.dart` (fichier lot D/B) pour suivre la nouvelle route `/tuteur/foyer` (FoyerPage, pas AppareilsPage), soit lever B-5 pour un autre poste/lot. Une fois B-5 leve et la suite verte : push `origin/ui/tuteur-v1` @ HEAD, `ETAT_A.md`, LE-*/LC-* a `verifie`.
+
 ## INT-E suite et push (25/09, session B-2026-09-25-coord, depart 08:57)
 
 Statut : **bloque, pas de push**. Fusion locale du lot E deja committee dans `C:\RA\depot` (`a5e8d94` "merge: integration du lot E", puis `e82ec66` A-3(2) ligne Consentements + test). Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` VIDE (verifiee).
