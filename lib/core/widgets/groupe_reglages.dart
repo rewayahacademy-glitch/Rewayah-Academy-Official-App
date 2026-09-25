@@ -7,22 +7,32 @@ import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
 
-/// Une rubrique d'un [GroupeReglages] : icone, libelle, legende ou valeur,
-/// chevron quand elle mene ailleurs.
+/// Une rubrique d'un [GroupeReglages] : icone (ou meneur), libelle, legende
+/// ou valeur, chevron quand elle mene ailleurs.
 @immutable
 class LigneRubrique {
-  /// Cree une rubrique.
+  /// Cree une rubrique. Il faut une [icone] ou un [meneur].
   const LigneRubrique({
-    required this.icone,
     required this.libelle,
+    this.icone,
+    this.meneur,
     this.legende,
     this.valeur,
     this.onPress,
     this.controle,
-  });
+  }) : assert(
+         icone != null || meneur != null,
+         'une rubrique porte une icone ou un meneur',
+       );
 
   /// L'icone de la rubrique, en encre d'accent.
-  final AppIcon icone;
+  final AppIcon? icone;
+
+  /// Ce qui tient la tete de ligne a la place de l'icone : l'avatar ou
+  /// l'initiale d'un membre du Foyer (demande B-1). Largeur libre ; le filet
+  /// commence apres lui, au meme retrait qu'apres une icone. Il n'a pas de
+  /// semantique propre a porter : la ligne est lue par son libelle.
+  final Widget? meneur;
 
   /// Le nom de la rubrique : « Informations personnelles ».
   final String libelle;
@@ -143,10 +153,11 @@ class _Ligne extends StatelessWidget {
         padding: const EdgeInsetsDirectional.only(start: AppSpacing.lg),
         child: Row(
           children: <Widget>[
-            IconTheme(
-              data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
-              child: Icon(ligne.icone.repos),
-            ),
+            ligne.meneur ??
+                IconTheme(
+                  data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                  child: Icon(ligne.icone!.repos),
+                ),
             Ecart.hMd,
             Expanded(
               // Le filet en retrait : il court sous le texte, pas sous

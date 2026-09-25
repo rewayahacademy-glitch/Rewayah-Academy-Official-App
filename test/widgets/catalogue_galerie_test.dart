@@ -109,6 +109,8 @@ const List<String> composantsDuCatalogue = <String>[
   'SelecteurProfils',
   'EntetePage',
   'BasculeTheme',
+  // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
+  'PageEtape',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

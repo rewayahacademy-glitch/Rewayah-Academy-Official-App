@@ -46,7 +46,6 @@ import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
-import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/detail_observations_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/detail_seance_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/observations_page.dart';
@@ -246,7 +245,6 @@ void main() {
       (Routes.ficheEleveSousPage('e1', 'acces'), AccesElevePage, 1),
       (Routes.ficheEleveSousPage('e1', 'appareils'), AppareilsElevePage, 1),
       (Routes.parcoursPour('e1'), ParcoursOffresPage, 1),
-      (Routes.tuteurReglages, ReglagesEnfantPage, 1),
       (Routes.tuteurSuivi, SuiviFoyerPage, 2),
       (Routes.tuteurSuiviObservations, ObservationsPage, 2),
       (Routes.seancePour('s1'), DetailSeancePage, 2),
@@ -396,6 +394,8 @@ void main() {
       '${Routes.tuteurAjouterEnfantAncien}?pour=moi':
           Routes.tuteurAjouterPourMoi,
       Routes.tuteurDisponibilites: Routes.tuteurFoyer,
+      // Mapping C6, demande B-4 : les reglages par eleve sont dans la fiche.
+      Routes.tuteurReglages: Routes.tuteurFoyer,
       '${Routes.ficheElevePour('e1')}/appareils/connexion': Routes.appairerPour(
         'e1',
       ),

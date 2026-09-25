@@ -340,6 +340,61 @@ void main() {
       expect(filets.length, 2);
     });
 
+    testWidgets('meneur (demande B-1) : a la place de l icone, meme retrait', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, vueMobile);
+      const Key cleMeneur = Key('avatar-membre');
+      await tester.pumpWidget(
+        hoteTheme(
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                meneur: const SizedBox.square(
+                  key: cleMeneur,
+                  dimension: AppTouchTarget.standard,
+                ),
+                libelle: 'Yusuf',
+                legende: 'Classe du mardi',
+                onPress: () {},
+              ),
+              const LigneRubrique(icone: AppIcons.foyer, libelle: 'Appareils'),
+            ],
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(cleMeneur), findsOneWidget);
+      // Une seule icone de tete : celle de la seconde ligne.
+      expect(find.byIcon(AppIcons.foyer.repos), findsOneWidget);
+      expect(find.byIcon(AppIcons.profil.repos), findsNothing);
+
+      // Le filet de la premiere ligne commence apres le meneur, au meme
+      // ecart (12) qu'apres une icone.
+      final DecoratedBox filet = tester
+          .widgetList<DecoratedBox>(
+            find.ancestor(
+              of: find.text('Yusuf'),
+              matching: find.byType(DecoratedBox),
+            ),
+          )
+          .firstWhere(
+            (DecoratedBox d) =>
+                d.decoration is BoxDecoration &&
+                (d.decoration as BoxDecoration).border is Border,
+          );
+      final double debutFilet = tester.getTopLeft(find.byWidget(filet)).dx;
+      final double finMeneur = tester.getTopRight(find.byKey(cleMeneur)).dx;
+      expect(debutFilet - finMeneur, AppSpacing.md);
+    });
+
+    test('une rubrique sans icone ni meneur est refusee', () {
+      expect(
+        () => LigneRubrique(libelle: 'Vide', onPress: () {}),
+        throwsAssertionError,
+      );
+    });
+
     for (final Brightness luminosite in Brightness.values) {
       testWidgets('surface du theme et texte 200 %, $luminosite', (
         WidgetTester tester,
