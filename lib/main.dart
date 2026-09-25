@@ -16,6 +16,7 @@ import 'core/observabilite/supervision.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/demo/mode_demonstration.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -69,6 +70,17 @@ Future<void> main() async {
     url: Env.supabaseUrl,
     publishableKey: Env.supabaseAnonKey,
   );
+
+  // Demonstration tuteur (P2-07) : `?demo=tuteur`, jamais en production.
+  if (demoTuteurActiveIci) {
+    runApp(
+      ProviderScope(
+        overrides: surchargesDemoTuteur(),
+        child: TranslationProvider(child: const RewayahApp()),
+      ),
+    );
+    return;
+  }
 
   if (Env.playgroundActif) {
     runApp(
