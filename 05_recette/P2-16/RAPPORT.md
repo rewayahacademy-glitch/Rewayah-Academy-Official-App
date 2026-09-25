@@ -42,3 +42,18 @@ Tout est coupe quand `MediaQuery.disableAnimations` est vrai ; aucune boucle, au
 
 ## Reste pour clore P2-16
 Echelonnement fin des listes propres a certains ecrans (Historique, Catalogue) si juge utile apres revue visuelle ; mesure de performance (profil 60 i/s sur telephone) ; captures avant/apres.
+
+# Etape 3 : echelonnement Historique et Catalogue, captures (commit 2c82790)
+
+Branche `ui/tuteur-v1-anim` @ 2c82790 (poussee).
+- Historique (Seances et Observations) : `CarteLignes` (lib/features/suivi_foyer/composants_historique.dart) fait apparaitre ses lignes en decale via `ElementEchelonne` (8 premieres au plus, les suivantes sans animation). Une seule carte, filets inchanges.
+- Catalogue des classes : chaque `CarteClasseOuverte` passe par `ElementEchelonne`.
+- Coupe si `disableAnimations` ; aucune boucle ; aucune dependance.
+
+## Verifications (sous verrou)
+- `flutter analyze --fatal-infos` : aucun probleme.
+- Tests des ecrans touches (historique, classe_tuteur, foyer, notifications, admin_observations, router, rtl_echelle_texte) : 595 verts, 0 echec. Aucun test modifie.
+- Captures « apres » (etat final, animations terminees) : 68 images dans `05_recette\P2-16\captures_apres\` (Historique, Compte, coquille ; 390x844, 1024x768, 1440x900 ; clair et sombre). Rendu identique a l'avant une fois le mouvement fini : aucune regression visuelle.
+
+## Reste pour clore P2-16
+Mesure de performance (profil 60 i/s) sur le telephone Android du directeur : aucun appareil branche (`adb devices` vide). Demande : brancher le telephone en debogage USB, puis `flutter run --profile` sur Historique, Compte et Catalogue.

@@ -402,3 +402,10 @@ Statut : fini (etape 1).
 Arret ici. Reste P2-16 : mesure de performance sur telephone, captures, echelonnement Historique/Catalogue si voulu. P2-16 reste en_cours.
 
 Statut : a_suivre.
+
+## P2-16 etape 3 (Historique et Catalogue echelonnes, captures) : FAIT (25/09, session B-2026-09-25-coord)
+
+`ui/tuteur-v1-anim` @ 2c82790 (poussee). Lignes de l'Historique (CarteLignes) et cartes du Catalogue echelonnees (8 premieres). analyze propre, tests des ecrans touches 595 verts. 68 captures apres dans `05_recette\P2-16\captures_apres`.
+Reste unique : mesure de performance sur telephone (aucun appareil branche, attend le directeur). P2-16 reste en_cours.
+
+Statut : a_suivre (attend telephone).
