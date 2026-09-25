@@ -1,0 +1,283 @@
+{
+  "resume_roles": "Les rectifications précédentes appliquaient des règles communes à tous les écrans sans dire à quel rôle elles s'adressaient. La notice de visite était donnée à tous les élèves, alors que seul l'enfant dont le parent observe doit la voir. La pagination active ‹ 1/12 ›, le signal réseau et d'autres commandes de l'enseignant restaient proposés à l'élève. À l'inverse, les écrans de l'enseignant (CLV-06, 07, 08, 10) gardaient un cadre d'élève ou de tuteur : le compte « Mariam », l'entrée « Foyer », la notice « Votre parent observe… », le sous-titre avec son propre nom et le bouton « Agrandir » à la place de « Réseau ». Désormais, chaque écran part de la personne qui l'utilise : l'élève (Mariam), l'enfant en interface guidée (Mariam) ou l'enseignante (Sayyida Amina), et chaque invariant précise ce que chaque rôle voit.",
+  "invariants": [
+    "I-1 Mention d'enregistrement (R1), affichée seulement si le serveur confirme l'enregistrement. Style commun : pas de fond, pas de bordure ni d'icône caméra, un point rouge plein de 8 px (≈#FD5056) suivi d'un texte de 12-13 px en couleur secondaire. Élève standard (CLV-04) : « Cours enregistré, visite de contrôle possible. ». Sur desktop, ce texte suit « En ligne » sur la ligne « Classe An-Nour · Sayyida Amina ». Sur téléphone et web étroit, il forme une ligne seule sous le sous-titre. Interface guidée (CLV-05) : même texte, placé directement sous le titre « Ma séance », qui n'a pas de sous-titre (desktop : après « En ligne »). Le texte visible ne devient « Le cours est enregistré. » que si le directeur répond oui à Q5. Enseignant (CLV-06, 07, 08) : même texte, sur sa ligne d'état « Classe An-Nour · … » (I-9). Fin de séance (CLV-10) : aucune mention.",
+    "I-2 Notice de visite (R2). Aucun bloc ocre, pour aucun rôle. Pendant une visite, le texte de la mention se rétracte au point rouge et la notice prend sa place, dans la même taille et sans fond. Élève standard : « Votre parent observe la séance. », seulement sur l'écran de l'élève dont le parent observe (ici Mariam). Point rouge qui clignote doucement (100 % → 40 %, cycle ≈ 2 s). Interface guidée : « Ton parent observe la séance. », seulement pour l'enfant concerné, avec l'icône œil. Le point reste fixe, sans clignoter (S l.781 : jamais d'animation anxiogène). Les autres élèves ne voient ni texte ni clignotement. Enseignant : notice toujours affichée pendant la visite, point qui clignote, « Tuteur de Mariam observe. » (texte de la spec, S l.855). La forme « Le tuteur de Mariam observe la séance. » ne s'applique que si Q4 = oui. Jamais « Tuteur de… » sur un écran d'élève ou guidé, jamais « Votre parent… » ni « Ton parent… » sur un écran d'enseignant. Aucun rôle ne voit la présence d'un contrôleur ou d'un admin incognito.",
+    "I-3 Vignette vidéo (R3, R4). Élève standard : vignette de l'enseignante dans le coin supérieur droit du support, en surimpression, retrait de 12 px, ratio ≈ 1,1:1, jamais étirée. Taille ≈ 136×124 px sur téléphone et web étroit, ≈ 208×190 px sur desktop. Elle porte l'étiquette du nom, sans barres de signal (réseau faible : texte « Réseau faible. L'audio est prioritaire. » seulement). Aucune vidéo d'autres élèves (Q7). Interface guidée : grande vignette de l'enseignante, jamais sur le texte. Environ 160×150 px sur téléphone et 180×164 px en web étroit, en coin. Sur desktop, vidéo latérale d'environ 300×275 px à côté du support (S l.730, 737 ; Q8). Étiquette sans barres de signal (réseau faible : « Le réseau est faible. »). Enseignant : sa propre vignette, seulement si sa caméra est active, mêmes tailles que l'élève, avec l'indicateur de signal. Dans tous les cas, le support récupère la place libérée.",
+    "I-4 Boutons et dock par rôle (R5). Tous les boutons d'appel sont des cercles de même diamètre, en mode normal comme en mode guidé. Élève standard : Micro, Caméra (si autorisée), Agrandir, Quitter. Interface guidée : Parler, Caméra (si autorisée, sinon aucun bouton), Agrandir, Quitter. Enseignant : Micro, Caméra, Réseau, Quitter, sans bouton Agrandir ni dans le dock ni à côté du zoom. Réservés à l'enseignant et jamais sur CLV-04 ni CLV-05 : les boutons « Élèves x/y » et « Supports », les tuiles Pointeur, Marquer, Masquer et Annoter (elles restent telles quelles), le bouton Réseau et les panneaux CLV-07 et CLV-08.",
+    "I-5 Barre flottante et pagination (R6). Pour tous les rôles sur desktop : 16 à 24 px entre le bas du support et la barre flottante. Enseignant : pagination active ‹ 1/12 › alignée sous le support, jamais sous un panneau, et zoom local. Élève standard : aucune flèche qui change la page pour la Classe (S l.1366). Au plus un indicateur « 1 / 12 » en lecture seule, qui suit l'enseignante. Le zoom local dépend de Q6. Interface guidée : ni pagination, ni indicateur de page, ni zoom.",
+    "I-6 Données cohérentes (relevé). Le compteur « Élèves x/y », la liste du panneau et le récapitulatif de fin viennent de la même source. On écrit « connectés », jamais « présents » ni « absents » avant la consolidation par le serveur (S l.1148). Un statut n'a qu'une couleur : « Pas encore connecté » est jaune. Les dates sont plausibles (septembre 2026). Ces données sont réservées à l'enseignant et n'apparaissent jamais sur CLV-04 ni CLV-05.",
+    "I-7 Téléphone (R8). Aucune pagination à boutons sur mobile, quel que soit le rôle. En implémentation, le support défile au pouce.",
+    "I-8 Web étroit par rôle. Élève standard : en-tête de CLV-04 web. Interface guidée : en-tête de CLV-05 web, sans sous-titre. Enseignant, sur CLV-06, 07 et 08 : en-tête de CLV-06 web (ligne d'état « Classe An-Nour · … », I-9), dock Micro, Caméra, Réseau, Quitter, notice « Tuteur de Mariam observe. ». Si un compte est affiché, c'est « SA », Sayyida Amina. Les panneaux Élèves et Supports (enseignant seulement) s'ouvrent en volet par-dessus le support, comme sur mobile. Aucune barre d'application empilée au-dessus, pour aucun rôle.",
+    "I-9 Cadre par rôle : en-tête, compte, navigation. Titre : « Séance en direct » pour l'élève standard et l'enseignant, « Ma séance » pour la guidée. Ligne d'état de l'élève standard : « Classe An-Nour · Sayyida Amina ». Ligne d'état de la guidée : aucun sous-titre, seulement « En ligne » et la mention. Ligne d'état de l'enseignant : « Classe An-Nour · 32 min restantes », qui devient « Classe An-Nour · La séance se poursuit. » après l'heure de fin (état montré par les maquettes). Elle ne porte pas son propre nom. « La séance se poursuit. » est toujours un texte simple, jamais un bandeau vert (DV D4). Compte = celui de la personne devant l'écran : « Mariam » pour l'élève standard ; avatar et prénom de Mariam sans menu déroulant, ni thème, ni cloche, ni réglages pour la guidée ; « Sayyida Amina » (SA) pour l'enseignant. Barre latérale masquée en salle pour tous (DV D7, S l.611, 844). Hors salle ou si elle est gardée : élève Accueil, Classes, Progression, Compte ; enseignant Journée, Classes, Ressources, Profil ; guidée aucune barre. « Foyer » (destination du tuteur) n'apparaît jamais.",
+    "I-10 Ce qu'un rôle ne voit jamais. Élève standard et guidée : compteur ou liste d'élèves, fiches, notes, boutons Élèves, Supports et Réseau, outils d'enseignement, pagination active, durée restante, récapitulatif de fin, cahier, notice « Tuteur de… », visite du parent d'un autre enfant, « Foyer », compte d'une autre personne. La guidée ne voit pas non plus le zoom, l'indicateur de page, le signal réseau, les réglages ni le sous-titre de Classe. Enseignant : formulation élève « Votre parent observe… », bouton Agrandir de l'élève, compte ou navigation d'un élève ou d'un tuteur (« Mariam », « Foyer », Accueil, Historique, Bibliothèque), contrôleur incognito, coordonnées des familles."
+  ],
+  "questions": [
+    "Q1 · Interface guidée (CLV-05) uniquement : garder les disques pleins vert (Parler) et violet (Caméra), ramenés à la même forme et au même diamètre que les autres (oui), ou revenir au style sombre commun (non) ?",
+    "Q2 · Enseignant, desktop (CLV-06, 07, 08) uniquement : une fois la vidéo en vignette, garder la carte « Outils d'enseignement » telle quelle dans une colonne droite étroite d'environ 340 px (oui), ou la passer en rangée sous le support comme sur mobile (non) ?",
+    "Q3 · Élève standard (CLV-04) et enseignant (CLV-06 à 08 et 10), desktop : retirer le compte du coin supérieur droit de la salle et le ranger en bas de la barre latérale hors salle, comme dans la planche claire appréciée (oui / non) ? Chacun ne voit que son propre compte : Mariam pour l'élève, Sayyida Amina pour l'enseignante. La guidée n'est pas concernée, elle garde seulement son avatar.",
+    "Q4 · Enseignant uniquement : remplacer le texte de la spec « Tuteur de Mariam observe. » par « Le tuteur de Mariam observe la séance. » (oui / non) ? Aucun élève ne voit jamais cette phrase.",
+    "Q5 · Interface guidée (CLV-05) uniquement : afficher le texte « Le cours est enregistré. » à la place de « Cours enregistré, visite de contrôle possible. », qui reste alors dans le libellé d'accessibilité (oui / non) ? La spec (S l.783) ne le permet que sur décision.",
+    "Q6 · Élève standard (CLV-04) uniquement : garder le zoom local (−, 100 %, +), qui n'agit que sur son écran et ne publie rien (oui / non) ? L'enseignant le garde dans tous les cas, la guidée ne l'a jamais.",
+    "Q7 · Élève standard (CLV-04) uniquement : ne jamais afficher la vidéo des autres élèves, comme le prévoit la matrice par défaut (oui / non) ? La guidée ne les voit jamais, l'enseignant les voit quand rien n'est partagé.",
+    "Q8 · Interface guidée desktop (CLV-05) uniquement : placer la grande vidéo de l'enseignante à côté du support, jamais par-dessus (S l.737) (oui), ou la mettre en vignette superposée comme l'élève standard (non) ?"
+  ],
+  "images": [
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-04_eleve_desktop_sombre.png",
+      "largeur": 1586,
+      "hauteur": 992,
+      "role": "Élève standard (CLV-04), écran de Mariam, l'élève dont le parent observe",
+      "corrections": [
+        {"x": 296, "y": 180, "w": 1234, "h": 55, "quoi": "La mention d'enregistrement est un bandeau violet plein de toute la largeur, avec une icône caméra.", "rectif": "Supprimer le bandeau. Sur la ligne du sous-titre « Classe An-Nour · Sayyida Amina », après « En ligne », mettre un point rouge suivi du petit texte « Cours enregistré, visite de contrôle possible. » (I-1).", "regle": "R1"},
+        {"x": 1131, "y": 560, "w": 399, "h": 56, "quoi": "Un bloc ocre séparé « Votre parent observe la séance. » reste affiché sous la vidéo.", "rectif": "Supprimer le bloc. Cet écran est celui de Mariam, dont le parent observe. Pendant la visite, la mention se réduit au point rouge qui clignote et « Votre parent observe la séance. » prend sa place (I-2). Un élève dont le parent n'observe pas ne voit rien.", "regle": "R2 ; rôle : notice seulement pour l'élève concerné (S l.600, 667)"},
+        {"x": 1128, "y": 248, "w": 403, "h": 297, "quoi": "La vidéo de l'enseignante occupe une colonne entière à côté du support.", "rectif": "En faire une vignette d'environ 208×190 px en surimpression dans le coin supérieur droit du support et élargir le support sur toute la largeur (I-3).", "regle": "R3"},
+        {"x": 575, "y": 831, "w": 440, "h": 100, "quoi": "La barre Micro/Caméra/Agrandir/Quitter chevauche le bas du support d'environ 13 px.", "rectif": "Laisser 16 à 24 px entre le bas du support et la barre (I-5).", "regle": "R6"},
+        {"x": 52, "y": 256, "w": 220, "h": 46, "quoi": "L'entrée « Foyer » de la barre latérale est une destination du tuteur, proposée à l'élève.", "rectif": "Retirer « Foyer ». Le cadre suit la personne devant l'écran, ici l'élève (I-9).", "regle": "Rôle : matrice §1, §6, §7.1 ; DV §2 point 10"},
+        {"x": 42, "y": 78, "w": 240, "h": 852, "quoi": "La barre latérale complète reste affichée en salle (Accueil, Foyer, Séance en direct, Classes, Historique, Bibliothèque, Profil), avec des destinations qui ne sont pas celles d'un élève.", "rectif": "Masquer la barre latérale en salle et rendre la largeur au support. Hors salle, ou si elle est gardée, elle contient seulement Accueil, Classes, Progression et Compte (I-9).", "regle": "Rôle : matrice §1 ; S l.111, 611 ; DV D7"},
+        {"x": 298, "y": 862, "w": 203, "h": 58, "quoi": "La pagination active ‹ 1/12 › est proposée à l'élève. Ces flèches changeraient la page du support pour toute la Classe, or c'est une commande de l'enseignant.", "rectif": "Retirer les flèches ‹ ›. Au plus, garder un indicateur « 1 / 12 » en lecture seule, sans bouton, qui suit l'enseignante (I-5).", "regle": "Rôle : matrice §2, §7.2 ; S l.1366, 99"},
+        {"x": 1466, "y": 498, "w": 40, "h": 28, "quoi": "La vignette de l'enseignante porte des barres de signal réseau en permanence. Ce détail technique relève de l'outil Réseau de l'enseignant.", "rectif": "Retirer les barres. Côté élève, seul le texte « Réseau faible. L'audio est prioritaire. » s'affiche, et seulement si son réseau faiblit (I-3).", "regle": "Rôle : matrice §3 (Réseau) ; S l.597 ; DV D5"},
+        {"x": 1080, "y": 866, "w": 166, "h": 50, "quoi": "Le zoom local (−, 100 %, +) n'est conforme pour l'élève que s'il reste local et ne publie rien. Le directeur ne l'a pas encore tranché.", "rectif": "Le garder avec la mention en maquette « zoom local, sans effet sur les autres ». Le retirer si le directeur répond non à Q6.", "regle": "Rôle : matrice §2 ; S l.67 ; question Q6"}
+      ],
+      "a_garder": [
+        "En-tête : titre « Séance en direct », sous-titre « Classe An-Nour · Sayyida Amina », En ligne, thème, cloche, réglages, compte « Mariam » (celui de l'élève elle-même, sans « Foyer »)",
+        "Carte support : Chapitre 1, titre, illustration, encart lavande, liste numérotée",
+        "Style de la barre flottante, dock élève Micro / Caméra / Agrandir / Quitter, bouton Quitter rouge",
+        "Étiquette « Sayyida Amina » et portrait non déformé (sans barres de signal)",
+        "Palette sombre et accents violets"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-05_guidee_desktop_sombre.png",
+      "largeur": 1586,
+      "hauteur": 992,
+      "role": "Interface guidée, enfant (CLV-05), écran de Mariam, dont le parent observe",
+      "corrections": [
+        {"x": 765, "y": 156, "w": 360, "h": 24, "quoi": "L'écran n'affiche aucune mention d'enregistrement.", "rectif": "Sur la ligne sous « Ma séance », sans sous-titre de Classe, mettre après la pastille « En ligne » le point rouge et le petit texte « Cours enregistré, visite de contrôle possible. » (I-1). Le texte visible devient « Le cours est enregistré. » seulement si Q5 = oui.", "regle": "R1 ; rôle : S l.728, 783"},
+        {"x": 1024, "y": 725, "w": 486, "h": 86, "quoi": "Un bloc ocre séparé « Ton parent regarde la séance. » est affiché.", "rectif": "Supprimer le bloc. Parce que c'est le parent de Mariam qui observe, « Ton parent observe la séance. » remplace le texte de la mention, dans la même taille, sans fond, avec l'icône œil. Le point rouge reste fixe, sans clignoter (I-2). Un enfant dont le parent n'observe pas ne voit rien. Jamais « Tuteur de Mariam… » ni « Votre parent… ».", "regle": "R2 ; rôle : S l.34, 781 ; matrice §1"},
+        {"x": 1024, "y": 204, "w": 486, "h": 500, "quoi": "La vidéo occupe une colonne de toute la hauteur du support.", "rectif": "Réduire la vidéo à une grande vignette latérale d'environ 300×275 px (ratio ≈ 1,1:1, jamais étirée), en haut à droite, à côté du support et jamais sur son texte. Garder l'étiquette « Sayyida Amina » (I-3). Si Q8 = non, la placer en vignette superposée comme sur CLV-04.", "regle": "R3 ; rôle : grande vignette guidée (S l.730, 737)"},
+        {"x": 313, "y": 204, "w": 692, "h": 612, "quoi": "Le support est réduit à moins de la moitié de la largeur pour laisser la place à la vidéo.", "rectif": "Une fois la barre latérale retirée, faire partir le support de la marge gauche (≈ x 80) jusqu'au bord de la vignette latérale (≈ x 1190), sans passer dessous. Laisser 16 à 24 px entre le bas du support et le dock guidé.", "regle": "R3 ; rôle : S l.737"},
+        {"x": 57, "y": 95, "w": 236, "h": 829, "quoi": "La barre latérale dense de l'application (Accueil, Foyer, Séance en direct, Classes, Historique, Bibliothèque, Profil) est affichée sur l'écran de l'enfant.", "rectif": "Retirer toute la barre latérale : l'interface guidée n'a aucune barre dense. Restent le retour ‹ et un accès contrôlé à la déconnexion (I-9).", "regle": "Rôle : matrice §1, §6 ; S l.117, 728, 737, 793"},
+        {"x": 70, "y": 268, "w": 212, "h": 38, "quoi": "L'entrée « Foyer » est une destination du tuteur, proposée à l'enfant.", "rectif": "Elle disparaît avec la barre latérale. Aucune destination de tuteur dans un cadre d'enfant.", "regle": "Rôle : matrice §6, §7.1"},
+        {"x": 1358, "y": 108, "w": 150, "h": 46, "quoi": "Le compte « Mariam » ouvre un menu déroulant (chevron), donc un changement de profil ou de compte sans contrôle.", "rectif": "Afficher seulement l'avatar et le prénom de l'enfant, sans chevron ni menu. La sortie passe par l'accès contrôlé de la verticale Élève enfant (I-9).", "regle": "Rôle : matrice §1 (son propre compte) ; S l.793"},
+        {"x": 1115, "y": 110, "w": 215, "h": 44, "quoi": "La bascule de thème, la cloche (avec pastille) et les réglages ajoutent des fonctions d'application sur l'écran guidé.", "rectif": "Retirer ces trois contrôles de la séance guidée (« jamais plus de fonctions »).", "regle": "Rôle : matrice §6 (réglages) ; S l.737, 789"},
+        {"x": 376, "y": 156, "w": 262, "h": 26, "quoi": "Le sous-titre « Classe An-Nour · Sayyida Amina » est celui de l'élève standard. L'interface guidée n'a qu'un titre court.", "rectif": "Retirer le sous-titre. Sous « Ma séance », la ligne ne garde que « En ligne » et la mention. Le nom de l'enseignante reste sur l'étiquette de sa vignette.", "regle": "Rôle : matrice §1 (sous-titre IG : non) ; S l.728"},
+        {"x": 1452, "y": 656, "w": 42, "h": 34, "quoi": "Les barres de signal sur la vidéo de l'enseignante sont un détail technique.", "rectif": "Retirer les barres. Seulement si le réseau faiblit, afficher le texte guidé « Le réseau est faible. » (I-3).", "regle": "Rôle : matrice §3, §6 ; S l.753, 789"}
+      ],
+      "a_garder": [
+        "Titre court « Ma séance », retour ‹ et pastille « En ligne », sans sous-titre ni barre latérale",
+        "Carte support et son contenu",
+        "Barre d'appel guidée : 4 boutons ronds libellés Parler, Caméra, Agrandir, Quitter (couleurs selon Q1)",
+        "Portrait non déformé et étiquette « Sayyida Amina », sans barres de signal",
+        "Avatar et prénom de Mariam, sans menu"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-06_enseignant_desktop_sombre.png",
+      "largeur": 1586,
+      "hauteur": 992,
+      "role": "Enseignant (CLV-06), écran de Sayyida Amina",
+      "corrections": [
+        {"x": 310, "y": 196, "w": 460, "h": 56, "quoi": "La mention d'enregistrement est une pilule violette pleine, placée dans la rangée des boutons d'action.", "rectif": "Retirer la pilule. Placer le point rouge et le petit texte « Cours enregistré, visite de contrôle possible. » après « En ligne », sur la ligne d'état (I-1). La rangée ne garde que « Élèves 3/4 » et « Supports », réservés à l'enseignant.", "regle": "R1"},
+        {"x": 1138, "y": 735, "w": 372, "h": 52, "quoi": "Un bloc ocre séparé « Tuteur de Mariam observe. » est affiché.", "rectif": "Supprimer le bloc. Pendant la visite, le point rouge clignote et la notice de l'enseignant prend la place du texte de la mention, sans fond : « Tuteur de Mariam observe. » (S l.855), ou « Le tuteur de Mariam observe la séance. » si Q4 = oui (I-2). Jamais « Votre parent… » ni « Ton parent… » sur cet écran.", "regle": "R2 ; rôle : S l.855 ; matrice §6"},
+        {"x": 1140, "y": 274, "w": 366, "h": 262, "quoi": "La vidéo occupe le haut d'une colonne dédiée.", "rectif": "En faire une vignette d'environ 208×190 px en surimpression dans le coin supérieur droit du support. C'est sa propre caméra, affichée seulement si elle est active. Le support s'élargit (I-3 ; placement des outils selon Q2).", "regle": "R3"},
+        {"x": 578, "y": 820, "w": 430, "h": 92, "quoi": "La barre de contrôle chevauche le bas du support d'environ 12 px (support visible jusqu'à y≈832, barre à partir de y=820).", "rectif": "Laisser 16 à 24 px entre le support et la barre (I-5).", "regle": "R6"},
+        {"x": 1360, "y": 108, "w": 150, "h": 46, "quoi": "La vue enseignant affiche le compte « Mariam », celui d'une élève.", "rectif": "Afficher le compte de l'enseignante, « Sayyida Amina », avec l'avatar SA (I-9).", "regle": "relevé ; rôle : matrice §1, §6 ; DV §2 point 10"},
+        {"x": 70, "y": 265, "w": 212, "h": 45, "quoi": "La barre latérale de la vue enseignant affiche « Foyer », une destination du tuteur.", "rectif": "Retirer « Foyer » (I-9).", "regle": "Rôle : matrice §6 Enseignant, §7.3"},
+        {"x": 58, "y": 95, "w": 234, "h": 830, "quoi": "La barre latérale (Accueil, Foyer, Séance en direct, Classes, Historique, Bibliothèque, Profil) n'est pas la navigation de l'enseignant.", "rectif": "Masquer la barre latérale en salle. Hors salle, ou si elle est gardée, n'y mettre que Journée, Classes, Ressources et Profil (I-9).", "regle": "Rôle : matrice §1 ; S l.844 ; DV D7"},
+        {"x": 785, "y": 196, "w": 335, "h": 56, "quoi": "« La séance se poursuit. » est affiché en bandeau vert plein avec une icône de signal.", "rectif": "Retirer le bandeau vert. Le texte passe, sans fond, sur la ligne d'état (correction suivante).", "regle": "Rôle : matrice §1 ; S l.859 ; DV D4"},
+        {"x": 376, "y": 155, "w": 380, "h": 28, "quoi": "La ligne d'état « Classe An-Nour · Sayyida Amina » reprend le format de l'élève : l'enseignante y lit son propre nom, et la durée restante, qui lui est réservée, manque.", "rectif": "Ligne d'état de l'enseignant : « Classe An-Nour · La séance se poursuit. » (état de la maquette, heure de fin dépassée), puis « En ligne » et la mention. Avant l'heure de fin : « Classe An-Nour · 32 min restantes ». La durée restante n'apparaît jamais sur un écran élève ou guidé (I-9).", "regle": "Rôle : matrice §1 (sous-titre et durée restante) ; S l.829"},
+        {"x": 1226, "y": 858, "w": 46, "h": 44, "quoi": "L'icône plein écran à côté du zoom est la commande « Agrandir le support » de l'élève. Elle n'est pas prévue pour l'enseignant.", "rectif": "La retirer. Garder le zoom local, permis à l'enseignant (I-4).", "regle": "Rôle : matrice §3 ; S l.627, 835-863"}
+      ],
+      "a_garder": [
+        "Structure de l'en-tête : retour, titre « Séance en direct », pastille « En ligne » (ligne d'état et compte corrigés)",
+        "Boutons « Élèves 3/4 » et « Supports » (enseignant uniquement)",
+        "Carte « Outils d'enseignement » avec ses 4 tuiles et l'état actif de Pointeur",
+        "Support partagé, dock enseignant Micro / Caméra / Réseau / Quitter, pagination active ‹ 1/12 ›, zoom local",
+        "Sa propre vignette : portrait non déformé, étiquette et indicateur de signal"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-07_eleves_desktop_sombre.png",
+      "largeur": 1586,
+      "hauteur": 992,
+      "role": "Enseignant (CLV-07, panneau Élèves), écran de Sayyida Amina",
+      "corrections": [
+        {"x": 274, "y": 184, "w": 463, "h": 50, "quoi": "La mention d'enregistrement est une pilule violette pleine avec une icône caméra.", "rectif": "Placer le point rouge et le petit texte sur la ligne d'état, après « En ligne », sans fond (I-1).", "regle": "R1"},
+        {"x": 1210, "y": 713, "w": 335, "h": 52, "quoi": "Un bloc ocre séparé « Tuteur de Mariam observe. » est affiché.", "rectif": "Supprimer le bloc. Pendant la visite, le point rouge clignote et la notice de l'enseignant prend la place du texte de la mention, sans fond : « Tuteur de Mariam observe. » (S l.855), ou « Le tuteur de Mariam observe la séance. » si Q4 = oui (I-2). Jamais « Votre parent… » sur cet écran.", "regle": "R2 ; rôle : S l.855 ; matrice §4, §6"},
+        {"x": 1210, "y": 255, "w": 330, "h": 265, "quoi": "La vidéo occupe une colonne pleine, au même niveau que le support.", "rectif": "En faire une vignette en surimpression dans le coin supérieur droit du support et élargir le support vers la droite (I-3).", "regle": "R3"},
+        {"x": 795, "y": 843, "w": 310, "h": 87, "quoi": "La barre flottante touche le bas du support, avec 0 à 3 px d'écart.", "rectif": "Laisser 16 à 24 px (I-5).", "regle": "R6"},
+        {"x": 1392, "y": 108, "w": 150, "h": 45, "quoi": "La vue enseignant affiche le compte « Mariam », celui d'une élève.", "rectif": "Afficher le compte « Sayyida Amina » (SA) (I-9).", "regle": "relevé ; rôle : matrice §1, §6"},
+        {"x": 1185, "y": 185, "w": 175, "h": 48, "quoi": "Le bouton indique « Élèves 3/4 », mais la liste montre un seul élève connecté sur trois.", "rectif": "Faire venir le compteur de la même source que la liste : « Élèves 1/3 » pour cet état (I-6).", "regle": "relevé"},
+        {"x": 290, "y": 728, "w": 230, "h": 50, "quoi": "Pour Yusuf, le point sur l'avatar est jaune alors que la puce « Pas encore connecté » est rouge.", "rectif": "Utiliser le jaune pour les deux.", "regle": "relevé"},
+        {"x": 298, "y": 556, "w": 112, "h": 24, "quoi": "La date « 18 sept. 2024 » n'est pas plausible.", "rectif": "Mettre une date proche, par exemple « 24 sept. 2026 ».", "regle": "relevé"},
+        {"x": 36, "y": 262, "w": 210, "h": 46, "quoi": "La barre latérale de la vue enseignant contient « Foyer », une destination du tuteur.", "rectif": "Retirer « Foyer » (I-9).", "regle": "Rôle : matrice §6 Enseignant, §7.3"},
+        {"x": 25, "y": 92, "w": 228, "h": 838, "quoi": "Le reste de la barre latérale suit la navigation de l'élève ou de la famille (Accueil, Historique, Bibliothèque). Journée et Ressources manquent.", "rectif": "Masquer la barre latérale en salle. Hors salle, ou si elle est gardée : Journée, Classes, Ressources, Profil (I-9).", "regle": "Rôle : matrice §1 ; S l.844 ; DV D7"},
+        {"x": 752, "y": 184, "w": 418, "h": 50, "quoi": "« La séance se poursuit. » est affiché dans un bandeau vert plein avec une icône de réseau.", "rectif": "Retirer le bandeau. Le texte passe, sans fond, sur la ligne d'état (correction suivante).", "regle": "Rôle : matrice §1 ; S l.859 ; DV D4"},
+        {"x": 330, "y": 148, "w": 340, "h": 24, "quoi": "La ligne d'état « Classe An-Nour · Sayyida Amina » reprend le format de l'élève et la durée restante manque.", "rectif": "« Classe An-Nour · La séance se poursuit. » dans l'état de la maquette, « Classe An-Nour · 32 min restantes » avant l'heure de fin, sans le nom de l'enseignante (I-9).", "regle": "Rôle : matrice §1 ; S l.829"},
+        {"x": 1285, "y": 875, "w": 40, "h": 40, "quoi": "Le bouton plein écran est la commande « Agrandir le support » de l'élève, placée dans la vue enseignant.", "rectif": "Le retirer. Garder le zoom 100 %, permis à l'enseignant (I-4).", "regle": "Rôle : matrice §3 ; S l.627, 835"}
+      ],
+      "a_garder": [
+        "Panneau Élèves en entier (enseignant uniquement) : carte de Mariam dépliée, grille d'informations, 4 actions, lignes Yusuf et Aïcha",
+        "Style unique des boutons en contour",
+        "Support partagé, carte des outils, dock enseignant Micro / Caméra / Réseau / Quitter, pagination ‹ 1/12 ›, zoom",
+        "Structure de l'en-tête : retour, titre, En ligne ; barre latérale masquée en salle ou réduite à Journée, Classes, Ressources, Profil ; compte Sayyida Amina"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-08_supports_desktop_sombre.png",
+      "largeur": 1586,
+      "hauteur": 992,
+      "role": "Enseignant (CLV-08, panneau Supports), écran de Sayyida Amina",
+      "corrections": [
+        {"x": 310, "y": 197, "w": 460, "h": 55, "quoi": "La mention d'enregistrement est une pilule violette pleine.", "rectif": "Placer le point rouge et le petit texte après « En ligne », sur la ligne d'état (I-1).", "regle": "R1"},
+        {"x": 1205, "y": 705, "w": 307, "h": 52, "quoi": "Un bloc ocre séparé « Tuteur de Mariam observe. » est affiché.", "rectif": "Supprimer le bloc. Pendant la visite, la mention se réduit au point rouge qui clignote et la notice de l'enseignant prend sa place, sans fond : « Tuteur de Mariam observe. » (S l.855), ou « Le tuteur de Mariam observe la séance. » si Q4 = oui (I-2). Jamais « Votre parent… » ni « Ton parent… » sur cet écran.", "regle": "R2 ; rôle : S l.855 ; matrice §6"},
+        {"x": 1205, "y": 274, "w": 302, "h": 240, "quoi": "La vidéo occupe une colonne dédiée.", "rectif": "En faire une vignette en surimpression dans le coin supérieur droit du support ; le support récupère l'espace (I-3).", "regle": "R3"},
+        {"x": 620, "y": 825, "w": 370, "h": 90, "quoi": "La barre flottante chevauche le bas du support d'environ 10 px.", "rectif": "Laisser 16 à 24 px (I-5).", "regle": "R6"},
+        {"x": 310, "y": 857, "w": 172, "h": 50, "quoi": "La pagination « 1/12 » est placée sous le panneau Supports et non sous le support qu'elle commande.", "rectif": "L'aligner sous le support partagé. Cette pagination active est réservée à l'enseignant (I-5).", "regle": "R6"},
+        {"x": 1360, "y": 108, "w": 150, "h": 45, "quoi": "La vue enseignant affiche le compte « Mariam », celui d'une élève.", "rectif": "Afficher le compte « Sayyida Amina » (SA) (I-9).", "regle": "relevé ; rôle : matrice §1, §6"},
+        {"x": 72, "y": 262, "w": 208, "h": 48, "quoi": "L'entrée « Foyer » de la barre latérale est une destination du tuteur, affichée dans la vue enseignant.", "rectif": "Retirer « Foyer » (I-9).", "regle": "Rôle : matrice §6 Enseignant, §7.3"},
+        {"x": 57, "y": 95, "w": 235, "h": 830, "quoi": "La barre latérale reprend la navigation de l'élève ou de la famille (Accueil, Foyer, Historique, Bibliothèque) au lieu de celle de l'enseignant.", "rectif": "Masquer la barre en salle. Hors salle, ou si elle est gardée : Journée, Classes, Ressources, Profil (I-9).", "regle": "Rôle : matrice §1 ; S l.844 ; DV D7"},
+        {"x": 376, "y": 156, "w": 262, "h": 26, "quoi": "La ligne d'état « Classe An-Nour · Sayyida Amina » suit le format de l'élève : l'enseignante y lit son propre nom et la durée restante manque.", "rectif": "« Classe An-Nour · La séance se poursuit. » dans l'état de la maquette, « Classe An-Nour · 32 min restantes » avant l'heure de fin, puis « En ligne » et la mention (I-9).", "regle": "Rôle : matrice §1 ; S l.829"},
+        {"x": 785, "y": 196, "w": 336, "h": 56, "quoi": "« La séance se poursuit. » est affiché en bandeau vert plein avec une icône de barres.", "rectif": "Retirer le bandeau. Le texte passe, sans fond, sur la ligne d'état.", "regle": "Rôle : matrice §1 ; S l.859 ; DV D4"},
+        {"x": 1383, "y": 858, "w": 50, "h": 50, "quoi": "Le bouton plein écran est la commande « Agrandir le support » de l'élève. Il n'est pas prévu pour l'enseignant.", "rectif": "Le retirer. Garder le zoom local 100 % (I-4).", "regle": "Rôle : matrice §3 ; S l.627, 835"}
+      ],
+      "a_garder": [
+        "Panneau Supports en entier (R9, enseignant uniquement) : Reprendre, Récents, Ressources de la Classe, bouton « Voir toute la bibliothèque »",
+        "Support partagé, carte des outils, dock enseignant Micro / Caméra / Réseau / Quitter",
+        "Structure de l'en-tête (retour, titre « Séance en direct », En ligne, thème, cloche, réglages), avec la ligne d'état, le compte et la barre latérale corrigés"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-10_fin_desktop_sombre.png",
+      "largeur": 1586,
+      "hauteur": 992,
+      "role": "Enseignant (CLV-10, fin de séance), écran de Sayyida Amina",
+      "corrections": [
+        {"x": 360, "y": 113, "w": 390, "h": 67, "quoi": "L'en-tête affiche encore « Séance en direct » et « En ligne » alors que la séance est terminée.", "rectif": "Afficher le titre « Séance terminée » et une pastille neutre « Terminée », ou retirer la pastille.", "regle": "relevé"},
+        {"x": 70, "y": 318, "w": 212, "h": 60, "quoi": "Le point vert « en direct » reste sur l'entrée du menu.", "rectif": "Retirer le point vert une fois la séance terminée.", "regle": "relevé"},
+        {"x": 745, "y": 655, "w": 185, "h": 50, "quoi": "« 3 élèves connectés sur 3 inscrits » contredit le compteur « Élèves 3/4 » et le panneau de la séance.", "rectif": "Faire venir ce chiffre de la même source que le compteur et le panneau. Garder le mot « connectés », jamais « présents » ni « absents », puisque la présence est consolidée plus tard par le serveur. Par exemple : « 2 élèves connectés sur 3 inscrits » (I-6).", "regle": "relevé ; rôle : S l.1148 ; matrice §5"},
+        {"x": 656, "y": 882, "w": 482, "h": 46, "quoi": "Le bouton « Revenir à ma journée » touche le bas de la fenêtre (y≈928 pour un cadre à y≈935).", "rectif": "Laisser au moins 24 px de marge basse et remonter le bloc si nécessaire.", "regle": "R6"},
+        {"x": 1358, "y": 106, "w": 150, "h": 50, "quoi": "Le compte en haut à droite est « Mariam », celui d'une élève, alors que l'écran est celui de l'enseignante.", "rectif": "Afficher le compte « Sayyida Amina » (SA) (I-9).", "regle": "Rôle : matrice §1, §6, §7.3 ; SY I-6"},
+        {"x": 70, "y": 262, "w": 212, "h": 50, "quoi": "L'entrée « Foyer » (destination du tuteur) figure dans la barre latérale de l'enseignante.", "rectif": "Retirer « Foyer » (I-9).", "regle": "Rôle : matrice §6 Enseignant, §7.3"},
+        {"x": 70, "y": 200, "w": 212, "h": 430, "quoi": "La navigation est celle d'un élève ou d'un tuteur (Accueil, Foyer, Historique, Bibliothèque). « Revenir à ma journée » renvoie vers une destination absente du menu.", "rectif": "Mettre la navigation de l'enseignant : Journée, Classes, Ressources, Profil. « Séance en direct » peut rester surligné, sans point vert (I-9).", "regle": "Rôle : matrice §1 ; S l.844 ; DV D7"},
+        {"x": 505, "y": 155, "w": 135, "h": 26, "quoi": "Le sous-titre ajoute « Sayyida Amina », le nom de l'enseignante elle-même, au format de l'élève.", "rectif": "Garder seulement « Classe An-Nour » (I-9).", "regle": "Rôle : matrice §1 (sous-titre EN) ; S l.829"}
+      ],
+      "a_garder": [
+        "Cercle coché avec étincelles, titre et sous-titre centrés",
+        "Carte récapitulative de 4 lignes et pastille « Cahier à compléter » (enseignant uniquement, jamais sur un écran élève)",
+        "Bouton plein « Ouvrir le cahier » et bouton en contour « Revenir à ma journée »",
+        "Structure de l'en-tête droit (thème, cloche, réglages), avec le compte Sayyida Amina et la navigation enseignant Journée, Classes, Ressources, Profil"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-04-05-06_mobile_sombre.png",
+      "largeur": 1491,
+      "hauteur": 1055,
+      "role": "Élève standard (CLV-04) · Interface guidée (CLV-05) · Enseignant (CLV-06), de gauche à droite",
+      "corrections": [
+        {"x": 85, "y": 193, "w": 375, "h": 44, "quoi": "CLV-04 (élève) : la mention est un bandeau plein avec une icône caméra, et contient la faute « enegistré ».", "rectif": "Remplacer par une ligne sous le sous-titre : point rouge et petit texte « Cours enregistré, visite de contrôle possible. » (I-1).", "regle": "R1"},
+        {"x": 85, "y": 789, "w": 377, "h": 43, "quoi": "CLV-04 (élève) : un bloc ocre séparé « Votre parent observe la séance. » est affiché.", "rectif": "Supprimer le bloc. Écran de Mariam, dont le parent observe : ce texte remplace la mention, avec le point rouge qui clignote (I-2). Les autres élèves ne voient rien.", "regle": "R2 ; rôle : S l.600"},
+        {"x": 422, "y": 378, "w": 24, "h": 20, "quoi": "CLV-04 (élève) : la vignette de l'enseignante porte des barres de signal réseau, un détail technique de l'enseignant.", "rectif": "Retirer les barres. Seulement si le réseau faiblit, afficher le texte « Réseau faible. L'audio est prioritaire. » (I-3).", "regle": "Rôle : matrice §3 ; S l.597 ; DV D5"},
+        {"x": 558, "y": 180, "w": 370, "h": 18, "quoi": "CLV-05 (guidée) : aucune mention d'enregistrement.", "rectif": "Ajouter directement sous « Ma séance », dont le sous-titre est retiré, la ligne avec le point rouge et « Cours enregistré, visite de contrôle possible. » (I-1). Le texte devient « Le cours est enregistré. » seulement si Q5 = oui.", "regle": "R1 ; rôle : S l.728, 783"},
+        {"x": 604, "y": 162, "w": 220, "h": 20, "quoi": "CLV-05 (guidée) : le sous-titre « Classe An-Nour · Sayyida Amina » est celui de l'élève standard. La guidée n'a qu'un titre court.", "rectif": "Retirer le sous-titre. Garder « Ma séance » seul, puis la ligne d'enregistrement.", "regle": "Rôle : matrice §1 ; S l.728"},
+        {"x": 767, "y": 215, "w": 157, "h": 165, "quoi": "CLV-05 (guidée) : la vidéo coupe le titre (« en class »).", "rectif": "Garder une grande vignette de l'enseignante, plus grande qu'en CLV-04 (≈ 160×150 px), dans le coin supérieur droit avec 12 px de retrait. Faire passer « Chapitre 1 » et le titre à gauche, avec retour à la ligne, pour que « Les bonnes manières en classe » ne soit jamais coupé (I-3).", "regle": "R3 ; rôle : grande vignette guidée (S l.730)"},
+        {"x": 894, "y": 353, "w": 24, "h": 20, "quoi": "CLV-05 (guidée) : barres de signal sur la vignette, un détail technique interdit en guidée.", "rectif": "Retirer les barres. Seulement si le réseau faiblit : « Le réseau est faible. » (I-3).", "regle": "Rôle : matrice §6 IG ; S l.753, 789"},
+        {"x": 558, "y": 765, "w": 375, "h": 45, "quoi": "CLV-05 (guidée) : un bloc ocre séparé « Ton parent regarde la séance. » est affiché.", "rectif": "Supprimer le bloc. Seulement pour l'enfant dont le parent observe, « Ton parent observe la séance. » remplace la mention, avec l'icône œil et un point rouge fixe, sans clignotement (I-2).", "regle": "R2 ; rôle : S l.34, 781"},
+        {"x": 655, "y": 832, "w": 88, "h": 80, "quoi": "CLV-05 (guidée) : le bouton Caméra est un ovale plus large que les autres cercles.", "rectif": "En faire un cercle du même diamètre que les autres boutons (I-4).", "regle": "R5"},
+        {"x": 1031, "y": 180, "w": 375, "h": 18, "quoi": "CLV-06 (enseignant) : aucune mention d'enregistrement.", "rectif": "Ajouter la ligne avec le point rouge et le texte sous la ligne d'état (I-1).", "regle": "R1"},
+        {"x": 1076, "y": 162, "w": 222, "h": 20, "quoi": "CLV-06 (enseignant) : le sous-titre « Classe An-Nour · Sayyida Amina » reprend le format de l'élève. L'enseignante y lit son propre nom et la durée restante manque.", "rectif": "« Classe An-Nour · La séance se poursuit. » dans l'état de la maquette, « Classe An-Nour · 32 min restantes » avant l'heure de fin (I-9).", "regle": "Rôle : matrice §1 ; S l.829"},
+        {"x": 1031, "y": 194, "w": 375, "h": 39, "quoi": "CLV-06 (enseignant) : « La séance se poursuit. » est posé dans un bandeau vert plein, avec une icône de barres.", "rectif": "Retirer le bandeau vert. Le texte passe, sans fond, sur la ligne d'état (correction précédente).", "regle": "Rôle : matrice §1 ; S l.859 ; DV D4"},
+        {"x": 1031, "y": 791, "w": 375, "h": 43, "quoi": "CLV-06 (enseignant) : un bloc ocre séparé « Tuteur de Mariam observe. » est affiché.", "rectif": "Supprimer le bloc. Afficher « Tuteur de Mariam observe. » (S l.855) à la place de la mention, sans fond, avec le point rouge qui clignote. Passer à « Le tuteur de Mariam observe la séance. » seulement si Q4 = oui (I-2).", "regle": "R2 ; rôle : S l.855"}
+      ],
+      "a_garder": [
+        "Disposition des 3 écrans et ordre des blocs",
+        "Vignettes de CLV-04 (élève, sans barres de signal) et de CLV-06 (sa propre caméra, avec signal) : taille et coin de référence",
+        "CLV-06 uniquement : tuiles d'outils, boutons « Élèves 3/4 » et « Supports », dock Micro / Caméra / Réseau / Quitter",
+        "CLV-04 : dock Micro / Caméra / Agrandir / Quitter ; CLV-05 : dock Parler / Caméra / Agrandir / Quitter ; bouton Quitter rouge",
+        "Contenu de la carte et thème sombre"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-07-08-10_mobile_sombre.png",
+      "largeur": 1491,
+      "hauteur": 1055,
+      "role": "Enseignant sur les trois écrans : CLV-07 Élèves · CLV-08 Supports · CLV-10 Fin de séance (de gauche à droite)",
+      "corrections": [
+        {"x": 85, "y": 193, "w": 375, "h": 42, "quoi": "CLV-07 : la mention est un bandeau plein avec une icône caméra, et contient la faute « erregistré ».", "rectif": "Remplacer par une ligne sous la ligne d'état : point rouge et petit texte exact (I-1).", "regle": "R1"},
+        {"x": 560, "y": 193, "w": 372, "h": 42, "quoi": "CLV-08 : même bandeau plein, avec la faute « enegistré ».", "rectif": "Appliquer la même correction qu'en CLV-07 (I-1).", "regle": "R1"},
+        {"x": 93, "y": 825, "w": 230, "h": 45, "quoi": "Pour Yusuf, l'avatar porte un point jaune et la puce du libellé est rouge.", "rectif": "Utiliser le jaune pour les deux.", "regle": "relevé"},
+        {"x": 98, "y": 652, "w": 120, "h": 38, "quoi": "La date « 18 sept. 2024 » n'est pas plausible.", "rectif": "Mettre une date proche, par exemple « 24 sept. 2026 ».", "regle": "relevé"},
+        {"x": 1120, "y": 628, "w": 200, "h": 46, "quoi": "CLV-10 : « 3 élèves connectés sur 3 inscrits » contredit « Élèves 3/4 » et le panneau.", "rectif": "Faire venir ce chiffre de la même source que le compteur et le panneau, avec le mot « connectés », jamais « présents » ni « absents ». Par exemple : « 2 élèves connectés sur 3 inscrits » (I-6).", "regle": "relevé ; rôle : S l.1148 ; matrice §5"},
+        {"x": 126, "y": 158, "w": 228, "h": 24, "quoi": "CLV-07 (enseignant) : le sous-titre « Classe An-Nour · Sayyida Amina » reprend le format de l'élève, et la durée restante manque.", "rectif": "Ligne d'état de l'enseignant : « Classe An-Nour · 32 min restantes », ou « Classe An-Nour · La séance se poursuit. » après l'heure de fin (I-9).", "regle": "Rôle : matrice §1 ; S l.829"},
+        {"x": 601, "y": 158, "w": 228, "h": 24, "quoi": "CLV-08 (enseignant) : même sous-titre au format de l'élève, sans durée restante.", "rectif": "Même correction qu'en CLV-07 (I-9).", "regle": "Rôle : matrice §1 ; S l.829"}
+      ],
+      "a_garder": [
+        "Vignette vidéo de CLV-07 et CLV-08 (sa propre caméra) : c'est la référence de I-3",
+        "Volets Élèves et Supports (R9, enseignant uniquement), tels quels ; sous le volet, le cadre reste celui de CLV-06 mobile (dock Micro / Caméra / Réseau / Quitter, notice « Tuteur de Mariam observe. »)",
+        "Écran CLV-10 en entier en dehors du chiffre (récapitulatif et cahier réservés à l'enseignant)",
+        "En-têtes (retour, titre, En ligne), thème et boutons, avec la ligne d'état corrigée"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-04-05-06_web_etroit_sombre.png",
+      "largeur": 1448,
+      "hauteur": 1086,
+      "role": "Élève standard (CLV-04) · Interface guidée (CLV-05) · Enseignant (CLV-06), de gauche à droite",
+      "corrections": [
+        {"x": 27, "y": 277, "w": 435, "h": 43, "quoi": "CLV-04 (élève) : la mention est un bandeau violet plein avec une icône caméra.", "rectif": "Remplacer par une ligne sous le sous-titre : point rouge et petit texte (I-1).", "regle": "R1"},
+        {"x": 304, "y": 334, "w": 158, "h": 222, "quoi": "CLV-04 (élève) : la vidéo occupe une colonne de toute la hauteur à côté de la carte.", "rectif": "En faire une vignette d'environ 136×124 px en surimpression dans le coin supérieur droit de la carte, qui passe en pleine largeur (I-3).", "regle": "R3"},
+        {"x": 304, "y": 576, "w": 158, "h": 57, "quoi": "CLV-04 (élève) : un bloc ocre « Votre parent observe la séance. » est affiché.", "rectif": "Supprimer le bloc. Seulement chez l'élève dont le parent observe (ici Mariam), afficher « Votre parent observe la séance. » à la place de la mention, avec le point rouge qui clignote (I-2). Les autres élèves ne voient rien.", "regle": "R2 ; rôle : S l.600, 667"},
+        {"x": 429, "y": 529, "w": 22, "h": 22, "quoi": "CLV-04 (élève) : barres de signal réseau sur la vignette de l'enseignante.", "rectif": "Retirer les barres. Seulement si le réseau faiblit, afficher le texte « Réseau faible. L'audio est prioritaire. » (I-3).", "regle": "Rôle : matrice §3 ; S l.597 ; DV D5"},
+        {"x": 504, "y": 266, "w": 443, "h": 20, "quoi": "CLV-05 (guidée) : aucune mention d'enregistrement.", "rectif": "Ajouter la ligne avec le point rouge et le texte directement sous « Ma séance », à la place du sous-titre retiré (I-1). Le texte devient « Le cours est enregistré. » seulement si Q5 = oui.", "regle": "R1 ; rôle : S l.728, 783"},
+        {"x": 549, "y": 250, "w": 190, "h": 18, "quoi": "CLV-05 (guidée) : le sous-titre « Classe An-Nour · Sayyida Amina » est celui de l'élève standard et de l'enseignant.", "rectif": "Retirer le sous-titre et garder seulement « Ma séance ».", "regle": "Rôle : matrice §1 ; S l.728"},
+        {"x": 787, "y": 289, "w": 158, "h": 282, "quoi": "CLV-05 (guidée) : la vidéo est trop haute et impose la hauteur de la rangée.", "rectif": "Passer la vidéo en vignette superposée dans le coin supérieur droit du support, sans colonne dédiée. Elle reste plus grande qu'en CLV-04 (≈ 180×164 px) et ne couvre jamais le titre (I-3).", "regle": "R3 ; rôle : grande vignette guidée (S l.730)"},
+        {"x": 504, "y": 755, "w": 443, "h": 38, "quoi": "CLV-05 (guidée) : un bloc ocre « Ton parent regarde la séance. » occupe toute la largeur.", "rectif": "Supprimer le bloc. Seulement pour l'enfant dont le parent observe, « Ton parent observe la séance. » remplace la mention, avec l'icône œil et un point rouge fixe (I-2).", "regle": "R2 ; rôle : S l.34, 781"},
+        {"x": 640, "y": 812, "w": 80, "h": 62, "quoi": "CLV-05 (guidée) : le bouton Caméra a une forme de pilule plus large que les cercles.", "rectif": "En faire un cercle du même diamètre (I-4).", "regle": "R5"},
+        {"x": 911, "y": 537, "w": 22, "h": 22, "quoi": "CLV-05 (guidée) : barres de signal sur la vignette, un détail technique interdit en guidée.", "rectif": "Retirer les barres. Seulement si le réseau faiblit : « Le réseau est faible. » (I-3).", "regle": "Rôle : matrice §6 IG ; S l.753, 789"},
+        {"x": 990, "y": 264, "w": 433, "h": 20, "quoi": "CLV-06 (enseignant) : aucune mention d'enregistrement.", "rectif": "Ajouter la ligne avec le point rouge et le texte sous la ligne d'état (I-1).", "regle": "R1"},
+        {"x": 1032, "y": 248, "w": 200, "h": 18, "quoi": "CLV-06 (enseignant) : le sous-titre « Classe An-Nour · Sayyida Amina » reprend le format de l'élève et la durée restante, réservée à l'enseignant, manque.", "rectif": "« Classe An-Nour · La séance se poursuit. » dans l'état de la maquette, « Classe An-Nour · 32 min restantes » avant l'heure de fin. Rien de tout cela sur CLV-04 ni CLV-05 (I-9).", "regle": "Rôle : matrice §1 ; S l.829"},
+        {"x": 990, "y": 277, "w": 433, "h": 38, "quoi": "CLV-06 (enseignant) : « La séance se poursuit. » est affiché en bandeau vert plein avec une icône.", "rectif": "Supprimer le bandeau. Le texte passe, sans fond, sur la ligne d'état (correction précédente).", "regle": "Rôle : matrice §1 ; S l.859 ; DV D4"},
+        {"x": 1253, "y": 382, "w": 170, "h": 168, "quoi": "CLV-06 (enseignant) : la vidéo est dans le flux, occupe une colonne et repousse les outils.", "rectif": "En faire une vignette en surimpression dans le coin supérieur droit de la carte (I-3).", "regle": "R3"},
+        {"x": 1253, "y": 740, "w": 170, "h": 42, "quoi": "CLV-06 (enseignant) : un bloc ocre « Tuteur de Mariam observe. » est affiché.", "rectif": "Supprimer le bloc. Afficher « Tuteur de Mariam observe. » (S l.855) à la place de la mention, avec le point rouge qui clignote. Passer à « Le tuteur de Mariam observe la séance. » seulement si Q4 = oui (I-2).", "regle": "R2 ; rôle : S l.855"}
+      ],
+      "a_garder": [
+        "En-tête avec retour, titre et « En ligne » sur les trois écrans (en-tête de référence du web étroit) ; sous-titre de Classe sur CLV-04 seulement, ligne d'état enseignant corrigée sur CLV-06, aucun sous-titre sur CLV-05",
+        "Contenu de la carte",
+        "CLV-06 uniquement : tuiles d'outils, boutons « Élèves 3/4 » et « Supports », dock Micro / Caméra / Réseau / Quitter ; jamais sur CLV-04 ni CLV-05",
+        "CLV-04 : dock Micro / Caméra / Agrandir / Quitter ; bouton Quitter rouge",
+        "Portraits non déformés"
+      ]
+    },
+    {
+      "image": "C:\\RA\\ressources\\lancement\\classe image\\CLV-07-08-10_web_etroit_sombre.png",
+      "largeur": 1448,
+      "hauteur": 1086,
+      "role": "Enseignant sur les trois écrans : CLV-07 Élèves · CLV-08 Supports · CLV-10 Fin de séance (de gauche à droite)",
+      "corrections": [
+        {"x": 27, "y": 269, "w": 466, "h": 40, "quoi": "CLV-07 : la mention est un bandeau violet plein avec une icône caméra.", "rectif": "Remplacer par une ligne sous la ligne d'état : point rouge et petit texte (I-1).", "regle": "R1"},
+        {"x": 531, "y": 269, "w": 462, "h": 40, "quoi": "CLV-08 : même bandeau plein.", "rectif": "Appliquer la même correction (I-1).", "regle": "R1"},
+        {"x": 275, "y": 782, "w": 218, "h": 36, "quoi": "CLV-07 (enseignant) : un bloc ocre porte la formulation de l'élève, « Votre parent observe la séance. », dans la vue de l'enseignante.", "rectif": "Supprimer le bloc. Pendant la visite, le texte de la mention se rétracte au point rouge qui clignote et la notice de l'enseignant prend sa place : « Tuteur de Mariam observe. » (S l.855), ou « Le tuteur de Mariam observe la séance. » si Q4 = oui (I-2).", "regle": "R2 ; rôle : matrice §4, §6 Enseignant ; S l.855"},
+        {"x": 769, "y": 782, "w": 225, "h": 36, "quoi": "CLV-08 (enseignant) : un bloc ocre porte la formulation de l'élève, « Votre parent regarde la séance. », avec en plus un autre verbe.", "rectif": "Supprimer le bloc. À la place de la mention : « Tuteur de Mariam observe. », ou « Le tuteur de Mariam observe la séance. » si Q4 = oui (I-2).", "regle": "R2 ; rôle : matrice §6 Enseignant ; S l.855"},
+        {"x": 22, "y": 318, "w": 240, "h": 592, "quoi": "CLV-07 : le panneau Élèves est côte à côte avec le support, qui se retrouve écrasé à ~225 px.", "rectif": "Ouvrir le panneau en volet par-dessus le support, comme dans la maquette mobile CLV-07. Le contenu du panneau ne change pas (I-8).", "regle": "R3"},
+        {"x": 527, "y": 318, "w": 230, "h": 592, "quoi": "CLV-08 : le panneau Supports écrase le support de la même façon.", "rectif": "Ouvrir le panneau en volet par-dessus le support, comme dans la maquette mobile CLV-08 (I-8).", "regle": "R3"},
+        {"x": 15, "y": 150, "w": 990, "h": 45, "quoi": "CLV-07 et CLV-08 : la barre d'application s'empile au-dessus de l'en-tête de séance. Elle porte une navigation qui n'est pas celle de l'enseignant (« Accueil · Mes classes ») et un avatar « AA » qui n'est pas celui de Sayyida Amina.", "rectif": "Retirer la barre pendant la séance. Utiliser uniquement l'en-tête enseignant de CLV-06 web : retour, « Séance en direct », ligne d'état « Classe An-Nour · … » (I-9), « En ligne », ligne de mention. Si un compte reste visible, c'est « SA », Sayyida Amina (I-8).", "regle": "R7 ; rôle : matrice §1 ; DV D7"},
+        {"x": 1020, "y": 150, "w": 418, "h": 45, "quoi": "CLV-10 : les liens de la barre d'application sont écrasés à ~9 px et illisibles. La barre montre « Accueil · Mes classes », ce qui contredit « Revenir à ma journée », et l'avatar « AA ».", "rectif": "Utiliser l'en-tête de CLV-10 desktop rectifié (retour et « Séance terminée »), sans barre de liens. Si un compte ou une navigation restent, ce sont ceux de l'enseignante : « SA » et Journée, Classes, Ressources, Profil.", "regle": "R6 ; rôle : matrice §1 ; DV D7"},
+        {"x": 38, "y": 735, "w": 200, "h": 42, "quoi": "CLV-07 : pour Yusuf, le point de l'avatar est jaune et la puce du libellé est rouge.", "rectif": "Utiliser le jaune pour les deux.", "regle": "relevé"},
+        {"x": 44, "y": 558, "w": 100, "h": 24, "quoi": "La date « 18 sept. 2024 » n'est pas plausible.", "rectif": "Mettre une date proche, par exemple « 24 sept. 2026 ».", "regle": "relevé"},
+        {"x": 1090, "y": 628, "w": 210, "h": 44, "quoi": "CLV-10 : « 3 élèves connectés sur 3 inscrits » ne correspond pas à l'état affiché pendant la séance.", "rectif": "Faire venir ce chiffre de la même source que le compteur de séance, avec le mot « connectés », jamais « présents » ni « absents » (I-6).", "regle": "relevé ; rôle : S l.1148"},
+        {"x": 388, "y": 838, "w": 46, "h": 64, "quoi": "CLV-07 (enseignant) : le dock contient « Agrandir », une commande de l'élève, et il lui manque le bouton « Réseau ».", "rectif": "Remplacer Agrandir par « Réseau ». Le dock de l'enseignant devient Micro, Caméra, Réseau, Quitter (I-4).", "regle": "Rôle : matrice §3, §4 ; S l.835, 853"},
+        {"x": 884, "y": 838, "w": 54, "h": 64, "quoi": "CLV-08 (enseignant) : même dock d'élève, avec Agrandir et sans Réseau.", "rectif": "Remplacer Agrandir par « Réseau » : Micro, Caméra, Réseau, Quitter (I-4).", "regle": "Rôle : matrice §3, §4 ; S l.835, 853"},
+        {"x": 65, "y": 242, "w": 195, "h": 20, "quoi": "CLV-07 (enseignant) : le sous-titre « Classe An-Nour · Sayyida Amina » suit le format de l'élève, et la durée restante manque.", "rectif": "« Classe An-Nour · 32 min restantes », ou « Classe An-Nour · La séance se poursuit. » après l'heure de fin, sans le nom de l'enseignante (I-9).", "regle": "Rôle : matrice §1 ; S l.829"},
+        {"x": 569, "y": 243, "w": 195, "h": 20, "quoi": "CLV-08 (enseignant) : même sous-titre au format de l'élève, sans durée restante.", "rectif": "Même correction qu'en CLV-07 (I-9).", "regle": "Rôle : matrice §1 ; S l.829"}
+      ],
+      "a_garder": [
+        "Contenu des panneaux Élèves et Supports (R9, enseignant uniquement) ; seule leur ouverture change",
+        "Vignette vidéo de la carte (sa propre caméra), déjà conforme à I-3",
+        "Dock de l'enseignant Micro / Caméra / Réseau / Quitter (Agrandir remplacé par Réseau)",
+        "Carte Fin de séance : icône, récapitulatif, deux boutons (enseignant uniquement)",
+        "Style unique des boutons, thème sombre"
+      ]
+    }
+  ]
+}
