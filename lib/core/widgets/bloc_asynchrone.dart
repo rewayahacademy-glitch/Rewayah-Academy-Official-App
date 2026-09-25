@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../capacites/capacite_indisponible.dart';
 import '../i18n/strings.g.dart';
+import '../mouvement/bascule_etat.dart';
 import '../theme/app_delais.dart';
 import '../theme/app_spacing.dart';
 import 'etat_systeme.dart';
@@ -80,6 +81,9 @@ class BlocAsynchrone<T> extends StatefulWidget {
 
 /// Ou en est une attente.
 enum _Attente { normale, prolongee, perdue }
+
+/// Le temps affiche, qui cle le fondu de [BasculeEtat].
+enum _Temps { chargement, contenu, vide, echec, indisponible }
 
 class _BlocAsynchroneState<T> extends State<BlocAsynchrone<T>> {
   Timer? _prolongement;
@@ -185,33 +189,44 @@ class _BlocAsynchroneState<T> extends State<BlocAsynchrone<T>> {
     actionEnCours: enCours,
   );
 
+  /// Le passage d'un temps a l'autre (squelette, contenu, vide, echec,
+  /// indisponible) se fait en fondu court (P2-16) ; un rafraichissement qui
+  /// reste dans le meme temps ne relance rien.
   @override
   Widget build(BuildContext context) {
+    final (_Temps temps, Widget enfant) = _rendu();
+    return BasculeEtat(etat: temps, child: enfant);
+  }
+
+  (_Temps, Widget) _rendu() {
     final AsyncValue<T> v = widget.valeur;
 
     if (_attente == _Attente.perdue) {
-      return _echec();
+      return (_Temps.echec, _echec());
     }
     if (v.hasError) {
       final Object? erreur = v.error;
       if (erreur is CapaciteIndisponible) {
-        return EtatSysteme(
-          nature: NatureEtat.indisponible,
-          dependance: erreur.dependance,
+        return (
+          _Temps.indisponible,
+          EtatSysteme(
+            nature: NatureEtat.indisponible,
+            dependance: erreur.dependance,
+          ),
         );
       }
-      return _echec(enCours: v.isLoading);
+      return (_Temps.echec, _echec(enCours: v.isLoading));
     }
     if (v.hasValue) {
       final T valeur = v.requireValue;
       final Widget? vide = widget.vide;
       if (vide != null && _vide(valeur)) {
-        return vide;
+        return (_Temps.vide, vide);
       }
-      return widget.construire(valeur);
+      return (_Temps.contenu, widget.construire(valeur));
     }
     if (_attente == _Attente.prolongee) {
-      return Column(
+      final Widget prolonge = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -223,7 +238,8 @@ class _BlocAsynchroneState<T> extends State<BlocAsynchrone<T>> {
           ),
         ],
       );
+      return (_Temps.chargement, prolonge);
     }
-    return widget.squelette;
+    return (_Temps.chargement, widget.squelette);
   }
 }

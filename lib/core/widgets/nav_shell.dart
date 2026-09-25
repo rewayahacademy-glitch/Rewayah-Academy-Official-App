@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../mouvement/mouvement.dart';
 import '../preferences/preferences_locales.dart';
 import '../router/routes.dart';
 import '../theme/app_color_pair.dart';
@@ -489,11 +490,8 @@ class _OngletBarre extends StatelessWidget {
                   width: AppSpacing.section,
                   height: NavShell.epaisseurSoulignement,
                   child: actif
-                      ? DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: palette.inkAccent.asBorderSide().color,
-                            borderRadius: AppRadius.arrondiFull,
-                          ),
+                      ? _SoulignementAnime(
+                          couleur: palette.inkAccent.asBorderSide().color,
                         )
                       : null,
                 ),
@@ -501,6 +499,38 @@ class _OngletBarre extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Le soulignement de l'onglet actif : il s'etire depuis son centre quand
+/// l'onglet devient actif (P2-16), une seule fois. Plein d'emblee quand les
+/// animations sont reduites.
+class _SoulignementAnime extends StatelessWidget {
+  const _SoulignementAnime({required this.couleur});
+
+  final Color couleur;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget trait = DecoratedBox(
+      decoration: BoxDecoration(
+        color: couleur,
+        borderRadius: AppRadius.arrondiFull,
+      ),
+    );
+    if (Mouvement.reduit(context)) {
+      return trait;
+    }
+    return RepaintBoundary(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(begin: 0, end: 1),
+        duration: Mouvement.moyen,
+        curve: Mouvement.accentuee,
+        child: trait,
+        builder: (BuildContext _, double f, Widget? enfant) =>
+            FractionallySizedBox(widthFactor: f, child: enfant),
       ),
     );
   }

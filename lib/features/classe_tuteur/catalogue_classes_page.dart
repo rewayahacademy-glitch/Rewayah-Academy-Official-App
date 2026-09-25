@@ -14,6 +14,7 @@ import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart' show monFuseauProvider;
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -346,9 +347,12 @@ class _Liste extends ConsumerWidget {
                   Ecart.vMd,
                   for (int i = 0; i < classes.length; i++) ...<Widget>[
                     if (i > 0) Ecart.vMd,
-                    CarteClasseOuverte(
-                      classe: classes[i],
-                      onChoisir: () => onChoisir(classes[i]),
+                    ElementEchelonne(
+                      index: i,
+                      child: CarteClasseOuverte(
+                        classe: classes[i],
+                        onChoisir: () => onChoisir(classes[i]),
+                      ),
                     ),
                   ],
                 ],

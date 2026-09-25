@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../mouvement/mouvement.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_metriques.dart';
@@ -300,92 +301,103 @@ class _Carte extends StatelessWidget {
         actif: _disponible,
         libelleSemantique: lu,
         respecterCibleTactile: false,
-        constructeur: (BuildContext contexte, EtatPression etat) => Container(
-          constraints: BoxConstraints(
-            minHeight: verticale
-                ? AppPage.hauteurChoix * 2
-                : AppPage.hauteurChoix,
-          ),
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          decoration: AppElevation.avecFilet(
-            surface: paire,
-            filet: retenue || etat.survole || etat.presse
-                ? palette.borderStrong
-                : palette.borderResting,
-            ombre: palette.ombre,
-            arrondi: AppRadius.arrondiLg,
-            ombres: AppElevation.niveau0,
-          ),
-          // Le libelle lu est [lu] : les textes visibles ne sont pas relus
-          // une seconde fois a sa suite.
-          child: ExcludeSemantics(
-            child: verticale
-                ? _contenuVertical(palette, paire, textes, styleSecondaire)
-                : Row(
-                    children: <Widget>[
-                      if (icone != null) ...<Widget>[
-                        IconTheme(
-                          data: _disponible
-                              ? IconThemeData(
-                                  color: paire.onBackground,
-                                  size: AppSpacing.xxl,
-                                )
-                              : palette.inkMuted.asIconTheme(
-                                  size: AppSpacing.xxl,
-                                ),
-                          child: Icon(icone!.resoudre(selectionne: retenue)),
-                        ),
-                        Ecart.hMd,
-                      ],
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              libelle,
-                              style: _disponible
-                                  ? paire.applyTo(
-                                      textes.titleMedium ?? const TextStyle(),
+        // La selection passe d'une teinte a l'autre en fondu court (P2-16).
+        constructeur: (BuildContext contexte, EtatPression etat) =>
+            AnimatedContainer(
+              duration: Mouvement.duree(contexte, Mouvement.court),
+              curve: Mouvement.entree,
+              constraints: BoxConstraints(
+                minHeight: verticale
+                    ? AppPage.hauteurChoix * 2
+                    : AppPage.hauteurChoix,
+              ),
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              decoration: AppElevation.avecFilet(
+                surface: paire,
+                filet: retenue || etat.survole || etat.presse
+                    ? palette.borderStrong
+                    : palette.borderResting,
+                ombre: palette.ombre,
+                arrondi: AppRadius.arrondiLg,
+                ombres: AppElevation.niveau0,
+              ),
+              // Le libelle lu est [lu] : les textes visibles ne sont pas relus
+              // une seconde fois a sa suite.
+              child: ExcludeSemantics(
+                child: verticale
+                    ? _contenuVertical(palette, paire, textes, styleSecondaire)
+                    : Row(
+                        children: <Widget>[
+                          if (icone != null) ...<Widget>[
+                            IconTheme(
+                              data: _disponible
+                                  ? IconThemeData(
+                                      color: paire.onBackground,
+                                      size: AppSpacing.xxl,
                                     )
-                                  : palette.inkMuted.applyTo(
-                                      textes.titleMedium ?? const TextStyle(),
+                                  : palette.inkMuted.asIconTheme(
+                                      size: AppSpacing.xxl,
                                     ),
-                            ),
-                            if (description != null) ...<Widget>[
-                              Ecart.vXs,
-                              Text(description!, style: styleSecondaire),
-                            ],
-                            if (raisonIndisponible != null) ...<Widget>[
-                              Ecart.vSm,
-                              Text(
-                                raisonIndisponible!,
-                                style: palette.inkMuted.applyTo(
-                                  textes.labelMedium ?? const TextStyle(),
-                                ),
+                              child: Icon(
+                                icone!.resoudre(selectionne: retenue),
                               ),
-                            ],
+                            ),
+                            Ecart.hMd,
                           ],
-                        ),
-                      ),
-                      // Le radio ou la coche doublent la couleur : une selection qui
-                      // ne se lirait qu'a la teinte n'existerait pas pour un
-                      // daltonien.
-                      if (radio) ...<Widget>[
-                        Ecart.hMd,
-                        RadioChoix(retenue: retenue, disponible: _disponible),
-                      ] else if (retenue)
-                        IconTheme(
-                          data: IconThemeData(
-                            color: paire.onBackground,
-                            size: AppSpacing.xxl,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  libelle,
+                                  style: _disponible
+                                      ? paire.applyTo(
+                                          textes.titleMedium ??
+                                              const TextStyle(),
+                                        )
+                                      : palette.inkMuted.applyTo(
+                                          textes.titleMedium ??
+                                              const TextStyle(),
+                                        ),
+                                ),
+                                if (description != null) ...<Widget>[
+                                  Ecart.vXs,
+                                  Text(description!, style: styleSecondaire),
+                                ],
+                                if (raisonIndisponible != null) ...<Widget>[
+                                  Ecart.vSm,
+                                  Text(
+                                    raisonIndisponible!,
+                                    style: palette.inkMuted.applyTo(
+                                      textes.labelMedium ?? const TextStyle(),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
-                          child: Icon(AppIcons.succes.actif),
-                        ),
-                    ],
-                  ),
-          ),
-        ),
+                          // Le radio ou la coche doublent la couleur : une selection qui
+                          // ne se lirait qu'a la teinte n'existerait pas pour un
+                          // daltonien.
+                          if (radio) ...<Widget>[
+                            Ecart.hMd,
+                            RadioChoix(
+                              retenue: retenue,
+                              disponible: _disponible,
+                            ),
+                          ] else if (retenue)
+                            IconTheme(
+                              data: IconThemeData(
+                                color: paire.onBackground,
+                                size: AppSpacing.xxl,
+                              ),
+                              child: Icon(AppIcons.succes.actif),
+                            ),
+                        ],
+                      ),
+              ),
+            ),
       ),
     );
   }
@@ -526,16 +538,41 @@ class RadioChoix extends StatelessWidget {
           child: retenue
               ? Padding(
                   padding: const EdgeInsets.all(AppSpacing.xs),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: palette.surfacePrimary.background,
+                  child: _Croissance(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: palette.surfacePrimary.background,
+                      ),
                     ),
                   ),
                 )
               : null,
         ),
       ),
+    );
+  }
+}
+
+/// Le point du radio grandit a sa pose, une fois (P2-16). Rendu tel quel
+/// quand les animations sont reduites.
+class _Croissance extends StatelessWidget {
+  const _Croissance({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (Mouvement.reduit(context)) {
+      return child;
+    }
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.4, end: 1),
+      duration: Mouvement.court,
+      curve: Mouvement.entree,
+      child: child,
+      builder: (BuildContext _, double f, Widget? enfant) =>
+          Transform.scale(scale: f, child: enfant),
     );
   }
 }
