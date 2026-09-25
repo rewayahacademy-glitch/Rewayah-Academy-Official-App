@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -268,6 +270,66 @@ void main() {
       ),
       (Routes.tuteurCompteConsentements, ConsentementObservationPage, 3),
     ];
+
+    // Ou le BOUTON de chaque ligne est touche (revue P2-09, majeur 2) : cette
+    // table ne monte que l'adresse ; le clic reel est prouve, ecran par
+    // ecran, dans le fichier nomme ici. Le test suivant verifie que chaque
+    // ecran de la table a son fichier, et que ce fichier touche un bouton
+    // (`tap`) et attend cet ecran.
+    const String compte = 'test/features/compte/compte_tuteur_test.dart';
+    const String classe = 'test/features/classe_tuteur/classe_tuteur_test.dart';
+    const String fiche = 'test/features/foyer/fiche_eleve_test.dart';
+    const String partage = 'test/features/appareils/appareil_partage_test.dart';
+    const String historique = 'test/features/historique/historique_test.dart';
+    final Map<Type, String> boutonTesteDans = <Type, String>{
+      AccueilFamillePage: 'test/features/accueil_famille_test.dart',
+      NotificationsPage: 'test/features/notifications/notifications_test.dart',
+      CatalogueClassesPage:
+          'test/features/classe_tuteur/catalogue_classes_test.dart',
+      ClasseTuteurPage: 'test/features/accueil_famille_test.dart',
+      PlanningClassePage: classe,
+      TravailClassePage: classe,
+      RessourcesClassePage: classe,
+      ProgressionClassePage: classe,
+      FoyerPage: partage,
+      AjouterEnfantPage:
+          'test/features/foyer/formulaire_profil_eleve_test.dart',
+      CreerMonProfilIndisponible: compte,
+      AppareilsPage: 'test/features/foyer/foyer_page_test.dart',
+      AppairagePage: 'test/features/appareils/emetteur_qr_test.dart',
+      FicheElevePage: partage,
+      InformationsElevePage: fiche,
+      InscriptionElevePage: fiche,
+      InterfaceElevePage: fiche,
+      CameraElevePage: fiche,
+      AccesElevePage: fiche,
+      AppareilsElevePage: partage,
+      ParcoursOffresPage: fiche,
+      SuiviFoyerPage: classe,
+      ObservationsPage: historique,
+      DetailSeancePage: historique,
+      DetailObservationsPage: historique,
+      CompteTuteurPage: compte,
+      InformationsComptePage: compte,
+      SecuriteComptePage: compte,
+      AccesComptePage: compte,
+      PaiementsComptePage: compte,
+      PreferencesComptePage: compte,
+      ApparenceComptePage: compte,
+      AideComptePage: compte,
+      InformationsLegalesComptePage: compte,
+      ConsentementObservationPage: compte,
+    };
+
+    test('chaque route de la table a son test de bouton (P2-09)', () {
+      for (final (String chemin, Type ecran, int _) in table) {
+        final String? fichier = boutonTesteDans[ecran];
+        expect(fichier, isNotNull, reason: '$chemin : aucun test de bouton');
+        final String source = File(fichier!).readAsStringSync();
+        expect(source, contains('tap'), reason: fichier);
+        expect(source, contains('$ecran'), reason: '$fichier : $ecran');
+      }
+    });
 
     for (final (String chemin, Type ecran, int destination) in table) {
       testWidgets('$chemin rend $ecran, destination $destination active', (
