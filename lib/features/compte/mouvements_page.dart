@@ -112,16 +112,50 @@ class MouvementsComptePage extends ConsumerStatefulWidget {
 }
 
 class _MouvementsComptePageState extends ConsumerState<MouvementsComptePage> {
-  String? _profil;
+  // Sans routeur (ecran monte seul) : le filtre reste un etat local.
+  String? _profilLocal;
+
+  Uri? _ici(BuildContext context) {
+    try {
+      return GoRouterState.of(context).uri;
+    } on Object {
+      return null;
+    }
+  }
+
+  /// Le filtre vit dans `?profil=` : il survit au retour du detail.
+  void _filtrer(GoRouter? routeur, Uri? ici, String? profil) {
+    if (routeur == null || ici == null) {
+      setState(() => _profilLocal = profil);
+      return;
+    }
+    final Map<String, String> requete = <String, String>{...ici.queryParameters}
+      ..remove('profil');
+    if (profil != null) {
+      requete['profil'] = profil;
+    }
+    routeur.go(
+      Uri(
+        path: ici.path,
+        queryParameters: requete.isEmpty ? null : requete,
+      ).toString(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final GoRouter? routeur = GoRouter.maybeOf(context);
+    final Uri? ici = _ici(context);
     final String retour = _retour(context) ?? Routes.tuteurCompteSoldes;
-    final AsyncValue<List<MouvementSolde>> mouvements = ref.watch(
-      mouvementsProvider(_profil),
-    );
     final Map<String, String> prenoms = _prenoms(ref);
+    final String? demande = ici == null
+        ? _profilLocal
+        : ici.queryParameters['profil'];
+    // Un profil hors du foyer lu ne filtre pas : « Tous ».
+    final String? profil = prenoms.containsKey(demande) ? demande : null;
+    final AsyncValue<List<MouvementSolde>> mouvements = ref.watch(
+      mouvementsProvider(profil),
+    );
     final bool indisponible =
         mouvements.hasError && mouvements.error is CapaciteIndisponible;
 
@@ -160,8 +194,8 @@ class _MouvementsComptePageState extends ConsumerState<MouvementsComptePage> {
                     FilterPill(
                       key: MouvementsComptePage.filtreKey(e.key),
                       libelle: e.value,
-                      retenue: _profil == e.key,
-                      onPress: () => setState(() => _profil = e.key),
+                      retenue: profil == e.key,
+                      onPress: () => _filtrer(routeur, ici, e.key),
                     ),
                 ],
               ),
@@ -170,7 +204,7 @@ class _MouvementsComptePageState extends ConsumerState<MouvementsComptePage> {
             BlocAsynchrone<List<MouvementSolde>>(
               valeur: mouvements,
               squelette: const Skeleton.liste(lignes: 3),
-              onReessayer: () => ref.invalidate(mouvementsProvider(_profil)),
+              onReessayer: () => ref.invalidate(mouvementsProvider(profil)),
               estVide: (List<MouvementSolde> l) => l.isEmpty,
               vide: EtatSysteme(
                 nature: NatureEtat.aucunResultat,
@@ -196,7 +230,9 @@ class _MouvementsComptePageState extends ConsumerState<MouvementsComptePage> {
                             Uri(
                               path: Routes.mouvementPour(m.id),
                               queryParameters: <String, String>{
-                                'retour': Routes.tuteurCompteMouvements,
+                                'retour':
+                                    ici?.toString() ??
+                                    Routes.tuteurCompteMouvements,
                               },
                             ).toString(),
                           ),

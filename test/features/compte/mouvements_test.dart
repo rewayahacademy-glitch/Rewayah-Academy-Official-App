@@ -124,10 +124,21 @@ void main() {
       // Une recharge n'a pas de seance liee.
       expect(find.byKey(DetailMouvementPage.voirSeanceKey), findsNothing);
 
+      // Le detail revient a l'adresse complete de S07 (constat 9).
+      expect(
+        ici.queryParameters['retour'],
+        '${Routes.tuteurCompteMouvements}?profil=${DonneesDemo.aichaId}',
+      );
+
       await tester.tap(find.byType(DisqueRetour));
       await stabiliser(tester);
-      expect(lieu(routeur), Routes.tuteurCompteMouvements);
+      final Uri deRetour = Uri.parse(lieu(routeur));
+      expect(deRetour.path, Routes.tuteurCompteMouvements);
+      expect(deRetour.queryParameters['profil'], DonneesDemo.aichaId);
       expect(find.byType(MouvementsComptePage), findsOneWidget);
+      // Le filtre est retrouve au retour du detail.
+      expect(find.textContaining('Yusuf ·'), findsNothing);
+      expect(find.textContaining('Aïcha ·'), findsNWidgets(3));
 
       await tester.tap(find.byType(DisqueRetour));
       await stabiliser(tester);
@@ -140,6 +151,34 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('le ?retour= de S07 survit a un aller-retour par le detail', (
+    WidgetTester tester,
+  ) async {
+    final String depart = Uri(
+      path: Routes.tuteurCompteMouvements,
+      queryParameters: <String, String>{'retour': Routes.tuteurFoyer},
+    ).toString();
+    final GoRouter routeur = await _demoSur(
+      tester,
+      depart,
+      const Size(390, 844),
+    );
+    await toucher(
+      tester,
+      find.text(t.finance.mouvements.natures.recharge).first,
+    );
+    expect(find.byType(DetailMouvementPage), findsOneWidget);
+
+    await tester.tap(find.byType(DisqueRetour));
+    await stabiliser(tester);
+    expect(lieu(routeur), depart);
+
+    await tester.tap(find.byType(DisqueRetour));
+    await stabiliser(tester);
+    expect(lieu(routeur), Routes.tuteurFoyer);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('demonstration : une remise liee mene au detail de la seance', (
     WidgetTester tester,
