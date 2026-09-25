@@ -309,6 +309,33 @@ void main() {
         );
       });
 
+      // Le bloc de l'accueil quand 0043 n'est pas appliquee (K5, REVUE LA-F).
+      for (final Size taille in const <Size>[Size(390, 844), Size(1440, 900)]) {
+        final String dim = '${taille.width.toInt()}x${taille.height.toInt()}';
+        testWidgets('bloc accueil indisponible $dim, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          final FauxServiceOffres faux = FauxServiceOffres()
+            ..erreurParcours = const PostgrestException(
+              message: 'relation inconnue',
+              code: 'PGRST205',
+            );
+          await _monter(
+            tester,
+            routes: _routesParcours(),
+            depart: Routes.tuteurAccueil,
+            mode: mode,
+            taille: taille,
+            surcharges: <Override>[
+              serviceOffresProvider.overrideWithValue(faux),
+            ],
+          );
+          debugPrint(
+            'PNG ${await capturer(tester, 'la4_bloc_indisponible_${dim}_${mode.name}')}',
+          );
+        });
+      }
+
       // Indisponible honnete : backend 0043 non applique (PGRST205).
       testWidgets('indisponible 390x844, ${mode.name}', (
         WidgetTester tester,
