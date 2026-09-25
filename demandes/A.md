@@ -27,3 +27,18 @@
 - **Contournement** : aucun cote lot A (fichier COORD) ; le test reste rouge sur la branche du lot A.
 
 Signature : Poste B, executant LA-2.
+
+## A-4 precisee (25/09, apres fusion de ui/tuteur-v1 @ 1cbc760 dans ui/tuteur-v1-a @ 384211d)
+
+- Toujours rouge : `test/accessibilite/clavier_test.dart:43-51` tape `t.inscription.roleTuteur` (texte absent). Cause dans le test COORD, pas dans le lot A.
+- Les cartes d'usage passent desormais par `ChoiceCardGroup` : plus de `Key('inscription-usage-moi')`. Correction voulue : monter les routes du parcours sous `hoteRoutant` (les etapes lisent `GoRouterState.of`, `hote` seul ne suffit pas), taper `find.text(t.inscription.usage.moiTitre)` puis `find.text(t.commun.continuer)` ; champs `Key('inscription-prenom')` et `Key('inscription-nom')` inchanges (modele : `test/features/inscription_test.dart`, `_monter`).
+
+## A-5 (25/09, migration LA-2 vers les composants partages)
+
+- **Fichiers** : `lib/core/widgets/page_etape.dart`, `lib/core/widgets/choice_card_group.dart` (COORD).
+- **Besoin 1** : `PageEtape.onRetour` facultatif (nul = pas de disque, rangee gardee). Aujourd'hui requis : sur la premiere etape et une fois le profil cree (actualisation en echec), l'inscription n'a pas d'etape precedente ; le disque sort alors du parcours par la deconnexion (`inscription_page.dart`, `CoquilleEtape`), ce qui double le lien آ« Se deconnecter آ».
+- **Besoin 2** : une disposition cote a cote de `ChoiceCardGroup` (cartes centrees, icone au-dessus du titre, radio en haut a droite) pour le genre (`onboarding Mble d.png`) ; en attendant, cartes empilees dans `genre_etape.dart`.
+- **Besoin 3 (confort de test)** : une cle par option (`OptionChoix.cle`) ; les tests tapent aujourd'hui le libelle.
+- **Contournement** : aucun composant local ; seulement les ecarts ci-dessus.
+
+Signature : Poste B, LA-F2.
