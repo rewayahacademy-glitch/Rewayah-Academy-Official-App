@@ -1469,11 +1469,59 @@ class Traductions$parcours$fr {
 	/// fr: 'Nous préparons vos options.'
 	String get chargement => 'Nous préparons vos options.';
 
+	/// fr: 'Pour {prenom}'
+	String pourPrenom({required Object prenom}) => 'Pour ${prenom}';
+
+	/// fr: 'Retour à l'accueil'
+	String get retourAccueil => 'Retour à l\'accueil';
+
+	/// fr: 'Retour au Foyer'
+	String get retourFoyer => 'Retour au Foyer';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Le questionnaire n'est pas encore disponible'
+	String get indisponibleTitre => 'Le questionnaire n\'est pas encore disponible';
+
+	/// fr: 'Cette étape n'est pas encore ouverte par l'académie. Vous n'avez rien à faire pour l'instant : rien n'est perdu, et vous pourrez la remplir dès qu'elle sera ouverte.'
+	String get indisponibleDetail => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.';
+
+	/// fr: 'Pas de connexion'
+	String get horsLigneTitre => 'Pas de connexion';
+
+	/// fr: 'Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.'
+	String get horsLigneDetail => 'Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.';
+
+	/// fr: 'Le questionnaire n'a pas pu s'afficher'
+	String get erreurChargement => 'Le questionnaire n\'a pas pu s\'afficher';
+
+	/// fr: 'Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.'
+	String get erreurChargementDetail => 'Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.';
+
+	/// fr: 'Ce profil élève est introuvable'
+	String get introuvableTitre => 'Ce profil élève est introuvable';
+
+	/// fr: 'Il a peut-être été retiré du foyer. Revenez au Foyer pour choisir un profil élève.'
+	String get introuvableDetail => 'Il a peut-être été retiré du foyer. Revenez au Foyer pour choisir un profil élève.';
+
+	/// fr: 'Préférence enregistrée pour {prenom}'
+	String finTitre({required Object prenom}) => 'Préférence enregistrée pour ${prenom}';
+
+	/// fr: 'Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.'
+	String get finDetail => 'Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.';
+
+	/// fr: 'Une autre personne du foyer souhaite apprendre ?'
+	String get finAjouterDetail => 'Une autre personne du foyer souhaite apprendre ?';
+
+	/// fr: 'Ajouter un profil élève'
+	String get finAjouterProfil => 'Ajouter un profil élève';
+
 	/// fr: 'Quel âge a {prenom} ?'
 	String ageQuestion({required Object prenom}) => 'Quel âge a ${prenom} ?';
 
-	/// fr: 'L'âge décide de la durée des séances et du nombre d'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.'
-	String get ageRaison => 'L\'âge décide de la durée des séances et du nombre d\'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.';
+	/// fr: 'L'âge décide de la durée des séances et du nombre d'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.'
+	String get ageRaison => 'L\'âge décide de la durée des séances et du nombre d\'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.';
 
 	/// fr: 'Dans quelle langue le cours doit-il être donné ?'
 	String get langueQuestion => 'Dans quelle langue le cours doit-il être donné ?';
@@ -1547,8 +1595,8 @@ class Traductions$parcours$fr {
 	/// fr: 'Voici les horaires ouverts pour {prenom}'
 	String offresQuestion({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}';
 
-	/// fr: 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.'
-	String get offresRaison => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.';
+	/// fr: 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.'
+	String get offresRaison => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.';
 
 	/// fr: 'Le plus proche de vos réponses'
 	String get offreRecommandee => 'Le plus proche de vos réponses';
@@ -1592,8 +1640,8 @@ class Traductions$parcours$fr {
 	/// fr: 'Me prévenir si de nouveaux horaires ouvrent'
 	String get refusPrevenir => 'Me prévenir si de nouveaux horaires ouvrent';
 
-	/// fr: 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d'enseignant et ne promet aucun horaire futur.'
-	String get refusEffet => 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.';
+	/// fr: 'Nous enregistrons que la demande existe. Cela ne crée pas de classe, ne cherche pas d'enseignant et ne promet aucun horaire futur.'
+	String get refusEffet => 'Nous enregistrons que la demande existe. Cela ne crée pas de classe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.';
 
 	/// fr: 'C'est noté. Nous vous préviendrons si un horaire correspondant ouvre.'
 	String get refusEnregistre => 'C\'est noté. Nous vous préviendrons si un horaire correspondant ouvre.';
@@ -1613,8 +1661,8 @@ class Traductions$parcours$fr {
 	/// fr: 'Cet horaire n'est plus proposé'
 	String get etatOffreIndisponible => 'Cet horaire n\'est plus proposé';
 
-	/// fr: 'L'horaire retenu pour {prenom} a été retiré avant qu'un groupe soit constitué. Choisissez-en un autre : rien n'est perdu.'
-	String etatOffreIndisponibleDetail({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'un groupe soit constitué. Choisissez-en un autre : rien n\'est perdu.';
+	/// fr: 'L'horaire retenu pour {prenom} a été retiré avant qu'une classe soit constituée. Choisissez-en un autre : rien n'est perdu.'
+	String etatOffreIndisponibleDetail({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'une classe soit constituée. Choisissez-en un autre : rien n\'est perdu.';
 
 	/// fr: 'Préférence enregistrée'
 	String get etatDiagnosticRequis => 'Préférence enregistrée';
@@ -1628,17 +1676,17 @@ class Traductions$parcours$fr {
 	/// fr: 'Un échange est prévu pour situer le niveau de {prenom}.'
 	String etatDiagnosticEnAttenteDetail({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.';
 
-	/// fr: 'Groupe en cours de constitution'
-	String get etatGroupeEnFormation => 'Groupe en cours de constitution';
+	/// fr: 'Classe en cours de constitution'
+	String get etatGroupeEnFormation => 'Classe en cours de constitution';
 
-	/// fr: 'Un groupe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'il est confirmé.'
-	String etatGroupeEnFormationDetail({required Object minimum}) => 'Un groupe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'il est confirmé.';
+	/// fr: 'Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.'
+	String etatGroupeEnFormationDetail({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.';
 
-	/// fr: 'Groupe confirmé'
-	String get etatGroupeConfirme => 'Groupe confirmé';
+	/// fr: 'Classe confirmée'
+	String get etatGroupeConfirme => 'Classe confirmée';
 
-	/// fr: 'Le groupe de {prenom} est constitué. Vous retrouverez ses séances dans son espace.'
-	String etatGroupeConfirmeDetail({required Object prenom}) => 'Le groupe de ${prenom} est constitué. Vous retrouverez ses séances dans son espace.';
+	/// fr: 'La classe de {prenom} est constituée. Vous retrouverez ses séances dans son espace.'
+	String etatGroupeConfirmeDetail({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.';
 
 	/// fr: 'Votre lieu a changé depuis ce choix'
 	String get fuseauChange => 'Votre lieu a changé depuis ce choix';
@@ -9205,8 +9253,24 @@ extension on Traductions {
 			'parcours.modifier' => 'Modifier mes réponses',
 			'parcours.erreur' => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.',
 			'parcours.chargement' => 'Nous préparons vos options.',
+			'parcours.pourPrenom' => ({required Object prenom}) => 'Pour ${prenom}',
+			'parcours.retourAccueil' => 'Retour à l\'accueil',
+			'parcours.retourFoyer' => 'Retour au Foyer',
+			'parcours.reessayer' => 'Réessayer',
+			'parcours.indisponibleTitre' => 'Le questionnaire n\'est pas encore disponible',
+			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
+			'parcours.horsLigneTitre' => 'Pas de connexion',
+			'parcours.horsLigneDetail' => 'Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.',
+			'parcours.erreurChargement' => 'Le questionnaire n\'a pas pu s\'afficher',
+			'parcours.erreurChargementDetail' => 'Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.',
+			'parcours.introuvableTitre' => 'Ce profil élève est introuvable',
+			'parcours.introuvableDetail' => 'Il a peut-être été retiré du foyer. Revenez au Foyer pour choisir un profil élève.',
+			'parcours.finTitre' => ({required Object prenom}) => 'Préférence enregistrée pour ${prenom}',
+			'parcours.finDetail' => 'Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.',
+			'parcours.finAjouterDetail' => 'Une autre personne du foyer souhaite apprendre ?',
+			'parcours.finAjouterProfil' => 'Ajouter un profil élève',
 			'parcours.ageQuestion' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
-			'parcours.ageRaison' => 'L\'âge décide de la durée des séances et du nombre d\'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.',
+			'parcours.ageRaison' => 'L\'âge décide de la durée des séances et du nombre d\'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.',
 			'parcours.langueQuestion' => 'Dans quelle langue le cours doit-il être donné ?',
 			'parcours.langueRaison' => 'C\'est la langue que l\'enseignant parlera pendant la séance. Elle est indépendante de la langue de l\'application, que vous pouvez changer à tout moment dans vos réglages.',
 			'parcours.lieuQuestion' => 'Où vous trouvez-vous ?',
@@ -9231,7 +9295,7 @@ extension on Traductions {
 			'parcours.momentApresMidi' => 'L\'après-midi',
 			'parcours.momentSoir' => 'Le soir',
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
-			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.',
+			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
@@ -9246,22 +9310,22 @@ extension on Traductions {
 			'parcours.aucuneOffreDetail' => 'L\'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.',
 			'parcours.refusAucun' => 'Aucun de ces horaires ne me convient',
 			'parcours.refusPrevenir' => 'Me prévenir si de nouveaux horaires ouvrent',
-			'parcours.refusEffet' => 'Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.',
+			'parcours.refusEffet' => 'Nous enregistrons que la demande existe. Cela ne crée pas de classe, ne cherche pas d\'enseignant et ne promet aucun horaire futur.',
 			'parcours.refusEnregistre' => 'C\'est noté. Nous vous préviendrons si un horaire correspondant ouvre.',
 			'parcours.etatAPersonnaliser' => 'Parcours à personnaliser',
 			'parcours.etatAPersonnaliserDetail' => ({required Object prenom}) => 'Quelques questions, et nous ne vous montrerons que ce qui convient à ${prenom}.',
 			'parcours.etatHoraireAChoisir' => 'Horaire à choisir',
 			'parcours.etatHoraireAChoisirDetail' => ({required Object prenom}) => 'Les horaires ouverts pour ${prenom} vous attendent.',
 			'parcours.etatOffreIndisponible' => 'Cet horaire n\'est plus proposé',
-			'parcours.etatOffreIndisponibleDetail' => ({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'un groupe soit constitué. Choisissez-en un autre : rien n\'est perdu.',
+			'parcours.etatOffreIndisponibleDetail' => ({required Object prenom}) => 'L\'horaire retenu pour ${prenom} a été retiré avant qu\'une classe soit constituée. Choisissez-en un autre : rien n\'est perdu.',
 			'parcours.etatDiagnosticRequis' => 'Préférence enregistrée',
 			'parcours.etatDiagnosticRequisDetail' => ({required Object prenom}) => 'Il reste un échange avec un enseignant pour situer le niveau de ${prenom}. L\'académie vous proposera un rendez-vous.',
 			'parcours.etatDiagnosticEnAttente' => 'Rendez-vous prévu',
 			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.',
-			'parcours.etatGroupeEnFormation' => 'Groupe en cours de constitution',
-			'parcours.etatGroupeEnFormationDetail' => ({required Object minimum}) => 'Un groupe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'il est confirmé.',
-			'parcours.etatGroupeConfirme' => 'Groupe confirmé',
-			'parcours.etatGroupeConfirmeDetail' => ({required Object prenom}) => 'Le groupe de ${prenom} est constitué. Vous retrouverez ses séances dans son espace.',
+			'parcours.etatGroupeEnFormation' => 'Classe en cours de constitution',
+			'parcours.etatGroupeEnFormationDetail' => ({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
+			'parcours.etatGroupeConfirme' => 'Classe confirmée',
+			'parcours.etatGroupeConfirmeDetail' => ({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.',
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
 			'parcours.voirHoraires' => 'Voir les horaires',
@@ -9678,6 +9742,8 @@ extension on Traductions {
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => 'Objectif personnel',
 			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.travailMaison' => 'Travail à la maison',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau contenu',
@@ -9694,8 +9760,6 @@ extension on Traductions {
 			'enseignant.cahier.exceptionMotif' => 'Motif',
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire : il reste au dossier de la séance.',
 			'enseignant.cahier.exceptionEnCours' => 'Enregistrement…',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
 			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.',
@@ -10192,6 +10256,8 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
@@ -10208,8 +10274,6 @@ extension on Traductions {
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
 			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',

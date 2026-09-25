@@ -189,6 +189,7 @@ ParcoursApprenant apprenantDeTest({
   bool offreIndisponible = false,
   bool fuseauChange = false,
   String? fuseauFoyer,
+  String? offreId,
 }) => ParcoursApprenant(
   eleveId: eleveId,
   prenom: prenom,
@@ -200,6 +201,7 @@ ParcoursApprenant apprenantDeTest({
   offreIndisponible: offreIndisponible,
   fuseauChange: fuseauChange,
   fuseauFoyer: fuseauFoyer,
+  offreId: offreId,
 );
 
 /// Une offre prete a l'emploi dans un test.

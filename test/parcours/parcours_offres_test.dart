@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/widgets/schedule_option.dart';
 import 'package:rewayah_academy/features/parcours_offres/bloc_parcours.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../support/harnais.dart';
 import 'faux_service_offres.dart';
@@ -373,8 +374,79 @@ void main() {
       expect(faux.choix.length, 1);
       expect(faux.choix.single.offreId, 'o1');
       expect(faux.choix.single.fuseau, 'Europe/Paris');
-      // On revient a l'accueil, qui dit l'etat reel.
+      // Aucun renoncement : il n'y avait pas de preference vivante.
+      expect(faux.renoncements, isEmpty);
+      // La fin d'admission dit ce qui est enregistre, puis propose la suite.
+      expect(find.text(t.parcours.finAjouterProfil), findsOneWidget);
+      await tester.tap(find.text(t.parcours.retourAccueil));
+      await tester.pumpAndSettle();
       expect(find.text('accueil'), findsOneWidget);
+    });
+
+    testWidgets('changer d horaire renonce d abord a la preference vivante', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres(
+        parcoursRendu: <ParcoursApprenant>[
+          apprenantDeTest(
+            cohorte: 'enfant_8_10',
+            langue: 'francais',
+            onboardingFaitLe: _fait,
+            fuseauFoyer: 'Europe/Paris',
+            intention: EtatIntention.enregistree,
+            offreId: 'ancienne',
+          ),
+        ],
+        offresRendues: <OffreHoraire>[offreDeTest()],
+      );
+
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: '/p',
+          surcharges: _avec(faux),
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/p',
+              builder: (BuildContext _, GoRouterState _) =>
+                  const ParcoursOffresPage(eleveId: 'e1'),
+            ),
+            GoRoute(
+              path: '/tuteur/foyer/ajouter',
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Scaffold(body: Text('ajouter')),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(ScheduleOption));
+      await tester.pumpAndSettle();
+
+      expect(faux.renoncements.single.membreId, 'e1');
+      expect(faux.choix.single.offreId, 'o1');
+      // Enchainement vers l'ajout d'un profil eleve, par la route seule.
+      await tester.tap(find.text(t.parcours.finAjouterProfil));
+      await tester.pumpAndSettle();
+      expect(find.text('ajouter'), findsOneWidget);
+    });
+
+    testWidgets('backend du parcours absent : indisponible honnete', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres()
+        ..erreurParcours = const PostgrestException(
+          message: 'relation absente',
+          code: 'PGRST205',
+        );
+
+      await tester.pumpWidget(
+        hote(const ParcoursOffresPage(eleveId: 'e1'), surcharges: _avec(faux)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.parcours.indisponibleTitre), findsOneWidget);
+      expect(find.text(t.parcours.erreur), findsNothing);
     });
   });
 
@@ -502,7 +574,8 @@ void main() {
       await repondre('Français');
       await repondre('France, Belgique, Espagne');
       await repondre(libelleNiveau(NiveauDeclare.debutLettres));
-      await repondre(libelleObjectif(ObjectifApprentissage.apprendreALire));
+      // Branche debutant : l'objectif n'est pas demande, il est deduit.
+      expect(find.text(t.parcours.objectifQuestion), findsNothing);
       // Rien n'est parti avant la derniere question.
       expect(faux.profilsEnregistres, isEmpty);
 
@@ -540,7 +613,12 @@ void main() {
       // retire des locales de l'application. Son nom vient du serveur et n'est
       // jamais traduit.
       expect(find.text('Pulaar'), findsOneWidget);
-      expect(find.text(t.parcours.langueRaison), findsOneWidget);
+      expect(find.textContaining(t.parcours.langueRaison), findsOneWidget);
+      // Le prenom de l'eleve reste en contexte.
+      expect(
+        find.textContaining(t.parcours.pourPrenom(prenom: 'Amina')),
+        findsOneWidget,
+      );
     });
 
     testWidgets(
