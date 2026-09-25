@@ -361,7 +361,7 @@ class _Encart extends StatelessWidget {
                               data: palette.inkStrong.asIconTheme(
                                 size: AppSpacing.xl,
                               ),
-                              child: Icon(AppIcons.attente.repos),
+                              child: Icon(AppIcons.horloge.repos),
                             ),
                     ),
                   ),

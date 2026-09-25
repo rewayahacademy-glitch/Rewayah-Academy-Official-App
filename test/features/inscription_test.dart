@@ -8,6 +8,7 @@ import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -130,6 +131,11 @@ Future<void> _jusquAuRecap(WidgetTester tester) async {
   await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Amina');
   await tester.enterText(find.byKey(const Key('inscription-nom')), 'Diallo');
   await _continuer(tester);
+  // Demande du directeur (25/09) : symbole femme et symbole homme, plus la
+  // silhouette neutre du profil.
+  expect(find.byIcon(AppIcons.femme.repos), findsOneWidget);
+  expect(find.byIcon(AppIcons.homme.repos), findsOneWidget);
+  expect(find.byIcon(AppIcons.profil.repos), findsNothing);
   await _taper(tester, find.text(t.inscription.genreFemme));
   await _continuer(tester);
 }
