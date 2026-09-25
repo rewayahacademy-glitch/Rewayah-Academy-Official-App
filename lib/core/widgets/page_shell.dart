@@ -162,10 +162,16 @@ class PageShell extends StatelessWidget {
     // En mode non defilant, le contenu devient l'enfant direct de l'`Expanded`
     // ci-dessous et recoit donc une hauteur bornee. La respiration n'a de sens
     // que dans le cas defilant, ou c'est le contenu qui pousse le bas de page.
+    // Avec un grand texte (200 % a 390 px), la tete fixe peut depasser la
+    // hauteur disponible : elle defile alors avec le contenu. A 100 %, rien ne
+    // change (captures identiques).
+    final bool teteDefile =
+        defilante && MediaQuery.textScalerOf(context).scale(1) > 1.3;
     final Widget corps = defilante
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              if (teteDefile) ...tete,
               child,
               // La respiration de bas de page : sans elle, le dernier element
               // colle au bord de l'ecran ou passe sous la zone d'action.
@@ -186,7 +192,7 @@ class PageShell extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    ...tete,
+                    if (!teteDefile) ...tete,
                     Expanded(
                       child: defilante
                           ? SingleChildScrollView(child: corps)
