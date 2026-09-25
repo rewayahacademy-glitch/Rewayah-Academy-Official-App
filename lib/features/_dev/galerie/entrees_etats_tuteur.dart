@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/capacites/port_finance_foyer.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
 import '../../../core/widgets/entete_page.dart';
 import '../../../core/widgets/etat_systeme.dart';
+import '../../../core/widgets/ligne_beneficiaire.dart';
+import '../../../core/widgets/resultat_par_profil.dart';
+import '../../../core/widgets/resume_solde.dart';
 import '../../../core/widgets/selecteur_profils.dart';
 import '../../../core/widgets/selecteur_theme.dart';
+import '../../../core/widgets/selection_profils.dart';
 import '../../../core/widgets/skeleton.dart';
 import 'catalogue_galerie.dart';
 
@@ -181,7 +186,127 @@ List<EntreeGalerie> entreesEtatsTuteur() => <EntreeGalerie>[
       ),
     ],
   ),
+  // Les composants partages des ecrans finance (LT-3). Montants en `XTS`,
+  // code ISO 4217 reserve aux essais : aucun ne passe pour un prix reel.
+  EntreeGalerie(
+    nom: 'ResumeSolde',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'total du foyer',
+        (BuildContext _) => const ResumeSolde.foyer(
+          totaux: <TotalSoldes>[
+            TotalSoldes(montantMineur: 4200, devise: 'XTS'),
+          ],
+          complet: true,
+        ),
+      ),
+      EtatGalerie(
+        'total incomplet',
+        (BuildContext _) => const ResumeSolde.foyer(
+          totaux: <TotalSoldes>[
+            TotalSoldes(montantMineur: 1200, devise: 'XTS'),
+          ],
+          complet: false,
+        ),
+      ),
+      EtatGalerie(
+        'profil, solde inconnu',
+        (BuildContext _) =>
+            const ResumeSolde.profil(prenom: 'Aicha', solde: _soldeInconnu),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneBeneficiaire',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'solde connu, acces actif',
+        (BuildContext _) => const LigneBeneficiaire(
+          prenom: 'Aicha',
+          solde: _soldeConnu,
+          acces: 'Accès actif',
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'solde inconnu',
+        (BuildContext _) =>
+            const LigneBeneficiaire(prenom: 'Youssef', solde: _soldeInconnu),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelectionProfils',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'un profil retenu',
+        (BuildContext _) => const SelectionProfils(
+          profils: _profilsExemple,
+          selection: <String>{'e1'},
+          onChange: _selectionIgnoree,
+        ),
+      ),
+      EtatGalerie(
+        'tous retenus',
+        (BuildContext _) => const SelectionProfils(
+          profils: _profilsExemple,
+          selection: <String>{'e1', 'e2', 'e3'},
+          onChange: _selectionIgnoree,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ResultatParProfil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'trois issues',
+        (BuildContext _) => const ResultatParProfil(
+          issues: <IssueProfil>[
+            IssueProfil(profilId: 'e1', issue: IssueServeur.confirmee),
+            IssueProfil(profilId: 'e2', issue: IssueServeur.enAttente),
+            IssueProfil(profilId: 'e3', issue: IssueServeur.echouee),
+          ],
+          prenoms: _prenomsExemple,
+        ),
+      ),
+      EtatGalerie(
+        'toutes confirmees',
+        (BuildContext _) => const ResultatParProfil(
+          issues: <IssueProfil>[
+            IssueProfil(profilId: 'e1', issue: IssueServeur.confirmee),
+            IssueProfil(profilId: 'e2', issue: IssueServeur.confirmee),
+          ],
+          prenoms: _prenomsExemple,
+        ),
+      ),
+    ],
+  ),
 ];
+
+const SoldeProfil _soldeConnu = SoldeProfil(
+  profilId: 'e1',
+  montantMineur: 2400,
+  devise: 'XTS',
+);
+
+const SoldeProfil _soldeInconnu = SoldeProfil(
+  profilId: 'e2',
+  montantMineur: null,
+  devise: null,
+);
+
+const Map<String, String> _prenomsExemple = <String, String>{
+  'e1': 'Aicha',
+  'e2': 'Youssef',
+  'e3': 'Karim',
+};
+
+void _selectionIgnoree(Set<String> selection) {}
 
 /// Trois profils d'exemple : prenoms fictifs, jamais des constantes metier.
 const List<ProfilSelectionnable> _profilsExemple = <ProfilSelectionnable>[

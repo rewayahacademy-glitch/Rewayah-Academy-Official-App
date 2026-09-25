@@ -109,6 +109,11 @@ const List<String> composantsDuCatalogue = <String>[
   'SelecteurProfils',
   'EntetePage',
   'SelecteurTheme',
+  // Les composants partages des ecrans finance (LT-3), cles `finance.*`.
+  'ResumeSolde',
+  'LigneBeneficiaire',
+  'SelectionProfils',
+  'ResultatParProfil',
   // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
   'PageEtape',
 ];

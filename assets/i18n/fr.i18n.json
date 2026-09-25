@@ -123,6 +123,23 @@
       "jourDate": "{jour} {numero} {mois}"
     }
   },
+  "finance": {
+    "totalFoyer": "Total des soldes",
+    "soldeDe": "Solde de {prenom}",
+    "soldeInconnu": "Solde inconnu pour le moment",
+    "soldeInconnuDetail": "Le serveur n'a pas encore rendu ce solde. Il s'affichera dès qu'il sera connu.",
+    "aucunTotal": "Total inconnu pour le moment",
+    "totalIncomplet": "Total incomplet : au moins un solde n'est pas encore connu.",
+    "soldeLigne": "Solde : {montant}",
+    "toutSelectionner": "Tout sélectionner",
+    "profilsSelectionnes": "Profils sélectionnés : {nombre}",
+    "profilSansPrenom": "Profil",
+    "issues": {
+      "confirmee": "Confirmée",
+      "enAttente": "En attente",
+      "echouee": "Échouée"
+    }
+  },
   "reseau": {
     "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",

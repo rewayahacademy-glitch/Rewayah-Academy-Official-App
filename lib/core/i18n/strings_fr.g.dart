@@ -42,6 +42,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 
 	// Translations
 	late final Traductions$commun$fr commun = Traductions$commun$fr.internal(_root);
+	late final Traductions$finance$fr finance = Traductions$finance$fr.internal(_root);
 	late final Traductions$reseau$fr reseau = Traductions$reseau$fr.internal(_root);
 	late final Traductions$etat$fr etat = Traductions$etat$fr.internal(_root);
 	late final Traductions$destructif$fr destructif = Traductions$destructif$fr.internal(_root);
@@ -126,6 +127,47 @@ class Traductions$commun$fr {
 	late final Traductions$commun$theme$fr theme = Traductions$commun$theme$fr.internal(_root);
 	late final Traductions$commun$demarrage$fr demarrage = Traductions$commun$demarrage$fr.internal(_root);
 	late final Traductions$commun$dates$fr dates = Traductions$commun$dates$fr.internal(_root);
+}
+
+// Path: finance
+class Traductions$finance$fr {
+	Traductions$finance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Total des soldes'
+	String get totalFoyer => 'Total des soldes';
+
+	/// fr: 'Solde de {prenom}'
+	String soldeDe({required Object prenom}) => 'Solde de ${prenom}';
+
+	/// fr: 'Solde inconnu pour le moment'
+	String get soldeInconnu => 'Solde inconnu pour le moment';
+
+	/// fr: 'Le serveur n'a pas encore rendu ce solde. Il s'affichera dès qu'il sera connu.'
+	String get soldeInconnuDetail => 'Le serveur n\'a pas encore rendu ce solde. Il s\'affichera dès qu\'il sera connu.';
+
+	/// fr: 'Total inconnu pour le moment'
+	String get aucunTotal => 'Total inconnu pour le moment';
+
+	/// fr: 'Total incomplet : au moins un solde n'est pas encore connu.'
+	String get totalIncomplet => 'Total incomplet : au moins un solde n\'est pas encore connu.';
+
+	/// fr: 'Solde : {montant}'
+	String soldeLigne({required Object montant}) => 'Solde : ${montant}';
+
+	/// fr: 'Tout sélectionner'
+	String get toutSelectionner => 'Tout sélectionner';
+
+	/// fr: 'Profils sélectionnés : {nombre}'
+	String profilsSelectionnes({required Object nombre}) => 'Profils sélectionnés : ${nombre}';
+
+	/// fr: 'Profil'
+	String get profilSansPrenom => 'Profil';
+
+	late final Traductions$finance$issues$fr issues = Traductions$finance$issues$fr.internal(_root);
 }
 
 // Path: reseau
@@ -2417,6 +2459,24 @@ class Traductions$commun$dates$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+}
+
+// Path: finance.issues
+class Traductions$finance$issues$fr {
+	Traductions$finance$issues$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confirmée'
+	String get confirmee => 'Confirmée';
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'Échouée'
+	String get echouee => 'Échouée';
 }
 
 // Path: connexion.recuperation
@@ -11250,6 +11310,19 @@ extension on Traductions {
 			'commun.dates.mois.10' => 'novembre',
 			'commun.dates.mois.11' => 'décembre',
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
+			'finance.totalFoyer' => 'Total des soldes',
+			'finance.soldeDe' => ({required Object prenom}) => 'Solde de ${prenom}',
+			'finance.soldeInconnu' => 'Solde inconnu pour le moment',
+			'finance.soldeInconnuDetail' => 'Le serveur n\'a pas encore rendu ce solde. Il s\'affichera dès qu\'il sera connu.',
+			'finance.aucunTotal' => 'Total inconnu pour le moment',
+			'finance.totalIncomplet' => 'Total incomplet : au moins un solde n\'est pas encore connu.',
+			'finance.soldeLigne' => ({required Object montant}) => 'Solde : ${montant}',
+			'finance.toutSelectionner' => 'Tout sélectionner',
+			'finance.profilsSelectionnes' => ({required Object nombre}) => 'Profils sélectionnés : ${nombre}',
+			'finance.profilSansPrenom' => 'Profil',
+			'finance.issues.confirmee' => 'Confirmée',
+			'finance.issues.enAttente' => 'En attente',
+			'finance.issues.echouee' => 'Échouée',
 			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
@@ -11673,6 +11746,8 @@ extension on Traductions {
 			'ficheEleve.lignes.appareilsLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
 			'ficheEleve.informations.titre' => 'Informations de l\'élève',
 			'ficheEleve.informations.identite' => 'Identité',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.informations.prenom' => 'Prénom',
 			'ficheEleve.informations.identiteNote' => 'Le prénom ne se modifie pas encore depuis cette page.',
 			'ficheEleve.informations.ageNote' => 'L\'âge et la date de naissance ne sont pas encore enregistrés sur le profil.',
@@ -11686,8 +11761,6 @@ extension on Traductions {
 			'ficheEleve.informations.apercuPhrase' => 'Vérifiez la photo avant de l\'envoyer.',
 			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
 			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.informations.autre' => 'Choisir une autre photo',
 			'ficheEleve.informations.annuler' => 'Annuler',
 			'ficheEleve.informations.etapeEnvoi' => 'Envoi de la photo, étape 1 sur 2',
@@ -12187,6 +12260,8 @@ extension on Traductions {
 			'admin.evaluations.colonneNiveau' => 'Niveau',
 			'admin.evaluations.colonneType' => 'Type',
 			'admin.evaluations.colonneDatePrevue' => 'Prévue le',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.colonneStatut' => 'Statut',
 			'admin.evaluations.colonneResultat' => 'Résultat',
 			'admin.evaluations.typeInitiale' => 'Initiale',
@@ -12200,8 +12275,6 @@ extension on Traductions {
 			'admin.evaluations.resultatEchec' => 'Échec',
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
@@ -12701,6 +12774,8 @@ extension on Traductions {
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			'compte.langueRegion' => 'Langue et région',
 			'compte.francaisDetail' => 'Langue de l\'interface',
+			_ => null,
+		} ?? switch (path) {
 			'compte.actif' => 'Actif',
 			'compte.arabe' => 'Arabe',
 			'compte.arabeDetail' => 'Bientôt disponible',
@@ -12714,8 +12789,6 @@ extension on Traductions {
 			'compte.coursDonnees' => 'Cours et données',
 			'compte.economieDonnees' => 'Économie de données',
 			'compte.economieDonneesDetail' => 'Réduit la qualité vidéo sur réseau mobile',
-			_ => null,
-		} ?? switch (path) {
 			'compte.lectureGrande' => 'Lecture en grand texte',
 			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
 			'compte.profilsTitre' => 'Profils du foyer',
@@ -13215,6 +13288,8 @@ extension on Traductions {
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
 			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
@@ -13228,8 +13303,6 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.inscritTitre' => 'Inscription confirmée',
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
 			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
@@ -13729,6 +13802,8 @@ extension on Traductions {
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
 			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',
@@ -13742,8 +13817,6 @@ extension on Traductions {
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',
 			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
