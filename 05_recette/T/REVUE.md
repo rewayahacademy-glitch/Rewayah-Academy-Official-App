@@ -66,3 +66,29 @@ Devises ISO 4217 à ajouter (constat 6) : exposant 0 : `BIF, DJF, GNF, KMF, PYG,
 9. Constat 9 : filtre et retour de S07 conservés, avec un test qui tape le détail puis Retour.
 10. Constats 12, 13, 14 : lien vers les mouvements de la séance, « Recharger » dans la fiche, garde de `_verifier`.
 11. Constats 15, 16, 17 : au choix de LT-F, sinon à consigner comme dette.
+
+## Corrections LT-F
+
+Branche `ui/tuteur-v1-t`, HEAD `97ab61a` (poussée). Dernière suite complète sous verrou (`dart run slang && dart analyze --fatal-infos && flutter test`) : analyze sans remarque, **2840 réussis, 610 sautés, 0 échec**. Frontière vide.
+
+| # | Issue | Commit / raison |
+|---|---|---|
+| 1 | corrigé | `db6e412` (aperçu invalidé à l'entrée de S10, sonde supprimée) |
+| 2 | corrigé | `db6e412` (« Payer » gardé ; l'expiration est dite par le refus du serveur) |
+| 3 | corrigé | `db6e412` (titre et ton de S11 d'après les issues) |
+| 4 | corrigé | `db6e412` (disponibilité de l'annulation exposée par le port) |
+| 5 | corrigé | `b3f0628` (total partiel dit « incomplet » sur Foyer et Accueil) |
+| 6 | corrigé | `232daef` (table ISO 4217 complétée, tests 0/3/4) |
+| 7 | restant | attend l'arbitrage du directeur (contrat DB-FIN-03), non touché |
+| 8 | corrigé | `97ab61a` (gardé, `ponytail:` vers l'indicateur `confirmable` de DB-FIN-05) |
+| 9 | corrigé | `e869aba` (filtre en `?profil=`, adresse complète de S07 en `?retour=` du détail ; tests filtre et retour) |
+| 10 | corrigé | `7a1bd06` (tête défilante au-delà de 130 % ; test 390 px à 200 % sur Soldes, Accès, Mouvements) |
+| 11 | corrigé | `05a6788` (`lib/core/widgets/colonnes_fiche.dart`, réexporté par la fiche ; galerie et `catalogue_galerie_test`) |
+| 12 | restant | faute de temps (lien « Voir les mouvements associés » à filtrer par `seanceId`) ; dette LT |
+| 13 | corrigé | `70a1398` (« Recharger » seulement si le profil figure dans les soldes lus ; test) |
+| 14 | corrigé | `9394725` (garde `_enCours` sur `_verifier` ; test double tap) |
+| 15 | restant | faute de temps ; le serveur reste l'ultime garde (référence du devis) ; dette LT |
+| 16 | restant | par décision de la revue : codes `demo_*` gardés jusqu'aux contrats DB-FIN-02/05 et DB-CPT-03 |
+| 17 | restant | faute de temps (`_Question` dupliqué dans deux fichiers) ; dette LT |
+
+Hors revue : `5d9ef60` retire de K7 une exemption périmée (`StockagePreferencesMemoire`).
