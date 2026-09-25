@@ -25,6 +25,7 @@ import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
+import '../../../core/widgets/colonnes_fiche.dart';
 import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
@@ -1244,6 +1245,25 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             ),
             child: const Text('Le corps de l etape.'),
           ),
+        ),
+      ),
+    ],
+  ),
+  // Le gabarit a deux colonnes de la fiche et du Compte (constat 11, LT-F).
+  EntreeGalerie(
+    nom: 'ColonnesFiche',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'principal seul',
+        (BuildContext _) =>
+            const ColonnesFiche(principal: Text('Le sujet de la page.')),
+      ),
+      EtatGalerie(
+        'principal et annexe',
+        (BuildContext _) => const ColonnesFiche(
+          principal: Text('Le sujet de la page.'),
+          annexe: Text('Ce qui l accompagne.'),
         ),
       ),
     ],

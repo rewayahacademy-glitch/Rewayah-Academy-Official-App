@@ -13,12 +13,12 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_elevation.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/colonnes_fiche.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -29,6 +29,10 @@ import '../compte/soldes_page.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
+
+// `ColonnesFiche` vit dans `lib/core/widgets` (partage avec le Compte) ; la
+// fiche le reexporte pour ses sous-pages.
+export '../../core/widgets/colonnes_fiche.dart' show ColonnesFiche;
 
 /// Une page de la fiche d'un eleve : la fiche elle-meme et ses sous-pages.
 ///
@@ -135,44 +139,6 @@ class PageFiche extends ConsumerWidget {
 /// adresse (un `pop` perdrait l'onglet actif apres un lien profond).
 VoidCallback retourVersFiche(BuildContext context, String eleveId) =>
     () => GoRouter.of(context).go(Routes.ficheElevePour(eleveId));
-
-/// Deux colonnes sur bureau (a partir de 1200), une pile en dessous.
-///
-/// La composition des pages de la fiche derive du Compte haute fidelite :
-/// le sujet principal a gauche, ce qui l'accompagne a droite. Jamais une
-/// colonne mobile etiree.
-class ColonnesFiche extends StatelessWidget {
-  /// Cree la composition.
-  const ColonnesFiche({required this.principal, super.key, this.annexe});
-
-  /// Le sujet de la page.
-  final Widget principal;
-
-  /// Ce qui l'accompagne : notes, liens.
-  final Widget? annexe;
-
-  @override
-  Widget build(BuildContext context) {
-    final Widget? droite = annexe;
-    if (droite == null) {
-      return principal;
-    }
-    if (AppGabarit.de(context) == Gabarit.desktop) {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(flex: 3, child: principal),
-          Ecart.hXxl,
-          Expanded(flex: 2, child: droite),
-        ],
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[principal, Ecart.vXxl, droite],
-    );
-  }
-}
 
 /// Une note attenuee : ce qui manque, ce qui s'applique et quand.
 class NoteFiche extends StatelessWidget {

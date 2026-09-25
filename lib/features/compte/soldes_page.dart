@@ -16,13 +16,13 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/colonnes_fiche.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_beneficiaire.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/resume_solde.dart';
 import '../../core/widgets/skeleton.dart';
-import '../foyer/fiche_eleve_page.dart' show ColonnesFiche;
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 

@@ -116,6 +116,8 @@ const List<String> composantsDuCatalogue = <String>[
   'ResultatParProfil',
   // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
   'PageEtape',
+  // Deplace de la fiche eleve vers `lib/core/widgets` (constat 11, LT-F).
+  'ColonnesFiche',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
