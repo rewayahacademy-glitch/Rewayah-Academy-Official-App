@@ -1,8 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart'
     show ModeAffichagePartage;
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
@@ -165,27 +168,28 @@ void main() {
       expect(emis, isEmpty);
     });
 
-    testWidgets('le doigt pose un trait quand le stylet est arme, faute de stylet', (
-      WidgetTester tester,
-    ) async {
-      final ProviderContainer conteneur = ProviderContainer(
-        overrides: surcharges(),
-      );
-      addTearDown(conteneur.dispose);
-      conteneur
-          .read(etatOutilsProvider.notifier)
-          .choisirOutil(OutilDock.stylet);
+    testWidgets(
+      'le doigt pose un trait quand le stylet est arme, faute de stylet',
+      (WidgetTester tester) async {
+        final ProviderContainer conteneur = ProviderContainer(
+          overrides: surcharges(),
+        );
+        addTearDown(conteneur.dispose);
+        conteneur
+            .read(etatOutilsProvider.notifier)
+            .choisirOutil(OutilDock.stylet);
 
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: conteneur,
-          child: hoteSansScope(couche()),
-        ),
-      );
-      await tracer(tester, PointerDeviceKind.touch);
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: conteneur,
+            child: hoteSansScope(couche()),
+          ),
+        );
+        await tracer(tester, PointerDeviceKind.touch);
 
-      expect(annotations.couches.single.traits, hasLength(1));
-    });
+        expect(annotations.couches.single.traits, hasLength(1));
+      },
+    );
 
     testWidgets('sur page figee, un trait hors bloc s ancre a la page', (
       WidgetTester tester,
@@ -225,7 +229,8 @@ void main() {
       expect(
         ancragesDegrades,
         1,
-        reason: "l'annotation suivra la page et pas les mots : l'hote doit "
+        reason:
+            "l'annotation suivra la page et pas les mots : l'hote doit "
             'pouvoir le dire',
       );
     });
@@ -261,9 +266,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: conteneur,
-          child: hoteSansScope(
-            couche(traits: <TraitVectoriel>[existant]),
-          ),
+          child: hoteSansScope(couche(traits: <TraitVectoriel>[existant])),
         ),
       );
       // Le trait existant passe a y = 10 (0.25 de 40 points) : la gomme le
@@ -277,6 +280,67 @@ void main() {
       expect(annotations.couches.single.traits, isEmpty);
       expect(emis.whereType<EvenementTraitRetire>(), hasLength(1));
       expect(emis.last.canal, CanalFiabilite.fiable);
+    });
+
+    testWidgets('sans geste : Suppr et l action semantique effacent', (
+      WidgetTester tester,
+    ) async {
+      TraitVectoriel trait(String id) => TraitVectoriel(
+        id: id,
+        ancrage: ayah1,
+        outil: OutilTrait.stylet,
+        intention: IntentionPedagogique.aRevoir,
+        points: const <PointNormalise>[
+          PointNormalise(0, 0.25),
+          PointNormalise(1, 0.25),
+        ],
+      );
+      final AnnotationLayer couchePosee = (await annotations.couche(
+        resourceId: ressourceTest,
+        sessionId: 'seance-1',
+        portee: PorteeAnnotation.temporaire,
+      ))!;
+      await annotations.ajouterTrait(couchePosee.id, trait('t-1'));
+      await annotations.ajouterTrait(couchePosee.id, trait('t-2'));
+
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await tester.pumpWidget(
+        hoteD(
+          couche(traits: <TraitVectoriel>[trait('t-1'), trait('t-2')]),
+          surcharges: surcharges(),
+        ),
+      );
+
+      // L'ardoise se nomme et se dit facultative.
+      final Finder ardoise = find.bySemanticsLabel(t.tc.outils.trait.ardoise);
+      expect(ardoise, findsOneWidget);
+
+      // Clavier : la surface prend le focus, Suppr retire le dernier trait.
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pumpAndSettle();
+      expect(
+        annotations.couches.single.traits.map((TraitVectoriel x) => x.id),
+        <String>['t-1'],
+      );
+
+      // Lecteur d'ecran : l'action « Effacer mon dernier trait ».
+      final SemanticsNode noeud = tester.getSemantics(ardoise);
+      tester.binding.performSemanticsAction(
+        SemanticsActionEvent(
+          type: SemanticsAction.customAction,
+          viewId: tester.view.viewId,
+          nodeId: noeud.id,
+          arguments: CustomSemanticsAction.getIdentifier(
+            CustomSemanticsAction(label: t.tc.outils.trait.effacerDernier),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(annotations.couches.single.traits, isEmpty);
+      expect(emis.whereType<EvenementTraitRetire>(), hasLength(2));
+      semantique.dispose();
     });
   });
 }

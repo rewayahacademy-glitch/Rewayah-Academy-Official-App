@@ -411,7 +411,7 @@ class _Heures extends StatelessWidget {
                     start: AppSpacing.md,
                   ),
                   child: _Colonne(
-                    icone: AppIcons.attente,
+                    icone: AppIcons.horloge,
                     libelle: LibellesGroupe.dureeLibelle,
                     valeur: affichage.duree,
                     compact: compact,

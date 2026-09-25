@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
+import '../observabilite/journal_dev.dart';
 import '../reseau/service_reseau.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
@@ -98,7 +99,7 @@ class _PageHorsLigneState extends ConsumerState<PageHorsLigne> {
       // Redemande un jeton : la source relit alors le profil.
       await ref.read(sourceSessionProvider).rafraichir();
     } on Object catch (erreur) {
-      debugPrint('Relecture de session impossible, reste hors ligne : $erreur');
+      journalDev('Relecture de session impossible, reste hors ligne : $erreur');
     } finally {
       if (mounted) {
         setState(() => _enCours = false);
@@ -162,7 +163,7 @@ class _EcranDemarrageState extends ConsumerState<EcranDemarrage> {
     try {
       await ref.read(sourceSessionProvider).rafraichir();
     } on Object catch (erreur) {
-      debugPrint('Relance de session impossible : $erreur');
+      journalDev('Relance de session impossible : $erreur');
     }
   }
 

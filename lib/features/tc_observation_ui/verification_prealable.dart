@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_observation/disponibilite_observation.dart';
@@ -118,7 +119,7 @@ Future<void> marquerExplicationVue(
   try {
     await stockage.ecrire(clefExplicationVue(observateurId), 'oui');
   } on Object catch (erreur) {
-    debugPrint('Memoire d\'explication non ecrite : $erreur');
+    journalDev('Memoire d\'explication non ecrite : $erreur');
   }
 }
 

@@ -641,4 +641,12 @@ abstract final class AppIcons {
     IconData(0xe19a, fontFamily: _repos),
     IconData(0xe19a, fontFamily: _actif),
   );
+
+  /// Information, aide : Phosphor `info` (0xe2ce, releve dans
+  /// `@phosphor-icons/web` 2.1.1). Devant « Comment ca marche ? » de la
+  /// classe (maquette M1, revue C m4).
+  static const AppIcon info = AppIcon._(
+    IconData(0xe2ce, fontFamily: _repos),
+    IconData(0xe2ce, fontFamily: _actif),
+  );
 }

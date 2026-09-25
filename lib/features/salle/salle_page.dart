@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
@@ -177,7 +178,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
       // qu'a nommer la cause pour l'usager. Aucun detail technique ne remonte
       // a l'ecran : « ICE failed » ne se lit pas devant un enfant.
-      debugPrint('entree en salle impossible : $erreur');
+      journalDev('entree en salle impossible : $erreur');
       if (mounted) {
         setState(() => _impasse = CauseImpasse.reseau);
       }

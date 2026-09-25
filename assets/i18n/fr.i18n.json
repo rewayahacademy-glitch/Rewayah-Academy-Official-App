@@ -2935,7 +2935,9 @@
         "surligneur": "Surligner",
         "gomme": "Gomme",
         "annuler": "Annuler",
-        "plus": "Plus"
+        "plus": "Plus",
+        "ardoise": "Ardoise d'annotation, facultative : le cours reste lisible sans elle",
+        "effacerDernier": "Effacer mon dernier trait"
       },
       "portee": {
         "temporaire": "Le temps d'expliquer",

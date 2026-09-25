@@ -24,7 +24,12 @@ class LienFleche extends StatelessWidget {
     required this.onPress,
     super.key,
     this.fleche = true,
+    this.icone,
   });
+
+  /// Icone decorative facultative devant le libelle (« Comment ca marche ? »
+  /// precede de `AppIcons.info`). Le libelle seul reste lu.
+  final AppIcon? icone;
 
   /// Le texte du lien : un verbe et son objet (« Voir l'historique »).
   final String libelle;
@@ -54,6 +59,13 @@ class LienFleche extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              if (icone != null) ...<Widget>[
+                IconTheme(
+                  data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                  child: Icon(icone!.repos),
+                ),
+                Ecart.hXs,
+              ],
               Flexible(
                 child: Text(
                   libelle,

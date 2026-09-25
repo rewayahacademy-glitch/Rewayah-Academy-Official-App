@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../appairage/profils_locaux.dart' show baseLocaleProvider;
 import '../cache/db/app_database.dart';
+import '../observabilite/journal_dev.dart';
 
 /// Le choix local du theme. Il ne modifie aucune preference de profil distante.
 enum PreferenceTheme {
@@ -132,7 +133,9 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
   /// Elle quitte donc « Systeme » pour un choix explicite ; « Systeme » se
   /// retrouve dans la page Apparence, qui ecrit la meme preference.
   void basculerClairSombre(Brightness affichee) => theme(
-    affichee == Brightness.dark ? PreferenceTheme.clair : PreferenceTheme.sombre,
+    affichee == Brightness.dark
+        ? PreferenceTheme.clair
+        : PreferenceTheme.sombre,
   );
 
   /// Restaure le theme persiste au lancement, sauf si un choix a deja ete fait
@@ -195,9 +198,8 @@ class StockagePreferencesDrift implements StockagePreferences {
   @override
   Future<String?> lire(String clef) async {
     final PreferenceLocaleData? ligne =
-        await (_base.select(_base.preferenceLocale)..where(
-              ($PreferenceLocaleTable p) => p.clef.equals(clef),
-            ))
+        await (_base.select(_base.preferenceLocale)
+              ..where(($PreferenceLocaleTable p) => p.clef.equals(clef)))
             .getSingleOrNull();
     return ligne?.valeur;
   }
@@ -265,7 +267,7 @@ final Provider<void> persistanceApparenceProvider = Provider<void>((Ref ref) {
         controleur.restaurerTheme(lu);
       }
     } on Object catch (erreur) {
-      debugPrint('Preference de theme illisible, reste en memoire : $erreur');
+      journalDev('Preference de theme illisible, reste en memoire : $erreur');
     }
   }
 
@@ -273,7 +275,7 @@ final Provider<void> persistanceApparenceProvider = Provider<void>((Ref ref) {
     try {
       await stockage.ecrire(clefPreferenceTheme, valeur.name);
     } on Object catch (erreur) {
-      debugPrint('Preference de theme non ecrite, reste en memoire : $erreur');
+      journalDev('Preference de theme non ecrite, reste en memoire : $erreur');
     }
   }
 
@@ -352,7 +354,7 @@ final Provider<void> persistanceNavigationProvider = Provider<void>((Ref ref) {
         controleur.restaurer(repliee: lu == 'true');
       }
     } on Object catch (erreur) {
-      debugPrint('Repli de navigation illisible, reste en memoire : $erreur');
+      journalDev('Repli de navigation illisible, reste en memoire : $erreur');
     }
   }
 
@@ -360,7 +362,7 @@ final Provider<void> persistanceNavigationProvider = Provider<void>((Ref ref) {
     try {
       await stockage.ecrire(clefNavigationRepliee, '$repliee');
     } on Object catch (erreur) {
-      debugPrint('Repli de navigation non ecrit, reste en memoire : $erreur');
+      journalDev('Repli de navigation non ecrit, reste en memoire : $erreur');
     }
   }
 

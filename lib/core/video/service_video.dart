@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
 import 'video_session_provider.dart';
 
 /// Pourquoi une salle refuse d'ouvrir.
@@ -145,7 +145,7 @@ class ServiceVideoSupabase implements ServiceVideo {
         params: <String, dynamic>{'p_session_id': seanceId},
       );
     } catch (e) {
-      debugPrint('annonce de sortie impossible : $e');
+      journalDev('annonce de sortie impossible : $e');
     }
   }
 }

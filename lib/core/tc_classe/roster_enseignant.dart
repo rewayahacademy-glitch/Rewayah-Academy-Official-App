@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Comme partout ailleurs : le type d'une famille de providers n'est pas exporte
 // par l'entree principale de Riverpod 3, il vit dans `misc.dart`.
@@ -8,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart'
     show FutureProviderFamily, ProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
 import '../presence/service_presence.dart';
 import 'port_roster_enseignant.dart';
 import 'roster_classe_vm.dart';
@@ -184,7 +184,7 @@ class RosterEnseignantSupabase implements PortRosterEnseignant {
           ficheDepuisRosterV(ligne).academyId: ficheDepuisRosterV(ligne),
       };
     } catch (erreur) {
-      debugPrint('fiches pedagogiques indisponibles : $erreur');
+      journalDev('fiches pedagogiques indisponibles : $erreur');
       return const <String, TeacherStudentProjection>{};
     }
   }
@@ -200,7 +200,7 @@ class RosterEnseignantSupabase implements PortRosterEnseignant {
           .select()
           .eq('session_id', sessionId);
     } catch (erreur) {
-      debugPrint('roster indisponible : $erreur');
+      journalDev('roster indisponible : $erreur');
       throw const EchecRoster(MotifEchecRoster.lecture);
     }
     return composerRoster(
@@ -266,7 +266,7 @@ class RosterEnseignantSupabase implements PortRosterEnseignant {
       } on EchecRoster catch (erreur) {
         // Le flux ne s'interrompt jamais sur une erreur : la lecture suivante a
         // lieu comme prevu, et le reseau revient souvent en trois secondes.
-        debugPrint('roster indisponible : $erreur');
+        journalDev('roster indisponible : $erreur');
       }
     }
 
