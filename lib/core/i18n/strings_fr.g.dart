@@ -2319,8 +2319,8 @@ class Traductions$connexion$recuperation$fr {
 	/// fr: 'La connexion n'a pas abouti'
 	String get lienRefuseTitre => 'La connexion n\'a pas abouti';
 
-	/// fr: 'Ce lien n'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.'
-	String get lienRefuse => 'Ce lien n\'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.';
+	/// fr: 'Ce lien n'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.'
+	String get lienRefuse => 'Ce lien n\'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.';
 
 	/// fr: 'Recevoir un nouveau lien'
 	String get envoyer => 'Recevoir un nouveau lien';
@@ -8422,7 +8422,7 @@ extension on Traductions {
 			'connexion.recuperation.lienExpireTitre' => 'Ce lien n\'est plus valable',
 			'connexion.recuperation.lienExpire' => 'Un lien de connexion ne sert qu\'une fois et expire au bout d\'un moment. Demandez-en un nouveau ci-dessous.',
 			'connexion.recuperation.lienRefuseTitre' => 'La connexion n\'a pas abouti',
-			'connexion.recuperation.lienRefuse' => 'Ce lien n\'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.',
+			'connexion.recuperation.lienRefuse' => 'Ce lien n\'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.',
 			'connexion.recuperation.envoyer' => 'Recevoir un nouveau lien',
 			'connexion.recuperation.envoyeTitre' => 'Nouveau lien envoyé',
 			'connexion.recuperation.envoye' => ({required Object courriel}) => 'Ouvrez le message envoyé à ${courriel}, puis suivez le lien.',

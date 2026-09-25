@@ -468,6 +468,45 @@ void main() {
       await tester.pumpAndSettle();
     }
 
+    testWidgets('sans 0043 il dit que le questionnaire n est pas ouvert (K5)', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres()
+        ..erreurParcours = const PostgrestException(
+          message: 'relation does not exist',
+          code: '42P01',
+        );
+      await tester.pumpWidget(
+        hote(
+          const Scaffold(body: SingleChildScrollView(child: BlocParcours())),
+          surcharges: _avec(faux),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('bloc-parcours-indisponible')),
+        findsOneWidget,
+      );
+      expect(find.text(t.parcours.indisponibleTitre), findsOneWidget);
+      expect(find.text(t.parcours.indisponibleDetail), findsOneWidget);
+    });
+
+    testWidgets('une autre erreur reste silencieuse', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceOffres faux = FauxServiceOffres()
+        ..erreurParcours = const PostgrestException(message: 'x', code: '500');
+      await tester.pumpWidget(
+        hote(
+          const Scaffold(body: SingleChildScrollView(child: BlocParcours())),
+          surcharges: _avec(faux),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('bloc-parcours-indisponible')), findsNothing);
+      expect(find.text(t.parcours.indisponibleTitre), findsNothing);
+    });
+
     testWidgets('il se tait quand tout le foyer a son groupe', (
       WidgetTester tester,
     ) async {

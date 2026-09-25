@@ -282,7 +282,7 @@
       "lienExpireTitre": "Ce lien n'est plus valable",
       "lienExpire": "Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.",
       "lienRefuseTitre": "La connexion n'a pas abouti",
-      "lienRefuse": "Ce lien n'a pas pu ouvrir votre session. Demandez-en un nouveau ci-dessous.",
+      "lienRefuse": "Ce lien n'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.",
       "envoyer": "Recevoir un nouveau lien",
       "envoyeTitre": "Nouveau lien envoyé",
       "envoye": "Ouvrez le message envoyé à {courriel}, puis suivez le lien.",

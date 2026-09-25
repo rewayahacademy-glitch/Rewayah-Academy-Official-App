@@ -138,23 +138,47 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 Future<void> _continuer(WidgetTester tester) =>
     _taper(tester, find.text(t.commun.continuer));
 
+/// Monte le parcours sur /inscription/usage puis avance par gestes reels
+/// jusqu'a l'etape [nom] : une route directe vers identite ou genre est
+/// redirigee vers usage par exigerEtapesPrecedentes (brouillon vierge), ce
+/// qui produisait des captures de l'ecran usage (constat REVUE LA-F).
+Future<GoRouter> _monterEtape(
+  WidgetTester tester,
+  String nom, {
+  ThemeMode mode = ThemeMode.light,
+  Size taille = const Size(390, 844),
+}) async {
+  final GoRouter routeur = await _monter(
+    tester,
+    depart: Routes.inscriptionUsage,
+    mode: mode,
+    taille: taille,
+  );
+  if (nom == 'usage') return routeur;
+  await _taper(tester, find.byKey(const Key('inscription-usage-moi')));
+  await _continuer(tester);
+  expect(find.byKey(const Key('inscription-prenom')), findsOneWidget);
+  if (nom == 'identite') return routeur;
+  await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Amina');
+  await tester.enterText(find.byKey(const Key('inscription-nom')), 'Diallo');
+  await _continuer(tester);
+  expect(find.byKey(const Key('inscription-genre-femme')), findsOneWidget);
+  return routeur;
+}
+
 void main() {
   group('Capture LA-2 : inscription par etapes', skip: sautSansCapture, () {
     setUpAll(() async {
       await chargerPolicesDuDepot();
     });
 
-    for (final (String nom, String route) in <(String, String)>[
-      ('usage', Routes.inscriptionUsage),
-      ('identite', Routes.inscriptionIdentite),
-      ('genre', Routes.inscriptionGenre),
-    ]) {
+    for (final String nom in <String>['usage', 'identite', 'genre']) {
       for (final ThemeMode mode in <ThemeMode>[
         ThemeMode.light,
         ThemeMode.dark,
       ]) {
         testWidgets('$nom 390x844, ${mode.name}', (WidgetTester tester) async {
-          await _monter(tester, depart: route, mode: mode);
+          await _monterEtape(tester, nom, mode: mode);
           debugPrint(
             'PNG ${await capturer(tester, 'la2_${nom}_390x844_${mode.name}')}',
           );
@@ -163,9 +187,9 @@ void main() {
         testWidgets('$nom 1440x900, ${mode.name}', (
           WidgetTester tester,
         ) async {
-          await _monter(
+          await _monterEtape(
             tester,
-            depart: route,
+            nom,
             mode: mode,
             taille: const Size(1440, 900),
           );
@@ -195,9 +219,9 @@ void main() {
             hauteurPx = image.height;
             image.dispose();
           });
-          await _monter(
+          await _monterEtape(
             tester,
-            depart: route,
+            nom,
             taille: Size(
               _largeurLogique,
               _largeurLogique * hauteurPx / largeurPx,
