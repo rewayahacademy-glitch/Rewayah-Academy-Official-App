@@ -231,8 +231,8 @@ class FicheElevePage extends ConsumerWidget {
   /// Le bloc du solde (S02).
   static const Key soldeKey = Key('ficheEleve.solde');
 
-  /// L'action du bloc du solde, vers S01.
-  static const Key voirSoldesKey = Key('ficheEleve.voirSoldes');
+  /// Le lien du bloc du solde, vers les mouvements de ce profil (S07).
+  static const Key voirMouvementsKey = Key('ficheEleve.voirMouvements');
 
   /// « Recharger » du bloc du solde, vers S03 avec ce profil (LT-7).
   static const Key rechargerKey = Key('ficheEleve.recharger');
@@ -427,7 +427,9 @@ class _SoldeFiche extends ConsumerWidget {
               if (rechargeable) ...<Widget>[
                 ActionPrincipale(
                   key: FicheElevePage.rechargerKey,
-                  libelle: t.finance.recharge.action,
+                  libelle: t.finance.soldes.rechargerPour(
+                    prenom: profil.prenom,
+                  ),
                   onPress: () => routeur.go(
                     Uri(
                       path: Routes.tuteurCompteRecharge,
@@ -440,13 +442,18 @@ class _SoldeFiche extends ConsumerWidget {
                 ),
                 Ecart.vSm,
               ],
+              // Complement Tuteur section 5 (fiche) : « Recharger pour
+              // [Prenom] ; Voir les mouvements ; Gerer l'acces ». Les
+              // mouvements s'ouvrent filtres sur ce profil ; le Foyer garde
+              // son entree vers les soldes de tout le foyer.
               LienFleche(
-                key: FicheElevePage.voirSoldesKey,
-                libelle: t.finance.soldes.voirSoldes,
+                key: FicheElevePage.voirMouvementsKey,
+                libelle: t.finance.mouvements.voir,
                 onPress: () => routeur.go(
                   Uri(
-                    path: Routes.tuteurCompteSoldes,
+                    path: Routes.tuteurCompteMouvements,
                     queryParameters: <String, String>{
+                      'profil': profil.eleveId,
                       'retour': Routes.ficheElevePour(profil.eleveId),
                     },
                   ).toString(),

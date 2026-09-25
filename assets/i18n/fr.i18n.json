@@ -143,7 +143,6 @@
       "aucunProfilPhrase": "Le serveur n'a rendu aucun solde de profil élève pour ce foyer.",
       "gererAcces": "Gérer les accès",
       "rubriqueFoyer": "Soldes",
-      "voirSoldes": "Voir les soldes du foyer",
       "derniereRemise": "Dernière remise liée à une séance : {montant}, le {date}",
       "indisponible": "Non disponible pour le moment.",
       "ligneAccueil": "Soldes du foyer : {total}",

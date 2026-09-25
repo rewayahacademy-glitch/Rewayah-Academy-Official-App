@@ -369,7 +369,7 @@ void main() {
     );
     expect(find.byType(FicheElevePage), findsOneWidget);
     expect(find.byKey(FicheElevePage.rechargerKey), findsNothing);
-    expect(find.byKey(FicheElevePage.voirSoldesKey), findsOneWidget);
+    expect(find.byKey(FicheElevePage.voirMouvementsKey), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

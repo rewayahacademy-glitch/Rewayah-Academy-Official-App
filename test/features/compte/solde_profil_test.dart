@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/resume_solde.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
+import 'package:rewayah_academy/features/compte/mouvements_page.dart';
 import 'package:rewayah_academy/features/compte/soldes_page.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -28,9 +29,8 @@ final List<Override> _demo = <Override>[
 final String _ficheAicha = Routes.ficheElevePour(DonneesDemo.aichaId);
 
 void main() {
-  testWidgets('demonstration : le bloc de la fiche ouvre S01 et revient', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('demonstration : le bloc de la fiche ouvre les mouvements du '
+      'profil et revient', (WidgetTester tester) async {
     final GoRouter routeur = await monterCompte(
       tester,
       depart: _ficheAicha,
@@ -68,11 +68,19 @@ void main() {
       findsOneWidget,
     );
 
-    await toucher(tester, find.byKey(FicheElevePage.voirSoldesKey));
+    // Complement Tuteur section 5 : « Recharger pour [Prenom] ».
+    expect(
+      find.text(t.finance.soldes.rechargerPour(prenom: 'Aïcha')),
+      findsOneWidget,
+    );
+
+    await toucher(tester, find.byKey(FicheElevePage.voirMouvementsKey));
     final Uri ici = Uri.parse(lieu(routeur));
-    expect(ici.path, Routes.tuteurCompteSoldes);
+    expect(ici.path, Routes.tuteurCompteMouvements);
+    expect(ici.queryParameters['profil'], DonneesDemo.aichaId);
     expect(ici.queryParameters['retour'], _ficheAicha);
-    expect(find.byType(SoldesComptePage), findsOneWidget);
+    expect(find.byType(MouvementsComptePage), findsOneWidget);
+    expect(find.textContaining('Yusuf ·'), findsNothing);
 
     await tester.tap(find.byType(DisqueRetour));
     await stabiliser(tester);
@@ -143,7 +151,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.byKey(FicheElevePage.voirSoldesKey), findsNothing);
+    expect(find.byKey(FicheElevePage.voirMouvementsKey), findsNothing);
     expect(find.byType(ResumeSolde), findsNothing);
     expect(find.text(t.commun.etats.actions.reessayer), findsNothing);
     expect(find.textContaining('0,00'), findsNothing);
