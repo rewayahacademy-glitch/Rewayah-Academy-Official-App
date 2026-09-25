@@ -468,3 +468,8 @@ Statut : a_suivre (attend telephone).
 - P2-11 M1 : lib/core/observabilite/journal_dev.dart (journalDev, muet hors kDebugMode) remplace les 32 debugPrint de lib (16 fichiers) ; garde-fou test/observabilite/journal_dev_test.dart.
 - Preuves (sous verrou) : dart analyze --fatal-infos lib test : aucun probleme ; tests cibles +202 ~54 ; suite complete +2725 ~572, 0 echec.
 - A faire par le coordinateur : integrer ui/tuteur-v1-fin2 dans ui/tuteur-v1 ; captures Classe/Accueil a regenerer si besoin (icones changees). Libelles ar des 2 nouvelles cles : repli fr (slang base_locale).
+
+## 25/09 : HL-B-5 integre
+- ui/tuteur-v1-fin2 (4da4c4f) fusionnee : origin/ui/tuteur-v1 @ 3b41b12. flutter analyze --fatal-infos 0 ; suite complete 2725 verts, 572 sautes, code 0 (04_phase0/hlb5_suite.log). Frontiere vide.
+- Consentements : 09_consentements (HL-B-6), page directeur BJdXriWb3EoSnez4JCs5cR. Questionnaire gele jusqu'a la fin des roles (HL-B-4).
+
