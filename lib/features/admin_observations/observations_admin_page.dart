@@ -717,13 +717,13 @@ List<ColonneDonnees<VisiteAdmin>> colonnesObservationsAdmin() =>
         titre: t.admin.observations.colonneSortie,
         texte: sortieDe,
         tabulaire: true,
-        flex: 2,
+        flex: 3,
       ),
       ColonneDonnees<VisiteAdmin>(
         titre: t.admin.observations.colonneDuree,
         texte: dureeDe,
         tabulaire: true,
-        flex: 2,
+        flex: 3,
       ),
       ColonneDonnees<VisiteAdmin>(
         titre: t.admin.observations.colonneStatut,
@@ -761,13 +761,15 @@ class _LigneVisite extends StatelessWidget {
     final TextStyle doux = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
-    final String plage = t.admin.observations.plage(
-      entree: heureMinute(ligne.entree),
-      sortie: switch (ligne.visite.leftAtUtc) {
-        final DateTime s => heureMinute(s.toLocal()),
-        null => t.admin.observations.sortieAbsente,
-      },
-    );
+    // Sans sortie, l'heure d'entree seule : la pastille dit deja « Sortie non
+    // enregistree », la ligne ne le repete pas.
+    final String plage = switch (ligne.visite.leftAtUtc) {
+      final DateTime s => t.admin.observations.plage(
+        entree: heureMinute(ligne.entree),
+        sortie: heureMinute(s.toLocal()),
+      ),
+      null => heureMinute(ligne.entree),
+    };
     return Semantics(
       label: semantiqueDe(ligne),
       excludeSemantics: true,
@@ -794,7 +796,12 @@ class _LigneVisite extends StatelessWidget {
                       Ecart.vXs,
                       Text(plage, style: AppTypography.tabulaire(doux)),
                       Ecart.vXs,
-                      Text(dureeDe(ligne), style: doux),
+                      Text(
+                        ligne.ouverte
+                            ? t.historique.observations.dureeNonConfirmee
+                            : dureeDe(ligne),
+                        style: doux,
+                      ),
                     ],
                   ),
                 ),

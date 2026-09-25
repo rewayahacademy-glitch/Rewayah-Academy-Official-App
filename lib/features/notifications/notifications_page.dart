@@ -170,7 +170,11 @@ class LigneNotification extends StatelessWidget {
                   // Largeur proportionnelle et commune : les filets verticaux
                   // s'alignent d'une ligne a l'autre, comme dans l'Historique.
                   SizedBox(
-                    width: contraintes.maxWidth * 0.3,
+                    width:
+                        contraintes.maxWidth *
+                        (contraintes.maxWidth >= AppPage.largeurDialogue
+                            ? 0.3
+                            : 0.38),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -192,7 +196,14 @@ class LigneNotification extends StatelessWidget {
                       color: palette.contourCarte.asBorderSide().color,
                     ),
                   ),
-                  Expanded(child: Text(notification.titre, style: fort)),
+                  Expanded(
+                    child: Text(
+                      notification.titre,
+                      style: palette.inkStrong.applyTo(
+                        textes.bodyMedium ?? const TextStyle(),
+                      ),
+                    ),
+                  ),
                   if (onPress != null) ...<Widget>[
                     Ecart.hXs,
                     IconTheme(
