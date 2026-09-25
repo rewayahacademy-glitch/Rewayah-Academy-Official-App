@@ -70,7 +70,7 @@ class BlocParcours extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final int minimum = regles.value?.minimumLancement ?? 0;
+    final int? minimum = regles.value?.minimumLancement;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -119,7 +119,7 @@ class _Carte extends StatelessWidget {
   const _Carte({required this.apprenant, required this.minimumLancement});
 
   final ParcoursApprenant apprenant;
-  final int minimumLancement;
+  final int? minimumLancement;
 
   @override
   Widget build(BuildContext context) {

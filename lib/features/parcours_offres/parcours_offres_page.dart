@@ -84,8 +84,16 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       .where((MomentJournee m) => _b.moments.contains(m.name))
       .toSet();
 
-  /// Le fuseau retenu, ou celui du foyer tant que la question n'est pas passee.
-  String get _fuseauVu => _fuseau ?? 'Europe/Paris';
+  /// Le fuseau retenu, ou une suggestion d'apres l'horloge de l'appareil tant
+  /// que la question n'est pas passee (jamais une valeur fixe : LA-F, constat
+  /// honnetete, `parcours.offresRaison` promet l'heure locale).
+  String get _fuseauVu =>
+      _fuseau ??
+      fuseauSuggere(
+            fuseauConnu: _apprenant?.fuseauFoyer,
+            decalageAppareil: DateTime.now().timeZoneOffset,
+          )?.iana ??
+      'Europe/Paris';
 
   ParcoursApprenant? get _apprenant => ref
       .watch(parcoursFoyerProvider)

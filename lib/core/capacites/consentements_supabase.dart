@@ -91,7 +91,7 @@ Acceptation? acceptationObservation(List<Acceptation> lues) {
 /// Les consentements du lot A.
 ///
 /// `portConsentementsProvider` (fichier du coordinateur) rend encore
-/// l'implementation indisponible : la demande A-2 (`demandes/A.md`) lui
+/// l'implementation indisponible : la demande A-3 (`demandes/A.md`) lui
 /// demande de pointer sur cet adaptateur. D'ici la, les ecrans du lot A lisent
 /// ce provider.
 final Provider<PortConsentements> consentementsLotAProvider =

@@ -238,7 +238,7 @@ class _Echec extends StatelessWidget {
 }
 
 /// L'invite des comptes existants, a poser la ou l'on veut la signaler
-/// (Compte, lot E ; demande A-2) : elle ne s'affiche que si la lecture des
+/// (Compte, lot E ; demande A-3) : elle ne s'affiche que si la lecture des
 /// acceptations **reussit** et montre la version non signee. Rien pendant la
 /// lecture ni en echec : une invite n'affirme rien qu'elle n'a pas lu.
 class InviteConsentementObservation extends ConsumerWidget {

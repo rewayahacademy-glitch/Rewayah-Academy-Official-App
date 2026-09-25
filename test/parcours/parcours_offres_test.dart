@@ -513,7 +513,7 @@ void main() {
       await monter(tester, <ParcoursApprenant>[
         _personnalise(intention: EtatIntention.affectee),
       ]);
-      expect(find.text(t.parcours.etatGroupeConfirme), findsNothing);
+      expect(find.text(t.parcours.etatClasseConfirmee), findsNothing);
       expect(find.byType(SizedBox), findsWidgets);
     });
 
@@ -524,10 +524,10 @@ void main() {
         _personnalise(intention: EtatIntention.enFormation),
       ]);
 
-      expect(find.text(t.parcours.etatGroupeEnFormation), findsOneWidget);
+      expect(find.text(t.parcours.etatClasseEnFormation), findsOneWidget);
       // Le minimum vient des regles serveur, pas d'une constante d'ecran.
       expect(
-        find.text(t.parcours.etatGroupeEnFormationDetail(minimum: 3)),
+        find.text(t.parcours.etatClasseEnFormationDetail(minimum: 3)),
         findsOneWidget,
       );
       expect(find.textContaining('réserv'), findsNothing);

@@ -1677,16 +1677,19 @@ class Traductions$parcours$fr {
 	String etatDiagnosticEnAttenteDetail({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.';
 
 	/// fr: 'Classe en cours de constitution'
-	String get etatGroupeEnFormation => 'Classe en cours de constitution';
+	String get etatClasseEnFormation => 'Classe en cours de constitution';
 
 	/// fr: 'Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.'
-	String etatGroupeEnFormationDetail({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.';
+	String etatClasseEnFormationDetail({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.';
+
+	/// fr: 'Une classe démarre à partir d'un certain nombre d'élèves. Nous vous préviendrons dès qu'elle est confirmée.'
+	String get etatClasseEnFormationDetailSansMinimum => 'Une classe démarre à partir d\'un certain nombre d\'élèves. Nous vous préviendrons dès qu\'elle est confirmée.';
 
 	/// fr: 'Classe confirmée'
-	String get etatGroupeConfirme => 'Classe confirmée';
+	String get etatClasseConfirmee => 'Classe confirmée';
 
 	/// fr: 'La classe de {prenom} est constituée. Vous retrouverez ses séances dans son espace.'
-	String etatGroupeConfirmeDetail({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.';
+	String etatClasseConfirmeeDetail({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.';
 
 	/// fr: 'Votre lieu a changé depuis ce choix'
 	String get fuseauChange => 'Votre lieu a changé depuis ce choix';
@@ -9322,10 +9325,11 @@ extension on Traductions {
 			'parcours.etatDiagnosticRequisDetail' => ({required Object prenom}) => 'Il reste un échange avec un enseignant pour situer le niveau de ${prenom}. L\'académie vous proposera un rendez-vous.',
 			'parcours.etatDiagnosticEnAttente' => 'Rendez-vous prévu',
 			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object prenom}) => 'Un échange est prévu pour situer le niveau de ${prenom}.',
-			'parcours.etatGroupeEnFormation' => 'Classe en cours de constitution',
-			'parcours.etatGroupeEnFormationDetail' => ({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
-			'parcours.etatGroupeConfirme' => 'Classe confirmée',
-			'parcours.etatGroupeConfirmeDetail' => ({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.',
+			'parcours.etatClasseEnFormation' => 'Classe en cours de constitution',
+			'parcours.etatClasseEnFormationDetail' => ({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
+			'parcours.etatClasseEnFormationDetailSansMinimum' => 'Une classe démarre à partir d\'un certain nombre d\'élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
+			'parcours.etatClasseConfirmee' => 'Classe confirmée',
+			'parcours.etatClasseConfirmeeDetail' => ({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.',
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
 			'parcours.voirHoraires' => 'Voir les horaires',
@@ -9741,9 +9745,9 @@ extension on Traductions {
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => 'Objectif personnel',
-			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
 			'enseignant.cahier.travailMaison' => 'Travail à la maison',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau contenu',
@@ -10255,9 +10259,9 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
-			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
