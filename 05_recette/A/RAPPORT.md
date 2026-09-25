@@ -142,3 +142,37 @@ rappelés ici.
 
 Aucun nouveau défaut hors périmètre découvert pendant le traitement des 6
 constats mineurs (tous dans des fichiers du lot A, cf. `00_OWNERSHIP.md §3`).
+
+## 7. Fusion 1cbc760 et migration (tâche 2/3, poste B)
+
+Régénération des captures des écrans touchés par la fusion de `ui/tuteur-v1`
+(1cbc760) et la migration de l'inscription vers `PageEtape` /
+`ChoiceCardGroup` (commits `65284f5`, `384211d`) :
+
+- `flutter test --no-pub test/capture/la2_inscription_capture_test.dart` sous
+  `CAPTURE_DIR` + les 3 `CAPTURE_MAQUETTE_LA2_*` (`onboarding Mble.png`,
+  `onboarding Mble d.png`, `Onboarding mobile 2.png`) : **21 tests, All tests
+  passed** (verrou, code 0). Les 20 captures 390x844/1440x900 clair/sombre
+  (usage, identité, genre, récapitulatif, identité en erreur, récapitulatif
+  en échec d'actualisation) et les 3 planches maquette | rendu sont
+  régénérées dans `05_recette/A/captures/`.
+- Planche `la2_genre_contre_maquette.png` ouverte et comparée à `onboarding
+  Mble d.png` : **écart non levé**. La maquette place les deux cartes
+  « Homme » / « Femme » côte à côte ; le rendu actuel (étape genre sur
+  `ChoiceCardGroup`) les empile toujours en liste verticale. Conforme au
+  constat de la tâche précédente (demande **A-5** au coordinateur : disposition
+  côte à côte pour `ChoiceCardGroup`) — non corrigible côté lot A tant que
+  A-5 n'est pas traitée (fichier `lib/core/widgets/**` hors périmètre).
+  Planches usage et récapitulatif : conformes, rien de nouveau par rapport
+  à LA-2/LA-F.
+- `dart run tool/verifier_jetons.dart` : **428 fichiers, aucune violation**
+  (verrou, code 0).
+- Frontière `git diff --stat origin/ui/tuteur-v1...HEAD -- supabase .github
+  vercel.json pubspec.yaml lib/core/theme lib/core/router lib/core/widgets` :
+  **vide**.
+- `graphe_imports.ps1 -Repo C:\RA\lot-a -Ref 384211d` : 366 fichiers `lib/`
+  atteignables depuis `lib/main.dart`, 66 non atteignables (hors `.g.dart`) ;
+  aucun fichier lié à l'inscription (usage/identité/genre/récapitulatif)
+  dans la liste des non-atteignables.
+- Aucun changement de code dans cette tâche (seules les captures et ce
+  rapport sont modifiés) ; rien à committer côté `lot-a`.
