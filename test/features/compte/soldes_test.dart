@@ -231,6 +231,46 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('bureau : chaque ligne porte un « Recharger » secondaire, '
+      'jamais en couleur, qui recharge ce profil', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await monterCompte(
+      tester,
+      depart: Routes.tuteurCompteSoldes,
+      taille: const Size(1440, 900),
+      eleves: DonneesDemo.eleves,
+      surcharges: _demo,
+    );
+    for (final String id in <String>[
+      DonneesDemo.aichaId,
+      DonneesDemo.yusufId,
+    ]) {
+      final Finder bouton = find.byKey(SoldesComptePage.rechargerLigneKey(id));
+      expect(bouton, findsOneWidget, reason: id);
+      expect(
+        tester.widget<ActionPrincipale>(bouton).niveau,
+        NiveauAction.secondaire,
+      );
+    }
+    // K-36 : aucun bouton violet plein sur cet ecran.
+    expect(
+      tester
+          .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+          .where((ActionPrincipale a) => a.niveau == NiveauAction.decisive),
+      isEmpty,
+    );
+
+    await toucher(
+      tester,
+      find.byKey(SoldesComptePage.rechargerLigneKey(DonneesDemo.yusufId)),
+    );
+    final Uri recharge = Uri.parse(lieu(routeur));
+    expect(recharge.path, Routes.tuteurCompteRecharge);
+    expect(recharge.queryParameters['profil'], DonneesDemo.yusufId);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('telephone : ni panneau ni selection', (
     WidgetTester tester,
   ) async {
@@ -239,6 +279,10 @@ void main() {
       depart: Routes.tuteurCompteSoldes,
       eleves: DonneesDemo.eleves,
       surcharges: _demo,
+    );
+    expect(
+      find.byKey(SoldesComptePage.rechargerLigneKey(DonneesDemo.aichaId)),
+      findsNothing,
     );
     expect(find.byKey(SoldesComptePage.panneauKey), findsNothing);
     expect(find.text(t.finance.soldes.selectionne), findsNothing);

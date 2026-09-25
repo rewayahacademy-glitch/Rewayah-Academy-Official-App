@@ -20,6 +20,7 @@ class LigneRubrique {
     this.valeur,
     this.onPress,
     this.controle,
+    this.action,
   }) : assert(
          icone != null || meneur != null,
          'une rubrique porte une icone ou un meneur',
@@ -49,6 +50,12 @@ class LigneRubrique {
   /// Un controle natif en fin de ligne (interrupteur). Il garde son propre
   /// geste et sa propre semantique : la ligne ne se presse alors pas.
   final Widget? controle;
+
+  /// Un bouton en fin de ligne (« Recharger » d'un solde). Il garde son geste
+  /// et sa semantique, mais, a la difference de [controle], la ligne reste
+  /// pressable ; il remplace le chevron. Toujours secondaire (K-36). A fort
+  /// grossissement, il passe sous les textes.
+  final Widget? action;
 }
 
 /// Un groupe de rubriques a filets en retrait : le hub du Compte, la fiche
@@ -126,7 +133,9 @@ class _Ligne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Une ligne a controle ne se presse pas : l'interrupteur garde son geste.
-    if (ligne.controle != null || ligne.onPress == null) {
+    // Avec une [LigneRubrique.action], elle se presse quand meme.
+    if ((ligne.controle != null && ligne.action == null) ||
+        ligne.onPress == null) {
       return MergeSemantics(child: _contenu(context, const EtatPression()));
     }
     return Pressable.selon(
@@ -140,6 +149,12 @@ class _Ligne extends StatelessWidget {
   Widget _contenu(BuildContext context, EtatPression etat) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final Widget? action = ligne.action == null
+        ? null
+        : Semantics(container: true, child: ligne.action);
+    // A 200 %, le bouton de fin de ligne passe sous les textes.
+    final bool actionDessous =
+        action != null && MediaQuery.textScalerOf(context).scale(1) > 1.5;
     final Color fond = etat.survole || etat.presse
         ? Color.alphaBlend(
             palette.calqueInteraction(presse: etat.presse),
@@ -180,13 +195,30 @@ class _Ligne extends StatelessWidget {
                     ),
                     child: Row(
                       children: <Widget>[
-                        Expanded(child: _textes(palette, textes)),
+                        Expanded(
+                          child: actionDessous
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    _textes(palette, textes),
+                                    Ecart.vSm,
+                                    action,
+                                  ],
+                                )
+                              : _textes(palette, textes),
+                        ),
                         if (ligne.controle != null) ...<Widget>[
                           Ecart.hSm,
                           ligne.controle!,
                         ],
+                        if (action != null && !actionDessous) ...<Widget>[
+                          Ecart.hSm,
+                          action,
+                        ],
                         if (ligne.onPress != null &&
-                            ligne.controle == null) ...<Widget>[
+                            ligne.controle == null &&
+                            action == null) ...<Widget>[
                           Ecart.hSm,
                           ExcludeSemantics(
                             child: IconTheme(

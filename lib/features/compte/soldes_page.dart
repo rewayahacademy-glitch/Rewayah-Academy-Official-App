@@ -85,6 +85,10 @@ class SoldesComptePage extends ConsumerStatefulWidget {
   /// « Recharger pour (prenom) », dans le panneau.
   static const Key rechargerProfilKey = Key('soldes.rechargerProfil');
 
+  /// Sur bureau, « Recharger » de la ligne d'un profil (secondaire, K-36).
+  static Key rechargerLigneKey(String profilId) =>
+      Key('soldes.rechargerLigne.$profilId');
+
   /// « Voir les mouvements de (prenom) », dans le panneau.
   static const Key mouvementsProfilKey = Key('soldes.mouvementsProfil');
 
@@ -165,6 +169,25 @@ class _SoldesComptePageState extends ConsumerState<SoldesComptePage> {
         selectionId: bureau ? selection?.profilId : null,
         onSelection: bureau
             ? (String id) => _selectionner(routeur, ici, id)
+            : null,
+        // Sur bureau, un « Recharger » par ligne (maquette), toujours
+        // secondaire : repete, il ne doit jamais prendre de couleur (K-36).
+        onRecharger: bureau
+            ? (String id) => routeur?.go(
+                Uri(
+                  path: Routes.tuteurCompteRecharge,
+                  queryParameters: <String, String>{
+                    'profil': id,
+                    'retour': Uri(
+                      path: Routes.tuteurCompteSoldes,
+                      queryParameters: <String, String>{
+                        ...?ici?.queryParameters,
+                        'profil': id,
+                      },
+                    ).toString(),
+                  },
+                ).toString(),
+              )
             : null,
       ),
     );
@@ -265,9 +288,17 @@ Map<String, String> _prenoms(WidgetRef ref) {
 }
 
 class _Soldes extends ConsumerWidget {
-  const _Soldes(this.soldes, {this.selectionId, this.onSelection});
+  const _Soldes(
+    this.soldes, {
+    this.selectionId,
+    this.onSelection,
+    this.onRecharger,
+  });
 
   final SoldesFoyer soldes;
+
+  /// Sur bureau, recharge un profil ; `null` ailleurs (pas de bouton).
+  final ValueChanged<String>? onRecharger;
 
   /// Sur bureau, le profil montre dans le panneau ; `null` ailleurs.
   final String? selectionId;
@@ -282,6 +313,7 @@ class _Soldes extends ConsumerWidget {
     );
     final Map<String, String> prenoms = _prenoms(ref);
     final ValueChanged<String>? selectionner = onSelection;
+    final ValueChanged<String>? recharger = onRecharger;
     final Map<String, String> etats = <String, String>{
       if (acces.hasValue && !acces.hasError)
         for (final AccesBeneficiaire a in acces.requireValue)
@@ -310,6 +342,26 @@ class _Soldes extends ConsumerWidget {
                   onPress: selectionner == null
                       ? null
                       : () => selectionner(s.profilId),
+                  recharger: recharger == null
+                      ? null
+                      : Semantics(
+                          button: true,
+                          label: t.finance.soldes.rechargerPour(
+                            prenom:
+                                prenoms[s.profilId] ??
+                                t.finance.profilSansPrenom,
+                          ),
+                          excludeSemantics: true,
+                          child: ActionPrincipale(
+                            key: SoldesComptePage.rechargerLigneKey(
+                              s.profilId,
+                            ),
+                            libelle: t.finance.recharge.action,
+                            niveau: NiveauAction.secondaire,
+                            pleineLargeur: false,
+                            onPress: () => recharger(s.profilId),
+                          ),
+                        ),
                 ),
             ],
           ),
@@ -325,15 +377,22 @@ class _Soldes extends ConsumerWidget {
     LigneRubrique r, {
     required bool retenue,
     required VoidCallback? onPress,
-  }) => LigneRubrique(
-    libelle: r.libelle,
-    meneur: r.meneur,
-    legende: r.legende,
-    onPress: onPress,
-    controle: retenue
-        ? StatusPill(libelle: t.finance.soldes.selectionne, ton: TonEtat.neutre)
-        : null,
-  );
+    Widget? recharger,
+  }) {
+    return LigneRubrique(
+      libelle: r.libelle,
+      meneur: r.meneur,
+      legende: r.legende,
+      onPress: onPress,
+      controle: retenue
+          ? StatusPill(
+              libelle: t.finance.soldes.selectionne,
+              ton: TonEtat.neutre,
+            )
+          : null,
+      action: recharger,
+    );
+  }
 }
 
 /// Sur bureau, le panneau « Profil selectionne » : son solde, sa derniere
