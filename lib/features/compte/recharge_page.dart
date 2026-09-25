@@ -95,7 +95,7 @@ class _RechargePageState extends ConsumerState<RechargePage> {
         return;
       }
       setState(() => _enCours = false);
-      // LT-8 : S05 lit le devis dans `extra`.
+      // S05 (`VerifierRechargePage`) lit le devis dans `extra`.
       GoRouter.of(context)
           .go(Routes.tuteurCompteRechargeVerifier, extra: devis);
     } on Object catch (e) {

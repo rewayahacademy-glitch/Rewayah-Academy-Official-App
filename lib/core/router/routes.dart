@@ -258,10 +258,15 @@ abstract final class Routes {
   /// offres, dans la meme page (`?profil=` preselectionne, `?retour=`).
   static const String tuteurCompteRecharge = '/tuteur/compte/soldes/recharge';
 
-  /// S05 « Verifier la recharge » : le devis passe par `extra`.
-  // LT-8 : ecran et enregistrement dans le routeur a venir.
+  /// S05 « Verifier la recharge » (LT-8) : le devis passe par `extra` ;
+  /// sans lui, l'ecran renvoie a la recharge.
   static const String tuteurCompteRechargeVerifier =
       '/tuteur/compte/soldes/recharge/verifier';
+
+  /// S06 « Resultat de la recharge » (LT-8) : le resultat passe par `extra` ;
+  /// sans lui, l'ecran renvoie aux soldes.
+  static const String tuteurCompteRechargeResultat =
+      '/tuteur/compte/soldes/recharge/resultat';
 
   /// S08 : le detail d'un mouvement (identifiant encode dans le segment).
   static String mouvementPour(String mouvementId) =>

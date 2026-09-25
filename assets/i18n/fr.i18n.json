@@ -193,7 +193,36 @@
       "aucuneOffre": "Aucune offre rendue pour ce profil",
       "aucuneOffrePhrase": "Le serveur ne propose aucune recharge pour {prenom} pour le moment.",
       "devisIndisponible": "Vérification indisponible pour le moment",
-      "devisIndisponiblePhrase": "Le serveur ne sait pas encore établir le prix de cette recharge. Rien n'a été payé ni enregistré."
+      "devisIndisponiblePhrase": "Le serveur ne sait pas encore établir le prix de cette recharge. Rien n'a été payé ni enregistré.",
+      "verification": {
+        "titre": "Vérifier la recharge",
+        "sousTitre": "Vérifiez la répartition et le montant.",
+        "prix": "Prix",
+        "remise": "Remise",
+        "aucuneRemise": "Aucune",
+        "quantite": "Ajoute",
+        "total": "Total à payer",
+        "valableJusqua": "Devis valable jusqu'au {date}",
+        "payer": "Payer",
+        "perdu": "Ce devis n'est plus disponible",
+        "perduPhrase": "Le devis n'est gardé que pendant la recharge. Reprenez la recharge pour en obtenir un nouveau. Rien n'a été payé.",
+        "reprendre": "Reprendre la recharge",
+        "expire": "Ce devis a expiré",
+        "expirePhrase": "Le prix n'est plus garanti. Reprenez la recharge pour obtenir un nouveau devis. Rien n'a été payé.",
+        "paiementIndisponible": "Paiement indisponible pour le moment",
+        "paiementIndisponiblePhrase": "Le serveur ne sait pas encore encaisser une recharge. Rien n'a été payé ni attribué."
+      },
+      "resultat": {
+        "titre": "Résultat de la recharge",
+        "paiementConfirme": "Paiement confirmé",
+        "paiementEnAttente": "Paiement en attente",
+        "paiementEchoue": "Paiement échoué",
+        "reference": "Référence du paiement : {reference}",
+        "attribution": "Attribution par profil",
+        "retourSoldes": "Revenir aux soldes",
+        "perdu": "Ce résultat n'est plus affiché",
+        "perduPhrase": "Le résultat d'une recharge n'est montré qu'une fois. Les soldes et les mouvements disent ce qui a été attribué."
+      }
     },
     "issues": {
       "confirmee": "Confirmée",

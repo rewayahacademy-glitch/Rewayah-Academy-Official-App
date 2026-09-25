@@ -50,6 +50,7 @@ import '../../features/compte/preferences_page.dart';
 import '../../features/compte/recharge_page.dart';
 import '../../features/compte/securite_page.dart';
 import '../../features/compte/soldes_page.dart';
+import '../../features/compte/verifier_recharge_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
@@ -93,6 +94,7 @@ import '../../features/tc_mushaf/mushaf_page.dart';
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
+import '../capacites/port_finance_foyer.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../mouvement/transitions.dart';
@@ -677,7 +679,29 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                             retour: retourRecharge(etat),
                           ),
                         ),
-                        // LT-8 : `verifier` (S05, devis dans `extra`).
+                        routes: <RouteBase>[
+                          // S05-S06 (LT-8) : devis et resultat par `extra`.
+                          GoRoute(
+                            path: 'verifier',
+                            pageBuilder: glissee(
+                              (GoRouterState etat) => VerifierRechargePage(
+                                devis: etat.extra is DevisRecharge
+                                    ? etat.extra! as DevisRecharge
+                                    : null,
+                              ),
+                            ),
+                          ),
+                          GoRoute(
+                            path: 'resultat',
+                            pageBuilder: glissee(
+                              (GoRouterState etat) => ResultatRechargePage(
+                                resultat: etat.extra is ResultatRecharge
+                                    ? etat.extra! as ResultatRecharge
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       GoRoute(
                         path: 'mouvements',
