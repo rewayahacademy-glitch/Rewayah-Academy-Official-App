@@ -331,3 +331,9 @@ Statut : fini.
 
 ## HL-B-1 (25/09) icones femme/homme/horloge : fait, ui/tuteur-v1-fin @ 1ea21dd (poussee). Tests touches verts, captures A et o regenerees. demandes/A.md et O.md a jour.
 
+
+## P2-09 (25/09, session B-2026-09-25-coord) : FAIT
+
+Lecture seule sur `ui/tuteur-v1-fin` (worktree `C:\RA\lot-fin`), aucun code touche. Carte des 34 routes `/tuteur/*` (`routes.dart`, `app_router.dart`) contre leurs boutons et leurs tests. Resultat : 0 bloquant, 2 majeurs, 2 mineurs. Majeurs : (1) le bouton « Essayer la demonstration » n'existe que hors environnement `production` (`environnementAutoriseDemo`) -- en production seule l'adresse tapee `?demo=tuteur` ouvre la demo, aucun bouton n'y mene depuis `main.dart` ; explique probablement pourquoi le directeur ne la trouve pas sur son build. (2) `test/router/navigation_test.dart` prouve que chaque route existe et rend le bon ecran, mais seules 4 de ses 34 lignes sont verifiees par un vrai tap (le tap existe ailleurs, par ecran, verifie par sondage sur Foyer/Classe/Historique/Compte, pas relu pour les 34). Mineurs : ecran « creer mon profil » indisponible sans retour verifie ; deux redirections (`/tuteur/disponibilites`, `/tuteur/reglages`) sans bouton restant qui y mene. Rapport : `05_recette/P2/P2-09.md` (pilotage @ 543e1eb, pousse). Tableau a jour (statut fait, preuve postee).
+
+Statut : fini.
