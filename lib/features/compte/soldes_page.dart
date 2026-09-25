@@ -47,9 +47,11 @@ String? resumeTotalSoldes(AsyncValue<SoldesFoyer> soldes) {
   if (lus.totaux.isEmpty) {
     return t.finance.aucunTotal;
   }
-  return lus.totaux
+  final String total = lus.totaux
       .map((TotalSoldes s) => formaterMontant(s.montantMineur, s.devise))
       .join(' · ');
+  // Un total partiel se dit comme tel (constat LT-R 5).
+  return lus.complet ? total : t.finance.totalPartiel(total: total);
 }
 
 /// S01 « Soldes et recharges » (`/tuteur/compte/soldes`, complement Tuteur,
