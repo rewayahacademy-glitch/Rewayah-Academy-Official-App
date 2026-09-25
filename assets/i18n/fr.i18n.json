@@ -141,6 +141,32 @@
   },
   "salle": {
     "bandeauPermanent": "Cours enregistré, visite de contrôle possible.",
+    "seance": {
+      "titre": "Séance en direct",
+      "titreGuidee": "Ma séance",
+      "ligne": "{debut} · {fin}",
+      "minutesRestantes": "{minutes} min restantes",
+      "sePoursuit": "La séance se poursuit.",
+      "enLigne": "En ligne",
+      "reconnexion": "Reconnexion",
+      "coursEnregistreCourt": "Le cours est enregistré.",
+      "votreParentObserve": "Votre parent observe la séance.",
+      "tonParentObserve": "Ton parent observe la séance.",
+      "tuteurDeObserve": "Tuteur de {prenom} observe.",
+      "leTuteurDeObserve": "Le tuteur de {prenom} observe la séance.",
+      "mentionEtNotice": "{mention} {notice}",
+      "retour": "Retour",
+      "notifications": "Notifications",
+      "reglages": "Réglages",
+      "compteDe": "Compte de {nom}",
+      "sortir": "Quitter la séance",
+      "compteurEleves": "Élèves {connectes}/{inscrits}",
+      "statut": {
+        "connecte": "Connecté",
+        "pasEncoreConnecte": "Pas encore connecté",
+        "connexionInterrompue": "Connexion interrompue"
+      }
+    },
     "micro": "Micro",
     "microCoupe": "Micro coupé",
     "camera": "Caméra",

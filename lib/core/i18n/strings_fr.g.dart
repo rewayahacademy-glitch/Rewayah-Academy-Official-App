@@ -199,6 +199,8 @@ class Traductions$salle$fr {
 	/// fr: 'Cours enregistré, visite de contrôle possible.'
 	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
 
+	late final Traductions$salle$seance$fr seance = Traductions$salle$seance$fr.internal(_root);
+
 	/// fr: 'Micro'
 	String get micro => 'Micro';
 
@@ -2414,6 +2416,74 @@ class Traductions$commun$dates$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+}
+
+// Path: salle.seance
+class Traductions$salle$seance$fr {
+	Traductions$salle$seance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séance en direct'
+	String get titre => 'Séance en direct';
+
+	/// fr: 'Ma séance'
+	String get titreGuidee => 'Ma séance';
+
+	/// fr: '{debut} · {fin}'
+	String ligne({required Object debut, required Object fin}) => '${debut} · ${fin}';
+
+	/// fr: '{minutes} min restantes'
+	String minutesRestantes({required Object minutes}) => '${minutes} min restantes';
+
+	/// fr: 'La séance se poursuit.'
+	String get sePoursuit => 'La séance se poursuit.';
+
+	/// fr: 'En ligne'
+	String get enLigne => 'En ligne';
+
+	/// fr: 'Reconnexion'
+	String get reconnexion => 'Reconnexion';
+
+	/// fr: 'Le cours est enregistré.'
+	String get coursEnregistreCourt => 'Le cours est enregistré.';
+
+	/// fr: 'Votre parent observe la séance.'
+	String get votreParentObserve => 'Votre parent observe la séance.';
+
+	/// fr: 'Ton parent observe la séance.'
+	String get tonParentObserve => 'Ton parent observe la séance.';
+
+	/// fr: 'Tuteur de {prenom} observe.'
+	String tuteurDeObserve({required Object prenom}) => 'Tuteur de ${prenom} observe.';
+
+	/// fr: 'Le tuteur de {prenom} observe la séance.'
+	String leTuteurDeObserve({required Object prenom}) => 'Le tuteur de ${prenom} observe la séance.';
+
+	/// fr: '{mention} {notice}'
+	String mentionEtNotice({required Object mention, required Object notice}) => '${mention} ${notice}';
+
+	/// fr: 'Retour'
+	String get retour => 'Retour';
+
+	/// fr: 'Notifications'
+	String get notifications => 'Notifications';
+
+	/// fr: 'Réglages'
+	String get reglages => 'Réglages';
+
+	/// fr: 'Compte de {nom}'
+	String compteDe({required Object nom}) => 'Compte de ${nom}';
+
+	/// fr: 'Quitter la séance'
+	String get sortir => 'Quitter la séance';
+
+	/// fr: 'Élèves {connectes}/{inscrits}'
+	String compteurEleves({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}';
+
+	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
 }
 
 // Path: connexion.recuperation
@@ -8067,6 +8137,24 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: salle.seance.statut
+class Traductions$salle$seance$statut$fr {
+	Traductions$salle$seance$statut$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connecté'
+	String get connecte => 'Connecté';
+
+	/// fr: 'Pas encore connecté'
+	String get pasEncoreConnecte => 'Pas encore connecté';
+
+	/// fr: 'Connexion interrompue'
+	String get connexionInterrompue => 'Connexion interrompue';
+}
+
 // Path: appareils.emetteur.verification
 class Traductions$appareils$emetteur$verification$fr {
 	Traductions$appareils$emetteur$verification$fr.internal(this._root);
@@ -11264,6 +11352,28 @@ extension on Traductions {
 			'etat.termine' => 'Terminé',
 			'destructif.irreversible' => 'Cette action ne peut pas être annulée.',
 			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
+			'salle.seance.titre' => 'Séance en direct',
+			'salle.seance.titreGuidee' => 'Ma séance',
+			'salle.seance.ligne' => ({required Object debut, required Object fin}) => '${debut} · ${fin}',
+			'salle.seance.minutesRestantes' => ({required Object minutes}) => '${minutes} min restantes',
+			'salle.seance.sePoursuit' => 'La séance se poursuit.',
+			'salle.seance.enLigne' => 'En ligne',
+			'salle.seance.reconnexion' => 'Reconnexion',
+			'salle.seance.coursEnregistreCourt' => 'Le cours est enregistré.',
+			'salle.seance.votreParentObserve' => 'Votre parent observe la séance.',
+			'salle.seance.tonParentObserve' => 'Ton parent observe la séance.',
+			'salle.seance.tuteurDeObserve' => ({required Object prenom}) => 'Tuteur de ${prenom} observe.',
+			'salle.seance.leTuteurDeObserve' => ({required Object prenom}) => 'Le tuteur de ${prenom} observe la séance.',
+			'salle.seance.mentionEtNotice' => ({required Object mention, required Object notice}) => '${mention} ${notice}',
+			'salle.seance.retour' => 'Retour',
+			'salle.seance.notifications' => 'Notifications',
+			'salle.seance.reglages' => 'Réglages',
+			'salle.seance.compteDe' => ({required Object nom}) => 'Compte de ${nom}',
+			'salle.seance.sortir' => 'Quitter la séance',
+			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}',
+			'salle.seance.statut.connecte' => 'Connecté',
+			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
+			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
 			'salle.micro' => 'Micro',
 			'salle.microCoupe' => 'Micro coupé',
 			'salle.camera' => 'Caméra',
@@ -11667,6 +11777,8 @@ extension on Traductions {
 			'ficheEleve.lignes.inscription' => 'Parcours et inscription',
 			'ficheEleve.lignes.inscriptionLegende' => 'Questionnaire et classe',
 			'ficheEleve.lignes.interface' => 'Interface',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.lignes.camera' => 'Caméra en cours',
 			'ficheEleve.lignes.cameraAutorisee' => 'Autorisée',
 			'ficheEleve.lignes.cameraNonAutorisee' => 'Non autorisée',
@@ -11689,8 +11801,6 @@ extension on Traductions {
 			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
 			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
 			'ficheEleve.informations.autre' => 'Choisir une autre photo',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.informations.annuler' => 'Annuler',
 			'ficheEleve.informations.etapeEnvoi' => 'Envoi de la photo, étape 1 sur 2',
 			'ficheEleve.informations.etapeEnregistrement' => 'Enregistrement sur le profil, étape 2 sur 2',
@@ -12181,6 +12291,8 @@ extension on Traductions {
 			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
 			'admin.evaluations.filtreRealisees' => 'Réalisées',
 			'admin.evaluations.filtreAnnulees' => 'Annulées',
@@ -12203,8 +12315,6 @@ extension on Traductions {
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
@@ -12695,6 +12805,8 @@ extension on Traductions {
 			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
 			'compte.themeClair' => 'Clair',
 			'compte.themeSombre' => 'Sombre',
+			_ => null,
+		} ?? switch (path) {
 			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
@@ -12717,8 +12829,6 @@ extension on Traductions {
 			'compte.economieDonnees' => 'Économie de données',
 			'compte.economieDonneesDetail' => 'Réduit la qualité vidéo sur réseau mobile',
 			'compte.lectureGrande' => 'Lecture en grand texte',
-			_ => null,
-		} ?? switch (path) {
 			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
 			'compte.profilsTitre' => 'Profils du foyer',
 			'compte.profilsIntro' => 'Les enfants rattachés à votre foyer.',
@@ -13209,6 +13319,8 @@ extension on Traductions {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
@@ -13231,8 +13343,6 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
 			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
@@ -13723,6 +13833,8 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
@@ -13745,8 +13857,6 @@ extension on Traductions {
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support au groupe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',

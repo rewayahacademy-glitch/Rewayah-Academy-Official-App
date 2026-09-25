@@ -132,6 +132,7 @@ Widget hoteCapture(
   List<Override> surcharges = const <Override>[],
   ThemeMode themeMode = ThemeMode.light,
   double echelleTexte = 1,
+  InterfaceMode interfaceMode = InterfaceMode.standard,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
@@ -140,8 +141,8 @@ Widget hoteCapture(
       child: Builder(
         builder: (BuildContext context) => MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          theme: AppTheme.pour(interfaceMode, Brightness.light),
+          darkTheme: AppTheme.pour(interfaceMode, Brightness.dark),
           themeMode: themeMode,
           locale: TranslationProvider.of(context).flutterLocale,
           supportedLocales: AppLocaleUtils.supportedLocales,
