@@ -199,3 +199,6 @@ Tableau : LA-F passe a `fait` (v6, preuve REVUE2.md + suite verte). LA-2 deja `f
 
 LOT E TERMINE bc6b0b3 (LE-F, 25/09 08:20 : fusion base, reglages enfant -> fiche du Foyer, suite verte)
 
+
+LOT O TERMINE e45963e (LO-F, 25/09 08:36 : fusion base, revue RAS, suite verte +2313 ~284, analyze propre)
+
