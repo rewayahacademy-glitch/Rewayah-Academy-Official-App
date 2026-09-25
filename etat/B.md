@@ -337,3 +337,23 @@ Statut : fini.
 Lecture seule sur `ui/tuteur-v1-fin` (worktree `C:\RA\lot-fin`), aucun code touche. Carte des 34 routes `/tuteur/*` (`routes.dart`, `app_router.dart`) contre leurs boutons et leurs tests. Resultat : 0 bloquant, 2 majeurs, 2 mineurs. Majeurs : (1) le bouton « Essayer la demonstration » n'existe que hors environnement `production` (`environnementAutoriseDemo`) -- en production seule l'adresse tapee `?demo=tuteur` ouvre la demo, aucun bouton n'y mene depuis `main.dart` ; explique probablement pourquoi le directeur ne la trouve pas sur son build. (2) `test/router/navigation_test.dart` prouve que chaque route existe et rend le bon ecran, mais seules 4 de ses 34 lignes sont verifiees par un vrai tap (le tap existe ailleurs, par ecran, verifie par sondage sur Foyer/Classe/Historique/Compte, pas relu pour les 34). Mineurs : ecran « creer mon profil » indisponible sans retour verifie ; deux redirections (`/tuteur/disponibilites`, `/tuteur/reglages`) sans bouton restant qui y mene. Rapport : `05_recette/P2/P2-09.md` (pilotage @ 543e1eb, pousse). Tableau a jour (statut fait, preuve postee).
 
 Statut : fini.
+
+## P2-10 (25/09, session B-2026-09-25-coord) : FAIT
+
+Lecture seule sur `ui/tuteur-v1-fin` (worktree `C:\RA\lot-fin` @ 8bc5f2b), aucun code
+touche. Revue mobile/tablette/desktop/accessibilite du role Tuteur : lecture des
+composants partages (`Pressable`, `NavShell`, `AppBottomSheet`, contraste) et
+inventaire des preuves automatisees (`test/accessibilite/*`,
+`test/features/**/*echelle_texte*`, `test/theme/contraste*`). Resultat : 1 bloquant,
+1 majeur, 2 mineurs. Bloquant : le test gele des 24 ecrans
+(`test/accessibilite/rtl_echelle_texte_ecrans_test.dart`) et l'unique test dedie
+d'echelle de texte (`classe_tuteur`) ne couvrent aucun ecran des autres dossiers du
+lot K (`tc_mes_groupes`, `tc_espace_groupe`, `tc_flux_academique`,
+`tc_observation_ui`, `tc_classe_live`, `tc_dock`, `demo`) : aucune preuve RTL/200 %
+pour eux. Majeur : le bandeau « Demonstration » (`Banner`) est purement visuel, invisible
+a un lecteur d'ecran. Mineurs : nom de participant tronque sans alternative semantique
+en salle live ; ardoise (`tc_dock`) sans alternative au geste de dessin. Rapport :
+`05_recette/P2/P2-10.md` (pilotage @ 5f30149, pousse). Tableau a jour (statut fait,
+preuve postee).
+
+Statut : fini.
