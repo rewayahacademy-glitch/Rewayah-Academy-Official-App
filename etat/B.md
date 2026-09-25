@@ -325,3 +325,6 @@ Limites : repere `Banner` d'angle discret sur les captures ; actions encore ados
 `git fetch` : `origin/ui/tuteur-v1` deja a `bd51224` (ff-only sans effet). Fusion `git merge --no-ff origin/ui/tuteur-v1-demo` (@ `bb51374`) -> `2e0fb7a`, sans conflit (pas de conflit i18n/slang). Frontiere `supabase/ .github/ vercel.json pubspec.yaml assets/fonts lib/core/theme dart_define.json` vide. Sous verrou : `flutter analyze --fatal-infos` aucun probleme ; suite complete `flutter test` +2691, 0 echec, code 0 (466 s). Push fait : `origin/ui/tuteur-v1` @ `2e0fb7a`. `ETAT_A.md` en-tete ecrite (nouvelle base, mode demo, points ouverts reportes). Pilotage pousse.
 
 Statut : fini.
+
+## HL-B-1 (25/09) icones femme/homme/horloge : fait, ui/tuteur-v1-fin @ 1ea21dd (poussee). Tests touches verts, captures A et o regenerees. demandes/A.md et O.md a jour.
+

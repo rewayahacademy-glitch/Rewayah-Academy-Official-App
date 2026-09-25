@@ -25,3 +25,8 @@
 - **Correction (test seul, aucun fichier de lib/ touche)** : `_surcharges` ajoute `portClassesFoyerProvider` (`FauxClassesFoyer`, classe fictive A pour `e1`) et `portSeancesFamilleProvider` (`FauxSeancesFamille`, seance `s1` en direct) ; les doubles d'observation du lot O (`FauxPortVisite`, `FauxPortPolitique`) sont gardes (pas `surchargesClasse`, qui surchargerait deux fois les memes providers : interdit par Riverpod). Nouveau `_ouvrirObservation` : Accueil reel -> « Voir la classe » -> « Observer la seance ». Assertions de retour -> `Routes.classePour('classe-a', eleveId: 'e1')` ; bouton de fin -> `t.tc.observation.entree.retourClasse`. Repere de coquille au telephone : « Historique » dans `NavShell.barreBasseKey` (le titre de l'Historique et le lien de la classe portent le meme mot).
 - **Preuves (sous verrou)** : fichier +5 vert ; `test/teaching_core/g` + `test/features/classe_tuteur` +269 ~109 vert ; `flutter analyze --fatal-infos` : aucun probleme.
 - **Commits** (depot local `ui/tuteur-v1`, NON pousse) : `24f0b0f` (correction), `bd51224` (format). Reste avant push : suite complete sous verrou.
+
+## O-4 icone horloge : TRAITE (HL-B-1, 25/09, ui/tuteur-v1-fin @ 1ea21dd)
+- Phosphor `clock` 0xe19a (trouve aussi : alarm, timer, watch, clock-countdown). AppIcons.horloge ajoute ; resultat_visite_page.dart l'affiche a la place du sablier ; fin_visite_test.dart verifie horloge presente et sablier absent. Captures regenerees : 05_recette/o/captures/o3_fin_{390x844@3,1440x900@1}_{light,dark}.png, o3_fin_seance.
+- Reste : le sablier des ecrans du lot C (C-5/C-13, m4) n'a pas ete change.
+

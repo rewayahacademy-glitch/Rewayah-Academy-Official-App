@@ -56,3 +56,8 @@ Signature : Poste B, LA-F2.
 ## A-5.2 (LA-C2, 25/09) : icone femme
 La maquette 'onboarding Mble d' montre une silhouette feminine pour Femme. Aucune icone de ce type dans lib/core/icons/app_icons.dart : les deux cartes utilisent AppIcons.profil. Ressource a fournir (glyphe Phosphor + entree AppIcons) si le directeur la veut.
 
+
+## A-5.2 icone femme : TRAITE (HL-B-1, 25/09, ui/tuteur-v1-fin @ 1ea21dd)
+- Recherche dans la police Phosphor embarquee (ligatures GSUB, 1512 noms). Trouve : `gender-female` 0xe6e0 et `gender-male` 0xe6e2, presents dans les deux graisses. Absents de Phosphor : woman, women, girl, lady, venus, person-dress, face-woman, user-female, man, boy (et les noms francais).
+- AppIcons.femme / AppIcons.homme ajoutes ; genre_etape.dart les utilise ; test inscription_test.dart verifie les deux symboles. Captures regenerees : 05_recette/A/captures/la2_genre_{390x844,1440x900}_{light,dark}.png.
+
