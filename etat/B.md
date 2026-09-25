@@ -1,5 +1,12 @@
 # Avancement du poste B
 
+## INT-A suite (25/09, session B-2026-09-25-coord, depart 08:33)
+
+Statut : bloque. Fusion locale du lot A deja committee dans C:\RA\depot (9f9d3bd "merge: integration du lot A"), frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme` VIDE (verifie). `flutter test` complet lance sous verrou (journal C:\RA\pilotage\04_phase0\integration_lotA_tests.log) : +2402 ~358 -2, 2 echecs :
+- `test/features/appareils/appareil_partage_test.dart` : "Tuteur : appareils depuis la navigation (vrai routeur, gestes) onglet Foyer -> profil -> Retirer confirme -> retours jusqu au Foyer" — `AppareilsPage` introuvable apres le geste (0 widget trouve, 1 attendu).
+- `test/features/appareils/emetteur_qr_test.dart` : "Foyer puis profil puis « Connecter un appareil » ouvre l emetteur ; le retour ramene" — URL attendue `/tuteur/foyer/e1/appareils`, URL reelle `/tuteur/foyer/e1` (la navigation ne pousse pas la sous-route appareils apres le retour de l'emetteur).
+Les routes elles-memes (`lib/core/router/app_router.dart:498` et `:548`) semblent correctement definies (statique avant `:eleveId`) ; l'echec parait venir d'un widget/callback de navigation touche par la fusion du lot A (StatefulShellBranch appareils du lot D/B), pas d'une simple faute de frappe. Non corrige faute de temps (limite 35 min) : pas de push vers `origin/ui/tuteur-v1`, ETAT_A.md non modifie (regle : uniquement si vert). Reprise : localiser dans quel commit fusionne la navigation vers `AppareilsPage`/l'emetteur QR a change (git log --oneline sur les fichiers `lib/features/appareils/*` et `lib/core/router/app_router.dart` entre `origin/ui/tuteur-v1` et HEAD), comparer avec les tests avant fusion.
+
 ## DIRECTIVE DU DIRECTEUR (24/09, 22 h 40) : pour les DEUX postes, à reporter dans COORDINATION.md par A
 
 Interdit désormais de lancer une tâche d'agent trop grosse. Tout est découpé pour que **chaque agent (avec ses sous-agents) finisse sa tâche en moins de 40 minutes**. Motif : l'ordinateur peut s'éteindre, et il ne doit pas tourner 24 h ; une coupure ne doit jamais faire perdre des heures de travail.
