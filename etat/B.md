@@ -1,5 +1,9 @@
 # Avancement du poste B
 
+## P2-16 revue et integration (25/09, session B-2026-09-25-coord)
+
+Statut : **fini**. Revue adversariale courte du diff `origin/ui/tuteur-v1..origin/ui/tuteur-v1-anim` : rien a corriger (durees <= 300 ms, `disableAnimations` respecte partout, `RepaintBoundary`, controleur `dispose()`, aucune boucle). Fusion dans `C:\RA\depot` : `git merge --no-ff origin/ui/tuteur-v1-anim` -> `92f5cf7`, sans conflit. Frontiere (supabase/.github/vercel.json/pubspec.yaml) vide. `flutter analyze --fatal-infos` propre, `flutter test` complet 2723 verts/0 echec/572 sautes. Pousse : `origin/ui/tuteur-v1` `f93272b..92f5cf7`. Detail : `05_recette/P2-16/RAPPORT.md` (etape 6). Tableau (artefact, collection `etapes`, ligne P2-16) mis a jour.
+
 ## C-14 seances et parcours (25/09, session B-2026-09-25-coord)
 
 Statut : **fini**. K6 etendu (seances hebdomadaires, fuseau, parcours), catalogue branche, mode demo alimente, aucune source serveur existante (production : indisponible honnete). `ui/tuteur-v1-fin` @ `8bc5f2b` poussee. Tests cibles verts, captures `05_recette/c/captures/c14/`. Reponse dans `demandes/C.md`. Tableau : ligne HL-B-2.

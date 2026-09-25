@@ -128,3 +128,17 @@ Toutes ces animations durent entre 150 et 300 millisecondes (moins d'un tiers de
 **Captures d'ecran :** deja a jour depuis l'etape 3 (68 images dans `05_recette\P2-16\captures_apres`). Rien de visuel n'a change depuis (seules les mesures de performance ont ete ajoutees) : la mise en page reste identique une fois les animations terminees, pas de nouvelle capture necessaire.
 
 **P2-16 est termine.** Tableau mis a jour (statut fait, preuve = ce rapport).
+
+# Etape 6 (revue et integration dans origin/ui/tuteur-v1, session B-2026-09-25-coord)
+
+Revue adversariale courte du diff `origin/ui/tuteur-v1..origin/ui/tuteur-v1-anim` (`C:\RA\depot`) : aucune animation en boucle ni infinie hors indicateurs de chargement ; `Mouvement.reduit`/`MediaQuery.disableAnimations` verifie sur chaque composant anime (`ApparitionDouce`, `BasculeEtat`, `pageGlissee`, `_SoulignementAnime`, `_Croissance`) ; `RepaintBoundary` pose autour de chaque widget qui s'anime ; `AnimationController` de `FonduOnglet` correctement `dispose()` ; toutes les durees bornees a `Mouvement.maximum` (300 ms) ; test existant ajuste sans affaiblissement (pump supplementaire pour attendre le fondu, assertion inchangee). Rien trouve a corriger.
+
+Integration dans `C:\RA\depot` :
+- `git merge --ff-only origin/ui/tuteur-v1` (deja a jour).
+- `git merge --no-ff origin/ui/tuteur-v1-anim -m "merge: animations sobres du role tuteur (P2-16)"` -> commit `92f5cf7`, sans conflit.
+- Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml` : **vide**.
+- `flutter analyze --fatal-infos` (sous verrou) : **aucun probleme**.
+- `flutter test` (suite complete, sous verrou) : **2723 tests, 0 echec, 572 sautes, code 0**.
+- `git push origin ui/tuteur-v1` : **f93272b..92f5cf7**, reussi.
+
+**P2-16 integre dans `origin/ui/tuteur-v1` @ `92f5cf7`.**

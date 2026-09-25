@@ -1,5 +1,13 @@
 # État annoncé par le poste A (coordinateur)
 
+## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ 92f5cf7 (animations sobres P2-16)
+
+- **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `92f5cf7`** (fusion `--no-ff` de `origin/ui/tuteur-v1-anim` sur `f93272b`, commit `92f5cf7`, sans conflit).
+- Contenu ajoute (P2-16) : socle de mouvement partage `lib/core/mouvement/` (durees 150-300 ms, courbes `easeOutCubic`/`emphasized`, respect de `MediaQuery.disableAnimations`) ; transitions de page glissees (`app_router.dart`, sens RTL/LTR) ; fondu court sur `AppCard`, `ChoiceCardGroup` (selection), `BlocAsynchrone` (changement d'etat) ; echelonnement des 8 premiers elements (Catalogue des classes, Hub du compte, lignes de l'Historique) ; soulignement d'onglet anime une fois.
+- Revue adversariale courte (poste B) avant fusion : aucune animation en boucle hors indicateurs de chargement, `Mouvement.reduit`/`disableAnimations` verifie sur chaque composant anime, `RepaintBoundary` pose autour de ce qui s'anime, `AnimationController` de `FonduOnglet` correctement `dispose()`, toutes les durees <= 300 ms (`Mouvement.maximum`). Rien a corriger.
+- Verification sous verrou (poste B coordinateur, P2-16) : `flutter analyze --fatal-infos` **aucun probleme** ; suite complete `flutter test` **2723 tests, 0 echec, 572 ignores, code 0**.
+- Frontiere `git diff --stat origin/ui/tuteur-v1..HEAD -- supabase .github vercel.json pubspec.yaml` (apres fusion) : **vide**.
+
 ## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ f93272b (finitions du role tuteur, P2-08 a P2-13, ROLE TUTEUR V1 TERMINE cote frontend)
 
 - **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `f93272b`** (fusion `--no-ff` de `origin/ui/tuteur-v1-fin` sur `2e0fb7a`, commit `f93272b`, sans conflit).
