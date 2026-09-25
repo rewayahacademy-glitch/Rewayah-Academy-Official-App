@@ -24,3 +24,21 @@ Tout est neutralise quand `MediaQuery.disableAnimations` est vrai. Aucune boucle
 
 ## Reste a faire pour clore P2-16
 Branchement du socle dans les ecrans (apparition des listes et cartes, BasculeEtat sur les etats de chargement), retour visuel au toucher homogene, barre de navigation animee, mesure de performance avant/apres (60 i/s), captures.
+
+# Etape 2 : socle branche dans les ecrans (commit e53eb6d)
+
+Branche `ui/tuteur-v1-anim` @ e53eb6d (poussee). Branchement fait dans les widgets partages, ce qui couvre d'un coup Accueil, Foyer, fiche enfant, Historique, Compte, Catalogue et Classe, sans surcharger chaque ecran :
+- `BlocAsynchrone` (lib/core/widgets/bloc_asynchrone.dart) : chaque passage squelette -> contenu / vide / echec / indisponible se fait par `BasculeEtat` (fondu 220 ms). Un rafraichissement qui reste dans le meme etat ne relance rien. C'est l'apparition douce du contenu de tous les ecrans qui lisent une valeur asynchrone.
+- Retour au toucher : l'enfoncement 0.98 de `Pressable` existait deja pour toutes les cartes et boutons partages ; pas de doublon. `AppCard` passe en `AnimatedContainer` (150 ms) : fond et contour de survol, pression et selection changent en fondu au lieu de sauter.
+- Cartes de choix (`ChoiceCardGroup`) : la selection passe d'une teinte a l'autre en 150 ms, le point du radio grandit a sa pose.
+- Barre de navigation flottante (`nav_shell.dart`) : le soulignement de l'onglet actif s'etire depuis son centre (220 ms, courbe emphasized).
+- Compte tuteur : les cartes s'echelonnent (35 ms, 8 premieres au plus).
+Tout est coupe quand `MediaQuery.disableAnimations` est vrai ; aucune boucle, aucune dependance.
+
+## Verifications (sous verrou)
+- `dart analyze --fatal-infos lib test` : aucun probleme.
+- `flutter test` (suite entiere) : 2720 verts, 572 sautes (preexistants), 0 echec.
+- Un seul test ajuste : `composants_etats_test.dart` (BlocAsynchrone perdu) attend la fin du fondu (`pump(Mouvement.maximum)`) avant de verifier que le squelette a disparu ; assertion inchangee.
+
+## Reste pour clore P2-16
+Echelonnement fin des listes propres a certains ecrans (Historique, Catalogue) si juge utile apres revue visuelle ; mesure de performance (profil 60 i/s sur telephone) ; captures avant/apres.

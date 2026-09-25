@@ -395,3 +395,10 @@ Branche `ui/tuteur-v1-anim` @ 1b7a0c7 (worktree C:\RA\lot-anim). Socle `lib/core
 P2-16 reste en_cours. Prochaine etape : brancher le socle dans les ecrans tuteur (listes/cartes, etats de chargement), retour au toucher, barre animee, mesure de performance et captures.
 
 Statut : fini (etape 1).
+
+## P2-16 etape 2 (socle branche dans les ecrans) : FAIT (25/09, session B-2026-09-25-coord)
+
+`ui/tuteur-v1-anim` @ e53eb6d (poussee). BasculeEtat dans BlocAsynchrone (tous les ecrans asynchrones), AppCard et cartes de choix animees (AnimatedContainer 150 ms, point du radio), soulignement anime de l'onglet actif, cartes du Compte echelonnees. Retour au toucher : Pressable 0.98 deja present, pas de doublon. analyze propre, `flutter test` complet 2720 verts. Rapport complete.
+Arret ici. Reste P2-16 : mesure de performance sur telephone, captures, echelonnement Historique/Catalogue si voulu. P2-16 reste en_cours.
+
+Statut : a_suivre.
