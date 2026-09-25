@@ -83,3 +83,13 @@ au coordinateur (E-1 à E-10, hors E-6/E-8/E-10 informatives) restent
 nécessaires pour brancher identité/accès du compte, historique des
 observations (tuteur et admin) en production — c'est le comportement attendu
 tant que COORD n'a pas branché les ports, pas un défaut du lot.
+
+## Suite donnee (LE-F, poste B coordinateur, 25/09)
+
+- Bloquants / majeurs : aucun, rien a corriger.
+- Fusion de origin/ui/tuteur-v1 dans ui/tuteur-v1-e (conflit strings.g.dart : union fr.i18n.json + dart run slang).
+- Consequence de la fusion : LigneRubrique.icone devenu nullable (meneur, demande B-1) ; carte_rubriques.dart rend le meneur sinon l'icone.
+- compte_page.dart : le reglage du profil enfant pousse Routes.ficheElevePour(enfant.id) (fiche du Foyer) au lieu de Routes.tuteurReglages ; test compte_test.dart qui TAPE la ligne et arrive sur la fiche.
+- Mineur 2 (doublon _filtrer, code de test) : laisse en l'etat. Mineur 1 : note, sans action.
+- analyze --fatal-infos vert ; suite complete verte (2334 tests, log LE-F_suite.log). Aucune capture touchee (pas de changement visuel).
+- Commit bc6b0b3 pousse sur origin/ui/tuteur-v1-e.
