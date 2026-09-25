@@ -170,3 +170,15 @@ Fin de visite (base : `EmptyState` + retour) : M5 et variantes ; `refus.politiqu
 ### Demandes au coordinateur (nouvelles)
 
 `demandes/O.md` O-9 (commande du son reçu dans `VideoSessionProvider`), O-10 (icônes agrandir/réduire), O-11 (emplacement de bandeau pleine largeur dans `PageShell`).
+
+## Sous-paquet 3 : Fins de visite et états particuliers (25/09/2026, reprise poste B à 08 h 18)
+
+Commits : `9bfbb6a` (travail de l'agent coupé du poste A), `cb66783` (validation par le coordinateur B, sans changement de code).
+
+Écran livré : fin de visite M5 (`resultat_visite_page.dart`), sans en-tête ni navigation, retour système = « Retour à la classe ». Variantes : première / dernière visite, durée atteinte (budget épuisé par le serveur), fin de séance (`seanceNonActive`, `horsFenetre`), observation interrompue (reconnexion échouée : `interrompre()` referme l'intervalle), observation retirée (`policyDesactivee`, `lienTuteurAbsent`), visites restantes relues au serveur (en lecture, lues, illisibles : rien de supposé), sortie non confirmée, confirmation « Quitter » refermée si le serveur termine la visite. « Voir mes observations » ouvre l'Historique, segment Observations. Décisions respectées : 2 visites de 2 min par parent et par séance, lues sur la politique (jamais en dur) ; visite écourtée consommée ; `OBSERVATION_TUTEUR_REELLE` inchangé (fermé en production). Vocabulaire « classe » dans `refus.politiqueDesactivee`.
+
+Commandes (sous verrou) : `dart analyze --fatal-infos lib/features/tc_observation_ui lib/core/tc_observation lib/core/i18n test/teaching_core/g` : No issues found! ; `flutter test --no-pub test/teaching_core/g test/tc_observation test/i18n test/router/navigation_test.dart` (CAPTURE_DIR) : `+307 ~5: All tests passed!` ; frontière (supabase, .github, vercel.json, pubspec.yaml, theme, router, widgets, Coran) : vide.
+
+Tests qui tapent : Retour à la classe, Voir mes observations, retour système, Quitter + confirmer (`fin_visite_test.dart`, 17 cas) ; vraie coquille Accueil -> Assister -> Observer maintenant -> Quitter -> fin -> Voir mes observations (`entree_observation_navigation_test.dart`).
+
+Captures (lues) : `o3_fin_390x844@3_{light,dark}`, `o3_fin_1440x900@1_{light,dark}`, `o3_duree_atteinte`, `o3_fin_seance`, `o3_visites_epuisees`, `o3_interrompue_390x844@3_light`, `o3_interrompue_1440x900@1_dark`, `o3_restantes_inconnues`, `o3_texte200`. Écart assumé : sablier au lieu de l'horloge de M5 (icône absente d'AppIcons, demande O-4) ; titre sur une ligne à 390. Planche automatique sautée (maquette M5 attendue sous l'ancien chemin D:\) ; planche du 25/09 06 h 51 conservée.
