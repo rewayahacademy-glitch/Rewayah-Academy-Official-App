@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/chemin_retour.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
@@ -90,7 +91,9 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
   /// Le disque retour : d'abord le chemin `?retour=` de l'adresse (la
   /// bibliotheque d'une classe, cote tuteur), **valide comme chemin interne**
   /// (`cheminRetourValide`) ; sinon l'ecran d'en dessous (la Bibliotheque,
-  /// route parente, cote eleve). Sans l'un ni l'autre : pas de disque.
+  /// route parente, cote eleve). Sans l'un ni l'autre (lien profond,
+  /// rechargement hors de la classe) : la Bibliotheque elle-meme, jamais une
+  /// impasse (revue C, m5).
   VoidCallback? _retour(BuildContext context) {
     final GoRouter? routeur = GoRouter.maybeOf(context);
     if (routeur == null) {
@@ -102,7 +105,9 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
     if (retour != null) {
       return () => routeur.go(retour);
     }
-    return routeur.canPop() ? routeur.pop : null;
+    return routeur.canPop()
+        ? routeur.pop
+        : () => routeur.go(Routes.tcBibliotheque);
   }
 
   Future<void> _telecharger() async {

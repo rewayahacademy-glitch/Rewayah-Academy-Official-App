@@ -1900,8 +1900,8 @@ class Traductions$classe$fr {
 	/// fr: 'Planning'
 	String get planning => 'Planning';
 
-	/// fr: 'Travail à préparer'
-	String get travail => 'Travail à préparer';
+	/// fr: 'Avant le prochain cours'
+	String get travail => 'Avant le prochain cours';
 
 	/// fr: 'Bibliothèque'
 	String get ressources => 'Bibliothèque';
@@ -6527,14 +6527,14 @@ class Traductions$tc$groupe$mesGroupes$fr {
 
 	// Translations
 
-	/// fr: 'Mes groupes'
-	String get titre => 'Mes groupes';
+	/// fr: 'Mes classes'
+	String get titre => 'Mes classes';
 
-	/// fr: 'Aucun groupe pour le moment'
-	String get aucun => 'Aucun groupe pour le moment';
+	/// fr: 'Aucune classe pour le moment'
+	String get aucun => 'Aucune classe pour le moment';
 
-	/// fr: 'L'académie vous placera dans un groupe dès qu'un créneau vous correspond.'
-	String get aucunDetail => 'L\'académie vous placera dans un groupe dès qu\'un créneau vous correspond.';
+	/// fr: 'L'académie vous placera dans une classe dès qu'un créneau vous correspond.'
+	String get aucunDetail => 'L\'académie vous placera dans une classe dès qu\'un créneau vous correspond.';
 }
 
 // Path: tc.groupe.commun
@@ -6545,8 +6545,8 @@ class Traductions$tc$groupe$commun$fr {
 
 	// Translations
 
-	/// fr: 'Vos groupes n'ont pas pu être lus'
-	String get erreur => 'Vos groupes n\'ont pas pu être lus';
+	/// fr: 'Vos classes n'ont pas pu être lues'
+	String get erreur => 'Vos classes n\'ont pas pu être lues';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -6560,8 +6560,8 @@ class Traductions$tc$groupe$carte$fr {
 
 	// Translations
 
-	/// fr: 'Ouvrir le groupe {libelle}'
-	String ouvrir({required Object libelle}) => 'Ouvrir le groupe ${libelle}';
+	/// fr: 'Ouvrir la classe {libelle}'
+	String ouvrir({required Object libelle}) => 'Ouvrir la classe ${libelle}';
 
 	/// fr: '{membres} / {seuil}'
 	String capacite({required Object membres, required Object seuil}) => '${membres} / ${seuil}';
@@ -6578,8 +6578,8 @@ class Traductions$tc$groupe$carte$fr {
 	/// fr: 'Aucune séance planifiée'
 	String get aucuneSeance => 'Aucune séance planifiée';
 
-	/// fr: 'Le planning de ce groupe n'est pas encore posé.'
-	String get aucuneSeanceDetail => 'Le planning de ce groupe n\'est pas encore posé.';
+	/// fr: 'Le planning de cette classe n'est pas encore posé.'
+	String get aucuneSeanceDetail => 'Le planning de cette classe n\'est pas encore posé.';
 
 	/// fr: 'Durée {valeur}'
 	String duree({required Object valeur}) => 'Durée ${valeur}';
@@ -6710,8 +6710,8 @@ class Traductions$tc$groupe$horloges$fr {
 	/// fr: 'Chez {nomme}'
 	String chezEnseignant({required Object nomme}) => 'Chez ${nomme}';
 
-	/// fr: 'Heure du groupe'
-	String get heureGroupe => 'Heure du groupe';
+	/// fr: 'Heure de la classe'
+	String get heureGroupe => 'Heure de la classe';
 
 	/// fr: '{heure} {ville}'
 	String heureEtVille({required Object heure, required Object ville}) => '${heure} ${ville}';
@@ -6758,8 +6758,8 @@ class Traductions$tc$groupe$espace$fr {
 
 	// Translations
 
-	/// fr: 'Mes groupes'
-	String get retour => 'Mes groupes';
+	/// fr: 'Mes classes'
+	String get retour => 'Mes classes';
 
 	/// fr: 'Avant le prochain cours'
 	String get avantProchainCours => 'Avant le prochain cours';
@@ -6776,17 +6776,17 @@ class Traductions$tc$groupe$espace$fr {
 	/// fr: 'Progression'
 	String get progression => 'Progression';
 
-	/// fr: 'Élèves du groupe'
-	String get roster => 'Élèves du groupe';
+	/// fr: 'Élèves de la classe'
+	String get roster => 'Élèves de la classe';
 
 	/// fr: 'Reprendre le cours'
 	String get reprendreLeCours => 'Reprendre le cours';
 
-	/// fr: 'Ce groupe ne vous est pas ouvert'
-	String get introuvable => 'Ce groupe ne vous est pas ouvert';
+	/// fr: 'Cette classe ne vous est pas ouverte'
+	String get introuvable => 'Cette classe ne vous est pas ouverte';
 
-	/// fr: 'Il a peut-être été clôturé, ou il appartient à une autre classe.'
-	String get introuvableDetail => 'Il a peut-être été clôturé, ou il appartient à une autre classe.';
+	/// fr: 'Elle a peut-être été clôturée, ou elle concerne un autre profil.'
+	String get introuvableDetail => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.';
 }
 
 // Path: tc.groupe.emplacement
@@ -9774,7 +9774,7 @@ extension on Traductions {
 			'tuteur.suivi.finUn' => '1 cours au suivi.',
 			'classe.catalogue' => 'Choisir une classe',
 			'classe.planning' => 'Planning',
-			'classe.travail' => 'Travail à préparer',
+			'classe.travail' => 'Avant le prochain cours',
 			'classe.ressources' => 'Bibliothèque',
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
@@ -10153,18 +10153,18 @@ extension on Traductions {
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Mode enfant',
 			'galerie.modeStandard' => 'Mode standard',
-			'tc.groupe.mesGroupes.titre' => 'Mes groupes',
-			'tc.groupe.mesGroupes.aucun' => 'Aucun groupe pour le moment',
-			'tc.groupe.mesGroupes.aucunDetail' => 'L\'académie vous placera dans un groupe dès qu\'un créneau vous correspond.',
-			'tc.groupe.commun.erreur' => 'Vos groupes n\'ont pas pu être lus',
+			'tc.groupe.mesGroupes.titre' => 'Mes classes',
+			'tc.groupe.mesGroupes.aucun' => 'Aucune classe pour le moment',
+			'tc.groupe.mesGroupes.aucunDetail' => 'L\'académie vous placera dans une classe dès qu\'un créneau vous correspond.',
+			'tc.groupe.commun.erreur' => 'Vos classes n\'ont pas pu être lues',
 			'tc.groupe.commun.reessayer' => 'Réessayer',
-			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir le groupe ${libelle}',
+			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Ouvrir la classe ${libelle}',
 			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '${membres} / ${seuil}',
 			'tc.groupe.carte.capacitePhrase' => ({required Object membres, required Object seuil}) => '${membres} élèves sur ${seuil} places',
 			'tc.groupe.carte.complet' => 'Complet',
 			'tc.groupe.carte.prochainCours' => 'Prochain cours',
 			'tc.groupe.carte.aucuneSeance' => 'Aucune séance planifiée',
-			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de ce groupe n\'est pas encore posé.',
+			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de cette classe n\'est pas encore posé.',
 			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
 			'tc.groupe.carte.dureeLibelle' => 'Durée',
 			'tc.groupe.carte.rejoindre' => 'Rejoindre',
@@ -10193,23 +10193,23 @@ extension on Traductions {
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
 			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
-			'tc.groupe.horloges.heureGroupe' => 'Heure du groupe',
+			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
-			'tc.groupe.espace.retour' => 'Mes groupes',
+			'tc.groupe.espace.retour' => 'Mes classes',
 			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
 			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
 			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
 			'tc.groupe.espace.progression' => 'Progression',
-			'tc.groupe.espace.roster' => 'Élèves du groupe',
+			'tc.groupe.espace.roster' => 'Élèves de la classe',
 			'tc.groupe.espace.reprendreLeCours' => 'Reprendre le cours',
-			'tc.groupe.espace.introuvable' => 'Ce groupe ne vous est pas ouvert',
-			'tc.groupe.espace.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à une autre classe.',
+			'tc.groupe.espace.introuvable' => 'Cette classe ne vous est pas ouverte',
+			'tc.groupe.espace.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.',
 			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
 			'tc.bibliotheque.titre' => 'Bibliothèque',

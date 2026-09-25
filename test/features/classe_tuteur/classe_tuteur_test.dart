@@ -49,6 +49,7 @@ import 'package:rewayah_academy/features/tc_observation_ui/entree_observation_pa
 import '../../fixtures/tuteur/faux_observation.dart';
 import '../../fixtures/tuteur/faux_seances_famille.dart';
 import '../../router/support_routeur.dart';
+import '../../support/harnais.dart' show hoteRoutant;
 import 'support_classe.dart';
 
 const String _a1 = eleveA1;
@@ -275,6 +276,63 @@ void main() {
         '${Routes.classeSousPage(_classe, 'ressources')}?eleve=$_a1',
       );
       expect(find.byType(RessourcesClassePage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('detail d une ressource ouvert par lien profond, sans '
+        '?retour= : un disque retour mene a la Bibliotheque, jamais une '
+        'impasse', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        depart: '${Routes.tcBibliotheque}/r1',
+        catalogue: FauxCatalogueClasse(<LibraryResource>[
+          ressourceFictive('r1', 'Support fictif 1'),
+        ]),
+      );
+      expect(find.byType(DetailRessourcePage), findsOneWidget);
+      expect(find.byType(DisqueRetour), findsOneWidget);
+
+      await _retour(tester);
+      expect(_lieu(routeur), Routes.tcBibliotheque);
+      expect(find.byType(DetailRessourcePage), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('detail d une ressource sans ?retour= ni ecran dessous : le '
+        'disque retour ouvre la Bibliotheque (repli, revue m5)', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: '${Routes.tcBibliotheque}/r1',
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.tcBibliotheque,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Text('bibliotheque'),
+            ),
+            // Route soeur, pas enfant : rien a depiler.
+            GoRoute(
+              path: '${Routes.tcBibliotheque}/:id',
+              builder: (BuildContext _, GoRouterState etat) =>
+                  DetailRessourcePage(resourceId: etat.pathParameters['id']!),
+            ),
+          ],
+          surcharges: surchargesClasse(
+            catalogue: FauxCatalogueClasse(<LibraryResource>[
+              ressourceFictive('r1', 'Support fictif 1'),
+            ]),
+          ),
+        ),
+      );
+      await stabiliser(tester);
+      expect(find.byType(DisqueRetour), findsOneWidget);
+
+      await _retour(tester);
+      expect(find.text('bibliotheque'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

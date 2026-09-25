@@ -242,7 +242,11 @@ void main() {
       );
     });
 
-    testWidgets('classe 390x844 @3, production : observation fermee (P3), '
+    // Simulation : le port K6 est ici un double (la classe est lue), seuls
+    // l'observation (P3) et l'horloge serveur sont dans leur etat de
+    // production. Ce que voit un tuteur en production aujourd'hui (port K6
+    // absent, C-1) est la capture `classe_390x844@3_indisponible`.
+    testWidgets('classe 390x844 @3, simulation : observation fermee (P3), '
         'horloge serveur absente', (WidgetTester tester) async {
       fixerVueCapture(tester, const Size(390, 844), 3, zoneSure: _zoneSure);
       await _monter(
@@ -259,7 +263,7 @@ void main() {
         ),
       );
       debugPrint(
-        'PNG ${await capturer(tester, 'classe_390x844@3_production_p3')}',
+        'PNG ${await capturer(tester, 'classe_390x844@3_p3_simulation')}',
       );
     });
 

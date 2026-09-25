@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -72,6 +73,28 @@ SeanceFamille _passee() => seanceFictive(
     'Paris',
     '18:00',
     date: 'Samedi 19 septembre',
+  ),
+);
+
+/// La classe fictive A avec son parcours lisible (ligne « cours · niveau »
+/// des maquettes V1 et V2), en donnees fictives.
+const ClasseFoyer _classeAvecParcours = ClasseFoyer(
+  eleveId: _a1,
+  classe: GroupSummaryVM(
+    groupeId: 'classe-a',
+    libelle: 'Classe fictive A',
+    couleurJeton: JetonCouleurGroupe(index: 0, codeStable: 'g0'),
+    enseignant: EnseignantVM(
+      enseignantId: 'enseignant-x',
+      titre: TitreEnseignant.sayyid,
+      nomAffichage: 'Enseignant X',
+    ),
+    nombreMembres: 3,
+    seuilMax: 6,
+    typePublic: TypePublicGroupeVM.enfant,
+    actif: true,
+    nomCours: 'Cours fictif',
+    niveauHumain: 'Niveau fictif',
   ),
 );
 
@@ -196,13 +219,26 @@ void main() {
         'et « Voir la classe » ouvre la classe de CET eleve', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await _monter(tester);
+      final GoRouter routeur = await _monter(
+        tester,
+        classes: const <ClasseFoyer>[_classeAvecParcours],
+      );
       await _ouvrirAccueilParLaBarre(tester);
 
       expect(find.text(t.tuteur.accueil.titre), findsWidgets);
       expect(find.text('Classe fictive A'), findsOneWidget);
       expect(
         find.text('${t.tc.groupe.enseignant.sayyid} Enseignant X'),
+        findsOneWidget,
+      );
+      // Le parcours lisible sous l'enseignant (V1, V2), quand il est rendu.
+      expect(
+        find.text(
+          LibellesGroupe.coursEtNiveau(
+            cours: 'Cours fictif',
+            niveau: 'Niveau fictif',
+          ),
+        ),
         findsOneWidget,
       );
       // Meme source pour le selecteur et la carte : « Salle ouverte » dans les
@@ -278,6 +314,40 @@ void main() {
       );
       await _toucher(tester, find.text(t.tuteur.accueil.connecterAppareil));
       expect(_lieu(routeur), Routes.appairerPour(_a1));
+    });
+
+    testWidgets('bandeau telephone : « Connecter un appareil » a droite du '
+        'texte a 390 (V1 #17), sous le texte a 200 pour cent', (
+      WidgetTester tester,
+    ) async {
+      final Finder titre = find.text(
+        t.tuteur.accueil.blocageAppareilTitre(prenom: 'Eleve A1'),
+      );
+      final Finder action = find.text(t.tuteur.accueil.connecterAppareil);
+
+      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _ouvrirAccueilParLaBarre(tester);
+      await tester.ensureVisible(action);
+      await stabiliser(tester);
+      expect(
+        tester.getTopLeft(action).dx,
+        greaterThan(tester.getTopRight(titre).dx),
+      );
+      expect(
+        tester.getTopLeft(action).dy,
+        lessThan(tester.getBottomLeft(find.byType(BandeauBlocage)).dy),
+      );
+
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await stabiliser(tester);
+      await tester.ensureVisible(action);
+      await stabiliser(tester);
+      expect(
+        tester.getTopLeft(action).dy,
+        greaterThan(tester.getBottomLeft(titre).dy),
+      );
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('un appareil actif : aucun blocage', (

@@ -27,8 +27,11 @@ bool aucunAppareilPret(List<AppareilAppaire> appareils, String eleveId) =>
 /// dossier a completer relève du portail d'attente.
 ///
 /// - Telephone ([compact]) : bandeau pleine largeur en registre doux
-///   d'avertissement, icone, titre, phrase concrete, action sous le texte
-///   (V1 coupait le bouton sur deux lignes).
+///   d'avertissement, icone, titre, phrase concrete, action **a droite du
+///   texte** comme la maquette V1 (#17) des [largeurActionADroite] dp ; sous
+///   le texte en dessous de cette largeur ou quand le texte est agrandi au-dela
+///   de [echelleActionADroite] (texte x2 : la colonne de texte resterait trop
+///   etroite a cote du bouton).
 /// - Tablette et bureau : tete de la colonne de droite, icone d'appareil,
 ///   titre, phrase et lien fleche (V2).
 class BandeauBlocage extends StatelessWidget {
@@ -49,10 +52,31 @@ class BandeauBlocage extends StatelessWidget {
   /// Ouvre l'emetteur de code d'appairage de cet eleve.
   final VoidCallback onConnecter;
 
+  /// Largeur d'ecran (dp) a partir de laquelle l'action du telephone se pose
+  /// a droite du texte (maquette V1).
+  static const double largeurActionADroite = 360;
+
+  /// Echelle de texte au-dela de laquelle l'action revient sous le texte.
+  static const double echelleActionADroite = 1.3;
+
+  /// Part maximale de la largeur du bandeau laissee a l'action a droite.
+  static const double _partAction = 0.38;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool actionADroite =
+        compact &&
+        MediaQuery.sizeOf(context).width >= largeurActionADroite &&
+        MediaQuery.textScalerOf(context).scale(1) <= echelleActionADroite;
+
+    final Widget action = ActionPrincipale(
+      libelle: t.tuteur.accueil.connecterAppareil,
+      onPress: onConnecter,
+      niveau: NiveauAction.secondaire,
+      pleineLargeur: false,
+    );
 
     final Widget textesBlocage = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,24 +98,23 @@ class BandeauBlocage extends StatelessWidget {
             textes.bodyMedium ?? const TextStyle(),
           ),
         ),
-        Ecart.vMd,
-        if (compact)
-          ActionPrincipale(
-            libelle: t.tuteur.accueil.connecterAppareil,
-            onPress: onConnecter,
-            niveau: NiveauAction.secondaire,
-            pleineLargeur: false,
-          )
-        else
-          LienFleche(
-            libelle: t.tuteur.accueil.connecterAppareil,
-            onPress: onConnecter,
-          ),
+        if (!actionADroite) ...<Widget>[
+          Ecart.vMd,
+          if (compact)
+            action
+          else
+            LienFleche(
+              libelle: t.tuteur.accueil.connecterAppareil,
+              onPress: onConnecter,
+            ),
+        ],
       ],
     );
 
     final Widget contenu = Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: actionADroite
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: <Widget>[
         ExcludeSemantics(
           child: IconTheme(
@@ -107,6 +130,15 @@ class BandeauBlocage extends StatelessWidget {
         ),
         Ecart.hLg,
         Expanded(child: textesBlocage),
+        if (actionADroite) ...<Widget>[
+          Ecart.hMd,
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width * _partAction,
+            ),
+            child: action,
+          ),
+        ],
       ],
     );
 

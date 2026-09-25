@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 
@@ -41,6 +42,28 @@ final String? _maquetteBureau =
     Platform.environment['CAPTURE_MAQUETTE_ACCUEIL_BUREAU'];
 
 const String _a1 = 'foyer-a-eleve-1';
+
+/// La classe fictive A avec son parcours lisible (« cours · niveau » sous
+/// l'enseignant, maquettes V1 et V2), en donnees fictives.
+const ClasseFoyer _classeAvecParcours = ClasseFoyer(
+  eleveId: _a1,
+  classe: GroupSummaryVM(
+    groupeId: 'classe-a',
+    libelle: 'Classe fictive A',
+    couleurJeton: JetonCouleurGroupe(index: 0, codeStable: 'g0'),
+    enseignant: EnseignantVM(
+      enseignantId: 'enseignant-x',
+      titre: TitreEnseignant.sayyid,
+      nomAffichage: 'Enseignant X',
+    ),
+    nombreMembres: 3,
+    seuilMax: 6,
+    typePublic: TypePublicGroupeVM.enfant,
+    actif: true,
+    nomCours: 'Cours fictif',
+    niveauHumain: 'Niveau fictif',
+  ),
+);
 
 class _FauxTravail implements PortTravailAVenir {
   const _FauxTravail();
@@ -107,11 +130,7 @@ Future<void> _monter(
         portSeancesFamilleProvider.overrideWithValue(faux),
         portClassesFoyerProvider.overrideWithValue(
           FauxClassesFoyer(
-            classes:
-                classes ??
-                <ClasseFoyer>[
-                  ClasseFoyer(eleveId: _a1, classe: classeFictive()),
-                ],
+            classes: classes ?? const <ClasseFoyer>[_classeAvecParcours],
           ),
         ),
         portTravailAVenirProvider.overrideWithValue(travail),

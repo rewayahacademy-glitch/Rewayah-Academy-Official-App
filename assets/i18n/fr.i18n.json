@@ -1555,7 +1555,7 @@
   "classe": {
     "catalogue": "Choisir une classe",
     "planning": "Planning",
-    "travail": "Travail à préparer",
+    "travail": "Avant le prochain cours",
     "ressources": "Bibliothèque",
     "progression": "Progression",
     "observer": "Observer la séance",
@@ -1984,22 +1984,22 @@
   "tc": {
     "groupe": {
       "mesGroupes": {
-        "titre": "Mes groupes",
-        "aucun": "Aucun groupe pour le moment",
-        "aucunDetail": "L'académie vous placera dans un groupe dès qu'un créneau vous correspond."
+        "titre": "Mes classes",
+        "aucun": "Aucune classe pour le moment",
+        "aucunDetail": "L'académie vous placera dans une classe dès qu'un créneau vous correspond."
       },
       "commun": {
-        "erreur": "Vos groupes n'ont pas pu être lus",
+        "erreur": "Vos classes n'ont pas pu être lues",
         "reessayer": "Réessayer"
       },
       "carte": {
-        "ouvrir": "Ouvrir le groupe {libelle}",
+        "ouvrir": "Ouvrir la classe {libelle}",
         "capacite": "{membres} / {seuil}",
         "capacitePhrase": "{membres} élèves sur {seuil} places",
         "complet": "Complet",
         "prochainCours": "Prochain cours",
         "aucuneSeance": "Aucune séance planifiée",
-        "aucuneSeanceDetail": "Le planning de ce groupe n'est pas encore posé.",
+        "aucuneSeanceDetail": "Le planning de cette classe n'est pas encore posé.",
         "duree": "Durée {valeur}",
         "dureeLibelle": "Durée",
         "rejoindre": "Rejoindre"
@@ -2038,7 +2038,7 @@
       "horloges": {
         "votreHeure": "Votre heure",
         "chezEnseignant": "Chez {nomme}",
-        "heureGroupe": "Heure du groupe",
+        "heureGroupe": "Heure de la classe",
         "heureEtVille": "{heure} {ville}"
       },
       "dst": {
@@ -2051,16 +2051,16 @@
         "conseilAppareil": "Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge."
       },
       "espace": {
-        "retour": "Mes groupes",
+        "retour": "Mes classes",
         "avantProchainCours": "Avant le prochain cours",
         "aucuneAction": "Rien à préparer pour l'instant",
         "bibliotheque": "Bibliothèque",
         "bibliothequeVoirTout": "Voir tout",
         "progression": "Progression",
-        "roster": "Élèves du groupe",
+        "roster": "Élèves de la classe",
         "reprendreLeCours": "Reprendre le cours",
-        "introuvable": "Ce groupe ne vous est pas ouvert",
-        "introuvableDetail": "Il a peut-être été clôturé, ou il appartient à une autre classe."
+        "introuvable": "Cette classe ne vous est pas ouverte",
+        "introuvableDetail": "Elle a peut-être été clôturée, ou elle concerne un autre profil."
       },
       "emplacement": {
         "nonBranche": "Bientôt disponible",
