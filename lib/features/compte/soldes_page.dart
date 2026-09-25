@@ -13,6 +13,7 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/chemin_retour.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -53,8 +54,8 @@ String? resumeTotalSoldes(AsyncValue<SoldesFoyer> soldes) {
 /// section 5 ; planche « Soldes du foyer »).
 ///
 /// Le total par devise, puis une ligne par profil (solde et acces). Aucun
-/// calcul : montants et totaux sont ceux du serveur. « Recharger » n'est pas
-/// rendu tant que l'ecran de recharge (LT-7) n'existe pas ; « Voir les
+/// calcul : montants et totaux sont ceux du serveur. « Recharger » mene a
+/// S03 (LT-7), seulement quand les soldes sont lus ; « Voir les
 /// mouvements » mene a S07 (LT-6) ; « Gerer les acces » mene a la page
 /// d'acces existante. Le retour suit `?retour=`
 /// (depuis le Foyer), sinon le Compte.
@@ -64,6 +65,9 @@ class SoldesComptePage extends ConsumerWidget {
 
   /// La ligne « Gerer les acces ».
   static const Key gererAccesKey = Key('soldes.gererAcces');
+
+  /// « Recharger », vers S03 (LT-7).
+  static const Key rechargerKey = Key('soldes.recharger');
 
   Uri? _adresse(BuildContext context) {
     try {
@@ -79,6 +83,7 @@ class SoldesComptePage extends ConsumerWidget {
     final String retour =
         cheminRetourValide(_adresse(context)?.queryParameters['retour']) ??
         Routes.tuteurCompte;
+    final AsyncValue<SoldesFoyer> soldes = ref.watch(soldesFoyerProvider);
 
     return PageShell(
       titre: t.finance.soldes.titre,
@@ -90,7 +95,7 @@ class SoldesComptePage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             BlocAsynchrone<SoldesFoyer>(
-              valeur: ref.watch(soldesFoyerProvider),
+              valeur: soldes,
               squelette: const Skeleton.liste(lignes: 3),
               onReessayer: () => ref.invalidate(soldesFoyerProvider),
               estVide: (SoldesFoyer s) => s.profils.isEmpty,
@@ -101,6 +106,25 @@ class SoldesComptePage extends ConsumerWidget {
               ),
               construire: _Soldes.new,
             ),
+            // « Recharger » (LT-7) seulement sur des soldes lus : en
+            // production (DB-FIN-01 absent), aucun bouton financier.
+            if (soldes.hasValue &&
+                !soldes.hasError &&
+                soldes.requireValue.profils.isNotEmpty) ...<Widget>[
+              Ecart.vLg,
+              ActionPrincipale(
+                key: rechargerKey,
+                libelle: t.finance.recharge.action,
+                onPress: () => routeur?.go(
+                  Uri(
+                    path: Routes.tuteurCompteRecharge,
+                    queryParameters: <String, String>{
+                      'retour': Routes.tuteurCompteSoldes,
+                    },
+                  ).toString(),
+                ),
+              ),
+            ],
             Ecart.vLg,
             GroupeReglages(
               key: gererAccesKey,

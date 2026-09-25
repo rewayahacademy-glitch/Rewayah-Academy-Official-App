@@ -37,6 +37,7 @@ import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/mouvements_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/preferences_page.dart';
+import 'package:rewayah_academy/features/compte/recharge_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/compte/soldes_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
@@ -263,6 +264,7 @@ void main() {
       (Routes.compteTuteurSousPage('acces'), AccesComptePage, 3),
       (Routes.compteTuteurSousPage('paiements'), PaiementsComptePage, 3),
       (Routes.tuteurCompteSoldes, SoldesComptePage, 3),
+      (Routes.tuteurCompteRecharge, RechargePage, 3),
       (Routes.tuteurCompteMouvements, MouvementsComptePage, 3),
       (Routes.mouvementPour('m1'), DetailMouvementPage, 3),
       (Routes.tuteurComptePreferences, PreferencesComptePage, 3),
@@ -320,6 +322,7 @@ void main() {
       AccesComptePage: compte,
       PaiementsComptePage: compte,
       SoldesComptePage: 'test/features/compte/soldes_test.dart',
+      RechargePage: 'test/features/compte/recharge_test.dart',
       MouvementsComptePage: 'test/features/compte/mouvements_test.dart',
       DetailMouvementPage: 'test/features/compte/mouvements_test.dart',
       PreferencesComptePage: compte,

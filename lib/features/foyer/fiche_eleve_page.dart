@@ -17,6 +17,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -267,6 +268,9 @@ class FicheElevePage extends ConsumerWidget {
   /// L'action du bloc du solde, vers S01.
   static const Key voirSoldesKey = Key('ficheEleve.voirSoldes');
 
+  /// « Recharger » du bloc du solde, vers S03 avec ce profil (LT-7).
+  static const Key rechargerKey = Key('ficheEleve.recharger');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PageFiche(
@@ -444,17 +448,38 @@ class _SoldeFiche extends ConsumerWidget {
                   ),
                   date: dateEcheance(remise.date),
                 ),
-          action: LienFleche(
-            key: FicheElevePage.voirSoldesKey,
-            libelle: t.finance.soldes.voirSoldes,
-            onPress: () => routeur.go(
-              Uri(
-                path: Routes.tuteurCompteSoldes,
-                queryParameters: <String, String>{
-                  'retour': Routes.ficheElevePour(profil.eleveId),
-                },
-              ).toString(),
-            ),
+          action: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // Rendu seulement sur des soldes lus (LT-7).
+              ActionPrincipale(
+                key: FicheElevePage.rechargerKey,
+                libelle: t.finance.recharge.action,
+                onPress: () => routeur.go(
+                  Uri(
+                    path: Routes.tuteurCompteRecharge,
+                    queryParameters: <String, String>{
+                      'profil': profil.eleveId,
+                      'retour': Routes.ficheElevePour(profil.eleveId),
+                    },
+                  ).toString(),
+                ),
+              ),
+              Ecart.vSm,
+              LienFleche(
+                key: FicheElevePage.voirSoldesKey,
+                libelle: t.finance.soldes.voirSoldes,
+                onPress: () => routeur.go(
+                  Uri(
+                    path: Routes.tuteurCompteSoldes,
+                    queryParameters: <String, String>{
+                      'retour': Routes.ficheElevePour(profil.eleveId),
+                    },
+                  ).toString(),
+                ),
+              ),
+            ],
           ),
         );
       },

@@ -254,6 +254,15 @@ abstract final class Routes {
   static const String tuteurCompteMouvements =
       '/tuteur/compte/soldes/mouvements';
 
+  /// S03-S04 « Recharger » (LT-7), sous S01 : choix des profils puis des
+  /// offres, dans la meme page (`?profil=` preselectionne, `?retour=`).
+  static const String tuteurCompteRecharge = '/tuteur/compte/soldes/recharge';
+
+  /// S05 « Verifier la recharge » : le devis passe par `extra`.
+  // LT-8 : ecran et enregistrement dans le routeur a venir.
+  static const String tuteurCompteRechargeVerifier =
+      '/tuteur/compte/soldes/recharge/verifier';
+
   /// S08 : le detail d'un mouvement (identifiant encode dans le segment).
   static String mouvementPour(String mouvementId) =>
       '$tuteurCompteMouvements/${Uri.encodeComponent(mouvementId)}';
@@ -284,6 +293,8 @@ abstract final class Routes {
       chemin.startsWith('$tuteurAppairer/') ||
       chemin.startsWith('$tuteurParcours/') ||
       chemin == tuteurComptePreferences ||
+      chemin == tuteurCompteRecharge ||
+      chemin.startsWith('$tuteurCompteRecharge/') ||
       chemin.startsWith('$tuteurComptePreferences/') ||
       chemin == tuteurCompteConsentements;
 

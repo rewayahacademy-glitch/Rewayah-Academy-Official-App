@@ -179,6 +179,22 @@
         "introuvablePhrase": "Le serveur n'a rendu aucun mouvement à cette adresse."
       }
     },
+    "recharge": {
+      "action": "Recharger",
+      "titre": "Recharger",
+      "pourQui": "Pour qui ?",
+      "pourQuiPhrase": "Choisissez les profils à recharger.",
+      "quelle": "Quelle recharge ?",
+      "quellePhrase": "Choisissez une offre pour chaque profil. Prix et remises seront vérifiés à l'étape suivante.",
+      "continuer": "Continuer",
+      "verifier": "Vérifier",
+      "offre": "Ajoute {quantite}",
+      "prix": "Prix : {prix}",
+      "aucuneOffre": "Aucune offre rendue pour ce profil",
+      "aucuneOffrePhrase": "Le serveur ne propose aucune recharge pour {prenom} pour le moment.",
+      "devisIndisponible": "Vérification indisponible pour le moment",
+      "devisIndisponiblePhrase": "Le serveur ne sait pas encore établir le prix de cette recharge. Rien n'a été payé ni enregistré."
+    },
     "issues": {
       "confirmee": "Confirmée",
       "enAttente": "En attente",

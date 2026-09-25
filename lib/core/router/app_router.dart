@@ -47,6 +47,7 @@ import '../../features/compte/informations_page.dart';
 import '../../features/compte/mouvements_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
+import '../../features/compte/recharge_page.dart';
 import '../../features/compte/securite_page.dart';
 import '../../features/compte/soldes_page.dart';
 import '../../features/connexion/connexion_page.dart';
@@ -668,6 +669,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState _) => const SoldesComptePage(),
                     ),
                     routes: <RouteBase>[
+                      GoRoute(
+                        path: 'recharge',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => RechargePage(
+                            profilInitial: etat.uri.queryParameters['profil'],
+                            retour: retourRecharge(etat),
+                          ),
+                        ),
+                        // LT-8 : `verifier` (S05, devis dans `extra`).
+                      ),
                       GoRoute(
                         path: 'mouvements',
                         pageBuilder: glissee(

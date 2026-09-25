@@ -28,7 +28,7 @@ final List<Override> _demo = <Override>[
   portFinanceFoyerProvider.overrideWithValue(const FinanceFoyerDemo()),
 ];
 
-/// Aucune action financiere n'est rendue sur S01 tant que LT-7 n'existe pas.
+/// Aucune action financiere n'est rendue sur S01 sans soldes lus.
 void _aucuneActionFinanciere() {
   for (final String interdit in <String>[
     'Recharger',
@@ -144,7 +144,11 @@ void main() {
       findsNWidgets(2),
     );
     expect(find.text(t.finance.totalIncomplet), findsNothing);
-    _aucuneActionFinanciere();
+    // Soldes lus : « Recharger » (LT-7) est la seule action financiere.
+    expect(find.byKey(SoldesComptePage.rechargerKey), findsOneWidget);
+    for (final String interdit in <String>['Payer', 'Annuler l', 'Acheter']) {
+      expect(find.textContaining(interdit), findsNothing, reason: interdit);
+    }
     expect(tester.takeException(), isNull);
   });
 

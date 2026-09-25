@@ -169,6 +169,7 @@ class Traductions$finance$fr {
 
 	late final Traductions$finance$soldes$fr soldes = Traductions$finance$soldes$fr.internal(_root);
 	late final Traductions$finance$mouvements$fr mouvements = Traductions$finance$mouvements$fr.internal(_root);
+	late final Traductions$finance$recharge$fr recharge = Traductions$finance$recharge$fr.internal(_root);
 	late final Traductions$finance$issues$fr issues = Traductions$finance$issues$fr.internal(_root);
 }
 
@@ -2540,6 +2541,57 @@ class Traductions$finance$mouvements$fr {
 	late final Traductions$finance$mouvements$natures$fr natures = Traductions$finance$mouvements$natures$fr.internal(_root);
 	late final Traductions$finance$mouvements$statuts$fr statuts = Traductions$finance$mouvements$statuts$fr.internal(_root);
 	late final Traductions$finance$mouvements$detail$fr detail = Traductions$finance$mouvements$detail$fr.internal(_root);
+}
+
+// Path: finance.recharge
+class Traductions$finance$recharge$fr {
+	Traductions$finance$recharge$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Recharger'
+	String get action => 'Recharger';
+
+	/// fr: 'Recharger'
+	String get titre => 'Recharger';
+
+	/// fr: 'Pour qui ?'
+	String get pourQui => 'Pour qui ?';
+
+	/// fr: 'Choisissez les profils à recharger.'
+	String get pourQuiPhrase => 'Choisissez les profils à recharger.';
+
+	/// fr: 'Quelle recharge ?'
+	String get quelle => 'Quelle recharge ?';
+
+	/// fr: 'Choisissez une offre pour chaque profil. Prix et remises seront vérifiés à l'étape suivante.'
+	String get quellePhrase => 'Choisissez une offre pour chaque profil. Prix et remises seront vérifiés à l\'étape suivante.';
+
+	/// fr: 'Continuer'
+	String get continuer => 'Continuer';
+
+	/// fr: 'Vérifier'
+	String get verifier => 'Vérifier';
+
+	/// fr: 'Ajoute {quantite}'
+	String offre({required Object quantite}) => 'Ajoute ${quantite}';
+
+	/// fr: 'Prix : {prix}'
+	String prix({required Object prix}) => 'Prix : ${prix}';
+
+	/// fr: 'Aucune offre rendue pour ce profil'
+	String get aucuneOffre => 'Aucune offre rendue pour ce profil';
+
+	/// fr: 'Le serveur ne propose aucune recharge pour {prenom} pour le moment.'
+	String aucuneOffrePhrase({required Object prenom}) => 'Le serveur ne propose aucune recharge pour ${prenom} pour le moment.';
+
+	/// fr: 'Vérification indisponible pour le moment'
+	String get devisIndisponible => 'Vérification indisponible pour le moment';
+
+	/// fr: 'Le serveur ne sait pas encore établir le prix de cette recharge. Rien n'a été payé ni enregistré.'
+	String get devisIndisponiblePhrase => 'Le serveur ne sait pas encore établir le prix de cette recharge. Rien n\'a été payé ni enregistré.';
 }
 
 // Path: finance.issues
@@ -11511,6 +11563,20 @@ extension on Traductions {
 			'finance.mouvements.detail.dateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'finance.mouvements.detail.introuvable' => 'Mouvement introuvable',
 			'finance.mouvements.detail.introuvablePhrase' => 'Le serveur n\'a rendu aucun mouvement à cette adresse.',
+			'finance.recharge.action' => 'Recharger',
+			'finance.recharge.titre' => 'Recharger',
+			'finance.recharge.pourQui' => 'Pour qui ?',
+			'finance.recharge.pourQuiPhrase' => 'Choisissez les profils à recharger.',
+			'finance.recharge.quelle' => 'Quelle recharge ?',
+			'finance.recharge.quellePhrase' => 'Choisissez une offre pour chaque profil. Prix et remises seront vérifiés à l\'étape suivante.',
+			'finance.recharge.continuer' => 'Continuer',
+			'finance.recharge.verifier' => 'Vérifier',
+			'finance.recharge.offre' => ({required Object quantite}) => 'Ajoute ${quantite}',
+			'finance.recharge.prix' => ({required Object prix}) => 'Prix : ${prix}',
+			'finance.recharge.aucuneOffre' => 'Aucune offre rendue pour ce profil',
+			'finance.recharge.aucuneOffrePhrase' => ({required Object prenom}) => 'Le serveur ne propose aucune recharge pour ${prenom} pour le moment.',
+			'finance.recharge.devisIndisponible' => 'Vérification indisponible pour le moment',
+			'finance.recharge.devisIndisponiblePhrase' => 'Le serveur ne sait pas encore établir le prix de cette recharge. Rien n\'a été payé ni enregistré.',
 			'finance.issues.confirmee' => 'Confirmée',
 			'finance.issues.enAttente' => 'En attente',
 			'finance.issues.echouee' => 'Échouée',
@@ -11888,6 +11954,8 @@ extension on Traductions {
 			'foyer.ajout.porte.illisibleTitre' => 'Votre compte n\'a pas pu être lu',
 			'foyer.ajout.porte.illisiblePhrase' => 'Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant.',
 			'foyer.ajout.pourQui.question' => 'Pour qui est ce profil élève ?',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.pourQui.sousTitre' => 'Choisissez la personne qui suivra les cours.',
 			'foyer.ajout.pourQui.requis' => 'Choisissez pour qui est ce profil pour continuer.',
 			'foyer.ajout.pourQui.indisponible' => 'Indisponible',
@@ -11902,8 +11970,6 @@ extension on Traductions {
 			'foyer.ajout.identite.sousTitre' => 'Son prénom, son nom et son âge.',
 			'foyer.ajout.identite.prenom' => 'Prénom',
 			'foyer.ajout.identite.nom' => 'Nom',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.ajout.identite.nomAide' => 'Le nom de famille n\'est jamais montré à l\'enseignant.',
 			'foyer.ajout.identite.age' => 'Âge',
 			'foyer.ajout.identite.ageSuffixe' => 'ans',
@@ -12402,6 +12468,8 @@ extension on Traductions {
 			'admin.regles.horizonAffectationDetail' => 'Le nombre de semaines à l\'avance sur lesquelles l\'affectation cherche un enseignant disponible.',
 			'admin.regles.ageCameraAuto' => 'Âge minimum caméra automatique',
 			'admin.regles.ageCameraAutoDetail' => 'En dessous de cet âge, l\'activation de la caméra reste soumise à l\'accord du tuteur.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.ageInterfaceEnfant' => 'Âge maximum interface enfant',
 			'admin.regles.ageInterfaceEnfantDetail' => 'En dessous de cet âge, un profil bascule sur l\'interface simplifiée à sa création.',
 			'admin.regles.appareilsParEleve' => 'Appareils par élève',
@@ -12416,8 +12484,6 @@ extension on Traductions {
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.fonctionnalites.valeurInvalide' => 'Entrez un nombre valide.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fonctionnalites.envoyer' => 'Enregistrer',
 			'admin.fonctionnalites.champValeur' => 'Valeur',
 			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
@@ -12916,6 +12982,8 @@ extension on Traductions {
 			'nav.admin.recherche' => 'Recherche',
 			'nav.admin.rechercheIndication' => 'Rechercher un écran',
 			'nav.admin.notificationsTitre' => 'Notifications',
+			_ => null,
+		} ?? switch (path) {
 			'nav.admin.menu' => 'Menu',
 			'nav.compte' => 'Mon compte',
 			'nav.principale' => 'Navigation principale',
@@ -12930,8 +12998,6 @@ extension on Traductions {
 			'compte.reglages' => 'Réglages',
 			'compte.reglagesDetail' => 'Apparence, notifications et accessibilité',
 			'compte.profils' => 'Gérer mon foyer',
-			_ => null,
-		} ?? switch (path) {
 			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
@@ -13430,6 +13496,8 @@ extension on Traductions {
 			'classe.observation.motif.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'classe.observation.motif.observationDesactivee' => 'L\'observation est fermée pour cette classe.',
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.enfantAbsent' => ({required Object prenom}) => 'L\'observation attend l\'arrivée de ${prenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object prenom}) => 'La présence de ${prenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
@@ -13444,8 +13512,6 @@ extension on Traductions {
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
 			'classe.pagePlanning.indisponible' => 'Le planning de la classe n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.aucun' => 'Rien à préparer pour l\'instant',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageTravail.aucunDetail' => 'Le travail donné par l\'enseignant apparaîtra ici.',
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
@@ -13944,6 +14010,8 @@ extension on Traductions {
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.masquer.reveler' => 'Révéler',
 			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
 			'tc.outils.masquer.tout' => 'Tout démasquer',
@@ -13958,8 +14026,6 @@ extension on Traductions {
 			'tc.classe.entete.coursEnCours' => 'Séance toujours en direct',
 			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
 			'tc.classe.roster.titre' => 'Élèves',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',

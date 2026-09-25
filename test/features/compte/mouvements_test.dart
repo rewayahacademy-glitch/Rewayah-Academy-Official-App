@@ -132,7 +132,11 @@ void main() {
       await tester.tap(find.byType(DisqueRetour));
       await stabiliser(tester);
       expect(lieu(routeur), Routes.tuteurCompteSoldes);
-      _aucuneActionFinanciere();
+      // De retour sur S01 aux soldes lus : « Recharger » (LT-7) seulement.
+      expect(find.byKey(SoldesComptePage.rechargerKey), findsOneWidget);
+      for (final String interdit in <String>['Payer', 'Annuler l', 'Acheter']) {
+        expect(find.textContaining(interdit), findsNothing, reason: interdit);
+      }
       expect(tester.takeException(), isNull);
     });
   }
