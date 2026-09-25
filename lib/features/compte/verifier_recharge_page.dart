@@ -106,8 +106,9 @@ class _VerifierRechargePageState extends ConsumerState<VerifierRechargePage> {
     void reprendre() => routeur?.go(Routes.tuteurCompteRecharge);
     final DevisRecharge? devis = widget.devis;
     final Object? echec = _echec;
-    final bool expire =
-        devis != null && DateTime.now().isAfter(devis.valableJusqua);
+    // L'expiration est dite par le serveur (refus type DevisExpire), jamais
+    // par l'horloge locale : « valable jusqu'au » reste une information.
+    final bool expire = echec is DevisExpire;
     final bool payable =
         devis != null && !expire && echec is! CapaciteIndisponible;
 

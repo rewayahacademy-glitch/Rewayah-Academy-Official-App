@@ -45,7 +45,7 @@ class AccesComptePage extends ConsumerWidget {
     );
     // « Arreter l'acces » (S09, LT-9) seulement si le serveur sait en rendre
     // les consequences (DB-FIN-05) ; en production, la lecture reste seule.
-    final bool arretPossible = apercuPossible(ref, <String>[
+    final bool arretPropose = arretPossible(ref, <String>[
       if (acces.hasValue && !acces.hasError)
         for (final AccesBeneficiaire a in acces.requireValue) a.eleveId,
     ]);
@@ -81,7 +81,7 @@ class AccesComptePage extends ConsumerWidget {
     // Ce qui accompagne la liste : l'arret (et ses consequences, S09-S10),
     // puis la note du titulaire. Colonne laterale sur bureau.
     final List<Widget> annexe = <Widget>[
-      if (arretPossible) ...<Widget>[
+      if (arretPropose) ...<Widget>[
         GroupeReglages(
           key: arreterKey,
           lignes: <LigneRubrique>[

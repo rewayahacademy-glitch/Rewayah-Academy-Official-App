@@ -155,6 +155,9 @@ class Traductions$finance$fr {
 	/// fr: 'Total incomplet : au moins un solde n'est pas encore connu.'
 	String get totalIncomplet => 'Total incomplet : au moins un solde n\'est pas encore connu.';
 
+	/// fr: '{total} (total incomplet)'
+	String totalPartiel({required Object total}) => '${total} (total incomplet)';
+
 	/// fr: 'Solde : {montant}'
 	String soldeLigne({required Object montant}) => 'Solde : ${montant}';
 
@@ -8595,6 +8598,12 @@ class Traductions$finance$arret$resultat$fr {
 	/// fr: 'Demande transmise'
 	String get enregistre => 'Demande transmise';
 
+	/// fr: 'Aucun accès arrêté'
+	String get aucun => 'Aucun accès arrêté';
+
+	/// fr: 'Arrêt partiel'
+	String get partiel => 'Arrêt partiel';
+
 	/// fr: 'Voici l'issue rendue par le serveur pour chaque profil.'
 	String get phrase => 'Voici l\'issue rendue par le serveur pour chaque profil.';
 
@@ -11845,6 +11854,7 @@ extension on Traductions {
 			'finance.soldeInconnuDetail' => 'Le serveur n\'a pas encore rendu ce solde. Il s\'affichera dès qu\'il sera connu.',
 			'finance.aucunTotal' => 'Total inconnu pour le moment',
 			'finance.totalIncomplet' => 'Total incomplet : au moins un solde n\'est pas encore connu.',
+			'finance.totalPartiel' => ({required Object total}) => '${total} (total incomplet)',
 			'finance.soldeLigne' => ({required Object montant}) => 'Solde : ${montant}',
 			'finance.toutSelectionner' => 'Tout sélectionner',
 			'finance.profilsSelectionnes' => ({required Object nombre}) => 'Profils sélectionnés : ${nombre}',
@@ -11955,6 +11965,8 @@ extension on Traductions {
 			'finance.arret.annulationIndisponiblePhrase' => 'Le serveur ne sait pas encore arrêter un accès. Rien n\'a été modifié.',
 			'finance.arret.resultat.titre' => 'Résultat de la demande',
 			'finance.arret.resultat.enregistre' => 'Demande transmise',
+			'finance.arret.resultat.aucun' => 'Aucun accès arrêté',
+			'finance.arret.resultat.partiel' => 'Arrêt partiel',
 			'finance.arret.resultat.phrase' => 'Voici l\'issue rendue par le serveur pour chaque profil.',
 			'finance.arret.resultat.parProfil' => 'Issue par profil',
 			'finance.arret.resultat.retourAcces' => 'Voir les accès',
@@ -12272,11 +12284,11 @@ extension on Traductions {
 			'appareils.emetteur.suiviIndisponible' => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.',
 			'appareils.emetteur.preparation' => 'Préparation du code',
 			'appareils.emetteur.verification.titre' => 'Vérification du code',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.emetteur.verification.phrase' => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.',
 			'appareils.emetteur.confirme.titre' => 'Appareil connecté',
 			'appareils.emetteur.confirme.phrase' => ({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.confirme.phraseSansPrenom' => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.',
 			'appareils.emetteur.confirme.action' => 'Terminé',
 			'appareils.emetteur.expire.titre' => 'Ce code a expiré',
@@ -12786,11 +12798,11 @@ extension on Traductions {
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
 			'admin.groupes.observationCapaciteAbsente' => 'Cette installation n\'a pas encore la mise à jour serveur que ce réglage demande (migration 0036). Réessayer n\'y changera rien : elle doit d\'abord être appliquée à la base.',
 			'admin.diagnostics.titre' => 'Diagnostics',
@@ -13300,11 +13312,11 @@ extension on Traductions {
 			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			'parcours.offresAutres' => 'Autres horaires possibles',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
 			'parcours.offreTraduite' => 'Affiché à votre heure locale',
 			'parcours.offreJours' => ({required Object jours}) => '${jours}',
@@ -13814,11 +13826,11 @@ extension on Traductions {
 			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
@@ -14328,11 +14340,11 @@ extension on Traductions {
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.type.image' => 'Image',
 			'tc.bibliotheque.type.lecon' => 'Leçon',
 			'tc.bibliotheque.detail.titre' => 'Support',

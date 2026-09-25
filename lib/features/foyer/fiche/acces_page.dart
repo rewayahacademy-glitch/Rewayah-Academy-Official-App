@@ -11,7 +11,7 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/status_pill.dart';
-import '../../compte/arret_acces_page.dart' show apercuPossible;
+import '../../compte/arret_acces_page.dart' show arretPossible;
 import '../fiche_eleve_page.dart';
 import '../foyer_page.dart';
 import '../ligne_membre.dart';
@@ -161,7 +161,7 @@ class _Acces extends ConsumerWidget {
           NoteFiche(t.ficheEleve.acces.detailIndisponible),
           // S10 avec ce profil (LT-9), seulement si le serveur sait en rendre
           // les consequences (DB-FIN-05).
-          if (apercuPossible(ref, <String>[profil.eleveId]))
+          if (arretPossible(ref, <String>[profil.eleveId]))
             LienFleche(
               key: AccesElevePage.arreterKey,
               libelle: t.finance.arret.action,

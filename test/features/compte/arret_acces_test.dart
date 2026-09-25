@@ -17,8 +17,10 @@ import 'package:rewayah_academy/core/capacites/port_finance_foyer.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/arret_acces_page.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
@@ -83,9 +85,12 @@ class _ApercuFixe extends FinanceFoyerDemo {
   }
 }
 
-/// Un apercu indisponible (DB-FIN-05) ; un arret compte.
+/// Un apercu indisponible (DB-FIN-05), dit par le port ; un arret compte.
 class _SansApercu extends FinanceFoyerDemo {
   int arrets = 0;
+
+  @override
+  bool get annulationDisponible => false;
 
   @override
   Future<ApercuAnnulation> apercuAnnulation(List<String> profilIds) =>
@@ -100,6 +105,32 @@ class _SansApercu extends FinanceFoyerDemo {
     arrets++;
     return _ArretRendu.resultat;
   }
+}
+
+/// L'apercu de la demonstration, chaque lecture comptee (constat LT-R 1).
+class _ApercuCompte extends FinanceFoyerDemo {
+  int lectures = 0;
+
+  @override
+  Future<ApercuAnnulation> apercuAnnulation(List<String> profilIds) {
+    lectures++;
+    return super.apercuAnnulation(profilIds);
+  }
+}
+
+/// Un arret dont toutes les issues sont echouees (constat LT-R 3).
+class _ToutRefuse extends FinanceFoyerDemo {
+  @override
+  Future<ResultatAnnulation> annulerAcces({
+    required String referenceApercu,
+    required List<String> profilIds,
+    required String cleIdempotence,
+  }) async => ResultatAnnulation(
+    profils: <IssueProfil>[
+      for (final String id in profilIds)
+        IssueProfil(profilId: id, issue: IssueServeur.echouee),
+    ],
+  );
 }
 
 /// Un arret qui attend que le test le libere : double tap et reessai.
@@ -243,7 +274,10 @@ void main() {
       expect(lieu(routeur), Routes.tuteurCompteArretAccesResultat);
       expect(find.byType(ResultatArretAccesPage), findsOneWidget);
       final res = t.finance.arret.resultat;
-      expect(find.text(res.enregistre), findsOneWidget);
+      // Une issue echouee parmi d'autres : « Arret partiel », jamais
+      // « Demande transmise ».
+      expect(find.text(res.partiel), findsOneWidget);
+      expect(find.text(res.enregistre), findsNothing);
       expect(find.text(t.finance.issues.confirmee), findsOneWidget);
       expect(find.text(t.finance.issues.enAttente), findsOneWidget);
       expect(find.text(t.finance.issues.echouee), findsOneWidget);
@@ -255,6 +289,39 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('S11 toutes echouees : « Aucun acces arrete », ton alerte', (
+    WidgetTester tester,
+  ) async {
+    await _versS10(tester, _ToutRefuse());
+    await toucher(tester, find.byKey(ArretAccesPage.comprisKey));
+    await toucher(tester, find.byKey(ArretAccesPage.confirmerKey));
+    final res = t.finance.arret.resultat;
+    expect(find.byType(ResultatArretAccesPage), findsOneWidget);
+    expect(find.text(res.aucun), findsOneWidget);
+    expect(find.text(res.enregistre), findsNothing);
+    expect(find.text(res.partiel), findsNothing);
+    expect(
+      tester.widget<EcranResultat>(find.byType(EcranResultat)).ton,
+      TonEtat.alerte,
+    );
+    expect(find.text(t.finance.issues.echouee), findsNWidgets(2));
+  });
+
+  testWidgets('S10 relit l\'apercu a chaque entree depuis les acces', (
+    WidgetTester tester,
+  ) async {
+    final _ApercuCompte port = _ApercuCompte();
+    await _versS10(tester, port);
+    // La page des acces ne lit aucun apercu pour afficher l'action.
+    expect(port.lectures, 1);
+    await tester.tap(find.byType(DisqueRetour));
+    await stabiliser(tester);
+    expect(find.text(t.finance.arret.pourQui), findsOneWidget);
+    await toucher(tester, find.byKey(ArretAccesPage.continuerKey));
+    expect(find.text(t.finance.arret.consequences), findsOneWidget);
+    expect(port.lectures, 2);
+  });
 
   testWidgets('production : page des acces sans action', (
     WidgetTester tester,

@@ -133,6 +133,31 @@ class _PaiementLent extends FinanceFoyerDemo {
   }
 }
 
+/// Un devis dont la date de validite est passee selon l'horloge locale ; le
+/// serveur refuse le paiement comme expire (constat LT-R 2).
+class _DevisExpire extends FinanceFoyerDemo {
+  _DevisExpire();
+
+  int paiements = 0;
+
+  static final DevisRecharge devis = DevisRecharge(
+    reference: 'test-devis-ancien',
+    lignes: _FinanceAvecDevis.devis.lignes,
+    totalMineur: 2599,
+    devise: FinanceFoyerDemo.devise,
+    valableJusqua: DateTime.utc(2000),
+  );
+
+  @override
+  Future<ResultatRecharge> payer({
+    required String referenceDevis,
+    required String cleIdempotence,
+  }) {
+    paiements++;
+    return Future<ResultatRecharge>.error(const DevisExpire());
+  }
+}
+
 Future<GoRouter> _surVerifier(WidgetTester tester, PortFinanceFoyer p) async {
   final GoRouter routeur = await monterCompte(
     tester,
@@ -160,6 +185,31 @@ bool? _cochee(WidgetTester tester, int rang) =>
 String _offre(String id) => 'demo-offre-$id';
 
 void main() {
+  testWidgets('devis expire : dit par le refus du serveur, pas l\'horloge', (
+    WidgetTester tester,
+  ) async {
+    final _DevisExpire port = _DevisExpire();
+    final GoRouter routeur = await monterCompte(
+      tester,
+      depart: Routes.tuteurCompteSoldes,
+      eleves: DonneesDemo.eleves,
+      surcharges: _finance(port),
+    );
+    routeur.go(Routes.tuteurCompteRechargeVerifier, extra: _DevisExpire.devis);
+    await stabiliser(tester);
+    final v = t.finance.recharge.verification;
+    // Date passee selon l'horloge locale : « Payer » reste propose.
+    expect(find.text(v.expire), findsNothing);
+    expect(find.byKey(VerifierRechargePage.payerKey), findsOneWidget);
+    await toucher(tester, find.byKey(VerifierRechargePage.payerKey));
+    expect(port.paiements, 1);
+    // Le refus du serveur ouvre l'etat « devis expire », sans « Payer ».
+    expect(find.text(v.expire), findsOneWidget);
+    expect(find.byKey(VerifierRechargePage.reprendreKey), findsOneWidget);
+    expect(find.byKey(VerifierRechargePage.payerKey), findsNothing);
+    expect(find.byType(ResultatRechargePage), findsNothing);
+  });
+
   for (final Size taille in <Size>[
     const Size(390, 844),
     const Size(1440, 900),

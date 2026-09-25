@@ -209,6 +209,16 @@ class DevisRecharge {
   final DateTime valableJusqua;
 }
 
+/// Refus du paiement (DB-FIN-04) : le serveur dit le devis expire. Seule
+/// source de l'etat « devis expire » (jamais l'horloge locale).
+///
+/// ponytail: le code serveur d'expiration reste a fixer dans le contrat
+/// DB-FIN-04 (demande T, LT-F) ; l'adaptateur le traduira en cette erreur.
+class DevisExpire implements Exception {
+  /// Cree le refus.
+  const DevisExpire();
+}
+
 /// L'issue par profil, telle que le serveur la rend.
 enum IssueServeur {
   /// Confirmee par le serveur.
@@ -346,6 +356,11 @@ abstract interface class PortFinanceFoyer {
     required String cleIdempotence,
   });
 
+  /// DB-FIN-05 : vrai si le serveur sait rendre les consequences d'une
+  /// annulation. Seule condition pour proposer « Arreter l'acces » (aucune
+  /// lecture pour le savoir).
+  bool get annulationDisponible;
+
   /// DB-FIN-05 : les consequences d'une annulation, avant confirmation.
   Future<ApercuAnnulation> apercuAnnulation(List<String> profilIds);
 
@@ -389,6 +404,9 @@ class FinanceFoyerIndisponible implements PortFinanceFoyer {
     required String referenceDevis,
     required String cleIdempotence,
   }) => _manque('DB-FIN-04');
+
+  @override
+  bool get annulationDisponible => false;
 
   @override
   Future<ApercuAnnulation> apercuAnnulation(List<String> profilIds) =>

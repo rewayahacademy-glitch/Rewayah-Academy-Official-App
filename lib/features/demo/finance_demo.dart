@@ -130,6 +130,9 @@ class FinanceFoyerDemo implements PortFinanceFoyer {
   }) => _manque('DB-FIN-04');
 
   @override
+  bool get annulationDisponible => true;
+
+  @override
   Future<ApercuAnnulation> apercuAnnulation(List<String> profilIds) async =>
       ApercuAnnulation(
         reference: 'demo-apercu',

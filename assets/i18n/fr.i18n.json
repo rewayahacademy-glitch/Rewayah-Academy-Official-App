@@ -130,6 +130,7 @@
     "soldeInconnuDetail": "Le serveur n'a pas encore rendu ce solde. Il s'affichera dès qu'il sera connu.",
     "aucunTotal": "Total inconnu pour le moment",
     "totalIncomplet": "Total incomplet : au moins un solde n'est pas encore connu.",
+    "totalPartiel": "{total} (total incomplet)",
     "soldeLigne": "Solde : {montant}",
     "toutSelectionner": "Tout sélectionner",
     "profilsSelectionnes": "Profils sélectionnés : {nombre}",
@@ -264,6 +265,8 @@
       "resultat": {
         "titre": "Résultat de la demande",
         "enregistre": "Demande transmise",
+        "aucun": "Aucun accès arrêté",
+        "partiel": "Arrêt partiel",
         "phrase": "Voici l'issue rendue par le serveur pour chaque profil.",
         "parProfil": "Issue par profil",
         "retourAcces": "Voir les accès",

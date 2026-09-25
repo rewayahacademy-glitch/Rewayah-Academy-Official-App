@@ -52,21 +52,11 @@ final FutureProviderFamily<ApercuAnnulation, String> apercuAnnulationProvider =
 String cleApercu(Iterable<String> ids) =>
     (List<String>.of(ids)..sort()).join(',');
 
-/// Vrai quand le serveur sait rendre un apercu pour [ids] (DB-FIN-05) : seule
-/// condition pour proposer « Arreter l'acces ». En production, faux.
-///
-/// ponytail: la disponibilite se lit en demandant l'apercu lui-meme (lecture
-/// sans effet), faute d'un indicateur de capacite ; a remplacer si le serveur
-/// en rend un.
-bool apercuPossible(WidgetRef ref, Iterable<String> ids) {
-  if (ids.isEmpty) {
-    return false;
-  }
-  final AsyncValue<ApercuAnnulation> apercu = ref.watch(
-    apercuAnnulationProvider(cleApercu(ids)),
-  );
-  return apercu.hasValue && !apercu.hasError;
-}
+/// Vrai quand le port dit l'annulation disponible (DB-FIN-05) et qu'il y a
+/// des profils : seule condition pour proposer « Arreter l'acces ». En
+/// production, faux. Aucune lecture d'apercu ici : S10 le lit a l'ouverture.
+bool arretPossible(WidgetRef ref, Iterable<String> ids) =>
+    ids.isNotEmpty && ref.watch(portFinanceFoyerProvider).annulationDisponible;
 
 /// Le motif de non-eligibilite en mots, depuis une liste **fermee** de codes
 /// connus. Un code inconnu (ou absent) se dit par une phrase neutre, jamais
@@ -153,6 +143,16 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
   bool _enCours = false;
   Object? _echec;
 
+  @override
+  void initState() {
+    super.initState();
+    // S10 ouvert directement : jamais un apercu garde d'une lecture passee.
+    final String? profil = widget.profilInitial;
+    if (profil != null) {
+      ref.invalidate(apercuAnnulationProvider(cleApercu(<String>[profil])));
+    }
+  }
+
   void _sortir() =>
       GoRouter.maybeOf(context)?.go(widget.retour ?? Routes.tuteurCompteAcces);
 
@@ -220,10 +220,14 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
           libelle: t.finance.arret.continuer,
           onPress: ids.isEmpty
               ? null
-              : () => setState(() {
-                  _selection = ids.toSet();
-                  _etape = 2;
-                }),
+              : () {
+                  // Chaque entree en S10 relit l'apercu (constat LT-R 1).
+                  ref.invalidate(apercuAnnulationProvider(cleApercu(ids)));
+                  setState(() {
+                    _selection = ids.toSet();
+                    _etape = 2;
+                  });
+                },
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -506,6 +510,36 @@ class _Consequences extends StatelessWidget {
   }
 }
 
+/// L'en-tete de S11 d'apres les issues rendues : toutes echouees, « Aucun
+/// acces arrete » ; melange avec des echecs, « Arret partiel » ; sinon
+/// « Demande transmise ».
+EcranResultat _enTete(List<IssueProfil> issues, String phrase) {
+  final res = t.finance.arret.resultat;
+  bool echouee(IssueProfil i) => i.issue == IssueServeur.echouee;
+  if (issues.isNotEmpty && issues.every(echouee)) {
+    return EcranResultat(
+      icone: AppIcons.avertissement,
+      ton: TonEtat.alerte,
+      titre: res.aucun,
+      phrase: phrase,
+    );
+  }
+  if (issues.any(echouee)) {
+    return EcranResultat(
+      icone: AppIcons.avertissement,
+      ton: TonEtat.avertissement,
+      titre: res.partiel,
+      phrase: phrase,
+    );
+  }
+  return EcranResultat(
+    icone: AppIcons.attente,
+    ton: TonEtat.neutre,
+    titre: res.enregistre,
+    phrase: phrase,
+  );
+}
+
 /// S11 (`/tuteur/compte/acces/arreter/resultat`), resultat dans `extra`.
 class ResultatArretAccesPage extends ConsumerWidget {
   /// Cree la page.
@@ -557,14 +591,9 @@ class ResultatArretAccesPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Aucune issue globale n'est rendue : l'ecran ne dit que la
-            // transmission, puis l'issue de chaque profil.
-            EcranResultat(
-              icone: AppIcons.attente,
-              ton: TonEtat.neutre,
-              titre: res.enregistre,
-              phrase: res.phrase,
-            ),
+            // Aucune issue globale n'est rendue : titre et ton se lisent sur
+            // les issues par profil (simple lecture de l'enumeration).
+            _enTete(r.profils, res.phrase),
             Ecart.vXl,
             ResultatParProfil(
               titre: res.parProfil,
