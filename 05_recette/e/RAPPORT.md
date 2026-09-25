@@ -5,7 +5,7 @@ Poste A. Worktree `D:\RA_TUTEUR\lot-e`, branche `ui/tuteur-v1-e`, créée depuis
 | Sous-paquet | Statut | Commits |
 |---|---|---|
 | 1. Mon compte et sous-pages | **livré** (24/09, 19 h 55) | `65cbcee`, `05f62a8`, `bbaf63f` |
-| 2. Historique et détails | non commencé | - |
+| 2. Historique et détails | **livré** (25/09, 03 h 30) | `5f44043`, `856e809`, `9479d04`, `6024bf1` |
 | 3. Notifications et consultation admin des observations | non commencé | - |
 
 ---
@@ -101,3 +101,76 @@ Détail et signatures : `pilotage-tuteur-v1/demandes/E.md`.
 ### 7. Défauts hors périmètre
 
 Aucun consigné dans `08_BACKLOG_VAGUE_CLASSE_VISIO.md` pour ce sous-paquet. Les deux défauts du composant partagé `GroupeReglages` sont dans E-2.
+
+---
+
+## Sous-paquet 2 : Historique, détail de séance, détail des observations
+
+Reprise d'un agent coupé : `lib/core/suivi/groupes_seances.dart` (non suivi) et les clés `historique.*` (non commitées) ont été relus, gardés et complétés.
+
+### 1. Commits
+
+| Hash | Message | Contenu |
+|---|---|---|
+| `5f44043` | feat(historique-tuteur): adaptateurs de lecture, classe des seances et visites d'observation sous RLS | `lib/core/suivi/groupes_seances.dart` (`sessions.groupe_id`, tri `started_at` descendant écrit), `lib/core/tc_observation/historique_observations_supabase.dart` (port K4, `guardian_session_visit`, tri `entered_at` descendant et `visit_number` croissant écrits) |
+| `856e809` | feat(historique-tuteur): Historique Seances et Observations, detail de seance et detail des observations (maquette V8 D2, D4) | 3 STUB remplacés (`observations_page`, `detail_seance_page`, `detail_observations_page`), `suivi_foyer_page` refait, `composants_historique`, `donnees_historique`, `filtres_historique` ; i18n `historique.*` (+ retrait de `tuteur.suivi.*`, espace du lot) ; slang ; `test/features/historique/**` ; ancien `test/features/suivi_foyer_test.dart` supprimé (écran remplacé) |
+| `9479d04` | fix(historique-tuteur): colonnes alignees, sous-titres sur une ligne, visites calees a droite (planches V8) | corrections après planches |
+| `6024bf1` | test(capture): Historique du tuteur ... | `test/capture/historique_tuteur_capture_test.dart` |
+
+Frontière `git diff --stat cefab7f -- supabase .github vercel.json web/vercel.json .firebaserc pubspec.yaml lib/core/theme lib/core/router lib/core/widgets lib/core/icons lib/core/coran lib/core/tc_coran lib/features/tc_mushaf` : **vide**. `vue_suivi_foyer.dart` (lu par l'élève) non modifié. `windows/flutter/*` non commités. STUB restants du lot E : `notifications_page.dart`, `observations_admin_page.dart` (sous-paquet 3).
+
+### 2. Écrans livrés et statut de preuve
+
+| Écran | Route | Statut | Détail |
+|---|---|---|---|
+| Historique, Séances | `/tuteur/suivi` (alias `/tuteur/historique`, `?eleve=&classe=` lus) | UI, BR, SIM ; DB-CRS-13, DB-HIS-03 | `mes_seances_v` + `presence_seance_v` (services existants) ; classe par `sessions.groupe_id` + classes courantes (`mes_groupes_famille_v`), sinon « Classe non disponible » ; sélecteur K1 partagé avec l'Accueil ; filtres Classe / Période / Statut (dérivés de la lecture, mémoire de session) ; séances passées seulement ; statut après la séance : coupure, départ, calcul non confirmé, inconnu = « En cours de vérification », jamais une absence ; « Retard N min » ; le sort du cours prime ; fuseau dit ; aucun réseau |
+| Historique, Observations | `/tuteur/suivi/observations` | UI, SIM ; COORD (E-7) ; DB-OBS-03/04/11 | Port K4 : **production = « Historique des observations indisponible »** jusqu'à E-7 ; en simulation : une ligne par séance et élève, « n visites · durée serveur » ou « Durée non confirmée », « Terminée » / « Sortie non enregistrée », jamais de motif de fin |
+| Détail de séance | `/tuteur/seances/:seanceId?eleve=` | UI, BR, SIM ; DB-CRS-12 | Titre = classe, sous-titre élève et date ; carte « La séance » (horaire, durée prévue, classe, enseignant avec Sayyid/Sayyida si la classe courante le nomme) ; carte « Présence de X » (statut, arrivée, interruption, phrase) ; fuseau UTC±hh:mm ; « introuvable » pour un id hors foyer ; aucun résumé famille (`lesson_reports` exclu) |
+| Détail des observations | `/tuteur/seances/:seanceId/observations?eleve=` | UI, SIM ; COORD (E-7) | Résumé (Vous, élève, enseignant, durée totale serveur), visites (rang, plage, durée, statut), fuseau ; introuvable ; indisponible en production |
+
+« Vérifié réellement » : **rien** (aucun navigateur, appareil ni Supabase).
+
+### 3. Carte des fonctions
+
+| Fonction | Écran unique | Route | Place dans la maquette (V8 D2 / D4, ancienne Historique) | Écart |
+|---|---|---|---|---|
+| Choisir l'élève | Historique (sélecteur K1, même sélection que l'Accueil) | - | rangée d'avatars sous le titre | point de statut non rendu (aucun état mesuré ici) ; sous-libellé = nombre de séances passées |
+| Ajouter un profil élève | **Foyer seulement** | `/tuteur/foyer/ajouter` | item « Ajouter enfant » du sélecteur | non rendu ici (doublon) |
+| Basculer Séances / Observations | Historique, contrôle segmenté | `/tuteur/suivi` / `/tuteur/suivi/observations` (`go`) | sous le sélecteur, pleine largeur | - |
+| Filtrer (Classe, Période, Statut) | chaque segment | - | trois menus sous le segment | sans icône (E-8.1) ; menu Classe absent sans classe nommable ; statuts présents seulement |
+| Ouvrir une séance | ligne de la carte Séances | `/tuteur/seances/:id?eleve=` (`go`) | ligne entière + chevron | sur téléphone la pastille passe sous la classe (maquette plus dense) ; à 1440 à droite |
+| Ouvrir les visites d'une séance | ligne de la carte Observations | `/tuteur/seances/:id/observations?eleve=` | ligne + chevron | idem |
+| Revenir à la liste | disque retour des détails | `go` vers la liste (filtres conservés) | « ‹ Observations » / « Retour à l'historique » (D4) | bouton « Retour à l'historique » non rendu : doublon du retour |
+| Réseau élève / enseignant | **non rendu** | - | ancienne capture | non mesuré (DB-HIS-03) |
+| Motif de fin de visite | **non rendu** | - | « Limite atteinte », « Départ volontaire » | le serveur écrit toujours « sortie volontaire » (DB-OBS-04) |
+| Notifications (cloche) | coquille | `/tuteur/notifications` | en haut à droite | sous-paquet 3 |
+
+### 4. Captures (`05_recette/e/captures/`, lues)
+
+- 16 : 4 écrans × {390x844@3, 1440x900@1} × {clair, sombre} (`e_historique_seances_*`, `e_historique_observations_*`, `e_detail_seance_*`, `e_detail_observations_*`) ; + `e_historique_seances_390x1400@2_pleine_hauteur_{light,dark}` ; + états `e_historique_observations_indisponible_390x844@3_light`, `e_historique_vide_390x844@3_light`.
+- 3 planches (+ `_capture.png`) : `e_planche_historique_observations_mobile_sombre` (V8 D2), `e_planche_detail_observations_mobile_clair` (V8 D4), `e_planche_historique_seances_ancienne_sombre` (ancienne capture). Maquettes recadrées : `05_recette/e/maquettes/v8_d2_*.png`, `v8_d4_*.png`.
+- Corrections après planches : débordement de ligne à 390 (pastille passée sous la classe) ; filets verticaux désalignés à 1440 (colonne de date à largeur fixe) ; date en double dans le détail de séance (ligne « Date » retirée, sous-titre court) ; durée et pastille des visites calées à droite comme D4.
+- Conforme au layout : titre + cloche, sélecteur, segment, trois filtres, UNE carte à filets, colonne date | filet | classe, pastille, chevron ; barre basse Historique active ; bureau : colonne de lecture 800 alignée au début, barre latérale.
+- Écarts restants : maquette ~1,4 fois plus dense (planches = structure) ; pastille sous la classe sur téléphone ; filtres sans icône (E-8.1) ; point de statut et « Ajouter » du sélecteur absents ; sous-titre du détail sur deux lignes à 390 (disque retour + cloche) ; bascule de thème de la coquille à 1440.
+
+### 5. Tests (tous sous `flutter-verrou.ps1`, dossier `D:\RA_TUTEUR\lot-e`)
+
+| # | Commande | Résultat exact |
+|---|---|---|
+| 1 | `dart run slang && dart format ... && dart analyze --fatal-infos lib/features/suivi_foyer lib/core/suivi lib/core/tc_observation/historique_observations_supabase.dart` | `No issues found!` |
+| 2 | `flutter test test/features/historique` (1re passe) | `+20 -5` : débordement de ligne à 390, `push` sans adresse (remplacé par `go`), retour imbriqué, test de filtre faux, largeur mesurée sur le mauvais widget ; corrigés |
+| 3 | `dart run tool/verifier_jetons.dart` (1re passe) | `1 violation [espacement-hors-echelle]` (`SizedBox(width: 1)`), corrigée |
+| 4 | final : `dart analyze --fatal-infos lib/features/suivi_foyer test/features/historique test/capture/historique_tuteur_capture_test.dart` ; `verifier_jetons` ; `flutter test test/features/historique test/router/navigation_test.dart test/accessibilite/rtl_echelle_texte_ecrans_test.dart test/features/suivi_eleve_test.dart test/suivi test/config/fixtures_isolees_test.dart test/i18n` | `No issues found!` ; `Jetons verifies : 427 fichiers, aucune violation.` ; `01:27 +183: All tests passed!` (`e2_tests_historique.log`) |
+| 5 | `flutter test test/capture/historique_tuteur_capture_test.dart` (CAPTURE_DIR + 3 maquettes) | `00:26 +24: All tests passed!` (`e2_captures.log`) |
+
+Couverture (33 tests du lot) : destination Historique **touchée** depuis la barre (390 et 1440), Historique actif ; ordre sélecteur > segment > filtres ; « Ajouter » absent ; statuts après séance (présence, retard 8 min, vérification pour une coupure, annulé, non tenu ; jamais « Absence » ni « Lien coupé ») ; classe et Sayyid ; ni séance future ni autre élève ; tri décroissant ; fuseau ; aucun réseau ; profil A2 **touché** ; ligne **touchée** > détail (horaire, arrivée, phrase, UTC) > disque retour **touché** > liste encore filtrée ; filtres Statut, Période, filtre vide + « Réinitialiser les filtres » ; Classe ; sans classe lisible ; `?eleve=` ; segment Observations **touché** (indisponible en production, sans « Réessayer ») puis Séances ; observations simulées : ligne, détail **touché**, visites, retour, profil A2, aucun motif de fin ; filtre Statut qui survit au changement de profil ; vide ; introuvables (séance, visites) avec retour **touché** ; chargement (squelette) ; échec + Réessayer (relecture comptée) ; vide ; foyer sans profil ; hors ligne (bandeau) ; présence illisible ; fonctions pures (statuts, périodes civiles, durées, dates, décalage, classes des séances, groupement des visites, lignes incomplètes écartées).
+
+**Non exécutés** : analyse et suite complètes (coordinateur) ; build web ; navigateur, appareil, Supabase ; test `(c)` de la définition de « fait » après publication de l'aperçu ; `graphe_imports.ps1` (écrans atteints par `app_router.dart`, fichier inchangé).
+
+### 6. Demandes au coordinateur
+
+`demandes/E.md` : **E-7** brancher `HistoriqueObservationsSupabase` dans `portHistoriqueObservationsProvider` (après confirmation du GRANT SELECT en production) ; **E-8** informations (icône de `MenuFiltre`, « Réessayer » pendant le réessai automatique de Riverpod, « Ajouter » non rendu, entrée `?eleve=&classe=` pour le lot C, clés `tuteur.suivi.*` retirées).
+
+### 7. Défauts hors périmètre
+
+Aucun consigné dans `08_BACKLOG_VAGUE_CLASSE_VISIO.md`.

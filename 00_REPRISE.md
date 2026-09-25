@@ -32,6 +32,8 @@ ultracode Tu reprends la coordination du chantier frontend Tuteur V1 de Rewayah 
 
 ## 3. Contrôles à faire à la reprise
 
+**EN PREMIER, et ensuite toutes les 30 minutes (erreur réelle du 24/09 : les demandes du poste B sont restées sans réponse plusieurs heures)** : `git -C D:\RA_TUTEUR\pilotage-git pull --rebase`, lire `demandes/*.md`, `etat/B.md` et, dans le tableau, toutes les lignes portant un `motif` ou restées `en_cours` à cause d'une demande au coordinateur. Répondre dans `ETAT_A.md` (commit ou raison) AVANT toute autre tâche : le poste B est bloqué tant que le coordinateur ne répond pas.
+
 1. `git -C D:\RA_TUTEUR\integration status` et `log --oneline -3` : HEAD attendu `cefab7f` (les 3 fichiers `windows/flutter/generated_*` modifiés ne sont que des fins de ligne, ne pas les committer).
 2. Pour chaque lot `c`, `e`, `o` : `git -C D:\RA_TUTEUR\lot-<x> log --oneline ui/tuteur-v1..HEAD` et `05_recette\<x>\RAPPORT.md`. Au 24/09 22 h 14 : C = 4 commits (C1 fait), E = 3 commits (E1 fait), O = 1 commit (O1 en cours).
 3. Tableau de suivi : lignes `en_cours` et `fait` des deux postes ; sessions actives.
