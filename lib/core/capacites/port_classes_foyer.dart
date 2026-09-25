@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../tc_groupe/group_summary_vm.dart';
 import 'capacite_indisponible.dart';
-import 'classes_foyer_supabase.dart';
 
 /// Une classe du foyer, vue pour un eleve precis.
 @immutable
@@ -59,11 +57,15 @@ class ClassesFoyerIndisponible implements PortClassesFoyer {
   }) => Future<ClasseFoyer?>.error(const CapaciteIndisponible('DB-TRV-07'));
 }
 
-/// Les classes du foyer employees par l'application : l'adaptateur reel
-/// (lectures sous RLS, `0019`), branche par le coordinateur le 25/09 (revue C,
-/// M2 ; demandes C-1, C-12). [ClassesFoyerIndisponible] reste le double des
-/// tests qui veulent l'etat « pas encore relie ».
+/// Les classes du foyer employees par l'application. Par defaut,
+/// **indisponible** (etat honnete, aucun appel serveur implicite) : les
+/// widget tests qui ne branchent aucun service reseau n'ont donc rien a
+/// surcharger. L'adaptateur reel `ClassesFoyerSupabase` (lectures sous RLS,
+/// `0019` ; revue C, M2 ; demandes C-1, C-12, constat C-INT-1) est branche
+/// explicitement au demarrage reel de l'application (`lib/main.dart`), jamais
+/// ici : un provider partage ne doit pas dependre implicitement d'un service
+/// reseau (`Supabase.instance`) pour son comportement par defaut.
 final Provider<PortClassesFoyer> portClassesFoyerProvider =
     Provider<PortClassesFoyer>(
-      (Ref ref) => ClassesFoyerSupabase(Supabase.instance.client),
+      (Ref ref) => const ClassesFoyerIndisponible(),
     );
