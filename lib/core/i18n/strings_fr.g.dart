@@ -1911,6 +1911,21 @@ class Traductions$notifications$fr {
 
 	/// fr: 'Notifications'
 	String get titre => 'Notifications';
+
+	/// fr: 'Les notifications ne sont pas encore disponibles'
+	String get indisponibleTitre => 'Les notifications ne sont pas encore disponibles';
+
+	/// fr: 'Les rappels de séance et les messages de l'académie s'afficheront ici dès qu'ils seront ouverts.'
+	String get indisponiblePhrase => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.';
+
+	/// fr: 'Aucune notification'
+	String get videTitre => 'Aucune notification';
+
+	/// fr: 'Les rappels de séance et les messages de l'académie s'afficheront ici.'
+	String get videPhrase => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici.';
+
+	/// fr: '{titre}, le {date} à {heure}'
+	String ligne({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}';
 }
 
 // Path: eleve
@@ -3697,6 +3712,135 @@ class Traductions$admin$observations$fr {
 
 	/// fr: 'Observations'
 	String get titre => 'Observations';
+
+	/// fr: 'Historique des observations'
+	String get titrePage => 'Historique des observations';
+
+	/// fr: 'Administration'
+	String get sousTitre => 'Administration';
+
+	/// fr: 'Rechercher un tuteur ou un élève'
+	String get recherche => 'Rechercher un tuteur ou un élève';
+
+	/// fr: 'Saisissez au moins deux lettres.'
+	String get rechercheCourte => 'Saisissez au moins deux lettres.';
+
+	/// fr: 'Aucun tuteur ni élève ne porte ce nom.'
+	String get rechercheAucune => 'Aucun tuteur ni élève ne porte ce nom.';
+
+	/// fr: 'La recherche n'a pas abouti. Réessayez.'
+	String get rechercheErreur => 'La recherche n\'a pas abouti. Réessayez.';
+
+	/// fr: 'Tuteur'
+	String get roleTuteur => 'Tuteur';
+
+	/// fr: 'Élève'
+	String get roleEleve => 'Élève';
+
+	/// fr: 'Tuteur : {nom}'
+	String filtreTuteur({required Object nom}) => 'Tuteur : ${nom}';
+
+	/// fr: 'Élève : {nom}'
+	String filtreEleve({required Object nom}) => 'Élève : ${nom}';
+
+	/// fr: 'Retirer le filtre {filtre}'
+	String retirerFiltre({required Object filtre}) => 'Retirer le filtre ${filtre}';
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Toutes les classes'
+	String get toutesClasses => 'Toutes les classes';
+
+	/// fr: 'Période'
+	String get periode => 'Période';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Tous les statuts'
+	String get tousStatuts => 'Tous les statuts';
+
+	/// fr: 'Date'
+	String get colonneDate => 'Date';
+
+	/// fr: 'Tuteur'
+	String get colonneTuteur => 'Tuteur';
+
+	/// fr: 'Élève'
+	String get colonneEleve => 'Élève';
+
+	/// fr: 'Classe'
+	String get colonneClasse => 'Classe';
+
+	/// fr: 'Entrée'
+	String get colonneEntree => 'Entrée';
+
+	/// fr: 'Sortie'
+	String get colonneSortie => 'Sortie';
+
+	/// fr: 'Durée'
+	String get colonneDuree => 'Durée';
+
+	/// fr: 'Statut'
+	String get colonneStatut => 'Statut';
+
+	/// fr: 'Terminée'
+	String get terminee => 'Terminée';
+
+	/// fr: 'Sortie non enregistrée'
+	String get ouverte => 'Sortie non enregistrée';
+
+	/// fr: 'Non enregistrée'
+	String get sortieAbsente => 'Non enregistrée';
+
+	/// fr: 'Non confirmée'
+	String get dureeNonConfirmee => 'Non confirmée';
+
+	/// fr: 'Nom non disponible'
+	String get nomInconnu => 'Nom non disponible';
+
+	/// fr: 'Classe non disponible'
+	String get classeInconnue => 'Classe non disponible';
+
+	/// fr: '{entree} - {sortie}'
+	String plage({required Object entree, required Object sortie}) => '${entree} - ${sortie}';
+
+	/// fr: 'Visite {rang} du {date}, {tuteur} pour {eleve}, {classe}, entrée {entree}, sortie {sortie}, durée {duree}, {statut}'
+	String ligne({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visite ${rang} du ${date}, ${tuteur} pour ${eleve}, ${classe}, entrée ${entree}, sortie ${sortie}, durée ${duree}, ${statut}';
+
+	/// fr: 'Heures affichées à l'heure de cet appareil (UTC{decalage}).'
+	String fuseau({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).';
+
+	/// fr: 'Historique des observations indisponible'
+	String get indisponibleTitre => 'Historique des observations indisponible';
+
+	/// fr: 'La lecture des visites d'observation n'est pas encore ouverte dans l'application.'
+	String get indisponiblePhrase => 'La lecture des visites d\'observation n\'est pas encore ouverte dans l\'application.';
+
+	/// fr: 'Aucune visite enregistrée'
+	String get videTitre => 'Aucune visite enregistrée';
+
+	/// fr: 'Les visites d'observation des tuteurs s'afficheront ici.'
+	String get videPhrase => 'Les visites d\'observation des tuteurs s\'afficheront ici.';
+
+	/// fr: 'Aucune visite ne correspond'
+	String get videFiltreTitre => 'Aucune visite ne correspond';
+
+	/// fr: 'Élargissez la période ou retirez un filtre.'
+	String get videFiltrePhrase => 'Élargissez la période ou retirez un filtre.';
+
+	/// fr: 'Effacer les filtres'
+	String get effacerFiltres => 'Effacer les filtres';
+
+	/// fr: 'Charger les visites plus anciennes'
+	String get chargerSuite => 'Charger les visites plus anciennes';
+
+	/// fr: 'Les visites plus anciennes n'ont pas pu être lues.'
+	String get erreurSuite => 'Les visites plus anciennes n\'ont pas pu être lues.';
+
+	/// fr: 'Toutes les visites sont affichées.'
+	String get fin => 'Toutes les visites sont affichées.';
 }
 
 // Path: admin.comptes
@@ -6256,8 +6400,8 @@ class Traductions$admin$journal$evenements$fr {
 	/// fr: 'Visite d'observation terminée'
 	String get observationSortie => 'Visite d\'observation terminée';
 
-	/// fr: 'Règles d'observation du groupe modifiées'
-	String get observationPolitiqueGroupeModifiee => 'Règles d\'observation du groupe modifiées';
+	/// fr: 'Règles d'observation de la classe modifiées'
+	String get observationPolitiqueGroupeModifiee => 'Règles d\'observation de la classe modifiées';
 }
 
 // Path: compte.tuteur.identite
@@ -9393,8 +9537,51 @@ extension on Traductions {
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
 			'admin.journal.evenements.observationEntree' => 'Visite d\'observation commencée',
 			'admin.journal.evenements.observationSortie' => 'Visite d\'observation terminée',
-			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Règles d\'observation du groupe modifiées',
+			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Règles d\'observation de la classe modifiées',
 			'admin.observations.titre' => 'Observations',
+			'admin.observations.titrePage' => 'Historique des observations',
+			'admin.observations.sousTitre' => 'Administration',
+			'admin.observations.recherche' => 'Rechercher un tuteur ou un élève',
+			'admin.observations.rechercheCourte' => 'Saisissez au moins deux lettres.',
+			'admin.observations.rechercheAucune' => 'Aucun tuteur ni élève ne porte ce nom.',
+			'admin.observations.rechercheErreur' => 'La recherche n\'a pas abouti. Réessayez.',
+			'admin.observations.roleTuteur' => 'Tuteur',
+			'admin.observations.roleEleve' => 'Élève',
+			'admin.observations.filtreTuteur' => ({required Object nom}) => 'Tuteur : ${nom}',
+			'admin.observations.filtreEleve' => ({required Object nom}) => 'Élève : ${nom}',
+			'admin.observations.retirerFiltre' => ({required Object filtre}) => 'Retirer le filtre ${filtre}',
+			'admin.observations.classe' => 'Classe',
+			'admin.observations.toutesClasses' => 'Toutes les classes',
+			'admin.observations.periode' => 'Période',
+			'admin.observations.statut' => 'Statut',
+			'admin.observations.tousStatuts' => 'Tous les statuts',
+			'admin.observations.colonneDate' => 'Date',
+			'admin.observations.colonneTuteur' => 'Tuteur',
+			'admin.observations.colonneEleve' => 'Élève',
+			'admin.observations.colonneClasse' => 'Classe',
+			'admin.observations.colonneEntree' => 'Entrée',
+			'admin.observations.colonneSortie' => 'Sortie',
+			'admin.observations.colonneDuree' => 'Durée',
+			'admin.observations.colonneStatut' => 'Statut',
+			'admin.observations.terminee' => 'Terminée',
+			'admin.observations.ouverte' => 'Sortie non enregistrée',
+			'admin.observations.sortieAbsente' => 'Non enregistrée',
+			'admin.observations.dureeNonConfirmee' => 'Non confirmée',
+			'admin.observations.nomInconnu' => 'Nom non disponible',
+			'admin.observations.classeInconnue' => 'Classe non disponible',
+			'admin.observations.plage' => ({required Object entree, required Object sortie}) => '${entree} - ${sortie}',
+			'admin.observations.ligne' => ({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visite ${rang} du ${date}, ${tuteur} pour ${eleve}, ${classe}, entrée ${entree}, sortie ${sortie}, durée ${duree}, ${statut}',
+			'admin.observations.fuseau' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
+			'admin.observations.indisponibleTitre' => 'Historique des observations indisponible',
+			'admin.observations.indisponiblePhrase' => 'La lecture des visites d\'observation n\'est pas encore ouverte dans l\'application.',
+			'admin.observations.videTitre' => 'Aucune visite enregistrée',
+			'admin.observations.videPhrase' => 'Les visites d\'observation des tuteurs s\'afficheront ici.',
+			'admin.observations.videFiltreTitre' => 'Aucune visite ne correspond',
+			'admin.observations.videFiltrePhrase' => 'Élargissez la période ou retirez un filtre.',
+			'admin.observations.effacerFiltres' => 'Effacer les filtres',
+			'admin.observations.chargerSuite' => 'Charger les visites plus anciennes',
+			'admin.observations.erreurSuite' => 'Les visites plus anciennes n\'ont pas pu être lues.',
+			'admin.observations.fin' => 'Toutes les visites sont affichées.',
 			'admin.comptes.titre' => 'Comptes',
 			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
@@ -9546,6 +9733,8 @@ extension on Traductions {
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
 			'parcours.objectifMemoriser' => 'Mémoriser',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.objectifIndecis' => 'Je ne sais pas encore',
 			'parcours.momentsQuestion' => 'Quels moments de la journée vous conviennent le mieux ?',
 			'parcours.momentsRaison' => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.',
@@ -9589,8 +9778,6 @@ extension on Traductions {
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
-			_ => null,
-		} ?? switch (path) {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
@@ -9919,6 +10106,11 @@ extension on Traductions {
 			'historique.observation.introuvableTitre' => 'Aucune visite pour cette séance',
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
 			'notifications.titre' => 'Notifications',
+			'notifications.indisponibleTitre' => 'Les notifications ne sont pas encore disponibles',
+			'notifications.indisponiblePhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.',
+			'notifications.videTitre' => 'Aucune notification',
+			'notifications.videPhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici.',
+			'notifications.ligne' => ({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
 			'eleve.accueil.coranDetail' => 'À lire quand tu veux',
@@ -10055,6 +10247,8 @@ extension on Traductions {
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
@@ -10103,8 +10297,6 @@ extension on Traductions {
 			'enseignant.journee.preflightBloque' => 'Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.',
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
 			'enseignant.journee.erreurPartielle' => 'Une partie de la journée n\'a pas pu être lue : prières, pauses ou rapports peuvent manquer.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
@@ -10569,6 +10761,8 @@ extension on Traductions {
 			'tc.classe.scene.vide' => 'Vous êtes seul dans la salle pour le moment',
 			'tc.classe.scene.sansImage' => 'Sans image',
 			'tc.classe.reseau.bon' => 'Réseau bon',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.reseau.mediocre' => 'Réseau instable',
 			'tc.classe.reseau.perdu' => 'Réseau perdu',
 			'tc.classe.attente.materiel' => 'Vérification de votre micro',
@@ -10617,8 +10811,6 @@ extension on Traductions {
 			'tc.observation.visite.mediaFerme' => 'Micro et caméra fermés pendant l\'observation.',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.enfantAbsent' => 'Votre enfant n\'a pas d\'image ouverte.',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',

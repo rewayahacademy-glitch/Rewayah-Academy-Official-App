@@ -208,6 +208,7 @@ Future<GoRouter> monterHistorique(
   bool horsLigne = false,
   ThemeMode mode = ThemeMode.light,
   Key? cadre,
+  List<Override> autres = const <Override>[],
 }) async {
   // Sans taille, la vue est deja fixee par l'appelant (outil de capture).
   if (taille != null) {
@@ -229,6 +230,7 @@ Future<GoRouter> monterHistorique(
           observations: observations,
           avecClasses: avecClasses,
         ),
+        ...autres,
       ],
       child: TranslationProvider(
         child: RepaintBoundary(

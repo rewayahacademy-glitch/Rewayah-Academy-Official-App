@@ -948,11 +948,54 @@
       "evenements": {
         "observationEntree": "Visite d'observation commencée",
         "observationSortie": "Visite d'observation terminée",
-        "observationPolitiqueGroupeModifiee": "Règles d'observation du groupe modifiées"
+        "observationPolitiqueGroupeModifiee": "Règles d'observation de la classe modifiées"
       }
     },
     "observations": {
-      "titre": "Observations"
+      "titre": "Observations",
+      "titrePage": "Historique des observations",
+      "sousTitre": "Administration",
+      "recherche": "Rechercher un tuteur ou un élève",
+      "rechercheCourte": "Saisissez au moins deux lettres.",
+      "rechercheAucune": "Aucun tuteur ni élève ne porte ce nom.",
+      "rechercheErreur": "La recherche n'a pas abouti. Réessayez.",
+      "roleTuteur": "Tuteur",
+      "roleEleve": "Élève",
+      "filtreTuteur": "Tuteur : {nom}",
+      "filtreEleve": "Élève : {nom}",
+      "retirerFiltre": "Retirer le filtre {filtre}",
+      "classe": "Classe",
+      "toutesClasses": "Toutes les classes",
+      "periode": "Période",
+      "statut": "Statut",
+      "tousStatuts": "Tous les statuts",
+      "colonneDate": "Date",
+      "colonneTuteur": "Tuteur",
+      "colonneEleve": "Élève",
+      "colonneClasse": "Classe",
+      "colonneEntree": "Entrée",
+      "colonneSortie": "Sortie",
+      "colonneDuree": "Durée",
+      "colonneStatut": "Statut",
+      "terminee": "Terminée",
+      "ouverte": "Sortie non enregistrée",
+      "sortieAbsente": "Non enregistrée",
+      "dureeNonConfirmee": "Non confirmée",
+      "nomInconnu": "Nom non disponible",
+      "classeInconnue": "Classe non disponible",
+      "plage": "{entree} - {sortie}",
+      "ligne": "Visite {rang} du {date}, {tuteur} pour {eleve}, {classe}, entrée {entree}, sortie {sortie}, durée {duree}, {statut}",
+      "fuseau": "Heures affichées à l'heure de cet appareil (UTC{decalage}).",
+      "indisponibleTitre": "Historique des observations indisponible",
+      "indisponiblePhrase": "La lecture des visites d'observation n'est pas encore ouverte dans l'application.",
+      "videTitre": "Aucune visite enregistrée",
+      "videPhrase": "Les visites d'observation des tuteurs s'afficheront ici.",
+      "videFiltreTitre": "Aucune visite ne correspond",
+      "videFiltrePhrase": "Élargissez la période ou retirez un filtre.",
+      "effacerFiltres": "Effacer les filtres",
+      "chargerSuite": "Charger les visites plus anciennes",
+      "erreurSuite": "Les visites plus anciennes n'ont pas pu être lues.",
+      "fin": "Toutes les visites sont affichées."
     },
     "comptes": {
       "titre": "Comptes",
@@ -1564,7 +1607,12 @@
     }
   },
   "notifications": {
-    "titre": "Notifications"
+    "titre": "Notifications",
+    "indisponibleTitre": "Les notifications ne sont pas encore disponibles",
+    "indisponiblePhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici dès qu'ils seront ouverts.",
+    "videTitre": "Aucune notification",
+    "videPhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici.",
+    "ligne": "{titre}, le {date} à {heure}"
   },
   "eleve": {
     "accueil": {
