@@ -30,6 +30,28 @@ const ActionsSeance _actions = ActionsSeance(
   onZoomPlus: _rien,
 );
 
+void _outil(OutilEnseignement _) {}
+void _aller(String _) {}
+
+const ActionsSeance _actionsEnseignant = ActionsSeance(
+  onRetour: _rien,
+  onQuitter: _rien,
+  onNotifications: _rien,
+  onReglages: _rien,
+  onCompte: _rien,
+  onMicro: _rien,
+  onCamera: _rien,
+  onReseau: _rien,
+  onEleves: _rien,
+  onSupports: _rien,
+  onOutil: _outil,
+  onPagePrecedente: _rien,
+  onPageSuivante: _rien,
+  onZoomMoins: _rien,
+  onZoomPlus: _rien,
+  onNaviguer: _aller,
+);
+
 class _Taille {
   const _Taille(this.nom, this.logique, this.densite, this.zone);
   final String nom;
@@ -216,6 +238,43 @@ void main() {
             debugPrint('PNG ${await capturer(tester, nom)}');
           });
         }
+      }
+    }
+  });
+
+  group('Capture : salle enseignant (T4)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final _Taille taille in _tailles) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nom = 'cl_06_enseignant_visite_${taille.nom}_${mode.name}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(
+            tester,
+            taille.logique,
+            taille.densite,
+            zoneSure: taille.zone,
+          );
+          await tester.pumpWidget(
+            hoteCapture(
+              SalleSeance(
+                vue: DonneesSeanceDemo.vue(
+                  RoleSeance.enseignant,
+                  EtatDemoSalle.visite,
+                ),
+                actions: _actionsEnseignant,
+              ),
+              themeMode: mode,
+            ),
+          );
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
       }
     }
   });

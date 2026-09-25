@@ -32,6 +32,9 @@ abstract final class DonneesSeanceDemo {
   static const String classe = 'Classe An-Nour';
   static const String enseignante = 'Sayyida Amina';
   static const String initialesEnseignante = 'SA';
+
+  /// L'identifiant fictif de la Classe An-Nour (rail enseignant).
+  static const String groupeDemo = 'demo-an-nour';
   static const String eleveCourant = 'Mariam';
 
   /// Les trois inscrits. « Eleves 1/3 » : seule Mariam est connectee.
@@ -111,6 +114,7 @@ abstract final class DonneesSeanceDemo {
           : null,
       support: etat == EtatDemoSalle.rienPartage ? null : support,
       cameraEnseignantActive: true,
+      groupeId: groupeDemo,
       eleves: eleves,
       supports: supports,
       fin: etat == EtatDemoSalle.fin ? fin : null,

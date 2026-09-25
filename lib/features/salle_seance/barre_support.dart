@@ -51,6 +51,69 @@ class IndicateurPage extends StatelessWidget {
   }
 }
 
+/// Pagination active de l'enseignant, desktop : ‹ 1 / 12 ›. Elle change la
+/// page de tous (I-5) ; une fleche sans rappel n'est pas rendue.
+class PaginationSupport extends StatelessWidget {
+  const PaginationSupport({
+    required this.page,
+    required this.pages,
+    this.onPrecedente,
+    this.onSuivante,
+    super.key,
+  });
+
+  final int page;
+  final int pages;
+  final VoidCallback? onPrecedente;
+  final VoidCallback? onSuivante;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final VoidCallback? precedente = page > 1 ? onPrecedente : null;
+    final VoidCallback? suivante = page < pages ? onSuivante : null;
+    return DecoratedBox(
+      key: const ValueKey<String>('pagination-support'),
+      decoration: palette.surfaceRaised.decoration(
+        borderRadius: AppRadius.arrondiFull,
+        side: palette.borderHairline.asBorderSide(),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _IconeBarre(
+              icone: AppIcons.chevron,
+              libelle: t.salle.seance.pagePrecedente,
+              onPress: precedente,
+              retourne: true,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Semantics(
+                label: t.salle.seance.pageSemantique(page: page, pages: pages),
+                excludeSemantics: true,
+                child: Text(
+                  t.salle.seance.page(page: page, pages: pages),
+                  style: palette.inkStrong.applyTo(
+                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            ),
+            _IconeBarre(
+              icone: AppIcons.chevron,
+              libelle: t.salle.seance.pageSuivante,
+              onPress: suivante,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// « Zoom local, sans effet sur les autres », (−, 100 %, +) et Agrandir.
 class ZoomLocal extends StatelessWidget {
   const ZoomLocal({
@@ -59,8 +122,13 @@ class ZoomLocal extends StatelessWidget {
     this.onPlus,
     this.onAgrandir,
     this.agrandi = false,
+    this.avecLibelle = true,
     super.key,
   });
+
+  /// « Zoom local, sans effet sur les autres » : eleve seulement (l'image
+  /// CLV-06 de l'enseignant montre les seules commandes).
+  final bool avecLibelle;
 
   /// Le facteur courant (1 = 100 %).
   final double zoom;
@@ -80,17 +148,19 @@ class ZoomLocal extends StatelessWidget {
       key: const ValueKey<String>('zoom-local'),
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Flexible(
-          child: Text(
-            t.salle.seance.zoomLocal,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: palette.inkMuted.applyTo(
-              theme.textTheme.labelSmall ?? const TextStyle(),
+        if (avecLibelle) ...<Widget>[
+          Flexible(
+            child: Text(
+              t.salle.seance.zoomLocal,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: palette.inkMuted.applyTo(
+                theme.textTheme.labelSmall ?? const TextStyle(),
+              ),
             ),
           ),
-        ),
-        Ecart.hXl,
+          Ecart.hXl,
+        ],
         DecoratedBox(
           decoration: _cadre(palette),
           child: Row(
@@ -138,22 +208,31 @@ class _IconeBarre extends StatelessWidget {
     required this.icone,
     required this.libelle,
     required this.onPress,
+    this.retourne = false,
   });
 
   final AppIcon icone;
   final String libelle;
   final VoidCallback? onPress;
 
+  /// Le chevron ‹ : [AppIcons.chevron] retourne.
+  final bool retourne;
+
   @override
   Widget build(BuildContext context) {
     final VoidCallback? action = onPress;
+    final AppPalette palette = AppPalette.of(context);
     final Widget dessin = SizedBox.square(
       dimension: AppSpacing.titreEcran,
       child: Center(
         child: IconTheme(
-          data: AppPalette.of(context).inkStrong
-              .asIconTheme(size: AppSpacing.xxl),
-          child: Icon(icone.repos),
+          // Une fleche de page en bout de support : estompee, inactive.
+          data:
+              (action == null && identical(icone, AppIcons.chevron)
+                      ? palette.inkFaint
+                      : palette.inkStrong)
+                  .asIconTheme(size: AppSpacing.xxl),
+          child: Transform.flip(flipX: retourne, child: Icon(icone.repos)),
         ),
       ),
     );

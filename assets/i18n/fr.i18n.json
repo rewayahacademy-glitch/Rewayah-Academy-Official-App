@@ -175,6 +175,29 @@
       "quitterQuestion": "Quitter la séance ?",
       "quitterConsequence": "Vous pourrez revenir si la séance est encore ouverte.",
       "illustration": "Illustration du support",
+      "quitterCahierConsequence": "Vous passerez ensuite au cahier de transmission.",
+      "quitterCahier": "Quitter et ouvrir le cahier",
+      "supports": "Supports",
+      "reseau": "Réseau",
+      "pagePrecedente": "Page précédente",
+      "pageSuivante": "Page suivante",
+      "outils": {
+        "titre": "Outils d'enseignement",
+        "pointeur": "Pointeur",
+        "marquer": "Marquer",
+        "masquer": "Masquer",
+        "annoter": "Annoter"
+      },
+      "rail": {
+        "navigation": "Navigation",
+        "marque": "Rewayah",
+        "sousMarque": "Academy",
+        "journee": "Journée",
+        "classes": "Classes",
+        "ressources": "Ressources",
+        "profil": "Profil"
+      },
+      "fermerPanneau": "Fermer le panneau",
       "demo": {
         "titre": "Salle de démonstration",
         "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",

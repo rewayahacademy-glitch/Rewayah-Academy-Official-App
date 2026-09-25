@@ -573,6 +573,75 @@ abstract final class AppIcons {
     IconData(0xe29a, fontFamily: _actif),
   );
 
+  // --- Salle de seance, enseignant (CLV-06, vague Classe) -----------------
+  // Points de code verifies sur une planche rendue de la police embarquee.
+
+  /// Outil Pointeur de la salle : Phosphor `cursor` (0xe1dc).
+  static const AppIcon curseur = AppIcon._(
+    IconData(0xe1dc, fontFamily: _repos),
+    IconData(0xe1dc, fontFamily: _actif),
+  );
+
+  /// Outil Marquer de la salle : Phosphor `pencil-simple` (0xe3b4).
+  static const AppIcon crayon = AppIcon._(
+    IconData(0xe3b4, fontFamily: _repos),
+    IconData(0xe3b4, fontFamily: _actif),
+  );
+
+  /// Outil Masquer de la salle : Phosphor `eye` (0xe220).
+  static const AppIcon oeil = AppIcon._(
+    IconData(0xe220, fontFamily: _repos),
+    IconData(0xe220, fontFamily: _actif),
+  );
+
+  /// Outil Annoter de la salle : Phosphor `pencil-line` (0xe3b2).
+  static const AppIcon annoter = AppIcon._(
+    IconData(0xe3b2, fontFamily: _repos),
+    IconData(0xe3b2, fontFamily: _actif),
+  );
+
+  /// Reseau (dock enseignant) : Phosphor `wifi-high` (0xe4ea).
+  static const AppIcon reseau = AppIcon._(
+    IconData(0xe4ea, fontFamily: _repos),
+    IconData(0xe4ea, fontFamily: _actif),
+  );
+
+  /// Bouton Eleves de la salle : Phosphor `users-three` (0xe68e).
+  static const AppIcon eleves = AppIcon._(
+    IconData(0xe68e, fontFamily: _repos),
+    IconData(0xe68e, fontFamily: _actif),
+  );
+
+  /// Bouton Supports de la salle : Phosphor `file-text` (0xe23a).
+  static const AppIcon supports = AppIcon._(
+    IconData(0xe23a, fontFamily: _repos),
+    IconData(0xe23a, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Classes, Phosphor `graduation-cap` (0xe62c).
+  static const AppIcon classes = AppIcon._(
+    IconData(0xe62c, fontFamily: _repos),
+    IconData(0xe62c, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Ressources et marque, Phosphor `book-open` (0xe0e6).
+  static const AppIcon livreOuvert = AppIcon._(
+    IconData(0xe0e6, fontFamily: _repos),
+    IconData(0xe0e6, fontFamily: _actif),
+  );
+
+  /// Fermer un panneau de la salle : Phosphor `x` (0xe4f6).
+  static const AppIcon fermer = AppIcon._(
+    IconData(0xe4f6, fontFamily: _repos),
+    IconData(0xe4f6, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Journee, Phosphor `house` (0xe2c2).
+  static const AppIcon maison = AppIcon._(
+    IconData(0xe2c2, fontFamily: _repos),
+    IconData(0xe2c2, fontFamily: _actif),
+  );
+
   /// Teaching Dock (D) : annuler le dernier trait. Remplace [reaffectation].
   static const AppIcon annuler = AppIcon._(
     IconData(0xe038, fontFamily: _repos),

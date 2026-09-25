@@ -2526,6 +2526,30 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Illustration du support'
 	String get illustration => 'Illustration du support';
 
+	/// fr: 'Vous passerez ensuite au cahier de transmission.'
+	String get quitterCahierConsequence => 'Vous passerez ensuite au cahier de transmission.';
+
+	/// fr: 'Quitter et ouvrir le cahier'
+	String get quitterCahier => 'Quitter et ouvrir le cahier';
+
+	/// fr: 'Supports'
+	String get supports => 'Supports';
+
+	/// fr: 'Réseau'
+	String get reseau => 'Réseau';
+
+	/// fr: 'Page précédente'
+	String get pagePrecedente => 'Page précédente';
+
+	/// fr: 'Page suivante'
+	String get pageSuivante => 'Page suivante';
+
+	late final Traductions$salle$seance$outils$fr outils = Traductions$salle$seance$outils$fr.internal(_root);
+	late final Traductions$salle$seance$rail$fr rail = Traductions$salle$seance$rail$fr.internal(_root);
+
+	/// fr: 'Fermer le panneau'
+	String get fermerPanneau => 'Fermer le panneau';
+
 	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
 	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
 }
@@ -8211,6 +8235,60 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: salle.seance.outils
+class Traductions$salle$seance$outils$fr {
+	Traductions$salle$seance$outils$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Outils d'enseignement'
+	String get titre => 'Outils d\'enseignement';
+
+	/// fr: 'Pointeur'
+	String get pointeur => 'Pointeur';
+
+	/// fr: 'Marquer'
+	String get marquer => 'Marquer';
+
+	/// fr: 'Masquer'
+	String get masquer => 'Masquer';
+
+	/// fr: 'Annoter'
+	String get annoter => 'Annoter';
+}
+
+// Path: salle.seance.rail
+class Traductions$salle$seance$rail$fr {
+	Traductions$salle$seance$rail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Navigation'
+	String get navigation => 'Navigation';
+
+	/// fr: 'Rewayah'
+	String get marque => 'Rewayah';
+
+	/// fr: 'Academy'
+	String get sousMarque => 'Academy';
+
+	/// fr: 'Journée'
+	String get journee => 'Journée';
+
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Ressources'
+	String get ressources => 'Ressources';
+
+	/// fr: 'Profil'
+	String get profil => 'Profil';
+}
+
 // Path: salle.seance.demo
 class Traductions$salle$seance$demo$fr {
 	Traductions$salle$seance$demo$fr.internal(this._root);
@@ -11522,6 +11600,25 @@ extension on Traductions {
 			'salle.seance.quitterQuestion' => 'Quitter la séance ?',
 			'salle.seance.quitterConsequence' => 'Vous pourrez revenir si la séance est encore ouverte.',
 			'salle.seance.illustration' => 'Illustration du support',
+			'salle.seance.quitterCahierConsequence' => 'Vous passerez ensuite au cahier de transmission.',
+			'salle.seance.quitterCahier' => 'Quitter et ouvrir le cahier',
+			'salle.seance.supports' => 'Supports',
+			'salle.seance.reseau' => 'Réseau',
+			'salle.seance.pagePrecedente' => 'Page précédente',
+			'salle.seance.pageSuivante' => 'Page suivante',
+			'salle.seance.outils.titre' => 'Outils d\'enseignement',
+			'salle.seance.outils.pointeur' => 'Pointeur',
+			'salle.seance.outils.marquer' => 'Marquer',
+			'salle.seance.outils.masquer' => 'Masquer',
+			'salle.seance.outils.annoter' => 'Annoter',
+			'salle.seance.rail.navigation' => 'Navigation',
+			'salle.seance.rail.marque' => 'Rewayah',
+			'salle.seance.rail.sousMarque' => 'Academy',
+			'salle.seance.rail.journee' => 'Journée',
+			'salle.seance.rail.classes' => 'Classes',
+			'salle.seance.rail.ressources' => 'Ressources',
+			'salle.seance.rail.profil' => 'Profil',
+			'salle.seance.fermerPanneau' => 'Fermer le panneau',
 			'salle.seance.demo.titre' => 'Salle de démonstration',
 			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
@@ -11895,6 +11992,8 @@ extension on Traductions {
 			'foyer.appareilsPartages' => 'Appareils partagés',
 			'foyer.appareilsFoyer' => 'Appareils du foyer',
 			'foyer.appareilsFoyerLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.creerMonProfil' => 'Créer mon profil élève',
 			'foyer.monProfil.titre' => 'Créer mon profil élève',
 			'foyer.monProfil.indisponibleTitre' => 'Pas encore possible',
@@ -11914,8 +12013,6 @@ extension on Traductions {
 			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
 			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.ajout.pourQui.moiDescription' => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.',
 			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
 			'foyer.ajout.identite.sousTitre' => 'Son prénom, son nom et son âge.',
@@ -12409,6 +12506,8 @@ extension on Traductions {
 			'admin.regles.absenceSeuilDetail' => 'Au-delà de ce nombre de minutes sans rejoindre la séance, l\'élève est marqué absent.',
 			'admin.regles.dureeSeance' => 'Durée de séance',
 			'admin.regles.dureeSeanceDetail' => 'La durée par défaut d\'une séance, avant toute exception individuelle.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.dureeMinimalePayee' => 'Durée minimale payée',
 			'admin.regles.dureeMinimalePayeeDetail' => 'En dessous de cette durée, une séance écourtée reste payée en entier.',
 			'admin.regles.pauseEntreSeances' => 'Pause entre deux séances',
@@ -12428,8 +12527,6 @@ extension on Traductions {
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
 			'admin.regles.uniteSemaines' => ({required Object n}) => '${n} sem.',
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -12923,6 +13020,8 @@ extension on Traductions {
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
 			'nav.admin.accueil' => 'Accueil',
+			_ => null,
+		} ?? switch (path) {
 			'nav.admin.operations' => 'Opérations',
 			'nav.admin.personnes' => 'Personnes',
 			'nav.admin.pedagogie' => 'Pédagogie',
@@ -12942,8 +13041,6 @@ extension on Traductions {
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
 			'compte.informations' => 'Informations',
-			_ => null,
-		} ?? switch (path) {
 			'compte.profil' => 'Profil',
 			'compte.profilDetail' => 'Voir et gérer vos informations',
 			'compte.reglages' => 'Réglages',
@@ -13437,6 +13534,8 @@ extension on Traductions {
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
 			'classe.observation.restantes' => ({required Object nombre}) => '${nombre} visites restantes pour cette séance',
 			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
@@ -13456,8 +13555,6 @@ extension on Traductions {
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
 			'classe.pagePlanning.aucuneDetail' => ({required Object prenom}) => 'Les prochaines séances de ${prenom} apparaîtront ici dès qu\'elles seront programmées.',
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
@@ -13951,6 +14048,8 @@ extension on Traductions {
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
@@ -13970,8 +14069,6 @@ extension on Traductions {
 			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
 			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
 			'tc.outils.annotation.aucuneSelection' => 'Sélectionnez d\'abord un passage.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
 			'tc.classe.entete.resteMinutes' => ({required Object minutes}) => 'Reste ${minutes} min',

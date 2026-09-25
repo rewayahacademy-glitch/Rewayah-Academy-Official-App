@@ -276,6 +276,9 @@ class _SalleDemoState extends State<SalleDemo> {
         onOutil: enseignant ? (OutilEnseignement _) => _inerte() : null,
         onPagePrecedente: enseignant ? _inerte : null,
         onPageSuivante: enseignant ? _inerte : null,
+        // Le rail sort de la salle (apres confirmation) : en demonstration,
+        // retour a la liste des etats.
+        onNaviguer: enseignant ? (String _) => widget.onSortir() : null,
       ),
     );
   }

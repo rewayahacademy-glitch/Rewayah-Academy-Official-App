@@ -33,19 +33,29 @@ enum FondBoutonAppel {
 
   /// Disque plein de la paire primaire : Camera, en guidee (Q1).
   primaire,
+
+  /// Surface surelevee, icone a l'encre de succes : Reseau (image CLV-06).
+  reseau,
 }
 
 /// Quitter la seance, apres confirmation : le dock (Quitter) et l'icone de
 /// sortie de l'en-tete guide passent par la meme question.
+///
+/// Enseignant ([cahier]) : آ« Quitter et ouvrir le cahier آ», la suite est le
+/// cahier de transmission (S l.861-863). Jamais آ« Terminer pour tous آ» ni
+/// آ« Prolonger آ». Le rail enseignant passe aussi par cette question.
 Future<void> confirmerQuitterSeance(
   BuildContext context,
-  VoidCallback quitter,
-) async {
+  VoidCallback quitter, {
+  bool cahier = false,
+}) async {
   final bool confirme = await ConfirmDestructive.demander(
     context,
     question: t.salle.seance.quitterQuestion,
-    consequence: t.salle.seance.quitterConsequence,
-    libelleConfirmer: t.salle.quitter,
+    consequence: cahier
+        ? t.salle.seance.quitterCahierConsequence
+        : t.salle.seance.quitterConsequence,
+    libelleConfirmer: cahier ? t.salle.seance.quitterCahier : t.salle.quitter,
   );
   if (confirme) quitter();
 }
@@ -96,7 +106,8 @@ class BoutonAppel extends StatelessWidget {
     final double diametre = diametreBoutonAppel(context);
     final double tailleIcone = _tailleIconeAppel(context);
     final BoxDecoration disque = switch (fond) {
-      FondBoutonAppel.surface => palette.surfaceOverlay.decoration(
+      FondBoutonAppel.surface ||
+      FondBoutonAppel.reseau => palette.surfaceOverlay.decoration(
         borderRadius: AppRadius.arrondiFull,
         side: palette.borderHairline.asBorderSide(),
       ),
@@ -119,6 +130,9 @@ class BoutonAppel extends StatelessWidget {
       // au-dessus du seuil de 3:1 d'un element graphique (WCAG 1.4.11).
       FondBoutonAppel.alerte => IconThemeData(
         color: _encreClaire,
+        size: tailleIcone,
+      ),
+      FondBoutonAppel.reseau => palette.inkSuccess.asIconTheme(
         size: tailleIcone,
       ),
       FondBoutonAppel.succes => IconThemeData(
@@ -224,8 +238,15 @@ class DockSeance extends StatelessWidget {
           onPress: agrandir,
         );
       case CommandeDock.reseau:
-        // Enseignant seulement (T4).
-        return null;
+        final VoidCallback? reseau = actions.onReseau;
+        if (reseau == null) return null;
+        return BoutonAppel(
+          key: const ValueKey<String>('bouton-reseau'),
+          icone: AppIcons.reseau.repos,
+          libelle: t.salle.seance.reseau,
+          fond: FondBoutonAppel.reseau,
+          onPress: reseau,
+        );
       case CommandeDock.quitter:
         final VoidCallback? quitter = actions.onQuitter;
         if (quitter == null) return null;
@@ -234,7 +255,11 @@ class DockSeance extends StatelessWidget {
           libelle: t.salle.quitter,
           libelleSemantique: t.salle.seance.sortir,
           fond: FondBoutonAppel.alerte,
-          onPress: () => confirmerQuitterSeance(context, quitter),
+          onPress: () => confirmerQuitterSeance(
+            context,
+            quitter,
+            cahier: vue.quitterOuvreCahier,
+          ),
         );
     }
   }
@@ -244,8 +269,15 @@ class DockSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final bool large = AppGabarit.de(context) == Gabarit.desktop;
     final List<Widget> boutons = <Widget>[
-      for (final CommandeDock commande in vue.commandesDock)
+      for (final CommandeDock commande in vue.commandesDock) ...<Widget>[
+        // Enseignant desktop (image CLV-06) : un filet vertical avant Quitter.
+        if (large &&
+            commande == CommandeDock.quitter &&
+            vue.quitterOuvreCahier &&
+            actions.onQuitter != null)
+          _Separateur(hauteur: diametreBoutonAppel(context)),
         ?_bouton(context, commande),
+      ],
     ];
     final AppColorPair fond = palette.surfaceRaised;
     final BoxDecoration cadre = fond.decoration(
@@ -299,4 +331,26 @@ class DockSeance extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Le filet vertical du dock enseignant desktop, avant Quitter.
+class _Separateur extends StatelessWidget {
+  const _Separateur({required this.hauteur});
+
+  final double hauteur;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    key: const ValueKey<String>('separateur-dock'),
+    // Un filet de 1 (la bordure) dans une case d'un demi-palier.
+    width: AppSpacing.xs,
+    height: hauteur,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        border: BorderDirectional(
+          start: AppPalette.of(context).borderResting.asBorderSide(),
+        ),
+      ),
+    ),
+  );
 }

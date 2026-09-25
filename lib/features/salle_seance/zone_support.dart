@@ -41,6 +41,8 @@ class ZoneSupport extends StatelessWidget {
     const InterfaceMode mode = InterfaceMode.standard;
     // Guidee desktop (Q8) : la video a cote du support, jamais par-dessus.
     final bool aCote = vue.videoACoteDuSupport(gabarit);
+    // La vignette n'existe que si la camera de l'enseignante est active.
+    final bool video = vue.cameraEnseignantActive;
     final double largeurVignette = MesuresVignette.largeur(
       gabarit,
       guidee: vue.vignetteAgrandie,
@@ -70,7 +72,7 @@ class ZoneSupport extends StatelessWidget {
                 child: _Contenu(
                   support: support,
                   gabarit: gabarit,
-                  largeurVignette: aCote ? 0 : largeurVignette,
+                  largeurVignette: aCote || !video ? 0 : largeurVignette,
                   encadreACote: colonneGuidee,
                 ),
               ),
@@ -91,7 +93,7 @@ class ZoneSupport extends StatelessWidget {
                     defilement
                   else
                     Positioned.fill(child: defilement),
-                  if (!aCote)
+                  if (!aCote && video)
                     PositionedDirectional(
                       top: MesuresVignette.retrait,
                       end: MesuresVignette.retrait,

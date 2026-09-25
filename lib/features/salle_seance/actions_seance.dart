@@ -30,6 +30,7 @@ class ActionsSeance {
     this.onNotifications,
     this.onReglages,
     this.onCompte,
+    this.onNaviguer,
   });
 
   /// Le chevron ‹ de l'en-tete. Passe par la meme confirmation que Quitter.
@@ -53,4 +54,8 @@ class ActionsSeance {
 
   /// Le menu du compte. `null` : le compte s'affiche sans chevron.
   final VoidCallback? onCompte;
+
+  /// Une entree du rail enseignant (desktop) : la route cible, apres la
+  /// confirmation de Quitter. `null` : le rail n'est pas rendu.
+  final ValueChanged<String>? onNaviguer;
 }

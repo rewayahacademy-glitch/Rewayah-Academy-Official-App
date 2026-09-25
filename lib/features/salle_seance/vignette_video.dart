@@ -110,7 +110,10 @@ class VignetteVideo extends StatelessWidget {
                     start: AppSpacing.sm,
                     bottom: AppSpacing.sm,
                     end: AppSpacing.sm,
+                    // L'etiquette prend sa largeur, le signal va au bout :
+                    // un Spacer partageait la place et tronquait le nom.
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Flexible(
                           child: DecoratedBox(
@@ -135,7 +138,7 @@ class VignetteVideo extends StatelessWidget {
                           ),
                         ),
                         if (vue.voitSignalVideo) ...<Widget>[
-                          const Spacer(),
+                          Ecart.hXs,
                           _Signal(
                             key: const ValueKey<String>('signal-video'),
                             barres: vue.signalEnseignant,

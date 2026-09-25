@@ -183,6 +183,7 @@ class VueSeance {
     this.fin,
     this.panneau = PanneauOuvert.aucun,
     this.notificationsNonLues = 0,
+    this.groupeId,
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -257,6 +258,9 @@ class VueSeance {
   /// Notifications non lues de la personne devant l'ecran : le point de la
   /// cloche (CLV-04, CLV-06 desktop). La guidee n'a pas de cloche.
   final int notificationsNonLues;
+
+  /// La Classe de la seance : l'entree « Classes » du rail y mene.
+  final String? groupeId;
 
   bool get _enseignant => role == RoleSeance.enseignant;
   bool get _guidee => role == RoleSeance.guidee;
@@ -362,6 +366,12 @@ class VueSeance {
   bool get voitOutils => _enseignant && support != null;
   bool get voitSignalVideo => _enseignant;
 
+  /// Le rail de navigation enseignant : desktop seulement (image CLV-06).
+  bool voitRail(Gabarit gabarit) => _enseignant && gabarit == Gabarit.desktop;
+
+  /// Quitter mene l'enseignant au cahier de transmission (S l.861-863).
+  bool get quitterOuvreCahier => _enseignant;
+
   /// Guidee : la vignette est plus grande (S CLV-05, ≈ 160 a 300 de large).
   bool get vignetteAgrandie => _guidee;
 
@@ -458,5 +468,6 @@ class VueSeance {
     fin: fin ?? this.fin,
     panneau: panneau ?? this.panneau,
     notificationsNonLues: notificationsNonLues,
+    groupeId: groupeId,
   );
 }
