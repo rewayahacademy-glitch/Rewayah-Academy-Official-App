@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/capacites/port_finance_foyer.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/resume_solde.dart';
@@ -166,6 +167,20 @@ void main() {
     );
     final Finder panneau = find.byKey(SoldesComptePage.panneauKey);
     expect(panneau, findsOneWidget);
+    // Un seul bouton principal : « Recharger » general passe en secondaire.
+    expect(
+      tester
+          .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+          .where((ActionPrincipale a) => a.niveau == NiveauAction.principale)
+          .length,
+      1,
+    );
+    expect(
+      tester
+          .widget<ActionPrincipale>(find.byKey(SoldesComptePage.rechargerKey))
+          .niveau,
+      NiveauAction.secondaire,
+    );
     // Par defaut, le premier profil lu.
     expect(
       find.descendant(

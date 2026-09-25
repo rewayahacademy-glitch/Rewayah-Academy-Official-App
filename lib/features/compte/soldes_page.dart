@@ -180,6 +180,11 @@ class _SoldesComptePageState extends ConsumerState<SoldesComptePage> {
         ActionPrincipale(
           key: SoldesComptePage.rechargerKey,
           libelle: t.finance.recharge.action,
+          // Un seul bouton principal par ecran : sur bureau, « Recharger pour
+          // (prenom) » du panneau l'est deja.
+          niveau: bureau && retenu != null
+              ? NiveauAction.secondaire
+              : NiveauAction.principale,
           onPress: () => routeur?.go(
             Uri(
               path: Routes.tuteurCompteRecharge,
