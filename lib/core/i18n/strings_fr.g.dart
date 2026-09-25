@@ -1936,6 +1936,7 @@ class Traductions$classe$fr {
 	late final Traductions$classe$pageTravail$fr pageTravail = Traductions$classe$pageTravail$fr.internal(_root);
 	late final Traductions$classe$pageRessources$fr pageRessources = Traductions$classe$pageRessources$fr.internal(_root);
 	late final Traductions$classe$pageProgression$fr pageProgression = Traductions$classe$pageProgression$fr.internal(_root);
+	late final Traductions$classe$pageCatalogue$fr pageCatalogue = Traductions$classe$pageCatalogue$fr.internal(_root);
 }
 
 // Path: enseignant
@@ -4997,6 +4998,91 @@ class Traductions$classe$pageProgression$fr {
 	String get aucuneDetail => 'Les progrès que l\'enseignant partage avec la famille apparaîtront ici.';
 }
 
+// Path: classe.pageCatalogue
+class Traductions$classe$pageCatalogue$fr {
+	Traductions$classe$pageCatalogue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour {prenom}'
+	String pour({required Object prenom}) => 'Pour ${prenom}';
+
+	/// fr: 'Classes proposées'
+	String get proposees => 'Classes proposées';
+
+	/// fr: 'Le choix de classe en ligne n'est pas encore ouvert.'
+	String get indisponible => 'Le choix de classe en ligne n\'est pas encore ouvert.';
+
+	/// fr: 'Aucune classe ne convient pour l'instant'
+	String get aucune => 'Aucune classe ne convient pour l\'instant';
+
+	/// fr: 'Aucune classe ouverte ne correspond au profil de {prenom} en ce moment.'
+	String aucuneDetail({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.';
+
+	/// fr: 'Ce profil n'est pas dans votre foyer'
+	String get eleveInconnuTitre => 'Ce profil n\'est pas dans votre foyer';
+
+	/// fr: 'Revenez à l'accueil et choisissez le profil élève concerné.'
+	String get eleveInconnuPhrase => 'Revenez à l\'accueil et choisissez le profil élève concerné.';
+
+	/// fr: 'Les jours et heures de cette classe ne sont pas encore affichés ici.'
+	String get horairesAbsents => 'Les jours et heures de cette classe ne sont pas encore affichés ici.';
+
+	/// fr: '1 place restante'
+	String get placeUne => '1 place restante';
+
+	/// fr: '{nombre} places restantes'
+	String places({required Object nombre}) => '${nombre} places restantes';
+
+	late final Traductions$classe$pageCatalogue$etat$fr etat = Traductions$classe$pageCatalogue$etat$fr.internal(_root);
+
+	/// fr: 'Choisir cette classe'
+	String get choisir => 'Choisir cette classe';
+
+	/// fr: 'Rejoindre la liste d'attente'
+	String get rejoindreAttente => 'Rejoindre la liste d\'attente';
+
+	/// fr: 'Avant de choisir'
+	String get precisionsTitre => 'Avant de choisir';
+
+	/// fr: 'Une classe garde le même enseignant pour toutes ses séances.'
+	String get precisionEnseignant => 'Une classe garde le même enseignant pour toutes ses séances.';
+
+	/// fr: 'Les places affichées sont celles de l'académie au moment de la lecture.'
+	String get precisionPlaces => 'Les places affichées sont celles de l\'académie au moment de la lecture.';
+
+	/// fr: 'Rien n'est réservé avant votre confirmation.'
+	String get precisionReserve => 'Rien n\'est réservé avant votre confirmation.';
+
+	/// fr: 'Confirmer la classe'
+	String get confirmerTitre => 'Confirmer la classe';
+
+	/// fr: 'Vous inscrivez {prenom} dans cette classe.'
+	String confirmerPhrase({required Object prenom}) => 'Vous inscrivez ${prenom} dans cette classe.';
+
+	/// fr: 'Vous inscrivez {prenom} sur la liste d'attente de cette classe.'
+	String confirmerAttentePhrase({required Object prenom}) => 'Vous inscrivez ${prenom} sur la liste d\'attente de cette classe.';
+
+	/// fr: 'Même classe et même enseignant pour toutes les séances de la semaine : {enseignant}.'
+	String memeEnseignant({required Object enseignant}) => 'Même classe et même enseignant pour toutes les séances de la semaine : ${enseignant}.';
+
+	/// fr: 'Confirmer l'inscription'
+	String get confirmer => 'Confirmer l\'inscription';
+
+	/// fr: 'Confirmer la liste d'attente'
+	String get confirmerAttente => 'Confirmer la liste d\'attente';
+
+	/// fr: 'La réponse de l'académie n'est pas arrivée. Réessayer ne crée pas de seconde inscription.'
+	String get envoiIncertain => 'La réponse de l\'académie n\'est pas arrivée. Réessayer ne crée pas de seconde inscription.';
+
+	/// fr: 'L'inscription en ligne n'est pas encore ouverte : aucune place n'a été réservée.'
+	String get envoiIndisponible => 'L\'inscription en ligne n\'est pas encore ouverte : aucune place n\'a été réservée.';
+
+	late final Traductions$classe$pageCatalogue$resultat$fr resultat = Traductions$classe$pageCatalogue$resultat$fr.internal(_root);
+}
+
 // Path: enseignant.bienvenue
 class Traductions$enseignant$bienvenue$fr {
 	Traductions$enseignant$bienvenue$fr.internal(this._root);
@@ -6371,6 +6457,66 @@ class Traductions$classe$pageTravail$statut$fr {
 
 	/// fr: 'Échéance passée'
 	String get expire => 'Échéance passée';
+}
+
+// Path: classe.pageCatalogue.etat
+class Traductions$classe$pageCatalogue$etat$fr {
+	Traductions$classe$pageCatalogue$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouverte'
+	String get ouverte => 'Ouverte';
+
+	/// fr: 'Complète'
+	String get complete => 'Complète';
+
+	/// fr: 'Liste d'attente'
+	String get listeAttente => 'Liste d\'attente';
+}
+
+// Path: classe.pageCatalogue.resultat
+class Traductions$classe$pageCatalogue$resultat$fr {
+	Traductions$classe$pageCatalogue$resultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Inscription confirmée'
+	String get inscritTitre => 'Inscription confirmée';
+
+	/// fr: '{prenom} rejoint {classe}.'
+	String inscritPhrase({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.';
+
+	/// fr: 'Voir la classe'
+	String get voirClasse => 'Voir la classe';
+
+	/// fr: 'Demande envoyée'
+	String get validationTitre => 'Demande envoyée';
+
+	/// fr: 'L'académie doit encore valider l'inscription de {prenom} dans {classe}.'
+	String validationPhrase({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.';
+
+	/// fr: 'Inscription sur liste d'attente'
+	String get listeAttenteTitre => 'Inscription sur liste d\'attente';
+
+	/// fr: '{prenom} est sur la liste d'attente de {classe}. Aucune place n'est réservée pour l'instant.'
+	String listeAttentePhrase({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.';
+
+	/// fr: 'Inscription non acceptée'
+	String get refuseTitre => 'Inscription non acceptée';
+
+	/// fr: 'Aucune place n'a été réservée pour {prenom}. Vous pouvez choisir une autre classe.'
+	String refusePhrase({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.';
+
+	/// fr: 'Voir les autres classes'
+	String get autresClasses => 'Voir les autres classes';
+
+	/// fr: 'Retour à l'accueil'
+	String get retourAccueil => 'Retour à l\'accueil';
 }
 
 // Path: tc.groupe.mesGroupes
@@ -9690,6 +9836,44 @@ extension on Traductions {
 			'classe.pageProgression.jalons' => 'Étapes franchies',
 			'classe.pageProgression.aucune' => 'Aucune étape partagée pour l\'instant',
 			'classe.pageProgression.aucuneDetail' => 'Les progrès que l\'enseignant partage avec la famille apparaîtront ici.',
+			'classe.pageCatalogue.pour' => ({required Object prenom}) => 'Pour ${prenom}',
+			'classe.pageCatalogue.proposees' => 'Classes proposées',
+			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
+			'classe.pageCatalogue.aucune' => 'Aucune classe ne convient pour l\'instant',
+			'classe.pageCatalogue.aucuneDetail' => ({required Object prenom}) => 'Aucune classe ouverte ne correspond au profil de ${prenom} en ce moment.',
+			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
+			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
+			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
+			'classe.pageCatalogue.placeUne' => '1 place restante',
+			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
+			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
+			'classe.pageCatalogue.etat.complete' => 'Complète',
+			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
+			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
+			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
+			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
+			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
+			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
+			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
+			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
+			'classe.pageCatalogue.confirmerPhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} dans cette classe.',
+			'classe.pageCatalogue.confirmerAttentePhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} sur la liste d\'attente de cette classe.',
+			'classe.pageCatalogue.memeEnseignant' => ({required Object enseignant}) => 'Même classe et même enseignant pour toutes les séances de la semaine : ${enseignant}.',
+			'classe.pageCatalogue.confirmer' => 'Confirmer l\'inscription',
+			'classe.pageCatalogue.confirmerAttente' => 'Confirmer la liste d\'attente',
+			'classe.pageCatalogue.envoiIncertain' => 'La réponse de l\'académie n\'est pas arrivée. Réessayer ne crée pas de seconde inscription.',
+			'classe.pageCatalogue.envoiIndisponible' => 'L\'inscription en ligne n\'est pas encore ouverte : aucune place n\'a été réservée.',
+			'classe.pageCatalogue.resultat.inscritTitre' => 'Inscription confirmée',
+			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
+			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
+			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
+			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
+			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
+			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
+			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
+			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
+			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
+			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
@@ -9767,6 +9951,8 @@ extension on Traductions {
 			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
 			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
 			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre groupe voit n\'a pas changé. Réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
 			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre groupe voit toujours la page présentée.',
 			'enseignant.salle.corpusAbsent' => 'Le texte du Coran n\'est pas installé',
@@ -9805,8 +9991,6 @@ extension on Traductions {
 			'enseignant.cahier.enFileDetail' => 'L\'envoi n\'a pas abouti : il repartira tout seul, sans que vous ayez à revenir ici.',
 			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
 			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Ajuster · ${eleve}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
 			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
@@ -10281,6 +10465,8 @@ extension on Traductions {
 			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
 			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',
 			'tc.observation.reglages.diminuer' => 'Diminuer',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.augmenter' => 'Augmenter',
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
@@ -10319,8 +10505,6 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
