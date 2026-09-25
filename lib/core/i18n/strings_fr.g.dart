@@ -749,26 +749,11 @@ class Traductions$appareils$fr {
 	/// fr: 'Appareils'
 	String get titre => 'Appareils';
 
-	/// fr: 'Deux appareils au maximum par enfant, un seul en cours à la fois.'
-	String get regle => 'Deux appareils au maximum par enfant, un seul en cours à la fois.';
-
-	/// fr: 'Ajouter un appareil'
-	String get ajouter => 'Ajouter un appareil';
-
-	/// fr: 'Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.'
-	String limiteAtteinte({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.';
-
-	/// fr: 'Sur l'appareil de l'enfant'
-	String get codeTitre => 'Sur l\'appareil de l\'enfant';
-
-	/// fr: 'Ouvrez l'application Rewayah, puis entrez ce code.'
-	String get codeInstruction => 'Ouvrez l\'application Rewayah, puis entrez ce code.';
-
-	/// fr: 'Expire dans {temps}'
-	String expireDans({required Object temps}) => 'Expire dans ${temps}';
-
-	/// fr: 'Ce code a expiré.'
-	String get expire => 'Ce code a expiré.';
+	late final Traductions$appareils$foyer$fr foyer = Traductions$appareils$foyer$fr.internal(_root);
+	late final Traductions$appareils$eleve$fr eleve = Traductions$appareils$eleve$fr.internal(_root);
+	late final Traductions$appareils$plateforme$fr plateforme = Traductions$appareils$plateforme$fr.internal(_root);
+	late final Traductions$appareils$retrait$fr retrait = Traductions$appareils$retrait$fr.internal(_root);
+	late final Traductions$appareils$emetteur$fr emetteur = Traductions$appareils$emetteur$fr.internal(_root);
 
 	/// fr: 'Générer un nouveau code'
 	String get regenerer => 'Générer un nouveau code';
@@ -776,17 +761,8 @@ class Traductions$appareils$fr {
 	/// fr: 'Retirer'
 	String get revoquer => 'Retirer';
 
-	/// fr: 'Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.'
-	String get revoquerConfirmation => 'Retirer cet appareil ? L\'enfant devra le réappairer pour s\'en resservir.';
-
-	/// fr: 'Utilisé {quand}'
-	String derniereUtilisation({required Object quand}) => 'Utilisé ${quand}';
-
-	/// fr: 'Jamais utilisé'
-	String get jamaisUtilise => 'Jamais utilisé';
-
-	/// fr: 'L'opération n'a pas abouti. Réessayez dans un instant.'
-	String get erreur => 'L\'opération n\'a pas abouti. Réessayez dans un instant.';
+	/// fr: 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code.'
+	String get revoquerConfirmation => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.';
 }
 
 // Path: enfant
@@ -1080,29 +1056,14 @@ class Traductions$eleveConnexion$fr {
 	/// fr: 'Scanner le carré'
 	String get scanner => 'Scanner le carré';
 
-	/// fr: 'Entre le code affiché sur le téléphone de tes parents'
-	String get codeInvite => 'Entre le code affiché sur le téléphone de tes parents';
-
-	/// fr: 'Ce code ne marche pas'
-	String get codeErreur => 'Ce code ne marche pas';
-
-	/// fr: 'Ce code est trop vieux. Demande-en un nouveau.'
-	String get codeExpire => 'Ce code est trop vieux. Demande-en un nouveau.';
-
 	/// fr: 'Qui es-tu ?'
 	String get choisirProfil => 'Qui es-tu ?';
 
-	/// fr: 'Choisis ton code secret'
-	String get nouveauCode => 'Choisis ton code secret';
-
-	/// fr: 'Entre-le encore une fois'
-	String get nouveauCodeConfirmer => 'Entre-le encore une fois';
-
-	/// fr: 'Les deux codes ne sont pas les mêmes'
-	String get codeDifferent => 'Les deux codes ne sont pas les mêmes';
-
-	/// fr: 'Code enregistré'
-	String get codeEnregistre => 'Code enregistré';
+	late final Traductions$eleveConnexion$profils$fr profils = Traductions$eleveConnexion$profils$fr.internal(_root);
+	late final Traductions$eleveConnexion$pin$fr pin = Traductions$eleveConnexion$pin$fr.internal(_root);
+	late final Traductions$eleveConnexion$saisie$fr saisie = Traductions$eleveConnexion$saisie$fr.internal(_root);
+	late final Traductions$eleveConnexion$lecteur$fr lecteur = Traductions$eleveConnexion$lecteur$fr.internal(_root);
+	late final Traductions$eleveConnexion$refus$fr refus = Traductions$eleveConnexion$refus$fr.internal(_root);
 }
 
 // Path: dossiers
@@ -2184,26 +2145,490 @@ class Traductions$connexion$feuilleAppareil$fr {
 	/// fr: 'Où trouver le code'
 	String get etapesTitre => 'Où trouver le code';
 
-	/// fr: 'Sur votre propre appareil, ouvrez Foyer et appareils.'
-	String get etape1 => 'Sur votre propre appareil, ouvrez Foyer et appareils.';
+	/// fr: 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.'
+	String get etape1 => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.';
 
-	/// fr: 'Ouvrez le profil de l'élève, puis Ajouter un appareil.'
-	String get etape2 => 'Ouvrez le profil de l\'élève, puis Ajouter un appareil.';
+	/// fr: 'Touchez le profil de l'élève, puis Connecter un appareil.'
+	String get etape2 => 'Touchez le profil de l\'élève, puis Connecter un appareil.';
 
-	/// fr: 'Un code de six caractères s'affiche. Il reste valable dix minutes.'
-	String get etape3 => 'Un code de six caractères s\'affiche. Il reste valable dix minutes.';
+	/// fr: 'Un QR code et un code de six caractères s'affichent, avec leur heure de fin.'
+	String get etape3 => 'Un QR code et un code de six caractères s\'affichent, avec leur heure de fin.';
 
-	/// fr: 'Saisissez-le ici, sur l'appareil de l'élève.'
-	String get etape4 => 'Saisissez-le ici, sur l\'appareil de l\'élève.';
+	/// fr: 'Sur l'appareil de l'élève, scannez le QR code ou saisissez le code.'
+	String get etape4 => 'Sur l\'appareil de l\'élève, scannez le QR code ou saisissez le code.';
 
-	/// fr: 'Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.'
-	String get plafond => 'Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.';
+	/// fr: 'Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.'
+	String get plafond => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.';
 
 	/// fr: 'Saisir le code'
 	String get saisir => 'Saisir le code';
 
 	/// fr: 'Fermer'
 	String get fermer => 'Fermer';
+}
+
+// Path: appareils.foyer
+class Traductions$appareils$foyer$fr {
+	Traductions$appareils$foyer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Appareils du foyer'
+	String get titre => 'Appareils du foyer';
+
+	/// fr: 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.'
+	String get phrase => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.';
+
+	/// fr: 'Profils élèves'
+	String get groupeProfils => 'Profils élèves';
+
+	/// fr: 'Aucun appareil connecté'
+	String get aucunAppareil => 'Aucun appareil connecté';
+
+	/// fr: '1 appareil connecté : {nom}'
+	String unAppareil({required Object nom}) => '1 appareil connecté : ${nom}';
+
+	/// fr: '{nombre} appareils connectés : {noms}'
+	String plusieursAppareils({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}';
+
+	/// fr: 'Appareil partagé'
+	String get partageTitre => 'Appareil partagé';
+
+	/// fr: 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.'
+	String get partage => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.';
+
+	/// fr: 'Aucun profil élève'
+	String get videTitre => 'Aucun profil élève';
+
+	/// fr: 'Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.'
+	String get vide => 'Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.';
+
+	/// fr: 'Ajouter un profil élève'
+	String get videAction => 'Ajouter un profil élève';
+}
+
+// Path: appareils.eleve
+class Traductions$appareils$eleve$fr {
+	Traductions$appareils$eleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Gérez les appareils autorisés pour {prenom}.'
+	String sousTitre({required Object prenom}) => 'Gérez les appareils autorisés pour ${prenom}.';
+
+	/// fr: 'Appareils connectés'
+	String get groupe => 'Appareils connectés';
+
+	/// fr: 'Connecter un appareil'
+	String get connecter => 'Connecter un appareil';
+
+	/// fr: 'Aucun appareil connecté'
+	String get videTitre => 'Aucun appareil connecté';
+
+	/// fr: 'Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.'
+	String vide({required Object prenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur de ${prenom} avec le code affiché par le bouton ci-dessous.';
+
+	/// fr: 'Profil élève introuvable'
+	String get introuvableTitre => 'Profil élève introuvable';
+
+	/// fr: 'Ce profil élève n'est pas rattaché à votre foyer.'
+	String get introuvable => 'Ce profil élève n\'est pas rattaché à votre foyer.';
+
+	/// fr: 'Voir les appareils du foyer'
+	String get introuvableAction => 'Voir les appareils du foyer';
+
+	/// fr: 'Connecté le {date}'
+	String connecteLe({required Object date}) => 'Connecté le ${date}';
+
+	/// fr: 'Dernière utilisation : {date}'
+	String utiliseLe({required Object date}) => 'Dernière utilisation : ${date}';
+
+	/// fr: 'Pas encore utilisé'
+	String get jamaisUtilise => 'Pas encore utilisé';
+
+	/// fr: 'Retirer {appareil}'
+	String retirerLibelle({required Object appareil}) => 'Retirer ${appareil}';
+
+	/// fr: 'Retirer ou connecter un appareil demande une connexion internet.'
+	String get horsLigne => 'Retirer ou connecter un appareil demande une connexion internet.';
+
+	/// fr: 'Choix du profil et code personnel'
+	String get partageTitre => 'Choix du profil et code personnel';
+
+	/// fr: 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.'
+	String get partage => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.';
+
+	/// fr: 'Retirer un appareil'
+	String get retraitTitre => 'Retirer un appareil';
+
+	/// fr: 'Un appareil retiré ne peut plus se reconnecter. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
+	String get retrait => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
+}
+
+// Path: appareils.plateforme
+class Traductions$appareils$plateforme$fr {
+	Traductions$appareils$plateforme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Téléphone ou tablette Android'
+	String get android => 'Téléphone ou tablette Android';
+
+	/// fr: 'iPhone ou iPad'
+	String get ios => 'iPhone ou iPad';
+
+	/// fr: 'Navigateur web'
+	String get web => 'Navigateur web';
+
+	/// fr: 'Ordinateur'
+	String get windows => 'Ordinateur';
+
+	/// fr: 'Appareil'
+	String get inconnue => 'Appareil';
+}
+
+// Path: appareils.retrait
+class Traductions$appareils$retrait$fr {
+	Traductions$appareils$retrait$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retirer cet appareil ?'
+	String get question => 'Retirer cet appareil ?';
+
+	/// fr: '{appareil} ne pourra plus se connecter au profil de {prenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
+	String consequence({required Object appareil, required Object prenom}) => '${appareil} ne pourra plus se connecter au profil de ${prenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
+
+	/// fr: 'Retirer l'appareil'
+	String get confirmer => 'Retirer l\'appareil';
+
+	/// fr: 'Retrait en cours'
+	String get enCours => 'Retrait en cours';
+
+	/// fr: 'Appareil retiré. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.'
+	String get reussi => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.';
+
+	/// fr: 'Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.'
+	String get echec => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.';
+
+	/// fr: 'Pas de connexion internet : l'appareil n'a pas été retiré.'
+	String get horsLigne => 'Pas de connexion internet : l\'appareil n\'a pas été retiré.';
+}
+
+// Path: appareils.emetteur
+class Traductions$appareils$emetteur$fr {
+	Traductions$appareils$emetteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connecter un appareil'
+	String get titre => 'Connecter un appareil';
+
+	/// fr: 'Pour {prenom}'
+	String pourEleve({required Object prenom}) => 'Pour ${prenom}';
+
+	/// fr: 'Sur l'autre appareil'
+	String get consigneTitre => 'Sur l\'autre appareil';
+
+	/// fr: 'Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.'
+	String get consigne => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.';
+
+	/// fr: 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l'appareil ne lit pas le QR.'
+	String get libelleQr => 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l\'appareil ne lit pas le QR.';
+
+	/// fr: 'Code à saisir'
+	String get codeManuel => 'Code à saisir';
+
+	/// fr: 'Code à saisir : {code}'
+	String codeLu({required Object code}) => 'Code à saisir : ${code}';
+
+	/// fr: 'Valable jusqu'à {heure}'
+	String valableJusqua({required Object heure}) => 'Valable jusqu\'à ${heure}';
+
+	/// fr: 'Encore {temps}'
+	String restant({required Object temps}) => 'Encore ${temps}';
+
+	/// fr: 'Quitter cet écran n'annule pas le code : il reste valable jusqu'à {heure}.'
+	String sortie({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.';
+
+	/// fr: 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l'appareil de l'élève.'
+	String get suiviIndisponible => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.';
+
+	/// fr: 'Préparation du code'
+	String get preparation => 'Préparation du code';
+
+	late final Traductions$appareils$emetteur$verification$fr verification = Traductions$appareils$emetteur$verification$fr.internal(_root);
+	late final Traductions$appareils$emetteur$confirme$fr confirme = Traductions$appareils$emetteur$confirme$fr.internal(_root);
+	late final Traductions$appareils$emetteur$expire$fr expire = Traductions$appareils$emetteur$expire$fr.internal(_root);
+	late final Traductions$appareils$emetteur$remplace$fr remplace = Traductions$appareils$emetteur$remplace$fr.internal(_root);
+	late final Traductions$appareils$emetteur$dejaActif$fr dejaActif = Traductions$appareils$emetteur$dejaActif$fr.internal(_root);
+	late final Traductions$appareils$emetteur$horsLigne$fr horsLigne = Traductions$appareils$emetteur$horsLigne$fr.internal(_root);
+	late final Traductions$appareils$emetteur$erreur$fr erreur = Traductions$appareils$emetteur$erreur$fr.internal(_root);
+}
+
+// Path: eleveConnexion.profils
+class Traductions$eleveConnexion$profils$fr {
+	Traductions$eleveConnexion$profils$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Touche ton prénom pour continuer.'
+	String get phrase => 'Touche ton prénom pour continuer.';
+
+	/// fr: 'Ajouter un profil sur cet appareil'
+	String get ajouter => 'Ajouter un profil sur cet appareil';
+
+	/// fr: 'Avec le code affiché par le tuteur'
+	String get ajouterLegende => 'Avec le code affiché par le tuteur';
+
+	/// fr: 'Continuer en tant que {prenom}'
+	String profilLibelle({required Object prenom}) => 'Continuer en tant que ${prenom}';
+
+	/// fr: 'Aucun profil sur cet appareil'
+	String get videTitre => 'Aucun profil sur cet appareil';
+
+	/// fr: 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.'
+	String get vide => 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.';
+
+	/// fr: 'Saisir un code'
+	String get videAction => 'Saisir un code';
+
+	/// fr: 'Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.'
+	String retire({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.';
+
+	/// fr: 'Cet appareil ne retrouve plus la connexion de {prenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici.'
+	String jetonAbsent({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.';
+}
+
+// Path: eleveConnexion.pin
+class Traductions$eleveConnexion$pin$fr {
+	Traductions$eleveConnexion$pin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bonjour {prenom}'
+	String bonjour({required Object prenom}) => 'Bonjour ${prenom}';
+
+	/// fr: 'Choisis ton code personnel'
+	String get creer => 'Choisis ton code personnel';
+
+	/// fr: 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.'
+	String get creerPhrase => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.';
+
+	/// fr: 'Entre-le encore une fois'
+	String get confirmer => 'Entre-le encore une fois';
+
+	/// fr: 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.'
+	String get different => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.';
+
+	/// fr: 'Connexion en cours'
+	String get ouverture => 'Connexion en cours';
+
+	/// fr: 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.'
+	String get horsLigne => 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.';
+
+	/// fr: 'Trop d'essais. Patiente un instant avant de réessayer.'
+	String get tropDEssais => 'Trop d\'essais. Patiente un instant avant de réessayer.';
+
+	/// fr: 'La connexion n'a pas abouti. Réessaie dans un instant.'
+	String get echec => 'La connexion n\'a pas abouti. Réessaie dans un instant.';
+
+	/// fr: 'Changer de profil'
+	String get changerProfil => 'Changer de profil';
+
+	/// fr: 'Code oublié ?'
+	String get oublie => 'Code oublié ?';
+
+	/// fr: 'Demande au tuteur d'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.'
+	String get oubliePhrase => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.';
+
+	/// fr: 'Saisir un nouveau code'
+	String get oublieAction => 'Saisir un nouveau code';
+}
+
+// Path: eleveConnexion.saisie
+class Traductions$eleveConnexion$saisie$fr {
+	Traductions$eleveConnexion$saisie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connecter cet appareil'
+	String get titre => 'Connecter cet appareil';
+
+	/// fr: 'Saisissez le code de six caractères affiché sous le QR code, sur l'appareil du tuteur.'
+	String get phrase => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.';
+
+	/// fr: 'Code'
+	String get champ => 'Code';
+
+	/// fr: 'Chiffres de 2 à 9 et lettres, sans I ni O.'
+	String get aide => 'Chiffres de 2 à 9 et lettres, sans I ni O.';
+
+	/// fr: 'Connecter l'appareil'
+	String get valider => 'Connecter l\'appareil';
+
+	/// fr: 'Scanner le QR code'
+	String get scanner => 'Scanner le QR code';
+
+	/// fr: 'Pas de connexion internet. Le code pourra être vérifié au retour du réseau.'
+	String get horsLigne => 'Pas de connexion internet. Le code pourra être vérifié au retour du réseau.';
+}
+
+// Path: eleveConnexion.lecteur
+class Traductions$eleveConnexion$lecteur$fr {
+	Traductions$eleveConnexion$lecteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Scanner le QR code'
+	String get titre => 'Scanner le QR code';
+
+	/// fr: 'Visez le QR code affiché sur l'appareil du tuteur.'
+	String get consigne => 'Visez le QR code affiché sur l\'appareil du tuteur.';
+
+	/// fr: 'Autorisez la caméra si l'appareil le demande.'
+	String get demarrage => 'Autorisez la caméra si l\'appareil le demande.';
+
+	/// fr: 'Vue de la caméra'
+	String get libelleApercu => 'Vue de la caméra';
+
+	/// fr: 'Ce QR code n'est pas un code de connexion Rewayah. Visez celui affiché par le tuteur.'
+	String get contenuInvalide => 'Ce QR code n\'est pas un code de connexion Rewayah. Visez celui affiché par le tuteur.';
+
+	/// fr: 'Saisir le code'
+	String get saisir => 'Saisir le code';
+
+	/// fr: 'Scanner à nouveau'
+	String get scannerANouveau => 'Scanner à nouveau';
+
+	/// fr: 'Vérification du code'
+	String get verificationTitre => 'Vérification du code';
+
+	/// fr: 'La caméra est arrêtée pendant la vérification.'
+	String get verificationPhrase => 'La caméra est arrêtée pendant la vérification.';
+
+	/// fr: 'Caméra non autorisée'
+	String get refuseeTitre => 'Caméra non autorisée';
+
+	/// fr: 'Pour lire le QR code, autorisez la caméra. Vous pouvez aussi saisir le code affiché sous le QR.'
+	String get refuseePhrase => 'Pour lire le QR code, autorisez la caméra. Vous pouvez aussi saisir le code affiché sous le QR.';
+
+	/// fr: 'Autoriser la caméra'
+	String get refuseeAction => 'Autoriser la caméra';
+
+	/// fr: 'Caméra bloquée'
+	String get refuseeDurablementTitre => 'Caméra bloquée';
+
+	/// fr: 'La caméra reste refusée pour Rewayah. Autorisez-la dans les réglages de l'appareil ou du navigateur, ou saisissez le code.'
+	String get refuseeDurablementPhrase => 'La caméra reste refusée pour Rewayah. Autorisez-la dans les réglages de l\'appareil ou du navigateur, ou saisissez le code.';
+
+	/// fr: 'Caméra occupée'
+	String get occupeeTitre => 'Caméra occupée';
+
+	/// fr: 'Une autre application utilise la caméra. Fermez-la, puis réessayez, ou saisissez le code.'
+	String get occupeePhrase => 'Une autre application utilise la caméra. Fermez-la, puis réessayez, ou saisissez le code.';
+
+	/// fr: 'Aucune caméra'
+	String get absenteTitre => 'Aucune caméra';
+
+	/// fr: 'Cet appareil n'a pas de caméra disponible. Saisissez le code affiché sous le QR.'
+	String get absentePhrase => 'Cet appareil n\'a pas de caméra disponible. Saisissez le code affiché sous le QR.';
+
+	/// fr: 'Lecture impossible ici'
+	String get nonSupporteeTitre => 'Lecture impossible ici';
+
+	/// fr: 'Cet appareil ou ce navigateur ne sait pas lire un QR code. Saisissez le code affiché sous le QR.'
+	String get nonSupporteePhrase => 'Cet appareil ou ce navigateur ne sait pas lire un QR code. Saisissez le code affiché sous le QR.';
+
+	/// fr: 'La caméra n'a pas démarré'
+	String get erreurTitre => 'La caméra n\'a pas démarré';
+
+	/// fr: 'Réessayez, ou saisissez le code affiché sous le QR.'
+	String get erreurPhrase => 'Réessayez, ou saisissez le code affiché sous le QR.';
+}
+
+// Path: eleveConnexion.refus
+class Traductions$eleveConnexion$refus$fr {
+	Traductions$eleveConnexion$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.'
+	String get format => 'Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.';
+
+	/// fr: 'Code non reconnu'
+	String get inconnuTitre => 'Code non reconnu';
+
+	/// fr: 'Ce code n'existe pas, ou un code plus récent l'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l'appareil du tuteur.'
+	String get inconnu => 'Ce code n\'existe pas, ou un code plus récent l\'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l\'appareil du tuteur.';
+
+	/// fr: 'Code expiré'
+	String get expireTitre => 'Code expiré';
+
+	/// fr: 'Ce code n'est plus valable. Affichez un nouveau code sur l'appareil du tuteur.'
+	String get expire => 'Ce code n\'est plus valable. Affichez un nouveau code sur l\'appareil du tuteur.';
+
+	/// fr: 'Code déjà utilisé'
+	String get dejaUtiliseTitre => 'Code déjà utilisé';
+
+	/// fr: 'Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l'appareil du tuteur.'
+	String get dejaUtilise => 'Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l\'appareil du tuteur.';
+
+	/// fr: 'Appareil retiré'
+	String get revoqueTitre => 'Appareil retiré';
+
+	/// fr: 'Le tuteur a retiré cet appareil. Demandez-lui d'afficher un nouveau code.'
+	String get revoque => 'Le tuteur a retiré cet appareil. Demandez-lui d\'afficher un nouveau code.';
+
+	/// fr: 'Limite d'appareils atteinte'
+	String get plafondTitre => 'Limite d\'appareils atteinte';
+
+	/// fr: 'Ce profil élève a atteint le nombre d'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.'
+	String get plafond => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.';
+
+	/// fr: 'Trop d'essais'
+	String get tropDEssaisTitre => 'Trop d\'essais';
+
+	/// fr: 'Patientez un instant avant de réessayer.'
+	String get tropDEssais => 'Patientez un instant avant de réessayer.';
+
+	/// fr: 'Pas de connexion'
+	String get horsLigneTitre => 'Pas de connexion';
+
+	/// fr: 'Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.'
+	String get horsLigne => 'Le code n\'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.';
+
+	/// fr: 'Connexion non enregistrée'
+	String get nonEnregistreTitre => 'Connexion non enregistrée';
+
+	/// fr: 'Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.'
+	String get nonEnregistre => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.';
+
+	/// fr: 'Connexion non aboutie'
+	String get generiqueTitre => 'Connexion non aboutie';
+
+	/// fr: 'La vérification du code n'a pas abouti. Réessayez dans un instant.'
+	String get generique => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.';
 }
 
 // Path: admin.tableau
@@ -5965,6 +6390,141 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: appareils.emetteur.verification
+class Traductions$appareils$emetteur$verification$fr {
+	Traductions$appareils$emetteur$verification$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérification du code'
+	String get titre => 'Vérification du code';
+
+	/// fr: 'Le code est masqué le temps de vérifier qu'il est toujours valable.'
+	String get phrase => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.';
+}
+
+// Path: appareils.emetteur.confirme
+class Traductions$appareils$emetteur$confirme$fr {
+	Traductions$appareils$emetteur$confirme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Appareil connecté'
+	String get titre => 'Appareil connecté';
+
+	/// fr: 'L'appareil de {prenom} est prêt. Le code n'est plus affiché et ne peut plus servir.'
+	String phrase({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.';
+
+	/// fr: 'L'appareil de l'élève est prêt. Le code n'est plus affiché et ne peut plus servir.'
+	String get phraseSansPrenom => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.';
+
+	/// fr: 'Terminé'
+	String get action => 'Terminé';
+}
+
+// Path: appareils.emetteur.expire
+class Traductions$appareils$emetteur$expire$fr {
+	Traductions$appareils$emetteur$expire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce code a expiré'
+	String get titre => 'Ce code a expiré';
+
+	/// fr: 'Il ne peut plus servir. Générez-en un nouveau quand l'autre appareil est prêt.'
+	String get phrase => 'Il ne peut plus servir. Générez-en un nouveau quand l\'autre appareil est prêt.';
+}
+
+// Path: appareils.emetteur.remplace
+class Traductions$appareils$emetteur$remplace$fr {
+	Traductions$appareils$emetteur$remplace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce code a été remplacé'
+	String get titre => 'Ce code a été remplacé';
+
+	/// fr: 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.'
+	String get phrase => 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.';
+}
+
+// Path: appareils.emetteur.dejaActif
+class Traductions$appareils$emetteur$dejaActif$fr {
+	Traductions$appareils$emetteur$dejaActif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un code est déjà valable'
+	String get titre => 'Un code est déjà valable';
+
+	/// fr: 'Un code créé pour cet élève vaut jusqu'à {heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l'ancien inutilisable.'
+	String phrase({required Object heure}) => 'Un code créé pour cet élève vaut jusqu\'à ${heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l\'ancien inutilisable.';
+}
+
+// Path: appareils.emetteur.horsLigne
+class Traductions$appareils$emetteur$horsLigne$fr {
+	Traductions$appareils$emetteur$horsLigne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Connexion interrompue'
+	String get titre => 'Connexion interrompue';
+
+	/// fr: 'Le code est masqué jusqu'au retour de la connexion. Il reste valable jusqu'à {heure}.'
+	String phraseAvecCode({required Object heure}) => 'Le code est masqué jusqu\'au retour de la connexion. Il reste valable jusqu\'à ${heure}.';
+
+	/// fr: 'Le code n'a pas pu être préparé. Il le sera dès le retour de la connexion.'
+	String get phraseSansCode => 'Le code n\'a pas pu être préparé. Il le sera dès le retour de la connexion.';
+}
+
+// Path: appareils.emetteur.erreur
+class Traductions$appareils$emetteur$erreur$fr {
+	Traductions$appareils$emetteur$erreur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Limite d'appareils atteinte'
+	String get plafondTitre => 'Limite d\'appareils atteinte';
+
+	/// fr: 'Cet élève a déjà le nombre maximal d'appareils. Retirez-en un pour en connecter un autre.'
+	String get plafondPhrase => 'Cet élève a déjà le nombre maximal d\'appareils. Retirez-en un pour en connecter un autre.';
+
+	/// fr: 'Voir les appareils'
+	String get plafondAction => 'Voir les appareils';
+
+	/// fr: 'Profil élève introuvable'
+	String get horsFoyerTitre => 'Profil élève introuvable';
+
+	/// fr: 'Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.'
+	String get horsFoyerPhrase => 'Ce profil élève n\'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.';
+
+	/// fr: 'Connexion d'appareil pas encore ouverte'
+	String get compteTitre => 'Connexion d\'appareil pas encore ouverte';
+
+	/// fr: 'Votre compte doit être validé avant de connecter l'appareil d'un élève.'
+	String get comptePhrase => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.';
+
+	/// fr: 'Le code n'a pas pu être préparé'
+	String get generiqueTitre => 'Le code n\'a pas pu être préparé';
+
+	/// fr: 'La demande n'a pas abouti. Réessayez dans un instant.'
+	String get generiquePhrase => 'La demande n\'a pas abouti. Réessayez dans un instant.';
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -8053,11 +8613,11 @@ extension on Traductions {
 			'connexion.appareilEleve' => 'Connecter l\'appareil d\'un élève',
 			'connexion.feuilleAppareil.pourQui' => 'Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.',
 			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
-			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer et appareils.',
-			'connexion.feuilleAppareil.etape2' => 'Ouvrez le profil de l\'élève, puis Ajouter un appareil.',
-			'connexion.feuilleAppareil.etape3' => 'Un code de six caractères s\'affiche. Il reste valable dix minutes.',
-			'connexion.feuilleAppareil.etape4' => 'Saisissez-le ici, sur l\'appareil de l\'élève.',
-			'connexion.feuilleAppareil.plafond' => 'Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.',
+			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.',
+			'connexion.feuilleAppareil.etape2' => 'Touchez le profil de l\'élève, puis Connecter un appareil.',
+			'connexion.feuilleAppareil.etape3' => 'Un QR code et un code de six caractères s\'affichent, avec leur heure de fin.',
+			'connexion.feuilleAppareil.etape4' => 'Sur l\'appareil de l\'élève, scannez le QR code ou saisissez le code.',
+			'connexion.feuilleAppareil.plafond' => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.',
 			'connexion.feuilleAppareil.saisir' => 'Saisir le code',
 			'connexion.feuilleAppareil.fermer' => 'Fermer',
 			'inscription.titre' => 'Créer votre compte',
@@ -8106,19 +8666,85 @@ extension on Traductions {
 			'kyc.erreur' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'appareils.titre' => 'Appareils',
-			'appareils.regle' => 'Deux appareils au maximum par enfant, un seul en cours à la fois.',
-			'appareils.ajouter' => 'Ajouter un appareil',
-			'appareils.limiteAtteinte' => ({required Object prenom}) => 'Deux appareils sont déjà appairés pour ${prenom}. Retirez-en un pour en ajouter un autre.',
-			'appareils.codeTitre' => 'Sur l\'appareil de l\'enfant',
-			'appareils.codeInstruction' => 'Ouvrez l\'application Rewayah, puis entrez ce code.',
-			'appareils.expireDans' => ({required Object temps}) => 'Expire dans ${temps}',
-			'appareils.expire' => 'Ce code a expiré.',
+			'appareils.foyer.titre' => 'Appareils du foyer',
+			'appareils.foyer.phrase' => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.',
+			'appareils.foyer.groupeProfils' => 'Profils élèves',
+			'appareils.foyer.aucunAppareil' => 'Aucun appareil connecté',
+			'appareils.foyer.unAppareil' => ({required Object nom}) => '1 appareil connecté : ${nom}',
+			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}',
+			'appareils.foyer.partageTitre' => 'Appareil partagé',
+			'appareils.foyer.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.',
+			'appareils.foyer.videTitre' => 'Aucun profil élève',
+			'appareils.foyer.vide' => 'Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.',
+			'appareils.foyer.videAction' => 'Ajouter un profil élève',
+			'appareils.eleve.sousTitre' => ({required Object prenom}) => 'Gérez les appareils autorisés pour ${prenom}.',
+			'appareils.eleve.groupe' => 'Appareils connectés',
+			'appareils.eleve.connecter' => 'Connecter un appareil',
+			'appareils.eleve.videTitre' => 'Aucun appareil connecté',
+			'appareils.eleve.vide' => ({required Object prenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur de ${prenom} avec le code affiché par le bouton ci-dessous.',
+			'appareils.eleve.introuvableTitre' => 'Profil élève introuvable',
+			'appareils.eleve.introuvable' => 'Ce profil élève n\'est pas rattaché à votre foyer.',
+			'appareils.eleve.introuvableAction' => 'Voir les appareils du foyer',
+			'appareils.eleve.connecteLe' => ({required Object date}) => 'Connecté le ${date}',
+			'appareils.eleve.utiliseLe' => ({required Object date}) => 'Dernière utilisation : ${date}',
+			'appareils.eleve.jamaisUtilise' => 'Pas encore utilisé',
+			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'Retirer ${appareil}',
+			'appareils.eleve.horsLigne' => 'Retirer ou connecter un appareil demande une connexion internet.',
+			'appareils.eleve.partageTitre' => 'Choix du profil et code personnel',
+			'appareils.eleve.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.',
+			'appareils.eleve.retraitTitre' => 'Retirer un appareil',
+			'appareils.eleve.retrait' => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			'appareils.plateforme.android' => 'Téléphone ou tablette Android',
+			'appareils.plateforme.ios' => 'iPhone ou iPad',
+			'appareils.plateforme.web' => 'Navigateur web',
+			'appareils.plateforme.windows' => 'Ordinateur',
+			'appareils.plateforme.inconnue' => 'Appareil',
+			'appareils.retrait.question' => 'Retirer cet appareil ?',
+			'appareils.retrait.consequence' => ({required Object appareil, required Object prenom}) => '${appareil} ne pourra plus se connecter au profil de ${prenom}. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			'appareils.retrait.confirmer' => 'Retirer l\'appareil',
+			'appareils.retrait.enCours' => 'Retrait en cours',
+			'appareils.retrait.reussi' => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
+			'appareils.retrait.echec' => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.',
+			'appareils.retrait.horsLigne' => 'Pas de connexion internet : l\'appareil n\'a pas été retiré.',
+			'appareils.emetteur.titre' => 'Connecter un appareil',
+			'appareils.emetteur.pourEleve' => ({required Object prenom}) => 'Pour ${prenom}',
+			'appareils.emetteur.consigneTitre' => 'Sur l\'autre appareil',
+			'appareils.emetteur.consigne' => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.',
+			'appareils.emetteur.libelleQr' => 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l\'appareil ne lit pas le QR.',
+			'appareils.emetteur.codeManuel' => 'Code à saisir',
+			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
+			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
+			'appareils.emetteur.restant' => ({required Object temps}) => 'Encore ${temps}',
+			'appareils.emetteur.sortie' => ({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.',
+			'appareils.emetteur.suiviIndisponible' => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.',
+			'appareils.emetteur.preparation' => 'Préparation du code',
+			'appareils.emetteur.verification.titre' => 'Vérification du code',
+			'appareils.emetteur.verification.phrase' => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.',
+			'appareils.emetteur.confirme.titre' => 'Appareil connecté',
+			'appareils.emetteur.confirme.phrase' => ({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.',
+			'appareils.emetteur.confirme.phraseSansPrenom' => 'L\'appareil de l\'élève est prêt. Le code n\'est plus affiché et ne peut plus servir.',
+			'appareils.emetteur.confirme.action' => 'Terminé',
+			'appareils.emetteur.expire.titre' => 'Ce code a expiré',
+			'appareils.emetteur.expire.phrase' => 'Il ne peut plus servir. Générez-en un nouveau quand l\'autre appareil est prêt.',
+			'appareils.emetteur.remplace.titre' => 'Ce code a été remplacé',
+			'appareils.emetteur.remplace.phrase' => 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.',
+			'appareils.emetteur.dejaActif.titre' => 'Un code est déjà valable',
+			'appareils.emetteur.dejaActif.phrase' => ({required Object heure}) => 'Un code créé pour cet élève vaut jusqu\'à ${heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l\'ancien inutilisable.',
+			'appareils.emetteur.horsLigne.titre' => 'Connexion interrompue',
+			'appareils.emetteur.horsLigne.phraseAvecCode' => ({required Object heure}) => 'Le code est masqué jusqu\'au retour de la connexion. Il reste valable jusqu\'à ${heure}.',
+			'appareils.emetteur.horsLigne.phraseSansCode' => 'Le code n\'a pas pu être préparé. Il le sera dès le retour de la connexion.',
+			'appareils.emetteur.erreur.plafondTitre' => 'Limite d\'appareils atteinte',
+			'appareils.emetteur.erreur.plafondPhrase' => 'Cet élève a déjà le nombre maximal d\'appareils. Retirez-en un pour en connecter un autre.',
+			'appareils.emetteur.erreur.plafondAction' => 'Voir les appareils',
+			'appareils.emetteur.erreur.horsFoyerTitre' => 'Profil élève introuvable',
+			'appareils.emetteur.erreur.horsFoyerPhrase' => 'Ce profil élève n\'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.',
+			'appareils.emetteur.erreur.compteTitre' => 'Connexion d\'appareil pas encore ouverte',
+			'appareils.emetteur.erreur.comptePhrase' => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.',
+			'appareils.emetteur.erreur.generiqueTitre' => 'Le code n\'a pas pu être préparé',
+			'appareils.emetteur.erreur.generiquePhrase' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
-			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? L\'enfant devra le réappairer pour s\'en resservir.',
-			'appareils.derniereUtilisation' => ({required Object quand}) => 'Utilisé ${quand}',
-			'appareils.jamaisUtilise' => 'Jamais utilisé',
-			'appareils.erreur' => 'L\'opération n\'a pas abouti. Réessayez dans un instant.',
+			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.',
 			'enfant.titre' => 'Ajouter un enfant',
 			'enfant.prenom' => 'Son prénom',
 			'enfant.nom' => 'Son nom',
@@ -8203,14 +8829,77 @@ extension on Traductions {
 			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
-			'eleveConnexion.codeInvite' => 'Entre le code affiché sur le téléphone de tes parents',
-			'eleveConnexion.codeErreur' => 'Ce code ne marche pas',
-			'eleveConnexion.codeExpire' => 'Ce code est trop vieux. Demande-en un nouveau.',
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
-			'eleveConnexion.nouveauCode' => 'Choisis ton code secret',
-			'eleveConnexion.nouveauCodeConfirmer' => 'Entre-le encore une fois',
-			'eleveConnexion.codeDifferent' => 'Les deux codes ne sont pas les mêmes',
-			'eleveConnexion.codeEnregistre' => 'Code enregistré',
+			'eleveConnexion.profils.phrase' => 'Touche ton prénom pour continuer.',
+			'eleveConnexion.profils.ajouter' => 'Ajouter un profil sur cet appareil',
+			'eleveConnexion.profils.ajouterLegende' => 'Avec le code affiché par le tuteur',
+			'eleveConnexion.profils.profilLibelle' => ({required Object prenom}) => 'Continuer en tant que ${prenom}',
+			'eleveConnexion.profils.videTitre' => 'Aucun profil sur cet appareil',
+			'eleveConnexion.profils.vide' => 'Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.',
+			'eleveConnexion.profils.videAction' => 'Saisir un code',
+			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.',
+			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
+			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
+			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
+			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
+			'eleveConnexion.pin.confirmer' => 'Entre-le encore une fois',
+			'eleveConnexion.pin.different' => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.',
+			'eleveConnexion.pin.ouverture' => 'Connexion en cours',
+			'eleveConnexion.pin.horsLigne' => 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.',
+			'eleveConnexion.pin.tropDEssais' => 'Trop d\'essais. Patiente un instant avant de réessayer.',
+			'eleveConnexion.pin.echec' => 'La connexion n\'a pas abouti. Réessaie dans un instant.',
+			'eleveConnexion.pin.changerProfil' => 'Changer de profil',
+			'eleveConnexion.pin.oublie' => 'Code oublié ?',
+			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.',
+			'eleveConnexion.pin.oublieAction' => 'Saisir un nouveau code',
+			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
+			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
+			'eleveConnexion.saisie.champ' => 'Code',
+			'eleveConnexion.saisie.aide' => 'Chiffres de 2 à 9 et lettres, sans I ni O.',
+			'eleveConnexion.saisie.valider' => 'Connecter l\'appareil',
+			'eleveConnexion.saisie.scanner' => 'Scanner le QR code',
+			'eleveConnexion.saisie.horsLigne' => 'Pas de connexion internet. Le code pourra être vérifié au retour du réseau.',
+			'eleveConnexion.lecteur.titre' => 'Scanner le QR code',
+			'eleveConnexion.lecteur.consigne' => 'Visez le QR code affiché sur l\'appareil du tuteur.',
+			'eleveConnexion.lecteur.demarrage' => 'Autorisez la caméra si l\'appareil le demande.',
+			'eleveConnexion.lecteur.libelleApercu' => 'Vue de la caméra',
+			'eleveConnexion.lecteur.contenuInvalide' => 'Ce QR code n\'est pas un code de connexion Rewayah. Visez celui affiché par le tuteur.',
+			'eleveConnexion.lecteur.saisir' => 'Saisir le code',
+			'eleveConnexion.lecteur.scannerANouveau' => 'Scanner à nouveau',
+			'eleveConnexion.lecteur.verificationTitre' => 'Vérification du code',
+			'eleveConnexion.lecteur.verificationPhrase' => 'La caméra est arrêtée pendant la vérification.',
+			'eleveConnexion.lecteur.refuseeTitre' => 'Caméra non autorisée',
+			'eleveConnexion.lecteur.refuseePhrase' => 'Pour lire le QR code, autorisez la caméra. Vous pouvez aussi saisir le code affiché sous le QR.',
+			'eleveConnexion.lecteur.refuseeAction' => 'Autoriser la caméra',
+			'eleveConnexion.lecteur.refuseeDurablementTitre' => 'Caméra bloquée',
+			'eleveConnexion.lecteur.refuseeDurablementPhrase' => 'La caméra reste refusée pour Rewayah. Autorisez-la dans les réglages de l\'appareil ou du navigateur, ou saisissez le code.',
+			'eleveConnexion.lecteur.occupeeTitre' => 'Caméra occupée',
+			'eleveConnexion.lecteur.occupeePhrase' => 'Une autre application utilise la caméra. Fermez-la, puis réessayez, ou saisissez le code.',
+			'eleveConnexion.lecteur.absenteTitre' => 'Aucune caméra',
+			'eleveConnexion.lecteur.absentePhrase' => 'Cet appareil n\'a pas de caméra disponible. Saisissez le code affiché sous le QR.',
+			'eleveConnexion.lecteur.nonSupporteeTitre' => 'Lecture impossible ici',
+			'eleveConnexion.lecteur.nonSupporteePhrase' => 'Cet appareil ou ce navigateur ne sait pas lire un QR code. Saisissez le code affiché sous le QR.',
+			'eleveConnexion.lecteur.erreurTitre' => 'La caméra n\'a pas démarré',
+			'eleveConnexion.lecteur.erreurPhrase' => 'Réessayez, ou saisissez le code affiché sous le QR.',
+			'eleveConnexion.refus.format' => 'Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.',
+			'eleveConnexion.refus.inconnuTitre' => 'Code non reconnu',
+			'eleveConnexion.refus.inconnu' => 'Ce code n\'existe pas, ou un code plus récent l\'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l\'appareil du tuteur.',
+			'eleveConnexion.refus.expireTitre' => 'Code expiré',
+			'eleveConnexion.refus.expire' => 'Ce code n\'est plus valable. Affichez un nouveau code sur l\'appareil du tuteur.',
+			'eleveConnexion.refus.dejaUtiliseTitre' => 'Code déjà utilisé',
+			'eleveConnexion.refus.dejaUtilise' => 'Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l\'appareil du tuteur.',
+			'eleveConnexion.refus.revoqueTitre' => 'Appareil retiré',
+			'eleveConnexion.refus.revoque' => 'Le tuteur a retiré cet appareil. Demandez-lui d\'afficher un nouveau code.',
+			'eleveConnexion.refus.plafondTitre' => 'Limite d\'appareils atteinte',
+			'eleveConnexion.refus.plafond' => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.',
+			'eleveConnexion.refus.tropDEssaisTitre' => 'Trop d\'essais',
+			'eleveConnexion.refus.tropDEssais' => 'Patientez un instant avant de réessayer.',
+			'eleveConnexion.refus.horsLigneTitre' => 'Pas de connexion',
+			'eleveConnexion.refus.horsLigne' => 'Le code n\'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.',
+			'eleveConnexion.refus.nonEnregistreTitre' => 'Connexion non enregistrée',
+			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
+			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
+			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.aucun' => 'Aucun dossier en attente',
 			'dossiers.aucunDetail' => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.',
@@ -8240,6 +8929,8 @@ extension on Traductions {
 			'dossiers.genreManquant' => 'Renseignez votre genre dans votre profil avant de consulter un dossier.',
 			'dossiers.erreur' => 'La décision n\'a pas abouti. Réessayez dans un instant.',
 			'admin.tableau.titre' => 'Centre de commande',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.foyers' => 'Foyers sans enseignant',
 			'admin.tableau.rapports' => 'Cahiers manquants',
@@ -8369,8 +9060,6 @@ extension on Traductions {
 			'admin.groupes.creerTitre' => 'Créer un groupe',
 			'admin.groupes.champLibelle' => 'Nom du groupe',
 			'admin.groupes.champEnseignantId' => 'Identifiant de l\'enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
@@ -8754,6 +9443,8 @@ extension on Traductions {
 			'admin.agents.nePourraPas' => 'Ne pourra pas',
 			'admin.agents.nePourraPasDetail' => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.',
 			'admin.agents.emissionEnCours' => 'Émission',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.emis' => 'Jeton émis',
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
 			'admin.agents.copier' => 'Copier le lien',
@@ -8883,8 +9574,6 @@ extension on Traductions {
 			'parcours.etatGroupeConfirmeDetail' => ({required Object prenom}) => 'Le groupe de ${prenom} est constitué. Vous retrouverez ses séances dans son espace.',
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
@@ -9268,6 +9957,8 @@ extension on Traductions {
 			'enseignant.cahier.toutEstNominal' => 'Tout s\'est passé comme prévu.',
 			'enseignant.cahier.toutEstNominalDetail' => 'Validez, et votre journée continue.',
 			'enseignant.cahier.exceptions' => 'À regarder',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.uneException' => '1 élève demande un regard.',
 			'enseignant.cahier.plusieursExceptions' => ({required Object nombre}) => '${nombre} élèves demandent un regard.',
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
@@ -9397,8 +10088,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.placesLibres' => 'places libres',
 			'enseignant.ficheGroupe.placesLibresUn' => 'place libre',
 			'enseignant.ficheGroupe.membresTitre' => 'Les élèves du groupe',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les groupes : celui-ci n\'a pas encore d\'élève.',
@@ -9782,6 +10471,8 @@ extension on Traductions {
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
 			'tc.parcours.intention.entretenir' => 'À entretenir',
