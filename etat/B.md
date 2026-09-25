@@ -421,3 +421,17 @@ Captures : rien de visuel n'a change depuis l'etape 3 (2c82790) -> les 68 captur
 Prochain agent : reprendre dans `C:\RA\lot-anim` (meme branche), relancer sous verrou `flutter test` puis `flutter build web`, verifier 0 echec / code 0, noter la taille de `main.dart.js`, completer `05_recette\P2-16\RAPPORT.md` (etape 4) avec les chiffres finaux, mettre a jour le tableau (ligne P2-16 -> fait, preuve), commit+push pilotage.
 
 Statut : a_suivre.
+
+## P2-16 etape 5 (cloture, session B-2026-09-25-coord)
+
+Reprise depuis l'agent precedent (`c5e43d0` lot-anim, `c133440` pilotage, tous deux deja pousses) : `git status`/`git log -5` (lot-anim) et fin de `etat/B.md` confirmes identiques a l'etat rendu, rien refait de deja fait.
+
+Sous verrou (`C:\RA\lot-anim`) : `flutter test` complet -> **2722 tests, 0 echec, code 0** (572 sautes preexistants). `flutter build web` -> reussi ; `main.dart.js` = 5 939 185 octets contre 5 926 632 octets avant animations (P2-13, `C:\RA\lot-fin`) = **+12 553 octets, +0,21 %** (negligeable).
+
+`05_recette\P2-16\RAPPORT.md` complete (etape 5) : tableau des 2 chiffres, et resume en langage simple pour le directeur (ce qui bouge et ou, preuves de performance, respect de « reduire les animations », suite de tests verte, captures deja a jour). Tableau (P2-16) : passe a **fait** avec preuve complete (etapes 1 a 5).
+
+Aucun code touche a cette etape (seules verifications finales). Captures inchangees depuis l'etape 3 (68 images, rendu identique). Commit lot-anim inchange (`c5e43d0`, deja pousse) ; commit pilotage a suivre (ce fichier + RAPPORT.md).
+
+**P2-16 est termine.** Prochaine etape du tableau a determiner par le coordinateur (voir lignes P2-14/CO-04 en attente du directeur, et etat general du role Tuteur).
+
+Statut : fini.

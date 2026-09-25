@@ -85,3 +85,46 @@ Reference "avant" deja disponible pour la comparaison de taille web : `C:\RA\lot
 Captures : aucun ecran modifie depuis l'etape 3 (seul un fichier de test ajoute) -> les 68 captures `05_recette/P2-16/captures_apres` restent valables, pas de regeneration necessaire.
 
 **P2-16 reste en_cours** : prochain agent doit relancer sous verrou (`flutter test` puis `flutter build web`), verifier 0 echec, mesurer `main.dart.js`, completer ce rapport avec les chiffres finaux, puis cloturer (tableau -> fait).
+
+# Etape 5 (cloture, session B-2026-09-25-coord) : suite complete verte, taille web, cloture P2-16
+
+Branche `ui/tuteur-v1-anim` @ `c5e43d0` (rien touche cote code, seules les verifications finales).
+
+## Suite complete `flutter test` (sous verrou)
+**2722 tests, 0 echec, code 0** (572 sautes preexistants, comme aux etapes precedentes). Le nouveau test de performance (etape 4) est compte dedans.
+
+## Taille du build web (sous verrou, `flutter build web`)
+| Version | Taille `main.dart.js` |
+|---|---|
+| Avant (P2-13, sans animations, `C:\RA\lot-fin`, base f93272b) | 5 926 632 octets (5,65 Mo) |
+| Apres (P2-16, avec animations, `C:\RA\lot-anim`, `c5e43d0`) | 5 939 185 octets (5,66 Mo) |
+| Difference | + 12 553 octets, soit **+ 0,21 %** |
+
+Le socle d'animations (mouvement) ajoute une taille negligeable au fichier livre au navigateur.
+
+## RESUME POUR LE DIRECTEUR (langage simple)
+
+**Ce qui bouge maintenant, et ou :**
+- **Changement de page** (Accueil, Foyer, Historique, Compte, fiche d'un enfant...) : l'ecran glisse et apparait en fondu au lieu de changer d'un coup sec.
+- **Changement d'onglet** (bas de l'ecran, role Tuteur) : fondu doux entre les deux ecrans.
+- **Chargement d'une information** (foyer, historique, notifications...) : le contenu apparait en fondu une fois pret, au lieu de sauter brutalement du squelette de chargement au contenu.
+- **Cartes et boutons** (choix, compte, catalogue) : la pression, la selection et le survol changent en douceur (150 ms) au lieu de sauter.
+- **Listes qui s'affichent** (Historique : seances/observations ; Catalogue des classes ; cartes du Compte) : les 8 premieres lignes/cartes apparaissent l'une apres l'autre en decale, pour guider l'oeil ; le reste de la liste ne bouge pas (pas d'effet sur les tres longues listes).
+- **Barre de navigation** : le trait sous l'onglet actif glisse jusqu'a sa nouvelle position au lieu de sauter.
+
+Toutes ces animations durent entre 150 et 300 millisecondes (moins d'un tiers de seconde) : assez pour guider l'oeil, pas assez pour ralentir l'usage. Aucune animation ne tourne en boucle ou a l'infini (sauf les indicateurs de chargement habituels, qui tournent tant qu'on attend une reponse).
+
+**Preuves de performance (chiffres) :**
+- Un test automatique mesure, pour 3 parcours reels (ouvrir l'Accueil ; aller de l'Accueil au Foyer puis a la fiche d'un enfant ; ouvrir l'Historique), le nombre d'images necessaires pour que toutes les animations se terminent. Resultat : entre 1 et 4 images, tres largement sous la limite fixee de 40 images (soit moins de 0,7 seconde) — dans les faits, tout se termine quasi instantanement.
+- Ce meme test verifie qu'une fois les animations finies, plus aucune image n'est programmee (l'appareil ne continue pas a dessiner pour rien en arriere-plan, donc pas d'usure de batterie inutile).
+- Le fichier envoye au navigateur (version web) n'a grossi que de 0,21 % (environ 12 Ko sur 5,7 Mo) a cause des animations : c'est negligeable, le temps de chargement du site n'est pas affecte.
+
+**Respect du reglage « reduire les animations » (accessibilite du telephone/ordinateur) :**
+- Toutes les animations sont ecrites pour s'eteindre completement (duree zero, aucun mouvement) des que l'utilisateur a active ce reglage dans son appareil. C'est verifie par des tests automatiques pour chaque type d'animation (pages, listes, cartes, chargement, barre de navigation).
+- Personne n'est donc oblige de subir des animations s'il ne le souhaite pas ou si son appareil le demande.
+
+**Suite complete des tests de l'application :** 2722 tests verifies, tous corrects, 0 echec. Rien n'a ete casse par les animations.
+
+**Captures d'ecran :** deja a jour depuis l'etape 3 (68 images dans `05_recette\P2-16\captures_apres`). Rien de visuel n'a change depuis (seules les mesures de performance ont ete ajoutees) : la mise en page reste identique une fois les animations terminees, pas de nouvelle capture necessaire.
+
+**P2-16 est termine.** Tableau mis a jour (statut fait, preuve = ce rapport).
