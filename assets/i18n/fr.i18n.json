@@ -175,6 +175,7 @@
         "statut": "Statut",
         "seance": "Séance liée",
         "voirSeance": "Voir la séance",
+        "aide": "Obtenir de l'aide",
         "dateHeure": "{date} à {heure}",
         "introuvable": "Mouvement introuvable",
         "introuvablePhrase": "Le serveur n'a rendu aucun mouvement à cette adresse."

@@ -200,10 +200,59 @@ void main() {
     );
 
     await toucher(tester, find.byKey(DetailMouvementPage.voirSeanceKey));
+    final Uri seance = Uri.parse(lieu(routeur));
     expect(
-      Uri.parse(lieu(routeur)).path,
+      seance.path,
       Routes.seancePour('demo-seance-${DonneesDemo.yusufId}--7'),
     );
+    // L'eleve du mouvement : une seance de groupe s'ouvre sur sa ligne.
+    expect(seance.queryParameters['eleve'], DonneesDemo.yusufId);
+  });
+
+  testWidgets('demonstration : le detail montre le solde actuel du profil et '
+      'ouvre l aide, qui y ramene', (WidgetTester tester) async {
+    final String detail = Routes.mouvementPour(
+      'demo-mvt-${DonneesDemo.aichaId}-remise',
+    );
+    final GoRouter routeur = await _demoSur(
+      tester,
+      detail,
+      const Size(390, 844),
+    );
+    expect(find.byKey(DetailMouvementPage.soldeKey), findsOneWidget);
+    expect(find.text(t.finance.soldeDe(prenom: 'Aïcha')), findsOneWidget);
+    expect(
+      find.text(formaterMontant(1200, FinanceFoyerDemo.devise)),
+      findsOneWidget,
+    );
+
+    await toucher(tester, find.byKey(DetailMouvementPage.aideKey));
+    final Uri aide = Uri.parse(lieu(routeur));
+    expect(aide.path, Routes.compteTuteurSousPage('aide'));
+    expect(find.text(t.compte.tuteur.pageAide.titre), findsWidgets);
+
+    await tester.tap(find.byType(DisqueRetour));
+    await stabiliser(tester);
+    expect(lieu(routeur), detail);
+    expect(find.byType(DetailMouvementPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('solde illisible : le detail reste, sans en-tete de solde', (
+    WidgetTester tester,
+  ) async {
+    await monterCompte(
+      tester,
+      depart: Routes.mouvementPour('mvt-x'),
+      eleves: DonneesDemo.eleves,
+      surcharges: <Override>[
+        portFinanceFoyerProvider.overrideWithValue(const _CodesInconnus()),
+      ],
+    );
+    expect(find.byType(DetailMouvementPage), findsOneWidget);
+    expect(find.byKey(DetailMouvementPage.soldeKey), findsNothing);
+    expect(find.textContaining('0,00'), findsNothing);
+    expect(find.byKey(DetailMouvementPage.aideKey), findsOneWidget);
   });
 
   testWidgets('demonstration : une consommation porte le signe moins', (

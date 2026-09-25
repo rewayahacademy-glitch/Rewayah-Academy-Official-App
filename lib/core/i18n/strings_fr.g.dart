@@ -8448,6 +8448,9 @@ class Traductions$finance$mouvements$detail$fr {
 	/// fr: 'Voir la séance'
 	String get voirSeance => 'Voir la séance';
 
+	/// fr: 'Obtenir de l'aide'
+	String get aide => 'Obtenir de l\'aide';
+
 	/// fr: '{date} à {heure}'
 	String dateHeure({required Object date, required Object heure}) => '${date} à ${heure}';
 
@@ -11891,6 +11894,7 @@ extension on Traductions {
 			'finance.mouvements.detail.statut' => 'Statut',
 			'finance.mouvements.detail.seance' => 'Séance liée',
 			'finance.mouvements.detail.voirSeance' => 'Voir la séance',
+			'finance.mouvements.detail.aide' => 'Obtenir de l\'aide',
 			'finance.mouvements.detail.dateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'finance.mouvements.detail.introuvable' => 'Mouvement introuvable',
 			'finance.mouvements.detail.introuvablePhrase' => 'Le serveur n\'a rendu aucun mouvement à cette adresse.',
@@ -12283,9 +12287,9 @@ extension on Traductions {
 			'appareils.emetteur.sortie' => ({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.',
 			'appareils.emetteur.suiviIndisponible' => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.',
 			'appareils.emetteur.preparation' => 'Préparation du code',
-			'appareils.emetteur.verification.titre' => 'Vérification du code',
 			_ => null,
 		} ?? switch (path) {
+			'appareils.emetteur.verification.titre' => 'Vérification du code',
 			'appareils.emetteur.verification.phrase' => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.',
 			'appareils.emetteur.confirme.titre' => 'Appareil connecté',
 			'appareils.emetteur.confirme.phrase' => ({required Object prenom}) => 'L\'appareil de ${prenom} est prêt. Le code n\'est plus affiché et ne peut plus servir.',
@@ -12797,9 +12801,9 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
-			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
@@ -13311,9 +13315,9 @@ extension on Traductions {
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
 			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
-			'parcours.offresAutres' => 'Autres horaires possibles',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
@@ -13825,9 +13829,9 @@ extension on Traductions {
 			'tuteur.accueil.annulee' => ({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu',
 			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
-			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
@@ -14339,9 +14343,9 @@ extension on Traductions {
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
-			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',

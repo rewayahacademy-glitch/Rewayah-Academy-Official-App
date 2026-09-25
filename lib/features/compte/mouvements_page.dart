@@ -21,9 +21,12 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/resume_solde.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
 import '../suivi_foyer/filtres_historique.dart' show dateCourte, heureMinute;
 import 'carte_rubriques.dart';
+import 'soldes_page.dart' show soldesFoyerProvider;
 
 // S07 « Mouvements de solde » et S08 « Detail d'un mouvement » (LT-6,
 // complement Tuteur section 5 ; planche « 01 Recharges, remises et acces »).
@@ -92,6 +95,14 @@ String? _retour(BuildContext context) {
     return cheminRetourValide(
       GoRouterState.of(context).uri.queryParameters['retour'],
     );
+  } on Object {
+    return null;
+  }
+}
+
+String? _adresse(BuildContext context) {
+  try {
+    return GoRouterState.of(context).uri.toString();
   } on Object {
     return null;
   }
@@ -261,11 +272,20 @@ class DetailMouvementPage extends ConsumerWidget {
   /// Le lien vers la seance liee.
   static const Key voirSeanceKey = Key('mouvement.voirSeance');
 
+  /// Le lien « Obtenir de l'aide ».
+  static const Key aideKey = Key('mouvement.aide');
+
+  /// Le solde actuel du profil concerne, s'il se lit.
+  static const Key soldeKey = Key('mouvement.solde');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final GoRouter? routeur = GoRouter.maybeOf(context);
     final String retour = _retour(context) ?? Routes.tuteurCompteMouvements;
     final Map<String, String> prenoms = _prenoms(ref);
+    final AsyncValue<SoldesFoyer> soldes = ref.watch(soldesFoyerProvider);
+    // L'adresse de cet ecran, pour que l'aide y ramene.
+    final String? ici = _adresse(context);
 
     return PageShell(
       titre: t.finance.mouvements.detail.titre,
@@ -285,8 +305,28 @@ class DetailMouvementPage extends ConsumerWidget {
             final MouvementSolde m = lu!;
             final String? statut = libelleStatut(m.statutServeur);
             final String? seance = m.seanceId;
+            // Le solde actuel du profil, en tete comme sur la maquette S08 :
+            // seulement s'il se lit et porte ce profil, jamais un « 0 ».
+            SoldeProfil? solde;
+            if (soldes.hasValue && !soldes.hasError) {
+              for (final SoldeProfil s in soldes.requireValue.profils) {
+                if (s.profilId == m.profilId) {
+                  solde = s;
+                }
+              }
+            }
+            final String? prenom = prenoms[m.profilId];
             return ListeEchelonnee(
               children: <Widget>[
+                if (solde != null && prenom != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                    child: ResumeSolde.profil(
+                      key: soldeKey,
+                      prenom: prenom,
+                      solde: solde,
+                    ),
+                  ),
                 AppCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -307,13 +347,17 @@ class DetailMouvementPage extends ConsumerWidget {
                       ),
                       LigneCleValeur(
                         cle: t.finance.mouvements.detail.profil,
-                        valeur:
-                            prenoms[m.profilId] ?? t.finance.profilSansPrenom,
+                        valeur: prenom ?? t.finance.profilSansPrenom,
                       ),
                       if (statut != null)
                         LigneCleValeur(
                           cle: t.finance.mouvements.detail.statut,
-                          valeur: statut,
+                          valeur: '',
+                          // Liste fermee : seul un statut confirme est connu.
+                          complement: StatusPill(
+                            libelle: statut,
+                            ton: TonEtat.succes,
+                          ),
                         ),
                     ],
                   ),
@@ -324,9 +368,33 @@ class DetailMouvementPage extends ConsumerWidget {
                     child: LienFleche(
                       key: voirSeanceKey,
                       libelle: t.finance.mouvements.detail.voirSeance,
-                      onPress: () => routeur?.go(Routes.seancePour(seance)),
+                      // L'eleve du mouvement : une seance de groupe du foyer
+                      // s'ouvre sur la bonne ligne.
+                      onPress: () => routeur?.go(
+                        Uri(
+                          path: Routes.seancePour(seance),
+                          queryParameters: <String, String>{
+                            'eleve': m.profilId,
+                          },
+                        ).toString(),
+                      ),
                     ),
                   ),
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: LienFleche(
+                    key: aideKey,
+                    libelle: t.finance.mouvements.detail.aide,
+                    onPress: () => routeur?.go(
+                      Uri(
+                        path: Routes.compteTuteurSousPage('aide'),
+                        queryParameters: ici == null
+                            ? null
+                            : <String, String>{'retour': ici},
+                      ).toString(),
+                    ),
+                  ),
+                ),
               ],
             );
           },

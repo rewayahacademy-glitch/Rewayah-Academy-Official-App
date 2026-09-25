@@ -6,6 +6,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_support.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/router/chemin_retour.dart';
 import '../../core/router/routes.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -29,10 +30,21 @@ class AideComptePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<CanalSupport?> canal = ref.watch(canalSupportProvider);
     final Object? erreur = canal.hasError ? canal.error : null;
+    // `?retour=` (filtre par `cheminRetourValide`) : l'aide ouverte depuis un
+    // detail de mouvement y ramene ; le Compte a defaut.
+    String? retour;
+    try {
+      retour = cheminRetourValide(
+        GoRouterState.of(context).uri.queryParameters['retour'],
+      );
+    } on Object {
+      retour = null;
+    }
+    final String sortie = retour ?? Routes.tuteurCompte;
 
     return PageShell(
       titre: t.compte.tuteur.pageAide.titre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
+      onRetour: () => GoRouter.of(context).go(sortie),
       child: ColonneSousPage(
         child: erreur is CapaciteIndisponible
             ? EtatSysteme(
