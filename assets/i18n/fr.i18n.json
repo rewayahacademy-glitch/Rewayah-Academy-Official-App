@@ -430,28 +430,202 @@
     "revoquerConfirmation": "Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code."
   },
   "enfant": {
-    "titre": "Ajouter un enfant",
-    "prenom": "Son prénom",
-    "nom": "Son nom",
-    "age": "Son âge",
-    "ageInvalide": "Indiquez un âge entre 3 et 18 ans.",
-    "ageRaison": "L'âge fixe le mode d'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.",
-    "creer": "Ajouter au foyer",
-    "erreur": "L'ajout n'a pas abouti. Réessayez dans un instant.",
-    "aucun": "Aucun enfant dans le foyer",
-    "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
+    "titre": "Ajouter un profil élève",
+    "aucun": "Aucun profil élève dans le foyer",
+    "aucunDetail": "Ajoutez d'abord un profil élève depuis le Foyer."
+  },
+  "reglagesEnfant": {
+    "titre": "Réglages par profil élève",
+    "intro": "La photo, la caméra et l'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l'administration restent ici.",
+    "renvoi": "Photo, caméra et interface",
+    "renvoiLegende": "Dans la fiche de {prenom}"
   },
   "foyer": {
     "titre": "Foyer",
-    "ajouterProfil": "Ajouter un profil élève"
+    "ajouterProfil": "Ajouter un profil élève",
+    "sousTitre": "Les profils élèves de votre foyer",
+    "membres": "Profils élèves",
+    "vide": {
+      "titre": "Aucun profil élève pour l'instant",
+      "phrase": "Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil."
+    },
+    "membre": {
+      "sansClasse": "Pas encore de classe",
+      "classeEchec": "Classe non lue",
+      "accesSansEcheance": "Accès sans échéance",
+      "accesJusquau": "Accès jusqu'au {date}",
+      "accesExpire": "Accès expiré depuis le {date}",
+      "date": "{jour} {mois} {annee}"
+    },
+    "classesIndisponibles": "La classe de chaque élève ne s'affiche pas encore sur cette page.",
+    "classesEchec": "La classe de certains élèves n'a pas pu être lue.",
+    "relireClasses": "Relire les classes",
+    "inscriptionIllisible": "L'inscription en cours de chaque élève ne s'affiche pas encore sur cette page.",
+    "appareilsPartages": "Appareils partagés",
+    "appareilsFoyer": "Appareils du foyer",
+    "appareilsFoyerLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
+    "creerMonProfil": "Créer mon profil élève",
+    "monProfil": {
+      "titre": "Créer mon profil élève",
+      "indisponibleTitre": "Pas encore possible",
+      "indisponiblePhrase": "Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.",
+      "retour": "Retour au foyer"
+    },
+    "ajout": {
+      "suivant": "Suivant",
+      "creer": "Créer le profil",
+      "porte": {
+        "illisibleTitre": "Votre compte n'a pas pu être lu",
+        "illisiblePhrase": "Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant."
+      },
+      "pourQui": {
+        "question": "Pour qui est ce profil élève ?",
+        "sousTitre": "Choisissez la personne qui suivra les cours.",
+        "requis": "Choisissez pour qui est ce profil pour continuer.",
+        "indisponible": "Indisponible",
+        "enfantTitre": "Un enfant ou un mineur",
+        "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
+        "enfantAttente": "Possible dès que votre dossier est validé.",
+        "procheTitre": "Un proche adulte",
+        "procheDescription": "Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.",
+        "moiTitre": "Moi-même",
+        "moiDescription": "Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement."
+      },
+      "identite": {
+        "question": "Qui est l'élève ?",
+        "sousTitre": "Son prénom, son nom et son âge.",
+        "prenom": "Prénom",
+        "nom": "Nom",
+        "nomAide": "Le nom de famille n'est jamais montré à l'enseignant.",
+        "age": "Âge",
+        "ageSuffixe": "ans",
+        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite."
+      },
+      "erreurs": {
+        "prenomRequis": "Indiquez le prénom de l'élève.",
+        "nomRequis": "Indiquez le nom de l'élève.",
+        "ageRequis": "Indiquez l'âge, en chiffres.",
+        "ageHorsBornes": "Indiquez un âge entre {min} et {max} ans."
+      },
+      "refus": {
+        "compteNonValide": "Votre dossier doit être validé avant d'ajouter un profil élève.",
+        "ageHorsBornes": "Cet âge n'est pas accepté. Vérifiez-le puis réessayez.",
+        "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez."
+      },
+      "incertaine": {
+        "titre": "Le profil a peut-être été créé",
+        "phrase": "La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.",
+        "voirFoyer": "Voir le foyer",
+        "reessayer": "Réessayer quand même"
+      },
+      "horsLigne": "Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra."
+    }
   },
   "ficheEleve": {
-    "informations": "Informations de l'élève",
-    "inscription": "Parcours et inscription",
-    "interface": "Interface",
-    "camera": "Caméra en cours",
-    "acces": "Accès Rewayah",
-    "appareils": "Appareils"
+    "titreRepli": "Profil élève",
+    "parametres": "Paramètres de l'élève",
+    "appareilsGroupe": "Appareils",
+    "introuvable": {
+      "titre": "Ce profil élève est introuvable",
+      "phrase": "Il ne fait pas partie de votre foyer, ou le lien est incomplet.",
+      "retour": "Retour au foyer"
+    },
+    "lignes": {
+      "informations": "Informations",
+      "informationsLegende": "Prénom et photo",
+      "inscription": "Parcours et inscription",
+      "inscriptionLegende": "Questionnaire et classe",
+      "interface": "Interface",
+      "camera": "Caméra en cours",
+      "cameraAutorisee": "Autorisée",
+      "cameraNonAutorisee": "Non autorisée",
+      "acces": "Accès Rewayah",
+      "appareils": "Appareils de {prenom}",
+      "appareilsLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un"
+    },
+    "informations": {
+      "titre": "Informations de l'élève",
+      "identite": "Identité",
+      "prenom": "Prénom",
+      "identiteNote": "Le prénom ne se modifie pas encore depuis cette page.",
+      "ageNote": "L'âge et la date de naissance ne sont pas encore enregistrés sur le profil.",
+      "photo": "Photo",
+      "photoLegende": "Une photo du visage de {prenom}. Ce n'est pas une pièce d'identité.",
+      "photoAucune": "Pas encore de photo",
+      "photoPresente": "Photo enregistrée",
+      "choisir": "Choisir une photo",
+      "changer": "Changer la photo",
+      "apercuTitre": "Aperçu",
+      "apercuPhrase": "Vérifiez la photo avant de l'envoyer.",
+      "apercuIllisible": "L'aperçu ne s'affiche pas sur cet appareil. La photo peut quand même être envoyée.",
+      "envoyer": "Envoyer cette photo",
+      "autre": "Choisir une autre photo",
+      "annuler": "Annuler",
+      "etapeEnvoi": "Envoi de la photo, étape 1 sur 2",
+      "etapeEnregistrement": "Enregistrement sur le profil, étape 2 sur 2",
+      "succes": "La photo est enregistrée.",
+      "tropLourde": "Cette photo dépasse {taille} Mo. Choisissez une image plus légère.",
+      "echecEnvoi": "La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.",
+      "echecEnregistrement": "La photo est envoyée, mais elle n'a pas pu être enregistrée sur le profil.",
+      "reprendre": "Réessayer",
+      "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
+      "horsLigne": "Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra."
+    },
+    "inscription": {
+      "titre": "Parcours et inscription",
+      "intro": "Où en est {prenom} : questionnaire et classe.",
+      "questionnaire": "Questionnaire",
+      "classe": "Classe",
+      "lecture": "Lecture en cours",
+      "etatInconnu": "L'état du questionnaire ne s'affiche pas encore.",
+      "aRemplir": "À remplir",
+      "horaireAChoisir": "Rempli, horaire à choisir",
+      "horaireRetire": "Horaire retiré, à choisir de nouveau",
+      "echangeAPrevoir": "Préférence enregistrée, échange de niveau à prévoir",
+      "echangePrevu": "Échange de niveau prévu",
+      "classeEnConstitution": "Classe en cours de constitution",
+      "classeConfirmee": "Classe confirmée",
+      "classeAucune": "Pas encore de classe. Choisir une classe",
+      "classeIndisponible": "La classe ne s'affiche pas encore ici. Choisir une classe",
+      "classeEchec": "La classe n'a pas pu être lue.",
+      "relireClasse": "Relire la classe"
+    },
+    "interface": {
+      "titre": "Interface",
+      "intro": "Comment Rewayah s'affiche sur l'appareil de {prenom}.",
+      "guidee": "Interface guidée",
+      "guideeDescription": "Des écrans simplifiés, de grands boutons, une chose à la fois.",
+      "standard": "Interface standard",
+      "standardDescription": "L'affichage habituel de Rewayah.",
+      "politique": "Vous choisissez ce réglage. Au départ, il a été fixé selon l'âge indiqué à la création du profil.",
+      "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
+      "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
+      "enCours": "Enregistrement en cours",
+      "echec": "Le changement n'a pas été enregistré. Réessayez.",
+      "horsLigne": "Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra."
+    },
+    "camera": {
+      "titre": "Caméra en cours",
+      "ligne": "Caméra pendant les séances",
+      "autorisee": "{prenom} peut allumer sa caméra pendant les séances.",
+      "interdite": "Le bouton caméra n'apparaîtra pas pour {prenom} pendant les séances.",
+      "application": "Le changement compte à la prochaine entrée de {prenom} en séance.",
+      "distincte": "Ce réglage ne change pas l'autorisation caméra de l'appareil, celle que le téléphone demande pour lire un QR code.",
+      "echec": "Le changement n'a pas été enregistré. Réessayez.",
+      "horsLigne": "Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra."
+    },
+    "acces": {
+      "titre": "Accès Rewayah",
+      "ligne": "Accès de {prenom}",
+      "pastilleSansEcheance": "Sans échéance",
+      "pastilleEnCours": "En cours",
+      "pastilleExpire": "Expiré",
+      "sansEcheance": "Aucune date de fin n'est enregistrée.",
+      "jusquau": "Jusqu'au {date}",
+      "expireDepuis": "Expiré depuis le {date}",
+      "expirePhrase": "Depuis cette date, {prenom} ne peut plus entrer dans Rewayah.",
+      "detailIndisponible": "Le début de l'accès et son motif ne s'affichent pas encore."
+    }
   },
   "disponibilites": {
     "titre": "Quand vos enfants peuvent-ils suivre un cours ?",
