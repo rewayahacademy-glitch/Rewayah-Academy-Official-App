@@ -24,3 +24,7 @@ Port `PortFinanceFoyer` (`lib/core/capacites/port_finance_foyer.dart`, commit `4
 - `DB-FIN-04` paiement et attribution (S05, S06) : entrée = référence de devis + clé d'idempotence ; sortie = référence de paiement, état du paiement, état d'attribution par profil (confirmé, en attente, échoué). Contrat de paiement collectif à confirmer (F4).
 - `DB-FIN-05` aperçu d'annulation (S09, S10) : entrée = profils choisis ; sortie = référence d'aperçu et, par profil, éligibilité et motif, date d'effet réelle, conséquences (séances, réservations, solde), solde conservé, possibilité de reprise.
 - `DB-FIN-06` annulation d'accès (S11) : entrée = référence d'aperçu + profils + clé d'idempotence ; sortie = issue par profil (confirmée, demande en attente, refusée) et motif.
+
+## Demande LT-6 (25/09) : codes de nature et de statut des mouvements (DB-FIN-02)
+
+S07/S08 traduisent `natureServeur` et `statutServeur` depuis une liste FERMÉE (`libelleNature`, `libelleStatut` dans `lib/features/compte/mouvements_page.dart`). Aujourd'hui seuls les codes de la démonstration y figurent (`demo_recharge`, `demo_consommation`, `demo_remise_seance`, `demo_confirme`) ; tout autre code se dit « Mouvement » (nature) ou n'est pas affiché (statut), jamais brut. Besoin : la liste réelle des codes `nature` et `statut` de `wallet_entries` que DB-FIN-02 rendra, avec leur libellé validé, pour compléter la table sans rien inventer.
