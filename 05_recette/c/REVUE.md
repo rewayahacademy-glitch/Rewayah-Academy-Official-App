@@ -68,3 +68,14 @@ Correction : les renommer en « Classe », ou confirmer par écrit qu'ils ne son
 - **Honnêteté.** Aucune fixture dans `lib/`. Travail, Bibliothèque et Progression disent « pas encore relié(e) » (`ressources_classe_page.dart:36-39`, `assignationsFamilleProvider` à `null`). Catalogue : « pas encore ouvert » en production, aucune réservation locale, clé d'idempotence gardée. DB-CRS-03, 07, 08, 09, 10, 11 et DB-TRV-07 sont cités.
 - **Frontière.** `git diff --stat` sur `supabase .github vercel.json web/vercel.json pubspec.yaml pubspec.lock assets/fonts lib/core/theme lib/core/router lib/core/widgets lib/core/coran lib/core/tc_coran lib/features/tc_mushaf lib/core/capacites/port_*` : vide. Les fichiers `lib/core/tc_groupe/libelles_tc_groupe.dart`, `tc_parcours/port_travail_a_venir.dart`, `tc_catalogue/detail_ressource_page.dart` et `capacites/classes_foyer_supabase.dart` appartiennent tous au lot C (`00_OWNERSHIP.md` l. 78-79). Seuls les `windows/flutter/generated_*` restent non commités (hors diff).
 - **Vocabulaire ajouté.** Aucune occurrence de « Session », « Cours en cours », « Ajouter enfant » ou « groupe » dans les clés ajoutées. « Sayyid / Sayyida » ; prénom seul quand le titre manque (`catalogue_classes_page.dart:68-75`).
+
+## 5. Suite donnée (coordinateur, poste B, 25/09 07:45, commit `6cc903f` sur `ui/tuteur-v1-c`)
+
+- **wip `4d37dc9` gardé** : cohérent avec la revue (m2 bouton à droite ≥ 360 dp, m3 « Avant le prochain cours », m5 retour de repli, m6 test de tri, m7 `tc.groupe.*` renommés en « classe », M5 test texte x2 et contraste). Ses tests ont été corrigés (tri `.asc.nullslast` de postgrest ; texte x2 du bandeau testé sur le bandeau seul).
+- **M1 (C-9)** : `etats_transverses_test` attend un `EtatSysteme` (introuvable ou pas encore relié), plus le libellé « groupe ». Vert.
+- **M2 (C-1, C-12)** : `portClassesFoyerProvider` sert `ClassesFoyerSupabase` (lectures RLS `0019`). La Classe est atteignable en production depuis « Voir la classe ». Le routeur de test garde `ClassesFoyerIndisponible`. Capture renommée `classe_390x844@3_p3_simulation`.
+- **M3 (C-7)** : `BlocParcours` remis sur l'Accueil (état sans classe) jusqu'à l'intégration de Fiche > Inscription du lot B, qui porte l'entrée durable.
+- **M4 (C-15)** : `fuseauCatalogueProvider` lit `monFuseauProvider` (fuseau du foyer). **C-14 reste ouvert** : `ClasseOuverte` (contrat K6, gelé) ne porte ni séances ni parcours ; demande écrite dans `demandes/C.md`. Le catalogue reste « pas encore ouvert » en production tant que DB-CRS-07 manque.
+- Base `origin/ui/tuteur-v1` @ `1cbc760` fusionnée ; aucun lien `Routes.tuteurReglages` dans `accueil_famille_page.dart` (seul reste : `compte_page.dart`, hors lot C).
+- Tests : suite complète `+2347 ~297`, 0 échec ; `flutter analyze` sans problème.
+- Reste ouvert : m1 (ligne de parcours de l'Accueil non capturée), m4, m8 (STUB dans `app_router.dart`), captures à refaire après M2/M3.
