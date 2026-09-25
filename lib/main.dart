@@ -17,6 +17,7 @@ import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/demo/mode_demonstration.dart';
+import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
@@ -97,12 +98,10 @@ Future<void> main() async {
     return;
   }
 
-  runApp(
-    ProviderScope(
-      overrides: _surchargesAppReelle(),
-      child: TranslationProvider(child: const RewayahApp()),
-    ),
-  );
+  // Hors production, la racine porte l'entree « Essayer la demonstration »
+  // (P2-07) ; en production elle n'a aucun lanceur et se comporte comme
+  // l'application seule.
+  runApp(RacineDemonstrable(surchargesReelles: _surchargesAppReelle()));
 }
 
 /// Demarre l'application en session d'observation.

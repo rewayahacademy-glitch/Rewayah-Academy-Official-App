@@ -11,6 +11,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
+import '../demo/racine_demonstrable.dart';
 
 /// Largeur maximale du contenu sur bureau (deux colonnes).
 const double _largeurBureau = 1040;
@@ -30,7 +31,8 @@ class BienvenuePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool bureau = AppGabarit.de(context) != Gabarit.mobile &&
+    final bool bureau =
+        AppGabarit.de(context) != Gabarit.mobile &&
         MediaQuery.sizeOf(context).width >= 900;
 
     return PageShell(
@@ -216,6 +218,8 @@ class _Sorties extends StatelessWidget {
           pleineLargeur: false,
         ),
       ),
+      // Hors production seulement : sans lanceur, l'entree ne rend rien.
+      const EntreeDemonstration(),
     ],
   );
 }

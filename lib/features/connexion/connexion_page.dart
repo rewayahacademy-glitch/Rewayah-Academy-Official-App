@@ -17,6 +17,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
+import '../demo/racine_demonstrable.dart';
 import 'feuille_appareil_eleve.dart';
 import 'recuperation_page.dart';
 
@@ -114,8 +115,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// pas sous les pieds d'un ecran deja monte.
   bool get _demo => widget.demoAuth ?? ref.read(demoAuthActiveProvider);
 
-  Future<void> _soumettre() =>
-      _demo ? _ouvrirDemonstration() : _envoyerLien();
+  Future<void> _soumettre() => _demo ? _ouvrirDemonstration() : _envoyerLien();
 
   Future<void> _envoyerLien() async {
     if (!courrielPlausible(_courriel.text)) {
@@ -272,9 +272,9 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                   _renvoye = false;
                                   _erreurRenvoi = null;
                                 }),
-                                onProbleme: () => GoRouter.of(
-                                  context,
-                                ).go(Routes.connexionRecuperation),
+                                onProbleme: () =>
+                                    GoRouter.of(context)
+                                        .go(Routes.connexionRecuperation),
                               )
                             : _Saisie(
                                 courriel: _courriel,
@@ -286,14 +286,16 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                 onSoumettre: () => unawaited(_soumettre()),
                                 onGoogle: () => unawaited(_google()),
                                 onEleve: () => unawaited(_entreeEleve()),
-                                onProbleme: () => GoRouter.of(
-                                  context,
-                                ).go(Routes.connexionRecuperation),
+                                onProbleme: () =>
+                                    GoRouter.of(context)
+                                        .go(Routes.connexionRecuperation),
                                 onDecouvrir: () =>
                                     GoRouter.of(context).go(Routes.bienvenue),
                               ),
                       ),
                     ),
+                    // Hors production seulement : sans lanceur, rien.
+                    const EntreeDemonstration(),
                   ],
                 ),
               ),
