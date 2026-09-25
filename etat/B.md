@@ -1,5 +1,9 @@
 # Avancement du poste B
 
+## INT-E suite et push, reprise 3 -- verification (25/09, session B-2026-09-25-coord)
+
+Reprise depuis l'agent precedent (`7212a0d` depot local non pousse, `9b2a289` pilotage pousse). `git status`/`git log -5` (depot) et `git log -3` (pilotage) confirmes identiques a l'etat rendu : rien n'a change depuis. Frontiere toujours vide. Pas de nouvelle execution de `flutter test` (aucun changement de code depuis le dernier passage vert-partiel, economie de tokens) : les 2 echecs B-5 restent l'unique blocage, toujours hors perimetre COORD (`lib/features/foyer/fiche_eleve_page.dart`, `test/features/appareils/*`). Statut inchange : **bloque**, en attente de la decision du coordinateur/directeur sur B-5 (voir reprise 2 ci-dessous pour le detail et les deux options). Pas de push `origin/ui/tuteur-v1`.
+
 ## INT-E suite et push, reprise 2 (25/09, session B-2026-09-25-coord, depart 09:07)
 
 Statut : **bloque, pas de push** (progres : C-INT-1 corrige). Reprise depuis l'agent precedent (`fc27e24` pilotage, `e82ec66` depot local non pousse).
