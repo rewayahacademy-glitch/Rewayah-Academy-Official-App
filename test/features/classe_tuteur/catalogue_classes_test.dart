@@ -151,6 +151,24 @@ void main() {
       // Une action par classe qui peut aboutir : aucune pour la complete.
       expect(find.text(_c.choisir), findsOneWidget);
       expect(find.text(_c.rejoindreAttente), findsOneWidget);
+      // Demande C-14 : seances, fuseau et parcours rendus par K6 ; sans
+      // seances rendues, la phrase honnete reste.
+      expect(
+        find.text(
+          _c.seanceHebdo(
+            jour: t.commun.dates.jours[1],
+            heure: '18:30',
+            duree: 45,
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(_c.fuseauClasse(fuseau: 'Europe/Paris')),
+        findsOneWidget,
+      );
+      expect(find.text('Cours fictif · Niveau fictif'), findsOneWidget);
+      expect(find.text(_c.horairesAbsents), findsNWidgets(2));
       // Les heures sont demandees dans le fuseau connu, jamais devine.
       expect(catalogue.fuseaux, everyElement('Europe/Paris'));
       // Onglet Accueil actif, retour visible.

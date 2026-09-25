@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_acces_foyer.dart';
+import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
@@ -34,6 +35,7 @@ import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import 'catalogue_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
 
@@ -79,6 +81,9 @@ List<Override> surchargesDemoTuteur({String? environnement}) {
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
+    portCatalogueClassesProvider.overrideWithValue(
+      const CatalogueClassesDemo(),
+    ),
     // Lectures des ecrans tuteur encore adossees a Supabase : rendues vides
     // ou fictives pour qu'aucune ne parte vers le serveur.
     appareilsDuFoyerProvider.overrideWith(

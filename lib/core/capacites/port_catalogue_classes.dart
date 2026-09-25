@@ -19,8 +19,11 @@ enum EtatClasseOuverte {
 /// Une vraie classe proposee a un eleve (point P1 : enseignant, places
 /// reelles), jamais une offre vitrine sans enseignant.
 ///
-/// **Forme provisoire** : aucune source ne la rend (DB-CRS-07). Les seances
-/// hebdomadaires et le fuseau s'ajouteront avec la source, jamais devines.
+/// **Forme provisoire** : aucune source serveur ne la rend encore
+/// (DB-CRS-07 ; aucune vue de classes ouvertes dans `supabase/migrations`).
+/// Les seances hebdomadaires, le fuseau et le parcours sont **portes par le
+/// contrat** (demande C-14, decision du directeur) mais restent vides tant
+/// que la source ne les rend pas : l'ecran le dit, rien n'est devine.
 @immutable
 class ClasseOuverte {
   /// Cree une classe ouverte.
@@ -30,6 +33,10 @@ class ClasseOuverte {
     required this.enseignant,
     required this.etat,
     this.placesRestantes,
+    this.seances = const <CreneauHebdomadaire>[],
+    this.fuseauIana,
+    this.cours,
+    this.niveau,
   });
 
   /// Identifiant de la classe.
@@ -46,6 +53,44 @@ class ClasseOuverte {
 
   /// Ouverte, complete ou en liste d'attente.
   final EtatClasseOuverte etat;
+
+  /// Les seances hebdomadaires, heures exprimees dans [fuseauIana]. Vide :
+  /// non rendues par le serveur (jamais devinees).
+  final List<CreneauHebdomadaire> seances;
+
+  /// Le fuseau IANA dans lequel [seances] sont exprimees. `null` : non dit.
+  final String? fuseauIana;
+
+  /// Le cours suivi par la classe (parcours), en langage humain.
+  final String? cours;
+
+  /// Le niveau de la classe dans ce cours.
+  final String? niveau;
+}
+
+/// Une seance hebdomadaire d'une classe ouverte : jour, heure de debut et
+/// duree, lus dans le fuseau de la classe.
+@immutable
+class CreneauHebdomadaire {
+  /// Cree un creneau.
+  const CreneauHebdomadaire({
+    required this.jourIso,
+    required this.heure,
+    required this.minute,
+    required this.dureeMinutes,
+  }) : assert(jourIso >= 1 && jourIso <= 7, 'jour ISO : 1 lundi a 7 dimanche');
+
+  /// Le jour, norme ISO : 1 lundi, 7 dimanche.
+  final int jourIso;
+
+  /// L'heure de debut (0 a 23).
+  final int heure;
+
+  /// La minute de debut (0 a 59).
+  final int minute;
+
+  /// La duree de la seance, en minutes.
+  final int dureeMinutes;
 }
 
 /// Ce qu'une demande d'inscription a produit (DB-CRS-08).

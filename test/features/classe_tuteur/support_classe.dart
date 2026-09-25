@@ -298,6 +298,13 @@ List<ClasseOuverte> classesProposeesFictives() => const <ClasseOuverte>[
     ),
     etat: EtatClasseOuverte.ouverte,
     placesRestantes: 2,
+    // Demande C-14 : seances, fuseau et parcours portes par K6.
+    seances: <CreneauHebdomadaire>[
+      CreneauHebdomadaire(jourIso: 2, heure: 18, minute: 30, dureeMinutes: 45),
+    ],
+    fuseauIana: 'Europe/Paris',
+    cours: 'Cours fictif',
+    niveau: 'Niveau fictif',
   ),
   ClasseOuverte(
     classeId: 'classe-c',

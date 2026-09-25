@@ -6759,6 +6759,12 @@ class Traductions$classe$pageCatalogue$fr {
 	/// fr: 'Les jours et heures de cette classe ne sont pas encore affichés ici.'
 	String get horairesAbsents => 'Les jours et heures de cette classe ne sont pas encore affichés ici.';
 
+	/// fr: '{jour} à {heure} · {duree} min'
+	String seanceHebdo({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min';
+
+	/// fr: 'Heures de la classe ({fuseau})'
+	String fuseauClasse({required Object fuseau}) => 'Heures de la classe (${fuseau})';
+
 	/// fr: '1 place restante'
 	String get placeUne => '1 place restante';
 
@@ -13194,6 +13200,8 @@ extension on Traductions {
 			'classe.pageCatalogue.eleveInconnuTitre' => 'Ce profil n\'est pas dans votre foyer',
 			'classe.pageCatalogue.eleveInconnuPhrase' => 'Revenez à l\'accueil et choisissez le profil élève concerné.',
 			'classe.pageCatalogue.horairesAbsents' => 'Les jours et heures de cette classe ne sont pas encore affichés ici.',
+			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
+			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
@@ -13217,10 +13225,10 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
 			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
-			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
-			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
+			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
 			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
@@ -13731,10 +13739,10 @@ extension on Traductions {
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
-			'tc.classe.commandes.microFermer' => 'Fermer le micro',
-			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.commandes.microFermer' => 'Fermer le micro',
+			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
 			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',
 			'tc.classe.commandes.microCoupe' => 'Micro fermé',
 			'tc.classe.commandes.quitter' => 'Quitter',
