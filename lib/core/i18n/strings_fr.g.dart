@@ -167,6 +167,7 @@ class Traductions$finance$fr {
 	/// fr: 'Profil'
 	String get profilSansPrenom => 'Profil';
 
+	late final Traductions$finance$soldes$fr soldes = Traductions$finance$soldes$fr.internal(_root);
 	late final Traductions$finance$issues$fr issues = Traductions$finance$issues$fr.internal(_root);
 }
 
@@ -2459,6 +2460,36 @@ class Traductions$commun$dates$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+}
+
+// Path: finance.soldes
+class Traductions$finance$soldes$fr {
+	Traductions$finance$soldes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Soldes et recharges'
+	String get titre => 'Soldes et recharges';
+
+	/// fr: 'Le solde de chaque profil élève du foyer.'
+	String get sousTitre => 'Le solde de chaque profil élève du foyer.';
+
+	/// fr: 'Profils élèves'
+	String get profils => 'Profils élèves';
+
+	/// fr: 'Aucun solde à afficher'
+	String get aucunProfil => 'Aucun solde à afficher';
+
+	/// fr: 'Le serveur n'a rendu aucun solde de profil élève pour ce foyer.'
+	String get aucunProfilPhrase => 'Le serveur n\'a rendu aucun solde de profil élève pour ce foyer.';
+
+	/// fr: 'Gérer les accès'
+	String get gererAcces => 'Gérer les accès';
+
+	/// fr: 'Soldes'
+	String get rubriqueFoyer => 'Soldes';
 }
 
 // Path: finance.issues
@@ -11320,6 +11351,13 @@ extension on Traductions {
 			'finance.toutSelectionner' => 'Tout sélectionner',
 			'finance.profilsSelectionnes' => ({required Object nombre}) => 'Profils sélectionnés : ${nombre}',
 			'finance.profilSansPrenom' => 'Profil',
+			'finance.soldes.titre' => 'Soldes et recharges',
+			'finance.soldes.sousTitre' => 'Le solde de chaque profil élève du foyer.',
+			'finance.soldes.profils' => 'Profils élèves',
+			'finance.soldes.aucunProfil' => 'Aucun solde à afficher',
+			'finance.soldes.aucunProfilPhrase' => 'Le serveur n\'a rendu aucun solde de profil élève pour ce foyer.',
+			'finance.soldes.gererAcces' => 'Gérer les accès',
+			'finance.soldes.rubriqueFoyer' => 'Soldes',
 			'finance.issues.confirmee' => 'Confirmée',
 			'finance.issues.enAttente' => 'En attente',
 			'finance.issues.echouee' => 'Échouée',
@@ -11739,6 +11777,8 @@ extension on Traductions {
 			'ficheEleve.lignes.inscriptionLegende' => 'Questionnaire et classe',
 			'ficheEleve.lignes.interface' => 'Interface',
 			'ficheEleve.lignes.camera' => 'Caméra en cours',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.lignes.cameraAutorisee' => 'Autorisée',
 			'ficheEleve.lignes.cameraNonAutorisee' => 'Non autorisée',
 			'ficheEleve.lignes.acces' => 'Accès Rewayah',
@@ -11746,8 +11786,6 @@ extension on Traductions {
 			'ficheEleve.lignes.appareilsLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
 			'ficheEleve.informations.titre' => 'Informations de l\'élève',
 			'ficheEleve.informations.identite' => 'Identité',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.informations.prenom' => 'Prénom',
 			'ficheEleve.informations.identiteNote' => 'Le prénom ne se modifie pas encore depuis cette page.',
 			'ficheEleve.informations.ageNote' => 'L\'âge et la date de naissance ne sont pas encore enregistrés sur le profil.',
@@ -12253,6 +12291,8 @@ extension on Traductions {
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.filtreRealisees' => 'Réalisées',
 			'admin.evaluations.filtreAnnulees' => 'Annulées',
 			'admin.evaluations.filtreCertifications' => 'Certifications',
@@ -12260,8 +12300,6 @@ extension on Traductions {
 			'admin.evaluations.colonneNiveau' => 'Niveau',
 			'admin.evaluations.colonneType' => 'Type',
 			'admin.evaluations.colonneDatePrevue' => 'Prévue le',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.colonneStatut' => 'Statut',
 			'admin.evaluations.colonneResultat' => 'Résultat',
 			'admin.evaluations.typeInitiale' => 'Initiale',
@@ -12767,6 +12805,8 @@ extension on Traductions {
 			'compte.themeClair' => 'Clair',
 			'compte.themeSombre' => 'Sombre',
 			'compte.accessibilite' => 'Accessibilité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
 			'compte.effets' => 'Réduire les effets',
@@ -12774,8 +12814,6 @@ extension on Traductions {
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			'compte.langueRegion' => 'Langue et région',
 			'compte.francaisDetail' => 'Langue de l\'interface',
-			_ => null,
-		} ?? switch (path) {
 			'compte.actif' => 'Actif',
 			'compte.arabe' => 'Arabe',
 			'compte.arabeDetail' => 'Bientôt disponible',
@@ -13281,6 +13319,8 @@ extension on Traductions {
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
@@ -13288,8 +13328,6 @@ extension on Traductions {
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
 			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
@@ -13795,6 +13833,8 @@ extension on Traductions {
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.action.rappel' => 'Rappel discret',
 			'tc.classe.action.reciter' => 'Choisir pour réciter',
 			'tc.classe.action.noter' => 'Noter',
@@ -13802,8 +13842,6 @@ extension on Traductions {
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
 			'tc.classe.rappel.echec' => 'Le rappel n\'a pas pu être envoyé',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',

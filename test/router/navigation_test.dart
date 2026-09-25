@@ -37,6 +37,7 @@ import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/preferences_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
+import 'package:rewayah_academy/features/compte/soldes_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
@@ -260,6 +261,7 @@ void main() {
       (Routes.compteTuteurSousPage('securite'), SecuriteComptePage, 3),
       (Routes.compteTuteurSousPage('acces'), AccesComptePage, 3),
       (Routes.compteTuteurSousPage('paiements'), PaiementsComptePage, 3),
+      (Routes.tuteurCompteSoldes, SoldesComptePage, 3),
       (Routes.tuteurComptePreferences, PreferencesComptePage, 3),
       (Routes.tuteurCompteApparence, ApparenceComptePage, 3),
       (Routes.compteTuteurSousPage('aide'), AideComptePage, 3),
@@ -314,6 +316,7 @@ void main() {
       SecuriteComptePage: compte,
       AccesComptePage: compte,
       PaiementsComptePage: compte,
+      SoldesComptePage: 'test/features/compte/soldes_test.dart',
       PreferencesComptePage: compte,
       ApparenceComptePage: compte,
       AideComptePage: compte,

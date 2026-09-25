@@ -42,8 +42,9 @@ import 'donnees_compte.dart';
 /// l'engrenage ouvre les Preferences ; « Modifier » n'est pas rendu (aucune
 /// ecriture pour le tuteur, DB-CPT-01) ; « Gerer les paiements », « Historique
 /// et recus » et « Moyen de paiement » se fondent en une rubrique Paiements,
-/// indisponible proprement (DB-CPT-03) ; « Appareils connectes » n'est pas
-/// rendu (aucune liste de sessions, DB-CPT-02).
+/// indisponible proprement (DB-CPT-03) ; « Soldes et recharges » ouvre S01
+/// (LT-4, DB-FIN-01) ; « Appareils connectes » n'est pas rendu (aucune liste
+/// de sessions, DB-CPT-02).
 class CompteTuteurPage extends StatelessWidget {
   /// Cree la page.
   const CompteTuteurPage({super.key});
@@ -106,6 +107,12 @@ class _Hub extends ConsumerWidget {
           icone: AppIcons.attente,
           libelle: t.compte.tuteur.acces.ligne,
           onPress: () => aller(Routes.compteTuteurSousPage('acces')),
+        ),
+        // S01 : soldes par profil (LT-4). Aucune action financiere ici.
+        LigneRubrique(
+          icone: AppIcons.finance,
+          libelle: t.finance.soldes.titre,
+          onPress: () => aller(Routes.tuteurCompteSoldes),
         ),
         // Une seule entree pour « Gerer les paiements », « Historique et
         // recus » et « Moyen de paiement » ; la valeur dit tout de suite

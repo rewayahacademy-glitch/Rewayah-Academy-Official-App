@@ -228,7 +228,7 @@ abstract final class Routes {
   static const String tuteurCompte = '/tuteur/compte';
 
   /// Une sous-page du compte : `informations`, `securite`, `acces`,
-  /// `paiements`, `preferences`, `aide`, `informations-legales`,
+  /// `paiements`, `soldes`, `preferences`, `aide`, `informations-legales`,
   /// `consentements`.
   static String compteTuteurSousPage(String segment) =>
       '$tuteurCompte/$segment';
@@ -239,11 +239,16 @@ abstract final class Routes {
     'securite',
     'acces',
     'paiements',
+    'soldes',
     'preferences',
     'aide',
     'informations-legales',
     'consentements',
   ];
+
+  /// S01 « Soldes et recharges » (LT-4), atteint depuis le Compte et le Foyer
+  /// (`?retour=` pour revenir au Foyer).
+  static const String tuteurCompteSoldes = '/tuteur/compte/soldes';
 
   /// Les preferences du titulaire.
   static const String tuteurComptePreferences = '/tuteur/compte/preferences';

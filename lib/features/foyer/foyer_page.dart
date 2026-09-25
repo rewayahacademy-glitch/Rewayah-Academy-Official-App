@@ -23,6 +23,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../compte/soldes_page.dart';
 import 'ligne_membre.dart';
 
 /// L'horloge du Foyer, pour dire qu'une echeance d'acces est passee.
@@ -63,6 +64,9 @@ class FoyerPage extends ConsumerWidget {
   /// Le groupe des profils eleves.
   static const Key membresKey = Key('foyer.membres');
 
+  /// Le resume des soldes, qui mene a S01.
+  static const Key soldesKey = Key('foyer.soldes');
+
   /// La section des appareils partages.
   static const Key appareilsKey = Key('foyer.appareils');
 
@@ -95,6 +99,30 @@ class FoyerPage extends ConsumerWidget {
                 libelle: t.foyer.appareilsFoyer,
                 legende: t.foyer.appareilsFoyerLegende,
                 onPress: () => routeur.go(Routes.tuteurFoyerAppareils),
+              ),
+            ],
+          ),
+        ),
+        Ecart.vXxl,
+        // Le total du foyer, qui mene a S01 (LT-4) ; « Non disponible » tant
+        // que DB-FIN-01 manque, jamais un « 0 ».
+        KeyedSubtree(
+          key: soldesKey,
+          child: GroupeReglages(
+            titre: t.finance.soldes.rubriqueFoyer,
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                icone: AppIcons.finance,
+                libelle: t.finance.soldes.titre,
+                valeur: resumeTotalSoldes(ref.watch(soldesFoyerProvider)),
+                onPress: () => routeur.go(
+                  Uri(
+                    path: Routes.tuteurCompteSoldes,
+                    queryParameters: <String, String>{
+                      'retour': Routes.tuteurFoyer,
+                    },
+                  ).toString(),
+                ),
               ),
             ],
           ),

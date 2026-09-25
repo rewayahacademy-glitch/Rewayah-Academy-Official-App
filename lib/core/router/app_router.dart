@@ -47,6 +47,7 @@ import '../../features/compte/informations_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
+import '../../features/compte/soldes_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
@@ -658,6 +659,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'paiements',
                     pageBuilder: glissee(
                       (GoRouterState _) => const PaiementsComptePage(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'soldes',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const SoldesComptePage(),
                     ),
                   ),
                   GoRoute(

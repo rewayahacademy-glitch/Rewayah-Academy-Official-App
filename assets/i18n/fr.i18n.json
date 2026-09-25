@@ -134,6 +134,15 @@
     "toutSelectionner": "Tout sélectionner",
     "profilsSelectionnes": "Profils sélectionnés : {nombre}",
     "profilSansPrenom": "Profil",
+    "soldes": {
+      "titre": "Soldes et recharges",
+      "sousTitre": "Le solde de chaque profil élève du foyer.",
+      "profils": "Profils élèves",
+      "aucunProfil": "Aucun solde à afficher",
+      "aucunProfilPhrase": "Le serveur n'a rendu aucun solde de profil élève pour ce foyer.",
+      "gererAcces": "Gérer les accès",
+      "rubriqueFoyer": "Soldes"
+    },
     "issues": {
       "confirmee": "Confirmée",
       "enAttente": "En attente",
