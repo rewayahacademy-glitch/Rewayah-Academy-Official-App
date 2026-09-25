@@ -8,15 +8,15 @@ import '../../core/widgets/app_bottom_sheet.dart';
 
 /// La feuille qui explique l'appairage d'un appareil d'eleve, depuis `TUT-00`.
 ///
-/// **Elle s'adresse au tuteur, pas a l'enfant.** C'est toute la raison d'etre
-/// de cette feuille : `ELV-01`, l'ecran de saisie qui suit, tutoie l'enfant
-/// (« Entre le code affiche sur le telephone de tes parents »). Les deux voix
-/// ne pouvaient pas tenir sur le meme ecran, et le bouton « J'ai un code »
-/// laissait le tuteur deviner a qui il parlait et ou trouver ce code.
+/// **Elle s'adresse au tuteur, pas a l'enfant**, et le vouvoie, comme la
+/// saisie du code qui suit (`/connexion/eleve/code`, `SaisieCodePage`). Seuls
+/// le choix du profil et le code personnel (`ELV-01`) tutoient l'eleve.
 ///
-/// Ce qu'elle ne promet pas : **le scan**. Aucun lecteur de code n'existe dans
-/// cette version (report assume, ADR-016, et commentaire de `_saisieCode`
-/// dans `eleve_connexion_page.dart`). Elle dit « saisir », jamais « scanner ».
+/// Le scan existe la ou la plateforme sait lire un QR code (Android, iOS,
+/// macOS, web ; port `LecteurQr`) : `/connexion/eleve/scanner`, propose depuis
+/// la saisie. Sur Windows et Linux, la saisie reste le seul chemin, et la
+/// feuille dit « scannez le QR code ou saisissez le code » sans rien promettre
+/// de plus (etape 4).
 ///
 /// Elle rend `true` quand le tuteur veut passer a la saisie. **Elle ne navigue
 /// pas elle-meme** : son contexte appartient a une route modale sur le point

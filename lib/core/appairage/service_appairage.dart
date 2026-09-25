@@ -204,12 +204,16 @@ class ServiceAppairageSupabase implements ServiceAppairage {
     return lignes.map(EleveDuFoyer.depuisJson).toList();
   }
 
+  /// Plus recent d'abord, ecrit en toutes lettres (demandes B-2 et D-2 ;
+  /// `03` section 1 ter bis-2) : sans `ascending`, PostgREST trie deja en
+  /// decroissant, mais un sens implicite est celui qui a mis le Coran a
+  /// l'envers. Un ecran qui veut un autre ordre le pose lui-meme.
   @override
   Future<List<AppareilAppaire>> appareils() async {
     final List<Map<String, dynamic>> lignes = await _client
         .from('mes_appareils_v')
         .select()
-        .order('paired_at');
+        .order('paired_at', ascending: false);
     return lignes.map(AppareilAppaire.depuisJson).toList();
   }
 

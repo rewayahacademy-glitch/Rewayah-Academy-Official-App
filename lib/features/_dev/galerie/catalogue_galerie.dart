@@ -41,6 +41,7 @@ import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
+import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
@@ -1121,6 +1122,30 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           onChange: _choixIgnore,
         ),
       ),
+      EtatGalerie(
+        'description et option indisponible',
+        (BuildContext _) => const ChoiceCardGroup(
+          options: <OptionChoix>[
+            OptionChoix(
+              valeur: 'enfant',
+              libelle: 'Mon enfant',
+              icone: AppIcons.profil,
+              description: 'Un profil suivi par vous',
+            ),
+            OptionChoix(
+              valeur: 'moi',
+              libelle: 'Moi-meme',
+              icone: AppIcons.profil,
+              description: 'Votre propre profil eleve',
+              disponible: false,
+              raisonIndisponible: 'Bientot disponible',
+            ),
+          ],
+          valeurInitiale: ReponseChoix(valeurs: <String>{'enfant'}),
+          autoriserSaisieLibre: false,
+          onChange: _choixIgnore,
+        ),
+      ),
     ],
   ),
   EntreeGalerie(
@@ -1179,6 +1204,45 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onRetour: _rien,
             onAction: _rien,
             enfant: const Text('Le corps de la page.'),
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'PageEtape',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'premiere etape',
+        (BuildContext _) => SizedBox(
+          height: _hauteurPage,
+          child: PageEtape(
+            numero: 1,
+            total: 3,
+            onRetour: _rien,
+            action: ActionPrincipale(
+              libelle: t.commun.continuer,
+              onPress: _rien,
+            ),
+            child: const Text('Le corps de l etape.'),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'derniere etape, action en pilule',
+        (BuildContext _) => SizedBox(
+          height: _hauteurPage,
+          child: PageEtape(
+            numero: 3,
+            total: 3,
+            onRetour: _rien,
+            action: ActionPrincipale(
+              libelle: t.commun.valider,
+              onPress: _rien,
+              pilule: true,
+            ),
+            child: const Text('Le corps de l etape.'),
           ),
         ),
       ),

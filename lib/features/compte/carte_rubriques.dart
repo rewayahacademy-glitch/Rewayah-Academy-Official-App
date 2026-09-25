@@ -264,15 +264,17 @@ class _Rubrique extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   ExcludeSemantics(
-                    child: SizedBox(
-                      width: AppTouchTarget.standard,
-                      child: IconTheme(
-                        data: palette.inkAccent.asIconTheme(
-                          size: AppSpacing.xxl,
+                    child:
+                        ligne.meneur ??
+                        SizedBox(
+                          width: AppTouchTarget.standard,
+                          child: IconTheme(
+                            data: palette.inkAccent.asIconTheme(
+                              size: AppSpacing.xxl,
+                            ),
+                            child: Icon(ligne.icone?.repos),
+                          ),
                         ),
-                        child: Icon(ligne.icone.repos),
-                      ),
-                    ),
                   ),
                   Ecart.hMd,
                   Expanded(

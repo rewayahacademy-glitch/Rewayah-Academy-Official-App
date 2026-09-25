@@ -43,6 +43,26 @@ void main() {
     expect(palette.surfaceQuran.onBackground, const Color(0xFF1C1D21));
   });
 
+  test(
+    'contenuQr (demande D-1) : blanc et quasi noir, meme paire en sombre',
+    () {
+      final AppPalette sombre = AppPalette.sombre();
+      for (final AppPalette p in <AppPalette>[palette, sombre]) {
+        expect(p.contenuQr.background, const Color(0xFFFFFFFF));
+        expect(p.contenuQr.onBackground, const Color(0xFF110E20));
+        expect(
+          contraste(p.contenuQr.onBackground, p.contenuQr.background),
+          greaterThanOrEqualTo(seuilTexte),
+        );
+      }
+      // Un ajout : la carte sombre reste sombre, seul le QR est blanc.
+      expect(
+        sombre.surfaceRaised.background,
+        isNot(sombre.contenuQr.background),
+      );
+    },
+  );
+
   test('le CTA dominant clair est doux, jamais l aplat violet', () {
     expect(
       palette.surfaceActionDouce.background,

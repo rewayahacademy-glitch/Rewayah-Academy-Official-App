@@ -14,7 +14,14 @@ import 'pressable.dart';
 @immutable
 class OptionChoix {
   /// Cree une option.
-  const OptionChoix({required this.valeur, required this.libelle, this.icone});
+  const OptionChoix({
+    required this.valeur,
+    required this.libelle,
+    this.icone,
+    this.description,
+    this.disponible = true,
+    this.raisonIndisponible,
+  });
 
   /// La valeur transmise a l'appelant.
   final String valeur;
@@ -24,6 +31,18 @@ class OptionChoix {
 
   /// Icone facultative.
   final AppIcon? icone;
+
+  /// Une phrase sous le libelle, qui dit ce que l'option change (style liste
+  /// avec description, planches V5 et V6 E1 ; demande B-3).
+  final String? description;
+
+  /// Faux pour une option **visible mais indisponible** (K3) : elle reste
+  /// lisible, dit pourquoi, et ne se presse pas.
+  final bool disponible;
+
+  /// Pourquoi l'option est indisponible, affiche sous elle. A defaut, la
+  /// carte dit seulement « Indisponible ».
+  final String? raisonIndisponible;
 }
 
 /// Ce que l'utilisateur a repondu.
@@ -141,8 +160,15 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
             child: _Carte(
               libelle: option.libelle,
               icone: option.icone,
+              description: option.description,
+              raisonIndisponible: option.disponible
+                  ? null
+                  : option.raisonIndisponible ?? t.commun.choix.indisponible,
               retenue: _selection.contains(option.valeur),
-              onPress: () => _basculer(option.valeur),
+              radio: !widget.selectionMultiple,
+              onPress: option.disponible
+                  ? () => _basculer(option.valeur)
+                  : null,
             ),
           ),
         if (widget.autoriserSaisieLibre)
@@ -150,6 +176,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
             libelle: t.choix.autre,
             icone: AppIcons.autreChoix,
             retenue: _autreRetenu,
+            radio: !widget.selectionMultiple,
             onPress: () => _basculer(ChoiceCardGroup.valeurAutre),
           ),
         if (widget.autoriserSaisieLibre && _autreRetenu) ...<Widget>[
@@ -173,17 +200,33 @@ class _Carte extends StatelessWidget {
     required this.libelle,
     required this.retenue,
     required this.onPress,
+    required this.radio,
     this.icone,
+    this.description,
+    this.raisonIndisponible,
   });
 
   final String libelle;
   final bool retenue;
-  final VoidCallback onPress;
+
+  /// `null` pour une option indisponible : la carte ne se presse pas.
+  final VoidCallback? onPress;
+
+  /// Vrai en selection unique : un radio dessine dit le choix ; en selection
+  /// multiple, la coche garde ce role.
+  final bool radio;
   final AppIcon? icone;
+  final String? description;
+
+  /// Non nul quand l'option est indisponible : la phrase affichee.
+  final String? raisonIndisponible;
+
+  bool get _disponible => raisonIndisponible == null;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
     // La selection change la PAIRE entiere, pas seulement le fond : le texte
     // suit toujours son fond.
     //
@@ -198,53 +241,155 @@ class _Carte extends StatelessWidget {
         ? palette.washAccent
         : palette.surfaceRaised;
 
-    return Pressable.selon(
-      onPress: onPress,
-      libelleSemantique: libelle,
-      respecterCibleTactile: false,
-      constructeur: (BuildContext contexte, EtatPression etat) => Container(
-        constraints: const BoxConstraints(minHeight: AppPage.hauteurChoix),
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        decoration: AppElevation.avecFilet(
-          surface: paire,
-          filet: retenue || etat.survole || etat.presse
-              ? palette.borderStrong
-              : palette.borderResting,
-          ombre: palette.ombre,
-          arrondi: AppRadius.arrondiLg,
-          ombres: AppElevation.niveau0,
-        ),
-        child: Row(
-          children: <Widget>[
-            if (icone != null) ...<Widget>[
-              IconTheme(
-                data: IconThemeData(
-                  color: paire.onBackground,
-                  size: AppSpacing.xxl,
+    final TextStyle styleSecondaire = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    // Le libelle lu : le titre seul tant qu'il n'y a rien d'autre (les
+    // usages existants restent lus a l'identique), puis la description et la
+    // raison d'indisponibilite.
+    final String lu = <String>[
+      libelle,
+      ?description,
+      ?raisonIndisponible,
+    ].join('. ');
+
+    return Semantics(
+      checked: retenue,
+      inMutuallyExclusiveGroup: radio,
+      child: Pressable.selon(
+        onPress: onPress,
+        actif: _disponible,
+        libelleSemantique: lu,
+        respecterCibleTactile: false,
+        constructeur: (BuildContext contexte, EtatPression etat) => Container(
+          constraints: const BoxConstraints(minHeight: AppPage.hauteurChoix),
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          decoration: AppElevation.avecFilet(
+            surface: paire,
+            filet: retenue || etat.survole || etat.presse
+                ? palette.borderStrong
+                : palette.borderResting,
+            ombre: palette.ombre,
+            arrondi: AppRadius.arrondiLg,
+            ombres: AppElevation.niveau0,
+          ),
+          // Le libelle lu est [lu] : les textes visibles ne sont pas relus
+          // une seconde fois a sa suite.
+          child: ExcludeSemantics(
+            child: Row(
+              children: <Widget>[
+                if (icone != null) ...<Widget>[
+                  IconTheme(
+                    data: _disponible
+                        ? IconThemeData(
+                            color: paire.onBackground,
+                            size: AppSpacing.xxl,
+                          )
+                        : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+                    child: Icon(icone!.resoudre(selectionne: retenue)),
+                  ),
+                  Ecart.hMd,
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        libelle,
+                        style: _disponible
+                            ? paire.applyTo(
+                                textes.titleMedium ?? const TextStyle(),
+                              )
+                            : palette.inkMuted.applyTo(
+                                textes.titleMedium ?? const TextStyle(),
+                              ),
+                      ),
+                      if (description != null) ...<Widget>[
+                        Ecart.vXs,
+                        Text(description!, style: styleSecondaire),
+                      ],
+                      if (raisonIndisponible != null) ...<Widget>[
+                        Ecart.vSm,
+                        Text(
+                          raisonIndisponible!,
+                          style: palette.inkMuted.applyTo(
+                            textes.labelMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-                child: Icon(icone!.resoudre(selectionne: retenue)),
-              ),
-              Ecart.hMd,
-            ],
-            Expanded(
-              child: Text(
-                libelle,
-                style: paire.applyTo(
-                  Theme.of(contexte).textTheme.titleMedium ?? const TextStyle(),
-                ),
-              ),
+                // Le radio ou la coche doublent la couleur : une selection qui
+                // ne se lirait qu'a la teinte n'existerait pas pour un
+                // daltonien.
+                if (radio) ...<Widget>[
+                  Ecart.hMd,
+                  RadioChoix(retenue: retenue, disponible: _disponible),
+                ] else if (retenue)
+                  IconTheme(
+                    data: IconThemeData(
+                      color: paire.onBackground,
+                      size: AppSpacing.xxl,
+                    ),
+                    child: Icon(AppIcons.succes.actif),
+                  ),
+              ],
             ),
-            // La coche double la couleur : une selection qui ne se lirait qu'a
-            // la teinte n'existerait pas pour un daltonien.
-            if (retenue)
-              IconTheme(
-                data: IconThemeData(
-                  color: paire.onBackground,
-                  size: AppSpacing.xxl,
-                ),
-                child: Icon(AppIcons.succes.actif),
-              ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Le radio dessine d'une carte de choix : anneau, point plein quand elle est
+/// retenue. L'anneau garde au moins 3:1 sur la carte (`borderStrong` au
+/// repos, `inkAccent` retenu) ; indisponible, il passe au filet de repos,
+/// comme tout controle inactif. Sans semantique propre : la carte porte
+/// l'etat coche.
+class RadioChoix extends StatelessWidget {
+  /// Cree le radio.
+  const RadioChoix({required this.retenue, super.key, this.disponible = true});
+
+  /// Vrai quand l'option est retenue.
+  final bool retenue;
+
+  /// Faux pour une option indisponible.
+  final bool disponible;
+
+  /// La couleur de l'anneau dans [palette].
+  AppInkColor anneau(AppPalette palette) => retenue
+      ? palette.inkAccent
+      : disponible
+      ? palette.borderStrong
+      : palette.borderResting;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return ExcludeSemantics(
+      child: SizedBox.square(
+        dimension: AppSpacing.xxl,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.fromBorderSide(
+              anneau(palette).asBorderSide(width: 2),
+            ),
+          ),
+          child: retenue
+              ? Padding(
+                  padding: const EdgeInsets.all(AppSpacing.xs),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: palette.surfacePrimary.background,
+                    ),
+                  ),
+                )
+              : null,
         ),
       ),
     );

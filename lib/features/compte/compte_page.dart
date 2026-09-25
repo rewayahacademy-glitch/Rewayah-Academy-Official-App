@@ -623,7 +623,7 @@ class _DetailEnfant extends StatelessWidget {
         title: t.compte.reglages,
         description: t.compte.reglagesDetail,
         icon: AppIcons.reglages,
-        onPress: () => context.push(Routes.tuteurReglages),
+        onPress: () => context.push(Routes.ficheElevePour(enfant.id)),
       ),
     ],
   );

@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
@@ -183,6 +185,44 @@ void main() {
     expect(find.text(t.compte.roles.admin), findsWidgets);
     expect(find.text(t.compte.roles.teacher), findsNothing);
     expect(find.text(t.compte.roles.accountant), findsNothing);
+  });
+
+  testWidgets('les reglages d un profil enfant menent a sa fiche du Foyer', (
+    WidgetTester tester,
+  ) async {
+    final FauxServiceAppairage service = FauxServiceAppairage()
+      ..elevesRendus = <EleveDuFoyer>[_enfant()];
+    tester.view.physicalSize = const Size(390, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      hoteRoutant(
+        depart: Routes.compteProfilEnfantPour('e1'),
+        routes: <RouteBase>[
+          GoRoute(
+            path: Routes.compteProfilEnfantPour('e1'),
+            builder: (BuildContext _, GoRouterState _) =>
+                const ProfilEnfantPage(profilId: 'e1'),
+          ),
+          GoRoute(
+            path: Routes.ficheElevePour('e1'),
+            builder: (BuildContext _, GoRouterState _) => const Text('FICHE'),
+          ),
+        ],
+        surcharges: <Override>[
+          serviceAppairageProvider.overrideWithValue(service),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final Finder reglages = find.text(t.compte.reglages);
+    await tester.ensureVisible(reglages);
+    await tester.tap(reglages);
+    await tester.pumpAndSettle();
+
+    expect(find.text('FICHE'), findsOneWidget);
   });
 
   testWidgets('les profils exposent le chargement sous forme de squelette', (
