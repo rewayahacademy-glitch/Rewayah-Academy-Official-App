@@ -8,6 +8,13 @@
     "fermer": "Fermer",
     "reessayer": "Réessayer",
     "chargement": "Chargement",
+    "etape": {
+      "sur": "{n} sur {total}",
+      "surLue": "Étape {n} sur {total}"
+    },
+    "choix": {
+      "indisponible": "Indisponible"
+    },
     "etats": {
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",

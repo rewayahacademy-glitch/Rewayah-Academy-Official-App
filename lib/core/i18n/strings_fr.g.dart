@@ -117,6 +117,8 @@ class Traductions$commun$fr {
 	/// fr: 'Chargement'
 	String get chargement => 'Chargement';
 
+	late final Traductions$commun$etape$fr etape = Traductions$commun$etape$fr.internal(_root);
+	late final Traductions$commun$choix$fr choix = Traductions$commun$choix$fr.internal(_root);
 	late final Traductions$commun$etats$fr etats = Traductions$commun$etats$fr.internal(_root);
 	late final Traductions$commun$entete$fr entete = Traductions$commun$entete$fr.internal(_root);
 	late final Traductions$commun$selecteurProfils$fr selecteurProfils = Traductions$commun$selecteurProfils$fr.internal(_root);
@@ -2006,6 +2008,33 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+}
+
+// Path: commun.etape
+class Traductions$commun$etape$fr {
+	Traductions$commun$etape$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{n} sur {total}'
+	String sur({required Object n, required Object total}) => '${n} sur ${total}';
+
+	/// fr: 'Étape {n} sur {total}'
+	String surLue({required Object n, required Object total}) => 'Étape ${n} sur ${total}';
+}
+
+// Path: commun.choix
+class Traductions$commun$choix$fr {
+	Traductions$commun$choix$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Indisponible'
+	String get indisponible => 'Indisponible';
 }
 
 // Path: commun.etats
@@ -7836,6 +7865,9 @@ extension on Traductions {
 			'commun.fermer' => 'Fermer',
 			'commun.reessayer' => 'Réessayer',
 			'commun.chargement' => 'Chargement',
+			'commun.etape.sur' => ({required Object n, required Object total}) => '${n} sur ${total}',
+			'commun.etape.surLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
+			'commun.choix.indisponible' => 'Indisponible',
 			'commun.etats.chargementProlonge.titre' => 'La connexion prend plus de temps que prévu',
 			'commun.etats.chargementProlonge.phrase' => 'Vous pouvez patienter encore un peu ou réessayer.',
 			'commun.etats.horsLigne.titre' => 'Vous êtes hors ligne',
@@ -8337,11 +8369,11 @@ extension on Traductions {
 			'admin.groupes.creerTitre' => 'Créer un groupe',
 			'admin.groupes.champLibelle' => 'Nom du groupe',
 			'admin.groupes.champEnseignantId' => 'Identifiant de l\'enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.champSeuil' => 'Seuil maximal',
 			'admin.groupes.creerEnvoyer' => 'Créer le groupe',
 			'admin.groupes.creerErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
@@ -8851,11 +8883,11 @@ extension on Traductions {
 			'parcours.etatGroupeConfirmeDetail' => ({required Object prenom}) => 'Le groupe de ${prenom} est constitué. Vous retrouverez ses séances dans son espace.',
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
-			_ => null,
-		} ?? switch (path) {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.coran' => 'Coran',
@@ -9365,11 +9397,11 @@ extension on Traductions {
 			'enseignant.ficheGroupe.placesLibres' => 'places libres',
 			'enseignant.ficheGroupe.placesLibresUn' => 'place libre',
 			'enseignant.ficheGroupe.membresTitre' => 'Les élèves du groupe',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les groupes : celui-ci n\'a pas encore d\'élève.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.erreur' => 'Ce groupe n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.ficheGroupe.introuvable' => 'Ce groupe n\'est pas l\'un des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
