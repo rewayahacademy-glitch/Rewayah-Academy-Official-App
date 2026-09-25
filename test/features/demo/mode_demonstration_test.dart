@@ -3,9 +3,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/suivi/service_suivi.dart';
+import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
+import 'package:rewayah_academy/core/tc_observation/activation_observation.dart';
+import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart';
+import 'package:rewayah_academy/core/tc_observation/port_historique_observations.dart';
+import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
+import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 void main() {
@@ -95,6 +104,42 @@ void main() {
         expect(await seances.historique(eleveId: id), hasLength(3));
         expect(await seances.prochaine(id), isNotNull);
       }
+    });
+
+    test('lectures tuteur hors serveur', () async {
+      expect(await conteneur.read(appareilsDuFoyerProvider.future), isEmpty);
+      expect(await conteneur.read(parcoursFoyerProvider.future), isEmpty);
+      expect(await conteneur.read(monFuseauProvider.future), 'Europe/Paris');
+      expect(await conteneur.read(seancesDuSuiviProvider.future), isEmpty);
+      expect(await conteneur.read(mesGroupesProvider.future), hasLength(2));
+    });
+
+    test('observation simulee, salle video jamais ouverte', () async {
+      expect(conteneur.read(observationTuteurReelleProvider), isFalse);
+      final PortPolitiqueObservation politique = conteneur.read(
+        portPolitiqueObservationProvider,
+      );
+      expect(
+        (await politique.politiqueEffective(groupeId: 'x')).observationActivee,
+        isTrue,
+      );
+      expect((await politique.budget(sessionId: 'x')).visitesMax, 2);
+      final PortVisiteObservation visite = conteneur.read(
+        portVisiteObservationProvider,
+      );
+      final ResultatEntreeObservation entree = await visite.entrer(
+        sessionId: 'x',
+        role: RoleObservateur.values.first,
+      );
+      expect(entree.autorise, isFalse);
+      final PortHistoriqueObservations historique = conteneur.read(
+        portHistoriqueObservationsProvider,
+      );
+      expect(await historique.mesObservations(), hasLength(2));
+      expect(
+        await historique.mesObservations(enfantId: DonneesDemo.aichaId),
+        hasLength(1),
+      );
     });
   });
 }

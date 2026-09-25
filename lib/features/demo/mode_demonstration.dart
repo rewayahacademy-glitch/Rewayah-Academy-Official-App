@@ -17,12 +17,22 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
+import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/service_offres.dart';
+import '../../core/planning/service_planning.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/session/source_session.dart';
+import '../../core/suivi/service_suivi.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/port_groupes.dart';
+import '../../core/tc_observation/activation_observation.dart';
+import '../../core/tc_observation/port_historique_observations.dart';
+import '../../core/tc_observation/port_politique_observation.dart';
+import '../../core/tc_observation/port_visite_observation.dart';
+import 'observation_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -66,6 +76,31 @@ List<Override> surchargesDemoTuteur({String? environnement}) {
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
+    // Lectures des ecrans tuteur encore adossees a Supabase : rendues vides
+    // ou fictives pour qu'aucune ne parte vers le serveur.
+    appareilsDuFoyerProvider.overrideWith(
+      (Ref ref) async => const <AppareilAppaire>[],
+    ),
+    parcoursFoyerProvider.overrideWith(
+      (Ref ref) async => const <ParcoursApprenant>[],
+    ),
+    monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
+    seancesDuSuiviProvider.overrideWith((Ref ref) async => const <Seance>[]),
+    mesGroupesProvider.overrideWith(
+      (Ref ref) async => DonneesDemo.classes.values.toList(),
+    ),
+    // Observation simulee : politique, budget, historique. La salle video
+    // demande un jeton au serveur, donc l'observation reelle reste fermee.
+    observationTuteurReelleProvider.overrideWithValue(false),
+    portPolitiqueObservationProvider.overrideWithValue(
+      const PolitiqueObservationDemo(),
+    ),
+    portVisiteObservationProvider.overrideWithValue(
+      const VisiteObservationDemo(),
+    ),
+    portHistoriqueObservationsProvider.overrideWithValue(
+      const HistoriqueObservationsDemo(),
+    ),
   ];
 }
 

@@ -17,6 +17,7 @@ import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/demo/mode_demonstration.dart';
+import 'features/demo/repere_demonstration.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -76,7 +77,12 @@ Future<void> main() async {
     runApp(
       ProviderScope(
         overrides: surchargesDemoTuteur(),
-        child: TranslationProvider(child: const RewayahApp()),
+        child: TranslationProvider(
+          child: RewayahApp(
+            builder: (BuildContext context, Widget? child) =>
+                RepereDemonstration(child: child),
+          ),
+        ),
       ),
     );
     return;
