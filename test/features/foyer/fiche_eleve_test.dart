@@ -979,6 +979,21 @@ void main() {
     });
   });
 
+  testWidgets('390 : le solde suit la carte d identite, avant les '
+      'parametres', (WidgetTester tester) async {
+    await _monter(tester, appairage: _foyerA());
+    await _toucher(tester, find.text(t.nav.tuteur.foyer).first);
+    await _toucher(tester, find.text('Eleve A1'));
+    final Rect entete = tester.getRect(find.byKey(FicheElevePage.enteteKey));
+    final Rect solde = tester.getRect(find.byKey(FicheElevePage.soldeKey));
+    final Rect parametres = tester.getRect(
+      find.byKey(FicheElevePage.parametresKey),
+    );
+    expect(solde.top, greaterThanOrEqualTo(entete.bottom));
+    expect(solde.bottom, lessThanOrEqualTo(parametres.top));
+    expect(tester.takeException(), isNull);
+  });
+
   group('Bureau', () {
     testWidgets('1440 : fiche en deux colonnes, parametres a gauche, '
         'appareils a droite', (WidgetTester tester) async {
@@ -998,8 +1013,12 @@ void main() {
       final Rect appareils = tester.getRect(
         find.byKey(FicheElevePage.appareilsKey),
       );
+      final Rect solde = tester.getRect(find.byKey(FicheElevePage.soldeKey));
       expect(appareils.left, greaterThan(parametres.right));
-      expect((appareils.top - parametres.top).abs(), lessThan(1));
+      // Le solde ouvre la colonne principale, avant les parametres
+      // (complement Tuteur section 5) ; les appareils lui font face.
+      expect(solde.bottom, lessThanOrEqualTo(parametres.top));
+      expect((appareils.top - solde.top).abs(), lessThan(1));
 
       await _toucher(tester, find.text(t.ficheEleve.lignes.informations));
       final Rect identite = tester.getRect(

@@ -207,10 +207,11 @@ String libelleInterface(InterfaceMode mode) => switch (mode) {
 /// Onglet actif : Foyer. Aucun age affiche : il n'est pas enregistre
 /// (DB-ADM-05).
 ///
-/// Sous les appareils, le solde de l'eleve (S02, LT-5 ; decision du
-/// directeur, section 1 ter point 9) : lu dans `soldesFoyerProvider` (S01),
-/// il mene a S01 avec `?retour=` vers cette fiche. Tant que DB-FIN-01 manque,
-/// une phrase courte, sans action financiere.
+/// Sous la carte d'identite, avant les parametres, le solde de l'eleve (S02,
+/// LT-5 ; complement Tuteur section 5) : lu dans `soldesFoyerProvider` (S01),
+/// il propose « Recharger pour » ce profil et ses mouvements, avec `?retour=`
+/// vers cette fiche. Tant que DB-FIN-01 manque, une phrase courte, sans
+/// action financiere.
 class FicheElevePage extends ConsumerWidget {
   /// Cree la page.
   const FicheElevePage({required this.eleveId, super.key});
@@ -336,20 +337,24 @@ class _ContenuFiche extends ConsumerWidget {
           child: _Entete(profil: profil, classe: texteClasse(classe)),
         ),
         Ecart.vXxl,
+        // Complement Tuteur section 5 : le solde « pres du resume du profil,
+        // avant les parametres secondaires ». En tete de la colonne
+        // principale : juste sous la carte d'identite sur telephone, a cote
+        // d'elle sur bureau.
         ColonnesFiche(
-          principal: parametres,
-          annexe: Column(
+          principal: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              appareils,
-              Ecart.vXxl,
               KeyedSubtree(
                 key: FicheElevePage.soldeKey,
                 child: _SoldeFiche(profil: profil),
               ),
+              Ecart.vXxl,
+              parametres,
             ],
           ),
+          annexe: appareils,
         ),
       ],
     );
