@@ -1,5 +1,11 @@
 # Avancement du poste B
 
+## Base suite et push, reprise 4 (25/09, session B-2026-09-25-coord)
+
+Reprise depuis l'agent precedent : `git status`/`git log -5` (depot, HEAD `20731a4`) et `git log -3`/fin de ce fichier (pilotage, `7e32767`) confirmes identiques a l'etat rendu -- rien n'a change depuis, aucune suite relancee (regle "continue sans refaire", aucun code modifie). Diagnostic O-INT-1 deja complet (voir ci-dessous et `demandes/O.md`) : pas refait.
+
+Exploration (piste de reprise, pas de correction) : `test/features/classe_tuteur/support_classe.dart` expose deja `surchargesClasse(...)`, qui monte le VRAI `ClasseTuteurPage` sur le vrai routeur avec `portClassesFoyerProvider`/observation/presence deja branches -- reutilisable pour reecrire `entree_observation_navigation_test.dart`. Obstacle : son double `FausseVisiteClasse` ne trace pas `rolesDemandes`/`sorties` comme l'exige ce test (contrairement a `FauxPortVisite` du lot O). Deux options consignees dans `demandes/O.md` pour la prochaine session dediee. Toujours hors budget de ce passage (instrumentation + reecriture des 5 montages + verification) : **statut inchange, bloque, pas de push**. Tableau `P2-03` complete avec cette piste (toujours `bloque`). `ETAT_A.md` non touche (regle : uniquement si vert).
+
 ## Base suite et push (25/09, session B-2026-09-25-coord)
 
 Statut : **bloque, pas de push**. Reprise identique a INT-O suite ci-dessous (meme fusion locale `b817b7f`, meme frontiere vide). `flutter test` complet sous verrou : journal `04_phase0/integration_finale_25-09_tests.log`, `+2672 ~568 -5`, code 1. **B-5 confirme corrige** (`20731a4`, session precedente) : les 2 echecs appareils ont disparu (-7 -> -5). Restent les **5 memes echecs O-INT-1** (`test/teaching_core/g/entree_observation_navigation_test.dart`).
