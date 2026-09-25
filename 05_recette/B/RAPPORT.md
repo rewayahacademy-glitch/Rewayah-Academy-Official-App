@@ -107,3 +107,14 @@ Dans `etat/B.md` : `service_offres.dart:115,125` `.order('ordre')` sans sens (lo
 | 16 | mineur | Aucune preuve 200 % ou RTL, cibles et contraste | **Corrige** : `test/features/foyer/accessibilite_foyer_test.dart` (voir §4). |
 | 17 | mineur | Hors ligne des pages d'ecriture non teste | **Corrige** avec le constat 9 : aucun `majReglages` hors ligne, verifie par geste. |
 | 18 | mineur | LB-1 sans rapport ni carte | **Corrige** avec le constat 1. |
+
+## 9. Fusion 1cbc760 et migration
+
+Fusion `origin/ui/tuteur-v1` (`1cbc760`) dans `ui/tuteur-v1-b` : `1d5e383` (conflits uniquement dans `strings*.g.dart`, JSON fusionne sans conflit, regenere par `dart run slang` sous verrou). Migration API COORD (`7ebbd03`) : `ligne_membre.dart` utilise `LigneRubrique(meneur: PhotoEleve(...))` (repli initiales) a la place de `AppIcons.profil` ; `formulaire_profil_eleve.dart` passe par `PageShell(actionsCoquille: false)` avec la `RangeeEtape` partagee en en-tete (PageEtape non retenue, elle borne l'en-tete) et `ChoiceCardGroup(autoriserSaisieLibre: false)` avec `OptionChoix` description/disponible/raisonIndisponible pour le choix « pour qui » ; `interface_page.dart` utilise `ChoiceCardGroup` avec cle (mode, generation) pour que la carte retenue soit toujours celle relue du serveur.
+
+Verifications a `7ebbd03` :
+- Captures regenerees dans `05_recette/B/captures/` (390x844@3 et 1440x900@1, clair et sombre) : Foyer, fiche eleve, ajout de profil. Planches existantes (`foyer_*_contre_*`, `fiche_*_contre_*`, `ajout_*_contre_*`) relues : les ecarts B-1 (avatar) et B-3 (plein ecran, cloche de coquille) restent identiques a ceux decrits en §5 et §8 ; aucun ecart nouveau introduit par la migration.
+- `flutter test test/features/foyer/foyer_capture_test.dart test/features/foyer/fiche_eleve_capture_test.dart test/features/foyer/formulaire_profil_eleve_capture_test.dart` : **+29 ~8, All tests passed!** (les 8 sautes sont les planches sans maquette de reference disponible).
+- `dart run tool/verifier_jetons.dart` : **Jetons verifies : 427 fichiers, aucune violation.**
+- Frontiere `git diff --stat origin/ui/tuteur-v1...HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme lib/core/router lib/core/widgets` : **vide**.
+- `graphe_imports.ps1 -Repo C:\RA\lot-b -Ref 7ebbd03` : 369 fichiers `lib/` atteignables depuis `lib/main.dart`, 62 non atteignables. Aucun fichier de l'espace Foyer/fiche du lot B parmi les non atteignables. `lib/features/reglages_enfant/reglages_enfant_page.dart` reste non atteignable (aucune route ne le cite, seuls des tests) : deja connu, lie a B-4 (redirection COORD encore ouverte, cf §6 et §8 constat 15), pas une regression de cette fusion.
