@@ -378,3 +378,13 @@ Rappel du directeur (a ne pas perdre) : la revue de code « cloud » (ultra) est
 **Etape « role Tuteur » : terminee cote frontend** (P2-01 a P2-13 tous a `fait`/`verifie`). Prochaines etapes du tableau : P2-14 (apercu a jour et verification des textes dans l'app servie — bloque par le deploiement, hors droit du poste B seul) et P2-15 (matrice de recette et rapport au directeur).
 
 Statut : fini.
+
+## P2-15 matrice et rapport directeur : FAIT (25/09, session B-2026-09-25-coord)
+
+`C:\RA\pilotage\05_recette\P2\RAPPORT_DIRECTEUR.md` ecrit pour le directeur (non-developpeur) : ce que le tuteur peut faire ecran par ecran (Bienvenue, inscription, Accueil, Classe, Catalogue, Foyer, fiche d'un enfant, appareils, Historique, Observation, Compte, Notifications, mode demonstration), ce qui est indisponible en attendant le serveur et pourquoi, les deux decisions qui attendent le directeur (texte de consentement, PR brouillon + apercu a autoriser). Annexe : matrice de recette (ecran, route, bouton, test, captures, statut) pour les 33 destinations du role Tuteur.
+
+Tableau : P2-15 passe a fait avec preuve. Relecture de toutes les lignes L*, P2-*, CO-* : correction de LC-F (la preuve disait encore « C-14 ouverte (decision directeur) » alors que la note du 25/09 dit deja C-14 fermee par HL-B-2 — contradiction levee, preuve mise a jour). CO-04 et P2-14 : motif ajoute « attend l'accord du directeur pour la PR brouillon » (statut inchange, a_faire). R-01 laisse en_cours. Aucune autre ligne L*/P2-*/CO-* trouvee en contradiction avec l'etat reel.
+
+**Etape « role Tuteur » : entierement terminee cote frontend, poste B seul** (P2-01 a P2-15 tous a fait/verifie). Restent explicitement hors droit du poste B seul : P2-14 (apercu deploye) et CO-04 (PR brouillon), les deux motives « attend l'accord du directeur ». Prochaine etape prete : P2-16 (effets et animations modernes du role Tuteur, demande du directeur, statut a_faire).
+
+Statut : fini.
