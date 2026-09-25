@@ -136,7 +136,15 @@ class _Contenu extends ConsumerWidget {
     final AsyncValue<List<MouvementSolde>> mouvements = ref.watch(
       mouvementsProvider(null),
     );
-    final bool mouvementsLisibles = mouvements.hasValue && !mouvements.hasError;
+    // Seulement les mouvements que le serveur rattache a cette seance et a cet
+    // eleve (constat 12) : le libelle promet une association, pas la liste.
+    final List<MouvementSolde> associes =
+        mouvements.hasValue && !mouvements.hasError
+        ? <MouvementSolde>[
+            for (final MouvementSolde m in mouvements.requireValue)
+              if (m.seanceId == seance.id && m.profilId == seance.eleveId) m,
+          ]
+        : const <MouvementSolde>[];
     final bool presenceIllisible =
         !presence.isLoading && (presence.hasError || presences == null);
     final LigneSuivi ligne = VueSuiviFoyer.depuis(
@@ -242,25 +250,35 @@ class _Contenu extends ConsumerWidget {
               ),
             ),
         ]),
-        // LT-12 : seulement quand les mouvements se lisent (demonstration) ;
-        // en production (DB-FIN-02) aucun lien. La liste n'a pas de filtre
-        // par seance : le lien mene a la liste simple, retour a la seance.
-        if (mouvementsLisibles) ...<Widget>[
+        // LT-12 : seulement quand un mouvement lu porte cette seance
+        // (demonstration) ; en production (DB-FIN-02) aucun lien. Un seul :
+        // son detail ; plusieurs : la liste filtree sur l'eleve. Retour a la
+        // seance dans les deux cas.
+        if (associes.isNotEmpty) ...<Widget>[
           Ecart.vLg,
           LienFleche(
             key: DetailSeancePage.voirMouvementsKey,
             libelle: t.historique.seance.voirMouvements,
-            onPress: () => GoRouter.of(context).go(
-              Uri(
-                path: Routes.tuteurCompteMouvements,
-                queryParameters: <String, String>{
-                  'retour': Uri(
-                    path: Routes.seancePour(seance.id),
-                    queryParameters: <String, String>{'eleve': seance.eleveId},
-                  ).toString(),
-                },
-              ).toString(),
-            ),
+            onPress: () {
+              final String retour = Uri(
+                path: Routes.seancePour(seance.id),
+                queryParameters: <String, String>{'eleve': seance.eleveId},
+              ).toString();
+              GoRouter.of(context).go(
+                associes.length == 1
+                    ? Uri(
+                        path: Routes.mouvementPour(associes.single.id),
+                        queryParameters: <String, String>{'retour': retour},
+                      ).toString()
+                    : Uri(
+                        path: Routes.tuteurCompteMouvements,
+                        queryParameters: <String, String>{
+                          'profil': seance.eleveId,
+                          'retour': retour,
+                        },
+                      ).toString(),
+              );
+            },
           ),
         ],
         Ecart.vMd,
