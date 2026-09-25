@@ -1,4 +1,4 @@
-# Lot C (Cours) : rapport de recette
+﻿# Lot C (Cours) : rapport de recette
 
 Poste A. Branche `ui/tuteur-v1-c` (depuis `ui/tuteur-v1` @ `cefab7f`), worktree `D:\RA_TUTEUR\lot-c`. Commits locaux, **aucun push**.
 
@@ -159,7 +159,12 @@ Reprise : aucun travail non commité ni commit du sous-paquet 3 laissé par un a
 
 ### Commits
 
-Voir le tableau en fin de section (renseigné après commit).
+| Hash | Message |
+|---|---|
+| `93ebcd1` | feat(tuteur-catalogue): choix de classe, confirmation idempotente et résultats, indisponible en production |
+| `be69282` | test(tuteur-catalogue): parcours touchés depuis la navigation, états, fonctions pures et captures de recette |
+
+Voisins relancés : `dart run tool/verifier_jetons.dart && flutter test --no-pub -r failures-only test/features/classe_tuteur/classe_tuteur_test.dart test/features/accueil_famille_test.dart test/router/navigation_test.dart test/capacites/ports_capacites_test.dart` : `Jetons verifies : 428 fichiers, aucune violation.` puis `+155: All tests passed!`.
 
 Fichiers : `lib/features/classe_tuteur/catalogue_classes_page.dart` (STUB remplacé), clés `classe.pageCatalogue.*` + générés, `test/features/classe_tuteur/{catalogue_classes_test,catalogue_classes_capture_test}.dart`, doubles ajoutés à `support_classe.dart` (`FauxCatalogueClasses`, `classesProposeesFictives`, `eleveA2`). Aucun fichier du coordinateur modifié ; **plus aucun STUB du lot C**. Frontière `git diff --stat cefab7f...HEAD -- supabase .github vercel.json pubspec.yaml lib/core/theme lib/core/router lib/core/widgets web/vercel.json .firebaserc` : **vide**.
 

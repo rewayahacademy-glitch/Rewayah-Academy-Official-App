@@ -6,7 +6,7 @@ Poste A. Worktree `D:\RA_TUTEUR\lot-e`, branche `ui/tuteur-v1-e`, créée depuis
 |---|---|---|
 | 1. Mon compte et sous-pages | **livré** (24/09, 19 h 55) | `65cbcee`, `05f62a8`, `bbaf63f` |
 | 2. Historique et détails | **livré** (25/09, 03 h 30) | `5f44043`, `856e809`, `9479d04`, `6024bf1` |
-| 3. Notifications et consultation admin des observations | non commencé | - |
+| 3. Notifications et consultation admin des observations | **livré** (25/09, 05 h 50) | `36bef8c`, `eaae7f4`, `6910318`, `d33aca4` |
 
 ---
 
@@ -174,3 +174,74 @@ Couverture (33 tests du lot) : destination Historique **touchée** depuis la bar
 ### 7. Défauts hors périmètre
 
 Aucun consigné dans `08_BACKLOG_VAGUE_CLASSE_VISIO.md`.
+
+---
+
+## Sous-paquet 3 : Notifications et consultation admin des observations
+
+Aucun travail antérieur trouvé (worktree propre hors `windows/flutter/*`, non commités).
+
+### 1. Commits
+
+| Hash | Message | Contenu |
+|---|---|---|
+| `36bef8c` | feat(notifications-tuteur): page Notifications atteinte par la cloche, indisponible honnete (DB-CPT-04) | STUB `notifications_page.dart` remplacé ; i18n `notifications.*` et `admin.observations.*` ; slang ; `test/features/notifications/**` ; `support_historique.dart` (paramètre `autres`) |
+| `eaae7f4` | feat(observations-admin): historique admin des observations (maquette V8 D3), onglets de Securite et audit | STUB `observations_admin_page.dart` remplacé ; `lib/core/tc_observation/historique_observations_admin_supabase.dart` ; `lib/features/admin_observations/annuaire_observations.dart` ; `journal_page.dart` (onglets, 3 libellés) ; `test/features/admin_observations/**` ; `journal_admin_test.dart` |
+| `6910318` | fix(...): corrections après planches | date sur une ligne, titres en corps, colonnes élargies, visite ouverte sans répétition |
+| `d33aca4` | test(capture): ... planche V8 D3 | `test/capture/notifications_observations_admin_capture_test.dart` |
+
+Frontière `git diff --stat cefab7f...HEAD -- supabase .github vercel.json web/vercel.json .firebaserc pubspec.yaml lib/core/theme lib/core/router lib/core/widgets lib/core/icons lib/core/coran lib/core/tc_coran lib/features/tc_mushaf lib/core/capacites/port_notifications.dart lib/core/tc_observation/port_historique_observations.dart` : **vide**. **Aucun STUB du lot E ne subsiste** (grep « STUB PHASE 0 : propriété du lot E » : 0).
+
+### 2. Écrans livrés et statut de preuve
+
+| Écran | Route | Statut | Détail |
+|---|---|---|---|
+| Notifications | `/tuteur/notifications` | UI, SIM ; DB-CPT-04 | Atteint par la cloche (coquille) ; production : « Les notifications ne sont pas encore disponibles », sans Réessayer, sans faux vide, cloche sans point ; Accueil actif, disque retour vers l'Accueil. Simulation : UNE carte à filets (date + heure, filet, titre, chevron seulement si destination interne validée par le port), vide, échec + Réessayer, chargement, hors ligne. Aucune route de détail (mapping ligne 9) |
+| Historique des observations (admin) | `/admin/securite-audit/observations` | UI, SIM ; COORD (E-9) ; DB-OBS-04/11 | Onglet pair du Journal (`ongletsSecurite()`). Production : « Historique des observations indisponible », rien d'autre lu. Simulation : recherche tuteur/élève (2 lettres, annuaire), filtres Classe / Période / Statut (relecture depuis le début), tableau 8 colonnes à ≥ 1200, UNE carte à filets en dessous, pagination par curseur, note de fuseau (UTC±hh:mm), lecture seule |
+| Journal (admin, lot E pour l'en-tête) | `/admin/securite-audit/journal` | UI, SIM | Onglets Journal / Observations en tête ; libellés `observation_entree`, `observation_sortie`, `observation_politique_groupe_modifiee` |
+
+« Vérifié réellement » : **rien** (aucun navigateur, appareil ni Supabase).
+
+### 3. Carte des fonctions
+
+| Fonction | Écran unique | Route | Place dans la maquette / le manifeste | Écart |
+|---|---|---|---|---|
+| Ouvrir les notifications | cloche de la coquille tuteur (toutes les pages) | `/tuteur/notifications` (`go`) | en-tête, à droite (V1, V2, V8) | cloche posée par COORD ; pas de point (aucune source) |
+| Lire une notification / suivre sa destination | Notifications, ligne | destination interne validée, sinon aucune | manifeste §5 : liste à filets, date à gauche, chevron | pas de détail ni de « marquer comme lu » (aucune source) |
+| Revenir | disque retour des Notifications | `/tuteur/notifications` → `/tuteur` | - | toujours vers l'Accueil (la cloche ouvre par `go`) |
+| Changer Journal / Observations | onglets de Sécurité et audit (dans les deux écrans) | `/admin/securite-audit/journal` / `.../observations` | D3 : barre latérale « Historique » (non retenue, manifeste) | onglets pairs (décision COORD, `ongletsSecurite()`) |
+| Rechercher un tuteur ou un élève | Observations admin, champ en tête | - | D3 : champ à gauche | choisir une personne pose un filtre, montré en pastille retirable |
+| Filtrer Classe / Période / Statut | Observations admin, trois menus à droite de la recherche | - | D3 : trois boutons à droite | sans icône (E-8.1) ; Statut = « Sortie non enregistrée » ou tous (le port ne filtre que les visites ouvertes) ; Classe = classes en cours |
+| Lire une visite (date, tuteur, élève, classe, entrée, sortie, durée, statut) | Observations admin, ligne | - | D3 : tableau | colonne « Fin » (motif) devenue « Statut » (DB-OBS-04) ; secondes des deux côtés ; pas de chevron ni tri « Date ↓ » (aucun détail admin, tri serveur fixe) |
+| Charger les visites plus anciennes | pied du tableau | - | absent de D3 | pagination (plus de 3 lignes en réalité) |
+
+Aucune fonction du sous-paquet n'est rendue deux fois ; aucune action d'écriture.
+
+### 4. Captures (`05_recette/e/captures/`, lues)
+
+- 19 PNG : `e_notifications_{indisponible,simulation}_{390x844@3,1440x900@1}_{light,dark}` (8), `e_notifications_vide_390x844@3_light`, `e_observations_admin_{indisponible,simulation}_{390x844@3,1440x900@1}_{light,dark}` (8), planche `e_planche_observations_admin_bureau_clair` (+ `_capture`). Maquette recadrée : `maquettes/v8_d3_admin_observations.png`.
+- Constats après la première planche, corrigés (`6910318`) : sortie et durée « Non enregistrée / Non confirmée » coupées sur deux lignes (colonnes élargies) ; date des notifications sur deux lignes à 390 (colonne à 38 %) ; titres de notification trop lourds (corps de texte) ; plage « 18:10 - Non enregistrée » redondante avec la pastille (heure d'entrée seule).
+- Conforme au layout D3 : titre + sous-titre « Administration », recherche à gauche et trois filtres à droite sur une ligne, UN tableau (en-tête pâle, lignes à filets, pastille), note de fuseau en pied.
+- Écarts restants : barre supérieure et barre latérale de l'AdminShell (8 domaines) au lieu de celle de D3 ; onglets Journal / Observations ajoutés ; filtres sans icône ; pas de chevron ni flèche de tri ; texte du tableau en `bodySmall` (composant partagé `DataCollection`) ; sur téléphone, l'en-tête (titre, onglets, recherche, filtres) occupe la moitié de l'écran.
+
+### 5. Tests (tous sous `flutter-verrou.ps1`, dossier `D:\RA_TUTEUR\lot-e`)
+
+| # | Commande | Résultat exact |
+|---|---|---|
+| 1 | `dart run slang && dart format ... && dart analyze --fatal-infos lib/features/notifications lib/features/admin_observations lib/features/admin_journal lib/core/tc_observation/historique_observations_admin_supabase.dart` | `No issues found!` |
+| 2 | `dart analyze` (tests) + `flutter test test/features/notifications test/features/admin_observations` (1re passe) | 2 erreurs de compilation du double (champ `liste`) puis `+26 -1` (deux `TextField` : champ de l'AdminShell) ; corrigés |
+| 3 | `dart run tool/verifier_jetons.dart` (1re passe) | `1 violation [ontap-nu]` (`ListTile.onTap`), remplacé par `Pressable` |
+| 4 | `flutter test test/features/notifications test/features/admin_observations test/features/journal_admin_test.dart test/widgets/admin_shell_test.dart test/router/navigation_test.dart test/i18n test/config/fixtures_isolees_test.dart test/features/historique test/capacites/ports_capacites_test.dart` | 1re passe `+187 -1` (`scrollUntilVisible` du Journal : deux `Scrollable` depuis les onglets), corrigé ; puis `02:13 +189: All tests passed!` (`e3_nonreg.log`) |
+| 5 | final : `dart analyze --fatal-infos` (lib et tests du sous-paquet, capture) ; `verifier_jetons` ; `flutter test test/features/notifications test/features/admin_observations test/features/journal_admin_test.dart` ; `flutter test test/capture/notifications_observations_admin_capture_test.dart` (CAPTURE_DIR + maquette D3) | `No issues found!` ; `Jetons verifies : 429 fichiers, aucune violation.` ; `00:48 +45: All tests passed!` (`e3_tests.log`) ; `00:27 +19: All tests passed!` (`e3_captures.log`) |
+
+Couverture : cloche **touchée** depuis l'Accueil à 390 et 1440 → Notifications (indisponible, dépendance DB-CPT-04, pas de Réessayer, pas de point, Accueil actif) → disque retour **touché** ; liste simulée triée, ligne **touchée** → Historique, ligne à lien externe non pressable ; vide ; échec + Réessayer (relecture comptée) ; chargement ; hors ligne ; port de production indisponible. Admin : onglet Observations **touché** depuis le Journal à 1440 et 390 (indisponible, annuaire jamais lu) puis onglet Journal **touché** ; barre latérale « Sécurité et audit » **touchée** ; tableau D3 (colonnes, pas de « Fin » ni de motif, ordre, secondes, visite ouverte sans sortie ni durée inventées, fuseau, aucune action principale) ; 390 : UNE carte ; filtres Statut / Période / Classe **touchés** (relecture sans curseur) ; recherche **touchée** (rien sous 2 lettres, choix → `tuteurId`, pastille **touchée** → retirée) ; pagination **touchée** (curseur) ; vide et vide sous filtre + Effacer ; échec + Réessayer ; chargement ; annuaire en panne (« Nom non disponible ») ; hors ligne ; fonctions pures (groupement par observateur, curseur relu et refus d'injection, recherche assainie, libellés du Journal). Journal : onglets présents.
+
+**Non exécutés** : analyse et suite complètes (coordinateur) ; build web ; navigateur, appareil, Supabase ; test `(c)` après publication de l'aperçu.
+
+### 6. Demandes au coordinateur
+
+`demandes/E.md` : **E-9** brancher `HistoriqueObservationsAdminSupabase` dans `portHistoriqueObservationsAdminProvider` (après GRANT confirmés) ; **E-10** informations (cloche admin faux vide, groupement par observateur, `DataCollection` une carte par ligne sous 1200, `scrollUntilVisible` et onglets, annuaire local, libellé « de la classe »).
+
+### 7. Défauts hors périmètre
+
+Aucun nouveau consigné dans `08_BACKLOG_VAGUE_CLASSE_VISIO.md` ; la cloche admin (faux vide) est remontée en E-10.1.

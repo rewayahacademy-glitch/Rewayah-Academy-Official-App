@@ -40,7 +40,19 @@ ultracode Tu reprends la coordination du chantier frontend Tuteur V1 de Rewayah 
 4. `git -C "D:\RA _APP\RA -OFFICIAL-APP" fetch origin` puis `git branch -r` : branches des lots du poste B publiées.
 5. Boîte de dépôt du tableau (`depots` au statut `nouveau`) et dossier `D:\RA _APP\specs chatgpt\` : nouvelles specs déposées par le directeur ?
 
-## 4. Ce qui tourne peut-être encore dans l'ANCIENNE session
+## 4 bis. ÉTAT FINAL de l'ancienne session (25/09, 06 h 41) : plus RIEN ne tourne
+
+Le directeur a interdit de relancer des workflows dans l'ancienne session. La vague C, E, O s'est arrêtée sur une limite de session. État exact :
+
+| Lot | Fait (commits locaux, NON poussés) | Reste à faire | Fichiers non commités laissés par un agent coupé |
+|---|---|---|---|
+| C (Cours) | 11 commits : C1 Accueil, C2 Classe et sous-pages, C3 Catalogue ; revue écrite `05_recette/c/REVUE.md` (0 bloquant, 5 majeurs M1-M5, 8 mineurs) | correction C (M1 à M5 dont Classe inatteignable en production faute de provider K6 branché, questionnaire sans entrée avant le lot B, catalogue sans séances ni fuseau, tests texte x2 absents) + push de `ui/tuteur-v1-c` | 10 : examiner avec `git diff` avant tout |
+| E (Compte, Historique) | 11 commits : E1, E2, E3 (Notifications, historique admin des observations) | revue E, correction E, push de `ui/tuteur-v1-e` | 0 |
+| O (Observation) | 4 commits : O1 entrée, O2 salle épurée avec bandeau de décompte | O3 Fins et états (coupé en cours), revue O, correction O, push de `ui/tuteur-v1-o` | 12 : probablement le début d'O3, à examiner |
+
+Lots C et E : remplacer aussi leurs liens vers `Routes.tuteurReglages` (consigne d'`ETAT_A.md`). Base à fusionner dans chaque lot avant sa fin : `origin/ui/tuteur-v1` @ `1cbc760` (réponses aux demandes du poste B, lot D intégré et vérifié). Demandes des lots du poste A au coordinateur : `demandes/C*.md`, `demandes/O.md` dans `D:\RA _APP\pilotage-tuteur-v1\` (C-1, C-5, C-7, C-9, C-11 à C-14), à traiter comme celles du poste B.
+
+## 4. (historique) Ce qui tournait dans l'ANCIENNE session
 
 Le workflow « tuteur-v1-phase1-poste-A » (run `wf_f5734424-997`, relancé à 20 h 46 après une limite de session) exécute, dans l'ordre et par sous-paquets : C2 Classe, C3 Catalogue, revue C, correction C + push de `ui/tuteur-v1-c` ; E2 Historique, E3 Notifications et admin, revue E, correction E + push ; O1 Entrée, O2 Salle avec bandeau, O3 Fins et états, revue O, correction O + push. Script : `C:\Users\dell\.claude\projects\C--Users-dell-AppData-Local-Programs-WindowsTerminal\fdb7e1de-cc9a-4b71-bb67-78d8572a5917\workflows\scripts\tuteur-v1-phase1-poste-a-wf_f5734424-997.js`.
 

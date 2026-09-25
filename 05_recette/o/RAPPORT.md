@@ -95,3 +95,78 @@ Corrigés après lecture des planches (`ed8065f`) : bouton inerte « Observer ma
 ### Défauts hors périmètre consignés
 
 Aucun nouveau défaut hors périmètre relevé (les défauts de la salle sont du lot O, sous-paquet 2).
+
+## Sous-paquet 2 : Salle d'observation avec bandeau de décompte (25/09/2026, 02 h 50 à 05 h 10)
+
+### Commits
+
+| Hash | Message |
+|---|---|
+| `f847cae` | feat(observation): salle epuree, bandeau du decompte et visites restantes |
+| `18a7d82` | test(observation): captures de recette de la salle et planches M4, M3, D1 |
+
+Reprise : aucun travail du sous-paquet 2 n'était laissé par l'agent précédent ; `strings_ar.g.dart` et `windows/flutter/generated_*` modifiés = fins de ligne seulement, non commités.
+
+Fichiers (tous C-obs) : `lib/features/tc_observation_ui/panneau_observation_tuteur.dart` (réécrit : la salle), **neufs** `compteur_visite.dart` (bandeau), `barre_commandes_observation.dart` (3 commandes), `contexte_salle_observation.dart` (en-tête lu par le port K6 des classes du foyer) ; `entree_observation_page.dart` (salle hors coquille plein cadre, retour système = Quitter + confirmation, état du lien suivi, visite refermée au démontage) ; `fr.i18n.json` espace `tc.observation.visite.*` seulement (+19 clés, −4 clés mortes `mediaFerme`, `enfantAbsent`, `restant`, `visites`) + générés ; tests `salle_observation_test.dart`, `salle_observation_capture_test.dart` (neufs), `ecrans_observation_test.dart`, `entree_explication_test.dart` (entrée en salle désormais à 390), `entree_observation_navigation_test.dart`, `support/hote_tc_g.dart` (`horloge`, `autres`). Frontière (`cefab7f...HEAD`, supabase, .github, vercel.json, pubspec.yaml, theme, router, widgets) : **vide**.
+
+### Écran livré : la salle (M3, M4, D1, directeur §1 bis-5)
+
+Du haut vers le bas : **bandeau pleine largeur** (sablier, décompte `mm:ss` en chiffres tabulaires seconde par seconde + « restantes » ; à droite « 1/2 visite restante pour cette séance », pluriel « 2/3 visites restantes… », « Aucune visite restante pour cette séance » à 0 ; lavande, ton d'avertissement dans les 30 dernières secondes ; « Temps restant non confirmé » si la relecture échoue ; lu en une phrase par le lecteur d'écran) ; en-tête (nom de la classe et « Mariam · Sayyid/Sayyida X » quand la classe du foyer se lit, sinon « Observation en cours » et les noms de la salle ; pastille d'état **réel** : En direct / Connexion / Reconnexion / Vidéo indisponible) ; **support dominant** (emplacement : aucun support partagé n'existe encore dans le produit, phrase discrète) ; deux vignettes 4:3 (enseignant, enfant ; image si publiée, sinon initiale et « Caméra fermée » ; « Pas encore dans la salle », jamais « absent » ; liseré d'accent et ondes seulement sur `parle` réel ; aucun camarade exposé) ; **barre de 3 commandes** : « Son reçu » (témoin, O-9), « Agrandir / Réduire » (support seul ; bandeau et Quitter restent), « Quitter » (pilule rouge douce) → confirmation « Quitter la visite ? Il vous reste 1 min 42 s. Une visite quittée avant la fin compte comme une visite entière… ». Aucun micro, caméra, chat, réaction. Pas de chevron (une fonction = un endroit : la sortie est « Quitter » ; retour système = même confirmation).
+
+Formats : téléphone M4 (vignettes côte à côte, barre en ligne ; défile si hauteur < 300 ou texte > 130 %, commandes icône au-dessus du libellé) ; dès 600 : **une carte** comme D1 (support ~78 %, vignettes en colonne à droite, barre son | agrandir | quitter) sous le bandeau ; paysage 844x390 ; clair et sombre.
+
+Reconnexion : pastille « Reconnexion » + phrase, son « interrompu », décompte continu jamais remis à zéro (test). Visite quittée par une autre voie (démontage de la page) : `sortir()` appelé (test) ; onglet tué = serveur (DB-OBS-03).
+
+### Carte des fonctions (sous-paquet 2)
+
+| Fonction | Écran unique | Route | Place dans la maquette |
+|---|---|---|---|
+| Voir le temps restant et les visites restantes | Salle, bandeau | `/tc/observation/:seanceId` (phase visite) | directeur §1 bis-5 (remplace la pastille « Visite 1/2 · 01:42 » de M3/M4/D1) |
+| Savoir si le direct tient | Salle, pastille d'en-tête | même | M3/M4 « En direct », D1 « Séance en direct » |
+| Regarder le support | Salle, zone dominante | même | M3/M4 carte support, D1 ~77 % |
+| Voir l'enseignant et son enfant | Salle, 2 vignettes | même | M4 sous le support, D1 colonne droite |
+| Son reçu (témoin) | Barre | même | M4 1re commande, D1 gauche |
+| Agrandir / réduire le support | Barre | même | M4 2e, D1 centre |
+| Quitter (avec confirmation) | Barre ; retour système = même geste | même → fin (base, sous-paquet 3) | M4 3e (pilule rouge), D1 droite |
+
+Aucun doublon : pas de chevron de retour concurrent de « Quitter ».
+
+### Statut de preuve
+
+| Élément | Statut |
+|---|---|
+| Salle, bandeau, commandes, états | UI réalisée ; testée en simulation ; branchée aux ports existants (moteur de visite, `moteurSalleProvider`, `PortClassesFoyer`) derrière l'interrupteur P3 |
+| En-tête nom de classe | production : `PortClassesFoyer` indisponible (DB-TRV-07, adaptateur du lot C) → titre générique, testé |
+| Atteignabilité (a) | `graphe_imports.ps1 -Ref 18a7d82` : les 4 fichiers atteignables depuis `lib/main.dart` |
+| Bouton qui y mène (b) | « Assister » (Accueil de la base) → « Observer maintenant » → salle, **touché depuis la vraie coquille à 390** (navigation_test) ; après C2 : bloc Observation de la classe (O-3) |
+| (c) `main.dart.js` servi | au coordinateur |
+| Vérifié réellement | rien |
+
+### Commandes et résultats exacts (toutes sous `flutter-verrou.ps1`)
+
+| Commande | Résultat |
+|---|---|
+| `dart run slang` | `Translations generated successfully` |
+| `dart analyze --fatal-infos lib/features/tc_observation_ui lib/core/tc_observation lib/core/i18n test/teaching_core/g` | 1re passes : 1 erreur (`Override`), 1 avertissement, 1 info ; finale `No issues found!` |
+| `flutter test salle_observation_test` (passes intermédiaires) | `+1 -?` : décompte non repeint (un `pump` ne suffisait pas → `pumpAndSettle`) ; `sortir` serveur jamais atteint en test (annulation d'abonnement = futur de zone racine, non avancé par l'horloge simulée → tour de vraie boucle `runAsync`) ; débordements à 200 % (barre, bandeau) corrigés |
+| `dart run tool/verifier_jetons.dart` | `Jetons verifies : 424 fichiers, aucune violation.` |
+| Finale : `flutter test --no-pub test/teaching_core/g test/tc_observation test/config/fixtures_isolees_test.dart test/i18n test/teaching_core/q/q03_quota_observation_tuteur_test.dart test/features/accueil_famille_test.dart test/features/observation_groupe_admin_test.dart test/router/navigation_test.dart` | `03:58 +277 ~43: All tests passed!` (journal `o2_tests.log` ; ~43 = captures sautées) |
+| Captures (`CAPTURE_DIR`, `CAPTURE_MAQUETTE_M4/M3/D1`) | `+21: All tests passed!` |
+
+18 tests dans `salle_observation_test.dart` (tous partent d'une classe double et TOUCHENT Observer la séance, Observer maintenant, Agrandir, Réduire, Quitter, Annuler, Quitter la visite, retour système) + 1 parcours depuis la vraie coquille à 390 (Assister → Observer maintenant → salle → Agrandir → Quitter → confirmer).
+
+### Captures (`captures/`, lues)
+
+`o2_salle_390x844@3_{light,dark}`, `o2_salle_1440x900@1_{light,dark}`, `o2_quitter_390x844@3_{light,dark}`, `o2_quitter_1440x900@1_light`, `o2_salle_1024x768@1_light`, `o2_salle_844x390@3_paysage_light`, `o2_agrandi_{390x844@3,1440x900@1}_light`, `o2_reconnexion_390x844@3_light`, `o2_fin_proche_390x844@3_light`, `o2_derniere_visite_390x844@3_light`, `o2_salle_vide_390x844@3_light`, `o2_video_indisponible_390x844@3_light`, `o2_texte200_390x844@2_light` ; planches `o2_salle_mobile_contre_maquette_M4`, `o2_salle_mobile_sombre_contre_maquette_M3`, `o2_salle_bureau_contre_maquette_D1` ; maquettes découpées `maquettes/{M4_salle_claire,M3_salle_sombre,D1_salle_bureau}.png`. « Vidéos » = aplats de test, jamais une photo.
+
+Corrigés après lecture des planches : libellés de commandes coupés à 390 (« Agrandi / r ») → `labelMedium` sur téléphone ; état vide du support en titre de page → phrase discrète ; titre d'en-tête trop grand → `titleMedium` ; bureau en éléments posés sur le fond → une carte comme D1 ; vignettes masquées sur écran court → seuil de défilement abaissé.
+
+Écarts de planche restants, assumés : bandeau du décompte au lieu de la pastille « Visite n/N · mm:ss » (décision du directeur) ; bandeau à la largeur du contenu, 24 dp sous le haut (O-11) ; support vide (aucun support partagé dans le produit ; contenu arabe des maquettes non reproduit, V8) ; pas de chevron (sortie unique = Quitter) ; icône « Agrandir » = cible du dock (O-10) ; « Son reçu » témoin et non bouton (O-9) ; sur la planche M4 (maquette tronquée à ~564 dp) les vignettes passent sous le pli et la salle défile, elles sont visibles à 390x844 ; M3 sombre : « Quitter » en pilule rouge douce (un style par format, manifeste §5) au lieu du bouton plein.
+
+### Écarts restants pour le sous-paquet 3
+
+Fin de visite (base : `EmptyState` + retour) : M5 et variantes ; `refus.politiqueDesactivee` (« groupe ») ; si la visite se termine pendant que la confirmation est ouverte, la feuille reste jusqu'à « Annuler » (sans effet).
+
+### Demandes au coordinateur (nouvelles)
+
+`demandes/O.md` O-9 (commande du son reçu dans `VideoSessionProvider`), O-10 (icônes agrandir/réduire), O-11 (emplacement de bandeau pleine largeur dans `PageShell`).
