@@ -34,12 +34,12 @@ class GenreEtape extends ConsumerWidget {
       libelleAction: t.commun.continuer,
       onAction: genre == null ? null : () => avancerDepuis(context, _route),
       onRetour: () => reculerDepuis(context, _route),
-      // Le groupe partage, sans carte « Autre ». Les cartes sont empilees :
-      // la disposition cote a cote de la maquette attend une variante du
-      // composant partage (demande A-5), pas une copie locale.
+      // Le groupe partage, sans carte « Autre », en disposition cote a cote
+      // (demande A-5.2, maquette « onboarding Mble d »).
       enfant: ChoiceCardGroup(
         key: const Key('inscription-genre'),
         autoriserSaisieLibre: false,
+        coteACote: true,
         valeurInitiale: genre == null
             ? null
             : ReponseChoix(valeurs: <String>{genre.name}),
