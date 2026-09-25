@@ -613,4 +613,32 @@ abstract final class AppIcons {
     IconData(0xe220, fontFamily: _repos),
     IconData(0xe220, fontFamily: _actif),
   );
+
+  // --- Genre et horloge (demande du directeur, 25/09) ---------------------
+  //
+  // Points de code **lus dans la police embarquee** : la table `post` n'a pas
+  // de noms, mais la table GSUB porte les ligatures Phosphor (suite de
+  // lettres vers glyphe). Les noms ci-dessous sont ces ligatures, relues sur
+  // `assets/fonts/Phosphor-Regular.ttf` le 25/09/2026 ; chaque point de code
+  // est present dans les DEUX graisses. Phosphor n'a ni `woman`, ni `girl`,
+  // ni `lady`, ni `user-female` : le symbole de genre est ce qu'il offre.
+
+  /// Genre : femme. Phosphor `gender-female` (0xe6e0).
+  static const AppIcon femme = AppIcon._(
+    IconData(0xe6e0, fontFamily: _repos),
+    IconData(0xe6e0, fontFamily: _actif),
+  );
+
+  /// Genre : homme. Phosphor `gender-male` (0xe6e2).
+  static const AppIcon homme = AppIcon._(
+    IconData(0xe6e2, fontFamily: _repos),
+    IconData(0xe6e2, fontFamily: _actif),
+  );
+
+  /// Heure, duree ecoulee : Phosphor `clock` (0xe19a). Fin de visite
+  /// d'observation (maquette M5), a la place du sablier [attente].
+  static const AppIcon horloge = AppIcon._(
+    IconData(0xe19a, fontFamily: _repos),
+    IconData(0xe19a, fontFamily: _actif),
+  );
 }

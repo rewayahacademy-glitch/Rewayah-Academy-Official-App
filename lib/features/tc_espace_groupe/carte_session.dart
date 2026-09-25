@@ -123,16 +123,18 @@ class _EnteteSession extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    // Un `Wrap` et non une `Row` : a 200 pour cent de taille de texte, la
+    // pastille passe sous la date au lieu de deborder (revue P2-10).
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.sm,
       children: <Widget>[
-        Expanded(
-          child: Text(
-            horloge.horlogeUtilisateur.dateLocaleRendue,
-            style: textes.titleMedium ?? const TextStyle(),
-          ),
+        Text(
+          horloge.horlogeUtilisateur.dateLocaleRendue,
+          style: textes.titleMedium ?? const TextStyle(),
         ),
-        Ecart.hMd,
         StatusPill(
           libelle: LibellesGroupe.phase(horloge.phase),
           ton: switch (horloge.phase) {

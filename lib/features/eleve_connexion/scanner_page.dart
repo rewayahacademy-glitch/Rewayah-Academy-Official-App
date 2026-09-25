@@ -20,6 +20,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/entete_page.dart';
+import '../../core/widgets/offline_banner.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import 'saisie_code_page.dart';
@@ -433,8 +434,8 @@ class _Etat extends StatelessWidget {
 /// barre posee en bas du cadre (REVUE R-08). Hors lecture, l'etat (refus,
 /// camera, verification) prend le milieu du cadre, entre les deux barres.
 ///
-/// La page passe par `PageShell` (bandeau hors ligne, zone sure, gouttiere) :
-/// le cadre s'arrete donc a la gouttiere du gabarit, comme le contenu de M3.
+/// La camera va bord a bord, comme M3 ; le bandeau hors ligne et la zone sure
+/// ne s'appliquent qu'aux barres posees sur le cadre.
 class _PleinCadre extends StatelessWidget {
   const _PleinCadre({
     required this.viseur,
@@ -460,83 +461,89 @@ class _PleinCadre extends StatelessWidget {
     final Widget? etatCourant = etat;
     final Widget? consigneCourante = consigne;
 
-    return PageShell(
-      defilante: false,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-        child: ClipRRect(
-          key: cadreKey,
-          borderRadius: AppRadius.arrondiLg,
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              DecoratedBox(decoration: palette.surfaceSunken.decoration()),
-              viseur,
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    DecoratedBox(
-                      decoration: palette.surfaceRaised.decoration(
-                        borderRadius: AppRadius.arrondiMd,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.xs),
-                        child: Row(
-                          children: <Widget>[
-                            DisqueRetour(onPress: onRetour),
-                            Ecart.hMd,
-                            Expanded(
-                              child: Semantics(
-                                header: true,
-                                child: Text(
-                                  t.eleveConnexion.lecteur.titre,
-                                  style: palette.inkStrong.applyTo(
-                                    textes.titleLarge ?? const TextStyle(),
+    // Bord a bord (revue P2-08, majeur 1) : la camera prend tout l'ecran,
+    // barre d'etat comprise ; seules les barres posees dessus respectent la
+    // zone sure. Plus de carte arrondie ni de gouttiere autour du viseur.
+    return Scaffold(
+      body: Stack(
+        key: cadreKey,
+        fit: StackFit.expand,
+        children: <Widget>[
+          DecoratedBox(decoration: palette.surfaceSunken.decoration()),
+          viseur,
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                const OfflineBanner(),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        DecoratedBox(
+                          decoration: palette.surfaceRaised.decoration(
+                            borderRadius: AppRadius.arrondiMd,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSpacing.xs),
+                            child: Row(
+                              children: <Widget>[
+                                DisqueRetour(onPress: onRetour),
+                                Ecart.hMd,
+                                Expanded(
+                                  child: Semantics(
+                                    header: true,
+                                    child: Text(
+                                      t.eleveConnexion.lecteur.titre,
+                                      style: palette.inkStrong.applyTo(
+                                        textes.titleLarge ?? const TextStyle(),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: etatCourant == null
-                          ? const SizedBox.shrink()
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppSpacing.md,
-                              ),
-                              child: etatCourant,
+                        Expanded(
+                          child: etatCourant == null
+                              ? const SizedBox.shrink()
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: AppSpacing.md,
+                                  ),
+                                  child: etatCourant,
+                                ),
+                        ),
+                        DecoratedBox(
+                          decoration: palette.surfaceRaised.decoration(
+                            borderRadius: AppRadius.arrondiMd,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSpacing.lg),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                if (consigneCourante != null) ...<Widget>[
+                                  consigneCourante,
+                                  Ecart.vLg,
+                                ],
+                                saisir,
+                              ],
                             ),
-                    ),
-                    DecoratedBox(
-                      decoration: palette.surfaceRaised.decoration(
-                        borderRadius: AppRadius.arrondiMd,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            if (consigneCourante != null) ...<Widget>[
-                              consigneCourante,
-                              Ecart.vLg,
-                            ],
-                            saisir,
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_observation/echec_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
@@ -199,6 +200,9 @@ void main() {
       // effective de la classe (120 s).
       expect(salle.politique.lecturesBudget, greaterThan(lecturesAvant));
       expect(find.text(r.resteUne(duree: '2 minutes')), findsOneWidget);
+      // Horloge de la maquette M5 (demande O-4), plus le sablier.
+      expect(find.byIcon(AppIcons.horloge.repos), findsOneWidget);
+      expect(find.byIcon(AppIcons.attente.repos), findsNothing);
       expect(find.text(r.voirObservations), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

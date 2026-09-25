@@ -2366,6 +2366,8 @@
       "eleveInconnuTitre": "Ce profil n'est pas dans votre foyer",
       "eleveInconnuPhrase": "Revenez à l'accueil et choisissez le profil élève concerné.",
       "horairesAbsents": "Les jours et heures de cette classe ne sont pas encore affichés ici.",
+      "seanceHebdo": "{jour} à {heure} · {duree} min",
+      "fuseauClasse": "Heures de la classe ({fuseau})",
       "placeUne": "1 place restante",
       "places": "{nombre} places restantes",
       "etat": {

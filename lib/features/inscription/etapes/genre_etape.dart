@@ -47,12 +47,12 @@ class GenreEtape extends ConsumerWidget {
           OptionChoix(
             valeur: Genre.homme.name,
             libelle: t.inscription.genreHomme,
-            icone: AppIcons.profil,
+            icone: AppIcons.homme,
           ),
           OptionChoix(
             valeur: Genre.femme.name,
             libelle: t.inscription.genreFemme,
-            icone: AppIcons.profil,
+            icone: AppIcons.femme,
           ),
         ],
         onChange: (ReponseChoix reponse) {

@@ -95,6 +95,24 @@ String? placesCatalogue(ClasseOuverte classe) {
       : t.classe.pageCatalogue.places(nombre: places);
 }
 
+/// Une seance hebdomadaire en mots : « Mardi a 18:30 · 45 min », heure lue
+/// dans le fuseau de la classe (demande C-14).
+String seanceCatalogue(CreneauHebdomadaire seance) {
+  final List<String> jours = t.commun.dates.jours;
+  final String heure =
+      '${seance.heure.toString().padLeft(2, '0')}:'
+      '${seance.minute.toString().padLeft(2, '0')}';
+  return t.classe.pageCatalogue.seanceHebdo(
+    jour: jours[(seance.jourIso - 1) % jours.length],
+    heure: heure,
+    duree: seance.dureeMinutes,
+  );
+}
+
+/// Le parcours de la classe (cours et niveau), vide quand il n'est pas dit.
+String parcoursCatalogue(ClasseOuverte classe) =>
+    LibellesGroupe.coursEtNiveau(cours: classe.cours, niveau: classe.niveau);
+
 /// La pastille d'etat d'une classe proposee.
 ({String libelle, TonEtat ton}) etatCatalogue(EtatClasseOuverte etat) =>
     switch (etat) {
@@ -408,6 +426,11 @@ class CarteClasseOuverte extends StatelessWidget {
                         enseignantCatalogue(classe.enseignant),
                         style: discret,
                       ),
+                      if (parcoursCatalogue(classe) case final String parcours
+                          when parcours.isNotEmpty) ...<Widget>[
+                        Ecart.vXs,
+                        Text(parcours, style: discret),
+                      ],
                     ],
                   ),
                 ),
@@ -417,7 +440,26 @@ class CarteClasseOuverte extends StatelessWidget {
           Ecart.vLg,
           const FiletHorizontal(),
           Ecart.vLg,
-          Text(t.classe.pageCatalogue.horairesAbsents, style: discret),
+          if (classe.seances.isEmpty)
+            Text(t.classe.pageCatalogue.horairesAbsents, style: discret)
+          else ...<Widget>[
+            for (final CreneauHebdomadaire s in classe.seances)
+              Text(
+                seanceCatalogue(s),
+                style: AppTypography.tabulaire(
+                  palette.inkStrong.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            if (classe.fuseauIana case final String fuseau) ...<Widget>[
+              Ecart.vXs,
+              Text(
+                t.classe.pageCatalogue.fuseauClasse(fuseau: fuseau),
+                style: discret,
+              ),
+            ],
+          ],
           Ecart.vMd,
           Wrap(
             spacing: AppSpacing.sm,
