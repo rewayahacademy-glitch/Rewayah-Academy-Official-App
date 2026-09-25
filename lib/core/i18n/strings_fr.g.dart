@@ -5711,6 +5711,7 @@ class Traductions$tc$observation$fr {
 	late final Traductions$tc$observation$refus$fr refus = Traductions$tc$observation$refus$fr.internal(_root);
 	late final Traductions$tc$observation$visite$fr visite = Traductions$tc$observation$visite$fr.internal(_root);
 	late final Traductions$tc$observation$fin$fr fin = Traductions$tc$observation$fin$fr.internal(_root);
+	late final Traductions$tc$observation$resultat$fr resultat = Traductions$tc$observation$resultat$fr.internal(_root);
 	late final Traductions$tc$observation$annonce$fr annonce = Traductions$tc$observation$annonce$fr.internal(_root);
 	late final Traductions$tc$observation$reglages$fr reglages = Traductions$tc$observation$reglages$fr.internal(_root);
 }
@@ -7484,8 +7485,8 @@ class Traductions$tc$observation$refus$fr {
 
 	// Translations
 
-	/// fr: 'L'observation est désactivée pour ce groupe.'
-	String get politiqueDesactivee => 'L\'observation est désactivée pour ce groupe.';
+	/// fr: 'L'observation est désactivée pour cette classe.'
+	String get politiqueDesactivee => 'L\'observation est désactivée pour cette classe.';
 
 	/// fr: 'Vous avez déjà utilisé vos visites pour cette séance.'
 	String get quotaVisites => 'Vous avez déjà utilisé vos visites pour cette séance.';
@@ -7618,6 +7619,63 @@ class Traductions$tc$observation$fin$fr {
 
 	/// fr: 'La connexion a été perdue.'
 	String get deconnexion => 'La connexion a été perdue.';
+}
+
+// Path: tc.observation.resultat
+class Traductions$tc$observation$resultat$fr {
+	Traductions$tc$observation$resultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre première visite est terminée'
+	String get premiereTerminee => 'Votre première visite est terminée';
+
+	/// fr: 'Votre dernière visite est terminée'
+	String get derniereTerminee => 'Votre dernière visite est terminée';
+
+	/// fr: 'Votre visite est terminée'
+	String get terminee => 'Votre visite est terminée';
+
+	/// fr: 'Durée de visite atteinte'
+	String get dureeAtteinte => 'Durée de visite atteinte';
+
+	/// fr: 'Observation interrompue'
+	String get interrompue => 'Observation interrompue';
+
+	/// fr: 'La séance continue pour {prenom}.'
+	String continuePour({required Object prenom}) => 'La séance continue pour ${prenom}.';
+
+	/// fr: 'La séance continue.'
+	String get continueSansPrenom => 'La séance continue.';
+
+	/// fr: 'Il vous reste une visite de {duree}. Revenez plus tard pour l'écouter.'
+	String resteUne({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.';
+
+	/// fr: 'Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter.'
+	String restent({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.';
+
+	/// fr: 'Il vous reste une visite. Revenez plus tard pour l'écouter.'
+	String get resteUneSansDuree => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.';
+
+	/// fr: 'Il vous reste {n} visites. Revenez plus tard pour l'écouter.'
+	String restentSansDuree({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.';
+
+	/// fr: 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.'
+	String get aucune => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.';
+
+	/// fr: 'Vous pourrez observer la prochaine séance.'
+	String get prochaineSeance => 'Vous pourrez observer la prochaine séance.';
+
+	/// fr: 'Vérification de vos visites restantes'
+	String get verification => 'Vérification de vos visites restantes';
+
+	/// fr: 'Vos visites restantes n'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.'
+	String get inconnues => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.';
+
+	/// fr: 'Voir mes observations'
+	String get voirObservations => 'Voir mes observations';
 }
 
 // Path: tc.observation.annonce
@@ -10005,7 +10063,7 @@ extension on Traductions {
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
-			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour ce groupe.',
+			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
 			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
@@ -10044,6 +10102,22 @@ extension on Traductions {
 			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',
 			'tc.observation.fin.revocationServeur' => 'Votre observation a été interrompue.',
 			'tc.observation.fin.deconnexion' => 'La connexion a été perdue.',
+			'tc.observation.resultat.premiereTerminee' => 'Votre première visite est terminée',
+			'tc.observation.resultat.derniereTerminee' => 'Votre dernière visite est terminée',
+			'tc.observation.resultat.terminee' => 'Votre visite est terminée',
+			'tc.observation.resultat.dureeAtteinte' => 'Durée de visite atteinte',
+			'tc.observation.resultat.interrompue' => 'Observation interrompue',
+			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
+			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
+			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
+			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.',
+			'tc.observation.resultat.resteUneSansDuree' => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.',
+			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.',
+			'tc.observation.resultat.aucune' => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.',
+			'tc.observation.resultat.prochaineSeance' => 'Vous pourrez observer la prochaine séance.',
+			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
+			'tc.observation.resultat.inconnues' => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.',
+			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
@@ -10119,6 +10193,8 @@ extension on Traductions {
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
@@ -10135,8 +10211,6 @@ extension on Traductions {
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
 			_ => null,
 		};

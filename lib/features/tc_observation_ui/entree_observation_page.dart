@@ -39,6 +39,7 @@ import 'explication_premiere_visite.dart';
 import 'options_entree_observation.dart';
 import 'ouverture_observation.dart';
 import 'panneau_observation_tuteur.dart';
+import 'resultat_visite_page.dart';
 import 'verification_prealable.dart';
 import 'vue_observation_tuteur.dart';
 
@@ -155,8 +156,19 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       }
     });
     _sEtatSalle = _moteur.etats.listen((EtatSalle etat) {
-      if (mounted) {
-        setState(() => _etatSalle = etat);
+      if (!mounted) {
+        return;
+      }
+      setState(() => _etatSalle = etat);
+      // **Reconnexion echouee pendant la visite : l'observation est
+      // interrompue** (releve V7, N3 -> N6). L'intervalle est referme aupres
+      // du serveur plutot que de laisser courir un temps que le parent ne
+      // voit plus. Une salle jamais jointe (jeton refuse) n'est pas une
+      // interruption : elle garde son message dans la salle.
+      if (etat == EtatSalle.echec && _enSalle) {
+        unawaited(
+          ref.read(moteurVisiteObservationProvider(widget.seanceId)).interrompre(),
+        );
       }
     });
   }
@@ -220,7 +232,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     ref.listen<AsyncValue<EtatVisiteObservation>>(
       etatVisiteObservationProvider(widget.seanceId),
       (
-        AsyncValue<EtatVisiteObservation>? _,
+        AsyncValue<EtatVisiteObservation>? anterieur,
         AsyncValue<EtatVisiteObservation> suivant,
       ) {
         final EtatVisiteObservation? valeur = suivant.value;
@@ -228,6 +240,10 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
           return;
         }
         _suivreConnexion(valeur.phase);
+        if (valeur.phase == PhaseVisite.terminee &&
+            anterieur?.value?.phase != PhaseVisite.terminee) {
+          _apresVisite(role);
+        }
         if (valeur.phase == PhaseVisite.enVisite) {
           unawaited(_rejoindreSalle(options));
         } else {
@@ -337,7 +353,9 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final GoRouter routeur = GoRouter.of(context);
     final String? classe = _classeId;
     if (classe != null) {
-      routeur.go(Routes.classePour(classe, eleveId: _eleveId));
+      routeur.go(
+        Routes.classePour(classe, eleveId: _eleveId ?? _enfantVisite),
+      );
     } else if (routeur.canPop()) {
       routeur.pop();
     } else {
@@ -399,7 +417,6 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       // La salle (sous-paquet 2) : tache focalisee plein cadre, sans titre de
       // page ni navigation. Le retour du systeme passe par « Quitter » et sa
       // confirmation : jamais une navigation qui laisserait la visite ouverte.
-      // La fin de visite reste celle de la base (sous-paquet 3).
       PhaseVisite.enVisite => PopScope(
         canPop: false,
         onPopInvokedWithResult: (bool fait, Object? _) {
@@ -415,18 +432,38 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
           ),
         ),
       ),
-      PhaseVisite.terminee => PageShell(
-        titre: t.tc.observation.entree.titre,
-        child: EmptyState(
-          message: libelleFinVisite(
-            valeur!.fin ?? FinDeVisite.sortieVolontaire,
+      // La fin de visite (sous-paquet 3, maquette M5 et variantes) : ecran
+      // resultat sans en-tete ni navigation, le retour systeme mene a la
+      // classe comme l'action dominante.
+      PhaseVisite.terminee => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (bool fait, Object? _) {
+          if (!fait) {
+            _retour();
+          }
+        },
+        child: PageShell(
+          defilante: false,
+          // Telephone : le resultat commence en haut, comme M5. Des la
+          // tablette : centre dans la hauteur, jamais colle en haut d'un grand
+          // ecran vide. Toujours defilant (texte agrandi, paysage).
+          child: LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints zone) =>
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: zone.maxHeight),
+                    child: Align(
+                      alignment: zone.maxWidth >= AppPage.largeurDialogue
+                          ? Alignment.center
+                          : AlignmentDirectional.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
+                        child: _resultat(valeur!, demande),
+                      ),
+                    ),
+                  ),
+                ),
           ),
-          invitation: valeur.sortieConfirmee
-              ? null
-              : t.tc.observation.visite.sortieNonConfirmee,
-          icone: AppIcons.pause,
-          libelleAction: _libelleRetour,
-          onAction: _retour,
         ),
       ),
       PhaseVisite.refusee => _cadreTuteur(
@@ -785,6 +822,89 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     _entrer(options);
   }
 
+  // --- La fin de visite (lot O, sous-paquet 3 : maquette M5 et variantes) --
+
+  /// Le prenom de l'enfant tel que la salle l'a publie pendant la visite.
+  String? _prenomEnfant;
+
+  /// L'enfant concerne par la visite, selon le serveur : le contexte du
+  /// retour a la classe quand l'adresse ne le nommait pas.
+  String? _enfantVisite;
+
+  /// A la fin d'une visite : la confirmation de sortie encore ouverte est
+  /// refermee (la question n'a plus d'objet), et les visites restantes sont
+  /// relues aupres du serveur, jamais deduites du compteur local.
+  void _apresVisite(AppRole? role) {
+    _fermerConfirmation();
+    if (role != AppRole.guardian) {
+      return;
+    }
+    ref.invalidate(
+      verificationPrealableProvider(_demande(ref.read(sessionProvider))),
+    );
+  }
+
+  /// Referme la feuille « Quitter la visite ? » si elle est ouverte : une
+  /// visite terminee par le serveur ne laisse pas une question sans objet a
+  /// l'ecran.
+  void _fermerConfirmation() {
+    if (!_confirmationOuverte || !mounted) {
+      return;
+    }
+    Navigator.of(
+      context,
+      rootNavigator: true,
+    ).popUntil((Route<dynamic> route) => route is! PopupRoute<dynamic>);
+    Navigator.of(
+      context,
+    ).popUntil((Route<dynamic> route) => route is! PopupRoute<dynamic>);
+  }
+
+  /// L'Historique, segment Observations (maquette D2), pour l'enfant de la
+  /// visite quand il est connu.
+  void _voirObservations() {
+    final String? eleve = _eleveId ?? _enfantVisite;
+    GoRouter.of(context).go(
+      Uri(
+        path: Routes.tuteurSuiviObservations,
+        queryParameters: eleve == null ? null : <String, String>{'eleve': eleve},
+      ).toString(),
+    );
+  }
+
+  /// L'ecran de fin : la fin publiee par le moteur, le rang de la visite
+  /// selon le serveur, et les visites restantes relues apres la fermeture.
+  Widget _resultat(EtatVisiteObservation etat, DemandeVerification demande) {
+    final AsyncValue<VerificationPrealable> relue = ref.watch(
+      verificationPrealableProvider(demande),
+    );
+    final RestantesApresVisite restantes = switch (relue) {
+      AsyncValue<VerificationPrealable>(isLoading: true) =>
+        const RestantesEnLecture(),
+      AsyncValue<VerificationPrealable>(
+        :final VerificationPrealable value?,
+      ) when value.visitesMax != null =>
+        RestantesLues(
+          nombre: value.visitesRestantes,
+          dureeParVisite: value.dureeParVisite,
+        ),
+      _ => const RestantesInconnues(),
+    };
+    final int? rang = etat.visite?.visitNumber;
+    final int? max = etat.budget?.visitesMax;
+    return ResultatVisite(
+      fin: etat.fin ?? FinDeVisite.sortieVolontaire,
+      restantes: restantes,
+      rang: rang == null || rang <= 0 ? null : rang,
+      derniere: rang != null && max != null && max > 0 && rang >= max,
+      prenomEnfant: _prenomEnfant,
+      sortieConfirmee: etat.sortieConfirmee,
+      libelleRetour: _libelleRetour,
+      onRetour: _retour,
+      onObservations: _voirObservations,
+    );
+  }
+
   /// Le panneau de visite, alimente par la salle reellement rejointe.
   ///
   /// `VueObservationTuteur.depuis` ne laisse sortir que deux personnes de la
@@ -813,6 +933,10 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
               )
               .value;
     final String? enfant = vue.monEnfant?.nom;
+    // Retenus pour la fin de visite : la salle est refermee avant que l'ecran
+    // de fin ne s'affiche, et ses participants avec elle.
+    _prenomEnfant = enfant ?? _prenomEnfant;
+    _enfantVisite = etat.visite?.enfantConcerneId ?? _enfantVisite;
     return PanneauObservationTuteur(
       vue: vue,
       onQuitter: onQuitter ?? _quitter,

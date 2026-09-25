@@ -357,7 +357,10 @@ void main() {
       expect(salle.visites.sorties, <String>['s1']);
       expect(salle.moteur.departs, 1);
       expect(find.byType(PanneauObservationTuteur), findsNothing);
-      expect(find.text(t.tc.observation.fin.sortieVolontaire), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.resultat.premiereTerminee),
+        findsOneWidget,
+      );
     });
 
     testWidgets('le retour du systeme passe par la meme confirmation', (

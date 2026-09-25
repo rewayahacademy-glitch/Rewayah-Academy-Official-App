@@ -273,6 +273,48 @@ void main() {
     expect(visites.sorties, <String>['s1']);
     expect(find.byType(PanneauObservationTuteur), findsNothing);
     expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
+
+    // Lot O, sous-paquet 3 : la fin de visite (M5), puis le retour, touche.
+    // Le faux serveur rend une politique d'une seule visite : c'etait la
+    // derniere.
+    expect(
+      find.text(t.tc.observation.resultat.derniereTerminee),
+      findsOneWidget,
+    );
+    await _presser(tester, find.text(t.commun.etats.actions.retourAccueil));
+    expect(lieu(routeur), Routes.tuteurAccueil);
+    expect(find.text(t.nav.tuteur.historique), findsOneWidget);
+  });
+
+  testWidgets('telephone : fin de visite, « Voir mes observations » ouvre '
+      'l\'Historique, segment Observations', (WidgetTester tester) async {
+    final FauxPortVisite visites = FauxPortVisite();
+    final FauxPortPolitique politique = FauxPortPolitique();
+    addTearDown(politique.fermer);
+    final GoRouter routeur = await _monter(
+      tester,
+      visites: visites,
+      politique: politique,
+    );
+
+    await _presser(tester, find.text(t.tuteur.accueil.assister));
+    await _presser(tester, find.text(t.tc.observation.explication.observer));
+    await _presser(tester, find.text(t.tc.observation.visite.quitter));
+    await _presser(
+      tester,
+      find.text(t.tc.observation.visite.quitterConfirmer),
+    );
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await stabiliser(tester);
+
+    await _presser(
+      tester,
+      find.text(t.tc.observation.resultat.voirObservations),
+    );
+    expect(lieu(routeur), startsWith(Routes.tuteurSuiviObservations));
+    // L'Historique est une destination de la coquille : la navigation revient.
+    expect(find.text(t.nav.tuteur.historique), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets(

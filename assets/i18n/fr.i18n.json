@@ -2282,7 +2282,7 @@
         "minutesSecondes": "{m} min {s} s"
       },
       "refus": {
-        "politiqueDesactivee": "L'observation est désactivée pour ce groupe.",
+        "politiqueDesactivee": "L'observation est désactivée pour cette classe.",
         "quotaVisites": "Vous avez déjà utilisé vos visites pour cette séance.",
         "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",
         "lienTuteur": "Vous n'êtes rattaché à aucun élève de cette séance.",
@@ -2325,6 +2325,24 @@
         "seanceTerminee": "La séance est terminée.",
         "revocationServeur": "Votre observation a été interrompue.",
         "deconnexion": "La connexion a été perdue."
+      },
+      "resultat": {
+        "premiereTerminee": "Votre première visite est terminée",
+        "derniereTerminee": "Votre dernière visite est terminée",
+        "terminee": "Votre visite est terminée",
+        "dureeAtteinte": "Durée de visite atteinte",
+        "interrompue": "Observation interrompue",
+        "continuePour": "La séance continue pour {prenom}.",
+        "continueSansPrenom": "La séance continue.",
+        "resteUne": "Il vous reste une visite de {duree}. Revenez plus tard pour l'écouter.",
+        "restent": "Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter.",
+        "resteUneSansDuree": "Il vous reste une visite. Revenez plus tard pour l'écouter.",
+        "restentSansDuree": "Il vous reste {n} visites. Revenez plus tard pour l'écouter.",
+        "aucune": "Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.",
+        "prochaineSeance": "Vous pourrez observer la prochaine séance.",
+        "verification": "Vérification de vos visites restantes",
+        "inconnues": "Vos visites restantes n'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.",
+        "voirObservations": "Voir mes observations"
       },
       "annonce": {
         "tuteurObserve": "Tuteur de {prenomEnfant} observe",

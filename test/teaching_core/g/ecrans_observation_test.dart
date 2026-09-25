@@ -675,7 +675,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(moteur.departs, 1);
-      expect(find.text(t.tc.observation.fin.quotaAtteint), findsOneWidget);
+      expect(
+        find.text(t.tc.observation.resultat.dureeAtteinte),
+        findsOneWidget,
+      );
     });
 
     testWidgets(
@@ -708,7 +711,10 @@ void main() {
         // Le serveur, et lui seul, epuise le budget -- pendant la connexion.
         politique.flux.add(unBudget(restant: Duration.zero, peutEntrer: false));
         await tester.pumpAndSettle();
-        expect(find.text(t.tc.observation.fin.quotaAtteint), findsOneWidget);
+        expect(
+          find.text(t.tc.observation.resultat.dureeAtteinte),
+          findsOneWidget,
+        );
 
         // La connexion aboutit APRES la fin de la visite.
         connexion.complete();
