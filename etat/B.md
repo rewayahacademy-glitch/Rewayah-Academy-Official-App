@@ -295,3 +295,9 @@ Suite complete `flutter test` sous verrou : +2677 tests, 0 echec, code 0, 413 s 
 Tableau : P2-01/02/03/04/06 -> fait (preuve). P2-05 deja fait. Lignes L*-* d'une session anterieure -> verifie (verifie_par B-2026-09-25-coord). LA-3 motif reduit (texte signe P2). `ETAT_A.md` en-tete ecrite (nouvelle base, corrections, points ouverts : consentement P2, C-14/K6, O-4 icone horloge, icone femme).
 
 Statut : fini.
+
+## P2-07 socle mode demonstration tuteur : FAIT, suite a donner (25/09, session B-2026-09-25-coord)
+
+Branche `ui/tuteur-v1-demo` (worktree `C:\RA\lot-demo`) @ `c31fb7a`, poussee. `lib/features/demo/mode_demonstration.dart` : garde `demoTuteurActive` = `ENVIRONNEMENT` non vide et sans « prod » (casse/espaces ignores) ET `?demo=tuteur` dans l'adresse (le deploiement force PLAYGROUND=false, donc interrupteur a l'execution) ; `surchargesDemoTuteur()` leve StateError en production. Doubles : session tuteur (SourceSessionDemo), foyer 2 eleves (elevesDuFoyerProvider), acces, classes, seances/historique. Branche dans `lib/main.dart` apres Supabase.initialize. Tests : `test/features/demo/mode_demonstration_test.dart` (6). Suite complete verte (+2683, 0 echec), analyze propre.
+
+Reste (P2-07 suite) : observation simulee (ports tc_observation : politique, visite, annonce, historique), repere « Demonstration » visible, autres ports capacites (consentements, identite, notifications, paiements, progression, resume, support) encore en Indisponible ; verifier qu'aucun provider non surcharge n'appelle Supabase sur les ecrans tuteur ; controle visuel sur l'apercu.
