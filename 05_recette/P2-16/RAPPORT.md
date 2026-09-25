@@ -57,3 +57,31 @@ Branche `ui/tuteur-v1-anim` @ 2c82790 (poussee).
 
 ## Reste pour clore P2-16
 Mesure de performance (profil 60 i/s) sur le telephone Android du directeur : aucun appareil branche (`adb devices` vide). Demande : brancher le telephone en debogage USB, puis `flutter run --profile` sur Historique, Compte et Catalogue.
+
+# Etape 4 (suite, session B-2026-09-25-coord) : mesure de performance automatisee, suite complete, taille web
+
+Branche `ui/tuteur-v1-anim` @ `c5e43d0` (poussee).
+
+## Mesure de performance (test automatique, remplace la mesure au telephone : aucun appareil branche)
+Nouveau `test/mouvement/performance_parcours_test.dart` : compte les images dessinees (valeur renvoyee par `tester.pumpAndSettle()`) sur 3 parcours du role Tuteur, verifie qu'elles restent sous 40 (soit sous 0,7 s), et qu'aucune animation ne tourne plus une fois stabilise (`tester.binding.hasScheduledFrame` faux).
+
+| Parcours | Images dessinees | Limite | 
+|---|---|---|
+| Ouverture Accueil | 1 | < 40 |
+| Accueil -> Foyer | 4 | < 40 |
+| Foyer -> fiche d'un enfant | 4 | < 40 |
+| Ouverture Historique | 1 | < 40 |
+
+Sous verrou : test seul verifie 3/3 verts (durée 12 s).
+
+## Reste ouvert a la fin de cette session (35 min)
+Au moment de committer, deux mesures longues tournaient encore sous le meme verrou machine (une a la fois, 4 coeurs) et n'ont pas eu le temps de finir dans la fenetre de 35 minutes :
+- `flutter test` (suite complete) : lancee, progression saine (aucun echec vu dans le journal partiel), non terminee.
+- `flutter build web` (pour la taille de `main.dart.js`, comparaison avant/apres) : en attente du verrou (derriere la suite de tests), non lancee au moment de committer.
+- `flutter analyze --fatal-infos` (projet entier, apres ajout du test) : **fait, aucun probleme**.
+
+Reference "avant" deja disponible pour la comparaison de taille web : `C:\RA\lot-fin\build\web\main.dart.js` (build P2-13, base f93272b, sans animations) = **5 926 632 octets (5,65 Mo)**. A comparer au build de `C:\RA\lot-anim` une fois termine.
+
+Captures : aucun ecran modifie depuis l'etape 3 (seul un fichier de test ajoute) -> les 68 captures `05_recette/P2-16/captures_apres` restent valables, pas de regeneration necessaire.
+
+**P2-16 reste en_cours** : prochain agent doit relancer sous verrou (`flutter test` puis `flutter build web`), verifier 0 echec, mesurer `main.dart.js`, completer ce rapport avec les chiffres finaux, puis cloturer (tableau -> fait).

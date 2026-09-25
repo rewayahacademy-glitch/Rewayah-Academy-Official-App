@@ -409,3 +409,15 @@ Statut : a_suivre.
 Reste unique : mesure de performance sur telephone (aucun appareil branche, attend le directeur). P2-16 reste en_cours.
 
 Statut : a_suivre (attend telephone).
+
+## P2-16 suite (performance/tests/captures) : A_SUIVRE (25/09, session B-2026-09-25-coord)
+
+`ui/tuteur-v1-anim` @ `c5e43d0` (poussee). Ajout `test/mouvement/performance_parcours_test.dart` : mesure automatique (pumpAndSettle compte les images) sur 3 parcours (Accueil, Accueil->Foyer->fiche, Historique) : 1, 4+4, 1 images, tres large marge sous 40 ; `hasScheduledFrame` faux apres stabilisation sur les 3. `analyze --fatal-infos` propre (projet entier).
+
+Limite 35 min atteinte avant la fin de la suite complete `flutter test` et de `flutter build web` (lances sous verrou, en cours/en attente au moment de committer ; aucun echec vu dans le journal partiel de la suite). Reference "avant" pour la taille web deja en main : `C:\RA\lot-fin\build\web\main.dart.js` = 5 926 632 octets (build P2-13, sans animations).
+
+Captures : rien de visuel n'a change depuis l'etape 3 (2c82790) -> les 68 captures existantes restent valables, pas de regeneration necessaire.
+
+Prochain agent : reprendre dans `C:\RA\lot-anim` (meme branche), relancer sous verrou `flutter test` puis `flutter build web`, verifier 0 echec / code 0, noter la taille de `main.dart.js`, completer `05_recette\P2-16\RAPPORT.md` (etape 4) avec les chiffres finaux, mettre a jour le tableau (ligne P2-16 -> fait, preuve), commit+push pilotage.
+
+Statut : a_suivre.
