@@ -439,3 +439,11 @@ Aucun code touche a cette etape (seules verifications finales). Captures inchang
 **P2-16 est termine.** Prochaine etape du tableau a determiner par le coordinateur (voir lignes P2-14/CO-04 en attente du directeur, et etat general du role Tuteur).
 
 Statut : fini.
+
+## 25/09 soir : ARRÊT demandé par le directeur (poste B éteint)
+- Rien ne tourne. Rôle Tuteur intégré : origin/ui/tuteur-v1 @ 92f5cf7 (2723 tests verts, animations P2-16).
+- Essai sur téléphone (P2-16, mesure de fluidité) : NON FAIT. Téléphone Honor LLY-NX1 (A6KXVB4417004321) autorisé en débogage USB sur ce PC.
+  - Cause : l'APK ne se construit pas. `:sentry_flutter:compileProfileKotlin` échoue (« Language version 1.6 is no longer supported »). Probablement aussi la cause du rouge « CI / Flutter (apk) » de la PR #3.
+  - Correctif en cours, NON VÉRIFIÉ : branche `ui/tuteur-v1-android` @ commit wip (android/build.gradle.kts force Kotlin 2.0 pour tous les sous-projets), worktree C:\RA\lot-android.
+  - Reprise : `flutter build apk --debug` puis `--profile` sous verrou dans C:\RA\lot-android ; si OK, fusion dans la base, puis mesure avec la méthode prête : 05_recette/P2-16/RAPPORT.md « Mesure sur telephone », mesure/ecoute.dart et analyse.dart.
+- Autres points ouverts : CI rouge sur la PR #3 (installer gh pour lire les journaux) ; texte de consentement à valider (directeur) ; poste A relancé sur le « Complément Tuteur » (branche ui/tuteur-v1-t à venir).
