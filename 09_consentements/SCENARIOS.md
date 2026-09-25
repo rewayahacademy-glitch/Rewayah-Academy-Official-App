@@ -4,12 +4,20 @@ Date : 25/09/2026. Rien ici n'est un avis juridique. Un article n'est cité que 
 
 Abréviations : RGPD = règlement (UE) 2016/679. LIL = loi française Informatique et Libertés. GN = loi guinéenne L/2016/037/AN. SN = loi sénégalaise 2008-12 (autorité : CDP). Textes = `TEXTES_V2.md`. Écarts = `CHARTE.md` section 9.
 
-Champ d'application : le RGPD s'applique aux familles situées dans l'UE dès que l'académie leur offre le service (RGPD art. 3.2). Si l'académie n'est pas établie dans l'UE, un représentant dans l'UE peut être exigé (RGPD art. 27) : à vérifier par un juriste. Les lois GN et SN s'appliquent aux familles et traitements situés dans ces pays : portée exacte à vérifier.
+Autres abréviations : UK GDPR = RGPD tel que conservé au Royaume-Uni (mêmes numéros d'articles) ; DPA 2018 = Data Protection Act 2018 ; ICO = Information Commissioner's Office ; Children's Code = ICO Age Appropriate Design Code (15 normes) ; CRA 2015 = Consumer Rights Act 2015 ; CCR 2013 = Consumer Contracts Regulations 2013.
+
+Champ d'application (information du coordinateur, 25/09) :
+- **Responsable du traitement : Rewayah Academy Ltd, société de droit anglais (Angleterre et pays de Galles).** Droit principal : UK GDPR et DPA 2018. Autorité principale : ICO. L'académie doit être enregistrée auprès de l'ICO et payer la « data protection fee ».
+- Familles dans l'UE : le RGPD s'applique aussi (RGPD art. 3.2, offre de services à des personnes dans l'UE). Un représentant dans l'UE (RGPD art. 27) est probablement requis : juriste. Autorité compétente pour une famille française : CNIL.
+- Familles en Guinée et au Sénégal : lois GN et SN en complément ; portée exacte à vérifier.
+- Écrans enfants : le Children's Code de l'ICO est la référence de conception pour tous les rôles enfants (intérêt supérieur de l'enfant, réglages protecteurs par défaut, minimisation, aucun « nudge », géolocalisation coupée, transparence adaptée à l'âge, contrôle parental signalé à l'enfant).
+- Âge du consentement numérique : 13 ans au Royaume-Uni (DPA 2018 s. 9, à vérifier), 15 ans en France (LIL art. 45), à vérifier en Guinée et au Sénégal. Quel âge s'applique à une famille française servie par une société anglaise : juriste. Règle de prudence proposée : le plus protecteur des deux (15 ans pour les familles en France).
+- Contrat : le consommateur UE garde les protections impératives de son pays, quel que soit le droit choisi (Rome I art. 6).
 
 ## Point sensible : l'inscription révèle une conviction religieuse
 
 - **Risque.** Être inscrit dans une école de Coran peut révéler une conviction religieuse. La Cour de justice de l'UE juge qu'une donnée qui révèle indirectement une catégorie sensible est elle-même sensible (arrêt C-184/20, 1er août 2022). Le RGPD art. 9.1 interdit par principe ce traitement, sauf exception de l'art. 9.2.
-- **Base légale proposée.** Consentement explicite (RGPD art. 9.2.a), donné par la personne adulte ou par le titulaire de l'autorité parentale, en plus de la base du contrat (art. 6.1.b) pour le service. L'exception 9.2.d (organisme à but non lucratif à finalité religieuse, pour ses membres) ne vaut que si l'académie a ce statut : à vérifier par un juriste. Au Sénégal, la loi 2008-12 soumet les données sensibles à un régime renforcé (autorisation préalable de la CDP probable) : à vérifier. En Guinée : à vérifier.
+- **Base légale proposée.** Consentement explicite (UK GDPR et RGPD art. 9.2.a ; au Royaume-Uni, conditions complémentaires du DPA 2018 annexe 1 à vérifier), donné par la personne adulte ou par le titulaire de l'autorité parentale, en plus de la base du contrat (art. 6.1.b) pour le service. L'exception 9.2.d (organisme à but non lucratif à finalité religieuse, pour ses membres) ne vaut que si l'académie a ce statut : à vérifier par un juriste. Au Sénégal, la loi 2008-12 soumet les données sensibles à un régime renforcé (autorisation préalable de la CDP probable) : à vérifier. En Guinée : à vérifier.
 - **Minimisation.** Aucun champ « religion », « pratique », « madhhab » ou « mosquée ». Aucune question sur la pratique des parents. Le niveau de lecture du Coran est une donnée pédagogique, pas une donnée de foi : ne pas l'enrichir de commentaires sur la pratique. Communications (courriels, SMS, notifications) au libellé neutre (« Rewayah », pas de verset ni de mot religieux dans l'objet ou l'aperçu de notification sur écran verrouillé). Libellé bancaire neutre à étudier. Pas de publicité ciblée, pas de partage avec des tiers à des fins commerciales, pas de réseaux sociaux intégrés qui pistent.
 - **Texte.** Accord A0 (TEXTES_V2) : phrase explicite « Votre inscription montre que vous ou votre enfant apprenez le Coran. C'est une information sur la religion. »
 - **Preuve.** Ligne d'accord A0 datée et versionnée ; registre des traitements avec la mention « donnée sensible, art. 9.2.a » ; AIPD (analyse d'impact, RGPD art. 35) car mineurs + donnée sensible + enregistrement.
@@ -97,7 +105,7 @@ Chaque ligne : risque ; règle ; parade dans le texte ; parade dans l'app ; preu
 
 ### S12 - Fuite de données (piratage, erreur de droits, jeton volé)
 - Risque : enfants, pièces d'identité, donnée religieuse exposés.
-- Règle : RGPD art. 32 (sécurité), 33 (notification à l'autorité sous 72 heures), 34 (information des personnes si risque élevé). SN et GN : obligations à vérifier.
+- Règle : UK GDPR et RGPD art. 32 (sécurité), 33 (notification à l'autorité sous 72 heures : ICO, et autorités UE concernées via le représentant, à vérifier), 34 (information des personnes si risque élevé). SN et GN : obligations à vérifier.
 - Texte : A1 décrit les mesures en mots simples et l'engagement de prévenir les familles. Pas de promesse de « risque zéro ».
 - App : procédure écrite ; registre des violations ; RLS et journal chaîné (déjà en place).
 - Preuve : registre des violations, même sans notification ; tests RLS ; procédure datée.
@@ -126,7 +134,7 @@ Chaque ligne : risque ; règle ; parade dans le texte ; parade dans l'app ; preu
 - Preuve : déclaration datée ; échanges archivés.
 
 ### S17 - Mineur de 15 ans ou plus qui veut décider seul
-- Règle : en France, un mineur de 15 ans peut consentir seul à un service en ligne (LIL art. 45) ; en dessous, consentement conjoint mineur et parent. Ailleurs : âge à vérifier par un juriste (GN, SN).
+- Règle : en France, un mineur de 15 ans peut consentir seul à un service en ligne (LIL art. 45) ; en dessous, consentement conjoint mineur et parent. Au Royaume-Uni, 13 ans (DPA 2018 s. 9, à vérifier). Ailleurs : âge à vérifier par un juriste (GN, SN).
 - Texte : variante « élève de 15 ans et plus » ; l'élève lit ses propres accords.
 - App : à 15 ans, l'élève peut voir et retirer ses accords caméra, observation et photo ; le contrat de paiement reste au parent.
 - Preuve : date de naissance ; ligne d'accord au nom de l'élève.
@@ -140,7 +148,7 @@ Chaque ligne : risque ; règle ; parade dans le texte ; parade dans l'app ; preu
 
 ### S20 - Transfert des données hors UE ou hors Guinée ou Sénégal
 - Risque : données de familles européennes hébergées hors UE, ou données guinéennes et sénégalaises hébergées en Europe ou aux États-Unis sans formalité.
-- Règle : RGPD art. 44 et suivants (décision d'adéquation art. 45, clauses types art. 46) ; art. 28 (contrat de sous-traitance) avec Supabase, Cloudflare, LiveKit, Vercel. SN et GN : conditions de transfert à vérifier par un juriste.
+- Règle : responsable au Royaume-Uni : UK GDPR chapitre V (adéquation britannique, ou IDTA ou addendum britannique aux clauses types de l'UE) pour les transferts depuis le Royaume-Uni vers l'hébergement Supabase et vers l'Afrique ; RGPD art. 44 et suivants (décision d'adéquation art. 45, clauses types art. 46) pour les données de familles UE ; art. 28 (contrat de sous-traitance) avec Supabase, Cloudflare, LiveKit, Vercel. SN et GN : conditions de transfert à vérifier par un juriste.
 - Texte : A1 nomme les prestataires, le pays d'hébergement et la garantie.
 - App : rien à l'écran ; confirmer la région Supabase (non lisible dans le dépôt) et R2.
 - Preuve : contrats de sous-traitance signés (DPA), liste des sous-traitants, clauses types.
@@ -196,10 +204,40 @@ Chaque ligne : risque ; règle ; parade dans le texte ; parade dans l'app ; preu
 - App : jeton limité, traçé, sans données d'identité ; mentionné dans le registre comme accès interne outillé.
 - Preuve : journal des jetons.
 
+### S31 - Droit de rétractation (famille consommateur)
+- Risque : un parent demande à être remboursé 10 jours après l'achat ; ou l'académie facture sans avoir informé du droit de rétractation.
+- Règle : CCR 2013 : 14 jours de rétractation pour un service conclu à distance ; si le service commence avant la fin du délai, il faut une demande expresse du consommateur ; en cas de rétractation ensuite, il paie une part proportionnée. Numéros de règlements à vérifier par un juriste. Familles UE : règles équivalentes de leur pays (Rome I art. 6).
+- Texte : A1 bis (TEXTES_V2) : information sur la rétractation, case séparée non précochée « Je demande que les cours commencent avant la fin des 14 jours ».
+- App : formulaire de rétractation dans Compte ; reçu daté.
+- Preuve : ligne de demande expresse datée ; information remise avant paiement ; confirmation sur support durable (courriel).
+
+### S32 - Clauses abusives et transparence du contrat
+- Règle : CRA 2015 partie 2 (une clause abusive ne lie pas le consommateur ; exigence de transparence) ; en France, Code de la consommation (clauses abusives) : à vérifier.
+- Texte : pas de clause d'exonération, pas de modification unilatérale sans préavis ni droit de résilier, pas de frais cachés.
+- Preuve : relecture juridique datée du texte complet.
+
+### S33 - Safeguarding et antécédents des enseignants
+- Risque : un enseignant ayant des antécédents incompatibles avec le travail auprès d'enfants.
+- Règle : politique de safeguarding (bonnes pratiques Keeping Children Safe in Education et NSPCC pour l'enseignement en ligne) ; contrôle DBS pour les enseignants au Royaume-Uni (niveau de contrôle à vérifier) ; équivalent (casier judiciaire) dans le pays de chaque enseignant : à vérifier par un juriste.
+- Texte : A1 dit que chaque enseignant est vérifié avant d'enseigner et qu'une personne est désignée pour la protection des enfants ; contrat enseignant E1 prévoit la vérification et la conduite attendue.
+- App : dossier enseignant avec date du dernier contrôle et échéance ; blocage d'affectation sans contrôle valide ; responsable safeguarding nommé et joignable depuis le bouton Signaler.
+- Preuve : politique de safeguarding signée et datée ; registre des contrôles (sans copie du casier au-delà du nécessaire) ; formation des enseignants.
+
+### S34 - Enregistrement ICO et conformité du responsable
+- Risque : traitement sans enregistrement ni redevance ICO ; absence de représentant UE.
+- App : aucune.
+- Preuve : numéro d'enregistrement ICO, reçu de la redevance, contrat du représentant UE si requis.
+
+### S35 - Écrans destinés aux enfants (Children's Code)
+- Risque : un écran enfant pousse à partager plus (« nudge »), montre des réglages ouverts par défaut, ou cache à l'enfant que ses parents le suivent.
+- Règle : Children's Code de l'ICO (15 normes) comme référence ; RGPD art. 25 (protection dès la conception).
+- App : réglages les plus protecteurs par défaut (caméra coupée, pas de photo, pas de géolocalisation, pas de profilage) ; texte à la hauteur de l'âge ; l'enfant voit quand un parent ou un contrôleur peut écouter (bandeau permanent, déjà présent) ; pas de série, badge ou notification conçus pour retenir l'enfant au-delà du cours.
+- Preuve : grille des 15 normes remplie écran par écran, jointe à l'AIPD.
+
 ## Les 5 risques majeurs
 
 1. Consentement groupé : un seul « J'ai lu et j'accepte » couvre conditions, enregistrement audio et observation, sans bouton de refus ni texte complet (S01, S03, S08).
 2. Donnée religieuse (art. 9) et mineurs sans base légale écrite, sans AIPD, sans registre (point sensible, S12).
 3. Pas de retrait ni d'exercice des droits dans l'app (S04, S13 à S15), et preuve d'accord effaçable avec le profil (S14).
 4. Caméra automatique dès 11 ans et observation dans une classe où toutes les familles n'ont pas dit oui (S06, S07).
-5. Transferts et sous-traitants non documentés (Supabase, R2, LiveKit, Vercel) pour des familles UE, GN et SN (S20).
+5. Conformité du responsable non établie : enregistrement ICO, représentant UE, transferts (IDTA, clauses types) et sous-traitants non documentés (Supabase, R2, LiveKit, Vercel), droit de rétractation et contrôle des antécédents des enseignants absents (S20, S31, S33, S34).

@@ -2,6 +2,15 @@
 
 Date : 25/09/2026. S'applique à tout texte d'accord, de contrat, d'information ou de conservation, pour tous les rôles : tuteur, enfant, élève adulte, enseignant, admin, contrôleur.
 
+## 0. Qui est responsable, quel droit
+
+- Responsable du traitement : **Rewayah Academy Ltd, société de droit anglais** (Angleterre et pays de Galles), numéro {numero_societe}, siège {adresse_siege}.
+- Droit principal : UK GDPR et Data Protection Act 2018. Autorité principale : ICO (enregistrement et « data protection fee »).
+- Familles dans l'UE : RGPD aussi (art. 3.2) ; représentant dans l'UE (art. 27) probablement requis.
+- Familles en Guinée et au Sénégal : lois L/2016/037/AN et 2008-12 en complément.
+- Consommateurs : Consumer Rights Act 2015 (clauses abusives, transparence), Consumer Contracts Regulations 2013 (rétractation 14 jours) ; un consommateur UE garde les protections impératives de son pays (Rome I art. 6).
+- Enfants : Children's Code de l'ICO = référence de conception pour tout écran vu par un enfant ; politique de safeguarding.
+
 ## 1. Principes
 
 1. **Loyauté.** On dit tout ce qu'on fait, avant de le faire. Rien de caché dans un texte long.
@@ -15,7 +24,8 @@ Date : 25/09/2026. S'applique à tout texte d'accord, de contrat, d'information 
 9. **Honnêteté sur les limites.** Dire ce qu'on ne peut pas empêcher (captures par d'autres familles, surveillance à la maison).
 10. **Le texte suit la réalité.** Un bandeau ou un texte ne décrit que ce que le serveur fait vraiment (ex. enregistrement réel).
 11. **Langue et lisibilité.** Français facile, phrases courtes, pas de tiret cadratin. Même version en poular et anglais, traduite par un humain.
-12. **Mineurs.** Le parent décide ; l'enfant est informé avec des mots de son âge ; à 15 ans (France, LIL art. 45) l'élève peut décider seul des accords facultatifs ; autres pays : âge à vérifier.
+12. **Mineurs.** Le parent décide ; l'enfant est informé avec des mots de son âge ; l'élève décide seul des accords facultatifs à partir de l'âge du consentement numérique : 13 ans au Royaume-Uni (DPA 2018 s. 9, à vérifier), 15 ans en France (LIL art. 45), à vérifier en Guinée et au Sénégal. En cas de doute, le plus protecteur.
+13. **Children's Code (15 normes ICO).** Intérêt supérieur de l'enfant ; réglages protecteurs par défaut ; minimisation ; aucun « nudge » vers moins de protection ; géolocalisation coupée ; pas de profilage ; transparence adaptée à l'âge ; l'enfant voit quand un parent ou l'académie peut l'écouter ou le suivre ; outils pour signaler et exercer ses droits.
 
 ## 2. Gabarit d'un texte d'accord
 
@@ -82,8 +92,12 @@ Mention sur 1, 3, 4, 8 : donnée pouvant révéler une conviction religieuse (ar
 9. Registre des violations de données et procédure 72 heures.
 10. Registre des demandes de droits et délais de réponse.
 11. Procédure de signalement et de protection de l'enfance, charte enseignant signée.
-12. Formalités locales : déclaration ou autorisation CDP (Sénégal), formalités Guinée, représentant UE si nécessaire.
+12. Formalités : numéro d'enregistrement ICO et reçu de la data protection fee ; contrat du représentant UE si requis ; déclaration ou autorisation CDP (Sénégal) ; formalités Guinée.
 13. Nom et contact du référent données (DPO si obligatoire : à vérifier).
+14. Transferts : analyses de transfert, IDTA ou addendum britannique, clauses types UE, pour chaque flux (Royaume-Uni vers hébergement, Royaume-Uni vers Afrique, UE vers Royaume-Uni).
+15. Politique de safeguarding datée, responsable désigné, registre des contrôles d'antécédents des enseignants (DBS au Royaume-Uni, équivalent ailleurs), formations.
+16. Grille Children's Code remplie écran par écran pour les écrans enfants.
+17. Contrat consommateur : information précontractuelle, rétractation, demandes expresses de démarrage anticipé, confirmations sur support durable.
 
 ## 7. Règles par rôle
 
@@ -109,6 +123,12 @@ Mention sur 1, 3, 4, 8 : donnée pouvant révéler une conviction religieuse (ar
 11. Directives post mortem et décès.
 12. Messages de prospection (règles par pays).
 13. Blocage de capture d'écran et clause d'interdiction de captation (qualification, sanctions).
+14. Enregistrement ICO, montant de la redevance, nécessité d'un représentant UE et choix de celui-ci.
+15. Mécanismes de transfert UK (adéquation, IDTA, addendum) et UE ; conditions de transfert vers et depuis la Guinée et le Sénégal.
+16. Âge du consentement numérique applicable à chaque famille (UK 13, France 15, Guinée, Sénégal) quand le responsable est au Royaume-Uni.
+17. Rétractation CCR 2013 et règles UE équivalentes ; clause de droit applicable et de juridiction (Rome I art. 6, Bruxelles I bis pour les familles UE) ; conformité CRA 2015 du texte complet.
+18. Safeguarding : niveau de contrôle DBS requis pour des enseignants en ligne, équivalents en Guinée, au Sénégal et en France ; obligations de signalement.
+19. Conditions du DPA 2018 annexe 1 pour la donnée religieuse au Royaume-Uni.
 
 ## 9. Écarts trouvés dans le code actuel (corrections à faire, non codées)
 
@@ -133,4 +153,8 @@ Mention sur 1, 3, 4, 8 : donnée pouvant révéler une conviction religieuse (ar
 | E17 | Pas de blocage de capture d'écran dans la salle | salle (Android) | FLAG_SECURE ; rappel dans la salle |
 | E18 | Le changement de `camera_policy` n'a pas de trace datée visible (à vérifier dans le journal 0009) | `service_appairage.dart` | Événement de journal à chaque changement |
 | E19 | Région d'hébergement et sous-traitants non documentés dans le dépôt | `supabase/config.toml` | Fiche sous-traitants dans le dossier d'audit |
-| E20 | Aucune explication pour l'enfant lui-même | salle, interface guidée | Écran enfant (section 7) |
+| E20 | Aucune explication pour l'enfant lui-même | salle, interface guidée | Écran enfant (section 7), conforme au Children's Code |
+| E21 | Aucune identité du responsable (Rewayah Academy Ltd, numéro, adresse, ICO) dans l'app | signature, Compte | Clé `accordsV2.responsable` ; page Informations légales |
+| E22 | Aucune information ni formulaire de rétractation de 14 jours, ni demande expresse de démarrage anticipé | paiement, Compte | Texte A1 bis ; formulaire ; trace datée |
+| E23 | Aucun suivi des contrôles d'antécédents des enseignants ; affectation possible sans contrôle | dossier enseignant, affectation | Date et échéance du contrôle ; blocage serveur de l'affectation |
+| E24 | Aucun responsable safeguarding joignable depuis l'app | salle, Compte | Contact dans Signaler et dans A1 |

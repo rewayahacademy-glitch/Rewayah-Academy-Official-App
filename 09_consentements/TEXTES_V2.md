@@ -7,6 +7,9 @@ Principe : un accord = un sujet. Chaque accord a deux boutons de même poids : �
 
 Nouvelles sortes proposées en base (Écart E1) : `service_terms`, `sensitive_data`, `camera`, `recording_objection` (opposition, pas un accord), `observation`, `photo`, `news`. Version de toutes : `2026-10-v2`.
 
+Identité du responsable, à afficher dans A1 et dans le texte complet (clé `accordsV2.responsable`) :
+« Rewayah Academy Ltd, société de droit anglais (Angleterre et pays de Galles), immatriculée sous le numéro {numero_societe}, siège : {adresse_siege}. Enregistrée auprès de l'ICO sous le numéro {numero_ico}. Contact données : {contact_donnees}. Représentant dans l'Union européenne : {representant_ue} (si requis). »
+
 Mots à remplacer : {prenom} = prénom de l'enfant ; {duree_enreg} = durée de conservation des enregistrements (30 jours aujourd'hui) ; {n_visites}, {minutes} lus depuis la politique de la classe ; {pays_hebergement} à confirmer.
 
 ---
@@ -41,6 +44,8 @@ Remplace : `contrat.titre`, `contrat.intro`, `contrat.lireTexte`, `contrat.accep
 
 > **Titre :** Les conditions du service
 >
+> **Qui nous sommes.** Rewayah Academy Ltd, société de droit anglais, numéro {numero_societe}, {adresse_siege}. Nous sommes responsables de vos données.
+>
 > **Ce que nous faisons.** Nous donnons des cours de Coran en direct, en visio, avec un enseignant. Pour cela, nous gardons : votre nom, votre courriel ou téléphone, le prénom et la date de naissance de {prenom}, ses horaires, sa présence, ses progrès, et vos paiements.
 >
 > **Pourquoi.** Pour organiser les cours, suivre les progrès, vous facturer et protéger les enfants.
@@ -59,15 +64,35 @@ Remplace : `contrat.titre`, `contrat.intro`, `contrat.lireTexte`, `contrat.accep
 > - Pour un jeune enfant, un adulte reste à portée de voix pendant le cours. L'enseignant anime le cours. Il ne peut pas surveiller ce qui se passe chez vous.
 > - Personne chez vous ne filme, ne photographie ni n'enregistre le cours. Les autres enfants ont droit au respect de leur vie privée. Si cela arrive, nous pouvons suspendre le compte.
 >
-> **Ce que nous nous engageons à faire.** Protéger vos données. Vous prévenir vite si elles sont exposées. Répondre à vos demandes sous un mois. Traiter chaque signalement.
+> **Ce que nous nous engageons à faire.** Protéger vos données. Vous prévenir vite si elles sont exposées. Répondre à vos demandes sous un mois. Traiter chaque signalement. Vérifier chaque enseignant avant qu'il enseigne à des enfants. Une personne de l'académie est chargée de la protection des enfants : {responsable_safeguarding}.
 >
-> **Vos droits.** Voir vos données, les corriger, les effacer, les récupérer, vous opposer, retirer un accord. Tout se fait dans Compte, Mes données, ou en écrivant à {contact_donnees}. Vous pouvez aussi vous plaindre auprès de l'autorité de votre pays : CNIL en France, CDP au Sénégal, autorité compétente en Guinée (nom à vérifier).
+> **Vos droits.** Voir vos données, les corriger, les effacer, les récupérer, vous opposer, retirer un accord. Tout se fait dans Compte, Mes données, ou en écrivant à {contact_donnees}. Vous pouvez aussi vous plaindre auprès d'une autorité : l'ICO au Royaume-Uni, la CNIL en France, la CDP au Sénégal, l'autorité compétente en Guinée (nom à vérifier).
+>
+> **La loi du contrat.** Le contrat suit le droit anglais. Si vous habitez dans un autre pays, vous gardez les protections de consommateur de votre pays. Vous pouvez saisir le tribunal de votre pays.
 >
 > **Si vous refusez.** Nous ne pouvons pas ouvrir le compte. Nous effaçons ce que vous avez saisi sous 30 jours.
 >
 > [ Lire le texte complet ] [ J'accepte ] [ Je refuse ]
 
 Déclaration séparée, case non précochée (clé `accordsV2.conditions.declarationAutorite`) : « Je déclare avoir l'autorité parentale sur {prenom}. »
+
+---
+
+## A1 bis - Le droit de changer d'avis (14 jours)
+
+Rôle : tuteur ou élève adulte qui paie. Base : CCR 2013 (Royaume-Uni) et règles équivalentes du pays de la famille ; à valider par un juriste. Nouvelles clés : `accordsV2.retractation.*`. Affiché avant le paiement, puis confirmé par courriel.
+
+> **Titre :** Vous pouvez changer d'avis pendant 14 jours
+>
+> **Ce que dit la loi.** Après votre achat, vous avez 14 jours pour changer d'avis, sans donner de raison.
+>
+> **Si les cours commencent avant la fin des 14 jours.** Vous pouvez nous demander de commencer tout de suite. Si vous changez d'avis ensuite, vous payez seulement les cours déjà suivis. Le reste vous est remboursé.
+>
+> **Comment faire.** Compte, Paiements, Changer d'avis. Ou écrivez à {contact_donnees}. Nous vous remboursons sous 14 jours.
+>
+> [ ] Je demande que les cours commencent avant la fin des 14 jours. (case facultative, non précochée)
+>
+> **Si vous ne cochez pas.** Les cours commencent après les 14 jours. Vous pouvez aussi cocher plus tard.
 
 ---
 
@@ -93,7 +118,7 @@ Remplace : `ficheEleve.camera.autorisee`, `ficheEleve.camera.interdite`, `admin.
 >
 > [ J'accepte ] [ Je refuse ]
 
-`admin.configuration.ageCameraAutoDetail` v2 : « Âge à partir duquel l'élève peut décider seul de sa caméra. En dessous, seul l'accord du tuteur ouvre la caméra. » (valeur proposée : 15, à valider par pays).
+`admin.configuration.ageCameraAutoDetail` v2 : « Âge à partir duquel l'élève peut décider seul de sa caméra. En dessous, seul l'accord du tuteur ouvre la caméra. » (valeur proposée : 15 pour les familles en France ; 13 au Royaume-Uni selon DPA 2018 s. 9 à vérifier ; à valider par pays. Children's Code : caméra coupée par défaut à tout âge).
 
 ---
 
@@ -194,4 +219,4 @@ Nouvelles clés : `accordsV2.messages.*`.
 
 ## Récapitulatif
 
-8 textes : A0 religion, A1 conditions, A2 caméra, A3 enregistrement et contrôle (plus E1 enseignant), A4 observation, A5 photo, A6 messages, A7 textes courts (kyc, reçus, nouvelle version).
+9 textes : A0 religion, A1 conditions (avec l'identité de Rewayah Academy Ltd), A1 bis rétractation, A2 caméra, A3 enregistrement et contrôle (plus E1 enseignant), A4 observation, A5 photo, A6 messages, A7 textes courts (kyc, reçus, nouvelle version).
