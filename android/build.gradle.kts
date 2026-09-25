@@ -22,3 +22,15 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+// Certains plugins Flutter anciens (sentry_flutter 8.x) forcent languageVersion = "1.6",
+// que le compilateur Kotlin 2.x refuse (« Language version 1.6 is no longer supported »).
+// On impose la plus basse version encore supportee a toutes les compilations Kotlin.
+subprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions {
+            languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+            apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+        }
+    }
+}
