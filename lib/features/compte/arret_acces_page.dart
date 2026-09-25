@@ -79,6 +79,10 @@ String? libelleEffet(String code) => switch (code) {
 /// Vrai si l'apercu dit tout ce que la confirmation engage pour [ids] : une
 /// entree par profil demande, et pour chaque profil eligible une date
 /// d'effet, un solde conserve et des consequences toutes connues.
+///
+/// ponytail: garde-fou d'affichage, aucun calcul (constat 8, LT-F). Plafond :
+/// la regle vit cote client ; un indicateur `confirmable` rendu par le
+/// serveur (a ajouter au contrat DB-FIN-05) remplacera cette fonction.
 bool apercuComplet(ApercuAnnulation apercu, List<String> ids) {
   final Set<String> rendus = <String>{
     for (final ConsequencesAnnulation c in apercu.profils) c.profilId,
