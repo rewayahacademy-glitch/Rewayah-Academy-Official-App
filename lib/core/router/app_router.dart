@@ -92,6 +92,7 @@ import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../mouvement/transitions.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -417,58 +418,67 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurAccueil,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const AccueilFamillePage(),
+                pageBuilder: glissee(
+                  (GoRouterState _) => const AccueilFamillePage(),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'notifications',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const NotificationsPage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const NotificationsPage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'classes/catalogue',
-                    builder: (BuildContext _, GoRouterState etat) =>
-                        CatalogueClassesPage(eleveId: _eleve(etat)),
+                    pageBuilder: glissee(
+                      (GoRouterState etat) =>
+                          CatalogueClassesPage(eleveId: _eleve(etat)),
+                    ),
                   ),
                   GoRoute(
                     path: 'classes/:classeId',
-                    builder: (BuildContext _, GoRouterState etat) =>
-                        ClasseTuteurPage(
-                          classeId: _parametre(etat, 'classeId'),
-                          eleveId: _eleve(etat),
-                        ),
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => ClasseTuteurPage(
+                        classeId: _parametre(etat, 'classeId'),
+                        eleveId: _eleve(etat),
+                      ),
+                    ),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'planning',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            PlanningClassePage(
-                              classeId: _parametre(etat, 'classeId'),
-                              eleveId: _eleve(etat),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => PlanningClassePage(
+                            classeId: _parametre(etat, 'classeId'),
+                            eleveId: _eleve(etat),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'travail',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            TravailClassePage(
-                              classeId: _parametre(etat, 'classeId'),
-                              eleveId: _eleve(etat),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => TravailClassePage(
+                            classeId: _parametre(etat, 'classeId'),
+                            eleveId: _eleve(etat),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'ressources',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            RessourcesClassePage(
-                              classeId: _parametre(etat, 'classeId'),
-                              eleveId: _eleve(etat),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => RessourcesClassePage(
+                            classeId: _parametre(etat, 'classeId'),
+                            eleveId: _eleve(etat),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'progression',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            ProgressionClassePage(
-                              classeId: _parametre(etat, 'classeId'),
-                              eleveId: _eleve(etat),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => ProgressionClassePage(
+                            classeId: _parametre(etat, 'classeId'),
+                            eleveId: _eleve(etat),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -483,73 +493,86 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurFoyer,
-                builder: (BuildContext _, GoRouterState _) => const FoyerPage(),
+                pageBuilder: glissee((GoRouterState _) => const FoyerPage()),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'ajouter',
                     // `?pour=moi` : le profil eleve du titulaire lui-meme,
                     // indisponible tant que DB-FOY-01 manque (mapping 7.1).
-                    builder: (BuildContext _, GoRouterState etat) =>
-                        etat.uri.queryParameters['pour'] == 'moi'
-                        ? const CreerMonProfilIndisponible()
-                        : const AjouterEnfantPage(),
+                    pageBuilder: glissee(
+                      (GoRouterState etat) =>
+                          etat.uri.queryParameters['pour'] == 'moi'
+                          ? const CreerMonProfilIndisponible()
+                          : const AjouterEnfantPage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'appareils',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const AppareilsPage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const AppareilsPage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'appairer/:eleveId',
-                    builder: (BuildContext _, GoRouterState etat) =>
-                        AppairagePage(eleveId: _parametre(etat, 'eleveId')),
+                    pageBuilder: glissee(
+                      (GoRouterState etat) =>
+                          AppairagePage(eleveId: _parametre(etat, 'eleveId')),
+                    ),
                   ),
                   GoRoute(
                     path: ':eleveId',
-                    builder: (BuildContext _, GoRouterState etat) =>
-                        FicheElevePage(eleveId: _parametre(etat, 'eleveId')),
+                    pageBuilder: glissee(
+                      (GoRouterState etat) =>
+                          FicheElevePage(eleveId: _parametre(etat, 'eleveId')),
+                    ),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'informations',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            InformationsElevePage(
-                              eleveId: _parametre(etat, 'eleveId'),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => InformationsElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'inscription',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            InscriptionElevePage(
-                              eleveId: _parametre(etat, 'eleveId'),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => InscriptionElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'interface',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            InterfaceElevePage(
-                              eleveId: _parametre(etat, 'eleveId'),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => InterfaceElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'camera',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            CameraElevePage(
-                              eleveId: _parametre(etat, 'eleveId'),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => CameraElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'acces',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            AccesElevePage(
-                              eleveId: _parametre(etat, 'eleveId'),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => AccesElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
                       ),
                       GoRoute(
                         path: 'appareils',
-                        builder: (BuildContext _, GoRouterState etat) =>
-                            AppareilsElevePage(
-                              eleveId: _parametre(etat, 'eleveId'),
-                            ),
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => AppareilsElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -559,8 +582,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               // tache focalisee de la branche Foyer.
               GoRoute(
                 path: '${Routes.tuteurParcours}/:eleveId',
-                builder: (BuildContext _, GoRouterState etat) =>
-                    ParcoursOffresPage(eleveId: _parametre(etat, 'eleveId')),
+                pageBuilder: glissee(
+                  (GoRouterState etat) =>
+                      ParcoursOffresPage(eleveId: _parametre(etat, 'eleveId')),
+                ),
               ),
             ],
           ),
@@ -570,28 +595,33 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurSuivi,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const SuiviFoyerPage(),
+                pageBuilder: glissee(
+                  (GoRouterState _) => const SuiviFoyerPage(),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'observations',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const ObservationsPage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const ObservationsPage(),
+                    ),
                   ),
                 ],
               ),
               GoRoute(
                 path: '${Routes.tuteurSeances}/:seanceId',
-                builder: (BuildContext _, GoRouterState etat) =>
-                    DetailSeancePage(seanceId: _parametre(etat, 'seanceId')),
+                pageBuilder: glissee(
+                  (GoRouterState etat) =>
+                      DetailSeancePage(seanceId: _parametre(etat, 'seanceId')),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'observations',
-                    builder: (BuildContext _, GoRouterState etat) =>
-                        DetailObservationsPage(
-                          seanceId: _parametre(etat, 'seanceId'),
-                          eleveId: _eleve(etat),
-                        ),
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => DetailObservationsPage(
+                        seanceId: _parametre(etat, 'seanceId'),
+                        eleveId: _eleve(etat),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -602,55 +632,66 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.tuteurCompte,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const CompteTuteurPage(),
+                pageBuilder: glissee(
+                  (GoRouterState _) => const CompteTuteurPage(),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'informations',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const InformationsComptePage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const InformationsComptePage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'securite',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const SecuriteComptePage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const SecuriteComptePage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'acces',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const AccesComptePage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const AccesComptePage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'paiements',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const PaiementsComptePage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const PaiementsComptePage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'preferences',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const PreferencesComptePage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const PreferencesComptePage(),
+                    ),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'apparence',
-                        builder: (BuildContext _, GoRouterState _) =>
-                            const ApparenceComptePage(),
+                        pageBuilder: glissee(
+                          (GoRouterState _) => const ApparenceComptePage(),
+                        ),
                       ),
                     ],
                   ),
                   GoRoute(
                     path: 'aide',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const AideComptePage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const AideComptePage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'informations-legales',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const InformationsLegalesComptePage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) =>
+                          const InformationsLegalesComptePage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'consentements',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const ConsentementObservationPage(),
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const ConsentementObservationPage(),
+                    ),
                   ),
                 ],
               ),
@@ -1239,7 +1280,14 @@ class _CoquilleNavigation extends ConsumerWidget {
       // ne connait que les branches.
       onAllerSecondaire: (String destination) =>
           GoRouter.of(context).go(destination),
-      child: navigationShell,
+      // Fondu court entre les onglets du tuteur (P2-16) ; l'eleve et
+      // l'enseignant gardent la bascule seche.
+      child: role == AppRole.guardian
+          ? FonduOnglet(
+              index: navigationShell.currentIndex,
+              child: navigationShell,
+            )
+          : navigationShell,
     );
 
     if (role != AppRole.guardian) {
