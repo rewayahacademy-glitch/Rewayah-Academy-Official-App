@@ -617,8 +617,10 @@ void main() {
       await repondre('Français');
       await repondre('France, Belgique, Espagne');
       await repondre(libelleNiveau(NiveauDeclare.debutLettres));
-      // Branche debutant : l'objectif n'est pas demande, il est deduit.
-      expect(find.text(t.parcours.objectifQuestion), findsNothing);
+      // Aucune branche cote client : l'objectif est demande aussi au
+      // debutant (REVUE LA-F, branches serveur seulement).
+      expect(find.text(t.parcours.objectifQuestion), findsOneWidget);
+      await repondre(libelleObjectif(ObjectifApprentissage.apprendreALire));
       // Rien n'est parti avant la derniere question.
       expect(faux.profilsEnregistres, isEmpty);
 

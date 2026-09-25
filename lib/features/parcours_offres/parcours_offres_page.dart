@@ -74,14 +74,11 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   String? get _fuseau => _b.fuseau ?? _apprenant?.fuseauFoyer;
   NiveauDeclare? get _niveau => _b.niveau ?? _apprenant?.niveauDeclare;
 
-  /// Branche debutant : qui commence par les lettres apprend d'abord a lire.
-  /// La question de l'objectif ne lui est pas posee ; la valeur enregistree
-  /// est celle que le serveur connait pour ce cas (`apprendre_a_lire`).
-  bool get _debutant => _niveau == NiveauDeclare.debutLettres;
-
-  ObjectifApprentissage? get _objectif => _debutant
-      ? ObjectifApprentissage.apprendreALire
-      : _b.objectif ?? _apprenant?.objectif;
+  // Aucune branche codee cote client (mandat LA-4 : branches serveur
+  // seulement). L'ancienne deduction « debut_lettres => apprendre_a_lire »
+  // a ete retiree (REVUE LA-F) : 0043 ne rend aucune regle de branchement,
+  // la question de l'objectif est donc posee a tous.
+  ObjectifApprentissage? get _objectif => _b.objectif ?? _apprenant?.objectif;
 
   Set<MomentJournee> get _moments => MomentJournee.values
       .where((MomentJournee m) => _b.moments.contains(m.name))
@@ -96,12 +93,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       ?.where((ParcoursApprenant p) => p.eleveId == widget.eleveId)
       .firstOrNull;
 
-  /// Les questions utiles pour cet apprenant : la branche debutant saute
-  /// l'objectif, et le total « n sur N » se calcule sur cette liste.
-  List<_Question> get _questions => <_Question>[
-    for (final _Question q in _Question.values)
-      if (q != _Question.objectif || !_debutant) q,
-  ];
+  /// Les questions de cet apprenant ; le total « n sur N » se calcule sur
+  /// cette liste.
+  List<_Question> get _questions => _Question.values;
 
   int get _total => _questions.length;
 
