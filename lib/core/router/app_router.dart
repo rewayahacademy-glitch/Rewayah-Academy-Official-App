@@ -76,7 +76,6 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
-import '../../features/reglages_enfant/reglages_enfant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
@@ -368,6 +367,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.tuteurDisponibilites,
         redirect: (BuildContext _, GoRouterState _) => Routes.tuteurFoyer,
       ),
+      // Les reglages par eleve vivent dans la fiche (photo, camera, interface ;
+      // lot B, LB-3) : l'ancienne page ferait un second endroit pour la meme
+      // fonction (mapping C6, demande B-4). Son adresse mene au Foyer.
+      GoRoute(
+        path: Routes.tuteurReglages,
+        redirect: (BuildContext _, GoRouterState _) => Routes.tuteurFoyer,
+      ),
       GoRoute(
         path: '${Routes.tuteurFoyer}/:eleveId/appareils/connexion',
         redirect: (BuildContext _, GoRouterState etat) =>
@@ -472,8 +478,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             ],
           ),
           // Foyer : ajout de profil, appareils, emetteur QR, fiche et ses
-          // pages ; puis le parcours et les reglages par eleve, qui
-          // rejoindront la fiche quand le lot B l'aura livree (C6, C7).
+          // pages ; puis le parcours (C7). Les reglages par eleve ont rejoint
+          // la fiche : `/tuteur/reglages` est un alias du Foyer (C6).
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
@@ -556,11 +562,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: '${Routes.tuteurParcours}/:eleveId',
                 builder: (BuildContext _, GoRouterState etat) =>
                     ParcoursOffresPage(eleveId: _parametre(etat, 'eleveId')),
-              ),
-              GoRoute(
-                path: Routes.tuteurReglages,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const ReglagesEnfantPage(),
               ),
             ],
           ),

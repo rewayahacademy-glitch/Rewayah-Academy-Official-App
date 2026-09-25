@@ -50,6 +50,7 @@ class PageShell extends StatelessWidget {
     this.entete,
     this.actions,
     this.defilante = true,
+    this.actionsCoquille = true,
   });
 
   /// Le corps de la page.
@@ -83,6 +84,12 @@ class PageShell extends StatelessWidget {
   /// paresseuse ou une grille de semaine defilante horizontalement.
   final bool defilante;
 
+  /// Faux pour une tache focalisee (ajout de profil, admission par etapes) :
+  /// ni cloche ni bascule de theme de la coquille, la page ne garde que ses
+  /// propres [actionsEntete] (demande B-3 ; planche V6, la rangee d'etape est
+  /// la premiere ligne). Voir `PageEtape`.
+  final bool actionsCoquille;
+
   @override
   Widget build(BuildContext context) {
     final AppMetriques metriques = AppMetriques.of(context);
@@ -90,7 +97,7 @@ class PageShell extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final List<Widget> actionsTete = <Widget>[
       ...actionsEntete,
-      ...ActionsEnteteCoquille.de(context),
+      if (actionsCoquille) ...ActionsEnteteCoquille.de(context),
     ];
     final bool enteteRiche =
         onRetour != null || sousTitre != null || actionsTete.isNotEmpty;

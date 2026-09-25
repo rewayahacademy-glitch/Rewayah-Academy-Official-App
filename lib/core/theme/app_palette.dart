@@ -320,6 +320,15 @@ class AppPalette extends ThemeExtension<AppPalette> {
       alpha: 0.08,
     ),
   );
+
+  /// Le contenu d'un QR : fond blanc, modules quasi noirs, **identique en
+  /// clair et en sombre** (manifeste visuel section 3.5 : « le QR reste noir
+  /// sur blanc pour le scan »). Ajout du 25/09/2026 (demande D-1) : aucun
+  /// jeton existant ne change.
+  AppColorPair get contenuQr => const AppColorPair(
+    background: Color(0xFFFFFFFF),
+    onBackground: Color(0xFF110E20),
+  );
   Color get voile =>
       const Color(0xFF000000).withValues(alpha: estSombre ? 0.56 : 0.32);
   AppShadowColor get ombreDialogue => const AppShadowColor(Color(0xFF000000));
