@@ -1,0 +1,86 @@
+﻿VERROU acquis 18:25:35 -> flutter build apk --profile
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 107.0.0 (108.0.0 available)
+  analyzer 14.3.0 (14.4.0 available)
+  android_file_picker 1.1.0 (2.0.0 available)
+  cli_util 0.5.2 (0.6.0 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  cupertino_ui 1.0.2 (1.1.1 available)
+  dbus 0.7.15 (0.8.0 available)
+  drift 2.34.4 (2.35.0 available)
+  drift_dev 2.34.6 (2.35.0 available)
+  file_picker 12.2.0 (13.1.0 available)
+  file_picker_darwin 1.1.0 (2.1.2 available)
+  file_picker_linux 1.1.0 (2.0.1 available)
+  file_picker_platform_interface 3.3.0 (4.0.0 available)
+  file_picker_web 3.1.0 (4.0.0 available)
+  flutter_cache_manager 3.4.2 (3.4.5 available)
+  flutter_secure_storage 11.0.0 (11.2.0 available)
+  flutter_secure_storage_darwin 0.4.0 (0.4.3 available)
+  flutter_secure_storage_linux 3.0.2 (3.0.3 available)
+  flutter_secure_storage_platform_interface 2.0.3 (2.1.1 available)
+  flutter_webrtc 1.6.0 (1.6.2+hotfix.3 available)
+  hooks 2.0.2 (2.2.0 available)
+  livekit_client 2.12.0 (2.13.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  material_ui 1.1.1 (1.4.0 available)
+  meta 1.18.3 (1.19.0 available)
+  native_toolchain_c 0.19.2 (0.19.5 available)
+  nm 0.5.0 (0.6.0 available)
+  objective_c 9.5.0 (9.6.0 available)
+  passkeys_platform_interface 2.9.0 (2.10.0 available)
+  platform 3.1.6 (3.2.0 available)
+  qr 3.0.2 (4.0.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  sentry 8.14.2 (9.30.1 available)
+  sentry_flutter 8.14.2 (9.30.1 available)
+  slang 4.19.1 (4.19.2 available)
+  sqflite 2.4.3 (2.4.4 available)
+  sqflite_android 2.4.3 (2.4.4 available)
+  sqflite_common 2.5.11 (2.5.13 available)
+  sqflite_darwin 2.4.3+1 (2.4.4 available)
+  sqflite_platform_interface 2.4.1 (2.4.2 available)
+  sqlite3 3.5.2 (3.6.0 available)
+  synchronized 3.4.1+2 (3.4.2 available)
+  test_api 0.7.12 (0.7.14 available)
+  vector_math 2.4.0 (2.4.3 available)
+  windows_file_picker 1.2.0 (2.0.0 available)
+Got dependencies!
+46 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Running Gradle task 'assembleProfile'...                        
+cmd : Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStoreType=Windows-ROOT
+Au caractère C:\RA\pilotage\outils\flutter-verrou.ps1:29 : 5
++     cmd /c $Commande
++     ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Picked up JAVA_...pe=Windows-ROOT:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): flutter_webrtc, livekit_client, 
+sentry_flutter
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-develop
+ers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: 
+https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+Font asset "Phosphor-Regular.ttf" was tree-shaken, reducing it from 488636 to 20568 bytes (95.8% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+Font asset "Phosphor-Fill.ttf" was tree-shaken, reducing it from 449252 to 17520 bytes (96.1% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+Font asset "CupertinoIcons.ttf" was tree-shaken, reducing it from 257628 to 848 bytes (99.7% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 1496 bytes (99.9% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+3 warnings
+Running Gradle task 'assembleProfile'...                          334,5s
+✓ Built build\app\outputs\flutter-apk\app-profile.apk (160.0MB)
+VERROU libéré, durée 345 s, code 0

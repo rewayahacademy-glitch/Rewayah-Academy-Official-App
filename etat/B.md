@@ -447,3 +447,11 @@ Statut : fini.
   - Correctif en cours, NON VÉRIFIÉ : branche `ui/tuteur-v1-android` @ commit wip (android/build.gradle.kts force Kotlin 2.0 pour tous les sous-projets), worktree C:\RA\lot-android.
   - Reprise : `flutter build apk --debug` puis `--profile` sous verrou dans C:\RA\lot-android ; si OK, fusion dans la base, puis mesure avec la méthode prête : 05_recette/P2-16/RAPPORT.md « Mesure sur telephone », mesure/ecoute.dart et analyse.dart.
 - Autres points ouverts : CI rouge sur la PR #3 (installer gh pour lire les journaux) ; texte de consentement à valider (directeur) ; poste A relancé sur le « Complément Tuteur » (branche ui/tuteur-v1-t à venir).
+
+## 25/09 soir : REPRISE, APK Android repare (HL-B-3 fait)
+- ui/tuteur-v1-android @ 94b31b0 : Kotlin 2.0 force (sentry_flutter), compileSdk 37 pour l'app (flutter_secure_storage), 36 minimum pour les bibliotheques (package_info_plus). build apk --debug et --profile : code 0.
+- Fusion dans la base : origin/ui/tuteur-v1 @ a855b23, suite complete 2723 verts, 572 sautes, code 0 (04_phase0/hlb3_suite.log). Frontiere vide.
+- Reste P2-16 : mesure sur telephone, attend que le telephone Honor soit branche (adb devices vide a 18:45).
+
+Statut : a_suivre (attend telephone).
+
