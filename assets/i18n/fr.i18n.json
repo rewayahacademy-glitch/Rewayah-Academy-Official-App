@@ -1398,11 +1398,54 @@
       "evenements": {
         "observationEntree": "Visite d'observation commencée",
         "observationSortie": "Visite d'observation terminée",
-        "observationPolitiqueGroupeModifiee": "Règles d'observation du groupe modifiées"
+        "observationPolitiqueGroupeModifiee": "Règles d'observation de la classe modifiées"
       }
     },
     "observations": {
-      "titre": "Observations"
+      "titre": "Observations",
+      "titrePage": "Historique des observations",
+      "sousTitre": "Administration",
+      "recherche": "Rechercher un tuteur ou un élève",
+      "rechercheCourte": "Saisissez au moins deux lettres.",
+      "rechercheAucune": "Aucun tuteur ni élève ne porte ce nom.",
+      "rechercheErreur": "La recherche n'a pas abouti. Réessayez.",
+      "roleTuteur": "Tuteur",
+      "roleEleve": "Élève",
+      "filtreTuteur": "Tuteur : {nom}",
+      "filtreEleve": "Élève : {nom}",
+      "retirerFiltre": "Retirer le filtre {filtre}",
+      "classe": "Classe",
+      "toutesClasses": "Toutes les classes",
+      "periode": "Période",
+      "statut": "Statut",
+      "tousStatuts": "Tous les statuts",
+      "colonneDate": "Date",
+      "colonneTuteur": "Tuteur",
+      "colonneEleve": "Élève",
+      "colonneClasse": "Classe",
+      "colonneEntree": "Entrée",
+      "colonneSortie": "Sortie",
+      "colonneDuree": "Durée",
+      "colonneStatut": "Statut",
+      "terminee": "Terminée",
+      "ouverte": "Sortie non enregistrée",
+      "sortieAbsente": "Non enregistrée",
+      "dureeNonConfirmee": "Non confirmée",
+      "nomInconnu": "Nom non disponible",
+      "classeInconnue": "Classe non disponible",
+      "plage": "{entree} - {sortie}",
+      "ligne": "Visite {rang} du {date}, {tuteur} pour {eleve}, {classe}, entrée {entree}, sortie {sortie}, durée {duree}, {statut}",
+      "fuseau": "Heures affichées à l'heure de cet appareil (UTC{decalage}).",
+      "indisponibleTitre": "Historique des observations indisponible",
+      "indisponiblePhrase": "La lecture des visites d'observation n'est pas encore ouverte dans l'application.",
+      "videTitre": "Aucune visite enregistrée",
+      "videPhrase": "Les visites d'observation des tuteurs s'afficheront ici.",
+      "videFiltreTitre": "Aucune visite ne correspond",
+      "videFiltrePhrase": "Élargissez la période ou retirez un filtre.",
+      "effacerFiltres": "Effacer les filtres",
+      "chargerSuite": "Charger les visites plus anciennes",
+      "erreurSuite": "Les visites plus anciennes n'ont pas pu être lues.",
+      "fin": "Toutes les visites sont affichées."
     },
     "comptes": {
       "titre": "Comptes",
@@ -1704,7 +1747,7 @@
     "profilDetail": "Voir et gérer vos informations",
     "reglages": "Réglages",
     "reglagesDetail": "Apparence, notifications et accessibilité",
-    "profils": "Profils du foyer",
+    "profils": "Gérer mon foyer",
     "profilsDetail": "Gérer les profils de vos enfants",
     "appareils": "Foyer",
     "appareilsDetail": "Les appareils et profils rattachés à votre foyer",
@@ -1789,6 +1832,138 @@
       "teacher": "Donne les cours et suit ses créneaux",
       "guardian": "Suit le foyer et ses enfants",
       "student": "Suit ses cours et son Coran"
+    },
+    "tuteur": {
+      "preferences": "Préférences",
+      "dateLongue": "{jour} {mois} {annee}",
+      "identite": {
+        "statutValide": "Compte validé",
+        "statutProvisoire": "Profil à compléter",
+        "nomInconnu": "Titulaire du compte",
+        "courrielAbsent": "Adresse de connexion non communiquée",
+        "connexionLien": "Connexion par lien reçu par courriel",
+        "connexionGoogle": "Connexion avec Google",
+        "connexionInconnue": "Méthode de connexion non précisée"
+      },
+      "acces": {
+        "titre": "Accès et paiements",
+        "resume": "Statut et échéance de chaque profil élève",
+        "pastilleActif": "Accès actif",
+        "pastilleExpire": "Accès terminé",
+        "ligne": "Accès des profils élèves",
+        "paiements": "Paiements et reçus"
+      },
+      "securite": {
+        "titre": "Connexion et sécurité",
+        "methode": "Méthode de connexion",
+        "methodeLien": "Lien par courriel",
+        "methodeGoogle": "Google"
+      },
+      "informations": {
+        "titre": "Informations personnelles",
+        "resume": "Nom, adresse de connexion, langue et fuseau",
+        "langueFuseau": "Français · {ville}",
+        "consulter": "Consulter mes informations"
+      },
+      "foyer": {
+        "titre": "Mon foyer",
+        "aucun": "Aucun profil élève pour le moment",
+        "un": "1 profil élève",
+        "plusieurs": "{nombre} profils élèves",
+        "legende": "Profils élèves et appareils du foyer",
+        "creerMonProfil": "Créer mon profil élève"
+      },
+      "aide": {
+        "titre": "Aide et support",
+        "ligne": "Aide et contact",
+        "legal": "Informations légales"
+      },
+      "deconnexion": {
+        "question": "Se déconnecter de Rewayah ?",
+        "consequence": "Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.",
+        "confirmer": "Me déconnecter",
+        "echec": "La déconnexion n'a pas abouti. Vérifiez votre connexion, puis réessayez."
+      },
+      "pageInformations": {
+        "titre": "Informations personnelles",
+        "prenom": "Prénom",
+        "nom": "Nom",
+        "courriel": "Adresse de connexion",
+        "langue": "Langue de l'interface",
+        "fuseau": "Fuseau des séances",
+        "fuseauIndisponible": "Non disponible pour le moment",
+        "note": "Ces informations sont tenues par l'académie. Elles ne se modifient pas encore depuis l'application."
+      },
+      "pageSecurite": {
+        "titre": "Connexion et sécurité",
+        "sousTitre": "Comment vous accédez à votre compte.",
+        "methode": "Méthode de connexion",
+        "adresse": "Adresse de connexion",
+        "appareils": "Les appareils connectés à votre compte ne sont pas encore listés dans l'application.",
+        "deconnexion": "Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte."
+      },
+      "pageAcces": {
+        "titre": "Accès des profils élèves",
+        "sousTitre": "Le statut de l'accès de chaque profil élève.",
+        "sansEcheance": "Sans date de fin",
+        "jusqua": "Ouvert jusqu'au {date}",
+        "expire": "Terminé le {date}",
+        "pastilleActif": "Actif",
+        "pastilleExpire": "Terminé",
+        "aucunTitre": "Aucun profil élève",
+        "aucunePhrase": "L'accès de chaque profil élève s'affichera ici.",
+        "titulaire": "Votre compte de titulaire n'a pas d'échéance propre : l'accès se règle profil par profil."
+      },
+      "pagePaiements": {
+        "titre": "Paiements et reçus",
+        "indisponibleTitre": "Paiements pas encore consultables",
+        "indisponiblePhrase": "L'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l'application. Aucun paiement ne vous est demandé ici.",
+        "aucunTitre": "Aucun paiement enregistré",
+        "aucunePhrase": "Les paiements enregistrés par l'académie s'afficheront ici.",
+        "paiementDu": "Paiement du {date}",
+        "justificatif": "Justificatif disponible"
+      },
+      "pagePreferences": {
+        "titre": "Préférences",
+        "sousTitre": "Personnalisez votre expérience sur cet appareil.",
+        "apparence": "Apparence",
+        "apparenceDetail": "Thème et confort visuel",
+        "langue": "Langue et région",
+        "notifications": "Notifications",
+        "notificationsDetail": "Pas encore disponibles dans l'application"
+      },
+      "pageApparence": {
+        "titre": "Apparence",
+        "sousTitre": "Appliqué sur cet appareil.",
+        "theme": "Thème de l'application",
+        "themeDetail": "Personnalisez l'apparence de Rewayah.",
+        "confort": "Confort visuel",
+        "animations": "Animations",
+        "animationsDetail": "Réduites quand votre appareil le demande",
+        "texte": "Taille du texte",
+        "texteDetail": "Suit la taille du système"
+      },
+      "pageAide": {
+        "titre": "Aide et support",
+        "indisponibleTitre": "Aide pas encore disponible",
+        "indisponiblePhrase": "Les questions fréquentes et le contact de l'académie ne sont pas encore ouverts dans l'application.",
+        "canalCourriel": "Courriel de l'académie",
+        "canalLien": "Page d'aide de l'académie",
+        "aucunCanal": "Aucun canal d'aide n'est publié pour le moment."
+      },
+      "pageLegal": {
+        "titre": "Informations légales",
+        "documents": "Documents acceptés",
+        "conditionsTuteur": "Conditions du tuteur",
+        "contratEnseignant": "Contrat enseignant",
+        "accuseEnregistrement": "Accusé d'enregistrement des cours",
+        "acceptation": "Version {version}, acceptée le {date}",
+        "aucunTitre": "Aucun document accepté",
+        "aucun": "Aucun document accepté n'est enregistré pour ce compte.",
+        "lectureSeule": "Un document accepté ne se modifie pas.",
+        "textes": "Conditions et confidentialité",
+        "textesIndisponibles": "Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l'application."
+      }
     }
   },
   "historique": {
@@ -1797,10 +1972,114 @@
     "segments": {
       "seances": "Séances",
       "observations": "Observations"
+    },
+    "moisCourts": ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."],
+    "dateCourte": "{jour} {mois} {annee}",
+    "dateLongue": "{jourSemaine} {jour} {mois} {annee}",
+    "plage": "{debut} - {fin}",
+    "duree": {
+      "secondes": "{s} s",
+      "minutes": "{m} min",
+      "minutesSecondes": "{m} min {s} s",
+      "heures": "{h} h",
+      "heuresMinutes": "{h} h {m}"
+    },
+    "fuseauListe": "Heures affichées à l'heure de cet appareil.",
+    "fuseauDetail": "Heures affichées à l'heure de cet appareil (UTC{decalage}).",
+    "classeInconnue": "Classe non disponible",
+    "selecteur": {
+      "aucune": "Aucune séance",
+      "une": "1 séance",
+      "plusieurs": "{n} séances"
+    },
+    "filtres": {
+      "classe": "Classe",
+      "toutesClasses": "Toutes les classes",
+      "periode": "Période",
+      "toutePeriode": "Toute la période",
+      "septJours": "7 derniers jours",
+      "trenteJours": "30 derniers jours",
+      "troisMois": "3 derniers mois",
+      "statut": "Statut",
+      "tousStatuts": "Tous les statuts"
+    },
+    "retour": "Retour à l'historique",
+    "etat": {
+      "presence": "Présence",
+      "retard": "Retard {minutes} min",
+      "retardSansDuree": "Retard",
+      "verification": "En cours de vérification",
+      "annule": "Cours annulé",
+      "nonTenu": "Cours non tenu"
+    },
+    "presenceIllisible": "La présence n'a pas pu être lue : les états restent inconnus pour le moment.",
+    "seances": {
+      "videTitre": "Aucune séance passée",
+      "videPhrase": "Les séances passées de {prenom} s'afficheront ici.",
+      "videPhraseFoyer": "Les séances passées des profils élèves s'afficheront ici.",
+      "filtreVideTitre": "Aucune séance ne correspond",
+      "filtreVidePhrase": "Changez les filtres pour retrouver les autres séances.",
+      "tronquee": "Les {nombre} séances les plus récentes sont affichées.",
+      "ouvrir": "Séance du {date}, {classe}, {etat}"
+    },
+    "observations": {
+      "indisponibleTitre": "Historique des observations indisponible",
+      "indisponiblePhrase": "Les visites enregistrées ne peuvent pas encore être lues dans l'application.",
+      "videTitre": "Aucune observation",
+      "videPhrase": "Les visites que vous faites pendant les séances de {prenom} s'afficheront ici.",
+      "videPhraseFoyer": "Vos visites pendant les séances s'afficheront ici.",
+      "filtreVideTitre": "Aucune observation ne correspond",
+      "filtreVidePhrase": "Changez les filtres pour retrouver les autres visites.",
+      "visiteUne": "1 visite",
+      "visites": "{n} visites",
+      "dureeNonConfirmee": "Durée non confirmée",
+      "terminee": "Terminée",
+      "nonRefermee": "Sortie non enregistrée",
+      "eleveInconnu": "Élève",
+      "tronquee": "Seules les visites les plus récentes sont affichées.",
+      "ouvrir": "Observations du {date}, {classe}, {etat}"
+    },
+    "seance": {
+      "titreSansClasse": "Séance du {date}",
+      "blocSeance": "La séance",
+      "blocPresence": "Présence de {prenom}",
+      "date": "Date",
+      "horaire": "Horaire",
+      "dureePrevue": "Durée prévue",
+      "classe": "Classe",
+      "enseignant": "Enseignant",
+      "presence": "Présence",
+      "arrivee": "Arrivée",
+      "interruption": "Interruption",
+      "verificationPhrase": "La présence n'est pas encore confirmée pour cette séance.",
+      "nonTenuPhrase": "La séance n'a pas eu lieu : ce n'est pas le fait de l'élève.",
+      "annulePhrase": "La séance a été annulée.",
+      "introuvableTitre": "Séance introuvable",
+      "introuvablePhrase": "Cette séance ne figure pas dans l'historique de votre foyer."
+    },
+    "observation": {
+      "titreSansClasse": "Observations du {date}",
+      "blocResume": "Résumé",
+      "blocVisites": "Visites",
+      "observateur": "Observateur",
+      "vous": "Vous",
+      "eleve": "Élève",
+      "enseignant": "Enseignant",
+      "dureeTotale": "Durée totale",
+      "visite": "Visite {n}",
+      "plageOuverte": "Entrée à {debut}",
+      "terminee": "Visite terminée",
+      "introuvableTitre": "Aucune visite pour cette séance",
+      "introuvablePhrase": "Aucune visite enregistrée ne correspond à cette séance."
     }
   },
   "notifications": {
-    "titre": "Notifications"
+    "titre": "Notifications",
+    "indisponibleTitre": "Les notifications ne sont pas encore disponibles",
+    "indisponiblePhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici dès qu'ils seront ouverts.",
+    "videTitre": "Aucune notification",
+    "videPhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici.",
+    "ligne": "{titre}, le {date} à {heure}"
   },
   "eleve": {
     "accueil": {
@@ -1995,28 +2274,6 @@
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.",
       "erreur": "L'enregistrement n'a pas abouti : {message}"
-    },
-    "suivi": {
-      "titre": "Suivi du foyer",
-      "tousLesEnfants": "Tous les enfants",
-      "colonneDate": "Date",
-      "colonneEnfant": "Enfant",
-      "colonneEnseignant": "Enseignant",
-      "colonneEtat": "État",
-      "aujourdhui": "Aujourd'hui, {heure}",
-      "hier": "Hier, {heure}",
-      "date": "{date}, {heure}",
-      "annule": "Cours annulé",
-      "nonTenu": "Cours non tenu",
-      "vide": "Aucun cours pour l'instant",
-      "videDetail": "Les cours de vos enfants s'afficheront ici, du plus récent au plus ancien, avec leur présence.",
-      "videFiltre": "Aucun cours pour cet enfant",
-      "videFiltreDetail": "Relâchez le filtre pour retrouver le reste du foyer.",
-      "effacerFiltres": "Tout afficher",
-      "erreur": "Le suivi n'a pas pu être lu. Réessayez dans un instant.",
-      "tronquee": "Les {nombre} cours les plus récents sont affichés.",
-      "fin": "{nombre} cours au suivi.",
-      "finUn": "1 cours au suivi."
     }
   },
   "classe": {

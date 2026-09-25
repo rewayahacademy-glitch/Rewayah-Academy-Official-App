@@ -60,9 +60,7 @@ Future<void> _monter(
   await tester.pumpWidget(
     hote(
       const JournalPage(),
-      surcharges: <Override>[
-        serviceJournalProvider.overrideWithValue(service),
-      ],
+      surcharges: <Override>[serviceJournalProvider.overrideWithValue(service)],
     ),
   );
   await tester.pumpAndSettle();
@@ -87,8 +85,9 @@ void main() {
 
       // Le seul ecran du produit sans action principale : la seule chose qu'on
       // puisse faire d'un journal immuable, c'est le lire.
-      for (final ActionPrincipale bouton
-          in tester.widgetList<ActionPrincipale>(find.byType(ActionPrincipale))) {
+      for (final ActionPrincipale bouton in tester.widgetList<ActionPrincipale>(
+        find.byType(ActionPrincipale),
+      )) {
         expect(
           bouton.niveau,
           isNot(NiveauAction.principale),
@@ -118,6 +117,18 @@ void main() {
           of: find.text(t.admin.journal.evtKycLu),
           matching: find.byType(AppCard),
         ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('les deux onglets de Securite et audit sont en tete', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester);
+      await _monter(tester, service: FauxServiceJournal());
+      expect(find.widgetWithText(Tab, t.admin.journal.titre), findsOneWidget);
+      expect(
+        find.widgetWithText(Tab, t.admin.observations.titre),
         findsOneWidget,
       );
     });
@@ -156,9 +167,7 @@ void main() {
 
       expect(find.text(t.admin.journal.chaineRompue), findsOneWidget);
       expect(
-        find.text(
-          t.admin.journal.chaineRompueDetail(nombre: 2, entree: 17),
-        ),
+        find.text(t.admin.journal.chaineRompueDetail(nombre: 2, entree: 17)),
         findsOneWidget,
       );
       // Et les entrees restent lisibles : un journal douteux se lit quand meme,
@@ -194,11 +203,7 @@ void main() {
         ..filtres0 = const FiltresJournal(
           total: 2,
           actions: <ValeurFiltre>[
-            ValeurFiltre(
-              valeur: 'kyc_read',
-              libelle: 'kyc_read',
-              nombre: 1,
-            ),
+            ValeurFiltre(valeur: 'kyc_read', libelle: 'kyc_read', nombre: 1),
             ValeurFiltre(
               valeur: 'profil_cree',
               libelle: 'profil_cree',
@@ -265,7 +270,18 @@ void main() {
         ActionPrincipale,
         t.admin.journal.chargerSuite,
       );
-      await tester.scrollUntilVisible(suite, 400);
+      // Deux zones defilantes depuis les onglets de Securite et audit (la
+      // barre d'onglets defile aussi) : on nomme celle du journal.
+      await tester.scrollUntilVisible(
+        suite,
+        400,
+        scrollable: find
+            .descendant(
+              of: find.byType(DataCollection<EntreeJournal>),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       // `scrollUntilVisible` s'arrete des que le finder **trouve** le widget,
       // c'est-a-dire des qu'il est construit — or une `ListView` construit
       // au-dela de son viewport. Le pied de page peut donc etre bati quelques
@@ -391,25 +407,26 @@ void main() {
       expect(find.text(t.commun.reessayer), findsOneWidget);
     });
 
-    testWidgets('une ecriture sans acteur humain est nommee, pas laissee vide', (
-      WidgetTester tester,
-    ) async {
-      _fenetre(tester);
-      final FauxServiceJournal service = FauxServiceJournal()
-        ..entreesEnBase = <EntreeJournal>[
-          _entree(id: 2, acteur: null, nom: null, role: null),
-          _entree(id: 1, nom: null),
-        ]
-        ..chaine = const EtatChaine(verifiees: 2, rompues: 0);
+    testWidgets(
+      'une ecriture sans acteur humain est nommee, pas laissee vide',
+      (WidgetTester tester) async {
+        _fenetre(tester);
+        final FauxServiceJournal service = FauxServiceJournal()
+          ..entreesEnBase = <EntreeJournal>[
+            _entree(id: 2, acteur: null, nom: null, role: null),
+            _entree(id: 1, nom: null),
+          ]
+          ..chaine = const EtatChaine(verifiees: 2, rompues: 0);
 
-      await _monter(tester, service: service);
+        await _monter(tester, service: service);
 
-      // Une case vide dans un journal est une ligne qu'on ne peut opposer a
-      // personne : les deux cas ont chacun leur mot.
-      expect(find.text(t.admin.journal.acteurSysteme), findsOneWidget);
-      expect(find.text(t.admin.journal.acteurInconnu), findsOneWidget);
-      expect(find.text(t.admin.journal.roleAucun), findsOneWidget);
-    });
+        // Une case vide dans un journal est une ligne qu'on ne peut opposer a
+        // personne : les deux cas ont chacun leur mot.
+        expect(find.text(t.admin.journal.acteurSysteme), findsOneWidget);
+        expect(find.text(t.admin.journal.acteurInconnu), findsOneWidget);
+        expect(find.text(t.admin.journal.roleAucun), findsOneWidget);
+      },
+    );
 
     testWidgets('un type d\'evenement inconnu s\'affiche tel quel', (
       WidgetTester tester,
@@ -457,18 +474,21 @@ void main() {
       expect(resumeDetails(const <String, dynamic>{}), isEmpty);
     });
 
-    test('la periode se traduit en borne basse, et « tout » n\'en pose pas', () {
-      final DateTime maintenant = DateTime(2026, 9, 12, 10);
+    test(
+      'la periode se traduit en borne basse, et « tout » n\'en pose pas',
+      () {
+        final DateTime maintenant = DateTime(2026, 9, 12, 10);
 
-      expect(
-        PeriodeJournal.semaine.depuis(maintenant),
-        DateTime(2026, 9, 5, 10),
-      );
-      expect(
-        PeriodeJournal.mois.depuis(maintenant),
-        DateTime(2026, 8, 13, 10),
-      );
-      expect(PeriodeJournal.tout.depuis(maintenant), isNull);
-    });
+        expect(
+          PeriodeJournal.semaine.depuis(maintenant),
+          DateTime(2026, 9, 5, 10),
+        );
+        expect(
+          PeriodeJournal.mois.depuis(maintenant),
+          DateTime(2026, 8, 13, 10),
+        );
+        expect(PeriodeJournal.tout.depuis(maintenant), isNull);
+      },
+    );
   });
 }
