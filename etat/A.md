@@ -12,3 +12,11 @@ Lignes du tableau : LT-1 à LT-13, LT-R, LT-F (phase « Complément Tuteur »). 
 - En attente du directeur : constat 7 (quantité de solde dans la devise du prix ?). Demandes ouvertes : DB-FIN-01 à 06, image_picker, paquet d'ouverture des réglages.
 - Piège : `dart format lib test` reformate 244 fichiers étrangers (version du formateur) ; ne formater que ses propres fichiers.
 - **LT-D (25/09 soir, demande du directeur : plus aucun point « faute de temps »)** : constats 12 (`65b994a`), 15 (`d1de6f4`) et 17 (`4d15926`) corrigés. Planches relues moi-même contre maquette et document : S08 (`81d1cb6`), S01 bureau avec panneau « Profil sélectionné » (`7867f40`), fiche élève (`5ebb050`, `d42ff45`). Captures et planches LT-4, LT-5, LT-6, LT-10 et LT-11 refaites. Ce que la maquette montre sans donnée serveur : demandes/T.md « Demande LT-D ». Nouveau HEAD à intégrer par le poste B : voir la ligne LT-D du tableau.
+
+## 26/09
+
+- Planche de validation (K-35, GABARITS §5 étape 7) : https://claude.ai/artifact/4RvyyEdvguSPavK4Pan69R, v3, 17 écrans × 4 captures. Commentaires du directeur traités et fermés.
+- **K-36 monochrome** (`83cee7b`, `855d10b`, `7727511`), **poussé : `origin/ui/tuteur-v1-t` @ `7727511`**, suite complète 3417 verts, analyze sans problème.
+- **Poste B, attention à l'intégration, composants communs modifiés (tous rôles)** : `ActionPrincipale` (niveau `decisive`, principale neutre `surfaceInverse`, sur bureau largeur du libellé pour de vrai) ; `nav_shell` (aucun accent, entrée active `surfaceSunken`) ; `SelecteurTheme` (toujours horizontal, paramètre `direction` retiré) ; `LigneRubrique.action` (nouveau) ; `PageShell` (actions en ligne sur bureau) ; `EcranResultat`, `FilterPill`, `ChoiceCardGroup`, `SelectionProfils`, `SelecteurProfils`, `LienFleche`, `PageEtape` passés en neutre. Tests : toucher un bouton sur bureau via `test/support/pressable_de.dart` (le centre de la zone est vide).
+- Restent en accent, non traités : `admin_shell`, `controle_segmente` et quelques autres (hors lot T).
+- En attente du go du directeur : corrections démo (champs de maquette, « unités », date réelle, filtres paiements, questions serveur vers BR-1).
