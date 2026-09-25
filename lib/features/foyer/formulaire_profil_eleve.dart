@@ -12,16 +12,13 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
-import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/entete_page.dart';
+import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// La porte d'acces du titulaire, qui decide de ce qui est creable (K3).
@@ -54,8 +51,9 @@ enum EtapeProfilEleve {
 /// `/tuteur/foyer/ajouter` depuis le Foyer, l'Accueil, le Compte et la fin de
 /// l'admission : **un seul flux**, jamais une copie.
 ///
-/// Gabarit d'etape des planches d'admission V6 (#12 et #14 du manifeste) :
-/// une rangee d'etape (disque retour, progression continue, « n sur N »), la
+/// Gabarit d'etape des planches d'admission V6 (#12 et #14 du manifeste),
+/// plein ecran sans actions de coquille : la `RangeeEtape` partagee (disque
+/// retour, progression continue, « n sur N »), la
 /// question, une consigne, le contenu, puis l'action en pilule ancree en bas.
 /// Sur bureau, une colonne centree de largeur de dialogue (V6 section 8.13) :
 /// jamais la page de telephone etiree.
@@ -89,14 +87,8 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
   /// « Voir le foyer » apres une reponse perdue.
   final VoidCallback onVoirFoyer;
 
-  /// La carte « Un enfant ou un mineur ».
-  static const Key choixEnfantKey = Key('profilEleve.choix.enfant');
-
-  /// La carte « Un proche adulte ».
-  static const Key choixProcheKey = Key('profilEleve.choix.proche');
-
-  /// La carte « Moi-meme ».
-  static const Key choixMoiKey = Key('profilEleve.choix.moi');
+  /// Le groupe des trois choix « pour qui » (`ChoiceCardGroup`).
+  static const Key choixKey = Key('profilEleve.choix');
 
   /// L'action du bas (« Suivant » puis « Creer le profil »).
   static const Key actionKey = Key('profilEleve.action');
@@ -306,9 +298,12 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           _retour();
         }
       },
+      // Le gabarit de `PageEtape` (sans actions de coquille, rangee d'etape
+      // partagee), mais borne a la colonne de dialogue sur bureau.
       child: PageShell(
+        actionsCoquille: false,
         entete: _Colonne(
-          child: _RangeeEtape(
+          child: RangeeEtape(
             numero: numero,
             total: _totalEtapes,
             onRetour: _retour,
@@ -402,39 +397,53 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
           sousTitre: t.foyer.ajout.pourQui.sousTitre,
         ),
         Ecart.vXxl,
-        CarteChoixFoyer(
-          key: FormulaireProfilEleve.choixEnfantKey,
-          icone: AppIcons.profil,
-          titre: t.foyer.ajout.pourQui.enfantTitre,
-          description: enfantCreable
-              ? t.foyer.ajout.pourQui.enfantDescription
-              : t.foyer.ajout.pourQui.enfantAttente,
-          retenue: _pourQui == PourQui.enfantOuMineur,
-          disponible: enfantCreable,
-          onPress: () => setState(() => _pourQui = PourQui.enfantOuMineur),
-        ),
-        Ecart.vMd,
-        CarteChoixFoyer(
-          key: FormulaireProfilEleve.choixProcheKey,
-          icone: AppIcons.foyer,
-          titre: t.foyer.ajout.pourQui.procheTitre,
-          description: t.foyer.ajout.pourQui.procheDescription,
-          retenue: false,
-          disponible: _creable(PourQui.procheAdulte),
-          onPress: () => setState(() => _pourQui = PourQui.procheAdulte),
-        ),
-        Ecart.vMd,
-        CarteChoixFoyer(
-          key: FormulaireProfilEleve.choixMoiKey,
-          icone: AppIcons.avatarSansPhoto,
-          titre: t.foyer.ajout.pourQui.moiTitre,
-          description: t.foyer.ajout.pourQui.moiDescription,
-          retenue: false,
-          disponible: _creable(PourQui.moiMeme),
-          onPress: () => setState(() => _pourQui = PourQui.moiMeme),
+        ChoiceCardGroup(
+          key: FormulaireProfilEleve.choixKey,
+          autoriserSaisieLibre: false,
+          valeurInitiale: _pourQui == null
+              ? null
+              : ReponseChoix(valeurs: <String>{_pourQui!.name}),
+          options: <OptionChoix>[
+            OptionChoix(
+              valeur: PourQui.enfantOuMineur.name,
+              libelle: t.foyer.ajout.pourQui.enfantTitre,
+              icone: AppIcons.profil,
+              description: t.foyer.ajout.pourQui.enfantDescription,
+              disponible: enfantCreable,
+              raisonIndisponible: t.foyer.ajout.pourQui.enfantAttente,
+            ),
+            OptionChoix(
+              valeur: PourQui.procheAdulte.name,
+              libelle: t.foyer.ajout.pourQui.procheTitre,
+              icone: AppIcons.foyer,
+              description: t.foyer.ajout.pourQui.procheDescription,
+              disponible: _creable(PourQui.procheAdulte),
+              raisonIndisponible: t.foyer.ajout.pourQui.indisponible,
+            ),
+            OptionChoix(
+              valeur: PourQui.moiMeme.name,
+              libelle: t.foyer.ajout.pourQui.moiTitre,
+              icone: AppIcons.avatarSansPhoto,
+              description: t.foyer.ajout.pourQui.moiDescription,
+              disponible: _creable(PourQui.moiMeme),
+              raisonIndisponible: t.foyer.ajout.pourQui.indisponible,
+            ),
+          ],
+          onChange: (ReponseChoix reponse) => setState(() {
+            _pourQui = _pourQuiDe(reponse);
+          }),
         ),
       ],
     );
+  }
+
+  static PourQui? _pourQuiDe(ReponseChoix reponse) {
+    for (final PourQui p in PourQui.values) {
+      if (reponse.valeurs.contains(p.name)) {
+        return p;
+      }
+    }
+    return null;
   }
 
   Widget _pageIdentite(BuildContext context) {
@@ -566,66 +575,6 @@ class _Colonne extends StatelessWidget {
   );
 }
 
-/// La rangee d'etape du gabarit V6 : disque retour, progression continue,
-/// « n sur N ». Une seule ligne ; lue « Etape n sur N ».
-class _RangeeEtape extends StatelessWidget {
-  const _RangeeEtape({
-    required this.numero,
-    required this.total,
-    required this.onRetour,
-  });
-
-  final int numero;
-  final int total;
-  final VoidCallback onRetour;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Row(
-      children: <Widget>[
-        DisqueRetour(onPress: onRetour),
-        Ecart.hXxl,
-        Expanded(
-          child: Semantics(
-            label: t.foyer.ajout.etapeSurLue(n: numero, total: total),
-            excludeSemantics: true,
-            child: ClipRRect(
-              borderRadius: AppRadius.arrondiFull,
-              child: SizedBox(
-                height: AppSpacing.sm,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    ColoredBox(color: palette.surfaceSunken.background),
-                    FractionallySizedBox(
-                      alignment: AlignmentDirectional.centerStart,
-                      widthFactor: numero / total,
-                      child: ColoredBox(
-                        color: palette.surfacePrimary.background,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        Ecart.hXxl,
-        ExcludeSemantics(
-          child: Text(
-            t.foyer.ajout.etapeSur(n: numero, total: total),
-            style: palette.inkStrong.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 /// La question de la page et sa consigne.
 class _Question extends StatelessWidget {
   const _Question({required this.question, required this.sousTitre});
@@ -678,191 +627,6 @@ class _Precision extends StatelessWidget {
         textAlign: TextAlign.center,
         style: (alerte ? palette.inkAlert : palette.inkMuted).applyTo(
           Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-        ),
-      ),
-    );
-  }
-}
-
-/// Une carte de choix du gabarit E1 : pastille d'icone, titre, description,
-/// radio en haut a droite. Une carte **indisponible** reste lisible, dit
-/// « Indisponible » en texte et ne se presse pas.
-///
-/// Locale au lot B tant que `ChoiceCardGroup` (composant partage) ne porte ni
-/// description ni option desactivee (demande B-3 au coordinateur). Servie
-/// aussi par la page Interface de la fiche eleve (options a radio).
-class CarteChoixFoyer extends StatelessWidget {
-  /// Cree une carte.
-  const CarteChoixFoyer({
-    required this.icone,
-    required this.titre,
-    required this.description,
-    required this.retenue,
-    required this.disponible,
-    required this.onPress,
-    super.key,
-  });
-
-  /// L'icone de la pastille.
-  final AppIcon icone;
-
-  /// Le titre de l'option.
-  final String titre;
-
-  /// Une phrase qui dit ce que l'option change.
-  final String description;
-
-  /// Vrai quand l'option est celle retenue.
-  final bool retenue;
-
-  /// Faux pour une option visible mais indisponible.
-  final bool disponible;
-
-  /// Le geste de choix.
-  final VoidCallback onPress;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    // La pastille retenue se detache de la carte retenue (deja en teinte
-    // d'accent) : pastille pleine d'accent, comme la planche E1.
-    final AppColorPair pastille = retenue
-        ? palette.surfacePrimary
-        : palette.surfaceSunken;
-
-    Widget carte(BuildContext contexte, EtatPression etat) {
-      final bool survol = disponible && (etat.survole || etat.presse);
-      return DecoratedBox(
-        decoration: AppElevation.avecFilet(
-          surface: retenue ? palette.washAccent : palette.surfaceRaised,
-          filet: retenue
-              ? palette.inkAccent
-              : survol
-              ? palette.borderStrong
-              : palette.contourCarte,
-          ombre: palette.ombre,
-          arrondi: AppRadius.arrondiSm,
-          ombres: AppElevation.niveau0,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox.square(
-                dimension: AppTouchTarget.standard,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: pastille.background,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconTheme(
-                    data: retenue
-                        ? IconThemeData(
-                            color: pastille.onBackground,
-                            size: AppSpacing.xxl,
-                          )
-                        : disponible
-                        ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
-                        : palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
-                    child: Icon(icone.resoudre(selectionne: retenue)),
-                  ),
-                ),
-              ),
-              Ecart.hLg,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      titre,
-                      style: (disponible ? palette.inkStrong : palette.inkMuted)
-                          .applyTo(textes.titleMedium ?? const TextStyle()),
-                    ),
-                    Ecart.vXs,
-                    Text(
-                      description,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
-                      ),
-                    ),
-                    if (!disponible) ...<Widget>[
-                      Ecart.vSm,
-                      Text(
-                        t.foyer.ajout.pourQui.indisponible,
-                        style: palette.inkMuted.applyTo(
-                          textes.labelMedium ?? const TextStyle(),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Ecart.hMd,
-              _Radio(retenue: retenue, disponible: disponible),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Semantics(
-      inMutuallyExclusiveGroup: true,
-      checked: retenue,
-      enabled: disponible,
-      child: Pressable.selon(
-        onPress: disponible ? onPress : null,
-        actif: disponible,
-        libelleSemantique: disponible
-            ? '$titre. $description'
-            : '$titre. $description ${t.foyer.ajout.pourQui.indisponible}.',
-        respecterCibleTactile: false,
-        arrondiFocus: AppRadius.arrondiSm,
-        constructeur: carte,
-      ),
-    );
-  }
-}
-
-/// Le radio dessine de la carte : anneau, point plein quand elle est retenue.
-/// Son contour garde 3:1 sur la carte (`borderStrong`).
-class _Radio extends StatelessWidget {
-  const _Radio({required this.retenue, required this.disponible});
-
-  final bool retenue;
-  final bool disponible;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return ExcludeSemantics(
-      child: SizedBox.square(
-        dimension: AppSpacing.xxl,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.fromBorderSide(
-              (retenue
-                      ? palette.inkAccent
-                      : disponible
-                      ? palette.borderStrong
-                      : palette.borderResting)
-                  .asBorderSide(width: 2),
-            ),
-          ),
-          child: retenue
-              ? Padding(
-                  padding: const EdgeInsets.all(AppSpacing.xs),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: palette.surfacePrimary.background,
-                    ),
-                  ),
-                )
-              : null,
         ),
       ),
     );

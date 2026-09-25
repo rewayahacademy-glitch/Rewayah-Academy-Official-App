@@ -362,7 +362,7 @@ void main() {
         depart: Routes.ficheEleveSousPage('inconnu', 'interface'),
       );
       expect(_etat(NatureEtat.introuvable), findsOneWidget);
-      expect(find.byKey(InterfaceElevePage.guideeKey), findsNothing);
+      expect(find.byKey(InterfaceElevePage.choixKey), findsNothing);
     });
   });
 
@@ -623,12 +623,14 @@ void main() {
       await _ouvrirFicheA1(tester);
       await _ouvrirLigne(tester, t.ficheEleve.lignes.interface);
 
-      bool retenue(Key cle) => tester
+      bool retenue(String libelle) => tester
           .widget<Semantics>(
             find
-                .descendant(
-                  of: find.byKey(cle),
-                  matching: find.byType(Semantics),
+                .ancestor(
+                  of: find.text(libelle),
+                  matching: find.byWidgetPredicate(
+                    (Widget w) => w is Semantics && w.properties.checked != null,
+                  ),
                 )
                 .first,
           )
@@ -637,17 +639,17 @@ void main() {
       expect(find.text(t.ficheEleve.interface.guidee), findsOneWidget);
       expect(find.text(t.ficheEleve.interface.politique), findsOneWidget);
 
-      await _toucher(tester, find.byKey(InterfaceElevePage.standardKey));
+      await _toucher(tester, find.text(t.ficheEleve.interface.standard));
       expect(appairage.reglagesEcrits.single.mode, InterfaceMode.standard);
       expect(appairage.reglagesEcrits.single.camera, isNull);
       expect(
         appairage.elevesRendus.firstWhere((EleveDuFoyer e) => e.id == a1).mode,
         InterfaceMode.standard,
       );
-      expect(retenue(InterfaceElevePage.standardKey), isTrue);
+      expect(retenue(t.ficheEleve.interface.standard), isTrue);
 
       // Toucher l'option deja retenue n'ecrit rien.
-      await _toucher(tester, find.byKey(InterfaceElevePage.standardKey));
+      await _toucher(tester, find.text(t.ficheEleve.interface.standard));
       expect(appairage.reglagesEcrits, hasLength(1));
 
       // De retour sur la fiche, la ligne dit la nouvelle interface.
@@ -664,7 +666,7 @@ void main() {
         appairage: appairage,
         depart: Routes.ficheEleveSousPage(a1, 'interface'),
       );
-      await _toucher(tester, find.byKey(InterfaceElevePage.standardKey));
+      await _toucher(tester, find.text(t.ficheEleve.interface.standard));
       expect(find.text(t.ficheEleve.interface.echec), findsOneWidget);
       expect(
         appairage.elevesRendus.firstWhere((EleveDuFoyer e) => e.id == a1).mode,
@@ -827,7 +829,7 @@ void main() {
         autres: horsLigne(),
       );
       expect(find.byKey(InterfaceElevePage.horsLigneKey), findsOneWidget);
-      await tester.tap(find.byKey(InterfaceElevePage.standardKey));
+      await tester.tap(find.text(t.ficheEleve.interface.standard));
       await stabiliser(tester);
       expect(appairage.reglagesEcrits, isEmpty);
       expect(find.text(t.ficheEleve.interface.echec), findsNothing);

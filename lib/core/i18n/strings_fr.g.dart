@@ -2483,12 +2483,6 @@ class Traductions$foyer$ajout$fr {
 
 	// Translations
 
-	/// fr: '{n} sur {total}'
-	String etapeSur({required Object n, required Object total}) => '${n} sur ${total}';
-
-	/// fr: 'Étape {n} sur {total}'
-	String etapeSurLue({required Object n, required Object total}) => 'Étape ${n} sur ${total}';
-
 	/// fr: 'Suivant'
 	String get suivant => 'Suivant';
 
@@ -9380,8 +9374,6 @@ extension on Traductions {
 			'foyer.monProfil.indisponibleTitre' => 'Pas encore possible',
 			'foyer.monProfil.indisponiblePhrase' => 'Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu\'il est.',
 			'foyer.monProfil.retour' => 'Retour au foyer',
-			'foyer.ajout.etapeSur' => ({required Object n, required Object total}) => '${n} sur ${total}',
-			'foyer.ajout.etapeSurLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'foyer.ajout.suivant' => 'Suivant',
 			'foyer.ajout.creer' => 'Créer le profil',
 			'foyer.ajout.porte.illisibleTitre' => 'Votre compte n\'a pas pu être lu',
@@ -9533,10 +9525,10 @@ extension on Traductions {
 			'disponibilites.joursLongs.2' => 'mercredi',
 			'disponibilites.joursLongs.3' => 'jeudi',
 			'disponibilites.joursLongs.4' => 'vendredi',
-			_ => null,
-		} ?? switch (path) {
 			'disponibilites.joursLongs.5' => 'samedi',
 			'disponibilites.joursLongs.6' => 'dimanche',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.titre' => 'Créneaux',
 			'creneaux.ongletHeures' => 'Mes heures',
 			'creneaux.ongletEleves' => 'Élèves en attente',
@@ -10047,10 +10039,10 @@ extension on Traductions {
 			'admin.programmes.supprimerNiveauTitre' => ({required Object nom}) => 'Supprimer ${nom}',
 			'admin.programmes.supprimerNiveauEnvoyer' => 'Supprimer',
 			'admin.programmes.supprimerNiveauErreur' => ({required Object message}) => 'La suppression n\'a pas abouti : ${message}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.publierVersion' => 'Publier la version',
 			'admin.programmes.publierVersionTitre' => ({required Object version}) => 'Publier ${version}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.publierVersionDetail' => 'Une fois publiée, cette version ne pourra plus être modifiée. Toute évolution académique en créera une nouvelle.',
 			'admin.programmes.publierVersionEnvoyer' => 'Publier',
 			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
@@ -10561,10 +10553,10 @@ extension on Traductions {
 			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.',
 			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.',
 			'tuteur.reglages.cameraAutoriser' => ({required Object prenom}) => 'Autoriser la caméra de ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.cameraRetirer' => ({required Object prenom}) => 'Retirer la caméra de ${prenom}',
 			'tuteur.reglages.mode' => 'Affichage',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.modeEnfant' => ({required Object prenom}) => 'Grand affichage, sans lecture : ${prenom} reconnaît des images et écoute.',
 			'tuteur.reglages.modeStandard' => ({required Object prenom}) => 'Affichage courant : ${prenom} lit son écran.',
 			'tuteur.reglages.modePasserEnfant' => ({required Object prenom}) => 'Passer ${prenom} au grand affichage',
@@ -11075,10 +11067,10 @@ extension on Traductions {
 			'tc.classe.etat.inconnu' => 'État inconnu',
 			'tc.classe.etat.attendu' => 'Attendu',
 			'tc.classe.etat.enConnexion' => 'En connexion',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.etat.present' => 'Présent',
 			'tc.classe.etat.enRetard' => 'En retard',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.etat.deconnecte' => 'Déconnecté',
 			'tc.classe.etat.enReconnexion' => 'En reconnexion',
 			'tc.classe.etat.sorti' => 'Sorti',

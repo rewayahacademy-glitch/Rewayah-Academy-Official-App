@@ -125,7 +125,8 @@ Future<void> _monter(
   if (etat == _Etat.pourQuiVierge || etat == _Etat.porteAttente) {
     return;
   }
-  await toucher(FormulaireProfilEleve.choixEnfantKey);
+  await tester.tap(find.text(t.foyer.ajout.pourQui.enfantTitre));
+  await stabiliser(tester);
   if (etat == _Etat.pourQuiChoisi) {
     return;
   }

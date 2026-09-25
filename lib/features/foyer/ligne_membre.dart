@@ -6,9 +6,10 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import 'photo_eleve.dart';
 
 /// Ce que le Foyer sait de la classe d'un membre.
 ///
@@ -173,8 +174,8 @@ String? texteClasse(ClasseMembre classe) => switch (classe) {
 ///
 /// Une rubrique du composant partage `GroupeReglages` : une surface pour tout
 /// le groupe, un filet en retrait entre les membres, un chevron vers la fiche.
-/// L'icone de profil tient la place de l'avatar tant que le composant partage
-/// n'accepte pas d'autre tete de ligne (demande B-1 au coordinateur).
+/// La tete de ligne est la photo de l'eleve, ou ses initiales sans photo, par
+/// le composant partage `AvatarTile` (via [PhotoEleve]).
 LigneRubrique ligneMembre({
   required ProfilEleveFoyer profil,
   required ClasseMembre classe,
@@ -182,7 +183,11 @@ LigneRubrique ligneMembre({
   required VoidCallback onPress,
   EtapeParcours? inscription,
 }) => LigneRubrique(
-  icone: AppIcons.profil,
+  meneur: PhotoEleve(
+    prenom: profil.prenom,
+    cleAvatar: profil.cleAvatar,
+    diametre: AppSpacing.section,
+  ),
   libelle: profil.prenom,
   legende: legendeMembre(
     profil: profil,

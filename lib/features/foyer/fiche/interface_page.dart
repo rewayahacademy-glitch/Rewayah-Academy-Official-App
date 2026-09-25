@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,8 +11,8 @@ import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/choice_card_group.dart';
 import '../fiche_eleve_page.dart';
-import '../formulaire_profil_eleve.dart';
 
 /// L'interface d'un profil eleve (`/tuteur/foyer/:eleveId/interface`).
 ///
@@ -33,11 +35,8 @@ class InterfaceElevePage extends StatelessWidget {
   /// L'eleve concerne.
   final String eleveId;
 
-  /// La carte « Interface guidee ».
-  static const Key guideeKey = Key('ficheEleve.interface.guidee');
-
-  /// La carte « Interface standard ».
-  static const Key standardKey = Key('ficheEleve.interface.standard');
+  /// Le groupe des deux choix d'interface (`ChoiceCardGroup`).
+  static const Key choixKey = Key('ficheEleve.interface.choix');
 
   /// La phrase hors ligne.
   static const Key horsLigneKey = Key('ficheEleve.interface.horsLigne');
@@ -67,11 +66,16 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
   bool _enCours = false;
   bool _echec = false;
 
+  /// Change a chaque geste : le groupe se reconstruit depuis la valeur relue,
+  /// jamais depuis la carte touchee (aucun etat optimiste).
+  int _generation = 0;
+
   Future<void> _choisir(InterfaceMode mode) async {
     if (_enCours || mode == widget.profil.mode) {
       return;
     }
     setState(() {
+      _generation++;
       _enCours = true;
       _echec = false;
     });
@@ -107,24 +111,41 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
         children: <Widget>[
           NoteFiche(t.ficheEleve.interface.intro(prenom: profil.prenom)),
           Ecart.vSm,
-          CarteChoixFoyer(
-            key: InterfaceElevePage.guideeKey,
-            icone: AppIcons.focus,
-            titre: t.ficheEleve.interface.guidee,
-            description: t.ficheEleve.interface.guideeDescription,
-            retenue: profil.mode == InterfaceMode.enfant,
-            disponible: !horsLigne,
-            onPress: () => _choisir(InterfaceMode.enfant),
-          ),
-          Ecart.vMd,
-          CarteChoixFoyer(
-            key: InterfaceElevePage.standardKey,
-            icone: AppIcons.tabletteOuOrdinateur,
-            titre: t.ficheEleve.interface.standard,
-            description: t.ficheEleve.interface.standardDescription,
-            retenue: profil.mode == InterfaceMode.standard,
-            disponible: !horsLigne,
-            onPress: () => _choisir(InterfaceMode.standard),
+          KeyedSubtree(
+            key: InterfaceElevePage.choixKey,
+            child: ChoiceCardGroup(
+              key: ValueKey<(InterfaceMode, int)>((profil.mode, _generation)),
+              autoriserSaisieLibre: false,
+              valeurInitiale: ReponseChoix(
+                valeurs: <String>{profil.mode.name},
+              ),
+              options: <OptionChoix>[
+                OptionChoix(
+                  valeur: InterfaceMode.enfant.name,
+                  libelle: t.ficheEleve.interface.guidee,
+                  icone: AppIcons.focus,
+                  description: t.ficheEleve.interface.guideeDescription,
+                  disponible: !horsLigne,
+                ),
+                OptionChoix(
+                  valeur: InterfaceMode.standard.name,
+                  libelle: t.ficheEleve.interface.standard,
+                  icone: AppIcons.tabletteOuOrdinateur,
+                  description: t.ficheEleve.interface.standardDescription,
+                  disponible: !horsLigne,
+                ),
+              ],
+              onChange: (ReponseChoix reponse) {
+                for (final InterfaceMode mode in <InterfaceMode>[
+                  InterfaceMode.enfant,
+                  InterfaceMode.standard,
+                ]) {
+                  if (reponse.valeurs.contains(mode.name)) {
+                    unawaited(_choisir(mode));
+                  }
+                }
+              },
+            ),
           ),
           if (horsLigne) ...<Widget>[
             Ecart.vMd,

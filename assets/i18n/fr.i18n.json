@@ -472,8 +472,6 @@
       "retour": "Retour au foyer"
     },
     "ajout": {
-      "etapeSur": "{n} sur {total}",
-      "etapeSurLue": "Étape {n} sur {total}",
       "suivant": "Suivant",
       "creer": "Créer le profil",
       "porte": {

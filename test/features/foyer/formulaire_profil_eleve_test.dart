@@ -144,7 +144,7 @@ VoidCallback? _action(WidgetTester tester) => tester
     .onPress;
 
 Future<void> _choisirEnfantPuisSuivant(WidgetTester tester) async {
-  await _toucher(tester, find.byKey(FormulaireProfilEleve.choixEnfantKey));
+  await _toucher(tester, find.text(t.foyer.ajout.pourQui.enfantTitre));
   await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
 }
 
@@ -173,13 +173,13 @@ void main() {
         expect(lieu(routeur), Routes.tuteurAjouterEnfant);
         expect(find.byType(AjouterEnfantPage), findsOneWidget);
         expect(find.text(t.foyer.ajout.pourQui.question), findsOneWidget);
-        expect(find.text(t.foyer.ajout.etapeSur(n: 1, total: 2)), findsOne);
+        expect(find.text(t.commun.etape.sur(n: 1, total: 2)), findsOne);
         // Aucune presélection : le bouton attend un choix.
         expect(_action(tester), isNull);
 
         await _choisirEnfantPuisSuivant(tester);
         expect(find.text(t.foyer.ajout.identite.question), findsOneWidget);
-        expect(find.text(t.foyer.ajout.etapeSur(n: 2, total: 2)), findsOne);
+        expect(find.text(t.commun.etape.sur(n: 2, total: 2)), findsOne);
 
         await _remplir(tester, prenom: '  Nouvel eleve ', nom: ' Fictif ');
         await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
@@ -211,17 +211,17 @@ void main() {
 
         await _toucher(
           tester,
-          find.byKey(FormulaireProfilEleve.choixProcheKey),
+          find.text(t.foyer.ajout.pourQui.procheTitre),
         );
         expect(_action(tester), isNull);
-        await _toucher(tester, find.byKey(FormulaireProfilEleve.choixMoiKey));
+        await _toucher(tester, find.text(t.foyer.ajout.pourQui.moiTitre));
         expect(_action(tester), isNull);
         expect(find.text(t.foyer.ajout.pourQui.question), findsOneWidget);
 
         // Semantique : groupe exclusif, cartes indisponibles non actives.
         final SemanticsHandle poignee = tester.ensureSemantics();
         expect(
-          tester.getSemantics(find.byKey(FormulaireProfilEleve.choixMoiKey)),
+          tester.getSemantics(find.text(t.foyer.ajout.pourQui.moiTitre)),
           isSemantics(
             isInMutuallyExclusiveGroup: true,
             hasCheckedState: true,
@@ -469,10 +469,10 @@ void main() {
         await _ouvrirAjout(tester);
 
         expect(find.text(t.foyer.ajout.pourQui.enfantAttente), findsOneWidget);
-        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsNWidgets(3));
+        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsNWidgets(2));
         await _toucher(
           tester,
-          find.byKey(FormulaireProfilEleve.choixEnfantKey),
+          find.text(t.foyer.ajout.pourQui.enfantTitre),
         );
         expect(_action(tester), isNull);
       },
@@ -510,7 +510,7 @@ void main() {
 
         expect(find.byKey(cle), findsOneWidget);
         expect(find.text(t.foyer.ajout.pourQui.enfantAttente), findsNothing);
-        expect(find.byKey(FormulaireProfilEleve.choixEnfantKey), findsNothing);
+        expect(find.byKey(FormulaireProfilEleve.choixKey), findsNothing);
         expect(_action(tester), isNull);
         // Le retour reste visible : aucune impasse.
         expect(find.byType(DisqueRetour), findsOneWidget);
