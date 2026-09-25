@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../mouvement/mouvement.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
@@ -111,7 +112,11 @@ class AppCard extends StatelessWidget {
     AppColorPair paire,
     EtatPression etat,
   ) {
-    return Container(
+    // Selection, survol et pression changent fond et contour en fondu court
+    // (P2-16) ; l'enfoncement 0.98 reste celui de [Pressable], sans doublon.
+    return AnimatedContainer(
+      duration: Mouvement.duree(context, Mouvement.court),
+      curve: Mouvement.entree,
       constraints: BoxConstraints(minHeight: metriques.cibleTactile),
       padding: EdgeInsets.all(
         marge ??

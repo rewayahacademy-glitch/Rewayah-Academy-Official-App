@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/mouvement/mouvement.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
@@ -191,6 +192,8 @@ void main() {
         ),
       );
       await tester.pump(AppDelais.requeteMax);
+      // Le squelette sort en fondu court (P2-16).
+      await tester.pump(Mouvement.maximum);
       expect(find.byKey(_squelette), findsNothing);
       expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
 

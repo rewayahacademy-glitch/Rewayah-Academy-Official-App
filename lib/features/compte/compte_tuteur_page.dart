@@ -8,6 +8,7 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
@@ -209,7 +210,7 @@ class _Hub extends ConsumerWidget {
       children: <Widget>[
         for (int i = 0; i < cartes.length; i++) ...<Widget>[
           if (i > 0) SizedBox(height: ecart),
-          cartes[i],
+          ElementEchelonne(index: i, child: cartes[i]),
         ],
       ],
     );
