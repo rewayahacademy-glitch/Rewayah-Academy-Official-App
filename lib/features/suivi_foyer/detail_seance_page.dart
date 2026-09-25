@@ -73,7 +73,7 @@ class DetailSeancePage extends ConsumerWidget {
                 ),
       sousTitre: seance == null
           ? null
-          : '${seance.elevePrenom} · ${dateLongueHistorique(seance.debut)}',
+          : '${seance.elevePrenom} · ${dateMoyenne(seance.debut)}',
       onRetour: retour,
       child: ColonneHistorique(
         child: BlocAsynchrone<List<Seance>>(
@@ -178,10 +178,6 @@ class _Contenu extends ConsumerWidget {
       children: <Widget>[
         titreBloc(t.historique.seance.blocSeance),
         carte(<Widget>[
-          LigneCleValeur(
-            cle: t.historique.seance.date,
-            valeur: dateLongueHistorique(seance.debut),
-          ),
           LigneCleValeur(
             cle: t.historique.seance.horaire,
             valeur: plageHoraire(seance.debut, seance.fin),

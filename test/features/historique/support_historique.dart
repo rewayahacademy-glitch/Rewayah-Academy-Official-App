@@ -196,7 +196,7 @@ List<Override> surchargesHistorique({
 Future<GoRouter> monterHistorique(
   WidgetTester tester, {
   String depart = Routes.tuteurAccueil,
-  Size taille = const Size(390, 844),
+  Size? taille = const Size(390, 844),
   List<Seance>? seances,
   List<PresenceParticipant>? presences,
   bool presencesIllisibles = false,
@@ -209,9 +209,12 @@ Future<GoRouter> monterHistorique(
   ThemeMode mode = ThemeMode.light,
   Key? cadre,
 }) async {
-  tester.view.physicalSize = taille;
-  tester.view.devicePixelRatio = 1;
-  addTearDown(tester.view.reset);
+  // Sans taille, la vue est deja fixee par l'appelant (outil de capture).
+  if (taille != null) {
+    tester.view.physicalSize = taille;
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+  }
   final FauxServiceAppairage appairage = FauxServiceAppairage()
     ..elevesRendus = eleves;
   late GoRouter routeur;

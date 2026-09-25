@@ -115,7 +115,7 @@ class DetailObservationsPage extends ConsumerWidget {
       sousTitre: lu == null
           ? null
           : '${prenomEleve(lu.enfantId ?? eleveId, profils)} · '
-                '${dateLongueHistorique(entree!)}',
+                '${dateMoyenne(entree!)}',
       onRetour: retour,
       child: ColonneHistorique(child: corps),
     );
@@ -275,26 +275,25 @@ class _Visite extends StatelessWidget {
                 ),
               ),
               Ecart.hMd,
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    // Une duree seulement quand le serveur l'a ecrite.
-                    if (terminee) ...<Widget>[
-                      Text(
-                        dureeLisible(duree),
-                        style: AppTypography.tabulaire(
-                          palette.inkStrong.applyTo(
-                            textes.bodyMedium ?? const TextStyle(),
-                          ),
+              // Calee a droite, contre le bord de la carte (maquette D4).
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  // Une duree seulement quand le serveur l'a ecrite.
+                  if (terminee) ...<Widget>[
+                    Text(
+                      dureeLisible(duree),
+                      style: AppTypography.tabulaire(
+                        palette.inkStrong.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
                         ),
                       ),
-                      Ecart.vXs,
-                    ],
-                    StatusPill(libelle: statut.libelle, ton: statut.ton),
+                    ),
+                    Ecart.vXs,
                   ],
-                ),
+                  StatusPill(libelle: statut.libelle, ton: statut.ton),
+                ],
               ),
             ],
           ),

@@ -331,6 +331,11 @@ String dateLongueHistorique(DateTime instant) => t.historique.dateLongue(
   annee: instant.year,
 );
 
+/// « lundi 21 sept. 2026 » : le sous-titre des details, sur une ligne.
+String dateMoyenne(DateTime instant) =>
+    '${t.commun.dates.jours[instant.weekday - 1].toLowerCase()} '
+    '${dateCourte(instant)}';
+
 /// « 18:00 - 19:00 ».
 String plageHoraire(DateTime debut, DateTime fin) =>
     t.historique.plage(debut: heureMinute(debut), fin: heureMinute(fin));

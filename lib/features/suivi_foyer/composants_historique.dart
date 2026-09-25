@@ -398,7 +398,15 @@ class LigneHistorique extends StatelessWidget {
                           contraintes.maxWidth >= _largeurPastilleADroite;
                       return Row(
                         children: <Widget>[
-                          Expanded(flex: 5, child: blocDate),
+                          // Une colonne de date de largeur fixe par ligne :
+                          // les filets verticaux s'alignent d'une ligne a
+                          // l'autre, quelle que soit la pastille.
+                          SizedBox(
+                            width:
+                                contraintes.maxWidth *
+                                (pastilleADroite ? 0.3 : 0.36),
+                            child: blocDate,
+                          ),
                           // Le filet vertical de la maquette, centre dans
                           // une gouttiere de 24.
                           SizedBox(
@@ -412,7 +420,6 @@ class LigneHistorique extends StatelessWidget {
                             ),
                           ),
                           Expanded(
-                            flex: 6,
                             child: pastilleADroite
                                 ? blocClasse
                                 : Column(
