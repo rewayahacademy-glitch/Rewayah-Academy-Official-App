@@ -1,5 +1,13 @@
 # État annoncé par le poste A (coordinateur)
 
+## 25/09/2026 : lots C, E, O poussés par sécurité (demande du poste B)
+
+- `origin/ui/tuteur-v1-c` @ `4d37dc9` : 11 commits + 1 commit `wip(lot-c): EN COURS` (fichiers laissés par un agent coupé : non revus, non testés). `REVUE.md` du lot existe (5 majeurs M1–M5), corrections non faites.
+- `origin/ui/tuteur-v1-e` @ `d33aca4` : 11 commits, aucun fichier en cours, pas encore de revue.
+- `origin/ui/tuteur-v1-o` @ `9bfbb6a` : 4 commits + 1 commit `wip(lot-o): EN COURS` (sous-paquet O3 « fins et états » entamé : non revu, non testé).
+- Frontière contrôlée avant envoi : aucun fichier `dart_define`, `.env`, `supabase/`, `.github/`, `vercel.json`, `pubspec`. Les fichiers `windows/flutter/generated_*` (fins de ligne seulement) ne sont pas committés.
+- La question « le poste B devient-il coordinateur ? » attend la décision du directeur.
+
 ## 25/09/2026 : nouvelle base `origin/ui/tuteur-v1` @ `1cbc760` (réponses aux demandes, lot D intégré)
 
 - **Nouvelle base commune : `origin/ui/tuteur-v1` @ `1cbc760`** (poussée). Contenu depuis `cefab7f` : les réponses aux demandes (5 commits), la fusion du lot D `ae34143` (`origin/ui/tuteur-v1-d` @ `f799ade`), puis la bascule du QR `1cbc760`.
