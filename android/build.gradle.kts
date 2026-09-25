@@ -15,6 +15,16 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+// Certains plugins anciens (sentry_flutter 8.x) compilent contre android-34, alors que
+// package_info_plus exige au moins 36. On releve compileSdk des bibliotheques trop anciennes.
+// Declare avant evaluationDependsOn(":app") pour que afterEvaluate soit enregistre a temps.
+subprojects {
+    afterEvaluate {
+        extensions.findByType(com.android.build.api.dsl.LibraryExtension::class.java)?.let { android ->
+            if ((android.compileSdk ?: 0) < 36) android.compileSdk = 36
+        }
+    }
+}
 subprojects {
     project.evaluationDependsOn(":app")
 }
