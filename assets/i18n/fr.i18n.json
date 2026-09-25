@@ -8,6 +8,13 @@
     "fermer": "Fermer",
     "reessayer": "Réessayer",
     "chargement": "Chargement",
+    "etape": {
+      "sur": "{n} sur {total}",
+      "surLue": "Étape {n} sur {total}"
+    },
+    "choix": {
+      "indisponible": "Indisponible"
+    },
     "etats": {
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",
@@ -252,11 +259,11 @@
     "feuilleAppareil": {
       "pourQui": "Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.",
       "etapesTitre": "Où trouver le code",
-      "etape1": "Sur votre propre appareil, ouvrez Foyer et appareils.",
-      "etape2": "Ouvrez le profil de l'élève, puis Ajouter un appareil.",
-      "etape3": "Un code de six caractères s'affiche. Il reste valable dix minutes.",
-      "etape4": "Saisissez-le ici, sur l'appareil de l'élève.",
-      "plafond": "Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.",
+      "etape1": "Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.",
+      "etape2": "Touchez le profil de l'élève, puis Connecter un appareil.",
+      "etape3": "Un QR code et un code de six caractères s'affichent, avec leur heure de fin.",
+      "etape4": "Sur l'appareil de l'élève, scannez le QR code ou saisissez le code.",
+      "plafond": "Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.",
       "saisir": "Saisir le code",
       "fermer": "Fermer"
     }
@@ -318,19 +325,109 @@
   },
   "appareils": {
     "titre": "Appareils",
-    "regle": "Deux appareils au maximum par enfant, un seul en cours à la fois.",
-    "ajouter": "Ajouter un appareil",
-    "limiteAtteinte": "Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.",
-    "codeTitre": "Sur l'appareil de l'enfant",
-    "codeInstruction": "Ouvrez l'application Rewayah, puis entrez ce code.",
-    "expireDans": "Expire dans {temps}",
-    "expire": "Ce code a expiré.",
+    "foyer": {
+      "titre": "Appareils du foyer",
+      "phrase": "Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.",
+      "groupeProfils": "Profils élèves",
+      "aucunAppareil": "Aucun appareil connecté",
+      "unAppareil": "1 appareil connecté : {nom}",
+      "plusieursAppareils": "{nombre} appareils connectés : {noms}",
+      "partageTitre": "Appareil partagé",
+      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.",
+      "videTitre": "Aucun profil élève",
+      "vide": "Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.",
+      "videAction": "Ajouter un profil élève"
+    },
+    "eleve": {
+      "sousTitre": "Gérez les appareils autorisés pour {prenom}.",
+      "groupe": "Appareils connectés",
+      "connecter": "Connecter un appareil",
+      "videTitre": "Aucun appareil connecté",
+      "vide": "Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.",
+      "introuvableTitre": "Profil élève introuvable",
+      "introuvable": "Ce profil élève n'est pas rattaché à votre foyer.",
+      "introuvableAction": "Voir les appareils du foyer",
+      "connecteLe": "Connecté le {date}",
+      "utiliseLe": "Dernière utilisation : {date}",
+      "jamaisUtilise": "Pas encore utilisé",
+      "retirerLibelle": "Retirer {appareil}",
+      "horsLigne": "Retirer ou connecter un appareil demande une connexion internet.",
+      "partageTitre": "Choix du profil et code personnel",
+      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.",
+      "retraitTitre": "Retirer un appareil",
+      "retrait": "Un appareil retiré ne peut plus se reconnecter. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion."
+    },
+    "plateforme": {
+      "android": "Téléphone ou tablette Android",
+      "ios": "iPhone ou iPad",
+      "web": "Navigateur web",
+      "windows": "Ordinateur",
+      "inconnue": "Appareil"
+    },
+    "retrait": {
+      "question": "Retirer cet appareil ?",
+      "consequence": "{appareil} ne pourra plus se connecter au profil de {prenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.",
+      "confirmer": "Retirer l'appareil",
+      "enCours": "Retrait en cours",
+      "reussi": "Appareil retiré. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.",
+      "echec": "Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.",
+      "horsLigne": "Pas de connexion internet : l'appareil n'a pas été retiré."
+    },
+    "emetteur": {
+      "titre": "Connecter un appareil",
+      "pourEleve": "Pour {prenom}",
+      "consigneTitre": "Sur l'autre appareil",
+      "consigne": "Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.",
+      "libelleQr": "QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l'appareil ne lit pas le QR.",
+      "codeManuel": "Code à saisir",
+      "codeLu": "Code à saisir : {code}",
+      "valableJusqua": "Valable jusqu'à {heure}",
+      "restant": "Encore {temps}",
+      "sortie": "Quitter cet écran n'annule pas le code : il reste valable jusqu'à {heure}.",
+      "suiviIndisponible": "Cet écran ne peut pas confirmer la connexion. Vérifiez sur l'appareil de l'élève.",
+      "preparation": "Préparation du code",
+      "verification": {
+        "titre": "Vérification du code",
+        "phrase": "Le code est masqué le temps de vérifier qu'il est toujours valable."
+      },
+      "confirme": {
+        "titre": "Appareil connecté",
+        "phrase": "L'appareil de {prenom} est prêt. Le code n'est plus affiché et ne peut plus servir.",
+        "phraseSansPrenom": "L'appareil de l'élève est prêt. Le code n'est plus affiché et ne peut plus servir.",
+        "action": "Terminé"
+      },
+      "expire": {
+        "titre": "Ce code a expiré",
+        "phrase": "Il ne peut plus servir. Générez-en un nouveau quand l'autre appareil est prêt."
+      },
+      "remplace": {
+        "titre": "Ce code a été remplacé",
+        "phrase": "Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus."
+      },
+      "dejaActif": {
+        "titre": "Un code est déjà valable",
+        "phrase": "Un code créé pour cet élève vaut jusqu'à {heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l'ancien inutilisable."
+      },
+      "horsLigne": {
+        "titre": "Connexion interrompue",
+        "phraseAvecCode": "Le code est masqué jusqu'au retour de la connexion. Il reste valable jusqu'à {heure}.",
+        "phraseSansCode": "Le code n'a pas pu être préparé. Il le sera dès le retour de la connexion."
+      },
+      "erreur": {
+        "plafondTitre": "Limite d'appareils atteinte",
+        "plafondPhrase": "Cet élève a déjà le nombre maximal d'appareils. Retirez-en un pour en connecter un autre.",
+        "plafondAction": "Voir les appareils",
+        "horsFoyerTitre": "Profil élève introuvable",
+        "horsFoyerPhrase": "Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.",
+        "compteTitre": "Connexion d'appareil pas encore ouverte",
+        "comptePhrase": "Votre compte doit être validé avant de connecter l'appareil d'un élève.",
+        "generiqueTitre": "Le code n'a pas pu être préparé",
+        "generiquePhrase": "La demande n'a pas abouti. Réessayez dans un instant."
+      }
+    },
     "regenerer": "Générer un nouveau code",
     "revoquer": "Retirer",
-    "revoquerConfirmation": "Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.",
-    "derniereUtilisation": "Utilisé {quand}",
-    "jamaisUtilise": "Jamais utilisé",
-    "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
+    "revoquerConfirmation": "Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code."
   },
   "enfant": {
     "titre": "Ajouter un enfant",
@@ -433,14 +530,87 @@
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
     "scanner": "Scanner le carré",
-    "codeInvite": "Entre le code affiché sur le téléphone de tes parents",
-    "codeErreur": "Ce code ne marche pas",
-    "codeExpire": "Ce code est trop vieux. Demande-en un nouveau.",
     "choisirProfil": "Qui es-tu ?",
-    "nouveauCode": "Choisis ton code secret",
-    "nouveauCodeConfirmer": "Entre-le encore une fois",
-    "codeDifferent": "Les deux codes ne sont pas les mêmes",
-    "codeEnregistre": "Code enregistré"
+    "profils": {
+      "phrase": "Touche ton prénom pour continuer.",
+      "ajouter": "Ajouter un profil sur cet appareil",
+      "ajouterLegende": "Avec le code affiché par le tuteur",
+      "profilLibelle": "Continuer en tant que {prenom}",
+      "videTitre": "Aucun profil sur cet appareil",
+      "vide": "Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.",
+      "videAction": "Saisir un code",
+      "retire": "Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.",
+      "jetonAbsent": "Cet appareil ne retrouve plus la connexion de {prenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici."
+    },
+    "pin": {
+      "bonjour": "Bonjour {prenom}",
+      "creer": "Choisis ton code personnel",
+      "creerPhrase": "Quatre chiffres, rien que pour toi. Il reste sur cet appareil.",
+      "confirmer": "Entre-le encore une fois",
+      "different": "Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.",
+      "ouverture": "Connexion en cours",
+      "horsLigne": "Pas de connexion internet. Ton code est bon : réessaie quand internet revient.",
+      "tropDEssais": "Trop d'essais. Patiente un instant avant de réessayer.",
+      "echec": "La connexion n'a pas abouti. Réessaie dans un instant.",
+      "changerProfil": "Changer de profil",
+      "oublie": "Code oublié ?",
+      "oubliePhrase": "Demande au tuteur d'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.",
+      "oublieAction": "Saisir un nouveau code"
+    },
+    "saisie": {
+      "titre": "Connecter cet appareil",
+      "phrase": "Saisissez le code de six caractères affiché sous le QR code, sur l'appareil du tuteur.",
+      "champ": "Code",
+      "aide": "Chiffres de 2 à 9 et lettres, sans I ni O.",
+      "valider": "Connecter l'appareil",
+      "scanner": "Scanner le QR code",
+      "horsLigne": "Pas de connexion internet. Le code pourra être vérifié au retour du réseau."
+    },
+    "lecteur": {
+      "titre": "Scanner le QR code",
+      "consigne": "Visez le QR code affiché sur l'appareil du tuteur.",
+      "demarrage": "Autorisez la caméra si l'appareil le demande.",
+      "libelleApercu": "Vue de la caméra",
+      "contenuInvalide": "Ce QR code n'est pas un code de connexion Rewayah. Visez celui affiché par le tuteur.",
+      "saisir": "Saisir le code",
+      "scannerANouveau": "Scanner à nouveau",
+      "verificationTitre": "Vérification du code",
+      "verificationPhrase": "La caméra est arrêtée pendant la vérification.",
+      "refuseeTitre": "Caméra non autorisée",
+      "refuseePhrase": "Pour lire le QR code, autorisez la caméra. Vous pouvez aussi saisir le code affiché sous le QR.",
+      "refuseeAction": "Autoriser la caméra",
+      "refuseeDurablementTitre": "Caméra bloquée",
+      "refuseeDurablementPhrase": "La caméra reste refusée pour Rewayah. Autorisez-la dans les réglages de l'appareil ou du navigateur, ou saisissez le code.",
+      "occupeeTitre": "Caméra occupée",
+      "occupeePhrase": "Une autre application utilise la caméra. Fermez-la, puis réessayez, ou saisissez le code.",
+      "absenteTitre": "Aucune caméra",
+      "absentePhrase": "Cet appareil n'a pas de caméra disponible. Saisissez le code affiché sous le QR.",
+      "nonSupporteeTitre": "Lecture impossible ici",
+      "nonSupporteePhrase": "Cet appareil ou ce navigateur ne sait pas lire un QR code. Saisissez le code affiché sous le QR.",
+      "erreurTitre": "La caméra n'a pas démarré",
+      "erreurPhrase": "Réessayez, ou saisissez le code affiché sous le QR."
+    },
+    "refus": {
+      "format": "Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.",
+      "inconnuTitre": "Code non reconnu",
+      "inconnu": "Ce code n'existe pas, ou un code plus récent l'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l'appareil du tuteur.",
+      "expireTitre": "Code expiré",
+      "expire": "Ce code n'est plus valable. Affichez un nouveau code sur l'appareil du tuteur.",
+      "dejaUtiliseTitre": "Code déjà utilisé",
+      "dejaUtilise": "Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l'appareil du tuteur.",
+      "revoqueTitre": "Appareil retiré",
+      "revoque": "Le tuteur a retiré cet appareil. Demandez-lui d'afficher un nouveau code.",
+      "plafondTitre": "Limite d'appareils atteinte",
+      "plafond": "Ce profil élève a atteint le nombre d'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.",
+      "tropDEssaisTitre": "Trop d'essais",
+      "tropDEssais": "Patientez un instant avant de réessayer.",
+      "horsLigneTitre": "Pas de connexion",
+      "horsLigne": "Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.",
+      "nonEnregistreTitre": "Connexion non enregistrée",
+      "nonEnregistre": "Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.",
+      "generiqueTitre": "Connexion non aboutie",
+      "generique": "La vérification du code n'a pas abouti. Réessayez dans un instant."
+    }
   },
   "dossiers": {
     "titre": "Dossiers à valider",
