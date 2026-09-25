@@ -146,7 +146,11 @@
       "voirSoldes": "Voir les soldes du foyer",
       "derniereRemise": "Dernière remise liée à une séance : {montant}, le {date}",
       "indisponible": "Non disponible pour le moment.",
-      "ligneAccueil": "Soldes du foyer : {total}"
+      "ligneAccueil": "Soldes du foyer : {total}",
+      "profilSelectionne": "Profil sélectionné",
+      "selectionne": "Sélectionné",
+      "rechargerPour": "Recharger pour {prenom}",
+      "mouvementsDe": "Voir les mouvements de {prenom}"
     },
     "mouvements": {
       "titre": "Mouvements de solde",

@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/resume_solde.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
+import 'package:rewayah_academy/features/compte/recharge_page.dart';
 import 'package:rewayah_academy/features/compte/soldes_page.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -150,6 +151,94 @@ void main() {
       expect(find.textContaining(interdit), findsNothing, reason: interdit);
     }
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('bureau : une ligne selectionne le profil ; le panneau recharge '
+      'et ouvre ses mouvements, la selection survit au retour', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await monterCompte(
+      tester,
+      depart: Routes.tuteurCompteSoldes,
+      taille: const Size(1440, 900),
+      eleves: DonneesDemo.eleves,
+      surcharges: _demo,
+    );
+    final Finder panneau = find.byKey(SoldesComptePage.panneauKey);
+    expect(panneau, findsOneWidget);
+    // Par defaut, le premier profil lu.
+    expect(
+      find.descendant(
+        of: panneau,
+        matching: find.text(t.finance.soldeDe(prenom: 'Aïcha')),
+      ),
+      findsOneWidget,
+    );
+
+    await toucher(tester, find.text('Yusuf'));
+    expect(
+      Uri.parse(lieu(routeur)).queryParameters['profil'],
+      DonneesDemo.yusufId,
+    );
+    expect(
+      find.descendant(
+        of: panneau,
+        matching: find.text(formaterMontant(800, FinanceFoyerDemo.devise)),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text(t.finance.soldes.selectionne), findsOneWidget);
+
+    await toucher(tester, find.byKey(SoldesComptePage.rechargerProfilKey));
+    final Uri recharge = Uri.parse(lieu(routeur));
+    expect(recharge.path, Routes.tuteurCompteRecharge);
+    expect(recharge.queryParameters['profil'], DonneesDemo.yusufId);
+    expect(find.byType(RechargePage), findsOneWidget);
+
+    await tester.tap(find.byType(DisqueRetour));
+    await stabiliser(tester);
+    expect(
+      Uri.parse(lieu(routeur)).queryParameters['profil'],
+      DonneesDemo.yusufId,
+    );
+    expect(
+      find.descendant(
+        of: panneau,
+        matching: find.text(t.finance.soldeDe(prenom: 'Yusuf')),
+      ),
+      findsOneWidget,
+    );
+
+    await toucher(tester, find.byKey(SoldesComptePage.mouvementsProfilKey));
+    final Uri mouvements = Uri.parse(lieu(routeur));
+    expect(mouvements.path, Routes.tuteurCompteMouvements);
+    expect(mouvements.queryParameters['profil'], DonneesDemo.yusufId);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('telephone : ni panneau ni selection', (
+    WidgetTester tester,
+  ) async {
+    await monterCompte(
+      tester,
+      depart: Routes.tuteurCompteSoldes,
+      eleves: DonneesDemo.eleves,
+      surcharges: _demo,
+    );
+    expect(find.byKey(SoldesComptePage.panneauKey), findsNothing);
+    expect(find.text(t.finance.soldes.selectionne), findsNothing);
+  });
+
+  testWidgets('production, bureau : aucun panneau ni action financiere', (
+    WidgetTester tester,
+  ) async {
+    await monterCompte(
+      tester,
+      depart: Routes.tuteurCompteSoldes,
+      taille: const Size(1440, 900),
+    );
+    expect(find.byKey(SoldesComptePage.panneauKey), findsNothing);
+    _aucuneActionFinanciere();
   });
 
   testWidgets('demonstration : le Foyer resume le total rendu', (

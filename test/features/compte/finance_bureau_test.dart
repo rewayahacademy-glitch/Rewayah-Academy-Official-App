@@ -115,14 +115,17 @@ void main() {
     ) async {
       await _soldes(tester, _bureau);
       expect(find.byType(ColonnesFiche), findsOneWidget);
-      _coteACote(
-        tester,
-        find.byType(ResumeSolde),
-        find.byKey(SoldesComptePage.rechargerKey),
+      // Le total du foyer, a gauche ; le panneau du profil a sa propre carte.
+      final Finder total = find.byWidgetPredicate(
+        (Widget w) => w is ResumeSolde && w.prenom == null,
       );
-      _coteACote(
+      final Finder panneau = find.byKey(SoldesComptePage.panneauKey);
+      _coteACote(tester, total, panneau);
+      // Les actions du foyer suivent le panneau, dans la meme colonne.
+      _empiles(tester, panneau, find.byKey(SoldesComptePage.rechargerKey));
+      _empiles(
         tester,
-        find.byType(ResumeSolde),
+        find.byKey(SoldesComptePage.rechargerKey),
         find.byKey(SoldesComptePage.gererAccesKey),
       );
       expect(tester.takeException(), isNull);

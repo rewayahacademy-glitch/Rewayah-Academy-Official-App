@@ -2520,6 +2520,18 @@ class Traductions$finance$soldes$fr {
 
 	/// fr: 'Soldes du foyer : {total}'
 	String ligneAccueil({required Object total}) => 'Soldes du foyer : ${total}';
+
+	/// fr: 'Profil sélectionné'
+	String get profilSelectionne => 'Profil sélectionné';
+
+	/// fr: 'Sélectionné'
+	String get selectionne => 'Sélectionné';
+
+	/// fr: 'Recharger pour {prenom}'
+	String rechargerPour({required Object prenom}) => 'Recharger pour ${prenom}';
+
+	/// fr: 'Voir les mouvements de {prenom}'
+	String mouvementsDe({required Object prenom}) => 'Voir les mouvements de ${prenom}';
 }
 
 // Path: finance.mouvements
@@ -11873,6 +11885,10 @@ extension on Traductions {
 			'finance.soldes.derniereRemise' => ({required Object montant, required Object date}) => 'Dernière remise liée à une séance : ${montant}, le ${date}',
 			'finance.soldes.indisponible' => 'Non disponible pour le moment.',
 			'finance.soldes.ligneAccueil' => ({required Object total}) => 'Soldes du foyer : ${total}',
+			'finance.soldes.profilSelectionne' => 'Profil sélectionné',
+			'finance.soldes.selectionne' => 'Sélectionné',
+			'finance.soldes.rechargerPour' => ({required Object prenom}) => 'Recharger pour ${prenom}',
+			'finance.soldes.mouvementsDe' => ({required Object prenom}) => 'Voir les mouvements de ${prenom}',
 			'finance.mouvements.titre' => 'Mouvements de solde',
 			'finance.mouvements.sousTitre' => 'L\'historique des mouvements de solde du foyer.',
 			'finance.mouvements.voir' => 'Voir les mouvements',
@@ -12283,12 +12299,12 @@ extension on Traductions {
 			'appareils.emetteur.codeManuel' => 'Code à saisir',
 			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
 			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.emetteur.restant' => ({required Object temps}) => 'Encore ${temps}',
 			'appareils.emetteur.sortie' => ({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.',
 			'appareils.emetteur.suiviIndisponible' => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.',
 			'appareils.emetteur.preparation' => 'Préparation du code',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.verification.titre' => 'Vérification du code',
 			'appareils.emetteur.verification.phrase' => 'Le code est masqué le temps de vérifier qu\'il est toujours valable.',
 			'appareils.emetteur.confirme.titre' => 'Appareil connecté',
@@ -12797,12 +12813,12 @@ extension on Traductions {
 			'admin.groupes.retirerEnvoyer' => 'Retirer',
 			'admin.groupes.retirerErreur' => ({required Object message}) => 'Le retrait n\'a pas abouti : ${message}',
 			'admin.groupes.modifierSeuilTitre' => ({required Object libelle}) => 'Seuil maximal de ${libelle}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.modifierSeuilEnvoyer' => 'Enregistrer',
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
@@ -13311,12 +13327,12 @@ extension on Traductions {
 			'parcours.momentsRaison' => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.',
 			'parcours.momentMatin' => 'Le matin',
 			'parcours.momentApresMidi' => 'L\'après-midi',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.momentSoir' => 'Le soir',
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
 			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
@@ -13825,12 +13841,12 @@ extension on Traductions {
 			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
 			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
 			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.poserDesHeures' => 'Proposer des heures',
 			'tuteur.accueil.annulee' => ({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu',
 			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
@@ -14339,12 +14355,12 @@ extension on Traductions {
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
