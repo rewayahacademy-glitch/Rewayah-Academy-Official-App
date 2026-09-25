@@ -401,6 +401,11 @@ class _SoldeFiche extends ConsumerWidget {
             solde = s;
           }
         }
+        // S03 ne propose que les profils des soldes lus : sans ligne pour ce
+        // profil, « Recharger » ouvrirait un ecran sans selection (constat 13).
+        final bool rechargeable = lus.profils.any(
+          (SoldeProfil s) => s.profilId == profil.eleveId,
+        );
         final MouvementSolde? remise = solde.derniereRemise;
         return ResumeSolde.profil(
           prenom: profil.prenom,
@@ -418,21 +423,23 @@ class _SoldeFiche extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // Rendu seulement sur des soldes lus (LT-7).
-              ActionPrincipale(
-                key: FicheElevePage.rechargerKey,
-                libelle: t.finance.recharge.action,
-                onPress: () => routeur.go(
-                  Uri(
-                    path: Routes.tuteurCompteRecharge,
-                    queryParameters: <String, String>{
-                      'profil': profil.eleveId,
-                      'retour': Routes.ficheElevePour(profil.eleveId),
-                    },
-                  ).toString(),
+              // Rendu seulement sur des soldes lus (LT-7) portant ce profil.
+              if (rechargeable) ...<Widget>[
+                ActionPrincipale(
+                  key: FicheElevePage.rechargerKey,
+                  libelle: t.finance.recharge.action,
+                  onPress: () => routeur.go(
+                    Uri(
+                      path: Routes.tuteurCompteRecharge,
+                      queryParameters: <String, String>{
+                        'profil': profil.eleveId,
+                        'retour': Routes.ficheElevePour(profil.eleveId),
+                      },
+                    ).toString(),
+                  ),
                 ),
-              ),
-              Ecart.vSm,
+                Ecart.vSm,
+              ],
               LienFleche(
                 key: FicheElevePage.voirSoldesKey,
                 libelle: t.finance.soldes.voirSoldes,

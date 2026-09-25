@@ -115,6 +115,25 @@ class _DevisSansPaiement extends FinanceFoyerDemo {
   }
 }
 
+/// Des soldes lus sans la ligne de Yusuf (constat 13).
+class _SoldesSansYusuf extends FinanceFoyerDemo {
+  const _SoldesSansYusuf();
+
+  @override
+  Future<SoldesFoyer> soldes() async {
+    final SoldesFoyer lus = await super.soldes();
+    return SoldesFoyer(
+      profils: <SoldeProfil>[
+        for (final SoldeProfil s in lus.profils)
+          if (s.profilId != DonneesDemo.yusufId) s,
+      ],
+      totaux: lus.totaux,
+      complet: false,
+      luLe: lus.luLe,
+    );
+  }
+}
+
 /// Un devis qui attend que le test le libere : garde de « Verifier »
 /// (constat 14).
 class _DevisLent extends FinanceFoyerDemo {
@@ -337,6 +356,21 @@ void main() {
     await stabiliser(tester);
     expect(lieu(routeur), fiche);
     expect(find.byType(FicheElevePage), findsOneWidget);
+  });
+
+  testWidgets('fiche : pas de « Recharger » pour un profil absent des soldes', (
+    WidgetTester tester,
+  ) async {
+    await monterCompte(
+      tester,
+      depart: Routes.ficheElevePour(DonneesDemo.yusufId),
+      eleves: DonneesDemo.eleves,
+      surcharges: _finance(const _SoldesSansYusuf()),
+    );
+    expect(find.byType(FicheElevePage), findsOneWidget);
+    expect(find.byKey(FicheElevePage.rechargerKey), findsNothing);
+    expect(find.byKey(FicheElevePage.voirSoldesKey), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('production : S01 sans bouton Recharger', (
