@@ -121,6 +121,8 @@ abstract final class DonneesSeanceDemo {
               EtatDemoSalle.supports => PanneauOuvert.supports,
               _ => PanneauOuvert.aucun,
             },
+      // Le point non lu de la cloche des images CLV-04 et CLV-06 desktop.
+      notificationsNonLues: 2,
     );
   }
 }

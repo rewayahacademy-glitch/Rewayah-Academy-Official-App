@@ -182,6 +182,7 @@ class VueSeance {
     this.supports = const <SupportDisponible>[],
     this.fin,
     this.panneau = PanneauOuvert.aucun,
+    this.notificationsNonLues = 0,
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -252,6 +253,10 @@ class VueSeance {
   /// Non nul : la seance est finie.
   final FinSeance? fin;
   final PanneauOuvert panneau;
+
+  /// Notifications non lues de la personne devant l'ecran : le point de la
+  /// cloche (CLV-04, CLV-06 desktop). La guidee n'a pas de cloche.
+  final int notificationsNonLues;
 
   bool get _enseignant => role == RoleSeance.enseignant;
   bool get _guidee => role == RoleSeance.guidee;
@@ -439,5 +444,6 @@ class VueSeance {
     supports: supports,
     fin: fin ?? this.fin,
     panneau: panneau ?? this.panneau,
+    notificationsNonLues: notificationsNonLues,
   );
 }

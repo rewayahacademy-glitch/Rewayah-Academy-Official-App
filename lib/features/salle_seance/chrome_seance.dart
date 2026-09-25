@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/bascule_theme.dart';
+import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
@@ -32,11 +34,28 @@ class ChromeSeance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Gabarit gabarit = AppGabarit.de(context);
-    return gabarit == Gabarit.desktop
-        ? _Large(vue: vue, actions: actions)
-        : _Etroit(vue: vue, actions: actions, gabarit: gabarit);
+    final AppPalette palette = AppPalette.of(context);
+    // L'en-tete garde l'echelle standard, meme en guidee : sur CLV-05, « Ma
+    // seance » a la taille de « Seance en direct » et la notice reste un petit
+    // texte, plus petit que « En ligne ». Le theme n'est pas modifie : seul ce
+    // sous-arbre lit l'echelle standard au lieu de l'echelle enfant.
+    return Theme(
+      data: Theme.of(context).copyWith(
+        textTheme: AppTypography.standard.apply(
+          bodyColor: palette.surfaceCanvas.onBackground,
+          displayColor: palette.surfaceCanvas.onBackground,
+        ),
+      ),
+      child: gabarit == Gabarit.desktop
+          ? _Large(vue: vue, actions: actions)
+          : _Etroit(vue: vue, actions: actions, gabarit: gabarit),
+    );
   }
 }
+
+/// Le retrait des lignes sous le titre, quand le chevron ‹ est la : la
+/// largeur du chevron et l'ecart qui le suit.
+const double _retraitEtroit = AppTouchTarget.standard + AppSpacing.xs;
 
 class _Large extends StatelessWidget {
   const _Large({required this.vue, required this.actions});
@@ -111,52 +130,59 @@ class _Etroit extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final AppPalette palette = AppPalette.of(context);
     final String? ligne = vue.ligneEtat;
+    final bool retour = actions.onRetour != null;
+    final bool mention = vue.texteMention != null;
+    // Gouttiere de 16 des deux cotes ; le web etroit laisse plus d'air
+    // au-dessus du titre (CLV-04-05-06_web_etroit).
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.md,
-        vertical: AppSpacing.sm,
+      padding: EdgeInsets.fromLTRB(
+        AppPage.gouttiereMobile,
+        gabarit == Gabarit.mobile ? AppSpacing.md : AppSpacing.xxl,
+        AppPage.gouttiereMobile,
+        AppSpacing.sm,
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _Retour(onPress: actions.onRetour),
-          Ecart.hXs,
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+          // Chevron, titre et « En ligne » sur une meme ligne, centres.
+          Row(
+            children: <Widget>[
+              if (retour) ...<Widget>[
+                _Retour(onPress: actions.onRetour),
+                Ecart.hXs,
+              ],
+              Expanded(
+                child: _Titre(
+                  texte: vue.titre,
+                  style: theme.textTheme.titleLarge,
+                ),
+              ),
+              Ecart.hSm,
+              _Connexion(vue: vue, compacte: true),
+            ],
+          ),
+          if (ligne != null || mention)
+            Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: retour ? _retraitEtroit : 0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: _Titre(
-                          texte: vue.titre,
-                          style: theme.textTheme.titleLarge,
-                        ),
-                      ),
-                      Ecart.hSm,
-                      _Connexion(vue: vue),
-                    ],
-                  ),
-                  if (ligne != null) ...<Widget>[
-                    Ecart.vXs,
+                  if (ligne != null)
                     Text(
                       ligne,
                       style: palette.inkMuted.applyTo(
                         theme.textTheme.bodyMedium ?? const TextStyle(),
                       ),
                     ),
-                  ],
-                  if (vue.texteMention != null) ...<Widget>[
-                    Ecart.vXs,
-                    MentionSeance(vue: vue),
-                  ],
+                  if (ligne != null && mention) Ecart.vXs,
+                  if (mention) MentionSeance(vue: vue),
                 ],
               ),
             ),
-          ),
         ],
       ),
     );
@@ -183,17 +209,54 @@ class _Titre extends StatelessWidget {
 }
 
 class _Connexion extends StatelessWidget {
-  const _Connexion({required this.vue});
+  const _Connexion({required this.vue, this.compacte = false});
 
   final VueSeance vue;
 
+  /// Telephone et web etroit : la petite pastille des images, marges serrees.
+  final bool compacte;
+
   @override
-  Widget build(BuildContext context) => StatusPill(
-    libelle: vue.texteConnexion,
-    ton: vue.connexion == ConnexionSeance.enLigne
-        ? TonEtat.succes
-        : TonEtat.avertissement,
-  );
+  Widget build(BuildContext context) {
+    final bool enLigne = vue.connexion == ConnexionSeance.enLigne;
+    final TonEtat ton = enLigne ? TonEtat.succes : TonEtat.avertissement;
+    if (!compacte) return StatusPill(libelle: vue.texteConnexion, ton: ton);
+
+    final AppPalette palette = AppPalette.of(context);
+    final AppColorPair fond = palette.paireDe(ton);
+    return Semantics(
+      label: vue.texteConnexion,
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs,
+        ),
+        decoration: fond.decoration(borderRadius: AppRadius.arrondiFull),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox.square(
+              dimension: StatusPill.diametrePastille,
+              child: DecoratedBox(
+                decoration: (enLigne
+                        ? palette.pointsStatut.succes
+                        : palette.pointsStatut.attention)
+                    .pastille(),
+              ),
+            ),
+            Ecart.hXs,
+            Text(
+              vue.texteConnexion,
+              style: fond.applyTo(
+                Theme.of(context).textTheme.labelSmall ?? const TextStyle(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _Retour extends StatelessWidget {
@@ -234,8 +297,11 @@ class _IconeEnTete extends StatelessWidget {
     onPress: onPress,
     libelleSemantique: libelle,
     arrondiFocus: AppRadius.arrondiFull,
+    respecterCibleTactile: false,
+    // Taille normale pour tous les roles (D5) : en guidee, une cible de 72
+    // decalait le titre et descendait le chevron sous la ligne du titre.
     child: SizedBox.square(
-      dimension: AppMetriques.of(context).cibleTactile,
+      dimension: AppTouchTarget.standard,
       child: Center(
         child: IconTheme(
           data: AppPalette.of(context).inkStrong
@@ -267,10 +333,9 @@ class _CoinComplet extends StatelessWidget {
         const BasculeTheme(),
         Ecart.hMd,
         if (cloche != null) ...<Widget>[
-          _IconeEnTete(
-            icone: AppIcons.notifications,
-            libelle: t.salle.seance.notifications,
+          ClocheNotifications(
             onPress: cloche,
+            nonLues: vue.notificationsNonLues,
           ),
           Ecart.hXs,
         ],

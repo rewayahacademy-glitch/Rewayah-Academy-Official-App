@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/bascule_theme.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
@@ -55,7 +56,9 @@ Future<void> _poser(
       ),
     ),
   );
-  await tester.pump();
+  // MaterialApp anime le passage d'un theme a l'autre : on attend la fin de
+  // l'animation, sinon un second rendu lirait encore les mesures du premier.
+  await tester.pump(const Duration(seconds: 1));
 }
 
 const List<Size> _tailles = <Size>[
@@ -121,6 +124,78 @@ void main() {
     expect(find.bySemanticsLabel(t.salle.seance.reglages), findsNothing);
     expect(find.text('Ton parent observe la séance.'), findsOneWidget);
     expect(find.text('Mariam'), findsOneWidget);
+  });
+
+  for (final Size taille in _tailles) {
+    testWidgets('guidee ${taille.width} : titre et notice a l\'echelle des '
+        'images, alignes comme pour l\'eleve', (WidgetTester tester) async {
+      double tailleDe(Finder f) =>
+          tester.widget<Text>(f).style?.fontSize ??
+          DefaultTextStyle.of(tester.element(f)).style.fontSize!;
+
+      await _poser(tester, RoleSeance.eleve, EtatDemoSalle.visite, taille);
+      final Rect titreEleve = tester.getRect(find.text('Séance en direct'));
+      final double corpsEleve = tailleDe(find.text('Séance en direct'));
+
+      await _poser(tester, RoleSeance.guidee, EtatDemoSalle.visite, taille);
+      final Finder titre = find.text('Ma séance');
+      final Finder notice = find.text('Ton parent observe la séance.');
+      final Finder pastille = find.text('En ligne');
+      expect(tailleDe(titre), corpsEleve);
+      expect(tailleDe(notice), lessThanOrEqualTo(tailleDe(pastille)));
+      // Meme retrait que l'eleve standard.
+      expect(tester.getRect(titre).left, titreEleve.left);
+      if (taille.width < 1200) {
+        // Le chevron est sur la ligne du titre.
+        final Rect chevron = tester.getRect(
+          find.bySemanticsLabel(t.salle.seance.retour),
+        );
+        expect(
+          (chevron.center.dy - tester.getRect(titre).center.dy).abs(),
+          lessThan(2),
+        );
+      }
+    });
+  }
+
+  testWidgets('telephone : « En ligne » a 16 du bord, comme le chevron', (
+    WidgetTester tester,
+  ) async {
+    await _poser(
+      tester,
+      RoleSeance.eleve,
+      EtatDemoSalle.repos,
+      const Size(390, 844),
+    );
+    final Rect pastille = tester.getRect(
+      find.bySemanticsLabel('En ligne'),
+    );
+    expect(pastille.right, 390 - 16);
+    expect(
+      tester.getRect(find.bySemanticsLabel(t.salle.seance.retour)).left,
+      16,
+    );
+  });
+
+  testWidgets('cloche : point non lu pour l\'eleve et l\'enseignant, '
+      'pas de cloche en guidee', (WidgetTester tester) async {
+    for (final RoleSeance role in <RoleSeance>[
+      RoleSeance.eleve,
+      RoleSeance.enseignant,
+    ]) {
+      await _poser(tester, role, EtatDemoSalle.repos, const Size(1440, 900));
+      final ClocheNotifications cloche = tester.widget(
+        find.byType(ClocheNotifications),
+      );
+      expect(cloche.nonLues, greaterThan(0));
+    }
+    await _poser(
+      tester,
+      RoleSeance.guidee,
+      EtatDemoSalle.repos,
+      const Size(1440, 900),
+    );
+    expect(find.byType(ClocheNotifications), findsNothing);
   });
 
   testWidgets('enseignant : compte SA, notice tuteur, jamais parent', (
