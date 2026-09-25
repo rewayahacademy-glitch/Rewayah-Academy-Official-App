@@ -72,3 +72,7 @@ Standards appliqués : Nielsen (minimalisme, reconnaissance plutôt que rappel),
 **D10. Zéro formation.** Un seul chemin par action, libellés en mots (pas d'icône seule sans libellé sauf dans le dock réduit, qui a une infobulle et un libellé accessible), aucune option avancée visible par défaut.
 
 Ces décisions complètent `01_visuel/GABARITS.md` (gabarits G1-G9) : la salle devient le gabarit **G10 « Salle de séance »** une fois validée.
+
+## Mise à jour du 25/09 au soir : les maquettes du directeur priment
+
+Le directeur a rejeté les planches redessinées selon D1-D10 : coins surchargés, chevauchements, support tassé, avatars étirés. **Ses 10 maquettes priment désormais sur ce document.** On les garde et on ne rectifie que leurs erreurs, selon la méthode du rôle tuteur (relevés `V/`, synthèse `V/00_SYNTHESE_RECTIFICATIONS.md`, règles R1-R9 et invariants I-1 à I-8). Les décisions D1-D10 ne s'appliquent que si elles vont dans le sens de ces rectifications.
