@@ -161,6 +161,35 @@
       "compteDe": "Compte de {nom}",
       "sortir": "Quitter la séance",
       "compteurEleves": "Élèves {connectes}/{inscrits}",
+      "agrandir": "Agrandir",
+      "rienPartage": "{nom} n'a rien partagé pour l'instant.",
+      "videoDe": "Vidéo de {nom}",
+      "page": "{page} / {pages}",
+      "pageSemantique": "Page {page} sur {pages}",
+      "zoomLocal": "Zoom local, sans effet sur les autres",
+      "zoomValeur": "{valeur} %",
+      "zoomMoins": "Réduire le zoom",
+      "zoomPlus": "Augmenter le zoom",
+      "quitterQuestion": "Quitter la séance ?",
+      "quitterConsequence": "Vous pourrez revenir si la séance est encore ouverte.",
+      "illustration": "Illustration du support",
+      "demo": {
+        "titre": "Salle de démonstration",
+        "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",
+        "roles": {
+          "eleve": "Élève standard",
+          "guidee": "Interface guidée",
+          "enseignant": "Enseignant"
+        },
+        "etats": {
+          "repos": "Repos",
+          "visite": "Visite",
+          "rienPartage": "Rien partagé",
+          "eleves": "Panneau Élèves",
+          "supports": "Panneau Supports",
+          "fin": "Fin de séance"
+        }
+      },
       "statut": {
         "connecte": "Connecté",
         "pasEncoreConnecte": "Pas encore connecté",

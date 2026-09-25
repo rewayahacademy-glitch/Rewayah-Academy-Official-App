@@ -135,11 +135,11 @@ class _Etroit extends StatelessWidget {
     // Gouttiere de 16 des deux cotes ; le web etroit laisse plus d'air
     // au-dessus du titre (CLV-04-05-06_web_etroit).
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        AppPage.gouttiereMobile,
-        gabarit == Gabarit.mobile ? AppSpacing.md : AppSpacing.xxl,
-        AppPage.gouttiereMobile,
-        AppSpacing.sm,
+      padding: EdgeInsetsDirectional.only(
+        start: AppPage.gouttiereMobile,
+        top: gabarit == Gabarit.mobile ? AppSpacing.md : AppSpacing.xxl,
+        end: AppPage.gouttiereMobile,
+        bottom: AppSpacing.sm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,32 +227,35 @@ class _Connexion extends StatelessWidget {
     return Semantics(
       label: vue.texteConnexion,
       excludeSemantics: true,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.xs,
-        ),
+      child: DecoratedBox(
         decoration: fond.decoration(borderRadius: AppRadius.arrondiFull),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox.square(
-              dimension: StatusPill.diametrePastille,
-              child: DecoratedBox(
-                decoration: (enLigne
-                        ? palette.pointsStatut.succes
-                        : palette.pointsStatut.attention)
-                    .pastille(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox.square(
+                dimension: StatusPill.diametrePastille,
+                child: DecoratedBox(
+                  decoration:
+                      (enLigne
+                              ? palette.pointsStatut.succes
+                              : palette.pointsStatut.attention)
+                          .pastille(),
+                ),
               ),
-            ),
-            Ecart.hXs,
-            Text(
-              vue.texteConnexion,
-              style: fond.applyTo(
-                Theme.of(context).textTheme.labelSmall ?? const TextStyle(),
+              Ecart.hXs,
+              Text(
+                vue.texteConnexion,
+                style: fond.applyTo(
+                  Theme.of(context).textTheme.labelSmall ?? const TextStyle(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

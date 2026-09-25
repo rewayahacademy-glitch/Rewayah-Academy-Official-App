@@ -453,6 +453,10 @@ abstract final class Routes {
   /// au rechargement : une adresse copiee ne rouvre donc rien.
   static const String salle = '/salle';
 
+  /// La salle de seance en demonstration (roles x etats, donnees fictives).
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoSalle = '/demo/salle';
+
   // --- Developpement --------------------------------------------------------
 
   /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.

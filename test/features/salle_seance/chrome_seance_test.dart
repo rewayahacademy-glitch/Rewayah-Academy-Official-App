@@ -167,9 +167,7 @@ void main() {
       EtatDemoSalle.repos,
       const Size(390, 844),
     );
-    final Rect pastille = tester.getRect(
-      find.bySemanticsLabel('En ligne'),
-    );
+    final Rect pastille = tester.getRect(find.bySemanticsLabel('En ligne'));
     expect(pastille.right, 390 - 16);
     expect(
       tester.getRect(find.bySemanticsLabel(t.salle.seance.retour)).left,

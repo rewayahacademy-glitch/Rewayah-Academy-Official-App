@@ -2483,6 +2483,43 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Élèves {connectes}/{inscrits}'
 	String compteurEleves({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}';
 
+	/// fr: 'Agrandir'
+	String get agrandir => 'Agrandir';
+
+	/// fr: '{nom} n'a rien partagé pour l'instant.'
+	String rienPartage({required Object nom}) => '${nom} n\'a rien partagé pour l\'instant.';
+
+	/// fr: 'Vidéo de {nom}'
+	String videoDe({required Object nom}) => 'Vidéo de ${nom}';
+
+	/// fr: '{page} / {pages}'
+	String page({required Object page, required Object pages}) => '${page} / ${pages}';
+
+	/// fr: 'Page {page} sur {pages}'
+	String pageSemantique({required Object page, required Object pages}) => 'Page ${page} sur ${pages}';
+
+	/// fr: 'Zoom local, sans effet sur les autres'
+	String get zoomLocal => 'Zoom local, sans effet sur les autres';
+
+	/// fr: '{valeur} %'
+	String zoomValeur({required Object valeur}) => '${valeur} %';
+
+	/// fr: 'Réduire le zoom'
+	String get zoomMoins => 'Réduire le zoom';
+
+	/// fr: 'Augmenter le zoom'
+	String get zoomPlus => 'Augmenter le zoom';
+
+	/// fr: 'Quitter la séance ?'
+	String get quitterQuestion => 'Quitter la séance ?';
+
+	/// fr: 'Vous pourrez revenir si la séance est encore ouverte.'
+	String get quitterConsequence => 'Vous pourrez revenir si la séance est encore ouverte.';
+
+	/// fr: 'Illustration du support'
+	String get illustration => 'Illustration du support';
+
+	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
 	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
 }
 
@@ -8137,6 +8174,24 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: salle.seance.demo
+class Traductions$salle$seance$demo$fr {
+	Traductions$salle$seance$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Salle de démonstration'
+	String get titre => 'Salle de démonstration';
+
+	/// fr: 'Données fictives, aucun serveur. Choisissez un rôle et un état.'
+	String get intro => 'Données fictives, aucun serveur. Choisissez un rôle et un état.';
+
+	late final Traductions$salle$seance$demo$roles$fr roles = Traductions$salle$seance$demo$roles$fr.internal(_root);
+	late final Traductions$salle$seance$demo$etats$fr etats = Traductions$salle$seance$demo$etats$fr.internal(_root);
+}
+
 // Path: salle.seance.statut
 class Traductions$salle$seance$statut$fr {
 	Traductions$salle$seance$statut$fr.internal(this._root);
@@ -11077,6 +11132,51 @@ class Traductions$tc$parcours$postCours$fr {
 	String get envoye => 'Cours clôturé.';
 }
 
+// Path: salle.seance.demo.roles
+class Traductions$salle$seance$demo$roles$fr {
+	Traductions$salle$seance$demo$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Élève standard'
+	String get eleve => 'Élève standard';
+
+	/// fr: 'Interface guidée'
+	String get guidee => 'Interface guidée';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+}
+
+// Path: salle.seance.demo.etats
+class Traductions$salle$seance$demo$etats$fr {
+	Traductions$salle$seance$demo$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Repos'
+	String get repos => 'Repos';
+
+	/// fr: 'Visite'
+	String get visite => 'Visite';
+
+	/// fr: 'Rien partagé'
+	String get rienPartage => 'Rien partagé';
+
+	/// fr: 'Panneau Élèves'
+	String get eleves => 'Panneau Élèves';
+
+	/// fr: 'Panneau Supports'
+	String get supports => 'Panneau Supports';
+
+	/// fr: 'Fin de séance'
+	String get fin => 'Fin de séance';
+}
+
 // Path: tc.outils.dock.position
 class Traductions$tc$outils$dock$position$fr {
 	Traductions$tc$outils$dock$position$fr.internal(this._root);
@@ -11371,6 +11471,29 @@ extension on Traductions {
 			'salle.seance.compteDe' => ({required Object nom}) => 'Compte de ${nom}',
 			'salle.seance.sortir' => 'Quitter la séance',
 			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}',
+			'salle.seance.agrandir' => 'Agrandir',
+			'salle.seance.rienPartage' => ({required Object nom}) => '${nom} n\'a rien partagé pour l\'instant.',
+			'salle.seance.videoDe' => ({required Object nom}) => 'Vidéo de ${nom}',
+			'salle.seance.page' => ({required Object page, required Object pages}) => '${page} / ${pages}',
+			'salle.seance.pageSemantique' => ({required Object page, required Object pages}) => 'Page ${page} sur ${pages}',
+			'salle.seance.zoomLocal' => 'Zoom local, sans effet sur les autres',
+			'salle.seance.zoomValeur' => ({required Object valeur}) => '${valeur} %',
+			'salle.seance.zoomMoins' => 'Réduire le zoom',
+			'salle.seance.zoomPlus' => 'Augmenter le zoom',
+			'salle.seance.quitterQuestion' => 'Quitter la séance ?',
+			'salle.seance.quitterConsequence' => 'Vous pourrez revenir si la séance est encore ouverte.',
+			'salle.seance.illustration' => 'Illustration du support',
+			'salle.seance.demo.titre' => 'Salle de démonstration',
+			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
+			'salle.seance.demo.roles.eleve' => 'Élève standard',
+			'salle.seance.demo.roles.guidee' => 'Interface guidée',
+			'salle.seance.demo.roles.enseignant' => 'Enseignant',
+			'salle.seance.demo.etats.repos' => 'Repos',
+			'salle.seance.demo.etats.visite' => 'Visite',
+			'salle.seance.demo.etats.rienPartage' => 'Rien partagé',
+			'salle.seance.demo.etats.eleves' => 'Panneau Élèves',
+			'salle.seance.demo.etats.supports' => 'Panneau Supports',
+			'salle.seance.demo.etats.fin' => 'Fin de séance',
 			'salle.seance.statut.connecte' => 'Connecté',
 			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
 			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
@@ -11754,6 +11877,8 @@ extension on Traductions {
 			'foyer.ajout.identite.age' => 'Âge',
 			'foyer.ajout.identite.ageSuffixe' => 'ans',
 			'foyer.ajout.identite.ageAide' => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.erreurs.prenomRequis' => 'Indiquez le prénom de l\'élève.',
 			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
 			'foyer.ajout.erreurs.ageRequis' => 'Indiquez l\'âge, en chiffres.',
@@ -11777,8 +11902,6 @@ extension on Traductions {
 			'ficheEleve.lignes.inscription' => 'Parcours et inscription',
 			'ficheEleve.lignes.inscriptionLegende' => 'Questionnaire et classe',
 			'ficheEleve.lignes.interface' => 'Interface',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.lignes.camera' => 'Caméra en cours',
 			'ficheEleve.lignes.cameraAutorisee' => 'Autorisée',
 			'ficheEleve.lignes.cameraNonAutorisee' => 'Non autorisée',
@@ -12268,6 +12391,8 @@ extension on Traductions {
 			'admin.fonctionnalites.champValeur' => 'Valeur',
 			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
 			'admin.fonctionnalites.multiParticipantsDetail' => 'Autorise plusieurs élèves dans une même séance de visioconférence.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fonctionnalites.participantsMax' => 'Participants maximum',
 			'admin.fonctionnalites.participantsMaxDetail' => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.',
 			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '${n}',
@@ -12291,8 +12416,6 @@ extension on Traductions {
 			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
 			'admin.evaluations.filtreRealisees' => 'Réalisées',
 			'admin.evaluations.filtreAnnulees' => 'Annulées',
@@ -12782,6 +12905,8 @@ extension on Traductions {
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
 			'compte.confidentialite' => 'Confidentialité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
@@ -12805,8 +12930,6 @@ extension on Traductions {
 			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
 			'compte.themeClair' => 'Clair',
 			'compte.themeSombre' => 'Sombre',
-			_ => null,
-		} ?? switch (path) {
 			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
@@ -13296,6 +13419,8 @@ extension on Traductions {
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
 			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageTravail.statut.aFaire' => 'À faire',
 			'classe.pageTravail.statut.enCours' => 'Commencé',
 			'classe.pageTravail.statut.fait' => 'Fait',
@@ -13319,8 +13444,6 @@ extension on Traductions {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
@@ -13810,6 +13933,8 @@ extension on Traductions {
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.',
@@ -13833,8 +13958,6 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',

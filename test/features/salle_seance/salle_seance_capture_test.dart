@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
@@ -21,6 +22,11 @@ const ActionsSeance _actions = ActionsSeance(
   onNotifications: _rien,
   onReglages: _rien,
   onCompte: _rien,
+  onMicro: _rien,
+  onCamera: _rien,
+  onAgrandir: _rien,
+  onZoomMoins: _rien,
+  onZoomPlus: _rien,
 );
 
 class _Taille {
@@ -94,6 +100,47 @@ void main() {
               debugPrint('PNG ${await capturer(tester, nom)}');
             });
           }
+        }
+      }
+    }
+  });
+
+  group('Capture : salle eleve (T2)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final EtatDemoSalle etat in <EtatDemoSalle>[
+      EtatDemoSalle.repos,
+      EtatDemoSalle.visite,
+      EtatDemoSalle.rienPartage,
+    ]) {
+      for (final _Taille taille in _tailles) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String nom =
+              'cl_04_eleve_${etat.name}_${taille.nom}_${mode.name}';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(
+              tester,
+              taille.logique,
+              taille.densite,
+              zoneSure: taille.zone,
+            );
+            await tester.pumpWidget(
+              hoteCapture(
+                SalleSeance(
+                  vue: DonneesSeanceDemo.vue(RoleSeance.eleve, etat),
+                  actions: _actions,
+                ),
+                themeMode: mode,
+              ),
+            );
+            await stabiliser(tester);
+            await tester.pump(const Duration(milliseconds: 1400));
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
         }
       }
     }

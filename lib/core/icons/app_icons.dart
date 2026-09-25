@@ -235,6 +235,30 @@ abstract final class AppIcons {
     IconData(0xe42a, fontFamily: _actif),
   );
 
+  /// Quitter la seance, dans le dock : le combine raccroche (phone-disconnect).
+  static const AppIcon raccrocher = AppIcon._(
+    IconData(0xe3bc, fontFamily: _repos),
+    IconData(0xe3bc, fontFamily: _actif),
+  );
+
+  /// Agrandir le support en plein ecran (corners-out).
+  static const AppIcon agrandir = AppIcon._(
+    IconData(0xe1d0, fontFamily: _repos),
+    IconData(0xe1d0, fontFamily: _actif),
+  );
+
+  /// Zoom local : agrandir (magnifying-glass-plus).
+  static const AppIcon zoomPlus = AppIcon._(
+    IconData(0xe310, fontFamily: _repos),
+    IconData(0xe310, fontFamily: _actif),
+  );
+
+  /// Zoom local : reduire (magnifying-glass-minus).
+  static const AppIcon zoomMoins = AppIcon._(
+    IconData(0xe30e, fontFamily: _repos),
+    IconData(0xe30e, fontFamily: _actif),
+  );
+
   /// Le bandeau permanent de la salle : cours enregistre, controle possible.
   static const AppIcon controleQualite = AppIcon._(
     IconData(0xe40c, fontFamily: _repos),
