@@ -24,6 +24,10 @@ import 'routes.dart';
 /// La destination autorisee de [session] : la racine du role d'un compte
 /// actif, la connexion d'un visiteur, la racine sinon (que la redirection
 /// renvoie a l'inscription, au portail d'attente ou a la page hors ligne).
+///
+/// Le visiteur va a la connexion, pas a `/bienvenue` : l'action de ces pages
+/// s'intitule « Se connecter ». Seule la racine `/` sans session mene a
+/// l'accueil public (`deciderRedirection`, demande A-1).
 String destinationAutorisee(SessionState session) {
   final AppRole? role = session.role;
   return switch (session.porte) {

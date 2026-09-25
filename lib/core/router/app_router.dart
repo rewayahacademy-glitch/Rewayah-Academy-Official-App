@@ -192,10 +192,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.connexionRecuperation,
         builder: (BuildContext _, GoRouterState _) => const RecuperationPage(),
       ),
-      // L'accueil public. Le visiteur deconnecte est encore renvoye sur la
-      // connexion : la bascule vers `/bienvenue` suivra la livraison de
-      // l'ecran par le lot A (une redirection vers un ecran indisponible
-      // fermerait la porte d'entree).
+      // L'accueil public : la racine d'un visiteur deconnecte y mene
+      // (`deciderRedirection`, demande A-1) ; une route protegee demandee
+      // sans session va toujours a la connexion, avec son retour.
       GoRoute(
         path: Routes.bienvenue,
         builder: (BuildContext _, GoRouterState _) => const BienvenuePage(),

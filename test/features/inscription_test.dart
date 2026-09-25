@@ -336,11 +336,23 @@ void main() {
         isNull,
       );
       expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
-      // Le disque de la rangee d'etape reste (gabarit PageEtape) mais ne
-      // ramene plus a une etape : il sort du parcours, donc deconnecte.
-      await _taper(tester, find.byType(DisqueRetour));
+      // Plus d'etape precedente : la rangee reste, sans disque (demande
+      // A-5.1) ; la seule sortie est « Se deconnecter », sans doublon.
+      expect(find.byType(DisqueRetour), findsNothing);
+      await _taper(
+        tester,
+        find.byKey(const Key('inscription-deconnexion')),
+      );
       expect(auth.deconnexions, 1);
       expect(find.text('3 sur 4'), findsNothing);
+    });
+
+    testWidgets('la premiere etape n a pas de disque retour, la rangee reste '
+        '(A-5.1)', (WidgetTester tester) async {
+      await _monter(tester);
+      expect(find.byType(DisqueRetour), findsNothing);
+      expect(find.text('1 sur 4'), findsOneWidget);
+      expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
     });
   });
 }

@@ -426,9 +426,28 @@ void main() {
       );
     });
 
-    test('la racine, la salle et la classe ne deviennent jamais un retour', () {
+    test('la racine d un visiteur sans session mene a l accueil public (A-1)', () {
+      expect(
+        deciderRedirection(
+          session: const SessionState.deconnecte(),
+          cheminDemande: Routes.racine,
+          maintenant: maintenant,
+        ),
+        Routes.bienvenue,
+      );
+      // Une route protegee va toujours a la connexion, avec son retour.
+      expect(
+        deciderRedirection(
+          session: const SessionState.deconnecte(),
+          cheminDemande: Routes.tuteurCompte,
+          maintenant: maintenant,
+        ),
+        _connexionAvecRetour(Routes.tuteurCompte),
+      );
+    });
+
+    test('la salle et la classe ne deviennent jamais un retour', () {
       for (final String chemin in <String>[
-        Routes.racine,
         Routes.salle,
         Routes.tcClasse,
       ]) {

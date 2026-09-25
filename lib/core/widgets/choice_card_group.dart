@@ -21,7 +21,12 @@ class OptionChoix {
     this.description,
     this.disponible = true,
     this.raisonIndisponible,
+    this.cle,
   });
+
+  /// Une cle posee sur la carte de l'option, pour qu'un test la vise sans
+  /// dependre du libelle (demande A-5.3).
+  final Key? cle;
 
   /// La valeur transmise a l'appelant.
   final String valeur;
@@ -158,6 +163,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: _Carte(
+              key: option.cle,
               libelle: option.libelle,
               icone: option.icone,
               description: option.description,
@@ -201,6 +207,7 @@ class _Carte extends StatelessWidget {
     required this.retenue,
     required this.onPress,
     required this.radio,
+    super.key,
     this.icone,
     this.description,
     this.raisonIndisponible,

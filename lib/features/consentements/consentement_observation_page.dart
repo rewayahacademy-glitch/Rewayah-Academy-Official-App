@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/capacites/consentements_supabase.dart';
+import '../../core/capacites/port_consentements.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/versions_contrat.dart';
 import '../../core/i18n/strings.g.dart';
@@ -68,7 +69,7 @@ class _ConsentementObservationPageState
     });
     try {
       await ref
-          .read(consentementsLotAProvider)
+          .read(portConsentementsProvider)
           .accepter(
             sorte: SorteContrat.conditionsTuteur,
             version: VersionsContrat.pour(SorteContrat.conditionsTuteur),

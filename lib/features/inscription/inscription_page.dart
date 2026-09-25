@@ -88,7 +88,6 @@ void reculerDepuis(BuildContext context, String route) {
   );
 }
 
-/// La coquille commune des quatre etapes.
 /// La coquille commune des quatre etapes, posee sur le gabarit partage
 /// [PageEtape] (demandes B-3 et A-2) : rangee d'etape (disque retour de 48,
 /// progression, « n sur N » calcule depuis [etapesInscription]) sans actions
@@ -129,9 +128,10 @@ class CoquilleEtape extends ConsumerWidget {
   final VoidCallback? onAction;
 
   /// Le retour a l'etape precedente ; `null` quand il n'y en a pas (premiere
-  /// etape, profil deja cree). [PageEtape] montre toujours le disque : il
-  /// sort alors du parcours, c'est-a-dire deconnecte (jamais de retour vers
-  /// une etape qui recreerait un profil). Inerte pendant un envoi.
+  /// etape, profil deja cree, envoi en cours). [PageEtape] ne montre alors
+  /// aucun disque (demande A-5.1) : la sortie du parcours reste le lien
+  /// « Se deconnecter », jamais un retour vers une etape qui recreerait un
+  /// profil.
   final VoidCallback? onRetour;
 
   /// Vrai pendant un envoi.
@@ -153,7 +153,7 @@ class CoquilleEtape extends ConsumerWidget {
     return PageEtape(
       numero: rangEtape(route),
       total: etapesInscription.length,
-      onRetour: onRetour ?? (enCours ? () {} : deconnecter),
+      onRetour: onRetour,
       action: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

@@ -90,10 +90,9 @@ Acceptation? acceptationObservation(List<Acceptation> lues) {
 
 /// Les consentements du lot A.
 ///
-/// `portConsentementsProvider` (fichier du coordinateur) rend encore
-/// l'implementation indisponible : la demande A-3 (`demandes/A.md`) lui
-/// demande de pointer sur cet adaptateur. D'ici la, les ecrans du lot A lisent
-/// ce provider.
+/// `portConsentementsProvider` (fichier du coordinateur) le rend depuis la
+/// demande A-3 : les ecrans lisent le port ; les tests surchargent ce
+/// provider-ci.
 final Provider<PortConsentements> consentementsLotAProvider =
     Provider<PortConsentements>(
       (Ref ref) => ConsentementsSupabase(
@@ -108,5 +107,5 @@ final Provider<PortConsentements> consentementsLotAProvider =
 /// Les acceptations du titulaire connecte, relues a chaque invalidation.
 final FutureProvider<List<Acceptation>> accordsTitulaireProvider =
     FutureProvider<List<Acceptation>>(
-      (Ref ref) => ref.watch(consentementsLotAProvider).signees(),
+      (Ref ref) => ref.watch(portConsentementsProvider).signees(),
     );
