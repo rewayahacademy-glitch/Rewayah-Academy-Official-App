@@ -54,6 +54,8 @@ class SalleSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
+    // Sans support, rien a agrandir : l'etat local est ignore.
+    final bool agrandi = local.agrandi && vue.support != null;
     // Gouttiere : 16 au telephone et en web etroit (images), 32 en desktop.
     final double gouttiere = large
         ? AppPage.gouttiereDesktop
@@ -67,7 +69,7 @@ class SalleSeance extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (local.agrandi)
+            if (agrandi)
               Ecart.vLg
             else ...<Widget>[
               ChromeSeance(vue: vue, actions: actions),
@@ -93,6 +95,7 @@ class SalleSeance extends StatelessWidget {
                       actions: actions,
                       microOuvert: local.microOuvert,
                       cameraAllumee: local.cameraAllumee,
+                      agrandi: agrandi,
                     ),
             ),
           ],
@@ -133,6 +136,7 @@ class _BarreBasse extends StatelessWidget {
           actions: actions,
           microOuvert: local.microOuvert,
           cameraAllumee: local.cameraAllumee,
+          agrandi: local.agrandi && support != null,
         ),
         Expanded(
           child: Align(
@@ -143,6 +147,7 @@ class _BarreBasse extends StatelessWidget {
                     onMoins: actions.onZoomMoins,
                     onPlus: actions.onZoomPlus,
                     onAgrandir: actions.onAgrandir,
+                    agrandi: local.agrandi,
                   )
                 : const SizedBox.shrink(),
           ),

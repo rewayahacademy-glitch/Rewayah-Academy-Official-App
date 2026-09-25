@@ -34,6 +34,10 @@ enum FondBoutonAppel {
 double diametreBoutonAppel(BuildContext context) =>
     AppMetriques.of(context).cibleTactile + AppSpacing.sm;
 
+/// L'encre claire fixe de Quitter : l'encre de la paire d'alerte du theme
+/// clair (blanc), prise au jeton et non ecrite en dur.
+final Color _encreClaire = AppPalette.claire().surfaceAlert.onBackground;
+
 /// Un bouton du dock : cercle, icone, libelle dessous.
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
@@ -67,8 +71,13 @@ class BoutonAppel extends StatelessWidget {
       FondBoutonAppel.surface => palette.inkStrong.asIconTheme(
         size: AppSpacing.xxl,
       ),
+      // Encre claire fixe, dans les deux themes (images : combine blanc sur
+      // disque rouge). Le disque est un point d'alerte, pas la paire
+      // `surfaceAlert` : son encre sombre en theme sombre tombait sous 2:1
+      // sur le rouge vif. Le blanc tient 4,1:1 (clair) et 3,3:1 (sombre),
+      // au-dessus du seuil de 3:1 d'un element graphique (WCAG 1.4.11).
       FondBoutonAppel.alerte => IconThemeData(
-        color: palette.surfaceAlert.onBackground,
+        color: _encreClaire,
         size: AppSpacing.xxl,
       ),
     };
@@ -112,6 +121,7 @@ class DockSeance extends StatelessWidget {
     required this.actions,
     this.microOuvert = true,
     this.cameraAllumee = true,
+    this.agrandi = false,
     super.key,
   });
 
@@ -119,6 +129,9 @@ class DockSeance extends StatelessWidget {
   final ActionsSeance actions;
   final bool microOuvert;
   final bool cameraAllumee;
+
+  /// Le support occupe l'ecran : le bouton devient « Reduire ».
+  final bool agrandi;
 
   Future<void> _quitter(BuildContext context, VoidCallback quitter) async {
     final bool confirme = await ConfirmDestructive.demander(
@@ -159,8 +172,9 @@ class DockSeance extends StatelessWidget {
         final VoidCallback? agrandir = actions.onAgrandir;
         if (agrandir == null) return null;
         return BoutonAppel(
-          icone: AppIcons.agrandir.repos,
-          libelle: t.salle.seance.agrandir,
+          key: const ValueKey<String>('bouton-agrandir'),
+          icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
+          libelle: agrandi ? t.salle.seance.reduire : t.salle.seance.agrandir,
           onPress: agrandir,
         );
       case CommandeDock.reseau:

@@ -37,8 +37,9 @@ class ZoneSupport extends StatelessWidget {
     if (support == null) return _RienPartage(vue: vue);
     final Gabarit gabarit = AppGabarit.de(context);
     final InterfaceMode mode = AppMetriques.of(context).mode;
+    final AppPalette paletteEcran = AppPalette.of(context);
     // La carte lit le theme clair, quel que soit le theme de l'ecran.
-    return Theme(
+    final Widget carte = Theme(
       data: AppTheme.pour(mode, Brightness.light),
       child: Builder(
         builder: (BuildContext contexte) {
@@ -59,10 +60,13 @@ class ZoneSupport extends StatelessWidget {
                           MediaQuery.textScalerOf(contexte).scale(1) * zoom,
                         ),
                       ),
-                      child: SingleChildScrollView(
-                        key: const ValueKey<String>('support-defilement'),
-                        padding: EdgeInsets.all(_marge(gabarit)),
-                        child: _Contenu(support: support, gabarit: gabarit),
+                      child: _FonduBas(
+                        couleur: palette.surfaceRaised.background,
+                        child: SingleChildScrollView(
+                          key: const ValueKey<String>('support-defilement'),
+                          padding: EdgeInsets.all(_marge(gabarit)),
+                          child: _Contenu(support: support, gabarit: gabarit),
+                        ),
                       ),
                     ),
                   ),
@@ -85,7 +89,52 @@ class ZoneSupport extends StatelessWidget {
         },
       ),
     );
+    if (gabarit != Gabarit.desktop) return carte;
+    // Desktop : la carte est sertie dans un cadre du theme de l'ecran (le
+    // lisere sombre de CLV-04), qui la detache du fond en clair comme en
+    // sombre.
+    return DecoratedBox(
+      key: const ValueKey<String>('cadre-support'),
+      decoration: paletteEcran.surfaceSunken.decoration(
+        borderRadius: const BorderRadius.all(
+          Radius.circular(AppRadius.lg + _serti),
+        ),
+        side: paletteEcran.borderHairline.asBorderSide(),
+      ),
+      child: Padding(padding: const EdgeInsets.all(_serti), child: carte),
+    );
   }
+}
+
+/// L'epaisseur du cadre qui sertit la carte en desktop.
+const double _serti = AppSpacing.sm;
+
+/// Un fondu en bas de la zone qui defile : une ligne coupee par l'arrondi de
+/// la carte s'efface au lieu de s'arreter net. Sa hauteur egale la plus
+/// petite marge interieure : en fin de defilement, il ne couvre que la marge.
+class _FonduBas extends StatelessWidget {
+  const _FonduBas({required this.couleur, required this.child});
+
+  /// Une couleur opaque quelconque : seul son canal alpha compte.
+  final Color couleur;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ShaderMask(
+    blendMode: BlendMode.dstIn,
+    shaderCallback: (Rect zone) {
+      final double debut = zone.height <= 0
+          ? 1
+          : (1 - AppSpacing.xl / zone.height).clamp(0, 1);
+      return LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[couleur, couleur, couleur.withValues(alpha: 0)],
+        stops: <double>[0, debut, 1],
+      ).createShader(zone);
+    },
+    child: child,
+  );
 }
 
 double _marge(Gabarit gabarit) =>
@@ -104,11 +153,12 @@ class _Contenu extends StatelessWidget {
     final bool large = gabarit == Gabarit.desktop;
     // La place laissee a la vignette sur les premieres lignes : aucun texte
     // ne passe dessous au repos.
+    // Au telephone, l'ecart titre-vignette se resserre (images : ≈ 10).
     final double reserve = math.max(
       0,
       MesuresVignette.retrait +
           MesuresVignette.largeur(gabarit) +
-          AppSpacing.lg -
+          (gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.lg) -
           _marge(gabarit),
     );
     final Widget entete = Column(
@@ -118,12 +168,14 @@ class _Contenu extends StatelessWidget {
         Ecart.vLg,
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: _largeurTitre),
-          child: Text(
-            support.titre,
+          child: _TitreEquilibre(
+            texte: support.titre,
             style: palette.inkStrong.applyTo(
-              (large
-                      ? theme.textTheme.headlineLarge
-                      : theme.textTheme.titleLarge) ??
+              switch (gabarit) {
+                    Gabarit.desktop => theme.textTheme.headlineLarge,
+                    Gabarit.tablette => theme.textTheme.headlineSmall,
+                    Gabarit.mobile => theme.textTheme.titleMedium,
+                  } ??
                   const TextStyle(),
             ),
           ),
@@ -239,9 +291,58 @@ class _Contenu extends StatelessWidget {
   }
 }
 
-/// La largeur maximale du titre du support : il passe a la ligne comme sur
-/// les images (« Les bonnes / manieres en classe »).
+/// La largeur maximale du titre du support : en desktop, il tient sur deux
+/// lignes comme sur les images.
 const double _largeurTitre = 400;
+
+/// Un titre aux lignes equilibrees (comme `text-wrap: balance`) : meme
+/// nombre de lignes qu'a pleine largeur, mais dans la plus petite largeur
+/// qui le garde. « Les bonnes / manieres en classe » plutot que « Les bonnes
+/// manieres en / classe », avec un mot seul sur la derniere ligne.
+class _TitreEquilibre extends StatelessWidget {
+  const _TitreEquilibre({required this.texte, required this.style});
+
+  final String texte;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints contraintes) {
+      final Widget titre = Text(texte, style: style);
+      final double pleine = contraintes.maxWidth;
+      if (!pleine.isFinite) return titre;
+      final TextStyle effectif = DefaultTextStyle.of(context).style
+          .merge(style);
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: texte, style: effectif),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      );
+      int lignes(double largeur) {
+        peintre.layout(maxWidth: largeur);
+        return peintre.computeLineMetrics().length;
+      }
+
+      final int cible = lignes(pleine);
+      if (cible <= 1) {
+        peintre.dispose();
+        return titre;
+      }
+      double bas = 0;
+      double haut = pleine;
+      for (int i = 0; i < 12; i++) {
+        final double milieu = (bas + haut) / 2;
+        if (lignes(milieu) > cible) {
+          bas = milieu;
+        } else {
+          haut = milieu;
+        }
+      }
+      peintre.dispose();
+      return SizedBox(width: haut.ceilToDouble(), child: titre);
+    },
+  );
+}
 
 /// La largeur maximale du texte de l'encadre.
 const double _largeurEncadre = 320;

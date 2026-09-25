@@ -2486,6 +2486,9 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Agrandir'
 	String get agrandir => 'Agrandir';
 
+	/// fr: 'Réduire'
+	String get reduire => 'Réduire';
+
 	/// fr: '{nom} n'a rien partagé pour l'instant.'
 	String rienPartage({required Object nom}) => '${nom} n\'a rien partagé pour l\'instant.';
 
@@ -11472,6 +11475,7 @@ extension on Traductions {
 			'salle.seance.sortir' => 'Quitter la séance',
 			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'Élèves ${connectes}/${inscrits}',
 			'salle.seance.agrandir' => 'Agrandir',
+			'salle.seance.reduire' => 'Réduire',
 			'salle.seance.rienPartage' => ({required Object nom}) => '${nom} n\'a rien partagé pour l\'instant.',
 			'salle.seance.videoDe' => ({required Object nom}) => 'Vidéo de ${nom}',
 			'salle.seance.page' => ({required Object page, required Object pages}) => '${page} / ${pages}',
@@ -11876,9 +11880,9 @@ extension on Traductions {
 			'foyer.ajout.identite.nomAide' => 'Le nom de famille n\'est jamais montré à l\'enseignant.',
 			'foyer.ajout.identite.age' => 'Âge',
 			'foyer.ajout.identite.ageSuffixe' => 'ans',
-			'foyer.ajout.identite.ageAide' => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.ajout.identite.ageAide' => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.',
 			'foyer.ajout.erreurs.prenomRequis' => 'Indiquez le prénom de l\'élève.',
 			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
 			'foyer.ajout.erreurs.ageRequis' => 'Indiquez l\'âge, en chiffres.',
@@ -12390,9 +12394,9 @@ extension on Traductions {
 			'admin.fonctionnalites.envoyer' => 'Enregistrer',
 			'admin.fonctionnalites.champValeur' => 'Valeur',
 			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
-			'admin.fonctionnalites.multiParticipantsDetail' => 'Autorise plusieurs élèves dans une même séance de visioconférence.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.fonctionnalites.multiParticipantsDetail' => 'Autorise plusieurs élèves dans une même séance de visioconférence.',
 			'admin.fonctionnalites.participantsMax' => 'Participants maximum',
 			'admin.fonctionnalites.participantsMaxDetail' => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.',
 			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '${n}',
@@ -12904,9 +12908,9 @@ extension on Traductions {
 			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
-			'compte.confidentialite' => 'Confidentialité',
 			_ => null,
 		} ?? switch (path) {
+			'compte.confidentialite' => 'Confidentialité',
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
@@ -13418,9 +13422,9 @@ extension on Traductions {
 			'classe.pageTravail.aucunDetail' => 'Le travail donné par l\'enseignant apparaîtra ici.',
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
-			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
 			'classe.pageTravail.statut.aFaire' => 'À faire',
 			'classe.pageTravail.statut.enCours' => 'Commencé',
 			'classe.pageTravail.statut.fait' => 'Fait',
@@ -13932,9 +13936,9 @@ extension on Traductions {
 			'tc.classe.entete.photoManquante' => 'Photo enseignant manquante',
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
-			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.',

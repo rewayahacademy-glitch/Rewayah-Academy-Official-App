@@ -247,6 +247,12 @@ abstract final class AppIcons {
     IconData(0xe1d0, fontFamily: _actif),
   );
 
+  /// Reduire le support agrandi (corners-in), pendant d'[agrandir].
+  static const AppIcon reduire = AppIcon._(
+    IconData(0xe1ce, fontFamily: _repos),
+    IconData(0xe1ce, fontFamily: _actif),
+  );
+
   /// Zoom local : agrandir (magnifying-glass-plus).
   static const AppIcon zoomPlus = AppIcon._(
     IconData(0xe310, fontFamily: _repos),

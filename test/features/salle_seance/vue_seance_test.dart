@@ -300,5 +300,13 @@ void main() {
         ]);
       }
     });
+
+    test('rien partage : pas d Agrandir au dock de l eleve', () {
+      for (final RoleSeance r in _eleves) {
+        final VueSeance v = _vue(r).copyWith(sansSupport: true);
+        expect(v.commandesDock, isNot(contains(CommandeDock.agrandir)));
+        expect(v.commandesDock, contains(CommandeDock.quitter));
+      }
+    });
   });
 }

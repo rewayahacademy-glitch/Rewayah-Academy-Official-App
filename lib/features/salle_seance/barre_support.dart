@@ -58,6 +58,7 @@ class ZoomLocal extends StatelessWidget {
     this.onMoins,
     this.onPlus,
     this.onAgrandir,
+    this.agrandi = false,
     super.key,
   });
 
@@ -66,6 +67,9 @@ class ZoomLocal extends StatelessWidget {
   final VoidCallback? onMoins;
   final VoidCallback? onPlus;
   final VoidCallback? onAgrandir;
+
+  /// Le support occupe l'ecran : le bouton devient « Reduire ».
+  final bool agrandi;
 
   @override
   Widget build(BuildContext context) {
@@ -116,8 +120,10 @@ class ZoomLocal extends StatelessWidget {
           DecoratedBox(
             decoration: _cadre(palette),
             child: _IconeBarre(
-              icone: AppIcons.agrandir,
-              libelle: t.salle.seance.agrandir,
+              icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
+              libelle: agrandi
+                  ? t.salle.seance.reduire
+                  : t.salle.seance.agrandir,
               onPress: agrandir,
             ),
           ),

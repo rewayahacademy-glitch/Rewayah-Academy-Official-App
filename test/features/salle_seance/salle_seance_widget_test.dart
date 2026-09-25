@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
@@ -40,6 +42,7 @@ Future<void> _monter(
   Size taille,
   EtatDemoSalle etat, {
   ThemeMode mode = ThemeMode.light,
+  EtatLocalSeance local = const EtatLocalSeance(),
 }) async {
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
@@ -47,6 +50,7 @@ Future<void> _monter(
       SalleSeance(
         vue: DonneesSeanceDemo.vue(RoleSeance.eleve, etat),
         actions: _actions,
+        local: local,
       ),
       themeMode: mode,
     ),
@@ -99,7 +103,11 @@ void main() {
           );
           expect(find.text('Micro'), findsOneWidget);
           expect(find.text('Caméra'), findsOneWidget);
-          expect(find.text('Agrandir'), findsOneWidget);
+          // Sans support, rien a agrandir.
+          expect(
+            find.text('Agrandir'),
+            etat == EtatDemoSalle.rienPartage ? findsNothing : findsOneWidget,
+          );
           expect(find.text('Quitter'), findsOneWidget);
         });
       }
@@ -170,6 +178,42 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('agrandi : le bouton devient « Reduire »', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      const Size(390, 844),
+      EtatDemoSalle.repos,
+      local: const EtatLocalSeance(agrandi: true),
+    );
+    expect(find.text('Réduire'), findsOneWidget);
+    expect(find.text('Agrandir'), findsNothing);
+  });
+
+  for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('Quitter : combine en encre claire (${mode.name})', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        const Size(390, 844),
+        EtatDemoSalle.repos,
+        mode: mode,
+      );
+      final IconTheme encre = tester.widget<IconTheme>(
+        find
+            .ancestor(
+              of: find.byIcon(AppIcons.raccrocher.actif),
+              matching: find.byType(IconTheme),
+            )
+            .first,
+      );
+      expect(encre.data.color, AppPalette.claire().surfaceAlert.onBackground);
+      expect(encre.data.color!.computeLuminance(), greaterThan(0.9));
+    });
+  }
 
   test('/demo/salle absente en production, presente ailleurs', () {
     expect(routesDemoSalle('production'), isEmpty);

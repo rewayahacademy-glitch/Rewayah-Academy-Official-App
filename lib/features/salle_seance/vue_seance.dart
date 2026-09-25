@@ -395,7 +395,8 @@ class VueSeance {
       gabarit == Gabarit.desktop &&
       (_enseignant || (role == RoleSeance.eleve && optionQ6));
 
-  /// Le dock, dans l'ordre (I-4).
+  /// Le dock, dans l'ordre (I-4). Agrandir n'existe que si un support est
+  /// partage : sans support, il n'y a rien a agrandir.
   List<CommandeDock> get commandesDock => switch (role) {
     RoleSeance.enseignant => const <CommandeDock>[
       CommandeDock.micro,
@@ -406,7 +407,7 @@ class VueSeance {
     RoleSeance.eleve || RoleSeance.guidee => <CommandeDock>[
       CommandeDock.micro,
       if (cameraAutorisee) CommandeDock.camera,
-      CommandeDock.agrandir,
+      if (support != null) CommandeDock.agrandir,
       CommandeDock.quitter,
     ],
   };
