@@ -20,6 +20,8 @@ import '../../core/domain/enums.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/presence/service_presence.dart';
+import '../../core/profil/service_acceptations.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/session/session_controleur.dart';
@@ -33,6 +35,7 @@ import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
 import 'observation_demo.dart';
+import 'presence_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -101,6 +104,9 @@ List<Override> surchargesDemoTuteur({String? environnement}) {
     portHistoriqueObservationsProvider.overrideWithValue(
       const HistoriqueObservationsDemo(),
     ),
+    // Presence (Accueil, verification prealable) et pieces signees (Compte).
+    servicePresenceProvider.overrideWithValue(const PresenceDemo()),
+    acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
   ];
 }
 
