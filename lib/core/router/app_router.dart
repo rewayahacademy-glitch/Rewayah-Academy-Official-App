@@ -379,7 +379,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         redirect: (BuildContext _, GoRouterState etat) =>
             Routes.appairerPour(_parametre(etat, 'eleveId')),
       ),
-      // STUB PHASE 0 : propriété du lot C-obs, à remplacer
+      // Alias de route, propriete du lot C-obs (integration, m8) :
       //
       // L'observation se rejoint par la seance, pas par la classe
       // (`/tc/observation/:seanceId`) : tant que la classe ne sait pas
