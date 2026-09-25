@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/admin_domaine.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/journal/service_journal.dart';
@@ -15,6 +16,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// Les trois profondeurs proposees par le filtre de periode.
@@ -239,6 +241,10 @@ class _Entete extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // Journal et historique des observations : les deux fonctions pairs de
+        // Securite et audit (`ongletsSecurite()`), une route chacune.
+        SousNavigationDomaine(onglets: ongletsSecurite(), indexActif: 0),
+        Ecart.vLg,
         const _BandeauChaine(),
         Ecart.vLg,
         // La periode ne depend d'aucune lecture : elle s'affiche meme quand les
@@ -614,6 +620,11 @@ String libelleEvenement(String type) => switch (type) {
   'agent_session_opened' => t.admin.journal.evtAgentSessionOuverte,
   'controller_observation_started' => t.admin.journal.evtObservationControleur,
   'video_token_issued' => t.admin.journal.evtJetonVideo,
+  // Les trois evenements de l'observation tuteur (`0033`, `0036`, `0037`).
+  'observation_entree' => t.admin.journal.evenements.observationEntree,
+  'observation_sortie' => t.admin.journal.evenements.observationSortie,
+  'observation_politique_groupe_modifiee' =>
+    t.admin.journal.evenements.observationPolitiqueGroupeModifiee,
   _ => type,
 };
 
