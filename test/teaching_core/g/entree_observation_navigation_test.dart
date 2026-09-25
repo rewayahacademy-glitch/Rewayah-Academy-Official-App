@@ -3,12 +3,12 @@
 // les boutons. Definition de « fait » du registre (`03` section 1 ter bis) :
 // un `routeur.go` seul ne prouve pas l'acces.
 //
-// **Entree actuelle de cette branche** : « Assister », sur la carte de
-// l'enfant pendant une seance en cours (Accueil de la base `cefab7f`). Le lot C
-// remplace cet Accueil et porte l'entree dans le bloc Observation de la classe
-// (sous-paquet C2), qui appellera `ouvrirObservation` : a l'integration, ce
-// test part de la classe (demande O-3 au coordinateur). Le geste de la classe
-// est deja teste dans `entree_explication_test.dart`.
+// **Entree integree (demandes O-3, O-INT-1)** : l'Accueil du lot C ne porte
+// plus « Assister ». Le parcours touche part de l'Accueil reel, ouvre la
+// classe (« Voir la classe »), puis « Observer la seance » du bloc
+// Observation de la classe (`BlocObservationClasse`). L'entree recoit alors
+// `?classe=` et `?eleve=` : « Pas maintenant », le disque retour et le retour
+// de fin de visite ramenent a la classe, jamais dans une impasse.
 
 import 'dart:async';
 
@@ -20,6 +20,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
@@ -34,6 +35,8 @@ import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
+import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
@@ -47,9 +50,12 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/compteur_visite.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_tuteur.dart';
 
+import '../../fixtures/tuteur/faux_classes_foyer.dart';
+import '../../fixtures/tuteur/faux_seances_famille.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
@@ -135,6 +141,27 @@ List<Override> _surcharges({
       ],
     ),
   ),
+  // La classe de l'enfant (contrat K6) et sa seance en direct (contrat K2) :
+  // l'Accueil montre la classe, la classe porte l'entree d'observation.
+  portClassesFoyerProvider.overrideWithValue(
+    FauxClassesFoyer(
+      classes: <ClasseFoyer>[
+        ClasseFoyer(eleveId: 'e1', classe: classeFictive()),
+      ],
+    ),
+  ),
+  portSeancesFamilleProvider.overrideWithValue(
+    FauxSeancesFamille(
+      seances: <SeanceFamille>[
+        seanceFictive(
+          eleveId: 'e1',
+          debutUtc: instantServeurFige.subtract(const Duration(minutes: 10)),
+          statut: StatutSeance.enCours,
+          heureFoyer: heureRendue('Europe/Paris', 'Paris', '17:50'),
+        ),
+      ],
+    ),
+  ),
   serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
   serviceOffresProvider.overrideWithValue(FauxServiceOffres()),
   portGroupesProvider.overrideWithValue(
@@ -201,9 +228,27 @@ Future<void> _presser(WidgetTester tester, Finder cible) async {
   await stabiliser(tester);
 }
 
+/// L'adresse de la classe de l'enfant, ou ramenent les retours de l'entree.
+final String _classe = Routes.classePour('classe-a', eleveId: 'e1');
+
+/// « Historique » dans la barre basse de la coquille (telephone) : la
+/// navigation est la. Le titre de l'Historique et le lien de la classe
+/// portent le meme mot, d'ou la barre comme repere.
+final Finder _navHistorique = find.descendant(
+  of: find.byKey(NavShell.barreBasseKey),
+  matching: find.text(t.nav.tuteur.historique),
+);
+
+/// De l'Accueil reel a la classe (« Voir la classe »), puis « Observer la
+/// seance » : l'entree d'observation, touchee comme un parent la touche.
+Future<void> _ouvrirObservation(WidgetTester tester) async {
+  await _presser(tester, find.text(t.tuteur.accueil.voirLaClasse));
+  await _presser(tester, find.text(t.classe.observer));
+}
+
 void main() {
-  testWidgets('telephone : Assister, l\'explication, Pas maintenant, retour a '
-      'l\'accueil', (WidgetTester tester) async {
+  testWidgets('telephone : la classe, l\'explication, Pas maintenant, retour '
+      'a la classe', (WidgetTester tester) async {
     final FauxPortVisite visites = FauxPortVisite();
     final FauxPortPolitique politique = FauxPortPolitique();
     addTearDown(politique.fermer);
@@ -214,30 +259,30 @@ void main() {
     );
 
     // La coquille du tuteur : quatre destinations, dont Historique.
-    expect(find.text(t.nav.tuteur.historique), findsOneWidget);
+    expect(_navHistorique, findsOneWidget);
 
-    await _presser(tester, find.text(t.tuteur.accueil.assister));
+    await _ouvrirObservation(tester);
 
     // La porte d'observation de CETTE seance, hors coquille (tache
     // focalisee) : l'explication de premiere utilisation, un disque retour.
     expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
     expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
     expect(find.byType(DisqueRetour), findsOneWidget);
-    expect(find.text(t.nav.tuteur.historique), findsNothing);
+    expect(_navHistorique, findsNothing);
     expect(visites.rolesDemandes, isEmpty);
 
-    // « Pas maintenant » : retour a l'accueil (aucune classe dans
-    // l'adresse), sans rien consommer, la navigation de nouveau la.
+    // « Pas maintenant » : retour a la classe (donnee par l'adresse),
+    // sans rien consommer, la navigation de nouveau la.
     await _presser(
       tester,
       find.text(t.tc.observation.explication.pasMaintenant),
     );
-    expect(lieu(routeur), Routes.tuteurAccueil);
-    expect(find.text(t.nav.tuteur.historique), findsOneWidget);
+    expect(lieu(routeur), _classe);
+    expect(_navHistorique, findsOneWidget);
     expect(visites.rolesDemandes, isEmpty);
   });
 
-  testWidgets('telephone : Assister, Observer maintenant, la salle, Agrandir, '
+  testWidgets('telephone : la classe, Observer maintenant, la salle, Agrandir, '
       'Quitter et sa confirmation', (WidgetTester tester) async {
     // Lot O, sous-paquet 2 : la salle refondue, atteinte en touchant depuis
     // la vraie coquille du tuteur, au format telephone.
@@ -250,13 +295,13 @@ void main() {
       politique: politique,
     );
 
-    await _presser(tester, find.text(t.tuteur.accueil.assister));
+    await _ouvrirObservation(tester);
     await _presser(tester, find.text(t.tc.observation.explication.observer));
 
     final v = t.tc.observation.visite;
     expect(find.byType(PanneauObservationTuteur), findsOneWidget);
     expect(find.byType(BandeauDecompteVisite), findsOneWidget);
-    expect(find.text(t.nav.tuteur.historique), findsNothing);
+    expect(_navHistorique, findsNothing);
     expect(tester.takeException(), isNull);
 
     await _presser(tester, find.text(v.agrandir));
@@ -281,9 +326,9 @@ void main() {
       find.text(t.tc.observation.resultat.derniereTerminee),
       findsOneWidget,
     );
-    await _presser(tester, find.text(t.commun.etats.actions.retourAccueil));
-    expect(lieu(routeur), Routes.tuteurAccueil);
-    expect(find.text(t.nav.tuteur.historique), findsOneWidget);
+    await _presser(tester, find.text(t.tc.observation.entree.retourClasse));
+    expect(lieu(routeur), _classe);
+    expect(_navHistorique, findsOneWidget);
   });
 
   testWidgets('telephone : fin de visite, « Voir mes observations » ouvre '
@@ -297,7 +342,7 @@ void main() {
       politique: politique,
     );
 
-    await _presser(tester, find.text(t.tuteur.accueil.assister));
+    await _ouvrirObservation(tester);
     await _presser(tester, find.text(t.tc.observation.explication.observer));
     await _presser(tester, find.text(t.tc.observation.visite.quitter));
     await _presser(
@@ -313,12 +358,12 @@ void main() {
     );
     expect(lieu(routeur), startsWith(Routes.tuteurSuiviObservations));
     // L'Historique est une destination de la coquille : la navigation revient.
-    expect(find.text(t.nav.tuteur.historique), findsOneWidget);
+    expect(_navHistorique, findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets(
-    'bureau : Assister, l\'explication, Observer maintenant, la visite',
+    'bureau : la classe, l\'explication, Observer maintenant, la visite',
     (WidgetTester tester) async {
       final FauxPortVisite visites = FauxPortVisite();
       final FauxPortPolitique politique = FauxPortPolitique();
@@ -331,7 +376,7 @@ void main() {
       );
 
       expect(find.text(t.nav.tuteur.historique), findsOneWidget);
-      await _presser(tester, find.text(t.tuteur.accueil.assister));
+      await _ouvrirObservation(tester);
       expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
       expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
       expect(visites.rolesDemandes, isEmpty);
@@ -343,7 +388,7 @@ void main() {
     },
   );
 
-  testWidgets('le disque retour de l\'explication ramene aussi a l\'accueil', (
+  testWidgets('le disque retour de l\'explication ramene aussi a la classe', (
     WidgetTester tester,
   ) async {
     final FauxPortVisite visites = FauxPortVisite();
@@ -355,10 +400,10 @@ void main() {
       politique: politique,
     );
 
-    await _presser(tester, find.text(t.tuteur.accueil.assister));
+    await _ouvrirObservation(tester);
     await _presser(tester, find.byType(DisqueRetour));
 
-    expect(lieu(routeur), Routes.tuteurAccueil);
+    expect(lieu(routeur), _classe);
     expect(visites.rolesDemandes, isEmpty);
   });
 }
