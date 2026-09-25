@@ -20,18 +20,24 @@ class RepereDemonstration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextDirection sens = Directionality.of(context);
-    return Banner(
-      message: libelleRepereDemonstration,
-      location: BannerLocation.topEnd,
-      textDirection: sens,
-      layoutDirection: sens,
-      color: Theme.of(context).colorScheme.tertiary,
-      textStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onTertiary,
-        fontSize: 10,
-        fontWeight: FontWeight.w700,
+    // Le bandeau est peint, donc muet pour un lecteur d'ecran : ce noeud
+    // l'annonce (revue P2-10, constat 2), sans rien changer au rendu.
+    return Semantics(
+      container: true,
+      label: 'Mode $libelleRepereDemonstration',
+      child: Banner(
+        message: libelleRepereDemonstration,
+        location: BannerLocation.topEnd,
+        textDirection: sens,
+        layoutDirection: sens,
+        color: Theme.of(context).colorScheme.tertiary,
+        textStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onTertiary,
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+        ),
+        child: child ?? const SizedBox.shrink(),
       ),
-      child: child ?? const SizedBox.shrink(),
     );
   }
 }
