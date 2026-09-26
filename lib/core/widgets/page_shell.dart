@@ -202,14 +202,25 @@ class PageShell extends StatelessWidget {
                 // AD-11 (1.4.10) : sur une vue tres basse (1280x1024 a
                 // 400 %, soit 256 de haut), la tete fixe ne laisse plus de
                 // place au corps et deborde ; la page defilante fait alors
-                // defiler la tete avec le corps.
+                // defiler la tete avec le corps. Un corps non defilant (liste
+                // paresseuse) y recoit la hauteur de la vue : la tete defile,
+                // puis la liste occupe tout l'ecran.
                 child: LayoutBuilder(
                   builder: (BuildContext _, BoxConstraints contraintes) =>
-                      defilante && contraintes.maxHeight < _hauteurTeteFixe
+                      contraintes.maxHeight < _hauteurTeteFixe
                       ? SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[...tete, corps],
+                            children: <Widget>[
+                              ...tete,
+                              if (defilante)
+                                corps
+                              else
+                                SizedBox(
+                                  height: contraintes.maxHeight,
+                                  child: corps,
+                                ),
+                            ],
                           ),
                         )
                       : Column(

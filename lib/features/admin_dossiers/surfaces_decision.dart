@@ -270,7 +270,9 @@ class _CorpsState extends ConsumerState<_Corps> {
               decoration: InputDecoration(
                 labelText: t.dossiers.refus.champ,
                 helperText: t.dossiers.refus.aide,
-                helperMaxLines: 3,
+                // AD-11 (1.4.4) : 3 lignes coupaient l'aide a 200 % (472 de
+                // large a 1440) ; borne large, l'aide n'est jamais coupee.
+                helperMaxLines: 8,
                 errorText: surface.erreurVide
                     ? t.dossiers.refus.erreurVide
                     : null,

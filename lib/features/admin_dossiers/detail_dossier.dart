@@ -183,11 +183,13 @@ class SqueletteDetail extends StatelessWidget {
         Skeleton(hauteur: h),
       ],
       Ecart.vLg,
-      const Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+      // Wrap comme les vrais boutons : a 320, 2 x 160 + 8 depasse 288 (AD-11).
+      const Wrap(
+        alignment: WrapAlignment.end,
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
         children: <Widget>[
           SizedBox(width: 160, child: Skeleton(hauteur: AppPage.hauteurBouton)),
-          SizedBox(width: AppSpacing.sm),
           SizedBox(width: 160, child: Skeleton(hauteur: AppPage.hauteurBouton)),
         ],
       ),

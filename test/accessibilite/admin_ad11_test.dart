@@ -46,24 +46,22 @@ import '../capture/outil_capture.dart';
 // RESTES AD-11 (defauts prouves, non corriges dans le temps imparti, voir
 // pilotage 05_recette/AD/AD-11.md) : ces cas restent ecrits et sautes, pour
 // que la suite reste verte sans masquer le defaut. A retirer un par un.
-//  - 320 de large, revue et suites + politique : un RenderFlex deborde de 40
-//    a droite (en-tete de revue), cascade sur cibles et focus ;
-//  - 1280x1024 a 400 % : file et suivantes debordent en bas (164) ;
-//  - 390 a 200 % : « Rechercher un ecran » encore coupe (barre mobile) ;
-//  - 1440 a 200 % : aide du motif de refus coupee ;
+// Passage 1 (corriges) : squelette du detail en Wrap (40 a droite a 320),
+// tete de PageShell defilante aussi pour un corps non defilant (164 en bas
+// a 400 %), libelles du tiroir sur deux lignes flexibles (200 %), aide du
+// motif de refus sur 8 lignes.
+// Restes :
+//  - politique a 320 : l'onglet de la politique n'est pas atteint (barre
+//    d'onglets defilante), cascade sur cibles et focus ;
+//  - 1280x1024 a 400 % : visionneuse (16 en bas) ; 02D et 02E : la feuille
+//    AppBottomSheet deborde de 32 en bas ;
+//  - 390 a 200 % : « Rechercher un ecran » coupe (barre mobile) ; la tete de
+//    PageShell deborde de 44 en bas (file et suivantes) ;
 //  - focus masque : ligne de revue 02B (1440) et onglet de politique
-//    partiellement hors vue ; 02D : bouton sous le clavier virtuel.
+//    hors vue (-16) ; 02D : bouton sous le clavier virtuel.
 const Set<String> _restes = <String>{
-  'ADM-02B_revue 320x640',
-  'ADM-02C_visionneuse 320x640',
-  'ADM-02D_refus 320x640',
-  'ADM-02E_validation 320x640',
   'AD-9_politique 320x640',
-  'ADM-02A_file 1280x1024_400pc',
-  'ADM-02B_revue 1280x1024_400pc',
   'ADM-02C_visionneuse 1280x1024_400pc',
-  'ADM-02D_refus 1280x1024_400pc',
-  'ADM-02E_validation 1280x1024_400pc',
   'AD-9_politique 1280x1024_400pc',
   'AD-S_coque 390x844_200pc',
   'ADM-02A_file 390x844_200pc',
@@ -72,11 +70,6 @@ const Set<String> _restes = <String>{
   'ADM-02D_refus 390x844_200pc',
   'ADM-02E_validation 390x844_200pc',
   'AD-9_politique 390x844_200pc',
-  'ADM-02D_refus 1440x900_200pc',
-  'Tab ADM-02B_revue 320x640 : focus jamais masque',
-  'Tab ADM-02C_visionneuse 320x640 : focus jamais masque',
-  'Tab ADM-02D_refus 320x640 : focus jamais masque',
-  'Tab ADM-02E_validation 320x640 : focus jamais masque',
   'Tab AD-9_politique 320x640 : focus jamais masque',
   'Tab ADM-02B_revue 1440x900 : focus jamais masque',
   'Tab AD-9_politique 1440x900 : focus jamais masque',

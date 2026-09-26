@@ -272,6 +272,8 @@ class AppBottomSheet extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final bool dialogue = forme == FormeModale.dialogue;
+    // Meme seuil que la tete defilante de PageShell.
+    final bool basse = MediaQuery.sizeOf(context).height < 360;
     // La boite de dialogue prend la surface des superpositions (plus claire
     // que la carte en sombre) et arrondit ses quatre coins : elle n'est
     // ancree a aucun bord.
@@ -293,48 +295,60 @@ class AppBottomSheet extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.all(dialogue ? AppSpacing.xxl : metriques.marge),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            // La poignee dit que la feuille se glisse. Elle est decorative :
-            // le glissement double toujours un bouton ou la touche Echap,
-            // aucun geste n'est le seul chemin (`06-accessibilite.md` section 2).
-            // Une boite de dialogue ne se glisse pas : pas de poignee.
-            if (!dialogue) ...<Widget>[
-              Center(
-                child: ExcludeSemantics(
-                  child: SizedBox(
-                    width: largeurPoignee,
-                    height: hauteurPoignee,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: palette.borderResting.asBorderSide().color,
-                        borderRadius: AppRadius.arrondiFull,
+        child: _defilerSiBasse(
+          basse,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // La poignee dit que la feuille se glisse. Elle est decorative :
+              // le glissement double toujours un bouton ou la touche Echap,
+              // aucun geste n'est le seul chemin (`06-accessibilite.md` section 2).
+              // Une boite de dialogue ne se glisse pas : pas de poignee.
+              if (!dialogue) ...<Widget>[
+                Center(
+                  child: ExcludeSemantics(
+                    child: SizedBox(
+                      width: largeurPoignee,
+                      height: hauteurPoignee,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: palette.borderResting.asBorderSide().color,
+                          borderRadius: AppRadius.arrondiFull,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Ecart.vLg,
-            ],
-            Semantics(
-              header: true,
-              child: Text(
-                titre,
-                style: surface.applyTo(
-                  textes.headlineSmall ?? const TextStyle(),
+                Ecart.vLg,
+              ],
+              Semantics(
+                header: true,
+                child: Text(
+                  titre,
+                  style: surface.applyTo(
+                    textes.headlineSmall ?? const TextStyle(),
+                  ),
                 ),
               ),
-            ),
-            Ecart.vLg,
-            Flexible(child: SingleChildScrollView(child: child)),
-            if (actions != null) ...<Widget>[Ecart.vXxl, actions!],
-          ],
+              Ecart.vLg,
+              if (basse)
+                child
+              else
+                Flexible(child: SingleChildScrollView(child: child)),
+              if (actions != null) ...<Widget>[Ecart.vXxl, actions!],
+            ],
+          ),
         ),
       ),
     );
   }
+
+  /// AD-11 (1.4.10) : sur une vue tres basse (1280x1024 a 400 %, 256 de
+  /// haut), titre et actions fixes ne laissent plus de place au corps et la
+  /// feuille debordait ; toute la feuille defile alors d'un bloc.
+  static Widget _defilerSiBasse(bool basse, Widget colonne) =>
+      basse ? SingleChildScrollView(child: colonne) : colonne;
 }
 
 /// Retient le glissement d'une feuille qu'une `PopScope` interdit de fermer.

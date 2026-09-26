@@ -356,10 +356,19 @@ class _Tiroir extends StatelessWidget {
         (MediaQuery.sizeOf(context).width - 2 * _retraitTuileNav)
             .clamp(0, 336)
             .toDouble();
+    // AD-11 (1.4.4) : a 200 %, un libelle ne tient plus sur une ligne dans la
+    // rangee M3 (non flexible) et la faisait deborder. Il passe a deux lignes
+    // flexibles, et la tuile grandit d'autant : 2 lignes de 20 + 16 = 56 a
+    // 100 %, soit la hauteur M3 inchangee.
+    final double hauteurTuile = math.max(
+      56,
+      2 * MediaQuery.textScalerOf(context).scale(20) + 16,
+    );
 
     return NavigationDrawerTheme(
       data: NavigationDrawerThemeData(
-        indicatorSize: Size(largeurIndicateur, 56),
+        tileHeight: hauteurTuile,
+        indicatorSize: Size(largeurIndicateur, hauteurTuile),
         labelTextStyle: _stylesLibelleNav(context, palette),
         iconTheme: _stylesIconeNav(palette),
       ),
@@ -381,7 +390,11 @@ class _Tiroir extends StatelessWidget {
             NavigationDrawerDestination(
               icon: _iconeEntree(palette, domaine, selectionnee: false),
               selectedIcon: _iconeEntree(palette, domaine, selectionnee: true),
-              label: _libelleEntree(palette, domaine),
+              // Flexible : enfant direct de la rangee M3 (DefaultTextStyle
+              // n'a pas d'objet de rendu).
+              label: Flexible(
+                child: _libelleEntree(palette, domaine, lignes: 2),
+              ),
             ),
           Ecart.vLg,
           _PiedUtilisateur(
