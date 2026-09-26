@@ -838,9 +838,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminPersonnesDossiers,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        // Le dossier vise depuis l'Accueil passe par `extra`, jamais par
+        // l'URL : un identifiant de personne n'a rien a faire dans un
+        // historique de navigateur (spec l.1933).
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: DossiersPage(),
+          child: DossiersPage(
+            profilId: switch (etat.extra) {
+              final String id => id,
+              _ => null,
+            },
+          ),
         ),
       ),
       // `ADM-08` : les comptes, atteints depuis l'Accueil
@@ -1187,6 +1195,8 @@ class _CoquilleSecondaire extends ConsumerWidget {
         domaineActif: null,
         onAller: aller,
         onCompte: () => aller(Routes.compte),
+        // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
+        onRetour: () => aller(Routes.admin),
         child: child,
       );
     }
@@ -1345,6 +1355,11 @@ class _CoquilleAdmin extends ConsumerWidget {
       domaineActif: domaine,
       onAller: aller,
       onCompte: () => aller(Routes.compte),
+      // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
+      // (spec section 26 ter, Q14).
+      onRetour: domaine == AdminDomaine.accueil
+          ? null
+          : () => aller(Routes.admin),
       child: child,
     );
   }

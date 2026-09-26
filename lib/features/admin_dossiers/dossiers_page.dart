@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart' show EtatPiece;
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
@@ -16,6 +17,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// `ADM-02` : la validation des dossiers.
@@ -32,7 +34,11 @@ import '../../core/widgets/status_pill.dart';
 /// construits. L'ecran ne peut pas le contourner.
 class DossiersPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de validation.
-  const DossiersPage({super.key});
+  const DossiersPage({super.key, this.profilId});
+
+  /// Le dossier a ouvrir en premier (ligne de l'Accueil), passe par `extra`.
+  /// Absent de la file, ou nul : le premier de la file.
+  final String? profilId;
 
   @override
   ConsumerState<DossiersPage> createState() => _DossiersPageState();
@@ -103,9 +109,17 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
     final AsyncValue<List<DossierAValider>> file = ref.watch(
       dossiersEnAttenteProvider,
     );
+    // Le dossier vise par l'Accueil s'il est dans la file, sinon le premier.
+    DossierAValider courant(List<DossierAValider> dossiers) =>
+        dossiers.firstWhere(
+          (DossierAValider d) => d.profilId == widget.profilId,
+          orElse: () => dossiers.first,
+        );
 
     return PageShell(
       titre: t.dossiers.titre,
+      sousTitre: t.dossiers.sousTitre,
+      entete: SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 0),
       // Les getters, jamais le type d'execution : Riverpod 3 relance un
       // provider en echec tout seul, et l'etat repasse alors par
       // `AsyncLoading` en conservant `hasError`. Un `switch` sur
@@ -119,7 +133,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
                   icone: AppIcons.dossiers,
                 )
               : _Dossier(
-                  dossier: file.requireValue.first,
+                  dossier: courant(file.requireValue),
                   restants: file.requireValue.length,
                   verifie: _verifie,
                   motif: _motif,
@@ -134,10 +148,10 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
                   onOuvrirRefus: () => setState(() => _refusEnCours = true),
                   onMotifChange: (String _) => setState(() {}),
                   onApprouver: () => unawaited(
-                    _decider(file.requireValue.first, approuve: true),
+                    _decider(courant(file.requireValue), approuve: true),
                   ),
                   onRefuser: () => unawaited(
-                    _decider(file.requireValue.first, approuve: false),
+                    _decider(courant(file.requireValue), approuve: false),
                   ),
                   tousVerifies: _verifie.length == _points.length,
                   points: _points,
@@ -237,16 +251,11 @@ class _Dossier extends StatelessWidget {
                 // Faute de depot, il n'y a pas de date de depot a dire : c'est
                 // l'anciennete de l'inscription qui mesure l'attente, et c'est
                 // justement cette personne qui attend le plus longtemps.
-                Text(
-                  switch (dossier.joursDAttente(DateTime.now())) {
-                    <= 0 => t.dossiers.inscritAujourdhui,
-                    1 => t.dossiers.inscritDepuisUnJour,
-                    final int jours => t.dossiers.inscritDepuis(
-                      jours: '$jours',
-                    ),
-                  },
-                  style: textes.bodySmall,
-                ),
+                Text(switch (dossier.joursDAttente(DateTime.now())) {
+                  <= 0 => t.dossiers.inscritAujourdhui,
+                  1 => t.dossiers.inscritDepuisUnJour,
+                  final int jours => t.dossiers.inscritDepuis(jours: '$jours'),
+                }, style: textes.bodySmall),
                 Ecart.vMd,
                 StatusPill(
                   libelle: dossier.etatPiece == EtatPiece.nonVisible

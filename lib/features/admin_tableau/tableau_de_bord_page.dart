@@ -32,6 +32,7 @@ class ATraiter {
     required this.depuis,
     required this.destination,
     required this.icone,
+    this.extra,
   });
 
   /// Ce qui attend, dit en clair.
@@ -45,6 +46,10 @@ class ATraiter {
 
   /// L'icone de la nature de la ligne.
   final AppIcon icone;
+
+  /// Ce que la destination doit ouvrir (le `profilId` d'un dossier), passe
+  /// par `extra` de GoRouter, jamais par l'URL (spec l.1933).
+  final Object? extra;
 }
 
 /// Assemble la liste a traiter, la plus ancienne en premier.
@@ -68,6 +73,9 @@ List<ATraiter> aTraiter({
         depuis: dossier.deposeLe,
         destination: Routes.adminPersonnesDossiers,
         icone: AppIcons.dossiers,
+        // La ligne nomme une personne : elle ouvre son dossier, pas le
+        // premier de la file (modification UX n°2).
+        extra: dossier.profilId,
       ),
     for (final Demande demande in demandes)
       ATraiter(
@@ -183,7 +191,9 @@ class TableauDeBordPage extends ConsumerWidget {
                       jours: '${maintenant.difference(ligne.depuis).inDays}',
                     ),
                   },
-                  onPress: () => GoRouter.of(context).go(ligne.destination),
+                  onPress: () =>
+                      GoRouter.of(context)
+                          .go(ligne.destination, extra: ligne.extra),
                 ),
               ),
           // La file des dossiers passe par `read_kyc_documents()`, qui refuse
@@ -222,7 +232,8 @@ class TableauDeBordPage extends ConsumerWidget {
             title: t.admin.tableau.outilsComptes,
             description: t.admin.tableau.outilsComptesDetail,
             icon: AppIcons.profil,
-            onPress: () => GoRouter.of(context).go(Routes.adminPersonnesComptes),
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminPersonnesComptes),
           ),
           Ecart.vSm,
           SettingRow(
@@ -269,7 +280,8 @@ class _Compteurs extends StatelessWidget {
       StatTile(
         valeur: indicateurs.foyersSansEnseignant,
         libelle: t.admin.tableau.foyers,
-        onPress: () => GoRouter.of(context).go(Routes.adminOperationsAttributions),
+        onPress: () =>
+            GoRouter.of(context).go(Routes.adminOperationsAttributions),
       ),
       StatTile(
         valeur: indicateurs.rapportsManquants,

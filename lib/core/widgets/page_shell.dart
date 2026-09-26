@@ -15,8 +15,8 @@ import 'offline_banner.dart';
 /// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2) :
 ///
 /// - le fond creme, qui vient du theme ;
-/// - la **gouttiere du gabarit courant** : 20 sur mobile, 32 sur tablette, 48
-///   sur desktop. Aucun ecran ne compare une largeur a un nombre, c'est
+/// - la **gouttiere du gabarit courant** : 16 sur mobile, 24 sur tablette, 32
+///   sur desktop (contrat A). Aucun ecran ne compare une largeur a un nombre, c'est
 ///   `AppGabarit` qui le fait, en un seul endroit ;
 /// - la **largeur bornee a 1200**, au dela de laquelle la colonne se centre.
 ///   Un ecran mobile etire sur 1400 pixels donne une colonne perdue au milieu
@@ -99,8 +99,11 @@ class PageShell extends StatelessWidget {
       ...actionsEntete,
       if (actionsCoquille) ...ActionsEnteteCoquille.de(context),
     ];
+    final VoidCallback? retour =
+        onRetour ??
+        (actionsCoquille ? ActionsEnteteCoquille.retourDe(context) : null);
     final bool enteteRiche =
-        onRetour != null || sousTitre != null || actionsTete.isNotEmpty;
+        retour != null || sousTitre != null || actionsTete.isNotEmpty;
 
     // La tete ne defile pas : le titre d'ecran, puis l'en-tete (un onglet, le
     // selecteur d'enfant de `TUT-01`, une ligne de contexte). C'est une zone
@@ -123,7 +126,7 @@ class PageShell extends StatelessWidget {
           EntetePage(
             titre: titre!,
             sousTitre: sousTitre,
-            onRetour: onRetour,
+            onRetour: retour,
             actions: actionsTete,
           )
         else
@@ -135,7 +138,7 @@ class PageShell extends StatelessWidget {
         Ecart.vLg,
         Row(
           children: <Widget>[
-            if (onRetour != null) DisqueRetour(onPress: onRetour!),
+            if (retour != null) DisqueRetour(onPress: retour),
             const Spacer(),
             for (final Widget action in actionsTete) ...<Widget>[
               Ecart.hXs,
@@ -218,10 +221,16 @@ class ActionsEnteteCoquille extends InheritedWidget {
     required this.actions,
     required super.child,
     super.key,
+    this.onRetour,
   });
 
   /// Les actions, dans l'ordre de lecture (la cloche en dernier).
   final List<Widget> actions;
+
+  /// Le retour que la coquille pose sur chacune de ses pages quand la page
+  /// n'en donne pas (l'admin : retour vers l'Accueil, spec section 26 ter).
+  /// Nul par defaut : le tuteur n'en pose aucun.
+  final VoidCallback? onRetour;
 
   /// Les actions posees au-dessus de [context], ou une liste vide.
   static List<Widget> de(BuildContext context) =>
@@ -230,9 +239,14 @@ class ActionsEnteteCoquille extends InheritedWidget {
           ?.actions ??
       const <Widget>[];
 
+  /// Le retour pose au-dessus de [context], ou nul.
+  static VoidCallback? retourDe(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
+      ?.onRetour;
+
   @override
   bool updateShouldNotify(ActionsEnteteCoquille ancien) =>
-      !listEquals(actions, ancien.actions);
+      !listEquals(actions, ancien.actions) || onRetour != ancien.onRetour;
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.

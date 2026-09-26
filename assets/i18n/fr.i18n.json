@@ -894,6 +894,7 @@
   },
   "dossiers": {
     "titre": "Dossiers à valider",
+    "sousTitre": "Examinez les dossiers prêts pour une décision.",
     "aucun": "Aucun dossier en attente",
     "aucunDetail": "Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.",
     "restantUn": "1 dossier en attente",

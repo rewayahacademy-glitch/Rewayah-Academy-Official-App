@@ -1220,6 +1220,9 @@ class Traductions$dossiers$fr {
 	/// fr: 'Dossiers à valider'
 	String get titre => 'Dossiers à valider';
 
+	/// fr: 'Examinez les dossiers prêts pour une décision.'
+	String get sousTitre => 'Examinez les dossiers prêts pour une décision.';
+
 	/// fr: 'Aucun dossier en attente'
 	String get aucun => 'Aucun dossier en attente';
 
@@ -11886,6 +11889,7 @@ extension on Traductions {
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
+			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier en attente',
 			'dossiers.aucunDetail' => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.',
 			'dossiers.restantUn' => '1 dossier en attente',
@@ -12202,9 +12206,9 @@ extension on Traductions {
 			'admin.evaluations.resultatEchec' => 'Échec',
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
-			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			_ => null,
 		} ?? switch (path) {
+			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
@@ -12716,9 +12720,9 @@ extension on Traductions {
 			'compte.coursDonnees' => 'Cours et données',
 			'compte.economieDonnees' => 'Économie de données',
 			'compte.economieDonneesDetail' => 'Réduit la qualité vidéo sur réseau mobile',
-			'compte.lectureGrande' => 'Lecture en grand texte',
 			_ => null,
 		} ?? switch (path) {
+			'compte.lectureGrande' => 'Lecture en grand texte',
 			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
 			'compte.profilsTitre' => 'Profils du foyer',
 			'compte.profilsIntro' => 'Les enfants rattachés à votre foyer.',
@@ -13230,9 +13234,9 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.inscritTitre' => 'Inscription confirmée',
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
-			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
 			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
@@ -13744,9 +13748,9 @@ extension on Traductions {
 			'tc.classe.support.aucun' => 'Aucun support présenté',
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support au groupe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
-			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',

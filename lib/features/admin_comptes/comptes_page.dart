@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
@@ -12,6 +13,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// `ADM-08` : les comptes du produit.
@@ -54,6 +56,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
 
     return PageShell(
       titre: t.admin.comptes.titre,
+      entete: SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 1),
       // `DataCollection` porte son propre `ListView` : il exige une hauteur
       // bornee, donc l'ecran gere son defilement, comme `ADM-04`.
       defilante: false,
