@@ -74,7 +74,7 @@ Q1 oui (guidée : disques pleins vert Parler et violet Caméra, même diamètre 
 
 ## 5. Correspondance image -> écran -> rôle -> capture
 
-| Image retouchée | Écran | Rôle effectif | États | Capture (dans `05_recette/CL/captures/`) |
+| Image retouchée | Écran | Rôle effectif | États | Capture (dans `10_classe/captures/T<n>/`) |
 |---|---|---|---|---|
 | `CLV-04_eleve_desktop_r.jpg` | CLV-04 | élève | visite (Mariam) | `cl_04_eleve_visite_1440x900@1_{dark,light}` |
 | `CLV-05_guidee_desktop_r.jpg` | CLV-05 | guidée | visite, point fixe + œil | `cl_05_guidee_visite_1440x900@1_*` |
@@ -103,17 +103,20 @@ Tailles : mobile 390x844 @3 (zone sûre 47/34), web étroit 640x1000 @1 (gabarit
 
 ## 7. Tâches (séquentielles, chacune < 30 min)
 
-| # | Tâche | Images |
-|---|---|---|
-| T1 | Socle : VueSeance + règles de la matrice, données démo, i18n, mention et en-tête | toutes (en-têtes) |
-| T2 | Salle élève standard CLV-04 (support, vignette, dock, barre basse) + page `/demo/salle` | CLV-04 desktop, mobile, web étroit |
-| T3 | Interface guidée CLV-05 + fin élève CLV-09 | CLV-05 desktop, mobile, web étroit |
-| T4 | Salle enseignant CLV-06 (rail, outils, Élèves/Supports, pagination, zoom, Réseau) | CLV-06 desktop, mobile, web étroit |
-| T5 | PanneauSeance + CLV-07 Élèves | CLV-07 desktop, mobile, web étroit |
-| T6 | CLV-08 Supports | CLV-08 desktop, mobile, web étroit |
-| T7 | CLV-10 fin enseignant + branchement de `/salle` sur SalleSeance | CLV-10 desktop, mobile, web étroit |
-| T8 | Branchement de `/tc/classe` sur SalleSeance + tests existants remis au vert | CLV-06, CLV-07 |
-| T9 | Recette : captures complètes, planches contre les 10 images, suite complète | les 10 |
+**Où en est-on (tenir cette colonne à jour, c'est la seule source) :** une tâche est « faite » quand son retour de relecture est corrigé et poussé. Captures d'une tâche : `10_classe/captures/T<n>/`, seulement les écrans de CETTE tâche (jamais celles des tâches précédentes, jamais dans `05_recette/`).
+
+| # | Tâche | Images | État |
+|---|---|---|---|
+| T1 | Socle : VueSeance + règles de la matrice, données démo, i18n, mention et en-tête | toutes (en-têtes) | faite |
+| T2 | Salle élève standard CLV-04 (support, vignette, dock, barre basse) + page `/demo/salle` | CLV-04 desktop, mobile, web étroit | faite |
+| T3 | Interface guidée CLV-05 + fin élève CLV-09 | CLV-05 desktop, mobile, web étroit | faite |
+| T4 | Salle enseignant CLV-06 (rail, outils, Élèves/Supports, pagination, zoom, Réseau) | CLV-06 desktop, mobile, web étroit | faite |
+| T5 | PanneauSeance + CLV-07 Élèves | CLV-07 desktop, mobile, web étroit | faite |
+| T6 | CLV-08 Supports | CLV-08 desktop, mobile, web étroit | faite |
+| T7 | CLV-10 fin enseignant + sorties de `/salle` (CLV-09, CLV-10, cahier) | CLV-10 desktop, mobile, web étroit | faite (retour de relecture corrigé) |
+| T8 | **À faire ensuite.** Rendu EN séance de `/salle` = SalleSeance (moitié de l'ancienne T7) | CLV-04, CLV-05, CLV-06 | à faire |
+| T9 | Branchement de `/tc/classe` sur SalleSeance + tests existants remis au vert | CLV-06, CLV-07 | à faire |
+| T10 | Recette : captures complètes, planches contre les 10 images, suite complète | les 10 | à faire |
 
 Le détail de chaque tâche suit (§8). Chaque agent lit §1 à §6 puis sa fiche.
 
@@ -180,20 +183,30 @@ Critères : panneau enseignant seulement ; une seule action pleine ; aucun cheva
 Fichiers : `resultat_seance.dart`, `depuis_salle.dart`, `lib/features/salle/salle_page.dart`, tests `test/features/salle_test.dart`, `salle_enseignant_test.dart` et nouveaux, captures.
 1. CLV-10 : en-tête « Séance terminée » + « Classe An-Nour » + pastille « Terminée », rail enseignant en desktop ; icône validée, « Séance terminée », « Le cahier est prêt avec les informations de la séance. », carte récapitulative (Classe An-Nour · Sayyida Amina ; Fin 15:16 ; 2 élèves connectés sur 3 inscrits ; Cahier de séance + badge doux « Cahier à compléter »), bouton plein « Ouvrir le cahier → » (`Routes.cahierPour`), secondaire « Revenir à ma journée ». État « Le cahier ne peut pas être ouvert pour le moment. » + « Réessayer ». Aucune mention d'enregistrement.
 2. `depuis_salle.dart` : construit `VueSeance` depuis `VueSalle`, la présence déjà lue (`presenceSeanceProvider`), `monTuteurObserveProvider`, `annoncesObservationProvider`, les capacités (caméra autorisée) ; outils et Supports sans rappel (non rendus) tant que BR-1 n'a pas câblé.
-3. `SallePage.build` : si `RoleSeance.resoudre(vue.role, mode)` n'est pas nul et hors impasse, rendre `SalleSeance` ; sinon rendu actuel inchangé (observateur, contrôleur, administration, impasses). Sortie enseignant -> CLV-10 puis cahier ; sortie élève -> CLV-09.
-Critères : `test/features/salle_test.dart`, `salle_enseignant_test.dart`, `test/video`, `test/router` verts (adapter les attentes d'interface sans affaiblir une règle : invisibilité du contrôleur, annonce d'observation à l'enseignant, jamais « absent ») ; route `/salle` inchangée. Captures CLV-10 aux 3 tailles, clair et sombre, contre `CLV-10_fin_desktop_r.jpg` et les colonnes droites des planches CLV-07-08-10.
+3. Sorties de `/salle` : enseignant -> CLV-10 puis cahier ; élève -> CLV-09 (« Retour à la Classe » -> `/tc/groupes`, guidée -> accueil). Le rendu EN séance est passé en T8.
+Critères : `test/features/salle_test.dart`, `salle_enseignant_test.dart`, `test/video`, `test/router` verts ; route `/salle` inchangée. Captures `10_classe/captures/T7/cl_10_fin_*` aux 3 tailles, clair et sombre, contre `CLV-10_fin_desktop_r.jpg` et les colonnes droites des planches CLV-07-08-10.
 
-### T8 - Branchement de /tc/classe et remise au vert
+### T8 - Rendu en séance de /salle sur SalleSeance
+
+Pourquoi à part : brancher tel quel casserait la vraie vidéo, le Coran et la présence (voir `05_recette/CL/T7.md`, « Reste à faire »). Ne pas toucher `PanneauEnseignant` (il porte le Coran : interdit).
+Fichiers : `vignette_video.dart`, `zone_support.dart` (ou équivalents de `salle_seance/`), `salle_seance.dart`, `lib/features/salle/salle_page.dart`, tests `salle_test.dart`, `salle_enseignant_test.dart`.
+1. Un emplacement `video` (Widget optionnel) dans `VignetteVideo` et `ZoneSupport`, rempli par `renduVideo` du moteur ; sans lui, le rendu démo actuel. Vidéo jamais déformée (cover dans la vignette).
+2. Un emplacement pour la ligne de présence de l'élève (« Ma présence », « en retard »), le mot du lien (qualité en mots) et « Vous attendez votre professeur », sans chevauchement et sans rien de réservé à l'enseignant chez l'élève et la guidée.
+3. `PanneauEnseignant` gardé tel quel, posé par-dessus la salle enseignant (aucune modification de son contenu).
+4. Enfin `SallePage.build` : si `RoleSeance.resoudre(vue.role, mode)` n'est pas nul et hors impasse, rendre `SalleSeance` via `DepuisSalle` (déjà prêt et testé) ; sinon rendu actuel (observateur, contrôleur, administration, impasses).
+Critères : `salle_test.dart`, `salle_enseignant_test.dart`, `test/video`, `test/router` verts sans affaiblir une règle (invisibilité du contrôleur, annonce d'observation à l'enseignant, jamais « absent », présence et lien toujours dits). Captures `10_classe/captures/T8/` : CLV-04, CLV-05, CLV-06 rendues par `SallePage` avec le faux moteur, 3 tailles, clair et sombre.
+
+### T9 - Branchement de /tc/classe et remise au vert
 
 Fichiers : `depuis_classe_live.dart`, `lib/features/tc_classe_live/classe_live_page.dart`, tests `test/teaching_core/e/*`, `test/teaching_core/q/q12_navigation_session_persistante_test.dart`.
 1. `ClasseLivePage` garde `ControleurSessionPersistante`, `PreCours` et sa route ; son corps en séance devient `SalleSeance` via `depuis_classe_live.dart` (`RosterClasseVM` -> liste d'élèves, `SessionClockVM` -> horloge, `ContexteClasseLive.support/dock/bibliotheque` -> rappels non nuls seulement s'ils sont fournis).
 2. Supprimer seulement le code de rendu devenu mort dans `classe_live_page.dart` (`_Corps`, `_Commandes`…) s'il n'a plus d'appelant ; garder `FicheSeance`, `PanneauRoster`, `BarreCoursEnCours` s'ils ont encore un importeur.
 Critères : `flutter test test/teaching_core test/features/salle_test.dart test/features/salle_enseignant_test.dart test/router` vert ; `/tc/classe` et `/salle` rendent la même salle pour un même rôle (test widget qui compare les textes visibles des deux hôtes) ; `flutter analyze` propre. Captures CLV-06 et CLV-07 desktop et mobile rendues via `ClasseLivePage` avec le faux moteur (`test/teaching_core/e/faux/faux_classe.dart`), comparées aux captures T4 et T5.
 
-### T9 - Recette complète
+### T10 - Recette complète
 
 Fichiers : `test/features/salle_seance/salle_seance_capture_test.dart` (complété), `test/capture/outil_capture.dart` (fonction `plancheRangee` : image retouchée en haut, rangée de N captures dessous, tout en `dart:ui`), `C:\RA\pilotage\05_recette\CL\RAPPORT.md`, `OU_TROUVER.md`.
-1. Produire toutes les captures du §5 dans `05_recette/CL/captures/` (clair et sombre), plus les états repos, rien partagé, panneaux, fin, pour chaque rôle, aux 3 tailles.
+1. Produire toutes les captures du §5 dans `10_classe/captures/T10/` (clair et sombre), plus les états repos, rien partagé, panneaux, fin, pour chaque rôle, aux 3 tailles.
 2. Dix planches `planche_<nom_image>.png` : image retouchée contre rendu (une capture pour les desktop, rangée de trois pour les planches mobile et web étroit).
 3. Relire chaque planche avec Read ; corriger dans le code les écarts de mise en page (pas les photos) ; relancer.
 4. `flutter analyze`, `dart run tool/verifier_jetons.dart`, **suite complète** `flutter test` (sous verrou).
