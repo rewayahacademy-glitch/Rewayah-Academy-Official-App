@@ -4,6 +4,7 @@
 // le panneau Eleves et le recapitulatif de fin (I-6). Les contenus (noms,
 // support) sont des contenus de demonstration, pas des libelles d'interface.
 
+import '../../core/tc_bibliotheque/library_resource.dart';
 import '../salle_seance/vue_seance.dart';
 
 /// Les etats montrables de la salle de demonstration.
@@ -93,20 +94,66 @@ abstract final class DonneesSeanceDemo {
     pages: 12,
   );
 
+  /// Le panneau Supports (CLV-08) : Reprendre, deux Recents, le fonds de la
+  /// Classe. « Ouvrir » montre `contenu` dans la salle de demonstration.
   static const List<SupportDisponible> supports = <SupportDisponible>[
     SupportDisponible(
-      titre: 'Chapitre 1 · Les bonnes manières',
+      id: 'demo-chapitre-1',
+      surTitre: 'Chapitre 1',
+      titre: 'Les bonnes manières',
       detail: 'Support de cours · v2.0',
+      rubrique: RubriqueSupport.reprendre,
+      type: TypeRessource.lecon,
+      teinte: 3,
+      monogramme: 'BM',
+      contenu: support,
     ),
     SupportDisponible(
+      id: 'demo-fiche-memorisation',
       titre: 'Fiche de mémorisation',
       detail: 'PDF · 12 pages · v1.1',
+      rubrique: RubriqueSupport.recent,
+      teinte: 5,
+      monogramme: 'FM',
+      contenu: SupportSeance(
+        chapitre: 'Chapitre 1',
+        titre: 'Fiche de mémorisation',
+        encadre: 'Relire chaque règle à voix basse avant la séance.',
+        points: <String>[
+          'Écouter avant de parler.',
+          'Lever la main pour demander la parole.',
+          'Remercier le professeur.',
+        ],
+        page: 1,
+        pages: 12,
+      ),
     ),
     SupportDisponible(
+      id: 'demo-exercices-chapitre-1',
       titre: 'Exercices – Chapitre 1',
       detail: 'PDF · 8 pages · v1.0',
+      rubrique: RubriqueSupport.recent,
+      teinte: 8,
+      monogramme: 'EX',
+      contenu: SupportSeance(
+        chapitre: 'Chapitre 1',
+        titre: 'Exercices – Chapitre 1',
+        encadre: 'Associer chaque situation à la bonne manière.',
+        points: <String>[
+          'Un camarade parle : que fais-tu ?',
+          'Tu as une question : que fais-tu ?',
+          'Le professeur explique : que fais-tu ?',
+        ],
+        page: 1,
+        pages: 8,
+      ),
     ),
-    SupportDisponible(titre: 'Bibliothèque An-Nour', detail: '24 ressources'),
+    SupportDisponible(
+      id: 'demo-bibliotheque-an-nour',
+      titre: 'Bibliothèque An-Nour',
+      detail: '24 ressources',
+      rubrique: RubriqueSupport.classe,
+    ),
   ];
 
   static const FinSeance fin = FinSeance(

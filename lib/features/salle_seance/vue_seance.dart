@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -128,13 +129,57 @@ class SupportSeance {
   final int pages;
 }
 
+/// La rubrique d'un support dans le panneau Supports (CLV-08). Ordre repris
+/// de `VueCatalogue` (Bibliotheque en classe) : continuer, recents, groupe.
+enum RubriqueSupport {
+  /// « Reprendre » : le support du cours en cours, avec « Ouvrir ».
+  reprendre,
+
+  /// « Recents ».
+  recent,
+
+  /// « Ressources de la Classe » : un fonds, pas un support ouvrable.
+  classe,
+}
+
 /// Un support proposable (panneau Supports, CLV-08).
+///
+/// Forme reduite de `LibraryResource` (Bibliotheque) : ce que la salle
+/// affiche, sans manifeste ni droit. Le cablage au catalogue vient a BR-1.
 @immutable
 class SupportDisponible {
-  const SupportDisponible({required this.titre, required this.detail});
+  const SupportDisponible({
+    required this.id,
+    required this.titre,
+    required this.detail,
+    required this.rubrique,
+    this.surTitre,
+    this.type = TypeRessource.pdf,
+    this.teinte = 1,
+    this.monogramme = '',
+    this.contenu,
+  });
 
+  /// Identifiant stable (celui de la ressource a BR-1).
+  final String id;
+
+  /// « Chapitre 1 » au-dessus du titre (rubrique Reprendre).
+  final String? surTitre;
   final String titre;
+
+  /// « PDF · 12 pages · v1.1 », « Support de cours · v2.0 », « 24 ressources ».
   final String detail;
+  final RubriqueSupport rubrique;
+
+  /// La couverture (grammaire de `VignetteRessource`). Teinte >= 1 : la
+  /// teinte 0 est reservee au Coran.
+  final TypeRessource type;
+  final int teinte;
+  final String monogramme;
+
+  /// Ce que la salle montre une fois le support ouvert. `null` : le support
+  /// ne s'ouvre pas dans la salle (fonds de la Classe).
+  final SupportSeance? contenu;
 }
 
 /// Le recapitulatif de fin (CLV-10), enseignant seulement.

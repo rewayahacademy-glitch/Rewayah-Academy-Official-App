@@ -63,11 +63,16 @@ class OutilsEnseignement extends StatefulWidget {
     required this.onOutil,
     required this.forme,
     this.initial = OutilEnseignement.pointeur,
+    this.pied,
     super.key,
   });
 
   final ValueChanged<OutilEnseignement>? onOutil;
   final FormeOutils forme;
+
+  /// Carte seulement : ce qui suit les outils dans la meme carte (CLV-08 :
+  /// Eleves et Supports en liste).
+  final Widget? pied;
 
   /// L'outil actif a l'ouverture (image CLV-06 : Pointeur ; image CLV-07,
   /// carte a cote du panneau : aucun, `null`).
@@ -156,6 +161,10 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
                     ),
                 ],
               ),
+              if (widget.pied case final Widget pied) ...<Widget>[
+                Ecart.vLg,
+                pied,
+              ],
             ],
           ),
         ),

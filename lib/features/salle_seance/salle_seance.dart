@@ -22,6 +22,7 @@ import 'dock_seance.dart';
 import 'outils_enseignement.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
+import 'panneau_supports.dart';
 import 'rail_seance.dart';
 import 'vue_seance.dart';
 import 'zone_support.dart';
@@ -359,6 +360,11 @@ class _SalleEnseignant extends StatelessWidget {
         titre: t.salle.seance.supports,
         onFermer: actions.onSupports,
         forme: forme,
+        enfant: PanneauSupports(
+          supports: vue.supports,
+          actions: actions,
+          forme: forme,
+        ),
       ),
     };
   }
@@ -374,13 +380,104 @@ class _SalleEnseignant extends StatelessWidget {
   }) {
     const double gouttiere = AppPage.gouttiereMobile;
     final SupportSeance? page = vue.support;
+    // CLV-08 : carte des outils en tete de la colonne droite, puis Eleves et
+    // Supports en liste ; sous le support, dock puis pagination et zoom.
+    final bool supports = vue.panneau == PanneauOuvert.supports;
     final Widget? boutons = _BoutonsPanneaux.ou(
       vue,
       actions,
       gabarit,
       etire: true,
       serre: true,
+      enColonne: supports,
     );
+    final Widget? carteOutils = outils
+        // Images CLV-07 et CLV-08 : aucun outil selectionne.
+        ? OutilsEnseignement(
+            onOutil: actions.onOutil,
+            forme: FormeOutils.carte,
+            initial: null,
+          )
+        : null;
+    final Widget? pagination = page != null && vue.voitPaginationActive(gabarit)
+        ? PaginationSupport(
+            page: page.page,
+            pages: page.pages,
+            onPrecedente: actions.onPagePrecedente,
+            onSuivante: actions.onPageSuivante,
+          )
+        : null;
+    final Widget dock = DockSeance(
+      vue: vue,
+      actions: actions,
+      microOuvert: local.microOuvert,
+      cameraAllumee: local.cameraAllumee,
+    );
+    final Widget? zoom = vue.voitZoomLocal(gabarit)
+        ? ZoomLocal(
+            zoom: local.zoom,
+            onMoins: actions.onZoomMoins,
+            onPlus: actions.onZoomPlus,
+            avecLibelle: false,
+          )
+        : null;
+    if (supports) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          ChromeSeance(vue: vue, actions: actions),
+          Ecart.vSm,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  SizedBox(width: largeurColonneSeance, child: panneau),
+                  Ecart.hMd,
+                  Expanded(child: support),
+                  Ecart.hMd,
+                  SizedBox(
+                    width: largeurColonneDroiteSeance,
+                    // Une seule carte haute comme le support : les outils,
+                    // puis Eleves et Supports (image CLV-08).
+                    child: outils
+                        ? OutilsEnseignement(
+                            onOutil: actions.onOutil,
+                            forme: FormeOutils.carte,
+                            initial: null,
+                            pied: boutons,
+                          )
+                        : Column(children: <Widget>[?boutons]),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Image CLV-08 : le dock part sous le debut du support, pagination
+          // et zoom a sa droite.
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              gouttiere + largeurPanneauSeance,
+              AppSpacing.xl,
+              gouttiere,
+              AppSpacing.lg,
+            ),
+            // A 1200 de large (bas du gabarit desktop), la rangee se reduit
+            // d'un bloc plutot que de deborder.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: AppSpacing.xl,
+                children: <Widget>[dock, ?pagination, ?zoom],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -402,14 +499,9 @@ class _SalleEnseignant extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       ?boutons,
-                      if (outils) ...<Widget>[
+                      if (carteOutils != null) ...<Widget>[
                         Ecart.vLg,
-                        // Image CLV-07 : aucun outil selectionne.
-                        OutilsEnseignement(
-                          onOutil: actions.onOutil,
-                          forme: FormeOutils.carte,
-                          initial: null,
-                        ),
+                        carteOutils,
                       ],
                     ],
                   ),
@@ -429,28 +521,7 @@ class _SalleEnseignant extends StatelessWidget {
           ),
           child: Row(
             spacing: AppSpacing.md,
-            children: <Widget>[
-              if (page != null && vue.voitPaginationActive(gabarit))
-                PaginationSupport(
-                  page: page.page,
-                  pages: page.pages,
-                  onPrecedente: actions.onPagePrecedente,
-                  onSuivante: actions.onPageSuivante,
-                ),
-              DockSeance(
-                vue: vue,
-                actions: actions,
-                microOuvert: local.microOuvert,
-                cameraAllumee: local.cameraAllumee,
-              ),
-              if (vue.voitZoomLocal(gabarit))
-                ZoomLocal(
-                  zoom: local.zoom,
-                  onMoins: actions.onZoomMoins,
-                  onPlus: actions.onZoomPlus,
-                  avecLibelle: false,
-                ),
-            ],
+            children: <Widget>[?pagination, dock, ?zoom],
           ),
         ),
       ],
@@ -547,6 +618,7 @@ class _BoutonsPanneaux extends StatelessWidget {
     required this.onSupports,
     required this.etire,
     this.serre = false,
+    this.enColonne = false,
   });
 
   static Widget? ou(
@@ -555,6 +627,7 @@ class _BoutonsPanneaux extends StatelessWidget {
     Gabarit gabarit, {
     bool? etire,
     bool serre = false,
+    bool enColonne = false,
   }) {
     final String? compteur = vue.compteurEleves;
     if (!vue.voitBoutonsPanneaux || compteur == null) return null;
@@ -565,6 +638,7 @@ class _BoutonsPanneaux extends StatelessWidget {
       onSupports: actions.onSupports,
       etire: etire ?? gabarit != Gabarit.desktop,
       serre: serre,
+      enColonne: enColonne,
     );
   }
 
@@ -575,6 +649,9 @@ class _BoutonsPanneaux extends StatelessWidget {
 
   /// Desktop, panneau ouvert : colonne droite etroite (CLV-07).
   final bool serre;
+
+  /// Desktop, panneau Supports : l'un sous l'autre, pleine largeur (CLV-08).
+  final bool enColonne;
 
   @override
   Widget build(BuildContext context) {
@@ -600,6 +677,13 @@ class _BoutonsPanneaux extends StatelessWidget {
           serre: serre,
         ),
     ];
+    if (enColonne) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: AppSpacing.md,
+        children: boutons,
+      );
+    }
     return Row(
       mainAxisSize: etire ? MainAxisSize.max : MainAxisSize.min,
       spacing: AppSpacing.md,

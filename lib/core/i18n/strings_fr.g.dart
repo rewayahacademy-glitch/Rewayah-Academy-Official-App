@@ -2553,6 +2553,8 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Fermer le panneau'
 	String get fermerPanneau => 'Fermer le panneau';
 
+	late final Traductions$salle$seance$panneauSupports$fr panneauSupports = Traductions$salle$seance$panneauSupports$fr.internal(_root);
+
 	/// fr: 'Élèves'
 	String get eleves => 'Élèves';
 
@@ -8307,6 +8309,36 @@ class Traductions$salle$seance$rail$fr {
 	String get profil => 'Profil';
 }
 
+// Path: salle.seance.panneauSupports
+class Traductions$salle$seance$panneauSupports$fr {
+	Traductions$salle$seance$panneauSupports$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reprendre'
+	String get reprendre => 'Reprendre';
+
+	/// fr: 'Récents'
+	String get recents => 'Récents';
+
+	/// fr: 'Ressources de la Classe'
+	String get ressourcesClasse => 'Ressources de la Classe';
+
+	/// fr: 'Voir tout'
+	String get voirTout => 'Voir tout';
+
+	/// fr: 'Ouvrir'
+	String get ouvrir => 'Ouvrir';
+
+	/// fr: 'Ouvrir {titre}'
+	String ouvrirSupport({required Object titre}) => 'Ouvrir ${titre}';
+
+	/// fr: 'Voir toute la bibliothèque'
+	String get voirBibliotheque => 'Voir toute la bibliothèque';
+}
+
 // Path: salle.seance.demo
 class Traductions$salle$seance$demo$fr {
 	Traductions$salle$seance$demo$fr.internal(this._root);
@@ -11638,6 +11670,13 @@ extension on Traductions {
 			'salle.seance.rail.ressources' => 'Ressources',
 			'salle.seance.rail.profil' => 'Profil',
 			'salle.seance.fermerPanneau' => 'Fermer le panneau',
+			'salle.seance.panneauSupports.reprendre' => 'Reprendre',
+			'salle.seance.panneauSupports.recents' => 'Récents',
+			'salle.seance.panneauSupports.ressourcesClasse' => 'Ressources de la Classe',
+			'salle.seance.panneauSupports.voirTout' => 'Voir tout',
+			'salle.seance.panneauSupports.ouvrir' => 'Ouvrir',
+			'salle.seance.panneauSupports.ouvrirSupport' => ({required Object titre}) => 'Ouvrir ${titre}',
+			'salle.seance.panneauSupports.voirBibliotheque' => 'Voir toute la bibliothèque',
 			'salle.seance.eleves' => 'Élèves',
 			'salle.seance.rappeler' => 'Rappeler',
 			'salle.seance.signalerBesoin' => 'Signaler un besoin',
@@ -12003,6 +12042,8 @@ extension on Traductions {
 			'foyer.membres' => 'Profils élèves',
 			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
 			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.membre.sansClasse' => 'Pas encore de classe',
 			'foyer.membre.classeEchec' => 'Classe non lue',
 			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
@@ -12010,8 +12051,6 @@ extension on Traductions {
 			'foyer.membre.accesExpire' => ({required Object date}) => 'Accès expiré depuis le ${date}',
 			'foyer.membre.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'foyer.classesIndisponibles' => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.classesEchec' => 'La classe de certains élèves n\'a pas pu être lue.',
 			'foyer.relireClasses' => 'Relire les classes',
 			'foyer.inscriptionIllisible' => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.',
@@ -12517,6 +12556,8 @@ extension on Traductions {
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
 			'admin.regles.titre' => 'Règles',
@@ -12524,8 +12565,6 @@ extension on Traductions {
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.regles.valeurInvalide' => 'Entrez un nombre valide.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.envoyer' => 'Enregistrer',
 			'admin.regles.champValeur' => 'Valeur',
 			'admin.regles.absenceSeuil' => 'Seuil d\'absence',
@@ -13031,6 +13070,8 @@ extension on Traductions {
 			'nav.tuteur.reglages' => 'Réglages',
 			'nav.tuteur.suivi' => 'Suivi',
 			'nav.tuteur.historique' => 'Historique',
+			_ => null,
+		} ?? switch (path) {
 			'nav.tuteur.compte' => 'Compte',
 			'nav.enseignant.journee' => 'Journée',
 			'nav.enseignant.creneaux' => 'Créneaux',
@@ -13038,8 +13079,6 @@ extension on Traductions {
 			'nav.controleur.planning' => 'Planning',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
-			_ => null,
-		} ?? switch (path) {
 			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.attribution' => 'Attribution',
 			'nav.admin.journal' => 'Journal',
@@ -13545,6 +13584,8 @@ extension on Traductions {
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
+			_ => null,
+		} ?? switch (path) {
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
 			'classe.seance.aucune' => 'Aucune séance planifiée',
 			'classe.seance.aucuneDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
@@ -13552,8 +13593,6 @@ extension on Traductions {
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
 			'classe.observation.uneVisite' => '1 visite disponible',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.visites' => ({required Object nombre}) => '${nombre} visites disponibles',
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
@@ -14059,6 +14098,8 @@ extension on Traductions {
 			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.intention.aApprendre' => 'À apprendre',
 			'tc.outils.intention.aRevoir' => 'À revoir',
 			'tc.outils.intention.aRenforcer' => 'À renforcer',
@@ -14066,8 +14107,6 @@ extension on Traductions {
 			'tc.outils.intention.pourEvaluation' => 'Pour l\'évaluation',
 			'tc.outils.trait.stylet' => 'Stylet',
 			'tc.outils.trait.surligneur' => 'Surligner',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',

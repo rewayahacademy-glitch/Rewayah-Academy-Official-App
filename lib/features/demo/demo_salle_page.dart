@@ -230,12 +230,22 @@ class _SalleDemoState extends State<SalleDemo> {
     _panneau = _panneau == panneau ? PanneauOuvert.aucun : panneau;
   });
 
+  /// Le support ouvert depuis le panneau Supports ; `null` : celui de l'etat.
+  SupportSeance? _support;
+
+  /// « Ouvrir » (CLV-08) : le support affiche change, le panneau se ferme.
+  void _ouvrirSupport(SupportDisponible choisi) => setState(() {
+    _support = choisi.contenu ?? _support;
+    _panneau = PanneauOuvert.aucun;
+  });
+
   @override
   Widget build(BuildContext context) {
-    final VueSeance vue = DonneesSeanceDemo.vue(
-      widget.role,
-      widget.etat,
-    ).copyWith(panneau: _panneau);
+    final VueSeance etat = DonneesSeanceDemo.vue(widget.role, widget.etat);
+    final VueSeance vue = etat.copyWith(
+      panneau: _panneau,
+      support: etat.support == null ? null : _support,
+    );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance ou sortie volontaire de l'eleve : CLV-09. La fin de
     // l'enseignant (CLV-10) vient avec T7.
@@ -285,6 +295,10 @@ class _SalleDemoState extends State<SalleDemo> {
         onChoisirPourReciter: enseignant ? (EleveSeance _) => _inerte() : null,
         onNoter: enseignant ? (EleveSeance _) => _inerte() : null,
         onSignaler: enseignant ? (EleveSeance _) => _inerte() : null,
+        // Le panneau Supports : « Ouvrir » agit ; la Bibliotheque complete
+        // n'est pas ouverte en demonstration (catalogue cable a BR-1).
+        onOuvrirSupport: enseignant ? _ouvrirSupport : null,
+        onBibliotheque: enseignant ? _inerte : null,
       ),
     );
   }

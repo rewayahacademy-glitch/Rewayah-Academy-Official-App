@@ -199,6 +199,15 @@
         "profil": "Profil"
       },
       "fermerPanneau": "Fermer le panneau",
+      "panneauSupports": {
+        "reprendre": "Reprendre",
+        "recents": "Récents",
+        "ressourcesClasse": "Ressources de la Classe",
+        "voirTout": "Voir tout",
+        "ouvrir": "Ouvrir",
+        "ouvrirSupport": "Ouvrir {titre}",
+        "voirBibliotheque": "Voir toute la bibliothèque"
+      },
       "eleves": "Élèves",
       "rappeler": "Rappeler",
       "signalerBesoin": "Signaler un\u00a0besoin",

@@ -331,7 +331,83 @@ void main() {
       }
     }
   });
+
+  group('Capture : panneau Supports (T6)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // Etats des images : desktop = visite + « La seance se poursuit. » ;
+    // telephone = sans visite, 32 min restantes ; web etroit = visite,
+    // 32 min restantes.
+    VueSeance vuePour(_Taille taille) {
+      final VueSeance base = DonneesSeanceDemo.vue(
+        RoleSeance.enseignant,
+        EtatDemoSalle.supports,
+      );
+      const VisiteSeance visite = VisiteSeance(
+        prenomEnfant: DonneesSeanceDemo.eleveCourant,
+        concerneMoi: true,
+      );
+      return switch (taille.nom) {
+        '1440x900@1' => base.copyWith(
+          visite: visite,
+          horloge: const HorlogeDepassee(),
+        ),
+        '640x1000@1' => base.copyWith(visite: visite),
+        _ => base,
+      };
+    }
+
+    for (final _Taille taille in _tailles) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nom = 'cl_08_supports_${taille.nom}_${mode.name}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(
+            tester,
+            taille.logique,
+            taille.densite,
+            zoneSure: taille.zone,
+          );
+          await tester.pumpWidget(
+            hoteCapture(
+              SalleSeance(vue: vuePour(taille), actions: _actionsSupports),
+              themeMode: mode,
+            ),
+          );
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
 }
+
+void _support(SupportDisponible _) {}
+
+const ActionsSeance _actionsSupports = ActionsSeance(
+  onRetour: _rien,
+  onQuitter: _rien,
+  onNotifications: _rien,
+  onReglages: _rien,
+  onCompte: _rien,
+  onMicro: _rien,
+  onCamera: _rien,
+  onReseau: _rien,
+  onEleves: _rien,
+  onSupports: _rien,
+  onOutil: _outil,
+  onPagePrecedente: _rien,
+  onPageSuivante: _rien,
+  onZoomMoins: _rien,
+  onZoomPlus: _rien,
+  onNaviguer: _aller,
+  onOuvrirSupport: _support,
+  onBibliotheque: _rien,
+);
 
 void _eleve(EleveSeance _) {}
 

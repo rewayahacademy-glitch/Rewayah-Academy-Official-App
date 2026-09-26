@@ -37,6 +37,8 @@ class ActionsSeance {
     this.onChoisirPourReciter,
     this.onNoter,
     this.onSignaler,
+    this.onOuvrirSupport,
+    this.onBibliotheque,
   });
 
   // Les quatre actions de la fiche d'un eleve (panneau Eleves, CLV-07),
@@ -46,6 +48,17 @@ class ActionsSeance {
   final ValueChanged<EleveSeance>? onChoisirPourReciter;
   final ValueChanged<EleveSeance>? onNoter;
   final ValueChanged<EleveSeance>? onSignaler;
+
+  // Le panneau Supports (CLV-08), repris de `ClassLibraryPicker` : l'appelant
+  // reste maitre de la suite (remplacer le support partage, fermer le
+  // panneau). `null` dans `/salle` jusqu'a BR-1 : rien n'est rendu.
+
+  /// « Ouvrir » (Reprendre) et les lignes des Recents.
+  final ValueChanged<SupportDisponible>? onOuvrirSupport;
+
+  /// « Voir tout », la ligne de la Bibliotheque de la Classe et « Voir toute
+  /// la bibliotheque ».
+  final VoidCallback? onBibliotheque;
 
   /// Le chevron ‹ de l'en-tete. Passe par la meme confirmation que Quitter.
   final VoidCallback? onRetour;
