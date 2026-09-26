@@ -23,6 +23,7 @@ import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/catalogue_local.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/tc_horloge/port_horloge_seance.dart';
@@ -61,6 +62,9 @@ List<RouteBase> routesDemoClasse(String environnement) {
           etat.uri.queryParameters['prepEleve'],
         ),
         guidee: etat.uri.queryParameters['guidee'] == 'oui',
+        titre: etat.uri.queryParameters['titre'] == 'sayyida'
+            ? TitreEnseignant.sayyida
+            : TitreEnseignant.sayyid,
       ),
     ),
   ];
@@ -114,8 +118,13 @@ class DemoClassePage extends StatelessWidget {
     this.preparation,
     this.preparationEleve,
     this.guidee = false,
+    this.titre = TitreEnseignant.sayyid,
     super.key,
   });
+
+  /// Le titre de l'enseignant (CL-4.7) : Sayyid par defaut, Sayyida en
+  /// variante (`&titre=sayyida`).
+  final TitreEnseignant titre;
 
   /// La preparation eleve choisie (CL-4.6).
   final PreparationEleveDemo? preparationEleve;
@@ -215,8 +224,10 @@ class DemoClassePage extends StatelessWidget {
     // CL-4.3 et CL-4.4 : l'eleve et l'enseignant voient le VRAI ecran.
     // L'Interface guidee rejoint depuis son Accueil (spec 2.2), l'Espace
     // Classe n'est pas son chemin : elle garde son recapitulatif.
-    if (r == RoleEntree.eleve) return EcranEleveDemo(etat: e);
-    if (r == RoleEntree.enseignant) return EcranEnseignantDemo(etat: e);
+    if (r == RoleEntree.eleve) return EcranEleveDemo(etat: e, titre: titre);
+    if (r == RoleEntree.enseignant) {
+      return EcranEnseignantDemo(etat: e, titre: titre);
+    }
 
     final EmplacementEntree emplacement = DonneesClasseDemo.emplacement(r, e);
     return PageShell(
@@ -265,11 +276,13 @@ class DemoClassePage extends StatelessWidget {
 List<Override> surchargesEleveDemo(
   EtatDemoClasse etat, {
   PortTravailAVenir travail = const TravailAVenirDemo(),
+  TitreEnseignant titre = TitreEnseignant.sayyid,
 }) {
   const String id = DonneesClasseDemo.groupeId;
   return <Override>[
-    groupeProvider(id)
-        .overrideWith((Ref _) async => DonneesClasseDemo.groupe(etat)),
+    groupeProvider(id).overrideWith(
+      (Ref _) async => DonneesClasseDemo.groupe(etat, titre: titre),
+    ),
     horlogeGroupeProvider(id).overrideWith(
       (Ref _) => etat == EtatDemoClasse.indisponible
           ? Stream<SessionClockVM>.error(StateError('demonstration'))
@@ -327,10 +340,13 @@ List<MembreSeance> membresEnseignantDemo() => <MembreSeance>[
 /// eleves, leurs projections et la preparation. Les providers `family` sont
 /// surcharges eux-memes : sous un ProviderScope imbrique, ils se resoudraient
 /// sinon dans le conteneur racine.
-List<Override> surchargesEnseignantDemo(EtatDemoClasse etat) {
+List<Override> surchargesEnseignantDemo(
+  EtatDemoClasse etat, {
+  TitreEnseignant titre = TitreEnseignant.sayyid,
+}) {
   const String id = DonneesClasseDemo.groupeId;
   return <Override>[
-    ...surchargesEleveDemo(etat),
+    ...surchargesEleveDemo(etat, titre: titre),
     groupesEnseignantProvider.overrideWith(
       (Ref _) async => <GroupeEnseignant>[groupeEnseignantDemo()],
     ),
@@ -361,16 +377,23 @@ List<Override> surchargesEnseignantDemo(EtatDemoClasse etat) {
 /// la salle : aucun appel serveur en demonstration.
 class EcranEnseignantDemo extends StatelessWidget {
   /// Cree l'ecran.
-  const EcranEnseignantDemo({required this.etat, super.key});
+  const EcranEnseignantDemo({
+    required this.etat,
+    this.titre = TitreEnseignant.sayyid,
+    super.key,
+  });
 
   /// La situation.
   final EtatDemoClasse etat;
+
+  /// Le titre de l'enseignant.
+  final TitreEnseignant titre;
 
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
       key: ValueKey<EtatDemoClasse>(etat),
-      overrides: surchargesEnseignantDemo(etat),
+      overrides: surchargesEnseignantDemo(etat, titre: titre),
       child: RepereDemonstration(
         child: FicheGroupePage(
           groupeId: DonneesClasseDemo.groupeId,
@@ -386,16 +409,23 @@ class EcranEnseignantDemo extends StatelessWidget {
 /// demonstration d'une situation (CL-4.3).
 class EcranEleveDemo extends StatelessWidget {
   /// Cree l'ecran.
-  const EcranEleveDemo({required this.etat, super.key});
+  const EcranEleveDemo({
+    required this.etat,
+    this.titre = TitreEnseignant.sayyid,
+    super.key,
+  });
 
   /// La situation.
   final EtatDemoClasse etat;
+
+  /// Le titre de l'enseignant.
+  final TitreEnseignant titre;
 
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
       key: ValueKey<EtatDemoClasse>(etat),
-      overrides: surchargesEleveDemo(etat),
+      overrides: surchargesEleveDemo(etat, titre: titre),
       child: RepereDemonstration(
         child: EspaceGroupePage(
           groupeId: DonneesClasseDemo.groupeId,

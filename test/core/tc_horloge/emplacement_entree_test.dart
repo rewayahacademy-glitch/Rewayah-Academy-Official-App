@@ -259,6 +259,6 @@ void main() {
     }
     expect(DonneesClasseDemo.actions.length, lessThanOrEqualTo(3));
     expect(DonneesClasseDemo.ressources, hasLength(3));
-    expect(DonneesClasseDemo.enseignante.photoUrlOuCle, isNull);
+    expect(DonneesClasseDemo.enseignant.photoUrlOuCle, isNull);
   });
 }

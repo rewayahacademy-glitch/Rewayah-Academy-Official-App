@@ -272,7 +272,7 @@ class _PreparationEleveEtat extends State<PreparationEleve> {
       libelle: t.salle.secours.continuerSansMicro,
       onPress: widget.onContinuerSansMicro,
       niveau: niveauContinuer,
-      pleineLargeur: false,
+      pleineLargeur: etire,
     );
     final Widget principal = autoriser
         ? _principal(
@@ -289,7 +289,8 @@ class _PreparationEleveEtat extends State<PreparationEleve> {
             etire: etire,
           );
     // Large : une rangee au bord de fin, le principal en dernier (contrat
-    // B). Mobile : le principal en pleine largeur, le secondaire dessous.
+    // B). Mobile (CL-4.7) : un meme groupe, les deux en pleine largeur,
+    // empiles a 8 d'ecart, le principal puis le secondaire.
     if (!etire) {
       return Wrap(
         alignment: WrapAlignment.end,
@@ -303,14 +304,7 @@ class _PreparationEleveEtat extends State<PreparationEleve> {
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        principal,
-        Ecart.vSm,
-        Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: IntrinsicWidth(child: continuer),
-        ),
-      ],
+      children: <Widget>[principal, Ecart.vSm, continuer],
     );
   }
 

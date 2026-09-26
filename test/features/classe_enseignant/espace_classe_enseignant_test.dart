@@ -270,7 +270,7 @@ void main() {
       // Le titre, puis le cours et le niveau, puis l'enseignante.
       final Finder cours = find.textContaining(DonneesClasseDemo.cours);
       final Finder enseignante = find.textContaining(
-        DonneesClasseDemo.enseignante.nomAffichage,
+        DonneesClasseDemo.enseignant.nomAffichage,
       );
       expect(
         tester.getTopLeft(titre).dy,

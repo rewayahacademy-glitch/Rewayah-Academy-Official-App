@@ -1,8 +1,9 @@
 // Donnees de demonstration de l'entree en classe (CL-4.2).
 //
 // Donnees fictives, jamais envoyees au serveur (K-28), sur le patron de
-// catalogue_demo.dart et seance_demo.dart. Aucune photo reelle : l'enseignante
-// est rendue par ses initiales. Les eleves ne portent qu'une projection
+// catalogue_demo.dart et seance_demo.dart. Aucune photo reelle : l'enseignant
+// est rendu par ses initiales. Par defaut un homme au titre Sayyid (CL-4.7) ;
+// la variante Sayyida se choisit par `&titre=sayyida`. Les eleves ne portent qu'une projection
 // pedagogique (R15), sans donnee famille.
 
 import 'package:flutter/foundation.dart';
@@ -110,15 +111,23 @@ abstract final class DonneesClasseDemo {
   /// Niveau.
   static const String niveau = 'Niveau 1';
 
-  /// L'enseignante, sans photo : repli sur les initiales.
-  static const EnseignantVM enseignante = EnseignantVM(
+  /// L'enseignant par defaut, sans photo : repli sur les initiales.
+  static const EnseignantVM enseignant = EnseignantVM(
+    enseignantId: 'demo-ens-ibrahim',
+    titre: TitreEnseignant.sayyid,
+    nomAffichage: 'Ibrahim',
+  );
+
+  /// La variante Sayyida, choisie par `&titre=sayyida`.
+  static const EnseignantVM enseignanteVariante = EnseignantVM(
     enseignantId: 'demo-ens-amina',
     titre: TitreEnseignant.sayyida,
     nomAffichage: 'Amina',
   );
 
-  /// Initiales de repli de l'avatar.
-  static const String initialesEnseignante = 'A';
+  /// L'enseignant de la demonstration selon le titre choisi.
+  static EnseignantVM enseignantPour(TitreEnseignant titre) =>
+      titre == TitreEnseignant.sayyida ? enseignanteVariante : enseignant;
 
   /// Les eleves, projection pedagogique seulement.
   static const List<EleveProjectionDemo> eleves = <EleveProjectionDemo>[
@@ -260,11 +269,14 @@ abstract final class DonneesClasseDemo {
   static const String groupeId = 'demo-classe-an-nour';
 
   /// L'identite de la classe, avec l'horloge d'une situation.
-  static GroupSummaryVM groupe(EtatDemoClasse etat) => GroupSummaryVM(
+  static GroupSummaryVM groupe(
+    EtatDemoClasse etat, {
+    TitreEnseignant titre = TitreEnseignant.sayyid,
+  }) => GroupSummaryVM(
     groupeId: groupeId,
     libelle: classe,
     couleurJeton: const JetonCouleurGroupe(index: 2, codeStable: 'an-nour'),
-    enseignant: enseignante,
+    enseignant: enseignantPour(titre),
     nomCours: cours,
     niveauHumain: niveau,
     nombreMembres: eleves.length,

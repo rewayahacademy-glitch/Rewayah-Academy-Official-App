@@ -227,7 +227,7 @@ void main() {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, EtatDemoClasse.aVenir);
       // L'enseignante de demonstration n'a pas de photo.
-      expect(DonneesClasseDemo.enseignante.photoManquante, isTrue);
+      expect(DonneesClasseDemo.enseignant.photoManquante, isTrue);
       expect(find.text(LibellesGroupe.photoManquante), findsNothing);
       expect(
         find.bySemanticsLabel(LibellesGroupe.photoManquante),

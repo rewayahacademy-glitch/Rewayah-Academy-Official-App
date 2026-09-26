@@ -27,7 +27,7 @@ import '../../core/widgets/skeleton.dart';
 ///   ecoule » (R6) ;
 /// - **aucune conversion de fuseau ici** : les heures arrivent deja rendues ;
 /// - **aucune pastille de decompte en double, aucun bouton grise**.
-class CarteSession extends StatelessWidget {
+class CarteSession extends StatefulWidget {
   /// Cree la Session Card.
   const CarteSession({
     required this.espace,
@@ -65,7 +65,29 @@ class CarteSession extends StatelessWidget {
   };
 
   @override
+  State<CarteSession> createState() => _CarteSessionState();
+}
+
+class _CarteSessionState extends State<CarteSession> {
+  /// Le titre de la carte : il recoit le focus quand le bouton focalise
+  /// laisse place a une ligne d'etat (revue UX n° 13, CL-4.7).
+  final FocusNode _focusTitre = FocusNode(
+    debugLabel: 'titre-carte-seance',
+    skipTraversal: true,
+  );
+
+  @override
+  void dispose() {
+    _focusTitre.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final GroupHomeVM espace = widget.espace;
+    final bool annulee = widget.annulee;
+    final bool horsLigne = widget.horsLigne;
+    final bool lectureEchouee = widget.lectureEchouee;
     final SessionClockVM? horloge = espace.horloge;
     final OccurrenceSeance? occurrence = espace.identite.prochaineSeance;
 
@@ -82,7 +104,7 @@ class CarteSession extends StatelessWidget {
     }
 
     final EmplacementEntree emplacement = EmplacementEntree.pour(
-      role: roleEntree(espace.role),
+      role: CarteSession.roleEntree(espace.role),
       horloge: horloge,
       nomClasse: espace.identite.libelle,
       annulee: annulee,
@@ -93,11 +115,15 @@ class CarteSession extends StatelessWidget {
 
     return AppCard(
       dominante: true,
-      entete: Semantics(
-        header: true,
-        child: Text(
-          horloge.horlogeUtilisateur.dateLocaleRendue,
-          style: textes.titleMedium ?? const TextStyle(),
+      entete: Focus(
+        focusNode: _focusTitre,
+        child: Semantics(
+          header: true,
+          child: Text(
+            horloge.horlogeUtilisateur.dateLocaleRendue,
+            key: const ValueKey<String>('carte-seance-titre'),
+            style: textes.titleMedium ?? const TextStyle(),
+          ),
         ),
       ),
       child: Column(
@@ -135,8 +161,9 @@ class CarteSession extends StatelessWidget {
             // Le tuteur ne rejoint pas la classe de son enfant : il l'observe
             // (lot C-obs, routes D8). Son emplacement reste une ligne d'etat.
             sansBouton: espace.role == RoleEspaceGroupe.tuteur,
-            onEntrer: onRejoindre,
-            onReessayer: onReessayer,
+            onEntrer: widget.onRejoindre,
+            onReessayer: widget.onReessayer,
+            focusRetour: _focusTitre,
           ),
         ],
       ),
@@ -238,7 +265,12 @@ class EmplacementEntreeVue extends StatefulWidget {
     this.onEntrer,
     this.onReessayer,
     this.sansBouton = false,
+    this.focusRetour,
   });
+
+  /// Recoit le focus quand le bouton focalise disparait (revue UX n° 13) ;
+  /// en general le titre de la carte de seance.
+  final FocusNode? focusRetour;
 
   /// Ce qu'il faut montrer.
   final EmplacementEntree emplacement;
@@ -258,6 +290,16 @@ class EmplacementEntreeVue extends StatefulWidget {
 
 class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
   late String _annonce = widget.emplacement.annonce;
+  final FocusNode _focusBouton = FocusNode(
+    debugLabel: 'emplacement-entree',
+    skipTraversal: true,
+  );
+
+  @override
+  void dispose() {
+    _focusBouton.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(EmplacementEntreeVue ancien) {
@@ -266,6 +308,16 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
       ancien.emplacement,
     );
     if (nouvelle != null) _annonce = nouvelle;
+    // Le bouton focalise laisse place a une ligne d'etat : le focus revient
+    // au titre de la carte. Le bouton qui apparait ne le prend jamais.
+    final bool avaitBouton = ancien.emplacement.estBouton && !ancien.sansBouton;
+    final bool aBouton = widget.emplacement.estBouton && !widget.sansBouton;
+    final FocusNode? retour = widget.focusRetour;
+    if (avaitBouton && !aBouton && _focusBouton.hasFocus && retour != null) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && retour.context != null) retour.requestFocus();
+      });
+    }
   }
 
   @override
@@ -277,15 +329,18 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
 
     final List<Widget> contenu;
     if (bouton) {
-      final Widget action = Semantics(
-        label: e.libelleLecteur,
-        button: true,
-        excludeSemantics: true,
-        onTap: widget.onEntrer,
-        child: ActionPrincipale(
-          libelle: e.libelle,
-          onPress: widget.onEntrer,
-          pleineLargeur: mobile,
+      final Widget action = Focus(
+        focusNode: _focusBouton,
+        child: Semantics(
+          label: e.libelleLecteur,
+          button: true,
+          excludeSemantics: true,
+          onTap: widget.onEntrer,
+          child: ActionPrincipale(
+            libelle: e.libelle,
+            onPress: widget.onEntrer,
+            pleineLargeur: mobile,
+          ),
         ),
       );
       contenu = <Widget>[
