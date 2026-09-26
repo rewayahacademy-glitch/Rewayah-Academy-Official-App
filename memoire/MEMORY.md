@@ -6,6 +6,8 @@
 
 > 🏫 **ENTRÉE EN CLASSE ET SALLE, 26/09/2026, règles réutilisables pour tout écran de Classe, préparation ou salle** : [CLASSE-ENTREE-2026-09-26](CLASSE-ENTREE-2026-09-26.md) (R1 à R21 : un seul produit, bouton seulement à l'ouverture, temps depuis horodatages, médias coupés à l'entrée, pas d'erreur brute, une seule bibliothèque, chrono discret reporté LIVE-CHRONO-01, pause LIVE-PAUSE-01 plus tard).
 
+> 🧑‍🏫 **RÔLE ENSEIGNANT, 26/09/2026, règles réutilisables** : [ENSEIGNANT-2026-09-26](ENSEIGNANT-2026-09-26.md) (E1 à E20 : Classe entière sans matching, aucune donnée privée des familles, salle unique, pas de faux succès, pas d'IA qui juge, pas de minuteur par élève, 4 destinations, « Sayyid Ibrahim vous appelle »). Vague : pilotage 12_enseignant/00_REPRISE.md.
+
 > **DÉMARRER ICI.** Dépôt `D:\RA _APP\RA -OFFICIAL-APP`. Specs canoniques : `docs/current/00_LIRE_D_ABORD.md`
 > puis `08` (gel fonctionnel, gate C0) et le document du domaine touché. Branche propre de PR :
 > `c0/configuration-baseline-2026-09-23` (PR #2 en brouillon, non fusionnée) ; V0 isolé sur `v0/verite-produit`.

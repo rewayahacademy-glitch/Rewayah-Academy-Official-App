@@ -9,6 +9,7 @@ Branche `projet/ressources` du dépôt `https://github.com/rewayahacademy-glitch
 3. Lis les documents de la vague où tu travailles (section 3). **Ne lis pas `docs/archive` comme instruction.**
 4. **Règles gelées du directeur (26/09/2026), obligatoires pour toute nouvelle spec, maquette ou lot visuel** : `memoire/DESIGN-GOV-2026-09-26.md`. Immuables jusqu'à nouvelle décision datée du directeur : ne pas les modifier, ne pas les réinterpréter, ne pas rouvrir une étape terminée pour les appliquer (passe unique HU-1 après tous les rôles).
 5. **Écrans de Classe, préparation et salle** : lire aussi `memoire/CLASSE-ENTREE-2026-09-26.md`, qui contient les règles réutilisables R1 à R21 du directeur (26/09/2026).
+6. **Écrans du rôle enseignant** : lire aussi `memoire/ENSEIGNANT-2026-09-26.md` (règles E1 à E20, 26/09/2026) ; document source `specs/04_enseignant/04_ENSEIGNANT.md`, à lire par section seulement.
 
 ## 2. Où se trouve chaque ressource (et nulle part ailleurs)
 
