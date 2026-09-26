@@ -103,15 +103,30 @@ void main() {
       Routes.admin,
     );
     expect(tester.getSize(find.byKey(AdminShell.railKey)).width, 80);
+    // Icone seule dans le rail : aucun libelle peint, donc aucun libelle
+    // coupe (revue AD-S) ; le libelle reste annonce.
+    expect(
+      find.descendant(
+        of: find.byKey(AdminShell.railKey),
+        matching: find.byWidgetPredicate(
+          (Widget w) => w is Visibility && !w.visible,
+        ),
+      ),
+      findsNWidgets(domainesAdmin(voitDirection: false).length),
+    );
+    expect(
+      find.bySemanticsLabel(RegExp(AdminDomaine.operations.libelle)),
+      findsOneWidget,
+    );
 
     await tester.tap(
-      _dans(AdminShell.railKey, find.text(AdminDomaine.personnes.libelle)),
+      _dans(AdminShell.railKey, find.byTooltip(AdminDomaine.personnes.libelle)),
     );
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 
     await tester.tap(
-      _dans(AdminShell.railKey, find.text(AdminDomaine.accueil.libelle)),
+      _dans(AdminShell.railKey, find.byTooltip(AdminDomaine.accueil.libelle)),
     );
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.admin);
@@ -208,8 +223,14 @@ void main() {
     );
     expect(find.byType(DisqueRetour), findsNothing);
 
-    routeur.go(Routes.adminPersonnesDossiers);
+    await tester.tap(
+      _dans(
+        AdminShell.barreLateraleKey,
+        find.text(AdminDomaine.personnes.libelle),
+      ),
+    );
     await _stabiliser(tester);
+    expect(_chemin(routeur), Routes.adminPersonnesDossiers);
     await tester.tap(find.byType(DisqueRetour));
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.admin);
@@ -238,20 +259,63 @@ void main() {
   testWidgets('Accueil : la 2e ligne de dossier ouvre ce dossier-la', (
     WidgetTester tester,
   ) async {
-    await _monter(tester, const Size(1440, 900), Routes.admin);
+    final GoRouter routeur = await _monter(
+      tester,
+      const Size(1440, 900),
+      Routes.admin,
+    );
     final Finder lignes = find.textContaining(
       t.admin.tableau.ligneDossier(prenom: '').trim(),
     );
     expect(lignes, findsAtLeastNWidgets(2));
-    final String libelle = tester.widget<Text>(lignes.at(1)).data!;
-    final String prenom = libelle
+    String prenomDe(int i) => tester
+        .widget<Text>(lignes.at(i))
+        .data!
         .replaceFirst(t.admin.tableau.ligneDossier(prenom: '').trim(), '')
         .trim();
+    final String premier = prenomDe(0);
+    final String second = prenomDe(1);
+    expect(second, isNot(premier));
 
     await tester.ensureVisible(lignes.at(1));
     await tester.tap(lignes.at(1));
     await _stabiliser(tester);
 
-    expect(find.textContaining(prenom), findsWidgets);
+    expect(_chemin(routeur), Routes.adminPersonnesDossiers);
+    // Le titre du dossier ouvert est le nom complet de la 2e ligne, pas
+    // celui du premier de la file.
+    Finder titreCommencantPar(String prenom) => find.byWidgetPredicate(
+      (Widget w) => w is Text && (w.data?.startsWith('$prenom ') ?? false),
+    );
+    expect(titreCommencantPar(second), findsOneWidget);
+    expect(titreCommencantPar(premier), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) => w is Text && (w.data?.startsWith('DEMO-D') ?? false),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('1440 : Recherche de l en-tete mene a la route trouvee', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      const Size(1440, 900),
+      Routes.admin,
+    );
+    await tester.tap(find.bySemanticsLabel(t.nav.admin.recherche));
+    await _stabiliser(tester);
+    await tester.enterText(
+      find.byType(TextField),
+      AdminDomaine.securite.libelle,
+    );
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await _stabiliser(tester);
+
+    expect(_chemin(routeur), startsWith(AdminDomaine.securite.chemin!));
+    expect(find.byType(TextField), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 }

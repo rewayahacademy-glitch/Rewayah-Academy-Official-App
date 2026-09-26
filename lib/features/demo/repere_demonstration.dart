@@ -31,11 +31,19 @@ class RepereDemonstration extends StatelessWidget {
         textDirection: sens,
         layoutDirection: sens,
         color: Theme.of(context).colorScheme.tertiary,
-        textStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onTertiary,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-        ),
+        // La famille vient du theme : un `TextStyle` nu laisse le bandeau
+        // (peint, hors `DefaultTextStyle`) sans police, donc illisible
+        // (revue AD-S). Couleurs inchangees.
+        textStyle: (Theme.of(context).textTheme.labelSmall ?? const TextStyle())
+            .copyWith(
+              color: Theme.of(context).colorScheme.onTertiary,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+              height: 1,
+              // Le bandeau de `Banner` ne fait que 80 de long : sans
+              // interlettrage et en 9, le mot y tient en entier.
+              letterSpacing: 0,
+            ),
         child: child ?? const SizedBox.shrink(),
       ),
     );

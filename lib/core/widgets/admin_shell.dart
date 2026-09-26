@@ -238,6 +238,11 @@ Widget _iconeEntree(
   );
 }
 
+/// L'info-bulle du rail : le libelle complet, au survol ou a l'appui long.
+/// Hors semantique : le libelle de la destination l'annonce deja.
+Widget _infoBulle(AdminDomaine domaine, Widget icone) =>
+    Tooltip(message: domaine.libelle, excludeFromSemantics: true, child: icone);
+
 /// La tete du tiroir et de la barre laterale : le mot-symbole.
 class _TeteNavigation extends StatelessWidget {
   const _TeteNavigation();
@@ -261,7 +266,9 @@ class _TeteNavigation extends StatelessWidget {
 
 /// Le pied du tiroir et de la barre laterale : qui est connecte, et le
 /// chemin vers « Mon compte ». La session ne porte pas de nom : le texte est
-/// celui du role (Q-S4, defaut).
+/// celui du role, cle existante (« Administrateur », initiale « A »). La
+/// maquette 02A montre « AD · Admin » : ecart soumis au directeur (question
+/// Q-S4 du concepteur), aucune cle creee sans son accord.
 class _PiedUtilisateur extends StatelessWidget {
   const _PiedUtilisateur({required this.onCompte});
 
@@ -375,8 +382,14 @@ class _Tiroir extends StatelessWidget {
   }
 }
 
-/// Le rail replie, de 600 a 1199 : icone et libelle court. Ni tete ni pied :
-/// 80 est trop etroit.
+/// Le rail replie, de 600 a 1199 : icone seule, libelle en info-bulle et en
+/// semantique. Ni tete ni pied : 80 est trop etroit.
+///
+/// Les libelles complets (« Opérations », « Configuration ») ne tiennent pas
+/// en 80 sans points de suspension, et aucun libelle court n'existe dans les
+/// traductions : plutot que d'en inventer un, le rail n'affiche que l'icone
+/// (revue AD-S, ecart soumis au directeur). Le libelle reste dans l'arbre
+/// semantique (`NavigationRailLabelType.none` le garde, invisible).
 class _Rail extends StatelessWidget {
   const _Rail({
     required this.domaines,
@@ -408,7 +421,7 @@ class _Rail extends StatelessWidget {
             onDestinationSelected: onChoisir,
             backgroundColor: palette.surfaceRaised.background,
             minWidth: AppGabarit.largeurRail,
-            labelType: NavigationRailLabelType.all,
+            labelType: NavigationRailLabelType.none,
             scrollable: true,
             groupAlignment: -1,
             useIndicator: true,
@@ -434,11 +447,13 @@ class _Rail extends StatelessWidget {
             destinations: <NavigationRailDestination>[
               for (final AdminDomaine domaine in domaines)
                 NavigationRailDestination(
-                  icon: _iconeEntree(palette, domaine, selectionnee: false),
-                  selectedIcon: _iconeEntree(
-                    palette,
+                  icon: _infoBulle(
                     domaine,
-                    selectionnee: true,
+                    _iconeEntree(palette, domaine, selectionnee: false),
+                  ),
+                  selectedIcon: _infoBulle(
+                    domaine,
+                    _iconeEntree(palette, domaine, selectionnee: true),
                   ),
                   label: _libelleEntree(palette, domaine),
                 ),
