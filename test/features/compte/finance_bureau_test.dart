@@ -238,6 +238,18 @@ void main() {
         find.byKey(ArretAccesPage.profilsKey),
         find.byKey(ArretAccesPage.profilKey(DonneesDemo.aichaId)),
       );
+      // « Confirmer » juste sous les profils, a droite : on avance
+      // (directeur, 26/09).
+      final Rect profils = tester.getRect(
+        find.byKey(ArretAccesPage.profilsKey),
+      );
+      final Rect confirmer = tester.getRect(
+        find.byKey(ArretAccesPage.confirmerKey),
+      );
+      expect(confirmer.top, greaterThanOrEqualTo(profils.bottom));
+      expect(confirmer.top - profils.bottom, lessThan(40));
+      expect(confirmer.right, moreOrLessEquals(profils.right, epsilon: 1));
+      expect(confirmer.width, lessThan(profils.width / 2));
       expect(tester.takeException(), isNull);
     });
 

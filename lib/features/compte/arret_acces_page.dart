@@ -13,6 +13,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/router/chemin_retour.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -284,6 +285,26 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
     final bool confirmable =
         complet && !aucunEligible && _compris && !indisponible && !_enCours;
 
+    final List<AccesBeneficiaire> concernes = <AccesBeneficiaire>[
+      for (final AccesBeneficiaire a in lus)
+        if (_selection.contains(a.eleveId)) a,
+    ];
+    // Sur bureau, « Confirmer » suit la liste des profils, a droite : on
+    // avance (directeur, 26/09). Ailleurs, en bas de l'ecran.
+    final bool sousLesProfils =
+        concernes.isNotEmpty && AppGabarit.de(context) == Gabarit.desktop;
+    final ActionPrincipale? confirmer = indisponible
+        ? null
+        : ActionPrincipale(
+            key: ArretAccesPage.confirmerKey,
+            libelle: t.finance.arret.confirmer,
+            // Confirmer l'arret : l'action a ne pas rater (K-36).
+            niveau: NiveauAction.decisive,
+            enCours: _enCours,
+            pleineLargeur: !sousLesProfils,
+            onPress: confirmable ? () => _confirmer(lu) : null,
+          );
+
     return PageEtape(
       numero: 2,
       total: 2,
@@ -295,16 +316,7 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
               _echec = null;
               _cle = const Uuid().v4();
             }),
-      action: indisponible
-          ? null
-          : ActionPrincipale(
-              key: ArretAccesPage.confirmerKey,
-              libelle: t.finance.arret.confirmer,
-              // Confirmer l'arret : l'action a ne pas rater (K-36).
-              niveau: NiveauAction.decisive,
-              enCours: _enCours,
-              onPress: confirmable ? () => _confirmer(lu) : null,
-            ),
+      action: sousLesProfils ? null : confirmer,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -314,10 +326,8 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
             phrase: t.finance.arret.consequencesPhrase,
           ),
           _AvecProfils(
-            profils: <AccesBeneficiaire>[
-              for (final AccesBeneficiaire a in lus)
-                if (_selection.contains(a.eleveId)) a,
-            ],
+            profils: concernes,
+            action: sousLesProfils ? confirmer : null,
             consequences: BlocAsynchrone<ApercuAnnulation>(
               valeur: apercu,
               squelette: const Skeleton.liste(lignes: 3),
@@ -350,16 +360,32 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
                   else ...<Widget>[
                     Material(
                       type: MaterialType.transparency,
-                      child: CheckboxListTile(
-                        key: ArretAccesPage.comprisKey,
-                        value: _compris,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(t.finance.arret.compris),
-                        onChanged: _enCours || indisponible
-                            ? null
-                            : (bool? v) =>
-                                  setState(() => _compris = v ?? false),
+                      // Case cochee en aplat neutre, sans accent (K-36).
+                      child: CheckboxTheme(
+                        data: CheckboxThemeData(
+                          fillColor: WidgetStateProperty.resolveWith(
+                            (Set<WidgetState> etats) =>
+                                etats.contains(WidgetState.selected)
+                                ? AppPalette.of(context)
+                                      .surfaceInverse
+                                      .background
+                                : null,
+                          ),
+                          checkColor: WidgetStatePropertyAll<Color>(
+                            AppPalette.of(context).surfaceInverse.onBackground,
+                          ),
+                        ),
+                        child: CheckboxListTile(
+                          key: ArretAccesPage.comprisKey,
+                          value: _compris,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(t.finance.arret.compris),
+                          onChanged: _enCours || indisponible
+                              ? null
+                              : (bool? v) =>
+                                    setState(() => _compris = v ?? false),
+                        ),
                       ),
                     ),
                     if (echec is CapaciteIndisponible)
@@ -391,10 +417,17 @@ class _ArretAccesPageState extends ConsumerState<ArretAccesPage> {
 /// Telephone et tablette, ou profils non lus : les consequences seules,
 /// comme avant.
 class _AvecProfils extends StatelessWidget {
-  const _AvecProfils({required this.profils, required this.consequences});
+  const _AvecProfils({
+    required this.profils,
+    required this.consequences,
+    this.action,
+  });
 
   final List<AccesBeneficiaire> profils;
   final Widget consequences;
+
+  /// Sur bureau, « Confirmer », juste sous les profils et a droite.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -402,15 +435,25 @@ class _AvecProfils extends StatelessWidget {
       return consequences;
     }
     return ColonnesFiche(
-      principal: GroupeReglages(
-        key: ArretAccesPage.profilsKey,
-        lignes: <LigneRubrique>[
-          for (final AccesBeneficiaire a in profils)
-            LigneRubrique(
-              icone: AppIcons.profil,
-              libelle: a.prenom,
-              legende: echeanceAcces(a),
-            ),
+      principal: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          GroupeReglages(
+            key: ArretAccesPage.profilsKey,
+            lignes: <LigneRubrique>[
+              for (final AccesBeneficiaire a in profils)
+                LigneRubrique(
+                  icone: AppIcons.profil,
+                  libelle: a.prenom,
+                  legende: echeanceAcces(a),
+                ),
+            ],
+          ),
+          if (action != null) ...<Widget>[
+            Ecart.vLg,
+            Align(alignment: AlignmentDirectional.centerEnd, child: action),
+          ],
         ],
       ),
       annexe: consequences,
