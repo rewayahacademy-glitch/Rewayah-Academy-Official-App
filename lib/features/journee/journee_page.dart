@@ -61,12 +61,12 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
-import 'point_rappel.dart';
 
 /// Combien de cahiers « A terminer » montre au plus (planche 1).
 const int maximumATerminer = 3;

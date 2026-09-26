@@ -2,9 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_mouvement.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_spacing.dart';
+import '../theme/app_mouvement.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
 
 /// Le petit point rouge de rappel des cahiers a terminer (decision K-45).
 ///

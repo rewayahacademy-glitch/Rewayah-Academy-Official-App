@@ -107,14 +107,19 @@ class BlocBibliotheque extends ConsumerWidget {
     super.key,
     this.onVoirTout,
     this.titre,
+    this.limite,
   });
 
   /// L'enveloppe de contexte.
   final SlotBibliotheque emplacement;
 
   /// Le titre de section ; par defaut celui de la Bibliotheque. L'enseignant
-  /// lit « Supports recents » (CL-4.4).
+  /// lit « Ressources recentes » (EN-3).
   final String? titre;
+
+  /// Le nombre de ressources montrees au plus, ou nul pour toutes.
+  /// L'Espace Classe enseignant en montre trois (EN-3, planche 2).
+  final int? limite;
 
   /// L'acces au catalogue complet.
   final VoidCallback? onVoirTout;
@@ -153,7 +158,11 @@ class BlocBibliotheque extends ConsumerWidget {
           ],
         ),
         Ecart.vMd,
-        _Couvertures(catalogue: catalogue, groupeId: emplacement.groupeId),
+        _Couvertures(
+          catalogue: catalogue,
+          groupeId: emplacement.groupeId,
+          limite: limite,
+        ),
       ],
     );
   }
@@ -161,10 +170,15 @@ class BlocBibliotheque extends ConsumerWidget {
 
 /// Les couvertures du groupe, rendues par Agent B.
 class _Couvertures extends StatelessWidget {
-  const _Couvertures({required this.catalogue, required this.groupeId});
+  const _Couvertures({
+    required this.catalogue,
+    required this.groupeId,
+    this.limite,
+  });
 
   final PortCatalogue catalogue;
   final String groupeId;
+  final int? limite;
 
   @override
   Widget build(BuildContext context) {
@@ -175,8 +189,13 @@ class _Couvertures extends StatelessWidget {
             if (etat.connectionState != ConnectionState.done) {
               return const Skeleton.liste(lignes: 1);
             }
-            final List<LibraryResource> ressources =
+            final List<LibraryResource> toutes =
                 etat.data ?? const <LibraryResource>[];
+            final int? max = limite;
+            final List<LibraryResource> ressources =
+                max == null || toutes.length <= max
+                ? toutes
+                : toutes.sublist(0, max);
             if (ressources.isEmpty) {
               return const EmplacementNonBranche();
             }

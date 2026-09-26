@@ -14,10 +14,14 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
+import 'package:rewayah_academy/features/fiche_groupe/preparation_seance.dart';
+import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
 import '../support/harnais.dart';
 
@@ -494,6 +498,113 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('ENS-07 perfectionne (EN-3)', () {
+    List<Override> avecProjections(
+      FauxServiceEnseignant enseignant,
+    ) => <Override>[
+      ..._surcharges(enseignant),
+      projectionElevesProvider(_groupeId).overrideWith(
+        (Ref _) => const <String, ProjectionEleve>{
+          'e1': ProjectionEleve(indicateur: IndicateurEleve.aRenforcer),
+          'e2': ProjectionEleve(indicateur: IndicateurEleve.regulier),
+        },
+      ),
+      progressionGroupeProvider(_groupeId).overrideWith(
+        (Ref _) =>
+            const ProgressionCompacte(chapitre: 'Chapitre 2', fraction: 0.4),
+      ),
+    ];
+    final List<MembreSeance> deux = <MembreSeance>[
+      membreDeTest(),
+      membreDeTest(studentId: 'e2', identifiant: 'RA-0002', prenom: 'Idris'),
+    ];
+
+    testWidgets('un indicateur par eleve : un point et un mot', (
+      WidgetTester tester,
+    ) async {
+      _fenetreHaute(tester);
+      await tester.pumpWidget(
+        hote(
+          const FicheGroupePage(groupeId: _groupeId),
+          surcharges: avecProjections(_avec(membres: deux)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(t.enseignant.ficheGroupe.indicateurARenforcer),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.enseignant.ficheGroupe.indicateurRegulier),
+        findsOneWidget,
+      );
+      // La progression de la classe tient une ligne, valeur ecrite.
+      expect(
+        find.text(t.enseignant.ficheGroupe.progressionTitre),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.classe.entree.progressionValeur(
+            chapitre: 'Chapitre 2',
+            pourcentage: 40,
+          ),
+        ),
+        findsOneWidget,
+      );
+      // La photo de l'eleve, initiales en repli (E5, K-44).
+      expect(find.byType(PhotoEleve), findsNWidgets(2));
+    });
+
+    testWidgets(
+      'toute la ligne d un eleve passe par le point d entree unique',
+      (WidgetTester tester) async {
+        _fenetreHaute(tester);
+        final List<String> ouverts = <String>[];
+        await tester.pumpWidget(
+          hote(
+            FicheGroupePage(groupeId: _groupeId, onOuvrirEleve: ouverts.add),
+            surcharges: avecProjections(_avec(membres: deux)),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Un appui sur l'indicateur, pas sur le prenom : c'est toute la ligne.
+        await tester.tap(
+          find.text(t.enseignant.ficheGroupe.indicateurRegulier),
+        );
+        await tester.pumpAndSettle();
+        expect(ouverts, <String>['e2']);
+      },
+    );
+
+    testWidgets('sans point d entree, la ligne ne promet rien', (
+      WidgetTester tester,
+    ) async {
+      _fenetreHaute(tester);
+      await tester.pumpWidget(
+        hote(
+          const FicheGroupePage(groupeId: _groupeId),
+          surcharges: avecProjections(_avec(membres: deux)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Aucune ligne d'eleve ne se presse tant qu'ENS-11 n'existe pas.
+      expect(
+        find.descendant(
+          of: find.ancestor(
+            of: find.text('Idris'),
+            matching: find.byType(GroupeReglages),
+          ),
+          matching: find.byType(Pressable),
+        ),
+        findsNothing,
+      );
     });
   });
 }

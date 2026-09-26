@@ -20,6 +20,7 @@ class LigneRubrique {
     this.valeur,
     this.onPress,
     this.controle,
+    this.marque,
   }) : assert(
          icone != null || meneur != null,
          'une rubrique porte une icone ou un meneur',
@@ -49,6 +50,11 @@ class LigneRubrique {
   /// Un controle natif en fin de ligne (interrupteur). Il garde son propre
   /// geste et sa propre semantique : la ligne ne se presse alors pas.
   final Widget? controle;
+
+  /// Une marque d'etat en fin de ligne, sans geste propre : une `StatusPill`,
+  /// un `PointRappel` (EN-3). Elle est lue avec la ligne et, contrairement a
+  /// [controle], elle n'empeche pas la ligne de se presser.
+  final Widget? marque;
 }
 
 /// Un groupe de rubriques a filets en retrait : le hub du Compte, la fiche
@@ -178,27 +184,15 @@ class _Ligne extends StatelessWidget {
                       bottom: AppSpacing.md,
                       end: AppSpacing.lg,
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(child: _textes(palette, textes)),
-                        if (ligne.controle != null) ...<Widget>[
-                          Ecart.hSm,
-                          ligne.controle!,
-                        ],
-                        if (ligne.onPress != null &&
-                            ligne.controle == null) ...<Widget>[
-                          Ecart.hSm,
-                          ExcludeSemantics(
-                            child: IconTheme(
-                              data: palette.inkMuted.asIconTheme(
-                                size: AppSpacing.xl,
-                              ),
-                              child: Icon(AppIcons.chevron.repos),
-                            ),
+                    // Sans marque, aucune mesure : la ligne reste compatible
+                    // avec les parents qui demandent des dimensions
+                    // intrinseques.
+                    child: ligne.marque == null
+                        ? _rangee(palette, textes, double.infinity, context)
+                        : LayoutBuilder(
+                            builder: (BuildContext _, BoxConstraints c) =>
+                                _rangee(palette, textes, c.maxWidth, context),
                           ),
-                        ],
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -208,6 +202,53 @@ class _Ligne extends StatelessWidget {
       ),
     );
   }
+
+  /// La marque reste en fin de ligne tant qu'elle laisse de la place au
+  /// texte ; a grande taille de texte ou sur une ligne etroite, elle passe
+  /// sous la legende, au bord de debut, au lieu de deborder.
+  Widget _rangee(
+    AppPalette palette,
+    TextTheme textes,
+    double largeur,
+    BuildContext context,
+  ) {
+    final Widget? marque = ligne.marque;
+    final bool marqueDessous =
+        marque != null &&
+        (MediaQuery.textScalerOf(context).scale(1) > 1.3 ||
+            largeur < _largeurMarqueEnFin);
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: marqueDessous
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    _textes(palette, textes),
+                    Ecart.vSm,
+                    marque,
+                  ],
+                )
+              : _textes(palette, textes),
+        ),
+        if (marque != null && !marqueDessous) ...<Widget>[Ecart.hSm, marque],
+        if (ligne.controle != null) ...<Widget>[Ecart.hSm, ligne.controle!],
+        if (ligne.onPress != null && ligne.controle == null) ...<Widget>[
+          Ecart.hSm,
+          ExcludeSemantics(
+            child: IconTheme(
+              data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+              child: Icon(AppIcons.chevron.repos),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// En dessous de cette largeur de texte, la marque passe sous la legende.
+  static const double _largeurMarqueEnFin = 320;
 
   Widget _textes(AppPalette palette, TextTheme textes) {
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(

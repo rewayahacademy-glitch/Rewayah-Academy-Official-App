@@ -111,6 +111,9 @@ const List<String> composantsDuCatalogue = <String>[
   'BasculeTheme',
   // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
   'PageEtape',
+  // EN-3 : le point de rappel des cahiers (K-45), sorti de la Journee parce
+  // qu'il sert desormais a plusieurs ecrans (Aujourd'hui, Mes Classes).
+  'PointRappel',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

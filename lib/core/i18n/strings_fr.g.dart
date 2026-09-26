@@ -7296,11 +7296,38 @@ class Traductions$enseignant$classes$fr {
 	/// fr: 'Classes'
 	String get titre => 'Classes';
 
-	/// fr: 'Vos Classes arrivent ici.'
-	String get provisoire => 'Vos Classes arrivent ici.';
+	/// fr: 'Aucune Classe attribuée'
+	String get vide => 'Aucune Classe attribuée';
 
-	/// fr: 'La liste de vos Classes, avec leur prochaine séance, sera posée à l'étape suivante.'
-	String get detail => 'La liste de vos Classes, avec leur prochaine séance, sera posée à l\'étape suivante.';
+	/// fr: 'Les Classes confirmées apparaîtront ici.'
+	String get videDetail => 'Les Classes confirmées apparaîtront ici.';
+
+	/// fr: 'Vos Classes n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Chargement de vos Classes.'
+	String get chargement => 'Chargement de vos Classes.';
+
+	/// fr: 'Niveau {niveau}'
+	String niveau({required Object niveau}) => 'Niveau ${niveau}';
+
+	/// fr: '1 élève'
+	String get eleveUn => '1 élève';
+
+	/// fr: '{nombre} élèves'
+	String eleves({required Object nombre}) => '${nombre} élèves';
+
+	/// fr: 'Prochaine séance : {jour} à {heure}'
+	String prochaine({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}';
+
+	/// fr: 'Aucune séance prévue'
+	String get sansProchaine => 'Aucune séance prévue';
+
+	/// fr: 'Remplacement'
+	String get remplacement => 'Remplacement';
+
+	/// fr: 'Un cahier de séance reste à valider'
+	String get rappelCahier => 'Un cahier de séance reste à valider';
 }
 
 // Path: enseignant.demo
@@ -8171,6 +8198,21 @@ class Traductions$enseignant$ficheGroupe$fr {
 
 	/// fr: 'Chargement de la Classe.'
 	String get chargementClasse => 'Chargement de la Classe.';
+
+	/// fr: 'Ressources récentes'
+	String get ressourcesTitre => 'Ressources récentes';
+
+	/// fr: 'Progression de la classe'
+	String get progressionTitre => 'Progression de la classe';
+
+	/// fr: 'Présence régulière'
+	String get indicateurRegulier => 'Présence régulière';
+
+	/// fr: 'À renforcer'
+	String get indicateurARenforcer => 'À renforcer';
+
+	/// fr: 'Absence récente'
+	String get indicateurAbsence => 'Absence récente';
 }
 
 // Path: enseignant.revue
@@ -14608,8 +14650,17 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
 			'enseignant.classes.titre' => 'Classes',
-			'enseignant.classes.provisoire' => 'Vos Classes arrivent ici.',
-			'enseignant.classes.detail' => 'La liste de vos Classes, avec leur prochaine séance, sera posée à l\'étape suivante.',
+			'enseignant.classes.vide' => 'Aucune Classe attribuée',
+			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
+			'enseignant.classes.erreur' => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
+			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
+			'enseignant.classes.eleveUn' => '1 élève',
+			'enseignant.classes.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
+			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
+			'enseignant.classes.remplacement' => 'Remplacement',
+			'enseignant.classes.rappelCahier' => 'Un cahier de séance reste à valider',
 			'enseignant.demo.titre' => 'Démonstration enseignant',
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
@@ -14858,6 +14909,8 @@ extension on Traductions {
 			'enseignant.ficheGroupe.complet' => 'Groupe complet',
 			'enseignant.ficheGroupe.placesLibres' => 'places libres',
 			'enseignant.ficheGroupe.placesLibresUn' => 'place libre',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.membresTitre' => 'Les élèves du groupe',
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
@@ -14867,8 +14920,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
 			'enseignant.ficheGroupe.revue' => 'Ouvrir la revue du groupe',
 			'enseignant.ficheGroupe.elevesTitre' => 'Élèves',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.preparationTitre' => 'À préparer',
 			'enseignant.ficheGroupe.supportPrevu' => 'Support prévu',
 			'enseignant.ficheGroupe.positionReprise' => 'Position de reprise',
@@ -14878,6 +14929,11 @@ extension on Traductions {
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Reprise : ${page}',
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Dernier point : ${texte}',
 			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
+			'enseignant.ficheGroupe.ressourcesTitre' => 'Ressources récentes',
+			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la classe',
+			'enseignant.ficheGroupe.indicateurRegulier' => 'Présence régulière',
+			'enseignant.ficheGroupe.indicateurARenforcer' => 'À renforcer',
+			'enseignant.ficheGroupe.indicateurAbsence' => 'Absence récente',
 			'enseignant.revue.titre' => 'Revue du groupe',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.aucuneAnomalieDetail' => 'Le calcul des anomalies pédagogiques n\'est pas encore ouvert aux enseignants : cette page reste vide jusque-là.',
@@ -15367,6 +15423,8 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
@@ -15381,8 +15439,6 @@ extension on Traductions {
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',

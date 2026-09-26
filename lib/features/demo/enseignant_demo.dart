@@ -311,6 +311,25 @@ abstract final class DonneesEnseignantDemo {
     ),
   ];
 
+  /// Les quatre Classes, telles que `mes_groupes_v` les rendrait (ENS-09).
+  /// Al-Ikhlas, sans prochaine seance, garde son rendez-vous du vendredi.
+  static List<GroupeEnseignant> groupes() => <GroupeEnseignant>[
+    for (final ClasseEnseignantDemo c in classes)
+      GroupeEnseignant(
+        id: c.id,
+        libelle: c.nom,
+        type: TypePublicGroupe.enfant,
+        seuilMax: c.seuilMax,
+        creneau: Creneau(
+          jour: c.prochaineSeance?.weekday ?? 5,
+          heure: c.prochaineSeance?.hour ?? 17,
+          fuseau: fuseau,
+        ),
+        nbMembres: c.eleves.length,
+        creeLe: DateTime(2026, 9),
+      ),
+  ];
+
   /// Une Classe par son identifiant.
   static ClasseEnseignantDemo classe(String id) =>
       classes.firstWhere((ClasseEnseignantDemo c) => c.id == id);

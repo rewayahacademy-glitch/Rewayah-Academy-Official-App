@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/features/demo/classe_demo.dart';
+import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
@@ -65,6 +67,40 @@ void main() {
       });
     }
   });
+
+  group(
+    'Capture : EN-3, Mes Classes et Espace Classe',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      for (final (String nom, Widget ecran) in <(String, Widget)>[
+        (
+          'mes_classes',
+          const CoquilleEnseignantDemo(ecran: EcranDemoEnseignant.classes),
+        ),
+        (
+          'espace_classe',
+          const EcranEnseignantDemo(etat: EtatDemoClasse.fenetreOuverte),
+        ),
+      ]) {
+        for (final (String l, Size taille) in <(String, Size)>[
+          ('390', const Size(390, 1700)),
+          ('768', const Size(768, 1500)),
+          ('1440', const Size(1440, 1300)),
+        ]) {
+          for (final ThemeMode mode in <ThemeMode>[
+            ThemeMode.light,
+            ThemeMode.dark,
+          ]) {
+            final String fichier = 'en3_${nom}_${l}_${mode.name}';
+            testWidgets(fichier, (WidgetTester tester) async {
+              await _capturer(tester, fichier, ecran, taille, mode: mode);
+            });
+          }
+        }
+      }
+    },
+  );
 
   group('Capture : EN-1b, coquille enseignant', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);

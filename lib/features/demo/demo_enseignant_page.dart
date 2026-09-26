@@ -29,6 +29,7 @@ import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_horloge/emplacement_entree.dart' show RoleEntree;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart';
@@ -39,6 +40,8 @@ import '../creneaux/creneaux_page.dart';
 import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
 import '../profil_enseignant/profil_enseignant_page.dart';
+import 'classe_demo.dart' show EtatDemoClasse;
+import 'demo_classe_page.dart' show adresseDemoClasse;
 import 'enseignant_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
@@ -132,6 +135,21 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
       () => DonneesEnseignantDemo.maintenant,
     ),
     seancesEnseignantProvider.overrideWith((Ref _) async => seances),
+    // Classes (ENS-09) : les quatre Classes, leur niveau, leur langue et le
+    // remplacement d'Al-Fatiha. Le cahier non valide d'Al-Badr vient de
+    // `cahiersEnRetardProvider`, plus bas.
+    groupesEnseignantProvider.overrideWith(
+      (Ref _) async =>
+          vide ? const <GroupeEnseignant>[] : DonneesEnseignantDemo.groupes(),
+    ),
+    detailsClassesProvider.overrideWithValue(<String, DetailClasse>{
+      for (final ClasseEnseignantDemo c in DonneesEnseignantDemo.classes)
+        c.id: DetailClasse(
+          niveau: c.niveau,
+          langue: c.langue,
+          remplacement: c.remplacement,
+        ),
+    }),
     cahiersEnRetardProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(etat),
     ),
@@ -272,7 +290,16 @@ class CoquilleEnseignantDemo extends StatelessWidget {
           },
           child: switch (ecran) {
             EcranDemoEnseignant.aujourdhui => const JourneePage(),
-            EcranDemoEnseignant.classes => const MesClassesPage(),
+            // Une ligne ouvre le VRAI Espace Classe enseignant de la
+            // demonstration de Classe (CL-4, perfectionne en EN-3).
+            EcranDemoEnseignant.classes => MesClassesPage(
+              onOuvrirClasse: (String _) => context.go(
+                adresseDemoClasse(
+                  RoleEntree.enseignant,
+                  EtatDemoClasse.fenetreOuverte,
+                ),
+              ),
+            ),
             EcranDemoEnseignant.disponibilites => const CreneauxPage(),
             EcranDemoEnseignant.profil => const ProfilEnseignantPage(),
           },

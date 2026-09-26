@@ -356,9 +356,12 @@ List<Override> surchargesEnseignantDemo(
       (Ref _) => <String, ProjectionEleve>{
         for (final (int i, EleveProjectionDemo e)
             in DonneesClasseDemo.eleves.indexed)
+          // Aucune photo de demonstration n'est livree : les initiales en
+          // repli (E5). L'indicateur vient des donnees, jamais d'un calcul.
           'demo-eleve-$i': ProjectionEleve(
             pageReprise: e.pageReprise,
             dernierPoint: e.dernierPoint,
+            indicateur: e.indicateur,
           ),
       },
     ),

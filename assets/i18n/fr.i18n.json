@@ -2698,8 +2698,17 @@
   "enseignant": {
     "classes": {
       "titre": "Classes",
-      "provisoire": "Vos Classes arrivent ici.",
-      "detail": "La liste de vos Classes, avec leur prochaine séance, sera posée à l'étape suivante."
+      "vide": "Aucune Classe attribuée",
+      "videDetail": "Les Classes confirmées apparaîtront ici.",
+      "erreur": "Vos Classes n'ont pas pu être lues. Réessayez dans un instant.",
+      "chargement": "Chargement de vos Classes.",
+      "niveau": "Niveau {niveau}",
+      "eleveUn": "1 élève",
+      "eleves": "{nombre} élèves",
+      "prochaine": "Prochaine séance : {jour} à {heure}",
+      "sansProchaine": "Aucune séance prévue",
+      "remplacement": "Remplacement",
+      "rappelCahier": "Un cahier de séance reste à valider"
     },
     "demo": {
       "titre": "Démonstration enseignant",
@@ -2981,7 +2990,12 @@
       "supportsTitre": "Supports récents",
       "repriseEleve": "Reprise : {page}",
       "dernierPoint": "Dernier point : {texte}",
-      "chargementClasse": "Chargement de la Classe."
+      "chargementClasse": "Chargement de la Classe.",
+      "ressourcesTitre": "Ressources récentes",
+      "progressionTitre": "Progression de la classe",
+      "indicateurRegulier": "Présence régulière",
+      "indicateurARenforcer": "À renforcer",
+      "indicateurAbsence": "Absence récente"
     },
     "revue": {
       "titre": "Revue du groupe",
