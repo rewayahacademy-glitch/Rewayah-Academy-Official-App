@@ -105,18 +105,16 @@ Tailles : mobile 390x844 @3 (zone sûre 47/34), web étroit 640x1000 @1 (gabarit
 
 **Où en est-on (tenir cette colonne à jour, c'est la seule source) :** une tâche est « faite » quand son retour de relecture est corrigé et poussé. Captures d'une tâche : `10_classe/captures/T<n>/`, seulement les écrans de CETTE tâche (jamais celles des tâches précédentes, jamais dans `05_recette/`).
 
-| # | Tâche | Images | État |
+**Seule chose encore à faire dans cette vague : la fiche T8 (rendu en séance de `/salle`).** Tout le reste est fait.
+
+| Fiche | Tâche | État | Rapport |
 |---|---|---|---|
-| T1 | Socle : VueSeance + règles de la matrice, données démo, i18n, mention et en-tête | toutes (en-têtes) | faite |
-| T2 | Salle élève standard CLV-04 (support, vignette, dock, barre basse) + page `/demo/salle` | CLV-04 desktop, mobile, web étroit | faite |
-| T3 | Interface guidée CLV-05 + fin élève CLV-09 | CLV-05 desktop, mobile, web étroit | faite |
-| T4 | Salle enseignant CLV-06 (rail, outils, Élèves/Supports, pagination, zoom, Réseau) | CLV-06 desktop, mobile, web étroit | faite |
-| T5 | PanneauSeance + CLV-07 Élèves | CLV-07 desktop, mobile, web étroit | faite |
-| T6 | CLV-08 Supports | CLV-08 desktop, mobile, web étroit | faite |
-| T7 | CLV-10 fin enseignant + sorties de `/salle` (CLV-09, CLV-10, cahier) | CLV-10 desktop, mobile, web étroit | faite (retour de relecture corrigé) |
-| T8 | **À faire ensuite.** Rendu EN séance de `/salle` = SalleSeance (moitié de l'ancienne T7) | CLV-04, CLV-05, CLV-06 | à faire |
-| T9 | Branchement de `/tc/classe` sur SalleSeance + tests existants remis au vert | CLV-06, CLV-07 | faite (livrée comme « T8 », `85a900b`, voir `05_recette/CL/T8.md`) |
-| T10 | Recette : captures complètes, planches contre les 10 images, suite complète | les 10 | à faire |
+| T1 à T7 | Socle, CLV-04, CLV-05 + CLV-09, CLV-06, CLV-07, CLV-08, CLV-10 + sorties de `/salle` | faites | `05_recette/CL/T1.md` à `T7.md` |
+| T8 | Rendu EN séance de `/salle` = SalleSeance | **à faire** | - |
+| T9 | `/tc/classe` sur SalleSeance | faite | `05_recette/CL/T8.md` (livrée sous le nom « T8 ») |
+| T10 | Recette : planches contre les 10 images, suite complète | faite | `05_recette/CL/RAPPORT.md` (captures dans `captures/T9/`, livrée sous le nom « T9 ») |
+
+Attention aux noms : les numéros de l'orchestration ont glissé d'un cran (« T8 » livré = fiche T9, « T9 » livré = fiche T10). Toujours se fier à la colonne « Fiche ».
 
 Le détail de chaque tâche suit (§8). Chaque agent lit §1 à §6 puis sa fiche.
 
