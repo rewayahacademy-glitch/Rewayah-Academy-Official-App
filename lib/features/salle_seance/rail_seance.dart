@@ -22,9 +22,18 @@ const double largeurRailSeance =
 
 /// Le rail : rien si [onNaviguer] est nul.
 class RailSeance extends StatelessWidget {
-  const RailSeance({required this.onNaviguer, this.groupeId, super.key});
+  const RailSeance({
+    required this.onNaviguer,
+    this.groupeId,
+    this.confirmerSortie = true,
+    super.key,
+  });
 
   final ValueChanged<String>? onNaviguer;
+
+  /// Vrai pendant la seance : chaque entree passe par la confirmation de
+  /// Quitter. Faux une fois la seance finie (CLV-10) : rien a quitter.
+  final bool confirmerSortie;
 
   /// La Classe de la seance ; sans elle, « Classes » reste affichee, active,
   /// sans lien.
@@ -36,12 +45,14 @@ class RailSeance extends StatelessWidget {
     if (naviguer == null) return const SizedBox.shrink();
     final AppPalette palette = AppPalette.of(context);
     final String? groupe = groupeId;
-    VoidCallback sortirVers(String route) =>
-        () => confirmerQuitterSeance(
-          context,
-          () => naviguer(route),
-          cahier: true,
-        );
+    // Seance finie (CLV-10) : plus rien a quitter, la navigation est directe.
+    VoidCallback sortirVers(String route) => confirmerSortie
+        ? () => confirmerQuitterSeance(
+            context,
+            () => naviguer(route),
+            cahier: true,
+          )
+        : () => naviguer(route);
     return Semantics(
       container: true,
       label: t.salle.seance.rail.navigation,

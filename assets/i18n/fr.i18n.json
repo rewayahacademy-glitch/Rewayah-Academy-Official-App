@@ -243,7 +243,22 @@
       "quitteTitre": "Vous avez quitté la séance.",
       "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
       "titreGuidee": "La séance est terminée.",
-      "retourAccueil": "Retour à l'accueil"
+      "retourAccueil": "Retour à l'accueil",
+      "enseignant": {
+        "terminee": "Terminée",
+        "phrase": "Le cahier est prêt avec les informations de la séance.",
+        "recapitulatif": "Récapitulatif de la séance",
+        "fin": "Fin",
+        "connectes": "{n} élèves connectés",
+        "unConnecte": "{n} élève connecté",
+        "inscrits": "sur {n} inscrits",
+        "unInscrit": "sur {n} inscrit",
+        "cahierSeance": "Cahier de séance",
+        "cahierACompleter": "Cahier à compléter",
+        "ouvrirCahier": "Ouvrir le cahier",
+        "revenirJournee": "Revenir à ma journée",
+        "erreurCahier": "Le cahier ne peut pas être ouvert pour le moment."
+      }
     },
     "micro": "Micro",
     "microCoupe": "Micro coupé",

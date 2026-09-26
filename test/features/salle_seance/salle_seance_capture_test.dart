@@ -384,6 +384,50 @@ void main() {
       }
     }
   });
+
+  group('Capture : fin enseignant CLV-10 (T7)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final _Taille taille in _tailles) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nom = 'cl_10_fin_${taille.nom}_${mode.name}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(
+            tester,
+            taille.logique,
+            taille.densite,
+            zoneSure: taille.zone,
+          );
+          await tester.pumpWidget(
+            hoteCapture(
+              FinSeanceEnseignant(
+                vue: DonneesSeanceDemo.vue(
+                  RoleSeance.enseignant,
+                  EtatDemoSalle.fin,
+                ),
+                actions: const ActionsSeance(
+                  onRetour: _rien,
+                  onNotifications: _rien,
+                  onReglages: _rien,
+                  onCompte: _rien,
+                  onNaviguer: _aller,
+                ),
+                onOuvrirCahier: _rien,
+                onRevenirJournee: _rien,
+              ),
+              themeMode: mode,
+            ),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
 }
 
 void _support(SupportDisponible _) {}

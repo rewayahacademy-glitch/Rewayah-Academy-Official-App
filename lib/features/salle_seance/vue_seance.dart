@@ -327,10 +327,10 @@ class VueSeance {
       case RoleSeance.guidee:
         return null;
       case RoleSeance.eleve:
-        final String base = t.salle.seance.ligne(
-          debut: nomClasse,
-          fin: nomEnseignant,
-        );
+        // `/salle` ne connait pas encore le nom de la Classe (BR-1).
+        final String base = nomClasse.isEmpty
+            ? nomEnseignant
+            : t.salle.seance.ligne(debut: nomClasse, fin: nomEnseignant);
         return horloge is HorlogeDepassee
             ? t.salle.seance.ligne(debut: base, fin: t.salle.seance.sePoursuit)
             : base;
@@ -341,6 +341,7 @@ class VueSeance {
           HorlogeDepassee() => t.salle.seance.sePoursuit,
           null => null,
         };
+        if (nomClasse.isEmpty) return suite;
         return suite == null
             ? nomClasse
             : t.salle.seance.ligne(debut: nomClasse, fin: suite);
@@ -441,6 +442,10 @@ class VueSeance {
   String? get compteurEleves => _enseignant
       ? t.salle.seance.compteurEleves(connectes: connectes, inscrits: inscrits)
       : null;
+
+  /// Le recapitulatif de fin (CLV-10) : enseignant seulement, seance finie.
+  /// L'eleve et la guidee ne voient jamais ni presence ni recapitulatif.
+  bool get voitRecapitulatifFin => _enseignant && fin != null;
 
   /// Connectes au moins une fois (recapitulatif de fin, meme source).
   int get connectesAuMoinsUneFois =>

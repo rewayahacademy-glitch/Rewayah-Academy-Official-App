@@ -1,0 +1,129 @@
+// L'adaptateur `/salle` -> `VueSeance` (T7).
+//
+// Pur : il ne lit que ce que `SallePage` a DEJA lu (la `VueSalle` du jeton,
+// la presence de `presenceSeanceProvider`, `monTuteurObserveProvider`,
+// `annoncesObservationProvider`) et n'ouvre aucun appel serveur (K-28).
+// Le support partage, les outils et Supports restent sans rappel tant que
+// BR-1 ne les a pas cables : `support` est nul ici.
+
+import '../../core/domain/enums.dart';
+import '../../core/presence/service_presence.dart';
+import '../../core/tc_observation/port_annonce_observation.dart';
+import '../salle/vue_salle.dart';
+import 'vue_seance.dart';
+
+/// Construit la `VueSeance` d'une salle `/salle`.
+abstract final class DepuisSalle {
+  /// `null` si le role du jeton n'a pas de salle de seance (tuteur
+  /// observateur, controleur, administration, inconnu) : l'ancien rendu reste.
+  static VueSeance? vue({
+    required VueSalle salle,
+    required InterfaceMode mode,
+    List<PresenceParticipant>? presence,
+    String? monProfil,
+    bool monTuteurObserve = false,
+    List<AnnonceObservation> annonces = const <AnnonceObservation>[],
+    String nomClasse = '',
+    String? groupeId,
+    FinSeance? fin,
+  }) {
+    final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
+    if (role == null) return null;
+    final bool enseignant = role == RoleSeance.enseignant;
+    final List<PresenceParticipant> lignes =
+        presence ?? const <PresenceParticipant>[];
+
+    String? prenomDe(RoleSalle cible) {
+      for (final PresenceParticipant p in lignes) {
+        if (RoleSalle.depuis(p.role) == cible && p.prenom.isNotEmpty) {
+          return p.prenom;
+        }
+      }
+      return null;
+    }
+
+    final String nomEnseignant =
+        prenomDe(RoleSalle.enseignant) ??
+        (enseignant ? salle.moi?.nom : salle.dominant?.nom) ??
+        '';
+
+    String? prenomEleve;
+    if (!enseignant) {
+      for (final PresenceParticipant p in lignes) {
+        if (p.profilId == monProfil && p.prenom.isNotEmpty) {
+          prenomEleve = p.prenom;
+        }
+      }
+      prenomEleve ??= salle.moi?.nom;
+    }
+
+    // La visite : a l'eleve seulement si c'est SON tuteur (serveur) ; a
+    // l'enseignant toujours, des qu'une annonce existe. Jamais au controleur
+    // (il n'a pas de salle de seance : `role` nul plus haut).
+    VisiteSeance? visite;
+    if (enseignant && annonces.isNotEmpty) {
+      visite = VisiteSeance(
+        prenomEnfant: annonces.first.prenomEnfant,
+        concerneMoi: false,
+      );
+    } else if (!enseignant && monTuteurObserve) {
+      visite = VisiteSeance(prenomEnfant: prenomEleve ?? '', concerneMoi: true);
+    }
+
+    return VueSeance(
+      role: role,
+      nomClasse: nomClasse,
+      nomEnseignant: nomEnseignant,
+      initialesEnseignant: initiales(nomEnseignant),
+      prenomEleve: prenomEleve,
+      connexion: salle.phase == PhaseSalle.reconnexion
+          ? ConnexionSeance.reconnexion
+          : ConnexionSeance.enLigne,
+      // Une impasse n'est pas une salle : rien n'y est enregistre.
+      enregistrementConfirme: salle.phase != PhaseSalle.refus,
+      visite: visite,
+      cameraEnseignantActive:
+          (enseignant ? salle.moi?.camera : salle.dominant?.camera) ?? false,
+      cameraAutorisee: salle.peutMontrer,
+      eleves: <EleveSeance>[
+        for (final PresenceParticipant p in lignes)
+          if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
+            EleveSeance(prenom: p.prenom, statut: statut(p)),
+      ],
+      fin: fin,
+      groupeId: groupeId,
+    );
+  }
+
+  /// Le statut d'un inscrit pendant la seance, depuis l'etat derive en base.
+  /// Jamais « absent » : qui n'est pas venu est « pas encore connecte » (I-6).
+  static StatutEleveSeance statut(PresenceParticipant p) => switch (p.etat) {
+    EtatPresence.presente ||
+    EtatPresence.enRetard ||
+    EtatPresence.reconnectee => StatutEleveSeance.connecte,
+    EtatPresence.deconnectee ||
+    EtatPresence.enReconnexion ||
+    EtatPresence.sortie => StatutEleveSeance.connexionInterrompue,
+    _ =>
+      p.entreLe == null
+          ? StatutEleveSeance.pasEncoreConnecte
+          : StatutEleveSeance.connexionInterrompue,
+  };
+
+  /// « SA » pour « Sayyida Amina ».
+  static String initiales(String nom) {
+    final List<String> mots = nom
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((String m) => m.isNotEmpty)
+        .toList();
+    return mots.take(2).map((String m) => m[0].toUpperCase()).join();
+  }
+
+  /// « 15:16 », heure locale.
+  static String heure(DateTime moment) {
+    final DateTime l = moment.toLocal();
+    return '${l.hour.toString().padLeft(2, '0')}:'
+        '${l.minute.toString().padLeft(2, '0')}';
+  }
+}

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -82,9 +82,7 @@ List<Override> _surcharges({
   // **Indisponible par defaut, et c'est le bon defaut** : un test qui ne parle
   // pas de presence doit exercer le repli de l'invariant J3, pas un tableau
   // rempli par commodite.
-  servicePresenceProvider.overrideWithValue(
-    presence ?? FauxServicePresence(),
-  ),
+  servicePresenceProvider.overrideWithValue(presence ?? FauxServicePresence()),
   // **Personne n'observe par defaut**, et surtout : sans cette surcharge, les
   // quinze cas de ce fichier qui montent la salle en role eleve iraient
   // chercher le VRAI port, c'est-a-dire `Supabase.instance.client`.
@@ -325,21 +323,9 @@ void main() {
             preVol: FauxServicePreVol(),
           ),
         );
-        expect(
-          _commande(t.salle.ouvrirMicro),
-          findsNothing,
-          reason: role,
-        );
-        expect(
-          _commande(t.salle.ouvrirCamera),
-          findsNothing,
-          reason: role,
-        );
-        expect(
-          _commande(t.salle.quitterLeCours),
-          findsOneWidget,
-          reason: role,
-        );
+        expect(_commande(t.salle.ouvrirMicro), findsNothing, reason: role);
+        expect(_commande(t.salle.ouvrirCamera), findsNothing, reason: role);
+        expect(_commande(t.salle.quitterLeCours), findsOneWidget, reason: role);
       }
     });
 
@@ -846,7 +832,11 @@ void main() {
 
       await _monterSalle(
         tester,
-        surcharges: _surcharges(video: video, moteur: moteur, preVol: FauxServicePreVol()),
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
       );
 
       await tester.tap(_commande(t.salle.quitterLeCours));
@@ -862,6 +852,15 @@ void main() {
 
       expect(video.sorties, <String>[_seance]);
       expect(moteur.departs, greaterThanOrEqualTo(1));
+      // CLV-09 d'abord : la sortie se dit, sans recapitulatif ni presence.
+      expect(find.text(t.salle.fin.quitteTitre), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('fin-recapitulatif')),
+        findsNothing,
+      );
+      expect(find.text(t.salle.bandeauPermanent), findsNothing);
+      await tester.tap(find.text(t.salle.fin.retourClasse));
+      await tester.pumpAndSettle();
       expect(find.text('accueil eleve'), findsOneWidget);
     });
 
@@ -920,6 +919,21 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(video.sorties, <String>[_seance]);
+      // CLV-10 d'abord : « Seance terminee », le recapitulatif, aucune mention
+      // d'enregistrement ; puis « Ouvrir le cahier » mene a SON cahier.
+      expect(find.text(t.salle.fin.enseignant.phrase), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('fin-recapitulatif')),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.bandeauPermanent), findsNothing);
+      expect(find.text('cahier de $_seance'), findsNothing);
+      await tester.ensureVisible(
+        find.text(t.salle.fin.enseignant.ouvrirCahier),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.fin.enseignant.ouvrirCahier));
+      await tester.pumpAndSettle();
       expect(find.text('cahier de $_seance'), findsOneWidget);
       expect(find.text('journee enseignant'), findsNothing);
     });
@@ -1141,10 +1155,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.presence.excusee), findsOneWidget);
-      expect(
-        find.textContaining(t.presence.consolide),
-        findsOneWidget,
-      );
+      expect(find.textContaining(t.presence.consolide), findsOneWidget);
     });
   });
 
@@ -1219,60 +1230,62 @@ void main() {
       );
     });
 
-    testWidgets('l enseignant lance son cours ICI et apprend qu un parent regarde', (
-      WidgetTester tester,
-    ) async {
-      // **Le chemin reel de l'enseignant.** Le bouton « Lancer » de sa journee
-      // (`ENS-02`) mene a cette salle, pas a `/tc/classe`. L'annonce n'etait
-      // montee que sur l'autre : il enseignait deux minutes devant un parent
-      // sans le savoir.
-      await _monterSalle(
-        tester,
-        surcharges: _surcharges(
-          video: FauxServiceVideo(acces0: _acces('teacher')),
-          moteur: FauxMoteurSalle(),
-          preVol: FauxServicePreVol(),
-          role: AppRole.teacher,
-          annonces: <AnnonceObservation>[
-            AnnonceObservation(
-              libelle: t.tc.observation.annonce.tuteurObserve(
+    testWidgets(
+      'l enseignant lance son cours ICI et apprend qu un parent regarde',
+      (WidgetTester tester) async {
+        // **Le chemin reel de l'enseignant.** Le bouton « Lancer » de sa journee
+        // (`ENS-02`) mene a cette salle, pas a `/tc/classe`. L'annonce n'etait
+        // montee que sur l'autre : il enseignait deux minutes devant un parent
+        // sans le savoir.
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('teacher')),
+            moteur: FauxMoteurSalle(),
+            preVol: FauxServicePreVol(),
+            role: AppRole.teacher,
+            annonces: <AnnonceObservation>[
+              AnnonceObservation(
+                libelle: t.tc.observation.annonce.tuteurObserve(
+                  prenomEnfant: 'Amina',
+                ),
                 prenomEnfant: 'Amina',
+                enfantConcerneId: 'enfant-1',
               ),
-              prenomEnfant: 'Amina',
-              enfantConcerneId: 'enfant-1',
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
 
-      expect(find.byType(IndicateurObservation), findsOneWidget);
-      expect(find.text('Tuteur de Amina observe'), findsOneWidget);
-    });
+        expect(find.byType(IndicateurObservation), findsOneWidget);
+        expect(find.text('Tuteur de Amina observe'), findsOneWidget);
+      },
+    );
 
-    testWidgets('l eleve de cette meme salle ne lit pas l annonce enseignante', (
-      WidgetTester tester,
-    ) async {
-      await _monterSalle(
-        tester,
-        surcharges: _surcharges(
-          video: FauxServiceVideo(acces0: _acces('student')),
-          moteur: FauxMoteurSalle(),
-          preVol: FauxServicePreVol(),
-          annonces: <AnnonceObservation>[
-            AnnonceObservation(
-              libelle: t.tc.observation.annonce.tuteurObserve(
+    testWidgets(
+      'l eleve de cette meme salle ne lit pas l annonce enseignante',
+      (WidgetTester tester) async {
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: FauxMoteurSalle(),
+            preVol: FauxServicePreVol(),
+            annonces: <AnnonceObservation>[
+              AnnonceObservation(
+                libelle: t.tc.observation.annonce.tuteurObserve(
+                  prenomEnfant: 'Amina',
+                ),
                 prenomEnfant: 'Amina',
+                enfantConcerneId: 'enfant-1',
               ),
-              prenomEnfant: 'Amina',
-              enfantConcerneId: 'enfant-1',
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
 
-      // Elle porte le prenom d'un enfant qui n'est pas forcement le sien.
-      expect(find.byType(IndicateurObservation), findsNothing);
-      expect(find.text('Tuteur de Amina observe'), findsNothing);
-    });
+        // Elle porte le prenom d'un enfant qui n'est pas forcement le sien.
+        expect(find.byType(IndicateurObservation), findsNothing);
+        expect(find.text('Tuteur de Amina observe'), findsNothing);
+      },
+    );
   });
 }

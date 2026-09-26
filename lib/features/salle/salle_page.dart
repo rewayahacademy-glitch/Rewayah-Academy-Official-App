@@ -34,6 +34,10 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
+import '../salle_seance/actions_seance.dart';
+import '../salle_seance/depuis_salle.dart';
+import '../salle_seance/resultat_seance.dart';
+import '../salle_seance/vue_seance.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'vue_salle.dart';
 
@@ -91,6 +95,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   EtatSalle _etatMoteur = EtatSalle.absent;
   List<ParticipantSalle> _participants = const <ParticipantSalle>[];
   QualiteLien _qualite = QualiteLien.inconnue;
+
+  /// La fin de l'enseignant qui a fait cours (CLV-10), figee a la sortie :
+  /// le recapitulatif lit la presence d'AVANT la deconnexion (I-6).
+  VueSeance? _finEnseignant;
+
+  /// Le cahier n'a pas pu etre ouvert depuis CLV-10 : « Reessayer ».
+  bool _cahierIndisponible = false;
+
+  /// L'eleve sorti de la salle (CLV-09).
+  IssueSeance? _sortieEleve;
 
   @override
   void initState() {
@@ -204,6 +218,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // Le cours a-t-il eu lieu ? La reponse se lit maintenant, pas apres.
     final bool versLeCahier =
         vue.role == RoleSalle.enseignant && vue.dansLaSalle;
+    final bool eleveSorti = vue.role == RoleSalle.eleve && vue.dansLaSalle;
+    // CLV-10 : le recapitulatif se fige maintenant, sur la presence deja lue
+    // (aucun nouvel appel) ; apres la deconnexion, elle ne dirait plus rien.
+    final VueSeance? fin = versLeCahier
+        ? DepuisSalle.vue(
+            salle: vue,
+            mode: AppMetriques.of(context).mode,
+            presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
+            monProfil: ref.read(sessionProvider).profileId,
+            fin: FinSeance(
+              heureFin: DepuisSalle.heure(DateTime.now()),
+              cahierACompleter: true,
+            ),
+          )
+        : null;
 
     // **L'annonce precede la deconnexion, et cet ordre porte une information
     // que rien d'autre ne porte.** LiveKit envoie le meme evenement `left` dans
@@ -215,17 +244,35 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!mounted) {
       return;
     }
+    if (fin != null) {
+      // CLV-10 d'abord, puis le cahier : « Ouvrir le cahier » (`_ouvrirCahier`).
+      setState(() => _finEnseignant = fin);
+      return;
+    }
     if (versLeCahier) {
-      // **L'invariant du catalogue est enfin tenu** : la sortie de `ENS-03`
-      // mene a `ENS-04` et a rien d'autre. L'ecart inscrit ici depuis le lot N3
-      // -- « `ENS-04` n'a pas de route, on renvoie donc chez soi » -- est leve :
-      // le cahier existe (`Routes.cahierPour`) et il est l'ecran de sortie de
-      // seance, pas un onglet. `go` et non `push` : la salle ne doit rester
-      // sous aucune pile, l'ADR-005 lui interdit d'etre revenue en arriere.
-      GoRouter.of(context).go(Routes.cahierPour(widget.seanceId));
+      _ouvrirCahier();
+      return;
+    }
+    if (eleveSorti) {
+      // CLV-09 : « Vous avez quitte la seance. » (guidee : « La seance est
+      // terminee. »), puis le retour a la racine de son role.
+      setState(() => _sortieEleve = IssueSeance.quittee);
       return;
     }
     _rentrer();
+  }
+
+  /// **L'invariant du catalogue est tenu** : la sortie de `ENS-03` mene a
+  /// `ENS-04` (via CLV-10) et a rien d'autre. `go` et non `push` : la salle
+  /// ne doit rester sous aucune pile, l'ADR-005 lui interdit d'etre revenue
+  /// en arriere.
+  void _ouvrirCahier() {
+    try {
+      GoRouter.of(context).go(Routes.cahierPour(widget.seanceId));
+    } catch (erreur) {
+      journalDev('cahier impossible a ouvrir : $erreur');
+      setState(() => _cahierIndisponible = true);
+    }
   }
 
   /// Retour a la racine de son role.
@@ -261,6 +308,26 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // encore en chargement s'il n'avait jamais ete observe. La sortie tomberait
     // alors sur la racine, qui redirige, au lieu de l'accueil du role.
     final String? monProfil = ref.watch(sessionProvider).profileId;
+
+    // Les ecrans de sortie de la salle de seance (T7).
+    final VueSeance? fin = _finEnseignant;
+    if (fin != null) {
+      return FinSeanceEnseignant(
+        vue: fin,
+        actions: ActionsSeance(
+          onRetour: _rentrer,
+          onNaviguer: (String route) => GoRouter.of(context).go(route),
+        ),
+        onOuvrirCahier: _ouvrirCahier,
+        onRevenirJournee: () =>
+            GoRouter.of(context).go(Routes.enseignantJournee),
+        cahierIndisponible: _cahierIndisponible,
+      );
+    }
+    final IssueSeance? sortie = _sortieEleve;
+    if (sortie != null) {
+      return ResultatSeance(issue: sortie, onRetour: _rentrer);
+    }
 
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,

@@ -247,8 +247,23 @@ class _SalleDemoState extends State<SalleDemo> {
       support: etat.support == null ? null : _support,
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
-    // Fin de seance ou sortie volontaire de l'eleve : CLV-09. La fin de
-    // l'enseignant (CLV-10) vient avec T7.
+    // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
+    // demonstration : « Ouvrir le cahier » ramene a la liste des etats).
+    if (enseignant && vue.estFinie) {
+      return FinSeanceEnseignant(
+        vue: vue,
+        actions: ActionsSeance(
+          onRetour: widget.onSortir,
+          onNotifications: _inerte,
+          onReglages: _inerte,
+          onCompte: _inerte,
+          onNaviguer: (String _) => widget.onSortir(),
+        ),
+        onOuvrirCahier: widget.onSortir,
+        onRevenirJournee: widget.onSortir,
+      );
+    }
+    // Fin de seance ou sortie volontaire de l'eleve : CLV-09.
     if (!enseignant && (vue.estFinie || _quittee)) {
       return ResultatSeance(
         issue: _quittee ? IssueSeance.quittee : IssueSeance.terminee,

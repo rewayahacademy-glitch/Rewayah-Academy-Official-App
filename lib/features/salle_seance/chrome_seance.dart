@@ -54,6 +54,90 @@ class ChromeSeance extends StatelessWidget {
   }
 }
 
+/// L'en-tete de la fin de seance enseignant (CLV-10).
+///
+/// Desktop : chevron, « Seance terminee », « Classe An-Nour » + pastille
+/// « Terminee », coin droit complet (theme, cloche, reglages, compte). Web
+/// etroit : le chevron seul (image CLV-07-08-10 web). Telephone : rien (image
+/// mobile). Jamais de mention d'enregistrement : la seance est finie.
+class EnteteFinSeance extends StatelessWidget {
+  const EnteteFinSeance({required this.vue, required this.actions, super.key});
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final Gabarit gabarit = AppGabarit.de(context);
+    final ThemeData theme = Theme.of(context);
+    final AppPalette palette = AppPalette.of(context);
+    if (gabarit == Gabarit.mobile) return const SizedBox.shrink();
+    if (gabarit != Gabarit.desktop) {
+      if (actions.onRetour == null) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(
+          start: AppPage.gouttiereMobile,
+          top: AppSpacing.xxl,
+          end: AppPage.gouttiereMobile,
+        ),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: _Retour(onPress: actions.onRetour),
+        ),
+      );
+    }
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(bottom: palette.borderHairline.asBorderSide()),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xxl,
+          vertical: AppSpacing.lg,
+        ),
+        child: Row(
+          children: <Widget>[
+            _Retour(onPress: actions.onRetour),
+            Ecart.hMd,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  _Titre(
+                    texte: t.salle.fin.titre,
+                    style: theme.textTheme.headlineMedium,
+                  ),
+                  Ecart.vXs,
+                  Wrap(
+                    spacing: AppSpacing.md,
+                    runSpacing: AppSpacing.xs,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        vue.nomClasse,
+                        style: palette.inkMuted.applyTo(
+                          theme.textTheme.bodyLarge ?? const TextStyle(),
+                        ),
+                      ),
+                      StatusPill(
+                        libelle: t.salle.fin.enseignant.terminee,
+                        ton: TonEtat.neutre,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Ecart.hLg,
+            _CoinComplet(vue: vue, actions: actions),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Le retrait des lignes sous le titre, quand le chevron ‹ est la : la
 /// largeur du chevron et l'ecart qui le suit.
 const double _retraitEtroit = AppTouchTarget.standard + AppSpacing.xs;

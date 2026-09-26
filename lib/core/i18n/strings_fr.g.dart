@@ -2602,6 +2602,8 @@ class Traductions$salle$fin$fr {
 
 	/// fr: 'Retour à l'accueil'
 	String get retourAccueil => 'Retour à l\'accueil';
+
+	late final Traductions$salle$fin$enseignant$fr enseignant = Traductions$salle$fin$enseignant$fr.internal(_root);
 }
 
 // Path: connexion.recuperation
@@ -8375,6 +8377,54 @@ class Traductions$salle$seance$statut$fr {
 	String get connexionInterrompue => 'Connexion interrompue';
 }
 
+// Path: salle.fin.enseignant
+class Traductions$salle$fin$enseignant$fr {
+	Traductions$salle$fin$enseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Terminée'
+	String get terminee => 'Terminée';
+
+	/// fr: 'Le cahier est prêt avec les informations de la séance.'
+	String get phrase => 'Le cahier est prêt avec les informations de la séance.';
+
+	/// fr: 'Récapitulatif de la séance'
+	String get recapitulatif => 'Récapitulatif de la séance';
+
+	/// fr: 'Fin'
+	String get fin => 'Fin';
+
+	/// fr: '{n} élèves connectés'
+	String connectes({required Object n}) => '${n} élèves connectés';
+
+	/// fr: '{n} élève connecté'
+	String unConnecte({required Object n}) => '${n} élève connecté';
+
+	/// fr: 'sur {n} inscrits'
+	String inscrits({required Object n}) => 'sur ${n} inscrits';
+
+	/// fr: 'sur {n} inscrit'
+	String unInscrit({required Object n}) => 'sur ${n} inscrit';
+
+	/// fr: 'Cahier de séance'
+	String get cahierSeance => 'Cahier de séance';
+
+	/// fr: 'Cahier à compléter'
+	String get cahierACompleter => 'Cahier à compléter';
+
+	/// fr: 'Ouvrir le cahier'
+	String get ouvrirCahier => 'Ouvrir le cahier';
+
+	/// fr: 'Revenir à ma journée'
+	String get revenirJournee => 'Revenir à ma journée';
+
+	/// fr: 'Le cahier ne peut pas être ouvert pour le moment.'
+	String get erreurCahier => 'Le cahier ne peut pas être ouvert pour le moment.';
+}
+
 // Path: appareils.emetteur.verification
 class Traductions$appareils$emetteur$verification$fr {
 	Traductions$appareils$emetteur$verification$fr.internal(this._root);
@@ -11703,6 +11753,19 @@ extension on Traductions {
 			'salle.fin.quittePhrase' => 'Vous pourrez revenir tant qu\'elle reste ouverte.',
 			'salle.fin.titreGuidee' => 'La séance est terminée.',
 			'salle.fin.retourAccueil' => 'Retour à l\'accueil',
+			'salle.fin.enseignant.terminee' => 'Terminée',
+			'salle.fin.enseignant.phrase' => 'Le cahier est prêt avec les informations de la séance.',
+			'salle.fin.enseignant.recapitulatif' => 'Récapitulatif de la séance',
+			'salle.fin.enseignant.fin' => 'Fin',
+			'salle.fin.enseignant.connectes' => ({required Object n}) => '${n} élèves connectés',
+			'salle.fin.enseignant.unConnecte' => ({required Object n}) => '${n} élève connecté',
+			'salle.fin.enseignant.inscrits' => ({required Object n}) => 'sur ${n} inscrits',
+			'salle.fin.enseignant.unInscrit' => ({required Object n}) => 'sur ${n} inscrit',
+			'salle.fin.enseignant.cahierSeance' => 'Cahier de séance',
+			'salle.fin.enseignant.cahierACompleter' => 'Cahier à compléter',
+			'salle.fin.enseignant.ouvrirCahier' => 'Ouvrir le cahier',
+			'salle.fin.enseignant.revenirJournee' => 'Revenir à ma journée',
+			'salle.fin.enseignant.erreurCahier' => 'Le cahier ne peut pas être ouvert pour le moment.',
 			'salle.micro' => 'Micro',
 			'salle.microCoupe' => 'Micro coupé',
 			'salle.camera' => 'Caméra',
@@ -12029,6 +12092,8 @@ extension on Traductions {
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
 			'appareils.revoquerConfirmation' => 'Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l\'aura pas reconnecté avec un nouveau code.',
+			_ => null,
+		} ?? switch (path) {
 			'enfant.titre' => 'Ajouter un profil élève',
 			'enfant.aucun' => 'Aucun profil élève dans le foyer',
 			'enfant.aucunDetail' => 'Ajoutez d\'abord un profil élève depuis le Foyer.',
@@ -12042,8 +12107,6 @@ extension on Traductions {
 			'foyer.membres' => 'Profils élèves',
 			'foyer.vide.titre' => 'Aucun profil élève pour l\'instant',
 			'foyer.vide.phrase' => 'Ajoutez un profil élève pour l\'inscrire dans une classe et relier son appareil.',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.membre.sansClasse' => 'Pas encore de classe',
 			'foyer.membre.classeEchec' => 'Classe non lue',
 			'foyer.membre.accesSansEcheance' => 'Accès sans échéance',
@@ -12543,6 +12606,8 @@ extension on Traductions {
 			'admin.qualite.filtreOuvertes' => 'Ouvertes',
 			'admin.qualite.filtreTraitees' => 'Traitées',
 			'admin.qualite.groupeRapportManquant' => 'Rapports de séance manquants',
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.groupeBlocageSansSuivi' => 'Blocages sans suivi',
 			'admin.qualite.groupeEvaluationEnRetard' => 'Évaluations en retard',
 			'admin.qualite.colonnePersonne' => 'Concerne',
@@ -12556,8 +12621,6 @@ extension on Traductions {
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
 			'admin.regles.titre' => 'Règles',
@@ -13057,6 +13120,8 @@ extension on Traductions {
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
 			'parcours.voirHoraires' => 'Voir les horaires',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
 			'avatar.sansPhoto' => 'Pas encore de photo',
@@ -13070,8 +13135,6 @@ extension on Traductions {
 			'nav.tuteur.reglages' => 'Réglages',
 			'nav.tuteur.suivi' => 'Suivi',
 			'nav.tuteur.historique' => 'Historique',
-			_ => null,
-		} ?? switch (path) {
 			'nav.tuteur.compte' => 'Compte',
 			'nav.enseignant.journee' => 'Journée',
 			'nav.enseignant.creneaux' => 'Créneaux',
@@ -13571,6 +13634,8 @@ extension on Traductions {
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'classe.catalogue' => 'Choisir une classe',
@@ -13584,8 +13649,6 @@ extension on Traductions {
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
-			_ => null,
-		} ?? switch (path) {
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
 			'classe.seance.aucune' => 'Aucune séance planifiée',
 			'classe.seance.aucuneDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
@@ -14085,6 +14148,8 @@ extension on Traductions {
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'Le groupe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.focus.quitter' => 'Quitter le focus',
 			'tc.outils.dock.titre' => 'Outils',
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
@@ -14098,8 +14163,6 @@ extension on Traductions {
 			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.intention.aApprendre' => 'À apprendre',
 			'tc.outils.intention.aRevoir' => 'À revoir',
 			'tc.outils.intention.aRenforcer' => 'À renforcer',
