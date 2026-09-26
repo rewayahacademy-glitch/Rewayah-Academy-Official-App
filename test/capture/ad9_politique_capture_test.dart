@@ -74,6 +74,7 @@ Future<void> _monter(
   EtatRevueDemo etat, {
   PortPolitiqueRevueKyc? port,
   Locale? langue,
+  TextDirection? direction,
 }) async {
   final List<Override> demo = surchargesDemoAdmin(
     environnement: 'staging',
@@ -104,8 +105,17 @@ Future<void> _monter(
                 supportedLocales: AppLocaleUtils.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 routerConfig: _routeur,
-                builder: (BuildContext context, Widget? child) =>
-                    RepereDemonstration(child: child),
+                builder: (BuildContext context, Widget? child) {
+                  final Widget repere = RepereDemonstration(child: child);
+                  // Miroir RTL sans changer la langue (memes clefs fr : ar
+                  // n'a pas encore la section dossiers, K-10 reprend le
+                  // motif deja prouve par tuteur_k_echelle_texte_test.dart
+                  // et nav_shell_adaptatif_test.dart plutot que de charger
+                  // une vraie locale arabe dans le test).
+                  return direction == null
+                      ? repere
+                      : Directionality(textDirection: direction, child: repere);
+                },
               );
             },
           ),
@@ -282,12 +292,15 @@ void main() {
       }
     }
 
-    // RTL arabe 390 clair, et 200 % en 390, etat 1.
-    testWidgets('390, etat 1 en arabe (RTL)', (WidgetTester tester) async {
+    // RTL (miroir, meme texte francais) 390 clair, et 200 % en 390, etat 1.
+    testWidgets('390, etat 1 en RTL', (WidgetTester tester) async {
       fixerVueCapture(tester, const Size(390, 844), 3);
-      await LocaleSettings.setLocaleRaw('ar');
-      addTearDown(() async => LocaleSettings.setLocaleRaw('fr'));
-      await _monter(tester, ThemeMode.light, _etat());
+      await _monter(
+        tester,
+        ThemeMode.light,
+        _etat(),
+        direction: TextDirection.rtl,
+      );
       await _ouvrirReglage(tester);
       final Rect interrupteur = tester.getRect(find.byType(Switch));
       expect(interrupteur.center.dx, lessThan(195));
