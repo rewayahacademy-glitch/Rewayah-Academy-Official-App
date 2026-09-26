@@ -12,6 +12,8 @@ import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
+import '../../core/tc_outils/learning_assignment.dart';
+import '../../core/tc_outils/libelles_outils.dart';
 import '../salle/vue_salle.dart';
 import 'depuis_salle.dart';
 import 'vue_seance.dart';
@@ -128,29 +130,69 @@ abstract final class DepuisClasseLive {
   /// projection n'en porte pas (PII).
   static FicheEleveSeance fiche(TeacherStudentProjection e) {
     const String inconnu = '-';
-    final int? page = e.lastLesson?.positionAtteinte?.page;
+    final DateTime? derniere = e.lastLesson?.dateUtc;
     return FicheEleveSeance(
-      niveau: e.level ?? inconnu,
+      niveau: switch (e.level) {
+        final String niveau => niveauSansIntitule(niveau),
+        null => inconnu,
+      },
       objectifActuel: e.activeGoals.isNotEmpty
           ? e.activeGoals.first
           : e.currentUnit ?? inconnu,
-      derniereSeance: page == null
-          ? inconnu
-          : t.tc.classe.fiche.page(page: page),
+      // Une date (image : « 24 sept. 2026 »), jamais une page.
+      derniereSeance: derniere == null ? inconnu : dateCourte(derniere),
       aReprendre: e.lastLesson?.pointARevoir ?? inconnu,
       presenceRecente: switch (e.recentAttendance) {
-        final AssiduiteRecente a => t.tc.classe.fiche.assiduite(
-          presences: a.presences,
-          total: a.total,
-        ),
+        final AssiduiteRecente a => seancesSemaine(a.presences),
         null => inconnu,
       },
-      travailActuel: e.currentAssignments.isEmpty
-          ? inconnu
-          : t.tc.classe.fiche.travailEnCours(
-              nombre: e.currentAssignments.length,
-            ),
+      travailActuel: switch (e.currentAssignments) {
+        <LearningAssignment>[] => inconnu,
+        final List<LearningAssignment> travaux => intituleTravail(
+          travaux.first,
+        ),
+      },
     );
+  }
+
+  /// « Niveau 1 » -> « 1 » : l'intitule de la fiche dit deja « Niveau »
+  /// (image CLV-07), la valeur ne le repete pas.
+  static String niveauSansIntitule(String niveau) {
+    final String intitule = t.tc.classe.fiche.niveau;
+    final String brut = niveau.trim();
+    if (brut.length > intitule.length &&
+        brut.toLowerCase().startsWith('${intitule.toLowerCase()} ')) {
+      return brut.substring(intitule.length).trim();
+    }
+    return brut;
+  }
+
+  /// « 24 sept. 2026 », en heure locale.
+  static String dateCourte(DateTime instantUtc) {
+    final DateTime local = instantUtc.toLocal();
+    return t.historique.dateCourte(
+      jour: local.day,
+      mois: t.historique.moisCourts[local.month - 1],
+      annee: local.year,
+    );
+  }
+
+  /// « 3 séances cette semaine » (image CLV-07). La periode « recente » de
+  /// `recentAttendance` est la semaine en cours : c'est ce que BR-1 devra
+  /// livrer cote serveur (le total des cours tenus n'est pas affiche).
+  static String seancesSemaine(int presences) => switch (presences) {
+    0 => t.salle.seance.fiche.aucuneSeanceSemaine,
+    1 => t.salle.seance.fiche.uneSeanceSemaine,
+    _ => t.salle.seance.fiche.seancesSemaine(nombre: presences),
+  };
+
+  /// L'intitule du travail en cours (image : « Écoute de la récitation ») :
+  /// la consigne de l'enseignant, sinon l'intention pedagogique, jamais un
+  /// simple compteur.
+  static String intituleTravail(LearningAssignment travail) {
+    final String? consigne = travail.instructions?.trim();
+    if (consigne != null && consigne.isNotEmpty) return consigne;
+    return libelleIntentionPedagogique(travail.purpose);
   }
 
   /// Le statut d'un inscrit, depuis l'etat projete. Jamais « absent » :

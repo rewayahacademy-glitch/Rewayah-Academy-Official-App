@@ -120,11 +120,27 @@ void main() {
             find.byKey(ValueKey<String>('panneau-seance-$forme')),
             findsOneWidget,
           );
-          // Fermeture : la croix partout (I-8 pour le volet).
-          expect(
-            find.bySemanticsLabel(t.salle.seance.fermerPanneau),
-            findsOneWidget,
-          );
+          // Fermeture : la croix en volet et en feuille (I-8) ; en colonne
+          // desktop, le menu « … » de l'image CLV-07, qui porte « Fermer le
+          // panneau ».
+          if (forme == 'colonne') {
+            expect(
+              find.byKey(const ValueKey<String>('menu-panneau-seance')),
+              findsOneWidget,
+            );
+            await tester.tap(
+              find.byKey(const ValueKey<String>('menu-panneau-seance')),
+            );
+            await tester.pump(const Duration(milliseconds: 500));
+            expect(find.text(t.salle.seance.fermerPanneau), findsOneWidget);
+            await tester.tapAt(Offset.zero);
+            await tester.pump(const Duration(milliseconds: 500));
+          } else {
+            expect(
+              find.bySemanticsLabel(t.salle.seance.fermerPanneau),
+              findsOneWidget,
+            );
+          }
           // Jamais « present » / « absent », ni coordonnee familiale.
           expect(
             find.textContaining(

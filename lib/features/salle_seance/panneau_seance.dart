@@ -23,9 +23,13 @@ import '../../core/widgets/pressable.dart';
 /// La largeur du volet en web etroit (image CLV-07 : ≈ 313 a 640 de large).
 const double largeurPanneauSeance = AppSpacing.respiration * 5;
 
-/// La largeur de la colonne en desktop : la fiche y tient ses valeurs sur
-/// une ligne et ses actions avec de la marge (image CLV-07 desktop).
-const double largeurColonneSeance = AppSpacing.respiration * 6 - AppSpacing.sm;
+/// La largeur de la colonne en desktop (image CLV-07 : ≈ 328 a 1440 de large,
+/// le support gardant son titre sur deux lignes).
+const double largeurColonneSeance = AppSpacing.respiration * 5 + AppSpacing.sm;
+
+/// La colonne Supports en desktop (image CLV-08), inchangee.
+const double largeurColonneSupportsSeance =
+    AppSpacing.respiration * 6 - AppSpacing.sm;
 
 /// La largeur de la colonne droite en desktop (Eleves, Supports, outils).
 const double largeurColonneDroiteSeance =
@@ -62,11 +66,22 @@ class PanneauSeance extends StatelessWidget {
     required this.onFermer,
     this.enfant = const SizedBox.shrink(),
     this.forme = FormePanneau.colonne,
+    this.enMenu = false,
+    this.ajusteAuContenu = false,
     super.key,
   });
 
   final String titre;
   final VoidCallback? onFermer;
+
+  /// Image CLV-07 desktop : un menu « … » (Fermer le panneau) a la place de
+  /// la croix. Colonne seulement.
+  final bool enMenu;
+
+  /// Image CLV-07 desktop : la colonne s'arrete apres la liste au lieu de
+  /// descendre jusqu'en bas. L'[enfant] doit alors se mesurer (liste
+  /// `shrinkWrap`). Colonne seulement.
+  final bool ajusteAuContenu;
 
   /// Le contenu, deja defilant (une liste) ou court.
   final Widget enfant;
@@ -76,6 +91,8 @@ class PanneauSeance extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final bool feuille = forme == FormePanneau.feuille;
+    final bool colonne = forme == FormePanneau.colonne;
+    final bool ajuste = colonne && ajusteAuContenu;
     final BoxDecoration decoration = feuille
         ? AppElevation.avecFilet(
             surface: palette.surfaceRaised,
@@ -94,7 +111,7 @@ class PanneauSeance extends StatelessWidget {
                     ? AppElevation.niveau3(palette.ombre)
                     : AppElevation.niveau1(palette.ombre),
               );
-    return Semantics(
+    final Widget cadre = Semantics(
       container: true,
       explicitChildNodes: true,
       label: titre,
@@ -110,6 +127,7 @@ class PanneauSeance extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
             children: <Widget>[
               if (feuille) ...<Widget>[
                 Center(
@@ -128,9 +146,13 @@ class PanneauSeance extends StatelessWidget {
                 ),
                 Ecart.vSm,
               ],
-              _EnTete(titre: titre, onFermer: onFermer),
+              _EnTete(
+                titre: titre,
+                onFermer: onFermer,
+                enMenu: colonne && enMenu,
+              ),
               Ecart.vSm,
-              Expanded(child: enfant),
+              if (ajuste) Flexible(child: enfant) else Expanded(child: enfant),
               // Web etroit : le chevron de bas de volet (image CLV-07-08-10).
               if (forme == FormePanneau.volet)
                 ExcludeSemantics(
@@ -149,36 +171,42 @@ class PanneauSeance extends StatelessWidget {
         ),
       ),
     );
+    if (!ajuste) return cadre;
+    return Align(alignment: AlignmentDirectional.topCenter, child: cadre);
   }
 }
 
 class _EnTete extends StatelessWidget {
-  const _EnTete({required this.titre, required this.onFermer});
+  const _EnTete({
+    required this.titre,
+    required this.onFermer,
+    required this.enMenu,
+  });
 
   final String titre;
   final VoidCallback? onFermer;
+  final bool enMenu;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final VoidCallback? fermer = onFermer;
+    if (enMenu && fermer != null) {
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(start: AppSpacing.xs),
+        child: Row(
+          children: <Widget>[
+            Expanded(child: _Titre(titre: titre)),
+            _MenuPanneau(titre: titre, onFermer: fermer),
+          ],
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsetsDirectional.only(start: AppSpacing.xs),
       child: Row(
         children: <Widget>[
-          Expanded(
-            child: Semantics(
-              header: true,
-              child: Text(
-                titre,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: palette.inkStrong.applyTo(
-                  Theme.of(context).textTheme.titleLarge ?? const TextStyle(),
-                ),
-              ),
-            ),
-          ),
+          Expanded(child: _Titre(titre: titre)),
           if (fermer != null)
             Pressable(
               onPress: fermer,
@@ -195,6 +223,66 @@ class _EnTete extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _Titre extends StatelessWidget {
+  const _Titre({required this.titre});
+
+  final String titre;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: Text(
+      titre,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: AppPalette.of(context).inkStrong
+          .applyTo(Theme.of(context).textTheme.titleLarge ?? const TextStyle()),
+    ),
+  );
+}
+
+/// Le menu « … » de la colonne desktop (image CLV-07) : une seule entree,
+/// « Fermer le panneau ».
+class _MenuPanneau extends StatelessWidget {
+  const _MenuPanneau({required this.titre, required this.onFermer});
+
+  final String titre;
+  final VoidCallback onFermer;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final Color? encre = palette.inkStrong
+        .asIconTheme(size: AppSpacing.xs)
+        .color;
+    Widget point() => SizedBox.square(
+      dimension: AppSpacing.xs,
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: encre, shape: BoxShape.circle),
+      ),
+    );
+    return PopupMenuButton<int>(
+      key: const ValueKey<String>('menu-panneau-seance'),
+      tooltip: t.salle.seance.optionsPanneau(titre: titre),
+      position: PopupMenuPosition.under,
+      onSelected: (int _) => onFermer(),
+      itemBuilder: (BuildContext _) => <PopupMenuEntry<int>>[
+        PopupMenuItem<int>(value: 0, child: Text(t.salle.seance.fermerPanneau)),
+      ],
+      child: SizedBox.square(
+        dimension: AppSpacing.titreEcran,
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: AppSpacing.xs,
+            children: <Widget>[point(), point(), point()],
+          ),
+        ),
       ),
     );
   }

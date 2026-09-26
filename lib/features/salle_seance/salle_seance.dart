@@ -368,6 +368,9 @@ class _SalleEnseignant extends StatelessWidget {
         titre: t.salle.seance.eleves,
         onFermer: actions.onEleves,
         forme: forme,
+        // Image CLV-07 desktop : menu « … » et colonne ajustee a la liste.
+        enMenu: true,
+        ajusteAuContenu: true,
         enfant: PanneauEleves(
           eleves: vue.eleves,
           actions: actions,
@@ -451,7 +454,7 @@ class _SalleEnseignant extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  SizedBox(width: largeurColonneSeance, child: panneau),
+                  SizedBox(width: largeurColonneSupportsSeance, child: panneau),
                   Ecart.hMd,
                   Expanded(child: support),
                   Ecart.hMd,

@@ -91,6 +91,9 @@ class _PanneauElevesState extends State<PanneauEleves> {
   Widget build(BuildContext context) {
     return ListView.separated(
       key: const ValueKey<String>('panneau-eleves'),
+      // Colonne desktop : la liste se mesure, la colonne s'arrete apres elle
+      // (image CLV-07) ; au-dela de la hauteur disponible, elle defile.
+      shrinkWrap: widget.large,
       // Telephone : la feuille descend jusqu'au bord de l'ecran, la liste
       // defile jusque sous la barre du systeme.
       padding: EdgeInsets.only(
@@ -399,6 +402,9 @@ class _GrilleFiche extends StatelessWidget {
   }
 }
 
+/// Au-dela, une valeur se replie sur deux lignes plutot que de rapetisser.
+const int _valeurCourte = 28;
+
 class _Champ extends StatelessWidget {
   const _Champ({
     required this.intitule,
@@ -436,6 +442,18 @@ class _Champ extends StatelessWidget {
               ],
             ),
             style: palette.inkStrong.applyTo(corps),
+          )
+        : large && valeur.length <= _valeurCourte
+        // Colonne desktop : une valeur courte tient sur sa ligne (image
+        // CLV-07 : « 3 séances cette semaine »), quitte a se reduire un peu.
+        ? FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              valeur,
+              maxLines: 1,
+              style: palette.inkStrong.applyTo(corps),
+            ),
           )
         : Text(valeur, style: palette.inkStrong.applyTo(corps));
     // Un fait = une annonce : intitule et valeur lus ensemble.

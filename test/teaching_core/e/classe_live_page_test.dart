@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
@@ -10,6 +11,7 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
 import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
@@ -299,6 +301,93 @@ void main() {
       expect(find.byType(BoutonRoster), findsNothing);
       expect(find.textContaining(t.salle.seance.eleves), findsNothing);
       expect(find.text('Amina'), findsNothing);
+    });
+
+    // Matrice des roles : rien de reserve a l'enseignant (Eleves, Supports,
+    // outils, Reseau, pagination active) chez l'eleve standard ni la guidee,
+    // meme quand le contexte fournit le dock, la Bibliotheque et un support
+    // pagine.
+    for (final (String nom, InterfaceMode mode) in <(String, InterfaceMode)>[
+      ('eleve standard', InterfaceMode.standard),
+      ('interface guidee', InterfaceMode.enfant),
+    ]) {
+      testWidgets('$nom : rien de reserve a l enseignant sur /tc/classe', (
+        WidgetTester tester,
+      ) async {
+        final SemanticsHandle semantique = tester.ensureSemantics();
+        final banc0 = banc(role: 'student', presence: troisEleves());
+        await monterClasse(
+          tester,
+          contexte: ContexteClasseLive(
+            sessionId: seance,
+            groupeId: 'g1',
+            libelleGroupe: 'Groupe Al-Fatiha',
+            enseignant: const EnseignantDeClasse(
+              nomAffichage: 'Youssouf',
+              titre: TitreEnseignant.sayyid,
+            ),
+            supportActifId: 'r1',
+            descriptionSupport: DonneesSeanceDemo.support,
+            support: (BuildContext _) => const Text('support presente'),
+            bibliotheque: (BuildContext _) => const Text('bibliotheque'),
+            dock: (BuildContext _) => const Text('dock'),
+            onNoter: () {},
+            onSignaler: () {},
+          ),
+          surcharges: banc0.surcharges,
+          ecran: LargeurEcran.desktop,
+          mode: mode,
+        );
+
+        expect(find.byType(SalleSeance), findsOneWidget);
+        for (final String reserve in <String>[
+          t.salle.seance.eleves,
+          t.salle.seance.supports,
+          t.salle.seance.reseau,
+          t.salle.seance.outils.titre,
+          t.salle.seance.outils.pointeur,
+          t.salle.seance.outils.marquer,
+          t.salle.seance.outils.masquer,
+          t.salle.seance.outils.annoter,
+        ]) {
+          expect(find.text(reserve), findsNothing, reason: reserve);
+          expect(find.bySemanticsLabel(reserve), findsNothing, reason: reserve);
+        }
+        expect(
+          find.bySemanticsLabel(t.salle.seance.pagePrecedente),
+          findsNothing,
+        );
+        expect(
+          find.bySemanticsLabel(t.salle.seance.pageSuivante),
+          findsNothing,
+        );
+        expect(find.text('dock'), findsNothing);
+        expect(find.text('bibliotheque'), findsNothing);
+        semantique.dispose();
+      });
+    }
+
+    testWidgets('enseignant, route ouverte directement : chevron et coin', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      final banc0 = banc(role: 'teacher', presence: troisEleves());
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.desktop,
+      );
+
+      // Images CLV-06 et CLV-07 : chevron retour, cloche, reglages et menu
+      // du compte, meme sans page a depiler (route ouverte par `go`).
+      expect(find.bySemanticsLabel(t.salle.seance.retour), findsOneWidget);
+      expect(find.bySemanticsLabel(t.salle.seance.reglages), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(RegExp(t.salle.seance.notifications)),
+        findsWidgets,
+      );
+      semantique.dispose();
     });
 
     testWidgets('quinze eleves tiennent dans la colonne', (

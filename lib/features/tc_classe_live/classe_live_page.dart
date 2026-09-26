@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
@@ -296,6 +297,37 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     GoRouter.maybeOf(context)?.go(route);
   }
 
+  /// Ouvre [route] sans quitter la salle : le controleur de session
+  /// persistante garde la room, la barre « Cours en cours » y ramene (D-24).
+  void _allerSansQuitter(String route) => GoRouter.maybeOf(context)?.go(route);
+
+  /// Le Groupe de la seance, selon le role : la fiche du groupe pour
+  /// l'enseignant, l'Espace Groupe pour l'eleve, l'accueil pour la guidee.
+  String _routeDuGroupe(RoleSeance role) => switch (role) {
+    RoleSeance.enseignant => Routes.groupePour(widget.contexte.groupeId),
+    RoleSeance.eleve => Routes.tcEspaceGroupe(widget.contexte.groupeId),
+    RoleSeance.guidee => Routes.eleve,
+  };
+
+  /// La cloche : aucune source de notifications avant BR-1 (K-28), la
+  /// feuille le dit plutot que d'inventer une liste.
+  Future<void> _voirNotifications() => AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.notifications.titre,
+    constructeur: (BuildContext _) => Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          t.notifications.indisponibleTitre,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Ecart.vXs,
+        Text(t.notifications.indisponiblePhrase),
+      ],
+    ),
+  );
+
   /// Le panneau ouvert a cote du support (enseignant).
   PanneauOuvert _panneau = PanneauOuvert.aucun;
 
@@ -377,9 +409,18 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       actions: ActionsSeance(
         // Revenir au Groupe ne quitte rien : la barre « Cours en cours »
         // ramene ici (session persistante, D-24).
+        // Ouverte par `go` (bouton « Rejoindre »), la route n'a rien a
+        // depiler : le chevron ramene alors au Groupe, sans quitter non plus.
         onRetour: Navigator.of(context).canPop()
             ? () => Navigator.of(context).pop()
-            : null,
+            : () => _allerSansQuitter(_routeDuGroupe(vue.role)),
+        // Coin de l'en-tete (images CLV-06 et CLV-07) : aucune source de
+        // notifications n'est branchee avant BR-1, la cloche le dit sur place
+        // ; reglages et compte ouvrent les pages communes `/compte`, la salle
+        // restant ouverte (barre « Cours en cours », D-24).
+        onNotifications: () => unawaited(_voirNotifications()),
+        onReglages: () => _allerSansQuitter(Routes.compteReglages),
+        onCompte: () => _allerSansQuitter(Routes.compte),
         onQuitter: () => unawaited(_sortir()),
         // Le rail enseignant (desktop) : la salle confirme la sortie, puis on
         // quitte vraiment avant d'aller ailleurs, comme le dit la confirmation.

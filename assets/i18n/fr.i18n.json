@@ -213,6 +213,12 @@
       "signalerBesoin": "Signaler un\u00a0besoin",
       "deplierFiche": "Afficher la fiche de {prenom}",
       "replierFiche": "Masquer la fiche de {prenom}",
+      "fiche": {
+        "aucuneSeanceSemaine": "Aucune séance cette semaine",
+        "uneSeanceSemaine": "1 séance cette semaine",
+        "seancesSemaine": "{nombre} séances cette semaine"
+      },
+      "optionsPanneau": "Options du panneau {titre}",
       "demo": {
         "titre": "Salle de démonstration",
         "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",

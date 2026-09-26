@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/session_live_vm.dart';
@@ -16,6 +17,8 @@ import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
+import 'package:rewayah_academy/core/tc_outils/intention_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_outils/learning_assignment.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
@@ -88,10 +91,23 @@ List<TeacherStudentProjection> _fiches() => <TeacherStudentProjection>[
     level: 'Niveau 1',
     activeGoals: const <String>['Chapitre 1 (les bonnes manières)'],
     lastLesson: ResumeSeance(
-      dateUtc: DateTime.utc(2026, 9, 24),
+      dateUtc: DateTime.utc(2026, 9, 24, 14),
       pointARevoir: 'Pages 24 à 26',
     ),
     recentAttendance: const AssiduiteRecente(presences: 3, total: 3),
+    currentAssignments: <LearningAssignment>[
+      LearningAssignment(
+        id: 'a1',
+        groupId: 'g1',
+        studentId: 'RA-Mariam',
+        resourceId: 'r1',
+        purpose: IntentionPedagogique.aRevoir,
+        instructions: 'Écoute de la récitation',
+        startsAtUtc: DateTime.utc(2026, 9, 24),
+        createdBy: 't1',
+        status: StatutAssignation.enCours,
+      ),
+    ],
     liveStatus: EtatPresenceProjete.present,
     interfaceGuidee: false,
   ),
@@ -101,10 +117,21 @@ void main() {
   group('Capture : /tc/classe sur la salle unique (T8)', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
 
-    for (final (String nom, bool eleves) in <(String, bool)>[
-      ('cl_06_enseignant_visite_tc', false),
-      ('cl_07_eleves_tc', true),
-    ]) {
+    for (final (String nom, bool eleves, String role, InterfaceMode mode)
+        in <(String, bool, String, InterfaceMode)>[
+          (
+            'cl_06_enseignant_visite_tc',
+            false,
+            'teacher',
+            InterfaceMode.standard,
+          ),
+          ('cl_07_eleves_tc', true, 'teacher', InterfaceMode.standard),
+          // Matrice des roles : la meme route, vue par l'eleve standard et la
+          // guidee (rien de reserve a l'enseignant).
+          ('cl_04_eleve_tc', false, 'student', InterfaceMode.standard),
+          ('cl_05_guidee_tc', false, 'student', InterfaceMode.enfant),
+        ]) {
+      final bool enseignant = role == 'teacher';
       for (final _Taille taille in _tailles) {
         for (final ThemeMode theme in <ThemeMode>[
           ThemeMode.light,
@@ -113,7 +140,7 @@ void main() {
           final bool desktop = taille.logique.width >= 1200;
           // Images : desktop en visite et « se poursuit » ; telephone CLV-06
           // en visite, CLV-07 sans visite avec « 32 min restantes ».
-          final bool visite = desktop || !eleves;
+          final bool visite = enseignant && (desktop || !eleves);
           testWidgets('$nom ${taille.nom} ${theme.name}', (
             WidgetTester tester,
           ) async {
@@ -145,7 +172,12 @@ void main() {
                   ),
                 ),
                 themeMode: theme,
-                surcharges: surchargesCapture(moteur: moteur, visite: visite),
+                interfaceMode: mode,
+                surcharges: surchargesCapture(
+                  moteur: moteur,
+                  visite: visite,
+                  role: role,
+                ),
               ),
             );
             await stabiliser(tester);
@@ -154,10 +186,17 @@ void main() {
                 identite: 't1',
                 role: 'teacher',
                 nom: 'Amina',
-                local: true,
+                local: enseignant,
                 micro: true,
                 camera: true,
               ),
+              if (!enseignant)
+                participantDe(
+                  identite: 'p1',
+                  role: 'student',
+                  nom: 'Mariam',
+                  local: true,
+                ),
             ]);
             await stabiliser(tester);
             if (eleves) {
@@ -182,9 +221,10 @@ void main() {
 List<Override> surchargesCapture({
   required FauxMoteurClasse moteur,
   required bool visite,
+  String role = 'teacher',
 }) => surchargesClasse(
   moteur: moteur,
-  video: FauxServiceVideoClasse(acces0: accesDe('teacher')),
+  video: FauxServiceVideoClasse(acces0: accesDe(role)),
   preVol: FauxPreVolClasse(),
   presence: FauxPresenceClasse(lignes: _inscrits()),
   roster: FauxRosterEnseignant(fiches: _fiches()),
