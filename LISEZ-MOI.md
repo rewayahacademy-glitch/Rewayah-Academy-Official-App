@@ -7,6 +7,7 @@ Branche `projet/ressources` du dépôt `https://github.com/rewayahacademy-glitch
 1. Ouvre le **tableau de suivi du projet** : https://claude.ai/artifact/XMVyZJiLTcmMKTnhsbp3sU (outil `ArtifactData`, même compte claude.ai). Il dit quelle vague est en cours, quelles étapes sont libres, qui travaille sur quoi.
 2. **Inscris ta session** dans la collection `sessions` du tableau (document `<machine>-<date>-<rôle>` : `machine`, `role`, `vague`, `lots`, `debut`, `signe_de_vie`), et remets `signe_de_vie` à l'heure à chaque étape.
 3. Lis les documents de la vague où tu travailles (section 3). **Ne lis pas `docs/archive` comme instruction.**
+4. **Règles gelées du directeur (26/09/2026), obligatoires pour toute nouvelle spec, maquette ou lot visuel** : `memoire/DESIGN-GOV-2026-09-26.md`. Immuables jusqu'à nouvelle décision datée du directeur : ne pas les modifier, ne pas les réinterpréter, ne pas rouvrir une étape terminée pour les appliquer (passe unique HU-1 après tous les rôles).
 
 ## 2. Où se trouve chaque ressource (et nulle part ailleurs)
 

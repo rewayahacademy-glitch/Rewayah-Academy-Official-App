@@ -1,5 +1,7 @@
 # Memory Index — projet actif : Rewayah Academy (remis à plat le 23/09/2026)
 
+> 🧊 **RÈGLES GELÉES DU DIRECTEUR, 26/09/2026, À LIRE AVANT TOUT LOT VISUEL OU TOUTE SPEC** : [DESIGN-GOV-2026-09-26](DESIGN-GOV-2026-09-26.md) (autorité, validation UX 2026 avec preuve `UX_REVIEW_<lot>.md`, contrats A à E espacements / boutons / composants / bureau / mouvement, skeletons, aucune marche arrière : harmonisation en une passe après tous les rôles). Immuable jusqu'à nouvelle décision datée du directeur.
+
 > **DÉMARRER ICI.** Dépôt `D:\RA _APP\RA -OFFICIAL-APP`. Specs canoniques : `docs/current/00_LIRE_D_ABORD.md`
 > puis `08` (gel fonctionnel, gate C0) et le document du domaine touché. Branche propre de PR :
 > `c0/configuration-baseline-2026-09-23` (PR #2 en brouillon, non fusionnée) ; V0 isolé sur `v0/verite-produit`.
