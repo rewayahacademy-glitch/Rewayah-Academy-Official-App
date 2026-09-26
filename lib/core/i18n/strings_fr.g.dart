@@ -8220,6 +8220,69 @@ class Traductions$enseignant$creneaux$fr {
 
 	/// fr: 'Vous avez atteint votre maximum d'élèves. Demandez une augmentation pour en suivre un de plus.'
 	String get refusPlafond => 'Vous avez atteint votre maximum d\'élèves. Demandez une augmentation pour en suivre un de plus.';
+
+	/// fr: 'Mes disponibilités'
+	String get mesDisponibilites => 'Mes disponibilités';
+
+	/// fr: 'Ajouter un créneau'
+	String get ajouterCreneau => 'Ajouter un créneau';
+
+	/// fr: '{heure} h'
+	String heure({required Object heure}) => '${heure} h';
+
+	/// fr: 'Classes disponibles'
+	String get classesDisponibles => 'Classes disponibles';
+
+	/// fr: 'Disponible'
+	String get etatDisponible => 'Disponible';
+
+	/// fr: 'En attente de validation'
+	String get etatEnAttente => 'En attente de validation';
+
+	/// fr: 'Limite de charge atteinte'
+	String get etatLimite => 'Limite de charge atteinte';
+
+	/// fr: 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.'
+	String get limiteDetail => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.';
+
+	/// fr: 'Aucune Classe compatible pour le moment'
+	String get aucuneClasse => 'Aucune Classe compatible pour le moment';
+
+	/// fr: 'Modifiez vos disponibilités si votre emploi du temps a changé.'
+	String get aucuneClasseDetail => 'Modifiez vos disponibilités si votre emploi du temps a changé.';
+
+	/// fr: 'Réserver cette Classe'
+	String get reserver => 'Réserver cette Classe';
+
+	/// fr: 'Confirmer cette Classe ?'
+	String get confirmerTitre => 'Confirmer cette Classe ?';
+
+	/// fr: 'Confirmer cette Classe'
+	String get confirmer => 'Confirmer cette Classe';
+
+	/// fr: 'Revenir'
+	String get revenir => 'Revenir';
+
+	/// fr: 'Niveau'
+	String get cleNiveau => 'Niveau';
+
+	/// fr: 'Langue'
+	String get cleLangue => 'Langue';
+
+	/// fr: 'Récurrence'
+	String get cleRecurrence => 'Récurrence';
+
+	/// fr: 'Fuseau de référence'
+	String get cleFuseau => 'Fuseau de référence';
+
+	/// fr: 'Heure locale'
+	String get cleHeureLocale => 'Heure locale';
+
+	/// fr: 'Durée'
+	String get cleDuree => 'Durée';
+
+	/// fr: '{minutes} min'
+	String duree({required Object minutes}) => '${minutes} min';
 }
 
 // Path: enseignant.ficheGroupe
@@ -15067,6 +15130,27 @@ extension on Traductions {
 			'enseignant.creneaux.refusCreneauRetire' => 'Cette famille ne propose plus ce créneau. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusHorsMesHeures' => 'Ce créneau ne figure plus dans vos heures. Reposez-le dans Mes heures pour pouvoir le prendre.',
 			'enseignant.creneaux.refusPlafond' => 'Vous avez atteint votre maximum d\'élèves. Demandez une augmentation pour en suivre un de plus.',
+			'enseignant.creneaux.mesDisponibilites' => 'Mes disponibilités',
+			'enseignant.creneaux.ajouterCreneau' => 'Ajouter un créneau',
+			'enseignant.creneaux.heure' => ({required Object heure}) => '${heure} h',
+			'enseignant.creneaux.classesDisponibles' => 'Classes disponibles',
+			'enseignant.creneaux.etatDisponible' => 'Disponible',
+			'enseignant.creneaux.etatEnAttente' => 'En attente de validation',
+			'enseignant.creneaux.etatLimite' => 'Limite de charge atteinte',
+			'enseignant.creneaux.limiteDetail' => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.',
+			'enseignant.creneaux.aucuneClasse' => 'Aucune Classe compatible pour le moment',
+			'enseignant.creneaux.aucuneClasseDetail' => 'Modifiez vos disponibilités si votre emploi du temps a changé.',
+			'enseignant.creneaux.reserver' => 'Réserver cette Classe',
+			'enseignant.creneaux.confirmerTitre' => 'Confirmer cette Classe ?',
+			'enseignant.creneaux.confirmer' => 'Confirmer cette Classe',
+			'enseignant.creneaux.revenir' => 'Revenir',
+			'enseignant.creneaux.cleNiveau' => 'Niveau',
+			'enseignant.creneaux.cleLangue' => 'Langue',
+			'enseignant.creneaux.cleRecurrence' => 'Récurrence',
+			'enseignant.creneaux.cleFuseau' => 'Fuseau de référence',
+			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
+			'enseignant.creneaux.cleDuree' => 'Durée',
+			'enseignant.creneaux.duree' => ({required Object minutes}) => '${minutes} min',
 			'enseignant.ficheGroupe.titre' => 'Fiche du groupe',
 			'enseignant.ficheGroupe.retour' => 'Retour à la journée',
 			'enseignant.ficheGroupe.creneauTitre' => 'Le rendez-vous du groupe',
@@ -15532,6 +15616,8 @@ extension on Traductions {
 			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.aucune' => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.',
 			'tc.observation.resultat.prochaineSeance' => 'Vous pourrez observer la prochaine séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
 			'tc.observation.resultat.inconnues' => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.',
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
@@ -15553,8 +15639,6 @@ extension on Traductions {
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',

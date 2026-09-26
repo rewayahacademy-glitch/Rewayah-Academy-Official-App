@@ -1,92 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/matching/service_matching.dart';
 import '../../core/planning/service_planning.dart';
-import '../../core/regles/service_regles.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bento_tile.dart';
-import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
+import '../demo/enseignant_demo.dart';
 import '../disponibilites/grille_semaine.dart';
 
-/// `ENS-06` : les heures de l'enseignant, et les eleves qui les attendent.
+/// Les Classes disponibles, telles que le serveur les filtrerait (doc 04 §15.4).
 ///
-/// Ce qui se prend ici est un **eleve**, pas un creneau : la relation dure et ne
-/// se rompt que par une demande tranchee par l'administration (ADR-017). Le
-/// creneau n'est que l'heure du rendez-vous hebdomadaire qui en decoule.
+/// **`null` tant que rien n'est branche (BR-1)** : la section n'est alors pas
+/// rendue, plutot que d'afficher un vide qui mentirait. La demonstration
+/// (`/demo/enseignant`) la surcharge avec [DonneesEnseignantDemo.offres].
+final Provider<List<OffreClasseDemo>?> offresClassesProvider =
+    Provider<List<OffreClasseDemo>?>((Ref ref) => null);
+
+/// `ENS-06` Disponibilites : les heures hebdomadaires de l'enseignant, puis
+/// les Classes disponibles (EN-5).
 ///
-/// **Onglets sur mobile seulement.** A partir de la tablette, l'ecran a la
-/// place de montrer la grille et le feed a la fois : un onglet sur un ecran de
-/// 1440 pixels cacherait la moitie de l'information sans raison
-/// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md` section 2). Reprise au lot R4.
+/// **L'ancien modele est retire de l'ecran** (doc 04 §15.1, E1) : plus
+/// d'onglet « Eleves en attente », plus de « Prendre {jour} a {heure} ». Le
+/// serveur n'est pas touche (BR-1).
 ///
-/// **Deux vues LOCALES, jamais deux destinations.** « Disponibilites » est une
-/// destination du TUTEUR (`TUT-04`) et « Creneaux » une destination de
-/// l'ENSEIGNANT : elles vivent dans deux coquilles distinctes et un enseignant
-/// n'en voit jamais qu'une. Il n'y a rien a fusionner, et rien a separer.
+/// **Hebdomadaire, sans date** (E15) : aucun « 16 sept. », aucune navigation
+/// de semaine.
+///
+/// Mobile : une colonne, « Mes disponibilites » puis « Classes disponibles ».
+/// Bureau : deux colonnes, le planning hebdomadaire et les Classes (doc 04
+/// §15.3).
 class CreneauxPage extends StatelessWidget {
-  /// Cree l'ecran des creneaux.
+  /// Cree l'ecran des disponibilites.
   const CreneauxPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final Gabarit gabarit = AppGabarit.de(context);
-
-    if (gabarit == Gabarit.mobile) {
-      return const _CreneauxOnglets();
-    }
-
-    // **Les deux panneaux portent leur nom des que les onglets disparaissent.**
-    // Le lot R4 a rendu l'ecran responsive et a laisse les deux libelles
-    // derriere lui, dans le seul `TabBar` mobile : a partir de la tablette, la
-    // grille gardait sa question en tete mais le feed n'avait plus aucun titre.
-    // Une liste d'eleves sans titre a cote d'une grille d'heures ne se lit pas.
     final Widget heures = _Panneau(
-      titre: t.creneaux.ongletHeures,
+      titre: t.enseignant.creneaux.mesDisponibilites,
       child: const _OngletHeures(),
     );
-    final Widget eleves = _Panneau(
-      titre: t.creneaux.ongletEleves,
-      child: const _OngletEleves(),
-    );
+    const Widget classes = _ClassesDisponibles();
 
     return PageShell(
-      titre: t.creneaux.titre,
+      // Le titre concorde avec la destination de la coquille.
+      titre: t.nav.enseignant.creneaux,
       child: gabarit == Gabarit.desktop
           ? Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(child: heures),
                 Ecart.hXxl,
-                Expanded(child: eleves),
+                const Expanded(child: classes),
               ],
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[heures, Ecart.vXxl, eleves],
+              children: <Widget>[heures, Ecart.vXxl, classes],
             ),
     );
   }
 }
 
-/// Un panneau nomme, hors gabarit mobile.
-///
-/// Il porte le libelle que le `TabBar` porte sur telephone : un seul et meme
-/// mot pour la meme zone, quelle que soit la largeur.
+/// Un panneau nomme.
 class _Panneau extends StatelessWidget {
   const _Panneau({required this.titre, required this.child});
 
@@ -96,60 +86,21 @@ class _Panneau extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: <Widget>[SectionHeader(titre: titre), Ecart.vMd, child],
+    children: <Widget>[
+      SectionHeader(titre: titre),
+      Ecart.vMd,
+      child,
+    ],
   );
 }
 
-/// La presentation mobile : deux onglets, un seul panneau visible a la fois.
-///
-/// **Pas de `TabBarView`** : il s'appuie sur un `PageView`, qui exige une
-/// hauteur bornee, alors que `PageShell` ne borne jamais la hauteur de son
-/// `child` -- c'est la page entiere qui defile, meme mecanique que le reste du
-/// produit. Le panneau bascule donc directement sur l'index du controleur, au
-/// prix du balayage au doigt entre onglets.
-class _CreneauxOnglets extends StatefulWidget {
-  const _CreneauxOnglets();
-
-  @override
-  State<_CreneauxOnglets> createState() => _CreneauxOngletsEtat();
+/// Le jour ecrit en toutes lettres, avec sa majuscule (« Lundi », E15).
+String _jour(int jour) {
+  final String long = t.disponibilites.joursLongs[jour - 1];
+  return long[0].toUpperCase() + long.substring(1);
 }
 
-class _CreneauxOngletsEtat extends State<_CreneauxOnglets>
-    with SingleTickerProviderStateMixin {
-  late final TabController _controleur;
-
-  @override
-  void initState() {
-    super.initState();
-    _controleur = TabController(length: 2, vsync: this)
-      ..addListener(() => setState(() {}));
-  }
-
-  @override
-  void dispose() {
-    _controleur.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PageShell(
-      titre: t.creneaux.titre,
-      entete: TabBar(
-        controller: _controleur,
-        tabs: <Widget>[
-          Tab(text: t.creneaux.ongletHeures),
-          Tab(text: t.creneaux.ongletEleves),
-        ],
-      ),
-      child: _controleur.index == 0
-          ? const _OngletHeures()
-          : const _OngletEleves(),
-    );
-  }
-}
-
-/// Onglet 1 : la meme grille que `TUT-04`, au sens litteral.
+/// « Mes disponibilites » : la liste par jour, puis la grille de `TUT-04`.
 class _OngletHeures extends ConsumerStatefulWidget {
   const _OngletHeures();
 
@@ -161,6 +112,7 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
   bool _enCours = false;
   bool _erreur = false;
   String? _confirmation;
+  bool _grilleOuverte = false;
 
   /// Nomme une case : c'est ce qui manquait a l'etat « enregistre ».
   ///
@@ -189,10 +141,9 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
           if (a.active && a.enseignantId == monId) a.creneau,
       }.toList();
 
-  bool _engagee(List<Creneau> engagements, Creneau creneau) =>
-      engagements.any(
-        (Creneau e) => e.jour == creneau.jour && e.heure == creneau.heure,
-      );
+  bool _engagee(List<Creneau> engagements, Creneau creneau) => engagements.any(
+    (Creneau e) => e.jour == creneau.jour && e.heure == creneau.heure,
+  );
 
   Future<void> _basculer(
     String monId,
@@ -216,11 +167,7 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
       } else {
         await service.poser(profilId: monId, creneau: creneau);
       }
-      ref
-        ..invalidate(disponibilitesProvider(monId))
-        // Les heures decident du feed : le laisser tel quel montrerait des
-        // eleves qu'on ne peut plus prendre, ou en cacherait qu'on pourrait.
-        ..invalidate(elevesEnAttenteProvider);
+      ref.invalidate(disponibilitesProvider(monId));
       if (mounted) {
         setState(() {
           final String heure = _nommer(creneau);
@@ -299,34 +246,62 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
       monId,
     );
 
+    // Mobile : la liste par jour avec les plages, puis « Ajouter un creneau »
+    // qui ouvre la grille (00_MAQUETTES, ENS-06 P). Sans aucune plage, la
+    // grille est ouverte d'emblee. Bureau : le planning est toujours visible.
+    final bool liste =
+        AppGabarit.de(context) == Gabarit.mobile && poses.isNotEmpty;
+    final bool grille = !liste || _grilleOuverte;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.disponibilites.titreEnseignant, style: textes.titleMedium),
-        Ecart.vXs,
-        Text(t.disponibilites.consigneEnseignant, style: textes.bodySmall),
-        Ecart.vMd,
-        GrilleSemaine(
-          creneaux: poses,
-          fuseau: fuseau.requireValue,
-          // Hors ligne, la grille reste CONSULTABLE mais inerte : une case
-          // pressee sans reseau echouerait apres le geste, et un bouton qui ne
-          // peut pas aboutir n'est pas rendu (`lib/CLAUDE.md`).
-          enCours: _enCours || horsLigne,
-          onBasculer: (Creneau creneau, bool posee) =>
-              _basculer(monId, engagements, creneau, posee),
-        ),
+        // Jours sans date (E15).
+        if (liste) ...<Widget>[
+          for (final int jour in (<int>{
+            for (final Creneau c in poses) c.jour,
+          }.toList()..sort()))
+            LigneCleValeur(
+              cle: _jour(jour),
+              valeur:
+                  (poses
+                          .where((Creneau c) => c.jour == jour)
+                          .map((Creneau c) => c.heure)
+                          .toList()
+                        ..sort())
+                      .map((int h) => t.enseignant.creneaux.heure(heure: '$h'))
+                      .join(', '),
+            ),
+          Ecart.vLg,
+        ],
+        if (!grille)
+          ActionPrincipale(
+            libelle: t.enseignant.creneaux.ajouterCreneau,
+            niveau: NiveauAction.secondaire,
+            onPress: () => setState(() => _grilleOuverte = true),
+          )
+        else ...<Widget>[
+          Text(t.disponibilites.titreEnseignant, style: textes.titleMedium),
+          Ecart.vXs,
+          Text(t.disponibilites.consigneEnseignant, style: textes.bodySmall),
+          Ecart.vMd,
+          GrilleSemaine(
+            creneaux: poses,
+            fuseau: fuseau.requireValue,
+            // Hors ligne, la grille reste CONSULTABLE mais inerte : une case
+            // pressee sans reseau echouerait apres le geste, et un bouton qui ne
+            // peut pas aboutir n'est pas rendu (`lib/CLAUDE.md`).
+            enCours: _enCours || horsLigne,
+            onBasculer: (Creneau creneau, bool posee) =>
+                _basculer(monId, engagements, creneau, posee),
+          ),
+        ],
         Ecart.vSm,
-        Text(
-          switch (poses.length) {
-            0 => t.enseignant.creneaux.aucuneHeure,
-            1 => t.disponibilites.poseeUne,
-            _ => t.disponibilites.posees(nombre: '${poses.length}'),
-          },
-          style: textes.bodySmall,
-        ),
-        Ecart.vXs,
-        Text(t.disponibilites.effetEnseignant, style: textes.bodySmall),
+        Text(switch (poses.length) {
+          0 => t.enseignant.creneaux.aucuneHeure,
+          1 => t.disponibilites.poseeUne,
+          _ => t.disponibilites.posees(nombre: '${poses.length}'),
+        }, style: textes.bodySmall),
         if (horsLigne) ...<Widget>[
           Ecart.vSm,
           Text(
@@ -373,481 +348,254 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
   }
 }
 
-/// Onglet 2 : les eleves en attente, anciennete d'abord.
-class _OngletEleves extends ConsumerStatefulWidget {
-  const _OngletEleves();
-
-  @override
-  ConsumerState<_OngletEleves> createState() => _OngletElevesEtat();
-}
-
-class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
-  String? _priseEnCours;
-  String? _erreur;
-
-  /// Au-dela de ce delai, la demande porte un lisere : sans lui, une famille
-  /// peut rester en bas de liste sans que personne ne le remarque.
-  static const int joursAvantSignal = 3;
-
-  Future<void> _prendre(EleveEnAttente eleve) async {
-    setState(() {
-      _priseEnCours = eleve.eleveId;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(serviceMatchingProvider)
-          .prendre(eleveId: eleve.eleveId, creneau: eleve.creneau);
-    } on Object catch (erreur) {
-      // La base tranche, pas l'ecran : si un autre enseignant vient de prendre
-      // cet eleve, le refus vient de la, et il est NOMME plutot que recopie.
-      if (mounted) {
-        setState(() => _erreur = _messageRefus(erreur));
-      }
-    } finally {
-      if (mounted) {
-        // **Le feed se relit dans les DEUX cas, succes comme refus.** Sur refus
-        // de concurrence, la ligne de l'eleve deja pris restait a l'ecran avec
-        // son bouton actif : un second tap redonnait la meme erreur. Rien ne se
-        // bricole en memoire -- la base dit ce qui reste a prendre, l'ecran le
-        // relit.
-        ref
-          ..invalidate(elevesEnAttenteProvider)
-          ..invalidate(affectationsProvider)
-          ..invalidate(seancesProvider);
-        setState(() => _priseEnCours = null);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final String? monId = ref.watch(sessionProvider).profileId;
-
-    if (monId == null) {
-      return const Skeleton.carteEleve(lignes: 3);
-    }
-
-    final AsyncValue<List<EleveEnAttente>> feed = ref.watch(
-      elevesEnAttenteProvider,
-    );
-    final AsyncValue<List<Affectation>> affectations = ref.watch(
-      affectationsProvider,
-    );
-    // **Par `regle_effective()`, pas par la vue des regles.** La vue ne joint a
-    // un profil que les cles qui ont un sens pour son role : y chercher une cle
-    // absente rend zero sans qu'aucune erreur ne se produise.
-    final AsyncValue<int> plafondLu = ref.watch(
-      valeurRegleProvider((profilId: monId, cle: CleRegle.plafondEleves)),
-    );
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-
-    final bool lisible =
-        feed.hasValue && affectations.hasValue && plafondLu.hasValue;
-    final bool echec =
-        feed.hasError || affectations.hasError || plafondLu.hasError;
-
-    // Le refus de la base se rend AVANT et AU-DESSUS de tout le reste, gate de
-    // chargement comprise : une prise refusee relit le feed, et si le message
-    // vivait dans le seul chemin « contenu », il disparaitrait pendant cette
-    // relecture pour revenir ensuite.
-    final Widget? refus = _erreur == null
-        ? null
-        : Text(
-            _erreur!,
-            style: palette.inkAlert.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          );
-
-    if (!lisible) {
-      // Sans cet etat, un feed illisible etait indiscernable d'un feed vide :
-      // `hasValue` faux, donc meme pas l'`EmptyState`, donc un ecran muet.
-      final Widget corps = echec
-          ? EmptyState(
-              message: t.enseignant.creneaux.feedErreur,
-              invitation: t.enseignant.creneaux.feedErreurDetail,
-              icone: AppIcons.avertissement,
-              libelleAction: t.commun.reessayer,
-              onAction: () {
-                ref.invalidate(elevesEnAttenteProvider);
-                ref.invalidate(affectationsProvider);
-                ref.invalidate(
-                  valeurRegleProvider((
-                    profilId: monId,
-                    cle: CleRegle.plafondEleves,
-                  )),
-                );
-              },
-            )
-          : const Skeleton.carteEleve(lignes: 3);
-
-      if (refus == null) {
-        return corps;
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[refus, Ecart.vMd, corps],
-      );
-    }
-
-    final int suivis = affectations.requireValue
-        .where((Affectation a) => a.active && a.enseignantId == monId)
-        .length;
-    final int plafond = plafondLu.requireValue;
-    final bool auPlafond = plafond > 0 && suivis >= plafond;
-
-    // L'anciennete ordonne la liste ici, et non dans la requete : sans ce tri,
-    // la famille qui attend depuis le plus longtemps se retrouvait en bas, ce
-    // qui vide le matching de son interet.
-    final List<EleveEnAttente> eleves = parAnciennete(feed.requireValue);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (plafond > 0)
-          Text(
-            t.creneaux.mesEleves(nombre: '$suivis', plafond: '$plafond'),
-            style: textes.bodySmall,
-          ),
-        Ecart.vMd,
-        if (horsLigne) ...<Widget>[
-          // La prise est impossible hors ligne, et c'est DIT : le bandeau de
-          // `PageShell` annonce la coupure, pas ce qu'elle empeche ici.
-          Text(
-            t.enseignant.creneaux.horsLignePrise,
-            style: palette.inkWarning.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-          Ecart.vMd,
-        ],
-        if (auPlafond) ...<Widget>[
-          // Le bouton « Prendre » n'est pas rendu au plafond : un bouton qui
-          // echoue apres le geste coute plus cher qu'un bouton absent.
-          Text(
-            t.creneaux.plafondAtteint(nombre: '$suivis'),
-            style: textes.bodyMedium,
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: t.creneaux.plafondDemander,
-            onPress: () => _ouvrirDemande(context, monId, plafond),
-            niveau: NiveauAction.secondaire,
-          ),
-          Ecart.vLg,
-        ],
-        if (refus != null) ...<Widget>[refus, Ecart.vMd],
-        if (eleves.isEmpty)
-          // Sans bouton : l'enseignant ne peut rien faire d'une file vide, sauf
-          // proposer d'autres heures -- ce que l'invitation dit.
-          EmptyState(
-            message: t.creneaux.aucunEleve,
-            invitation: t.creneaux.aucunEleveDetail,
-          )
-        else
-          for (final EleveEnAttente eleve in eleves)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: _CarteEleve(
-                eleve: eleve,
-                enCours: _priseEnCours == eleve.eleveId,
-                // Au plafond comme hors ligne, la carte reste visible :
-                // l'enseignant doit pouvoir constater qui attend avant de
-                // demander plus, ou avant de retrouver du reseau.
-                avecBouton: !auPlafond && !horsLigne,
-                onPrendre: () => _prendre(eleve),
-              ),
-            ),
-      ],
-    );
-  }
-
-  Future<void> _ouvrirDemande(
-    BuildContext context,
-    String monId,
-    int plafond,
-  ) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext contexteFeuille) =>
-          _FeuilleDemande(monId: monId, plafondActuel: plafond),
-    );
-  }
-}
-
-/// Ce que la base a refuse, reconnu depuis sa phrase.
-///
-/// **Un pis-aller assume, pas un contrat.** `prendre_eleve()` et
-/// `guard_assignment_cap()` rendent des PHRASES SQL non traduites ; les montrer
-/// telles quelles ferait dependre un libelle d'interface d'une chaine de
-/// migration. Le vrai remede est un code d'erreur ferme cote base : il est
-/// demande dans `docs/archive/2026-09-pre-remise-a-plat/parallel-reports/CONTRACT_REQUEST_D.md`. En attendant, on
-/// reconnait la phrase et on affiche la notre, avec un repli qui recopie le
-/// message brut plutot que d'avaler un refus qu'on n'avait pas prevu.
-enum _Refus {
-  /// Un autre enseignant a gagne la course. C'est le cas de concurrence.
-  dejaPris,
-
-  /// L'eleve avait deja un enseignant avant que l'ecran ne se rafraichisse.
-  dejaSuivi,
-
-  /// Le foyer ne propose plus ce creneau.
-  creneauRetire,
-
-  /// Le creneau ne croise plus les heures de l'enseignant.
-  horsMesHeures,
-
-  /// Le trigger de plafond a refuse l'insertion.
-  plafond,
-
-  /// Tout le reste : on recopie, on n'invente pas.
-  inconnu,
-}
-
-_Refus _refusDe(Object erreur) {
-  final String brut = erreur.toString().toLowerCase();
-  // L'ordre compte : « autre enseignant » se teste avant « un enseignant »,
-  // sinon le conflit de concurrence serait lu comme un eleve deja suivi.
-  if (brut.contains('autre enseignant')) {
-    return _Refus.dejaPris;
-  }
-  if (brut.contains('deja un enseignant')) {
-    return _Refus.dejaSuivi;
-  }
-  if (brut.contains('propose par ce foyer')) {
-    return _Refus.creneauRetire;
-  }
-  if (brut.contains('vos disponibilites')) {
-    return _Refus.horsMesHeures;
-  }
-  if (brut.contains('plafond d')) {
-    return _Refus.plafond;
-  }
-  return _Refus.inconnu;
-}
-
-String _messageRefus(Object erreur) => switch (_refusDe(erreur)) {
-  _Refus.dejaPris => t.enseignant.creneaux.refusDejaPris,
-  _Refus.dejaSuivi => t.enseignant.creneaux.refusDejaSuivi,
-  _Refus.creneauRetire => t.enseignant.creneaux.refusCreneauRetire,
-  _Refus.horsMesHeures => t.enseignant.creneaux.refusHorsMesHeures,
-  _Refus.plafond => t.enseignant.creneaux.refusPlafond,
-  _Refus.inconnu => t.creneaux.erreur(message: _brut(erreur)),
+/// Le mot et le ton de chaque etat, ecrits et pas seulement colores
+/// (UX_REVIEW_04, ligne 7 b).
+(String, TonEtat) _etat(EtatOffreDemo etat) => switch (etat) {
+  EtatOffreDemo.disponible => (
+    t.enseignant.creneaux.etatDisponible,
+    TonEtat.succes,
+  ),
+  EtatOffreDemo.enAttenteValidation => (
+    t.enseignant.creneaux.etatEnAttente,
+    TonEtat.neutre,
+  ),
+  EtatOffreDemo.limiteAtteinte => (
+    t.enseignant.creneaux.etatLimite,
+    TonEtat.avertissement,
+  ),
 };
 
-String _brut(Object erreur) {
-  final String brut = erreur.toString();
-  // Les exceptions Postgrest portent le message metier en clair : c'est lui
-  // qu'il faut montrer, pas le type de l'exception.
-  final int deuxPoints = brut.indexOf(': ');
-  return deuxPoints >= 0 && deuxPoints + 2 < brut.length
-      ? brut.substring(deuxPoints + 2)
-      : brut;
-}
+/// « Lundi, Mercredi, Vendredi » : tous les jours du rendez-vous.
+String _recurrence(OffreClasseDemo offre) => offre.jours.map(_jour).join(', ');
 
-/// Une ligne du feed : **un creneau compatible**, pas un eleve.
-///
-/// Le meme eleve apparait autant de fois qu'il propose d'heures que
-/// l'enseignant peut tenir. Compter les cartes annoncerait quatre familles la
-/// ou une seule attend.
-///
-/// **Aucune coordonnee de famille n'est rendue ici** (ADR-008) : prenom,
-/// identifiant immuable, niveau declare, jour et heure, anciennete. Ni nom de
-/// famille, ni courriel, ni telephone, ni identifiant de foyer -- et le modele
-/// `EleveEnAttente` n'en porte aucun, il n'y a donc rien a oublier de masquer.
-class _CarteEleve extends StatelessWidget {
-  const _CarteEleve({
-    required this.eleve,
-    required this.enCours,
-    required this.avecBouton,
-    required this.onPrendre,
-  });
-
-  final EleveEnAttente eleve;
-  final bool enCours;
-  final bool avecBouton;
-  final VoidCallback onPrendre;
+/// Section « Classes disponibles » (doc 04 §15.6, §15.7).
+class _ClassesDisponibles extends ConsumerStatefulWidget {
+  const _ClassesDisponibles();
 
   @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final int jours = eleve.joursDAttente(DateTime.now());
-    final bool signale = jours >= _OngletElevesEtat.joursAvantSignal;
+  ConsumerState<_ClassesDisponibles> createState() => _ClassesDisponiblesEtat();
+}
 
-    return BentoTile(
-      // Le lisere de l'attente : il ne remplace pas le texte, il le double.
-      surface: signale ? palette.surfaceWarning : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(eleve.prenom, style: textes.titleMedium),
-          Text(eleve.identifiantImmuable, style: textes.bodySmall),
-          if (eleve.niveau != null)
-            Text(
-              t.creneaux.niveau(niveau: eleve.niveau!),
-              style: textes.bodySmall,
-            ),
-          Ecart.vXs,
-          Text(switch (jours) {
-            0 => t.creneaux.attendAujourdhui,
-            1 => t.creneaux.attendUnJour,
-            _ => t.creneaux.attendDepuis(jours: '$jours'),
-          }, style: textes.bodySmall),
-          Ecart.vSm,
-          if (avecBouton)
-            ActionPrincipale(
-              libelle: t.creneaux.prendre(
-                jour: t.disponibilites.joursLongs[eleve.creneau.jour - 1],
-                heure: '${eleve.creneau.heure}',
-              ),
-              onPress: onPrendre,
-              enCours: enCours,
-            ),
-        ],
+class _ClassesDisponiblesEtat extends ConsumerState<_ClassesDisponibles> {
+  /// Les Classes demandees pendant cette visite : en demonstration, leur etat
+  /// passe a « En attente de validation », rien n'est envoye.
+  final Set<String> _demandees = <String>{};
+
+  Future<void> _ouvrir(OffreClasseDemo offre) async {
+    final bool? demandee = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (BuildContext _) => DetailOffrePage(offre: offre),
       ),
     );
-  }
-}
-
-/// La demande d'augmentation de plafond, faite par l'enseignant pour lui-meme.
-class _FeuilleDemande extends ConsumerStatefulWidget {
-  const _FeuilleDemande({required this.monId, required this.plafondActuel});
-
-  final String monId;
-  final int plafondActuel;
-
-  @override
-  ConsumerState<_FeuilleDemande> createState() => _FeuilleDemandeEtat();
-}
-
-class _FeuilleDemandeEtat extends ConsumerState<_FeuilleDemande> {
-  final TextEditingController _motif = TextEditingController();
-  int? _valeur;
-  bool _enCours = false;
-  String? _erreur;
-  bool _envoyee = false;
-
-  @override
-  void dispose() {
-    _motif.dispose();
-    super.dispose();
-  }
-
-  Future<void> _envoyer() async {
-    final int? valeur = _valeur;
-    if (valeur == null || _motif.text.trim().isEmpty) {
-      setState(() => _erreur = t.creneaux.demandeMotifRequis);
-      return;
-    }
-    setState(() {
-      _enCours = true;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(serviceMatchingProvider)
-          .demander(
-            sorte: SorteDemande.plafond,
-            sujetId: widget.monId,
-            motif: _motif.text.trim(),
-            valeur: valeur,
-          );
-      if (mounted) {
-        setState(() => _envoyee = true);
-      }
-    } on Object catch (erreur) {
-      if (mounted) {
-        setState(() => _erreur = _brut(erreur));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _enCours = false);
-      }
+    if (demandee == true && mounted) {
+      setState(() => _demandees.add(offre.id));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-
-    return Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: metriques.marge,
-        end: metriques.marge,
-        top: metriques.marge,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + metriques.marge,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(t.creneaux.demandeTitre, style: textes.titleMedium),
-          Ecart.vMd,
-          if (_envoyee)
-            Text(t.creneaux.demandeEnvoyee, style: textes.bodyMedium)
-          else if (horsLigne)
-            // Une demande deposee sans reseau se perdrait : elle ne passe pas
-            // par la file hors ligne des rapports.
-            Text(
-              t.enseignant.creneaux.horsLigneDemande,
-              style: palette.inkWarning.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
+    final List<OffreClasseDemo>? offres = ref.watch(offresClassesProvider);
+    if (offres == null) {
+      return const SizedBox.shrink();
+    }
+    return _Panneau(
+      titre: t.enseignant.creneaux.classesDisponibles,
+      child: offres.isEmpty
+          ? EmptyState(
+              message: t.enseignant.creneaux.aucuneClasse,
+              invitation: t.enseignant.creneaux.aucuneClasseDetail,
             )
-          else ...<Widget>[
-            ChoiceCardGroup(
-              options: <OptionChoix>[
-                for (int de = 1; de <= 3; de++)
-                  OptionChoix(
-                    valeur: '${widget.plafondActuel + de}',
-                    libelle: t.creneaux.eleves(
-                      nombre: '${widget.plafondActuel + de}',
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                for (final OffreClasseDemo offre in offres)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                    child: _CarteOffre(
+                      offre: offre,
+                      etat: _demandees.contains(offre.id)
+                          ? EtatOffreDemo.enAttenteValidation
+                          : offre.etat,
+                      onOuvrir: () => _ouvrir(offre),
                     ),
                   ),
               ],
-              onChange: (ReponseChoix reponse) => setState(() {
-                _valeur = int.tryParse(
-                  reponse.valeurs.isEmpty
-                      ? reponse.saisieLibre ?? ''
-                      : reponse.valeurs.first,
-                );
-              }),
             ),
-            Ecart.vMd,
-            TextField(
-              controller: _motif,
-              decoration: InputDecoration(labelText: t.creneaux.demandeMotif),
-              // Sans ceci, le bouton ne se reconstruit pas a la frappe et
-              // reste inerte alors que le motif est saisi (piege de l'etape 3).
-              onChanged: (String _) => setState(() {}),
-              maxLines: 2,
-            ),
-            if (_erreur != null) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                _erreur!,
-                style: palette.inkAlert.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
-                ),
-              ),
+    );
+  }
+}
+
+/// Une Classe disponible : nom, niveau, langue, jours et heure, etat ecrit.
+class _CarteOffre extends StatelessWidget {
+  const _CarteOffre({
+    required this.offre,
+    required this.etat,
+    required this.onOuvrir,
+  });
+
+  final OffreClasseDemo offre;
+  final EtatOffreDemo etat;
+  final VoidCallback onOuvrir;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final (String mot, TonEtat ton) = _etat(etat);
+    final bool ouvrable = etat == EtatOffreDemo.disponible;
+    final String heure = t.enseignant.creneaux.heure(
+      heure: '${offre.creneau.heure}',
+    );
+
+    return BentoTile(
+      // Seule une Classe disponible s'ouvre sur son detail (ENS-06B).
+      onPress: ouvrable ? onOuvrir : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // Le nom puis l'etat, en retour a la ligne : « Limite de charge
+          // atteinte » ne tient pas a cote du nom sur 390 pixels.
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              Text(offre.nom, style: textes.titleMedium),
+              StatusPill(libelle: mot, ton: ton),
             ],
-            Ecart.vMd,
-            ActionPrincipale(
-              libelle: t.creneaux.demandeEnvoyer,
-              enCours: _enCours,
-              onPress: _valeur == null || _motif.text.trim().isEmpty
-                  ? null
-                  : _envoyer,
-            ),
+          ),
+          Ecart.vXs,
+          Text(
+            '${t.creneaux.niveau(niveau: '${offre.niveau}')} · ${offre.langue}',
+            style: textes.bodySmall,
+          ),
+          Text('${_recurrence(offre)} · $heure', style: textes.bodySmall),
+          if (etat == EtatOffreDemo.limiteAtteinte) ...<Widget>[
+            Ecart.vSm,
+            // La charge de l'ENSEIGNANT, pas la capacite de la Classe
+            // (00_MAQUETTES, ENS-06 R3).
+            Text(t.enseignant.creneaux.limiteDetail, style: textes.bodySmall),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// `ENS-06B` : le detail d'une Classe disponible, sa confirmation, puis un
+/// succes honnete (E7).
+///
+/// L'enseignant voit tout le rendez-vous avant de s'engager : il accepte la
+/// Classe entiere (doc 04 §16.2). **En demonstration, rien n'est envoye** :
+/// le succes le dit, et la Classe passe a « En attente de validation ».
+///
+/// Les champs que la source ne donne pas (public, capacite, date de debut,
+/// parcours) ne sont pas rendus plutot qu'inventes.
+class DetailOffrePage extends StatefulWidget {
+  /// Cree le detail.
+  const DetailOffrePage({required this.offre, super.key});
+
+  /// La Classe proposee.
+  final OffreClasseDemo offre;
+
+  @override
+  State<DetailOffrePage> createState() => _DetailOffrePageEtat();
+}
+
+class _DetailOffrePageEtat extends State<DetailOffrePage> {
+  bool _demandee = false;
+
+  List<Widget> _resume(OffreClasseDemo offre) => <Widget>[
+    LigneCleValeur(
+      cle: t.enseignant.creneaux.cleRecurrence,
+      valeur: _recurrence(offre),
+    ),
+    LigneCleValeur(
+      cle: t.enseignant.creneaux.cleHeureLocale,
+      valeur: t.enseignant.creneaux.heure(heure: '${offre.creneau.heure}'),
+    ),
+    if (offre.dureeMinutes != null)
+      LigneCleValeur(
+        cle: t.enseignant.creneaux.cleDuree,
+        valeur: t.enseignant.creneaux.duree(minutes: '${offre.dureeMinutes}'),
+      ),
+  ];
+
+  /// La confirmation « Confirmer cette Classe ? », qui rappelle tous les jours
+  /// avant l'envoi (doc 04 §16.4).
+  Future<void> _confirmer() async {
+    final OffreClasseDemo offre = widget.offre;
+    final bool? ok = await AppBottomSheet.ouvrir<bool>(
+      context,
+      titre: t.enseignant.creneaux.confirmerTitre,
+      constructeur: (BuildContext _) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: _resume(offre),
+      ),
+      // « Revenir » d'abord, « Confirmer cette Classe » en fin de ligne,
+      // aucun choix preselectionne (UX_REVIEW_04, ligne 8).
+      actions: (BuildContext feuille) => Wrap(
+        alignment: WrapAlignment.end,
+        spacing: AppSpacing.md,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          ActionPrincipale(
+            libelle: t.enseignant.creneaux.revenir,
+            niveau: NiveauAction.secondaire,
+            onPress: () => Navigator.of(feuille).pop(false),
+          ),
+          ActionPrincipale(
+            libelle: t.enseignant.creneaux.confirmer,
+            onPress: () => Navigator.of(feuille).pop(true),
+          ),
+        ],
+      ),
+    );
+    if (ok == true && mounted) {
+      setState(() => _demandee = true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final OffreClasseDemo offre = widget.offre;
+    final (String mot, TonEtat ton) = _etat(
+      _demandee ? EtatOffreDemo.enAttenteValidation : offre.etat,
+    );
+
+    return PageShell(
+      titre: offre.nom,
+      onRetour: () => Navigator.of(context).pop(_demandee),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: StatusPill(libelle: mot, ton: ton),
+          ),
+          Ecart.vMd,
+          LigneCleValeur(
+            cle: t.enseignant.creneaux.cleNiveau,
+            valeur: '${offre.niveau}',
+          ),
+          LigneCleValeur(
+            cle: t.enseignant.creneaux.cleLangue,
+            valeur: offre.langue,
+          ),
+          ..._resume(offre),
+          LigneCleValeur(
+            cle: t.enseignant.creneaux.cleFuseau,
+            valeur: offre.creneau.fuseau,
+          ),
+          Ecart.vLg,
+          if (_demandee)
+            // Succes honnete (E7) : la demonstration n'envoie rien, et le dit.
+            LocalFeedback(message: t.enseignant.demo.mention, persistant: true)
+          else if (offre.etat == EtatOffreDemo.disponible)
+            ActionPrincipale(
+              libelle: t.enseignant.creneaux.reserver,
+              onPress: _confirmer,
+            ),
         ],
       ),
     );

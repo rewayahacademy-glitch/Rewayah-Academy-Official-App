@@ -180,6 +180,10 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
           vide ? const <Creneau>[] : DonneesEnseignantDemo.disponibilites,
     ),
     affectationsProvider.overrideWith((Ref _) async => const <Affectation>[]),
+    // Classes disponibles (ENS-06), une par etat.
+    offresClassesProvider.overrideWithValue(
+      vide ? const <OffreClasseDemo>[] : DonneesEnseignantDemo.offres,
+    ),
     // Profil (ENS-05).
     profilEnseignantProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.profil,

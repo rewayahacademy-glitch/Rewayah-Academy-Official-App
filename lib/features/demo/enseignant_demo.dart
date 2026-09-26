@@ -150,6 +150,8 @@ class OffreClasseDemo {
     required this.langue,
     required this.creneau,
     required this.etat,
+    this.autresJours = const <int>[],
+    this.dureeMinutes,
   });
 
   /// Identifiant fictif.
@@ -169,6 +171,16 @@ class OffreClasseDemo {
 
   /// Son etat.
   final EtatOffreDemo etat;
+
+  /// Les autres jours du meme rendez-vous (1 = lundi), a la meme heure :
+  /// l'enseignant accepte la Classe entiere (doc 04 §16.2, R-ENS-04).
+  final List<int> autresJours;
+
+  /// Duree d'une seance, `null` si la source ne la donne pas.
+  final int? dureeMinutes;
+
+  /// Tous les jours du rendez-vous hebdomadaire, dans l'ordre de la semaine.
+  List<int> get jours => <int>{creneau.jour, ...autresJours}.toList()..sort();
 }
 
 /// Un remplacement propose ou assure.
@@ -443,6 +455,10 @@ abstract final class DonneesEnseignantDemo {
       langue: 'Arabe',
       creneau: Creneau(jour: 3, heure: 18, fuseau: fuseau),
       etat: EtatOffreDemo.disponible,
+      // Lundi, mercredi, vendredi : l'exemple de R-ENS-04 (doc 04).
+      autresJours: <int>[1, 5],
+      // La duree des seances de demonstration (45 min, voir `seances`).
+      dureeMinutes: 45,
     ),
     OffreClasseDemo(
       id: 'demo-offre-as-salam',
