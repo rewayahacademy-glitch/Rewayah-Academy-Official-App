@@ -44,6 +44,7 @@ import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
+import 'services_admin_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -166,8 +167,24 @@ List<Override> surchargesDemoAdmin({
       ),
     ),
     demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+    // Tous les autres services admin adosses a Supabase : « indisponible ».
+    ...surchargesServicesAdminIndisponibles(),
   ];
 }
+
+/// Parametre d'adresse de la variante « profil a completer » (9.8).
+const String parametreProfilDemo = 'profil';
+
+/// Valeur qui simule un relecteur dont le genre n'est pas renseigne.
+const String valeurProfilACompleter = 'a-completer';
+
+/// L'etat de depart de la demonstration admin selon l'adresse :
+/// `?demo=admin&profil=a-completer` rend la variante « Profil a completer ».
+EtatRevueDemo etatRevueDemoPour(Uri adresse) => EtatRevueDemo.initial(
+  genreRelecteurRenseigne:
+      adresse.queryParameters[parametreProfilDemo]?.trim().toLowerCase() !=
+      valeurProfilACompleter,
+);
 
 /// Session admin fictive, resolue tout de suite, sans Supabase. Aucune
 /// valeur `super_admin` dans [AppRole] (Q40).

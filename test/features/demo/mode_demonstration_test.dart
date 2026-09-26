@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
+import 'package:rewayah_academy/core/admin/service_comptes.dart';
+import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
@@ -22,6 +25,7 @@ import 'package:rewayah_academy/core/tc_observation/port_politique_observation.d
 import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
+import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
 void main() {
   final Uri avecDemo = Uri.parse('https://apercu.example/?demo=tuteur');
@@ -138,9 +142,42 @@ void main() {
       );
       expect(
         (await conteneur.read(indicateursProvider.future)).dossiersEnAttente,
-        8,
+        10,
       );
       expect(await conteneur.read(demandesProvider.future), isEmpty);
+    });
+
+    test('aucun service admin ne resout un adaptateur Supabase', () async {
+      for (final Provider<Object> p in providersServicesAdmin) {
+        final Object service = conteneur.read(p);
+        expect(
+          service.runtimeType.toString(),
+          isNot(contains('Supabase')),
+          reason: '$p',
+        );
+      }
+      await expectLater(
+        conteneur.read(serviceComptesProvider).comptes(),
+        throwsA(isA<CapaciteIndisponible>()),
+      );
+      await expectLater(
+        conteneur.read(serviceGroupesProvider).groupes(),
+        throwsA(isA<CapaciteIndisponible>()),
+      );
+    });
+
+    test('variante profil a completer par adresse', () {
+      expect(
+        etatRevueDemoPour(
+          Uri.parse('https://apercu.example/?demo=admin&profil=a-completer'),
+        ).genreRelecteurRenseigne,
+        isFalse,
+      );
+      expect(
+        etatRevueDemoPour(Uri.parse('https://apercu.example/?demo=admin'))
+            .genreRelecteurRenseigne,
+        isTrue,
+      );
     });
   });
 

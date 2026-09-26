@@ -2,10 +2,16 @@
 // partage, doubles des deux ports de revue et pont vers l'ecran actuel.
 //
 // Donnees manifestement fictives, aucune vraie identite, aucune photo : toute
-// piece est une `SourcePieceFictive` que l'ecran dessine avec « Document
-// fictif ». Le genre n'est jamais stocke : le drapeau `horsPorteeSiPolitique`
-// simule l'effet de la regle serveur. Jamais en production (garde de
-// `mode_demonstration.dart`).
+// piece est une `SourcePieceFictive` ; la mention visible « Document fictif »
+// arrivera avec l'ecran de revue d'AD-7 (l'ecran ADM-02 actuel affiche
+// « Apercu indisponible »). Le genre n'est jamais stocke : le drapeau
+// `horsPorteeSiPolitique` simule l'effet de la regle serveur. Jamais en
+// production (garde de `mode_demonstration.dart`).
+//
+// Noms : les deux premiers dossiers reprennent les fixtures de
+// `persona.dart` (Q12) ; les suivants portent des patronymes manifestement
+// fictifs (« Exemple », « Fictif »...), pour la regle « aucune vraie
+// identite ».
 
 import '../../core/admin/service_comptes.dart' show EtatPiece;
 import '../../core/capacites/capacite_indisponible.dart';
@@ -13,10 +19,6 @@ import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/service_validation.dart';
-
-/// Marque de toute piece de demonstration. En dur, hors traductions produit,
-/// comme `libelleRepereDemonstration` : le mode n'existe que hors production.
-const String libelleDocumentFictif = 'Document fictif';
 
 /// Les trois verifications humaines obligatoires d'une piece disponible.
 const List<String> verificationsDemo = <String>['lisible', 'nom', 'validite'];
@@ -135,6 +137,13 @@ class EtatRevueDemo {
   bool genreRelecteurRenseigne;
   final Map<String, (ChargeDecision, ResultatDecision)> commandes =
       <String, (ChargeDecision, ResultatDecision)>{};
+
+  /// Echecs metier memorises par commande (17.6), rejoues a l'identique.
+  final Map<String, (ChargeDecision, CodeErreurRevue)> echecs =
+      <String, (ChargeDecision, CodeErreurRevue)>{};
+
+  /// Commandes dont la premiere relecture rend « en attente ».
+  final Set<String> commandesEnAttente = <String>{};
   final Set<String> vuesExpireesConsommees = <String>{};
 
   /// Nombre de decisions reellement enregistrees.
@@ -167,6 +176,20 @@ abstract final class DonneesDossiersDemo {
   static const String horsPortee = 'demo-dossier-06';
   static const String reponsePerdue = 'demo-dossier-07';
   static const String lienExpire = 'demo-dossier-08';
+  static const String accordManquant = 'demo-dossier-09';
+  static const String decisionIndisponible = 'demo-dossier-10';
+
+  static const List<AccordSoumis> _accordsEnseignantIncomplets = <AccordSoumis>[
+    AccordSoumis(
+      sorte: SorteContrat.accuseEnregistrementControle,
+      version: 'v1',
+      etat: EtatAccord.accepte,
+    ),
+    AccordSoumis(
+      sorte: SorteContrat.contratEnseignant,
+      etat: EtatAccord.manquant,
+    ),
+  ];
 
   static const List<AccordSoumis> _accordsEnseignant = <AccordSoumis>[
     AccordSoumis(
@@ -195,8 +218,8 @@ abstract final class DonneesDossiersDemo {
       DossierDemo(
         id: enseignantNominal,
         identifiantImmuable: 'DEMO-D01',
-        prenom: 'Idriss',
-        nom: 'Exemple',
+        prenom: 'Omar',
+        nom: 'Haddad',
         role: AppRole.teacher,
         soumisLe: il(72),
         revision: 2,
@@ -207,8 +230,8 @@ abstract final class DonneesDossiersDemo {
       DossierDemo(
         id: tuteurDocumentaire,
         identifiantImmuable: 'DEMO-D02',
-        prenom: 'Salma',
-        nom: 'Essai',
+        prenom: 'Amina',
+        nom: 'Benali',
         role: AppRole.guardian,
         soumisLe: il(48),
         revision: 1,
@@ -298,6 +321,30 @@ abstract final class DonneesDossiersDemo {
         consequence: ConsequenceValidation.activationPossible,
         lienExpireSimule: true,
       ),
+      DossierDemo(
+        id: accordManquant,
+        identifiantImmuable: 'DEMO-D09',
+        prenom: 'Sofia',
+        nom: 'Exemple',
+        role: AppRole.teacher,
+        soumisLe: il(20),
+        revision: 1,
+        documentId: 'demo-piece-09',
+        accords: _accordsEnseignantIncomplets,
+        consequence: ConsequenceValidation.activationPossible,
+      ),
+      DossierDemo(
+        id: decisionIndisponible,
+        identifiantImmuable: 'DEMO-D10',
+        prenom: 'Nabil',
+        nom: 'Fictif',
+        role: AppRole.guardian,
+        soumisLe: il(16),
+        revision: 1,
+        documentId: 'demo-piece-10',
+        accords: _accordsTuteur,
+        consequence: ConsequenceValidation.indeterminee,
+      ),
     ];
   }
 }
@@ -376,9 +423,17 @@ class RevueDossiersDemo implements PortRevueDossiers {
     );
     final bool ouvert = d.statut == StatutRevue.aVerifier;
     final List<BlocageRevue> validation = _blocagesValidation(d);
-    final List<BlocageRevue> refus = ouvert
-        ? const <BlocageRevue>[]
-        : const <BlocageRevue>[BlocageRevue.dejaDecide];
+    // Le filtre de genre s'applique aussi a la decision (0004:545) : un
+    // relecteur hors portee ne refuse pas plus qu'il ne valide.
+    final List<BlocageRevue> refus = <BlocageRevue>[
+      if (!ouvert) BlocageRevue.dejaDecide,
+      if (ouvert && piece == EtatPieceRevue.nonVisible)
+        BlocageRevue.pieceNonVisible,
+    ];
+    final List<BlocageRevue> acces = <BlocageRevue>[
+      if (piece == EtatPieceRevue.nonVisible) BlocageRevue.pieceNonVisible,
+      if (piece == EtatPieceRevue.absente) BlocageRevue.pieceAbsente,
+    ];
     return DossierPourRevue(
       dossierId: d.id,
       revision: d.revision,
@@ -411,6 +466,8 @@ class RevueDossiersDemo implements PortRevueDossiers {
       peutVoirPiece: piece == EtatPieceRevue.disponible,
       blocagesValidation: validation,
       blocagesRefus: refus,
+      blocagesAcces: acces,
+      peutResoumettre: d.statut == StatutRevue.refuse,
       consequence: d.consequence,
     );
   }
@@ -420,6 +477,7 @@ class RevueDossiersDemo implements PortRevueDossiers {
     required String dossierId,
     required String documentId,
   }) async {
+    _exigerProfil();
     final DossierDemo d = _dossier(dossierId);
     if (d.documentId == null || d.documentId != documentId) {
       throw const ErreurRevueDossier(CodeErreurRevue.introuvable);
@@ -453,6 +511,7 @@ class RevueDossiersDemo implements PortRevueDossiers {
     required Set<String> verificationsFaites,
     String? motif,
   }) async {
+    _exigerProfil();
     final DossierDemo d = _dossier(dossierId);
     final ChargeDecision charge = (
       dossierId: dossierId,
@@ -461,12 +520,37 @@ class RevueDossiersDemo implements PortRevueDossiers {
       motif: motif?.trim(),
     );
     final (ChargeDecision, ResultatDecision)? deja = etat.commandes[commandeId];
-    if (deja != null) {
-      if (deja.$1 != charge) {
+    final (ChargeDecision, CodeErreurRevue)? echec = etat.echecs[commandeId];
+    if (deja != null || echec != null) {
+      if ((deja?.$1 ?? echec!.$1) != charge) {
         throw const ErreurRevueDossier(CodeErreurRevue.commandeIncoherente);
       }
-      return deja.$2;
+      if (deja != null) {
+        return deja.$2;
+      }
+      throw ErreurRevueDossier(echec!.$2);
     }
+    try {
+      return _deciderUneFois(d, charge, commandeId, verificationsFaites);
+    } on ErreurRevueDossier catch (e) {
+      // Un echec metier est memorise (17.6) ; la reponse perdue, non : la
+      // decision a bien ete enregistree.
+      if (e.code != CodeErreurRevue.reponsePerdue) {
+        etat.echecs[commandeId] = (charge, e.code);
+      }
+      rethrow;
+    }
+  }
+
+  ResultatDecision _deciderUneFois(
+    DossierDemo d,
+    ChargeDecision charge,
+    String commandeId,
+    Set<String> verificationsFaites,
+  ) {
+    final DecisionDossier decision = charge.decision;
+    final int revisionAttendue = charge.revisionAttendue;
+    final String? motif = charge.motif;
     if (d.statut != StatutRevue.aVerifier) {
       throw const ErreurRevueDossier(CodeErreurRevue.dejaDecide);
     }
@@ -482,6 +566,10 @@ class RevueDossiersDemo implements PortRevueDossiers {
       throw const ErreurRevueDossier(CodeErreurRevue.perime);
     }
     if (decision == DecisionDossier.refuser) {
+      if (d.etatPiece(politiqueGenre: etat.politiqueGenre) ==
+          EtatPieceRevue.nonVisible) {
+        throw const ErreurRevueDossier(CodeErreurRevue.interdit);
+      }
       if ((motif ?? '').trim().isEmpty) {
         throw const ErreurRevueDossier(CodeErreurRevue.motifRequis);
       }
@@ -499,6 +587,12 @@ class RevueDossiersDemo implements PortRevueDossiers {
       }
       if (d.accords.any((AccordSoumis a) => a.etat == EtatAccord.manquant)) {
         throw const ErreurRevueDossier(CodeErreurRevue.accordManquant);
+      }
+      // 17.4 : `can_validate` lu auparavant ne vaut pas autorisation.
+      if (d.consequence == ConsequenceValidation.indeterminee) {
+        throw const ErreurRevueDossier(
+          CodeErreurRevue.indisponibleTemporairement,
+        );
       }
     }
 
@@ -520,7 +614,9 @@ class RevueDossiersDemo implements PortRevueDossiers {
     etat.nombreDecisions += 1;
     if (d.reponsePerdueSimulee) {
       // La decision est enregistree, seule la reponse se perd.
+      // La premiere relecture la dira encore « en attente ».
       d.reponsePerdueSimulee = false;
+      etat.commandesEnAttente.add(commandeId);
       throw const ErreurRevueDossier(CodeErreurRevue.reponsePerdue);
     }
     return resultat;
@@ -532,9 +628,16 @@ class RevueDossiersDemo implements PortRevueDossiers {
     required String commandeId,
   }) async {
     final (ChargeDecision, ResultatDecision)? c = etat.commandes[commandeId];
-    return c == null || c.$1.dossierId != dossierId
-        ? const EtatCommandeInconnue()
-        : EtatCommandeReussie(c.$2);
+    final (ChargeDecision, CodeErreurRevue)? e = etat.echecs[commandeId];
+    if (c != null && c.$1.dossierId == dossierId) {
+      return etat.commandesEnAttente.remove(commandeId)
+          ? const EtatCommandeEnAttente()
+          : EtatCommandeReussie(c.$2);
+    }
+    if (e != null && e.$1.dossierId == dossierId) {
+      return EtatCommandeEchouee(e.$2);
+    }
+    return const EtatCommandeInconnue();
   }
 }
 
@@ -582,15 +685,35 @@ class ServiceValidationDemo implements ServiceValidation {
 
   final EtatRevueDemo etat;
   final RevueDossiersDemo _revue;
-  int _commandes = 0;
 
+  /// Commande en cours par (dossier, decision, motif) : un nouveau tap apres
+  /// une reponse perdue renvoie la MEME commande (P-ADM-10.5).
+  final Map<String, ({String commandeId, int revision})> _enCours =
+      <String, ({String commandeId, int revision})>{};
+
+  /// L'ecran actuel ne montre que le premier dossier et ne sait trancher que
+  /// ceux qui ont une piece : la famille dispensee et la piece absente sont
+  /// retirees de sa file (elles relevent d'AD-5/AD-6, via le port), et un
+  /// dossier hors portee passe en fin de file pour ne bloquer aucun autre cas.
   @override
   Future<List<DossierAValider>> enAttente() async {
     if (etat.politiqueGenre && !etat.genreRelecteurRenseigne) {
       throw const GenreLecteurInconnu();
     }
+    final List<DossierDemo> traitables = <DossierDemo>[
+      for (final DossierDemo d in etat.fileTriee)
+        if (d.etatPiece(politiqueGenre: etat.politiqueGenre)
+            case EtatPieceRevue.disponible || EtatPieceRevue.nonVisible)
+          d,
+    ];
+    bool horsPortee(DossierDemo d) =>
+        d.etatPiece(politiqueGenre: etat.politiqueGenre) ==
+        EtatPieceRevue.nonVisible;
     return <DossierAValider>[
-      for (final DossierDemo d in etat.fileTriee) _versEcran(d),
+      for (final DossierDemo d in traitables)
+        if (!horsPortee(d)) _versEcran(d),
+      for (final DossierDemo d in traitables)
+        if (horsPortee(d)) _versEcran(d),
     ];
   }
 
@@ -634,14 +757,41 @@ class ServiceValidationDemo implements ServiceValidation {
       (DossierDemo d) => d.documentId == documentId,
       orElse: () => throw const ErreurRevueDossier(CodeErreurRevue.introuvable),
     );
-    _commandes += 1;
-    await _revue.decider(
-      dossierId: d.id,
-      revisionAttendue: d.revision,
-      decision: approuve ? DecisionDossier.valider : DecisionDossier.refuser,
-      commandeId: 'demo-commande-${d.id}-$_commandes',
-      verificationsFaites: verificationsDemo.toSet(),
-      motif: motif,
-    );
+    final DecisionDossier decision = approuve
+        ? DecisionDossier.valider
+        : DecisionDossier.refuser;
+    final String cle = '${d.id}|${decision.name}|${motif?.trim() ?? ''}';
+    final ({String commandeId, int revision}) commande =
+        _enCours[cle] ??
+        (
+          commandeId: 'demo-${d.id}-r${d.revision}-${decision.name}',
+          revision: d.revision,
+        );
+    _enCours[cle] = commande;
+    try {
+      await _revue.decider(
+        dossierId: d.id,
+        revisionAttendue: commande.revision,
+        decision: decision,
+        commandeId: commande.commandeId,
+        verificationsFaites: verificationsDemo.toSet(),
+        motif: motif,
+      );
+    } on ErreurRevueDossier catch (e) {
+      if (e.code != CodeErreurRevue.reponsePerdue) {
+        _enCours.remove(cle);
+        rethrow;
+      }
+      // Reponse perdue : relire le resultat avant de conclure a l'echec.
+      final EtatCommande relu = await _revue.resultatDecision(
+        dossierId: d.id,
+        commandeId: commande.commandeId,
+      );
+      if (relu is! EtatCommandeReussie) {
+        // Commande gardee : le prochain tap la rejoue a l'identique.
+        rethrow;
+      }
+    }
+    _enCours.remove(cle);
   }
 }

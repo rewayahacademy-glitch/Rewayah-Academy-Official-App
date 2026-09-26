@@ -36,7 +36,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Le plus ancien dossier synthetique d'abord, piece jamais montree.
-    expect(find.text('Idriss Exemple'), findsOneWidget);
+    expect(find.text('Omar Haddad'), findsOneWidget);
     expect(find.text(t.dossiers.apercuIndisponible), findsOneWidget);
     expect(find.byType(Image), findsNothing);
 
@@ -53,7 +53,7 @@ void main() {
       etat.dossiers[DonneesDossiersDemo.enseignantNominal]!.statut,
       StatutRevue.valide,
     );
-    expect(find.text('Idriss Exemple'), findsNothing);
-    expect(find.text('Salma Essai'), findsOneWidget);
+    expect(find.text('Omar Haddad'), findsNothing);
+    expect(find.text('Amina Benali'), findsOneWidget);
   });
 }

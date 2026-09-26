@@ -94,7 +94,7 @@ Future<void> main() async {
   if (demoAdminActiveIci) {
     runApp(
       ProviderScope(
-        overrides: surchargesDemoAdmin(),
+        overrides: surchargesDemoAdmin(etat: etatRevueDemoPour(Uri.base)),
         child: TranslationProvider(
           child: RewayahApp(
             builder: (BuildContext context, Widget? child) =>

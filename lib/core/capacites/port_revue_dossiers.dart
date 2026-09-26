@@ -194,6 +194,8 @@ class DossierPourRevue {
     this.typePiece,
     this.documentId,
     this.revisionDocument,
+    this.peutResoumettre,
+    this.blocagesAcces = const <BlocageRevue>[],
   });
 
   final String dossierId;
@@ -215,6 +217,12 @@ class DossierPourRevue {
   final bool peutVoirPiece;
   final List<BlocageRevue> blocagesValidation;
   final List<BlocageRevue> blocagesRefus;
+
+  /// Pourquoi la piece n'est pas visible (vide quand [peutVoirPiece]).
+  final List<BlocageRevue> blocagesAcces;
+
+  /// `can_resubmit` (17.2) ; nul quand le serveur ne le fournit pas.
+  final bool? peutResoumettre;
   final ConsequenceValidation consequence;
 }
 
