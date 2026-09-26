@@ -37,7 +37,9 @@ Préparée le 26/09/2026 par le poste B, coordinateur. Le découpage de cette pa
 |---|---|---|
 | AD-1 | **Relevé du code existant (§3, §24).**<br>• Route ADM-02 et ses deux entrées : Personnes et compteur Accueil.<br>• Les 3 libellés exacts des vérifications, avec leur source i18n et code.<br>• Le champ genre lu et l'endroit où il bloque.<br>• La politique Super Admin : existe-t-elle ?<br>• Le profil admin en lecture seule.<br>• Les composants réutilisables (§26 ter).<br>• Le portail `/attente`.<br>• Chaque fait cité avec `fichier:ligne`. | `11_admin/01_RELEVE.md` |
 | AD-2 | **Revue UX 2026 (§4 des règles gelées).**<br>• Confronter chaque disposition `PROPOSITION` aux référentiels.<br>• Pour chacune : la règle, la source, la date, la conclusion. | `11_admin/UX_REVIEW_03_ADMIN_DOSSIERS.md` |
-| AD-3 | **Maquettes (6 images, §21 et §26 quater).**<br>• 02A desktop sombre, 02A mobile clair, 02B mobile sombre, 02C desktop sombre, 02D desktop sombre, 02E mobile clair.<br>• Faites après AD-1 (vrais libellés) et AD-2.<br>• Aucune n'existe encore. Le directeur choisit qui les produit : lui (comme pour le tuteur et la classe), ou le poste sous forme de proposition à valider. | Images dans `11_admin/V/`, validées par le directeur avant AD-5 |
+| AD-3 | **Maquettes : FAIT (26/09).** Fournies par le directeur dans `11_admin/V/`, index `V/00_MAQUETTES.md`. | — |
+| AD-3R | **Relevé des maquettes.** Compléter `V/00_MAQUETTES.md` après AD-1, avec les vrais libellés et les textes de la spec. Aucun redessin. | `V/00_MAQUETTES.md` complété |
+| AD-S | **Coque admin, visible sur 02A.**<br>• Aligner l'`AdminShell` existant : barre latérale 288 (7 entrées, routes existantes), en-tête (titre, sous-titre, thème, profil), pied utilisateur, tiroir sur mobile.<br>• Aucune nouvelle page.<br>• Les images `V/coque/` ne servent que de référence. | Code, tests, captures 390 / 768 / 1440 |
 | AD-4 | **Socle de démonstration admin.**<br>• Ports (interfaces) des services du §17, sans serveur.<br>• Jeu de données synthétique : enseignant, tuteur, famille dispensée, pièce absente, conflit.<br>• Mention « Démonstration ». | Code et tests |
 | AD-5 | **ADM-02A, file des dossiers (§9, §26 ter).**<br>• Mobile 390, tablette 768.<br>• Bureau 1440 en maître-détail : file 336, gap 24, détail 728.<br>• Squelettes de chargement.<br>• Les 7 états avec leurs textes exacts. | Code, tests qui touchent les boutons, 4 captures |
 | AD-6 | **ADM-02B, revue du dossier (§10).**<br>• 4 cartes.<br>• Vérifications réelles tirées d'AD-1, aucune inventée.<br>• 8 états. | Idem |
@@ -48,5 +50,11 @@ Préparée le 26/09/2026 par le poste B, coordinateur. Le découpage de cette pa
 | AD-11 | **Recette (§20, §22, §23).**<br>• Accessibilité : reflow 320, clavier, focus jamais masqué, texte à 200 %.<br>• Planche de validation : 4 captures par écran, publiée en page web (K-21, K-35). | `05_recette/AD/RAPPORT.md` et la planche |
 | AD-R | **Revue croisée**, par une autre session. | L'étape passe à « vérifié » |
 | AD-BR | **Besoins serveur de la spec (§17, §16, §28)** : RPC, RLS, audit, atomicité, concurrence, politique de genre côté serveur. Une ligne par besoin, rien n'est codé avant BR-1. | Liste dans `11_admin/AD-BR.md` |
+
+**Périmètre strict (consigne K-39)** :
+- ADM-02 et la coque, rien d'autre.
+- Pas d'accueil admin, pas d'espace de traitement, pas de pédagogie, pas de reste du rôle admin : c'est l'étape AD-X, plus tard, sur décision du directeur.
+- Suivre le tableau dans l'ordre, étape par étape, chacune cochée avec sa preuve.
+- S'arrêter après AD-11.
 
 Hors périmètre, à ne pas construire (§25) : les comptes du personnel, les suspensions, les rôles, la photo publique, l'onboarding enseignant, les notifications et les e-mails.
