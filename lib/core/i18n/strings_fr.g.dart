@@ -557,8 +557,11 @@ class Traductions$attente$fr {
 	/// fr: 'Prochaine étape : {etape}'
 	String prochaineEtape({required Object etape}) => 'Prochaine étape : ${etape}';
 
-	/// fr: 'Déposez une nouvelle pièce pour relancer la vérification.'
-	String get refuseDetail => 'Déposez une nouvelle pièce pour relancer la vérification.';
+	/// fr: 'Pour relancer la vérification, commencez par cet élément : {element}.'
+	String refuseDetail({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.';
+
+	/// fr: 'Vous pouvez joindre l'académie pour connaître la marche à suivre.'
+	String get refuseSansElement => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.';
 
 	/// fr: 'L'état de votre dossier ne s'affiche pas pour le moment.'
 	String get illisible => 'L\'état de votre dossier ne s\'affiche pas pour le moment.';
@@ -11782,7 +11785,8 @@ extension on Traductions {
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
 			'attente.etatAFournir' => 'À fournir',
 			'attente.prochaineEtape' => ({required Object etape}) => 'Prochaine étape : ${etape}',
-			'attente.refuseDetail' => 'Déposez une nouvelle pièce pour relancer la vérification.',
+			'attente.refuseDetail' => ({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.',
+			'attente.refuseSansElement' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.illisible' => 'L\'état de votre dossier ne s\'affiche pas pour le moment.',
 			'attente.horsLigne' => 'Vous êtes hors ligne. L\'état de votre dossier s\'affichera dès le retour du réseau.',
 			'connexion.titre' => 'Se connecter',
@@ -12095,9 +12099,9 @@ extension on Traductions {
 			'ficheEleve.informations.photoPresente' => 'Photo enregistrée',
 			'ficheEleve.informations.choisir' => 'Choisir une photo',
 			'ficheEleve.informations.changer' => 'Changer la photo',
-			'ficheEleve.informations.apercuTitre' => 'Aperçu',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.apercuTitre' => 'Aperçu',
 			'ficheEleve.informations.apercuPhrase' => 'Vérifiez la photo avant de l\'envoyer.',
 			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
 			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
@@ -12609,9 +12613,9 @@ extension on Traductions {
 			'admin.qualite.groupeEvaluationEnRetard' => 'Évaluations en retard',
 			'admin.qualite.colonnePersonne' => 'Concerne',
 			'admin.qualite.colonneDepuis' => 'Depuis',
-			'admin.qualite.colonneStatut' => 'Statut',
 			_ => null,
 		} ?? switch (path) {
+			'admin.qualite.colonneStatut' => 'Statut',
 			'admin.qualite.statutOuvert' => 'Ouverte',
 			'admin.qualite.statutTraite' => 'Traitée',
 			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
@@ -13123,9 +13127,9 @@ extension on Traductions {
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
 			'parcours.voirHoraires' => 'Voir les horaires',
-			'parcours.changerHoraire' => 'Changer d\'horaire',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.changerHoraire' => 'Changer d\'horaire',
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
@@ -13637,9 +13641,9 @@ extension on Traductions {
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
-			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'classe.catalogue' => 'Choisir une classe',
 			'classe.planning' => 'Planning',
@@ -14151,9 +14155,9 @@ extension on Traductions {
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'Le groupe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
-			'tc.coran.focus.quitter' => 'Quitter le focus',
 			_ => null,
 		} ?? switch (path) {
+			'tc.coran.focus.quitter' => 'Quitter le focus',
 			'tc.outils.dock.titre' => 'Outils',
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
 			'tc.outils.dock.position.bas' => 'En bas',

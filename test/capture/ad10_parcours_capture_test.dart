@@ -18,8 +18,6 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
-import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
-import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -38,46 +36,6 @@ Future<void> _stabiliser(WidgetTester tester) async {
 }
 
 late GoRouter _routeur;
-
-/// Le dossier dont la correction est interdite (AD-BR-28 : la cle n'existe
-/// qu'en demonstration). Les autres gestes vont a la demonstration.
-class _DossierSansCorrection implements ServiceDossier {
-  _DossierSansCorrection(this._base);
-
-  final ServiceDossier _base;
-
-  @override
-  Future<void> creerProfil({
-    required AppRole role,
-    required String prenom,
-    required String nom,
-    Genre? genre,
-  }) => _base.creerProfil(role: role, prenom: prenom, nom: nom, genre: genre);
-
-  @override
-  Future<EtatDossier> etat() async {
-    final EtatDossier e = await _base.etat();
-    return EtatDossier(
-      profilExiste: e.profilExiste,
-      role: e.role,
-      statutCompte: e.statutCompte,
-      pieceDeposee: e.pieceDeposee,
-      statutPiece: e.statutPiece,
-      motifRefus: e.motifRefus,
-      deposeLe: e.deposeLe,
-      contratSigne: e.contratSigne,
-      accuseSigne: e.accuseSigne,
-      correctionAutorisee: false,
-    );
-  }
-
-  @override
-  Future<void> accepterContrat(SorteContrat sorte, String version) =>
-      _base.accepterContrat(sorte, version);
-
-  @override
-  Future<void> deposerPiece(PieceAEnvoyer piece) => _base.deposerPiece(piece);
-}
 
 Future<void> _monter(
   WidgetTester tester,
@@ -298,14 +256,20 @@ void main() {
           WidgetTester tester,
         ) async {
           fixerVueCapture(tester, taille, _densite(nom));
-          final EtatRevueDemo e = _etat();
-          await _refuserAmina(e);
-          // Index 1 : serviceDossierProvider (surchargesDemoTuteur, AD-10).
-          final List<Override> surcharges = _personne(e, _amina)
-            ..[1] = serviceDossierProvider.overrideWithValue(
-              _DossierSansCorrection(ServiceDossierDemo(e, _amina)),
-            );
-          await _monter(tester, mode, surcharges, Routes.attente);
+          // Le point d'entree de la demonstration en ligne (AD-BR-28) :
+          // ?demo=tuteur&dossier=refuse-fige.
+          final ({EtatRevueDemo dossiers, String titulaire}) fige =
+              dossierTitulaireDemoPour(
+                Uri.parse('/?demo=tuteur&dossier=refuse-fige'),
+                maintenant: DateTime.utc(2026, 9, 26, 12),
+              )!;
+          await _monter(
+            tester,
+            mode,
+            _personne(fige.dossiers, fige.titulaire),
+            Routes.attente,
+          );
+          expect(find.text(t.attente.corriger), findsNothing);
           expect(find.text(t.attente.correctionImpossible), findsOneWidget);
           debugPrint(
             'PNG ${await capturer(tester, fichier('5_attente_correction_impossible'))}',
@@ -341,6 +305,9 @@ void main() {
             _routeur.routerDelegate.currentConfiguration.uri.path,
             startsWith(Routes.tuteurAccueil),
           );
+          // Aucune donnee deduite de la decision (P-ADM-11.3).
+          expect(find.textContaining('Aïcha'), findsNothing);
+          expect(find.textContaining('Yusuf'), findsNothing);
           debugPrint(
             'PNG ${await capturer(tester, fichier('8_retour_valide'))}',
           );

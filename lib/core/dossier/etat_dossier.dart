@@ -21,6 +21,7 @@ class EtatDossier {
     this.contratSigne = false,
     this.accuseSigne = false,
     this.correctionAutorisee,
+    this.pieceRequise = true,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -43,6 +44,7 @@ class EtatDossier {
       contratSigne: json['contrat_signe'] == true,
       accuseSigne: json['accuse_signe'] == true,
       correctionAutorisee: json['correction_autorisee'] as bool?,
+      pieceRequise: json['piece_requise'] as bool? ?? true,
     );
   }
 
@@ -79,6 +81,11 @@ class EtatDossier {
   /// correction reste permise comme avant.
   final bool? correctionAutorisee;
 
+  /// Faux quand le dossier est dispense de piece d'identite (P-ADM-08.3) :
+  /// aucune piece n'est alors demandee, meme apres un refus. Absent de la
+  /// reponse actuelle d'`etat_dossier()` (AD-BR-29) : vrai, comme avant.
+  final bool pieceRequise;
+
   /// Ce que le portail d'attente doit afficher.
   ///
   /// L'ordre compte : un compte suspendu le reste quel que soit l'etat de son
@@ -109,7 +116,7 @@ class EtatDossier {
   List<PieceManquante> get manquants => <PieceManquante>[
     if (!accuseSigne) PieceManquante.accuse,
     if (!contratSigne) PieceManquante.contrat,
-    if (!pieceDeposee || statutPiece == StatutPiece.refusee)
+    if (pieceRequise && (!pieceDeposee || statutPiece == StatutPiece.refusee))
       PieceManquante.pieceIdentite,
   ];
 
@@ -125,7 +132,8 @@ class EtatDossier {
       other.deposeLe == deposeLe &&
       other.contratSigne == contratSigne &&
       other.accuseSigne == accuseSigne &&
-      other.correctionAutorisee == correctionAutorisee;
+      other.correctionAutorisee == correctionAutorisee &&
+      other.pieceRequise == pieceRequise;
 
   @override
   int get hashCode => Object.hash(
@@ -139,6 +147,7 @@ class EtatDossier {
     contratSigne,
     accuseSigne,
     correctionAutorisee,
+    pieceRequise,
   );
 }
 

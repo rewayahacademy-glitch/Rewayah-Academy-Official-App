@@ -263,7 +263,8 @@
     },
     "etatAFournir": "À fournir",
     "prochaineEtape": "Prochaine étape : {etape}",
-    "refuseDetail": "Déposez une nouvelle pièce pour relancer la vérification.",
+    "refuseDetail": "Pour relancer la vérification, commencez par cet élément : {element}.",
+    "refuseSansElement": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "illisible": "L'état de votre dossier ne s'affiche pas pour le moment.",
     "horsLigne": "Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau."
   },

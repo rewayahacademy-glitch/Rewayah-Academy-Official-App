@@ -118,11 +118,12 @@ Future<GoRouter> _monterPersonne(
     ),
   );
   await _stabiliser(tester);
+  // Aucun `go` force : la garde de session conduit seule un compte en
+  // attente ou refuse vers /attente (entree naturelle).
   final GoRouter routeur = ProviderScope.containerOf(
     tester.element(find.byType(RewayahApp)),
   ).read(routeurProvider);
-  routeur.go(Routes.attente);
-  await _stabiliser(tester);
+  expect(_chemin(routeur), Routes.attente);
   return routeur;
 }
 
@@ -354,6 +355,95 @@ void main() {
     );
     await _pauseEtRetour(tester);
     expect(_chemin(routeur), Routes.attente);
+  });
+
+  testWidgets('T1 bis famille dispensee refusee : aucune piece demandee', (
+    WidgetTester tester,
+  ) async {
+    final EtatRevueDemo etat = EtatRevueDemo.initial();
+    const String id = DonneesDossiersDemo.familleDispensee;
+    await RevueDossiersDemo(etat).decider(
+      dossierId: id,
+      revisionAttendue: etat.dossiers[id]!.revision,
+      decision: DecisionDossier.refuser,
+      commandeId: 'ad10-t1b',
+      verificationsFaites: const <String>{},
+      motif: 'Motif fictif.',
+    );
+    final GoRouter routeur = await _monterPersonne(tester, etat, id);
+    expect(find.text(t.attente.refuse), findsOneWidget);
+    expect(find.text(t.attente.refuseSansElement), findsOneWidget);
+    expect(find.textContaining('pièce'), findsNothing);
+    expect(find.text(t.attente.corriger), findsNothing);
+    expect(_chemin(routeur), isNot(Routes.attentePiece));
+  });
+
+  testWidgets(
+    'T6 ?dossier=refuse-fige : correction impossible, sans Corriger',
+    (WidgetTester tester) async {
+      final ({EtatRevueDemo dossiers, String titulaire}) fige =
+          dossierTitulaireDemoPour(
+            Uri.parse('/?demo=tuteur&dossier=refuse-fige'),
+          )!;
+      await _monterPersonne(tester, fige.dossiers, fige.titulaire);
+      expect(find.text(t.attente.correctionImpossible), findsOneWidget);
+      expect(find.text(t.attente.corriger), findsNothing);
+    },
+  );
+
+  testWidgets('T8 bis : apres validation, aucun enfant ni classe deduits', (
+    WidgetTester tester,
+  ) async {
+    final EtatRevueDemo etat = EtatRevueDemo.initial();
+    const String id = DonneesDossiersDemo.familleDispensee;
+    final GoRouter routeur = await _monterPersonne(tester, etat, id);
+    await RevueDossiersDemo(etat).decider(
+      dossierId: id,
+      revisionAttendue: etat.dossiers[id]!.revision,
+      decision: DecisionDossier.valider,
+      commandeId: 'ad10-t8c',
+      verificationsFaites: const <String>{},
+    );
+    await _pauseEtRetour(tester);
+    expect(_chemin(routeur), startsWith(Routes.tuteurAccueil));
+    expect(find.textContaining('Aïcha'), findsNothing);
+    expect(find.textContaining('Yusuf'), findsNothing);
+  });
+
+  test('deux resoumissions : pieces distinctes, decisions separees', () async {
+    final EtatRevueDemo etat = EtatRevueDemo.initial();
+    const String a = DonneesDossiersDemo.tuteurDocumentaire;
+    const String b = DonneesDossiersDemo.enseignantNominal;
+    for (final String id in <String>[a, b]) {
+      await RevueDossiersDemo(etat).decider(
+        dossierId: id,
+        revisionAttendue: etat.dossiers[id]!.revision,
+        decision: DecisionDossier.refuser,
+        commandeId: 'ad10-u2-$id',
+        verificationsFaites: const <String>{},
+        motif: 'Motif fictif.',
+      );
+      etat.resoumettre(id);
+    }
+    final String? pieceA = etat.dossiers[a]!.documentId;
+    final String? pieceB = etat.dossiers[b]!.documentId;
+    expect(pieceA, isNot(pieceB));
+
+    final ServiceValidationDemo service = ServiceValidationDemo(etat);
+    await service.decider(
+      documentId: pieceB!,
+      approuve: false,
+      motif: 'Motif fictif B.',
+    );
+    expect(etat.dossiers[b]!.statut, StatutRevue.refuse);
+    expect(etat.dossiers[a]!.statut, StatutRevue.aVerifier);
+    await service.decider(
+      documentId: pieceA!,
+      approuve: false,
+      motif: 'Motif fictif A.',
+    );
+    expect(etat.dossiers[a]!.motifRefus, 'Motif fictif A.');
+    expect(etat.dossiers[b]!.motifRefus, 'Motif fictif B.');
   });
 
   test('T11 garde : la demonstration titulaire est fermee en production', () {

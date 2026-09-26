@@ -258,10 +258,17 @@ class _Statut extends StatelessWidget {
             ),
           ),
           Ecart.vMd,
+          // La phrase suit le premier element a corriger, celui que « Corriger »
+          // ouvre (P-ADM-09.2) ; sans element (famille dispensee), aucune
+          // piece n'est demandee (P-ADM-08.3).
           Text(
             etat.correctionAutorisee == false
                 ? t.attente.correctionImpossible
-                : t.attente.refuseDetail,
+                : etat.manquants.isEmpty
+                ? t.attente.refuseSansElement
+                : t.attente.refuseDetail(
+                    element: _libelle(etat.manquants.first),
+                  ),
             style: textes.bodyMedium,
           ),
         ],

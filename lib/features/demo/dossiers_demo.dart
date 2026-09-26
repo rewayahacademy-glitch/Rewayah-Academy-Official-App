@@ -76,6 +76,10 @@ class DossierDemo {
 
   /// Le motif du dernier refus, lu par le portail de la personne (AD-10).
   String? motifRefus;
+
+  /// Faux quand l'administration interdit la correction du refus (AD-BR-28,
+  /// `?dossier=refuse-fige`). Nul : permise, comme en production.
+  bool? correctionAutorisee;
   final bool horsPorteeSiPolitique;
   final bool lienExpireSimule;
 
@@ -173,7 +177,7 @@ class EtatRevueDemo {
       ..statut = StatutRevue.aVerifier
       ..revision += 1
       ..pieceTransmise = true
-      ..documentId = '-r'
+      ..documentId = 'demo-piece-${d.id}-r$n'
       ..revisionDocument = n
       ..soumisLe = maintenant
       ..motifRefus = null;
@@ -846,6 +850,10 @@ class ServiceDossierDemo implements ServiceDossier {
       deposeLe: d.soumisLe,
       contratSigne: true,
       accuseSigne: true,
+      correctionAutorisee: d.correctionAutorisee,
+      // L'exigence vient du double (AD-BR-29) : une famille dispensee n'a
+      // jamais de piece a deposer, meme refusee.
+      pieceRequise: d.exigence != ExigencePiece.dispensee,
     );
   }
 

@@ -106,7 +106,12 @@ List<Override> surchargesDemoTuteur({
       selecteurFichierProvider.overrideWithValue(const SelecteurFichierDemo()),
     ] else
       sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
-    elevesDuFoyerProvider.overrideWith((Ref ref) async => DonneesDemo.eleves),
+    // Un titulaire tout juste valide n'a ni eleve ni classe (P-ADM-08.6,
+    // 11.3) : la validation ne donne rien de plus que l'arrivee a /tuteur.
+    elevesDuFoyerProvider.overrideWith(
+      (Ref ref) async =>
+          avecDossier ? const <EleveDuFoyer>[] : DonneesDemo.eleves,
+    ),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
@@ -124,7 +129,9 @@ List<Override> surchargesDemoTuteur({
     monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
     seancesDuSuiviProvider.overrideWith((Ref ref) async => const <Seance>[]),
     mesGroupesProvider.overrideWith(
-      (Ref ref) async => DonneesDemo.classes.values.toList(),
+      (Ref ref) async => avecDossier
+          ? const <GroupSummaryVM>[]
+          : DonneesDemo.classes.values.toList(),
     ),
     // Observation simulee : politique, budget, historique. La salle video
     // demande un jeton au serveur, donc l'observation reelle reste fermee.
@@ -231,24 +238,27 @@ class SourceSessionDemoAdmin implements SourceSession {
 /// Parametre d'adresse du dossier de la personne en demonstration (AD-10).
 const String parametreDossierDemo = 'dossier';
 
-/// ?demo=tuteur&dossier=refuse|verification : la personne est Amina Benali,
-/// titulaire d'un dossier refuse (motif fictif) ou en cours de verification.
+/// ?demo=tuteur&dossier=refuse|refuse-fige|verification : la personne est
+/// Amina Benali, titulaire d'un dossier refuse (motif fictif), refuse sans
+/// correction permise (AD-BR-28), ou en cours de verification.
 /// Nul sans ce parametre : la demonstration tuteur habituelle.
 ({EtatRevueDemo dossiers, String titulaire})? dossierTitulaireDemoPour(
-  Uri adresse,
-) {
+  Uri adresse, {
+  DateTime? maintenant,
+}) {
   final String? v = adresse.queryParameters[parametreDossierDemo]
       ?.trim()
       .toLowerCase();
-  if (v != 'refuse' && v != 'verification') {
+  if (v != 'refuse' && v != 'refuse-fige' && v != 'verification') {
     return null;
   }
-  final EtatRevueDemo e = EtatRevueDemo.initial();
+  final EtatRevueDemo e = EtatRevueDemo.initial(maintenant: maintenant);
   const String id = DonneesDossiersDemo.tuteurDocumentaire;
-  if (v == 'refuse') {
+  if (v != 'verification') {
     e.dossiers[id]!
       ..statut = StatutRevue.refuse
-      ..motifRefus = 'Motif fictif : la photo de la pièce est floue.';
+      ..motifRefus = 'Motif fictif : la photo de la pièce est floue.'
+      ..correctionAutorisee = v == 'refuse-fige' ? false : null;
   }
   return (dossiers: e, titulaire: id);
 }

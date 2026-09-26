@@ -279,7 +279,12 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
           GroupeReglages(
             titre: t.dossiers.verifications,
             lignes: <LigneRubrique>[
-              if (d.verifications.isEmpty)
+              // Piece absente : la carte reste (§10.4) mais sans pictogramme
+              // de case, puisqu'il n'y a rien a verifier (P-ADM-08.2).
+              if (d.etatPiece == EtatPieceRevue.absente)
+                for (final String id in _verificationsAffichees)
+                  LigneRubrique(libelle: libelleVerification(id)!)
+              else if (d.verifications.isEmpty)
                 for (final String id in _verificationsAffichees)
                   _ligneInactive(id, palette)
               else

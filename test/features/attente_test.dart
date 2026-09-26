@@ -328,7 +328,10 @@ void main() {
         expect(find.text(t.attente.refuse), findsOneWidget);
         expect(find.text(t.attente.correctionImpossible), findsOneWidget);
         expect(find.text(t.attente.corriger), findsNothing);
-        expect(find.text(t.attente.refuseDetail), findsNothing);
+        expect(
+          find.text(t.attente.refuseDetail(element: t.attente.pieceIdentite)),
+          findsNothing,
+        );
 
         await tester.tap(find.text(t.attente.seDeconnecter));
         await tester.pumpAndSettle();
@@ -349,6 +352,11 @@ void main() {
         ),
       );
 
+      // Le texte nomme l'element que « Corriger » ouvre, et non la piece.
+      expect(
+        find.text(t.attente.refuseDetail(element: t.attente.signatureContrat)),
+        findsOneWidget,
+      );
       await tester.tap(find.text(t.attente.corriger));
       await tester.pumpAndSettle();
       expect(find.text(t.consentement.texte.caseResponsable), findsOneWidget);
