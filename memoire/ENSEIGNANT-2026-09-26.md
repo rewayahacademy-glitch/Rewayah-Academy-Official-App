@@ -31,7 +31,7 @@
   - Aucune seconde salle, aucun second préflight.
 - **E5. Aucune donnée privée des familles côté enseignant.** Ni téléphone, ni e-mail, ni adresse, ni pièce d'identité, ni paiement, ni solde.
   - La fiche élève est pédagogique seulement : prénom, identifiant Académie, niveau, objectif, dernière séance, reprise, assiduité récente, travail, notes autorisées.
-  - **Photo de l'élève : elle s'affiche** (décision du directeur, 26/09/2026), partout où l'enseignant et l'administration identifient l'élève : roster, fiche élève, salle, cahier.
+  - **Photo de l'élève : elle s'affiche** (décision du directeur, 26/09/2026) chez son enseignant, à l'administration **et chez les élèves de sa Classe** : roster, fiche élève, salle, cahier, dossiers. Les camarades voient déjà sa vidéo en classe ; la photo en dit moins.
     - Si le tuteur a déposé une photo, c'est que l'enseignant et l'administration en ont besoin. La vidéo est déjà permise en classe, donc la photo aussi.
     - Composant `PhotoEleve` (photo signée, initiales seulement en repli).
     - Cette visibilité est couverte par le consentement de l'inscription de l'enfant (texte A5 de pilotage `09_consentements`).
@@ -82,5 +82,9 @@
   - Jamais : groupe, Session, Cours en cours, matching, Rapport obligatoire, Élève problématique, Erreur inconnue.
 - **E18. L'enseignant ne crée rien d'administratif.** Pas de bouton « Nouvelle classe », « Nouvelle séance » ou « Ajouter un élève ».
   - Pas non plus de « Générer une évaluation », « Imprimer le roster » ni « Ajouter un document ». Pas de messagerie avec les familles.
-- **E19. Les raccourcis clavier en salle sur ordinateur sont une proposition en attente** (voir `00_MAQUETTES_ENSEIGNANT.md` §4). Ils ne sont pas codés avant la décision du directeur.
+- **E19. Raccourcis clavier en salle sur ordinateur : accordés par le directeur le 26/09, avec protections** (étape EN-KB).
+  - M micro, V caméra, R roster, B bibliothèque, Échap ferme le panneau.
+  - Actifs seulement quand le focus est dans la salle, jamais pendant une saisie de texte ; désactivables dans les réglages.
+  - **La caméra ne s'allume jamais par un raccourci** : V ne fait que la couper ; l'allumer demande le bouton.
+  - Chaque bascule est annoncée au lecteur d'écran et visible sur le bouton.
 - **E20. Les dates et noms de démonstration sont réalistes et datés de 2026.** Les données des planches (2024, Youssouf, Amina…) ne sont jamais recopiées telles quelles.
