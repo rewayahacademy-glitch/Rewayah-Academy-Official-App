@@ -266,13 +266,34 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// `ENS-04` (via CLV-10) et a rien d'autre. `go` et non `push` : la salle
   /// ne doit rester sous aucune pile, l'ADR-005 lui interdit d'etre revenue
   /// en arriere.
+  ///
+  /// `go` ne leve rien pour une adresse inconnue : il afficherait la page
+  /// d'erreur du routeur. Le chemin est donc **verifie avant** d'y aller
+  /// ([cheminCahierOuvrable]) ; sans seance ou sans route, CLV-10 reste
+  /// affiche avec son message et « Reessayer ».
   void _ouvrirCahier() {
-    try {
-      GoRouter.of(context).go(Routes.cahierPour(widget.seanceId));
-    } catch (erreur) {
-      journalDev('cahier impossible a ouvrir : $erreur');
+    final GoRouter routeur = GoRouter.of(context);
+    final String? chemin = cheminCahierOuvrable(
+      routeur.configuration,
+      widget.seanceId,
+    );
+    if (chemin == null) {
+      journalDev('cahier impossible a ouvrir : ${widget.seanceId}');
       setState(() => _cahierIndisponible = true);
+      return;
     }
+    routeur.go(chemin);
+  }
+
+  /// « Retour a la Classe » de CLV-09 (eleve standard, matrice section 5) :
+  /// l'espace des Classes de l'eleve (`/tc/groupes`, CLV-01 partiel), et non
+  /// l'accueil. La guidee garde « Retour a l'accueil » et sa racine.
+  void _retourClasse() {
+    if (AppMetriques.of(context).mode == InterfaceMode.enfant) {
+      _rentrer();
+      return;
+    }
+    GoRouter.of(context).go(Routes.tcGroupes);
   }
 
   /// Retour a la racine de son role.
@@ -326,7 +347,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     }
     final IssueSeance? sortie = _sortieEleve;
     if (sortie != null) {
-      return ResultatSeance(issue: sortie, onRetour: _rentrer);
+      return ResultatSeance(issue: sortie, onRetour: _retourClasse);
     }
 
     final VueSalle vue = VueSalle.depuis(
@@ -1549,4 +1570,13 @@ class _Impasse extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Le chemin du cahier de [seanceId], ou `null` s'il ne peut pas s'ouvrir :
+/// seance inconnue, ou aucune route du [routeur] ne le reconnait.
+@visibleForTesting
+String? cheminCahierOuvrable(RouteConfiguration routeur, String seanceId) {
+  if (seanceId.isEmpty) return null;
+  final String chemin = Routes.cahierPour(seanceId);
+  return routeur.findMatch(Uri.parse(chemin)).isEmpty ? null : chemin;
 }

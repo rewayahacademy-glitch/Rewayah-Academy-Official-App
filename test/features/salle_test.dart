@@ -157,6 +157,11 @@ Future<void> _monterSalle(
               const Text('accueil eleve'),
         ),
         GoRoute(
+          path: Routes.tcGroupes,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Text('classes eleve'),
+        ),
+        GoRoute(
           path: Routes.enseignantJournee,
           builder: (BuildContext _, GoRouterState _) =>
               const Text('journee enseignant'),
@@ -859,9 +864,12 @@ void main() {
         findsNothing,
       );
       expect(find.text(t.salle.bandeauPermanent), findsNothing);
+      // « Retour a la Classe » mene a la Classe (l'espace des Classes de
+      // l'eleve), pas a l'accueil : libelle et destination concordent.
       await tester.tap(find.text(t.salle.fin.retourClasse));
       await tester.pumpAndSettle();
-      expect(find.text('accueil eleve'), findsOneWidget);
+      expect(find.text('classes eleve'), findsOneWidget);
+      expect(find.text('accueil eleve'), findsNothing);
     });
 
     testWidgets('renoncer laisse dans la salle', (WidgetTester tester) async {

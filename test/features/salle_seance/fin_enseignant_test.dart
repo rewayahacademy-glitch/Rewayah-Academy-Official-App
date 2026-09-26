@@ -7,13 +7,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
@@ -106,6 +109,39 @@ PresenceParticipant _ligne(
 );
 
 void main() {
+  group('CLV-10 : retours de relecture T7', () {
+    test('0 et 1 au singulier, puis pluriel', () {
+      expect(libelleConnectes(0), '0 élève connecté');
+      expect(libelleConnectes(1), '1 élève connecté');
+      expect(libelleConnectes(2), '2 élèves connectés');
+      expect(libelleInscrits(0), 'sur 0 inscrit');
+      expect(libelleInscrits(3), 'sur 3 inscrits');
+    });
+
+    test('le cahier ne s ouvre que vers une route existante', () {
+      final GoRouter sansCahier = GoRouter(
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, _) => const SizedBox()),
+        ],
+      );
+      final GoRouter avecCahier = GoRouter(
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, _) => const SizedBox()),
+          GoRoute(
+            path: '${Routes.enseignantSeance}/:seanceId/cahier',
+            builder: (_, _) => const SizedBox(),
+          ),
+        ],
+      );
+      expect(cheminCahierOuvrable(sansCahier.configuration, 's1'), isNull);
+      expect(cheminCahierOuvrable(avecCahier.configuration, ''), isNull);
+      expect(
+        cheminCahierOuvrable(avecCahier.configuration, 's1'),
+        Routes.cahierPour('s1'),
+      );
+    });
+  });
+
   group('CLV-10 : fin de seance enseignant', () {
     for (final MapEntry<String, Size> taille in _tailles.entries) {
       testWidgets('textes exacts, sans mention ni absent (${taille.key})', (

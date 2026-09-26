@@ -109,6 +109,10 @@ class ResultatSeance extends StatelessWidget {
 /// desktop) ; pleine largeur moins la gouttiere sur telephone.
 const double _largeurFin = AppPage.largeurEtatVide + AppSpacing.section * 2;
 
+/// La largeur de la phrase du cahier sur telephone (coupure de l'image 390).
+const double _largeurPhraseTelephone =
+    AppPage.largeurEtatVide - AppSpacing.section * 2 - AppSpacing.md;
+
 /// La fin de seance de l'enseignant (CLV-10, S l.1131-1185).
 ///
 /// En-tete « Seance terminee » + Classe + pastille « Terminee » (desktop),
@@ -247,11 +251,22 @@ class _CorpsFin extends StatelessWidget {
           ),
         ),
         Ecart.vSm,
-        Text(
-          t.salle.fin.enseignant.phrase,
-          textAlign: TextAlign.center,
-          style: palette.inkMuted.applyTo(
-            textes.bodyLarge ?? const TextStyle(),
+        // Telephone : la phrase coupe comme l'image (« ...les informations /
+        // de la seance. »), jamais sur un mot seul.
+        Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: AppGabarit.de(context) == Gabarit.mobile
+                  ? _largeurPhraseTelephone
+                  : double.infinity,
+            ),
+            child: Text(
+              t.salle.fin.enseignant.phrase,
+              textAlign: TextAlign.center,
+              style: palette.inkMuted.applyTo(
+                textes.bodyLarge ?? const TextStyle(),
+              ),
+            ),
           ),
         ),
         Ecart.vXl,
@@ -302,12 +317,20 @@ class _HerosValide extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final Color encre = palette.inkAccent.asBorderSide().color;
+    // Le halo lavande doux des images, derriere la coche.
+    final Color halo = palette.washAccent.background;
     return ExcludeSemantics(
       child: Center(
         child: SizedBox.square(
           dimension: _cote,
           child: CustomPaint(
-            painter: _Etincelles(encre),
+            painter: _Etincelles(
+              encre,
+              halo,
+              // Desktop : quatre etincelles ; telephone et web etroit : trois
+              // (images CLV-10).
+              quatre: AppGabarit.de(context) == Gabarit.desktop,
+            ),
             child: Center(
               child: IconTheme(
                 data: palette.inkAccent.asIconTheme(size: _icone),
@@ -323,19 +346,31 @@ class _HerosValide extends StatelessWidget {
 
 /// Des etoiles a quatre branches autour de la coche (decor).
 class _Etincelles extends CustomPainter {
-  const _Etincelles(this.couleur);
+  const _Etincelles(this.couleur, this.halo, {required this.quatre});
 
   final Color couleur;
+  final Color halo;
+  final bool quatre;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final Offset centre = size.center(Offset.zero);
+    final double rayon = size.shortestSide * 0.62;
+    canvas.drawCircle(
+      centre,
+      rayon,
+      Paint()
+        ..shader = RadialGradient(
+          colors: <Color>[halo, halo.withValues(alpha: 0)],
+        ).createShader(Rect.fromCircle(center: centre, radius: rayon)),
+    );
     final Paint p = Paint()..color = couleur;
     final double w = size.width;
     for (final (double x, double y, double r) in <(double, double, double)>[
       (0.24, 0.14, 0.065),
       (0.13, 0.28, 0.03),
       (0.86, 0.46, 0.055),
-      (0.76, 0.76, 0.07),
+      if (quatre) (0.76, 0.76, 0.07),
     ]) {
       final Offset c = Offset(x * w, y * size.height);
       final double b = r * w;
@@ -352,8 +387,21 @@ class _Etincelles extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_Etincelles oldDelegate) => oldDelegate.couleur != couleur;
+  bool shouldRepaint(_Etincelles oldDelegate) =>
+      oldDelegate.couleur != couleur ||
+      oldDelegate.halo != halo ||
+      oldDelegate.quatre != quatre;
 }
+
+/// « n eleve(s) connecte(s) » : en francais, 0 et 1 prennent le singulier.
+String libelleConnectes(int n) => n <= 1
+    ? t.salle.fin.enseignant.unConnecte(n: n)
+    : t.salle.fin.enseignant.connectes(n: n);
+
+/// « sur n inscrit(s) » : 0 et 1 au singulier.
+String libelleInscrits(int n) => n <= 1
+    ? t.salle.fin.enseignant.unInscrit(n: n)
+    : t.salle.fin.enseignant.inscrits(n: n);
 
 /// La carte recapitulative : Classe, Fin, eleves connectes, cahier.
 class _CarteRecapitulatif extends StatelessWidget {
@@ -373,8 +421,10 @@ class _CarteRecapitulatif extends StatelessWidget {
     final TextStyle simple = palette.inkStrong.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
+    // Les sous-lignes des images (« Sayyida Amina », « sur 3 inscrits ») :
+    // corps courant, a l'encre discrete.
     final TextStyle discret = palette.inkMuted.applyTo(
-      textes.bodySmall ?? const TextStyle(),
+      textes.bodyMedium ?? const TextStyle(),
     );
     // I-6 : les deux nombres viennent de la liste du compteur « Eleves x/y ».
     final int connectes = vue.connectesAuMoinsUneFois;
@@ -400,18 +450,8 @@ class _CarteRecapitulatif extends StatelessWidget {
       ),
       _LigneRecap(
         icone: AppIcons.eleves,
-        haut: Text(
-          connectes <= 1
-              ? t.salle.fin.enseignant.unConnecte(n: connectes)
-              : t.salle.fin.enseignant.connectes(n: connectes),
-          style: fort,
-        ),
-        bas: Text(
-          inscrits <= 1
-              ? t.salle.fin.enseignant.unInscrit(n: inscrits)
-              : t.salle.fin.enseignant.inscrits(n: inscrits),
-          style: discret,
-        ),
+        haut: Text(libelleConnectes(connectes), style: fort),
+        bas: Text(libelleInscrits(inscrits), style: discret),
       ),
       _LigneRecap(
         icone: AppIcons.cahier,
