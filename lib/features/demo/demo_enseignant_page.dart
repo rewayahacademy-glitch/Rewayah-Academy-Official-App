@@ -36,9 +36,11 @@ import '../../core/video/pre_vol.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import '../bienvenue_enseignant/bienvenue_page.dart';
 import '../creneaux/creneaux_page.dart';
 import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
+import '../profil_enseignant/photo_publique.dart';
 import '../profil_enseignant/profil_enseignant_page.dart';
 import 'classe_demo.dart' show EtatDemoClasse;
 import 'demo_classe_page.dart' show adresseDemoClasse;
@@ -92,6 +94,7 @@ String libelleEcranDemoEnseignant(EcranDemoEnseignant ecran) => switch (ecran) {
   EcranDemoEnseignant.aujourdhui => t.nav.enseignant.journee,
   EcranDemoEnseignant.classes => t.nav.enseignant.classes,
   EcranDemoEnseignant.disponibilites => t.nav.enseignant.creneaux,
+  EcranDemoEnseignant.premiersPas => t.enseignant.bienvenue.titre,
   EcranDemoEnseignant.profil => t.nav.enseignant.profil,
 };
 
@@ -189,7 +192,43 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
       (Ref _) async => DonneesEnseignantDemo.profil,
     ),
     acceptationsProvider.overrideWith((Ref _) async => const <Acceptation>[]),
+    // Photo publique (ENS-05A) : sans photo au depart, un choix et un envoi
+    // fictifs qui ne quittent pas l'appareil (K-28).
+    photoPubliqueProvider.overrideWith(PhotoPubliqueControleur.new),
+    choixPhotoPubliqueProvider.overrideWithValue(const _ChoixPhotoDemo()),
+    envoiPhotoPubliqueProvider.overrideWithValue(const _EnvoiPhotoDemo()),
+    // Premiers pas (ENS-01) : la photo manque, le reste est confirme (sauf
+    // les disponibilites dans la situation vide).
+    prerequisEnseignantProvider.overrideWith(
+      (Ref ref) => PrerequisEnseignant(
+        photo: ref.watch(photoPubliqueProvider) != null,
+        langues: DonneesEnseignantDemo.profil.langues.isNotEmpty,
+        fuseau: true,
+        disponibilites: !vide,
+      ),
+    ),
   ];
+}
+
+/// Le choix de photo de la demonstration : aucun fichier, les initiales en
+/// repli, comme toutes les photos de demonstration.
+class _ChoixPhotoDemo implements ChoixPhotoPublique {
+  const _ChoixPhotoDemo();
+
+  @override
+  Future<PhotoChoisie?> choisir() async => const PhotoChoisie();
+}
+
+/// L'envoi de la demonstration : rien ne part, la cle est fictive. Le succes
+/// n'arrive qu'apres la reponse simulee, jamais avant.
+class _EnvoiPhotoDemo implements EnvoiPhotoPublique {
+  const _EnvoiPhotoDemo();
+
+  @override
+  Future<String> envoyer(PhotoChoisie photo) => Future<String>.delayed(
+    const Duration(milliseconds: 600),
+    () => 'demo/enseignant/${DonneesEnseignantDemo.enseignantId}.png',
+  );
 }
 
 /// La page : la liste des ecrans, ou la coquille sur l'ecran choisi.
@@ -271,6 +310,15 @@ class CoquilleEnseignantDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Premiers pas : un flux d'activation, sans barre ni destination active
+    // (00_MAQUETTES planche 1, R4).
+    if (ecran == EcranDemoEnseignant.premiersPas) {
+      return ProviderScope(
+        key: ValueKey<EtatDemoEnseignant>(etat),
+        overrides: surchargesCoquilleEnseignantDemo(etat),
+        child: const RepereDemonstration(child: BienvenueEnseignantPage()),
+      );
+    }
     final List<Destination> destinations = destinationsPour(
       role: AppRole.teacher,
       mode: InterfaceMode.standard,
@@ -306,6 +354,8 @@ class CoquilleEnseignantDemo extends StatelessWidget {
             ),
             EcranDemoEnseignant.disponibilites => const CreneauxPage(),
             EcranDemoEnseignant.profil => const ProfilEnseignantPage(),
+            // Rendu plus haut, hors de la coquille.
+            EcranDemoEnseignant.premiersPas => const SizedBox.shrink(),
           },
         ),
       ),

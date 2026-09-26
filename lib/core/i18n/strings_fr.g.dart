@@ -2179,6 +2179,7 @@ class Traductions$enseignant$fr {
 	late final Traductions$enseignant$signalement$fr signalement = Traductions$enseignant$signalement$fr.internal(_root);
 	late final Traductions$enseignant$demo$fr demo = Traductions$enseignant$demo$fr.internal(_root);
 	late final Traductions$enseignant$bienvenue$fr bienvenue = Traductions$enseignant$bienvenue$fr.internal(_root);
+	late final Traductions$enseignant$photo$fr photo = Traductions$enseignant$photo$fr.internal(_root);
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
 	late final Traductions$enseignant$salle$fr salle = Traductions$enseignant$salle$fr.internal(_root);
 	late final Traductions$enseignant$cahier$fr cahier = Traductions$enseignant$cahier$fr.internal(_root);
@@ -7489,23 +7490,38 @@ class Traductions$enseignant$bienvenue$fr {
 	/// fr: 'Votre dossier est validé.'
 	String get dossierValide => 'Votre dossier est validé.';
 
-	/// fr: 'Ce qui vient maintenant'
-	String get suite => 'Ce qui vient maintenant';
+	/// fr: 'Préparez votre espace avant votre première Classe.'
+	String get sousTitre => 'Préparez votre espace avant votre première Classe.';
 
-	/// fr: 'Vous déclarez vos heures d'enseignement, par créneaux d'une heure.'
-	String get pas1 => 'Vous déclarez vos heures d\'enseignement, par créneaux d\'une heure.';
+	/// fr: 'À compléter'
+	String get aCompleter => 'À compléter';
 
-	/// fr: 'L'académie vous confie des élèves sur ces heures, en groupes de cinq enfants ou six adultes.'
-	String get pas2 => 'L\'académie vous confie des élèves sur ces heures, en groupes de cinq enfants ou six adultes.';
+	/// fr: '{fait} sur {total}'
+	String compteur({required Object fait, required Object total}) => '${fait} sur ${total}';
 
-	/// fr: 'Après chaque cours, vous remplissez un cahier de transmission. Il est prérempli : vous ne corrigez que les exceptions.'
-	String get pas3 => 'Après chaque cours, vous remplissez un cahier de transmission. Il est prérempli : vous ne corrigez que les exceptions.';
+	/// fr: 'Fait'
+	String get fait => 'Fait';
+
+	/// fr: 'Ajouter ma photo professionnelle'
+	String get prerequisPhoto => 'Ajouter ma photo professionnelle';
+
+	/// fr: 'Vérifier mes langues d'enseignement'
+	String get prerequisLangues => 'Vérifier mes langues d\'enseignement';
+
+	/// fr: 'Vérifier mon fuseau horaire'
+	String get prerequisFuseau => 'Vérifier mon fuseau horaire';
+
+	/// fr: 'Ajouter ma photo'
+	String get ctaPhoto => 'Ajouter ma photo';
+
+	/// fr: 'Vérifier mes informations'
+	String get ctaInformations => 'Vérifier mes informations';
+
+	/// fr: 'Voir ma journée'
+	String get ctaJournee => 'Voir ma journée';
 
 	/// fr: 'Deux choses à ne pas découvrir en cours de route'
 	String get rappels => 'Deux choses à ne pas découvrir en cours de route';
-
-	/// fr: 'Vous les avez accusées à l'inscription. Elles sont rappelées ici, et la salle les rappelle en permanence.'
-	String get rappelDejaAccepte => 'Vous les avez accusées à l\'inscription. Elles sont rappelées ici, et la salle les rappelle en permanence.';
 
 	/// fr: 'Déclarer mes disponibilités'
 	String get declarer => 'Déclarer mes disponibilités';
@@ -7527,6 +7543,54 @@ class Traductions$enseignant$bienvenue$fr {
 
 	/// fr: 'Votre profil n'a pas pu être lu. Réessayez dans un instant.'
 	String get erreur => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.';
+}
+
+// Path: enseignant.photo
+class Traductions$enseignant$photo$fr {
+	Traductions$enseignant$photo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Photo professionnelle'
+	String get titre => 'Photo professionnelle';
+
+	/// fr: 'Cette photo peut être visible par les élèves et les familles de vos Classes.'
+	String get aide => 'Cette photo peut être visible par les élèves et les familles de vos Classes.';
+
+	/// fr: 'N'utilisez pas votre pièce d'identité.'
+	String get notice => 'N\'utilisez pas votre pièce d\'identité.';
+
+	/// fr: 'Choisir une photo'
+	String get choisir => 'Choisir une photo';
+
+	/// fr: 'Utiliser cette photo'
+	String get utiliser => 'Utiliser cette photo';
+
+	/// fr: 'Remplacer la photo'
+	String get remplacer => 'Remplacer la photo';
+
+	/// fr: 'Choisir une autre photo'
+	String get autre => 'Choisir une autre photo';
+
+	/// fr: 'Changer la photo'
+	String get changer => 'Changer la photo';
+
+	/// fr: 'Votre photo publique'
+	String get alternatif => 'Votre photo publique';
+
+	/// fr: 'La photo est enregistrée.'
+	String get succes => 'La photo est enregistrée.';
+
+	/// fr: 'La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.'
+	String get echec => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.';
+
+	/// fr: 'La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.'
+	String get selectionEchec => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.';
+
+	/// fr: 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.'
+	String get horsLigne => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.';
 }
 
 // Path: enseignant.journee
@@ -14899,12 +14963,17 @@ extension on Traductions {
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
-			'enseignant.bienvenue.suite' => 'Ce qui vient maintenant',
-			'enseignant.bienvenue.pas1' => 'Vous déclarez vos heures d\'enseignement, par créneaux d\'une heure.',
-			'enseignant.bienvenue.pas2' => 'L\'académie vous confie des élèves sur ces heures, en groupes de cinq enfants ou six adultes.',
-			'enseignant.bienvenue.pas3' => 'Après chaque cours, vous remplissez un cahier de transmission. Il est prérempli : vous ne corrigez que les exceptions.',
+			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
+			'enseignant.bienvenue.aCompleter' => 'À compléter',
+			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
+			'enseignant.bienvenue.fait' => 'Fait',
+			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
+			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
+			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
+			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
+			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
+			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
-			'enseignant.bienvenue.rappelDejaAccepte' => 'Vous les avez accusées à l\'inscription. Elles sont rappelées ici, et la salle les rappelle en permanence.',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
@@ -14912,6 +14981,19 @@ extension on Traductions {
 			'enseignant.bienvenue.dossierIncompletDetail' => 'Le portail d\'attente vous dit ce qu\'il reste à fournir.',
 			'enseignant.bienvenue.versAttente' => 'Voir mon dossier',
 			'enseignant.bienvenue.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
+			'enseignant.photo.titre' => 'Photo professionnelle',
+			'enseignant.photo.aide' => 'Cette photo peut être visible par les élèves et les familles de vos Classes.',
+			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
+			'enseignant.photo.choisir' => 'Choisir une photo',
+			'enseignant.photo.utiliser' => 'Utiliser cette photo',
+			'enseignant.photo.remplacer' => 'Remplacer la photo',
+			'enseignant.photo.autre' => 'Choisir une autre photo',
+			'enseignant.photo.changer' => 'Changer la photo',
+			'enseignant.photo.alternatif' => 'Votre photo publique',
+			'enseignant.photo.succes' => 'La photo est enregistrée.',
+			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
+			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
+			'enseignant.photo.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
 			'enseignant.journee.titre' => 'Aujourd\'hui',
@@ -15084,6 +15166,8 @@ extension on Traductions {
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
 			'enseignant.profil.verificationEnAttente' => 'En attente',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.verificationValidee' => 'Validée',
 			'enseignant.profil.verificationRefusee' => 'À reprendre',
 			'enseignant.profil.contratSection' => 'Contrat et accusés',
@@ -15102,8 +15186,6 @@ extension on Traductions {
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.horsLigne' => 'Pas de réseau : rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.modifierLangues' => 'Modifier les langues',
@@ -15598,6 +15680,8 @@ extension on Traductions {
 			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
 			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
 			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',
@@ -15616,8 +15700,6 @@ extension on Traductions {
 			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.aucune' => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.',
 			'tc.observation.resultat.prochaineSeance' => 'Vous pourrez observer la prochaine séance.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
 			'tc.observation.resultat.inconnues' => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.',
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',

@@ -20,8 +20,7 @@ import '../support/harnais.dart';
 /// Une destination-temoin, pour mesurer ou une action mene vraiment.
 GoRoute _temoin(String chemin, String texte) => GoRoute(
   path: chemin,
-  builder: (BuildContext _, GoRouterState _) =>
-      Scaffold(body: Text(texte)),
+  builder: (BuildContext _, GoRouterState _) => Scaffold(body: Text(texte)),
 );
 
 /// Une session d'enseignant resolue, dont seul le statut varie.
@@ -46,6 +45,7 @@ Future<void> _monter(
   bool echecProfil = false,
   AccountStatus? statut = AccountStatus.active,
   bool horsLigne = false,
+  PrerequisEnseignant? prerequis,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -65,8 +65,10 @@ Future<void> _monter(
         _temoin(Routes.enseignantCreneaux, 'creneaux'),
         _temoin(Routes.enseignantJournee, 'journee'),
         _temoin(Routes.attente, 'portail'),
+        _temoin(Routes.enseignantProfil, 'profil'),
       ],
       surcharges: <Override>[
+        prerequisEnseignantProvider.overrideWithValue(prerequis),
         sourceSessionProvider.overrideWithValue(
           FausseSourceSession(_session(statut)),
         ),
@@ -119,19 +121,92 @@ void main() {
       expect(find.text(t.enseignant.bienvenue.declarer), findsOneWidget);
     });
 
-    testWidgets('les trois pas suivants sont dits, dans l ordre', (
+    // EN-6 : la prose « cinq enfants ou six adultes » est retiree (E6,
+    // 00_MAQUETTES planche 1 R2) ; ce test remplace « les trois pas ».
+    testWidgets('la prose des groupes de cinq ou six n existe plus', (
       WidgetTester tester,
     ) async {
       await _monter(tester);
       await tester.pumpAndSettle();
 
-      for (final String pas in <String>[
-        t.enseignant.bienvenue.pas1,
-        t.enseignant.bienvenue.pas2,
-        t.enseignant.bienvenue.pas3,
-      ]) {
-        expect(find.text(pas), findsOneWidget);
-      }
+      expect(find.textContaining('cinq enfants'), findsNothing);
+      expect(find.textContaining('six adultes'), findsNothing);
+    });
+  });
+
+  group('ENS-01 : « A completer » et le premier manque (EN-6)', () {
+    testWidgets('sans prerequis rendus, aucune carte n est inventee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.bienvenue.aCompleter), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.declarer), findsOneWidget);
+    });
+
+    testWidgets('photo manquante : compteur en texte, lignes faites, bouton', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        prerequis: const PrerequisEnseignant(
+          photo: false,
+          langues: true,
+          fuseau: true,
+          disponibilites: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.bienvenue.aCompleter), findsOneWidget);
+      expect(
+        find.text(t.enseignant.bienvenue.compteur(fait: 3, total: 4)),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.bienvenue.fait), findsNWidgets(3));
+      expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsOneWidget);
+      expect(find.text(t.enseignant.bienvenue.ctaPhoto), findsOneWidget);
+    });
+
+    testWidgets('informations a verifier : le bouton mene au profil', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        prerequis: const PrerequisEnseignant(
+          photo: true,
+          langues: true,
+          fuseau: false,
+          disponibilites: false,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(t.enseignant.bienvenue.ctaInformations));
+      await tester.pumpAndSettle();
+      expect(find.text('profil'), findsOneWidget);
+    });
+
+    testWidgets('tout est complet : « Voir ma journee », une seule sortie', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        prerequis: const PrerequisEnseignant(
+          photo: true,
+          langues: true,
+          fuseau: true,
+          disponibilites: true,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.bienvenue.fait), findsNWidgets(4));
+      expect(find.text(t.enseignant.bienvenue.versJournee), findsNothing);
+      await tester.tap(find.text(t.enseignant.bienvenue.ctaJournee));
+      await tester.pumpAndSettle();
+      expect(find.text('journee'), findsOneWidget);
     });
   });
 

@@ -21,16 +21,15 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
-import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import 'photo_publique.dart';
 
 /// `ENS-05` : qui suis-je pour l'academie, et ou regle-je ce qui m'appartient.
 ///
@@ -124,19 +123,22 @@ class _Corps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ordre du doc 04 section 23.1 : identite et photo publique en tete
+    // (00_MAQUETTES planche 4), informations professionnelles, statut,
+    // contrats, reglages ; la deconnexion reste en bas, a part.
     final Widget identite = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppCard(dominante: true, child: _Entete(profil: profil)),
+        _Entete(profil: profil),
         Ecart.vSection,
-        _Statut(profil: profil, statutSession: statutSession),
+        _Declaration(profil: profil, horsLigne: horsLigne),
       ],
     );
 
     final Widget reglages = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _Declaration(profil: profil, horsLigne: horsLigne),
+        _Statut(profil: profil, statutSession: statutSession),
         Ecart.vSection,
         const _Contrat(),
         Ecart.vSection,
@@ -162,22 +164,64 @@ class _Corps extends StatelessWidget {
   }
 }
 
-/// L'identite professionnelle autorisee : prenom et identifiant immuable.
+/// L'en-tete : la photo publique, le prenom et l'identifiant immuable, puis
+/// « Changer la photo » (00_MAQUETTES planche 4, ENS-05).
 ///
-/// Rien d'autre n'est montre, et c'est exactement ce que le produit expose deja
-/// aux familles (ADR-008).
-class _Entete extends StatelessWidget {
+/// Ni badge « verifie », ni biographie, ni specialite (R1 a R3 de la
+/// planche) : c'est exactement ce que le produit expose deja aux familles
+/// (ADR-008), plus la photo de `ENS-05A`.
+class _Entete extends ConsumerWidget {
   const _Entete({required this.profil});
 
   final ProfilEnseignant profil;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final String? cle = ref.watch(photoPubliqueProvider);
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _Identite(profil: profil, cle: cle, textes: textes),
+        Ecart.vMd,
+        // Largeur naturelle : une action secondaire, pas le bouton dominant.
+        IntrinsicWidth(
+          child: ActionPrincipale(
+            libelle: cle == null
+                ? t.enseignant.photo.choisir
+                : t.enseignant.photo.changer,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            onPress: () =>
+                unawaited(ouvrirPhotoPublique(context, prenom: profil.prenom)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Identite extends StatelessWidget {
+  const _Identite({
+    required this.profil,
+    required this.cle,
+    required this.textes,
+  });
+
+  final ProfilEnseignant profil;
+  final String? cle;
+  final TextTheme textes;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        AvatarTile(prenom: profil.prenom),
+        PortraitPublic(
+          prenom: profil.prenom,
+          cle: cle,
+          diametre: AppSpacing.respiration + AppSpacing.xxxl,
+        ),
         Ecart.hLg,
         Expanded(
           child: Column(
@@ -234,49 +278,43 @@ class _Statut extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.statutSection),
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              // La pastille garde sa largeur intrinseque : une colonne etiree
-              // lui donnerait toute la largeur de la carte, et un aplat large
-              // n'est plus une pastille (`01-systeme-visuel.md` section 3).
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: StatusPill(libelle: libelle, ton: ton),
+        GroupeReglages(
+          titre: t.enseignant.profil.statutSection,
+          lignes: <LigneRubrique>[
+            // Une ligne d'etat calme (K-42 point 3) : la pastille dit l'etat,
+            // la legende dit ce qu'il permet.
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: detail,
+              marque: StatusPill(libelle: libelle, ton: ton),
+            ),
+            LigneRubrique(
+              icone: AppIcons.controleQualite,
+              libelle: t.enseignant.profil.verification,
+              valeur: switch (profil.verification) {
+                VerificationEnseignant.enAttente =>
+                  t.enseignant.profil.verificationEnAttente,
+                VerificationEnseignant.validee =>
+                  t.enseignant.profil.verificationValidee,
+                VerificationEnseignant.refusee =>
+                  t.enseignant.profil.verificationRefusee,
+                null => t.enseignant.profil.nonRenseigne,
+              },
+            ),
+          ],
+        ),
+        if (divergent) ...<Widget>[
+          Ecart.vMd,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.enseignant.profil.statutDivergent,
+              style: palette.inkWarning.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
               ),
-              Ecart.vMd,
-              Text(detail, style: textes.bodyMedium),
-              if (divergent) ...<Widget>[
-                Ecart.vMd,
-                Semantics(
-                  liveRegion: true,
-                  child: Text(
-                    t.enseignant.profil.statutDivergent,
-                    style: palette.inkWarning.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
-        SettingRow(
-          title: t.enseignant.profil.verification,
-          value: switch (profil.verification) {
-            VerificationEnseignant.enAttente =>
-              t.enseignant.profil.verificationEnAttente,
-            VerificationEnseignant.validee =>
-              t.enseignant.profil.verificationValidee,
-            VerificationEnseignant.refusee =>
-              t.enseignant.profil.verificationRefusee,
-            null => t.enseignant.profil.nonRenseigne,
-          },
-          icon: AppIcons.controleQualite,
-          enabled: false,
-        ),
+        ],
       ],
     );
   }
@@ -384,63 +422,70 @@ class _DeclarationState extends ConsumerState<_Declaration> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.identite),
         if (widget.horsLigne) ...<Widget>[
           Text(t.enseignant.profil.horsLigne, style: textes.bodySmall),
           Ecart.vSm,
         ],
-        SettingRow(
-          title: t.enseignant.profil.pays,
-          value: profil.pays ?? t.enseignant.profil.nonRenseigne,
-          icon: AppIcons.foyer,
-          // Un bouton qui ne peut pas aboutir n'est pas rendu : hors ligne, la
-          // ligne redevient une lecture et la phrase ci-dessus l'explique.
-          onPress: widget.horsLigne
-              ? null
-              : () => unawaited(
-                  _editer(
-                    titre: t.enseignant.profil.modifierPays,
-                    valeur: profil.pays ?? '',
-                    indice: null,
-                    ecrire: (String saisie) => _service.declarer(pays: saisie),
-                  ),
-                ),
-        ),
-        SettingRow(
-          title: t.enseignant.profil.langues,
-          value: langues.isEmpty ? t.enseignant.profil.nonRenseigne : langues,
-          icon: AppIcons.reglages,
-          onPress: widget.horsLigne
-              ? null
-              : () => unawaited(
-                  _editer(
-                    titre: t.enseignant.profil.modifierLangues,
-                    valeur: langues,
-                    indice: t.enseignant.profil.languesIndice,
-                    ecrire: (String saisie) =>
-                        _service.declarer(langues: _listeDeLangues(saisie)),
-                  ),
-                ),
-        ),
-        SettingRow(
-          title: t.enseignant.profil.fuseau,
-          description: t.enseignant.profil.fuseauDetail,
-          value: fuseau.hasValue
-              ? fuseau.requireValue
-              : t.enseignant.profil.nonRenseigne,
-          icon: AppIcons.creneaux,
-          enabled: false,
-        ),
-        SettingRow(
-          title: t.enseignant.profil.plafond,
-          description: t.enseignant.profil.plafondDetail,
-          value: profil.plafondHeures == null
-              ? t.enseignant.profil.nonRenseigne
-              : t.enseignant.profil.plafondValeur(
-                  nombre: profil.plafondHeures!,
-                ),
-          icon: AppIcons.journee,
-          enabled: false,
+        // Lignes groupees, chaque ligne entiere cliquable quand elle s'edite
+        // (UX_REVIEW_04 ligne ENS-05, cible d'au moins 48).
+        GroupeReglages(
+          titre: t.enseignant.profil.identite,
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              libelle: t.enseignant.profil.pays,
+              valeur: profil.pays ?? t.enseignant.profil.nonRenseigne,
+              icone: AppIcons.foyer,
+              // Un bouton qui ne peut pas aboutir n'est pas rendu : hors
+              // ligne, la ligne redevient une lecture et la phrase l'explique.
+              onPress: widget.horsLigne
+                  ? null
+                  : () => unawaited(
+                      _editer(
+                        titre: t.enseignant.profil.modifierPays,
+                        valeur: profil.pays ?? '',
+                        indice: null,
+                        ecrire: (String saisie) =>
+                            _service.declarer(pays: saisie),
+                      ),
+                    ),
+            ),
+            LigneRubrique(
+              libelle: t.enseignant.profil.langues,
+              valeur: langues.isEmpty
+                  ? t.enseignant.profil.nonRenseigne
+                  : langues,
+              icone: AppIcons.cours,
+              onPress: widget.horsLigne
+                  ? null
+                  : () => unawaited(
+                      _editer(
+                        titre: t.enseignant.profil.modifierLangues,
+                        valeur: langues,
+                        indice: t.enseignant.profil.languesIndice,
+                        ecrire: (String saisie) =>
+                            _service.declarer(langues: _listeDeLangues(saisie)),
+                      ),
+                    ),
+            ),
+            LigneRubrique(
+              libelle: t.enseignant.profil.fuseau,
+              legende: t.enseignant.profil.fuseauDetail,
+              valeur: fuseau.hasValue
+                  ? fuseau.requireValue
+                  : t.enseignant.profil.nonRenseigne,
+              icone: AppIcons.horloge,
+            ),
+            LigneRubrique(
+              libelle: t.enseignant.profil.plafond,
+              legende: t.enseignant.profil.plafondDetail,
+              valeur: profil.plafondHeures == null
+                  ? t.enseignant.profil.nonRenseigne
+                  : t.enseignant.profil.plafondValeur(
+                      nombre: profil.plafondHeures!,
+                    ),
+              icone: AppIcons.journee,
+            ),
+          ],
         ),
         LocalFeedback(message: _message),
       ],
@@ -515,7 +560,10 @@ class _Contrat extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.contratSection),
+        // Le groupe porte son titre ; les etats vides et d'echec gardent le
+        // leur.
+        if (!acceptations.hasValue || acceptations.requireValue.isEmpty)
+          SectionHeader(titre: t.enseignant.profil.contratSection),
         // L'erreur reste locale a la section : les autres restent lisibles, et
         // la deconnexion aussi.
         switch (acceptations) {
@@ -530,19 +578,21 @@ class _Contrat extends ConsumerWidget {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      for (final Acceptation lue in acceptations.requireValue)
-                        SettingRow(
-                          key: ValueKey<String>(
-                            '${lue.sorte.valeurSql}-${lue.version}',
-                          ),
-                          title: _libelle(lue.sorte),
-                          description: t.enseignant.profil.contratDetail(
-                            version: lue.version,
-                            date: _date(lue.accepteeLe),
-                          ),
-                          icon: AppIcons.dossiers,
-                          enabled: false,
-                        ),
+                      GroupeReglages(
+                        titre: t.enseignant.profil.contratSection,
+                        lignes: <LigneRubrique>[
+                          for (final Acceptation lue
+                              in acceptations.requireValue)
+                            LigneRubrique(
+                              libelle: _libelle(lue.sorte),
+                              legende: t.enseignant.profil.contratDetail(
+                                version: lue.version,
+                                date: _date(lue.accepteeLe),
+                              ),
+                              icone: AppIcons.dossiers,
+                            ),
+                        ],
+                      ),
                       Ecart.vSm,
                       Text(
                         t.enseignant.profil.contratLectureSeule,
@@ -586,20 +636,19 @@ class _Personnel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.personnel),
-        SettingRow(
-          title: t.compte.profil,
-          description: t.compte.profilDetail,
-          icon: AppIcons.profil,
+    return GroupeReglages(
+      titre: t.enseignant.profil.personnel,
+      lignes: <LigneRubrique>[
+        LigneRubrique(
+          libelle: t.compte.profil,
+          legende: t.compte.profilDetail,
+          icone: AppIcons.profil,
           onPress: () => context.push(Routes.compteProfil),
         ),
-        SettingRow(
-          title: t.compte.reglages,
-          description: t.compte.reglagesDetail,
-          icon: AppIcons.reglages,
+        LigneRubrique(
+          libelle: t.compte.reglages,
+          legende: t.compte.reglagesDetail,
+          icone: AppIcons.reglages,
           onPress: () => context.push(Routes.compteReglages),
         ),
       ],
@@ -624,8 +673,7 @@ class _Deconnexion extends ConsumerWidget {
     // lire pendant `build` aurait un autre defaut, moins visible : il
     // construirait le client Supabase au montage, et tout test qui monte cet
     // ecran sans surcharger le service echouerait avant d'avoir rien mesure.
-    onPress: () =>
-        unawaited(_demander(context, ref.read(serviceAuthProvider))),
+    onPress: () => unawaited(_demander(context, ref.read(serviceAuthProvider))),
   );
 
   Future<void> _demander(BuildContext context, ServiceAuth auth) async {

@@ -216,6 +216,10 @@ enum EcranDemoEnseignant {
 
   /// Profil (ENS-05).
   profil,
+
+  /// Premiers pas (ENS-01) : un flux d'activation, hors de la barre. Il
+  /// reste le dernier : les quatre premiers suivent l'ordre des destinations.
+  premiersPas,
 }
 
 /// Les situations proposees pour chaque ecran.
