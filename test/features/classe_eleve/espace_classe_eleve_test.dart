@@ -7,12 +7,15 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
+import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart';
@@ -215,6 +218,72 @@ void main() {
       await _poser(tester, EtatDemoClasse.aVenir);
       expect(find.text('Chapitre 1 · 60 %'), findsOneWidget);
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    });
+  });
+
+  testWidgets('photo absente : initiales, sans « Photo a fournir »', (
+    WidgetTester tester,
+  ) async {
+    await avecLargeur(tester, largeurMobile, () async {
+      await _poser(tester, EtatDemoClasse.aVenir);
+      // L'enseignante de demonstration n'a pas de photo.
+      expect(DonneesClasseDemo.enseignante.photoManquante, isTrue);
+      expect(find.text(LibellesGroupe.photoManquante), findsNothing);
+      expect(
+        find.bySemanticsLabel(LibellesGroupe.photoManquante),
+        findsNothing,
+      );
+      expect(find.byType(PhotoEnseignant), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byType(IdentiteGroupe),
+          matching: find.byType(AvatarTile),
+        ),
+        findsOneWidget,
+      );
+    });
+  });
+
+  testWidgets('le retour « Mes classes » est au bord de debut', (
+    WidgetTester tester,
+  ) async {
+    for (final double largeur in <double>[largeurMobile, 1440]) {
+      await avecLargeur(tester, largeur, () async {
+        await _poser(tester, EtatDemoClasse.aVenir);
+        final Finder retour = find.widgetWithText(
+          ActionPrincipale,
+          LibellesGroupe.retour,
+        );
+        expect(retour, findsOneWidget);
+        final Rect r = tester.getRect(retour);
+        // Leading : aligne sur le bord de debut du contenu, jamais centre.
+        expect(
+          r.left,
+          closeTo(tester.getTopLeft(find.byType(IdentiteGroupe)).dx, 1),
+        );
+        expect(r.width, lessThan(largeur - 96));
+      });
+    }
+  });
+
+  testWidgets('mobile : « Voir tout » au bord de fin de l en-tete', (
+    WidgetTester tester,
+  ) async {
+    await avecLargeur(tester, largeurMobile, () async {
+      await _poser(tester, EtatDemoClasse.aVenir);
+      final Finder voirTout = find.widgetWithText(
+        ActionPrincipale,
+        LibellesGroupe.bibliothequeVoirTout,
+      );
+      await tester.ensureVisible(voirTout);
+      final Rect lien = tester.getRect(voirTout);
+      final Rect titre = tester.getRect(
+        find.text(LibellesGroupe.bibliotheque).first,
+      );
+      // Meme ligne que le titre, et au bord de fin.
+      expect(lien.top, lessThan(titre.bottom));
+      expect(lien.right, greaterThan(largeurMobile - 48));
+      expect(lien.width, lessThan(largeurMobile / 2));
     });
   });
 

@@ -4,8 +4,8 @@
 // - eleve (CL-4.3) : le VRAI EspaceGroupePage, ses providers surcharges par un
 //   ProviderScope sur les donnees de classe_demo.dart (aucun port reseau
 //   modifie) ;
-// - enseignant et Interface guidee : un recapitulatif texte de l'emplacement
-//   d'entree (l'enseignant passe en CL-4.4).
+// - enseignant (CL-4.4) : le VRAI FicheGroupePage, meme patron ;
+// - Interface guidee : un recapitulatif texte de l'emplacement d'entree.
 // Aucun appel serveur (consigne K-28).
 
 import 'package:flutter/material.dart';
@@ -13,7 +13,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
+import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/catalogue_local.dart';
@@ -28,6 +32,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../fiche_groupe/fiche_groupe_page.dart';
+import '../fiche_groupe/preparation_seance.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
 import 'classe_demo.dart';
@@ -138,10 +144,11 @@ class DemoClassePage extends StatelessWidget {
       );
     }
 
-    // CL-4.3 : l'eleve voit le VRAI ecran. L'enseignant garde son
-    // recapitulatif jusqu'a CL-4.4 ; l'Interface guidee rejoint depuis son
-    // Accueil (spec 2.2), l'Espace Classe n'est pas son chemin.
+    // CL-4.3 et CL-4.4 : l'eleve et l'enseignant voient le VRAI ecran.
+    // L'Interface guidee rejoint depuis son Accueil (spec 2.2), l'Espace
+    // Classe n'est pas son chemin : elle garde son recapitulatif.
     if (r == RoleEntree.eleve) return EcranEleveDemo(etat: e);
+    if (r == RoleEntree.enseignant) return EcranEnseignantDemo(etat: e);
 
     final EmplacementEntree emplacement = DonneesClasseDemo.emplacement(r, e);
     return PageShell(
@@ -223,6 +230,87 @@ List<Override> surchargesEleveDemo(
       ),
     ),
   ];
+}
+
+/// Le groupe de demonstration, tel que `mes_groupes_v` le rendrait.
+GroupeEnseignant groupeEnseignantDemo() => GroupeEnseignant(
+  id: DonneesClasseDemo.groupeId,
+  libelle: DonneesClasseDemo.classe,
+  type: TypePublicGroupe.enfant,
+  seuilMax: 6,
+  creneau: const Creneau(jour: 1, heure: 18, fuseau: 'Europe/Paris'),
+  nbMembres: DonneesClasseDemo.eleves.length,
+  creeLe: DateTime.utc(2026, 9),
+);
+
+/// Les eleves de demonstration, projection pedagogique seulement (R15).
+List<MembreSeance> membresEnseignantDemo() => <MembreSeance>[
+  for (final (int i, EleveProjectionDemo e) in DonneesClasseDemo.eleves.indexed)
+    MembreSeance(
+      studentId: 'demo-eleve-$i',
+      identifiantImmuable: 'RA-DEMO-00${i + 1}',
+      prenom: e.prenom,
+      niveau: e.niveau,
+    ),
+];
+
+/// Les surcharges de la page enseignant pour une situation : celles de
+/// l'eleve (seance, horloge, reseau, supports), plus la fiche du groupe, ses
+/// eleves, leurs projections et la preparation. Les providers `family` sont
+/// surcharges eux-memes : sous un ProviderScope imbrique, ils se resoudraient
+/// sinon dans le conteneur racine.
+List<Override> surchargesEnseignantDemo(EtatDemoClasse etat) {
+  const String id = DonneesClasseDemo.groupeId;
+  return <Override>[
+    ...surchargesEleveDemo(etat),
+    groupesEnseignantProvider.overrideWith(
+      (Ref _) async => <GroupeEnseignant>[groupeEnseignantDemo()],
+    ),
+    membresGroupeEnseignantProvider(id)
+        .overrideWith((Ref _) async => membresEnseignantDemo()),
+    projectionElevesProvider(id).overrideWith(
+      (Ref _) => <String, ProjectionEleve>{
+        for (final (int i, EleveProjectionDemo e)
+            in DonneesClasseDemo.eleves.indexed)
+          'demo-eleve-$i': ProjectionEleve(
+            pageReprise: e.pageReprise,
+            dernierPoint: e.dernierPoint,
+          ),
+      },
+    ),
+    preparationSeanceProvider(id).overrideWith(
+      (Ref _) => const PreparationSeance(
+        supportPrevu: DonneesClasseDemo.supportPrevu,
+        positionReprise: 'Page 24',
+        objectif: 'Lecture et compréhension des bonnes manières',
+      ),
+    ),
+  ];
+}
+
+/// Le VRAI Espace Classe enseignant (`FicheGroupePage`) sur les donnees de
+/// demonstration d'une situation (CL-4.4). « Preparer l'entree » n'ouvre pas
+/// la salle : aucun appel serveur en demonstration.
+class EcranEnseignantDemo extends StatelessWidget {
+  /// Cree l'ecran.
+  const EcranEnseignantDemo({required this.etat, super.key});
+
+  /// La situation.
+  final EtatDemoClasse etat;
+
+  @override
+  Widget build(BuildContext context) {
+    return ProviderScope(
+      key: ValueKey<EtatDemoClasse>(etat),
+      overrides: surchargesEnseignantDemo(etat),
+      child: RepereDemonstration(
+        child: FicheGroupePage(
+          groupeId: DonneesClasseDemo.groupeId,
+          onPreparer: (_) {},
+        ),
+      ),
+    );
+  }
 }
 
 /// Le VRAI Espace Classe eleve (`EspaceGroupePage`) sur les donnees de

@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
+import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 
 void main() {
   test('/demo/classe absente en production, presente ailleurs', () {
@@ -77,7 +78,9 @@ void main() {
       adresseDemoClasse(RoleEntree.enseignant, EtatDemoClasse.fenetreOuverte),
     );
     await tester.pumpAndSettle();
+    await tester.pump();
+    // CL-4.4 : le VRAI ecran enseignant, et son bouton.
+    expect(find.byType(FicheGroupePage), findsOneWidget);
     expect(find.text("Préparer l'entrée"), findsOneWidget);
-    expect(find.text('Forme : bouton'), findsOneWidget);
   });
 }

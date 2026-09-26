@@ -11,6 +11,7 @@ import '../../core/tc_bibliotheque/port_catalogue.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -105,10 +106,15 @@ class BlocBibliotheque extends ConsumerWidget {
     required this.emplacement,
     super.key,
     this.onVoirTout,
+    this.titre,
   });
 
   /// L'enveloppe de contexte.
   final SlotBibliotheque emplacement;
+
+  /// Le titre de section ; par defaut celui de la Bibliotheque. L'enseignant
+  /// lit « Supports recents » (CL-4.4).
+  final String? titre;
 
   /// L'acces au catalogue complet.
   final VoidCallback? onVoirTout;
@@ -120,10 +126,31 @@ class BlocBibliotheque extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(
-          titre: LibellesGroupe.bibliotheque,
-          libelleAction: LibellesGroupe.bibliothequeVoirTout,
-          onAction: onVoirTout,
+        // « Voir tout » au bord de fin de l'en-tete, sur mobile comme sur
+        // bureau : `IntrinsicWidth` donne au lien sa largeur naturelle,
+        // bornee par la place restante ; a 200 %, titre et lien passent a la
+        // ligne au lieu de deborder.
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Flexible(
+              flex: 2,
+              child: SectionHeader(titre: titre ?? LibellesGroupe.bibliotheque),
+            ),
+            if (onVoirTout != null) ...<Widget>[
+              Ecart.hLg,
+              Flexible(
+                child: IntrinsicWidth(
+                  child: ActionPrincipale(
+                    libelle: LibellesGroupe.bibliothequeVoirTout,
+                    niveau: NiveauAction.tertiaire,
+                    pleineLargeur: false,
+                    onPress: onVoirTout,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         Ecart.vMd,
         _Couvertures(catalogue: catalogue, groupeId: emplacement.groupeId),

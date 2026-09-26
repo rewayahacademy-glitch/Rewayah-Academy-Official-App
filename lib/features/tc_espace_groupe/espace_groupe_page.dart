@@ -15,6 +15,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
@@ -97,16 +98,21 @@ class _Sortie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Au bord de debut (contrat B). `IntrinsicWidth` : sans lui,
+    // `ActionPrincipale` s'etirerait et centrerait son libelle ; borne par la
+    // largeur disponible, le libelle passe a la ligne a 200 %.
     return Align(
       alignment: AlignmentDirectional.centerStart,
-      child: ActionPrincipale(
-        libelle: LibellesGroupe.retour,
-        niveau: NiveauAction.tertiaire,
-        pleineLargeur: false,
-        // `go` et non `pop` : l'espace peut avoir ete ouvert par une adresse,
-        // et une sortie qui n'existe que sur une pile laisserait l'utilisateur
-        // enferme.
-        onPress: () => GoRouter.of(context).go(CheminsTcA.mesGroupes),
+      child: IntrinsicWidth(
+        child: ActionPrincipale(
+          libelle: LibellesGroupe.retour,
+          niveau: NiveauAction.tertiaire,
+          pleineLargeur: false,
+          // `go` et non `pop` : l'espace peut avoir ete ouvert par une adresse,
+          // et une sortie qui n'existe que sur une pile laisserait l'utilisateur
+          // enferme.
+          onPress: () => GoRouter.of(context).go(CheminsTcA.mesGroupes),
+        ),
       ),
     );
   }
@@ -271,7 +277,12 @@ class _Colonnes extends StatelessWidget {
         : null;
 
     final List<Widget> identiteEtSeance = <Widget>[
-      IdentiteGroupe(groupe: identite),
+      IdentiteGroupe(
+        groupe: identite,
+        // Cote famille, une photo absente se replie sur les initiales, sans
+        // pastille : « Photo a fournir » est une information interne.
+        repliInitiales: espace.estCoteFamille,
+      ),
       Ecart.vXl,
       session,
       if (reprise != null) ...<Widget>[Ecart.vLg, reprise],
@@ -388,13 +399,22 @@ class _Rangee extends StatelessWidget {
 /// meme groupe aux yeux de la famille.
 class IdentiteGroupe extends StatelessWidget {
   /// Cree l'identite.
-  const IdentiteGroupe({required this.groupe, super.key, this.urlPhoto});
+  const IdentiteGroupe({
+    required this.groupe,
+    super.key,
+    this.urlPhoto,
+    this.repliInitiales = false,
+  });
 
   /// Le groupe.
   final GroupSummaryVM groupe;
 
   /// L'URL signee de la photo, quand l'hote sait la resoudre.
   final String? urlPhoto;
+
+  /// Vrai cote eleve et tuteur : une photo absente devient les initiales,
+  /// sans pastille « Photo a fournir » (information interne).
+  final bool repliInitiales;
 
   @override
   Widget build(BuildContext context) {
@@ -409,7 +429,13 @@ class IdentiteGroupe extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          PhotoEnseignant(enseignant: groupe.enseignant, urlSignee: urlPhoto),
+          if (repliInitiales)
+            AvatarTile(
+              prenom: groupe.enseignant.nomAffichage,
+              urlSignee: urlPhoto,
+            )
+          else
+            PhotoEnseignant(enseignant: groupe.enseignant, urlSignee: urlPhoto),
           Ecart.hLg,
           Expanded(
             child: Column(
@@ -457,7 +483,7 @@ class IdentiteGroupe extends StatelessWidget {
                           ? TonEtat.avertissement
                           : TonEtat.neutre,
                     ),
-                    if (groupe.enseignant.photoManquante)
+                    if (!repliInitiales && groupe.enseignant.photoManquante)
                       StatusPill(
                         libelle: LibellesGroupe.photoManquante,
                         ton: TonEtat.avertissement,

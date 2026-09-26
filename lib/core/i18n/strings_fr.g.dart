@@ -7898,6 +7898,36 @@ class Traductions$enseignant$ficheGroupe$fr {
 
 	/// fr: 'Ouvrir la revue du groupe'
 	String get revue => 'Ouvrir la revue du groupe';
+
+	/// fr: 'Élèves'
+	String get elevesTitre => 'Élèves';
+
+	/// fr: 'À préparer'
+	String get preparationTitre => 'À préparer';
+
+	/// fr: 'Support prévu'
+	String get supportPrevu => 'Support prévu';
+
+	/// fr: 'Position de reprise'
+	String get positionReprise => 'Position de reprise';
+
+	/// fr: 'Objectif'
+	String get objectif => 'Objectif';
+
+	/// fr: 'Aucune préparation renseignée pour cette séance.'
+	String get preparationVide => 'Aucune préparation renseignée pour cette séance.';
+
+	/// fr: 'Supports récents'
+	String get supportsTitre => 'Supports récents';
+
+	/// fr: 'Reprise : {page}'
+	String repriseEleve({required Object page}) => 'Reprise : ${page}';
+
+	/// fr: 'Dernier point : {texte}'
+	String dernierPoint({required Object texte}) => 'Dernier point : ${texte}';
+
+	/// fr: 'Chargement de la Classe.'
+	String get chargementClasse => 'Chargement de la Classe.';
 }
 
 // Path: enseignant.revue
@@ -14376,6 +14406,16 @@ extension on Traductions {
 			'enseignant.ficheGroupe.introuvable' => 'Ce groupe n\'est pas l\'un des vôtres',
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
 			'enseignant.ficheGroupe.revue' => 'Ouvrir la revue du groupe',
+			'enseignant.ficheGroupe.elevesTitre' => 'Élèves',
+			'enseignant.ficheGroupe.preparationTitre' => 'À préparer',
+			'enseignant.ficheGroupe.supportPrevu' => 'Support prévu',
+			'enseignant.ficheGroupe.positionReprise' => 'Position de reprise',
+			'enseignant.ficheGroupe.objectif' => 'Objectif',
+			'enseignant.ficheGroupe.preparationVide' => 'Aucune préparation renseignée pour cette séance.',
+			'enseignant.ficheGroupe.supportsTitre' => 'Supports récents',
+			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Reprise : ${page}',
+			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Dernier point : ${texte}',
+			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
 			'enseignant.revue.titre' => 'Revue du groupe',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.aucuneAnomalieDetail' => 'Le calcul des anomalies pédagogiques n\'est pas encore ouvert aux enseignants : cette page reste vide jusque-là.',
@@ -14464,6 +14504,8 @@ extension on Traductions {
 			'tc.groupe.duree.minutes' => ({required Object minutes}) => '${minutes} min',
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
@@ -14474,8 +14516,6 @@ extension on Traductions {
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
 			'tc.groupe.espace.retour' => 'Mes classes',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
 			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
 			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',

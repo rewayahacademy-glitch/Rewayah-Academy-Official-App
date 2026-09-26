@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 
@@ -38,6 +40,9 @@ GroupeEnseignant _groupe({
 List<Override> _surcharges(FauxServiceEnseignant enseignant) => <Override>[
   serviceEnseignantProvider.overrideWithValue(enseignant),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+  // CL-4.4 : la carte de seance lit la Classe par le port des groupes ; sans
+  // seance, elle le dit, et le reste de la fiche reste lu.
+  groupeProvider(_groupeId).overrideWith((Ref _) async => null),
 ];
 
 /// Un service qui rend un groupe et ses membres.
@@ -91,9 +96,9 @@ void main() {
     testWidgets('loading : un squelette a la forme de la fiche', (
       WidgetTester tester,
     ) async {
-      final FauxServiceEnseignant enseignant =
-          _avec(membres: <MembreSeance>[membreDeTest()])
-            ..delai = const Duration(milliseconds: 40);
+      final FauxServiceEnseignant enseignant = _avec(
+        membres: <MembreSeance>[membreDeTest()],
+      )..delai = const Duration(milliseconds: 40);
 
       await tester.pumpWidget(
         hote(
@@ -154,9 +159,9 @@ void main() {
       await tester.pumpWidget(
         hote(
           const FicheGroupePage(groupeId: _groupeId),
-          surcharges: _surcharges(_avec(groupes: <GroupeEnseignant>[
-            _groupe(nbMembres: 0),
-          ])),
+          surcharges: _surcharges(
+            _avec(groupes: <GroupeEnseignant>[_groupe(nbMembres: 0)]),
+          ),
         ),
       );
       await tester.pumpAndSettle();
@@ -242,24 +247,25 @@ void main() {
       );
     });
 
-    testWidgets('sans niveau, la fiche se tait plutot que d afficher un tiret', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        hote(
-          const FicheGroupePage(groupeId: _groupeId),
-          surcharges: _surcharges(
-            _avec(membres: <MembreSeance>[membreDeTest(prenom: 'Khadija')]),
+    testWidgets(
+      'sans niveau, la fiche se tait plutot que d afficher un tiret',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          hote(
+            const FicheGroupePage(groupeId: _groupeId),
+            surcharges: _surcharges(
+              _avec(membres: <MembreSeance>[membreDeTest(prenom: 'Khadija')]),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Khadija'), findsOneWidget);
-      // Aucune ligne « niveau : - » : une promesse non tenue a chaque eleve
-      // coute plus cher que le silence.
-      expect(find.textContaining('Niveau'), findsNothing);
-    });
+        expect(find.text('Khadija'), findsOneWidget);
+        // Aucune ligne « niveau : - » : une promesse non tenue a chaque eleve
+        // coute plus cher que le silence.
+        expect(find.textContaining('Niveau'), findsNothing);
+      },
+    );
 
     testWidgets('un prenom masque laisse l identifiant nommer l eleve', (
       WidgetTester tester,
@@ -293,9 +299,7 @@ void main() {
           const FicheGroupePage(groupeId: _groupeId),
           surcharges: _surcharges(
             _avec(
-              groupes: <GroupeEnseignant>[
-                _groupe(seuilMax: 5, nbMembres: 3),
-              ],
+              groupes: <GroupeEnseignant>[_groupe(seuilMax: 5, nbMembres: 3)],
               membres: <MembreSeance>[membreDeTest()],
             ),
           ),
@@ -315,15 +319,29 @@ void main() {
           const FicheGroupePage(groupeId: _groupeId),
           surcharges: _surcharges(
             _avec(
-              groupes: <GroupeEnseignant>[
-                _groupe(seuilMax: 5, nbMembres: 5),
-              ],
+              groupes: <GroupeEnseignant>[_groupe(seuilMax: 5, nbMembres: 5)],
               membres: <MembreSeance>[
                 membreDeTest(prenom: 'Un'),
-                membreDeTest(studentId: 'e2', identifiant: 'RA-2', prenom: 'Deux'),
-                membreDeTest(studentId: 'e3', identifiant: 'RA-3', prenom: 'Trois'),
-                membreDeTest(studentId: 'e4', identifiant: 'RA-4', prenom: 'Quatre'),
-                membreDeTest(studentId: 'e5', identifiant: 'RA-5', prenom: 'Cinq'),
+                membreDeTest(
+                  studentId: 'e2',
+                  identifiant: 'RA-2',
+                  prenom: 'Deux',
+                ),
+                membreDeTest(
+                  studentId: 'e3',
+                  identifiant: 'RA-3',
+                  prenom: 'Trois',
+                ),
+                membreDeTest(
+                  studentId: 'e4',
+                  identifiant: 'RA-4',
+                  prenom: 'Quatre',
+                ),
+                membreDeTest(
+                  studentId: 'e5',
+                  identifiant: 'RA-5',
+                  prenom: 'Cinq',
+                ),
               ],
             ),
           ),
@@ -334,10 +352,7 @@ void main() {
       expect(find.text(t.enseignant.ficheGroupe.complet), findsOneWidget);
       // « 0 place libre » se lit, il ne se masque pas.
       expect(find.text('0'), findsOneWidget);
-      expect(
-        find.text(t.enseignant.ficheGroupe.placesLibresUn),
-        findsNothing,
-      );
+      expect(find.text(t.enseignant.ficheGroupe.placesLibresUn), findsNothing);
     });
 
     testWidgets('une seule place libre se dit au singulier', (
@@ -349,7 +364,11 @@ void main() {
           surcharges: _surcharges(
             _avec(
               groupes: <GroupeEnseignant>[
-                _groupe(seuilMax: 6, nbMembres: 5, type: TypePublicGroupe.adulte),
+                _groupe(
+                  seuilMax: 6,
+                  nbMembres: 5,
+                  type: TypePublicGroupe.adulte,
+                ),
               ],
             ),
           ),

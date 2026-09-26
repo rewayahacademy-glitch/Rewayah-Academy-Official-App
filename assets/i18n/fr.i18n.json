@@ -2860,7 +2860,17 @@
       "erreur": "Ce groupe n'a pas pu être lu. Réessayez dans un instant.",
       "introuvable": "Ce groupe n'est pas l'un des vôtres",
       "introuvableDetail": "Il a peut-être été clôturé, ou il appartient à un autre enseignant.",
-      "revue": "Ouvrir la revue du groupe"
+      "revue": "Ouvrir la revue du groupe",
+      "elevesTitre": "Élèves",
+      "preparationTitre": "À préparer",
+      "supportPrevu": "Support prévu",
+      "positionReprise": "Position de reprise",
+      "objectif": "Objectif",
+      "preparationVide": "Aucune préparation renseignée pour cette séance.",
+      "supportsTitre": "Supports récents",
+      "repriseEleve": "Reprise : {page}",
+      "dernierPoint": "Dernier point : {texte}",
+      "chargementClasse": "Chargement de la Classe."
     },
     "revue": {
       "titre": "Revue du groupe",
