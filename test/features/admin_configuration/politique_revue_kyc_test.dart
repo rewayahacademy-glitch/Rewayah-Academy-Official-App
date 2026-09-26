@@ -11,15 +11,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
+import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/matching/service_matching.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
+
+import '../../support/harnais.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -146,6 +155,13 @@ Future<void> _visible(WidgetTester tester, Finder cible) async {
   await _stabiliser(tester);
 }
 
+Future<void> _toucher(WidgetTester tester, Finder cible) async {
+  await tester.ensureVisible(cible);
+  await _stabiliser(tester);
+  await tester.tap(cible);
+  await _stabiliser(tester);
+}
+
 bool _valeurSwitch(WidgetTester tester) =>
     tester.widget<Switch>(find.byType(Switch)).value;
 
@@ -202,6 +218,30 @@ void main() {
     await tester.tap(voir);
     await _stabiliser(tester);
     expect(find.text('Document fictif'), findsWidgets);
+
+    // La decision n'est plus bloquee par le genre : fermer, cocher, valider.
+    await _toucher(
+      tester,
+      find.descendant(
+        of: find.byType(VisionneusePiece),
+        matching: find.text(t.commun.fermer),
+      ),
+    );
+    expect(find.byType(VisionneusePiece), findsNothing);
+    for (final String point in <String>[
+      t.dossiers.pointLisible,
+      t.dossiers.pointNom,
+      t.dossiers.pointValidite,
+    ]) {
+      await _toucher(tester, find.text(point).first);
+    }
+    await _toucher(tester, find.text(t.dossiers.approuver).first);
+    expect(find.text(t.dossiers.validation.titre), findsOneWidget);
+    expect(etat.nombreDecisions, 0);
+    await tester.tap(find.text(t.dossiers.approuver).last);
+    await _stabiliser(tester);
+    await _stabiliser(tester);
+    expect(etat.nombreDecisions, 1);
   });
 
   testWidgets('G4 : genre absent, politique activee : Profil a completer', (
@@ -347,6 +387,62 @@ void main() {
     routeur.go(Routes.adminConfigurationPolitiqueRevueKyc);
     await _stabiliser(tester);
     expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+    expect(find.byType(Switch), findsNothing);
+  });
+
+  testWidgets('G13 : coque de production (sans ?demo=admin), port par defaut', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          // Seule la session admin est simulee ; le port de politique garde
+          // sa valeur de production (PolitiqueRevueKycIndisponible).
+          sourceSessionProvider.overrideWithValue(
+            const SourceSessionDemoAdmin(),
+          ),
+          stockagePreferencesProvider.overrideWithValue(
+            StockagePreferencesMemoire(),
+          ),
+          serviceValidationProvider.overrideWithValue(FauxServiceValidation()),
+          indicateursProvider.overrideWith(
+            (Ref ref) async => const IndicateursAdmin(
+              dossiersEnAttente: 0,
+              foyersSansEnseignant: 0,
+              rapportsManquants: 0,
+              incidents24h: 0,
+              comptesEchus: 0,
+              demandesEnAttente: 0,
+            ),
+          ),
+          demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+          ...surchargesServicesAdminIndisponibles(),
+        ],
+        child: TranslationProvider(child: const RewayahApp()),
+      ),
+    );
+    await _stabiliser(tester);
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      tester.element(find.byType(RewayahApp)),
+    );
+    expect(
+      conteneur.read(portPolitiqueRevueKycProvider),
+      isA<PolitiqueRevueKycIndisponible>(),
+    );
+    final GoRouter routeur = conteneur.read(routeurProvider)..go(Routes.admin);
+    await _stabiliser(tester);
+    await _domaine(tester, AdminDomaine.configuration);
+    expect(find.text(t.admin.regles.titre), findsWidgets);
+    expect(find.text(t.admin.politiqueRevueKyc.titre), findsNothing);
+
+    routeur.go(Routes.adminConfigurationPolitiqueRevueKyc);
+    await _stabiliser(tester);
+    expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+    expect(find.text(t.admin.politiqueRevueKyc.libelle), findsNothing);
     expect(find.byType(Switch), findsNothing);
   });
 }

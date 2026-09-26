@@ -22,6 +22,8 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -44,12 +46,14 @@ class _PortCapture implements PortPolitiqueRevueKyc {
   bool echecLecture = false;
   final Completer<void> porte = Completer<void>();
   bool retenir = false;
+  Completer<void>? porteLecture;
 
   @override
   Future<PolitiqueRevueKyc> lire() async {
     if (echecLecture) {
       throw Exception('panne');
     }
+    await porteLecture?.future;
     return _base.lire();
   }
 
@@ -220,6 +224,71 @@ void main() {
           await tester.tap(find.text('Voir la pièce'));
           await _stabiliser(tester);
           debugPrint('PNG ${await capturer(tester, fichier('11_piece'))}');
+
+          // 12, 13 : la decision sur Adam (06) n'est plus bloquee.
+          await tester.tap(
+            find.descendant(
+              of: find.byType(VisionneusePiece),
+              matching: find.text(t.commun.fermer),
+            ),
+          );
+          await _stabiliser(tester);
+          for (final String point in <String>[
+            t.dossiers.pointLisible,
+            t.dossiers.pointNom,
+            t.dossiers.pointValidite,
+          ]) {
+            await tester.ensureVisible(find.text(point).first);
+            await _stabiliser(tester);
+            await tester.tap(find.text(point).first);
+            await _stabiliser(tester);
+          }
+          await tester.ensureVisible(find.text(t.dossiers.approuver).first);
+          await _stabiliser(tester);
+          await tester.tap(find.text(t.dossiers.approuver).first);
+          await _stabiliser(tester);
+          expect(find.text(t.dossiers.validation.titre), findsOneWidget);
+          debugPrint('PNG ${await capturer(tester, fichier('12_decision'))}');
+          await tester.tap(find.text(t.dossiers.approuver).last);
+          await _stabiliser(tester);
+          await _stabiliser(tester);
+          debugPrint('PNG ${await capturer(tester, fichier('13_valide'))}');
+        });
+
+        // 6 : chargement (squelette partage).
+        testWidgets('$nom, chargement, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, _densite(nom));
+          final EtatRevueDemo etat = _etat();
+          final _PortCapture port = _PortCapture(PolitiqueRevueKycDemo(etat))
+            ..porteLecture = Completer<void>();
+          await _monter(tester, mode, etat, port: port);
+          _routeur.go(Routes.adminConfigurationPolitiqueRevueKyc);
+          await _stabiliser(tester);
+          expect(find.byType(Skeleton), findsWidgets);
+          debugPrint('PNG ${await capturer(tester, fichier('6_chargement'))}');
+          port.porteLecture!.complete();
+          await _stabiliser(tester);
+        });
+
+        // 14 : port de production, « Pas encore disponible ».
+        testWidgets('$nom, indisponible, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, _densite(nom));
+          await _monter(
+            tester,
+            mode,
+            _etat(),
+            port: const PolitiqueRevueKycIndisponible(),
+          );
+          _routeur.go(Routes.adminConfigurationPolitiqueRevueKyc);
+          await _stabiliser(tester);
+          expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+          debugPrint(
+            'PNG ${await capturer(tester, fichier('14_indisponible'))}',
+          );
         });
 
         // 3 : envoi en cours.
