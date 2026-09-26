@@ -475,46 +475,49 @@ class _Equipement extends StatelessWidget {
     final ResultatPreVol? r = resultat;
     final String verif = t.salle.preparation.verification;
 
-    final (String, _Ton) connexion = switch (reseau) {
-      null => (verif, _Ton.verification),
-      ReseauPreparation.bonne => (t.salle.preparation.connexionPrete, _Ton.ok),
+    final (String, TonPreparation) connexion = switch (reseau) {
+      null => (verif, TonPreparation.verification),
+      ReseauPreparation.bonne => (
+        t.salle.preparation.connexionPrete,
+        TonPreparation.ok,
+      ),
       ReseauPreparation.instable => (
         t.salle.preparation.connexionInstable,
-        _Ton.attention,
+        TonPreparation.attention,
       ),
       ReseauPreparation.horsLigne => (
         t.salle.preparation.connexionInstable,
-        _Ton.bloque,
+        TonPreparation.bloque,
       ),
     };
-    final (String, _Ton) micro = r == null
-        ? (verif, _Ton.verification)
+    final (String, TonPreparation) micro = r == null
+        ? (verif, TonPreparation.verification)
         : vue.motif == MotifPreCours.permissionRefusee
-        ? (t.salle.preparation.microBloque, _Ton.bloque)
+        ? (t.salle.preparation.microBloque, TonPreparation.bloque)
         : vue.microPresent
-        ? (t.salle.preparation.microPret, _Ton.ok)
-        : (t.salle.preparation.microAbsent, _Ton.bloque);
-    final (String, _Ton) sortie = r == null
-        ? (verif, _Ton.verification)
-        : (t.salle.preparation.sortieSysteme, _Ton.ok);
-    final (String, _Ton) camera = r == null
-        ? (verif, _Ton.verification)
+        ? (t.salle.preparation.microPret, TonPreparation.ok)
+        : (t.salle.preparation.microAbsent, TonPreparation.bloque);
+    final (String, TonPreparation) sortie = r == null
+        ? (verif, TonPreparation.verification)
+        : (t.salle.preparation.sortieSysteme, TonPreparation.ok);
+    final (String, TonPreparation) camera = r == null
+        ? (verif, TonPreparation.verification)
         : vue.cameraPresente
-        ? (t.salle.preparation.cameraPrete, _Ton.ok)
-        : (t.salle.preparation.cameraAbsente, _Ton.attention);
+        ? (t.salle.preparation.cameraPrete, TonPreparation.ok)
+        : (t.salle.preparation.cameraAbsente, TonPreparation.attention);
 
     LigneRubrique ligne(
       String cle,
       AppIcon icone,
       String libelle,
-      (String, _Ton) etat,
+      (String, TonPreparation) etat,
     ) => LigneRubrique(
       icone: icone,
       libelle: libelle,
       legende: etat.$1,
       controle: KeyedSubtree(
         key: ValueKey<String>('etat-$cle-${etat.$2.name}'),
-        child: _IconeEtat(ton: etat.$2),
+        child: IconeEtatPreparation(ton: etat.$2),
       ),
     );
 
@@ -560,23 +563,38 @@ class _Equipement extends StatelessWidget {
   }
 }
 
-enum _Ton { verification, ok, attention, bloque }
+/// Le ton d'une ligne de preparation (enseignant et eleve).
+enum TonPreparation {
+  /// Verification en cours.
+  verification,
+
+  /// Tout va bien.
+  ok,
+
+  /// A surveiller, jamais bloquant.
+  attention,
+
+  /// Bloque.
+  bloque,
+}
 
 /// L'icone d'un etat. Le texte de la legende porte le sens : l'icone est
 /// exclue de la semantique, et n'est jamais la seule marque (W-141).
-class _IconeEtat extends StatelessWidget {
-  const _IconeEtat({required this.ton});
+class IconeEtatPreparation extends StatelessWidget {
+  /// Cree l'icone.
+  const IconeEtatPreparation({required this.ton, super.key});
 
-  final _Ton ton;
+  /// Le ton montre.
+  final TonPreparation ton;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final (AppIcon icone, AppInkColor couleur) = switch (ton) {
-      _Ton.verification => (AppIcons.attente, palette.inkMuted),
-      _Ton.ok => (AppIcons.succes, palette.inkAccent),
-      _Ton.attention => (AppIcons.avertissement, palette.inkMuted),
-      _Ton.bloque => (AppIcons.avertissement, palette.inkStrong),
+      TonPreparation.verification => (AppIcons.attente, palette.inkMuted),
+      TonPreparation.ok => (AppIcons.succes, palette.inkAccent),
+      TonPreparation.attention => (AppIcons.avertissement, palette.inkMuted),
+      TonPreparation.bloque => (AppIcons.avertissement, palette.inkStrong),
     };
     return ExcludeSemantics(
       child: IconTheme(

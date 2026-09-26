@@ -2539,6 +2539,7 @@ class Traductions$salle$preparation$fr {
 	String get retourJournee => 'Retour à ma journée';
 
 	late final Traductions$salle$preparation$demo$fr demo = Traductions$salle$preparation$demo$fr.internal(_root);
+	late final Traductions$salle$preparation$eleve$fr eleve = Traductions$salle$preparation$eleve$fr.internal(_root);
 }
 
 // Path: salle.secours
@@ -8579,6 +8580,48 @@ class Traductions$salle$preparation$demo$fr {
 	String get permissionRefusee => 'Permission refusée';
 }
 
+// Path: salle.preparation.eleve
+class Traductions$salle$preparation$eleve$fr {
+	Traductions$salle$preparation$eleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nous vérifions votre appareil…'
+	String get verification => 'Nous vérifions votre appareil…';
+
+	/// fr: 'Tout est prêt'
+	String get pret => 'Tout est prêt';
+
+	/// fr: 'Audio'
+	String get audio => 'Audio';
+
+	/// fr: 'Accès à la classe'
+	String get acces => 'Accès à la classe';
+
+	/// fr: 'Vous pouvez entrer'
+	String get accesOk => 'Vous pouvez entrer';
+
+	/// fr: 'En attente de la connexion'
+	String get accesAttente => 'En attente de la connexion';
+
+	/// fr: 'Vous entrerez avec le micro coupé.'
+	String get microCoupe => 'Vous entrerez avec le micro coupé.';
+
+	/// fr: 'Votre micro n'est pas accessible'
+	String get microInaccessible => 'Votre micro n\'est pas accessible';
+
+	/// fr: 'Le professeur ne pourra pas vous entendre tant que l'accès au micro reste bloqué.'
+	String get microInaccessibleDetail => 'Le professeur ne pourra pas vous entendre tant que l\'accès au micro reste bloqué.';
+
+	/// fr: 'Autoriser le micro'
+	String get autoriserMicro => 'Autoriser le micro';
+
+	late final Traductions$salle$preparation$eleve$guidee$fr guidee = Traductions$salle$preparation$eleve$guidee$fr.internal(_root);
+	late final Traductions$salle$preparation$eleve$demo$fr demo = Traductions$salle$preparation$eleve$demo$fr.internal(_root);
+}
+
 // Path: salle.seance.outils
 class Traductions$salle$seance$outils$fr {
 	Traductions$salle$seance$outils$fr.internal(this._root);
@@ -11745,6 +11788,57 @@ class Traductions$tc$parcours$postCours$fr {
 	String get envoye => 'Cours clôturé.';
 }
 
+// Path: salle.preparation.eleve.guidee
+class Traductions$salle$preparation$eleve$guidee$fr {
+	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Préparation de la séance…'
+	String get verification => 'Préparation de la séance…';
+
+	/// fr: 'Tout est prêt.'
+	String get pret => 'Tout est prêt.';
+
+	/// fr: 'Le micro sera coupé en entrant.'
+	String get microCoupe => 'Le micro sera coupé en entrant.';
+
+	/// fr: 'Le micro est bloqué. On l'autorise ?'
+	String get microQuestion => 'Le micro est bloqué. On l\'autorise ?';
+
+	/// fr: 'La connexion ne marche pas pour l'instant.'
+	String get horsLigne => 'La connexion ne marche pas pour l\'instant.';
+}
+
+// Path: salle.preparation.eleve.demo
+class Traductions$salle$preparation$eleve$demo$fr {
+	Traductions$salle$preparation$eleve$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Préparation élève'
+	String get section => 'Préparation élève';
+
+	/// fr: 'Préparation élève, Interface guidée'
+	String get sectionGuidee => 'Préparation élève, Interface guidée';
+
+	/// fr: 'Vérification en cours'
+	String get verification => 'Vérification en cours';
+
+	/// fr: 'Prêt'
+	String get pret => 'Prêt';
+
+	/// fr: 'Micro bloqué'
+	String get microBloque => 'Micro bloqué';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+}
+
 // Path: salle.seance.demo.groupes
 class Traductions$salle$seance$demo$groupes$fr {
 	Traductions$salle$seance$demo$groupes$fr.internal(this._root);
@@ -12207,6 +12301,27 @@ extension on Traductions {
 			'salle.preparation.demo.reseauFaible' => 'Réseau faible',
 			'salle.preparation.demo.microAbsent' => 'Micro absent',
 			'salle.preparation.demo.permissionRefusee' => 'Permission refusée',
+			'salle.preparation.eleve.verification' => 'Nous vérifions votre appareil…',
+			'salle.preparation.eleve.pret' => 'Tout est prêt',
+			'salle.preparation.eleve.audio' => 'Audio',
+			'salle.preparation.eleve.acces' => 'Accès à la classe',
+			'salle.preparation.eleve.accesOk' => 'Vous pouvez entrer',
+			'salle.preparation.eleve.accesAttente' => 'En attente de la connexion',
+			'salle.preparation.eleve.microCoupe' => 'Vous entrerez avec le micro coupé.',
+			'salle.preparation.eleve.microInaccessible' => 'Votre micro n\'est pas accessible',
+			'salle.preparation.eleve.microInaccessibleDetail' => 'Le professeur ne pourra pas vous entendre tant que l\'accès au micro reste bloqué.',
+			'salle.preparation.eleve.autoriserMicro' => 'Autoriser le micro',
+			'salle.preparation.eleve.guidee.verification' => 'Préparation de la séance…',
+			'salle.preparation.eleve.guidee.pret' => 'Tout est prêt.',
+			'salle.preparation.eleve.guidee.microCoupe' => 'Le micro sera coupé en entrant.',
+			'salle.preparation.eleve.guidee.microQuestion' => 'Le micro est bloqué. On l\'autorise ?',
+			'salle.preparation.eleve.guidee.horsLigne' => 'La connexion ne marche pas pour l\'instant.',
+			'salle.preparation.eleve.demo.section' => 'Préparation élève',
+			'salle.preparation.eleve.demo.sectionGuidee' => 'Préparation élève, Interface guidée',
+			'salle.preparation.eleve.demo.verification' => 'Vérification en cours',
+			'salle.preparation.eleve.demo.pret' => 'Prêt',
+			'salle.preparation.eleve.demo.microBloque' => 'Micro bloqué',
+			'salle.preparation.eleve.demo.horsLigne' => 'Hors ligne',
 			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
 			'salle.secours.reseauFaible' => 'Réseau faible. L\'audio est prioritaire.',
 			'salle.secours.reseauFaibleGuidee' => 'Le réseau est faible.',
@@ -12571,6 +12686,8 @@ extension on Traductions {
 			'consentement.compte.erreur' => 'Vos accords ne s\'affichent pas pour le moment.',
 			'consentement.compte.horsLigne' => 'Vous êtes hors ligne. Vos accords s\'afficheront dès le retour du réseau.',
 			'consentement.compte.sansProfil' => 'Aucun compte connecté : reconnectez-vous pour lire vos accords.',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.compte.invite' => 'Une nouvelle version à lire : les visites des parents',
 			'consentement.compte.inviteAction' => 'Lire',
 			'kyc.titre' => 'Votre pièce d\'identité',
@@ -12592,8 +12709,6 @@ extension on Traductions {
 			'appareils.foyer.groupeProfils' => 'Profils élèves',
 			'appareils.foyer.aucunAppareil' => 'Aucun appareil connecté',
 			'appareils.foyer.unAppareil' => ({required Object nom}) => '1 appareil connecté : ${nom}',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}',
 			'appareils.foyer.partageTitre' => 'Appareil partagé',
 			'appareils.foyer.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.',
@@ -13085,6 +13200,8 @@ extension on Traductions {
 			'admin.attribution.choisirEleveDetail' => 'Les enseignants s\'afficheront ici, ceux qui partagent une heure avec lui en premier.',
 			'admin.attribution.charge' => ({required Object actifs, required Object plafond}) => '${actifs} élèves sur ${plafond}',
 			'admin.attribution.complet' => 'Plafond atteint',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.libreSur' => ({required Object jour, required Object heure}) => 'Libre ${jour} à ${heure} h',
 			'admin.attribution.libreSurPlusieurs' => ({required Object nombre}) => 'Libre sur ${nombre} des heures proposées',
 			'admin.attribution.sansHeureCommune' => 'Aucune heure commune',
@@ -13106,8 +13223,6 @@ extension on Traductions {
 			'admin.groupes.colonneEtat' => 'État',
 			'admin.groupes.typeEnfant' => 'Enfants',
 			'admin.groupes.typeAdulte' => 'Adultes',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.filtreTousTypes' => 'Tous les publics',
 			'admin.groupes.etatActif' => 'Actif',
 			'admin.groupes.etatCloture' => 'Clôturé',
@@ -13599,6 +13714,8 @@ extension on Traductions {
 			'agent.bandeau' => 'Observation, lecture seule',
 			'agent.bandeauMasque' => 'Prénoms masqués',
 			'agent.bandeauExpire' => ({required Object heure}) => 'jusqu\'à ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
 			'vide.aucunCreneau' => 'Aucun créneau disponible pour le moment',
@@ -13620,8 +13737,6 @@ extension on Traductions {
 			'parcours.pourPrenom' => ({required Object prenom}) => 'Pour ${prenom}',
 			'parcours.retourAccueil' => 'Retour à l\'accueil',
 			'parcours.retourFoyer' => 'Retour au Foyer',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.reessayer' => 'Réessayer',
 			'parcours.indisponibleTitre' => 'Le questionnaire n\'est pas encore disponible',
 			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
@@ -14113,6 +14228,8 @@ extension on Traductions {
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			'tuteur.accueil.sansClassePhrase' => ({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
@@ -14134,8 +14251,6 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.enDirect' => 'En direct',
 			'tuteur.accueil.etatCourt.salleOuverte' => 'Salle ouverte',
 			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'Dans ${jours} j',
 			'tuteur.accueil.etatCourt.prevue' => 'Séance prévue',
@@ -14627,6 +14742,8 @@ extension on Traductions {
 			'controleur.planning.avec' => ({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}',
 			'controleur.planning.plage' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.planning.plageAutreJour' => ({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.planning.plageUtc' => ({required Object debut, required Object fin}) => '${debut} à ${fin} UTC',
 			'controleur.planning.observer' => 'Observer',
 			'controleur.planning.entree' => 'Entrée en cours',
@@ -14648,8 +14765,6 @@ extension on Traductions {
 			'galerie.elevation' => 'Élévation et rayons',
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
-			_ => null,
-		} ?? switch (path) {
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Mode enfant',
 			'galerie.modeStandard' => 'Mode standard',

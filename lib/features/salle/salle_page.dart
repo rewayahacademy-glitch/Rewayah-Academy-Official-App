@@ -13,6 +13,7 @@ import '../../core/presence/vue_presence.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -40,7 +41,9 @@ import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
+import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
+import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'vue_salle.dart';
 
@@ -109,6 +112,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// La preparation de l'enseignant est a l'ecran : rien n'est connecte.
   bool _enPreparation = false;
+
+  /// L'eleve a choisi « Continuer sans micro » (PRE-ERR-01, CL-4.6) : le
+  /// micro reste coupe, le blocage materiel ne l'arrete plus.
+  bool _sansMicro = false;
   AccesSalle? _acces;
   CauseImpasse? _impasse;
   EtatSalle _etatMoteur = EtatSalle.absent;
@@ -147,7 +154,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         setState(() => _qualite = lien);
       }
     });
-    _enPreparation = widget.preparation;
+    // Le tuteur observateur n'a AUCUNE preparation (D-14) : il n'ouvre ni
+    // micro ni camera.
+    _enPreparation =
+        widget.preparation &&
+        ref.read(sessionProvider).role != AppRole.guardian;
     if (!_enPreparation) {
       unawaited(_entrer());
     }
@@ -188,7 +199,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!mounted) {
       return;
     }
-    if (!preVol.peutEntrer) {
+    if (!preVol.peutEntrer && !_sansMicro) {
       setState(() => _impasse = CauseImpasse.materiel);
       return;
     }
@@ -354,6 +365,35 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
     // CLV-03 (CL-4.5) : la preparation de l'enseignant, avant toute
     // connexion. « Entrer dans la classe » lance l'entree existante.
+    final SessionState session = ref.watch(sessionProvider);
+    // Session pas encore lue : aucune preparation n'est choisie a l'aveugle.
+    if (_enPreparation && !session.resolue) {
+      return const Scaffold(body: SizedBox.shrink());
+    }
+    // Le tuteur observateur n'a AUCUNE preparation (D-14) : entree directe.
+    if (_enPreparation && session.role == AppRole.guardian) {
+      _enPreparation = false;
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) unawaited(_entrer());
+      });
+    }
+    // PRE-ELV-01 (CL-4.6) : la preparation presque silencieuse de l'eleve.
+    if (_enPreparation && session.role == AppRole.student) {
+      final String? groupe = widget.groupeId;
+      return _PreparationEleveBranchee(
+        guidee: session.interfaceMode == InterfaceMode.enfant,
+        onEntrer: ({required bool sansMicro}) {
+          setState(() {
+            _enPreparation = false;
+            _sansMicro = sansMicro;
+          });
+          unawaited(_entrer());
+        },
+        onRetour: () => GoRouter.of(
+          context,
+        ).go(groupe == null ? Routes.racine : CheminsTcA.espaceGroupe(groupe)),
+      );
+    }
     if (_enPreparation) {
       return _PreparationBranchee(
         groupeId: widget.groupeId,
@@ -1660,6 +1700,45 @@ class _PreparationBranchee extends ConsumerWidget {
           onEntrer: onEntrer,
           onRetour: onRetour,
           onReessayer: () => ref.invalidate(preVolProvider),
+        ),
+      ),
+    );
+  }
+}
+
+/// La preparation de l'eleve sur les vraies lectures (CL-4.6) : le pre-vol
+/// (`preVolProvider`, seul chemin) et la connectivite (une erreur de lecture
+/// vaut « en ligne »). Aucun jeton n'est demande ici.
+class _PreparationEleveBranchee extends ConsumerWidget {
+  const _PreparationEleveBranchee({
+    required this.guidee,
+    required this.onEntrer,
+    required this.onRetour,
+  });
+
+  final bool guidee;
+  final void Function({required bool sansMicro}) onEntrer;
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<bool> horsLigne = ref.watch(horsLigneProvider);
+    return Scaffold(
+      body: SafeArea(
+        child: PreparationEleve(
+          guidee: guidee,
+          resultat: ref.watch(preVolProvider).value,
+          reseau: switch (horsLigne.value) {
+            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+            true => ReseauPreparation.horsLigne,
+            false => ReseauPreparation.bonne,
+          },
+          onEntrer: () => onEntrer(sansMicro: false),
+          onContinuerSansMicro: () => onEntrer(sansMicro: true),
+          onRetour: onRetour,
+          onReessayer: () => ref
+            ..invalidate(preVolProvider)
+            ..invalidate(horsLigneProvider),
         ),
       ),
     );

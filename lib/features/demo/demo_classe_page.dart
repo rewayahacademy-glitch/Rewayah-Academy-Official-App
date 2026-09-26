@@ -35,6 +35,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../fiche_groupe/fiche_groupe_page.dart';
 import '../fiche_groupe/preparation_seance.dart';
+import '../salle/preparation_eleve.dart';
 import '../salle/preparation_enseignant.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
@@ -55,6 +56,11 @@ List<RouteBase> routesDemoClasse(String environnement) {
           PreparationDemo.values,
           etat.uri.queryParameters['prep'],
         ),
+        preparationEleve: _lire(
+          PreparationEleveDemo.values,
+          etat.uri.queryParameters['prepEleve'],
+        ),
+        guidee: etat.uri.queryParameters['guidee'] == 'oui',
       ),
     ),
   ];
@@ -102,7 +108,20 @@ String libelleEtatDemoClasse(EtatDemoClasse etat) => switch (etat) {
 /// La page : la liste, ou le recapitulatif si [role] et [etat] sont donnes.
 class DemoClassePage extends StatelessWidget {
   /// Cree la page.
-  const DemoClassePage({this.role, this.etat, this.preparation, super.key});
+  const DemoClassePage({
+    this.role,
+    this.etat,
+    this.preparation,
+    this.preparationEleve,
+    this.guidee = false,
+    super.key,
+  });
+
+  /// La preparation eleve choisie (CL-4.6).
+  final PreparationEleveDemo? preparationEleve;
+
+  /// La preparation eleve en Interface guidee.
+  final bool guidee;
 
   /// La preparation enseignant choisie (CL-4.5).
   final PreparationDemo? preparation;
@@ -119,6 +138,10 @@ class DemoClassePage extends StatelessWidget {
     final EtatDemoClasse? e = etat;
     final PreparationDemo? p = preparation;
     if (p != null) return EcranPreparationDemo(etat: p);
+    final PreparationEleveDemo? pe = preparationEleve;
+    if (pe != null) {
+      return EcranPreparationEleveDemo(etat: pe, guidee: guidee);
+    }
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     Text texte(String valeur, {bool fort = false}) => Text(
@@ -162,6 +185,28 @@ class DemoClassePage extends StatelessWidget {
                 libelle: libellePreparationDemo(p),
                 onPress: () => context.go(adressePreparationDemo(p)),
               ),
+            for (final bool g in <bool>[false, true]) ...<Widget>[
+              Ecart.vXxl,
+              Semantics(
+                header: true,
+                child: texte(
+                  g
+                      ? t.salle.preparation.eleve.demo.sectionGuidee
+                      : t.salle.preparation.eleve.demo.section,
+                  fort: true,
+                ),
+              ),
+              Ecart.vMd,
+              for (final PreparationEleveDemo p in PreparationEleveDemo.values)
+                LienFleche(
+                  key: ValueKey<String>(
+                    'lien-preparation-eleve-${g ? 'guidee-' : ''}${p.name}',
+                  ),
+                  libelle: libellePreparationEleveDemo(p),
+                  onPress: () =>
+                      context.go(adressePreparationEleveDemo(p, guidee: g)),
+                ),
+            ],
           ],
         ),
       );
@@ -354,7 +399,9 @@ class EcranEleveDemo extends StatelessWidget {
       child: RepereDemonstration(
         child: EspaceGroupePage(
           groupeId: DonneesClasseDemo.groupeId,
-          onRejoindre: (_) {},
+          onRejoindre: (_) => context.go(
+            adressePreparationEleveDemo(PreparationEleveDemo.pret),
+          ),
         ),
       ),
     );
@@ -436,6 +483,109 @@ class EcranPreparationDemo extends StatelessWidget {
             ),
             onReessayer: () {},
             onTesterCamera: () {},
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Les situations de la preparation eleve en demonstration (CL-4.6).
+enum PreparationEleveDemo {
+  /// Les verifications tournent.
+  verification,
+
+  /// Tout est pret.
+  pret,
+
+  /// Le micro est bloque dans les reglages.
+  microBloque,
+
+  /// Aucune connexion.
+  horsLigne,
+}
+
+/// Le libelle d'une situation de preparation eleve.
+String libellePreparationEleveDemo(PreparationEleveDemo p) => switch (p) {
+  PreparationEleveDemo.verification =>
+    t.salle.preparation.eleve.demo.verification,
+  PreparationEleveDemo.pret => t.salle.preparation.eleve.demo.pret,
+  PreparationEleveDemo.microBloque =>
+    t.salle.preparation.eleve.demo.microBloque,
+  PreparationEleveDemo.horsLigne => t.salle.preparation.eleve.demo.horsLigne,
+};
+
+/// L'adresse d'une situation de preparation eleve, sur la meme route.
+String adressePreparationEleveDemo(
+  PreparationEleveDemo p, {
+  bool guidee = false,
+}) => Uri(
+  path: Routes.demoClasse,
+  queryParameters: <String, String>{
+    'prepEleve': p.name,
+    if (guidee) 'guidee': 'oui',
+  },
+).toString();
+
+/// La VRAIE preparation eleve (`PreparationEleve`) sur les donnees de
+/// demonstration. Aucun appel serveur, aucun micro reel : « Entrer » et
+/// « Continuer sans micro » ne font que revenir a la liste.
+class EcranPreparationEleveDemo extends StatelessWidget {
+  /// Cree l'ecran.
+  const EcranPreparationEleveDemo({
+    required this.etat,
+    this.guidee = false,
+    super.key,
+  });
+
+  /// La situation.
+  final PreparationEleveDemo etat;
+
+  /// Interface guidee.
+  final bool guidee;
+
+  @override
+  Widget build(BuildContext context) {
+    final ResultatPreVol? resultat = switch (etat) {
+      PreparationEleveDemo.verification => null,
+      PreparationEleveDemo.microBloque => const ResultatPreVol(
+        microDisponible: false,
+        cameraDisponible: false,
+        sortieAudioDisponible: true,
+        permissionRefusee: true,
+      ),
+      PreparationEleveDemo.pret ||
+      PreparationEleveDemo.horsLigne => const ResultatPreVol(
+        microDisponible: true,
+        cameraDisponible: true,
+        sortieAudioDisponible: true,
+        permissionRefusee: false,
+      ),
+    };
+    return RepereDemonstration(
+      child: Scaffold(
+        body: SafeArea(
+          child: PreparationEleve(
+            key: ValueKey<String>('${etat.name}-$guidee'),
+            guidee: guidee,
+            resultat: resultat,
+            reseau: switch (etat) {
+              PreparationEleveDemo.verification => null,
+              PreparationEleveDemo.horsLigne => ReseauPreparation.horsLigne,
+              PreparationEleveDemo.pret ||
+              PreparationEleveDemo.microBloque => ReseauPreparation.bonne,
+            },
+            onEntrer: () => context.go(Routes.demoClasse),
+            onContinuerSansMicro: () => context.go(Routes.demoClasse),
+            onReessayer: () {},
+            onRetour: () => context.go(
+              guidee
+                  ? Routes.demoClasse
+                  : adresseDemoClasse(
+                      RoleEntree.eleve,
+                      EtatDemoClasse.fenetreOuverte,
+                    ),
+            ),
           ),
         ),
       ),
