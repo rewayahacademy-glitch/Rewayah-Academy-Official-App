@@ -93,6 +93,7 @@ class BoutonAppel extends StatelessWidget {
     required this.onPress,
     this.libelleSemantique,
     this.fond = FondBoutonAppel.surface,
+    this.actif = true,
     super.key,
   });
 
@@ -102,53 +103,67 @@ class BoutonAppel extends StatelessWidget {
   final VoidCallback onPress;
   final FondBoutonAppel fond;
 
+  /// Faux : le bouton reste rendu mais ne repond pas (Micro et Camera
+  /// pendant la reconnexion, lot CL-7, UX_REVIEW U1). Aucune transparence :
+  /// le disque passe au fond neutre et l'encre `inkMuted` dit l'attente,
+  /// comme le bouton inerte d'`ActionPrincipale`.
+  final bool actif;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final double diametre = diametreBoutonAppel(context);
     final double tailleIcone = _tailleIconeAppel(context);
-    final BoxDecoration disque = switch (fond) {
-      FondBoutonAppel.surface ||
-      FondBoutonAppel.reseau => palette.surfaceOverlay.decoration(
-        borderRadius: AppRadius.arrondiFull,
-        side: palette.borderHairline.asBorderSide(),
-      ),
-      FondBoutonAppel.alerte => palette.pointsStatut.alerte.pastille(),
-      FondBoutonAppel.succes => palette.surfaceSuccess.decoration(
-        borderRadius: AppRadius.arrondiFull,
-      ),
-      FondBoutonAppel.primaire => palette.surfacePrimary.decoration(
-        borderRadius: AppRadius.arrondiFull,
-      ),
-    };
-    final IconThemeData encre = switch (fond) {
-      FondBoutonAppel.surface => palette.inkStrong.asIconTheme(
-        size: tailleIcone,
-      ),
-      // Encre claire fixe, dans les deux themes (images : combine blanc sur
-      // disque rouge). Le disque est un point d'alerte, pas la paire
-      // `surfaceAlert` : son encre sombre en theme sombre tombait sous 2:1
-      // sur le rouge vif. Le blanc tient 4,1:1 (clair) et 3,3:1 (sombre),
-      // au-dessus du seuil de 3:1 d'un element graphique (WCAG 1.4.11).
-      FondBoutonAppel.alerte => IconThemeData(
-        color: _encreClaire,
-        size: tailleIcone,
-      ),
-      FondBoutonAppel.reseau => palette.inkSuccess.asIconTheme(
-        size: tailleIcone,
-      ),
-      FondBoutonAppel.succes => IconThemeData(
-        color: palette.surfaceSuccess.onBackground,
-        size: tailleIcone,
-      ),
-      FondBoutonAppel.primaire => IconThemeData(
-        color: palette.surfacePrimary.onBackground,
-        size: tailleIcone,
-      ),
-    };
+    final BoxDecoration disque = !actif
+        ? palette.surfaceRaised.decoration(
+            borderRadius: AppRadius.arrondiFull,
+            side: palette.borderResting.asBorderSide(),
+          )
+        : switch (fond) {
+            FondBoutonAppel.surface ||
+            FondBoutonAppel.reseau => palette.surfaceOverlay.decoration(
+              borderRadius: AppRadius.arrondiFull,
+              side: palette.borderHairline.asBorderSide(),
+            ),
+            FondBoutonAppel.alerte => palette.pointsStatut.alerte.pastille(),
+            FondBoutonAppel.succes => palette.surfaceSuccess.decoration(
+              borderRadius: AppRadius.arrondiFull,
+            ),
+            FondBoutonAppel.primaire => palette.surfacePrimary.decoration(
+              borderRadius: AppRadius.arrondiFull,
+            ),
+          };
+    final IconThemeData encre = !actif
+        ? palette.inkMuted.asIconTheme(size: tailleIcone)
+        : switch (fond) {
+            FondBoutonAppel.surface => palette.inkStrong.asIconTheme(
+              size: tailleIcone,
+            ),
+            // Encre claire fixe, dans les deux themes (images : combine blanc sur
+            // disque rouge). Le disque est un point d'alerte, pas la paire
+            // `surfaceAlert` : son encre sombre en theme sombre tombait sous 2:1
+            // sur le rouge vif. Le blanc tient 4,1:1 (clair) et 3,3:1 (sombre),
+            // au-dessus du seuil de 3:1 d'un element graphique (WCAG 1.4.11).
+            FondBoutonAppel.alerte => IconThemeData(
+              color: _encreClaire,
+              size: tailleIcone,
+            ),
+            FondBoutonAppel.reseau => palette.inkSuccess.asIconTheme(
+              size: tailleIcone,
+            ),
+            FondBoutonAppel.succes => IconThemeData(
+              color: palette.surfaceSuccess.onBackground,
+              size: tailleIcone,
+            ),
+            FondBoutonAppel.primaire => IconThemeData(
+              color: palette.surfacePrimary.onBackground,
+              size: tailleIcone,
+            ),
+          };
     return Pressable(
       onPress: onPress,
+      actif: actif,
       libelleSemantique: libelleSemantique ?? libelle,
       arrondiFocus: AppRadius.arrondiMd,
       child: Column(
@@ -169,7 +184,7 @@ class BoutonAppel extends StatelessWidget {
             libelle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: palette.inkStrong.applyTo(
+            style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
               theme.textTheme.labelMedium ?? const TextStyle(),
             ),
           ),
@@ -213,9 +228,12 @@ class DockSeance extends StatelessWidget {
               ? (microOuvert ? AppIcons.micro : AppIcons.microCoupe).actif
               : (microOuvert ? AppIcons.micro : AppIcons.microCoupe).repos,
           libelle: colore ? t.salle.seance.parler : t.salle.micro,
-          libelleSemantique: microOuvert
-              ? t.salle.fermerMicro
-              : t.salle.ouvrirMicro,
+          libelleSemantique:
+              vue.libelleIndisponible(
+                colore ? t.salle.seance.parler : t.salle.micro,
+              ) ??
+              (microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro),
+          actif: vue.commandesPublicationActives,
           fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
           onPress: micro,
         );
@@ -226,9 +244,10 @@ class DockSeance extends StatelessWidget {
           icone:
               (cameraAllumee ? AppIcons.camera : AppIcons.cameraCoupee).actif,
           libelle: t.salle.camera,
-          libelleSemantique: cameraAllumee
-              ? t.salle.fermerCamera
-              : t.salle.ouvrirCamera,
+          libelleSemantique:
+              vue.libelleIndisponible(t.salle.camera) ??
+              (cameraAllumee ? t.salle.fermerCamera : t.salle.ouvrirCamera),
+          actif: vue.commandesPublicationActives,
           fond: colore ? FondBoutonAppel.primaire : FondBoutonAppel.surface,
           onPress: camera,
         );

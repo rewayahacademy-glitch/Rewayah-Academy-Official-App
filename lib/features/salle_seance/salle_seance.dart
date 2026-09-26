@@ -12,9 +12,12 @@ import 'package:flutter/services.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/offline_banner.dart';
 import '../../core/widgets/pressable.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
@@ -108,10 +111,14 @@ class SalleSeance extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (agrandi)
-              Ecart.vLg
-            else ...<Widget>[
+            if (agrandi) ...<Widget>[
+              // Mode agrandi : l'en-tete se retire, l'etat critique reste
+              // visible (CL-7 §2.7).
+              BandeauSecours(vue: vue, gouttiere: gouttiere),
+              Ecart.vLg,
+            ] else ...<Widget>[
               ChromeSeance(vue: vue, actions: actions),
+              BandeauSecours(vue: vue, gouttiere: gouttiere),
               if (!large) Ecart.vLg,
             ],
             Expanded(
@@ -294,6 +301,7 @@ class _SalleEnseignant extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ChromeSeance(vue: vue, actions: actions),
+            BandeauSecours(vue: vue),
             if (outils || boutons != null)
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(
@@ -397,6 +405,7 @@ class _SalleEnseignant extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ChromeSeance(vue: vue, actions: actions),
+            BandeauSecours(vue: vue),
             ecart,
             if (boutons != null) ...<Widget>[
               Padding(
@@ -550,6 +559,7 @@ class _SalleEnseignant extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ChromeSeance(vue: vue, actions: actions),
+          BandeauSecours(vue: vue),
           Ecart.vSm,
           Expanded(
             child: Padding(
@@ -606,6 +616,7 @@ class _SalleEnseignant extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         ChromeSeance(vue: vue, actions: actions),
+        BandeauSecours(vue: vue),
         Ecart.vSm,
         Expanded(
           child: Padding(
@@ -702,6 +713,7 @@ class _SalleEnseignant extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         ChromeSeance(vue: vue, actions: actions),
+        BandeauSecours(vue: vue),
         mobile ? Ecart.vSm : Ecart.vMd,
         Expanded(
           child: LayoutBuilder(
@@ -986,6 +998,62 @@ class _BarreBasse extends StatelessWidget {
                     agrandi: local.agrandi,
                   )
                 : const SizedBox.shrink(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Les etats de connexion sous l'en-tete de la salle (lot CL-7, P05, P06) :
+/// le bandeau non bloquant (reseau faible, reconnexion), puis le retour bref
+/// « Connexion retablie. ». Tout vient de [VueSeance.connexion] : la salle ne
+/// detecte rien elle-meme (BR-1).
+///
+/// Le bandeau prend toute la largeur de la colonne salle (au-dessus du
+/// support, jamais sous le rail enseignant) ; le retour bref se pose dans la
+/// gouttiere du gabarit. Apparition en `AppMouvement.apparition`, zero sous
+/// reduction du mouvement.
+class BandeauSecours extends StatelessWidget {
+  const BandeauSecours({
+    required this.vue,
+    this.gouttiere = AppPage.gouttiereMobile,
+    super.key,
+  });
+
+  final VueSeance vue;
+
+  /// La gouttiere du gabarit, pour le retour bref.
+  final double gouttiere;
+
+  @override
+  Widget build(BuildContext context) {
+    final String? texte = vue.texteBandeau;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        AnimatedSize(
+          duration: AppMouvement.duree(context, AppMouvement.apparition),
+          curve: AppMouvement.entree,
+          alignment: AlignmentDirectional.topStart,
+          child: texte == null
+              ? const SizedBox(width: double.infinity)
+              : OfflineBanner.message(
+                  key: const ValueKey<String>('bandeau-secours'),
+                  message: texte,
+                  sousTexte: vue.sousTexteBandeau,
+                  // Reseau faible : la room reste connectee, jamais l'icone
+                  // hors ligne (P06.5).
+                  icone: vue.connexion == ConnexionSeance.reseauFaible
+                      ? AppIcons.reseau.repos
+                      : null,
+                ),
+        ),
+        Padding(
+          padding: EdgeInsetsDirectional.only(start: gouttiere, end: gouttiere),
+          child: LocalFeedback(
+            key: const ValueKey<String>('retour-retablie'),
+            message: vue.texteRetabli,
           ),
         ),
       ],
