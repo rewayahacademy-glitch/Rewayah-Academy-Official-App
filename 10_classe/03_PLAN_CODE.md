@@ -103,18 +103,16 @@ Tailles : mobile 390x844 @3 (zone sûre 47/34), web étroit 640x1000 @1 (gabarit
 
 ## 7. Tâches (séquentielles, chacune < 30 min)
 
-**Où en est-on (tenir cette colonne à jour, c'est la seule source) :** une tâche est « faite » quand son retour de relecture est corrigé et poussé. Captures d'une tâche : `10_classe/captures/T<n>/`, seulement les écrans de CETTE tâche (jamais celles des tâches précédentes, jamais dans `05_recette/`).
+**Où en est-on (seule source ; une ligne par fiche du §8) :**
 
-**Seule chose encore à faire dans cette vague : la fiche T8 (rendu en séance de `/salle`).** Tout le reste est fait.
+| Fiche §8 | État | Où lire le résultat |
+|---|---|---|
+| T1 à T7 | faites | `05_recette/CL/T1.md` à `T7.md` |
+| **T8** (rendu en séance de `/salle`) | **à faire : c'est la prochaine et la dernière** | - |
+| T9 (`/tc/classe`) | faite | `05_recette/CL/T8.md` |
+| T10 (recette, 10 planches) | faite, retours de relecture corrigés (`262b4b2`) | `05_recette/CL/RAPPORT.md`, captures `captures/T9/` |
 
-| Fiche | Tâche | État | Rapport |
-|---|---|---|---|
-| T1 à T7 | Socle, CLV-04, CLV-05 + CLV-09, CLV-06, CLV-07, CLV-08, CLV-10 + sorties de `/salle` | faites | `05_recette/CL/T1.md` à `T7.md` |
-| T8 | Rendu EN séance de `/salle` = SalleSeance | **à faire** | - |
-| T9 | `/tc/classe` sur SalleSeance | faite | `05_recette/CL/T8.md` (livrée sous le nom « T8 ») |
-| T10 | Recette : planches contre les 10 images, suite complète | faite | `05_recette/CL/RAPPORT.md` (captures dans `captures/T9/`, livrée sous le nom « T9 ») |
-
-Attention aux noms : les numéros de l'orchestration ont glissé d'un cran (« T8 » livré = fiche T9, « T9 » livré = fiche T10). Toujours se fier à la colonne « Fiche ».
+Pour les rapports, se fier à la colonne « Fiche §8 » (les noms de fichiers de rapport ont un cran de décalage). Une fiche est « faite » quand son retour de relecture est corrigé et poussé. Captures d'une nouvelle tâche : `10_classe/captures/T<fiche>/`, seulement ses écrans.
 
 Le détail de chaque tâche suit (§8). Chaque agent lit §1 à §6 puis sa fiche.
 
