@@ -171,3 +171,25 @@ Complété après l'inventaire du code : voir `01_HARMONISATION.md`.
 ## 5. Découpage
 
 Voir `02_DECOUPAGE.md` et le tableau de suivi, étapes `CL-4.*`.
+
+## 6. Ajustements de la revue UX
+
+Source : `10_classe/UX_REVIEW_CL-4.md` (étape CL-4.1, 26/09/2026, DESIGN-GOV §4). Les ajustements précisent le rendu ; ils ne touchent ni les permissions, ni les états serveur, ni les règles R1 à R21. Les numéros renvoient aux lignes de la revue.
+
+1. **Emplacement d'entrée (n° 1)** : hauteur du bouton (52) réservée dans tous les états. La ligne d'état est un texte, ni focalisable ni annoncée comme désactivée. Chaque état porte une icône et un texte.
+2. **Composition bureau par rangées (n° 4 et 6)** : élève [identité + séance | Avant le prochain cours], puis [bibliothèque | progression] ; enseignant [séance | À préparer], puis [Élèves | Supports récents]. L'ordre de lecture et de focus suit alors le document §3.2 et §4.2. Écart entre colonnes : 24. Pas de troisième zone côté enseignant.
+3. **Tablette 768 en une colonne (n° 5 et 7)** : une colonne jusqu'à 839, deux à partir de 840 (M3 expanded). Remplace le 60/40 de la spec 02.
+4. **Colonnes et texte agrandi (n° 20)** : deux colonnes seulement si la largeur utile divisée par le facteur de texte atteint 840.
+5. **Bibliothèque (n° 9)** : vignette décorative pour le lecteur d'écran ; libellé « {titre}, {type}, {taille} » en un seul nœud ; une cible par support.
+6. **Progression (n° 10)** : une barre, jamais un anneau, avec la valeur écrite à côté (« Chapitre 1 · 60 % »), en un seul nœud.
+7. **Roster (n° 11)** : une ligne = une seule cible ; pas d'icônes d'action à droite des lignes ; dernier point utile en texte neutre, sans point coloré.
+8. **Préparation enseignant (n° 12)** : à partir de 840, deux volets dans la largeur de lecture 800 (environ 388, 24, 388) ; sous 840, une colonne de 640. Aperçu « Caméra coupée » avec la seule action « Tester la caméra » (pas de barre d'icônes sur l'aperçu). « Modifier les périphériques » en lien tertiaire. Micro absent : bouton désactivé et raison écrite juste au-dessus.
+9. **Préparation élève (n° 13)** : pas d'entrée automatique ; une seule annonce polie en fin de vérification ; la feuille de blocage CL-7 prend puis rend le focus ; aucun lien d'aide sans destination.
+10. **Skeletons (n° 14)** : os exclus de la sémantique, un seul nœud « Chargement de la prochaine séance. » ou « Chargement de la Classe. » ; en préparation, un état « Vérification… » par ligne.
+11. **Hors ligne et DST (n° 15)** : hors ligne, le texte de la spec 02 et « Réessayer » occupent l'emplacement d'entrée, sans second bandeau ; notice DST sous les heures, au-dessus de l'emplacement, pour l'élève comme pour l'enseignant.
+12. **Annonces (n° 16)** : `Semantics(liveRegion: true)` sur l'emplacement et le résumé de préparation, pas de `sendAnnouncement` ; le décompte n'est pas dans la région live, seuls les changements d'état sont annoncés ; rendu web à contrôler en CL-4.7.
+13. **Focus (n° 17)** : `FocusTraversalGroup` par rangée ; si l'élément focalisé disparaît, le focus revient au titre de la carte de séance ; le bouton qui apparaît ne vole pas le focus ; bandeaux jamais au-dessus de l'élément focalisé.
+14. **Reflow 320 (n° 19)** : heures en paires empilées, libellé du bouton sur plusieurs lignes sans ellipse, couvertures en liste plutôt qu'en défilement horizontal.
+15. **À vérifier en recette (n° 18 et 20)** : zone de 48 de `LienFleche` ; hauteur 52 d'`ActionPrincipale` en minimum et non en valeur fixe (sans fork du composant).
+
+Dérogations maintenues, décision du directeur : bouton non étiré sur bureau (n° 2) ; bouton mobile dans la carte, jamais en pied collant (n° 3).
