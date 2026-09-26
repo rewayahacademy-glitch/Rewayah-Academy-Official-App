@@ -65,18 +65,7 @@ import '../capture/outil_capture.dart';
 //    false), le toucher au centre retombe hors de l'onglet, cascade sur
 //    cibles et focus. Un onglet sur deux lignes ou un libelle raccourci
 //    change le rendu du composant partage SousNavigationDomaine sur les lots
-//    livres ;
-//  - 1280x1024 a 400 % : visionneuse (16 en bas, colonne 288x108, source non
-//    localisee ; un defilement d'un bloc sous 360 a fait passer a 34) ;
-//  - 02D au clavier virtuel a 320 : pendant le Tab dans la feuille, la revue
-//    est remontee (« TextEditingController used after being disposed » sur
-//    le motif, _Corps de surfaces_decision), le focus ne revient pas a
-//    « Refuser » et l'etat laisse fait echouer les cas suivants du groupe.
-//    Cause du remontage non localisee (des cles globales sur la tete et le
-//    corps de PageShell, qui bascule sous 340 de haut, n'y ont rien change) ;
-//    a 390 et 200 %,
-//    l'etiquette « Motif du refus » du champ est coupee (etiquette flottante
-//    sur une ligne).
+//    livres. Il reste aussi a trancher si le banc charge les polices reelles.
 // Passage 4 (corriges) : Tab de la revue a 1440 atteint le detail (ordre de
 // l'arbre file puis detail dans le maitre-detail, l'ordre de lecture classait
 // la file par sa geometrie defilee) ; le titre de la revue n'est plus un
@@ -84,16 +73,20 @@ import '../capture/outil_capture.dart';
 // banc mesure « Valider » apres les trois coches (inactif avant) ; la boite
 // de dialogue d'AppBottomSheet (bureau) se retire du clavier virtuel comme
 // la feuille (Annuler de 02D sous le clavier a 1440).
+// Passage 5 (corriges) : le seuil de tete defilante de PageShell ignore le
+// clavier virtuel (lu sur la vue) : a 320x640 avec un clavier de 300, la
+// bascule de structure remontait la revue et disposait le motif de 02D ;
+// etiquette du motif en widget Text (passe a la ligne a 390 et 200 %) ;
+// visionneuse sous 360 de haut : piece a la hauteur de la vue, actions
+// defilantes dessous, et piece fictive dessinee a sa taille nominale puis
+// reduite comme une image sous 240 de large (400 %) ; le banc retire le
+// clavier simule meme si le cas echoue (plus de cascade).
 // Le banc joue aussi les cas sautes avec --dart-define=TOUT=true.
 const Set<String> _restes = <String>{
   'AD-9_politique 320x640',
-  'ADM-02C_visionneuse 1280x1024_400pc',
   'AD-9_politique 1280x1024_400pc',
   'AD-9_politique 390x844_200pc',
-  'ADM-02D_refus 390x844_200pc',
   'Tab AD-9_politique 320x640 : focus jamais masque',
-  'refus 320x640 : Entree ouvre 02D, clavier virtuel, Echap ferme, focus '
-      'rendu',
 };
 
 void _test(String nom, WidgetTesterCallback corps) => testWidgets(
@@ -699,6 +692,7 @@ void main() {
         await _stab(tester);
         expect(find.text(t.dossiers.refus.champ), findsOneWidget);
         // Clavier virtuel simule : le champ focalise reste visible.
+        addTearDown(tester.view.resetViewInsets);
         tester.view.viewInsets = FakeViewPadding(
           bottom: 300 * tester.view.devicePixelRatio,
         );

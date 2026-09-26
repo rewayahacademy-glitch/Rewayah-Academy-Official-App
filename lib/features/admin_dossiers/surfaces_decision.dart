@@ -268,7 +268,9 @@ class _CorpsState extends ConsumerState<_Corps> {
                 }
               },
               decoration: InputDecoration(
-                labelText: t.dossiers.refus.champ,
+                // AD-11 (1.4.4) : labelText tient sur une ligne en ellipse,
+                // coupe a 390 et 200 % ; le widget Text passe a la ligne.
+                label: Text(t.dossiers.refus.champ),
                 helperText: t.dossiers.refus.aide,
                 // AD-11 (1.4.4) : 3 lignes coupaient l'aide a 200 % (472 de
                 // large a 1440) ; borne large, l'aide n'est jamais coupee.

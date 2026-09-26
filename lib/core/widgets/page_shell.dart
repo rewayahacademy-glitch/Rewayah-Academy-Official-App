@@ -209,9 +209,18 @@ class PageShell extends StatelessWidget {
                 // sous-titre, onglets) y prend presque toute la hauteur et
                 // ne laissait au corps qu'une bande (390x844, 44 de
                 // debordement, ligne de la file hors d'atteinte).
+                // Le clavier virtuel ne compte pas dans ce seuil : il est
+                // passager, et basculer la structure a son ouverture
+                // remontait le corps (la revue et le motif de 02D, ouvert
+                // dessus, a 320x640 avec un clavier de 300). Lu sur la vue :
+                // le Scaffold de la coquille retire le clavier du MediaQuery
+                // de son corps.
                 child: LayoutBuilder(
                   builder: (BuildContext _, BoxConstraints contraintes) =>
-                      contraintes.maxHeight < _hauteurTeteFixe ||
+                      contraintes.maxHeight +
+                                  View.of(context).viewInsets.bottom /
+                                      View.of(context).devicePixelRatio <
+                              _hauteurTeteFixe ||
                           (gabarit == Gabarit.mobile &&
                               MediaQuery.textScalerOf(context).scale(1) >= 2)
                       ? SingleChildScrollView(

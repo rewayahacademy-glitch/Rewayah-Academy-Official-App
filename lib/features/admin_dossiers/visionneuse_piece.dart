@@ -304,67 +304,91 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
         },
         child: Focus(
           skipTraversal: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Expanded(child: _corps(context)),
-              Ecart.vLg,
-              // Zoom au debut, « Fermer » au contenu a la fin, sur la meme
-              // ligne ; OverflowBar mesure et empile seulement si le texte
-              // agrandi deborde (maquette 02C, contrat B).
-              OverflowBar(
-                alignment: contenu
-                    ? MainAxisAlignment.spaceBetween
-                    : MainAxisAlignment.end,
-                overflowAlignment: OverflowBarAlignment.end,
-                spacing: AppSpacing.sm,
-                overflowSpacing: AppSpacing.sm,
-                children: <Widget>[
-                  if (contenu)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        _BoutonZoom(
-                          icone: AppIcons.reduire,
-                          libelle: t.dossiers.visionneuse.reduire,
-                          touche: '-',
-                          onPress: _peutReduire ? _reduire : null,
-                        ),
-                        Ecart.hSm,
-                        _BoutonZoom(
-                          icone: AppIcons.ajouter,
-                          libelle: t.dossiers.visionneuse.agrandir,
-                          touche: '+',
-                          onPress: _peutAgrandir ? _agrandir : null,
-                        ),
-                        Ecart.hSm,
-                        _BoutonZoom(
-                          icone: AppIcons.ajusterEcran,
-                          libelle: t.dossiers.visionneuse.ajuster,
-                          touche: '0',
-                          onPress: _ajuster,
-                        ),
-                      ],
-                    ),
-                  // IntrinsicWidth : au contenu, jamais etire (comme les
-                  // actions de la revue).
-                  IntrinsicWidth(
-                    child: ActionPrincipale(
-                      libelle: t.commun.fermer,
-                      niveau: NiveauAction.secondaire,
-                      pleineLargeur: false,
-                      focusNode: _focusFermer,
-                      onPress: _fermer,
-                    ),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints c) {
+              final Widget actions = _actions(contenu);
+              // AD-11 (1.4.10) : a 400 % (320x256), la visionneuse n'a que
+              // 108 de haut et les actions empilees en prennent 108 (16 en
+              // bas). Sous 360, la piece garde la hauteur de la vue et les
+              // actions defilent dessous ; au-dessus, rendu inchange.
+              if (c.maxHeight.isFinite && c.maxHeight < 360) {
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      SizedBox(height: c.maxHeight, child: _corps(context)),
+                      Ecart.vLg,
+                      actions,
+                    ],
                   ),
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(child: _corps(context)),
+                  Ecart.vLg,
+                  actions,
                 ],
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
     );
   }
+
+  Widget _actions(bool contenu) =>
+      // Zoom au debut, « Fermer » au contenu a la fin, sur la meme
+      // ligne ; OverflowBar mesure et empile seulement si le texte
+      // agrandi deborde (maquette 02C, contrat B).
+      OverflowBar(
+        alignment: contenu
+            ? MainAxisAlignment.spaceBetween
+            : MainAxisAlignment.end,
+        overflowAlignment: OverflowBarAlignment.end,
+        spacing: AppSpacing.sm,
+        overflowSpacing: AppSpacing.sm,
+        children: <Widget>[
+          if (contenu)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _BoutonZoom(
+                  icone: AppIcons.reduire,
+                  libelle: t.dossiers.visionneuse.reduire,
+                  touche: '-',
+                  onPress: _peutReduire ? _reduire : null,
+                ),
+                Ecart.hSm,
+                _BoutonZoom(
+                  icone: AppIcons.ajouter,
+                  libelle: t.dossiers.visionneuse.agrandir,
+                  touche: '+',
+                  onPress: _peutAgrandir ? _agrandir : null,
+                ),
+                Ecart.hSm,
+                _BoutonZoom(
+                  icone: AppIcons.ajusterEcran,
+                  libelle: t.dossiers.visionneuse.ajuster,
+                  touche: '0',
+                  onPress: _ajuster,
+                ),
+              ],
+            ),
+          // IntrinsicWidth : au contenu, jamais etire (comme les
+          // actions de la revue).
+          IntrinsicWidth(
+            child: ActionPrincipale(
+              libelle: t.commun.fermer,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              focusNode: _focusFermer,
+              onPress: _fermer,
+            ),
+          ),
+        ],
+      );
 
   Widget _corps(BuildContext context) {
     final Traductions$dossiers$visionneuse$fr v = t.dossiers.visionneuse;
@@ -573,54 +597,71 @@ class _PieceFictive extends StatelessWidget {
         ),
       ),
     );
+    final Widget carte = DecoratedBox(
+      decoration: palette.surfaceSunken.decoration(
+        borderRadius: AppRadius.arrondiLg,
+        side: palette.borderHairline.asBorderSide(),
+      ),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.all(AppSpacing.xxl),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              t.dossiers.visionneuse.documentFictif,
+              style: palette.surfaceSunken.applyTo(
+                Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vLg,
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  AspectRatio(
+                    aspectRatio: 0.78,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: neutre,
+                        borderRadius: AppRadius.arrondiSm,
+                      ),
+                    ),
+                  ),
+                  Ecart.hLg,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        for (final double f in <double>[0.9, 0.7, 0.8, 0.5])
+                          barre(f),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
     return AspectRatio(
       aspectRatio: ratio,
-      child: DecoratedBox(
-        decoration: palette.surfaceSunken.decoration(
-          borderRadius: AppRadius.arrondiLg,
-          side: palette.borderHairline.asBorderSide(),
-        ),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.all(AppSpacing.xxl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                t.dossiers.visionneuse.documentFictif,
-                style: palette.surfaceSunken.applyTo(
-                  Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
-                ),
-              ),
-              Ecart.vLg,
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    AspectRatio(
-                      aspectRatio: 0.78,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: neutre,
-                          borderRadius: AppRadius.arrondiSm,
-                        ),
-                      ),
-                    ),
-                    Ecart.hLg,
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          for (final double f in <double>[0.9, 0.7, 0.8, 0.5])
-                            barre(f),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints c) {
+          // AD-11 (1.4.10) : a 400 % (320x256) la piece n'a que 123x60, moins
+          // que ses marges (34 en bas). La piece tient lieu d'image : sous
+          // 240 de large, elle est dessinee a sa taille nominale, texte non
+          // agrandi, puis reduite comme une image (le zoom l'agrandit).
+          // Au-dessus, rendu inchange.
+          if (c.maxWidth >= 240) return carte;
+          return FittedBox(
+            child: SizedBox(
+              width: 320,
+              height: 320 / ratio,
+              child: MediaQuery.withNoTextScaling(child: carte),
+            ),
+          );
+        },
       ),
     );
   }
