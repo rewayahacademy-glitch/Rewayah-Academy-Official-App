@@ -2174,6 +2174,8 @@ class Traductions$enseignant$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$enseignant$classes$fr classes = Traductions$enseignant$classes$fr.internal(_root);
+	late final Traductions$enseignant$demo$fr demo = Traductions$enseignant$demo$fr.internal(_root);
 	late final Traductions$enseignant$bienvenue$fr bienvenue = Traductions$enseignant$bienvenue$fr.internal(_root);
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
 	late final Traductions$enseignant$salle$fr salle = Traductions$enseignant$salle$fr.internal(_root);
@@ -5915,11 +5917,14 @@ class Traductions$nav$enseignant$fr {
 
 	// Translations
 
-	/// fr: 'Journée'
-	String get journee => 'Journée';
+	/// fr: 'Aujourd'hui'
+	String get journee => 'Aujourd\'hui';
 
-	/// fr: 'Créneaux'
-	String get creneaux => 'Créneaux';
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Disponibilités'
+	String get creneaux => 'Disponibilités';
 
 	/// fr: 'Profil'
 	String get profil => 'Profil';
@@ -7278,6 +7283,57 @@ class Traductions$classe$pageCatalogue$fr {
 	String get envoiIndisponible => 'L\'inscription en ligne n\'est pas encore ouverte : aucune place n\'a été réservée.';
 
 	late final Traductions$classe$pageCatalogue$resultat$fr resultat = Traductions$classe$pageCatalogue$resultat$fr.internal(_root);
+}
+
+// Path: enseignant.classes
+class Traductions$enseignant$classes$fr {
+	Traductions$enseignant$classes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classes'
+	String get titre => 'Classes';
+
+	/// fr: 'Vos Classes arrivent ici.'
+	String get provisoire => 'Vos Classes arrivent ici.';
+
+	/// fr: 'La liste de vos Classes, avec leur prochaine séance, sera posée à l'étape suivante.'
+	String get detail => 'La liste de vos Classes, avec leur prochaine séance, sera posée à l\'étape suivante.';
+}
+
+// Path: enseignant.demo
+class Traductions$enseignant$demo$fr {
+	Traductions$enseignant$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration enseignant'
+	String get titre => 'Démonstration enseignant';
+
+	/// fr: 'Données fictives, aucun envoi.'
+	String get mention => 'Données fictives, aucun envoi.';
+
+	/// fr: 'Choisissez un écran de Sayyid Ibrahim.'
+	String get intro => 'Choisissez un écran de Sayyid Ibrahim.';
+
+	/// fr: 'Écrans'
+	String get ecrans => 'Écrans';
+
+	/// fr: 'Situations'
+	String get etats => 'Situations';
+
+	/// fr: 'Journée ordinaire'
+	String get etatNominal => 'Journée ordinaire';
+
+	/// fr: 'Aucune séance'
+	String get etatVide => 'Aucune séance';
+
+	/// fr: 'Hors ligne'
+	String get etatHorsLigne => 'Hors ligne';
 }
 
 // Path: enseignant.bienvenue
@@ -13832,8 +13888,9 @@ extension on Traductions {
 			'nav.tuteur.suivi' => 'Suivi',
 			'nav.tuteur.historique' => 'Historique',
 			'nav.tuteur.compte' => 'Compte',
-			'nav.enseignant.journee' => 'Journée',
-			'nav.enseignant.creneaux' => 'Créneaux',
+			'nav.enseignant.journee' => 'Aujourd\'hui',
+			'nav.enseignant.classes' => 'Classes',
+			'nav.enseignant.creneaux' => 'Disponibilités',
 			'nav.enseignant.profil' => 'Profil',
 			'nav.controleur.planning' => 'Planning',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
@@ -14233,9 +14290,9 @@ extension on Traductions {
 			'tuteur.accueil.seanceIllisible' => 'La prochaine séance n\'a pas pu être lue.',
 			'tuteur.accueil.classeIndisponible' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
-			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			'tuteur.accueil.sansClassePhrase' => ({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
@@ -14487,6 +14544,17 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
+			'enseignant.classes.titre' => 'Classes',
+			'enseignant.classes.provisoire' => 'Vos Classes arrivent ici.',
+			'enseignant.classes.detail' => 'La liste de vos Classes, avec leur prochaine séance, sera posée à l\'étape suivante.',
+			'enseignant.demo.titre' => 'Démonstration enseignant',
+			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
+			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
+			'enseignant.demo.ecrans' => 'Écrans',
+			'enseignant.demo.etats' => 'Situations',
+			'enseignant.demo.etatNominal' => 'Journée ordinaire',
+			'enseignant.demo.etatVide' => 'Aucune séance',
+			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
@@ -14736,6 +14804,8 @@ extension on Traductions {
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
 			'controleur.planning.titre' => 'Planning global',
 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.planning.tousEtats' => 'Tout',
 			'controleur.planning.etatEnCours' => 'En cours',
 			'controleur.planning.etatAVenir' => 'À venir',
@@ -14748,8 +14818,6 @@ extension on Traductions {
 			'controleur.planning.colonneEtat' => 'État',
 			'controleur.planning.colonneEntree' => 'Entrée',
 			'controleur.planning.avec' => ({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.planning.plage' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.planning.plageAutreJour' => ({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}',
 			'controleur.planning.plageUtc' => ({required Object debut, required Object fin}) => '${debut} à ${fin} UTC',
@@ -15250,6 +15318,8 @@ extension on Traductions {
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',

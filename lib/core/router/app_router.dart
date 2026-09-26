@@ -53,6 +53,7 @@ import '../../features/consentements/consentement_observation_page.dart';
 import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/demo/demo_classe_page.dart';
+import '../../features/demo/demo_enseignant_page.dart';
 import '../../features/demo/demo_salle_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
@@ -60,6 +61,7 @@ import '../../features/dossier/signature_page.dart';
 import '../../features/eleve_connexion/eleve_connexion_page.dart';
 import '../../features/eleve_connexion/saisie_code_page.dart';
 import '../../features/eleve_connexion/scanner_page.dart';
+import '../../features/enseignant_classes/mes_classes_page.dart';
 import '../../features/fiche_groupe/fiche_groupe_page.dart';
 import '../../features/foyer/creer_mon_profil_indisponible.dart';
 import '../../features/foyer/fiche/acces_page.dart';
@@ -721,6 +723,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ),
             ],
           ),
+          // Classes, deuxieme branche (E10) : l'ordre des branches est celui
+          // de `destinationsPour(AppRole.teacher)`.
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.enseignantClasses,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const MesClassesPage(),
+              ),
+            ],
+          ),
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
@@ -743,8 +756,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Les quatre poses de l'enseignant, HORS de la coquille et c'est le
-      // point : la barre de l'enseignant en tient exactement trois
-      // (`TEACHER_PARALLEL_BASELINE.md` §3.1, ADR-027), et le cahier est
+      // point : la barre de l'enseignant en tient quatre destinations (E10,
+      // decision du 26/09/2026 qui remplace ADR-027), et le cahier est
       // l'ecran de sortie de seance, sans barre qui offrirait de partir
       // ailleurs. Une pose s'atteint depuis un ecran puis se quitte.
       //
@@ -1055,6 +1068,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // La salle de seance en demonstration : aucune route en production.
       ...routesDemoSalle(Env.environnement),
       ...routesDemoClasse(Env.environnement),
+      ...routesDemoEnseignant(Env.environnement),
     ],
   );
 });

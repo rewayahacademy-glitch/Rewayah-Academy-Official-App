@@ -1936,8 +1936,9 @@
       "compte": "Compte"
     },
     "enseignant": {
-      "journee": "Journée",
-      "creneaux": "Créneaux",
+      "journee": "Aujourd'hui",
+      "classes": "Classes",
+      "creneaux": "Disponibilités",
       "profil": "Profil"
     },
     "controleur": {
@@ -2695,6 +2696,21 @@
     }
   },
   "enseignant": {
+    "classes": {
+      "titre": "Classes",
+      "provisoire": "Vos Classes arrivent ici.",
+      "detail": "La liste de vos Classes, avec leur prochaine séance, sera posée à l'étape suivante."
+    },
+    "demo": {
+      "titre": "Démonstration enseignant",
+      "mention": "Données fictives, aucun envoi.",
+      "intro": "Choisissez un écran de Sayyid Ibrahim.",
+      "ecrans": "Écrans",
+      "etats": "Situations",
+      "etatNominal": "Journée ordinaire",
+      "etatVide": "Aucune séance",
+      "etatHorsLigne": "Hors ligne"
+    },
     "bienvenue": {
       "titre": "Premiers pas",
       "salutation": "Bienvenue, {prenom}.",

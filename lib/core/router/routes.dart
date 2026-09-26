@@ -279,6 +279,10 @@ abstract final class Routes {
   /// La journee de cours.
   static const String enseignantJournee = '/enseignant/journee';
 
+  /// Mes Classes (ENS-09), deuxieme destination de la barre enseignant (E10,
+  /// decision du directeur du 26/09/2026). Page provisoire jusqu'a EN-3.
+  static const String enseignantClasses = '/enseignant/classes';
+
   /// Disponibilites et feed de matching.
   static const String enseignantCreneaux = '/enseignant/creneaux';
 
@@ -286,8 +290,9 @@ abstract final class Routes {
   static const String enseignantProfil = '/enseignant/profil';
 
   // Les quatre routes suivantes ne sont **pas** des destinations de premier
-  // niveau : la barre de l'enseignant en tient exactement trois, Journee,
-  // Creneaux et Profil (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_PARALLEL_BASELINE.md` §3).
+  // niveau : la barre de l'enseignant en tient quatre, Aujourd'hui, Classes,
+  // Disponibilites et Profil (E10, decision du directeur du 26/09/2026, qui
+  // remplace ADR-027 et ses trois destinations).
   // Ce sont des poses, atteintes depuis un ecran puis quittees
   // (`03-architecture-information.md` section 5).
   //
@@ -460,6 +465,10 @@ abstract final class Routes {
   /// L'entree en classe en demonstration (roles x etats, CL-4.2).
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoClasse = '/demo/classe';
+
+  /// La coquille enseignant en demonstration (EN-1b) : `?ecran=...&etat=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoEnseignant = '/demo/enseignant';
 
   // --- Developpement --------------------------------------------------------
 
