@@ -12,12 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
+import '../../core/admin/service_admin.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_politique_revue_kyc.dart';
+import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/service_validation.dart';
+import '../../core/matching/service_matching.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
@@ -36,6 +41,7 @@ import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
 import 'catalogue_demo.dart';
+import 'dossiers_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
 
@@ -113,6 +119,74 @@ List<Override> surchargesDemoTuteur({String? environnement}) {
     servicePresenceProvider.overrideWithValue(const PresenceDemo()),
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
   ];
+}
+
+/// Valeur du parametre qui ouvre la demonstration admin (AD-4).
+const String valeurDemoAdmin = 'admin';
+
+/// Vrai si l'adresse demande la demonstration admin.
+bool demoAdminDemandee(Uri adresse) =>
+    adresse.queryParameters[parametreDemo]?.trim().toLowerCase() ==
+    valeurDemoAdmin;
+
+/// La garde admin, meme porte compilee que celle du tuteur.
+bool demoAdminActive({required Uri adresse, required String environnement}) =>
+    environnementAutoriseDemo(environnement) && demoAdminDemandee(adresse);
+
+/// La garde admin appliquee a la compilation et a l'adresse d'ouverture.
+bool get demoAdminActiveIci =>
+    demoAdminActive(adresse: Uri.base, environnement: Env.environnement);
+
+/// Les surcharges de la demonstration admin.
+///
+/// Une seule [EtatRevueDemo] partagee par les doubles : une bascule de
+/// politique se voit dans la file. Leve une [StateError] en production.
+List<Override> surchargesDemoAdmin({
+  String? environnement,
+  EtatRevueDemo? etat,
+}) {
+  if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
+    throw StateError('Demonstration interdite en production.');
+  }
+  final EtatRevueDemo e = etat ?? EtatRevueDemo.initial();
+  return <Override>[
+    sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
+    portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
+    portPolitiqueRevueKycProvider.overrideWithValue(PolitiqueRevueKycDemo(e)),
+    // L'ecran ADM-02 actuel et l'Accueil admin : aucun appel serveur.
+    serviceValidationProvider.overrideWithValue(ServiceValidationDemo(e)),
+    indicateursProvider.overrideWith(
+      (Ref ref) async => IndicateursAdmin(
+        dossiersEnAttente: e.nombreAVerifier,
+        foyersSansEnseignant: 0,
+        rapportsManquants: 0,
+        incidents24h: 0,
+        comptesEchus: 0,
+        demandesEnAttente: 0,
+      ),
+    ),
+    demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+  ];
+}
+
+/// Session admin fictive, resolue tout de suite, sans Supabase. Aucune
+/// valeur `super_admin` dans [AppRole] (Q40).
+class SourceSessionDemoAdmin implements SourceSession {
+  const SourceSessionDemoAdmin();
+
+  static const SessionState etat = SessionState(
+    resolue: true,
+    role: AppRole.admin,
+    profileId: 'demo-admin',
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
+  );
+
+  @override
+  Stream<SessionState> etats() => Stream<SessionState>.value(etat);
+
+  @override
+  Future<void> rafraichir() async {}
 }
 
 /// Donnees fictives partagees par les doubles.

@@ -1,9 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
+import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
@@ -16,6 +20,7 @@ import 'package:rewayah_academy/core/tc_observation/guardian_session_visit.dart'
 import 'package:rewayah_academy/core/tc_observation/port_historique_observations.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
+import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
 void main() {
@@ -66,6 +71,76 @@ void main() {
 
     test('la compilation de test (developpement) sans adresse : fermee', () {
       expect(demoTuteurActiveIci, isFalse);
+    });
+  });
+
+  group('garde de la demonstration admin', () {
+    final Uri avecAdmin = Uri.parse('https://apercu.example/?demo=admin');
+
+    test('fermee en production et sans environnement', () {
+      for (final String env in <String>['production', 'prod', '']) {
+        expect(
+          demoAdminActive(adresse: avecAdmin, environnement: env),
+          isFalse,
+          reason: env,
+        );
+      }
+      expect(
+        () => surchargesDemoAdmin(environnement: 'production'),
+        throwsStateError,
+      );
+    });
+
+    test('ouverte en apercu, seulement sur ?demo=admin', () {
+      expect(
+        demoAdminActive(adresse: avecAdmin, environnement: 'staging'),
+        isTrue,
+      );
+      expect(
+        demoAdminActive(adresse: avecDemo, environnement: 'staging'),
+        isFalse,
+      );
+      expect(
+        demoAdminActive(adresse: sansDemo, environnement: 'staging'),
+        isFalse,
+      );
+      expect(demoAdminActiveIci, isFalse);
+    });
+  });
+
+  group('doubles admin', () {
+    late ProviderContainer conteneur;
+
+    setUp(() {
+      conteneur = ProviderContainer(
+        overrides: surchargesDemoAdmin(environnement: 'staging'),
+      );
+    });
+    tearDown(() => conteneur.dispose());
+
+    test('session admin et doubles de revue', () async {
+      final SessionState etat = await conteneur
+          .read(sourceSessionProvider)
+          .etats()
+          .first;
+      expect(etat.role, AppRole.admin);
+      expect(
+        conteneur.read(portRevueDossiersProvider),
+        isA<RevueDossiersDemo>(),
+      );
+      expect(
+        conteneur.read(portPolitiqueRevueKycProvider),
+        isA<PolitiqueRevueKycDemo>(),
+      );
+      expect(
+        conteneur.read(serviceValidationProvider),
+        isA<ServiceValidationDemo>(),
+      );
+      expect(
+        (await conteneur.read(indicateursProvider.future)).dossiersEnAttente,
+        8,
+      );
+      expect(await conteneur.read(demandesProvider.future), isEmpty);
     });
   });
 

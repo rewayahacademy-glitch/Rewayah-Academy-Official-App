@@ -89,6 +89,23 @@ Future<void> main() async {
     return;
   }
 
+  // Demonstration admin (AD-4) : `?demo=admin`, meme garde et meme repere.
+  // Aucun adaptateur serveur des ports de revue n'est branche (K-28).
+  if (demoAdminActiveIci) {
+    runApp(
+      ProviderScope(
+        overrides: surchargesDemoAdmin(),
+        child: TranslationProvider(
+          child: RewayahApp(
+            builder: (BuildContext context, Widget? child) =>
+                RepereDemonstration(child: child),
+          ),
+        ),
+      ),
+    );
+    return;
+  }
+
   if (Env.playgroundActif) {
     runApp(
       ProviderScope(

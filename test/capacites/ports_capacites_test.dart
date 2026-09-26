@@ -8,10 +8,12 @@ import 'package:rewayah_academy/core/capacites/port_consentements.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/capacites/port_preferences_persistantes.dart';
 import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_resume_seance_famille.dart';
+import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
@@ -21,9 +23,11 @@ import '../fixtures/tuteur/faux_classes_foyer.dart';
 import '../fixtures/tuteur/faux_identite_titulaire.dart';
 import '../fixtures/tuteur/foyers.dart';
 
-/// Les deux familles d'identifiants admises : registre backend, ou lot qui
-/// ecrit l'adaptateur.
-final RegExp _dependanceValide = RegExp(r'^(DB-[A-Z]{3}-\d{2}|LOT-[A-E])$');
+/// Les trois familles d'identifiants admises : registre backend, lot qui
+/// ecrit l'adaptateur, ou besoin serveur de la vague Admin (K-28).
+final RegExp _dependanceValide = RegExp(
+  r'^(DB-[A-Z]{3}-\d{2}|LOT-[A-E]|AD-BR-\d{2})$',
+);
 
 Matcher _indisponible(String dependance) => throwsA(
   isA<CapaciteIndisponible>().having(
@@ -182,6 +186,58 @@ void main() {
             .read(portPreferencesPersistantesProvider)
             .enregistrer(const PreferencesLocales()),
         'DB-CPT-09',
+      ),
+      // Revue des dossiers (AD-4) : aucun adaptateur serveur avant AD-BR.
+      (
+        'file des dossiers',
+        (ProviderContainer c) =>
+            c.read(portRevueDossiersProvider).listerDossiers(),
+        'AD-BR-01',
+      ),
+      (
+        'dossier pour revue',
+        (ProviderContainer c) =>
+            c.read(portRevueDossiersProvider).dossierPourRevue('d1'),
+        'AD-BR-02',
+      ),
+      (
+        'vue de piece',
+        (ProviderContainer c) => c
+            .read(portRevueDossiersProvider)
+            .demanderVuePiece(dossierId: 'd1', documentId: 'p1'),
+        'AD-BR-03',
+      ),
+      (
+        'decision sur un dossier',
+        (ProviderContainer c) => c
+            .read(portRevueDossiersProvider)
+            .decider(
+              dossierId: 'd1',
+              revisionAttendue: 1,
+              decision: DecisionDossier.valider,
+              commandeId: 'k1',
+              verificationsFaites: const <String>{},
+            ),
+        'AD-BR-06',
+      ),
+      (
+        'resultat d une decision',
+        (ProviderContainer c) => c
+            .read(portRevueDossiersProvider)
+            .resultatDecision(dossierId: 'd1', commandeId: 'k1'),
+        'AD-BR-07',
+      ),
+      (
+        'politique de revue',
+        (ProviderContainer c) => c.read(portPolitiqueRevueKycProvider).lire(),
+        'AD-BR-16',
+      ),
+      (
+        'modification de la politique de revue',
+        (ProviderContainer c) => c
+            .read(portPolitiqueRevueKycProvider)
+            .modifier(genreRelecteurApplique: false, versionAttendue: 1),
+        'AD-BR-17',
       ),
     ];
 
