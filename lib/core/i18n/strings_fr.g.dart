@@ -2532,6 +2532,9 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Quitter et ouvrir le cahier'
 	String get quitterCahier => 'Quitter et ouvrir le cahier';
 
+	/// fr: 'Rester'
+	String get rester => 'Rester';
+
 	/// fr: 'Supports'
 	String get supports => 'Supports';
 
@@ -11602,6 +11605,7 @@ extension on Traductions {
 			'salle.seance.illustration' => 'Illustration du support',
 			'salle.seance.quitterCahierConsequence' => 'Vous passerez ensuite au cahier de transmission.',
 			'salle.seance.quitterCahier' => 'Quitter et ouvrir le cahier',
+			'salle.seance.rester' => 'Rester',
 			'salle.seance.supports' => 'Supports',
 			'salle.seance.reseau' => 'Réseau',
 			'salle.seance.pagePrecedente' => 'Page précédente',
@@ -11991,9 +11995,9 @@ extension on Traductions {
 			'foyer.inscriptionIllisible' => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.',
 			'foyer.appareilsPartages' => 'Appareils partagés',
 			'foyer.appareilsFoyer' => 'Appareils du foyer',
-			'foyer.appareilsFoyerLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.appareilsFoyerLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
 			'foyer.creerMonProfil' => 'Créer mon profil élève',
 			'foyer.monProfil.titre' => 'Créer mon profil élève',
 			'foyer.monProfil.indisponibleTitre' => 'Pas encore possible',
@@ -12505,9 +12509,9 @@ extension on Traductions {
 			'admin.regles.absenceSeuil' => 'Seuil d\'absence',
 			'admin.regles.absenceSeuilDetail' => 'Au-delà de ce nombre de minutes sans rejoindre la séance, l\'élève est marqué absent.',
 			'admin.regles.dureeSeance' => 'Durée de séance',
-			'admin.regles.dureeSeanceDetail' => 'La durée par défaut d\'une séance, avant toute exception individuelle.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regles.dureeSeanceDetail' => 'La durée par défaut d\'une séance, avant toute exception individuelle.',
 			'admin.regles.dureeMinimalePayee' => 'Durée minimale payée',
 			'admin.regles.dureeMinimalePayeeDetail' => 'En dessous de cette durée, une séance écourtée reste payée en entier.',
 			'admin.regles.pauseEntreSeances' => 'Pause entre deux séances',
@@ -13019,9 +13023,9 @@ extension on Traductions {
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
-			'nav.admin.accueil' => 'Accueil',
 			_ => null,
 		} ?? switch (path) {
+			'nav.admin.accueil' => 'Accueil',
 			'nav.admin.operations' => 'Opérations',
 			'nav.admin.personnes' => 'Personnes',
 			'nav.admin.pedagogie' => 'Pédagogie',
@@ -13533,9 +13537,9 @@ extension on Traductions {
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
 			'classe.observation.restantes' => ({required Object nombre}) => '${nombre} visites restantes pour cette séance',
-			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
 			_ => null,
 		} ?? switch (path) {
+			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
@@ -14047,9 +14051,9 @@ extension on Traductions {
 			'tc.outils.trait.plus' => 'Plus',
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
-			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',

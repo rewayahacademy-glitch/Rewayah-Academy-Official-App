@@ -594,10 +594,11 @@ abstract final class AppIcons {
     IconData(0xe220, fontFamily: _actif),
   );
 
-  /// Outil Annoter de la salle : Phosphor `pencil-line` (0xe3b2).
+  /// Outil Annoter de la salle : Phosphor `note-pencil` (0xe34c), un carre
+  /// et un crayon (images CLV-06), distinct du crayon seul de Marquer.
   static const AppIcon annoter = AppIcon._(
-    IconData(0xe3b2, fontFamily: _repos),
-    IconData(0xe3b2, fontFamily: _actif),
+    IconData(0xe34c, fontFamily: _repos),
+    IconData(0xe34c, fontFamily: _actif),
   );
 
   /// Reseau (dock enseignant) : Phosphor `wifi-high` (0xe4ea).

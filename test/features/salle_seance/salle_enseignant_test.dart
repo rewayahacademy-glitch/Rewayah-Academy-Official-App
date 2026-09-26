@@ -249,7 +249,70 @@ void main() {
     await tester.tap(find.text('Quitter'));
     await _attendre(tester);
     expect(find.text('Quitter et ouvrir le cahier'), findsOneWidget);
+    // Spec CLV-06, textes exacts : « Rester », jamais « Annuler ».
+    expect(find.text('Rester'), findsOneWidget);
+    expect(find.text('Annuler'), findsNothing);
     expect(find.textContaining('Terminer pour tous'), findsNothing);
     expect(find.textContaining('Prolonger'), findsNothing);
+  });
+
+  // Geometrie mesuree avec les vraies polices du depot et la zone sure du
+  // telephone, comme les captures : la police de test elargit tout texte.
+  group('mise en page reelle', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    Future<void> monterReel(WidgetTester tester, String taille) async {
+      final bool mobile = taille == 'mobile';
+      fixerVueCapture(
+        tester,
+        _tailles[taille]!,
+        mobile ? 3 : 1,
+        zoneSure: mobile
+            ? const EdgeInsets.only(top: 47, bottom: 34)
+            : EdgeInsets.zero,
+      );
+      await tester.pumpWidget(
+        hoteCapture(
+          SalleSeance(
+            vue: DonneesSeanceDemo.vue(
+              RoleSeance.enseignant,
+              EtatDemoSalle.visite,
+            ),
+            actions: _complet,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    for (final String taille in <String>['mobile', 'desktop']) {
+      testWidgets('$taille : la diapositive entiere tient dans le support', (
+        WidgetTester tester,
+      ) async {
+        await monterReel(tester, taille);
+        final Rect support = tester.getRect(_cle('zone-support'));
+        final Rect derniere = tester.getRect(
+          find.text('Respecter les camarades.'),
+        );
+        // La troisieme consigne est entiere, au-dessus du fondu du bas.
+        expect(derniere.bottom, lessThan(support.bottom - 16));
+      });
+    }
+
+    testWidgets("vignette etroite : le nom de l'enseignante est entier", (
+      WidgetTester tester,
+    ) async {
+      await monterReel(tester, 'mobile');
+      final Finder vignette = _cle('vignette-video');
+      final Rect cadre = tester.getRect(vignette);
+      final Rect nom = tester.getRect(_cle('nom-video'));
+      expect(
+        find.descendant(of: vignette, matching: find.text('Sayyida Amina')),
+        findsOneWidget,
+      );
+      expect(cadre.contains(nom.topLeft), isTrue);
+      expect(cadre.contains(nom.bottomRight - const Offset(1, 1)), isTrue);
+    });
   });
 }

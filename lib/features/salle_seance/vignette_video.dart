@@ -107,11 +107,13 @@ class VignetteVideo extends StatelessWidget {
                     ),
                   ),
                   PositionedDirectional(
-                    start: AppSpacing.sm,
-                    bottom: AppSpacing.sm,
-                    end: AppSpacing.sm,
-                    // L'etiquette prend sa largeur, le signal va au bout :
-                    // un Spacer partageait la place et tronquait le nom.
+                    start: _retraitEtiquette,
+                    bottom: _retraitEtiquette,
+                    end: _retraitEtiquette,
+                    // L'etiquette prend sa largeur, le signal va au bout.
+                    // Le nom s'ecrit en entier (images : « Sayyida Amina ») :
+                    // dans la vignette etroite, il se resserre au besoin
+                    // plutot que de se couper.
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -122,16 +124,20 @@ class VignetteVideo extends StatelessWidget {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.sm,
+                                horizontal: _retraitEtiquette,
                                 vertical: AppSpacing.xs,
                               ),
-                              child: Text(
-                                vue.nomEnseignant,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: palette.surfaceInverse.applyTo(
-                                  theme.textTheme.labelSmall ??
-                                      const TextStyle(),
+                              child: FittedBox(
+                                key: const ValueKey<String>('nom-video'),
+                                fit: BoxFit.scaleDown,
+                                alignment: AlignmentDirectional.centerStart,
+                                child: Text(
+                                  vue.nomEnseignant,
+                                  maxLines: 1,
+                                  style: palette.surfaceInverse.applyTo(
+                                    theme.textTheme.labelSmall ??
+                                        const TextStyle(),
+                                  ),
                                 ),
                               ),
                             ),
@@ -196,3 +202,7 @@ class _Signal extends StatelessWidget {
 
 /// L'ecart entre deux barres de signal : un demi-palier.
 const double _ecartBarres = AppSpacing.xs / 2;
+
+/// Le retrait de l'etiquette du nom, et sa marge laterale : un palier et
+/// demi, pour que le nom tienne en entier dans la vignette etroite.
+const double _retraitEtiquette = AppSpacing.xs + AppSpacing.xs / 2;

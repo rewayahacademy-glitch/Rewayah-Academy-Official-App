@@ -158,12 +158,14 @@ class _Entree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    // L'entree active est un aplat violet plein (image CLV-06), libelle et
+    // icone dans l'encre de cet aplat.
+    final Color? encreActive = actif
+        ? palette.surfacePrimary.onBackground
+        : null;
     final Widget ligne = DecoratedBox(
       decoration: actif
-          ? palette.washAccent.decoration(
-              borderRadius: AppRadius.arrondiMd,
-              side: palette.inkAccent.asBorderSide(),
-            )
+          ? palette.surfacePrimary.decoration(borderRadius: AppRadius.arrondiMd)
           : const BoxDecoration(),
       child: SizedBox(
         height: AppSpacing.titreEcran + AppSpacing.sm,
@@ -172,8 +174,9 @@ class _Entree extends StatelessWidget {
           child: Row(
             children: <Widget>[
               IconTheme(
-                data: (actif ? palette.inkAccent : palette.inkStrong)
-                    .asIconTheme(size: AppSpacing.xxl),
+                data: encreActive != null
+                    ? IconThemeData(color: encreActive, size: AppSpacing.xxl)
+                    : palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
                 child: Icon(icone.resoudre(selectionne: actif)),
               ),
               Ecart.hLg,
@@ -184,7 +187,7 @@ class _Entree extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style:
                       (actif
-                      ? palette.washAccent.applyTo
+                      ? palette.surfacePrimary.applyTo
                       : palette.inkStrong.applyTo)(
                         Theme.of(context).textTheme.titleSmall ??
                             const TextStyle(),

@@ -23,12 +23,23 @@ import 'vue_seance.dart';
 
 /// Le support et la vignette video.
 class ZoneSupport extends StatelessWidget {
-  const ZoneSupport({required this.vue, this.zoom = 1, super.key});
+  const ZoneSupport({
+    required this.vue,
+    this.zoom = 1,
+    this.serre = false,
+    super.key,
+  });
 
   final VueSeance vue;
 
   /// Le zoom local (1 = 100 %), qui n'agit que sur cet ecran.
   final double zoom;
+
+  /// Salle enseignant, telephone et desktop : le support partage l'ecran
+  /// avec les boutons Eleves et Supports et la rangee d'outils. Marges et
+  /// ecarts se resserrent pour que la diapositive entiere tienne dans la
+  /// place laissee (images CLV-04-05-06 mobile et CLV-06 desktop).
+  final bool serre;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +63,7 @@ class ZoneSupport extends StatelessWidget {
     // s'arrete apres son contenu, un espace la separe du dock.
     final bool colonneGuidee =
         vue.vignetteAgrandie && gabarit == Gabarit.tablette && !aCote;
+    final _Marges marges = _Marges.de(gabarit, serre: serre);
     // La carte lit le theme clair, quel que soit le theme de l'ecran.
     final Widget carte = Theme(
       data: AppTheme.pour(mode, Brightness.light),
@@ -66,12 +78,17 @@ class ZoneSupport extends StatelessWidget {
             ),
             child: _FonduBas(
               couleur: palette.surfaceRaised.background,
+              hauteur: marges.fondu,
               child: SingleChildScrollView(
                 key: const ValueKey<String>('support-defilement'),
-                padding: EdgeInsets.all(_marge(gabarit)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: marges.x,
+                  vertical: marges.y,
+                ),
                 child: _Contenu(
                   support: support,
                   gabarit: gabarit,
+                  marges: marges,
                   largeurVignette: aCote || !video ? 0 : largeurVignette,
                   encadreACote: colonneGuidee,
                 ),
@@ -95,8 +112,8 @@ class ZoneSupport extends StatelessWidget {
                     Positioned.fill(child: defilement),
                   if (!aCote && video)
                     PositionedDirectional(
-                      top: MesuresVignette.retrait,
-                      end: MesuresVignette.retrait,
+                      top: marges.retraitVignette,
+                      end: marges.retraitVignette,
                       // La video garde le theme de l'ecran.
                       child: Theme(
                         data: Theme.of(context),
@@ -170,10 +187,17 @@ const double _serti = AppSpacing.sm;
 /// la carte s'efface au lieu de s'arreter net. Sa hauteur egale la plus
 /// petite marge interieure : en fin de defilement, il ne couvre que la marge.
 class _FonduBas extends StatelessWidget {
-  const _FonduBas({required this.couleur, required this.child});
+  const _FonduBas({
+    required this.couleur,
+    required this.hauteur,
+    required this.child,
+  });
 
   /// Une couleur opaque quelconque : seul son canal alpha compte.
   final Color couleur;
+
+  /// La hauteur du fondu : la plus petite marge interieure.
+  final double hauteur;
   final Widget child;
 
   @override
@@ -182,7 +206,7 @@ class _FonduBas extends StatelessWidget {
     shaderCallback: (Rect zone) {
       final double debut = zone.height <= 0
           ? 1
-          : (1 - AppSpacing.xl / zone.height).clamp(0, 1);
+          : (1 - hauteur / zone.height).clamp(0, 1);
       return LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
@@ -194,19 +218,64 @@ class _FonduBas extends StatelessWidget {
   );
 }
 
-double _marge(Gabarit gabarit) =>
-    gabarit == Gabarit.desktop ? AppSpacing.section : AppSpacing.xl;
+/// Les marges et ecarts du support, par gabarit, ordinaires ou resserres.
+@immutable
+class _Marges {
+  const _Marges({
+    required this.x,
+    required this.y,
+    required this.retraitVignette,
+    required this.serre,
+  });
+
+  factory _Marges.de(Gabarit gabarit, {required bool serre}) {
+    final bool large = gabarit == Gabarit.desktop;
+    // Resserre seulement au telephone et en desktop : en web etroit, les
+    // outils sont en colonne et la diapositive tient deja.
+    final bool actif = serre && gabarit != Gabarit.tablette;
+    if (large) {
+      return _Marges(
+        x: AppSpacing.section,
+        y: actif ? AppSpacing.xxl : AppSpacing.section,
+        retraitVignette: MesuresVignette.retrait,
+        serre: actif,
+      );
+    }
+    return _Marges(
+      x: actif ? AppSpacing.lg : AppSpacing.xl,
+      y: actif ? AppSpacing.lg : AppSpacing.xl,
+      // Image mobile, colonne enseignant : la vignette serre le coin.
+      retraitVignette: actif ? AppSpacing.sm : MesuresVignette.retrait,
+      serre: actif,
+    );
+  }
+
+  /// Les marges interieures, laterales et verticales.
+  final double x;
+  final double y;
+
+  /// Le retrait de la vignette depuis le coin du support.
+  final double retraitVignette;
+
+  /// Les ecarts du contenu sont resserres.
+  final bool serre;
+
+  /// Le fondu du bas ne couvre que la plus petite marge (et au plus xl).
+  double get fondu => math.min(AppSpacing.xl, math.min(x, y));
+}
 
 class _Contenu extends StatelessWidget {
   const _Contenu({
     required this.support,
     required this.gabarit,
+    required this.marges,
     required this.largeurVignette,
     this.encadreACote = false,
   });
 
   final SupportSeance support;
   final Gabarit gabarit;
+  final _Marges marges;
 
   /// La largeur de la vignette posee en coin ; 0 quand elle est a cote.
   final double largeurVignette;
@@ -220,6 +289,9 @@ class _Contenu extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final bool large = gabarit == Gabarit.desktop;
+    // Salle enseignant (telephone, desktop) : ecarts resserres pour que la
+    // diapositive entiere tienne au-dessus des outils et du dock.
+    final bool serre = marges.serre;
     // La place laissee a la vignette sur les premieres lignes : aucun texte
     // ne passe dessous au repos.
     // Au telephone, l'ecart titre-vignette se resserre (images : ≈ 10).
@@ -227,20 +299,28 @@ class _Contenu extends StatelessWidget {
         ? 0
         : math.max(
             0,
-            MesuresVignette.retrait +
+            marges.retraitVignette +
                 largeurVignette +
                 (gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.lg) -
-                _marge(gabarit),
+                marges.x,
           );
+    final Widget ligneFine = _Ligne(
+      fraction: 1,
+      epaisseur: serre && !large ? AppSpacing.sm : AppSpacing.md,
+    );
+    Widget ligne(double fraction) => _Ligne(
+      fraction: fraction,
+      epaisseur: serre && !large ? AppSpacing.sm : AppSpacing.md,
+    );
     final Widget encadre = DecoratedBox(
       key: const ValueKey<String>('encadre-support'),
       decoration: palette.washAccent.decoration(
         borderRadius: AppRadius.arrondiMd,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: AppSpacing.xxl,
-          vertical: AppSpacing.lg,
+          vertical: serre ? AppSpacing.md : AppSpacing.lg,
         ),
         child: Align(
           alignment: AlignmentDirectional.centerStart,
@@ -263,7 +343,7 @@ class _Contenu extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _Pastille(texte: support.chapitre),
-        Ecart.vLg,
+        if (serre && !large) Ecart.vSm else Ecart.vLg,
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: _largeurTitre),
           child: _TitreEquilibre(
@@ -278,26 +358,34 @@ class _Contenu extends StatelessWidget {
             ),
           ),
         ),
-        Ecart.vXl,
-        const _Ligne(fraction: 1),
-        if (large) ...<Widget>[
-          Ecart.vMd,
-          const _Ligne(fraction: 0.86),
-          Ecart.vMd,
-          const _Ligne(fraction: 0.7),
-        ],
+        if (serre && !large) Ecart.vMd else Ecart.vXl,
+        ligneFine,
+        if (large) ...<Widget>[Ecart.vMd, ligne(0.86), Ecart.vMd, ligne(0.7)],
         if (encadreACote) ...<Widget>[
           Ecart.vMd,
-          const _Ligne(fraction: 1),
+          ligneFine,
           Ecart.vMd,
-          const _Ligne(fraction: 0.94),
+          ligne(0.94),
           Ecart.vLg,
           encadre,
           Ecart.vLg,
-          const _Ligne(fraction: 1),
+          ligneFine,
         ],
       ],
     );
+    // Les ecarts autour de l'encadre et des consignes.
+    final Widget autourEncadre = serre
+        ? Ecart.vMd
+        : (large ? Ecart.vXxl : Ecart.vLg);
+    final double pastillePoint = switch ((large, serre)) {
+      (true, false) => AppSpacing.xxxl + AppSpacing.sm,
+      (true, true) => AppSpacing.xxxl + AppSpacing.xs,
+      (false, false) => AppSpacing.xxxl,
+      (false, true) => AppSpacing.xxl + AppSpacing.xs,
+    };
+    final double ecartPoint = serre && !large
+        ? AppSpacing.xs / 2
+        : AppSpacing.xs;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -313,34 +401,33 @@ class _Contenu extends StatelessWidget {
                   : math.max(
                       0,
                       largeurVignette / MesuresVignette.ratio +
-                          MesuresVignette.retrait -
-                          _marge(gabarit),
+                          marges.retraitVignette -
+                          marges.y,
                     ),
             ),
           ],
         ),
+        // Telephone et web etroit : deux lignes sous la vignette ; une
+        // seule quand le support est resserre (image mobile, enseignant).
         if (!large && !encadreACote) ...<Widget>[
-          Ecart.vMd,
-          const _Ligne(fraction: 1),
-          Ecart.vMd,
-          const _Ligne(fraction: 0.7),
+          if (serre) Ecart.vSm else Ecart.vMd,
+          ligneFine,
+          if (!serre) ...<Widget>[Ecart.vMd, ligne(0.7)],
         ],
         if (!encadreACote) ...<Widget>[
-          if (large) Ecart.vXxl else Ecart.vLg,
+          autourEncadre,
           encadre,
-          if (large) Ecart.vXxl else Ecart.vLg,
-          const _Ligne(fraction: 0.6),
+          autourEncadre,
+          ligne(0.6),
         ],
-        Ecart.vLg,
+        if (serre) Ecart.vMd else Ecart.vLg,
         for (int i = 0; i < support.points.length; i++)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            padding: EdgeInsets.symmetric(vertical: ecartPoint),
             child: Row(
               children: <Widget>[
                 SizedBox.square(
-                  dimension: large
-                      ? AppSpacing.xxxl + AppSpacing.sm
-                      : AppSpacing.xxxl,
+                  dimension: pastillePoint,
                   child: DecoratedBox(
                     decoration: palette.washAccent.decoration(
                       borderRadius: AppRadius.arrondiFull,
@@ -370,10 +457,14 @@ class _Contenu extends StatelessWidget {
               ],
             ),
           ),
-        if (large) Ecart.vXxl else Ecart.vLg,
-        const _Ligne(fraction: 1),
-        Ecart.vMd,
-        const _Ligne(fraction: 0.66),
+        // Desktop resserre (image CLV-06) : les trois consignes, puis la
+        // marge, sans lignes de fin. Ailleurs : deux lignes de fin.
+        if (!(serre && large)) ...<Widget>[
+          if (serre) Ecart.vMd else if (large) Ecart.vXxl else Ecart.vLg,
+          ligneFine,
+          if (serre) Ecart.vSm else Ecart.vMd,
+          ligne(0.66),
+        ],
       ],
     );
   }
@@ -437,16 +528,19 @@ const double _largeurEncadre = 320;
 
 /// Une ligne de texte figuree, en gris clair.
 class _Ligne extends StatelessWidget {
-  const _Ligne({required this.fraction});
+  const _Ligne({required this.fraction, this.epaisseur = AppSpacing.md});
 
   final double fraction;
+
+  /// L'epaisseur du trait ; plus fine dans le support resserre du telephone.
+  final double epaisseur;
 
   @override
   Widget build(BuildContext context) => FractionallySizedBox(
     alignment: AlignmentDirectional.centerStart,
     widthFactor: fraction,
     child: SizedBox(
-      height: AppSpacing.md,
+      height: epaisseur,
       child: DecoratedBox(
         decoration: AppPalette.of(context).surfaceSunken
             .decoration(borderRadius: AppRadius.arrondiFull),

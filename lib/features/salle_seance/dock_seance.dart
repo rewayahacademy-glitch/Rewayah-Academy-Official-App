@@ -41,9 +41,9 @@ enum FondBoutonAppel {
 /// Quitter la seance, apres confirmation : le dock (Quitter) et l'icone de
 /// sortie de l'en-tete guide passent par la meme question.
 ///
-/// Enseignant ([cahier]) : آ« Quitter et ouvrir le cahier آ», la suite est le
-/// cahier de transmission (S l.861-863). Jamais آ« Terminer pour tous آ» ni
-/// آ« Prolonger آ». Le rail enseignant passe aussi par cette question.
+/// Enseignant ([cahier]) : « Quitter et ouvrir le cahier », la suite est le
+/// cahier de transmission (S l.861-863). Jamais « Terminer pour tous » ni
+/// « Prolonger ». Le rail enseignant passe aussi par cette question.
 Future<void> confirmerQuitterSeance(
   BuildContext context,
   VoidCallback quitter, {
@@ -56,6 +56,9 @@ Future<void> confirmerQuitterSeance(
         ? t.salle.seance.quitterCahierConsequence
         : t.salle.seance.quitterConsequence,
     libelleConfirmer: cahier ? t.salle.seance.quitterCahier : t.salle.quitter,
+    // Spec CLV-06, textes exacts : « Rester » et « Quitter et ouvrir le
+    // cahier ».
+    libelleAnnuler: cahier ? t.salle.seance.rester : null,
   );
   if (confirme) quitter();
 }

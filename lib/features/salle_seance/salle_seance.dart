@@ -145,7 +145,9 @@ class _SalleEnseignant extends StatelessWidget {
   Widget build(BuildContext context) {
     const double gouttiere = AppPage.gouttiereMobile;
     final bool outils = vue.voitOutils && actions.onOutil != null;
-    final Widget support = ZoneSupport(vue: vue, zoom: local.zoom);
+    // Telephone et desktop : le support partage la hauteur avec les boutons
+    // et les outils, il se resserre pour montrer la diapositive entiere.
+    final Widget support = ZoneSupport(vue: vue, zoom: local.zoom, serre: true);
     final Widget? boutons = _BoutonsPanneaux.ou(vue, actions, gabarit);
     final Widget? panneau = _panneau();
     switch (gabarit) {
@@ -254,6 +256,10 @@ class _SalleEnseignant extends StatelessWidget {
       case Gabarit.tablette:
       case Gabarit.mobile:
         final bool mobile = gabarit == Gabarit.mobile;
+        // Telephone : les ecarts entre les rangees se resserrent d'un
+        // palier, la place revient au support (image mobile, enseignant).
+        final Widget ecart = mobile ? Ecart.vSm : Ecart.vMd;
+        final double ecartDock = mobile ? AppSpacing.sm : AppSpacing.md;
         final Widget milieu = mobile || !outils
             ? support
             : Row(
@@ -271,13 +277,13 @@ class _SalleEnseignant extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ChromeSeance(vue: vue, actions: actions),
-            Ecart.vMd,
+            ecart,
             if (boutons != null) ...<Widget>[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: gouttiere),
                 child: boutons,
               ),
-              Ecart.vMd,
+              ecart,
             ],
             Expanded(
               child: Padding(
@@ -306,7 +312,7 @@ class _SalleEnseignant extends StatelessWidget {
               ),
             ),
             if (mobile && outils) ...<Widget>[
-              Ecart.vMd,
+              ecart,
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: gouttiere),
                 child: OutilsEnseignement(
@@ -316,11 +322,11 @@ class _SalleEnseignant extends StatelessWidget {
               ),
             ],
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(
+              padding: EdgeInsetsDirectional.fromSTEB(
                 gouttiere,
-                AppSpacing.md,
+                ecartDock,
                 gouttiere,
-                AppSpacing.md,
+                ecartDock,
               ),
               child: DockSeance(
                 vue: vue,
