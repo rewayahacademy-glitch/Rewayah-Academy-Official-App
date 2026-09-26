@@ -10,6 +10,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
@@ -33,12 +34,14 @@ import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
+import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
+import 'preparation_enseignant.dart';
 import 'vue_salle.dart';
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
@@ -67,7 +70,20 @@ import 'vue_salle.dart';
 ///   n'existe donc toujours pas ici, plutot que d'etre grise.
 class SallePage extends ConsumerStatefulWidget {
   /// Cree la salle pour une seance.
-  const SallePage({required this.seanceId, super.key});
+  const SallePage({
+    required this.seanceId,
+    super.key,
+    this.preparation = false,
+    this.groupeId,
+  });
+
+  /// Montrer d'abord la preparation de l'enseignant (CLV-03, CL-4.5). Vrai
+  /// seulement depuis « Preparer l'entree » : rien n'est connecte avant
+  /// « Entrer dans la classe ».
+  final bool preparation;
+
+  /// La classe d'origine, pour « Retour a la Classe » et le contexte.
+  final String? groupeId;
 
   /// La seance visee, lue dans le billet d'entree (ADR-005). Elle ne transite
   /// jamais par l'URL : une adresse copiee arrive sans billet et repart.
@@ -90,6 +106,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   StreamSubscription<QualiteLien>? _sQualite;
 
   bool _materielPret = false;
+
+  /// La preparation de l'enseignant est a l'ecran : rien n'est connecte.
+  bool _enPreparation = false;
   AccesSalle? _acces;
   CauseImpasse? _impasse;
   EtatSalle _etatMoteur = EtatSalle.absent;
@@ -128,7 +147,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         setState(() => _qualite = lien);
       }
     });
-    unawaited(_entrer());
+    _enPreparation = widget.preparation;
+    if (!_enPreparation) {
+      unawaited(_entrer());
+    }
   }
 
   @override
@@ -329,6 +351,26 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // encore en chargement s'il n'avait jamais ete observe. La sortie tomberait
     // alors sur la racine, qui redirige, au lieu de l'accueil du role.
     final String? monProfil = ref.watch(sessionProvider).profileId;
+
+    // CLV-03 (CL-4.5) : la preparation de l'enseignant, avant toute
+    // connexion. « Entrer dans la classe » lance l'entree existante.
+    if (_enPreparation) {
+      return _PreparationBranchee(
+        groupeId: widget.groupeId,
+        onEntrer: () {
+          setState(() => _enPreparation = false);
+          unawaited(_entrer());
+        },
+        onRetour: () {
+          final String? groupe = widget.groupeId;
+          GoRouter.of(context).go(
+            groupe == null
+                ? Routes.enseignantJournee
+                : Routes.groupePour(groupe),
+          );
+        },
+      );
+    }
 
     // Les ecrans de sortie de la salle de seance (T7).
     final VueSeance? fin = _finEnseignant;
@@ -1579,4 +1621,47 @@ String? cheminCahierOuvrable(RouteConfiguration routeur, String seanceId) {
   if (seanceId.isEmpty) return null;
   final String chemin = Routes.cahierPour(seanceId);
   return routeur.findMatch(Uri.parse(chemin)).isEmpty ? null : chemin;
+}
+
+/// La preparation de l'enseignant sur les vraies lectures : le pre-vol
+/// (`preVolProvider`, seul chemin), la connectivite, et la preparation de la
+/// seance deja affichee dans la Classe. Aucun jeton n'est demande ici.
+class _PreparationBranchee extends ConsumerWidget {
+  const _PreparationBranchee({
+    required this.groupeId,
+    required this.onEntrer,
+    required this.onRetour,
+  });
+
+  final String? groupeId;
+  final VoidCallback onEntrer;
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<bool> horsLigne = ref.watch(horsLigneProvider);
+    final String? groupe = groupeId;
+    final PreparationSeance? preparation = groupe == null
+        ? null
+        : ref.watch(preparationSeanceProvider(groupe));
+    return Scaffold(
+      body: SafeArea(
+        child: PreparationEnseignant(
+          resultat: ref.watch(preVolProvider).value,
+          reseau: switch (horsLigne.value) {
+            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+            true => ReseauPreparation.horsLigne,
+            false => ReseauPreparation.bonne,
+          },
+          contexte: ContextePreparation(
+            support: preparation?.supportPrevu,
+            reprise: preparation?.positionReprise,
+          ),
+          onEntrer: onEntrer,
+          onRetour: onRetour,
+          onReessayer: () => ref.invalidate(preVolProvider),
+        ),
+      ),
+    );
+  }
 }

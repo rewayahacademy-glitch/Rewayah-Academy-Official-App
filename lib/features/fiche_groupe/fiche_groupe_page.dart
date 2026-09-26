@@ -345,7 +345,7 @@ class _Seance extends ConsumerWidget {
     final String? sessionId =
         identite.horloge?.sessionId ?? identite.prochaineSeance?.sessionId;
     final void Function(String sessionId) preparer =
-        onPreparer ?? _versPreparation(context);
+        onPreparer ?? _versPreparation(context, groupeId);
 
     return CarteSession(
       espace: espace,
@@ -364,10 +364,18 @@ class _Seance extends ConsumerWidget {
   /// Le chemin existant vers la preparation : la salle canonique, qui montre
   /// d'abord le pre-vol complet de l'enseignant (`PreCours`) et n'entre
   /// qu'apres. Le billet passe par `extra`, jamais par l'URL (ADR-005).
-  static void Function(String) _versPreparation(BuildContext context) =>
+  static void Function(String) _versPreparation(
+    BuildContext context,
+    String groupeId,
+  ) =>
       (String sessionId) => GoRouter.of(context).go(
         Routes.salle,
-        extra: BilletSalle(sessionId: sessionId, emisA: DateTime.now()),
+        extra: BilletSalle(
+          sessionId: sessionId,
+          emisA: DateTime.now(),
+          preparation: true,
+          groupeId: groupeId,
+        ),
       );
 }
 

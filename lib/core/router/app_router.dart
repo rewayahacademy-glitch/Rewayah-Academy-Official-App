@@ -1030,6 +1030,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           seanceId: etat.extra is BilletSalle
               ? (etat.extra! as BilletSalle).sessionId
               : '',
+          preparation:
+              etat.extra is BilletSalle &&
+              (etat.extra! as BilletSalle).preparation,
+          groupeId: etat.extra is BilletSalle
+              ? (etat.extra! as BilletSalle).groupeId
+              : null,
         ),
       ),
 

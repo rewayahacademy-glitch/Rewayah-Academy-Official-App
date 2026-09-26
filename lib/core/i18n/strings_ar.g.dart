@@ -63,6 +63,7 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$salle$preparation$ar preparation = _Traductions$salle$preparation$ar._(_root);
 	@override late final _Traductions$salle$secours$ar secours = _Traductions$salle$secours$ar._(_root);
 }
 
@@ -126,6 +127,52 @@ class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
 	@override String progressionValeur({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %';
 	@override String dst({required Object avant, required Object apres}) => 'تغيير التوقيت: سينتقل الدرس من ${avant} إلى ${apres}.';
 	@override late final _Traductions$classe$entree$annonce$ar annonce = _Traductions$classe$entree$annonce$ar._(_root);
+}
+
+// Path: salle.preparation
+class _Traductions$salle$preparation$ar extends Traductions$salle$preparation$fr {
+	_Traductions$salle$preparation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'التحضير لدخول الفصل';
+	@override String get retour => 'العودة إلى الفصل';
+	@override String get cameraCoupee => 'الكاميرا مغلقة';
+	@override String get testerCamera => 'اختبار الكاميرا';
+	@override String get testCameraFait => 'انتهى الاختبار المحلي. تبقى الكاميرا مغلقة عند الدخول.';
+	@override String get equipement => 'أجهزتك';
+	@override String get connexion => 'الاتصال';
+	@override String get micro => 'الميكروفون';
+	@override String get sortieAudio => 'مخرج الصوت';
+	@override String get camera => 'الكاميرا';
+	@override String get verification => 'جارٍ التحقق…';
+	@override String get chargement => 'جارٍ التحقق من الأجهزة…';
+	@override String get connexionPrete => 'الاتصال جاهز';
+	@override String get connexionInstable => 'الاتصال غير مستقر';
+	@override String get reseauFaible => 'الاتصال غير مستقر. الأولوية للصوت.';
+	@override String get microPret => 'تم العثور على الميكروفون · الميكروفون مغلق عند الدخول';
+	@override String get microAbsent => 'لم يُعثر على ميكروفون';
+	@override String get microAbsentRaison => 'لم يُعثر على ميكروفون. وصّل ميكروفونًا أو فعّله لتتمكن من التدريس.';
+	@override String get microBloque => 'الميكروفون محظور';
+	@override String get permissionRefusee => 'الميكروفون محظور في إعدادات هذا الجهاز.';
+	@override String get ouvrirReglages => 'فتح الإعدادات';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get sortieSysteme => 'مخرج النظام';
+	@override String get cameraPrete => 'تم العثور على الكاميرا · الكاميرا مغلقة عند الدخول';
+	@override String get cameraAbsente => 'الكاميرا غير متاحة. يمكنك الدخول دون كاميرا.';
+	@override String get modifierPeripheriques => 'تغيير الأجهزة';
+	@override String get contexte => 'سياق الحصة';
+	@override String get classe => 'الفصل';
+	@override String get debut => 'البداية';
+	@override String get support => 'المادة المقررة';
+	@override String get reprise => 'الاستئناف';
+	@override String get eleves => 'الطلاب المنتظرون';
+	@override String get entrer => 'دخول الفصل';
+	@override String get terminee => 'انتهت هذه الحصة.';
+	@override String get nonAssignee => 'هذه الحصة غير مسندة إليك.';
+	@override String get retourJournee => 'العودة إلى يومي';
+	@override late final _Traductions$salle$preparation$demo$ar demo = _Traductions$salle$preparation$demo$ar._(_root);
 }
 
 // Path: salle.secours
@@ -222,6 +269,20 @@ class _Traductions$classe$entree$annonce$ar extends Traductions$classe$entree$an
 	@override String get attente => 'أنت في القاعة';
 }
 
+// Path: salle.preparation.demo
+class _Traductions$salle$preparation$demo$ar extends Traductions$salle$preparation$demo$fr {
+	_Traductions$salle$preparation$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'تحضير المعلم';
+	@override String get pret => 'جاهز';
+	@override String get reseauFaible => 'شبكة ضعيفة';
+	@override String get microAbsent => 'لا ميكروفون';
+	@override String get permissionRefusee => 'الإذن مرفوض';
+}
+
 // Path: tc.groupe.enseignant
 class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseignant$fr {
 	_Traductions$tc$groupe$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -266,6 +327,47 @@ extension on TraductionsAr {
 			'classe.entree.annonce.aVenir' => 'حصة قادمة',
 			'classe.entree.annonce.fenetreOuverte' => 'القاعة مفتوحة',
 			'classe.entree.annonce.attente' => 'أنت في القاعة',
+			'salle.preparation.titre' => 'التحضير لدخول الفصل',
+			'salle.preparation.retour' => 'العودة إلى الفصل',
+			'salle.preparation.cameraCoupee' => 'الكاميرا مغلقة',
+			'salle.preparation.testerCamera' => 'اختبار الكاميرا',
+			'salle.preparation.testCameraFait' => 'انتهى الاختبار المحلي. تبقى الكاميرا مغلقة عند الدخول.',
+			'salle.preparation.equipement' => 'أجهزتك',
+			'salle.preparation.connexion' => 'الاتصال',
+			'salle.preparation.micro' => 'الميكروفون',
+			'salle.preparation.sortieAudio' => 'مخرج الصوت',
+			'salle.preparation.camera' => 'الكاميرا',
+			'salle.preparation.verification' => 'جارٍ التحقق…',
+			'salle.preparation.chargement' => 'جارٍ التحقق من الأجهزة…',
+			'salle.preparation.connexionPrete' => 'الاتصال جاهز',
+			'salle.preparation.connexionInstable' => 'الاتصال غير مستقر',
+			'salle.preparation.reseauFaible' => 'الاتصال غير مستقر. الأولوية للصوت.',
+			'salle.preparation.microPret' => 'تم العثور على الميكروفون · الميكروفون مغلق عند الدخول',
+			'salle.preparation.microAbsent' => 'لم يُعثر على ميكروفون',
+			'salle.preparation.microAbsentRaison' => 'لم يُعثر على ميكروفون. وصّل ميكروفونًا أو فعّله لتتمكن من التدريس.',
+			'salle.preparation.microBloque' => 'الميكروفون محظور',
+			'salle.preparation.permissionRefusee' => 'الميكروفون محظور في إعدادات هذا الجهاز.',
+			'salle.preparation.ouvrirReglages' => 'فتح الإعدادات',
+			'salle.preparation.reessayer' => 'إعادة المحاولة',
+			'salle.preparation.sortieSysteme' => 'مخرج النظام',
+			'salle.preparation.cameraPrete' => 'تم العثور على الكاميرا · الكاميرا مغلقة عند الدخول',
+			'salle.preparation.cameraAbsente' => 'الكاميرا غير متاحة. يمكنك الدخول دون كاميرا.',
+			'salle.preparation.modifierPeripheriques' => 'تغيير الأجهزة',
+			'salle.preparation.contexte' => 'سياق الحصة',
+			'salle.preparation.classe' => 'الفصل',
+			'salle.preparation.debut' => 'البداية',
+			'salle.preparation.support' => 'المادة المقررة',
+			'salle.preparation.reprise' => 'الاستئناف',
+			'salle.preparation.eleves' => 'الطلاب المنتظرون',
+			'salle.preparation.entrer' => 'دخول الفصل',
+			'salle.preparation.terminee' => 'انتهت هذه الحصة.',
+			'salle.preparation.nonAssignee' => 'هذه الحصة غير مسندة إليك.',
+			'salle.preparation.retourJournee' => 'العودة إلى يومي',
+			'salle.preparation.demo.section' => 'تحضير المعلم',
+			'salle.preparation.demo.pret' => 'جاهز',
+			'salle.preparation.demo.reseauFaible' => 'شبكة ضعيفة',
+			'salle.preparation.demo.microAbsent' => 'لا ميكروفون',
+			'salle.preparation.demo.permissionRefusee' => 'الإذن مرفوض',
 			'salle.secours.reseauFaible' => 'الشبكة ضعيفة. الأولوية للصوت.',
 			'salle.secours.reseauFaibleGuidee' => 'الشبكة ضعيفة.',
 			'salle.secours.reseauFaibleGuideeSuite' => 'الصوت يبقى أولوية.',

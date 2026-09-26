@@ -195,6 +195,7 @@ class Traductions$salle$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$salle$preparation$fr preparation = Traductions$salle$preparation$fr.internal(_root);
 
 	/// fr: 'Cours enregistré, visite de contrôle possible.'
 	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
@@ -2419,6 +2420,125 @@ class Traductions$commun$dates$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+}
+
+// Path: salle.preparation
+class Traductions$salle$preparation$fr {
+	Traductions$salle$preparation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Préparer l'entrée dans la classe'
+	String get titre => 'Préparer l\'entrée dans la classe';
+
+	/// fr: 'Retour à la Classe'
+	String get retour => 'Retour à la Classe';
+
+	/// fr: 'Caméra coupée'
+	String get cameraCoupee => 'Caméra coupée';
+
+	/// fr: 'Tester la caméra'
+	String get testerCamera => 'Tester la caméra';
+
+	/// fr: 'Test local terminé. La caméra reste coupée à l'entrée.'
+	String get testCameraFait => 'Test local terminé. La caméra reste coupée à l\'entrée.';
+
+	/// fr: 'Votre équipement'
+	String get equipement => 'Votre équipement';
+
+	/// fr: 'Connexion'
+	String get connexion => 'Connexion';
+
+	/// fr: 'Micro'
+	String get micro => 'Micro';
+
+	/// fr: 'Sortie audio'
+	String get sortieAudio => 'Sortie audio';
+
+	/// fr: 'Caméra'
+	String get camera => 'Caméra';
+
+	/// fr: 'Vérification…'
+	String get verification => 'Vérification…';
+
+	/// fr: 'Vérification du matériel…'
+	String get chargement => 'Vérification du matériel…';
+
+	/// fr: 'Connexion prête'
+	String get connexionPrete => 'Connexion prête';
+
+	/// fr: 'Connexion instable'
+	String get connexionInstable => 'Connexion instable';
+
+	/// fr: 'Connexion instable. L'audio sera prioritaire.'
+	String get reseauFaible => 'Connexion instable. L\'audio sera prioritaire.';
+
+	/// fr: 'Micro détecté · Micro coupé à l'entrée'
+	String get microPret => 'Micro détecté · Micro coupé à l\'entrée';
+
+	/// fr: 'Aucun micro détecté'
+	String get microAbsent => 'Aucun micro détecté';
+
+	/// fr: 'Aucun micro détecté. Connectez ou activez un micro pour enseigner.'
+	String get microAbsentRaison => 'Aucun micro détecté. Connectez ou activez un micro pour enseigner.';
+
+	/// fr: 'Micro bloqué'
+	String get microBloque => 'Micro bloqué';
+
+	/// fr: 'Le micro est bloqué dans les réglages de cet appareil.'
+	String get permissionRefusee => 'Le micro est bloqué dans les réglages de cet appareil.';
+
+	/// fr: 'Ouvrir les réglages'
+	String get ouvrirReglages => 'Ouvrir les réglages';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Sortie système'
+	String get sortieSysteme => 'Sortie système';
+
+	/// fr: 'Caméra détectée · Caméra coupée à l'entrée'
+	String get cameraPrete => 'Caméra détectée · Caméra coupée à l\'entrée';
+
+	/// fr: 'Caméra non disponible. Vous pouvez entrer sans caméra.'
+	String get cameraAbsente => 'Caméra non disponible. Vous pouvez entrer sans caméra.';
+
+	/// fr: 'Modifier les périphériques'
+	String get modifierPeripheriques => 'Modifier les périphériques';
+
+	/// fr: 'Contexte de la séance'
+	String get contexte => 'Contexte de la séance';
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Début'
+	String get debut => 'Début';
+
+	/// fr: 'Support prévu'
+	String get support => 'Support prévu';
+
+	/// fr: 'Reprise'
+	String get reprise => 'Reprise';
+
+	/// fr: 'Élèves attendus'
+	String get eleves => 'Élèves attendus';
+
+	/// fr: 'Entrer dans la classe'
+	String get entrer => 'Entrer dans la classe';
+
+	/// fr: 'Cette séance est terminée.'
+	String get terminee => 'Cette séance est terminée.';
+
+	/// fr: 'Cette séance ne vous est pas attribuée.'
+	String get nonAssignee => 'Cette séance ne vous est pas attribuée.';
+
+	/// fr: 'Retour à ma journée'
+	String get retourJournee => 'Retour à ma journée';
+
+	late final Traductions$salle$preparation$demo$fr demo = Traductions$salle$preparation$demo$fr.internal(_root);
 }
 
 // Path: salle.secours
@@ -8435,6 +8555,30 @@ class Traductions$commun$etats$actions$fr {
 	String get revenir => 'Revenir en arrière';
 }
 
+// Path: salle.preparation.demo
+class Traductions$salle$preparation$demo$fr {
+	Traductions$salle$preparation$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Préparation enseignant'
+	String get section => 'Préparation enseignant';
+
+	/// fr: 'Prêt'
+	String get pret => 'Prêt';
+
+	/// fr: 'Réseau faible'
+	String get reseauFaible => 'Réseau faible';
+
+	/// fr: 'Micro absent'
+	String get microAbsent => 'Micro absent';
+
+	/// fr: 'Permission refusée'
+	String get permissionRefusee => 'Permission refusée';
+}
+
 // Path: salle.seance.outils
 class Traductions$salle$seance$outils$fr {
 	Traductions$salle$seance$outils$fr.internal(this._root);
@@ -12022,6 +12166,47 @@ extension on Traductions {
 			'etat.enRetard' => 'En retard',
 			'etat.termine' => 'Terminé',
 			'destructif.irreversible' => 'Cette action ne peut pas être annulée.',
+			'salle.preparation.titre' => 'Préparer l\'entrée dans la classe',
+			'salle.preparation.retour' => 'Retour à la Classe',
+			'salle.preparation.cameraCoupee' => 'Caméra coupée',
+			'salle.preparation.testerCamera' => 'Tester la caméra',
+			'salle.preparation.testCameraFait' => 'Test local terminé. La caméra reste coupée à l\'entrée.',
+			'salle.preparation.equipement' => 'Votre équipement',
+			'salle.preparation.connexion' => 'Connexion',
+			'salle.preparation.micro' => 'Micro',
+			'salle.preparation.sortieAudio' => 'Sortie audio',
+			'salle.preparation.camera' => 'Caméra',
+			'salle.preparation.verification' => 'Vérification…',
+			'salle.preparation.chargement' => 'Vérification du matériel…',
+			'salle.preparation.connexionPrete' => 'Connexion prête',
+			'salle.preparation.connexionInstable' => 'Connexion instable',
+			'salle.preparation.reseauFaible' => 'Connexion instable. L\'audio sera prioritaire.',
+			'salle.preparation.microPret' => 'Micro détecté · Micro coupé à l\'entrée',
+			'salle.preparation.microAbsent' => 'Aucun micro détecté',
+			'salle.preparation.microAbsentRaison' => 'Aucun micro détecté. Connectez ou activez un micro pour enseigner.',
+			'salle.preparation.microBloque' => 'Micro bloqué',
+			'salle.preparation.permissionRefusee' => 'Le micro est bloqué dans les réglages de cet appareil.',
+			'salle.preparation.ouvrirReglages' => 'Ouvrir les réglages',
+			'salle.preparation.reessayer' => 'Réessayer',
+			'salle.preparation.sortieSysteme' => 'Sortie système',
+			'salle.preparation.cameraPrete' => 'Caméra détectée · Caméra coupée à l\'entrée',
+			'salle.preparation.cameraAbsente' => 'Caméra non disponible. Vous pouvez entrer sans caméra.',
+			'salle.preparation.modifierPeripheriques' => 'Modifier les périphériques',
+			'salle.preparation.contexte' => 'Contexte de la séance',
+			'salle.preparation.classe' => 'Classe',
+			'salle.preparation.debut' => 'Début',
+			'salle.preparation.support' => 'Support prévu',
+			'salle.preparation.reprise' => 'Reprise',
+			'salle.preparation.eleves' => 'Élèves attendus',
+			'salle.preparation.entrer' => 'Entrer dans la classe',
+			'salle.preparation.terminee' => 'Cette séance est terminée.',
+			'salle.preparation.nonAssignee' => 'Cette séance ne vous est pas attribuée.',
+			'salle.preparation.retourJournee' => 'Retour à ma journée',
+			'salle.preparation.demo.section' => 'Préparation enseignant',
+			'salle.preparation.demo.pret' => 'Prêt',
+			'salle.preparation.demo.reseauFaible' => 'Réseau faible',
+			'salle.preparation.demo.microAbsent' => 'Micro absent',
+			'salle.preparation.demo.permissionRefusee' => 'Permission refusée',
 			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
 			'salle.secours.reseauFaible' => 'Réseau faible. L\'audio est prioritaire.',
 			'salle.secours.reseauFaibleGuidee' => 'Le réseau est faible.',
@@ -12407,6 +12592,8 @@ extension on Traductions {
 			'appareils.foyer.groupeProfils' => 'Profils élèves',
 			'appareils.foyer.aucunAppareil' => 'Aucun appareil connecté',
 			'appareils.foyer.unAppareil' => ({required Object nom}) => '1 appareil connecté : ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}',
 			'appareils.foyer.partageTitre' => 'Appareil partagé',
 			'appareils.foyer.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.',
@@ -12448,8 +12635,6 @@ extension on Traductions {
 			'appareils.emetteur.consigne' => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.',
 			'appareils.emetteur.libelleQr' => 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l\'appareil ne lit pas le QR.',
 			'appareils.emetteur.codeManuel' => 'Code à saisir',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
 			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
 			'appareils.emetteur.restant' => ({required Object temps}) => 'Encore ${temps}',
@@ -12921,6 +13106,8 @@ extension on Traductions {
 			'admin.groupes.colonneEtat' => 'État',
 			'admin.groupes.typeEnfant' => 'Enfants',
 			'admin.groupes.typeAdulte' => 'Adultes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.filtreTousTypes' => 'Tous les publics',
 			'admin.groupes.etatActif' => 'Actif',
 			'admin.groupes.etatCloture' => 'Clôturé',
@@ -12962,8 +13149,6 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
@@ -13435,6 +13620,8 @@ extension on Traductions {
 			'parcours.pourPrenom' => ({required Object prenom}) => 'Pour ${prenom}',
 			'parcours.retourAccueil' => 'Retour à l\'accueil',
 			'parcours.retourFoyer' => 'Retour au Foyer',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.reessayer' => 'Réessayer',
 			'parcours.indisponibleTitre' => 'Le questionnaire n\'est pas encore disponible',
 			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
@@ -13476,8 +13663,6 @@ extension on Traductions {
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
 			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
@@ -13949,6 +14134,8 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.enDirect' => 'En direct',
 			'tuteur.accueil.etatCourt.salleOuverte' => 'Salle ouverte',
 			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'Dans ${jours} j',
 			'tuteur.accueil.etatCourt.prevue' => 'Séance prévue',
@@ -13990,8 +14177,6 @@ extension on Traductions {
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.titre' => 'Réglages par enfant',
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
@@ -14463,6 +14648,8 @@ extension on Traductions {
 			'galerie.elevation' => 'Élévation et rayons',
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
+			_ => null,
+		} ?? switch (path) {
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Mode enfant',
 			'galerie.modeStandard' => 'Mode standard',
@@ -14504,8 +14691,6 @@ extension on Traductions {
 			'tc.groupe.duree.minutes' => ({required Object minutes}) => '${minutes} min',
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',

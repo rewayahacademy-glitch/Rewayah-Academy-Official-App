@@ -30,10 +30,12 @@ import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/pre_vol.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../fiche_groupe/fiche_groupe_page.dart';
 import '../fiche_groupe/preparation_seance.dart';
+import '../salle/preparation_enseignant.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
 import 'classe_demo.dart';
@@ -49,6 +51,10 @@ List<RouteBase> routesDemoClasse(String environnement) {
       builder: (BuildContext _, GoRouterState etat) => DemoClassePage(
         role: _lire(RoleEntree.values, etat.uri.queryParameters['role']),
         etat: _lire(EtatDemoClasse.values, etat.uri.queryParameters['etat']),
+        preparation: _lire(
+          PreparationDemo.values,
+          etat.uri.queryParameters['prep'],
+        ),
       ),
     ),
   ];
@@ -96,7 +102,10 @@ String libelleEtatDemoClasse(EtatDemoClasse etat) => switch (etat) {
 /// La page : la liste, ou le recapitulatif si [role] et [etat] sont donnes.
 class DemoClassePage extends StatelessWidget {
   /// Cree la page.
-  const DemoClassePage({this.role, this.etat, super.key});
+  const DemoClassePage({this.role, this.etat, this.preparation, super.key});
+
+  /// La preparation enseignant choisie (CL-4.5).
+  final PreparationDemo? preparation;
 
   /// Le role choisi.
   final RoleEntree? role;
@@ -108,6 +117,8 @@ class DemoClassePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final RoleEntree? r = role;
     final EtatDemoClasse? e = etat;
+    final PreparationDemo? p = preparation;
+    if (p != null) return EcranPreparationDemo(etat: p);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     Text texte(String valeur, {bool fort = false}) => Text(
@@ -139,6 +150,18 @@ class DemoClassePage extends StatelessWidget {
                   onPress: () => context.go(adresseDemoClasse(role, etat)),
                 ),
             ],
+            Ecart.vXxl,
+            Semantics(
+              header: true,
+              child: texte(t.salle.preparation.demo.section, fort: true),
+            ),
+            Ecart.vMd,
+            for (final PreparationDemo p in PreparationDemo.values)
+              LienFleche(
+                key: ValueKey<String>('lien-preparation-${p.name}'),
+                libelle: libellePreparationDemo(p),
+                onPress: () => context.go(adressePreparationDemo(p)),
+              ),
           ],
         ),
       );
@@ -306,7 +329,8 @@ class EcranEnseignantDemo extends StatelessWidget {
       child: RepereDemonstration(
         child: FicheGroupePage(
           groupeId: DonneesClasseDemo.groupeId,
-          onPreparer: (_) {},
+          onPreparer: (_) =>
+              context.go(adressePreparationDemo(PreparationDemo.pret)),
         ),
       ),
     );
@@ -331,6 +355,88 @@ class EcranEleveDemo extends StatelessWidget {
         child: EspaceGroupePage(
           groupeId: DonneesClasseDemo.groupeId,
           onRejoindre: (_) {},
+        ),
+      ),
+    );
+  }
+}
+
+/// Les situations de la preparation enseignant en demonstration (CL-4.5).
+enum PreparationDemo {
+  /// Tout est pret.
+  pret,
+
+  /// Connexion instable : l'audio sera prioritaire.
+  reseauFaible,
+
+  /// Aucun micro : le bouton est desactive.
+  microAbsent,
+
+  /// Le micro est bloque dans les reglages.
+  permissionRefusee,
+}
+
+/// Le libelle d'une situation de preparation.
+String libellePreparationDemo(PreparationDemo p) => switch (p) {
+  PreparationDemo.pret => t.salle.preparation.demo.pret,
+  PreparationDemo.reseauFaible => t.salle.preparation.demo.reseauFaible,
+  PreparationDemo.microAbsent => t.salle.preparation.demo.microAbsent,
+  PreparationDemo.permissionRefusee =>
+    t.salle.preparation.demo.permissionRefusee,
+};
+
+/// L'adresse d'une situation de preparation, sur la meme route de demo.
+String adressePreparationDemo(PreparationDemo p) => Uri(
+  path: Routes.demoClasse,
+  queryParameters: <String, String>{'prep': p.name},
+).toString();
+
+/// La VRAIE preparation enseignant (`PreparationEnseignant`) sur les donnees
+/// de demonstration. Aucun appel serveur, aucune camera ni micro reels : le
+/// materiel est un resultat fixe, et « Entrer » ne fait que revenir ici.
+class EcranPreparationDemo extends StatelessWidget {
+  /// Cree l'ecran.
+  const EcranPreparationDemo({required this.etat, super.key});
+
+  /// La situation.
+  final PreparationDemo etat;
+
+  @override
+  Widget build(BuildContext context) {
+    final ResultatPreVol resultat = ResultatPreVol(
+      microDisponible:
+          etat != PreparationDemo.microAbsent &&
+          etat != PreparationDemo.permissionRefusee,
+      cameraDisponible: etat != PreparationDemo.permissionRefusee,
+      sortieAudioDisponible: true,
+      permissionRefusee: etat == PreparationDemo.permissionRefusee,
+    );
+    return RepereDemonstration(
+      child: Scaffold(
+        body: SafeArea(
+          child: PreparationEnseignant(
+            key: ValueKey<PreparationDemo>(etat),
+            resultat: resultat,
+            reseau: etat == PreparationDemo.reseauFaible
+                ? ReseauPreparation.instable
+                : ReseauPreparation.bonne,
+            contexte: ContextePreparation(
+              classe: DonneesClasseDemo.classe,
+              debut: 'Dans 8 min',
+              support: DonneesClasseDemo.supportPrevu,
+              reprise: 'Page 24',
+              eleves: '${DonneesClasseDemo.eleves.length}',
+            ),
+            onEntrer: () => context.go(Routes.demoClasse),
+            onRetour: () => context.go(
+              adresseDemoClasse(
+                RoleEntree.enseignant,
+                EtatDemoClasse.fenetreOuverte,
+              ),
+            ),
+            onReessayer: () {},
+            onTesterCamera: () {},
+          ),
         ),
       ),
     );
