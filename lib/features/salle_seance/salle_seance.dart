@@ -7,6 +7,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -82,7 +83,7 @@ class SalleSeance extends StatelessWidget {
         color: palette.surfaceCanvas.background,
         child: SafeArea(
           bottom: !feuilleOuverte,
-          child: _SalleEnseignant(
+          child: _FocusPanneaux(
             vue: vue,
             actions: actions,
             local: local,
@@ -147,11 +148,11 @@ class SalleSeance extends StatelessWidget {
   }
 }
 
-/// La salle de l'enseignant (CLV-06) : rail (desktop), outils, boutons
-/// Eleves et Supports, support dominant, pagination active et zoom (desktop),
-/// dock Micro, Camera, Reseau, Quitter. Jamais Agrandir.
-class _SalleEnseignant extends StatelessWidget {
-  const _SalleEnseignant({
+/// Le clavier des panneaux Eleves et Supports : Echap ferme le panneau
+/// ouvert ; a la fermeture (croix, menu ou Echap), le focus revient au
+/// bouton qui l'avait ouvert.
+class _FocusPanneaux extends StatefulWidget {
+  const _FocusPanneaux({
     required this.vue,
     required this.actions,
     required this.local,
@@ -166,6 +167,95 @@ class _SalleEnseignant extends StatelessWidget {
   final Widget? contenuSupport;
 
   @override
+  State<_FocusPanneaux> createState() => _FocusPanneauxState();
+}
+
+class _FocusPanneauxState extends State<_FocusPanneaux> {
+  final FocusNode _focusEleves = FocusNode(debugLabel: 'bouton-eleves');
+  final FocusNode _focusSupports = FocusNode(debugLabel: 'bouton-supports');
+
+  @override
+  void didUpdateWidget(_FocusPanneaux ancien) {
+    super.didUpdateWidget(ancien);
+    final PanneauOuvert avant = ancien.vue.panneau;
+    if (avant == PanneauOuvert.aucun ||
+        widget.vue.panneau != PanneauOuvert.aucun) {
+      return;
+    }
+    final FocusNode bouton = avant == PanneauOuvert.eleves
+        ? _focusEleves
+        : _focusSupports;
+    // Le bouton est remonte au cadre suivant (telephone, web etroit).
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted && bouton.context != null) bouton.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusEleves.dispose();
+    _focusSupports.dispose();
+    super.dispose();
+  }
+
+  void _fermer() {
+    switch (widget.vue.panneau) {
+      case PanneauOuvert.eleves:
+        widget.actions.onEleves?.call();
+      case PanneauOuvert.supports:
+        widget.actions.onSupports?.call();
+      case PanneauOuvert.aucun:
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool ouvert =
+        widget.vue.voitBoutonsPanneaux &&
+        widget.vue.panneau != PanneauOuvert.aucun;
+    return CallbackShortcuts(
+      bindings: <ShortcutActivator, VoidCallback>{
+        if (ouvert) const SingleActivator(LogicalKeyboardKey.escape): _fermer,
+      },
+      child: _SalleEnseignant(
+        vue: widget.vue,
+        actions: widget.actions,
+        local: widget.local,
+        gabarit: widget.gabarit,
+        contenuSupport: widget.contenuSupport,
+        focusEleves: _focusEleves,
+        focusSupports: _focusSupports,
+      ),
+    );
+  }
+}
+
+/// La salle de l'enseignant (CLV-06) : rail (desktop), outils, boutons
+/// Eleves et Supports, support dominant, pagination active et zoom (desktop),
+/// dock Micro, Camera, Reseau, Quitter. Jamais Agrandir.
+class _SalleEnseignant extends StatelessWidget {
+  const _SalleEnseignant({
+    required this.vue,
+    required this.actions,
+    required this.local,
+    required this.gabarit,
+    required this.focusEleves,
+    required this.focusSupports,
+    this.contenuSupport,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final EtatLocalSeance local;
+  final Gabarit gabarit;
+  final Widget? contenuSupport;
+
+  /// Les noeuds des boutons Eleves et Supports (retour du focus).
+  final FocusNode focusEleves;
+  final FocusNode focusSupports;
+
+  @override
   Widget build(BuildContext context) {
     const double gouttiere = AppPage.gouttiereMobile;
     final bool outils = vue.voitOutils && actions.onOutil != null;
@@ -177,7 +267,13 @@ class _SalleEnseignant extends StatelessWidget {
       serre: true,
       contenu: contenuSupport,
     );
-    final Widget? boutons = _BoutonsPanneaux.ou(vue, actions, gabarit);
+    final Widget? boutons = _BoutonsPanneaux.ou(
+      vue,
+      actions,
+      gabarit,
+      focusEleves: focusEleves,
+      focusSupports: focusSupports,
+    );
     final Widget? panneau = _panneau();
     if (panneau != null) {
       return gabarit == Gabarit.desktop
@@ -362,7 +458,7 @@ class _SalleEnseignant extends StatelessWidget {
   Widget? _panneau() {
     if (!vue.voitBoutonsPanneaux) return null;
     final FormePanneau forme = FormePanneau.pour(gabarit);
-    return switch (vue.panneau) {
+    final Widget? panneau = switch (vue.panneau) {
       PanneauOuvert.aucun => null,
       PanneauOuvert.eleves => PanneauSeance(
         titre: t.salle.seance.eleves,
@@ -389,6 +485,10 @@ class _SalleEnseignant extends StatelessWidget {
         ),
       ),
     };
+    if (panneau == null) return null;
+    // A l'ouverture, le focus entre dans le panneau (si rien d'autre ne le
+    // tient) : Echap le ferme alors depuis le clavier.
+    return Focus(autofocus: true, skipTraversal: true, child: panneau);
   }
 
   /// Desktop, panneau ouvert (CLV-07, CLV-08) : panneau a gauche, support au
@@ -412,6 +512,8 @@ class _SalleEnseignant extends StatelessWidget {
       etire: true,
       serre: true,
       enColonne: supports,
+      focusEleves: focusEleves,
+      focusSupports: focusSupports,
     );
     final Widget? carteOutils = outils
         // Images CLV-07 et CLV-08 : aucun outil selectionne.
@@ -646,6 +748,9 @@ class _BoutonsPanneaux extends StatelessWidget {
     required this.onEleves,
     required this.onSupports,
     required this.etire,
+    this.panneau = PanneauOuvert.aucun,
+    this.focusEleves,
+    this.focusSupports,
     this.serre = false,
     this.enColonne = false,
   });
@@ -657,6 +762,8 @@ class _BoutonsPanneaux extends StatelessWidget {
     bool? etire,
     bool serre = false,
     bool enColonne = false,
+    FocusNode? focusEleves,
+    FocusNode? focusSupports,
   }) {
     final String? compteur = vue.compteurEleves;
     if (!vue.voitBoutonsPanneaux || compteur == null) return null;
@@ -666,10 +773,18 @@ class _BoutonsPanneaux extends StatelessWidget {
       onEleves: actions.onEleves,
       onSupports: actions.onSupports,
       etire: etire ?? gabarit != Gabarit.desktop,
+      panneau: vue.panneau,
+      focusEleves: focusEleves,
+      focusSupports: focusSupports,
       serre: serre,
       enColonne: enColonne,
     );
   }
+
+  /// Le panneau ouvert : son bouton se dit selectionne.
+  final PanneauOuvert panneau;
+  final FocusNode? focusEleves;
+  final FocusNode? focusSupports;
 
   final String compteur;
   final VoidCallback? onEleves;
@@ -693,6 +808,8 @@ class _BoutonsPanneaux extends StatelessWidget {
           icone: AppIcons.eleves,
           libelle: compteur,
           onPress: eleves,
+          ouvert: panneau == PanneauOuvert.eleves,
+          focusNode: focusEleves,
           etire: etire,
           serre: serre,
         ),
@@ -702,6 +819,8 @@ class _BoutonsPanneaux extends StatelessWidget {
           icone: AppIcons.supports,
           libelle: t.salle.seance.supports,
           onPress: supports,
+          ouvert: panneau == PanneauOuvert.supports,
+          focusNode: focusSupports,
           etire: etire,
           serre: serre,
         ),
@@ -729,6 +848,8 @@ class BoutonPanneau extends StatelessWidget {
     required this.icone,
     required this.libelle,
     required this.onPress,
+    this.ouvert = false,
+    this.focusNode,
     this.etire = false,
     this.serre = false,
     super.key,
@@ -737,6 +858,12 @@ class BoutonPanneau extends StatelessWidget {
   final AppIcon icone;
   final String libelle;
   final VoidCallback onPress;
+
+  /// Son panneau est ouvert : dit « selectionne » aux lecteurs d'ecran.
+  final bool ouvert;
+
+  /// Le noeud de focus, rendu au bouton quand son panneau se ferme.
+  final FocusNode? focusNode;
 
   /// Largeur imposee (telephone, web etroit) : le chevron va au bout.
   final bool etire;
@@ -755,43 +882,47 @@ class BoutonPanneau extends StatelessWidget {
         Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
       ),
     );
-    return Pressable(
-      onPress: onPress,
-      libelleSemantique: libelle,
-      arrondiFocus: AppRadius.arrondiMd,
-      child: DecoratedBox(
-        decoration: palette.surfaceRaised.decoration(
-          borderRadius: AppRadius.arrondiMd,
-          side: palette.borderHairline.asBorderSide(),
-        ),
-        child: SizedBox(
-          // Telephone et web etroit : plus bas et plus serre (images).
-          height: etire
-              ? AppSpacing.titreEcran
-              : AppSpacing.titreEcran + AppSpacing.xs,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: etire ? AppSpacing.md : AppSpacing.lg,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                IconTheme(
-                  data: palette.inkAccent.asIconTheme(
-                    size: serre ? AppSpacing.xl : AppSpacing.xxl,
+    return Semantics(
+      selected: ouvert,
+      child: Pressable(
+        onPress: onPress,
+        libelleSemantique: libelle,
+        arrondiFocus: AppRadius.arrondiMd,
+        focusNode: focusNode,
+        child: DecoratedBox(
+          decoration: palette.surfaceRaised.decoration(
+            borderRadius: AppRadius.arrondiMd,
+            side: palette.borderHairline.asBorderSide(),
+          ),
+          child: SizedBox(
+            // Telephone et web etroit : plus bas et plus serre (images).
+            height: etire
+                ? AppSpacing.titreEcran
+                : AppSpacing.titreEcran + AppSpacing.xs,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: etire ? AppSpacing.md : AppSpacing.lg,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconTheme(
+                    data: palette.inkAccent.asIconTheme(
+                      size: serre ? AppSpacing.xl : AppSpacing.xxl,
+                    ),
+                    child: Icon(icone.repos),
                   ),
-                  child: Icon(icone.repos),
-                ),
-                if (serre) Ecart.hSm else Ecart.hMd,
-                if (etire) Expanded(child: texte) else texte,
-                if (serre) Ecart.hXs else if (etire) Ecart.hSm else Ecart.hLg,
-                IconTheme(
-                  data: palette.inkMuted.asIconTheme(
-                    size: serre ? AppSpacing.lg : AppSpacing.xl,
+                  if (serre) Ecart.hSm else Ecart.hMd,
+                  if (etire) Expanded(child: texte) else texte,
+                  if (serre) Ecart.hXs else if (etire) Ecart.hSm else Ecart.hLg,
+                  IconTheme(
+                    data: palette.inkMuted.asIconTheme(
+                      size: serre ? AppSpacing.lg : AppSpacing.xl,
+                    ),
+                    child: Icon(AppIcons.chevron.repos),
                   ),
-                  child: Icon(AppIcons.chevron.repos),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

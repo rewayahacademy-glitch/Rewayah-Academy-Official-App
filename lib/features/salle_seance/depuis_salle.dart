@@ -85,11 +85,15 @@ abstract final class DepuisSalle {
       cameraEnseignantActive:
           (enseignant ? salle.moi?.camera : salle.dominant?.camera) ?? false,
       cameraAutorisee: salle.peutMontrer,
-      eleves: <EleveSeance>[
-        for (final PresenceParticipant p in lignes)
-          if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
-            EleveSeance(prenom: p.prenom, statut: statut(p)),
-      ],
+      // L'eleve ne lit jamais la liste de ses camarades (roster enseignant),
+      // comme dans `depuis_classe_live.dart`.
+      eleves: enseignant
+          ? <EleveSeance>[
+              for (final PresenceParticipant p in lignes)
+                if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
+                  EleveSeance(prenom: p.prenom, statut: statut(p)),
+            ]
+          : const <EleveSeance>[],
       fin: fin,
       groupeId: groupeId,
     );

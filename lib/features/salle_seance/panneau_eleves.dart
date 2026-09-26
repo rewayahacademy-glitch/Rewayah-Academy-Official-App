@@ -29,6 +29,10 @@ String libelleStatutEleve(StatutEleveSeance statut) => switch (statut) {
     t.salle.seance.statut.connexionInterrompue,
 };
 
+/// La cle d'un inscrit dans le panneau : son identifiant d'academie ; a
+/// defaut (demonstration, sans identifiant), son prenom.
+String cleEleveSeance(EleveSeance eleve) => eleve.id ?? eleve.prenom;
+
 AppInkColor _encreStatut(AppPalette palette, StatutEleveSeance statut) =>
     switch (statut) {
       StatutEleveSeance.connecte => palette.inkSuccess,
@@ -79,14 +83,15 @@ class PanneauEleves extends StatefulWidget {
 }
 
 class _PanneauElevesState extends State<PanneauEleves> {
-  /// Le prenom de la fiche depliee : au depart, le premier eleve connecte
-  /// qui a une fiche (image : Mariam).
+  /// La cle de la fiche depliee : au depart, le premier eleve connecte qui a
+  /// une fiche (image : Mariam). L'identifiant, jamais le prenom seul : deux
+  /// inscrits de meme prenom ne se deplient pas ensemble.
   late String? _deplie = _premierDeplie();
 
   String? _premierDeplie() {
     for (final EleveSeance e in widget.eleves) {
       if (e.statut == StatutEleveSeance.connecte && e.fiche != null) {
-        return e.prenom;
+        return cleEleveSeance(e);
       }
     }
     return null;
@@ -109,7 +114,8 @@ class _PanneauElevesState extends State<PanneauEleves> {
           widget.serre ? Ecart.vXs : Ecart.vSm,
       itemBuilder: (BuildContext _, int i) {
         final EleveSeance e = widget.eleves[i];
-        final bool deplie = _deplie == e.prenom && e.fiche != null;
+        final String cle = cleEleveSeance(e);
+        final bool deplie = _deplie == cle && e.fiche != null;
         return _CarteEleve(
           eleve: e,
           deplie: deplie,
@@ -118,7 +124,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
           actions: widget.actions,
           onBasculer: e.fiche == null
               ? null
-              : () => setState(() => _deplie = deplie ? null : e.prenom),
+              : () => setState(() => _deplie = deplie ? null : cle),
         );
       },
     );
@@ -147,7 +153,7 @@ class _CarteEleve extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final FicheEleveSeance? fiche = eleve.fiche;
     return DecoratedBox(
-      key: ValueKey<String>('eleve-${eleve.prenom}'),
+      key: ValueKey<String>('eleve-${cleEleveSeance(eleve)}'),
       decoration: palette.surfaceOverlay.decoration(
         borderRadius: AppRadius.arrondiMd,
         side: palette.borderHairline.asBorderSide(),
