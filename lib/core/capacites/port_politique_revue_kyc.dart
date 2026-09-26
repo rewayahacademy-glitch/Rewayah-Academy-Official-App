@@ -59,3 +59,20 @@ final Provider<PortPolitiqueRevueKyc> portPolitiqueRevueKycProvider =
     Provider<PortPolitiqueRevueKyc>(
       (Ref ref) => const PolitiqueRevueKycIndisponible(),
     );
+
+/// La politique lue par le port (AD-9). En production, `lire()` echoue
+/// localement (`CapaciteIndisponible`), sans reseau.
+final FutureProvider<PolitiqueRevueKyc> politiqueRevueKycProvider =
+    FutureProvider.autoDispose<PolitiqueRevueKyc>(
+      (Ref ref) => ref.watch(portPolitiqueRevueKycProvider).lire(),
+      // Sans retentative automatique : « Reessayer » est la seule relance.
+      retry: (int retryCount, Object error) => null,
+    );
+
+/// Vrai seulement si la politique est lue et que le lecteur a la capacite
+/// Super Admin. Chargement ou erreur : faux (l'onglet reste invisible).
+final Provider<bool> peutReglerPolitiqueKycProvider =
+    Provider.autoDispose<bool>(
+      (Ref ref) =>
+          ref.watch(politiqueRevueKycProvider).value?.peutModifier ?? false,
+    );

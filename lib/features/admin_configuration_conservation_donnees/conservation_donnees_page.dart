@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/config_edition.dart';
 import '../../core/admin/service_configuration.dart';
+import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -35,7 +36,9 @@ class ConservationDonneesPage extends ConsumerWidget {
     return PageShell(
       titre: t.admin.conservationDonnees.titre,
       entete: SousNavigationDomaine(
-        onglets: ongletsConfiguration(),
+        onglets: ongletsConfiguration(
+          politiqueRevueKyc: ref.watch(peutReglerPolitiqueKycProvider),
+        ),
         indexActif: 2,
       ),
       child: Column(

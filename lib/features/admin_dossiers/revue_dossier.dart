@@ -12,7 +12,7 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
@@ -599,14 +599,17 @@ class _RaisonsDecision extends StatelessWidget {
   }
 }
 
-/// Le genre du lecteur manque : l'etat actuel, sans action (AD-9).
+/// Le genre du lecteur manque, politique activee (spec 15.3, AD-9). SANS
+/// « Completer mon profil » : `/compte/profil` n'a pas de champ genre et le
+/// relecteur ne doit pas le modifier lui-meme (15.3, AD-BR-20).
 class GenreManquant extends StatelessWidget {
   /// Cree l'etat.
   const GenreManquant({super.key});
 
   @override
-  Widget build(BuildContext context) => EmptyState(
-    message: t.dossiers.genreManquant,
-    icone: AppIcons.avertissement,
+  Widget build(BuildContext context) => EtatSysteme(
+    nature: NatureEtat.accesRefuse,
+    titre: t.dossiers.profilACompleter.titre,
+    phrase: t.dossiers.profilACompleter.texte,
   );
 }

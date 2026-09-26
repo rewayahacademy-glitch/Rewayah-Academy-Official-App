@@ -37,12 +37,26 @@ class SousNavigationDomaine extends StatefulWidget {
 }
 
 class _SousNavigationDomaineEtat extends State<SousNavigationDomaine>
-    with SingleTickerProviderStateMixin {
-  late final TabController _controleur = TabController(
+    with TickerProviderStateMixin {
+  late TabController _controleur = _nouveau();
+
+  TabController _nouveau() => TabController(
     length: widget.onglets.length,
     initialIndex: widget.indexActif,
     vsync: this,
   );
+
+  /// Un onglet peut apparaitre apres coup (AD-9 : l'onglet de la politique
+  /// n'existe qu'une fois la capacite lue) : le controleur suit le nombre.
+  @override
+  void didUpdateWidget(SousNavigationDomaine ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.onglets.length != widget.onglets.length ||
+        ancien.indexActif != widget.indexActif) {
+      _controleur.dispose();
+      _controleur = _nouveau();
+    }
+  }
 
   @override
   void dispose() {

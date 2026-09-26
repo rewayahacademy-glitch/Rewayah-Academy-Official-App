@@ -990,7 +990,10 @@
     "approuver": "Valider le dossier",
     "refuser": "Refuser le dossier",
     "journalisation": "Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.",
-    "genreManquant": "Renseignez votre genre dans votre profil avant de consulter un dossier.",
+    "profilACompleter": {
+      "titre": "Profil à compléter",
+      "texte": "Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle."
+    },
     "refus": {
       "titre": "Refuser le dossier",
       "nomType": "{nom} · {type}",
@@ -1308,6 +1311,12 @@
       "documentsIdentite": "Documents d'identité",
       "documentsIdentiteDetail": "Le nombre de jours pendant lesquels un document d'identité déposé reste accessible avant sa purge.",
       "uniteJours": "{n} j"
+    },
+    "politiqueRevueKyc": {
+      "titre": "Politique de genre pour la revue KYC",
+      "libelle": "Limiter la revue KYC selon le genre",
+      "aide": "Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.",
+      "echecEnregistrement": "@:admin.groupes.observationErreur"
     },
     "evaluations": {
       "titre": "Évaluations",

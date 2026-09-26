@@ -179,18 +179,27 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
 /// l'audit interdit pour un domaine sans fonction reelle. Cette liste
 /// grandit lot par lot (`CFG-02`, `CFG-03`), jamais d'un coup comme
 /// Pedagogie.
-List<({String libelle, String chemin})> ongletsConfiguration() =>
-    <({String libelle, String chemin})>[
-      (libelle: t.admin.regles.titre, chemin: Routes.adminConfigurationRegles),
-      (
-        libelle: t.admin.fonctionnalites.titre,
-        chemin: Routes.adminConfigurationFonctionnalites,
-      ),
-      (
-        libelle: t.admin.conservationDonnees.titre,
-        chemin: Routes.adminConfigurationConservationDonnees,
-      ),
-    ];
+///
+/// [politiqueRevueKyc] ajoute l'onglet de la politique de genre (AD-9) ; il
+/// ne vaut vrai que pour la capacite Super Admin lue par le port.
+List<({String libelle, String chemin})> ongletsConfiguration({
+  bool politiqueRevueKyc = false,
+}) => <({String libelle, String chemin})>[
+  (libelle: t.admin.regles.titre, chemin: Routes.adminConfigurationRegles),
+  (
+    libelle: t.admin.fonctionnalites.titre,
+    chemin: Routes.adminConfigurationFonctionnalites,
+  ),
+  (
+    libelle: t.admin.conservationDonnees.titre,
+    chemin: Routes.adminConfigurationConservationDonnees,
+  ),
+  if (politiqueRevueKyc)
+    (
+      libelle: t.admin.politiqueRevueKyc.titre,
+      chemin: Routes.adminConfigurationPolitiqueRevueKyc,
+    ),
+];
 
 /// Les deux fonctions pairs du domaine Personnes : Dossiers a valider
 /// (`ADM-02`) et Comptes (`ADM-08`), modification UX n°1. Consommee par

@@ -492,31 +492,54 @@ void main() {
         _erreur(CodeErreurRevue.perime),
       );
     });
+
+    test(
+      'AD-9 : politique desactivee et genre absent, rien ne bloque',
+      () async {
+        final (_, RevueDossiersDemo revue, _) = _doubles(
+          politiqueGenre: false,
+          genreRelecteurRenseigne: false,
+        );
+        const String id = DonneesDossiersDemo.horsPortee;
+        expect((await revue.listerDossiers()).total, 10);
+        final DossierPourRevue d = await revue.dossierPourRevue(id);
+        expect(d.etatPiece, EtatPieceRevue.disponible);
+        expect(d.peutRefuser, isTrue);
+        await revue.demanderVuePiece(
+          dossierId: id,
+          documentId: 'demo-piece-06',
+        );
+        final ResultatDecision r = await revue.decider(
+          dossierId: id,
+          revisionAttendue: d.revision,
+          decision: DecisionDossier.refuser,
+          commandeId: 'ad9',
+          verificationsFaites: const <String>{},
+          motif: 'Piece illisible',
+        );
+        expect(r.statutFinal, StatutRevue.refuse);
+      },
+    );
   });
 
   group('pont ADM-02', () {
-    test(
-      'file de l\'ecran : toute la file, dans l\'ordre du port',
-      () async {
-        final (EtatRevueDemo etat, _, _) = _doubles();
-        final List<String> ids = <String>[
-          for (final DossierAValider d in await ServiceValidationDemo(
-            etat,
-          ).enAttente())
-            d.profilId,
-        ];
-        // AD-5 : toute la file, dans l'ordre du port, pour que chaque ligne
-        // trouve son detail.
-        expect(ids, <String>[
-          for (final DossierDemo d in etat.fileTriee) d.id,
-        ]);
-        expect(ids, contains(DonneesDossiersDemo.familleDispensee));
-        expect(ids, contains(DonneesDossiersDemo.pieceAbsente));
-        expect(ids, contains(DonneesDossiersDemo.horsPortee));
-        expect(ids.first, DonneesDossiersDemo.enseignantNominal);
-        expect(ids, contains(DonneesDossiersDemo.reponsePerdue));
-      },
-    );
+    test('file de l\'ecran : toute la file, dans l\'ordre du port', () async {
+      final (EtatRevueDemo etat, _, _) = _doubles();
+      final List<String> ids = <String>[
+        for (final DossierAValider d in await ServiceValidationDemo(
+          etat,
+        ).enAttente())
+          d.profilId,
+      ];
+      // AD-5 : toute la file, dans l'ordre du port, pour que chaque ligne
+      // trouve son detail.
+      expect(ids, <String>[for (final DossierDemo d in etat.fileTriee) d.id]);
+      expect(ids, contains(DonneesDossiersDemo.familleDispensee));
+      expect(ids, contains(DonneesDossiersDemo.pieceAbsente));
+      expect(ids, contains(DonneesDossiersDemo.horsPortee));
+      expect(ids.first, DonneesDossiersDemo.enseignantNominal);
+      expect(ids, contains(DonneesDossiersDemo.reponsePerdue));
+    });
 
     test('reponse perdue : meme commande, succes relu', () async {
       final (EtatRevueDemo etat, _, _) = _doubles();

@@ -1298,9 +1298,7 @@ class Traductions$dossiers$fr {
 	/// fr: 'Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.'
 	String get journalisation => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.';
 
-	/// fr: 'Renseignez votre genre dans votre profil avant de consulter un dossier.'
-	String get genreManquant => 'Renseignez votre genre dans votre profil avant de consulter un dossier.';
-
+	late final Traductions$dossiers$profilACompleter$fr profilACompleter = Traductions$dossiers$profilACompleter$fr.internal(_root);
 	late final Traductions$dossiers$refus$fr refus = Traductions$dossiers$refus$fr.internal(_root);
 	late final Traductions$dossiers$validation$fr validation = Traductions$dossiers$validation$fr.internal(_root);
 	late final Traductions$dossiers$decision$fr decision = Traductions$dossiers$decision$fr.internal(_root);
@@ -1322,6 +1320,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$regles$fr regles = Traductions$admin$regles$fr.internal(_root);
 	late final Traductions$admin$fonctionnalites$fr fonctionnalites = Traductions$admin$fonctionnalites$fr.internal(_root);
 	late final Traductions$admin$conservationDonnees$fr conservationDonnees = Traductions$admin$conservationDonnees$fr.internal(_root);
+	late final Traductions$admin$politiqueRevueKyc$fr politiqueRevueKyc = Traductions$admin$politiqueRevueKyc$fr.internal(_root);
 	late final Traductions$admin$evaluations$fr evaluations = Traductions$admin$evaluations$fr.internal(_root);
 	late final Traductions$admin$progression$fr progression = Traductions$admin$progression$fr.internal(_root);
 	late final Traductions$admin$programmes$fr programmes = Traductions$admin$programmes$fr.internal(_root);
@@ -3748,6 +3747,21 @@ class Traductions$dossiers$revue$fr {
 	late final Traductions$dossiers$revue$etats$fr etats = Traductions$dossiers$revue$etats$fr.internal(_root);
 }
 
+// Path: dossiers.profilACompleter
+class Traductions$dossiers$profilACompleter$fr {
+	Traductions$dossiers$profilACompleter$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Profil à compléter'
+	String get titre => 'Profil à compléter';
+
+	/// fr: 'Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle.'
+	String get texte => 'Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle.';
+}
+
 // Path: dossiers.refus
 class Traductions$dossiers$refus$fr {
 	Traductions$dossiers$refus$fr.internal(this._root);
@@ -4730,6 +4744,27 @@ class Traductions$admin$conservationDonnees$fr {
 
 	/// fr: '{n} j'
 	String uniteJours({required Object n}) => '${n} j';
+}
+
+// Path: admin.politiqueRevueKyc
+class Traductions$admin$politiqueRevueKyc$fr {
+	Traductions$admin$politiqueRevueKyc$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Politique de genre pour la revue KYC'
+	String get titre => 'Politique de genre pour la revue KYC';
+
+	/// fr: 'Limiter la revue KYC selon le genre'
+	String get libelle => 'Limiter la revue KYC selon le genre';
+
+	/// fr: 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.'
+	String get aide => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.';
+
+	/// fr: 'Le réglage n'a pas pu être enregistré.'
+	String get echecEnregistrement => _root.admin.groupes.observationErreur;
 }
 
 // Path: admin.evaluations
@@ -12333,7 +12368,8 @@ extension on Traductions {
 			'dossiers.approuver' => 'Valider le dossier',
 			'dossiers.refuser' => 'Refuser le dossier',
 			'dossiers.journalisation' => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.',
-			'dossiers.genreManquant' => 'Renseignez votre genre dans votre profil avant de consulter un dossier.',
+			'dossiers.profilACompleter.titre' => 'Profil à compléter',
+			'dossiers.profilACompleter.texte' => 'Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle.',
 			'dossiers.refus.titre' => 'Refuser le dossier',
 			'dossiers.refus.nomType' => ({required Object nom, required Object type}) => '${nom} · ${type}',
 			'dossiers.refus.corps' => 'Indiquez le motif qui sera affiché à la personne concernée.',
@@ -12565,9 +12601,9 @@ extension on Traductions {
 			'admin.qualite.statutOuvert' => 'Ouverte',
 			'admin.qualite.statutTraite' => 'Traitée',
 			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
-			'admin.qualite.depuisUnJour' => '1 jour',
 			_ => null,
 		} ?? switch (path) {
+			'admin.qualite.depuisUnJour' => '1 jour',
 			'admin.qualite.depuisJours' => ({required Object jours}) => '${jours} jours',
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
@@ -12628,6 +12664,10 @@ extension on Traductions {
 			'admin.conservationDonnees.documentsIdentite' => 'Documents d\'identité',
 			'admin.conservationDonnees.documentsIdentiteDetail' => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.',
 			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '${n} j',
+			'admin.politiqueRevueKyc.titre' => 'Politique de genre pour la revue KYC',
+			'admin.politiqueRevueKyc.libelle' => 'Limiter la revue KYC selon le genre',
+			'admin.politiqueRevueKyc.aide' => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.',
+			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'Évaluations',
 			'admin.evaluations.intro' => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.',
 			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -13075,13 +13115,13 @@ extension on Traductions {
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
+			_ => null,
+		} ?? switch (path) {
 			'nav.eleve.coran' => 'Coran',
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
-			_ => null,
-		} ?? switch (path) {
 			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',
 			'nav.tuteur.suivi' => 'Suivi',
@@ -13589,13 +13629,13 @@ extension on Traductions {
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'classe.catalogue' => 'Choisir une classe',
 			'classe.planning' => 'Planning',
+			_ => null,
+		} ?? switch (path) {
 			'classe.travail' => 'Avant le prochain cours',
 			'classe.ressources' => 'Bibliothèque',
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
 			'classe.titre' => 'Classe',
-			_ => null,
-		} ?? switch (path) {
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
@@ -14103,13 +14143,13 @@ extension on Traductions {
 			'tc.outils.dock.titre' => 'Outils',
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
 			'tc.outils.dock.position.bas' => 'En bas',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.position.gauche' => 'À gauche',
 			'tc.outils.dock.position.droite' => 'À droite',
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
 			'tc.outils.dock.focus' => 'Focus',
 			'tc.outils.dock.marquer' => 'Marquer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',

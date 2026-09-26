@@ -430,7 +430,7 @@ void main() {
         FauxServiceValidation()..erreurFile = const GenreLecteurInconnu(),
       );
 
-      expect(find.text(t.dossiers.genreManquant), findsOneWidget);
+      expect(find.text(t.dossiers.profilACompleter.titre), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsNothing);
     });
 
@@ -443,7 +443,7 @@ void main() {
       );
 
       expect(find.text(t.commun.reessayer), findsOneWidget);
-      expect(find.text(t.dossiers.genreManquant), findsNothing);
+      expect(find.text(t.dossiers.profilACompleter.titre), findsNothing);
     });
   });
 }
