@@ -404,9 +404,12 @@ void main() {
   });
 
   group('AD-11 22.7 : hover et focus visibles sur ordinateur', () {
-    // RESTE AD-11 : le survol ne change pas le fond de la ligne dans l'hote
-    // de test (FocusableActionDetector.onShowHoverHighlight jamais appele
-    // avec la souris simulee) ; defaut ou limite du banc non tranche.
+    // Tranche au passage 6 : limite du banc, pas defaut de l'ecran. Le banc
+    // allait au domaine par un toucher (tester.tap, doigt), ce qui met le
+    // FocusManager en mode « touch » ; en ce mode Flutter ne montre aucun
+    // survol (FocusableActionDetector), et un simple deplacement de souris ne
+    // le rebascule pas. Sur un poste, la barre laterale se clique a la souris
+    // (mode « traditional ») : le banc fait de meme.
     for (final bool survolExige in <bool>[false, true]) {
       testWidgets(
         survolExige
@@ -415,7 +418,6 @@ void main() {
         (WidgetTester tester) async {
           await _corps22_7(tester, survolExige: survolExige);
         },
-        skip: survolExige,
         variant: TargetPlatformVariant.only(TargetPlatform.windows),
       );
     }
@@ -435,14 +437,25 @@ Future<void> _corps22_7(
         const Size(1440, 900),
         etat: EtatRevueDemo.initial(),
       );
-      await _barre(tester, AdminDomaine.personnes);
-      final Finder ligne = _ligne('Amina');
-      final Rect zone = tester.getRect(ligne);
       final TestGesture souris = await tester.createGesture(
         kind: PointerDeviceKind.mouse,
       );
       await souris.addPointer(location: const Offset(1439, 899));
       addTearDown(souris.removePointer);
+      // Le domaine se choisit d'un clic de souris, comme sur un poste.
+      final Offset domaine = tester.getCenter(
+        find.descendant(
+          of: find.byKey(AdminShell.barreLateraleKey),
+          matching: find.text(AdminDomaine.personnes.libelle),
+        ),
+      );
+      await souris.moveTo(domaine);
+      await souris.down(domaine);
+      await souris.up();
+      await _stab(tester);
+      final Finder ligne = _ligne('Amina');
+      final Rect zone = tester.getRect(ligne);
+      await souris.moveTo(const Offset(1439, 899));
       await _stab(tester);
       final List<String> repos = _peinture(tester, ligne);
 
