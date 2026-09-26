@@ -2,6 +2,7 @@
 // en demonstration (`?demo=admin`). Chaque ouverture part du bouton reel
 // « Voir la piece » de la revue (K-07).
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -226,6 +228,84 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.digit0);
     await tester.pump();
     expect(_echelle(tester), closeTo(1, 1e-6));
+  });
+
+  testWidgets('molette et pincement ne descendent jamais sous 100 %', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    await _voirPiece(tester, 'Omar');
+    final Offset centre = tester.getCenter(find.byType(InteractiveViewer));
+    // Molette vers le bas : InteractiveViewer reduit l'echelle.
+    final TestPointer souris = TestPointer(1, PointerDeviceKind.mouse);
+    for (int i = 0; i < 5; i++) {
+      await tester.sendEventToBinding(souris.hover(centre));
+      await tester.sendEventToBinding(souris.scroll(const Offset(0, 400)));
+      await tester.pump();
+    }
+    expect(_echelle(tester), greaterThanOrEqualTo(1 - 1e-6));
+    // Pincement : deux doigts qui se rapprochent.
+    final TestGesture a = await tester.startGesture(
+      centre - const Offset(80, 0),
+    );
+    final TestGesture b = await tester.startGesture(
+      centre + const Offset(80, 0),
+      pointer: 7,
+    );
+    for (int i = 0; i < 6; i++) {
+      await a.moveBy(const Offset(12, 0));
+      await b.moveBy(const Offset(-12, 0));
+      await tester.pump();
+    }
+    await a.up();
+    await b.up();
+    await _stabiliser(tester);
+    expect(_echelle(tester), greaterThanOrEqualTo(1 - 1e-6));
+    // Les info-bulles disent la touche du raccourci.
+    expect(
+      find.byTooltip(
+        t.dossiers.visionneuse.infoBulle(
+          action: t.dossiers.visionneuse.agrandir,
+          touche: '+',
+        ),
+      ),
+      findsOneWidget,
+    );
+    // Seul le texte exact de la spec : aucune phrase generique d'etat.
+    expect(find.text(t.commun.etats.ressourceExpiree.phrase), findsNothing);
+    // Focus initial visible : sur « Fermer », jamais sur un noeud nu.
+    expect(
+      FocusManager.instance.primaryFocus?.debugLabel,
+      'visionneuse-fermer',
+    );
+    // « Fermer » au contenu, sur la ligne du zoom, a la fin.
+    final Rect fermer = tester.getRect(
+      find
+          .ancestor(
+            of: find.descendant(
+              of: find.byType(VisionneusePiece),
+              matching: find.text(t.commun.fermer),
+            ),
+            matching: find.byType(ActionPrincipale),
+          )
+          .first,
+    );
+    final Rect zoom = tester.getRect(
+      find.bySemanticsLabel(t.dossiers.visionneuse.agrandir),
+    );
+    final Rect surface = tester.getRect(find.byType(VisionneusePiece));
+    expect(fermer.width, lessThan(surface.width / 2));
+    expect((fermer.center.dy - zoom.center.dy).abs(), lessThan(8));
+    expect(fermer.right, closeTo(surface.right, 1));
+  });
+
+  testWidgets('lien expire : texte exact seul, sans phrase generique', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    await _voirPiece(tester, 'Karim');
+    expect(find.text(t.dossiers.visionneuse.expire), findsOneWidget);
+    expect(find.text(t.commun.etats.ressourceExpiree.phrase), findsNothing);
   });
 
   testWidgets('lien expire : « Recharger la piece » redemande la vue', (

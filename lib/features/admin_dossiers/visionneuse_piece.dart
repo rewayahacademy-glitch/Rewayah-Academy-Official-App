@@ -34,6 +34,7 @@ final Provider<ImageProvider<Object> Function(Uri url)> imagePieceProvider =
 Future<void> ouvrirVisionneusePiece(
   BuildContext context, {
   required DossierPourRevue dossier,
+  ValueChanged<bool>? onLecture,
 }) async {
   final TypePiece? type = dossier.typePiece;
   await AppBottomSheet.ouvrirLecture<void>(
@@ -41,7 +42,8 @@ Future<void> ouvrirVisionneusePiece(
     titre: t.dossiers.revue.piece,
     sousTitre: type == null ? null : libelleTypePiece(type),
     libelleFermer: t.dossiers.visionneuse.fermerPiece,
-    constructeur: (BuildContext _) => VisionneusePiece(dossier: dossier),
+    constructeur: (BuildContext _) =>
+        VisionneusePiece(dossier: dossier, onLecture: onLecture),
   );
 }
 
@@ -72,10 +74,15 @@ class _AjusterIntent extends Intent {
 /// La visionneuse : lecture et zoom seulement, jamais de decision.
 class VisionneusePiece extends ConsumerStatefulWidget {
   /// Cree la visionneuse du dossier.
-  const VisionneusePiece({required this.dossier, super.key});
+  const VisionneusePiece({required this.dossier, super.key, this.onLecture});
 
   /// Le dossier dont la piece est lue.
   final DossierPourRevue dossier;
+
+  /// Vrai quand la piece s'est affichee (premiere image peinte) ; faux sur
+  /// un echec de lecture (erreur, format, acces retire, indisponible,
+  /// aucune). La revue y ouvre ou referme ses verifications (P-ADM-06).
+  final ValueChanged<bool>? onLecture;
 
   /// Echelle maximale (400 %).
   static const double echelleMax = 4;
@@ -94,12 +101,21 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
   VuePiece? _vue;
   ImageProvider<Object>? _image;
   Size _zone = Size.zero;
+  final FocusNode _focusFermer = FocusNode(debugLabel: 'visionneuse-fermer');
+  bool _lue = false;
 
   @override
   void initState() {
     super.initState();
     _zoom.addListener(_rafraichir);
     unawaited(_charger());
+    // Focus initial sur un element qui porte un anneau (« Fermer »), jamais
+    // sur un noeud invisible ; les raccourcis restent sur la surface.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _focusFermer.requestFocus();
+      }
+    });
   }
 
   @override
@@ -108,12 +124,44 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
       ..removeListener(_rafraichir)
       ..dispose();
     _oublierImage();
+    _focusFermer.dispose();
     super.dispose();
   }
 
   void _rafraichir() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  /// Signale a la revue une lecture reussie (une fois) ou un echec.
+  void _signaler(_Etat etat) {
+    final ValueChanged<bool>? rappel = widget.onLecture;
+    if (rappel == null) {
+      return;
+    }
+    switch (etat) {
+      case _Etat.erreur ||
+          _Etat.format ||
+          _Etat.accesRetire ||
+          _Etat.indisponible ||
+          _Etat.aucune:
+        _lue = false;
+        rappel(false);
+      case _Etat.chargement || _Etat.contenu || _Etat.expire || _Etat.horsLigne:
+        break;
+    }
+  }
+
+  /// La premiere image peinte : la piece a ete vue.
+  void _affichee() {
+    if (_lue) {
+      return;
+    }
+    _lue = true;
+    final ValueChanged<bool>? rappel = widget.onLecture;
+    if (rappel != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => rappel(true));
     }
   }
 
@@ -127,6 +175,7 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
     final String? documentId = widget.dossier.documentId;
     if (documentId == null) {
       setState(() => _etat = _Etat.aucune);
+      _signaler(_Etat.aucune);
       return;
     }
     setState(() => _etat = _Etat.chargement);
@@ -172,6 +221,7 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
       }
       _etat = suivant;
     });
+    _signaler(suivant);
   }
 
   /// L'image n'a pas pu etre lue : expiree si l'echeance est passee.
@@ -186,6 +236,7 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
           _vue = null;
           _etat = expiree ? _Etat.expire : _Etat.erreur;
         });
+        _signaler(_etat);
       }
     });
   }
@@ -252,17 +303,22 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
           ),
         },
         child: Focus(
-          autofocus: true,
+          skipTraversal: true,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(child: _corps(context)),
               Ecart.vLg,
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.center,
+              // Zoom au debut, « Fermer » au contenu a la fin, sur la meme
+              // ligne ; OverflowBar mesure et empile seulement si le texte
+              // agrandi deborde (maquette 02C, contrat B).
+              OverflowBar(
+                alignment: contenu
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.end,
+                overflowAlignment: OverflowBarAlignment.end,
                 spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
+                overflowSpacing: AppSpacing.sm,
                 children: <Widget>[
                   if (contenu)
                     Row(
@@ -271,29 +327,35 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
                         _BoutonZoom(
                           icone: AppIcons.reduire,
                           libelle: t.dossiers.visionneuse.reduire,
+                          touche: '-',
                           onPress: _peutReduire ? _reduire : null,
                         ),
                         Ecart.hSm,
                         _BoutonZoom(
                           icone: AppIcons.ajouter,
                           libelle: t.dossiers.visionneuse.agrandir,
+                          touche: '+',
                           onPress: _peutAgrandir ? _agrandir : null,
                         ),
                         Ecart.hSm,
                         _BoutonZoom(
                           icone: AppIcons.ajusterEcran,
                           libelle: t.dossiers.visionneuse.ajuster,
+                          touche: '0',
                           onPress: _ajuster,
                         ),
                       ],
-                    )
-                  else
-                    const SizedBox.shrink(),
-                  ActionPrincipale(
-                    libelle: t.commun.fermer,
-                    niveau: NiveauAction.secondaire,
-                    pleineLargeur: false,
-                    onPress: _fermer,
+                    ),
+                  // IntrinsicWidth : au contenu, jamais etire (comme les
+                  // actions de la revue).
+                  IntrinsicWidth(
+                    child: ActionPrincipale(
+                      libelle: t.commun.fermer,
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      focusNode: _focusFermer,
+                      onPress: _fermer,
+                    ),
                   ),
                 ],
               ),
@@ -318,6 +380,9 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
           child: EtatSysteme(
             nature: nature,
             titre: phrase,
+            // Phrase vide : seul le texte exact de la spec s'affiche, sans la
+            // phrase generique commun.etats.* (§11.5, §26 ter).
+            phrase: '',
             libelleAction: action,
             onAction: onAction,
           ),
@@ -342,6 +407,8 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
           return ClipRect(
             child: InteractiveViewer(
               transformationController: _zoom,
+              // Aucun geste (pincement, Ctrl+molette) sous 100 % (Q25).
+              minScale: 1,
               maxScale: VisionneusePiece.echelleMax,
               child: Center(child: _imagePiece(context)),
             ),
@@ -385,12 +452,20 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
   Widget _imagePiece(BuildContext context) {
     final ImageProvider<Object>? image = _image;
     if (image == null) {
+      _affichee();
       return const _PieceFictive();
     }
     return Image(
       image: image,
       fit: BoxFit.contain,
       excludeFromSemantics: true,
+      frameBuilder:
+          (BuildContext context, Widget enfant, int? image, bool synchrone) {
+            if (image != null || synchrone) {
+              _affichee();
+            }
+            return enfant;
+          },
       loadingBuilder:
           (BuildContext context, Widget enfant, ImageChunkEvent? progres) =>
               progres == null
@@ -413,18 +488,26 @@ class _BoutonZoom extends StatelessWidget {
   const _BoutonZoom({
     required this.icone,
     required this.libelle,
+    required this.touche,
     required this.onPress,
   });
 
   final AppIcon icone;
   final String libelle;
+
+  /// La touche du raccourci, dite dans l'info-bulle (pas un texte a
+  /// traduire : le symbole de la touche).
+  final String touche;
   final VoidCallback? onPress;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     return Tooltip(
-      message: libelle,
+      message: t.dossiers.visionneuse.infoBulle(
+        action: libelle,
+        touche: touche,
+      ),
       excludeFromSemantics: true,
       child: Pressable(
         onPress: onPress,
@@ -469,15 +552,18 @@ class _PieceFictive extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final Color neutre = palette.borderHairline.asBorderSide().color;
-    Widget barre(double fraction) => FractionallySizedBox(
-      widthFactor: fraction,
+    Widget barre(double fraction) => Align(
       alignment: AlignmentDirectional.centerStart,
-      child: SizedBox(
-        height: AppSpacing.md,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: neutre,
-            borderRadius: AppRadius.arrondiFull,
+      child: FractionallySizedBox(
+        widthFactor: fraction,
+        alignment: AlignmentDirectional.centerStart,
+        child: SizedBox(
+          height: AppSpacing.md,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: neutre,
+              borderRadius: AppRadius.arrondiFull,
+            ),
           ),
         ),
       ),

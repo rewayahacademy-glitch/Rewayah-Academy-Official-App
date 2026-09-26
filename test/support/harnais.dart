@@ -409,9 +409,17 @@ class FauxServiceValidation implements ServiceValidation {
   /// Les cles signees, dans l'ordre (AD-7).
   final List<String> apercus = <String>[];
 
+  /// Ce que la signature doit jeter (AD-7 : StorageException 404...).
+  Object? erreurApercu;
+
   @override
   Future<String> apercu(String cleObjet) async {
     apercus.add(cleObjet);
+    final Object? erreur = erreurApercu;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
     return 'https://exemple.test/$cleObjet';
   }
 

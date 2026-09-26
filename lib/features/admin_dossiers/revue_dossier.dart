@@ -65,6 +65,13 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
   bool _refusEnCours = false;
   bool _envoi = false;
   bool _perime = false;
+
+  /// La visionneuse a affiche la piece (P-ADM-06 point 5) ; retombe a faux
+  /// sur un echec de lecture.
+  bool _pieceLue = false;
+
+  /// Les verifications s'ouvrent : pas de lecture exigee, ou piece lue.
+  bool get _lectureFaite => !widget.dossier.lectureRequise || _pieceLue;
   String? _erreur;
 
   @override
@@ -81,7 +88,21 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
   /// Ouvre la visionneuse puis rend le focus a « Voir la piece », quel que
   /// soit le chemin de fermeture (repli sur le titre si le bouton a disparu).
   Future<void> _voirPiece() async {
-    await ouvrirVisionneusePiece(context, dossier: widget.dossier);
+    await ouvrirVisionneusePiece(
+      context,
+      dossier: widget.dossier,
+      onLecture: (bool lue) {
+        if (mounted && lue != _pieceLue) {
+          setState(() {
+            _pieceLue = lue;
+            // Un echec de lecture referme les cases deja cochees.
+            if (!lue) {
+              _faites.clear();
+            }
+          });
+        }
+      },
+    );
     if (!mounted) {
       return;
     }
@@ -92,13 +113,19 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
   FocusNode _noeud(String id) =>
       _focus.putIfAbsent(id, () => FocusNode(debugLabel: 'verification-$id'));
 
-  bool _cochee(VerificationRevue v) =>
-      v.modifiable ? _faites.contains(v.id) : v.etat == EtatVerification.faite;
+  /// Modifiable par le port ET piece lue quand la lecture est exigee.
+  bool _modifiable(VerificationRevue v) => v.modifiable && _lectureFaite;
+
+  bool _cochee(VerificationRevue v) => _modifiable(v)
+      ? _faites.contains(v.id)
+      : v.modifiable
+      ? false
+      : v.etat == EtatVerification.faite;
 
   /// Les verifications obligatoires encore a faire, dans l'ordre.
   List<VerificationRevue> get _manquantes => <VerificationRevue>[
     for (final VerificationRevue v in widget.dossier.verifications)
-      if (v.obligatoire && v.modifiable && !_faites.contains(v.id)) v,
+      if (v.obligatoire && _modifiable(v) && !_faites.contains(v.id)) v,
   ];
 
   void _allerPremiere() {
@@ -179,6 +206,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
     final bool bloque = horsLigne || _envoi || _perime;
     final bool peutValider =
         d.peutValider &&
+        _lectureFaite &&
         manquantes.isEmpty &&
         d.documentId != null &&
         !canalAbsent &&
@@ -302,6 +330,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
           horsLigne: horsLigne,
           dossier: d,
           canalAbsent: canalAbsent,
+          lectureAttendue: !_lectureFaite,
           verificationsManquantes: manquantes.isNotEmpty,
           onReessayer: widget.onActualiser,
           onAllerPremiere: _allerPremiere,
@@ -363,7 +392,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
       libelle: libelleVerification(v.id)!,
       cochee: cochee,
       focusNode: _noeud(v.id),
-      onPress: v.modifiable
+      onPress: _modifiable(v)
           ? () => setState(() {
               if (!_faites.remove(v.id)) {
                 _faites.add(v.id);
@@ -479,6 +508,7 @@ class _RaisonsDecision extends StatelessWidget {
     required this.horsLigne,
     required this.dossier,
     required this.canalAbsent,
+    required this.lectureAttendue,
     required this.verificationsManquantes,
     required this.onReessayer,
     required this.onAllerPremiere,
@@ -487,6 +517,9 @@ class _RaisonsDecision extends StatelessWidget {
   final bool horsLigne;
   final DossierPourRevue dossier;
   final bool canalAbsent;
+
+  /// La piece doit etre vue avant de verifier (production, AD-7).
+  final bool lectureAttendue;
   final bool verificationsManquantes;
   final VoidCallback onReessayer;
   final VoidCallback onAllerPremiere;
@@ -519,7 +552,7 @@ class _RaisonsDecision extends StatelessWidget {
       raison = Text(t.dossiers.revue.etats.decisionIndisponible, style: style);
     } else if (b.contains(BlocageRevue.accordManquant)) {
       raison = Text(t.dossiers.revue.etats.accordManquant, style: style);
-    } else if (b.isNotEmpty) {
+    } else if (b.isNotEmpty || lectureAttendue) {
       raison = Text(t.dossiers.revue.pasPret, style: style);
     } else if (verificationsManquantes) {
       raison = LienFleche(

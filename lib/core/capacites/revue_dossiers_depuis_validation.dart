@@ -179,6 +179,9 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       // Aucun accord versionne n'est lu (AD-BR-02) : la carte est masquee.
       accords: const <AccordSoumis>[],
       peutValider: consultable,
+      // La cle finit par une extension d'image : c'est une promesse, pas une
+      // lecture. La revue attend l'affichage reussi (AD-7, P-ADM-06 pt 5).
+      lectureRequise: consultable,
       peutRefuser: peutRefuser,
       peutVoirPiece: d.documentId != null && piece != EtatPieceRevue.nonVisible,
       blocagesValidation: <BlocageRevue>[?manque],

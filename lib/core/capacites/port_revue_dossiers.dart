@@ -205,7 +205,13 @@ class DossierPourRevue {
     this.revisionDocument,
     this.peutResoumettre,
     this.blocagesAcces = const <BlocageRevue>[],
+    this.lectureRequise = false,
   });
+
+  /// Vrai : les verifications et la validation restent fermees tant que la
+  /// visionneuse n'a pas affiche la piece avec succes, et se referment sur un
+  /// echec de lecture (P-ADM-06 point 5). Pose par l'adaptateur de production.
+  final bool lectureRequise;
 
   final String dossierId;
   final int revision;

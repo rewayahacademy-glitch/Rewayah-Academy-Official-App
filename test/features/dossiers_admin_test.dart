@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show StorageException;
 
 import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
@@ -78,6 +79,33 @@ Future<void> _taper(WidgetTester tester, String libelle) async {
   await tester.tap(find.text(libelle));
   await tester.pumpAndSettle();
 }
+
+/// Ouvre la visionneuse, laisse l'image se decoder (hors horloge factice),
+/// puis la ferme par « Fermer » : la piece a ete vue (P-ADM-06 point 5).
+Future<void> _voirEtFermer(WidgetTester tester) async {
+  await _taper(tester, t.dossiers.revue.voirPiece);
+  await tester.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 100)),
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(
+    find.descendant(
+      of: find.byType(VisionneusePiece),
+      matching: find.text(t.commun.fermer),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+ActionPrincipale _action(WidgetTester tester, String libelle) =>
+    tester.widget<ActionPrincipale>(
+      find
+          .ancestor(
+            of: find.text(libelle).first,
+            matching: find.byType(ActionPrincipale),
+          )
+          .first,
+    );
 
 void main() {
   testWidgets('la premiere lecture montre un squelette', (
@@ -168,6 +196,13 @@ void main() {
       await _taper(tester, t.dossiers.approuver);
       expect(service.verdicts, isEmpty);
 
+      // Production : les cases restent fermees tant que la piece n'a pas ete
+      // affichee (AD-7, P-ADM-06 point 5).
+      await _taper(tester, t.dossiers.pointLisible);
+      await _allerA(tester, t.dossiers.approuver);
+      expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+      await _voirEtFermer(tester);
+
       for (final String point in <String>[
         t.dossiers.pointLisible,
         t.dossiers.pointNom,
@@ -229,6 +264,10 @@ void main() {
       expect(service.apercus, isEmpty);
 
       await _taper(tester, t.dossiers.revue.voirPiece);
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pumpAndSettle();
       expect(find.byType(VisionneusePiece), findsOneWidget);
       expect(service.apercus, <String>['p1/piece.webp']);
       expect(find.textContaining('http'), findsNothing);
@@ -252,6 +291,41 @@ void main() {
       await _taper(tester, t.dossiers.pointValidite);
       await _taper(tester, t.dossiers.approuver);
       expect(service.verdicts.single.approuve, isTrue);
+    });
+
+    testWidgets('AD-7 : une signature en echec (404) garde la validation '
+        'fermee et le refus ouvert', (WidgetTester tester) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()
+          ..file = <DossierAValider>[_dossier()]
+          ..erreurApercu = const StorageException(
+            'Object not found',
+            statusCode: '404',
+          ),
+      );
+      await _taper(tester, t.dossiers.revue.voirPiece);
+      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(find.text(t.dossiers.visionneuse.erreur), findsOneWidget);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
+      for (final String point in <String>[
+        t.dossiers.pointLisible,
+        t.dossiers.pointNom,
+        t.dossiers.pointValidite,
+      ]) {
+        await _taper(tester, point);
+      }
+      await _allerA(tester, t.dossiers.approuver);
+      expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+      expect(_action(tester, t.dossiers.refuser).onPress, isNotNull);
+      await _taper(tester, t.dossiers.approuver);
+      expect(service.verdicts, isEmpty);
     });
 
     testWidgets('AD-7 : une piece pdf ne s affiche pas, validation fermee, '

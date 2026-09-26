@@ -101,8 +101,14 @@ void main() {
       // raison ; la base refuserait un verdict sans piece.
       expect(_actif(tester, 'Valider le dossier'), isFalse);
       expect(_actif(tester, 'Refuser le dossier'), isFalse);
-      // Ni la checklist, qui n'a rien a verifier.
-      expect(find.text('Vérifications'), findsNothing);
+      // La carte des verifications reste (§10.4, §26 ter, AD-6), mais
+      // aucune case ne se coche : il n'y a rien a verifier.
+      expect(find.text('Vérifications'), findsOneWidget);
+      await tester.ensureVisible(find.text('La pièce est lisible').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('La pièce est lisible').first);
+      await tester.pumpAndSettle();
+      expect(_actif(tester, 'Valider le dossier'), isFalse);
     },
   );
 

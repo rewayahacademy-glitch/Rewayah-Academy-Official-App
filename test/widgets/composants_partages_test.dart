@@ -388,10 +388,27 @@ void main() {
       expect(debutFilet - finMeneur, AppSpacing.md);
     });
 
-    test('une rubrique sans icone ni meneur est refusee', () {
+    // AD-5 a retire l'assert (lignes d'identite sans icone) : la regle
+    // devient positive, la ligne nue se construit et garde son libelle au
+    // debut (Q-AD7-9).
+    testWidgets('une rubrique sans icone ni meneur reste lisible', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, vueMobile);
+      await tester.pumpWidget(
+        hoteTheme(
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(libelle: 'Vide', onPress: () {}),
+            ],
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.text('Vide'), findsOneWidget);
       expect(
-        () => LigneRubrique(libelle: 'Vide', onPress: () {}),
-        throwsAssertionError,
+        tester.getTopLeft(find.text('Vide')).dx,
+        lessThan(vueMobile.width / 2),
       );
     });
 

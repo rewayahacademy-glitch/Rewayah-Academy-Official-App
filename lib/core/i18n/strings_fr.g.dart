@@ -3680,6 +3680,9 @@ class Traductions$dossiers$visionneuse$fr {
 	/// fr: 'Ajuster à l’écran'
 	String get ajuster => 'Ajuster à l’écran';
 
+	/// fr: '{action} (touche {touche})'
+	String infoBulle({required Object action, required Object touche}) => '${action} (touche ${touche})';
+
 	/// fr: 'Document fictif'
 	String get documentFictif => 'Document fictif';
 }
@@ -12148,6 +12151,7 @@ extension on Traductions {
 			'dossiers.visionneuse.agrandir' => 'Agrandir',
 			'dossiers.visionneuse.reduire' => 'Réduire',
 			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
+			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
 			'dossiers.visionneuse.documentFictif' => 'Document fictif',
 			'dossiers.revue.identite' => 'Identité et dossier',
 			'dossiers.revue.piece' => 'Pièce d\'identité',
@@ -12428,9 +12432,9 @@ extension on Traductions {
 			'admin.regles.ageInterfaceEnfantDetail' => 'En dessous de cet âge, un profil bascule sur l\'interface simplifiée à sa création.',
 			'admin.regles.appareilsParEleve' => 'Appareils par élève',
 			'admin.regles.appareilsParEleveDetail' => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.',
-			'admin.regles.seancesSimultanees' => 'Séances simultanées par profil',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regles.seancesSimultanees' => 'Séances simultanées par profil',
 			'admin.regles.seancesSimultaneesDetail' => 'Le nombre de séances qu\'un même profil peut suivre en même temps.',
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
 			'admin.regles.uniteSemaines' => ({required Object n}) => '${n} sem.',
@@ -12942,9 +12946,9 @@ extension on Traductions {
 			'nav.compte' => 'Mon compte',
 			'nav.principale' => 'Navigation principale',
 			'nav.motSymbole' => 'Rewayah',
-			'nav.replier' => 'Replier la navigation',
 			_ => null,
 		} ?? switch (path) {
+			'nav.replier' => 'Replier la navigation',
 			'nav.deplier' => 'Déplier la navigation',
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
@@ -13456,9 +13460,9 @@ extension on Traductions {
 			'classe.observation.motif.presenceEnVerification' => ({required Object prenom}) => 'La présence de ${prenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
-			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
 			'classe.observation.motif.capaciteAbsente' => 'L\'observation n\'est pas disponible pour le moment.',
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
@@ -13970,9 +13974,9 @@ extension on Traductions {
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
 			'tc.outils.masquer.reveler' => 'Révéler',
 			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
-			'tc.outils.masquer.tout' => 'Tout démasquer',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.masquer.tout' => 'Tout démasquer',
 			'tc.outils.focus.quitter' => 'Quitter le focus',
 			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
 			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',

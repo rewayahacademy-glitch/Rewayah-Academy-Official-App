@@ -935,6 +935,7 @@
       "agrandir": "Agrandir",
       "reduire": "Réduire",
       "ajuster": "Ajuster à l’écran",
+      "infoBulle": "{action} (touche {touche})",
       "documentFictif": "Document fictif"
     },
     "revue": {
