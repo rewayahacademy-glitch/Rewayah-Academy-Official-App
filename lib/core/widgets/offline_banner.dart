@@ -6,6 +6,7 @@ import '../icons/app_icons.dart';
 import '../reseau/service_reseau.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 
 /// Bandeau de degradation reseau.
@@ -34,7 +35,8 @@ class OfflineBanner extends ConsumerWidget {
   const OfflineBanner({super.key})
     : message = null,
       sousTexte = null,
-      icone = null;
+      icone = null,
+      encadre = false;
 
   /// Cree le bandeau avec un [message] fourni par l'appelant, sans lire
   /// [horsLigneProvider] : la salle de seance (lot CL-7) y pose l'etat que
@@ -43,10 +45,14 @@ class OfflineBanner extends ConsumerWidget {
   ///
   /// [sousTexte] : une seconde ligne (Interface guidee, reseau faible).
   /// [icone] : par defaut, l'icone hors ligne.
+  /// [encadre] : vrai quand le bandeau suit les marges de la page
+  /// (contrat A) au lieu d'aller d'un bord a l'autre : filet sur les quatre
+  /// cotes et rayon `AppRadius.arrondiSm`, comme le retour local.
   const OfflineBanner.message({
     required String this.message,
     this.sousTexte,
     this.icone,
+    this.encadre = false,
     super.key,
   });
 
@@ -59,6 +65,9 @@ class OfflineBanner extends ConsumerWidget {
   /// L'icone de tete, ou `null` pour l'icone hors ligne.
   final IconData? icone;
 
+  /// Vrai : bandeau borne par les marges de la page, cadre arrondi.
+  final bool encadre;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String? fourni = message;
@@ -67,6 +76,7 @@ class OfflineBanner extends ConsumerWidget {
         message: fourni,
         sousTexte: sousTexte,
         icone: icone ?? AppIcons.horsLigne.repos,
+        encadre: encadre,
       );
     }
     // Tant que la reponse n'est pas la, l'appareil est repute en ligne : un
@@ -84,11 +94,17 @@ class OfflineBanner extends ConsumerWidget {
 
 /// Le rendu commun des deux constructeurs.
 class _Bandeau extends StatelessWidget {
-  const _Bandeau({required this.message, required this.icone, this.sousTexte});
+  const _Bandeau({
+    required this.message,
+    required this.icone,
+    this.sousTexte,
+    this.encadre = false,
+  });
 
   final String message;
   final String? sousTexte;
   final IconData icone;
+  final bool encadre;
 
   @override
   Widget build(BuildContext context) {
@@ -102,10 +118,18 @@ class _Bandeau extends StatelessWidget {
     return Semantics(
       liveRegion: true,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: paire.background,
-          border: Border(bottom: palette.borderStrong.asBorderSide()),
-        ),
+        decoration: encadre
+            ? BoxDecoration(
+                color: paire.background,
+                border: Border.fromBorderSide(
+                  palette.borderStrong.asBorderSide(),
+                ),
+                borderRadius: AppRadius.arrondiSm,
+              )
+            : BoxDecoration(
+                color: paire.background,
+                border: Border(bottom: palette.borderStrong.asBorderSide()),
+              ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,

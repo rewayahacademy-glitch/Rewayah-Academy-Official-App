@@ -16,6 +16,7 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/offline_banner.dart';
 import '../../core/widgets/pressable.dart';
@@ -114,11 +115,16 @@ class SalleSeance extends StatelessWidget {
             if (agrandi) ...<Widget>[
               // Mode agrandi : l'en-tete se retire, l'etat critique reste
               // visible (CL-7 §2.7).
-              BandeauSecours(vue: vue, gouttiere: gouttiere),
+              BandeauSecours(vue: vue, actions: actions, gouttiere: gouttiere),
               Ecart.vLg,
             ] else ...<Widget>[
               ChromeSeance(vue: vue, actions: actions),
-              BandeauSecours(vue: vue, gouttiere: gouttiere),
+              BandeauSecours(
+                vue: vue,
+                actions: actions,
+                gouttiere: gouttiere,
+                espaceApres: large ? AppSpacing.lg : 0,
+              ),
               if (!large) Ecart.vLg,
             ],
             Expanded(
@@ -301,7 +307,13 @@ class _SalleEnseignant extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ChromeSeance(vue: vue, actions: actions),
-            BandeauSecours(vue: vue),
+            // La rangee d'outils n'a pas d'ecart en tete : 12, comme sous
+            // elle.
+            BandeauSecours(
+              vue: vue,
+              actions: actions,
+              espaceApres: AppSpacing.md,
+            ),
             if (outils || boutons != null)
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(
@@ -405,7 +417,7 @@ class _SalleEnseignant extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ChromeSeance(vue: vue, actions: actions),
-            BandeauSecours(vue: vue),
+            BandeauSecours(vue: vue, actions: actions),
             ecart,
             if (boutons != null) ...<Widget>[
               Padding(
@@ -559,7 +571,7 @@ class _SalleEnseignant extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ChromeSeance(vue: vue, actions: actions),
-          BandeauSecours(vue: vue),
+          BandeauSecours(vue: vue, actions: actions),
           Ecart.vSm,
           Expanded(
             child: Padding(
@@ -616,7 +628,7 @@ class _SalleEnseignant extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         ChromeSeance(vue: vue, actions: actions),
-        BandeauSecours(vue: vue),
+        BandeauSecours(vue: vue, actions: actions),
         Ecart.vSm,
         Expanded(
           child: Padding(
@@ -713,7 +725,7 @@ class _SalleEnseignant extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         ChromeSeance(vue: vue, actions: actions),
-        BandeauSecours(vue: vue),
+        BandeauSecours(vue: vue, actions: actions),
         mobile ? Ecart.vSm : Ecart.vMd,
         Expanded(
           child: LayoutBuilder(
@@ -1010,53 +1022,136 @@ class _BarreBasse extends StatelessWidget {
 /// « Connexion retablie. ». Tout vient de [VueSeance.connexion] : la salle ne
 /// detecte rien elle-meme (BR-1).
 ///
-/// Le bandeau prend toute la largeur de la colonne salle (au-dessus du
-/// support, jamais sous le rail enseignant) ; le retour bref se pose dans la
-/// gouttiere du gabarit. Apparition en `AppMouvement.apparition`, zero sous
-/// reduction du mouvement.
+/// Bandeau, retour bref et bloc d'erreur suivent les marges de la page
+/// (contrat A : gouttiere 16 / 32 du gabarit), au-dessus du support et
+/// jamais sous le rail enseignant. [espaceApres] : l'ecart du gabarit entre
+/// l'etat et le support quand le gabarit n'en pose pas lui-meme (eleve
+/// desktop), pour que rien ne touche le support. Apparition en
+/// `AppMouvement.apparition`, zero sous reduction du mouvement.
+///
+/// Reconnexion impossible ou hors ligne confirme (T-S3) : `EtatSysteme` en
+/// bloc a la place du bandeau, la salle reste montee ; largeur bornee
+/// (contrat D), alignee au bord start du support.
 class BandeauSecours extends StatelessWidget {
   const BandeauSecours({
     required this.vue,
+    required this.actions,
     this.gouttiere = AppPage.gouttiereMobile,
+    this.espaceApres = 0,
     super.key,
   });
 
   final VueSeance vue;
+  final ActionsSeance actions;
 
-  /// La gouttiere du gabarit, pour le retour bref.
+  /// La gouttiere du gabarit.
   final double gouttiere;
+
+  /// L'ecart sous un etat visible, s'il manque au gabarit.
+  final double espaceApres;
 
   @override
   Widget build(BuildContext context) {
     final String? texte = vue.texteBandeau;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        AnimatedSize(
-          duration: AppMouvement.duree(context, AppMouvement.apparition),
-          curve: AppMouvement.entree,
-          alignment: AlignmentDirectional.topStart,
-          child: texte == null
-              ? const SizedBox(width: double.infinity)
-              : OfflineBanner.message(
-                  key: const ValueKey<String>('bandeau-secours'),
-                  message: texte,
-                  sousTexte: vue.sousTexteBandeau,
-                  // Reseau faible : la room reste connectee, jamais l'icone
-                  // hors ligne (P06.5).
-                  icone: vue.connexion == ConnexionSeance.reseauFaible
-                      ? AppIcons.reseau.repos
-                      : null,
-                ),
+    final String? titreEchec = vue.titreEchec;
+    final bool visible =
+        texte != null || titreEchec != null || vue.texteRetabli != null;
+    final Widget etat;
+    if (titreEchec != null) {
+      etat = Align(
+        alignment: AlignmentDirectional.topStart,
+        // Hauteur bornee : un tiers de l'ecran, un cinquieme quand le texte
+        // est agrandi (au-dela de 150 %, en-tete et dock grandissent aussi).
+        // Au-dela, le bloc defile en lui-meme et le support garde sa place
+        // (W2 1.4.10).
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: AppPage.largeurFormulaire,
+            maxHeight:
+                MediaQuery.sizeOf(context).height /
+                (MediaQuery.textScalerOf(context).scale(1) > 1.5 ? 5 : 3),
+          ),
+          child: SingleChildScrollView(
+            child: _BlocEchec(vue: vue, actions: actions, titre: titreEchec),
+          ),
         ),
-        Padding(
-          padding: EdgeInsetsDirectional.only(start: gouttiere, end: gouttiere),
-          child: LocalFeedback(
+      );
+    } else if (texte != null) {
+      etat = OfflineBanner.message(
+        key: const ValueKey<String>('bandeau-secours'),
+        message: texte,
+        sousTexte: vue.sousTexteBandeau,
+        // Reseau faible : la room reste connectee, jamais l'icone hors
+        // ligne (P06.5).
+        icone: vue.connexion == ConnexionSeance.reseauFaible
+            ? AppIcons.reseau.repos
+            : null,
+        encadre: true,
+      );
+    } else {
+      etat = const SizedBox(width: double.infinity);
+    }
+    return Padding(
+      padding: EdgeInsetsDirectional.only(
+        start: gouttiere,
+        end: gouttiere,
+        bottom: visible ? espaceApres : 0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AnimatedSize(
+            duration: AppMouvement.duree(context, AppMouvement.apparition),
+            curve: AppMouvement.entree,
+            alignment: AlignmentDirectional.topStart,
+            child: etat,
+          ),
+          LocalFeedback(
             key: const ValueKey<String>('retour-retablie'),
             message: vue.texteRetabli,
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Le bloc d'erreur de connexion (P05.8) : titre exact par role, sans
+/// phrase ; `Reessayer` au bord trailing, la sortie au bord leading (en
+/// echec, et hors ligne en guidee), qui repasse par la confirmation
+/// existante. Rien n'est rendu sans son geste.
+class _BlocEchec extends StatelessWidget {
+  const _BlocEchec({
+    required this.vue,
+    required this.actions,
+    required this.titre,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final String titre;
+
+  @override
+  Widget build(BuildContext context) {
+    final VoidCallback? quitter = actions.onQuitter;
+    return EtatSysteme(
+      key: const ValueKey<String>('bloc-echec-connexion'),
+      nature: vue.connexion == ConnexionSeance.horsLigne
+          ? NatureEtat.horsLigne
+          : NatureEtat.reconnexion,
+      titre: titre,
+      phrase: '',
+      libelleAction: t.salle.secours.reessayer,
+      onAction: actions.onReessayerConnexion,
+      libelleSecondaire: vue.libelleQuitterEchec,
+      onSecondaire: vue.echecPermetQuitter && quitter != null
+          ? () => confirmerQuitterSeance(
+              context,
+              quitter,
+              cahier: vue.quitterOuvreCahier,
+            )
+          : null,
+      actionsContratB: true,
     );
   }
 }

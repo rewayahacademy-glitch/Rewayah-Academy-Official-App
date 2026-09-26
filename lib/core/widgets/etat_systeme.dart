@@ -90,7 +90,15 @@ class EtatSysteme extends StatelessWidget {
     this.libelleSecondaire,
     this.onSecondaire,
     this.dependance,
+    this.actionsContratB = false,
   });
+
+  /// Bloc seulement. Vrai : actions selon les contrats A et B
+  /// (DESIGN-GOV-2026-09-26 §4 bis.1-2) : 16 sous l'objet, groupe aligne
+  /// au bord trailing, sortie ([onSecondaire]) puis poursuite ([onAction])
+  /// en LTR, 8 entre les deux. Faux (defaut) : disposition historique,
+  /// harmonisee en HU-1 pour les ecrans deja livres.
+  final bool actionsContratB;
 
   /// La nature de l'etat.
   final NatureEtat nature;
@@ -261,6 +269,7 @@ class EtatSysteme extends StatelessWidget {
       actionEnCours: actionEnCours,
       libelleSecondaire: libelleSecondaire,
       onSecondaire: onSecondaire,
+      actionsContratB: actionsContratB,
     );
   }
 }
@@ -282,8 +291,10 @@ class _Bloc extends StatelessWidget {
     required this.actionEnCours,
     required this.libelleSecondaire,
     required this.onSecondaire,
+    this.actionsContratB = false,
   });
 
+  final bool actionsContratB;
   final AppIcon icone;
   final TonEtat ton;
   final String titre;
@@ -353,14 +364,60 @@ class _Bloc extends StatelessWidget {
                         textes.titleSmall ?? const TextStyle(),
                       ),
                     ),
-                    Ecart.vXs,
-                    Text(
-                      phrase,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
+                    // Une phrase vide n'est pas rendue (titre seul, spec).
+                    if (phrase.isNotEmpty) ...<Widget>[
+                      Ecart.vXs,
+                      Text(
+                        phrase,
+                        style: palette.inkMuted.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
                       ),
-                    ),
-                    if (avecAction || avecSecondaire) ...<Widget>[
+                    ],
+                    if (actionsContratB &&
+                        (avecAction || avecSecondaire)) ...<Widget>[
+                      Ecart.vLg,
+                      SizedBox(
+                        width: double.infinity,
+                        child: Wrap(
+                          alignment: WrapAlignment.end,
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.sm,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          // `IntrinsicWidth` : dans un `Wrap`, le bouton
+                          // centre son libelle sur toute la largeur offerte ;
+                          // le groupe du contrat B garde la largeur du
+                          // libelle.
+                          children: <Widget>[
+                            if (avecSecondaire)
+                              IntrinsicWidth(
+                                child: ActionPrincipale(
+                                  key: const ValueKey<String>(
+                                    'etat-systeme-secondaire',
+                                  ),
+                                  libelle: libelleSecondaire!,
+                                  onPress: onSecondaire,
+                                  niveau: NiveauAction.tertiaire,
+                                  pleineLargeur: false,
+                                ),
+                              ),
+                            if (avecAction)
+                              IntrinsicWidth(
+                                child: ActionPrincipale(
+                                  key: const ValueKey<String>(
+                                    'etat-systeme-action',
+                                  ),
+                                  libelle: libelleAction!,
+                                  onPress: onAction,
+                                  enCours: actionEnCours,
+                                  niveau: NiveauAction.secondaire,
+                                  pleineLargeur: false,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ] else if (avecAction || avecSecondaire) ...<Widget>[
                       Ecart.vMd,
                       Wrap(
                         spacing: AppSpacing.sm,
