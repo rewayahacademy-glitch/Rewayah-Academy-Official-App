@@ -237,8 +237,8 @@
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
     "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
-    "enVerification": "Nous vérifions votre dossier. Vous recevrez une notification dès qu'il est validé.",
-    "refuse": "Votre dossier n'a pas été validé.",
+    "enVerification": "Nous vérifions votre dossier.",
+    "refuse": "Dossier refusé",
     "suspendu": "Votre compte est suspendu.",
     "contacterAcademie": "Contacter l'académie",
     "deposeLe": "Déposé le {date}",
@@ -251,7 +251,9 @@
     "signerLeContrat": "Lire et signer",
     "lireLaCarte": "Lire",
     "toutEstDepose": "Tout est déposé.",
-    "corriger": "Reprendre mon dossier",
+    "corriger": "Corriger",
+    "correctionImpossible": "Ce dossier ne peut pas être modifié pour le moment.",
+    "actualiser": "Actualiser l'état du dossier",
     "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "seDeconnecter": "Se déconnecter",
     "titreDossier": "Votre dossier",
@@ -944,6 +946,8 @@
     },
     "revue": {
       "identite": "Identité et dossier",
+      "pieceNonRequise": "Aucune pièce requise pour ce dossier.",
+      "pieceNonTransmise": "La pièce requise n’a pas été transmise.",
       "piece": "Pièce d'identité",
       "voirPiece": "Voir la pièce",
       "accords": "Accords et éléments soumis",
@@ -989,7 +993,6 @@
     "verdict": "Décision",
     "approuver": "Valider le dossier",
     "refuser": "Refuser le dossier",
-    "journalisation": "Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.",
     "profilACompleter": {
       "titre": "Profil à compléter",
       "texte": "Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle."

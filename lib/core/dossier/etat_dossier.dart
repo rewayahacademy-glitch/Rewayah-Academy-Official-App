@@ -20,6 +20,7 @@ class EtatDossier {
     this.deposeLe,
     this.contratSigne = false,
     this.accuseSigne = false,
+    this.correctionAutorisee,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -41,6 +42,7 @@ class EtatDossier {
       deposeLe: depose is String ? DateTime.tryParse(depose)?.toLocal() : null,
       contratSigne: json['contrat_signe'] == true,
       accuseSigne: json['accuse_signe'] == true,
+      correctionAutorisee: json['correction_autorisee'] as bool?,
     );
   }
 
@@ -71,6 +73,11 @@ class EtatDossier {
 
   /// Vrai quand la carte d'accuse de l'ADR-011 a ete accusee.
   final bool accuseSigne;
+
+  /// Faux quand l'administration interdit la correction d'un dossier refuse.
+  /// Absent de la reponse actuelle d'`etat_dossier()` (AD-BR-28) : nul, et la
+  /// correction reste permise comme avant.
+  final bool? correctionAutorisee;
 
   /// Ce que le portail d'attente doit afficher.
   ///
@@ -117,7 +124,8 @@ class EtatDossier {
       other.motifRefus == motifRefus &&
       other.deposeLe == deposeLe &&
       other.contratSigne == contratSigne &&
-      other.accuseSigne == accuseSigne;
+      other.accuseSigne == accuseSigne &&
+      other.correctionAutorisee == correctionAutorisee;
 
   @override
   int get hashCode => Object.hash(
@@ -130,6 +138,7 @@ class EtatDossier {
     deposeLe,
     contratSigne,
     accuseSigne,
+    correctionAutorisee,
   );
 }
 

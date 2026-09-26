@@ -13,11 +13,16 @@
 // fictifs (« Exemple », « Fictif »...), pour la regle « aucune vraie
 // identite ».
 
+import 'dart:typed_data';
+
 import '../../core/admin/service_comptes.dart' show EtatPiece;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/etat_dossier.dart';
+import '../../core/dossier/selecteur_fichier.dart';
+import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
 
 /// Les trois verifications humaines obligatoires d'une piece disponible.
@@ -60,14 +65,17 @@ class DossierDemo {
   final String prenom;
   final String nom;
   final AppRole role;
-  final DateTime soumisLe;
+  DateTime soumisLe;
   final List<AccordSoumis> accords;
   final ConsequenceValidation consequence;
   final ExigencePiece exigence;
-  final bool pieceTransmise;
+  bool pieceTransmise;
   final TypePiece? typePiece;
-  final String? documentId;
-  final int? revisionDocument;
+  String? documentId;
+  int? revisionDocument;
+
+  /// Le motif du dernier refus, lu par le portail de la personne (AD-10).
+  String? motifRefus;
   final bool horsPorteeSiPolitique;
   final bool lienExpireSimule;
 
@@ -154,6 +162,22 @@ class EtatRevueDemo {
   int get nombreAVerifier => dossiers.values
       .where((DossierDemo d) => d.statut == StatutRevue.aVerifier)
       .length;
+
+  /// La personne corrige son dossier refuse (AD-10, P-ADM-09.4) : une
+  /// nouvelle revision revient dans la file, sans reprendre les cases de
+  /// l'ancienne piece (la cle de revue porte la revision).
+  void resoumettre(String id) {
+    final DossierDemo d = dossiers[id]!;
+    final int n = (d.revisionDocument ?? 0) + 1;
+    d
+      ..statut = StatutRevue.aVerifier
+      ..revision += 1
+      ..pieceTransmise = true
+      ..documentId = '-r'
+      ..revisionDocument = n
+      ..soumisLe = maintenant
+      ..motifRefus = null;
+  }
 
   /// La file triee : soumission croissante puis identifiant.
   List<DossierDemo> get fileTriee =>
@@ -600,7 +624,8 @@ class RevueDossiersDemo implements PortRevueDossiers {
     final bool valide = decision == DecisionDossier.valider;
     d
       ..statut = valide ? StatutRevue.valide : StatutRevue.refuse
-      ..revision += 1;
+      ..revision += 1
+      ..motifRefus = valide ? null : motif!.trim();
     if (valide && d.consequence == ConsequenceValidation.activationPossible) {
       d.etatCompte = AccountStatus.active;
     }
@@ -783,4 +808,66 @@ class ServiceValidationDemo implements ServiceValidation {
     }
     _enCours.remove(cle);
   }
+}
+
+/// Le dossier vu par la personne elle-meme (AD-10), lu dans le meme etat que
+/// la revue admin : une decision de l'administration s'y voit a la relecture.
+/// Accuse et contrat sont tenus pour signes (le jeu ne simule que la piece).
+class ServiceDossierDemo implements ServiceDossier {
+  ServiceDossierDemo(this.etatRevue, this.titulaire);
+
+  final EtatRevueDemo etatRevue;
+  final String titulaire;
+
+  DossierDemo get _d => etatRevue.dossiers[titulaire]!;
+
+  @override
+  Future<void> creerProfil({
+    required AppRole role,
+    required String prenom,
+    required String nom,
+    Genre? genre,
+  }) async {}
+
+  @override
+  Future<EtatDossier> etat() async {
+    final DossierDemo d = _d;
+    return EtatDossier(
+      profilExiste: true,
+      role: d.role,
+      statutCompte: d.etatCompte,
+      pieceDeposee: d.pieceTransmise || d.exigence == ExigencePiece.dispensee,
+      statutPiece: switch (d.statut) {
+        StatutRevue.aVerifier => StatutPiece.enAttente,
+        StatutRevue.valide => StatutPiece.validee,
+        StatutRevue.refuse => StatutPiece.refusee,
+      },
+      motifRefus: d.motifRefus,
+      deposeLe: d.soumisLe,
+      contratSigne: true,
+      accuseSigne: true,
+    );
+  }
+
+  @override
+  Future<void> accepterContrat(SorteContrat sorte, String version) async {}
+
+  @override
+  Future<void> deposerPiece(PieceAEnvoyer piece) async =>
+      etatRevue.resoumettre(titulaire);
+}
+
+/// Un choix de fichier sans fichier : quelques octets synthetiques, jamais
+/// une image realiste (« document-fictif.png »).
+class SelecteurFichierDemo implements SelecteurFichier {
+  const SelecteurFichierDemo();
+
+  @override
+  Future<PieceAEnvoyer?> choisirPiece(TypePiece type) async => PieceAEnvoyer(
+    octets: Uint8List.fromList(const <int>[
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // signature PNG
+    ]),
+    nomFichier: 'document-fictif.png',
+    type: type,
+  );
 }

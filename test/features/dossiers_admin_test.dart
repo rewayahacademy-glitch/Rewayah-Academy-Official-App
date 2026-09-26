@@ -294,7 +294,7 @@ void main() {
         FauxServiceValidation()..file = <DossierAValider>[_dossier()],
       );
 
-      expect(find.text(t.dossiers.journalisation), findsNothing);
+      expect(find.textContaining("journal d'audit"), findsNothing);
       expect(find.text(t.dossiers.apercu), findsNothing);
       expect(find.textContaining('piece.webp'), findsNothing);
       expect(service.apercus, isEmpty);

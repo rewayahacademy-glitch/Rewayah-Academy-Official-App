@@ -8,6 +8,8 @@
 // workflow. La garde, elle, est compilee : `ENVIRONNEMENT=production` la
 // ferme quelle que soit l'adresse.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -21,6 +23,8 @@ import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/selecteur_fichier.dart';
+import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/offres/offre_horaire.dart';
@@ -78,12 +82,30 @@ bool get demoTuteurActiveIci =>
 ///
 /// Leve une [StateError] si l'environnement ne l'autorise pas : meme appelee
 /// par erreur, elle ne produit rien en production.
-List<Override> surchargesDemoTuteur({String? environnement}) {
+///
+/// Avec [dossiers] et [titulaire] (AD-10), la personne est le titulaire d'un
+/// dossier du jeu de revue : sa session et son portail d'attente lisent le
+/// meme etat que la revue admin, et « Corriger » depose une piece fictive.
+List<Override> surchargesDemoTuteur({
+  String? environnement,
+  EtatRevueDemo? dossiers,
+  String? titulaire,
+}) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
   }
+  final bool avecDossier = dossiers != null && titulaire != null;
   return <Override>[
-    sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
+    if (avecDossier) ...<Override>[
+      sourceSessionProvider.overrideWithValue(
+        SourceSessionDemoTitulaire(dossiers, titulaire),
+      ),
+      serviceDossierProvider.overrideWithValue(
+        ServiceDossierDemo(dossiers, titulaire),
+      ),
+      selecteurFichierProvider.overrideWithValue(const SelecteurFichierDemo()),
+    ] else
+      sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
     elevesDuFoyerProvider.overrideWith((Ref ref) async => DonneesDemo.eleves),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
@@ -204,6 +226,64 @@ class SourceSessionDemoAdmin implements SourceSession {
 
   @override
   Future<void> rafraichir() async {}
+}
+
+/// Parametre d'adresse du dossier de la personne en demonstration (AD-10).
+const String parametreDossierDemo = 'dossier';
+
+/// ?demo=tuteur&dossier=refuse|verification : la personne est Amina Benali,
+/// titulaire d'un dossier refuse (motif fictif) ou en cours de verification.
+/// Nul sans ce parametre : la demonstration tuteur habituelle.
+({EtatRevueDemo dossiers, String titulaire})? dossierTitulaireDemoPour(
+  Uri adresse,
+) {
+  final String? v = adresse.queryParameters[parametreDossierDemo]
+      ?.trim()
+      .toLowerCase();
+  if (v != 'refuse' && v != 'verification') {
+    return null;
+  }
+  final EtatRevueDemo e = EtatRevueDemo.initial();
+  const String id = DonneesDossiersDemo.tuteurDocumentaire;
+  if (v == 'refuse') {
+    e.dossiers[id]!
+      ..statut = StatutRevue.refuse
+      ..motifRefus = 'Motif fictif : la photo de la pièce est floue.';
+  }
+  return (dossiers: e, titulaire: id);
+}
+
+/// La session du titulaire d'un dossier de demonstration (AD-10) : son statut
+/// de compte suit l'etat partage, relu a chaque [rafraichir], comme le
+/// rafraichissement de jeton relit le profil en production.
+class SourceSessionDemoTitulaire implements SourceSession {
+  SourceSessionDemoTitulaire(this.dossiers, this.titulaire);
+
+  final EtatRevueDemo dossiers;
+  final String titulaire;
+  final StreamController<SessionState> _flux =
+      StreamController<SessionState>.broadcast();
+
+  SessionState get _etat {
+    final DossierDemo d = dossiers.dossiers[titulaire]!;
+    return SessionState(
+      resolue: true,
+      role: d.role,
+      householdId: d.role == AppRole.guardian ? DonneesDemo.foyerId : null,
+      profileId: d.id,
+      accountStatus: d.etatCompte,
+      lectureProfil: LectureProfil.presente,
+    );
+  }
+
+  @override
+  Stream<SessionState> etats() async* {
+    yield _etat;
+    yield* _flux.stream;
+  }
+
+  @override
+  Future<void> rafraichir() async => _flux.add(_etat);
 }
 
 /// Donnees fictives partagees par les doubles.

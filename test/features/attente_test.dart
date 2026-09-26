@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
@@ -31,6 +33,7 @@ EtatDossier _etat({
   StatutPiece? statutPiece,
   String? motif,
   DateTime? depose,
+  bool? correction,
 }) => EtatDossier(
   profilExiste: true,
   role: AppRole.guardian,
@@ -41,6 +44,7 @@ EtatDossier _etat({
   statutPiece: statutPiece,
   motifRefus: motif,
   deposeLe: depose,
+  correctionAutorisee: correction,
 );
 
 void main() {
@@ -178,13 +182,11 @@ void main() {
           routes: <RouteBase>[
             GoRoute(
               path: Routes.attente,
-              builder: (BuildContext _, GoRouterState _) =>
-                  const AttentePage(),
+              builder: (BuildContext _, GoRouterState _) => const AttentePage(),
             ),
             GoRoute(
               path: Routes.attenteContrat,
-              builder: (BuildContext _, GoRouterState _) =>
-                  const ContratPage(),
+              builder: (BuildContext _, GoRouterState _) => const ContratPage(),
             ),
           ],
           surcharges: surcharges,
@@ -269,6 +271,178 @@ void main() {
         expect(lu.etape, EtapeDossier.refuse);
       },
     );
+  });
+
+  group('AD-10 : correction, correction interdite, relecture au retour', () {
+    Future<(FausseSourceSession, FauxServiceAuth)> monter(
+      WidgetTester tester,
+      EtatDossier etat,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()..etatRendu = etat;
+      final FausseSourceSession source = FausseSourceSession();
+      final FauxServiceAuth auth = FauxServiceAuth();
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.attente,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.attente,
+              builder: (BuildContext _, GoRouterState _) => const AttentePage(),
+            ),
+            GoRoute(
+              path: Routes.attenteContrat,
+              builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+            ),
+            GoRoute(
+              path: Routes.attentePiece,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Text('route-piece'),
+            ),
+          ],
+          surcharges: <Override>[
+            serviceDossierProvider.overrideWithValue(dossier),
+            sourceSessionProvider.overrideWithValue(source),
+            serviceAuthProvider.overrideWithValue(auth),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      return (source, auth);
+    }
+
+    testWidgets(
+      'T6 correction interdite : le texte de la spec, sans Corriger',
+      (WidgetTester tester) async {
+        final (FausseSourceSession _, FauxServiceAuth auth) = await monter(
+          tester,
+          _etat(
+            accuse: true,
+            contrat: true,
+            piece: true,
+            statutPiece: StatutPiece.refusee,
+            motif: 'Motif fictif.',
+            correction: false,
+          ),
+        );
+
+        expect(find.text(t.attente.refuse), findsOneWidget);
+        expect(find.text(t.attente.correctionImpossible), findsOneWidget);
+        expect(find.text(t.attente.corriger), findsNothing);
+        expect(find.text(t.attente.refuseDetail), findsNothing);
+
+        await tester.tap(find.text(t.attente.seDeconnecter));
+        await tester.pumpAndSettle();
+        expect(auth.deconnexions, 1);
+      },
+    );
+
+    testWidgets('T7 Corriger mene au premier element a corriger', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(
+          accuse: true,
+          piece: true,
+          statutPiece: StatutPiece.refusee,
+          motif: 'Motif fictif.',
+        ),
+      );
+
+      await tester.tap(find.text(t.attente.corriger));
+      await tester.pumpAndSettle();
+      expect(find.text(t.consentement.texte.caseResponsable), findsOneWidget);
+      expect(find.text('route-piece'), findsNothing);
+    });
+
+    testWidgets('Corriger mene au depot quand seule la piece est refusee', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.refusee,
+          motif: 'Motif fictif.',
+        ),
+      );
+
+      await tester.tap(find.text(t.attente.corriger));
+      await tester.pumpAndSettle();
+      expect(find.text('route-piece'), findsOneWidget);
+    });
+
+    testWidgets('en verification : aucune promesse, et l actualisation relit', (
+      WidgetTester tester,
+    ) async {
+      final (FausseSourceSession source, FauxServiceAuth _) = await monter(
+        tester,
+        _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        ),
+      );
+
+      expect(find.textContaining('notification'), findsNothing);
+      await tester.tap(find.text(t.attente.actualiser));
+      await tester.pumpAndSettle();
+      expect(source.rafraichissements, 1);
+    });
+
+    testWidgets('T8 le retour dans l application relit la session', (
+      WidgetTester tester,
+    ) async {
+      final (FausseSourceSession source, FauxServiceAuth _) = await monter(
+        tester,
+        _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        ),
+      );
+
+      // Les transitions une a une, comme la plateforme les envoie.
+      for (final AppLifecycleState s in <AppLifecycleState>[
+        AppLifecycleState.inactive,
+        AppLifecycleState.hidden,
+        AppLifecycleState.paused,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(s);
+      }
+      await tester.pump();
+      expect(source.rafraichissements, 0);
+      for (final AppLifecycleState s in <AppLifecycleState>[
+        AppLifecycleState.hidden,
+        AppLifecycleState.inactive,
+        AppLifecycleState.resumed,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(s);
+      }
+      await tester.pumpAndSettle();
+      expect(source.rafraichissements, 1);
+    });
+
+    test('T11 correction_autorisee absente : nulle, la correction reste', () {
+      final EtatDossier sans = EtatDossier.depuisJson(const <String, dynamic>{
+        'profil': true,
+        'piece_statut': 'rejected',
+      });
+      final EtatDossier interdite = EtatDossier.depuisJson(
+        const <String, dynamic>{
+          'profil': true,
+          'piece_statut': 'rejected',
+          'correction_autorisee': false,
+        },
+      );
+      expect(sans.correctionAutorisee, isNull);
+      expect(interdite.correctionAutorisee, isFalse);
+      expect(sans == interdite, isFalse);
+    });
   });
 }
 

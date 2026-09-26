@@ -218,8 +218,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         : AppSpacing.xxl;
     final String nom = '${d.prenom} ${d.nom}'.trim();
     final List<VerificationRevue> manquantes = _manquantes;
-    final bool canalAbsent =
-        d.documentId == null && d.exigencePiece == ExigencePiece.dispensee;
+
     final bool bloque = horsLigne || nonResolue;
     final bool validationIndeterminee =
         d.consequence == ConsequenceValidation.indeterminee;
@@ -227,11 +226,10 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         d.peutValider &&
         _lectureFaite &&
         manquantes.isEmpty &&
-        d.documentId != null &&
-        !canalAbsent &&
+        (d.documentId != null || d.etatPiece == EtatPieceRevue.nonRequise) &&
         !validationIndeterminee &&
         !bloque;
-    final bool peutRefuser = d.peutRefuser && !canalAbsent && !bloque;
+    final bool peutRefuser = d.peutRefuser && !bloque;
     final List<AccordSoumis> acceptes = <AccordSoumis>[
       for (final AccordSoumis a in d.accords)
         if (a.etat == EtatAccord.accepte) a,
@@ -276,19 +274,21 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
           focusNode: _focusVoirPiece,
           onVoirPiece: () => unawaited(_voirPiece()),
         ),
-        SizedBox(height: section),
-        GroupeReglages(
-          titre: t.dossiers.verifications,
-          lignes: <LigneRubrique>[
-            if (d.verifications.isEmpty)
-              for (final String id in _verificationsAffichees)
-                _ligneInactive(id, palette)
-            else
-              for (final VerificationRevue v in d.verifications)
-                if (libelleVerification(v.id) != null)
-                  _ligneVerification(v, palette),
-          ],
-        ),
+        if (d.etatPiece != EtatPieceRevue.nonRequise) ...<Widget>[
+          SizedBox(height: section),
+          GroupeReglages(
+            titre: t.dossiers.verifications,
+            lignes: <LigneRubrique>[
+              if (d.verifications.isEmpty)
+                for (final String id in _verificationsAffichees)
+                  _ligneInactive(id, palette)
+              else
+                for (final VerificationRevue v in d.verifications)
+                  if (libelleVerification(v.id) != null)
+                    _ligneVerification(v, palette),
+            ],
+          ),
+        ],
         if (acceptes.isNotEmpty) ...<Widget>[
           SizedBox(height: section),
           GroupeReglages(
@@ -370,7 +370,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         _RaisonsDecision(
           horsLigne: horsLigne,
           dossier: d,
-          canalAbsent: canalAbsent,
+
           lectureAttendue: !_lectureFaite,
           verificationsManquantes: manquantes.isNotEmpty,
           validationIndeterminee: validationIndeterminee,
@@ -497,9 +497,13 @@ class _CartePiece extends StatelessWidget {
         icone: AppIcons.dossiers,
         libelle: t.dossiers.pieceNonVisible,
       ),
-      EtatPieceRevue.absente || EtatPieceRevue.nonRequise => LigneRubrique(
+      EtatPieceRevue.absente => LigneRubrique(
         icone: AppIcons.dossiers,
-        libelle: t.dossiers.sansPiece,
+        libelle: t.dossiers.revue.pieceNonTransmise,
+      ),
+      EtatPieceRevue.nonRequise => LigneRubrique(
+        icone: AppIcons.dossiers,
+        libelle: t.dossiers.revue.pieceNonRequise,
       ),
     };
     return GroupeReglages(
@@ -514,7 +518,6 @@ class _RaisonsDecision extends StatelessWidget {
   const _RaisonsDecision({
     required this.horsLigne,
     required this.dossier,
-    required this.canalAbsent,
     required this.lectureAttendue,
     required this.verificationsManquantes,
     required this.validationIndeterminee,
@@ -524,7 +527,6 @@ class _RaisonsDecision extends StatelessWidget {
 
   final bool horsLigne;
   final DossierPourRevue dossier;
-  final bool canalAbsent;
 
   /// La piece doit etre vue avant de verifier (production, AD-7).
   final bool lectureAttendue;
@@ -560,12 +562,18 @@ class _RaisonsDecision extends StatelessWidget {
           ),
         ],
       );
-    } else if (b.contains(BlocageRevue.decisionIndisponible) || canalAbsent) {
+    } else if (b.contains(BlocageRevue.decisionIndisponible)) {
       raison = Text(t.dossiers.revue.etats.decisionIndisponible, style: style);
     } else if (b.contains(BlocageRevue.accordManquant)) {
       raison = Text(t.dossiers.revue.etats.accordManquant, style: style);
     } else if (validationIndeterminee && dossier.peutValider) {
       raison = Text(t.dossiers.validation.indisponible, style: style);
+    } else if (b.contains(BlocageRevue.pieceAbsente)) {
+      raison = Text(
+        t.dossiers.revue.pieceNonTransmise,
+        style: style,
+        textAlign: TextAlign.end,
+      );
     } else if (b.isNotEmpty || lectureAttendue) {
       raison = Text(t.dossiers.revue.pasPret, style: style);
     } else if (verificationsManquantes) {

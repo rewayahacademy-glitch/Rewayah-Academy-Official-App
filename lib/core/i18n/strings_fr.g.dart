@@ -485,11 +485,11 @@ class Traductions$attente$fr {
 	/// fr: 'Il manque encore des pièces à votre dossier.'
 	String get dossierIncomplet => 'Il manque encore des pièces à votre dossier.';
 
-	/// fr: 'Nous vérifions votre dossier. Vous recevrez une notification dès qu'il est validé.'
-	String get enVerification => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.';
+	/// fr: 'Nous vérifions votre dossier.'
+	String get enVerification => 'Nous vérifions votre dossier.';
 
-	/// fr: 'Votre dossier n'a pas été validé.'
-	String get refuse => 'Votre dossier n\'a pas été validé.';
+	/// fr: 'Dossier refusé'
+	String get refuse => 'Dossier refusé';
 
 	/// fr: 'Votre compte est suspendu.'
 	String get suspendu => 'Votre compte est suspendu.';
@@ -527,8 +527,14 @@ class Traductions$attente$fr {
 	/// fr: 'Tout est déposé.'
 	String get toutEstDepose => 'Tout est déposé.';
 
-	/// fr: 'Reprendre mon dossier'
-	String get corriger => 'Reprendre mon dossier';
+	/// fr: 'Corriger'
+	String get corriger => 'Corriger';
+
+	/// fr: 'Ce dossier ne peut pas être modifié pour le moment.'
+	String get correctionImpossible => 'Ce dossier ne peut pas être modifié pour le moment.';
+
+	/// fr: 'Actualiser l'état du dossier'
+	String get actualiser => 'Actualiser l\'état du dossier';
 
 	/// fr: 'Vous pouvez joindre l'académie pour connaître la marche à suivre.'
 	String get suspenduDetail => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.';
@@ -1294,9 +1300,6 @@ class Traductions$dossiers$fr {
 
 	/// fr: 'Refuser le dossier'
 	String get refuser => 'Refuser le dossier';
-
-	/// fr: 'Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.'
-	String get journalisation => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.';
 
 	late final Traductions$dossiers$profilACompleter$fr profilACompleter = Traductions$dossiers$profilACompleter$fr.internal(_root);
 	late final Traductions$dossiers$refus$fr refus = Traductions$dossiers$refus$fr.internal(_root);
@@ -3707,6 +3710,12 @@ class Traductions$dossiers$revue$fr {
 
 	/// fr: 'Identité et dossier'
 	String get identite => 'Identité et dossier';
+
+	/// fr: 'Aucune pièce requise pour ce dossier.'
+	String get pieceNonRequise => 'Aucune pièce requise pour ce dossier.';
+
+	/// fr: 'La pièce requise n’a pas été transmise.'
+	String get pieceNonTransmise => 'La pièce requise n’a pas été transmise.';
 
 	/// fr: 'Pièce d'identité'
 	String get piece => 'Pièce d\'identité';
@@ -11750,8 +11759,8 @@ extension on Traductions {
 			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
-			'attente.enVerification' => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.',
-			'attente.refuse' => 'Votre dossier n\'a pas été validé.',
+			'attente.enVerification' => 'Nous vérifions votre dossier.',
+			'attente.refuse' => 'Dossier refusé',
 			'attente.suspendu' => 'Votre compte est suspendu.',
 			'attente.contacterAcademie' => 'Contacter l\'académie',
 			'attente.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
@@ -11764,7 +11773,9 @@ extension on Traductions {
 			'attente.signerLeContrat' => 'Lire et signer',
 			'attente.lireLaCarte' => 'Lire',
 			'attente.toutEstDepose' => 'Tout est déposé.',
-			'attente.corriger' => 'Reprendre mon dossier',
+			'attente.corriger' => 'Corriger',
+			'attente.correctionImpossible' => 'Ce dossier ne peut pas être modifié pour le moment.',
+			'attente.actualiser' => 'Actualiser l\'état du dossier',
 			'attente.suspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.seDeconnecter' => 'Se déconnecter',
 			'attente.titreDossier' => 'Votre dossier',
@@ -12085,10 +12096,10 @@ extension on Traductions {
 			'ficheEleve.informations.choisir' => 'Choisir une photo',
 			'ficheEleve.informations.changer' => 'Changer la photo',
 			'ficheEleve.informations.apercuTitre' => 'Aperçu',
-			'ficheEleve.informations.apercuPhrase' => 'Vérifiez la photo avant de l\'envoyer.',
-			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.apercuPhrase' => 'Vérifiez la photo avant de l\'envoyer.',
+			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
 			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
 			'ficheEleve.informations.autre' => 'Choisir une autre photo',
 			'ficheEleve.informations.annuler' => 'Annuler',
@@ -12325,6 +12336,8 @@ extension on Traductions {
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
 			'dossiers.visionneuse.documentFictif' => 'Document fictif',
 			'dossiers.revue.identite' => 'Identité et dossier',
+			'dossiers.revue.pieceNonRequise' => 'Aucune pièce requise pour ce dossier.',
+			'dossiers.revue.pieceNonTransmise' => 'La pièce requise n’a pas été transmise.',
 			'dossiers.revue.piece' => 'Pièce d\'identité',
 			'dossiers.revue.voirPiece' => 'Voir la pièce',
 			'dossiers.revue.accords' => 'Accords et éléments soumis',
@@ -12367,7 +12380,6 @@ extension on Traductions {
 			'dossiers.verdict' => 'Décision',
 			'dossiers.approuver' => 'Valider le dossier',
 			'dossiers.refuser' => 'Refuser le dossier',
-			'dossiers.journalisation' => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.',
 			'dossiers.profilACompleter.titre' => 'Profil à compléter',
 			'dossiers.profilACompleter.texte' => 'Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle.',
 			'dossiers.refus.titre' => 'Refuser le dossier',
@@ -12598,11 +12610,11 @@ extension on Traductions {
 			'admin.qualite.colonnePersonne' => 'Concerne',
 			'admin.qualite.colonneDepuis' => 'Depuis',
 			'admin.qualite.colonneStatut' => 'Statut',
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.statutOuvert' => 'Ouverte',
 			'admin.qualite.statutTraite' => 'Traitée',
 			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.depuisUnJour' => '1 jour',
 			'admin.qualite.depuisJours' => ({required Object jours}) => '${jours} jours',
 			'admin.qualite.actionTraiter' => 'Marquer traité',
@@ -13112,11 +13124,11 @@ extension on Traductions {
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
 			'parcours.voirHoraires' => 'Voir les horaires',
 			'parcours.changerHoraire' => 'Changer d\'horaire',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
-			_ => null,
-		} ?? switch (path) {
 			'nav.eleve.coran' => 'Coran',
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
@@ -13626,11 +13638,11 @@ extension on Traductions {
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'classe.catalogue' => 'Choisir une classe',
 			'classe.planning' => 'Planning',
-			_ => null,
-		} ?? switch (path) {
 			'classe.travail' => 'Avant le prochain cours',
 			'classe.ressources' => 'Bibliothèque',
 			'classe.progression' => 'Progression',
@@ -14140,11 +14152,11 @@ extension on Traductions {
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
 			'tc.coran.focus.quitter' => 'Quitter le focus',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.titre' => 'Outils',
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
 			'tc.outils.dock.position.bas' => 'En bas',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.position.gauche' => 'À gauche',
 			'tc.outils.dock.position.droite' => 'À droite',
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',

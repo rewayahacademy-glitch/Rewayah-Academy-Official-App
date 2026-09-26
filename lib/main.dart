@@ -17,6 +17,7 @@ import 'core/observabilite/supervision.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
@@ -77,9 +78,14 @@ Future<void> main() async {
 
   // Demonstration tuteur (P2-07) : `?demo=tuteur`, jamais en production.
   if (demoTuteurActiveIci) {
+    final ({EtatRevueDemo dossiers, String titulaire})? titulaireDemo =
+        dossierTitulaireDemoPour(Uri.base);
     runApp(
       ProviderScope(
-        overrides: surchargesDemoTuteur(),
+        overrides: surchargesDemoTuteur(
+          dossiers: titulaireDemo?.dossiers,
+          titulaire: titulaireDemo?.titulaire,
+        ),
         child: TranslationProvider(
           child: RewayahApp(
             builder: (BuildContext context, Widget? child) =>

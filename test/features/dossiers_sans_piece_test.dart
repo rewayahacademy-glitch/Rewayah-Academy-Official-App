@@ -88,10 +88,11 @@ void main() {
       expect(find.textContaining('Aicha Sow'), findsWidgets);
       // AD-6 : l'identifiant immuable n'est plus affiche dans le detail.
       expect(find.textContaining('TEACHER-AS-000001'), findsNothing);
-      expect(find.text('Aucune pièce déposée'), findsOneWidget);
+      // AD-10 (P-ADM-08.4) : la raison est dite dans la carte et sous les
+      // actions.
       expect(
-        find.text("Ce dossier n'est pas encore prêt à être validé."),
-        findsOneWidget,
+        find.text('La pièce requise n’a pas été transmise.'),
+        findsNWidgets(2),
       );
       expect(
         find.text('Ce dossier ne peut pas être refusé dans son état actuel.'),

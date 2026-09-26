@@ -145,7 +145,7 @@ void main() {
       find.text('La consultation de la pièce est indisponible pour le moment.'),
       findsNothing,
     );
-    expect(find.text(t.dossiers.journalisation), findsNothing);
+    expect(find.textContaining("journal d'audit"), findsNothing);
   });
 
   testWidgets('1440 : cases jamais precochees, lien vers la premiere', (
@@ -346,17 +346,16 @@ void main() {
           true,
           true,
         ),
-        (
-          'Yanis',
-          "Ce dossier n'est pas encore prêt à être validé.",
-          true,
-          false,
-        ),
+        ('Yanis', 'La pièce requise n’a pas été transmise.', true, false),
       ]) {
     testWidgets('390 : $prenom -> $texte', (WidgetTester tester) async {
       await _monter(tester, const Size(390, 844));
       await _ouvrir(tester, prenom);
-      expect(find.text(texte), findsOneWidget);
+      // Yanis : la raison est dite dans la carte ET sous les actions (AD-10).
+      expect(
+        find.text(texte),
+        prenom == 'Yanis' ? findsNWidgets(2) : findsOneWidget,
+      );
       expect(
         _bouton(tester, 'Valider le dossier').onPress == null,
         validerFerme,

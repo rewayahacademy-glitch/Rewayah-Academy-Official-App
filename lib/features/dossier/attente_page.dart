@@ -10,6 +10,7 @@ import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -32,12 +33,41 @@ import '../inscription/brouillon_inscription.dart';
 /// Quatre etats, calcules en base par `etat_dossier()` et non ici : le portail
 /// doit dire exactement ce que l'administration voit, et deux calculs finissent
 /// toujours par diverger.
-class AttentePage extends ConsumerWidget {
+class AttentePage extends ConsumerStatefulWidget {
   /// Cree le portail d'attente.
   const AttentePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AttentePage> createState() => _AttentePageState();
+}
+
+class _AttentePageState extends ConsumerState<AttentePage> {
+  /// Relit l'etat au retour dans l'application (P-ADM-11.1) : aucun signal
+  /// serveur n'existe (AD-BR-26), la relecture est le seul moyen honnete de
+  /// voir une decision prise pendant l'absence.
+  late final AppLifecycleListener _cycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _cycle = AppLifecycleListener(onResume: () => unawaited(_relire()));
+  }
+
+  @override
+  void dispose() {
+    _cycle.dispose();
+    super.dispose();
+  }
+
+  /// Relit le dossier puis la session : un compte devenu actif est alors
+  /// redirige par la garde existante vers la racine de son role.
+  Future<void> _relire() async {
+    ref.invalidate(etatDossierProvider);
+    await ref.read(sourceSessionProvider).rafraichir();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<EtatDossier> etat = ref.watch(etatDossierProvider);
     final GoRouter? routeur = GoRouter.maybeOf(context);
 
@@ -46,11 +76,11 @@ class AttentePage extends ConsumerWidget {
     // conservant `hasError`.
     final _Prochaine? prochaine = etat.hasValue
         ? _prochaine(
-              etat.requireValue,
-              adulte:
-                  ref.watch(brouillonInscriptionProvider).usage ==
-                  UsageInscription.moi,
-            )
+            etat.requireValue,
+            adulte:
+                ref.watch(brouillonInscriptionProvider).usage ==
+                UsageInscription.moi,
+          )
         : etat.hasError
         ? _Prochaine(
             t.commun.reessayer,
@@ -71,6 +101,14 @@ class AttentePage extends ConsumerWidget {
                   ? () => routeur?.go(prochaine.chemin!)
                   : prochaine.geste,
               fleche: prochaine.chemin != null,
+            ),
+            Ecart.vMd,
+          ],
+          if (etat.value?.etape == EtapeDossier.enVerification) ...<Widget>[
+            ActionPrincipale(
+              libelle: t.attente.actualiser,
+              onPress: () => unawaited(_relire()),
+              niveau: NiveauAction.tertiaire,
             ),
             Ecart.vMd,
           ],
@@ -113,17 +151,22 @@ class _Prochaine {
 /// `adulte` : l'inscription vient de « Moi uniquement » (eleve adulte, son
 /// propre tuteur) ; le contrat s'ouvre alors en variante eleve adulte
 /// (`?pour=moi`). Sans brouillon (rechargement), variante responsable legal.
-_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) => switch (etat.etape) {
-  EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
-    _action(etat.manquants.first),
-    _chemin(etat.manquants.first, adulte: adulte),
-  ),
-  EtapeDossier.refuse => _Prochaine.vers(
-    t.attente.corriger,
-    Routes.attentePiece,
-  ),
-  _ => null,
-};
+_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) =>
+    switch (etat.etape) {
+      EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
+        _action(etat.manquants.first),
+        _chemin(etat.manquants.first, adulte: adulte),
+      ),
+      // « Corriger » mene au premier element a corriger (P-ADM-09.2) : la piece
+      // refusee figure dans manquants, apres l'accuse et le contrat.
+      EtapeDossier.refuse
+          when etat.correctionAutorisee != false && etat.manquants.isNotEmpty =>
+        _Prochaine.vers(
+          t.attente.corriger,
+          _chemin(etat.manquants.first, adulte: adulte),
+        ),
+      _ => null,
+    };
 
 String _libelle(PieceManquante piece) => switch (piece) {
   PieceManquante.accuse => t.attente.carteAccuse,
@@ -137,8 +180,7 @@ String _action(PieceManquante piece) => switch (piece) {
   PieceManquante.pieceIdentite => t.attente.deposerLaPiece,
 };
 
-String _chemin(PieceManquante piece, {required bool adulte}) =>
-    switch (piece) {
+String _chemin(PieceManquante piece, {required bool adulte}) => switch (piece) {
   PieceManquante.accuse => Routes.attenteAccuse,
   PieceManquante.contrat =>
     adulte ? '${Routes.attenteContrat}?pour=moi' : Routes.attenteContrat,
@@ -216,7 +258,12 @@ class _Statut extends StatelessWidget {
             ),
           ),
           Ecart.vMd,
-          Text(t.attente.refuseDetail, style: textes.bodyMedium),
+          Text(
+            etat.correctionAutorisee == false
+                ? t.attente.correctionImpossible
+                : t.attente.refuseDetail,
+            style: textes.bodyMedium,
+          ),
         ],
       ),
       EtapeDossier.suspendu => _Bloc(

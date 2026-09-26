@@ -302,7 +302,7 @@ LigneRubrique ligneDossier(
   if (d.etatPiece == EtatPieceRevue.nonVisible) {
     return (t.dossiers.pieceNonVisible, TonEtat.avertissement);
   }
-  return d.aPieceIdentite
+  return d.aPieceIdentite || d.etatPiece == EtatPieceRevue.nonRequise
       ? (t.dossiers.file.enVerification, TonEtat.accent)
       : (t.dossiers.sansPiece, TonEtat.avertissement);
 }
