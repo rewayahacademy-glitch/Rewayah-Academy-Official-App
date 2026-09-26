@@ -311,16 +311,11 @@ class _PiedUtilisateur extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Text(
-                        nom,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textes.titleSmall,
-                      ),
+                      // AD-11 (1.4.4) : jamais coupes a 200 %, ils passent
+                      // a la ligne.
+                      Text(nom, style: textes.titleSmall),
                       Text(
                         role,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         style: palette.inkMuted.applyTo(
                           textes.bodySmall ?? const TextStyle(),
                         ),
@@ -354,9 +349,17 @@ class _Tiroir extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    // AD-11 (1.4.10) : l'indicateur M3 mesure 336 de large (tiroir de 360) ;
+    // a 320 de large (1280 a 400 %), il deborderait de 40. Il suit donc la
+    // largeur de la vue, retrait de tuile compris.
+    final double largeurIndicateur =
+        (MediaQuery.sizeOf(context).width - 2 * _retraitTuileNav)
+            .clamp(0, 336)
+            .toDouble();
 
     return NavigationDrawerTheme(
       data: NavigationDrawerThemeData(
+        indicatorSize: Size(largeurIndicateur, 56),
         labelTextStyle: _stylesLibelleNav(context, palette),
         iconTheme: _stylesIconeNav(palette),
       ),
@@ -679,6 +682,7 @@ class _BoutonRecherche extends StatelessWidget {
         decoration: InputDecoration(
           isDense: true,
           hintText: t.nav.admin.rechercheIndication,
+          hintMaxLines: 2,
           prefixIcon: Icon(AppIcons.recherche.repos),
         ),
       ),
@@ -764,6 +768,9 @@ class _BarreMobileState extends State<_BarreMobile> {
                     decoration: InputDecoration(
                       isDense: true,
                       hintText: t.nav.admin.rechercheIndication,
+                      // AD-11 (1.4.4) : a 200 %, l'indication passe a la
+                      // ligne au lieu d'etre coupee.
+                      hintMaxLines: 2,
                       prefixIcon: Icon(AppIcons.recherche.repos),
                     ),
                   ),

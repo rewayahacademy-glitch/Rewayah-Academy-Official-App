@@ -9,6 +9,10 @@ import '../theme/app_spacing.dart';
 import 'entete_page.dart';
 import 'offline_banner.dart';
 
+/// Hauteur disponible sous laquelle la tete d'une page defilante defile avec
+/// le corps (vue tres basse, zoom 400 %) au lieu de rester fixe.
+const double _hauteurTeteFixe = 360;
+
 /// Le gabarit de page du produit. **Tout ecran passe par lui.**
 ///
 /// Ce qu'il tient, et qu'aucun ecran ne refait
@@ -195,16 +199,30 @@ class PageShell extends StatelessWidget {
             Expanded(
               child: _Colonne(
                 gouttiere: gabarit.gouttiere,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    ...tete,
-                    Expanded(
-                      child: defilante
-                          ? SingleChildScrollView(child: corps)
-                          : corps,
-                    ),
-                  ],
+                // AD-11 (1.4.10) : sur une vue tres basse (1280x1024 a
+                // 400 %, soit 256 de haut), la tete fixe ne laisse plus de
+                // place au corps et deborde ; la page defilante fait alors
+                // defiler la tete avec le corps.
+                child: LayoutBuilder(
+                  builder: (BuildContext _, BoxConstraints contraintes) =>
+                      defilante && contraintes.maxHeight < _hauteurTeteFixe
+                      ? SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[...tete, corps],
+                          ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            ...tete,
+                            Expanded(
+                              child: defilante
+                                  ? SingleChildScrollView(child: corps)
+                                  : corps,
+                            ),
+                          ],
+                        ),
                 ),
               ),
             ),
