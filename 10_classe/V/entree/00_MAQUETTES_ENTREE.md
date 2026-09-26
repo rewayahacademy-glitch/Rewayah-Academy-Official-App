@@ -110,9 +110,9 @@ La page du Coran affichée comme support (P2 04A) relève du lecteur du Coran, h
 
 ### Actions (contrat B)
 
-8. **Avant l'ouverture, pas de bouton grisé.**
-   - Les images montrent « Rejoindre » désactivé ; la spec demande un libellé d'état non interactif.
-   - Le bouton n'apparaît qu'à l'ouverture, sans changer de page.
+8. **Un seul emplacement d'entrée** (proposition du directeur, 26/09, règle R4).
+   - Il remplace la pastille « Dans 3 h 28 », la note « Le bouton sera disponible… » et le bouton grisé des images.
+   - Avant l'ouverture, c'est une ligne d'état calme, « Cours dans 8 min ». À l'ouverture, il devient le bouton « Rejoindre » ou « Préparer l'entrée », au même endroit.
 9. **Place du bouton sur bureau** :
    - dans la carte de séance, 16 sous son contenu ;
    - aligné sur le bord de fin (trailing) ;
