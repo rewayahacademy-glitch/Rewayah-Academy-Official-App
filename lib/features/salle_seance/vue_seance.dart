@@ -260,6 +260,7 @@ class VueSeance {
     this.support,
     this.cameraEnseignantActive = true,
     this.cameraAutorisee = true,
+    this.microBloque = false,
     this.signalEnseignant = 3,
     this.eleves = const <EleveSeance>[],
     this.elevesConnus = true,
@@ -330,6 +331,11 @@ class VueSeance {
 
   /// La politique du profil autorise la camera de l'eleve (ADR-009).
   final bool cameraAutorisee;
+
+  /// Le micro est refuse par le systeme de l'appareil (P09) : signal du
+  /// moteur (BR-1), jamais detecte par l'ecran. Le geste Micro ouvre alors
+  /// la feuille « micro bloque » et le micro reste montre coupe (P09.6).
+  final bool microBloque;
 
   /// Barres de signal de la video de l'enseignant (0 a 3), lues seulement
   /// par l'enseignant.
@@ -619,6 +625,7 @@ class VueSeance {
     bool sansSupport = false,
     bool? enregistrementConfirme,
     bool? cameraAutorisee,
+    bool? microBloque,
     List<EleveSeance>? eleves,
     FinSeance? fin,
     PanneauOuvert? panneau,
@@ -636,6 +643,7 @@ class VueSeance {
     support: sansSupport ? null : support ?? this.support,
     cameraEnseignantActive: cameraEnseignantActive,
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,
+    microBloque: microBloque ?? this.microBloque,
     signalEnseignant: signalEnseignant,
     eleves: eleves ?? this.eleves,
     elevesConnus: elevesConnus,

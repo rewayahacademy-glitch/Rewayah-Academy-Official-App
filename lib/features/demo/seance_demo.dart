@@ -212,6 +212,7 @@ abstract final class DonneesSeanceDemo {
           : const HorlogeRestante(32),
       connexion: connexion(etat),
       cameraAutorisee: etat != EtatDemoSalle.cameraInterdite,
+      microBloque: etat == EtatDemoSalle.microBloque,
       visite: etat == EtatDemoSalle.visite
           ? const VisiteSeance(prenomEnfant: eleveCourant, concerneMoi: true)
           : null,

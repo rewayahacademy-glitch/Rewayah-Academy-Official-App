@@ -18,6 +18,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/pressable.dart';
 import 'actions_seance.dart';
+import 'feuille_micro_bloque.dart';
 import 'vue_seance.dart';
 
 /// Le fond d'un [BoutonAppel].
@@ -94,8 +95,13 @@ class BoutonAppel extends StatelessWidget {
     this.libelleSemantique,
     this.fond = FondBoutonAppel.surface,
     this.actif = true,
+    this.focusNode,
     super.key,
   });
+
+  /// Le noeud de focus du bouton : la salle y rend le focus a la fermeture
+  /// d'une feuille ouverte par ce bouton (micro bloque, W2 2.4.3).
+  final FocusNode? focusNode;
 
   final IconData icone;
   final String libelle;
@@ -164,6 +170,7 @@ class BoutonAppel extends StatelessWidget {
     return Pressable(
       onPress: onPress,
       actif: actif,
+      focusNode: focusNode,
       libelleSemantique: libelleSemantique ?? libelle,
       arrondiFocus: AppRadius.arrondiMd,
       child: Column(
@@ -223,19 +230,11 @@ class DockSeance extends StatelessWidget {
       case CommandeDock.micro:
         final VoidCallback? micro = actions.onMicro;
         if (micro == null) return null;
-        return BoutonAppel(
-          icone: colore
-              ? (microOuvert ? AppIcons.micro : AppIcons.microCoupe).actif
-              : (microOuvert ? AppIcons.micro : AppIcons.microCoupe).repos,
-          libelle: colore ? t.salle.seance.parler : t.salle.micro,
-          libelleSemantique:
-              vue.libelleIndisponible(
-                colore ? t.salle.seance.parler : t.salle.micro,
-              ) ??
-              (microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro),
-          actif: vue.commandesPublicationActives,
-          fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
-          onPress: micro,
+        return _BoutonMicro(
+          vue: vue,
+          actions: actions,
+          microOuvert: microOuvert,
+          onMicro: micro,
         );
       case CommandeDock.camera:
         final VoidCallback? camera = actions.onCamera;
@@ -361,6 +360,70 @@ class DockSeance extends StatelessWidget {
 }
 
 /// Le filet vertical du dock enseignant desktop, avant Quitter.
+/// Le bouton Micro du dock. Micro bloque par le systeme
+/// ([VueSeance.microBloque], P09) : le geste ouvre la feuille « micro
+/// bloque » au lieu de basculer le micro, le bouton reste « coupe » et, a la
+/// fermeture, le focus revient ici (UX_REVIEW U5, W2 2.4.3).
+class _BoutonMicro extends StatefulWidget {
+  const _BoutonMicro({
+    required this.vue,
+    required this.actions,
+    required this.microOuvert,
+    required this.onMicro,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final bool microOuvert;
+  final VoidCallback onMicro;
+
+  @override
+  State<_BoutonMicro> createState() => _BoutonMicroState();
+}
+
+class _BoutonMicroState extends State<_BoutonMicro> {
+  final FocusNode _focus = FocusNode(debugLabel: 'bouton-micro');
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
+  Future<void> _ouvrirFeuille() async {
+    await ouvrirFeuilleMicroBloque(
+      context,
+      vue: widget.vue,
+      actions: widget.actions,
+    );
+    if (mounted) _focus.requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final VueSeance vue = widget.vue;
+    // Guidee (Q1) : « Parler » en disque plein.
+    final bool colore = vue.dockColore;
+    // Bloque : jamais montre ouvert (P09.6).
+    final bool ouvert = widget.microOuvert && !vue.microBloque;
+    final String libelle = colore ? t.salle.seance.parler : t.salle.micro;
+    return BoutonAppel(
+      key: const ValueKey<String>('bouton-micro'),
+      focusNode: _focus,
+      icone: colore
+          ? (ouvert ? AppIcons.micro : AppIcons.microCoupe).actif
+          : (ouvert ? AppIcons.micro : AppIcons.microCoupe).repos,
+      libelle: libelle,
+      libelleSemantique:
+          vue.libelleIndisponible(libelle) ??
+          (ouvert ? t.salle.fermerMicro : t.salle.ouvrirMicro),
+      actif: vue.commandesPublicationActives,
+      fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
+      onPress: vue.microBloque ? _ouvrirFeuille : widget.onMicro,
+    );
+  }
+}
+
 class _Separateur extends StatelessWidget {
   const _Separateur({required this.hauteur});
 
