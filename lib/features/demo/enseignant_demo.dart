@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/coran/service_coran.dart' show PositionLecture;
 import '../../core/domain/enums.dart';
+import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/presence/service_presence.dart' show EtatPresence;
@@ -495,6 +496,25 @@ abstract final class DonneesEnseignantDemo {
     debut: DateTime(2026, 9, 29, 18),
     enseignantAbsent: 'Sayyid Harun',
   );
+
+  /// L'offre de remplacement d'Aujourd'hui (ENS-13B, EN-8), tiree de
+  /// [remplacement] : la seance d'Al-Fatiha, 45 min, ses trois eleves. Ni le
+  /// motif ni l'enseignant absent ne sont montres.
+  static OffreRemplacement offreRemplacement() {
+    final ClasseEnseignantDemo c = classe(remplacement.classeId);
+    return OffreRemplacement(
+      seanceId: 'demo-seance-al-fatiha-2909',
+      classe: c.nom,
+      debut: remplacement.debut,
+      fin: remplacement.debut.add(const Duration(minutes: 45)),
+      nbEleves: c.eleves.length,
+    );
+  }
+
+  /// L'etat que le serveur de demonstration rend a une absence declaree
+  /// (doc 04 §17.2) : la recherche d'un remplacant commence. Jamais
+  /// « Remplacant confirme » sur la seule declaration (E7).
+  static const EtatAbsence etatAbsenceDeclaree = EtatAbsence.recherche;
 
   /// Le profil de l'enseignant, tel que le service le rendrait.
   static const ProfilEnseignant profil = ProfilEnseignant(

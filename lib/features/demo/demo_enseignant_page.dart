@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
@@ -142,6 +143,20 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
       () => DonneesEnseignantDemo.maintenant,
     ),
     seancesEnseignantProvider.overrideWith((Ref _) async => seances),
+    // Absence et remplacement (ENS-13, ENS-13B, EN-8) : l'offre d'Al-Fatiha
+    // en Alerte utile, et des reponses simulees qui ne quittent pas
+    // l'appareil (K-28). Hors ligne, aucune reponse, donc aucun etat (E7).
+    declarationAbsenceProvider.overrideWithValue(
+      DeclarationAbsenceDemo(horsLigne: etat == EtatDemoEnseignant.horsLigne),
+    ),
+    reponseRemplacementProvider.overrideWithValue(
+      ReponseRemplacementDemo(horsLigne: etat == EtatDemoEnseignant.horsLigne),
+    ),
+    offresRemplacementProvider.overrideWithValue(
+      vide
+          ? const <OffreRemplacement>[]
+          : <OffreRemplacement>[DonneesEnseignantDemo.offreRemplacement()],
+    ),
     // Classes (ENS-09) : les quatre Classes, leur niveau, leur langue et le
     // remplacement d'Al-Fatiha. Le cahier non valide d'Al-Badr vient de
     // `cahiersEnRetardProvider`, plus bas.
@@ -221,6 +236,38 @@ class _ChoixPhotoDemo implements ChoixPhotoPublique {
 
   @override
   Future<PhotoChoisie?> choisir() async => const PhotoChoisie();
+}
+
+/// La declaration d'absence de la demonstration (ENS-13, EN-8) : rien ne
+/// part. L'etat n'arrive qu'apres la reponse simulee ; hors ligne, aucune
+/// reponse, donc aucun etat (E7).
+class DeclarationAbsenceDemo implements DeclarationAbsence {
+  /// Cree le port ; [horsLigne] simule l'absence de reponse.
+  const DeclarationAbsenceDemo({this.horsLigne = false});
+
+  /// Vrai quand l'appareil est hors ligne.
+  final bool horsLigne;
+
+  @override
+  Future<EtatAbsence?> declarer(String seanceId) =>
+      Future<EtatAbsence?>.delayed(
+        const Duration(milliseconds: 600),
+        () => horsLigne ? null : DonneesEnseignantDemo.etatAbsenceDeclaree,
+      );
+}
+
+/// La reponse aux offres de la demonstration (ENS-13B, EN-8) : rien ne part.
+/// La confirmation n'arrive qu'apres la reponse simulee ; hors ligne, jamais.
+class ReponseRemplacementDemo implements ReponseRemplacement {
+  /// Cree le port ; [horsLigne] simule l'absence de reponse.
+  const ReponseRemplacementDemo({this.horsLigne = false});
+
+  /// Vrai quand l'appareil est hors ligne.
+  final bool horsLigne;
+
+  @override
+  Future<bool> assurer(OffreRemplacement offre) =>
+      Future<bool>.delayed(const Duration(milliseconds: 600), () => !horsLigne);
 }
 
 /// L'envoi de la demonstration : rien ne part, la cle est fictive. Le succes

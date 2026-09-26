@@ -2864,7 +2864,28 @@
       "voirClasseLecteur": "Voir la Classe {classe}",
       "aucuneSeance": "Aucune séance à venir",
       "aucuneSeanceDetail": "Vos prochaines séances apparaîtront ici.",
-      "date": "{jour} {numero} {mois}"
+      "date": "{jour} {numero} {mois}",
+      "absence": {
+        "ouvrir": "Déclarer une absence",
+        "titre": "Vous ne pourrez pas assurer cette séance ?",
+        "cleDate": "Date",
+        "notice": "Votre affectation à la Classe reste inchangée.",
+        "declarer": "Déclarer mon absence",
+        "echec": "La demande n'a pas abouti. Réessayez dans un instant.",
+        "etats": {
+          "enregistree": "Absence enregistrée",
+          "recherche": "Recherche d'un remplaçant",
+          "remplacantConfirme": "Remplaçant confirmé",
+          "aucunRemplacant": "Aucun remplaçant confirmé",
+          "seanceAnnulee": "Séance annulée",
+          "demandeAnnulee": "Demande annulée"
+        }
+      },
+      "remplacement": {
+        "titre": "Assurer ce remplacement ?",
+        "assurer": "Assurer ce remplacement",
+        "pasCetteFois": "Pas cette fois"
+      }
     },
     "salle": {
       "reference": "Présenté : page {page} sur {total} · {reference}",

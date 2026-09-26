@@ -7798,6 +7798,9 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String date({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+
+	late final Traductions$enseignant$journee$absence$fr absence = Traductions$enseignant$journee$absence$fr.internal(_root);
+	late final Traductions$enseignant$journee$remplacement$fr remplacement = Traductions$enseignant$journee$remplacement$fr.internal(_root);
 }
 
 // Path: enseignant.salle
@@ -10235,6 +10238,53 @@ class Traductions$enseignant$signalement$categories$fr {
 	String get autre => 'Autre';
 }
 
+// Path: enseignant.journee.absence
+class Traductions$enseignant$journee$absence$fr {
+	Traductions$enseignant$journee$absence$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Déclarer une absence'
+	String get ouvrir => 'Déclarer une absence';
+
+	/// fr: 'Vous ne pourrez pas assurer cette séance ?'
+	String get titre => 'Vous ne pourrez pas assurer cette séance ?';
+
+	/// fr: 'Date'
+	String get cleDate => 'Date';
+
+	/// fr: 'Votre affectation à la Classe reste inchangée.'
+	String get notice => 'Votre affectation à la Classe reste inchangée.';
+
+	/// fr: 'Déclarer mon absence'
+	String get declarer => 'Déclarer mon absence';
+
+	/// fr: 'La demande n'a pas abouti. Réessayez dans un instant.'
+	String get echec => 'La demande n\'a pas abouti. Réessayez dans un instant.';
+
+	late final Traductions$enseignant$journee$absence$etats$fr etats = Traductions$enseignant$journee$absence$etats$fr.internal(_root);
+}
+
+// Path: enseignant.journee.remplacement
+class Traductions$enseignant$journee$remplacement$fr {
+	Traductions$enseignant$journee$remplacement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Assurer ce remplacement ?'
+	String get titre => 'Assurer ce remplacement ?';
+
+	/// fr: 'Assurer ce remplacement'
+	String get assurer => 'Assurer ce remplacement';
+
+	/// fr: 'Pas cette fois'
+	String get pasCetteFois => 'Pas cette fois';
+}
+
 // Path: tc.groupe.mesGroupes
 class Traductions$tc$groupe$mesGroupes$fr {
 	Traductions$tc$groupe$mesGroupes$fr.internal(this._root);
@@ -12450,6 +12500,33 @@ class Traductions$classe$entree$demo$etats$fr {
 
 	/// fr: 'Changement d'heure'
 	String get changementHeure => 'Changement d\'heure';
+}
+
+// Path: enseignant.journee.absence.etats
+class Traductions$enseignant$journee$absence$etats$fr {
+	Traductions$enseignant$journee$absence$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Absence enregistrée'
+	String get enregistree => 'Absence enregistrée';
+
+	/// fr: 'Recherche d'un remplaçant'
+	String get recherche => 'Recherche d\'un remplaçant';
+
+	/// fr: 'Remplaçant confirmé'
+	String get remplacantConfirme => 'Remplaçant confirmé';
+
+	/// fr: 'Aucun remplaçant confirmé'
+	String get aucunRemplacant => 'Aucun remplaçant confirmé';
+
+	/// fr: 'Séance annulée'
+	String get seanceAnnulee => 'Séance annulée';
+
+	/// fr: 'Demande annulée'
+	String get demandeAnnulee => 'Demande annulée';
 }
 
 // Path: tc.outils.dock.position
@@ -15102,6 +15179,21 @@ extension on Traductions {
 			'enseignant.journee.aucuneSeance' => 'Aucune séance à venir',
 			'enseignant.journee.aucuneSeanceDetail' => 'Vos prochaines séances apparaîtront ici.',
 			'enseignant.journee.date' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
+			'enseignant.journee.absence.ouvrir' => 'Déclarer une absence',
+			'enseignant.journee.absence.titre' => 'Vous ne pourrez pas assurer cette séance ?',
+			'enseignant.journee.absence.cleDate' => 'Date',
+			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
+			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
+			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
+			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
+			'enseignant.journee.absence.etats.recherche' => 'Recherche d\'un remplaçant',
+			'enseignant.journee.absence.etats.remplacantConfirme' => 'Remplaçant confirmé',
+			'enseignant.journee.absence.etats.aucunRemplacant' => 'Aucun remplaçant confirmé',
+			'enseignant.journee.absence.etats.seanceAnnulee' => 'Séance annulée',
+			'enseignant.journee.absence.etats.demandeAnnulee' => 'Demande annulée',
+			'enseignant.journee.remplacement.titre' => 'Assurer ce remplacement ?',
+			'enseignant.journee.remplacement.assurer' => 'Assurer ce remplacement',
+			'enseignant.journee.remplacement.pasCetteFois' => 'Pas cette fois',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
 			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre groupe.',
@@ -15193,6 +15285,8 @@ extension on Traductions {
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
@@ -15208,8 +15302,6 @@ extension on Traductions {
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
 			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.',
@@ -15707,6 +15799,8 @@ extension on Traductions {
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
@@ -15722,8 +15816,6 @@ extension on Traductions {
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',

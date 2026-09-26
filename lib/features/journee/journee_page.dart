@@ -36,6 +36,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
@@ -56,6 +57,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -67,6 +69,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
+import 'absence_remplacement_vue.dart';
 
 /// Combien de cahiers « A terminer » montre au plus (planche 1).
 const int maximumATerminer = 3;
@@ -230,18 +233,37 @@ class _Corps extends ConsumerWidget {
         t.enseignant.journee.erreurPartielle,
     ];
 
+    // ENS-13B : les offres arrivent en Alerte utile ; une offre acceptee et
+    // confirmee par le serveur devient la carte « Remplacement » (EN-8).
+    final List<OffreRemplacement> confirmes = ref.watch(
+      remplacementsConfirmesProvider,
+    );
+    final List<OffreRemplacement> offres = ref
+        .watch(offresRemplacementProvider)
+        .where(
+          (OffreRemplacement o) =>
+              !confirmes.any((OffreRemplacement c) => c.seanceId == o.seanceId),
+        )
+        .toList(growable: false);
+
     return _Composition(
       prochaine: _CarteProchaineSeance(
         seance: dominant,
         maintenant: maintenant,
       ),
+      remplacements: <Widget>[
+        for (final OffreRemplacement r in confirmes)
+          CarteRemplacement(offre: r, date: dateLisible(r.debut)),
+      ],
       maJournee: _MaJournee(
         journee: journee,
         prochain: dominant,
         maintenant: maintenant,
       ),
       aTerminer: aTerminer.isEmpty ? null : _ATerminer(cahiers: aTerminer),
-      alertes: alertes.isEmpty ? null : _AlertesUtiles(alertes: alertes),
+      alertes: alertes.isEmpty && offres.isEmpty
+          ? null
+          : _AlertesUtiles(alertes: alertes, offres: offres),
     );
   }
 }
@@ -282,9 +304,11 @@ class _Composition extends StatelessWidget {
     required this.maJournee,
     required this.aTerminer,
     required this.alertes,
+    this.remplacements = const <Widget>[],
   });
 
   final Widget prochaine;
+  final List<Widget> remplacements;
   final Widget maJournee;
   final Widget? aTerminer;
   final Widget? alertes;
@@ -299,6 +323,11 @@ class _Composition extends StatelessWidget {
         final Widget ecartSection = deuxColonnes ? Ecart.vXxxl : Ecart.vXxl;
         final List<Widget> principale = <Widget>[
           prochaine,
+          // Deux cartes autonomes d'une meme section : 16 (contrat A).
+          for (final Widget carte in remplacements) ...<Widget>[
+            Ecart.vLg,
+            carte,
+          ],
           ecartSection,
           maJournee,
         ];
@@ -425,6 +454,10 @@ class _CarteProchaineSeance extends ConsumerWidget {
 
     final bool enCours = cours.enCoursA(maintenant);
     final String nom = _nomClasse(cours.groupeLibelle);
+    final DeclarationAbsence? declaration = ref.watch(
+      declarationAbsenceProvider,
+    );
+    final EtatAbsence? absence = ref.watch(etatsAbsenceProvider)[cours.id];
     // Tant que la reponse est inconnue, l'appareil est repute en ligne.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final SessionClockVM horloge = SessionClockVM.depuisFenetre(
@@ -487,6 +520,14 @@ class _CarteProchaineSeance extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              // ENS-13 : l'etat de l'absence, sous le nom (style K-42, §5).
+              if (absence != null) ...<Widget>[
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: PastilleAbsence(etat: absence),
+                ),
+                Ecart.vMd,
+              ],
               // La date seulement si ce n'est pas aujourd'hui : l'en-tete de
               // la page la dit deja (un element en moins, K-42).
               if (!_memeJour(cours.debut, maintenant)) ...<Widget>[
@@ -527,6 +568,44 @@ class _CarteProchaineSeance extends ConsumerWidget {
                 onEntrer: () => _agir(context, ref, cours, emplacement),
                 onReessayer: () => ref.invalidate(seancesEnseignantProvider),
               ),
+              // ENS-13 : l'absence s'ouvre depuis sa seance (E3), une fois,
+              // avant la seance. Ensuite, l'etat rendu par le serveur reste
+              // lisible sur la pastille (doc 04 §17.2).
+              if (declaration != null &&
+                  absence == null &&
+                  !enCours &&
+                  cours.statut == StatutSeance.planifiee &&
+                  cours.debut.isAfter(maintenant)) ...<Widget>[
+                Ecart.vSm,
+                // Au bord de debut, a largeur naturelle (contrat B).
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: IntrinsicWidth(
+                    child: ActionPrincipale(
+                      key: const ValueKey<String>('journee-declarer-absence'),
+                      libelle: t.enseignant.journee.absence.ouvrir,
+                      niveau: NiveauAction.tertiaire,
+                      pleineLargeur: false,
+                      onPress: () async {
+                        final EtatAbsence? etat = await ouvrirFeuilleAbsence(
+                          context,
+                          port: declaration,
+                          seanceId: cours.id,
+                          classe: nom,
+                          debut: cours.debut,
+                          fin: cours.fin,
+                          date: dateLisible(cours.debut),
+                        );
+                        if (etat != null) {
+                          ref
+                              .read(etatsAbsenceProvider.notifier)
+                              .retenir(cours.id, etat);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -686,14 +765,20 @@ class _ATerminer extends ConsumerWidget {
   }
 }
 
-/// « Alertes utiles » : une ligne par alerte, sans destination.
-class _AlertesUtiles extends StatelessWidget {
-  const _AlertesUtiles({required this.alertes});
+/// « Alertes utiles » : une ligne par alerte, sans destination, sauf l'offre
+/// de remplacement (ENS-13B), qui ouvre « Assurer ce remplacement ? ».
+class _AlertesUtiles extends ConsumerWidget {
+  const _AlertesUtiles({
+    required this.alertes,
+    this.offres = const <OffreRemplacement>[],
+  });
 
   final List<String> alertes;
+  final List<OffreRemplacement> offres;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ReponseRemplacement? port = ref.watch(reponseRemplacementProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -701,6 +786,31 @@ class _AlertesUtiles extends StatelessWidget {
         Ecart.vSm,
         GroupeReglages(
           lignes: <LigneRubrique>[
+            for (final OffreRemplacement offre in offres)
+              LigneRubrique(
+                icone: AppIcons.cours,
+                libelle: t.enseignant.journee.remplacement.titre,
+                legende:
+                    '${offre.classe} · ${dateLisible(offre.debut)} · '
+                    '${_hhmm(offre.debut)}',
+                onPress: port == null
+                    ? null
+                    : () async {
+                        final bool confirme = await ouvrirFeuilleRemplacement(
+                          context,
+                          port: port,
+                          offre: offre,
+                          date: dateLisible(offre.debut),
+                        );
+                        // La carte n'apparait que sur la confirmation du
+                        // serveur (E7).
+                        if (confirme) {
+                          ref
+                              .read(remplacementsConfirmesProvider.notifier)
+                              .confirmer(offre);
+                        }
+                      },
+              ),
             for (final String alerte in alertes)
               LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
           ],
