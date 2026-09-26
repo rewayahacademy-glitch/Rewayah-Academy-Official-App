@@ -338,7 +338,9 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
 
   /// Aucun `get_decision_result` (AD-BR-07) : la file en cache d'abord, puis
   /// le rechargement existant. Absent : deja traite, sans attribuer la
-  /// decision au clic local (17.6). Present : inconnu, reprise permise.
+  /// decision au clic local (17.6). Present : toujours en attente, JAMAIS un
+  /// echec -- la requete peut etre encore en vol et `decider_dossier` n'est
+  /// ni idempotent ni garde (AD-BR-06/07) : aucune reprise ouverte (Q-AD8-9).
   @override
   Future<EtatCommande> resultatDecision({
     required String dossierId,
@@ -354,7 +356,7 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     if (_documentEnFile(await recharger(), dossierId) == null) {
       return const EtatCommandeEchouee(CodeErreurRevue.dejaDecide);
     }
-    return const EtatCommandeInconnue();
+    return const EtatCommandeEnAttente();
   }
 }
 

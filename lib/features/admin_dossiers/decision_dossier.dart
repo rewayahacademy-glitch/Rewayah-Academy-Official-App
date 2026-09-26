@@ -11,6 +11,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show KeepAliveLink;
 import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
@@ -114,7 +115,10 @@ EtatDecision etatPourCode(CommandeDecision c, CodeErreurRevue code) =>
       CodeErreurRevue.dejaDecide => DecisionConflit(c),
       CodeErreurRevue.verificationManquante ||
       CodeErreurRevue.accordManquant ||
-      CodeErreurRevue.activationImpossible => DecisionPlusPrete(c),
+      CodeErreurRevue.activationImpossible =>
+        c.decision == DecisionDossier.valider
+            ? DecisionPlusPrete(c)
+            : DecisionInterdite(c),
       CodeErreurRevue.pieceIndisponible =>
         c.decision == DecisionDossier.valider
             ? DecisionPlusPrete(c)
@@ -130,6 +134,10 @@ EtatDecision etatPourCode(CommandeDecision c, CodeErreurRevue code) =>
 
 /// Les decisions en cours, par dossier.
 class DecisionsDossiersNotifier extends Notifier<Map<String, EtatDecision>> {
+  /// Tenu tant qu'une commande n'est pas resolue : quitter la page ne doit
+  /// jamais rouvrir les decisions sans relecture (P-ADM-10.6).
+  KeepAliveLink? _garde;
+
   @override
   Map<String, EtatDecision> build() => <String, EtatDecision>{};
 
@@ -141,10 +149,22 @@ class DecisionsDossiersNotifier extends Notifier<Map<String, EtatDecision>> {
       m[dossierId] = e;
     }
     state = m;
+    if (m.values.any((EtatDecision x) => x.nonResolue)) {
+      _garde ??= ref.keepAlive();
+    } else {
+      _garde?.close();
+      _garde = null;
+    }
   }
 
-  /// Envoie (ou rejoue) une commande. Aucune relance automatique.
+  /// Envoie (ou rejoue) une commande. Aucune relance automatique. Une
+  /// commande deja non resolue pour ce dossier n'est jamais doublee (double
+  /// tap, Entree repetee) : l'etat courant est rendu tel quel.
   Future<EtatDecision> envoyer(CommandeDecision c) async {
+    final EtatDecision? courant = state[c.dossierId];
+    if (courant != null && courant.nonResolue) {
+      return courant;
+    }
     _poser(c.dossierId, DecisionEnvoi(c));
     EtatDecision fin;
     try {
@@ -197,8 +217,9 @@ class DecisionsDossiersNotifier extends Notifier<Map<String, EtatDecision>> {
           c,
           code,
         ),
-        // Le dossier est toujours la apres relecture : echec, reprise permise
-        // avec la meme charge (Q-AD8-9).
+        // Le port affirme que la commande n'est jamais arrivee (il suit les
+        // commandId) : echec certain, reprise avec la meme charge. Un port
+        // qui ne sait pas trancher rend EtatCommandeEnAttente (Q-AD8-9).
         EtatCommandeInconnue() => DecisionEchec(c),
       };
     } on Object {
@@ -214,7 +235,8 @@ class DecisionsDossiersNotifier extends Notifier<Map<String, EtatDecision>> {
   void oublier(String dossierId) => _poser(dossierId, null);
 }
 
-/// Les decisions de la session, purgees quand plus rien ne les lit.
+/// Les decisions de la session, purgees quand plus rien ne les lit et
+/// qu'aucune commande n'est en suspens.
 final NotifierProvider<DecisionsDossiersNotifier, Map<String, EtatDecision>>
 decisionsDossiersProvider =
     NotifierProvider.autoDispose<

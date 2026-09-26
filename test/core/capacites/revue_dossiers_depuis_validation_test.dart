@@ -386,7 +386,8 @@ void main() {
       );
       expect(
         await port.resultatDecision(dossierId: 'p1', commandeId: 'c1'),
-        isA<EtatCommandeInconnue>(),
+        // Toujours present : en attente, jamais un echec (Q-AD8-9).
+        isA<EtatCommandeEnAttente>(),
       );
       expect(recharges, 1);
       recharge = <DossierAValider>[];

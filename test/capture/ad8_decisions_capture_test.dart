@@ -8,8 +8,9 @@
 // visible sur chaque capture).
 //
 // Matrice couverte (item 2 du lot) : refus vide/erreur/saisi, envoi, reussite,
-// conflit, inconnu, validation (ouverture), hors ligne (surface ouverte puis
-// coupure) ; 390x844, 768x1024, 1440x900, clair et sombre.
+// conflit, inconnu, validation (ouverture, envoi, reussite), refus
+// indisponible/interdit/trop long (port de capture), hors ligne (surface
+// ouverte puis coupure) ; 390x844, 768x1024, 1440x900, clair et sombre.
 
 import 'dart:async';
 
@@ -20,6 +21,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -45,9 +47,12 @@ late GoRouter _routeur;
 /// Enveloppe la demonstration : `decider` attend [porte] avant de
 /// transmettre, pour figer « ... en cours... » le temps d'une capture.
 class _PortEnvoiControle implements PortRevueDossiers {
-  _PortEnvoiControle(this._base);
+  _PortEnvoiControle(this._base, {this.erreur});
 
   final PortRevueDossiers _base;
+
+  /// Levee par `decider` a la place de la decision (etats secondaires).
+  final Exception? erreur;
   final Completer<void> porte = Completer<void>();
 
   @override
@@ -76,6 +81,10 @@ class _PortEnvoiControle implements PortRevueDossiers {
     required Set<String> verificationsFaites,
     String? motif,
   }) async {
+    final Exception? e = erreur;
+    if (e != null) {
+      throw e;
+    }
     await porte.future;
     return _base.decider(
       dossierId: dossierId,
@@ -278,7 +287,10 @@ void main() {
           WidgetTester tester,
         ) async {
           fixerVueCapture(tester, taille, _densite(nom));
-          await _monter(tester, taille, mode);
+          final _PortEnvoiControle port = _PortEnvoiControle(
+            RevueDossiersDemo(EtatRevueDemo.initial()),
+          );
+          await _monter(tester, taille, mode, port: port);
           await _ouvrirLigne(tester, 'Omar');
           for (final String point in <String>[
             t.dossiers.pointLisible,
@@ -302,7 +314,72 @@ void main() {
           debugPrint(
             'PNG ${await capturer(tester, 'ad8_validation_${nom}_${mode.name}')}',
           );
+
+          // Envoi puis reussite (« Dossier valide. ») depuis la meme 02E.
+          await tester.tap(find.text(t.dossiers.approuver).last);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 50));
+          expect(find.text(t.dossiers.validation.envoi), findsOneWidget);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ad8_validation_envoi_${nom}_${mode.name}')}',
+          );
+          port.porte.complete();
+          await _stabiliser(tester);
+          await _stabiliser(tester);
+          expect(find.text(t.dossiers.validation.succes), findsOneWidget);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ad8_validation_reussite_${nom}_${mode.name}')}',
+          );
         });
+
+        // 2 bis. Etats secondaires du refus (dossier 01) : le port de
+        //        capture rend le code, la demonstration ne les atteint pas.
+        for (final (String cas, Exception erreur, String texte)
+            in <(String, Exception, String)>[
+              (
+                'indisponible',
+                const CapaciteIndisponible('capture'),
+                t.dossiers.refus.indisponible,
+              ),
+              (
+                'interdit',
+                const ErreurRevueDossier(CodeErreurRevue.interdit),
+                t.dossiers.refus.interdit,
+              ),
+              (
+                'trop_long',
+                const ErreurRevueDossier(CodeErreurRevue.motifTropLong),
+                t.dossiers.refus.tropLong,
+              ),
+            ]) {
+          testWidgets('$nom, refus $cas, ${mode.name}', (
+            WidgetTester tester,
+          ) async {
+            fixerVueCapture(tester, taille, _densite(nom));
+            await _monter(
+              tester,
+              taille,
+              mode,
+              port: _PortEnvoiControle(
+                RevueDossiersDemo(EtatRevueDemo.initial()),
+                erreur: erreur,
+              ),
+            );
+            await _ouvrirLigne(tester, 'Omar');
+            await _versLabel(tester, find.text(t.dossiers.refuser).first);
+            await tester.tap(find.text(t.dossiers.refuser).first);
+            await _stabiliser(tester);
+            await tester.enterText(_champMotif, 'Photo illisible.');
+            await _stabiliser(tester);
+            await tester.tap(find.text(t.dossiers.refuser).last);
+            await _stabiliser(tester);
+            await _stabiliser(tester);
+            expect(find.text(texte), findsOneWidget);
+            debugPrint(
+              'PNG ${await capturer(tester, 'ad8_refus_${cas}_${nom}_${mode.name}')}',
+            );
+          });
+        }
 
         // 3. Refus, conflit (dossier 05 : un autre administrateur a tranche).
         testWidgets('$nom, refus conflit, ${mode.name}', (
@@ -319,7 +396,7 @@ void main() {
           await tester.tap(find.text(t.dossiers.refuser).last);
           await _stabiliser(tester);
           await _stabiliser(tester);
-          expect(find.text(t.dossiers.refus.conflit), findsOneWidget);
+          expect(find.text(t.dossiers.decision.conflit), findsOneWidget);
           debugPrint(
             'PNG ${await capturer(tester, 'ad8_refus_conflit_${nom}_${mode.name}')}',
           );

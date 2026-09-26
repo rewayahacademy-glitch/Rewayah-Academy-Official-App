@@ -74,7 +74,8 @@ class _EtatSurface extends ChangeNotifier {
   }
 }
 
-String _nom(DossierPourRevue d) => '${d.prenom} ${d.nom}'.trim();
+String _nom(DossierPourRevue d) =>
+    t.dossiers.decision.nomComplet(prenom: d.prenom, nom: d.nom).trim();
 
 /// Le message de l'etat, ou nul.
 String? _message(
@@ -90,7 +91,7 @@ String? _message(
     t.dossiers.refus.tropLong,
   DecisionEchec() =>
     refus ? t.dossiers.refus.erreur : t.dossiers.validation.erreur,
-  DecisionConflit() => t.dossiers.refus.conflit,
+  DecisionConflit() => t.dossiers.decision.conflit,
   DecisionInconnue() || DecisionVerification() =>
     refus ? t.dossiers.refus.inconnu : t.dossiers.validation.inconnu,
   DecisionInterdite() =>
@@ -396,7 +397,10 @@ class _ActionsState extends ConsumerState<_Actions> {
   }
 
   void _confirmer(EtatDecision? e) {
-    if (ref.read(horsLigneProvider).value ?? false) {
+    // L'etat capture a la construction peut etre perime (double tap, Entree
+    // repetee avant la reconstruction) : on relit l'etat courant.
+    if ((ref.read(horsLigneProvider).value ?? false) ||
+        (ref.read(decisionsDossiersProvider)[_id]?.nonResolue ?? false)) {
       return;
     }
     final TextEditingController? motif = widget.motif;
@@ -484,13 +488,15 @@ class _ActionsState extends ConsumerState<_Actions> {
         );
 
     return switch (e) {
+      // Le dossier a change ou ete traite : l'ancien motif ne vaut plus
+      // (en production la revision reste 0, la cle de la revue ne change pas).
       DecisionConflit() || DecisionPlusPrete() => unique(
         t.dossiers.revue.etats.actualiserDossier,
-        _relire,
+        () => _relire(purgerMotif: true),
       ),
       DecisionTraitee() => unique(
         t.dossiers.revue.etats.retourDossiers,
-        _relire,
+        () => _relire(purgerMotif: true),
       ),
       DecisionInterdite() => unique(
         t.commun.fermer,

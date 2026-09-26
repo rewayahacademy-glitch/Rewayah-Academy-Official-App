@@ -464,7 +464,7 @@ void main() {
     await tester.tap(find.text('Valider le dossier').last);
     await _stabiliser(tester);
     expect(
-      find.text(t.dossiers.refus.conflit),
+      find.text(t.dossiers.decision.conflit),
       findsOneWidget,
       reason: find
           .byType(Text)
@@ -476,7 +476,7 @@ void main() {
     expect(find.text('Valider le dossier'), findsOneWidget);
     await tester.tap(find.text('Actualiser le dossier').last);
     await _stabiliser(tester);
-    expect(find.text(t.dossiers.refus.conflit), findsNothing);
+    expect(find.text(t.dossiers.decision.conflit), findsNothing);
     expect(find.text(t.dossiers.validation.titre), findsNothing);
   });
 }

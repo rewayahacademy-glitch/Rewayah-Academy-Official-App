@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
@@ -23,6 +27,59 @@ Future<void> _taper(WidgetTester tester, String libelle) async {
   await tester.pumpAndSettle();
   await tester.tap(cible);
   await tester.pumpAndSettle();
+}
+
+/// Retient `decider` et compte les appels ; le reste va a la demonstration.
+class _PortRetenu implements PortRevueDossiers {
+  _PortRetenu(this._base);
+
+  final PortRevueDossiers _base;
+  final Completer<void> porte = Completer<void>();
+  int appels = 0;
+
+  @override
+  Future<PageDossiers> listerDossiers({
+    String? curseur,
+    int limite = 20,
+    AppRole? role,
+  }) => _base.listerDossiers(curseur: curseur, limite: limite, role: role);
+
+  @override
+  Future<DossierPourRevue> dossierPourRevue(String dossierId) =>
+      _base.dossierPourRevue(dossierId);
+
+  @override
+  Future<VuePiece> demanderVuePiece({
+    required String dossierId,
+    required String documentId,
+  }) => _base.demanderVuePiece(dossierId: dossierId, documentId: documentId);
+
+  @override
+  Future<ResultatDecision> decider({
+    required String dossierId,
+    required int revisionAttendue,
+    required DecisionDossier decision,
+    required String commandeId,
+    required Set<String> verificationsFaites,
+    String? motif,
+  }) async {
+    appels++;
+    await porte.future;
+    return _base.decider(
+      dossierId: dossierId,
+      revisionAttendue: revisionAttendue,
+      decision: decision,
+      commandeId: commandeId,
+      verificationsFaites: verificationsFaites,
+      motif: motif,
+    );
+  }
+
+  @override
+  Future<EtatCommande> resultatDecision({
+    required String dossierId,
+    required String commandeId,
+  }) => _base.resultatDecision(dossierId: dossierId, commandeId: commandeId);
 }
 
 /// Rend visible puis tape (la revue ouverte directement n'a pas de liste).
@@ -78,6 +135,41 @@ void main() {
     );
     expect(find.text('Omar Haddad'), findsNothing);
     expect(find.text('Amina Benali'), findsOneWidget);
+  });
+
+  testWidgets('AD-8 : Entree n envoie pas ; double tap = un seul envoi', (
+    WidgetTester tester,
+  ) async {
+    final EtatRevueDemo etat = EtatRevueDemo.initial();
+    final _PortRetenu port = _PortRetenu(RevueDossiersDemo(etat));
+    final List<Override> s = surchargesDemoAdmin(
+      environnement: 'staging',
+      etat: etat,
+    );
+    s[1] = portRevueDossiersProvider.overrideWithValue(port);
+    await tester.pumpWidget(hote(const DossiersPage(), surcharges: s));
+    await tester.pumpAndSettle();
+    await ouvrirPremierDossier(tester);
+
+    await _toucher(tester, t.dossiers.refuser);
+    await tester.enterText(find.byType(TextField), 'Motif fictif.');
+    await tester.pumpAndSettle();
+    // Entree dans le champ multiligne : aucune decision, 02D reste ouverte.
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(port.appels, 0);
+    expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+    // Deux taps dans le meme frame, avant toute reconstruction.
+    final Finder confirmer = find.text(t.dossiers.refuser).last;
+    await tester.tap(confirmer);
+    await tester.tap(confirmer);
+    await tester.pump();
+    expect(port.appels, 1);
+    port.porte.complete();
+    await tester.pumpAndSettle();
+    expect(port.appels, 1);
+    expect(etat.nombreDecisions, 1);
+    expect(find.text(t.dossiers.refus.succes), findsOneWidget);
   });
 
   testWidgets('AD-8 : refus a reponse perdue (07), une seule decision', (

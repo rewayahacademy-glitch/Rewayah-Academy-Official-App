@@ -3783,9 +3783,6 @@ class Traductions$dossiers$refus$fr {
 	/// fr: 'Le dossier n'a pas pu être refusé.'
 	String get erreur => 'Le dossier n\'a pas pu être refusé.';
 
-	/// fr: 'Ce dossier a été traité par un autre membre de l'équipe.'
-	String get conflit => 'Ce dossier a été traité par un autre membre de l\'équipe.';
-
 	/// fr: 'Vous êtes hors ligne. Le refus n’a pas été envoyé.'
 	String get horsLigne => 'Vous êtes hors ligne. Le refus n’a pas été envoyé.';
 
@@ -3866,6 +3863,12 @@ class Traductions$dossiers$decision$fr {
 
 	/// fr: 'Ce dossier a déjà été traité.'
 	String get dejaTraite => 'Ce dossier a déjà été traité.';
+
+	/// fr: 'Ce dossier a été traité par un autre membre de l'équipe.'
+	String get conflit => 'Ce dossier a été traité par un autre membre de l\'équipe.';
+
+	/// fr: '{prenom} {nom}'
+	String nomComplet({required Object prenom, required Object nom}) => '${prenom} ${nom}';
 }
 
 // Path: admin.tableau
@@ -12340,7 +12343,6 @@ extension on Traductions {
 			'dossiers.refus.tropLong' => 'Le motif dépasse la longueur autorisée.',
 			'dossiers.refus.envoi' => 'Refus en cours…',
 			'dossiers.refus.erreur' => 'Le dossier n\'a pas pu être refusé.',
-			'dossiers.refus.conflit' => 'Ce dossier a été traité par un autre membre de l\'équipe.',
 			'dossiers.refus.horsLigne' => 'Vous êtes hors ligne. Le refus n’a pas été envoyé.',
 			'dossiers.refus.inconnu' => 'Le résultat du refus n’est pas encore confirmé.',
 			'dossiers.refus.interdit' => 'Vous ne pouvez plus refuser ce dossier.',
@@ -12362,6 +12364,8 @@ extension on Traductions {
 			'dossiers.validation.succes' => 'Dossier validé.',
 			'dossiers.decision.verifierResultat' => 'Vérifier le résultat',
 			'dossiers.decision.dejaTraite' => 'Ce dossier a déjà été traité.',
+			'dossiers.decision.conflit' => 'Ce dossier a été traité par un autre membre de l\'équipe.',
+			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '${prenom} ${nom}',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.foyers' => 'Foyers sans enseignant',
@@ -12562,9 +12566,9 @@ extension on Traductions {
 			'admin.qualite.statutTraite' => 'Traitée',
 			'admin.qualite.depuisAujourdhui' => 'Aujourd\'hui',
 			'admin.qualite.depuisUnJour' => '1 jour',
-			'admin.qualite.depuisJours' => ({required Object jours}) => '${jours} jours',
 			_ => null,
 		} ?? switch (path) {
+			'admin.qualite.depuisJours' => ({required Object jours}) => '${jours} jours',
 			'admin.qualite.actionTraiter' => 'Marquer traité',
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Marquer traité : ${personne}',
 			'admin.qualite.champNote' => 'Note (optionnelle)',
@@ -13076,9 +13080,9 @@ extension on Traductions {
 			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
-			'nav.tuteur.disponibilites' => 'Disponibilités',
 			_ => null,
 		} ?? switch (path) {
+			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',
 			'nav.tuteur.suivi' => 'Suivi',
 			'nav.tuteur.historique' => 'Historique',
@@ -13590,9 +13594,9 @@ extension on Traductions {
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
 			'classe.titre' => 'Classe',
-			'classe.historique' => 'Historique',
 			_ => null,
 		} ?? switch (path) {
+			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
@@ -14104,9 +14108,9 @@ extension on Traductions {
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
 			'tc.outils.dock.focus' => 'Focus',
 			'tc.outils.dock.marquer' => 'Marquer',
-			'tc.outils.dock.masquer' => 'Masquer',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',

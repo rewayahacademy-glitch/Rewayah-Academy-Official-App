@@ -1001,7 +1001,6 @@
       "tropLong": "Le motif dépasse la longueur autorisée.",
       "envoi": "Refus en cours…",
       "erreur": "Le dossier n'a pas pu être refusé.",
-      "conflit": "Ce dossier a été traité par un autre membre de l'équipe.",
       "horsLigne": "Vous êtes hors ligne. Le refus n’a pas été envoyé.",
       "inconnu": "Le résultat du refus n’est pas encore confirmé.",
       "interdit": "Vous ne pouvez plus refuser ce dossier.",
@@ -1026,7 +1025,9 @@
     },
     "decision": {
       "verifierResultat": "Vérifier le résultat",
-      "dejaTraite": "Ce dossier a déjà été traité."
+      "dejaTraite": "Ce dossier a déjà été traité.",
+      "conflit": "Ce dossier a été traité par un autre membre de l'équipe.",
+      "nomComplet": "{prenom} {nom}"
     }
   },
   "admin": {
