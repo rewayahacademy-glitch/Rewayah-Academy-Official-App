@@ -8,16 +8,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/app.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -31,6 +34,8 @@ Future<void> _stabiliser(WidgetTester tester) async {
   }
 }
 
+late GoRouter _routeur;
+
 /// Un port qui ne repond jamais : le detail reste sur son squelette.
 Future<DossierPourRevue> _jamais() => Completer<DossierPourRevue>().future;
 
@@ -40,10 +45,10 @@ Future<void> _monter(
   ThemeMode mode, {
   List<Override> plus = const <Override>[],
 }) async {
-  tester.view.physicalSize = taille;
-  tester.view.devicePixelRatio = 1;
-  addTearDown(tester.view.resetPhysicalSize);
-  addTearDown(tester.view.resetDevicePixelRatio);
+  // La taille et la densite viennent de `fixerVueCapture` (390 a @3).
+  // `MaterialApp.router` sur le vrai routeur plutot que `RewayahApp` : la
+  // persistance des preferences appelle `path_provider`, absent sous
+  // `runAsync` (meme choix que `coque_admin_capture_test.dart`).
   await tester.pumpWidget(
     ProviderScope(
       key: UniqueKey(),
@@ -54,19 +59,32 @@ Future<void> _monter(
       child: TranslationProvider(
         child: RepaintBoundary(
           key: cadreCapture,
-          child: RewayahApp(
-            themeMode: mode,
-            builder: (BuildContext context, Widget? child) =>
-                RepereDemonstration(child: child),
+          child: Consumer(
+            builder: (BuildContext context, WidgetRef ref, Widget? _) {
+              _routeur = ref.read(routeurProvider);
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                darkTheme: AppTheme.pour(
+                  InterfaceMode.standard,
+                  Brightness.dark,
+                ),
+                themeMode: mode,
+                locale: TranslationProvider.of(context).flutterLocale,
+                supportedLocales: AppLocaleUtils.supportedLocales,
+                localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                routerConfig: _routeur,
+                builder: (BuildContext context, Widget? child) =>
+                    RepereDemonstration(child: child),
+              );
+            },
           ),
         ),
       ),
     ),
   );
   await _stabiliser(tester);
-  ProviderScope.containerOf(tester.element(find.byType(RewayahApp)))
-      .read(routeurProvider)
-      .go(Routes.admin);
+  _routeur.go(Routes.admin);
   await _stabiliser(tester);
 }
 
@@ -74,6 +92,13 @@ Future<void> _monter(
 Future<void> _ouvrirDossiers(WidgetTester tester) async {
   final Finder barre = find.byKey(AdminShell.barreLateraleKey);
   final bool mobile = barre.evaluate().isEmpty;
+  // 768 : le rail n'a ni barre laterale ni menu ; la capture va a la route
+  // (le parcours tape est couvert a 390 et 1440 par les tests de revue).
+  if (mobile && find.bySemanticsLabel(t.nav.admin.menu).evaluate().isEmpty) {
+    _routeur.go(Routes.adminPersonnesDossiers);
+    await _stabiliser(tester);
+    return;
+  }
   if (mobile) {
     await tester.tap(find.bySemanticsLabel(t.nav.admin.menu));
     await _stabiliser(tester);

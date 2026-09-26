@@ -18,6 +18,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
+import 'file_dossiers.dart' show actualiserDossiers;
 import 'textes_dossier.dart';
 
 /// La revue d'un dossier (`ADM-02B`, AD-6), lue par le port. Ordre de
@@ -122,7 +123,8 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
             approuve: approuve,
             motif: approuve ? null : _motif.text.trim(),
           );
-      ref.invalidate(dossiersEnAttenteProvider);
+      // Les trois caches de la file et du detail, comme « Actualiser ».
+      actualiserDossiers(ref);
       if (mounted) {
         widget.onDecision();
       }
@@ -208,16 +210,19 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         _CarteIdentite(dossier: d),
         SizedBox(height: section),
         _CartePiece(dossier: d),
-        if (d.verifications.isNotEmpty) ...<Widget>[
-          SizedBox(height: section),
-          GroupeReglages(
-            titre: t.dossiers.verifications,
-            lignes: <LigneRubrique>[
+        SizedBox(height: section),
+        GroupeReglages(
+          titre: t.dossiers.verifications,
+          lignes: <LigneRubrique>[
+            if (d.verifications.isEmpty)
+              for (final String id in _verificationsAffichees)
+                _ligneInactive(id, palette)
+            else
               for (final VerificationRevue v in d.verifications)
-                _ligneVerification(v, palette),
-            ],
-          ),
-        ],
+                if (libelleVerification(v.id) != null)
+                  _ligneVerification(v, palette),
+          ],
+        ),
         if (acceptes.isNotEmpty) ...<Widget>[
           SizedBox(height: section),
           GroupeReglages(
@@ -249,16 +254,20 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
           // IntrinsicWidth : le bouton au contenu (le Container centre
           // d'ActionPrincipale s'etirerait sinon a la largeur du Wrap).
           children: <Widget>[
-            IntrinsicWidth(
-              child: ActionPrincipale(
-                libelle: t.dossiers.refuser,
-                niveau: NiveauAction.destructive,
-                pleineLargeur: false,
-                onPress: peutRefuser
-                    ? () => setState(() => _refusEnCours = true)
-                    : null,
+            // Motif ouvert : le seul « Refuser » visible est celui qui envoie
+            // (un seul bouton destructif). Motif en ligne provisoire jusqu'a
+            // AD-8 (ADM-02D), AD-BR-07.
+            if (!(_refusEnCours && peutRefuser))
+              IntrinsicWidth(
+                child: ActionPrincipale(
+                  libelle: t.dossiers.refuser,
+                  niveau: NiveauAction.destructive,
+                  pleineLargeur: false,
+                  onPress: peutRefuser
+                      ? () => setState(() => _refusEnCours = true)
+                      : null,
+                ),
               ),
-            ),
             IntrinsicWidth(
               child: ActionPrincipale(
                 libelle: t.dossiers.approuver,
@@ -318,10 +327,22 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
     );
   }
 
+  /// Une verification que ce dossier n'ouvre pas : non cochee, non pressable.
+  LigneRubrique _ligneInactive(String id, AppPalette palette) => LigneRubrique(
+    libelle: libelleVerification(id)!,
+    cochee: false,
+    meneur: ExcludeSemantics(
+      child: IconTheme(
+        data: palette.borderStrong.asIconTheme(size: AppSpacing.xxl),
+        child: Icon(AppIcons.succes.resoudre(selectionne: false)),
+      ),
+    ),
+  );
+
   LigneRubrique _ligneVerification(VerificationRevue v, AppPalette palette) {
     final bool cochee = _cochee(v);
     return LigneRubrique(
-      libelle: libelleVerification(v.id),
+      libelle: libelleVerification(v.id)!,
       cochee: cochee,
       focusNode: _noeud(v.id),
       onPress: v.modifiable
@@ -344,12 +365,23 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
 }
 
 /// Le libelle d'une verification, dans l'ordre du code : lisible, nom,
-/// validite.
-String libelleVerification(String id) => switch (id) {
+/// validite. Un identifiant inconnu n'a pas de libelle : il n'est pas
+/// affiche, plutot que d'emprunter celui d'une autre verification.
+String? libelleVerification(String id) => switch (id) {
   'lisible' => t.dossiers.pointLisible,
   'nom' => t.dossiers.pointNom,
-  _ => t.dossiers.pointValidite,
+  'validite' => t.dossiers.pointValidite,
+  _ => null,
 };
+
+/// Les verifications montrees sans case active quand le dossier n'en ouvre
+/// aucune (piece absente ou hors de portee) : la carte reste, la raison est
+/// dite sous les actions (§10.4, §26 ter).
+const List<String> _verificationsAffichees = <String>[
+  'lisible',
+  'nom',
+  'validite',
+];
 
 class _CarteIdentite extends StatelessWidget {
   const _CarteIdentite({required this.dossier});
@@ -466,13 +498,11 @@ class _RaisonsDecision extends StatelessWidget {
     } else if (b.isNotEmpty) {
       raison = Text(t.dossiers.revue.pasPret, style: style);
     } else if (verificationsManquantes) {
-      raison = Semantics(
-        link: true,
-        child: LienFleche(
-          libelle: t.dossiers.revue.etats.verificationsIncompletes,
-          onPress: onAllerPremiere,
-          fleche: false,
-        ),
+      raison = LienFleche(
+        libelle: t.dossiers.revue.etats.verificationsIncompletes,
+        onPress: onAllerPremiere,
+        fleche: false,
+        annonceLien: true,
       );
     }
     final bool refusFerme = !dossier.peutRefuser && !horsLigne;

@@ -110,6 +110,7 @@ class Pressable extends StatefulWidget {
     this.selectionne,
     this.coche,
     this.focusNode,
+    this.lien = false,
   }) : constructeur = null;
 
   /// Cree une zone pressable dont le contenu suit l'etat d'interaction.
@@ -130,6 +131,7 @@ class Pressable extends StatefulWidget {
     this.selectionne,
     this.coche,
     this.focusNode,
+    this.lien = false,
   }) : child = null;
 
   /// Le contenu rendu, quand il ne depend pas de l'etat.
@@ -165,6 +167,10 @@ class Pressable extends StatefulWidget {
 
   /// Etat de case annonce (`Semantics.checked`). Nul : non annonce.
   final bool? coche;
+
+  /// Annonce un lien (Semantics.link) plutot qu'un bouton : il mene a un
+  /// endroit, il n'engage rien.
+  final bool lien;
 
   /// Le noeud de focus de la zone, pour qu'un ecran puisse y poser le focus.
   final FocusNode? focusNode;
@@ -315,7 +321,8 @@ class _PressableState extends State<Pressable>
     }
 
     return Semantics(
-      button: _pressable,
+      button: _pressable && !widget.lien,
+      link: widget.lien,
       enabled: _pressable,
       selected: widget.selectionne,
       checked: widget.coche,

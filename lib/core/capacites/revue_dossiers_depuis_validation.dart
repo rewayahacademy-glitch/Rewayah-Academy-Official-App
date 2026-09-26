@@ -103,9 +103,13 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     }
     final EtatPieceRevue piece = _etatPiece(d) ?? EtatPieceRevue.absente;
     final bool disponible = piece == EtatPieceRevue.disponible;
-    final BlocageRevue manque = piece == EtatPieceRevue.nonVisible
-        ? BlocageRevue.pieceNonVisible
-        : BlocageRevue.pieceAbsente;
+    // Jusqu'a AD-7, la piece ne s'ouvre pas en production : les verifications
+    // restent non modifiables et la validation fermee (AD-BR-03, Q-AD6-1).
+    final BlocageRevue manque = switch (piece) {
+      EtatPieceRevue.disponible => BlocageRevue.pieceNonConsultable,
+      EtatPieceRevue.nonVisible => BlocageRevue.pieceNonVisible,
+      _ => BlocageRevue.pieceAbsente,
+    };
     // `decider_dossier` exige `p_document_id` : sans piece, aucun geste.
     final bool peutRefuser = d.documentId != null;
     return DossierPourRevue(
@@ -129,17 +133,15 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
               origine: OrigineVerification.humaine,
               obligatoire: true,
               etat: EtatVerification.aFaire,
-              modifiable: true,
+              modifiable: false,
             ),
       ],
       // Aucun accord versionne n'est lu (AD-BR-02) : la carte est masquee.
       accords: const <AccordSoumis>[],
-      peutValider: disponible,
+      peutValider: false,
       peutRefuser: peutRefuser,
       peutVoirPiece: d.documentId != null,
-      blocagesValidation: disponible
-          ? const <BlocageRevue>[]
-          : <BlocageRevue>[manque],
+      blocagesValidation: <BlocageRevue>[manque],
       blocagesRefus: peutRefuser
           ? const <BlocageRevue>[]
           : <BlocageRevue>[manque],

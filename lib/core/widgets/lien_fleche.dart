@@ -25,6 +25,7 @@ class LienFleche extends StatelessWidget {
     super.key,
     this.fleche = true,
     this.icone,
+    this.annonceLien = false,
   });
 
   /// Icone decorative facultative devant le libelle (« Comment ca marche ? »
@@ -38,6 +39,10 @@ class LienFleche extends StatelessWidget {
   /// part ne devrait d'ailleurs pas etre rendu.
   final VoidCallback? onPress;
 
+  /// Vrai : annonce comme lien (Semantics.link), non comme bouton. Pour un
+  /// lien qui deplace le focus dans l'ecran (AD-6).
+  final bool annonceLien;
+
   /// Faux pour un lien sans fleche, en fin de phrase par exemple.
   final bool fleche;
 
@@ -50,6 +55,7 @@ class LienFleche extends StatelessWidget {
     return Pressable.selon(
       onPress: onPress,
       libelleSemantique: libelle,
+      lien: annonceLien,
       arrondiFocus: AppRadius.arrondiSm,
       constructeur: (BuildContext contexte, EtatPression etat) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),

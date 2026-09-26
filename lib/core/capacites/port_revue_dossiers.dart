@@ -48,6 +48,10 @@ enum BlocageRevue {
   accordManquant,
   dejaDecide,
   decisionIndisponible,
+
+  /// La piece existe mais ne peut pas encore etre ouverte (visionneuse
+  /// d'AD-7) : on n'atteste pas une piece qu'on n'a pas vue.
+  pieceNonConsultable,
 }
 
 /// Le verdict.

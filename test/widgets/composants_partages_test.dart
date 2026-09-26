@@ -412,15 +412,21 @@ void main() {
           tester,
           find.byType(GroupeReglages),
         );
-        final ColoredBox fond = tester.widget(
-          find
-              .descendant(
+        // Le fond de ligne est un DecoratedBox (barre de selection, HL-A-1).
+        final Iterable<Color?> fonds = tester
+            .widgetList<DecoratedBox>(
+              find.descendant(
                 of: find.byType(GroupeReglages),
-                matching: find.byType(ColoredBox),
-              )
-              .first,
-        );
-        expect(fond.color, palette.surfaceRaised.background);
+                matching: find.byType(DecoratedBox),
+              ),
+            )
+            .map(
+              (DecoratedBox b) => switch (b.decoration) {
+                final BoxDecoration d => d.color,
+                _ => null,
+              },
+            );
+        expect(fonds, contains(palette.surfaceRaised.background));
       });
     }
   });

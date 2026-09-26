@@ -234,28 +234,41 @@ class _Ligne extends StatelessWidget {
                       bottom: AppSpacing.md,
                       end: AppSpacing.lg,
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(child: _textes(palette, textes)),
-                        if (ligne.controle != null) ...<Widget>[
-                          Ecart.hSm,
-                          ligne.controle!,
-                        ],
-                        if (ligne.onPress != null &&
-                            ligne.controle == null &&
-                            ligne.cochee == null) ...<Widget>[
-                          Ecart.hSm,
-                          ExcludeSemantics(
-                            child: IconTheme(
-                              data: palette.inkMuted.asIconTheme(
-                                size: AppSpacing.xl,
+                    child: _controleSousLibelle(context)
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              _textes(palette, textes),
+                              Ecart.vXs,
+                              Align(
+                                alignment: AlignmentDirectional.centerEnd,
+                                child: ligne.controle,
                               ),
-                              child: Icon(AppIcons.chevron.repos),
-                            ),
+                            ],
+                          )
+                        : Row(
+                            children: <Widget>[
+                              Expanded(child: _textes(palette, textes)),
+                              if (ligne.controle != null) ...<Widget>[
+                                Ecart.hSm,
+                                ligne.controle!,
+                              ],
+                              if (ligne.onPress != null &&
+                                  ligne.controle == null &&
+                                  ligne.cochee == null) ...<Widget>[
+                                Ecart.hSm,
+                                ExcludeSemantics(
+                                  child: IconTheme(
+                                    data: palette.inkMuted.asIconTheme(
+                                      size: AppSpacing.xl,
+                                    ),
+                                    child: Icon(AppIcons.chevron.repos),
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
-                        ],
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -265,6 +278,17 @@ class _Ligne extends StatelessWidget {
       ),
     );
   }
+
+  /// Le controle passe sous le libelle quand le texte est agrandi (150 % et
+  /// plus) sur une largeur de telephone : a cote, un bouton a 200 % deborde
+  /// (AD-6, 390 a 200 %). ponytail: seuil fixe sur l'echelle et la largeur,
+  /// pas une mesure du controle ; a remplacer par une mise en page mesuree
+  /// si un controle large deborde encore a moins de 150 %.
+  bool _controleSousLibelle(BuildContext context) =>
+      ligne.controle != null &&
+      MediaQuery.textScalerOf(context).scale(AppSpacing.lg) >=
+          AppSpacing.lg * 1.5 &&
+      MediaQuery.sizeOf(context).width < 600;
 
   Widget _textes(AppPalette palette, TextTheme textes) {
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(

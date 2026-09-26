@@ -158,6 +158,11 @@ void main() {
       expect(_coche(tester, p), isFalse);
     }
     const String lien = 'Terminez les vérifications requises.';
+    // Le lien est annonce comme lien, pas comme bouton (une seule annonce).
+    expect(
+      tester.getSemantics(find.bySemanticsLabel(lien)),
+      isSemantics(isLink: true, isButton: false),
+    );
     await _taperTexte(tester, lien);
     Rect focus = FocusManager.instance.primaryFocus!.rect;
     expect(tester.getRect(find.text(_points[0])).overlaps(focus), isTrue);
@@ -174,6 +179,25 @@ void main() {
     }
     expect(_bouton(tester, 'Valider le dossier').onPress, isNotNull);
     expect(find.text(lien), findsNothing);
+  });
+
+  testWidgets('1440 : motif ouvert, un seul Refuser visible (destructif)', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    await _ouvrirDossiers(tester);
+    expect(find.text('Refuser le dossier'), findsOneWidget);
+    await _taperTexte(tester, 'Refuser le dossier');
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.text('Refuser le dossier'), findsOneWidget);
+    expect(_bouton(tester, 'Refuser le dossier').onPress, isNull);
+    await tester.enterText(find.byType(TextField), 'Piece floue');
+    await _stabiliser(tester);
+    expect(_bouton(tester, 'Refuser le dossier').onPress, isNotNull);
+    expect(
+      _bouton(tester, 'Refuser le dossier').niveau,
+      NiveauAction.destructive,
+    );
   });
 
   testWidgets('1440 : les cases repartent a zero en changeant de dossier', (
@@ -235,14 +259,9 @@ void main() {
     );
   });
 
-  // 200 % : un RenderFlex deborde de 180 px a 390 des le premier pump apres
-  // le changement d'echelle (avant tout defilement), donc dans une carte ou
-  // la raison au-dessus des actions, pas forcement dans le groupe d'actions
-  // lui-meme (`LienFleche` degage : Flexible+mainAxisSize.min sous un Column
-  // borne). Isole non concluant dans le temps d'AD-6 (`FlutterError.toString`
-  // rendu par `takeException` ne porte que le resume, sans le widget
-  // fautif) ; reste OUVERT, hors de cette boucle (rapport AD-6).
-  for (final double texte in <double>[1]) {
+  // 200 % : le controle de fin de ligne d'un `GroupeReglages` (« Voir la
+  // piece ») passe sous le libelle au lieu de deborder (AD-6, corrections).
+  for (final double texte in <double>[1, 2]) {
     testWidgets('390 a ${texte * 100} % : actions dans la marge de 16', (
       WidgetTester tester,
     ) async {
@@ -306,7 +325,16 @@ void main() {
         refuserFerme,
       );
       if (prenom == 'Yanis' || prenom == 'Adam') {
-        expect(find.text('Vérifications'), findsNothing);
+        // §10.4 : la carte reste, sans case active ni cochee (absence de
+        // controle, pas controle negatif).
+        expect(find.text('Vérifications'), findsOneWidget);
+        for (final String p in _points) {
+          expect(find.text(p), findsOneWidget);
+          expect(_coche(tester, p), isFalse);
+          await tester.tap(find.text(p), warnIfMissed: false);
+          await _stabiliser(tester);
+          expect(_coche(tester, p), isFalse);
+        }
       }
     });
   }

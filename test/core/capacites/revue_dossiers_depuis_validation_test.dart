@@ -171,15 +171,19 @@ void main() {
       d.verifications.every(
         (VerificationRevue v) =>
             v.obligatoire &&
-            v.modifiable &&
+            // Jusqu'a AD-7 : pas d'attestation d'une piece non consultable.
+            !v.modifiable &&
             v.etat == EtatVerification.aFaire &&
             v.origine == OrigineVerification.humaine,
       ),
       isTrue,
     );
     expect(d.accords, isEmpty);
-    expect(d.peutValider && d.peutRefuser && d.peutVoirPiece, isTrue);
-    expect(d.blocagesValidation, isEmpty);
+    expect(d.peutValider, isFalse);
+    expect(d.peutRefuser && d.peutVoirPiece, isTrue);
+    expect(d.blocagesValidation, <BlocageRevue>[
+      BlocageRevue.pieceNonConsultable,
+    ]);
     expect(d.consequence, ConsequenceValidation.indeterminee);
     // Aucune cle d'objet dans le modele rendu.
     expect(d.toString().contains('x/d1'), isFalse);
