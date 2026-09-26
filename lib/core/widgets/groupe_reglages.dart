@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../icons/app_icons.dart';
 import '../theme/app_elevation.dart';
@@ -234,17 +237,12 @@ class _Ligne extends StatelessWidget {
                       bottom: AppSpacing.md,
                       end: AppSpacing.lg,
                     ),
-                    child: _controleSousLibelle(context)
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisSize: MainAxisSize.min,
+                    child: ligne.controle != null
+                        ? _RangeeMesuree(
+                            sens: Directionality.of(context),
                             children: <Widget>[
                               _textes(palette, textes),
-                              Ecart.vXs,
-                              Align(
-                                alignment: AlignmentDirectional.centerEnd,
-                                child: ligne.controle,
-                              ),
+                              ligne.controle!,
                             ],
                           )
                         : Row(
@@ -278,17 +276,6 @@ class _Ligne extends StatelessWidget {
       ),
     );
   }
-
-  /// Le controle passe sous le libelle quand le texte est agrandi (150 % et
-  /// plus) sur une largeur de telephone : a cote, un bouton a 200 % deborde
-  /// (AD-6, 390 a 200 %). ponytail: seuil fixe sur l'echelle et la largeur,
-  /// pas une mesure du controle ; a remplacer par une mise en page mesuree
-  /// si un controle large deborde encore a moins de 150 %.
-  bool _controleSousLibelle(BuildContext context) =>
-      ligne.controle != null &&
-      MediaQuery.textScalerOf(context).scale(AppSpacing.lg) >=
-          AppSpacing.lg * 1.5 &&
-      MediaQuery.sizeOf(context).width < 600;
 
   Widget _textes(AppPalette palette, TextTheme textes) {
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(
@@ -333,4 +320,161 @@ class _Ligne extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Le libelle et le controle de fin de ligne, places par une MESURE (HL-A-3) :
+/// cote a cote tant que le mot le plus long du libelle, l'ecart de 8 et la
+/// largeur naturelle du controle tiennent dans la largeur disponible ; sinon
+/// le controle passe sous le libelle, aligne en fin, a 4. Aucun seuil fixe
+/// d'echelle ni de largeur d'ecran.
+class _RangeeMesuree extends MultiChildRenderObjectWidget {
+  const _RangeeMesuree({required this.sens, required super.children});
+
+  final TextDirection sens;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduRangeeMesuree(sens);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduRangeeMesuree renderObject,
+  ) {
+    renderObject.sens = sens;
+  }
+}
+
+class _DonneesRangee extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduRangeeMesuree extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _DonneesRangee>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _DonneesRangee> {
+  _RenduRangeeMesuree(this._sens);
+
+  static const double _ecartCote = AppSpacing.sm;
+  static const double _ecartDessous = AppSpacing.xs;
+
+  TextDirection _sens;
+  set sens(TextDirection valeur) {
+    if (valeur == _sens) {
+      return;
+    }
+    _sens = valeur;
+    markNeedsLayout();
+  }
+
+  RenderBox get _textes => firstChild!;
+  RenderBox get _controle => lastChild!;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _DonneesRangee) {
+      child.parentData = _DonneesRangee();
+    }
+  }
+
+  /// Vrai : le controle tient a cote du libelle dans [largeur].
+  bool _cote(double largeur) =>
+      !largeur.isFinite ||
+      _textes.getMinIntrinsicWidth(double.infinity) +
+              _ecartCote +
+              _controle.getMaxIntrinsicWidth(double.infinity) <=
+          largeur;
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    _textes.getMinIntrinsicWidth(height),
+    _controle.getMinIntrinsicWidth(height),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      _textes.getMaxIntrinsicWidth(height) +
+      _ecartCote +
+      _controle.getMaxIntrinsicWidth(height);
+
+  double _hauteur(double largeur, bool max) {
+    double h(RenderBox b, double w) =>
+        max ? b.getMaxIntrinsicHeight(w) : b.getMinIntrinsicHeight(w);
+    if (_cote(largeur)) {
+      final double c = _controle.getMaxIntrinsicWidth(double.infinity);
+      return math.max(
+        h(_textes, largeur.isFinite ? largeur - c - _ecartCote : largeur),
+        h(_controle, c),
+      );
+    }
+    return h(_textes, largeur) + _ecartDessous + h(_controle, largeur);
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) => _hauteur(width, false);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => _hauteur(width, true);
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) =>
+      _placer(constraints, ChildLayoutHelper.dryLayoutChild);
+
+  @override
+  void performLayout() {
+    size = _placer(constraints, ChildLayoutHelper.layoutChild, placer: true);
+  }
+
+  Size _placer(
+    BoxConstraints contraintes,
+    ChildLayouter disposer, {
+    bool placer = false,
+  }) {
+    final double largeur = contraintes.maxWidth;
+    final bool finSurDroite = _sens == TextDirection.ltr;
+    if (_cote(largeur)) {
+      final Size c = disposer(
+        _controle,
+        BoxConstraints(maxHeight: contraintes.maxHeight),
+      );
+      final double wTextes = largeur.isFinite
+          ? math.max(0, largeur - c.width - _ecartCote)
+          : _textes.getMaxIntrinsicWidth(double.infinity);
+      final Size t = disposer(
+        _textes,
+        BoxConstraints.tightFor(width: wTextes)
+            .copyWith(maxHeight: contraintes.maxHeight),
+      );
+      final double w = wTextes + _ecartCote + c.width;
+      final double h = math.max(t.height, c.height);
+      if (placer) {
+        (_textes.parentData! as _DonneesRangee).offset = Offset(
+          finSurDroite ? 0 : w - t.width,
+          (h - t.height) / 2,
+        );
+        (_controle.parentData! as _DonneesRangee).offset = Offset(
+          finSurDroite ? w - c.width : 0,
+          (h - c.height) / 2,
+        );
+      }
+      return contraintes.constrain(Size(w, h));
+    }
+    final Size t = disposer(_textes, BoxConstraints.tightFor(width: largeur));
+    final Size c = disposer(_controle, BoxConstraints(maxWidth: largeur));
+    final double h = t.height + _ecartDessous + c.height;
+    if (placer) {
+      (_textes.parentData! as _DonneesRangee).offset = Offset.zero;
+      (_controle.parentData! as _DonneesRangee).offset = Offset(
+        finSurDroite ? largeur - c.width : 0,
+        t.height + _ecartDessous,
+      );
+    }
+    return contraintes.constrain(Size(largeur, h));
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
 }

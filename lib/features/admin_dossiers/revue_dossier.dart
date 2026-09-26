@@ -560,6 +560,7 @@ class _RaisonsDecision extends StatelessWidget {
         onPress: onAllerPremiere,
         fleche: false,
         annonceLien: true,
+        alignerEnFin: true,
       );
     }
     final bool refusFerme = !dossier.peutRefuser && !horsLigne;

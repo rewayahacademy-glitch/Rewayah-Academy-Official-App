@@ -5,9 +5,10 @@
 
 import 'package:flutter/material.dart';
 
-/// Le libelle du repere. Volontairement en dur : le mode n'existe que sur
-/// l'apercu, il n'entre pas dans les traductions du produit.
-const String libelleRepereDemonstration = 'Démonstration';
+import '../../core/i18n/strings.g.dart';
+
+/// Le libelle du repere, traduit (K-41) : `commun.demonstration.repere`.
+String get libelleRepereDemonstration => t.commun.demonstration.repere;
 
 /// Coiffe [child] d'un bandeau d'angle « Démonstration ».
 class RepereDemonstration extends StatelessWidget {
@@ -24,7 +25,7 @@ class RepereDemonstration extends StatelessWidget {
     // l'annonce (revue P2-10, constat 2), sans rien changer au rendu.
     return Semantics(
       container: true,
-      label: 'Mode $libelleRepereDemonstration',
+      label: t.commun.demonstration.repereLu,
       child: Banner(
         message: libelleRepereDemonstration,
         location: BannerLocation.topEnd,

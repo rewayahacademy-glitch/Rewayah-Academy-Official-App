@@ -118,6 +118,7 @@ class Traductions$commun$fr {
 	/// fr: 'Chargement'
 	String get chargement => 'Chargement';
 
+	late final Traductions$commun$demonstration$fr demonstration = Traductions$commun$demonstration$fr.internal(_root);
 	late final Traductions$commun$etape$fr etape = Traductions$commun$etape$fr.internal(_root);
 	late final Traductions$commun$choix$fr choix = Traductions$commun$choix$fr.internal(_root);
 	late final Traductions$commun$etats$fr etats = Traductions$commun$etats$fr.internal(_root);
@@ -2262,6 +2263,21 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+}
+
+// Path: commun.demonstration
+class Traductions$commun$demonstration$fr {
+	Traductions$commun$demonstration$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration'
+	String get repere => 'Démonstration';
+
+	/// fr: 'Mode Démonstration'
+	String get repereLu => 'Mode Démonstration';
 }
 
 // Path: commun.etape
@@ -11414,6 +11430,8 @@ extension on Traductions {
 			'commun.fermer' => 'Fermer',
 			'commun.reessayer' => 'Réessayer',
 			'commun.chargement' => 'Chargement',
+			'commun.demonstration.repere' => 'Démonstration',
+			'commun.demonstration.repereLu' => 'Mode Démonstration',
 			'commun.etape.sur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'commun.etape.surLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'commun.choix.indisponible' => 'Indisponible',
@@ -11916,10 +11934,10 @@ extension on Traductions {
 			'ficheEleve.informations.apercuTitre' => 'Aperçu',
 			'ficheEleve.informations.apercuPhrase' => 'Vérifiez la photo avant de l\'envoyer.',
 			'ficheEleve.informations.apercuIllisible' => 'L\'aperçu ne s\'affiche pas sur cet appareil. La photo peut quand même être envoyée.',
-			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
-			'ficheEleve.informations.autre' => 'Choisir une autre photo',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.envoyer' => 'Envoyer cette photo',
+			'ficheEleve.informations.autre' => 'Choisir une autre photo',
 			'ficheEleve.informations.annuler' => 'Annuler',
 			'ficheEleve.informations.etapeEnvoi' => 'Envoi de la photo, étape 1 sur 2',
 			'ficheEleve.informations.etapeEnregistrement' => 'Enregistrement sur le profil, étape 2 sur 2',
@@ -12430,10 +12448,10 @@ extension on Traductions {
 			'admin.regles.ageCameraAutoDetail' => 'En dessous de cet âge, l\'activation de la caméra reste soumise à l\'accord du tuteur.',
 			'admin.regles.ageInterfaceEnfant' => 'Âge maximum interface enfant',
 			'admin.regles.ageInterfaceEnfantDetail' => 'En dessous de cet âge, un profil bascule sur l\'interface simplifiée à sa création.',
-			'admin.regles.appareilsParEleve' => 'Appareils par élève',
-			'admin.regles.appareilsParEleveDetail' => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regles.appareilsParEleve' => 'Appareils par élève',
+			'admin.regles.appareilsParEleveDetail' => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.',
 			'admin.regles.seancesSimultanees' => 'Séances simultanées par profil',
 			'admin.regles.seancesSimultaneesDetail' => 'Le nombre de séances qu\'un même profil peut suivre en même temps.',
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
@@ -12944,10 +12962,10 @@ extension on Traductions {
 			'nav.admin.notificationsTitre' => 'Notifications',
 			'nav.admin.menu' => 'Menu',
 			'nav.compte' => 'Mon compte',
-			'nav.principale' => 'Navigation principale',
-			'nav.motSymbole' => 'Rewayah',
 			_ => null,
 		} ?? switch (path) {
+			'nav.principale' => 'Navigation principale',
+			'nav.motSymbole' => 'Rewayah',
 			'nav.replier' => 'Replier la navigation',
 			'nav.deplier' => 'Déplier la navigation',
 			'compte.titre' => 'Mon compte',
@@ -13458,10 +13476,10 @@ extension on Traductions {
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
 			'classe.observation.motif.enfantAbsent' => ({required Object prenom}) => 'L\'observation attend l\'arrivée de ${prenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object prenom}) => 'La présence de ${prenom} est en cours de vérification.',
-			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
-			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
+			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
 			'classe.observation.motif.capaciteAbsente' => 'L\'observation n\'est pas disponible pour le moment.',
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
@@ -13972,10 +13990,10 @@ extension on Traductions {
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
-			'tc.outils.masquer.reveler' => 'Révéler',
-			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.masquer.reveler' => 'Révéler',
+			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
 			'tc.outils.masquer.tout' => 'Tout démasquer',
 			'tc.outils.focus.quitter' => 'Quitter le focus',
 			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',

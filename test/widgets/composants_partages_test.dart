@@ -412,6 +412,60 @@ void main() {
       );
     });
 
+    // HL-A-3 : le controle de fin de ligne passe sous le libelle selon une
+    // MESURE (largeur disponible contre mot le plus long du libelle + 8 +
+    // largeur naturelle du controle), plus selon un seuil d'echelle fixe.
+    for (final (String cas, double largeur, double echelle, bool dessous)
+        in <(String, double, double, bool)>[
+          ('390 a 100 % : a cote', 358, 1, false),
+          ('1440 a 200 % : a cote (place suffisante)', 900, 2, false),
+          ('carte etroite a 100 % : dessous (mesure)', 200, 1, true),
+          ('390 a 200 % : dessous', 358, 2, true),
+        ]) {
+      testWidgets('GroupeReglages controle mesure, $cas', (
+        WidgetTester tester,
+      ) async {
+        fixerVue(tester, largeur > 400 ? const Size(1440, 900) : vueMobile);
+        await tester.pumpWidget(
+          hoteTheme(
+            Align(
+              alignment: AlignmentDirectional.topStart,
+              child: SizedBox(
+                width: largeur,
+                child: GroupeReglages(
+                  lignes: <LigneRubrique>[
+                    LigneRubrique(
+                      icone: AppIcons.dossiers,
+                      libelle: 'Piece',
+                      controle: ActionPrincipale(
+                        libelle: 'Voir',
+                        niveau: NiveauAction.tertiaire,
+                        pleineLargeur: false,
+                        onPress: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            echelleTexte: echelle,
+          ),
+        );
+        expect(tester.takeException(), isNull);
+        final Rect libelle = tester.getRect(find.text('Piece'));
+        final Rect controle = tester.getRect(find.byType(ActionPrincipale));
+        final Rect groupe = tester.getRect(find.byType(GroupeReglages));
+        if (dessous) {
+          expect(controle.top, greaterThanOrEqualTo(libelle.bottom));
+        } else {
+          expect(controle.left, greaterThan(libelle.right));
+          expect(controle.top, lessThan(libelle.bottom));
+        }
+        // Toujours au bord de fin (16 de retrait), jamais au-dela.
+        expect(controle.right, closeTo(groupe.right - AppSpacing.lg, 0.5));
+      });
+    }
+
     for (final Brightness luminosite in Brightness.values) {
       testWidgets('surface du theme et texte 200 %, $luminosite', (
         WidgetTester tester,

@@ -26,7 +26,13 @@ class LienFleche extends StatelessWidget {
     this.fleche = true,
     this.icone,
     this.annonceLien = false,
+    this.alignerEnFin = false,
   });
+
+  /// Vrai : le lien se range au bord de fin, comme les actions qu'il suit
+  /// (HL-A-3) : aucun retrait de fin, lignes alignees en fin quand le texte
+  /// passe a la ligne (200 %, 390). Faux (defaut) : rendu inchange.
+  final bool alignerEnFin;
 
   /// Icone decorative facultative devant le libelle (« Comment ca marche ? »
   /// precede de `AppIcons.info`). Le libelle seul reste lu.
@@ -58,7 +64,9 @@ class LienFleche extends StatelessWidget {
       lien: annonceLien,
       arrondiFocus: AppRadius.arrondiSm,
       constructeur: (BuildContext contexte, EtatPression etat) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        padding: alignerEnFin
+            ? const EdgeInsetsDirectional.only(start: AppSpacing.xs)
+            : const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         // Le libelle est deja porte par `Pressable` : le texte visible est
         // retire de l'arbre semantique pour ne pas etre lu deux fois.
         child: ExcludeSemantics(
@@ -75,6 +83,7 @@ class LienFleche extends StatelessWidget {
               Flexible(
                 child: Text(
                   libelle,
+                  textAlign: alignerEnFin ? TextAlign.end : null,
                   style: palette.inkAccent
                       .applyTo(base)
                       .copyWith(

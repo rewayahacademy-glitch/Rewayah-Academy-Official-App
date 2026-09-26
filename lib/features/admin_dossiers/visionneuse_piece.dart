@@ -394,10 +394,15 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
       _Etat.chargement => Semantics(
         liveRegion: true,
         label: v.chargement,
-        child: const Center(
+        child: Center(
           child: AspectRatio(
             aspectRatio: _PieceFictive.ratio,
-            child: Skeleton(hauteur: double.infinity),
+            // Hauteur mesuree : `Skeleton` pose ses blocs dans une colonne
+            // non bornee, une hauteur infinie y echoue (HL-A-3, capture).
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints boite) =>
+                  Skeleton(hauteur: boite.maxHeight),
+            ),
           ),
         ),
       ),

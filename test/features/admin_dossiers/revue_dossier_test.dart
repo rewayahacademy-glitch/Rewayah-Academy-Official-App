@@ -292,8 +292,42 @@ void main() {
       final Rect r = tester.getRect(find.text('Refuser le dossier'));
       final Rect v = tester.getRect(find.text('Valider le dossier'));
       expect(v.top >= r.top, isTrue);
+      // HL-A-3 : le lien « Terminez les verifications requises. » est range
+      // au bord de fin, comme les actions (fin du texte = fin de Valider).
+      final Rect action = tester.getRect(
+        find
+            .ancestor(
+              of: find.text('Valider le dossier'),
+              matching: find.byType(ActionPrincipale),
+            )
+            .first,
+      );
+      final Rect lien = tester.getRect(
+        find.text('Terminez les vérifications requises.'),
+      );
+      expect(lien.right, closeTo(action.right, 0.5));
+      expect(lien.top, greaterThan(action.bottom));
     });
   }
+
+  testWidgets('1440 : le lien des verifications est aligne en fin', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    await _ouvrirDossiers(tester);
+    final Rect action = tester.getRect(
+      find
+          .ancestor(
+            of: find.text('Valider le dossier'),
+            matching: find.byType(ActionPrincipale),
+          )
+          .first,
+    );
+    final Rect lien = tester.getRect(
+      find.text('Terminez les vérifications requises.'),
+    );
+    expect(lien.right, closeTo(action.right, 0.5));
+  });
 
   for (final (String prenom, String texte, bool validerFerme, bool refuserFerme)
       in <(String, String, bool, bool)>[
