@@ -20,9 +20,16 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/pressable.dart';
 
-/// La largeur du panneau en desktop et en web etroit (image CLV-07 : ≈ 320
-/// a 1440 de large).
+/// La largeur du volet en web etroit (image CLV-07 : ≈ 313 a 640 de large).
 const double largeurPanneauSeance = AppSpacing.respiration * 5;
+
+/// La largeur de la colonne en desktop : la fiche y tient ses valeurs sur
+/// une ligne et ses actions avec de la marge (image CLV-07 desktop).
+const double largeurColonneSeance = AppSpacing.respiration * 6 - AppSpacing.sm;
+
+/// La largeur de la colonne droite en desktop (Eleves, Supports, outils).
+const double largeurColonneDroiteSeance =
+    AppSpacing.respiration * 5 - AppSpacing.lg;
 
 /// La hauteur de support laissee visible au-dessus de la feuille du
 /// telephone : le haut de la diapositive et la vignette entiere (image).
@@ -96,9 +103,9 @@ class PanneauSeance extends StatelessWidget {
         decoration: decoration,
         child: Padding(
           padding: EdgeInsetsDirectional.fromSTEB(
-            feuille ? AppSpacing.lg : AppSpacing.sm,
+            forme == FormePanneau.colonne ? AppSpacing.xs : AppSpacing.sm,
             feuille ? AppSpacing.sm : AppSpacing.md,
-            feuille ? AppSpacing.lg : AppSpacing.sm,
+            forme == FormePanneau.colonne ? AppSpacing.xs : AppSpacing.sm,
             0,
           ),
           child: Column(
@@ -124,6 +131,19 @@ class PanneauSeance extends StatelessWidget {
               _EnTete(titre: titre, onFermer: onFermer),
               Ecart.vSm,
               Expanded(child: enfant),
+              // Web etroit : le chevron de bas de volet (image CLV-07-08-10).
+              if (forme == FormePanneau.volet)
+                ExcludeSemantics(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: IconTheme(
+                      data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
+                      child: Icon(AppIcons.suiteEnBas.repos),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

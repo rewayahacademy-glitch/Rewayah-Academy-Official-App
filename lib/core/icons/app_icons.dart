@@ -669,6 +669,13 @@ abstract final class AppIcons {
     IconData(0xe13c, fontFamily: _actif),
   );
 
+  /// Volet Eleves (CLV-07, web etroit) : la liste continue plus bas, Phosphor
+  /// `caret-down` (0xe136). Direction cardinale : ne se miroite pas.
+  static const AppIcon suiteEnBas = AppIcon._(
+    IconData(0xe136, fontFamily: _repos),
+    IconData(0xe136, fontFamily: _actif),
+  );
+
   /// Rail enseignant : Journee, Phosphor `house` (0xe2c2).
   static const AppIcon maison = AppIcon._(
     IconData(0xe2c2, fontFamily: _repos),

@@ -69,15 +69,16 @@ class OutilsEnseignement extends StatefulWidget {
   final ValueChanged<OutilEnseignement>? onOutil;
   final FormeOutils forme;
 
-  /// L'outil actif a l'ouverture (images : Pointeur).
-  final OutilEnseignement initial;
+  /// L'outil actif a l'ouverture (image CLV-06 : Pointeur ; image CLV-07,
+  /// carte a cote du panneau : aucun, `null`).
+  final OutilEnseignement? initial;
 
   @override
   State<OutilsEnseignement> createState() => _OutilsEnseignementState();
 }
 
 class _OutilsEnseignementState extends State<OutilsEnseignement> {
-  late OutilEnseignement _actif = widget.initial;
+  late OutilEnseignement? _actif = widget.initial;
 
   void _choisir(ValueChanged<OutilEnseignement> rappel, OutilEnseignement o) {
     setState(() => _actif = o);

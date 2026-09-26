@@ -152,7 +152,7 @@ void main() {
             t.salle.seance.rappeler,
             t.tc.classe.action.reciter,
             t.tc.classe.action.noter,
-            t.tc.classe.action.signaler,
+            t.salle.seance.signalerBesoin,
           ]) {
             expect(find.text(action), findsOneWidget, reason: action);
           }
@@ -232,9 +232,9 @@ void main() {
       expect(find.byKey(const ValueKey<String>('fiche-eleve')), findsOneWidget);
       expect(find.text('Pages 20 à 23'), findsOneWidget);
       expect(find.text('Pages 24 à 26'), findsNothing);
-      await tester.ensureVisible(find.text(t.tc.classe.action.signaler));
+      await tester.ensureVisible(find.text(t.salle.seance.signalerBesoin));
       await tester.pump();
-      await tester.tap(find.text(t.tc.classe.action.signaler));
+      await tester.tap(find.text(t.salle.seance.signalerBesoin));
       await tester.pump();
       expect(_journal.last, 'signaler Yusuf');
     });
@@ -254,7 +254,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text(t.salle.seance.rappeler), findsOneWidget);
       expect(find.text(t.tc.classe.action.noter), findsNothing);
-      expect(find.text(t.tc.classe.action.signaler), findsNothing);
+      expect(find.text(t.salle.seance.signalerBesoin), findsNothing);
     });
   });
 }

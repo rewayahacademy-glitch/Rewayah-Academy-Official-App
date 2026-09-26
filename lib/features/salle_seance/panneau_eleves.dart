@@ -15,6 +15,7 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/pressable.dart';
 import 'actions_seance.dart';
 import 'vue_seance.dart';
@@ -35,12 +36,38 @@ AppInkColor _encreStatut(AppPalette palette, StatutEleveSeance statut) =>
       StatutEleveSeance.connexionInterrompue => palette.inkAlert,
     };
 
+/// La couleur de la pastille. L'attente se lit jaune orange (images) : le
+/// fond d'avertissement plein, et non l'encre de texte brun olive.
+Color _couleurPastille(AppPalette palette, StatutEleveSeance statut) =>
+    switch (statut) {
+      StatutEleveSeance.pasEncoreConnecte => palette.surfaceWarning.background,
+      _ => _encreStatut(palette, statut).asBorderSide().color,
+    };
+
+/// Le corps des intitules et valeurs de la fiche (image CLV-07 : ≈ 13 px).
+/// Plus Jakarta Sans n'a pas d'axe `opsz` : la retaille est sure.
+const double _corpsFiche = 13;
+
+TextStyle _styleFiche(BuildContext context) =>
+    (Theme.of(context).textTheme.bodyMedium ?? const TextStyle()).copyWith(
+      fontSize: _corpsFiche,
+    );
+
 /// La liste des inscrits ; une fiche depliee a la fois.
 class PanneauEleves extends StatefulWidget {
-  const PanneauEleves({required this.eleves, required this.actions, super.key});
+  const PanneauEleves({
+    required this.eleves,
+    required this.actions,
+    this.large = false,
+    super.key,
+  });
 
   final List<EleveSeance> eleves;
   final ActionsSeance actions;
+
+  /// Colonne desktop : intitules au corps des valeurs (image desktop) ;
+  /// ailleurs, intitules en petit (images web etroit et telephone).
+  final bool large;
 
   @override
   State<PanneauEleves> createState() => _PanneauElevesState();
@@ -64,7 +91,11 @@ class _PanneauElevesState extends State<PanneauEleves> {
   Widget build(BuildContext context) {
     return ListView.separated(
       key: const ValueKey<String>('panneau-eleves'),
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      // Telephone : la feuille descend jusqu'au bord de l'ecran, la liste
+      // defile jusque sous la barre du systeme.
+      padding: EdgeInsets.only(
+        bottom: AppSpacing.md + MediaQuery.paddingOf(context).bottom,
+      ),
       itemCount: widget.eleves.length,
       separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
       itemBuilder: (BuildContext _, int i) {
@@ -73,6 +104,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
         return _CarteEleve(
           eleve: e,
           deplie: deplie,
+          large: widget.large,
           actions: widget.actions,
           onBasculer: e.fiche == null
               ? null
@@ -87,12 +119,14 @@ class _CarteEleve extends StatelessWidget {
   const _CarteEleve({
     required this.eleve,
     required this.deplie,
+    required this.large,
     required this.actions,
     required this.onBasculer,
   });
 
   final EleveSeance eleve;
   final bool deplie;
+  final bool large;
   final ActionsSeance actions;
   final VoidCallback? onBasculer;
 
@@ -114,7 +148,7 @@ class _CarteEleve extends StatelessWidget {
             _EnTeteEleve(eleve: eleve, deplie: deplie, onBasculer: onBasculer),
             if (deplie && fiche != null) ...<Widget>[
               Ecart.vSm,
-              _GrilleFiche(fiche: fiche),
+              _GrilleFiche(fiche: fiche, large: large),
               _ActionsEleve(eleve: eleve, actions: actions),
             ],
           ],
@@ -146,7 +180,7 @@ class _EnTeteEleve extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.xs),
       child: Row(
         children: <Widget>[
-          _Avatar(eleve: eleve, encre: encre),
+          _Avatar(eleve: eleve),
           Ecart.hMd,
           Expanded(
             child: Column(
@@ -163,7 +197,7 @@ class _EnTeteEleve extends StatelessWidget {
                 Ecart.vXs,
                 Row(
                   children: <Widget>[
-                    _Pastille(encre: encre),
+                    _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
                     Ecart.hXs,
                     Flexible(
                       child: Text(
@@ -171,7 +205,7 @@ class _EnTeteEleve extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: (connecte ? encre : palette.inkMuted).applyTo(
-                          textes.bodySmall ?? const TextStyle(),
+                          _styleFiche(context),
                         ),
                       ),
                     ),
@@ -210,10 +244,9 @@ class _EnTeteEleve extends StatelessWidget {
 /// L'avatar : l'initiale pour l'eleve connecte (image : « M »), sinon la
 /// silhouette avec la pastille du statut en bas a droite.
 class _Avatar extends StatelessWidget {
-  const _Avatar({required this.eleve, required this.encre});
+  const _Avatar({required this.eleve});
 
   final EleveSeance eleve;
-  final AppInkColor encre;
 
   static const double _diametre = AppSpacing.titreEcran - AppSpacing.xs;
 
@@ -265,7 +298,10 @@ class _Avatar extends StatelessWidget {
                       width: AppSpacing.xs / 2,
                     ),
                   ),
-                  child: _Pastille(encre: encre, grande: true),
+                  child: _Pastille(
+                    couleur: _couleurPastille(palette, eleve.statut),
+                    grande: true,
+                  ),
                 ),
               ),
           ],
@@ -276,9 +312,9 @@ class _Avatar extends StatelessWidget {
 }
 
 class _Pastille extends StatelessWidget {
-  const _Pastille({required this.encre, this.grande = false});
+  const _Pastille({required this.couleur, this.grande = false});
 
-  final AppInkColor encre;
+  final Color couleur;
   final bool grande;
 
   @override
@@ -287,10 +323,7 @@ class _Pastille extends StatelessWidget {
     return SizedBox.square(
       dimension: d,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: encre.asBorderSide().color,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: couleur, shape: BoxShape.circle),
       ),
     );
   }
@@ -298,44 +331,44 @@ class _Pastille extends StatelessWidget {
 
 /// Les six champs, en grille de deux colonnes (images).
 class _GrilleFiche extends StatelessWidget {
-  const _GrilleFiche({required this.fiche});
+  const _GrilleFiche({required this.fiche, required this.large});
 
   final FicheEleveSeance fiche;
+  final bool large;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final double ecart = large ? AppSpacing.md : AppSpacing.sm;
+    // Cellules serrees sur les cotes : les valeurs tiennent sur une ligne,
+    // comme sur les images (« 3 seances cette semaine »).
+    const EdgeInsets marge = EdgeInsets.symmetric(
+      horizontal: AppSpacing.sm,
+      vertical: AppSpacing.md,
+    );
+    Widget champ(String intitule, String valeur, {bool objectif = false}) =>
+        _Champ(
+          intitule: intitule,
+          valeur: valeur,
+          large: large,
+          objectif: objectif,
+        );
     final Widget gauche = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: AppSpacing.md,
+      spacing: ecart,
       children: <Widget>[
-        _Champ(intitule: t.tc.classe.fiche.niveau, valeur: fiche.niveau),
-        _Champ(
-          intitule: t.tc.classe.fiche.objectif,
-          valeur: fiche.objectifActuel,
-        ),
-        _Champ(
-          intitule: t.tc.classe.fiche.derniereSeance,
-          valeur: fiche.derniereSeance,
-        ),
+        champ(t.tc.classe.fiche.niveau, fiche.niveau),
+        champ(t.tc.classe.fiche.objectif, fiche.objectifActuel, objectif: true),
+        champ(t.tc.classe.fiche.derniereSeance, fiche.derniereSeance),
       ],
     );
     final Widget droite = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: AppSpacing.md,
+      spacing: ecart,
       children: <Widget>[
-        _Champ(
-          intitule: t.tc.classe.fiche.aReprendre,
-          valeur: fiche.aReprendre,
-        ),
-        _Champ(
-          intitule: t.tc.classe.fiche.presenceRecente,
-          valeur: fiche.presenceRecente,
-        ),
-        _Champ(
-          intitule: t.tc.classe.fiche.travailActuel,
-          valeur: fiche.travailActuel,
-        ),
+        champ(t.tc.classe.fiche.aReprendre, fiche.aReprendre),
+        champ(t.tc.classe.fiche.presenceRecente, fiche.presenceRecente),
+        champ(t.tc.classe.fiche.travailActuel, fiche.travailActuel),
       ],
     );
     return DecoratedBox(
@@ -349,10 +382,7 @@ class _GrilleFiche extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: gauche,
-              ),
+              child: Padding(padding: marge, child: gauche),
             ),
             VerticalDivider(
               width: 1,
@@ -360,10 +390,7 @@ class _GrilleFiche extends StatelessWidget {
               color: palette.borderHairline.asBorderSide().color,
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: droite,
-              ),
+              child: Padding(padding: marge, child: droite),
             ),
           ],
         ),
@@ -373,41 +400,60 @@ class _GrilleFiche extends StatelessWidget {
 }
 
 class _Champ extends StatelessWidget {
-  const _Champ({required this.intitule, required this.valeur});
+  const _Champ({
+    required this.intitule,
+    required this.valeur,
+    required this.large,
+    this.objectif = false,
+  });
 
   final String intitule;
   final String valeur;
+  final bool large;
+
+  /// L'objectif actuel : le chapitre en gras sur sa ligne, la precision
+  /// entre parentheses dessous (images : « Chapitre 1 » puis « (les bonnes
+  /// manieres) »).
+  final bool objectif;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle corps = _styleFiche(context);
+    final TextStyle styleIntitule = large
+        ? corps
+        : Theme.of(context).textTheme.bodySmall ?? const TextStyle();
+    final int coupure = objectif ? valeur.indexOf(' (') : -1;
+    final Widget texteValeur = coupure > 0
+        ? Text.rich(
+            TextSpan(
+              children: <InlineSpan>[
+                TextSpan(
+                  text: valeur.substring(0, coupure),
+                  style: AppTypography.graisse(corps, FontWeight.w700),
+                ),
+                TextSpan(text: '\n${valeur.substring(coupure + 1)}'),
+              ],
+            ),
+            style: palette.inkStrong.applyTo(corps),
+          )
+        : Text(valeur, style: palette.inkStrong.applyTo(corps));
     // Un fait = une annonce : intitule et valeur lus ensemble.
     return MergeSemantics(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            intitule,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
+          Text(intitule, style: palette.inkMuted.applyTo(styleIntitule)),
           Ecart.vXs,
-          Text(
-            valeur,
-            style: palette.inkStrong.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
+          texteValeur,
         ],
       ),
     );
   }
 }
 
-/// Les quatre actions : tuiles icone + libelle, de meme style que les outils
-/// d'enseignement. Une action sans rappel n'est pas rendue.
+/// Les quatre actions : tuiles icone pleine violette + libelle (images).
+/// Une action sans rappel n'est pas rendue.
 class _ActionsEleve extends StatelessWidget {
   const _ActionsEleve({required this.eleve, required this.actions});
 
@@ -416,17 +462,19 @@ class _ActionsEleve extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<(AppIcon, String, ValueChanged<EleveSeance>?)> liste =
-        <(AppIcon, String, ValueChanged<EleveSeance>?)>[
-          (AppIcons.rappeler, t.salle.seance.rappeler, actions.onRappeler),
-          (
-            AppIcons.reciter,
-            t.tc.classe.action.reciter,
-            actions.onChoisirPourReciter,
-          ),
-          (AppIcons.noter, t.tc.classe.action.noter, actions.onNoter),
-          (AppIcons.signaler, t.tc.classe.action.signaler, actions.onSignaler),
-        ];
+    final List<(AppIcon, String, ValueChanged<EleveSeance>?)>
+    liste = <(AppIcon, String, ValueChanged<EleveSeance>?)>[
+      (AppIcons.rappeler, t.salle.seance.rappeler, actions.onRappeler),
+      (
+        AppIcons.reciter,
+        t.tc.classe.action.reciter,
+        actions.onChoisirPourReciter,
+      ),
+      (AppIcons.noter, t.tc.classe.action.noter, actions.onNoter),
+      // « Signaler / un besoin » : l'espace insecable garde « un
+      // besoin » ensemble, comme sur les images.
+      (AppIcons.signaler, t.salle.seance.signalerBesoin, actions.onSignaler),
+    ];
     final List<Widget> tuiles = <Widget>[
       for (final (AppIcon icone, String libelle, ValueChanged<EleveSeance>? r)
           in liste)
@@ -482,15 +530,17 @@ class _TuileAction extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs / 2,
+              horizontal: AppSpacing.xs,
               vertical: AppSpacing.sm,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(icone.repos),
+                  data: palette.inkAccent.asIconTheme(
+                    size: AppSpacing.xxl + AppSpacing.xs,
+                  ),
+                  child: Icon(icone.actif),
                 ),
                 Ecart.vXs,
                 Text(

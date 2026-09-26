@@ -65,9 +65,16 @@ class SalleSeance extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
     if (vue.role == RoleSeance.enseignant) {
+      // Telephone, panneau ouvert : la feuille descend jusqu'au bord de
+      // l'ecran (image) ; elle garde elle-meme la marge du systeme.
+      final bool feuilleOuverte =
+          gabarit == Gabarit.mobile &&
+          vue.voitBoutonsPanneaux &&
+          vue.panneau != PanneauOuvert.aucun;
       return Material(
         color: palette.surfaceCanvas.background,
         child: SafeArea(
+          bottom: !feuilleOuverte,
           child: _SalleEnseignant(
             vue: vue,
             actions: actions,
@@ -342,7 +349,11 @@ class _SalleEnseignant extends StatelessWidget {
         titre: t.salle.seance.eleves,
         onFermer: actions.onEleves,
         forme: forme,
-        enfant: PanneauEleves(eleves: vue.eleves, actions: actions),
+        enfant: PanneauEleves(
+          eleves: vue.eleves,
+          actions: actions,
+          large: forme == FormePanneau.colonne,
+        ),
       ),
       PanneauOuvert.supports => PanneauSeance(
         titre: t.salle.seance.supports,
@@ -381,21 +392,23 @@ class _SalleEnseignant extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                SizedBox(width: largeurPanneauSeance, child: panneau),
-                Ecart.hLg,
+                SizedBox(width: largeurColonneSeance, child: panneau),
+                Ecart.hMd,
                 Expanded(child: support),
-                Ecart.hLg,
+                Ecart.hMd,
                 SizedBox(
-                  width: largeurPanneauSeance + AppSpacing.lg,
+                  width: largeurColonneDroiteSeance,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       ?boutons,
                       if (outils) ...<Widget>[
                         Ecart.vLg,
+                        // Image CLV-07 : aucun outil selectionne.
                         OutilsEnseignement(
                           onOutil: actions.onOutil,
                           forme: FormeOutils.carte,
+                          initial: null,
                         ),
                       ],
                     ],
@@ -405,6 +418,8 @@ class _SalleEnseignant extends StatelessWidget {
             ),
           ),
         ),
+        // La barre basse part juste apres le bas du panneau (image : ≈ 580
+        // a 1440 de large), la ou la colonne elargie laisse sa place.
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
             gouttiere + largeurPanneauSeance,
@@ -504,10 +519,11 @@ class _SalleEnseignant extends StatelessWidget {
                       child: panneau,
                     )
                   else
+                    // Le volet descend jusqu'au bas de l'ecran (image).
                     PositionedDirectional(
                       start: AppSpacing.sm,
                       top: 0,
-                      bottom: AppSpacing.sm,
+                      bottom: 0,
                       width: largeurVolet,
                       child: panneau,
                     ),

@@ -2559,6 +2559,9 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Rappeler'
 	String get rappeler => 'Rappeler';
 
+	/// fr: 'Signaler un besoin'
+	String get signalerBesoin => 'Signaler un besoin';
+
 	/// fr: 'Afficher la fiche de {prenom}'
 	String deplierFiche({required Object prenom}) => 'Afficher la fiche de ${prenom}';
 
@@ -11637,6 +11640,7 @@ extension on Traductions {
 			'salle.seance.fermerPanneau' => 'Fermer le panneau',
 			'salle.seance.eleves' => 'Élèves',
 			'salle.seance.rappeler' => 'Rappeler',
+			'salle.seance.signalerBesoin' => 'Signaler un besoin',
 			'salle.seance.deplierFiche' => ({required Object prenom}) => 'Afficher la fiche de ${prenom}',
 			'salle.seance.replierFiche' => ({required Object prenom}) => 'Masquer la fiche de ${prenom}',
 			'salle.seance.demo.titre' => 'Salle de démonstration',
@@ -12006,9 +12010,9 @@ extension on Traductions {
 			'foyer.membre.accesExpire' => ({required Object date}) => 'Accès expiré depuis le ${date}',
 			'foyer.membre.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'foyer.classesIndisponibles' => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.',
-			'foyer.classesEchec' => 'La classe de certains élèves n\'a pas pu être lue.',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.classesEchec' => 'La classe de certains élèves n\'a pas pu être lue.',
 			'foyer.relireClasses' => 'Relire les classes',
 			'foyer.inscriptionIllisible' => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.',
 			'foyer.appareilsPartages' => 'Appareils partagés',
@@ -12520,9 +12524,9 @@ extension on Traductions {
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.regles.valeurInvalide' => 'Entrez un nombre valide.',
-			'admin.regles.envoyer' => 'Enregistrer',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regles.envoyer' => 'Enregistrer',
 			'admin.regles.champValeur' => 'Valeur',
 			'admin.regles.absenceSeuil' => 'Seuil d\'absence',
 			'admin.regles.absenceSeuilDetail' => 'Au-delà de ce nombre de minutes sans rejoindre la séance, l\'élève est marqué absent.',
@@ -13034,9 +13038,9 @@ extension on Traductions {
 			'nav.controleur.planning' => 'Planning',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
-			'nav.admin.demandes' => 'Demandes',
 			_ => null,
 		} ?? switch (path) {
+			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.attribution' => 'Attribution',
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
@@ -13548,9 +13552,9 @@ extension on Traductions {
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
 			'classe.observation.uneVisite' => '1 visite disponible',
-			'classe.observation.visites' => ({required Object nombre}) => '${nombre} visites disponibles',
 			_ => null,
 		} ?? switch (path) {
+			'classe.observation.visites' => ({required Object nombre}) => '${nombre} visites disponibles',
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
@@ -14062,9 +14066,9 @@ extension on Traductions {
 			'tc.outils.intention.pourEvaluation' => 'Pour l\'évaluation',
 			'tc.outils.trait.stylet' => 'Stylet',
 			'tc.outils.trait.surligneur' => 'Surligner',
-			'tc.outils.trait.gomme' => 'Gomme',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
