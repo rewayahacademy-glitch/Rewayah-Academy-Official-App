@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -179,11 +180,22 @@ class AppBottomSheet extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: AppRadius.arrondiFeuille,
       ),
-      builder: (BuildContext contexte) => AppBottomSheet(
-        titre: titre,
-        forme: forme,
-        actions: actions?.call(contexte),
-        child: constructeur(contexte),
+      // Le clavier : une route modale n'evite pas les `viewInsets` d'elle-meme.
+      // Sans ce retrait, a 390 le clavier recouvrait le champ et les actions
+      // d'une feuille de saisie (HL-A-4) ; le corps defile, titre et actions
+      // restent au-dessus du clavier.
+      builder: (BuildContext contexte) => Padding(
+        padding: EdgeInsetsDirectional.only(
+          bottom: MediaQuery.viewInsetsOf(contexte).bottom,
+        ),
+        child: _GardeGlissement(
+          child: AppBottomSheet(
+            titre: titre,
+            forme: forme,
+            actions: actions?.call(contexte),
+            child: constructeur(contexte),
+          ),
+        ),
       ),
     );
   }
@@ -323,6 +335,58 @@ class AppBottomSheet extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Retient le glissement d'une feuille qu'une `PopScope` interdit de fermer.
+///
+/// Le glissement de `BottomSheet` ferme par `Navigator.pop`, qui ignore
+/// `PopScope` : une feuille de saisie (motif de refus, AD-8) se refermait sur
+/// un glisser et le texte partait sans la question d'abandon (HL-A-4). Quand
+/// la route refuse de se fermer ([RoutePopDisposition.doNotPop]), ce
+/// recognizer gagne l'arene avant celui de la feuille et un glisser vers le
+/// bas passe par `Navigator.maybePop` -- le meme chemin qu'`Echap` -- ce qui
+/// laisse la `PopScope` poser sa question. Sinon il ne participe pas et la
+/// feuille suit le doigt comme avant.
+class _GardeGlissement extends StatelessWidget {
+  const _GardeGlissement({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final ModalRoute<Object?>? route = ModalRoute.of(context);
+    double descente = 0;
+    return RawGestureDetector(
+      behavior: HitTestBehavior.translucent,
+      gestures: <Type, GestureRecognizerFactory>{
+        _GlissementRetenu:
+            GestureRecognizerFactoryWithHandlers<_GlissementRetenu>(
+              () => _GlissementRetenu(route),
+              (_GlissementRetenu r) => r
+                ..route = route
+                ..onStart = ((DragStartDetails _) => descente = 0)
+                ..onUpdate = ((DragUpdateDetails d) => descente += d.delta.dy)
+                ..onEnd = (DragEndDetails d) {
+                  if (descente > 0 || (d.primaryVelocity ?? 0) > 0) {
+                    unawaited(Navigator.of(context).maybePop());
+                  }
+                },
+            ),
+      },
+      child: child,
+    );
+  }
+}
+
+class _GlissementRetenu extends VerticalDragGestureRecognizer {
+  _GlissementRetenu(this.route);
+
+  ModalRoute<Object?>? route;
+
+  @override
+  bool isPointerAllowed(PointerEvent event) =>
+      route?.popDisposition == RoutePopDisposition.doNotPop &&
+      super.isPointerAllowed(event);
 }
 
 /// Le cadre de la boite de dialogue de bureau : centree, bornee a

@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -47,12 +48,15 @@ late GoRouter _routeur;
 /// Enveloppe la demonstration : `decider` attend [porte] avant de
 /// transmettre, pour figer « ... en cours... » le temps d'une capture.
 class _PortEnvoiControle implements PortRevueDossiers {
-  _PortEnvoiControle(this._base, {this.erreur});
+  _PortEnvoiControle(this._base, {this.erreur, this.avant});
 
   final PortRevueDossiers _base;
 
   /// Levee par `decider` a la place de la decision (etats secondaires).
   final Exception? erreur;
+
+  /// Appele juste avant de lever [erreur] (coupure au moment du clic).
+  final VoidCallback? avant;
   final Completer<void> porte = Completer<void>();
 
   @override
@@ -83,6 +87,7 @@ class _PortEnvoiControle implements PortRevueDossiers {
   }) async {
     final Exception? e = erreur;
     if (e != null) {
+      avant?.call();
       throw e;
     }
     await porte.future;
@@ -451,7 +456,135 @@ void main() {
             'PNG ${await capturer(tester, 'ad8_hors_ligne_${nom}_${mode.name}')}',
           );
         });
+
+        // HL-A-4. Hors ligne AU MOMENT DU CLIC : le motif est saisi, le
+        //         reseau tombe pendant l'envoi, la requete echoue.
+        testWidgets('HL-A-4 $nom, hors ligne au clic, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, _densite(nom));
+          final StreamController<bool> reseau =
+              StreamController<bool>.broadcast();
+          addTearDown(reseau.close);
+          await _monter(
+            tester,
+            taille,
+            mode,
+            port: _PortEnvoiControle(
+              RevueDossiersDemo(EtatRevueDemo.initial()),
+              erreur: Exception('reseau coupe'),
+              avant: () => reseau.add(true),
+            ),
+            plus: <Override>[
+              horsLigneProvider.overrideWith((Ref ref) => reseau.stream),
+            ],
+          );
+          await _ouvrirLigne(tester, 'Omar');
+          await _versLabel(tester, find.text(t.dossiers.refuser).first);
+          await tester.tap(find.text(t.dossiers.refuser).first);
+          await _stabiliser(tester);
+          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _stabiliser(tester);
+          await tester.tap(find.text(t.dossiers.refuser).last);
+          await _stabiliser(tester);
+          await _stabiliser(tester);
+          expect(find.text(t.dossiers.refus.horsLigne), findsOneWidget);
+          expect(find.text('Photo illisible.'), findsOneWidget);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ad8_hors_ligne_clic_${nom}_${mode.name}')}',
+          );
+        });
+
+        // HL-A-4. Validation (02E) en resultat inconnu et « plus prete ».
+        for (final (String cas, CodeErreurRevue code, String texte)
+            in <(String, CodeErreurRevue, String)>[
+              (
+                'inconnu',
+                CodeErreurRevue.reponsePerdue,
+                t.dossiers.validation.inconnu,
+              ),
+              (
+                'plus_pret',
+                CodeErreurRevue.accordManquant,
+                t.dossiers.validation.plusPret,
+              ),
+            ]) {
+          testWidgets('HL-A-4 $nom, validation $cas, ${mode.name}', (
+            WidgetTester tester,
+          ) async {
+            fixerVueCapture(tester, taille, _densite(nom));
+            await _monter(
+              tester,
+              taille,
+              mode,
+              port: _PortEnvoiControle(
+                RevueDossiersDemo(EtatRevueDemo.initial()),
+                erreur: ErreurRevueDossier(code),
+              ),
+            );
+            await _ouvrirLigne(tester, 'Omar');
+            await _ouvrirValidationDansRevue(tester);
+            await tester.tap(find.text(t.dossiers.approuver).last);
+            await _stabiliser(tester);
+            await _stabiliser(tester);
+            expect(find.text(texte), findsOneWidget);
+            debugPrint(
+              'PNG ${await capturer(tester, 'ad8_validation_${cas}_${nom}_${mode.name}')}',
+            );
+          });
+        }
+      }
+
+      // HL-A-4. Refus (motif saisi) et validation a 200 %, 390 et 1440.
+      for (final (Size taille, String nom) in <(Size, String)>[
+        _tailles.first,
+        _tailles.last,
+      ]) {
+        testWidgets('HL-A-4 $nom, surfaces a 200 %, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, _densite(nom));
+          tester.platformDispatcher.textScaleFactorTestValue = 2;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await _monter(tester, taille, mode);
+          await _ouvrirLigne(tester, 'Omar');
+          await _versLabel(tester, find.text(t.dossiers.refuser).first);
+          await tester.tap(find.text(t.dossiers.refuser).first);
+          await _stabiliser(tester);
+          await tester.enterText(_champMotif, 'Photo illisible.');
+          await _stabiliser(tester);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ad8_refus_saisi_200_${nom}_${mode.name}')}',
+          );
+          // Echap, puis « Abandonner » : retour a la revue.
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+          await _stabiliser(tester);
+          await tester.tap(find.text(t.dossiers.refus.abandonner));
+          await _stabiliser(tester);
+          await _ouvrirValidationDansRevue(tester);
+          expect(find.text(t.dossiers.validation.titre), findsOneWidget);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ad8_validation_200_${nom}_${mode.name}')}',
+          );
+        });
       }
     }
   });
+}
+
+/// Coche les trois verifications puis tape « Valider le dossier » (revue
+/// deja ouverte).
+Future<void> _ouvrirValidationDansRevue(WidgetTester tester) async {
+  for (final String point in <String>[
+    t.dossiers.pointLisible,
+    t.dossiers.pointNom,
+    t.dossiers.pointValidite,
+  ]) {
+    await _versLabel(tester, find.text(point));
+    await tester.tap(find.text(point));
+    await _stabiliser(tester);
+  }
+  await _versLabel(tester, find.text(t.dossiers.approuver));
+  await tester.tap(find.text(t.dossiers.approuver));
+  await _stabiliser(tester);
 }
