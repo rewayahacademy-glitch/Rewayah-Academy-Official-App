@@ -107,10 +107,18 @@ Widget titreFocalisable(FocusNode? noeud, Widget titre) => noeud == null
 /// fleche d'accent miroitee en arabe. Lu « Retour ».
 class DisqueRetour extends StatelessWidget {
   /// Cree le disque.
-  const DisqueRetour({required this.onPress, super.key});
+  const DisqueRetour({
+    required this.onPress,
+    super.key,
+    this.libelleSemantique,
+  });
 
   /// Le retour.
   final VoidCallback onPress;
+
+  /// Ce qu'annonce le disque ; « Retour » par defaut (« Fermer la piece »
+  /// dans la visionneuse plein ecran).
+  final String? libelleSemantique;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +126,7 @@ class DisqueRetour extends StatelessWidget {
 
     return Pressable(
       onPress: onPress,
-      libelleSemantique: t.commun.entete.retour,
+      libelleSemantique: libelleSemantique ?? t.commun.entete.retour,
       arrondiFocus: AppRadius.arrondiFull,
       child: ExcludeSemantics(
         child: SizedBox.square(

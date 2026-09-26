@@ -1231,6 +1231,7 @@ class Traductions$dossiers$fr {
 
 	late final Traductions$dossiers$file$fr file = Traductions$dossiers$file$fr.internal(_root);
 	late final Traductions$dossiers$detail$fr detail = Traductions$dossiers$detail$fr.internal(_root);
+	late final Traductions$dossiers$visionneuse$fr visionneuse = Traductions$dossiers$visionneuse$fr.internal(_root);
 	late final Traductions$dossiers$revue$fr revue = Traductions$dossiers$revue$fr.internal(_root);
 
 	/// fr: '1 dossier en attente'
@@ -3633,6 +3634,54 @@ class Traductions$dossiers$detail$fr {
 
 	/// fr: 'Dossier d'{nom}'
 	String titreElide({required Object nom}) => 'Dossier d\'${nom}';
+}
+
+// Path: dossiers.visionneuse
+class Traductions$dossiers$visionneuse$fr {
+	Traductions$dossiers$visionneuse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement de la pièce…'
+	String get chargement => 'Chargement de la pièce…';
+
+	/// fr: 'La pièce ne peut pas être affichée.'
+	String get erreur => 'La pièce ne peut pas être affichée.';
+
+	/// fr: 'L'accès à cette pièce a expiré.'
+	String get expire => 'L\'accès à cette pièce a expiré.';
+
+	/// fr: 'Recharger la pièce'
+	String get recharger => 'Recharger la pièce';
+
+	/// fr: 'Ce format de pièce ne peut pas être affiché.'
+	String get formatNonPrisEnCharge => 'Ce format de pièce ne peut pas être affiché.';
+
+	/// fr: 'Vous n’avez plus accès à cette pièce.'
+	String get accesRetire => 'Vous n’avez plus accès à cette pièce.';
+
+	/// fr: 'Vous êtes hors ligne. La pièce ne peut pas être chargée.'
+	String get horsLigne => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.';
+
+	/// fr: 'Aucune pièce n’est disponible.'
+	String get aucune => 'Aucune pièce n’est disponible.';
+
+	/// fr: 'Fermer la pièce'
+	String get fermerPiece => 'Fermer la pièce';
+
+	/// fr: 'Agrandir'
+	String get agrandir => 'Agrandir';
+
+	/// fr: 'Réduire'
+	String get reduire => 'Réduire';
+
+	/// fr: 'Ajuster à l’écran'
+	String get ajuster => 'Ajuster à l’écran';
+
+	/// fr: 'Document fictif'
+	String get documentFictif => 'Document fictif';
 }
 
 // Path: dossiers.revue
@@ -12087,6 +12136,19 @@ extension on Traductions {
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
+			'dossiers.visionneuse.chargement' => 'Chargement de la pièce…',
+			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
+			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
+			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
+			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
+			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
+			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
+			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
+			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
+			'dossiers.visionneuse.agrandir' => 'Agrandir',
+			'dossiers.visionneuse.reduire' => 'Réduire',
+			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
+			'dossiers.visionneuse.documentFictif' => 'Document fictif',
 			'dossiers.revue.identite' => 'Identité et dossier',
 			'dossiers.revue.piece' => 'Pièce d\'identité',
 			'dossiers.revue.voirPiece' => 'Voir la pièce',
@@ -12367,6 +12429,8 @@ extension on Traductions {
 			'admin.regles.appareilsParEleve' => 'Appareils par élève',
 			'admin.regles.appareilsParEleveDetail' => 'Le nombre d\'appareils qu\'un élève peut avoir actifs en même temps.',
 			'admin.regles.seancesSimultanees' => 'Séances simultanées par profil',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.seancesSimultaneesDetail' => 'Le nombre de séances qu\'un même profil peut suivre en même temps.',
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
 			'admin.regles.uniteSemaines' => ({required Object n}) => '${n} sem.',
@@ -12380,8 +12444,6 @@ extension on Traductions {
 			'admin.fonctionnalites.champValeur' => 'Valeur',
 			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
 			'admin.fonctionnalites.multiParticipantsDetail' => 'Autorise plusieurs élèves dans une même séance de visioconférence.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fonctionnalites.participantsMax' => 'Participants maximum',
 			'admin.fonctionnalites.participantsMaxDetail' => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.',
 			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '${n}',
@@ -12881,6 +12943,8 @@ extension on Traductions {
 			'nav.principale' => 'Navigation principale',
 			'nav.motSymbole' => 'Rewayah',
 			'nav.replier' => 'Replier la navigation',
+			_ => null,
+		} ?? switch (path) {
 			'nav.deplier' => 'Déplier la navigation',
 			'compte.titre' => 'Mon compte',
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
@@ -12894,8 +12958,6 @@ extension on Traductions {
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
 			'compte.confidentialite' => 'Confidentialité',
-			_ => null,
-		} ?? switch (path) {
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
@@ -13395,6 +13457,8 @@ extension on Traductions {
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.capaciteAbsente' => 'L\'observation n\'est pas disponible pour le moment.',
 			'classe.pagePlanning.prochaines' => 'Prochaines séances',
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
@@ -13408,8 +13472,6 @@ extension on Traductions {
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
 			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageTravail.statut.aFaire' => 'À faire',
 			'classe.pageTravail.statut.enCours' => 'Commencé',
 			'classe.pageTravail.statut.fait' => 'Fait',
@@ -13909,6 +13971,8 @@ extension on Traductions {
 			'tc.outils.masquer.reveler' => 'Révéler',
 			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
 			'tc.outils.masquer.tout' => 'Tout démasquer',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.focus.quitter' => 'Quitter le focus',
 			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
 			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
@@ -13922,8 +13986,6 @@ extension on Traductions {
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.',

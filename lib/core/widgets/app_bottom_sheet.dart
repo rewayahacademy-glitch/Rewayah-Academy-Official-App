@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../icons/app_icons.dart';
 
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
@@ -8,6 +13,8 @@ import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'entete_page.dart' show DisqueRetour;
+import 'pressable.dart';
 
 /// La forme d'une surface modale, selon le gabarit.
 enum FormeModale {
@@ -181,6 +188,72 @@ class AppBottomSheet extends StatelessWidget {
     );
   }
 
+  /// Ouvre une surface de LECTURE modale (visionneuse de piece, AD-7).
+  ///
+  /// Sous [AppGabarit.seuilEtendu] (classes compacte et moyenne), c'est un
+  /// plein ecran : disque retour au debut, titre, sous-titre, corps extensible,
+  /// pied. A partir de 840, une boite de dialogue bornee a
+  /// [AppPage.largeurLecture], tenue a 32 des bords. Le voile ne ferme pas
+  /// (`barrierDismissible: false`) ; `Echap` et le retour systeme passent par
+  /// `Navigator.maybePop`. Durees gelees 180 / 120, nulles en reduction de
+  /// mouvement. [ouvrir] reste inchange.
+  static Future<T?> ouvrirLecture<T>(
+    BuildContext context, {
+    required String titre,
+    required String libelleFermer,
+    required Widget Function(BuildContext context) constructeur,
+    String? sousTitre,
+    Widget Function(BuildContext context)? actions,
+  }) {
+    final AppPalette palette = AppPalette.of(context);
+    final bool pleinEcran =
+        MediaQuery.sizeOf(context).width < AppGabarit.seuilEtendu;
+    return showDialog<T>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: palette.voile,
+      useSafeArea: false,
+      animationStyle: AnimationStyle(
+        curve: AppMouvement.entree,
+        duration: AppMouvement.duree(context, AppMouvement.feuilleOuverture),
+        reverseCurve: AppMouvement.sortie,
+        reverseDuration: AppMouvement.duree(
+          context,
+          AppMouvement.feuilleFermeture,
+        ),
+      ),
+      builder: (BuildContext contexte) {
+        final Widget surface = _SurfaceLecture(
+          titre: titre,
+          sousTitre: sousTitre,
+          libelleFermer: libelleFermer,
+          pleinEcran: pleinEcran,
+          actions: actions?.call(contexte),
+          child: constructeur(contexte),
+        );
+        if (pleinEcran) {
+          return Material(type: MaterialType.transparency, child: surface);
+        }
+        return SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.xxxl),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppPage.largeurLecture,
+                ),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: surface,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -277,6 +350,148 @@ class _CadreDialogue extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// La surface de lecture de [AppBottomSheet.ouvrirLecture] : plein ecran
+/// (disque retour au debut) ou dialogue borne (croix a la fin). Le corps
+/// occupe toute la hauteur restante.
+class _SurfaceLecture extends StatelessWidget {
+  const _SurfaceLecture({
+    required this.titre,
+    required this.sousTitre,
+    required this.libelleFermer,
+    required this.pleinEcran,
+    required this.actions,
+    required this.child,
+  });
+
+  final String titre;
+  final String? sousTitre;
+  final String libelleFermer;
+  final bool pleinEcran;
+  final Widget? actions;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppMetriques metriques = AppMetriques.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppColorPair surface = pleinEcran
+        ? palette.surfaceRaised
+        : palette.surfaceOverlay;
+    void fermer() => unawaited(Navigator.of(context).maybePop());
+
+    final Widget entete = Row(
+      children: <Widget>[
+        if (pleinEcran) ...<Widget>[
+          DisqueRetour(onPress: fermer, libelleSemantique: libelleFermer),
+          Ecart.hMd,
+        ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Semantics(
+                header: true,
+                child: Text(
+                  titre,
+                  style: surface.applyTo(
+                    textes.headlineSmall ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              if (sousTitre != null) ...<Widget>[
+                Ecart.vSm,
+                Text(
+                  sousTitre!,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        if (!pleinEcran) ...<Widget>[
+          Ecart.hMd,
+          Tooltip(
+            message: libelleFermer,
+            excludeFromSemantics: true,
+            child: Pressable(
+              onPress: fermer,
+              libelleSemantique: libelleFermer,
+              arrondiFocus: AppRadius.arrondiFull,
+              child: ExcludeSemantics(
+                child: SizedBox.square(
+                  dimension: AppTouchTarget.standard,
+                  child: Center(
+                    child: IconTheme(
+                      data: palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+                      child: Icon(AppIcons.effacer.repos),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+
+    final Widget colonne = Padding(
+      padding: EdgeInsetsDirectional.all(
+        pleinEcran ? metriques.marge : AppSpacing.xxl,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          entete,
+          Ecart.vLg,
+          Expanded(child: child),
+          if (actions != null) ...<Widget>[Ecart.vLg, actions!],
+        ],
+      ),
+    );
+
+    // Le voile ne ferme pas (`barrierDismissible: false`), ce qui desactive
+    // aussi le `DismissIntent` de la route : Echap est donc rebranche ici,
+    // sur la meme fermeture que la croix.
+    return Shortcuts(
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
+      },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          DismissIntent: CallbackAction<DismissIntent>(
+            onInvoke: (_) {
+              fermer();
+              return null;
+            },
+          ),
+        },
+        child: pleinEcran
+            ? ColoredBox(
+                color: surface.background,
+                child: SafeArea(child: colonne),
+              )
+            : _decorer(palette, surface, colonne),
+      ),
+    );
+  }
+
+  Widget _decorer(AppPalette palette, AppColorPair surface, Widget colonne) {
+    return DecoratedBox(
+      decoration: AppElevation.avecFilet(
+        surface: surface,
+        filet: palette.borderHairline,
+        ombre: palette.ombre,
+        arrondi: AppRadius.arrondiLg,
+        ombres: AppElevation.niveau3(palette.ombre),
+      ),
+      child: colonne,
     );
   }
 }

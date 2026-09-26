@@ -7,8 +7,10 @@ import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
+import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 
 import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
@@ -36,6 +38,9 @@ Future<FauxServiceValidation> _monter(
       surcharges: <Override>[
         serviceValidationProvider.overrideWithValue(service),
         surchargeRevueDossiersProduction,
+        imagePieceProvider.overrideWithValue(
+          (Uri _) => MemoryImage(pngSynthetique),
+        ),
       ],
     ),
   );
@@ -209,21 +214,89 @@ void main() {
       expect(service.verdicts.single.motif, 'Photo illisible.');
     });
 
-    testWidgets('AD-6 : ni journalisation, ni apercu, ni URL dans le detail', (
+    testWidgets('AD-7 : ni journalisation ni URL dans le detail ; « Voir la '
+        'piece » signe par le mecanisme existant et la validation se rouvre', (
       WidgetTester tester,
     ) async {
-      await _monter(
+      final FauxServiceValidation service = await _monter(
         tester,
         FauxServiceValidation()..file = <DossierAValider>[_dossier()],
       );
 
-      // Le rappel de journalisation et l'apercu en ligne ont quitte le
-      // detail (modification 13) : aucune cle d'objet, aucune image.
       expect(find.text(t.dossiers.journalisation), findsNothing);
       expect(find.text(t.dossiers.apercu), findsNothing);
-      expect(find.byType(Image), findsNothing);
       expect(find.textContaining('piece.webp'), findsNothing);
-      expect(find.text(t.dossiers.revue.voirPiece), findsOneWidget);
+      expect(service.apercus, isEmpty);
+
+      await _taper(tester, t.dossiers.revue.voirPiece);
+      expect(find.byType(VisionneusePiece), findsOneWidget);
+      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(find.textContaining('http'), findsNothing);
+      expect(find.textContaining('piece.webp'), findsNothing);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(VisionneusePiece), findsNothing);
+      expect(
+        FocusManager.instance.primaryFocus?.debugLabel,
+        'adm02b-voir-piece',
+      );
+
+      await _taper(tester, t.dossiers.pointLisible);
+      await _taper(tester, t.dossiers.pointNom);
+      await _taper(tester, t.dossiers.pointValidite);
+      await _taper(tester, t.dossiers.approuver);
+      expect(service.verdicts.single.approuve, isTrue);
+    });
+
+    testWidgets('AD-7 : une piece pdf ne s affiche pas, validation fermee, '
+        'refus ouvert, rien n est signe', (WidgetTester tester) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()
+          ..file = <DossierAValider>[
+            DossierAValider(
+              documentId: 'doc1',
+              profilId: 'p1',
+              type: TypePiece.carteIdentite,
+              cleObjet: 'p1/piece.pdf',
+              deposeLe: DateTime(2026, 9, 4),
+              prenom: 'Moussa',
+              nom: 'Barry',
+              identifiantImmuable: 'TEACHER-MB-000001',
+              role: AppRole.teacher,
+            ),
+          ],
+      );
+      await _taper(tester, t.dossiers.revue.voirPiece);
+      expect(
+        find.text(t.dossiers.visionneuse.formatNonPrisEnCharge),
+        findsOneWidget,
+      );
+      expect(service.apercus, isEmpty);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _allerA(tester, t.dossiers.approuver);
+      final Finder valider = find.ancestor(
+        of: find.text(t.dossiers.approuver),
+        matching: find.byType(ActionPrincipale),
+      );
+      expect(tester.widget<ActionPrincipale>(valider).onPress, isNull);
+      final Finder refuser = find.ancestor(
+        of: find.text(t.dossiers.refuser).first,
+        matching: find.byType(ActionPrincipale),
+      );
+      expect(tester.widget<ActionPrincipale>(refuser.first).onPress, isNotNull);
     });
 
     testWidgets('une file vide est une invitation, pas un ecran mort', (

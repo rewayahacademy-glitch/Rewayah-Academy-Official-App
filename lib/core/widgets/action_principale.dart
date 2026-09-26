@@ -57,6 +57,7 @@ class ActionPrincipale extends StatelessWidget {
     this.prefixe,
     this.fleche = false,
     this.pilule = false,
+    this.focusNode,
   });
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
@@ -100,6 +101,9 @@ class ActionPrincipale extends StatelessWidget {
   /// bouton a le rayon `sm` (12).
   final bool pilule;
 
+  /// Le noeud de focus, pour y rendre le focus apres une modale.
+  final FocusNode? focusNode;
+
   BorderRadius get _arrondi =>
       pilule ? AppRadius.arrondiFull : AppRadius.arrondiSm;
 
@@ -114,6 +118,7 @@ class ActionPrincipale extends StatelessWidget {
       libelleSemantique: libelle,
       respecterCibleTactile: false,
       arrondiFocus: _arrondi,
+      focusNode: focusNode,
       constructeur: (BuildContext contexte, EtatPression etat) =>
           _corps(contexte, palette, metriques, etat, actif: actif),
     );

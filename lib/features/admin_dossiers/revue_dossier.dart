@@ -20,6 +20,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
 import 'file_dossiers.dart' show actualiserDossiers;
 import 'textes_dossier.dart';
+import 'visionneuse_piece.dart';
 
 /// La revue d'un dossier (`ADM-02B`, AD-6), lue par le port. Ordre de
 /// lecture : titre, statut, identite, piece, verifications, accords, puis
@@ -59,6 +60,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
   final Set<String> _faites = <String>{};
   final Map<String, FocusNode> _focus = <String, FocusNode>{};
   final FocusNode _focusTitre = FocusNode(debugLabel: 'adm02b-titre');
+  final FocusNode _focusVoirPiece = FocusNode(debugLabel: 'adm02b-voir-piece');
   final TextEditingController _motif = TextEditingController();
   bool _refusEnCours = false;
   bool _envoi = false;
@@ -71,8 +73,20 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
       n.dispose();
     }
     _focusTitre.dispose();
+    _focusVoirPiece.dispose();
     _motif.dispose();
     super.dispose();
+  }
+
+  /// Ouvre la visionneuse puis rend le focus a « Voir la piece », quel que
+  /// soit le chemin de fermeture (repli sur le titre si le bouton a disparu).
+  Future<void> _voirPiece() async {
+    await ouvrirVisionneusePiece(context, dossier: widget.dossier);
+    if (!mounted) {
+      return;
+    }
+    (_focusVoirPiece.context != null ? _focusVoirPiece : _focusTitre)
+        .requestFocus();
   }
 
   FocusNode _noeud(String id) =>
@@ -209,7 +223,11 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         SizedBox(height: section),
         _CarteIdentite(dossier: d),
         SizedBox(height: section),
-        _CartePiece(dossier: d),
+        _CartePiece(
+          dossier: d,
+          focusNode: _focusVoirPiece,
+          onVoirPiece: () => unawaited(_voirPiece()),
+        ),
         SizedBox(height: section),
         GroupeReglages(
           titre: t.dossiers.verifications,
@@ -413,9 +431,15 @@ class _CarteIdentite extends StatelessWidget {
 }
 
 class _CartePiece extends StatelessWidget {
-  const _CartePiece({required this.dossier});
+  const _CartePiece({
+    required this.dossier,
+    required this.focusNode,
+    required this.onVoirPiece,
+  });
 
   final DossierPourRevue dossier;
+  final FocusNode focusNode;
+  final VoidCallback onVoirPiece;
 
   @override
   Widget build(BuildContext context) {
@@ -424,13 +448,13 @@ class _CartePiece extends StatelessWidget {
       EtatPieceRevue.disponible => LigneRubrique(
         icone: AppIcons.dossiers,
         libelle: type == null ? t.dossiers.revue.piece : libelleTypePiece(type),
-        // « Voir la piece » attend la visionneuse d'AD-7 (AD-BR-03).
-        legende: t.dossiers.revue.pieceIndisponible,
+        // AD-7 : la visionneuse (lecture et zoom seulement).
         controle: ActionPrincipale(
           libelle: t.dossiers.revue.voirPiece,
           niveau: NiveauAction.tertiaire,
           pleineLargeur: false,
-          onPress: null,
+          focusNode: focusNode,
+          onPress: dossier.peutVoirPiece ? onVoirPiece : null,
         ),
       ),
       EtatPieceRevue.nonVisible => LigneRubrique(

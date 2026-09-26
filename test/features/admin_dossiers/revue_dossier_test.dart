@@ -139,11 +139,11 @@ void main() {
     expect(find.textContaining('http'), findsNothing);
     expect(find.textContaining('demo-fictif'), findsNothing);
     expect(find.textContaining('DEMO-D01'), findsNothing);
-    // Voir la piece : present, inactif, avec sa raison.
-    expect(_bouton(tester, 'Voir la pièce').onPress, isNull);
+    // AD-7 : Voir la piece est actif, sans legende d'indisponibilite.
+    expect(_bouton(tester, 'Voir la pièce').onPress, isNotNull);
     expect(
       find.text('La consultation de la pièce est indisponible pour le moment.'),
-      findsOneWidget,
+      findsNothing,
     );
     expect(find.text(t.dossiers.journalisation), findsNothing);
   });

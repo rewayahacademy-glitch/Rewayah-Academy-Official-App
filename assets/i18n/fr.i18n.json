@@ -922,6 +922,21 @@
       "titreDe": "Dossier de {nom}",
       "titreElide": "Dossier d'{nom}"
     },
+    "visionneuse": {
+      "chargement": "Chargement de la pièce…",
+      "erreur": "La pièce ne peut pas être affichée.",
+      "expire": "L'accès à cette pièce a expiré.",
+      "recharger": "Recharger la pièce",
+      "formatNonPrisEnCharge": "Ce format de pièce ne peut pas être affiché.",
+      "accesRetire": "Vous n’avez plus accès à cette pièce.",
+      "horsLigne": "Vous êtes hors ligne. La pièce ne peut pas être chargée.",
+      "aucune": "Aucune pièce n’est disponible.",
+      "fermerPiece": "Fermer la pièce",
+      "agrandir": "Agrandir",
+      "reduire": "Réduire",
+      "ajuster": "Ajuster à l’écran",
+      "documentFictif": "Document fictif"
+    },
     "revue": {
       "identite": "Identité et dossier",
       "piece": "Pièce d'identité",

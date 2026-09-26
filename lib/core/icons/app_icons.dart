@@ -338,6 +338,20 @@ abstract final class AppIcons {
     IconData(0xe3d4, fontFamily: _actif),
   );
 
+  /// Reduction du zoom : Phosphor `minus` (0xe32a, releve dans
+  /// `phosphor_flutter` 2.1.0).
+  static const AppIcon reduire = AppIcon._(
+    IconData(0xe32a, fontFamily: _repos),
+    IconData(0xe32a, fontFamily: _actif),
+  );
+
+  /// Ajustement a l'ecran : Phosphor `corners-in` (0xe1ce, releve dans
+  /// `phosphor_flutter` 2.1.0).
+  static const AppIcon ajusterEcran = AppIcon._(
+    IconData(0xe1ce, fontFamily: _repos),
+    IconData(0xe1ce, fontFamily: _actif),
+  );
+
   /// Progression vers l'element suivant.
   static const AppIcon suivant = AppIcon._(
     IconData(0xe13a, fontFamily: _repos),

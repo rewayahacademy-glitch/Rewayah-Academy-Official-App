@@ -41,7 +41,9 @@ void main() {
     // Le plus ancien dossier synthetique d'abord, piece jamais montree.
     // AD-6 : titre de la revue, piece jamais montree, raison dite.
     expect(find.text("Dossier d'Omar Haddad"), findsOneWidget);
-    expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
+    // AD-7 : la piece s'ouvre par « Voir la piece », jamais en ligne.
+    expect(find.text(t.dossiers.revue.pieceIndisponible), findsNothing);
+    expect(find.text(t.dossiers.revue.voirPiece), findsOneWidget);
     expect(find.byType(Image), findsNothing);
 
     for (final String point in <String>[

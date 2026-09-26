@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -405,9 +406,14 @@ class FauxServiceValidation implements ServiceValidation {
     return file;
   }
 
+  /// Les cles signees, dans l'ordre (AD-7).
+  final List<String> apercus = <String>[];
+
   @override
-  Future<String> apercu(String cleObjet) async =>
-      'https://exemple.test/$cleObjet';
+  Future<String> apercu(String cleObjet) async {
+    apercus.add(cleObjet);
+    return 'https://exemple.test/$cleObjet';
+  }
 
   @override
   Future<void> decider({
@@ -616,7 +622,9 @@ class FauxServiceAttribution implements ServiceAttribution {
     ({String eleveId, String enseignantId, Creneau creneau, String? motif})
   >
   attributions =
-      <({String eleveId, String enseignantId, Creneau creneau, String? motif})>[];
+      <
+        ({String eleveId, String enseignantId, Creneau creneau, String? motif})
+      >[];
 
   /// Ce que la lecture de la file doit jeter.
   Object? erreurFoyers;
@@ -711,7 +719,14 @@ class FauxServiceJournal implements ServiceJournal {
     ({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})
   >
   lectures =
-      <({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})>[];
+      <
+        ({
+          String? acteur,
+          String? type,
+          DateTime? depuis,
+          CurseurJournal? curseur,
+        })
+      >[];
 
   /// Ce que la lecture doit jeter.
   Object? erreurEntrees;
@@ -755,7 +770,9 @@ class FauxServiceJournal implements ServiceJournal {
       );
     }
     if (depuis != null) {
-      retenues = retenues.where((EntreeJournal e) => !e.survenuLe.isBefore(depuis));
+      retenues = retenues.where(
+        (EntreeJournal e) => !e.survenuLe.isBefore(depuis),
+      );
     }
     if (curseur != null) {
       // Le meme keyset que la base : strictement avant le couple donne.
@@ -935,10 +952,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -948,8 +962,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(
@@ -1555,13 +1568,13 @@ class FauxDepotRapports implements DepotRapports {
   Object? erreurAJeter;
 
   /// Les cles presentes, du plus ancien au plus recent.
-  List<String> get cles => (_lignes.values.toList()
-        ..sort(
-          (RapportEnAttente a, RapportEnAttente b) =>
-              a.redigeA.compareTo(b.redigeA),
-        ))
-      .map((RapportEnAttente r) => r.cleIdempotence)
-      .toList(growable: false);
+  List<String> get cles =>
+      (_lignes.values.toList()..sort(
+            (RapportEnAttente a, RapportEnAttente b) =>
+                a.redigeA.compareTo(b.redigeA),
+          ))
+          .map((RapportEnAttente r) => r.cleIdempotence)
+          .toList(growable: false);
 
   @override
   Future<List<RapportEnAttente>> enAttente() async =>
@@ -1679,3 +1692,13 @@ MembreSeance membreDeTest({
   niveau: niveau,
   riwaya: riwaya,
 );
+
+/// Une image PNG synthetique de 1 x 1 (transparente) : jamais une vraie piece.
+final Uint8List pngSynthetique = Uint8List.fromList(<int>[
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, //
+  0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //
+  0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, //
+  0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, //
+  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, //
+  0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+]);
