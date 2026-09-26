@@ -53,12 +53,18 @@ class SalleSeance extends StatelessWidget {
     required this.vue,
     required this.actions,
     this.local = const EtatLocalSeance(),
+    this.contenuSupport,
     super.key,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
+
+  /// Le rendu reel du support partage (Classe Live :
+  /// `ContexteClasseLive.support`). `null` : la salle rend elle-meme
+  /// `vue.support` (demonstration).
+  final Widget? contenuSupport;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +87,7 @@ class SalleSeance extends StatelessWidget {
             actions: actions,
             local: local,
             gabarit: gabarit,
+            contenuSupport: contenuSupport,
           ),
         ),
       );
@@ -109,7 +116,11 @@ class SalleSeance extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: gouttiere),
-                child: ZoneSupport(vue: vue, zoom: local.zoom),
+                child: ZoneSupport(
+                  vue: vue,
+                  zoom: local.zoom,
+                  contenu: contenuSupport,
+                ),
               ),
             ),
             Padding(
@@ -145,12 +156,14 @@ class _SalleEnseignant extends StatelessWidget {
     required this.actions,
     required this.local,
     required this.gabarit,
+    this.contenuSupport,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
   final Gabarit gabarit;
+  final Widget? contenuSupport;
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +171,12 @@ class _SalleEnseignant extends StatelessWidget {
     final bool outils = vue.voitOutils && actions.onOutil != null;
     // Telephone et desktop : le support partage la hauteur avec les boutons
     // et les outils, il se resserre pour montrer la diapositive entiere.
-    final Widget support = ZoneSupport(vue: vue, zoom: local.zoom, serre: true);
+    final Widget support = ZoneSupport(
+      vue: vue,
+      zoom: local.zoom,
+      serre: true,
+      contenu: contenuSupport,
+    );
     final Widget? boutons = _BoutonsPanneaux.ou(vue, actions, gabarit);
     final Widget? panneau = _panneau();
     if (panneau != null) {
@@ -519,9 +537,16 @@ class _SalleEnseignant extends StatelessWidget {
             gouttiere,
             AppSpacing.lg,
           ),
-          child: Row(
-            spacing: AppSpacing.md,
-            children: <Widget>[?pagination, dock, ?zoom],
+          // Pres du bas du gabarit desktop (1200 a 1400), la rangee se
+          // reduit d'un bloc plutot que de deborder, comme sur CLV-08.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: AppSpacing.md,
+              children: <Widget>[?pagination, dock, ?zoom],
+            ),
           ),
         ),
       ],

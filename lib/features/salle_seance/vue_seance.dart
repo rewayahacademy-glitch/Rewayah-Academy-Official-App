@@ -86,7 +86,17 @@ class FicheEleveSeance {
 /// Un inscrit de la Classe.
 @immutable
 class EleveSeance {
-  const EleveSeance({required this.prenom, required this.statut, this.fiche});
+  const EleveSeance({
+    required this.prenom,
+    required this.statut,
+    this.fiche,
+    this.id,
+  });
+
+  /// L'identifiant d'academie (`/tc/classe`) : les actions de la fiche
+  /// (rappel, recitation) visent un inscrit par lui, jamais par son prenom.
+  /// `null` en demonstration et dans `/salle`.
+  final String? id;
 
   final String prenom;
   final StatutEleveSeance statut;
@@ -224,6 +234,7 @@ class VueSeance {
     this.cameraAutorisee = true,
     this.signalEnseignant = 3,
     this.eleves = const <EleveSeance>[],
+    this.elevesConnus = true,
     this.supports = const <SupportDisponible>[],
     this.fin,
     this.panneau = PanneauOuvert.aucun,
@@ -294,6 +305,10 @@ class VueSeance {
   /// Les inscrits : source unique du compteur, du panneau et du
   /// recapitulatif (I-6).
   final List<EleveSeance> eleves;
+
+  /// Faux quand la liste n'a pas pu etre lue (J3) : aucun compteur, jamais
+  /// un zero invente.
+  final bool elevesConnus;
   final List<SupportDisponible> supports;
 
   /// Non nul : la seance est finie.
@@ -439,7 +454,7 @@ class VueSeance {
   int get inscrits => eleves.length;
 
   /// « Eleves 1/3 », ou `null` hors enseignant.
-  String? get compteurEleves => _enseignant
+  String? get compteurEleves => _enseignant && elevesConnus
       ? t.salle.seance.compteurEleves(connectes: connectes, inscrits: inscrits)
       : null;
 
@@ -514,6 +529,7 @@ class VueSeance {
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,
     signalEnseignant: signalEnseignant,
     eleves: eleves ?? this.eleves,
+    elevesConnus: elevesConnus,
     supports: supports,
     fin: fin ?? this.fin,
     panneau: panneau ?? this.panneau,

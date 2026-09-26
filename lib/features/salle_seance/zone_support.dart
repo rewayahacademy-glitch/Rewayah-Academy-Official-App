@@ -27,10 +27,16 @@ class ZoneSupport extends StatelessWidget {
     required this.vue,
     this.zoom = 1,
     this.serre = false,
+    this.contenu,
     super.key,
   });
 
   final VueSeance vue;
+
+  /// Le rendu reel du support (Classe Live). `null` : `vue.support` est
+  /// rendu par la salle. Il occupe la carte, sous la vignette, sans defiler
+  /// ici : le rendu fourni gere lui-meme sa lecture.
+  final Widget? contenu;
 
   /// Le zoom local (1 = 100 %), qui n'agit que sur cet ecran.
   final double zoom;
@@ -70,31 +76,41 @@ class ZoneSupport extends StatelessWidget {
       child: Builder(
         builder: (BuildContext contexte) {
           final AppPalette palette = AppPalette.of(contexte);
-          final Widget defilement = MediaQuery(
-            data: MediaQuery.of(contexte).copyWith(
-              textScaler: TextScaler.linear(
-                MediaQuery.textScalerOf(contexte).scale(1) * zoom,
-              ),
-            ),
-            child: _FonduBas(
-              couleur: palette.surfaceRaised.background,
-              hauteur: marges.fondu,
-              child: SingleChildScrollView(
-                key: const ValueKey<String>('support-defilement'),
-                padding: EdgeInsets.symmetric(
-                  horizontal: marges.x,
-                  vertical: marges.y,
-                ),
-                child: _Contenu(
-                  support: support,
-                  gabarit: gabarit,
-                  marges: marges,
-                  largeurVignette: aCote || !video ? 0 : largeurVignette,
-                  encadreACote: colonneGuidee,
-                ),
-              ),
-            ),
-          );
+          final Widget? fourni = contenu;
+          final Widget defilement = fourni != null
+              ? Padding(
+                  key: const ValueKey<String>('support-fourni'),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: marges.x,
+                    vertical: marges.y,
+                  ),
+                  child: fourni,
+                )
+              : MediaQuery(
+                  data: MediaQuery.of(contexte).copyWith(
+                    textScaler: TextScaler.linear(
+                      MediaQuery.textScalerOf(contexte).scale(1) * zoom,
+                    ),
+                  ),
+                  child: _FonduBas(
+                    couleur: palette.surfaceRaised.background,
+                    hauteur: marges.fondu,
+                    child: SingleChildScrollView(
+                      key: const ValueKey<String>('support-defilement'),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: marges.x,
+                        vertical: marges.y,
+                      ),
+                      child: _Contenu(
+                        support: support,
+                        gabarit: gabarit,
+                        marges: marges,
+                        largeurVignette: aCote || !video ? 0 : largeurVignette,
+                        encadreACote: colonneGuidee,
+                      ),
+                    ),
+                  ),
+                );
           return DecoratedBox(
             key: const ValueKey<String>('zone-support'),
             decoration: palette.surfaceRaised
