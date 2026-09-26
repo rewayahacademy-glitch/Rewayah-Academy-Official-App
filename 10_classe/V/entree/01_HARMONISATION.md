@@ -51,9 +51,10 @@ Les libellés qui changent :
 
 | Où | Existant | Devient |
 |---|---|---|
-| Carte de séance, élève | « Rejoindre » (`tc.groupe.carte.rejoindre`) | « Rejoindre la séance » : action exacte (contrat B.6) et texte de la spec |
-| Préparation, enseignant | « Avant d'ouvrir le cours » (`tc.classe.prevol.titre`) | « Préparer la séance », avec l'introduction « Vérifiez le son avant d'entrer. » |
-| CTA de préparation | — | « Entrer dans la séance » ; secondaire « Retour à la Classe » |
+| Carte de séance, élève | « Rejoindre » (`tc.groupe.carte.rejoindre`) | Gardé (document du directeur §3.4). Libellé pour le lecteur d'écran : « Rejoindre la séance de {Classe} » |
+| Carte de séance, enseignant | — | « Préparer l'entrée », qui mène à la préparation |
+| Préparation | « Avant d'ouvrir le cours » (`tc.classe.prevol.titre`) | « Préparer l'entrée dans la classe » (maquettes) |
+| CTA de préparation | — | « Entrer dans la classe » ; secondaire « Retour à la Classe » |
 
 Les nouvelles clés vont en i18n slang, en fr et en ar. Aucune chaîne n'est écrite en dur.
 

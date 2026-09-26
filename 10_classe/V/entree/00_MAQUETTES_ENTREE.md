@@ -71,7 +71,11 @@ Planches concernées : P1 M7, P2 04A et 04B, P4 CLV-03 live, P5 « Classe en dir
 
 La salle est déjà faite (CL-3, CL-5, CL-6, D1 à D10 validés). La règle gelée §4 bis.8 interdit de rouvrir une étape faite.
 
-L'élément nouveau de ces images est le **chrono interne**, « écoulé / restant ». Il est noté pour la passe d'harmonisation HU-1 et n'est pas construit maintenant.
+L'élément nouveau de ces images est le **chrono interne**, « écoulé / restant ».
+- Le directeur juge que la maquette l'a raté : il prend trop de place.
+- Il ne se fait pas maintenant. C'est l'étape **LIVE-CHRONO-01**.
+- Il sera **discret** : ce n'est pas une course de vitesse. Il sert seulement à savoir où en est la durée de la séance.
+- La **pause configurable de l'enseignant** est notée pour plus tard : **LIVE-PAUSE-01**.
 
 La page du Coran affichée comme support (P2 04A) relève du lecteur du Coran, hors de cette vague.
 
@@ -79,15 +83,16 @@ La page du Coran affichée comme support (P2 04A) relève du lecteur du Coran, h
 
 ### Textes : ceux de la spec, pas ceux de l'image
 
+**Mise à jour du 26/09, après le document du directeur** `REWAYAH_CLASSE_ENTREE_PREFLIGHT_CHRONO_V1.md`. Ce document est plus récent que la spec 02, il prime donc sur elle. Ses libellés rejoignent ceux des maquettes et du code.
+
 1. **Bouton élève** :
-   - le bouton s'intitule « Rejoindre la séance », jamais « Rejoindre la classe » ni « Rejoindre » ;
+   - « Rejoindre » (code existant, et §3.4 du document) ;
    - libellé pour le lecteur d'écran : « Rejoindre la séance de {Classe} ».
-2. **Bouton enseignant** : « Préparer la séance », jamais « Préparer l'entrée ».
-3. **CLV-03** :
-   - titre « Préparer la séance » ;
-   - introduction « Vérifiez le son avant d'entrer. » ;
-   - bouton « Entrer dans la séance », jamais « Entrer dans la classe » ;
-   - secondaire « Retour à la Classe ».
+2. **Bouton enseignant** : « Préparer l'entrée » (maquettes et document §4.3). Il mène toujours à la préparation, jamais directement dans la salle.
+3. **Préparation** :
+   - bouton « Entrer dans la classe » (document §6.3) ;
+   - secondaire « Retour à la Classe » ;
+   - micro et caméra écrits « Micro détecté · Micro coupé à l'entrée », jamais « activé » (§6.2).
 4. **Sections** :
    - « Avant le prochain cours » et « Voir tout » sont gardés, car le code et les images les emploient déjà (voir `01_HARMONISATION.md` §4) ;
    - « Supports de la classe » devient le titre de bibliothèque déjà en place dans le code ;
@@ -136,13 +141,15 @@ La page du Coran affichée comme support (P2 04A) relève du lecteur du Coran, h
 16. **Caméra (CLV-03)** :
     - aucune caméra n'est ouverte automatiquement (spec, Règles) ;
     - sur bureau, la zone d'aperçu de la référence P3 est gardée, à l'état « Caméra coupée », avec l'action « Tester la caméra » ;
-    - sur mobile, pas d'aperçu vidéo (spec).
+    - sur mobile, un aperçu compact, lui aussi coupé, puis l'état de préparation (document §12).
     - Le micro est le seul critère bloquant ; la caméra n'est jamais bloquante.
-17. **Élève : pas de préflight obligatoire** (spec P01, P02, §3).
-    - La vérification est silencieuse : un état bref « Nous vérifions votre appareil… ».
-    - Elle ne s'arrête que sur un blocage : une seule question claire, une action principale, « Continuer sans micro » en secondaire.
-    - « Tout est prêt ! » ne demande **aucun appui supplémentaire** : l'entrée continue d'elle-même.
+    - Pas de sélecteur de sortie audio si la plateforme ne le permet pas : aucun faux contrôle inerte (§9.2).
+17. **Élève : une préparation presque silencieuse** (document §7, PRE-ELV-01).
+    - Les vérifications se font seules.
+    - L'état normal est minimal : « Tout est prêt », Connexion, Audio, Accès à la classe, « Vous entrerez avec le micro coupé. », puis le bouton « Entrer dans la classe ».
+    - Il ne s'arrête autrement que sur un blocage (PRE-ERR-01) : un message humain, « Autoriser le micro », puis « Continuer sans micro » en secondaire.
     - Les écrans de blocage réutilisent ceux de CL-7 (feuille micro T-S4, `EtatSysteme`), sans fork.
+    - Aucune erreur brute (ICE, RTP, SDP, TURN) n'apparaît.
 18. **Aucune photo de personne réelle.**
     - Enseignante : l'avatar partagé du dépôt (initiales ou illustration). Une photo publique n'arrivera qu'avec les données réelles (BR-1).
     - Élèves : initiales seulement. Pas de photo d'enfant, pas de pastille de présence qui juge (« Irrégulier »).
