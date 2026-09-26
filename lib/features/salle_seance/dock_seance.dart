@@ -17,6 +17,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'feuille_micro_bloque.dart';
 import 'vue_seance.dart';
@@ -289,7 +290,13 @@ class DockSeance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final bool large = AppGabarit.de(context) == Gabarit.desktop;
+    final Gabarit gabarit = AppGabarit.de(context);
+    final bool large = gabarit == Gabarit.desktop;
+    final bool mobile = gabarit == Gabarit.mobile;
+    final String? texteCamera = vue.texteCameraInterdite;
+    final Widget? statutCamera = texteCamera == null
+        ? null
+        : StatutCameraInterdite(texte: texteCamera);
     final List<Widget> boutons = <Widget>[
       for (final CommandeDock commande in vue.commandesDock) ...<Widget>[
         // Enseignant desktop (image CLV-06) : un filet vertical avant Quitter.
@@ -299,6 +306,9 @@ class DockSeance extends StatelessWidget {
             actions.onQuitter != null)
           _Separateur(hauteur: diametreBoutonAppel(context)),
         ?_bouton(context, commande),
+        // P10.3 (Q-S1) : tablette et desktop, le statut prend la place du
+        // bouton Camera absent, juste apres Micro.
+        if (commande == CommandeDock.micro && !mobile) ?statutCamera,
       ],
     ];
     final AppColorPair fond = palette.surfaceRaised;
@@ -338,7 +348,7 @@ class DockSeance extends StatelessWidget {
         ),
       );
     }
-    return DecoratedBox(
+    final Widget dock = DecoratedBox(
       key: const ValueKey<String>('dock-seance'),
       decoration: cadre,
       child: Padding(
@@ -356,7 +366,40 @@ class DockSeance extends StatelessWidget {
         ),
       ),
     );
+    if (statutCamera == null || !mobile) return dock;
+    // Telephone (Q-S1) : le statut au-dessus du dock, aligne start, ecart 8.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Align(alignment: AlignmentDirectional.centerStart, child: statutCamera),
+        Ecart.vSm,
+        dock,
+      ],
+    );
   }
+}
+
+/// Le statut « Camera desactivee pour ce profil. » de l'eleve standard
+/// (P10.3, [VueSeance.texteCameraInterdite]) : une [StatusPill] au ton
+/// neutre, **non interactive** (aucun [Pressable], ni survol ni focus), lue
+/// dans l'ordre du dock. Une phrase plutot qu'un mot : la pilule passe a la
+/// ligne au lieu de deborder.
+class StatutCameraInterdite extends StatelessWidget {
+  const StatutCameraInterdite({required this.texte, super.key});
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    key: const ValueKey<String>('statut-camera-interdite'),
+    widthFactor: 1,
+    // Borne : dans la pilule desktop, la largeur n'est pas contrainte.
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
+      child: StatusPill(libelle: texte, ton: TonEtat.neutre),
+    ),
+  );
 }
 
 /// Le filet vertical du dock enseignant desktop, avant Quitter.
