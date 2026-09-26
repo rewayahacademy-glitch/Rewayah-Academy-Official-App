@@ -226,11 +226,9 @@ class _IconeBarre extends StatelessWidget {
       dimension: AppSpacing.titreEcran,
       child: Center(
         child: IconTheme(
-          // Une fleche de page en bout de support : estompee, inactive.
+          // Un bouton sans rappel (fin de pagination, etc.) : estompe, inactif.
           data:
-              (action == null && identical(icone, AppIcons.chevron)
-                      ? palette.inkFaint
-                      : palette.inkStrong)
+              (action == null ? palette.inkFaint : palette.inkStrong)
                   .asIconTheme(size: AppSpacing.xxl),
           child: Transform.flip(flipX: retourne, child: Icon(icone.repos)),
         ),

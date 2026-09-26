@@ -903,25 +903,35 @@ class BoutonPanneau extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                 horizontal: etire ? AppSpacing.md : AppSpacing.lg,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  IconTheme(
-                    data: palette.inkAccent.asIconTheme(
-                      size: serre ? AppSpacing.xl : AppSpacing.xxl,
+              // Le libelle est deja porte par la semantique de Pressable :
+              // exclure celle du contenu visuel evite une double lecture
+              // (« Eleves 1/3\nEleves 1/3 »).
+              child: ExcludeSemantics(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconTheme(
+                      data: palette.inkAccent.asIconTheme(
+                        size: serre ? AppSpacing.xl : AppSpacing.xxl,
+                      ),
+                      child: Icon(icone.repos),
                     ),
-                    child: Icon(icone.repos),
-                  ),
-                  if (serre) Ecart.hSm else Ecart.hMd,
-                  if (etire) Expanded(child: texte) else texte,
-                  if (serre) Ecart.hXs else if (etire) Ecart.hSm else Ecart.hLg,
-                  IconTheme(
-                    data: palette.inkMuted.asIconTheme(
-                      size: serre ? AppSpacing.lg : AppSpacing.xl,
+                    if (serre) Ecart.hSm else Ecart.hMd,
+                    if (etire) Expanded(child: texte) else texte,
+                    if (serre)
+                      Ecart.hXs
+                    else if (etire)
+                      Ecart.hSm
+                    else
+                      Ecart.hLg,
+                    IconTheme(
+                      data: palette.inkMuted.asIconTheme(
+                        size: serre ? AppSpacing.lg : AppSpacing.xl,
+                      ),
+                      child: Icon(AppIcons.chevron.repos),
                     ),
-                    child: Icon(AppIcons.chevron.repos),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

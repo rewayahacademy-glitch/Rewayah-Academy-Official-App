@@ -168,6 +168,7 @@ class BoutonAppel extends StatelessWidget {
           Text(
             libelle,
             maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: palette.inkStrong.applyTo(
               theme.textTheme.labelMedium ?? const TextStyle(),
             ),
@@ -329,7 +330,11 @@ class DockSeance extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: boutons,
+          // Chaque bouton prend une part egale : un libelle trop large
+          // (texte agrandi, 320px) s'ellipse au lieu de deborder la ligne.
+          children: <Widget>[
+            for (final Widget bouton in boutons) Expanded(child: bouton),
+          ],
         ),
       ),
     );
