@@ -915,7 +915,8 @@
       "enVerification": "En cours de vérification",
       "sansNom": "Dossier sans nom disponible",
       "legende": "{type} · {date}",
-      "dateHeure": "{date} à {heure} ({zone})"
+      "dateHeure": "{date} à {heure} ({zone})",
+      "suivantAnnonce": "Dossier suivant : {nom}"
     },
     "detail": {
       "titreDe": "Dossier de {nom}",

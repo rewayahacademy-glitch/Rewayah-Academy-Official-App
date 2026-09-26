@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/admin_domaine.dart';
@@ -62,25 +65,39 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
     ref.read(selectionDossierProvider.notifier).fermerDetail();
   }
 
-  /// Apres une decision : relire, puis passer au suivant de l'ancien ordre
-  /// (deux panneaux) ou revenir a la liste (panneau unique).
+  /// Apres une decision : relire, puis passer au suivant de l'ancien ordre.
+  /// Deux panneaux : le suivant est selectionne et annonce (§26 ter,
+  /// « Dossier suivant : {nom} »). Panneau unique : retour a la liste, le
+  /// focus sur la ligne suivante (la ligne decidee a disparu).
   void _apresDecision(String id, {required bool maitreDetail}) {
     final List<DossierEnFile> avant =
         ref.read(fileDossiersProvider).value?.elements ?? <DossierEnFile>[];
     final int i = avant.indexWhere((DossierEnFile d) => d.dossierId == id);
-    final String? suivant = i >= 0 && i + 1 < avant.length
-        ? avant[i + 1].dossierId
+    final DossierEnFile? suivant = i >= 0 && i + 1 < avant.length
+        ? avant[i + 1]
         : null;
     actualiserDossiers(ref);
     final SelectionDossierNotifier selection = ref.read(
       selectionDossierProvider.notifier,
     );
     if (maitreDetail && suivant != null) {
-      selection.choisir(suivant);
+      selection.choisir(suivant.dossierId);
+      unawaited(
+        SemanticsService.sendAnnouncement(
+          View.of(context),
+          t.dossiers.file.suivantAnnonce(nom: nomOuDefaut(suivant.nomAffiche)),
+          Directionality.of(context),
+        ),
+      );
     } else if (maitreDetail) {
       selection.retirer();
     } else {
-      _fermerDetail();
+      setState(() => _retourDetail = true);
+      if (suivant != null) {
+        selection.choisir(suivant.dossierId);
+      } else {
+        selection.retirer();
+      }
     }
   }
 

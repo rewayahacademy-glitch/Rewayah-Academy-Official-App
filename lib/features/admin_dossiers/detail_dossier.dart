@@ -49,7 +49,9 @@ class DetailDossier extends ConsumerWidget {
         valeur: dossiers,
         squelette: const SqueletteDetail(),
         titreProlonge: t.dossiers.file.chargementProlonge,
-        onReessayer: () => ref.invalidate(dossiersEnAttenteProvider),
+        // File et detail relus ensemble : sinon la file, figee sur l'ancienne
+        // lecture, ferait dire a tort « plus disponible ».
+        onReessayer: () => actualiserDossiers(ref),
         erreurVersEtat: (Object e, VoidCallback? _) =>
             e is GenreLecteurInconnu ? const GenreManquant() : null,
         construire: (List<DossierAValider> liste) {

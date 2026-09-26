@@ -22,6 +22,10 @@ import 'etat_file_dossiers.dart';
 import 'revue_existante.dart';
 import 'textes_dossier.dart';
 
+/// Sous cette largeur (file de 336 en maitre-detail), l'en-tete passe sur
+/// deux lignes : compteur au debut, Actualiser au bord de fin.
+const double _largeurEnTeteSurUneLigne = 352;
+
 /// Relit la file et le service existant (source du detail jusqu'a AD-6).
 void actualiserDossiers(WidgetRef ref) {
   ref.invalidate(dossiersEnAttenteProvider);
@@ -100,48 +104,89 @@ class FileDossiers extends ConsumerWidget {
     final int? total = etat?.total;
     final TextTheme textes = Theme.of(context).textTheme;
 
+    // Une actualisation qui echoue garde la liste deja autorisee (§26 ter) :
+    // l'etat d'erreur se pose au-dessus. Seul un refus d'acces ou un profil a
+    // completer la remplace.
+    final Object? erreur = file.error;
+    final bool garderListe =
+        file.hasValue &&
+        file.hasError &&
+        !file.isLoading &&
+        erreur is! ErreurRevueDossier;
+    final AsyncValue<EtatFile> valeurBloc = garderListe
+        ? AsyncData<EtatFile>(file.requireValue)
+        : file;
+    void reessayer() => actualiserDossiers(ref);
+
+    final Widget compteur = Semantics(
+      liveRegion: true,
+      child: Text(
+        actualisation
+            ? t.dossiers.file.actualisation
+            : (total == null || file.isLoading
+                  ? ''
+                  : (total == 1
+                        ? t.dossiers.restantUn
+                        : t.dossiers.restants(n: total))),
+        style: textes.bodySmall,
+      ),
+    );
+    // Largeur du libelle seul : le bouton centre son contenu et s'etirerait
+    // sinon sur toute la contrainte.
+    final Widget actualiser = IntrinsicWidth(
+      child: ActionPrincipale(
+        libelle: t.dossiers.file.actualiser,
+        niveau: NiveauAction.tertiaire,
+        pleineLargeur: false,
+        enCours: actualisation,
+        onPress: reessayer,
+      ),
+    );
+
     return FocusTraversalGroup(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          // Compteur au debut, Actualiser au bord de fin ; a l'etroit, le
-          // bouton passe dessous plutot que de deborder.
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: <Widget>[
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  actualisation
-                      ? t.dossiers.file.actualisation
-                      : (total == null || file.isLoading
-                            ? ''
-                            : (total == 1
-                                  ? t.dossiers.restantUn
-                                  : t.dossiers.restants(n: total))),
-                  style: textes.bodySmall,
-                ),
-              ),
-              // Largeur du libelle seul : le bouton centre son contenu et
-              // s'etirerait sinon sur toute la contrainte du Wrap.
-              IntrinsicWidth(
-                child: ActionPrincipale(
-                  libelle: t.dossiers.file.actualiser,
-                  niveau: NiveauAction.tertiaire,
-                  pleineLargeur: false,
-                  enCours: actualisation,
-                  onPress: () => actualiserDossiers(ref),
-                ),
-              ),
-            ],
+          // Compteur au debut, Actualiser au bord de fin (contrat B, Q18) ;
+          // a l'etroit (file 336, texte a 200 %), le bouton passe dessous,
+          // toujours au bord de fin.
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints c) =>
+                c.maxWidth < _largeurEnTeteSurUneLigne
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      compteur,
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: actualiser,
+                      ),
+                    ],
+                  )
+                : OverflowBar(
+                    alignment: MainAxisAlignment.spaceBetween,
+                    overflowAlignment: OverflowBarAlignment.end,
+                    spacing: AppSpacing.sm,
+                    overflowSpacing: AppSpacing.sm,
+                    children: <Widget>[compteur, actualiser],
+                  ),
           ),
           Ecart.vSm,
+          if (garderListe) ...<Widget>[
+            etatErreurDossiers(context, ref, erreur!, reessayer) ??
+                EtatSysteme(
+                  nature: NatureEtat.echecServeur,
+                  titre: t.dossiers.file.erreur,
+                  phrase: '',
+                  libelleAction: t.commun.etats.actions.reessayer,
+                  onAction: reessayer,
+                ),
+            Ecart.vLg,
+          ],
           BlocAsynchrone<EtatFile>(
-            valeur: file,
+            valeur: valeurBloc,
             squelette: const SqueletteFile(),
             titreProlonge: t.dossiers.file.chargementProlonge,
             titreEchec: t.dossiers.file.erreur,
@@ -219,7 +264,9 @@ LigneRubrique ligneDossier(
   final String nom = nomOuDefaut(d.nomAffiche);
   return LigneRubrique(
     libelle: nom,
-    libelleSemantique: ouvrirDossier(nom),
+    // Sans nom, « Dossier sans nom disponible » seul : aucun texte compose
+    // hors spec.
+    libelleSemantique: d.nomAffiche.trim().isEmpty ? nom : ouvrirDossier(nom),
     selectionnee: selectionnee,
     autofocus: autofocus,
     pastille: d.aPieceIdentite
