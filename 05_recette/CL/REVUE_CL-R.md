@@ -42,3 +42,13 @@ Tests ajoutés dans `test/features/salle_seance/revue_cl_r_test.dart` :
 ## 5. Remarque hors périmètre
 
 Le libellé lu par un lecteur d'écran sur `BoutonPanneau` est doublé (« Élèves 1/3\nÉlèves 1/3 »), parce que le `libelleSemantique` et le `Text` visible se cumulent. Ce défaut existait déjà avant les correctifs. Il est à traiter dans HU-1.
+
+## 6. Tests manquants ajoutés, correctifs (`a4a8b2c`)
+
+`test/features/salle_seance/revue_cl_r_tests_test.dart` (10 tests) : `ZoomLocal` (− / +), `PaginationSupport` (rappels et bornes désactivées), `RailSeance` avec `confirmerSortie: false` (navigation directe, sans dialogue), salle élève/guidée/enseignant (repos) à 320 px et texte 200 % sans débordement, `BoutonPanneau` lu une seule fois.
+
+Deux défauts corrigés : `_IconeBarre` (`barre_support.dart`) applique `inkFaint` à tout bouton sans rappel, plus seulement au chevron ; `BoutonPanneau` (`salle_seance.dart`) exclut la sémantique de son contenu visuel (`ExcludeSemantics`), donc lu une seule fois (referme le constat du point 5).
+
+Le test 320 px/200 % a révélé un vrai débordement du dock mobile (`dock_seance.dart`, libellé sous chaque bouton non contraint) : corrigé avec les jetons existants (`overflow: TextOverflow.ellipsis`, `Expanded` par bouton).
+
+`flutter analyze --fatal-infos` : aucun problème. `flutter test test/features/salle_seance/ test/features/demo/` : 246 réussis, 163 ignorés (captures), 0 échec.
