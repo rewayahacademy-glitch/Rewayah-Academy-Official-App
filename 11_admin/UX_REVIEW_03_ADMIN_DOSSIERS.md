@@ -9,7 +9,7 @@
 - **Priorité :** contrats gelés (A à E, §4 bis) > spec 03 > standard.
 - **EN 301 549 :** V4.1.1 (2026-09) publiée par l'ETSI le 02/09/2026, fondée sur WCAG 2.2 AA, non encore citée au JOUE ; V3.2.1 (2021, WCAG 2.1) en vigueur. Cible retenue : WCAG 2.2 AA, qui couvre les deux.
 - **Pages non relues au texte par l'outil (rendu JavaScript) :** m3.material.io et developer.apple.com (HIG). Les règles tirées de ces pages sont signalées comme telles.
-- **Rien n'est implémenté avant l'accord du directeur.**
+- **Accord du directeur donné le 26/09/2026 (« on code »)** : l'implémentation démarre (AD-4). Les points de la section Dérogations restent à trancher par lui ; en attendant, le code applique leur valeur par défaut.
 
 Légende des colonnes : Proposition (réf. spec) ; Source consultée ; Date ; Règle utile ; Conclusion ; Modification ; Dérogation.
 
