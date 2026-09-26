@@ -235,9 +235,13 @@ void main() {
     );
   });
 
-  // 200 % : un RenderFlex deborde de 180 a 390 (source non isolee dans le
-  // temps d'AD-6) ; le cas reste OUVERT et sort de cette boucle tant qu'il
-  // n'est pas corrige (rapport AD-6), plutot que de le masquer.
+  // 200 % : un RenderFlex deborde de 180 px a 390 des le premier pump apres
+  // le changement d'echelle (avant tout defilement), donc dans une carte ou
+  // la raison au-dessus des actions, pas forcement dans le groupe d'actions
+  // lui-meme (`LienFleche` degage : Flexible+mainAxisSize.min sous un Column
+  // borne). Isole non concluant dans le temps d'AD-6 (`FlutterError.toString`
+  // rendu par `takeException` ne porte que le resume, sans le widget
+  // fautif) ; reste OUVERT, hors de cette boucle (rapport AD-6).
   for (final double texte in <double>[1]) {
     testWidgets('390 a ${texte * 100} % : actions dans la marge de 16', (
       WidgetTester tester,
@@ -250,7 +254,7 @@ void main() {
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       await _stabiliser(tester);
       final Object? erreur = tester.takeException();
-      expect(erreur, isNull, reason: (erreur as FlutterError?)?.toStringDeep());
+      expect(erreur, isNull, reason: '$erreur');
       for (final String libelle in <String>[
         'Refuser le dossier',
         'Valider le dossier',
