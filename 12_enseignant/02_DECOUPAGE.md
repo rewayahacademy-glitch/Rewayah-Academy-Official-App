@@ -43,7 +43,7 @@
 | **EN-12** | Recette, détail sous le tableau. | `captures_cl47_test.dart` | Sonnet, 35 min, en deux agents si besoin |
 | **EN-R** | Revue croisée par une autre session : contre les règles E1 à E20, R1 à R21, K-42 et les 14 questions anti-cauchemar (doc §33). | modèle `05_recette/CL/REVUE_CL-4.md` | Opus, 30 min |
 | **EN-RC** | Corrections de la revue, puis la planche web du directeur (format CL-4), publiée par l'orchestrateur. | — | Opus, 35 min |
-| **EN-KB** | Plus tard, sur décision du directeur : raccourcis clavier de la salle sur bureau (00_MAQUETTES §4 point 3). | — | — |
+| **EN-KB** | Raccourcis clavier de la salle sur bureau, accordés le 26/09 (E19) : M, V, R, B, Échap ; actifs seulement dans la salle et hors saisie ; désactivables ; V ne fait que couper la caméra, jamais l'allumer. Après EN-10. | `Shortcuts`/`Actions` Flutter, réglages de `/compte/reglages` | Opus, 30 min |
 
 **Détail d'EN-1b, le socle.**
 1. Coquille enseignant à 4 destinations (E10) : Aujourd'hui, Classes, Disponibilités, Profil.
@@ -88,7 +88,7 @@
 L'ordre est le suivant :
 1. EN-1a et EN-1b. EN-1a ne fait que de la documentation, il peut donc tourner en parallèle.
 2. EN-2 à EN-8, dans l'ordre. EN-4 doit précéder EN-9.
-3. EN-9 et EN-10.
+3. EN-9 et EN-10, puis EN-KB.
 4. EN-11, puis EN-12.
 5. EN-R, puis EN-RC.
 

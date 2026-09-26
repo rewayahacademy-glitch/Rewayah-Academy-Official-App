@@ -113,7 +113,7 @@ Détail :
   2. Le statut « Micro activé » affiché d'office est retiré : le micro est coupé à l'entrée (R1 à R21).
   3. Pas d'onglets « Tableau blanc », « Applications » ni « Discussion » : ils n'existent pas au contrat (E3). Il reste Coran et Documents, via le sélecteur de ressources.
   4. Pas de minuteur « 01:24 / 02:00 » par élève (E9), ni de « Évaluation en temps réel : Très bien » (E8).
-  5. Les photos des élèves s'affichent (décision du directeur du 26/09, E5), avec les initiales en repli.
+  5. Les photos des élèves s'affichent chez l'enseignant et chez les camarades de la Classe (décision du directeur du 26/09, E5), avec les initiales en repli.
   6. Le Teaching Dock et la file de récitation sont **raccordés à `/salle`**, sans seconde salle.
 
 ### Planche 4
@@ -196,4 +196,4 @@ Je propose huit corrections au document. J'en assume la responsabilité face à 
 7. **§38 maquettes.** Les planches ont une barre d'état « 9:41 » et des dates de 2024 : rien de cela n'est reproduit. Les photos d'élèves, elles, sont gardées (décision du directeur du 26/09).
 8. **§4.2 fenêtre d'entrée.** Deux durées de 20 minutes existent dans le code : le billet de salle et l'horloge de démonstration. Le billet reste. L'horloge de démonstration est acceptable. Le calcul par le serveur viendra à BR-1.
 
-Seuls les **raccourcis** (point 3) attendent l'accord du directeur. Les sept autres points sont appliqués par défaut, et le directeur peut les renverser.
+Le directeur a accordé les **raccourcis** (point 3) le 26/09, avec protections : la caméra ne s'allume jamais par un raccourci (règle E19). Les sept autres points sont appliqués par défaut, et le directeur peut les renverser.

@@ -1,4 +1,4 @@
-﻿# 09 - Textes révisés, version v2 (2026-10-v2)
+# 09 - Textes révisés, version v2 (2026-10-v2)
 
 Statut : **projet, à valider par un juriste avant production** (voir CHARTE section 8).
 Langue : français facile. Phrases courtes. Pas de tiret cadratin. Traductions poular et anglais à faire par un traducteur humain, relues par un locuteur, avec la même version.
@@ -180,7 +180,7 @@ Remplace : `ficheEleve…photoLegende` et ajoute `accordsV2.photo.*`.
 >
 > **Pourquoi.** Pour que l'enseignant reconnaisse {prenom} dans l'app.
 >
-> **Qui voit.** L'enseignant de {prenom} et l'équipe. La photo n'est jamais publiée, ni sur un site ni sur un réseau.
+> **Qui voit.** L'enseignant de {prenom}, les élèves de sa Classe et l'équipe. La photo n'est jamais publiée, ni sur un site ni sur un réseau.
 >
 > **Combien de temps.** Tant que vous la laissez. Elle est effacée quand vous la supprimez ou quand {prenom} quitte l'académie.
 >

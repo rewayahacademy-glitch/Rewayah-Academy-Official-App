@@ -161,11 +161,11 @@ Mention sur 1, 3, 4, 8 : donnée pouvant révéler une conviction religieuse (ar
 
 ## Décision du directeur du 26/09/2026 : photo de l'élève
 
-1. **La photo de l'élève s'affiche** chez son enseignant et à l'administration : roster, fiche élève, salle, cahier, dossiers.
+1. **La photo de l'élève s'affiche** chez son enseignant, à l'administration **et chez les élèves de sa Classe** : roster, fiche élève, salle, cahier, dossiers.
    - Raison donnée par le directeur : si le tuteur a choisi une photo, c'est que l'enseignant et l'administration en ont besoin.
-   - La vidéo est déjà permise en classe ; la photo, qui en dit moins, l'est donc aussi.
+   - La vidéo est déjà permise en classe, et les camarades la voient ; la photo, qui en dit moins, l'est donc aussi.
    - Les initiales ne servent que de repli, quand aucune photo n'a été déposée.
 2. **Le consentement se donne à l'inscription de l'enfant.**
-   - Le texte A5 (`TEXTES_V2.md`, « Qui voit : l'enseignant de {prenom} et l'équipe ») est présenté pendant l'inscription, avec les autres accords.
+   - Le texte A5 (`TEXTES_V2.md`) est présenté pendant l'inscription, avec les autres accords. Sa ligne « Qui voit » dit désormais : l'enseignant de {prenom}, les élèves de sa Classe et l'équipe.
    - Il reste un accord distinct (principe 3), retirable au même endroit que les autres (principe 5).
 3. **Correction.** Une règle « initiales seulement, jamais la photo de l'élève » avait été ajoutée par un agent sans décision du directeur. Elle est retirée partout.
