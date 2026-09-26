@@ -32,7 +32,7 @@
 | **EN-1b** | Socle, en quatre parties (détail sous le tableau) : coquille, données de démonstration, route de démonstration, squelette de capture. | `nav_shell.dart`, `classe_demo.dart`, `demo_classe_page.dart`, `outil_capture.dart` | Opus, 35 min |
 | **EN-2** | ENS-02 Aujourd'hui (00_MAQUETTES §2, planche 1) : carte « Prochaine séance » avec `EmplacementEntree` (E11), « Ma journée », « À terminer » (3 au plus), « Alertes utiles » si non vide ; deux colonnes sur bureau. Retrait de « Élèves en attente » et de « Cours individuel ». | `JourneePage`, `TimelineRow`, carte de séance CL-4, `EmplacementEntree` | Opus, 35 min, puis Sonnet pour les tests et captures |
 | **EN-3** | ENS-09 Mes Classes (nouvelle page, lignes groupées, tri §12.2) et ENS-07 perfectionné (détail sous le tableau). | `FicheGroupePage`, `IdentiteGroupe`, `BlocBibliotheque`, cartes de `MesGroupesPage` | Opus, 35 min |
-| **EN-4** | ENS-11 fiche élève hors séance (feuille sur mobile, panneau sur bureau, une colonne, E5 et E14) et ENS-12 « Signaler un besoin » (catégories §22.1, « Détails internes » et « Résumé partageable » séparés, notice). | `AppBottomSheet`, `GroupeReglages`, `AvatarTile` (initiales) | Opus, 35 min |
+| **EN-4** | ENS-11 fiche élève hors séance (feuille sur mobile, panneau sur bureau, une colonne, E5 et E14) et ENS-12 « Signaler un besoin » (catégories §22.1, « Détails internes » et « Résumé partageable » séparés, notice). | `AppBottomSheet`, `GroupeReglages`, `PhotoEleve` (photo, initiales en repli) | Opus, 35 min |
 | **EN-5** | ENS-06 Disponibilités (détail sous le tableau) et ENS-06B détail, confirmation et succès honnête (E7). | `CreneauxPage`, `GrilleSemaine` | Opus, 35 min, puis Sonnet |
 | **EN-6** | ENS-01 Premiers pas (« À compléter », le bouton porte le premier manque, retrait de la prose 5/6), ENS-05 Profil (photo en tête, E18 et R de la planche 4) et ENS-05A photo publique (textes §24, démonstration sans envoi réel). | `BienvenueEnseignantPage`, `ProfilEnseignantPage`, `PhotoEnseignant` | Opus, 35 min |
 | **EN-7** | ENS-04 Cahier perfectionné : ordre de la planche 4 (résumé, pastilles de statut, travail, reprise, « Valider le cahier »), deux colonnes sur bureau. Retraits : IA, « Justifiée », « Ajouter un document », brouillon. Textes §20.7 et §20.8. | `CahierPage`, `vue_cahier.dart` | Opus, 35 min |
@@ -59,6 +59,7 @@
   - « Ressources récentes », 3 au plus ;
   - « Progression de la classe » en une ligne ;
   - un indicateur par élève, doublé d'un mot ;
+  - la photo de chaque élève (`PhotoEleve`) à la place des seules initiales posées en CL-4.4 (E5, décision du directeur du 26/09) ;
   - toute la ligne d'un élève ouvre ENS-11 ;
   - deux colonnes sur bureau.
 

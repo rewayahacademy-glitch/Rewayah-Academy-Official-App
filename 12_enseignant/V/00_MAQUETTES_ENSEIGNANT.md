@@ -86,7 +86,7 @@ Légende :
 **ENS-11 Fiche élève.** Existant : aucune fiche côté enseignant.
 - P :
   - une feuille sur mobile, un panneau latéral sur bureau ;
-  - en tête : initiales, prénom, identifiant Académie ;
+  - en tête : photo de l'élève (initiales en repli), prénom, identifiant Académie ;
   - les tuiles Niveau, Objectif, Présence récente et Travail ;
   - la ligne « Dernière séance ».
 - R :
@@ -113,7 +113,7 @@ Détail :
   2. Le statut « Micro activé » affiché d'office est retiré : le micro est coupé à l'entrée (R1 à R21).
   3. Pas d'onglets « Tableau blanc », « Applications » ni « Discussion » : ils n'existent pas au contrat (E3). Il reste Coran et Documents, via le sélecteur de ressources.
   4. Pas de minuteur « 01:24 / 02:00 » par élève (E9), ni de « Évaluation en temps réel : Très bien » (E8).
-  5. Les élèves sont montrés par leurs initiales, jamais par leur photo (E5).
+  5. Les photos des élèves s'affichent (décision du directeur du 26/09, E5), avec les initiales en repli.
   6. Le Teaching Dock et la file de récitation sont **raccordés à `/salle`**, sans seconde salle.
 
 ### Planche 4
@@ -178,7 +178,7 @@ Il a quatre Classes :
 - Al-Badr : niveau 1, français ;
 - Al-Ikhlas : sans prochaine séance.
 
-Les élèves sont désignés par des prénoms et des initiales, sans photo. Les dates sont en septembre et octobre 2026.
+Les élèves ont un prénom, et une photo de démonstration non réelle (initiales en repli). Les dates sont en septembre et octobre 2026.
 
 ## 4. Mon avis sur le document 04 (droit de regard du directeur)
 
@@ -193,7 +193,7 @@ Je propose huit corrections au document. J'en assume la responsabilité face à 
 4. **§18.5 file de récitation.** J'ajoute « aucun minuteur par élève ». Le directeur l'a dit pour le chrono : ce n'est pas une course (E9).
 5. **Remplacement (P-ENS-12).** Le document décrit l'acceptation d'une offre mais ne lui donne pas d'emplacement. Je propose : l'offre arrive comme une « Alerte utile » dans Aujourd'hui, et ouvre une feuille « Assurer ce remplacement ? » (ENS-13B).
 6. **§7 navigation.** La décision d'architecture ADR-027 fixait l'enseignant à 3 destinations. La demande du directeur, plus récente, en impose 4, et elle prime (DESIGN-GOV §1). ADR-027 sera noté comme remplacé.
-7. **§38 maquettes.** Les planches ont une barre d'état « 9:41 », des dates de 2024 et des photos d'enfants, que la règle §38 interdit. Rien de cela ne sera reproduit.
+7. **§38 maquettes.** Les planches ont une barre d'état « 9:41 » et des dates de 2024 : rien de cela n'est reproduit. Les photos d'élèves, elles, sont gardées (décision du directeur du 26/09).
 8. **§4.2 fenêtre d'entrée.** Deux durées de 20 minutes existent dans le code : le billet de salle et l'horloge de démonstration. Le billet reste. L'horloge de démonstration est acceptable. Le calcul par le serveur viendra à BR-1.
 
 Seuls les **raccourcis** (point 3) attendent l'accord du directeur. Les sept autres points sont appliqués par défaut, et le directeur peut les renverser.
