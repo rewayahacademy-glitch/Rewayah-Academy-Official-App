@@ -32,3 +32,5 @@ Branche `ui/admin-v1`, commit `e636017` « admin(AD-5): corrections de revue »,
 4. Après une décision sur mobile, quand la file devient vide, le focus ne va pas sur le titre.
 5. Questions toujours ouvertes : Q-AD5-1 (fuseau : UTC affiché), Q-AD5-2 à Q-AD5-6, Q15, OfflineBanner générique, composants partagés étendus (K-10).
 6. Détail : contenu de revue actuel, avec des boutons en pleine largeur (Q-AD5-5, relève d'AD-6 et AD-8). Titre du détail avec une apostrophe droite, « Dossier d'Amina Benali ».
+
+HL-A-1 : fait, commit 0d5bda5 poussé sur origin/ui/admin-v1. Les points 1 à 4 ci-dessus sont corrigés (squelette capturé à 390 et 1440, pastille placée au même endroit sur toute la file, focus sur le titre quand la file se vide, « Pièce hors de votre portée » sur la ligne) ; la barre latérale ne déborde plus à 1440 et 200 %. Reste : l'annonce de la pastille par le lecteur d'écran n'est pas vérifiée (le libellé « Ouvrir le dossier de {nom} » la masque).
