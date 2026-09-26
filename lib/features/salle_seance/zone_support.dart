@@ -355,7 +355,9 @@ class _Contenu extends StatelessWidget {
         ),
       ),
     );
-    final Widget entete = Column(
+    // Desktop sans illustration (panneau ouvert, CLV-07/08) : le titre de
+    // l'image est ≈ 0,77 fois celui de CLV-06, il tient sur deux lignes.
+    Widget entete({required bool reduit}) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _Pastille(texte: support.chapitre),
@@ -366,7 +368,10 @@ class _Contenu extends StatelessWidget {
             texte: support.titre,
             style: palette.inkStrong.applyTo(
               switch (gabarit) {
-                    Gabarit.desktop => theme.textTheme.headlineLarge,
+                    Gabarit.desktop =>
+                      reduit
+                          ? theme.textTheme.headlineSmall
+                          : theme.textTheme.headlineLarge,
                     Gabarit.tablette => theme.textTheme.headlineSmall,
                     Gabarit.mobile => theme.textTheme.titleMedium,
                   } ??
@@ -406,34 +411,35 @@ class _Contenu extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         LayoutBuilder(
-          builder: (BuildContext _, BoxConstraints c) => Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(child: entete),
-              // Desktop : l'illustration seulement si le titre garde sa
-              // place (panneau ouvert, CLV-07 : support plus etroit, sans
-              // illustration).
-              if (large &&
-                  c.maxWidth >=
-                      reserve +
-                          _Illustration._largeur +
-                          _largeurTitre) ...<Widget>[
-                Ecart.hXxl,
-                const _Illustration(),
+          builder: (BuildContext _, BoxConstraints c) {
+            // Desktop : l'illustration seulement si le titre garde sa
+            // place (panneau ouvert, CLV-07 : support plus etroit, sans
+            // illustration).
+            final bool illustration =
+                large &&
+                c.maxWidth >= reserve + _Illustration._largeur + _largeurTitre;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(child: entete(reduit: large && !illustration)),
+                if (illustration) ...<Widget>[
+                  Ecart.hXxl,
+                  const _Illustration(),
+                ],
+                SizedBox(
+                  width: reserve,
+                  height: large || largeurVignette <= 0
+                      ? 0
+                      : math.max(
+                          0,
+                          largeurVignette / MesuresVignette.ratio +
+                              marges.retraitVignette -
+                              marges.y,
+                        ),
+                ),
               ],
-              SizedBox(
-                width: reserve,
-                height: large || largeurVignette <= 0
-                    ? 0
-                    : math.max(
-                        0,
-                        largeurVignette / MesuresVignette.ratio +
-                            marges.retraitVignette -
-                            marges.y,
-                      ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
         // Telephone et web etroit : deux lignes sous la vignette ; une
         // seule quand le support est resserre (image mobile, enseignant).
