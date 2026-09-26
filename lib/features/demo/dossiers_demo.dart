@@ -678,8 +678,9 @@ class PolitiqueRevueKycDemo implements PortPolitiqueRevueKyc {
   }
 }
 
-/// Pont vers la revue actuelle (`revue_existante.dart`), en demonstration
-/// seulement : il reste la source du detail jusqu'a AD-6. Il transmet les trois verifications comme faites : l'ecran
+/// Pont vers les decisions de la revue (`revue_dossier.dart`), en
+/// demonstration seulement : depuis AD-6, le detail est lu par le port et ce
+/// pont ne sert plus qu'aux decisions, jusqu'a AD-8. Il transmet les trois verifications comme faites : l'ecran
 /// exige deja les trois coches avant Valider. Jamais hors demonstration.
 class ServiceValidationDemo implements ServiceValidation {
   ServiceValidationDemo(this.etat) : _revue = RevueDossiersDemo(etat);

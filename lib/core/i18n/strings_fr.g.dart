@@ -1231,6 +1231,7 @@ class Traductions$dossiers$fr {
 
 	late final Traductions$dossiers$file$fr file = Traductions$dossiers$file$fr.internal(_root);
 	late final Traductions$dossiers$detail$fr detail = Traductions$dossiers$detail$fr.internal(_root);
+	late final Traductions$dossiers$revue$fr revue = Traductions$dossiers$revue$fr.internal(_root);
 
 	/// fr: '1 dossier en attente'
 	String get restantUn => '1 dossier en attente';
@@ -1289,8 +1290,8 @@ class Traductions$dossiers$fr {
 	/// fr: 'Valider le dossier'
 	String get approuver => 'Valider le dossier';
 
-	/// fr: 'Refuser'
-	String get refuser => 'Refuser';
+	/// fr: 'Refuser le dossier'
+	String get refuser => 'Refuser le dossier';
 
 	/// fr: 'Ce qui ne va pas, en une phrase'
 	String get motif => 'Ce qui ne va pas, en une phrase';
@@ -3632,6 +3633,56 @@ class Traductions$dossiers$detail$fr {
 
 	/// fr: 'Dossier d'{nom}'
 	String titreElide({required Object nom}) => 'Dossier d\'${nom}';
+}
+
+// Path: dossiers.revue
+class Traductions$dossiers$revue$fr {
+	Traductions$dossiers$revue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Identité et dossier'
+	String get identite => 'Identité et dossier';
+
+	/// fr: 'Pièce d'identité'
+	String get piece => 'Pièce d\'identité';
+
+	/// fr: 'Voir la pièce'
+	String get voirPiece => 'Voir la pièce';
+
+	/// fr: 'Accords et éléments soumis'
+	String get accords => 'Accords et éléments soumis';
+
+	/// fr: 'Nom'
+	String get nom => 'Nom';
+
+	/// fr: 'Prénom'
+	String get prenom => 'Prénom';
+
+	/// fr: 'Type de dossier'
+	String get typeDossier => 'Type de dossier';
+
+	/// fr: 'Date de dépôt'
+	String get dateDepot => 'Date de dépôt';
+
+	/// fr: 'État du dossier'
+	String get etatDossier => 'État du dossier';
+
+	/// fr: 'Date de dépôt indisponible'
+	String get dateIndisponible => 'Date de dépôt indisponible';
+
+	/// fr: 'Ce dossier n'est pas encore prêt à être validé.'
+	String get pasPret => 'Ce dossier n\'est pas encore prêt à être validé.';
+
+	/// fr: 'Impossible de charger ce dossier.'
+	String get erreurChargement => 'Impossible de charger ce dossier.';
+
+	/// fr: 'La consultation de la pièce est indisponible pour le moment.'
+	String get pieceIndisponible => 'La consultation de la pièce est indisponible pour le moment.';
+
+	late final Traductions$dossiers$revue$etats$fr etats = Traductions$dossiers$revue$etats$fr.internal(_root);
 }
 
 // Path: admin.tableau
@@ -8439,6 +8490,45 @@ class Traductions$foyer$ajout$incertaine$fr {
 	String get reessayer => 'Réessayer quand même';
 }
 
+// Path: dossiers.revue.etats
+class Traductions$dossiers$revue$etats$fr {
+	Traductions$dossiers$revue$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement du dossier…'
+	String get chargement => 'Chargement du dossier…';
+
+	/// fr: 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.'
+	String get horsLigne => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.';
+
+	/// fr: 'Vous n’avez plus accès à ce dossier.'
+	String get accesPerdu => 'Vous n’avez plus accès à ce dossier.';
+
+	/// fr: 'Retour aux dossiers'
+	String get retourDossiers => 'Retour aux dossiers';
+
+	/// fr: 'Terminez les vérifications requises.'
+	String get verificationsIncompletes => 'Terminez les vérifications requises.';
+
+	/// fr: 'Un accord requis manque à ce dossier.'
+	String get accordManquant => 'Un accord requis manque à ce dossier.';
+
+	/// fr: 'La décision est indisponible pour le moment.'
+	String get decisionIndisponible => 'La décision est indisponible pour le moment.';
+
+	/// fr: 'Ce dossier a changé depuis son ouverture.'
+	String get modifie => 'Ce dossier a changé depuis son ouverture.';
+
+	/// fr: 'Actualiser le dossier'
+	String get actualiserDossier => 'Actualiser le dossier';
+
+	/// fr: 'Ce dossier ne peut pas être refusé dans son état actuel.'
+	String get refusNonAutorise => 'Ce dossier ne peut pas être refusé dans son état actuel.';
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -11997,6 +12087,29 @@ extension on Traductions {
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
+			'dossiers.revue.identite' => 'Identité et dossier',
+			'dossiers.revue.piece' => 'Pièce d\'identité',
+			'dossiers.revue.voirPiece' => 'Voir la pièce',
+			'dossiers.revue.accords' => 'Accords et éléments soumis',
+			'dossiers.revue.nom' => 'Nom',
+			'dossiers.revue.prenom' => 'Prénom',
+			'dossiers.revue.typeDossier' => 'Type de dossier',
+			'dossiers.revue.dateDepot' => 'Date de dépôt',
+			'dossiers.revue.etatDossier' => 'État du dossier',
+			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
+			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
+			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
+			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
+			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
+			'dossiers.revue.etats.horsLigne' => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.',
+			'dossiers.revue.etats.accesPerdu' => 'Vous n’avez plus accès à ce dossier.',
+			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
+			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
+			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
+			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
+			'dossiers.revue.etats.modifie' => 'Ce dossier a changé depuis son ouverture.',
+			'dossiers.revue.etats.actualiserDossier' => 'Actualiser le dossier',
+			'dossiers.revue.etats.refusNonAutorise' => 'Ce dossier ne peut pas être refusé dans son état actuel.',
 			'dossiers.restantUn' => '1 dossier en attente',
 			'dossiers.restants' => ({required Object n}) => '${n} dossiers en attente',
 			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
@@ -12016,7 +12129,7 @@ extension on Traductions {
 			'dossiers.pointValidite' => 'La pièce n\'est pas expirée',
 			'dossiers.verdict' => 'Décision',
 			'dossiers.approuver' => 'Valider le dossier',
-			'dossiers.refuser' => 'Refuser',
+			'dossiers.refuser' => 'Refuser le dossier',
 			'dossiers.motif' => 'Ce qui ne va pas, en une phrase',
 			'dossiers.motifRequis' => 'Un refus doit dire ce qui ne va pas : la famille n\'a que cette phrase pour corriger.',
 			'dossiers.journalisation' => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.',
@@ -12267,6 +12380,8 @@ extension on Traductions {
 			'admin.fonctionnalites.champValeur' => 'Valeur',
 			'admin.fonctionnalites.multiParticipants' => 'Séances multi-participants',
 			'admin.fonctionnalites.multiParticipantsDetail' => 'Autorise plusieurs élèves dans une même séance de visioconférence.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fonctionnalites.participantsMax' => 'Participants maximum',
 			'admin.fonctionnalites.participantsMaxDetail' => 'Le nombre de participants autorisés quand les séances multi-participants sont actives.',
 			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '${n}',
@@ -12290,8 +12405,6 @@ extension on Traductions {
 			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
 			'admin.evaluations.filtreRealisees' => 'Réalisées',
 			'admin.evaluations.filtreAnnulees' => 'Annulées',
@@ -12781,6 +12894,8 @@ extension on Traductions {
 			'compte.appareils' => 'Foyer',
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
 			'compte.confidentialite' => 'Confidentialité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
@@ -12804,8 +12919,6 @@ extension on Traductions {
 			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
 			'compte.themeClair' => 'Clair',
 			'compte.themeSombre' => 'Sombre',
-			_ => null,
-		} ?? switch (path) {
 			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
@@ -13295,6 +13408,8 @@ extension on Traductions {
 			'classe.pageTravail.indisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.echeance' => ({required Object date}) => 'Échéance : ${date}',
 			'classe.pageTravail.nonCochable' => 'Marquer un travail comme fait n\'est pas encore possible ici.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageTravail.statut.aFaire' => 'À faire',
 			'classe.pageTravail.statut.enCours' => 'Commencé',
 			'classe.pageTravail.statut.fait' => 'Fait',
@@ -13318,8 +13433,6 @@ extension on Traductions {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
@@ -13809,6 +13922,8 @@ extension on Traductions {
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.',
@@ -13832,8 +13947,6 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',

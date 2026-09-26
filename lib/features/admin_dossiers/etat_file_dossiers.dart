@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/session/session_controleur.dart';
@@ -100,6 +101,16 @@ final AsyncNotifierProvider<FileDossiersNotifier, EtatFile>
 fileDossiersProvider = AsyncNotifierProvider<FileDossiersNotifier, EtatFile>(
   FileDossiersNotifier.new,
 );
+
+/// Le detail d'un dossier, lu par le port (AD-6). Sans retentative
+/// automatique, comme `dossiersEnAttenteProvider` : « Reessayer » est la
+/// seule relance.
+final FutureProviderFamily<DossierPourRevue, String> dossierPourRevueProvider =
+    FutureProvider.autoDispose.family<DossierPourRevue, String>(
+      (Ref ref, String id) =>
+          ref.watch(portRevueDossiersProvider).dossierPourRevue(id),
+      retry: (int retryCount, Object error) => null,
+    );
 
 /// La selection de la file, pour la session : elle survit a la navigation
 /// et se reinitialise a tout changement de profil (deconnexion comprise).

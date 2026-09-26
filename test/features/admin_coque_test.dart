@@ -287,10 +287,18 @@ void main() {
     Finder titreCommencantPar(String prenom) => find.byWidgetPredicate(
       (Widget w) => w is Text && (w.data?.startsWith('$prenom ') ?? false),
     );
-    // AD-5 : a 1440, maitre-detail. Le nom de la 2e ligne figure dans la
-    // file ET dans le detail ; le premier n'est que dans la file. La ligne
-    // ouverte est annoncee selectionnee.
-    expect(titreCommencantPar(second), findsNWidgets(2));
+    // AD-5/AD-6 : a 1440, maitre-detail. Le nom de la 2e ligne figure dans
+    // la file, et le detail porte « Dossier de/d'{nom} » ; le premier n'est
+    // que dans la file. La ligne ouverte est annoncee selectionnee.
+    expect(titreCommencantPar(second), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) =>
+            w is Text &&
+            (w.data?.startsWith(RegExp("Dossier d(e |')$second ")) ?? false),
+      ),
+      findsOneWidget,
+    );
     expect(titreCommencantPar(premier), findsOneWidget);
     expect(
       tester.getSemantics(
@@ -302,7 +310,8 @@ void main() {
       find.byWidgetPredicate(
         (Widget w) => w is Text && (w.data?.startsWith('DEMO-D') ?? false),
       ),
-      findsOneWidget,
+      // AD-6 : l'identifiant immuable n'est plus affiche dans le detail.
+      findsNothing,
     );
   });
 

@@ -108,6 +108,8 @@ class Pressable extends StatefulWidget {
     this.arrondiFocus,
     this.autofocus = false,
     this.selectionne,
+    this.coche,
+    this.focusNode,
   }) : constructeur = null;
 
   /// Cree une zone pressable dont le contenu suit l'etat d'interaction.
@@ -126,6 +128,8 @@ class Pressable extends StatefulWidget {
     this.arrondiFocus,
     this.autofocus = false,
     this.selectionne,
+    this.coche,
+    this.focusNode,
   }) : child = null;
 
   /// Le contenu rendu, quand il ne depend pas de l'etat.
@@ -158,6 +162,12 @@ class Pressable extends StatefulWidget {
 
   /// Etat de selection annonce (`Semantics.selected`). Nul : non annonce.
   final bool? selectionne;
+
+  /// Etat de case annonce (`Semantics.checked`). Nul : non annonce.
+  final bool? coche;
+
+  /// Le noeud de focus de la zone, pour qu'un ecran puisse y poser le focus.
+  final FocusNode? focusNode;
 
   /// Duree de l'animation de pression : le retour tactile du budget de
   /// mouvement, jamais une valeur posee ici (`app_mouvement.dart`).
@@ -308,10 +318,12 @@ class _PressableState extends State<Pressable>
       button: _pressable,
       enabled: _pressable,
       selected: widget.selectionne,
+      checked: widget.coche,
       label: widget.libelleSemantique,
       child: FocusableActionDetector(
         enabled: _pressable,
         autofocus: widget.autofocus,
+        focusNode: widget.focusNode,
         mouseCursor: _pressable
             ? SystemMouseCursors.click
             : SystemMouseCursors.basic,

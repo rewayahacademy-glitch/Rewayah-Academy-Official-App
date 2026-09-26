@@ -121,13 +121,123 @@ void main() {
     );
   });
 
-  test('les gestes du port restent indisponibles', () async {
+  test('AD-6 : detail depuis la meme file, sans appel de plus', () async {
+    int appels = 0;
+    final List<DossierAValider> file = <DossierAValider>[
+      _d('p1', doc: 'd1', prenom: 'Omar'),
+      _d('p2', doc: null, prenom: 'Ines'),
+      DossierAValider(
+        documentId: null,
+        profilId: 'p3',
+        type: null,
+        cleObjet: null,
+        deposeLe: DateTime.utc(2026, 9, 25, 15),
+        prenom: 'B',
+        nom: 'Test',
+        identifiantImmuable: 'ID-p3',
+        role: AppRole.guardian,
+        etatPiece: EtatPiece.nonVisible,
+      ),
+    ];
+    // Comme en production : un cache partage, lu une seule fois.
+    final Future<List<DossierAValider>> cache = Future<List<DossierAValider>>(
+      () {
+        appels++;
+        return file;
+      },
+    );
     final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
-      () async => <DossierAValider>[],
+      () => cache,
+    );
+    await port.listerDossiers();
+    final DossierPourRevue d = await port.dossierPourRevue('p1');
+    expect(appels, 1);
+    expect(d.dossierId, 'p1');
+    expect(d.prenom, 'Omar');
+    expect(d.nom, 'Test');
+    expect(d.role, AppRole.teacher);
+    expect(d.soumisLeUtc, DateTime.utc(2026, 9, 25, 14, 30));
+    expect(d.revision, 0);
+    expect(d.statut, StatutRevue.aVerifier);
+    expect(d.etatPiece, EtatPieceRevue.disponible);
+    expect(d.typePiece, TypePiece.carteIdentite);
+    expect(d.documentId, 'd1');
+    expect(d.verifications.map((VerificationRevue v) => v.id), <String>[
+      'lisible',
+      'nom',
+      'validite',
+    ]);
+    expect(
+      d.verifications.every(
+        (VerificationRevue v) =>
+            v.obligatoire &&
+            v.modifiable &&
+            v.etat == EtatVerification.aFaire &&
+            v.origine == OrigineVerification.humaine,
+      ),
+      isTrue,
+    );
+    expect(d.accords, isEmpty);
+    expect(d.peutValider && d.peutRefuser && d.peutVoirPiece, isTrue);
+    expect(d.blocagesValidation, isEmpty);
+    expect(d.consequence, ConsequenceValidation.indeterminee);
+    // Aucune cle d'objet dans le modele rendu.
+    expect(d.toString().contains('x/d1'), isFalse);
+
+    final DossierPourRevue sans = await port.dossierPourRevue('p2');
+    expect(sans.etatPiece, EtatPieceRevue.absente);
+    expect(sans.verifications, isEmpty);
+    expect(sans.peutValider || sans.peutRefuser, isFalse);
+    expect(sans.blocagesValidation, <BlocageRevue>[BlocageRevue.pieceAbsente]);
+    expect(sans.blocagesRefus, <BlocageRevue>[BlocageRevue.pieceAbsente]);
+
+    final DossierPourRevue horsPortee = await port.dossierPourRevue('p3');
+    expect(horsPortee.etatPiece, EtatPieceRevue.nonVisible);
+    expect(horsPortee.blocagesValidation, <BlocageRevue>[
+      BlocageRevue.pieceNonVisible,
+    ]);
+    expect(appels, 1);
+
+    await expectLater(
+      port.dossierPourRevue('inconnu'),
+      throwsA(
+        isA<ErreurRevueDossier>().having(
+          (ErreurRevueDossier e) => e.code,
+          'code',
+          CodeErreurRevue.introuvable,
+        ),
+      ),
     );
     await expectLater(
-      port.dossierPourRevue('p1'),
-      throwsA(isA<CapaciteIndisponible>()),
+      RevueDossiersDepuisValidation(
+        () async => throw const GenreLecteurInconnu(),
+      ).dossierPourRevue('p1'),
+      throwsA(
+        isA<ErreurRevueDossier>().having(
+          (ErreurRevueDossier e) => e.code,
+          'code',
+          CodeErreurRevue.profilACompleter,
+        ),
+      ),
+    );
+    await expectLater(
+      RevueDossiersDepuisValidation(
+        () async =>
+            throw const PostgrestException(message: 'refus', code: '42501'),
+      ).dossierPourRevue('p1'),
+      throwsA(
+        isA<ErreurRevueDossier>().having(
+          (ErreurRevueDossier e) => e.code,
+          'code',
+          CodeErreurRevue.interdit,
+        ),
+      ),
+    );
+  });
+
+  test('la decision du port reste indisponible (AD-8)', () async {
+    final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+      () async => <DossierAValider>[],
     );
     await expectLater(
       port.decider(

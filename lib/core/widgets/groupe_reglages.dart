@@ -25,7 +25,16 @@ class LigneRubrique {
     this.selectionnee,
     this.libelleSemantique,
     this.autofocus = false,
+    this.cochee,
+    this.focusNode,
   });
+
+  /// Case d'une liste de verifications : annoncee (`Semantics.checked`). Non
+  /// nulle, la ligne se presse (bascule) sans chevron. Nul : pas une case.
+  final bool? cochee;
+
+  /// Le noeud de focus de la ligne pressable (un ecran y pose le focus).
+  final FocusNode? focusNode;
 
   /// L'icone de la rubrique, en encre d'accent.
   final AppIcon? icone;
@@ -149,7 +158,12 @@ class _Ligne extends StatelessWidget {
   Widget build(BuildContext context) {
     // Une ligne a controle ne se presse pas : l'interrupteur garde son geste.
     if (ligne.controle != null || ligne.onPress == null) {
-      return MergeSemantics(child: _contenu(context, const EtatPression()));
+      return MergeSemantics(
+        child: Semantics(
+          checked: ligne.cochee,
+          child: _contenu(context, const EtatPression()),
+        ),
+      );
     }
     return Pressable.selon(
       onPress: ligne.onPress,
@@ -157,6 +171,8 @@ class _Ligne extends StatelessWidget {
       arrondiFocus: AppRadius.arrondiSm,
       libelleSemantique: ligne.libelleSemantique,
       selectionne: ligne.selectionnee,
+      coche: ligne.cochee,
+      focusNode: ligne.focusNode,
       autofocus: ligne.autofocus,
       constructeur: _contenu,
     );
@@ -226,7 +242,8 @@ class _Ligne extends StatelessWidget {
                           ligne.controle!,
                         ],
                         if (ligne.onPress != null &&
-                            ligne.controle == null) ...<Widget>[
+                            ligne.controle == null &&
+                            ligne.cochee == null) ...<Widget>[
                           Ecart.hSm,
                           ExcludeSemantics(
                             child: IconTheme(

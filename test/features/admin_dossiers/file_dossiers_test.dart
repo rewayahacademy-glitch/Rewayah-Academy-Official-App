@@ -104,7 +104,9 @@ void main() {
     await tester.tap(_ligne('Amina'));
     await _stabiliser(tester);
     expect(tester.getSemantics(_ligne('Amina')), isSemantics(isSelected: true));
-    expect(find.text('Amina Benali'), findsNWidgets(2));
+    // AD-6 : le detail porte le titre ; nom et prenom sont sur leurs lignes.
+    expect(find.text('Amina Benali'), findsOneWidget);
+    expect(find.text("Dossier d'Amina Benali"), findsOneWidget);
   });
 
   testWidgets('1440 : les coches repartent a vide en changeant de dossier', (

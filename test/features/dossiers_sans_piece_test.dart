@@ -5,6 +5,7 @@ import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 
 import '../support/dossiers_production.dart';
@@ -40,6 +41,20 @@ DossierAValider _dossier({
   etatCompte: AccountStatus.pendingKyc,
 );
 
+/// Vrai quand le bouton [libelle] se presse.
+bool _actif(WidgetTester tester, String libelle) =>
+    tester
+        .widget<ActionPrincipale>(
+          find
+              .ancestor(
+                of: find.text(libelle),
+                matching: find.byType(ActionPrincipale),
+              )
+              .first,
+        )
+        .onPress !=
+    null;
+
 void main() {
   Future<FauxServiceValidation> monter(
     WidgetTester tester,
@@ -71,13 +86,21 @@ void main() {
       expect(tester.takeException(), isNull);
       // La personne est la — c'est tout l'objet de la migration 0015.
       expect(find.textContaining('Aicha Sow'), findsWidgets);
-      expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+      // AD-6 : l'identifiant immuable n'est plus affiche dans le detail.
+      expect(find.textContaining('TEACHER-AS-000001'), findsNothing);
       expect(find.text('Aucune pièce déposée'), findsOneWidget);
-      expect(find.text('Rien à trancher pour l\'instant'), findsOneWidget);
-      // Aucun verdict : la base refuserait, et un bouton qui echoue apres le
-      // geste coute plus cher en confiance qu'un bouton absent.
-      expect(find.text('Valider le dossier'), findsNothing);
-      expect(find.text('Refuser'), findsNothing);
+      expect(
+        find.text("Ce dossier n'est pas encore prêt à être validé."),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Ce dossier ne peut pas être refusé dans son état actuel.'),
+        findsOneWidget,
+      );
+      // AD-6 : les deux decisions sont presentes mais fermees, avec leur
+      // raison ; la base refuserait un verdict sans piece.
+      expect(_actif(tester, 'Valider le dossier'), isFalse);
+      expect(_actif(tester, 'Refuser le dossier'), isFalse);
       // Ni la checklist, qui n'a rien a verifier.
       expect(find.text('Vérifications'), findsNothing);
     },
@@ -93,7 +116,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text('Pièce hors de votre portée'), findsOneWidget);
       expect(find.text('Aucune pièce déposée'), findsNothing);
-      expect(find.text('Valider le dossier'), findsNothing);
+      expect(_actif(tester, 'Valider le dossier'), isFalse);
     },
   );
 
@@ -111,7 +134,7 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Vérifications'), findsOneWidget);
     expect(find.text('Valider le dossier'), findsOneWidget);
-    expect(find.text('Refuser'), findsWidgets);
+    expect(find.text('Refuser le dossier'), findsWidgets);
     expect(find.text('Aucune pièce déposée'), findsNothing);
   });
 }

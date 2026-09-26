@@ -19,16 +19,18 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'etat_file_dossiers.dart';
-import 'revue_existante.dart';
+import 'revue_dossier.dart';
 import 'textes_dossier.dart';
 
 /// Sous cette largeur (file de 336 en maitre-detail), l'en-tete passe sur
 /// deux lignes : compteur au debut, Actualiser au bord de fin.
 const double _largeurEnTeteSurUneLigne = 352;
 
-/// Relit la file et le service existant (source du detail jusqu'a AD-6).
+/// Relit la file, le service existant (cache de production partage) et le
+/// detail lu par le port (AD-6).
 void actualiserDossiers(WidgetRef ref) {
   ref.invalidate(dossiersEnAttenteProvider);
+  ref.invalidate(dossierPourRevueProvider);
   ref.read(fileDossiersProvider.notifier).actualiser();
 }
 

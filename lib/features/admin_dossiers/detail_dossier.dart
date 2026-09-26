@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
-import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -10,7 +10,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/skeleton.dart';
 import 'etat_file_dossiers.dart';
 import 'file_dossiers.dart';
-import 'revue_existante.dart';
+import 'revue_dossier.dart';
 
 /// L'etat « Selectionnez un dossier a examiner. » (deux panneaux seulement).
 class AucuneSelection extends StatelessWidget {
@@ -25,53 +25,90 @@ class AucuneSelection extends StatelessWidget {
   );
 }
 
-/// Le detail d'un dossier selectionne. Jusqu'a AD-6, il lit le service
-/// existant (meme cache que la file en production) et montre la revue
-/// actuelle, deplacee telle quelle.
+/// Le detail d'un dossier selectionne (`ADM-02B`, AD-6), lu par le port
+/// (`dossierPourRevueProvider`) : en production l'adaptateur d'AD-5 le
+/// reconstruit depuis le cache deja charge, sans appel serveur de plus.
 class DetailDossier extends ConsumerWidget {
   /// Cree le detail du dossier [id].
-  const DetailDossier({required this.id, required this.onDecision, super.key});
+  const DetailDossier({
+    required this.id,
+    required this.onDecision,
+    this.avecTitre = true,
+    super.key,
+  });
 
   final String id;
 
   /// Appele apres une decision reussie, avec l'identifiant decide.
   final void Function(String id) onDecision;
 
+  /// Faux en panneau unique : le titre est deja dans l'en-tete de page.
+  final bool avecTitre;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<DossierAValider>> dossiers = ref.watch(
-      dossiersEnAttenteProvider,
+    final AsyncValue<DossierPourRevue> dossier = ref.watch(
+      dossierPourRevueProvider(id),
     );
     final EtatFile? file = ref.watch(fileDossiersProvider).value;
 
+    void retirer() {
+      actualiserDossiers(ref);
+      ref.read(selectionDossierProvider.notifier).retirer();
+    }
+
     return FocusTraversalGroup(
-      child: BlocAsynchrone<List<DossierAValider>>(
-        valeur: dossiers,
+      child: BlocAsynchrone<DossierPourRevue>(
+        valeur: dossier,
         squelette: const SqueletteDetail(),
         titreProlonge: t.dossiers.file.chargementProlonge,
+        titreEchec: t.dossiers.revue.erreurChargement,
         // File et detail relus ensemble : sinon la file, figee sur l'ancienne
         // lecture, ferait dire a tort « plus disponible ».
         onReessayer: () => actualiserDossiers(ref),
-        erreurVersEtat: (Object e, VoidCallback? _) =>
-            e is GenreLecteurInconnu ? const GenreManquant() : null,
-        construire: (List<DossierAValider> liste) {
-          final DossierAValider? d = liste
-              .where((DossierAValider x) => x.profilId == id)
-              .firstOrNull;
+        erreurVersEtat: (Object e, VoidCallback? _) {
+          if (e is CapaciteIndisponible) {
+            return EtatSysteme(
+              nature: NatureEtat.indisponible,
+              titre: t.dossiers.revue.etats.decisionIndisponible,
+              phrase: '',
+              dependance: e.dependance,
+            );
+          }
+          if (e is! ErreurRevueDossier) {
+            return null;
+          }
+          return switch (e.code) {
+            CodeErreurRevue.interdit ||
+            CodeErreurRevue.nonAutorise => EtatSysteme(
+              nature: NatureEtat.accesRefuse,
+              titre: t.dossiers.revue.etats.accesPerdu,
+              phrase: '',
+              libelleAction: t.dossiers.revue.etats.retourDossiers,
+              onAction: retirer,
+            ),
+            CodeErreurRevue.introuvable => _SelectionRetiree(
+              onActualiser: retirer,
+            ),
+            CodeErreurRevue.profilACompleter => const GenreManquant(),
+            _ => null,
+          };
+        },
+        construire: (DossierPourRevue d) {
           final bool dansFile =
               file == null ||
               file.elements.any((DossierEnFile e) => e.dossierId == id);
-          if (d == null || !dansFile) {
-            return _SelectionRetiree(
-              onActualiser: () {
-                actualiserDossiers(ref);
-                ref.read(selectionDossierProvider.notifier).retirer();
-              },
-            );
+          if (!dansFile) {
+            return _SelectionRetiree(onActualiser: retirer);
           }
           return KeyedSubtree(
-            key: ValueKey<String>(id),
-            child: RevueExistante(dossier: d, onDecision: () => onDecision(id)),
+            key: ValueKey<String>('$id#${d.revision}'),
+            child: RevueDossier(
+              dossier: d,
+              avecTitre: avecTitre,
+              onDecision: () => onDecision(id),
+              onActualiser: () => actualiserDossiers(ref),
+            ),
           );
         },
       ),
@@ -97,43 +134,63 @@ class _SelectionRetiree extends StatelessWidget {
   );
 }
 
-/// Le squelette du detail, dans l'ordre du contenu : titre, date, constat,
-/// verifications, decision.
+/// Le squelette du detail, a la geometrie du contenu : en-tete, quatre
+/// cartes, puis le groupe de deux boutons au bord de fin. Sans shimmer.
 class SqueletteDetail extends StatelessWidget {
   /// Cree le squelette.
   const SqueletteDetail({super.key});
 
   @override
-  Widget build(BuildContext context) => const ExcludeSemantics(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        FractionallySizedBox(
-          widthFactor: 0.5,
-          child: Skeleton(hauteur: AppSpacing.xxl),
-        ),
-        SizedBox(height: AppSpacing.sm),
-        FractionallySizedBox(
-          widthFactor: 0.35,
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      // Le texte est lu ; les formes, non.
+      Text(t.dossiers.revue.etats.chargement),
+      Ecart.vSm,
+      ExcludeSemantics(child: _formes()),
+    ],
+  );
+
+  Widget _formes() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      const FractionallySizedBox(
+        alignment: AlignmentDirectional.centerStart,
+        widthFactor: 0.5,
+        child: Skeleton(hauteur: AppSpacing.xxl),
+      ),
+      Ecart.vSm,
+      const FractionallySizedBox(
+        alignment: AlignmentDirectional.centerStart,
+        widthFactor: 0.35,
+        child: Skeleton(hauteur: AppSpacing.lg),
+      ),
+      for (final double h in const <double>[
+        5 * AppTouchTarget.standard,
+        AppTouchTarget.standard,
+        3 * AppTouchTarget.standard,
+        AppTouchTarget.standard,
+      ]) ...<Widget>[
+        const SizedBox(height: AppSpacing.xxl),
+        const FractionallySizedBox(
+          alignment: AlignmentDirectional.centerStart,
+          widthFactor: 0.3,
           child: Skeleton(hauteur: AppSpacing.lg),
         ),
-        SizedBox(height: AppSpacing.xxl),
-        Skeleton(hauteur: 160),
-        SizedBox(height: AppSpacing.xxl),
-        FractionallySizedBox(
-          widthFactor: 0.3,
-          child: Skeleton(hauteur: AppSpacing.xl),
-        ),
-        SizedBox(height: AppSpacing.md),
-        Skeleton(hauteur: AppTouchTarget.standard),
-        SizedBox(height: AppSpacing.md),
-        Skeleton(hauteur: AppTouchTarget.standard),
-        SizedBox(height: AppSpacing.md),
-        Skeleton(hauteur: AppTouchTarget.standard),
-        SizedBox(height: AppSpacing.xxl),
-        Skeleton(hauteur: AppPage.hauteurBouton),
+        Ecart.vSm,
+        Skeleton(hauteur: h),
       ],
-    ),
+      Ecart.vLg,
+      const Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          SizedBox(width: 160, child: Skeleton(hauteur: AppPage.hauteurBouton)),
+          SizedBox(width: AppSpacing.sm),
+          SizedBox(width: 160, child: Skeleton(hauteur: AppPage.hauteurBouton)),
+        ],
+      ),
+    ],
   );
 }

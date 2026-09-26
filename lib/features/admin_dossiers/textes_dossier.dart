@@ -36,6 +36,28 @@ String dateRevue(DateTime utc) {
   return texte.replaceAll(' ', ' ');
 }
 
+/// Le titre de la revue : « Dossier de/d'{nom} », ou « Dossier sans nom
+/// disponible » seul quand aucun nom n'est lisible.
+String titreRevue(String nom) =>
+    nom.trim().isEmpty ? t.dossiers.file.sansNom : titreDossier(nom.trim());
+
+/// Le libelle d'un type de piece (cles existantes du depot de piece). Le type
+/// « autre » n'a pas de texte propre : le titre de la carte le porte.
+String libelleTypePiece(TypePiece type) => switch (type) {
+  TypePiece.carteIdentite => t.kyc.carteIdentite,
+  TypePiece.passeport => t.kyc.passeport,
+  TypePiece.titreSejour => t.kyc.titreSejour,
+  TypePiece.autre => t.dossiers.revue.piece,
+};
+
+/// Le libelle d'un accord (memes cles que les informations legales).
+String libelleAccord(SorteContrat sorte) => switch (sorte) {
+  SorteContrat.conditionsTuteur => t.compte.tuteur.pageLegal.conditionsTuteur,
+  SorteContrat.contratEnseignant => t.compte.tuteur.pageLegal.contratEnseignant,
+  SorteContrat.accuseEnregistrementControle =>
+    t.compte.tuteur.pageLegal.accuseEnregistrement,
+};
+
 /// Le type de dossier : toujours « Enseignant » ou « Tuteur ».
 String typeDossier(AppRole role) => switch (role) {
   AppRole.teacher => t.compte.roles.teacher,

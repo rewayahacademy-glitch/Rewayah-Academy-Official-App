@@ -132,17 +132,22 @@ void main() {
           FauxServiceValidation()..file = <DossierAValider>[_dossier()],
         );
 
-        final double yApercu = tester
-            .getTopLeft(find.text(t.dossiers.apercu))
+        // AD-6 : identite, piece, verifications, puis la decision.
+        final double yIdentite = tester
+            .getTopLeft(find.text(t.dossiers.revue.identite))
+            .dy;
+        final double yPiece = tester
+            .getTopLeft(find.text(t.dossiers.revue.piece))
             .dy;
         final double yChecklist = tester
             .getTopLeft(find.text(t.dossiers.verifications))
             .dy;
         final double yVerdict = tester
-            .getTopLeft(find.text(t.dossiers.verdict))
+            .getTopLeft(find.text(t.dossiers.refuser))
             .dy;
 
-        expect(yApercu, lessThan(yChecklist));
+        expect(yIdentite, lessThan(yPiece));
+        expect(yPiece, lessThan(yChecklist));
         expect(yChecklist, lessThan(yVerdict));
       },
     );
@@ -187,20 +192,24 @@ void main() {
       // que l annoncer plus tot.
       await _allerA(tester, t.dossiers.motifRequis);
       expect(find.text(t.dossiers.motifRequis), findsOneWidget);
-      await tester.tap(find.text(t.dossiers.refuser));
+      // La confirmation du refus en ligne (transitoire jusqu'a AD-8) est le
+      // second « Refuser le dossier », sous le motif.
+      await tester.ensureVisible(find.text(t.dossiers.refuser).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.dossiers.refuser).last);
       await tester.pumpAndSettle();
       expect(service.verdicts, isEmpty);
 
       await tester.enterText(find.byType(TextField), 'Photo illisible.');
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.dossiers.refuser));
+      await tester.tap(find.text(t.dossiers.refuser).last);
       await tester.pumpAndSettle();
 
       expect(service.verdicts.single.approuve, isFalse);
       expect(service.verdicts.single.motif, 'Photo illisible.');
     });
 
-    testWidgets('la journalisation est rappelee sous les verdicts', (
+    testWidgets('AD-6 : ni journalisation, ni apercu, ni URL dans le detail', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -208,19 +217,13 @@ void main() {
         FauxServiceValidation()..file = <DossierAValider>[_dossier()],
       );
 
-      // La liste defile : le rappel est en bas, il faut aller le chercher comme
-      // l'administrateur le ferait.
-      await tester.scrollUntilVisible(
-        find.text(t.dossiers.journalisation),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
-      expect(find.text(t.dossiers.journalisation), findsOneWidget);
-      expect(
-        tester.getTopLeft(find.text(t.dossiers.journalisation)).dy,
-        greaterThan(tester.getTopLeft(find.text(t.dossiers.verdict)).dy),
-      );
+      // Le rappel de journalisation et l'apercu en ligne ont quitte le
+      // detail (modification 13) : aucune cle d'objet, aucune image.
+      expect(find.text(t.dossiers.journalisation), findsNothing);
+      expect(find.text(t.dossiers.apercu), findsNothing);
+      expect(find.byType(Image), findsNothing);
+      expect(find.textContaining('piece.webp'), findsNothing);
+      expect(find.text(t.dossiers.revue.voirPiece), findsOneWidget);
     });
 
     testWidgets('une file vide est une invitation, pas un ecran mort', (

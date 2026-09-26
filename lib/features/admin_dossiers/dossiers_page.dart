@@ -153,7 +153,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
         ? null
         : elements
               .where((DossierEnFile d) => d.dossierId == id)
-              .map((DossierEnFile d) => nomOuDefaut(d.nomAffiche))
+              .map((DossierEnFile d) => d.nomAffiche)
               .firstOrNull;
 
     return PopScope(
@@ -164,7 +164,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
         }
       },
       child: PageShell(
-        titre: detailSeul && nom != null ? titreDossier(nom) : t.dossiers.titre,
+        titre: detailSeul && nom != null ? titreRevue(nom) : t.dossiers.titre,
         sousTitre: detailSeul ? null : t.dossiers.sousTitre,
         onRetour: detailSeul ? _fermerDetail : null,
         focusTitre: _focusTitre,
@@ -193,10 +193,20 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
             if (selection.detailOuvert && id != null) {
               return SingleChildScrollView(
                 key: ValueKey<String>('adm02a-detail-$id'),
-                child: DetailDossier(
-                  id: id,
-                  onDecision: (String x) =>
-                      _apresDecision(x, maitreDetail: false),
+                // Le detail ne s'etire pas : plafond 728, aligne au debut.
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: largeurDetailDossier,
+                    ),
+                    child: DetailDossier(
+                      id: id,
+                      avecTitre: false,
+                      onDecision: (String x) =>
+                          _apresDecision(x, maitreDetail: false),
+                    ),
+                  ),
                 ),
               );
             }
