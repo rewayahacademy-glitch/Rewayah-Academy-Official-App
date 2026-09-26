@@ -496,7 +496,7 @@ void main() {
 
   group('pont ADM-02', () {
     test(
-      'file de l\'ecran : traitables d\'abord, hors portee en fin',
+      'file de l\'ecran : toute la file, dans l\'ordre du port',
       () async {
         final (EtatRevueDemo etat, _, _) = _doubles();
         final List<String> ids = <String>[
@@ -505,9 +505,14 @@ void main() {
           ).enAttente())
             d.profilId,
         ];
-        expect(ids, isNot(contains(DonneesDossiersDemo.familleDispensee)));
-        expect(ids, isNot(contains(DonneesDossiersDemo.pieceAbsente)));
-        expect(ids.last, DonneesDossiersDemo.horsPortee);
+        // AD-5 : toute la file, dans l'ordre du port, pour que chaque ligne
+        // trouve son detail.
+        expect(ids, <String>[
+          for (final DossierDemo d in etat.fileTriee) d.id,
+        ]);
+        expect(ids, contains(DonneesDossiersDemo.familleDispensee));
+        expect(ids, contains(DonneesDossiersDemo.pieceAbsente));
+        expect(ids, contains(DonneesDossiersDemo.horsPortee));
         expect(ids.first, DonneesDossiersDemo.enseignantNominal);
         expect(ids, contains(DonneesDossiersDemo.reponsePerdue));
       },
