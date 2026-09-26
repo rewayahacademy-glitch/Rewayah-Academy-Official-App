@@ -280,10 +280,16 @@ class _LigneSupport extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final VoidCallback? ouvrir = onOuvrir;
     final String? surTitre = support.surTitre;
+    // Colonne desktop (image CLV-08, ≈ 328 de large) : la ligne Reprendre
+    // prend aussi le corps resserre, « Les bonnes manieres » tient sur une
+    // ligne a cote d'« Ouvrir ». Plus Jakarta Sans (labelLarge) se retaille
+    // sans risque ; DM Sans (titleSmall) non.
+    final bool resserre = serre || (!compact && boutonOuvrir);
     final TextStyle base =
-        (compact ? textes.labelLarge : textes.titleSmall) ?? const TextStyle();
+        (compact || resserre ? textes.labelLarge : textes.titleSmall) ??
+        const TextStyle();
     final TextStyle titre = palette.inkStrong.applyTo(
-      serre
+      resserre
           ? base.copyWith(
               fontSize: textes.bodyMedium?.fontSize,
               height: textes.bodyMedium?.height,

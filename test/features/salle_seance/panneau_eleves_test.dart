@@ -4,6 +4,7 @@
 // coordonnee familiale ; aucun debordement aux trois tailles.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -271,6 +272,91 @@ void main() {
       expect(find.text(t.salle.seance.rappeler), findsOneWidget);
       expect(find.text(t.tc.classe.action.noter), findsNothing);
       expect(find.text(t.salle.seance.signalerBesoin), findsNothing);
+    });
+  });
+
+  group('Panneau Eleves : fidelite aux images (recette T10)', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('web etroit : aucun mot du support ne depasse du volet', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, _tailles['web etroit']!);
+      final double bordVolet = tester
+          .getRect(find.byKey(const ValueKey<String>('panneau-seance-volet')))
+          .right;
+      final Finder textes = find.descendant(
+        of: find.byKey(const ValueKey<String>('zone-support')),
+        matching: find.byType(RichText),
+      );
+      final Finder vignette = find.byKey(
+        const ValueKey<String>('vignette-video'),
+      );
+      for (final Element e in textes.evaluate()) {
+        final RenderParagraph p = e.renderObject! as RenderParagraph;
+        final bool dansVignette = find
+            .descendant(of: vignette, matching: find.byWidget(e.widget))
+            .evaluate()
+            .isNotEmpty;
+        if (dansVignette) continue;
+        final int n = p.text.toPlainText().length;
+        for (final TextBox b in p.getBoxesForSelection(
+          TextSelection(baseOffset: 0, extentOffset: n),
+        )) {
+          final Offset debut = p.localToGlobal(Offset(b.left, b.top));
+          final Offset fin = p.localToGlobal(Offset(b.right, b.top));
+          // Un texte commence sous le volet : il y reste entier.
+          if (debut.dx < bordVolet) {
+            expect(
+              fin.dx,
+              lessThanOrEqualTo(bordVolet),
+              reason: '« ${p.text.toPlainText()} » depasse du volet',
+            );
+          }
+        }
+      }
+    });
+
+    for (final PanneauOuvert panneau in <PanneauOuvert>[
+      PanneauOuvert.eleves,
+      PanneauOuvert.supports,
+    ]) {
+      testWidgets('desktop, panneau ${panneau.name} : le titre du support '
+          'tient sur deux lignes', (WidgetTester tester) async {
+        fixerVueCapture(tester, _tailles['desktop']!, 1);
+        final VueSeance vue = _vue(
+          RoleSeance.enseignant,
+        ).copyWith(panneau: panneau);
+        await tester.pumpWidget(
+          hoteCapture(SalleSeance(vue: vue, actions: _complet)),
+        );
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(tester.takeException(), isNull);
+        final String titre = vue.support!.titre;
+        final RenderParagraph p = tester.renderObject<RenderParagraph>(
+          find.text(titre),
+        );
+        final Set<double> lignes = <double>{
+          for (final TextBox b in p.getBoxesForSelection(
+            TextSelection(baseOffset: 0, extentOffset: titre.length),
+          ))
+            b.top.roundToDouble(),
+        };
+        expect(lignes.length, 2);
+      });
+    }
+
+    testWidgets('telephone : les trois inscrits tiennent entiers', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, _tailles['mobile']!);
+      for (final EleveSeance e in _vue(RoleSeance.enseignant).eleves) {
+        final Rect r = tester.getRect(
+          find.byKey(ValueKey<String>('eleve-${e.prenom}')),
+        );
+        expect(r.bottom, lessThanOrEqualTo(844), reason: e.prenom);
+      }
     });
   });
 }

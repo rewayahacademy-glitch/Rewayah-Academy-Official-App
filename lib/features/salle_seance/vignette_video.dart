@@ -24,6 +24,18 @@ abstract final class MesuresVignette {
   /// Desktop : ≈ 208 x 190.
   static const double largeurLarge = 208;
 
+  /// Desktop, panneau Eleves ou Supports ouvert : ≈ 192 x 175 (images
+  /// CLV-07 et CLV-08 : le titre du support garde ses deux lignes).
+  static const double largeurLargePanneau = 192;
+
+  /// Web etroit, eleve standard : ≈ 188 x 171 (image CLV-04-05-06 web
+  /// etroit, ≈ 31 % de la largeur du support).
+  static const double largeurTablette = 188;
+
+  /// Web etroit, enseignant, outils en colonne a droite : ≈ 176 x 160
+  /// (meme image, colonne CLV-06).
+  static const double largeurTabletteEnseignant = 176;
+
   /// Interface guidee, telephone : ≈ 160 x 145 (S CLV-05).
   static const double largeurGuideeMobile = 160;
 
@@ -38,8 +50,15 @@ abstract final class MesuresVignette {
   static const double retrait = AppSpacing.md;
 
   /// La largeur pour un gabarit ; [guidee] : les mesures de l'Interface
-  /// guidee ([VueSeance.vignetteAgrandie]).
-  static double largeur(Gabarit gabarit, {bool guidee = false}) {
+  /// guidee ([VueSeance.vignetteAgrandie]) ; [enseignant] : la salle de
+  /// l'enseignant ; [panneau] : un panneau Eleves ou Supports est ouvert
+  /// (web etroit : le volet couvre le support, la vignette reste petite).
+  static double largeur(
+    Gabarit gabarit, {
+    bool guidee = false,
+    bool enseignant = false,
+    bool panneau = false,
+  }) {
     if (guidee) {
       return switch (gabarit) {
         Gabarit.mobile => largeurGuideeMobile,
@@ -47,7 +66,14 @@ abstract final class MesuresVignette {
         Gabarit.desktop => largeurGuideeLarge,
       };
     }
-    return gabarit == Gabarit.desktop ? largeurLarge : largeurEtroite;
+    return switch (gabarit) {
+      Gabarit.mobile => largeurEtroite,
+      Gabarit.tablette =>
+        panneau
+            ? largeurEtroite
+            : (enseignant ? largeurTabletteEnseignant : largeurTablette),
+      Gabarit.desktop => panneau ? largeurLargePanneau : largeurLarge,
+    };
   }
 
   /// La hauteur qui suit du ratio.

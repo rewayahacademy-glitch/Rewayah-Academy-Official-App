@@ -59,11 +59,16 @@ class PanneauEleves extends StatefulWidget {
     required this.eleves,
     required this.actions,
     this.large = false,
+    this.serre = false,
     super.key,
   });
 
   final List<EleveSeance> eleves;
   final ActionsSeance actions;
+
+  /// Feuille du telephone : ecarts resserres, pour que la liste des trois
+  /// inscrits tienne entiere sous la fiche depliee (image CLV-07 mobile).
+  final bool serre;
 
   /// Colonne desktop : intitules au corps des valeurs (image desktop) ;
   /// ailleurs, intitules en petit (images web etroit et telephone).
@@ -100,7 +105,8 @@ class _PanneauElevesState extends State<PanneauEleves> {
         bottom: AppSpacing.md + MediaQuery.paddingOf(context).bottom,
       ),
       itemCount: widget.eleves.length,
-      separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
+      separatorBuilder: (BuildContext _, int _) =>
+          widget.serre ? Ecart.vXs : Ecart.vSm,
       itemBuilder: (BuildContext _, int i) {
         final EleveSeance e = widget.eleves[i];
         final bool deplie = _deplie == e.prenom && e.fiche != null;
@@ -108,6 +114,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
           eleve: e,
           deplie: deplie,
           large: widget.large,
+          serre: widget.serre,
           actions: widget.actions,
           onBasculer: e.fiche == null
               ? null
@@ -123,6 +130,7 @@ class _CarteEleve extends StatelessWidget {
     required this.eleve,
     required this.deplie,
     required this.large,
+    required this.serre,
     required this.actions,
     required this.onBasculer,
   });
@@ -130,6 +138,7 @@ class _CarteEleve extends StatelessWidget {
   final EleveSeance eleve;
   final bool deplie;
   final bool large;
+  final bool serre;
   final ActionsSeance actions;
   final VoidCallback? onBasculer;
 
@@ -144,15 +153,15 @@ class _CarteEleve extends StatelessWidget {
         side: palette.borderHairline.asBorderSide(),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
+        padding: EdgeInsets.all(serre ? AppSpacing.xs : AppSpacing.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _EnTeteEleve(eleve: eleve, deplie: deplie, onBasculer: onBasculer),
             if (deplie && fiche != null) ...<Widget>[
-              Ecart.vSm,
-              _GrilleFiche(fiche: fiche, large: large),
-              _ActionsEleve(eleve: eleve, actions: actions),
+              if (serre) Ecart.vXs else Ecart.vSm,
+              _GrilleFiche(fiche: fiche, large: large, serre: serre),
+              _ActionsEleve(eleve: eleve, actions: actions, serre: serre),
             ],
           ],
         ),
@@ -334,26 +343,34 @@ class _Pastille extends StatelessWidget {
 
 /// Les six champs, en grille de deux colonnes (images).
 class _GrilleFiche extends StatelessWidget {
-  const _GrilleFiche({required this.fiche, required this.large});
+  const _GrilleFiche({
+    required this.fiche,
+    required this.large,
+    required this.serre,
+  });
 
   final FicheEleveSeance fiche;
   final bool large;
+  final bool serre;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final double ecart = large ? AppSpacing.md : AppSpacing.sm;
+    final double ecart = large
+        ? AppSpacing.md
+        : (serre ? AppSpacing.xs : AppSpacing.sm);
     // Cellules serrees sur les cotes : les valeurs tiennent sur une ligne,
     // comme sur les images (« 3 seances cette semaine »).
-    const EdgeInsets marge = EdgeInsets.symmetric(
+    final EdgeInsets marge = EdgeInsets.symmetric(
       horizontal: AppSpacing.sm,
-      vertical: AppSpacing.md,
+      vertical: serre ? AppSpacing.sm : AppSpacing.md,
     );
     Widget champ(String intitule, String valeur, {bool objectif = false}) =>
         _Champ(
           intitule: intitule,
           valeur: valeur,
           large: large,
+          serre: serre,
           objectif: objectif,
         );
     final Widget gauche = Column(
@@ -410,12 +427,14 @@ class _Champ extends StatelessWidget {
     required this.intitule,
     required this.valeur,
     required this.large,
+    required this.serre,
     this.objectif = false,
   });
 
   final String intitule;
   final String valeur;
   final bool large;
+  final bool serre;
 
   /// L'objectif actuel : le chapitre en gras sur sa ligne, la precision
   /// entre parentheses dessous (images : « Chapitre 1 » puis « (les bonnes
@@ -462,7 +481,7 @@ class _Champ extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(intitule, style: palette.inkMuted.applyTo(styleIntitule)),
-          Ecart.vXs,
+          if (!serre) Ecart.vXs,
           texteValeur,
         ],
       ),
@@ -473,10 +492,15 @@ class _Champ extends StatelessWidget {
 /// Les quatre actions : tuiles icone pleine violette + libelle (images).
 /// Une action sans rappel n'est pas rendue.
 class _ActionsEleve extends StatelessWidget {
-  const _ActionsEleve({required this.eleve, required this.actions});
+  const _ActionsEleve({
+    required this.eleve,
+    required this.actions,
+    required this.serre,
+  });
 
   final EleveSeance eleve;
   final ActionsSeance actions;
+  final bool serre;
 
   @override
   Widget build(BuildContext context) {
@@ -501,13 +525,14 @@ class _ActionsEleve extends StatelessWidget {
             child: _TuileAction(
               icone: icone,
               libelle: libelle,
+              serre: serre,
               onPress: () => r(eleve),
             ),
           ),
     ];
     if (tuiles.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      padding: EdgeInsets.only(top: serre ? AppSpacing.xs : AppSpacing.sm),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -523,11 +548,13 @@ class _TuileAction extends StatelessWidget {
   const _TuileAction({
     required this.icone,
     required this.libelle,
+    required this.serre,
     required this.onPress,
   });
 
   final AppIcon icone;
   final String libelle;
+  final bool serre;
   final VoidCallback onPress;
 
   @override
@@ -543,13 +570,16 @@ class _TuileAction extends StatelessWidget {
           side: palette.borderHairline.asBorderSide(),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: AppSpacing.respiration + AppSpacing.lg,
+          // Feuille du telephone : la cible reste d'au moins 48 de haut.
+          constraints: BoxConstraints(
+            minHeight: serre
+                ? AppSpacing.titreEcran
+                : AppSpacing.respiration + AppSpacing.lg,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: AppSpacing.xs,
-              vertical: AppSpacing.sm,
+              vertical: serre ? AppSpacing.xs : AppSpacing.sm,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -560,7 +590,7 @@ class _TuileAction extends StatelessWidget {
                   ),
                   child: Icon(icone.actif),
                 ),
-                Ecart.vXs,
+                if (!serre) Ecart.vXs,
                 Text(
                   libelle,
                   textAlign: TextAlign.center,

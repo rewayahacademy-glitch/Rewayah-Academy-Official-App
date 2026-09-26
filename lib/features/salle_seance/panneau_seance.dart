@@ -27,9 +27,9 @@ const double largeurPanneauSeance = AppSpacing.respiration * 5;
 /// le support gardant son titre sur deux lignes).
 const double largeurColonneSeance = AppSpacing.respiration * 5 + AppSpacing.sm;
 
-/// La colonne Supports en desktop (image CLV-08), inchangee.
-const double largeurColonneSupportsSeance =
-    AppSpacing.respiration * 6 - AppSpacing.sm;
+/// La colonne Supports en desktop (image CLV-08 : ≈ 328 a 1440 de large,
+/// comme la colonne Eleves ; le titre du support garde ses deux lignes).
+const double largeurColonneSupportsSeance = largeurColonneSeance;
 
 /// La largeur de la colonne droite en desktop (Eleves, Supports, outils).
 const double largeurColonneDroiteSeance =

@@ -375,6 +375,7 @@ class _SalleEnseignant extends StatelessWidget {
           eleves: vue.eleves,
           actions: actions,
           large: forme == FormePanneau.colonne,
+          serre: forme == FormePanneau.feuille,
         ),
       ),
       PanneauOuvert.supports => PanneauSeance(

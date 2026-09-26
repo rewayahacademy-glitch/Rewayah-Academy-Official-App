@@ -63,13 +63,19 @@ class ZoneSupport extends StatelessWidget {
     final double largeurVignette = MesuresVignette.largeur(
       gabarit,
       guidee: vue.vignetteAgrandie,
+      enseignant: vue.role == RoleSeance.enseignant,
+      panneau: vue.panneau != PanneauOuvert.aucun,
     );
     // Guidee web etroit (image CLV-04-05-06 web etroit) : la grande vignette
     // descend jusqu'a l'encadre, qui se range a cote d'elle ; la carte
     // s'arrete apres son contenu, un espace la separe du dock.
     final bool colonneGuidee =
         vue.vignetteAgrandie && gabarit == Gabarit.tablette && !aCote;
-    final _Marges marges = _Marges.de(gabarit, serre: serre);
+    final _Marges marges = _Marges.de(
+      gabarit,
+      serre: serre,
+      panneau: vue.panneau != PanneauOuvert.aucun,
+    );
     // La carte lit le theme clair, quel que soit le theme de l'ecran.
     final Widget carte = Theme(
       data: AppTheme.pour(mode, Brightness.light),
@@ -107,6 +113,7 @@ class ZoneSupport extends StatelessWidget {
                         marges: marges,
                         largeurVignette: aCote || !video ? 0 : largeurVignette,
                         encadreACote: colonneGuidee,
+                        sousVolet: vue.panneau != PanneauOuvert.aucun,
                       ),
                     ),
                   ),
@@ -242,19 +249,28 @@ class _Marges {
     required this.y,
     required this.retraitVignette,
     required this.serre,
+    this.ecartTitre = AppSpacing.lg,
   });
 
-  factory _Marges.de(Gabarit gabarit, {required bool serre}) {
+  factory _Marges.de(
+    Gabarit gabarit, {
+    required bool serre,
+    bool panneau = false,
+  }) {
     final bool large = gabarit == Gabarit.desktop;
     // Resserre seulement au telephone et en desktop : en web etroit, les
     // outils sont en colonne et la diapositive tient deja.
     final bool actif = serre && gabarit != Gabarit.tablette;
     if (large) {
+      // Panneau ouvert (images CLV-07 et CLV-08) : support plus etroit,
+      // marge laterale ≈ 31 et titre proche de la vignette, pour que le
+      // titre tienne sur deux lignes.
       return _Marges(
-        x: AppSpacing.section,
+        x: panneau ? AppSpacing.xxxl : AppSpacing.section,
         y: actif ? AppSpacing.xxl : AppSpacing.section,
         retraitVignette: MesuresVignette.retrait,
         serre: actif,
+        ecartTitre: panneau ? AppSpacing.sm : AppSpacing.lg,
       );
     }
     return _Marges(
@@ -263,8 +279,13 @@ class _Marges {
       // Image mobile, colonne enseignant : la vignette serre le coin.
       retraitVignette: actif ? AppSpacing.sm : MesuresVignette.retrait,
       serre: actif,
+      // Au telephone, l'ecart titre-vignette se resserre (images : ≈ 10).
+      ecartTitre: gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.lg,
     );
   }
+
+  /// L'ecart entre le titre et la vignette posee en coin.
+  final double ecartTitre;
 
   /// Les marges interieures, laterales et verticales.
   final double x;
@@ -287,7 +308,11 @@ class _Contenu extends StatelessWidget {
     required this.marges,
     required this.largeurVignette,
     this.encadreACote = false,
+    this.sousVolet = false,
   });
+
+  /// Web etroit : un panneau est ouvert, son volet couvre le support.
+  final bool sousVolet;
 
   final SupportSeance support;
   final Gabarit gabarit;
@@ -305,19 +330,24 @@ class _Contenu extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
     final bool large = gabarit == Gabarit.desktop;
+    // Web etroit (image CLV-04-05-06 web etroit) : le texte du support est
+    // plus grand qu'au telephone, l'encadre tient sur deux lignes.
+    // Volet Eleves ou Supports ouvert : le texte garde le petit corps et
+    // reste entier sous le volet ; aucun mot coupe ne depasse de son bord
+    // (image CLV-07-08-10 web etroit).
+    final bool tablette = gabarit == Gabarit.tablette && !sousVolet;
     // Salle enseignant (telephone, desktop) : ecarts resserres pour que la
     // diapositive entiere tienne au-dessus des outils et du dock.
     final bool serre = marges.serre;
     // La place laissee a la vignette sur les premieres lignes : aucun texte
     // ne passe dessous au repos.
-    // Au telephone, l'ecart titre-vignette se resserre (images : ≈ 10).
     final double reserve = largeurVignette <= 0
         ? 0
         : math.max(
             0,
             marges.retraitVignette +
                 largeurVignette +
-                (gabarit == Gabarit.mobile ? AppSpacing.sm : AppSpacing.lg) -
+                marges.ecartTitre -
                 marges.x,
           );
     final Widget ligneFine = _Ligne(
@@ -341,12 +371,24 @@ class _Contenu extends StatelessWidget {
         child: Align(
           alignment: AlignmentDirectional.centerStart,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: _largeurEncadre),
+            constraints: BoxConstraints(
+              maxWidth: tablette
+                  ? _largeurEncadreEtroit
+                  : (sousVolet && gabarit == Gabarit.tablette
+                        ? _largeurEncadreSousVolet
+                        : _largeurEncadre),
+            ),
             child: Text(
               support.encadre,
               style: palette.inkAccent.applyTo(
                 (large
                         ? theme.textTheme.titleLarge
+                        : tablette
+                        // Image : ≈ 18 px. Plus Jakarta Sans n'a pas d'axe
+                        // `opsz` : la retaille est sure.
+                        ? theme.textTheme.bodyLarge?.copyWith(
+                            fontSize: _corpsEncadreEtroit,
+                          )
                         : theme.textTheme.bodyMedium) ??
                     const TextStyle(),
               ),
@@ -398,7 +440,7 @@ class _Contenu extends StatelessWidget {
     final Widget autourEncadre = serre
         ? Ecart.vMd
         : (large ? Ecart.vXxl : Ecart.vLg);
-    final double pastillePoint = switch ((large, serre)) {
+    final double pastillePoint = switch ((large || tablette, serre)) {
       (true, false) => AppSpacing.xxxl + AppSpacing.sm,
       (true, true) => AppSpacing.xxxl + AppSpacing.xs,
       (false, false) => AppSpacing.xxxl,
@@ -476,13 +518,15 @@ class _Contenu extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (large) Ecart.hXl else Ecart.hLg,
+                if (large || tablette) Ecart.hXl else Ecart.hLg,
                 Expanded(
                   child: Text(
                     support.points[i],
                     style: palette.inkStrong.applyTo(
                       (large
                               ? theme.textTheme.titleMedium
+                              : tablette
+                              ? theme.textTheme.bodyLarge
                               : theme.textTheme.bodyMedium) ??
                           const TextStyle(),
                     ),
@@ -559,6 +603,17 @@ class _TitreEquilibre extends StatelessWidget {
 
 /// La largeur maximale du texte de l'encadre.
 const double _largeurEncadre = 320;
+
+/// Web etroit : l'encadre coupe apres « explications » (image), et son texte
+/// reste sous le volet Eleves ou Supports quand il est ouvert.
+const double _largeurEncadreEtroit = 256;
+
+/// Web etroit, volet ouvert : l'encadre se coupe sur deux lignes qui
+/// restent sous le volet (≈ 320 de large).
+const double _largeurEncadreSousVolet = 200;
+
+/// Web etroit : le corps du texte de l'encadre (image : ≈ 18 px).
+const double _corpsEncadreEtroit = 18;
 
 /// Une ligne de texte figuree, en gris clair.
 class _Ligne extends StatelessWidget {
