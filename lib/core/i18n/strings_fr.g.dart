@@ -8442,6 +8442,7 @@ class Traductions$salle$seance$demo$fr {
 	/// fr: 'Données fictives, aucun serveur. Choisissez un rôle et un état.'
 	String get intro => 'Données fictives, aucun serveur. Choisissez un rôle et un état.';
 
+	late final Traductions$salle$seance$demo$groupes$fr groupes = Traductions$salle$seance$demo$groupes$fr.internal(_root);
 	late final Traductions$salle$seance$demo$roles$fr roles = Traductions$salle$seance$demo$roles$fr.internal(_root);
 	late final Traductions$salle$seance$demo$etats$fr etats = Traductions$salle$seance$demo$etats$fr.internal(_root);
 }
@@ -11434,6 +11435,21 @@ class Traductions$tc$parcours$postCours$fr {
 	String get envoye => 'Cours clôturé.';
 }
 
+// Path: salle.seance.demo.groupes
+class Traductions$salle$seance$demo$groupes$fr {
+	Traductions$salle$seance$demo$groupes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Déroulé de la séance'
+	String get seance => 'Déroulé de la séance';
+
+	/// fr: 'Situations de secours'
+	String get secours => 'Situations de secours';
+}
+
 // Path: salle.seance.demo.roles
 class Traductions$salle$seance$demo$roles$fr {
 	Traductions$salle$seance$demo$roles$fr.internal(this._root);
@@ -11869,6 +11885,8 @@ extension on Traductions {
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'Options du panneau ${titre}',
 			'salle.seance.demo.titre' => 'Salle de démonstration',
 			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
+			'salle.seance.demo.groupes.seance' => 'Déroulé de la séance',
+			'salle.seance.demo.groupes.secours' => 'Situations de secours',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
 			'salle.seance.demo.roles.guidee' => 'Interface guidée',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
@@ -12204,10 +12222,10 @@ extension on Traductions {
 			'appareils.emetteur.consigne' => 'Ouvrez Rewayah, touchez « Connecter l\'appareil d\'un élève », puis scannez ce QR ou saisissez le code.',
 			'appareils.emetteur.libelleQr' => 'QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l\'appareil ne lit pas le QR.',
 			'appareils.emetteur.codeManuel' => 'Code à saisir',
-			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
-			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
 			_ => null,
 		} ?? switch (path) {
+			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
+			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
 			'appareils.emetteur.restant' => ({required Object temps}) => 'Encore ${temps}',
 			'appareils.emetteur.sortie' => ({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.',
 			'appareils.emetteur.suiviIndisponible' => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.',
@@ -12718,10 +12736,10 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Clôturer ${libelle}',
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
-			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
-			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
+			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
 			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
@@ -13232,10 +13250,10 @@ extension on Traductions {
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
 			'parcours.offresRaison' => 'Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.',
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
-			'parcours.offresAutres' => 'Autres horaires possibles',
-			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.offresAutres' => 'Autres horaires possibles',
+			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
@@ -13746,10 +13764,10 @@ extension on Traductions {
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
-			'tuteur.reglages.titre' => 'Réglages par enfant',
-			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.reglages.titre' => 'Réglages par enfant',
+			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
 			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
@@ -14260,10 +14278,10 @@ extension on Traductions {
 			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
 			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
-			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
-			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
+			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',

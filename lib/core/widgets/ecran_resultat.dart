@@ -42,7 +42,12 @@ class EcranResultat extends StatelessWidget {
     this.actionEnCours = false,
     this.libelleSecondaire,
     this.onSecondaire,
+    this.focusAction = false,
   });
+
+  /// Vrai pour poser le focus clavier sur l'action dominante a l'ouverture
+  /// (ecran qui remplace la page sans geste, ex. acces retire en salle).
+  final bool focusAction;
 
   /// L'icone du cercle heros, rendue dans sa graisse pleine (medaillon).
   final AppIcon icone;
@@ -164,6 +169,7 @@ class EcranResultat extends StatelessWidget {
                 onPress: onAction,
                 enCours: actionEnCours,
                 fleche: true,
+                autofocus: focusAction,
               ),
             ],
             if (avecSecondaire) ...<Widget>[

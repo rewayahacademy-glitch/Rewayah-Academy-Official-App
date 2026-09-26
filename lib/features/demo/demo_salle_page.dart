@@ -1,6 +1,7 @@
 // La salle de seance en demonstration : /demo/salle (hors production).
 //
-// Sans parametre : la liste des liens role x etat (3 x 6). Avec `role` et
+// Sans parametre : la liste des liens par role, deroule (6 etats) puis
+// situations de secours CL-7 (9, 8 pour l enseignant). Avec `role` et
 // `etat` : la salle en plein ecran, donnees fictives (seance_demo.dart) et
 // etat local (micro, camera, zoom, agrandi, panneaux). Aucun appel serveur
 // (consigne K-28). La guidee lit le theme `InterfaceMode.enfant`.
@@ -103,6 +104,28 @@ String _libelleEtat(EtatDemoSalle etat) => switch (etat) {
   EtatDemoSalle.accesRetire => t.salle.seance.demo.etats.accesRetire,
 };
 
+/// Les etats du deroule ordinaire de la seance (lots CL-1 a CL-6).
+const List<EtatDemoSalle> etatsDemoSeance = <EtatDemoSalle>[
+  EtatDemoSalle.repos,
+  EtatDemoSalle.visite,
+  EtatDemoSalle.rienPartage,
+  EtatDemoSalle.eleves,
+  EtatDemoSalle.supports,
+  EtatDemoSalle.fin,
+];
+
+/// Les situations de secours (lot CL-7) proposees pour [role], dans l'ordre
+/// de la spec (P06, P05, P09, P10, P11, P12). Une situation sans objet pour
+/// un role n'est pas listee : la camera est toujours permise a l'enseignant
+/// (matrice des roles), donc pas de « Camera interdite » pour lui.
+List<EtatDemoSalle> etatsDemoSecours(RoleSeance role) => <EtatDemoSalle>[
+  for (final EtatDemoSalle etat in EtatDemoSalle.values)
+    if (!etatsDemoSeance.contains(etat) &&
+        !(role == RoleSeance.enseignant &&
+            etat == EtatDemoSalle.cameraInterdite))
+      etat,
+];
+
 class _ListeDemo extends StatelessWidget {
   const _ListeDemo();
 
@@ -110,6 +133,31 @@ class _ListeDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
+    Widget groupe(String titre, RoleSeance role, List<EtatDemoSalle> etats) =>
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              titre,
+              style: palette.inkMuted.applyTo(
+                theme.textTheme.labelLarge ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vSm,
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: <Widget>[
+                for (final EtatDemoSalle etat in etats)
+                  _Lien(
+                    key: ValueKey<String>('lien-${role.name}-${etat.name}'),
+                    libelle: _libelleEtat(etat),
+                    onPress: () => context.go(adresseDemoSalle(role, etat)),
+                  ),
+              ],
+            ),
+          ],
+        );
     return PageShell(
       titre: t.salle.seance.demo.titre,
       child: Column(
@@ -123,23 +171,22 @@ class _ListeDemo extends StatelessWidget {
           ),
           for (final RoleSeance role in RoleSeance.values) ...<Widget>[
             Ecart.vXxl,
-            Text(
-              _libelleRole(role),
-              style: palette.inkStrong.applyTo(
-                theme.textTheme.titleMedium ?? const TextStyle(),
+            Semantics(
+              header: true,
+              child: Text(
+                _libelleRole(role),
+                style: palette.inkStrong.applyTo(
+                  theme.textTheme.titleMedium ?? const TextStyle(),
+                ),
               ),
             ),
             Ecart.vMd,
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.sm,
-              children: <Widget>[
-                for (final EtatDemoSalle etat in EtatDemoSalle.values)
-                  _Lien(
-                    libelle: _libelleEtat(etat),
-                    onPress: () => context.go(adresseDemoSalle(role, etat)),
-                  ),
-              ],
+            groupe(t.salle.seance.demo.groupes.seance, role, etatsDemoSeance),
+            Ecart.vLg,
+            groupe(
+              t.salle.seance.demo.groupes.secours,
+              role,
+              etatsDemoSecours(role),
             ),
           ],
         ],
@@ -149,7 +196,7 @@ class _ListeDemo extends StatelessWidget {
 }
 
 class _Lien extends StatelessWidget {
-  const _Lien({required this.libelle, required this.onPress});
+  const _Lien({required this.libelle, required this.onPress, super.key});
 
   final String libelle;
   final VoidCallback onPress;
@@ -174,10 +221,13 @@ class _Lien extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
-                libelle,
-                style: palette.inkStrong.applyTo(
-                  Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+              // Reflow 320 et texte 200 % (T-S6) : le libelle passe a la ligne.
+              Flexible(
+                child: Text(
+                  libelle,
+                  style: palette.inkStrong.applyTo(
+                    Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+                  ),
                 ),
               ),
               Ecart.hSm,
@@ -218,6 +268,9 @@ class _SalleDemoState extends State<SalleDemo> {
   bool _micro = true;
   bool _camera = true;
 
+  /// La connexion apres « Reessayer » ; `null` : celle de l'etat choisi.
+  ConnexionSeance? _connexion;
+
   /// L'eleve a quitte la salle avant la fin (apres confirmation).
   bool _quittee = false;
   bool _agrandi = false;
@@ -254,6 +307,7 @@ class _SalleDemoState extends State<SalleDemo> {
     final VueSeance vue = etat.copyWith(
       panneau: _panneau,
       support: etat.support == null ? null : _support,
+      connexion: _connexion,
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
@@ -323,6 +377,12 @@ class _SalleDemoState extends State<SalleDemo> {
         // n'est pas ouverte en demonstration (catalogue cable a BR-1).
         onOuvrirSupport: enseignant ? _ouvrirSupport : null,
         onBibliotheque: enseignant ? _inerte : null,
+        // Secours (CL-7), sans serveur : « Reessayer » simule le retour de la
+        // connexion (« Connexion retablie. ») ; « Continuer sans micro »
+        // laisse le micro coupe. Ouvrir les reglages : BR-1 (non rendu).
+        onReessayerConnexion: () =>
+            setState(() => _connexion = ConnexionSeance.retablie),
+        onContinuerSansMicro: () => setState(() => _micro = false),
       ),
     );
   }

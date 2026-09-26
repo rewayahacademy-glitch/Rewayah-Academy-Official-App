@@ -17,7 +17,6 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/pressable.dart';
-import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'feuille_micro_bloque.dart';
 import 'vue_seance.dart';
@@ -292,7 +291,6 @@ class DockSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
-    final bool mobile = gabarit == Gabarit.mobile;
     final String? texteCamera = vue.texteCameraInterdite;
     final Widget? statutCamera = texteCamera == null
         ? null
@@ -306,9 +304,6 @@ class DockSeance extends StatelessWidget {
             actions.onQuitter != null)
           _Separateur(hauteur: diametreBoutonAppel(context)),
         ?_bouton(context, commande),
-        // P10.3 (Q-S1) : tablette et desktop, le statut prend la place du
-        // bouton Camera absent, juste apres Micro.
-        if (commande == CommandeDock.micro && !mobile) ?statutCamera,
       ],
     ];
     final AppColorPair fond = palette.surfaceRaised;
@@ -316,6 +311,7 @@ class DockSeance extends StatelessWidget {
       borderRadius: AppRadius.arrondiLg,
       side: palette.borderHairline.asBorderSide(),
     );
+    final Widget dock;
     if (large) {
       // Guidee desktop (image CLV-05) : des disques bien separes, centres
       // a ≈ 130 l'un de l'autre, dans une pilule de ≈ 555 de large.
@@ -324,7 +320,7 @@ class DockSeance extends StatelessWidget {
       final bool aere = vue.dockColore;
       final double caseAeree =
           diametreBoutonAppel(context) + AppSpacing.titreEcran + AppSpacing.sm;
-      return DecoratedBox(
+      dock = DecoratedBox(
         key: const ValueKey<String>('dock-seance'),
         decoration: cadre,
         child: Padding(
@@ -347,30 +343,36 @@ class DockSeance extends StatelessWidget {
           ),
         ),
       );
+    } else {
+      dock = DecoratedBox(
+        key: const ValueKey<String>('dock-seance'),
+        decoration: cadre,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.md,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // Chaque bouton prend une part egale : un libelle trop large
+            // (texte agrandi, 320px) s'ellipse au lieu de deborder la ligne.
+            children: <Widget>[
+              for (final Widget bouton in boutons) Expanded(child: bouton),
+            ],
+          ),
+        ),
+      );
     }
-    final Widget dock = DecoratedBox(
-      key: const ValueKey<String>('dock-seance'),
-      decoration: cadre,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.md,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          // Chaque bouton prend une part egale : un libelle trop large
-          // (texte agrandi, 320px) s'ellipse au lieu de deborder la ligne.
-          children: <Widget>[
-            for (final Widget bouton in boutons) Expanded(child: bouton),
-          ],
-        ),
-      ),
-    );
-    if (statutCamera == null || !mobile) return dock;
-    // Telephone (Q-S1) : le statut au-dessus du dock, aligne start, ecart 8.
+    if (statutCamera == null) return dock;
+    // Q-S1 (option par defaut), corrige apres T-S5 : a toutes les tailles,
+    // le statut est une ligne de texte d'etat discret au-dessus du dock,
+    // alignee start, ecart 8. Dans le dock, la pilule de deux mots passait
+    // sur deux lignes des 768.
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: large
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.stretch,
       children: <Widget>[
         Align(alignment: AlignmentDirectional.centerStart, child: statutCamera),
         Ecart.vSm,
@@ -381,25 +383,30 @@ class DockSeance extends StatelessWidget {
 }
 
 /// Le statut « Camera desactivee pour ce profil. » de l'eleve standard
-/// (P10.3, [VueSeance.texteCameraInterdite]) : une [StatusPill] au ton
-/// neutre, **non interactive** (aucun [Pressable], ni survol ni focus), lue
-/// dans l'ordre du dock. Une phrase plutot qu'un mot : la pilule passe a la
-/// ligne au lieu de deborder.
+/// (P10.3, [VueSeance.texteCameraInterdite]) : un **texte d'etat discret**
+/// (encre `inkMuted`, `bodyMedium`), comme « La seance se poursuit. » de la
+/// ligne d'etat. Non interactif (aucun [Pressable], ni survol ni focus), lu
+/// avant le dock. Une phrase de cinq mots : une `StatusPill` (deux mots au
+/// plus) passait a la ligne ; le texte reflue librement a 320 et a 200 %.
 class StatutCameraInterdite extends StatelessWidget {
   const StatutCameraInterdite({required this.texte, super.key});
 
   final String texte;
 
   @override
-  Widget build(BuildContext context) => Center(
-    key: const ValueKey<String>('statut-camera-interdite'),
-    widthFactor: 1,
-    // Borne : dans la pilule desktop, la largeur n'est pas contrainte.
-    child: ConstrainedBox(
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return ConstrainedBox(
+      key: const ValueKey<String>('statut-camera-interdite'),
       constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
-      child: StatusPill(libelle: texte, ton: TonEtat.neutre),
-    ),
-  );
+      child: Text(
+        texte,
+        style: palette.inkMuted.applyTo(
+          Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+        ),
+      ),
+    );
+  }
 }
 
 /// Le filet vertical du dock enseignant desktop, avant Quitter.

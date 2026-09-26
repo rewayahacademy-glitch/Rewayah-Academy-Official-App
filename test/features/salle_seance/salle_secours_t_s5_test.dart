@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -111,10 +112,17 @@ void main() {
           find.ancestor(of: _statut, matching: find.byType(Pressable)),
           findsNothing,
         );
-        final StatusPill pilule = tester.widget<StatusPill>(
+        // Texte d'etat discret (correction T-S6) : aucune pilule, hors du
+        // dock, au-dessus de lui (une ligne : captures TS6, vraies polices).
+        expect(
           find.descendant(of: _statut, matching: find.byType(StatusPill)),
+          findsNothing,
         );
-        expect(pilule.ton, TonEtat.neutre);
+        expect(find.descendant(of: _dock, matching: _statut), findsNothing);
+        expect(
+          tester.getBottomLeft(_statut).dy,
+          lessThanOrEqualTo(tester.getTopLeft(_dock).dy),
+        );
         // Taper le statut ne sort pas et ne leve rien.
         await tester.tap(find.text(_texteCamera), warnIfMissed: false);
         await tester.pump();
@@ -128,9 +136,7 @@ void main() {
     ) async {
       final SemanticsHandle poignee = tester.ensureSemantics();
       await _monter(tester, RoleSeance.eleve, EtatDemoSalle.cameraInterdite);
-      final SemanticsNode noeud = tester.getSemantics(
-        find.descendant(of: _statut, matching: find.byType(StatusPill)),
-      );
+      final SemanticsNode noeud = tester.getSemantics(find.text(_texteCamera));
       expect(noeud.label, _texteCamera);
       expect(noeud.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
       poignee.dispose();
@@ -146,7 +152,7 @@ void main() {
       );
     });
 
-    testWidgets('ES 1440 : le statut est dans la barre, apres Micro', (
+    testWidgets('ES 1440 : le statut est aligne sur le debut du dock', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -155,26 +161,35 @@ void main() {
         EtatDemoSalle.cameraInterdite,
         taille: _tailles.last,
       );
-      expect(find.descendant(of: _dock, matching: _statut), findsOneWidget);
-      final Finder micro = find.byKey(const ValueKey<String>('bouton-micro'));
       expect(
-        tester.getCenter(_statut).dx,
-        greaterThan(tester.getCenter(micro).dx),
+        tester.getTopLeft(_statut).dx,
+        moreOrLessEquals(tester.getTopLeft(_dock).dx),
       );
     });
 
-    testWidgets('ES 390 zoom 2,0 : aucun debordement', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        RoleSeance.eleve,
-        EtatDemoSalle.cameraInterdite,
-        echelleTexte: 2,
-      );
-      expect(tester.takeException(), isNull);
-      expect(_statut, findsOneWidget);
-    });
+    // Texte 200 % aux trois tailles, reflow 320 a 100 % (W2 1.4.10) et
+    // 320 a 200 % sur une hauteur longue (precedent revue CL-R).
+    for (final (_Taille taille, double zoom) in <(_Taille, double)>[
+      (_petite, 2),
+      (_tailles[1], 2),
+      (_tailles[2], 2),
+      (const _Taille('320x640@1', Size(320, 640), 1, EdgeInsets.zero), 1),
+      (const _Taille('320x1400@1', Size(320, 1400), 1, EdgeInsets.zero), 2),
+    ]) {
+      testWidgets('ES ${taille.nom} zoom $zoom : aucun debordement', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          RoleSeance.eleve,
+          EtatDemoSalle.cameraInterdite,
+          taille: taille,
+          echelleTexte: zoom,
+        );
+        expect(tester.takeException(), isNull);
+        expect(_statut, findsOneWidget);
+      });
+    }
 
     for (final _Taille taille in _tailles) {
       testWidgets('IG ${taille.nom} : ni bouton ni explication', (
@@ -288,6 +303,34 @@ void main() {
         expect(_sorties, 1);
         poignee.dispose();
       });
+    }
+
+    for (final _Taille taille in _tailles) {
+      testWidgets(
+        'ES ${taille.nom} : focus clavier sur l\'action a l\'ouverture',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            RoleSeance.eleve,
+            EtatDemoSalle.accesRetire,
+            taille: taille,
+          );
+          final FocusNode? focus = FocusManager.instance.primaryFocus;
+          expect(focus, isNotNull);
+          expect(focus!.context, isNotNull);
+          expect(
+            find.ancestor(
+              of: find.text('Retour à la Classe'),
+              matching: find.byWidget(focus.context!.widget),
+            ),
+            findsOneWidget,
+          );
+          // Entree active l'action focalisee.
+          await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+          await tester.pump();
+          expect(_sorties, 1);
+        },
+      );
     }
 
     testWidgets('IG : l\'ecran de fin guide, Retour a l\'accueil', (

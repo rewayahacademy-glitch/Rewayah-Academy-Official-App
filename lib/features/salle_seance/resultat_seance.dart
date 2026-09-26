@@ -101,6 +101,10 @@ class ResultatSeance extends StatelessWidget {
                           ? t.salle.fin.retourAccueil
                           : t.salle.fin.retourClasse,
                       onAction: onRetour,
+                      // P12 (UX_REVIEW CL-7) : l'acces retire remplace la
+                      // salle sans geste de l'eleve ; le focus clavier se
+                      // pose sur la seule action, visible a l'ouverture.
+                      focusAction: issue == IssueSeance.accesRetire,
                     ),
                   ),
                 ),

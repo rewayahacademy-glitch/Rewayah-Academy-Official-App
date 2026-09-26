@@ -59,7 +59,13 @@ class ActionPrincipale extends StatelessWidget {
     this.fleche = false,
     this.pilule = false,
     this.compacte = false,
+    this.autofocus = false,
   });
+
+  /// Vrai pour prendre le focus clavier a l'ouverture de l'ecran : un ecran
+  /// qui remplace la page sans geste (acces retire en salle) pose le focus
+  /// sur son action, sinon le clavier repart du haut du document.
+  final bool autofocus;
 
   /// Format reduit, meme peinture : la pastille « Ouvrir » d'une ligne de
   /// liste (≈ 34 de haut au lieu de 52). La zone pressable garde la cible
@@ -124,6 +130,7 @@ class ActionPrincipale extends StatelessWidget {
       // la pastille reste centree dedans.
       respecterCibleTactile: reduit,
       arrondiFocus: _arrondi,
+      autofocus: autofocus,
       constructeur: (BuildContext contexte, EtatPression etat) {
         final Widget corps = _corps(
           contexte,

@@ -241,6 +241,10 @@
       "demo": {
         "titre": "Salle de démonstration",
         "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",
+        "groupes": {
+          "seance": "Déroulé de la séance",
+          "secours": "Situations de secours"
+        },
         "roles": {
           "eleve": "Élève standard",
           "guidee": "Interface guidée",
