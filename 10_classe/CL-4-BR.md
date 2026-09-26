@@ -13,3 +13,4 @@ Une ligne par besoin. Démonstration seulement jusqu'à BR-1 (K-28).
 - Projection pédagogique des élèves pour l'enseignant (niveau, page de reprise, dernier point utile, présence récente en texte neutre), sans donnée famille (R15).
 - Support prévu de la séance (titre, chapitre, pages), « Avant le prochain cours » (3 au plus) et ressources de la classe (titre, type, taille).
 - Photo publique de l'enseignante (repli initiales en attendant).
+- CL-4.4 : sources à brancher pour l'Espace Classe enseignant — `preparationSeanceProvider(groupeId)` (support prévu, position de reprise, objectif), `projectionElevesProvider(groupeId)` (page de reprise, dernier point, par studentId), et `PortGroupes.groupe(id)` / horloge de séance lisibles par l'enseignant de la Classe (aujourd'hui, sans lecture, la carte dit « Aucune séance prévue »).
