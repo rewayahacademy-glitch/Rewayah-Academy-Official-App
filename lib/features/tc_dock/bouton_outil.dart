@@ -62,7 +62,9 @@ class BoutonOutil extends StatelessWidget {
       child: ExcludeSemantics(
         child: DecoratedBox(
           decoration: retenu
-              ? palette.washAccent.decoration(borderRadius: AppRadius.arrondiSm)
+              ? palette.washAccent.decoration(
+                  borderRadius: AppRadius.arrondiSm,
+                )
               : const BoxDecoration(),
           child: Padding(
             padding: const EdgeInsets.symmetric(

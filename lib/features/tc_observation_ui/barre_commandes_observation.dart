@@ -114,9 +114,7 @@ class BarreCommandesObservation extends StatelessWidget {
 /// Le style des libelles : `labelMedium` sur telephone (trois commandes sur
 /// 390 points, M4), `labelLarge` des la tablette (D1).
 TextStyle _style(BuildContext context, TextTheme textes) =>
-    (AppGabarit.de(context).estLarge
-        ? textes.labelLarge
-        : textes.labelMedium) ??
+    (AppGabarit.de(context).estLarge ? textes.labelLarge : textes.labelMedium) ??
     const TextStyle();
 
 /// Une icone et son libelle : cote a cote (M4, D1), ou l'icone au-dessus quand
@@ -163,10 +161,7 @@ class _Medaillon extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox.square(
     dimension: diametre,
     child: DecoratedBox(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: paire.background,
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: paire.background),
       child: Center(
         child: IconTheme(
           data: IconThemeData(color: paire.onBackground, size: AppSpacing.xl),
@@ -243,7 +238,9 @@ class _Agrandir extends StatelessWidget {
         libelle: Text(
           libelle,
           textAlign: empile ? TextAlign.center : TextAlign.start,
-          style: palette.inkStrong.applyTo(_style(context, textes)),
+          style: palette.inkStrong.applyTo(
+            _style(context, textes),
+          ),
         ),
       ),
     );

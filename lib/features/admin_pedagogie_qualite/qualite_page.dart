@@ -117,10 +117,8 @@ class _Corps extends StatelessWidget {
   };
 
   String _libelleGroupe(TypeAnomalieQualite type) => switch (type) {
-    TypeAnomalieQualite.rapportManquant =>
-      t.admin.qualite.groupeRapportManquant,
-    TypeAnomalieQualite.blocageSansSuivi =>
-      t.admin.qualite.groupeBlocageSansSuivi,
+    TypeAnomalieQualite.rapportManquant => t.admin.qualite.groupeRapportManquant,
+    TypeAnomalieQualite.blocageSansSuivi => t.admin.qualite.groupeBlocageSansSuivi,
     TypeAnomalieQualite.evaluationEnRetard =>
       t.admin.qualite.groupeEvaluationEnRetard,
   };
@@ -161,11 +159,8 @@ class _Corps extends StatelessWidget {
           Expanded(
             child: ListView(
               children: <Widget>[
-                for (final TypeAnomalieQualite type
-                    in TypeAnomalieQualite.values)
-                  if (visibles.any(
-                    (AnomalieQualite a) => a.type == type,
-                  )) ...<Widget>[
+                for (final TypeAnomalieQualite type in TypeAnomalieQualite.values)
+                  if (visibles.any((AnomalieQualite a) => a.type == type)) ...<Widget>[
                     Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: Text(
@@ -199,8 +194,7 @@ class _GroupeAnomalies extends StatelessWidget {
   Widget build(BuildContext context) {
     return DataCollection<AnomalieQualite>(
       lignes: anomalies,
-      cle: (AnomalieQualite a) =>
-          ValueKey<String>('${a.type.valeurSql}-${a.refId}'),
+      cle: (AnomalieQualite a) => ValueKey<String>('${a.type.valeurSql}-${a.refId}'),
       colonnes: <ColonneDonnees<AnomalieQualite>>[
         ColonneDonnees<AnomalieQualite>(
           titre: t.admin.qualite.colonnePersonne,
@@ -215,8 +209,7 @@ class _GroupeAnomalies extends StatelessWidget {
         ),
         ColonneDonnees<AnomalieQualite>(
           titre: t.admin.qualite.colonneStatut,
-          texte: (AnomalieQualite a) =>
-              a.controleStatut == StatutControleQualite.traite
+          texte: (AnomalieQualite a) => a.controleStatut == StatutControleQualite.traite
               ? t.admin.qualite.statutTraite
               : t.admin.qualite.statutOuvert,
           rendu: (BuildContext _, AnomalieQualite a) => StatusPill(
@@ -313,15 +306,12 @@ class _FeuilleTraitementEtat extends State<_FeuilleTraitement> {
       _erreur = null;
     });
     try {
-      await widget.onEnvoyer(
-        _note.text.trim().isEmpty ? null : _note.text.trim(),
-      );
+      await widget.onEnvoyer(_note.text.trim().isEmpty ? null : _note.text.trim());
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
       setState(
-        () =>
-            _erreur = t.admin.qualite.traiterErreur(message: _message(erreur)),
+        () => _erreur = t.admin.qualite.traiterErreur(message: _message(erreur)),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -340,10 +330,7 @@ class _FeuilleTraitementEtat extends State<_FeuilleTraitement> {
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(
-            _erreur!,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
+          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
         ],
         Ecart.vLg,
         ActionPrincipale(

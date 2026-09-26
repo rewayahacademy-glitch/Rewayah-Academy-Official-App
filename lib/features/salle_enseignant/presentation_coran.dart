@@ -129,20 +129,18 @@ class PresentateurCoran {
     required int sourate,
     required int verset,
   }) async {
-    await _ref
-        .read(moteurSalleProvider)
-        .presenterContenu(
-          ContenuPresente(
-            page: page,
-            sourate: sourate,
-            verset: verset,
-            // L'identite repond « qui a tourne la page ». Elle ne decide d'aucun
-            // droit : la barriere est `can_publish_data` dans le jeton signe, et
-            // c'est le serveur qui la fait respecter.
-            presentePar: _ref.read(sessionProvider).profileId ?? '',
-            emisLe: DateTime.now(),
-          ),
-        );
+    await _ref.read(moteurSalleProvider).presenterContenu(
+      ContenuPresente(
+        page: page,
+        sourate: sourate,
+        verset: verset,
+        // L'identite repond « qui a tourne la page ». Elle ne decide d'aucun
+        // droit : la barriere est `can_publish_data` dans le jeton signe, et
+        // c'est le serveur qui la fait respecter.
+        presentePar: _ref.read(sessionProvider).profileId ?? '',
+        emisLe: DateTime.now(),
+      ),
+    );
     return SortPresentation.envoye;
   }
 }

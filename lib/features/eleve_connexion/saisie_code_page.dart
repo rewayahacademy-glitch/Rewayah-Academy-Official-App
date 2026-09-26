@@ -199,9 +199,9 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
         return;
       }
       setState(
-        () =>
-            _erreur = libellesRefusAppairage(MotifRefusAppairage.generique)
-                .phrase,
+        () => _erreur = libellesRefusAppairage(
+          MotifRefusAppairage.generique,
+        ).phrase,
       );
     } finally {
       if (mounted) {

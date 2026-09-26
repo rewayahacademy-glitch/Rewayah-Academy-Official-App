@@ -151,7 +151,8 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
         vue: vue,
         mode: etat.mode,
         zoom: etat.zoomLocal,
-        onPage: (int p) => _allerA(p, origine: OrigineNavigation.personnelle),
+        onPage: (int p) =>
+            _allerA(p, origine: OrigineNavigation.personnelle),
         onZoom: (double delta) {
           ref.read(lectureCoranProvider.notifier).zoomer(delta);
           _planifierEnregistrement();
@@ -224,8 +225,7 @@ class _Entete extends ConsumerWidget {
               page: '${vue?.numero ?? 1}',
               total: '${vue?.nombrePages ?? pagesMushafMedine}',
             ),
-            if (vue?.juzNumero != null)
-              t.eleve.coran.juz(juz: '${vue!.juzNumero}'),
+            if (vue?.juzNumero != null) t.eleve.coran.juz(juz: '${vue!.juzNumero}'),
           ].join(' . '),
           style: palette.inkMuted.applyTo(
             AppTypography.tabulaire(textes.bodySmall ?? const TextStyle()),
@@ -401,7 +401,9 @@ class _Attribution extends StatelessWidget {
         '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
         '${t.eleve.coran.sourceLien}',
         textAlign: TextAlign.center,
-        style: palette.inkFaint.applyTo(textes.labelSmall ?? const TextStyle()),
+        style: palette.inkFaint.applyTo(
+          textes.labelSmall ?? const TextStyle(),
+        ),
       ),
     );
   }

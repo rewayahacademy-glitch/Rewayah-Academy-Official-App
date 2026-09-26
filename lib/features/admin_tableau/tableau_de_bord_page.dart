@@ -222,8 +222,7 @@ class TableauDeBordPage extends ConsumerWidget {
             title: t.admin.tableau.outilsComptes,
             description: t.admin.tableau.outilsComptesDetail,
             icon: AppIcons.profil,
-            onPress: () =>
-                GoRouter.of(context).go(Routes.adminPersonnesComptes),
+            onPress: () => GoRouter.of(context).go(Routes.adminPersonnesComptes),
           ),
           Ecart.vSm,
           SettingRow(
@@ -270,8 +269,7 @@ class _Compteurs extends StatelessWidget {
       StatTile(
         valeur: indicateurs.foyersSansEnseignant,
         libelle: t.admin.tableau.foyers,
-        onPress: () =>
-            GoRouter.of(context).go(Routes.adminOperationsAttributions),
+        onPress: () => GoRouter.of(context).go(Routes.adminOperationsAttributions),
       ),
       StatTile(
         valeur: indicateurs.rapportsManquants,

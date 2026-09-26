@@ -624,7 +624,8 @@ class _Deconnexion extends ConsumerWidget {
     // lire pendant `build` aurait un autre defaut, moins visible : il
     // construirait le client Supabase au montage, et tout test qui monte cet
     // ecran sans surcharger le service echouerait avant d'avoir rien mesure.
-    onPress: () => unawaited(_demander(context, ref.read(serviceAuthProvider))),
+    onPress: () =>
+        unawaited(_demander(context, ref.read(serviceAuthProvider))),
   );
 
   Future<void> _demander(BuildContext context, ServiceAuth auth) async {

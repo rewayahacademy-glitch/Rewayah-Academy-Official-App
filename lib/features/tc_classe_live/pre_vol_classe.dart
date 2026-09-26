@@ -122,7 +122,8 @@ class VuePreCours {
   /// Un eleve dont tout va bien ne voit rien : c'est exactement ce que dit la
   /// spec -- « verifications silencieuses, action uniquement si un probleme
   /// bloque ».
-  bool get visible => bloque || detail == DetailPreCours.complet;
+  bool get visible =>
+      bloque || detail == DetailPreCours.complet;
 }
 
 /// Le pre-cours a l'ecran.

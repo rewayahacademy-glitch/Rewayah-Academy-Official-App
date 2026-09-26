@@ -59,7 +59,10 @@ class BarreCoursEnCours extends ConsumerWidget {
           child: Row(
             children: <Widget>[
               // Le mot porte l'etat, jamais la seule couleur (invariant J7).
-              StatusPill(libelle: t.tc.classe.barre.titre, ton: TonEtat.succes),
+              StatusPill(
+                libelle: t.tc.classe.barre.titre,
+                ton: TonEtat.succes,
+              ),
               Ecart.hSm,
               Expanded(
                 child: Text(
@@ -70,7 +73,10 @@ class BarreCoursEnCours extends ConsumerWidget {
               ),
               if (restant != null) ...<Widget>[
                 Ecart.hSm,
-                Text(restant, style: textes.labelMedium ?? const TextStyle()),
+                Text(
+                  restant,
+                  style: textes.labelMedium ?? const TextStyle(),
+                ),
               ],
             ],
           ),

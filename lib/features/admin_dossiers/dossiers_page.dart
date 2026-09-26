@@ -237,11 +237,16 @@ class _Dossier extends StatelessWidget {
                 // Faute de depot, il n'y a pas de date de depot a dire : c'est
                 // l'anciennete de l'inscription qui mesure l'attente, et c'est
                 // justement cette personne qui attend le plus longtemps.
-                Text(switch (dossier.joursDAttente(DateTime.now())) {
-                  <= 0 => t.dossiers.inscritAujourdhui,
-                  1 => t.dossiers.inscritDepuisUnJour,
-                  final int jours => t.dossiers.inscritDepuis(jours: '$jours'),
-                }, style: textes.bodySmall),
+                Text(
+                  switch (dossier.joursDAttente(DateTime.now())) {
+                    <= 0 => t.dossiers.inscritAujourdhui,
+                    1 => t.dossiers.inscritDepuisUnJour,
+                    final int jours => t.dossiers.inscritDepuis(
+                      jours: '$jours',
+                    ),
+                  },
+                  style: textes.bodySmall,
+                ),
                 Ecart.vMd,
                 StatusPill(
                   libelle: dossier.etatPiece == EtatPiece.nonVisible

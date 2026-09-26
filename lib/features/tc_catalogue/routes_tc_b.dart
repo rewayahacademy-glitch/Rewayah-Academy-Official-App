@@ -35,7 +35,8 @@ abstract final class RoutesTcB {
   static const String parametreGroupe = 'groupe';
 
   /// Le chemin de la fiche d'une ressource donnee.
-  static String versRessource(String resourceId) => '$bibliotheque/$resourceId';
+  static String versRessource(String resourceId) =>
+      '$bibliotheque/$resourceId';
 
   /// L'adresse de la Bibliotheque vue depuis l'Espace d'un groupe.
   ///

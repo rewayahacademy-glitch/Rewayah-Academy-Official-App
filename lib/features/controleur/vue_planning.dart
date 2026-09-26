@@ -184,9 +184,7 @@ class VuePlanning {
     final List<FacetteEnseignant> tries = facettes.values.toList()
       ..sort((FacetteEnseignant a, FacetteEnseignant b) {
         final int parPrenom = a.prenom.compareTo(b.prenom);
-        return parPrenom != 0
-            ? parPrenom
-            : a.identifiant.compareTo(b.identifiant);
+        return parPrenom != 0 ? parPrenom : a.identifiant.compareTo(b.identifiant);
       });
 
     return VuePlanning(

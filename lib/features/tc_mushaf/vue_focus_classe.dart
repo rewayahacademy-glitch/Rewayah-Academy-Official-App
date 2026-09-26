@@ -103,7 +103,9 @@ class _SansPlage extends StatelessWidget {
         '${t.tc.coran.focus.aucunePlage}. '
         '${t.tc.coran.focus.aucunePlageDetail}',
         textAlign: TextAlign.center,
-        style: palette.inkMuted.applyTo(textes.labelSmall ?? const TextStyle()),
+        style: palette.inkMuted.applyTo(
+          textes.labelSmall ?? const TextStyle(),
+        ),
       ),
     );
   }

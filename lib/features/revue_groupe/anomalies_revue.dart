@@ -100,7 +100,7 @@ List<AnomalieRevue> anomaliesDuGroupe({
 /// Le jour ou le socle livre la lecture, c'est ce provider qui la consomme, et
 /// l'ecran n'a pas une ligne a changer : c'est pourquoi il existe des
 /// maintenant plutot qu'une liste vide ecrite en dur dans l'ecran.
-final FutureProviderFamily<List<AnomalieRevue>, String>
-anomaliesGroupeProvider = FutureProvider.family<List<AnomalieRevue>, String>(
-  (Ref ref, String groupeId) async => const <AnomalieRevue>[],
-);
+final FutureProviderFamily<List<AnomalieRevue>, String> anomaliesGroupeProvider =
+    FutureProvider.family<List<AnomalieRevue>, String>(
+      (Ref ref, String groupeId) async => const <AnomalieRevue>[],
+    );

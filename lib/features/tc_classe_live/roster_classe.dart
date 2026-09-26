@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -37,8 +37,7 @@ TonEtat tonEtatProjete(EtatPresenceProjete etat) => switch (etat) {
   EtatPresenceProjete.enConnexion => TonEtat.accent,
   EtatPresenceProjete.enRetard ||
   EtatPresenceProjete.enReconnexion => TonEtat.avertissement,
-  EtatPresenceProjete.deconnecte ||
-  EtatPresenceProjete.absent => TonEtat.alerte,
+  EtatPresenceProjete.deconnecte || EtatPresenceProjete.absent => TonEtat.alerte,
   EtatPresenceProjete.attendu ||
   EtatPresenceProjete.sorti ||
   EtatPresenceProjete.inconnu => TonEtat.neutre,
@@ -200,8 +199,8 @@ class PanneauRoster extends StatelessWidget {
                 inscrits: roster.attendus,
                 plafond: plafond,
               ),
-              style:
-                  Theme.of(context).textTheme.labelSmall ?? const TextStyle(),
+              style: Theme.of(context).textTheme.labelSmall ??
+                  const TextStyle(),
             ),
           Ecart.vMd,
         ],

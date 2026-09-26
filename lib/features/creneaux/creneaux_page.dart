@@ -96,11 +96,7 @@ class _Panneau extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: <Widget>[
-      SectionHeader(titre: titre),
-      Ecart.vMd,
-      child,
-    ],
+    children: <Widget>[SectionHeader(titre: titre), Ecart.vMd, child],
   );
 }
 
@@ -193,9 +189,10 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
           if (a.active && a.enseignantId == monId) a.creneau,
       }.toList();
 
-  bool _engagee(List<Creneau> engagements, Creneau creneau) => engagements.any(
-    (Creneau e) => e.jour == creneau.jour && e.heure == creneau.heure,
-  );
+  bool _engagee(List<Creneau> engagements, Creneau creneau) =>
+      engagements.any(
+        (Creneau e) => e.jour == creneau.jour && e.heure == creneau.heure,
+      );
 
   Future<void> _basculer(
     String monId,
@@ -320,11 +317,14 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
               _basculer(monId, engagements, creneau, posee),
         ),
         Ecart.vSm,
-        Text(switch (poses.length) {
-          0 => t.enseignant.creneaux.aucuneHeure,
-          1 => t.disponibilites.poseeUne,
-          _ => t.disponibilites.posees(nombre: '${poses.length}'),
-        }, style: textes.bodySmall),
+        Text(
+          switch (poses.length) {
+            0 => t.enseignant.creneaux.aucuneHeure,
+            1 => t.disponibilites.poseeUne,
+            _ => t.disponibilites.posees(nombre: '${poses.length}'),
+          },
+          style: textes.bodySmall,
+        ),
         Ecart.vXs,
         Text(t.disponibilites.effetEnseignant, style: textes.bodySmall),
         if (horsLigne) ...<Widget>[

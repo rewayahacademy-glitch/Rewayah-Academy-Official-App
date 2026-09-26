@@ -275,10 +275,9 @@ String detailEtape(
   // constante ecrite ici : il change par decision d'exploitation. Tant que
   // la regle n'est pas encore chargee, ne rien affirmer sur un chiffre
   // (LA-F, constat honnetete : 0 serait une information fausse).
-  EtapeParcours.groupeEnFormation =>
-    minimumLancement == null
-        ? t.parcours.etatClasseEnFormationDetailSansMinimum
-        : t.parcours.etatClasseEnFormationDetail(minimum: minimumLancement),
+  EtapeParcours.groupeEnFormation => minimumLancement == null
+      ? t.parcours.etatClasseEnFormationDetailSansMinimum
+      : t.parcours.etatClasseEnFormationDetail(minimum: minimumLancement),
   EtapeParcours.groupeConfirme => t.parcours.etatClasseConfirmeeDetail(
     prenom: prenom,
   ),

@@ -90,9 +90,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   String get _fuseauVu =>
       _fuseau ??
       fuseauSuggere(
-        fuseauConnu: _apprenant?.fuseauFoyer,
-        decalageAppareil: DateTime.now().timeZoneOffset,
-      )?.iana ??
+            fuseauConnu: _apprenant?.fuseauFoyer,
+            decalageAppareil: DateTime.now().timeZoneOffset,
+          )?.iana ??
       'Europe/Paris';
 
   ParcoursApprenant? get _apprenant => ref

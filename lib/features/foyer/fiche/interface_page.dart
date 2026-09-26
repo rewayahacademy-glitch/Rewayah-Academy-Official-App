@@ -116,7 +116,9 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
             child: ChoiceCardGroup(
               key: ValueKey<(InterfaceMode, int)>((profil.mode, _generation)),
               autoriserSaisieLibre: false,
-              valeurInitiale: ReponseChoix(valeurs: <String>{profil.mode.name}),
+              valeurInitiale: ReponseChoix(
+                valeurs: <String>{profil.mode.name},
+              ),
               options: <OptionChoix>[
                 OptionChoix(
                   valeur: InterfaceMode.enfant.name,

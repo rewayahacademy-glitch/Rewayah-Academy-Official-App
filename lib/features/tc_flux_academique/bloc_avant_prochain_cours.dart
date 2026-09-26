@@ -146,9 +146,7 @@ class BlocAvantProchainCours extends ConsumerWidget {
         Ecart.vXs,
         Text(
           detail,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
+          style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
         ),
       ],
     );

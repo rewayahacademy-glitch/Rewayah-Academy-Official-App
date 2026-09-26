@@ -322,7 +322,10 @@ class _LigneMembre extends StatelessWidget {
           children: <Widget>[
             // `libelle` rend le prenom, ou l'identifiant immuable quand la base
             // l'a masque en observation : un eleve reste designable.
-            Text(membre.libelle, style: textes.titleSmall ?? const TextStyle()),
+            Text(
+              membre.libelle,
+              style: textes.titleSmall ?? const TextStyle(),
+            ),
             Ecart.vXs,
             // L'identifiant immuable ne se coupe pas : c'est le seul moyen de
             // nommer un eleve sans nom de famille, y compris a 200 % de taille
@@ -360,7 +363,8 @@ String _nomType(TypePublicGroupe type) => switch (type) {
 
 /// Le jour du creneau, en clair. `t.disponibilites.joursLongs` est lu par sept
 /// ecrans : c'est la seule liste de jours du produit.
-String _jour(Creneau creneau) => t.disponibilites.joursLongs[creneau.jour - 1];
+String _jour(Creneau creneau) =>
+    t.disponibilites.joursLongs[creneau.jour - 1];
 
 /// L'heure pleine du creneau, sur deux chiffres.
 ///

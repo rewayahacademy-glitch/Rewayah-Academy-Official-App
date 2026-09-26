@@ -63,8 +63,10 @@ class ClassLibraryPicker extends StatelessWidget {
   }) => AppBottomSheet.ouvrir<void>(
     context,
     titre: t.tc.bibliotheque.classe.titre,
-    constructeur: (BuildContext contexte) =>
-        ClassLibraryPicker(groupeId: groupeId, onChoisir: onChoisir),
+    constructeur: (BuildContext contexte) => ClassLibraryPicker(
+      groupeId: groupeId,
+      onChoisir: onChoisir,
+    ),
   );
 
   @override

@@ -125,12 +125,13 @@ class _CorpsEtat extends ConsumerState<_Corps> {
 
   /// Ouvre la bibliotheque, puis presente ce qui y a ete choisi.
   Future<void> _ouvrirBibliotheque() async {
-    final ({int sourate, int verset})? choix =
-        await AppBottomSheet.ouvrir<({int sourate, int verset})>(
-          context,
-          titre: t.enseignant.salle.bibliotheque,
-          constructeur: (BuildContext _) => const _Bibliotheque(),
-        );
+    final ({int sourate, int verset})? choix = await AppBottomSheet.ouvrir<
+      ({int sourate, int verset})
+    >(
+      context,
+      titre: t.enseignant.salle.bibliotheque,
+      constructeur: (BuildContext _) => const _Bibliotheque(),
+    );
     if (choix == null || !mounted) {
       return;
     }
@@ -364,21 +365,21 @@ class _Texte extends StatelessWidget {
                     child: Text.rich(
                       TextSpan(
                         children: <InlineSpan>[
-                          for (final VersetCoran verset
-                              in section.versets) ...<InlineSpan>[
-                            TextSpan(text: '${verset.texte} '),
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              // Un numero de verset est un repere de mise en
-                              // page, pas du texte revele : un lecteur d'ecran
-                              // doit lire le verset, pas epeler son numero au
-                              // milieu de la phrase.
-                              child: ExcludeSemantics(
-                                child: RosaceVerset(numero: verset.numero),
+                          for (final VersetCoran verset in section.versets)
+                            ...<InlineSpan>[
+                              TextSpan(text: '${verset.texte} '),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                // Un numero de verset est un repere de mise en
+                                // page, pas du texte revele : un lecteur d'ecran
+                                // doit lire le verset, pas epeler son numero au
+                                // milieu de la phrase.
+                                child: ExcludeSemantics(
+                                  child: RosaceVerset(numero: verset.numero),
+                                ),
                               ),
-                            ),
-                            const TextSpan(text: ' '),
-                          ],
+                              const TextSpan(text: ' '),
+                            ],
                         ],
                       ),
                       textAlign: TextAlign.justify,
@@ -551,8 +552,10 @@ class _LigneSourate extends StatelessWidget {
       libelleSemantique: t.enseignant.salle.presenterSourate(
         sourate: sourate.nomTranslittere,
       ),
-      onPress: () =>
-          Navigator.of(context).pop((sourate: sourate.numero, verset: 1)),
+      onPress: () => Navigator.of(context).pop((
+        sourate: sourate.numero,
+        verset: 1,
+      )),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
         child: Row(

@@ -130,9 +130,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
             Ecart.vMd,
           ],
           ActionPrincipale(
-            libelle: _piece == null
-                ? t.kyc.choisirFichier
-                : t.kyc.fichierChoisi,
+            libelle: _piece == null ? t.kyc.choisirFichier : t.kyc.fichierChoisi,
             onPress: _type == null ? null : () => unawaited(_choisir()),
             niveau: NiveauAction.secondaire,
           ),

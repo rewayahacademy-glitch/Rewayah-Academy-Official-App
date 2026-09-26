@@ -233,11 +233,16 @@ class _Decision extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(eleve.libelle, style: textes.titleLarge),
-              Text(switch (jours) {
-                <= 0 => t.admin.diagnostics.inscritAujourdhui,
-                1 => t.admin.diagnostics.inscritDepuisUnJour,
-                final int j => t.admin.diagnostics.inscritDepuis(jours: '$j'),
-              }, style: textes.bodySmall),
+              Text(
+                switch (jours) {
+                  <= 0 => t.admin.diagnostics.inscritAujourdhui,
+                  1 => t.admin.diagnostics.inscritDepuisUnJour,
+                  final int j => t.admin.diagnostics.inscritDepuis(
+                    jours: '$j',
+                  ),
+                },
+                style: textes.bodySmall,
+              ),
             ],
           ),
         ),
@@ -265,16 +270,11 @@ class _Decision extends StatelessWidget {
           controller: motif,
           maxLines: 2,
           onChanged: onMotifChange,
-          decoration: InputDecoration(
-            labelText: t.admin.diagnostics.champMotif,
-          ),
+          decoration: InputDecoration(labelText: t.admin.diagnostics.champMotif),
         ),
         if (erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(
-            erreur!,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
+          Text(erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
         ],
         Ecart.vLg,
         ActionPrincipale(

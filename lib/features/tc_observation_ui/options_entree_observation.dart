@@ -48,13 +48,11 @@ class OptionsEntreeObservation {
       modes: const <ModeEntreeAdmin>[],
       intro: t.tc.observation.entree.controleurIntro,
     ),
-    AppRole.teacher ||
-    AppRole.student ||
-    AppRole.accountant ||
-    null => OptionsEntreeObservation._(
-      modes: const <ModeEntreeAdmin>[],
-      intro: t.tc.observation.entree.roleSansObservation,
-    ),
+    AppRole.teacher || AppRole.student || AppRole.accountant || null =>
+      OptionsEntreeObservation._(
+        modes: const <ModeEntreeAdmin>[],
+        intro: t.tc.observation.entree.roleSansObservation,
+      ),
   };
 
   /// Le role d'observation tenu par defaut. `null` quand ce compte n'observe

@@ -28,11 +28,7 @@ import 'feuille_choix.dart';
 /// ne peut pas prendre a la place de l'enseignant.
 class BarreStylet extends ConsumerWidget {
   /// Cree la barre du stylet.
-  const BarreStylet({
-    required this.onAnnuler,
-    super.key,
-    this.peutAnnuler = true,
-  });
+  const BarreStylet({required this.onAnnuler, super.key, this.peutAnnuler = true});
 
   /// Annule le dernier geste. C'est l'hote qui sait quelle couche est
   /// concernee : la barre ne connait pas les couches.
@@ -76,8 +72,7 @@ class BarreStylet extends ConsumerWidget {
             BoutonOutil(
               icone: AppIcons.menu,
               libelle: t.tc.outils.trait.plus,
-              onPress: () =>
-                  unawaited(_choisirPortee(context, controleur, etat)),
+              onPress: () => unawaited(_choisirPortee(context, controleur, etat)),
             ),
           ],
         ),
