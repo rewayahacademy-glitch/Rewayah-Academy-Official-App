@@ -110,6 +110,12 @@ class _CarteSessionState extends State<CarteSession> {
       annulee: annulee,
       horsLigne: horsLigne,
       lectureEchouee: lectureEchouee,
+      // Le tuteur n'entre pas : sa ligne d'etat ne depend pas de la seance
+      // materialisee (revue CL-4.R, m3).
+      accesInverifiable:
+          espace.role != RoleEspaceGroupe.tuteur &&
+          horloge.sessionId == null &&
+          occurrence.sessionId == null,
     );
     final TextTheme textes = Theme.of(context).textTheme;
 

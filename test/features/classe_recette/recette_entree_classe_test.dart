@@ -409,7 +409,7 @@ void main() {
         taille: const Size(390, 900),
       );
       final Rect principal = tester.getRect(
-        find.byKey(const ValueKey<String>('preparation-autoriser-micro')),
+        find.byKey(const ValueKey<String>('preparation-reessayer')),
       );
       final Rect secondaire = tester.getRect(
         find.byKey(const ValueKey<String>('preparation-continuer-sans-micro')),
@@ -428,7 +428,7 @@ void main() {
         taille: const Size(1440, 900),
       );
       final Rect principal = tester.getRect(
-        find.byKey(const ValueKey<String>('preparation-autoriser-micro')),
+        find.byKey(const ValueKey<String>('preparation-reessayer')),
       );
       final Rect secondaire = tester.getRect(
         find.byKey(const ValueKey<String>('preparation-continuer-sans-micro')),

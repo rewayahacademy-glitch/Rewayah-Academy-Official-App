@@ -280,6 +280,15 @@ void main() {
         tester.getTopLeft(cours.first).dy,
         lessThan(tester.getTopLeft(enseignante.first).dy),
       );
+      // Le type de groupe tient la ligne de contexte discrete, apres le cours
+      // et le niveau (revue CL-4.R, m7).
+      expect(
+        find.text(
+          '${DonneesClasseDemo.cours} · ${DonneesClasseDemo.niveau} · '
+          '${t.admin.groupes.typeEnfant}',
+        ),
+        findsOneWidget,
+      );
       // La capacite en petite pastille : « 3 eleves sur 6 places ».
       expect(
         find.widgetWithText(

@@ -144,6 +144,11 @@ void main() {
       // groupe ».
       expect(find.text('Perles du Coran'), findsOneWidget);
       expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
+      // Le type de groupe, information pedagogique (revue CL-4.R, m7) : les
+      // libelles de public existent deja sous `admin.groupes.*`, aucune cle
+      // jumelle n'a ete creee.
+      expect(find.text(t.admin.groupes.typeEnfant), findsOneWidget);
+      expect(find.text(t.admin.groupes.typeAdulte), findsNothing);
       // Le rendez-vous hebdomadaire, sur une ligne discrete.
       expect(
         find.text(

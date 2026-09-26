@@ -28,6 +28,7 @@ import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/salle/preparation_eleve.dart';
 import 'package:rewayah_academy/features/salle/preparation_enseignant.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/tc_mes_groupes/chemins_tc_a.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/harnais.dart';
@@ -68,6 +69,7 @@ Widget _hote({
   bool guidee = false,
   Size taille = const Size(390, 1200),
   double texte = 1,
+  VoidCallback? onOuvrirReglages,
 }) => TranslationProvider(
   child: MaterialApp(
     theme: AppTheme.pour(
@@ -85,6 +87,7 @@ Widget _hote({
           onContinuerSansMicro: () => appuis.sansMicro++,
           onReessayer: () => appuis.reessayer++,
           onRetour: () {},
+          onOuvrirReglages: onOuvrirReglages,
         ),
       ),
     ),
@@ -99,6 +102,7 @@ Future<void> _poser(
   bool guidee = false,
   Size taille = const Size(390, 1200),
   double texte = 1,
+  VoidCallback? onOuvrirReglages,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -111,6 +115,7 @@ Future<void> _poser(
       guidee: guidee,
       taille: taille,
       texte: texte,
+      onOuvrirReglages: onOuvrirReglages,
     ),
   );
   await tester.pump();
@@ -166,6 +171,7 @@ List<Override> _surcharges({
 Future<void> _monterSalle(
   WidgetTester tester, {
   required List<Override> surcharges,
+  String? groupeId,
 }) async {
   tester.view.physicalSize = const Size(390, 1200);
   tester.view.devicePixelRatio = 1;
@@ -178,7 +184,17 @@ Future<void> _monterSalle(
         GoRoute(
           path: Routes.salle,
           builder: (BuildContext _, GoRouterState _) =>
-              const SallePage(seanceId: 's1', preparation: true),
+              SallePage(seanceId: 's1', preparation: true, groupeId: groupeId),
+        ),
+        GoRoute(
+          path: Routes.racinePour(AppRole.student),
+          builder: (BuildContext _, GoRouterState _) =>
+              const Text('accueil eleve'),
+        ),
+        GoRoute(
+          path: CheminsTcA.espaceGroupe('g1'),
+          builder: (BuildContext _, GoRouterState _) =>
+              const Text('espace classe'),
         ),
       ],
     ),
@@ -286,6 +302,38 @@ void main() {
     expect(video.demandes, <String>['s1']);
   });
 
+  testWidgets('micro bloque sans action reelle : « Reessayer », jamais '
+      '« Autoriser »', (WidgetTester tester) async {
+    for (final bool guidee in <bool>[false, true]) {
+      final _Appuis appuis = _Appuis();
+      await _poser(
+        tester,
+        resultat: _bloque,
+        reseau: ReseauPreparation.bonne,
+        appuis: appuis,
+        guidee: guidee,
+      );
+      expect(_autoriser, findsNothing, reason: '$guidee');
+      expect(find.text(t.salle.preparation.eleve.autoriserMicro), findsNothing);
+      expect(
+        find.text(t.salle.preparation.eleve.guidee.microQuestion),
+        findsNothing,
+      );
+      final Finder reessayer = find.byKey(
+        const ValueKey<String>('preparation-reessayer'),
+      );
+      expect(
+        tester.widget<ActionPrincipale>(reessayer).niveau,
+        NiveauAction.principale,
+      );
+      await tester.tap(reessayer);
+      await tester.tap(_continuer);
+      await tester.pump();
+      expect(appuis.reessayer, 1);
+      expect(appuis.sansMicro, 1);
+    }
+  });
+
   testWidgets('micro bloque : « Autoriser le micro » ouvre la feuille CL-7', (
     WidgetTester tester,
   ) async {
@@ -295,6 +343,7 @@ void main() {
       resultat: _bloque,
       reseau: ReseauPreparation.bonne,
       appuis: appuis,
+      onOuvrirReglages: () {},
     );
     expect(
       find.text(t.salle.preparation.eleve.microInaccessible),
@@ -440,7 +489,7 @@ void main() {
       guidee: true,
     );
     expect(
-      find.text(t.salle.preparation.eleve.guidee.microQuestion),
+      find.text(t.salle.preparation.eleve.guidee.microBloque),
       findsOneWidget,
     );
     expect(
@@ -467,6 +516,61 @@ void main() {
     expect(find.text(t.salle.preparation.eleve.guidee.pret), findsOneWidget);
     expect(find.byType(GroupeReglages), findsNothing);
   });
+
+  testWidgets('salle, Interface guidee : « Retour a l accueil » mene a '
+      'l accueil de l eleve (spec 02 §2.2)', (WidgetTester tester) async {
+    await _monterSalle(
+      tester,
+      groupeId: 'g1',
+      surcharges: _surcharges(
+        role: AppRole.student,
+        video: FauxServiceVideo(),
+        preVol: FauxServicePreVol(),
+        guidee: true,
+      ),
+    );
+    expect(find.text(t.salle.retourAccueil), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey<String>('preparation-retour')));
+    await tester.pumpAndSettle();
+    expect(find.text('accueil eleve'), findsOneWidget);
+    expect(find.text('espace classe'), findsNothing);
+  });
+
+  testWidgets('salle, standard : « Retour a la Classe » mene a la Classe', (
+    WidgetTester tester,
+  ) async {
+    await _monterSalle(
+      tester,
+      groupeId: 'g1',
+      surcharges: _surcharges(
+        role: AppRole.student,
+        video: FauxServiceVideo(),
+        preVol: FauxServicePreVol(),
+      ),
+    );
+    expect(find.text(t.salle.preparation.retour), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey<String>('preparation-retour')));
+    await tester.pumpAndSettle();
+    expect(find.text('espace classe'), findsOneWidget);
+  });
+
+  for (final AppRole role in <AppRole>[AppRole.admin, AppRole.controller]) {
+    testWidgets('${role.name} avec preparation : jamais la preparation '
+        'enseignant, le comportement de son role', (WidgetTester tester) async {
+      final FauxServiceVideo video = FauxServiceVideo();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          role: role,
+          video: video,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      expect(find.byType(PreparationEnseignant), findsNothing);
+      expect(find.byType(PreparationEleve), findsNothing);
+      expect(video.demandes, <String>['s1']);
+    });
+  }
 
   testWidgets('tuteur observateur : aucune preparation (D-14)', (
     WidgetTester tester,

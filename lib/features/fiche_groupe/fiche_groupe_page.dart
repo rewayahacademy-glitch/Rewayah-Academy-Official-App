@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
@@ -477,6 +478,12 @@ class _EnteteGroupe extends ConsumerWidget {
       jour: _jour(groupe.creneau),
       heure: _heure(groupe.creneau),
     );
+    // Enfants ou Adultes : une information pedagogique, sur la ligne de
+    // contexte discrete (revue CL-4.R, m7). Cles existantes, aucune jumelle.
+    final String typePublic = switch (groupe.type) {
+      TypePublicGroupe.enfant => t.admin.groupes.typeEnfant,
+      TypePublicGroupe.adulte => t.admin.groupes.typeAdulte,
+    };
     final GroupSummaryVM? resume = ref.watch(groupeProvider(groupe.id)).value;
     if (resume != null) {
       // Initiales en repli, jamais de pastille « Photo a fournir » ici :
@@ -485,6 +492,7 @@ class _EnteteGroupe extends ConsumerWidget {
         groupe: resume,
         repliInitiales: true,
         ligneDiscrete: horaire,
+        typePublic: typePublic,
       );
     }
 
@@ -498,6 +506,13 @@ class _EnteteGroupe extends ConsumerWidget {
           Text(
             groupe.libelle,
             style: textes.headlineSmall ?? const TextStyle(),
+          ),
+          Ecart.vXs,
+          Text(
+            typePublic,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
           ),
           Ecart.vXs,
           Text(

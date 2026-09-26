@@ -405,7 +405,13 @@ class IdentiteGroupe extends StatelessWidget {
     this.urlPhoto,
     this.repliInitiales = false,
     this.ligneDiscrete,
+    this.typePublic,
   });
+
+  /// Le type de groupe (« Enfants », « Adultes »), deja traduit, ajoute a la
+  /// ligne de contexte cote enseignant : une information pedagogique
+  /// (revue CL-4.R, m7). `null` cote famille.
+  final String? typePublic;
 
   /// Le groupe.
   final GroupSummaryVM groupe;
@@ -426,9 +432,12 @@ class IdentiteGroupe extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
     final String? discrete = ligneDiscrete;
-    final String coursEtNiveau = LibellesGroupe.coursEtNiveau(
-      cours: groupe.nomCours,
-      niveau: groupe.niveauHumain,
+    final String coursEtNiveau = LibellesGroupe.joindre(
+      LibellesGroupe.coursEtNiveau(
+        cours: groupe.nomCours,
+        niveau: groupe.niveauHumain,
+      ),
+      typePublic,
     );
 
     return MergeSemantics(

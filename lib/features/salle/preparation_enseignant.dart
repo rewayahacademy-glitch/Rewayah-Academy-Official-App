@@ -138,8 +138,13 @@ class PreparationEnseignant extends StatefulWidget {
 class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
   bool _testCameraFait = false;
 
+  /// « Tester la camera » n'existe que si un vrai test est branche (R10) :
+  /// sans [PreparationEnseignant.onTesterCamera], ni bouton ni « Test local
+  /// termine ».
   void _testerCamera() {
-    widget.onTesterCamera?.call();
+    final VoidCallback? tester = widget.onTesterCamera;
+    if (tester == null) return;
+    tester();
     setState(() => _testCameraFait = true);
   }
 
@@ -258,10 +263,16 @@ class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
         !vue.bloque &&
         reseau != null &&
         reseau != ReseauPreparation.horsLigne;
+    // Un blocage deja connu garde son bouton desactive avec sa raison ecrite
+    // au-dessus (revue UX n° 12 d) ; sinon, la verification est une ligne.
+    final bool enVerification =
+        !vue.bloque && (resultat == null || reseau == null);
 
     final Widget apercu = _Apercu(
       compact: !bureau,
-      testable: resultat?.cameraDisponible ?? false,
+      testable:
+          widget.onTesterCamera != null &&
+          (resultat?.cameraDisponible ?? false),
       testFait: _testCameraFait,
       onTester: _testerCamera,
     );
@@ -286,18 +297,6 @@ class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (resultat == null && reseau == null) ...<Widget>[
-          Semantics(
-            liveRegion: true,
-            child: Text(
-              t.salle.preparation.chargement,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-          ),
-          Ecart.vLg,
-        ],
         if (bureau)
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,24 +351,57 @@ class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
           ),
         ],
         Ecart.vLg,
-        Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: bureau
-              ? IntrinsicWidth(
-                  child: ActionPrincipale(
+        // Pendant la verification, l'emplacement du bouton porte une ligne
+        // d'etat (patron R4) : jamais un bouton grise sans raison ecrite.
+        if (enVerification)
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: AppPage.hauteurBouton),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Semantics(
+                liveRegion: true,
+                child: MergeSemantics(
+                  child: Row(
+                    key: const ValueKey<String>('preparation-verification'),
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      const IconeEtatPreparation(
+                        ton: TonPreparation.verification,
+                      ),
+                      Ecart.hSm,
+                      Flexible(
+                        child: Text(
+                          t.salle.preparation.verification,
+                          style: palette.inkMuted.applyTo(
+                            textes.bodyMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
+        else
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: bureau
+                ? IntrinsicWidth(
+                    child: ActionPrincipale(
+                      key: const ValueKey<String>('preparation-entrer'),
+                      libelle: t.salle.preparation.entrer,
+                      onPress: peutEntrer ? widget.onEntrer : null,
+                      pleineLargeur: !bureau,
+                    ),
+                  )
+                : ActionPrincipale(
                     key: const ValueKey<String>('preparation-entrer'),
                     libelle: t.salle.preparation.entrer,
                     onPress: peutEntrer ? widget.onEntrer : null,
                     pleineLargeur: !bureau,
                   ),
-                )
-              : ActionPrincipale(
-                  key: const ValueKey<String>('preparation-entrer'),
-                  libelle: t.salle.preparation.entrer,
-                  onPress: peutEntrer ? widget.onEntrer : null,
-                  pleineLargeur: !bureau,
-                ),
-        ),
+          ),
       ],
     );
   }

@@ -81,6 +81,35 @@ void main() {
       expect(e.libelle, 'Préparation en cours');
     });
 
+    test('fenetre ouverte sans seance materialisee : ligne d etat et '
+        '« Reessayer », jamais un bouton (revue CL-4.R, m3)', () {
+      final DateTime m = t0.subtract(const Duration(minutes: 8));
+      for (final RoleEntree role in RoleEntree.values) {
+        final EmplacementEntree e = EmplacementEntree.pour(
+          role: role,
+          horloge: horloge(m),
+          nomClasse: DonneesClasseDemo.classe,
+          accesInverifiable: true,
+        );
+        expect(e.forme, FormeEntree.ligne, reason: role.name);
+        expect(e.estBouton, isFalse);
+        expect(e.etat, EtatEntree.indisponible);
+        expect(
+          e.libelle,
+          "L'accès à la salle ne peut pas être vérifié pour le moment.",
+        );
+        expect(e.reessayer, isTrue);
+      }
+      // Avant l'ouverture, rien ne change : « Cours dans ... ».
+      final EmplacementEntree avant = EmplacementEntree.pour(
+        role: RoleEntree.eleve,
+        horloge: horloge(t0.subtract(const Duration(hours: 3))),
+        nomClasse: DonneesClasseDemo.classe,
+        accesInverifiable: true,
+      );
+      expect(avant.etat, EtatEntree.aVenir);
+    });
+
     test('attente avant le debut : deja dans la salle', () {
       final EmplacementEntree e = a(
         t0.subtract(const Duration(minutes: 3)),

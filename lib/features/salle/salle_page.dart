@@ -156,9 +156,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     });
     // Le tuteur observateur n'a AUCUNE preparation (D-14) : il n'ouvre ni
     // micro ni camera.
+    // Seuls l'eleve et l'enseignant en ont une ; session pas encore lue
+    // (role nul) : le choix se refait au `build`.
+    final AppRole? role = ref.read(sessionProvider).role;
     _enPreparation =
         widget.preparation &&
-        ref.read(sessionProvider).role != AppRole.guardian;
+        (role == null || role == AppRole.student || role == AppRole.teacher);
     if (!_enPreparation) {
       unawaited(_entrer());
     }
@@ -370,8 +373,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (_enPreparation && !session.resolue) {
       return const Scaffold(body: SizedBox.shrink());
     }
-    // Le tuteur observateur n'a AUCUNE preparation (D-14) : entree directe.
-    if (_enPreparation && session.role == AppRole.guardian) {
+    // Seuls l'eleve et l'enseignant ont une preparation. Le tuteur
+    // observateur n'en a AUCUNE (D-14), et un autre role (admin, controleur)
+    // garde le comportement de son role : l'entree directe, jamais la
+    // preparation enseignant par defaut (revue CL-4.R, m8).
+    if (_enPreparation &&
+        session.role != AppRole.student &&
+        session.role != AppRole.teacher) {
       _enPreparation = false;
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
         if (mounted) unawaited(_entrer());
@@ -380,8 +388,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // PRE-ELV-01 (CL-4.6) : la preparation presque silencieuse de l'eleve.
     if (_enPreparation && session.role == AppRole.student) {
       final String? groupe = widget.groupeId;
+      final bool guidee = session.interfaceMode == InterfaceMode.enfant;
       return _PreparationEleveBranchee(
-        guidee: session.interfaceMode == InterfaceMode.enfant,
+        guidee: guidee,
         onEntrer: ({required bool sansMicro}) {
           setState(() {
             _enPreparation = false;
@@ -389,12 +398,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           });
           unawaited(_entrer());
         },
-        onRetour: () => GoRouter.of(
-          context,
-        ).go(groupe == null ? Routes.racine : CheminsTcA.espaceGroupe(groupe)),
+        // En Interface guidee, « Retour a l'accueil » mene a l'accueil de
+        // l'eleve (spec 02 §2.2) ; en standard, « Retour a la Classe ».
+        onRetour: guidee
+            ? _rentrer
+            : () => GoRouter.of(context).go(
+                groupe == null
+                    ? Routes.racine
+                    : CheminsTcA.espaceGroupe(groupe),
+              ),
       );
     }
-    if (_enPreparation) {
+    if (_enPreparation && session.role == AppRole.teacher) {
       return _PreparationBranchee(
         groupeId: widget.groupeId,
         onEntrer: () {

@@ -47,6 +47,7 @@ Future<void> _poser(
   ReseauPreparation? reseau = ReseauPreparation.bonne,
   bool sortieAudio = false,
   VoidCallback? onEntrer,
+  VoidCallback? onTesterCamera,
   Size taille = const Size(1440, 1000),
   double texte = 1,
 }) async {
@@ -71,7 +72,7 @@ Future<void> _poser(
               onEntrer: onEntrer ?? () {},
               onRetour: () {},
               onReessayer: () {},
-              onTesterCamera: () {},
+              onTesterCamera: onTesterCamera,
             ),
           ),
         ),
@@ -168,10 +169,27 @@ void main() {
     expect(find.text(t.salle.preparation.cameraPrete), findsOneWidget);
     expect(find.textContaining('activé'), findsNothing);
     expect(find.text(t.salle.preparation.cameraCoupee), findsOneWidget);
+  });
 
-    // « Tester la camera » : un retour local, aucune camera ouverte.
+  testWidgets('« Tester la camera » n existe qu avec un vrai test (R10)', (
+    WidgetTester tester,
+  ) async {
+    // Sans rappel branche : aucun bouton, jamais « Test local termine ».
+    await _poser(tester, resultat: _pret);
+    expect(find.text(t.salle.preparation.testerCamera), findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('preparation-tester-camera')),
+      findsNothing,
+    );
+    expect(find.text(t.salle.preparation.testCameraFait), findsNothing);
+
+    // Avec un vrai rappel : le bouton existe, le test a lieu, puis le
+    // message local s'affiche.
+    int tests = 0;
+    await _poser(tester, resultat: _pret, onTesterCamera: () => tests++);
     await tester.tap(find.text(t.salle.preparation.testerCamera));
     await tester.pump();
+    expect(tests, 1);
     expect(find.text(t.salle.preparation.testCameraFait), findsOneWidget);
   });
 
@@ -200,7 +218,6 @@ void main() {
       findsOne,
     );
     expect(find.text(t.salle.preparation.connexionPrete), findsOneWidget);
-    expect(_entrer(tester).onPress, isNull);
 
     // Le materiel a rendu, le reseau pas encore.
     await _poser(tester, resultat: _pret, reseau: null);
@@ -210,6 +227,38 @@ void main() {
     );
     expect(find.byKey(const ValueKey<String>('etat-micro-ok')), findsOne);
     expect(find.byType(GroupeReglages), findsOneWidget);
+  });
+
+  testWidgets('verification : une ligne d etat, jamais un bouton grise', (
+    WidgetTester tester,
+  ) async {
+    final Finder ligne = find.byKey(
+      const ValueKey<String>('preparation-verification'),
+    );
+    final Finder bouton = find.byKey(
+      const ValueKey<String>('preparation-entrer'),
+    );
+    for (final (ResultatPreVol? r, ReseauPreparation? n)
+        in <(ResultatPreVol?, ReseauPreparation?)>[
+          (null, null),
+          (null, ReseauPreparation.bonne),
+          (_pret, null),
+        ]) {
+      await _poser(tester, resultat: r, reseau: n);
+      expect(bouton, findsNothing, reason: '$r $n');
+      expect(ligne, findsOneWidget, reason: '$r $n');
+      expect(
+        find.descendant(
+          of: ligne,
+          matching: find.text(t.salle.preparation.verification),
+        ),
+        findsOneWidget,
+      );
+    }
+    // Verifications rendues : la ligne cede la place au bouton actif.
+    await _poser(tester, resultat: _pret);
+    expect(ligne, findsNothing);
+    expect(_entrer(tester).onPress, isNotNull);
   });
 
   testWidgets('bureau : deux volets ; sous 840, une colonne', (

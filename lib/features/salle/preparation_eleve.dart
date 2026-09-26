@@ -260,13 +260,19 @@ class _PreparationEleveEtat extends State<PreparationEleve> {
     );
   }
 
+  /// « Autoriser le micro » n'existe que si une vraie action d'autorisation
+  /// est branchee ([PreparationEleve.onOuvrirReglages]). Sinon, le principal
+  /// est « Reessayer » : on ne propose jamais d'autoriser sans rien autoriser.
+  bool get _autorisable =>
+      widget.onOuvrirReglages != null &&
+      VuePreCours.depuis(
+            role: RoleSalle.eleve,
+            resultat: widget.resultat,
+          ).motif ==
+          MotifPreCours.permissionRefusee;
+
   Widget _actionsBlocage(bool etire, {required NiveauAction niveauContinuer}) {
-    final bool autoriser =
-        VuePreCours.depuis(
-          role: RoleSalle.eleve,
-          resultat: widget.resultat,
-        ).motif ==
-        MotifPreCours.permissionRefusee;
+    final bool autoriser = _autorisable;
     final Widget continuer = ActionPrincipale(
       key: const ValueKey<String>('preparation-continuer-sans-micro'),
       libelle: t.salle.secours.continuerSansMicro,
@@ -396,7 +402,9 @@ class _PreparationEleveEtat extends State<PreparationEleve> {
         PhasePreparationEleve.microBloque => <Widget>[
           _titre(
             context,
-            t.salle.preparation.eleve.guidee.microQuestion,
+            _autorisable
+                ? t.salle.preparation.eleve.guidee.microQuestion
+                : t.salle.preparation.eleve.guidee.microBloque,
             annonce: true,
           ),
           Ecart.vXl,

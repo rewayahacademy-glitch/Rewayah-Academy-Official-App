@@ -193,13 +193,14 @@
         "accesAttente": "En attente de la connexion",
         "microCoupe": "Vous entrerez avec le micro coupé.",
         "microInaccessible": "Votre micro n'est pas accessible",
-        "microInaccessibleDetail": "Le professeur ne pourra pas vous entendre tant que l'accès au micro reste bloqué.",
+        "microInaccessibleDetail": "Personne dans la classe ne pourra vous entendre tant que l'accès au micro reste bloqué.",
         "autoriserMicro": "Autoriser le micro",
         "guidee": {
           "verification": "Préparation de la séance…",
           "pret": "Tout est prêt.",
           "microCoupe": "Le micro sera coupé en entrant.",
           "microQuestion": "Le micro est bloqué. On l'autorise ?",
+          "microBloque": "Le micro est bloqué.",
           "horsLigne": "La connexion ne marche pas pour l'instant."
         },
         "demo": {
@@ -2526,6 +2527,7 @@
       "aucune": "Aucune séance prévue",
       "horsLigne": "Vous êtes hors ligne. La séance nécessite une connexion.",
       "indisponible": "L'information sur la séance est indisponible pour l'instant.",
+      "accesInverifiable": "L'accès à la salle ne peut pas être vérifié pour le moment.",
       "reessayer": "Réessayer",
       "chargementSeance": "Chargement de la prochaine séance.",
       "progressionValeur": "{chapitre} · {pourcentage} %",

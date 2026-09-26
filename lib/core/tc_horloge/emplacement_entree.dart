@@ -81,7 +81,9 @@ class EmplacementEntree {
   /// [horloge] `null` : aucune occurrence connue. [horsLigne] et
   /// [lectureEchouee] priment sur le temps : sans information fiable, on ne
   /// propose pas d'entrer. [annulee] vient du serveur. [preparationEnCours]
-  /// est vrai pendant le pre-vol de cette seance.
+  /// est vrai pendant le pre-vol de cette seance. [accesInverifiable] est
+  /// vrai quand la fenetre est ouverte mais qu'aucune seance n'est
+  /// materialisee (aucun `sessionId`) : on ne peut pas y entrer.
   factory EmplacementEntree.pour({
     required RoleEntree role,
     required SessionClockVM? horloge,
@@ -90,6 +92,7 @@ class EmplacementEntree {
     bool horsLigne = false,
     bool lectureEchouee = false,
     bool preparationEnCours = false,
+    bool accesInverifiable = false,
   }) {
     final String? dst = _avisDst(horloge?.noticeDst);
     if (horsLigne || lectureEchouee) {
@@ -141,6 +144,20 @@ class EmplacementEntree {
         EtatEntree.preparation,
         t.classe.entree.preparation,
         dst,
+      );
+    }
+    // Fenetre ouverte sans seance materialisee : rien ne permet d'entrer. Ni
+    // bouton grise, ni bouton muet : la ligne d'etat et « Reessayer » (R4).
+    if (accesInverifiable) {
+      final String texte = t.classe.entree.accesInverifiable;
+      return EmplacementEntree(
+        role: role,
+        etat: EtatEntree.indisponible,
+        forme: FormeEntree.ligne,
+        libelle: texte,
+        annonce: texte,
+        reessayer: true,
+        avisDst: dst,
       );
     }
     return switch (horloge.phase) {
