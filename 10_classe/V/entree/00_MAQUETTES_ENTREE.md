@@ -1,0 +1,166 @@
+# Entrée en classe (CL-4) : maquettes du directeur, classement par rôle et rectifications
+
+Le directeur a fourni ces maquettes le 26/09/2026 (7 planches, `PLANCHE-1.png` à `PLANCHE-7.png`, copiées depuis `Downloads/entrée classe`). Il aime le layout global.
+
+**Ce qu'il demande, dans cet ordre :**
+1. classer les écrans par rôle, puisque les écrans sont partagés entre les rôles ;
+2. harmoniser le style avec celui déjà en place, pour garder une seule ligne cohérente ;
+3. découper le travail, puis implémenter.
+
+On ne redessine rien, selon la méthode tuteur : relever ce que montre l'image, puis corriger ses erreurs par écrit.
+
+**Ordre de priorité** :
+1. demande la plus récente du directeur ;
+2. règles gelées (DESIGN-GOV, contrats A à E) ;
+3. textes exacts de la spec 02 (CLV-01 à CLV-03) ;
+4. code et composants déjà en place ;
+5. image.
+
+## 1. Les 7 planches : même layout, variantes
+
+Les 7 planches déclinent le même layout :
+- barre latérale « Rewayah » sur bureau, avec le compte en pied ;
+- en-tête : retour, nom de la Classe, cours et niveau ;
+- carte de l'enseignante ;
+- carte « Prochaine séance », avec son bouton ;
+- tâches avant le cours ;
+- supports.
+
+Elles varient sur quatre points : clair ou sombre, onglets ou non, aperçu caméra allumé ou non, libellés.
+
+| Planche | Mode | Contenu |
+|---|---|---|
+| 1 | sombre | Élève et enseignante sur web ; préparation enseignante sur web ; mobiles M1 à M7 (M7 = salle en direct) |
+| 2 | clair | CLV-01, 02, 03 sur web ; mobiles 01A, 01B, 02A ; préflight élève 03A et 03B ; salle 04A et 04B |
+| 3 | clair | 01A, 01B et 01C (élève) ; 02A, 02B et 02C (enseignante) ; CLV-03 sur web, caméra désactivée |
+| 4 | clair, barre latérale sombre | Élève et enseignante sur bureau ; préparation en 3 étapes ; mobiles ; salle en direct sur bureau |
+| 5 | clair | Élève sur bureau ; préparation sur bureau ; salle en direct ; mobiles ADM-CL-01 à 05 et ADM-EN-01, 02 |
+| 6 | sombre | CLV-01, 02, 03 sur bureau (préparation en 3 étapes) ; mobiles 01a, 01b, 02a, 03a, 03b, 03c ; salle mobile |
+| 7 | clair lavande | Élève sur mobile et sur web ; enseignante sur web ; préparation élève et enseignante sur web ; « Tout est prêt » ; problème de micro |
+
+## 2. Classement par rôle
+
+### Élève standard
+
+| Écran | Référence retenue | Variantes (mêmes idées) |
+|---|---|---|
+| **CLV-01 Espace Classe**, bureau 1440 | P2 « CLV-01 » (clair) | P1 web, P3 01C, P4 01a, P5, P6 CLV-01, P7 n°4 |
+| CLV-01, mobile avant ouverture | P2 CLV-01A | P1 M1, P3 01A, P4, P5 ADM-CL-01, P6 01a, P7 n°1 |
+| CLV-01, mobile avec la salle ouverte | P2 CLV-01B | P1 M2, P3 01B, P5 ADM-CL-02, P6 01b, P7 n°2 |
+| **Couche d'entrée** (vérification silencieuse avant `/salle`) | P5 ADM-CL-03 « Nous vérifions votre appareil… » | P1 M4, P2 03A, P6 03a, P7 n°3 et n°7 |
+| Couche d'entrée, blocage micro | P5 ADM-CL-04 ; web : P7 n°8 | P1 M5, P2 03B, P4 mobile, P6 03b |
+
+### Élève en Interface guidée
+
+Aucune planche ne lui est dédiée. Il reçoit la même couche d'entrée, en mode guidé (spec P02) : une seule question claire et une seule action principale. **L'Espace Classe n'est pas son chemin** : il rejoint depuis son Accueil (spec §2.2).
+
+### Enseignant
+
+| Écran | Référence retenue | Variantes |
+|---|---|---|
+| **CLV-02 Espace Classe enseignant**, bureau | P3 CLV-02C (sans onglets) | P1, P2, P4 01b, P5, P6 CLV-02, P7 n°5 |
+| CLV-02, mobile | P3 CLV-02A (avant) et 02B (salle ouverte) | P1 M3, P2 02A, P5 ADM-EN-01, P6 02a |
+| **CLV-03 Préparer la séance**, bureau | P3 CLV-03 (caméra désactivée, liste « Votre équipement ») | P1, P2, P4 et P6 (en 3 étapes), P5, P7 n°6 |
+| CLV-03, mobile | P1 M6 (vérifications, « Tester le son », pas d'aperçu vidéo) | P5 ADM-EN-02, P6 03c |
+
+### Commun : la salle en direct
+
+Ce ne sont que des références : **hors de CL-4**.
+
+Planches concernées : P1 M7, P2 04A et 04B, P4 CLV-03 live, P5 « Classe en direct » et ADM-CL-05, P6 CLV-04.
+
+La salle est déjà faite (CL-3, CL-5, CL-6, D1 à D10 validés). La règle gelée §4 bis.8 interdit de rouvrir une étape faite.
+
+L'élément nouveau de ces images est le **chrono interne**, « écoulé / restant ». Il est noté pour la passe d'harmonisation HU-1 et n'est pas construit maintenant.
+
+La page du Coran affichée comme support (P2 04A) relève du lecteur du Coran, hors de cette vague.
+
+## 3. Rectifications (à appliquer sans redessiner)
+
+### Textes : ceux de la spec, pas ceux de l'image
+
+1. **Bouton élève** :
+   - le bouton s'intitule « Rejoindre la séance », jamais « Rejoindre la classe » ni « Rejoindre » ;
+   - libellé pour le lecteur d'écran : « Rejoindre la séance de {Classe} ».
+2. **Bouton enseignant** : « Préparer la séance », jamais « Préparer l'entrée ».
+3. **CLV-03** :
+   - titre « Préparer la séance » ;
+   - introduction « Vérifiez le son avant d'entrer. » ;
+   - bouton « Entrer dans la séance », jamais « Entrer dans la classe » ;
+   - secondaire « Retour à la Classe ».
+4. **Sections** :
+   - « Avant le prochain cours » et « Voir tout » sont gardés, car le code et les images les emploient déjà (voir `01_HARMONISATION.md` §4) ;
+   - « Supports de la classe » devient le titre de bibliothèque déjà en place dans le code ;
+   - côté enseignant : « Élèves », « Préparation pédagogique » et « Ressources ».
+5. **Heures**, absentes des images, à ajouter :
+   - « Votre heure » ;
+   - « Chez Sayyida {prénom} » (élève) ou « Heure de la Classe » (enseignant), seulement si l'heure diffère ;
+   - « Durée ».
+6. **Conseil d'appareil**, absent des images, à ajouter en texte discret : « Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge. »
+7. **États de la fenêtre** (spec) :
+   - avant l'ouverture : « La salle ouvrira à {heure}. » ;
+   - salle ouverte : « La salle est ouverte. La séance commence dans {durée}. » ;
+   - à T0 : « Séance en direct ».
+   - Le décompte « Dans 3 h 28 » est conservé en pastille.
+
+### Actions (contrat B)
+
+8. **Avant l'ouverture, pas de bouton grisé.**
+   - Les images montrent « Rejoindre » désactivé ; la spec demande un libellé d'état non interactif.
+   - Le bouton n'apparaît qu'à l'ouverture, sans changer de page.
+9. **Place du bouton sur bureau** :
+   - dans la carte de séance, 16 sous son contenu ;
+   - aligné sur le bord de fin (trailing) ;
+   - à sa largeur naturelle, jamais étiré sur toute la carte.
+   - Sur mobile, il prend toute la largeur (spec : hauteur 52, largeur disponible).
+10. **Un seul bouton principal par écran.**
+    - La pastille « Ouverte • Rejoindre » de l'en-tête (P3) est retirée, car elle double le bouton.
+    - La cloche, la recherche et le bouton « Message » (P2, P5) sont retirés : aucune fonction n'existe derrière.
+11. **« Modifier » le support prévu (enseignant)** : action tertiaire en lien, jamais un second bouton plein.
+
+### Portée : rien d'inventé
+
+12. **Les onglets sont retirés** : « Vue d'ensemble / Élèves / Supports / Notes / Historique », « Supports / Progression / Messages ».
+    - La spec n'en prévoit pas, et chaque onglet ouvrirait une page qui n'existe pas.
+    - Les sorties de la spec restent des liens : « Voir les élèves » et « Voir les ressources ».
+    - La référence P3 02C est déjà sans onglets.
+13. **La préparation en 3 étapes (P4 et P6) n'est pas retenue.** CLV-03 est une seule carte « Vérifications » : Réseau, Micro, Caméra.
+14. **« Ma progression »** (élève) reste une carte compacte, en colonne secondaire.
+    - Elle affiche le chapitre et une barre, puis un lien vers Progression.
+    - Pas de statistiques détaillées : c'est la destination Progression, pas un doublon.
+15. **Les notes de cours et les « Points à renforcer » (enseignant) ne sont pas repris.**
+    - La spec limite la préparation à 3 éléments : support de reprise, travail en cours, alerte pédagogique autorisée.
+
+### Médias et vie privée
+
+16. **Caméra (CLV-03)** :
+    - aucune caméra n'est ouverte automatiquement (spec, Règles) ;
+    - sur bureau, la zone d'aperçu de la référence P3 est gardée, à l'état « Caméra coupée », avec l'action « Tester la caméra » ;
+    - sur mobile, pas d'aperçu vidéo (spec).
+    - Le micro est le seul critère bloquant ; la caméra n'est jamais bloquante.
+17. **Élève : pas de préflight obligatoire** (spec P01, P02, §3).
+    - La vérification est silencieuse : un état bref « Nous vérifions votre appareil… ».
+    - Elle ne s'arrête que sur un blocage : une seule question claire, une action principale, « Continuer sans micro » en secondaire.
+    - « Tout est prêt ! » ne demande **aucun appui supplémentaire** : l'entrée continue d'elle-même.
+    - Les écrans de blocage réutilisent ceux de CL-7 (feuille micro T-S4, `EtatSysteme`), sans fork.
+18. **Aucune photo de personne réelle.**
+    - Enseignante : l'avatar partagé du dépôt (initiales ou illustration). Une photo publique n'arrivera qu'avec les données réelles (BR-1).
+    - Élèves : initiales seulement. Pas de photo d'enfant, pas de pastille de présence qui juge (« Irrégulier »).
+    - Libellés neutres de la spec : prénom, identifiant de l'académie, dernier point utile.
+19. **Les illustrations décoratives ne sont pas reproduites** (mosquée en bandeau, couverture du Coran photographique). On garde les surfaces du thème : aucun nouvel asset.
+20. **Données de démonstration** :
+    - synthétiques, avec la mention visible « Démonstration » ;
+    - noms déjà utilisés en démo : Classe An-Nour, Sayyida Amina, Mariam, Yusuf, Aïcha.
+
+### Style : une seule ligne (voir §4)
+
+21. Les couleurs viennent du thème figé chrome / violet (K-37), en clair et en sombre. On ne recopie aucune couleur des images : le lavande de P7 et les verts ou ambres libres ne sont pas repris.
+22. La barre latérale et la navigation mobile sont **celles des coques existantes de chaque rôle**. On n'invente aucune entrée : les « Mes classes / Bibliothèque / Progression » des images servent seulement à vérifier. Tout écart est noté ici.
+
+## 4. Harmonisation avec le style en place
+
+Complété après l'inventaire du code : voir `01_HARMONISATION.md`.
+
+## 5. Découpage
+
+Voir `02_DECOUPAGE.md` et le tableau de suivi, étapes `CL-4.*`.
