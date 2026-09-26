@@ -31,7 +31,11 @@
   - Aucune seconde salle, aucun second préflight.
 - **E5. Aucune donnée privée des familles côté enseignant.** Ni téléphone, ni e-mail, ni adresse, ni pièce d'identité, ni paiement, ni solde.
   - La fiche élève est pédagogique seulement : prénom, identifiant Académie, niveau, objectif, dernière séance, reprise, assiduité récente, travail, notes autorisées.
-  - Pour un élève, on affiche ses **initiales**, jamais sa photo.
+  - **Photo de l'élève : elle s'affiche** (décision du directeur, 26/09/2026), partout où l'enseignant et l'administration identifient l'élève : roster, fiche élève, salle, cahier.
+    - Si le tuteur a déposé une photo, c'est que l'enseignant et l'administration en ont besoin. La vidéo est déjà permise en classe, donc la photo aussi.
+    - Composant `PhotoEleve` (photo signée, initiales seulement en repli).
+    - Cette visibilité est couverte par le consentement de l'inscription de l'enfant (texte A5 de pilotage `09_consentements`).
+    - Une règle « initiales seulement, jamais la photo de l'élève » est une erreur : elle ne venait pas du directeur.
 - **E6. Rien de ce que le serveur décide n'est calculé dans Flutter.** Cela vaut pour :
   - la fenêtre d'entrée, la capacité, la durée et les seuils (pas de 4, 5, 6, 60, 90 ni 40 % en dur) ;
   - la compatibilité des Classes et la limite de charge ;
