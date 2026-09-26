@@ -2746,8 +2746,20 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Élèves'
 	String get eleves => 'Élèves';
 
-	/// fr: 'Rappeler'
-	String get rappeler => 'Rappeler';
+	/// fr: 'Appeler discrètement'
+	String get rappeler => 'Appeler discrètement';
+
+	/// fr: 'Faire réciter'
+	String get faireReciter => 'Faire réciter';
+
+	/// fr: 'File de récitation'
+	String get fileRecitation => 'File de récitation';
+
+	/// fr: 'À suivre'
+	String get aSuivre => 'À suivre';
+
+	/// fr: '{nom} vous appelle'
+	String vousAppelle({required Object nom}) => '${nom} vous appelle';
 
 	/// fr: 'Signaler un besoin'
 	String get signalerBesoin => 'Signaler un besoin';
@@ -12405,6 +12417,9 @@ class Traductions$salle$seance$demo$etats$fr {
 	/// fr: 'Rien partagé'
 	String get rienPartage => 'Rien partagé';
 
+	/// fr: 'Appeler discrètement'
+	String get appel => 'Appeler discrètement';
+
 	/// fr: 'Panneau Élèves'
 	String get eleves => 'Panneau Élèves';
 
@@ -12945,7 +12960,11 @@ extension on Traductions {
 			'salle.seance.panneauSupports.ouvrirSupport' => ({required Object titre}) => 'Ouvrir ${titre}',
 			'salle.seance.panneauSupports.voirBibliotheque' => 'Voir toute la bibliothèque',
 			'salle.seance.eleves' => 'Élèves',
-			'salle.seance.rappeler' => 'Rappeler',
+			'salle.seance.rappeler' => 'Appeler discrètement',
+			'salle.seance.faireReciter' => 'Faire réciter',
+			'salle.seance.fileRecitation' => 'File de récitation',
+			'salle.seance.aSuivre' => 'À suivre',
+			'salle.seance.vousAppelle' => ({required Object nom}) => '${nom} vous appelle',
 			'salle.seance.signalerBesoin' => 'Signaler un besoin',
 			'salle.seance.deplierFiche' => ({required Object prenom}) => 'Afficher la fiche de ${prenom}',
 			'salle.seance.replierFiche' => ({required Object prenom}) => 'Masquer la fiche de ${prenom}',
@@ -12963,6 +12982,7 @@ extension on Traductions {
 			'salle.seance.demo.etats.repos' => 'Repos',
 			'salle.seance.demo.etats.visite' => 'Visite',
 			'salle.seance.demo.etats.rienPartage' => 'Rien partagé',
+			'salle.seance.demo.etats.appel' => 'Appeler discrètement',
 			'salle.seance.demo.etats.eleves' => 'Panneau Élèves',
 			'salle.seance.demo.etats.supports' => 'Panneau Supports',
 			'salle.seance.demo.etats.fin' => 'Fin de séance',
@@ -13224,13 +13244,13 @@ extension on Traductions {
 			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
 			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
 			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
 			'consentement.compte.merci' => 'Merci, votre accord est enregistré.',
 			'consentement.compte.chargement' => 'Lecture de vos accords',
 			'consentement.compte.erreur' => 'Vos accords ne s\'affichent pas pour le moment.',
 			'consentement.compte.horsLigne' => 'Vous êtes hors ligne. Vos accords s\'afficheront dès le retour du réseau.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.compte.sansProfil' => 'Aucun compte connecté : reconnectez-vous pour lire vos accords.',
 			'consentement.compte.invite' => 'Une nouvelle version à lire : les visites des parents',
 			'consentement.compte.inviteAction' => 'Lire',
@@ -13738,13 +13758,13 @@ extension on Traductions {
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
 			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
 			'admin.attribution.changerEleve' => 'Choisir un autre élève',
 			'admin.attribution.choisirEleve' => 'Choisissez un élève',
 			'admin.attribution.choisirEleveDetail' => 'Les enseignants s\'afficheront ici, ceux qui partagent une heure avec lui en premier.',
 			'admin.attribution.charge' => ({required Object actifs, required Object plafond}) => '${actifs} élèves sur ${plafond}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.attribution.complet' => 'Plafond atteint',
 			'admin.attribution.libreSur' => ({required Object jour, required Object heure}) => 'Libre ${jour} à ${heure} h',
 			'admin.attribution.libreSurPlusieurs' => ({required Object nombre}) => 'Libre sur ${nombre} des heures proposées',
@@ -14252,13 +14272,13 @@ extension on Traductions {
 			'agent.ouverture' => 'Ouverture',
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
+			_ => null,
+		} ?? switch (path) {
 			'agent.indisponible' => 'Service indisponible',
 			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
 			'agent.reessayer' => 'Réessayer',
 			'agent.bandeau' => 'Observation, lecture seule',
 			'agent.bandeauMasque' => 'Prénoms masqués',
-			_ => null,
-		} ?? switch (path) {
 			'agent.bandeauExpire' => ({required Object heure}) => 'jusqu\'à ${heure}',
 			'vide.aucunCours' => 'Aucun cours aujourd\'hui',
 			'vide.aucunCoursDetail' => 'Votre prochain cours apparaîtra ici.',
@@ -14766,13 +14786,13 @@ extension on Traductions {
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
 			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'tuteur.accueil.seanceIllisible' => 'La prochaine séance n\'a pas pu être lue.',
 			'tuteur.accueil.classeIndisponible' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			'tuteur.accueil.sansClassePhrase' => ({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
@@ -15280,13 +15300,13 @@ extension on Traductions {
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.devoirAucun' => 'Aucun travail',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
@@ -15794,13 +15814,13 @@ extension on Traductions {
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
 			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',

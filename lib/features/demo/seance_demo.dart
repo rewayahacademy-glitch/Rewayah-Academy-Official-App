@@ -5,6 +5,7 @@
 // support) sont des contenus de demonstration, pas des libelles d'interface.
 
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_classe/roster_classe_vm.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
 
@@ -19,8 +20,11 @@ enum EtatDemoSalle {
   /// L'enseignante n'a rien partage.
   rienPartage,
 
-  /// Panneau Eleves ouvert (enseignant).
+  /// Panneau Eleves ouvert (enseignant), avec la file de recitation.
   eleves,
+
+  /// Appel discret recu (eleve) : « {titre et nom} vous appelle » (EN-9).
+  appel,
 
   /// Panneau Supports ouvert (enseignant).
   supports,
@@ -186,6 +190,12 @@ abstract final class DonneesSeanceDemo {
     ),
   ];
 
+  /// La file de recitation de la demonstration (EN-9).
+  static const FileRecitation recitation = FileRecitation(
+    actif: 'Mariam',
+    suivants: <String>['Yusuf', 'Aicha'],
+  );
+
   static const FinSeance fin = FinSeance(
     heureFin: '15:16',
     cahierACompleter: true,
@@ -216,6 +226,12 @@ abstract final class DonneesSeanceDemo {
       visite: etat == EtatDemoSalle.visite
           ? const VisiteSeance(prenomEnfant: eleveCourant, concerneMoi: true)
           : null,
+      // La file de recitation (EN-9) : Mariam recite, Yusuf et Aicha a
+      // suivre. Des prenoms seulement (cles de demonstration).
+      recitation: enseignant && etat == EtatDemoSalle.eleves
+          ? recitation
+          : FileRecitation.vide,
+      appelRecu: !enseignant && etat == EtatDemoSalle.appel,
       support: etat == EtatDemoSalle.rienPartage ? null : support,
       cameraEnseignantActive: true,
       groupeId: groupeDemo,

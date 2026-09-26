@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -257,6 +258,8 @@ class VueSeance {
     this.connexion = ConnexionSeance.enLigne,
     this.enregistrementConfirme = true,
     this.visite,
+    this.recitation = FileRecitation.vide,
+    this.appelRecu = false,
     this.support,
     this.cameraEnseignantActive = true,
     this.cameraAutorisee = true,
@@ -324,6 +327,14 @@ class VueSeance {
   final bool enregistrementConfirme;
 
   final VisiteSeance? visite;
+
+  /// La file de recitation (EN-9) : identifiants d'academie, ou prenoms en
+  /// demonstration (`cleEleveSeance`). Aucun minuteur par eleve ni
+  /// evaluation (E8, E9).
+  final FileRecitation recitation;
+
+  /// L'enseignant vient d'appeler discretement cet eleve (EN-9, E16).
+  final bool appelRecu;
 
   /// `null` : rien n'est partage.
   final SupportSeance? support;
@@ -498,6 +509,14 @@ class VueSeance {
   /// Guidee : ni theme, ni cloche, ni reglages, ni menu de compte.
   bool get voitReglagesEnTete => !_guidee;
 
+  // --- Appel discret (EN-9, E16) ---
+
+  /// Ce que voit l'eleve appele : le titre et le nom de l'enseignant viennent
+  /// des donnees (« Sayyid Ibrahim vous appelle »), jamais « Le professeur ».
+  String? get texteAppel => !_enseignant && appelRecu && !estFinie
+      ? t.salle.seance.vousAppelle(nom: nomEnseignant)
+      : null;
+
   // --- Mention et notice (I-1, I-2) ---
 
   /// Le texte de la mention d'enregistrement, ou `null` (non confirme, fin).
@@ -621,6 +640,8 @@ class VueSeance {
     ConnexionSeance? connexion,
     VisiteSeance? visite,
     bool sansVisite = false,
+    FileRecitation? recitation,
+    bool? appelRecu,
     SupportSeance? support,
     bool sansSupport = false,
     bool? enregistrementConfirme,
@@ -640,6 +661,8 @@ class VueSeance {
     enregistrementConfirme:
         enregistrementConfirme ?? this.enregistrementConfirme,
     visite: sansVisite ? null : visite ?? this.visite,
+    recitation: recitation ?? this.recitation,
+    appelRecu: appelRecu ?? this.appelRecu,
     support: sansSupport ? null : support ?? this.support,
     cameraEnseignantActive: cameraEnseignantActive,
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,

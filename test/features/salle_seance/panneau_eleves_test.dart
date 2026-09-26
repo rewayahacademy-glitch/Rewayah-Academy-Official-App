@@ -167,7 +167,7 @@ void main() {
           expect(find.text('Écoute de la récitation'), findsOneWidget);
           for (final String action in <String>[
             t.salle.seance.rappeler,
-            t.tc.classe.action.reciter,
+            t.salle.seance.faireReciter,
             t.tc.classe.action.noter,
             t.salle.seance.signalerBesoin,
           ]) {

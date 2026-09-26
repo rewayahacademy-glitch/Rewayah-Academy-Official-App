@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -62,6 +63,7 @@ class PanneauEleves extends StatefulWidget {
   const PanneauEleves({
     required this.eleves,
     required this.actions,
+    this.recitation,
     this.large = false,
     this.serre = false,
     super.key,
@@ -69,6 +71,10 @@ class PanneauEleves extends StatefulWidget {
 
   final List<EleveSeance> eleves;
   final ActionsSeance actions;
+
+  /// La file de recitation (EN-9), en tete du panneau : l'eleve en cours,
+  /// puis « A suivre ». `null` : pas de bloc.
+  final FileRecitation? recitation;
 
   /// Feuille du telephone : ecarts resserres, pour que la liste des trois
   /// inscrits tienne entiere sous la fiche depliee (image CLV-07 mobile).
@@ -99,6 +105,8 @@ class _PanneauElevesState extends State<PanneauEleves> {
 
   @override
   Widget build(BuildContext context) {
+    final FileRecitation? file = widget.recitation;
+    final int tete = file == null ? 0 : 1;
     return ListView.separated(
       key: const ValueKey<String>('panneau-eleves'),
       // Colonne desktop : la liste se mesure, la colonne s'arrete apres elle
@@ -109,11 +117,14 @@ class _PanneauElevesState extends State<PanneauEleves> {
       padding: EdgeInsets.only(
         bottom: AppSpacing.md + MediaQuery.paddingOf(context).bottom,
       ),
-      itemCount: widget.eleves.length,
+      itemCount: widget.eleves.length + tete,
       separatorBuilder: (BuildContext _, int _) =>
           widget.serre ? Ecart.vXs : Ecart.vSm,
-      itemBuilder: (BuildContext _, int i) {
-        final EleveSeance e = widget.eleves[i];
+      itemBuilder: (BuildContext _, int index) {
+        if (file != null && index == 0) {
+          return FileRecitationSeance(file: file, eleves: widget.eleves);
+        }
+        final EleveSeance e = widget.eleves[index - tete];
         final String cle = cleEleveSeance(e);
         final bool deplie = _deplie == cle && e.fiche != null;
         return _CarteEleve(
@@ -515,7 +526,7 @@ class _ActionsEleve extends StatelessWidget {
       (AppIcons.rappeler, t.salle.seance.rappeler, actions.onRappeler),
       (
         AppIcons.reciter,
-        t.tc.classe.action.reciter,
+        t.salle.seance.faireReciter,
         actions.onChoisirPourReciter,
       ),
       (AppIcons.noter, t.tc.classe.action.noter, actions.onNoter),
@@ -609,6 +620,89 @@ class _TuileAction extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Le prenom d'une cle de la file : l'inscrit de meme cle, ou la cle elle-meme.
+String _prenomDe(String cle, List<EleveSeance> eleves) {
+  for (final EleveSeance e in eleves) {
+    if (cleEleveSeance(e) == cle) return e.prenom;
+  }
+  return cle;
+}
+
+/// La file de recitation (EN-9) : l'eleve en cours, puis « A suivre ».
+/// Ni minuteur par eleve (E9), ni evaluation (E8) : des prenoms, rien d'autre.
+class FileRecitationSeance extends StatelessWidget {
+  const FileRecitationSeance({
+    required this.file,
+    required this.eleves,
+    super.key,
+  });
+
+  final FileRecitation file;
+  final List<EleveSeance> eleves;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? actif = file.actif;
+    final List<String> suivants = file.suivantsVisibles;
+    final TextStyle corps = textes.bodyMedium ?? const TextStyle();
+    return DecoratedBox(
+      key: const ValueKey<String>('file-recitation'),
+      decoration: palette.surfaceOverlay.decoration(
+        borderRadius: AppRadius.arrondiMd,
+        side: palette.borderHairline.asBorderSide(),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Semantics(
+              header: true,
+              child: Text(
+                t.salle.seance.fileRecitation,
+                style: palette.inkStrong.applyTo(
+                  textes.titleSmall ?? const TextStyle(),
+                ),
+              ),
+            ),
+            Ecart.vSm,
+            Text(
+              actif == null
+                  ? t.tc.classe.recitation.personne
+                  : t.tc.classe.recitation.actif(
+                      prenom: _prenomDe(actif, eleves),
+                    ),
+              style: AppTypography.graisse(
+                palette.inkStrong.applyTo(corps),
+                FontWeight.w700,
+              ),
+            ),
+            if (suivants.isNotEmpty) ...<Widget>[
+              Ecart.vSm,
+              Text(
+                t.salle.seance.aSuivre,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+              for (final String cle in suivants)
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                  child: Text(
+                    _prenomDe(cle, eleves),
+                    style: palette.inkStrong.applyTo(corps),
+                  ),
+                ),
+            ],
+          ],
         ),
       ),
     );

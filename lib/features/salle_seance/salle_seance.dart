@@ -125,6 +125,7 @@ class SalleSeance extends StatelessWidget {
                 gouttiere: gouttiere,
                 espaceApres: large ? AppSpacing.lg : 0,
               ),
+              ?_appel(vue, gouttiere),
               if (!large) Ecart.vLg,
             ],
             Expanded(
@@ -491,6 +492,12 @@ class _SalleEnseignant extends StatelessWidget {
         enfant: PanneauEleves(
           eleves: vue.eleves,
           actions: actions,
+          // File au repos (personne, personne a suivre) : pas de bloc, le
+          // panneau reste celui de CLV-07.
+          recitation:
+              vue.recitation.enCours || vue.recitation.suivants.isNotEmpty
+              ? vue.recitation
+              : null,
           large: forme == FormePanneau.colonne,
           serre: forme == FormePanneau.feuille,
         ),
@@ -1154,4 +1161,43 @@ class _BlocEchec extends StatelessWidget {
       actionsContratB: true,
     );
   }
+}
+
+/// L'appel discret recu par l'eleve (EN-9, E16) : une ligne d'etat annoncee
+/// poliment (region vivante), sans fenetre, sans son ni focus vole.
+Widget? _appel(VueSeance vue, double gouttiere) {
+  final String? texte = vue.texteAppel;
+  if (texte == null) return null;
+  return Padding(
+    key: const ValueKey<String>('appel-discret'),
+    padding: EdgeInsetsDirectional.fromSTEB(
+      gouttiere,
+      AppSpacing.sm,
+      gouttiere,
+      0,
+    ),
+    child: Builder(
+      builder: (BuildContext context) {
+        final AppPalette palette = AppPalette.of(context);
+        return Semantics(
+          liveRegion: true,
+          child: DecoratedBox(
+            decoration: palette.surfaceOverlay.decoration(
+              borderRadius: AppRadius.arrondiMd,
+              side: palette.borderHairline.asBorderSide(),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Text(
+                texte,
+                style: palette.inkStrong.applyTo(
+                  Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }

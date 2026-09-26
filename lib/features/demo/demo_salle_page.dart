@@ -13,6 +13,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -20,6 +21,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/panneau_eleves.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
@@ -91,6 +93,7 @@ String _libelleEtat(EtatDemoSalle etat) => switch (etat) {
   EtatDemoSalle.visite => t.salle.seance.demo.etats.visite,
   EtatDemoSalle.rienPartage => t.salle.seance.demo.etats.rienPartage,
   EtatDemoSalle.eleves => t.salle.seance.demo.etats.eleves,
+  EtatDemoSalle.appel => t.salle.seance.demo.etats.appel,
   EtatDemoSalle.supports => t.salle.seance.demo.etats.supports,
   EtatDemoSalle.fin => t.salle.seance.demo.etats.fin,
   EtatDemoSalle.reseauFaible => t.salle.seance.demo.etats.reseauFaible,
@@ -110,6 +113,7 @@ const List<EtatDemoSalle> etatsDemoSeance = <EtatDemoSalle>[
   EtatDemoSalle.visite,
   EtatDemoSalle.rienPartage,
   EtatDemoSalle.eleves,
+  EtatDemoSalle.appel,
   EtatDemoSalle.supports,
   EtatDemoSalle.fin,
 ];
@@ -275,6 +279,14 @@ class _SalleDemoState extends State<SalleDemo> {
   bool _quittee = false;
   bool _agrandi = false;
   double _zoom = 1;
+
+  /// La file de recitation locale (EN-9) : « Faire reciter » donne la parole
+  /// sans serveur, par le modele de `ControleurRecitation`.
+  late FileRecitation _recitation = DonneesSeanceDemo.vue(
+    widget.role,
+    widget.etat,
+  ).recitation;
+
   late PanneauOuvert _panneau = DonneesSeanceDemo.vue(
     widget.role,
     widget.etat,
@@ -308,6 +320,7 @@ class _SalleDemoState extends State<SalleDemo> {
       panneau: _panneau,
       support: etat.support == null ? null : _support,
       connexion: _connexion,
+      recitation: _recitation,
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
@@ -370,7 +383,13 @@ class _SalleDemoState extends State<SalleDemo> {
         // Les quatre actions de la fiche (panneau Eleves) : sans serveur en
         // demonstration. Le rappel reussi ne produit rien (spec 10.2).
         onRappeler: enseignant ? (EleveSeance _) => _inerte() : null,
-        onChoisirPourReciter: enseignant ? (EleveSeance _) => _inerte() : null,
+        onChoisirPourReciter: enseignant
+            ? (EleveSeance e) => setState(
+                () => _recitation = _recitation.donnerLaParoleA(
+                  cleEleveSeance(e),
+                ),
+              )
+            : null,
         onNoter: enseignant ? (EleveSeance _) => _inerte() : null,
         onSignaler: enseignant ? (EleveSeance _) => _inerte() : null,
         // Le panneau Supports : « Ouvrir » agit ; la Bibliotheque complete
