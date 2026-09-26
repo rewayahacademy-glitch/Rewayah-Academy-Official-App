@@ -2119,6 +2119,7 @@ class Traductions$classe$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$classe$entree$fr entree = Traductions$classe$entree$fr.internal(_root);
 
 	/// fr: 'Choisir une classe'
 	String get catalogue => 'Choisir une classe';
@@ -6826,6 +6827,78 @@ class Traductions$tuteur$reglages$fr {
 	String erreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
 }
 
+// Path: classe.entree
+class Traductions$classe$entree$fr {
+	Traductions$classe$entree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cours dans {duree}'
+	String coursDans({required Object duree}) => 'Cours dans ${duree}';
+
+	/// fr: 'Cours dans moins d'une minute'
+	String get coursImminent => 'Cours dans moins d\'une minute';
+
+	/// fr: 'Rejoindre'
+	String get rejoindre => 'Rejoindre';
+
+	/// fr: 'Rejoindre la séance de {classe}'
+	String rejoindreLecteur({required Object classe}) => 'Rejoindre la séance de ${classe}';
+
+	/// fr: 'Préparer l'entrée'
+	String get preparer => 'Préparer l\'entrée';
+
+	/// fr: 'Préparer l'entrée de la séance de {classe}'
+	String preparerLecteur({required Object classe}) => 'Préparer l\'entrée de la séance de ${classe}';
+
+	/// fr: 'La salle est ouverte. La séance commence dans {duree}.'
+	String salleOuverte({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.';
+
+	/// fr: 'La salle est ouverte. La séance commence dans moins d'une minute.'
+	String get salleOuverteImminent => 'La salle est ouverte. La séance commence dans moins d\'une minute.';
+
+	/// fr: 'Préparation en cours'
+	String get preparation => 'Préparation en cours';
+
+	/// fr: 'Vous êtes dans la salle. La séance commence dans {duree}.'
+	String attente({required Object duree}) => 'Vous êtes dans la salle. La séance commence dans ${duree}.';
+
+	/// fr: 'Vous êtes dans la salle. La séance commence dans moins d'une minute.'
+	String get attenteImminent => 'Vous êtes dans la salle. La séance commence dans moins d\'une minute.';
+
+	/// fr: 'Séance en direct'
+	String get enDirect => 'Séance en direct';
+
+	/// fr: 'Temps prévu écoulé'
+	String get tempsEcoule => 'Temps prévu écoulé';
+
+	/// fr: 'Séance terminée'
+	String get terminee => 'Séance terminée';
+
+	/// fr: 'Séance annulée'
+	String get annulee => 'Séance annulée';
+
+	/// fr: 'Aucune séance prévue'
+	String get aucune => 'Aucune séance prévue';
+
+	/// fr: 'Vous êtes hors ligne. La séance nécessite une connexion.'
+	String get horsLigne => 'Vous êtes hors ligne. La séance nécessite une connexion.';
+
+	/// fr: 'L'information sur la séance est indisponible pour l'instant.'
+	String get indisponible => 'L\'information sur la séance est indisponible pour l\'instant.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Changement d'heure : le cours passera de {avant} à {apres}.'
+	String dst({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.';
+
+	late final Traductions$classe$entree$annonce$fr annonce = Traductions$classe$entree$annonce$fr.internal(_root);
+	late final Traductions$classe$entree$demo$fr demo = Traductions$classe$entree$demo$fr.internal(_root);
+}
+
 // Path: classe.seance
 class Traductions$classe$seance$fr {
 	Traductions$classe$seance$fr.internal(this._root);
@@ -9287,6 +9360,63 @@ class Traductions$tuteur$accueil$etatCourt$fr {
 	String get illisible => 'Non disponible';
 }
 
+// Path: classe.entree.annonce
+class Traductions$classe$entree$annonce$fr {
+	Traductions$classe$entree$annonce$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séance à venir'
+	String get aVenir => 'Séance à venir';
+
+	/// fr: 'La salle est ouverte'
+	String get fenetreOuverte => 'La salle est ouverte';
+
+	/// fr: 'Vous êtes dans la salle'
+	String get attente => 'Vous êtes dans la salle';
+}
+
+// Path: classe.entree.demo
+class Traductions$classe$entree$demo$fr {
+	Traductions$classe$entree$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Entrée en classe'
+	String get titre => 'Entrée en classe';
+
+	/// fr: 'Démonstration'
+	String get mention => 'Démonstration';
+
+	/// fr: 'Données fictives, aucun appel serveur. Chaque lien montre ce que dit l'emplacement d'entrée pour un rôle et un moment.'
+	String get intro => 'Données fictives, aucun appel serveur. Chaque lien montre ce que dit l\'emplacement d\'entrée pour un rôle et un moment.';
+
+	late final Traductions$classe$entree$demo$roles$fr roles = Traductions$classe$entree$demo$roles$fr.internal(_root);
+	late final Traductions$classe$entree$demo$etats$fr etats = Traductions$classe$entree$demo$etats$fr.internal(_root);
+
+	/// fr: 'Forme : bouton'
+	String get formeBouton => 'Forme : bouton';
+
+	/// fr: 'Forme : ligne d'état'
+	String get formeLigne => 'Forme : ligne d\'état';
+
+	/// fr: 'Lecteur d'écran : {texte}'
+	String lecteur({required Object texte}) => 'Lecteur d\'écran : ${texte}';
+
+	/// fr: 'Annonce : {texte}'
+	String annonce({required Object texte}) => 'Annonce : ${texte}';
+
+	/// fr: 'Détail : {texte}'
+	String detail({required Object texte}) => 'Détail : ${texte}';
+
+	/// fr: 'Retour à la liste'
+	String get retour => 'Retour à la liste';
+}
+
 // Path: classe.observation.motif
 class Traductions$classe$observation$motif$fr {
 	Traductions$classe$observation$motif$fr.internal(this._root);
@@ -11520,6 +11650,66 @@ class Traductions$salle$seance$demo$etats$fr {
 
 	/// fr: 'Accès retiré'
 	String get accesRetire => 'Accès retiré';
+}
+
+// Path: classe.entree.demo.roles
+class Traductions$classe$entree$demo$roles$fr {
+	Traductions$classe$entree$demo$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Élève'
+	String get eleve => 'Élève';
+
+	/// fr: 'Élève, Interface guidée'
+	String get guidee => 'Élève, Interface guidée';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+}
+
+// Path: classe.entree.demo.etats
+class Traductions$classe$entree$demo$etats$fr {
+	Traductions$classe$entree$demo$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À venir'
+	String get aVenir => 'À venir';
+
+	/// fr: 'Fenêtre ouverte'
+	String get fenetreOuverte => 'Fenêtre ouverte';
+
+	/// fr: 'Préparation en cours'
+	String get preparation => 'Préparation en cours';
+
+	/// fr: 'Attente avant le début'
+	String get attente => 'Attente avant le début';
+
+	/// fr: 'En direct'
+	String get enDirect => 'En direct';
+
+	/// fr: 'Temps prévu écoulé'
+	String get tempsEcoule => 'Temps prévu écoulé';
+
+	/// fr: 'Terminée'
+	String get terminee => 'Terminée';
+
+	/// fr: 'Annulée'
+	String get annulee => 'Annulée';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+
+	/// fr: 'Information indisponible'
+	String get indisponible => 'Information indisponible';
+
+	/// fr: 'Changement d'heure'
+	String get changementHeure => 'Changement d\'heure';
 }
 
 // Path: tc.outils.dock.position
@@ -13801,6 +13991,52 @@ extension on Traductions {
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'classe.entree.coursDans' => ({required Object duree}) => 'Cours dans ${duree}',
+			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
+			'classe.entree.rejoindre' => 'Rejoindre',
+			'classe.entree.rejoindreLecteur' => ({required Object classe}) => 'Rejoindre la séance de ${classe}',
+			'classe.entree.preparer' => 'Préparer l\'entrée',
+			'classe.entree.preparerLecteur' => ({required Object classe}) => 'Préparer l\'entrée de la séance de ${classe}',
+			'classe.entree.salleOuverte' => ({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.',
+			'classe.entree.salleOuverteImminent' => 'La salle est ouverte. La séance commence dans moins d\'une minute.',
+			'classe.entree.preparation' => 'Préparation en cours',
+			'classe.entree.attente' => ({required Object duree}) => 'Vous êtes dans la salle. La séance commence dans ${duree}.',
+			'classe.entree.attenteImminent' => 'Vous êtes dans la salle. La séance commence dans moins d\'une minute.',
+			'classe.entree.enDirect' => 'Séance en direct',
+			'classe.entree.tempsEcoule' => 'Temps prévu écoulé',
+			'classe.entree.terminee' => 'Séance terminée',
+			'classe.entree.annulee' => 'Séance annulée',
+			'classe.entree.aucune' => 'Aucune séance prévue',
+			'classe.entree.horsLigne' => 'Vous êtes hors ligne. La séance nécessite une connexion.',
+			'classe.entree.indisponible' => 'L\'information sur la séance est indisponible pour l\'instant.',
+			'classe.entree.reessayer' => 'Réessayer',
+			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.',
+			'classe.entree.annonce.aVenir' => 'Séance à venir',
+			'classe.entree.annonce.fenetreOuverte' => 'La salle est ouverte',
+			'classe.entree.annonce.attente' => 'Vous êtes dans la salle',
+			'classe.entree.demo.titre' => 'Entrée en classe',
+			'classe.entree.demo.mention' => 'Démonstration',
+			'classe.entree.demo.intro' => 'Données fictives, aucun appel serveur. Chaque lien montre ce que dit l\'emplacement d\'entrée pour un rôle et un moment.',
+			'classe.entree.demo.roles.eleve' => 'Élève',
+			'classe.entree.demo.roles.guidee' => 'Élève, Interface guidée',
+			'classe.entree.demo.roles.enseignant' => 'Enseignant',
+			'classe.entree.demo.etats.aVenir' => 'À venir',
+			'classe.entree.demo.etats.fenetreOuverte' => 'Fenêtre ouverte',
+			'classe.entree.demo.etats.preparation' => 'Préparation en cours',
+			'classe.entree.demo.etats.attente' => 'Attente avant le début',
+			'classe.entree.demo.etats.enDirect' => 'En direct',
+			'classe.entree.demo.etats.tempsEcoule' => 'Temps prévu écoulé',
+			'classe.entree.demo.etats.terminee' => 'Terminée',
+			'classe.entree.demo.etats.annulee' => 'Annulée',
+			'classe.entree.demo.etats.horsLigne' => 'Hors ligne',
+			'classe.entree.demo.etats.indisponible' => 'Information indisponible',
+			'classe.entree.demo.etats.changementHeure' => 'Changement d\'heure',
+			'classe.entree.demo.formeBouton' => 'Forme : bouton',
+			'classe.entree.demo.formeLigne' => 'Forme : ligne d\'état',
+			'classe.entree.demo.lecteur' => ({required Object texte}) => 'Lecteur d\'écran : ${texte}',
+			'classe.entree.demo.annonce' => ({required Object texte}) => 'Annonce : ${texte}',
+			'classe.entree.demo.detail' => ({required Object texte}) => 'Détail : ${texte}',
+			'classe.entree.demo.retour' => 'Retour à la liste',
 			'classe.catalogue' => 'Choisir une classe',
 			'classe.planning' => 'Planning',
 			'classe.travail' => 'Avant le prochain cours',
@@ -14232,6 +14468,8 @@ extension on Traductions {
 			'tc.groupe.espace.retour' => 'Mes classes',
 			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
 			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
 			'tc.groupe.espace.progression' => 'Progression',
@@ -14278,8 +14516,6 @@ extension on Traductions {
 			'tc.bibliotheque.detail.renduCoran' => 'Le Coran s’ouvre dans le lecteur dédié.',
 			'tc.bibliotheque.action.telecharger' => 'Rendre disponible hors ligne',
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',

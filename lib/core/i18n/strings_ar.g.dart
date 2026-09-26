@@ -39,9 +39,20 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	TraductionsAr $copyWith({TranslationMetadata<AppLocale, Traductions>? meta}) => TraductionsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
 	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
+}
+
+// Path: classe
+class _Traductions$classe$ar extends Traductions$classe$fr {
+	_Traductions$classe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$classe$entree$ar entree = _Traductions$classe$entree$ar._(_root);
 }
 
 // Path: salle
@@ -72,6 +83,36 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 
 	// Translations
 	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
+}
+
+// Path: classe.entree
+class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
+	_Traductions$classe$entree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String coursDans({required Object duree}) => 'الدرس بعد ${duree}';
+	@override String get coursImminent => 'الدرس بعد أقل من دقيقة';
+	@override String get rejoindre => 'انضمام';
+	@override String rejoindreLecteur({required Object classe}) => 'الانضمام إلى حصة ${classe}';
+	@override String get preparer => 'تحضير الدخول';
+	@override String preparerLecteur({required Object classe}) => 'تحضير الدخول إلى حصة ${classe}';
+	@override String salleOuverte({required Object duree}) => 'القاعة مفتوحة. تبدأ الحصة بعد ${duree}.';
+	@override String get salleOuverteImminent => 'القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.';
+	@override String get preparation => 'التحضير جارٍ';
+	@override String attente({required Object duree}) => 'أنت في القاعة. تبدأ الحصة بعد ${duree}.';
+	@override String get attenteImminent => 'أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.';
+	@override String get enDirect => 'الحصة مباشرة';
+	@override String get tempsEcoule => 'انتهى الوقت المقرر';
+	@override String get terminee => 'انتهت الحصة';
+	@override String get annulee => 'أُلغيت الحصة';
+	@override String get aucune => 'لا توجد حصة مقررة';
+	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
+	@override String get indisponible => 'معلومات الحصة غير متاحة حاليًا.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String dst({required Object avant, required Object apres}) => 'تغيير التوقيت: سينتقل الدرس من ${avant} إلى ${apres}.';
+	@override late final _Traductions$classe$entree$annonce$ar annonce = _Traductions$classe$entree$annonce$ar._(_root);
 }
 
 // Path: salle.secours
@@ -137,6 +178,18 @@ class _Traductions$tc$groupe$ar extends Traductions$tc$groupe$fr {
 	@override late final _Traductions$tc$groupe$enseignant$ar enseignant = _Traductions$tc$groupe$enseignant$ar._(_root);
 }
 
+// Path: classe.entree.annonce
+class _Traductions$classe$entree$annonce$ar extends Traductions$classe$entree$annonce$fr {
+	_Traductions$classe$entree$annonce$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aVenir => 'حصة قادمة';
+	@override String get fenetreOuverte => 'القاعة مفتوحة';
+	@override String get attente => 'أنت في القاعة';
+}
+
 // Path: tc.groupe.enseignant
 class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseignant$fr {
 	_Traductions$tc$groupe$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -156,6 +209,29 @@ class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseign
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'classe.entree.coursDans' => ({required Object duree}) => 'الدرس بعد ${duree}',
+			'classe.entree.coursImminent' => 'الدرس بعد أقل من دقيقة',
+			'classe.entree.rejoindre' => 'انضمام',
+			'classe.entree.rejoindreLecteur' => ({required Object classe}) => 'الانضمام إلى حصة ${classe}',
+			'classe.entree.preparer' => 'تحضير الدخول',
+			'classe.entree.preparerLecteur' => ({required Object classe}) => 'تحضير الدخول إلى حصة ${classe}',
+			'classe.entree.salleOuverte' => ({required Object duree}) => 'القاعة مفتوحة. تبدأ الحصة بعد ${duree}.',
+			'classe.entree.salleOuverteImminent' => 'القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.',
+			'classe.entree.preparation' => 'التحضير جارٍ',
+			'classe.entree.attente' => ({required Object duree}) => 'أنت في القاعة. تبدأ الحصة بعد ${duree}.',
+			'classe.entree.attenteImminent' => 'أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.',
+			'classe.entree.enDirect' => 'الحصة مباشرة',
+			'classe.entree.tempsEcoule' => 'انتهى الوقت المقرر',
+			'classe.entree.terminee' => 'انتهت الحصة',
+			'classe.entree.annulee' => 'أُلغيت الحصة',
+			'classe.entree.aucune' => 'لا توجد حصة مقررة',
+			'classe.entree.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
+			'classe.entree.indisponible' => 'معلومات الحصة غير متاحة حاليًا.',
+			'classe.entree.reessayer' => 'إعادة المحاولة',
+			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'تغيير التوقيت: سينتقل الدرس من ${avant} إلى ${apres}.',
+			'classe.entree.annonce.aVenir' => 'حصة قادمة',
+			'classe.entree.annonce.fenetreOuverte' => 'القاعة مفتوحة',
+			'classe.entree.annonce.attente' => 'أنت في القاعة',
 			'salle.secours.reseauFaible' => 'الشبكة ضعيفة. الأولوية للصوت.',
 			'salle.secours.reseauFaibleGuidee' => 'الشبكة ضعيفة.',
 			'salle.secours.reseauFaibleGuideeSuite' => 'الصوت يبقى أولوية.',

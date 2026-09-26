@@ -52,6 +52,7 @@ import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
 import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
+import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_salle_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
@@ -1047,6 +1048,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
 
       // La salle de seance en demonstration : aucune route en production.
       ...routesDemoSalle(Env.environnement),
+      ...routesDemoClasse(Env.environnement),
     ],
   );
 });

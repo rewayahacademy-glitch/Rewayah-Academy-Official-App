@@ -2435,6 +2435,62 @@
     }
   },
   "classe": {
+    "entree": {
+      "coursDans": "Cours dans {duree}",
+      "coursImminent": "Cours dans moins d'une minute",
+      "rejoindre": "Rejoindre",
+      "rejoindreLecteur": "Rejoindre la séance de {classe}",
+      "preparer": "Préparer l'entrée",
+      "preparerLecteur": "Préparer l'entrée de la séance de {classe}",
+      "salleOuverte": "La salle est ouverte. La séance commence dans {duree}.",
+      "salleOuverteImminent": "La salle est ouverte. La séance commence dans moins d'une minute.",
+      "preparation": "Préparation en cours",
+      "attente": "Vous êtes dans la salle. La séance commence dans {duree}.",
+      "attenteImminent": "Vous êtes dans la salle. La séance commence dans moins d'une minute.",
+      "enDirect": "Séance en direct",
+      "tempsEcoule": "Temps prévu écoulé",
+      "terminee": "Séance terminée",
+      "annulee": "Séance annulée",
+      "aucune": "Aucune séance prévue",
+      "horsLigne": "Vous êtes hors ligne. La séance nécessite une connexion.",
+      "indisponible": "L'information sur la séance est indisponible pour l'instant.",
+      "reessayer": "Réessayer",
+      "dst": "Changement d'heure : le cours passera de {avant} à {apres}.",
+      "annonce": {
+        "aVenir": "Séance à venir",
+        "fenetreOuverte": "La salle est ouverte",
+        "attente": "Vous êtes dans la salle"
+      },
+      "demo": {
+        "titre": "Entrée en classe",
+        "mention": "Démonstration",
+        "intro": "Données fictives, aucun appel serveur. Chaque lien montre ce que dit l'emplacement d'entrée pour un rôle et un moment.",
+        "roles": {
+          "eleve": "Élève",
+          "guidee": "Élève, Interface guidée",
+          "enseignant": "Enseignant"
+        },
+        "etats": {
+          "aVenir": "À venir",
+          "fenetreOuverte": "Fenêtre ouverte",
+          "preparation": "Préparation en cours",
+          "attente": "Attente avant le début",
+          "enDirect": "En direct",
+          "tempsEcoule": "Temps prévu écoulé",
+          "terminee": "Terminée",
+          "annulee": "Annulée",
+          "horsLigne": "Hors ligne",
+          "indisponible": "Information indisponible",
+          "changementHeure": "Changement d'heure"
+        },
+        "formeBouton": "Forme : bouton",
+        "formeLigne": "Forme : ligne d'état",
+        "lecteur": "Lecteur d'écran : {texte}",
+        "annonce": "Annonce : {texte}",
+        "detail": "Détail : {texte}",
+        "retour": "Retour à la liste"
+      }
+    },
     "catalogue": "Choisir une classe",
     "planning": "Planning",
     "travail": "Avant le prochain cours",

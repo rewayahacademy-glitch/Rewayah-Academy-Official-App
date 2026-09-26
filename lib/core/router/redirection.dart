@@ -49,7 +49,9 @@ String? deciderRedirection({
   // pas et cette porte reste fermee.
   if (environnementAutoriseDemo(environnement) &&
       (cheminDemande == Routes.demoSalle ||
-          cheminDemande.startsWith('${Routes.demoSalle}/'))) {
+          cheminDemande.startsWith('${Routes.demoSalle}/') ||
+          cheminDemande == Routes.demoClasse ||
+          cheminDemande.startsWith('${Routes.demoClasse}/'))) {
     return null;
   }
 

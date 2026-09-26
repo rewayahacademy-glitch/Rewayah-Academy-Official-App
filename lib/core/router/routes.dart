@@ -457,6 +457,10 @@ abstract final class Routes {
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoSalle = '/demo/salle';
 
+  /// L'entree en classe en demonstration (roles x etats, CL-4.2).
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoClasse = '/demo/classe';
+
   // --- Developpement --------------------------------------------------------
 
   /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.
