@@ -42,6 +42,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
 	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
+	@override late final _Traductions$enseignant$ar enseignant = _Traductions$enseignant$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
 }
 
@@ -73,6 +74,16 @@ class _Traductions$eleve$ar extends Traductions$eleve$fr {
 
 	// Translations
 	@override late final _Traductions$eleve$suivi$ar suivi = _Traductions$eleve$suivi$ar._(_root);
+}
+
+// Path: enseignant
+class _Traductions$enseignant$ar extends Traductions$enseignant$fr {
+	_Traductions$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$enseignant$ficheGroupe$ar ficheGroupe = _Traductions$enseignant$ficheGroupe$ar._(_root);
 }
 
 // Path: tc
@@ -168,6 +179,25 @@ class _Traductions$eleve$suivi$ar extends Traductions$eleve$suivi$fr {
 	@override String tronquee({required Object nombre}) => 'تظهر أحدث ${nombre} دروس.';
 	@override String fin({required Object nombre}) => 'عدد الدروس في المتابعة: ${nombre}.';
 	@override String get finUn => 'درس واحد في المتابعة.';
+}
+
+// Path: enseignant.ficheGroupe
+class _Traductions$enseignant$ficheGroupe$ar extends Traductions$enseignant$ficheGroupe$fr {
+	_Traductions$enseignant$ficheGroupe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get elevesTitre => 'الطلاب';
+	@override String get preparationTitre => 'للتحضير';
+	@override String get supportPrevu => 'المادة المقررة';
+	@override String get positionReprise => 'موضع الاستئناف';
+	@override String get objectif => 'الهدف';
+	@override String get preparationVide => 'لم يُسجَّل أي تحضير لهذه الحصة.';
+	@override String get supportsTitre => 'أحدث المواد';
+	@override String repriseEleve({required Object page}) => 'الاستئناف: ${page}';
+	@override String dernierPoint({required Object texte}) => 'آخر ملاحظة: ${texte}';
+	@override String get chargementClasse => 'جارٍ تحميل الفصل.';
 }
 
 // Path: tc.groupe
@@ -271,6 +301,16 @@ extension on TraductionsAr {
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'تظهر أحدث ${nombre} دروس.',
 			'eleve.suivi.fin' => ({required Object nombre}) => 'عدد الدروس في المتابعة: ${nombre}.',
 			'eleve.suivi.finUn' => 'درس واحد في المتابعة.',
+			'enseignant.ficheGroupe.elevesTitre' => 'الطلاب',
+			'enseignant.ficheGroupe.preparationTitre' => 'للتحضير',
+			'enseignant.ficheGroupe.supportPrevu' => 'المادة المقررة',
+			'enseignant.ficheGroupe.positionReprise' => 'موضع الاستئناف',
+			'enseignant.ficheGroupe.objectif' => 'الهدف',
+			'enseignant.ficheGroupe.preparationVide' => 'لم يُسجَّل أي تحضير لهذه الحصة.',
+			'enseignant.ficheGroupe.supportsTitre' => 'أحدث المواد',
+			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'الاستئناف: ${page}',
+			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'آخر ملاحظة: ${texte}',
+			'enseignant.ficheGroupe.chargementClasse' => 'جارٍ تحميل الفصل.',
 			'tc.groupe.enseignant.sayyid' => 'سيد',
 			'tc.groupe.enseignant.sayyida' => 'سيدة',
 			_ => null,

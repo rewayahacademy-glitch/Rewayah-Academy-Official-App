@@ -404,6 +404,7 @@ class IdentiteGroupe extends StatelessWidget {
     super.key,
     this.urlPhoto,
     this.repliInitiales = false,
+    this.ligneDiscrete,
   });
 
   /// Le groupe.
@@ -416,10 +417,15 @@ class IdentiteGroupe extends StatelessWidget {
   /// sans pastille « Photo a fournir » (information interne).
   final bool repliInitiales;
 
+  /// Une ligne discrete sous l'enseignant, quand l'hote en a une : le
+  /// rendez-vous hebdomadaire, cote enseignant (CL-4.4b).
+  final String? ligneDiscrete;
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final String? discrete = ligneDiscrete;
     final String coursEtNiveau = LibellesGroupe.coursEtNiveau(
       cours: groupe.nomCours,
       niveau: groupe.niveauHumain,
@@ -455,15 +461,26 @@ class IdentiteGroupe extends StatelessWidget {
                     ),
                   ],
                 ),
+                // CLV-02 : le nom de la Classe, puis le cours et le niveau,
+                // puis l'enseignant.
+                if (coursEtNiveau.isNotEmpty) ...<Widget>[
+                  Ecart.vXs,
+                  Text(
+                    coursEtNiveau,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  ),
+                ],
                 Ecart.vXs,
                 Text(
                   LibellesGroupe.enseignantNomme(groupe.enseignant),
                   style: textes.titleSmall ?? const TextStyle(),
                 ),
-                if (coursEtNiveau.isNotEmpty) ...<Widget>[
+                if (discrete != null && discrete.isNotEmpty) ...<Widget>[
                   Ecart.vXs,
                   Text(
-                    coursEtNiveau,
+                    discrete,
                     style: palette.inkMuted.applyTo(
                       textes.bodySmall ?? const TextStyle(),
                     ),

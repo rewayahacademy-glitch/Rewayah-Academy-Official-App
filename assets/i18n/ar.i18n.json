@@ -73,6 +73,20 @@
       "finUn": "درس واحد في المتابعة."
     }
   },
+  "enseignant": {
+    "ficheGroupe": {
+      "elevesTitre": "الطلاب",
+      "preparationTitre": "للتحضير",
+      "supportPrevu": "المادة المقررة",
+      "positionReprise": "موضع الاستئناف",
+      "objectif": "الهدف",
+      "preparationVide": "لم يُسجَّل أي تحضير لهذه الحصة.",
+      "supportsTitre": "أحدث المواد",
+      "repriseEleve": "الاستئناف: {page}",
+      "dernierPoint": "آخر ملاحظة: {texte}",
+      "chargementClasse": "جارٍ تحميل الفصل."
+    }
+  },
   "tc": {
     "groupe": {
       "enseignant": {

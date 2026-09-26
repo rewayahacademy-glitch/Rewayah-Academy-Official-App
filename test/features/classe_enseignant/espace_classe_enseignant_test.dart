@@ -14,7 +14,11 @@ import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
@@ -179,28 +183,118 @@ void main() {
   ) async {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, EtatDemoClasse.aVenir);
+      // CL-4.4b : une seule carte groupee, une ligne par eleve.
+      // (« Supports recents » a le sien : on prend celui des eleves, et tous
+      // les prenoms doivent y etre.)
+      final Finder groupe = find.ancestor(
+        of: find.text(DonneesClasseDemo.eleves.first.prenom),
+        matching: find.byType(GroupeReglages),
+      );
+      expect(groupe, findsOneWidget);
       for (final EleveProjectionDemo e in DonneesClasseDemo.eleves) {
-        expect(find.text(e.prenom), findsOneWidget);
         expect(
-          find.text(
-            t.enseignant.ficheGroupe.dernierPoint(texte: e.dernierPoint),
+          find.descendant(of: groupe, matching: find.text(e.prenom)),
+          findsOneWidget,
+        );
+        // Une seule ligne secondaire « niveau · reprise », puis le dernier
+        // point dessous, dans la meme legende.
+        final String reprise = t.enseignant.ficheGroupe.repriseEleve(
+          page: e.pageReprise,
+        );
+        final String point = t.enseignant.ficheGroupe.dernierPoint(
+          texte: e.dernierPoint,
+        );
+        expect(
+          find.descendant(
+            of: groupe,
+            matching: find.text('${e.niveau} · $reprise\n$point'),
           ),
           findsOneWidget,
         );
       }
+      // Aucune carte par eleve.
       expect(
-        find.text(t.enseignant.ficheGroupe.repriseEleve(page: 'Page 24')),
-        findsNWidgets(2),
+        find.descendant(
+          of: find.byType(AppCard),
+          matching: find.text('Mariam'),
+        ),
+        findsNothing,
       );
-      expect(find.byType(AvatarTile), findsNWidgets(3));
+      // Trois initiales d'eleve dans le groupe, plus celles de l'enseignante
+      // dans l'identite.
+      expect(
+        find.descendant(of: groupe, matching: find.byType(AvatarTile)),
+        findsNWidgets(3),
+      );
+      expect(find.byType(AvatarTile), findsNWidgets(4));
       // Jamais de photo, ni d'eleve ni d'enseignante.
       expect(find.byType(Image), findsNothing);
       expect(find.byType(PhotoEnseignant), findsNothing);
-      // Le lien vers la revue du groupe est garde.
+      // Le lien vers la revue du groupe est garde, au bord de fin, sous la
+      // carte.
+      final Finder revue = find.widgetWithText(
+        ActionPrincipale,
+        t.enseignant.ficheGroupe.revue,
+      );
+      expect(revue, findsOneWidget);
       expect(
-        find.widgetWithText(ActionPrincipale, t.enseignant.ficheGroupe.revue),
+        tester.getTopLeft(revue).dy,
+        greaterThan(tester.getBottomLeft(groupe).dy),
+      );
+      expect(
+        tester.getTopRight(revue).dx,
+        moreOrLessEquals(tester.getTopRight(groupe).dx, epsilon: 1),
+      );
+    });
+  });
+
+  testWidgets('haut de page : retour au bord de debut, puis le nom de la '
+      'Classe en titre ; capacite en pastille, aucune tuile de places', (
+    WidgetTester tester,
+  ) async {
+    await avecLargeur(tester, largeurMobile, () async {
+      await _poser(tester, EtatDemoClasse.aVenir);
+      // Plus de titre d'ecran « Fiche du groupe ».
+      expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
+      final Finder titre = find.text(DonneesClasseDemo.classe);
+      expect(titre, findsOneWidget);
+      final Finder retour = find.text(t.enseignant.ficheGroupe.retour);
+      expect(
+        tester.getTopLeft(retour).dy,
+        lessThan(tester.getTopLeft(titre).dy),
+      );
+      expect(
+        tester.getTopLeft(retour).dx,
+        lessThan(tester.getSize(find.byType(FicheGroupePage)).width / 3),
+      );
+      // Le titre, puis le cours et le niveau, puis l'enseignante.
+      final Finder cours = find.textContaining(DonneesClasseDemo.cours);
+      final Finder enseignante = find.textContaining(
+        DonneesClasseDemo.enseignante.nomAffichage,
+      );
+      expect(
+        tester.getTopLeft(titre).dy,
+        lessThan(tester.getTopLeft(cours.first).dy),
+      );
+      expect(
+        tester.getTopLeft(cours.first).dy,
+        lessThan(tester.getTopLeft(enseignante.first).dy),
+      );
+      // La capacite en petite pastille : « 3 eleves sur 6 places ».
+      expect(
+        find.widgetWithText(
+          StatusPill,
+          t.tc.groupe.carte.capacitePhrase(
+            membres: DonneesClasseDemo.eleves.length,
+            seuil: 6,
+          ),
+        ),
         findsOneWidget,
       );
+      // Aucune tuile « places libres » pleine largeur.
+      expect(find.byType(StatTile), findsNothing);
+      expect(find.text(t.enseignant.ficheGroupe.placesLibres), findsNothing);
+      expect(find.text(t.enseignant.ficheGroupe.placesLibresUn), findsNothing);
     });
   });
 

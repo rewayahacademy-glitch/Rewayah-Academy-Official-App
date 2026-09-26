@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
@@ -13,6 +12,7 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_horloge/port_horloge_seance.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
@@ -22,15 +22,15 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/stat_tile.dart';
 import '../../core/widgets/status_pill.dart';
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
+import '../tc_espace_groupe/espace_groupe_page.dart' show IdentiteGroupe;
 import 'preparation_seance.dart';
 
 /// `ENS-07` : la fiche d'un groupe, telle que son enseignant la lit.
@@ -76,10 +76,11 @@ class FicheGroupePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Pas de titre d'ecran (CL-4.4b) : comme chez l'eleve, le nom de la
+    // Classe EST le titre, porte par `IdentiteGroupe`. Le chemin de sortie,
+    // visible et en haut, au bord de debut : cet ecran n'a pas de barre de
+    // navigation pour le porter.
     return PageShell(
-      titre: t.enseignant.ficheGroupe.titre,
-      // Le chemin de sortie, visible et en haut : cet ecran n'a pas de barre de
-      // navigation pour le porter.
       entete: const _Sortie(),
       child: _Corps(groupeId: groupeId, onPreparer: onPreparer),
     );
@@ -181,7 +182,7 @@ class _Corps extends ConsumerWidget {
     final Widget eleves = _Membres(
       membres: membres.requireValue,
       projections: ref.watch(projectionElevesProvider(groupe.id)),
-      revue: _EnDebut(
+      revue: IntrinsicWidth(
         child: ActionPrincipale(
           libelle: t.enseignant.ficheGroupe.revue,
           niveau: NiveauAction.tertiaire,
@@ -445,79 +446,70 @@ class _Preparation extends ConsumerWidget {
   }
 }
 
-/// Le groupe, son public, son rendez-vous hebdomadaire et ses places libres.
-class _EnteteGroupe extends StatelessWidget {
+/// L'identite de la Classe, la **meme** que chez l'eleve (CL-4.4b).
+///
+/// `IdentiteGroupe` partage : le nom de la Classe en titre, le cours et le
+/// niveau, l'enseignant, puis la capacite en petite `StatusPill`
+/// (« 3 eleves sur 6 places »). Le rendez-vous hebdomadaire tient sur une
+/// ligne discrete. Aucune tuile « places libres » pleine largeur.
+///
+/// Tant que le resume de la Classe n'est pas lu, ou s'il ne peut pas l'etre,
+/// le nom, l'horaire et la capacite se lisent sur `mes_groupes_v`, dans le
+/// meme ordre et la meme forme.
+class _EnteteGroupe extends ConsumerWidget {
   const _EnteteGroupe({required this.groupe});
 
   final GroupeEnseignant groupe;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Une seule visio commune par semaine depuis le pivot : le creneau du
+    // groupe EST l'heure du cours.
+    final String horaire = t.enseignant.ficheGroupe.creneauHebdo(
+      jour: _jour(groupe.creneau),
+      heure: _heure(groupe.creneau),
+    );
+    final GroupSummaryVM? resume = ref.watch(groupeProvider(groupe.id)).value;
+    if (resume != null) {
+      // Initiales en repli, jamais de pastille « Photo a fournir » ici :
+      // l'enseignant lit sa Classe, pas son dossier (CL-4.4).
+      return IdentiteGroupe(
+        groupe: resume,
+        repliInitiales: true,
+        ligneDiscrete: horaire,
+      );
+    }
+
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        BentoTile(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      groupe.libelle,
-                      style: textes.headlineSmall ?? const TextStyle(),
-                    ),
-                  ),
-                  if (groupe.complet)
-                    StatusPill(
-                      libelle: t.enseignant.ficheGroupe.complet,
-                      ton: TonEtat.avertissement,
-                    ),
-                ],
-              ),
-              Ecart.vXs,
-              Text(
-                _nomType(groupe.type),
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
-                ),
-              ),
-              Ecart.vLg,
-              Text(
-                t.enseignant.ficheGroupe.creneauTitre,
-                style: textes.labelLarge ?? const TextStyle(),
-              ),
-              Ecart.vXs,
-              // Une seule visio commune par semaine depuis le pivot : le
-              // creneau du groupe EST l'heure du cours.
-              Text(
-                t.enseignant.ficheGroupe.creneauHebdo(
-                  jour: _jour(groupe.creneau),
-                  heure: _heure(groupe.creneau),
-                ),
-                style: textes.titleMedium ?? const TextStyle(),
-              ),
-            ],
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            groupe.libelle,
+            style: textes.headlineSmall ?? const TextStyle(),
           ),
-        ),
-        Ecart.vMd,
-        // Le seuil affiche est celui du groupe, jamais un chiffre calcule ici :
-        // cinq enfants, six adultes, et c'est la base qui le tient. Le zero
-        // s'affiche comme les autres valeurs.
-        //
-        // Sans `onPress` : l'enseignant ne compose pas son groupe, ce compteur
-        // est un constat, et il n'existe aucun ecran d'action ou le mener.
-        StatTile(
-          valeur: groupe.placesLibres,
-          libelle: groupe.placesLibres == 1
-              ? t.enseignant.ficheGroupe.placesLibresUn
-              : t.enseignant.ficheGroupe.placesLibres,
-          ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
-        ),
-      ],
+          Ecart.vXs,
+          Text(
+            horaire,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vSm,
+          // Le seuil affiche est celui du groupe, jamais un chiffre calcule
+          // ici : cinq enfants, six adultes, et c'est la base qui le tient.
+          StatusPill(
+            libelle: LibellesGroupe.capacitePhrase(
+              membres: groupe.nbMembres,
+              seuil: groupe.seuilMax,
+            ),
+            ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -554,112 +546,60 @@ class _Membres extends StatelessWidget {
             registre: RegistreVide.subi,
           )
         else
-          for (final MembreSeance membre in membres)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: _LigneMembre(
-                membre: membre,
-                projection: projections[membre.studentId],
-              ),
-            ),
+          // Une seule surface groupee, une ligne par eleve (CL-4.4b), jamais
+          // une carte par eleve.
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              for (final MembreSeance membre in membres)
+                _ligneMembre(membre, projections[membre.studentId]),
+            ],
+          ),
         Ecart.vSm,
-        revue,
+        // Au bord de fin, sous la carte : un lien, pas une action principale.
+        Align(alignment: AlignmentDirectional.centerEnd, child: revue),
       ],
     );
   }
 }
 
-/// Un eleve : ses initiales (jamais de photo), son prenom, son identifiant
-/// immuable, son niveau indique, sa page de reprise et son dernier point, en
-/// texte neutre. Rien de ce que R15 interdit : le modele n'en porte pas.
+/// Un eleve, une ligne : ses initiales (jamais de photo), son prenom en titre,
+/// son identifiant immuable en valeur discrete, puis une seule ligne
+/// secondaire « niveau · reprise » et, dessous, son dernier point. En texte
+/// neutre : rien de ce que R15 interdit, le modele n'en porte pas.
 ///
-/// Non actionnable, donc ni `SignalRow` ni `Pressable` : depuis la fiche, un
-/// eleve ne mene a aucun ecran que l'enseignant ait le droit d'ouvrir. La ligne
-/// est lue **d'un bloc** par les technologies d'assistance.
-class _LigneMembre extends StatelessWidget {
-  const _LigneMembre({required this.membre, this.projection});
+/// Sans `onPress` : depuis la fiche, un eleve ne mene a aucun ecran que
+/// l'enseignant ait le droit d'ouvrir. `GroupeReglages` lit alors la ligne
+/// **d'un bloc** (`MergeSemantics`), identifiant compris.
+LigneRubrique _ligneMembre(MembreSeance membre, ProjectionEleve? projection) {
+  final String? niveau = membre.niveau?.trim();
+  final String? page = projection?.pageReprise?.trim();
+  final String? point = projection?.dernierPoint?.trim();
+  final String resume = <String>[
+    if (niveau != null && niveau.isNotEmpty) niveau,
+    if (page != null && page.isNotEmpty)
+      t.enseignant.ficheGroupe.repriseEleve(page: page),
+  ].join(' · ');
+  final String legende = <String>[
+    if (resume.isNotEmpty) resume,
+    if (point != null && point.isNotEmpty)
+      t.enseignant.ficheGroupe.dernierPoint(texte: point),
+  ].join('\n');
 
-  final MembreSeance membre;
-  final ProjectionEleve? projection;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final TextStyle discret = palette.inkMuted.applyTo(
-      textes.bodySmall ?? const TextStyle(),
-    );
-    final String? niveau = membre.niveau;
-    final String? page = projection?.pageReprise;
-    final String? point = projection?.dernierPoint;
-
-    return MergeSemantics(
-      child: AppCard(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Initiales seulement : aucune photo d'eleve (rectification 18).
-            ExcludeSemantics(
-              child: AvatarTile(prenom: membre.libelle, diametre: 40),
-            ),
-            Ecart.hMd,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // `libelle` rend le prenom, ou l'identifiant immuable quand
-                  // la base l'a masque en observation.
-                  Text(
-                    membre.libelle,
-                    style: textes.titleSmall ?? const TextStyle(),
-                  ),
-                  Ecart.vXs,
-                  // L'identifiant immuable ne se coupe pas. [A11Y]
-                  Text(membre.identifiantImmuable, style: discret),
-                  if (niveau != null && niveau.trim().isNotEmpty) ...<Widget>[
-                    Ecart.vXs,
-                    Text(
-                      t.enseignant.ficheGroupe.niveauIndique(
-                        niveau: niveau.trim(),
-                      ),
-                      style: discret,
-                    ),
-                  ],
-                  if (page != null && page.trim().isNotEmpty) ...<Widget>[
-                    Ecart.vXs,
-                    Text(
-                      t.enseignant.ficheGroupe.repriseEleve(page: page.trim()),
-                      style: discret,
-                    ),
-                  ],
-                  if (point != null && point.trim().isNotEmpty) ...<Widget>[
-                    Ecart.vXs,
-                    Text(
-                      t.enseignant.ficheGroupe.dernierPoint(
-                        texte: point.trim(),
-                      ),
-                      style: discret,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  return LigneRubrique(
+    // `libelle` rend le prenom, ou l'identifiant immuable quand la base l'a
+    // masque en observation.
+    libelle: membre.libelle,
+    // Initiales seulement : aucune photo d'eleve (rectification 18).
+    meneur: ExcludeSemantics(
+      child: AvatarTile(prenom: membre.libelle, diametre: 40),
+    ),
+    // L'identifiant immuable reste lisible, discret, en fin de ligne. [A11Y]
+    valeur: membre.identifiantImmuable == membre.libelle
+        ? null
+        : membre.identifiantImmuable,
+    legende: legende.isEmpty ? null : legende,
+  );
 }
-
-/// Le nom du public d'un groupe.
-///
-/// Les deux libelles existent deja sous `admin.groupes.*` : en declarer des
-/// jumeaux sous `enseignant.*` donnerait deux cles pour le meme mot.
-String _nomType(TypePublicGroupe type) => switch (type) {
-  TypePublicGroupe.enfant => t.admin.groupes.typeEnfant,
-  TypePublicGroupe.adulte => t.admin.groupes.typeAdulte,
-};
 
 /// Le jour du creneau, en clair. `t.disponibilites.joursLongs` est lu par sept
 /// ecrans : c'est la seule liste de jours du produit.
