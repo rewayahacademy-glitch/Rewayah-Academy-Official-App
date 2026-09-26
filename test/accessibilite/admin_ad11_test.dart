@@ -68,14 +68,22 @@ import '../capture/outil_capture.dart';
 //    livres ;
 //  - 1280x1024 a 400 % : visionneuse (16 en bas, colonne 288x108, source non
 //    localisee ; un defilement d'un bloc sous 360 a fait passer a 34) ;
-//  - revue 02B (1440) au clavier : le Tab parcourt barre, titre, compte et
-//    les lignes de la file puis revient sur un noeud deja vu ; il n'atteint
-//    jamais le detail (Voir la piece, verifications, decision). Un ordre de
-//    l'arbre (WidgetOrderTraversalPolicy) sur la file n'y change rien :
-//    cause non localisee ;
-//  - 02D : bouton sous le clavier virtuel (320 et 1440) ; a 390 et 200 %,
+//  - 02D au clavier virtuel a 320 : pendant le Tab dans la feuille, la revue
+//    est remontee (« TextEditingController used after being disposed » sur
+//    le motif, _Corps de surfaces_decision), le focus ne revient pas a
+//    « Refuser » et l'etat laisse fait echouer les cas suivants du groupe.
+//    Cause du remontage non localisee (des cles globales sur la tete et le
+//    corps de PageShell, qui bascule sous 340 de haut, n'y ont rien change) ;
+//    a 390 et 200 %,
 //    l'etiquette « Motif du refus » du champ est coupee (etiquette flottante
-//    sur une ligne), revelee par la correction de la tete de PageShell.
+//    sur une ligne).
+// Passage 4 (corriges) : Tab de la revue a 1440 atteint le detail (ordre de
+// l'arbre file puis detail dans le maitre-detail, l'ordre de lecture classait
+// la file par sa geometrie defilee) ; le titre de la revue n'est plus un
+// arret de Tab (cible de retour seulement, il restait hors de la vue) ; le
+// banc mesure « Valider » apres les trois coches (inactif avant) ; la boite
+// de dialogue d'AppBottomSheet (bureau) se retire du clavier virtuel comme
+// la feuille (Annuler de 02D sous le clavier a 1440).
 // Le banc joue aussi les cas sautes avec --dart-define=TOUT=true.
 const Set<String> _restes = <String>{
   'AD-9_politique 320x640',
@@ -84,11 +92,7 @@ const Set<String> _restes = <String>{
   'AD-9_politique 390x844_200pc',
   'ADM-02D_refus 390x844_200pc',
   'Tab AD-9_politique 320x640 : focus jamais masque',
-  'revue : ordre logique, Espace coche, Entree ouvre 02E, Echap ferme et '
-      'rend le focus',
   'refus 320x640 : Entree ouvre 02D, clavier virtuel, Echap ferme, focus '
-      'rendu',
-  'refus 1440x900 : Entree ouvre 02D, clavier virtuel, Echap ferme, focus '
       'rendu',
 };
 
@@ -424,6 +428,20 @@ bool _estSousFocus(Element cible, FocusNode n) {
   return trouve;
 }
 
+/// Les deux premiers textes sous le noeud, pour nommer un echec.
+List<String> _textes(FocusNode n) {
+  final List<String> tx = <String>[];
+  void v(Element x) {
+    if (tx.length < 2 && x.widget is Text) {
+      tx.add((x.widget as Text).data ?? '');
+    }
+    x.visitChildElements(v);
+  }
+
+  (n.context as Element?)?.visitChildElements(v);
+  return tx;
+}
+
 /// 3. Le centre du noeud focalise est dans la vue, et le toucher y retombe
 /// dans le sous-arbre focalise (rien de fixe ne le recouvre).
 void _verifierNonMasque(WidgetTester tester, FocusNode n, String ecran) {
@@ -437,7 +455,7 @@ void _verifierNonMasque(WidgetTester tester, FocusNode n, String ecran) {
   expect(
     centre.dy >= 0 && centre.dy <= bas && centre.dx >= 0,
     isTrue,
-    reason: '$ecran : focus hors vue ($r, bas $bas)',
+    reason: '$ecran : focus hors vue ($r, bas $bas, $n, ${_textes(n)})',
   );
   final HitTestResult res = HitTestResult();
   tester.binding.hitTestInView(res, centre, tester.view.viewId);
@@ -623,19 +641,18 @@ void main() {
       final int p1 = _indice(vus, find.text(t.dossiers.pointLisible));
       final int p2 = _indice(vus, find.text(t.dossiers.pointNom));
       final int p3 = _indice(vus, find.text(t.dossiers.pointValidite));
-      final int ok = _indice(vus, find.text(t.dossiers.approuver));
       final int non = _indice(vus, find.text(t.dossiers.refuser));
-      for (final int i in <int>[voir, p1, p2, p3, ok, non]) {
+      for (final int i in <int>[voir, p1, p2, p3, non]) {
         expect(
           i,
           isNot(-1),
           reason:
-              'action non atteinte au clavier ($voir $p1 $p2 $p3 $ok $non, '
-              '${vus.map((FocusNode f) => '${f.debugLabel}@${f.rect.topLeft}')})',
+              'action non atteinte au clavier ($voir $p1 $p2 $p3 $non, '
+              '${vus.map((FocusNode f) => '${f.debugLabel}@${f.rect.topLeft}').toList()})',
         );
       }
       expect(p1 < p2 && p2 < p3, isTrue, reason: 'ordre des verifications');
-      expect(p3 < ok, isTrue, reason: 'verifications avant la decision');
+      expect(p3 < non, isTrue, reason: 'verifications avant la decision');
       for (final String p in <String>[
         t.dossiers.pointLisible,
         t.dossiers.pointNom,
@@ -645,6 +662,11 @@ void main() {
         await tester.sendKeyEvent(LogicalKeyboardKey.space);
         await _stab(tester);
       }
+      // « Valider » n'est actif (donc arret de Tab) qu'une fois les trois
+      // verifications cochees : depuis la derniere, Tab doit l'atteindre.
+      final List<FocusNode> apres = await _parcourirTab(tester, 'revue');
+      final int ok = _indice(apres, find.text(t.dossiers.approuver));
+      expect(ok, isNot(-1), reason: 'Valider non atteint au clavier');
       final Finder valider = find.text(t.dossiers.approuver);
       await _focusSur(tester, valider);
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);

@@ -242,8 +242,12 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (widget.avecTitre) ...<Widget>[
+          // Cible de retour du focus seulement, comme le titre d'EntetePage :
+          // pas un arret de Tab (AD-11, il y restait hors de la vue une fois
+          // le detail defile).
           Focus(
             focusNode: _focusTitre,
+            skipTraversal: true,
             child: Semantics(
               header: true,
               child: Text(titreRevue(nom), style: textes.headlineSmall),

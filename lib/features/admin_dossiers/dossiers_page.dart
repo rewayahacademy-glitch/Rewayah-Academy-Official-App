@@ -279,27 +279,34 @@ class _MaitreDetailState extends ConsumerState<_MaitreDetail> {
         }
       });
     }
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          width: largeurFileDossiers,
-          child: SingleChildScrollView(
-            key: const PageStorageKey<String>('adm02a-file'),
-            child: FileDossiers(selection: id, onChoisir: widget.onChoisir),
+    // AD-11 (2.4.3) : l'ordre de lecture classait la file par sa geometrie
+    // defilee (groupe plus haut que la vue une fois descendu) ; apres la
+    // derniere ligne, Tab revenait a la barre et n'atteignait jamais le
+    // detail. Ordre de l'arbre ici : la file, puis le detail.
+    return FocusTraversalGroup(
+      policy: WidgetOrderTraversalPolicy(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+            width: largeurFileDossiers,
+            child: SingleChildScrollView(
+              key: const PageStorageKey<String>('adm02a-file'),
+              child: FileDossiers(selection: id, onChoisir: widget.onChoisir),
+            ),
           ),
-        ),
-        const SizedBox(width: ecartFileDetail),
-        SizedBox(
-          width: largeurDetailDossier,
-          child: SingleChildScrollView(
-            key: ValueKey<String?>(id),
-            child: id == null
-                ? const AucuneSelection()
-                : DetailDossier(id: id, onDecision: widget.onDecision),
+          const SizedBox(width: ecartFileDetail),
+          SizedBox(
+            width: largeurDetailDossier,
+            child: SingleChildScrollView(
+              key: ValueKey<String?>(id),
+              child: id == null
+                  ? const AucuneSelection()
+                  : DetailDossier(id: id, onDecision: widget.onDecision),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

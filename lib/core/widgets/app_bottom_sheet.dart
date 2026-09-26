@@ -413,18 +413,26 @@ class _CadreDialogue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xxxl),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppPage.largeurDialogue,
+    // AD-11 (2.4.11) : le clavier virtuel, comme la feuille (HL-A-4). Sans ce
+    // retrait, a 1440x900 les actions de 02D (Annuler, 582 a 634) passaient
+    // sous un clavier de 300. Nul sans clavier : rendu inchange.
+    return Padding(
+      padding: EdgeInsetsDirectional.only(
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xxxl),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppPage.largeurDialogue,
+              ),
+              // Un `Material` transparent : le texte et les controles du corps
+              // trouvent leur ancetre Material sans qu'aucune couleur ni ombre
+              // Material ne s'ajoute a celles d'AppElevation.
+              child: Material(type: MaterialType.transparency, child: child),
             ),
-            // Un `Material` transparent : le texte et les controles du corps
-            // trouvent leur ancetre Material sans qu'aucune couleur ni ombre
-            // Material ne s'ajoute a celles d'AppElevation.
-            child: Material(type: MaterialType.transparency, child: child),
           ),
         ),
       ),
