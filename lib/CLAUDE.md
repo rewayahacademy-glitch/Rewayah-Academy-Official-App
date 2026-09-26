@@ -11,6 +11,14 @@ Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`,
 `ActionPrincipale`) sont les seuls points d'entrée de leur fonction : on les améliore, on
 n'en recrée pas un qui ferait la même chose.
 
+## 🧊 Règles gelées du directeur, DESIGN-GOV-2026-09-26 (obligatoires avant tout nouveau lot visuel)
+
+Texte intégral et seul faisant foi : `docs/current/DESIGN-GOV-2026-09-26.md` (copie de `projet/ressources:memoire/DESIGN-GOV-2026-09-26.md`). **Règle gelée jusqu'à nouvelle décision datée du directeur** : ne pas la modifier, ne pas la réinterpréter.
+
+- Autorité (§1) : dernière demande explicite du directeur, puis décisions canoniques, puis contrats serveur vérifiés, puis la spec du lot, puis le système de design gelé. Une maquette n'élargit jamais une permission ; aucune donnée absente du contrat n'est inventée.
+- Validation UX 2026 (§4) : avant d'implémenter une disposition `PROPOSITION`, la confronter aux référentiels officiels (Flutter adaptive, Material 3, Apple HIG, WCAG 2.2 AA, Nielsen, Fitts / Hick / Gestalt, Baymard ; GOV.UK exclu) et livrer `UX_REVIEW_<lot>.md` (règle, source, date, conclusion, modification). Jamais « conforme » sans règle ni conséquence.
+- Contrats A à E (§4 bis) : échelle d'espacement 4 à 64, **objet vers le CTA qui agit dessus : 16**, CTA au bord *trailing* (`start/end`, jamais `left/right`), pas de bouton pleine largeur sur bureau, `ActionPrincipale` / `AppCard` / `GroupeReglages` / `Skeleton` / `AppBottomSheet` jamais forkés, bureau 1440 réel, durées de mouvement gelées, `Skeleton` + `BlocAsynchrone` obligatoires pour tout chargement substantiel.
+- Progression (§4 bis.8) : s'applique aux nouveaux lots seulement. **Aucune étape faite n'est rouverte** ; l'harmonisation des écrans déjà faits se fera en une passe (HU-1) après les visuels de tous les rôles.
 ## Règles vérifiées par `dart run tool/verifier_jetons.dart` (local et CI)
 
 - **Aucun `onTap` nu** : tout passe par `Pressable`.

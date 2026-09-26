@@ -1,6 +1,14 @@
 # Rewayah - charte UX/UI canonique
 Version : 22 septembre 2026. Condensé opérationnel de la Bible V2 ; inspection du thème Flutter existant obligatoire avant migration des tokens.
 
+## 🧊 Règles gelées du directeur, DESIGN-GOV-2026-09-26 (obligatoires avant tout nouveau lot visuel)
+
+Texte intégral et seul faisant foi : `docs/current/DESIGN-GOV-2026-09-26.md` (copie de `projet/ressources:memoire/DESIGN-GOV-2026-09-26.md`). **Règle gelée jusqu'à nouvelle décision datée du directeur** : ne pas la modifier, ne pas la réinterpréter.
+
+- Autorité (§1) : dernière demande explicite du directeur, puis décisions canoniques, puis contrats serveur vérifiés, puis la spec du lot, puis le système de design gelé. Une maquette n'élargit jamais une permission ; aucune donnée absente du contrat n'est inventée.
+- Validation UX 2026 (§4) : avant d'implémenter une disposition `PROPOSITION`, la confronter aux référentiels officiels (Flutter adaptive, Material 3, Apple HIG, WCAG 2.2 AA, Nielsen, Fitts / Hick / Gestalt, Baymard ; GOV.UK exclu) et livrer `UX_REVIEW_<lot>.md` (règle, source, date, conclusion, modification). Jamais « conforme » sans règle ni conséquence.
+- Contrats A à E (§4 bis) : échelle d'espacement 4 à 64, **objet vers le CTA qui agit dessus : 16**, CTA au bord *trailing* (`start/end`, jamais `left/right`), pas de bouton pleine largeur sur bureau, `ActionPrincipale` / `AppCard` / `GroupeReglages` / `Skeleton` / `AppBottomSheet` jamais forkés, bureau 1440 réel, durées de mouvement gelées, `Skeleton` + `BlocAsynchrone` obligatoires pour tout chargement substantiel.
+- Progression (§4 bis.8) : s'applique aux nouveaux lots seulement. **Aucune étape faite n'est rouverte** ; l'harmonisation des écrans déjà faits se fera en une passe (HU-1) après les visuels de tous les rôles.
 ## Langage visuel
 Material Design 3 comme système de composants et comportements ; adaptation iOS pertinente et cohérente. Style calme, contemporain, aéré, profondeur discrète, ombres légères, animation courte qui sert la compréhension. Palette douce et presque monochrome ; violet fortement atténué, jamais primaire par défaut. Les documents fournis ne fixent pas de valeurs HEX officielles : ne pas inventer de palette chiffrée « approuvée ». Auditer les tokens et les dernières maquettes approuvées, proposer au directeur les tokens précis s'ils manquent, puis les centraliser. Des touches pédagogiques de couleur sont possibles dans l'Interface guidée et les groupes, sans coder l'information par la seule couleur. Mode clair et sombre complets, contraste vérifié.
 

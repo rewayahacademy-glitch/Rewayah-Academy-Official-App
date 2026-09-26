@@ -14,6 +14,7 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 | Bilan C0 | `docs/current/CONFIGURATION_BASELINE_2026-09-23.md` (PASS / BLOCKED / INCONNU par point, avec preuves) |
 | Produit, rôles, parcours, recette | `docs/current/01_PRODUIT_ET_PARCOURS.md` |
 | Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
+| **Tout nouveau lot visuel ou nouvelle spec (règle gelée du directeur, 26/09/2026)** | `docs/current/DESIGN-GOV-2026-09-26.md`, immuable jusqu'à nouvelle décision datée du directeur |
 | Écran, composant, thème, accessibilité | `docs/current/03_DESIGN_SYSTEM_ET_UX.md` puis `lib/CLAUDE.md` |
 | Branches, worktrees, déploiement, ménage | `docs/current/04_EXECUTION_GIT_CI_ET_MIGRATION.md` |
 | Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
