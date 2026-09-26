@@ -1,50 +1,32 @@
-/// `ENS-02` : la journee de l'enseignant, en une seule colonne.
+/// `ENS-02` Aujourd'hui : la journee de l'enseignant (EN-2, planche 1).
 ///
-/// **Cours, pauses et prieres sont des entrees de meme nature**, du haut vers
-/// le bas. C'est la demande explicite des specs produit, et elle interdit un
-/// bloc « prieres » separe : une interruption doit se lire a sa place dans le
-/// deroule, pas dans un encadre a cote. Le gabarit est donc litteralement le
-/// meme pour les trois sortes, seul le contenu change.
+/// **Quatre blocs, pas un de plus** (K-42) : la carte « Prochaine seance »,
+/// « Ma journee », « A terminer » (trois au plus) et « Alertes utiles », cette
+/// derniere rendue seulement quand elle n'est pas vide. Sur bureau, deux
+/// colonnes a partir de 840 de largeur utile divisee par le facteur de texte :
+/// a gauche ce qui vient (carte puis journee), a droite ce qui reste a faire.
+/// L'ordre de lecture reste celui du mobile.
 ///
-/// **L'ordre de priorite visuelle est fixe** : prochain cours, puis la colonne
-/// de la journee, puis les exceptions, puis le secondaire. Une seule entorse,
-/// assumee : les alertes qui concernent le cours dominant (un eleve qui n'est
-/// pas entre, un cours annule aujourd'hui) se posent juste sous la carte
-/// dominante et non dans la section des exceptions. A 390 de large, une absence
-/// annoncee sous la colonne serait lue apres le cours, c'est-a-dire trop tard.
+/// Retires d'EN-2 (00_MAQUETTES §2, planche 1) : « Eleves en attente » (ancien
+/// matching, E1), « Cours individuel » (une seance est celle d'une Classe), la
+/// cloche, la ligne « Bonjour... » et la pastille « Confirmee ».
 ///
-/// **Le bouton de lancement existe depuis le lot N3**, et seulement dans la
-/// fenetre ou il peut aboutir : de dix minutes avant le debut du cours jusqu'a
-/// sa fin. Hors de cette fenetre, une phrase dit quand il s'ouvrira, plutot
-/// qu'un bouton grise -- un bouton qui echoue apres le geste coute plus cher en
-/// confiance qu'un bouton absent. **Le materiel est verifie avant**, par
-/// `preVolProvider` : sans micro, il n'y a pas de bouton, il y a la raison.
+/// **Cours, pauses et prieres sont des entrees de meme nature** dans « Ma
+/// journee » : le gabarit `TimelineRow` est le meme pour les trois sortes.
 ///
-/// La fenetre du client est la meme que celle de la base, et c'est la base qui
-/// tranche : `autoriser_jeton_video()` refuse le jeton avant `debut - 10 min`
-/// et apres `fin + 15 min` (ADR-005). Le seuil lu ici ne fait qu'eviter de
-/// proposer un geste dont on sait qu'il serait refuse. Il s'appelle
-/// `seuilOuvertureSalle` et vit dans `core/video/pre_vol.dart`, remonte a
-/// l'integration du lot Enseignant (`CONTRACT_REQUEST_A.md` §1) : une constante
-/// que tout ecran offrant l'entree doit respecter n'a pas sa place dans le
-/// fichier de l'un d'eux. **Ne pas la redeclarer ici** -- elle doit rester egale
-/// au seuil de la base, et deux copies finiraient par diverger.
+/// **La carte suit E11** : une ligne de contexte calme, puis un seul bouton
+/// qui evolue. Le modele `EmplacementEntree` (CL-4) est reutilise sans fork :
+/// [emplacementJournee] ne fait que donner un bouton aux etats ou CL-4 pose une
+/// simple ligne (avant la fenetre, apres la seance). Le pre-vol ne se fait plus
+/// ici : il appartient a la preparation de la Classe (CL-4).
 ///
-/// **Depuis le pivot du 19 septembre 2026, un cours est celui d'un groupe** :
-/// l'ecran lit `seancesEnseignantProvider`, une entree par seance, et non
-/// `seancesProvider`, qui rend une ligne par eleve et afficherait cinq fois le
-/// cours d'un groupe de cinq enfants.
+/// **Le cahier a terminer (K-45)** : tout espace qui regroupe des cahiers a
+/// terminer porte le point de rappel ([PointRappel]), et une phrase qui aide
+/// plutot qu'elle ne reproche.
 ///
-/// **L'objectif commun de la seance n'est pas affiche, et c'est volontaire** :
-/// aucune couche ne le porte (ni `sessions`, ni `SeanceEnseignant`). Se taire
-/// coute moins cher qu'un tiret a chaque ligne. La demande est ecrite dans
-/// `docs/archive/2026-09-pre-remise-a-plat/parallel-reports/CONTRACT_REQUEST_A.md`.
-///
-/// Les heures affichees sont celles de l'appareil. Aucune mention de fuseau
-/// n'est posee ici, contrairement a la grille de `ENS-06` : les seances et les
-/// prieres sont des instants absolus, et `mon_fuseau()` dit ou l'enseignant
-/// **pose** ses creneaux, pas ou il se trouve. Annoncer « heures affichees en
-/// Europe/Paris » a un enseignant en deplacement serait faux.
+/// Depuis le pivot du 19 septembre 2026, l'ecran lit
+/// `seancesEnseignantProvider`, une entree par seance de Classe. Les heures
+/// affichees sont celles de l'appareil ; aucune mention de fuseau n'est posee.
 library;
 
 import 'dart:async';
@@ -58,7 +40,6 @@ import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/matching/service_matching.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -66,32 +47,44 @@ import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/reseau/service_reseau.dart';
-import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/emplacement_entree.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../core/video/pre_vol.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
-import '../../core/widgets/signal_row.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/stat_tile.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
+import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
+import 'point_rappel.dart';
 
-/// Combien d'alertes individuelles la Journee accepte d'afficher a la fois.
+/// Combien de cahiers « A terminer » montre au plus (planche 1).
+const int maximumATerminer = 3;
+
+/// Combien d'alertes individuelles de presence la page montre a la fois.
 ///
-/// **« Rares » est un mot du protocole, pas une intention.** Deux lignes se
-/// lisent d'un coup d'oeil avant un cours ; cinq deviennent une liste que
-/// personne ne lit, et la sixieme fait perdre la premiere. Au dela, une phrase
-/// dit combien d'autres attendent, et le detail se lit en salle.
+/// Deux lignes se lisent d'un coup d'oeil avant un cours ; au dela, une
+/// phrase dit combien d'autres attendent.
 const int _maximumAlertes = 2;
+
+/// Combien de temps la seance reste joignable apres sa fin prevue (ADR-005 :
+/// la base refuse le jeton apres `fin + 15 min`).
+const Duration _graceApresFin = Duration(minutes: 15);
+
+/// L'horloge de la page. En production, l'heure de l'appareil ; la
+/// demonstration (`/demo/enseignant`) la fixe au lundi 28 septembre 2026.
+final Provider<DateTime Function()> maintenantJourneeProvider =
+    Provider<DateTime Function()>((Ref _) => DateTime.now);
 
 /// `ENS-02`, la racine du role Enseignant.
 class JourneePage extends ConsumerWidget {
@@ -100,28 +93,25 @@ class JourneePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Un seul `PageShell`, quel que soit l'etat : le titre d'ecran ne disparait
-    // pas pendant une charge, et le bandeau hors ligne du shell coiffe la page
-    // dans les six etats.
-    return PageShell(
-      titre: t.enseignant.journee.titre,
-      child: _Cadence(
-        constructeur: (DateTime maintenant) => _Corps(maintenant: maintenant),
+    final DateTime Function() lire = ref.watch(maintenantJourneeProvider);
+    // Un seul `PageShell`, quel que soit l'etat : le titre ne disparait pas
+    // pendant une charge, et le bandeau hors ligne du shell coiffe la page.
+    return _Cadence(
+      lire: lire,
+      constructeur: (DateTime maintenant) => PageShell(
+        titre: t.enseignant.journee.titre,
+        sousTitre: dateLisible(maintenant),
+        child: _Corps(maintenant: maintenant),
       ),
     );
   }
 }
 
 /// Le battement d'une minute, pose sur l'ecran et non dans un provider.
-///
-/// Il vit dans un widget a part pour que [JourneePage] reste un
-/// `ConsumerWidget` : c'est la declaration exacte que le routeur attend
-/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md` section 3), et une page
-/// devenue `ConsumerStatefulWidget` pour porter une horloge serait un ecart de
-/// contrat pour une raison purement interne.
 class _Cadence extends StatefulWidget {
-  const _Cadence({required this.constructeur});
+  const _Cadence({required this.lire, required this.constructeur});
 
+  final DateTime Function() lire;
   final Widget Function(DateTime maintenant) constructeur;
 
   @override
@@ -130,16 +120,16 @@ class _Cadence extends StatefulWidget {
 
 class _CadenceEtat extends State<_Cadence> {
   Timer? _horloge;
-  DateTime _maintenant = DateTime.now();
+  late DateTime _maintenant = widget.lire();
 
   @override
   void initState() {
     super.initState();
-    // Le minuteur se lit en minutes : le rafraichir a la seconde ferait
+    // Le decompte se lit en minutes : le rafraichir a la seconde ferait
     // travailler l'ecran soixante fois pour rien.
     _horloge = Timer.periodic(
       const Duration(minutes: 1),
-      (Timer _) => setState(() => _maintenant = DateTime.now()),
+      (Timer _) => setState(() => _maintenant = widget.lire()),
     );
   }
 
@@ -153,7 +143,7 @@ class _CadenceEtat extends State<_Cadence> {
   Widget build(BuildContext context) => widget.constructeur(_maintenant);
 }
 
-/// Le corps de la journee : cinq lectures, six etats.
+/// Le corps : quatre lectures, puis la composition.
 class _Corps extends ConsumerWidget {
   const _Corps({required this.maintenant});
 
@@ -161,13 +151,8 @@ class _Corps extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     final String? monId = ref.watch(sessionProvider).profileId;
-
-    if (monId == null) {
-      return const Skeleton.liste(lignes: 4);
-    }
+    if (monId == null) return const _Squelette();
 
     final AsyncValue<List<SeanceEnseignant>> seances = ref.watch(
       seancesEnseignantProvider,
@@ -175,40 +160,28 @@ class _Corps extends ConsumerWidget {
     final AsyncValue<ReglagesPriere?> reglages = ref.watch(
       reglagesPriereProvider(monId),
     );
-    // La pause vient de `regle_effective()`, jamais d'une constante : elle peut
-    // differer d'un profil a l'autre (ADR-017 section 2.4, invariant I10).
+    // La pause vient de `regle_effective()`, jamais d'une constante (ADR-017
+    // section 2.4, invariant I10).
     final AsyncValue<int> pause = ref.watch(
       valeurRegleProvider((profilId: monId, cle: CleRegle.pauseEntreCours)),
     );
     final AsyncValue<List<CahierEnRetard>> retards = ref.watch(
       cahiersEnRetardProvider,
     );
-    final AsyncValue<List<EleveEnAttente>> feed = ref.watch(
-      elevesEnAttenteProvider,
-    );
 
-    // **Un seul test de chargement.** L'ecran en portait deux : le premier
-    // interceptait la premiere charge, le second branchait un squelette que
-    // rien ne pouvait plus atteindre. Le chemin mort est supprime, et c'est sa
-    // forme -- carte dominante puis lignes de colonne -- qui est gardee, parce
-    // qu'un squelette ressemble a ce qui arrive.
-    final bool premiereCharge = <AsyncValue<Object?>>[
-      seances,
-      reglages,
-      pause,
-      retards,
-      feed,
-    ].any(
-      (AsyncValue<Object?> lecture) => !lecture.hasValue && lecture.isLoading,
-    );
-    if (premiereCharge) {
-      return const Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Skeleton.tuileBento(hauteur: 160),
-          Ecart.vXl,
-          Skeleton.ligneTimeline(lignes: 3),
-        ],
+    final bool premiereCharge =
+        <AsyncValue<Object?>>[seances, reglages, pause, retards].any(
+          (AsyncValue<Object?> lecture) =>
+              !lecture.hasValue && lecture.isLoading,
+        );
+    if (premiereCharge) return const _Squelette();
+
+    if (seances.hasError) {
+      return EmptyState(
+        message: t.enseignant.journee.erreur,
+        icone: AppIcons.avertissement,
+        libelleAction: t.commun.reessayer,
+        onAction: () => ref.invalidate(seancesEnseignantProvider),
       );
     }
 
@@ -217,20 +190,14 @@ class _Corps extends ConsumerWidget {
     final Map<String, SeanceEnseignant> parId = <String, SeanceEnseignant>{
       for (final SeanceEnseignant seance in toutes) seance.id: seance,
     };
-    // Le pont vers la journee partagee. `construireJournee`, `prochainCours` et
-    // `seanceAnnuleeDuJour` raisonnent en `Seance`, et `TimelineRow` lit
-    // `elevePrenom` : le pivot groupes n'a pas encore atteint ces trois-la, et
-    // ce sont des fichiers partages. La conversion est donc locale, et le
-    // resultat est **relu par identifiant** pour retrouver la seance riche.
+    // Le pont vers la journee partagee, relu par identifiant pour retrouver
+    // la seance riche.
     final List<Seance> pont = toutes.map(_versSeance).toList(growable: false);
     final Seance? relais = prochainCours(pont, maintenant);
     final SeanceEnseignant? dominant = relais == null ? null : parId[relais.id];
     final Seance? annulee = seanceAnnuleeDuJour(pont, maintenant);
 
-    // Les bornes du jour civil local. `DateTime(annee, mois, jour + 1)` plutot
-    // qu'une addition de 24 heures : deux fois par an, une journee civile ne
-    // dure pas vingt-quatre heures, et la colonne perdrait ou doublerait une
-    // heure de cours.
+    // Les bornes du jour civil local, par le calendrier et non par 24 heures.
     final DateTime debutJour = DateTime(
       maintenant.year,
       maintenant.month,
@@ -241,144 +208,192 @@ class _Corps extends ConsumerWidget {
       maintenant.month,
       maintenant.day + 1,
     );
-
     final List<EntreeJournee> journee = construireJournee(
       seances: pont,
       reglages: reglages.value,
       debut: debutJour,
       fin: finJour,
-      // Une regle illisible ne se remplace pas par une valeur inventee : sans
-      // elle, aucun trou n'est declare pause, et les cours restent exacts.
+      // Une regle illisible ne se remplace pas par une valeur inventee.
       pauseMaximale: Duration(minutes: pause.value ?? 0),
     );
 
-    final List<EntreeJournee> coursDuJour = journee
-        .where((EntreeJournee entree) => entree.sorte == SorteEntree.cours)
-        .toList(growable: false);
-    final bool journeeFinie =
-        coursDuJour.isNotEmpty &&
-        coursDuJour.every(
-          (EntreeJournee entree) => !maintenant.isBefore(entree.fin),
-        );
-
-    // Le feed rend **une ligne par creneau compatible** : le meme eleve y
-    // figure autant de fois qu'il propose d'heures que cet enseignant peut
-    // tenir. Compter les lignes annoncerait quatre familles la ou une seule
-    // attend.
-    final int enAttente = (feed.value ?? const <EleveEnAttente>[])
-        .map((EleveEnAttente eleve) => eleve.eleveId)
-        .toSet()
-        .length;
-
-    final List<CahierEnRetard> aDeposer =
+    final List<CahierEnRetard> aTerminer =
         retards.value ?? const <CahierEnRetard>[];
 
-    // Les lectures secondaires ne font pas echouer l'ecran, mais leur echec ne
-    // s'avale plus en silence : une pause illisible fait disparaitre toutes les
-    // pauses, et une priere illisible toutes les prieres.
-    final bool erreurPartielle =
-        reglages.hasError ||
-        pause.hasError ||
-        retards.hasError ||
-        feed.hasError;
+    // Les alertes utiles : ce qui change ce que l'enseignant fait aujourd'hui.
+    final List<String> alertes = <String>[
+      if (annulee != null)
+        t.enseignant.journee.coursAnnule(heure: _hhmm(annulee.debut)),
+      if (dominant != null && dominant.enCoursA(maintenant))
+        ..._alertesPresence(ref, dominant),
+      if (reglages.hasError || pause.hasError || retards.hasError)
+        t.enseignant.journee.erreurPartielle,
+    ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (seances.hasError)
-          EmptyState(
-            message: t.enseignant.journee.erreur,
-            icone: AppIcons.avertissement,
-            libelleAction: t.commun.reessayer,
-            onAction: () => ref.invalidate(seancesEnseignantProvider),
-          )
-        else ...<Widget>[
-          _BlocDominant(seance: dominant, maintenant: maintenant),
-          if (dominant != null) ...<Widget>[
-            Ecart.vSm,
-            _AlertesSeance(seance: dominant, maintenant: maintenant),
-          ],
-          if (annulee != null) ...<Widget>[
-            Ecart.vSm,
-            _LigneAlerte(
-              phrase: t.enseignant.journee.coursAnnule(
-                heure: _hhmm(annulee.debut),
-              ),
-              icone: AppIcons.avertissement,
-            ),
-          ],
-          Ecart.vXl,
-          SectionHeader(titre: t.enseignant.journee.colonne),
-          Ecart.vMd,
-          if (journee.isEmpty)
-            _RienAujourdhui(prochain: dominant)
-          else
-            for (final EntreeJournee entree in journee)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: TimelineRow(entree: entree),
-              ),
-          if (journeeFinie) ...<Widget>[
-            Ecart.vSm,
-            Text(
-              coursDuJour.length == 1
-                  ? t.enseignant.journee.journeeTermineeUn
-                  : t.enseignant.journee.journeeTerminee(
-                      nombre: '${coursDuJour.length}',
-                    ),
-              style: textes.bodySmall,
-            ),
-          ],
-        ],
-        if (erreurPartielle) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            t.enseignant.journee.erreurPartielle,
-            // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
-            // blanc, illisible sur la page.
-            style: palette.inkAlert.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-        if (aDeposer.isNotEmpty) ...<Widget>[
-          Ecart.vXl,
-          SectionHeader(
-            titre: t.enseignant.journee.rapportsTitre,
-            compteur: aDeposer.length,
-          ),
-          Ecart.vMd,
-          for (final CahierEnRetard cahier in aDeposer)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: _LigneRapport(cahier: cahier),
-            ),
-        ],
-        Ecart.vXl,
-        SectionHeader(
-          titre: t.enseignant.journee.enAttenteTitre,
-          libelleAction: t.enseignant.journee.voirCreneaux,
-          onAction: () => GoRouter.of(context).go(Routes.enseignantCreneaux),
-        ),
-        Ecart.vMd,
-        // `StatTile` et non une tuile bricolee : le zero s'y affiche comme les
-        // autres valeurs, les chiffres y sont tabulaires, et le compteur mene a
-        // l'ecran ou il se traite (`ENS-06`).
-        StatTile(
-          valeur: enAttente,
-          libelle: enAttente == 1
-              ? t.enseignant.journee.enAttenteLibelleUn
-              : t.enseignant.journee.enAttenteLibelle,
-          onPress: () => GoRouter.of(context).go(Routes.enseignantCreneaux),
-        ),
-      ],
+    return _Composition(
+      prochaine: _CarteProchaineSeance(
+        seance: dominant,
+        maintenant: maintenant,
+      ),
+      maJournee: _MaJournee(
+        journee: journee,
+        prochain: dominant,
+        maintenant: maintenant,
+      ),
+      aTerminer: aTerminer.isEmpty ? null : _ATerminer(cahiers: aTerminer),
+      alertes: alertes.isEmpty ? null : _AlertesUtiles(alertes: alertes),
     );
   }
 }
 
-/// Le bloc dominant : le cours en cours, sinon le prochain a venir.
-class _BlocDominant extends ConsumerWidget {
-  const _BlocDominant({required this.seance, required this.maintenant});
+/// Les absences et coupures du cours en direct, en phrases.
+///
+/// `null` n'est pas une liste vide : « je ne sais pas » ne s'annonce pas
+/// comme une absence (invariant J3). Seuls `absente` et `deconnectee`
+/// deviennent une alerte.
+List<String> _alertesPresence(WidgetRef ref, SeanceEnseignant seance) {
+  final List<PresenceParticipant>? lignes = ref
+      .watch(presenceSeanceProvider(seance.id))
+      .value;
+  if (lignes == null) return const <String>[];
+  final List<PresenceParticipant> manquants = lignes
+      .where(
+        (PresenceParticipant ligne) =>
+            !ligne.estEnseignant &&
+            (ligne.etat == EtatPresence.absente ||
+                ligne.etat == EtatPresence.deconnectee),
+      )
+      .toList(growable: false);
+  final int reste = manquants.length - _maximumAlertes;
+  return <String>[
+    for (final PresenceParticipant ligne in manquants.take(_maximumAlertes))
+      ligne.etat == EtatPresence.absente
+          ? t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne))
+          : t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
+    if (reste > 0) t.enseignant.journee.autresAbsences(nombre: '$reste'),
+  ];
+}
+
+/// Une ou deux colonnes, selon la largeur utile divisee par le facteur de
+/// texte (UX_REVIEW_04, ligne ENS-02, point c).
+class _Composition extends StatelessWidget {
+  const _Composition({
+    required this.prochaine,
+    required this.maJournee,
+    required this.aTerminer,
+    required this.alertes,
+  });
+
+  final Widget prochaine;
+  final Widget maJournee;
+  final Widget? aTerminer;
+  final Widget? alertes;
+
+  @override
+  Widget build(BuildContext context) {
+    final double facteur = MediaQuery.textScalerOf(context).scale(1);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final bool deuxColonnes =
+            contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
+        final Widget ecartSection = deuxColonnes ? Ecart.vXxxl : Ecart.vXxl;
+        final List<Widget> principale = <Widget>[
+          prochaine,
+          ecartSection,
+          maJournee,
+        ];
+        final Widget? cahiers = aTerminer;
+        final Widget? signaux = alertes;
+        final List<Widget> secondaire = <Widget>[
+          ?cahiers,
+          if (cahiers != null && signaux != null) ecartSection,
+          ?signaux,
+        ];
+
+        if (!deuxColonnes || secondaire.isEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ...principale,
+              if (secondaire.isNotEmpty) ecartSection,
+              ...secondaire,
+            ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: principale,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xxxl),
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: secondaire,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// E11 : l'emplacement de la carte « Prochaine seance », depuis celui de CL-4.
+///
+/// Ce que CL-4 montre en bouton (« Preparer l'entree », avec son decompte) et
+/// ce qui propose « Reessayer » restent tels quels. Aux etats ou CL-4 ne pose
+/// qu'une ligne, la ligne devient le contexte calme et un seul bouton suit :
+/// - avant la fenetre : « Preparer la seance » ;
+/// - apres la seance, cahier non depose : « Finaliser le cahier » ;
+/// - sinon (annulee, terminee et deposee) : « Voir la Classe ».
+///
+/// Pendant le pre-vol (`preparation`), la ligne seule : l'enseignant est deja
+/// en train de faire le geste. Jamais de bouton grise.
+EmplacementEntree emplacementJournee(
+  EmplacementEntree base, {
+  required String nomClasse,
+  required bool cahierAFinaliser,
+}) {
+  if (base.estBouton || base.reessayer || base.etat == EtatEntree.preparation) {
+    return base;
+  }
+  final (String libelle, String lecteur) = switch (base.etat) {
+    EtatEntree.aVenir => (
+      t.enseignant.journee.preparerSeance,
+      t.enseignant.journee.preparerSeanceLecteur(classe: nomClasse),
+    ),
+    EtatEntree.terminee when cahierAFinaliser => (
+      t.enseignant.journee.finaliserCahier,
+      t.enseignant.journee.finaliserCahierLecteur(classe: nomClasse),
+    ),
+    _ => (
+      t.enseignant.journee.voirClasse,
+      t.enseignant.journee.voirClasseLecteur(classe: nomClasse),
+    ),
+  };
+  return EmplacementEntree(
+    role: base.role,
+    etat: base.etat,
+    forme: FormeEntree.bouton,
+    libelle: libelle,
+    libelleLecteur: lecteur,
+    detail: base.libelle,
+    annonce: base.annonce,
+    avisDst: base.avisDst,
+  );
+}
+
+/// La carte « Prochaine seance » : peu de choses (E12), un seul emplacement
+/// (E11), au style de la carte de seance CL-4.
+class _CarteProchaineSeance extends ConsumerWidget {
+  const _CarteProchaineSeance({required this.seance, required this.maintenant});
 
   final SeanceEnseignant? seance;
   final DateTime maintenant;
@@ -386,351 +401,316 @@ class _BlocDominant extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
     final SeanceEnseignant? cours = seance;
 
     if (cours == null) {
-      return EmptyState(
-        message: t.enseignant.journee.aucunCours,
-        invitation: t.enseignant.journee.aucunCoursDetail,
-        // Un constat, pas une porte : l'enseignant ne quitte pas cet ecran
-        // pour agir, le bloc des eleves en attente en dessous le fait.
-        registre: RegistreVide.subi,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          SectionHeader(titre: t.enseignant.journee.prochaineSeance),
+          Ecart.vSm,
+          AppCard(
+            dominante: true,
+            child: EmptyState(
+              message: t.enseignant.journee.aucuneSeance,
+              invitation: t.enseignant.journee.aucuneSeanceDetail,
+              icone: AppIcons.cours,
+              registre: RegistreVide.subi,
+            ),
+          ),
+        ],
       );
     }
 
     final bool enCours = cours.enCoursA(maintenant);
-    final bool aujourdhui = _memeJour(cours.debut, maintenant);
-    final bool fenetreOuverte =
-        enCours || cours.avantDebut(maintenant) <= seuilOuvertureSalle;
-    // Tant que la reponse est inconnue, l'appareil est repute en ligne : c'est
-    // la lecture prescrite de ce provider, et elle evite de refuser un
-    // lancement sur une ignorance.
+    final String nom = _nomClasse(cours.groupeLibelle);
+    // Tant que la reponse est inconnue, l'appareil est repute en ligne.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    final String? libelleGroupe = cours.groupeLibelle;
-    // Capture avant le test : un champ public n'est pas promu par une
-    // comparaison a `null`, et le `!` qui en decoule est exactement ce qu'un
-    // relecteur ne doit pas avoir a verifier.
-    final String? idGroupe = cours.groupeId;
+    final SessionClockVM horloge = SessionClockVM.depuisFenetre(
+      fenetre: FenetreSeance(
+        debutUtc: cours.debut.toUtc(),
+        finPrevueUtc: cours.fin.toUtc(),
+        // Le seuil de la base, jamais redeclare ici (ADR-005).
+        fenetreAcces: seuilOuvertureSalle,
+        graceApresFin: _graceApresFin,
+      ),
+      maintenantServeurUtc: maintenant.toUtc(),
+      horlogeUtilisateur: HorlogeAffichee(
+        fuseauIana: '',
+        libelleVille: '',
+        heureLocaleRendue: _hhmm(cours.debut),
+        dateLocaleRendue: dateLisible(cours.debut),
+      ),
+      sessionId: cours.id,
+    );
+    final EmplacementEntree emplacement = emplacementJournee(
+      EmplacementEntree.pour(
+        role: RoleEntree.enseignant,
+        horloge: horloge,
+        nomClasse: nom,
+        annulee: cours.statut == StatutSeance.annulee,
+        horsLigne: horsLigne,
+      ),
+      nomClasse: nom,
+      cahierAFinaliser: !cours.cahierDepose,
+    );
 
-    // Carte posee, jamais un aplat sature : la regle de la zone pleine unique
-    // n'attribue l'aplat qu'a l'action principale, et depuis le lot N3 c'est le
-    // bouton de lancement qui la porte -- pas la carte qui l'entoure. L'etat
-    // « en cours » se dit par la pastille, jamais par la couleur de fond.
-    return BentoTile(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        SectionHeader(
+          titre: enCours
+              ? t.enseignant.journee.coursEnCours
+              : t.enseignant.journee.prochaineSeance,
+        ),
+        Ecart.vSm,
+        AppCard(
+          dominante: true,
+          entete: Row(
             children: <Widget>[
               Expanded(
-                child: Text(
-                  enCours
-                      ? t.enseignant.journee.coursEnCours
-                      : t.enseignant.journee.prochainCours,
-                  style: textes.labelLarge ?? const TextStyle(),
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    nom,
+                    key: const ValueKey<String>('journee-carte-classe'),
+                    style: textes.titleLarge ?? const TextStyle(),
+                  ),
                 ),
               ),
               if (enCours)
                 StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
             ],
           ),
-          Ecart.vXs,
-          // Le nom du groupe, ou « Cours individuel » pour une seance
-          // anterieure au pivot. Aucun prenom ici : `SeanceEnseignant` n'en
-          // porte pas, et cinq prenoms dans la carte dominante feraient cinq
-          // choses a lire avant un cours. Ils se lisent sur la fiche groupe.
-          Text(
-            libelleGroupe == null || libelleGroupe.isEmpty
-                ? t.enseignant.journee.coursIndividuel
-                : libelleGroupe,
-            style: textes.headlineSmall ?? const TextStyle(),
-          ),
-          if (cours.estGroupe)
-            Text(
-              _effectif(cours.nbParticipants),
-              style: textes.bodySmall ?? const TextStyle(),
-            ),
-          Ecart.vSm,
-          // Heure et compte a rebours : chiffres tabulaires (Jakarta), sans
-          // quoi « Dans 1 h 59 » bouge a chaque minute (DM Sans n'a pas de
-          // `tnum`, revue phase 0, jetons D4).
-          Text(switch ((enCours, aujourdhui)) {
-            (true, _) => t.enseignant.journee.jusqua(heure: _hhmm(cours.fin)),
-            (false, true) => _minuteur(cours.avantDebut(maintenant)),
-            (false, false) => t.enseignant.journee.unAutreJour(
-              jour: t.disponibilites.joursLongs[cours.debut.weekday - 1],
-              heure: _hhmm(cours.debut),
-            ),
-          }, style: _heureTabulaire(textes)),
-          Ecart.vSm,
-          // Le lancement, ou la raison de son absence. Jamais les deux, jamais
-          // un bouton inerte.
-          if (!fenetreOuverte)
-            Text(
-              t.enseignant.journee.lancementPlusTard,
-              style: textes.bodySmall ?? const TextStyle(),
-            )
-          else if (horsLigne)
-            // Une salle ne s'ouvre pas sans reseau : le geste echouerait apres
-            // le tap, ce qui coute plus cher que son absence.
-            Text(
-              t.enseignant.journee.lancerHorsLigne,
-              style: textes.bodySmall ?? const TextStyle(),
-            )
-          else
-            _Lancement(seanceId: cours.id),
-          if (idGroupe != null) ...<Widget>[
-            Ecart.vSm,
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: ActionPrincipale(
-                libelle: t.enseignant.journee.voirGroupe,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-                onPress: () =>
-                    GoRouter.of(context).go(Routes.groupePour(idGroupe)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              // La date seulement si ce n'est pas aujourd'hui : l'en-tete de
+              // la page la dit deja (un element en moins, K-42).
+              if (!_memeJour(cours.debut, maintenant)) ...<Widget>[
+                Text(
+                  horloge.horlogeUtilisateur.dateLocaleRendue,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+                Ecart.vMd,
+              ],
+              LigneCleValeur(
+                cle: t.enseignant.journee.heure,
+                valeur: t.enseignant.journee.plage(
+                  debut: _hhmm(cours.debut),
+                  fin: _hhmm(cours.fin),
+                ),
+                chiffres: true,
               ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-/// Le pre-vol, puis le lancement -- ou la raison qui le remplace.
-///
-/// **Un seul chemin de lecture du pre-vol** : `preVolProvider`, et non
-/// `servicePreVolProvider` en imperatif. Deux chemins existaient, l'arbitrage
-/// de l'Agent 0 a tranche pour le provider afin que la Journee et la salle
-/// lisent le meme resultat.
-class _Lancement extends ConsumerWidget {
-  const _Lancement({required this.seanceId});
-
-  final String seanceId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final AsyncValue<ResultatPreVol> preVol = ref.watch(preVolProvider);
-
-    if (!preVol.hasValue && preVol.isLoading) {
-      return Text(
-        t.enseignant.journee.preflight,
-        style: textes.bodySmall ?? const TextStyle(),
-      );
-    }
-
-    final ResultatPreVol? resultat = preVol.value;
-    // `peutEntrer` vaut `microDisponible && !permissionRefusee` : le micro
-    // suffit, la camera n'est pas bloquante (ADR-001).
-    if (resultat != null && resultat.peutEntrer) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            t.enseignant.journee.preflightOk,
-            style: textes.bodySmall ?? const TextStyle(),
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: t.enseignant.journee.lancer,
-            onPress: () => GoRouter.of(context).go(
-              Routes.salle,
-              // Le billet passe par `extra`, jamais par l'URL (ADR-005) :
-              // une adresse de salle copiee ne rouvre rien.
-              extra: BilletSalle(sessionId: seanceId, emisA: DateTime.now()),
-            ),
-          ),
-        ],
-      );
-    }
-
-    // Pre-flight echoue : pas de bouton, la raison exacte, et de quoi relancer
-    // la verification quand le micro est branche ou la permission accordee.
-    final String raison = switch (resultat) {
-      null => t.enseignant.journee.preflightIndisponible,
-      ResultatPreVol(permissionRefusee: true) =>
-        t.enseignant.journee.preflightBloque,
-      _ => t.enseignant.journee.preflightSansMicro,
-    };
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          raison,
-          style: palette.inkAlert.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
-        ),
-        Ecart.vSm,
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: ActionPrincipale(
-            libelle: t.commun.reessayer,
-            niveau: NiveauAction.secondaire,
-            pleineLargeur: false,
-            onPress: () => ref.invalidate(preVolProvider),
+              Ecart.vSm,
+              LigneCleValeur(
+                cle: LibellesGroupe.dureeLibelle,
+                valeur: LibellesGroupe.dureeLisible(
+                  cours.fin.difference(cours.debut),
+                ),
+                chiffres: true,
+              ),
+              Ecart.vSm,
+              LigneCleValeur(
+                cle: t.enseignant.journee.eleves,
+                valeur: _effectif(cours.nbParticipants),
+                chiffres: true,
+              ),
+              // Le bouton se pose 16 sous le contenu qu'il confirme (R20).
+              Ecart.vLg,
+              EmplacementEntreeVue(
+                emplacement: emplacement,
+                onEntrer: () => _agir(context, ref, cours, emplacement),
+                onReessayer: () => ref.invalidate(seancesEnseignantProvider),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
+
+  /// Ou mene le bouton unique : le cahier, sinon la Classe (sa preparation).
+  Future<void> _agir(
+    BuildContext context,
+    WidgetRef ref,
+    SeanceEnseignant cours,
+    EmplacementEntree emplacement,
+  ) async {
+    final GoRouter routeur = GoRouter.of(context);
+    if (emplacement.libelle == t.enseignant.journee.finaliserCahier) {
+      await routeur.push<void>(Routes.cahierPour(cours.id));
+      if (context.mounted) {
+        ref.invalidate(cahiersEnRetardProvider);
+        ref.invalidate(seancesEnseignantProvider);
+      }
+      return;
+    }
+    final String? idGroupe = cours.groupeId;
+    routeur.go(
+      idGroupe == null ? Routes.enseignantClasses : Routes.groupePour(idGroupe),
+    );
+  }
 }
 
-/// Les rares alertes individuelles du cours dominant.
-///
-/// **Lues seulement quand le cours se tient.** Avant l'heure, personne n'est
-/// attendu en salle et une absence n'existe pas encore ; apres, c'est le cahier
-/// de transmission qui porte le sujet.
-///
-/// `null` n'est pas une liste vide : `null` dit « je ne sais pas » et ne
-/// s'annonce donc pas comme une absence (invariant J3). Seuls `absente` et
-/// `deconnectee` deviennent une alerte -- `inconnu` est critique pour la salle,
-/// pas pour la Journee, ou il n'apprendrait rien d'actionnable.
-class _AlertesSeance extends ConsumerWidget {
-  const _AlertesSeance({required this.seance, required this.maintenant});
+/// « Ma journee » : cours, pauses et prieres, du haut vers le bas.
+class _MaJournee extends StatelessWidget {
+  const _MaJournee({
+    required this.journee,
+    required this.prochain,
+    required this.maintenant,
+  });
 
-  final SeanceEnseignant seance;
+  final List<EntreeJournee> journee;
+  final SeanceEnseignant? prochain;
   final DateTime maintenant;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (!seance.enCoursA(maintenant)) {
-      return const SizedBox.shrink();
-    }
-
+  Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final List<PresenceParticipant>? lignes = ref
-        .watch(presenceSeanceProvider(seance.id))
-        .value;
-    if (lignes == null) {
-      return const SizedBox.shrink();
-    }
-
-    final List<PresenceParticipant> manquants = lignes
-        .where(
-          (PresenceParticipant ligne) =>
-              !ligne.estEnseignant &&
-              (ligne.etat == EtatPresence.absente ||
-                  ligne.etat == EtatPresence.deconnectee),
-        )
+    final AppPalette palette = AppPalette.of(context);
+    final List<EntreeJournee> cours = journee
+        .where((EntreeJournee entree) => entree.sorte == SorteEntree.cours)
         .toList(growable: false);
-    if (manquants.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final List<PresenceParticipant> montrees = manquants
-        .take(_maximumAlertes)
-        .toList(growable: false);
-    final int reste = manquants.length - montrees.length;
+    final bool finie =
+        cours.isNotEmpty &&
+        cours.every((EntreeJournee entree) => !maintenant.isBefore(entree.fin));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        for (final PresenceParticipant ligne in montrees)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: _LigneAlerte(
-              phrase: ligne.etat == EtatPresence.absente
-                  ? t.enseignant.journee.absenceDetectee(
-                      eleve: _nommer(ligne),
-                    )
-                  : t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
-              icone: AppIcons.avertissement,
+        SectionHeader(titre: t.enseignant.journee.maJournee),
+        Ecart.vSm,
+        if (journee.isEmpty)
+          _RienAujourdhui(prochain: prochain)
+        else
+          for (int i = 0; i < journee.length; i++) ...<Widget>[
+            if (i > 0) Ecart.vMd,
+            TimelineRow(entree: journee[i]),
+          ],
+        if (finie) ...<Widget>[
+          Ecart.vMd,
+          Text(
+            cours.length == 1
+                ? t.enseignant.journee.journeeTermineeUn
+                : t.enseignant.journee.journeeTerminee(
+                    nombre: '${cours.length}',
+                  ),
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
             ),
           ),
-        if (reste > 0)
-          Text(
-            t.enseignant.journee.autresAbsences(nombre: '$reste'),
-            style: textes.bodySmall ?? const TextStyle(),
-          ),
+        ],
       ],
     );
   }
 }
 
-/// Une alerte en registre doux : fond `washWarning`, encre de la paire.
-///
-/// Ce n'est pas un `SignalRow` : celui-la est une ligne **actionnable**, avec
-/// chevron et destination obligatoire. Une absence constatee pendant un cours
-/// ne mene nulle part -- l'enseignant est deja en salle, ou le bouton de
-/// lancement est juste au dessus.
-class _LigneAlerte extends StatelessWidget {
-  const _LigneAlerte({required this.phrase, required this.icone});
+/// « A terminer » : les cahiers non valides, trois au plus (K-45).
+class _ATerminer extends ConsumerWidget {
+  const _ATerminer({required this.cahiers});
 
-  final String phrase;
-  final AppIcon icone;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return MergeSemantics(
-      child: AppCard(
-        surface: palette.washWarning,
-        child: Row(
-          children: <Widget>[
-            Icon(icone.repos, size: AppSpacing.xl),
-            Ecart.hMd,
-            Expanded(
-              child: Text(
-                phrase,
-                style: palette.washWarning.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Une seance terminee dont le cahier manque, et le chemin pour le deposer.
-class _LigneRapport extends ConsumerWidget {
-  const _LigneRapport({required this.cahier});
-
-  final CahierEnRetard cahier;
+  final List<CahierEnRetard> cahiers;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SignalRow(
-      phrase: t.enseignant.journee.rapportLigne(
-        jour: t.disponibilites.joursLongs[cahier.debut.weekday - 1],
-        heure: _hhmm(cahier.debut),
-      ),
-      icone: AppIcons.cahier,
-      // Au dela de vingt-quatre heures, ce n'est plus une attente.
-      ton: cahier.enRetard ? TonEtat.avertissement : TonEtat.neutre,
-      anciennete: cahier.enRetard
-          ? t.enseignant.journee.rapportRetard(
-              heures: '${cahier.heuresDeRetard}',
-            )
-          : t.enseignant.journee.rapportAttente(
-              heures: '${cahier.heuresDeRetard}',
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // Le titre au style de `SectionHeader`, le point colle a lui : dans
+        // `SectionHeader`, qui occupe toute la ligne, il partirait au bout.
+        Row(
+          children: <Widget>[
+            Flexible(
+              child: Semantics(
+                header: true,
+                child: Text(
+                  t.enseignant.journee.aTerminer,
+                  style: palette.surfaceCanvas.applyTo(
+                    textes.headlineSmall ?? const TextStyle(),
+                  ),
+                ),
+              ),
             ),
-      onPress: () async {
-        // `push` et non `go` : au retour, la file se relit et la ligne
-        // disparait d'elle-meme. Avec `go`, le provider garderait sa valeur en
-        // cache et l'enseignant relirait un rapport qu'il vient de deposer.
-        await GoRouter.of(context).push<void>(
-          Routes.cahierPour(cahier.seanceId),
-        );
-        if (context.mounted) {
-          ref.invalidate(cahiersEnRetardProvider);
-          ref.invalidate(seancesEnseignantProvider);
-        }
-      },
+            Ecart.hXs,
+            PointRappel(
+              key: const ValueKey<String>('journee-point-rappel'),
+              libelle: t.enseignant.journee.rappelCahier,
+            ),
+          ],
+        ),
+        Ecart.vXs,
+        Text(
+          t.enseignant.journee.aTerminerAide,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
+        GroupeReglages(
+          lignes: <LigneRubrique>[
+            for (final CahierEnRetard cahier in cahiers.take(maximumATerminer))
+              LigneRubrique(
+                icone: AppIcons.cahier,
+                libelle: t.enseignant.journee.cahierLigne(
+                  classe: _nomClasse(cahier.groupeLibelle),
+                ),
+                legende: t.enseignant.journee.cahierDetail(
+                  jour: t.commun.dates.jours[cahier.debut.weekday - 1]
+                      .toLowerCase(),
+                  numero: '${cahier.debut.day}',
+                  mois: t.commun.dates.mois[cahier.debut.month - 1],
+                  heure: _hhmm(cahier.debut),
+                ),
+                onPress: () async {
+                  // `push` et non `go` : au retour, la file se relit et la
+                  // ligne disparait d'elle-meme.
+                  await GoRouter.of(context)
+                      .push<void>(Routes.cahierPour(cahier.seanceId));
+                  if (context.mounted) {
+                    ref.invalidate(cahiersEnRetardProvider);
+                    ref.invalidate(seancesEnseignantProvider);
+                  }
+                },
+              ),
+          ],
+        ),
+      ],
     );
   }
 }
 
-/// Ce que la colonne dit quand la journee est vide.
+/// « Alertes utiles » : une ligne par alerte, sans destination.
+class _AlertesUtiles extends StatelessWidget {
+  const _AlertesUtiles({required this.alertes});
+
+  final List<String> alertes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        SectionHeader(titre: t.enseignant.journee.alertesUtiles),
+        Ecart.vSm,
+        GroupeReglages(
+          lignes: <LigneRubrique>[
+            for (final String alerte in alertes)
+              LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Ce que « Ma journee » dit quand elle est vide.
 class _RienAujourdhui extends StatelessWidget {
   const _RienAujourdhui({required this.prochain});
 
@@ -739,14 +719,13 @@ class _RienAujourdhui extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
     final SeanceEnseignant? cours = prochain;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.enseignant.journee.rienAujourdhui, style: textes.bodyMedium),
-        // Un etat vide est une invitation, pas un constat : quand un cours
-        // existe ailleurs dans la semaine, il se dit ici.
+        Text(t.enseignant.journee.rienAujourdhui, style: textes.bodyLarge),
         if (cours != null) ...<Widget>[
           Ecart.vXs,
           Text(
@@ -754,7 +733,9 @@ class _RienAujourdhui extends StatelessWidget {
               jour: t.disponibilites.joursLongs[cours.debut.weekday - 1],
               heure: _hhmm(cours.debut),
             ),
-            style: textes.bodySmall,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
           ),
         ],
       ],
@@ -762,42 +743,47 @@ class _RienAujourdhui extends StatelessWidget {
   }
 }
 
-/// La seance d'enseignant, vue comme la `Seance` que la journee partagee sait
-/// lire.
-///
-/// **Une conversion, pas un second modele.** `construireJournee` est le seul
-/// point d'entree correct pour meler cours, pauses et prieres, et `TimelineRow`
-/// le seul gabarit de ligne : les deux datent d'avant le pivot et raisonnent en
-/// eleve unique. Plutot qu'une colonne locale, la seance de groupe est traduite
-/// dans leur vocabulaire : `elevePrenom` porte le **nom du groupe** et
-/// `eleveIdentifiant` son **effectif**, qui sont ce que la ligne doit dire d'un
-/// cours de groupe.
-///
-/// `ponytail:` dette assumee. Plafond : un champ de modele partage employe pour
-/// un libelle. Chemin de reprise : un champ de groupe sur `EntreeJournee` ou un
-/// parametre de `TimelineRow`, demande dans `CONTRACT_REQUEST_A.md`. Les six
-/// champs d'identite non repris (`eleveId`, les trois de l'enseignant) ne sont
-/// lus par aucune des quatre fonctions consommatrices.
-Seance _versSeance(SeanceEnseignant seance) {
-  final String? libelle = seance.groupeLibelle;
-  return Seance(
-    id: seance.id,
-    debut: seance.debut,
-    fin: seance.fin,
-    statut: seance.statut,
-    eleveId: '',
-    elevePrenom: libelle == null || libelle.isEmpty
-        ? t.enseignant.journee.coursIndividuel
-        : libelle,
-    eleveIdentifiant: seance.estGroupe
-        ? _effectif(seance.nbParticipants)
-        : '',
-    enseignantId: '',
-    enseignantPrenom: '',
-    enseignantIdentifiant: '',
-    minutesInterruption: seance.minutesInterruption,
+/// Le squelette : la forme de la page qui arrive, sans fausse donnee.
+class _Squelette extends StatelessWidget {
+  const _Squelette();
+
+  @override
+  Widget build(BuildContext context) => const Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      Skeleton.tuileBento(hauteur: 240),
+      Ecart.vXxl,
+      Skeleton.ligneTimeline(lignes: 3),
+    ],
   );
 }
+
+/// La seance d'enseignant, vue comme la `Seance` que la journee partagee sait
+/// lire. `elevePrenom` porte « la Classe An-Nour » et `eleveIdentifiant`
+/// l'effectif, ce que `TimelineRow` doit dire d'une seance de Classe.
+///
+/// `ponytail:` dette assumee (champ de modele partage employe pour un
+/// libelle). Reprise : un champ de groupe sur `EntreeJournee`, demande dans
+/// `CONTRACT_REQUEST_A.md`.
+Seance _versSeance(SeanceEnseignant seance) => Seance(
+  id: seance.id,
+  debut: seance.debut,
+  fin: seance.fin,
+  statut: seance.statut,
+  eleveId: '',
+  elevePrenom: t.enseignant.journee.classeNommee(
+    classe: _nomClasse(seance.groupeLibelle),
+  ),
+  eleveIdentifiant: _effectif(seance.nbParticipants),
+  enseignantId: '',
+  enseignantPrenom: '',
+  enseignantIdentifiant: '',
+  minutesInterruption: seance.minutesInterruption,
+);
+
+/// Le nom d'une Classe, « Classe » quand la base n'en donne pas.
+String _nomClasse(String? libelle) =>
+    libelle == null || libelle.isEmpty ? t.enseignant.journee.classe : libelle;
 
 /// Combien d'eleves, au singulier ou au pluriel.
 String _effectif(int nombre) => nombre == 1
@@ -805,36 +791,22 @@ String _effectif(int nombre) => nombre == 1
     : t.enseignant.journee.effectif(nombre: '$nombre');
 
 /// Comment nommer un eleve dans une alerte : son prenom, sinon son identifiant
-/// immuable quand la base l'a masque. **Jamais un nom de famille** : la vue
-/// n'en porte aucun.
+/// immuable. **Jamais un nom de famille.**
 String _nommer(PresenceParticipant ligne) =>
     ligne.prenom.trim().isEmpty ? ligne.identifiantImmuable : ligne.prenom;
+
+/// « Lundi 28 septembre » : la date d'un instant, en toutes lettres.
+String dateLisible(DateTime quand) => t.enseignant.journee.date(
+  jour: t.commun.dates.jours[quand.weekday - 1],
+  numero: '${quand.day}',
+  mois: t.commun.dates.mois[quand.month - 1],
+);
+
+/// Vrai quand deux instants tombent le meme jour civil local.
+bool _memeJour(DateTime a, DateTime b) =>
+    a.year == b.year && a.month == b.month && a.day == b.day;
 
 /// L'heure locale d'un instant, sur deux chiffres.
 String _hhmm(DateTime quand) =>
     '${quand.hour.toString().padLeft(2, '0')}:'
     '${quand.minute.toString().padLeft(2, '0')}';
-
-/// Le style d'une heure ou d'un compte a rebours du bloc dominant : le titre
-/// en chiffres tabulaires (Plus Jakarta Sans), DM Sans n'ayant pas de `tnum`.
-TextStyle _heureTabulaire(TextTheme textes) =>
-    AppTypography.tabulaire(textes.titleMedium ?? const TextStyle());
-
-/// Le temps restant avant le debut, en heures et minutes.
-String _minuteur(Duration reste) {
-  final int minutes = reste.inMinutes;
-  if (minutes <= 0) {
-    return t.enseignant.journee.minuteurImminent;
-  }
-  if (minutes < Duration.minutesPerHour) {
-    return t.enseignant.journee.minuteurMinutes(minutes: '$minutes');
-  }
-  return t.enseignant.journee.minuteurHeures(
-    heures: '${minutes ~/ Duration.minutesPerHour}',
-    minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
-  );
-}
-
-/// Vrai quand deux instants tombent le meme jour civil local.
-bool _memeJour(DateTime a, DateTime b) =>
-    a.year == b.year && a.month == b.month && a.day == b.day;

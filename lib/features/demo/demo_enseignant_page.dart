@@ -126,7 +126,11 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     horsLigneProvider.overrideWith(
       (Ref _) => Stream<bool>.value(etat == EtatDemoEnseignant.horsLigne),
     ),
-    // Aujourd'hui (ENS-02).
+    // Aujourd'hui (ENS-02), a l'heure fixe de la demonstration (lundi
+    // 28 septembre 2026, 16 h) : les seances fictives restent a venir.
+    maintenantJourneeProvider.overrideWithValue(
+      () => DonneesEnseignantDemo.maintenant,
+    ),
     seancesEnseignantProvider.overrideWith((Ref _) async => seances),
     cahiersEnRetardProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(etat),

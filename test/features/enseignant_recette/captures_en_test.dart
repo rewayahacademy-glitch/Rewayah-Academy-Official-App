@@ -23,6 +23,49 @@ Future<void> _capturer(
 }
 
 void main() {
+  group('Capture : EN-2, Aujourd hui', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 1500)),
+      ('768', const Size(768, 1300)),
+      ('1440', const Size(1440, 1000)),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String fichier = 'en2_aujourdhui_${l}_${mode.name}';
+        testWidgets(fichier, (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            fichier,
+            const CoquilleEnseignantDemo(ecran: EcranDemoEnseignant.aujourdhui),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    // Les deux situations secondaires, sur telephone.
+    for (final EtatDemoEnseignant etat in <EtatDemoEnseignant>[
+      EtatDemoEnseignant.vide,
+      EtatDemoEnseignant.horsLigne,
+    ]) {
+      final String fichier = 'en2_aujourdhui_${etat.name}_390_light';
+      testWidgets(fichier, (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          fichier,
+          CoquilleEnseignantDemo(
+            ecran: EcranDemoEnseignant.aujourdhui,
+            etat: etat,
+          ),
+          const Size(390, 1100),
+        );
+      });
+    }
+  });
+
   group('Capture : EN-1b, coquille enseignant', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     // La VRAIE coquille (4 destinations, E10) sur chaque destination, aux

@@ -7410,8 +7410,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Vérifier avant le cours'
 	String get preflight => 'Vérifier avant le cours';
 
-	/// fr: 'Votre journée'
-	String get titre => 'Votre journée';
+	/// fr: 'Aujourd'hui'
+	String get titre => 'Aujourd\'hui';
 
 	/// fr: 'Prochain cours'
 	String get prochainCours => 'Prochain cours';
@@ -7538,6 +7538,69 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: 'élève en attente sur vos heures'
 	String get enAttenteLibelleUn => 'élève en attente sur vos heures';
+
+	/// fr: 'Prochaine séance'
+	String get prochaineSeance => 'Prochaine séance';
+
+	/// fr: 'Ma journée'
+	String get maJournee => 'Ma journée';
+
+	/// fr: 'À terminer'
+	String get aTerminer => 'À terminer';
+
+	/// fr: 'Le cahier aide vos élèves et vous permet d'ajuster le prochain cours.'
+	String get aTerminerAide => 'Le cahier aide vos élèves et vous permet d\'ajuster le prochain cours.';
+
+	/// fr: 'Des cahiers attendent d'être terminés'
+	String get rappelCahier => 'Des cahiers attendent d\'être terminés';
+
+	/// fr: 'Cahier de {classe}'
+	String cahierLigne({required Object classe}) => 'Cahier de ${classe}';
+
+	/// fr: 'Séance du {jour} {numero} {mois} à {heure}'
+	String cahierDetail({required Object jour, required Object numero, required Object mois, required Object heure}) => 'Séance du ${jour} ${numero} ${mois} à ${heure}';
+
+	/// fr: 'Alertes utiles'
+	String get alertesUtiles => 'Alertes utiles';
+
+	/// fr: 'Heure'
+	String get heure => 'Heure';
+
+	/// fr: 'Élèves'
+	String get eleves => 'Élèves';
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'la Classe {classe}'
+	String classeNommee({required Object classe}) => 'la Classe ${classe}';
+
+	/// fr: 'Préparer la séance'
+	String get preparerSeance => 'Préparer la séance';
+
+	/// fr: 'Préparer la séance de {classe}'
+	String preparerSeanceLecteur({required Object classe}) => 'Préparer la séance de ${classe}';
+
+	/// fr: 'Finaliser le cahier'
+	String get finaliserCahier => 'Finaliser le cahier';
+
+	/// fr: 'Finaliser le cahier de {classe}'
+	String finaliserCahierLecteur({required Object classe}) => 'Finaliser le cahier de ${classe}';
+
+	/// fr: 'Voir la Classe'
+	String get voirClasse => 'Voir la Classe';
+
+	/// fr: 'Voir la Classe {classe}'
+	String voirClasseLecteur({required Object classe}) => 'Voir la Classe ${classe}';
+
+	/// fr: 'Aucune séance à venir'
+	String get aucuneSeance => 'Aucune séance à venir';
+
+	/// fr: 'Vos prochaines séances apparaîtront ici.'
+	String get aucuneSeanceDetail => 'Vos prochaines séances apparaîtront ici.';
+
+	/// fr: '{jour} {numero} {mois}'
+	String date({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
 }
 
 // Path: enseignant.salle
@@ -14574,7 +14637,7 @@ extension on Traductions {
 			'enseignant.bienvenue.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
-			'enseignant.journee.titre' => 'Votre journée',
+			'enseignant.journee.titre' => 'Aujourd\'hui',
 			'enseignant.journee.prochainCours' => 'Prochain cours',
 			'enseignant.journee.coursEnCours' => 'Séance en direct',
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
@@ -14617,6 +14680,27 @@ extension on Traductions {
 			'enseignant.journee.enAttenteTitre' => 'Élèves en attente',
 			'enseignant.journee.enAttenteLibelle' => 'élèves en attente sur vos heures',
 			'enseignant.journee.enAttenteLibelleUn' => 'élève en attente sur vos heures',
+			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
+			'enseignant.journee.maJournee' => 'Ma journée',
+			'enseignant.journee.aTerminer' => 'À terminer',
+			'enseignant.journee.aTerminerAide' => 'Le cahier aide vos élèves et vous permet d\'ajuster le prochain cours.',
+			'enseignant.journee.rappelCahier' => 'Des cahiers attendent d\'être terminés',
+			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Cahier de ${classe}',
+			'enseignant.journee.cahierDetail' => ({required Object jour, required Object numero, required Object mois, required Object heure}) => 'Séance du ${jour} ${numero} ${mois} à ${heure}',
+			'enseignant.journee.alertesUtiles' => 'Alertes utiles',
+			'enseignant.journee.heure' => 'Heure',
+			'enseignant.journee.eleves' => 'Élèves',
+			'enseignant.journee.classe' => 'Classe',
+			'enseignant.journee.classeNommee' => ({required Object classe}) => 'la Classe ${classe}',
+			'enseignant.journee.preparerSeance' => 'Préparer la séance',
+			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Préparer la séance de ${classe}',
+			'enseignant.journee.finaliserCahier' => 'Finaliser le cahier',
+			'enseignant.journee.finaliserCahierLecteur' => ({required Object classe}) => 'Finaliser le cahier de ${classe}',
+			'enseignant.journee.voirClasse' => 'Voir la Classe',
+			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'Voir la Classe ${classe}',
+			'enseignant.journee.aucuneSeance' => 'Aucune séance à venir',
+			'enseignant.journee.aucuneSeanceDetail' => 'Vos prochaines séances apparaîtront ici.',
+			'enseignant.journee.date' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
 			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre groupe.',
@@ -14783,6 +14867,8 @@ extension on Traductions {
 			'enseignant.ficheGroupe.introuvableDetail' => 'Il a peut-être été clôturé, ou il appartient à un autre enseignant.',
 			'enseignant.ficheGroupe.revue' => 'Ouvrir la revue du groupe',
 			'enseignant.ficheGroupe.elevesTitre' => 'Élèves',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.preparationTitre' => 'À préparer',
 			'enseignant.ficheGroupe.supportPrevu' => 'Support prévu',
 			'enseignant.ficheGroupe.positionReprise' => 'Position de reprise',
@@ -14804,8 +14890,6 @@ extension on Traductions {
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
 			'controleur.planning.titre' => 'Planning global',
 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.planning.tousEtats' => 'Tout',
 			'controleur.planning.etatEnCours' => 'En cours',
 			'controleur.planning.etatAVenir' => 'À venir',
@@ -15297,6 +15381,8 @@ extension on Traductions {
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
@@ -15318,8 +15404,6 @@ extension on Traductions {
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
