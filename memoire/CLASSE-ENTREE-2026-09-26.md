@@ -24,7 +24,13 @@
 
 ## Temps et accès
 
-- **R4. Pas de bouton d'entrée désactivé pendant des jours.** Avant l'ouverture de la fenêtre, on affiche le temps restant. Le bouton n'apparaît qu'à l'ouverture réelle, décidée par le serveur.
+- **R4. Un seul emplacement d'entrée qui dit le contexte** (proposition du directeur, 26/09 : « moins de pollution visuelle »).
+  - Un même emplacement, à la même place et de la même taille, porte tout le parcours d'entrée.
+  - Avant l'ouverture, c'est une ligne d'état calme : icône et texte, « Cours dans 8 min ». Elle n'a pas l'air d'un bouton : pas grisée, et elle n'est pas annoncée comme un bouton désactivé.
+  - À l'ouverture réelle, décidée par le serveur, elle devient le bouton : « Rejoindre » pour l'élève, « Préparer l'entrée » pour l'enseignant.
+  - Ensuite viennent « Séance en direct · Rejoindre », puis « Séance terminée ».
+  - On ne doublonne pas : pas de pastille de décompte, de note « la salle ouvrira… » ni de bouton grisé à côté.
+  - Le changement d'état est annoncé au lecteur d'écran (région live polie).
 - **R5. Le temps se calcule depuis des horodatages qui font foi** (début, fin prévue, heure de référence), jamais depuis un seul `Timer` local.
   - On ne code jamais une durée en dur (« 1 h », « 1 h 30 »).
   - Après une reconnexion ou un retour d'arrière-plan, on recalcule sans reprendre un compteur suspendu.
