@@ -50,15 +50,21 @@ import '../capture/outil_capture.dart';
 // tete de PageShell defilante aussi pour un corps non defilant (164 en bas
 // a 400 %), libelles du tiroir sur deux lignes flexibles (200 %), aide du
 // motif de refus sur 8 lignes.
+// Passage 2 (corriges) : la barre d'onglets (SousNavigationDomaine) ramene
+// l'onglet focalise au clavier dans la vue (politique a 1440) ; le banc fait
+// defiler le tiroir mobile avant d'y toucher un domaine (400 %).
 // Restes :
-//  - politique a 320 : l'onglet de la politique n'est pas atteint (barre
-//    d'onglets defilante), cascade sur cibles et focus ;
-//  - 1280x1024 a 400 % : visionneuse (16 en bas) ; 02D et 02E : la feuille
-//    AppBottomSheet deborde de 32 en bas ;
+//  - politique a 320 et a 400 % : le libelle de l'onglet de la politique
+//    (576 de large avec la police de test) depasse la vue ; Tab ne passe pas
+//    a la ligne (softWrap: false), le toucher au centre retombe hors de
+//    l'onglet, cascade sur cibles et focus. Un onglet sur deux lignes change
+//    le rendu du composant partage sur les lots livres : decision directeur ;
+//  - 1280x1024 a 400 % : visionneuse (16 en bas, colonne 288x108, source non
+//    localisee ; un defilement d'un bloc sous 360 a fait passer a 34) ;
 //  - 390 a 200 % : « Rechercher un ecran » coupe (barre mobile) ; la tete de
 //    PageShell deborde de 44 en bas (file et suivantes) ;
-//  - focus masque : ligne de revue 02B (1440) et onglet de politique
-//    hors vue (-16) ; 02D : bouton sous le clavier virtuel.
+//  - focus masque : ligne de revue 02B (1440) ; 02D : bouton sous le clavier
+//    virtuel.
 const Set<String> _restes = <String>{
   'AD-9_politique 320x640',
   'ADM-02C_visionneuse 1280x1024_400pc',
@@ -72,7 +78,6 @@ const Set<String> _restes = <String>{
   'AD-9_politique 390x844_200pc',
   'Tab AD-9_politique 320x640 : focus jamais masque',
   'Tab ADM-02B_revue 1440x900 : focus jamais masque',
-  'Tab AD-9_politique 1440x900 : focus jamais masque',
   'revue : ordre logique, Espace coche, Entree ouvre 02E, Echap ferme et '
       'rend le focus',
   'refus 320x640 : Entree ouvre 02D, clavier virtuel, Echap ferme, focus '
@@ -212,6 +217,21 @@ Future<void> _domaine(WidgetTester tester, AdminDomaine domaine) async {
     );
   } else {
     await _toucher(tester, find.bySemanticsLabel(t.nav.admin.menu));
+    // A 400 % le tiroir defile et ne construit que ses premieres entrees :
+    // on le fait defiler comme un utilisateur avant de toucher l'entree.
+    await tester.scrollUntilVisible(
+      find.descendant(
+        of: find.byKey(AdminShell.tiroirKey),
+        matching: find.text(domaine.libelle),
+      ),
+      48,
+      scrollable: find
+          .descendant(
+            of: find.byKey(AdminShell.tiroirKey),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     await _toucher(
       tester,
       find.descendant(

@@ -59,7 +59,36 @@ class _SousNavigationDomaineEtat extends State<SousNavigationDomaine>
   }
 
   @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_suivreLeFocus);
+  }
+
+  /// Critere AD-11 « focus jamais masque » : la barre centre l'onglet actif,
+  /// et Tab pouvait laisser un autre onglet hors de la vue. Quand le focus
+  /// clavier entre sur un onglet, seule la barre defile pour le montrer,
+  /// jamais la page. Rendu inchange.
+  void _suivreLeFocus() {
+    final BuildContext? cible = FocusManager.instance.primaryFocus?.context;
+    if (cible == null || !mounted) return;
+    bool dansLaBarre = false;
+    cible.visitAncestorElements((Element a) {
+      dansLaBarre = identical(a, context);
+      return !dansLaBarre;
+    });
+    if (!dansLaBarre) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !cible.mounted) return;
+      final RenderObject? onglet = cible.findRenderObject();
+      final ScrollableState? barre = Scrollable.maybeOf(cible);
+      if (onglet == null || barre == null) return;
+      barre.position.ensureVisible(onglet, alignment: 0.5);
+    });
+  }
+
+  @override
   void dispose() {
+    FocusManager.instance.removeListener(_suivreLeFocus);
     _controleur.dispose();
     super.dispose();
   }
