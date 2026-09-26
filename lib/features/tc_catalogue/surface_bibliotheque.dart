@@ -25,8 +25,10 @@ import 'libelles_bibliotheque.dart';
 /// [position] est non nulle quand la recherche portait un repere -- « 2:255 »,
 /// « 40 » -- et que la ressource l'accepte : on ouvre alors directement au bon
 /// endroit plutot qu'au debut.
-typedef ChoixRessource =
-    void Function(LibraryResource ressource, ContentPosition? position);
+typedef ChoixRessource = void Function(
+  LibraryResource ressource,
+  ContentPosition? position,
+);
 
 /// La Bibliotheque, **la seule**.
 ///
@@ -160,7 +162,8 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: <Widget>[
-              for (final TypeRessource type in TypeRessource.values) ...<Widget>[
+              for (final TypeRessource type
+                  in TypeRessource.values) ...<Widget>[
                 FilterPill(
                   libelle: libelleTypeRessource(type),
                   retenue: _filtre.types?.contains(type) ?? false,

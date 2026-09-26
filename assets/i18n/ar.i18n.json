@@ -20,6 +20,8 @@
       "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
       "indisponible": "معلومات الحصة غير متاحة حاليًا.",
       "reessayer": "إعادة المحاولة",
+      "chargementSeance": "جارٍ تحميل الحصة القادمة.",
+      "progressionValeur": "{chapitre} · {pourcentage} %",
       "dst": "تغيير التوقيت: سينتقل الدرس من {avant} إلى {apres}.",
       "annonce": {
         "aVenir": "حصة قادمة",

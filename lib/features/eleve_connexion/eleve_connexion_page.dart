@@ -456,8 +456,9 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     // commun aux trois taches de l'appareil eleve (saisie, scanner, ici), dont
     // le disque retour et le titre sont alignes sur le panneau (REVUE R-07).
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
-    final VoidCallback? retour =
-        _moment == MomentConnexionEleve.ouverture ? null : _retour;
+    final VoidCallback? retour = _moment == MomentConnexionEleve.ouverture
+        ? null
+        : _retour;
     if (mobile) {
       return PageShell(titre: titre, onRetour: retour, child: contenu);
     }

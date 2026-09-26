@@ -60,10 +60,7 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
           Text(t.agent.intro, style: textes.bodyMedium),
           Ecart.vXxl,
 
-          if (echec != null) ...<Widget>[
-            _Refus(echec: echec),
-            Ecart.vXxl,
-          ],
+          if (echec != null) ...<Widget>[_Refus(echec: echec), Ecart.vXxl],
 
           TextField(
             controller: _jeton,
@@ -88,12 +85,14 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
                   Text(t.agent.entrer, style: textes.titleSmall),
                   Ecart.vSm,
                   SelectableText(
-                    Uri.base.replace(
-                      path: Routes.agentEntree,
-                      queryParameters: <String, String>{
-                        parametreJetonAgent: saisi,
-                      },
-                    ).toString(),
+                    Uri.base
+                        .replace(
+                          path: Routes.agentEntree,
+                          queryParameters: <String, String>{
+                            parametreJetonAgent: saisi,
+                          },
+                        )
+                        .toString(),
                     style: textes.bodySmall,
                   ),
                 ],
@@ -121,8 +120,7 @@ class _Refus extends StatelessWidget {
     // client ne va pas etre plus bavard qu'elle.
     final (String titre, String detail) = switch (echec) {
       EchecAgent.jetonRefuse => (t.agent.refus, t.agent.refusDetail),
-      EchecAgent.serviceIndisponible ||
-      EchecAgent.reponseIllisible => (
+      EchecAgent.serviceIndisponible || EchecAgent.reponseIllisible => (
         t.agent.indisponible,
         t.agent.indisponibleDetail,
       ),

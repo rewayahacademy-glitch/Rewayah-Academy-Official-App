@@ -1,24 +1,38 @@
 // L'entree en classe en demonstration : /demo/classe (hors production, CL-4.2).
 //
-// Sans parametre : les liens role x etat. Avec `role` et `etat` : un
-// recapitulatif texte de l'emplacement d'entree, que CL-4.3 remplacera par les
-// ecrans. EspaceGroupePage et FicheGroupePage ne sont pas reutilises ici : ils
-// lisent des ports reseau (groupes, travail, reseau, roster Supabase) qu'il
-// faudrait tous surcharger, et leur rendu ignore encore EmplacementEntree.
+// Sans parametre : les liens role x etat. Avec `role` et `etat` :
+// - eleve (CL-4.3) : le VRAI EspaceGroupePage, ses providers surcharges par un
+//   ProviderScope sur les donnees de classe_demo.dart (aucun port reseau
+//   modifie) ;
+// - enseignant et Interface guidee : un recapitulatif texte de l'emplacement
+//   d'entree (l'enseignant passe en CL-4.4).
 // Aucun appel serveur (consigne K-28).
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_bibliotheque/catalogue_local.dart';
+import '../../core/tc_bibliotheque/donnees_catalogue.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
+import '../../core/tc_horloge/port_horloge_seance.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
+import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../tc_espace_groupe/emplacements_groupe.dart';
+import '../tc_espace_groupe/espace_groupe_page.dart';
 import 'classe_demo.dart';
 import 'mode_demonstration.dart';
+import 'repere_demonstration.dart';
 
 /// Les routes de la demonstration de l'entree : AUCUNE en production.
 List<RouteBase> routesDemoClasse(String environnement) {
@@ -124,6 +138,11 @@ class DemoClassePage extends StatelessWidget {
       );
     }
 
+    // CL-4.3 : l'eleve voit le VRAI ecran. L'enseignant garde son
+    // recapitulatif jusqu'a CL-4.4 ; l'Interface guidee rejoint depuis son
+    // Accueil (spec 2.2), l'Espace Classe n'est pas son chemin.
+    if (r == RoleEntree.eleve) return EcranEleveDemo(etat: e);
+
     final EmplacementEntree emplacement = DonneesClasseDemo.emplacement(r, e);
     return PageShell(
       titre: DonneesClasseDemo.classe,
@@ -161,6 +180,70 @@ class DemoClassePage extends StatelessWidget {
             onPress: () => context.go(Routes.demoClasse),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Les surcharges de la page eleve pour une situation : aucun port reseau
+/// n'est modifie, seuls les providers lus par la page sont remplaces.
+List<Override> surchargesEleveDemo(
+  EtatDemoClasse etat, {
+  PortTravailAVenir travail = const TravailAVenirDemo(),
+}) {
+  const String id = DonneesClasseDemo.groupeId;
+  return <Override>[
+    groupeProvider(id)
+        .overrideWith((Ref _) async => DonneesClasseDemo.groupe(etat)),
+    horlogeGroupeProvider(id).overrideWith(
+      (Ref _) => etat == EtatDemoClasse.indisponible
+          ? Stream<SessionClockVM>.error(StateError('demonstration'))
+          : Stream<SessionClockVM>.value(DonneesClasseDemo.horloge(etat)),
+    ),
+    horsLigneProvider.overrideWith(
+      (Ref _) => Stream<bool>.value(etat == EtatDemoClasse.horsLigne),
+    ),
+    seanceAnnuleeProvider(id)
+        .overrideWith((Ref _) => etat == EtatDemoClasse.annulee),
+    progressionGroupeProvider(id)
+        .overrideWith((Ref _) => DonneesClasseDemo.progression),
+    portTravailAVenirProvider.overrideWithValue(travail),
+    // Surcharge aussi la famille : sous un ProviderScope imbrique, elle se
+    // resoudrait sinon dans le conteneur racine, ou le port vaut `null`.
+    travailAVenirProvider((groupeId: id, studentId: null))
+        .overrideWith((Ref _) => travail.avantProchainCours(groupeId: id)),
+    portCatalogueProvider.overrideWithValue(
+      CatalogueLocal(
+        ressources: DonneesClasseDemo.supports,
+        assignationsParGroupe: <String, List<String>>{
+          id: <String>[
+            for (final LibraryResource r in DonneesClasseDemo.supports) r.id,
+          ],
+        },
+      ),
+    ),
+  ];
+}
+
+/// Le VRAI Espace Classe eleve (`EspaceGroupePage`) sur les donnees de
+/// demonstration d'une situation (CL-4.3).
+class EcranEleveDemo extends StatelessWidget {
+  /// Cree l'ecran.
+  const EcranEleveDemo({required this.etat, super.key});
+
+  /// La situation.
+  final EtatDemoClasse etat;
+
+  @override
+  Widget build(BuildContext context) {
+    return ProviderScope(
+      key: ValueKey<EtatDemoClasse>(etat),
+      overrides: surchargesEleveDemo(etat),
+      child: RepereDemonstration(
+        child: EspaceGroupePage(
+          groupeId: DonneesClasseDemo.groupeId,
+          onRejoindre: (_) {},
+        ),
       ),
     );
   }

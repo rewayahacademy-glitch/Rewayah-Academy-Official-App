@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -127,8 +127,8 @@ class EnteteClasse extends StatelessWidget {
             // La photo enseignant est OBLIGATOIRE (decision D-01). Quand elle
             // manque, on ne pose pas un avatar generique : cela masquerait une
             // donnee absente au lieu de la signaler. On ecrit qu'elle manque.
-            if (session.enseignant.photoCleOuUrl case final String photo)
-              ...<Widget>[
+            if (session.enseignant.photoCleOuUrl
+                case final String photo) ...<Widget>[
               AvatarTile(
                 prenom: session.enseignant.nomAffichage,
                 urlSignee: photo,

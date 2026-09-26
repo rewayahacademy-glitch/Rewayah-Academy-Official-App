@@ -7,10 +7,13 @@
 
 import 'package:flutter/foundation.dart';
 
+import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_groupe/group_home_vm.dart' show SlotAction;
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
+import '../../core/tc_parcours/port_travail_a_venir.dart';
+import '../tc_espace_groupe/emplacements_groupe.dart' show ProgressionCompacte;
 
 /// Un eleve vu par l'enseignant : projection pedagogique seulement.
 @immutable
@@ -252,4 +255,56 @@ abstract final class DonneesClasseDemo {
         lectureEchouee: etat == EtatDemoClasse.indisponible,
         preparationEnCours: etat == EtatDemoClasse.preparation,
       );
+
+  /// Identifiant de la classe de demonstration.
+  static const String groupeId = 'demo-classe-an-nour';
+
+  /// L'identite de la classe, avec l'horloge d'une situation.
+  static GroupSummaryVM groupe(EtatDemoClasse etat) => GroupSummaryVM(
+    groupeId: groupeId,
+    libelle: classe,
+    couleurJeton: const JetonCouleurGroupe(index: 2, codeStable: 'an-nour'),
+    enseignant: enseignante,
+    nomCours: cours,
+    niveauHumain: niveau,
+    nombreMembres: eleves.length,
+    seuilMax: 6,
+    typePublic: TypePublicGroupeVM.enfant,
+    actif: true,
+    prochaineSeance: OccurrenceSeance(
+      debutUtc: debutUtc,
+      duree: finPrevueUtc.difference(debutUtc),
+      fuseauReferenceGroupe: 'Europe/Paris',
+      sessionId: 'demo-seance-an-nour',
+    ),
+    horloge: horloge(etat),
+  );
+
+  /// La progression compacte de l'eleve.
+  static const ProgressionCompacte progression = ProgressionCompacte(
+    chapitre: 'Chapitre 1',
+    fraction: 0.6,
+  );
+
+  /// Les supports de la classe, en ressources de la Bibliotheque unique.
+  static List<LibraryResource> get supports => <LibraryResource>[
+    for (final (int i, RessourceDemo r) in ressources.indexed)
+      LibraryResource.depuisJson(<String, dynamic>{
+        'id': 'demo-support-$i',
+        'title': r.titre,
+        'short_title': '${r.titre}, ${r.type}, ${r.taille}',
+      }),
+  ];
+}
+
+/// Le travail « Avant le prochain cours » de la demonstration.
+class TravailAVenirDemo implements PortTravailAVenir {
+  /// Cree le port.
+  const TravailAVenirDemo();
+
+  @override
+  Future<List<SlotAction>> avantProchainCours({
+    required String groupeId,
+    String? studentId,
+  }) async => DonneesClasseDemo.actions;
 }

@@ -157,8 +157,9 @@ class VueClasseLive {
     EtatSalle.reconnexion => MotLien.reconnexion,
     EtatSalle.retabli => MotLien.retabli,
     EtatSalle.echec => MotLien.echec,
-    EtatSalle.absent || EtatSalle.connexion || EtatSalle.connecte =>
-      MotLien.aucun,
+    EtatSalle.absent ||
+    EtatSalle.connexion ||
+    EtatSalle.connecte => MotLien.aucun,
   };
 
   /// Qui domine l'ecran.

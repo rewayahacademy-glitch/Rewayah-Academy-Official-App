@@ -2455,6 +2455,8 @@
       "horsLigne": "Vous êtes hors ligne. La séance nécessite une connexion.",
       "indisponible": "L'information sur la séance est indisponible pour l'instant.",
       "reessayer": "Réessayer",
+      "chargementSeance": "Chargement de la prochaine séance.",
+      "progressionValeur": "{chapitre} · {pourcentage} %",
       "dst": "Changement d'heure : le cours passera de {avant} à {apres}.",
       "annonce": {
         "aVenir": "Séance à venir",

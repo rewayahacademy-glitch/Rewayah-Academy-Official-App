@@ -46,11 +46,11 @@ class AttentePage extends ConsumerWidget {
     // conservant `hasError`.
     final _Prochaine? prochaine = etat.hasValue
         ? _prochaine(
-              etat.requireValue,
-              adulte:
-                  ref.watch(brouillonInscriptionProvider).usage ==
-                  UsageInscription.moi,
-            )
+            etat.requireValue,
+            adulte:
+                ref.watch(brouillonInscriptionProvider).usage ==
+                UsageInscription.moi,
+          )
         : etat.hasError
         ? _Prochaine(
             t.commun.reessayer,
@@ -113,17 +113,18 @@ class _Prochaine {
 /// `adulte` : l'inscription vient de « Moi uniquement » (eleve adulte, son
 /// propre tuteur) ; le contrat s'ouvre alors en variante eleve adulte
 /// (`?pour=moi`). Sans brouillon (rechargement), variante responsable legal.
-_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) => switch (etat.etape) {
-  EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
-    _action(etat.manquants.first),
-    _chemin(etat.manquants.first, adulte: adulte),
-  ),
-  EtapeDossier.refuse => _Prochaine.vers(
-    t.attente.corriger,
-    Routes.attentePiece,
-  ),
-  _ => null,
-};
+_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) =>
+    switch (etat.etape) {
+      EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
+        _action(etat.manquants.first),
+        _chemin(etat.manquants.first, adulte: adulte),
+      ),
+      EtapeDossier.refuse => _Prochaine.vers(
+        t.attente.corriger,
+        Routes.attentePiece,
+      ),
+      _ => null,
+    };
 
 String _libelle(PieceManquante piece) => switch (piece) {
   PieceManquante.accuse => t.attente.carteAccuse,
@@ -137,8 +138,7 @@ String _action(PieceManquante piece) => switch (piece) {
   PieceManquante.pieceIdentite => t.attente.deposerLaPiece,
 };
 
-String _chemin(PieceManquante piece, {required bool adulte}) =>
-    switch (piece) {
+String _chemin(PieceManquante piece, {required bool adulte}) => switch (piece) {
   PieceManquante.accuse => Routes.attenteAccuse,
   PieceManquante.contrat =>
     adulte ? '${Routes.attenteContrat}?pour=moi' : Routes.attenteContrat,

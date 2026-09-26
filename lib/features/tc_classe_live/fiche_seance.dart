@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,8 +118,7 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
   Widget build(BuildContext context) {
     final TeacherStudentProjection eleve = widget.eleve;
     final TextTheme textes = Theme.of(context).textTheme;
-    final bool recite =
-        ref.watch(recitationProvider).actif == eleve.academyId;
+    final bool recite = ref.watch(recitationProvider).actif == eleve.academyId;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -331,7 +331,9 @@ class _Constat extends StatelessWidget {
               : t.enseignant.cahier.eleves(
                   nombre: '${brouillon.participants.length}',
                 ),
-          style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
         ),
         Ecart.vXl,
         if (vue.toutEstNominal && !lectureSeule) ...<Widget>[
@@ -461,9 +463,7 @@ class _LigneEleve extends StatelessWidget {
       onPress: onAjuster,
       libelleSemantique: onAjuster == null
           ? null
-          : t.enseignant.cahier.ajusterPour(
-              eleve: participant.membre.libelle,
-            ),
+          : t.enseignant.cahier.ajusterPour(eleve: participant.membre.libelle),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -642,8 +642,7 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           icon: AppIcons.pause,
           controle: Switch(
             value: _nouveauSuspendu,
-            onChanged: (bool actif) =>
-                setState(() => _nouveauSuspendu = actif),
+            onChanged: (bool actif) => setState(() => _nouveauSuspendu = actif),
           ),
         ),
         Ecart.vSection,
@@ -776,10 +775,7 @@ class _ApresDepot extends ConsumerWidget {
           // Le seul cas persistant prevu du produit, nomme dans le commentaire
           // de `LocalFeedback` : le rapport mis en file hors ligne, affiche tant
           // que la file n'est pas videe.
-          LocalFeedback(
-            message: t.enseignant.cahier.enFile,
-            persistant: true,
-          ),
+          LocalFeedback(message: t.enseignant.cahier.enFile, persistant: true),
         Ecart.vXl,
         switch (sort) {
           SortCahier.envoye => EmptyState(

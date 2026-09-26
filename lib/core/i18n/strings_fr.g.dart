@@ -6892,6 +6892,12 @@ class Traductions$classe$entree$fr {
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
 
+	/// fr: 'Chargement de la prochaine séance.'
+	String get chargementSeance => 'Chargement de la prochaine séance.';
+
+	/// fr: '{chapitre} · {pourcentage} %'
+	String progressionValeur({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %';
+
 	/// fr: 'Changement d'heure : le cours passera de {avant} à {apres}.'
 	String dst({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.';
 
@@ -14010,6 +14016,8 @@ extension on Traductions {
 			'classe.entree.horsLigne' => 'Vous êtes hors ligne. La séance nécessite une connexion.',
 			'classe.entree.indisponible' => 'L\'information sur la séance est indisponible pour l\'instant.',
 			'classe.entree.reessayer' => 'Réessayer',
+			'classe.entree.chargementSeance' => 'Chargement de la prochaine séance.',
+			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %',
 			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.',
 			'classe.entree.annonce.aVenir' => 'Séance à venir',
 			'classe.entree.annonce.fenetreOuverte' => 'La salle est ouverte',
@@ -14466,10 +14474,10 @@ extension on Traductions {
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
 			'tc.groupe.session.conseilAppareil' => 'Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge.',
 			'tc.groupe.espace.retour' => 'Mes classes',
-			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
-			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.espace.avantProchainCours' => 'Avant le prochain cours',
+			'tc.groupe.espace.aucuneAction' => 'Rien à préparer pour l\'instant',
 			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
 			'tc.groupe.espace.progression' => 'Progression',

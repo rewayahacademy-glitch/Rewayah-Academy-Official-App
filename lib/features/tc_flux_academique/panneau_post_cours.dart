@@ -83,8 +83,7 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         return EmptyState(
           message: t.tc.parcours.postCours.repriseInconnue,
           libelleAction: t.tc.parcours.postCours.valider,
-          onAction: () =>
-              ref.invalidate(postCoursProvider(widget.sessionId)),
+          onAction: () => ref.invalidate(postCoursProvider(widget.sessionId)),
         );
       }
       return const Skeleton.liste(lignes: 3);

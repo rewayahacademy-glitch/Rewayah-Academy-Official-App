@@ -144,11 +144,12 @@ class VueCahier {
   /// regards ferait toucher un eleve a la place d'un autre.
   static List<ParticipantBrouillon> _parNom(
     List<ParticipantBrouillon> lignes,
-  ) => lignes.toList()..sort(
-    (ParticipantBrouillon a, ParticipantBrouillon b) => a.membre.libelle
-        .toLowerCase()
-        .compareTo(b.membre.libelle.toLowerCase()),
-  );
+  ) => lignes.toList()
+    ..sort(
+      (ParticipantBrouillon a, ParticipantBrouillon b) => a.membre.libelle
+          .toLowerCase()
+          .compareTo(b.membre.libelle.toLowerCase()),
+    );
 }
 
 /// Traduit une ligne de brouillon en ligne de presence affichable.

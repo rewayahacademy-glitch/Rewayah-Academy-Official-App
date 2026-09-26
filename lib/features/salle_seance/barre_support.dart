@@ -227,9 +227,8 @@ class _IconeBarre extends StatelessWidget {
       child: Center(
         child: IconTheme(
           // Un bouton sans rappel (fin de pagination, etc.) : estompe, inactif.
-          data:
-              (action == null ? palette.inkFaint : palette.inkStrong)
-                  .asIconTheme(size: AppSpacing.xxl),
+          data: (action == null ? palette.inkFaint : palette.inkStrong)
+              .asIconTheme(size: AppSpacing.xxl),
           child: Transform.flip(flipX: retourne, child: Icon(icone.repos)),
         ),
       ),

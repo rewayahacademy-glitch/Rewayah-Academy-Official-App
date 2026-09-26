@@ -111,6 +111,8 @@ class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
 	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
 	@override String get indisponible => 'معلومات الحصة غير متاحة حاليًا.';
 	@override String get reessayer => 'إعادة المحاولة';
+	@override String get chargementSeance => 'جارٍ تحميل الحصة القادمة.';
+	@override String progressionValeur({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %';
 	@override String dst({required Object avant, required Object apres}) => 'تغيير التوقيت: سينتقل الدرس من ${avant} إلى ${apres}.';
 	@override late final _Traductions$classe$entree$annonce$ar annonce = _Traductions$classe$entree$annonce$ar._(_root);
 }
@@ -228,6 +230,8 @@ extension on TraductionsAr {
 			'classe.entree.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
 			'classe.entree.indisponible' => 'معلومات الحصة غير متاحة حاليًا.',
 			'classe.entree.reessayer' => 'إعادة المحاولة',
+			'classe.entree.chargementSeance' => 'جارٍ تحميل الحصة القادمة.',
+			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %',
 			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'تغيير التوقيت: سينتقل الدرس من ${avant} إلى ${apres}.',
 			'classe.entree.annonce.aVenir' => 'حصة قادمة',
 			'classe.entree.annonce.fenetreOuverte' => 'القاعة مفتوحة',

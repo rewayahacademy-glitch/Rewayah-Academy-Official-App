@@ -27,11 +27,12 @@ import '../tc_observation_ui/module_reglages_observation.dart';
 /// Les replis sont ceux du serveur, cle par cle -- une cle jamais seedee doit
 /// afficher ce que la base appliquerait, pas un chiffre invente.
 final FutureProvider<GuardianObservationPolicy>
-politiqueAcademieObservationProvider = FutureProvider<GuardianObservationPolicy>(
-  (Ref ref) async => politiqueAcademieDepuis(
-    await ref.watch(serviceConfigurationProvider).lire(clesObservation),
-  ),
-);
+politiqueAcademieObservationProvider =
+    FutureProvider<GuardianObservationPolicy>(
+      (Ref ref) async => politiqueAcademieDepuis(
+        await ref.watch(serviceConfigurationProvider).lire(clesObservation),
+      ),
+    );
 
 /// Construit la politique d'Academie depuis les quatre valeurs de `app_config`.
 GuardianObservationPolicy politiqueAcademieDepuis(List<ValeurConfig> valeurs) {
@@ -148,7 +149,8 @@ class _FeuilleObservationGroupeEtat
   /// autrement enverrait un administrateur presser un bouton qui echouera a
   /// l'identique.
   Widget _echec(Object? erreur) => EmptyState(
-    message: erreur is EchecObservation &&
+    message:
+        erreur is EchecObservation &&
             erreur.motif == MotifEchecObservation.capaciteAbsente
         ? t.admin.groupes.observationCapaciteAbsente
         : t.admin.groupes.erreur,

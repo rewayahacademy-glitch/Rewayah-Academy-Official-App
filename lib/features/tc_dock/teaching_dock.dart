@@ -221,13 +221,12 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     if (support == null || selection == null) {
       return;
     }
-    final IntentionPedagogique? intention =
-        await FeuilleChoix.ouvrirIntention(
-          context,
-          titre: t.tc.outils.marquer.titre,
-          aide: t.tc.outils.marquer.aide,
-          intentionInitiale: etat.intention,
-        );
+    final IntentionPedagogique? intention = await FeuilleChoix.ouvrirIntention(
+      context,
+      titre: t.tc.outils.marquer.titre,
+      aide: t.tc.outils.marquer.aide,
+      intentionInitiale: etat.intention,
+    );
     if (intention == null || !mounted) {
       return;
     }
@@ -249,9 +248,7 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
       intention: intention,
     );
     await annotations.poserMarqueur(couche.id, marqueur);
-    _emettre(
-      EvenementMarqueur.pose(coucheId: couche.id, marqueur: marqueur),
-    );
+    _emettre(EvenementMarqueur.pose(coucheId: couche.id, marqueur: marqueur));
     // Aucun retour local : le marqueur apparait sur le passage marque. Une
     // reussite visuellement evidente ne declenche aucune notification.
   }
@@ -266,13 +263,12 @@ class _TeachingDockState extends ConsumerState<TeachingDock> {
     if (support == null || selection == null || groupeId == null) {
       return;
     }
-    final IntentionPedagogique? intention =
-        await FeuilleChoix.ouvrirIntention(
-          context,
-          titre: t.tc.outils.revision.titre,
-          aide: t.tc.outils.revision.aide,
-          intentionInitiale: etat.intention,
-        );
+    final IntentionPedagogique? intention = await FeuilleChoix.ouvrirIntention(
+      context,
+      titre: t.tc.outils.revision.titre,
+      aide: t.tc.outils.revision.aide,
+      intentionInitiale: etat.intention,
+    );
     if (intention == null || !mounted) {
       return;
     }
