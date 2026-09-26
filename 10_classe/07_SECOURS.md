@@ -133,7 +133,7 @@ Consignes communes : `03_PLAN_CODE.md` §6 (verrou flutter, interdits, slang fr 
 
 | Tâche | État |
 |---|---|
-| T-S1 à T-S6 | à faire |
+| T-S1 à T-S6 | fait (26/09/2026, T-S6 `56541ce`) |
 
 ### T-S1 - Modèle, textes, démo (≈ 30 min)
 

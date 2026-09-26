@@ -10,14 +10,14 @@ Référentiels exclus : GOV.UK Design System (décision du directeur, §4.1). La
 |---|---|---|
 | W1 | WCAG 2.2, critère 4.1.3 « Status Messages » (w3.org/WAI/WCAG22/Understanding/status-messages) : « Status messages can be programmatically determined … without receiving focus. » | lue en ligne le 26/09/2026 |
 | W2 | WCAG 2.2 : 1.4.1 Utilisation de la couleur, 2.4.3 Parcours du focus, 2.4.11 Focus non masqué (minimum), 2.5.8 Taille de cible (minimum), 3.2.2 Changement au moment de la saisie, 3.3.1 Identification des erreurs | texte normatif connu ; non rechargé dans cette session |
-| M3 | Material Design 3 : bannières (message persistant tant que la condition dure), snackbars (bref, non critique), bottom sheets, dialogues | page m3.material.io injoignable par l'outil le 26/09/2026 (« socket hang up ») ; règles connues, à relire en recette T-S6 |
-| AH | Apple HIG, Privacy (demander l'accès au moment où il sert ; en cas de refus, expliquer et orienter vers Réglages sans insister) | page non lisible par l'outil le 26/09/2026 ; règle connue, à relire en recette T-S6 |
+| M3 | Material Design 3 : bannières (message persistant tant que la condition dure), snackbars (bref, non critique), bottom sheets, dialogues | relue en recette T-S6 le 26/09/2026 : page M3 Snackbar lue (bref, disparaît seul, bas de l'écran) ; la page M3 « banners » répond 404 : M3 n'a plus de composant bannière, la règle « persiste tant que la condition dure, non modale, en haut sous la barre » vient de Material 2 (m2.material.io/components/banners, trouvée par recherche). Conclusions U1, U2, U4 inchangées. |
+| AH | Apple HIG, Privacy (demander l'accès au moment où il sert ; en cas de refus, expliquer et orienter vers Réglages sans insister) | relue en recette T-S6 le 26/09/2026 par recherche web (HIG Privacy / « Accessing private data » ; la page elle-même ne se charge pas dans l'outil) : demander au moment où la fonction sert, texte précis et poli sans pression, après un refus on peut orienter vers Réglages. Conclusion U5 inchangée. |
 | FL | Flutter, « Adaptive and responsive design » et « Accessibility » (`Semantics.liveRegion`, focus, `SemanticsService.announce`) | règles connues ; non rechargé |
 | EN | EN 301 549 V3.2.1 (2021-03), chapitre 9 = WCAG 2.1 AA ; aucune « version 2026 » supposée | édition connue ; portée : web et application |
 | NI | Nielsen, heuristiques 1 (visibilité de l'état), 3 (contrôle et liberté), 5 (prévention des erreurs), 9 (diagnostiquer et récupérer) | référence stable |
 | LO | Fitts (cible 48 / 72 dp), Hick (deux choix au plus en secours), proximité Gestalt (§4 bis.1 : objet → CTA 16 dp) | référence stable |
 
-Réserve honnête : seules W1 a été relue en ligne pendant cette session (délai < 35 min, deux sites injoignables par l'outil). La recette T-S6 relit M3 et AH et met à jour la colonne « Consultation » ; si une règle diffère, la ligne concernée passe à « ajustée ».
+Réserve honnête (mise à jour T-S6) : W1 relue en ligne au cadrage ; M3 et AH relues en recette T-S6 (colonne « Consultation ») ; W2, FL, EN non rechargées (texte normatif stable). Aucune conclusion ne change.
 
 ## 1. Propositions contrôlées
 
@@ -28,10 +28,10 @@ Réserve honnête : seules W1 a été relue en ligne pendant cette session (dél
 | U3 | Reconnexion impossible, hors ligne confirmé (P05.8) | `EtatSysteme(portee: bloc)` à la place du bandeau, entre en-tête et support ; action `Réessayer` au bord trailing, `Quitter la séance` au leading ; la salle reste montée. | NI-3, NI-9 ; Hick : deux choix ; §4 bis.2 : poursuite trailing, sortie leading, 16 dp sous l'objet ; W2 3.3.1. | ajustée | Pas d'écran plein ni de dialogue : la spec dit « Page de salle conservée ». `Quitter la séance` repasse par la confirmation existante (`Quitter la séance ?` / cahier pour l'enseignant) : aucune sortie sans confirmation (NI-5). |
 | U4 | Réseau faible (P06) | Même bandeau que U1, ton avertissement, pastille « En ligne » inchangée ; commandes actives. | W2 1.4.1 : texte + icône, jamais la couleur seule ; spec P06.5 : aucun faux « hors ligne ». | conforme | La pastille d'état n'est pas remplacée par « Hors ligne » tant que la room est connectée. |
 | U5 | Micro bloqué (P09) | Feuille `AppBottomSheet` (feuille du bas < 600, dialogue centré au-delà) ouverte **au geste Micro** ; texte + `Continuer sans micro` (secondaire, leading) + `Ouvrir les réglages` (principal, trailing) **seulement si la plateforme le permet**. Fermeture → focus rendu au bouton Micro. | AH : demande contextuelle, orientation vers Réglages ; W2 2.4.3 (retour du focus) ; M3 : feuille modale pour une décision courte ; §4 bis.2 : un seul CTA dominant. | ajustée | Sans paquet de permission (pubspec interdit, `permission_handler` non retenu C05 §6), `onOuvrirReglages` reste `null` → bouton non rendu ; `Continuer sans micro` devient la seule action. Le bouton Micro reste « coupé » : aucun état « micro actif » simulé (P09.6). |
-| U6 | Caméra interdite (P10) | Élève standard : pas de bouton Caméra (déjà fait) ; `StatusPill` ton neutre, non interactive, « Caméra désactivée pour ce profil. » posée dans la barre basse (à la place du bouton, 768/1440) ou au-dessus du dock, alignée start, 8 dp (390). Guidée : rien. | Spec P10.3 « statut non interactif … pas dans le contenu principal » ; W2 : pas de contrôle factice ; Nielsen 1. | ajustée (Q-S1) | La spec parle de « détails média », que ni la matrice ni les maquettes du directeur ne montrent : la barre basse est retenue comme zone média. Choix soumis au directeur (Q-S1 dans `07_SECOURS.md`). |
+| U6 | Caméra interdite (P10) | Élève standard : pas de bouton Caméra (déjà fait) ; `StatusPill` ton neutre, non interactive, « Caméra désactivée pour ce profil. » posée dans la barre basse (à la place du bouton, 768/1440) ou au-dessus du dock, alignée start, 8 dp (390). Guidée : rien. | Spec P10.3 « statut non interactif … pas dans le contenu principal » ; W2 : pas de contrôle factice ; Nielsen 1. | ajustée (Q-S1), corrigée T-S6 | **T-S6** : la `StatusPill` (prévue pour 2 mots) passait sur deux lignes à 768 ; le statut devient un **texte d'état discret** (encre atténuée, comme « La séance se poursuit. ») au-dessus du dock, aligné start, 8 dp, **à toutes les tailles** ; tient sur une ligne à 390/768/1440, reflue à 320 et à 200 %. La spec parle de « détails média », que ni la matrice ni les maquettes du directeur ne montrent : la barre basse est retenue comme zone média. Choix soumis au directeur (Q-S1 dans `07_SECOURS.md`). |
 | U7 | Séance prolongée (P11) | Texte simple dans la ligne d'état (déjà fait pour ES et EN), jamais bandeau vert ; guidée : rien (matrice). Minuteur jamais négatif. | Matrice + DV D4 ; NI-1 ; minimalisme. | conforme | Aucun changement visuel ; ajout de situations démo et d'un test « minutes ≥ 0 ». |
 | U8 | Salle terminée (P12) | `ResultatSeance` (élève, guidée) et `FinSeanceEnseignant` existants ; focus initial sur le titre. | NI-1 ; W2 2.4.3 ; §4 bis.2 : résultat, 16 dp, CTA trailing. | conforme (existant) | Aucun changement ; écart d'anatomie éventuel consigné pour HU-1, pas corrigé ici (§4 bis.8). |
-| U9 | Accès retiré (P12) | Nouvelle issue de `ResultatSeance` (`accesRetire`) : titre « Votre accès à cette séance a pris fin. », CTA `Retour à la Classe` ; guidée : écran de fin guidé existant. Aucune tentative de reconnexion. | NI-9 ; spec P12.5 ; W2 3.3.1. | conforme | Pas de nouveau composant : une valeur d'énumération de plus et ses textes. |
+| U9 | Accès retiré (P12) | Nouvelle issue de `ResultatSeance` (`accesRetire`) : titre « Votre accès à cette séance a pris fin. », CTA `Retour à la Classe` ; guidée : écran de fin guidé existant. Aucune tentative de reconnexion. | NI-9 ; spec P12.5 ; W2 3.3.1, 2.4.3. | conforme (T-S6) | Pas de nouveau composant : une valeur d'énumération de plus et ses textes. T-S6 : focus clavier explicite posé sur `Retour à la Classe` à l'ouverture (extension additive `ActionPrincipale.autofocus` / `EcranResultat.focusAction`) ; le titre reste l'en-tête lu en premier. |
 | U10 | Mobile 390 / tablette 768 / desktop 1440 | Bandeaux pleine largeur de la colonne salle, gouttière 16 / 16 / 32 (valeurs du gabarit existant) ; bloc U3 borné par `EtatSysteme` ; feuille U5 = feuille du bas < 600, dialogue ≥ 600. | Contrat D : pas d'étirement mécanique, largeur bornée par le composant ; FL adaptive. | conforme | Aucune largeur ad hoc. Zoom 200 % : bandeau sur plusieurs lignes, jamais tronqué (W2 1.4.4 / 1.4.10). |
 | U11 | Mouvement | Apparition/disparition des bandeaux avec `AppMouvement.apparition` (180 ms) et courbes existantes ; réduction de mouvement = 0. | Contrat E. | conforme | Aucune durée locale. |
 
@@ -42,3 +42,22 @@ Aucune dérogation aux contrats A à E. Une tension documentée : la règle de `
 ## 3. Limites (§4.3)
 
 Rien ici ne change une permission, un état serveur ni la présence : détection réelle de la qualité, échec durable, révocation, permission OS et publication vidéo restent côté serveur et SDK (BR-1).
+
+## 4. Recette T-S6 (26/09/2026)
+
+| # | Coché | Preuve |
+|---|---|---|
+| U1 | oui | T-S2 : bandeau `liveRegion`, commandes désactivées ; captures `TS2/cl7_0{4,5,6}_reconnexion_*` |
+| U2 | oui | T-S2 : `LocalFeedback` ; démo : Réessayer (échec) → « Connexion rétablie. » (`demo_salle_page_test`) |
+| U3 | oui | T-S3 : bloc `EtatSysteme`, Réessayer trailing, Quitter leading avec confirmation |
+| U4 | oui | T-S2 : pastille « En ligne » conservée en réseau faible |
+| U5 | oui | T-S4 : feuille / dialogue, focus rendu au bouton Micro, Ouvrir les réglages non rendu (BR-1) |
+| U6 | oui (corrigé) | texte d'état discret une ligne ; `TS5/cl7_04_camera_interdite_*` recapturées ; tests 390/768/1440 à 200 %, 320 à 100 % et 200 % |
+| U7 | oui | T-S5 : « La séance se poursuit. », jamais négatif |
+| U8 | oui | existant |
+| U9 | oui (corrigé) | focus clavier sur l'action à l'ouverture, Entrée sort (tests aux 3 tailles) |
+| U10 | oui | `/demo/salle` : liste sans débordement à 320 (100 %) et 390/768/1440 (200 %) ; libellés des liens repliables |
+| U11 | oui | durées `AppMouvement` seulement (`verifier_jetons` : aucun écart dans les fichiers du lot) |
+
+Clavier : Tab atteint les liens de `/demo/salle`, le lien focalisé reste dans la vue (focus jamais masqué, W2 2.4.11), Entrée l'ouvre.
+Écarts consignés pour HU-1 (hors lot) : `verifier_jetons` signale deux écarts antérieurs hors CL-7 (`repere_demonstration.dart:37` graisse, `scanner_page.dart:467` page sans coquille).

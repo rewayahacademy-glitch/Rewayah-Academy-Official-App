@@ -48,7 +48,7 @@ Vous n'aviez pas encore répondu à 8 petites questions de détail. Pour ne pas 
 ## Ce qui n'est pas encore fait
 
 - **CL-4 (les écrans d'entrée)** : « Espace Classe » élève, « Espace Classe » enseignant, préparation technique avant d'entrer. Ces 3 écrans n'ont pas de maquette du directeur : quelqu'un doit d'abord les dessiner (ou vous les valider directement en code) avant de les coder.
-- **CL-7 (les écrans de secours)** : reconnexion, réseau faible, micro refusé, caméra interdite, séance prolongée, séance terminée ou accès retiré. Là aussi, pas encore de maquette.
+- ~~CL-7 (les écrans de secours)~~ : **fait le 26/09** avec votre feu vert sans maquette, voir la section « Écrans de secours (CL-7) » plus bas.
 - Ces deux points étaient prévus pour le poste A ; comme il est éteint depuis le 25/09, ils attendent soit une reprise par le poste B, soit votre feu vert pour les dessiner sans maquette (méthode habituelle : gabarits déjà utilisés ailleurs).
 - **BR-1 (branchement du serveur, tout en une fois, plus tard)** : le vrai support de cours partagé, les outils d'enseignement qui agissent réellement, la vraie bibliothèque de supports, les permissions micro/caméra du téléphone, la fusion technique des deux salles existantes en une seule en coulisses. Rien de tout cela n'est visible pour l'instant : les écrans sont prêts à les recevoir dès que vous donnez le feu vert pour BR-1.
 - Une question mineure laissée à votre avis : quand un enfant en interface guidée quitte la séance avant la fin, il voit aujourd'hui « La séance est terminée. » alors qu'elle continue pour les autres. Une phrase plus juste serait « Tu as quitté la séance. ». Rien n'a été changé sans votre accord.
@@ -56,3 +56,35 @@ Vous n'aviez pas encore répondu à 8 petites questions de détail. Pour ne pas 
 ## Tableau de suivi (nettoyage)
 
 Le tableau partagé (page « Chantier Tuteur V1 ») a été relu et remis à jour ce soir pour qu'il reflète l'état réel du lot Classe et visio (les lignes CL-3 et CL-6, marquées comme en cours, sont en réalité terminées) et pour que l'autre poste ne s'y perde plus : voir le récapitulatif court en tête des lignes `CL-*`.
+
+## Écrans de secours (CL-7)
+
+Fait le 26/09/2026, sans maquette (votre feu vert), en réutilisant les éléments déjà présents dans l'application. Rien n'est branché au serveur : ce sont les écrans, prêts à recevoir les vrais signaux à l'étape BR-1.
+
+**Ce qui est fait**, pour l'élève, l'enfant en interface guidée et l'enseignant :
+
+- **Réseau faible** : une bande d'avertissement en haut (« Réseau faible. L'audio est prioritaire. ») ; la séance continue normalement.
+- **Reconnexion** : la bande dit « Connexion interrompue. Reconnexion en cours… » ; le cours reste affiché ; Micro et Caméra sont mis en pause le temps de la reconnexion.
+- **Connexion rétablie** : un court message « Connexion rétablie. » qui disparaît seul.
+- **Reconnexion impossible / hors ligne** : un encadré avec « Réessayer » et « Quitter la séance » (Quitter demande toujours confirmation).
+- **Micro bloqué** par le téléphone : une petite fenêtre explique que le micro est bloqué, avec « Continuer sans micro ». Le bouton « Ouvrir les réglages » viendra avec le serveur (BR-1).
+- **Caméra interdite** (élève) : pas de bouton Caméra, et une ligne discrète au-dessus des boutons du bas : « Caméra désactivée pour ce profil. » L'enfant en interface guidée ne voit ni bouton ni explication.
+- **Séance prolongée** : « La séance se poursuit. » à la place du minuteur ; aucun bouton « Prolonger ».
+- **Accès retiré** : un écran « Votre accès à cette séance a pris fin. » avec « Retour à la Classe ». Au clavier, ce bouton est déjà sélectionné à l'ouverture.
+
+**Où le voir** : ouvrez `/demo/salle`. Pour chaque rôle (Élève standard, Interface guidée, Enseignant), il y a deux groupes de boutons : « Déroulé de la séance » (l'ordinaire) puis **« Situations de secours »** (9 situations ; 8 pour l'enseignant, car il a toujours la caméra). Un clic ouvre la salle dans cette situation. Dans « Reconnexion impossible », « Réessayer » fait revenir la connexion pour que vous voyiez la suite.
+
+**Captures à regarder** (dossier `10_classe/captures/`) :
+
+- `TS6/cl7_demo_liste_390x844_light.png` : la page de démonstration rangée par rôle.
+- `TS5/cl7_04_camera_interdite_768x1024@1_light.png` : la ligne « Caméra désactivée pour ce profil. » tient maintenant sur une seule ligne (avant, elle se coupait en deux sur tablette).
+- `TS2/` : réseau faible, reconnexion, connexion rétablie (élève `cl7_04`, guidée `cl7_05`, enseignant `cl7_06`).
+- `TS3/`, `TS4/`, `TS5/` : reconnexion impossible, micro bloqué, séance prolongée, accès retiré.
+
+**Vérifié** : téléphone, tablette, ordinateur, clair et sombre ; écran très étroit (320) ; texte agrandi à 200 % ; navigation au clavier (on voit toujours où l'on est). 619 tests réussis, aucun échec. Les recommandations de Google (Material) et d'Apple ont été relues : rien à changer.
+
+**À trancher par vous** (une option par défaut est appliquée, rien n'est bloqué) :
+
+1. **Q-S1** : « Caméra désactivée pour ce profil. » reste **visible** au-dessus des boutons (choix actuel), ou bien seulement **lu à voix haute** par le lecteur d'écran, sans texte visible ?
+2. **Q-S2** : ces textes n'étaient pas dans la spec, ils ont été proposés : « Connexion rétablie. » pour l'enfant ; « Continuer sans micro » pour l'enfant ; « Impossible de rétablir la connexion. » pour l'enseignant ; et, pour le lecteur d'écran, « Indisponible pendant la reconnexion. » sur un bouton en pause. Les gardez-vous ?
+3. **Boutons de l'enfant pendant la reconnexion** : en interface guidée, les grosses pastilles de couleur « Parler » et « Caméra » deviennent **grises (sans couleur)** tant que la reconnexion dure, pour montrer qu'elles sont en pause. Cela vous convient-il, ou préférez-vous qu'elles gardent leur couleur (en restant inactives) ?

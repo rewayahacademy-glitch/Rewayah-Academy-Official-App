@@ -32,7 +32,7 @@ La règle : **aucun écran codé avant que le directeur ait validé les planches
 | **CL-4** | A | Entrée : CLV-01 Espace Classe élève, CLV-02 Espace Classe enseignant, CLV-03 Préparation technique. | CL-3 |
 | **CL-5** | A | Salle élève : CLV-04 standard, CLV-05 Interface guidée, CLV-09 Fin de séance élève. | CL-3 |
 | **CL-6** | B (agents) | Salle enseignant : CLV-06, CLV-07 Élèves (enseignant **uniquement**), CLV-08 Supports, CLV-10 Fin de séance enseignant. | CL-3 |
-| **CL-7** | A | Résilience : reconnexion (P05), réseau faible (P06), micro refusé (P09), caméra interdite (P10), séance prolongée (P11), salle terminée ou accès retiré (P12). | CL-4, CL-5 |
+| **CL-7** (fait 26/09, `56541ce`) | A | Résilience : reconnexion (P05), réseau faible (P06), micro refusé (P09), caméra interdite (P10), séance prolongée (P11), salle terminée ou accès retiré (P12). | CL-4, CL-5 |
 | **CL-R** | cloud ou Sonnet | Revue adversariale de chaque lot (rôle effectif respecté, rien d'interdit affiché, jetons du thème, i18n). | chaque lot |
 | **CL-F** | B | Intégration dans `ui/classe-v1`, analyze + suite complète, recette §9 de la spec, dont une **vraie rencontre** élève-enseignant sur deux appareils (§9.1). | tous |
 

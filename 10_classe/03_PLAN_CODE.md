@@ -111,6 +111,7 @@ Tailles : mobile 390x844 @3 (zone sûre 47/34), web étroit 640x1000 @1 (gabarit
 | **T8** (rendu en séance de `/salle`) | **à faire : c'est la prochaine et la dernière** | - |
 | T9 (`/tc/classe`) | faite | `05_recette/CL/T8.md` |
 | T10 (recette, 10 planches) | faite, retours de relecture corrigés (`262b4b2`) | `05_recette/CL/RAPPORT.md`, captures `captures/T9/` |
+| CL-7 écrans de secours, T-S1 à T-S6 (plan `07_SECOURS.md`) | faites (T-S6 `56541ce`) | `05_recette/CL/T-S1.md` à `T-S6.md`, `RAPPORT.md` section « Écrans de secours (CL-7) », captures `captures/TS2/` à `TS6/` |
 
 Pour les rapports, se fier à la colonne « Fiche §8 » (les noms de fichiers de rapport ont un cran de décalage). Une fiche est « faite » quand son retour de relecture est corrigé et poussé. Captures d'une nouvelle tâche : `10_classe/captures/T<fiche>/`, seulement ses écrans.
 
