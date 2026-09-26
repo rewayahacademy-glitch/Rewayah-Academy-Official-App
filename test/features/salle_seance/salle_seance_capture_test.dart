@@ -278,4 +278,82 @@ void main() {
       }
     }
   });
+
+  group('Capture : panneau Eleves (T5)', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // Etats des images : desktop = visite + « La seance se poursuit. » ;
+    // telephone = sans visite, 32 min restantes ; web etroit = visite,
+    // 32 min restantes.
+    VueSeance vuePour(_Taille taille) {
+      final VueSeance base = DonneesSeanceDemo.vue(
+        RoleSeance.enseignant,
+        EtatDemoSalle.eleves,
+      );
+      const VisiteSeance visite = VisiteSeance(
+        prenomEnfant: DonneesSeanceDemo.eleveCourant,
+        concerneMoi: true,
+      );
+      return switch (taille.nom) {
+        '1440x900@1' => base.copyWith(
+          visite: visite,
+          horloge: const HorlogeDepassee(),
+        ),
+        '640x1000@1' => base.copyWith(visite: visite),
+        _ => base,
+      };
+    }
+
+    for (final _Taille taille in _tailles) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String nom = 'cl_07_eleves_${taille.nom}_${mode.name}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(
+            tester,
+            taille.logique,
+            taille.densite,
+            zoneSure: taille.zone,
+          );
+          await tester.pumpWidget(
+            hoteCapture(
+              SalleSeance(vue: vuePour(taille), actions: _actionsEleves),
+              themeMode: mode,
+            ),
+          );
+          await stabiliser(tester);
+          await tester.pump(const Duration(milliseconds: 1400));
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
 }
+
+void _eleve(EleveSeance _) {}
+
+const ActionsSeance _actionsEleves = ActionsSeance(
+  onRetour: _rien,
+  onQuitter: _rien,
+  onNotifications: _rien,
+  onReglages: _rien,
+  onCompte: _rien,
+  onMicro: _rien,
+  onCamera: _rien,
+  onReseau: _rien,
+  onEleves: _rien,
+  onSupports: _rien,
+  onOutil: _outil,
+  onPagePrecedente: _rien,
+  onPageSuivante: _rien,
+  onZoomMoins: _rien,
+  onZoomPlus: _rien,
+  onNaviguer: _aller,
+  onRappeler: _eleve,
+  onChoisirPourReciter: _eleve,
+  onNoter: _eleve,
+  onSignaler: _eleve,
+);

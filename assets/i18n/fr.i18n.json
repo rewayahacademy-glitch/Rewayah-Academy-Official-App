@@ -199,6 +199,10 @@
         "profil": "Profil"
       },
       "fermerPanneau": "Fermer le panneau",
+      "eleves": "Élèves",
+      "rappeler": "Rappeler",
+      "deplierFiche": "Afficher la fiche de {prenom}",
+      "replierFiche": "Masquer la fiche de {prenom}",
       "demo": {
         "titre": "Salle de démonstration",
         "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",

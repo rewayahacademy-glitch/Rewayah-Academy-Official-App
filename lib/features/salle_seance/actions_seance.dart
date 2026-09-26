@@ -7,6 +7,8 @@
 
 import 'package:flutter/foundation.dart';
 
+import 'vue_seance.dart';
+
 /// Les outils d'enseignement (CLV-06), enseignant seulement.
 enum OutilEnseignement { pointeur, marquer, masquer, annoter }
 
@@ -31,7 +33,19 @@ class ActionsSeance {
     this.onReglages,
     this.onCompte,
     this.onNaviguer,
+    this.onRappeler,
+    this.onChoisirPourReciter,
+    this.onNoter,
+    this.onSignaler,
   });
+
+  // Les quatre actions de la fiche d'un eleve (panneau Eleves, CLV-07),
+  // reprises de `FicheSeance` (/tc/classe) : aucune ne touche au support ni
+  // a la page. `null` : l'action n'est pas rendue (jamais grisee).
+  final ValueChanged<EleveSeance>? onRappeler;
+  final ValueChanged<EleveSeance>? onChoisirPourReciter;
+  final ValueChanged<EleveSeance>? onNoter;
+  final ValueChanged<EleveSeance>? onSignaler;
 
   /// Le chevron ‹ de l'en-tete. Passe par la meme confirmation que Quitter.
   final VoidCallback? onRetour;

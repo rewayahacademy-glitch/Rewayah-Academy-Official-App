@@ -2553,6 +2553,18 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Fermer le panneau'
 	String get fermerPanneau => 'Fermer le panneau';
 
+	/// fr: 'Élèves'
+	String get eleves => 'Élèves';
+
+	/// fr: 'Rappeler'
+	String get rappeler => 'Rappeler';
+
+	/// fr: 'Afficher la fiche de {prenom}'
+	String deplierFiche({required Object prenom}) => 'Afficher la fiche de ${prenom}';
+
+	/// fr: 'Masquer la fiche de {prenom}'
+	String replierFiche({required Object prenom}) => 'Masquer la fiche de ${prenom}';
+
 	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
 	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
 }
@@ -11623,6 +11635,10 @@ extension on Traductions {
 			'salle.seance.rail.ressources' => 'Ressources',
 			'salle.seance.rail.profil' => 'Profil',
 			'salle.seance.fermerPanneau' => 'Fermer le panneau',
+			'salle.seance.eleves' => 'Élèves',
+			'salle.seance.rappeler' => 'Rappeler',
+			'salle.seance.deplierFiche' => ({required Object prenom}) => 'Afficher la fiche de ${prenom}',
+			'salle.seance.replierFiche' => ({required Object prenom}) => 'Masquer la fiche de ${prenom}',
 			'salle.seance.demo.titre' => 'Salle de démonstration',
 			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
@@ -11991,12 +12007,12 @@ extension on Traductions {
 			'foyer.membre.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'foyer.classesIndisponibles' => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.',
 			'foyer.classesEchec' => 'La classe de certains élèves n\'a pas pu être lue.',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.relireClasses' => 'Relire les classes',
 			'foyer.inscriptionIllisible' => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.',
 			'foyer.appareilsPartages' => 'Appareils partagés',
 			'foyer.appareilsFoyer' => 'Appareils du foyer',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.appareilsFoyerLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
 			'foyer.creerMonProfil' => 'Créer mon profil élève',
 			'foyer.monProfil.titre' => 'Créer mon profil élève',
@@ -12505,12 +12521,12 @@ extension on Traductions {
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.regles.valeurInvalide' => 'Entrez un nombre valide.',
 			'admin.regles.envoyer' => 'Enregistrer',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.champValeur' => 'Valeur',
 			'admin.regles.absenceSeuil' => 'Seuil d\'absence',
 			'admin.regles.absenceSeuilDetail' => 'Au-delà de ce nombre de minutes sans rejoindre la séance, l\'élève est marqué absent.',
 			'admin.regles.dureeSeance' => 'Durée de séance',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.dureeSeanceDetail' => 'La durée par défaut d\'une séance, avant toute exception individuelle.',
 			'admin.regles.dureeMinimalePayee' => 'Durée minimale payée',
 			'admin.regles.dureeMinimalePayeeDetail' => 'En dessous de cette durée, une séance écourtée reste payée en entier.',
@@ -13019,12 +13035,12 @@ extension on Traductions {
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
+			_ => null,
+		} ?? switch (path) {
 			'nav.admin.attribution' => 'Attribution',
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
-			_ => null,
-		} ?? switch (path) {
 			'nav.admin.accueil' => 'Accueil',
 			'nav.admin.operations' => 'Opérations',
 			'nav.admin.personnes' => 'Personnes',
@@ -13533,12 +13549,12 @@ extension on Traductions {
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
 			'classe.observation.uneVisite' => '1 visite disponible',
 			'classe.observation.visites' => ({required Object nombre}) => '${nombre} visites disponibles',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
 			'classe.observation.restantes' => ({required Object nombre}) => '${nombre} visites restantes pour cette séance',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.minutes' => ({required Object minutes}) => '${minutes} min',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
@@ -14047,12 +14063,12 @@ extension on Traductions {
 			'tc.outils.trait.stylet' => 'Stylet',
 			'tc.outils.trait.surligneur' => 'Surligner',
 			'tc.outils.trait.gomme' => 'Gomme',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',

@@ -43,7 +43,8 @@ abstract final class DonneesSeanceDemo {
       prenom: 'Mariam',
       statut: StatutEleveSeance.connecte,
       fiche: FicheEleveSeance(
-        niveau: 'Niveau 1',
+        // L'intitule « Niveau » est celui de la fiche : la valeur seule ici.
+        niveau: '1',
         objectifActuel: 'Chapitre 1 (les bonnes manières)',
         derniereSeance: '24 sept. 2026',
         aReprendre: 'Pages 24 à 26',
@@ -51,10 +52,31 @@ abstract final class DonneesSeanceDemo {
         travailActuel: 'Écoute de la récitation',
       ),
     ),
-    EleveSeance(prenom: 'Yusuf', statut: StatutEleveSeance.pasEncoreConnecte),
+    // Fiches fictives de Yusuf et Aicha : leurs lignes (repliees sur les
+    // images) se deplient donc vraiment en demonstration.
+    EleveSeance(
+      prenom: 'Yusuf',
+      statut: StatutEleveSeance.pasEncoreConnecte,
+      fiche: FicheEleveSeance(
+        niveau: '1',
+        objectifActuel: 'Chapitre 1 (les bonnes manières)',
+        derniereSeance: '24 sept. 2026',
+        aReprendre: 'Pages 20 à 23',
+        presenceRecente: '2 séances cette semaine',
+        travailActuel: 'Lecture du chapitre',
+      ),
+    ),
     EleveSeance(
       prenom: 'Aïcha',
       statut: StatutEleveSeance.connexionInterrompue,
+      fiche: FicheEleveSeance(
+        niveau: '1',
+        objectifActuel: 'Chapitre 1 (les bonnes manières)',
+        derniereSeance: '24 sept. 2026',
+        aReprendre: 'Pages 24 à 26',
+        presenceRecente: '3 séances cette semaine',
+        travailActuel: 'Écoute de la récitation',
+      ),
     ),
   ];
 

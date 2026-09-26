@@ -279,6 +279,12 @@ class _SalleDemoState extends State<SalleDemo> {
         // Le rail sort de la salle (apres confirmation) : en demonstration,
         // retour a la liste des etats.
         onNaviguer: enseignant ? (String _) => widget.onSortir() : null,
+        // Les quatre actions de la fiche (panneau Eleves) : sans serveur en
+        // demonstration. Le rappel reussi ne produit rien (spec 10.2).
+        onRappeler: enseignant ? (EleveSeance _) => _inerte() : null,
+        onChoisirPourReciter: enseignant ? (EleveSeance _) => _inerte() : null,
+        onNoter: enseignant ? (EleveSeance _) => _inerte() : null,
+        onSignaler: enseignant ? (EleveSeance _) => _inerte() : null,
       ),
     );
   }

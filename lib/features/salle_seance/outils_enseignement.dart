@@ -119,7 +119,47 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
           );
         },
       ),
-      FormeOutils.colonne || FormeOutils.carte => SizedBox(
+      // Desktop avec panneau ouvert (CLV-07/08, Q2) : carte titree, quatre
+      // tuiles de meme largeur sur une rangee.
+      FormeOutils.carte => DecoratedBox(
+        decoration: AppPalette.of(context).surfaceRaised.decoration(
+          borderRadius: AppRadius.arrondiLg,
+          side: AppPalette.of(context).borderHairline.asBorderSide(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ExcludeSemantics(
+                child: Text(
+                  t.salle.seance.outils.titre,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppPalette.of(context).inkStrong.applyTo(
+                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              Ecart.vMd,
+              Row(
+                spacing: AppSpacing.sm,
+                children: <Widget>[
+                  for (final OutilEnseignement o in OutilEnseignement.values)
+                    Expanded(
+                      child: SizedBox(
+                        height: MesuresOutils.tuileDesktop.height,
+                        child: tuile(o),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      FormeOutils.colonne => SizedBox(
         width: MesuresOutils.colonne,
         child: Column(
           mainAxisSize: MainAxisSize.min,

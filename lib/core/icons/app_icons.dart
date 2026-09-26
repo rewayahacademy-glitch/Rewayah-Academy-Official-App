@@ -637,6 +637,38 @@ abstract final class AppIcons {
     IconData(0xe4f6, fontFamily: _actif),
   );
 
+  /// Panneau Eleves (CLV-07) : Rappeler, Phosphor `phone` (0xe3b8).
+  static const AppIcon rappeler = AppIcon._(
+    IconData(0xe3b8, fontFamily: _repos),
+    IconData(0xe3b8, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Choisir pour reciter, Phosphor `play`
+  /// (0xe3d0). Le triangle ne se miroite pas : il dit « lancer ».
+  static const AppIcon reciter = AppIcon._(
+    IconData(0xe3d0, fontFamily: _repos),
+    IconData(0xe3d0, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Noter, Phosphor `file-text` (0xe23a).
+  static const AppIcon noter = AppIcon._(
+    IconData(0xe23a, fontFamily: _repos),
+    IconData(0xe23a, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Signaler un besoin, Phosphor `flag` (0xe244).
+  static const AppIcon signaler = AppIcon._(
+    IconData(0xe244, fontFamily: _repos),
+    IconData(0xe244, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : fiche depliee, Phosphor `caret-up` (0xe13c).
+  /// Direction cardinale : ne se miroite pas.
+  static const AppIcon replier = AppIcon._(
+    IconData(0xe13c, fontFamily: _repos),
+    IconData(0xe13c, fontFamily: _actif),
+  );
+
   /// Rail enseignant : Journee, Phosphor `house` (0xe2c2).
   static const AppIcon maison = AppIcon._(
     IconData(0xe2c2, fontFamily: _repos),

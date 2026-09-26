@@ -389,23 +389,35 @@ class _Contenu extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(child: entete),
-            if (large) ...<Widget>[Ecart.hXxl, const _Illustration()],
-            SizedBox(
-              width: reserve,
-              height: large || largeurVignette <= 0
-                  ? 0
-                  : math.max(
-                      0,
-                      largeurVignette / MesuresVignette.ratio +
-                          marges.retraitVignette -
-                          marges.y,
-                    ),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (BuildContext _, BoxConstraints c) => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(child: entete),
+              // Desktop : l'illustration seulement si le titre garde sa
+              // place (panneau ouvert, CLV-07 : support plus etroit, sans
+              // illustration).
+              if (large &&
+                  c.maxWidth >=
+                      reserve +
+                          _Illustration._largeur +
+                          _largeurTitre) ...<Widget>[
+                Ecart.hXxl,
+                const _Illustration(),
+              ],
+              SizedBox(
+                width: reserve,
+                height: large || largeurVignette <= 0
+                    ? 0
+                    : math.max(
+                        0,
+                        largeurVignette / MesuresVignette.ratio +
+                            marges.retraitVignette -
+                            marges.y,
+                      ),
+              ),
+            ],
+          ),
         ),
         // Telephone et web etroit : deux lignes sous la vignette ; une
         // seule quand le support est resserre (image mobile, enseignant).

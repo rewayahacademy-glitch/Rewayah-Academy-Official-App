@@ -4,6 +4,8 @@
 // sans barre d'application (I-8). Dispositions par `Gabarit` : compacte
 // (< 600), moyenne (600-1199), large (>= 1200).
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
@@ -18,6 +20,7 @@ import 'barre_support.dart';
 import 'chrome_seance.dart';
 import 'dock_seance.dart';
 import 'outils_enseignement.dart';
+import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'rail_seance.dart';
 import 'vue_seance.dart';
@@ -150,6 +153,18 @@ class _SalleEnseignant extends StatelessWidget {
     final Widget support = ZoneSupport(vue: vue, zoom: local.zoom, serre: true);
     final Widget? boutons = _BoutonsPanneaux.ou(vue, actions, gabarit);
     final Widget? panneau = _panneau();
+    if (panneau != null) {
+      return gabarit == Gabarit.desktop
+          ? _avecRail(
+              _desktopAvecPanneau(
+                context,
+                panneau: panneau,
+                support: support,
+                outils: outils,
+              ),
+            )
+          : _etroitAvecPanneau(panneau: panneau, support: support);
+    }
     switch (gabarit) {
       case Gabarit.desktop:
         final SupportSeance? page = vue.support;
@@ -181,16 +196,7 @@ class _SalleEnseignant extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    if (panneau != null) ...<Widget>[
-                      SizedBox(width: largeurPanneauSeance, child: panneau),
-                      Ecart.hLg,
-                    ],
-                    Expanded(child: support),
-                  ],
-                ),
+                child: support,
               ),
             ),
             Padding(
@@ -244,15 +250,7 @@ class _SalleEnseignant extends StatelessWidget {
             ),
           ],
         );
-        final ValueChanged<String>? naviguer = actions.onNaviguer;
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (vue.voitRail(gabarit) && naviguer != null)
-              RailSeance(onNaviguer: naviguer, groupeId: vue.groupeId),
-            Expanded(child: contenu),
-          ],
-        );
+        return _avecRail(contenu);
       case Gabarit.tablette:
       case Gabarit.mobile:
         final bool mobile = gabarit == Gabarit.mobile;
@@ -288,27 +286,7 @@ class _SalleEnseignant extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: Stack(
-                  children: <Widget>[
-                    Positioned.fill(child: milieu),
-                    // Web etroit : volet a gauche, par-dessus le support
-                    // (I-8) ; telephone : feuille depuis le bas.
-                    if (panneau != null)
-                      if (mobile)
-                        Positioned.fill(
-                          top: AppSpacing.respiration * 2,
-                          child: panneau,
-                        )
-                      else
-                        PositionedDirectional(
-                          start: 0,
-                          top: 0,
-                          bottom: 0,
-                          width: largeurPanneauSeance,
-                          child: panneau,
-                        ),
-                  ],
-                ),
+                child: milieu,
               ),
             ),
             if (mobile && outils) ...<Widget>[
@@ -340,18 +318,207 @@ class _SalleEnseignant extends StatelessWidget {
     }
   }
 
-  /// Le panneau ouvert (cadre seul en T4), ou `null`.
-  Widget? _panneau() => switch (vue.panneau) {
-    PanneauOuvert.aucun => null,
-    PanneauOuvert.eleves => PanneauSeance(
-      titre: vue.compteurEleves ?? '',
-      onFermer: actions.onEleves,
-    ),
-    PanneauOuvert.supports => PanneauSeance(
-      titre: t.salle.seance.supports,
-      onFermer: actions.onSupports,
-    ),
-  };
+  /// Desktop : le rail enseignant a gauche, s'il a un rappel.
+  Widget _avecRail(Widget contenu) {
+    final ValueChanged<String>? naviguer = actions.onNaviguer;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (vue.voitRail(gabarit) && naviguer != null)
+          RailSeance(onNaviguer: naviguer, groupeId: vue.groupeId),
+        Expanded(child: contenu),
+      ],
+    );
+  }
+
+  /// Le panneau ouvert, ou `null`. Enseignant seulement : ce widget n'est
+  /// construit que pour `RoleSeance.enseignant`, et la vue le confirme.
+  Widget? _panneau() {
+    if (!vue.voitBoutonsPanneaux) return null;
+    final FormePanneau forme = FormePanneau.pour(gabarit);
+    return switch (vue.panneau) {
+      PanneauOuvert.aucun => null,
+      PanneauOuvert.eleves => PanneauSeance(
+        titre: t.salle.seance.eleves,
+        onFermer: actions.onEleves,
+        forme: forme,
+        enfant: PanneauEleves(eleves: vue.eleves, actions: actions),
+      ),
+      PanneauOuvert.supports => PanneauSeance(
+        titre: t.salle.seance.supports,
+        onFermer: actions.onSupports,
+        forme: forme,
+      ),
+    };
+  }
+
+  /// Desktop, panneau ouvert (CLV-07, CLV-08) : panneau a gauche, support au
+  /// centre, colonne droite (Eleves et Supports, puis carte des outils, Q2) ;
+  /// pagination, dock et zoom sous le support seulement.
+  Widget _desktopAvecPanneau(
+    BuildContext context, {
+    required Widget panneau,
+    required Widget support,
+    required bool outils,
+  }) {
+    const double gouttiere = AppPage.gouttiereMobile;
+    final SupportSeance? page = vue.support;
+    final Widget? boutons = _BoutonsPanneaux.ou(
+      vue,
+      actions,
+      gabarit,
+      etire: true,
+      serre: true,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ChromeSeance(vue: vue, actions: actions),
+        Ecart.vSm,
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                SizedBox(width: largeurPanneauSeance, child: panneau),
+                Ecart.hLg,
+                Expanded(child: support),
+                Ecart.hLg,
+                SizedBox(
+                  width: largeurPanneauSeance + AppSpacing.lg,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      ?boutons,
+                      if (outils) ...<Widget>[
+                        Ecart.vLg,
+                        OutilsEnseignement(
+                          onOutil: actions.onOutil,
+                          forme: FormeOutils.carte,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(
+            gouttiere + largeurPanneauSeance,
+            AppSpacing.xl,
+            gouttiere,
+            AppSpacing.lg,
+          ),
+          child: Row(
+            spacing: AppSpacing.md,
+            children: <Widget>[
+              if (page != null && vue.voitPaginationActive(gabarit))
+                PaginationSupport(
+                  page: page.page,
+                  pages: page.pages,
+                  onPrecedente: actions.onPagePrecedente,
+                  onSuivante: actions.onPageSuivante,
+                ),
+              DockSeance(
+                vue: vue,
+                actions: actions,
+                microOuvert: local.microOuvert,
+                cameraAllumee: local.cameraAllumee,
+              ),
+              if (vue.voitZoomLocal(gabarit))
+                ZoomLocal(
+                  zoom: local.zoom,
+                  onMoins: actions.onZoomMoins,
+                  onPlus: actions.onZoomPlus,
+                  avecLibelle: false,
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Web etroit et telephone, panneau ouvert : le panneau recouvre le
+  /// support (volet a gauche, ou feuille du bas qui laisse voir le haut du
+  /// support et la vignette). Les boutons Eleves et Supports et les outils
+  /// se retirent : le panneau les remplace (images CLV-07-08-10).
+  Widget _etroitAvecPanneau({
+    required Widget panneau,
+    required Widget support,
+  }) {
+    const double gouttiere = AppPage.gouttiereMobile;
+    final bool mobile = gabarit == Gabarit.mobile;
+    final double ecartDock = mobile ? AppSpacing.sm : AppSpacing.md;
+    Widget dessous(double largeurVolet) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+            child: support,
+          ),
+        ),
+        Padding(
+          // Web etroit : le dock se centre a droite du volet (image).
+          padding: EdgeInsetsDirectional.fromSTEB(
+            mobile ? gouttiere : largeurVolet + AppSpacing.sm + AppSpacing.xs,
+            ecartDock,
+            mobile ? gouttiere : AppSpacing.sm,
+            ecartDock,
+          ),
+          child: Align(
+            child: DockSeance(
+              vue: vue,
+              actions: actions,
+              microOuvert: local.microOuvert,
+              cameraAllumee: local.cameraAllumee,
+            ),
+          ),
+        ),
+      ],
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ChromeSeance(vue: vue, actions: actions),
+        mobile ? Ecart.vSm : Ecart.vMd,
+        Expanded(
+          child: LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints c) {
+              // Volet : au plus la moitie de la largeur, moins un palier, pour
+              // laisser au dock toute sa place a droite (image : ≈ 313).
+              final double largeurVolet = math.min(
+                largeurPanneauSeance,
+                c.maxWidth / 2 - AppSpacing.lg,
+              );
+              return Stack(
+                children: <Widget>[
+                  Positioned.fill(child: dessous(largeurVolet)),
+                  if (mobile)
+                    Positioned.fill(
+                      top: supportVisibleSousFeuille,
+                      child: panneau,
+                    )
+                  else
+                    PositionedDirectional(
+                      start: AppSpacing.sm,
+                      top: 0,
+                      bottom: AppSpacing.sm,
+                      width: largeurVolet,
+                      child: panneau,
+                    ),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 /// « Eleves 1/3 › » et « Supports › » : enseignant seulement. Desktop :
@@ -363,9 +530,16 @@ class _BoutonsPanneaux extends StatelessWidget {
     required this.onEleves,
     required this.onSupports,
     required this.etire,
+    this.serre = false,
   });
 
-  static Widget? ou(VueSeance vue, ActionsSeance actions, Gabarit gabarit) {
+  static Widget? ou(
+    VueSeance vue,
+    ActionsSeance actions,
+    Gabarit gabarit, {
+    bool? etire,
+    bool serre = false,
+  }) {
     final String? compteur = vue.compteurEleves;
     if (!vue.voitBoutonsPanneaux || compteur == null) return null;
     if (actions.onEleves == null && actions.onSupports == null) return null;
@@ -373,7 +547,8 @@ class _BoutonsPanneaux extends StatelessWidget {
       compteur: compteur,
       onEleves: actions.onEleves,
       onSupports: actions.onSupports,
-      etire: gabarit != Gabarit.desktop,
+      etire: etire ?? gabarit != Gabarit.desktop,
+      serre: serre,
     );
   }
 
@@ -381,6 +556,9 @@ class _BoutonsPanneaux extends StatelessWidget {
   final VoidCallback? onEleves;
   final VoidCallback? onSupports;
   final bool etire;
+
+  /// Desktop, panneau ouvert : colonne droite etroite (CLV-07).
+  final bool serre;
 
   @override
   Widget build(BuildContext context) {
@@ -394,6 +572,7 @@ class _BoutonsPanneaux extends StatelessWidget {
           libelle: compteur,
           onPress: eleves,
           etire: etire,
+          serre: serre,
         ),
       if (supports != null)
         BoutonPanneau(
@@ -402,6 +581,7 @@ class _BoutonsPanneaux extends StatelessWidget {
           libelle: t.salle.seance.supports,
           onPress: supports,
           etire: etire,
+          serre: serre,
         ),
     ];
     return Row(
@@ -421,6 +601,7 @@ class BoutonPanneau extends StatelessWidget {
     required this.libelle,
     required this.onPress,
     this.etire = false,
+    this.serre = false,
     super.key,
   });
 
@@ -430,6 +611,9 @@ class BoutonPanneau extends StatelessWidget {
 
   /// Largeur imposee (telephone, web etroit) : le chevron va au bout.
   final bool etire;
+
+  /// Icones et ecarts resserres (colonne droite desktop, CLV-07).
+  final bool serre;
 
   @override
   Widget build(BuildContext context) {
@@ -464,14 +648,18 @@ class BoutonPanneau extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                  data: palette.inkAccent.asIconTheme(
+                    size: serre ? AppSpacing.xl : AppSpacing.xxl,
+                  ),
                   child: Icon(icone.repos),
                 ),
-                Ecart.hMd,
+                if (serre) Ecart.hSm else Ecart.hMd,
                 if (etire) Expanded(child: texte) else texte,
-                if (etire) Ecart.hSm else Ecart.hLg,
+                if (serre) Ecart.hXs else if (etire) Ecart.hSm else Ecart.hLg,
                 IconTheme(
-                  data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                  data: palette.inkMuted.asIconTheme(
+                    size: serre ? AppSpacing.lg : AppSpacing.xl,
+                  ),
                   child: Icon(AppIcons.chevron.repos),
                 ),
               ],
