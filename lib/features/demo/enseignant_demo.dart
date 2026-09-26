@@ -17,9 +17,11 @@
 import 'package:flutter/foundation.dart';
 
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
+import '../../core/coran/service_coran.dart' show PositionLecture;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
+import '../../core/presence/service_presence.dart' show EtatPresence;
 import '../../core/profil/service_profil_enseignant.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 
@@ -220,6 +222,10 @@ enum EcranDemoEnseignant {
   /// Premiers pas (ENS-01) : un flux d'activation, hors de la barre. Il
   /// reste le dernier : les quatre premiers suivent l'ordre des destinations.
   premiersPas,
+
+  /// Cahier de seance (ENS-04, EN-7) : l'ecran de sortie de seance, hors de
+  /// la barre (planche 4, R5).
+  cahier,
 }
 
 /// Les situations proposees pour chaque ecran.
@@ -498,4 +504,57 @@ abstract final class DonneesEnseignantDemo {
     plafondHeures: 12,
     statutCompte: AccountStatus.active,
   );
+
+  /// Le brouillon du cahier d'Al-Badr, 26 septembre 2026, tel que
+  /// `brouillon_cahier()` le rendrait (ENS-04, EN-7) : Nour presente, Idris en
+  /// retard, Aya absente. Nour et Idris se sont arretes au meme verset, ce qui
+  /// donne la proposition de reprise. [deja] rend le cahier deja valide.
+  static BrouillonCahier brouillonCahier({bool deja = false}) {
+    final ClasseEnseignantDemo c = classes[2];
+    final DateTime debut = DateTime(2026, 9, 26, 17);
+    const PositionLecture position = PositionLecture(
+      page: 582,
+      sourate: 78,
+      verset: 12,
+    );
+    ParticipantBrouillon eleve(
+      EleveEnseignantDemo e,
+      EtatPresence presence, {
+      int retard = 0,
+      bool lu = true,
+    }) => ParticipantBrouillon(
+      membre: MembreSeance(
+        studentId: e.id,
+        identifiantImmuable: 'RA-${e.id.substring(11).toUpperCase()}',
+        prenom: e.prenom,
+      ),
+      presence: presence,
+      entreLe: presence == EtatPresence.absente
+          ? null
+          : debut.add(Duration(minutes: retard)),
+      derniereTraceLe: presence == EtatPresence.absente
+          ? null
+          : debut.add(const Duration(minutes: 45)),
+      position: lu ? position : null,
+    );
+    return BrouillonCahier(
+      seanceId: cahierDemoSeanceId,
+      debut: debut,
+      fin: debut.add(const Duration(minutes: 45)),
+      statut: StatutSeance.terminee,
+      dureeMinutes: 45,
+      minutesInterruption: 0,
+      dejaDepose: deja,
+      groupeId: c.id,
+      participants: <ParticipantBrouillon>[
+        eleve(c.eleves[0], EtatPresence.presente),
+        eleve(c.eleves[1], EtatPresence.enRetard, retard: 7),
+        eleve(c.eleves[2], EtatPresence.absente, lu: false),
+      ],
+      evenements: const <EvenementSeance>[],
+    );
+  }
+
+  /// La seance du cahier de demonstration.
+  static const String cahierDemoSeanceId = 'demo-seance-al-badr-2609';
 }

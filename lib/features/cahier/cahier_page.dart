@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/coran/service_coran.dart' show PositionLecture;
 import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/vue_presence.dart';
-import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -22,32 +23,34 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
+import '../foyer/photo_eleve.dart';
 import '../presence_correction/presence_correction.dart';
 import '../presence_correction/presence_correction_page.dart';
 import 'makharij.dart';
 import 'vue_cahier.dart';
 
-/// `ENS-04` : le cahier de transmission d'une seance.
+/// `ENS-04` : le cahier de seance (doc 04 §20, planche 4, K-45).
 ///
 /// **L'ecran de sortie de seance, et le seul.** On y arrive en quittant la
-/// salle, jamais depuis la barre basse (`08-catalogue-ecrans.md`, fiche
-/// `ENS-04`). Le branchement de la sortie de salle est pose par l'Agent Z ; cet
-/// ecran garantit le reste : il se rend depuis une route a parametre, et il
-/// ramene a la Journee des que le cahier est parti.
+/// salle, jamais depuis la barre de navigation (planche 4, R5).
 ///
-/// **Le principe anti-burnout commande toute la presentation.** L'ecran est
-/// prerempli par `brouillon_cahier()` : presence deduite, duree calculee par la
-/// base, unite de curriculum quand elle existe, evenements de seance. Tout vaut
-/// « Continuer » par defaut, `BrouillonCahier.exceptions` rend les seules lignes
-/// qui demandent un regard, et `toutEstNominal` ouvre le chemin d'un seul geste.
-/// Aucun champ ne redemande ce que le systeme sait deja.
+/// **Moins de 45 secondes.** L'ecran est prerempli par `brouillon_cahier()` :
+/// presence deduite, duree calculee par la base, position de lecture. Tout vaut
+/// « Continuer » par defaut, et l'enseignant ne touche qu'aux exceptions.
+/// L'enseignant juge, la machine ne juge jamais (K-45, point 4).
 ///
-/// Ce que l'enseignant **ne peut pas** faire n'est pas grise : il n'est pas
-/// rendu. Aucun selecteur de niveau, aucun changement de cycle, aucune
-/// validation de palier -- `DecisionEleve` ne porte aucun champ qui le
-/// permettrait, et une phrase dit pourquoi le programme est institutionnel.
+/// **Ordre de la planche 4** : resume et pastilles de statut, eleves (et leur
+/// devoir), position de reprise, phrase d'integrite, « Valider le cahier ».
+/// Sur bureau, deux colonnes : le resume et les eleves sans exception, puis
+/// les exceptions et la reprise.
+///
+/// **Le cahier reste corrigeable apres validation** (K-45, point 5) :
+/// l'enseignant ne voit que « Corrige le ... », l'historique est reserve a
+/// l'academie.
 class CahierPage extends ConsumerWidget {
   /// Cree le cahier d'une seance.
   const CahierPage({required this.seanceId, super.key});
@@ -70,10 +73,8 @@ class CahierPage extends ConsumerWidget {
 
 /// Le corps du cahier, qui porte les decisions en cours de saisie.
 ///
-/// Les decisions vivent ici et nulle part ailleurs : aucun etat global n'est
-/// cree pour un formulaire qui ne survit pas a l'ecran. Une entree absente de la
-/// carte **est** la decision par defaut, « Continuer » : ainsi le chemin nominal
-/// ne construit aucun objet, et rien a synchroniser quand le brouillon est relu.
+/// Une entree absente de la carte **est** la decision par defaut,
+/// « Continuer » : le chemin nominal ne construit aucun objet.
 class _Cahier extends ConsumerStatefulWidget {
   const _Cahier({required this.seanceId, required this.vue});
 
@@ -86,60 +87,118 @@ class _Cahier extends ConsumerStatefulWidget {
 
 class _CahierState extends ConsumerState<_Cahier> {
   final Map<String, DecisionEleve> _decisions = <String, DecisionEleve>{};
-  final TextEditingController _note = TextEditingController();
+  final TextEditingController _reprise = TextEditingController();
+  final FocusNode _focusReprise = FocusNode();
 
   bool _envoiEnCours = false;
   bool _echecEnvoi = false;
+  bool _repriseManquante = false;
+  bool _repriseProposee = false;
+  bool _enCorrection = false;
+  DateTime? _corrigeLe;
   SortCahier? _sort;
 
   @override
+  void initState() {
+    super.initState();
+    _focusReprise.addListener(_sortieReprise);
+  }
+
+  @override
   void dispose() {
-    _note.dispose();
+    _focusReprise
+      ..removeListener(_sortieReprise)
+      ..dispose();
+    _reprise.dispose();
     super.dispose();
+  }
+
+  /// A la sortie du champ, un message calme si la reprise manque (K-45,
+  /// point 2). Jamais pendant la frappe.
+  void _sortieReprise() {
+    if (_focusReprise.hasFocus) return;
+    final bool manquante = _reprise.text.trim().isEmpty;
+    if (manquante != _repriseManquante) {
+      setState(() => _repriseManquante = manquante);
+    }
+  }
+
+  /// Preremplit la reprise une seule fois, quand le brouillon arrive : c'est
+  /// une proposition que l'enseignant verifie (doc 04 §20.1).
+  void _proposerReprise(VueCahier vue) {
+    if (_repriseProposee) return;
+    final BrouillonCahier? brouillon = vue.brouillon;
+    if (brouillon == null) return;
+    _repriseProposee = true;
+    final PositionLecture? position = repriseProposee(brouillon.participants);
+    if (position != null && _reprise.text.isEmpty) {
+      _reprise.text = t.enseignant.cahier.repriseProposee(
+        sourate: '${position.sourate}',
+        verset: '${position.verset}',
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final VueCahier vue = widget.vue;
     final SortCahier? sort = _sort;
+    _proposerReprise(vue);
 
     if (sort != null) {
       return PageShell(
         titre: t.enseignant.cahier.titre,
-        actions: _retourJournee(),
-        child: _ApresDepot(sort: sort),
+        child: _ApresDepot(
+          sort: sort,
+          corrigeLe: _corrigeLe,
+          onCorriger: sort == SortCahier.envoye ? _corriger : null,
+          onRetour: _retourJournee,
+        ),
       );
     }
 
+    final bool lectureSeule =
+        vue.etat == EtatCahier.dejaDepose && !_enCorrection;
+
     return PageShell(
       titre: t.enseignant.cahier.titre,
-      actions: _actions(vue),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (_echecEnvoi)
+          if (_echecEnvoi) ...<Widget>[
             LocalFeedback(message: t.enseignant.cahier.echecEnvoi),
+            Ecart.vLg,
+          ],
           switch (vue.etat) {
             EtatCahier.chargement => const Skeleton.liste(lignes: 4),
-            EtatCahier.erreur => EmptyState(
-              message: t.enseignant.cahier.erreur,
-              invitation: t.enseignant.cahier.erreurDetail,
-              icone: AppIcons.avertissement,
-              libelleAction: t.commun.reessayer,
-              onAction: _relire,
+            EtatCahier.erreur => _SansConstat(
+              etat: EmptyState(
+                message: t.enseignant.cahier.erreur,
+                invitation: t.enseignant.cahier.erreurDetail,
+                icone: AppIcons.avertissement,
+                libelleAction: t.commun.reessayer,
+                onAction: _relire,
+              ),
+              validation: _validation(vue, large: false),
             ),
-            EtatCahier.vide => EmptyState(
-              message: t.enseignant.cahier.vide,
-              invitation: t.enseignant.cahier.videDetail,
-              icone: AppIcons.cahier,
-              registre: RegistreVide.subi,
+            EtatCahier.vide => _SansConstat(
+              etat: EmptyState(
+                message: t.enseignant.cahier.vide,
+                invitation: t.enseignant.cahier.videDetail,
+                icone: AppIcons.cahier,
+                registre: RegistreVide.subi,
+              ),
+              validation: _validation(vue, large: false),
             ),
             EtatCahier.dejaDepose || EtatCahier.constat => _Constat(
               vue: vue,
-              note: _note,
               decisions: _decisions,
-              lectureSeule: vue.etat == EtatCahier.dejaDepose,
+              lectureSeule: lectureSeule,
+              aValider: !lectureSeule && !_enCorrection,
               onAjuster: _ajuster,
+              onCorriger: _corriger,
+              onRetour: _retourJournee,
+              validation: (bool large) => _validation(vue, large: large),
             ),
           },
         ],
@@ -147,43 +206,85 @@ class _CahierState extends ConsumerState<_Cahier> {
     );
   }
 
-  /// La zone d'action collee en bas : **un seul bouton**, jamais deux.
-  ///
-  /// En chargement, aucun : on ne valide pas un constat qu'on n'a pas lu. Sur un
-  /// cahier deja depose, le bouton ramene a la Journee au lieu d'offrir un
-  /// second depot.
-  Widget? _actions(VueCahier vue) {
-    if (vue.etat == EtatCahier.chargement) {
-      return null;
-    }
-    if (vue.etat == EtatCahier.dejaDepose) {
-      return _retourJournee();
-    }
+  /// La fin du cahier : la reprise obligatoire, la phrase d'integrite, puis
+  /// le seul bouton dominant, 16 sous ce qu'il confirme (contrat B).
+  Widget _validation(VueCahier vue, {required bool large}) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String libelle =
+        vue.etat == EtatCahier.constat || vue.etat == EtatCahier.dejaDepose
+        ? t.enseignant.cahier.valider
+        : t.enseignant.cahier.validerSansConstat;
 
-    return ActionPrincipale(
-      libelle: switch (vue.etat) {
-        EtatCahier.constat when vue.toutEstNominal =>
-          t.enseignant.cahier.validerTout,
-        EtatCahier.constat => t.enseignant.cahier.valider,
-        // Sans constat, le libelle le dit : l'enseignant doit savoir qu'il
-        // depose un cahier que la base n'a pas pu preremplir.
-        _ => t.enseignant.cahier.validerSansConstat,
-      },
-      enCours: _envoiEnCours,
-      onPress: _envoiEnCours ? null : () => unawaited(_deposer(vue)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: Text(t.enseignant.cahier.reprise, style: textes.titleSmall),
+        ),
+        Ecart.vSm,
+        TextField(
+          key: const ValueKey<String>('cahier-reprise'),
+          controller: _reprise,
+          focusNode: _focusReprise,
+          textInputAction: TextInputAction.done,
+          onChanged: (String valeur) {
+            if (_repriseManquante && valeur.trim().isNotEmpty) {
+              setState(() => _repriseManquante = false);
+            }
+          },
+          decoration: InputDecoration(
+            labelText: t.enseignant.cahier.reprise,
+            helperText: t.enseignant.cahier.repriseDetail,
+            helperMaxLines: 2,
+            errorText: _repriseManquante
+                ? t.enseignant.cahier.repriseRequise
+                : null,
+            errorMaxLines: 3,
+          ),
+        ),
+        Ecart.vXxl,
+        Text(
+          t.enseignant.cahier.integrite,
+          key: const ValueKey<String>('cahier-integrite'),
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vLg,
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          // `ActionPrincipale` s'etire a la largeur offerte ; IntrinsicWidth
+          // lui rend sa largeur naturelle sur bureau (contrat B).
+          child: _Borne(
+            borne: large,
+            child: ActionPrincipale(
+              key: const ValueKey<String>('cahier-valider'),
+              libelle: libelle,
+              pleineLargeur: !large,
+              enCours: _envoiEnCours,
+              onPress: _envoiEnCours ? null : () => unawaited(_deposer(vue)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _retourJournee() => ActionPrincipale(
-    libelle: t.enseignant.cahier.retourJournee,
-    niveau: NiveauAction.secondaire,
-    onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
-  );
+  void _retourJournee() => GoRouter.of(context).go(Routes.enseignantJournee);
 
   void _relire() => ref.invalidate(brouillonCahierProvider(widget.seanceId));
 
-  /// Ouvre le reglage d'un eleve : l'exception, le point phonetique, l'objectif,
-  /// le travail maison, la suspension du nouveau.
+  /// Rouvre le cahier deja valide pour le corriger (K-45, point 5).
+  void _corriger() => setState(() {
+    _enCorrection = true;
+    _sort = null;
+    _echecEnvoi = false;
+  });
+
+  /// Ouvre le reglage d'un eleve : la presence, le point phonetique,
+  /// l'objectif, le devoir, la suspension du nouveau.
   Future<void> _ajuster(ParticipantBrouillon participant) async {
     final BrouillonCahier? brouillon = widget.vue.brouillon;
     if (brouillon == null) {
@@ -208,12 +309,15 @@ class _CahierState extends ConsumerState<_Cahier> {
 
   /// Depose le cahier : une seule ecriture, une seule cle.
   ///
-  /// La cle d'idempotence n'est **pas** generee ici : `FileRapports.enregistrer`
-  /// la genere a la redaction, et ne la regenere jamais au rejeu. C'est elle qui
-  /// permet a la contrainte d'unicite de `lesson_reports` de refuser un doublon
-  /// apres une coupure.
+  /// Sans position de reprise, rien ne part : le message calme s'affiche et
+  /// le champ reprend le focus (K-45, point 2). Le bouton n'est jamais grise.
   Future<void> _deposer(VueCahier vue) async {
-    if (!vue.peutDeposer) {
+    if (!vue.peutDeposer && !_enCorrection) {
+      return;
+    }
+    if (_reprise.text.trim().isEmpty) {
+      setState(() => _repriseManquante = true);
+      _focusReprise.requestFocus();
       return;
     }
     setState(() {
@@ -228,7 +332,7 @@ class _CahierState extends ConsumerState<_Cahier> {
           _decisions[p.membre.studentId] ??
               DecisionEleve(studentId: p.membre.studentId),
       ],
-      noteGroupe: _note.text,
+      positionReprise: _reprise.text.trim(),
     );
 
     try {
@@ -238,18 +342,18 @@ class _CahierState extends ConsumerState<_Cahier> {
       if (!mounted) {
         return;
       }
-      // Le compteur de cahiers manquants et le brouillon sont relus par leurs
-      // proprietaires : aucun compteur n'est recalcule ici, la base en tient
-      // deja trois.
-      ref.invalidate(brouillonCahierProvider(widget.seanceId));
       ref.invalidate(cahiersEnRetardProvider);
+      final bool correction = _enCorrection;
       setState(() {
         _envoiEnCours = false;
         _sort = sort;
+        _enCorrection = false;
+        // « Corrige le ... » seulement quand le serveur a confirme (E7).
+        if (correction && sort == SortCahier.envoye) {
+          _corrigeLe = ref.read(horlogeCahierProvider)();
+        }
       });
     } on Object {
-      // Un echec de file locale n'est pas un echec d'envoi : le cahier n'a pas
-      // ete enregistre du tout, et l'enseignant doit pouvoir reessayer.
       if (mounted) {
         setState(() {
           _envoiEnCours = false;
@@ -260,61 +364,186 @@ class _CahierState extends ConsumerState<_Cahier> {
   }
 }
 
-/// Le constat prerempli : la duree, les exceptions, puis le reste.
+/// Un cahier sans constat (vide ou erreur) : l'etat, puis la reprise et le
+/// bouton. Un cahier tardif vaut mieux qu'un cahier perdu.
+class _SansConstat extends StatelessWidget {
+  const _SansConstat({required this.etat, required this.validation});
+
+  final Widget etat;
+  final Widget validation;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[etat, Ecart.vXxl, validation],
+  );
+}
+
+/// Le constat prerempli, dans l'ordre de la planche 4.
 class _Constat extends StatelessWidget {
   const _Constat({
     required this.vue,
-    required this.note,
     required this.decisions,
     required this.lectureSeule,
+    required this.aValider,
     required this.onAjuster,
+    required this.onCorriger,
+    required this.onRetour,
+    required this.validation,
   });
 
   final VueCahier vue;
-  final TextEditingController note;
   final Map<String, DecisionEleve> decisions;
   final bool lectureSeule;
+  final bool aValider;
   final Future<void> Function(ParticipantBrouillon participant) onAjuster;
+  final VoidCallback onCorriger;
+  final VoidCallback onRetour;
+  final Widget Function(bool large) validation;
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     final BrouillonCahier? brouillon = vue.brouillon;
     if (brouillon == null) {
       return const SizedBox.shrink();
     }
 
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // Deux colonnes a partir de 840 de largeur utile, divisee par le
+        // facteur de texte (K-42, regle 6).
+        final double texte = MediaQuery.textScalerOf(context).scale(1);
+        final bool large =
+            contraintes.maxWidth / texte >= AppGabarit.seuilEtendu;
+        final Widget ecart = large ? Ecart.vXxxl : Ecart.vXxl;
+
+        final Widget resume = _Resume(
+          brouillon: brouillon,
+          vue: vue,
+          aValider: aValider,
+        );
+        final Widget? aRegarder = vue.exceptions.isEmpty
+            ? null
+            : _Section(
+                titre: t.enseignant.cahier.exceptions,
+                sousTitre: vue.exceptions.length == 1
+                    ? t.enseignant.cahier.uneException
+                    : t.enseignant.cahier.plusieursExceptions(
+                        nombre: '${vue.exceptions.length}',
+                      ),
+                eleves: <Widget>[
+                  for (final ParticipantBrouillon p in vue.exceptions)
+                    _ligne(p, brouillon),
+                ],
+              );
+        final Widget? nominaux = vue.nominaux.isEmpty
+            ? null
+            : _Section(
+                titre: t.enseignant.cahier.nominaux,
+                eleves: <Widget>[
+                  for (final ParticipantBrouillon p in vue.nominaux)
+                    _ligne(p, brouillon),
+                ],
+              );
+        final Widget fin = lectureSeule
+            ? _DejaDepose(onCorriger: onCorriger, onRetour: onRetour)
+            : validation(large);
+
+        if (!large) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              resume,
+              if (aRegarder != null) ...<Widget>[ecart, aRegarder],
+              if (nominaux != null) ...<Widget>[ecart, nominaux],
+              ecart,
+              fin,
+            ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  resume,
+                  if (nominaux != null) ...<Widget>[ecart, nominaux],
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xxxl),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  if (aRegarder != null) ...<Widget>[aRegarder, ecart],
+                  fin,
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _ligne(ParticipantBrouillon p, BrouillonCahier brouillon) =>
+      _LigneEleve(
+        participant: p,
+        brouillon: brouillon,
+        decision: decisions[p.membre.studentId],
+        onAjuster: lectureSeule ? null : () => unawaited(onAjuster(p)),
+      );
+}
+
+/// Le resume de la seance : le rappel s'il reste a valider, la duree, le
+/// nombre d'eleves et les pastilles de statut (un mot et un nombre, jamais la
+/// seule couleur).
+class _Resume extends StatelessWidget {
+  const _Resume({
+    required this.brouillon,
+    required this.vue,
+    required this.aValider,
+  });
+
+  final BrouillonCahier brouillon;
+  final VueCahier vue;
+  final bool aValider;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final StatutsCahier statuts = StatutsCahier.depuis(brouillon.participants);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (lectureSeule) ...<Widget>[
-          AppCard(
-            surface: palette.washAccent,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(
-                  t.enseignant.cahier.dejaDepose,
-                  style: palette.washAccent.applyTo(
-                    textes.titleMedium ?? const TextStyle(),
+        if (aValider) ...<Widget>[
+          Row(
+            children: <Widget>[
+              PointRappel(
+                key: const ValueKey<String>('cahier-point-rappel'),
+                libelle: t.enseignant.classes.rappelCahier,
+              ),
+              Ecart.hSm,
+              Flexible(
+                child: ExcludeSemantics(
+                  child: Text(
+                    t.enseignant.cahier.aValider,
+                    style: palette.inkMuted.applyTo(
+                      textes.labelLarge ?? const TextStyle(),
+                    ),
                   ),
                 ),
-                Ecart.vSm,
-                Text(
-                  t.enseignant.cahier.dejaDeposeDetail,
-                  style: palette.washAccent.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Ecart.vXl,
+          Ecart.vSm,
         ],
-        // La duree du cahier est celle que la base a calculee. Le depot sait en
-        // calculer quatre autres pour la meme seance : en afficher une seconde
-        // ici donnerait deux chiffres pour un meme cours.
+        // La duree du cahier est celle que la base a calculee, et une seule.
         Text(
           brouillon.minutesInterruption > 0
               ? t.enseignant.cahier.dureeEtInterruption(
@@ -331,109 +560,143 @@ class _Constat extends StatelessWidget {
               : t.enseignant.cahier.eleves(
                   nombre: '${brouillon.participants.length}',
                 ),
-          style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
-        ),
-        Ecart.vXl,
-        if (vue.toutEstNominal && !lectureSeule) ...<Widget>[
-          // Le chemin des 45 secondes, dit explicitement : l'enseignant n'a
-          // rien a lire de plus, le bouton du bas suffit.
-          AppCard(
-            surface: palette.washSuccess,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(
-                  t.enseignant.cahier.toutEstNominal,
-                  style: palette.washSuccess.applyTo(
-                    textes.titleMedium ?? const TextStyle(),
-                  ),
-                ),
-                Ecart.vSm,
-                Text(
-                  t.enseignant.cahier.toutEstNominalDetail,
-                  style: palette.washSuccess.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Ecart.vXl,
-        ],
-        if (vue.exceptions.isNotEmpty) ...<Widget>[
-          Text(t.enseignant.cahier.exceptions, style: textes.titleSmall),
-          Ecart.vXs,
-          Text(
-            vue.exceptions.length == 1
-                ? t.enseignant.cahier.uneException
-                : t.enseignant.cahier.plusieursExceptions(
-                    nombre: '${vue.exceptions.length}',
-                  ),
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-          Ecart.vMd,
-          for (final ParticipantBrouillon p in vue.exceptions) ...<Widget>[
-            _LigneEleve(
-              participant: p,
-              brouillon: brouillon,
-              decision: decisions[p.membre.studentId],
-              onAjuster: lectureSeule ? null : () => unawaited(onAjuster(p)),
-            ),
-            Ecart.vMd,
-          ],
-        ],
-        if (vue.nominaux.isNotEmpty) ...<Widget>[
-          Ecart.vSm,
-          Text(t.enseignant.cahier.nominaux, style: textes.titleSmall),
-          Ecart.vMd,
-          for (final ParticipantBrouillon p in vue.nominaux) ...<Widget>[
-            _LigneEleve(
-              participant: p,
-              brouillon: brouillon,
-              decision: decisions[p.membre.studentId],
-              onAjuster: lectureSeule ? null : () => unawaited(onAjuster(p)),
-            ),
-            Ecart.vMd,
-          ],
-        ],
-        Ecart.vSm,
-        // Le curriculum est institutionnel : l'ecran l'ecrit au lieu de poser un
-        // selecteur inerte qui ne pourrait rien changer.
-        Text(
-          t.enseignant.cahier.curriculumFige,
           style: palette.inkMuted.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
-        if (!lectureSeule) ...<Widget>[
-          Ecart.vSection,
-          Text(t.enseignant.cahier.noteGroupe, style: textes.titleSmall),
-          Ecart.vXs,
-          Text(
-            t.enseignant.cahier.noteGroupeDetail,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
+        Ecart.vMd,
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            StatusPill(
+              libelle: t.enseignant.cahier.statutPresents(
+                nombre: '${statuts.presents}',
+              ),
+              ton: TonEtat.neutre,
             ),
-          ),
+            StatusPill(
+              libelle: t.enseignant.cahier.statutAbsents(
+                nombre: '${statuts.absents}',
+              ),
+              ton: statuts.absents > 0 ? TonEtat.avertissement : TonEtat.neutre,
+            ),
+            StatusPill(
+              libelle: t.enseignant.cahier.statutEnRetard(
+                nombre: '${statuts.enRetard}',
+              ),
+              ton: statuts.enRetard > 0
+                  ? TonEtat.avertissement
+                  : TonEtat.neutre,
+            ),
+          ],
+        ),
+        if (vue.toutEstNominal) ...<Widget>[
           Ecart.vMd,
-          TextField(
-            controller: note,
-            maxLines: 3,
-            textInputAction: TextInputAction.newline,
-            decoration: InputDecoration(
-              labelText: t.enseignant.cahier.noteGroupe,
-            ),
-          ),
+          Text(t.enseignant.cahier.toutEstNominal, style: textes.bodyMedium),
         ],
       ],
     );
   }
 }
 
-/// Une ligne d'eleve : son etat deduit, son unite quand elle existe, et ce que
-/// l'enseignant a decide.
+/// Une section d'eleves : un titre, une ligne douce, puis les blocs.
+class _Section extends StatelessWidget {
+  const _Section({required this.titre, required this.eleves, this.sousTitre});
+
+  final String titre;
+  final String? sousTitre;
+  final List<Widget> eleves;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? sous = sousTitre;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Semantics(header: true, child: Text(titre, style: textes.titleSmall)),
+        if (sous != null) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            sous,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
+        Ecart.vSm,
+        for (int i = 0; i < eleves.length; i++) ...<Widget>[
+          if (i > 0) Ecart.vLg,
+          eleves[i],
+        ],
+      ],
+    );
+  }
+}
+
+/// Le cahier deja valide : il se lit, et il reste corrigeable (K-45, point 5).
+class _DejaDepose extends StatelessWidget {
+  const _DejaDepose({required this.onCorriger, required this.onRetour});
+
+  final VoidCallback onCorriger;
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(t.enseignant.cahier.dejaDepose, style: textes.titleMedium),
+        Ecart.vLg,
+        _Actions(onCorriger: onCorriger, onRetour: onRetour),
+      ],
+    );
+  }
+}
+
+/// « Corriger le cahier » (tertiaire), puis « Retour a ma journee » au bord
+/// de fin (contrat B).
+class _Actions extends StatelessWidget {
+  const _Actions({required this.onRetour, this.onCorriger});
+
+  final VoidCallback? onCorriger;
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context) {
+    final VoidCallback? corriger = onCorriger;
+    return Wrap(
+      alignment: WrapAlignment.end,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: <Widget>[
+        if (corriger != null)
+          IntrinsicWidth(
+            child: ActionPrincipale(
+              key: const ValueKey<String>('cahier-corriger'),
+              libelle: t.enseignant.cahier.corriger,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: corriger,
+            ),
+          ),
+        IntrinsicWidth(
+          child: ActionPrincipale(
+            libelle: t.enseignant.cahier.retourJournee,
+            pleineLargeur: false,
+            onPress: onRetour,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Le bloc d'un eleve : sa photo, sa presence preremplie, puis son
+/// evaluation (K-45, point 3) : performance, faiblesses, devoir a faire.
 class _LigneEleve extends StatelessWidget {
   const _LigneEleve({
     required this.participant,
@@ -456,63 +719,87 @@ class _LigneEleve extends StatelessWidget {
     );
     final UniteCurriculum? unite = participant.unite;
     final DecisionEleve? d = decision;
+    final String? devoir = d?.travailMaison;
 
     return AppCard(
       onPress: onAjuster,
       libelleSemantique: onAjuster == null
           ? null
-          : t.enseignant.cahier.ajusterPour(
-              eleve: participant.membre.libelle,
-            ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+          : t.enseignant.cahier.ajusterPour(eleve: participant.membre.libelle),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          LignePresence(
-            nom: participant.membre.libelle,
-            vue: VuePresence.depuis(
-              ligne: ligneDePresence(
-                participant: participant,
-                brouillon: brouillon,
-              ),
-              maintenant: brouillon.fin,
-            ),
-            // Le brouillon ne rend pas la colonne `consolide` : l'ecran se tait
-            // plutot que d'affirmer qu'aucune decision humaine n'a fige l'etat.
-            afficherConsolide: false,
+          // La photo s'affiche chez l'enseignant (E5) ; les initiales en
+          // repli tant que le brouillon ne porte pas de cle d'avatar.
+          PhotoEleve(
+            prenom: participant.membre.libelle,
+            cleAvatar: null,
+            diametre: AppSpacing.section,
           ),
-          Ecart.vXs,
-          Text(participant.membre.identifiantImmuable, style: discret),
-          if (unite != null) ...<Widget>[
-            Ecart.vSm,
-            // Le nom humain seul fait titre. `codeTechnique` (F1-PHO-01) a une
-            // interdiction UX explicite : sous-texte technique discret, jamais
-            // un titre.
-            Text(unite.nomHumain, style: textes.bodyMedium),
-            Text(unite.codeTechnique, style: discret),
-          ],
-          if (participant.position case final position?) ...<Widget>[
-            Ecart.vSm,
-            // Lecture seule : la position appartient a l'eleve (invariant J2),
-            // l'enseignant la lit pour preremplir, il ne l'ecrit jamais.
-            Text(
-              t.enseignant.cahier.position(
-                sourate: '${position.sourate}',
-                verset: '${position.verset}',
-              ),
-              style: discret,
+          Ecart.hMd,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                LignePresence(
+                  nom: participant.membre.libelle,
+                  vue: VuePresence.depuis(
+                    ligne: ligneDePresence(
+                      participant: participant,
+                      brouillon: brouillon,
+                    ),
+                    maintenant: brouillon.fin,
+                  ),
+                  afficherConsolide: false,
+                ),
+                Ecart.vXs,
+                Text(participant.membre.identifiantImmuable, style: discret),
+                if (unite != null) ...<Widget>[
+                  Ecart.vSm,
+                  // Le nom humain seul fait titre ; le code technique reste
+                  // un sous-texte discret.
+                  Text(unite.nomHumain, style: textes.bodyMedium),
+                  Text(unite.codeTechnique, style: discret),
+                ],
+                if (participant.position case final position?) ...<Widget>[
+                  Ecart.vSm,
+                  Text(
+                    t.enseignant.cahier.position(
+                      sourate: '${position.sourate}',
+                      verset: '${position.verset}',
+                    ),
+                    style: discret,
+                  ),
+                ],
+                if (d != null && !d.confirme) ...<Widget>[
+                  Ecart.vSm,
+                  Text(
+                    t.enseignant.cahier.exceptionConsignee,
+                    style: textes.bodyMedium,
+                  ),
+                ],
+                if (d?.pointPhonetique != null) ...<Widget>[
+                  Ecart.vXs,
+                  Text(t.enseignant.cahier.pointPhonetiqueNote, style: discret),
+                ],
+                // EN-7 : echelle attendue du directeur. Performance et
+                // faiblesses (K-45, point 3) : ni le doc 04 §20 ni la planche 4
+                // ne donnent d'echelle ni de mots. L'emplacement reste vide.
+                const SizedBox.shrink(
+                  key: ValueKey<String>('cahier-emplacement-performance'),
+                ),
+                const SizedBox.shrink(
+                  key: ValueKey<String>('cahier-emplacement-faiblesses'),
+                ),
+                Ecart.vSm,
+                Text(
+                  '${t.enseignant.cahier.travailMaison} : '
+                  '${devoir ?? t.enseignant.cahier.devoirAucun}',
+                  style: discret,
+                ),
+              ],
             ),
-          ],
-          if (d != null && !d.confirme) ...<Widget>[
-            Ecart.vSm,
-            Text(
-              t.enseignant.cahier.exceptionConsignee,
-              style: textes.bodyMedium,
-            ),
-          ],
-          if (d?.pointPhonetique != null) ...<Widget>[
-            Ecart.vXs,
-            Text(t.enseignant.cahier.pointPhonetiqueNote, style: discret),
-          ],
+          ),
         ],
       ),
     );
@@ -591,7 +878,9 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           // plus.
           capacites: const PresenceCorrectionCapacites(
             peutCorriger: true,
-            peutExcuser: true,
+            // « Excuser l'absence » retire : l'enseignant ne juge pas une
+            // absence (planche 4, R2).
+            peutExcuser: false,
           ),
           adaptateur: _AdaptateurExceptionCahier(_consigner),
           libelles: libellesCorrectionCahier(),
@@ -642,8 +931,7 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           icon: AppIcons.pause,
           controle: Switch(
             value: _nouveauSuspendu,
-            onChanged: (bool actif) =>
-                setState(() => _nouveauSuspendu = actif),
+            onChanged: (bool actif) => setState(() => _nouveauSuspendu = actif),
           ),
         ),
         Ecart.vSection,
@@ -753,51 +1041,67 @@ PresenceCorrectionLibelles libellesCorrectionCahier() =>
       journalisation: t.enseignant.cahier.exceptionJournalisation,
     );
 
-/// Ce que l'ecran dit une fois le cahier parti.
+/// Ce que l'ecran dit une fois le cahier parti (doc 04 §20.7 et §20.8).
 ///
-/// Deux sorts, deux phrases, et **aucune minuterie** : rien ne se ferme tout
-/// seul ici. Un cahier qui se validerait ou se quitterait seul serait un faux
-/// temoignage.
-class _ApresDepot extends ConsumerWidget {
-  const _ApresDepot({required this.sort});
+/// « Cahier enregistre » seulement sur la confirmation du serveur ; en file
+/// locale, « En attente d'envoi ». Aucune minuterie : rien ne se ferme seul.
+class _ApresDepot extends StatelessWidget {
+  const _ApresDepot({
+    required this.sort,
+    required this.corrigeLe,
+    required this.onCorriger,
+    required this.onRetour,
+  });
 
   final SortCahier sort;
+  final DateTime? corrigeLe;
+  final VoidCallback? onCorriger;
+  final VoidCallback onRetour;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // L'etat hors ligne se lit a la source unique, par `value`, jamais par le
-    // type de l'AsyncValue.
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-
+  Widget build(BuildContext context) {
+    final DateTime? corrige = corrigeLe;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (sort == SortCahier.enFile)
-          // Le seul cas persistant prevu du produit, nomme dans le commentaire
-          // de `LocalFeedback` : le rapport mis en file hors ligne, affiche tant
-          // que la file n'est pas videe.
-          LocalFeedback(
-            message: t.enseignant.cahier.enFile,
-            persistant: true,
-          ),
-        Ecart.vXl,
         switch (sort) {
           SortCahier.envoye => EmptyState(
             message: t.enseignant.cahier.depose,
-            invitation: t.enseignant.cahier.deposeDetail,
+            invitation: corrige == null
+                ? t.enseignant.cahier.deposeDetail
+                : t.enseignant.cahier.corrigeLe(date: _date(corrige)),
             icone: AppIcons.succes,
             registre: RegistreVide.bonneNouvelle,
           ),
           SortCahier.enFile => EmptyState(
             message: t.enseignant.cahier.enFileTitre,
-            invitation: horsLigne
-                ? t.enseignant.cahier.enFileDetailHorsLigne
-                : t.enseignant.cahier.enFileDetail,
+            invitation: t.enseignant.cahier.enFileDetail,
             icone: AppIcons.enAttenteEnvoi,
-            registre: RegistreVide.bonneNouvelle,
+            registre: RegistreVide.subi,
           ),
         },
+        Ecart.vLg,
+        _Actions(onCorriger: onCorriger, onRetour: onRetour),
       ],
     );
   }
+
+  /// « lundi 28 septembre », par les libelles `commun.dates`.
+  static String _date(DateTime d) => t.commun.dates.jourDate(
+    jour: t.commun.dates.jours[d.weekday - 1].toLowerCase(),
+    numero: d.day,
+    mois: t.commun.dates.mois[d.month - 1],
+  );
+}
+
+/// Rend a un bouton sa largeur naturelle quand [borne] est vrai.
+class _Borne extends StatelessWidget {
+  const _Borne({required this.borne, required this.child});
+
+  final bool borne;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      borne ? IntrinsicWidth(child: child) : child;
 }

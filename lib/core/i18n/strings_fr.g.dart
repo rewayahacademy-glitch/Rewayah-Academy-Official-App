@@ -7880,8 +7880,8 @@ class Traductions$enseignant$cahier$fr {
 
 	// Translations
 
-	/// fr: 'Cahier de transmission'
-	String get titre => 'Cahier de transmission';
+	/// fr: 'Cahier de séance'
+	String get titre => 'Cahier de séance';
 
 	/// fr: '{minutes} min de cours'
 	String duree({required Object minutes}) => '${minutes} min de cours';
@@ -7931,8 +7931,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Déposer sans le constat'
 	String get validerSansConstat => 'Déposer sans le constat';
 
-	/// fr: 'Retour à la journée'
-	String get retourJournee => 'Retour à la journée';
+	/// fr: 'Retour à ma journée'
+	String get retourJournee => 'Retour à ma journée';
 
 	/// fr: 'Le constat n'a pas pu être déduit'
 	String get vide => 'Le constat n\'a pas pu être déduit';
@@ -7955,20 +7955,20 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Un cahier ne se dépose qu'une fois, et il ne se supprime pas d'ici.'
 	String get dejaDeposeDetail => 'Un cahier ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.';
 
-	/// fr: 'Cahier déposé'
-	String get depose => 'Cahier déposé';
+	/// fr: 'Cahier enregistré'
+	String get depose => 'Cahier enregistré';
 
 	/// fr: 'L'académie l'a reçu.'
 	String get deposeDetail => 'L\'académie l\'a reçu.';
 
-	/// fr: 'Cahier enregistré'
-	String get enFileTitre => 'Cahier enregistré';
+	/// fr: 'En attente d'envoi'
+	String get enFileTitre => 'En attente d\'envoi';
 
-	/// fr: 'Enregistré. Sera envoyé dès le retour du réseau.'
-	String get enFile => 'Enregistré. Sera envoyé dès le retour du réseau.';
+	/// fr: 'Le cahier sera envoyé lorsque la connexion reviendra.'
+	String get enFile => 'Le cahier sera envoyé lorsque la connexion reviendra.';
 
-	/// fr: 'L'envoi n'a pas abouti : il repartira tout seul, sans que vous ayez à revenir ici.'
-	String get enFileDetail => 'L\'envoi n\'a pas abouti : il repartira tout seul, sans que vous ayez à revenir ici.';
+	/// fr: 'Le cahier sera envoyé lorsque la connexion reviendra.'
+	String get enFileDetail => 'Le cahier sera envoyé lorsque la connexion reviendra.';
 
 	/// fr: 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.'
 	String get enFileDetailHorsLigne => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.';
@@ -7997,8 +7997,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Il s'inscrit dans le programme de l'académie, qui ne se modifie pas d'ici.'
 	String get objectifDetail => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.';
 
-	/// fr: 'Travail à la maison'
-	String get travailMaison => 'Travail à la maison';
+	/// fr: 'Devoir à faire'
+	String get travailMaison => 'Devoir à faire';
 
 	/// fr: 'Ajustez la suggestion, ou laissez-la telle quelle.'
 	String get travailMaisonDetail => 'Ajustez la suggestion, ou laissez-la telle quelle.';
@@ -8056,6 +8056,48 @@ class Traductions$enseignant$cahier$fr {
 
 	/// fr: 'Votre décision et son motif sont consignés dans le cahier, avec votre nom.'
 	String get exceptionJournalisation => 'Votre décision et son motif sont consignés dans le cahier, avec votre nom.';
+
+	/// fr: 'À valider'
+	String get aValider => 'À valider';
+
+	/// fr: 'Présents {nombre}'
+	String statutPresents({required Object nombre}) => 'Présents ${nombre}';
+
+	/// fr: 'Absents {nombre}'
+	String statutAbsents({required Object nombre}) => 'Absents ${nombre}';
+
+	/// fr: 'En retard {nombre}'
+	String statutEnRetard({required Object nombre}) => 'En retard ${nombre}';
+
+	/// fr: 'Performance'
+	String get performance => 'Performance';
+
+	/// fr: 'Faiblesses'
+	String get faiblesses => 'Faiblesses';
+
+	/// fr: 'Aucun travail'
+	String get devoirAucun => 'Aucun travail';
+
+	/// fr: 'Où la Classe s'est arrêtée'
+	String get reprise => 'Où la Classe s\'est arrêtée';
+
+	/// fr: 'C'est la position de reprise d'un remplaçant.'
+	String get repriseDetail => 'C\'est la position de reprise d\'un remplaçant.';
+
+	/// fr: 'Sourate {sourate}, verset {verset}'
+	String repriseProposee({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}';
+
+	/// fr: 'Indiquez où la Classe s'est arrêtée : un remplaçant reprendra ici.'
+	String get repriseRequise => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.';
+
+	/// fr: 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.'
+	String get integrite => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.';
+
+	/// fr: 'Corriger le cahier'
+	String get corriger => 'Corriger le cahier';
+
+	/// fr: 'Corrigé le {date}'
+	String corrigeLe({required Object date}) => 'Corrigé le ${date}';
 }
 
 // Path: enseignant.profil
@@ -15081,7 +15123,7 @@ extension on Traductions {
 			'enseignant.salle.corpusAbsentDetail' => 'Le corpus n\'a pas été importé dans cet environnement. Il n\'y a rien à présenter.',
 			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre groupe.',
 			'enseignant.salle.sansDroitPresentation' => 'Votre accès à cette séance ne permet pas de présenter un contenu.',
-			'enseignant.cahier.titre' => 'Cahier de transmission',
+			'enseignant.cahier.titre' => 'Cahier de séance',
 			'enseignant.cahier.duree' => ({required Object minutes}) => '${minutes} min de cours',
 			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '${minutes} min de cours, dont ${interruption} min d\'interruption',
 			'enseignant.cahier.unEleve' => '1 élève',
@@ -15098,7 +15140,7 @@ extension on Traductions {
 			'enseignant.cahier.valider' => 'Valider le cahier',
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
-			'enseignant.cahier.retourJournee' => 'Retour à la journée',
+			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
@@ -15106,11 +15148,11 @@ extension on Traductions {
 			'enseignant.cahier.echecEnvoi' => 'Le cahier n\'a pas pu être enregistré. Réessayez.',
 			'enseignant.cahier.dejaDepose' => 'Le cahier de cette séance est déjà déposé.',
 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
-			'enseignant.cahier.depose' => 'Cahier déposé',
+			'enseignant.cahier.depose' => 'Cahier enregistré',
 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
-			'enseignant.cahier.enFileTitre' => 'Cahier enregistré',
-			'enseignant.cahier.enFile' => 'Enregistré. Sera envoyé dès le retour du réseau.',
-			'enseignant.cahier.enFileDetail' => 'L\'envoi n\'a pas abouti : il repartira tout seul, sans que vous ayez à revenir ici.',
+			'enseignant.cahier.enFileTitre' => 'En attente d\'envoi',
+			'enseignant.cahier.enFile' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
+			'enseignant.cahier.enFileDetail' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
 			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
 			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Ajuster · ${eleve}',
 			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
@@ -15120,7 +15162,7 @@ extension on Traductions {
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => 'Objectif personnel',
 			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
-			'enseignant.cahier.travailMaison' => 'Travail à la maison',
+			'enseignant.cahier.travailMaison' => 'Devoir à faire',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau contenu',
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
@@ -15140,6 +15182,20 @@ extension on Traductions {
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
 			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.',
 			'enseignant.cahier.exceptionJournalisation' => 'Votre décision et son motif sont consignés dans le cahier, avec votre nom.',
+			'enseignant.cahier.aValider' => 'À valider',
+			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
+			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
+			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
+			'enseignant.cahier.performance' => 'Performance',
+			'enseignant.cahier.faiblesses' => 'Faiblesses',
+			'enseignant.cahier.devoirAucun' => 'Aucun travail',
+			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
+			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
+			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
+			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
+			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
+			'enseignant.cahier.corriger' => 'Corriger le cahier',
+			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			'enseignant.profil.titre' => 'Profil',
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
 			'enseignant.profil.intro' => 'Ce que l\'académie sait de vous, et ce que vous pouvez y changer.',
@@ -15152,6 +15208,8 @@ extension on Traductions {
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
 			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.',
@@ -15166,8 +15224,6 @@ extension on Traductions {
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
 			'enseignant.profil.verificationEnAttente' => 'En attente',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.verificationValidee' => 'Validée',
 			'enseignant.profil.verificationRefusee' => 'À reprendre',
 			'enseignant.profil.contratSection' => 'Contrat et accusés',
@@ -15666,6 +15722,8 @@ extension on Traductions {
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
@@ -15680,8 +15738,6 @@ extension on Traductions {
 			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
 			'tc.observation.fin.quotaAtteint' => 'Votre temps d\'observation est écoulé.',
 			'tc.observation.fin.seanceTerminee' => 'La séance est terminée.',

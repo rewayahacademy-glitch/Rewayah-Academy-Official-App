@@ -263,8 +263,7 @@ class GroupeEnseignant {
   final DateTime creeLe;
 
   /// Les places encore libres. Jamais negatif.
-  int get placesLibres =>
-      seuilMax - nbMembres < 0 ? 0 : seuilMax - nbMembres;
+  int get placesLibres => seuilMax - nbMembres < 0 ? 0 : seuilMax - nbMembres;
 
   /// Vrai quand le groupe est au plafond.
   bool get complet => nbMembres >= seuilMax;
@@ -408,9 +407,8 @@ class ParticipantBrouillon {
           riwaya: json['riwaya'] as String?,
         ),
         presence: EtatPresence.depuisSql(json['presence'] as String?),
-        entreLe: DateTime.tryParse(
-          json['entre_le'] as String? ?? '',
-        )?.toLocal(),
+        entreLe: DateTime.tryParse(json['entre_le'] as String? ?? '')
+            ?.toLocal(),
         derniereTraceLe: DateTime.tryParse(
           json['derniere_trace_le'] as String? ?? '',
         )?.toLocal(),
@@ -652,6 +650,7 @@ class CahierARendre {
     required this.seanceId,
     required this.decisions,
     this.noteGroupe,
+    this.positionReprise,
   });
 
   /// La seance concernee.
@@ -664,12 +663,19 @@ class CahierARendre {
   /// interdit tout rapport narratif obligatoire.
   final String? noteGroupe;
 
+  /// Ou la Classe s'est arretee : la position de reprise d'un remplacant,
+  /// obligatoire a la validation (K-45, point 2). Le contrat serveur la
+  /// recevra a BR-1.
+  final String? positionReprise;
+
   /// Le contenu serialise, tel qu'il sera ecrit dans `lesson_reports.content`.
   Map<String, dynamic> versJson() => <String, dynamic>{
     'version': 1,
     'session_id': seanceId,
     if (noteGroupe != null && noteGroupe!.trim().isNotEmpty)
       'note_groupe': noteGroupe!.trim(),
+    if (positionReprise != null && positionReprise!.trim().isNotEmpty)
+      'position_reprise': positionReprise!.trim(),
     'eleves': <Map<String, dynamic>>[
       for (final DecisionEleve d in decisions) d.versJson(),
     ],

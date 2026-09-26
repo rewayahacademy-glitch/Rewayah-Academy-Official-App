@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
+import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
@@ -37,6 +38,8 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../bienvenue_enseignant/bienvenue_page.dart';
+import '../cahier/cahier_page.dart';
+import '../cahier/vue_cahier.dart';
 import '../creneaux/creneaux_page.dart';
 import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
@@ -95,6 +98,7 @@ String libelleEcranDemoEnseignant(EcranDemoEnseignant ecran) => switch (ecran) {
   EcranDemoEnseignant.classes => t.nav.enseignant.classes,
   EcranDemoEnseignant.disponibilites => t.nav.enseignant.creneaux,
   EcranDemoEnseignant.premiersPas => t.enseignant.bienvenue.titre,
+  EcranDemoEnseignant.cahier => t.enseignant.cahier.titre,
   EcranDemoEnseignant.profil => t.nav.enseignant.profil,
 };
 
@@ -312,6 +316,20 @@ class CoquilleEnseignantDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     // Premiers pas : un flux d'activation, sans barre ni destination active
     // (00_MAQUETTES planche 1, R4).
+    // Cahier de seance (ENS-04) : l'ecran de sortie de seance, sans barre
+    // (planche 4, R5). Aucune ecriture ne part (K-28).
+    if (ecran == EcranDemoEnseignant.cahier) {
+      return ProviderScope(
+        key: ValueKey<EtatDemoEnseignant>(etat),
+        overrides: <Override>[
+          ...surchargesCoquilleEnseignantDemo(etat),
+          ...surchargesCahierDemo(etat),
+        ],
+        child: const RepereDemonstration(
+          child: CahierPage(seanceId: DonneesEnseignantDemo.cahierDemoSeanceId),
+        ),
+      );
+    }
     if (ecran == EcranDemoEnseignant.premiersPas) {
       return ProviderScope(
         key: ValueKey<EtatDemoEnseignant>(etat),
@@ -355,10 +373,55 @@ class CoquilleEnseignantDemo extends StatelessWidget {
             EcranDemoEnseignant.disponibilites => const CreneauxPage(),
             EcranDemoEnseignant.profil => const ProfilEnseignantPage(),
             // Rendu plus haut, hors de la coquille.
-            EcranDemoEnseignant.premiersPas => const SizedBox.shrink(),
+            EcranDemoEnseignant.premiersPas ||
+            EcranDemoEnseignant.cahier => const SizedBox.shrink(),
           },
         ),
       ),
     );
   }
+}
+
+/// Les surcharges du cahier de demonstration (ENS-04, EN-7) : le brouillon
+/// d'Al-Badr, une soumission fictive et l'horloge de la demonstration.
+///
+/// Situation `vide` : aucun constat. Situation `horsLigne` : le cahier reste
+/// en file, et l'ecran dit « En attente d'envoi », jamais « Cahier
+/// enregistre » (doc 04 §20.8).
+List<Override> surchargesCahierDemo(
+  EtatDemoEnseignant etat, {
+  bool deja = false,
+}) => <Override>[
+  brouillonCahierProvider(DonneesEnseignantDemo.cahierDemoSeanceId)
+      .overrideWith(
+        (Ref _) async => etat == EtatDemoEnseignant.vide
+            ? null
+            : DonneesEnseignantDemo.brouillonCahier(deja: deja),
+      ),
+  soumissionCahierProvider.overrideWithValue(
+    SoumissionCahierDemo(enFile: etat == EtatDemoEnseignant.horsLigne),
+  ),
+  horlogeCahierProvider.overrideWithValue(
+    () => DonneesEnseignantDemo.maintenant,
+  ),
+];
+
+/// La soumission de la demonstration : rien ne part. Le sort n'arrive
+/// qu'apres la reponse simulee, jamais avant (E7).
+class SoumissionCahierDemo implements SoumissionCahier {
+  /// Cree la soumission ; [enFile] simule une file hors ligne.
+  const SoumissionCahierDemo({this.enFile = false});
+
+  /// Vrai quand le cahier reste en file locale.
+  final bool enFile;
+
+  @override
+  Future<SortCahier> soumettre(CahierARendre cahier) =>
+      Future<SortCahier>.delayed(
+        const Duration(milliseconds: 600),
+        () => enFile ? SortCahier.enFile : SortCahier.envoye,
+      );
+
+  @override
+  Future<int> rejouer() async => 0;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/coran/service_coran.dart' show PositionLecture;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/presence/service_presence.dart';
 
@@ -144,11 +145,12 @@ class VueCahier {
   /// regards ferait toucher un eleve a la place d'un autre.
   static List<ParticipantBrouillon> _parNom(
     List<ParticipantBrouillon> lignes,
-  ) => lignes.toList()..sort(
-    (ParticipantBrouillon a, ParticipantBrouillon b) => a.membre.libelle
-        .toLowerCase()
-        .compareTo(b.membre.libelle.toLowerCase()),
-  );
+  ) => lignes.toList()
+    ..sort(
+      (ParticipantBrouillon a, ParticipantBrouillon b) => a.membre.libelle
+          .toLowerCase()
+          .compareTo(b.membre.libelle.toLowerCase()),
+    );
 }
 
 /// Traduit une ligne de brouillon en ligne de presence affichable.
@@ -177,3 +179,77 @@ PresenceParticipant ligneDePresence({
   derniereTraceLe: participant.derniereTraceLe,
   debutSeance: brouillon.debut,
 );
+
+/// Les trois pastilles de statut du cahier (planche 4 : Presents, Absents,
+/// En retard), comptees sur l'etat de presence deja derive, jamais ressaisi.
+///
+/// Une presence `inconnu` n'est comptee nulle part : elle n'est pas une
+/// absence (invariant J3), elle reste une ligne « A regarder ».
+@immutable
+class StatutsCahier {
+  const StatutsCahier._({
+    required this.presents,
+    required this.absents,
+    required this.enRetard,
+  });
+
+  /// Compte les statuts des participants.
+  factory StatutsCahier.depuis(List<ParticipantBrouillon> participants) {
+    int presents = 0;
+    int absents = 0;
+    int enRetard = 0;
+    for (final ParticipantBrouillon p in participants) {
+      switch (p.presence) {
+        case EtatPresence.presente ||
+            EtatPresence.reconnectee ||
+            EtatPresence.finalisee:
+          presents++;
+        case EtatPresence.absente || EtatPresence.excusee:
+          absents++;
+        case EtatPresence.enRetard:
+          enRetard++;
+        default:
+          break;
+      }
+    }
+    return StatutsCahier._(
+      presents: presents,
+      absents: absents,
+      enRetard: enRetard,
+    );
+  }
+
+  /// Eleves presents.
+  final int presents;
+
+  /// Eleves absents.
+  final int absents;
+
+  /// Eleves en retard.
+  final int enRetard;
+}
+
+/// La position de reprise proposee (doc 04 §20.1) : la position de lecture
+/// commune des eleves, quand ils en ont une et qu'elle est la meme pour tous.
+///
+/// Des positions differentes ne donnent **aucune** proposition : la machine
+/// ne choisit pas a la place de l'enseignant (K-45, point 4).
+PositionLecture? repriseProposee(List<ParticipantBrouillon> participants) {
+  PositionLecture? commune;
+  for (final ParticipantBrouillon p in participants) {
+    final PositionLecture? position = p.position;
+    if (position == null) continue;
+    if (commune == null) {
+      commune = position;
+    } else if (commune.sourate != position.sourate ||
+        commune.verset != position.verset) {
+      return null;
+    }
+  }
+  return commune;
+}
+
+/// L'horloge du cahier, pour dater « Corrige le ... » (K-45, point 5).
+/// Surchargee par la demonstration et les tests.
+final Provider<DateTime Function()> horlogeCahierProvider =
+    Provider<DateTime Function()>((Ref _) => DateTime.now);
