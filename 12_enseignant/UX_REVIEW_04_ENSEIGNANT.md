@@ -77,5 +77,5 @@ Colonnes : n°, écran et disposition prévue (00_MAQUETTES et 02_DECOUPAGE), so
 
 ## Points à soumettre au directeur (signalés, non tranchés)
 
-1. **Emplacement de l'offre de remplacement (ENS-13B).** L'orchestrateur a proposé l'« Alerte utile » dans Aujourd'hui, puis une feuille (00_MAQUETTES §4, point 5). Ce choix est appliqué par défaut ; il n'a pas encore reçu d'accord explicite du directeur.
+1. **Emplacement de l'offre de remplacement (ENS-13B).** Tranché : décision du directeur du 26/09 (consigne K-43, point 4 d) : Alerte utile dans Aujourd'hui, puis acceptation dans une feuille. Rien à soumettre.
 2. **Correction d'un cahier après validation (ENS-04).** WCAG 3.3.4 demande qu'un envoi soit réversible, ou relu avant envoi. La revue retient « relu à l'écran avant envoi ». Si le directeur veut qu'un cahier validé reste corrigeable pendant un temps, c'est une règle serveur (BR-1) à décider par lui, pas par un standard.
