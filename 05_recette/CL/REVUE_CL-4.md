@@ -92,3 +92,24 @@ C'est exactement le « faux contrôle inerte » que R10 interdit, avec en plus u
     - `/tc/classe` ne change pas pour l'enseignant, l'admin et le tuteur (`routes_tc_a.dart:48-51`). L'élève passe désormais par `/salle` et sa préparation, comme le prévoit `01_HARMONISATION.md` §1 (« surface focalisée devant la salle canonique `/salle` »).
     - `/salle` sans `preparation` garde l'entrée directe (`salle_page.dart:157-164`). `_sansMicro` n'est posé que par l'élève (`:385-391`).
     - Remarque de conception : l'état `_enPreparation` est modifié dans `build` pour le tuteur (`salle_page.dart:373-378`), hors `setState`. Cela fonctionne, mais c'est fragile.
+
+## Suite donnée (CL-4.RC, 26/09/2026)
+
+Code : `C:\RA\classe`, branche `ui/classe-v1`, commit `5e2c2f0`.
+
+| Constat | Suite | Preuve |
+|---|---|---|
+| M1 | Corrigé, `5e2c2f0`. « Tester la caméra » n'existe que si `onTesterCamera` est fourni. Sans rappel : ni bouton, ni « Test local terminé ». Le rappel de démonstration est conservé. | `preparation_enseignant_test.dart`, test « Tester la camera n existe qu avec un vrai test (R10) » : absence sans rappel, présence et appel avec rappel. |
+| M2 | Corrigé, `5e2c2f0`. La tournure est neutre : « Personne dans la classe ne pourra vous entendre tant que l'accès au micro reste bloqué. » Aucune autre personne genrée dans les clés fr du lot. Aucune clé ar. | `fr.i18n.json`, `salle.preparation.eleve.microInaccessibleDetail` |
+| m1 | Non traité, laissé en note. Le lecteur d'écran réel (TalkBack, NVDA web) sera contrôlé sur appareil à BR-1. | — |
+| m2 | Corrigé, `5e2c2f0`. Pendant la vérification, l'emplacement du bouton porte la ligne d'état « Vérification… » (patron R4, région live). Le bouton désactivé ne reste que pour un blocage connu, avec sa raison écrite au-dessus. | `preparation_enseignant_test.dart`, test « verification : une ligne d etat, jamais un bouton grise » |
+| m3 | Corrigé, `5e2c2f0`. Fenêtre ouverte sans `sessionId` : `EmplacementEntree.pour(accesInverifiable: true)` donne la ligne « L'accès à la salle ne peut pas être vérifié pour le moment. » avec « Réessayer », chez l'enseignant comme chez l'élève. Le tuteur n'est pas concerné. La clé fr `classe.entree.accesInverifiable` est nouvelle : le texte n'existait pas en i18n. | `emplacement_entree_test.dart`, test « fenetre ouverte sans seance materialisee » |
+| m4 | Corrigé, `5e2c2f0`. En Interface guidée, « Retour à l'accueil » mène à l'accueil de l'élève (spec 02 §2.2). En standard, « Retour à la Classe » mène toujours à la Classe. | `preparation_eleve_test.dart`, deux tests de salle « Retour » |
+| m5 | Corrigé, `5e2c2f0`. Sans `onOuvrirReglages`, le bouton principal est « Réessayer » (relance la vérification) et « Continuer sans micro » reste. En guidée, la question « On l'autorise ? » devient « Le micro est bloqué. » (nouvelle clé fr `guidee.microBloque`). « Autoriser le micro » ne revient qu'avec une vraie action. | `preparation_eleve_test.dart`, test « micro bloque sans action reelle » ; recette contrat B adaptée |
+| m6 | Non traité, laissé en note. R17 tenu en amont (plafond dans le port, `null` distinct de la liste vide) relève de BR-1. | — |
+| m7 | Corrigé, `5e2c2f0`. Le type de groupe revient sur la ligne de contexte discrète de l'Espace Classe enseignant, par exemple « Lecture du Coran · Niveau 1 · Enfants ». Il utilise les clés existantes `admin.groupes.typeEnfant` et `typeAdulte`. | `fiche_groupe_test.dart` (assertion rétablie) ; `espace_classe_enseignant_test.dart` |
+| m8 | Corrigé, `5e2c2f0`. (a) Le test de route élève « Rejoindre » vérifie que l'élève va vers `/salle` avec `preparation: true`, et jamais vers `/tc/classe`. (b) La préparation enseignant est réservée à `AppRole.teacher`. L'admin et le contrôleur arrivés avec `preparation: true` gardent l'entrée directe de leur rôle. | `routes_tc_a_test.dart` ; `preparation_eleve_test.dart`, tests admin et controller |
+
+Verrou après le dernier changement :
+- `flutter analyze` : aucun problème ;
+- `flutter test test/features test/router test/core test/teaching_core test/video` : **All tests passed!** +2667, ~781 ignorés, code 0.
