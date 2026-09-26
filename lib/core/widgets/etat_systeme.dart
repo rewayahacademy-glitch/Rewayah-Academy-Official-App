@@ -353,13 +353,17 @@ class _Bloc extends StatelessWidget {
                         textes.titleSmall ?? const TextStyle(),
                       ),
                     ),
-                    Ecart.vXs,
-                    Text(
-                      phrase,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
+                    // Phrase vide : l'ecran n'a qu'un texte a dire (le titre) ;
+                    // la phrase par defaut serait du texte invente (AD-5).
+                    if (phrase.isNotEmpty) ...<Widget>[
+                      Ecart.vXs,
+                      Text(
+                        phrase,
+                        style: palette.inkMuted.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
                       ),
-                    ),
+                    ],
                     if (avecAction || avecSecondaire) ...<Widget>[
                       Ecart.vMd,
                       Wrap(

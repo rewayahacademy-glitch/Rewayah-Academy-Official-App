@@ -1223,11 +1223,14 @@ class Traductions$dossiers$fr {
 	/// fr: 'Examinez les dossiers prêts pour une décision.'
 	String get sousTitre => 'Examinez les dossiers prêts pour une décision.';
 
-	/// fr: 'Aucun dossier en attente'
-	String get aucun => 'Aucun dossier en attente';
+	/// fr: 'Aucun dossier n'attend de validation.'
+	String get aucun => 'Aucun dossier n\'attend de validation.';
 
-	/// fr: 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.'
-	String get aucunDetail => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.';
+	/// fr: 'Les nouveaux dossiers apparaîtront ici lorsqu'ils seront prêts.'
+	String get aucunDetail => 'Les nouveaux dossiers apparaîtront ici lorsqu\'ils seront prêts.';
+
+	late final Traductions$dossiers$file$fr file = Traductions$dossiers$file$fr.internal(_root);
+	late final Traductions$dossiers$detail$fr detail = Traductions$dossiers$detail$fr.internal(_root);
 
 	/// fr: '1 dossier en attente'
 	String get restantUn => '1 dossier en attente';
@@ -3548,6 +3551,84 @@ class Traductions$eleveConnexion$refus$fr {
 
 	/// fr: 'La vérification du code n'a pas abouti. Réessayez dans un instant.'
 	String get generique => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: dossiers.file
+class Traductions$dossiers$file$fr {
+	Traductions$dossiers$file$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement des dossiers…'
+	String get chargement => 'Chargement des dossiers…';
+
+	/// fr: 'Impossible de charger les dossiers.'
+	String get erreur => 'Impossible de charger les dossiers.';
+
+	/// fr: 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.'
+	String get horsLigne => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.';
+
+	/// fr: 'Vous n'avez pas accès aux dossiers à valider.'
+	String get accesRefuse => 'Vous n\'avez pas accès aux dossiers à valider.';
+
+	/// fr: 'Actualisation des dossiers…'
+	String get actualisation => 'Actualisation des dossiers…';
+
+	/// fr: 'Le chargement prend plus de temps que prévu.'
+	String get chargementProlonge => 'Le chargement prend plus de temps que prévu.';
+
+	/// fr: 'Impossible de charger les dossiers suivants.'
+	String get suivantsErreur => 'Impossible de charger les dossiers suivants.';
+
+	/// fr: 'La consultation des dossiers est indisponible pour le moment.'
+	String get indisponible => 'La consultation des dossiers est indisponible pour le moment.';
+
+	/// fr: 'Ce dossier n’est plus disponible dans la file.'
+	String get selectionRetiree => 'Ce dossier n’est plus disponible dans la file.';
+
+	/// fr: 'Actualiser les dossiers'
+	String get actualiser => 'Actualiser les dossiers';
+
+	/// fr: 'Sélectionnez un dossier à examiner.'
+	String get aucuneSelection => 'Sélectionnez un dossier à examiner.';
+
+	/// fr: 'Charger les dossiers suivants'
+	String get suivants => 'Charger les dossiers suivants';
+
+	/// fr: 'Ouvrir le dossier de {nom}'
+	String ouvrirDe({required Object nom}) => 'Ouvrir le dossier de ${nom}';
+
+	/// fr: 'Ouvrir le dossier d'{nom}'
+	String ouvrirElide({required Object nom}) => 'Ouvrir le dossier d\'${nom}';
+
+	/// fr: 'En cours de vérification'
+	String get enVerification => 'En cours de vérification';
+
+	/// fr: 'Dossier sans nom disponible'
+	String get sansNom => 'Dossier sans nom disponible';
+
+	/// fr: '{type} · {date}'
+	String legende({required Object type, required Object date}) => '${type} · ${date}';
+
+	/// fr: '{date} à {heure} ({zone})'
+	String dateHeure({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})';
+}
+
+// Path: dossiers.detail
+class Traductions$dossiers$detail$fr {
+	Traductions$dossiers$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dossier de {nom}'
+	String titreDe({required Object nom}) => 'Dossier de ${nom}';
+
+	/// fr: 'Dossier d'{nom}'
+	String titreElide({required Object nom}) => 'Dossier d\'${nom}';
 }
 
 // Path: admin.tableau
@@ -11890,8 +11971,28 @@ extension on Traductions {
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
-			'dossiers.aucun' => 'Aucun dossier en attente',
-			'dossiers.aucunDetail' => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.',
+			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
+			'dossiers.aucunDetail' => 'Les nouveaux dossiers apparaîtront ici lorsqu\'ils seront prêts.',
+			'dossiers.file.chargement' => 'Chargement des dossiers…',
+			'dossiers.file.erreur' => 'Impossible de charger les dossiers.',
+			'dossiers.file.horsLigne' => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.',
+			'dossiers.file.accesRefuse' => 'Vous n\'avez pas accès aux dossiers à valider.',
+			'dossiers.file.actualisation' => 'Actualisation des dossiers…',
+			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
+			'dossiers.file.suivantsErreur' => 'Impossible de charger les dossiers suivants.',
+			'dossiers.file.indisponible' => 'La consultation des dossiers est indisponible pour le moment.',
+			'dossiers.file.selectionRetiree' => 'Ce dossier n’est plus disponible dans la file.',
+			'dossiers.file.actualiser' => 'Actualiser les dossiers',
+			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
+			'dossiers.file.suivants' => 'Charger les dossiers suivants',
+			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
+			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
+			'dossiers.file.enVerification' => 'En cours de vérification',
+			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
+			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
+			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
+			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
+			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
 			'dossiers.restantUn' => '1 dossier en attente',
 			'dossiers.restants' => ({required Object n}) => '${n} dossiers en attente',
 			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
@@ -12186,6 +12287,8 @@ extension on Traductions {
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
 			'admin.evaluations.filtreToutes' => 'Toutes',
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.filtreRealisees' => 'Réalisées',
 			'admin.evaluations.filtreAnnulees' => 'Annulées',
 			'admin.evaluations.filtreCertifications' => 'Certifications',
@@ -12206,8 +12309,6 @@ extension on Traductions {
 			'admin.evaluations.resultatEchec' => 'Échec',
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
@@ -12700,6 +12801,8 @@ extension on Traductions {
 			'compte.themeClair' => 'Clair',
 			'compte.themeSombre' => 'Sombre',
 			'compte.accessibilite' => 'Accessibilité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
 			'compte.effets' => 'Réduire les effets',
@@ -12720,8 +12823,6 @@ extension on Traductions {
 			'compte.coursDonnees' => 'Cours et données',
 			'compte.economieDonnees' => 'Économie de données',
 			'compte.economieDonneesDetail' => 'Réduit la qualité vidéo sur réseau mobile',
-			_ => null,
-		} ?? switch (path) {
 			'compte.lectureGrande' => 'Lecture en grand texte',
 			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
 			'compte.profilsTitre' => 'Profils du foyer',
@@ -13214,6 +13315,8 @@ extension on Traductions {
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
 			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
@@ -13234,8 +13337,6 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.inscritTitre' => 'Inscription confirmée',
 			'classe.pageCatalogue.resultat.inscritPhrase' => ({required Object prenom, required Object classe}) => '${prenom} rejoint ${classe}.',
 			'classe.pageCatalogue.resultat.voirClasse' => 'Voir la classe',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.resultat.validationTitre' => 'Demande envoyée',
 			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
@@ -13728,6 +13829,8 @@ extension on Traductions {
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
 			'tc.classe.action.rappel' => 'Rappel discret',
@@ -13748,8 +13851,6 @@ extension on Traductions {
 			'tc.classe.support.aucun' => 'Aucun support présenté',
 			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support au groupe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',

@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart' show EtatPiece;
+import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 
+import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
 
 /// `ADM-02` apres la migration `0015` : la file contient des **personnes**, pas
@@ -49,11 +51,13 @@ void main() {
         const DossiersPage(),
         surcharges: <Override>[
           serviceValidationProvider.overrideWithValue(service),
+          surchargeRevueDossiersProduction,
           serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
         ],
       ),
     );
     await tester.pumpAndSettle();
+    await ouvrirPremierDossier(tester);
     return service;
   }
 
@@ -79,18 +83,19 @@ void main() {
     },
   );
 
-  testWidgets('une piece hors de portee le dit, et ne se confond pas avec une absence', (
-    WidgetTester tester,
-  ) async {
-    await monter(tester, <DossierAValider>[
-      _dossier(piece: EtatPiece.nonVisible),
-    ]);
+  testWidgets(
+    'une piece hors de portee le dit, et ne se confond pas avec une absence',
+    (WidgetTester tester) async {
+      await monter(tester, <DossierAValider>[
+        _dossier(piece: EtatPiece.nonVisible),
+      ]);
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('Pièce hors de votre portée'), findsOneWidget);
-    expect(find.text('Aucune pièce déposée'), findsNothing);
-    expect(find.text('Valider le dossier'), findsNothing);
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('Pièce hors de votre portée'), findsOneWidget);
+      expect(find.text('Aucune pièce déposée'), findsNothing);
+      expect(find.text('Valider le dossier'), findsNothing);
+    },
+  );
 
   testWidgets('une piece a verifier garde la checklist et les deux verdicts', (
     WidgetTester tester,

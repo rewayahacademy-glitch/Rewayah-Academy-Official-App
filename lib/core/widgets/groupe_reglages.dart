@@ -20,10 +20,11 @@ class LigneRubrique {
     this.valeur,
     this.onPress,
     this.controle,
-  }) : assert(
-         icone != null || meneur != null,
-         'une rubrique porte une icone ou un meneur',
-       );
+    this.pastille,
+    this.selectionnee,
+    this.libelleSemantique,
+    this.autofocus = false,
+  });
 
   /// L'icone de la rubrique, en encre d'accent.
   final AppIcon? icone;
@@ -49,6 +50,21 @@ class LigneRubrique {
   /// Un controle natif en fin de ligne (interrupteur). Il garde son propre
   /// geste et sa propre semantique : la ligne ne se presse alors pas.
   final Widget? controle;
+
+  /// Une pastille d'etat dans le flux du libelle : a cote du nom quand la
+  /// place suffit, dessous sinon (AD-5).
+  final Widget? pastille;
+
+  /// Selection d'une file maitre-detail : annoncee (`Semantics.selected`) et
+  /// marquee autrement que par la couleur (barre de debut, graisse). Nul :
+  /// la ligne n'est pas selectionnable.
+  final bool? selectionnee;
+
+  /// Libelle lu a la place du libelle visible.
+  final String? libelleSemantique;
+
+  /// Prend le focus a l'apparition (retour d'un detail vers sa ligne).
+  final bool autofocus;
 }
 
 /// Un groupe de rubriques a filets en retrait : le hub du Compte, la fiche
@@ -133,6 +149,9 @@ class _Ligne extends StatelessWidget {
       onPress: ligne.onPress,
       respecterCibleTactile: false,
       arrondiFocus: AppRadius.arrondiSm,
+      libelleSemantique: ligne.libelleSemantique,
+      selectionne: ligne.selectionnee,
+      autofocus: ligne.autofocus,
       constructeur: _contenu,
     );
   }
@@ -140,25 +159,40 @@ class _Ligne extends StatelessWidget {
   Widget _contenu(BuildContext context, EtatPression etat) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final Color fond = etat.survole || etat.presse
+    final bool choisie = ligne.selectionnee ?? false;
+    final Color fond = etat.survole || etat.presse || choisie
         ? Color.alphaBlend(
             palette.calqueInteraction(presse: etat.presse),
             palette.surfaceRaised.background,
           )
         : palette.surfaceRaised.background;
+    final Widget? tete =
+        ligne.meneur ??
+        (ligne.icone == null
+            ? null
+            : IconTheme(
+                data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                child: Icon(ligne.icone!.repos),
+              ));
 
-    return ColoredBox(
-      color: fond,
+    return DecoratedBox(
+      // La selection ne tient pas a la seule teinte : une barre de 4 au bord
+      // de debut, en encre d'accent (jeton existant).
+      decoration: BoxDecoration(
+        color: fond,
+        border: choisie
+            ? BorderDirectional(
+                start: palette.inkAccent.asBorderSide(width: AppSpacing.xs),
+              )
+            : null,
+      ),
       child: Padding(
-        padding: const EdgeInsetsDirectional.only(start: AppSpacing.lg),
+        padding: EdgeInsetsDirectional.only(
+          start: choisie ? AppSpacing.lg - AppSpacing.xs : AppSpacing.lg,
+        ),
         child: Row(
           children: <Widget>[
-            ligne.meneur ??
-                IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(ligne.icone!.repos),
-                ),
-            Ecart.hMd,
+            if (tete != null) ...<Widget>[tete, Ecart.hMd],
             Expanded(
               // Le filet en retrait : il court sous le texte, pas sous
               // l'icone, et s'arrete a la derniere ligne du groupe.
@@ -226,10 +260,15 @@ class _Ligne extends StatelessWidget {
           children: <Widget>[
             Text(
               ligne.libelle,
-              style: palette.inkStrong.applyTo(
-                textes.bodyLarge ?? const TextStyle(),
-              ),
+              style: palette.inkStrong
+                  .applyTo(textes.bodyLarge ?? const TextStyle())
+                  .copyWith(
+                    fontWeight: (ligne.selectionnee ?? false)
+                        ? FontWeight.w600
+                        : null,
+                  ),
             ),
+            if (ligne.pastille != null) ligne.pastille!,
             if (ligne.valeur != null)
               Text(ligne.valeur!, style: styleSecondaire),
           ],

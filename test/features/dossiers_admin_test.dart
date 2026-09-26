@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 
+import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
 
 DossierAValider _dossier({String id = 'doc1', String prenom = 'Moussa'}) =>
@@ -33,10 +35,12 @@ Future<FauxServiceValidation> _monter(
       const DossiersPage(),
       surcharges: <Override>[
         serviceValidationProvider.overrideWithValue(service),
+        surchargeRevueDossiersProduction,
       ],
     ),
   );
   await tester.pumpAndSettle();
+  await ouvrirPremierDossier(tester);
   return service;
 }
 
@@ -83,12 +87,15 @@ void main() {
         surcharges: <Override>[
           serviceValidationProvider.overrideWithValue(FauxServiceValidation()),
           dossiersEnAttenteProvider.overrideWith((_) => reponse.future),
+          surchargeRevueDossiersProduction,
         ],
       ),
     );
     await tester.pump();
 
-    expect(find.byType(Skeleton), findsOneWidget);
+    // AD-5 : la file a son squelette (quatre lignes) et son texte visible.
+    expect(find.byType(Skeleton), findsWidgets);
+    expect(find.text(t.dossiers.file.chargement), findsOneWidget);
     expect(find.text(t.commun.chargement), findsNothing);
 
     reponse.complete(const <DossierAValider>[]);
@@ -108,9 +115,13 @@ void main() {
           ],
       );
 
-      expect(find.textContaining('Moussa'), findsOneWidget);
+      // Le detail ouvert (titre « Dossier de Moussa Barry » et constat) : une
+      // personne, une revue. Les deux pieces d'une meme personne ne font
+      // qu'une ligne (AD-BR-01), la plus ancienne gardee.
+      expect(find.text('Dossier de Moussa Barry'), findsOneWidget);
       expect(find.textContaining('Aissatou'), findsNothing);
-      expect(find.text(t.dossiers.restants(n: 2)), findsOneWidget);
+      // En production, le total n'est pas garanti : aucun compteur (Q16).
+      expect(find.text(t.dossiers.restants(n: 2)), findsNothing);
     });
 
     testWidgets(

@@ -287,8 +287,17 @@ void main() {
     Finder titreCommencantPar(String prenom) => find.byWidgetPredicate(
       (Widget w) => w is Text && (w.data?.startsWith('$prenom ') ?? false),
     );
-    expect(titreCommencantPar(second), findsOneWidget);
-    expect(titreCommencantPar(premier), findsNothing);
+    // AD-5 : a 1440, maitre-detail. Le nom de la 2e ligne figure dans la
+    // file ET dans le detail ; le premier n'est que dans la file. La ligne
+    // ouverte est annoncee selectionnee.
+    expect(titreCommencantPar(second), findsNWidgets(2));
+    expect(titreCommencantPar(premier), findsOneWidget);
+    expect(
+      tester.getSemantics(
+        find.bySemanticsLabel(RegExp('^Ouvrir le dossier d.?.?$second ')),
+      ),
+      isSemantics(isSelected: true),
+    );
     expect(
       find.byWidgetPredicate(
         (Widget w) => w is Text && (w.data?.startsWith('DEMO-D') ?? false),

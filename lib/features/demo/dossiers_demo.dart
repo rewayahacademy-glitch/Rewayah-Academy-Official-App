@@ -677,8 +677,8 @@ class PolitiqueRevueKycDemo implements PortPolitiqueRevueKyc {
   }
 }
 
-/// Pont vers l'ecran `ADM-02` actuel, en demonstration seulement (disparait
-/// avec AD-5). Il transmet les trois verifications comme faites : l'ecran
+/// Pont vers la revue actuelle (`revue_existante.dart`), en demonstration
+/// seulement : il reste la source du detail jusqu'a AD-6. Il transmet les trois verifications comme faites : l'ecran
 /// exige deja les trois coches avant Valider. Jamais hors demonstration.
 class ServiceValidationDemo implements ServiceValidation {
   ServiceValidationDemo(this.etat) : _revue = RevueDossiersDemo(etat);
@@ -691,29 +691,16 @@ class ServiceValidationDemo implements ServiceValidation {
   final Map<String, ({String commandeId, int revision})> _enCours =
       <String, ({String commandeId, int revision})>{};
 
-  /// L'ecran actuel ne montre que le premier dossier et ne sait trancher que
-  /// ceux qui ont une piece : la famille dispensee et la piece absente sont
-  /// retirees de sa file (elles relevent d'AD-5/AD-6, via le port), et un
-  /// dossier hors portee passe en fin de file pour ne bloquer aucun autre cas.
+  /// Toute la file, dans l'ordre du port (AD-5) : chaque ligne de la file
+  /// doit trouver son detail ici, sinon elle ouvrirait « Ce dossier n'est
+  /// plus disponible ». La revue actuelle sait deja dire « rien a trancher ».
   @override
   Future<List<DossierAValider>> enAttente() async {
     if (etat.politiqueGenre && !etat.genreRelecteurRenseigne) {
       throw const GenreLecteurInconnu();
     }
-    final List<DossierDemo> traitables = <DossierDemo>[
-      for (final DossierDemo d in etat.fileTriee)
-        if (d.etatPiece(politiqueGenre: etat.politiqueGenre)
-            case EtatPieceRevue.disponible || EtatPieceRevue.nonVisible)
-          d,
-    ];
-    bool horsPortee(DossierDemo d) =>
-        d.etatPiece(politiqueGenre: etat.politiqueGenre) ==
-        EtatPieceRevue.nonVisible;
     return <DossierAValider>[
-      for (final DossierDemo d in traitables)
-        if (!horsPortee(d)) _versEcran(d),
-      for (final DossierDemo d in traitables)
-        if (horsPortee(d)) _versEcran(d),
+      for (final DossierDemo d in etat.fileTriee) _versEcran(d),
     ];
   }
 

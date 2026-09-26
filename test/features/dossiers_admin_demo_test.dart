@@ -6,6 +6,7 @@ import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 
+import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
 
 /// Fait defiler jusqu'a un libelle puis tape dessus, comme l'administrateur.
@@ -34,6 +35,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    // AD-5 : la page montre la file ; taper la premiere ligne ouvre la revue.
+    await ouvrirPremierDossier(tester);
 
     // Le plus ancien dossier synthetique d'abord, piece jamais montree.
     expect(find.text('Omar Haddad'), findsOneWidget);
