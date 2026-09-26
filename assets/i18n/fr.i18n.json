@@ -923,6 +923,9 @@
       "sansNom": "Dossier sans nom disponible",
       "legende": "{type} · {date}",
       "dateHeure": "{date} à {heure} ({zone})",
+      "dateChiffres": "{jour}/{mois}/{annee}",
+      "heureChiffres": "{heures}:{minutes}",
+      "zoneUtc": "UTC",
       "suivantAnnonce": "Dossier suivant : {nom}"
     },
     "detail": {

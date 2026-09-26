@@ -216,7 +216,9 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
     final double section = MediaQuery.sizeOf(context).width >= 600
         ? AppSpacing.xxxl
         : AppSpacing.xxl;
-    final String nom = '${d.prenom} ${d.nom}'.trim();
+    final String nom = t.dossiers.decision
+        .nomComplet(prenom: d.prenom, nom: d.nom)
+        .trim();
     final List<VerificationRevue> manquantes = _manquantes;
 
     final bool bloque = horsLigne || nonResolue;

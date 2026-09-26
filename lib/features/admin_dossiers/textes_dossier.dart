@@ -29,9 +29,16 @@ String _deux(int n) => n.toString().padLeft(2, '0');
 String dateRevue(DateTime utc) {
   final DateTime u = utc.toUtc();
   final String texte = t.dossiers.file.dateHeure(
-    date: '${_deux(u.day)}/${_deux(u.month)}/${u.year}',
-    heure: '${_deux(u.hour)}:${_deux(u.minute)}',
-    zone: 'UTC',
+    date: t.dossiers.file.dateChiffres(
+      jour: _deux(u.day),
+      mois: _deux(u.month),
+      annee: '${u.year}',
+    ),
+    heure: t.dossiers.file.heureChiffres(
+      heures: _deux(u.hour),
+      minutes: _deux(u.minute),
+    ),
+    zone: t.dossiers.file.zoneUtc,
   );
   return texte.replaceAll(' ', ' ');
 }
