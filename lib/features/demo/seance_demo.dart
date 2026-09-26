@@ -5,6 +5,7 @@
 // support) sont des contenus de demonstration, pas des libelles d'interface.
 
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
 
 /// Les etats montrables de la salle de demonstration.
@@ -26,6 +27,35 @@ enum EtatDemoSalle {
 
   /// Seance terminee.
   fin,
+
+  // --- Ecrans de secours (lot CL-7) ---
+
+  /// Reseau faible, room connectee (P06).
+  reseauFaible,
+
+  /// Reconnexion en cours (P05).
+  reconnexion,
+
+  /// Connexion retablie (P05.6).
+  retablie,
+
+  /// Reconnexion impossible (P05.8).
+  echec,
+
+  /// Hors ligne confirme (P05.8).
+  horsLigne,
+
+  /// Micro bloque par le systeme (P09).
+  microBloque,
+
+  /// Camera interdite par le profil (P10).
+  cameraInterdite,
+
+  /// Heure de fin passee (P11).
+  prolongee,
+
+  /// Acces retire par le serveur (P12).
+  accesRetire,
 }
 
 /// Les donnees exactes de la demonstration.
@@ -175,9 +205,13 @@ abstract final class DonneesSeanceDemo {
       nomEnseignant: enseignante,
       initialesEnseignant: initialesEnseignante,
       prenomEleve: enseignant ? null : eleveCourant,
-      horloge: etat == EtatDemoSalle.visite && enseignant
+      horloge:
+          (etat == EtatDemoSalle.visite && enseignant) ||
+              etat == EtatDemoSalle.prolongee
           ? const HorlogeDepassee()
           : const HorlogeRestante(32),
+      connexion: connexion(etat),
+      cameraAutorisee: etat != EtatDemoSalle.cameraInterdite,
       visite: etat == EtatDemoSalle.visite
           ? const VisiteSeance(prenomEnfant: eleveCourant, concerneMoi: true)
           : null,
@@ -186,7 +220,12 @@ abstract final class DonneesSeanceDemo {
       groupeId: groupeDemo,
       eleves: eleves,
       supports: supports,
-      fin: etat == EtatDemoSalle.fin ? fin : null,
+      // Acces retire, cote enseignant : la fin CLV-10 avec le cahier (P12.4).
+      fin:
+          etat == EtatDemoSalle.fin ||
+              (etat == EtatDemoSalle.accesRetire && enseignant)
+          ? fin
+          : null,
       panneau: !enseignant
           ? PanneauOuvert.aucun
           : switch (etat) {
@@ -198,4 +237,22 @@ abstract final class DonneesSeanceDemo {
       notificationsNonLues: 2,
     );
   }
+
+  /// La connexion montree par un etat de secours (lot CL-7).
+  static ConnexionSeance connexion(EtatDemoSalle etat) => switch (etat) {
+    EtatDemoSalle.reseauFaible => ConnexionSeance.reseauFaible,
+    EtatDemoSalle.reconnexion => ConnexionSeance.reconnexion,
+    EtatDemoSalle.retablie => ConnexionSeance.retablie,
+    EtatDemoSalle.echec => ConnexionSeance.echec,
+    EtatDemoSalle.horsLigne => ConnexionSeance.horsLigne,
+    _ => ConnexionSeance.enLigne,
+  };
+
+  /// L'issue de l'eleve impose par l'etat, ou `null` (salle ouverte). La
+  /// guidee n'a qu'un ecran de fin : son rendu ignore l'issue.
+  static IssueSeance? issueEleve(EtatDemoSalle etat) => switch (etat) {
+    EtatDemoSalle.fin => IssueSeance.terminee,
+    EtatDemoSalle.accesRetire => IssueSeance.accesRetire,
+    _ => null,
+  };
 }

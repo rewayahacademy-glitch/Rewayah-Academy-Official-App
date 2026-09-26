@@ -31,6 +31,9 @@ enum IssueSeance {
 
   /// L'eleve est sorti avant la fin, apres confirmation.
   quittee,
+
+  /// Le serveur a retire l'acces (P12) : aucune reconnexion tentee.
+  accesRetire,
 }
 
 /// L'ecran de fin de l'eleve : standard ou guide, fin ou sortie.
@@ -58,12 +61,15 @@ class ResultatSeance extends StatelessWidget {
         : switch (issue) {
             IssueSeance.terminee => t.salle.fin.titre,
             IssueSeance.quittee => t.salle.fin.quitteTitre,
+            IssueSeance.accesRetire => t.salle.fin.accesRetireTitre,
           };
     final String? phrase = guidee
         ? null
         : switch (issue) {
             IssueSeance.terminee => t.salle.fin.phrase,
             IssueSeance.quittee => t.salle.fin.quittePhrase,
+            // S l.673 : un titre seul, aucune phrase.
+            IssueSeance.accesRetire => null,
           };
     return Material(
       key: const ValueKey<String>('resultat-seance'),

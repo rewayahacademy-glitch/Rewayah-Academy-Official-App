@@ -6,6 +6,8 @@
 // Le roster reste la source unique du compteur, du panneau et du
 // recapitulatif (I-6) : la liste d'eleves en est une projection, rien de plus.
 
+import 'dart:math' as math;
+
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -63,11 +65,7 @@ abstract final class DepuisClasseLive {
       initialesEnseignant: DepuisSalle.initiales(nomEnseignant),
       prenomEleve: prenomEleve,
       horloge: enseignant ? horlogeDe(horloge) : null,
-      connexion:
-          salle.phase == PhaseSalle.reconnexion ||
-              salle.phase == PhaseSalle.instable
-          ? ConnexionSeance.reconnexion
-          : ConnexionSeance.enLigne,
+      connexion: DepuisSalle.connexionDe(salle.phase),
       enregistrementConfirme: salle.phase != PhaseSalle.refus,
       visite: visite,
       support: support,
@@ -98,7 +96,9 @@ abstract final class DepuisClasseLive {
     if (horloge == null) return null;
     return switch (horloge.phase) {
       PhaseSeance.enCours => switch (horloge.restant) {
-        final Duration r => HorlogeRestante((r.inSeconds / 60).ceil()),
+        final Duration r => HorlogeRestante(
+          math.max(0, (r.inSeconds / 60).ceil()),
+        ),
         null => null,
       },
       PhaseSeance.prolongee => const HorlogeDepassee(),

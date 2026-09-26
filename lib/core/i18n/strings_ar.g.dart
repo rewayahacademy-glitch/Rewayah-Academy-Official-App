@@ -39,8 +39,19 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	TraductionsAr $copyWith({TranslationMetadata<AppLocale, Traductions>? meta}) => TraductionsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
+}
+
+// Path: salle
+class _Traductions$salle$ar extends Traductions$salle$fr {
+	_Traductions$salle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$salle$secours$ar secours = _Traductions$salle$secours$ar._(_root);
 }
 
 // Path: eleve
@@ -61,6 +72,32 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 
 	// Translations
 	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
+}
+
+// Path: salle.secours
+class _Traductions$salle$secours$ar extends Traductions$salle$secours$fr {
+	_Traductions$salle$secours$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get reseauFaible => 'الشبكة ضعيفة. الأولوية للصوت.';
+	@override String get reseauFaibleGuidee => 'الشبكة ضعيفة.';
+	@override String get reseauFaibleGuideeSuite => 'الصوت يبقى أولوية.';
+	@override String get reconnexion => 'انقطع الاتصال. جارٍ إعادة الاتصال…';
+	@override String get reconnexionGuidee => 'جارٍ إعادة الاتصال بالحصة…';
+	@override String get retablie => 'عاد الاتصال.';
+	@override String get echec => 'تعذّرت إعادة الاتصال.';
+	@override String get echecGuidee => 'الاتصال لا يعود.';
+	@override String get horsLigne => 'أنت غير متصل. تحتاج الحصة إلى اتصال.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get quitter => 'خروج';
+	@override String indisponible({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.';
+	@override String get cameraInterdite => 'الكاميرا معطّلة لهذا الملف.';
+	@override String get microBloque => 'الميكروفون محظور في إعدادات هذا الجهاز.';
+	@override String get microBloqueGuidee => 'الميكروفون محظور على هذا الجهاز.';
+	@override String get continuerSansMicro => 'المتابعة دون ميكروفون';
+	@override String get ouvrirReglages => 'فتح الإعدادات';
 }
 
 // Path: eleve.suivi
@@ -119,6 +156,23 @@ class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseign
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'salle.secours.reseauFaible' => 'الشبكة ضعيفة. الأولوية للصوت.',
+			'salle.secours.reseauFaibleGuidee' => 'الشبكة ضعيفة.',
+			'salle.secours.reseauFaibleGuideeSuite' => 'الصوت يبقى أولوية.',
+			'salle.secours.reconnexion' => 'انقطع الاتصال. جارٍ إعادة الاتصال…',
+			'salle.secours.reconnexionGuidee' => 'جارٍ إعادة الاتصال بالحصة…',
+			'salle.secours.retablie' => 'عاد الاتصال.',
+			'salle.secours.echec' => 'تعذّرت إعادة الاتصال.',
+			'salle.secours.echecGuidee' => 'الاتصال لا يعود.',
+			'salle.secours.horsLigne' => 'أنت غير متصل. تحتاج الحصة إلى اتصال.',
+			'salle.secours.reessayer' => 'إعادة المحاولة',
+			'salle.secours.quitter' => 'خروج',
+			'salle.secours.indisponible' => ({required Object commande}) => '${commande}. غير متاح أثناء إعادة الاتصال.',
+			'salle.secours.cameraInterdite' => 'الكاميرا معطّلة لهذا الملف.',
+			'salle.secours.microBloque' => 'الميكروفون محظور في إعدادات هذا الجهاز.',
+			'salle.secours.microBloqueGuidee' => 'الميكروفون محظور على هذا الجهاز.',
+			'salle.secours.continuerSansMicro' => 'المتابعة دون ميكروفون',
+			'salle.secours.ouvrirReglages' => 'فتح الإعدادات',
 			'eleve.suivi.titre' => 'متابعة دروسي',
 			'eleve.suivi.colonneDate' => 'التاريخ',
 			'eleve.suivi.colonneCours' => 'الدرس',

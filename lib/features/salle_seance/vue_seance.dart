@@ -46,8 +46,11 @@ sealed class HorlogeSeance {
 }
 
 /// Il reste [minutes] minutes avant l'heure de fin prevue.
+///
+/// Jamais negatif (P11) : apres l'heure de fin, c'est [HorlogeDepassee]. Les
+/// adaptateurs bornent a 0 ce que le moteur leur donne.
 final class HorlogeRestante extends HorlogeSeance {
-  const HorlogeRestante(this.minutes);
+  const HorlogeRestante(this.minutes) : assert(minutes >= 0);
   final int minutes;
 }
 
@@ -56,8 +59,33 @@ final class HorlogeDepassee extends HorlogeSeance {
   const HorlogeDepassee();
 }
 
-/// L'etat de la connexion de celui qui regarde.
-enum ConnexionSeance { enLigne, reconnexion }
+/// L'etat de la connexion de celui qui regarde (P05, P06, lot CL-7).
+///
+/// Tout vient du moteur ou du serveur (BR-1) : l'ecran ne detecte rien
+/// lui-meme et ne tient aucune minuterie.
+enum ConnexionSeance {
+  /// Lien sain.
+  enLigne,
+
+  /// Room connectee, qualite degradee : jamais « hors ligne » (P06.5).
+  reseauFaible,
+
+  /// Lien perdu, le moteur retablit la connexion.
+  reconnexion,
+
+  /// La coupure vient d'etre refermee (etat transitoire).
+  retablie,
+
+  /// Le moteur a renonce a retablir la connexion.
+  echec,
+
+  /// L'appareil n'a plus de reseau (confirme par le moteur).
+  horsLigne;
+
+  /// La room est connectee : la pastille dit « En ligne ».
+  bool get etablie =>
+      this == enLigne || this == reseauFaible || this == retablie;
+}
 
 /// Statut d'un inscrit pendant la seance. Jamais « present » ni « absent »
 /// avant la consolidation par le serveur (I-6).
@@ -274,6 +302,11 @@ class VueSeance {
   /// Q8 : guidee desktop, video a cote du support, jamais par-dessus.
   static const bool optionQ8 = true;
 
+  /// Q-S1 (lot CL-7) : eleve standard sans camera, le statut « Camera
+  /// desactivee pour ce profil. » est visible dans la barre basse (non :
+  /// aucun texte visible, libelle d'accessibilite seulement).
+  static const bool optionQS1 = true;
+
   final RoleSeance role;
   final String nomClasse;
   final String nomEnseignant;
@@ -366,11 +399,86 @@ class VueSeance {
   /// La duree restante n'est lue que par l'enseignant.
   bool get voitDureeRestante => _enseignant;
 
-  /// Le libelle de la pastille de connexion.
-  String get texteConnexion => switch (connexion) {
-    ConnexionSeance.enLigne => t.salle.seance.enLigne,
-    ConnexionSeance.reconnexion => t.salle.seance.reconnexion,
+  /// Le libelle de la pastille de connexion : « En ligne » tant que la room
+  /// est connectee, meme en reseau faible (P06.5).
+  String get texteConnexion =>
+      connexion.etablie ? t.salle.seance.enLigne : t.salle.seance.reconnexion;
+
+  // --- Ecrans de secours (lot CL-7, P05, P06, P09 a P12) ---
+
+  /// Le bandeau non bloquant (reseau faible, reconnexion), ou `null`.
+  String? get texteBandeau => switch (connexion) {
+    ConnexionSeance.reseauFaible =>
+      _guidee
+          ? t.salle.secours.reseauFaibleGuidee
+          : t.salle.secours.reseauFaible,
+    ConnexionSeance.reconnexion =>
+      _guidee ? t.salle.secours.reconnexionGuidee : t.salle.secours.reconnexion,
+    ConnexionSeance.enLigne ||
+    ConnexionSeance.retablie ||
+    ConnexionSeance.echec ||
+    ConnexionSeance.horsLigne => null,
   };
+
+  /// Le sous-texte du bandeau : guidee en reseau faible seulement.
+  String? get sousTexteBandeau =>
+      _guidee && connexion == ConnexionSeance.reseauFaible
+      ? t.salle.secours.reseauFaibleGuideeSuite
+      : null;
+
+  /// Le retour bref « Connexion retablie. », ou `null`.
+  String? get texteRetabli =>
+      connexion == ConnexionSeance.retablie ? t.salle.secours.retablie : null;
+
+  /// Le bloc d'erreur remplace le bandeau : reconnexion impossible ou hors
+  /// ligne confirme. La salle reste montee.
+  bool get voitBlocEchec =>
+      connexion == ConnexionSeance.echec ||
+      connexion == ConnexionSeance.horsLigne;
+
+  /// Le titre du bloc d'erreur, ou `null`. La guidee n'a qu'un texte pour
+  /// les deux etats (S l.775).
+  String? get titreEchec {
+    if (!voitBlocEchec) return null;
+    if (_guidee) return t.salle.secours.echecGuidee;
+    return connexion == ConnexionSeance.echec
+        ? t.salle.secours.echec
+        : t.salle.secours.horsLigne;
+  }
+
+  /// Le bloc d'erreur offre la sortie : toujours en echec ; hors ligne,
+  /// seulement en guidee (S l.655 : « Reessayer » seul).
+  bool get echecPermetQuitter =>
+      connexion == ConnexionSeance.echec ||
+      (connexion == ConnexionSeance.horsLigne && _guidee);
+
+  /// La sortie du bloc d'erreur : « Quitter » en guidee, « Quitter la
+  /// seance » ailleurs (la confirmation existante suit).
+  String get libelleQuitterEchec =>
+      _guidee ? t.salle.secours.quitter : t.salle.seance.sortir;
+
+  /// Micro et Camera repondent-ils ? Faux tant que la connexion n'est pas
+  /// etablie : les boutons restent rendus, desactives (UX_REVIEW U1).
+  bool get commandesPublicationActives =>
+      connexion != ConnexionSeance.reconnexion &&
+      connexion != ConnexionSeance.echec &&
+      connexion != ConnexionSeance.horsLigne;
+
+  /// Le libelle d'accessibilite d'une commande desactivee, ou `null`.
+  String? libelleIndisponible(String commande) => commandesPublicationActives
+      ? null
+      : t.salle.secours.indisponible(commande: commande);
+
+  /// Le statut non interactif de l'eleve standard sans camera (P10.3), ou
+  /// `null`. Guidee : ni bouton ni explication ; enseignant : sans objet.
+  String? get texteCameraInterdite =>
+      role == RoleSeance.eleve && !cameraAutorisee && optionQS1
+      ? t.salle.secours.cameraInterdite
+      : null;
+
+  /// Le corps de la feuille « micro bloque » (P09).
+  String get texteMicroBloque =>
+      _guidee ? t.salle.secours.microBloqueGuidee : t.salle.secours.microBloque;
 
   /// Le compte en haut a droite : TOUJOURS celui de la personne devant
   /// l'ecran (I-9). L'enseignant ne voit jamais le compte d'un eleve.
@@ -504,6 +612,7 @@ class VueSeance {
     RoleSeance? role,
     HorlogeSeance? horloge,
     bool sansHorloge = false,
+    ConnexionSeance? connexion,
     VisiteSeance? visite,
     bool sansVisite = false,
     SupportSeance? support,
@@ -520,7 +629,7 @@ class VueSeance {
     initialesEnseignant: initialesEnseignant,
     prenomEleve: prenomEleve,
     horloge: sansHorloge ? null : horloge ?? this.horloge,
-    connexion: connexion,
+    connexion: connexion ?? this.connexion,
     enregistrementConfirme:
         enregistrementConfirme ?? this.enregistrementConfirme,
     visite: sansVisite ? null : visite ?? this.visite,

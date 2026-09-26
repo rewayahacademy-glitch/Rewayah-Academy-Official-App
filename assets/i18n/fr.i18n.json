@@ -141,6 +141,25 @@
   },
   "salle": {
     "bandeauPermanent": "Cours enregistré, visite de contrôle possible.",
+    "secours": {
+      "reseauFaible": "Réseau faible. L'audio est prioritaire.",
+      "reseauFaibleGuidee": "Le réseau est faible.",
+      "reseauFaibleGuideeSuite": "Le son reste prioritaire.",
+      "reconnexion": "Connexion interrompue. Reconnexion en cours…",
+      "reconnexionGuidee": "Reconnexion de la séance…",
+      "retablie": "Connexion rétablie.",
+      "echec": "Impossible de rétablir la connexion.",
+      "echecGuidee": "La connexion ne revient pas.",
+      "horsLigne": "Vous êtes hors ligne. La séance nécessite une connexion.",
+      "reessayer": "Réessayer",
+      "quitter": "Quitter",
+      "indisponible": "{commande}. Indisponible pendant la reconnexion.",
+      "cameraInterdite": "Caméra désactivée pour ce profil.",
+      "microBloque": "Le micro est bloqué dans les réglages de cet appareil.",
+      "microBloqueGuidee": "Le micro est bloqué sur cet appareil.",
+      "continuerSansMicro": "Continuer sans micro",
+      "ouvrirReglages": "Ouvrir les réglages"
+    },
     "seance": {
       "titre": "Séance en direct",
       "titreGuidee": "Ma séance",
@@ -233,7 +252,16 @@
           "rienPartage": "Rien partagé",
           "eleves": "Panneau Élèves",
           "supports": "Panneau Supports",
-          "fin": "Fin de séance"
+          "fin": "Fin de séance",
+          "reseauFaible": "Réseau faible",
+          "reconnexion": "Reconnexion",
+          "retablie": "Connexion rétablie",
+          "echec": "Reconnexion impossible",
+          "horsLigne": "Hors ligne",
+          "microBloque": "Micro bloqué",
+          "cameraInterdite": "Caméra interdite",
+          "prolongee": "Séance prolongée",
+          "accesRetire": "Accès retiré"
         }
       },
       "statut": {
@@ -248,6 +276,7 @@
       "retourClasse": "Retour à la Classe",
       "quitteTitre": "Vous avez quitté la séance.",
       "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
+      "accesRetireTitre": "Votre accès à cette séance a pris fin.",
       "titreGuidee": "La séance est terminée.",
       "retourAccueil": "Retour à l'accueil",
       "enseignant": {

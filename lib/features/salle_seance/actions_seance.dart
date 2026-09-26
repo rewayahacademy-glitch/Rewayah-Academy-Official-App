@@ -39,7 +39,22 @@ class ActionsSeance {
     this.onSignaler,
     this.onOuvrirSupport,
     this.onBibliotheque,
+    this.onReessayerConnexion,
+    this.onContinuerSansMicro,
+    this.onOuvrirReglages,
   });
+
+  // Les ecrans de secours (lot CL-7). `null` : l'action n'est pas rendue.
+
+  /// « Reessayer » du bloc d'erreur de connexion.
+  final VoidCallback? onReessayerConnexion;
+
+  /// « Continuer sans micro » de la feuille micro bloque.
+  final VoidCallback? onContinuerSansMicro;
+
+  /// « Ouvrir les reglages » : `null` tant que la plateforme ne le permet
+  /// pas (BR-1, aucun paquet de permission).
+  final VoidCallback? onOuvrirReglages;
 
   // Les quatre actions de la fiche d'un eleve (panneau Eleves, CLV-07),
   // reprises de `FicheSeance` (/tc/classe) : aucune ne touche au support ni

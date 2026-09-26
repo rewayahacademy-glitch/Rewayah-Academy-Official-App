@@ -199,6 +199,7 @@ class Traductions$salle$fr {
 	/// fr: 'Cours enregistré, visite de contrôle possible.'
 	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
 
+	late final Traductions$salle$secours$fr secours = Traductions$salle$secours$fr.internal(_root);
 	late final Traductions$salle$seance$fr seance = Traductions$salle$seance$fr.internal(_root);
 	late final Traductions$salle$fin$fr fin = Traductions$salle$fin$fr.internal(_root);
 
@@ -2419,6 +2420,66 @@ class Traductions$commun$dates$fr {
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
 }
 
+// Path: salle.secours
+class Traductions$salle$secours$fr {
+	Traductions$salle$secours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réseau faible. L'audio est prioritaire.'
+	String get reseauFaible => 'Réseau faible. L\'audio est prioritaire.';
+
+	/// fr: 'Le réseau est faible.'
+	String get reseauFaibleGuidee => 'Le réseau est faible.';
+
+	/// fr: 'Le son reste prioritaire.'
+	String get reseauFaibleGuideeSuite => 'Le son reste prioritaire.';
+
+	/// fr: 'Connexion interrompue. Reconnexion en cours…'
+	String get reconnexion => 'Connexion interrompue. Reconnexion en cours…';
+
+	/// fr: 'Reconnexion de la séance…'
+	String get reconnexionGuidee => 'Reconnexion de la séance…';
+
+	/// fr: 'Connexion rétablie.'
+	String get retablie => 'Connexion rétablie.';
+
+	/// fr: 'Impossible de rétablir la connexion.'
+	String get echec => 'Impossible de rétablir la connexion.';
+
+	/// fr: 'La connexion ne revient pas.'
+	String get echecGuidee => 'La connexion ne revient pas.';
+
+	/// fr: 'Vous êtes hors ligne. La séance nécessite une connexion.'
+	String get horsLigne => 'Vous êtes hors ligne. La séance nécessite une connexion.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Quitter'
+	String get quitter => 'Quitter';
+
+	/// fr: '{commande}. Indisponible pendant la reconnexion.'
+	String indisponible({required Object commande}) => '${commande}. Indisponible pendant la reconnexion.';
+
+	/// fr: 'Caméra désactivée pour ce profil.'
+	String get cameraInterdite => 'Caméra désactivée pour ce profil.';
+
+	/// fr: 'Le micro est bloqué dans les réglages de cet appareil.'
+	String get microBloque => 'Le micro est bloqué dans les réglages de cet appareil.';
+
+	/// fr: 'Le micro est bloqué sur cet appareil.'
+	String get microBloqueGuidee => 'Le micro est bloqué sur cet appareil.';
+
+	/// fr: 'Continuer sans micro'
+	String get continuerSansMicro => 'Continuer sans micro';
+
+	/// fr: 'Ouvrir les réglages'
+	String get ouvrirReglages => 'Ouvrir les réglages';
+}
+
 // Path: salle.seance
 class Traductions$salle$seance$fr {
 	Traductions$salle$seance$fr.internal(this._root);
@@ -2601,6 +2662,9 @@ class Traductions$salle$fin$fr {
 
 	/// fr: 'Vous pourrez revenir tant qu'elle reste ouverte.'
 	String get quittePhrase => 'Vous pourrez revenir tant qu\'elle reste ouverte.';
+
+	/// fr: 'Votre accès à cette séance a pris fin.'
+	String get accesRetireTitre => 'Votre accès à cette séance a pris fin.';
 
 	/// fr: 'La séance est terminée.'
 	String get titreGuidee => 'La séance est terminée.';
@@ -11413,6 +11477,33 @@ class Traductions$salle$seance$demo$etats$fr {
 
 	/// fr: 'Fin de séance'
 	String get fin => 'Fin de séance';
+
+	/// fr: 'Réseau faible'
+	String get reseauFaible => 'Réseau faible';
+
+	/// fr: 'Reconnexion'
+	String get reconnexion => 'Reconnexion';
+
+	/// fr: 'Connexion rétablie'
+	String get retablie => 'Connexion rétablie';
+
+	/// fr: 'Reconnexion impossible'
+	String get echec => 'Reconnexion impossible';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+
+	/// fr: 'Micro bloqué'
+	String get microBloque => 'Micro bloqué';
+
+	/// fr: 'Caméra interdite'
+	String get cameraInterdite => 'Caméra interdite';
+
+	/// fr: 'Séance prolongée'
+	String get prolongee => 'Séance prolongée';
+
+	/// fr: 'Accès retiré'
+	String get accesRetire => 'Accès retiré';
 }
 
 // Path: tc.outils.dock.position
@@ -11690,6 +11781,23 @@ extension on Traductions {
 			'etat.termine' => 'Terminé',
 			'destructif.irreversible' => 'Cette action ne peut pas être annulée.',
 			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
+			'salle.secours.reseauFaible' => 'Réseau faible. L\'audio est prioritaire.',
+			'salle.secours.reseauFaibleGuidee' => 'Le réseau est faible.',
+			'salle.secours.reseauFaibleGuideeSuite' => 'Le son reste prioritaire.',
+			'salle.secours.reconnexion' => 'Connexion interrompue. Reconnexion en cours…',
+			'salle.secours.reconnexionGuidee' => 'Reconnexion de la séance…',
+			'salle.secours.retablie' => 'Connexion rétablie.',
+			'salle.secours.echec' => 'Impossible de rétablir la connexion.',
+			'salle.secours.echecGuidee' => 'La connexion ne revient pas.',
+			'salle.secours.horsLigne' => 'Vous êtes hors ligne. La séance nécessite une connexion.',
+			'salle.secours.reessayer' => 'Réessayer',
+			'salle.secours.quitter' => 'Quitter',
+			'salle.secours.indisponible' => ({required Object commande}) => '${commande}. Indisponible pendant la reconnexion.',
+			'salle.secours.cameraInterdite' => 'Caméra désactivée pour ce profil.',
+			'salle.secours.microBloque' => 'Le micro est bloqué dans les réglages de cet appareil.',
+			'salle.secours.microBloqueGuidee' => 'Le micro est bloqué sur cet appareil.',
+			'salle.secours.continuerSansMicro' => 'Continuer sans micro',
+			'salle.secours.ouvrirReglages' => 'Ouvrir les réglages',
 			'salle.seance.titre' => 'Séance en direct',
 			'salle.seance.titreGuidee' => 'Ma séance',
 			'salle.seance.ligne' => ({required Object debut, required Object fin}) => '${debut} · ${fin}',
@@ -11770,6 +11878,15 @@ extension on Traductions {
 			'salle.seance.demo.etats.eleves' => 'Panneau Élèves',
 			'salle.seance.demo.etats.supports' => 'Panneau Supports',
 			'salle.seance.demo.etats.fin' => 'Fin de séance',
+			'salle.seance.demo.etats.reseauFaible' => 'Réseau faible',
+			'salle.seance.demo.etats.reconnexion' => 'Reconnexion',
+			'salle.seance.demo.etats.retablie' => 'Connexion rétablie',
+			'salle.seance.demo.etats.echec' => 'Reconnexion impossible',
+			'salle.seance.demo.etats.horsLigne' => 'Hors ligne',
+			'salle.seance.demo.etats.microBloque' => 'Micro bloqué',
+			'salle.seance.demo.etats.cameraInterdite' => 'Caméra interdite',
+			'salle.seance.demo.etats.prolongee' => 'Séance prolongée',
+			'salle.seance.demo.etats.accesRetire' => 'Accès retiré',
 			'salle.seance.statut.connecte' => 'Connecté',
 			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
 			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
@@ -11778,6 +11895,7 @@ extension on Traductions {
 			'salle.fin.retourClasse' => 'Retour à la Classe',
 			'salle.fin.quitteTitre' => 'Vous avez quitté la séance.',
 			'salle.fin.quittePhrase' => 'Vous pourrez revenir tant qu\'elle reste ouverte.',
+			'salle.fin.accesRetireTitre' => 'Votre accès à cette séance a pris fin.',
 			'salle.fin.titreGuidee' => 'La séance est terminée.',
 			'salle.fin.retourAccueil' => 'Retour à l\'accueil',
 			'salle.fin.enseignant.terminee' => 'Terminée',
@@ -12088,6 +12206,8 @@ extension on Traductions {
 			'appareils.emetteur.codeManuel' => 'Code à saisir',
 			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code à saisir : ${code}',
 			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valable jusqu\'à ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.emetteur.restant' => ({required Object temps}) => 'Encore ${temps}',
 			'appareils.emetteur.sortie' => ({required Object heure}) => 'Quitter cet écran n\'annule pas le code : il reste valable jusqu\'à ${heure}.',
 			'appareils.emetteur.suiviIndisponible' => 'Cet écran ne peut pas confirmer la connexion. Vérifiez sur l\'appareil de l\'élève.',
@@ -12115,8 +12235,6 @@ extension on Traductions {
 			'appareils.emetteur.erreur.compteTitre' => 'Connexion d\'appareil pas encore ouverte',
 			'appareils.emetteur.erreur.comptePhrase' => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.',
 			'appareils.emetteur.erreur.generiqueTitre' => 'Le code n\'a pas pu être préparé',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.erreur.generiquePhrase' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'appareils.regenerer' => 'Générer un nouveau code',
 			'appareils.revoquer' => 'Retirer',
@@ -12602,6 +12720,8 @@ extension on Traductions {
 			'admin.groupes.cloturerDetail' => 'Tous les membres actifs seront retirés du groupe. Cette action ne peut pas être annulée.',
 			'admin.groupes.cloturerEnvoyer' => 'Clôturer',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.journalisation' => 'Chaque création, ajout, retrait et clôture est inscrit au journal d\'audit.',
 			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation : ${libelle}',
 			'admin.groupes.observationErreur' => 'Le réglage n\'a pas pu être enregistré.',
@@ -12629,8 +12749,6 @@ extension on Traductions {
 			'admin.qualite.erreur' => 'Les anomalies n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.qualite.aucune' => 'Aucune anomalie détectée',
 			'admin.qualite.aucuneDetail' => 'Tout est à jour : rapports rédigés, blocages suivis, évaluations à l\'heure.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.filtreToutes' => 'Toutes',
 			'admin.qualite.filtreOuvertes' => 'Ouvertes',
 			'admin.qualite.filtreTraitees' => 'Traitées',
@@ -13116,6 +13234,8 @@ extension on Traductions {
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
@@ -13143,8 +13263,6 @@ extension on Traductions {
 			'parcours.etatClasseEnFormationDetail' => ({required Object minimum}) => 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'Une classe démarre à partir d\'un certain nombre d\'élèves. Nous vous préviendrons dès qu\'elle est confirmée.',
 			'parcours.etatClasseConfirmee' => 'Classe confirmée',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.etatClasseConfirmeeDetail' => ({required Object prenom}) => 'La classe de ${prenom} est constituée. Vous retrouverez ses séances dans son espace.',
 			'parcours.fuseauChange' => 'Votre lieu a changé depuis ce choix',
 			'parcours.fuseauChangeDetail' => 'L\'horaire est le même pour l\'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu\'il vous convient toujours.',
@@ -13630,6 +13748,8 @@ extension on Traductions {
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
 			'tuteur.reglages.titre' => 'Réglages par enfant',
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
 			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
@@ -13657,8 +13777,6 @@ extension on Traductions {
 			'tuteur.reglages.demandeActuelle' => ({required Object minutes}) => 'Aujourd\'hui : ${minutes} min',
 			'tuteur.reglages.demandeMinutes' => ({required Object minutes}) => '${minutes} min',
 			'tuteur.reglages.demandeMotif' => 'Pourquoi ce changement ?',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.demandeMotifRequis' => 'Un motif est nécessaire : c\'est lui qui permet de trancher.',
 			'tuteur.reglages.demandeEnvoyer' => 'Envoyer la demande',
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
@@ -14144,6 +14262,8 @@ extension on Traductions {
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
@@ -14171,8 +14291,6 @@ extension on Traductions {
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'Le groupe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',

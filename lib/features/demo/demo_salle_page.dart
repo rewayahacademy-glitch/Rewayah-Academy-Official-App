@@ -92,6 +92,15 @@ String _libelleEtat(EtatDemoSalle etat) => switch (etat) {
   EtatDemoSalle.eleves => t.salle.seance.demo.etats.eleves,
   EtatDemoSalle.supports => t.salle.seance.demo.etats.supports,
   EtatDemoSalle.fin => t.salle.seance.demo.etats.fin,
+  EtatDemoSalle.reseauFaible => t.salle.seance.demo.etats.reseauFaible,
+  EtatDemoSalle.reconnexion => t.salle.seance.demo.etats.reconnexion,
+  EtatDemoSalle.retablie => t.salle.seance.demo.etats.retablie,
+  EtatDemoSalle.echec => t.salle.seance.demo.etats.echec,
+  EtatDemoSalle.horsLigne => t.salle.seance.demo.etats.horsLigne,
+  EtatDemoSalle.microBloque => t.salle.seance.demo.etats.microBloque,
+  EtatDemoSalle.cameraInterdite => t.salle.seance.demo.etats.cameraInterdite,
+  EtatDemoSalle.prolongee => t.salle.seance.demo.etats.prolongee,
+  EtatDemoSalle.accesRetire => t.salle.seance.demo.etats.accesRetire,
 };
 
 class _ListeDemo extends StatelessWidget {
@@ -264,11 +273,11 @@ class _SalleDemoState extends State<SalleDemo> {
       );
     }
     // Fin de seance ou sortie volontaire de l'eleve : CLV-09.
-    if (!enseignant && (vue.estFinie || _quittee)) {
-      return ResultatSeance(
-        issue: _quittee ? IssueSeance.quittee : IssueSeance.terminee,
-        onRetour: widget.onSortir,
-      );
+    final IssueSeance? issue = _quittee
+        ? IssueSeance.quittee
+        : DonneesSeanceDemo.issueEleve(widget.etat);
+    if (!enseignant && issue != null) {
+      return ResultatSeance(issue: issue, onRetour: widget.onSortir);
     }
     return SalleSeance(
       vue: vue,

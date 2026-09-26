@@ -1,4 +1,25 @@
 {
+  "salle": {
+    "secours": {
+      "reseauFaible": "الشبكة ضعيفة. الأولوية للصوت.",
+      "reseauFaibleGuidee": "الشبكة ضعيفة.",
+      "reseauFaibleGuideeSuite": "الصوت يبقى أولوية.",
+      "reconnexion": "انقطع الاتصال. جارٍ إعادة الاتصال…",
+      "reconnexionGuidee": "جارٍ إعادة الاتصال بالحصة…",
+      "retablie": "عاد الاتصال.",
+      "echec": "تعذّرت إعادة الاتصال.",
+      "echecGuidee": "الاتصال لا يعود.",
+      "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
+      "reessayer": "إعادة المحاولة",
+      "quitter": "خروج",
+      "indisponible": "{commande}. غير متاح أثناء إعادة الاتصال.",
+      "cameraInterdite": "الكاميرا معطّلة لهذا الملف.",
+      "microBloque": "الميكروفون محظور في إعدادات هذا الجهاز.",
+      "microBloqueGuidee": "الميكروفون محظور على هذا الجهاز.",
+      "continuerSansMicro": "المتابعة دون ميكروفون",
+      "ouvrirReglages": "فتح الإعدادات"
+    }
+  },
   "eleve": {
     "suivi": {
       "titre": "متابعة دروسي",

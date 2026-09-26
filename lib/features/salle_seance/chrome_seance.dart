@@ -303,7 +303,7 @@ class _Connexion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool enLigne = vue.connexion == ConnexionSeance.enLigne;
+    final bool enLigne = vue.connexion.etablie;
     final TonEtat ton = enLigne ? TonEtat.succes : TonEtat.avertissement;
     if (!compacte) return StatusPill(libelle: vue.texteConnexion, ton: ton);
 

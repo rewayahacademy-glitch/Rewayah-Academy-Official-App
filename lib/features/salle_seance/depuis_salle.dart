@@ -76,9 +76,7 @@ abstract final class DepuisSalle {
       nomEnseignant: nomEnseignant,
       initialesEnseignant: initiales(nomEnseignant),
       prenomEleve: prenomEleve,
-      connexion: salle.phase == PhaseSalle.reconnexion
-          ? ConnexionSeance.reconnexion
-          : ConnexionSeance.enLigne,
+      connexion: connexionDe(salle.phase),
       // Une impasse n'est pas une salle : rien n'y est enregistre.
       enregistrementConfirme: salle.phase != PhaseSalle.refus,
       visite: visite,
@@ -98,6 +96,20 @@ abstract final class DepuisSalle {
       groupeId: groupeId,
     );
   }
+
+  /// La connexion vue par la salle de seance : seulement les phases DEJA
+  /// connues du moteur (lot CL-7). Echec durable et hors ligne confirme
+  /// viendront du moteur a BR-1.
+  static ConnexionSeance connexionDe(PhaseSalle phase) => switch (phase) {
+    PhaseSalle.instable => ConnexionSeance.reseauFaible,
+    PhaseSalle.reconnexion => ConnexionSeance.reconnexion,
+    PhaseSalle.retabli => ConnexionSeance.retablie,
+    PhaseSalle.materiel ||
+    PhaseSalle.ouverture ||
+    PhaseSalle.connexion ||
+    PhaseSalle.enSalle ||
+    PhaseSalle.refus => ConnexionSeance.enLigne,
+  };
 
   /// Le statut d'un inscrit pendant la seance, depuis l'etat derive en base.
   /// Jamais « absent » : qui n'est pas venu est « pas encore connecte » (I-6).
