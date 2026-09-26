@@ -53,31 +53,37 @@ import '../capture/outil_capture.dart';
 // Passage 2 (corriges) : la barre d'onglets (SousNavigationDomaine) ramene
 // l'onglet focalise au clavier dans la vue (politique a 1440) ; le banc fait
 // defiler le tiroir mobile avant d'y toucher un domaine (400 %).
+// Passage 3 (corriges) : a 200 % de texte, la barre mobile prend le bouton
+// de recherche (feuille) au lieu du champ coupe ; sur mobile a 200 %, la
+// tete de PageShell defile avec le corps (44 en bas, ligne de file hors
+// d'atteinte a 390) ; Actualiser de la file ramene la tete de la file dans
+// la vue quand il recoit le focus (cache sous les onglets a 1440).
 // Restes :
-//  - politique a 320 et a 400 % : le libelle de l'onglet de la politique
-//    (576 de large avec la police de test) depasse la vue ; Tab ne passe pas
-//    a la ligne (softWrap: false), le toucher au centre retombe hors de
-//    l'onglet, cascade sur cibles et focus. Un onglet sur deux lignes change
-//    le rendu du composant partage sur les lots livres : decision directeur ;
+//  - politique a 320, a 400 % et a 390/200 % (BLOQUE, decision directeur) :
+//    le libelle de l'onglet de la politique (576 de large avec la police de
+//    test a 100 %) depasse la vue ; Tab ne passe pas a la ligne (softWrap:
+//    false), le toucher au centre retombe hors de l'onglet, cascade sur
+//    cibles et focus. Un onglet sur deux lignes ou un libelle raccourci
+//    change le rendu du composant partage SousNavigationDomaine sur les lots
+//    livres ;
 //  - 1280x1024 a 400 % : visionneuse (16 en bas, colonne 288x108, source non
 //    localisee ; un defilement d'un bloc sous 360 a fait passer a 34) ;
-//  - 390 a 200 % : « Rechercher un ecran » coupe (barre mobile) ; la tete de
-//    PageShell deborde de 44 en bas (file et suivantes) ;
-//  - focus masque : ligne de revue 02B (1440) ; 02D : bouton sous le clavier
-//    virtuel.
+//  - revue 02B (1440) au clavier : le Tab parcourt barre, titre, compte et
+//    les lignes de la file puis revient sur un noeud deja vu ; il n'atteint
+//    jamais le detail (Voir la piece, verifications, decision). Un ordre de
+//    l'arbre (WidgetOrderTraversalPolicy) sur la file n'y change rien :
+//    cause non localisee ;
+//  - 02D : bouton sous le clavier virtuel (320 et 1440) ; a 390 et 200 %,
+//    l'etiquette « Motif du refus » du champ est coupee (etiquette flottante
+//    sur une ligne), revelee par la correction de la tete de PageShell.
+// Le banc joue aussi les cas sautes avec --dart-define=TOUT=true.
 const Set<String> _restes = <String>{
   'AD-9_politique 320x640',
   'ADM-02C_visionneuse 1280x1024_400pc',
   'AD-9_politique 1280x1024_400pc',
-  'AD-S_coque 390x844_200pc',
-  'ADM-02A_file 390x844_200pc',
-  'ADM-02B_revue 390x844_200pc',
-  'ADM-02C_visionneuse 390x844_200pc',
-  'ADM-02D_refus 390x844_200pc',
-  'ADM-02E_validation 390x844_200pc',
   'AD-9_politique 390x844_200pc',
+  'ADM-02D_refus 390x844_200pc',
   'Tab AD-9_politique 320x640 : focus jamais masque',
-  'Tab ADM-02B_revue 1440x900 : focus jamais masque',
   'revue : ordre logique, Espace coche, Entree ouvre 02E, Echap ferme et '
       'rend le focus',
   'refus 320x640 : Entree ouvre 02D, clavier virtuel, Echap ferme, focus '
@@ -86,8 +92,11 @@ const Set<String> _restes = <String>{
       'rendu',
 };
 
-void _test(String nom, WidgetTesterCallback corps) =>
-    testWidgets(nom, corps, skip: _restes.contains(nom));
+void _test(String nom, WidgetTesterCallback corps) => testWidgets(
+  nom,
+  corps,
+  skip: _restes.contains(nom) && !const bool.fromEnvironment('TOUT'),
+);
 
 Future<void> _stab(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -446,7 +455,18 @@ void _verifierNonMasque(WidgetTester tester, FocusNode n, String ecran) {
     }
     if (touche) break;
   }
-  expect(touche, isTrue, reason: '$ecran : focus masque ($r)');
+  String dessus = '';
+  for (final HitTestEntry e in res.path) {
+    if (e.target is RenderParagraph) {
+      dessus = (e.target as RenderParagraph).text.toPlainText();
+      break;
+    }
+  }
+  expect(
+    touche,
+    isTrue,
+    reason: '$ecran : focus masque ($r, $n, recouvert par « $dessus »)',
+  );
 }
 
 /// 2 et 3. Tab jusqu'au retour au debut ; rend les noeuds visites.
@@ -606,7 +626,13 @@ void main() {
       final int ok = _indice(vus, find.text(t.dossiers.approuver));
       final int non = _indice(vus, find.text(t.dossiers.refuser));
       for (final int i in <int>[voir, p1, p2, p3, ok, non]) {
-        expect(i, isNot(-1), reason: 'action non atteinte au clavier');
+        expect(
+          i,
+          isNot(-1),
+          reason:
+              'action non atteinte au clavier ($voir $p1 $p2 $p3 $ok $non, '
+              '${vus.map((FocusNode f) => '${f.debugLabel}@${f.rect.topLeft}')})',
+        );
       }
       expect(p1 < p2 && p2 < p3, isTrue, reason: 'ordre des verifications');
       expect(p3 < ok, isTrue, reason: 'verifications avant la decision');

@@ -205,9 +205,15 @@ class PageShell extends StatelessWidget {
                 // defiler la tete avec le corps. Un corps non defilant (liste
                 // paresseuse) y recoit la hauteur de la vue : la tete defile,
                 // puis la liste occupe tout l'ecran.
+                // Meme regle sur mobile a 200 % de texte : la tete (titre,
+                // sous-titre, onglets) y prend presque toute la hauteur et
+                // ne laissait au corps qu'une bande (390x844, 44 de
+                // debordement, ligne de la file hors d'atteinte).
                 child: LayoutBuilder(
                   builder: (BuildContext _, BoxConstraints contraintes) =>
-                      contraintes.maxHeight < _hauteurTeteFixe
+                      contraintes.maxHeight < _hauteurTeteFixe ||
+                          (gabarit == Gabarit.mobile &&
+                              MediaQuery.textScalerOf(context).scale(1) >= 2)
                       ? SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,

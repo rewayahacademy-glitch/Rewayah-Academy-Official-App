@@ -138,13 +138,30 @@ class FileDossiers extends ConsumerWidget {
     );
     // Largeur du libelle seul : le bouton centre son contenu et s'etirerait
     // sinon sur toute la contrainte.
-    final Widget actualiser = IntrinsicWidth(
-      child: ActionPrincipale(
-        libelle: t.dossiers.file.actualiser,
-        niveau: NiveauAction.tertiaire,
-        pleineLargeur: false,
-        enCours: actualisation,
-        onPress: reessayer,
+    // AD-11 (2.4.11) : au clavier, Actualiser recevait le focus alors que la
+    // file restait defilee (88 a 1440, bouton cache sous les onglets) ; son
+    // arrivee ramene la tete de la file dans la vue, apres la frame.
+    final Widget actualiser = Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onFocusChange: (bool dedans) {
+        if (!dedans) return;
+        WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+          final FocusNode? n = FocusManager.instance.primaryFocus;
+          final BuildContext? c = n?.context;
+          if (c != null && c.mounted) {
+            unawaited(Scrollable.ensureVisible(c));
+          }
+        });
+      },
+      child: IntrinsicWidth(
+        child: ActionPrincipale(
+          libelle: t.dossiers.file.actualiser,
+          niveau: NiveauAction.tertiaire,
+          pleineLargeur: false,
+          enCours: actualisation,
+          onPress: reessayer,
+        ),
       ),
     );
 

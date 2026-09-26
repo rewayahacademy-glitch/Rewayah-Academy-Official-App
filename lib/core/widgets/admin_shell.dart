@@ -747,6 +747,11 @@ class _BarreMobileState extends State<_BarreMobile> {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    // AD-11 (1.4.4) : au-dela de 150 % de texte, le champ en ligne n'a plus
+    // la place de montrer son indication entiere entre menu et compte ; la
+    // barre prend alors le bouton qui ouvre le meme champ en feuille (motif
+    // deja servi a partir de 600). Rendu inchange a 100 %.
+    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.5;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -770,25 +775,29 @@ class _BarreMobileState extends State<_BarreMobile> {
                 ),
               ),
               Ecart.hSm,
-              Expanded(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: AppPage.largeurFormulaire,
-                  ),
-                  child: TextField(
-                    controller: _recherche,
-                    onSubmitted: _lancer,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: t.nav.admin.rechercheIndication,
-                      // AD-11 (1.4.4) : a 200 %, l'indication passe a la
-                      // ligne au lieu d'etre coupee.
-                      hintMaxLines: 2,
-                      prefixIcon: Icon(AppIcons.recherche.repos),
+              if (texteAgrandi) ...<Widget>[
+                const Spacer(),
+                _BoutonRecherche(onRecherche: widget.onRecherche),
+              ] else
+                Expanded(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: AppPage.largeurFormulaire,
+                    ),
+                    child: TextField(
+                      controller: _recherche,
+                      onSubmitted: _lancer,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: t.nav.admin.rechercheIndication,
+                        // AD-11 (1.4.4) : a 200 %, l'indication passe a la
+                        // ligne au lieu d'etre coupee.
+                        hintMaxLines: 2,
+                        prefixIcon: Icon(AppIcons.recherche.repos),
+                      ),
                     ),
                   ),
                 ),
-              ),
               Ecart.hSm,
               _BoutonCompte(onCompte: widget.onCompte),
             ],
