@@ -18,9 +18,12 @@ void main() {
       expect(Supervision.demarree, isFalse);
     });
 
-    test('l\'erreur volontaire ne part pas quand rien n\'est demarre', () async {
-      expect(await Supervision.declencherErreurDeTest(), isNull);
-    });
+    test(
+      'l\'erreur volontaire ne part pas quand rien n\'est demarre',
+      () async {
+        expect(await Supervision.declencherErreurDeTest(), isNull);
+      },
+    );
 
     test('l\'environnement par defaut n\'est jamais la production', () {
       expect(Env.environnement, 'developpement');
@@ -60,7 +63,8 @@ void main() {
     });
 
     test('laisse intact ce qui ne porte pas de chaine de requete', () {
-      const String url = 'https://gggmtelinlpseweouyav.supabase.co/rest/v1/eleves';
+      const String url =
+          'https://gggmtelinlpseweouyav.supabase.co/rest/v1/eleves';
 
       final SentryEvent? nettoye = Supervision.nettoyer(
         evenementAvecMiette(<String, dynamic>{'url': url, 'method': 'POST'}),
@@ -85,12 +89,66 @@ void main() {
       expect(nettoye.breadcrumbs!.single.category, 'http');
     });
 
+    // AD-11 (22.4, 26 quater) : une URL signee de piece KYC ne part jamais,
+    // ni sa cle d'objet (dans le chemin), ni son jeton (dans la requete).
+    const String urlSignee =
+        'https://gggmtelinlpseweouyav.supabase.co/storage/v1/object/sign/'
+        'kyc/9f1c8e40/piece-identite.webp?token=eyJhbGciOiJIUzI1NiJ9.x';
+
+    void sansPiece(String? texte) {
+      expect(texte, isNot(contains('9f1c8e40')));
+      expect(texte, isNot(contains('piece-identite')));
+      expect(texte, isNot(contains('token')));
+      expect(texte, isNot(contains('eyJ')));
+    }
+
+    test('masque cle d objet et jeton d une URL signee (miette)', () {
+      final SentryEvent? nettoye = Supervision.nettoyer(
+        SentryEvent(
+          breadcrumbs: <Breadcrumb>[
+            Breadcrumb(
+              category: 'http',
+              message: 'GET $urlSignee',
+              data: const <String, dynamic>{
+                'url': urlSignee,
+                'status_code': 403,
+              },
+            ),
+          ],
+        ),
+        Hint(),
+      );
+      final Breadcrumb m = nettoye!.breadcrumbs!.single;
+      sansPiece(m.data!['url'] as String);
+      sansPiece(m.message);
+      expect(m.data!['url'], contains('/storage/v1/object/'));
+      expect(m.data!['status_code'], 403);
+    });
+
+    test('masque une URL signee dans une exception et dans le message', () {
+      final SentryEvent? nettoye = Supervision.nettoyer(
+        SentryEvent(
+          exceptions: const <SentryException>[
+            SentryException(
+              type: 'NetworkImageLoadException',
+              value: 'HTTP request failed, statusCode: 403, $urlSignee',
+            ),
+          ],
+          message: const SentryMessage('Echec de chargement : $urlSignee'),
+        ),
+        Hint(),
+      );
+      sansPiece(nettoye!.exceptions!.single.value);
+      sansPiece(nettoye.message!.formatted);
+      expect(nettoye.exceptions!.single.value, contains('statusCode: 403'));
+    });
+
     test('supporte une miette sans donnees et un evenement sans miette', () {
       expect(
-        Supervision.nettoyer(evenementAvecMiette(null), Hint())!
-            .breadcrumbs!
-            .single
-            .data,
+        Supervision.nettoyer(
+          evenementAvecMiette(null),
+          Hint(),
+        )!.breadcrumbs!.single.data,
         isNull,
       );
       expect(

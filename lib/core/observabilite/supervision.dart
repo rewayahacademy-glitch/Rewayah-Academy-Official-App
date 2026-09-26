@@ -87,32 +87,58 @@ abstract final class Supervision {
   /// et une barriere que personne ne teste finit par ceder.
   @visibleForTesting
   static SentryEvent? nettoyer(SentryEvent evenement, Hint hint) {
+    // AD-11 (22.4) : une URL signee de piece KYC porte la cle d'objet dans
+    // son CHEMIN (`/storage/v1/object/sign/<bucket>/<cle>`) ; couper la
+    // chaine de requete ne suffit pas. Le chemin est masque partout ou une
+    // URL peut voyager : miettes, message, exceptions.
     final List<Breadcrumb>? miettes = evenement.breadcrumbs;
-    if (miettes == null || miettes.isEmpty) {
-      return evenement;
-    }
-
+    final List<SentryException>? exceptions = evenement.exceptions;
+    final SentryMessage? message = evenement.message;
     return evenement.copyWith(
-      breadcrumbs: miettes.map(_nettoyerMiette).toList(),
+      exceptions: exceptions
+          ?.map(
+            (SentryException e) => e.value == null
+                ? e
+                : e.copyWith(value: masquerStockage(e.value!)),
+          )
+          .toList(),
+      message: message?.copyWith(formatted: masquerStockage(message.formatted)),
+      breadcrumbs: miettes?.map(_nettoyerMiette).toList(),
     );
   }
 
+  static final RegExp _stockage = RegExp(
+    r'/storage/v1/object/[^\s"'
+    "'"
+    r')]*',
+  );
+
+  /// Masque le chemin d'objet (et donc la cle) de toute URL de stockage.
+  @visibleForTesting
+  static String masquerStockage(String texte) =>
+      texte.replaceAll(_stockage, '/storage/v1/object/[masque]');
+
   static Breadcrumb _nettoyerMiette(Breadcrumb miette) {
+    final String? message = miette.message;
     final Map<String, dynamic>? donnees = miette.data;
+    Breadcrumb sortie = miette;
+    if (message != null) {
+      sortie = sortie.copyWith(message: masquerStockage(message));
+    }
     if (donnees == null) {
-      return miette;
+      return sortie;
     }
 
     final Object? url = donnees['url'];
-    if (url is! String || !url.contains('?')) {
-      return miette;
+    if (url is! String) {
+      return sortie;
     }
+    final String sansRequete = url.contains('?')
+        ? url.substring(0, url.indexOf('?'))
+        : url;
 
-    return miette.copyWith(
-      data: <String, dynamic>{
-        ...donnees,
-        'url': url.substring(0, url.indexOf('?')),
-      },
+    return sortie.copyWith(
+      data: <String, dynamic>{...donnees, 'url': masquerStockage(sansRequete)},
     );
   }
 

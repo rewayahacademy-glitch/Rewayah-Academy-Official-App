@@ -13,11 +13,15 @@ const int limiteFileDossiers = 20;
 class EtatFile {
   const EtatFile({
     required this.elements,
+    this.profil,
     this.curseurSuivant,
     this.total,
     this.chargeSuite = false,
     this.erreurSuite = false,
   });
+
+  /// Le profil pour lequel la file a ete lue (purge, 22.4).
+  final String? profil;
 
   final List<DossierEnFile> elements;
   final String? curseurSuivant;
@@ -36,6 +40,7 @@ class EtatFile {
     bool? chargeSuite,
     bool? erreurSuite,
   }) => EtatFile(
+    profil: profil,
     elements: elements ?? this.elements,
     curseurSuivant: effacerCurseur
         ? null
@@ -50,10 +55,25 @@ class EtatFile {
 class FileDossiersNotifier extends AsyncNotifier<EtatFile> {
   @override
   Future<EtatFile> build() async {
+    final String? profil = _suivreProfil(ref);
+    // Riverpod garde la valeur precedente pendant une relecture : c'est
+    // voulu pour « Actualiser » (meme profil), interdit pour un autre
+    // compte ou une deconnexion. La liste d'un autre profil est effacee
+    // AVANT la relecture (22.4).
+    final EtatFile? precedente = state.value;
+    if (precedente != null && precedente.profil != profil) {
+      // Une valeur remplace la precedente (une simple attente la
+      // recopierait), puis l'attente reprend sur cette liste vide.
+      state = AsyncData<EtatFile>(
+        EtatFile(profil: profil, elements: const <DossierEnFile>[]),
+      );
+      state = const AsyncLoading<EtatFile>();
+    }
     final PageDossiers page = await ref
         .watch(portRevueDossiersProvider)
         .listerDossiers(limite: limiteFileDossiers);
     return EtatFile(
+      profil: profil,
       elements: page.elements,
       curseurSuivant: page.curseurSuivant,
       total: page.total,
@@ -106,11 +126,28 @@ fileDossiersProvider = AsyncNotifierProvider<FileDossiersNotifier, EtatFile>(
 /// automatique, comme `dossiersEnAttenteProvider` : « Reessayer » est la
 /// seule relance.
 final FutureProviderFamily<DossierPourRevue, String> dossierPourRevueProvider =
-    FutureProvider.autoDispose.family<DossierPourRevue, String>(
-      (Ref ref, String id) =>
-          ref.watch(portRevueDossiersProvider).dossierPourRevue(id),
-      retry: (int retryCount, Object error) => null,
-    );
+    FutureProvider.autoDispose.family<DossierPourRevue, String>((
+      Ref ref,
+      String id,
+    ) {
+      _suivreProfil(ref);
+      return ref.watch(portRevueDossiersProvider).dossierPourRevue(id);
+    }, retry: (int retryCount, Object error) => null);
+
+/// AD-11 (22.4, 26 quater) : les donnees controlees suivent le profil. Un
+/// changement de compte ou une deconnexion relance la lecture SANS garder
+/// la liste precedente (relecture sur dependance, etat efface), et une
+/// reponse tardive visant l'ancien profil est ignoree par Riverpod (la
+/// construction qui l'attendait n'est plus la courante). Une session
+/// illisible (hote de test sans Supabase) laisse la lecture telle quelle.
+String? _suivreProfil(Ref ref) {
+  try {
+    return ref.watch(sessionProvider.select((s) => s.profileId));
+  } on Object {
+    // Rien : voir ci-dessus.
+    return null;
+  }
+}
 
 /// La selection de la file, pour la session : elle survit a la navigation
 /// et se reinitialise a tout changement de profil (deconnexion comprise).

@@ -219,6 +219,29 @@ void main() {
     });
   });
 
+  group('AD-11 : la file des dossiers est gardee pour chaque role', () {
+    // Routes.adminPersonnesDossiers porte des pieces d'identite : seul
+    // l'administrateur y entre ; le tuteur voit l'acces refuse, les autres
+    // roles repartent a leur racine.
+    for (final AppRole role in AppRole.values) {
+      test('${Routes.adminPersonnesDossiers} et ${role.valeurSql}', () {
+        final String? decision = deciderRedirection(
+          session: _session(role: role),
+          cheminDemande: Routes.adminPersonnesDossiers,
+          maintenant: maintenant,
+        );
+        if (role == AppRole.admin) {
+          expect(decision, isNull);
+        } else if (role == AppRole.guardian) {
+          expect(decision, Routes.accesRefuse);
+        } else {
+          expect(decision, Routes.racinePour(role));
+          expect(decision, isNot(Routes.adminPersonnesDossiers));
+        }
+      });
+    }
+  });
+
   group('Le tuteur : ses anciennes adresses communes le rejoignent', () {
     final Map<String, String> alias = <String, String>{
       Routes.compte: Routes.tuteurCompte,
@@ -426,31 +449,31 @@ void main() {
       );
     });
 
-    test('la racine d un visiteur sans session mene a l accueil public (A-1)', () {
-      expect(
-        deciderRedirection(
-          session: const SessionState.deconnecte(),
-          cheminDemande: Routes.racine,
-          maintenant: maintenant,
-        ),
-        Routes.bienvenue,
-      );
-      // Une route protegee va toujours a la connexion, avec son retour.
-      expect(
-        deciderRedirection(
-          session: const SessionState.deconnecte(),
-          cheminDemande: Routes.tuteurCompte,
-          maintenant: maintenant,
-        ),
-        _connexionAvecRetour(Routes.tuteurCompte),
-      );
-    });
+    test(
+      'la racine d un visiteur sans session mene a l accueil public (A-1)',
+      () {
+        expect(
+          deciderRedirection(
+            session: const SessionState.deconnecte(),
+            cheminDemande: Routes.racine,
+            maintenant: maintenant,
+          ),
+          Routes.bienvenue,
+        );
+        // Une route protegee va toujours a la connexion, avec son retour.
+        expect(
+          deciderRedirection(
+            session: const SessionState.deconnecte(),
+            cheminDemande: Routes.tuteurCompte,
+            maintenant: maintenant,
+          ),
+          _connexionAvecRetour(Routes.tuteurCompte),
+        );
+      },
+    );
 
     test('la salle et la classe ne deviennent jamais un retour', () {
-      for (final String chemin in <String>[
-        Routes.salle,
-        Routes.tcClasse,
-      ]) {
+      for (final String chemin in <String>[Routes.salle, Routes.tcClasse]) {
         expect(
           deciderRedirection(
             session: const SessionState.deconnecte(),

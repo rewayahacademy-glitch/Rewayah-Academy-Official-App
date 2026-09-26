@@ -26,7 +26,9 @@ String _deux(int n) => n.toString().padLeft(2, '0');
 /// « dd/MM/yyyy à HH:mm (UTC) ». Toujours en UTC, et dit : sans paquet de
 /// fuseaux (pubspec interdit), convertir vers un fuseau IANA serait faux
 /// (AD-BR-19, Q-AD5-1). Espaces insecables : la date passe en bloc.
-String dateRevue(DateTime utc) {
+/// Sans date (valeur absente), « Date de dépôt indisponible » (AD-11).
+String dateRevue(DateTime? utc) {
+  if (utc == null) return t.dossiers.revue.dateIndisponible;
   final DateTime u = utc.toUtc();
   final String texte = t.dossiers.file.dateHeure(
     date: t.dossiers.file.dateChiffres(

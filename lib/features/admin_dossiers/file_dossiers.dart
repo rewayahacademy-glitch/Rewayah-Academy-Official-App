@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin/service_admin.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/dossier/service_validation.dart';
@@ -31,6 +32,8 @@ const double _largeurEnTeteSurUneLigne = 352;
 void actualiserDossiers(WidgetRef ref) {
   ref.invalidate(dossiersEnAttenteProvider);
   ref.invalidate(dossierPourRevueProvider);
+  // AD-11 : le compteur de l'Accueil (ADM-01) suit la file apres decision.
+  ref.invalidate(indicateursProvider);
   ref.read(fileDossiersProvider.notifier).actualiser();
 }
 
