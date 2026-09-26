@@ -6,11 +6,15 @@
 // Saute sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`). Donnees :
 // fixtures synthetiques de la demonstration uniquement.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
@@ -26,16 +30,40 @@ const EdgeInsets _zoneSure = EdgeInsets.only(top: 47, bottom: 34);
 
 late WidgetRef _ref;
 
+/// Un port qui ne repond jamais : la file reste sur son squelette. Reserve a
+/// la capture (jamais dans lib).
+class _PortEnAttente extends RevueDossiersIndisponible {
+  const _PortEnAttente();
+
+  @override
+  Future<PageDossiers> listerDossiers({
+    String? curseur,
+    int limite = 20,
+    AppRole? role,
+  }) => Completer<PageDossiers>().future;
+}
+
+/// La demonstration admin, sauf le port de revue, remplace par [_PortEnAttente].
+List<Override> _surchargesEnAttente() => <Override>[
+  for (final Override o in surchargesDemoAdmin(environnement: 'staging'))
+    // ignore: invalid_use_of_visible_for_testing_member
+    if (!identical(o.origin, portRevueDossiersProvider)) o,
+  portRevueDossiersProvider.overrideWithValue(const _PortEnAttente()),
+];
+
 Future<void> _monter(
   WidgetTester tester,
   ThemeMode mode, {
   bool attendre = true,
+  bool enAttente = false,
 }) async {
   late GoRouter routeur;
   await tester.pumpWidget(
     ProviderScope(
       key: UniqueKey(),
-      overrides: surchargesDemoAdmin(environnement: 'staging'),
+      overrides: enAttente
+          ? _surchargesEnAttente()
+          : surchargesDemoAdmin(environnement: 'staging'),
       child: TranslationProvider(
         child: RepaintBoundary(
           key: cadreCapture,
@@ -120,8 +148,29 @@ void main() {
           'PNG ${await capturer(tester, 'ad5_aucune_selection_1440x900@1_${mode.name}')}',
         );
       });
+      // Squelette : un port qui ne repond jamais (test seulement), pour une
+      // preuve stable et non une trame de transition.
+      for (final (String nom, Size taille, double ratio)
+          in <(String, Size, double)>[
+            ('390x844@3', const Size(390, 844), 3),
+            ('1440x900@1', const Size(1440, 900), 1),
+          ]) {
+        testWidgets('$nom, squelette de la file, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(
+            tester,
+            taille,
+            ratio,
+            zoneSure: ratio == 3 ? _zoneSure : EdgeInsets.zero,
+          );
+          await _monter(tester, mode, enAttente: true);
+          expect(find.text(t.dossiers.file.chargement), findsOneWidget);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ad5_squelette_${nom}_${mode.name}')}',
+          );
+        });
+      }
     }
-    // Squelette : non capture. La demonstration repond dans la trame ; une
-    // trame de transition n'est pas une preuve (ecart note au relevé AD-5).
   });
 }

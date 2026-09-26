@@ -203,19 +203,32 @@ class FileDossiers extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                GroupeReglages(
-                  lignes: <LigneRubrique>[
-                    for (final DossierEnFile d in e.elements)
-                      ligneDossier(
-                        d,
-                        selectionnee: marquerSelection
-                            ? d.dossierId == selection
-                            : null,
-                        autofocus:
-                            focusSurSelection && d.dossierId == selection,
-                        onPress: () => onChoisir(d.dossierId),
-                      ),
-                  ],
+                // Une seule place pour la pastille dans toute la file
+                // (00_MAQUETTES, rectification 1) : a cote du nom si toutes
+                // les lignes le permettent, sinon sous le nom partout.
+                LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints c) {
+                    final bool sous = pastilleSousLeNom(
+                      context,
+                      e.elements,
+                      c.maxWidth,
+                    );
+                    return GroupeReglages(
+                      lignes: <LigneRubrique>[
+                        for (final DossierEnFile d in e.elements)
+                          ligneDossier(
+                            d,
+                            pastilleSous: sous,
+                            selectionnee: marquerSelection
+                                ? d.dossierId == selection
+                                : null,
+                            autofocus:
+                                focusSurSelection && d.dossierId == selection,
+                            onPress: () => onChoisir(d.dossierId),
+                          ),
+                      ],
+                    );
+                  },
                 ),
                 if (e.erreurSuite) ...<Widget>[
                   Ecart.vLg,
@@ -260,8 +273,10 @@ LigneRubrique ligneDossier(
   required VoidCallback onPress,
   bool? selectionnee,
   bool autofocus = false,
+  bool? pastilleSous,
 }) {
   final String nom = nomOuDefaut(d.nomAffiche);
+  final (String libellePastille, TonEtat ton) = pastilleDossier(d);
   return LigneRubrique(
     libelle: nom,
     // Sans nom, « Dossier sans nom disponible » seul : aucun texte compose
@@ -269,18 +284,73 @@ LigneRubrique ligneDossier(
     libelleSemantique: d.nomAffiche.trim().isEmpty ? nom : ouvrirDossier(nom),
     selectionnee: selectionnee,
     autofocus: autofocus,
-    pastille: d.aPieceIdentite
-        ? StatusPill(
-            libelle: t.dossiers.file.enVerification,
-            ton: TonEtat.accent,
-          )
-        : StatusPill(libelle: t.dossiers.sansPiece, ton: TonEtat.avertissement),
+    pastille: StatusPill(libelle: libellePastille, ton: ton),
+    pastilleSousLibelle: pastilleSous,
     legende: t.dossiers.file.legende(
       type: typeDossier(d.role),
       date: dateRevue(d.soumisLeUtc),
     ),
     onPress: onPress,
   );
+}
+
+/// La pastille d'une ligne : l'etat de la piece vu par ce relecteur prime
+/// (« Pièce hors de votre portée »), sinon presence ou absence de piece.
+(String, TonEtat) pastilleDossier(DossierEnFile d) {
+  if (d.etatPiece == EtatPieceRevue.nonVisible) {
+    return (t.dossiers.pieceNonVisible, TonEtat.avertissement);
+  }
+  return d.aPieceIdentite
+      ? (t.dossiers.file.enVerification, TonEtat.accent)
+      : (t.dossiers.sansPiece, TonEtat.avertissement);
+}
+
+/// Vrai si, pour au moins une ligne, le nom et sa pastille ne tiennent pas
+/// cote a cote dans [largeur] (largeur du groupe) : la pastille passe alors
+/// sous le nom sur TOUTES les lignes. Mesure faite avec la graisse de la
+/// selection (le pire cas) et l'echelle de texte courante.
+bool pastilleSousLeNom(
+  BuildContext context,
+  List<DossierEnFile> elements,
+  double largeur,
+) {
+  if (!largeur.isFinite) {
+    return false;
+  }
+  final TextTheme textes = Theme.of(context).textTheme;
+  final TextScaler echelle = MediaQuery.textScalerOf(context);
+  final TextDirection sens = Directionality.of(context);
+  double mesurer(String texte, TextStyle? style) {
+    final TextPainter p = TextPainter(
+      text: TextSpan(text: texte, style: style),
+      textDirection: sens,
+      textScaler: echelle,
+      maxLines: 1,
+    )..layout();
+    final double w = p.width;
+    p.dispose();
+    return w;
+  }
+
+  // Retrait de debut et de fin, puis chevron et son ecart (GroupeReglages).
+  final double utile =
+      largeur - AppSpacing.lg * 2 - AppSpacing.sm - AppSpacing.xl;
+  final TextStyle? styleNom = textes.bodyLarge?.copyWith(
+    fontWeight: FontWeight.w600,
+  );
+  for (final DossierEnFile d in elements) {
+    final String libelle = pastilleDossier(d).$1;
+    final double pastille =
+        AppSpacing.md * 2 +
+        StatusPill.diametrePastille +
+        AppSpacing.sm +
+        mesurer(libelle, textes.labelMedium);
+    final double nom = mesurer(nomOuDefaut(d.nomAffiche), styleNom);
+    if (nom + AppSpacing.md + pastille > utile) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /// Le squelette de la file : texte visible, puis quatre lignes a la forme

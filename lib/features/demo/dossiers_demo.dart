@@ -407,6 +407,7 @@ class RevueDossiersDemo implements PortRevueDossiers {
             statut: d.statut,
             revision: d.revision,
             aPieceIdentite: d.pieceTransmise,
+            etatPiece: d.etatPiece(politiqueGenre: etat.politiqueGenre),
           ),
       ],
       curseurSuivant: fin < file.length ? '$fin' : null,

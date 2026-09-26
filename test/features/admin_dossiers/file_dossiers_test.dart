@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -234,9 +235,9 @@ void main() {
   for (final (String nom, Size taille, double texte)
       in <(String, Size, double)>[
         ('768', const Size(768, 1024), 1),
-        // 1440 a 200 % : la barre laterale de la coque deborde (hors AD-5,
-        // signale au relevé) ; 1200 couvre le repli sous 1088 utiles.
         ('1200', const Size(1200, 900), 1),
+        // HL-A-1 : la barre laterale ne deborde plus a 200 %.
+        ('1440 a 200 %', const Size(1440, 900), 2),
       ]) {
     testWidgets('$nom : repli sequentiel, ni revue ni selection', (
       WidgetTester tester,
@@ -255,6 +256,128 @@ void main() {
       );
     });
   }
+
+  testWidgets('1440 a 200 % : Personnes tape dans la barre laterale, repli', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    final GoRouter routeur = await _monter(tester, const Size(1440, 900));
+    // Aucun debordement de la coque (une erreur de rendu ferait echouer).
+    expect(tester.takeException(), isNull);
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(AdminShell.barreLateraleKey),
+        matching: find.text(AdminDomaine.personnes.libelle),
+      ),
+    );
+    await _stabiliser(tester);
+    expect(tester.takeException(), isNull);
+    expect(_chemin(routeur), Routes.adminPersonnesDossiers);
+    expect(_ligne('Omar'), findsOneWidget);
+    expect(find.text(t.dossiers.verifications), findsNothing);
+  });
+
+  for (final (String nom, Size taille) in <(String, Size)>[
+    ('390', const Size(390, 844)),
+    ('1440', const Size(1440, 900)),
+  ]) {
+    testWidgets('$nom : pastille au meme endroit sur toutes les lignes', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille);
+      await _ouvrirDossiers(tester);
+      final Finder pastilles = find.descendant(
+        of: find.byKey(const PageStorageKey<String>('adm02a-file')),
+        matching: find.byType(StatusPill),
+      );
+      expect(pastilles, findsWidgets);
+      final Set<double> debuts = <double>{
+        for (final Element e in pastilles.evaluate())
+          tester.getTopLeft(find.byWidget(e.widget)).dx.roundToDouble(),
+      };
+      final Set<double> fins = <double>{
+        for (final Element e in pastilles.evaluate())
+          tester.getTopRight(find.byWidget(e.widget)).dx.roundToDouble(),
+      };
+      // Sous le nom partout (debuts alignes) ou a cote partout (fins
+      // alignees au bord de fin) : jamais un melange.
+      expect(debuts.length == 1 || fins.length == 1, isTrue);
+      if (nom == '1440') {
+        // 336 ne suffit pas au nom et a sa pastille : dessous, partout.
+        expect(debuts, hasLength(1));
+        final Rect nomOmar = tester.getRect(
+          find.descendant(
+            of: find.byKey(const PageStorageKey<String>('adm02a-file')),
+            matching: find.text('Omar Haddad'),
+          ),
+        );
+        final Rect pastilleOmar = tester.getRect(pastilles.first);
+        expect(pastilleOmar.top, greaterThanOrEqualTo(nomOmar.bottom));
+      }
+    });
+  }
+
+  testWidgets('390 : « Pièce hors de votre portée » sur la ligne', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(390, 844));
+    await _ouvrirDossiers(tester);
+    final Finder ligne = _ligne('Adam');
+    await tester.ensureVisible(ligne);
+    await _stabiliser(tester);
+    final Finder pastille = find.text(t.dossiers.pieceNonVisible);
+    expect(pastille, findsOneWidget);
+    expect(tester.getRect(ligne).contains(tester.getCenter(pastille)), isTrue);
+    // Les autres lignes gardent leur pastille propre.
+    expect(find.text(t.dossiers.file.enVerification), findsWidgets);
+  });
+
+  testWidgets('390 : la decision qui vide la file rend le focus au titre', (
+    WidgetTester tester,
+  ) async {
+    final EtatRevueDemo etat = EtatRevueDemo.initial();
+    for (final String id in etat.dossiers.keys) {
+      if (id != DonneesDossiersDemo.enseignantNominal) {
+        etat.dossiers[id]!.statut = StatutRevue.valide;
+      }
+    }
+    await _monter(tester, const Size(390, 844), etat: etat);
+    await _ouvrirDossiers(tester);
+    await tester.tap(_ligne('Omar'));
+    await _stabiliser(tester);
+    for (final String point in <String>[
+      t.dossiers.pointLisible,
+      t.dossiers.pointNom,
+      t.dossiers.pointValidite,
+    ]) {
+      await _taperTexte(tester, point);
+      await _stabiliser(tester);
+    }
+    await tester.ensureVisible(find.text(t.dossiers.approuver));
+    await tester.tap(find.text(t.dossiers.approuver));
+    await _stabiliser(tester);
+    expect(_ligne('Omar'), findsNothing);
+    expect(find.text(t.dossiers.aucun), findsOneWidget);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02a-titre');
+  });
+}
+
+/// Ouvre Personnes > Dossiers depuis la coque, comme l'administrateur : le
+/// tiroir sur mobile, la barre laterale sur bureau.
+Future<void> _ouvrirDossiers(WidgetTester tester) async {
+  final Finder barre = find.byKey(AdminShell.barreLateraleKey);
+  if (barre.evaluate().isEmpty) {
+    await tester.tap(find.bySemanticsLabel(t.nav.admin.menu));
+    await _stabiliser(tester);
+  }
+  await tester.tap(
+    find.descendant(
+      of: barre.evaluate().isEmpty ? find.byKey(AdminShell.tiroirKey) : barre,
+      matching: find.text(AdminDomaine.personnes.libelle),
+    ),
+  );
+  await _stabiliser(tester);
 }
 
 GoRouter routeurDe(WidgetTester tester) =>

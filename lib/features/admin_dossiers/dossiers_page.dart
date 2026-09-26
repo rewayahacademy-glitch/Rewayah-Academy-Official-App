@@ -44,6 +44,16 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
   /// Vrai juste apres la fermeture du detail : le focus revient a la ligne.
   bool _retourDetail = false;
 
+  /// Le titre de la page : il recoit le focus quand une decision vide la
+  /// file en panneau unique (plus aucune ligne ou le poser).
+  final FocusNode _focusTitre = FocusNode(debugLabel: 'adm02a-titre');
+
+  @override
+  void dispose() {
+    _focusTitre.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -97,6 +107,14 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
         selection.choisir(suivant.dossierId);
       } else {
         selection.retirer();
+        if (avant.length <= 1) {
+          // La file est vide : le focus va au titre de la page.
+          WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+            if (mounted) {
+              _focusTitre.requestFocus();
+            }
+          });
+        }
       }
     }
   }
@@ -149,6 +167,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
         titre: detailSeul && nom != null ? titreDossier(nom) : t.dossiers.titre,
         sousTitre: detailSeul ? null : t.dossiers.sousTitre,
         onRetour: detailSeul ? _fermerDetail : null,
+        focusTitre: _focusTitre,
         entete: SousNavigationDomaine(
           onglets: ongletsPersonnes(),
           indexActif: 0,

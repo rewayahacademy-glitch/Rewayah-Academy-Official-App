@@ -21,6 +21,7 @@ class LigneRubrique {
     this.onPress,
     this.controle,
     this.pastille,
+    this.pastilleSousLibelle,
     this.selectionnee,
     this.libelleSemantique,
     this.autofocus = false,
@@ -54,6 +55,11 @@ class LigneRubrique {
   /// Une pastille d'etat dans le flux du libelle : a cote du nom quand la
   /// place suffit, dessous sinon (AD-5).
   final Widget? pastille;
+
+  /// Place de la [pastille] imposee par la liste, pour que toutes ses lignes
+  /// la posent au meme endroit : vrai, sous le libelle ; faux, a cote. Nul :
+  /// chaque ligne decide selon sa place (Wrap).
+  final bool? pastilleSousLibelle;
 
   /// Selection d'une file maitre-detail : annoncee (`Semantics.selected`) et
   /// marquee autrement que par la couleur (barre de debut, graisse). Nul :
@@ -186,10 +192,10 @@ class _Ligne extends StatelessWidget {
               )
             : null,
       ),
+      // Le filet d'une decoration ne prend aucune place : le retrait reste le
+      // meme, selectionnee ou non (le contenu ne saute pas de 4).
       child: Padding(
-        padding: EdgeInsetsDirectional.only(
-          start: choisie ? AppSpacing.lg - AppSpacing.xs : AppSpacing.lg,
-        ),
+        padding: const EdgeInsetsDirectional.only(start: AppSpacing.lg),
         child: Row(
           children: <Widget>[
             if (tete != null) ...<Widget>[tete, Ecart.hMd],
@@ -268,11 +274,17 @@ class _Ligne extends StatelessWidget {
                         : null,
                   ),
             ),
-            if (ligne.pastille != null) ligne.pastille!,
+            if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
+              ligne.pastille!,
             if (ligne.valeur != null)
               Text(ligne.valeur!, style: styleSecondaire),
           ],
         ),
+        if (ligne.pastille != null &&
+            ligne.pastilleSousLibelle == true) ...<Widget>[
+          Ecart.vXs,
+          ligne.pastille!,
+        ],
         if (ligne.legende != null) ...<Widget>[
           Ecart.vXs,
           Text(ligne.legende!, style: styleSecondaire),

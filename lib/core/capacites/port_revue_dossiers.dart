@@ -114,6 +114,7 @@ class DossierEnFile {
     required this.statut,
     required this.revision,
     required this.aPieceIdentite,
+    this.etatPiece,
   });
 
   final String dossierId;
@@ -125,6 +126,10 @@ class DossierEnFile {
   final StatutRevue statut;
   final int revision;
   final bool aPieceIdentite;
+
+  /// Etat de la piece vu par CE relecteur, quand la source le dit (HL-A-1).
+  /// Nul : inconnu, la ligne s'en tient a [aPieceIdentite].
+  final EtatPieceRevue? etatPiece;
 }
 
 /// Une page de la file.

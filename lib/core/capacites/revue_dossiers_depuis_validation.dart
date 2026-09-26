@@ -70,6 +70,13 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
               revision: 0,
               aPieceIdentite:
                   d.documentId != null || d.etatPiece == EtatPiece.nonVisible,
+              // Lu dans la meme reponse (`etat_piece`) : aucun appel de plus.
+              etatPiece: switch (d.etatPiece) {
+                EtatPiece.nonVisible => EtatPieceRevue.nonVisible,
+                EtatPiece.aucune => EtatPieceRevue.absente,
+                _ when d.documentId != null => EtatPieceRevue.disponible,
+                _ => null,
+              },
             ),
       ],
     );

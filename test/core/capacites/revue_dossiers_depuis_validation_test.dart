@@ -2,6 +2,7 @@
 // fait aucun appel serveur de plus que la file existante.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/service_comptes.dart' show EtatPiece;
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.dart';
@@ -58,6 +59,39 @@ void main() {
       expect(appels, 1);
     },
   );
+
+  test('etat de la piece lu dans la meme reponse (non_visible)', () async {
+    int appels = 0;
+    final PageDossiers page = await RevueDossiersDepuisValidation(() async {
+      appels++;
+      return <DossierAValider>[
+        _d('p1', doc: 'd1'),
+        DossierAValider(
+          documentId: null,
+          profilId: 'p2',
+          type: null,
+          cleObjet: null,
+          deposeLe: DateTime.utc(2026, 9, 25, 15),
+          prenom: 'B',
+          nom: 'Test',
+          identifiantImmuable: 'ID-p2',
+          role: AppRole.teacher,
+          etatPiece: EtatPiece.nonVisible,
+        ),
+        _d('p3', doc: null),
+      ];
+    }).listerDossiers();
+    expect(appels, 1);
+    expect(
+      page.elements.map((DossierEnFile e) => e.etatPiece),
+      <EtatPieceRevue?>[
+        EtatPieceRevue.disponible,
+        EtatPieceRevue.nonVisible,
+        null,
+      ],
+    );
+    expect(page.elements[1].aPieceIdentite, isTrue);
+  });
 
   test('erreurs typees : genre inconnu, 42501', () async {
     await expectLater(

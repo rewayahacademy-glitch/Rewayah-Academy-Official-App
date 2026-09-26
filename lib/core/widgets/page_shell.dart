@@ -51,7 +51,12 @@ class PageShell extends StatelessWidget {
     this.actions,
     this.defilante = true,
     this.actionsCoquille = true,
+    this.focusTitre,
   });
+
+  /// Le focus du titre, pour qu'une page y ramene le lecteur (voir
+  /// [EntetePage.focusTitre]).
+  final FocusNode? focusTitre;
 
   /// Le corps de la page.
   final Widget child;
@@ -128,9 +133,13 @@ class PageShell extends StatelessWidget {
             sousTitre: sousTitre,
             onRetour: retour,
             actions: actionsTete,
+            focusTitre: focusTitre,
           )
         else
-          Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
+          titreFocalisable(
+            focusTitre,
+            Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
+          ),
         Ecart.vXxl,
       ] else if (enteteRiche) ...<Widget>[
         // Sans titre, la page garde son disque retour et les actions de la

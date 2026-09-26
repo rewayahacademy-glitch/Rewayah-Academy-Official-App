@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -214,11 +215,21 @@ String? _cheminRecherche(String saisie) {
 /// Attenuee quand le domaine est inerte (aucune fonction livree) : ni gris de
 /// bouton desactive, ni ecran vide derriere -- juste une encre plus discrete
 /// pour dire « pas encore », comme un compteur d'`ADM-01` sans destination.
-Widget _libelleEntree(AppPalette palette, AdminDomaine domaine) => Text(
+/// Retrait horizontal par defaut d'une tuile de NavigationDrawer.
+const double _retraitTuileNav = 12;
+
+/// Hauteur d'une ligne de labelMedium a 100 % (M3 : 16).
+const double _hauteurLibelleNav = 16;
+
+Widget _libelleEntree(
+  AppPalette palette,
+  AdminDomaine domaine, {
+  int lignes = 1,
+}) => Text(
   domaine.libelle,
   overflow: TextOverflow.ellipsis,
-  maxLines: 1,
-  softWrap: false,
+  maxLines: lignes,
+  softWrap: lignes > 1,
   style: domaine.actif
       ? null
       : TextStyle(color: palette.inkFaint.asBorderSide().color),
@@ -483,6 +494,22 @@ class _Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final double cible = AppMetriques.of(context).cibleTactile;
+    // Deux lignes de libelle a l'echelle courante, jamais moins que la cible.
+    final double hauteurTuile = math.max(
+      cible,
+      MediaQuery.textScalerOf(context).scale(_hauteurLibelleNav) * 2 +
+          AppSpacing.md,
+    );
+    // Retraits du tiroir (12 de chaque cote), puis 16, icone, 12 (Flutter).
+    const double largeurTuile =
+        AdminShell.largeurBarreLaterale - _retraitTuileNav * 2;
+    const double largeurLibelle =
+        largeurTuile -
+        AppSpacing.lg -
+        AppSpacing.xxl -
+        AppSpacing.md -
+        AppSpacing.lg;
 
     return SizedBox(
       key: AdminShell.barreLateraleKey,
@@ -501,7 +528,10 @@ class _Sidebar extends StatelessWidget {
                 Expanded(
                   child: NavigationDrawerTheme(
                     data: NavigationDrawerThemeData(
-                      tileHeight: AppMetriques.of(context).cibleTactile,
+                      // La tuile grandit avec le texte (200 %) : le libelle
+                      // passe sur deux lignes au lieu de deborder.
+                      tileHeight: hauteurTuile,
+                      indicatorSize: Size(largeurTuile, hauteurTuile),
                       labelTextStyle: _stylesLibelleNav(context, palette),
                       iconTheme: _stylesIconeNav(palette),
                     ),
@@ -527,7 +557,16 @@ class _Sidebar extends StatelessWidget {
                               domaine,
                               selectionnee: true,
                             ),
-                            label: _libelleEntree(palette, domaine),
+                            // La rangee du tiroir ne borne pas son libelle :
+                            // largeur explicite, sinon il deborde a 200 %.
+                            label: SizedBox(
+                              width: largeurLibelle,
+                              child: _libelleEntree(
+                                palette,
+                                domaine,
+                                lignes: 2,
+                              ),
+                            ),
                           ),
                       ],
                     ),
