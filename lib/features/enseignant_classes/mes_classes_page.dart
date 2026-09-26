@@ -14,6 +14,7 @@ import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -220,8 +221,7 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback onPress) {
         );
 
   final List<Widget> marques = <Widget>[
-    if (l.cahierAValider)
-      PointRappel(libelle: t.enseignant.classes.rappelCahier),
+    if (l.cahierAValider) const _CahierAValider(),
     if (l.detail.remplacement)
       StatusPill(
         libelle: t.enseignant.classes.remplacement,
@@ -246,4 +246,38 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback onPress) {
             ],
           ),
   );
+}
+
+/// Le rappel d'un cahier non valide (K-45) : le point **et** le mot
+/// « Cahier a valider », jamais la couleur seule (WCAG 1.4.1, relecture
+/// d'EN-3). Au ton calme : le mot en texte doux, sans alarme. Lu une seule
+/// fois, par sa phrase complete.
+class _CahierAValider extends StatelessWidget {
+  const _CahierAValider();
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Semantics(
+      key: const ValueKey<String>('classes-cahier-a-valider'),
+      label: t.enseignant.classes.rappelCahier,
+      excludeSemantics: true,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          PointRappel(libelle: t.enseignant.classes.rappelCahier),
+          Ecart.hXs,
+          Flexible(
+            child: Text(
+              t.enseignant.classes.cahierAValider,
+              style: palette.inkMuted.applyTo(
+                textes.labelMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

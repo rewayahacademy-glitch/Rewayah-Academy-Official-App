@@ -2708,7 +2708,46 @@
       "prochaine": "Prochaine séance : {jour} à {heure}",
       "sansProchaine": "Aucune séance prévue",
       "remplacement": "Remplacement",
-      "rappelCahier": "Un cahier de séance reste à valider"
+      "rappelCahier": "Un cahier de séance reste à valider",
+      "cahierAValider": "Cahier à valider"
+    },
+    "eleve": {
+      "titre": "Fiche de {prenom}",
+      "retour": "Élèves",
+      "identifiant": "Identifiant Académie : {id}",
+      "photo": "Photo de {prenom}",
+      "niveau": "Niveau",
+      "objectif": "Objectif",
+      "presence": "Présence récente",
+      "travail": "Travail",
+      "travailReprise": "Reprise à la {page}",
+      "derniereSeance": "Dernière séance",
+      "nonRenseigne": "Non renseigné",
+      "signaler": "Signaler un besoin",
+      "signalerAide": "Un besoin à remonter à l'académie, sans recopier le contexte."
+    },
+    "signalement": {
+      "titre": "Signaler un besoin",
+      "contexte": "Pour {prenom} · {classe}",
+      "categorieTitre": "Catégorie",
+      "categories": {
+        "pedagogique": "Problème pédagogique",
+        "presence": "Présence",
+        "technique": "Technique",
+        "changement": "Changement",
+        "autre": "Autre"
+      },
+      "details": "Détails internes",
+      "detailsAide": "Lu par l'équipe de l'académie seulement.",
+      "resume": "Résumé partageable",
+      "resumeAide": "Peut être partagé avec la famille par l'académie.",
+      "notice": "Les détails internes ne sont pas envoyés automatiquement à la famille.",
+      "choisirCategorie": "Choisissez une catégorie pour continuer.",
+      "detailsRequis": "Pour « Autre », dites en quelques mots de quoi il s'agit.",
+      "envoyer": "Envoyer le signalement",
+      "demoSucces": "Démonstration : ce signalement est prêt, mais rien n'a été envoyé.",
+      "demoSuccesDetail": "Dans l'application reliée, il partira vers l'équipe de l'académie.",
+      "fermer": "Fermer"
     },
     "demo": {
       "titre": "Démonstration enseignant",

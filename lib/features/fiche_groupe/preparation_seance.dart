@@ -45,7 +45,15 @@ class ProjectionEleve {
     this.dernierPoint,
     this.cleAvatar,
     this.indicateur,
+    this.objectif,
+    this.presenceRecente,
   });
+
+  /// L'objectif en cours de l'eleve, en texte neutre (fiche ENS-11, EN-4).
+  final String? objectif;
+
+  /// La presence recente, en texte neutre, sans jugement (fiche ENS-11).
+  final String? presenceRecente;
 
   /// La page de reprise, en texte lisible (« Page 24 »).
   final String? pageReprise;

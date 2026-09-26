@@ -362,6 +362,8 @@ List<Override> surchargesEnseignantDemo(
             pageReprise: e.pageReprise,
             dernierPoint: e.dernierPoint,
             indicateur: e.indicateur,
+            objectif: e.objectif,
+            presenceRecente: e.presenceRecente,
           ),
       },
     ),
@@ -400,6 +402,8 @@ class EcranEnseignantDemo extends StatelessWidget {
       child: RepereDemonstration(
         child: FicheGroupePage(
           groupeId: DonneesClasseDemo.groupeId,
+          // EN-4 : toute la ligne d'un eleve ouvre sa fiche (ENS-11).
+          onOuvrirEleve: FicheGroupePage.ficheEleve,
           onPreparer: (_) =>
               context.go(adressePreparationDemo(PreparationDemo.pret)),
         ),

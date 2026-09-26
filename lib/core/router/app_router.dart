@@ -778,8 +778,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: '${Routes.enseignantGroupe}/:groupeId',
-        builder: (BuildContext _, GoRouterState etat) =>
-            FicheGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
+        builder: (BuildContext _, GoRouterState etat) => FicheGroupePage(
+          groupeId: etat.pathParameters['groupeId'] ?? '',
+          // EN-4 : toute la ligne d'un eleve ouvre sa fiche (ENS-11).
+          onOuvrirEleve: FicheGroupePage.ficheEleve,
+        ),
       ),
       GoRoute(
         path: '${Routes.enseignantGroupe}/:groupeId/revue',

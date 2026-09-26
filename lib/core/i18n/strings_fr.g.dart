@@ -2175,6 +2175,8 @@ class Traductions$enseignant$fr {
 
 	// Translations
 	late final Traductions$enseignant$classes$fr classes = Traductions$enseignant$classes$fr.internal(_root);
+	late final Traductions$enseignant$eleve$fr eleve = Traductions$enseignant$eleve$fr.internal(_root);
+	late final Traductions$enseignant$signalement$fr signalement = Traductions$enseignant$signalement$fr.internal(_root);
 	late final Traductions$enseignant$demo$fr demo = Traductions$enseignant$demo$fr.internal(_root);
 	late final Traductions$enseignant$bienvenue$fr bienvenue = Traductions$enseignant$bienvenue$fr.internal(_root);
 	late final Traductions$enseignant$journee$fr journee = Traductions$enseignant$journee$fr.internal(_root);
@@ -7328,6 +7330,110 @@ class Traductions$enseignant$classes$fr {
 
 	/// fr: 'Un cahier de séance reste à valider'
 	String get rappelCahier => 'Un cahier de séance reste à valider';
+
+	/// fr: 'Cahier à valider'
+	String get cahierAValider => 'Cahier à valider';
+}
+
+// Path: enseignant.eleve
+class Traductions$enseignant$eleve$fr {
+	Traductions$enseignant$eleve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fiche de {prenom}'
+	String titre({required Object prenom}) => 'Fiche de ${prenom}';
+
+	/// fr: 'Élèves'
+	String get retour => 'Élèves';
+
+	/// fr: 'Identifiant Académie : {id}'
+	String identifiant({required Object id}) => 'Identifiant Académie : ${id}';
+
+	/// fr: 'Photo de {prenom}'
+	String photo({required Object prenom}) => 'Photo de ${prenom}';
+
+	/// fr: 'Niveau'
+	String get niveau => 'Niveau';
+
+	/// fr: 'Objectif'
+	String get objectif => 'Objectif';
+
+	/// fr: 'Présence récente'
+	String get presence => 'Présence récente';
+
+	/// fr: 'Travail'
+	String get travail => 'Travail';
+
+	/// fr: 'Reprise à la {page}'
+	String travailReprise({required Object page}) => 'Reprise à la ${page}';
+
+	/// fr: 'Dernière séance'
+	String get derniereSeance => 'Dernière séance';
+
+	/// fr: 'Non renseigné'
+	String get nonRenseigne => 'Non renseigné';
+
+	/// fr: 'Signaler un besoin'
+	String get signaler => 'Signaler un besoin';
+
+	/// fr: 'Un besoin à remonter à l'académie, sans recopier le contexte.'
+	String get signalerAide => 'Un besoin à remonter à l\'académie, sans recopier le contexte.';
+}
+
+// Path: enseignant.signalement
+class Traductions$enseignant$signalement$fr {
+	Traductions$enseignant$signalement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Signaler un besoin'
+	String get titre => 'Signaler un besoin';
+
+	/// fr: 'Pour {prenom} · {classe}'
+	String contexte({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}';
+
+	/// fr: 'Catégorie'
+	String get categorieTitre => 'Catégorie';
+
+	late final Traductions$enseignant$signalement$categories$fr categories = Traductions$enseignant$signalement$categories$fr.internal(_root);
+
+	/// fr: 'Détails internes'
+	String get details => 'Détails internes';
+
+	/// fr: 'Lu par l'équipe de l'académie seulement.'
+	String get detailsAide => 'Lu par l\'équipe de l\'académie seulement.';
+
+	/// fr: 'Résumé partageable'
+	String get resume => 'Résumé partageable';
+
+	/// fr: 'Peut être partagé avec la famille par l'académie.'
+	String get resumeAide => 'Peut être partagé avec la famille par l\'académie.';
+
+	/// fr: 'Les détails internes ne sont pas envoyés automatiquement à la famille.'
+	String get notice => 'Les détails internes ne sont pas envoyés automatiquement à la famille.';
+
+	/// fr: 'Choisissez une catégorie pour continuer.'
+	String get choisirCategorie => 'Choisissez une catégorie pour continuer.';
+
+	/// fr: 'Pour « Autre », dites en quelques mots de quoi il s'agit.'
+	String get detailsRequis => 'Pour « Autre », dites en quelques mots de quoi il s\'agit.';
+
+	/// fr: 'Envoyer le signalement'
+	String get envoyer => 'Envoyer le signalement';
+
+	/// fr: 'Démonstration : ce signalement est prêt, mais rien n'a été envoyé.'
+	String get demoSucces => 'Démonstration : ce signalement est prêt, mais rien n\'a été envoyé.';
+
+	/// fr: 'Dans l'application reliée, il partira vers l'équipe de l'académie.'
+	String get demoSuccesDetail => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
 }
 
 // Path: enseignant.demo
@@ -9934,6 +10040,30 @@ class Traductions$classe$pageCatalogue$resultat$fr {
 
 	/// fr: 'Retour à l'accueil'
 	String get retourAccueil => 'Retour à l\'accueil';
+}
+
+// Path: enseignant.signalement.categories
+class Traductions$enseignant$signalement$categories$fr {
+	Traductions$enseignant$signalement$categories$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Problème pédagogique'
+	String get pedagogique => 'Problème pédagogique';
+
+	/// fr: 'Présence'
+	String get presence => 'Présence';
+
+	/// fr: 'Technique'
+	String get technique => 'Technique';
+
+	/// fr: 'Changement'
+	String get changement => 'Changement';
+
+	/// fr: 'Autre'
+	String get autre => 'Autre';
 }
 
 // Path: tc.groupe.mesGroupes
@@ -14661,6 +14791,39 @@ extension on Traductions {
 			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
 			'enseignant.classes.remplacement' => 'Remplacement',
 			'enseignant.classes.rappelCahier' => 'Un cahier de séance reste à valider',
+			'enseignant.classes.cahierAValider' => 'Cahier à valider',
+			'enseignant.eleve.titre' => ({required Object prenom}) => 'Fiche de ${prenom}',
+			'enseignant.eleve.retour' => 'Élèves',
+			'enseignant.eleve.identifiant' => ({required Object id}) => 'Identifiant Académie : ${id}',
+			'enseignant.eleve.photo' => ({required Object prenom}) => 'Photo de ${prenom}',
+			'enseignant.eleve.niveau' => 'Niveau',
+			'enseignant.eleve.objectif' => 'Objectif',
+			'enseignant.eleve.presence' => 'Présence récente',
+			'enseignant.eleve.travail' => 'Travail',
+			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
+			'enseignant.eleve.derniereSeance' => 'Dernière séance',
+			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
+			'enseignant.eleve.signaler' => 'Signaler un besoin',
+			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
+			'enseignant.signalement.titre' => 'Signaler un besoin',
+			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
+			'enseignant.signalement.categorieTitre' => 'Catégorie',
+			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
+			'enseignant.signalement.categories.presence' => 'Présence',
+			'enseignant.signalement.categories.technique' => 'Technique',
+			'enseignant.signalement.categories.changement' => 'Changement',
+			'enseignant.signalement.categories.autre' => 'Autre',
+			'enseignant.signalement.details' => 'Détails internes',
+			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
+			'enseignant.signalement.resume' => 'Résumé partageable',
+			'enseignant.signalement.resumeAide' => 'Peut être partagé avec la famille par l\'académie.',
+			'enseignant.signalement.notice' => 'Les détails internes ne sont pas envoyés automatiquement à la famille.',
+			'enseignant.signalement.choisirCategorie' => 'Choisissez une catégorie pour continuer.',
+			'enseignant.signalement.detailsRequis' => 'Pour « Autre », dites en quelques mots de quoi il s\'agit.',
+			'enseignant.signalement.envoyer' => 'Envoyer le signalement',
+			'enseignant.signalement.demoSucces' => 'Démonstration : ce signalement est prêt, mais rien n\'a été envoyé.',
+			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
+			'enseignant.signalement.fermer' => 'Fermer',
 			'enseignant.demo.titre' => 'Démonstration enseignant',
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
@@ -14876,6 +15039,8 @@ extension on Traductions {
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.horsLigne' => 'Pas de réseau : rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.modifierLangues' => 'Modifier les langues',
@@ -14909,8 +15074,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.complet' => 'Groupe complet',
 			'enseignant.ficheGroupe.placesLibres' => 'places libres',
 			'enseignant.ficheGroupe.placesLibresUn' => 'place libre',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.membresTitre' => 'Les élèves du groupe',
 			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans ce groupe',
@@ -15390,6 +15553,8 @@ extension on Traductions {
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
@@ -15423,8 +15588,6 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',

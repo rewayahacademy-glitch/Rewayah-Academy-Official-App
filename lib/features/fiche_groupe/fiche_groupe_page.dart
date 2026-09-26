@@ -32,6 +32,7 @@ import '../foyer/photo_eleve.dart' show PhotoEleve;
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart' show IdentiteGroupe;
+import 'fiche_eleve_enseignant.dart';
 import 'preparation_seance.dart';
 
 /// `ENS-07` : la fiche d'un groupe, telle que son enseignant la lit.
@@ -81,6 +82,12 @@ class FicheGroupePage extends ConsumerWidget {
   /// chevron : rien ne promet un ecran qui n'existe pas encore.
   final void Function(String studentId)? onOuvrirEleve;
 
+  /// Le point d'entree du routeur et de la demonstration (EN-4) : avec lui,
+  /// toute la ligne d'un eleve ouvre sa fiche (ENS-11), que l'Espace Classe
+  /// ouvre lui-meme parce qu'il detient la projection de l'eleve. Il n'a rien
+  /// d'autre a faire.
+  static void ficheEleve(String studentId) {}
+
   /// Ce que fait « Preparer l'entree ». Par defaut, le chemin existant vers la
   /// preparation : `/salle` avec son billet, qui ouvre d'abord le pre-vol
   /// complet de l'enseignant. La demonstration le remplace.
@@ -124,7 +131,7 @@ class _Sortie extends StatelessWidget {
 }
 
 /// Les cinq etats de la fiche, plus « ce groupe n'est pas le votre ».
-class _Corps extends ConsumerWidget {
+class _Corps extends ConsumerStatefulWidget {
   const _Corps({required this.groupeId, this.onPreparer, this.onOuvrirEleve});
 
   final String groupeId;
@@ -132,7 +139,33 @@ class _Corps extends ConsumerWidget {
   final void Function(String studentId)? onOuvrirEleve;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_Corps> createState() => _CorpsState();
+}
+
+class _CorpsState extends ConsumerState<_Corps> {
+  /// L'eleve dont la fiche occupe la colonne des eleves, sur bureau (EN-4).
+  String? _ouvert;
+
+  /// Vrai quand l'Espace Classe tient sur deux colonnes : la fiche s'ouvre
+  /// alors en panneau, a la place du roster ; sinon, en feuille.
+  bool _large = false;
+
+  /// ENS-11 : toute la ligne d'un eleve ouvre sa fiche, feuille sous 840,
+  /// panneau au-dessus. Le rappel `onOuvrirEleve` est ensuite prevenu.
+  void _ouvrir(EleveFiche eleve) {
+    if (_large) {
+      setState(() => _ouvert = eleve.membre.studentId);
+    } else {
+      ouvrirFicheEleve(context, eleve);
+    }
+    widget.onOuvrirEleve?.call(eleve.membre.studentId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String groupeId = widget.groupeId;
+    final void Function(String sessionId)? onPreparer = widget.onPreparer;
+    final void Function(String studentId)? onOuvrirEleve = widget.onOuvrirEleve;
     final AsyncValue<List<GroupeEnseignant>> groupes = ref.watch(
       groupesEnseignantProvider,
     );
@@ -199,7 +232,16 @@ class _Corps extends ConsumerWidget {
     final Widget eleves = _Membres(
       membres: membres.requireValue,
       projections: ref.watch(projectionElevesProvider(groupe.id)),
-      onOuvrirEleve: onOuvrirEleve,
+      onOuvrirEleve: onOuvrirEleve == null
+          ? null
+          : (String id) {
+              final EleveFiche? fiche = _fiche(
+                membres.requireValue,
+                groupe,
+                id,
+              );
+              if (fiche != null) _ouvrir(fiche);
+            },
       revue: IntrinsicWidth(
         child: ActionPrincipale(
           libelle: t.enseignant.ficheGroupe.revue,
@@ -247,6 +289,10 @@ class _Corps extends ConsumerWidget {
         final double facteur = MediaQuery.textScalerOf(contexte).scale(1);
         final bool deuxColonnes =
             contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
+        _large = deuxColonnes;
+        final EleveFiche? ouverte = deuxColonnes
+            ? _fiche(membres.requireValue, groupe, _ouvert)
+            : null;
 
         final Widget colonneClasse = FocusTraversalGroup(
           child: Column(
@@ -274,11 +320,42 @@ class _Corps extends ConsumerWidget {
           children: <Widget>[
             entete,
             Ecart.vSection,
-            _Rangee(debut: colonneClasse, fin: colonneEleves),
+            _Rangee(
+              debut: colonneClasse,
+              fin: switch (ouverte) {
+                null => colonneEleves,
+                final EleveFiche e => FocusTraversalGroup(
+                  child: PanneauFicheEleve(
+                    key: ValueKey<String>('panneau-${e.membre.studentId}'),
+                    eleve: e,
+                    onFermer: () => setState(() => _ouvert = null),
+                  ),
+                ),
+              },
+            ),
           ],
         );
       },
     );
+  }
+
+  /// La vue de fiche d'un eleve de la Classe, ou nul s'il n'y est plus.
+  EleveFiche? _fiche(
+    List<MembreSeance> membres,
+    GroupeEnseignant groupe,
+    String? id,
+  ) {
+    if (id == null) return null;
+    for (final MembreSeance m in membres) {
+      if (m.studentId == id) {
+        return EleveFiche(
+          membre: m,
+          classe: groupe.libelle,
+          projection: ref.read(projectionElevesProvider(groupe.id))[id],
+        );
+      }
+    }
+    return null;
   }
 }
 

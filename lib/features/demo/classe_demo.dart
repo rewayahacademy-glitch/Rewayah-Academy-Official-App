@@ -27,8 +27,12 @@ class EleveProjectionDemo {
     required this.pageReprise,
     required this.dernierPoint,
     required this.presenceRecente,
+    required this.objectif,
     this.indicateur = IndicateurEleve.regulier,
   });
+
+  /// Objectif en cours, en texte neutre (fiche ENS-11, EN-4).
+  final String objectif;
 
   /// Prenom. La photo s'affiche chez l'enseignant (E5, K-44) ; aucune photo
   /// de demonstration n'est livree, les initiales tiennent donc lieu.
@@ -143,6 +147,7 @@ abstract final class DonneesClasseDemo {
       pageReprise: 'Page 24',
       dernierPoint: 'Lecture fluide des lettres liées',
       presenceRecente: '3 séances sur les 3 dernières',
+      objectif: 'Terminer la sourate Al-Mulk',
     ),
     EleveProjectionDemo(
       prenom: 'Yusuf',
@@ -150,6 +155,7 @@ abstract final class DonneesClasseDemo {
       pageReprise: 'Page 22',
       dernierPoint: 'Reprendre les voyelles longues',
       presenceRecente: '2 séances sur les 3 dernières',
+      objectif: 'Maîtriser les voyelles longues',
       indicateur: IndicateurEleve.absence,
     ),
     EleveProjectionDemo(
@@ -158,6 +164,7 @@ abstract final class DonneesClasseDemo {
       pageReprise: 'Page 24',
       dernierPoint: 'Arrêts en fin de verset',
       presenceRecente: '3 séances sur les 3 dernières',
+      objectif: 'Respecter les arrêts',
       indicateur: IndicateurEleve.aRenforcer,
     ),
   ];
