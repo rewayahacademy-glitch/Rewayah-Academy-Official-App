@@ -239,7 +239,7 @@ void main() {
     );
   });
 
-  test('la decision du port reste indisponible (AD-8)', () async {
+  test('sans RPC branchee, la decision reste indisponible', () async {
     final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
       () async => <DossierAValider>[],
     );
@@ -255,6 +255,165 @@ void main() {
     );
   });
 
+  group('AD-8 : decision sur decider_dossier existant', () {
+    Future<ResultatDecision> deciderSur(
+      RevueDossiersDepuisValidation port, {
+      String dossierId = 'p1',
+    }) => port.decider(
+      dossierId: dossierId,
+      revisionAttendue: 0,
+      decision: DecisionDossier.refuser,
+      commandeId: 'c1',
+      verificationsFaites: const <String>{},
+      motif: 'Motif fictif',
+    );
+
+    test('document absent du cache : deja decide, aucun appel', () async {
+      int appels = 0;
+      final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+        () async => <DossierAValider>[_d('p2')],
+        deciderExistant: ({
+          required String documentId,
+          required bool approuve,
+          String? motif,
+        }) async => appels++,
+      );
+      await expectLater(
+        deciderSur(port),
+        throwsA(
+          isA<ErreurRevueDossier>().having(
+            (ErreurRevueDossier e) => e.code,
+            'code',
+            CodeErreurRevue.dejaDecide,
+          ),
+        ),
+      );
+      expect(appels, 0);
+    });
+
+    test(
+      'appel unique avec le document du cache, sans promettre de compte',
+      () async {
+        final List<(String, bool, String?)> appels =
+            <(String, bool, String?)>[];
+        final RevueDossiersDepuisValidation port =
+            RevueDossiersDepuisValidation(
+              () async => <DossierAValider>[_d('p1')],
+              deciderExistant: ({
+                required String documentId,
+                required bool approuve,
+                String? motif,
+              }) async => appels.add((documentId, approuve, motif)),
+            );
+        final ResultatDecision r = await deciderSur(port);
+        expect(appels, <(String, bool, String?)>[
+          ('doc', false, 'Motif fictif'),
+        ]);
+        expect(r.dossierId, 'p1');
+        expect(r.statutFinal, StatutRevue.refuse);
+        expect(r.etatCompte, isNull);
+      },
+    );
+
+    test('carte des erreurs serveur, sans motif dans le message', () async {
+      Future<void> Function({
+        required String documentId,
+        required bool approuve,
+        String? motif,
+      })
+      jeter(Object e) =>
+          ({
+            required String documentId,
+            required bool approuve,
+            String? motif,
+          }) => Future<void>.error(e);
+      Future<Object?> erreur(Object e) async {
+        try {
+          await deciderSur(
+            RevueDossiersDepuisValidation(
+              () async => <DossierAValider>[_d('p1')],
+              deciderExistant: jeter(e),
+            ),
+          );
+        } on Object catch (x) {
+          return x;
+        }
+        return null;
+      }
+
+      final Object? motifRequis = await erreur(
+        const PostgrestException(
+          message: 'un refus exige un motif',
+          code: 'P0001',
+        ),
+      );
+      expect(
+        (motifRequis! as ErreurRevueDossier).code,
+        CodeErreurRevue.motifRequis,
+      );
+      final Object? interdit = await erreur(
+        const PostgrestException(message: 'x', code: '42501'),
+      );
+      expect((interdit! as ErreurRevueDossier).code, CodeErreurRevue.interdit);
+      final Object? hors = await erreur(
+        const PostgrestException(
+          message: 'document introuvable ou hors du perimetre',
+          code: 'P0001',
+        ),
+      );
+      expect((hors! as ErreurRevueDossier).code, CodeErreurRevue.interdit);
+      final Object? autre = await erreur(
+        const PostgrestException(message: 'autre', code: 'P0001'),
+      );
+      expect(autre, isA<EchecDecisionCertain>());
+      final Object? perdue = await erreur(Exception('coupure'));
+      expect(
+        (perdue! as ErreurRevueDossier).code,
+        CodeErreurRevue.reponsePerdue,
+      );
+      expect(perdue.toString(), isNot(contains('Motif fictif')));
+    });
+
+    test('resultatDecision : cache, puis rechargement existant', () async {
+      int recharges = 0;
+      List<DossierAValider> recharge = <DossierAValider>[_d('p1')];
+      final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+        () async => <DossierAValider>[_d('p1')],
+        relire: () async {
+          recharges++;
+          return recharge;
+        },
+      );
+      expect(
+        await port.resultatDecision(dossierId: 'p1', commandeId: 'c1'),
+        isA<EtatCommandeInconnue>(),
+      );
+      expect(recharges, 1);
+      recharge = <DossierAValider>[];
+      final EtatCommande e = await port.resultatDecision(
+        dossierId: 'p1',
+        commandeId: 'c1',
+      );
+      expect(
+        e,
+        isA<EtatCommandeEchouee>().having(
+          (EtatCommandeEchouee x) => x.code,
+          'code',
+          CodeErreurRevue.dejaDecide,
+        ),
+      );
+      // Absent du cache : aucun rechargement.
+      final RevueDossiersDepuisValidation vide = RevueDossiersDepuisValidation(
+        () async => <DossierAValider>[],
+        relire: () async {
+          recharges++;
+          return <DossierAValider>[];
+        },
+      );
+      await vide.resultatDecision(dossierId: 'p1', commandeId: 'c1');
+      expect(recharges, 2);
+    });
+  });
   test('elision : voyelles accentuees, ni Y ni H', () {
     expect(ouvrirDossier('Inès Exemple'), "Ouvrir le dossier d'Inès Exemple");
     expect(ouvrirDossier('Élise'), "Ouvrir le dossier d'Élise");

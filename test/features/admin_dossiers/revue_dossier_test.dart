@@ -188,16 +188,23 @@ void main() {
     await _ouvrirDossiers(tester);
     expect(find.text('Refuser le dossier'), findsOneWidget);
     await _taperTexte(tester, 'Refuser le dossier');
+    // AD-8 : le motif est dans 02D (dialogue a 1440), plus en ligne.
     expect(find.byType(TextField), findsOneWidget);
-    expect(find.text('Refuser le dossier'), findsOneWidget);
-    expect(_bouton(tester, 'Refuser le dossier').onPress, isNull);
-    await tester.enterText(find.byType(TextField), 'Piece floue');
-    await _stabiliser(tester);
-    expect(_bouton(tester, 'Refuser le dossier').onPress, isNotNull);
-    expect(
-      _bouton(tester, 'Refuser le dossier').niveau,
-      NiveauAction.destructive,
+    expect(find.text(t.dossiers.refus.corps), findsOneWidget);
+    final ActionPrincipale confirmer = tester.widget<ActionPrincipale>(
+      find
+          .ancestor(
+            of: find.text('Refuser le dossier').last,
+            matching: find.byType(ActionPrincipale),
+          )
+          .first,
     );
+    expect(confirmer.niveau, NiveauAction.destructive);
+    expect(confirmer.pleineLargeur, isFalse);
+    // Un seul bouton destructif dans la surface : l'autre est Annuler.
+    expect(find.text(t.commun.annuler), findsOneWidget);
+    // 02D s'ouvre sur le champ.
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02d-motif');
   });
 
   testWidgets('1440 : les cases repartent a zero en changeant de dossier', (
@@ -451,8 +458,13 @@ void main() {
     }
     expect(_bouton(tester, 'Valider le dossier').onPress, isNotNull);
     await _taperTexte(tester, 'Valider le dossier');
+    // 02E s'ouvre sur Annuler ; la confirmation est le dernier « Valider ».
+    expect(find.text(t.dossiers.validation.titre), findsOneWidget);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'surface-annuler');
+    await tester.tap(find.text('Valider le dossier').last);
+    await _stabiliser(tester);
     expect(
-      find.text('Ce dossier a changé depuis son ouverture.'),
+      find.text(t.dossiers.refus.conflit),
       findsOneWidget,
       reason: find
           .byType(Text)
@@ -460,11 +472,11 @@ void main() {
           .map((Element e) => (e.widget as Text).data)
           .join(' | '),
     );
-    expect(_bouton(tester, 'Valider le dossier').onPress, isNull);
-    await _taperTexte(tester, 'Actualiser le dossier');
-    expect(
-      find.text('Ce dossier a changé depuis son ouverture.'),
-      findsNothing,
-    );
+    // Conflit : la confirmation disparait, seul « Actualiser le dossier ».
+    expect(find.text('Valider le dossier'), findsOneWidget);
+    await tester.tap(find.text('Actualiser le dossier').last);
+    await _stabiliser(tester);
+    expect(find.text(t.dossiers.refus.conflit), findsNothing);
+    expect(find.text(t.dossiers.validation.titre), findsNothing);
   });
 }

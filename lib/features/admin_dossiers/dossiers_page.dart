@@ -7,8 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import 'decision_dossier.dart';
 import 'detail_dossier.dart';
 import 'etat_file_dossiers.dart';
 import 'file_dossiers.dart';
@@ -43,6 +45,9 @@ class DossiersPage extends ConsumerStatefulWidget {
 class _DossiersPageState extends ConsumerState<DossiersPage> {
   /// Vrai juste apres la fermeture du detail : le focus revient a la ligne.
   bool _retourDetail = false;
+
+  /// Le message du retour local apres une decision (AD-8).
+  String? _retour;
 
   /// Le titre de la page : il recoit le focus quand une decision vide la
   /// file en panneau unique (plus aucune ligne ou le poser).
@@ -79,7 +84,15 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
   /// Deux panneaux : le suivant est selectionne et annonce (§26 ter,
   /// « Dossier suivant : {nom} »). Panneau unique : retour a la liste, le
   /// focus sur la ligne suivante (la ligne decidee a disparu).
-  void _apresDecision(String id, {required bool maitreDetail}) {
+  void _apresDecision(String id, String message, {required bool maitreDetail}) {
+    // Le retour local, apres confirmation serveur seulement. Remis a nul
+    // d'abord : deux decisions de suite rejouent l'apparition.
+    setState(() => _retour = null);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) {
+        setState(() => _retour = message);
+      }
+    });
     final List<DossierEnFile> avant =
         ref.read(fileDossiersProvider).value?.elements ?? <DossierEnFile>[];
     final int i = avant.indexWhere((DossierEnFile d) => d.dossierId == id);
@@ -142,6 +155,9 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Les decisions en cours sont portees par la page (pas par la feuille
+    // ni par la revue) : leur suivi survit a la fermeture des surfaces.
+    ref.listen(decisionsDossiersProvider, (Object? _, Object? _) {});
     final SelectionDossier selection = ref.watch(selectionDossierProvider);
     final List<DossierEnFile> elements =
         ref.watch(fileDossiersProvider).value?.elements ?? <DossierEnFile>[];
@@ -168,9 +184,13 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
         sousTitre: detailSeul ? null : t.dossiers.sousTitre,
         onRetour: detailSeul ? _fermerDetail : null,
         focusTitre: _focusTitre,
-        entete: SousNavigationDomaine(
-          onglets: ongletsPersonnes(),
-          indexActif: 0,
+        entete: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 0),
+            LocalFeedback(message: _retour),
+          ],
         ),
         defilante: false,
         child: LayoutBuilder(
@@ -187,7 +207,8 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
                 selection: selection,
                 elements: elements,
                 onChoisir: (String x) => _choisir(x, maitreDetail: true),
-                onDecision: (String x) => _apresDecision(x, maitreDetail: true),
+                onDecision: (String x, String m) =>
+                    _apresDecision(x, m, maitreDetail: true),
               );
             }
             if (selection.detailOuvert && id != null) {
@@ -203,8 +224,8 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
                     child: DetailDossier(
                       id: id,
                       avecTitre: false,
-                      onDecision: (String x) =>
-                          _apresDecision(x, maitreDetail: false),
+                      onDecision: (String x, String m) =>
+                          _apresDecision(x, m, maitreDetail: false),
                     ),
                   ),
                 ),
@@ -237,7 +258,7 @@ class _MaitreDetail extends ConsumerStatefulWidget {
   final SelectionDossier selection;
   final List<DossierEnFile> elements;
   final void Function(String id) onChoisir;
-  final void Function(String id) onDecision;
+  final void Function(String id, String message) onDecision;
 
   @override
   ConsumerState<_MaitreDetail> createState() => _MaitreDetailState();

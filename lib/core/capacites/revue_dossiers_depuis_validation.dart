@@ -5,8 +5,12 @@
 //
 // Ce que la RPC ne fournit pas reste honnetement absent : ni total, ni
 // curseur, ni revision, ni accord versionne, ni consequence (AD-BR-01, 02,
-// 06). La piece et la decision du port restent indisponibles : jusqu'a AD-8,
-// l'ecran decide encore par `ServiceValidation.decider`.
+// 06). AD-8 : la decision passe par le port, sur la RPC EXISTANTE
+// `decider_dossier` (ServiceValidation.decider), sans idempotence ni revision
+// serveur (AD-BR-06, AD-BR-07) : apres un resultat inconnu, l'etat est relu
+// (file en cache, puis rechargement existant de `dossiers_en_attente`).
+
+import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Riverpod 3 a sorti `Override` de l'export principal.
@@ -17,6 +21,7 @@ import 'package:supabase_flutter/supabase_flutter.dart'
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
 import '../dossier/service_validation.dart';
+import '../theme/app_delais.dart';
 import 'capacite_indisponible.dart';
 import 'port_revue_dossiers.dart';
 
@@ -32,7 +37,23 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
   /// ServiceValidation.apercu : le createSignedUrl de 60 s DEJA utilise
   /// avant AD-6, aucun nouvel appel ni changement serveur). La porte serveur
   /// utoriser_lecture_piece_identite n'est pas branchee (AD-BR-03, BR-1).
-  const RevueDossiersDepuisValidation(this.lire, {this.apercu, this.horloge});
+  ///
+  /// [deciderExistant] appelle `decider_dossier` (ServiceValidation.decider) ;
+  /// [relire] recharge la file par `dossiers_en_attente`. Nuls, la decision
+  /// reste indisponible.
+  const RevueDossiersDepuisValidation(
+    this.lire, {
+    this.apercu,
+    this.horloge,
+    this.deciderExistant,
+    this.relire,
+  });
+
+  /// La RPC existante `decider_dossier`.
+  final DeciderExistant? deciderExistant;
+
+  /// Le rechargement existant de la file (invalidation puis relecture).
+  final Future<List<DossierAValider>> Function()? relire;
 
   final Future<List<DossierAValider>> Function() lire;
 
@@ -250,6 +271,105 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       typeMime: type,
     );
   }
+
+  /// Le document de ce dossier encore present dans [lignes], ou nul.
+  static String? _documentEnFile(List<DossierAValider> lignes, String id) =>
+      lignes
+          .where(
+            (DossierAValider x) => x.profilId == id && x.documentId != null,
+          )
+          .map((DossierAValider x) => x.documentId!)
+          .firstOrNull;
+
+  /// La decision sur `decider_dossier`. Le document est cherche dans la file
+  /// DEJA en cache : absent, le dossier est deja traite, sans aucun appel.
+  /// Aucune relance automatique ; un delai de [AppDelais.requeteMax] ou une
+  /// reponse perdue donnent `reponsePerdue`, jamais un echec certain.
+  @override
+  Future<ResultatDecision> decider({
+    required String dossierId,
+    required int revisionAttendue,
+    required DecisionDossier decision,
+    required String commandeId,
+    required Set<String> verificationsFaites,
+    String? motif,
+  }) async {
+    final DeciderExistant? rpc = deciderExistant;
+    if (rpc == null) {
+      throw const CapaciteIndisponible('AD-BR-06');
+    }
+    final String? documentId = _documentEnFile(await _lire(), dossierId);
+    if (documentId == null) {
+      throw const ErreurRevueDossier(CodeErreurRevue.dejaDecide);
+    }
+    final bool approuve = decision == DecisionDossier.valider;
+    try {
+      await rpc(
+        documentId: documentId,
+        approuve: approuve,
+        motif: approuve ? null : motif,
+      ).timeout(AppDelais.requeteMax);
+    } on PostgrestException catch (e) {
+      // Le serveur a repondu : la transaction est annulee, echec certain.
+      // AD-BR : la carte repose sur des sous-chaines de message (P0001).
+      final String m = e.message;
+      if (m.contains('un refus exige un motif')) {
+        throw const ErreurRevueDossier(CodeErreurRevue.motifRequis);
+      }
+      if (e.code == '42501' ||
+          m.contains('introuvable ou hors du perimetre') ||
+          m.contains('seul un administrateur')) {
+        throw const ErreurRevueDossier(CodeErreurRevue.interdit);
+      }
+      throw const EchecDecisionCertain();
+    } on Object {
+      // Delai, coupure : la decision a pu etre enregistree (P-ADM-10).
+      throw const ErreurRevueDossier(CodeErreurRevue.reponsePerdue);
+    }
+    return ResultatDecision(
+      dossierId: dossierId,
+      statutFinal: approuve ? StatutRevue.valide : StatutRevue.refuse,
+      // La RPC ne rend ni revision ni etat du compte (AD-BR-06) : on ne
+      // promet jamais « compte active ».
+      nouvelleRevision: 0,
+      decideLeUtc: (horloge ?? DateTime.now)().toUtc(),
+    );
+  }
+
+  /// Aucun `get_decision_result` (AD-BR-07) : la file en cache d'abord, puis
+  /// le rechargement existant. Absent : deja traite, sans attribuer la
+  /// decision au clic local (17.6). Present : inconnu, reprise permise.
+  @override
+  Future<EtatCommande> resultatDecision({
+    required String dossierId,
+    required String commandeId,
+  }) async {
+    final Future<List<DossierAValider>> Function()? recharger = relire;
+    if (recharger == null) {
+      throw const CapaciteIndisponible('AD-BR-07');
+    }
+    if (_documentEnFile(await _lire(), dossierId) == null) {
+      return const EtatCommandeEchouee(CodeErreurRevue.dejaDecide);
+    }
+    if (_documentEnFile(await recharger(), dossierId) == null) {
+      return const EtatCommandeEchouee(CodeErreurRevue.dejaDecide);
+    }
+    return const EtatCommandeInconnue();
+  }
+}
+
+/// La signature de `ServiceValidation.decider` (RPC `decider_dossier`).
+typedef DeciderExistant = Future<void> Function({
+  required String documentId,
+  required bool approuve,
+  String? motif,
+});
+
+/// Le serveur a repondu par un refus sans code connu : echec certain, la
+/// reprise de la meme charge est permise. Aucun message serveur n'est garde.
+class EchecDecisionCertain implements Exception {
+  /// Cree l'echec.
+  const EchecDecisionCertain();
 }
 
 /// Le branchement de production, pose dans `lib/main.dart` seulement.
@@ -258,5 +378,10 @@ final Override surchargeRevueDossiersProduction = portRevueDossiersProvider
       (Ref ref) => RevueDossiersDepuisValidation(
         () => ref.read(dossiersEnAttenteProvider.future),
         apercu: (String cle) => ref.read(serviceValidationProvider).apercu(cle),
+        deciderExistant: ref.read(serviceValidationProvider).decider,
+        relire: () {
+          ref.invalidate(dossiersEnAttenteProvider);
+          return ref.read(dossiersEnAttenteProvider.future);
+        },
       ),
     );

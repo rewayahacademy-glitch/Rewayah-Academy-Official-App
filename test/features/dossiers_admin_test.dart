@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.dart';
@@ -185,7 +186,31 @@ void main() {
       },
     );
 
-    testWidgets('la validation attend que les trois constats soient poses', (
+    testWidgets(
+      'production : la consequence est inconnue, Valider reste ferme (Q21)',
+      (WidgetTester tester) async {
+        final FauxServiceValidation service = await _monter(
+          tester,
+          FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+        );
+
+        await _voirEtFermer(tester);
+        for (final String point in <String>[
+          t.dossiers.pointLisible,
+          t.dossiers.pointNom,
+          t.dossiers.pointValidite,
+        ]) {
+          await _taper(tester, point);
+        }
+        await _allerA(tester, t.dossiers.approuver);
+        expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+        expect(find.text(t.dossiers.validation.indisponible), findsOneWidget);
+        expect(find.text(t.dossiers.validation.titre), findsNothing);
+        expect(service.verdicts, isEmpty);
+      },
+    );
+
+    testWidgets('AD-8 : un refus passe par 02D, jamais sans motif', (
       WidgetTester tester,
     ) async {
       final FauxServiceValidation service = await _monter(
@@ -193,62 +218,73 @@ void main() {
         FauxServiceValidation()..file = <DossierAValider>[_dossier()],
       );
 
-      await _taper(tester, t.dossiers.approuver);
+      await _taper(tester, t.dossiers.refuser);
+      // 02D ouvert : titre, corps, champ etiquete, aide ; rien n'est parti.
+      expect(find.text(t.dossiers.refus.corps), findsOneWidget);
+      expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+      expect(find.text(t.dossiers.refus.aide), findsOneWidget);
       expect(service.verdicts, isEmpty);
 
-      // Production : les cases restent fermees tant que la piece n'a pas ete
-      // affichee (AD-7, P-ADM-06 point 5).
-      await _taper(tester, t.dossiers.pointLisible);
-      await _allerA(tester, t.dossiers.approuver);
-      expect(_action(tester, t.dossiers.approuver).onPress, isNull);
-      await _voirEtFermer(tester);
+      // Confirmer a vide, puis avec des espaces seuls : erreur, aucun appel.
+      await tester.tap(find.text(t.dossiers.refuser).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+      await tester.enterText(find.byType(TextField), '   ');
+      await tester.tap(find.text(t.dossiers.refuser).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+      expect(service.verdicts, isEmpty);
 
-      for (final String point in <String>[
-        t.dossiers.pointLisible,
-        t.dossiers.pointNom,
-        t.dossiers.pointValidite,
-      ]) {
-        await _taper(tester, point);
-      }
+      await tester.enterText(find.byType(TextField), '  Photo illisible.  ');
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.erreurVide), findsNothing);
+      await tester.tap(find.text(t.dossiers.refuser).last);
+      await tester.pumpAndSettle();
 
-      await _taper(tester, t.dossiers.approuver);
-
+      // decider_dossier appele UNE fois, motif trime ; retour local.
       expect(service.verdicts, hasLength(1));
-      expect(service.verdicts.single.approuve, isTrue);
-      expect(service.verdicts.single.motif, isNull);
+      expect(service.verdicts.single.approuve, isFalse);
+      expect(service.verdicts.single.motif, 'Photo illisible.');
+      expect(find.text(t.dossiers.refus.succes), findsOneWidget);
+      expect(find.text(t.dossiers.refus.corps), findsNothing);
     });
 
-    testWidgets('un refus sans motif ne part pas', (WidgetTester tester) async {
+    testWidgets('AD-8 : un motif saisi n\'est pas perdu sur Annuler', (
+      WidgetTester tester,
+    ) async {
       final FauxServiceValidation service = await _monter(
         tester,
         FauxServiceValidation()..file = <DossierAValider>[_dossier()],
       );
 
-      await _allerA(tester, t.dossiers.refuser);
-      await tester.tap(find.text(t.dossiers.refuser));
+      await _taper(tester, t.dossiers.refuser);
+      await tester.enterText(find.byType(TextField), 'Photo floue.');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.annuler));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.dossiers.refus.abandonQuestion),
+        findsOneWidget,
+        reason: find
+            .byType(Text)
+            .evaluate()
+            .map((Element e) => (e.widget as Text).data)
+            .join(' | '),
+      );
+
+      await tester.tap(find.text(t.dossiers.refus.continuerSaisie));
+      await tester.pumpAndSettle();
+      expect(find.text('Photo floue.'), findsOneWidget);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.abandonQuestion), findsOneWidget);
+      await tester.tap(find.text(t.dossiers.refus.abandonner));
       await tester.pumpAndSettle();
 
-      // La base refuse aussi un verdict negatif sans motif : l ecran ne fait
-      // que l annoncer plus tot.
-      await _allerA(tester, t.dossiers.motifRequis);
-      expect(find.text(t.dossiers.motifRequis), findsOneWidget);
-      // La confirmation du refus en ligne (transitoire jusqu'a AD-8) est le
-      // second « Refuser le dossier », sous le motif.
-      await tester.ensureVisible(find.text(t.dossiers.refuser).last);
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.dossiers.refuser).last);
-      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.corps), findsNothing);
       expect(service.verdicts, isEmpty);
-
-      await tester.enterText(find.byType(TextField), 'Photo illisible.');
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.dossiers.refuser).last);
-      await tester.pumpAndSettle();
-
-      expect(service.verdicts.single.approuve, isFalse);
-      expect(service.verdicts.single.motif, 'Photo illisible.');
     });
-
     testWidgets('AD-7 : ni journalisation ni URL dans le detail ; « Voir la '
         'piece » signe par le mecanisme existant et la validation se rouvre', (
       WidgetTester tester,
@@ -289,8 +325,10 @@ void main() {
       await _taper(tester, t.dossiers.pointLisible);
       await _taper(tester, t.dossiers.pointNom);
       await _taper(tester, t.dossiers.pointValidite);
-      await _taper(tester, t.dossiers.approuver);
-      expect(service.verdicts.single.approuve, isTrue);
+      // AD-8, Q21 : en production 02E reste ferme (consequence inconnue).
+      await _allerA(tester, t.dossiers.approuver);
+      expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+      expect(service.verdicts, isEmpty);
     });
 
     testWidgets('AD-7 : une signature en echec (404) garde la validation '

@@ -40,7 +40,7 @@ class DetailDossier extends ConsumerWidget {
   final String id;
 
   /// Appele apres une decision reussie, avec l'identifiant decide.
-  final void Function(String id) onDecision;
+  final void Function(String id, String message) onDecision;
 
   /// Faux en panneau unique : le titre est deja dans l'en-tete de page.
   final bool avecTitre;
@@ -106,7 +106,7 @@ class DetailDossier extends ConsumerWidget {
             child: RevueDossier(
               dossier: d,
               avecTitre: avecTitre,
-              onDecision: () => onDecision(id),
+              onDecision: (String message) => onDecision(id, message),
               onActualiser: () => actualiserDossiers(ref),
             ),
           );

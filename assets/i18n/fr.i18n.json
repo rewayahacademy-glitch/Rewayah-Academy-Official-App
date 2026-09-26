@@ -989,11 +989,45 @@
     "verdict": "Décision",
     "approuver": "Valider le dossier",
     "refuser": "Refuser le dossier",
-    "motif": "Ce qui ne va pas, en une phrase",
-    "motifRequis": "Un refus doit dire ce qui ne va pas : la famille n'a que cette phrase pour corriger.",
     "journalisation": "Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.",
     "genreManquant": "Renseignez votre genre dans votre profil avant de consulter un dossier.",
-    "erreur": "La décision n'a pas abouti. Réessayez dans un instant."
+    "refus": {
+      "titre": "Refuser le dossier",
+      "nomType": "{nom} · {type}",
+      "corps": "Indiquez le motif qui sera affiché à la personne concernée.",
+      "champ": "Motif du refus",
+      "aide": "Expliquez ce qui doit être corrigé, sans donnée interne ni commentaire personnel.",
+      "erreurVide": "Indiquez le motif du refus.",
+      "tropLong": "Le motif dépasse la longueur autorisée.",
+      "envoi": "Refus en cours…",
+      "erreur": "Le dossier n'a pas pu être refusé.",
+      "conflit": "Ce dossier a été traité par un autre membre de l'équipe.",
+      "horsLigne": "Vous êtes hors ligne. Le refus n’a pas été envoyé.",
+      "inconnu": "Le résultat du refus n’est pas encore confirmé.",
+      "interdit": "Vous ne pouvez plus refuser ce dossier.",
+      "indisponible": "Le refus est indisponible pour le moment.",
+      "succes": "Dossier refusé.",
+      "abandonQuestion": "Abandonner le motif saisi ?",
+      "continuerSaisie": "Continuer la saisie",
+      "abandonner": "Abandonner"
+    },
+    "validation": {
+      "titre": "Valider ce dossier ?",
+      "corpsActivation": "Le dossier de {nom} sera validé. Son compte pourra accéder à son espace.",
+      "corpsDocumentaire": "Le dossier de {nom} sera validé. Les autres conditions d’accès resteront applicables.",
+      "indisponible": "La validation est indisponible pour le moment.",
+      "envoi": "Validation en cours…",
+      "erreur": "Le dossier n'a pas pu être validé.",
+      "horsLigne": "Vous êtes hors ligne. La validation n’a pas été envoyée.",
+      "inconnu": "Le résultat de la validation n’est pas encore confirmé.",
+      "plusPret": "Ce dossier n’est plus prêt à être validé.",
+      "interdit": "Vous ne pouvez plus valider ce dossier.",
+      "succes": "Dossier validé."
+    },
+    "decision": {
+      "verifierResultat": "Vérifier le résultat",
+      "dejaTraite": "Ce dossier a déjà été traité."
+    }
   },
   "admin": {
     "tableau": {

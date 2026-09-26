@@ -85,6 +85,9 @@ enum CodeErreurRevue {
   typeNonPrisEnCharge,
   motifRequis,
 
+  /// Q30 : le motif depasse la longueur admise par le serveur.
+  motifTropLong,
+
   /// Meme `command_id`, autre charge.
   commandeIncoherente,
 

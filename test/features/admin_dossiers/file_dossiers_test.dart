@@ -153,6 +153,9 @@ void main() {
     await tester.ensureVisible(find.text(t.dossiers.approuver));
     await tester.tap(find.text(t.dossiers.approuver));
     await _stabiliser(tester);
+    // AD-8 : 02E, puis la confirmation.
+    await tester.tap(find.text(t.dossiers.approuver).last);
+    await _stabiliser(tester);
     expect(
       etat.dossiers[DonneesDossiersDemo.enseignantNominal]!.statut,
       StatutRevue.valide,
@@ -228,6 +231,9 @@ void main() {
     }
     await tester.ensureVisible(find.text(t.dossiers.approuver));
     await tester.tap(find.text(t.dossiers.approuver));
+    await _stabiliser(tester);
+    // AD-8 : 02E, puis la confirmation.
+    await tester.tap(find.text(t.dossiers.approuver).last);
     await _stabiliser(tester);
     expect(_ligne('Omar'), findsNothing);
     expect(find.text(t.dossiers.verifications), findsNothing);
@@ -358,6 +364,9 @@ void main() {
     }
     await tester.ensureVisible(find.text(t.dossiers.approuver));
     await tester.tap(find.text(t.dossiers.approuver));
+    await _stabiliser(tester);
+    // AD-8 : 02E, puis la confirmation.
+    await tester.tap(find.text(t.dossiers.approuver).last);
     await _stabiliser(tester);
     expect(_ligne('Omar'), findsNothing);
     expect(find.text(t.dossiers.aucun), findsOneWidget);

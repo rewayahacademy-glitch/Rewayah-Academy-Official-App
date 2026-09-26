@@ -1,0 +1,547 @@
+// Les surfaces de decision (AD-8) : refus ADM-02D et validation ADM-02E.
+// Toutes deux par `AppBottomSheet.ouvrir` (aucun fork) : seul le contenu est
+// nouveau. L'envoi passe par le port, l'etat vit dans
+// `decisionsDossiersProvider` (porte par la page).
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/capacites/port_revue_dossiers.dart';
+import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/groupe_reglages.dart';
+import 'decision_dossier.dart';
+import 'file_dossiers.dart' show actualiserDossiers;
+import 'textes_dossier.dart';
+
+/// Ouvre la surface de decision d'un dossier. [motif] est detenu par la
+/// revue (conserve tant qu'elle vit, sauf « Abandonner ») ; exige pour un
+/// refus. Se termine a la fermeture de la surface, quel qu'en soit le chemin.
+Future<void> ouvrirDecision(
+  BuildContext context, {
+  required DossierPourRevue dossier,
+  required DecisionDossier decision,
+  required Set<String> verifications,
+  TextEditingController? motif,
+}) async {
+  final bool refus = decision == DecisionDossier.refuser;
+  assert(!refus || motif != null, 'un refus exige un controleur de motif');
+  final _EtatSurface surface = _EtatSurface();
+  await AppBottomSheet.ouvrir<void>(
+    context,
+    titre: refus ? t.dossiers.refus.titre : t.dossiers.validation.titre,
+    constructeur: (BuildContext _) => _Corps(
+      dossier: dossier,
+      decision: decision,
+      motif: motif,
+      surface: surface,
+    ),
+    actions: (BuildContext _) => _Actions(
+      dossier: dossier,
+      decision: decision,
+      verifications: verifications,
+      motif: motif,
+      surface: surface,
+    ),
+  );
+}
+
+/// L'erreur locale du motif, partagee entre le corps et les actions.
+///
+/// ponytail: jamais dispose explicitement -- la future d'`ouvrir` se complete
+/// au pop, AVANT l'animation de sortie qui lit encore ce notifiant. Sans
+/// ressource native (le FocusNode du champ est detenu par le corps), le
+/// ramasse-miettes suffit.
+class _EtatSurface extends ChangeNotifier {
+  bool _erreurVide = false;
+
+  /// Pose par le corps : ramene le focus dans le champ.
+  VoidCallback? focaliserChamp;
+
+  bool get erreurVide => _erreurVide;
+
+  set erreurVide(bool v) {
+    if (v != _erreurVide) {
+      _erreurVide = v;
+      notifyListeners();
+    }
+  }
+}
+
+String _nom(DossierPourRevue d) => '${d.prenom} ${d.nom}'.trim();
+
+/// Le message de l'etat, ou nul.
+String? _message(
+  EtatDecision? e, {
+  required bool refus,
+  required bool horsLigne,
+}) => switch (e) {
+  null when horsLigne =>
+    refus ? t.dossiers.refus.horsLigne : t.dossiers.validation.horsLigne,
+  DecisionEchec() when horsLigne =>
+    refus ? t.dossiers.refus.horsLigne : t.dossiers.validation.horsLigne,
+  DecisionEchec(code: CodeErreurRevue.motifTropLong) =>
+    t.dossiers.refus.tropLong,
+  DecisionEchec() =>
+    refus ? t.dossiers.refus.erreur : t.dossiers.validation.erreur,
+  DecisionConflit() => t.dossiers.refus.conflit,
+  DecisionInconnue() || DecisionVerification() =>
+    refus ? t.dossiers.refus.inconnu : t.dossiers.validation.inconnu,
+  DecisionInterdite() =>
+    refus ? t.dossiers.refus.interdit : t.dossiers.validation.interdit,
+  DecisionIndisponible() =>
+    refus ? t.dossiers.refus.indisponible : t.dossiers.validation.indisponible,
+  DecisionPlusPrete() => t.dossiers.validation.plusPret,
+  DecisionTraitee() => t.dossiers.decision.dejaTraite,
+  _ => null,
+};
+
+class _Corps extends ConsumerStatefulWidget {
+  const _Corps({
+    required this.dossier,
+    required this.decision,
+    required this.motif,
+    required this.surface,
+  });
+
+  final DossierPourRevue dossier;
+  final DecisionDossier decision;
+  final TextEditingController? motif;
+  final _EtatSurface surface;
+
+  @override
+  ConsumerState<_Corps> createState() => _CorpsState();
+}
+
+class _CorpsState extends ConsumerState<_Corps> {
+  final FocusNode _champ = FocusNode(debugLabel: 'adm02d-motif');
+
+  DossierPourRevue get dossier => widget.dossier;
+  TextEditingController? get motif => widget.motif;
+  _EtatSurface get surface => widget.surface;
+  bool get _refus => widget.decision == DecisionDossier.refuser;
+
+  @override
+  void initState() {
+    super.initState();
+    surface.focaliserChamp = _champ.requestFocus;
+  }
+
+  @override
+  void dispose() {
+    surface.focaliserChamp = null;
+    _champ.dispose();
+    super.dispose();
+  }
+
+  Future<void> _demanderAbandon(BuildContext context) async {
+    final bool? abandon = await AppBottomSheet.ouvrir<bool>(
+      context,
+      titre: t.dossiers.refus.abandonQuestion,
+      constructeur: (BuildContext _) => const SizedBox.shrink(),
+      actions: (BuildContext c) => _AvecFocus(
+        constructeur: (FocusNode n) => _RangeeActions(
+          enfants: <Widget>[
+            ActionPrincipale(
+              libelle: t.dossiers.refus.continuerSaisie,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              focusNode: n,
+              onPress: () => Navigator.of(c).pop(false),
+            ),
+            ActionPrincipale(
+              libelle: t.dossiers.refus.abandonner,
+              niveau: NiveauAction.destructive,
+              pleineLargeur: false,
+              onPress: () => Navigator.of(c).pop(true),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (abandon ?? false) {
+      motif?.clear();
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+    } else if (context.mounted) {
+      _champ.requestFocus();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final EtatDecision? e = ref.watch(
+      decisionsDossiersProvider.select(
+        (Map<String, EtatDecision> m) => m[dossier.dossierId],
+      ),
+    );
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final String? message = _message(e, refus: _refus, horsLigne: horsLigne);
+    final Widget statut = message == null
+        ? const SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsetsDirectional.only(top: AppSpacing.lg),
+            child: Semantics(
+              liveRegion: true,
+              child: Text(
+                message,
+                style:
+                    (e is DecisionEchec ? palette.inkAlert : palette.inkMuted)
+                        .applyTo(textes.bodyMedium ?? const TextStyle()),
+              ),
+            ),
+          );
+
+    if (!_refus) {
+      final String nom = nomOuDefaut(_nom(dossier));
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                libelle: t.dossiers.revue.typeDossier,
+                valeur: typeDossier(dossier.role),
+              ),
+            ],
+          ),
+          Ecart.vLg,
+          Text(
+            dossier.consequence == ConsequenceValidation.activationPossible
+                ? t.dossiers.validation.corpsActivation(nom: nom)
+                : t.dossiers.validation.corpsDocumentaire(nom: nom),
+            style: textes.bodyMedium,
+          ),
+          statut,
+        ],
+      );
+    }
+
+    final TextEditingController champ = motif!;
+    return ListenableBuilder(
+      listenable: Listenable.merge(<Listenable>[champ, surface]),
+      builder: (BuildContext context, Widget? _) => PopScope(
+        canPop: champ.text.trim().isEmpty || (e?.nonResolue ?? false),
+        onPopInvokedWithResult: (bool fait, Object? _) {
+          if (!fait) {
+            unawaited(_demanderAbandon(context));
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              t.dossiers.refus.nomType(
+                nom: nomOuDefaut(_nom(dossier)),
+                type: typeDossier(dossier.role),
+              ),
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vSm,
+            Text(t.dossiers.refus.corps, style: textes.bodyMedium),
+            Ecart.vLg,
+            TextField(
+              controller: champ,
+              focusNode: _champ,
+              autofocus: true,
+              minLines: 3,
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              textInputAction: TextInputAction.newline,
+              onChanged: (String v) {
+                if (v.trim().isNotEmpty) {
+                  surface.erreurVide = false;
+                }
+              },
+              decoration: InputDecoration(
+                labelText: t.dossiers.refus.champ,
+                helperText: t.dossiers.refus.aide,
+                helperMaxLines: 3,
+                errorText: surface.erreurVide
+                    ? t.dossiers.refus.erreurVide
+                    : null,
+                errorMaxLines: 3,
+              ),
+            ),
+            statut,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Les actions : Wrap a la fin, secondaire puis principale, 8 d'ecart.
+class _RangeeActions extends StatelessWidget {
+  const _RangeeActions({required this.enfants});
+
+  final List<Widget> enfants;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+    alignment: WrapAlignment.end,
+    spacing: AppSpacing.sm,
+    runSpacing: AppSpacing.sm,
+    children: <Widget>[
+      for (final Widget e in enfants) IntrinsicWidth(child: e),
+    ],
+  );
+}
+
+/// Donne un noeud focalise apres la premiere image (ActionPrincipale n'a
+/// pas d'autofocus).
+class _AvecFocus extends StatefulWidget {
+  const _AvecFocus({required this.constructeur});
+
+  final Widget Function(FocusNode noeud) constructeur;
+
+  @override
+  State<_AvecFocus> createState() => _AvecFocusState();
+}
+
+class _AvecFocusState extends State<_AvecFocus> {
+  final FocusNode _noeud = FocusNode(debugLabel: 'surface-autofocus');
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted && _noeud.context != null) {
+        _noeud.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _noeud.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.constructeur(_noeud);
+}
+
+class _Actions extends ConsumerStatefulWidget {
+  const _Actions({
+    required this.dossier,
+    required this.decision,
+    required this.verifications,
+    required this.motif,
+    required this.surface,
+  });
+
+  final DossierPourRevue dossier;
+  final DecisionDossier decision;
+  final Set<String> verifications;
+  final TextEditingController? motif;
+  final _EtatSurface surface;
+
+  @override
+  ConsumerState<_Actions> createState() => _ActionsState();
+}
+
+class _ActionsState extends ConsumerState<_Actions> {
+  final FocusNode _annuler = FocusNode(debugLabel: 'surface-annuler');
+  final FocusNode _etat = FocusNode(debugLabel: 'surface-action-etat');
+
+  bool get _refus => widget.decision == DecisionDossier.refuser;
+  String get _id => widget.dossier.dossierId;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!_refus) {
+      // 02E : le focus va sur Annuler, jamais sur Valider.
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && _annuler.context != null) {
+          _annuler.requestFocus();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _annuler.dispose();
+    _etat.dispose();
+    super.dispose();
+  }
+
+  void _fermer() {
+    if (mounted) {
+      unawaited(Navigator.of(context).maybePop());
+    }
+  }
+
+  void _fermerApres(EtatDecision e) {
+    if (e is DecisionReussie &&
+        mounted &&
+        (ModalRoute.of(context)?.isCurrent ?? false)) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _confirmer(EtatDecision? e) {
+    if (ref.read(horsLigneProvider).value ?? false) {
+      return;
+    }
+    final TextEditingController? motif = widget.motif;
+    if (_refus && (motif == null || motif.text.trim().isEmpty)) {
+      widget.surface.erreurVide = true;
+      widget.surface.focaliserChamp?.call();
+      return;
+    }
+    final CommandeDecision c = e is DecisionEchec
+        // Reessayer : la MEME commande, la meme charge (P-ADM-10.5).
+        ? e.commande
+        : CommandeDecision(
+            dossierId: _id,
+            revision: widget.dossier.revision,
+            decision: widget.decision,
+            verifications: widget.verifications,
+            motif: _refus ? motif!.text : null,
+          );
+    unawaited(
+      ref
+          .read(decisionsDossiersProvider.notifier)
+          .envoyer(c)
+          .then(_fermerApres),
+    );
+  }
+
+  void _verifier() => unawaited(
+    ref
+        .read(decisionsDossiersProvider.notifier)
+        .verifier(_id)
+        .then(_fermerApres),
+  );
+
+  /// Actualiser, retour aux dossiers, fermer : on oublie et on relit.
+  void _relire({bool purgerMotif = false}) {
+    ref.read(decisionsDossiersProvider.notifier).oublier(_id);
+    actualiserDossiers(ref);
+    if (purgerMotif) {
+      widget.motif?.clear();
+    }
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _annulerCommande() {
+    ref.read(decisionsDossiersProvider.notifier).oublier(_id);
+    _fermer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<EtatDecision?>(
+      decisionsDossiersProvider.select((Map<String, EtatDecision> m) => m[_id]),
+      (EtatDecision? avant, EtatDecision? apres) {
+        if (apres.runtimeType != avant.runtimeType) {
+          WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+            if (mounted && _etat.context != null) {
+              _etat.requestFocus();
+            }
+          });
+        }
+      },
+    );
+    final EtatDecision? e = ref.watch(
+      decisionsDossiersProvider.select((Map<String, EtatDecision> m) => m[_id]),
+    );
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final String libelle = _refus ? t.dossiers.refuser : t.dossiers.approuver;
+    final NiveauAction niveau = _refus
+        ? NiveauAction.destructive
+        : NiveauAction.principale;
+
+    Widget unique(String l, VoidCallback f, {NiveauAction? n}) =>
+        _RangeeActions(
+          enfants: <Widget>[
+            ActionPrincipale(
+              libelle: l,
+              niveau: n ?? NiveauAction.secondaire,
+              pleineLargeur: false,
+              focusNode: _etat,
+              onPress: f,
+            ),
+          ],
+        );
+
+    return switch (e) {
+      DecisionConflit() || DecisionPlusPrete() => unique(
+        t.dossiers.revue.etats.actualiserDossier,
+        _relire,
+      ),
+      DecisionTraitee() => unique(
+        t.dossiers.revue.etats.retourDossiers,
+        _relire,
+      ),
+      DecisionInterdite() => unique(
+        t.commun.fermer,
+        () => _relire(purgerMotif: true),
+      ),
+      DecisionIndisponible() => unique(t.commun.annuler, _annulerCommande),
+      DecisionInconnue() || DecisionVerification() => _RangeeActions(
+        enfants: <Widget>[
+          ActionPrincipale(
+            libelle: t.commun.fermer,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            onPress: e is DecisionVerification ? null : _fermer,
+          ),
+          ActionPrincipale(
+            libelle: t.dossiers.decision.verifierResultat,
+            pleineLargeur: false,
+            focusNode: _etat,
+            enCours: e is DecisionVerification,
+            onPress: e is DecisionVerification ? null : _verifier,
+          ),
+        ],
+      ),
+      _ => _RangeeActions(
+        enfants: <Widget>[
+          ActionPrincipale(
+            libelle: t.commun.annuler,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            focusNode: _annuler,
+            // Pendant l'envoi, Annuler laisserait croire a une annulation
+            // (Q-AD8-8) : Echap et retour ferment sans rien annuler.
+            onPress: e is DecisionEnvoi ? null : _annulerCommande,
+          ),
+          ActionPrincipale(
+            libelle: switch (e) {
+              DecisionEnvoi() =>
+                _refus ? t.dossiers.refus.envoi : t.dossiers.validation.envoi,
+              DecisionEchec() when !horsLigne => t.commun.reessayer,
+              _ => libelle,
+            },
+            niveau: niveau,
+            pleineLargeur: false,
+            focusNode: e is DecisionEchec ? _etat : null,
+            enCours: e is DecisionEnvoi,
+            onPress: e is DecisionEnvoi || horsLigne
+                ? null
+                : () => _confirmer(e),
+          ),
+        ],
+      ),
+    };
+  }
+}

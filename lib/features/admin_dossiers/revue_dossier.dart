@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/domain/enums.dart';
-import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -14,11 +13,12 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
+import 'decision_dossier.dart';
 import 'file_dossiers.dart' show actualiserDossiers;
+import 'surfaces_decision.dart';
 import 'textes_dossier.dart';
 import 'visionneuse_piece.dart';
 
@@ -42,8 +42,9 @@ class RevueDossier extends ConsumerStatefulWidget {
   /// Le dossier revu, tel que le port le rend.
   final DossierPourRevue dossier;
 
-  /// Appele apres une decision reussie.
-  final VoidCallback onDecision;
+  /// Appele apres une decision confirmee par le serveur, avec le message du
+  /// retour local (« Dossier refuse. » ou « Dossier valide. »).
+  final void Function(String message) onDecision;
 
   /// Relit le dossier (hors ligne, dossier modifie).
   final VoidCallback onActualiser;
@@ -61,10 +62,16 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
   final Map<String, FocusNode> _focus = <String, FocusNode>{};
   final FocusNode _focusTitre = FocusNode(debugLabel: 'adm02b-titre');
   final FocusNode _focusVoirPiece = FocusNode(debugLabel: 'adm02b-voir-piece');
+  final FocusNode _focusRefuser = FocusNode(debugLabel: 'adm02b-refuser');
+  final FocusNode _focusValider = FocusNode(debugLabel: 'adm02b-valider');
+
+  /// Le motif de 02D, detenu ici : conserve tant que la revue vit (cle
+  /// dossier + revision), sauf « Abandonner ».
   final TextEditingController _motif = TextEditingController();
-  bool _refusEnCours = false;
-  bool _envoi = false;
-  bool _perime = false;
+  bool _decide = false;
+
+  /// Vrai tant que 02D ou 02E est ouverte : le statut n'est dit qu'une fois.
+  bool _surfaceOuverte = false;
 
   /// La visionneuse a affiche la piece (P-ADM-06 point 5) ; retombe a faux
   /// sur un echec de lecture.
@@ -72,7 +79,6 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
 
   /// Les verifications s'ouvrent : pas de lecture exigee, ou piece lue.
   bool get _lectureFaite => !widget.dossier.lectureRequise || _pieceLue;
-  String? _erreur;
 
   @override
   void dispose() {
@@ -81,6 +87,8 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
     }
     _focusTitre.dispose();
     _focusVoirPiece.dispose();
+    _focusRefuser.dispose();
+    _focusValider.dispose();
     _motif.dispose();
     super.dispose();
   }
@@ -147,47 +155,44 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
     }
   }
 
-  Future<void> _decider({required bool approuve}) async {
-    final String? documentId = widget.dossier.documentId;
-    if (documentId == null) {
+  /// Ouvre 02D ou 02E, puis rend le focus au declencheur (repli : titre).
+  Future<void> _ouvrir(DecisionDossier decision) async {
+    final bool refus = decision == DecisionDossier.refuser;
+    // Une commande close (echec, conflit...) laissee par une surface fermee
+    // est oubliee : la nouvelle ouverture repart d'une confirmation neuve.
+    ref
+        .read(decisionsDossiersProvider.notifier)
+        .oublier(widget.dossier.dossierId);
+    setState(() => _surfaceOuverte = true);
+    await ouvrirDecision(
+      context,
+      dossier: widget.dossier,
+      decision: decision,
+      verifications: <String>{..._faites},
+      motif: refus ? _motif : null,
+    );
+    if (mounted) {
+      setState(() => _surfaceOuverte = false);
+    }
+    // Apres une decision, le focus appartient a la page (dossier suivant).
+    if (!mounted || _decide) {
       return;
     }
-    setState(() {
-      _envoi = true;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(serviceValidationProvider)
-          .decider(
-            documentId: documentId,
-            approuve: approuve,
-            motif: approuve ? null : _motif.text.trim(),
-          );
-      // Les trois caches de la file et du detail, comme « Actualiser ».
-      actualiserDossiers(ref);
-      if (mounted) {
-        widget.onDecision();
-      }
-    } on ErreurRevueDossier catch (e) {
-      if (mounted) {
-        setState(() {
-          if (e.code == CodeErreurRevue.perime) {
-            _perime = true;
-          } else {
-            _erreur = t.dossiers.erreur;
-          }
-        });
-      }
-    } on Object {
-      if (mounted) {
-        setState(() => _erreur = t.dossiers.erreur);
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _envoi = false);
-      }
+    final FocusNode n = refus ? _focusRefuser : _focusValider;
+    (n.context != null ? n : _focusTitre).requestFocus();
+  }
+
+  /// Apres confirmation serveur seulement : le message du retour local.
+  void _surDecision(EtatDecision? avant, EtatDecision? apres) {
+    if (apres is! DecisionReussie) {
+      return;
     }
+    final String message = apres.commande.decision == DecisionDossier.refuser
+        ? t.dossiers.refus.succes
+        : t.dossiers.validation.succes;
+    _decide = true;
+    actualiserDossiers(ref);
+    widget.onDecision(message);
   }
 
   @override
@@ -196,6 +201,18 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    ref.listen<EtatDecision?>(
+      decisionsDossiersProvider.select(
+        (Map<String, EtatDecision> m) => m[widget.dossier.dossierId],
+      ),
+      _surDecision,
+    );
+    final EtatDecision? commande = ref.watch(
+      decisionsDossiersProvider.select(
+        (Map<String, EtatDecision> m) => m[widget.dossier.dossierId],
+      ),
+    );
+    final bool nonResolue = commande?.nonResolue ?? false;
     final double section = MediaQuery.sizeOf(context).width >= 600
         ? AppSpacing.xxxl
         : AppSpacing.xxl;
@@ -203,13 +220,16 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
     final List<VerificationRevue> manquantes = _manquantes;
     final bool canalAbsent =
         d.documentId == null && d.exigencePiece == ExigencePiece.dispensee;
-    final bool bloque = horsLigne || _envoi || _perime;
+    final bool bloque = horsLigne || nonResolue;
+    final bool validationIndeterminee =
+        d.consequence == ConsequenceValidation.indeterminee;
     final bool peutValider =
         d.peutValider &&
         _lectureFaite &&
         manquantes.isEmpty &&
         d.documentId != null &&
         !canalAbsent &&
+        !validationIndeterminee &&
         !bloque;
     final bool peutRefuser = d.peutRefuser && !canalAbsent && !bloque;
     final List<AccordSoumis> acceptes = <AccordSoumis>[
@@ -279,19 +299,6 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
             ],
           ),
         ],
-        if (_perime) ...<Widget>[
-          Ecart.vLg,
-          Semantics(
-            liveRegion: true,
-            child: EtatSysteme(
-              nature: NatureEtat.ressourceExpiree,
-              titre: t.dossiers.revue.etats.modifie,
-              phrase: '',
-              libelleAction: t.dossiers.revue.etats.actualiserDossier,
-              onAction: widget.onActualiser,
-            ),
-          ),
-        ],
         Ecart.vLg,
         Wrap(
           alignment: WrapAlignment.end,
@@ -300,76 +307,76 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
           // IntrinsicWidth : le bouton au contenu (le Container centre
           // d'ActionPrincipale s'etirerait sinon a la largeur du Wrap).
           children: <Widget>[
-            // Motif ouvert : le seul « Refuser » visible est celui qui envoie
-            // (un seul bouton destructif). Motif en ligne provisoire jusqu'a
-            // AD-8 (ADM-02D), AD-BR-07.
-            if (!(_refusEnCours && peutRefuser))
-              IntrinsicWidth(
-                child: ActionPrincipale(
-                  libelle: t.dossiers.refuser,
-                  niveau: NiveauAction.destructive,
-                  pleineLargeur: false,
-                  onPress: peutRefuser
-                      ? () => setState(() => _refusEnCours = true)
-                      : null,
-                ),
+            IntrinsicWidth(
+              child: ActionPrincipale(
+                libelle: t.dossiers.refuser,
+                niveau: NiveauAction.destructive,
+                pleineLargeur: false,
+                focusNode: _focusRefuser,
+                onPress: peutRefuser
+                    ? () => unawaited(_ouvrir(DecisionDossier.refuser))
+                    : null,
               ),
+            ),
             IntrinsicWidth(
               child: ActionPrincipale(
                 libelle: t.dossiers.approuver,
                 pleineLargeur: false,
-                enCours: _envoi && !_refusEnCours,
+                focusNode: _focusValider,
                 onPress: peutValider
-                    ? () => unawaited(_decider(approuve: true))
+                    ? () => unawaited(_ouvrir(DecisionDossier.valider))
                     : null,
               ),
             ),
           ],
         ),
+        if (!_surfaceOuverte &&
+            (commande is DecisionInconnue ||
+                commande is DecisionVerification)) ...<Widget>[
+          Ecart.vXs,
+          // Surface fermee : le statut reste sous les actions (P-ADM-10.6).
+          Semantics(
+            liveRegion: true,
+            child: Wrap(
+              alignment: WrapAlignment.end,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSpacing.sm,
+              children: <Widget>[
+                Text(
+                  commande!.commande.decision == DecisionDossier.refuser
+                      ? t.dossiers.refus.inconnu
+                      : t.dossiers.validation.inconnu,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+                ActionPrincipale(
+                  libelle: t.dossiers.decision.verifierResultat,
+                  niveau: NiveauAction.tertiaire,
+                  pleineLargeur: false,
+                  enCours: commande is DecisionVerification,
+                  onPress: commande is DecisionVerification
+                      ? null
+                      : () => unawaited(
+                          ref
+                              .read(decisionsDossiersProvider.notifier)
+                              .verifier(d.dossierId),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ],
         _RaisonsDecision(
           horsLigne: horsLigne,
           dossier: d,
           canalAbsent: canalAbsent,
           lectureAttendue: !_lectureFaite,
           verificationsManquantes: manquantes.isNotEmpty,
+          validationIndeterminee: validationIndeterminee,
           onReessayer: widget.onActualiser,
           onAllerPremiere: _allerPremiere,
         ),
-        if (_refusEnCours && peutRefuser) ...<Widget>[
-          Ecart.vLg,
-          TextField(
-            controller: _motif,
-            onChanged: (String _) => setState(() {}),
-            maxLines: 2,
-            decoration: InputDecoration(labelText: t.dossiers.motif),
-          ),
-          Ecart.vSm,
-          Text(t.dossiers.motifRequis, style: textes.bodySmall),
-          Ecart.vMd,
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: IntrinsicWidth(
-              child: ActionPrincipale(
-                libelle: t.dossiers.refuser,
-                enCours: _envoi,
-                niveau: NiveauAction.destructive,
-                pleineLargeur: false,
-                onPress: _motif.text.trim().isEmpty
-                    ? null
-                    : () => unawaited(_decider(approuve: false)),
-              ),
-            ),
-          ),
-        ],
-        if (_erreur != null) ...<Widget>[
-          Ecart.vMd,
-          Text(
-            _erreur!,
-            style: palette.inkAlert.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -510,6 +517,7 @@ class _RaisonsDecision extends StatelessWidget {
     required this.canalAbsent,
     required this.lectureAttendue,
     required this.verificationsManquantes,
+    required this.validationIndeterminee,
     required this.onReessayer,
     required this.onAllerPremiere,
   });
@@ -521,6 +529,10 @@ class _RaisonsDecision extends StatelessWidget {
   /// La piece doit etre vue avant de verifier (production, AD-7).
   final bool lectureAttendue;
   final bool verificationsManquantes;
+
+  /// La consequence de la validation est inconnue : 02E ne s'ouvre pas
+  /// (13.4, Q21).
+  final bool validationIndeterminee;
   final VoidCallback onReessayer;
   final VoidCallback onAllerPremiere;
 
@@ -552,6 +564,8 @@ class _RaisonsDecision extends StatelessWidget {
       raison = Text(t.dossiers.revue.etats.decisionIndisponible, style: style);
     } else if (b.contains(BlocageRevue.accordManquant)) {
       raison = Text(t.dossiers.revue.etats.accordManquant, style: style);
+    } else if (validationIndeterminee && dossier.peutValider) {
+      raison = Text(t.dossiers.validation.indisponible, style: style);
     } else if (b.isNotEmpty || lectureAttendue) {
       raison = Text(t.dossiers.revue.pasPret, style: style);
     } else if (verificationsManquantes) {

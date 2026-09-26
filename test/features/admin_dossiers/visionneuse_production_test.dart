@@ -158,7 +158,12 @@ void main() {
     ]) {
       await _toucher(tester, find.text(point));
     }
-    await _toucher(tester, find.text(t.dossiers.approuver));
-    expect(service.verdicts.single.approuve, isTrue);
+    // AD-8, Q21 : la consequence est inconnue en production, 02E ne s'ouvre
+    // pas ; la raison est dite sous les actions (Q-AD8-1).
+    await tester.ensureVisible(find.text(t.dossiers.approuver));
+    await tester.pumpAndSettle();
+    expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+    expect(find.text(t.dossiers.validation.indisponible), findsOneWidget);
+    expect(service.verdicts, isEmpty);
   });
 }
