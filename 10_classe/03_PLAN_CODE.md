@@ -115,7 +115,7 @@ Tailles : mobile 390x844 @3 (zone sûre 47/34), web étroit 640x1000 @1 (gabarit
 | T6 | CLV-08 Supports | CLV-08 desktop, mobile, web étroit | faite |
 | T7 | CLV-10 fin enseignant + sorties de `/salle` (CLV-09, CLV-10, cahier) | CLV-10 desktop, mobile, web étroit | faite (retour de relecture corrigé) |
 | T8 | **À faire ensuite.** Rendu EN séance de `/salle` = SalleSeance (moitié de l'ancienne T7) | CLV-04, CLV-05, CLV-06 | à faire |
-| T9 | Branchement de `/tc/classe` sur SalleSeance + tests existants remis au vert | CLV-06, CLV-07 | à faire |
+| T9 | Branchement de `/tc/classe` sur SalleSeance + tests existants remis au vert | CLV-06, CLV-07 | faite (livrée comme « T8 », `85a900b`, voir `05_recette/CL/T8.md`) |
 | T10 | Recette : captures complètes, planches contre les 10 images, suite complète | les 10 | à faire |
 
 Le détail de chaque tâche suit (§8). Chaque agent lit §1 à §6 puis sa fiche.
