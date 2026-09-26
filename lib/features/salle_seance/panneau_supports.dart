@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -26,6 +27,9 @@ import 'vue_seance.dart';
 
 /// La largeur des vignettes du panneau (image CLV-08 : ≈ 48 px).
 const double _largeurVignette = AppSpacing.titreEcran - AppSpacing.xs;
+
+/// Volet et feuille : la vignette dense (images : ≈ 36 a 40 pt).
+const double _largeurVignetteCompacte = AppSpacing.xxxl + AppSpacing.xs;
 
 /// Le contenu du panneau Supports.
 class PanneauSupports extends StatelessWidget {
@@ -56,10 +60,18 @@ class PanneauSupports extends StatelessWidget {
     final bool voirToutClasse = forme != FormePanneau.colonne;
     // Volet et feuille : plus denses (images web etroit et telephone).
     final bool compact = forme != FormePanneau.colonne;
+    // Volet du web etroit : titres de ligne au registre 14 (image).
+    final bool serre = forme == FormePanneau.volet;
+    // Retrait interieur : cartes a ≈ 12 du bord du panneau (desktop) ou de
+    // l'ecran (feuille), titres a ≈ 16 (images CLV-08).
+    final double retrait = compact ? AppSpacing.xs : AppSpacing.sm;
     return ListView(
       key: const ValueKey<String>('panneau-supports'),
-      padding: EdgeInsets.only(
-        bottom: AppSpacing.md + MediaQuery.paddingOf(context).bottom,
+      padding: EdgeInsetsDirectional.fromSTEB(
+        retrait,
+        0,
+        retrait,
+        AppSpacing.md + MediaQuery.paddingOf(context).bottom,
       ),
       children: <Widget>[
         if (reprendre.isNotEmpty) ...<Widget>[
@@ -72,6 +84,7 @@ class PanneauSupports extends StatelessWidget {
               for (final SupportDisponible s in reprendre)
                 _LigneSupport(
                   compact: compact,
+                  serre: serre,
                   support: s,
                   onOuvrir: ouvrir == null || s.contenu == null
                       ? null
@@ -80,7 +93,7 @@ class PanneauSupports extends StatelessWidget {
                 ),
             ],
           ),
-          if (compact) Ecart.vSm else Ecart.vMd,
+          if (!compact) Ecart.vSm,
         ],
         if (recents.isNotEmpty) ...<Widget>[
           _TitreRubrique(
@@ -93,6 +106,7 @@ class PanneauSupports extends StatelessWidget {
               for (final SupportDisponible s in recents)
                 _LigneSupport(
                   compact: compact,
+                  serre: serre,
                   support: s,
                   onOuvrir: ouvrir == null || s.contenu == null
                       ? null
@@ -100,7 +114,7 @@ class PanneauSupports extends StatelessWidget {
                 ),
             ],
           ),
-          if (compact) Ecart.vSm else Ecart.vMd,
+          if (!compact) Ecart.vSm,
         ],
         if (classe.isNotEmpty) ...<Widget>[
           _TitreRubrique(
@@ -113,6 +127,7 @@ class PanneauSupports extends StatelessWidget {
               for (final SupportDisponible s in classe)
                 _LigneSupport(
                   compact: compact,
+                  serre: serre,
                   support: s,
                   onOuvrir: bibliotheque,
                   fonds: true,
@@ -121,7 +136,7 @@ class PanneauSupports extends StatelessWidget {
           ),
         ],
         if (bibliotheque != null) ...<Widget>[
-          if (compact) Ecart.vSm else Ecart.vMd,
+          Ecart.vSm,
           // La seule zone pleine du panneau.
           ActionPrincipale(
             key: const ValueKey<String>('voir-bibliotheque'),
@@ -152,37 +167,47 @@ class _TitreRubrique extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final VoidCallback? voirTout = onVoirTout;
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(
-        AppSpacing.xs,
-        AppSpacing.xs,
-        0,
-        AppSpacing.sm,
+    // Avec « Voir tout » : une ligne de la hauteur de sa cible tactile, sans
+    // marge en plus. Sans lien : le titre seul, pres de sa carte (images).
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: voirTout == null ? 0 : AppMetriques.of(context).cibleTactile,
       ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Semantics(
-              header: true,
-              child: Text(
-                titre,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: palette.inkStrong.applyTo(
-                  (compact
-                          ? Theme.of(context).textTheme.titleSmall
-                          : Theme.of(context).textTheme.titleMedium) ??
-                      const TextStyle(),
+      child: Padding(
+        padding: voirTout == null
+            ? const EdgeInsetsDirectional.fromSTEB(
+                AppSpacing.xs,
+                AppSpacing.xs,
+                0,
+                AppSpacing.sm,
+              )
+            : const EdgeInsetsDirectional.only(start: AppSpacing.xs),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: Text(
+                  titre,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: palette.inkStrong.applyTo(
+                    (compact
+                            ? Theme.of(context).textTheme.titleSmall
+                            : Theme.of(context).textTheme.titleMedium) ??
+                        const TextStyle(),
+                  ),
                 ),
               ),
             ),
-          ),
-          if (voirTout != null)
-            LienFleche(
-              libelle: t.salle.seance.panneauSupports.voirTout,
-              onPress: voirTout,
-            ),
-        ],
+            if (voirTout != null)
+              LienFleche(
+                libelle: t.salle.seance.panneauSupports.voirTout,
+                onPress: voirTout,
+                legende: true,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -228,7 +253,12 @@ class _LigneSupport extends StatelessWidget {
     this.boutonOuvrir = false,
     this.fonds = false,
     this.compact = false,
+    this.serre = false,
   });
+
+  /// Volet du web etroit : titres de ligne a la taille de odyMedium, pour
+  /// que « Les bonnes manieres » tienne sur une ligne a cote d'« Ouvrir ».
+  final bool serre;
 
   /// Volet et feuille : titres au registre inferieur, detail sur deux lignes.
   final bool compact;
@@ -250,11 +280,18 @@ class _LigneSupport extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final VoidCallback? ouvrir = onOuvrir;
     final String? surTitre = support.surTitre;
+    final TextStyle base =
+        (compact ? textes.labelLarge : textes.titleSmall) ?? const TextStyle();
     final TextStyle titre = palette.inkStrong.applyTo(
-      (compact ? textes.labelLarge : textes.titleSmall) ?? const TextStyle(),
+      serre
+          ? base.copyWith(
+              fontSize: textes.bodyMedium?.fontSize,
+              height: textes.bodyMedium?.height,
+            )
+          : base,
     );
     final Widget vignette = SizedBox(
-      width: _largeurVignette,
+      width: compact ? _largeurVignetteCompacte : _largeurVignette,
       child: fonds
           ? AspectRatio(
               aspectRatio: 1,
@@ -282,11 +319,16 @@ class _LigneSupport extends StatelessWidget {
             ),
     );
     final Widget corps = Padding(
-      padding: const EdgeInsets.all(AppSpacing.sm),
+      padding: compact
+          ? EdgeInsets.symmetric(
+              horizontal: serre ? AppSpacing.xs : AppSpacing.sm,
+              vertical: AppSpacing.xs + AppSpacing.xs / 2,
+            )
+          : const EdgeInsets.all(AppSpacing.sm),
       child: Row(
         children: <Widget>[
           ExcludeSemantics(child: vignette),
-          Ecart.hMd,
+          if (compact) Ecart.hSm else Ecart.hMd,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,6 +368,9 @@ class _LigneSupport extends StatelessWidget {
                 onPress: ouvrir,
                 niveau: NiveauAction.secondaire,
                 pleineLargeur: false,
+                // Petite pastille (≈ 70 x 34 sur les images), pas un bouton
+                // de formulaire.
+                compacte: true,
               )
             else
               IconTheme(

@@ -104,7 +104,7 @@ abstract final class DonneesSeanceDemo {
       detail: 'Support de cours · v2.0',
       rubrique: RubriqueSupport.reprendre,
       type: TypeRessource.lecon,
-      teinte: 3,
+      teinte: 9,
       monogramme: 'BM',
       contenu: support,
     ),
@@ -113,7 +113,7 @@ abstract final class DonneesSeanceDemo {
       titre: 'Fiche de mémorisation',
       detail: 'PDF · 12 pages · v1.1',
       rubrique: RubriqueSupport.recent,
-      teinte: 5,
+      teinte: 25,
       monogramme: 'FM',
       contenu: SupportSeance(
         chapitre: 'Chapitre 1',
@@ -133,7 +133,7 @@ abstract final class DonneesSeanceDemo {
       titre: 'Exercices – Chapitre 1',
       detail: 'PDF · 8 pages · v1.0',
       rubrique: RubriqueSupport.recent,
-      teinte: 8,
+      teinte: 3,
       monogramme: 'EX',
       contenu: SupportSeance(
         chapitre: 'Chapitre 1',

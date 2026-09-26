@@ -279,4 +279,63 @@ void main() {
       );
     });
   });
+
+  // Mesures sur les polices du depot (relecture T6) : en dernier, car le
+  // chargement vaut pour tout le fichier.
+  group('Panneau Supports : mesures (relecture T6)', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('telephone 390x844 : tout le panneau tient, action pleine '
+        'comprise, sans defiler (relecture T6)', (WidgetTester tester) async {
+      fixerVueCapture(
+        tester,
+        const Size(390, 844),
+        3,
+        zoneSure: const EdgeInsets.only(top: 47, bottom: 34),
+      );
+      await tester.pumpWidget(
+        hoteCapture(
+          SalleSeance(
+            vue: DonneesSeanceDemo.vue(
+              RoleSeance.enseignant,
+              EtatDemoSalle.supports,
+            ).copyWith(panneau: PanneauOuvert.supports),
+            actions: _complet,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      final Rect cta = tester.getRect(
+        find.byKey(const ValueKey<String>('voir-bibliotheque')),
+      );
+      expect(cta.bottom, lessThanOrEqualTo(844));
+    });
+
+    for (final MapEntry<String, Size> taille in _tailles.entries) {
+      testWidgets('« Ouvrir » est une petite pastille (${taille.key})', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, taille.value);
+        final Rect pastille = tester.getRect(
+          find
+              .descendant(
+                of: find.byKey(
+                  const ValueKey<String>('ouvrir-demo-chapitre-1'),
+                ),
+                matching: find.byType(Container),
+              )
+              .first,
+        );
+        expect(pastille.height, lessThanOrEqualTo(40));
+        expect(pastille.width, lessThanOrEqualTo(90));
+        // Le titre de Reprendre tient sur une ligne a cote de la pastille.
+        final Finder titre = find.descendant(
+          of: find.byType(PanneauSupports),
+          matching: find.text('Les bonnes manières'),
+        );
+        expect(tester.getSize(titre).height, lessThanOrEqualTo(28));
+      });
+    }
+  });
 }

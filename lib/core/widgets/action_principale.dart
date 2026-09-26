@@ -57,7 +57,13 @@ class ActionPrincipale extends StatelessWidget {
     this.prefixe,
     this.fleche = false,
     this.pilule = false,
+    this.compacte = false,
   });
+
+  /// Format reduit, meme peinture : la pastille « Ouvrir » d'une ligne de
+  /// liste (≈ 34 de haut au lieu de 52). La zone pressable garde la cible
+  /// tactile du mode ; en Interface guidee, le format reduit est ignore.
+  final bool compacte;
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
   /// pas « Valider » (`02-regles-ux.md` section 9).
@@ -108,14 +114,26 @@ class ActionPrincipale extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final bool actif = onPress != null && !enCours;
+    final bool reduit = compacte && !metriques.estEnfant;
 
     return Pressable.selon(
       onPress: actif ? onPress : null,
       libelleSemantique: libelle,
-      respecterCibleTactile: false,
+      // Le format reduit est plus petit que la cible : `Pressable` l'y porte,
+      // la pastille reste centree dedans.
+      respecterCibleTactile: reduit,
       arrondiFocus: _arrondi,
-      constructeur: (BuildContext contexte, EtatPression etat) =>
-          _corps(contexte, palette, metriques, etat, actif: actif),
+      constructeur: (BuildContext contexte, EtatPression etat) {
+        final Widget corps = _corps(
+          contexte,
+          palette,
+          metriques,
+          etat,
+          actif: actif,
+          reduit: reduit,
+        );
+        return reduit ? Center(child: corps) : corps;
+      },
     );
   }
 
@@ -125,6 +143,7 @@ class ActionPrincipale extends StatelessWidget {
     AppMetriques metriques,
     EtatPression etat, {
     required bool actif,
+    bool reduit = false,
   }) {
     final _Peinture peinture = _peinturePour(
       palette,
@@ -136,15 +155,22 @@ class ActionPrincipale extends StatelessWidget {
     return Container(
       width: pleineLargeur ? double.infinity : null,
       constraints: BoxConstraints(
-        minHeight: metriques.estEnfant
+        minHeight: reduit
+            ? AppSpacing.xxxl + AppSpacing.xs / 2
+            : metriques.estEnfant
             ? AppTouchTarget.enfant
             : AppPage.hauteurBouton,
       ),
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.md,
-      ),
+      padding: reduit
+          ? const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.xs,
+            )
+          : const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xl,
+              vertical: AppSpacing.md,
+            ),
       decoration: BoxDecoration(
         color: peinture.fond,
         borderRadius: _arrondi,
