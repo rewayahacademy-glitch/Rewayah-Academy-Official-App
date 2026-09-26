@@ -161,6 +161,18 @@ void main() {
     expect(_entrer(tester).onPress, isNotNull);
   });
 
+  testWidgets('hors ligne : bouton desactive, raison ecrite au-dessus', (
+    WidgetTester tester,
+  ) async {
+    await _poser(tester, resultat: _pret, reseau: ReseauPreparation.horsLigne);
+    expect(_entrer(tester).onPress, isNull);
+    expect(
+      find.byKey(const ValueKey<String>('preparation-raison')),
+      findsOneWidget,
+    );
+    expect(find.text(t.salle.secours.horsLigne), findsOneWidget);
+  });
+
   testWidgets('micro et camera coupes a l entree, jamais « activé »', (
     WidgetTester tester,
   ) async {

@@ -287,10 +287,11 @@ class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
     final String? raison = switch (vue.motif) {
       MotifPreCours.microAbsent => t.salle.preparation.microAbsentRaison,
       MotifPreCours.permissionRefusee => t.salle.preparation.permissionRefusee,
-      null =>
-        reseau == ReseauPreparation.instable
-            ? t.salle.preparation.reseauFaible
-            : null,
+      null => switch (reseau) {
+        ReseauPreparation.instable => t.salle.preparation.reseauFaible,
+        ReseauPreparation.horsLigne => t.salle.secours.horsLigne,
+        _ => null,
+      },
     };
     final VoidCallback? reglages = widget.onOuvrirReglages;
 
