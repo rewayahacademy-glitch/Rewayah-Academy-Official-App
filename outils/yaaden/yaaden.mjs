@@ -324,9 +324,11 @@ async function reveil(cache, args) {
   if (force) quand = new Date(force);
   else {
     // sonde minimale : Haiku, sans CLAUDE.md ni outils, session non gardée
-    const r = spawnSync('claude', ['-p', '--safe-mode', '--model', 'haiku', '--tools', '', '--output-format', 'stream-json', '--verbose', '--no-session-persistence', 'Réponds seulement : ok'], { encoding: 'utf8', shell: process.platform === 'win32', timeout: 120000 });
+    const r = spawnSync('claude', ['-p', '--safe-mode', '--model', 'haiku', '--tools', '', '--output-format', 'stream-json', '--verbose', '--no-session-persistence', 'Réponds seulement : ok'], { encoding: 'utf8', timeout: 120000 }); // sans shell : arguments passés tels quels
+    if (r.error) return `sonde impossible (${r.error.code || r.error.message}) : rien programmé`;
     const h = heureDepuisEvenements((r.stdout || '').split('\n'));
-    if (h.erreur) return `${h.erreur} : rien programmé`;
+    // Claude Code n'émet l'événement qu'à l'approche d'une limite
+    if (h.erreur) return r.status === 0 ? 'aucune limite proche : rien programmé' : `sonde en échec (code ${r.status}) : rien programmé`;
     if (h.libre) return `pas de limite atteinte (${h.fenetres.map((w) => `${w.nom} ${Math.round(w.utilization * 100)} %`).join(', ')}) : rien programmé`;
     quand = heureReveil(h.resetsAt);
   }
