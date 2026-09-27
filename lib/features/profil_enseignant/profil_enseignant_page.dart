@@ -47,6 +47,15 @@ import 'photo_publique.dart';
 /// defilement a 390 x 844, et surtout elle survit a l'echec de toutes les
 /// lectures de l'ecran -- c'est la seule chose qu'un enseignant doit toujours
 /// pouvoir faire.
+/// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
+///
+/// Le modele [ProfilEnseignant] ne porte pas encore le titre : la
+/// demonstration fixe ce nom, la production le branchera a BR-1. Rien n'est
+/// calcule cote client ; sans valeur, l'en-tete garde le prenom.
+final Provider<String?> nomPublicEnseignantProvider = Provider<String?>(
+  (Ref _) => null,
+);
+
 class ProfilEnseignantPage extends ConsumerWidget {
   /// Cree l'ecran de profil de l'enseignant.
   const ProfilEnseignantPage({super.key});
@@ -183,7 +192,12 @@ class _Entete extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _Identite(profil: profil, cle: cle, textes: textes),
+        _Identite(
+          profil: profil,
+          nomPublic: ref.watch(nomPublicEnseignantProvider),
+          cle: cle,
+          textes: textes,
+        ),
         Ecart.vMd,
         // Largeur naturelle : une action secondaire, pas le bouton dominant.
         IntrinsicWidth(
@@ -205,16 +219,19 @@ class _Entete extends ConsumerWidget {
 class _Identite extends StatelessWidget {
   const _Identite({
     required this.profil,
+    required this.nomPublic,
     required this.cle,
     required this.textes,
   });
 
   final ProfilEnseignant profil;
+  final String? nomPublic;
   final String? cle;
   final TextTheme textes;
 
   @override
   Widget build(BuildContext context) {
+    final String? titre = nomPublic?.trim();
     return Row(
       children: <Widget>[
         PortraitPublic(
@@ -227,25 +244,26 @@ class _Identite extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              // Le nom avec son titre (R18) ; le prenom seul tant que le titre
+              // n'est pas fourni.
               Text(
-                profil.prenom.isEmpty
+                titre != null && titre.isNotEmpty
+                    ? titre
+                    : profil.prenom.isEmpty
                     ? t.enseignant.profil.nonRenseigne
                     : profil.prenom,
                 style: textes.headlineSmall,
               ),
               Ecart.vXs,
+              // L'identifiant immuable, en ligne discrete : jamais un code
+              // technique comme identite (R18).
               Text(
                 profil.identifiant.isEmpty
                     ? t.enseignant.profil.nonRenseigne
                     : profil.identifiant,
-                style: textes.bodyLarge,
-              ),
-              Ecart.vXs,
-              // L'identifiant immuable est ce que les familles voient : il vaut
-              // mieux le dire ici qu'une seconde ligne de reglage ailleurs.
-              Text(
-                t.enseignant.profil.identifiantDetail,
-                style: textes.bodySmall,
+                style: AppPalette.of(
+                  context,
+                ).inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ],
           ),

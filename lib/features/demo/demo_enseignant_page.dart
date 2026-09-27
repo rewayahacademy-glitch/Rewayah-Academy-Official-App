@@ -210,6 +210,10 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     profilEnseignantProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.profil,
     ),
+    // Le nom public avec son titre (R18), que le modele ne porte pas encore.
+    nomPublicEnseignantProvider.overrideWithValue(
+      DonneesEnseignantDemo.nomAffiche(TitreEnseignant.sayyid),
+    ),
     acceptationsProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.acceptations,
     ),

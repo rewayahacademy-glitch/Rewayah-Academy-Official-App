@@ -101,8 +101,8 @@ class RevueGroupePage extends ConsumerWidget {
       // n'y a rien a faire, et proposer une action serait inviter a inventer un
       // probleme.
       return EmptyState(
+        // Une seule phrase calme (UX_REVIEW_04 ligne 10), sans detail.
         message: t.enseignant.revue.aucuneAnomalie,
-        invitation: t.enseignant.revue.aucuneAnomalieDetail,
         registre: RegistreVide.bonneNouvelle,
       );
     }

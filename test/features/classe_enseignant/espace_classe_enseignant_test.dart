@@ -201,20 +201,31 @@ void main() {
           find.descendant(of: groupe, matching: find.text(e.prenom)),
           findsOneWidget,
         );
-        // Une seule ligne secondaire « niveau · reprise », puis le dernier
-        // point dessous, dans la meme legende.
+        // Une seule ligne secondaire « niveau · reprise » ; le dernier point
+        // reste dans la fiche eleve (K-42 style §4).
         final String reprise = t.enseignant.ficheGroupe.repriseEleve(
           page: e.pageReprise,
-        );
-        final String point = t.enseignant.ficheGroupe.dernierPoint(
-          texte: e.dernierPoint,
         );
         expect(
           find.descendant(
             of: groupe,
-            matching: find.text('${e.niveau} · $reprise\n$point'),
+            matching: find.text('${e.niveau} · $reprise'),
           ),
-          findsOneWidget,
+          findsNWidgets(
+            DonneesClasseDemo.eleves
+                .where(
+                  (EleveProjectionDemo x) =>
+                      x.niveau == e.niveau && x.pageReprise == e.pageReprise,
+                )
+                .length,
+          ),
+        );
+        expect(
+          find.descendant(
+            of: groupe,
+            matching: find.textContaining(e.dernierPoint),
+          ),
+          findsNothing,
         );
       }
       // Aucune carte par eleve.
@@ -263,7 +274,7 @@ void main() {
       expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
       final Finder titre = find.text(DonneesClasseDemo.classe);
       expect(titre, findsOneWidget);
-      final Finder retour = find.text(t.enseignant.ficheGroupe.retour);
+      final Finder retour = find.text(t.commun.retour);
       expect(
         tester.getTopLeft(retour).dy,
         lessThan(tester.getTopLeft(titre).dy),

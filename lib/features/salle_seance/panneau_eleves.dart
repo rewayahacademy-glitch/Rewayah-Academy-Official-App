@@ -178,7 +178,12 @@ class _CarteEleve extends StatelessWidget {
             if (deplie && fiche != null) ...<Widget>[
               if (serre) Ecart.vXs else Ecart.vSm,
               _GrilleFiche(fiche: fiche, large: large, serre: serre),
-              _ActionsEleve(eleve: eleve, actions: actions, serre: serre),
+              _ActionsEleve(
+                eleve: eleve,
+                actions: actions,
+                serre: serre,
+                large: large,
+              ),
             ],
           ],
         ),
@@ -513,11 +518,16 @@ class _ActionsEleve extends StatelessWidget {
     required this.eleve,
     required this.actions,
     required this.serre,
+    required this.large,
   });
 
   final EleveSeance eleve;
   final ActionsSeance actions;
   final bool serre;
+
+  /// Colonne desktop : deux rangees de deux, pour qu'aucun libelle ne se
+  /// coupe au milieu d'un mot (WCAG 1.4.10 et 1.4.12).
+  final bool large;
 
   @override
   Widget build(BuildContext context) {
@@ -548,15 +558,25 @@ class _ActionsEleve extends StatelessWidget {
           ),
     ];
     if (tuiles.isEmpty) return const SizedBox.shrink();
+    Widget rangee(List<Widget> enfants) => IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: AppSpacing.xs,
+        children: enfants,
+      ),
+    );
     return Padding(
       padding: EdgeInsets.only(top: serre ? AppSpacing.xs : AppSpacing.sm),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: AppSpacing.xs,
-          children: tuiles,
-        ),
-      ),
+      child: large && tuiles.length > 2
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                rangee(tuiles.sublist(0, 2)),
+                Ecart.vXs,
+                rangee(tuiles.sublist(2)),
+              ],
+            )
+          : rangee(tuiles),
     );
   }
 }

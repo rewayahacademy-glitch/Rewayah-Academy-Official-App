@@ -70,11 +70,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.revue.aucuneAnomalie), findsOneWidget);
-      // La verite du depot, dite a l'ecran : le calcul des anomalies n'est pas
-      // ouvert aux enseignants, et la page reste vide jusque-la.
+      // Une seule phrase calme (UX_REVIEW_04 ligne 10) : aucun detail.
       expect(
         find.text(t.enseignant.revue.aucuneAnomalieDetail),
-        findsOneWidget,
+        findsNothing,
       );
       // Rien a faire, donc aucun bouton : proposer une action serait inviter a
       // inventer un probleme.

@@ -179,6 +179,10 @@ void main() {
         t.tc.classe.action.noter,
         t.salle.seance.signalerBesoin,
       ]) {
+        // Sur bureau, les tuiles vont par deux rangees de deux : la seconde
+        // peut demander un defilement du panneau.
+        await tester.ensureVisible(find.text(libelle));
+        await tester.pump();
         await tester.tap(find.text(libelle));
         await tester.pump();
       }

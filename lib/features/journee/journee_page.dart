@@ -35,6 +35,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
@@ -80,10 +81,6 @@ const int maximumATerminer = 3;
 /// Deux lignes se lisent d'un coup d'oeil avant un cours ; au dela, une
 /// phrase dit combien d'autres attendent.
 const int _maximumAlertes = 2;
-
-/// Combien de temps la seance reste joignable apres sa fin prevue (ADR-005 :
-/// la base refuse le jeton apres `fin + 15 min`).
-const Duration _graceApresFin = Duration(minutes: 15);
 
 /// L'horloge de la page. En production, l'heure de l'appareil ; la
 /// demonstration (`/demo/enseignant`) la fixe au lundi 28 septembre 2026.
@@ -390,11 +387,22 @@ EmplacementEntree emplacementJournee(
   EmplacementEntree base, {
   required String nomClasse,
   required bool cahierAFinaliser,
+  EtatAbsence? absence,
 }) {
-  if (base.estBouton || base.reessayer || base.etat == EtatEntree.preparation) {
+  // ENS-13 : une absence declaree (hors « Demande annulee », ou l'enseignant
+  // assure de nouveau la seance) ne laisse que « Voir la Classe » (E11, doc 04
+  // §17.1 et §17.2).
+  final bool absent = absence != null && absence != EtatAbsence.demandeAnnulee;
+  if (base.reessayer ||
+      base.etat == EtatEntree.preparation ||
+      (base.estBouton && !absent)) {
     return base;
   }
   final (String libelle, String lecteur) = switch (base.etat) {
+    _ when absent => (
+      t.enseignant.journee.voirClasse,
+      t.enseignant.journee.voirClasseLecteur(classe: nomClasse),
+    ),
     EtatEntree.aVenir => (
       t.enseignant.journee.preparerSeance,
       t.enseignant.journee.preparerSeanceLecteur(classe: deDevant(nomClasse)),
@@ -414,7 +422,8 @@ EmplacementEntree emplacementJournee(
     forme: FormeEntree.bouton,
     libelle: libelle,
     libelleLecteur: lecteur,
-    detail: base.libelle,
+    // Un bouton de CL-4 remplace porte deja son contexte dans `detail`.
+    detail: base.estBouton ? base.detail : base.libelle,
     annonce: base.annonce,
     avisDst: base.avisDst,
   );
@@ -467,7 +476,8 @@ class _CarteProchaineSeance extends ConsumerWidget {
         finPrevueUtc: cours.fin.toUtc(),
         // Le seuil de la base, jamais redeclare ici (ADR-005).
         fenetreAcces: seuilOuvertureSalle,
-        graceApresFin: _graceApresFin,
+        // La borne unique de core (ADR-005), jamais redeclaree ici (E6).
+        graceApresFin: graceApresFin,
       ),
       maintenantServeurUtc: maintenant.toUtc(),
       horlogeUtilisateur: HorlogeAffichee(
@@ -488,6 +498,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
       ),
       nomClasse: nom,
       cahierAFinaliser: !cours.cahierDepose,
+      absence: absence,
     );
 
     return Column(
@@ -631,9 +642,12 @@ class _CarteProchaineSeance extends ConsumerWidget {
       return;
     }
     final String? idGroupe = cours.groupeId;
-    routeur.go(
-      idGroupe == null ? Routes.enseignantClasses : Routes.groupePour(idGroupe),
-    );
+    if (idGroupe == null) {
+      routeur.go(Routes.enseignantClasses);
+      return;
+    }
+    // `push` : le retour de l'Espace Classe se referme sur Aujourd'hui (R1).
+    await routeur.push<void>(Routes.groupePour(idGroupe));
   }
 }
 

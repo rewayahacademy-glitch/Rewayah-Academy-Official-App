@@ -420,7 +420,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(t.enseignant.ficheGroupe.retour));
+      await tester.tap(find.text(t.commun.retour));
       await tester.pumpAndSettle();
 
       expect(find.text('journee'), findsOneWidget);

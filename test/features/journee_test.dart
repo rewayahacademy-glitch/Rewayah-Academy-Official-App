@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
@@ -357,6 +358,23 @@ void main() {
             cahierAFinaliser: false,
           ).libelle,
           t.enseignant.journee.voirClasse,
+        );
+      }
+    });
+
+    test('absence declaree : Voir la Classe, sauf demande annulee', () {
+      for (final EtatAbsence absence in EtatAbsence.values) {
+        final EmplacementEntree e = emplacementJournee(
+          ligne(EtatEntree.aVenir),
+          nomClasse: 'An-Nour',
+          cahierAFinaliser: false,
+          absence: absence,
+        );
+        expect(
+          e.libelle,
+          absence == EtatAbsence.demandeAnnulee
+              ? t.enseignant.journee.preparerSeance
+              : t.enseignant.journee.voirClasse,
         );
       }
     });

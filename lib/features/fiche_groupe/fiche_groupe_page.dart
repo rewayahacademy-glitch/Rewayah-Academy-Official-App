@@ -118,13 +118,23 @@ class _Sortie extends StatelessWidget {
   Widget build(BuildContext context) {
     return _EnDebut(
       child: ActionPrincipale(
-        libelle: t.enseignant.ficheGroupe.retour,
+        // Libelle neutre : la fiche s'ouvre depuis Mes classes comme depuis
+        // Aujourd'hui, et le retour ramene la ou l'on etait (R1).
+        libelle: t.commun.retour,
         niveau: NiveauAction.tertiaire,
         pleineLargeur: false,
-        // `go` et non `pop` : la fiche peut avoir ete ouverte par une adresse,
-        // et une sortie qui ne fonctionne que sur une pile existante laisserait
-        // l'enseignant enferme.
-        onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
+        // `pop` quand la pile le permet ; sinon `go` vers la Journee : la
+        // fiche peut avoir ete ouverte par une adresse, et une sortie qui ne
+        // fonctionne que sur une pile existante laisserait l'enseignant
+        // enferme.
+        onPress: () {
+          final GoRouter routeur = GoRouter.of(context);
+          if (routeur.canPop()) {
+            routeur.pop();
+          } else {
+            routeur.go(Routes.enseignantJournee);
+          }
+        },
       ),
     );
   }
@@ -734,7 +744,7 @@ class _Membres extends StatelessWidget {
 
 /// Un eleve, une ligne : sa photo (`PhotoEleve`, initiales en repli ; E5,
 /// K-44), son prenom en titre, puis une seule ligne secondaire « niveau ·
-/// reprise » et, dessous, son dernier point. En fin de ligne, son indicateur :
+/// reprise ». En fin de ligne, son indicateur :
 /// un point **et** un mot (`StatusPill`), jamais la couleur seule. En texte
 /// neutre : rien de ce que R15 interdit, le modele n'en porte pas.
 ///
@@ -751,17 +761,13 @@ LigneRubrique _ligneMembre(
 ) {
   final String? niveau = membre.niveau?.trim();
   final String? page = projection?.pageReprise?.trim();
-  final String? point = projection?.dernierPoint?.trim();
-  final String resume = <String>[
+  // Une seule ligne secondaire (K-42 style §4) : le dernier point reste dans
+  // la fiche eleve (ENS-11), qu'une pression sur la ligne ouvre.
+  final String legende = <String>[
     if (niveau != null && niveau.isNotEmpty) niveau,
     if (page != null && page.isNotEmpty)
       t.enseignant.ficheGroupe.repriseEleve(page: page),
   ].join(' · ');
-  final String legende = <String>[
-    if (resume.isNotEmpty) resume,
-    if (point != null && point.isNotEmpty)
-      t.enseignant.ficheGroupe.dernierPoint(texte: point),
-  ].join('\n');
 
   return LigneRubrique(
     // `libelle` rend le prenom, ou l'identifiant immuable quand la base l'a

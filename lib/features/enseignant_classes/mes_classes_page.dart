@@ -181,7 +181,9 @@ class MesClassesPage extends ConsumerWidget {
       );
       final void Function(String) ouvrir =
           onOuvrirClasse ??
-          (String id) => GoRouter.of(context).go(Routes.groupePour(id));
+          // `push` : le retour de l'Espace Classe se referme sur Mes classes
+          // (R1).
+          (String id) => GoRouter.of(context).push(Routes.groupePour(id));
       corps = GroupeReglages(
         lignes: <LigneRubrique>[
           for (final ClasseListee l in lignes)
