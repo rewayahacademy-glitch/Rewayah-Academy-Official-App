@@ -114,9 +114,17 @@ void main() {
           Routes.enseignantCreneaux,
           Routes.enseignantProfil,
         ],
-        // Le controleur et le comptable n ont pas de barre ; l'admin a sa
-        // propre coquille (`admin_domaine_test.dart`).
-        AppRole.controller: <String>[],
+        // Le controleur a QUATRE destinations, dans l'ordre C13 : Controle,
+        // Historique, Echanges, Compte (document 08 du 27/09/2026, qui
+        // remplace « une seule destination, sans barre »).
+        AppRole.controller: <String>[
+          Routes.controleur,
+          Routes.controleurHistorique,
+          Routes.controleurEchanges,
+          Routes.compte,
+        ],
+        // Le comptable n'a pas de barre ; l'admin a sa propre coquille
+        // (`admin_domaine_test.dart`).
         AppRole.accountant: <String>[],
         AppRole.admin: <String>[],
       };

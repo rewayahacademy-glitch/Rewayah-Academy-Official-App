@@ -50,9 +50,12 @@ import '../../features/compte/securite_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
+import '../../features/controleur/echanges_controleur_page.dart';
+import '../../features/controleur/historique_controleur_page.dart';
 import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/demo/demo_classe_page.dart';
+import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
 import '../../features/demo/demo_salle_page.dart';
 import '../../features/dossier/attente_page.dart';
@@ -790,13 +793,49 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             RevueGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
       ),
 
-      // Controleur : une seule destination, pas de barre de navigation.
-      // `CTR-01` est sa racine et son seul ecran ; `CTR-02`, la salle, se
-      // rejoint depuis une ligne en cours et vit hors de l'arbre (ADR-005).
-      GoRoute(
-        path: Routes.controleur,
-        builder: (BuildContext _, GoRouterState _) =>
-            const PlanningControleurPage(),
+      // Controleur : quatre destinations, Controle, Historique, Echanges,
+      // Compte (C13, document 08 du 27/09/2026, qui remplace « une seule
+      // destination, sans barre »). Les trois premieres sont les branches,
+      // dans l'ordre de `destinationsPour(AppRole.controller)` ; Compte est
+      // `/compte`, partage, rejoint par `go`. `CTR-02`, la salle, vit hors de
+      // l'arbre et sans barre (ADR-005).
+      StatefulShellRoute.indexedStack(
+        builder:
+            (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
+                _CoquilleNavigation(
+                  role: AppRole.controller,
+                  navigationShell: n,
+                  chemin: etat.uri.path,
+                ),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.controleur,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const PlanningControleurPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.controleurHistorique,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const HistoriqueControleurPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
+                path: Routes.controleurEchanges,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const EchangesControleurPage(),
+              ),
+            ],
+          ),
+        ],
       ),
 
       // Admin. Huit domaines (gel d'architecture,
@@ -1072,6 +1111,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoSalle(Env.environnement),
       ...routesDemoClasse(Env.environnement),
       ...routesDemoEnseignant(Env.environnement),
+      ...routesDemoControleur(Env.environnement),
     ],
   );
 });

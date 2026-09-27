@@ -1949,7 +1949,11 @@
       "profil": "Profil"
     },
     "controleur": {
-      "planning": "Planning"
+      "planning": "Planning",
+      "controle": "Contrôle",
+      "historique": "Historique",
+      "echanges": "Échanges",
+      "compte": "Compte"
     },
     "admin": {
       "tableauDeBord": "Tableau de bord",
@@ -3125,6 +3129,23 @@
     }
   },
   "controleur": {
+    "historique": {
+      "titre": "Historique",
+      "provisoire": "Cet écran est en préparation."
+    },
+    "echanges": {
+      "titre": "Échanges",
+      "provisoire": "Cet écran est en préparation."
+    },
+    "demo": {
+      "titre": "Démonstration contrôleur",
+      "mention": "Données fictives, aucun envoi.",
+      "intro": "Choisissez un écran du contrôle et une situation de mission.",
+      "etatAucune": "Aucune mission",
+      "etatPasEncoreEnDirect": "Séance pas encore en direct",
+      "etatEnDirect": "Séance en direct",
+      "etatIndisponible": "Mission indisponible"
+    },
     "planning": {
       "titre": "Planning global",
       "visiteJournalisee": "Votre entrée est enregistrée : votre nom, la séance, l'heure. Les participants, eux, ne vous voient pas.",

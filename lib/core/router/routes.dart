@@ -331,8 +331,17 @@ abstract final class Routes {
 
   // --- Controleur ---------------------------------------------------------
 
-  /// Planning global. Une seule destination, pas de barre de navigation.
+  /// Controle (CTR-01), premiere des quatre destinations du controleur (C13,
+  /// document 08 du 27/09/2026, qui remplace « une seule destination, sans
+  /// barre »). Encore le planning global jusqu'a sa refonte en CT-2.
   static const String controleur = '/controleur';
+
+  /// Historique (CTR-05), deuxieme destination. Page provisoire jusqu'a CT-7.
+  static const String controleurHistorique = '/controleur/historique';
+
+  /// Echanges (CTR-04), troisieme destination. Page provisoire jusqu'a CT-6.
+  /// La quatrieme, Compte, est `/compte`, partage par tous les roles.
+  static const String controleurEchanges = '/controleur/echanges';
 
   // --- Admin, huit domaines (gel d'architecture,
   // docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md) ------------------------------------
@@ -469,6 +478,10 @@ abstract final class Routes {
   /// La coquille enseignant en demonstration (EN-1b) : `?ecran=...&etat=...`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoEnseignant = '/demo/enseignant';
+
+  /// La coquille controleur en demonstration (CT-1b) : `?ecran=...&etat=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoControleur = '/demo/controleur';
 
   // --- Developpement --------------------------------------------------------
 

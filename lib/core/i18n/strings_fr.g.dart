@@ -2199,6 +2199,9 @@ class Traductions$controleur$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$controleur$historique$fr historique = Traductions$controleur$historique$fr.internal(_root);
+	late final Traductions$controleur$echanges$fr echanges = Traductions$controleur$echanges$fr.internal(_root);
+	late final Traductions$controleur$demo$fr demo = Traductions$controleur$demo$fr.internal(_root);
 	late final Traductions$controleur$planning$fr planning = Traductions$controleur$planning$fr.internal(_root);
 }
 
@@ -5961,6 +5964,18 @@ class Traductions$nav$controleur$fr {
 
 	/// fr: 'Planning'
 	String get planning => 'Planning';
+
+	/// fr: 'Contrôle'
+	String get controle => 'Contrôle';
+
+	/// fr: 'Historique'
+	String get historique => 'Historique';
+
+	/// fr: 'Échanges'
+	String get echanges => 'Échanges';
+
+	/// fr: 'Compte'
+	String get compte => 'Compte';
 }
 
 // Path: nav.admin
@@ -8524,6 +8539,66 @@ class Traductions$enseignant$revue$fr {
 
 	/// fr: 'Proposition de réorientation'
 	String get typeReorientation => 'Proposition de réorientation';
+}
+
+// Path: controleur.historique
+class Traductions$controleur$historique$fr {
+	Traductions$controleur$historique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Historique'
+	String get titre => 'Historique';
+
+	/// fr: 'Cet écran est en préparation.'
+	String get provisoire => 'Cet écran est en préparation.';
+}
+
+// Path: controleur.echanges
+class Traductions$controleur$echanges$fr {
+	Traductions$controleur$echanges$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Échanges'
+	String get titre => 'Échanges';
+
+	/// fr: 'Cet écran est en préparation.'
+	String get provisoire => 'Cet écran est en préparation.';
+}
+
+// Path: controleur.demo
+class Traductions$controleur$demo$fr {
+	Traductions$controleur$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration contrôleur'
+	String get titre => 'Démonstration contrôleur';
+
+	/// fr: 'Données fictives, aucun envoi.'
+	String get mention => 'Données fictives, aucun envoi.';
+
+	/// fr: 'Choisissez un écran du contrôle et une situation de mission.'
+	String get intro => 'Choisissez un écran du contrôle et une situation de mission.';
+
+	/// fr: 'Aucune mission'
+	String get etatAucune => 'Aucune mission';
+
+	/// fr: 'Séance pas encore en direct'
+	String get etatPasEncoreEnDirect => 'Séance pas encore en direct';
+
+	/// fr: 'Séance en direct'
+	String get etatEnDirect => 'Séance en direct';
+
+	/// fr: 'Mission indisponible'
+	String get etatIndisponible => 'Mission indisponible';
 }
 
 // Path: controleur.planning
@@ -14378,6 +14453,10 @@ extension on Traductions {
 			'nav.enseignant.creneaux' => 'Disponibilités',
 			'nav.enseignant.profil' => 'Profil',
 			'nav.controleur.planning' => 'Planning',
+			'nav.controleur.controle' => 'Contrôle',
+			'nav.controleur.historique' => 'Historique',
+			'nav.controleur.echanges' => 'Échanges',
+			'nav.controleur.compte' => 'Compte',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
 			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
@@ -14764,12 +14843,12 @@ extension on Traductions {
 			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'Heure de la classe : ${heure} ${ville}',
 			'tuteur.accueil.seanceEnDirect' => 'Séance en direct',
 			'tuteur.accueil.seanceTerminee' => 'Séance terminée',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.seanceAnnulee' => 'Cette séance n\'aura pas lieu.',
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
@@ -15278,12 +15357,12 @@ extension on Traductions {
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
 			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.aValider' => 'À valider',
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
@@ -15417,6 +15496,17 @@ extension on Traductions {
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
 			'enseignant.revue.typeTransfert' => 'Proposition de transfert',
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
+			'controleur.historique.titre' => 'Historique',
+			'controleur.historique.provisoire' => 'Cet écran est en préparation.',
+			'controleur.echanges.titre' => 'Échanges',
+			'controleur.echanges.provisoire' => 'Cet écran est en préparation.',
+			'controleur.demo.titre' => 'Démonstration contrôleur',
+			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
+			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de mission.',
+			'controleur.demo.etatAucune' => 'Aucune mission',
+			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
+			'controleur.demo.etatEnDirect' => 'Séance en direct',
+			'controleur.demo.etatIndisponible' => 'Mission indisponible',
 			'controleur.planning.titre' => 'Planning global',
 			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
 			'controleur.planning.tousEtats' => 'Tout',
@@ -15781,6 +15871,8 @@ extension on Traductions {
 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
 			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
@@ -15796,8 +15888,6 @@ extension on Traductions {
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
