@@ -1810,7 +1810,7 @@
     },
     "comptes": {
       "titre": "Comptes",
-      "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.",
+      "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.",
       "attenteUneAujourdhui": "Une personne attend une décision, inscrite aujourd'hui.",
       "attenteUneUnJour": "Une personne attend une décision depuis 1 jour.",
       "attenteUne": "Une personne attend une décision depuis {jours} jours.",
@@ -1845,6 +1845,7 @@
       "pieceValidee": "Validée",
       "pieceRefusee": "Refusée",
       "pieceNonVisible": "Hors de votre portée",
+      "pieceSansObjet": "Sans objet",
       "attendAujourdhui": "Aujourd'hui",
       "attendUnJour": "1 jour",
       "attendJours": "{jours} jours"

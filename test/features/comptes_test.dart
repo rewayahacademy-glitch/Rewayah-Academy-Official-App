@@ -57,10 +57,7 @@ CompteAdmin _compte({
 );
 
 void main() {
-  Future<void> monter(
-    WidgetTester tester,
-    ServiceComptes service,
-  ) async {
+  Future<void> monter(WidgetTester tester, ServiceComptes service) async {
     await tester.pumpWidget(
       hote(
         const ComptesPage(),
@@ -105,8 +102,14 @@ void main() {
     await monter(
       tester,
       _FauxServiceComptes(<CompteAdmin>[
-        _compte(identifiant: 'TEACHER-AS-000001', etat: AccountStatus.pendingKyc),
-        _compte(identifiant: 'TEACHER-AS-000002', etat: AccountStatus.pendingKyc),
+        _compte(
+          identifiant: 'TEACHER-AS-000001',
+          etat: AccountStatus.pendingKyc,
+        ),
+        _compte(
+          identifiant: 'TEACHER-AS-000002',
+          etat: AccountStatus.pendingKyc,
+        ),
         _compte(
           identifiant: 'TEACHER-AD-000003',
           etat: AccountStatus.pendingKyc,
@@ -115,13 +118,93 @@ void main() {
           identifiant: 'GUARDIAN-SR-000002',
           etat: AccountStatus.active,
           role: AppRole.guardian,
-          piece: EtatPiece.validee,
+          piece: EtatPiece.aucune,
         ),
       ]),
     );
 
     expect(tester.takeException(), isNull);
     expect(find.text('3 personnes attendent une décision.'), findsOneWidget);
+  });
+
+  // K-47 : la verification d'identite et la validation ne concernent que
+  // l'enseignant. Un tuteur `pending_kyc` ne depose rien et n'attend aucune
+  // decision : il ne doit ni gonfler le bandeau ni afficher un manque de piece.
+  testWidgets(
+    'un tuteur pending_kyc n attend aucune decision, un enseignant si',
+    (WidgetTester tester) async {
+      await monter(
+        tester,
+        // Le tuteur en tete : la liste est paresseuse et la surface de test
+        // etroite, une troisieme ligne peut rester hors ecran.
+        _FauxServiceComptes(<CompteAdmin>[
+          _compte(
+            identifiant: 'GUARDIAN-SR-000003',
+            etat: AccountStatus.pendingKyc,
+            role: AppRole.guardian,
+            prenom: 'Mariam',
+          ),
+          _compte(
+            identifiant: 'TEACHER-AS-000001',
+            etat: AccountStatus.pendingKyc,
+          ),
+          _compte(
+            identifiant: 'TEACHER-AS-000002',
+            etat: AccountStatus.pendingKyc,
+          ),
+        ]),
+      );
+
+      expect(tester.takeException(), isNull);
+      // Deux enseignants en attente, le tuteur n'est pas compte.
+      expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
+      expect(find.text('3 personnes attendent une décision.'), findsNothing);
+      // Le tuteur reste visible, avec « Sans objet » pour la piece.
+      expect(find.textContaining('GUARDIAN-SR-000003'), findsWidgets);
+      expect(find.textContaining('Sans objet'), findsOneWidget);
+      // L'enseignant garde son manque de piece affiche.
+      expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
+
+      // Contre-epreuve au niveau du modele.
+      final CompteAdmin tuteur = _compte(
+        identifiant: 'GUARDIAN-SR-000003',
+        etat: AccountStatus.pendingKyc,
+        role: AppRole.guardian,
+      );
+      final CompteAdmin enseignant = _compte(
+        identifiant: 'TEACHER-AS-000001',
+        etat: AccountStatus.pendingKyc,
+      );
+      expect(tuteur.attendUneDecision, isFalse);
+      expect(enseignant.attendUneDecision, isTrue);
+    },
+  );
+
+  testWidgets('un tuteur seul en attente ne fait apparaitre aucun bandeau', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'GUARDIAN-SR-000003',
+          etat: AccountStatus.pendingKyc,
+          role: AppRole.guardian,
+          joursDepuisInscription: 3,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    // Ni « Une personne attend… » ni « N personnes attendent… ». L'intro de
+    // la page contient aussi « attendent une décision », d'ou l'ancrage.
+    expect(
+      find.textContaining(
+        RegExp(r'^(Une personne attend|\d+ personnes attendent)'),
+      ),
+      findsNothing,
+    );
+    expect(find.textContaining('Sans objet'), findsOneWidget);
   });
 
   testWidgets('une lecture en echec le dit et laisse reessayer', (
@@ -155,7 +238,7 @@ void main() {
           identifiant: 'GUARDIAN-SR-000002',
           etat: AccountStatus.active,
           role: AppRole.guardian,
-          piece: EtatPiece.validee,
+          piece: EtatPiece.aucune,
         ),
       ]),
     );
@@ -178,12 +261,15 @@ void main() {
     await monter(
       tester,
       _FauxServiceComptes(<CompteAdmin>[
-        _compte(identifiant: 'TEACHER-AS-000001', etat: AccountStatus.pendingKyc),
+        _compte(
+          identifiant: 'TEACHER-AS-000001',
+          etat: AccountStatus.pendingKyc,
+        ),
         _compte(
           identifiant: 'GUARDIAN-SR-000002',
           etat: AccountStatus.active,
           role: AppRole.guardian,
-          piece: EtatPiece.validee,
+          piece: EtatPiece.aucune,
         ),
       ]),
     );

@@ -273,7 +273,11 @@ class _Corps extends StatelessWidget {
                 ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonnePiece,
-                  texte: (CompteAdmin c) => _nomPiece(c.piece),
+                  // K-47 : un tuteur ne depose aucune piece. « Aucune piece
+                  // deposee » lui preterait un manque qui n'existe pas.
+                  texte: (CompteAdmin c) => c.role == AppRole.guardian
+                      ? t.admin.comptes.pieceSansObjet
+                      : _nomPiece(c.piece),
                 ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonneAttente,

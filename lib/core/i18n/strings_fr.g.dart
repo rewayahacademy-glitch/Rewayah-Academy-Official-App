@@ -5938,8 +5938,8 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'Comptes'
 	String get titre => 'Comptes';
 
-	/// fr: 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.'
-	String get intro => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.';
+	/// fr: 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.'
+	String get intro => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.';
 
 	/// fr: 'Une personne attend une décision, inscrite aujourd'hui.'
 	String get attenteUneAujourdhui => 'Une personne attend une décision, inscrite aujourd\'hui.';
@@ -6042,6 +6042,9 @@ class Traductions$admin$comptes$fr {
 
 	/// fr: 'Hors de votre portée'
 	String get pieceNonVisible => 'Hors de votre portée';
+
+	/// fr: 'Sans objet'
+	String get pieceSansObjet => 'Sans objet';
 
 	/// fr: 'Aujourd'hui'
 	String get attendAujourdhui => 'Aujourd\'hui';
@@ -14153,7 +14156,7 @@ extension on Traductions {
 			'admin.observations.erreurSuite' => 'Les visites plus anciennes n\'ont pas pu être lues.',
 			'admin.observations.fin' => 'Toutes les visites sont affichées.',
 			'admin.comptes.titre' => 'Comptes',
-			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
+			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
 			'admin.comptes.attenteUneUnJour' => 'Une personne attend une décision depuis 1 jour.',
 			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
@@ -14190,6 +14193,7 @@ extension on Traductions {
 			'admin.comptes.pieceValidee' => 'Validée',
 			'admin.comptes.pieceRefusee' => 'Refusée',
 			'admin.comptes.pieceNonVisible' => 'Hors de votre portée',
+			'admin.comptes.pieceSansObjet' => 'Sans objet',
 			'admin.comptes.attendAujourdhui' => 'Aujourd\'hui',
 			'admin.comptes.attendUnJour' => '1 jour',
 			'admin.comptes.attendJours' => ({required Object jours}) => '${jours} jours',
@@ -14670,9 +14674,9 @@ extension on Traductions {
 			'historique.seance.horaire' => 'Horaire',
 			'historique.seance.dureePrevue' => 'Durée prévue',
 			'historique.seance.classe' => 'Classe',
-			'historique.seance.enseignant' => 'Enseignant',
 			_ => null,
 		} ?? switch (path) {
+			'historique.seance.enseignant' => 'Enseignant',
 			'historique.seance.presence' => 'Présence',
 			'historique.seance.arrivee' => 'Arrivée',
 			'historique.seance.interruption' => 'Interruption',
@@ -15184,9 +15188,9 @@ extension on Traductions {
 			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
 			'enseignant.profil.fuseauDetail' => 'C\'est lui qui décide de l\'heure de vos créneaux, pas l\'heure de cet appareil.',
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
-			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
@@ -15698,9 +15702,9 @@ extension on Traductions {
 			'tc.observation.resultat.terminee' => 'Votre visite est terminée',
 			'tc.observation.resultat.dureeAtteinte' => 'Durée de visite atteinte',
 			'tc.observation.resultat.interrompue' => 'Observation interrompue',
-			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
 			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
 			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.',
