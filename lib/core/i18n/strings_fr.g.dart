@@ -2281,6 +2281,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$nav$fr nav = Traductions$adulte$nav$fr.internal(_root);
 	late final Traductions$adulte$accueil$fr accueil = Traductions$adulte$accueil$fr.internal(_root);
 	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
+	late final Traductions$adulte$monEspace$fr monEspace = Traductions$adulte$monEspace$fr.internal(_root);
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
@@ -8876,6 +8877,45 @@ class Traductions$adulte$maClasse$fr {
 	String get aucuneClasseDetail => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.';
 }
 
+// Path: adulte.monEspace
+class Traductions$adulte$monEspace$fr {
+	Traductions$adulte$monEspace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Élève adulte'
+	String get role => 'Élève adulte';
+
+	/// fr: 'Mon compte'
+	String get monCompte => 'Mon compte';
+
+	/// fr: 'Mes informations'
+	String get informations => 'Mes informations';
+
+	/// fr: 'Cours et accès'
+	String get coursAcces => 'Cours et accès';
+
+	/// fr: 'Ma classe, mes séances et mon accès'
+	String get coursAccesLegende => 'Ma classe, mes séances et mon accès';
+
+	/// fr: 'Paiements'
+	String get paiements => 'Paiements';
+
+	/// fr: 'Historique et reçus de mes paiements'
+	String get paiementsLegende => 'Historique et reçus de mes paiements';
+
+	/// fr: 'Mes accords'
+	String get accords => 'Mes accords';
+
+	/// fr: 'Accepter, refuser ou retirer chacun de vos accords'
+	String get accordsLegende => 'Accepter, refuser ou retirer chacun de vos accords';
+
+	/// fr: 'Méthode et adresse de connexion'
+	String get securiteLegende => 'Méthode et adresse de connexion';
+}
+
 // Path: adulte.provisoire
 class Traductions$adulte$provisoire$fr {
 	Traductions$adulte$provisoire$fr.internal(this._root);
@@ -8886,9 +8926,6 @@ class Traductions$adulte$provisoire$fr {
 
 	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
 	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
-
-	/// fr: 'Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.'
-	String get monEspace => 'Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.';
 
 	/// fr: 'La page de votre forfait famille arrivera dans une prochaine étape.'
 	String get forfaitFamille => 'La page de votre forfait famille arrivera dans une prochaine étape.';
@@ -16214,8 +16251,17 @@ extension on Traductions {
 			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (vous)',
 			'adulte.maClasse.progression' => 'Ma progression dans cette classe',
 			'adulte.maClasse.aucuneClasseDetail' => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.',
+			'adulte.monEspace.role' => 'Élève adulte',
+			'adulte.monEspace.monCompte' => 'Mon compte',
+			'adulte.monEspace.informations' => 'Mes informations',
+			'adulte.monEspace.coursAcces' => 'Cours et accès',
+			'adulte.monEspace.coursAccesLegende' => 'Ma classe, mes séances et mon accès',
+			'adulte.monEspace.paiements' => 'Paiements',
+			'adulte.monEspace.paiementsLegende' => 'Historique et reçus de mes paiements',
+			'adulte.monEspace.accords' => 'Mes accords',
+			'adulte.monEspace.accordsLegende' => 'Accepter, refuser ou retirer chacun de vos accords',
+			'adulte.monEspace.securiteLegende' => 'Méthode et adresse de connexion',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
-			'adulte.provisoire.monEspace' => 'Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.',
 			'adulte.provisoire.forfaitFamille' => 'La page de votre forfait famille arrivera dans une prochaine étape.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',

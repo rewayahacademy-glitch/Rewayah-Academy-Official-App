@@ -6,11 +6,13 @@
 // (F17). Aucun appel serveur (K-28) : chaque besoin est une ligne d'EA-BR.md.
 
 import '../../core/appairage/service_appairage.dart' show EleveDuFoyer;
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/domain/enums.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
+import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'classe_demo.dart';
 
 /// Les 25 cas du doc section 18, dans son ordre.
@@ -99,18 +101,9 @@ enum GenreTitulaireDemo { homme, femme }
 /// (`&vue=conjoint`).
 enum VueDemoAdulte { titulaire, secondAdulte }
 
-/// La ligne famille unique de Mon espace (UX_REVIEW_07 ligne 5 a) : jamais
-/// deux a la fois.
-enum LigneFamilleDemo {
-  /// Adulte seul : « Ajouter ma famille ».
-  ajouterMaFamille,
-
-  /// Titulaire d'un foyer : « Ma famille ».
-  maFamille,
-
-  /// Second adulte : « Forfait famille ».
-  forfaitFamille,
-}
+/// La ligne famille unique de Mon espace (UX_REVIEW_07 ligne 5 a) : celle de
+/// la vraie page (EA-4), sous son nom du socle EA-1b.
+typedef LigneFamilleDemo = LigneFamilleAdulte;
 
 /// Le foyer Diallo, fige pour toute la vague (00_MAQUETTES section 3).
 abstract final class DonneesAdulteDemo {
@@ -305,6 +298,31 @@ abstract final class DonneesAdulteDemo {
               ParticipantClasseAdulte(id: 'demo-eleve-$i', prenom: e.prenom),
           ],
         );
+
+  /// Le nom de famille du foyer, porte par les deux adultes.
+  static const String nomFamille = 'Diallo';
+
+  /// L'adresse de connexion fictive de la personne qui regarde, sur le
+  /// domaine reserve aux exemples (RFC 2606) : jamais une vraie adresse.
+  static String courrielVue(GenreTitulaireDemo genre, VueDemoAdulte vue) =>
+      '${prenomVue(genre, vue).toLowerCase()}.diallo@example.com';
+
+  /// Mon espace de la personne qui regarde (EA-4) : son identite, sans
+  /// photo livree (initiales en repli, E5), et sa ligne famille.
+  static MonEspaceAdulteVM monEspace(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+    VueDemoAdulte vue,
+  ) => MonEspaceAdulteVM(
+    identite: IdentiteTitulaire(
+      prenom: prenomVue(genre, vue),
+      nom: nomFamille,
+      courriel: courrielVue(genre, vue),
+      methodeConnexion: MethodeConnexion.lienCourriel,
+      statut: AccountStatus.active,
+    ),
+    ligneFamille: ligneFamille(etat, vue),
+  );
 
   /// La ligne famille de Mon espace pour cet etat et cette vue.
   static LigneFamilleDemo ligneFamille(EtatDemoAdulte etat, VueDemoAdulte vue) {

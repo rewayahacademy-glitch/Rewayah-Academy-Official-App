@@ -153,6 +153,8 @@ void main() {
     expect(find.text(t.adulte.famille.maFamille), findsOneWidget);
     expect(find.text(t.adulte.famille.ajouter), findsNothing);
     expect(find.text(t.adulte.famille.forfaitFamille), findsNothing);
+    // Mon espace est la vraie page (EA-4) : la ligne est sous les rubriques.
+    await tester.ensureVisible(find.text(t.adulte.famille.maFamille));
     await tester.tap(find.text(t.adulte.famille.maFamille));
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsOneWidget);
@@ -188,6 +190,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text(t.adulte.famille.forfaitFamille), findsOneWidget);
+    await tester.ensureVisible(find.text(t.adulte.famille.forfaitFamille));
     await tester.tap(find.text(t.adulte.famille.forfaitFamille));
     await tester.pumpAndSettle();
     expect(find.text(t.adulte.provisoire.forfaitFamille), findsOneWidget);

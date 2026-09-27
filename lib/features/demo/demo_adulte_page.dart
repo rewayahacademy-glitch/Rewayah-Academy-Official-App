@@ -12,8 +12,10 @@
 // Aucun role serveur n'est change : la demonstration choisit la coquille, le
 // role reel reste lu du jeton. Aucun appel serveur (K-28).
 //
-// L'Accueil (EA-2) et Ma classe (EA-3) sont les vrais ecrans. Coran, Mon
-// espace et Forfait famille sont PROVISOIRES : EA-4 les remplace.
+// L'Accueil (EA-2), Ma classe (EA-3) et Mon espace (EA-4) sont les vrais
+// ecrans ; « Paiements » de Mon espace ouvre la vraie page des paiements du
+// Compte. Coran et Forfait famille restent PROVISOIRES (Forfait famille :
+// EA-8 et EA-11).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,13 +34,14 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../compte/paiements_page.dart';
 import '../foyer/foyer_page.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
+import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'adulte_demo.dart';
 import 'classe_demo.dart';
 import 'demo_classe_page.dart'
@@ -66,6 +69,9 @@ enum EcranDemoAdulte {
 
   /// Ma famille : la coquille du tuteur sur le Foyer (EA-5).
   maFamille,
+
+  /// Paiements, ouverts depuis Mon espace (EA-4).
+  paiements,
 }
 
 /// Les routes de la demonstration adulte : AUCUNE en production.
@@ -129,6 +135,7 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.monEspace => t.adulte.nav.monEspace,
   EcranDemoAdulte.forfaitFamille => t.adulte.famille.forfaitFamille,
   EcranDemoAdulte.maFamille => t.adulte.famille.maFamille,
+  EcranDemoAdulte.paiements => t.adulte.monEspace.paiements,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -333,9 +340,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     if (ecran == EcranDemoAdulte.maFamille) return _foyer(context);
     final List<Destination> destinations = destinationsEleveAdulte();
-    final int actif = ecran == EcranDemoAdulte.forfaitFamille
-        ? EcranDemoAdulte.monEspace.index
-        : ecran.index;
+    // Les pages ouvertes depuis Mon espace gardent sa destination allumee.
+    final int actif = switch (ecran) {
+      EcranDemoAdulte.forfaitFamille ||
+      EcranDemoAdulte.paiements => EcranDemoAdulte.monEspace.index,
+      _ => ecran.index,
+    };
     return ProviderScope(
       key: ValueKey<String>(_adresse(ecran)),
       overrides: <Override>[
@@ -355,8 +365,16 @@ class CoquilleAdulteDemo extends StatelessWidget {
           if (DonneesAdulteDemo.maClasse(genre, vue)
               case final MaClasseAdulteVM classe)
             maClasseAdulteProvider.overrideWith((Ref _) async => classe),
-        ] else
+        ] else ...<Override>[
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+          // Mon espace lit l'identite et la ligne famille de la personne qui
+          // regarde (EA-4). Les paiements gardent leur fournisseur reel
+          // (indisponible, DB-CPT-03) : aucun paiement invente.
+          if (ecran == EcranDemoAdulte.monEspace)
+            monEspaceAdulteProvider.overrideWith(
+              (Ref _) async => DonneesAdulteDemo.monEspace(etat, genre, vue),
+            ),
+        ],
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -391,15 +409,24 @@ class CoquilleAdulteDemo extends StatelessWidget {
               titre: t.adulte.nav.coran,
               phrase: t.adulte.provisoire.coran,
             ),
-            EcranDemoAdulte.monEspace => _MonEspaceProvisoire(
-              ligne: DonneesAdulteDemo.ligneFamille(etat, vue),
-              onFamille: (LigneFamilleDemo ligne) => context.go(
+            // Seuls « Paiements » et la ligne famille ont leur page dans la
+            // demonstration ; les autres rubriques restent sans effet.
+            EcranDemoAdulte.monEspace => MonEspaceAdultePage(
+              onOuvrir: (RubriqueMonEspace r) {
+                if (r == RubriqueMonEspace.paiements) {
+                  context.go(_adresse(EcranDemoAdulte.paiements));
+                }
+              },
+              onFamille: (LigneFamilleAdulte ligne) => context.go(
                 _adresse(
-                  ligne == LigneFamilleDemo.forfaitFamille
+                  ligne == LigneFamilleAdulte.forfaitFamille
                       ? EcranDemoAdulte.forfaitFamille
                       : EcranDemoAdulte.maFamille,
                 ),
               ),
+            ),
+            EcranDemoAdulte.paiements => PaiementsComptePage(
+              onRetour: () => context.go(_adresse(EcranDemoAdulte.monEspace)),
             ),
             EcranDemoAdulte.forfaitFamille => _PageProvisoire(
               titre: t.adulte.famille.forfaitFamille,
@@ -497,62 +524,6 @@ class _PageProvisoire extends StatelessWidget {
         style: palette.inkMuted.applyTo(
           Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
         ),
-      ),
-    );
-  }
-}
-
-/// Mon espace provisoire (EA-4 le remplace) : la ligne famille unique, dont
-/// le libelle suit la situation rendue (UX_REVIEW_07 ligne 5 a et b).
-class _MonEspaceProvisoire extends StatelessWidget {
-  const _MonEspaceProvisoire({required this.ligne, required this.onFamille});
-
-  final LigneFamilleDemo ligne;
-  final void Function(LigneFamilleDemo ligne) onFamille;
-
-  /// La cle de la ligne famille.
-  static const Key ligneFamilleKey = Key('adulte.monEspace.famille');
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final (String libelle, String? legende) = switch (ligne) {
-      LigneFamilleDemo.ajouterMaFamille => (
-        t.adulte.famille.ajouter,
-        t.adulte.famille.ajouterLegende,
-      ),
-      LigneFamilleDemo.maFamille => (t.adulte.famille.maFamille, null),
-      LigneFamilleDemo.forfaitFamille => (
-        t.adulte.famille.forfaitFamille,
-        null,
-      ),
-    };
-    return PageShell(
-      titre: t.adulte.nav.monEspace,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            t.adulte.provisoire.monEspace,
-            style: palette.inkMuted.applyTo(
-              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-          Ecart.vXl,
-          KeyedSubtree(
-            key: ligneFamilleKey,
-            child: GroupeReglages(
-              lignes: <LigneRubrique>[
-                LigneRubrique(
-                  libelle: libelle,
-                  legende: legende,
-                  icone: AppIcons.foyer,
-                  onPress: () => onFamille(ligne),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

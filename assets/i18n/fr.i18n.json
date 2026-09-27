@@ -3862,9 +3862,20 @@
       "progression": "Ma progression dans cette classe",
       "aucuneClasseDetail": "Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte."
     },
+    "monEspace": {
+      "role": "Élève adulte",
+      "monCompte": "Mon compte",
+      "informations": "Mes informations",
+      "coursAcces": "Cours et accès",
+      "coursAccesLegende": "Ma classe, mes séances et mon accès",
+      "paiements": "Paiements",
+      "paiementsLegende": "Historique et reçus de mes paiements",
+      "accords": "Mes accords",
+      "accordsLegende": "Accepter, refuser ou retirer chacun de vos accords",
+      "securiteLegende": "Méthode et adresse de connexion"
+    },
     "provisoire": {
       "coran": "Le Coran de votre espace élève s'affichera ici.",
-      "monEspace": "Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.",
       "forfaitFamille": "La page de votre forfait famille arrivera dans une prochaine étape."
     },
     "famille": {
