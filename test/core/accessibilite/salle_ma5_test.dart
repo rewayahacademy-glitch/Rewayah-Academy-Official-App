@@ -107,6 +107,23 @@ void main() {
             mineur ? findsOneWidget : findsNothing,
           );
           expect(find.text(t.salle.seance.votreParentObserve), findsNothing);
+          // La carte du support : a 200 %, la vignette de l'enseignant passe
+          // au-dessus du texte, qui prend toute la largeur (aucun mot coupe) ;
+          // a 100 %, elle reste posee en coin.
+          final Finder pile = find.byKey(
+            const ValueKey<String>('vignette-support-pile'),
+          );
+          if (echelle >= 2) {
+            expect(pile, findsOneWidget);
+            final Finder chapitre = find.textContaining('Chapitre');
+            expect(chapitre, findsWidgets);
+            expect(
+              tester.getTopLeft(chapitre.first).dy,
+              greaterThanOrEqualTo(tester.getBottomLeft(pile).dy),
+            );
+          } else {
+            expect(pile, findsNothing);
+          }
           expect(tester.takeException(), isNull);
         },
       );
