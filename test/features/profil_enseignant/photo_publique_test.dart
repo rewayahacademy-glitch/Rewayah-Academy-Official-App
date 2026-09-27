@@ -107,9 +107,12 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await stabiliser(tester);
 
+    // Doc §10.1 : une tâche confirmée n'est plus affichée ; les quatre
+    // étant faites, la carte « À compléter » disparaît.
+    expect(find.text(t.enseignant.bienvenue.ctaPhoto), findsNothing);
     expect(
-      find.text(t.enseignant.bienvenue.compteur(fait: 4, total: 4)),
-      findsOneWidget,
+      find.text(t.enseignant.bienvenue.compteur(fait: 3, total: 4)),
+      findsNothing,
     );
   });
 }
