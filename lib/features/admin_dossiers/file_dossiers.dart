@@ -309,7 +309,7 @@ LigneRubrique ligneDossier(
     pastille: StatusPill(libelle: libellePastille, ton: ton),
     pastilleSousLibelle: pastilleSous,
     legende: t.dossiers.file.legende(
-      type: typeDossier(d.role),
+      type: typeDossier(),
       date: dateRevue(d.soumisLeUtc),
     ),
     onPress: onPress,
@@ -322,7 +322,7 @@ LigneRubrique ligneDossier(
   if (d.etatPiece == EtatPieceRevue.nonVisible) {
     return (t.dossiers.pieceNonVisible, TonEtat.avertissement);
   }
-  return d.aPieceIdentite || d.etatPiece == EtatPieceRevue.nonRequise
+  return d.aPieceIdentite
       ? (t.dossiers.file.enVerification, TonEtat.accent)
       : (t.dossiers.sansPiece, TonEtat.avertissement);
 }

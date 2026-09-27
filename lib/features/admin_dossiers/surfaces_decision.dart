@@ -210,7 +210,7 @@ class _CorpsState extends ConsumerState<_Corps> {
         children: <Widget>[
           // HL-A-5 : meme anatomie que 02D, une ligne de contexte douce.
           Text(
-            t.dossiers.refus.nomType(nom: nom, type: typeDossier(dossier.role)),
+            t.dossiers.refus.nomType(nom: nom, type: typeDossier()),
             style: palette.inkMuted.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),
@@ -244,7 +244,7 @@ class _CorpsState extends ConsumerState<_Corps> {
             Text(
               t.dossiers.refus.nomType(
                 nom: nomOuDefaut(_nom(dossier)),
-                type: typeDossier(dossier.role),
+                type: typeDossier(),
               ),
               style: palette.inkMuted.applyTo(
                 textes.bodyMedium ?? const TextStyle(),

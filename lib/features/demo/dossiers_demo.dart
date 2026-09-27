@@ -91,9 +91,6 @@ class DossierDemo {
 
   /// L'etat de la piece pour le relecteur, selon la politique courante.
   EtatPieceRevue etatPiece({required bool politiqueGenre}) {
-    if (exigence == ExigencePiece.dispensee) {
-      return EtatPieceRevue.nonRequise;
-    }
     if (!pieceTransmise) {
       return EtatPieceRevue.absente;
     }
@@ -197,8 +194,9 @@ class EtatRevueDemo {
 /// Le jeu synthetique, dates relatives a l'ouverture.
 abstract final class DonneesDossiersDemo {
   static const String enseignantNominal = 'demo-dossier-01';
-  static const String tuteurDocumentaire = 'demo-dossier-02';
-  static const String familleDispensee = 'demo-dossier-03';
+  // K-47 (HL-A-6) : la file ne porte que des enseignants. D03 (famille
+  // dispensee, un tuteur) est retire ; D02 garde son identifiant.
+  static const String enseignantDocumentaire = 'demo-dossier-02';
   static const String pieceAbsente = 'demo-dossier-04';
   static const String conflit = 'demo-dossier-05';
   static const String horsPortee = 'demo-dossier-06';
@@ -232,14 +230,6 @@ abstract final class DonneesDossiersDemo {
     ),
   ];
 
-  static const List<AccordSoumis> _accordsTuteur = <AccordSoumis>[
-    AccordSoumis(
-      sorte: SorteContrat.conditionsTuteur,
-      version: 'v1',
-      etat: EtatAccord.accepte,
-    ),
-  ];
-
   static List<DossierDemo> fabriquer(DateTime maintenant) {
     DateTime il(int heures) => maintenant.subtract(Duration(hours: heures));
     return <DossierDemo>[
@@ -256,12 +246,10 @@ abstract final class DonneesDossiersDemo {
         consequence: ConsequenceValidation.activationPossible,
       ),
       DossierDemo(
-        id: tuteurDocumentaire,
+        id: enseignantDocumentaire,
         identifiantImmuable: 'DEMO-D02',
         prenom: 'Amina',
         nom: 'Benali',
-        // K-47 (HL-A-6) : la piece ne concerne que l'enseignant ; ce dossier,
-        // jadis tuteur, porte desormais un enseignant (identifiant garde).
         role: AppRole.teacher,
         soumisLe: il(48),
         revision: 1,
@@ -269,21 +257,6 @@ abstract final class DonneesDossiersDemo {
         documentId: 'demo-piece-02',
         accords: _accordsEnseignant,
         consequence: ConsequenceValidation.documentaireSeule,
-      ),
-      DossierDemo(
-        id: familleDispensee,
-        identifiantImmuable: 'DEMO-D03',
-        prenom: 'Hana',
-        nom: 'Témoin',
-        role: AppRole.guardian,
-        soumisLe: il(44),
-        revision: 1,
-        exigence: ExigencePiece.dispensee,
-        pieceTransmise: false,
-        typePiece: null,
-        revisionDocument: null,
-        accords: _accordsTuteur,
-        consequence: ConsequenceValidation.activationPossible,
       ),
       DossierDemo(
         id: pieceAbsente,
@@ -517,7 +490,6 @@ class RevueDossiersDemo implements PortRevueDossiers {
       case EtatPieceRevue.nonVisible:
         throw const ErreurRevueDossier(CodeErreurRevue.interdit);
       case EtatPieceRevue.absente:
-      case EtatPieceRevue.nonRequise:
         throw const ErreurRevueDossier(CodeErreurRevue.introuvable);
       case EtatPieceRevue.disponible:
         break;
@@ -756,7 +728,7 @@ class ServiceValidationDemo implements ServiceValidation {
       etatPiece: switch (piece) {
         EtatPieceRevue.disponible => EtatPiece.aVerifier,
         EtatPieceRevue.nonVisible => EtatPiece.nonVisible,
-        EtatPieceRevue.absente || EtatPieceRevue.nonRequise => EtatPiece.aucune,
+        EtatPieceRevue.absente => EtatPiece.aucune,
       },
       inscritLeConnue: d.soumisLe.toLocal(),
       etatCompte: d.etatCompte,
@@ -842,7 +814,7 @@ class ServiceDossierDemo implements ServiceDossier {
       profilExiste: true,
       role: d.role,
       statutCompte: d.etatCompte,
-      pieceDeposee: d.pieceTransmise || d.exigence == ExigencePiece.dispensee,
+      pieceDeposee: d.pieceTransmise,
       statutPiece: switch (d.statut) {
         StatutRevue.aVerifier => StatutPiece.enAttente,
         StatutRevue.valide => StatutPiece.validee,
@@ -853,9 +825,8 @@ class ServiceDossierDemo implements ServiceDossier {
       contratSigne: true,
       accuseSigne: true,
       correctionAutorisee: d.correctionAutorisee,
-      // L'exigence vient du double (AD-BR-29) : une famille dispensee n'a
-      // jamais de piece a deposer, meme refusee.
-      pieceRequise: d.exigence != ExigencePiece.dispensee,
+      // Le titulaire est toujours un enseignant (K-47) : piece exigee.
+      pieceRequise: true,
     );
   }
 

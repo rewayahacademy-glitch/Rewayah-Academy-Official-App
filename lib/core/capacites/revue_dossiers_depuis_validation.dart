@@ -86,7 +86,24 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
   }
 
   /// Lit la file et traduit ses erreurs en reponses metier typees.
-  Future<List<DossierAValider>> _lire() async {
+  ///
+  /// K-47 (HL-A-6) : la file ADM-02 ne porte que des ENSEIGNANTS. Tant que
+  /// `dossiers_en_attente` rend aussi les tuteurs `pending_kyc` (BR-1.c), ils
+  /// sont ecartes ici, sans nouvel appel : liste, detail, piece et decision
+  /// lisent tous cette file filtree.
+  Future<List<DossierAValider>> _lire() async =>
+      enseignantsSeulement(await _lireBrut());
+
+  /// Garde les seules lignes d'enseignants. Une ligne au role illisible
+  /// (repliee sur `guardian` par `DossierAValider.depuisJson`) est ecartee.
+  static List<DossierAValider> enseignantsSeulement(
+    List<DossierAValider> lignes,
+  ) => <DossierAValider>[
+    for (final DossierAValider d in lignes)
+      if (d.role == AppRole.teacher) d,
+  ];
+
+  Future<List<DossierAValider>> _lireBrut() async {
     try {
       return await lire();
     } on Object catch (e) {
@@ -353,7 +370,8 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     if (_documentEnFile(await _lire(), dossierId) == null) {
       return const EtatCommandeEchouee(CodeErreurRevue.dejaDecide);
     }
-    if (_documentEnFile(await recharger(), dossierId) == null) {
+    if (_documentEnFile(enseignantsSeulement(await recharger()), dossierId) ==
+        null) {
       return const EtatCommandeEchouee(CodeErreurRevue.dejaDecide);
     }
     return const EtatCommandeEnAttente();

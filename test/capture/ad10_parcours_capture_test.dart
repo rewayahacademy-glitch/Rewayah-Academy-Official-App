@@ -143,8 +143,10 @@ double _densite(String nom) => nom.contains('@3') ? 3 : 1;
 EtatRevueDemo _etat() =>
     EtatRevueDemo.initial(maintenant: DateTime.utc(2026, 9, 26, 12));
 
-const String _amina = DonneesDossiersDemo.tuteurDocumentaire;
-const String _hana = DonneesDossiersDemo.familleDispensee;
+const String _amina = DonneesDossiersDemo.enseignantDocumentaire;
+// K-47 (HL-A-6) : plus de tuteur dans la file ; le retour apres validation
+// est celui d'un enseignant.
+const String _omar = DonneesDossiersDemo.enseignantNominal;
 const String _motif = 'Motif fictif : la photo de la pièce est floue.';
 
 /// Refus d'Amina pose dans l'etat partage (le geste admin est teste ailleurs).
@@ -177,17 +179,6 @@ void main() {
           await _stabiliser(tester);
           debugPrint(
             'PNG ${await capturer(tester, fichier('3_file_pastilles'))}',
-          );
-
-          // 1 : famille dispensee.
-          await tester.ensureVisible(_ligne('Hana'));
-          await _stabiliser(tester);
-          await tester.tap(_ligne('Hana'));
-          await _stabiliser(tester);
-          expect(find.text(t.dossiers.revue.pieceNonRequise), findsOneWidget);
-          await _versActions(tester);
-          debugPrint(
-            'PNG ${await capturer(tester, fichier('1_famille_dispensee'))}',
           );
         });
 
@@ -281,13 +272,13 @@ void main() {
         ) async {
           fixerVueCapture(tester, taille, _densite(nom));
           final EtatRevueDemo e = _etat();
-          await _monter(tester, mode, _personne(e, _hana), Routes.attente);
+          await _monter(tester, mode, _personne(e, _omar), Routes.attente);
           await RevueDossiersDemo(e).decider(
-            dossierId: _hana,
-            revisionAttendue: e.dossiers[_hana]!.revision,
+            dossierId: _omar,
+            revisionAttendue: e.dossiers[_omar]!.revision,
             decision: DecisionDossier.valider,
             commandeId: 'capture-validation',
-            verificationsFaites: const <String>{},
+            verificationsFaites: verificationsDemo.toSet(),
           );
           for (final AppLifecycleState s in <AppLifecycleState>[
             AppLifecycleState.inactive,
@@ -303,11 +294,8 @@ void main() {
           await _stabiliser(tester);
           expect(
             _routeur.routerDelegate.currentConfiguration.uri.path,
-            startsWith(Routes.tuteurAccueil),
+            startsWith('/enseignant'),
           );
-          // Aucune donnee deduite de la decision (P-ADM-11.3).
-          expect(find.textContaining('Aïcha'), findsNothing);
-          expect(find.textContaining('Yusuf'), findsNothing);
           debugPrint(
             'PNG ${await capturer(tester, fichier('8_retour_valide'))}',
           );

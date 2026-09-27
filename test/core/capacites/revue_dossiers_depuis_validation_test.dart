@@ -135,7 +135,7 @@ void main() {
         prenom: 'B',
         nom: 'Test',
         identifiantImmuable: 'ID-p3',
-        role: AppRole.guardian,
+        role: AppRole.teacher,
         etatPiece: EtatPiece.nonVisible,
       ),
     ];
@@ -236,6 +236,57 @@ void main() {
           CodeErreurRevue.interdit,
         ),
       ),
+    );
+  });
+
+  // K-47 (HL-A-6) : tant que dossiers_en_attente rend aussi les tuteurs
+  // pending_kyc (BR-1.c), l'adaptateur les ecarte, sans appel de plus.
+  test('K-47 : les lignes de tuteur sont ecartees de la file', () async {
+    int appels = 0;
+    final DossierAValider tuteur = DossierAValider(
+      documentId: null,
+      profilId: 'g1',
+      type: null,
+      cleObjet: null,
+      deposeLe: DateTime.utc(2026, 9, 25, 13),
+      prenom: 'Hana',
+      nom: 'Test',
+      identifiantImmuable: 'ID-g1',
+      role: AppRole.guardian,
+      etatPiece: EtatPiece.aucune,
+    );
+    final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+      () async {
+        appels++;
+        return <DossierAValider>[tuteur, _d('p1', doc: 'd1', prenom: 'Omar')];
+      },
+    );
+    final PageDossiers page = await port.listerDossiers();
+    expect(page.elements.map((DossierEnFile e) => e.dossierId), <String>['p1']);
+    expect(
+      (await port.listerDossiers(role: AppRole.guardian)).elements,
+      isEmpty,
+    );
+    await expectLater(
+      port.dossierPourRevue('g1'),
+      throwsA(
+        isA<ErreurRevueDossier>().having(
+          (ErreurRevueDossier e) => e.code,
+          'code',
+          CodeErreurRevue.introuvable,
+        ),
+      ),
+    );
+    expect(appels, 3);
+    // Un role illisible retombe sur guardian a la lecture : ecarte aussi.
+    final DossierAValider sansRole = DossierAValider.depuisJson(
+      const <String, dynamic>{'profile_id': 'x1', 'etat_piece': 'aucune'},
+    );
+    expect(
+      RevueDossiersDepuisValidation.enseignantsSeulement(<DossierAValider>[
+        sansRole,
+      ]),
+      isEmpty,
     );
   });
 

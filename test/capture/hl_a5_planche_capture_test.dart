@@ -164,8 +164,10 @@ EtatRevueDemo _etat({bool superAdmin = true}) => EtatRevueDemo.initial(
   superAdmin: superAdmin,
 );
 
-const String _amina = DonneesDossiersDemo.tuteurDocumentaire;
-const String _hana = DonneesDossiersDemo.familleDispensee;
+const String _amina = DonneesDossiersDemo.enseignantDocumentaire;
+// K-47 (HL-A-6) : plus de tuteur dans la file ; le retour apres validation
+// est celui d'un enseignant.
+const String _omar = DonneesDossiersDemo.enseignantNominal;
 const String _motif = 'Motif fictif : la photo de la pièce est floue.';
 
 void main() {
@@ -352,13 +354,13 @@ void main() {
         ) async {
           fixerVueCapture(tester, taille, _densite(tailleNom));
           final EtatRevueDemo e = _etat();
-          await _monter(tester, mode.key, _personne(e, _hana), Routes.attente);
+          await _monter(tester, mode.key, _personne(e, _omar), Routes.attente);
           await RevueDossiersDemo(e).decider(
-            dossierId: _hana,
-            revisionAttendue: e.dossiers[_hana]!.revision,
+            dossierId: _omar,
+            revisionAttendue: e.dossiers[_omar]!.revision,
             decision: DecisionDossier.valider,
             commandeId: 'capture-hl-a5-validation',
-            verificationsFaites: const <String>{},
+            verificationsFaites: verificationsDemo.toSet(),
           );
           for (final AppLifecycleState s in <AppLifecycleState>[
             AppLifecycleState.inactive,
@@ -374,7 +376,7 @@ void main() {
           await _stabiliser(tester);
           expect(
             _routeur.routerDelegate.currentConfiguration.uri.path,
-            startsWith(Routes.tuteurAccueil),
+            startsWith('/enseignant'),
           );
           debugPrint(
             'PNG ${await capturer(tester, fichier('retour_apres_validation_hors_portee'))}',

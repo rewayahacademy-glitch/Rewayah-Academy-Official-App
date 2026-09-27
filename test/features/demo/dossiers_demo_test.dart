@@ -52,8 +52,8 @@ void main() {
     test('10 dossiers a verifier, tries, total et pagination', () async {
       final (_, RevueDossiersDemo revue, _) = _doubles();
       final PageDossiers tout = await revue.listerDossiers();
-      expect(tout.total, 10);
-      expect(tout.elements, hasLength(10));
+      expect(tout.total, 9);
+      expect(tout.elements, hasLength(9));
       expect(
         tout.elements.first.dossierId,
         DonneesDossiersDemo.enseignantNominal,
@@ -84,7 +84,7 @@ void main() {
       );
       expect(
         <int>[p1.elements.length, p2.elements.length, p3.elements.length],
-        <int>[4, 4, 2],
+        <int>[4, 4, 1],
       );
       expect(p1.aSuite && p2.aSuite, isTrue);
       expect(p3.aSuite, isFalse);
@@ -98,16 +98,16 @@ void main() {
         ),
         isTrue,
       );
-      // K-47 (HL-A-6) : D02, D07 et D10 sont passes enseignants ; seul D03
-      // (famille dispensee, dormant) reste un tuteur.
+      // K-47 (HL-A-6) : la file ne porte que des enseignants.
       expect(enseignants.total, 9);
+      expect((await revue.listerDossiers(role: AppRole.guardian)).total, 0);
     });
 
     test('toutes les pieces sont fictives', () async {
       final (_, RevueDossiersDemo revue, _) = _doubles(politiqueGenre: false);
       for (final String id in <String>[
         DonneesDossiersDemo.enseignantNominal,
-        DonneesDossiersDemo.tuteurDocumentaire,
+        DonneesDossiersDemo.enseignantDocumentaire,
         DonneesDossiersDemo.conflit,
         DonneesDossiersDemo.horsPortee,
         DonneesDossiersDemo.reponsePerdue,
@@ -123,20 +123,15 @@ void main() {
   });
 
   group('cas de revue', () {
-    test('famille dispensee : validable sans piece', () async {
-      final (_, RevueDossiersDemo revue, _) = _doubles();
-      final DossierPourRevue d = await revue.dossierPourRevue(
-        DonneesDossiersDemo.familleDispensee,
+    test('K-47 : aucun tuteur dans le jeu, piece toujours exigee', () {
+      final List<DossierDemo> jeu = DonneesDossiersDemo.fabriquer(
+        DateTime.utc(2026, 9, 27),
       );
-      expect(d.etatPiece, EtatPieceRevue.nonRequise);
-      expect(d.peutValider, isTrue);
-      expect(d.verifications, isEmpty);
-      final ResultatDecision r = await _valider(
-        revue,
-        DonneesDossiersDemo.familleDispensee,
-        verifications: const <String>{},
+      expect(jeu.where((DossierDemo d) => d.role == AppRole.guardian), isEmpty);
+      expect(
+        jeu.every((DossierDemo d) => d.exigence == ExigencePiece.requise),
+        isTrue,
       );
-      expect(r.statutFinal, StatutRevue.valide);
     });
 
     test('piece absente : validation fermee, refus possible', () async {
@@ -179,7 +174,7 @@ void main() {
       expect(r.nouvelleRevision, 3);
       expect(r.etatCompte, AccountStatus.active);
       final PageDossiers file = await revue.listerDossiers();
-      expect(file.total, 9);
+      expect(file.total, 8);
       expect(
         file.elements.any((DossierEnFile d) => d.dossierId == id),
         isFalse,
@@ -202,7 +197,7 @@ void main() {
 
     test('idempotence par commande', () async {
       final (EtatRevueDemo etat, RevueDossiersDemo revue, _) = _doubles();
-      const String id = DonneesDossiersDemo.tuteurDocumentaire;
+      const String id = DonneesDossiersDemo.enseignantDocumentaire;
       final ResultatDecision r1 = await revue.decider(
         dossierId: id,
         revisionAttendue: 1,
@@ -407,7 +402,7 @@ void main() {
         genreRelecteurRenseigne: false,
         politiqueGenre: false,
       );
-      expect((await desactivee.listerDossiers()).total, 10);
+      expect((await desactivee.listerDossiers()).total, 9);
       // Lecture de la piece et decision fermees aussi (0004:202-204).
       await expectLater(
         active.demanderVuePiece(
@@ -503,7 +498,7 @@ void main() {
           genreRelecteurRenseigne: false,
         );
         const String id = DonneesDossiersDemo.horsPortee;
-        expect((await revue.listerDossiers()).total, 10);
+        expect((await revue.listerDossiers()).total, 9);
         final DossierPourRevue d = await revue.dossierPourRevue(id);
         expect(d.etatPiece, EtatPieceRevue.disponible);
         expect(d.peutRefuser, isTrue);
@@ -536,7 +531,6 @@ void main() {
       // AD-5 : toute la file, dans l'ordre du port, pour que chaque ligne
       // trouve son detail.
       expect(ids, <String>[for (final DossierDemo d in etat.fileTriee) d.id]);
-      expect(ids, contains(DonneesDossiersDemo.familleDispensee));
       expect(ids, contains(DonneesDossiersDemo.pieceAbsente));
       expect(ids, contains(DonneesDossiersDemo.horsPortee));
       expect(ids.first, DonneesDossiersDemo.enseignantNominal);

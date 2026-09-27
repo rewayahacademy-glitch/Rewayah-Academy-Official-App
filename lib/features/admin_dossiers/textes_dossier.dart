@@ -67,8 +67,7 @@ String libelleAccord(SorteContrat sorte) => switch (sorte) {
     t.compte.tuteur.pageLegal.accuseEnregistrement,
 };
 
-/// Le type de dossier : toujours « Enseignant » ou « Tuteur ».
-String typeDossier(AppRole role) => switch (role) {
-  AppRole.teacher => t.compte.roles.teacher,
-  _ => t.compte.roles.guardian,
-};
+/// Le type de dossier : toujours « Enseignant ». K-47 (HL-A-6) : la piece
+/// et la validation ne concernent que l'enseignant, seul present dans la
+/// file ADM-02 ; le tuteur n'y entre jamais.
+String typeDossier() => t.compte.roles.teacher;

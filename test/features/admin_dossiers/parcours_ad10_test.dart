@@ -14,9 +14,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
-import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/admin_dossiers/file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -80,16 +78,6 @@ Future<void> _toucher(WidgetTester tester, String libelle) async {
   await _stabiliser(tester);
 }
 
-ActionPrincipale _action(WidgetTester tester, String libelle) =>
-    tester.widget<ActionPrincipale>(
-      find
-          .ancestor(
-            of: find.text(libelle),
-            matching: find.byType(ActionPrincipale),
-          )
-          .first,
-    );
-
 /// La personne, titulaire du dossier [id], dans la vraie application en
 /// demonstration tuteur, sur le MEME etat que la revue admin.
 Future<GoRouter> _monterPersonne(
@@ -146,34 +134,22 @@ Future<void> _pauseEtRetour(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('T1 famille dispensee : aucune piece requise, validable', (
+  // K-47 (HL-A-6) : la piece et la validation ne concernent que l'enseignant ;
+  // la file ADM-02 ne montre jamais un tuteur, ni le type « Tuteur ».
+  testWidgets('T1 file ADM-02 : enseignants seulement, aucun tuteur', (
     WidgetTester tester,
   ) async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
-    final int avant = etat.fileTriee.length;
     await _monter(tester, etat);
-    await _ouvrir(tester, 'Hana');
+    await _personnes(tester);
 
-    expect(find.text(t.dossiers.revue.pieceNonRequise), findsOneWidget);
-    expect(find.text(t.dossiers.verifications), findsNothing);
-    expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
+    expect(_ligne('Omar'), findsOneWidget);
+    expect(_ligne('Hana'), findsNothing);
+    expect(find.textContaining(t.compte.roles.guardian), findsNothing);
+    final PageDossiers page = await RevueDossiersDemo(etat).listerDossiers();
     expect(
-      find.text(t.dossiers.revue.etats.decisionIndisponible),
-      findsNothing,
-    );
-    expect(_action(tester, t.dossiers.approuver).onPress, isNotNull);
-
-    await _toucher(tester, t.dossiers.approuver);
-    await tester.tap(find.text(t.dossiers.approuver).last);
-    await _stabiliser(tester);
-    await _stabiliser(tester);
-
-    expect(etat.nombreDecisions, 1);
-    expect(find.text(t.dossiers.validation.succes), findsOneWidget);
-    expect(etat.fileTriee.length, avant - 1);
-    expect(
-      etat.dossiers[DonneesDossiersDemo.familleDispensee]!.statut,
-      isNot(StatutRevue.aVerifier),
+      page.elements.every((DossierEnFile d) => d.role == AppRole.teacher),
+      isTrue,
     );
   });
 
@@ -203,13 +179,13 @@ void main() {
 
     // La pastille de chaque ligne, telle que le port la rend a l'ecran.
     final PageDossiers page = await RevueDossiersDemo(etat).listerDossiers();
-    final DossierEnFile hana = page.elements.firstWhere(
-      (DossierEnFile d) => d.dossierId == DonneesDossiersDemo.familleDispensee,
+    final DossierEnFile omar = page.elements.firstWhere(
+      (DossierEnFile d) => d.dossierId == DonneesDossiersDemo.enseignantNominal,
     );
     final DossierEnFile yanis = page.elements.firstWhere(
       (DossierEnFile d) => d.dossierId == DonneesDossiersDemo.pieceAbsente,
     );
-    expect(pastilleDossier(hana).$1, t.dossiers.file.enVerification);
+    expect(pastilleDossier(omar).$1, t.dossiers.file.enVerification);
     expect(pastilleDossier(yanis).$1, t.dossiers.sansPiece);
     await tester.ensureVisible(_ligne('Yanis'));
     await _stabiliser(tester);
@@ -223,7 +199,7 @@ void main() {
   testWidgets('T5 refus, correction par la personne, retour en file en '
       'revision nouvelle, cases vides', (WidgetTester tester) async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String id = DonneesDossiersDemo.tuteurDocumentaire;
+    const String id = DonneesDossiersDemo.enseignantDocumentaire;
     const String motif = 'Motif fictif : photo floue.';
 
     // Admin : refus avec motif, depuis la coque.
@@ -274,55 +250,53 @@ void main() {
     expect(etat.nombreDecisions, 1);
   });
 
-  testWidgets('T8 validee pendant l absence : le retour mene a /tuteur', (
+  testWidgets('T8 validee pendant l absence : le retour quitte /attente', (
     WidgetTester tester,
   ) async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String id = DonneesDossiersDemo.familleDispensee;
+    const String id = DonneesDossiersDemo.enseignantNominal;
     final GoRouter routeur = await _monterPersonne(tester, etat, id);
     expect(_chemin(routeur), Routes.attente);
-    // K-47 : un tuteur n'est pas « en verification » : son acces s'ouvre.
-    expect(find.text(t.attente.accesTitre), findsOneWidget);
-    expect(find.text(t.attente.titre), findsNothing);
+    expect(find.text(t.attente.titre), findsOneWidget);
 
-    // L'administration valide (le geste admin est prouve par T1).
+    // L'administration valide (le geste admin est prouve par T5 et T7).
     await RevueDossiersDemo(etat).decider(
       dossierId: id,
       revisionAttendue: etat.dossiers[id]!.revision,
       decision: DecisionDossier.valider,
       commandeId: 'ad10-t8',
-      verificationsFaites: const <String>{},
+      verificationsFaites: verificationsDemo.toSet(),
     );
     expect(etat.dossiers[id]!.etatCompte, AccountStatus.active);
 
     await _pauseEtRetour(tester);
-    expect(_chemin(routeur), startsWith(Routes.tuteurAccueil));
-    expect(find.byType(NavShell), findsOneWidget);
+    expect(_chemin(routeur), startsWith('/enseignant'));
   });
 
-  testWidgets('T8 variante : « Actualiser l etat du dossier » mene a /tuteur', (
-    WidgetTester tester,
-  ) async {
-    final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String id = DonneesDossiersDemo.familleDispensee;
-    final GoRouter routeur = await _monterPersonne(tester, etat, id);
-    await RevueDossiersDemo(etat).decider(
-      dossierId: id,
-      revisionAttendue: etat.dossiers[id]!.revision,
-      decision: DecisionDossier.valider,
-      commandeId: 'ad10-t8b',
-      verificationsFaites: const <String>{},
-    );
-    await tester.tap(find.text(t.attente.actualiserCompte));
-    await _stabiliser(tester);
-    await _stabiliser(tester);
-    expect(_chemin(routeur), startsWith(Routes.tuteurAccueil));
-  });
+  testWidgets(
+    'T8 variante : « Actualiser l etat du dossier » quitte /attente',
+    (WidgetTester tester) async {
+      final EtatRevueDemo etat = EtatRevueDemo.initial();
+      const String id = DonneesDossiersDemo.enseignantNominal;
+      final GoRouter routeur = await _monterPersonne(tester, etat, id);
+      await RevueDossiersDemo(etat).decider(
+        dossierId: id,
+        revisionAttendue: etat.dossiers[id]!.revision,
+        decision: DecisionDossier.valider,
+        commandeId: 'ad10-t8b',
+        verificationsFaites: verificationsDemo.toSet(),
+      );
+      await tester.tap(find.text(t.attente.actualiser));
+      await _stabiliser(tester);
+      await _stabiliser(tester);
+      expect(_chemin(routeur), startsWith('/enseignant'));
+    },
+  );
 
   test('demonstration : un refus garde le motif, la resoumission ouvre une '
       'nouvelle revision', () async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String id = DonneesDossiersDemo.tuteurDocumentaire;
+    const String id = DonneesDossiersDemo.enseignantDocumentaire;
     final int revision = etat.dossiers[id]!.revision;
     await RevueDossiersDemo(etat).decider(
       dossierId: id,
@@ -347,7 +321,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String id = DonneesDossiersDemo.tuteurDocumentaire;
+    const String id = DonneesDossiersDemo.enseignantDocumentaire;
     final GoRouter routeur = await _monterPersonne(tester, etat, id);
     await RevueDossiersDemo(etat).decider(
       dossierId: id,
@@ -358,30 +332,6 @@ void main() {
     );
     await _pauseEtRetour(tester);
     expect(_chemin(routeur), Routes.attente);
-  });
-
-  // K-47 (HL-A-6) : un tuteur n'a ni piece ni refus de piece ; il voit l'etat
-  // honnete de son acces, jamais « Dossier refuse » ni « Corriger ».
-  testWidgets('T1 bis tuteur refuse en file : ni refus ni piece demandee', (
-    WidgetTester tester,
-  ) async {
-    final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String id = DonneesDossiersDemo.familleDispensee;
-    await RevueDossiersDemo(etat).decider(
-      dossierId: id,
-      revisionAttendue: etat.dossiers[id]!.revision,
-      decision: DecisionDossier.refuser,
-      commandeId: 'ad10-t1b',
-      verificationsFaites: const <String>{},
-      motif: 'Motif fictif.',
-    );
-    final GoRouter routeur = await _monterPersonne(tester, etat, id);
-    expect(find.text(t.attente.refuse), findsNothing);
-    expect(find.text(t.attente.refuseSansElement), findsNothing);
-    expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
-    expect(find.textContaining('pièce'), findsNothing);
-    expect(find.text(t.attente.corriger), findsNothing);
-    expect(_chemin(routeur), isNot(Routes.attentePiece));
   });
 
   testWidgets(
@@ -397,28 +347,9 @@ void main() {
     },
   );
 
-  testWidgets('T8 bis : apres validation, aucun enfant ni classe deduits', (
-    WidgetTester tester,
-  ) async {
-    final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String id = DonneesDossiersDemo.familleDispensee;
-    final GoRouter routeur = await _monterPersonne(tester, etat, id);
-    await RevueDossiersDemo(etat).decider(
-      dossierId: id,
-      revisionAttendue: etat.dossiers[id]!.revision,
-      decision: DecisionDossier.valider,
-      commandeId: 'ad10-t8c',
-      verificationsFaites: const <String>{},
-    );
-    await _pauseEtRetour(tester);
-    expect(_chemin(routeur), startsWith(Routes.tuteurAccueil));
-    expect(find.textContaining('Aïcha'), findsNothing);
-    expect(find.textContaining('Yusuf'), findsNothing);
-  });
-
   test('deux resoumissions : pieces distinctes, decisions separees', () async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
-    const String a = DonneesDossiersDemo.tuteurDocumentaire;
+    const String a = DonneesDossiersDemo.enseignantDocumentaire;
     const String b = DonneesDossiersDemo.enseignantNominal;
     for (final String id in <String>[a, b]) {
       await RevueDossiersDemo(etat).decider(
@@ -457,7 +388,7 @@ void main() {
       () => surchargesDemoTuteur(
         environnement: 'production',
         dossiers: EtatRevueDemo.initial(),
-        titulaire: DonneesDossiersDemo.tuteurDocumentaire,
+        titulaire: DonneesDossiersDemo.enseignantDocumentaire,
       ),
       throwsStateError,
     );

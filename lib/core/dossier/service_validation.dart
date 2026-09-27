@@ -61,6 +61,8 @@ class DossierAValider {
       prenom: json['first_name'] as String? ?? '',
       nom: json['last_name'] as String? ?? '',
       identifiantImmuable: json['immutable_id'] as String? ?? '',
+      // K-47 (HL-A-6) : un role illisible retombe sur guardian, que la file
+      // ADM-02 ecarte (enseignants seulement) : jamais pris pour un enseignant.
       role: AppRole.depuisSql(json['role'] as String?) ?? AppRole.guardian,
       etatPiece: EtatPiece.depuisSql(json['etat_piece'] as String?),
       inscritLeConnue: inscription,

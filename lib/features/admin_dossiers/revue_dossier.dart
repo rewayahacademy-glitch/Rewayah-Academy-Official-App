@@ -229,7 +229,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         d.peutValider &&
         _lectureFaite &&
         manquantes.isEmpty &&
-        (d.documentId != null || d.etatPiece == EtatPieceRevue.nonRequise) &&
+        d.documentId != null &&
         !validationIndeterminee &&
         !bloque;
     final bool peutRefuser = d.peutRefuser && !bloque;
@@ -258,7 +258,7 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         ],
         Text(
           t.dossiers.file.legende(
-            type: typeDossier(d.role),
+            type: typeDossier(),
             date: t.dossiers.deposeLe(date: dateRevue(d.soumisLeUtc)),
           ),
           style: palette.inkMuted.applyTo(
@@ -281,26 +281,24 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
           focusNode: _focusVoirPiece,
           onVoirPiece: () => unawaited(_voirPiece()),
         ),
-        if (d.etatPiece != EtatPieceRevue.nonRequise) ...<Widget>[
-          SizedBox(height: section),
-          GroupeReglages(
-            titre: t.dossiers.verifications,
-            lignes: <LigneRubrique>[
-              // Piece absente : la carte reste (§10.4) mais sans pictogramme
-              // de case, puisqu'il n'y a rien a verifier (P-ADM-08.2).
-              if (d.etatPiece == EtatPieceRevue.absente)
-                for (final String id in _verificationsAffichees)
-                  LigneRubrique(libelle: libelleVerification(id)!)
-              else if (d.verifications.isEmpty)
-                for (final String id in _verificationsAffichees)
-                  _ligneInactive(id, palette)
-              else
-                for (final VerificationRevue v in d.verifications)
-                  if (libelleVerification(v.id) != null)
-                    _ligneVerification(v, palette),
-            ],
-          ),
-        ],
+        SizedBox(height: section),
+        GroupeReglages(
+          titre: t.dossiers.verifications,
+          lignes: <LigneRubrique>[
+            // Piece absente : la carte reste (§10.4) mais sans pictogramme
+            // de case, puisqu'il n'y a rien a verifier (P-ADM-08.2).
+            if (d.etatPiece == EtatPieceRevue.absente)
+              for (final String id in _verificationsAffichees)
+                LigneRubrique(libelle: libelleVerification(id)!)
+            else if (d.verifications.isEmpty)
+              for (final String id in _verificationsAffichees)
+                _ligneInactive(id, palette)
+            else
+              for (final VerificationRevue v in d.verifications)
+                if (libelleVerification(v.id) != null)
+                  _ligneVerification(v, palette),
+          ],
+        ),
         if (acceptes.isNotEmpty) ...<Widget>[
           SizedBox(height: section),
           GroupeReglages(
@@ -545,10 +543,6 @@ class _CartePiece extends StatelessWidget {
       EtatPieceRevue.absente => LigneRubrique(
         icone: AppIcons.dossiers,
         libelle: t.dossiers.revue.pieceNonTransmise,
-      ),
-      EtatPieceRevue.nonRequise => LigneRubrique(
-        icone: AppIcons.dossiers,
-        libelle: t.dossiers.revue.pieceNonRequise,
       ),
     };
     return GroupeReglages(

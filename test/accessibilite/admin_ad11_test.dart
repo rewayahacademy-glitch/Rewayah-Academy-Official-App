@@ -186,7 +186,7 @@ Future<void> _monterAttente(WidgetTester tester, _Vue v) async {
     surchargesDemoTuteur(
       environnement: 'staging',
       dossiers: EtatRevueDemo.initial(),
-      titulaire: DonneesDossiersDemo.tuteurDocumentaire,
+      titulaire: DonneesDossiersDemo.enseignantDocumentaire,
     ),
   );
   expect(

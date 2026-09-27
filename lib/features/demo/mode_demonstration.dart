@@ -255,7 +255,7 @@ const String parametreDossierDemo = 'dossier';
     return null;
   }
   final EtatRevueDemo e = EtatRevueDemo.initial(maintenant: maintenant);
-  const String id = DonneesDossiersDemo.tuteurDocumentaire;
+  const String id = DonneesDossiersDemo.enseignantDocumentaire;
   if (v != 'verification') {
     e.dossiers[id]!
       ..statut = StatutRevue.refuse

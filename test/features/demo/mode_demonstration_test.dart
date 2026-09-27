@@ -142,7 +142,8 @@ void main() {
       );
       expect(
         (await conteneur.read(indicateursProvider.future)).dossiersEnAttente,
-        10,
+        // K-47 (HL-A-6) : D03 (famille dispensee, un tuteur) est retire.
+        9,
       );
       expect(await conteneur.read(demandesProvider.future), isEmpty);
     });

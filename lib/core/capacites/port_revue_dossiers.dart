@@ -15,8 +15,11 @@ import 'capacite_indisponible.dart';
 /// Statut de revue d'un dossier.
 enum StatutRevue { aVerifier, valide, refuse }
 
-/// La piece est-elle exigee pour ce dossier.
-enum ExigencePiece { requise, dispensee }
+/// La piece est-elle exigee pour ce dossier. K-47 (HL-A-6) : la file ne
+/// porte que des enseignants, a qui la piece est toujours exigee ; la
+/// dispense de la famille (P-ADM-08) n'a plus d'objet, le tuteur ne deposant
+/// aucune piece et n'entrant jamais dans la file.
+enum ExigencePiece { requise }
 
 /// Etat de la piece vu par CE relecteur.
 enum EtatPieceRevue {
@@ -24,9 +27,6 @@ enum EtatPieceRevue {
 
   /// Requise, non transmise.
   absente,
-
-  /// Dispensee.
-  nonRequise,
 
   /// Hors de portee de ce relecteur (politique de genre active).
   nonVisible,
