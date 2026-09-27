@@ -13,6 +13,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -284,29 +285,33 @@ class _CahierState extends ConsumerState<_Cahier> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // Le champ porte deja ce libelle : le titre n'est pas relu (W-243).
+        // Le titre nomme le champ : pas de label flottant qui le repete
+        // (K-42 §1). Le champ garde ce nom au lecteur d'ecran par sa
+        // semantique, et le titre n'est donc pas relu (W-243).
         ExcludeSemantics(
           child: Text(t.enseignant.cahier.reprise, style: textes.titleSmall),
         ),
         Ecart.vSm,
-        TextField(
-          key: const ValueKey<String>('cahier-reprise'),
-          controller: _reprise,
-          focusNode: _focusReprise,
-          textInputAction: TextInputAction.done,
-          onChanged: (String valeur) {
-            if (_repriseManquante && valeur.trim().isNotEmpty) {
-              setState(() => _repriseManquante = false);
-            }
-          },
-          decoration: InputDecoration(
-            labelText: t.enseignant.cahier.reprise,
-            helperText: t.enseignant.cahier.repriseDetail,
-            helperMaxLines: 2,
-            errorText: _repriseManquante
-                ? t.enseignant.cahier.repriseRequise
-                : null,
-            errorMaxLines: 3,
+        Semantics(
+          label: t.enseignant.cahier.reprise,
+          child: TextField(
+            key: const ValueKey<String>('cahier-reprise'),
+            controller: _reprise,
+            focusNode: _focusReprise,
+            textInputAction: TextInputAction.done,
+            onChanged: (String valeur) {
+              if (_repriseManquante && valeur.trim().isNotEmpty) {
+                setState(() => _repriseManquante = false);
+              }
+            },
+            decoration: InputDecoration(
+              helperText: t.enseignant.cahier.repriseDetail,
+              helperMaxLines: 2,
+              errorText: _repriseManquante
+                  ? t.enseignant.cahier.repriseRequise
+                  : null,
+              errorMaxLines: 3,
+            ),
           ),
         ),
         Ecart.vXxl,
@@ -594,6 +599,10 @@ class _Constat extends StatelessWidget {
         ton: presence.ton,
       ),
       onPress: lectureSeule ? null : () => unawaited(onAjuster(p)),
+      // Le lecteur d'ecran entend l'action, pas seulement le prenom (W-243).
+      libelleSemantique: lectureSeule
+          ? null
+          : t.enseignant.cahier.ajusterPour(eleve: p.membre.libelle),
     );
   }
 }
@@ -1085,20 +1094,22 @@ class _ApresDepot extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // Au bord de debut, comme le reste de la page, et non centre au-dessus
+        // d'actions tenues au bord de fin (K-42 §2 et §7).
         switch (sort) {
-          SortCahier.envoye => EmptyState(
-            message: t.enseignant.cahier.depose,
-            invitation: corrige == null
+          SortCahier.envoye => _EtatDepot(
+            titre: t.enseignant.cahier.depose,
+            detail: corrige == null
                 ? t.enseignant.cahier.deposeDetail
                 : t.enseignant.cahier.corrigeLe(date: _date(corrige)),
             icone: AppIcons.succes,
-            registre: RegistreVide.bonneNouvelle,
+            encre: AppPalette.of(context).inkSuccess,
           ),
-          SortCahier.enFile => EmptyState(
-            message: t.enseignant.cahier.enFileTitre,
-            invitation: t.enseignant.cahier.enFileDetail,
+          SortCahier.enFile => _EtatDepot(
+            titre: t.enseignant.cahier.enFileTitre,
+            detail: t.enseignant.cahier.enFileDetail,
             icone: AppIcons.enAttenteEnvoi,
-            registre: RegistreVide.subi,
+            encre: AppPalette.of(context).inkMuted,
           ),
         },
         Ecart.vLg,
@@ -1113,6 +1124,47 @@ class _ApresDepot extends StatelessWidget {
     numero: d.day,
     mois: t.commun.dates.mois[d.month - 1],
   );
+}
+
+/// L'etat du cahier parti, au bord de debut : l'icone du registre, le titre,
+/// puis sa ligne douce. Memes textes, memes icones et memes encres que l'etat
+/// vide qu'il remplace (vert pour l'enregistre, neutre pour l'attente).
+class _EtatDepot extends StatelessWidget {
+  const _EtatDepot({
+    required this.titre,
+    required this.detail,
+    required this.icone,
+    required this.encre,
+  });
+
+  final String titre;
+  final String detail;
+  final AppIcon icone;
+  final AppInkColor encre;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        IconTheme(
+          data: encre.asIconTheme(size: AppSpacing.section),
+          child: Icon(icone.repos),
+        ),
+        Ecart.vLg,
+        Semantics(header: true, child: Text(titre, style: textes.titleLarge)),
+        Ecart.vSm,
+        Text(
+          detail,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 /// Rend a un bouton sa largeur naturelle quand [borne] est vrai.

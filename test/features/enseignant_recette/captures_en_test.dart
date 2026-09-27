@@ -49,7 +49,9 @@ Future<void> _capturer(
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
     hoteCapture(
-      rtl ? Directionality(textDirection: TextDirection.rtl, child: ecran) : ecran,
+      rtl
+          ? Directionality(textDirection: TextDirection.rtl, child: ecran)
+          : ecran,
       themeMode: mode,
       echelleTexte: echelle,
       surcharges: surcharges,
@@ -107,9 +109,7 @@ void main() {
           await _capturer(
             tester,
             'aujourdhui/en12_aujourdhui_${l}_${mode.name}',
-            const CoquilleEnseignantDemo(
-              ecran: EcranDemoEnseignant.aujourdhui,
-            ),
+            const CoquilleEnseignantDemo(ecran: EcranDemoEnseignant.aujourdhui),
             taille,
             mode: mode,
           );
@@ -358,15 +358,8 @@ void main() {
         'PNG ${await capturer(tester, 'disponibilites/en12_succes_390_light')}',
       );
     });
-    testWidgets('disponibilites_200pct_390_light', (
-      WidgetTester tester,
-    ) async {
-      await monter(
-        tester,
-        const Size(390, 3000),
-        ThemeMode.light,
-        echelle: 2,
-      );
+    testWidgets('disponibilites_200pct_390_light', (WidgetTester tester) async {
+      await monter(tester, const Size(390, 3000), ThemeMode.light, echelle: 2);
       debugPrint(
         'PNG ${await capturer(tester, 'disponibilites/en12_disponibilites_200pct_390_light')}',
       );
@@ -530,7 +523,9 @@ void main() {
       );
       await tester.pumpWidget(
         hoteCapture(
-          rtl ? Directionality(textDirection: TextDirection.rtl, child: ecran) : ecran,
+          rtl
+              ? Directionality(textDirection: TextDirection.rtl, child: ecran)
+              : ecran,
           themeMode: mode,
           echelleTexte: echelle,
         ),
@@ -719,7 +714,9 @@ void main() {
       final Widget ecran = SalleDemo(role: role, etat: etat, onSortir: () {});
       await tester.pumpWidget(
         hoteCapture(
-          rtl ? Directionality(textDirection: TextDirection.rtl, child: ecran) : ecran,
+          rtl
+              ? Directionality(textDirection: TextDirection.rtl, child: ecran)
+              : ecran,
           themeMode: mode,
           echelleTexte: echelle,
         ),
@@ -841,12 +838,12 @@ void main() {
       const MembreSeance(
         studentId: 'demo-eleve-maryam',
         identifiantImmuable: 'RA-MA-000002',
-        prenom: 'Maryam',
+        prenom: 'Mariam',
       ),
       const MembreSeance(
-        studentId: 'demo-eleve-adam',
-        identifiantImmuable: 'RA-AD-000003',
-        prenom: 'Adam',
+        studentId: 'demo-eleve-aicha',
+        identifiantImmuable: 'RA-AI-000003',
+        prenom: 'Aïcha',
       ),
     ];
     final List<AnomalieRevue> anomalies = <AnomalieRevue>[
@@ -859,12 +856,12 @@ void main() {
       const AnomalieRevue(
         type: TypeAnomalieRevue.horsCorridor,
         studentId: 'demo-eleve-maryam',
-        eleve: 'Maryam',
+        eleve: 'Mariam',
       ),
       const AnomalieRevue(
         type: TypeAnomalieRevue.transfertPropose,
-        studentId: 'demo-eleve-adam',
-        eleve: 'Adam',
+        studentId: 'demo-eleve-aicha',
+        eleve: 'Aïcha',
       ),
     ];
 
@@ -873,7 +870,9 @@ void main() {
         FauxServiceEnseignant()
           ..membresRendus = <String, List<MembreSeance>>{classe: eleves},
       ),
-      anomaliesGroupeProvider.overrideWith((Ref ref, String groupeId) async => a),
+      anomaliesGroupeProvider.overrideWith(
+        (Ref ref, String groupeId) async => a,
+      ),
     ];
 
     for (final (String l, Size taille) in <(String, Size)>[
@@ -906,9 +905,7 @@ void main() {
         });
       }
     }
-    testWidgets('avec_anomalies_200pct_390_light', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('avec_anomalies_200pct_390_light', (WidgetTester tester) async {
       await _capturer(
         tester,
         'revue_classe/en12_avec_anomalies_200pct_390_light',

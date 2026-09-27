@@ -358,6 +358,8 @@ class _Contenu extends StatelessWidget {
       fraction: fraction,
       epaisseur: serre && !large ? AppSpacing.sm : AppSpacing.md,
     );
+    // Sans texte, pas d'encadre : jamais une pastille vide (E16, EN-RC).
+    final bool avecEncadre = support.encadre.trim().isNotEmpty;
     final Widget encadre = DecoratedBox(
       key: const ValueKey<String>('encadre-support'),
       decoration: palette.washAccent.decoration(
@@ -429,8 +431,7 @@ class _Contenu extends StatelessWidget {
           ligneFine,
           Ecart.vMd,
           ligne(0.94),
-          Ecart.vLg,
-          encadre,
+          if (avecEncadre) ...<Widget>[Ecart.vLg, encadre],
           Ecart.vLg,
           ligneFine,
         ],
@@ -492,8 +493,7 @@ class _Contenu extends StatelessWidget {
         ],
         if (!encadreACote) ...<Widget>[
           autourEncadre,
-          encadre,
-          autourEncadre,
+          if (avecEncadre) ...<Widget>[encadre, autourEncadre],
           ligne(0.6),
         ],
         if (serre) Ecart.vMd else Ecart.vLg,

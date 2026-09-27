@@ -127,7 +127,8 @@ abstract final class DonneesSeanceDemo {
   static const SupportSeance support = SupportSeance(
     chapitre: 'Chapitre 1',
     titre: 'Les bonnes manières en classe',
-    encadre: 'Être attentif aux explications du professeur.',
+    // Pas d'encadre : « le professeur » n'est jamais montre a l'eleve (E16).
+    encadre: '',
     points: <String>[
       'Écouter avec calme.',
       'Poser des questions poliment.',

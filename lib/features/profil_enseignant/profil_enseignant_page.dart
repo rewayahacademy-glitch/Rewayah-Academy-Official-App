@@ -648,7 +648,7 @@ class _Contrat extends ConsumerWidget {
 /// `/compte/reglages` existent, portent les seules preferences reelles du
 /// produit, et restent ouvertes a un compte actif. Le chemin de retour a 390 de
 /// large est la barre basse elle-meme : `_CoquilleSecondaire` rend `/compte/*`
-/// dans `NavShell` avec les trois destinations de l'enseignant, aucune active.
+/// dans `NavShell` avec les quatre destinations de l'enseignant, aucune active.
 class _Personnel extends StatelessWidget {
   const _Personnel();
 

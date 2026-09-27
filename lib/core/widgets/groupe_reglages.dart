@@ -22,6 +22,7 @@ class LigneRubrique {
     this.controle,
     this.marque,
     this.focusNode,
+    this.libelleSemantique,
   }) : assert(
          icone != null || meneur != null,
          'une rubrique porte une icone ou un meneur',
@@ -60,6 +61,10 @@ class LigneRubrique {
   /// Le noeud de focus de la ligne pressable, pour qu'un ecran y rende le
   /// focus (fermeture du panneau de la fiche eleve, EN-12).
   final FocusNode? focusNode;
+
+  /// Ce que la ligne pressable dit de son action au lecteur d'ecran, quand
+  /// le libelle seul ne la nomme pas : « Ajuster · Aya » (W-243).
+  final String? libelleSemantique;
 }
 
 /// Un groupe de rubriques a filets en retrait : le hub du Compte, la fiche
@@ -143,6 +148,7 @@ class _Ligne extends StatelessWidget {
     return Pressable.selon(
       onPress: ligne.onPress,
       focusNode: ligne.focusNode,
+      libelleSemantique: ligne.libelleSemantique,
       respecterCibleTactile: false,
       arrondiFocus: AppRadius.arrondiSm,
       constructeur: _contenu,
