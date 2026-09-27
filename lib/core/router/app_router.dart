@@ -52,7 +52,7 @@ import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
 import '../../features/controleur/compte_rendu_controle.dart'
-    show ChoixCompteRendu;
+    show choixObservationDepuis;
 import '../../features/controleur/compte_rendu_controle_page.dart';
 import '../../features/controleur/controle_page.dart';
 import '../../features/controleur/echanges_controleur_page.dart';
@@ -1110,14 +1110,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const GardeControle(child: CompteRenduControlePage()),
       ),
       // CTR-03A, l'observation structuree (CT-5) : « Ajouter une
-      // observation » ou « Signaler un point important », porte par extra.
+      // observation » ou « Signaler un point important », porte par
+      // l'adresse (`?choix=`), pour survivre a un rechargement.
       GoRoute(
         path: Routes.controleurObservation,
         builder: (BuildContext _, GoRouterState etat) => GardeControle(
           child: ObservationControlePage(
-            choix: etat.extra is ChoixCompteRendu
-                ? etat.extra! as ChoixCompteRendu
-                : ChoixCompteRendu.ajouterObservation,
+            choix: choixObservationDepuis(etat.uri.queryParameters, etat.extra),
           ),
         ),
       ),

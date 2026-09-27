@@ -79,6 +79,30 @@ enum ChoixCompteRendu {
   pointImportant,
 }
 
+/// L'adresse de CTR-03A a [chemin] pour [choix] : le choix est porte par
+/// l'adresse (`?choix=`), pas par `extra` seul, pour qu'un rechargement de
+/// la PWA ou un lien direct ne change pas en silence un « point important »
+/// en observation ordinaire (revue CT-5).
+String adresseObservation(String chemin, ChoixCompteRendu choix) => Uri(
+  path: chemin,
+  queryParameters: <String, String>{'choix': choix.name},
+).toString();
+
+/// Le choix de CTR-03A lu dans l'adresse, puis dans `extra` (appels
+/// existants), sinon « Ajouter une observation ».
+ChoixCompteRendu choixObservationDepuis(
+  Map<String, String> parametres,
+  Object? extra,
+) {
+  final String? nom = parametres['choix'];
+  for (final ChoixCompteRendu c in ChoixCompteRendu.values) {
+    if (c.name == nom) return c;
+  }
+  return extra is ChoixCompteRendu
+      ? extra
+      : ChoixCompteRendu.ajouterObservation;
+}
+
 /// Le port d'envoi du compte rendu. L'implementation reelle attend BR-1.
 abstract interface class EnvoiCompteRendu {
   /// Transmet a l'administration la visite de [seanceId] et ses faits

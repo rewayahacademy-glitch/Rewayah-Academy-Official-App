@@ -119,8 +119,9 @@ List<RouteBase> routesDemoControleur(String environnement) {
                     espaces: espaces.vers(principal: false),
                   ),
                 ),
-                onObservation: (ChoixCompteRendu choix) =>
-                    contexte.go(cheminDemoObservationControleur, extra: choix),
+                onObservation: (ChoixCompteRendu choix) => contexte.go(
+                  adresseObservation(cheminDemoObservationControleur, choix),
+                ),
                 onEcrireAdmin: () =>
                     contexte.go(adresseFilMissionDemoControleur()),
               ),
@@ -142,9 +143,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
         ],
         child: RepereDemonstration(
           child: ObservationControlePage(
-            choix: etat.extra is ChoixCompteRendu
-                ? etat.extra! as ChoixCompteRendu
-                : ChoixCompteRendu.ajouterObservation,
+            choix: choixObservationDepuis(etat.uri.queryParameters, etat.extra),
             onRetour: () => contexte.go(cheminDemoCompteRenduControleur),
             onRevenir: () => contexte.go(
               adresseDemoControleur(EcranDemoControleur.controle),
