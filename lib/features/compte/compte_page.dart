@@ -82,15 +82,18 @@ class ComptePage extends ConsumerWidget {
               icon: AppIcons.foyer,
               onPress: () => context.go(Routes.tuteurFoyer),
             ),
-          SettingRow(
-            title: t.compte.appareils,
-            description: t.compte.appareilsDetail,
-            icon: AppIcons.appareil,
-            onPress: projection.afficheFoyer
-                ? () => context.push(Routes.tuteurFoyer)
-                : null,
-            enabled: projection.afficheFoyer,
-          ),
+          // Minimisation (C8, CT-9) : le controle ne montre ni appareils ni
+          // foyer, pas meme une ligne inerte.
+          if (projection.afficheAppareils)
+            SettingRow(
+              title: t.compte.appareils,
+              description: t.compte.appareilsDetail,
+              icon: AppIcons.appareil,
+              onPress: projection.afficheFoyer
+                  ? () => context.push(Routes.tuteurFoyer)
+                  : null,
+              enabled: projection.afficheFoyer,
+            ),
           SettingRow(
             title: t.compte.confidentialite,
             description: t.compte.confidentialiteDetail,
@@ -663,6 +666,7 @@ class _CompteProjection {
     required this.statut,
     required this.espaces,
     required this.afficheFoyer,
+    required this.afficheAppareils,
     this.profileId,
   });
 
@@ -682,6 +686,7 @@ class _CompteProjection {
       },
       espaces: _espacesPour(role),
       afficheFoyer: foyer,
+      afficheAppareils: role != AppRole.controller,
       profileId: session.profileId,
     );
   }
@@ -691,6 +696,7 @@ class _CompteProjection {
   final String statut;
   final List<_EspaceCompte> espaces;
   final bool afficheFoyer;
+  final bool afficheAppareils;
   final String? profileId;
 }
 

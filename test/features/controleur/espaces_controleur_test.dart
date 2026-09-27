@@ -180,6 +180,8 @@ void main() {
       expect(find.byType(SelecteurEspaces), findsNothing);
       expect(find.byKey(const ValueKey<String>('controleur')), findsOneWidget);
       expect(find.byKey(RaccourciEspaces.cle), findsNothing);
+      // Minimisation (C8) : ni appareils ni foyer, pas meme une ligne inerte.
+      expect(find.text(t.compte.appareils), findsNothing);
     });
 
     test('le tuteur, l eleve et le comptable n ont jamais Controle', () {
