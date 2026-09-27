@@ -30,6 +30,7 @@ import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/lien_fleche.dart';
@@ -1249,6 +1250,57 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // CT-6 : le fil de discussion generique (CTR-04 Echanges). Envoi honnete :
+  // en cours, envoye sur reponse, echec avec « Reessayer ».
+  EntreeGalerie(
+    nom: 'FilDiscussion',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide',
+        (BuildContext _) => SizedBox(
+          height: 480,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              messages: const <MessageFil>[],
+              textes: _textesFil,
+              onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'messages',
+        (BuildContext _) => SizedBox(
+          height: 640,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              messages: const <MessageFil>[
+                MessageFil(
+                  id: 'g1',
+                  auteur: 'Vous',
+                  texte: 'La séance a commencé avec huit minutes de retard.',
+                  horodatage: 'Jeudi 24 septembre, 18:02',
+                  deSoi: true,
+                ),
+                MessageFil(
+                  id: 'g2',
+                  auteur: 'Administration',
+                  texte: "Merci, c'est noté.",
+                  horodatage: 'Vendredi 25 septembre, 09:30',
+                  deSoi: false,
+                ),
+              ],
+              textes: _textesFil,
+              onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
   // EN-3 : le rappel des cahiers non valides (K-45). Il pulse trois fois
   // puis reste fixe ; fixe d'emblee quand les animations sont reduites.
   EntreeGalerie(
@@ -2214,3 +2266,18 @@ void _codeIgnore(String code) {}
 void _choixIgnore(ReponseChoix reponse) {}
 
 void _basculeIgnoree(Creneau creneau, bool posee) {}
+
+/// Les textes du fil de la galerie (CT-6).
+final TextesFilDiscussion _textesFil = TextesFilDiscussion(
+  aideChamp: t.controleur.echanges.champ,
+  libelleChamp: t.controleur.echanges.champLibelle,
+  envoyer: t.controleur.echanges.envoyer,
+  champVide: t.controleur.echanges.champVide,
+  enCours: t.controleur.echanges.enCours,
+  envoye: t.controleur.echanges.envoye,
+  echec: t.controleur.echanges.echec,
+  reessayer: t.controleur.echanges.reessayer,
+  auteurSoi: t.controleur.echanges.auteurVous,
+  annonce: (String auteur, String texte) =>
+      t.controleur.echanges.nouveauMessage(auteur: auteur, texte: texte),
+);

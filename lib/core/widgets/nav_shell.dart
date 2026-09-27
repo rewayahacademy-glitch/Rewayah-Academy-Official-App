@@ -53,8 +53,8 @@ class Destination {
 /// **Le role seul ne suffit pas, le mode d'interface compte.** Un eleve en
 /// mode enfant n'a aucune destination : sans decision a lui laisser, aucune
 /// navigation n'est offerte, et `NavShell` rend alors son enfant sans le
-/// moindre chrome. Le controleur et le comptable, de meme, n'ont pas de
-/// coquille : une destination unique ne monte pas une barre.
+/// moindre chrome. Le comptable, de meme, n'a pas de coquille. Le controleur
+/// en a une a quatre destinations depuis le 27/09/2026 (C13).
 ///
 /// **Le mode change le nombre de destinations, jamais l'arborescence**
 /// (ADR-009) : les branches du routeur sont les memes pour les deux modes,
@@ -148,8 +148,35 @@ List<Destination> destinationsPour({
         chemin: Routes.enseignantProfil,
       ),
     ],
-    // Le controleur observe et signale : une seule destination, qui ne monte
-    // pas de barre. Le comptable est hors de l'arborescence en MVP-0 (ADR-003).
+    // **Controle, Historique, Echanges, Compte**, dans cet ordre et sur tous
+    // les formats (C13, document 08 du 27/09/2026 §4.1). Le choix precedent,
+    // « une seule destination, qui ne monte pas de barre », est remplace par
+    // ce document, plus recent (DESIGN-GOV §1). Les trois premieres sont les
+    // branches de la coquille controleur dans `app_router.dart`, dans le meme
+    // ordre ; Compte est `/compte`, partage, rejoint par `go`.
+    AppRole.controller => <Destination>[
+      Destination(
+        libelle: t.nav.controleur.controle,
+        icone: AppIcons.controleQualite,
+        chemin: Routes.controleur,
+      ),
+      Destination(
+        libelle: t.nav.controleur.historique,
+        icone: AppIcons.historique,
+        chemin: Routes.controleurHistorique,
+      ),
+      Destination(
+        libelle: t.nav.controleur.echanges,
+        icone: AppIcons.discussion,
+        chemin: Routes.controleurEchanges,
+      ),
+      Destination(
+        libelle: t.nav.controleur.compte,
+        icone: AppIcons.profil,
+        chemin: Routes.compte,
+      ),
+    ],
+    // Le comptable est hors de l'arborescence en MVP-0 (ADR-003).
     //
     // **L'admin n'en tient plus aucune ici depuis le lot IA-01** (19 septembre
     // 2026) : l'operateur a impose une architecture a huit domaines, au dela
@@ -158,9 +185,7 @@ List<Destination> destinationsPour({
     // (`lib/core/widgets/admin_shell.dart`, `lib/core/admin/admin_domaine.dart`),
     // qui ne partage pas cette limite de quatre : elle est nee pour un role a
     // barre courte, et huit domaines en feraient un menu si on les y forcait.
-    AppRole.controller ||
-    AppRole.accountant ||
-    AppRole.admin => const <Destination>[],
+    AppRole.accountant || AppRole.admin => const <Destination>[],
   };
 
   assert(

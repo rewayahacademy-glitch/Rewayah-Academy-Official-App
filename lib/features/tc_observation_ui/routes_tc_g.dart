@@ -32,7 +32,7 @@ abstract final class RoutesTcG {
 /// `nav_shell.dart` est
 /// protege et plafonne a quatre destinations par assertion : l'entree du tuteur
 /// se greffe donc sur `accueil_famille_page.dart`, qui porte deja `_assister`,
-/// et celle du controle qualite sur `planning_page.dart` (CTR-01). Les deux
+/// et celle du controle qualite sur `controle_page.dart` (CTR-01). Les deux
 /// demandes sont dans `TC_CONTRACT_REQUEST_G.md`.
 List<RouteBase> routesTcG() => <RouteBase>[
   GoRoute(
