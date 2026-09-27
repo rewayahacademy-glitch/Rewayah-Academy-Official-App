@@ -6,6 +6,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 import 'pressable.dart';
 
 /// Les quatre niveaux d'action, pas cinq.
@@ -18,7 +19,7 @@ enum NiveauAction {
   /// sombre). **Une seule par ecran**, zero si l'ecran est en lecture.
   principale,
 
-  /// Contour `borderStrong` sur `surfaceRaised`. Deux au plus.
+  /// Filet fin `borderStrong` sur `surfaceRaised`. Deux au plus.
   secondaire,
 
   /// Texte `inkAccent`, sans contour. Autant que necessaire, mais jamais
@@ -57,7 +58,19 @@ class ActionPrincipale extends StatelessWidget {
     this.prefixe,
     this.fleche = false,
     this.pilule = false,
+    this.compacte = false,
+    this.autofocus = false,
   });
+
+  /// Vrai pour prendre le focus clavier a l'ouverture de l'ecran : un ecran
+  /// qui remplace la page sans geste (acces retire en salle) pose le focus
+  /// sur son action, sinon le clavier repart du haut du document.
+  final bool autofocus;
+
+  /// Format reduit, meme peinture : la pastille « Ouvrir » d'une ligne de
+  /// liste (≈ 34 de haut au lieu de 52). La zone pressable garde la cible
+  /// tactile du mode ; en Interface guidee, le format reduit est ignore.
+  final bool compacte;
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
   /// pas « Valider » (`02-regles-ux.md` section 9).
@@ -108,14 +121,27 @@ class ActionPrincipale extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final bool actif = onPress != null && !enCours;
+    final bool reduit = compacte && !metriques.estEnfant;
 
     return Pressable.selon(
       onPress: actif ? onPress : null,
       libelleSemantique: libelle,
-      respecterCibleTactile: false,
+      // Le format reduit est plus petit que la cible : `Pressable` l'y porte,
+      // la pastille reste centree dedans.
+      respecterCibleTactile: reduit,
       arrondiFocus: _arrondi,
-      constructeur: (BuildContext contexte, EtatPression etat) =>
-          _corps(contexte, palette, metriques, etat, actif: actif),
+      autofocus: autofocus,
+      constructeur: (BuildContext contexte, EtatPression etat) {
+        final Widget corps = _corps(
+          contexte,
+          palette,
+          metriques,
+          etat,
+          actif: actif,
+          reduit: reduit,
+        );
+        return reduit ? Center(child: corps) : corps;
+      },
     );
   }
 
@@ -125,6 +151,7 @@ class ActionPrincipale extends StatelessWidget {
     AppMetriques metriques,
     EtatPression etat, {
     required bool actif,
+    bool reduit = false,
   }) {
     final _Peinture peinture = _peinturePour(
       palette,
@@ -136,15 +163,22 @@ class ActionPrincipale extends StatelessWidget {
     return Container(
       width: pleineLargeur ? double.infinity : null,
       constraints: BoxConstraints(
-        minHeight: metriques.estEnfant
+        minHeight: reduit
+            ? AppSpacing.xxxl + AppSpacing.xs / 2
+            : metriques.estEnfant
             ? AppTouchTarget.enfant
             : AppPage.hauteurBouton,
       ),
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.md,
-      ),
+      padding: reduit
+          ? const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.xs,
+            )
+          : const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xl,
+              vertical: AppSpacing.md,
+            ),
       decoration: BoxDecoration(
         color: peinture.fond,
         borderRadius: _arrondi,
@@ -172,9 +206,7 @@ class ActionPrincipale extends StatelessWidget {
               child: Text(
                 libelle,
                 textAlign: TextAlign.center,
-                style: peinture.encre(
-                  Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
-                ),
+                style: _styleLibelle(context, peinture, actif: actif),
               ),
             ),
             if (fleche && !enCours) ...<Widget>[
@@ -193,6 +225,33 @@ class ActionPrincipale extends StatelessWidget {
     );
   }
 
+  /// Le style du libelle : **une seule graisse percue, dans les deux themes.**
+  ///
+  /// L'action pleine porte le semi-gras des images (700 dessine, lu comme un
+  /// semi-gras sur son fond doux) ; les autres niveaux restent a 600. Une
+  /// encre claire sur fond sombre se lit plus grasse qu'une encre sombre sur
+  /// fond clair au meme `wght` (irradiation, mesuree sur les captures T7) :
+  /// elle perd donc 100, pour qu'un meme bouton ait la meme graisse en clair
+  /// et en sombre.
+  TextStyle _styleLibelle(
+    BuildContext context,
+    _Peinture peinture, {
+    required bool actif,
+  }) {
+    final TextStyle base = peinture.encre(
+      Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+    );
+    final int centaines =
+        (actif && niveau == NiveauAction.principale ? 7 : 6) -
+        (encreClaire(base.color) ? 1 : 0);
+    return AppTypography.graisse(base, FontWeight.values[centaines - 1]);
+  }
+
+  /// Vrai pour une encre claire (texte clair sur fond sombre).
+  @visibleForTesting
+  static bool encreClaire(Color? encre) =>
+      encre != null && encre.computeLuminance() > 0.5;
+
   /// Le fond, l'encre et le filet du niveau, dans l'etat courant.
   ///
   /// **Un bouton inerte ne se signale pas par de la transparence** : baisser
@@ -206,7 +265,7 @@ class ActionPrincipale extends StatelessWidget {
   /// faible de la rampe, si bien que le bouton le plus important de l'ecran
   /// disparaissait au premier champ vide et se lisait comme une panne. Il
   /// passe desormais sur `surfaceRaised` avec le filet `borderStrong`, plus
-  /// epais que celui d'un secondaire (3 contre 2) : la forme reste visible et
+  /// epais que celui d'un secondaire (3 contre 1) : la forme reste visible et
   /// pese plus, seule l'encre `inkMuted` dit qu'il attend une condition.
   ///
   /// Le survol n'invente aucune couleur : il passe au registre doux de la meme
@@ -258,10 +317,12 @@ class ActionPrincipale extends StatelessWidget {
           final AppColorPair paire = etat.survole
               ? palette.washAccent
               : palette.surfaceRaised;
+          // Surface pleine a filet fin (images CLV-10) : `borderStrong` garde
+          // le contraste du contour, l'epaisseur 1 le rend discret.
           return _Peinture(
             fond: paire.background,
             encre: paire.applyTo,
-            filet: palette.borderStrong.asBorderSide(width: 2),
+            filet: palette.borderStrong.asBorderSide(),
           );
         }
       case NiveauAction.tertiaire:

@@ -107,6 +107,7 @@ class Pressable extends StatefulWidget {
     this.respecterCibleTactile = true,
     this.arrondiFocus,
     this.autofocus = false,
+    this.focusNode,
   }) : constructeur = null;
 
   /// Cree une zone pressable dont le contenu suit l'etat d'interaction.
@@ -124,6 +125,7 @@ class Pressable extends StatefulWidget {
     this.respecterCibleTactile = true,
     this.arrondiFocus,
     this.autofocus = false,
+    this.focusNode,
   }) : child = null;
 
   /// Le contenu rendu, quand il ne depend pas de l'etat.
@@ -153,6 +155,10 @@ class Pressable extends StatefulWidget {
 
   /// Prend le focus des l'apparition. Reserve au premier champ d'une feuille.
   final bool autofocus;
+
+  /// Le noeud de focus, fourni quand l'appelant doit rendre le focus a cette
+  /// zone (le bouton qui a ouvert un panneau, a sa fermeture).
+  final FocusNode? focusNode;
 
   /// Duree de l'animation de pression : le retour tactile du budget de
   /// mouvement, jamais une valeur posee ici (`app_mouvement.dart`).
@@ -306,6 +312,7 @@ class _PressableState extends State<Pressable>
       child: FocusableActionDetector(
         enabled: _pressable,
         autofocus: widget.autofocus,
+        focusNode: widget.focusNode,
         mouseCursor: _pressable
             ? SystemMouseCursors.click
             : SystemMouseCursors.basic,

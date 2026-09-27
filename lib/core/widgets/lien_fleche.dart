@@ -25,7 +25,12 @@ class LienFleche extends StatelessWidget {
     super.key,
     this.fleche = true,
     this.icone,
+    this.legende = false,
   });
+
+  /// Registre de legende (`labelSmall`, fleche plus petite) : le « Voir tout »
+  /// d'un titre de rubrique dense. La cible tactile reste de 48 sur 48.
+  final bool legende;
 
   /// Icone decorative facultative devant le libelle (« Comment ca marche ? »
   /// precede de `AppIcons.info`). Le libelle seul reste lu.
@@ -44,8 +49,10 @@ class LienFleche extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle base =
-        Theme.of(context).textTheme.labelLarge ?? const TextStyle();
+        (legende ? textes.labelSmall : textes.labelLarge) ?? const TextStyle();
+    final double tailleIcone = legende ? AppSpacing.md : AppSpacing.lg;
 
     return Pressable.selon(
       onPress: onPress,
@@ -81,7 +88,7 @@ class LienFleche extends StatelessWidget {
               if (fleche) ...<Widget>[
                 Ecart.hXs,
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                  data: palette.inkAccent.asIconTheme(size: tailleIcone),
                   child: Icon(AppIcons.flecheAction.repos),
                 ),
               ],

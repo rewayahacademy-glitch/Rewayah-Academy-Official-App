@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -45,13 +46,34 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
                 role: role,
                 contenuRoster: RosterEnseignantSlot(groupeId: groupeId),
                 onRejoindre: (GroupSummaryVM groupe) =>
-                    _rejoindre(contexte, groupe),
+                    role == RoleEspaceGroupe.eleve
+                    ? _preparer(contexte, groupe)
+                    : _rejoindre(contexte, groupe),
               );
             },
           ),
         ],
       ),
     ];
+
+/// L'eleve : « Rejoindre » ouvre la salle canonique, qui montre d'abord
+/// sa preparation presque silencieuse (PRE-ELV-01, CL-4.6). Aucune nouvelle
+/// route : le billet passe par `extra`, jamais par l'URL (ADR-005).
+void _preparer(BuildContext contexte, GroupSummaryVM groupe) {
+  final String? sessionId = groupe.prochaineSeance?.sessionId;
+  if (sessionId == null) {
+    return;
+  }
+  GoRouter.of(contexte).go(
+    Routes.salle,
+    extra: BilletSalle(
+      sessionId: sessionId,
+      emisA: DateTime.now(),
+      preparation: true,
+      groupeId: groupe.groupeId,
+    ),
+  );
+}
 
 /// Ouvre la Classe Live du groupe, avec son contexte.
 ///

@@ -10,8 +10,10 @@ import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -33,8 +35,16 @@ import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
+import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
+import '../salle_seance/actions_seance.dart';
+import '../salle_seance/depuis_salle.dart';
+import '../salle_seance/resultat_seance.dart';
+import '../salle_seance/vue_seance.dart';
+import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
+import 'preparation_eleve.dart';
+import 'preparation_enseignant.dart';
 import 'vue_salle.dart';
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
@@ -63,7 +73,20 @@ import 'vue_salle.dart';
 ///   n'existe donc toujours pas ici, plutot que d'etre grise.
 class SallePage extends ConsumerStatefulWidget {
   /// Cree la salle pour une seance.
-  const SallePage({required this.seanceId, super.key});
+  const SallePage({
+    required this.seanceId,
+    super.key,
+    this.preparation = false,
+    this.groupeId,
+  });
+
+  /// Montrer d'abord la preparation de l'enseignant (CLV-03, CL-4.5). Vrai
+  /// seulement depuis « Preparer l'entree » : rien n'est connecte avant
+  /// « Entrer dans la classe ».
+  final bool preparation;
+
+  /// La classe d'origine, pour « Retour a la Classe » et le contexte.
+  final String? groupeId;
 
   /// La seance visee, lue dans le billet d'entree (ADR-005). Elle ne transite
   /// jamais par l'URL : une adresse copiee arrive sans billet et repart.
@@ -86,11 +109,28 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   StreamSubscription<QualiteLien>? _sQualite;
 
   bool _materielPret = false;
+
+  /// La preparation de l'enseignant est a l'ecran : rien n'est connecte.
+  bool _enPreparation = false;
+
+  /// L'eleve a choisi « Continuer sans micro » (PRE-ERR-01, CL-4.6) : le
+  /// micro reste coupe, le blocage materiel ne l'arrete plus.
+  bool _sansMicro = false;
   AccesSalle? _acces;
   CauseImpasse? _impasse;
   EtatSalle _etatMoteur = EtatSalle.absent;
   List<ParticipantSalle> _participants = const <ParticipantSalle>[];
   QualiteLien _qualite = QualiteLien.inconnue;
+
+  /// La fin de l'enseignant qui a fait cours (CLV-10), figee a la sortie :
+  /// le recapitulatif lit la presence d'AVANT la deconnexion (I-6).
+  VueSeance? _finEnseignant;
+
+  /// Le cahier n'a pas pu etre ouvert depuis CLV-10 : « Reessayer ».
+  bool _cahierIndisponible = false;
+
+  /// L'eleve sorti de la salle (CLV-09).
+  IssueSeance? _sortieEleve;
 
   @override
   void initState() {
@@ -114,7 +154,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         setState(() => _qualite = lien);
       }
     });
-    unawaited(_entrer());
+    // Le tuteur observateur n'a AUCUNE preparation (D-14) : il n'ouvre ni
+    // micro ni camera.
+    // Seuls l'eleve et l'enseignant en ont une ; session pas encore lue
+    // (role nul) : le choix se refait au `build`.
+    final AppRole? role = ref.read(sessionProvider).role;
+    _enPreparation =
+        widget.preparation &&
+        (role == null || role == AppRole.student || role == AppRole.teacher);
+    if (!_enPreparation) {
+      unawaited(_entrer());
+    }
   }
 
   @override
@@ -152,7 +202,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!mounted) {
       return;
     }
-    if (!preVol.peutEntrer) {
+    if (!preVol.peutEntrer && !_sansMicro) {
       setState(() => _impasse = CauseImpasse.materiel);
       return;
     }
@@ -204,6 +254,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // Le cours a-t-il eu lieu ? La reponse se lit maintenant, pas apres.
     final bool versLeCahier =
         vue.role == RoleSalle.enseignant && vue.dansLaSalle;
+    final bool eleveSorti = vue.role == RoleSalle.eleve && vue.dansLaSalle;
+    // CLV-10 : le recapitulatif se fige maintenant, sur la presence deja lue
+    // (aucun nouvel appel) ; apres la deconnexion, elle ne dirait plus rien.
+    final VueSeance? fin = versLeCahier
+        ? DepuisSalle.vue(
+            salle: vue,
+            mode: AppMetriques.of(context).mode,
+            presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
+            monProfil: ref.read(sessionProvider).profileId,
+            fin: FinSeance(
+              heureFin: DepuisSalle.heure(DateTime.now()),
+              cahierACompleter: true,
+            ),
+          )
+        : null;
 
     // **L'annonce precede la deconnexion, et cet ordre porte une information
     // que rien d'autre ne porte.** LiveKit envoie le meme evenement `left` dans
@@ -215,17 +280,56 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!mounted) {
       return;
     }
+    if (fin != null) {
+      // CLV-10 d'abord, puis le cahier : « Ouvrir le cahier » (`_ouvrirCahier`).
+      setState(() => _finEnseignant = fin);
+      return;
+    }
     if (versLeCahier) {
-      // **L'invariant du catalogue est enfin tenu** : la sortie de `ENS-03`
-      // mene a `ENS-04` et a rien d'autre. L'ecart inscrit ici depuis le lot N3
-      // -- « `ENS-04` n'a pas de route, on renvoie donc chez soi » -- est leve :
-      // le cahier existe (`Routes.cahierPour`) et il est l'ecran de sortie de
-      // seance, pas un onglet. `go` et non `push` : la salle ne doit rester
-      // sous aucune pile, l'ADR-005 lui interdit d'etre revenue en arriere.
-      GoRouter.of(context).go(Routes.cahierPour(widget.seanceId));
+      _ouvrirCahier();
+      return;
+    }
+    if (eleveSorti) {
+      // CLV-09 : « Vous avez quitte la seance. » (guidee : « La seance est
+      // terminee. »), puis le retour a la racine de son role.
+      setState(() => _sortieEleve = IssueSeance.quittee);
       return;
     }
     _rentrer();
+  }
+
+  /// **L'invariant du catalogue est tenu** : la sortie de `ENS-03` mene a
+  /// `ENS-04` (via CLV-10) et a rien d'autre. `go` et non `push` : la salle
+  /// ne doit rester sous aucune pile, l'ADR-005 lui interdit d'etre revenue
+  /// en arriere.
+  ///
+  /// `go` ne leve rien pour une adresse inconnue : il afficherait la page
+  /// d'erreur du routeur. Le chemin est donc **verifie avant** d'y aller
+  /// ([cheminCahierOuvrable]) ; sans seance ou sans route, CLV-10 reste
+  /// affiche avec son message et « Reessayer ».
+  void _ouvrirCahier() {
+    final GoRouter routeur = GoRouter.of(context);
+    final String? chemin = cheminCahierOuvrable(
+      routeur.configuration,
+      widget.seanceId,
+    );
+    if (chemin == null) {
+      journalDev('cahier impossible a ouvrir : ${widget.seanceId}');
+      setState(() => _cahierIndisponible = true);
+      return;
+    }
+    routeur.go(chemin);
+  }
+
+  /// « Retour a la Classe » de CLV-09 (eleve standard, matrice section 5) :
+  /// l'espace des Classes de l'eleve (`/tc/groupes`, CLV-01 partiel), et non
+  /// l'accueil. La guidee garde « Retour a l'accueil » et sa racine.
+  void _retourClasse() {
+    if (AppMetriques.of(context).mode == InterfaceMode.enfant) {
+      _rentrer();
+      return;
+    }
+    GoRouter.of(context).go(Routes.tcGroupes);
   }
 
   /// Retour a la racine de son role.
@@ -261,6 +365,87 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // encore en chargement s'il n'avait jamais ete observe. La sortie tomberait
     // alors sur la racine, qui redirige, au lieu de l'accueil du role.
     final String? monProfil = ref.watch(sessionProvider).profileId;
+
+    // CLV-03 (CL-4.5) : la preparation de l'enseignant, avant toute
+    // connexion. « Entrer dans la classe » lance l'entree existante.
+    final SessionState session = ref.watch(sessionProvider);
+    // Session pas encore lue : aucune preparation n'est choisie a l'aveugle.
+    if (_enPreparation && !session.resolue) {
+      return const Scaffold(body: SizedBox.shrink());
+    }
+    // Seuls l'eleve et l'enseignant ont une preparation. Le tuteur
+    // observateur n'en a AUCUNE (D-14), et un autre role (admin, controleur)
+    // garde le comportement de son role : l'entree directe, jamais la
+    // preparation enseignant par defaut (revue CL-4.R, m8).
+    if (_enPreparation &&
+        session.role != AppRole.student &&
+        session.role != AppRole.teacher) {
+      _enPreparation = false;
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) unawaited(_entrer());
+      });
+    }
+    // PRE-ELV-01 (CL-4.6) : la preparation presque silencieuse de l'eleve.
+    if (_enPreparation && session.role == AppRole.student) {
+      final String? groupe = widget.groupeId;
+      final bool guidee = session.interfaceMode == InterfaceMode.enfant;
+      return _PreparationEleveBranchee(
+        guidee: guidee,
+        onEntrer: ({required bool sansMicro}) {
+          setState(() {
+            _enPreparation = false;
+            _sansMicro = sansMicro;
+          });
+          unawaited(_entrer());
+        },
+        // En Interface guidee, « Retour a l'accueil » mene a l'accueil de
+        // l'eleve (spec 02 §2.2) ; en standard, « Retour a la Classe ».
+        onRetour: guidee
+            ? _rentrer
+            : () => GoRouter.of(context).go(
+                groupe == null
+                    ? Routes.racine
+                    : CheminsTcA.espaceGroupe(groupe),
+              ),
+      );
+    }
+    if (_enPreparation && session.role == AppRole.teacher) {
+      return _PreparationBranchee(
+        groupeId: widget.groupeId,
+        onEntrer: () {
+          setState(() => _enPreparation = false);
+          unawaited(_entrer());
+        },
+        onRetour: () {
+          final String? groupe = widget.groupeId;
+          GoRouter.of(context).go(
+            groupe == null
+                ? Routes.enseignantJournee
+                : Routes.groupePour(groupe),
+          );
+        },
+      );
+    }
+
+    // Les ecrans de sortie de la salle de seance (T7).
+    final VueSeance? fin = _finEnseignant;
+    if (fin != null) {
+      return FinSeanceEnseignant(
+        vue: fin,
+        actions: ActionsSeance(
+          onRetour: _rentrer,
+          onNaviguer: (String route) => GoRouter.of(context).go(route),
+        ),
+        onOuvrirCahier: _ouvrirCahier,
+        onRevenirJournee: () =>
+            GoRouter.of(context).go(Routes.enseignantJournee),
+        cahierIndisponible: _cahierIndisponible,
+      );
+    }
+    final IssueSeance? sortie = _sortieEleve;
+    if (sortie != null) {
+      return ResultatSeance(issue: sortie, onRetour: _retourClasse);
+    }
 
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
@@ -1478,6 +1663,97 @@ class _Impasse extends StatelessWidget {
                 onPress: onRentrer,
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Le chemin du cahier de [seanceId], ou `null` s'il ne peut pas s'ouvrir :
+/// seance inconnue, ou aucune route du [routeur] ne le reconnait.
+@visibleForTesting
+String? cheminCahierOuvrable(RouteConfiguration routeur, String seanceId) {
+  if (seanceId.isEmpty) return null;
+  final String chemin = Routes.cahierPour(seanceId);
+  return routeur.findMatch(Uri.parse(chemin)).isEmpty ? null : chemin;
+}
+
+/// La preparation de l'enseignant sur les vraies lectures : le pre-vol
+/// (`preVolProvider`, seul chemin), la connectivite, et la preparation de la
+/// seance deja affichee dans la Classe. Aucun jeton n'est demande ici.
+class _PreparationBranchee extends ConsumerWidget {
+  const _PreparationBranchee({
+    required this.groupeId,
+    required this.onEntrer,
+    required this.onRetour,
+  });
+
+  final String? groupeId;
+  final VoidCallback onEntrer;
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<bool> horsLigne = ref.watch(horsLigneProvider);
+    final String? groupe = groupeId;
+    final PreparationSeance? preparation = groupe == null
+        ? null
+        : ref.watch(preparationSeanceProvider(groupe));
+    return Scaffold(
+      body: SafeArea(
+        child: PreparationEnseignant(
+          resultat: ref.watch(preVolProvider).value,
+          reseau: switch (horsLigne.value) {
+            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+            true => ReseauPreparation.horsLigne,
+            false => ReseauPreparation.bonne,
+          },
+          contexte: ContextePreparation(
+            support: preparation?.supportPrevu,
+            reprise: preparation?.positionReprise,
+          ),
+          onEntrer: onEntrer,
+          onRetour: onRetour,
+          onReessayer: () => ref.invalidate(preVolProvider),
+        ),
+      ),
+    );
+  }
+}
+
+/// La preparation de l'eleve sur les vraies lectures (CL-4.6) : le pre-vol
+/// (`preVolProvider`, seul chemin) et la connectivite (une erreur de lecture
+/// vaut « en ligne »). Aucun jeton n'est demande ici.
+class _PreparationEleveBranchee extends ConsumerWidget {
+  const _PreparationEleveBranchee({
+    required this.guidee,
+    required this.onEntrer,
+    required this.onRetour,
+  });
+
+  final bool guidee;
+  final void Function({required bool sansMicro}) onEntrer;
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<bool> horsLigne = ref.watch(horsLigneProvider);
+    return Scaffold(
+      body: SafeArea(
+        child: PreparationEleve(
+          guidee: guidee,
+          resultat: ref.watch(preVolProvider).value,
+          reseau: switch (horsLigne.value) {
+            null => horsLigne.hasError ? ReseauPreparation.bonne : null,
+            true => ReseauPreparation.horsLigne,
+            false => ReseauPreparation.bonne,
+          },
+          onEntrer: () => onEntrer(sansMicro: false),
+          onContinuerSansMicro: () => onEntrer(sansMicro: true),
+          onRetour: onRetour,
+          onReessayer: () => ref
+            ..invalidate(preVolProvider)
+            ..invalidate(horsLigneProvider),
         ),
       ),
     );

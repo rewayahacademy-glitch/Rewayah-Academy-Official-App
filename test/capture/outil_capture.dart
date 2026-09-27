@@ -132,6 +132,7 @@ Widget hoteCapture(
   List<Override> surcharges = const <Override>[],
   ThemeMode themeMode = ThemeMode.light,
   double echelleTexte = 1,
+  InterfaceMode interfaceMode = InterfaceMode.standard,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
@@ -140,8 +141,8 @@ Widget hoteCapture(
       child: Builder(
         builder: (BuildContext context) => MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          theme: AppTheme.pour(interfaceMode, Brightness.light),
+          darkTheme: AppTheme.pour(interfaceMode, Brightness.dark),
           themeMode: themeMode,
           locale: TranslationProvider.of(context).flutterLocale,
           supportedLocales: AppLocaleUtils.supportedLocales,
@@ -247,6 +248,86 @@ Future<String> capturerEtComparer(
     await File(chemin).writeAsBytes(png!.buffer.asUint8List());
     await File(chemin.replaceFirst(RegExp(r'\.png$'), '_capture.png'))
         .writeAsBytes(pngCapture!.buffer.asUint8List());
+  });
+  return chemin;
+}
+
+/// Compose une planche de recette : l'image retouchee [cheminImage] en haut,
+/// a la largeur [largeur], puis une rangee des [captures] (PNG deja ecrits)
+/// dessous, chacune reduite sans deformation dans une case de meme largeur.
+/// Tout en `dart:ui`, dans `tester.runAsync` (decodage et ecriture reels).
+/// Rend le chemin de la planche `<nom>.png` dans `CAPTURE_DIR`.
+Future<String> plancheRangee(
+  WidgetTester tester, {
+  required String nom,
+  required String cheminImage,
+  required List<String> captures,
+  int largeur = 1600,
+}) async {
+  const double marge = 16;
+  final String chemin = cheminSortie(nom);
+  await tester.runAsync(() async {
+    Future<ui.Image> lire(String c) async {
+      final ui.Codec codec = await ui.instantiateImageCodec(
+        await File(c).readAsBytes(),
+      );
+      return (await codec.getNextFrame()).image;
+    }
+
+    final ui.Image image = await lire(cheminImage);
+    final List<ui.Image> rangee = <ui.Image>[
+      for (final String c in captures) await lire(c),
+    ];
+    final double l = largeur.toDouble();
+    final double hImage = image.height * l / image.width;
+    final double largeurCase =
+        (l - marge * (rangee.length + 1)) / rangee.length;
+    double hRangee = 0;
+    for (final ui.Image c in rangee) {
+      final double h = c.height * largeurCase / c.width;
+      if (h > hRangee) hRangee = h;
+    }
+    final double hTotale = hImage + marge * 2 + hRangee;
+    final ui.PictureRecorder enregistreur = ui.PictureRecorder();
+    final Canvas toile = Canvas(enregistreur);
+    final Paint neutre = Paint()..filterQuality = FilterQuality.medium;
+    toile.drawRect(
+      Rect.fromLTWH(0, 0, l, hTotale),
+      Paint()..color = const Color(0xFF7A7A7A),
+    );
+    toile.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Rect.fromLTWH(0, 0, l, hImage),
+      neutre,
+    );
+    for (int i = 0; i < rangee.length; i++) {
+      final ui.Image c = rangee[i];
+      final double h = c.height * largeurCase / c.width;
+      toile.drawImageRect(
+        c,
+        Rect.fromLTWH(0, 0, c.width.toDouble(), c.height.toDouble()),
+        Rect.fromLTWH(
+          marge + i * (largeurCase + marge),
+          hImage + marge,
+          largeurCase,
+          h,
+        ),
+        neutre,
+      );
+    }
+    final ui.Image planche = await enregistreur.endRecording().toImage(
+      largeur,
+      hTotale.ceil(),
+    );
+    final ByteData? png = await planche.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+    for (final ui.Image i in <ui.Image>[image, ...rangee, planche]) {
+      i.dispose();
+    }
+    await File(chemin).parent.create(recursive: true);
+    await File(chemin).writeAsBytes(png!.buffer.asUint8List());
   });
   return chemin;
 }

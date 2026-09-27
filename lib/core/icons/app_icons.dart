@@ -235,6 +235,36 @@ abstract final class AppIcons {
     IconData(0xe42a, fontFamily: _actif),
   );
 
+  /// Quitter la seance, dans le dock : le combine raccroche (phone-disconnect).
+  static const AppIcon raccrocher = AppIcon._(
+    IconData(0xe3bc, fontFamily: _repos),
+    IconData(0xe3bc, fontFamily: _actif),
+  );
+
+  /// Agrandir le support en plein ecran (corners-out).
+  static const AppIcon agrandir = AppIcon._(
+    IconData(0xe1d0, fontFamily: _repos),
+    IconData(0xe1d0, fontFamily: _actif),
+  );
+
+  /// Reduire le support agrandi (corners-in), pendant d'[agrandir].
+  static const AppIcon reduire = AppIcon._(
+    IconData(0xe1ce, fontFamily: _repos),
+    IconData(0xe1ce, fontFamily: _actif),
+  );
+
+  /// Zoom local : agrandir (magnifying-glass-plus).
+  static const AppIcon zoomPlus = AppIcon._(
+    IconData(0xe310, fontFamily: _repos),
+    IconData(0xe310, fontFamily: _actif),
+  );
+
+  /// Zoom local : reduire (magnifying-glass-minus).
+  static const AppIcon zoomMoins = AppIcon._(
+    IconData(0xe30e, fontFamily: _repos),
+    IconData(0xe30e, fontFamily: _actif),
+  );
+
   /// Le bandeau permanent de la salle : cours enregistre, controle possible.
   static const AppIcon controleQualite = AppIcon._(
     IconData(0xe40c, fontFamily: _repos),
@@ -541,6 +571,115 @@ abstract final class AppIcons {
   static const AppIcon pointeur = AppIcon._(
     IconData(0xe29a, fontFamily: _repos),
     IconData(0xe29a, fontFamily: _actif),
+  );
+
+  // --- Salle de seance, enseignant (CLV-06, vague Classe) -----------------
+  // Points de code verifies sur une planche rendue de la police embarquee.
+
+  /// Outil Pointeur de la salle : Phosphor `cursor` (0xe1dc).
+  static const AppIcon curseur = AppIcon._(
+    IconData(0xe1dc, fontFamily: _repos),
+    IconData(0xe1dc, fontFamily: _actif),
+  );
+
+  /// Outil Marquer de la salle : Phosphor `pencil-simple` (0xe3b4).
+  static const AppIcon crayon = AppIcon._(
+    IconData(0xe3b4, fontFamily: _repos),
+    IconData(0xe3b4, fontFamily: _actif),
+  );
+
+  /// Outil Masquer de la salle : Phosphor `eye` (0xe220).
+  static const AppIcon oeil = AppIcon._(
+    IconData(0xe220, fontFamily: _repos),
+    IconData(0xe220, fontFamily: _actif),
+  );
+
+  /// Outil Annoter de la salle : Phosphor `note-pencil` (0xe34c), un carre
+  /// et un crayon (images CLV-06), distinct du crayon seul de Marquer.
+  static const AppIcon annoter = AppIcon._(
+    IconData(0xe34c, fontFamily: _repos),
+    IconData(0xe34c, fontFamily: _actif),
+  );
+
+  /// Reseau (dock enseignant) : Phosphor `wifi-high` (0xe4ea).
+  static const AppIcon reseau = AppIcon._(
+    IconData(0xe4ea, fontFamily: _repos),
+    IconData(0xe4ea, fontFamily: _actif),
+  );
+
+  /// Bouton Eleves de la salle : Phosphor `users-three` (0xe68e).
+  static const AppIcon eleves = AppIcon._(
+    IconData(0xe68e, fontFamily: _repos),
+    IconData(0xe68e, fontFamily: _actif),
+  );
+
+  /// Bouton Supports de la salle : Phosphor `file-text` (0xe23a).
+  static const AppIcon supports = AppIcon._(
+    IconData(0xe23a, fontFamily: _repos),
+    IconData(0xe23a, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Classes, Phosphor `graduation-cap` (0xe62c).
+  static const AppIcon classes = AppIcon._(
+    IconData(0xe62c, fontFamily: _repos),
+    IconData(0xe62c, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Ressources et marque, Phosphor `book-open` (0xe0e6).
+  static const AppIcon livreOuvert = AppIcon._(
+    IconData(0xe0e6, fontFamily: _repos),
+    IconData(0xe0e6, fontFamily: _actif),
+  );
+
+  /// Fermer un panneau de la salle : Phosphor `x` (0xe4f6).
+  static const AppIcon fermer = AppIcon._(
+    IconData(0xe4f6, fontFamily: _repos),
+    IconData(0xe4f6, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Rappeler, Phosphor `phone` (0xe3b8).
+  static const AppIcon rappeler = AppIcon._(
+    IconData(0xe3b8, fontFamily: _repos),
+    IconData(0xe3b8, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Choisir pour reciter, Phosphor `play`
+  /// (0xe3d0). Le triangle ne se miroite pas : il dit « lancer ».
+  static const AppIcon reciter = AppIcon._(
+    IconData(0xe3d0, fontFamily: _repos),
+    IconData(0xe3d0, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Noter, Phosphor `file-text` (0xe23a).
+  static const AppIcon noter = AppIcon._(
+    IconData(0xe23a, fontFamily: _repos),
+    IconData(0xe23a, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : Signaler un besoin, Phosphor `flag` (0xe244).
+  static const AppIcon signaler = AppIcon._(
+    IconData(0xe244, fontFamily: _repos),
+    IconData(0xe244, fontFamily: _actif),
+  );
+
+  /// Panneau Eleves (CLV-07) : fiche depliee, Phosphor `caret-up` (0xe13c).
+  /// Direction cardinale : ne se miroite pas.
+  static const AppIcon replier = AppIcon._(
+    IconData(0xe13c, fontFamily: _repos),
+    IconData(0xe13c, fontFamily: _actif),
+  );
+
+  /// Volet Eleves (CLV-07, web etroit) : la liste continue plus bas, Phosphor
+  /// `caret-down` (0xe136). Direction cardinale : ne se miroite pas.
+  static const AppIcon suiteEnBas = AppIcon._(
+    IconData(0xe136, fontFamily: _repos),
+    IconData(0xe136, fontFamily: _actif),
+  );
+
+  /// Rail enseignant : Journee, Phosphor `house` (0xe2c2).
+  static const AppIcon maison = AppIcon._(
+    IconData(0xe2c2, fontFamily: _repos),
+    IconData(0xe2c2, fontFamily: _actif),
   );
 
   /// Teaching Dock (D) : annuler le dernier trait. Remplace [reaffectation].

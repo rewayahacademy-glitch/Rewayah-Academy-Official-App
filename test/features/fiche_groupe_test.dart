@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +11,12 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 
 import '../support/harnais.dart';
@@ -38,6 +44,9 @@ GroupeEnseignant _groupe({
 List<Override> _surcharges(FauxServiceEnseignant enseignant) => <Override>[
   serviceEnseignantProvider.overrideWithValue(enseignant),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+  // CL-4.4 : la carte de seance lit la Classe par le port des groupes ; sans
+  // seance, elle le dit, et le reste de la fiche reste lu.
+  groupeProvider(_groupeId).overrideWith((Ref _) async => null),
 ];
 
 /// Un service qui rend un groupe et ses membres.
@@ -91,9 +100,9 @@ void main() {
     testWidgets('loading : un squelette a la forme de la fiche', (
       WidgetTester tester,
     ) async {
-      final FauxServiceEnseignant enseignant =
-          _avec(membres: <MembreSeance>[membreDeTest()])
-            ..delai = const Duration(milliseconds: 40);
+      final FauxServiceEnseignant enseignant = _avec(
+        membres: <MembreSeance>[membreDeTest()],
+      )..delai = const Duration(milliseconds: 40);
 
       await tester.pumpWidget(
         hote(
@@ -131,10 +140,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // CL-4.4b : le nom de la Classe EST le titre ; plus de « Fiche du
+      // groupe ».
       expect(find.text('Perles du Coran'), findsOneWidget);
-      // Les libelles de public existent deja sous `admin.groupes.*` : aucune
-      // cle jumelle n'a ete creee.
+      expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
+      // Le type de groupe, information pedagogique (revue CL-4.R, m7) : les
+      // libelles de public existent deja sous `admin.groupes.*`, aucune cle
+      // jumelle n'a ete creee.
       expect(find.text(t.admin.groupes.typeEnfant), findsOneWidget);
+      expect(find.text(t.admin.groupes.typeAdulte), findsNothing);
+      // Le rendez-vous hebdomadaire, sur une ligne discrete.
       expect(
         find.text(
           t.enseignant.ficheGroupe.creneauHebdo(
@@ -154,9 +169,9 @@ void main() {
       await tester.pumpWidget(
         hote(
           const FicheGroupePage(groupeId: _groupeId),
-          surcharges: _surcharges(_avec(groupes: <GroupeEnseignant>[
-            _groupe(nbMembres: 0),
-          ])),
+          surcharges: _surcharges(
+            _avec(groupes: <GroupeEnseignant>[_groupe(nbMembres: 0)]),
+          ),
         ),
       );
       await tester.pumpAndSettle();
@@ -234,32 +249,36 @@ void main() {
       // L'identifiant immuable est le seul moyen de nommer un eleve sans nom de
       // famille : il est rendu en entier.
       expect(find.text('RA-0001'), findsOneWidget);
-      // « Niveau indique », jamais « niveau du programme » : la valeur vient de
-      // `student_profiles.level`, un texte libre.
+      // CL-4.4b : le niveau tient la ligne secondaire, tel que saisi
+      // (`student_profiles.level`, un texte libre), dans la ligne de l'eleve.
       expect(
-        find.text(t.enseignant.ficheGroupe.niveauIndique(niveau: 'Debutant')),
+        find.descendant(
+          of: find.byType(GroupeReglages),
+          matching: find.text('Debutant'),
+        ),
         findsOneWidget,
       );
     });
 
-    testWidgets('sans niveau, la fiche se tait plutot que d afficher un tiret', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        hote(
-          const FicheGroupePage(groupeId: _groupeId),
-          surcharges: _surcharges(
-            _avec(membres: <MembreSeance>[membreDeTest(prenom: 'Khadija')]),
+    testWidgets(
+      'sans niveau, la fiche se tait plutot que d afficher un tiret',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          hote(
+            const FicheGroupePage(groupeId: _groupeId),
+            surcharges: _surcharges(
+              _avec(membres: <MembreSeance>[membreDeTest(prenom: 'Khadija')]),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Khadija'), findsOneWidget);
-      // Aucune ligne « niveau : - » : une promesse non tenue a chaque eleve
-      // coute plus cher que le silence.
-      expect(find.textContaining('Niveau'), findsNothing);
-    });
+        expect(find.text('Khadija'), findsOneWidget);
+        // Aucune ligne « niveau : - » : une promesse non tenue a chaque eleve
+        // coute plus cher que le silence.
+        expect(find.textContaining('Niveau'), findsNothing);
+      },
+    );
 
     testWidgets('un prenom masque laisse l identifiant nommer l eleve', (
       WidgetTester tester,
@@ -280,22 +299,26 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('RA-0042'), findsNWidgets(2));
+      // L'identifiant nomme la ligne ; il n'est pas repete en valeur.
+      expect(
+        find.descendant(
+          of: find.byType(GroupeReglages),
+          matching: find.text('RA-0042'),
+        ),
+        findsOneWidget,
+      );
     });
   });
 
-  group('ENS-07 : les places et le seuil', () {
-    testWidgets('les places libres se comptent sur le seuil du groupe', (
-      WidgetTester tester,
-    ) async {
+  group('ENS-07 : la capacite et le seuil (CL-4.4b)', () {
+    testWidgets('la capacite se lit en pastille sur le seuil du groupe, '
+        'sans tuile de places libres', (WidgetTester tester) async {
       await tester.pumpWidget(
         hote(
           const FicheGroupePage(groupeId: _groupeId),
           surcharges: _surcharges(
             _avec(
-              groupes: <GroupeEnseignant>[
-                _groupe(seuilMax: 5, nbMembres: 3),
-              ],
+              groupes: <GroupeEnseignant>[_groupe(seuilMax: 5, nbMembres: 3)],
               membres: <MembreSeance>[membreDeTest()],
             ),
           ),
@@ -303,11 +326,18 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('2'), findsOneWidget);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibres), findsOneWidget);
+      final Finder pastille = find.widgetWithText(
+        StatusPill,
+        t.tc.groupe.carte.capacitePhrase(membres: 3, seuil: 5),
+      );
+      expect(pastille, findsOneWidget);
+      expect(tester.widget<StatusPill>(pastille).ton, TonEtat.neutre);
+      expect(find.byType(StatTile), findsNothing);
+      expect(find.text(t.enseignant.ficheGroupe.placesLibres), findsNothing);
+      expect(find.text(t.enseignant.ficheGroupe.placesLibresUn), findsNothing);
     });
 
-    testWidgets('un groupe complet le dit, et le zero s affiche', (
+    testWidgets('un groupe complet le dit par le ton de sa pastille', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -315,15 +345,29 @@ void main() {
           const FicheGroupePage(groupeId: _groupeId),
           surcharges: _surcharges(
             _avec(
-              groupes: <GroupeEnseignant>[
-                _groupe(seuilMax: 5, nbMembres: 5),
-              ],
+              groupes: <GroupeEnseignant>[_groupe(seuilMax: 5, nbMembres: 5)],
               membres: <MembreSeance>[
                 membreDeTest(prenom: 'Un'),
-                membreDeTest(studentId: 'e2', identifiant: 'RA-2', prenom: 'Deux'),
-                membreDeTest(studentId: 'e3', identifiant: 'RA-3', prenom: 'Trois'),
-                membreDeTest(studentId: 'e4', identifiant: 'RA-4', prenom: 'Quatre'),
-                membreDeTest(studentId: 'e5', identifiant: 'RA-5', prenom: 'Cinq'),
+                membreDeTest(
+                  studentId: 'e2',
+                  identifiant: 'RA-2',
+                  prenom: 'Deux',
+                ),
+                membreDeTest(
+                  studentId: 'e3',
+                  identifiant: 'RA-3',
+                  prenom: 'Trois',
+                ),
+                membreDeTest(
+                  studentId: 'e4',
+                  identifiant: 'RA-4',
+                  prenom: 'Quatre',
+                ),
+                membreDeTest(
+                  studentId: 'e5',
+                  identifiant: 'RA-5',
+                  prenom: 'Cinq',
+                ),
               ],
             ),
           ),
@@ -331,36 +375,32 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.ficheGroupe.complet), findsOneWidget);
-      // « 0 place libre » se lit, il ne se masque pas.
-      expect(find.text('0'), findsOneWidget);
+      final Finder pastille = find.widgetWithText(
+        StatusPill,
+        t.tc.groupe.carte.capacitePhrase(membres: 5, seuil: 5),
+      );
+      expect(pastille, findsOneWidget);
+      expect(tester.widget<StatusPill>(pastille).ton, TonEtat.avertissement);
+      // Une ligne par eleve, dans un seul groupe, jamais une carte par eleve.
+      expect(find.byType(GroupeReglages), findsOneWidget);
+      for (final String prenom in <String>[
+        'Un',
+        'Deux',
+        'Trois',
+        'Quatre',
+        'Cinq',
+      ]) {
+        expect(
+          find.descendant(
+            of: find.byType(GroupeReglages),
+            matching: find.text(prenom),
+          ),
+          findsOneWidget,
+        );
+      }
       expect(
-        find.text(t.enseignant.ficheGroupe.placesLibresUn),
+        find.descendant(of: find.byType(AppCard), matching: find.text('Un')),
         findsNothing,
-      );
-    });
-
-    testWidgets('une seule place libre se dit au singulier', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        hote(
-          const FicheGroupePage(groupeId: _groupeId),
-          surcharges: _surcharges(
-            _avec(
-              groupes: <GroupeEnseignant>[
-                _groupe(seuilMax: 6, nbMembres: 5, type: TypePublicGroupe.adulte),
-              ],
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text(t.admin.groupes.typeAdulte), findsOneWidget);
-      expect(
-        find.text(t.enseignant.ficheGroupe.placesLibresUn),
-        findsOneWidget,
       );
     });
   });
