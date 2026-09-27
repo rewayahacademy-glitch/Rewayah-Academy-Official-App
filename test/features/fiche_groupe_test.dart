@@ -147,7 +147,7 @@ void main() {
       // CL-4.4b : le nom de la Classe EST le titre ; plus de « Fiche du
       // groupe ».
       expect(find.text('Perles du Coran'), findsOneWidget);
-      expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
+      expect(find.text('Fiche du groupe'), findsNothing);
       // Le type de groupe, information pedagogique (revue CL-4.R, m7) : les
       // libelles de public existent deja sous `admin.groupes.*`, aucune cle
       // jumelle n'a ete creee.
@@ -337,8 +337,8 @@ void main() {
       expect(pastille, findsOneWidget);
       expect(tester.widget<StatusPill>(pastille).ton, TonEtat.neutre);
       expect(find.byType(StatTile), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibres), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibresUn), findsNothing);
+      expect(find.text('places libres'), findsNothing);
+      expect(find.text('place libre'), findsNothing);
     });
 
     testWidgets('un groupe complet le dit par le ton de sa pastille', (

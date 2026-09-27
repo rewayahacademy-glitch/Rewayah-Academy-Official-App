@@ -39,6 +39,21 @@ class SelecteurRessources extends StatefulWidget {
 class _SelecteurRessourcesState extends State<SelecteurRessources> {
   OngletRessources _onglet = OngletRessources.recents;
   String _recherche = '';
+  final TextEditingController _champ = TextEditingController();
+
+  @override
+  void dispose() {
+    _champ.dispose();
+    super.dispose();
+  }
+
+  /// Choisir un onglet vide la recherche : sinon la liste, cherchee dans
+  /// tous les supports, ne changerait pas (W-141).
+  void _choisirOnglet(OngletRessources o) => setState(() {
+    _onglet = o;
+    _recherche = '';
+    _champ.clear();
+  });
 
   static String _libelle(OngletRessources onglet) => switch (onglet) {
     OngletRessources.recents => t.tc.bibliotheque.sections.recents,
@@ -85,13 +100,14 @@ class _SelecteurRessourcesState extends State<SelecteurRessources> {
                   key: ValueKey<String>('onglet-${o.name}'),
                   label: Text(_libelle(o)),
                   selected: _onglet == o && _recherche.trim().isEmpty,
-                  onSelected: (_) => setState(() => _onglet = o),
+                  onSelected: (_) => _choisirOnglet(o),
                 ),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
           TextField(
             key: const ValueKey<String>('recherche-ressources'),
+            controller: _champ,
             onChanged: (String v) => setState(() => _recherche = v),
             decoration: InputDecoration(
               labelText: t.tc.bibliotheque.rechercheLibelle,
@@ -103,10 +119,14 @@ class _SelecteurRessourcesState extends State<SelecteurRessources> {
           if (visibles.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-              child: Text(
-                t.tc.bibliotheque.aucunResultat.message,
-                style: palette.inkMuted.applyTo(
-                  texte.bodyMedium ?? const TextStyle(),
+              // Annonce en tapant (W-413, message d'etat).
+              child: Semantics(
+                liveRegion: true,
+                child: Text(
+                  t.tc.bibliotheque.aucunResultat.message,
+                  style: palette.inkMuted.applyTo(
+                    texte.bodyMedium ?? const TextStyle(),
+                  ),
                 ),
               ),
             )

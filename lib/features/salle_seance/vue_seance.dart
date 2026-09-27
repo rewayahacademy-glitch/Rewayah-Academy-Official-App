@@ -6,6 +6,7 @@
 // `/tc/classe` ou depuis la demonstration (`lib/features/demo/seance_demo.dart`).
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show StringCharacters;
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
@@ -521,7 +522,10 @@ class VueSeance {
       ? CompteSeance(nom: nomEnseignant, initiales: initialesEnseignant)
       : CompteSeance(
           nom: prenomEleve!,
-          initiales: prenomEleve!.substring(0, 1).toUpperCase(),
+          // Un grapheme entier (lettre arabe avec haraka) ; vide sans prenom.
+          initiales: prenomEleve!.characters.isEmpty
+              ? ''
+              : prenomEleve!.characters.first.toUpperCase(),
         );
 
   /// Guidee : ni theme, ni cloche, ni reglages, ni menu de compte.

@@ -271,7 +271,7 @@ void main() {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, EtatDemoClasse.aVenir);
       // Plus de titre d'ecran « Fiche du groupe ».
-      expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
+      expect(find.text('Fiche du groupe'), findsNothing);
       final Finder titre = find.text(DonneesClasseDemo.classe);
       expect(titre, findsOneWidget);
       final Finder retour = find.text(t.commun.retour);
@@ -318,8 +318,8 @@ void main() {
       );
       // Aucune tuile « places libres » pleine largeur.
       expect(find.byType(StatTile), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibres), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibresUn), findsNothing);
+      expect(find.text('places libres'), findsNothing);
+      expect(find.text('place libre'), findsNothing);
     });
   });
 

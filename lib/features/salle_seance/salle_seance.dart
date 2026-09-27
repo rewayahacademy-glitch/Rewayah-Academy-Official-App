@@ -229,6 +229,7 @@ class _FocusPanneaux extends StatefulWidget {
 class _FocusPanneauxState extends State<_FocusPanneaux> {
   final FocusNode _focusEleves = FocusNode(debugLabel: 'bouton-eleves');
   final FocusNode _focusSupports = FocusNode(debugLabel: 'bouton-supports');
+  final FocusNode _focusSupport = FocusNode(debugLabel: 'support');
 
   @override
   void didUpdateWidget(_FocusPanneaux ancien) {
@@ -238,7 +239,14 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         widget.vue.panneau != PanneauOuvert.aucun) {
       return;
     }
-    final FocusNode bouton = avant == PanneauOuvert.eleves
+    // Une ressource choisie (EN-10) : le focus va au nouveau support, pas
+    // au bouton Supports (UX_REVIEW_04 n° 17 f).
+    final bool supportChange =
+        widget.vue.support != null &&
+        !identical(ancien.vue.support, widget.vue.support);
+    final FocusNode bouton = supportChange
+        ? _focusSupport
+        : avant == PanneauOuvert.eleves
         ? _focusEleves
         : _focusSupports;
     // Le bouton est remonte au cadre suivant (telephone, web etroit).
@@ -251,6 +259,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   void dispose() {
     _focusEleves.dispose();
     _focusSupports.dispose();
+    _focusSupport.dispose();
     super.dispose();
   }
 
@@ -392,6 +401,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
             contenuSupport: widget.contenuSupport,
             focusEleves: _focusEleves,
             focusSupports: _focusSupports,
+            focusSupport: _focusSupport,
           ),
         ),
       ),
@@ -450,6 +460,7 @@ class _SalleEnseignant extends StatelessWidget {
     required this.gabarit,
     required this.focusEleves,
     required this.focusSupports,
+    required this.focusSupport,
     this.contenuSupport,
   });
 
@@ -463,17 +474,23 @@ class _SalleEnseignant extends StatelessWidget {
   final FocusNode focusEleves;
   final FocusNode focusSupports;
 
+  /// Le noeud du support : il recoit le focus apres le choix d'une ressource.
+  final FocusNode focusSupport;
+
   @override
   Widget build(BuildContext context) {
     const double gouttiere = AppPage.gouttiereMobile;
     final bool outils = vue.voitOutils && actions.onOutil != null;
     // Telephone et desktop : le support partage la hauteur avec les boutons
     // et les outils, il se resserre pour montrer la diapositive entiere.
-    final Widget support = ZoneSupport(
-      vue: vue,
-      zoom: local.zoom,
-      serre: true,
-      contenu: contenuSupport,
+    final Widget support = Focus(
+      focusNode: focusSupport,
+      child: ZoneSupport(
+        vue: vue,
+        zoom: local.zoom,
+        serre: true,
+        contenu: contenuSupport,
+      ),
     );
     final Widget? boutons = _BoutonsPanneaux.ou(
       vue,

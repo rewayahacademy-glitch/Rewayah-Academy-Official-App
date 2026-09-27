@@ -288,6 +288,8 @@ class _Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final bool connecte = eleve.statut == StatutEleveSeance.connecte;
+    // Un grapheme entier (lettre arabe avec haraka) ; sans prenom, l'icone.
+    final bool initiale = connecte && eleve.prenom.characters.isNotEmpty;
     final AppColorPair fond = connecte
         ? palette.washAccent
         : palette.surfaceSunken;
@@ -303,9 +305,9 @@ class _Avatar extends StatelessWidget {
                   borderRadius: AppRadius.arrondiFull,
                 ),
                 child: Center(
-                  child: connecte
+                  child: initiale
                       ? Text(
-                          eleve.prenom.substring(0, 1).toUpperCase(),
+                          eleve.prenom.characters.first.toUpperCase(),
                           style: palette.inkAccent.applyTo(
                             Theme.of(context).textTheme.titleLarge ??
                                 const TextStyle(),
@@ -419,24 +421,34 @@ class _GrilleFiche extends StatelessWidget {
         borderRadius: AppRadius.arrondiSm,
         side: palette.borderHairline.asBorderSide(),
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              child: Padding(padding: marge, child: gauche),
+      // 390 a texte agrandi : une seule colonne, pour que les mots ne se
+      // coupent pas (W-144, W-1410 ; meme seuil que groupe_reglages).
+      child: serre && MediaQuery.textScalerOf(context).scale(1) > 1.3
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(padding: marge, child: gauche),
+                Padding(padding: marge, child: droite),
+              ],
+            )
+          : IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(padding: marge, child: gauche),
+                  ),
+                  VerticalDivider(
+                    width: 1,
+                    thickness: 1,
+                    color: palette.borderHairline.asBorderSide().color,
+                  ),
+                  Expanded(
+                    child: Padding(padding: marge, child: droite),
+                  ),
+                ],
+              ),
             ),
-            VerticalDivider(
-              width: 1,
-              thickness: 1,
-              color: palette.borderHairline.asBorderSide().color,
-            ),
-            Expanded(
-              child: Padding(padding: marge, child: droite),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -484,9 +496,13 @@ class _Champ extends StatelessWidget {
             ),
             style: palette.inkStrong.applyTo(corps),
           )
-        : large && valeur.length <= _valeurCourte
+        : large &&
+              valeur.length <= _valeurCourte &&
+              MediaQuery.textScalerOf(context).scale(1) <= 1
         // Colonne desktop : une valeur courte tient sur sa ligne (image
         // CLV-07 : « 3 séances cette semaine »), quitte a se reduire un peu.
+        // Texte agrandi : la valeur passe a la ligne plutot que d'annuler
+        // l'agrandissement (W-144).
         ? FittedBox(
             fit: BoxFit.scaleDown,
             alignment: AlignmentDirectional.centerStart,
@@ -533,12 +549,13 @@ class _ActionsEleve extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<(AppIcon, String, ValueChanged<EleveSeance>?)>
     liste = <(AppIcon, String, ValueChanged<EleveSeance>?)>[
-      (AppIcons.rappeler, t.salle.seance.rappeler, actions.onRappeler),
+      // Ordre de E14 : Faire reciter, Appeler discretement, Noter, Signaler.
       (
         AppIcons.reciter,
         t.salle.seance.faireReciter,
         actions.onChoisirPourReciter,
       ),
+      (AppIcons.rappeler, t.salle.seance.rappeler, actions.onRappeler),
       (AppIcons.noter, t.tc.classe.action.noter, actions.onNoter),
       // « Signaler / un besoin » : l'espace insecable garde « un
       // besoin » ensemble, comme sur les images.

@@ -7694,9 +7694,6 @@ class Traductions$enseignant$journee$fr {
 	/// fr: '1 élève'
 	String get effectifUn => '1 élève';
 
-	/// fr: 'Voir le groupe'
-	String get voirGroupe => 'Voir le groupe';
-
 	/// fr: 'Micro prêt'
 	String get preflightOk => 'Micro prêt';
 
@@ -7930,12 +7927,6 @@ class Traductions$enseignant$cahier$fr {
 
 	/// fr: 'Le niveau et le programme sont ceux de l'académie : ils ne se modifient pas depuis le cahier.'
 	String get curriculumFige => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier.';
-
-	/// fr: 'Note pour le groupe'
-	String get noteGroupe => 'Note pour le groupe';
-
-	/// fr: 'Facultative. Aucun texte n'est attendu.'
-	String get noteGroupeDetail => 'Facultative. Aucun texte n\'est attendu.';
 
 	/// fr: 'Valider le cahier'
 	String get valider => 'Valider le cahier';
@@ -8420,32 +8411,11 @@ class Traductions$enseignant$ficheGroupe$fr {
 
 	// Translations
 
-	/// fr: 'Fiche du groupe'
-	String get titre => 'Fiche du groupe';
-
 	/// fr: 'Retour à Aujourd'hui'
 	String get retour => 'Retour à Aujourd\'hui';
 
-	/// fr: 'Le rendez-vous du groupe'
-	String get creneauTitre => 'Le rendez-vous du groupe';
-
 	/// fr: '{jour} à {heure}, chaque semaine'
 	String creneauHebdo({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine';
-
-	/// fr: 'Groupe complet'
-	String get complet => 'Groupe complet';
-
-	/// fr: 'places libres'
-	String get placesLibres => 'places libres';
-
-	/// fr: 'place libre'
-	String get placesLibresUn => 'place libre';
-
-	/// fr: 'Les élèves du groupe'
-	String get membresTitre => 'Les élèves du groupe';
-
-	/// fr: 'Niveau indiqué : {niveau}'
-	String niveauIndique({required Object niveau}) => 'Niveau indiqué : ${niveau}';
 
 	/// fr: 'Aucun élève dans cette Classe'
 	String get aucunMembre => 'Aucun élève dans cette Classe';
@@ -8498,8 +8468,8 @@ class Traductions$enseignant$ficheGroupe$fr {
 	/// fr: 'Ressources récentes'
 	String get ressourcesTitre => 'Ressources récentes';
 
-	/// fr: 'Progression de la classe'
-	String get progressionTitre => 'Progression de la classe';
+	/// fr: 'Progression de la Classe'
+	String get progressionTitre => 'Progression de la Classe';
 
 	/// fr: 'Présence régulière'
 	String get indicateurRegulier => 'Présence régulière';
@@ -10560,14 +10530,14 @@ class Traductions$tc$groupe$espace$fr {
 	/// fr: 'Progression'
 	String get progression => 'Progression';
 
-	/// fr: 'Élèves de la classe'
-	String get roster => 'Élèves de la classe';
+	/// fr: 'Élèves de la Classe'
+	String get roster => 'Élèves de la Classe';
 
 	/// fr: 'Reprendre le cours'
 	String get reprendreLeCours => 'Reprendre le cours';
 
-	/// fr: 'Cette classe ne vous est pas ouverte'
-	String get introuvable => 'Cette classe ne vous est pas ouverte';
+	/// fr: 'Cette Classe ne vous est pas ouverte'
+	String get introuvable => 'Cette Classe ne vous est pas ouverte';
 
 	/// fr: 'Elle a peut-être été clôturée, ou elle concerne un autre profil.'
 	String get introuvableDetail => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.';
@@ -15166,7 +15136,6 @@ extension on Traductions {
 			'enseignant.journee.coursIndividuel' => 'Cours individuel',
 			'enseignant.journee.effectif' => ({required Object nombre}) => '${nombre} élèves',
 			'enseignant.journee.effectifUn' => '1 élève',
-			'enseignant.journee.voirGroupe' => 'Voir le groupe',
 			'enseignant.journee.preflightOk' => 'Micro prêt',
 			'enseignant.journee.preflightBloque' => 'Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.',
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
@@ -15253,8 +15222,6 @@ extension on Traductions {
 			'enseignant.cahier.plusieursExceptions' => ({required Object nombre}) => '${nombre} élèves demandent un regard.',
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
 			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier.',
-			'enseignant.cahier.noteGroupe' => 'Note pour le groupe',
-			'enseignant.cahier.noteGroupeDetail' => 'Facultative. Aucun texte n\'est attendu.',
 			'enseignant.cahier.valider' => 'Valider le cahier',
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
@@ -15306,11 +15273,11 @@ extension on Traductions {
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.devoirAucun' => 'Aucun travail',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
@@ -15409,15 +15376,8 @@ extension on Traductions {
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
 			'enseignant.creneaux.cleDuree' => 'Durée',
 			'enseignant.creneaux.duree' => ({required Object minutes}) => '${minutes} min',
-			'enseignant.ficheGroupe.titre' => 'Fiche du groupe',
 			'enseignant.ficheGroupe.retour' => 'Retour à Aujourd\'hui',
-			'enseignant.ficheGroupe.creneauTitre' => 'Le rendez-vous du groupe',
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
-			'enseignant.ficheGroupe.complet' => 'Groupe complet',
-			'enseignant.ficheGroupe.placesLibres' => 'places libres',
-			'enseignant.ficheGroupe.placesLibresUn' => 'place libre',
-			'enseignant.ficheGroupe.membresTitre' => 'Les élèves du groupe',
-			'enseignant.ficheGroupe.niveauIndique' => ({required Object niveau}) => 'Niveau indiqué : ${niveau}',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette Classe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
 			'enseignant.ficheGroupe.erreur' => 'Cette Classe n\'a pas pu être lue. Réessayez dans un instant.',
@@ -15435,7 +15395,7 @@ extension on Traductions {
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Dernier point : ${texte}',
 			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'Ressources récentes',
-			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la classe',
+			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la Classe',
 			'enseignant.ficheGroupe.indicateurRegulier' => 'Présence régulière',
 			'enseignant.ficheGroupe.indicateurARenforcer' => 'À renforcer',
 			'enseignant.ficheGroupe.indicateurAbsence' => 'Absence récente',
@@ -15542,9 +15502,9 @@ extension on Traductions {
 			'tc.groupe.espace.bibliotheque' => 'Bibliothèque',
 			'tc.groupe.espace.bibliothequeVoirTout' => 'Voir tout',
 			'tc.groupe.espace.progression' => 'Progression',
-			'tc.groupe.espace.roster' => 'Élèves de la classe',
+			'tc.groupe.espace.roster' => 'Élèves de la Classe',
 			'tc.groupe.espace.reprendreLeCours' => 'Reprendre le cours',
-			'tc.groupe.espace.introuvable' => 'Cette classe ne vous est pas ouverte',
+			'tc.groupe.espace.introuvable' => 'Cette Classe ne vous est pas ouverte',
 			'tc.groupe.espace.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.',
 			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
@@ -15820,8 +15780,6 @@ extension on Traductions {
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
@@ -15832,6 +15790,8 @@ extension on Traductions {
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',

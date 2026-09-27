@@ -2831,7 +2831,6 @@
       "coursIndividuel": "Cours individuel",
       "effectif": "{nombre} élèves",
       "effectifUn": "1 élève",
-      "voirGroupe": "Voir le groupe",
       "preflightOk": "Micro prêt",
       "preflightBloque": "Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.",
       "preflightSansMicro": "Aucun micro n'est détecté. Branchez-en un pour lancer le cours.",
@@ -2928,8 +2927,6 @@
       "plusieursExceptions": "{nombre} élèves demandent un regard.",
       "nominaux": "Rien à signaler",
       "curriculumFige": "Le niveau et le programme sont ceux de l'académie : ils ne se modifient pas depuis le cahier.",
-      "noteGroupe": "Note pour le groupe",
-      "noteGroupeDetail": "Facultative. Aucun texte n'est attendu.",
       "valider": "Valider le cahier",
       "validerTout": "Tout est conforme, valider",
       "validerSansConstat": "Déposer sans le constat",
@@ -3088,15 +3085,8 @@
       "duree": "{minutes} min"
     },
     "ficheGroupe": {
-      "titre": "Fiche du groupe",
       "retour": "Retour à Aujourd'hui",
-      "creneauTitre": "Le rendez-vous du groupe",
       "creneauHebdo": "{jour} à {heure}, chaque semaine",
-      "complet": "Groupe complet",
-      "placesLibres": "places libres",
-      "placesLibresUn": "place libre",
-      "membresTitre": "Les élèves du groupe",
-      "niveauIndique": "Niveau indiqué : {niveau}",
       "aucunMembre": "Aucun élève dans cette Classe",
       "aucunMembreDetail": "L'administration compose les Classes : celle-ci n'a pas encore d'élève.",
       "erreur": "Cette Classe n'a pas pu être lue. Réessayez dans un instant.",
@@ -3114,7 +3104,7 @@
       "dernierPoint": "Dernier point : {texte}",
       "chargementClasse": "Chargement de la Classe.",
       "ressourcesTitre": "Ressources récentes",
-      "progressionTitre": "Progression de la classe",
+      "progressionTitre": "Progression de la Classe",
       "indicateurRegulier": "Présence régulière",
       "indicateurARenforcer": "À renforcer",
       "indicateurAbsence": "Absence récente"
@@ -3256,9 +3246,9 @@
         "bibliotheque": "Bibliothèque",
         "bibliothequeVoirTout": "Voir tout",
         "progression": "Progression",
-        "roster": "Élèves de la classe",
+        "roster": "Élèves de la Classe",
         "reprendreLeCours": "Reprendre le cours",
-        "introuvable": "Cette classe ne vous est pas ouverte",
+        "introuvable": "Cette Classe ne vous est pas ouverte",
         "introuvableDetail": "Elle a peut-être été clôturée, ou elle concerne un autre profil."
       },
       "emplacement": {

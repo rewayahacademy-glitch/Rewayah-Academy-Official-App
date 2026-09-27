@@ -809,7 +809,7 @@ LigneRubrique _ligneMembre(
   );
 }
 
-/// « Progression de la classe » en une ligne : l'etape commune et sa valeur
+/// « Progression de la Classe » en une ligne : l'etape commune et sa valeur
 /// ecrites, puis la barre, en un seul noeud (UX_REVIEW_04 n° 9 b). Une
 /// barre, jamais un anneau.
 class _ProgressionClasse extends StatelessWidget {
