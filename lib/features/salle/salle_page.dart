@@ -793,6 +793,10 @@ class _EnteteControle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
+    // L'encre de la paire du registre `salle` (celle que `PageImmersive` pose
+    // en fond) : un style du theme porte l'encre des surfaces claires, qui
+    // ecrase le `DefaultTextStyle` de la coquille et disparait sur le fond.
+    final AppColorPair salle = AppPalette.of(context).surfaceInverse;
     final String? attente = _attenteDe(vue);
     final (String, TonEtat) lien = _etatDuLien(vue);
 
@@ -807,14 +811,19 @@ class _EnteteControle extends StatelessWidget {
                 header: true,
                 child: Text(
                   t.salle.visiteControle.titre,
-                  style: textes.titleMedium ?? const TextStyle(),
+                  style: salle.applyTo(textes.titleMedium ?? const TextStyle()),
                 ),
               ),
               Ecart.vXs,
               Semantics(
                 liveRegion: true,
                 child: attente != null
-                    ? Text(attente, style: textes.labelLarge ?? const TextStyle())
+                    ? Text(
+                        attente,
+                        style: salle.applyTo(
+                          textes.labelLarge ?? const TextStyle(),
+                        ),
+                      )
                     : StatusPill(libelle: lien.$1, ton: lien.$2),
               ),
             ],
@@ -866,6 +875,7 @@ class _CommandesControle extends StatelessWidget {
               : t.salle.visiteControle.retablirSon,
           actif: sonRecu,
           onPress: onSon,
+          encreDuRegistre: true,
         ),
         _Commande(
           icone: AppIcons.agrandir,
@@ -877,6 +887,7 @@ class _CommandesControle extends StatelessWidget {
               : t.salle.visiteControle.agrandir,
           actif: agrandi,
           onPress: onAgrandir,
+          encreDuRegistre: true,
         ),
       ],
     );
@@ -912,6 +923,35 @@ class _Bandeaux extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // CT-3 : chez le controleur, la mention permanente rejoint le registre
+    // doux de son rappel (`washWarning`). `PermanentNotice` reste intacte et
+    // sans parametre (ADR-011) ; son encre discrete, faite pour une surface
+    // claire, se perdait sur le fond de la salle. Les autres roles gardent leur
+    // rendu jusqu'a l'harmonisation HU-1.
+    if (vue.role == RoleSalle.controleur) {
+      return DecoratedBox(
+        decoration: AppPalette.of(context).washWarning.decoration(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            _Rappel(
+              texte: t.salle.bandeauControle,
+              ton: TonEtat.avertissement,
+              icone: AppIcons.controleQualite,
+            ),
+            const Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: AppSpacing.lg,
+                end: AppSpacing.lg,
+                bottom: AppSpacing.md,
+              ),
+              child: PermanentNotice(),
+            ),
+          ],
+        ),
+      );
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -920,12 +960,7 @@ class _Bandeaux extends StatelessWidget {
         // n'accepte aucun parametre, et c'est ce qui garantit qu'il affiche la
         // meme ligne pour les quatre roles (ADR-011). Le rappel d'invisibilite,
         // lui, ne concerne que l'ecran de qui observe.
-        if (vue.role == RoleSalle.controleur)
-          _Rappel(
-            texte: t.salle.bandeauControle,
-            ton: TonEtat.avertissement,
-            icone: AppIcons.controleQualite,
-          ),
+        // (Le rappel du controleur est rendu plus haut, avec la mention.)
         if (vue.role == RoleSalle.tuteurObservateur)
           _Rappel(
             texte: t.salle.observationMuette,
@@ -1166,9 +1201,25 @@ class _Corps extends StatelessWidget {
           // Une largeur de chrome, deja posee pour la barre laterale : la
           // reutiliser evite d'en inventer une seconde.
           width: AppGabarit.largeurBarreLaterale,
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: _ListePresence(lignes: lignes, entete: true),
+          child: DecoratedBox(
+            // CT-3 : chez le controleur, la colonne se pose sur la surface des
+            // vignettes (`surfaceSunken`) : `SectionHeader` et `LignePresence`
+            // portent l'encre des surfaces claires, illisible sur le fond de la
+            // salle. Les autres roles gardent leur rendu (HU-1).
+            decoration: vue.role == RoleSalle.controleur
+                ? AppPalette.of(context).surfaceSunken.decoration()
+                : const BoxDecoration(),
+            child: IconTheme.merge(
+              data: vue.role == RoleSalle.controleur
+                  ? IconThemeData(
+                      color: AppPalette.of(context).surfaceSunken.onBackground,
+                    )
+                  : const IconThemeData(),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: _ListePresence(lignes: lignes, entete: true),
+              ),
+            ),
           ),
         ),
       ],
@@ -1730,6 +1781,7 @@ class _Commande extends StatelessWidget {
     required this.acte,
     required this.actif,
     required this.onPress,
+    this.encreDuRegistre = false,
   });
 
   final AppIcon icone;
@@ -1737,6 +1789,12 @@ class _Commande extends StatelessWidget {
   final String acte;
   final bool actif;
   final VoidCallback? onPress;
+
+  /// CT-3 : le mot sous le cercle prend l'encre de la paire du registre
+  /// `salle` (`surfaceInverse`), lisible sur le fond de la salle en clair
+  /// comme en sombre. Reserve aux commandes du controleur : les autres roles
+  /// gardent leur rendu (harmonisation HU-1).
+  final bool encreDuRegistre;
 
   @override
   Widget build(BuildContext context) {
@@ -1779,7 +1837,11 @@ class _Commande extends StatelessWidget {
               libelle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: textes.labelSmall ?? const TextStyle(),
+              style: encreDuRegistre
+                  ? palette.surfaceInverse.applyTo(
+                      textes.labelSmall ?? const TextStyle(),
+                    )
+                  : textes.labelSmall ?? const TextStyle(),
             ),
           ],
         ),
