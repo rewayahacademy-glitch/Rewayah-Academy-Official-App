@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/accessibilite/mode_accessibilite.dart';
+import 'core/domain/enums.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/preferences/preferences_locales.dart';
 import 'core/router/app_router.dart';
@@ -53,12 +54,19 @@ class RewayahApp extends ConsumerWidget {
     // Meme regle pour les raccourcis clavier de la salle (EN-KB).
     ref.watch(persistanceRaccourcisProvider);
     final ThemeMode mode = themeMode ?? ref.watch(modeThemeProvider);
+    // MA-2 (question 2 de MA-1b) : la presentation vient du fournisseur
+    // unique du Mode Accessibilite, et le theme reste celui d'`AppTheme.pour`
+    // existant, sans aucune couleur nouvelle (K-37).
+    final InterfaceMode presentation =
+        ref.watch(modeAccessibiliteActifProvider)
+        ? InterfaceMode.enfant
+        : InterfaceMode.standard;
 
     return MaterialApp.router(
       title: 'Rewayah Academy',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.pour(session.interfaceMode, Brightness.light),
-      darkTheme: AppTheme.pour(session.interfaceMode, Brightness.dark),
+      theme: AppTheme.pour(presentation, Brightness.light),
+      darkTheme: AppTheme.pour(presentation, Brightness.dark),
       themeMode: mode,
       // Le bandeau d'observation coiffe TOUS les ecrans, et il est pose ici
       // plutot que dans `PageShell` pour deux raisons : il doit survivre aux

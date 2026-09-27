@@ -5934,8 +5934,14 @@ class Traductions$nav$eleve$fr {
 	/// fr: 'Accueil'
 	String get accueil => 'Accueil';
 
+	/// fr: 'Ma classe'
+	String get maClasse => 'Ma classe';
+
 	/// fr: 'Coran'
 	String get coran => 'Coran';
+
+	/// fr: 'Mon espace'
+	String get monEspace => 'Mon espace';
 
 	/// fr: 'Suivi'
 	String get suivi => 'Suivi';
@@ -14415,7 +14421,9 @@ extension on Traductions {
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
+			'nav.eleve.maClasse' => 'Ma classe',
 			'nav.eleve.coran' => 'Coran',
+			'nav.eleve.monEspace' => 'Mon espace',
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
@@ -14810,10 +14818,10 @@ extension on Traductions {
 			'tuteur.accueil.titre' => 'Accueil',
 			'tuteur.accueil.voirLaClasse' => 'Voir la classe',
 			'tuteur.accueil.prochaineSeance' => 'Prochaine séance',
-			'tuteur.accueil.heureDe' => ({required Object ville}) => 'Heure de ${ville}',
-			'tuteur.accueil.heureAppareil' => 'Heure de cet appareil',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.heureDe' => ({required Object ville}) => 'Heure de ${ville}',
+			'tuteur.accueil.heureAppareil' => 'Heure de cet appareil',
 			'tuteur.accueil.dateEtFuseau' => ({required Object date, required Object fuseau}) => '${date} · ${fuseau}',
 			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'Heure de la classe : ${heure} ${ville}',
 			'tuteur.accueil.seanceEnDirect' => 'Séance en direct',
@@ -15324,10 +15332,10 @@ extension on Traductions {
 			'enseignant.cahier.exceptionCorriger' => 'Corriger la présence',
 			'enseignant.cahier.exceptionExcuser' => 'Excuser l\'absence',
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
-			'enseignant.cahier.exceptionMotif' => 'Motif',
-			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.exceptionMotif' => 'Motif',
+			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
 			'enseignant.cahier.exceptionEnCours' => 'Enregistrement…',
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
@@ -15838,10 +15846,10 @@ extension on Traductions {
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
-			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
-			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
+			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',

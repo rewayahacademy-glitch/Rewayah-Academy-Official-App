@@ -50,45 +50,47 @@ class Destination {
 /// Fonction pure, a part du cablage : la regle des quatre destinations se
 /// verifie sans monter de routeur.
 ///
-/// **Le role seul ne suffit pas, le mode d'interface compte.** Un eleve en
-/// mode enfant n'a aucune destination : sans decision a lui laisser, aucune
-/// navigation n'est offerte, et `NavShell` rend alors son enfant sans le
-/// moindre chrome. Le controleur et le comptable, de meme, n'ont pas de
-/// coquille : une destination unique ne monte pas une barre.
+/// **MA-2 (27/09/2026) : l'eleve a les memes quatre destinations dans les
+/// deux presentations**, standard et Mode Accessibilite (`InterfaceMode
+/// .enfant`) : Accueil, Ma classe, Coran, Mon espace (doc 06 §3, MA17 ; choix
+/// provisoire du directeur Q1). Le mode ne cree pas une seconde application :
+/// fin du « aucune destination » de l'ancien mode enfant. Les routes ne
+/// changent pas : Ma classe mene a `/eleve/suivi` (le Suivi s'atteint donc
+/// depuis Ma classe), Mon espace a `/compte`. Le parametre [mode] reste pour
+/// les autres roles et la signature ; il ne change plus rien a l'eleve.
 ///
-/// **Le mode change le nombre de destinations, jamais l'arborescence**
-/// (ADR-009) : les branches du routeur sont les memes pour les deux modes,
-/// seule la liste rendue a la barre change ici.
+/// Le controleur et le comptable n'ont pas de coquille : une destination
+/// unique ne monte pas une barre.
 List<Destination> destinationsPour({
   required AppRole role,
   required InterfaceMode mode,
 }) {
   final List<Destination> destinations = switch (role) {
-    AppRole.student =>
-      mode == InterfaceMode.enfant
-          ? const <Destination>[]
-          : <Destination>[
-              Destination(
-                libelle: t.nav.eleve.accueil,
-                icone: AppIcons.accueil,
-                chemin: Routes.eleve,
-              ),
-              Destination(
-                libelle: t.nav.eleve.coran,
-                icone: AppIcons.coran,
-                chemin: Routes.eleveCoran,
-              ),
-              Destination(
-                libelle: t.nav.eleve.suivi,
-                icone: AppIcons.suivi,
-                chemin: Routes.eleveSuivi,
-              ),
-              Destination(
-                libelle: t.nav.eleve.compte,
-                icone: AppIcons.profil,
-                chemin: Routes.compte,
-              ),
-            ],
+    // L'ordre est celui des branches de la coquille eleve dans
+    // `app_router.dart` (Accueil, Ma classe, Coran) : les deux doivent rester
+    // d'accord. Mon espace n'a pas de branche, il se rejoint par `go`.
+    AppRole.student => <Destination>[
+      Destination(
+        libelle: t.nav.eleve.accueil,
+        icone: AppIcons.accueil,
+        chemin: Routes.eleve,
+      ),
+      Destination(
+        libelle: t.nav.eleve.maClasse,
+        icone: AppIcons.classes,
+        chemin: Routes.eleveSuivi,
+      ),
+      Destination(
+        libelle: t.nav.eleve.coran,
+        icone: AppIcons.coran,
+        chemin: Routes.eleveCoran,
+      ),
+      Destination(
+        libelle: t.nav.eleve.monEspace,
+        icone: AppIcons.profil,
+        chemin: Routes.compte,
+      ),
+    ],
     // **Accueil, Foyer, Historique, Compte**, dans cet ordre et sur tous les
     // formats (mandat Tuteur V1 section 4 ; decisions du coordinateur du
     // 24/09/2026, section 3 point 6). Chacune est une branche de la coquille
@@ -197,8 +199,9 @@ List<Destination> secondairesPour({required AppRole role}) =>
 /// - **quatre destinations au maximum**, pour tous les roles. C'est la seule
 ///   chose qui empeche la barre basse de devenir un menu. Une cinquieme est
 ///   refusee par une assertion, pas par la relecture ;
-/// - **zero destination est un cas legitime**, et meme deux : l'eleve en mode
-///   enfant n'a aucune navigation, le controleur n'en a qu'une. Aucun chrome
+/// - **zero destination est un cas legitime**, et meme une : le controleur
+///   n'en a qu'une (l'eleve en a quatre dans les deux presentations depuis
+///   MA-2). Aucun chrome
 ///   n'est alors rendu, et l'ecran occupe toute la place.
 ///
 /// **Zone sure** : la barre basse consomme l'encart bas, le contenu ne le
@@ -478,9 +481,11 @@ class _OngletBarre extends StatelessWidget {
                   child: Icon(destination.icone.resoudre(selectionne: actif)),
                 ),
                 Ecart.vXs,
+                // MA-2 : a 200 %, le nom passe sur deux lignes au plus au lieu
+                // d'etre tronque (UX_REVIEW_06, ligne 1 c).
                 Text(
                   destination.libelle,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: encre.applyTo(
@@ -920,7 +925,7 @@ class _ItemColonne extends StatelessWidget {
                     maxScaleFactor: NavShell.echelleTexteMaxBarre,
                     child: Text(
                       destination.libelle,
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                       style: (textes.labelMedium ?? const TextStyle()).copyWith(

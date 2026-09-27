@@ -1941,7 +1941,9 @@
   "nav": {
     "eleve": {
       "accueil": "Accueil",
+      "maClasse": "Ma classe",
       "coran": "Coran",
+      "monEspace": "Mon espace",
       "suivi": "Suivi",
       "compte": "Compte"
     },

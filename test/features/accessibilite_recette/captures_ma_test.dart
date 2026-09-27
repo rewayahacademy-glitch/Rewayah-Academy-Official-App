@@ -94,4 +94,37 @@ void main() {
       );
     });
   });
+
+  // -------------------------------------------------------------------
+  // MA-2 : la navigation a 4 destinations (barre, rail, barre laterale).
+  // -------------------------------------------------------------------
+  group('Capture MA-2 : navigation', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in const <(String, Size)>[
+      ('390', Size(390, 844)),
+      ('768', Size(768, 1024)),
+      ('1440', Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('nav_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma2/ma2_nav_mariam_avant_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('nav_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma2/ma2_nav_mariam_avant_390_light_texte200',
+        const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+        const Size(390, 844),
+        echelle: 2,
+      );
+    });
+  });
 }

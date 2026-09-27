@@ -14,12 +14,14 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import 'accessibilite_demo.dart';
 import 'demo_classe_page.dart' show EcranEleveDemo;
@@ -145,7 +147,14 @@ class DemoAccessibilitePage extends StatelessWidget {
 }
 
 /// L'ecran d'une situation, en Mode Accessibilite.
-class EcranAccessibiliteDemo extends StatelessWidget {
+///
+/// MA-2 : hors de la salle, l'ecran est pose dans la VRAIE coquille
+/// (`NavShell`, destinations de `destinationsPour` pour l'eleve), sur Ma
+/// classe. Les autres destinations restent dans la demonstration (aucune
+/// route reelle, aucun serveur) : leur ecran propre au mode arrive en MA-3
+/// (Accueil), MA-7 (Coran) et MA-8 (Mon espace). Pendant la seance, aucune
+/// navigation d'app (MA17, MA20).
+class EcranAccessibiliteDemo extends StatefulWidget {
   /// Cree l'ecran.
   const EcranAccessibiliteDemo({
     required this.eleve,
@@ -159,23 +168,59 @@ class EcranAccessibiliteDemo extends StatelessWidget {
   /// Le moment de la seance.
   final MomentDemoAccessibilite moment;
 
+  /// L'index de Ma classe dans les destinations de l'eleve.
+  static const int indexMaClasse = 1;
+
+  @override
+  State<EcranAccessibiliteDemo> createState() => _EcranAccessibiliteDemoEtat();
+}
+
+class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
+  int _index = EcranAccessibiliteDemo.indexMaClasse;
+
   @override
   Widget build(BuildContext context) {
+    final Widget classe = EcranEleveDemo(
+      etat: DonneesAccessibiliteDemo.etatClasse(widget.moment),
+      titre: DonneesAccessibiliteDemo.titre,
+    );
+    final List<Destination> destinations = destinationsPour(
+      role: AppRole.student,
+      mode: DonneesAccessibiliteDemo.presentation,
+    );
+    final Widget contenu = widget.moment == MomentDemoAccessibilite.pendant
+        ? classe
+        : NavShell(
+            destinations: destinations,
+            indexActif: _index,
+            libellesDansLeRail: true,
+            onAller: (String chemin) {
+              final int i = destinations.indexWhere(
+                (Destination d) => d.chemin == chemin,
+              );
+              if (i != -1) setState(() => _index = i);
+            },
+            child: _index == EcranAccessibiliteDemo.indexMaClasse
+                ? classe
+                : PageShell(
+                    key: ValueKey<String>('demo-destination-$_index'),
+                    titre: destinations[_index].libelle,
+                    sousTitre: t.accessibilite.demo.mention,
+                    child: const SizedBox.shrink(),
+                  ),
+          );
     // Sous la racine, le theme suit la session (standard en demonstration) :
     // la presentation du Mode Accessibilite y est reprise telle quelle,
     // `AppTheme.pour` existant, sans aucune couleur nouvelle (K-37).
     return ProviderScope(
-      key: ValueKey<String>('${eleve.name}-${moment.name}'),
+      key: ValueKey<String>('${widget.eleve.name}-${widget.moment.name}'),
       overrides: surchargesAccessibiliteDemo(),
       child: Theme(
         data: AppTheme.pour(
           DonneesAccessibiliteDemo.presentation,
           Theme.of(context).brightness,
         ),
-        child: EcranEleveDemo(
-          etat: DonneesAccessibiliteDemo.etatClasse(moment),
-          titre: DonneesAccessibiliteDemo.titre,
-        ),
+        child: contenu,
       ),
     );
   }
