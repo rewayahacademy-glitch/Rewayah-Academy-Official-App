@@ -1,7 +1,8 @@
 {
   "vague": "Admin — dossiers KYC",
   "branche": "ui/admin-v1",
-  "dernier_commit": "f73dd41",
+  "dernier_commit": "2fac423",
+  "note_commit": "2fac423 est le commit de la branche ui/admin-v1 auquel les captures de la planche HL-A-5 (écrans 1 à 16, dont les écrans tuteur 15 et 16 de HL-A-6) ont été faites. Les captures AD-S à AD-11 listées ici datent de commits antérieurs.",
   "note_captures": "Chaque capture a été vérifiée sur le disque (Test-Path) avant d'être listée ici. Aucun chemin n'est inventé.",
   "ecrans": [
     {
@@ -205,6 +206,50 @@
       "captures": [
         "AD-11\\ad11_1_coque_320x640@1_light.png",
         "AD-11\\ad11_1_coque_320x640@1_dark.png"
+      ]
+    },
+    {
+      "id": "tuteur_apres_inscription",
+      "titre": "Le tuteur juste après son inscription, qui arrive directement sur son accueil (démonstration, écran 15)",
+      "gabarit": "Accueil tuteur /tuteur (AccueilFamillePage), sans pièce ni file de vérification (K-47)",
+      "composants_partages": ["PageShell"],
+      "captures": [
+        "HL-A-5\\tuteur_apres_inscription_telephone_clair.png",
+        "HL-A-5\\tuteur_apres_inscription_telephone_sombre.png",
+        "HL-A-5\\tuteur_apres_inscription_tablette_clair.png",
+        "HL-A-5\\tuteur_apres_inscription_tablette_sombre.png",
+        "HL-A-5\\tuteur_apres_inscription_ordinateur_clair.png",
+        "HL-A-5\\tuteur_apres_inscription_ordinateur_sombre.png"
+      ]
+    },
+    {
+      "id": "tuteur_attente_ouverture",
+      "titre": "Le tuteur en production avant BR-1 : son compte est créé, aucun document à envoyer, l'ouverture n'est pas encore automatique (écran 16)",
+      "gabarit": "PageShell (portail /attente, accès en préparation, Actualiser et Se déconnecter)",
+      "composants_partages": ["PageShell", "ActionPrincipale"],
+      "note": "Repère Démonstration ajouté par l'hôte de capture, absent en production (constat n5 de REVUE_AD-R).",
+      "captures": [
+        "HL-A-5\\tuteur_attente_ouverture_telephone_clair.png",
+        "HL-A-5\\tuteur_attente_ouverture_telephone_sombre.png",
+        "HL-A-5\\tuteur_attente_ouverture_tablette_clair.png",
+        "HL-A-5\\tuteur_attente_ouverture_tablette_sombre.png",
+        "HL-A-5\\tuteur_attente_ouverture_ordinateur_clair.png",
+        "HL-A-5\\tuteur_attente_ouverture_ordinateur_sombre.png"
+      ]
+    },
+    {
+      "id": "attente_famille_dispensee",
+      "titre": "Le portail d'attente d'une famille dispensée de pièce (ancien écran AD-10)",
+      "gabarit": "PageShell (portail d'attente du titulaire, version AD-10)",
+      "composants_partages": ["PageShell"],
+      "perime": "K-47 : le tuteur n'a plus de dossier ni de validation",
+      "captures": [
+        "AD-10\\ad10_1_famille_dispensee_390x844@3_light.png",
+        "AD-10\\ad10_1_famille_dispensee_390x844@3_dark.png",
+        "AD-10\\ad10_1_famille_dispensee_768x1024@1_light.png",
+        "AD-10\\ad10_1_famille_dispensee_768x1024@1_dark.png",
+        "AD-10\\ad10_1_famille_dispensee_1440x900@1_light.png",
+        "AD-10\\ad10_1_famille_dispensee_1440x900@1_dark.png"
       ]
     }
   ]
