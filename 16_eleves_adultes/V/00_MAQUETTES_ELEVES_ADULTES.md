@@ -200,6 +200,7 @@ Existant : `FoyerPage` en deux colonnes à partir de 1200, `CompteTuteurPage` en
 ## 3. Données de démonstration communes (K-35, E20)
 
 - **Foyer Diallo** : titulaire **Mamadou** (homme, élève de la Classe An-Nour), conjointe **Mariama** (élève d'une autre Classe, dont le titulaire ne voit pas le nom), enfants **Aïcha** et **Oumar**. Les prénoms viennent des exemples du document du directeur (§9.3, §12.4), pas des planches.
+- Choix de démonstration (EA-4) : le nom de famille **Diallo** est porté par les deux adultes, la conjointe comprise (adresse fictive `mariama.diallo@example.com`, domaine réservé RFC 2606) ; la section ne donne pas le nom de la conjointe, le directeur peut le changer.
 - Variante `&titulaire=femme` : titulaire femme, place « conjoint ».
 - Variante `&vue=conjoint` : l'espace du second adulte.
 - L'enseignant est **Sayyid Ibrahim**, comme dans la démonstration enseignant ; la Classe An-Nour est la même.
