@@ -210,6 +210,9 @@ class Traductions$salle$fr {
 	/// fr: 'Micro coupé'
 	String get microCoupe => 'Micro coupé';
 
+	/// fr: 'Micro ouvert'
+	String get microOuvert => 'Micro ouvert';
+
 	/// fr: 'Caméra'
 	String get camera => 'Caméra';
 
@@ -12994,6 +12997,7 @@ extension on Traductions {
 			'salle.fin.enseignant.erreurCahier' => 'Le cahier ne peut pas être ouvert pour le moment.',
 			'salle.micro' => 'Micro',
 			'salle.microCoupe' => 'Micro coupé',
+			'salle.microOuvert' => 'Micro ouvert',
 			'salle.camera' => 'Caméra',
 			'salle.cameraCoupee' => 'Caméra éteinte',
 			'salle.quitter' => 'Quitter',
@@ -13216,9 +13220,9 @@ extension on Traductions {
 			'consentement.comment.sansMicro' => 'Votre micro et votre caméra restent désactivés pendant la visite.',
 			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
 			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
-			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
 			_ => null,
 		} ?? switch (path) {
+			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
 			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
 			'consentement.compte.merci' => 'Merci, votre accord est enregistré.',
 			'consentement.compte.chargement' => 'Lecture de vos accords',
@@ -13730,9 +13734,9 @@ extension on Traductions {
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
 			'admin.attribution.heureProposee' => '1 heure proposée',
-			'admin.attribution.sansHeure' => 'Aucune heure proposée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.attribution.sansHeure' => 'Aucune heure proposée',
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
 			'admin.attribution.changerEleve' => 'Choisir un autre élève',
 			'admin.attribution.choisirEleve' => 'Choisissez un élève',
@@ -14244,9 +14248,9 @@ extension on Traductions {
 			'agent.entrer' => 'Ouvrir l\'application',
 			'agent.ouverture' => 'Ouverture',
 			'agent.refus' => 'Jeton refusé',
-			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
 			_ => null,
 		} ?? switch (path) {
+			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
 			'agent.indisponible' => 'Service indisponible',
 			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
 			'agent.reessayer' => 'Réessayer',
@@ -14758,9 +14762,9 @@ extension on Traductions {
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
-			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
 			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'tuteur.accueil.seanceIllisible' => 'La prochaine séance n\'a pas pu être lue.',
@@ -15272,9 +15276,9 @@ extension on Traductions {
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
 			'enseignant.cahier.devoirAucun' => 'Aucun travail',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
-			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
@@ -15786,9 +15790,9 @@ extension on Traductions {
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
-			'tc.observation.visite.titre' => 'Observation en cours',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',

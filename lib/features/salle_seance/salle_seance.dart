@@ -231,9 +231,21 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   final FocusNode _focusSupports = FocusNode(debugLabel: 'bouton-supports');
   final FocusNode _focusSupport = FocusNode(debugLabel: 'support');
 
+  /// EN-12 (micro), decision du directeur du 27/09 : l'etat du micro obtenu
+  /// (« Micro ouvert » ou « Micro coupe »), montre brievement et lu par le
+  /// lecteur d'ecran, que le geste vienne du dock ou de la touche M.
+  String? _retourMicro;
+
   @override
   void didUpdateWidget(_FocusPanneaux ancien) {
     super.didUpdateWidget(ancien);
+    if (ancien.local.microOuvert != widget.local.microOuvert) {
+      _retourMicro = widget.local.microOuvert
+          ? t.salle.microOuvert
+          : t.salle.microCoupe;
+      // Lu une seule fois : le bandeau visible est exclu des semantiques.
+      _annoncer(_retourMicro!);
+    }
     final PanneauOuvert avant = ancien.vue.panneau;
     if (avant == PanneauOuvert.aucun ||
         widget.vue.panneau != PanneauOuvert.aucun) {
@@ -326,10 +338,9 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     final ActionsSeance actions = widget.actions;
     switch (raccourci) {
       case RaccourciSalle.micro:
-        final bool coupait = widget.local.microOuvert;
+        // L'annonce de l'etat obtenu (ouvert ou coupe) suit le changement
+        // d'etat du micro (`didUpdateWidget`), comme pour le dock.
         actions.onMicro?.call();
-        // Annonce discrete, sans fenetre : l'etat obtenu.
-        if (coupait) _annoncer(t.salle.microCoupe);
       case RaccourciSalle.camera:
         actions.onCamera?.call();
         _annoncer(t.salle.cameraCoupee);
@@ -338,6 +349,16 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
       case RaccourciSalle.bibliotheque:
         actions.onBibliotheque?.call();
     }
+  }
+
+  /// La hauteur du retour du micro : au-dessus du dock et de ses libelles,
+  /// et, hors bureau, au-dessus de la rangee d'outils posee sur le dock.
+  double _hauteurRetourMicro(BuildContext context) {
+    final double dessusDock =
+        diametreBoutonAppel(context) + AppSpacing.respiration;
+    return widget.gabarit == Gabarit.desktop
+        ? dessusDock
+        : dessusDock + AppSpacing.respiration + AppSpacing.lg;
   }
 
   void _annoncer(String message) {
@@ -393,15 +414,42 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
             if (ouvert)
               const SingleActivator(LogicalKeyboardKey.escape): _fermer,
           },
-          child: _SalleEnseignant(
-            vue: vue,
-            actions: widget.actions,
-            local: widget.local,
-            gabarit: widget.gabarit,
-            contenuSupport: widget.contenuSupport,
-            focusEleves: _focusEleves,
-            focusSupports: _focusSupports,
-            focusSupport: _focusSupport,
+          child: Stack(
+            children: <Widget>[
+              Positioned.fill(
+                child: _SalleEnseignant(
+                  vue: vue,
+                  actions: widget.actions,
+                  local: widget.local,
+                  gabarit: widget.gabarit,
+                  contenuSupport: widget.contenuSupport,
+                  focusEleves: _focusEleves,
+                  focusSupports: _focusSupports,
+                  focusSupport: _focusSupport,
+                ),
+              ),
+              // Le retour du micro : discret, au-dessus du dock, sans
+              // fenetre ni geste ; il ne retient aucun toucher.
+              PositionedDirectional(
+                start: 0,
+                end: 0,
+                bottom: _hauteurRetourMicro(context),
+                child: IgnorePointer(
+                  child: ExcludeSemantics(
+                    // Centre et a la largeur du texte : une etiquette
+                    // breve, pas un bandeau d'une rive a l'autre.
+                    child: Center(
+                      child: IntrinsicWidth(
+                        child: LocalFeedback(
+                          key: const ValueKey<String>('retour-micro'),
+                          message: _retourMicro,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
