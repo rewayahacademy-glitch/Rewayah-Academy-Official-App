@@ -15,9 +15,9 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
+import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/controleur/echanges_controleur_page.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
-import 'package:rewayah_academy/features/controleur/planning_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
@@ -136,7 +136,7 @@ void main() {
       tester,
       adresseDemoControleur(EcranDemoControleur.controle),
     );
-    expect(find.byType(PlanningControleurPage), findsOneWidget);
+    expect(find.byType(ControleControleurPage), findsOneWidget);
     final NavShell depart = tester.widget<NavShell>(find.byType(NavShell));
     expect(depart.destinations, hasLength(4));
     expect(depart.indexActif, 0);
@@ -159,7 +159,7 @@ void main() {
           (
             t.nav.controleur.controle,
             EcranDemoControleur.controle,
-            PlanningControleurPage,
+            ControleControleurPage,
           ),
         ];
     for (final (String libelle, EcranDemoControleur ecran, Type page)

@@ -9,31 +9,32 @@
 // fournisseurs reels restent en place, aucun port reseau n'est modifie :
 // aucun appel serveur (K-28).
 //
-// Controle montre encore le planning global, vide ici, jusqu'a sa refonte
-// en CT-2, qui lira `DonneesControleurDemo.mission(etat)`.
+// Controle (CT-2) lit `DonneesControleurDemo.mission(etat)` : une seule
+// carte de mission, jamais un planning (C1).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
-import '../../core/controle/service_controle.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../compte/compte_page.dart';
+import '../controleur/controle_page.dart';
 import '../controleur/echanges_controleur_page.dart';
 import '../controleur/historique_controleur_page.dart';
-import '../controleur/planning_page.dart';
+import '../controleur/mission_controle.dart';
 import 'controleur_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
@@ -112,10 +113,35 @@ List<Override> surchargesCoquilleControleurDemo(EtatDemoControleur etat) =>
     <Override>[
       sessionProvider.overrideWith(_SessionControleurDemo.new),
       horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
-      // Le planning global, vide : il est remplace par la mission en CT-2
-      // (C1, C3). Aucune lecture de `mes_seances_v`.
-      planningGlobalProvider.overrideWith((Ref _) async => const <Seance>[]),
+      // La mission de la situation (CT-2) : une seule, jamais un planning
+      // (C1, C3). Aucune lecture serveur.
+      missionControleProvider.overrideWith(
+        (Ref _) async => missionDemoControleur(etat),
+      ),
     ];
+
+/// La mission de demonstration de [etat], dans le modele de CTR-01.
+MissionControle? missionDemoControleur(EtatDemoControleur etat) {
+  final MissionControleurDemo? m = DonneesControleurDemo.mission(etat);
+  if (m == null) return null;
+  final String titre = switch (m.titreEnseignant) {
+    TitreEnseignant.sayyid => LibellesGroupe.sayyid,
+    TitreEnseignant.sayyida => LibellesGroupe.sayyida,
+  };
+  return MissionControle(
+    seanceId: m.seanceId,
+    classe: m.classe,
+    enseignant: '$titre ${m.enseignant}',
+    nombreEleves: m.nombreEleves,
+    debut: m.debut,
+    finPrevue: m.finPrevue,
+    etat: switch (m.etat) {
+      EtatMissionDemo.prevue => EtatMissionControle.prevue,
+      EtatMissionDemo.enDirect => EtatMissionControle.enDirect,
+      EtatMissionDemo.indisponible => EtatMissionControle.indisponible,
+    },
+  );
+}
 
 /// La page : la liste des ecrans, ou la coquille sur l'ecran choisi.
 class DemoControleurPage extends StatelessWidget {
@@ -214,7 +240,7 @@ class CoquilleControleurDemo extends StatelessWidget {
             );
           },
           child: switch (ecran) {
-            EcranDemoControleur.controle => const PlanningControleurPage(),
+            EcranDemoControleur.controle => const ControleControleurPage(),
             EcranDemoControleur.historique => const HistoriqueControleurPage(),
             EcranDemoControleur.echanges => const EchangesControleurPage(),
             EcranDemoControleur.compte => const ComptePage(),

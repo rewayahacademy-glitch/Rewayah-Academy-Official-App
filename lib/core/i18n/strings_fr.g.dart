@@ -2202,7 +2202,7 @@ class Traductions$controleur$fr {
 	late final Traductions$controleur$historique$fr historique = Traductions$controleur$historique$fr.internal(_root);
 	late final Traductions$controleur$echanges$fr echanges = Traductions$controleur$echanges$fr.internal(_root);
 	late final Traductions$controleur$demo$fr demo = Traductions$controleur$demo$fr.internal(_root);
-	late final Traductions$controleur$planning$fr planning = Traductions$controleur$planning$fr.internal(_root);
+	late final Traductions$controleur$controle$fr controle = Traductions$controleur$controle$fr.internal(_root);
 }
 
 // Path: aConstruire
@@ -8601,100 +8601,52 @@ class Traductions$controleur$demo$fr {
 	String get etatIndisponible => 'Mission indisponible';
 }
 
-// Path: controleur.planning
-class Traductions$controleur$planning$fr {
-	Traductions$controleur$planning$fr.internal(this._root);
+// Path: controleur.controle
+class Traductions$controleur$controle$fr {
+	Traductions$controleur$controle$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
 
-	/// fr: 'Planning global'
-	String get titre => 'Planning global';
+	/// fr: 'Contrôle'
+	String get titre => 'Contrôle';
 
-	/// fr: 'Votre entrée est enregistrée : votre nom, la séance, l'heure. Les participants, eux, ne vous voient pas.'
-	String get visiteJournalisee => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.';
+	/// fr: 'Votre prochaine mission'
+	String get mission => 'Votre prochaine mission';
 
-	/// fr: 'Tout'
-	String get tousEtats => 'Tout';
+	/// fr: 'Commencer le contrôle'
+	String get commencer => 'Commencer le contrôle';
 
-	/// fr: 'En cours'
-	String get etatEnCours => 'En cours';
+	/// fr: 'Aucun contrôle n'est à réaliser pour le moment.'
+	String get vide => 'Aucun contrôle n\'est à réaliser pour le moment.';
 
-	/// fr: 'À venir'
-	String get etatAVenir => 'À venir';
+	/// fr: 'Rewayah vous proposera une mission lorsqu'une séance compatible sera disponible.'
+	String get videAide => 'Rewayah vous proposera une mission lorsqu\'une séance compatible sera disponible.';
 
-	/// fr: 'À vérifier'
-	String get etatIncident => 'À vérifier';
+	/// fr: 'Cette mission n'est plus disponible.'
+	String get indisponible => 'Cette mission n\'est plus disponible.';
 
-	/// fr: 'Tous les enseignants'
-	String get tousEnseignants => 'Tous les enseignants';
+	/// fr: 'Le contrôle s'ouvrira dès que la séance sera en direct.'
+	String get attente => 'Le contrôle s\'ouvrira dès que la séance sera en direct.';
 
-	/// fr: 'Enseignant'
-	String get colonneEnseignant => 'Enseignant';
-
-	/// fr: 'Élève'
-	String get colonneEleve => 'Élève';
-
-	/// fr: 'Heure locale'
-	String get colonneHeure => 'Heure locale';
-
-	/// fr: 'UTC'
-	String get colonneUtc => 'UTC';
-
-	/// fr: 'État'
-	String get colonneEtat => 'État';
-
-	/// fr: 'Entrée'
-	String get colonneEntree => 'Entrée';
-
-	/// fr: '{enseignant} et {eleve}'
-	String avec({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}';
+	/// fr: 'Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.'
+	String get incognito => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.';
 
 	/// fr: '{debut} à {fin}'
-	String plage({required Object debut, required Object fin}) => '${debut} à ${fin}';
+	String horaire({required Object debut, required Object fin}) => '${debut} à ${fin}';
 
-	/// fr: '{jour} {debut} à {fin}'
-	String plageAutreJour({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}';
+	/// fr: '{minutes} min prévues'
+	String duree({required Object minutes}) => '${minutes} min prévues';
 
-	/// fr: '{debut} à {fin} UTC'
-	String plageUtc({required Object debut, required Object fin}) => '${debut} à ${fin} UTC';
+	/// fr: '{nombre} élèves'
+	String eleves({required Object nombre}) => '${nombre} élèves';
 
-	/// fr: 'Observer'
-	String get observer => 'Observer';
+	/// fr: 'Lecture de votre mission en cours.'
+	String get chargement => 'Lecture de votre mission en cours.';
 
-	/// fr: 'Entrée en cours'
-	String get entree => 'Entrée en cours';
-
-	/// fr: 'L'entrée n'a pas été accordée. La séance vient peut-être de se terminer.'
-	String get entreeRefusee => 'L\'entrée n\'a pas été accordée. La séance vient peut-être de se terminer.';
-
-	/// fr: 'Aucune séance en cours ni à venir'
-	String get vide => 'Aucune séance en cours ni à venir';
-
-	/// fr: 'Les cours programmés apparaîtront ici, du plus proche au plus lointain.'
-	String get videDetail => 'Les cours programmés apparaîtront ici, du plus proche au plus lointain.';
-
-	/// fr: 'Aucune séance ne correspond'
-	String get videFiltre => 'Aucune séance ne correspond';
-
-	/// fr: 'Relâchez un filtre pour retrouver le reste du planning.'
-	String get videFiltreDetail => 'Relâchez un filtre pour retrouver le reste du planning.';
-
-	/// fr: 'Tout afficher'
-	String get effacerFiltres => 'Tout afficher';
-
-	/// fr: 'Le planning n'a pas pu être lu. Réessayez dans un instant.'
-	String get erreur => 'Le planning n\'a pas pu être lu. Réessayez dans un instant.';
-
-	/// fr: 'Les {nombre} premières séances sont affichées.'
-	String tronquee({required Object nombre}) => 'Les ${nombre} premières séances sont affichées.';
-
-	/// fr: '{nombre} séances au planning.'
-	String fin({required Object nombre}) => '${nombre} séances au planning.';
-
-	/// fr: '1 séance au planning.'
-	String get finUne => '1 séance au planning.';
+	/// fr: 'Votre mission n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreur => 'Votre mission n\'a pas pu être lue. Réessayez dans un instant.';
 }
 
 // Path: tc.groupe
@@ -15507,35 +15459,19 @@ extension on Traductions {
 			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			'controleur.demo.etatEnDirect' => 'Séance en direct',
 			'controleur.demo.etatIndisponible' => 'Mission indisponible',
-			'controleur.planning.titre' => 'Planning global',
-			'controleur.planning.visiteJournalisee' => 'Votre entrée est enregistrée : votre nom, la séance, l\'heure. Les participants, eux, ne vous voient pas.',
-			'controleur.planning.tousEtats' => 'Tout',
-			'controleur.planning.etatEnCours' => 'En cours',
-			'controleur.planning.etatAVenir' => 'À venir',
-			'controleur.planning.etatIncident' => 'À vérifier',
-			'controleur.planning.tousEnseignants' => 'Tous les enseignants',
-			'controleur.planning.colonneEnseignant' => 'Enseignant',
-			'controleur.planning.colonneEleve' => 'Élève',
-			'controleur.planning.colonneHeure' => 'Heure locale',
-			'controleur.planning.colonneUtc' => 'UTC',
-			'controleur.planning.colonneEtat' => 'État',
-			'controleur.planning.colonneEntree' => 'Entrée',
-			'controleur.planning.avec' => ({required Object enseignant, required Object eleve}) => '${enseignant} et ${eleve}',
-			'controleur.planning.plage' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
-			'controleur.planning.plageAutreJour' => ({required Object jour, required Object debut, required Object fin}) => '${jour} ${debut} à ${fin}',
-			'controleur.planning.plageUtc' => ({required Object debut, required Object fin}) => '${debut} à ${fin} UTC',
-			'controleur.planning.observer' => 'Observer',
-			'controleur.planning.entree' => 'Entrée en cours',
-			'controleur.planning.entreeRefusee' => 'L\'entrée n\'a pas été accordée. La séance vient peut-être de se terminer.',
-			'controleur.planning.vide' => 'Aucune séance en cours ni à venir',
-			'controleur.planning.videDetail' => 'Les cours programmés apparaîtront ici, du plus proche au plus lointain.',
-			'controleur.planning.videFiltre' => 'Aucune séance ne correspond',
-			'controleur.planning.videFiltreDetail' => 'Relâchez un filtre pour retrouver le reste du planning.',
-			'controleur.planning.effacerFiltres' => 'Tout afficher',
-			'controleur.planning.erreur' => 'Le planning n\'a pas pu être lu. Réessayez dans un instant.',
-			'controleur.planning.tronquee' => ({required Object nombre}) => 'Les ${nombre} premières séances sont affichées.',
-			'controleur.planning.fin' => ({required Object nombre}) => '${nombre} séances au planning.',
-			'controleur.planning.finUne' => '1 séance au planning.',
+			'controleur.controle.titre' => 'Contrôle',
+			'controleur.controle.mission' => 'Votre prochaine mission',
+			'controleur.controle.commencer' => 'Commencer le contrôle',
+			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
+			'controleur.controle.videAide' => 'Rewayah vous proposera une mission lorsqu\'une séance compatible sera disponible.',
+			'controleur.controle.indisponible' => 'Cette mission n\'est plus disponible.',
+			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
+			'controleur.controle.incognito' => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.',
+			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
+			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
+			'controleur.controle.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'controleur.controle.chargement' => 'Lecture de votre mission en cours.',
+			'controleur.controle.erreur' => 'Votre mission n\'a pas pu être lue. Réessayez dans un instant.',
 			'aConstruire.titre' => 'Écran à construire',
 			'aConstruire.detail' => 'Cet écran arrive à l\'étape 3.',
 			'galerie.titre' => 'Galerie des composants',
@@ -15871,8 +15807,6 @@ extension on Traductions {
 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
 			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
@@ -15889,6 +15823,8 @@ extension on Traductions {
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',

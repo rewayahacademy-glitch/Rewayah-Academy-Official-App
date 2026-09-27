@@ -52,4 +52,35 @@ void main() {
       }
     }
   });
+
+  group('Capture : CT-2, CTR-01 Controle', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    // Les quatre situations de mission, sur la VRAIE coquille.
+    for (final EtatDemoControleur etat in EtatDemoControleur.values) {
+      for (final (String l, Size taille) in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('768', const Size(768, 1000)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String fichier = 'ct2_controle_${etat.name}_${l}_${mode.name}';
+          testWidgets(fichier, (WidgetTester tester) async {
+            await _capturer(
+              tester,
+              fichier,
+              CoquilleControleurDemo(
+                ecran: EcranDemoControleur.controle,
+                etat: etat,
+              ),
+              taille,
+              mode: mode,
+            );
+          });
+        }
+      }
+    }
+  });
 }

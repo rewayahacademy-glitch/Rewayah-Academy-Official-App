@@ -50,9 +50,9 @@ import '../../features/compte/securite_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
+import '../../features/controleur/controle_page.dart';
 import '../../features/controleur/echanges_controleur_page.dart';
 import '../../features/controleur/historique_controleur_page.dart';
-import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
@@ -813,7 +813,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRoute(
                 path: Routes.controleur,
                 builder: (BuildContext _, GoRouterState _) =>
-                    const PlanningControleurPage(),
+                    const ControleControleurPage(),
               ),
             ],
           ),
