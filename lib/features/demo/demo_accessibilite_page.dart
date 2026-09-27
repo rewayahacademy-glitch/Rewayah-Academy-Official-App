@@ -261,6 +261,7 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
       etat: mineur ? EtatDemoSalle.visite : EtatDemoSalle.repos,
       titre: DonneesAccessibiliteDemo.titre,
       tutoiement: mineur,
+      prenomEleve: DonneesAccessibiliteDemo.prenom(widget.eleve),
       onSortir: () => _etapeSuivante(EtapeDemoAccessibilite.classe),
     );
   }

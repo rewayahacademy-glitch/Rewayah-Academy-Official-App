@@ -271,6 +271,18 @@ void main() {
         mode: ThemeMode.dark,
       );
     });
+    testWidgets('salle_idriss_1440_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma5/ma5_salle_idriss_1440_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.fenetre,
+          etapeInitiale: EtapeDemoAccessibilite.salle,
+        ),
+        const Size(1440, 900),
+      );
+    });
     for (final String etape in <String>['preparation', 'salle']) {
       testWidgets('${etape}_390_light_texte200', (WidgetTester tester) async {
         await _capturer(

@@ -273,6 +273,7 @@ class SalleDemo extends StatefulWidget {
     required this.onSortir,
     this.titre = TitreEnseignant.sayyid,
     this.tutoiement,
+    this.prenomEleve = DonneesSeanceDemo.eleveCourant,
     super.key,
   });
 
@@ -285,6 +286,10 @@ class SalleDemo extends StatefulWidget {
 
   /// MA-5 : tutoiement selon l'age (mineur ou adulte) ; `null` : par le role.
   final bool? tutoiement;
+
+  /// MA-5 : l'eleve courant de la demonstration (Mariam par defaut, Idriss
+  /// dans la demonstration du Mode Accessibilite).
+  final String prenomEleve;
 
   @override
   State<SalleDemo> createState() => _SalleDemoState();
@@ -347,6 +352,7 @@ class _SalleDemoState extends State<SalleDemo> {
       widget.role,
       widget.etat,
       titre: widget.titre,
+      prenomEleve: widget.prenomEleve,
     );
     final VueSeance vue = etat.copyWith(
       panneau: _panneau,

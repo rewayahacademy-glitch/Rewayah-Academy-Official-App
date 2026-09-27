@@ -221,6 +221,7 @@ abstract final class DonneesSeanceDemo {
     RoleSeance role,
     EtatDemoSalle etat, {
     TitreEnseignant titre = TitreEnseignant.sayyid,
+    String prenomEleve = eleveCourant,
   }) {
     final bool enseignant = role == RoleSeance.enseignant;
     final String nom = enseignantPour(titre);
@@ -229,7 +230,7 @@ abstract final class DonneesSeanceDemo {
       nomClasse: classe,
       nomEnseignant: nom,
       initialesEnseignant: DepuisSalle.initiales(nom),
-      prenomEleve: enseignant ? null : eleveCourant,
+      prenomEleve: enseignant ? null : prenomEleve,
       horloge:
           (etat == EtatDemoSalle.visite && enseignant) ||
               etat == EtatDemoSalle.prolongee
@@ -239,7 +240,7 @@ abstract final class DonneesSeanceDemo {
       cameraAutorisee: etat != EtatDemoSalle.cameraInterdite,
       microBloque: etat == EtatDemoSalle.microBloque,
       visite: etat == EtatDemoSalle.visite
-          ? const VisiteSeance(prenomEnfant: eleveCourant, concerneMoi: true)
+          ? VisiteSeance(prenomEnfant: prenomEleve, concerneMoi: true)
           : null,
       // La file de recitation (EN-9) : Mariam recite, Yusuf et Aïcha a
       // suivre. Des prenoms seulement (cles de demonstration).
