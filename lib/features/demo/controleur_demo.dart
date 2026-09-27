@@ -292,24 +292,25 @@ class FilAdminDemo {
   /// Cree le fil.
   const FilAdminDemo({
     required this.id,
-    required this.titre,
+    required this.missionId,
+    required this.classe,
+    required this.debutMission,
     required this.etat,
     required this.messages,
-    this.rapportId,
-    this.classe,
   });
 
   /// Identifiant fictif.
   final String id;
 
-  /// Titre humain.
-  final String titre;
+  /// La mission du fil : un fil par mission seulement en V1 (CT-6). Le
+  /// titre humain en est deduit (« {Classe} · {date} »), jamais un nom.
+  final String missionId;
 
-  /// Le rapport lie, dont le contexte est epingle en haut du fil.
-  final String? rapportId;
+  /// La Classe de la mission.
+  final String classe;
 
-  /// La Classe liee, ou nulle pour un sujet general.
-  final String? classe;
+  /// Debut de la seance observee, epingle en haut du fil.
+  final DateTime debutMission;
 
   /// Etat du fil.
   final EtatFilDemo etat;
@@ -358,17 +359,14 @@ abstract final class DonneesControleurDemo {
   ];
 
   /// La mission de la situation, ou nulle (aucune mission).
-  static MissionControleurDemo? mission(EtatDemoControleur etat) =>
-      switch (etat) {
-        EtatDemoControleur.aucune => null,
-        EtatDemoControleur.pasEncoreEnDirect => _mission(
-          EtatMissionDemo.prevue,
-        ),
-        EtatDemoControleur.enDirect => _mission(EtatMissionDemo.enDirect),
-        EtatDemoControleur.indisponible => _mission(
-          EtatMissionDemo.indisponible,
-        ),
-      };
+  static MissionControleurDemo? mission(
+    EtatDemoControleur etat,
+  ) => switch (etat) {
+    EtatDemoControleur.aucune => null,
+    EtatDemoControleur.pasEncoreEnDirect => _mission(EtatMissionDemo.prevue),
+    EtatDemoControleur.enDirect => _mission(EtatMissionDemo.enDirect),
+    EtatDemoControleur.indisponible => _mission(EtatMissionDemo.indisponible),
+  };
 
   static MissionControleurDemo _mission(EtatMissionDemo etat) =>
       MissionControleurDemo(
@@ -442,13 +440,14 @@ abstract final class DonneesControleurDemo {
     ),
   ];
 
-  /// Les fils avec l'administration : un par mission ou par sujet (C17).
+  /// Les fils avec l'administration : un par mission seulement en V1 (C17,
+  /// CT-6), aucun prenom d'eleve (C8).
   static final List<FilAdminDemo> fils = <FilAdminDemo>[
     FilAdminDemo(
       id: 'demo-fil-al-badr-0924',
-      titre: 'Contrôle du 24 septembre',
-      rapportId: 'demo-rapport-0924',
+      missionId: 'demo-mission-al-badr-0924',
       classe: 'Classe Al-Badr',
+      debutMission: DateTime(2026, 9, 24, 17),
       etat: EtatFilDemo.reponseRecue,
       messages: <MessageFilDemo>[
         MessageFilDemo(
@@ -468,14 +467,16 @@ abstract final class DonneesControleurDemo {
       ],
     ),
     FilAdminDemo(
-      id: 'demo-fil-connexion-0926',
-      titre: 'Connexion pendant les contrôles',
+      id: 'demo-fil-al-ikhlas-0926',
+      missionId: 'demo-mission-al-ikhlas-0926',
+      classe: 'Classe Al-Ikhlas',
+      debutMission: DateTime(2026, 9, 26, 10),
       etat: EtatFilDemo.enAttente,
       messages: <MessageFilDemo>[
         MessageFilDemo(
           auteur: AuteurMessageDemo.controleur,
           texte:
-              "Le son a coupé deux fois pendant l'observation de samedi. "
+              "Le son a coupé deux fois pendant l'observation. "
               'Est-ce relevé de votre côté ?',
           date: DateTime(2026, 9, 26, 10, 30),
         ),
@@ -486,6 +487,8 @@ abstract final class DonneesControleurDemo {
   /// Le nombre de controles realises cette semaine (C11 : une ligne, sans
   /// score), sur les rapports de la semaine du 21 septembre.
   static int get controlesCetteSemaine => rapports
-      .where((RapportControleurDemo r) => !r.date.isBefore(DateTime(2026, 9, 21)))
+      .where(
+        (RapportControleurDemo r) => !r.date.isBefore(DateTime(2026, 9, 21)),
+      )
       .length;
 }

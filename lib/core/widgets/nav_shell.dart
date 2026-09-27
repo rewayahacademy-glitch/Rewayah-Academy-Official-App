@@ -167,9 +167,7 @@ List<Destination> destinationsPour({
       ),
       Destination(
         libelle: t.nav.controleur.echanges,
-        // Provisoire : aucune icone de discussion dans `AppIcons` ; CT-6
-        // pose la sienne avec le composant de fil (question consignee).
-        icone: AppIcons.info,
+        icone: AppIcons.discussion,
         chemin: Routes.controleurEchanges,
       ),
       Destination(

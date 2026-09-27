@@ -8820,8 +8820,65 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Échanges'
 	String get titre => 'Échanges';
 
-	/// fr: 'Cet écran est en préparation.'
-	String get provisoire => 'Cet écran est en préparation.';
+	/// fr: '{classe} · {date}'
+	String titreFil({required Object classe, required Object date}) => '${classe} · ${date}';
+
+	/// fr: 'Dernière activité : {date}'
+	String derniereActivite({required Object date}) => 'Dernière activité : ${date}';
+
+	/// fr: 'Réponse reçue'
+	String get reponseRecue => 'Réponse reçue';
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'Aucun échange avec l'administration pour le moment.'
+	String get vide => 'Aucun échange avec l\'administration pour le moment.';
+
+	/// fr: 'Contexte de la visite, joint automatiquement'
+	String get contexte => 'Contexte de la visite, joint automatiquement';
+
+	/// fr: 'Classe'
+	String get cleClasse => 'Classe';
+
+	/// fr: 'Date'
+	String get cleDate => 'Date';
+
+	/// fr: 'Heure'
+	String get cleHeure => 'Heure';
+
+	/// fr: 'Vous'
+	String get auteurVous => 'Vous';
+
+	/// fr: 'Administration'
+	String get auteurAdmin => 'Administration';
+
+	/// fr: 'Répondre à l'administration…'
+	String get champ => 'Répondre à l\'administration…';
+
+	/// fr: 'Répondre à l'administration'
+	String get champLibelle => 'Répondre à l\'administration';
+
+	/// fr: 'Envoyer'
+	String get envoyer => 'Envoyer';
+
+	/// fr: 'Écrivez un message pour pouvoir l'envoyer.'
+	String get champVide => 'Écrivez un message pour pouvoir l\'envoyer.';
+
+	/// fr: 'Envoi en cours.'
+	String get enCours => 'Envoi en cours.';
+
+	/// fr: 'Envoyé.'
+	String get envoye => 'Envoyé.';
+
+	/// fr: 'Ce message n'a pas pu être envoyé. Il est gardé : réessayez.'
+	String get echec => 'Ce message n\'a pas pu être envoyé. Il est gardé : réessayez.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Nouveau message de {auteur} : {texte}'
+	String nouveauMessage({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}';
 }
 
 // Path: controleur.demo
@@ -15778,7 +15835,26 @@ extension on Traductions {
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'observation n\'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant.',
 			'controleur.echanges.titre' => 'Échanges',
-			'controleur.echanges.provisoire' => 'Cet écran est en préparation.',
+			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
+			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
+			'controleur.echanges.reponseRecue' => 'Réponse reçue',
+			'controleur.echanges.enAttente' => 'En attente',
+			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
+			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
+			'controleur.echanges.cleClasse' => 'Classe',
+			'controleur.echanges.cleDate' => 'Date',
+			'controleur.echanges.cleHeure' => 'Heure',
+			'controleur.echanges.auteurVous' => 'Vous',
+			'controleur.echanges.auteurAdmin' => 'Administration',
+			'controleur.echanges.champ' => 'Répondre à l\'administration…',
+			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
+			'controleur.echanges.envoyer' => 'Envoyer',
+			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
+			'controleur.echanges.enCours' => 'Envoi en cours.',
+			'controleur.echanges.envoye' => 'Envoyé.',
+			'controleur.echanges.echec' => 'Ce message n\'a pas pu être envoyé. Il est gardé : réessayez.',
+			'controleur.echanges.reessayer' => 'Réessayer',
+			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
 			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
 			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de mission.',
@@ -16057,6 +16133,8 @@ extension on Traductions {
 			'tc.classe.attente.ouverture' => 'Ouverture du cours',
 			'tc.classe.attente.connexion' => 'Connexion au cours',
 			'tc.classe.attente.refus' => 'Le cours n\'est pas accessible pour le moment',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.lien.instable' => 'Connexion instable',
 			'tc.classe.lien.reconnexion' => 'Reconnexion en cours',
 			'tc.classe.lien.retabli' => 'Connexion rétablie',
@@ -16076,8 +16154,6 @@ extension on Traductions {
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
 			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
 			'tc.observation.entree.entrer' => 'Entrer',

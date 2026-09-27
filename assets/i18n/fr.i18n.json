@@ -3215,7 +3215,26 @@
     },
     "echanges": {
       "titre": "Échanges",
-      "provisoire": "Cet écran est en préparation."
+      "titreFil": "{classe} · {date}",
+      "derniereActivite": "Dernière activité : {date}",
+      "reponseRecue": "Réponse reçue",
+      "enAttente": "En attente",
+      "vide": "Aucun échange avec l'administration pour le moment.",
+      "contexte": "Contexte de la visite, joint automatiquement",
+      "cleClasse": "Classe",
+      "cleDate": "Date",
+      "cleHeure": "Heure",
+      "auteurVous": "Vous",
+      "auteurAdmin": "Administration",
+      "champ": "Répondre à l'administration…",
+      "champLibelle": "Répondre à l'administration",
+      "envoyer": "Envoyer",
+      "champVide": "Écrivez un message pour pouvoir l'envoyer.",
+      "enCours": "Envoi en cours.",
+      "envoye": "Envoyé.",
+      "echec": "Ce message n'a pas pu être envoyé. Il est gardé : réessayez.",
+      "reessayer": "Réessayer",
+      "nouveauMessage": "Nouveau message de {auteur} : {texte}"
     },
     "demo": {
       "titre": "Démonstration contrôleur",

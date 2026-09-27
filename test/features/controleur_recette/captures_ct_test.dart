@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
@@ -321,6 +322,73 @@ void main() {
               tester,
               'ct5_observation_${nom}_$s',
               cheminDemoObservationControleur,
+              taille,
+              mode: mode,
+              avant: avant,
+            );
+          });
+        }
+      }
+    }
+  });
+
+  group('Capture : CT-6, CTR-04 Echanges', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    // Le port de demonstration repond en 400 ms.
+    Future<void> reponse(WidgetTester tester) async {
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+    }
+
+    // La liste ; le fil Al-Badr ; le fil de la mission ouvert depuis
+    // « Ecrire a l'administration », un message envoye.
+    Future<void> envoye(WidgetTester tester) async {
+      await reponse(tester);
+      await tester.enterText(
+        find.byKey(FilDiscussion.champKey),
+        'Une question sur cette visite.',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await reponse(tester);
+    }
+
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 844)),
+      ('768', const Size(768, 1000)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String s = '${l}_${mode.name}';
+        for (final (
+              String nom,
+              String route,
+              Future<void> Function(WidgetTester) avant,
+            )
+            in <(String, String, Future<void> Function(WidgetTester))>[
+              (
+                'liste',
+                adresseDemoControleur(EcranDemoControleur.echanges),
+                reponse,
+              ),
+              (
+                'fil',
+                adresseDemoControleur(
+                  EcranDemoControleur.echanges,
+                  fil: 'demo-mission-al-badr-0924',
+                ),
+                reponse,
+              ),
+              ('fil_envoye', adresseFilMissionDemoControleur(), envoye),
+            ]) {
+          testWidgets('ct6_echanges_${nom}_$s', (WidgetTester tester) async {
+            await _capturerRoute(
+              tester,
+              'ct6_echanges_${nom}_$s',
+              route,
               taille,
               mode: mode,
               avant: avant,

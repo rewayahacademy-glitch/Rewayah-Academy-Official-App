@@ -339,7 +339,7 @@ abstract final class Routes {
   /// Historique (CTR-05), deuxieme destination. Page provisoire jusqu'a CT-7.
   static const String controleurHistorique = '/controleur/historique';
 
-  /// Echanges (CTR-04), troisieme destination. Page provisoire jusqu'a CT-6.
+  /// Echanges (CTR-04), troisieme destination : fils par mission (CT-6).
   /// La quatrieme, Compte, est `/compte`, partage par tous les roles.
   static const String controleurEchanges = '/controleur/echanges';
 

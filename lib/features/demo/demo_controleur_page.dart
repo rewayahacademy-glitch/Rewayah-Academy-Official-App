@@ -39,6 +39,7 @@ import '../compte/compte_page.dart';
 import '../controleur/compte_rendu_controle.dart';
 import '../controleur/compte_rendu_controle_page.dart';
 import '../controleur/controle_page.dart';
+import '../controleur/echanges_controleur.dart';
 import '../controleur/echanges_controleur_page.dart';
 import '../controleur/historique_controleur_page.dart';
 import '../controleur/mission_controle.dart';
@@ -67,6 +68,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
               etat.uri.queryParameters['etat'],
             ) ??
             EtatDemoControleur.enDirect,
+        fil: etat.uri.queryParameters['fil'],
       ),
     ),
     // CTR-02 (CT-3) : la VRAIE salle, en role controleur, sans serveur.
@@ -96,9 +98,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
             ),
             onObservation: (ChoixCompteRendu choix) =>
                 contexte.go(cheminDemoObservationControleur, extra: choix),
-            onEcrireAdmin: () => contexte.go(
-              adresseDemoControleur(EcranDemoControleur.echanges),
-            ),
+            onEcrireAdmin: () => contexte.go(adresseFilMissionDemoControleur()),
           ),
         ),
       ),
@@ -123,9 +123,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
             onRevenir: () => contexte.go(
               adresseDemoControleur(EcranDemoControleur.controle),
             ),
-            onEcrireAdmin: () => contexte.go(
-              adresseDemoControleur(EcranDemoControleur.echanges),
-            ),
+            onEcrireAdmin: () => contexte.go(adresseFilMissionDemoControleur()),
           ),
         ),
       ),
@@ -233,10 +231,121 @@ T? _lire<T extends Enum>(List<T> valeurs, String? nom) {
 String adresseDemoControleur(
   EcranDemoControleur ecran, {
   EtatDemoControleur etat = EtatDemoControleur.enDirect,
+  String? fil,
 }) => Uri(
   path: Routes.demoControleur,
-  queryParameters: <String, String>{'ecran': ecran.name, 'etat': etat.name},
+  queryParameters: <String, String>{
+    'ecran': ecran.name,
+    'etat': etat.name,
+    'fil': ?fil,
+  },
 ).toString();
+
+/// « Ecrire a l'administration » (P-CTR-06) : le fil de la mission en direct
+/// de la demonstration, dans Echanges.
+String adresseFilMissionDemoControleur() => adresseDemoControleur(
+  EcranDemoControleur.echanges,
+  fil: DonneesControleurDemo.mission(EtatDemoControleur.enDirect)!.id,
+);
+
+/// Les echanges de demonstration (CT-6) : les fils de
+/// [DonneesControleurDemo.fils], en memoire ; l'envoi repond apres un court
+/// delai, rien ne part (K-28). Le fil d'une mission sans fil nait vide,
+/// comme le fil canonique cree par le serveur (P-CTR-06).
+class EchangesDemo implements PortEchanges {
+  /// Cree le port, sur les fils de demonstration.
+  EchangesDemo()
+    : _fils = <FilEchange>[
+        for (final FilAdminDemo f in DonneesControleurDemo.fils)
+          FilEchange(
+            id: f.id,
+            missionId: f.missionId,
+            classe: f.classe,
+            debutMission: f.debutMission,
+            etat: switch (f.etat) {
+              EtatFilDemo.reponseRecue => EtatFilEchange.reponseRecue,
+              EtatFilDemo.enAttente => EtatFilEchange.enAttente,
+            },
+            messages: <MessageEchange>[
+              for (final (int i, MessageFilDemo m) in f.messages.indexed)
+                MessageEchange(
+                  id: '${f.id}-$i',
+                  auteur: switch (m.auteur) {
+                    AuteurMessageDemo.controleur => AuteurEchange.controleur,
+                    AuteurMessageDemo.administration =>
+                      AuteurEchange.administration,
+                  },
+                  texte: m.texte,
+                  date: m.date,
+                ),
+            ],
+          ),
+      ];
+
+  final List<FilEchange> _fils;
+
+  static const Duration _delai = Duration(milliseconds: 400);
+
+  @override
+  Future<List<FilEchange>> fils() async {
+    await Future<void>.delayed(_delai);
+    return <FilEchange>[
+      for (final FilEchange f in _fils)
+        if (f.messages.isNotEmpty) f,
+    ]..sort(
+      (FilEchange a, FilEchange b) =>
+          b.derniereActivite.compareTo(a.derniereActivite),
+    );
+  }
+
+  @override
+  Future<FilEchange> filDeMission(String missionId) async {
+    await Future<void>.delayed(_delai);
+    for (final FilEchange f in _fils) {
+      if (f.missionId == missionId) return f;
+    }
+    final MissionControleurDemo? m = DonneesControleurDemo.mission(
+      EtatDemoControleur.enDirect,
+    );
+    if (m == null || m.id != missionId) {
+      throw StateError('Mission inconnue de la demonstration.');
+    }
+    final FilEchange nouveau = FilEchange(
+      id: 'demo-fil-$missionId',
+      missionId: missionId,
+      classe: m.classe,
+      debutMission: m.debut,
+      etat: EtatFilEchange.enAttente,
+      messages: const <MessageEchange>[],
+    );
+    _fils.add(nouveau);
+    return nouveau;
+  }
+
+  @override
+  Future<void> envoyer(String filId, String texte) async {
+    await Future<void>.delayed(_delai);
+    final int i = _fils.indexWhere((FilEchange f) => f.id == filId);
+    if (i == -1) throw StateError('Fil inconnu de la demonstration.');
+    final FilEchange f = _fils[i];
+    _fils[i] = FilEchange(
+      id: f.id,
+      missionId: f.missionId,
+      classe: f.classe,
+      debutMission: f.debutMission,
+      etat: EtatFilEchange.enAttente,
+      messages: <MessageEchange>[
+        ...f.messages,
+        MessageEchange(
+          id: '${f.id}-${f.messages.length}',
+          auteur: AuteurEchange.controleur,
+          texte: texte,
+          date: DateTime.now(),
+        ),
+      ],
+    );
+  }
+}
 
 /// Le libelle d'un ecran : celui de sa destination dans la barre.
 String libelleEcranDemoControleur(EcranDemoControleur ecran) => switch (ecran) {
@@ -281,6 +390,8 @@ List<Override> surchargesCoquilleControleurDemo(EtatDemoControleur etat) =>
       // Transmission et envoi simules (CT-4) : rien ne part, la reponse
       // arrive apres un court delai. Lu aussi par « Reessayer » du Controle.
       envoiCompteRenduProvider.overrideWithValue(const EnvoiCompteRenduDemo()),
+      // Echanges simules (CT-6) : fils en memoire, envoi sans serveur.
+      portEchangesProvider.overrideWith((Ref _) => EchangesDemo()),
     ];
 
 /// La mission de demonstration de [etat], dans le modele de CTR-01.
@@ -312,8 +423,12 @@ class DemoControleurPage extends StatelessWidget {
   const DemoControleurPage({
     this.ecran,
     this.etat = EtatDemoControleur.enDirect,
+    this.fil,
     super.key,
   });
+
+  /// La mission dont le fil d'Echanges s'ouvre, ou nulle.
+  final String? fil;
 
   /// L'ecran choisi, ou nul pour la liste.
   final EcranDemoControleur? ecran;
@@ -324,7 +439,9 @@ class DemoControleurPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final EcranDemoControleur? e = ecran;
-    if (e != null) return CoquilleControleurDemo(ecran: e, etat: etat);
+    if (e != null) {
+      return CoquilleControleurDemo(ecran: e, etat: etat, fil: fil);
+    }
 
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
@@ -370,8 +487,12 @@ class CoquilleControleurDemo extends StatelessWidget {
   const CoquilleControleurDemo({
     required this.ecran,
     this.etat = EtatDemoControleur.enDirect,
+    this.fil,
     super.key,
   });
+
+  /// La mission dont le fil d'Echanges s'ouvre, ou nulle pour la liste.
+  final String? fil;
 
   /// L'ecran affiche, donc la destination active.
   final EcranDemoControleur ecran;
@@ -415,7 +536,10 @@ class CoquilleControleurDemo extends StatelessWidget {
                   context.go(cheminDemoCompteRenduControleur),
             ),
             EcranDemoControleur.historique => const HistoriqueControleurPage(),
-            EcranDemoControleur.echanges => const EchangesControleurPage(),
+            EcranDemoControleur.echanges => EchangesControleurPage(
+              key: ValueKey<String?>(fil),
+              missionOuverte: fil,
+            ),
             EcranDemoControleur.compte => const ComptePage(),
           },
         ),

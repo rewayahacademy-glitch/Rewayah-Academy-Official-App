@@ -781,6 +781,21 @@ abstract final class AppIcons {
     IconData(0xe19a, fontFamily: _actif),
   );
 
+  /// Discussion, fil de messages : Phosphor `chats-circle` (0xe17e, releve
+  /// dans les ligatures de la police embarquee). Destination Echanges du
+  /// controleur (CTR-04, CT-6).
+  static const AppIcon discussion = AppIcon._(
+    IconData(0xe17e, fontFamily: _repos),
+    IconData(0xe17e, fontFamily: _actif),
+  );
+
+  /// Envoyer un message : Phosphor `paper-plane-right` (0xe396, releve dans
+  /// les ligatures de la police embarquee). Bouton d'envoi du fil (CT-6).
+  static const AppIcon envoyerMessage = AppIcon._(
+    IconData(0xe396, fontFamily: _repos),
+    IconData(0xe396, fontFamily: _actif),
+  );
+
   /// Information, aide : Phosphor `info` (0xe2ce, releve dans
   /// `@phosphor-icons/web` 2.1.1). Devant « Comment ca marche ? » de la
   /// classe (maquette M1, revue C m4).
