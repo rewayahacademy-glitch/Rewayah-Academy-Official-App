@@ -5,7 +5,8 @@
 // ceux de la demonstration de Classe (CL-4), reutilises et jamais recopies.
 
 import '../../core/domain/enums.dart';
-import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart';
 import 'classe_demo.dart';
 
 /// L'eleve de la demonstration.
@@ -84,6 +85,24 @@ abstract final class DonneesAccessibiliteDemo {
         MomentDemoAccessibilite.pendant => EtatDemoClasse.enDirect,
         MomentDemoAccessibilite.apres => EtatDemoClasse.terminee,
       };
+
+  /// La Classe telle que l'Accueil de l'eleve la lit (MA-3) : la carte de
+  /// seance CL-4 sans conseil d'appareil (peu d'elements ; il vit dans Ma
+  /// classe), et les trois actions de la demonstration de Classe.
+  static GroupHomeVM espaceAccueil(MomentDemoAccessibilite moment) {
+    final GroupSummaryVM identite = DonneesClasseDemo.groupe(
+      etatClasse(moment),
+      titre: titre,
+    );
+    return GroupHomeVM(
+      identite: identite,
+      role: RoleEspaceGroupe.eleve,
+      horloge: identite.horloge,
+      avantProchainCours: DonneesClasseDemo.actions,
+      bibliotheque: SlotBibliotheque(groupeId: identite.groupeId),
+      afficheConseilAppareil: false,
+    );
+  }
 
   /// L'observation par le tuteur : active pendant la seance de Mariam
   /// seulement (jamais pour un adulte).

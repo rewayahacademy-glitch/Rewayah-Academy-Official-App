@@ -23,6 +23,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import '../accueil_eleve/accueil_accessibilite.dart';
 import 'accessibilite_demo.dart';
 import 'demo_classe_page.dart' show EcranEleveDemo;
 import 'mode_demonstration.dart';
@@ -151,14 +152,16 @@ class DemoAccessibilitePage extends StatelessWidget {
 /// MA-2 : hors de la salle, l'ecran est pose dans la VRAIE coquille
 /// (`NavShell`, destinations de `destinationsPour` pour l'eleve), sur Ma
 /// classe. Les autres destinations restent dans la demonstration (aucune
-/// route reelle, aucun serveur) : leur ecran propre au mode arrive en MA-3
-/// (Accueil), MA-7 (Coran) et MA-8 (Mon espace). Pendant la seance, aucune
+/// route reelle, aucun serveur). MA-3 : l'Accueil du mode
+/// (`AccueilAccessibilite`) ; le Coran et Mon espace arrivent en MA-7 et
+/// MA-8. Pendant la seance, aucune
 /// navigation d'app (MA17, MA20).
 class EcranAccessibiliteDemo extends StatefulWidget {
   /// Cree l'ecran.
   const EcranAccessibiliteDemo({
     required this.eleve,
     this.moment = MomentDemoAccessibilite.avant,
+    this.destinationInitiale = indexMaClasse,
     super.key,
   });
 
@@ -168,15 +171,29 @@ class EcranAccessibiliteDemo extends StatefulWidget {
   /// Le moment de la seance.
   final MomentDemoAccessibilite moment;
 
+  /// La destination ouverte a l'arrivee (captures de MA-3 : l'Accueil).
+  final int destinationInitiale;
+
   /// L'index de Ma classe dans les destinations de l'eleve.
   static const int indexMaClasse = 1;
+
+  /// L'index de l'Accueil (MA-3).
+  static const int indexAccueil = 0;
+
+  /// L'index du Coran.
+  static const int indexCoran = 2;
+
+  /// L'index de Mon espace.
+  static const int indexMonEspace = 3;
 
   @override
   State<EcranAccessibiliteDemo> createState() => _EcranAccessibiliteDemoEtat();
 }
 
 class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
-  int _index = EcranAccessibiliteDemo.indexMaClasse;
+  late int _index = widget.destinationInitiale;
+
+  void _aller(int index) => setState(() => _index = index);
 
   @override
   Widget build(BuildContext context) {
@@ -202,6 +219,21 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
             },
             child: _index == EcranAccessibiliteDemo.indexMaClasse
                 ? classe
+                : _index == EcranAccessibiliteDemo.indexAccueil
+                ? AccueilAccessibilite(
+                    key: const ValueKey<String>('demo-accueil'),
+                    prenom: DonneesAccessibiliteDemo.prenom(widget.eleve),
+                    espace: DonneesAccessibiliteDemo.espaceAccueil(
+                      widget.moment,
+                    ),
+                    onVoirClasse: () =>
+                        _aller(EcranAccessibiliteDemo.indexMaClasse),
+                    onTache: () => _aller(EcranAccessibiliteDemo.indexMaClasse),
+                    onCoran: () => _aller(EcranAccessibiliteDemo.indexCoran),
+                    // L'aide vit dans Mon espace en demonstration (MA14,
+                    // MA-8) : aucune route reelle hors de la demonstration.
+                    onAide: () => _aller(EcranAccessibiliteDemo.indexMonEspace),
+                  )
                 : PageShell(
                     key: ValueKey<String>('demo-destination-$_index'),
                     titre: destinations[_index].libelle,

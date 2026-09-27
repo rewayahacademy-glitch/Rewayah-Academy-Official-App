@@ -612,6 +612,15 @@
       "etatAvant": "Avant la séance",
       "etatPendant": "Pendant la séance",
       "etatApres": "Après la séance"
+    },
+    "accueil": {
+      "salutation": "As-salāmu ’alaykum, {prenom}.",
+      "prochaineSeance": "Prochaine séance",
+      "avec": "avec {nomme}",
+      "voirMaClasse": "Voir ma classe",
+      "lireCoran": "Lire le Coran",
+      "lireCoranDetail": "Accéder au Mushaf",
+      "aide": "Besoin d'aide ?"
     }
   },
   "accuse": {

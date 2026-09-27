@@ -127,4 +127,51 @@ void main() {
       );
     });
   });
+
+  // -------------------------------------------------------------------
+  // MA-3 : l'Accueil de l'eleve (Mariam avant, Idriss apres, 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-3 : Accueil', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('accueil_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma3/ma3_accueil_mariam_avant_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              destinationInitiale: EcranAccessibiliteDemo.indexAccueil,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('accueil_idriss_apres_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma3/ma3_accueil_idriss_apres_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.apres,
+          destinationInitiale: EcranAccessibiliteDemo.indexAccueil,
+        ),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('accueil_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma3/ma3_accueil_mariam_avant_390_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexAccueil,
+        ),
+        const Size(390, 3400),
+        echelle: 2,
+      );
+    });
+  });
 }

@@ -37,7 +37,18 @@ class CarteSession extends StatefulWidget {
     this.horsLigne = false,
     this.annulee = false,
     this.lectureEchouee = false,
+    this.identite,
+    this.actionHorsEntree,
   });
+
+  /// L'identite de la Classe posee au-dessus des heures (Accueil du Mode
+  /// Accessibilite, MA-3) ; nulle dans l'Espace Classe, qui la porte deja.
+  final Widget? identite;
+
+  /// Le seul bouton de la carte quand l'emplacement d'entree n'en est pas
+  /// un (ligne d'etat sans « Reessayer ») : jamais a cote de « Rejoindre »
+  /// (R4). Accueil du Mode Accessibilite : « Voir ma classe » (MA-3).
+  final Widget? actionHorsEntree;
 
   /// L'Espace Groupe auquel elle appartient.
   final GroupHomeVM espace;
@@ -136,6 +147,10 @@ class _CarteSessionState extends State<CarteSession> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          if (widget.identite != null) ...<Widget>[
+            widget.identite!,
+            Ecart.vLg,
+          ],
           HeuresSeance(
             libelleContrepartie: _libelleContrepartie(espace),
             horloge: horloge,
@@ -171,6 +186,12 @@ class _CarteSessionState extends State<CarteSession> {
             onReessayer: widget.onReessayer,
             focusRetour: _focusTitre,
           ),
+          if (widget.actionHorsEntree != null &&
+              !emplacement.estBouton &&
+              !emplacement.reessayer) ...<Widget>[
+            Ecart.vLg,
+            widget.actionHorsEntree!,
+          ],
         ],
       ),
     );
