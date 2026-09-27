@@ -667,11 +667,12 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             contexte.descriptionSupport ??
             (contexte.supportActifId == null
                 ? null
-                : const SupportSeance(
+                : SupportSeance(
+                    ressourceId: contexte.supportActifId,
                     chapitre: '',
                     titre: '',
                     encadre: '',
-                    points: <String>[],
+                    points: const <String>[],
                     page: 1,
                     pages: 1,
                   )),

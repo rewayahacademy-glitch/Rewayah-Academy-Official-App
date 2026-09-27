@@ -803,8 +803,6 @@ class _Actions extends StatelessWidget {
   }
 }
 
-/// Le bloc d'un eleve : sa photo, sa presence preremplie, puis son
-/// evaluation (K-45, point 3) : performance, faiblesses, devoir a faire.
 /// La feuille de reglage d'un eleve.
 ///
 /// **La correction de presence n'est pas redessinee** : c'est

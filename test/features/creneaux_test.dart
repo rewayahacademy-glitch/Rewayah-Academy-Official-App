@@ -250,7 +250,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tout le rendez-vous est lu avant de s'engager (doc 04 §16.2).
-      expect(find.text('Lundi, Mercredi, Vendredi'), findsOneWidget);
+      expect(find.text('Mercredi, Vendredi'), findsOneWidget);
 
       final Finder reserver = find.text(t.enseignant.creneaux.reserver);
       await tester.ensureVisible(reserver);

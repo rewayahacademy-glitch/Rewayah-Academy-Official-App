@@ -476,8 +476,9 @@ abstract final class DonneesEnseignantDemo {
       langue: 'Arabe',
       creneau: Creneau(jour: 3, heure: 18, fuseau: fuseau),
       etat: EtatOffreDemo.disponible,
-      // Lundi, mercredi, vendredi : l'exemple de R-ENS-04 (doc 04).
-      autresJours: <int>[1, 5],
+      // Mercredi et vendredi, d'apres l'exemple de R-ENS-04 (doc 04) sans le
+      // lundi : le lundi a 18 h est deja la seance d'An-Nour (E6, EN-RC).
+      autresJours: <int>[5],
       // La duree des seances de demonstration (45 min, voir `seances`).
       dureeMinutes: 45,
     ),

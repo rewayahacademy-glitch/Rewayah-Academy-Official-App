@@ -426,6 +426,40 @@ void main() {
       expect(find.text('journee'), findsOneWidget);
     });
 
+    // R1 : ouvert par-dessus un ecran, le Retour y ramene (branche `pop`).
+    testWidgets('ouverte par-dessus, le retour ramene a l ecran precedent', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: '/precedent',
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/precedent',
+              builder: (BuildContext contexte, GoRouterState _) => TextButton(
+                onPressed: () =>
+                    GoRouter.of(contexte).push(Routes.groupePour(_groupeId)),
+                child: const Text('precedent'),
+              ),
+            ),
+            ..._routes(),
+          ],
+          surcharges: _surcharges(_avec()),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('precedent'));
+      await tester.pumpAndSettle();
+      expect(find.byType(FicheGroupePage), findsOneWidget);
+
+      await tester.tap(find.text(t.commun.retour));
+      await tester.pumpAndSettle();
+
+      expect(find.text('precedent'), findsOneWidget);
+      expect(find.byType(FicheGroupePage), findsNothing);
+      expect(find.text('journee'), findsNothing);
+    });
+
     testWidgets('la revue courte du groupe s ouvre depuis la fiche', (
       WidgetTester tester,
     ) async {
@@ -581,6 +615,39 @@ void main() {
         expect(ouverts, <String>['e2']);
       },
     );
+
+    // UX_REVIEW_04 n. 12 b : a 1200, le panneau ferme rend le focus a la
+    // ligne de l'eleve.
+    testWidgets('le panneau ferme, le focus revient a la ligne', (
+      WidgetTester tester,
+    ) async {
+      _fenetreHaute(tester);
+      await tester.pumpWidget(
+        hote(
+          FicheGroupePage(groupeId: _groupeId, onOuvrirEleve: (String _) {}),
+          surcharges: avecProjections(_avec(membres: deux)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('RA-0002'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('panneau-e2')), findsOneWidget);
+
+      await tester.tap(find.text(t.enseignant.eleve.retour));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('panneau-e2')), findsNothing);
+
+      final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+      expect(focus, isNotNull);
+      expect(
+        find.descendant(
+          of: find.byElementPredicate((Element e) => e == focus),
+          matching: find.text('RA-0002'),
+        ),
+        findsOneWidget,
+      );
+    });
 
     testWidgets('sans point d entree, la ligne ne promet rien', (
       WidgetTester tester,

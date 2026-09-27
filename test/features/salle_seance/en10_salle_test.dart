@@ -249,4 +249,18 @@ void main() {
       }
     }
   });
+
+  // UX_REVIEW_04 n. 17 f : une ressource choisie, le focus va au support, pas
+  // au bouton Supports.
+  testWidgets('EN-RC : une ressource choisie, le focus va au support', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    await _ouvrirSelecteur(tester);
+    await tester.tap(_cle('ressource-demo-fiche-memorisation'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(tester.takeException(), isNull);
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'support');
+  });
 }

@@ -7517,9 +7517,6 @@ class Traductions$enseignant$bienvenue$fr {
 	/// fr: '{fait} sur {total}'
 	String compteur({required Object fait, required Object total}) => '${fait} sur ${total}';
 
-	/// fr: 'Fait'
-	String get fait => 'Fait';
-
 	/// fr: 'Ajouter ma photo professionnelle'
 	String get prerequisPhoto => 'Ajouter ma photo professionnelle';
 
@@ -8084,9 +8081,6 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Faiblesses'
 	String get faiblesses => 'Faiblesses';
 
-	/// fr: 'Aucun travail'
-	String get devoirAucun => 'Aucun travail';
-
 	/// fr: 'Où la Classe s'est arrêtée'
 	String get reprise => 'Où la Classe s\'est arrêtée';
 
@@ -8128,9 +8122,6 @@ class Traductions$enseignant$profil$fr {
 
 	/// fr: 'Identité professionnelle'
 	String get identite => 'Identité professionnelle';
-
-	/// fr: 'C'est ce que les familles voient de vous. Il ne change jamais.'
-	String get identifiantDetail => 'C\'est ce que les familles voient de vous. Il ne change jamais.';
 
 	/// fr: 'Pays'
 	String get pays => 'Pays';
@@ -8413,9 +8404,6 @@ class Traductions$enseignant$ficheGroupe$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
-
-	/// fr: 'Retour à Aujourd'hui'
-	String get retour => 'Retour à Aujourd\'hui';
 
 	/// fr: '{jour} à {heure}, chaque semaine'
 	String creneauHebdo({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine';
@@ -15086,7 +15074,6 @@ extension on Traductions {
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
-			'enseignant.bienvenue.fait' => 'Fait',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
@@ -15277,12 +15264,11 @@ extension on Traductions {
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
-			'enseignant.cahier.devoirAucun' => 'Aucun travail',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier',
@@ -15291,7 +15277,6 @@ extension on Traductions {
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
 			'enseignant.profil.intro' => 'Ce que l\'académie sait de vous, et ce que vous pouvez y changer.',
 			'enseignant.profil.identite' => 'Identité professionnelle',
-			'enseignant.profil.identifiantDetail' => 'C\'est ce que les familles voient de vous. Il ne change jamais.',
 			'enseignant.profil.pays' => 'Pays',
 			'enseignant.profil.langues' => 'Langues',
 			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
@@ -15380,7 +15365,6 @@ extension on Traductions {
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
 			'enseignant.creneaux.cleDuree' => 'Durée',
 			'enseignant.creneaux.duree' => ({required Object minutes}) => '${minutes} min',
-			'enseignant.ficheGroupe.retour' => 'Retour à Aujourd\'hui',
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, chaque semaine',
 			'enseignant.ficheGroupe.aucunMembre' => 'Aucun élève dans cette Classe',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'L\'administration compose les Classes : celle-ci n\'a pas encore d\'élève.',
@@ -15793,12 +15777,12 @@ extension on Traductions {
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',

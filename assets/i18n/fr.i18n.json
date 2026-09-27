@@ -2774,7 +2774,6 @@
       "sousTitre": "Préparez votre espace avant votre première Classe.",
       "aCompleter": "À compléter",
       "compteur": "{fait} sur {total}",
-      "fait": "Fait",
       "prerequisPhoto": "Ajouter ma photo professionnelle",
       "prerequisLangues": "Vérifier mes langues d'enseignement",
       "prerequisFuseau": "Vérifier mon fuseau horaire",
@@ -2979,7 +2978,6 @@
       "statutEnRetard": "En retard {nombre}",
       "performance": "Performance",
       "faiblesses": "Faiblesses",
-      "devoirAucun": "Aucun travail",
       "reprise": "Où la Classe s'est arrêtée",
       "repriseDetail": "C'est la position de reprise d'un remplaçant.",
       "repriseProposee": "Sourate {sourate}, verset {verset}",
@@ -2993,7 +2991,6 @@
       "compteValide": "Compte enseignant vérifié",
       "intro": "Ce que l'académie sait de vous, et ce que vous pouvez y changer.",
       "identite": "Identité professionnelle",
-      "identifiantDetail": "C'est ce que les familles voient de vous. Il ne change jamais.",
       "pays": "Pays",
       "langues": "Langues",
       "fuseau": "Fuseau de mes cours",
@@ -3086,7 +3083,6 @@
       "duree": "{minutes} min"
     },
     "ficheGroupe": {
-      "retour": "Retour à Aujourd'hui",
       "creneauHebdo": "{jour} à {heure}, chaque semaine",
       "aucunMembre": "Aucun élève dans cette Classe",
       "aucunMembreDetail": "L'administration compose les Classes : celle-ci n'a pas encore d'élève.",

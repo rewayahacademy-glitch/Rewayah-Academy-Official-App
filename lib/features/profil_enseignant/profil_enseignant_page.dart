@@ -31,6 +31,15 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'photo_publique.dart';
 
+/// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
+///
+/// Le modele [ProfilEnseignant] ne porte pas encore le titre : la
+/// demonstration fixe ce nom, la production le branchera a BR-1. Rien n'est
+/// calcule cote client ; sans valeur, l'en-tete garde le prenom.
+final Provider<String?> nomPublicEnseignantProvider = Provider<String?>(
+  (Ref _) => null,
+);
+
 /// `ENS-05` : qui suis-je pour l'academie, et ou regle-je ce qui m'appartient.
 ///
 /// Troisieme et derniere destination de la barre de l'enseignant. **C'est elle
@@ -47,15 +56,6 @@ import 'photo_publique.dart';
 /// defilement a 390 x 844, et surtout elle survit a l'echec de toutes les
 /// lectures de l'ecran -- c'est la seule chose qu'un enseignant doit toujours
 /// pouvoir faire.
-/// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
-///
-/// Le modele [ProfilEnseignant] ne porte pas encore le titre : la
-/// demonstration fixe ce nom, la production le branchera a BR-1. Rien n'est
-/// calcule cote client ; sans valeur, l'en-tete garde le prenom.
-final Provider<String?> nomPublicEnseignantProvider = Provider<String?>(
-  (Ref _) => null,
-);
-
 class ProfilEnseignantPage extends ConsumerWidget {
   /// Cree l'ecran de profil de l'enseignant.
   const ProfilEnseignantPage({super.key});

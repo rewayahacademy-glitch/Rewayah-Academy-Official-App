@@ -258,9 +258,14 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     }
     // Une ressource choisie (EN-10) : le focus va au nouveau support, pas
     // au bouton Supports (UX_REVIEW_04 n° 17 f).
+    // Le signal est la ressource choisie quand on la connait, sinon l'objet.
+    final String? avantId = ancien.vue.support?.ressourceId;
+    final String? apresId = widget.vue.support?.ressourceId;
     final bool supportChange =
         widget.vue.support != null &&
-        !identical(ancien.vue.support, widget.vue.support);
+        (avantId != null && apresId != null
+            ? avantId != apresId
+            : !identical(ancien.vue.support, widget.vue.support));
     final FocusNode bouton = supportChange
         ? _focusSupport
         : avant == PanneauOuvert.eleves

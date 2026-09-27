@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
@@ -81,9 +82,11 @@ void main() {
         expect(find.text(t.salle.microOuvert), findsNothing);
         expect(_annonces(tester), <String>[t.salle.microCoupe]);
 
-        // Breve : le bandeau se retire de lui-meme.
-        await tester.pump(const Duration(seconds: 4));
-        await tester.pump(const Duration(milliseconds: 300));
+        // Breve : le bandeau se retire de lui-meme, apres le maintien d'un
+        // retour local puis une sortie tenue dans le plafond des transitions.
+        await tester.pump(AppMouvement.retourLocalMaintien);
+        await tester.pump();
+        await tester.pump(AppMouvement.plafond);
         expect(find.text(t.salle.microCoupe), findsNothing);
       });
     }
@@ -104,7 +107,7 @@ void main() {
       await _attendre(tester);
       expect(find.text(t.salle.microCoupe), findsOneWidget);
       expect(_annonces(tester), <String>[t.salle.microCoupe]);
-      await tester.pump(const Duration(seconds: 4));
+      await tester.pump(AppMouvement.retourLocalMaintien);
     });
   });
 
@@ -132,7 +135,7 @@ void main() {
           debugPrint(
             'PNG ${await capturer(tester, 'en12_micro_ouvert_${nom}_$theme')}',
           );
-          await tester.pump(const Duration(seconds: 4));
+          await tester.pump(AppMouvement.retourLocalMaintien);
         });
       }
     }

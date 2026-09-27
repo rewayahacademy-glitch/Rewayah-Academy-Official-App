@@ -29,7 +29,7 @@ final List<MembreSeance> _eleves = <MembreSeance>[
   const MembreSeance(
     studentId: 'demo-eleve-maryam',
     identifiantImmuable: 'RA-MA-000002',
-    prenom: 'Maryam',
+    prenom: 'Mariam',
   ),
   const MembreSeance(
     studentId: 'demo-eleve-adam',
@@ -96,7 +96,7 @@ void main() {
               const AnomalieRevue(
                 type: TypeAnomalieRevue.horsCorridor,
                 studentId: 'demo-eleve-maryam',
-                eleve: 'Maryam',
+                eleve: 'Mariam',
               ),
               const AnomalieRevue(
                 type: TypeAnomalieRevue.transfertPropose,

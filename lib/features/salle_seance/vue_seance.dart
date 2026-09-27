@@ -164,8 +164,12 @@ class SupportSeance {
     required this.points,
     required this.page,
     required this.pages,
+    this.ressourceId,
   });
 
+  /// La ressource partagee (`supportActifId`) quand on la connait : deux
+  /// ressources sans description restent distinctes (UX_REVIEW_04 n. 17 f).
+  final String? ressourceId;
   final String chapitre;
   final String titre;
   final String encadre;
