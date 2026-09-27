@@ -172,7 +172,9 @@ class Pressable extends StatefulWidget {
   /// endroit, il n'engage rien.
   final bool lien;
 
-  /// Le noeud de focus de la zone, pour qu'un ecran puisse y poser le focus.
+  /// Le noeud de focus de la zone, pour qu'un ecran puisse y poser le focus
+  /// ou que l'appelant le rende a cette zone (le bouton qui a ouvert un
+  /// panneau, a sa fermeture).
   final FocusNode? focusNode;
 
   /// Duree de l'animation de pression : le retour tactile du budget de

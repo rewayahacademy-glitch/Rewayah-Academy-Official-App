@@ -103,11 +103,19 @@ void main() {
       await avecLargeur(tester, largeurTablette, () async {
         await _espace(tester);
         final Offset session = tester.getTopLeft(find.byType(CarteSession));
+        final Offset avant = tester.getTopLeft(
+          find.text(LibellesGroupe.avantProchainCours),
+        );
         final Offset bibliotheque = tester.getTopLeft(
           find.text(LibellesGroupe.bibliotheque),
         );
-        // La Bibliotheque passe a droite, et reste donc lue apres la Session.
-        expect(bibliotheque.dx, greaterThan(session.dx));
+        // CL-4.3, composition par rangees (revue UX, ajustement n° 2) :
+        // [identite + seance | Avant le prochain cours], puis [bibliotheque |
+        // progression]. « Avant » passe a droite de la seance ; la
+        // Bibliotheque ouvre la rangee suivante, sous la seance.
+        expect(avant.dx, greaterThan(session.dx));
+        expect(bibliotheque.dx, closeTo(session.dx, 1));
+        expect(bibliotheque.dy, greaterThan(session.dy));
       });
     });
 

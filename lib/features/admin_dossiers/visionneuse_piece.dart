@@ -355,7 +355,7 @@ class _VisionneusePieceState extends ConsumerState<VisionneusePiece> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 _BoutonZoom(
-                  icone: AppIcons.reduire,
+                  icone: AppIcons.moins,
                   libelle: t.dossiers.visionneuse.reduire,
                   touche: '-',
                   onPress: _peutReduire ? _reduire : null,

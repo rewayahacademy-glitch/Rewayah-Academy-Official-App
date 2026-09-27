@@ -1,3 +1,4 @@
+import '../../features/demo/mode_demonstration.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../session/session_state.dart';
@@ -41,7 +42,19 @@ String? deciderRedirection({
   bool routeConnue = true,
   String? cheminComplet,
   String? retour,
+  String environnement = Env.environnement,
 }) {
+  // La salle de demonstration passe sans session hors production : donnees
+  // fictives, aucun appel serveur (K-28). En production, la route n'existe
+  // pas et cette porte reste fermee.
+  if (environnementAutoriseDemo(environnement) &&
+      (cheminDemande == Routes.demoSalle ||
+          cheminDemande.startsWith('${Routes.demoSalle}/') ||
+          cheminDemande == Routes.demoClasse ||
+          cheminDemande.startsWith('${Routes.demoClasse}/'))) {
+    return null;
+  }
+
   // La galerie de developpement echappe a la porte : elle ne montre que des
   // composants, aucune donnee. Elle n'est de toute facon pas compilee en
   // production.

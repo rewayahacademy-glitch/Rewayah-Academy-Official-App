@@ -27,12 +27,17 @@ class LienFleche extends StatelessWidget {
     this.icone,
     this.annonceLien = false,
     this.alignerEnFin = false,
+    this.legende = false,
   });
 
   /// Vrai : le lien se range au bord de fin, comme les actions qu'il suit
   /// (HL-A-3) : aucun retrait de fin, lignes alignees en fin quand le texte
   /// passe a la ligne (200 %, 390). Faux (defaut) : rendu inchange.
   final bool alignerEnFin;
+
+  /// Registre de legende (`labelSmall`, fleche plus petite) : le « Voir tout »
+  /// d'un titre de rubrique dense. La cible tactile reste de 48 sur 48.
+  final bool legende;
 
   /// Icone decorative facultative devant le libelle (« Comment ca marche ? »
   /// precede de `AppIcons.info`). Le libelle seul reste lu.
@@ -55,8 +60,10 @@ class LienFleche extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle base =
-        Theme.of(context).textTheme.labelLarge ?? const TextStyle();
+        (legende ? textes.labelSmall : textes.labelLarge) ?? const TextStyle();
+    final double tailleIcone = legende ? AppSpacing.md : AppSpacing.lg;
 
     return Pressable.selon(
       onPress: onPress,
@@ -96,7 +103,7 @@ class LienFleche extends StatelessWidget {
               if (fleche) ...<Widget>[
                 Ecart.hXs,
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                  data: palette.inkAccent.asIconTheme(size: tailleIcone),
                   child: Icon(AppIcons.flecheAction.repos),
                 ),
               ],

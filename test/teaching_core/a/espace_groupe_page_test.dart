@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -198,7 +199,11 @@ void main() {
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.alIhsan);
-        expect(find.text(LibellesGroupe.attenteAvantDebut), findsOneWidget);
+        // CL-4.3 : la phrase vient de l'emplacement d'entree unique (R4).
+        expect(
+          find.textContaining(t.classe.entree.annonce.attente),
+          findsOneWidget,
+        );
         expect(
           find.text(LibellesGroupe.attenteAvantDebutDetail),
           findsOneWidget,
@@ -211,7 +216,11 @@ void main() {
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.alHikma);
-        expect(find.text(LibellesGroupe.prolongee), findsOneWidget);
+        // R6 : « Temps prevu ecoule », jamais un nombre negatif.
+        expect(
+          find.textContaining(t.classe.entree.tempsEcoule),
+          findsOneWidget,
+        );
         expect(find.textContaining('Reste -'), findsNothing);
       });
     });
@@ -234,9 +243,9 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.alBaqara);
         expect(find.byType(NoticeChangementHeure), findsOneWidget);
-        expect(find.text(LibellesGroupe.dstJ7), findsOneWidget);
+        // CL-4.3 : l'avis, sous les heures, vient d'EmplacementEntree.
         expect(
-          find.text(LibellesGroupe.dstDetail(avant: '13:00', apres: '12:00')),
+          find.text(t.classe.entree.dst(avant: '13:00', apres: '12:00')),
           findsOneWidget,
         );
       });

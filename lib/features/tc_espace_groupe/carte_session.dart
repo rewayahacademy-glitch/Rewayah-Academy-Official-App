@@ -1,34 +1,43 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/skeleton.dart';
 
-/// La Session Card : le bloc dominant de l'Espace Groupe.
+/// La Session Card : le bloc dominant de l'Espace Classe (CLV-01, CL-4.3).
 ///
 /// Elle porte tout ce qui concerne le prochain rendez-vous, et **rien d'autre**
-/// : la date, les deux horloges quand elles different, la duree, l'etat du
-/// temps, le bouton d'entree quand la fenetre est ouverte, l'avertissement de
-/// changement d'heure quand il y en a un, et le conseil d'appareil.
+/// : la date, les deux horloges quand elles different, la duree, l'avis de
+/// changement d'heure, le conseil d'appareil, puis **un seul emplacement
+/// d'entree** (R4) calcule par [EmplacementEntree.pour].
 ///
-/// Deux regles y sont visibles a l'oeil nu :
-///
-/// - **aucun compte a rebours negatif** : en prolongation, la carte dit
-///   « Cours toujours en cours » et ne montre aucun nombre ;
-/// - **aucune conversion de fuseau ici** : les heures arrivent deja rendues,
-///   et le libelle de ville est lisible, jamais « UTC+3 ».
-class CarteSession extends StatelessWidget {
+/// - **aucun compte a rebours negatif** : en prolongation, « Temps prevu
+///   ecoule » (R6) ;
+/// - **aucune conversion de fuseau ici** : les heures arrivent deja rendues ;
+/// - **aucune pastille de decompte en double, aucun bouton grise**.
+class CarteSession extends StatefulWidget {
   /// Cree la Session Card.
-  const CarteSession({required this.espace, super.key, this.onRejoindre});
+  const CarteSession({
+    required this.espace,
+    super.key,
+    this.onRejoindre,
+    this.onReessayer,
+    this.horsLigne = false,
+    this.annulee = false,
+    this.lectureEchouee = false,
+  });
 
   /// L'Espace Groupe auquel elle appartient.
   final GroupHomeVM espace;
@@ -36,8 +45,49 @@ class CarteSession extends StatelessWidget {
   /// Ce que fait « Rejoindre ». Nul tant qu'Agent Z ne l'a pas branche.
   final VoidCallback? onRejoindre;
 
+  /// Relance la lecture quand l'emplacement propose « Reessayer ».
+  final VoidCallback? onReessayer;
+
+  /// Hors ligne : le texte de la spec et « Reessayer » occupent l'emplacement.
+  final bool horsLigne;
+
+  /// Seance annulee, selon le serveur.
+  final bool annulee;
+
+  /// L'horloge de seance n'a pas pu etre lue.
+  final bool lectureEchouee;
+
+  /// Le role de l'emplacement d'entree pour le role de l'Espace Groupe.
+  static RoleEntree roleEntree(RoleEspaceGroupe role) => switch (role) {
+    RoleEspaceGroupe.enseignant ||
+    RoleEspaceGroupe.admin => RoleEntree.enseignant,
+    RoleEspaceGroupe.eleve || RoleEspaceGroupe.tuteur => RoleEntree.eleve,
+  };
+
+  @override
+  State<CarteSession> createState() => _CarteSessionState();
+}
+
+class _CarteSessionState extends State<CarteSession> {
+  /// Le titre de la carte : il recoit le focus quand le bouton focalise
+  /// laisse place a une ligne d'etat (revue UX n° 13, CL-4.7).
+  final FocusNode _focusTitre = FocusNode(
+    debugLabel: 'titre-carte-seance',
+    skipTraversal: true,
+  );
+
+  @override
+  void dispose() {
+    _focusTitre.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final GroupHomeVM espace = widget.espace;
+    final bool annulee = widget.annulee;
+    final bool horsLigne = widget.horsLigne;
+    final bool lectureEchouee = widget.lectureEchouee;
     final SessionClockVM? horloge = espace.horloge;
     final OccurrenceSeance? occurrence = espace.identite.prochaineSeance;
 
@@ -53,49 +103,373 @@ class CarteSession extends StatelessWidget {
       );
     }
 
+    final EmplacementEntree emplacement = EmplacementEntree.pour(
+      role: CarteSession.roleEntree(espace.role),
+      horloge: horloge,
+      nomClasse: espace.identite.libelle,
+      annulee: annulee,
+      horsLigne: horsLigne,
+      lectureEchouee: lectureEchouee,
+      // Le tuteur n'entre pas : sa ligne d'etat ne depend pas de la seance
+      // materialisee (revue CL-4.R, m3).
+      accesInverifiable:
+          espace.role != RoleEspaceGroupe.tuteur &&
+          horloge.sessionId == null &&
+          occurrence.sessionId == null,
+    );
+    final TextTheme textes = Theme.of(context).textTheme;
+
     return AppCard(
       dominante: true,
-      entete: _EnteteSession(horloge: horloge),
-      // Le tuteur ne rejoint pas la classe de son enfant : il l'observe, par
-      // la porte d'observation (lot C-obs). Aucun « Rejoindre » ne lui est
-      // rendu, meme fenetre ouverte (revue phase 0, routes D8).
-      actions: horloge.rejoindreOuvert && espace.role != RoleEspaceGroupe.tuteur
-          ? ActionPrincipale(
-              libelle: LibellesGroupe.rejoindre,
-              onPress: onRejoindre,
-            )
-          : null,
+      entete: Focus(
+        focusNode: _focusTitre,
+        child: Semantics(
+          header: true,
+          child: Text(
+            horloge.horlogeUtilisateur.dateLocaleRendue,
+            key: const ValueKey<String>('carte-seance-titre'),
+            style: textes.titleMedium ?? const TextStyle(),
+          ),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _LigneHorloge(
-            libelle: LibellesGroupe.votreHeure,
-            horloge: horloge.horlogeUtilisateur,
+          HeuresSeance(
+            libelleContrepartie: _libelleContrepartie(espace),
+            horloge: horloge,
+            duree: occurrence.duree,
           ),
-          if (horloge.horlogeContrepartie != null) ...<Widget>[
-            Ecart.vSm,
-            _LigneHorloge(
-              libelle: _libelleContrepartie(espace),
-              horloge: horloge.horlogeContrepartie!,
-            ),
-          ],
-          Ecart.vSm,
-          _LigneValeur(
-            libelle: LibellesGroupe.dureeLibelle,
-            valeur: LibellesGroupe.dureeLisible(occurrence.duree),
-          ),
-          Ecart.vLg,
-          _EtatDuTemps(horloge: horloge),
-          if (horloge.noticeDst != null) ...<Widget>[
-            Ecart.vLg,
-            NoticeChangementHeure(notice: horloge.noticeDst!),
+          if (emplacement.avisDst != null) ...<Widget>[
+            Ecart.vMd,
+            NoticeChangementHeure(texte: emplacement.avisDst!),
           ],
           if (espace.afficheConseilAppareil) ...<Widget>[
-            Ecart.vLg,
+            Ecart.vMd,
             const _ConseilAppareil(),
           ],
+          // Entrer en avance prouve qu'on etait pret ; cela ne credite aucune
+          // minute de presence academique. On le dit plutot que de le laisser
+          // deviner.
+          if (horloge.phase == PhaseSeance.attenteAvantT0) ...<Widget>[
+            Ecart.vMd,
+            Text(
+              LibellesGroupe.attenteAvantDebutDetail,
+              style: AppPalette.of(context).inkMuted
+                  .applyTo(textes.bodySmall ?? const TextStyle()),
+            ),
+          ],
+          // Le bouton se pose 16 sous le contenu qu'il confirme (R20).
+          Ecart.vLg,
+          EmplacementEntreeVue(
+            emplacement: emplacement,
+            // Le tuteur ne rejoint pas la classe de son enfant : il l'observe
+            // (lot C-obs, routes D8). Son emplacement reste une ligne d'etat.
+            sansBouton: espace.role == RoleEspaceGroupe.tuteur,
+            onEntrer: widget.onRejoindre,
+            onReessayer: widget.onReessayer,
+            focusRetour: _focusTitre,
+          ),
         ],
+      ),
+    );
+  }
+}
+
+/// Les heures de la seance : « Votre heure », la contrepartie quand elle
+/// differe, la duree. Partageable avec l'Espace Classe enseignant (CL-4.4).
+class HeuresSeance extends StatelessWidget {
+  /// Cree le bloc d'heures.
+  const HeuresSeance({
+    required this.libelleContrepartie,
+    required this.horloge,
+    required this.duree,
+    super.key,
+  });
+
+  /// « Chez Sayyida Amina » ou « Heure du groupe ».
+  final String libelleContrepartie;
+
+  /// L'horloge, heures deja rendues.
+  final SessionClockVM horloge;
+
+  /// La duree de l'occurrence.
+  final Duration duree;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _LigneHorloge(
+          libelle: LibellesGroupe.votreHeure,
+          horloge: horloge.horlogeUtilisateur,
+        ),
+        if (horloge.horlogeContrepartie != null) ...<Widget>[
+          Ecart.vSm,
+          _LigneHorloge(
+            libelle: libelleContrepartie,
+            horloge: horloge.horlogeContrepartie!,
+          ),
+        ],
+        Ecart.vSm,
+        _LigneValeur(
+          libelle: LibellesGroupe.dureeLibelle,
+          valeur: LibellesGroupe.dureeLisible(duree),
+        ),
+      ],
+    );
+  }
+}
+
+/// L'avis de changement d'heure, sous les heures et au-dessus de
+/// l'emplacement (revue UX n° 15). **Le widget ne calcule rien** : le texte
+/// arrive resolu par [EmplacementEntree] depuis la notice du serveur.
+class NoticeChangementHeure extends StatelessWidget {
+  /// Cree l'avis.
+  const NoticeChangementHeure({required this.texte, super.key});
+
+  /// Le texte.
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) {
+    return MergeSemantics(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Icon(AppIcons.horloge.repos, size: AppSpacing.xl),
+          Ecart.hSm,
+          Expanded(
+            child: Text(texte, style: Theme.of(context).textTheme.bodySmall),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// L'emplacement d'entree unique (R4) : une ligne d'etat ou un bouton, au
+/// meme endroit, avec la hauteur du bouton (52) reservee dans tous les etats.
+///
+/// - La ligne d'etat est un texte avec son icone : ni focalisable, ni
+///   annoncee comme desactivee. Jamais de bouton grise.
+/// - Le bouton est trailing et a sa largeur naturelle des la tablette, en
+///   pleine largeur sur mobile.
+/// - Seuls les changements d'etat sont annonces
+///   ([EmplacementEntree.annonceDepuis]) ; le decompte ne l'est pas.
+///
+/// Partageable avec l'Espace Classe enseignant (CL-4.4) : le libelle
+/// (« Rejoindre » ou « Preparer l'entree ») vient de l'[EmplacementEntree].
+class EmplacementEntreeVue extends StatefulWidget {
+  /// Cree l'emplacement.
+  const EmplacementEntreeVue({
+    required this.emplacement,
+    super.key,
+    this.onEntrer,
+    this.onReessayer,
+    this.sansBouton = false,
+    this.focusRetour,
+  });
+
+  /// Recoit le focus quand le bouton focalise disparait (revue UX n° 13) ;
+  /// en general le titre de la carte de seance.
+  final FocusNode? focusRetour;
+
+  /// Ce qu'il faut montrer.
+  final EmplacementEntree emplacement;
+
+  /// « Rejoindre » ou « Preparer l'entree ».
+  final VoidCallback? onEntrer;
+
+  /// « Reessayer ».
+  final VoidCallback? onReessayer;
+
+  /// Vrai pour un role qui n'entre pas (tuteur) : le bouton devient la ligne.
+  final bool sansBouton;
+
+  @override
+  State<EmplacementEntreeVue> createState() => _EmplacementEntreeVueState();
+}
+
+class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
+  late String _annonce = widget.emplacement.annonce;
+  final FocusNode _focusBouton = FocusNode(
+    debugLabel: 'emplacement-entree',
+    skipTraversal: true,
+  );
+
+  @override
+  void dispose() {
+    _focusBouton.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(EmplacementEntreeVue ancien) {
+    super.didUpdateWidget(ancien);
+    final String? nouvelle = widget.emplacement.annonceDepuis(
+      ancien.emplacement,
+    );
+    if (nouvelle != null) _annonce = nouvelle;
+    // Le bouton focalise laisse place a une ligne d'etat : le focus revient
+    // au titre de la carte. Le bouton qui apparait ne le prend jamais.
+    final bool avaitBouton = ancien.emplacement.estBouton && !ancien.sansBouton;
+    final bool aBouton = widget.emplacement.estBouton && !widget.sansBouton;
+    final FocusNode? retour = widget.focusRetour;
+    if (avaitBouton && !aBouton && _focusBouton.hasFocus && retour != null) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && retour.context != null) retour.requestFocus();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final EmplacementEntree e = widget.emplacement;
+    final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
+    final bool bouton = e.estBouton && !widget.sansBouton;
+    final String? detail = e.detail;
+
+    final List<Widget> contenu;
+    if (bouton) {
+      final Widget action = Focus(
+        focusNode: _focusBouton,
+        child: Semantics(
+          label: e.libelleLecteur,
+          button: true,
+          excludeSemantics: true,
+          onTap: widget.onEntrer,
+          child: ActionPrincipale(
+            libelle: e.libelle,
+            onPress: widget.onEntrer,
+            pleineLargeur: mobile,
+          ),
+        ),
+      );
+      contenu = <Widget>[
+        if (detail != null) ...<Widget>[
+          _LigneEtat(etat: e.etat, texte: detail),
+          Ecart.vLg,
+        ],
+        if (mobile) action else _EnFin(child: action),
+      ];
+    } else {
+      contenu = <Widget>[
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppPage.hauteurBouton),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: _LigneEtat(
+              etat: e.etat,
+              texte: widget.sansBouton && detail != null ? detail : e.libelle,
+            ),
+          ),
+        ),
+        if (e.reessayer)
+          if (mobile)
+            ActionPrincipale(
+              libelle: t.classe.entree.reessayer,
+              niveau: NiveauAction.secondaire,
+              onPress: widget.onReessayer,
+            )
+          else
+            _EnFin(
+              child: ActionPrincipale(
+                libelle: t.classe.entree.reessayer,
+                niveau: NiveauAction.secondaire,
+                pleineLargeur: false,
+                onPress: widget.onReessayer,
+              ),
+            ),
+      ];
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // La region live : le seul texte des changements d'etat.
+        Semantics(
+          liveRegion: true,
+          label: _annonce,
+          child: const SizedBox.shrink(),
+        ),
+        ...contenu,
+      ],
+    );
+  }
+}
+
+/// Une ligne d'etat : icone et texte, lus d'un bloc, jamais focalisable.
+class _LigneEtat extends StatelessWidget {
+  const _LigneEtat({required this.etat, required this.texte});
+
+  final EtatEntree etat;
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppIcon icone = switch (etat) {
+      EtatEntree.aVenir || EtatEntree.attente => AppIcons.horloge,
+      EtatEntree.fenetreOuverte ||
+      EtatEntree.enDirect ||
+      EtatEntree.preparation => AppIcons.cours,
+      EtatEntree.terminee => AppIcons.succes,
+      EtatEntree.annulee => AppIcons.annuler,
+      EtatEntree.aucune => AppIcons.info,
+      EtatEntree.indisponible => AppIcons.horsLigne,
+    };
+    return MergeSemantics(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icone.repos, size: AppSpacing.xxl),
+          Ecart.hSm,
+          Flexible(
+            child: Text(
+              texte,
+              // Un decompte : chiffres tabulaires (revue phase 0, jetons D4).
+              style: AppTypography.tabulaire(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Le squelette fidele a la carte de seance : date, heures, emplacement de
+/// 52. Un seul noeud lu, les os exclus (revue UX n° 10).
+class SqueletteCarteSession extends StatelessWidget {
+  /// Cree le squelette.
+  const SqueletteCarteSession({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: t.classe.entree.chargementSeance,
+      child: const ExcludeSemantics(
+        child: AppCard(
+          dominante: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Skeleton(hauteur: AppSpacing.xl),
+              Ecart.vLg,
+              Skeleton.texte(),
+              Ecart.vLg,
+              Skeleton(hauteur: AppPage.hauteurBouton),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -103,52 +477,14 @@ class CarteSession extends StatelessWidget {
 
 /// Le libelle de la seconde horloge, selon qui regarde.
 ///
-/// L'eleve et le tuteur lisent « Chez Sayyid Youssouf » ; l'enseignant lit
-/// « Heure du groupe ». **Le voyage d'un enseignant ne deplace jamais l'horaire
-/// institutionnel du groupe** : c'est pour cela que sa contrepartie est le
-/// groupe, et non un collegue.
+/// L'eleve et le tuteur lisent « Chez Sayyida Amina » ; l'enseignant lit
+/// « Heure du groupe ». Le voyage d'un enseignant ne deplace jamais l'horaire
+/// institutionnel du groupe.
 String _libelleContrepartie(GroupHomeVM espace) => espace.estCoteFamille
     ? LibellesGroupe.chezEnseignant(
         LibellesGroupe.enseignantNomme(espace.identite.enseignant),
       )
     : LibellesGroupe.heureGroupe;
-
-/// La date du rendez-vous et l'etat court de la seance.
-class _EnteteSession extends StatelessWidget {
-  const _EnteteSession({required this.horloge});
-
-  final SessionClockVM horloge;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    // Un `Wrap` et non une `Row` : a 200 pour cent de taille de texte, la
-    // pastille passe sous la date au lieu de deborder (revue P2-10).
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: AppSpacing.md,
-      runSpacing: AppSpacing.sm,
-      children: <Widget>[
-        Text(
-          horloge.horlogeUtilisateur.dateLocaleRendue,
-          style: textes.titleMedium ?? const TextStyle(),
-        ),
-        StatusPill(
-          libelle: LibellesGroupe.phase(horloge.phase),
-          ton: switch (horloge.phase) {
-            PhaseSeance.enCours ||
-            PhaseSeance.prolongee ||
-            PhaseSeance.attenteAvantT0 => TonEtat.accent,
-            PhaseSeance.salleOuverte => TonEtat.succes,
-            PhaseSeance.avantFenetre || PhaseSeance.terminee => TonEtat.neutre,
-          },
-        ),
-      ],
-    );
-  }
-}
 
 /// Une heure deja rendue, avec sa ville.
 class _LigneHorloge extends StatelessWidget {
@@ -169,7 +505,8 @@ class _LigneHorloge extends StatelessWidget {
   }
 }
 
-/// Un libelle a gauche, une valeur a droite, lus d'un bloc.
+/// Un libelle et sa valeur, lus d'un bloc. En paire qui s'empile : a 320 de
+/// large et a 200 % de texte, rien ne deborde (revue UX n° 14).
 class _LigneValeur extends StatelessWidget {
   const _LigneValeur({required this.libelle, required this.valeur});
 
@@ -182,129 +519,30 @@ class _LigneValeur extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
 
     return MergeSemantics(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Text(
-              libelle,
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ),
-          Ecart.hMd,
-          Flexible(
-            child: Text(
-              valeur,
-              textAlign: TextAlign.end,
-              // Une heure : chiffres tabulaires (revue phase 0, jetons D4).
-              style: AppTypography.tabulaire(
-                textes.titleSmall ?? const TextStyle(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// La phrase de temps, et l'invariant de presence quand il s'applique.
-class _EtatDuTemps extends StatelessWidget {
-  const _EtatDuTemps({required this.horloge});
-
-  final SessionClockVM horloge;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-
-    return MergeSemantics(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        spacing: AppSpacing.md,
         children: <Widget>[
           Text(
-            LibellesGroupe.ligneEtat(horloge),
-            // « Dans 12 min » : un compte a rebours, en chiffres tabulaires
-            // (revue phase 0, jetons D4).
-            style: AppTypography.tabulaire(
-              textes.titleMedium ?? const TextStyle(),
-            ),
-          ),
-          // Entrer vingt minutes en avance prouve qu'on etait pret ; cela ne
-          // credite aucune minute de presence academique. On le dit a la
-          // personne plutot que de le laisser deviner.
-          if (horloge.phase == PhaseSeance.attenteAvantT0) ...<Widget>[
-            Ecart.vXs,
-            Text(
-              LibellesGroupe.attenteAvantDebutDetail,
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-/// L'avertissement de changement d'heure.
-///
-/// **Le widget ne calcule rien.** Il recoit deux heures deja rendues et une
-/// echeance ; il n'ouvre aucune base de fuseaux, ne compare aucun offset et ne
-/// connait pas la date de transition. C'est `SessionClockVM` qui l'apporte, et
-/// le serveur qui la determine.
-class NoticeChangementHeure extends StatelessWidget {
-  /// Cree la notice.
-  const NoticeChangementHeure({required this.notice, super.key});
-
-  /// Ce que le port a rendu.
-  final NoticeDst notice;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-
-    // Une notice dont les deux heures coincident n'annonce rien : la transition
-    // existe, mais elle ne deplace pas ce cours-la.
-    if (!notice.deplaceLHeure) {
-      return const SizedBox.shrink();
-    }
-
-    return MergeSemantics(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          StatusPill(
-            libelle: LibellesGroupe.dstEcheance(notice.echeance),
-            ton: TonEtat.avertissement,
-          ),
-          Ecart.vXs,
-          Text(
-            LibellesGroupe.dstDetail(
-              avant: notice.heureAvantRendue,
-              apres: notice.heureApresRendue,
-            ),
+            libelle,
             style: palette.inkMuted.applyTo(
               textes.bodySmall ?? const TextStyle(),
             ),
           ),
+          Text(
+            valeur,
+            // Une heure : chiffres tabulaires (revue phase 0, jetons D4).
+            style: AppTypography.tabulaire(
+              textes.titleSmall ?? const TextStyle(),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-/// Le conseil d'appareil, discret.
-///
-/// **Pas de fenetre modale, pas de blocage, aucun jugement.** Une ligne, au bas
-/// de la Session Card, que l'on peut ignorer sans consequence.
+/// Le conseil d'appareil, discret : une ligne, sans modale ni blocage.
 class _ConseilAppareil extends StatelessWidget {
   const _ConseilAppareil();
 
@@ -335,6 +573,25 @@ class _ConseilAppareil extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Pose une action au bord de fin, a sa largeur naturelle.
+///
+/// Une `Row` et non un `Align` : `ActionPrincipale` est un `Container`
+/// aligne, qui s'etire sur toute contrainte bornee ; la `Row` lui donne une
+/// largeur libre, donc sa largeur naturelle (rectification 9).
+class _EnFin extends StatelessWidget {
+  const _EnFin({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[child],
     );
   }
 }

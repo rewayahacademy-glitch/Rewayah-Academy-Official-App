@@ -273,6 +273,14 @@ void main() {
       );
       expect(d.color, palette.surfaceRaised.background);
       expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);
+      // Surface pleine a filet fin (images CLV-10).
+      expect(d.border!.top.width, 1);
+    });
+
+    test('graisse percue unique : l encre claire est reperee', () {
+      expect(ActionPrincipale.encreClaire(const Color(0xFFFFFFFF)), isTrue);
+      expect(ActionPrincipale.encreClaire(const Color(0xFF110E20)), isFalse);
+      expect(ActionPrincipale.encreClaire(null), isFalse);
     });
 
     testWidgets('un bouton inerte change de paire, jamais d opacite', (
@@ -294,7 +302,7 @@ void main() {
       // fond, si bien que le bouton le plus important de l'ecran disparaissait
       // au premier champ vide et se lisait comme une panne. Il reste desormais
       // sur `surfaceRaised`, avec le filet le plus epais du produit -- plus
-      // lourd qu'un secondaire au repos, qui porte 2.
+      // lourd qu'un secondaire au repos, qui porte 1.
       expect(d.color, palette.surfaceRaised.background);
       expect(d.color, isNot(palette.surfaceSunken.background));
       expect(d.border!.top.color, palette.borderStrong.asBorderSide().color);

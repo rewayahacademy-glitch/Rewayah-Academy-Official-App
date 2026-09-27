@@ -1,4 +1,56 @@
 {
+  "classe": {
+    "entree": {
+      "coursDans": "الدرس بعد {duree}",
+      "coursImminent": "الدرس بعد أقل من دقيقة",
+      "rejoindre": "انضمام",
+      "rejoindreLecteur": "الانضمام إلى حصة {classe}",
+      "preparer": "تحضير الدخول",
+      "preparerLecteur": "تحضير الدخول إلى حصة {classe}",
+      "salleOuverte": "القاعة مفتوحة. تبدأ الحصة بعد {duree}.",
+      "salleOuverteImminent": "القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.",
+      "preparation": "التحضير جارٍ",
+      "attente": "أنت في القاعة. تبدأ الحصة بعد {duree}.",
+      "attenteImminent": "أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.",
+      "enDirect": "الحصة مباشرة",
+      "tempsEcoule": "انتهى الوقت المقرر",
+      "terminee": "انتهت الحصة",
+      "annulee": "أُلغيت الحصة",
+      "aucune": "لا توجد حصة مقررة",
+      "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
+      "indisponible": "معلومات الحصة غير متاحة حاليًا.",
+      "reessayer": "إعادة المحاولة",
+      "chargementSeance": "جارٍ تحميل الحصة القادمة.",
+      "progressionValeur": "{chapitre} · {pourcentage} %",
+      "dst": "تغيير التوقيت: سينتقل الدرس من {avant} إلى {apres}.",
+      "annonce": {
+        "aVenir": "حصة قادمة",
+        "fenetreOuverte": "القاعة مفتوحة",
+        "attente": "أنت في القاعة"
+      }
+    }
+  },
+  "salle": {
+    "secours": {
+      "reseauFaible": "الشبكة ضعيفة. الأولوية للصوت.",
+      "reseauFaibleGuidee": "الشبكة ضعيفة.",
+      "reseauFaibleGuideeSuite": "الصوت يبقى أولوية.",
+      "reconnexion": "انقطع الاتصال. جارٍ إعادة الاتصال…",
+      "reconnexionGuidee": "جارٍ إعادة الاتصال بالحصة…",
+      "retablie": "عاد الاتصال.",
+      "echec": "تعذّرت إعادة الاتصال.",
+      "echecGuidee": "الاتصال لا يعود.",
+      "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
+      "reessayer": "إعادة المحاولة",
+      "quitter": "خروج",
+      "indisponible": "{commande}. غير متاح أثناء إعادة الاتصال.",
+      "cameraInterdite": "الكاميرا معطّلة لهذا الملف.",
+      "microBloque": "الميكروفون محظور في إعدادات هذا الجهاز.",
+      "microBloqueGuidee": "الميكروفون محظور على هذا الجهاز.",
+      "continuerSansMicro": "المتابعة دون ميكروفون",
+      "ouvrirReglages": "فتح الإعدادات"
+    }
+  },
   "eleve": {
     "suivi": {
       "titre": "متابعة دروسي",
@@ -19,6 +71,20 @@
       "tronquee": "تظهر أحدث {nombre} دروس.",
       "fin": "عدد الدروس في المتابعة: {nombre}.",
       "finUn": "درس واحد في المتابعة."
+    }
+  },
+  "enseignant": {
+    "ficheGroupe": {
+      "elevesTitre": "الطلاب",
+      "preparationTitre": "للتحضير",
+      "supportPrevu": "المادة المقررة",
+      "positionReprise": "موضع الاستئناف",
+      "objectif": "الهدف",
+      "preparationVide": "لم يُسجَّل أي تحضير لهذه الحصة.",
+      "supportsTitre": "أحدث المواد",
+      "repriseEleve": "الاستئناف: {page}",
+      "dernierPoint": "آخر ملاحظة: {texte}",
+      "chargementClasse": "جارٍ تحميل الفصل."
     }
   },
   "tc": {
