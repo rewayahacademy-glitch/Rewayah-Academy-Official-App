@@ -8,6 +8,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/features/revue_groupe/anomalies_revue.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
@@ -106,45 +107,46 @@ void main() {
   });
 
   group('ENS-08 : les anomalies, quand la source en rendra', () {
-    testWidgets('une carte par anomalie, son type dit par un mot', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        service: _service(),
-        anomalies: const <AnomalieRevue>[
-          AnomalieRevue(
-            type: TypeAnomalieRevue.transfertPropose,
-            studentId: 'e2',
-            eleve: 'Bilal',
-          ),
-          AnomalieRevue(
-            type: TypeAnomalieRevue.gateAVenir,
-            studentId: 'e1',
-            eleve: 'Khadija',
-            detail: 'Palier de fin de cycle dans deux semaines.',
-          ),
-        ],
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'une ligne par anomalie dans un seul groupe, son type dit par un mot',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          service: _service(),
+          anomalies: const <AnomalieRevue>[
+            AnomalieRevue(
+              type: TypeAnomalieRevue.transfertPropose,
+              studentId: 'e2',
+              eleve: 'Bilal',
+            ),
+            AnomalieRevue(
+              type: TypeAnomalieRevue.gateAVenir,
+              studentId: 'e1',
+              eleve: 'Khadija',
+              detail: 'Palier de fin de cycle dans deux semaines.',
+            ),
+          ],
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AppCard), findsNWidgets(2));
-      expect(find.text(t.enseignant.revue.typeGate), findsOneWidget);
-      expect(find.text(t.enseignant.revue.typeTransfert), findsOneWidget);
-      expect(
-        find.text('Palier de fin de cycle dans deux semaines.'),
-        findsOneWidget,
-      );
-      // L'enseignant signale, l'academie tranche : aucune action de decision
-      // n'est rendue, meme pas grisee.
-      // Seul le retour de l'Espace Classe (decision EN-RC).
-      expect(find.byType(ActionPrincipale), findsOneWidget);
-      expect(
-        find.widgetWithText(ActionPrincipale, t.commun.retour),
-        findsOneWidget,
-      );
-      expect(find.text(t.enseignant.revue.pasDeDecision), findsOneWidget);
-    });
+        expect(find.byType(GroupeReglages), findsOneWidget);
+        expect(find.text(t.enseignant.revue.typeGate), findsOneWidget);
+        expect(find.text(t.enseignant.revue.typeTransfert), findsOneWidget);
+        expect(
+          find.textContaining('Palier de fin de cycle dans deux semaines.'),
+          findsOneWidget,
+        );
+        // L'enseignant signale, l'academie tranche : aucune action de decision
+        // n'est rendue, meme pas grisee.
+        // Seul le retour de l'Espace Classe (decision EN-RC).
+        expect(find.byType(ActionPrincipale), findsOneWidget);
+        expect(
+          find.widgetWithText(ActionPrincipale, t.commun.retour),
+          findsOneWidget,
+        );
+        expect(find.text(t.enseignant.revue.pasDeDecision), findsOneWidget);
+      },
+    );
 
     test('une anomalie qui vise un ancien membre ne s affiche pas', () {
       final List<AnomalieRevue> retenues = anomaliesDuGroupe(

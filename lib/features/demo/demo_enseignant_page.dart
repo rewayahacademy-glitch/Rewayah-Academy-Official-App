@@ -46,7 +46,7 @@ import '../enseignant_classes/mes_classes_page.dart';
 import '../journee/journee_page.dart';
 import '../profil_enseignant/photo_publique.dart';
 import '../profil_enseignant/profil_enseignant_page.dart';
-import 'classe_demo.dart' show EtatDemoClasse;
+import 'classe_demo.dart' show DonneesClasseDemo, EtatDemoClasse;
 import 'demo_classe_page.dart' show adresseDemoClasse;
 import 'enseignant_demo.dart';
 import 'mode_demonstration.dart';
@@ -413,15 +413,21 @@ class CoquilleEnseignantDemo extends StatelessWidget {
           },
           child: switch (ecran) {
             EcranDemoEnseignant.aujourdhui => const JourneePage(),
-            // Une ligne ouvre le VRAI Espace Classe enseignant de la
-            // demonstration de Classe (CL-4, perfectionne en EN-3).
+            // An-Nour ouvre le VRAI Espace Classe enseignant de la
+            // demonstration de Classe (CL-4, perfectionne en EN-3), avant sa
+            // fenetre (E11, R4 : « Preparer la seance ») ; les autres Classes
+            // n'ont pas de donnees de Classe et ne s'ouvrent pas (E3).
             EcranDemoEnseignant.classes => MesClassesPage(
-              onOuvrirClasse: (String _) => context.go(
-                adresseDemoClasse(
-                  RoleEntree.enseignant,
-                  EtatDemoClasse.fenetreOuverte,
-                ),
-              ),
+              ouvrable: (String id) => id == DonneesClasseDemo.groupeId,
+              onOuvrirClasse: (String id) {
+                if (id != DonneesClasseDemo.groupeId) return;
+                context.go(
+                  adresseDemoClasse(
+                    RoleEntree.enseignant,
+                    EtatDemoClasse.aVenir,
+                  ),
+                );
+              },
             ),
             EcranDemoEnseignant.disponibilites => const CreneauxPage(),
             EcranDemoEnseignant.profil => const ProfilEnseignantPage(),

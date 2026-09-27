@@ -282,12 +282,11 @@ abstract final class DonneesEnseignantDemo {
       nom: 'An-Nour',
       niveau: 1,
       langue: 'Arabe',
-      prochaineSeance: DateTime(2026, 9, 28, 17, 30),
+      prochaineSeance: DateTime(2026, 9, 28, 18),
       eleves: <EleveEnseignantDemo>[
-        _eleve('demo-eleve-yusuf', 'Yusuf', 'Page 12'),
-        _eleve('demo-eleve-maryam', 'Mariam', 'Page 9'),
-        _eleve('demo-eleve-adam', 'Adam', 'Page 14', photo: false),
-        _eleve('demo-eleve-safiya', 'Safiya', 'Page 11'),
+        _eleve('demo-eleve-maryam', 'Mariam', 'Page 24'),
+        _eleve('demo-eleve-yusuf', 'Yusuf', 'Page 22'),
+        _eleve('demo-eleve-aicha', 'Aïcha', 'Page 24'),
       ],
     ),
     ClasseEnseignantDemo(
@@ -336,23 +335,27 @@ abstract final class DonneesEnseignantDemo {
     ),
   ];
 
-  /// Les quatre Classes, telles que `mes_groupes_v` les rendrait (ENS-09).
-  /// Al-Ikhlas, sans prochaine seance, garde son rendez-vous du vendredi.
+  /// Les Classes de l'enseignant, telles que `mes_groupes_v` les rendrait
+  /// (ENS-09). Al-Ikhlas, sans prochaine seance, garde son rendez-vous du
+  /// vendredi. Al-Fatiha n'y figure pas : elle n'est qu'une offre de
+  /// remplacement, pas encore acceptee (E1, E7 ; recette EN-12, points 1 et
+  /// 17). [classes] la garde comme source de l'offre.
   static List<GroupeEnseignant> groupes() => <GroupeEnseignant>[
     for (final ClasseEnseignantDemo c in classes)
-      GroupeEnseignant(
-        id: c.id,
-        libelle: c.nom,
-        type: TypePublicGroupe.enfant,
-        seuilMax: c.seuilMax,
-        creneau: Creneau(
-          jour: c.prochaineSeance?.weekday ?? 5,
-          heure: c.prochaineSeance?.hour ?? 17,
-          fuseau: fuseau,
+      if (c.id != remplacement.classeId)
+        GroupeEnseignant(
+          id: c.id,
+          libelle: c.nom,
+          type: TypePublicGroupe.enfant,
+          seuilMax: c.seuilMax,
+          creneau: Creneau(
+            jour: c.prochaineSeance?.weekday ?? 5,
+            heure: c.prochaineSeance?.hour ?? 17,
+            fuseau: fuseau,
+          ),
+          nbMembres: c.eleves.length,
+          creeLe: DateTime(2026, 9),
         ),
-        nbMembres: c.eleves.length,
-        creeLe: DateTime(2026, 9),
-      ),
   ];
 
   /// Une Classe par son identifiant.
@@ -385,7 +388,7 @@ abstract final class DonneesEnseignantDemo {
       seance(
         'demo-seance-an-nour-2409',
         classes[0],
-        DateTime(2026, 9, 24, 17, 30),
+        DateTime(2026, 9, 24, 18),
         StatutSeance.terminee,
         cahier: true,
       ),
@@ -398,7 +401,7 @@ abstract final class DonneesEnseignantDemo {
       seance(
         'demo-seance-an-nour-2809',
         classes[0],
-        DateTime(2026, 9, 28, 17, 30),
+        DateTime(2026, 9, 28, 18),
         StatutSeance.planifiee,
       ),
       seance(
@@ -515,6 +518,7 @@ abstract final class DonneesEnseignantDemo {
       debut: remplacement.debut,
       fin: remplacement.debut.add(const Duration(minutes: 45)),
       nbEleves: c.eleves.length,
+      groupeId: remplacement.classeId,
     );
   }
 

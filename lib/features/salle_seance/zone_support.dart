@@ -502,17 +502,30 @@ class _Contenu extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: ecartPoint),
             child: Row(
               children: <Widget>[
-                SizedBox.square(
-                  dimension: pastillePoint,
+                // Un minimum et non une taille fixe : a 200 %, la pastille
+                // grandit avec son chiffre au lieu de le rogner.
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: pastillePoint,
+                    minHeight: pastillePoint,
+                  ),
                   child: DecoratedBox(
                     decoration: palette.washAccent.decoration(
                       borderRadius: AppRadius.arrondiFull,
                     ),
                     child: Center(
-                      child: Text(
-                        '${i + 1}',
-                        style: palette.washAccent.applyTo(
-                          theme.textTheme.titleSmall ?? const TextStyle(),
+                      widthFactor: 1,
+                      heightFactor: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          '${i + 1}',
+                          textAlign: TextAlign.center,
+                          style: palette.washAccent.applyTo(
+                            theme.textTheme.titleSmall ?? const TextStyle(),
+                          ),
                         ),
                       ),
                     ),

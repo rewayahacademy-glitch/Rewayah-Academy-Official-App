@@ -14,9 +14,11 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -181,8 +183,23 @@ class CarteRemplacement extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final List<LigneCleValeur> lignes = lignesRemplacement(offre, date: date);
+    final String? groupe = offre.groupeId;
     return AppCard(
       key: ValueKey<String>('journee-carte-remplacement-${offre.seanceId}'),
+      // E11 et doc 04 §17.3 : le remplacant ouvre la Classe remplacee, ou le
+      // bloc « A preparer » donne l'objectif, le support et la reprise.
+      // `push` : le retour se referme sur Aujourd'hui (R1).
+      actions: groupe == null
+          ? null
+          : ActionPrincipale(
+              key: ValueKey<String>(
+                'journee-carte-remplacement-voir-${offre.seanceId}',
+              ),
+              libelle: t.enseignant.journee.voirClasse,
+              niveau: NiveauAction.secondaire,
+              onPress: () =>
+                  GoRouter.of(context).push<void>(Routes.groupePour(groupe)),
+            ),
       entete: Row(
         children: <Widget>[
           Expanded(

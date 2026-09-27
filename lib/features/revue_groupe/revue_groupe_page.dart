@@ -7,11 +7,14 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../fiche_groupe/fiche_eleve_enseignant.dart'
+    show EleveFiche, ouvrirFicheEleve;
 import '../fiche_groupe/fiche_groupe_page.dart' show SortieEspaceClasse;
+import '../fiche_groupe/preparation_seance.dart' show projectionElevesProvider;
 import 'anomalies_revue.dart';
 
 /// `ENS-08` : la revue courte d'un groupe.
@@ -82,7 +85,7 @@ class RevueGroupePage extends ConsumerWidget {
             ),
           ),
           Ecart.vXxl,
-          _corps(ref, membres: membres, anomalies: lues),
+          _corps(ref, membres: membres, anomalies: lues, classe: nom ?? ''),
         ],
       ),
     );
@@ -101,6 +104,7 @@ class RevueGroupePage extends ConsumerWidget {
     WidgetRef ref, {
     required AsyncValue<List<MembreSeance>> membres,
     required AsyncValue<List<AnomalieRevue>> anomalies,
+    required String classe,
   }) {
     if (!membres.hasValue || !anomalies.hasValue) {
       if (membres.hasError || anomalies.hasError) {
@@ -136,28 +140,46 @@ class RevueGroupePage extends ConsumerWidget {
       );
     }
 
-    return _Liste(anomalies: retenues);
+    return _Liste(
+      anomalies: retenues,
+      membres: membres.requireValue,
+      groupeId: groupeId,
+      classe: classe,
+    );
   }
 }
 
-class _Liste extends StatelessWidget {
-  const _Liste({required this.anomalies});
+/// Une ligne par anomalie dans un seul groupe (K-42 §4) ; l'appui ouvre la
+/// fiche de l'eleve, d'ou « Signaler un besoin » (doc 04 §13.6 : anomalies
+/// actionnables).
+class _Liste extends ConsumerWidget {
+  const _Liste({
+    required this.anomalies,
+    required this.membres,
+    required this.groupeId,
+    required this.classe,
+  });
 
   final List<AnomalieRevue> anomalies;
+  final List<MembreSeance> membres;
+  final String groupeId;
+  final String classe;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        for (final AnomalieRevue anomalie in anomalies) ...<Widget>[
-          _Carte(anomalie: anomalie),
-          Ecart.vMd,
-        ],
-        Ecart.vSm,
+        GroupeReglages(
+          lignes: <LigneRubrique>[
+            for (final AnomalieRevue anomalie in anomalies)
+              _ligne(context, ref, anomalie),
+          ],
+        ),
+        Ecart.vLg,
         // Qui decide, dit une fois pour la page entiere.
         Text(
           t.enseignant.revue.pasDeDecision,
@@ -168,20 +190,13 @@ class _Liste extends StatelessWidget {
       ],
     );
   }
-}
 
-class _Carte extends StatelessWidget {
-  const _Carte({required this.anomalie});
-
-  final AnomalieRevue anomalie;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    // Le type se dit par un **mot**, jamais par une couleur seule : la carte
-    // reste sur la surface elevee par defaut, et c'est le libelle qui porte le
-    // sens.
+  LigneRubrique _ligne(
+    BuildContext context,
+    WidgetRef ref,
+    AnomalieRevue anomalie,
+  ) {
+    // Le type se dit par un **mot**, jamais par une couleur seule.
     final String type = switch (anomalie.type) {
       TypeAnomalieRevue.gateAVenir => t.enseignant.revue.typeGate,
       TypeAnomalieRevue.horsCorridor => t.enseignant.revue.typeCorridor,
@@ -189,26 +204,28 @@ class _Carte extends StatelessWidget {
       TypeAnomalieRevue.reorientationProposee =>
         t.enseignant.revue.typeReorientation,
     };
-
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(type, style: textes.titleSmall),
-          Ecart.vXs,
-          Text(anomalie.eleve, style: textes.bodyMedium),
-          if (anomalie.detail case final String detail
-              when detail.trim().isNotEmpty) ...<Widget>[
-            Ecart.vSm,
-            Text(
-              detail,
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
+    final String? detail = anomalie.detail?.trim();
+    final MembreSeance? membre = membres
+        .where((MembreSeance m) => m.studentId == anomalie.studentId)
+        .firstOrNull;
+    return LigneRubrique(
+      icone: AppIcons.suivi,
+      libelle: type,
+      legende: detail == null || detail.isEmpty
+          ? anomalie.eleve
+          : '${anomalie.eleve} · $detail',
+      onPress: membre == null
+          ? null
+          : () => ouvrirFicheEleve(
+              context,
+              EleveFiche(
+                membre: membre,
+                classe: classe,
+                projection: ref.read(
+                  projectionElevesProvider(groupeId),
+                )[membre.studentId],
               ),
             ),
-          ],
-        ],
-      ),
     );
   }
 }

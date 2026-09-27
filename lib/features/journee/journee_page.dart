@@ -38,6 +38,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
+import '../../core/enseignant/depot_cahiers.dart' show cahiersEnFileProvider;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/elision.dart';
@@ -258,7 +259,13 @@ class _Corps extends ConsumerWidget {
         prochain: dominant,
         maintenant: maintenant,
       ),
-      aTerminer: aTerminer.isEmpty ? null : _ATerminer(cahiers: aTerminer),
+      aTerminer: aTerminer.isEmpty
+          ? null
+          : _ATerminer(
+              cahiers: aTerminer,
+              enFile:
+                  ref.watch(cahiersEnFileProvider).value ?? const <String>{},
+            ),
       alertes: alertes.isEmpty && offres.isEmpty
           ? null
           : _AlertesUtiles(alertes: alertes, offres: offres),
@@ -706,9 +713,12 @@ class _MaJournee extends StatelessWidget {
 
 /// « A terminer » : les cahiers non valides, trois au plus (K-45).
 class _ATerminer extends ConsumerWidget {
-  const _ATerminer({required this.cahiers});
+  const _ATerminer({required this.cahiers, this.enFile = const <String>{}});
 
   final List<CahierEnRetard> cahiers;
+
+  /// Les seances dont le cahier valide attend l'envoi (file locale).
+  final Set<String> enFile;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -755,13 +765,18 @@ class _ATerminer extends ConsumerWidget {
                 libelle: t.enseignant.journee.cahierLigne(
                   classe: deDevant(_nomClasse(cahier.groupeLibelle)),
                 ),
-                legende: t.enseignant.journee.cahierDetail(
-                  jour: t.commun.dates.jours[cahier.debut.weekday - 1]
-                      .toLowerCase(),
-                  numero: '${cahier.debut.day}',
-                  mois: t.commun.dates.mois[cahier.debut.month - 1],
-                  heure: _hhmm(cahier.debut),
-                ),
+                // Doc 04 §20.8 : valide hors ligne, le cahier reste ici
+                // « En attente d'envoi » jusqu'a la confirmation du serveur ;
+                // l'appui ouvre cet etat, pas le formulaire (§33 n. 14).
+                legende: enFile.contains(cahier.seanceId)
+                    ? t.enseignant.cahier.enFileTitre
+                    : t.enseignant.journee.cahierDetail(
+                        jour: t.commun.dates.jours[cahier.debut.weekday - 1]
+                            .toLowerCase(),
+                        numero: '${cahier.debut.day}',
+                        mois: t.commun.dates.mois[cahier.debut.month - 1],
+                        heure: _hhmm(cahier.debut),
+                      ),
                 onPress: () async {
                   // `push` et non `go` : au retour, la file se relit et la
                   // ligne disparait d'elle-meme.
@@ -770,6 +785,7 @@ class _ATerminer extends ConsumerWidget {
                   if (context.mounted) {
                     ref.invalidate(cahiersEnRetardProvider);
                     ref.invalidate(seancesEnseignantProvider);
+                    ref.invalidate(cahiersEnFileProvider);
                   }
                 },
               ),

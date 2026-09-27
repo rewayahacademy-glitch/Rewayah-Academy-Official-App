@@ -131,11 +131,16 @@ List<ClasseListee> classesTriees({
 /// `ENS-09` : les Classes de l'enseignant.
 class MesClassesPage extends ConsumerWidget {
   /// Cree la page.
-  const MesClassesPage({super.key, this.onOuvrirClasse});
+  const MesClassesPage({super.key, this.onOuvrirClasse, this.ouvrable});
 
   /// Ce que fait une ligne pressee. Par defaut, l'Espace Classe (`ENS-07`) ;
   /// la demonstration le remplace pour rester dans ses donnees.
   final void Function(String groupeId)? onOuvrirClasse;
+
+  /// Vrai pour une Classe qui s'ouvre ; par defaut, toutes. La demonstration
+  /// n'ouvre que celle dont elle a les donnees (E3) : une ligne sans
+  /// destination n'a ni chevron ni appui.
+  final bool Function(String groupeId)? ouvrable;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -187,7 +192,12 @@ class MesClassesPage extends ConsumerWidget {
       corps = GroupeReglages(
         lignes: <LigneRubrique>[
           for (final ClasseListee l in lignes)
-            _ligne(l, () => ouvrir(l.groupe.id)),
+            _ligne(
+              l,
+              (ouvrable?.call(l.groupe.id) ?? true)
+                  ? () => ouvrir(l.groupe.id)
+                  : null,
+            ),
         ],
       );
     }
@@ -211,7 +221,7 @@ class MesClassesPage extends ConsumerWidget {
 /// effectif » et la prochaine seance en texte doux. En fin de ligne, seulement
 /// les exceptions : le point de rappel d'un cahier non valide (K-45) et la
 /// pastille « Remplacement » (E12). Toute la ligne ouvre la Classe.
-LigneRubrique _ligne(ClasseListee l, VoidCallback onPress) {
+LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
   final int? niveau = l.detail.niveau;
   final String? langue = l.detail.langue;
   final int n = l.groupe.nbMembres;

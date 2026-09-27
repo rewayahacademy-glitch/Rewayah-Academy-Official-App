@@ -151,7 +151,7 @@ void main() {
       await _toucher(tester, _offre);
       expect(find.text('Al-Fatiha'), findsWidgets);
       expect(find.text('Heure locale'), findsOne);
-      expect(find.text('3 élèves'), findsOne);
+      expect(find.text('3 élèves'), findsWidgets);
       expect(find.text('Assurer ce remplacement'), findsOne);
       expect(find.text('Pas cette fois'), findsOne);
     });
@@ -172,6 +172,14 @@ void main() {
         find.descendant(
           of: _carteRemplacement,
           matching: find.text('Remplacement'),
+        ),
+        findsOne,
+      );
+      // E11, doc 04 §17.3 : le remplacant ouvre la Classe remplacee.
+      expect(
+        find.descendant(
+          of: _carteRemplacement,
+          matching: find.text('Voir la Classe'),
         ),
         findsOne,
       );

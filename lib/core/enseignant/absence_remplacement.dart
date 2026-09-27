@@ -52,6 +52,7 @@ class OffreRemplacement {
     required this.debut,
     required this.fin,
     required this.nbEleves,
+    this.groupeId,
   });
 
   /// La seance a assurer.
@@ -68,6 +69,11 @@ class OffreRemplacement {
 
   /// Le nombre d'eleves.
   final int nbEleves;
+
+  /// La Classe remplacee : le remplacant y trouve l'objectif, le support, la
+  /// reprise et les eleves (doc 04 §17.3, question §33 n. 11). `null` si le
+  /// serveur ne la donne pas.
+  final String? groupeId;
 }
 
 /// Le port de declaration d'une absence.

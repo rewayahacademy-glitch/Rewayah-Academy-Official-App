@@ -37,7 +37,7 @@ void main() {
         );
         expect(
           lignes.map((ClasseListee l) => l.groupe.libelle).toList(),
-          <String>['An-Nour', 'Al-Fatiha', 'Al-Badr', 'Al-Ikhlas'],
+          <String>['An-Nour', 'Al-Badr', 'Al-Ikhlas'],
         );
         // Le cahier du 26 septembre d'Al-Badr n'est pas valide (K-45).
         expect(
@@ -92,19 +92,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Une seule carte groupee, quatre lignes.
+      // Une seule carte groupee, trois lignes : Al-Fatiha n'est qu'une offre
+      // de remplacement, pas encore acceptee (E1, E7).
       expect(find.byType(GroupeReglages), findsOneWidget);
-      for (final String nom in <String>[
-        'An-Nour',
-        'Al-Fatiha',
-        'Al-Badr',
-        'Al-Ikhlas',
-      ]) {
+      for (final String nom in <String>['An-Nour', 'Al-Badr', 'Al-Ikhlas']) {
         expect(find.text(nom), findsOneWidget);
       }
+      expect(find.text('Al-Fatiha'), findsNothing);
       // Dans l'ordre du tri.
       final double y1 = tester.getTopLeft(find.text('An-Nour')).dy;
-      final double y2 = tester.getTopLeft(find.text('Al-Fatiha')).dy;
+      final double y2 = tester.getTopLeft(find.text('Al-Badr')).dy;
       final double y4 = tester.getTopLeft(find.text('Al-Ikhlas')).dy;
       expect(y1 < y2 && y2 < y4, isTrue);
       // Pas de pastille « Remplacement » : l'offre d'Al-Fatiha n'est pas

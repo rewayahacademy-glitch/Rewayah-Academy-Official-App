@@ -225,7 +225,8 @@ class _Tuile extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final String libelle = _libelle(outil);
-    return Semantics(
+    final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final Widget tuile = Semantics(
       selected: actif,
       child: Pressable(
         onPress: onPress,
@@ -248,20 +249,30 @@ class _Tuile extends StatelessWidget {
                       .asIconTheme(size: AppSpacing.xxl),
                   child: Icon(_icone(outil).resoudre(selectionne: actif)),
                 ),
-                Ecart.vXs,
-                Text(
-                  libelle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: palette.inkStrong.applyTo(
-                    Theme.of(context).textTheme.labelSmall ?? const TextStyle(),
+                // Texte agrandi (DESIGN-GOV, 200 %) : l'icone seule, le
+                // libelle en infobulle et pour le lecteur d'ecran, plutot
+                // qu'un mot tronque.
+                if (!agrandi) ...<Widget>[
+                  Ecart.vXs,
+                  Text(
+                    libelle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: palette.inkStrong.applyTo(
+                      Theme.of(context).textTheme.labelSmall ??
+                          const TextStyle(),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
         ),
       ),
     );
+    // Le lecteur d'ecran lit deja le libelle par `Pressable`.
+    return agrandi
+        ? Tooltip(message: libelle, excludeFromSemantics: true, child: tuile)
+        : tuile;
   }
 }

@@ -285,7 +285,7 @@ class _CorpsState extends ConsumerState<_Corps> {
           libelle: t.enseignant.ficheGroupe.revue,
           niveau: NiveauAction.tertiaire,
           pleineLargeur: false,
-          onPress: () => GoRouter.of(context).go(Routes.revuePour(groupe.id)),
+          onPress: () => GoRouter.of(context).push(Routes.revuePour(groupe.id)),
         ),
       ),
     );

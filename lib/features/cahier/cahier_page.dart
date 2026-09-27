@@ -66,9 +66,15 @@ class CahierPage extends ConsumerWidget {
       brouillonCahierProvider(seanceId),
     );
 
+    // Doc 04 §20.8 : un cahier valide hors ligne se lit « En attente
+    // d'envoi » ; il ne rouvre pas le formulaire (question §33 n. 14).
+    final bool enFile =
+        ref.watch(cahiersEnFileProvider).value?.contains(seanceId) ?? false;
+
     return _Cahier(
       seanceId: seanceId,
       vue: VueCahier.depuis(lecture: lecture),
+      enFile: enFile,
     );
   }
 }
@@ -78,10 +84,17 @@ class CahierPage extends ConsumerWidget {
 /// Une entree absente de la carte **est** la decision par defaut,
 /// « Continuer » : le chemin nominal ne construit aucun objet.
 class _Cahier extends ConsumerStatefulWidget {
-  const _Cahier({required this.seanceId, required this.vue});
+  const _Cahier({
+    required this.seanceId,
+    required this.vue,
+    this.enFile = false,
+  });
 
   final String seanceId;
   final VueCahier vue;
+
+  /// Vrai quand ce cahier, deja valide, attend le serveur dans la file locale.
+  final bool enFile;
 
   @override
   ConsumerState<_Cahier> createState() => _CahierState();
@@ -153,7 +166,8 @@ class _CahierState extends ConsumerState<_Cahier> {
   @override
   Widget build(BuildContext context) {
     final VueCahier vue = widget.vue;
-    final SortCahier? sort = _sort;
+    final SortCahier? sort =
+        _sort ?? (widget.enFile && !_enCorrection ? SortCahier.enFile : null);
     _proposerReprise(vue);
 
     if (sort != null) {
@@ -354,7 +368,9 @@ class _CahierState extends ConsumerState<_Cahier> {
       if (!mounted) {
         return;
       }
-      ref.invalidate(cahiersEnRetardProvider);
+      ref
+        ..invalidate(cahiersEnRetardProvider)
+        ..invalidate(cahiersEnFileProvider);
       final bool correction = _enCorrection;
       setState(() {
         _envoiEnCours = false;

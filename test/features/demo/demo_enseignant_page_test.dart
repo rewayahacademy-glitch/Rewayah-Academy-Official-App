@@ -45,7 +45,13 @@ void main() {
       for (final ClasseEnseignantDemo c in DonneesEnseignantDemo.classes) c.nom,
     ];
     expect(noms, <String>['An-Nour', 'Al-Fatiha', 'Al-Badr', 'Al-Ikhlas']);
-    expect(DonneesEnseignantDemo.classes.first.eleves, hasLength(4));
+    // An-Nour : les eleves de la demonstration de Classe (CL-4), partout.
+    expect(DonneesEnseignantDemo.classes.first.eleves, hasLength(3));
+    // Al-Fatiha n'est qu'une offre de remplacement : hors de Mes classes.
+    expect(
+      DonneesEnseignantDemo.groupes().map((GroupeEnseignant g) => g.libelle),
+      <String>['An-Nour', 'Al-Badr', 'Al-Ikhlas'],
+    );
     expect(DonneesEnseignantDemo.classes[1].remplacement, isFalse);
     expect(DonneesEnseignantDemo.classes.last.prochaineSeance, isNull);
     for (final SeanceEnseignant s in DonneesEnseignantDemo.seances(
