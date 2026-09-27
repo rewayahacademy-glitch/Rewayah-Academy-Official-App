@@ -86,9 +86,6 @@ List<RouteBase> routesDemoControleur(String environnement) {
           faitsVisiteProvider.overrideWith(
             (Ref _) async => faitsVisiteDemoControleur(),
           ),
-          envoiCompteRenduProvider.overrideWithValue(
-            const EnvoiCompteRenduDemo(),
-          ),
         ],
         child: RepereDemonstration(
           child: CompteRenduControlePage(
@@ -139,6 +136,10 @@ FaitsVisite faitsVisiteDemoControleur() {
 class EnvoiCompteRenduDemo implements EnvoiCompteRendu {
   /// Cree le port.
   const EnvoiCompteRenduDemo();
+
+  @override
+  Future<void> transmettreVisite(String seanceId) =>
+      Future<void>.delayed(const Duration(milliseconds: 400));
 
   @override
   Future<void> envoyer(ChoixCompteRendu choix) =>
@@ -251,6 +252,9 @@ List<Override> surchargesCoquilleControleurDemo(EtatDemoControleur etat) =>
       missionControleProvider.overrideWith(
         (Ref _) async => missionDemoControleur(etat),
       ),
+      // Transmission et envoi simules (CT-4) : rien ne part, la reponse
+      // arrive apres un court delai. Lu aussi par « Reessayer » du Controle.
+      envoiCompteRenduProvider.overrideWithValue(const EnvoiCompteRenduDemo()),
     ];
 
 /// La mission de demonstration de [etat], dans le modele de CTR-01.

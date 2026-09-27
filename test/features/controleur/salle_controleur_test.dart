@@ -112,5 +112,12 @@ void main() {
     expect(find.byType(CompteRenduControlePage), findsOneWidget);
     expect(find.text(t.controleur.compteRendu.titre), findsWidgets);
     expect(Routes.controleurCompteRendu, '/controleur/compte-rendu');
+    // La visite part a l'arrivee (CT-4) : sa reponse simulee arrive ensuite.
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(t.controleur.compteRendu.visiteTransmise),
+      findsOneWidget,
+    );
   });
 }

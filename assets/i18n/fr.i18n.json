@@ -3173,6 +3173,9 @@
       "envoyeTitre": "Compte rendu envoyé",
       "envoyePhrase": "Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».",
       "ecrireAdmin": "Écrire à l'administration",
+      "visiteEnCours": "Transmission de la visite à l'administration en cours.",
+      "visiteTransmise": "La visite et ses faits sont transmis à l'administration.",
+      "visiteEchec": "La visite n'a pas encore pu être transmise à l'administration.",
       "aTerminer": "Compte rendu à terminer",
       "reprendre": "Reprendre le compte rendu"
     },

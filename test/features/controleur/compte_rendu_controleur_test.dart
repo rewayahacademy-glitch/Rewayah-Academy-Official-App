@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -15,11 +16,30 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
+import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
-Future<void> _monter(WidgetTester tester, GoRouter routeur) async {
-  tester.view.physicalSize = const Size(1280, 900);
+/// Echoue au premier essai de transmission, reussit ensuite.
+class _PortEchecPuisSucces implements EnvoiCompteRendu {
+  int essais = 0;
+
+  @override
+  Future<void> transmettreVisite(String seanceId) async {
+    essais++;
+    if (essais == 1) throw StateError('pas de reponse');
+  }
+
+  @override
+  Future<void> envoyer(ChoixCompteRendu choix) async {}
+}
+
+Future<void> _monter(
+  WidgetTester tester,
+  GoRouter routeur, {
+  Size taille = const Size(1280, 900),
+}) async {
+  tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
@@ -43,8 +63,11 @@ GoRouter _routeurDemo() => GoRouter(
   routes: routesDemoControleur('dev'),
 );
 
-Future<void> _jusquAuCompteRendu(WidgetTester tester) async {
-  await _monter(tester, _routeurDemo());
+Future<void> _jusquAuCompteRendu(
+  WidgetTester tester, {
+  Size taille = const Size(1280, 900),
+}) async {
+  await _monter(tester, _routeurDemo(), taille: taille);
   await tester.tap(find.byKey(ControleControleurPage.commencerKey));
   await tester.pumpAndSettle();
   await tester.tap(find.text(t.salle.quitter));
@@ -104,6 +127,123 @@ void main() {
     expect(find.text(r.aTerminer), findsNothing);
   });
 
+  testWidgets('Quitter puis Plus tard : les faits de la visite sont partis', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, _routeurDemo());
+    final r = t.controleur.compteRendu;
+    await tester.tap(find.byKey(ControleControleurPage.commencerKey));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.salle.quitter));
+    await tester.pump();
+    await tester.pump();
+    // La visite part des l'arrivee, sans geste du controleur (C2) ; aucun
+    // succes avant la reponse.
+    expect(find.byType(CompteRenduControlePage), findsOneWidget);
+    expect(find.text(r.visiteEnCours), findsOneWidget);
+    expect(find.text(r.visiteTransmise), findsNothing);
+
+    // « Plus tard » tout de suite : la transmission n'est pas retenue.
+    await tester.tap(find.byKey(CompteRenduControlePage.plusTardKey));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+    expect(find.byType(ControleControleurPage), findsOneWidget);
+    expect(find.text(r.aTerminer), findsOneWidget);
+    expect(find.text(r.visiteTransmise), findsOneWidget);
+    expect(find.text(r.visiteEnCours), findsNothing);
+
+    // La reprise garde l'etat : rien ne repart en double.
+    await tester.tap(find.byKey(ControleControleurPage.reprendreKey));
+    await tester.pumpAndSettle();
+    expect(find.text(r.visiteTransmise), findsOneWidget);
+    expect(find.text(r.visiteEnCours), findsNothing);
+  });
+
+  testWidgets('Transmission de la visite en echec : le dit, puis nouvel essai', (
+    WidgetTester tester,
+  ) async {
+    final _PortEchecPuisSucces port = _PortEchecPuisSucces();
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          missionControleProvider.overrideWith(
+            (Ref _) async => missionDemoControleur(EtatDemoControleur.enDirect),
+          ),
+          envoiCompteRenduProvider.overrideWithValue(port),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            home: const CompteRenduControlePage(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final r = t.controleur.compteRendu;
+    expect(port.essais, 1);
+    expect(find.text(r.visiteEchec), findsOneWidget);
+    expect(find.text(r.visiteTransmise), findsNothing);
+
+    await tester.tap(find.byKey(LigneTransmissionVisite.reessayerKey));
+    await tester.pumpAndSettle();
+    expect(port.essais, 2);
+    expect(find.text(r.visiteTransmise), findsOneWidget);
+    expect(find.byKey(LigneTransmissionVisite.reessayerKey), findsNothing);
+  });
+
+  testWidgets('Plus tard et Envoyer : cote a cote sur ordinateur', (
+    WidgetTester tester,
+  ) async {
+    await _jusquAuCompteRendu(tester);
+    await tester.tap(
+      find.byKey(CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler)),
+    );
+    await tester.pumpAndSettle();
+    final Rect plusTard = tester.getRect(
+      find.byKey(CompteRenduControlePage.plusTardKey),
+    );
+    final Rect envoyer = tester.getRect(
+      find.byKey(CompteRenduControlePage.actionKey),
+    );
+    // Meme ligne, le dominant en dernier, aucun ne s'etire.
+    expect(plusTard.center.dy, closeTo(envoyer.center.dy, 1));
+    expect(envoyer.left, greaterThan(plusTard.right));
+    expect(plusTard.width, lessThan(320));
+    // Les deux tiennent dans la colonne de 640 : aucun ne prend la largeur.
+    expect(envoyer.right - plusTard.left, lessThanOrEqualTo(640));
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('Plus tard et Envoyer : empiles pleine largeur sur mobile', (
+    WidgetTester tester,
+  ) async {
+    await _jusquAuCompteRendu(tester, taille: const Size(390, 844));
+    await tester.tap(
+      find.byKey(CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler)),
+    );
+    await tester.pumpAndSettle();
+    final Rect plusTard = tester.getRect(
+      find.byKey(CompteRenduControlePage.plusTardKey),
+    );
+    final Rect envoyer = tester.getRect(
+      find.byKey(CompteRenduControlePage.actionKey),
+    );
+    expect(envoyer.bottom, lessThanOrEqualTo(plusTard.top));
+    expect(plusTard.width, closeTo(envoyer.width, 1));
+    expect(plusTard.width, greaterThan(300));
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('Plus tard : compte rendu a terminer, puis reprise', (
     WidgetTester tester,
   ) async {
@@ -111,6 +251,7 @@ void main() {
     final r = t.controleur.compteRendu;
 
     await tester.tap(find.byKey(CompteRenduControlePage.plusTardKey));
+    await tester.pump(const Duration(milliseconds: 500));
     await tester.pumpAndSettle();
     expect(find.byType(ControleControleurPage), findsOneWidget);
     expect(find.text(r.aTerminer), findsOneWidget);

@@ -8687,6 +8687,15 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Écrire à l'administration'
 	String get ecrireAdmin => 'Écrire à l\'administration';
 
+	/// fr: 'Transmission de la visite à l'administration en cours.'
+	String get visiteEnCours => 'Transmission de la visite à l\'administration en cours.';
+
+	/// fr: 'La visite et ses faits sont transmis à l'administration.'
+	String get visiteTransmise => 'La visite et ses faits sont transmis à l\'administration.';
+
+	/// fr: 'La visite n'a pas encore pu être transmise à l'administration.'
+	String get visiteEchec => 'La visite n\'a pas encore pu être transmise à l\'administration.';
+
 	/// fr: 'Compte rendu à terminer'
 	String get aTerminer => 'Compte rendu à terminer';
 
@@ -15625,6 +15634,9 @@ extension on Traductions {
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
+			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
+			'controleur.compteRendu.visiteTransmise' => 'La visite et ses faits sont transmis à l\'administration.',
+			'controleur.compteRendu.visiteEchec' => 'La visite n\'a pas encore pu être transmise à l\'administration.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.echanges.titre' => 'Échanges',
@@ -15958,11 +15970,11 @@ extension on Traductions {
 			'tc.observation.disponibilite.visitesEpuisees' => 'Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.tempsEpuiseTitre' => 'Temps d\'observation écoulé',
 			'tc.observation.disponibilite.tempsEpuise' => 'Votre temps d\'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
 			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
 			'tc.observation.disponibilite.seanceNonTenue' => 'Elle a été annulée, reportée ou n\'a pas été tenue.',

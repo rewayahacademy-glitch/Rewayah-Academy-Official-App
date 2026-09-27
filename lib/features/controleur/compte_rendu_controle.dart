@@ -2,9 +2,12 @@
 // la visite, le choix du controleur et l'envoi.
 //
 // Decision du directeur du 27/09/2026 (C2) : a la sortie de la salle, la
-// visite et ses faits partent AUTOMATIQUEMENT a l'administration ; l'envoi
-// ne fait que joindre la reponse du controleur au meme rapport. Aucun
-// interrupteur de partage.
+// visite et ses faits partent AUTOMATIQUEMENT a l'administration
+// (`transmettreVisite`, des l'arrivee sur le compte rendu, que le controleur
+// reponde, choisisse « Plus tard » ou ferme l'app) ; l'envoi ne fait que
+// joindre la reponse du controleur au meme rapport. Aucun interrupteur de
+// partage. L'app fermee pendant l'envoi : le serveur doit aussi creer le
+// rapport a la sortie annoncee (CT-BR).
 //
 // Les fournisseurs par defaut sont neutres : aucun fait, et un envoi qui
 // echoue honnetement, faute de serveur (K-28). La source reelle (BR-1,
@@ -76,6 +79,12 @@ enum ChoixCompteRendu {
 
 /// Le port d'envoi du compte rendu. L'implementation reelle attend BR-1.
 abstract interface class EnvoiCompteRendu {
+  /// Transmet a l'administration la visite de [seanceId] et ses faits
+  /// automatiques, des la sortie de la salle, sans geste du controleur (C2).
+  /// Doit etre idempotent cote serveur. Leve une exception si le serveur n'a
+  /// pas confirme.
+  Future<void> transmettreVisite(String seanceId);
+
   /// Joint [choix] au rapport de la visite. Leve une exception si le serveur
   /// n'a pas confirme : aucun succes n'est affiche sans reponse.
   Future<void> envoyer(ChoixCompteRendu choix);
@@ -87,8 +96,49 @@ class EnvoiCompteRenduIndisponible implements EnvoiCompteRendu {
   const EnvoiCompteRenduIndisponible();
 
   @override
+  Future<void> transmettreVisite(String seanceId) async =>
+      throw StateError('Aucun serveur branche (BR-1).');
+
+  @override
   Future<void> envoyer(ChoixCompteRendu choix) async =>
       throw StateError('Aucun serveur branche (BR-1).');
+}
+
+/// Ou en est la transmission automatique de la visite.
+enum TransmissionVisite {
+  /// Partie, sans reponse encore.
+  enCours,
+
+  /// Confirmee par le serveur.
+  transmise,
+
+  /// Le serveur n'a pas confirme : un nouvel essai est propose.
+  echec,
+}
+
+/// Transmet la visite a terminer, si elle n'est ni partie ni en route.
+///
+/// Le port et le notifier sont lus AVANT l'attente : la page peut etre quittee
+/// (« Plus tard ») pendant l'envoi, qui continue et met l'etat a jour dans le
+/// conteneur racine.
+Future<void> transmettreVisiteATerminer(WidgetRef ref) async {
+  final CompteRenduATerminer suivi = ref.read(
+    compteRenduATerminerProvider.notifier,
+  );
+  final CompteRenduEnSuspens? visite = ref.read(compteRenduATerminerProvider);
+  if (visite == null ||
+      visite.transmission == TransmissionVisite.enCours ||
+      visite.transmission == TransmissionVisite.transmise) {
+    return;
+  }
+  final EnvoiCompteRendu port = ref.read(envoiCompteRenduProvider);
+  suivi.marquer(visite.seanceId, TransmissionVisite.enCours);
+  try {
+    await port.transmettreVisite(visite.seanceId);
+    suivi.marquer(visite.seanceId, TransmissionVisite.transmise);
+  } on Object {
+    suivi.marquer(visite.seanceId, TransmissionVisite.echec);
+  }
 }
 
 /// Le port d'envoi ; neutre par defaut.
@@ -104,8 +154,20 @@ class CompteRenduATerminer extends Notifier<CompteRenduEnSuspens?> {
   @override
   CompteRenduEnSuspens? build() => null;
 
-  /// Marque le compte rendu de la visite comme a terminer.
-  void ouvrir(CompteRenduEnSuspens visite) => state = visite;
+  /// Marque le compte rendu de la visite comme a terminer. Une reprise de la
+  /// meme visite garde l'etat de sa transmission.
+  void ouvrir(CompteRenduEnSuspens visite) {
+    if (state?.seanceId == visite.seanceId) return;
+    state = visite;
+  }
+
+  /// Met a jour la transmission de la visite [seanceId], si c'est toujours
+  /// elle qui reste a terminer.
+  void marquer(String seanceId, TransmissionVisite transmission) {
+    final CompteRenduEnSuspens? v = state;
+    if (v == null || v.seanceId != seanceId) return;
+    state = v.avec(transmission);
+  }
 
   /// Le compte rendu est envoye : plus rien a terminer.
   void terminer() => state = null;
@@ -115,13 +177,32 @@ class CompteRenduATerminer extends Notifier<CompteRenduEnSuspens?> {
 @immutable
 class CompteRenduEnSuspens {
   /// Cree l'entree.
-  const CompteRenduEnSuspens({required this.classe, required this.debut});
+  const CompteRenduEnSuspens({
+    required this.seanceId,
+    required this.classe,
+    required this.debut,
+    this.transmission,
+  });
+
+  /// La seance observee.
+  final String seanceId;
 
   /// La Classe observee.
   final String classe;
 
   /// Le debut prevu de la seance.
   final DateTime debut;
+
+  /// La transmission automatique de la visite, nulle avant le depart.
+  final TransmissionVisite? transmission;
+
+  /// La meme visite, sa transmission changee.
+  CompteRenduEnSuspens avec(TransmissionVisite etat) => CompteRenduEnSuspens(
+    seanceId: seanceId,
+    classe: classe,
+    debut: debut,
+    transmission: etat,
+  );
 }
 
 /// Le compte rendu a terminer, ou nul.

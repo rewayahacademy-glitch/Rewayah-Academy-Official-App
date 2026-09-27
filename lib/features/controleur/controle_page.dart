@@ -19,6 +19,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'compte_rendu_controle.dart';
+import 'compte_rendu_controle_page.dart' show LigneTransmissionVisite;
 import 'mission_controle.dart';
 
 /// `CTR-01` Controle (CT-2) : **une seule** carte de mission, jamais un
@@ -147,6 +148,10 @@ class _BlocATerminer extends StatelessWidget {
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),
+          // La visite part sans attendre la reponse (C2) : son etat reste
+          // visible ici apres « Plus tard ».
+          Ecart.vMd,
+          const LigneTransmissionVisite(),
           Ecart.vLg,
           Align(
             alignment: AlignmentDirectional.centerEnd,

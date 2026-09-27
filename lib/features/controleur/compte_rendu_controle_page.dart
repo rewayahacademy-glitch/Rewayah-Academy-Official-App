@@ -14,6 +14,8 @@
 //   dit (K-28) ;
 // - « Plus tard » ramene au Controle, ou le compte rendu reste « a terminer ».
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +25,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -88,11 +91,20 @@ class _CompteRenduControlePageState
     super.initState();
     // Tant que la reponse n'est pas envoyee, le compte rendu est « a
     // terminer » (doc 08 CTR-01) ; en memoire seulement (C12).
+    // La visite et ses faits partent aussitot a l'administration (C2), sans
+    // attendre la reponse du controleur : « Plus tard » ne la retient pas.
     ref.read(missionControleProvider.future).then((MissionControle? m) {
       if (!mounted || m == null || _etape == _Etape.envoye) return;
       ref
           .read(compteRenduATerminerProvider.notifier)
-          .ouvrir(CompteRenduEnSuspens(classe: m.classe, debut: m.debut));
+          .ouvrir(
+            CompteRenduEnSuspens(
+              seanceId: m.seanceId,
+              classe: m.classe,
+              debut: m.debut,
+            ),
+          );
+      unawaited(transmettreVisiteATerminer(ref));
     }, onError: (Object _) {});
   }
 
@@ -171,6 +183,7 @@ class _CompteRenduControlePageState
     );
     final ChoixCompteRendu? choix = _choix;
     final bool envoi = choix == ChoixCompteRendu.rienASignaler;
+    final bool compact = AppGabarit.de(context) == Gabarit.mobile;
 
     return PageShell(
       titre: t.controleur.compteRendu.titre,
@@ -187,6 +200,8 @@ class _CompteRenduControlePageState
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const _FaitsAutomatiques(),
+                Ecart.vMd,
+                const LigneTransmissionVisite(),
                 Ecart.vXxl,
                 Semantics(
                   header: true,
@@ -252,32 +267,28 @@ class _CompteRenduControlePageState
                   ),
                   Ecart.vLg,
                 ],
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: <Widget>[
-                    ActionPrincipale(
-                      key: CompteRenduControlePage.plusTardKey,
-                      libelle: t.controleur.compteRendu.plusTard,
-                      niveau: NiveauAction.secondaire,
-                      pleineLargeur: false,
-                      onPress: _enCours ? null : _revenir,
-                    ),
-                    if (choix != null)
-                      ApparitionDouce(
-                        child: ActionPrincipale(
-                          key: CompteRenduControlePage.actionKey,
-                          libelle: envoi
-                              ? t.controleur.compteRendu.envoyer
-                              : t.commun.continuer,
-                          pleineLargeur: false,
-                          enCours: _enCours,
-                          onPress: _agir,
+                _Actions(
+                  plusTard: ActionPrincipale(
+                    key: CompteRenduControlePage.plusTardKey,
+                    libelle: t.controleur.compteRendu.plusTard,
+                    niveau: NiveauAction.secondaire,
+                    pleineLargeur: compact,
+                    onPress: _enCours ? null : _revenir,
+                  ),
+                  dominant: choix == null
+                      ? null
+                      : ApparitionDouce(
+                          child: ActionPrincipale(
+                            key: CompteRenduControlePage.actionKey,
+                            libelle: envoi
+                                ? t.controleur.compteRendu.envoyer
+                                : t.commun.continuer,
+                            pleineLargeur: compact,
+                            enCours: _enCours,
+                            onPress: _agir,
+                          ),
                         ),
-                      ),
-                  ],
+                  compact: compact,
                 ),
                 Semantics(
                   liveRegion: true,
@@ -298,6 +309,113 @@ class _CompteRenduControlePageState
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// « Plus tard » et le bouton dominant : cote a cote au bord de fin sur
+/// ordinateur, le dominant en dernier (K-42) ; empiles en pleine largeur sur
+/// mobile, le dominant en premier. Une `Row` et non un `Wrap` : dans un
+/// `Wrap`, `ActionPrincipale` s'etire sur toute la largeur.
+class _Actions extends StatelessWidget {
+  const _Actions({
+    required this.plusTard,
+    required this.dominant,
+    required this.compact,
+  });
+
+  final Widget plusTard;
+  final Widget? dominant;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget? d = dominant;
+    if (compact) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (d != null) ...<Widget>[d, Ecart.vSm],
+          plusTard,
+        ],
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        plusTard,
+        if (d != null) ...<Widget>[Ecart.hSm, d],
+      ],
+    );
+  }
+}
+
+/// L'etat de la transmission automatique de la visite (C2), dit honnetement :
+/// en cours, transmise (seulement apres la reponse du serveur), ou pas encore
+/// transmise, avec un nouvel essai.
+class LigneTransmissionVisite extends ConsumerWidget {
+  /// Cree la ligne.
+  const LigneTransmissionVisite({super.key});
+
+  /// La cle de « Reessayer ».
+  static const Key reessayerKey = ValueKey<String>('ctr03-visite-reessayer');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final CompteRenduEnSuspens? visite = ref.watch(
+      compteRenduATerminerProvider,
+    );
+    final TransmissionVisite? etat = visite?.transmission;
+    if (etat == null) return const SizedBox.shrink();
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final r = t.controleur.compteRendu;
+    final (String texte, AppIcon icone) = switch (etat) {
+      TransmissionVisite.enCours => (r.visiteEnCours, AppIcons.info),
+      TransmissionVisite.transmise => (r.visiteTransmise, AppIcons.succes),
+      TransmissionVisite.echec => (r.visiteEchec, AppIcons.signaler),
+    };
+    return Semantics(
+      liveRegion: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              IconTheme(
+                data: palette.inkMuted.asIconTheme(size: 18),
+                child: Icon(icone.resoudre()),
+              ),
+              Ecart.hSm,
+              Expanded(
+                child: Text(
+                  texte,
+                  style: (etat == TransmissionVisite.echec
+                          ? palette.inkStrong
+                          : palette.inkMuted)
+                      .applyTo(textes.bodyMedium ?? const TextStyle()),
+                ),
+              ),
+            ],
+          ),
+          if (etat == TransmissionVisite.echec) ...<Widget>[
+            Ecart.vSm,
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ActionPrincipale(
+                key: reessayerKey,
+                libelle: t.commun.reessayer,
+                niveau: NiveauAction.secondaire,
+                pleineLargeur: false,
+                onPress: () => unawaited(transmettreVisiteATerminer(ref)),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
