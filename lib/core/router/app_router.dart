@@ -50,10 +50,13 @@ import '../../features/compte/securite_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
+import '../../features/controleur/compte_rendu_controle.dart'
+    show ChoixCompteRendu;
 import '../../features/controleur/compte_rendu_controle_page.dart';
 import '../../features/controleur/controle_page.dart';
 import '../../features/controleur/echanges_controleur_page.dart';
 import '../../features/controleur/historique_controleur_page.dart';
+import '../../features/controleur/observation_controle_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
@@ -1102,11 +1105,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) =>
             const CompteRenduControlePage(),
       ),
-      // CTR-03A, provisoire jusqu'a CT-5.
+      // CTR-03A, l'observation structuree (CT-5) : « Ajouter une
+      // observation » ou « Signaler un point important », porte par extra.
       GoRoute(
         path: Routes.controleurObservation,
-        builder: (BuildContext _, GoRouterState _) =>
-            const ObservationControlePage(),
+        builder: (BuildContext _, GoRouterState etat) =>
+            ObservationControlePage(
+              choix: etat.extra is ChoixCompteRendu
+                  ? etat.extra! as ChoixCompteRendu
+                  : ChoixCompteRendu.ajouterObservation,
+            ),
       ),
 
       // Galerie de developpement, absente des versions de production.

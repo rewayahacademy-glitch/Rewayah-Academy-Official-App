@@ -32,7 +32,6 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
-import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
@@ -230,8 +229,7 @@ class _CompteRenduControlePageState
                         },
                         icone: switch (c) {
                           ChoixCompteRendu.rienASignaler => AppIcons.succes,
-                          ChoixCompteRendu.ajouterObservation =>
-                            AppIcons.noter,
+                          ChoixCompteRendu.ajouterObservation => AppIcons.noter,
                           ChoixCompteRendu.pointImportant => AppIcons.signaler,
                         },
                       ),
@@ -394,10 +392,11 @@ class LigneTransmissionVisite extends ConsumerWidget {
               Expanded(
                 child: Text(
                   texte,
-                  style: (etat == TransmissionVisite.echec
-                          ? palette.inkStrong
-                          : palette.inkMuted)
-                      .applyTo(textes.bodyMedium ?? const TextStyle()),
+                  style:
+                      (etat == TransmissionVisite.echec
+                              ? palette.inkStrong
+                              : palette.inkMuted)
+                          .applyTo(textes.bodyMedium ?? const TextStyle()),
                 ),
               ),
             ],
@@ -497,8 +496,11 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
                       AsyncData<FaitsVisite?>(:final FaitsVisite? value)
                           when value != null =>
                         _Lignes(faits: value),
-                      AsyncData<FaitsVisite?>() || AsyncError<FaitsVisite?>() =>
-                        Text(t.controleur.compteRendu.faitsAbsents, style: doux),
+                      AsyncData<FaitsVisite?>() ||
+                      AsyncError<FaitsVisite?>() => Text(
+                        t.controleur.compteRendu.faitsAbsents,
+                        style: doux,
+                      ),
                       _ => Text(
                         t.controleur.compteRendu.faitsChargement,
                         style: doux,
@@ -568,25 +570,4 @@ class _Lignes extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Observation (CTR-03A) : page provisoire, construite par CT-5.
-class ObservationControlePage extends StatelessWidget {
-  /// Cree la page.
-  const ObservationControlePage({super.key, this.onRetour});
-
-  /// Le retour au compte rendu ; par defaut, sa route.
-  final VoidCallback? onRetour;
-
-  @override
-  Widget build(BuildContext context) => PageShell(
-    titre: t.controleur.compteRendu.ajouterObservation,
-    onRetour:
-        onRetour ??
-        () => GoRouter.of(context).go(Routes.controleurCompteRendu),
-    child: EmptyState(
-      message: t.controleur.compteRendu.provisoire,
-      registre: RegistreVide.subi,
-    ),
-  );
 }

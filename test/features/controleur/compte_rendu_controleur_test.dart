@@ -17,6 +17,8 @@ import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
@@ -32,6 +34,9 @@ class _PortEchecPuisSucces implements EnvoiCompteRendu {
 
   @override
   Future<void> envoyer(ChoixCompteRendu choix) async {}
+
+  @override
+  Future<void> envoyerObservation(ObservationControle observation) async {}
 }
 
 Future<void> _monter(
@@ -102,7 +107,9 @@ void main() {
 
     // Choisir n'envoie rien : le bouton apparait.
     await tester.tap(
-      find.byKey(CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler)),
+      find.byKey(
+        CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+      ),
     );
     await tester.pumpAndSettle();
     expect(find.text(r.notice), findsOneWidget);
@@ -160,51 +167,55 @@ void main() {
     expect(find.text(r.visiteEnCours), findsNothing);
   });
 
-  testWidgets('Transmission de la visite en echec : le dit, puis nouvel essai', (
-    WidgetTester tester,
-  ) async {
-    final _PortEchecPuisSucces port = _PortEchecPuisSucces();
-    tester.view.physicalSize = const Size(1280, 900);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: <Override>[
-          missionControleProvider.overrideWith(
-            (Ref _) async => missionDemoControleur(EtatDemoControleur.enDirect),
-          ),
-          envoiCompteRenduProvider.overrideWithValue(port),
-        ],
-        child: TranslationProvider(
-          child: MaterialApp(
-            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-            locale: AppLocale.fr.flutterLocale,
-            supportedLocales: AppLocaleUtils.supportedLocales,
-            localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            home: const CompteRenduControlePage(),
+  testWidgets(
+    'Transmission de la visite en echec : le dit, puis nouvel essai',
+    (WidgetTester tester) async {
+      final _PortEchecPuisSucces port = _PortEchecPuisSucces();
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            missionControleProvider.overrideWith(
+              (Ref _) async =>
+                  missionDemoControleur(EtatDemoControleur.enDirect),
+            ),
+            envoiCompteRenduProvider.overrideWithValue(port),
+          ],
+          child: TranslationProvider(
+            child: MaterialApp(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: AppLocale.fr.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              home: const CompteRenduControlePage(),
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    final r = t.controleur.compteRendu;
-    expect(port.essais, 1);
-    expect(find.text(r.visiteEchec), findsOneWidget);
-    expect(find.text(r.visiteTransmise), findsNothing);
+      );
+      await tester.pumpAndSettle();
+      final r = t.controleur.compteRendu;
+      expect(port.essais, 1);
+      expect(find.text(r.visiteEchec), findsOneWidget);
+      expect(find.text(r.visiteTransmise), findsNothing);
 
-    await tester.tap(find.byKey(LigneTransmissionVisite.reessayerKey));
-    await tester.pumpAndSettle();
-    expect(port.essais, 2);
-    expect(find.text(r.visiteTransmise), findsOneWidget);
-    expect(find.byKey(LigneTransmissionVisite.reessayerKey), findsNothing);
-  });
+      await tester.tap(find.byKey(LigneTransmissionVisite.reessayerKey));
+      await tester.pumpAndSettle();
+      expect(port.essais, 2);
+      expect(find.text(r.visiteTransmise), findsOneWidget);
+      expect(find.byKey(LigneTransmissionVisite.reessayerKey), findsNothing);
+    },
+  );
 
   testWidgets('Plus tard et Envoyer : cote a cote sur ordinateur', (
     WidgetTester tester,
   ) async {
     await _jusquAuCompteRendu(tester);
     await tester.tap(
-      find.byKey(CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler)),
+      find.byKey(
+        CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+      ),
     );
     await tester.pumpAndSettle();
     final Rect plusTard = tester.getRect(
@@ -228,7 +239,9 @@ void main() {
   ) async {
     await _jusquAuCompteRendu(tester, taille: const Size(390, 844));
     await tester.tap(
-      find.byKey(CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler)),
+      find.byKey(
+        CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+      ),
     );
     await tester.pumpAndSettle();
     final Rect plusTard = tester.getRect(
@@ -260,7 +273,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(CompteRenduControlePage), findsOneWidget);
 
-    // Ajouter une observation mene a CTR-03A (provisoire, CT-5).
+    // Ajouter une observation mene a CTR-03A (CT-5).
     await tester.tap(
       find.byKey(
         CompteRenduControlePage.cleChoix(ChoixCompteRendu.ajouterObservation),
@@ -290,7 +303,9 @@ void main() {
     );
     final r = t.controleur.compteRendu;
     await tester.tap(
-      find.byKey(CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler)),
+      find.byKey(
+        CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+      ),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(CompteRenduControlePage.actionKey));

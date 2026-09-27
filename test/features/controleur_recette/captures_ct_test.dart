@@ -12,6 +12,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
@@ -227,6 +229,98 @@ void main() {
               tester,
               'ct4_compte_rendu_${nom}_$s',
               cheminDemoCompteRenduControleur,
+              taille,
+              mode: mode,
+              avant: avant,
+            );
+          });
+        }
+      }
+    }
+  });
+
+  group('Capture : CT-5, CTR-03A observation', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    // Quatre etats par la VRAIE route `/demo/controleur/compte-rendu/
+    // observation` : nature, personne avec le roster, texte requis,
+    // recapitulatif avec la notice.
+    Future<void> toucher(WidgetTester tester, Finder cible) async {
+      await tester.ensureVisible(cible);
+      await tester.pumpAndSettle();
+      await tester.tap(cible);
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> continuer(WidgetTester tester) =>
+        toucher(tester, find.text(t.commun.continuer).last);
+
+    Future<void> nature(WidgetTester tester) => toucher(
+      tester,
+      find.byKey(
+        ObservationControlePage.cleNature(NatureObservation.interventionAdmin),
+      ),
+    );
+
+    Future<void> personne(WidgetTester tester) async {
+      await nature(tester);
+      await continuer(tester);
+      await toucher(
+        tester,
+        find.byKey(
+          ObservationControlePage.cleDomaine(DomaineObservation.pedagogie),
+        ),
+      );
+      await continuer(tester);
+      await toucher(
+        tester,
+        find.byKey(
+          ObservationControlePage.clePersonne(PersonneConcernee.elevePrecis),
+        ),
+      );
+      await toucher(
+        tester,
+        find.byKey(ObservationControlePage.cleEleve('demo-eleve-0')),
+      );
+    }
+
+    Future<void> texte(WidgetTester tester) async {
+      await personne(tester);
+      await continuer(tester);
+      await continuer(tester);
+    }
+
+    Future<void> recapitulatif(WidgetTester tester) async {
+      await texte(tester);
+      await tester.enterText(
+        find.byKey(ObservationControlePage.texteKey),
+        "L'élève n'a pas eu la parole pendant la récitation.",
+      );
+      await tester.pumpAndSettle();
+      await continuer(tester);
+    }
+
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 844)),
+      ('768', const Size(768, 1000)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String s = '${l}_${mode.name}';
+        for (final (String nom, Future<void> Function(WidgetTester) avant)
+            in <(String, Future<void> Function(WidgetTester))>[
+              ('nature', nature),
+              ('personne', personne),
+              ('texte_requis', texte),
+              ('recapitulatif', recapitulatif),
+            ]) {
+          testWidgets('ct5_observation_${nom}_$s', (WidgetTester tester) async {
+            await _capturerRoute(
+              tester,
+              'ct5_observation_${nom}_$s',
+              cheminDemoObservationControleur,
               taille,
               mode: mode,
               avant: avant,

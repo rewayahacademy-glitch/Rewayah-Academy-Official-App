@@ -2203,6 +2203,7 @@ class Traductions$controleur$fr {
 	// Translations
 	late final Traductions$controleur$historique$fr historique = Traductions$controleur$historique$fr.internal(_root);
 	late final Traductions$controleur$compteRendu$fr compteRendu = Traductions$controleur$compteRendu$fr.internal(_root);
+	late final Traductions$controleur$observation$fr observation = Traductions$controleur$observation$fr.internal(_root);
 	late final Traductions$controleur$echanges$fr echanges = Traductions$controleur$echanges$fr.internal(_root);
 	late final Traductions$controleur$demo$fr demo = Traductions$controleur$demo$fr.internal(_root);
 	late final Traductions$controleur$controle$fr controle = Traductions$controleur$controle$fr.internal(_root);
@@ -8701,6 +8702,111 @@ class Traductions$controleur$compteRendu$fr {
 
 	/// fr: 'Reprendre le compte rendu'
 	String get reprendre => 'Reprendre le compte rendu';
+}
+
+// Path: controleur.observation
+class Traductions$controleur$observation$fr {
+	Traductions$controleur$observation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous signalez un point important : votre texte sera demandé.'
+	String get important => 'Vous signalez un point important : votre texte sera demandé.';
+
+	/// fr: 'Quelle est la nature de votre observation ?'
+	String get questionNature => 'Quelle est la nature de votre observation ?';
+
+	/// fr: 'Point positif'
+	String get pointPositif => 'Point positif';
+
+	/// fr: 'À suivre'
+	String get aSuivre => 'À suivre';
+
+	/// fr: 'Intervention Admin souhaitée'
+	String get interventionAdmin => 'Intervention Admin souhaitée';
+
+	/// fr: 'Quel domaine concerne-t-elle ?'
+	String get questionDomaine => 'Quel domaine concerne-t-elle ?';
+
+	/// fr: 'Pédagogie'
+	String get pedagogie => 'Pédagogie';
+
+	/// fr: 'Interaction avec les élèves'
+	String get interaction => 'Interaction avec les élèves';
+
+	/// fr: 'Gestion de la classe'
+	String get gestionClasse => 'Gestion de la classe';
+
+	/// fr: 'Respect du cadre'
+	String get respectCadre => 'Respect du cadre';
+
+	/// fr: 'Comportement / climat'
+	String get climat => 'Comportement / climat';
+
+	/// fr: 'Autre'
+	String get autre => 'Autre';
+
+	/// fr: 'Qui est concerné ?'
+	String get questionPersonne => 'Qui est concerné ?';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Classe entière'
+	String get classeEntiere => 'Classe entière';
+
+	/// fr: 'Élève précis'
+	String get elevePrecis => 'Élève précis';
+
+	/// fr: 'Aucun participant précis'
+	String get aucun => 'Aucun participant précis';
+
+	/// fr: 'Choisissez l'élève dans la liste de la Classe.'
+	String get questionEleve => 'Choisissez l\'élève dans la liste de la Classe.';
+
+	/// fr: 'La liste des élèves n'est pas disponible pour le moment.'
+	String get rosterIndisponible => 'La liste des élèves n\'est pas disponible pour le moment.';
+
+	/// fr: 'Qu'avez-vous observé ?'
+	String get questionTexte => 'Qu\'avez-vous observé ?';
+
+	/// fr: 'Votre texte est nécessaire pour cette observation.'
+	String get texteObligatoire => 'Votre texte est nécessaire pour cette observation.';
+
+	/// fr: 'Ce texte est facultatif.'
+	String get texteFacultatif => 'Ce texte est facultatif.';
+
+	/// fr: 'Votre remarque'
+	String get libelleTexte => 'Votre remarque';
+
+	/// fr: 'Décrivez seulement ce que vous avez observé.'
+	String get aideTexte => 'Décrivez seulement ce que vous avez observé.';
+
+	/// fr: 'Écrivez ce que vous avez observé pour continuer.'
+	String get texteRequis => 'Écrivez ce que vous avez observé pour continuer.';
+
+	/// fr: 'Vérifiez votre observation avant l'envoi.'
+	String get questionRecap => 'Vérifiez votre observation avant l\'envoi.';
+
+	/// fr: 'Nature'
+	String get cleNature => 'Nature';
+
+	/// fr: 'Domaine'
+	String get cleDomaine => 'Domaine';
+
+	/// fr: 'Personne concernée'
+	String get clePersonne => 'Personne concernée';
+
+	/// fr: 'Remarque'
+	String get cleTexte => 'Remarque';
+
+	/// fr: 'Aucun texte'
+	String get sansTexte => 'Aucun texte';
+
+	/// fr: 'L'observation n'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant.'
+	String get echec => 'L\'observation n\'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant.';
 }
 
 // Path: controleur.echanges
@@ -15639,6 +15745,38 @@ extension on Traductions {
 			'controleur.compteRendu.visiteEchec' => 'La visite n\'a pas encore pu être transmise à l\'administration.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
+			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
+			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
+			'controleur.observation.pointPositif' => 'Point positif',
+			'controleur.observation.aSuivre' => 'À suivre',
+			'controleur.observation.interventionAdmin' => 'Intervention Admin souhaitée',
+			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
+			'controleur.observation.pedagogie' => 'Pédagogie',
+			'controleur.observation.interaction' => 'Interaction avec les élèves',
+			'controleur.observation.gestionClasse' => 'Gestion de la classe',
+			'controleur.observation.respectCadre' => 'Respect du cadre',
+			'controleur.observation.climat' => 'Comportement / climat',
+			'controleur.observation.autre' => 'Autre',
+			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
+			'controleur.observation.enseignant' => 'Enseignant',
+			'controleur.observation.classeEntiere' => 'Classe entière',
+			'controleur.observation.elevePrecis' => 'Élève précis',
+			'controleur.observation.aucun' => 'Aucun participant précis',
+			'controleur.observation.questionEleve' => 'Choisissez l\'élève dans la liste de la Classe.',
+			'controleur.observation.rosterIndisponible' => 'La liste des élèves n\'est pas disponible pour le moment.',
+			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
+			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
+			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
+			'controleur.observation.libelleTexte' => 'Votre remarque',
+			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
+			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
+			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
+			'controleur.observation.cleNature' => 'Nature',
+			'controleur.observation.cleDomaine' => 'Domaine',
+			'controleur.observation.clePersonne' => 'Personne concernée',
+			'controleur.observation.cleTexte' => 'Remarque',
+			'controleur.observation.sansTexte' => 'Aucun texte',
+			'controleur.observation.echec' => 'L\'observation n\'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.provisoire' => 'Cet écran est en préparation.',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -15938,6 +16076,8 @@ extension on Traductions {
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
 			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
 			'tc.observation.entree.entrer' => 'Entrer',
@@ -15970,8 +16110,6 @@ extension on Traductions {
 			'tc.observation.disponibilite.visitesEpuisees' => 'Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.tempsEpuiseTitre' => 'Temps d\'observation écoulé',
 			'tc.observation.disponibilite.tempsEpuise' => 'Votre temps d\'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
 			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',

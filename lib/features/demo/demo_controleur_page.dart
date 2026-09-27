@@ -42,6 +42,8 @@ import '../controleur/controle_page.dart';
 import '../controleur/echanges_controleur_page.dart';
 import '../controleur/historique_controleur_page.dart';
 import '../controleur/mission_controle.dart';
+import '../controleur/observation_controle.dart';
+import '../controleur/observation_controle_page.dart';
 import '../salle/salle_page.dart';
 import 'controleur_demo.dart';
 import 'mode_demonstration.dart';
@@ -92,8 +94,8 @@ List<RouteBase> routesDemoControleur(String environnement) {
             onRevenir: () => contexte.go(
               adresseDemoControleur(EcranDemoControleur.controle),
             ),
-            onObservation: (ChoixCompteRendu _) =>
-                contexte.go(cheminDemoObservationControleur),
+            onObservation: (ChoixCompteRendu choix) =>
+                contexte.go(cheminDemoObservationControleur, extra: choix),
             onEcrireAdmin: () => contexte.go(
               adresseDemoControleur(EcranDemoControleur.echanges),
             ),
@@ -101,19 +103,44 @@ List<RouteBase> routesDemoControleur(String environnement) {
         ),
       ),
     ),
-    // CTR-03A provisoire (CT-5 le construit).
+    // CTR-03A (CT-5) : l'observation structuree, roster de demonstration
+    // (prenoms seuls, C8), envoi simule, aucun serveur.
     GoRoute(
       path: cheminDemoObservationControleur,
-      builder: (BuildContext contexte, GoRouterState _) => RepereDemonstration(
-        child: ObservationControlePage(
-          onRetour: () => contexte.go(cheminDemoCompteRenduControleur),
+      builder: (BuildContext contexte, GoRouterState etat) => ProviderScope(
+        overrides: <Override>[
+          ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
+          rosterControleProvider.overrideWith(
+            (Ref _) async => rosterDemoControleur(),
+          ),
+        ],
+        child: RepereDemonstration(
+          child: ObservationControlePage(
+            choix: etat.extra is ChoixCompteRendu
+                ? etat.extra! as ChoixCompteRendu
+                : ChoixCompteRendu.ajouterObservation,
+            onRetour: () => contexte.go(cheminDemoCompteRenduControleur),
+            onRevenir: () => contexte.go(
+              adresseDemoControleur(EcranDemoControleur.controle),
+            ),
+            onEcrireAdmin: () => contexte.go(
+              adresseDemoControleur(EcranDemoControleur.echanges),
+            ),
+          ),
         ),
       ),
     ),
   ];
 }
 
-/// L'observation provisoire en demonstration.
+/// Le roster autorise de demonstration : prenom seul (C8), identifiant
+/// pedagogique fictif.
+List<EleveRoster> rosterDemoControleur() => <EleveRoster>[
+  for (final (int i, String prenom) in DonneesControleurDemo.roster.indexed)
+    EleveRoster(id: 'demo-eleve-$i', prenom: prenom),
+];
+
+/// L'observation structuree (CTR-03A) en demonstration.
 const String cheminDemoObservationControleur =
     '${Routes.demoControleur}/compte-rendu/observation';
 
@@ -144,6 +171,10 @@ class EnvoiCompteRenduDemo implements EnvoiCompteRendu {
   @override
   Future<void> envoyer(ChoixCompteRendu choix) =>
       Future<void>.delayed(const Duration(milliseconds: 400));
+
+  @override
+  Future<void> envoyerObservation(ObservationControle observation) =>
+      Future<void>.delayed(const Duration(milliseconds: 400));
 }
 
 /// La salle du controleur en demonstration.
@@ -166,9 +197,7 @@ class SalleControleurDemo extends StatelessWidget {
   Widget build(BuildContext context) => ProviderScope(
     overrides: <Override>[
       ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
-      moteurSalleProvider.overrideWith(
-        (Ref _) => MoteurSalleControleurDemo(),
-      ),
+      moteurSalleProvider.overrideWith((Ref _) => MoteurSalleControleurDemo()),
       serviceVideoProvider.overrideWithValue(
         const ServiceVideoControleurDemo(),
       ),
@@ -182,9 +211,7 @@ class SalleControleurDemo extends StatelessWidget {
       presenceSeanceProvider.overrideWith(
         (Ref _, String _) => Stream<List<PresenceParticipant>?>.value(null),
       ),
-      servicePresenceProvider.overrideWithValue(
-        const PresenceControleurDemo(),
-      ),
+      servicePresenceProvider.overrideWithValue(const PresenceControleurDemo()),
     ],
     child: RepereDemonstration(
       child: SallePage(
@@ -212,13 +239,12 @@ String adresseDemoControleur(
 ).toString();
 
 /// Le libelle d'un ecran : celui de sa destination dans la barre.
-String libelleEcranDemoControleur(EcranDemoControleur ecran) =>
-    switch (ecran) {
-      EcranDemoControleur.controle => t.nav.controleur.controle,
-      EcranDemoControleur.historique => t.nav.controleur.historique,
-      EcranDemoControleur.echanges => t.nav.controleur.echanges,
-      EcranDemoControleur.compte => t.nav.controleur.compte,
-    };
+String libelleEcranDemoControleur(EcranDemoControleur ecran) => switch (ecran) {
+  EcranDemoControleur.controle => t.nav.controleur.controle,
+  EcranDemoControleur.historique => t.nav.controleur.historique,
+  EcranDemoControleur.echanges => t.nav.controleur.echanges,
+  EcranDemoControleur.compte => t.nav.controleur.compte,
+};
 
 /// Le libelle d'une situation.
 String libelleEtatDemoControleur(EtatDemoControleur etat) => switch (etat) {
@@ -380,7 +406,10 @@ class CoquilleControleurDemo extends StatelessWidget {
             EcranDemoControleur.controle => ControleControleurPage(
               onCommencer: (MissionControle m) => context.go(
                 cheminDemoSalleControleur,
-                extra: BilletSalle(sessionId: m.seanceId, emisA: DateTime.now()),
+                extra: BilletSalle(
+                  sessionId: m.seanceId,
+                  emisA: DateTime.now(),
+                ),
               ),
               onReprendreCompteRendu: () =>
                   context.go(cheminDemoCompteRenduControleur),

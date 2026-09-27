@@ -17,6 +17,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'observation_controle.dart';
+
 /// Les faits d'une visite (doc 08 §1.1, C4) : releves par le systeme, jamais
 /// saisis par le controleur.
 @immutable
@@ -88,6 +90,10 @@ abstract interface class EnvoiCompteRendu {
   /// Joint [choix] au rapport de la visite. Leve une exception si le serveur
   /// n'a pas confirme : aucun succes n'est affiche sans reponse.
   Future<void> envoyer(ChoixCompteRendu choix);
+
+  /// Joint [observation] (CTR-03A) au rapport de la visite deja transmis.
+  /// Leve une exception si le serveur n'a pas confirme.
+  Future<void> envoyerObservation(ObservationControle observation);
 }
 
 /// Sans serveur, rien ne part : l'envoi echoue, et l'ecran le dit.
@@ -101,6 +107,10 @@ class EnvoiCompteRenduIndisponible implements EnvoiCompteRendu {
 
   @override
   Future<void> envoyer(ChoixCompteRendu choix) async =>
+      throw StateError('Aucun serveur branche (BR-1).');
+
+  @override
+  Future<void> envoyerObservation(ObservationControle observation) async =>
       throw StateError('Aucun serveur branche (BR-1).');
 }
 
@@ -143,9 +153,7 @@ Future<void> transmettreVisiteATerminer(WidgetRef ref) async {
 
 /// Le port d'envoi ; neutre par defaut.
 final Provider<EnvoiCompteRendu> envoiCompteRenduProvider =
-    Provider<EnvoiCompteRendu>(
-      (Ref _) => const EnvoiCompteRenduIndisponible(),
-    );
+    Provider<EnvoiCompteRendu>((Ref _) => const EnvoiCompteRenduIndisponible());
 
 /// Le compte rendu commence et non envoye (« A terminer », doc 08 CTR-01) :
 /// la Classe et l'heure de la visite, ou nul. **En memoire seulement** (C12),
