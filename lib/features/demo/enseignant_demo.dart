@@ -284,7 +284,7 @@ abstract final class DonneesEnseignantDemo {
       langue: 'Arabe',
       prochaineSeance: DateTime(2026, 9, 28, 18),
       eleves: <EleveEnseignantDemo>[
-        _eleve('demo-eleve-maryam', 'Mariam', 'Page 24'),
+        _eleve('demo-eleve-mariam', 'Mariam', 'Page 24'),
         _eleve('demo-eleve-yusuf', 'Yusuf', 'Page 22'),
         _eleve('demo-eleve-aicha', 'Aïcha', 'Page 24'),
       ],

@@ -7952,8 +7952,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Le constat n'a pas pu être lu.'
 	String get erreur => 'Le constat n\'a pas pu être lu.';
 
-	/// fr: 'Réessayez, ou déposez le cahier sans le constat : un cahier tardif vaut mieux qu'un cahier perdu.'
-	String get erreurDetail => 'Réessayez, ou déposez le cahier sans le constat : un cahier tardif vaut mieux qu\'un cahier perdu.';
+	/// fr: 'Réessayez, ou déposez le cahier sans le constat.'
+	String get erreurDetail => 'Réessayez, ou déposez le cahier sans le constat.';
 
 	/// fr: 'Le cahier n'a pas pu être enregistré. Réessayez.'
 	String get echecEnvoi => 'Le cahier n\'a pas pu être enregistré. Réessayez.';
@@ -8150,8 +8150,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Statut du compte'
 	String get statutSection => 'Statut du compte';
 
-	/// fr: 'Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.'
-	String get statutValideDetail => 'Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.';
+	/// fr: 'Vous pouvez enseigner et déclarer vos heures.'
+	String get statutValideDetail => 'Vous pouvez enseigner et déclarer vos heures.';
 
 	/// fr: 'Dossier en cours de vérification'
 	String get statutEnAttente => 'Dossier en cours de vérification';
@@ -15221,7 +15221,7 @@ extension on Traductions {
 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
-			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier sans le constat : un cahier tardif vaut mieux qu\'un cahier perdu.',
+			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'Le cahier n\'a pas pu être enregistré. Réessayez.',
 			'enseignant.cahier.dejaDepose' => 'Le cahier de cette séance est déjà déposé.',
 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
@@ -15286,7 +15286,7 @@ extension on Traductions {
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
-			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner, déclarer vos heures et recevoir des élèves.',
+			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner et déclarer vos heures.',
 			'enseignant.profil.statutEnAttente' => 'Dossier en cours de vérification',
 			'enseignant.profil.statutEnAttenteDetail' => 'L\'académie vérifie vos pièces. Vous n\'avez rien de plus à faire.',
 			'enseignant.profil.statutProvisoire' => 'Accès provisoire',

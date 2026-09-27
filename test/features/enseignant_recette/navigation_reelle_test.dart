@@ -67,7 +67,7 @@ void main() {
         _groupeId: <MembreSeance>[
           membreDeTest(studentId: 'demo-eleve-yusuf', prenom: _elevePrenom),
           membreDeTest(
-            studentId: 'demo-eleve-maryam',
+            studentId: 'demo-eleve-mariam',
             identifiant: 'RA-0002',
             prenom: 'Mariam',
           ),

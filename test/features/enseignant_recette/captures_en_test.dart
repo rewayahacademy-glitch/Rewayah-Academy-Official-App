@@ -836,7 +836,7 @@ void main() {
         prenom: 'Yusuf',
       ),
       const MembreSeance(
-        studentId: 'demo-eleve-maryam',
+        studentId: 'demo-eleve-mariam',
         identifiantImmuable: 'RA-MA-000002',
         prenom: 'Mariam',
       ),
@@ -855,7 +855,7 @@ void main() {
       ),
       const AnomalieRevue(
         type: TypeAnomalieRevue.horsCorridor,
-        studentId: 'demo-eleve-maryam',
+        studentId: 'demo-eleve-mariam',
         eleve: 'Mariam',
       ),
       const AnomalieRevue(
