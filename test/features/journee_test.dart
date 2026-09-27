@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -449,15 +450,21 @@ void main() {
       expect(find.text(t.enseignant.journee.aTerminerAide), findsOneWidget);
       expect(find.byType(PointRappel), findsOneWidget);
       expect(
-        find.text(t.enseignant.journee.cahierLigne(classe: 'Al-Badr')),
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Badr')),
+        ),
         findsOneWidget,
       );
       expect(
-        find.text(t.enseignant.journee.cahierLigne(classe: 'Al-Fatiha')),
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Fatiha')),
+        ),
         findsOneWidget,
       );
       expect(
-        find.text(t.enseignant.journee.cahierLigne(classe: 'Al-Ikhlas')),
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Ikhlas')),
+        ),
         findsNothing,
       );
     });
@@ -478,7 +485,9 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tester.tap(
-        find.text(t.enseignant.journee.cahierLigne(classe: 'Al-Badr')),
+        find.text(
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Badr')),
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.text('cahier:a'), findsOneWidget);

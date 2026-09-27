@@ -39,6 +39,7 @@ import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/journee.dart';
@@ -396,11 +397,11 @@ EmplacementEntree emplacementJournee(
   final (String libelle, String lecteur) = switch (base.etat) {
     EtatEntree.aVenir => (
       t.enseignant.journee.preparerSeance,
-      t.enseignant.journee.preparerSeanceLecteur(classe: nomClasse),
+      t.enseignant.journee.preparerSeanceLecteur(classe: deDevant(nomClasse)),
     ),
     EtatEntree.terminee when cahierAFinaliser => (
       t.enseignant.journee.finaliserCahier,
-      t.enseignant.journee.finaliserCahierLecteur(classe: nomClasse),
+      t.enseignant.journee.finaliserCahierLecteur(classe: deDevant(nomClasse)),
     ),
     _ => (
       t.enseignant.journee.voirClasse,
@@ -738,7 +739,7 @@ class _ATerminer extends ConsumerWidget {
               LigneRubrique(
                 icone: AppIcons.cahier,
                 libelle: t.enseignant.journee.cahierLigne(
-                  classe: _nomClasse(cahier.groupeLibelle),
+                  classe: deDevant(_nomClasse(cahier.groupeLibelle)),
                 ),
                 legende: t.enseignant.journee.cahierDetail(
                   jour: t.commun.dates.jours[cahier.debut.weekday - 1]

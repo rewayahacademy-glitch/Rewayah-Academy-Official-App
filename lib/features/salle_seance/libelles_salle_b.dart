@@ -21,8 +21,10 @@ abstract final class LibellesSalleB {
   static const String raccourcisTitre =
       'Raccourcis clavier en salle sur ordinateur';
 
-  /// EN-KB, regle E19, premier et troisieme points, mot pour mot.
+  /// EN-KB, regle E19, premier et troisieme points ; « roster » (mot de la
+  /// regle E19) est remplace par « Élèves », le nom que porte le panneau a
+  /// l'ecran (EN-9, EN-11, E17 : aucun terme qui n'est pas affiche ailleurs).
   static const String raccourcisDetail =
-      'M micro, V caméra, R roster, B bibliothèque, Échap ferme le panneau. '
+      'M micro, V caméra, R Élèves, B bibliothèque, Échap ferme le panneau. '
       "La caméra ne s'allume jamais par un raccourci.";
 }
