@@ -467,7 +467,9 @@ void main() {
 
         expect(find.text(t.attente.accesTitre), findsOneWidget);
         expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
-        expect(find.text(t.attente.aucunDocument), findsOneWidget);
+        expect(find.textContaining(t.attente.aucunDocument), findsOneWidget);
+        // Aucune ouverture n'est promise « en cours » : la sortie est dite.
+        expect(find.textContaining(t.attente.accesContact), findsOneWidget);
         expect(find.text(t.attente.titreCompte), findsWidgets);
         for (final String interdit in <String>[
           t.attente.titre,
@@ -525,6 +527,28 @@ void main() {
       expect(lu.manquants, isEmpty);
       expect(lu.etape, EtapeDossier.accesEnPreparation);
     });
+
+    testWidgets(
+      'role illisible : etat illisible et Reessayer, jamais la piece',
+      (WidgetTester tester) async {
+        final FauxServiceDossier dossier = FauxServiceDossier()
+          ..etatRendu = const EtatDossier(
+            profilExiste: true,
+            statutCompte: AccountStatus.pendingKyc,
+          );
+        await _monter(tester, dossier);
+
+        expect(find.text(t.attente.illisible), findsOneWidget);
+        expect(find.text(t.commun.reessayer), findsOneWidget);
+        expect(find.text(t.attente.pieceIdentite), findsNothing);
+        expect(find.text(t.attente.deposerLaPiece), findsNothing);
+        expect(
+          const EtatDossier(profilExiste: true).pieceExigee,
+          isFalse,
+          reason: 'un role absent n exige aucune piece',
+        );
+      },
+    );
 
     test('T11 correction_autorisee absente : nulle, la correction reste', () {
       final EtatDossier sans = EtatDossier.depuisJson(const <String, dynamic>{

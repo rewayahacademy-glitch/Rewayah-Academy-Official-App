@@ -18,9 +18,13 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
+import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
@@ -28,6 +32,7 @@ import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../support/harnais.dart';
 import 'outil_capture.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
@@ -380,6 +385,64 @@ void main() {
           );
           debugPrint(
             'PNG ${await capturer(tester, fichier('retour_apres_validation_hors_portee'))}',
+          );
+        });
+
+        // 15. HL-A-6 (K-47) : le tuteur apres inscription, en demonstration,
+        //     arrive directement sur son accueil (aucune piece, aucune file).
+        testWidgets('$tailleNom, ${mode.value}, tuteur apres inscription', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, _densite(tailleNom));
+          await _monter(
+            tester,
+            mode.key,
+            surchargesDemoTuteur(environnement: 'staging'),
+            Routes.tuteurAccueil,
+          );
+          expect(
+            _routeur.routerDelegate.currentConfiguration.uri.path,
+            startsWith(Routes.tuteurAccueil),
+          );
+          debugPrint(
+            'PNG ${await capturer(tester, fichier('tuteur_apres_inscription'))}',
+          );
+        });
+
+        // 16. HL-A-6 : le tuteur en production AVANT BR-1 (le serveur le fait
+        //     naitre pending_kyc) : accords signes, aucune piece demandee,
+        //     l'ecran dit honnetement que l'ouverture n'est pas automatique.
+        testWidgets('$tailleNom, ${mode.value}, tuteur attente ouverture', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, _densite(tailleNom));
+          await _monter(tester, mode.key, <Override>[
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(
+                const SessionState(
+                  resolue: true,
+                  role: AppRole.guardian,
+                  profileId: 'capture-tuteur',
+                  accountStatus: AccountStatus.pendingKyc,
+                  lectureProfil: LectureProfil.presente,
+                ),
+              ),
+            ),
+            serviceDossierProvider.overrideWithValue(
+              FauxServiceDossier()
+                ..etatRendu = const EtatDossier(
+                  profilExiste: true,
+                  role: AppRole.guardian,
+                  statutCompte: AccountStatus.pendingKyc,
+                  accuseSigne: true,
+                  contratSigne: true,
+                ),
+            ),
+          ], Routes.attente);
+          expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
+          expect(find.text(t.attente.deposerLaPiece), findsNothing);
+          debugPrint(
+            'PNG ${await capturer(tester, fichier('tuteur_attente_ouverture'))}',
           );
         });
       }

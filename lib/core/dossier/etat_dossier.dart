@@ -81,9 +81,10 @@ class EtatDossier {
   /// correction reste permise comme avant.
   final bool? correctionAutorisee;
 
-  /// Faux quand le dossier est dispense de piece d'identite (P-ADM-08.3) :
-  /// aucune piece n'est alors demandee, meme apres un refus. Absent de la
-  /// reponse actuelle d'`etat_dossier()` (AD-BR-29) : vrai, comme avant.
+  /// Faux quand le serveur dit qu'aucune piece n'est attendue. K-47 : la
+  /// piece ne concerne que l'enseignant (voir [pieceExigee]) ; il n'y a plus
+  /// de dispense famille. Absent de la reponse actuelle d'`etat_dossier()`
+  /// (AD-BR-29) : vrai, comme avant.
   final bool pieceRequise;
 
   /// Ce que le portail d'attente doit afficher.
@@ -114,9 +115,14 @@ class EtatDossier {
   /// d'identite et la validation ne concernent que l'enseignant.
   bool get estTuteur => role == AppRole.guardian;
 
-  /// Vrai quand une piece d'identite est attendue : jamais pour un tuteur
-  /// (K-47), meme tant que `etat_dossier()` ne rend pas `piece_requise`.
-  bool get pieceExigee => pieceRequise && !estTuteur;
+  /// Vrai quand un profil existe sans role lisible : ni tuteur ni enseignant
+  /// ne se devinent, le portail le dit illisible (jamais une piece demandee).
+  bool get roleIllisible => profilExiste && role == null;
+
+  /// Vrai quand une piece d'identite est attendue : pour l'enseignant
+  /// seulement (K-47), meme tant que `etat_dossier()` ne rend pas
+  /// `piece_requise`. Un role absent n'exige rien.
+  bool get pieceExigee => pieceRequise && role == AppRole.teacher;
 
   /// Ce qu'il reste a fournir, dans l'ordre ou l'ecran le proposera.
   ///

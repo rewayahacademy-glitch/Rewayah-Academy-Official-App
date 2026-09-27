@@ -260,8 +260,9 @@
     "titreCompte": "Votre compte",
     "accordsARelire": "Il vous reste nos conditions à lire et à accepter.",
     "accesTitre": "Votre compte est créé",
-    "accesEnPreparation": "Son ouverture est en cours de notre côté.",
+    "accesEnPreparation": "L'ouverture de votre compte n'est pas encore automatique.",
     "aucunDocument": "Vous n'avez aucun document à envoyer.",
+    "accesContact": "L'académie peut l'ouvrir pour vous : joignez-la.",
     "actualiserCompte": "Actualiser",
     "reste": {
       "one": "Il reste un élément à fournir.",
@@ -539,7 +540,7 @@
         "horsFoyerTitre": "Profil élève introuvable",
         "horsFoyerPhrase": "Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.",
         "compteTitre": "Connexion d'appareil pas encore ouverte",
-        "comptePhrase": "Votre compte doit être validé avant de connecter l'appareil d'un élève.",
+        "comptePhrase": "Votre compte doit être ouvert avant de connecter l'appareil d'un élève.",
         "generiqueTitre": "Le code n'a pas pu être préparé",
         "generiquePhrase": "La demande n'a pas abouti. Réessayez dans un instant."
       }
@@ -604,7 +605,7 @@
         "indisponible": "Indisponible",
         "enfantTitre": "Un enfant ou un mineur",
         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
-        "enfantAttente": "Possible dès que votre dossier est validé.",
+        "enfantAttente": "Possible dès que votre accès est ouvert.",
         "procheTitre": "Un proche adulte",
         "procheDescription": "Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.",
         "moiTitre": "Moi-même",
@@ -627,7 +628,7 @@
         "ageHorsBornes": "Indiquez un âge entre {min} et {max} ans."
       },
       "refus": {
-        "compteNonValide": "Votre dossier doit être validé avant d'ajouter un profil élève.",
+        "compteNonValide": "Votre accès doit être ouvert avant d'ajouter un profil élève.",
         "ageHorsBornes": "Cet âge n'est pas accepté. Vérifiez-le puis réessayez.",
         "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez."
       },
@@ -956,7 +957,6 @@
     },
     "revue": {
       "identite": "Identité et dossier",
-      "pieceNonRequise": "Aucune pièce requise pour ce dossier.",
       "pieceNonTransmise": "La pièce requise n’a pas été transmise.",
       "piece": "Pièce d'identité",
       "voirPiece": "Voir la pièce",

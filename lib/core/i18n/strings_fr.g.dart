@@ -554,11 +554,14 @@ class Traductions$attente$fr {
 	/// fr: 'Votre compte est créé'
 	String get accesTitre => 'Votre compte est créé';
 
-	/// fr: 'Son ouverture est en cours de notre côté.'
-	String get accesEnPreparation => 'Son ouverture est en cours de notre côté.';
+	/// fr: 'L'ouverture de votre compte n'est pas encore automatique.'
+	String get accesEnPreparation => 'L\'ouverture de votre compte n\'est pas encore automatique.';
 
 	/// fr: 'Vous n'avez aucun document à envoyer.'
 	String get aucunDocument => 'Vous n\'avez aucun document à envoyer.';
+
+	/// fr: 'L'académie peut l'ouvrir pour vous : joignez-la.'
+	String get accesContact => 'L\'académie peut l\'ouvrir pour vous : joignez-la.';
 
 	/// fr: 'Actualiser'
 	String get actualiserCompte => 'Actualiser';
@@ -3740,9 +3743,6 @@ class Traductions$dossiers$revue$fr {
 
 	/// fr: 'Identité et dossier'
 	String get identite => 'Identité et dossier';
-
-	/// fr: 'Aucune pièce requise pour ce dossier.'
-	String get pieceNonRequise => 'Aucune pièce requise pour ce dossier.';
 
 	/// fr: 'La pièce requise n’a pas été transmise.'
 	String get pieceNonTransmise => 'La pièce requise n’a pas été transmise.';
@@ -8590,8 +8590,8 @@ class Traductions$appareils$emetteur$erreur$fr {
 	/// fr: 'Connexion d'appareil pas encore ouverte'
 	String get compteTitre => 'Connexion d\'appareil pas encore ouverte';
 
-	/// fr: 'Votre compte doit être validé avant de connecter l'appareil d'un élève.'
-	String get comptePhrase => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.';
+	/// fr: 'Votre compte doit être ouvert avant de connecter l'appareil d'un élève.'
+	String get comptePhrase => 'Votre compte doit être ouvert avant de connecter l\'appareil d\'un élève.';
 
 	/// fr: 'Le code n'a pas pu être préparé'
 	String get generiqueTitre => 'Le code n\'a pas pu être préparé';
@@ -8641,8 +8641,8 @@ class Traductions$foyer$ajout$pourQui$fr {
 	/// fr: 'Un profil rattaché à votre foyer, que vous gérez pour lui.'
 	String get enfantDescription => 'Un profil rattaché à votre foyer, que vous gérez pour lui.';
 
-	/// fr: 'Possible dès que votre dossier est validé.'
-	String get enfantAttente => 'Possible dès que votre dossier est validé.';
+	/// fr: 'Possible dès que votre accès est ouvert.'
+	String get enfantAttente => 'Possible dès que votre accès est ouvert.';
 
 	/// fr: 'Un proche adulte'
 	String get procheTitre => 'Un proche adulte';
@@ -8719,8 +8719,8 @@ class Traductions$foyer$ajout$refus$fr {
 
 	// Translations
 
-	/// fr: 'Votre dossier doit être validé avant d'ajouter un profil élève.'
-	String get compteNonValide => 'Votre dossier doit être validé avant d\'ajouter un profil élève.';
+	/// fr: 'Votre accès doit être ouvert avant d'ajouter un profil élève.'
+	String get compteNonValide => 'Votre accès doit être ouvert avant d\'ajouter un profil élève.';
 
 	/// fr: 'Cet âge n'est pas accepté. Vérifiez-le puis réessayez.'
 	String get ageHorsBornes => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.';
@@ -11812,8 +11812,9 @@ extension on Traductions {
 			'attente.titreCompte' => 'Votre compte',
 			'attente.accordsARelire' => 'Il vous reste nos conditions à lire et à accepter.',
 			'attente.accesTitre' => 'Votre compte est créé',
-			'attente.accesEnPreparation' => 'Son ouverture est en cours de notre côté.',
+			'attente.accesEnPreparation' => 'L\'ouverture de votre compte n\'est pas encore automatique.',
 			'attente.aucunDocument' => 'Vous n\'avez aucun document à envoyer.',
+			'attente.accesContact' => 'L\'académie peut l\'ouvrir pour vous : joignez-la.',
 			'attente.actualiserCompte' => 'Actualiser',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
 			'attente.etatAFournir' => 'À fournir',
@@ -12032,7 +12033,7 @@ extension on Traductions {
 			'appareils.emetteur.erreur.horsFoyerTitre' => 'Profil élève introuvable',
 			'appareils.emetteur.erreur.horsFoyerPhrase' => 'Ce profil élève n\'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.',
 			'appareils.emetteur.erreur.compteTitre' => 'Connexion d\'appareil pas encore ouverte',
-			'appareils.emetteur.erreur.comptePhrase' => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.',
+			'appareils.emetteur.erreur.comptePhrase' => 'Votre compte doit être ouvert avant de connecter l\'appareil d\'un élève.',
 			'appareils.emetteur.erreur.generiqueTitre' => 'Le code n\'a pas pu être préparé',
 			'appareils.emetteur.erreur.generiquePhrase' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'appareils.regenerer' => 'Générer un nouveau code',
@@ -12079,7 +12080,7 @@ extension on Traductions {
 			'foyer.ajout.pourQui.indisponible' => 'Indisponible',
 			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
-			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre dossier est validé.',
+			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
 			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
 			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
@@ -12096,7 +12097,7 @@ extension on Traductions {
 			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
 			'foyer.ajout.erreurs.ageRequis' => 'Indiquez l\'âge, en chiffres.',
 			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.',
-			'foyer.ajout.refus.compteNonValide' => 'Votre dossier doit être validé avant d\'ajouter un profil élève.',
+			'foyer.ajout.refus.compteNonValide' => 'Votre accès doit être ouvert avant d\'ajouter un profil élève.',
 			'foyer.ajout.refus.ageHorsBornes' => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.',
 			'foyer.ajout.refus.refuse' => 'La création n\'a pas été acceptée. Vérifiez les informations puis réessayez.',
 			'foyer.ajout.incertaine.titre' => 'Le profil a peut-être été créé',
@@ -12125,9 +12126,9 @@ extension on Traductions {
 			'ficheEleve.informations.identite' => 'Identité',
 			'ficheEleve.informations.prenom' => 'Prénom',
 			'ficheEleve.informations.identiteNote' => 'Le prénom ne se modifie pas encore depuis cette page.',
-			'ficheEleve.informations.ageNote' => 'L\'âge et la date de naissance ne sont pas encore enregistrés sur le profil.',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.ageNote' => 'L\'âge et la date de naissance ne sont pas encore enregistrés sur le profil.',
 			'ficheEleve.informations.photo' => 'Photo',
 			'ficheEleve.informations.photoLegende' => ({required Object prenom}) => 'Une photo du visage de ${prenom}. Ce n\'est pas une pièce d\'identité.',
 			'ficheEleve.informations.photoAucune' => 'Pas encore de photo',
@@ -12376,7 +12377,6 @@ extension on Traductions {
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
 			'dossiers.visionneuse.documentFictif' => 'Document fictif',
 			'dossiers.revue.identite' => 'Identité et dossier',
-			'dossiers.revue.pieceNonRequise' => 'Aucune pièce requise pour ce dossier.',
 			'dossiers.revue.pieceNonTransmise' => 'La pièce requise n’a pas été transmise.',
 			'dossiers.revue.piece' => 'Pièce d\'identité',
 			'dossiers.revue.voirPiece' => 'Voir la pièce',

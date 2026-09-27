@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/service_admin.dart';
+import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
@@ -131,8 +132,13 @@ class TableauDeBordPage extends ConsumerWidget {
     // Les getters, jamais le type d'execution : Riverpod 3 relance un provider
     // en echec tout seul, et l'etat repasse par `AsyncLoading` en conservant
     // `hasError` (piege de l'etape 3).
+    // K-47 (HL-A-6) : les lignes « Dossier d'identite » ne portent que des
+    // enseignants, comme la file ADM-02 qu'elles ouvrent. Meme cache, aucun
+    // appel de plus ; le compteur serveur compte encore les tuteurs (BR-1.c).
     final List<ATraiter> lignes = aTraiter(
-      dossiers: dossiers.value ?? const <DossierAValider>[],
+      dossiers: RevueDossiersDepuisValidation.enseignantsSeulement(
+        dossiers.value ?? const <DossierAValider>[],
+      ),
       demandes: demandes.value ?? const <Demande>[],
     );
 

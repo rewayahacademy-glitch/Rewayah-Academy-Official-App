@@ -71,18 +71,24 @@ class _AttentePageState extends ConsumerState<AttentePage> {
   Widget build(BuildContext context) {
     final AsyncValue<EtatDossier> etat = ref.watch(etatDossierProvider);
     final GoRouter? routeur = GoRouter.maybeOf(context);
+    // Un profil sans role lisible ne se devine ni tuteur ni enseignant : il
+    // se dit illisible, avec Reessayer, plutot que de demander une piece.
+    final EtatDossier? lu = etat.hasValue && !etat.requireValue.roleIllisible
+        ? etat.requireValue
+        : null;
+    final bool illisible = lu == null && (etat.hasError || etat.hasValue);
 
     // Les getters, jamais le type d'execution : Riverpod 3 relance un provider
     // en echec tout seul, et l'etat repasse alors par `AsyncLoading` en
     // conservant `hasError`.
-    final _Prochaine? prochaine = etat.hasValue
+    final _Prochaine? prochaine = lu != null
         ? _prochaine(
-            etat.requireValue,
+            lu,
             adulte:
                 ref.watch(brouillonInscriptionProvider).usage ==
                 UsageInscription.moi,
           )
-        : etat.hasError
+        : illisible
         ? _Prochaine(
             t.commun.reessayer,
             () => ref.invalidate(etatDossierProvider),
@@ -92,7 +98,7 @@ class _AttentePageState extends ConsumerState<AttentePage> {
     return PageShell(
       // K-47 : un tuteur n'a pas de dossier a faire verifier, seulement un
       // compte a ouvrir.
-      titre: etat.value?.estTuteur ?? false
+      titre: lu?.estTuteur ?? false
           ? t.attente.titreCompte
           : t.attente.titreDossier,
       // HL-A-5 : le pied ne garde que Se deconnecter ; la prochaine action
@@ -108,10 +114,10 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           const MarquePage(),
           Ecart.vXxl,
           AppCard(
-            child: etat.hasValue
-                ? _Statut(etat: etat.requireValue)
-                : etat.hasError
-                ? _Illisible(erreur: etat.error!)
+            child: lu != null
+                ? _Statut(etat: lu)
+                : illisible
+                ? _Illisible(erreur: etat.error ?? const FormatException())
                 : const _Patience(),
           ),
           // HL-A-5 (DESIGN-GOV B) : les actions rattachees a la carte d'etat
@@ -136,14 +142,14 @@ class _AttentePageState extends ConsumerState<AttentePage> {
               ),
             ),
           ],
-          if (etat.value?.etape
+          if (lu?.etape
               case EtapeDossier.enVerification ||
                   EtapeDossier.accesEnPreparation) ...<Widget>[
             Ecart.vLg,
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: ActionPrincipale(
-                libelle: etat.value!.estTuteur
+                libelle: lu!.estTuteur
                     ? t.attente.actualiserCompte
                     : t.attente.actualiser,
                 onPress: () => unawaited(_relire()),
@@ -282,11 +288,16 @@ class _Statut extends StatelessWidget {
         icone: AppIcons.dossiers,
       ),
       // K-47 (HL-A-6) : l'etat honnete du tuteur tant que le serveur le fait
-      // naitre en attente (BR-1) : ni piece, ni verification, ni delai.
+      // naitre en attente (BR-1) : ni piece, ni verification, ni delai. Rien
+      // n'est promis « en cours » : aucun ecran admin ne l'ouvre avant BR-1,
+      // la sortie est de joindre l'academie (comme l'etat suspendu).
       EtapeDossier.accesEnPreparation => _Bloc(
         titre: t.attente.accesTitre,
         message: t.attente.accesEnPreparation,
-        detail: t.attente.aucunDocument,
+        detail: <String>[
+          t.attente.aucunDocument,
+          t.attente.accesContact,
+        ].join('\n'),
         icone: AppIcons.foyer,
       ),
       EtapeDossier.refuse => Column(
@@ -304,8 +315,8 @@ class _Statut extends StatelessWidget {
           ),
           Ecart.vMd,
           // La phrase suit le premier element a corriger, celui que « Corriger »
-          // ouvre (P-ADM-09.2) ; sans element (famille dispensee), aucune
-          // piece n'est demandee (P-ADM-08.3).
+          // ouvre (P-ADM-09.2) ; sans element, la sortie est de joindre
+          // l'academie (K-47 : seul l'enseignant passe par ce refus).
           Text(
             etat.correctionAutorisee == false
                 ? t.attente.correctionImpossible
