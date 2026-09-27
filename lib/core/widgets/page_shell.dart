@@ -215,40 +215,17 @@ class PageShell extends StatelessWidget {
                 // dessus, a 320x640 avec un clavier de 300). Lu sur la vue :
                 // le Scaffold de la coquille retire le clavier du MediaQuery
                 // de son corps.
-                child: LayoutBuilder(
-                  builder: (BuildContext _, BoxConstraints contraintes) =>
-                      contraintes.maxHeight +
-                                  View.of(context).viewInsets.bottom /
-                                      View.of(context).devicePixelRatio <
-                              _hauteurTeteFixe ||
-                          (gabarit == Gabarit.mobile &&
-                              MediaQuery.textScalerOf(context).scale(1) >= 2)
-                      ? SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              ...tete,
-                              if (defilante)
-                                corps
-                              else
-                                SizedBox(
-                                  height: contraintes.maxHeight,
-                                  child: corps,
-                                ),
-                            ],
-                          ),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            ...tete,
-                            Expanded(
-                              child: defilante
-                                  ? SingleChildScrollView(child: corps)
-                                  : corps,
-                            ),
-                          ],
-                        ),
+                child: _Bascule(
+                  teteDefilante: (double hauteur) =>
+                      hauteur +
+                              View.of(context).viewInsets.bottom /
+                                  View.of(context).devicePixelRatio <
+                          _hauteurTeteFixe ||
+                      (gabarit == Gabarit.mobile &&
+                          MediaQuery.textScalerOf(context).scale(1) >= 2),
+                  tete: tete,
+                  corps: corps,
+                  defilante: defilante,
                 ),
               ),
             ),
@@ -300,6 +277,87 @@ class ActionsEnteteCoquille extends InheritedWidget {
   @override
   bool updateShouldNotify(ActionsEnteteCoquille ancien) =>
       !listEquals(actions, ancien.actions) || onRetour != ancien.onRetour;
+}
+
+/// La bascule entre la tete fixe (`Column(tete, Expanded(corps))`) et le
+/// defilement global (`SingleChildScrollView(Column(tete, corps))`).
+///
+/// AD-RC M4 : la tete et le corps changent de parent a chaque bascule
+/// (rotation, redimensionnement, texte a 200 %). Sans cle, leur etat local
+/// (saisie, focus, position d'une liste) etait recree. Chacun porte donc une
+/// `GlobalKey` tenue par ce `State` : Flutter deplace le sous-arbre au lieu de
+/// le reconstruire. Une seule branche est rendue a la fois, chaque cle n'est
+/// donc jamais a deux endroits de l'arbre.
+class _Bascule extends StatefulWidget {
+  const _Bascule({
+    required this.teteDefilante,
+    required this.tete,
+    required this.corps,
+    required this.defilante,
+  });
+
+  /// Vrai quand, pour la hauteur disponible, la tete doit defiler avec le
+  /// corps.
+  final bool Function(double hauteur) teteDefilante;
+  final List<Widget> tete;
+  final Widget corps;
+  final bool defilante;
+
+  @override
+  State<_Bascule> createState() => _BasculeState();
+}
+
+class _BasculeState extends State<_Bascule> {
+  final GlobalKey _cleTete = GlobalKey(debugLabel: 'PageShell.tete');
+  final GlobalKey _cleCorps = GlobalKey(debugLabel: 'PageShell.corps');
+
+  @override
+  Widget build(BuildContext context) {
+    // La tete garde sa mise en page d'avant : une colonne etiree de hauteur
+    // minimale rend ses enfants comme s'ils etaient ceux de la colonne
+    // exterieure.
+    final Widget tete = KeyedSubtree(
+      key: _cleTete,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: widget.tete,
+      ),
+    );
+    final Widget corps = KeyedSubtree(key: _cleCorps, child: widget.corps);
+
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) =>
+          widget.teteDefilante(contraintes.maxHeight)
+          ? SingleChildScrollView(
+              // Un corps non defilant (liste paresseuse) garde le defileur
+              // principal de la page dans les deux branches : sur mobile, sa
+              // liste reste attachee au meme controleur et garde sa position.
+              primary: widget.defilante ? null : false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  tete,
+                  if (widget.defilante)
+                    corps
+                  else
+                    SizedBox(height: contraintes.maxHeight, child: corps),
+                ],
+              ),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                tete,
+                Expanded(
+                  child: widget.defilante
+                      ? SingleChildScrollView(child: corps)
+                      : corps,
+                ),
+              ],
+            ),
+    );
+  }
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.
