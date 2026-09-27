@@ -60,6 +60,7 @@ class PreferencesLocales {
     this.notificationsFoyer = true,
     this.economieDonnees = false,
     this.lectureGrande = false,
+    this.raccourcisSalle = true,
   });
 
   /// Theme d'affichage local.
@@ -83,6 +84,11 @@ class PreferencesLocales {
   /// Taille de lecture preferee, quand le moteur la supporte.
   final bool lectureGrande;
 
+  /// Les raccourcis clavier de la salle sur ordinateur (E19, EN-KB) : M, V,
+  /// R, B. Desactivables ici (WCAG 2.1.4). Persiste sur l'appareil par
+  /// [persistanceRaccourcisProvider].
+  final bool raccourcisSalle;
+
   /// Retourne une copie avec les valeurs modifiees.
   PreferencesLocales copyWith({
     PreferenceTheme? theme,
@@ -92,6 +98,7 @@ class PreferencesLocales {
     bool? notificationsFoyer,
     bool? economieDonnees,
     bool? lectureGrande,
+    bool? raccourcisSalle,
   }) => PreferencesLocales(
     theme: theme ?? this.theme,
     animationsReduites: animationsReduites ?? this.animationsReduites,
@@ -100,6 +107,7 @@ class PreferencesLocales {
     notificationsFoyer: notificationsFoyer ?? this.notificationsFoyer,
     economieDonnees: economieDonnees ?? this.economieDonnees,
     lectureGrande: lectureGrande ?? this.lectureGrande,
+    raccourcisSalle: raccourcisSalle ?? this.raccourcisSalle,
   );
 }
 
@@ -117,6 +125,9 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
   /// Vrai des qu'un choix de theme a ete fait pendant cette session : la
   /// lecture du stockage, qui peut arriver apres, ne l'ecrase jamais.
   bool _themeChoisi = false;
+
+  /// Vrai des qu'un choix de raccourcis a ete fait pendant cette session.
+  bool _raccourcisChoisis = false;
 
   @override
   PreferencesLocales build() => const PreferencesLocales();
@@ -169,6 +180,21 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
   /// Change la taille de lecture locale.
   void lectureGrande(bool valeur) =>
       state = state.copyWith(lectureGrande: valeur);
+
+  /// Active ou desactive les raccourcis clavier de la salle (E19).
+  void raccourcisSalle(bool valeur) {
+    _raccourcisChoisis = true;
+    state = state.copyWith(raccourcisSalle: valeur);
+  }
+
+  /// Restaure le choix persiste au lancement, sauf si un choix a deja ete
+  /// fait entre-temps.
+  void restaurerRaccourcisSalle({required bool actifs}) {
+    if (_raccourcisChoisis) {
+      return;
+    }
+    state = state.copyWith(raccourcisSalle: actifs);
+  }
 }
 
 /// Clef de la preference de theme dans le stockage local.
@@ -372,4 +398,48 @@ final Provider<void> persistanceNavigationProvider = Provider<void>((Ref ref) {
       unawaited(ecrire(apres));
     }
   });
+});
+
+/// Clef de la preference des raccourcis clavier de la salle (EN-KB).
+const String clefRaccourcisSalle = 'salle.raccourcis';
+
+/// Relie le choix des raccourcis de la salle a son stockage, comme
+/// [persistanceNavigationProvider] : une lecture au montage, une ecriture a
+/// chaque changement. **Monte par `RewayahApp` seulement.**
+final Provider<void> persistanceRaccourcisProvider = Provider<void>((Ref ref) {
+  final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
+  final PreferencesLocalesControleur controleur = ref.read(
+    preferencesLocalesProvider.notifier,
+  );
+
+  Future<void> restaurer() async {
+    try {
+      final String? lu = await stockage.lire(clefRaccourcisSalle);
+      if (ref.mounted && (lu == 'true' || lu == 'false')) {
+        controleur.restaurerRaccourcisSalle(actifs: lu == 'true');
+      }
+    } on Object catch (erreur) {
+      journalDev('Raccourcis de salle illisibles, en memoire : $erreur');
+    }
+  }
+
+  Future<void> ecrire(bool actifs) async {
+    try {
+      await stockage.ecrire(clefRaccourcisSalle, '$actifs');
+    } on Object catch (erreur) {
+      journalDev('Raccourcis de salle non ecrits, en memoire : $erreur');
+    }
+  }
+
+  unawaited(restaurer());
+  ref.listen<bool>(
+    preferencesLocalesProvider.select(
+      (PreferencesLocales p) => p.raccourcisSalle,
+    ),
+    (bool? avant, bool apres) {
+      if (avant != apres) {
+        unawaited(ecrire(apres));
+      }
+    },
+  );
 });

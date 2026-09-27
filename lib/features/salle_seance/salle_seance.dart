@@ -4,13 +4,17 @@
 // sans barre d'application (I-8). Dispositions par `Gabarit` : compacte
 // (< 600), moyenne (600-1199), large (>= 1200).
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/preferences/preferences_locales.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -59,6 +63,7 @@ class SalleSeance extends StatelessWidget {
     required this.actions,
     this.local = const EtatLocalSeance(),
     this.contenuSupport,
+    this.raccourcisClavier,
     super.key,
   });
 
@@ -66,10 +71,39 @@ class SalleSeance extends StatelessWidget {
   final ActionsSeance actions;
   final EtatLocalSeance local;
 
+  /// EN-KB (E19) : les raccourcis M, V, R, B de la salle enseignant sur
+  /// bureau. `null` : la preference locale de `/compte/reglages` quand un
+  /// `ProviderScope` l'entoure, sinon inactifs.
+  final bool? raccourcisClavier;
+
   /// Le rendu reel du support partage (Classe Live :
   /// `ContexteClasseLive.support`). `null` : la salle rend elle-meme
   /// `vue.support` (demonstration).
   final Widget? contenuSupport;
+
+  /// Construit la salle enseignant avec l'etat des raccourcis : la valeur
+  /// explicite, sinon la preference locale (suivie), sinon inactifs (salle
+  /// montee sans `ProviderScope`, comme dans les tests d'ecran).
+  Widget _avecPreferenceRaccourcis(
+    BuildContext context,
+    Widget Function(bool raccourcis) construire,
+  ) {
+    final bool? explicite = raccourcisClavier;
+    if (explicite != null) return construire(explicite);
+    if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
+        null) {
+      return construire(false);
+    }
+    return Consumer(
+      builder: (BuildContext _, WidgetRef ref, Widget? _) => construire(
+        ref.watch(
+          preferencesLocalesProvider.select(
+            (PreferencesLocales p) => p.raccourcisSalle,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,12 +121,16 @@ class SalleSeance extends StatelessWidget {
         color: palette.surfaceCanvas.background,
         child: SafeArea(
           bottom: !feuilleOuverte,
-          child: _FocusPanneaux(
-            vue: vue,
-            actions: actions,
-            local: local,
-            gabarit: gabarit,
-            contenuSupport: contenuSupport,
+          child: _avecPreferenceRaccourcis(
+            context,
+            (bool raccourcis) => _FocusPanneaux(
+              vue: vue,
+              actions: actions,
+              local: local,
+              gabarit: gabarit,
+              contenuSupport: contenuSupport,
+              raccourcis: raccourcis,
+            ),
           ),
         ),
       );
@@ -172,6 +210,7 @@ class _FocusPanneaux extends StatefulWidget {
     required this.local,
     required this.gabarit,
     this.contenuSupport,
+    this.raccourcis = false,
   });
 
   final VueSeance vue;
@@ -179,6 +218,9 @@ class _FocusPanneaux extends StatefulWidget {
   final EtatLocalSeance local;
   final Gabarit gabarit;
   final Widget? contenuSupport;
+
+  /// EN-KB : les raccourcis M, V, R, B sont permis (preference locale).
+  final bool raccourcis;
 
   @override
   State<_FocusPanneaux> createState() => _FocusPanneauxState();
@@ -225,6 +267,80 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     }
   }
 
+  /// Vrai quand un champ de texte tient le focus : aucune lettre n'est
+  /// alors un raccourci (E19, jamais pendant une saisie).
+  static bool _saisieEnCours() {
+    final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+    if (focus == null) return false;
+    return focus.widget is EditableText ||
+        focus.findAncestorWidgetOfExactType<EditableText>() != null;
+  }
+
+  /// Le raccourci peut-il agir maintenant ? Salle enseignant sur bureau,
+  /// preference active, hors saisie, et le bouton correspondant existe.
+  bool _permis(RaccourciSalle raccourci) {
+    final VueSeance vue = widget.vue;
+    final ActionsSeance actions = widget.actions;
+    if (!widget.raccourcis ||
+        widget.gabarit != Gabarit.desktop ||
+        vue.role != RoleSeance.enseignant ||
+        _saisieEnCours()) {
+      return false;
+    }
+    final PanneauOuvert panneau = vue.panneau;
+    return switch (raccourci) {
+      // Micro bloque : le bouton ouvre une feuille ; la lettre ne fait rien.
+      RaccourciSalle.micro =>
+        actions.onMicro != null &&
+            vue.commandesPublicationActives &&
+            !vue.microBloque,
+      // E19 : V ne fait que couper la camera, jamais l'allumer.
+      RaccourciSalle.camera =>
+        actions.onCamera != null &&
+            vue.commandesPublicationActives &&
+            widget.local.cameraAllumee,
+      // Sur bureau, le panneau Eleves est deja la quand rien d'autre n'est
+      // ouvert : R le ramene depuis Supports ou le selecteur.
+      RaccourciSalle.eleves =>
+        vue.voitBoutonsPanneaux &&
+            actions.onEleves != null &&
+            (panneau == PanneauOuvert.supports ||
+                panneau == PanneauOuvert.ressources),
+      RaccourciSalle.bibliotheque =>
+        vue.voitBoutonsPanneaux &&
+            actions.onBibliotheque != null &&
+            panneau != PanneauOuvert.ressources,
+    };
+  }
+
+  void _executer(RaccourciSalle raccourci) {
+    final ActionsSeance actions = widget.actions;
+    switch (raccourci) {
+      case RaccourciSalle.micro:
+        final bool coupait = widget.local.microOuvert;
+        actions.onMicro?.call();
+        // Annonce discrete, sans fenetre : l'etat obtenu.
+        if (coupait) _annoncer(t.salle.microCoupe);
+      case RaccourciSalle.camera:
+        actions.onCamera?.call();
+        _annoncer(t.salle.cameraCoupee);
+      case RaccourciSalle.eleves:
+        actions.onEleves?.call();
+      case RaccourciSalle.bibliotheque:
+        actions.onBibliotheque?.call();
+    }
+  }
+
+  void _annoncer(String message) {
+    unawaited(
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        message,
+        Directionality.of(context),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // EN-9 : sur bureau, le panneau Eleves est ouvert d'office (a droite du
@@ -238,20 +354,88 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     final bool ouvert =
         widget.vue.voitBoutonsPanneaux &&
         widget.vue.panneau != PanneauOuvert.aucun;
-    return CallbackShortcuts(
-      bindings: <ShortcutActivator, VoidCallback>{
-        if (ouvert) const SingleActivator(LogicalKeyboardKey.escape): _fermer,
+    // EN-KB (E19) : les lettres sont posees sur le sous-arbre de la salle,
+    // jamais globales ; l'action refuse (et laisse passer la touche) hors
+    // bureau, preference coupee, ou pendant une saisie.
+    return Shortcuts(
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.keyM): IntentRaccourciSalle(
+          RaccourciSalle.micro,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyV): IntentRaccourciSalle(
+          RaccourciSalle.camera,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyR): IntentRaccourciSalle(
+          RaccourciSalle.eleves,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyB): IntentRaccourciSalle(
+          RaccourciSalle.bibliotheque,
+        ),
       },
-      child: _SalleEnseignant(
-        vue: vue,
-        actions: widget.actions,
-        local: widget.local,
-        gabarit: widget.gabarit,
-        contenuSupport: widget.contenuSupport,
-        focusEleves: _focusEleves,
-        focusSupports: _focusSupports,
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          IntentRaccourciSalle: _ActionRaccourciSalle(
+            permis: _permis,
+            executer: _executer,
+          ),
+        },
+        child: CallbackShortcuts(
+          bindings: <ShortcutActivator, VoidCallback>{
+            if (ouvert)
+              const SingleActivator(LogicalKeyboardKey.escape): _fermer,
+          },
+          child: _SalleEnseignant(
+            vue: vue,
+            actions: widget.actions,
+            local: widget.local,
+            gabarit: widget.gabarit,
+            contenuSupport: widget.contenuSupport,
+            focusEleves: _focusEleves,
+            focusSupports: _focusSupports,
+          ),
+        ),
       ),
     );
+  }
+}
+
+/// Les raccourcis clavier de la salle enseignant (E19, EN-KB).
+enum RaccourciSalle {
+  /// M : bascule le micro.
+  micro,
+
+  /// V : coupe la camera, ne l'allume jamais.
+  camera,
+
+  /// R : le panneau Eleves (roster).
+  eleves,
+
+  /// B : le selecteur de ressources (bibliotheque, EN-10).
+  bibliotheque,
+}
+
+/// L'intention d'un raccourci de la salle.
+class IntentRaccourciSalle extends Intent {
+  const IntentRaccourciSalle(this.raccourci);
+
+  final RaccourciSalle raccourci;
+}
+
+/// L'action des raccourcis : desactivee, elle laisse la touche au reste de
+/// l'application (un champ de texte la recoit alors normalement).
+class _ActionRaccourciSalle extends Action<IntentRaccourciSalle> {
+  _ActionRaccourciSalle({required this.permis, required this.executer});
+
+  final bool Function(RaccourciSalle raccourci) permis;
+  final void Function(RaccourciSalle raccourci) executer;
+
+  @override
+  bool isEnabled(IntentRaccourciSalle intent) => permis(intent.raccourci);
+
+  @override
+  Object? invoke(IntentRaccourciSalle intent) {
+    executer(intent.raccourci);
+    return null;
   }
 }
 

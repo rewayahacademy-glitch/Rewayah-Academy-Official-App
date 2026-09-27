@@ -15,4 +15,14 @@ abstract final class LibellesSalleB {
 
   /// 04_ENSEIGNANT §19.1, deuxieme onglet : « Cette Classe ».
   static const String cetteClasse = 'Cette Classe';
+
+  /// EN-KB, memoire ENSEIGNANT-2026-09-26 regle E19 (titre de la regle) :
+  /// la ligne de `/compte/reglages`.
+  static const String raccourcisTitre =
+      'Raccourcis clavier en salle sur ordinateur';
+
+  /// EN-KB, regle E19, premier et troisieme points, mot pour mot.
+  static const String raccourcisDetail =
+      'M micro, V caméra, R roster, B bibliothèque, Échap ferme le panneau. '
+      "La caméra ne s'allume jamais par un raccourci.";
 }

@@ -71,7 +71,7 @@ void main() {
     expect(find.text(t.compte.accessibilite), findsOneWidget);
     expect(find.text(t.compte.notifications), findsOneWidget);
     expect(find.text(t.compte.economieDonnees), findsOneWidget);
-    expect(find.byType(Switch), findsNWidgets(6));
+    expect(find.byType(Switch), findsNWidgets(7));
     expect(find.byType(Radio<PreferenceTheme>), findsNWidgets(3));
   });
 
@@ -103,7 +103,7 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(Switch), findsNWidgets(6));
+    expect(find.byType(Switch), findsNWidgets(7));
     expect(find.byType(Radio<PreferenceTheme>), findsNWidgets(3));
   });
 

@@ -49,6 +49,8 @@ class RewayahApp extends ConsumerWidget {
     ref.watch(persistanceApparenceProvider);
     // Meme regle pour le repli de la navigation laterale (bouton de repli).
     ref.watch(persistanceNavigationProvider);
+    // Meme regle pour les raccourcis clavier de la salle (EN-KB).
+    ref.watch(persistanceRaccourcisProvider);
     final ThemeMode mode = themeMode ?? ref.watch(modeThemeProvider);
 
     return MaterialApp.router(
