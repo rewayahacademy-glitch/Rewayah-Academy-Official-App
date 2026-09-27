@@ -257,6 +257,12 @@
     "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "seDeconnecter": "Se déconnecter",
     "titreDossier": "Votre dossier",
+    "titreCompte": "Votre compte",
+    "accordsARelire": "Il vous reste nos conditions à lire et à accepter.",
+    "accesTitre": "Votre compte est créé",
+    "accesEnPreparation": "Son ouverture est en cours de notre côté.",
+    "aucunDocument": "Vous n'avez aucun document à envoyer.",
+    "actualiserCompte": "Actualiser",
     "reste": {
       "one": "Il reste un élément à fournir.",
       "other": "Il reste {n} éléments à fournir."

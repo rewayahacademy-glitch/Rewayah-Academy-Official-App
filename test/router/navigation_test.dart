@@ -556,6 +556,9 @@ void main() {
         ),
         _session(AppRole.guardian)
             .copyWith(accountStatus: AccountStatus.pendingKyc),
+        // K-47 (HL-A-6) : le depot de piece n'est ouvert qu'a l'enseignant.
+        _session(AppRole.teacher)
+            .copyWith(accountStatus: AccountStatus.pendingKyc),
         // La page hors ligne n'appartient qu'a une session dont le profil n'a
         // pas pu etre lu.
         const SessionState(

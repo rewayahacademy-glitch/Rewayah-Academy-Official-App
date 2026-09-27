@@ -98,7 +98,9 @@ void main() {
         ),
         isTrue,
       );
-      expect(enseignants.total, 6);
+      // K-47 (HL-A-6) : D02, D07 et D10 sont passes enseignants ; seul D03
+      // (famille dispensee, dormant) reste un tuteur.
+      expect(enseignants.total, 9);
     });
 
     test('toutes les pieces sont fictives', () async {

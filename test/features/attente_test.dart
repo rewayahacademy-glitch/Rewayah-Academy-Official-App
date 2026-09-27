@@ -25,7 +25,10 @@ Future<void> _monter(WidgetTester tester, FauxServiceDossier dossier) async {
   await tester.pumpAndSettle();
 }
 
+// K-47 (HL-A-6) : la piece, sa verification et son refus ne concernent que
+// l'enseignant ; le tuteur se construit avec [role] explicite.
 EtatDossier _etat({
+  AppRole role = AppRole.teacher,
   AccountStatus statut = AccountStatus.pendingKyc,
   bool accuse = false,
   bool contrat = false,
@@ -36,7 +39,7 @@ EtatDossier _etat({
   bool? correction,
 }) => EtatDossier(
   profilExiste: true,
-  role: AppRole.guardian,
+  role: role,
   statutCompte: statut,
   accuseSigne: accuse,
   contratSigne: contrat,
@@ -165,7 +168,7 @@ void main() {
       required UsageInscription? usage,
     }) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
-        ..etatRendu = _etat(accuse: true);
+        ..etatRendu = _etat(role: AppRole.guardian, accuse: true);
       final List<Override> surcharges = <Override>[
         serviceDossierProvider.overrideWithValue(dossier),
       ];
@@ -362,7 +365,7 @@ void main() {
       );
       await tester.tap(find.text(t.attente.corriger));
       await tester.pumpAndSettle();
-      expect(find.text(t.consentement.texte.caseResponsable), findsOneWidget);
+      expect(find.byType(ContratPage), findsOneWidget);
       expect(find.text('route-piece'), findsNothing);
     });
 
@@ -436,6 +439,91 @@ void main() {
       }
       await tester.pumpAndSettle();
       expect(source.rafraichissements, 1);
+    });
+
+    // K-47 (HL-A-6) : le tuteur ne depose aucune piece et n'attend aucune
+    // validation ; ses accords restent.
+    testWidgets('tuteur incomplet : l accuse et le contrat, jamais la piece', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, _etat(role: AppRole.guardian));
+
+      expect(find.text(t.attente.accordsARelire), findsOneWidget);
+      expect(find.text(t.attente.carteAccuse), findsOneWidget);
+      expect(find.text(t.attente.signatureContrat), findsOneWidget);
+      expect(find.text(t.attente.pieceIdentite), findsNothing);
+      expect(find.text(t.attente.deposerLaPiece), findsNothing);
+      expect(find.text(t.attente.dossierIncomplet), findsNothing);
+      expect(find.text(t.attente.titreDossier), findsNothing);
+    });
+
+    testWidgets(
+      'tuteur accords signes, compte en attente : etat honnete, sans piece',
+      (WidgetTester tester) async {
+        final (FausseSourceSession source, FauxServiceAuth auth) = await monter(
+          tester,
+          _etat(role: AppRole.guardian, accuse: true, contrat: true),
+        );
+
+        expect(find.text(t.attente.accesTitre), findsOneWidget);
+        expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
+        expect(find.text(t.attente.aucunDocument), findsOneWidget);
+        expect(find.text(t.attente.titreCompte), findsWidgets);
+        for (final String interdit in <String>[
+          t.attente.titre,
+          t.attente.enVerification,
+          t.attente.delai,
+          t.attente.pieceIdentite,
+          t.attente.deposerLaPiece,
+          t.attente.corriger,
+        ]) {
+          expect(find.text(interdit), findsNothing, reason: interdit);
+        }
+
+        await tester.tap(find.text(t.attente.actualiserCompte));
+        await tester.pumpAndSettle();
+        expect(source.rafraichissements, 1);
+
+        await tester.tap(find.text(t.attente.seDeconnecter));
+        await tester.pumpAndSettle();
+        expect(auth.deconnexions, 1);
+      },
+    );
+
+    testWidgets(
+      'tuteur avec une ancienne piece refusee : ni refus ni Corriger',
+      (WidgetTester tester) async {
+        await monter(
+          tester,
+          _etat(
+            role: AppRole.guardian,
+            accuse: true,
+            contrat: true,
+            piece: true,
+            statutPiece: StatutPiece.refusee,
+            motif: 'Motif fictif.',
+          ),
+        );
+
+        expect(find.text(t.attente.refuse), findsNothing);
+        expect(find.text('Motif fictif.'), findsNothing);
+        expect(find.text(t.attente.corriger), findsNothing);
+        expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
+        expect(find.text('route-piece'), findsNothing);
+      },
+    );
+
+    test('tuteur : aucune piece exigee, meme si la base ne le dit pas', () {
+      final EtatDossier lu = EtatDossier.depuisJson(const <String, dynamic>{
+        'profil': true,
+        'role': 'guardian',
+        'statut': 'pending_kyc',
+        'contrat_signe': true,
+        'accuse_signe': true,
+      });
+      expect(lu.pieceExigee, isFalse);
+      expect(lu.manquants, isEmpty);
+      expect(lu.etape, EtapeDossier.accesEnPreparation);
     });
 
     test('T11 correction_autorisee absente : nulle, la correction reste', () {

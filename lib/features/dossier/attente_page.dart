@@ -90,7 +90,11 @@ class _AttentePageState extends ConsumerState<AttentePage> {
         : null;
 
     return PageShell(
-      titre: t.attente.titreDossier,
+      // K-47 : un tuteur n'a pas de dossier a faire verifier, seulement un
+      // compte a ouvrir.
+      titre: etat.value?.estTuteur ?? false
+          ? t.attente.titreCompte
+          : t.attente.titreDossier,
       // HL-A-5 : le pied ne garde que Se deconnecter ; la prochaine action
       // se place 16 sous la carte d'etat qu'elle confirme.
       actions: ActionPrincipale(
@@ -132,12 +136,16 @@ class _AttentePageState extends ConsumerState<AttentePage> {
               ),
             ),
           ],
-          if (etat.value?.etape == EtapeDossier.enVerification) ...<Widget>[
+          if (etat.value?.etape
+              case EtapeDossier.enVerification ||
+                  EtapeDossier.accesEnPreparation) ...<Widget>[
             Ecart.vLg,
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: ActionPrincipale(
-                libelle: t.attente.actualiser,
+                libelle: etat.value!.estTuteur
+                    ? t.attente.actualiserCompte
+                    : t.attente.actualiser,
                 onPress: () => unawaited(_relire()),
                 niveau: NiveauAction.tertiaire,
                 pleineLargeur: false,
@@ -231,7 +239,12 @@ class _Statut extends StatelessWidget {
       EtapeDossier.incomplet => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.attente.dossierIncomplet, style: textes.headlineSmall),
+          Text(
+            etat.estTuteur
+                ? t.attente.accordsARelire
+                : t.attente.dossierIncomplet,
+            style: textes.headlineSmall,
+          ),
           Ecart.vMd,
           Text(
             t.attente.reste(n: etat.manquants.length),
@@ -267,6 +280,14 @@ class _Statut extends StatelessWidget {
           t.attente.delai,
         ].join('\n'),
         icone: AppIcons.dossiers,
+      ),
+      // K-47 (HL-A-6) : l'etat honnete du tuteur tant que le serveur le fait
+      // naitre en attente (BR-1) : ni piece, ni verification, ni delai.
+      EtapeDossier.accesEnPreparation => _Bloc(
+        titre: t.attente.accesTitre,
+        message: t.attente.accesEnPreparation,
+        detail: t.attente.aucunDocument,
+        icone: AppIcons.foyer,
       ),
       EtapeDossier.refuse => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

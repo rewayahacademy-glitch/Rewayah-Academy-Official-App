@@ -120,6 +120,17 @@ void main() {
         isNull,
       );
     });
+
+    // K-47 (HL-A-6) : la piece d'identite ne concerne que l'enseignant.
+    test('le depot de piece : ouvert a l enseignant, ferme au tuteur', () {
+      String? pour(AppRole role) => deciderRedirection(
+        session: _session(role: role, statut: AccountStatus.pendingKyc),
+        cheminDemande: Routes.attentePiece,
+        maintenant: maintenant,
+      );
+      expect(pour(AppRole.teacher), isNull);
+      expect(pour(AppRole.guardian), Routes.attente);
+    });
   });
 
   group('Chaque role reste dans son espace', () {

@@ -30,7 +30,11 @@ class GenreEtape extends ConsumerWidget {
     return CoquilleEtape(
       route: _route,
       question: t.inscription.genreQuestion,
-      explication: t.inscription.genreRaison,
+      // K-47 : la seule raison dite est la relecture de la piece, qui ne
+      // concerne que l'enseignant ; aucune explication pour le tuteur.
+      explication: brouillon.usage == UsageInscription.enseignant
+          ? t.inscription.genreRaison
+          : null,
       libelleAction: t.commun.continuer,
       onAction: genre == null ? null : () => avancerDepuis(context, _route),
       onRetour: () => reculerDepuis(context, _route),

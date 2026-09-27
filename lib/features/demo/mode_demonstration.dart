@@ -238,6 +238,8 @@ class SourceSessionDemoAdmin implements SourceSession {
 /// Parametre d'adresse du dossier de la personne en demonstration (AD-10).
 const String parametreDossierDemo = 'dossier';
 
+/// K-47 (HL-A-6) : la titulaire est desormais une ENSEIGNANTE (la piece ne
+/// concerne plus le tuteur) ; le parametre garde son nom d'origine.
 /// ?demo=tuteur&dossier=refuse|refuse-fige|verification : la personne est
 /// Amina Benali, titulaire d'un dossier refuse (motif fictif), refuse sans
 /// correction permise (AD-BR-28), ou en cours de verification.

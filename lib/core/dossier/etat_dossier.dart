@@ -95,14 +95,28 @@ class EtatDossier {
     if (statutCompte == AccountStatus.disabled) {
       return EtapeDossier.suspendu;
     }
-    if (statutPiece == StatutPiece.refusee) {
+    // K-47 (HL-A-6) : un tuteur n'a pas de piece, donc pas de refus de piece,
+    // meme s'il en avait depose une avant la decision.
+    if (statutPiece == StatutPiece.refusee && !estTuteur) {
       return EtapeDossier.refuse;
     }
     if (manquants.isNotEmpty) {
       return EtapeDossier.incomplet;
     }
-    return EtapeDossier.enVerification;
+    // Personne ne verifie le dossier d'un tuteur : son acces attend le
+    // serveur (BR-1), pas une validation.
+    return estTuteur
+        ? EtapeDossier.accesEnPreparation
+        : EtapeDossier.enVerification;
   }
+
+  /// Vrai pour un tuteur (famille ou eleve adulte). K-47 : la piece
+  /// d'identite et la validation ne concernent que l'enseignant.
+  bool get estTuteur => role == AppRole.guardian;
+
+  /// Vrai quand une piece d'identite est attendue : jamais pour un tuteur
+  /// (K-47), meme tant que `etat_dossier()` ne rend pas `piece_requise`.
+  bool get pieceExigee => pieceRequise && !estTuteur;
 
   /// Ce qu'il reste a fournir, dans l'ordre ou l'ecran le proposera.
   ///
@@ -116,7 +130,7 @@ class EtatDossier {
   List<PieceManquante> get manquants => <PieceManquante>[
     if (!accuseSigne) PieceManquante.accuse,
     if (!contratSigne) PieceManquante.contrat,
-    if (pieceRequise && (!pieceDeposee || statutPiece == StatutPiece.refusee))
+    if (pieceExigee && (!pieceDeposee || statutPiece == StatutPiece.refusee))
       PieceManquante.pieceIdentite,
   ];
 
@@ -151,13 +165,17 @@ class EtatDossier {
   );
 }
 
-/// Les quatre etats du portail d'attente.
+/// Les cinq etats du portail d'attente.
 enum EtapeDossier {
   /// Il manque des pieces. Une liste courte, chacune avec son bouton.
   incomplet,
 
-  /// Tout est depose, l'academie verifie.
+  /// Tout est depose, l'academie verifie (enseignant).
   enVerification,
+
+  /// Tuteur : accords signes, aucune piece a fournir ; l'acces s'ouvre cote
+  /// serveur (BR-1). Aucune verification, aucun delai promis.
+  accesEnPreparation,
 
   /// Refuse, avec un motif et de quoi corriger.
   refuse,

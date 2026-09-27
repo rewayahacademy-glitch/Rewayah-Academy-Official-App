@@ -281,7 +281,9 @@ void main() {
     const String id = DonneesDossiersDemo.familleDispensee;
     final GoRouter routeur = await _monterPersonne(tester, etat, id);
     expect(_chemin(routeur), Routes.attente);
-    expect(find.text(t.attente.titre), findsOneWidget);
+    // K-47 : un tuteur n'est pas « en verification » : son acces s'ouvre.
+    expect(find.text(t.attente.accesTitre), findsOneWidget);
+    expect(find.text(t.attente.titre), findsNothing);
 
     // L'administration valide (le geste admin est prouve par T1).
     await RevueDossiersDemo(etat).decider(
@@ -311,7 +313,7 @@ void main() {
       commandeId: 'ad10-t8b',
       verificationsFaites: const <String>{},
     );
-    await tester.tap(find.text(t.attente.actualiser));
+    await tester.tap(find.text(t.attente.actualiserCompte));
     await _stabiliser(tester);
     await _stabiliser(tester);
     expect(_chemin(routeur), startsWith(Routes.tuteurAccueil));
@@ -358,7 +360,9 @@ void main() {
     expect(_chemin(routeur), Routes.attente);
   });
 
-  testWidgets('T1 bis famille dispensee refusee : aucune piece demandee', (
+  // K-47 (HL-A-6) : un tuteur n'a ni piece ni refus de piece ; il voit l'etat
+  // honnete de son acces, jamais « Dossier refuse » ni « Corriger ».
+  testWidgets('T1 bis tuteur refuse en file : ni refus ni piece demandee', (
     WidgetTester tester,
   ) async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
@@ -372,8 +376,9 @@ void main() {
       motif: 'Motif fictif.',
     );
     final GoRouter routeur = await _monterPersonne(tester, etat, id);
-    expect(find.text(t.attente.refuse), findsOneWidget);
-    expect(find.text(t.attente.refuseSansElement), findsOneWidget);
+    expect(find.text(t.attente.refuse), findsNothing);
+    expect(find.text(t.attente.refuseSansElement), findsNothing);
+    expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
     expect(find.textContaining('pièce'), findsNothing);
     expect(find.text(t.attente.corriger), findsNothing);
     expect(_chemin(routeur), isNot(Routes.attentePiece));
