@@ -350,9 +350,11 @@ class CoquilleAdulteDemo extends StatelessWidget {
         ] else if (ecran == EcranDemoAdulte.maClasse) ...<Override>[
           // Ma classe lit la meme Classe An-Nour, plus sa propre vue (EA-3).
           ...surchargesEleveDemo(seance),
-          maClasseAdulteProvider.overrideWith(
-            (Ref _) async => DonneesAdulteDemo.maClasse(genre, vue),
-          ),
+          // Le second adulte est eleve d'une autre Classe, que la
+          // demonstration n'a pas : le fournisseur reel reste (indisponible).
+          if (DonneesAdulteDemo.maClasse(genre, vue)
+              case final MaClasseAdulteVM classe)
+            maClasseAdulteProvider.overrideWith((Ref _) async => classe),
         ] else
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
       ],
@@ -371,7 +373,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
           child: switch (ecran) {
             // La cloche reste sans destination jusqu'a EA-8 (centre de
             // notifications de l'eleve adulte) ; « Voir tout » ouvre Ma
-            // classe, qui porte la Bibliotheque (EA-3).
+            // classe, dont le « Voir tout » ouvre la Bibliotheque de la
+            // Classe, avec toutes ses ressources (EA-3).
             EcranDemoAdulte.accueil => AccueilAdultePage(
               onRejoindre: (_) => context.go(
                 adressePreparationEleveDemo(PreparationEleveDemo.pret),

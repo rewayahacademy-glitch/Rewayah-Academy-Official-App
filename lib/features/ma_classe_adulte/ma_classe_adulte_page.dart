@@ -23,6 +23,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
@@ -37,6 +38,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
+import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_espace_groupe/emplacements_groupe.dart' show BlocBibliotheque;
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show ColonnesParRangees, LecteurGroupe, LectureGroupe, SqueletteGroupe;
@@ -116,11 +118,18 @@ class MaClasseAdultePage extends ConsumerWidget {
   /// Ce que fait le bouton de l'emplacement d'entree.
   final void Function(GroupSummaryVM groupe)? onRejoindre;
 
-  /// Ouvre la Bibliotheque de la Classe.
+  /// Ouvre la Bibliotheque de la Classe. Par defaut, comme l'Espace Classe :
+  /// la Bibliotheque sur ce groupe (`RoutesTcB.avecGroupe`), qui montre
+  /// toutes ses ressources.
   final void Function(String groupeId)? onVoirRessources;
 
   /// Le nombre de ressources montrees.
   static const int limite = 3;
+
+  /// Le diametre des photos des participants : la valeur des eleves de la
+  /// fiche du groupe (`fiche_groupe_page.dart`, `diametre: 40`), que cet
+  /// ecran ne modifie pas (K-51).
+  static const double diametrePhoto = 40;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -228,8 +237,7 @@ class _Sections extends StatelessWidget {
                       child: PhotoEleve(
                         prenom: p.prenom,
                         cleAvatar: p.cleAvatar,
-                        // Le diametre des eleves de la fiche du groupe.
-                        diametre: AppSpacing.section,
+                        diametre: MaClasseAdultePage.diametrePhoto,
                       ),
                     ),
                   ),
@@ -243,7 +251,11 @@ class _Sections extends StatelessWidget {
         emplacement: espace.bibliotheque,
         titre: t.adulte.accueil.ressources,
         limite: MaClasseAdultePage.limite,
-        onVoirTout: voir == null ? null : () => voir(groupeId),
+        // Trois ici, toutes dans la Bibliotheque de la Classe : l'identifiant
+        // voyage dans l'adresse, comme depuis l'Espace Classe.
+        onVoirTout: () => voir == null
+            ? GoRouter.of(context).go(RoutesTcB.avecGroupe(groupeId))
+            : voir(groupeId),
       ),
     ];
 

@@ -21,6 +21,7 @@ import 'package:rewayah_academy/features/demo/demo_classe_page.dart'
     show EcranPreparationEleveDemo, routesDemoClasse;
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
+import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart'
@@ -106,7 +107,7 @@ void main() {
     final List<ParticipantClasseAdulte> attendus = DonneesAdulteDemo.maClasse(
       GenreTitulaireDemo.homme,
       VueDemoAdulte.titulaire,
-    ).participants;
+    )!.participants;
     expect(
       find.descendant(of: participants, matching: find.byType(PhotoEleve)),
       findsNWidgets(attendus.length),
@@ -170,9 +171,17 @@ void main() {
     expect(droite.dx, greaterThan(gauche.dx));
   });
 
-  testWidgets('vue du second adulte : son prenom parmi les participants', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('vue du second adulte : jamais dans la Classe du titulaire, '
+      'indisponible faute de sa propre Classe', (WidgetTester tester) async {
+    // Le foyer fige (00_MAQUETTES section 3) : le second adulte est eleve
+    // d'une AUTRE Classe, que la demonstration n'a pas.
+    expect(
+      DonneesAdulteDemo.maClasse(
+        GenreTitulaireDemo.homme,
+        VueDemoAdulte.secondAdulte,
+      ),
+      isNull,
+    );
     taille(tester, const Size(390, 844));
     await monterCoquille(
       tester,
@@ -181,13 +190,66 @@ void main() {
         vue: VueDemoAdulte.secondAdulte,
       ),
     );
+    expect(find.byType(MaClasseAdultePage), findsOneWidget);
+    expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+    expect(find.byType(IdentiteGroupe), findsNothing);
+    expect(participants, findsNothing);
+    expect(find.textContaining('Mariama'), findsNothing);
+  });
+
+  test('cote titulaire, une seule liste, sans le second adulte', () {
+    List<ParticipantClasseAdulte> liste(GenreTitulaireDemo g) =>
+        DonneesAdulteDemo.maClasse(g, VueDemoAdulte.titulaire)!.participants;
+    final List<ParticipantClasseAdulte> homme = liste(GenreTitulaireDemo.homme);
+    expect(homme.first.estMoi, isTrue);
+    expect(homme.first.prenom, 'Mamadou');
+    expect(homme.first.id, DonneesAdulteDemo.mamadouId);
+    // Le second adulte n'est jamais parmi les camarades du titulaire.
+    expect(
+      homme.map((ParticipantClasseAdulte p) => p.prenom),
+      isNot(contains('Mariama')),
+    );
+    expect(
+      liste(GenreTitulaireDemo.femme)
+          .map((ParticipantClasseAdulte p) => p.prenom),
+      isNot(contains('Mamadou')),
+    );
+    // La ligne de progression lit la page de reprise du titulaire.
+    expect(
+      DonneesAdulteDemo.ligneProgressionClasse,
+      endsWith(DonneesAdulteDemo.pageRepriseTitulaire),
+    );
+  });
+
+  testWidgets('« Voir tout » des ressources ouvre la Bibliotheque de la '
+      'Classe', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(EcranDemoAdulte.maClasse),
+      autres: <RouteBase>[
+        GoRoute(
+          path: RoutesTcB.bibliotheque,
+          builder: (BuildContext _, GoRouterState etat) => Text(
+            'bibliotheque:'
+            '${etat.uri.queryParameters[RoutesTcB.parametreGroupe]}',
+          ),
+        ),
+      ],
+    );
+    final Finder voirTout = find.descendant(
+      of: find.byType(BlocBibliotheque),
+      matching: find.byType(ActionPrincipale),
+    );
     await tester.scrollUntilVisible(
-      participants,
+      voirTout,
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    await tester.tap(voirTout);
+    await tester.pumpAndSettle();
     expect(
-      find.text(t.adulte.maClasse.vous(prenom: 'Mariama')),
+      find.text('bibliotheque:${DonneesClasseDemo.groupeId}'),
       findsOneWidget,
     );
   });

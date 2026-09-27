@@ -256,35 +256,55 @@ abstract final class DonneesAdulteDemo {
   static const String aProposClasse =
       'Lecture du Coran avec application des règles de tajwid.';
 
-  /// La progression dans la Classe An-Nour, une ligne rendue : le chapitre
-  /// de la demonstration de Classe et la page de reprise.
-  static String get ligneProgressionClasse =>
-      '${DonneesClasseDemo.progression.chapitre} · Page 24';
+  /// La page de reprise du titulaire dans la Classe An-Nour, une donnee
+  /// rendue telle quelle : la sienne, jamais celle d'un autre eleve.
+  static const String pageRepriseTitulaire = 'Page 24';
 
-  /// Ma classe de la personne qui regarde. Les participants sont autant que
-  /// l'effectif que le groupe rend (`DonneesClasseDemo.groupe`) : la
-  /// personne qui regarde, puis les premiers eleves de la demonstration de
-  /// Classe. Aucune photo livree : les initiales en repli (E5).
-  static MaClasseAdulteVM maClasse(
+  /// La progression du titulaire dans la Classe An-Nour, une ligne rendue :
+  /// le chapitre de la demonstration de Classe et sa page de reprise.
+  static String get ligneProgressionClasse =>
+      '${DonneesClasseDemo.progression.chapitre} · $pageRepriseTitulaire';
+
+  /// L'identifiant du titulaire selon la variante.
+  static String idTitulaire(GenreTitulaireDemo genre) =>
+      genre == GenreTitulaireDemo.homme ? mamadouId : mariamaId;
+
+  /// Ma classe de la personne qui regarde, ou `null` quand la demonstration
+  /// n'a pas sa Classe.
+  ///
+  /// Le titulaire est eleve de la Classe An-Nour : ses participants sont
+  /// autant que l'effectif que le groupe rend (`DonneesClasseDemo.groupe`),
+  /// lui d'abord, puis les premiers eleves de la demonstration de Classe. La
+  /// liste est la meme quelle que soit la vue, puisqu'elle n'est rendue qu'a
+  /// lui.
+  ///
+  /// Le second adulte est eleve d'une AUTRE Classe, dont le titulaire ne voit
+  /// pas le nom (00_MAQUETTES section 3) : la demonstration n'en a aucune,
+  /// donc `null`, et la page garde son fournisseur reel (indisponible), plutot
+  /// que de le placer dans An-Nour. Aucune photo livree : les initiales en
+  /// repli (E5).
+  static MaClasseAdulteVM? maClasse(
     GenreTitulaireDemo genre,
     VueDemoAdulte vue,
-  ) => MaClasseAdulteVM(
-    groupeId: DonneesClasseDemo.groupeId,
-    aPropos: aProposClasse,
-    ligneProgression: ligneProgressionClasse,
-    participants: <ParticipantClasseAdulte>[
-      ParticipantClasseAdulte(
-        id: vue == VueDemoAdulte.titulaire ? mamadouId : mariamaId,
-        prenom: prenomVue(genre, vue),
-        estMoi: true,
-      ),
-      for (final (int i, EleveProjectionDemo e)
-          in DonneesClasseDemo.eleves
-              .take(DonneesClasseDemo.eleves.length - 1)
-              .indexed)
-        ParticipantClasseAdulte(id: 'demo-eleve-$i', prenom: e.prenom),
-    ],
-  );
+  ) => vue == VueDemoAdulte.secondAdulte
+      ? null
+      : MaClasseAdulteVM(
+          groupeId: DonneesClasseDemo.groupeId,
+          aPropos: aProposClasse,
+          ligneProgression: ligneProgressionClasse,
+          participants: <ParticipantClasseAdulte>[
+            ParticipantClasseAdulte(
+              id: idTitulaire(genre),
+              prenom: prenomTitulaire(genre),
+              estMoi: true,
+            ),
+            for (final (int i, EleveProjectionDemo e)
+                in DonneesClasseDemo.eleves
+                    .take(DonneesClasseDemo.eleves.length - 1)
+                    .indexed)
+              ParticipantClasseAdulte(id: 'demo-eleve-$i', prenom: e.prenom),
+          ],
+        );
 
   /// La ligne famille de Mon espace pour cet etat et cette vue.
   static LigneFamilleDemo ligneFamille(EtatDemoAdulte etat, VueDemoAdulte vue) {

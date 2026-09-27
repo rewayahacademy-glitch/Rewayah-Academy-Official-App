@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 
 import '../../capture/outil_capture.dart';
@@ -25,6 +26,7 @@ Future<void> _capturer(
   Size taille, {
   ThemeMode mode = ThemeMode.light,
   double echelle = 1,
+  bool pleineHauteur = false,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final GoRouter routeur = GoRouter(
@@ -59,6 +61,28 @@ Future<void> _capturer(
     ),
   );
   await stabiliser(tester);
+  if (pleineHauteur) {
+    // La vue grandit de ce qui reste a defiler, jusqu'a ce que plus rien ne
+    // defile : la page entiere tient dans le PNG, progression comprise.
+    for (int i = 0; i < 4; i++) {
+      double reste = 0;
+      for (final ScrollableState s in tester.stateList<ScrollableState>(
+        find.byType(Scrollable),
+      )) {
+        if (s.position.axis == Axis.vertical &&
+            s.position.maxScrollExtent > reste) {
+          reste = s.position.maxScrollExtent;
+        }
+      }
+      if (reste <= 0) break;
+      fixerVueCapture(
+        tester,
+        Size(taille.width, tester.view.physicalSize.height + reste),
+        1,
+      );
+      await stabiliser(tester);
+    }
+  }
   debugPrint('PNG ${await capturer(tester, fichier)}');
 }
 
@@ -85,6 +109,18 @@ void main() {
             mode: mode,
           );
         });
+        // La page entiere : participants avec photo (K-44), les trois
+        // ressources et la ligne de progression.
+        testWidgets('${fichier}_pleine', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            '${fichier}_pleine',
+            adresseDemoAdulte(EcranDemoAdulte.maClasse),
+            taille,
+            mode: mode,
+            pleineHauteur: true,
+          );
+        });
       }
     }
 
@@ -95,6 +131,35 @@ void main() {
         adresseDemoAdulte(EcranDemoAdulte.maClasse),
         const Size(390, 844),
         echelle: 2,
+      );
+    });
+
+    testWidgets('ea3_ma_classe_390_light_200pc_pleine', (
+      WidgetTester tester,
+    ) async {
+      await _capturer(
+        tester,
+        'ea3_ma_classe_390_light_200pc_pleine',
+        adresseDemoAdulte(EcranDemoAdulte.maClasse),
+        const Size(390, 844),
+        echelle: 2,
+        pleineHauteur: true,
+      );
+    });
+
+    // La vue du second adulte : eleve d'une autre Classe, que la
+    // demonstration n'a pas ; jamais la Classe du titulaire.
+    testWidgets('ea3_ma_classe_390_light_conjoint', (
+      WidgetTester tester,
+    ) async {
+      await _capturer(
+        tester,
+        'ea3_ma_classe_390_light_conjoint',
+        adresseDemoAdulte(
+          EcranDemoAdulte.maClasse,
+          vue: VueDemoAdulte.secondAdulte,
+        ),
+        const Size(390, 844),
       );
     });
   });
