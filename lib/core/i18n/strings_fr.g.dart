@@ -787,6 +787,7 @@ class Traductions$accessibilite$fr {
 	late final Traductions$accessibilite$accueil$fr accueil = Traductions$accessibilite$accueil$fr.internal(_root);
 	late final Traductions$accessibilite$maClasse$fr maClasse = Traductions$accessibilite$maClasse$fr.internal(_root);
 	late final Traductions$accessibilite$tutoiement$fr tutoiement = Traductions$accessibilite$tutoiement$fr.internal(_root);
+	late final Traductions$accessibilite$apres$fr apres = Traductions$accessibilite$apres$fr.internal(_root);
 }
 
 // Path: accuse
@@ -3072,6 +3073,27 @@ class Traductions$accessibilite$tutoiement$fr {
 
 	/// fr: 'Tu es hors ligne. La séance nécessite une connexion.'
 	String get horsLigne => 'Tu es hors ligne. La séance nécessite une connexion.';
+
+	/// fr: 'Tu peux retrouver ton travail dans ta Classe.'
+	String get finPhrase => 'Tu peux retrouver ton travail dans ta Classe.';
+}
+
+// Path: accessibilite.apres
+class Traductions$accessibilite$apres$fr {
+	Traductions$accessibilite$apres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Revoir le support du cours'
+	String get revoirSupport => 'Revoir le support du cours';
+
+	/// fr: 'Le support reste dans ta Classe.'
+	String get revoirSupportDetail => 'Le support reste dans ta Classe.';
+
+	/// fr: 'Le support reste dans votre Classe.'
+	String get revoirSupportDetailVous => 'Le support reste dans votre Classe.';
 }
 
 // Path: consentement.texte
@@ -13360,6 +13382,10 @@ extension on Traductions {
 			_ => null,
 		} ?? switch (path) {
 			'accessibilite.tutoiement.horsLigne' => 'Tu es hors ligne. La séance nécessite une connexion.',
+			'accessibilite.tutoiement.finPhrase' => 'Tu peux retrouver ton travail dans ta Classe.',
+			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
+			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta Classe.',
+			'accessibilite.apres.revoirSupportDetailVous' => 'Le support reste dans votre Classe.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
@@ -13867,12 +13893,12 @@ extension on Traductions {
 			'admin.demandes.regleInconnue' => 'Règle non reconnue',
 			'admin.demandes.plateforme' => ({required Object valeur}) => 'Plateforme : ${valeur}',
 			'admin.demandes.effective' => ({required Object valeur}) => 'Appliquée : ${valeur}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.minutes' => ({required Object valeur}) => '${valeur} min',
 			'admin.demandes.eleves' => ({required Object valeur}) => '${valeur} élèves',
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}',
 			'admin.demandes.sansSurcharge' => 'Cet élève suit la règle de la plateforme.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.changer' => 'Changer',
 			'admin.demandes.clore' => 'Revenir à la règle de la plateforme',
 			'admin.demandes.historique' => 'Surcharges closes',
@@ -14381,12 +14407,12 @@ extension on Traductions {
 			'admin.agents.colonneEtat' => 'État',
 			'admin.agents.parcoursEleve' => 'Élève',
 			'admin.agents.parcoursTuteur' => 'Tuteur',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.parcoursEnseignant' => 'Enseignant',
 			'admin.agents.parcoursControleur' => 'Contrôle qualité',
 			'admin.agents.parcoursAdmin' => 'Administration',
 			'admin.agents.parcoursComptable' => 'Comptable',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.parcoursInconnu' => 'Parcours inconnu',
 			'admin.agents.etatActif' => 'Actif',
 			'admin.agents.etatRevoque' => 'Révoqué',
@@ -14895,12 +14921,12 @@ extension on Traductions {
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.titre' => 'Suivi de mes cours',
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Cours',
 			'eleve.suivi.colonneEnseignant' => 'Enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.colonneEtat' => 'Présence',
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
@@ -15409,12 +15435,12 @@ extension on Traductions {
 			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => 'Objectif personnel',
 			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
 			'enseignant.cahier.travailMaison' => 'Devoir à faire',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.suite' => 'La suite pour cet élève',
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
@@ -15923,12 +15949,12 @@ extension on Traductions {
 			'tc.observation.disponibilite.horsFenetre' => 'L\'observation est possible seulement pendant la séance.',
 			'tc.observation.disponibilite.desactiveeTitre' => 'Observation fermée pour cette classe',
 			'tc.observation.disponibilite.desactivee' => 'L\'administration a fermé l\'observation de cette classe.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.lienAbsentTitre' => 'Aucun de vos enfants dans cette séance',
 			'tc.observation.disponibilite.lienAbsent' => 'L\'observation est réservée aux parents des élèves de la séance.',
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Votre enfant n\'est pas dans la séance',
 			'tc.observation.disponibilite.enfantAbsent' => 'L\'observation s\'ouvre quand votre enfant est présent.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.presenceTitre' => 'Présence en cours de vérification',
 			'tc.observation.disponibilite.presence' => 'L\'observation s\'ouvre dès que la présence de votre enfant est confirmée.',
 			'tc.observation.disponibilite.visiteOuverteTitre' => 'Une visite est déjà ouverte',

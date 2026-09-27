@@ -27,6 +27,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_eleve/accueil_accessibilite.dart';
+import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../salle/preparation_eleve.dart';
 import '../salle/preparation_enseignant.dart' show ReseauPreparation;
 import '../salle_seance/vue_seance.dart' show RoleSeance;
@@ -214,7 +215,14 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
   void _aller(int index) => setState(() {
     _index = index;
     _suivi = false;
+    _apres = false;
   });
+
+  /// MA-6 : au moment « apres », l'ecran « apres la seance » s'ouvre
+  /// d'abord (a la place de Ma classe) ; toute navigation le referme.
+  late bool _apres =
+      widget.moment == MomentDemoAccessibilite.apres &&
+      widget.destinationInitiale == EcranAccessibiliteDemo.indexMaClasse;
 
   /// MA-5 : « Rejoindre » ouvre la preparation guidee, « Entrer dans la
   /// classe » la salle ; la sortie de la salle ramene a la Classe.
@@ -334,7 +342,22 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
               );
               if (i != -1) _aller(i);
             },
-            child: _index == EcranAccessibiliteDemo.indexMaClasse && _suivi
+            child: _apres
+                ? ApresSeanceAccessibilite(
+                    key: const ValueKey<String>('demo-apres'),
+                    espace: DonneesAccessibiliteDemo.espaceAccueil(
+                      widget.moment,
+                    ),
+                    prochaineSeance: DonneesAccessibiliteDemo.seances[1],
+                    tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
+                    onRetourClasse: () =>
+                        _aller(EcranAccessibiliteDemo.indexMaClasse),
+                    onTache: () => _aller(EcranAccessibiliteDemo.indexMaClasse),
+                    onSupport: () =>
+                        _aller(EcranAccessibiliteDemo.indexMaClasse),
+                    onAide: () => _aller(EcranAccessibiliteDemo.indexMonEspace),
+                  )
+                : _index == EcranAccessibiliteDemo.indexMaClasse && _suivi
                 ? PageShell(
                     key: const ValueKey<String>('demo-suivi'),
                     titre: t.accessibilite.maClasse.suivi,

@@ -301,4 +301,50 @@ void main() {
       });
     }
   });
+
+  // -------------------------------------------------------------------
+  // MA-6 : apres la seance (Mariam tutoyee ; Idriss vouvoye ; 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-6 : apres la seance', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('apres_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma6/ma6_apres_mariam_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              moment: MomentDemoAccessibilite.apres,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('apres_idriss_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma6/ma6_apres_idriss_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.apres,
+        ),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('apres_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma6/ma6_apres_mariam_390_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          moment: MomentDemoAccessibilite.apres,
+        ),
+        const Size(390, 1900),
+        echelle: 2,
+      );
+    });
+  });
 }

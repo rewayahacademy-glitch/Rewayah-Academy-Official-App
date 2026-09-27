@@ -634,7 +634,13 @@
       "attente": "Tu es dans la salle. La séance commence dans {duree}.",
       "attenteImminent": "Tu es dans la salle. La séance commence dans moins d'une minute.",
       "annonceAttente": "Tu es dans la salle",
-      "horsLigne": "Tu es hors ligne. La séance nécessite une connexion."
+      "horsLigne": "Tu es hors ligne. La séance nécessite une connexion.",
+      "finPhrase": "Tu peux retrouver ton travail dans ta Classe."
+    },
+    "apres": {
+      "revoirSupport": "Revoir le support du cours",
+      "revoirSupportDetail": "Le support reste dans ta Classe.",
+      "revoirSupportDetailVous": "Le support reste dans votre Classe."
     }
   },
   "accuse": {
