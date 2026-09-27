@@ -1,0 +1,211 @@
+{
+  "vague": "Admin — dossiers KYC",
+  "branche": "ui/admin-v1",
+  "dernier_commit": "f73dd41",
+  "note_captures": "Chaque capture a été vérifiée sur le disque (Test-Path) avant d'être listée ici. Aucun chemin n'est inventé.",
+  "ecrans": [
+    {
+      "id": "coque",
+      "titre": "L'habillage général de l'espace admin (menu, recherche, thème)",
+      "gabarit": "AdminShell sur PageShell",
+      "composants_partages": ["AdminShell", "PageShell", "ActionsEnteteCoquille", "BasculeTheme"],
+      "captures": [
+        "AD-S\\coque_admin_dossiers_390x844@3_light.png",
+        "AD-S\\coque_admin_dossiers_390x844@3_dark.png",
+        "AD-S\\coque_admin_dossiers_1440x900@1_light.png",
+        "AD-S\\coque_admin_dossiers_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02A_file",
+      "titre": "La liste des dossiers à traiter",
+      "gabarit": "PageShell (liste seule à 390, maître-détail 336/24/728 à 1440)",
+      "composants_partages": ["PageShell", "LigneRubrique", "Pressable.selectionne", "BlocAsynchrone", "EtatSysteme"],
+      "captures": [
+        "AD-5\\ad5_file_390x844@3_light.png",
+        "AD-5\\ad5_file_390x844@3_dark.png",
+        "AD-5\\ad5_maitre_detail_1440x900@1_light.png",
+        "AD-5\\ad5_maitre_detail_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02A_squelette",
+      "titre": "Le chargement de la liste des dossiers",
+      "gabarit": "PageShell (état de chargement)",
+      "composants_partages": ["PageShell", "BlocAsynchrone"],
+      "captures": [
+        "AD-5\\ad5_squelette_390x844@3_light.png",
+        "AD-5\\ad5_squelette_390x844@3_dark.png",
+        "AD-5\\ad5_squelette_1440x900@1_light.png",
+        "AD-5\\ad5_squelette_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02B_revue",
+      "titre": "La fiche d'un dossier à vérifier",
+      "gabarit": "PageShell (détail : identité, pièce, vérifications, accords)",
+      "composants_partages": ["PageShell", "LigneRubrique", "Pressable", "BlocAsynchrone", "EtatSysteme", "LienFleche"],
+      "captures": [
+        "AD-6\\ad6_nominal_390x844@3_light.png",
+        "AD-6\\ad6_nominal_390x844@3_dark.png",
+        "AD-6\\ad6_nominal_1440x900@1_light.png",
+        "AD-6\\ad6_nominal_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02B_verifications_incompletes",
+      "titre": "La fiche quand des vérifications manquent encore",
+      "gabarit": "PageShell (détail, carte Vérifications non cochée)",
+      "composants_partages": ["PageShell", "LigneRubrique", "Pressable (case à cocher)", "EtatSysteme"],
+      "captures": [
+        "AD-6\\ad6_verifications_incompletes_390x844@3_light.png",
+        "AD-6\\ad6_verifications_incompletes_390x844@3_dark.png",
+        "AD-6\\ad6_verifications_incompletes_1440x900@1_light.png",
+        "AD-6\\ad6_verifications_incompletes_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02C_visionneuse",
+      "titre": "La visionneuse d'une pièce d'identité",
+      "gabarit": "AppBottomSheet.ouvrirLecture (plein écran sous 840 px, dialogue borné à 800 px sinon)",
+      "composants_partages": ["AppBottomSheet", "BlocAsynchrone"],
+      "captures": [
+        "AD-7\\ad7_contenu_390x844@3_light.png",
+        "AD-7\\ad7_contenu_390x844@3_dark.png",
+        "AD-7\\ad7_contenu_1440x900@1_light.png",
+        "AD-7\\ad7_contenu_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02D_refus",
+      "titre": "La feuille pour refuser un dossier",
+      "gabarit": "AppBottomSheet.ouvrir (motif en feuille, question d'abandon)",
+      "composants_partages": ["AppBottomSheet", "LocalFeedback"],
+      "captures": [
+        "AD-8\\ad8_refus_saisi_390x844@3_light.png",
+        "AD-8\\ad8_refus_saisi_390x844@3_dark.png",
+        "AD-8\\ad8_refus_saisi_1440x900@1_light.png",
+        "AD-8\\ad8_refus_saisi_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02D_erreur_motif",
+      "titre": "Le refus quand le motif n'est pas valide",
+      "gabarit": "AppBottomSheet.ouvrir (message d'erreur sous le champ de motif)",
+      "composants_partages": ["AppBottomSheet", "LocalFeedback"],
+      "captures": [
+        "AD-8\\ad8_refus_erreur_390x844@3_light.png",
+        "AD-8\\ad8_refus_erreur_390x844@3_dark.png",
+        "AD-8\\ad8_refus_erreur_1440x900@1_light.png",
+        "AD-8\\ad8_refus_erreur_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "02E_validation",
+      "titre": "La confirmation avant de valider un dossier",
+      "gabarit": "AppBottomSheet.ouvrir (confirmation, focus sur Annuler)",
+      "composants_partages": ["AppBottomSheet", "LocalFeedback"],
+      "captures": [
+        "AD-8\\ad8_validation_390x844@3_light.png",
+        "AD-8\\ad8_validation_390x844@3_dark.png",
+        "AD-8\\ad8_validation_1440x900@1_light.png",
+        "AD-8\\ad8_validation_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "decision_reussie",
+      "titre": "Le message quand la décision a bien été enregistrée",
+      "gabarit": "AppBottomSheet + retour à la liste (PageShell)",
+      "composants_partages": ["LocalFeedback", "EtatSysteme"],
+      "captures": [
+        "AD-8\\ad8_validation_reussite_390x844@3_light.png",
+        "AD-8\\ad8_validation_reussite_390x844@3_dark.png",
+        "AD-8\\ad8_validation_reussite_1440x900@1_light.png",
+        "AD-8\\ad8_validation_reussite_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "resultat_inconnu",
+      "titre": "Le message quand on ne sait pas si la décision a marché",
+      "gabarit": "AppBottomSheet (résultat indéterminé, bouton Vérifier le résultat)",
+      "composants_partages": ["LocalFeedback", "EtatSysteme"],
+      "captures": [
+        "AD-8\\ad8_validation_inconnu_390x844@3_light.png",
+        "AD-8\\ad8_validation_inconnu_390x844@3_dark.png",
+        "AD-8\\ad8_validation_inconnu_1440x900@1_light.png",
+        "AD-8\\ad8_validation_inconnu_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "politique_genre_activee",
+      "titre": "Le réglage de la règle de genre, activé",
+      "gabarit": "PageShell (4e onglet configuration, capacité Super Admin)",
+      "composants_partages": ["PageShell", "SousNavigationDomaine", "GroupeReglages", "LocalFeedback"],
+      "captures": [
+        "AD-9\\ad9_1_active_390x844@3_light.png",
+        "AD-9\\ad9_1_active_390x844@3_dark.png",
+        "AD-9\\ad9_1_active_1440x900@1_light.png",
+        "AD-9\\ad9_1_active_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "politique_genre_desactivee",
+      "titre": "Le réglage de la règle de genre, désactivé",
+      "gabarit": "PageShell (4e onglet configuration, capacité Super Admin)",
+      "composants_partages": ["PageShell", "SousNavigationDomaine", "GroupeReglages", "LocalFeedback"],
+      "captures": [
+        "AD-9\\ad9_2_desactive_390x844@3_light.png",
+        "AD-9\\ad9_2_desactive_390x844@3_dark.png",
+        "AD-9\\ad9_2_desactive_1440x900@1_light.png",
+        "AD-9\\ad9_2_desactive_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "acces_refuse",
+      "titre": "L'écran quand un compte n'a pas le droit d'entrer",
+      "gabarit": "EtatSysteme (garde de page, sans la capacité Super Admin)",
+      "composants_partages": ["PageShell", "EtatSysteme"],
+      "captures": [
+        "AD-9\\ad9_8_refuse_390x844@3_light.png",
+        "AD-9\\ad9_8_refuse_390x844@3_dark.png",
+        "AD-9\\ad9_8_refuse_1440x900@1_light.png",
+        "AD-9\\ad9_8_refuse_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "attente_refuse",
+      "titre": "Le portail d'attente après un refus",
+      "gabarit": "PageShell (portail d'attente du titulaire, motif public affiché)",
+      "composants_partages": ["PageShell", "EtatSysteme", "StatusPill"],
+      "captures": [
+        "AD-10\\ad10_4_attente_refus_390x844@3_light.png",
+        "AD-10\\ad10_4_attente_refus_390x844@3_dark.png",
+        "AD-10\\ad10_4_attente_refus_1440x900@1_light.png",
+        "AD-10\\ad10_4_attente_refus_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "retour_apres_validation",
+      "titre": "Le portail d'attente après une validation",
+      "gabarit": "PageShell (portail d'attente du titulaire, relecture au retour)",
+      "composants_partages": ["PageShell", "EtatSysteme", "LocalFeedback"],
+      "captures": [
+        "AD-10\\ad10_8_retour_valide_390x844@3_light.png",
+        "AD-10\\ad10_8_retour_valide_390x844@3_dark.png",
+        "AD-10\\ad10_8_retour_valide_1440x900@1_light.png",
+        "AD-10\\ad10_8_retour_valide_1440x900@1_dark.png"
+      ]
+    },
+    {
+      "id": "reflow_320",
+      "titre": "L'écran très étroit (320 pixels), pour vérifier qu'il ne casse pas",
+      "gabarit": "AdminShell / PageShell (tiroir et en-tête bornés à la largeur de la vue)",
+      "composants_partages": ["AdminShell", "PageShell"],
+      "note": "Vraies captures à 320×640 (coque AD-11, passage CAPTURE_DIR), remplaçant les anciennes captures 390/1440 de la coque (AD-S) utilisées en attendant. Existence vérifiée par Test-Path.",
+      "captures": [
+        "AD-11\\ad11_1_coque_320x640@1_light.png",
+        "AD-11\\ad11_1_coque_320x640@1_dark.png"
+      ]
+    }
+  ]
+}
