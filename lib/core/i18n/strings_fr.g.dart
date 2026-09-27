@@ -8998,8 +8998,11 @@ class Traductions$controleur$controle$fr {
 	/// fr: '{minutes} min prévues'
 	String duree({required Object minutes}) => '${minutes} min prévues';
 
-	/// fr: '{nombre} élèves'
-	String eleves({required Object nombre}) => '${nombre} élèves';
+	/// fr: '(one) {{n} élève} (other) {{n} élèves}'
+	String eleves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève',
+		other: '${n} élèves',
+	);
 
 	/// fr: 'Lecture de votre mission en cours.'
 	String get chargement => 'Lecture de votre mission en cours.';
@@ -15934,7 +15937,7 @@ extension on Traductions {
 			'controleur.controle.incognito' => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
-			'controleur.controle.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
 			'controleur.controle.chargement' => 'Lecture de votre mission en cours.',
 			'controleur.controle.erreur' => 'Votre mission n\'a pas pu être lue. Réessayez dans un instant.',
 			'aConstruire.titre' => 'Écran à construire',

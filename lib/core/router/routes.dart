@@ -333,7 +333,7 @@ abstract final class Routes {
 
   /// Controle (CTR-01), premiere des quatre destinations du controleur (C13,
   /// document 08 du 27/09/2026, qui remplace « une seule destination, sans
-  /// barre »). Encore le planning global jusqu'a sa refonte en CT-2.
+  /// barre »). Une seule carte de mission, jamais de planning (CT-2, C3).
   static const String controleur = '/controleur';
 
   /// Historique (CTR-05), deuxieme destination. Page provisoire jusqu'a CT-7.

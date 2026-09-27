@@ -3271,7 +3271,10 @@
       "incognito": "Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.",
       "horaire": "{debut} à {fin}",
       "duree": "{minutes} min prévues",
-      "eleves": "{nombre} élèves",
+      "eleves": {
+        "one": "{n} élève",
+        "other": "{n} élèves"
+      },
       "chargement": "Lecture de votre mission en cours.",
       "erreur": "Votre mission n'a pas pu être lue. Réessayez dans un instant."
     }
