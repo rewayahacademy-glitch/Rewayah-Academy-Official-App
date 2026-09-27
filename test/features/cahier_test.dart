@@ -25,9 +25,11 @@ ParticipantBrouillon _participant({
   EtatPresence presence = EtatPresence.presente,
   UniteCurriculum? unite,
   bool lu = true,
+  bool suspensionPermise = true,
 }) => ParticipantBrouillon(
   membre: membreDeTest(studentId: id, identifiant: 'RA-$id', prenom: prenom),
   presence: presence,
+  suspensionPermise: suspensionPermise,
   entreLe: _debut,
   derniereTraceLe: _debut.add(const Duration(minutes: 40)),
   unite: unite,
@@ -698,6 +700,81 @@ void main() {
       expect(service.cahiersDeposes, hasLength(2));
       expect(find.text(t.enseignant.cahier.depose), findsOneWidget);
       expect(find.text('Corrigé le lundi 28 septembre'), findsOneWidget);
+    });
+  });
+
+  group('ENS-04 : EN-7b (suite par eleve, doc 04 §20.4)', () {
+    Future<void> monter(WidgetTester tester, FauxServiceEnseignant s) async {
+      _telephone(tester);
+      await tester.pumpWidget(
+        hote(
+          const CahierPage(seanceId: _seance),
+          surcharges: _surcharges(service: s, depot: FauxDepotRapports()),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Khadija'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('Suspendre le nouveau, tape, part dans le cahier', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceEnseignant service = FauxServiceEnseignant()
+        ..brouillonRendu = _brouillon();
+      await monter(tester, service);
+
+      final Finder suspendre = find.byKey(
+        const ValueKey<String>('cahier-suite-suspendre'),
+      );
+      await tester.ensureVisible(suspendre);
+      await tester.pumpAndSettle();
+      await tester.tap(suspendre);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.enseignant.cahier.ajusterValider));
+      await tester.tap(find.text(t.enseignant.cahier.ajusterValider));
+      await tester.pumpAndSettle();
+      await _valider(tester);
+
+      final Map<String, dynamic> decision = _decisionsEnvoyees(
+        service.cahiersDeposes.single.contenu,
+      )['e1']!;
+      expect(decision['suite'], 'suspendreNouveau');
+      expect(decision['nouveau_suspendu'], isTrue);
+    });
+
+    testWidgets('sans permission academique, Suspendre n est pas propose', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceEnseignant service = FauxServiceEnseignant()
+        ..brouillonRendu = _brouillon(
+          participants: <ParticipantBrouillon>[
+            _participant(suspensionPermise: false),
+          ],
+        );
+      await monter(tester, service);
+
+      expect(
+        find.byKey(const ValueKey<String>('cahier-suite-continuer')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('cahier-suite-suspendre')),
+        findsNothing,
+      );
+    });
+
+    test('Continuer par defaut ne part pas dans le contenu', () {
+      const DecisionEleve d = DecisionEleve(studentId: 'e1');
+      expect(d.versJson().containsKey('suite'), isFalse);
+      expect(d.nouveauSuspendu, isFalse);
+      expect(
+        const DecisionEleve(
+          studentId: 'e1',
+          suite: SuiteEleve.renforcer,
+        ).versJson()['suite'],
+        'renforcer',
+      );
     });
   });
 }

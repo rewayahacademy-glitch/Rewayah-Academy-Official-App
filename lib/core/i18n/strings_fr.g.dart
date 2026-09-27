@@ -8012,8 +8012,23 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Ajustez la suggestion, ou laissez-la telle quelle.'
 	String get travailMaisonDetail => 'Ajustez la suggestion, ou laissez-la telle quelle.';
 
-	/// fr: 'Suspendre le nouveau contenu'
-	String get suspendreNouveau => 'Suspendre le nouveau contenu';
+	/// fr: 'La suite pour cet élève'
+	String get suite => 'La suite pour cet élève';
+
+	/// fr: 'Continuer'
+	String get suiteContinuer => 'Continuer';
+
+	/// fr: 'Renforcer'
+	String get suiteRenforcer => 'Renforcer';
+
+	/// fr: 'Suspendre le nouveau'
+	String get suspendreNouveau => 'Suspendre le nouveau';
+
+	/// fr: 'Devoir précédent : {devoir}'
+	String devoirPrecedent({required Object devoir}) => 'Devoir précédent : ${devoir}';
+
+	/// fr: 'Réviser la sourate {sourate}, versets {debut} à {fin}.'
+	String devoirPlage({required Object sourate, required Object debut, required Object fin}) => 'Réviser la sourate ${sourate}, versets ${debut} à ${fin}.';
 
 	/// fr: 'La révision continue, rien de nouveau n'est ajouté pour cet élève.'
 	String get suspendreNouveauDetail => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.';
@@ -15241,7 +15256,12 @@ extension on Traductions {
 			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
 			'enseignant.cahier.travailMaison' => 'Devoir à faire',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
-			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau contenu',
+			'enseignant.cahier.suite' => 'La suite pour cet élève',
+			'enseignant.cahier.suiteContinuer' => 'Continuer',
+			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
+			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
+			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Devoir précédent : ${devoir}',
+			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Réviser la sourate ${sourate}, versets ${debut} à ${fin}.',
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
 			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'Lecture : sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.makhrajSinSad' => 'Sîn / Sâd (س / ص)',
@@ -15262,13 +15282,13 @@ extension on Traductions {
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier',
@@ -15776,13 +15796,13 @@ extension on Traductions {
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',

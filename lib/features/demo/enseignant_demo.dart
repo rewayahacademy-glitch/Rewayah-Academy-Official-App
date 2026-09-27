@@ -21,6 +21,7 @@ import '../../core/coran/service_coran.dart' show PositionLecture;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/presence/service_presence.dart' show EtatPresence;
 import '../../core/profil/service_acceptations.dart' show Acceptation;
@@ -588,6 +589,13 @@ abstract final class DonneesEnseignantDemo {
           ? null
           : debut.add(const Duration(minutes: 45)),
       position: lu ? position : null,
+      // EN-7b : le devoir de la seance precedente, que le cahier rappelle
+      // (doc 04 §20.1, « travail precedent »).
+      devoirPrecedent: t.enseignant.cahier.devoirPlage(
+        sourate: '78',
+        debut: '1',
+        fin: '11',
+      ),
     );
     return BrouillonCahier(
       seanceId: cahierDemoSeanceId,

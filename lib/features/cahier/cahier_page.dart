@@ -26,7 +26,6 @@ import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/point_rappel.dart';
-import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../fiche_groupe/preparation_seance.dart'
@@ -34,6 +33,7 @@ import '../fiche_groupe/preparation_seance.dart'
 import '../foyer/photo_eleve.dart';
 import '../presence_correction/presence_correction.dart';
 import '../presence_correction/presence_correction_page.dart';
+import 'emplacement_evaluation.dart';
 import 'makharij.dart';
 import 'vue_cahier.dart';
 
@@ -581,6 +581,10 @@ class _Constat extends StatelessWidget {
         // K-45 : ce qui est consigne se relit avant de valider (EN-7).
         : d?.pointPhonetique != null
         ? t.enseignant.cahier.pointPhonetiqueNote
+        : d?.suite == SuiteEleve.renforcer
+        ? t.enseignant.cahier.suiteRenforcer
+        : d?.suite == SuiteEleve.suspendreNouveau
+        ? t.enseignant.cahier.suspendreNouveau
         : devoir != null
         ? '${t.enseignant.cahier.travailMaison} : $devoir'
         : p.unite?.nomHumain;
@@ -596,7 +600,7 @@ class _Constat extends StatelessWidget {
       legende: legende,
       marque: StatusPill(
         libelle: LignePresence.libelle(presence.etat),
-        ton: presence.ton,
+        ton: tonCahier(presence.ton),
       ),
       onPress: lectureSeule ? null : () => unawaited(onAjuster(p)),
       // Le lecteur d'ecran entend l'action, pas seulement le prenom (W-243).
@@ -606,6 +610,17 @@ class _Constat extends StatelessWidget {
     );
   }
 }
+
+/// Le ton d'une presence dans le cahier (EN-7b, K-45 point 6).
+///
+/// Apres la seance, rien n'a « echoue » : une absence demande un regard, pas
+/// une sanction. Le cahier lit donc le role « a surveiller » (ambre) la ou la
+/// salle en direct dit « alerte » (rouge), pour la pastille « Absents » du
+/// resume comme pour la pastille « Absence » de la ligne : un seul role, deja
+/// dans le theme, aucune couleur creee.
+@visibleForTesting
+TonEtat tonCahier(TonEtat ton) =>
+    ton == TonEtat.alerte ? TonEtat.avertissement : ton;
 
 /// Le resume de la seance : le rappel s'il reste a valider, la duree, le
 /// nombre d'eleves et les pastilles de statut (un mot et un nombre, jamais la
@@ -690,7 +705,9 @@ class _Resume extends StatelessWidget {
               libelle: t.enseignant.cahier.statutAbsents(
                 nombre: '${statuts.absents}',
               ),
-              ton: statuts.absents > 0 ? TonEtat.alerte : TonEtat.neutre,
+              ton: statuts.absents > 0
+                  ? tonCahier(TonEtat.alerte)
+                  : TonEtat.neutre,
             ),
             StatusPill(
               libelle: t.enseignant.cahier.statutEnRetard(
@@ -776,29 +793,48 @@ class _Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final VoidCallback? corriger = onCorriger;
-    return Wrap(
-      alignment: WrapAlignment.end,
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: <Widget>[
-        if (corriger != null)
-          IntrinsicWidth(
-            child: ActionPrincipale(
-              key: const ValueKey<String>('cahier-corriger'),
-              libelle: t.enseignant.cahier.corriger,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
-              onPress: corriger,
-            ),
-          ),
-        IntrinsicWidth(
-          child: ActionPrincipale(
-            libelle: t.enseignant.cahier.retourJournee,
-            pleineLargeur: false,
-            onPress: onRetour,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // EN-7b (K-42, K-36) : sur telephone, les boutons pleine largeur,
+        // centres, le dominant au plus pres du pouce ; sur bureau, au bord de
+        // fin, le dominant en dernier. Meme seuil que les deux colonnes.
+        final double texte = MediaQuery.textScalerOf(context).scale(1);
+        final bool large =
+            contraintes.maxWidth / texte >= AppGabarit.seuilEtendu;
+        final Widget? tertiaire = corriger == null
+            ? null
+            : ActionPrincipale(
+                key: const ValueKey<String>('cahier-corriger'),
+                libelle: t.enseignant.cahier.corriger,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: !large,
+                onPress: corriger,
+              );
+        final Widget dominant = ActionPrincipale(
+          key: const ValueKey<String>('cahier-retour-journee'),
+          libelle: t.enseignant.cahier.retourJournee,
+          pleineLargeur: !large,
+          onPress: onRetour,
+        );
+        if (!large) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              if (tertiaire != null) ...<Widget>[tertiaire, Ecart.vSm],
+              dominant,
+            ],
+          );
+        }
+        return Wrap(
+          alignment: WrapAlignment.end,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            if (tertiaire != null) IntrinsicWidth(child: tertiaire),
+            IntrinsicWidth(child: dominant),
+          ],
+        );
+      },
     );
   }
 }
@@ -834,7 +870,7 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
 
   late String? _motifException = widget.decision.motifException;
   late String? _phonetique = widget.decision.pointPhonetique;
-  late bool _nouveauSuspendu = widget.decision.nouveauSuspendu;
+  late SuiteEleve _suite = widget.decision.suite;
 
   @override
   void dispose() {
@@ -877,14 +913,60 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
             style: discret,
           ),
         ],
-        // EN-7 : echelle attendue du directeur. Performance et faiblesses
-        // (K-45, point 3) : ni le doc 04 §20 ni la planche 4 ne donnent
-        // d'echelle ni de mots. L'emplacement reste vide.
-        const SizedBox.shrink(
-          key: ValueKey<String>('cahier-emplacement-performance'),
+        // EN-7b : le devoir de la seance precedente, prerempli (doc 04
+        // §20.1) ; l'enseignant le lit, il ne le ressaisit pas.
+        if (participant.devoirPrecedent case final String devoir?) ...<Widget>[
+          Ecart.vMd,
+          Text(
+            t.enseignant.cahier.devoirPrecedent(devoir: devoir),
+            key: const ValueKey<String>('cahier-devoir-precedent'),
+            style: textes.bodyMedium,
+          ),
+        ],
+        // Performance et faiblesses (K-45, point 3) : ni le doc 04 §20 ni la
+        // planche 4 ne donnent d'echelle ni de mots. Les emplacements sont
+        // prets, et ne rendent rien tant que l'echelle n'est pas fournie.
+        EmplacementEvaluation(
+          key: const ValueKey<String>('cahier-emplacement-performance'),
+          titre: t.enseignant.cahier.performance,
+          onChange: (String? _) {},
         ),
-        const SizedBox.shrink(
-          key: ValueKey<String>('cahier-emplacement-faiblesses'),
+        EmplacementEvaluation(
+          key: const ValueKey<String>('cahier-emplacement-faiblesses'),
+          titre: t.enseignant.cahier.faiblesses,
+          onChange: (String? _) {},
+        ),
+        Ecart.vSection,
+        // Doc 04 §20.4 : « Continuer » par defaut, « Renforcer », et
+        // « Suspendre le nouveau » seulement si la logique academique le
+        // permet.
+        Text(t.enseignant.cahier.suite, style: textes.titleSmall),
+        Ecart.vMd,
+        ChoiceCardGroup(
+          key: const ValueKey<String>('cahier-suite'),
+          autoriserSaisieLibre: false,
+          options: <OptionChoix>[
+            OptionChoix(
+              valeur: SuiteEleve.continuer.name,
+              libelle: t.enseignant.cahier.suiteContinuer,
+              cle: const ValueKey<String>('cahier-suite-continuer'),
+            ),
+            OptionChoix(
+              valeur: SuiteEleve.renforcer.name,
+              libelle: t.enseignant.cahier.suiteRenforcer,
+              cle: const ValueKey<String>('cahier-suite-renforcer'),
+            ),
+            if (participant.suspensionPermise ||
+                _suite == SuiteEleve.suspendreNouveau)
+              OptionChoix(
+                valeur: SuiteEleve.suspendreNouveau.name,
+                libelle: t.enseignant.cahier.suspendreNouveau,
+                description: t.enseignant.cahier.suspendreNouveauDetail,
+                cle: const ValueKey<String>('cahier-suite-suspendre'),
+              ),
+          ],
+          valeurInitiale: ReponseChoix(valeurs: <String>{_suite.name}),
+          onChange: _choisirSuite,
         ),
         Ecart.vSection,
         PresenceCorrectionPanneau(
@@ -953,16 +1035,6 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
             labelText: t.enseignant.cahier.travailMaison,
           ),
         ),
-        Ecart.vXl,
-        SettingRow(
-          title: t.enseignant.cahier.suspendreNouveau,
-          description: t.enseignant.cahier.suspendreNouveauDetail,
-          icon: AppIcons.pause,
-          controle: Switch(
-            value: _nouveauSuspendu,
-            onChanged: (bool actif) => setState(() => _nouveauSuspendu = actif),
-          ),
-        ),
         Ecart.vSection,
         // Un libelle qui lui est propre, et non « Valider » : la feuille de
         // confirmation du panneau de presence porte deja ce mot, et deux boutons
@@ -1002,6 +1074,19 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
     });
   }
 
+  /// Retient la suite choisie ; sans choix, « Continuer » (doc 04 §20.4).
+  void _choisirSuite(ReponseChoix reponse) {
+    final String? valeur = reponse.valeurs.isEmpty
+        ? null
+        : reponse.valeurs.first;
+    setState(() {
+      _suite = SuiteEleve.values.firstWhere(
+        (SuiteEleve s) => s.name == valeur,
+        orElse: () => SuiteEleve.continuer,
+      );
+    });
+  }
+
   /// Consigne l'exception signalee par le panneau partage.
   ///
   /// Elle part **dans le cahier**, pas dans une seconde ecriture : le contenu du
@@ -1026,7 +1111,7 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
         pointPhonetique: _phonetique,
         objectifPersonnel: objectif.isEmpty ? null : objectif,
         travailMaison: travail.isEmpty ? null : travail,
-        nouveauSuspendu: _nouveauSuspendu,
+        suite: _suite,
       ),
     );
   }
