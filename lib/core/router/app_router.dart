@@ -836,8 +836,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.controleurEchanges,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const EchangesControleurPage(),
+                builder: (BuildContext _, GoRouterState etat) =>
+                    EchangesControleurPage(
+                      missionOuverte: etat.uri.queryParameters['mission'],
+                    ),
               ),
             ],
           ),

@@ -343,6 +343,19 @@ abstract final class Routes {
   /// La quatrieme, Compte, est `/compte`, partage par tous les roles.
   static const String controleurEchanges = '/controleur/echanges';
 
+  /// Le fil de la mission [missionId] dans les Echanges (« Ecrire a
+  /// l'administration », P-CTR-06) : le meme ecran, ouvert sur ce fil.
+  static String controleurEchangesMission(String missionId) => Uri(
+    path: controleurEchanges,
+    queryParameters: <String, String>{'mission': missionId},
+  ).toString();
+
+  /// Ou mene « Ecrire a l'administration » : le fil de la mission quand son
+  /// identifiant est connu, la liste des Echanges sinon.
+  static String controleurEcrireAdmin(String? missionId) => missionId == null
+      ? controleurEchanges
+      : controleurEchangesMission(missionId);
+
   /// Compte rendu (CTR-03), la sortie de la salle d'observation (P-CTR-03
   /// point 12). Tache focalisee, hors coquille (CT-4).
   static const String controleurCompteRendu = '/controleur/compte-rendu';

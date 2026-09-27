@@ -178,7 +178,11 @@ class _CompteRenduControlePageState
             libelleSecondaire: t.controleur.compteRendu.ecrireAdmin,
             onSecondaire:
                 widget.onEcrireAdmin ??
-                () => GoRouter.of(context).go(Routes.controleurEchanges),
+                // Le fil de CETTE mission (P-CTR-06), la liste si son
+                // identifiant n'est pas connu.
+                () =>
+                    GoRouter.of(context)
+                        .go(Routes.controleurEcrireAdmin(mission?.id)),
           ),
         ),
       );

@@ -36,7 +36,13 @@ class MissionControle {
     required this.debut,
     required this.finPrevue,
     required this.etat,
+    this.id,
   });
+
+  /// L'identifiant de la mission, qui nomme son fil d'echanges (un seul fil
+  /// par mission, P-CTR-06). Nul tant que le serveur ne le rend pas (BR-1) :
+  /// « Ecrire a l'administration » ouvre alors la liste des Echanges.
+  final String? id;
 
   /// La seance observee, portee par le billet de salle.
   final String seanceId;

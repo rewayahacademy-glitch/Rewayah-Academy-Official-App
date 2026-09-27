@@ -446,6 +446,7 @@ MissionControle? missionDemoControleur(EtatDemoControleur etat) {
     TitreEnseignant.sayyida => LibellesGroupe.sayyida,
   };
   return MissionControle(
+    id: m.id,
     seanceId: m.seanceId,
     classe: m.classe,
     enseignant: '$titre ${m.enseignant}',
