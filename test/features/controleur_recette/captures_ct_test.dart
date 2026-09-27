@@ -3,7 +3,13 @@
 // ajoute ses ecrans ici ; CT-12 en fait la recette.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
@@ -18,6 +24,46 @@ Future<void> _capturer(
 }) async {
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(hoteCapture(ecran, themeMode: mode));
+  await stabiliser(tester);
+  debugPrint('PNG ${await capturer(tester, fichier)}');
+}
+
+/// Heberge [route] sur la VRAIE route de demonstration
+/// (`routesDemoControleur`) : la salle (CTR-02) et le compte rendu (CTR-03)
+/// lisent le routeur (Quitter, retour), un `home:` nu ne suffit pas.
+Future<void> _capturerRoute(
+  WidgetTester tester,
+  String fichier,
+  String route,
+  Size taille, {
+  ThemeMode mode = ThemeMode.light,
+}) async {
+  fixerVueCapture(tester, taille, 1);
+  final GoRouter routeur = GoRouter(
+    initialLocation: route,
+    routes: routesDemoControleur('dev'),
+  );
+  await tester.pumpWidget(
+    ProviderScope(
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: Builder(
+            builder: (BuildContext contexte) => MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              themeMode: mode,
+              locale: TranslationProvider.of(contexte).flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              routerConfig: routeur,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
   await stabiliser(tester);
   debugPrint('PNG ${await capturer(tester, fichier)}');
 }
@@ -83,4 +129,46 @@ void main() {
       }
     }
   });
+
+  group(
+    'Capture : CT-3, CTR-02 salle et compte rendu',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      // La salle (CTR-02, `SalleControleurDemo(seanceId: 'demo-controle')`) et
+      // le compte rendu provisoire (CTR-03), tous deux atteints par la VRAIE
+      // route de demonstration `/demo/controleur/salle` et
+      // `/demo/controleur/compte-rendu`.
+      for (final (String l, Size taille) in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('768', const Size(768, 1000)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String s = '${l}_${mode.name}';
+          testWidgets('ct3_salle_$s', (WidgetTester tester) async {
+            await _capturerRoute(
+              tester,
+              'ct3_salle_$s',
+              cheminDemoSalleControleur,
+              taille,
+              mode: mode,
+            );
+          });
+          testWidgets('ct3_compte_rendu_$s', (WidgetTester tester) async {
+            await _capturerRoute(
+              tester,
+              'ct3_compte_rendu_$s',
+              cheminDemoCompteRenduControleur,
+              taille,
+              mode: mode,
+            );
+          });
+        }
+      }
+    },
+  );
 }
