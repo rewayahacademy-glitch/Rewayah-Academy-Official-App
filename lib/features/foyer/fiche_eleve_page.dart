@@ -240,11 +240,23 @@ String libelleInterface(InterfaceMode mode) => switch (mode) {
 /// groupe sous les appareils, sans refonte.
 class FicheElevePage extends ConsumerWidget {
   /// Cree la page.
-  const FicheElevePage({required this.eleveId, super.key});
+  const FicheElevePage({
+    required this.eleveId,
+    super.key,
+    this.onAller,
+    this.onRetour,
+  });
 
   /// L'eleve affiche. Un identifiant de chemin, jamais une autorisation : la
   /// RLS decide.
   final String eleveId;
+
+  /// Ouvre un chemin de la fiche (sous-pages) ; par defaut, le routeur. La
+  /// demonstration adulte y garde la personne dans sa coquille (EA-5).
+  final void Function(String chemin)? onAller;
+
+  /// Le retour ; par defaut, le Foyer par le routeur.
+  final VoidCallback? onRetour;
 
   /// La carte d'identite.
   static const Key enteteKey = Key('ficheEleve.entete');
@@ -259,21 +271,24 @@ class FicheElevePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return PageFiche(
       eleveId: eleveId,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurFoyer),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurFoyer),
       construire: (BuildContext context, ProfilEleveFoyer profil) =>
-          _ContenuFiche(profil: profil),
+          _ContenuFiche(profil: profil, onAller: onAller),
     );
   }
 }
 
 class _ContenuFiche extends ConsumerWidget {
-  const _ContenuFiche({required this.profil});
+  const _ContenuFiche({required this.profil, this.onAller});
 
   final ProfilEleveFoyer profil;
 
+  final void Function(String chemin)? onAller;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final GoRouter routeur = GoRouter.of(context);
+    final void Function(String chemin) aller =
+        onAller ?? GoRouter.of(context).go;
     final DateTime maintenant = ref.watch(horlogeFoyerProvider)();
     final ClasseMembre classe = classeMembreLue(
       ref.watch(classesMembreProvider(profil.eleveId)),
@@ -290,19 +305,19 @@ class _ContenuFiche extends ConsumerWidget {
             icone: AppIcons.profil,
             libelle: t.ficheEleve.lignes.informations,
             legende: t.ficheEleve.lignes.informationsLegende,
-            onPress: () => routeur.go(sousPage('informations')),
+            onPress: () => aller(sousPage('informations')),
           ),
           LigneRubrique(
             icone: AppIcons.lecon,
             libelle: t.ficheEleve.lignes.inscription,
             legende: t.ficheEleve.lignes.inscriptionLegende,
-            onPress: () => routeur.go(sousPage('inscription')),
+            onPress: () => aller(sousPage('inscription')),
           ),
           LigneRubrique(
             icone: AppIcons.tabletteOuOrdinateur,
             libelle: t.ficheEleve.lignes.interface,
             legende: libelleInterface(profil.mode),
-            onPress: () => routeur.go(sousPage('interface')),
+            onPress: () => aller(sousPage('interface')),
           ),
           LigneRubrique(
             icone: AppIcons.camera,
@@ -310,13 +325,13 @@ class _ContenuFiche extends ConsumerWidget {
             legende: profil.camera == CameraPolicy.allowed
                 ? t.ficheEleve.lignes.cameraAutorisee
                 : t.ficheEleve.lignes.cameraNonAutorisee,
-            onPress: () => routeur.go(sousPage('camera')),
+            onPress: () => aller(sousPage('camera')),
           ),
           LigneRubrique(
             icone: AppIcons.verrou,
             libelle: t.ficheEleve.lignes.acces,
             legende: statutAcces(profil, maintenant),
-            onPress: () => routeur.go(sousPage('acces')),
+            onPress: () => aller(sousPage('acces')),
           ),
         ],
       ),
@@ -333,7 +348,7 @@ class _ContenuFiche extends ConsumerWidget {
             legende: t.ficheEleve.lignes.appareilsLegende,
             // Le retour des appareils ramene a cette fiche (`?retour=`), pas
             // aux appareils du foyer d'ou l'on ne vient pas (B-5).
-            onPress: () => routeur.go(
+            onPress: () => aller(
               Uri(
                 path: sousPage('appareils'),
                 queryParameters: <String, String>{

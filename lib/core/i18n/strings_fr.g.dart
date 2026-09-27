@@ -8932,6 +8932,12 @@ class Traductions$adulte$provisoire$fr {
 
 	/// fr: 'La page de votre forfait famille arrivera dans une prochaine étape.'
 	String get forfaitFamille => 'La page de votre forfait famille arrivera dans une prochaine étape.';
+
+	/// fr: 'L'ajout de votre famille arrivera dans une prochaine étape.'
+	String get ajouterMaFamille => 'L\'ajout de votre famille arrivera dans une prochaine étape.';
+
+	/// fr: 'L'invitation et le détail de cette place arriveront dans une prochaine étape.'
+	String get placeAdulte => 'L\'invitation et le détail de cette place arriveront dans une prochaine étape.';
 }
 
 // Path: adulte.famille
@@ -16347,6 +16353,8 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
 			'adulte.provisoire.forfaitFamille' => 'La page de votre forfait famille arrivera dans une prochaine étape.',
+			'adulte.provisoire.ajouterMaFamille' => 'L\'ajout de votre famille arrivera dans une prochaine étape.',
+			'adulte.provisoire.placeAdulte' => 'L\'invitation et le détail de cette place arriveront dans une prochaine étape.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.maFamille' => 'Ma famille',

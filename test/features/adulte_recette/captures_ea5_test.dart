@@ -127,8 +127,8 @@ void main() {
       );
     });
 
-    // Titulaire femme (« Ajouter un conjoint », F3), adulte seul (le Foyer
-    // vide, aucune place), et un delai en cours (F17, sans action).
+    // Titulaire femme (« Ajouter un conjoint », F3), adulte seul (« Ajouter
+    // ma famille », jamais le Foyer, F6), et un delai en cours (F17).
     for (final (String nom, String adresse) in <(String, String)>[
       (
         'titulaire_femme',
@@ -168,6 +168,26 @@ void main() {
           );
         });
       }
+    }
+
+    // Les chemins de Ma famille (revue d'EA-5) : les vraies pages du tuteur
+    // dans sa coquille, et la place adulte provisoire.
+    for (final (String nom, String adresse) in <(String, String)>[
+      ('ajouter_profil', adresseDemoAdulte(EcranDemoAdulte.ajouterProfil)),
+      ('fiche_enfant', adresseDemoAdulte(EcranDemoAdulte.ficheEleve)),
+      ('appareils', adresseDemoAdulte(EcranDemoAdulte.appareils)),
+      (
+        'place_adulte',
+        adresseDemoAdulte(
+          EcranDemoAdulte.placeAdulte,
+          etat: EtatDemoAdulte.titulaireSansConjoint,
+        ),
+      ),
+    ]) {
+      final String fichier = 'ea5_${nom}_390_light';
+      testWidgets(fichier, (WidgetTester tester) async {
+        await _capturer(tester, fichier, adresse, const Size(390, 844));
+      });
     }
 
     // « Paiements du foyer », ouverts depuis Ma famille : la vraie page.

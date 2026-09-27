@@ -133,9 +133,6 @@ abstract final class DonneesAdulteDemo {
   /// une donnee rendue, jamais calculee dans Flutter (F17).
   static final DateTime finDelai = DateTime.utc(2026, 12, 18);
 
-  /// La fin d'acces des enfants, fictive.
-  static final DateTime finAcces = DateTime.utc(2099, 12, 31);
-
   /// Le prenom du titulaire selon la variante.
   static String prenomTitulaire(GenreTitulaireDemo genre) =>
       genre == GenreTitulaireDemo.homme ? 'Mamadou' : 'Mariama';
@@ -144,15 +141,16 @@ abstract final class DonneesAdulteDemo {
   static String prenomSecondAdulte(GenreTitulaireDemo genre) =>
       genre == GenreTitulaireDemo.homme ? 'Mariama' : 'Mamadou';
 
-  /// Les enfants du foyer, tels que le Foyer du tuteur les lit.
-  static final List<EleveDuFoyer> enfants = <EleveDuFoyer>[
+  /// Les enfants du foyer, tels que le Foyer du tuteur les lit. Aucune
+  /// echeance d'acces : le cas ordinaire (`finAcces` nul), jamais une date
+  /// sentinelle.
+  static const List<EleveDuFoyer> enfants = <EleveDuFoyer>[
     EleveDuFoyer(
       id: aichaId,
       prenom: 'Aïcha',
       identifiantImmuable: 'DEMO-D1',
       mode: InterfaceMode.enfant,
       camera: CameraPolicy.forbidden,
-      finAcces: finAcces,
     ),
     EleveDuFoyer(
       id: oumarId,
@@ -160,7 +158,6 @@ abstract final class DonneesAdulteDemo {
       identifiantImmuable: 'DEMO-D2',
       mode: InterfaceMode.enfant,
       camera: CameraPolicy.forbidden,
-      finAcces: finAcces,
     ),
   ];
 

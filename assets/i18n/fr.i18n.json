@@ -3884,7 +3884,9 @@
     },
     "provisoire": {
       "coran": "Le Coran de votre espace élève s'affichera ici.",
-      "forfaitFamille": "La page de votre forfait famille arrivera dans une prochaine étape."
+      "forfaitFamille": "La page de votre forfait famille arrivera dans une prochaine étape.",
+      "ajouterMaFamille": "L'ajout de votre famille arrivera dans une prochaine étape.",
+      "placeAdulte": "L'invitation et le détail de cette place arriveront dans une prochaine étape."
     },
     "famille": {
       "ajouter": "Ajouter ma famille",

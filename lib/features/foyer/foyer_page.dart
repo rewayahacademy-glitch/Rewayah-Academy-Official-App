@@ -121,10 +121,25 @@ class FoyerPage extends ConsumerWidget {
     final AsyncValue<FoyerTitulaireVM> lectureAdulte = ref.watch(
       foyerTitulaireProvider,
     );
-    final FoyerTitulaireVM? adulte =
-        lectureAdulte.hasValue && !lectureAdulte.hasError
-        ? lectureAdulte.requireValue
-        : null;
+    // Seul « pas titulaire » (`CapaciteIndisponible`) rend le Foyer du tuteur.
+    // Le chargement et toute autre erreur se disent comme tels (squelette,
+    // puis erreur avec « Reessayer ») : jamais le Foyer du tuteur montre en
+    // silence a un titulaire adulte, ni un saut de mise en page.
+    if (lectureAdulte.hasError
+        ? lectureAdulte.error is! CapaciteIndisponible
+        : !lectureAdulte.hasValue) {
+      return PageShell(
+        child: BlocAsynchrone<FoyerTitulaireVM>(
+          valeur: lectureAdulte,
+          squelette: const Skeleton.liste(),
+          onReessayer: () => ref.invalidate(foyerTitulaireProvider),
+          construire: (FoyerTitulaireVM _) => const SizedBox.shrink(),
+        ),
+      );
+    }
+    final FoyerTitulaireVM? adulte = lectureAdulte.hasError
+        ? null
+        : lectureAdulte.requireValue;
 
     final Widget profils = KeyedSubtree(
       key: membresKey,
@@ -181,6 +196,9 @@ class FoyerPage extends ConsumerWidget {
           ),
         ),
         // Le titulaire adulte est deja eleve : pas de « Creer mon profil ».
+        // Ecart avec 00_MAQUETTES 2.3 G (qui le garde) et lien « A propos du
+        // forfait famille » (2.1 P) reporte : question posee au directeur
+        // dans le releve d'EA-5.
         if (adulte == null) ...<Widget>[
           Ecart.vXxl,
           Align(

@@ -100,11 +100,11 @@ class FoyerTitulaireVM {
 
 /// Le titulaire et sa place adulte. **Aucune source serveur a ce jour**
 /// (EA-BR-14) : `CapaciteIndisponible`, et le Foyer reste celui du tuteur.
+/// Levee tout de suite (pas un futur) : le Foyer du tuteur ne passe pas par
+/// un squelette pour une reponse connue d'avance.
 final FutureProvider<FoyerTitulaireVM> foyerTitulaireProvider =
     FutureProvider<FoyerTitulaireVM>(
-      (Ref _) => Future<FoyerTitulaireVM>.error(
-        const CapaciteIndisponible('foyer_titulaire'),
-      ),
+      (Ref _) => throw const CapaciteIndisponible('foyer_titulaire'),
     );
 
 /// La cle de la ligne de la place adulte.

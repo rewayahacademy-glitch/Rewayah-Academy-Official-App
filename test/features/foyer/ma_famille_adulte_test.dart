@@ -24,12 +24,15 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
+import 'package:rewayah_academy/features/appareils/appareils_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
+import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
@@ -262,20 +265,117 @@ void main() {
     expect(placeDit(tester, t.adulte.famille.place.inviterConjoint), isTrue);
   });
 
-  testWidgets('adulte seul : la place libre et aucun profil eleve (vide)', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('adulte seul et second adulte : jamais le Foyer du titulaire '
+      '(F6, F7), meme par l\'adresse', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
-    await monterCoquille(
+    final GoRouter routeur = await monterCoquille(
       tester,
       adresseDemoAdulte(
         EcranDemoAdulte.maFamille,
         etat: EtatDemoAdulte.adulteSeul,
       ),
     );
-    expect(placeDit(tester, t.adulte.famille.place.ajouterConjointe), isTrue);
-    expect(find.text(t.foyer.vide.titre), findsOneWidget);
-    expect(find.text('Aïcha'), findsNothing);
+    // Adulte seul : « Ajouter ma famille », comme sa ligne de Mon espace.
+    expect(find.byType(FoyerPage), findsNothing);
+    expect(find.text(t.adulte.provisoire.ajouterMaFamille), findsOneWidget);
+    expect(find.text(t.adulte.famille.titulaire), findsNothing);
+    // Second adulte : « Forfait famille », sans enfants ni place.
+    for (final EcranDemoAdulte ecran in <EcranDemoAdulte>[
+      EcranDemoAdulte.maFamille,
+      EcranDemoAdulte.ficheEleve,
+      EcranDemoAdulte.appareils,
+    ]) {
+      routeur.go(adresseDemoAdulte(ecran, vue: VueDemoAdulte.secondAdulte));
+      await tester.pumpAndSettle();
+      expect(find.byType(FoyerPage), findsNothing, reason: ecran.name);
+      expect(
+        find.text(t.adulte.provisoire.forfaitFamille),
+        findsOneWidget,
+        reason: ecran.name,
+      );
+      expect(find.text('Aïcha'), findsNothing, reason: ecran.name);
+      expect(find.textContaining('Mariama'), findsNothing, reason: ecran.name);
+    }
+  });
+
+  testWidgets('Ma famille : ajouter un profil (sans « Un proche adulte »), '
+      'fiche d\'un enfant, appareils, place adulte : les vraies pages', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.monEspace));
+    Future<void> versMaFamille() async {
+      final Finder ligne = find.descendant(
+        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
+        matching: find.text(t.adulte.famille.maFamille),
+      );
+      await tester.ensureVisible(ligne);
+      await tester.tap(ligne);
+      await tester.pumpAndSettle();
+      expect(find.byType(FoyerPage), findsOneWidget);
+    }
+
+    // « Ajouter un profil eleve » : le formulaire commun, sans proche adulte.
+    await versMaFamille();
+    await tester.tap(find.byKey(FoyerPage.ajouterKey));
+    await tester.pumpAndSettle();
+    expect(find.byType(FormulaireProfilEleve), findsOneWidget);
+    expect(find.text(t.foyer.ajout.pourQui.enfantTitre), findsOneWidget);
+    expect(find.text(t.foyer.ajout.pourQui.procheTitre), findsNothing);
+    expect(find.byKey(FormulaireProfilEleve.porteIllisibleKey), findsNothing);
+    // Quitter le formulaire ramene a Ma famille.
+    await tester.tap(find.byType(DisqueRetour));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+
+    // Une ligne enfant : sa fiche, retour a Ma famille.
+    final Finder aicha = find.descendant(
+      of: find.byKey(FoyerPage.membresKey),
+      matching: find.text('Aïcha'),
+    );
+    await tester.ensureVisible(aicha);
+    await tester.tap(aicha);
+    await tester.pumpAndSettle();
+    expect(find.byType(FicheElevePage), findsOneWidget);
+    expect(
+      tester.widget<FicheElevePage>(find.byType(FicheElevePage)).eleveId,
+      DonneesAdulteDemo.aichaId,
+    );
+    expect(find.byKey(FicheElevePage.enteteKey), findsOneWidget);
+    // Aucune date sentinelle d'acces.
+    expect(find.textContaining('2099'), findsNothing);
+    await tester.tap(find.byType(DisqueRetour));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+
+    // « Appareils du foyer » : la page des appareils, avec les enfants.
+    final Finder appareils = find.descendant(
+      of: find.byKey(FoyerPage.appareilsKey),
+      matching: find.text(t.foyer.appareilsFoyer),
+    );
+    await tester.ensureVisible(appareils);
+    await tester.tap(appareils);
+    await tester.pumpAndSettle();
+    expect(find.byType(AppareilsPage), findsOneWidget);
+    expect(find.text('Oumar'), findsOneWidget);
+    await tester.tap(find.byType(DisqueRetour));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+
+    // La place adulte : une page provisoire honnete, retour a Ma famille.
+    final Finder placeLigne = find.descendant(
+      of: find.byKey(lignePlaceAdulteKey),
+      matching: find.text(
+        t.adulte.famille.place.maConjointe(prenom: 'Mariama'),
+      ),
+    );
+    await tester.ensureVisible(placeLigne);
+    await tester.tap(placeLigne);
+    await tester.pumpAndSettle();
+    expect(find.text(t.adulte.provisoire.placeAdulte), findsOneWidget);
+    await tester.tap(find.byType(DisqueRetour));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
   });
 
   testWidgets('les destinations de la coquille du tuteur reagissent toutes', (
@@ -410,6 +510,56 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+
+    testWidgets('titulaire en chargement ou en erreur : jamais le Foyer du '
+        'tuteur en silence', (WidgetTester tester) async {
+      taille(tester, const Size(390, 844));
+      final Completer<FoyerTitulaireVM> jamais = Completer<FoyerTitulaireVM>();
+      bool panne = false;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            foyerTitulaireProvider.overrideWith(
+              (Ref _) => panne
+                  ? Future<FoyerTitulaireVM>.error(Exception('panne'))
+                  : jamais.future,
+            ),
+            elevesDuFoyerProvider.overrideWith(
+              (Ref _) async => const <EleveDuFoyer>[],
+            ),
+            horsLigneProvider.overrideWith(
+              (Ref _) => Stream<bool>.value(false),
+            ),
+          ],
+          child: TranslationProvider(
+            child: MaterialApp(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              home: const FoyerPage(),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      // Chargement : un squelette, ni « Foyer » ni « Creer mon profil ».
+      expect(find.byType(Skeleton), findsWidgets);
+      expect(find.text(t.foyer.titre), findsNothing);
+      expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
+      // Erreur : dite, avec « Reessayer ».
+      panne = true;
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(FoyerPage)),
+      );
+      conteneur.invalidate(foyerTitulaireProvider);
+      await tester.pumpAndSettle();
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) => w is EtatSysteme && w.nature == NatureEtat.echecServeur,
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.foyer.titre), findsNothing);
+      expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
     });
 
     testWidgets(

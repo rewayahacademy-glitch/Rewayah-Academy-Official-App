@@ -24,10 +24,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
-import '../../core/appairage/service_appairage.dart' show EleveDuFoyer;
+import '../../core/appairage/service_appairage.dart'
+    show AppareilAppaire, EleveDuFoyer;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
+import '../../core/foyer/port_creation_profil_eleve.dart';
+import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -43,6 +46,9 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../appareils/appareils_page.dart';
+import '../appareils/liste_appareils_eleve.dart'
+    show donneesAppareilsFoyerProvider;
 import '../compte/aide_page.dart';
 import '../compte/apparence_page.dart';
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
@@ -51,8 +57,11 @@ import '../compte/informations_page.dart';
 import '../compte/paiements_page.dart';
 import '../compte/preferences_page.dart';
 import '../compte/securite_page.dart';
+import '../foyer/fiche_eleve_page.dart';
+import '../foyer/formulaire_profil_eleve.dart';
 import '../foyer/foyer_page.dart';
-import '../foyer/place_adulte.dart' show foyerTitulaireProvider;
+import '../foyer/place_adulte.dart'
+    show FoyerTitulaireVM, foyerTitulaireProvider, libellePlace;
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'adulte_demo.dart';
@@ -113,6 +122,51 @@ enum EcranDemoAdulte {
   /// Paiements du foyer, ouverts depuis Ma famille (EA-5 ; la page du foyer
   /// vient avec EA-9).
   paiementsFoyer,
+
+  /// La place adulte, ouverte depuis sa ligne de Ma famille : provisoire
+  /// (EA-6 et EA-8).
+  placeAdulte,
+
+  /// Le formulaire d'ajout d'un profil eleve, ouvert depuis Ma famille.
+  ajouterProfil,
+
+  /// La fiche d'un enfant (`eleve=`), ouverte depuis Ma famille.
+  ficheEleve,
+
+  /// Les appareils du foyer, ouverts depuis Ma famille.
+  appareils,
+
+  /// « Ajouter ma famille », ouvert depuis Mon espace par l'adulte sans
+  /// foyer : provisoire.
+  ajouterMaFamille,
+}
+
+/// Les ecrans de l'espace foyer (coquille du tuteur), reserves au titulaire
+/// d'un foyer (F6, F7).
+const Set<EcranDemoAdulte> _ecransFoyer = <EcranDemoAdulte>{
+  EcranDemoAdulte.maFamille,
+  EcranDemoAdulte.paiementsFoyer,
+  EcranDemoAdulte.placeAdulte,
+  EcranDemoAdulte.ajouterProfil,
+  EcranDemoAdulte.ficheEleve,
+  EcranDemoAdulte.appareils,
+};
+
+/// L'ecran que la personne a le droit de voir : l'espace foyer n'est qu'au
+/// titulaire d'un foyer. Le second adulte arrive sur « Forfait famille »,
+/// l'adulte sans foyer sur « Ajouter ma famille », comme sa ligne de Mon
+/// espace (F6, F7) : jamais les donnees d'un role qui n'y a pas droit.
+EcranDemoAdulte ecranPermisDemoAdulte(
+  EcranDemoAdulte ecran,
+  EtatDemoAdulte etat,
+  VueDemoAdulte vue,
+) {
+  if (!_ecransFoyer.contains(ecran)) return ecran;
+  if (vue == VueDemoAdulte.secondAdulte) return EcranDemoAdulte.forfaitFamille;
+  if (!DonneesAdulteDemo.aUnFoyer(etat)) {
+    return EcranDemoAdulte.ajouterMaFamille;
+  }
+  return ecran;
 }
 
 /// L'ecran de la demonstration qu'ouvre une rubrique de Mon espace.
@@ -149,6 +203,7 @@ List<RouteBase> routesDemoAdulte(String environnement) {
           seance:
               _lire(EtatDemoClasse.values, p['seance']) ??
               EtatDemoClasse.aVenir,
+          eleve: p['eleve'],
         );
       },
     ),
@@ -169,6 +224,7 @@ String adresseDemoAdulte(
   GenreTitulaireDemo genre = GenreTitulaireDemo.homme,
   VueDemoAdulte vue = VueDemoAdulte.titulaire,
   EtatDemoClasse seance = EtatDemoClasse.aVenir,
+  String? eleve,
 }) => Uri(
   path: Routes.demoAdulte,
   queryParameters: <String, String>{
@@ -177,6 +233,7 @@ String adresseDemoAdulte(
     if (genre == GenreTitulaireDemo.femme) 'titulaire': 'femme',
     if (vue == VueDemoAdulte.secondAdulte) 'vue': 'conjoint',
     if (seance != EtatDemoClasse.aVenir) 'seance': seance.name,
+    'eleve': ?eleve,
   },
 ).toString();
 
@@ -198,6 +255,11 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.aide => t.compte.tuteur.aide.ligne,
   EcranDemoAdulte.informationsLegales => t.compte.tuteur.aide.legal,
   EcranDemoAdulte.paiementsFoyer => t.adulte.famille.paiementsFoyer,
+  EcranDemoAdulte.placeAdulte => t.adulte.famille.forfaitFamille,
+  EcranDemoAdulte.ajouterProfil => t.foyer.ajouterProfil,
+  EcranDemoAdulte.ficheEleve => t.ficheEleve.titreRepli,
+  EcranDemoAdulte.appareils => t.foyer.appareilsFoyer,
+  EcranDemoAdulte.ajouterMaFamille => t.adulte.famille.ajouter,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -250,11 +312,15 @@ class DemoAdultePage extends StatelessWidget {
     this.genre = GenreTitulaireDemo.homme,
     this.vue = VueDemoAdulte.titulaire,
     this.seance = EtatDemoClasse.aVenir,
+    this.eleve,
     super.key,
   });
 
   /// La situation de la prochaine seance (Accueil).
   final EtatDemoClasse seance;
+
+  /// L'enfant dont la fiche est ouverte (`ficheEleve`).
+  final String? eleve;
 
   /// L'ecran choisi, ou nul pour la liste.
   final EcranDemoAdulte? ecran;
@@ -278,6 +344,7 @@ class DemoAdultePage extends StatelessWidget {
         genre: genre,
         vue: vue,
         seance: seance,
+        eleve: eleve,
       );
     }
     final AppPalette palette = AppPalette.of(context);
@@ -373,13 +440,18 @@ class CoquilleAdulteDemo extends StatelessWidget {
     this.vue = VueDemoAdulte.titulaire,
     this.seance = EtatDemoClasse.aVenir,
     this.environnement = Env.environnement,
+    this.eleve,
     super.key,
   });
 
   /// La situation de la prochaine seance (Accueil).
   final EtatDemoClasse seance;
 
-  /// L'ecran affiche.
+  /// L'enfant dont la fiche est ouverte (`ficheEleve`) ; par defaut le
+  /// premier enfant du foyer.
+  final String? eleve;
+
+  /// L'ecran demande (voir [ecranPermisDemoAdulte] pour celui qui s'affiche).
   final EcranDemoAdulte ecran;
 
   /// La situation du foyer.
@@ -395,29 +467,35 @@ class CoquilleAdulteDemo extends StatelessWidget {
   /// production (`surchargesDemoTuteur` le verifie).
   final String environnement;
 
-  String _adresse(EcranDemoAdulte e) =>
-      adresseDemoAdulte(e, etat: etat, genre: genre, vue: vue, seance: seance);
+  String _adresse(EcranDemoAdulte e, {String? eleve}) => adresseDemoAdulte(
+    e,
+    etat: etat,
+    genre: genre,
+    vue: vue,
+    seance: seance,
+    eleve: eleve,
+  );
 
   @override
   Widget build(BuildContext context) {
-    if (ecran == EcranDemoAdulte.maFamille ||
-        ecran == EcranDemoAdulte.paiementsFoyer) {
-      return _foyer(context);
+    final EcranDemoAdulte vu = ecranPermisDemoAdulte(ecran, etat, vue);
+    if (_ecransFoyer.contains(vu)) {
+      return _foyer(context, vu);
     }
     final List<Destination> destinations = destinationsEleveAdulte();
     // Les pages ouvertes depuis Mon espace gardent sa destination allumee.
-    final bool depuisMonEspace = ecran.index >= EcranDemoAdulte.monEspace.index;
+    final bool depuisMonEspace = vu.index >= EcranDemoAdulte.monEspace.index;
     final int actif = depuisMonEspace
         ? EcranDemoAdulte.monEspace.index
-        : ecran.index;
+        : vu.index;
     void versMonEspace() => context.go(_adresse(EcranDemoAdulte.monEspace));
     return ProviderScope(
-      key: ValueKey<String>(_adresse(ecran)),
+      key: ValueKey<String>(_adresse(vu)),
       overrides: <Override>[
         sessionProvider.overrideWith(_SessionAdulteDemo.new),
         // L'Accueil lit la Classe An-Nour de la demonstration de Classe
         // (seance, reseau, travail, supports), plus sa propre vue.
-        if (ecran == EcranDemoAdulte.accueil) ...<Override>[
+        if (vu == EcranDemoAdulte.accueil) ...<Override>[
           ...surchargesEleveDemo(seance),
           // Le second adulte est eleve d'une autre Classe, que la
           // demonstration n'a pas : le fournisseur reel reste (indisponible),
@@ -425,7 +503,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
           if (DonneesAdulteDemo.accueil(genre, vue)
               case final AccueilAdulteVM accueil)
             accueilAdulteProvider.overrideWith((Ref _) async => accueil),
-        ] else if (ecran == EcranDemoAdulte.maClasse) ...<Override>[
+        ] else if (vu == EcranDemoAdulte.maClasse) ...<Override>[
           // Ma classe lit la meme Classe An-Nour, plus sa propre vue (EA-3).
           ...surchargesEleveDemo(seance),
           // Le second adulte est eleve d'une autre Classe, que la
@@ -472,7 +550,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
             );
             if (cible != null) context.go(_adresse(cible));
           },
-          child: switch (ecran) {
+          child: switch (vu) {
             // La cloche reste sans destination jusqu'a EA-8 (centre de
             // notifications de l'eleve adulte) ; « Voir tout » ouvre Ma
             // classe, dont le « Voir tout » ouvre la Bibliotheque de la
@@ -500,11 +578,13 @@ class CoquilleAdulteDemo extends StatelessWidget {
               onOuvrir: (RubriqueMonEspace r) =>
                   context.go(_adresse(ecranDeRubrique(r))),
               onFamille: (LigneFamilleAdulte ligne) => context.go(
-                _adresse(
-                  ligne == LigneFamilleAdulte.forfaitFamille
-                      ? EcranDemoAdulte.forfaitFamille
-                      : EcranDemoAdulte.maFamille,
-                ),
+                _adresse(switch (ligne) {
+                  LigneFamilleAdulte.forfaitFamille =>
+                    EcranDemoAdulte.forfaitFamille,
+                  LigneFamilleAdulte.ajouterMaFamille =>
+                    EcranDemoAdulte.ajouterMaFamille,
+                  LigneFamilleAdulte.maFamille => EcranDemoAdulte.maFamille,
+                }),
               ),
             ),
             EcranDemoAdulte.paiements => PaiementsComptePage(
@@ -540,8 +620,17 @@ class CoquilleAdulteDemo extends StatelessWidget {
               phrase: t.adulte.provisoire.forfaitFamille,
               onRetour: versMonEspace,
             ),
+            EcranDemoAdulte.ajouterMaFamille => _PageProvisoire(
+              titre: t.adulte.famille.ajouter,
+              phrase: t.adulte.provisoire.ajouterMaFamille,
+              onRetour: versMonEspace,
+            ),
             EcranDemoAdulte.maFamille ||
-            EcranDemoAdulte.paiementsFoyer => const SizedBox.shrink(),
+            EcranDemoAdulte.paiementsFoyer ||
+            EcranDemoAdulte.placeAdulte ||
+            EcranDemoAdulte.ajouterProfil ||
+            EcranDemoAdulte.ficheEleve ||
+            EcranDemoAdulte.appareils => const SizedBox.shrink(),
           },
         ),
       ),
@@ -551,25 +640,110 @@ class CoquilleAdulteDemo extends StatelessWidget {
   /// La coquille du tuteur existante (Accueil, Foyer, Historique, Compte) sur
   /// Ma famille, le Foyer du tuteur peuple du foyer Diallo (EA-5). Le retour
   /// vers Mon espace est une ligne au bord de debut, au-dessus du Foyer
-  /// (UX_REVIEW_07 ligne 1 a).
+  /// (UX_REVIEW_07 ligne 1 a), sur le fond de page du theme.
   ///
   /// Decision EA-5 (releve d'EA-1b, « seul le Foyer reagit ») : la coquille
   /// du tuteur n'est pas recreee ; chacune de ses destinations reagit, et
   /// celles qui n'ont pas de page dans l'espace foyer de la demonstration
   /// ramenent a l'espace eleve, dont elles ont l'equivalent : « Compte » ouvre
   /// Mon espace (une seule place pour le compte, E3), « Accueil » et
-  /// « Historique » ouvrent l'Accueil (prochaine et dernieres seances). Les
-  /// chemins internes du Foyer (ajout, fiche, appareils) n'ont pas encore de
-  /// page de demonstration : ils ne quittent pas la coquille.
-  Widget _foyer(BuildContext context) {
+  /// « Historique » ouvrent l'Accueil (prochaine et dernieres seances).
+  ///
+  /// Les chemins internes du Foyer ouvrent les VRAIES pages du tuteur dans
+  /// cette coquille (K-51, rien de recree) : le formulaire commun d'ajout
+  /// (`FormulaireProfilEleve`, sans « Un proche adulte », F2), la fiche de
+  /// chaque enfant (`FicheElevePage`) et les appareils du foyer
+  /// (`AppareilsPage`). Les sous-pages de la fiche n'ont pas encore d'ecran
+  /// de demonstration : leurs lignes ne quittent pas la coquille. La ligne
+  /// de la place adulte ouvre une page provisoire (EA-6, EA-8).
+  Widget _foyer(BuildContext context, EcranDemoAdulte vu) {
     final List<Destination> destinations = destinationsPour(
       role: AppRole.guardian,
       mode: InterfaceMode.standard,
     );
     final List<EleveDuFoyer> enfants = DonneesAdulteDemo.enfantsPour(etat);
+    final FoyerTitulaireVM titulaire = DonneesAdulteDemo.foyerTitulaire(
+      etat,
+      genre,
+    );
     void versMaFamille() => context.go(_adresse(EcranDemoAdulte.maFamille));
+    void versFiche(String id) =>
+        context.go(_adresse(EcranDemoAdulte.ficheEleve, eleve: id));
+    // Les chemins du tuteur, ramenes aux ecrans de la demonstration.
+    void allerFoyer(String chemin) {
+      final String p = Uri.parse(chemin).path;
+      if (p == Routes.tuteurFoyer) {
+        versMaFamille();
+      } else if (p == Routes.tuteurAjouterEnfant) {
+        context.go(_adresse(EcranDemoAdulte.ajouterProfil));
+      } else if (p == Routes.tuteurFoyerAppareils) {
+        context.go(_adresse(EcranDemoAdulte.appareils));
+      } else if (p.startsWith('${Routes.tuteurFoyer}/')) {
+        final String id = p.substring(Routes.tuteurFoyer.length + 1);
+        if (!id.contains('/')) versFiche(id);
+      }
+    }
+
+    final Widget page = switch (vu) {
+      EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
+        onRetour: versMaFamille,
+      ),
+      EcranDemoAdulte.placeAdulte => _PageProvisoire(
+        titre: libellePlace(titulaire),
+        phrase: t.adulte.provisoire.placeAdulte,
+        onRetour: versMaFamille,
+      ),
+      EcranDemoAdulte.ajouterProfil => FormulaireProfilEleve(
+        onAbandon: versMaFamille,
+        onVoirFoyer: versMaFamille,
+        onCree: (String? id) => id == null ? versMaFamille() : versFiche(id),
+      ),
+      EcranDemoAdulte.ficheEleve => FicheElevePage(
+        eleveId: eleve ?? DonneesAdulteDemo.aichaId,
+        onAller: allerFoyer,
+        onRetour: versMaFamille,
+      ),
+      EcranDemoAdulte.appareils => AppareilsPage(
+        onAller: allerFoyer,
+        onRetour: versMaFamille,
+      ),
+      _ => ColoredBox(
+        // Le fond de page du theme sous la ligne de retour : jamais une bande
+        // claire en sombre, ni deux tons en clair (rail et barre laterale).
+        color: AppPalette.of(context).surfaceCanvas.background,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: AppSpacing.lg,
+                end: AppSpacing.lg,
+                top: AppSpacing.sm,
+              ),
+              child: LienFleche(
+                key: const ValueKey<String>('retour-mon-espace'),
+                icone: AppIcons.retour,
+                fleche: false,
+                libelle: t.adulte.famille.retourMonEspace,
+                onPress: () => context.go(_adresse(EcranDemoAdulte.monEspace)),
+              ),
+            ),
+            Expanded(
+              child: FoyerPage(
+                onAller: allerFoyer,
+                onPlaceAdulte: () =>
+                    context.go(_adresse(EcranDemoAdulte.placeAdulte)),
+                onPaiementsFoyer: () =>
+                    context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    };
+
     return ProviderScope(
-      key: ValueKey<String>(_adresse(ecran)),
+      key: ValueKey<String>(_adresse(vu, eleve: eleve)),
       overrides: <Override>[
         ...surchargesDemoTuteur(environnement: environnement, eleves: enfants),
         // Sous un ProviderScope imbrique, un provider derive non surcharge se
@@ -579,16 +753,24 @@ class CoquilleAdulteDemo extends StatelessWidget {
             for (final EleveDuFoyer e in enfants) ProfilEleveFoyer.depuis(e),
           ],
         ),
+        donneesAppareilsFoyerProvider.overrideWith(
+          (Ref _) async =>
+              (eleves: enfants, appareils: const <AppareilAppaire>[]),
+        ),
         horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+        // Le formulaire d'ajout : la porte du titulaire (compte actif) et une
+        // creation de demonstration, qui n'envoie rien (K-28).
+        porteAjoutProfilProvider.overrideWithValue(PorteAcces.actif),
+        portCreationProfilEleveProvider.overrideWithValue(
+          const _CreationProfilDemo(),
+        ),
         // Ma famille du titulaire (EA-5, EA-BR-14) : son identite par le port
         // du Compte, et la place adulte selon la situation.
         identiteTitulaireProvider.overrideWith(
           (Ref _) async =>
               DonneesAdulteDemo.identite(genre, VueDemoAdulte.titulaire),
         ),
-        foyerTitulaireProvider.overrideWith(
-          (Ref _) async => DonneesAdulteDemo.foyerTitulaire(etat, genre),
-        ),
+        foyerTitulaireProvider.overrideWith((Ref _) async => titulaire),
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -603,40 +785,26 @@ class CoquilleAdulteDemo extends StatelessWidget {
               _ => EcranDemoAdulte.accueil,
             }),
           ),
-          child: ecran == EcranDemoAdulte.paiementsFoyer
-              ? PaiementsComptePage(onRetour: versMaFamille)
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsetsDirectional.only(
-                        start: AppSpacing.lg,
-                        end: AppSpacing.lg,
-                        top: AppSpacing.sm,
-                      ),
-                      child: LienFleche(
-                        key: const ValueKey<String>('retour-mon-espace'),
-                        icone: AppIcons.retour,
-                        fleche: false,
-                        libelle: t.adulte.famille.retourMonEspace,
-                        onPress: () =>
-                            context.go(_adresse(EcranDemoAdulte.monEspace)),
-                      ),
-                    ),
-                    Expanded(
-                      child: FoyerPage(
-                        onAller: (String _) {},
-                        onPaiementsFoyer: () => context.go(
-                          _adresse(EcranDemoAdulte.paiementsFoyer),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+          child: page,
         ),
       ),
     );
   }
+}
+
+/// La creation d'un profil eleve en demonstration : les memes regles
+/// d'ecran que l'adaptateur reel (seul « Un enfant ou un mineur », compte
+/// actif), et rien n'est envoye (K-28). Le formulaire revient a Ma famille.
+class _CreationProfilDemo implements PortCreationProfilEleve {
+  const _CreationProfilDemo();
+
+  @override
+  bool peutCreer(PourQui pourQui, {required PorteAcces porte}) =>
+      pourQui == PourQui.enfantOuMineur && porte == PorteAcces.actif;
+
+  @override
+  Future<ResultatCreationProfil> creer(BrouillonProfilEleve _) async =>
+      const ProfilCree();
 }
 
 /// Une page provisoire : son titre et une phrase qui dit ce qui viendra.

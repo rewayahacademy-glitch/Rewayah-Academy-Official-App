@@ -39,7 +39,14 @@ import 'liste_appareils_eleve.dart';
 /// (« Reessayer »), hors ligne sans donnees.
 class AppareilsPage extends ConsumerWidget {
   /// Cree la page.
-  const AppareilsPage({super.key});
+  const AppareilsPage({super.key, this.onAller, this.onRetour});
+
+  /// Ouvre un chemin (ajout, appareils d'un profil) ; par defaut, le
+  /// routeur. La demonstration adulte y garde la personne dans sa coquille.
+  final void Function(String chemin)? onAller;
+
+  /// Le retour ; par defaut, le Foyer par le routeur (niveau 2).
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,7 +55,8 @@ class AppareilsPage extends ConsumerWidget {
     );
     final AsyncValue<bool> reseau = ref.watch(horsLigneProvider);
     final bool horsLigne = reseau.hasValue && reseau.requireValue;
-    final GoRouter? routeur = GoRouter.maybeOf(context);
+    final void Function(String chemin)? aller =
+        onAller ?? GoRouter.maybeOf(context)?.go;
 
     // Tant que le Foyer du lot B n'est pas livre, la destination Foyer rend
     // cette page (STUB de `foyer_page.dart`) : a sa propre racine, elle n'a
@@ -70,20 +78,20 @@ class AppareilsPage extends ConsumerWidget {
               titre: t.appareils.foyer.videTitre,
               phrase: t.appareils.foyer.vide,
               libelleAction: t.appareils.foyer.videAction,
-              onAction: () => routeur?.go(Routes.tuteurAjouterEnfant),
+              onAction: () => aller?.call(Routes.tuteurAjouterEnfant),
             ),
             construire: (DonneesAppareilsFoyer d) => _Contenu(
               donnees: d,
               onProfil: (String eleveId) =>
-                  routeur?.go(Routes.ficheEleveSousPage(eleveId, 'appareils')),
+                  aller?.call(Routes.ficheEleveSousPage(eleveId, 'appareils')),
             ),
           );
 
     return PageShell(
       titre: t.appareils.foyer.titre,
-      onRetour: niveau2 && routeur != null
-          ? () => routeur.go(Routes.tuteurFoyer)
-          : null,
+      onRetour:
+          onRetour ??
+          (niveau2 && aller != null ? () => aller(Routes.tuteurFoyer) : null),
       child: corps,
     );
   }
