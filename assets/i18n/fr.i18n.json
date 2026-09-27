@@ -3837,5 +3837,65 @@
         "envoye": "Cours clôturé."
       }
     }
+  },
+  "adulte": {
+    "nav": {
+      "accueil": "Accueil",
+      "maClasse": "Ma classe",
+      "coran": "Coran",
+      "monEspace": "Mon espace"
+    },
+    "provisoire": {
+      "accueil": "Votre accueil arrivera dans une prochaine étape : votre prochaine séance, ce qu'il faut préparer et vos dernières séances.",
+      "maClasse": "Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.",
+      "coran": "Le Coran de votre espace élève s'affichera ici.",
+      "monEspace": "Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.",
+      "forfaitFamille": "La page de votre forfait famille arrivera dans une prochaine étape."
+    },
+    "famille": {
+      "ajouter": "Ajouter ma famille",
+      "ajouterLegende": "Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.",
+      "maFamille": "Ma famille",
+      "forfaitFamille": "Forfait famille",
+      "retourMonEspace": "Revenir à Mon espace"
+    },
+    "demo": {
+      "titre": "Démonstration de l'élève adulte",
+      "mention": "Les données sont fictives et rien n'est envoyé.",
+      "intro": "Choisissez un écran, puis une situation du foyer Diallo.",
+      "ecrans": "Les écrans",
+      "situations": "Les situations du foyer",
+      "variantes": "Les variantes",
+      "titulaireFemme": "La titulaire est une femme, son conjoint est le second adulte.",
+      "vueConjointe": "Mon espace vu par la conjointe, second adulte du foyer.",
+      "vueConjoint": "Mon espace vu par le conjoint, second adulte du foyer.",
+      "etats": {
+        "adulteSeul": "L'adulte est seul, sans foyer.",
+        "titulaireSansConjoint": "Le foyer n'a pas de second adulte.",
+        "invitationEnAttente": "L'invitation du second adulte est en attente.",
+        "invitationExpiree": "L'invitation du second adulte a expiré.",
+        "invitationAnnulee": "L'invitation du second adulte a été annulée.",
+        "conjointActif": "Le second adulte fait partie du foyer.",
+        "conjointQuitte": "Le second adulte a quitté le foyer.",
+        "conjointRetire": "Le second adulte a été retiré du foyer.",
+        "delai60": "Un délai de 60 jours est en cours.",
+        "nouvelleDemande": "Une nouvelle invitation est possible après le délai de 60 jours.",
+        "validationEnAttente": "La validation administrative est en attente.",
+        "validationRefusee": "La validation administrative a été refusée.",
+        "secondDepart": "Le second adulte est parti pour la deuxième fois.",
+        "delai120": "Un délai de 120 jours est en cours.",
+        "departsSuivants": "Après le troisième départ, le délai reste de 120 jours.",
+        "repriseDemandee": "Une demande de reprise du foyer a été déposée.",
+        "repriseRefuseeParTitulaire": "La demande de reprise a été refusée par le titulaire.",
+        "repriseSansReponse": "Après 30 jours sans réponse, la demande attend l'administration.",
+        "repriseValidee": "La reprise du foyer a été validée.",
+        "repriseRefusee": "La reprise du foyer a été refusée.",
+        "dejaDansUnAutreFoyer": "L'adulte invité fait déjà partie d'un autre foyer.",
+        "erreurReseau": "Le réseau a coupé pendant une action.",
+        "doubleSoumission": "La même action a été envoyée deux fois.",
+        "notificationDansLApplication": "La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.",
+        "emancipation": "Un élève devenu adulte garde toutes ses données."
+      }
+    }
   }
 }

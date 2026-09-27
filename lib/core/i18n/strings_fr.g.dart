@@ -84,6 +84,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$aConstruire$fr aConstruire = Traductions$aConstruire$fr.internal(_root);
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
 	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
+	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
 }
 
 // Path: commun
@@ -2268,6 +2269,19 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+}
+
+// Path: adulte
+class Traductions$adulte$fr {
+	Traductions$adulte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$adulte$nav$fr nav = Traductions$adulte$nav$fr.internal(_root);
+	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
+	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
+	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
 }
 
 // Path: commun.etape
@@ -8782,6 +8796,113 @@ class Traductions$tc$parcours$fr {
 	late final Traductions$tc$parcours$postCours$fr postCours = Traductions$tc$parcours$postCours$fr.internal(_root);
 }
 
+// Path: adulte.nav
+class Traductions$adulte$nav$fr {
+	Traductions$adulte$nav$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accueil'
+	String get accueil => 'Accueil';
+
+	/// fr: 'Ma classe'
+	String get maClasse => 'Ma classe';
+
+	/// fr: 'Coran'
+	String get coran => 'Coran';
+
+	/// fr: 'Mon espace'
+	String get monEspace => 'Mon espace';
+}
+
+// Path: adulte.provisoire
+class Traductions$adulte$provisoire$fr {
+	Traductions$adulte$provisoire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre accueil arrivera dans une prochaine étape : votre prochaine séance, ce qu'il faut préparer et vos dernières séances.'
+	String get accueil => 'Votre accueil arrivera dans une prochaine étape : votre prochaine séance, ce qu\'il faut préparer et vos dernières séances.';
+
+	/// fr: 'Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.'
+	String get maClasse => 'Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.';
+
+	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
+	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
+
+	/// fr: 'Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.'
+	String get monEspace => 'Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.';
+
+	/// fr: 'La page de votre forfait famille arrivera dans une prochaine étape.'
+	String get forfaitFamille => 'La page de votre forfait famille arrivera dans une prochaine étape.';
+}
+
+// Path: adulte.famille
+class Traductions$adulte$famille$fr {
+	Traductions$adulte$famille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouter ma famille'
+	String get ajouter => 'Ajouter ma famille';
+
+	/// fr: 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.'
+	String get ajouterLegende => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.';
+
+	/// fr: 'Ma famille'
+	String get maFamille => 'Ma famille';
+
+	/// fr: 'Forfait famille'
+	String get forfaitFamille => 'Forfait famille';
+
+	/// fr: 'Revenir à Mon espace'
+	String get retourMonEspace => 'Revenir à Mon espace';
+}
+
+// Path: adulte.demo
+class Traductions$adulte$demo$fr {
+	Traductions$adulte$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration de l'élève adulte'
+	String get titre => 'Démonstration de l\'élève adulte';
+
+	/// fr: 'Les données sont fictives et rien n'est envoyé.'
+	String get mention => 'Les données sont fictives et rien n\'est envoyé.';
+
+	/// fr: 'Choisissez un écran, puis une situation du foyer Diallo.'
+	String get intro => 'Choisissez un écran, puis une situation du foyer Diallo.';
+
+	/// fr: 'Les écrans'
+	String get ecrans => 'Les écrans';
+
+	/// fr: 'Les situations du foyer'
+	String get situations => 'Les situations du foyer';
+
+	/// fr: 'Les variantes'
+	String get variantes => 'Les variantes';
+
+	/// fr: 'La titulaire est une femme, son conjoint est le second adulte.'
+	String get titulaireFemme => 'La titulaire est une femme, son conjoint est le second adulte.';
+
+	/// fr: 'Mon espace vu par la conjointe, second adulte du foyer.'
+	String get vueConjointe => 'Mon espace vu par la conjointe, second adulte du foyer.';
+
+	/// fr: 'Mon espace vu par le conjoint, second adulte du foyer.'
+	String get vueConjoint => 'Mon espace vu par le conjoint, second adulte du foyer.';
+
+	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -12293,6 +12414,90 @@ class Traductions$tc$parcours$postCours$fr {
 
 	/// fr: 'Cours clôturé.'
 	String get envoye => 'Cours clôturé.';
+}
+
+// Path: adulte.demo.etats
+class Traductions$adulte$demo$etats$fr {
+	Traductions$adulte$demo$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'adulte est seul, sans foyer.'
+	String get adulteSeul => 'L\'adulte est seul, sans foyer.';
+
+	/// fr: 'Le foyer n'a pas de second adulte.'
+	String get titulaireSansConjoint => 'Le foyer n\'a pas de second adulte.';
+
+	/// fr: 'L'invitation du second adulte est en attente.'
+	String get invitationEnAttente => 'L\'invitation du second adulte est en attente.';
+
+	/// fr: 'L'invitation du second adulte a expiré.'
+	String get invitationExpiree => 'L\'invitation du second adulte a expiré.';
+
+	/// fr: 'L'invitation du second adulte a été annulée.'
+	String get invitationAnnulee => 'L\'invitation du second adulte a été annulée.';
+
+	/// fr: 'Le second adulte fait partie du foyer.'
+	String get conjointActif => 'Le second adulte fait partie du foyer.';
+
+	/// fr: 'Le second adulte a quitté le foyer.'
+	String get conjointQuitte => 'Le second adulte a quitté le foyer.';
+
+	/// fr: 'Le second adulte a été retiré du foyer.'
+	String get conjointRetire => 'Le second adulte a été retiré du foyer.';
+
+	/// fr: 'Un délai de 60 jours est en cours.'
+	String get delai60 => 'Un délai de 60 jours est en cours.';
+
+	/// fr: 'Une nouvelle invitation est possible après le délai de 60 jours.'
+	String get nouvelleDemande => 'Une nouvelle invitation est possible après le délai de 60 jours.';
+
+	/// fr: 'La validation administrative est en attente.'
+	String get validationEnAttente => 'La validation administrative est en attente.';
+
+	/// fr: 'La validation administrative a été refusée.'
+	String get validationRefusee => 'La validation administrative a été refusée.';
+
+	/// fr: 'Le second adulte est parti pour la deuxième fois.'
+	String get secondDepart => 'Le second adulte est parti pour la deuxième fois.';
+
+	/// fr: 'Un délai de 120 jours est en cours.'
+	String get delai120 => 'Un délai de 120 jours est en cours.';
+
+	/// fr: 'Après le troisième départ, le délai reste de 120 jours.'
+	String get departsSuivants => 'Après le troisième départ, le délai reste de 120 jours.';
+
+	/// fr: 'Une demande de reprise du foyer a été déposée.'
+	String get repriseDemandee => 'Une demande de reprise du foyer a été déposée.';
+
+	/// fr: 'La demande de reprise a été refusée par le titulaire.'
+	String get repriseRefuseeParTitulaire => 'La demande de reprise a été refusée par le titulaire.';
+
+	/// fr: 'Après 30 jours sans réponse, la demande attend l'administration.'
+	String get repriseSansReponse => 'Après 30 jours sans réponse, la demande attend l\'administration.';
+
+	/// fr: 'La reprise du foyer a été validée.'
+	String get repriseValidee => 'La reprise du foyer a été validée.';
+
+	/// fr: 'La reprise du foyer a été refusée.'
+	String get repriseRefusee => 'La reprise du foyer a été refusée.';
+
+	/// fr: 'L'adulte invité fait déjà partie d'un autre foyer.'
+	String get dejaDansUnAutreFoyer => 'L\'adulte invité fait déjà partie d\'un autre foyer.';
+
+	/// fr: 'Le réseau a coupé pendant une action.'
+	String get erreurReseau => 'Le réseau a coupé pendant une action.';
+
+	/// fr: 'La même action a été envoyée deux fois.'
+	String get doubleSoumission => 'La même action a été envoyée deux fois.';
+
+	/// fr: 'La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.'
+	String get notificationDansLApplication => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.';
+
+	/// fr: 'Un élève devenu adulte garde toutes ses données.'
+	String get emancipation => 'Un élève devenu adulte garde toutes ses données.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -15939,6 +16144,54 @@ extension on Traductions {
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
+			'adulte.nav.accueil' => 'Accueil',
+			'adulte.nav.maClasse' => 'Ma classe',
+			'adulte.nav.coran' => 'Coran',
+			'adulte.nav.monEspace' => 'Mon espace',
+			'adulte.provisoire.accueil' => 'Votre accueil arrivera dans une prochaine étape : votre prochaine séance, ce qu\'il faut préparer et vos dernières séances.',
+			'adulte.provisoire.maClasse' => 'Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.',
+			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
+			'adulte.provisoire.monEspace' => 'Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.',
+			'adulte.provisoire.forfaitFamille' => 'La page de votre forfait famille arrivera dans une prochaine étape.',
+			'adulte.famille.ajouter' => 'Ajouter ma famille',
+			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
+			'adulte.famille.maFamille' => 'Ma famille',
+			'adulte.famille.forfaitFamille' => 'Forfait famille',
+			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
+			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
+			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
+			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',
+			'adulte.demo.ecrans' => 'Les écrans',
+			'adulte.demo.situations' => 'Les situations du foyer',
+			'adulte.demo.variantes' => 'Les variantes',
+			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
+			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
+			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
+			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
+			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
+			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
+			'adulte.demo.etats.invitationExpiree' => 'L\'invitation du second adulte a expiré.',
+			'adulte.demo.etats.invitationAnnulee' => 'L\'invitation du second adulte a été annulée.',
+			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
+			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
+			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
+			'adulte.demo.etats.delai60' => 'Un délai de 60 jours est en cours.',
+			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le délai de 60 jours.',
+			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
+			'adulte.demo.etats.validationRefusee' => 'La validation administrative a été refusée.',
+			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
+			'adulte.demo.etats.delai120' => 'Un délai de 120 jours est en cours.',
+			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai reste de 120 jours.',
+			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
+			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
+			'adulte.demo.etats.repriseSansReponse' => 'Après 30 jours sans réponse, la demande attend l\'administration.',
+			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
+			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
+			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
+			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
+			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
+			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
+			'adulte.demo.etats.emancipation' => 'Un élève devenu adulte garde toutes ses données.',
 			_ => null,
 		};
 	}

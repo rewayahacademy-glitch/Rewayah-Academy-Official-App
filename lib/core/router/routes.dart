@@ -470,6 +470,11 @@ abstract final class Routes {
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoEnseignant = '/demo/enseignant';
 
+  /// La coquille de l'eleve adulte en demonstration (EA-1b) :
+  /// `?ecran=...&etat=...&titulaire=femme&vue=conjoint`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoAdulte = '/demo/adulte';
+
   // --- Developpement --------------------------------------------------------
 
   /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.

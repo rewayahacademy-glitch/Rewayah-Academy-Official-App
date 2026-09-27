@@ -70,14 +70,20 @@ bool get demoTuteurActiveIci =>
 /// Les surcharges de la demonstration tuteur.
 ///
 /// Leve une [StateError] si l'environnement ne l'autorise pas : meme appelee
-/// par erreur, elle ne produit rien en production.
-List<Override> surchargesDemoTuteur({String? environnement}) {
+/// par erreur, elle ne produit rien en production. [eleves] remplace les
+/// eleves du foyer (la demonstration adulte y met le foyer Diallo, EA-1b).
+List<Override> surchargesDemoTuteur({
+  String? environnement,
+  List<EleveDuFoyer>? eleves,
+}) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
   }
   return <Override>[
     sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
-    elevesDuFoyerProvider.overrideWith((Ref ref) async => DonneesDemo.eleves),
+    elevesDuFoyerProvider.overrideWith(
+      (Ref ref) async => eleves ?? DonneesDemo.eleves,
+    ),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
