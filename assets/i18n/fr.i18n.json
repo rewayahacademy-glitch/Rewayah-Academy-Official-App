@@ -602,6 +602,18 @@
     "horsLigne": "Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
     "caseRequise": "Cochez la case pour continuer."
   },
+  "accessibilite": {
+    "demo": {
+      "titre": "Démonstration du Mode Accessibilité",
+      "mention": "Données fictives, aucun envoi.",
+      "intro": "Choisissez un élève et un moment de la séance.",
+      "eleveMineure": "Mariam, élève mineure",
+      "eleveAdulte": "Idriss, élève adulte",
+      "etatAvant": "Avant la séance",
+      "etatPendant": "Pendant la séance",
+      "etatApres": "Après la séance"
+    }
+  },
   "accuse": {
     "titre": "À savoir avant de commencer",
     "compris": "J'ai compris"

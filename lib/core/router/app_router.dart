@@ -52,6 +52,7 @@ import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
 import '../../features/controleur/planning_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
+import '../../features/demo/demo_accessibilite_page.dart';
 import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
 import '../../features/demo/demo_salle_page.dart';
@@ -1072,6 +1073,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoSalle(Env.environnement),
       ...routesDemoClasse(Env.environnement),
       ...routesDemoEnseignant(Env.environnement),
+      ...routesDemoAccessibilite(Env.environnement),
     ],
   );
 });

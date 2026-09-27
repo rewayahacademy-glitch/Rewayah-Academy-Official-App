@@ -52,6 +52,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$connexion$fr connexion = Traductions$connexion$fr.internal(_root);
 	late final Traductions$inscription$fr inscription = Traductions$inscription$fr.internal(_root);
 	late final Traductions$contrat$fr contrat = Traductions$contrat$fr.internal(_root);
+	late final Traductions$accessibilite$fr accessibilite = Traductions$accessibilite$fr.internal(_root);
 	late final Traductions$accuse$fr accuse = Traductions$accuse$fr.internal(_root);
 	late final Traductions$consentement$fr consentement = Traductions$consentement$fr.internal(_root);
 	late final Traductions$kyc$fr kyc = Traductions$kyc$fr.internal(_root);
@@ -773,6 +774,16 @@ class Traductions$contrat$fr {
 
 	/// fr: 'Cochez la case pour continuer.'
 	String get caseRequise => 'Cochez la case pour continuer.';
+}
+
+// Path: accessibilite
+class Traductions$accessibilite$fr {
+	Traductions$accessibilite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$accessibilite$demo$fr demo = Traductions$accessibilite$demo$fr.internal(_root);
 }
 
 // Path: accuse
@@ -2947,6 +2958,39 @@ class Traductions$inscription$recap$fr {
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
+}
+
+// Path: accessibilite.demo
+class Traductions$accessibilite$demo$fr {
+	Traductions$accessibilite$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration du Mode Accessibilité'
+	String get titre => 'Démonstration du Mode Accessibilité';
+
+	/// fr: 'Données fictives, aucun envoi.'
+	String get mention => 'Données fictives, aucun envoi.';
+
+	/// fr: 'Choisissez un élève et un moment de la séance.'
+	String get intro => 'Choisissez un élève et un moment de la séance.';
+
+	/// fr: 'Mariam, élève mineure'
+	String get eleveMineure => 'Mariam, élève mineure';
+
+	/// fr: 'Idriss, élève adulte'
+	String get eleveAdulte => 'Idriss, élève adulte';
+
+	/// fr: 'Avant la séance'
+	String get etatAvant => 'Avant la séance';
+
+	/// fr: 'Pendant la séance'
+	String get etatPendant => 'Pendant la séance';
+
+	/// fr: 'Après la séance'
+	String get etatApres => 'Après la séance';
 }
 
 // Path: consentement.texte
@@ -13202,6 +13246,14 @@ extension on Traductions {
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
+			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
+			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
+			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
+			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
+			'accessibilite.demo.eleveAdulte' => 'Idriss, élève adulte',
+			'accessibilite.demo.etatAvant' => 'Avant la séance',
+			'accessibilite.demo.etatPendant' => 'Pendant la séance',
+			'accessibilite.demo.etatApres' => 'Après la séance',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
@@ -13218,6 +13270,8 @@ extension on Traductions {
 			'consentement.texte.caseAdulte' => 'J\'accepte ces modalités',
 			'consentement.texte.continuer' => 'Continuer',
 			'consentement.texte.retour' => 'Retour',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.comment.titre' => 'Comment ça marche ?',
 			'consentement.comment.visites' => ({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une visite de ${minutes} min par séance.', other: '${n} visites de ${minutes} min par séance.', ), 
 			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une visite courte par séance.', other: '${n} visites courtes par séance.', ), 
@@ -13226,8 +13280,6 @@ extension on Traductions {
 			'consentement.comment.ecouter' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
 			'consentement.comment.sansMicro' => 'Votre micro et votre caméra restent désactivés pendant la visite.',
 			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
 			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
 			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
@@ -13732,6 +13784,8 @@ extension on Traductions {
 			'admin.attribution.colonneEleves' => 'Élèves sans enseignant',
 			'admin.attribution.colonneEnseignants' => 'Enseignants',
 			'admin.attribution.aucunEleve' => 'Chaque élève a son enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.aucunEleveDetail' => 'Les enfants que personne n\'a encore pris apparaîtront ici, celui qui attend depuis le plus longtemps en premier.',
 			'admin.attribution.erreurEleves' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
 			'admin.attribution.erreurEnseignants' => 'Les enseignants n\'ont pas pu être lus. Réessayez dans un instant.',
@@ -13740,8 +13794,6 @@ extension on Traductions {
 			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
-			_ => null,
-		} ?? switch (path) {
 			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
@@ -14246,6 +14298,8 @@ extension on Traductions {
 			'admin.agents.videDetail' => 'Aucun agent IA n\'a accès à l\'application pour l\'instant.',
 			'admin.agents.erreur' => 'La liste des jetons n\'a pas pu être lue.',
 			'admin.notifications.titre' => 'Notifications',
+			_ => null,
+		} ?? switch (path) {
 			'admin.notifications.vide' => 'Aucune notification',
 			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
 			'agent.titre' => 'Entrée d\'un agent',
@@ -14254,8 +14308,6 @@ extension on Traductions {
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
 			'agent.ouverture' => 'Ouverture',
-			_ => null,
-		} ?? switch (path) {
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
 			'agent.indisponible' => 'Service indisponible',
@@ -14760,6 +14812,8 @@ extension on Traductions {
 			'tuteur.accueil.prochaineSeance' => 'Prochaine séance',
 			'tuteur.accueil.heureDe' => ({required Object ville}) => 'Heure de ${ville}',
 			'tuteur.accueil.heureAppareil' => 'Heure de cet appareil',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.dateEtFuseau' => ({required Object date, required Object fuseau}) => '${date} · ${fuseau}',
 			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'Heure de la classe : ${heure} ${ville}',
 			'tuteur.accueil.seanceEnDirect' => 'Séance en direct',
@@ -14768,8 +14822,6 @@ extension on Traductions {
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
@@ -15274,6 +15326,8 @@ extension on Traductions {
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
 			'enseignant.cahier.exceptionMotif' => 'Motif',
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.exceptionEnCours' => 'Enregistrement…',
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
@@ -15282,8 +15336,6 @@ extension on Traductions {
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
@@ -15788,6 +15840,8 @@ extension on Traductions {
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
@@ -15796,8 +15850,6 @@ extension on Traductions {
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
