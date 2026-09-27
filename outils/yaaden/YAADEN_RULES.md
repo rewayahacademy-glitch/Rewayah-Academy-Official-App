@@ -5,6 +5,7 @@
 - Toute session, sur tout poste, installe YAADEN (LISEZMOI) avant de travailler.
 - Tout morceau livré (commit) = une ligne `@Y RELAIS` dans la même réponse ; sinon le hook Stop renvoie l'écrire.
 - Le travail d'un sous-agent est relayé par l'orchestrateur dès sa réception, morceau par morceau.
+- Avant de commencer un nouveau rôle : liste courte des points prioritaires au directeur, bloquants en premier ; attendre sa réponse (K-49).
 - Boîte non vide = envoyer avant la fin de la réponse suivante. Reporter = `@Y PLUS_TARD`, jamais un « plus tard » dans un texte libre.
 
 ## 1. Relais au fil de l'eau (codes lus par le script, jamais exécutés)
