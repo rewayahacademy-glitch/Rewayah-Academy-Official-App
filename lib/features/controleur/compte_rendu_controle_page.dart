@@ -37,6 +37,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'compte_rendu_controle.dart';
+import 'garde_controle.dart';
 import 'mission_controle.dart';
 
 enum _Etape { choix, envoye }
@@ -153,6 +154,14 @@ class _CompteRenduControlePageState
             classe: mission.classe,
             heure: heureDeLAppareil(mission.debut),
           );
+
+    // Mission retiree ou seance annulee pendant le compte rendu (P-CTR-08,
+    // CT-9) : rien de la mission ne reste visible. Un envoi deja confirme
+    // garde son resultat.
+    if (mission?.etat == EtatMissionControle.indisponible &&
+        _etape != _Etape.envoye) {
+      return MissionIndisponible(onRevenir: _revenir);
+    }
 
     if (_etape == _Etape.envoye) {
       return PageShell(

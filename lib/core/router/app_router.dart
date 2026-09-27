@@ -42,6 +42,7 @@ import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
+import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
 import '../../features/compte/paiements_page.dart';
@@ -55,6 +56,7 @@ import '../../features/controleur/compte_rendu_controle.dart'
 import '../../features/controleur/compte_rendu_controle_page.dart';
 import '../../features/controleur/controle_page.dart';
 import '../../features/controleur/echanges_controleur_page.dart';
+import '../../features/controleur/garde_controle.dart';
 import '../../features/controleur/historique_controleur_page.dart';
 import '../../features/controleur/observation_controle_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
@@ -1103,18 +1105,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.controleurCompteRendu,
         builder: (BuildContext _, GoRouterState _) =>
-            const CompteRenduControlePage(),
+            const GardeControle(child: CompteRenduControlePage()),
       ),
       // CTR-03A, l'observation structuree (CT-5) : « Ajouter une
       // observation » ou « Signaler un point important », porte par extra.
       GoRoute(
         path: Routes.controleurObservation,
-        builder: (BuildContext _, GoRouterState etat) =>
-            ObservationControlePage(
-              choix: etat.extra is ChoixCompteRendu
-                  ? etat.extra! as ChoixCompteRendu
-                  : ChoixCompteRendu.ajouterObservation,
-            ),
+        builder: (BuildContext _, GoRouterState etat) => GardeControle(
+          child: ObservationControlePage(
+            choix: etat.extra is ChoixCompteRendu
+                ? etat.extra! as ChoixCompteRendu
+                : ChoixCompteRendu.ajouterObservation,
+          ),
+        ),
       ),
 
       // Galerie de developpement, absente des versions de production.
@@ -1383,7 +1386,13 @@ class _CoquilleNavigation extends ConsumerWidget {
     );
 
     if (role != AppRole.guardian) {
-      return coquille;
+      // CT-9 : le raccourci d'en-tete vers `Compte > Espaces`, seulement
+      // quand le compte a plus d'un espace (jamais le tuteur, C6) ; l'espace
+      // Controle est garde, refus generique si la capacite manque (C7).
+      final Widget avecEspaces = EnteteEspaces(child: coquille);
+      return role == AppRole.controller
+          ? GardeControle(child: avecEspaces)
+          : avecEspaces;
     }
     // Le tuteur porte, sur chaque page de sa coquille, la cloche des
     // notifications et, a partir de la tablette, la bascule clair / sombre

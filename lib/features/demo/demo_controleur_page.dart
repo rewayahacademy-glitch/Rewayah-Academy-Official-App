@@ -36,17 +36,20 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../compte/compte_page.dart';
+import '../compte/espaces_compte.dart';
 import '../controleur/compte_rendu_controle.dart';
 import '../controleur/compte_rendu_controle_page.dart';
 import '../controleur/controle_page.dart';
 import '../controleur/echanges_controleur.dart';
 import '../controleur/echanges_controleur_page.dart';
+import '../controleur/garde_controle.dart';
 import '../controleur/historique_controleur_page.dart';
 import '../controleur/mission_controle.dart';
 import '../controleur/observation_controle.dart';
 import '../controleur/observation_controle_page.dart';
 import '../salle/salle_page.dart';
 import 'controleur_demo.dart';
+import 'espaces_controleur_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 import 'salle_controleur_demo.dart';
@@ -69,6 +72,7 @@ List<RouteBase> routesDemoControleur(String environnement) {
             ) ??
             EtatDemoControleur.enDirect,
         fil: etat.uri.queryParameters['fil'],
+        espaces: SituationEspacesDemo.lire(etat.uri.queryParameters),
       ),
     ),
     // CTR-02 (CT-3) : la VRAIE salle, en role controleur, sans serveur.
@@ -84,24 +88,46 @@ List<RouteBase> routesDemoControleur(String environnement) {
     // demonstration, aucun serveur.
     GoRoute(
       path: cheminDemoCompteRenduControleur,
-      builder: (BuildContext contexte, GoRouterState _) => ProviderScope(
-        overrides: <Override>[
-          ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
-          faitsVisiteProvider.overrideWith(
-            (Ref _) async => faitsVisiteDemoControleur(),
-          ),
-        ],
-        child: RepereDemonstration(
-          child: CompteRenduControlePage(
-            onRevenir: () => contexte.go(
-              adresseDemoControleur(EcranDemoControleur.controle),
+      builder: (BuildContext contexte, GoRouterState etat) {
+        // CT-9 : `etat=indisponible` montre la mission retiree pendant le
+        // compte rendu (P-CTR-08) ; la mission est en cours (§4.2) et le
+        // retour garde le profil de demonstration.
+        final SituationEspacesDemo espaces = SituationEspacesDemo.lire(
+          etat.uri.queryParameters,
+        );
+        return ProviderScope(
+          overrides: <Override>[
+            ...surchargesCoquilleControleurDemo(
+              _lire(
+                    EtatDemoControleur.values,
+                    etat.uri.queryParameters['etat'],
+                  ) ??
+                  EtatDemoControleur.enDirect,
+              profil: espaces.controleur,
             ),
-            onObservation: (ChoixCompteRendu choix) =>
-                contexte.go(cheminDemoObservationControleur, extra: choix),
-            onEcrireAdmin: () => contexte.go(adresseFilMissionDemoControleur()),
+            ...surchargesEspacesDemo(espaces.enMission()),
+            faitsVisiteProvider.overrideWith(
+              (Ref _) async => faitsVisiteDemoControleur(),
+            ),
+          ],
+          child: RepereDemonstration(
+            child: GardeControle(
+              child: CompteRenduControlePage(
+                onRevenir: () => contexte.go(
+                  adresseDemoControleur(
+                    EcranDemoControleur.controle,
+                    espaces: espaces.vers(principal: false),
+                  ),
+                ),
+                onObservation: (ChoixCompteRendu choix) =>
+                    contexte.go(cheminDemoObservationControleur, extra: choix),
+                onEcrireAdmin: () =>
+                    contexte.go(adresseFilMissionDemoControleur()),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     ),
     // CTR-03A (CT-5) : l'observation structuree, roster de demonstration
     // (prenoms seuls, C8), envoi simule, aucun serveur.
@@ -232,12 +258,14 @@ String adresseDemoControleur(
   EcranDemoControleur ecran, {
   EtatDemoControleur etat = EtatDemoControleur.enDirect,
   String? fil,
+  SituationEspacesDemo espaces = const SituationEspacesDemo(),
 }) => Uri(
   path: Routes.demoControleur,
   queryParameters: <String, String>{
     'ecran': ecran.name,
     'etat': etat.name,
     'fil': ?fil,
+    ...espaces.parametres,
   },
 ).toString();
 
@@ -366,11 +394,15 @@ String libelleEtatDemoControleur(EtatDemoControleur etat) => switch (etat) {
 
 /// La session de demonstration : un controleur resolu, sans source serveur.
 class _SessionControleurDemo extends SessionControleur {
+  _SessionControleurDemo([this._id = DonneesControleurDemo.controleurId]);
+
+  final String _id;
+
   @override
-  SessionState build() => const SessionState(
+  SessionState build() => SessionState(
     resolue: true,
     role: AppRole.controller,
-    profileId: DonneesControleurDemo.controleurId,
+    profileId: _id,
     accountStatus: AccountStatus.active,
     lectureProfil: LectureProfil.presente,
   );
@@ -378,21 +410,32 @@ class _SessionControleurDemo extends SessionControleur {
 
 /// Les surcharges de la coquille controleur : seuls les providers lus par
 /// les pages sont remplaces, aucun port reseau.
-List<Override> surchargesCoquilleControleurDemo(EtatDemoControleur etat) =>
-    <Override>[
-      sessionProvider.overrideWith(_SessionControleurDemo.new),
-      horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
-      // La mission de la situation (CT-2) : une seule, jamais un planning
-      // (C1, C3). Aucune lecture serveur.
-      missionControleProvider.overrideWith(
-        (Ref _) async => missionDemoControleur(etat),
-      ),
-      // Transmission et envoi simules (CT-4) : rien ne part, la reponse
-      // arrive apres un court delai. Lu aussi par « Reessayer » du Controle.
-      envoiCompteRenduProvider.overrideWithValue(const EnvoiCompteRenduDemo()),
-      // Echanges simules (CT-6) : fils en memoire, envoi sans serveur.
-      portEchangesProvider.overrideWith((Ref _) => EchangesDemo()),
-    ];
+///
+/// [profil] (CT-9) : le compte de la session ; la mission est celle que le
+/// serveur lui attribuerait, jamais sa propre Classe.
+List<Override> surchargesCoquilleControleurDemo(
+  EtatDemoControleur etat, {
+  ControleurDemo? profil,
+}) => <Override>[
+  sessionProvider.overrideWith(
+    () => profil == null
+        ? _SessionControleurDemo()
+        : _SessionControleurDemo(profil.id),
+  ),
+  horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+  // La mission de la situation (CT-2) : une seule, jamais un planning
+  // (C1, C3). Aucune lecture serveur.
+  missionControleProvider.overrideWith(
+    (Ref _) async => profil == null
+        ? missionDemoControleur(etat)
+        : missionAttribueeDemo(etat, profil),
+  ),
+  // Transmission et envoi simules (CT-4) : rien ne part, la reponse
+  // arrive apres un court delai. Lu aussi par « Reessayer » du Controle.
+  envoiCompteRenduProvider.overrideWithValue(const EnvoiCompteRenduDemo()),
+  // Echanges simules (CT-6) : fils en memoire, envoi sans serveur.
+  portEchangesProvider.overrideWith((Ref _) => EchangesDemo()),
+];
 
 /// La mission de demonstration de [etat], dans le modele de CTR-01.
 MissionControle? missionDemoControleur(EtatDemoControleur etat) {
@@ -424,8 +467,12 @@ class DemoControleurPage extends StatelessWidget {
     this.ecran,
     this.etat = EtatDemoControleur.enDirect,
     this.fil,
+    this.espaces = const SituationEspacesDemo(),
     super.key,
   });
+
+  /// Le profil et l'espace (CT-9).
+  final SituationEspacesDemo espaces;
 
   /// La mission dont le fil d'Echanges s'ouvre, ou nulle.
   final String? fil;
@@ -439,8 +486,20 @@ class DemoControleurPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final EcranDemoControleur? e = ecran;
+    // L'espace principal de l'Enseignant-Controleur ou de l'Admin-Controleur
+    // (CT-9) : sa coquille, autour de Compte.
+    if (e != null &&
+        espaces.espacePrincipal &&
+        espaces.profil != ProfilDemoControleur.externe) {
+      return EspacePrincipalDemo(situation: espaces);
+    }
     if (e != null) {
-      return CoquilleControleurDemo(ecran: e, etat: etat, fil: fil);
+      return CoquilleControleurDemo(
+        ecran: e,
+        etat: etat,
+        fil: fil,
+        espaces: espaces,
+      );
     }
 
     final AppPalette palette = AppPalette.of(context);
@@ -474,10 +533,105 @@ class DemoControleurPage extends StatelessWidget {
                     context.go(adresseDemoControleur(ecran, etat: etat)),
               ),
           ],
+          // CT-9 : commutation d'espaces et etats transverses.
+          Ecart.vXxl,
+          Semantics(
+            header: true,
+            child: texte(t.controleur.demo.espaces, fort: true),
+          ),
+          Ecart.vSm,
+          texte(t.controleur.demo.espacesIntro),
+          Ecart.vMd,
+          for (final (String cle, String libelle, String adresse)
+              in _liensEspaces())
+            LienFleche(
+              key: ValueKey<String>('lien-espaces-$cle'),
+              libelle: libelle,
+              onPress: () => context.go(adresse),
+            ),
         ],
       ),
     );
   }
+}
+
+/// Les liens de la section « Espaces et acces » (CT-9).
+List<(String, String, String)> _liensEspaces() {
+  const SituationEspacesDemo enseignant = SituationEspacesDemo(
+    profil: ProfilDemoControleur.enseignant,
+  );
+  const SituationEspacesDemo admin = SituationEspacesDemo(
+    profil: ProfilDemoControleur.admin,
+  );
+  final d = t.controleur.demo;
+  return <(String, String, String)>[
+    (
+      'enseignant-controle',
+      d.enseignantControle,
+      adresseDemoControleur(EcranDemoControleur.controle, espaces: enseignant),
+    ),
+    (
+      'enseignant-principal',
+      d.enseignantPrincipal,
+      adresseDemoControleur(
+        EcranDemoControleur.compte,
+        espaces: enseignant.vers(principal: true),
+      ),
+    ),
+    (
+      'admin-controle',
+      d.adminControle,
+      adresseDemoControleur(EcranDemoControleur.controle, espaces: admin),
+    ),
+    (
+      'admin-principal',
+      d.adminPrincipal,
+      adresseDemoControleur(
+        EcranDemoControleur.compte,
+        espaces: admin.vers(principal: true),
+      ),
+    ),
+    (
+      'mission-en-cours',
+      d.missionEnCours,
+      adresseDemoControleur(
+        EcranDemoControleur.compte,
+        espaces: enseignant.enMission(),
+      ),
+    ),
+    (
+      'acces-revoque',
+      d.accesRevoque,
+      adresseDemoControleur(
+        EcranDemoControleur.historique,
+        espaces: const SituationEspacesDemo(
+          profil: ProfilDemoControleur.enseignant,
+          acces: AccesDemoControleur.revoque,
+        ),
+      ),
+    ),
+    (
+      'sans-capacite',
+      d.sansCapacite,
+      adresseDemoControleur(
+        EcranDemoControleur.controle,
+        espaces: const SituationEspacesDemo(
+          profil: ProfilDemoControleur.enseignant,
+          acces: AccesDemoControleur.sansCapacite,
+        ),
+      ),
+    ),
+    (
+      'compte-rendu-indisponible',
+      d.compteRenduIndisponible,
+      Uri(
+        path: cheminDemoCompteRenduControleur,
+        queryParameters: <String, String>{
+          'etat': EtatDemoControleur.indisponible.name,
+        },
+      ).toString(),
+    ),
+  ];
 }
 
 /// La VRAIE coquille controleur, sur la VRAIE page de [ecran], ses providers
@@ -488,8 +642,12 @@ class CoquilleControleurDemo extends StatelessWidget {
     required this.ecran,
     this.etat = EtatDemoControleur.enDirect,
     this.fil,
+    this.espaces = const SituationEspacesDemo(),
     super.key,
   });
+
+  /// Le profil, la mission en cours et l'acces (CT-9).
+  final SituationEspacesDemo espaces;
 
   /// La mission dont le fil d'Echanges s'ouvre, ou nulle pour la liste.
   final String? fil;
@@ -507,41 +665,61 @@ class CoquilleControleurDemo extends StatelessWidget {
       mode: InterfaceMode.standard,
     );
     return ProviderScope(
-      key: ValueKey<EtatDemoControleur>(etat),
-      overrides: surchargesCoquilleControleurDemo(etat),
+      key: ValueKey<String>('${etat.name}-${espaces.parametres}'),
+      overrides: <Override>[
+        ...surchargesCoquilleControleurDemo(etat, profil: espaces.controleur),
+        ...surchargesEspacesDemo(espaces),
+      ],
       child: RepereDemonstration(
-        child: NavShell(
-          destinations: destinations,
-          indexActif: ecran.index,
-          libellesDansLeRail: true,
-          onAller: (String chemin) {
-            final int i = destinations.indexWhere(
-              (Destination d) => d.chemin == chemin,
-            );
-            if (i == -1) return;
-            context.go(
-              adresseDemoControleur(EcranDemoControleur.values[i], etat: etat),
-            );
-          },
-          child: switch (ecran) {
-            EcranDemoControleur.controle => ControleControleurPage(
-              onCommencer: (MissionControle m) => context.go(
-                cheminDemoSalleControleur,
-                extra: BilletSalle(
-                  sessionId: m.seanceId,
-                  emisA: DateTime.now(),
+        // CT-9 : l'espace Controle est garde (C7) ; le raccourci d'en-tete
+        // ouvre `Compte > Espaces` quand le compte en a plusieurs (C6).
+        child: GardeControle(
+          child: EnteteEspaces(
+            child: NavShell(
+              destinations: destinations,
+              indexActif: ecran.index,
+              libellesDansLeRail: true,
+              onAller: (String chemin) {
+                final int i = destinations.indexWhere(
+                  (Destination d) => d.chemin == chemin,
+                );
+                if (i == -1) return;
+                context.go(
+                  adresseDemoControleur(
+                    EcranDemoControleur.values[i],
+                    etat: etat,
+                    espaces: espaces,
+                  ),
+                );
+              },
+              child: switch (ecran) {
+                EcranDemoControleur.controle => ControleControleurPage(
+                  onCommencer: (MissionControle m) => context.go(
+                    cheminDemoSalleControleur,
+                    extra: BilletSalle(
+                      sessionId: m.seanceId,
+                      emisA: DateTime.now(),
+                    ),
+                  ),
+                  onReprendreCompteRendu: () => context.go(
+                    Uri(
+                      path: cheminDemoCompteRenduControleur,
+                      queryParameters: espaces.parametres.isEmpty
+                          ? null
+                          : espaces.parametres,
+                    ).toString(),
+                  ),
                 ),
-              ),
-              onReprendreCompteRendu: () =>
-                  context.go(cheminDemoCompteRenduControleur),
+                EcranDemoControleur.historique =>
+                  const HistoriqueControleurPage(),
+                EcranDemoControleur.echanges => EchangesControleurPage(
+                  key: ValueKey<String?>(fil),
+                  missionOuverte: fil,
+                ),
+                EcranDemoControleur.compte => const ComptePage(),
+              },
             ),
-            EcranDemoControleur.historique => const HistoriqueControleurPage(),
-            EcranDemoControleur.echanges => EchangesControleurPage(
-              key: ValueKey<String?>(fil),
-              missionOuverte: fil,
-            ),
-            EcranDemoControleur.compte => const ComptePage(),
-          },
+          ),
         ),
       ),
     );
