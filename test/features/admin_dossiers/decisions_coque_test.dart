@@ -161,16 +161,6 @@ Finder get _champMotif => find
     )
     .first;
 
-ActionPrincipale _action(WidgetTester tester, String libelle) =>
-    tester.widget<ActionPrincipale>(
-      find
-          .ancestor(
-            of: find.text(libelle),
-            matching: find.byType(ActionPrincipale),
-          )
-          .first,
-    );
-
 const Size _mobile = Size(390, 844);
 const Size _bureau = Size(1440, 900);
 
@@ -367,8 +357,10 @@ void main() {
     await _stabiliser(tester);
     expect(find.text(t.dossiers.refus.corps), findsNothing);
     expect(find.text(t.dossiers.refus.inconnu), findsOneWidget);
+    // HL-A-5 : resultat inconnu, l'emplacement dit l'etat ; aucun bouton
+    // grise au-dessus.
     for (final String l in <String>[t.dossiers.refuser, t.dossiers.approuver]) {
-      expect(_action(tester, l).onPress, isNull, reason: l);
+      expect(find.text(l), findsNothing, reason: l);
     }
 
     await _toucher(tester, t.dossiers.decision.verifierResultat);

@@ -177,15 +177,16 @@ void main() {
     );
   });
 
-  testWidgets('T2 piece absente : la raison dite deux fois, Valider ferme, '
+  testWidgets('T2 piece absente : la raison dite une fois, Valider absent, '
       'Refuser ouvre 02D', (WidgetTester tester) async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
     await _monter(tester, etat);
     await _ouvrir(tester, 'Yanis');
 
-    expect(find.text(t.dossiers.revue.pieceNonTransmise), findsNWidgets(2));
-    expect(_action(tester, t.dossiers.approuver).onPress, isNull);
-    await _toucher(tester, t.dossiers.approuver);
+    // Dite une fois dans la carte Piece ; l'emplacement de decision dit « pas pret ».
+    expect(find.text(t.dossiers.revue.pieceNonTransmise), findsOneWidget);
+    expect(find.text(t.dossiers.revue.pasPret), findsOneWidget);
+    expect(find.text(t.dossiers.approuver), findsNothing);
     expect(etat.nombreDecisions, 0);
     expect(find.text(t.dossiers.refus.corps), findsNothing);
 
@@ -269,7 +270,7 @@ void main() {
     expect(d.motifRefus, isNull);
     await _monter(tester, etat);
     await _ouvrir(tester, 'Amina');
-    expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+    expect(find.text(t.dossiers.approuver), findsNothing);
     expect(etat.nombreDecisions, 1);
   });
 

@@ -8,6 +8,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -311,45 +312,15 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
           ),
         ],
         Ecart.vLg,
-        Wrap(
-          alignment: WrapAlignment.end,
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          // IntrinsicWidth : le bouton au contenu (le Container centre
-          // d'ActionPrincipale s'etirerait sinon a la largeur du Wrap).
-          children: <Widget>[
-            IntrinsicWidth(
-              child: ActionPrincipale(
-                libelle: t.dossiers.refuser,
-                niveau: NiveauAction.destructive,
-                pleineLargeur: false,
-                focusNode: _focusRefuser,
-                onPress: peutRefuser
-                    ? () => unawaited(_ouvrir(DecisionDossier.refuser))
-                    : null,
-              ),
-            ),
-            IntrinsicWidth(
-              child: ActionPrincipale(
-                libelle: t.dossiers.approuver,
-                pleineLargeur: false,
-                focusNode: _focusValider,
-                onPress: peutValider
-                    ? () => unawaited(_ouvrir(DecisionDossier.valider))
-                    : null,
-              ),
-            ),
-          ],
-        ),
+        // Un seul emplacement dit l'etat de la decision (STYLE-REFERENCE
+        // regle 3) : une ligne d'etat calme a la place d'un bouton qui ne
+        // se presse pas, jamais de bouton grise.
         if (!_surfaceOuverte &&
-            (commande is DecisionInconnue ||
-                commande is DecisionVerification)) ...<Widget>[
-          Ecart.vXs,
-          // Surface fermee : le statut reste sous les actions (P-ADM-10.6).
-          Semantics(
-            liveRegion: true,
+            (commande is DecisionInconnue || commande is DecisionVerification))
+          // Surface fermee : le statut reste a la place des actions
+          // (P-ADM-10.6).
+          _LigneEtat(
             child: Wrap(
-              alignment: WrapAlignment.end,
               crossAxisAlignment: WrapCrossAlignment.center,
               spacing: AppSpacing.sm,
               children: <Widget>[
@@ -376,18 +347,86 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
                 ),
               ],
             ),
+          )
+        else
+          _actions(
+            context,
+            peutValider: peutValider,
+            peutRefuser: peutRefuser,
+            raisons: _RaisonsDecision(
+              horsLigne: horsLigne,
+              dossier: d,
+              raisonValidation: !peutValider,
+              lectureAttendue: !_lectureFaite,
+              verificationsManquantes: manquantes.isNotEmpty,
+              validationIndeterminee: validationIndeterminee,
+              onReessayer: widget.onActualiser,
+              onAllerPremiere: _allerPremiere,
+            ),
           ),
-        ],
-        _RaisonsDecision(
-          horsLigne: horsLigne,
-          dossier: d,
+      ],
+    );
+  }
 
-          lectureAttendue: !_lectureFaite,
-          verificationsManquantes: manquantes.isNotEmpty,
-          validationIndeterminee: validationIndeterminee,
-          onReessayer: widget.onActualiser,
-          onAllerPremiere: _allerPremiere,
-        ),
+  /// Les actions de decision. Sur mobile, le bouton principal en pleine
+  /// largeur puis le secondaire dessous ; sur tablette et bureau, au bord
+  /// de fin en largeur naturelle. Un bouton qui ne se presse pas n'est pas
+  /// rendu : sa raison occupe sa place, dans la ligne d'etat.
+  Widget _actions(
+    BuildContext context, {
+    required bool peutValider,
+    required bool peutRefuser,
+    required _RaisonsDecision raisons,
+  }) {
+    final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
+    final Widget valider = ActionPrincipale(
+      libelle: t.dossiers.approuver,
+      pleineLargeur: mobile,
+      focusNode: _focusValider,
+      onPress: () => unawaited(_ouvrir(DecisionDossier.valider)),
+    );
+    final Widget refuser = ActionPrincipale(
+      libelle: t.dossiers.refuser,
+      niveau: NiveauAction.destructive,
+      pleineLargeur: mobile,
+      focusNode: _focusRefuser,
+      onPress: () => unawaited(_ouvrir(DecisionDossier.refuser)),
+    );
+    final bool ligne = raisons.aUneRaison;
+    if (mobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (peutValider) valider,
+          if (ligne) _LigneEtat(child: raisons),
+          if (peutRefuser) ...<Widget>[
+            if (peutValider || ligne) Ecart.vSm,
+            refuser,
+          ],
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (peutValider || peutRefuser)
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            // IntrinsicWidth : le bouton au contenu (le Container centre
+            // d'ActionPrincipale s'etirerait sinon a la largeur du Wrap).
+            children: <Widget>[
+              if (peutRefuser) IntrinsicWidth(child: refuser),
+              if (peutValider) IntrinsicWidth(child: valider),
+            ],
+          ),
+        if (ligne) ...<Widget>[
+          if (peutValider || peutRefuser) Ecart.vSm,
+          _LigneEtat(child: raisons),
+        ],
       ],
     );
   }
@@ -456,22 +495,24 @@ class _CarteIdentite extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GroupeReglages(
     titre: t.dossiers.revue.identite,
+    // Une ligne par element : la valeur en titre, son libelle en ligne
+    // douce (STYLE-REFERENCE regle 4). L'etat du dossier n'est plus repete :
+    // la pastille d'en-tete le dit (§10.7, champs necessaires seulement).
     lignes: <LigneRubrique>[
       if (dossier.nom.trim().isNotEmpty)
-        LigneRubrique(libelle: t.dossiers.revue.nom, valeur: dossier.nom),
+        LigneRubrique(libelle: dossier.nom, legende: t.dossiers.revue.nom),
       if (dossier.prenom.trim().isNotEmpty)
-        LigneRubrique(libelle: t.dossiers.revue.prenom, valeur: dossier.prenom),
+        LigneRubrique(
+          libelle: dossier.prenom,
+          legende: t.dossiers.revue.prenom,
+        ),
       LigneRubrique(
-        libelle: t.dossiers.revue.typeDossier,
-        valeur: typeDossier(dossier.role),
+        libelle: typeDossier(dossier.role),
+        legende: t.dossiers.revue.typeDossier,
       ),
       LigneRubrique(
-        libelle: t.dossiers.revue.dateDepot,
-        valeur: dateRevue(dossier.soumisLeUtc),
-      ),
-      LigneRubrique(
-        libelle: t.dossiers.revue.etatDossier,
-        valeur: t.dossiers.file.enVerification,
+        libelle: dateRevue(dossier.soumisLeUtc),
+        legende: t.dossiers.revue.dateDepot,
       ),
     ],
   );
@@ -524,11 +565,30 @@ class _CartePiece extends StatelessWidget {
   }
 }
 
-/// Les raisons sous les actions, a 4, annoncees (liveRegion).
+/// La ligne d'etat de l'emplacement de decision : hauteur d'un bouton
+/// reservee, calee au bord de debut, une seule region annoncee.
+class _LigneEtat extends StatelessWidget {
+  const _LigneEtat({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    liveRegion: true,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: AppPage.hauteurBouton),
+      child: Align(alignment: AlignmentDirectional.centerStart, child: child),
+    ),
+  );
+}
+
+/// Les raisons de l'emplacement de decision, a la place du bouton qui ne se
+/// presse pas.
 class _RaisonsDecision extends StatelessWidget {
   const _RaisonsDecision({
     required this.horsLigne,
     required this.dossier,
+    required this.raisonValidation,
     required this.lectureAttendue,
     required this.verificationsManquantes,
     required this.validationIndeterminee,
@@ -538,6 +598,9 @@ class _RaisonsDecision extends StatelessWidget {
 
   final bool horsLigne;
   final DossierPourRevue dossier;
+
+  /// Vrai quand « Valider le dossier » ne se presse pas : sa raison est dite.
+  final bool raisonValidation;
 
   /// La piece doit etre vue avant de verifier (production, AD-7).
   final bool lectureAttendue;
@@ -549,6 +612,25 @@ class _RaisonsDecision extends StatelessWidget {
   final VoidCallback onReessayer;
   final VoidCallback onAllerPremiere;
 
+  /// Le refus est ferme par les droits (pas par le reseau).
+  bool get _refusFerme => !dossier.peutRefuser && !horsLigne;
+
+  /// Vrai quand la validation fermee a une raison a dire.
+  bool get _raisonValidationDite {
+    if (!raisonValidation) {
+      return false;
+    }
+    final List<BlocageRevue> b = dossier.blocagesValidation;
+    return horsLigne ||
+        b.isNotEmpty ||
+        (validationIndeterminee && dossier.peutValider) ||
+        lectureAttendue ||
+        verificationsManquantes;
+  }
+
+  /// Vrai quand la ligne d'etat a quelque chose a dire.
+  bool get aUneRaison => _raisonValidationDite || _refusFerme;
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -558,9 +640,10 @@ class _RaisonsDecision extends StatelessWidget {
     );
     final List<BlocageRevue> b = dossier.blocagesValidation;
     Widget? raison;
-    if (horsLigne) {
+    if (!_raisonValidationDite) {
+      raison = null;
+    } else if (horsLigne) {
       raison = Wrap(
-        alignment: WrapAlignment.end,
         crossAxisAlignment: WrapCrossAlignment.center,
         spacing: AppSpacing.sm,
         children: <Widget>[
@@ -579,13 +662,9 @@ class _RaisonsDecision extends StatelessWidget {
       raison = Text(t.dossiers.revue.etats.accordManquant, style: style);
     } else if (validationIndeterminee && dossier.peutValider) {
       raison = Text(t.dossiers.validation.indisponible, style: style);
-    } else if (b.contains(BlocageRevue.pieceAbsente)) {
-      raison = Text(
-        t.dossiers.revue.pieceNonTransmise,
-        style: style,
-        textAlign: TextAlign.end,
-      );
     } else if (b.isNotEmpty || lectureAttendue) {
+      // Piece absente comprise : « La piece requise n'a pas ete transmise. »
+      // n'est dite qu'une fois, dans la carte Piece (§10.11).
       raison = Text(t.dossiers.revue.pasPret, style: style);
     } else if (verificationsManquantes) {
       raison = LienFleche(
@@ -593,27 +672,18 @@ class _RaisonsDecision extends StatelessWidget {
         onPress: onAllerPremiere,
         fleche: false,
         annonceLien: true,
-        alignerEnFin: true,
       );
     }
-    final bool refusFerme = !dossier.peutRefuser && !horsLigne;
-    return Semantics(
-      liveRegion: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (raison != null) ...<Widget>[Ecart.vXs, raison],
-          if (refusFerme) ...<Widget>[
-            Ecart.vXs,
-            Text(
-              t.dossiers.revue.etats.refusNonAutorise,
-              style: style,
-              textAlign: TextAlign.end,
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ?raison,
+        if (_refusFerme) ...<Widget>[
+          if (raison != null) Ecart.vXs,
+          Text(t.dossiers.revue.etats.refusNonAutorise, style: style),
         ],
-      ),
+      ],
     );
   }
 }

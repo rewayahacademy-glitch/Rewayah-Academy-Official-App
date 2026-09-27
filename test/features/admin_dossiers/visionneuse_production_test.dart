@@ -128,9 +128,9 @@ void main() {
     );
 
     // Avant lecture : cases fermees, validation fermee, refus ouvert.
-    await tester.ensureVisible(find.text(t.dossiers.approuver));
+    await tester.ensureVisible(find.text(t.dossiers.refuser));
     await _stabiliser(tester);
-    expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+    expect(find.text(t.dossiers.approuver), findsNothing);
     expect(_action(tester, t.dossiers.refuser).onPress, isNotNull);
 
     await _toucher(tester, find.text(t.dossiers.revue.voirPiece));
@@ -160,9 +160,9 @@ void main() {
     }
     // AD-8, Q21 : la consequence est inconnue en production, 02E ne s'ouvre
     // pas ; la raison est dite sous les actions (Q-AD8-1).
-    await tester.ensureVisible(find.text(t.dossiers.approuver));
+    await tester.ensureVisible(find.text(t.dossiers.validation.indisponible));
     await tester.pumpAndSettle();
-    expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+    expect(find.text(t.dossiers.approuver), findsNothing);
     expect(find.text(t.dossiers.validation.indisponible), findsOneWidget);
     expect(service.verdicts, isEmpty);
   });

@@ -153,7 +153,8 @@ void main() {
   ) async {
     await _monter(tester, const Size(1440, 900));
     await _ouvrirDossiers(tester);
-    expect(_bouton(tester, 'Valider le dossier').onPress, isNull);
+    // Valider ferme n'est pas rendu : le lien tient sa place.
+    expect(find.text('Valider le dossier'), findsNothing);
     for (final String p in _points) {
       expect(_coche(tester, p), isFalse);
     }
@@ -231,6 +232,9 @@ void main() {
   ) async {
     await _monter(tester, const Size(1440, 900));
     await _ouvrirDossiers(tester);
+    for (final String p in _points) {
+      await _taperTexte(tester, p);
+    }
     final Finder refuser = find
         .ancestor(
           of: find.text('Refuser le dossier'),
@@ -281,59 +285,62 @@ void main() {
       await _stabiliser(tester);
       final Object? erreur = tester.takeException();
       expect(erreur, isNull, reason: '$erreur');
-      for (final String libelle in <String>[
-        'Refuser le dossier',
-        'Valider le dossier',
-      ]) {
-        final Finder b = find
+      Rect bouton(String libelle) => tester.getRect(
+        find
             .ancestor(
               of: find.text(libelle),
               matching: find.byType(ActionPrincipale),
             )
-            .first;
-        await tester.ensureVisible(b);
-        await _stabiliser(tester);
-        final Rect rect = tester.getRect(b);
-        expect(rect.left >= 16 && rect.right <= 374, isTrue, reason: libelle);
-      }
-      final Rect r = tester.getRect(find.text('Refuser le dossier'));
-      final Rect v = tester.getRect(find.text('Valider le dossier'));
-      expect(v.top >= r.top, isTrue);
-      // HL-A-3 : le lien « Terminez les verifications requises. » est range
-      // au bord de fin, comme les actions (fin du texte = fin de Valider).
-      final Rect action = tester.getRect(
-        find
-            .ancestor(
-              of: find.text('Valider le dossier'),
-              matching: find.byType(ActionPrincipale),
-            )
             .first,
       );
+      // HL-A-5 : Valider ferme n'est pas rendu ; le lien tient sa place au
+      // bord de debut, puis Refuser en pleine largeur dessous.
+      expect(find.text('Valider le dossier'), findsNothing);
+      await tester.ensureVisible(find.text('Refuser le dossier'));
+      await _stabiliser(tester);
       final Rect lien = tester.getRect(
         find.text('Terminez les vérifications requises.'),
       );
-      expect(lien.right, closeTo(action.right, 0.5));
-      expect(lien.top, greaterThan(action.bottom));
+      Rect r = bouton('Refuser le dossier');
+      expect(r.left, closeTo(16, 0.5));
+      expect(r.right, closeTo(374, 0.5));
+      // Texte du lien : bord de debut + le retrait de LienFleche (xs, 4).
+      expect(lien.left, closeTo(16 + 4, 0.5));
+      expect(lien.bottom <= r.top, isTrue);
+      // Pret : Valider en pleine largeur, Refuser dessous.
+      for (final String p in _points) {
+        await _taperTexte(tester, p);
+      }
+      await tester.ensureVisible(find.text('Refuser le dossier'));
+      await _stabiliser(tester);
+      final Rect v = bouton('Valider le dossier');
+      r = bouton('Refuser le dossier');
+      for (final Rect b in <Rect>[v, r]) {
+        expect(b.left, closeTo(16, 0.5));
+        expect(b.right, closeTo(374, 0.5));
+      }
+      expect(v.bottom <= r.top, isTrue);
+      expect(tester.takeException(), isNull);
     });
   }
 
-  testWidgets('1440 : le lien des verifications est aligne en fin', (
+  testWidgets('1440 : le lien des verifications tient la place de Valider', (
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
     await _ouvrirDossiers(tester);
-    final Rect action = tester.getRect(
-      find
-          .ancestor(
-            of: find.text('Valider le dossier'),
-            matching: find.byType(ActionPrincipale),
-          )
-          .first,
-    );
+    expect(find.text('Valider le dossier'), findsNothing);
+    final Rect carte = tester.getRect(find.byType(GroupeReglages).last);
     final Rect lien = tester.getRect(
       find.text('Terminez les vérifications requises.'),
     );
-    expect(lien.right, closeTo(action.right, 0.5));
+    // Ligne d'etat au bord de debut, sous Refuser.
+    // Texte du lien : bord de debut + le retrait de LienFleche (xs, 4).
+    expect(lien.left, closeTo(carte.left + 4, 0.5));
+    expect(
+      lien.top,
+      greaterThan(tester.getRect(find.text('Refuser le dossier')).bottom),
+    );
   });
 
   for (final (String prenom, String texte, bool validerFerme, bool refuserFerme)
@@ -351,18 +358,20 @@ void main() {
     testWidgets('390 : $prenom -> $texte', (WidgetTester tester) async {
       await _monter(tester, const Size(390, 844));
       await _ouvrir(tester, prenom);
-      // Yanis : la raison est dite dans la carte ET sous les actions (AD-10).
+      // Yanis : la raison est dite une fois, dans la carte ; l'emplacement
+      // de decision dit « pas pret » (HL-A-5, §10.11).
+      expect(find.text(texte), findsOneWidget);
+      if (prenom == 'Yanis') {
+        expect(find.text(t.dossiers.revue.pasPret), findsOneWidget);
+      }
+      // Un bouton ferme n'est pas rendu : sa raison tient sa place.
       expect(
-        find.text(texte),
-        prenom == 'Yanis' ? findsNWidgets(2) : findsOneWidget,
+        find.text('Valider le dossier'),
+        validerFerme ? findsNothing : findsOneWidget,
       );
       expect(
-        _bouton(tester, 'Valider le dossier').onPress == null,
-        validerFerme,
-      );
-      expect(
-        _bouton(tester, 'Refuser le dossier').onPress == null,
-        refuserFerme,
+        find.text('Refuser le dossier'),
+        refuserFerme ? findsNothing : findsOneWidget,
       );
       if (prenom == 'Yanis' || prenom == 'Adam') {
         // §10.4 : la carte reste, sans case active ni cochee (absence de
@@ -402,8 +411,8 @@ void main() {
       find.text('Vous êtes hors ligne. Aucune décision ne peut être envoyée.'),
       findsOneWidget,
     );
-    expect(_bouton(tester, 'Valider le dossier').onPress, isNull);
-    expect(_bouton(tester, 'Refuser le dossier').onPress, isNull);
+    expect(find.text('Valider le dossier'), findsNothing);
+    expect(find.text('Refuser le dossier'), findsNothing);
     await _taperTexte(tester, t.commun.reessayer);
     expect(find.text("Dossier d'Omar Haddad"), findsOneWidget);
   });

@@ -41,19 +41,21 @@ DossierAValider _dossier({
   etatCompte: AccountStatus.pendingKyc,
 );
 
-/// Vrai quand le bouton [libelle] se presse.
+/// Vrai quand le bouton [libelle] se presse. Un bouton ferme n'est pas
+/// rendu (HL-A-5) : absent vaut ferme.
 bool _actif(WidgetTester tester, String libelle) =>
+    find.text(libelle).evaluate().isNotEmpty &&
     tester
-        .widget<ActionPrincipale>(
-          find
-              .ancestor(
-                of: find.text(libelle),
-                matching: find.byType(ActionPrincipale),
-              )
-              .first,
-        )
-        .onPress !=
-    null;
+            .widget<ActionPrincipale>(
+              find
+                  .ancestor(
+                    of: find.text(libelle),
+                    matching: find.byType(ActionPrincipale),
+                  )
+                  .first,
+            )
+            .onPress !=
+        null;
 
 void main() {
   Future<FauxServiceValidation> monter(
@@ -88,11 +90,15 @@ void main() {
       expect(find.textContaining('Aicha Sow'), findsWidgets);
       // AD-6 : l'identifiant immuable n'est plus affiche dans le detail.
       expect(find.textContaining('TEACHER-AS-000001'), findsNothing);
-      // AD-10 (P-ADM-08.4) : la raison est dite dans la carte et sous les
-      // actions.
+      // HL-A-5 : la raison est dite une fois, dans la carte ; l'emplacement
+      // de decision dit « pas pret ».
       expect(
         find.text('La pièce requise n’a pas été transmise.'),
-        findsNWidgets(2),
+        findsOneWidget,
+      );
+      expect(
+        find.text("Ce dossier n'est pas encore prêt à être validé."),
+        findsOneWidget,
       );
       expect(
         find.text('Ce dossier ne peut pas être refusé dans son état actuel.'),
@@ -140,7 +146,9 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Vérifications'), findsOneWidget);
-    expect(find.text('Valider le dossier'), findsOneWidget);
+    // Valider n'apparait qu'une fois la piece lue et verifiee (HL-A-5) ;
+    // d'ici la, sa raison tient sa place.
+    expect(find.text('Valider le dossier'), findsNothing);
     expect(find.text('Refuser le dossier'), findsWidgets);
     expect(find.text('Aucune pièce déposée'), findsNothing);
   });

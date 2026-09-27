@@ -126,8 +126,8 @@ void main() {
     await _stabiliser(tester);
     await tester.tap(_ligne('Omar'));
     await _stabiliser(tester);
-    // Valider reste ferme : aucune coche n'a survecu au changement.
-    expect(find.text(t.dossiers.approuver), findsOneWidget);
+    // Valider reste ferme (non rendu, HL-A-5) : aucune coche n'a survecu.
+    expect(find.text(t.dossiers.approuver), findsNothing);
   });
 
   testWidgets('1440 : valider passe au dossier suivant', (

@@ -120,7 +120,7 @@ void main() {
     expect(tester.getSize(find.byType(VisionneusePiece)).width, lessThan(800));
     expect(find.textContaining('http'), findsNothing);
     expect(find.textContaining('République'), findsNothing);
-    expect(find.text(t.dossiers.approuver), findsOneWidget); // sous le voile
+    expect(find.text(t.dossiers.refuser), findsOneWidget); // sous le voile
     expect(
       find.descendant(
         of: find.byType(VisionneusePiece),

@@ -202,8 +202,8 @@ void main() {
         ]) {
           await _taper(tester, point);
         }
-        await _allerA(tester, t.dossiers.approuver);
-        expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+        await _allerA(tester, t.dossiers.validation.indisponible);
+        expect(find.text(t.dossiers.approuver), findsNothing);
         expect(find.text(t.dossiers.validation.indisponible), findsOneWidget);
         expect(find.text(t.dossiers.validation.titre), findsNothing);
         expect(service.verdicts, isEmpty);
@@ -326,8 +326,8 @@ void main() {
       await _taper(tester, t.dossiers.pointNom);
       await _taper(tester, t.dossiers.pointValidite);
       // AD-8, Q21 : en production 02E reste ferme (consequence inconnue).
-      await _allerA(tester, t.dossiers.approuver);
-      expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+      await _allerA(tester, t.dossiers.refuser);
+      expect(find.text(t.dossiers.approuver), findsNothing);
       expect(service.verdicts, isEmpty);
     });
 
@@ -359,10 +359,10 @@ void main() {
       ]) {
         await _taper(tester, point);
       }
-      await _allerA(tester, t.dossiers.approuver);
-      expect(_action(tester, t.dossiers.approuver).onPress, isNull);
+      // Valider ferme n'est pas rendu : sa raison occupe sa place.
+      await _allerA(tester, t.dossiers.refuser);
+      expect(find.text(t.dossiers.approuver), findsNothing);
       expect(_action(tester, t.dossiers.refuser).onPress, isNotNull);
-      await _taper(tester, t.dossiers.approuver);
       expect(service.verdicts, isEmpty);
     });
 
@@ -398,12 +398,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await _allerA(tester, t.dossiers.approuver);
-      final Finder valider = find.ancestor(
-        of: find.text(t.dossiers.approuver),
-        matching: find.byType(ActionPrincipale),
-      );
-      expect(tester.widget<ActionPrincipale>(valider).onPress, isNull);
+      await _allerA(tester, t.dossiers.refuser);
+      expect(find.text(t.dossiers.approuver), findsNothing);
       final Finder refuser = find.ancestor(
         of: find.text(t.dossiers.refuser).first,
         matching: find.byType(ActionPrincipale),

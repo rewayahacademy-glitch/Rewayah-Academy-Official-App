@@ -117,45 +117,66 @@ class _PolitiqueRevueKycPageState extends ConsumerState<PolitiqueRevueKycPage> {
           onglets: ongletsConfiguration(politiqueRevueKyc: true),
           indexActif: 3,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            GroupeReglages(
-              lignes: <LigneRubrique>[
-                LigneRubrique(
-                  libelle: t.admin.politiqueRevueKyc.libelle,
-                  legende: t.admin.politiqueRevueKyc.aide,
-                  controle: Switch.adaptive(
-                    value: p.genreRelecteurApplique,
-                    onChanged: _envoi ? null : (bool v) => _basculer(p, v),
-                  ),
+        // Une seule colonne bornee, calee au debut : jamais un mobile etire
+        // sur bureau (STYLE-REFERENCE regle 6).
+        child: Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppPage.largeurReglages,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                GroupeReglages(
+                  lignes: <LigneRubrique>[
+                    LigneRubrique(
+                      libelle: t.admin.politiqueRevueKyc.libelle,
+                      legende: t.admin.politiqueRevueKyc.aide,
+                      controle: Switch.adaptive(
+                        value: p.genreRelecteurApplique,
+                        onChanged: _envoi ? null : (bool v) => _basculer(p, v),
+                      ),
+                    ),
+                  ],
                 ),
+                Ecart.vLg,
+                LocalFeedback(key: ValueKey<int>(_essai), message: _retour),
               ],
             ),
-            Ecart.vMd,
-            LocalFeedback(key: ValueKey<int>(_essai), message: _retour),
-          ],
+          ),
         ),
       );
     }
+    // Chargement et erreurs gardent l'en-tete de la page chargee : rien ne
+    // saute a l'arrivee (skeleton fidele). Pas pour un refus d'acces : on ne
+    // montre pas l'onglet reserve a qui n'y a pas droit.
+    Widget avecEntete(Widget child) => PageShell(
+      titre: t.admin.politiqueRevueKyc.titre,
+      entete: SousNavigationDomaine(
+        onglets: ongletsConfiguration(politiqueRevueKyc: true),
+        indexActif: 3,
+      ),
+      child: child,
+    );
     if (lue.hasError) {
       final Object erreur = lue.error!;
-      final Widget etat = switch (erreur) {
-        CapaciteIndisponible(:final String dependance) => EtatSysteme(
-          nature: NatureEtat.indisponible,
-          dependance: dependance,
+      return switch (erreur) {
+        CapaciteIndisponible(:final String dependance) => avecEntete(
+          EtatSysteme(nature: NatureEtat.indisponible, dependance: dependance),
         ),
         ErreurRevueDossier(
           code: CodeErreurRevue.interdit || CodeErreurRevue.nonAutorise,
         ) =>
-          const EtatSysteme(nature: NatureEtat.accesRefuse),
-        _ => EtatSysteme(
-          nature: NatureEtat.echecServeur,
-          onAction: () => ref.invalidate(politiqueRevueKycProvider),
+          const PageShell(child: EtatSysteme(nature: NatureEtat.accesRefuse)),
+        _ => avecEntete(
+          EtatSysteme(
+            nature: NatureEtat.echecServeur,
+            onAction: () => ref.invalidate(politiqueRevueKycProvider),
+          ),
         ),
       };
-      return PageShell(child: etat);
     }
-    return const PageShell(child: Skeleton.liste(lignes: 1));
+    return avecEntete(const Skeleton.liste(lignes: 1));
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -148,11 +149,13 @@ class SqueletteDetail extends StatelessWidget {
       // Le texte est lu ; les formes, non.
       Text(t.dossiers.revue.etats.chargement),
       Ecart.vSm,
-      ExcludeSemantics(child: _formes()),
+      ExcludeSemantics(
+        child: _formes(mobile: AppGabarit.de(context) == Gabarit.mobile),
+      ),
     ],
   );
 
-  Widget _formes() => Column(
+  Widget _formes({required bool mobile}) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
     children: <Widget>[
@@ -167,8 +170,15 @@ class SqueletteDetail extends StatelessWidget {
         widthFactor: 0.35,
         child: Skeleton(hauteur: AppSpacing.lg),
       ),
+      // La pastille d'etat de l'en-tete.
+      Ecart.vSm,
+      const FractionallySizedBox(
+        alignment: AlignmentDirectional.centerStart,
+        widthFactor: 0.25,
+        child: Skeleton(hauteur: AppSpacing.xxl),
+      ),
       for (final double h in const <double>[
-        5 * AppTouchTarget.standard,
+        4 * AppTouchTarget.standard,
         AppTouchTarget.standard,
         3 * AppTouchTarget.standard,
         AppTouchTarget.standard,
@@ -183,16 +193,18 @@ class SqueletteDetail extends StatelessWidget {
         Skeleton(hauteur: h),
       ],
       Ecart.vLg,
-      // Wrap comme les vrais boutons : a 320, 2 x 160 + 8 depasse 288 (AD-11).
-      const Wrap(
-        alignment: WrapAlignment.end,
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.sm,
-        children: <Widget>[
-          SizedBox(width: 160, child: Skeleton(hauteur: AppPage.hauteurBouton)),
-          SizedBox(width: 160, child: Skeleton(hauteur: AppPage.hauteurBouton)),
-        ],
-      ),
+      // Un seul emplacement de decision : pleine largeur sur mobile, au
+      // bord de fin sur tablette et bureau.
+      if (mobile)
+        const Skeleton(hauteur: AppPage.hauteurBouton)
+      else
+        const Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: SizedBox(
+            width: 160,
+            child: Skeleton(hauteur: AppPage.hauteurBouton),
+          ),
+        ),
     ],
   );
 }

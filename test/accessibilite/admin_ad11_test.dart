@@ -587,8 +587,10 @@ void main() {
         expect(s.label, contains(p));
         expect(s.flagsCollection.isChecked, isNotNull);
       }
+      // HL-A-5 : Valider ferme n'est pas rendu ; son emplacement porte le
+      // lien vers la premiere verification, nomme lui aussi.
       for (final String b in <String>[
-        t.dossiers.approuver,
+        t.dossiers.revue.etats.verificationsIncompletes,
         t.dossiers.refuser,
         t.dossiers.revue.voirPiece,
       ]) {
