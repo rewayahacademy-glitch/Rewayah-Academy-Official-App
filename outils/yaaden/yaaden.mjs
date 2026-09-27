@@ -97,12 +97,17 @@ export function lireNouveauxTextes(fichier, curseurs) {
   const fin = brut.lastIndexOf('\n'); // ne consommer que des lignes complètes
   if (fin < 0) return { textes: [], curseur: debut };
   const textes = [];
+  let commits = 0;
   for (const l of brut.slice(0, fin).split('\n')) {
     let o; try { o = JSON.parse(l); } catch { continue; }
     if (o.type !== 'assistant' || o.isSidechain) continue;
-    for (const c of o.message?.content || []) if (c.type === 'text') textes.push(c.text);
+    for (const c of o.message?.content || []) {
+      if (c.type === 'text') textes.push(c.text);
+      // un morceau livré = un commit de la session principale
+      else if (c.type === 'tool_use' && /\bgit\b[^\n]*\bcommit\b/.test(String(c.input?.command || ''))) commits++;
+    }
   }
-  return { textes, curseur: debut + Buffer.byteLength(brut.slice(0, fin + 1), 'utf8') };
+  return { textes, commits, curseur: debut + Buffer.byteLength(brut.slice(0, fin + 1), 'utf8') };
 }
 
 export function versBoite(cache, entrees, poste, session) {
@@ -134,7 +139,7 @@ function hookStop(cache, entree) {
   const fichier = entree.transcript_path;
   if (!fichier || !fs.existsSync(fichier)) return;
   const curseurs = lireJson(path.join(cache, 'curseurs.json'), {});
-  const { textes, curseur } = lireNouveauxTextes(fichier, curseurs);
+  const { textes, commits, curseur } = lireNouveauxTextes(fichier, curseurs);
   const valides = [];
   for (const t of textes) for (const l of extraireLignes(t)) {
     const a = analyser(l);
@@ -144,6 +149,10 @@ function hookStop(cache, entree) {
   versBoite(cache, valides, conf.poste, entree.session_id || '');
   curseurs[fichier] = curseur;
   ecrireJson(path.join(cache, 'curseurs.json'), curseurs);
+  // relais obligatoire (K-48) : un commit sans ligne RELAIS renvoie Claude l'écrire, une seule fois
+  if (commits && !valides.some((a) => a.type === 'RELAIS') && !entree.stop_hook_active) {
+    return { decision: 'block', reason: `YAADEN obligatoire (K-48) : ${commits} commit(s) sans relais. Écris maintenant, en début de ligne, « @Y RELAIS <étape> <CODE> commit=<sha> tests=<n/n> | <texte court> » pour chaque morceau livré, puis termine.` };
+  }
 }
 
 function dansPerimetre(conf, cwd) {
@@ -371,13 +380,22 @@ async function main() {
         console.log(`poste ${poste}, cache ${cache}, racines ${racines.join(' ; ')}`);
         return;
       }
-      case 'hook-stop': hookStop(cache, await lireEntree()); return;
+      case 'hook-stop': {
+        const r = hookStop(cache, await lireEntree());
+        if (r) console.log(JSON.stringify(r));
+        return;
+      }
       case 'hook-start':
       case 'hook-prompt': {
         const entree = await lireEntree();
         const { conf } = charger(cache);
         if (!conf || !dansPerimetre(conf, entree.cwd)) return;
-        if (cmd === 'hook-prompt' && !/^\s*continuer\s*[.!]?\s*$/i.test(entree.prompt || '')) return;
+        if (cmd === 'hook-prompt' && !/^\s*continuer\s*[.!]?\s*$/i.test(entree.prompt || '')) {
+          // rappel d'une ligne tant que la boîte n'est pas envoyée
+          const n = lireLignes(path.join(cache, 'boite.jsonl')).filter((x) => !x.lot).length;
+          if (n) console.log(JSON.stringify({ hookSpecificOutput: { hookEventName: 'UserPromptSubmit', additionalContext: `YAADEN : BOÎTE ${n} à envoyer (obligatoire, K-48) → node yaaden.mjs envoyer, un batch, recu <lot>.` } }));
+          return;
+        }
         const evt = cmd === 'hook-start' ? 'SessionStart' : 'UserPromptSubmit';
         console.log(JSON.stringify({ hookSpecificOutput: { hookEventName: evt, additionalContext: paquetReprise(cache) } }));
         return;

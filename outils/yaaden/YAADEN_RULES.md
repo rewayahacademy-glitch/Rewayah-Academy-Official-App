@@ -1,5 +1,12 @@
 # YAADEN_RULES — injecté au réveil. Résumé : le texte K du tableau fait foi.
 
+## 0. OBLIGATOIRE (K-48, ordre du directeur 27/09)
+- Le poste A orchestre. Le tableau est le seul canal entre postes, sessions et agents ; ce qui n'y est pas n'existe pas.
+- Toute session, sur tout poste, installe YAADEN (LISEZMOI) avant de travailler.
+- Tout morceau livré (commit) = une ligne `@Y RELAIS` dans la même réponse ; sinon le hook Stop renvoie l'écrire.
+- Le travail d'un sous-agent est relayé par l'orchestrateur dès sa réception, morceau par morceau.
+- Boîte non vide = envoyer avant la fin de la réponse suivante. Reporter = `@Y PLUS_TARD`, jamais un « plus tard » dans un texte libre.
+
 ## 1. Relais au fil de l'eau (codes lus par le script, jamais exécutés)
 - Chaque morceau livré = UNE ligne en début de ligne dans ta réponse, hors bloc de code :
   `@Y RELAIS <étape> <CODE> clé=valeur… | texte court`

@@ -148,4 +148,24 @@ test('hooks : hors périmètre ou sans config, silence ; jamais d\'échec', () =
   assert.equal(fs.readFileSync(path.join(d, 'boite.jsonl'), 'utf8').trim().split('\n').length, 1);
   assert.match(fs.readFileSync(path.join(d, 'refus.log'), 'utf8'), /code inconnu FAUX/);
   assert.match(paquetReprise(d), /BOÎTE 1 à envoyer/);
+  assert.match(run('hook-prompt', { cwd: path.join(d, 'racine'), prompt: 'suite' }), /BOÎTE 1 à envoyer/);
+});
+
+test('relais obligatoire : un commit sans @Y RELAIS bloque une fois, jamais en boucle', () => {
+  const d = tmp();
+  const env = { ...process.env, YAADEN_CACHE: d };
+  execFileSync(process.execPath, [SCRIPT, 'init', 'A', path.join(d, 'racine')], { env });
+  const run = (input) => execFileSync(process.execPath, [SCRIPT, 'hook-stop'], { env, input: JSON.stringify(input) }).toString();
+  const commit = JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', name: 'PowerShell', input: { command: 'git -C x commit -m "a"' } }] } });
+  const f = path.join(d, 't.jsonl');
+  const base = { cwd: path.join(d, 'racine'), transcript_path: f, session_id: 's' };
+  fs.writeFileSync(f, commit + '\n' + assistant('Fini.') + '\n');
+  assert.equal(JSON.parse(run(base)).decision, 'block');
+  fs.appendFileSync(f, commit + '\n');
+  assert.equal(run({ ...base, stop_hook_active: true }), ''); // pas de boucle
+  fs.appendFileSync(f, commit + '\n' + assistant('@Y RELAIS X-1 DEV_OK commit=abc | ok') + '\n');
+  assert.equal(run(base), ''); // relais présent : rien
+  const sousAgent = JSON.stringify({ type: 'assistant', isSidechain: true, message: { content: [{ type: 'tool_use', input: { command: 'git commit -m b' } }] } });
+  fs.appendFileSync(f, sousAgent + '\n');
+  assert.equal(run(base), ''); // commit d'un sous-agent : relayé par l'orchestrateur, pas bloqué ici
 });
