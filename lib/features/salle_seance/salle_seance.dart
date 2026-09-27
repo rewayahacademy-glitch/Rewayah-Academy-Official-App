@@ -28,6 +28,7 @@ import 'outils_enseignement.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
+import 'selecteur_ressources.dart';
 import 'vue_seance.dart';
 import 'zone_support.dart';
 
@@ -217,6 +218,8 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         widget.actions.onEleves?.call();
       case PanneauOuvert.supports:
         widget.actions.onSupports?.call();
+      case PanneauOuvert.ressources:
+        widget.actions.onBibliotheque?.call();
       case PanneauOuvert.aucun:
         break;
     }
@@ -376,6 +379,7 @@ class _SalleEnseignant extends StatelessWidget {
                     actions: actions,
                     microOuvert: local.microOuvert,
                     cameraAllumee: local.cameraAllumee,
+                    focusSupports: focusSupports,
                   ),
                   Expanded(
                     child: Align(
@@ -462,6 +466,7 @@ class _SalleEnseignant extends StatelessWidget {
                 actions: actions,
                 microOuvert: local.microOuvert,
                 cameraAllumee: local.cameraAllumee,
+                focusSupports: focusSupports,
               ),
             ),
           ],
@@ -511,6 +516,15 @@ class _SalleEnseignant extends StatelessWidget {
           forme: forme,
         ),
       ),
+      // EN-10 : le selecteur de ressources (04 §19), ouvert par « Voir toute
+      // la bibliotheque » et par la Bibliotheque du Teaching Dock ; feuille
+      // sur mobile, panneau sur bureau. La salle reste ouverte.
+      PanneauOuvert.ressources => PanneauSeance(
+        titre: t.salle.seance.supports,
+        onFermer: actions.onBibliotheque,
+        forme: forme,
+        enfant: SelecteurRessources(supports: vue.supports, actions: actions),
+      ),
     };
     if (panneau == null) return null;
     // A l'ouverture, le focus entre dans le panneau (si rien d'autre ne le
@@ -555,6 +569,7 @@ class _SalleEnseignant extends StatelessWidget {
       actions: actions,
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
+      focusSupports: focusSupports,
     );
     final Widget? zoom = vue.voitZoomLocal(gabarit)
         ? ZoomLocal(
@@ -727,6 +742,7 @@ class _SalleEnseignant extends StatelessWidget {
               actions: actions,
               microOuvert: local.microOuvert,
               cameraAllumee: local.cameraAllumee,
+              focusSupports: focusSupports,
             ),
           ),
         ),
@@ -802,11 +818,13 @@ class _BoutonsPanneaux extends StatelessWidget {
   }) {
     final String? compteur = vue.compteurEleves;
     if (!vue.voitBoutonsPanneaux || compteur == null) return null;
-    if (actions.onEleves == null && actions.onSupports == null) return null;
+    if (actions.onEleves == null) return null;
     return _BoutonsPanneaux(
       compteur: compteur,
       onEleves: actions.onEleves,
-      onSupports: actions.onSupports,
+      // EN-10 : Supports passe dans le Teaching Dock compact (maquettes,
+      // planche 3) ; un seul bouton Supports dans la salle.
+      onSupports: null,
       etire: etire ?? gabarit != Gabarit.desktop,
       panneau: vue.panneau,
       focusEleves: focusEleves,

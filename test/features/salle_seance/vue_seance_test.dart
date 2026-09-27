@@ -150,10 +150,13 @@ void main() {
       }
     });
 
-    test('jamais Agrandir au dock ; Micro, Camera, Reseau, Quitter', () {
+    test('jamais Agrandir au dock ; dock compact EN-10', () {
       expect(_vue(r).commandesDock, <CommandeDock>[
+        CommandeDock.supports,
         CommandeDock.micro,
         CommandeDock.camera,
+        CommandeDock.partager,
+        CommandeDock.outils,
         CommandeDock.reseau,
         CommandeDock.quitter,
       ]);

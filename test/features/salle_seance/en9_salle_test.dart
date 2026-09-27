@@ -126,12 +126,17 @@ void main() {
           .first;
       final Finder yusuf = find.byKey(const ValueKey<String>('eleve-Yusuf'));
       await tester.scrollUntilVisible(yusuf, 80, scrollable: liste);
+      // EN-10 : le dock compact est plus large ; on amene Yusuf en haut.
+      await tester.ensureVisible(yusuf);
+      await tester.pump();
       await tester.tap(
         find.descendant(of: yusuf, matching: find.text('Yusuf')).first,
       );
       await tester.pump();
       final Finder reciter = find.text(t.salle.seance.faireReciter);
       await tester.scrollUntilVisible(reciter, 80, scrollable: liste);
+      await tester.ensureVisible(reciter);
+      await tester.pump();
       await tester.tap(reciter);
       await tester.pump();
       await tester.scrollUntilVisible(_file, -80, scrollable: liste);

@@ -231,10 +231,28 @@ class FinSeance {
 }
 
 /// Le panneau ouvert a cote du support (enseignant seulement).
-enum PanneauOuvert { aucun, eleves, supports }
+enum PanneauOuvert {
+  aucun,
+  eleves,
+  supports,
+
+  /// EN-10 : le selecteur de ressources (04 §19).
+  ressources,
+}
 
 /// Une commande du dock, par role (I-4).
-enum CommandeDock { micro, camera, agrandir, reseau, quitter }
+enum CommandeDock {
+  micro,
+  camera,
+  agrandir,
+  reseau,
+  quitter,
+
+  /// EN-10 : le Teaching Dock compact de l'enseignant.
+  supports,
+  partager,
+  outils,
+}
 
 /// Un compte affiche en haut a droite : celui de la personne devant l'ecran.
 @immutable
@@ -618,9 +636,14 @@ class VueSeance {
   /// Le dock, dans l'ordre (I-4). Agrandir n'existe que si un support est
   /// partage : sans support, il n'y a rien a agrandir.
   List<CommandeDock> get commandesDock => switch (role) {
+    // EN-10 (maquettes planche 3, 04 §18.3) : barre compacte Supports,
+    // Micro, Camera, Partager, « Ouvrir les outils d'enseignement ».
     RoleSeance.enseignant => const <CommandeDock>[
+      CommandeDock.supports,
       CommandeDock.micro,
       CommandeDock.camera,
+      CommandeDock.partager,
+      CommandeDock.outils,
       CommandeDock.reseau,
       CommandeDock.quitter,
     ],

@@ -14,6 +14,7 @@ import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
@@ -182,7 +183,8 @@ void main() {
       expect(tester.getSemantics(eleves), isNot(isSemantics(isSelected: true)));
       await tester.tap(eleves);
       await tester.pump();
-      expect(tester.widget<BoutonPanneau>(eleves).ouvert, isTrue);
+      // EN-10 : Supports est dans le Teaching Dock compact.
+      expect(tester.widget<BoutonAppel>(eleves).selectionne, isTrue);
       expect(
         tester.getSemantics(eleves),
         isSemantics(isSelected: true, isButton: true),

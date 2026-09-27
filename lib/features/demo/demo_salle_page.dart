@@ -23,6 +23,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/outils_dock_salle.dart';
 import '../salle_seance/panneau_eleves.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
@@ -273,7 +274,9 @@ class _SalleDemoState extends State<SalleDemo> {
   static const double _zoomMax = 2;
 
   bool _micro = true;
-  bool _camera = true;
+
+  /// EN-10 : la camera de l'enseignant ne s'allume jamais sans son geste.
+  late bool _camera = widget.role != RoleSeance.enseignant;
 
   /// La connexion apres « Reessayer » ; `null` : celle de l'etat choisi.
   ConnexionSeance? _connexion;
@@ -349,6 +352,67 @@ class _SalleDemoState extends State<SalleDemo> {
     if (!enseignant && issue != null) {
       return ResultatSeance(issue: issue, onRetour: widget.onSortir);
     }
+    late final ActionsSeance actions;
+    actions = ActionsSeance(
+      // EN-10 : « Partager » (etat partage publie a BR-1, K-28 : rien ici)
+      // et « Ouvrir les outils d'enseignement » (Teaching Dock en feuille).
+      onPartager: enseignant ? _inerte : null,
+      onOutilsEnseignement: enseignant
+          ? () => unawaited(ouvrirOutilsEnseignement(context, actions: actions))
+          : null,
+      onRetour: widget.onSortir,
+      onQuitter: enseignant
+          ? widget.onSortir
+          : () => setState(() => _quittee = true),
+      onMicro: () => setState(() => _micro = !_micro),
+      onCamera: () => setState(() => _camera = !_camera),
+      onAgrandir: () => setState(() => _agrandi = !_agrandi),
+      onZoomMoins: () => _zoomer(-_pasZoom),
+      onZoomPlus: () => _zoomer(_pasZoom),
+      onNotifications: _inerte,
+      onReglages: _inerte,
+      onCompte: _inerte,
+      onReseau: enseignant ? _inerte : null,
+      onEleves: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.eleves)
+          : null,
+      onSupports: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.supports)
+          : null,
+      onOutil: enseignant ? (OutilEnseignement _) => _inerte() : null,
+      onPagePrecedente: enseignant ? _inerte : null,
+      onPageSuivante: enseignant ? _inerte : null,
+      // Le rail sort de la salle (apres confirmation) : en demonstration,
+      // retour a la liste des etats.
+      onNaviguer: enseignant ? (String _) => widget.onSortir() : null,
+      // Les quatre actions de la fiche (panneau Eleves) : sans serveur en
+      // demonstration. Le rappel reussi ne produit rien (spec 10.2).
+      onRappeler: enseignant ? (EleveSeance _) => _inerte() : null,
+      onChoisirPourReciter: enseignant
+          ? (EleveSeance e) => setState(
+              () =>
+                  _recitation = _recitation.donnerLaParoleA(cleEleveSeance(e)),
+            )
+          : null,
+      onNoter: enseignant ? (EleveSeance _) => _inerte() : null,
+      // EN-9b : la feuille « Signaler un besoin » d'EN-4, sans envoi.
+      onSignaler: enseignant
+          ? (EleveSeance e) => unawaited(signalerDepuisSeance(context, e, vue))
+          : null,
+      // Le panneau Supports : « Ouvrir » agit. EN-10 : « Voir toute la
+      // bibliotheque » ouvre le selecteur de ressources (donnees de la
+      // demonstration ; catalogue cable a BR-1).
+      onOuvrirSupport: enseignant ? _ouvrirSupport : null,
+      onBibliotheque: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.ressources)
+          : null,
+      // Secours (CL-7), sans serveur : « Reessayer » simule le retour de la
+      // connexion (« Connexion retablie. ») ; « Continuer sans micro »
+      // laisse le micro coupe. Ouvrir les reglages : BR-1 (non rendu).
+      onReessayerConnexion: () =>
+          setState(() => _connexion = ConnexionSeance.retablie),
+      onContinuerSansMicro: () => setState(() => _micro = false),
+    );
     return SalleSeance(
       vue: vue,
       local: EtatLocalSeance(
@@ -357,59 +421,7 @@ class _SalleDemoState extends State<SalleDemo> {
         zoom: _zoom,
         agrandi: _agrandi,
       ),
-      actions: ActionsSeance(
-        onRetour: widget.onSortir,
-        onQuitter: enseignant
-            ? widget.onSortir
-            : () => setState(() => _quittee = true),
-        onMicro: () => setState(() => _micro = !_micro),
-        onCamera: () => setState(() => _camera = !_camera),
-        onAgrandir: () => setState(() => _agrandi = !_agrandi),
-        onZoomMoins: () => _zoomer(-_pasZoom),
-        onZoomPlus: () => _zoomer(_pasZoom),
-        onNotifications: _inerte,
-        onReglages: _inerte,
-        onCompte: _inerte,
-        onReseau: enseignant ? _inerte : null,
-        onEleves: enseignant
-            ? () => _basculerPanneau(PanneauOuvert.eleves)
-            : null,
-        onSupports: enseignant
-            ? () => _basculerPanneau(PanneauOuvert.supports)
-            : null,
-        onOutil: enseignant ? (OutilEnseignement _) => _inerte() : null,
-        onPagePrecedente: enseignant ? _inerte : null,
-        onPageSuivante: enseignant ? _inerte : null,
-        // Le rail sort de la salle (apres confirmation) : en demonstration,
-        // retour a la liste des etats.
-        onNaviguer: enseignant ? (String _) => widget.onSortir() : null,
-        // Les quatre actions de la fiche (panneau Eleves) : sans serveur en
-        // demonstration. Le rappel reussi ne produit rien (spec 10.2).
-        onRappeler: enseignant ? (EleveSeance _) => _inerte() : null,
-        onChoisirPourReciter: enseignant
-            ? (EleveSeance e) => setState(
-                () => _recitation = _recitation.donnerLaParoleA(
-                  cleEleveSeance(e),
-                ),
-              )
-            : null,
-        onNoter: enseignant ? (EleveSeance _) => _inerte() : null,
-        // EN-9b : la feuille « Signaler un besoin » d'EN-4, sans envoi.
-        onSignaler: enseignant
-            ? (EleveSeance e) =>
-                  unawaited(signalerDepuisSeance(context, e, vue))
-            : null,
-        // Le panneau Supports : « Ouvrir » agit ; la Bibliotheque complete
-        // n'est pas ouverte en demonstration (catalogue cable a BR-1).
-        onOuvrirSupport: enseignant ? _ouvrirSupport : null,
-        onBibliotheque: enseignant ? _inerte : null,
-        // Secours (CL-7), sans serveur : « Reessayer » simule le retour de la
-        // connexion (« Connexion retablie. ») ; « Continuer sans micro »
-        // laisse le micro coupe. Ouvrir les reglages : BR-1 (non rendu).
-        onReessayerConnexion: () =>
-            setState(() => _connexion = ConnexionSeance.retablie),
-        onContinuerSansMicro: () => setState(() => _micro = false),
-      ),
+      actions: actions,
     );
   }
 }
