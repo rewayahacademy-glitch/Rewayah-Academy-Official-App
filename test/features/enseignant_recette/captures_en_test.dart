@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -34,6 +35,15 @@ const List<(String, Size)> _tailles = <(String, Size)>[
 
 const List<ThemeMode> _themes = <ThemeMode>[ThemeMode.light, ThemeMode.dark];
 
+/// Le depot de cahiers en memoire, pour chaque capture : sans ce faux, la
+/// Journee et le Cahier ouvrent une vraie base drift (`baseLocaleProvider`),
+/// qui appelle `path_provider` (absent en test) des que `capturer` passe par
+/// `runAsync`. Meme fable que `depotRapportsProvider.overrideWithValue` dans
+/// `rtl_echelle_texte_ecrans_test.dart` pour `CahierPage`.
+List<Override> _surchargesBase() => <Override>[
+  depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+];
+
 /// Monte [ecran] et ecrit son PNG ; [rtl] simule l'arabe (miroir de sens),
 /// [echelle] simule le texte agrandi (200 % attendu par le directeur).
 Future<void> _capturer(
@@ -54,7 +64,7 @@ Future<void> _capturer(
           : ecran,
       themeMode: mode,
       echelleTexte: echelle,
-      surcharges: surcharges,
+      surcharges: <Override>[..._surchargesBase(), ...surcharges],
     ),
   );
   await stabiliser(tester);
@@ -528,6 +538,7 @@ void main() {
               : ecran,
           themeMode: mode,
           echelleTexte: echelle,
+          surcharges: _surchargesBase(),
         ),
       );
       await stabiliser(tester);
@@ -613,6 +624,7 @@ void main() {
               : ecran,
           themeMode: mode,
           echelleTexte: echelle,
+          surcharges: _surchargesBase(),
         ),
       );
       await stabiliser(tester);
