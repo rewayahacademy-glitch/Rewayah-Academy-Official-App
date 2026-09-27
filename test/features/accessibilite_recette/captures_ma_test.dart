@@ -5,12 +5,22 @@
 // `captures_en_test.dart`. Sortie en un sous-dossier par ecran.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/coran/service_coran.dart'
+    show PositionLecture;
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
+import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
+import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../teaching_core/c/faux/faux_corpus_coran.dart';
+import '../../teaching_core/c/goldens/corpus_reference.dart';
 
 const List<(String, Size)> _tailles = <(String, Size)>[
   ('390', Size(390, 1900)),
@@ -345,6 +355,88 @@ void main() {
         const Size(390, 1900),
         echelle: 2,
       );
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // MA-7 : le Coran autour du rendu (entree avec reprise ; lecteur ouvert
+  // en verset agrandi par « Lecture en grand texte » ; 200 %). Corpus de
+  // reference des tests, rendu du Coran intouche.
+  // -------------------------------------------------------------------
+  group('Capture MA-7 : Coran', skip: sautSansCapture, () {
+    late CorpusReference reference;
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      reference = CorpusReference.charger();
+    });
+    List<Override> corpus() => <Override>[
+      portCorpusCoranProvider.overrideWithValue(FauxCorpusCoran(reference)),
+      portLayoutMushafProvider.overrideWithValue(
+        const LayoutLignesIndisponible(),
+      ),
+      portNavigationCoranProvider.overrideWithValue(
+        FauxNavigationCoran(
+          personnelle: PositionLecture(
+            page: reference.pages.last.numero,
+            sourate: 1,
+            verset: 1,
+          ),
+        ),
+      ),
+    ];
+    Widget ecran(EleveDemoAccessibilite eleve) => EcranAccessibiliteDemo(
+      eleve: eleve,
+      destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+      surchargesCoran: corpus(),
+    );
+    Future<void> ouvrir(WidgetTester tester, String fichier) async {
+      ProviderScope.containerOf(
+        tester.element(find.byType(EcranAccessibiliteDemo)),
+      ).read(preferencesLocalesProvider.notifier).lectureGrande(true);
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('coran-ma-principale')),
+      );
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      debugPrint('PNG ${await capturer(tester, fichier)}');
+    }
+
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('coran_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma7/ma7_coran_mariam_${l}_${mode.name}',
+            ecran(EleveDemoAccessibilite.mariam),
+            taille,
+            mode: mode,
+          );
+          await ouvrir(
+            tester,
+            'ma7/ma7_coran_lecteur_mariam_${l}_${mode.name}',
+          );
+        });
+      }
+    }
+    testWidgets('coran_idriss_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma7/ma7_coran_idriss_390_light',
+        ecran(EleveDemoAccessibilite.idriss),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('coran_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma7/ma7_coran_mariam_390_light_texte200',
+        ecran(EleveDemoAccessibilite.mariam),
+        const Size(390, 1900),
+        echelle: 2,
+      );
+      await ouvrir(tester, 'ma7/ma7_coran_lecteur_mariam_390_light_texte200');
     });
   });
 }

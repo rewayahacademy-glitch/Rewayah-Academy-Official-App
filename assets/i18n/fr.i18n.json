@@ -623,6 +623,15 @@
       "lireCoranDetail": "Accéder au Mushaf",
       "aide": "Besoin d'aide ?"
     },
+    "coran": {
+      "ouvrir": "Ouvrir le Coran",
+      "reprendre": "Reprendre là où tu t'es arrêté(e)",
+      "reprendreVous": "Reprendre là où vous vous êtes arrêté(e)",
+      "reprendreDetail": "Tu en étais page {page}.",
+      "reprendreDetailVous": "Vous en étiez page {page}.",
+      "lectureGrande": "Le Coran s'ouvre en lecture agrandie, verset par verset.",
+      "retour": "Retour à l'entrée du Coran"
+    },
     "maClasse": {
       "titre": "Ma classe",
       "suivi": "Mon suivi",

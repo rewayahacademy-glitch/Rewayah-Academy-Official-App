@@ -785,6 +785,7 @@ class Traductions$accessibilite$fr {
 	// Translations
 	late final Traductions$accessibilite$demo$fr demo = Traductions$accessibilite$demo$fr.internal(_root);
 	late final Traductions$accessibilite$accueil$fr accueil = Traductions$accessibilite$accueil$fr.internal(_root);
+	late final Traductions$accessibilite$coran$fr coran = Traductions$accessibilite$coran$fr.internal(_root);
 	late final Traductions$accessibilite$maClasse$fr maClasse = Traductions$accessibilite$maClasse$fr.internal(_root);
 	late final Traductions$accessibilite$tutoiement$fr tutoiement = Traductions$accessibilite$tutoiement$fr.internal(_root);
 	late final Traductions$accessibilite$apres$fr apres = Traductions$accessibilite$apres$fr.internal(_root);
@@ -3028,6 +3029,36 @@ class Traductions$accessibilite$accueil$fr {
 
 	/// fr: 'Besoin d'aide ?'
 	String get aide => 'Besoin d\'aide ?';
+}
+
+// Path: accessibilite.coran
+class Traductions$accessibilite$coran$fr {
+	Traductions$accessibilite$coran$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir le Coran'
+	String get ouvrir => 'Ouvrir le Coran';
+
+	/// fr: 'Reprendre là où tu t'es arrêté(e)'
+	String get reprendre => 'Reprendre là où tu t\'es arrêté(e)';
+
+	/// fr: 'Reprendre là où vous vous êtes arrêté(e)'
+	String get reprendreVous => 'Reprendre là où vous vous êtes arrêté(e)';
+
+	/// fr: 'Tu en étais page {page}.'
+	String reprendreDetail({required Object page}) => 'Tu en étais page ${page}.';
+
+	/// fr: 'Vous en étiez page {page}.'
+	String reprendreDetailVous({required Object page}) => 'Vous en étiez page ${page}.';
+
+	/// fr: 'Le Coran s'ouvre en lecture agrandie, verset par verset.'
+	String get lectureGrande => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.';
+
+	/// fr: 'Retour à l'entrée du Coran'
+	String get retour => 'Retour à l\'entrée du Coran';
 }
 
 // Path: accessibilite.maClasse
@@ -13371,7 +13402,16 @@ extension on Traductions {
 			'accessibilite.accueil.lireCoran' => 'Lire le Coran',
 			'accessibilite.accueil.lireCoranDetail' => 'Accéder au Mushaf',
 			'accessibilite.accueil.aide' => 'Besoin d\'aide ?',
+			'accessibilite.coran.ouvrir' => 'Ouvrir le Coran',
+			'accessibilite.coran.reprendre' => 'Reprendre là où tu t\'es arrêté(e)',
+			'accessibilite.coran.reprendreVous' => 'Reprendre là où vous vous êtes arrêté(e)',
+			'accessibilite.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}.',
+			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}.',
+			'accessibilite.coran.lectureGrande' => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.',
+			'accessibilite.coran.retour' => 'Retour à l\'entrée du Coran',
 			'accessibilite.maClasse.titre' => 'Ma classe',
+			_ => null,
+		} ?? switch (path) {
 			'accessibilite.maClasse.suivi' => 'Mon suivi',
 			'accessibilite.maClasse.suiviDetail' => 'Les séances passées et la présence',
 			'accessibilite.tutoiement.tonHeure' => 'Ton heure',
@@ -13379,8 +13419,6 @@ extension on Traductions {
 			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'Tu es dans la salle. La séance commence dans ${duree}.',
 			'accessibilite.tutoiement.attenteImminent' => 'Tu es dans la salle. La séance commence dans moins d\'une minute.',
 			'accessibilite.tutoiement.annonceAttente' => 'Tu es dans la salle',
-			_ => null,
-		} ?? switch (path) {
 			'accessibilite.tutoiement.horsLigne' => 'Tu es hors ligne. La séance nécessite une connexion.',
 			'accessibilite.tutoiement.finPhrase' => 'Tu peux retrouver ton travail dans ta Classe.',
 			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
@@ -13886,6 +13924,8 @@ extension on Traductions {
 			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
 			'admin.demandes.feuille' => ({required Object prenom}) => 'Les règles de ${prenom}',
 			'admin.demandes.feuilleIntro' => 'La valeur de la plateforme et celle qui s\'applique, côte à côte. Une règle se change ici sans qu\'une demande existe.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.regleDuree' => 'Durée d\'une séance',
 			'admin.demandes.regleMinimum' => 'Durée minimale payable',
 			'admin.demandes.reglePause' => 'Pause entre deux cours',
@@ -13893,8 +13933,6 @@ extension on Traductions {
 			'admin.demandes.regleInconnue' => 'Règle non reconnue',
 			'admin.demandes.plateforme' => ({required Object valeur}) => 'Plateforme : ${valeur}',
 			'admin.demandes.effective' => ({required Object valeur}) => 'Appliquée : ${valeur}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.minutes' => ({required Object valeur}) => '${valeur} min',
 			'admin.demandes.eleves' => ({required Object valeur}) => '${valeur} élèves',
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}',
@@ -14400,6 +14438,8 @@ extension on Traductions {
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
 			'admin.agents.colonneLibelle' => 'Jeton',
 			'admin.agents.colonneQui' => 'Observe',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.colonneParcours' => 'Parcours',
 			'admin.agents.colonneIdentite' => 'Prénoms',
 			'admin.agents.colonneExpire' => 'Jusqu\'à',
@@ -14407,8 +14447,6 @@ extension on Traductions {
 			'admin.agents.colonneEtat' => 'État',
 			'admin.agents.parcoursEleve' => 'Élève',
 			'admin.agents.parcoursTuteur' => 'Tuteur',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.parcoursEnseignant' => 'Enseignant',
 			'admin.agents.parcoursControleur' => 'Contrôle qualité',
 			'admin.agents.parcoursAdmin' => 'Administration',
@@ -14914,6 +14952,8 @@ extension on Traductions {
 			'eleve.coran.pagePrecedente' => 'Page précédente',
 			'eleve.coran.pageSuivante' => 'Page suivante',
 			'eleve.coran.reglages' => 'Réglages de lecture',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.fermerReglages' => 'Fermer les réglages',
 			'eleve.coran.taille' => 'Taille du texte',
 			'eleve.coran.agrandir' => 'Agrandir le texte',
@@ -14921,8 +14961,6 @@ extension on Traductions {
 			'eleve.coran.source' => 'Texte du Coran : Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
 			'eleve.coran.edition' => 'Mushaf de Médine, riwaya Hafs',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.titre' => 'Suivi de mes cours',
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Cours',
@@ -15428,6 +15466,8 @@ extension on Traductions {
 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
 			'enseignant.cahier.enFileTitre' => 'En attente d\'envoi',
 			'enseignant.cahier.enFile' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.enFileDetail' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
 			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
 			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Ajuster · ${eleve}',
@@ -15435,8 +15475,6 @@ extension on Traductions {
 			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
 			'enseignant.cahier.objectif' => 'Objectif personnel',
 			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
@@ -15942,6 +15980,8 @@ extension on Traductions {
 			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
 			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
 			'tc.observation.disponibilite.seanceNonTenue' => 'Elle a été annulée, reportée ou n\'a pas été tenue.',
@@ -15949,8 +15989,6 @@ extension on Traductions {
 			'tc.observation.disponibilite.horsFenetre' => 'L\'observation est possible seulement pendant la séance.',
 			'tc.observation.disponibilite.desactiveeTitre' => 'Observation fermée pour cette classe',
 			'tc.observation.disponibilite.desactivee' => 'L\'administration a fermé l\'observation de cette classe.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.lienAbsentTitre' => 'Aucun de vos enfants dans cette séance',
 			'tc.observation.disponibilite.lienAbsent' => 'L\'observation est réservée aux parents des élèves de la séance.',
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Votre enfant n\'est pas dans la séance',

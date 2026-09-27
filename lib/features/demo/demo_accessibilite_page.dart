@@ -17,6 +17,7 @@ import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/preferences/preferences_locales.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -28,11 +29,13 @@ import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_eleve/accueil_accessibilite.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
+import '../accueil_eleve/coran_accessibilite.dart';
 import '../salle/preparation_eleve.dart';
 import '../salle/preparation_enseignant.dart' show ReseauPreparation;
 import '../salle_seance/vue_seance.dart' show RoleSeance;
 import 'accessibilite_demo.dart';
 import 'classe_demo.dart' show EtatDemoClasse;
+import 'coran_demo_accessibilite.dart';
 import 'demo_classe_page.dart' show EcranEleveDemo;
 import 'demo_salle_page.dart' show SalleDemo;
 import 'mode_demonstration.dart';
@@ -165,8 +168,8 @@ class DemoAccessibilitePage extends StatelessWidget {
 /// (`NavShell`, destinations de `destinationsPour` pour l'eleve), sur Ma
 /// classe. Les autres destinations restent dans la demonstration (aucune
 /// route reelle, aucun serveur). MA-3 : l'Accueil du mode
-/// (`AccueilAccessibilite`) ; le Coran et Mon espace arrivent en MA-7 et
-/// MA-8. Pendant la seance, aucune
+/// (`AccueilAccessibilite`) ; MA-7 : le Coran (`CoranAccessibilite`) ;
+/// Mon espace arrive en MA-8. Pendant la seance, aucune
 /// navigation d'app (MA17, MA20).
 class EcranAccessibiliteDemo extends StatefulWidget {
   /// Cree l'ecran.
@@ -175,8 +178,14 @@ class EcranAccessibiliteDemo extends StatefulWidget {
     this.moment = MomentDemoAccessibilite.avant,
     this.destinationInitiale = indexMaClasse,
     this.etapeInitiale = EtapeDemoAccessibilite.classe,
+    this.surchargesCoran,
     super.key,
   });
+
+  /// MA-7 : le corpus et la navigation du Coran ; nul en demonstration
+  /// (aucun serveur, lecteur dans son etat « indisponible »). Les tests et
+  /// les captures y posent le corpus de reference des tests.
+  final List<Override>? surchargesCoran;
 
   /// L'eleve.
   final EleveDemoAccessibilite eleve;
@@ -227,6 +236,19 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
   /// MA-5 : « Rejoindre » ouvre la preparation guidee, « Entrer dans la
   /// classe » la salle ; la sortie de la salle ramene a la Classe.
   late EtapeDemoAccessibilite _etape = widget.etapeInitiale;
+
+  /// MA-7 : le Coran vit dans un conteneur ISOLE (corpus et navigation de
+  /// la demonstration ou des tests) : aucun fournisseur du moteur ne remonte
+  /// jusqu'au service serveur de la racine.
+  late final ProviderContainer _coran = ProviderContainer(
+    overrides: widget.surchargesCoran ?? surchargesCoranDemoAccessibilite(),
+  );
+
+  @override
+  void dispose() {
+    _coran.dispose();
+    super.dispose();
+  }
 
   void _etapeSuivante(EtapeDemoAccessibilite etape) =>
       setState(() => _etape = etape);
@@ -382,6 +404,30 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                     // L'aide vit dans Mon espace en demonstration (MA14,
                     // MA-8) : aucune route reelle hors de la demonstration.
                     onAide: () => _aller(EcranAccessibiliteDemo.indexMonEspace),
+                  )
+                : _index == EcranAccessibiliteDemo.indexCoran
+                ? Consumer(
+                    builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                      // La preference de l'appareil, lue ici, voyage vers le
+                      // conteneur isole du Coran.
+                      final bool grande = ref.watch(
+                        preferencesLocalesProvider.select(
+                          (PreferencesLocales p) => p.lectureGrande,
+                        ),
+                      );
+                      return UncontrolledProviderScope(
+                        container: _coran,
+                        child: CoranAccessibilite(
+                          key: const ValueKey<String>('demo-coran'),
+                          tutoiement: DonneesAccessibiliteDemo.mineur(
+                            widget.eleve,
+                          ),
+                          lectureGrande: grande,
+                          onAide: () =>
+                              _aller(EcranAccessibiliteDemo.indexMonEspace),
+                        ),
+                      );
+                    },
                   )
                 : PageShell(
                     key: ValueKey<String>('demo-destination-$_index'),
