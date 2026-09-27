@@ -257,6 +257,12 @@ class _CorpsState extends ConsumerState<_Corps> {
               controller: champ,
               focusNode: _champ,
               autofocus: true,
+              // HL-A-5 : le motif envoye (ou dont le resultat est inconnu)
+              // ne se modifie plus ; etat de rendu seulement.
+              readOnly:
+                  e is DecisionEnvoi ||
+                  e is DecisionInconnue ||
+                  e is DecisionVerification,
               minLines: 3,
               maxLines: null,
               keyboardType: TextInputType.multiline,
@@ -544,9 +550,10 @@ class _ActionsState extends ConsumerState<_Actions> {
         enfants: <Widget>[
           ActionPrincipale(
             libelle: t.commun.annuler,
-            // HL-A-5 : a cote d'un destructif (texte rouge), un contour
-            // dominerait l'action qui confirme.
-            niveau: _refus ? NiveauAction.tertiaire : NiveauAction.secondaire,
+            // HL-A-5 : Annuler en tertiaire dans 02D comme dans 02E (meme
+            // anatomie). Le destructif reste un texte (jamais d'aplat rouge,
+            // contrat d'ActionPrincipale).
+            niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
             focusNode: _annuler,
             // Pendant l'envoi, Annuler laisserait croire a une annulation

@@ -195,6 +195,10 @@ void main() {
           // 2. Fiche du dossier (revue nominale, Omar).
           await tester.tap(_ligne('Omar'));
           await _stabiliser(tester);
+          // Cadrage propre : defilee jusqu'a l'emplacement de decision (la
+          // capture a l'ouverture etait identique a « coque et file »).
+          await tester.ensureVisible(find.text(t.dossiers.refuser).first);
+          await _stabiliser(tester);
           debugPrint('PNG ${await capturer(tester, fichier('fiche_dossier'))}');
 
           // 3. Verifications incompletes.
@@ -373,7 +377,7 @@ void main() {
             startsWith(Routes.tuteurAccueil),
           );
           debugPrint(
-            'PNG ${await capturer(tester, fichier('retour_apres_validation'))}',
+            'PNG ${await capturer(tester, fichier('retour_apres_validation_hors_portee'))}',
           );
         });
       }

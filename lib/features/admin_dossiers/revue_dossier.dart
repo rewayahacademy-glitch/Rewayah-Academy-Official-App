@@ -407,26 +407,26 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
         ],
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
+    // HL-A-5 : une seule rangee au bord de fin ; la ligne d'etat occupe la
+    // place exacte de « Valider le dossier » (meme emplacement que le bouton
+    // qu'elle remplace, meme ordre que sur mobile : Valider ou sa raison,
+    // puis Refuser).
+    return Wrap(
+      alignment: WrapAlignment.end,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      // IntrinsicWidth : le bouton au contenu (le Container centre
+      // d'ActionPrincipale s'etirerait sinon a la largeur du Wrap).
       children: <Widget>[
-        if (peutValider || peutRefuser)
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            // IntrinsicWidth : le bouton au contenu (le Container centre
-            // d'ActionPrincipale s'etirerait sinon a la largeur du Wrap).
-            children: <Widget>[
-              if (peutRefuser) IntrinsicWidth(child: refuser),
-              if (peutValider) IntrinsicWidth(child: valider),
-            ],
-          ),
-        if (ligne) ...<Widget>[
-          if (peutValider || peutRefuser) Ecart.vSm,
-          _LigneEtat(child: raisons),
-        ],
+        if (peutRefuser) IntrinsicWidth(child: refuser),
+        // Raison qui ne concerne pas Valider (refus ferme) : entre les deux.
+        if (peutValider && ligne)
+          IntrinsicWidth(child: _LigneEtat(enRangee: true, child: raisons)),
+        if (peutValider)
+          IntrinsicWidth(child: valider)
+        else if (ligne)
+          IntrinsicWidth(child: _LigneEtat(enRangee: true, child: raisons)),
       ],
     );
   }
@@ -496,8 +496,9 @@ class _CarteIdentite extends StatelessWidget {
   Widget build(BuildContext context) => GroupeReglages(
     titre: t.dossiers.revue.identite,
     // Une ligne par element : la valeur en titre, son libelle en ligne
-    // douce (STYLE-REFERENCE regle 4). L'etat du dossier n'est plus repete :
-    // la pastille d'en-tete le dit (§10.7, champs necessaires seulement).
+    // douce (STYLE-REFERENCE regle 4). L'etat, le type et la date de depot ne
+    // sont plus repetes : la pastille et la ligne de contexte de l'en-tete les
+    // disent (§10.7, champs necessaires seulement ; HL-A-5).
     lignes: <LigneRubrique>[
       if (dossier.nom.trim().isNotEmpty)
         LigneRubrique(libelle: dossier.nom, legende: t.dossiers.revue.nom),
@@ -506,14 +507,6 @@ class _CarteIdentite extends StatelessWidget {
           libelle: dossier.prenom,
           legende: t.dossiers.revue.prenom,
         ),
-      LigneRubrique(
-        libelle: typeDossier(dossier.role),
-        legende: t.dossiers.revue.typeDossier,
-      ),
-      LigneRubrique(
-        libelle: dateRevue(dossier.soumisLeUtc),
-        legende: t.dossiers.revue.dateDepot,
-      ),
     ],
   );
 }
@@ -568,16 +561,24 @@ class _CartePiece extends StatelessWidget {
 /// La ligne d'etat de l'emplacement de decision : hauteur d'un bouton
 /// reservee, calee au bord de debut, une seule region annoncee.
 class _LigneEtat extends StatelessWidget {
-  const _LigneEtat({required this.child});
+  const _LigneEtat({required this.child, this.enRangee = false});
 
   final Widget child;
+
+  /// Dans la rangee de bureau : a la largeur de son texte, a la place du
+  /// bouton qu'elle remplace (Align sans facteur prendrait toute la rangee).
+  final bool enRangee;
 
   @override
   Widget build(BuildContext context) => Semantics(
     liveRegion: true,
     child: ConstrainedBox(
       constraints: const BoxConstraints(minHeight: AppPage.hauteurBouton),
-      child: Align(alignment: AlignmentDirectional.centerStart, child: child),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        widthFactor: enRangee ? 1 : null,
+        child: child,
+      ),
     ),
   );
 }

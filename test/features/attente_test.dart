@@ -194,6 +194,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // HL-A-5 : l'action est sous la carte d'etat, dans le corps defilant.
+      await tester.ensureVisible(find.text(t.attente.signerLeContrat));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.attente.signerLeContrat));
       await tester.pumpAndSettle();
     }

@@ -334,13 +334,14 @@ void main() {
     final Rect lien = tester.getRect(
       find.text('Terminez les vérifications requises.'),
     );
-    // Ligne d'etat au bord de debut, sous Refuser.
-    // Texte du lien : bord de debut + le retrait de LienFleche (xs, 4).
-    expect(lien.left, closeTo(carte.left + 4, 0.5));
-    expect(
-      lien.top,
-      greaterThan(tester.getRect(find.text('Refuser le dossier')).bottom),
-    );
+    // HL-A-5 : la ligne d'etat a la place exacte de Valider, dans la meme
+    // rangee que Refuser, au bord de fin (texte + retrait de LienFleche).
+    final Rect refuser = tester.getRect(find.text('Refuser le dossier'));
+    // Police de test large : la rangee passe a la ligne ; le Wrap garde
+    // l'ordre (Refuser puis la ligne d'etat) et le bord de fin.
+    expect(lien.right, closeTo(carte.right - 4, 0.5));
+    expect(refuser.right, closeTo(carte.right - 20, 0.5));
+    expect(lien.top, greaterThan(refuser.top));
   });
 
   for (final (String prenom, String texte, bool validerFerme, bool refuserFerme)

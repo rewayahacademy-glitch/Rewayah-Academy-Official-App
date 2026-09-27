@@ -11,6 +11,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -90,27 +91,12 @@ class _AttentePageState extends ConsumerState<AttentePage> {
 
     return PageShell(
       titre: t.attente.titreDossier,
-      actions: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (prochaine != null) ...<Widget>[
-            ActionPrincipale(
-              libelle: prochaine.libelle,
-              onPress: prochaine.chemin != null
-                  ? () => routeur?.go(prochaine.chemin!)
-                  : prochaine.geste,
-              fleche: prochaine.chemin != null,
-            ),
-            Ecart.vMd,
-          ],
-          ActionPrincipale(
-            libelle: t.attente.seDeconnecter,
-            onPress: () =>
-                unawaited(ref.read(serviceAuthProvider).deconnexion()),
-            niveau: NiveauAction.tertiaire,
-          ),
-        ],
+      // HL-A-5 : le pied ne garde que Se deconnecter ; la prochaine action
+      // se place 16 sous la carte d'etat qu'elle confirme.
+      actions: ActionPrincipale(
+        libelle: t.attente.seDeconnecter,
+        onPress: () => unawaited(ref.read(serviceAuthProvider).deconnexion()),
+        niveau: NiveauAction.tertiaire,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -124,8 +110,28 @@ class _AttentePageState extends ConsumerState<AttentePage> {
                 ? _Illisible(erreur: etat.error!)
                 : const _Patience(),
           ),
-          // HL-A-5 (DESIGN-GOV B) : l'action rattachee a la carte d'etat se
-          // place 16 sous elle, au bord de fin, et non dans le pied.
+          // HL-A-5 (DESIGN-GOV B) : les actions rattachees a la carte d'etat
+          // se placent 16 sous elle, au bord de fin, et non dans le pied ;
+          // pleine largeur sur mobile, largeur naturelle au-dela.
+          if (prochaine != null) ...<Widget>[
+            Ecart.vLg,
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              // IntrinsicWidth au-dela du mobile : le Container centre
+              // d'ActionPrincipale s'etirerait sinon (meme remede que 02B).
+              child: _AuContenu(
+                actif: AppGabarit.de(context) != Gabarit.mobile,
+                child: ActionPrincipale(
+                  libelle: prochaine.libelle,
+                  onPress: prochaine.chemin != null
+                      ? () => routeur?.go(prochaine.chemin!)
+                      : prochaine.geste,
+                  fleche: prochaine.chemin != null,
+                  pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
+                ),
+              ),
+            ),
+          ],
           if (etat.value?.etape == EtapeDossier.enVerification) ...<Widget>[
             Ecart.vLg,
             Align(
@@ -142,6 +148,18 @@ class _AttentePageState extends ConsumerState<AttentePage> {
       ),
     );
   }
+}
+
+/// Le bouton a sa largeur naturelle quand [actif].
+class _AuContenu extends StatelessWidget {
+  const _AuContenu({required this.actif, required this.child});
+
+  final bool actif;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      actif ? IntrinsicWidth(child: child) : child;
 }
 
 /// La prochaine action : une route, ou un geste (reessayer).
