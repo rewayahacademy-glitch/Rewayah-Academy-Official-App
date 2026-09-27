@@ -203,4 +203,90 @@ void main() {
       );
     });
   });
+
+  // -------------------------------------------------------------------
+  // MA-5 : la preparation guidee et la salle (Mariam observee ; Idriss
+  // adulte ; texte a 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-5 : preparation et salle', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const List<(String, Size)> tailles = <(String, Size)>[
+      ('390', Size(390, 844)),
+      ('768', Size(768, 1024)),
+      ('1440', Size(1440, 900)),
+    ];
+    for (final (String l, Size taille) in tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('preparation_${l}_${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          await _capturer(
+            tester,
+            'ma5/ma5_preparation_mariam_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              moment: MomentDemoAccessibilite.fenetre,
+              etapeInitiale: EtapeDemoAccessibilite.preparation,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+        testWidgets('salle_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma5/ma5_salle_mariam_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              moment: MomentDemoAccessibilite.fenetre,
+              etapeInitiale: EtapeDemoAccessibilite.salle,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('fenetre_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma5/ma5_fenetre_mariam_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          moment: MomentDemoAccessibilite.fenetre,
+        ),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('salle_idriss_390_dark', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma5/ma5_salle_idriss_390_dark',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.fenetre,
+          etapeInitiale: EtapeDemoAccessibilite.salle,
+        ),
+        const Size(390, 844),
+        mode: ThemeMode.dark,
+      );
+    });
+    for (final String etape in <String>['preparation', 'salle']) {
+      testWidgets('${etape}_390_light_texte200', (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          'ma5/ma5_${etape}_mariam_390_light_texte200',
+          EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.mariam,
+            moment: MomentDemoAccessibilite.fenetre,
+            etapeInitiale: etape == 'salle'
+                ? EtapeDemoAccessibilite.salle
+                : EtapeDemoAccessibilite.preparation,
+          ),
+          const Size(390, 844),
+          echelle: 2,
+        );
+      });
+    }
+  });
 }

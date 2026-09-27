@@ -300,6 +300,7 @@ class VueSeance {
     this.panneau = PanneauOuvert.aucun,
     this.notificationsNonLues = 0,
     this.groupeId,
+    this.tutoiement,
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -400,6 +401,13 @@ class VueSeance {
 
   /// La Classe de la seance : l'entree « Classes » du rail y mene.
   final String? groupeId;
+
+  /// MA-5 : le tutoiement suit la situation (mineur ou adulte), jamais la
+  /// presentation (MA1, deux axes). `null` : le choix par le role (la
+  /// guidee tutoie).
+  final bool? tutoiement;
+
+  bool get _tutoie => tutoiement ?? _guidee;
 
   bool get _enseignant => role == RoleSeance.enseignant;
   bool get _guidee => role == RoleSeance.guidee;
@@ -570,8 +578,10 @@ class VueSeance {
   String? get texteNotice {
     if (!visiteVisible) return null;
     return switch (role) {
-      RoleSeance.eleve => t.salle.seance.votreParentObserve,
-      RoleSeance.guidee => t.salle.seance.tonParentObserve,
+      RoleSeance.eleve || RoleSeance.guidee =>
+        _tutoie
+            ? t.salle.seance.tonParentObserve
+            : t.salle.seance.votreParentObserve,
       // Vague Enseignant : « Un parent observe cette seance », sans prenom
       // (02_DECOUPAGE, detail EN-9 ; choix provisoire consigne au directeur).
       RoleSeance.enseignant => t.salle.seance.unParentObserve,
@@ -686,6 +696,7 @@ class VueSeance {
     List<EleveSeance>? eleves,
     FinSeance? fin,
     PanneauOuvert? panneau,
+    bool? tutoiement,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -711,5 +722,6 @@ class VueSeance {
     panneau: panneau ?? this.panneau,
     notificationsNonLues: notificationsNonLues,
     groupeId: groupeId,
+    tutoiement: tutoiement ?? this.tutoiement,
   );
 }

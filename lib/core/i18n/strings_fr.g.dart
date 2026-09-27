@@ -2989,6 +2989,9 @@ class Traductions$accessibilite$demo$fr {
 	/// fr: 'Avant la séance'
 	String get etatAvant => 'Avant la séance';
 
+	/// fr: 'Juste avant la séance, l'entrée est ouverte'
+	String get etatFenetre => 'Juste avant la séance, l\'entrée est ouverte';
+
 	/// fr: 'Pendant la séance'
 	String get etatPendant => 'Pendant la séance';
 
@@ -13336,6 +13339,7 @@ extension on Traductions {
 			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
 			'accessibilite.demo.eleveAdulte' => 'Idriss, élève adulte',
 			'accessibilite.demo.etatAvant' => 'Avant la séance',
+			'accessibilite.demo.etatFenetre' => 'Juste avant la séance, l\'entrée est ouverte',
 			'accessibilite.demo.etatPendant' => 'Pendant la séance',
 			'accessibilite.demo.etatApres' => 'Après la séance',
 			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'As-salāmu ’alaykum, ${prenom}.',
@@ -13353,9 +13357,9 @@ extension on Traductions {
 			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'Tu es dans la salle. La séance commence dans ${duree}.',
 			'accessibilite.tutoiement.attenteImminent' => 'Tu es dans la salle. La séance commence dans moins d\'une minute.',
 			'accessibilite.tutoiement.annonceAttente' => 'Tu es dans la salle',
-			'accessibilite.tutoiement.horsLigne' => 'Tu es hors ligne. La séance nécessite une connexion.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibilite.tutoiement.horsLigne' => 'Tu es hors ligne. La séance nécessite une connexion.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
@@ -13867,9 +13871,9 @@ extension on Traductions {
 			'admin.demandes.eleves' => ({required Object valeur}) => '${valeur} élèves',
 			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Posée le ${date} : ${motif}',
 			'admin.demandes.sansSurcharge' => 'Cet élève suit la règle de la plateforme.',
-			'admin.demandes.changer' => 'Changer',
 			_ => null,
 		} ?? switch (path) {
+			'admin.demandes.changer' => 'Changer',
 			'admin.demandes.clore' => 'Revenir à la règle de la plateforme',
 			'admin.demandes.historique' => 'Surcharges closes',
 			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '${valeur}, du ${debut} au ${fin}',
@@ -14381,9 +14385,9 @@ extension on Traductions {
 			'admin.agents.parcoursControleur' => 'Contrôle qualité',
 			'admin.agents.parcoursAdmin' => 'Administration',
 			'admin.agents.parcoursComptable' => 'Comptable',
-			'admin.agents.parcoursInconnu' => 'Parcours inconnu',
 			_ => null,
 		} ?? switch (path) {
+			'admin.agents.parcoursInconnu' => 'Parcours inconnu',
 			'admin.agents.etatActif' => 'Actif',
 			'admin.agents.etatRevoque' => 'Révoqué',
 			'admin.agents.etatExpire' => 'Expiré',
@@ -14895,9 +14899,9 @@ extension on Traductions {
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Cours',
 			'eleve.suivi.colonneEnseignant' => 'Enseignant',
-			'eleve.suivi.colonneEtat' => 'Présence',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.suivi.colonneEtat' => 'Présence',
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
@@ -15409,9 +15413,9 @@ extension on Traductions {
 			'enseignant.cahier.objectif' => 'Objectif personnel',
 			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
 			'enseignant.cahier.travailMaison' => 'Devoir à faire',
-			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.suite' => 'La suite pour cet élève',
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
@@ -15923,9 +15927,9 @@ extension on Traductions {
 			'tc.observation.disponibilite.lienAbsent' => 'L\'observation est réservée aux parents des élèves de la séance.',
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Votre enfant n\'est pas dans la séance',
 			'tc.observation.disponibilite.enfantAbsent' => 'L\'observation s\'ouvre quand votre enfant est présent.',
-			'tc.observation.disponibilite.presenceTitre' => 'Présence en cours de vérification',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.disponibilite.presenceTitre' => 'Présence en cours de vérification',
 			'tc.observation.disponibilite.presence' => 'L\'observation s\'ouvre dès que la présence de votre enfant est confirmée.',
 			'tc.observation.disponibilite.visiteOuverteTitre' => 'Une visite est déjà ouverte',
 			'tc.observation.disponibilite.visiteOuverte' => 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.',

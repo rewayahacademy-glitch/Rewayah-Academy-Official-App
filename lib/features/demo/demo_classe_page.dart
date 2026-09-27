@@ -422,6 +422,7 @@ class EcranEleveDemo extends StatelessWidget {
     this.titreDestination,
     this.tutoiement = false,
     this.pied,
+    this.onRejoindre,
     super.key,
   });
 
@@ -440,6 +441,11 @@ class EcranEleveDemo extends StatelessWidget {
   /// Le bas de page de l'hote (MA-4 : Suivi, aide).
   final Widget? pied;
 
+  /// « Rejoindre » de l'hote (MA-5 : la preparation guidee de la
+  /// demonstration du Mode Accessibilite) ; `null` : la preparation de la
+  /// demonstration de Classe.
+  final VoidCallback? onRejoindre;
+
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
@@ -453,9 +459,11 @@ class EcranEleveDemo extends StatelessWidget {
           pied: pied,
           // Le titre de destination n'existe qu'en Mode Accessibilite.
           enPile: titreDestination != null,
-          onRejoindre: (_) => context.go(
-            adressePreparationEleveDemo(PreparationEleveDemo.pret),
-          ),
+          onRejoindre: (_) {
+            final VoidCallback? hote = onRejoindre;
+            if (hote != null) return hote();
+            context.go(adressePreparationEleveDemo(PreparationEleveDemo.pret));
+          },
         ),
       ),
     );

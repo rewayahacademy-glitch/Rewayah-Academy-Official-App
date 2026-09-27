@@ -24,6 +24,9 @@ enum MomentDemoAccessibilite {
   /// Avant la seance.
   avant,
 
+  /// Fenetre ouverte, avant l'heure : l'entree est permise (MA-5).
+  fenetre,
+
   /// Pendant la seance.
   pendant,
 
@@ -82,6 +85,7 @@ abstract final class DonneesAccessibiliteDemo {
   static EtatDemoClasse etatClasse(MomentDemoAccessibilite moment) =>
       switch (moment) {
         MomentDemoAccessibilite.avant => EtatDemoClasse.aVenir,
+        MomentDemoAccessibilite.fenetre => EtatDemoClasse.fenetreOuverte,
         MomentDemoAccessibilite.pendant => EtatDemoClasse.enDirect,
         MomentDemoAccessibilite.apres => EtatDemoClasse.terminee,
       };
@@ -110,4 +114,17 @@ abstract final class DonneesAccessibiliteDemo {
     EleveDemoAccessibilite eleve,
     MomentDemoAccessibilite moment,
   ) => mineur(eleve) && moment == MomentDemoAccessibilite.pendant;
+}
+
+/// L'etape du parcours d'entree dans la demonstration (MA-5) : la Classe,
+/// la preparation guidee, puis la salle.
+enum EtapeDemoAccessibilite {
+  /// Ma classe (ou l'Accueil).
+  classe,
+
+  /// La preparation guidee (CL-4.6).
+  preparation,
+
+  /// La salle pendant la seance.
+  salle,
 }

@@ -610,6 +610,7 @@
       "eleveMineure": "Mariam, élève mineure",
       "eleveAdulte": "Idriss, élève adulte",
       "etatAvant": "Avant la séance",
+      "etatFenetre": "Juste avant la séance, l'entrée est ouverte",
       "etatPendant": "Pendant la séance",
       "etatApres": "Après la séance"
     },

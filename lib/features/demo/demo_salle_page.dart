@@ -272,6 +272,7 @@ class SalleDemo extends StatefulWidget {
     required this.etat,
     required this.onSortir,
     this.titre = TitreEnseignant.sayyid,
+    this.tutoiement,
     super.key,
   });
 
@@ -281,6 +282,9 @@ class SalleDemo extends StatefulWidget {
 
   /// Le titre de l'enseignant de la demonstration (E16).
   final TitreEnseignant titre;
+
+  /// MA-5 : tutoiement selon l'age (mineur ou adulte) ; `null` : par le role.
+  final bool? tutoiement;
 
   @override
   State<SalleDemo> createState() => _SalleDemoState();
@@ -349,6 +353,7 @@ class _SalleDemoState extends State<SalleDemo> {
       support: etat.support == null ? null : _support,
       connexion: _connexion,
       recitation: _recitation,
+      tutoiement: widget.tutoiement,
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en

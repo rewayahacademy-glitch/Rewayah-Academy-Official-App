@@ -21,15 +21,22 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/video/pre_vol.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_eleve/accueil_accessibilite.dart';
+import '../salle/preparation_eleve.dart';
+import '../salle/preparation_enseignant.dart' show ReseauPreparation;
+import '../salle_seance/vue_seance.dart' show RoleSeance;
 import 'accessibilite_demo.dart';
 import 'classe_demo.dart' show EtatDemoClasse;
 import 'demo_classe_page.dart' show EcranEleveDemo;
+import 'demo_salle_page.dart' show SalleDemo;
 import 'mode_demonstration.dart';
+import 'repere_demonstration.dart';
+import 'seance_demo.dart' show EtatDemoSalle;
 
 /// Les routes de la demonstration du Mode Accessibilite : AUCUNE en
 /// production.
@@ -81,6 +88,7 @@ String libelleEleveDemoAccessibilite(EleveDemoAccessibilite eleve) =>
 String libelleMomentDemoAccessibilite(MomentDemoAccessibilite moment) =>
     switch (moment) {
       MomentDemoAccessibilite.avant => t.accessibilite.demo.etatAvant,
+      MomentDemoAccessibilite.fenetre => t.accessibilite.demo.etatFenetre,
       MomentDemoAccessibilite.pendant => t.accessibilite.demo.etatPendant,
       MomentDemoAccessibilite.apres => t.accessibilite.demo.etatApres,
     };
@@ -165,6 +173,7 @@ class EcranAccessibiliteDemo extends StatefulWidget {
     required this.eleve,
     this.moment = MomentDemoAccessibilite.avant,
     this.destinationInitiale = indexMaClasse,
+    this.etapeInitiale = EtapeDemoAccessibilite.classe,
     super.key,
   });
 
@@ -176,6 +185,9 @@ class EcranAccessibiliteDemo extends StatefulWidget {
 
   /// La destination ouverte a l'arrivee (captures de MA-3 : l'Accueil).
   final int destinationInitiale;
+
+  /// L'etape ouverte a l'arrivee (captures de MA-5 : preparation, salle).
+  final EtapeDemoAccessibilite etapeInitiale;
 
   /// L'index de Ma classe dans les destinations de l'eleve.
   static const int indexMaClasse = 1;
@@ -204,11 +216,61 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
     _suivi = false;
   });
 
+  /// MA-5 : « Rejoindre » ouvre la preparation guidee, « Entrer dans la
+  /// classe » la salle ; la sortie de la salle ramene a la Classe.
+  late EtapeDemoAccessibilite _etape = widget.etapeInitiale;
+
+  void _etapeSuivante(EtapeDemoAccessibilite etape) =>
+      setState(() => _etape = etape);
+
+  /// La preparation guidee (CL-4.6) du Mode Accessibilite : la VRAIE
+  /// `PreparationEleve`, tout pret, sans micro ni serveur. Elle defile :
+  /// a 200 %, le bouton de l'etape reste atteignable (aucun pied collant).
+  Widget _preparation() => RepereDemonstration(
+    child: Scaffold(
+      body: SafeArea(
+        child: PreparationEleve(
+          key: const ValueKey<String>('demo-accessibilite-preparation'),
+          guidee: true,
+          resultat: const ResultatPreVol(
+            microDisponible: true,
+            cameraDisponible: true,
+            sortieAudioDisponible: true,
+            permissionRefusee: false,
+          ),
+          reseau: ReseauPreparation.bonne,
+          onEntrer: () => _etapeSuivante(EtapeDemoAccessibilite.salle),
+          onContinuerSansMicro: () =>
+              _etapeSuivante(EtapeDemoAccessibilite.salle),
+          onReessayer: () {},
+          onRetour: () => _etapeSuivante(EtapeDemoAccessibilite.classe),
+        ),
+      ),
+    ),
+  );
+
+  /// La salle en Mode Accessibilite : la VRAIE salle de l'eleve guide
+  /// (`SalleSeance`, role `guidee`), sans navigation d'app. L'observation
+  /// par le tuteur ne concerne que la mineure (MA4) ; tutoiement selon
+  /// l'age.
+  Widget _salle() {
+    final bool mineur = DonneesAccessibiliteDemo.mineur(widget.eleve);
+    return SalleDemo(
+      key: const ValueKey<String>('demo-accessibilite-salle'),
+      role: RoleSeance.guidee,
+      etat: mineur ? EtatDemoSalle.visite : EtatDemoSalle.repos,
+      titre: DonneesAccessibiliteDemo.titre,
+      tutoiement: mineur,
+      onSortir: () => _etapeSuivante(EtapeDemoAccessibilite.classe),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final EtatDemoClasse etatClasse = DonneesAccessibiliteDemo.etatClasse(
       widget.moment,
     );
+    void entrer() => _etapeSuivante(EtapeDemoAccessibilite.preparation);
     // MA-4 : Ma classe avant la seance. Le VRAI Espace Classe (carte CL-4,
     // un seul emplacement d'entree), titre « Ma classe », tutoiement selon
     // l'age ; le Suivi reste atteignable, puis l'aide en dernier (MA14).
@@ -217,6 +279,7 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
       titre: DonneesAccessibiliteDemo.titre,
       titreDestination: t.accessibilite.maClasse.titre,
       tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
+      onRejoindre: entrer,
       pied: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -247,12 +310,18 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
     final Widget classe = EcranEleveDemo(
       etat: etatClasse,
       titre: DonneesAccessibiliteDemo.titre,
+      tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
+      onRejoindre: entrer,
     );
     final List<Destination> destinations = destinationsPour(
       role: AppRole.student,
       mode: DonneesAccessibiliteDemo.presentation,
     );
-    final Widget contenu = widget.moment == MomentDemoAccessibilite.pendant
+    final Widget contenu = _etape == EtapeDemoAccessibilite.salle
+        ? _salle()
+        : _etape == EtapeDemoAccessibilite.preparation
+        ? _preparation()
+        : widget.moment == MomentDemoAccessibilite.pendant
         ? classe
         : NavShell(
             destinations: destinations,
@@ -281,6 +350,7 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                     espace: DonneesAccessibiliteDemo.espaceAccueil(
                       widget.moment,
                     ),
+                    onRejoindre: entrer,
                     onVoirClasse: () =>
                         _aller(EcranAccessibiliteDemo.indexMaClasse),
                     onTache: () => _aller(EcranAccessibiliteDemo.indexMaClasse),
