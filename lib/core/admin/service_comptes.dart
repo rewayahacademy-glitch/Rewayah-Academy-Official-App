@@ -145,7 +145,12 @@ class CompteAdmin {
   }
 
   /// Vrai quand ce compte attend une decision de l'administration.
-  bool get attendUneDecision => etat == AccountStatus.pendingKyc;
+  ///
+  /// Seul un enseignant en attente attend une decision (K-47) : la
+  /// verification d'identite et la validation ne concernent que lui. Un tuteur
+  /// `pending_kyc` ne depose rien et n'attend aucune validation.
+  bool get attendUneDecision =>
+      etat == AccountStatus.pendingKyc && role == AppRole.teacher;
 
   /// Depuis combien de jours ce compte attend, en jours pleins.
   int joursDAttente(DateTime maintenant) =>
