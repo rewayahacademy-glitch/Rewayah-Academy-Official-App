@@ -18,6 +18,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/pressable.dart';
+import '../foyer/photo_eleve.dart';
 import 'actions_seance.dart';
 import 'vue_seance.dart';
 
@@ -288,38 +289,19 @@ class _Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final bool connecte = eleve.statut == StatutEleveSeance.connecte;
-    // Un grapheme entier (lettre arabe avec haraka) ; sans prenom, l'icone.
-    final bool initiale = connecte && eleve.prenom.characters.isNotEmpty;
-    final AppColorPair fond = connecte
-        ? palette.washAccent
-        : palette.surfaceSunken;
     return ExcludeSemantics(
       child: SizedBox.square(
         dimension: _diametre,
         child: Stack(
           clipBehavior: Clip.none,
           children: <Widget>[
+            // E5 et K-44 : la photo de l'eleve par `PhotoEleve`, les
+            // initiales seulement en repli.
             Positioned.fill(
-              child: DecoratedBox(
-                decoration: fond.decoration(
-                  borderRadius: AppRadius.arrondiFull,
-                ),
-                child: Center(
-                  child: initiale
-                      ? Text(
-                          eleve.prenom.characters.first.toUpperCase(),
-                          style: palette.inkAccent.applyTo(
-                            Theme.of(context).textTheme.titleLarge ??
-                                const TextStyle(),
-                          ),
-                        )
-                      : IconTheme(
-                          data: palette.inkMuted.asIconTheme(
-                            size: AppSpacing.xxl,
-                          ),
-                          child: Icon(AppIcons.avatarSansPhoto.actif),
-                        ),
-                ),
+              child: PhotoEleve(
+                prenom: eleve.prenom,
+                cleAvatar: eleve.cleAvatar,
+                diametre: _diametre,
               ),
             ),
             if (!connecte)

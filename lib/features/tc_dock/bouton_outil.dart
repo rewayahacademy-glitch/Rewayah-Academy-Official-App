@@ -52,7 +52,11 @@ class BoutonOutil extends StatelessWidget {
         ? AppSpacing.xxxl
         : AppSpacing.xxl;
 
-    return Pressable(
+    // Doc 04 §28 et §33 n. 13 : sans libelle visible, ou quand l'agrandissement
+    // du texte le coupe, une infobulle le montre (comme `nav_shell`).
+    final bool libelleVisible =
+        avecLibelle && MediaQuery.textScalerOf(context).scale(1) <= 1.3;
+    final Widget bouton = Pressable(
       libelleSemantique: libelle,
       arrondiFocus: AppRadius.arrondiSm,
       onPress: onPress,
@@ -96,5 +100,8 @@ class BoutonOutil extends StatelessWidget {
         ),
       ),
     );
+    return libelleVisible
+        ? bouton
+        : Tooltip(message: libelle, excludeFromSemantics: true, child: bouton);
   }
 }

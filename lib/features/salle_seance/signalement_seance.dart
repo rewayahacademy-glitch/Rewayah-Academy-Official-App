@@ -11,7 +11,13 @@ import 'vue_seance.dart';
 
 /// L'eleve de la seance, tel que la feuille d'EN-4 l'attend. L'identifiant
 /// d'academie quand il est connu ; sinon (demonstration), le prenom.
-EleveFiche eleveFicheDepuisSeance(EleveSeance eleve, VueSeance vue) {
+/// [seanceId] : la seance, que le signalement emporte (doc 04 §22.2) ; nul
+/// en demonstration, ou aucune seance n'existe.
+EleveFiche eleveFicheDepuisSeance(
+  EleveSeance eleve,
+  VueSeance vue, {
+  String? seanceId,
+}) {
   final String id = eleve.id ?? eleve.prenom;
   return EleveFiche(
     membre: MembreSeance(
@@ -20,6 +26,7 @@ EleveFiche eleveFicheDepuisSeance(EleveSeance eleve, VueSeance vue) {
       prenom: eleve.prenom,
     ),
     classe: vue.nomClasse,
+    seanceId: seanceId,
   );
 }
 
@@ -27,5 +34,9 @@ EleveFiche eleveFicheDepuisSeance(EleveSeance eleve, VueSeance vue) {
 Future<void> signalerDepuisSeance(
   BuildContext context,
   EleveSeance eleve,
-  VueSeance vue,
-) => ouvrirSignalement(context, eleveFicheDepuisSeance(eleve, vue));
+  VueSeance vue, {
+  String? seanceId,
+}) => ouvrirSignalement(
+  context,
+  eleveFicheDepuisSeance(eleve, vue, seanceId: seanceId),
+);

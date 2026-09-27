@@ -36,7 +36,12 @@ class EleveFiche {
     required this.membre,
     required this.classe,
     this.projection,
+    this.seanceId,
   });
+
+  /// La seance d'ou part le signalement, si applicable (doc 04 §22.2) :
+  /// nulle hors seance.
+  final String? seanceId;
 
   /// L'eleve, tel que la Classe le connait.
   final MembreSeance membre;
@@ -317,10 +322,22 @@ class SignalementBesoin {
     required this.categorie,
     required this.detailsInternes,
     required this.resumePartageable,
+    required this.classe,
+    required this.horodatage,
+    this.seanceId,
   });
 
   /// L'eleve, prerempli.
   final String studentId;
+
+  /// La Classe, preremplie (doc 04 §22.2, §33 n. 7).
+  final String classe;
+
+  /// La seance, si applicable (doc 04 §22.2).
+  final String? seanceId;
+
+  /// L'horodatage de l'envoi (doc 04 §22.2).
+  final DateTime horodatage;
 
   /// La categorie.
   final CategorieBesoin categorie;
@@ -416,6 +433,9 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           categorie: categorie,
           detailsInternes: _details.text.trim(),
           resumePartageable: _resume.text.trim(),
+          classe: widget.eleve.classe,
+          seanceId: widget.eleve.seanceId,
+          horodatage: DateTime.now(),
         ),
       );
     }

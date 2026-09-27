@@ -599,6 +599,22 @@ class _Resume extends StatelessWidget {
           ),
           Ecart.vSm,
         ],
+        // Doc 04 §20.3 et §33 n. 7 : de quelle seance il s'agit, avant la
+        // phrase de bonne foi (libelle de « A terminer »). Le nom de la
+        // Classe attend EN-BR : le brouillon ne porte que `groupeId`.
+        Text(
+          t.enseignant.journee.cahierDetail(
+            jour: t.commun.dates.jours[brouillon.debut.weekday - 1]
+                .toLowerCase(),
+            numero: '${brouillon.debut.day}',
+            mois: t.commun.dates.mois[brouillon.debut.month - 1],
+            heure:
+                '${brouillon.debut.hour.toString().padLeft(2, '0')}:'
+                '${brouillon.debut.minute.toString().padLeft(2, '0')}',
+          ),
+          style: textes.titleSmall,
+        ),
+        Ecart.vXs,
         // La duree du cahier est celle que la base a calculee, et une seule.
         Text(
           brouillon.minutesInterruption > 0

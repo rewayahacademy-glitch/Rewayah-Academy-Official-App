@@ -12,6 +12,7 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -343,6 +344,15 @@ class _Sorties extends StatelessWidget {
       _Manque.disponibilites => t.enseignant.bienvenue.declarer,
       _Manque.aucun => t.enseignant.bienvenue.ctaJournee,
     };
+    // K-42 (style, regles 2 et 6) : sur bureau, le bouton a sa largeur
+    // naturelle, au bord de fin ; pleine largeur sur telephone.
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
+    Widget borne(Widget bouton) => bureau
+        ? Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: IntrinsicWidth(child: bouton),
+          )
+        : bouton;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -361,16 +371,20 @@ class _Sorties extends StatelessWidget {
           ),
           Ecart.vMd,
         ],
-        ActionPrincipale(
-          libelle: libelle,
-          onPress: () => _allerVers(context, manque, prenom),
+        borne(
+          ActionPrincipale(
+            libelle: libelle,
+            onPress: () => _allerVers(context, manque, prenom),
+          ),
         ),
         if (manque != _Manque.aucun) ...<Widget>[
           Ecart.vMd,
-          ActionPrincipale(
-            libelle: t.enseignant.bienvenue.versJournee,
-            niveau: NiveauAction.tertiaire,
-            onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
+          borne(
+            ActionPrincipale(
+              libelle: t.enseignant.bienvenue.versJournee,
+              niveau: NiveauAction.tertiaire,
+              onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
+            ),
           ),
         ],
       ],

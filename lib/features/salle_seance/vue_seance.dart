@@ -121,7 +121,12 @@ class EleveSeance {
     required this.statut,
     this.fiche,
     this.id,
+    this.cleAvatar,
   });
+
+  /// La cle de sa photo (E5, K-44), `null` sans photo : les initiales en
+  /// repli. Nulle en demonstration, qui n'a aucune photo stockee.
+  final String? cleAvatar;
 
   /// L'identifiant d'academie (`/tc/classe`) : les actions de la fiche
   /// (rappel, recitation) visent un inscrit par lui, jamais par son prenom.

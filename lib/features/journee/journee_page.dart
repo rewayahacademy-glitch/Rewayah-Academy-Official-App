@@ -64,6 +64,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/point_rappel.dart';
@@ -724,6 +725,9 @@ class _ATerminer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    // Doc 04 §11.4 et §33 n. 9 : du plus ancien au plus recent, trois au
+    // plus ; au-dela, « Voir tout » ouvre la liste complete.
+    final List<CahierEnRetard> tries = trierCahiersATerminer(cahiers);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -747,6 +751,20 @@ class _ATerminer extends ConsumerWidget {
               key: const ValueKey<String>('journee-point-rappel'),
               libelle: t.enseignant.journee.rappelCahier,
             ),
+            if (tries.length > maximumATerminer) ...<Widget>[
+              const Spacer(),
+              LienFleche(
+                key: const ValueKey<String>('journee-a-terminer-voir-tout'),
+                libelle: t.tuteur.accueil.voirTout,
+                legende: true,
+                onPress: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext _) =>
+                        _ListeATerminer(cahiers: tries),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
         Ecart.vXs,
@@ -757,9 +775,60 @@ class _ATerminer extends ConsumerWidget {
           ),
         ),
         Ecart.vSm,
-        GroupeReglages(
+        _LignesATerminer(
+          cahiers: tries.take(maximumATerminer).toList(growable: false),
+          enFile: enFile,
+        ),
+      ],
+    );
+  }
+}
+
+/// Les cahiers « A terminer », du plus ancien au plus recent (§11.4).
+List<CahierEnRetard> trierCahiersATerminer(List<CahierEnRetard> cahiers) =>
+    List<CahierEnRetard>.of(cahiers)
+      ..sort((CahierEnRetard a, CahierEnRetard b) => a.debut.compareTo(b.debut));
+
+/// La liste complete « A terminer », ouverte par « Voir tout » (§11.4).
+class _ListeATerminer extends ConsumerWidget {
+  const _ListeATerminer({required this.cahiers});
+
+  final List<CahierEnRetard> cahiers;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return PageShell(
+      titre: t.enseignant.journee.aTerminer,
+      onRetour: () => Navigator.of(context).pop(),
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+          child: _LignesATerminer(
+            // Relue au retour d'un cahier : une ligne validee disparait.
+            cahiers: trierCahiersATerminer(
+              ref.watch(cahiersEnRetardProvider).value ?? cahiers,
+            ),
+            enFile: ref.watch(cahiersEnFileProvider).value ?? const <String>{},
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Une ligne par cahier ; l'appui ouvre le cahier de la seance.
+class _LignesATerminer extends ConsumerWidget {
+  const _LignesATerminer({required this.cahiers, required this.enFile});
+
+  final List<CahierEnRetard> cahiers;
+  final Set<String> enFile;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GroupeReglages(
           lignes: <LigneRubrique>[
-            for (final CahierEnRetard cahier in cahiers.take(maximumATerminer))
+            for (final CahierEnRetard cahier in cahiers)
               LigneRubrique(
                 icone: AppIcons.cahier,
                 libelle: t.enseignant.journee.cahierLigne(
@@ -790,8 +859,6 @@ class _ATerminer extends ConsumerWidget {
                 },
               ),
           ],
-        ),
-      ],
     );
   }
 }

@@ -241,6 +241,7 @@ class _Etroit extends StatelessWidget {
                 child: _Titre(
                   texte: vue.titre,
                   style: theme.textTheme.titleLarge,
+                  lignes: vue.connexion == ConnexionSeance.enLigne ? 2 : 1,
                 ),
               ),
               Ecart.hSm,
@@ -275,17 +276,21 @@ class _Etroit extends StatelessWidget {
 }
 
 class _Titre extends StatelessWidget {
-  const _Titre({required this.texte, required this.style});
+  const _Titre({required this.texte, required this.style, this.lignes = 2});
 
   final String texte;
   final TextStyle? style;
+
+  /// Doc 04 §28, §33 n. 13 : a 200 %, le titre passe sur deux lignes. Une
+  /// seule quand un bloc de secours occupe deja l'ecran etroit.
+  final int lignes;
 
   @override
   Widget build(BuildContext context) => Semantics(
     header: true,
     child: Text(
       texte,
-      maxLines: 1,
+      maxLines: lignes,
       overflow: TextOverflow.ellipsis,
       style: AppPalette.of(context).inkStrong
           .applyTo(style ?? const TextStyle()),

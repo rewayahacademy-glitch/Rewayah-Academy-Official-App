@@ -190,7 +190,7 @@ class BoutonAppel extends StatelessWidget {
               size: tailleIcone,
             ),
           };
-    final Widget bouton = Pressable(
+    final Widget pressable = Pressable(
       onPress: onPress,
       actif: actif,
       focusNode: focusNode,
@@ -223,6 +223,15 @@ class BoutonAppel extends StatelessWidget {
         ],
       ),
     );
+    // Doc 04 §28 et §33 n. 13 : en icone seule, le libelle reste visible en
+    // infobulle (comme `nav_shell`), deja lu par `Pressable`.
+    final Widget bouton = iconeSeule
+        ? Tooltip(
+            message: libelleSemantique ?? libelle,
+            excludeFromSemantics: true,
+            child: pressable,
+          )
+        : pressable;
     final bool? choisi = selectionne;
     return choisi == null ? bouton : Semantics(selected: choisi, child: bouton);
   }
