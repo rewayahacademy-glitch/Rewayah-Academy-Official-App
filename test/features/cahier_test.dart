@@ -293,12 +293,17 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      // EN-12 : la ligne ne montre que le nom humain ; le code est dans la
+      // feuille « Ajuster ».
+      expect(find.text('F1-PHO-01'), findsNothing);
+      await tester.tap(find.text('Les points de sortie du sin'));
+      await tester.pumpAndSettle();
 
       final TextTheme textes = Theme.of(tester.element(find.text('F1-PHO-01')))
           .textTheme;
       final Text code = tester.widget<Text>(find.text('F1-PHO-01'));
       final Text nom = tester.widget<Text>(
-        find.text('Les points de sortie du sin'),
+        find.text('Les points de sortie du sin').last,
       );
       // Le nom humain porte le titre, le code reste un sous-texte : sa taille
       // est celle du petit corps de texte, jamais celle du nom. Interdiction UX

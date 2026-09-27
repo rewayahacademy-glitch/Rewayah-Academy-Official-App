@@ -4,6 +4,8 @@
 // libelle dessous. Quitter est un disque plein d'alerte et passe toujours par
 // une confirmation.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/domain/enums.dart';
@@ -87,6 +89,19 @@ double _tailleIconeAppel(BuildContext context) =>
 /// clair (blanc), prise au jeton et non ecrite en dur.
 final Color _encreClaire = AppPalette.claire().surfaceAlert.onBackground;
 
+/// EN-12 (UX_REVIEW_04 n° 17 d, K-42) : le dock etroit trop serre (390,
+/// 768 a sept boutons) ou le texte agrandi. Les boutons y passent en icone
+/// seule, le libelle reste lu par le lecteur d'ecran, et le disque tient
+/// sa case moins un ecart, sans descendre sous la cible tactile.
+class _DockEtroit extends InheritedWidget {
+  const _DockEtroit({required this.diametre, required super.child});
+
+  final double diametre;
+
+  @override
+  bool updateShouldNotify(_DockEtroit ancien) => ancien.diametre != diametre;
+}
+
 /// Un bouton du dock : cercle, icone, libelle dessous.
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
@@ -124,7 +139,10 @@ class BoutonAppel extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
-    final double diametre = diametreBoutonAppel(context);
+    final _DockEtroit? etroit = context
+        .dependOnInheritedWidgetOfExactType<_DockEtroit>();
+    final bool iconeSeule = etroit != null;
+    final double diametre = etroit?.diametre ?? diametreBoutonAppel(context);
     final double tailleIcone = _tailleIconeAppel(context);
     final BoxDecoration disque = !actif
         ? palette.surfaceRaised.decoration(
@@ -191,15 +209,17 @@ class BoutonAppel extends StatelessWidget {
               ),
             ),
           ),
-          Ecart.vXs,
-          Text(
-            libelle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
-              theme.textTheme.labelMedium ?? const TextStyle(),
+          if (!iconeSeule) ...<Widget>[
+            Ecart.vXs,
+            Text(
+              libelle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
+                theme.textTheme.labelMedium ?? const TextStyle(),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -395,13 +415,30 @@ class DockSeance extends StatelessWidget {
             horizontal: AppSpacing.sm,
             vertical: AppSpacing.md,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            // Chaque bouton prend une part egale : un libelle trop large
-            // (texte agrandi, 320px) s'ellipse au lieu de deborder la ligne.
-            children: <Widget>[
-              for (final Widget bouton in boutons) Expanded(child: bouton),
-            ],
+          child: LayoutBuilder(
+            builder: (BuildContext contexte, BoxConstraints contraintes) {
+              final Widget rangee = Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // Chaque bouton prend une part egale.
+                children: <Widget>[
+                  for (final Widget bouton in boutons) Expanded(child: bouton),
+                ],
+              );
+              if (boutons.isEmpty) return rangee;
+              final double diametre = diametreBoutonAppel(contexte);
+              final double parCase = contraintes.maxWidth / boutons.length;
+              final bool serre = parCase < diametre + AppSpacing.sm;
+              final bool texteAgrandi =
+                  MediaQuery.textScalerOf(contexte).scale(1) > 1;
+              if (!serre && !texteAgrandi) return rangee;
+              // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
+              // moins un ecart, jamais sous la cible tactile.
+              final double reduit = math.max(
+                math.min(diametre, parCase - AppSpacing.xs),
+                AppMetriques.of(contexte).cibleTactile,
+              );
+              return _DockEtroit(diametre: reduit, child: rangee);
+            },
           ),
         ),
       );

@@ -23,6 +23,7 @@ import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/presence/service_presence.dart' show EtatPresence;
+import '../../core/profil/service_acceptations.dart' show Acceptation;
 import '../../core/profil/service_profil_enseignant.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 
@@ -284,7 +285,7 @@ abstract final class DonneesEnseignantDemo {
       prochaineSeance: DateTime(2026, 9, 28, 17, 30),
       eleves: <EleveEnseignantDemo>[
         _eleve('demo-eleve-yusuf', 'Yusuf', 'Page 12'),
-        _eleve('demo-eleve-maryam', 'Maryam', 'Page 9'),
+        _eleve('demo-eleve-maryam', 'Mariam', 'Page 9'),
         _eleve('demo-eleve-adam', 'Adam', 'Page 14', photo: false),
         _eleve('demo-eleve-safiya', 'Safiya', 'Page 11'),
       ],
@@ -446,13 +447,18 @@ abstract final class DonneesEnseignantDemo {
     ];
   }
 
-  /// Les disponibilites hebdomadaires, sans date (E15) : lundi, mardi,
-  /// mercredi et samedi. `jour` suit la convention de [Creneau] (1 = lundi).
+  /// Les disponibilites hebdomadaires, sans date (E15) : du lundi au
+  /// vendredi et le samedi, de quoi tenir tout le rythme des Classes
+  /// proposees (doc 04 §16). `jour` suit la convention de [Creneau]
+  /// (1 = lundi).
   static const List<Creneau> disponibilites = <Creneau>[
     Creneau(jour: 1, heure: 17, fuseau: fuseau),
     Creneau(jour: 1, heure: 18, fuseau: fuseau),
     Creneau(jour: 2, heure: 18, fuseau: fuseau),
     Creneau(jour: 3, heure: 17, fuseau: fuseau),
+    Creneau(jour: 3, heure: 18, fuseau: fuseau),
+    Creneau(jour: 4, heure: 17, fuseau: fuseau),
+    Creneau(jour: 5, heure: 18, fuseau: fuseau),
     Creneau(jour: 6, heure: 10, fuseau: fuseau),
     Creneau(jour: 6, heure: 11, fuseau: fuseau),
   ];
@@ -520,10 +526,30 @@ abstract final class DonneesEnseignantDemo {
   static const ProfilEnseignant profil = ProfilEnseignant(
     prenom: prenom,
     identifiant: identifiant,
+    // EN-12 (E20) : un compte actif a un dossier valide et un pays, coherent
+    // avec son fuseau.
+    pays: 'France',
     langues: <String>['Arabe', 'Français'],
     plafondHeures: 12,
     statutCompte: AccountStatus.active,
+    verification: VerificationEnseignant.validee,
   );
+
+  /// Les pieces signees de l'enseignant (ENS-05), telles que
+  /// `contract_acceptances` les rendrait : un compte actif est passe par la
+  /// signature.
+  static final List<Acceptation> acceptations = <Acceptation>[
+    Acceptation(
+      sorte: SorteContrat.contratEnseignant,
+      version: '2026-09',
+      accepteeLe: DateTime(2026, 9, 1),
+    ),
+    Acceptation(
+      sorte: SorteContrat.accuseEnregistrementControle,
+      version: '2026-09',
+      accepteeLe: DateTime(2026, 9, 1),
+    ),
+  ];
 
   /// Le brouillon du cahier d'Al-Badr, 26 septembre 2026, tel que
   /// `brouillon_cahier()` le rendrait (ENS-04, EN-7) : Nour presente, Idris en

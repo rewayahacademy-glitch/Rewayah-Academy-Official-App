@@ -68,6 +68,7 @@ enum EtatDemoSalle {
 /// Les donnees exactes de la demonstration.
 abstract final class DonneesSeanceDemo {
   static const String classe = 'Classe An-Nour';
+
   /// L'enseignant de la salle, le meme que sur Aujourd'hui et l'Espace
   /// Classe (E16) : « Sayyid Ibrahim » par defaut, pour tous les roles.
   static String enseignantPour(TitreEnseignant titre) =>
@@ -95,7 +96,7 @@ abstract final class DonneesSeanceDemo {
         travailActuel: 'Écoute de la récitation',
       ),
     ),
-    // Fiches fictives de Yusuf et Aicha : leurs lignes (repliees sur les
+    // Fiches fictives de Yusuf et Aïcha : leurs lignes (repliees sur les
     // images) se deplient donc vraiment en demonstration.
     EleveSeance(
       prenom: 'Yusuf',
@@ -201,7 +202,7 @@ abstract final class DonneesSeanceDemo {
   /// La file de recitation de la demonstration (EN-9).
   static const FileRecitation recitation = FileRecitation(
     actif: 'Mariam',
-    suivants: <String>['Yusuf', 'Aicha'],
+    suivants: <String>['Yusuf', 'Aïcha'],
   );
 
   static const FinSeance fin = FinSeance(
@@ -239,7 +240,7 @@ abstract final class DonneesSeanceDemo {
       visite: etat == EtatDemoSalle.visite
           ? const VisiteSeance(prenomEnfant: eleveCourant, concerneMoi: true)
           : null,
-      // La file de recitation (EN-9) : Mariam recite, Yusuf et Aicha a
+      // La file de recitation (EN-9) : Mariam recite, Yusuf et Aïcha a
       // suivre. Des prenoms seulement (cles de demonstration).
       recitation: enseignant && etat == EtatDemoSalle.eleves
           ? recitation

@@ -562,61 +562,84 @@ class _DetailOffrePageEtat extends State<DetailOffrePage> {
     final (String mot, TonEtat ton) = _etat(
       _demandee ? EtatOffreDemo.enAttenteValidation : offre.etat,
     );
+    // K-42 (style, regles 2 et 6) : sur bureau, une colonne bornee et le
+    // bouton dominant a sa largeur naturelle, au bord de fin.
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
 
     return PageShell(
       titre: offre.nom,
       onRetour: () => Navigator.of(context).pop(_demandee),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: StatusPill(libelle: mot, ton: ton),
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+          child: _contenu(context, offre, mot, ton, bureau),
+        ),
+      ),
+    );
+  }
+
+  Widget _contenu(
+    BuildContext context,
+    OffreClasseDemo offre,
+    String mot,
+    TonEtat ton,
+    bool bureau,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: StatusPill(libelle: mot, ton: ton),
+        ),
+        Ecart.vMd,
+        LigneCleValeur(
+          cle: t.enseignant.creneaux.cleNiveau,
+          valeur: '${offre.niveau}',
+        ),
+        LigneCleValeur(
+          cle: t.enseignant.creneaux.cleLangue,
+          valeur: offre.langue,
+        ),
+        ..._resume(offre),
+        LigneCleValeur(
+          cle: t.enseignant.creneaux.cleFuseau,
+          valeur: offre.creneau.fuseau,
+        ),
+        Ecart.vLg,
+        if (_demandee) ...<Widget>[
+          // Succes E7 et doc 04 §16.5, annonce une fois, poliment.
+          Semantics(
+            liveRegion: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  t.enseignant.creneaux.demandeTransmise,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Ecart.vXs,
+                Text(
+                  t.enseignant.creneaux.demandeTransmiseDetail,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
           ),
           Ecart.vMd,
-          LigneCleValeur(
-            cle: t.enseignant.creneaux.cleNiveau,
-            valeur: '${offre.niveau}',
-          ),
-          LigneCleValeur(
-            cle: t.enseignant.creneaux.cleLangue,
-            valeur: offre.langue,
-          ),
-          ..._resume(offre),
-          LigneCleValeur(
-            cle: t.enseignant.creneaux.cleFuseau,
-            valeur: offre.creneau.fuseau,
-          ),
-          Ecart.vLg,
-          if (_demandee) ...<Widget>[
-            // Succes E7 et doc 04 §16.5, annonce une fois, poliment.
-            Semantics(
-              liveRegion: true,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    t.enseignant.creneaux.demandeTransmise,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Ecart.vXs,
-                  Text(
-                    t.enseignant.creneaux.demandeTransmiseDetail,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-            Ecart.vMd,
-            // La demonstration n'envoie rien, et le dit.
-            LocalFeedback(message: t.enseignant.demo.mention, persistant: true),
-          ] else if (offre.etat == EtatOffreDemo.disponible)
-            ActionPrincipale(
+          // La demonstration n'envoie rien, et le dit.
+          LocalFeedback(message: t.enseignant.demo.mention, persistant: true),
+        ] else if (offre.etat == EtatOffreDemo.disponible)
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: ActionPrincipale(
               libelle: t.enseignant.creneaux.reserver,
+              pleineLargeur: !bureau,
               onPress: _confirmer,
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }

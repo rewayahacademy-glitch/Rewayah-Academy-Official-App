@@ -1,6 +1,7 @@
 // EN-4 : ENS-11 Fiche eleve hors seance, ENS-12 Signaler un besoin, et le mot
 // « Cahier a valider » a cote du point de rappel de Mes Classes.
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -131,7 +132,13 @@ void main() {
       await tester.ensureVisible(
         find.text(t.enseignant.signalement.categories.autre),
       );
-      await tester.tap(find.text(t.enseignant.signalement.categories.autre));
+      // EN-12 : une ligne a radio par categorie ; le radio porte le choix.
+      await tester.tap(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is Radio<CategorieBesoin> && w.value == CategorieBesoin.autre,
+        ),
+      );
       await tester.pumpAndSettle();
       expect(
         find.text(t.enseignant.signalement.choisirCategorie),

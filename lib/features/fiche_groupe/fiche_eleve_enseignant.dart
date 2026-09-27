@@ -23,7 +23,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart';
@@ -499,20 +498,26 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
         ),
         Ecart.vSm,
         // Un choix unique en liste, toutes les options visibles (UX_REVIEW_04
-        // n° 13 b) : jamais un menu deroulant cache.
-        ChoiceCardGroup(
-          autoriserSaisieLibre: false,
-          options: <OptionChoix>[
-            for (final CategorieBesoin c in CategorieBesoin.values)
-              OptionChoix(valeur: c.name, libelle: c.libelle, icone: c.icone),
-          ],
-          onChange: (ReponseChoix r) => setState(() {
-            _categorie = r.valeurs.isEmpty
-                ? null
-                : CategorieBesoin.values.byName(r.valeurs.first);
+        // n° 13 b) : jamais un menu deroulant cache. EN-12 (K-42, regles 1
+        // et 4) : une liste groupee compacte, une ligne a radio par
+        // categorie, comme le choix du theme du Compte.
+        RadioGroup<CategorieBesoin>(
+          groupValue: _categorie,
+          onChanged: (CategorieBesoin? c) => setState(() {
+            _categorie = c;
             _erreurCategorie = null;
             if (_erreurDetails != null) _validerDetails();
           }),
+          child: GroupeReglages(
+            lignes: <LigneRubrique>[
+              for (final CategorieBesoin c in CategorieBesoin.values)
+                LigneRubrique(
+                  libelle: c.libelle,
+                  icone: c.icone,
+                  controle: Radio<CategorieBesoin>(value: c),
+                ),
+            ],
+          ),
         ),
         if (_erreurCategorie != null) ...<Widget>[
           Ecart.vSm,

@@ -17,9 +17,9 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
@@ -431,7 +431,7 @@ class _Constat extends StatelessWidget {
                     : t.enseignant.cahier.plusieursExceptions(
                         nombre: '${vue.exceptions.length}',
                       ),
-                eleves: <Widget>[
+                eleves: <LigneRubrique>[
                   for (final ParticipantBrouillon p in vue.exceptions)
                     _ligne(p, brouillon),
                 ],
@@ -440,7 +440,7 @@ class _Constat extends StatelessWidget {
             ? null
             : _Section(
                 titre: t.enseignant.cahier.nominaux,
-                eleves: <Widget>[
+                eleves: <LigneRubrique>[
                   for (final ParticipantBrouillon p in vue.nominaux)
                     _ligne(p, brouillon),
                 ],
@@ -489,13 +489,39 @@ class _Constat extends StatelessWidget {
     );
   }
 
-  Widget _ligne(ParticipantBrouillon p, BrouillonCahier brouillon) =>
-      _LigneEleve(
-        participant: p,
-        brouillon: brouillon,
-        decision: decisions[p.membre.studentId],
-        onAjuster: lectureSeule ? null : () => unawaited(onAjuster(p)),
-      );
+  /// K-42 (style, regle 4) : une ligne par eleve dans un groupe, jamais une
+  /// carte par eleve. Prenom et pastille de presence, une seule ligne douce
+  /// (l'exception consignee, le devoir ou la lecture) ; le detail est dans
+  /// la feuille « Ajuster ».
+  LigneRubrique _ligne(ParticipantBrouillon p, BrouillonCahier brouillon) {
+    final VuePresence presence = VuePresence.depuis(
+      ligne: ligneDePresence(participant: p, brouillon: brouillon),
+      maintenant: brouillon.fin,
+    );
+    final DecisionEleve? d = decisions[p.membre.studentId];
+    final String? devoir = d?.travailMaison;
+    final String? legende = d != null && !d.confirme
+        ? t.enseignant.cahier.exceptionConsignee
+        : devoir != null
+        ? '${t.enseignant.cahier.travailMaison} : $devoir'
+        : p.unite?.nomHumain;
+    return LigneRubrique(
+      // La photo s'affiche chez l'enseignant (E5) ; les initiales en repli
+      // tant que le brouillon ne porte pas de cle d'avatar.
+      meneur: PhotoEleve(
+        prenom: p.membre.libelle,
+        cleAvatar: null,
+        diametre: AppSpacing.section,
+      ),
+      libelle: p.membre.libelle,
+      legende: legende,
+      marque: StatusPill(
+        libelle: LignePresence.libelle(presence.etat),
+        ton: presence.ton,
+      ),
+      onPress: lectureSeule ? null : () => unawaited(onAjuster(p)),
+    );
+  }
 }
 
 /// Le resume de la seance : le rappel s'il reste a valider, la duree, le
@@ -600,13 +626,13 @@ class _Resume extends StatelessWidget {
   }
 }
 
-/// Une section d'eleves : un titre, une ligne douce, puis les blocs.
+/// Une section d'eleves : un titre, une ligne douce, puis un seul groupe.
 class _Section extends StatelessWidget {
   const _Section({required this.titre, required this.eleves, this.sousTitre});
 
   final String titre;
   final String? sousTitre;
-  final List<Widget> eleves;
+  final List<LigneRubrique> eleves;
 
   @override
   Widget build(BuildContext context) {
@@ -627,10 +653,7 @@ class _Section extends StatelessWidget {
           ),
         ],
         Ecart.vSm,
-        for (int i = 0; i < eleves.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vLg,
-          eleves[i],
-        ],
+        GroupeReglages(lignes: eleves),
       ],
     );
   }
@@ -697,115 +720,6 @@ class _Actions extends StatelessWidget {
 
 /// Le bloc d'un eleve : sa photo, sa presence preremplie, puis son
 /// evaluation (K-45, point 3) : performance, faiblesses, devoir a faire.
-class _LigneEleve extends StatelessWidget {
-  const _LigneEleve({
-    required this.participant,
-    required this.brouillon,
-    required this.decision,
-    required this.onAjuster,
-  });
-
-  final ParticipantBrouillon participant;
-  final BrouillonCahier brouillon;
-  final DecisionEleve? decision;
-  final VoidCallback? onAjuster;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle discret = palette.inkMuted.applyTo(
-      textes.bodySmall ?? const TextStyle(),
-    );
-    final UniteCurriculum? unite = participant.unite;
-    final DecisionEleve? d = decision;
-    final String? devoir = d?.travailMaison;
-
-    return AppCard(
-      onPress: onAjuster,
-      libelleSemantique: onAjuster == null
-          ? null
-          : t.enseignant.cahier.ajusterPour(eleve: participant.membre.libelle),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // La photo s'affiche chez l'enseignant (E5) ; les initiales en
-          // repli tant que le brouillon ne porte pas de cle d'avatar.
-          PhotoEleve(
-            prenom: participant.membre.libelle,
-            cleAvatar: null,
-            diametre: AppSpacing.section,
-          ),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                LignePresence(
-                  nom: participant.membre.libelle,
-                  vue: VuePresence.depuis(
-                    ligne: ligneDePresence(
-                      participant: participant,
-                      brouillon: brouillon,
-                    ),
-                    maintenant: brouillon.fin,
-                  ),
-                  afficherConsolide: false,
-                ),
-                Ecart.vXs,
-                Text(participant.membre.identifiantImmuable, style: discret),
-                if (unite != null) ...<Widget>[
-                  Ecart.vSm,
-                  // Le nom humain seul fait titre ; le code technique reste
-                  // un sous-texte discret.
-                  Text(unite.nomHumain, style: textes.bodyMedium),
-                  Text(unite.codeTechnique, style: discret),
-                ],
-                if (participant.position case final position?) ...<Widget>[
-                  Ecart.vSm,
-                  Text(
-                    t.enseignant.cahier.position(
-                      sourate: '${position.sourate}',
-                      verset: '${position.verset}',
-                    ),
-                    style: discret,
-                  ),
-                ],
-                if (d != null && !d.confirme) ...<Widget>[
-                  Ecart.vSm,
-                  Text(
-                    t.enseignant.cahier.exceptionConsignee,
-                    style: textes.bodyMedium,
-                  ),
-                ],
-                if (d?.pointPhonetique != null) ...<Widget>[
-                  Ecart.vXs,
-                  Text(t.enseignant.cahier.pointPhonetiqueNote, style: discret),
-                ],
-                // EN-7 : echelle attendue du directeur. Performance et
-                // faiblesses (K-45, point 3) : ni le doc 04 §20 ni la planche 4
-                // ne donnent d'echelle ni de mots. L'emplacement reste vide.
-                const SizedBox.shrink(
-                  key: ValueKey<String>('cahier-emplacement-performance'),
-                ),
-                const SizedBox.shrink(
-                  key: ValueKey<String>('cahier-emplacement-faiblesses'),
-                ),
-                Ecart.vSm,
-                Text(
-                  '${t.enseignant.cahier.travailMaison} : '
-                  '${devoir ?? t.enseignant.cahier.devoirAucun}',
-                  style: discret,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// La feuille de reglage d'un eleve.
 ///
 /// **La correction de presence n'est pas redessinee** : c'est
@@ -853,11 +767,43 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
     final TextStyle discret = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
+    final ParticipantBrouillon participant = widget.participant;
+    final UniteCurriculum? unite = participant.unite;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // EN-12 (K-42, regle 4) : le detail de l'eleve, sorti de la ligne
+        // du cahier, se lit ici.
+        Text(participant.membre.identifiantImmuable, style: discret),
+        if (unite != null) ...<Widget>[
+          Ecart.vSm,
+          // Le nom humain seul fait titre ; le code technique reste un
+          // sous-texte discret.
+          Text(unite.nomHumain, style: textes.bodyMedium),
+          Text(unite.codeTechnique, style: discret),
+        ],
+        if (participant.position case final position?) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            t.enseignant.cahier.position(
+              sourate: '${position.sourate}',
+              verset: '${position.verset}',
+            ),
+            style: discret,
+          ),
+        ],
+        // EN-7 : echelle attendue du directeur. Performance et faiblesses
+        // (K-45, point 3) : ni le doc 04 §20 ni la planche 4 ne donnent
+        // d'echelle ni de mots. L'emplacement reste vide.
+        const SizedBox.shrink(
+          key: ValueKey<String>('cahier-emplacement-performance'),
+        ),
+        const SizedBox.shrink(
+          key: ValueKey<String>('cahier-emplacement-faiblesses'),
+        ),
+        Ecart.vSection,
         PresenceCorrectionPanneau(
           cible: PresenceCorrectionCible(
             ligne: ligneDePresence(

@@ -210,7 +210,9 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     profilEnseignantProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.profil,
     ),
-    acceptationsProvider.overrideWith((Ref _) async => const <Acceptation>[]),
+    acceptationsProvider.overrideWith(
+      (Ref _) async => DonneesEnseignantDemo.acceptations,
+    ),
     // Photo publique (ENS-05A) : sans photo au depart, un choix et un envoi
     // fictifs qui ne quittent pas l'appareil (K-28).
     photoPubliqueProvider.overrideWith(PhotoPubliqueControleur.new),

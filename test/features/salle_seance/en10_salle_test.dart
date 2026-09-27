@@ -68,8 +68,25 @@ void main() {
         expect(_cle('bouton-supports'), findsOneWidget);
         expect(_cle('dock-partager'), findsOneWidget);
         expect(_cle('dock-outils'), findsOneWidget);
-        expect(find.text(t.salle.micro), findsWidgets);
-        expect(find.text(t.salle.camera), findsWidgets);
+        // EN-12 (17 d) : dock serre, icone seule ; le libelle reste lu.
+        expect(
+          find.bySemanticsLabel(
+            RegExp(
+              '${RegExp.escape(t.salle.fermerMicro)}|'
+              '${RegExp.escape(t.salle.ouvrirMicro)}',
+            ),
+          ),
+          findsWidgets,
+        );
+        expect(
+          find.bySemanticsLabel(
+            RegExp(
+              '${RegExp.escape(t.salle.fermerCamera)}|'
+              '${RegExp.escape(t.salle.ouvrirCamera)}',
+            ),
+          ),
+          findsWidgets,
+        );
         expect(
           find.bySemanticsLabel(
             RegExp(RegExp.escape(LibellesSalleB.ouvrirOutils)),
