@@ -3112,7 +3112,6 @@
     "revue": {
       "titre": "Revue de la Classe",
       "aucuneAnomalie": "Rien ne demande votre attention.",
-      "aucuneAnomalieDetail": "Le calcul des anomalies pédagogiques n'est pas encore ouvert aux enseignants : cette page reste vide jusque-là.",
       "erreur": "La revue n'a pas pu être lue.",
       "erreurDetail": "Cette Classe n'est peut-être pas la vôtre, ou la lecture a échoué.",
       "pasDeDecision": "Vous signalez, l'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.",

@@ -192,7 +192,18 @@ class MesClassesPage extends ConsumerWidget {
       );
     }
 
-    return PageShell(titre: t.enseignant.classes.titre, child: corps);
+    // K-42 (style, regle 6) : sur bureau, une colonne bornee comme ENS-06B,
+    // pour que pastille et chevron restent pres du nom de la Classe.
+    return PageShell(
+      titre: t.enseignant.classes.titre,
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+          child: corps,
+        ),
+      ),
+    );
   }
 }
 

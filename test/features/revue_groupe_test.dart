@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/features/revue_groupe/anomalies_revue.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
@@ -72,8 +73,8 @@ void main() {
       expect(find.text(t.enseignant.revue.aucuneAnomalie), findsOneWidget);
       // Une seule phrase calme (UX_REVIEW_04 ligne 10) : aucun detail.
       expect(
-        find.text(t.enseignant.revue.aucuneAnomalieDetail),
-        findsNothing,
+        tester.widget<EmptyState>(find.byType(EmptyState)).invitation,
+        isNull,
       );
       // Rien a faire, donc aucun bouton : proposer une action serait inviter a
       // inventer un probleme.

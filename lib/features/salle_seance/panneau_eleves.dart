@@ -695,7 +695,7 @@ class FileRecitationSeance extends StatelessWidget {
     );
     final TextStyle fort = palette.inkStrong.applyTo(corps);
     // EN-9b : un bloc compact (intitule, puis une seule ligne « Mariam
-    // recite · A suivre : Yusuf, Aicha »), pour que la fiche depliee et les
+    // recite · A suivre : Yusuf, Aïcha »), pour que la fiche depliee et les
     // inscrits restent a l'ecran sous lui.
     final List<Widget> ligne = <Widget>[
       Text(
@@ -736,10 +736,17 @@ class FileRecitationSeance extends StatelessWidget {
               header: true,
               child: Text(t.salle.seance.fileRecitation, style: discret),
             ),
-            Wrap(
-              spacing: AppSpacing.xs,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: ligne,
+            // Une seule lecture pour toute la ligne, annoncee quand l'eleve
+            // qui recite change (W-413, W-131) ; l'intitule reste a part.
+            MergeSemantics(
+              child: Semantics(
+                liveRegion: true,
+                child: Wrap(
+                  spacing: AppSpacing.xs,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: ligne,
+                ),
+              ),
             ),
           ],
         ),

@@ -8495,9 +8495,6 @@ class Traductions$enseignant$revue$fr {
 	/// fr: 'Rien ne demande votre attention.'
 	String get aucuneAnomalie => 'Rien ne demande votre attention.';
 
-	/// fr: 'Le calcul des anomalies pédagogiques n'est pas encore ouvert aux enseignants : cette page reste vide jusque-là.'
-	String get aucuneAnomalieDetail => 'Le calcul des anomalies pédagogiques n\'est pas encore ouvert aux enseignants : cette page reste vide jusque-là.';
-
 	/// fr: 'La revue n'a pas pu être lue.'
 	String get erreur => 'La revue n\'a pas pu être lue.';
 
@@ -15401,7 +15398,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.indicateurAbsence' => 'Absence récente',
 			'enseignant.revue.titre' => 'Revue de la Classe',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
-			'enseignant.revue.aucuneAnomalieDetail' => 'Le calcul des anomalies pédagogiques n\'est pas encore ouvert aux enseignants : cette page reste vide jusque-là.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
 			'enseignant.revue.erreurDetail' => 'Cette Classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
 			'enseignant.revue.pasDeDecision' => 'Vous signalez, l\'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.',
@@ -15790,9 +15786,9 @@ extension on Traductions {
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
+			'tc.observation.visite.titre' => 'Observation en cours',
 			_ => null,
 		} ?? switch (path) {
-			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',

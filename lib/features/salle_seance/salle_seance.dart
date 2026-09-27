@@ -687,7 +687,11 @@ class _SalleEnseignant extends StatelessWidget {
     final Widget? panneau = switch (vue.panneau) {
       PanneauOuvert.aucun => null,
       PanneauOuvert.eleves => PanneauSeance(
-        titre: t.salle.seance.eleves,
+        // Sur bureau, le bouton « Eleves 1/3 » s'efface devant le panneau
+        // ouvert (K-42, style 3) : le compteur passe dans son en-tete.
+        titre: forme == FormePanneau.colonne
+            ? vue.compteurEleves ?? t.salle.seance.eleves
+            : t.salle.seance.eleves,
         // EN-9 : sur bureau, le panneau Eleves reste ouvert a droite du
         // support ; il ne se ferme pas.
         onFermer: forme == FormePanneau.colonne ? null : actions.onEleves,
@@ -697,10 +701,13 @@ class _SalleEnseignant extends StatelessWidget {
         enfant: PanneauEleves(
           eleves: vue.eleves,
           actions: actions,
-          // File au repos (personne, personne a suivre) : pas de bloc, le
-          // panneau reste celui de CLV-07.
+          // Sur bureau, le panneau droit montre toujours « File de
+          // recitation » (maquettes enseignant, EN-9) ; ailleurs, file au
+          // repos : pas de bloc, le panneau reste celui de CLV-07.
           recitation:
-              vue.recitation.enCours || vue.recitation.suivants.isNotEmpty
+              forme == FormePanneau.colonne ||
+                  vue.recitation.enCours ||
+                  vue.recitation.suivants.isNotEmpty
               ? vue.recitation
               : null,
           large: forme == FormePanneau.colonne,
@@ -1020,6 +1027,12 @@ class _BoutonsPanneaux extends StatelessWidget {
     final String? compteur = vue.compteurEleves;
     if (!vue.voitBoutonsPanneaux || compteur == null) return null;
     if (actions.onEleves == null) return null;
+    // Bureau, panneau Eleves ouvert : il dit deja l'etat et le compteur (son
+    // en-tete), le bouton ne le repete pas (K-42, style 3). R et Echap
+    // restent.
+    if (gabarit == Gabarit.desktop && vue.panneau == PanneauOuvert.eleves) {
+      return null;
+    }
     return _BoutonsPanneaux(
       compteur: compteur,
       onEleves: actions.onEleves,
