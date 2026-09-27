@@ -135,28 +135,59 @@ class BlocBibliotheque extends ConsumerWidget {
         // bureau : `IntrinsicWidth` donne au lien sa largeur naturelle,
         // bornee par la place restante ; a 200 %, titre et lien passent a la
         // ligne au lieu de deborder.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Flexible(
-              flex: 2,
-              child: SectionHeader(titre: titre ?? LibellesGroupe.bibliotheque),
-            ),
-            if (onVoirTout != null) ...<Widget>[
-              Ecart.hLg,
-              Flexible(
+        // MA-4 : a 200 %, deux colonnes coupaient « Bibliotheque » et
+        // « Voir tout » au milieu des mots ; le lien passe sous le titre.
+        if (MediaQuery.textScalerOf(context).scale(1) >= 2)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // Un seul mot plus large que l'ecran a 200 % : il se resserre
+              // au lieu d'etre coupe (aucun mot coupe, MA-4).
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
                 child: IntrinsicWidth(
-                  child: ActionPrincipale(
-                    libelle: LibellesGroupe.bibliothequeVoirTout,
-                    niveau: NiveauAction.tertiaire,
-                    pleineLargeur: false,
-                    onPress: onVoirTout,
+                  child: SectionHeader(
+                    titre: titre ?? LibellesGroupe.bibliotheque,
                   ),
                 ),
               ),
+              if (onVoirTout != null) ...<Widget>[
+                Ecart.vSm,
+                ActionPrincipale(
+                  libelle: LibellesGroupe.bibliothequeVoirTout,
+                  niveau: NiveauAction.tertiaire,
+                  pleineLargeur: false,
+                  onPress: onVoirTout,
+                ),
+              ],
             ],
-          ],
-        ),
+          )
+        else
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
+                flex: 2,
+                child: SectionHeader(
+                  titre: titre ?? LibellesGroupe.bibliotheque,
+                ),
+              ),
+              if (onVoirTout != null) ...<Widget>[
+                Ecart.hLg,
+                Flexible(
+                  child: IntrinsicWidth(
+                    child: ActionPrincipale(
+                      libelle: LibellesGroupe.bibliothequeVoirTout,
+                      niveau: NiveauAction.tertiaire,
+                      pleineLargeur: false,
+                      onPress: onVoirTout,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         Ecart.vMd,
         _Couvertures(
           catalogue: catalogue,

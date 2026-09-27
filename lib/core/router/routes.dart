@@ -510,6 +510,10 @@ abstract final class Routes {
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoControleur = '/demo/controleur';
 
+  /// Le Mode Accessibilite en demonstration (MA-1b) : `?eleve=...&moment=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoAccessibilite = '/demo/accessibilite';
+
   // --- Developpement --------------------------------------------------------
 
   /// Galerie des composants. Compilee seulement avec `--dart-define=GALERIE=true`.

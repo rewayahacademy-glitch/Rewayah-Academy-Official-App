@@ -1,0 +1,442 @@
+// MA-1b : squelette des captures de la vague Mode Accessibilite, complete de
+// MA-2 a MA-12 (recette) pour chaque ecran et ses cas (avant, pendant,
+// apres ; mineur et adulte ; texte a 200 % ; animations reduites). Jamais
+// sans `CAPTURE_DIR` (voir test/capture/LISEZ-MOI.md). Modele :
+// `captures_en_test.dart`. Sortie en un sous-dossier par ecran.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/coran/service_coran.dart'
+    show PositionLecture;
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
+import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
+import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
+import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
+import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
+
+import '../../capture/outil_capture.dart';
+import '../../teaching_core/c/faux/faux_corpus_coran.dart';
+import '../../teaching_core/c/goldens/corpus_reference.dart';
+
+const List<(String, Size)> _tailles = <(String, Size)>[
+  ('390', Size(390, 1900)),
+  ('768', Size(768, 1500)),
+  ('1440', Size(1440, 1100)),
+];
+
+const List<ThemeMode> _themes = <ThemeMode>[ThemeMode.light, ThemeMode.dark];
+
+/// Monte [ecran] en Mode Accessibilite et ecrit son PNG ; [echelle] simule le
+/// texte agrandi, [reduit] les animations reduites.
+Future<void> _capturer(
+  WidgetTester tester,
+  String fichier,
+  Widget ecran,
+  Size taille, {
+  ThemeMode mode = ThemeMode.light,
+  double echelle = 1,
+  bool reduit = false,
+}) async {
+  fixerVueCapture(tester, taille, 1);
+  await tester.pumpWidget(
+    hoteCapture(
+      reduit
+          ? Builder(
+              builder: (BuildContext context) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(disableAnimations: true),
+                child: ecran,
+              ),
+            )
+          : ecran,
+      themeMode: mode,
+      echelleTexte: echelle,
+      interfaceMode: InterfaceMode.enfant,
+    ),
+  );
+  await stabiliser(tester);
+  debugPrint('PNG ${await capturer(tester, fichier)}');
+}
+
+void main() {
+  // -------------------------------------------------------------------
+  // Socle (MA-1b) : la liste de la demonstration et l'ecran de Mariam.
+  // -------------------------------------------------------------------
+  group('Capture MA-1b : socle', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('liste_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma1b/ma1b_liste_${l}_${mode.name}',
+            const DemoAccessibilitePage(),
+            taille,
+            mode: mode,
+          );
+        });
+        testWidgets('mariam_avant_${l}_${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          await _capturer(
+            tester,
+            'ma1b/ma1b_mariam_avant_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('mariam_avant_390_light_texte200_reduit', (
+      WidgetTester tester,
+    ) async {
+      await _capturer(
+        tester,
+        'ma1b/ma1b_mariam_avant_390_light_texte200_reduit',
+        const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+        const Size(390, 2600),
+        echelle: 2,
+        reduit: true,
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // MA-2 : la navigation a 4 destinations (barre, rail, barre laterale).
+  // -------------------------------------------------------------------
+  group('Capture MA-2 : navigation', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in const <(String, Size)>[
+      ('390', Size(390, 844)),
+      ('768', Size(768, 1024)),
+      ('1440', Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('nav_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma2/ma2_nav_mariam_avant_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('nav_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma2/ma2_nav_mariam_avant_390_light_texte200',
+        const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+        const Size(390, 844),
+        echelle: 2,
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // MA-3 : l'Accueil de l'eleve (Mariam avant, Idriss apres, 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-3 : Accueil', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('accueil_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma3/ma3_accueil_mariam_avant_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              destinationInitiale: EcranAccessibiliteDemo.indexAccueil,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('accueil_idriss_apres_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma3/ma3_accueil_idriss_apres_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.apres,
+          destinationInitiale: EcranAccessibiliteDemo.indexAccueil,
+        ),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('accueil_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma3/ma3_accueil_mariam_avant_390_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexAccueil,
+        ),
+        const Size(390, 3400),
+        echelle: 2,
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // MA-4 : Ma classe avant la seance (Mariam ; texte a 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-4 : Ma classe', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('ma_classe_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma4/ma4_ma_classe_mariam_avant_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('ma_classe_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma4/ma4_ma_classe_mariam_avant_390_light_texte200',
+        const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+        const Size(390, 4200),
+        echelle: 2,
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // MA-5 : la preparation guidee et la salle (Mariam observee ; Idriss
+  // adulte ; texte a 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-5 : preparation et salle', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const List<(String, Size)> tailles = <(String, Size)>[
+      ('390', Size(390, 844)),
+      ('768', Size(768, 1024)),
+      ('1440', Size(1440, 900)),
+    ];
+    for (final (String l, Size taille) in tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('preparation_${l}_${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          await _capturer(
+            tester,
+            'ma5/ma5_preparation_mariam_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              moment: MomentDemoAccessibilite.fenetre,
+              etapeInitiale: EtapeDemoAccessibilite.preparation,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+        testWidgets('salle_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma5/ma5_salle_mariam_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              moment: MomentDemoAccessibilite.fenetre,
+              etapeInitiale: EtapeDemoAccessibilite.salle,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('fenetre_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma5/ma5_fenetre_mariam_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          moment: MomentDemoAccessibilite.fenetre,
+        ),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('salle_idriss_390_dark', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma5/ma5_salle_idriss_390_dark',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.fenetre,
+          etapeInitiale: EtapeDemoAccessibilite.salle,
+        ),
+        const Size(390, 844),
+        mode: ThemeMode.dark,
+      );
+    });
+    testWidgets('salle_idriss_1440_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma5/ma5_salle_idriss_1440_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.fenetre,
+          etapeInitiale: EtapeDemoAccessibilite.salle,
+        ),
+        const Size(1440, 900),
+      );
+    });
+    for (final String etape in <String>['preparation', 'salle']) {
+      testWidgets('${etape}_390_light_texte200', (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          'ma5/ma5_${etape}_mariam_390_light_texte200',
+          EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.mariam,
+            moment: MomentDemoAccessibilite.fenetre,
+            etapeInitiale: etape == 'salle'
+                ? EtapeDemoAccessibilite.salle
+                : EtapeDemoAccessibilite.preparation,
+          ),
+          const Size(390, 844),
+          echelle: 2,
+        );
+      });
+    }
+  });
+
+  // -------------------------------------------------------------------
+  // MA-6 : apres la seance (Mariam tutoyee ; Idriss vouvoye ; 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-6 : apres la seance', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('apres_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma6/ma6_apres_mariam_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              moment: MomentDemoAccessibilite.apres,
+            ),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('apres_idriss_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma6/ma6_apres_idriss_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          moment: MomentDemoAccessibilite.apres,
+        ),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('apres_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma6/ma6_apres_mariam_390_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          moment: MomentDemoAccessibilite.apres,
+        ),
+        const Size(390, 1900),
+        echelle: 2,
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // MA-7 : le Coran autour du rendu (entree avec reprise ; lecteur ouvert
+  // en verset agrandi par « Lecture en grand texte » ; 200 %). Corpus de
+  // reference des tests, rendu du Coran intouche.
+  // -------------------------------------------------------------------
+  group('Capture MA-7 : Coran', skip: sautSansCapture, () {
+    late CorpusReference reference;
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      reference = CorpusReference.charger();
+    });
+    List<Override> corpus() => <Override>[
+      portCorpusCoranProvider.overrideWithValue(FauxCorpusCoran(reference)),
+      portLayoutMushafProvider.overrideWithValue(
+        const LayoutLignesIndisponible(),
+      ),
+      portNavigationCoranProvider.overrideWithValue(
+        FauxNavigationCoran(
+          personnelle: PositionLecture(
+            page: reference.pages.last.numero,
+            sourate: 1,
+            verset: 1,
+          ),
+        ),
+      ),
+    ];
+    Widget ecran(EleveDemoAccessibilite eleve) => EcranAccessibiliteDemo(
+      eleve: eleve,
+      destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+      surchargesCoran: corpus(),
+    );
+    Future<void> ouvrir(WidgetTester tester, String fichier) async {
+      ProviderScope.containerOf(
+        tester.element(find.byType(EcranAccessibiliteDemo)),
+      ).read(preferencesLocalesProvider.notifier).lectureGrande(true);
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('coran-ma-principale')),
+      );
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      debugPrint('PNG ${await capturer(tester, fichier)}');
+    }
+
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('coran_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma7/ma7_coran_mariam_${l}_${mode.name}',
+            ecran(EleveDemoAccessibilite.mariam),
+            taille,
+            mode: mode,
+          );
+          await ouvrir(
+            tester,
+            'ma7/ma7_coran_lecteur_mariam_${l}_${mode.name}',
+          );
+        });
+      }
+    }
+    testWidgets('coran_idriss_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma7/ma7_coran_idriss_390_light',
+        ecran(EleveDemoAccessibilite.idriss),
+        const Size(390, 1900),
+      );
+    });
+    testWidgets('coran_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma7/ma7_coran_mariam_390_light_texte200',
+        ecran(EleveDemoAccessibilite.mariam),
+        const Size(390, 1900),
+        echelle: 2,
+      );
+      await ouvrir(tester, 'ma7/ma7_coran_lecteur_mariam_390_light_texte200');
+    });
+  });
+}

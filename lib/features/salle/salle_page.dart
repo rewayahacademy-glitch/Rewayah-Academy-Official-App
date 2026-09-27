@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -485,6 +486,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       impasse: _impasse,
     );
     final bool enImpasse = vue.phase == PhaseSalle.refus;
+    // MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+    // registre `salle` (celle que `PageImmersive` pose en fond), comme le
+    // controleur (CT-3). Les autres roles gardent leur rendu (HU-1).
+    final bool encreAccessible =
+        vue.role == RoleSalle.eleve &&
+        ref.watch(modeAccessibiliteActifProvider);
 
     // **`.value`, et surtout pas un filtrage par le type de l'AsyncValue**
     // (piege de l'etape 3, Riverpod 3). Les trois cas qui rendent `null` --
@@ -569,6 +576,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       registre: RegistreImmersif.salle,
       entete: _Entete(
         vue: vue,
+        encreAccessible: encreAccessible,
         monTuteurObserve: monTuteurObserve,
         annonces: annonces,
         // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
@@ -587,11 +595,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // impasse n'est pas une salle, rien n'y est enregistre. Partout ailleurs
       // il est present, y compris pendant l'attente : la regle se lit donc
       // AVANT que le micro puisse s'ouvrir.
-      bandeau: enImpasse ? null : _Bandeaux(vue: vue),
+      bandeau: enImpasse
+          ? null
+          : _Bandeaux(vue: vue, encreAccessible: encreAccessible),
       commandes: enImpasse
           ? null
           : _Commandes(
               vue: vue,
+              encreAccessible: encreAccessible,
               onMicro: _basculerMicro,
               onCamera: _basculerCamera,
               onQuitter: () => _quitter(vue),
@@ -599,6 +610,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       child: enImpasse
           ? _Impasse(
               cause: vue.cause,
+              encreAccessible: encreAccessible,
               onReessayer: _entrer,
               onRentrer: _rentrer,
             )
@@ -615,7 +627,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               lignes: lignes,
               seanceId: widget.seanceId,
             )
-          : _Corps(vue: vue, lignes: lignes),
+          : _Corps(vue: vue, lignes: lignes, encreAccessible: encreAccessible),
     );
   }
 }
@@ -635,6 +647,7 @@ class _Entete extends StatelessWidget {
     this.monTuteurObserve = false,
     this.annonces = const <AnnonceObservation>[],
     this.onVoirPresence,
+    this.encreAccessible = false,
   });
 
   final VueSalle vue;
@@ -653,6 +666,10 @@ class _Entete extends StatelessWidget {
   /// Ouvre la liste de presence, quand elle ne tient pas en colonne.
   final VoidCallback? onVoirPresence;
 
+  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
+  final bool encreAccessible;
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -660,7 +677,10 @@ class _Entete extends StatelessWidget {
     final String? attente = _attenteDe(vue);
 
     if (attente != null) {
-      return Text(attente, style: textes.labelLarge ?? const TextStyle());
+      return Text(
+        attente,
+        style: _encreSalle(context, textes.labelLarge, active: encreAccessible),
+      );
     }
 
     final (String, TonEtat) etatDuLien = _etatDuLien(vue);
@@ -686,7 +706,11 @@ class _Entete extends StatelessWidget {
                   vue.qualite == QualiteLien.perdue
                       ? t.salle.lienPerdu
                       : t.salle.lienMediocre,
-                  style: textes.labelMedium ?? const TextStyle(),
+                  style: _encreSalle(
+                    context,
+                    textes.labelMedium,
+                    active: encreAccessible,
+                  ),
                 ),
               ),
             ],
@@ -702,7 +726,11 @@ class _Entete extends StatelessWidget {
                 libelleSemantique: t.presence.voir,
                 child: Text(
                   t.presence.titre,
-                  style: textes.labelMedium ?? const TextStyle(),
+                  style: _encreSalle(
+                    context,
+                    textes.labelMedium,
+                    active: encreAccessible,
+                  ),
                 ),
               ),
             ],
@@ -712,7 +740,10 @@ class _Entete extends StatelessWidget {
         // (specification d'etape section 7, `ELV-03`).
         if (mienne case final VuePresence etat) ...<Widget>[
           Ecart.vSm,
-          LignePresence(nom: t.presence.mienne, vue: etat),
+          _SurLaSalle(
+            active: encreAccessible,
+            child: LignePresence(nom: t.presence.mienne, vue: etat),
+          ),
         ],
         // **L'enfant apprend que son tuteur regarde, ici aussi.** Il y a DEUX
         // salles cote eleve : celle-ci, ou mene « Rejoindre » depuis l'accueil
@@ -917,9 +948,13 @@ class _SupportAgrandi extends StatelessWidget {
 
 /// Le bandeau permanent, et le rappel propre a qui observe.
 class _Bandeaux extends StatelessWidget {
-  const _Bandeaux({required this.vue});
+  const _Bandeaux({required this.vue, this.encreAccessible = false});
 
   final VueSalle vue;
+
+  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
+  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -967,7 +1002,7 @@ class _Bandeaux extends StatelessWidget {
             ton: TonEtat.accent,
             icone: AppIcons.microCoupe,
           ),
-        const PermanentNotice(),
+        _SurLaSalle(active: encreAccessible, child: const PermanentNotice()),
       ],
     );
   }
@@ -1179,10 +1214,18 @@ class _CorpsEnseignant extends StatelessWidget {
 
 /// La scene, et la presence quand l'ecran a la place de la garder ouverte.
 class _Corps extends StatelessWidget {
-  const _Corps({required this.vue, required this.lignes});
+  const _Corps({
+    required this.vue,
+    required this.lignes,
+    this.encreAccessible = false,
+  });
 
   final VueSalle vue;
   final List<_Presence> lignes;
+
+  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
+  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -1190,13 +1233,15 @@ class _Corps extends StatelessWidget {
     final bool colonne = gabarit.estLarge && vue.voitLesParticipants;
 
     if (!colonne) {
-      return _Scene(vue: vue);
+      return _Scene(vue: vue, encreAccessible: encreAccessible);
     }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Expanded(child: _Scene(vue: vue)),
+        Expanded(
+          child: _Scene(vue: vue, encreAccessible: encreAccessible),
+        ),
         SizedBox(
           // Une largeur de chrome, deja posee pour la barre laterale : la
           // reutiliser evite d'en inventer une seconde.
@@ -1237,9 +1282,13 @@ class _Corps extends StatelessWidget {
 /// etait deja mesure a deux, par le test d'invisibilite du controleur, ou une
 /// vignette de 96x128 ne contenait pas son propre bloc « sans image ».
 class _Scene extends StatelessWidget {
-  const _Scene({required this.vue});
+  const _Scene({required this.vue, this.encreAccessible = false});
 
   final VueSalle vue;
+
+  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
+  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -1265,7 +1314,7 @@ class _Scene extends StatelessWidget {
       children: <Widget>[
         Positioned.fill(
           child: distants.isEmpty
-              ? _Seul(role: vue.role)
+              ? _Seul(role: vue.role, encreAccessible: encreAccessible)
               : _Galerie(participants: distants),
         ),
         if (moi case final ParticipantSalle local)
@@ -1506,9 +1555,13 @@ class _SansImage extends StatelessWidget {
 
 /// Seul dans la salle.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role});
+  const _Seul({required this.role, this.encreAccessible = false});
 
   final RoleSalle role;
+
+  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
+  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -1540,13 +1593,21 @@ class _Seul extends StatelessWidget {
             Text(
               phrase.$1,
               textAlign: TextAlign.center,
-              style: textes.titleMedium ?? const TextStyle(),
+              style: _encreSalle(
+                context,
+                textes.titleMedium,
+                active: encreAccessible,
+              ),
             ),
             Ecart.vSm,
             Text(
               phrase.$2,
               textAlign: TextAlign.center,
-              style: textes.bodyMedium ?? const TextStyle(),
+              style: _encreSalle(
+                context,
+                textes.bodyMedium,
+                active: encreAccessible,
+              ),
             ),
           ],
         ),
@@ -1713,9 +1774,14 @@ class _Commandes extends StatelessWidget {
     required this.onMicro,
     required this.onCamera,
     required this.onQuitter,
+    this.encreAccessible = false,
   });
 
   final VueSalle vue;
+
+  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
+  final bool encreAccessible;
   final Future<void> Function(bool ouvert) onMicro;
   final Future<void> Function(bool ouverte) onCamera;
   final Future<void> Function() onQuitter;
@@ -1736,6 +1802,7 @@ class _Commandes extends StatelessWidget {
         // absence ne pose pas la question.
         if (vue.peutParler)
           _Commande(
+            encreDuRegistre: encreAccessible,
             icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
             libelle: t.salle.micro,
             acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
@@ -1744,6 +1811,7 @@ class _Commandes extends StatelessWidget {
           ),
         if (vue.peutMontrer)
           _Commande(
+            encreDuRegistre: encreAccessible,
             icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
             libelle: t.salle.camera,
             acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
@@ -1751,6 +1819,7 @@ class _Commandes extends StatelessWidget {
             onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null,
           ),
         _Commande(
+          encreDuRegistre: encreAccessible,
           icone: AppIcons.sortie,
           libelle: t.salle.quitter,
           acte: t.salle.quitterLeCours,
@@ -1790,10 +1859,10 @@ class _Commande extends StatelessWidget {
   final bool actif;
   final VoidCallback? onPress;
 
-  /// CT-3 : le mot sous le cercle prend l'encre de la paire du registre
-  /// `salle` (`surfaceInverse`), lisible sur le fond de la salle en clair
-  /// comme en sombre. Reserve aux commandes du controleur : les autres roles
-  /// gardent leur rendu (harmonisation HU-1).
+  /// Le mot sous le cercle prend l'encre de la paire du registre `salle`
+  /// (`surfaceInverse`), lisible sur le fond de la salle en clair comme en
+  /// sombre. Reserve aux commandes du controleur (CT-3) et a l'eleve en Mode
+  /// Accessibilite (MA-5) : les autres roles gardent leur rendu (HU-1).
   final bool encreDuRegistre;
 
   @override
@@ -1837,11 +1906,11 @@ class _Commande extends StatelessWidget {
               libelle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: encreDuRegistre
-                  ? palette.surfaceInverse.applyTo(
-                      textes.labelSmall ?? const TextStyle(),
-                    )
-                  : textes.labelSmall ?? const TextStyle(),
+              style: _encreSalle(
+                context,
+                textes.labelSmall,
+                active: encreDuRegistre,
+              ),
             ),
           ],
         ),
@@ -1856,11 +1925,16 @@ class _Impasse extends StatelessWidget {
     required this.cause,
     required this.onReessayer,
     required this.onRentrer,
+    this.encreAccessible = false,
   });
 
   final CauseImpasse cause;
   final Future<void> Function() onReessayer;
   final VoidCallback onRentrer;
+
+  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
+  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
+  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -1893,13 +1967,21 @@ class _Impasse extends StatelessWidget {
             Text(
               dit.$1,
               textAlign: TextAlign.center,
-              style: textes.titleMedium ?? const TextStyle(),
+              style: _encreSalle(
+                context,
+                textes.titleMedium,
+                active: encreAccessible,
+              ),
             ),
             Ecart.vSm,
             Text(
               dit.$2,
               textAlign: TextAlign.center,
-              style: textes.bodyMedium ?? const TextStyle(),
+              style: _encreSalle(
+                context,
+                textes.bodyMedium,
+                active: encreAccessible,
+              ),
             ),
             Ecart.vXxl,
             // Une seule action principale : reessayer quand cela a un sens,
@@ -2013,6 +2095,43 @@ class _PreparationEleveBranchee extends ConsumerWidget {
           onReessayer: () => ref
             ..invalidate(preVolProvider)
             ..invalidate(horsLigneProvider),
+        ),
+      ),
+    );
+  }
+}
+
+/// MA-5 : un style de texte avec l'encre du registre `salle`
+/// (`surfaceInverse`) quand [active] ; le style du theme sinon.
+TextStyle _encreSalle(
+  BuildContext context,
+  TextStyle? style, {
+  required bool active,
+}) {
+  final TextStyle base = style ?? const TextStyle();
+  return active ? AppPalette.of(context).surfaceInverse.applyTo(base) : base;
+}
+
+/// MA-5 : un composant partage fait pour une surface claire se pose, pour
+/// l'eleve en Mode Accessibilite, sur la surface des vignettes
+/// (`surfaceSunken`), comme la colonne de presence du controleur (CT-3).
+class _SurLaSalle extends StatelessWidget {
+  const _SurLaSalle({required this.active, required this.child});
+
+  final bool active;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!active) return child;
+    final AppColorPair sunken = AppPalette.of(context).surfaceSunken;
+    return DecoratedBox(
+      decoration: sunken.decoration(),
+      child: IconTheme.merge(
+        data: IconThemeData(color: sunken.onBackground),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: child,
         ),
       ),
     );

@@ -76,6 +76,17 @@ class ZoneSupport extends StatelessWidget {
       serre: serre,
       panneau: vue.panneau != PanneauOuvert.aucun,
     );
+    // A 200 % (texte agrandi, Mode Accessibilite compris), telephone et web
+    // etroit : la vignette posee en coin laisserait au titre une colonne si
+    // etroite que les mots s'y couperaient (« Chapitr / e 1 »). Elle passe
+    // alors au-dessus du texte, qui prend toute la largeur et ne revient a
+    // la ligne qu'entre les mots (MA-5). A 100 %, rien ne change.
+    final bool pile =
+        contenu == null &&
+        !aCote &&
+        video &&
+        gabarit != Gabarit.desktop &&
+        MediaQuery.textScalerOf(context).scale(1) * zoom >= _seuilPile;
     // La carte lit le theme clair, quel que soit le theme de l'ecran.
     final Widget carte = Theme(
       data: AppTheme.pour(mode, Brightness.light),
@@ -107,13 +118,37 @@ class ZoneSupport extends StatelessWidget {
                         horizontal: marges.x,
                         vertical: marges.y,
                       ),
-                      child: _Contenu(
-                        support: support,
-                        gabarit: gabarit,
-                        marges: marges,
-                        largeurVignette: aCote || !video ? 0 : largeurVignette,
-                        encadreACote: colonneGuidee,
-                        sousVolet: vue.panneau != PanneauOuvert.aucun,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          if (pile) ...<Widget>[
+                            Align(
+                              alignment: AlignmentDirectional.topEnd,
+                              // La video garde le theme de l'ecran.
+                              child: Theme(
+                                data: Theme.of(context),
+                                child: VignetteVideo(
+                                  key: const ValueKey<String>(
+                                    'vignette-support-pile',
+                                  ),
+                                  vue: vue,
+                                  largeur: largeurVignette,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: marges.ecartTitre),
+                          ],
+                          _Contenu(
+                            support: support,
+                            gabarit: gabarit,
+                            marges: marges,
+                            largeurVignette: aCote || !video || pile
+                                ? 0
+                                : largeurVignette,
+                            encadreACote: colonneGuidee && !pile,
+                            sousVolet: vue.panneau != PanneauOuvert.aucun,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -133,7 +168,7 @@ class ZoneSupport extends StatelessWidget {
                     defilement
                   else
                     Positioned.fill(child: defilement),
-                  if (!aCote && video)
+                  if (!aCote && video && !pile)
                     PositionedDirectional(
                       top: marges.retraitVignette,
                       end: marges.retraitVignette,
@@ -205,6 +240,10 @@ class _Serti extends StatelessWidget {
 
 /// L'epaisseur du cadre qui sertit la carte en desktop.
 const double _serti = AppSpacing.sm;
+
+/// L'echelle de texte (zoom local compris) a partir de laquelle la vignette
+/// passe au-dessus du texte, hors desktop (MA-5).
+const double _seuilPile = 1.5;
 
 /// Un fondu en bas de la zone qui defile : une ligne coupee par l'arrondi de
 /// la carte s'efface au lieu de s'arreter net. Sa hauteur egale la plus

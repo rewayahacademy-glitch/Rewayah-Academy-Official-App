@@ -84,6 +84,8 @@ class EmplacementEntree {
   /// est vrai pendant le pre-vol de cette seance. [accesInverifiable] est
   /// vrai quand la fenetre est ouverte mais qu'aucune seance n'est
   /// materialisee (aucun `sessionId`) : on ne peut pas y entrer.
+  /// [tutoiement] est vrai pour l'eleve mineur en Mode Accessibilite (MA4) :
+  /// les phrases qui s'adressent a lui le tutoient ; un adulte est vouvoye.
   factory EmplacementEntree.pour({
     required RoleEntree role,
     required SessionClockVM? horloge,
@@ -93,11 +95,14 @@ class EmplacementEntree {
     bool lectureEchouee = false,
     bool preparationEnCours = false,
     bool accesInverifiable = false,
+    bool tutoiement = false,
   }) {
     final String? dst = _avisDst(horloge?.noticeDst);
     if (horsLigne || lectureEchouee) {
       final String texte = horsLigne
-          ? t.classe.entree.horsLigne
+          ? (tutoiement
+                ? t.accessibilite.tutoiement.horsLigne
+                : t.classe.entree.horsLigne)
           : t.classe.entree.indisponible;
       return EmplacementEntree(
         role: role,
@@ -167,10 +172,16 @@ class EmplacementEntree {
         role,
         EtatEntree.attente,
         nomClasse,
-        detail: imminent
+        detail: tutoiement
+            ? (imminent
+                  ? t.accessibilite.tutoiement.attenteImminent
+                  : t.accessibilite.tutoiement.attente(duree: duree))
+            : imminent
             ? t.classe.entree.attenteImminent
             : t.classe.entree.attente(duree: duree),
-        annonce: t.classe.entree.annonce.attente,
+        annonce: tutoiement
+            ? t.accessibilite.tutoiement.annonceAttente
+            : t.classe.entree.annonce.attente,
         dst: dst,
       ),
       PhaseSeance.enCours => _bouton(

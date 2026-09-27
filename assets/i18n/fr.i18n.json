@@ -625,6 +625,56 @@
     "horsLigne": "Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
     "caseRequise": "Cochez la case pour continuer."
   },
+  "accessibilite": {
+    "demo": {
+      "titre": "Démonstration du Mode Accessibilité",
+      "mention": "Données fictives, aucun envoi.",
+      "intro": "Choisissez un élève et un moment de la séance.",
+      "eleveMineure": "Mariam, élève mineure",
+      "eleveAdulte": "Idriss, élève adulte",
+      "etatAvant": "Avant la séance",
+      "etatFenetre": "Juste avant la séance, l'entrée est ouverte",
+      "etatPendant": "Pendant la séance",
+      "etatApres": "Après la séance"
+    },
+    "accueil": {
+      "salutation": "As-salāmu ’alaykum, {prenom}.",
+      "prochaineSeance": "Prochaine séance",
+      "avec": "avec {nomme}",
+      "voirMaClasse": "Voir ma classe",
+      "lireCoran": "Lire le Coran",
+      "lireCoranDetail": "Accéder au Mushaf",
+      "aide": "Besoin d'aide ?"
+    },
+    "coran": {
+      "ouvrir": "Ouvrir le Coran",
+      "reprendre": "Reprendre là où tu t'es arrêté(e)",
+      "reprendreVous": "Reprendre là où vous vous êtes arrêté(e)",
+      "reprendreDetail": "Tu en étais page {page}.",
+      "reprendreDetailVous": "Vous en étiez page {page}.",
+      "lectureGrande": "Le Coran s'ouvre en lecture agrandie, verset par verset.",
+      "retour": "Retour à l'entrée du Coran"
+    },
+    "maClasse": {
+      "titre": "Ma classe",
+      "suivi": "Mon suivi",
+      "suiviDetail": "Les séances passées et la présence"
+    },
+    "tutoiement": {
+      "tonHeure": "Ton heure",
+      "attenteDetail": "Ce temps d'attente ne compte pas dans ta présence.",
+      "attente": "Tu es dans la salle. La séance commence dans {duree}.",
+      "attenteImminent": "Tu es dans la salle. La séance commence dans moins d'une minute.",
+      "annonceAttente": "Tu es dans la salle",
+      "horsLigne": "Tu es hors ligne. La séance nécessite une connexion.",
+      "finPhrase": "Tu peux retrouver ton travail dans ta Classe."
+    },
+    "apres": {
+      "revoirSupport": "Revoir le support du cours",
+      "revoirSupportDetail": "Le support reste dans ta Classe.",
+      "revoirSupportDetailVous": "Le support reste dans votre Classe."
+    }
+  },
   "accuse": {
     "titre": "À savoir avant de commencer",
     "compris": "J'ai compris"
@@ -2069,7 +2119,9 @@
   "nav": {
     "eleve": {
       "accueil": "Accueil",
+      "maClasse": "Ma classe",
       "coran": "Coran",
+      "monEspace": "Mon espace",
       "suivi": "Suivi",
       "compte": "Compte"
     },

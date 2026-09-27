@@ -34,7 +34,15 @@ class PhotoEnseignant extends StatelessWidget {
     super.key,
     this.urlSignee,
     this.diametre,
+    this.repliInitiales = false,
   });
+
+  /// Vrai sur un ecran de l'eleve (Accueil du Mode Accessibilite, MA-3) :
+  /// une photo manquante y montre les initiales, comme `PhotoEleve` cote
+  /// famille. Le manque est une donnee pour l'enseignant et l'administration,
+  /// jamais un avertissement pour un enfant. Faux partout ailleurs : l'etat
+  /// « photo manquante » reste explicite (D-01).
+  final bool repliInitiales;
 
   /// L'enseignant concerne.
   final EnseignantVM enseignant;
@@ -47,10 +55,10 @@ class PhotoEnseignant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!enseignant.photoManquante) {
+    if (!enseignant.photoManquante || repliInitiales) {
       return AvatarTile(
         prenom: enseignant.nomAffichage,
-        urlSignee: urlSignee,
+        urlSignee: enseignant.photoManquante ? null : urlSignee,
         diametre: diametre,
       );
     }

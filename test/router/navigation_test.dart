@@ -80,21 +80,25 @@ String _lieu(GoRouter routeur) => lieu(routeur);
 
 void main() {
   group('destinationsPour : une barre par role, jamais plus de quatre', () {
-    test('un eleve en mode enfant n a aucune destination (ADR-009)', () {
-      final List<Destination> rien = destinationsPour(
-        role: AppRole.student,
-        mode: InterfaceMode.enfant,
-      );
-      expect(rien, isEmpty);
+    // MA-2 (27/09/2026) remplace l'ancienne regle « aucune destination en
+    // mode enfant » : les memes quatre dans les deux presentations (Q1).
+    test('un eleve a les memes destinations dans les deux presentations', () {
+      List<String> chemins(InterfaceMode mode) =>
+          destinationsPour(role: AppRole.student, mode: mode)
+              .map((Destination d) => d.chemin)
+              .toList();
+      expect(chemins(InterfaceMode.enfant), hasLength(4));
+      expect(chemins(InterfaceMode.enfant), chemins(InterfaceMode.standard));
     });
 
     test('les chemins des destinations sont exactement ceux du role', () {
       final Map<AppRole, List<String>> attendus = <AppRole, List<String>>{
-        // L'eleve et l'enseignant : inchanges (non-regression).
+        // L'eleve (MA-2) : Accueil, Ma classe, Coran, Mon espace, sur les
+        // routes existantes.
         AppRole.student: <String>[
           Routes.eleve,
-          Routes.eleveCoran,
           Routes.eleveSuivi,
+          Routes.eleveCoran,
           Routes.compte,
         ],
         // Le tuteur : Accueil, Foyer, Historique, Compte, dans cet ordre, sur
@@ -504,15 +508,15 @@ void main() {
       expect(find.byType(AccueilElevePage), findsOneWidget);
       for (final String libelle in <String>[
         t.nav.eleve.accueil,
+        t.nav.eleve.maClasse,
         t.nav.eleve.coran,
-        t.nav.eleve.suivi,
-        t.nav.eleve.compte,
+        t.nav.eleve.monEspace,
       ]) {
         expect(find.text(libelle), findsOneWidget, reason: libelle);
       }
-      // Compte n'a pas de branche : la barre le rejoint par `go`, et non
+      // Mon espace n'a pas de branche : la barre le rejoint par `go`, et non
       // par `goBranch` sur un index absent (C01 3.3-6).
-      await tester.tap(find.text(t.nav.eleve.compte));
+      await tester.tap(find.text(t.nav.eleve.monEspace));
       await _stabiliser(tester);
       expect(_lieu(routeur), Routes.compte);
       expect(find.byType(ComptePage), findsOneWidget);

@@ -61,6 +61,7 @@ import '../../features/controleur/garde_controle.dart';
 import '../../features/controleur/historique_controleur_page.dart';
 import '../../features/controleur/observation_controle_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
+import '../../features/demo/demo_accessibilite_page.dart';
 import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
@@ -302,10 +303,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // Eleve. Meme arborescence en mode enfant et en mode standard : c'est ce
-      // que chaque ecran AFFICHE qui change, jamais la structure (ADR-009). La
-      // barre a trois destinations en mode standard, zero en mode enfant :
-      // `destinationsPour` decide ce qui est rendu, les branches existent dans
-      // les deux modes.
+      // que chaque ecran AFFICHE qui change, jamais la structure (ADR-009).
+      // MA-2 : quatre destinations dans les deux presentations (Accueil, Ma
+      // classe, Coran, Mon espace) ; les branches suivent l'ordre de
+      // `destinationsPour` (Accueil, Ma classe = `/eleve/suivi`, Coran), Mon
+      // espace (`/compte`) n'a pas de branche. Aucun chemin ne change.
       StatefulShellRoute.indexedStack(
         builder:
             (BuildContext _, GoRouterState etat, StatefulNavigationShell n) =>
@@ -327,6 +329,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRoute(
+                path: Routes.eleveSuivi,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const SuiviElevePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <GoRoute>[
+              GoRoute(
                 path: Routes.eleveCoran,
                 // Pointe sur le nouveau moteur Mushaf (Teaching Core, lot C) :
                 // arbitrage entérine au plan d'integration section 3.1 point
@@ -334,15 +345,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 // nouveau moteur ». `sessionId` reste nul : hors classe.
                 builder: (BuildContext _, GoRouterState _) =>
                     const MushafPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: <GoRoute>[
-              GoRoute(
-                path: Routes.eleveSuivi,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const SuiviElevePage(),
               ),
             ],
           ),
@@ -1157,6 +1159,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoClasse(Env.environnement),
       ...routesDemoEnseignant(Env.environnement),
       ...routesDemoControleur(Env.environnement),
+      ...routesDemoAccessibilite(Env.environnement),
     ],
   );
 });
@@ -1250,9 +1253,8 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
 /// destinations.
 ///
 /// Le role est connu par construction de la route : chaque coquille est câblée
-/// a un seul role. Le mode d'interface, lui, est lu dans la session : un eleve
-/// en mode enfant obtient zero destination, `NavShell` rend alors l'ecran sans
-/// le moindre chrome, sur les memes branches (ADR-009).
+/// a un seul role. Depuis MA-2, l'eleve garde ses quatre destinations dans
+/// les deux presentations, sur les memes branches (ADR-009).
 /// Le chrome d'un role autour d'un ecran **hors** de sa barre.
 ///
 /// `ADM-06`, `ADM-07` et `ADM-08` ne sont pas des destinations de premier

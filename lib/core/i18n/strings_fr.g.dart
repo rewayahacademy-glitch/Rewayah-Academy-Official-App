@@ -52,6 +52,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$connexion$fr connexion = Traductions$connexion$fr.internal(_root);
 	late final Traductions$inscription$fr inscription = Traductions$inscription$fr.internal(_root);
 	late final Traductions$contrat$fr contrat = Traductions$contrat$fr.internal(_root);
+	late final Traductions$accessibilite$fr accessibilite = Traductions$accessibilite$fr.internal(_root);
 	late final Traductions$accuse$fr accuse = Traductions$accuse$fr.internal(_root);
 	late final Traductions$consentement$fr consentement = Traductions$consentement$fr.internal(_root);
 	late final Traductions$kyc$fr kyc = Traductions$kyc$fr.internal(_root);
@@ -806,6 +807,21 @@ class Traductions$contrat$fr {
 
 	/// fr: 'Cochez la case pour continuer.'
 	String get caseRequise => 'Cochez la case pour continuer.';
+}
+
+// Path: accessibilite
+class Traductions$accessibilite$fr {
+	Traductions$accessibilite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$accessibilite$demo$fr demo = Traductions$accessibilite$demo$fr.internal(_root);
+	late final Traductions$accessibilite$accueil$fr accueil = Traductions$accessibilite$accueil$fr.internal(_root);
+	late final Traductions$accessibilite$coran$fr coran = Traductions$accessibilite$coran$fr.internal(_root);
+	late final Traductions$accessibilite$maClasse$fr maClasse = Traductions$accessibilite$maClasse$fr.internal(_root);
+	late final Traductions$accessibilite$tutoiement$fr tutoiement = Traductions$accessibilite$tutoiement$fr.internal(_root);
+	late final Traductions$accessibilite$apres$fr apres = Traductions$accessibilite$apres$fr.internal(_root);
 }
 
 // Path: accuse
@@ -3033,6 +3049,168 @@ class Traductions$inscription$recap$fr {
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
+}
+
+// Path: accessibilite.demo
+class Traductions$accessibilite$demo$fr {
+	Traductions$accessibilite$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration du Mode Accessibilité'
+	String get titre => 'Démonstration du Mode Accessibilité';
+
+	/// fr: 'Données fictives, aucun envoi.'
+	String get mention => 'Données fictives, aucun envoi.';
+
+	/// fr: 'Choisissez un élève et un moment de la séance.'
+	String get intro => 'Choisissez un élève et un moment de la séance.';
+
+	/// fr: 'Mariam, élève mineure'
+	String get eleveMineure => 'Mariam, élève mineure';
+
+	/// fr: 'Idriss, élève adulte'
+	String get eleveAdulte => 'Idriss, élève adulte';
+
+	/// fr: 'Avant la séance'
+	String get etatAvant => 'Avant la séance';
+
+	/// fr: 'Juste avant la séance, l'entrée est ouverte'
+	String get etatFenetre => 'Juste avant la séance, l\'entrée est ouverte';
+
+	/// fr: 'Pendant la séance'
+	String get etatPendant => 'Pendant la séance';
+
+	/// fr: 'Après la séance'
+	String get etatApres => 'Après la séance';
+}
+
+// Path: accessibilite.accueil
+class Traductions$accessibilite$accueil$fr {
+	Traductions$accessibilite$accueil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'As-salāmu ’alaykum, {prenom}.'
+	String salutation({required Object prenom}) => 'As-salāmu ’alaykum, ${prenom}.';
+
+	/// fr: 'Prochaine séance'
+	String get prochaineSeance => 'Prochaine séance';
+
+	/// fr: 'avec {nomme}'
+	String avec({required Object nomme}) => 'avec ${nomme}';
+
+	/// fr: 'Voir ma classe'
+	String get voirMaClasse => 'Voir ma classe';
+
+	/// fr: 'Lire le Coran'
+	String get lireCoran => 'Lire le Coran';
+
+	/// fr: 'Accéder au Mushaf'
+	String get lireCoranDetail => 'Accéder au Mushaf';
+
+	/// fr: 'Besoin d'aide ?'
+	String get aide => 'Besoin d\'aide ?';
+}
+
+// Path: accessibilite.coran
+class Traductions$accessibilite$coran$fr {
+	Traductions$accessibilite$coran$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir le Coran'
+	String get ouvrir => 'Ouvrir le Coran';
+
+	/// fr: 'Reprendre là où tu t'es arrêté(e)'
+	String get reprendre => 'Reprendre là où tu t\'es arrêté(e)';
+
+	/// fr: 'Reprendre là où vous vous êtes arrêté(e)'
+	String get reprendreVous => 'Reprendre là où vous vous êtes arrêté(e)';
+
+	/// fr: 'Tu en étais page {page}.'
+	String reprendreDetail({required Object page}) => 'Tu en étais page ${page}.';
+
+	/// fr: 'Vous en étiez page {page}.'
+	String reprendreDetailVous({required Object page}) => 'Vous en étiez page ${page}.';
+
+	/// fr: 'Le Coran s'ouvre en lecture agrandie, verset par verset.'
+	String get lectureGrande => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.';
+
+	/// fr: 'Retour à l'entrée du Coran'
+	String get retour => 'Retour à l\'entrée du Coran';
+}
+
+// Path: accessibilite.maClasse
+class Traductions$accessibilite$maClasse$fr {
+	Traductions$accessibilite$maClasse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ma classe'
+	String get titre => 'Ma classe';
+
+	/// fr: 'Mon suivi'
+	String get suivi => 'Mon suivi';
+
+	/// fr: 'Les séances passées et la présence'
+	String get suiviDetail => 'Les séances passées et la présence';
+}
+
+// Path: accessibilite.tutoiement
+class Traductions$accessibilite$tutoiement$fr {
+	Traductions$accessibilite$tutoiement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ton heure'
+	String get tonHeure => 'Ton heure';
+
+	/// fr: 'Ce temps d'attente ne compte pas dans ta présence.'
+	String get attenteDetail => 'Ce temps d\'attente ne compte pas dans ta présence.';
+
+	/// fr: 'Tu es dans la salle. La séance commence dans {duree}.'
+	String attente({required Object duree}) => 'Tu es dans la salle. La séance commence dans ${duree}.';
+
+	/// fr: 'Tu es dans la salle. La séance commence dans moins d'une minute.'
+	String get attenteImminent => 'Tu es dans la salle. La séance commence dans moins d\'une minute.';
+
+	/// fr: 'Tu es dans la salle'
+	String get annonceAttente => 'Tu es dans la salle';
+
+	/// fr: 'Tu es hors ligne. La séance nécessite une connexion.'
+	String get horsLigne => 'Tu es hors ligne. La séance nécessite une connexion.';
+
+	/// fr: 'Tu peux retrouver ton travail dans ta Classe.'
+	String get finPhrase => 'Tu peux retrouver ton travail dans ta Classe.';
+}
+
+// Path: accessibilite.apres
+class Traductions$accessibilite$apres$fr {
+	Traductions$accessibilite$apres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Revoir le support du cours'
+	String get revoirSupport => 'Revoir le support du cours';
+
+	/// fr: 'Le support reste dans ta Classe.'
+	String get revoirSupportDetail => 'Le support reste dans ta Classe.';
+
+	/// fr: 'Le support reste dans votre Classe.'
+	String get revoirSupportDetailVous => 'Le support reste dans votre Classe.';
 }
 
 // Path: consentement.texte
@@ -6332,8 +6510,14 @@ class Traductions$nav$eleve$fr {
 	/// fr: 'Accueil'
 	String get accueil => 'Accueil';
 
+	/// fr: 'Ma classe'
+	String get maClasse => 'Ma classe';
+
 	/// fr: 'Coran'
 	String get coran => 'Coran';
+
+	/// fr: 'Mon espace'
+	String get monEspace => 'Mon espace';
 
 	/// fr: 'Suivi'
 	String get suivi => 'Suivi';
@@ -14050,13 +14234,49 @@ extension on Traductions {
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
+			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
+			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
+			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
+			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
+			'accessibilite.demo.eleveAdulte' => 'Idriss, élève adulte',
+			_ => null,
+		} ?? switch (path) {
+			'accessibilite.demo.etatAvant' => 'Avant la séance',
+			'accessibilite.demo.etatFenetre' => 'Juste avant la séance, l\'entrée est ouverte',
+			'accessibilite.demo.etatPendant' => 'Pendant la séance',
+			'accessibilite.demo.etatApres' => 'Après la séance',
+			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'As-salāmu ’alaykum, ${prenom}.',
+			'accessibilite.accueil.prochaineSeance' => 'Prochaine séance',
+			'accessibilite.accueil.avec' => ({required Object nomme}) => 'avec ${nomme}',
+			'accessibilite.accueil.voirMaClasse' => 'Voir ma classe',
+			'accessibilite.accueil.lireCoran' => 'Lire le Coran',
+			'accessibilite.accueil.lireCoranDetail' => 'Accéder au Mushaf',
+			'accessibilite.accueil.aide' => 'Besoin d\'aide ?',
+			'accessibilite.coran.ouvrir' => 'Ouvrir le Coran',
+			'accessibilite.coran.reprendre' => 'Reprendre là où tu t\'es arrêté(e)',
+			'accessibilite.coran.reprendreVous' => 'Reprendre là où vous vous êtes arrêté(e)',
+			'accessibilite.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}.',
+			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}.',
+			'accessibilite.coran.lectureGrande' => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.',
+			'accessibilite.coran.retour' => 'Retour à l\'entrée du Coran',
+			'accessibilite.maClasse.titre' => 'Ma classe',
+			'accessibilite.maClasse.suivi' => 'Mon suivi',
+			'accessibilite.maClasse.suiviDetail' => 'Les séances passées et la présence',
+			'accessibilite.tutoiement.tonHeure' => 'Ton heure',
+			'accessibilite.tutoiement.attenteDetail' => 'Ce temps d\'attente ne compte pas dans ta présence.',
+			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'Tu es dans la salle. La séance commence dans ${duree}.',
+			'accessibilite.tutoiement.attenteImminent' => 'Tu es dans la salle. La séance commence dans moins d\'une minute.',
+			'accessibilite.tutoiement.annonceAttente' => 'Tu es dans la salle',
+			'accessibilite.tutoiement.horsLigne' => 'Tu es hors ligne. La séance nécessite une connexion.',
+			'accessibilite.tutoiement.finPhrase' => 'Tu peux retrouver ton travail dans ta Classe.',
+			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
+			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta Classe.',
+			'accessibilite.apres.revoirSupportDetailVous' => 'Le support reste dans votre Classe.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
 			'consentement.texte.titre' => 'Les visites des parents',
 			'consentement.texte.quiResponsable' => 'Les parents des élèves présents peuvent observer brièvement la séance.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.texte.quiResponsableDetail' => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.',
 			'consentement.texte.quiAdulte' => 'Les parents des autres élèves présents peuvent observer brièvement la séance.',
 			'consentement.texte.quiAdulteDetail' => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.',
@@ -14533,6 +14753,8 @@ extension on Traductions {
 			'dossiers.revue.etats.accesPerdu' => 'Vous n’avez plus accès à ce dossier.',
 			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
 			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
 			'dossiers.revue.etats.modifie' => 'Ce dossier a changé depuis son ouverture.',
@@ -14569,8 +14791,6 @@ extension on Traductions {
 			'dossiers.refus.tropLong' => 'Le motif dépasse la longueur autorisée.',
 			'dossiers.refus.envoi' => 'Refus en cours…',
 			'dossiers.refus.erreur' => 'Le dossier n\'a pas pu être refusé.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.refus.horsLigne' => 'Vous êtes hors ligne. Le refus n’a pas été envoyé.',
 			'dossiers.refus.inconnu' => 'Le résultat du refus n’est pas encore confirmé.',
 			'dossiers.refus.interdit' => 'Vous ne pouvez plus refuser ce dossier.',
@@ -15047,6 +15267,8 @@ extension on Traductions {
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
 			'admin.journal.evenements.observationEntree' => 'Visite d\'observation commencée',
 			'admin.journal.evenements.observationSortie' => 'Visite d\'observation terminée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Règles d\'observation de la classe modifiées',
 			'admin.observations.titre' => 'Observations',
 			'admin.observations.titrePage' => 'Historique des observations',
@@ -15083,8 +15305,6 @@ extension on Traductions {
 			'admin.observations.ligne' => ({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visite ${rang} du ${date}, ${tuteur} pour ${eleve}, ${classe}, entrée ${entree}, sortie ${sortie}, durée ${duree}, ${statut}',
 			'admin.observations.fuseau' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
 			'admin.observations.indisponibleTitre' => 'Historique des observations indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'admin.observations.indisponiblePhrase' => 'La lecture des visites d\'observation n\'est pas encore ouverte dans l\'application.',
 			'admin.observations.videTitre' => 'Aucune visite enregistrée',
 			'admin.observations.videPhrase' => 'Les visites d\'observation des tuteurs s\'afficheront ici.',
@@ -15308,7 +15528,9 @@ extension on Traductions {
 			'parcours.renoncerMotif' => 'La famille a changé d\'horaire depuis le parcours',
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
+			'nav.eleve.maClasse' => 'Ma classe',
 			'nav.eleve.coran' => 'Coran',
+			'nav.eleve.monEspace' => 'Mon espace',
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
 			'nav.tuteur.accueil' => 'Accueil',
@@ -15559,6 +15781,8 @@ extension on Traductions {
 			'historique.moisCourts.11' => 'déc.',
 			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
+			_ => null,
+		} ?? switch (path) {
 			'historique.plage' => ({required Object debut, required Object fin}) => '${debut} - ${fin}',
 			'historique.duree.secondes' => ({required Object s}) => '${s} s',
 			'historique.duree.minutes' => ({required Object m}) => '${m} min',
@@ -15597,8 +15821,6 @@ extension on Traductions {
 			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Séance du ${date}, ${classe}, ${etat}',
 			'historique.observations.indisponibleTitre' => 'Historique des observations indisponible',
 			'historique.observations.indisponiblePhrase' => 'Les visites enregistrées ne peuvent pas encore être lues dans l\'application.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observations.videTitre' => 'Aucune observation',
 			'historique.observations.videPhrase' => ({required Object prenom}) => 'Les visites que vous faites pendant les séances de ${prenom} s\'afficheront ici.',
 			'historique.observations.videPhraseFoyer' => 'Vos visites pendant les séances s\'afficheront ici.',
@@ -16073,6 +16295,8 @@ extension on Traductions {
 			'enseignant.journee.coursEnCours' => 'Séance en direct',
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.minuteurImminent' => 'Ça commence',
 			'enseignant.journee.jusqua' => ({required Object heure}) => 'Jusqu\'à ${heure}',
 			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '${jour}, à ${heure}',
@@ -16111,8 +16335,6 @@ extension on Traductions {
 			'enseignant.journee.enAttenteLibelle' => 'élèves en attente sur vos heures',
 			'enseignant.journee.enAttenteLibelleUn' => 'élève en attente sur vos heures',
 			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
 			'enseignant.journee.aTerminerAide' => 'Le cahier aide vos élèves et vous permet d\'ajuster le prochain cours.',
@@ -16587,6 +16809,8 @@ extension on Traductions {
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
 			'tc.bibliotheque.type.image' => 'Image',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.type.lecon' => 'Leçon',
 			'tc.bibliotheque.detail.titre' => 'Support',
 			'tc.bibliotheque.detail.capacites' => 'Ce que ce support permet',
@@ -16625,8 +16849,6 @@ extension on Traductions {
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',

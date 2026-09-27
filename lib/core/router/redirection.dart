@@ -55,7 +55,9 @@ String? deciderRedirection({
           cheminDemande == Routes.demoEnseignant ||
           cheminDemande.startsWith('${Routes.demoEnseignant}/') ||
           cheminDemande == Routes.demoControleur ||
-          cheminDemande.startsWith('${Routes.demoControleur}/'))) {
+          cheminDemande.startsWith('${Routes.demoControleur}/') ||
+          cheminDemande == Routes.demoAccessibilite ||
+          cheminDemande.startsWith('${Routes.demoAccessibilite}/'))) {
     return null;
   }
 
