@@ -313,7 +313,7 @@ void main() {
       expect(_commande(t.salle.ouvrirCamera), findsOneWidget);
     });
 
-    testWidgets('un observateur et un controleur n ont que la sortie', (
+    testWidgets('observateur et controleur : ni micro ni camera', (
       WidgetTester tester,
     ) async {
       for (final String role in <String>[

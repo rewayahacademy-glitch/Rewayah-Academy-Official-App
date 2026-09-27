@@ -23,6 +23,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../salle_seance/libelles_salle_b.dart';
+import 'espaces_compte.dart';
 
 /// Le portail commun du compte, accessible depuis tous les roles actifs.
 ///
@@ -36,6 +37,11 @@ class ComptePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final SessionState session = ref.watch(sessionProvider);
     final _CompteProjection projection = _CompteProjection.depuis(session);
+    // Le cumul d'espaces vient d'une projection explicite (CT-9, BR-1) ; par
+    // defaut, un seul espace et la liste de lecture ci-dessous.
+    final bool plusieursEspaces = ref.watch(
+      espacesCompteProvider.select((EspacesCompte e) => e.plusieurs),
+    );
 
     return PageShell(
       titre: t.compte.titre,
@@ -76,15 +82,18 @@ class ComptePage extends ConsumerWidget {
               icon: AppIcons.foyer,
               onPress: () => context.go(Routes.tuteurFoyer),
             ),
-          SettingRow(
-            title: t.compte.appareils,
-            description: t.compte.appareilsDetail,
-            icon: AppIcons.appareil,
-            onPress: projection.afficheFoyer
-                ? () => context.push(Routes.tuteurFoyer)
-                : null,
-            enabled: projection.afficheFoyer,
-          ),
+          // Minimisation (C8, CT-9) : le controle ne montre ni appareils ni
+          // foyer, pas meme une ligne inerte.
+          if (projection.afficheAppareils)
+            SettingRow(
+              title: t.compte.appareils,
+              description: t.compte.appareilsDetail,
+              icon: AppIcons.appareil,
+              onPress: projection.afficheFoyer
+                  ? () => context.push(Routes.tuteurFoyer)
+                  : null,
+              enabled: projection.afficheFoyer,
+            ),
           SettingRow(
             title: t.compte.confidentialite,
             description: t.compte.confidentialiteDetail,
@@ -95,15 +104,20 @@ class ComptePage extends ConsumerWidget {
           SectionHeader(titre: t.compte.espaces),
           Text(t.compte.espacesDetail),
           Ecart.vSm,
-          for (final _EspaceCompte espace in projection.espaces)
-            SettingRow(
-              key: ValueKey<String>(espace.code),
-              title: espace.libelle,
-              description: espace.detail,
-              value: t.compte.habilitation,
-              icon: espace.icone,
-              enabled: false,
-            ),
+          // Plusieurs espaces (Enseignant ou Admin, et Controle) : le
+          // selecteur, le meme que celui du raccourci d'en-tete (C6).
+          if (plusieursEspaces)
+            const SelecteurEspaces()
+          else
+            for (final _EspaceCompte espace in projection.espaces)
+              SettingRow(
+                key: ValueKey<String>(espace.code),
+                title: espace.libelle,
+                description: espace.detail,
+                value: t.compte.habilitation,
+                icon: espace.icone,
+                enabled: false,
+              ),
           Ecart.vSection,
           SettingRow(
             title: t.compte.deconnexion,
@@ -652,6 +666,7 @@ class _CompteProjection {
     required this.statut,
     required this.espaces,
     required this.afficheFoyer,
+    required this.afficheAppareils,
     this.profileId,
   });
 
@@ -671,6 +686,7 @@ class _CompteProjection {
       },
       espaces: _espacesPour(role),
       afficheFoyer: foyer,
+      afficheAppareils: role != AppRole.controller,
       profileId: session.profileId,
     );
   }
@@ -680,6 +696,7 @@ class _CompteProjection {
   final String statut;
   final List<_EspaceCompte> espaces;
   final bool afficheFoyer;
+  final bool afficheAppareils;
   final String? profileId;
 }
 
@@ -726,7 +743,8 @@ List<_EspaceCompte> _espacesPour(AppRole role) {
   return switch (role) {
     // SessionState porte un seul role effectif. Ne pas deduire un cumul de
     // roles depuis le mot « administration » : une capacite supplementaire
-    // devra venir d'une projection serveur explicite.
+    // vient d'une projection serveur explicite, `espacesCompteProvider`
+    // (CT-9), qui remplace alors cette liste par `SelecteurEspaces`.
     AppRole.admin => <_EspaceCompte>[
       espace(
         'admin',

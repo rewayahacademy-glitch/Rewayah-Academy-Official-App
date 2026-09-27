@@ -7,11 +7,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// `Override` n'est pas exporte par l'entree principale de Riverpod 3.
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -20,6 +24,7 @@ import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.d
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/controleur/echanges_controleur.dart';
 import 'package:rewayah_academy/features/controleur/echanges_controleur_page.dart';
+import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
@@ -63,10 +68,10 @@ Future<void> _ecrireEtEnvoyer(WidgetTester tester, String texte) async {
   final e = t.controleur.echanges;
   // Champ vide : le bouton est inactif, la raison est ecrite.
   expect(find.text(e.champVide), findsOneWidget);
-  final IconButton inactif = tester.widget<IconButton>(
+  final ActionPrincipale inactif = tester.widget<ActionPrincipale>(
     find.byKey(FilDiscussion.envoyerKey),
   );
-  expect(inactif.onPressed, isNull);
+  expect(inactif.onPress, isNull);
 
   await tester.enterText(find.byKey(FilDiscussion.champKey), texte);
   await tester.pump();
@@ -252,4 +257,98 @@ void main() {
     expect(find.text(t.controleur.echanges.vide), findsNothing);
     expect(find.text(t.controleur.echanges.reponseRecue), findsNothing);
   });
+  // Hors demonstration (revue CT-6) : sans `onEcrireAdmin`, le resultat du
+  // compte rendu mene au fil de CETTE mission par l'adresse reelle, la
+  // liste seulement si l'identifiant de la mission n'est pas connu.
+  for (final (String cas, bool connu) in <(String, bool)>[
+    ('avec identifiant', true),
+    ('sans identifiant', false),
+  ]) {
+    testWidgets('hors demonstration, Ecrire a l\'administration ($cas)', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final MissionControle mission = missionDemoControleur(
+        EtatDemoControleur.enDirect,
+      )!;
+      final String? id = connu ? mission.id : null;
+      expect(mission.id, isNotNull);
+      final GoRouter routeur = GoRouter(
+        initialLocation: Routes.controleurCompteRendu,
+        routes: <RouteBase>[
+          GoRoute(
+            path: Routes.controleurCompteRendu,
+            builder: (BuildContext _, GoRouterState _) =>
+                const CompteRenduControlePage(),
+          ),
+          // Le meme constructeur que `app_router.dart`.
+          GoRoute(
+            path: Routes.controleurEchanges,
+            builder: (BuildContext _, GoRouterState etat) =>
+                EchangesControleurPage(
+                  missionOuverte: etat.uri.queryParameters['mission'],
+                ),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            missionControleProvider.overrideWith(
+              (Ref _) async => MissionControle(
+                id: id,
+                seanceId: mission.seanceId,
+                classe: mission.classe,
+                enseignant: mission.enseignant,
+                nombreEleves: mission.nombreEleves,
+                debut: mission.debut,
+                finPrevue: mission.finPrevue,
+                etat: mission.etat,
+              ),
+            ),
+            envoiCompteRenduProvider.overrideWithValue(
+              const EnvoiCompteRenduDemo(),
+            ),
+            portEchangesProvider.overrideWith((Ref _) => EchangesDemo()),
+          ],
+          child: TranslationProvider(
+            child: MaterialApp.router(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: AppLocale.fr.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              routerConfig: routeur,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(
+          CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(CompteRenduControlePage.actionKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CompteRenduControlePage.actionKey));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(t.controleur.compteRendu.ecrireAdmin));
+      await _attendre(tester);
+      expect(routeur.state.uri.path, Routes.controleurEchanges);
+      expect(routeur.state.uri.queryParameters['mission'], id);
+      final EchangesControleurPage page = tester.widget(
+        find.byType(EchangesControleurPage),
+      );
+      expect(page.missionOuverte, id);
+      if (id != null) {
+        // Le fil de la mission, contexte joint.
+        expect(find.text(t.controleur.echanges.contexte), findsOneWidget);
+      }
+    });
+  }
 }

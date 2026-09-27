@@ -29,6 +29,7 @@ import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import 'compte_rendu_controle.dart';
+import 'mission_controle.dart';
 import 'observation_controle.dart';
 
 enum _Etape { nature, domaine, personne, texte, recapitulatif, envoye }
@@ -215,6 +216,8 @@ class _ObservationControlePageState
 
   @override
   Widget build(BuildContext context) {
+    // Mission devenue indisponible : l'observation se termine quand meme
+    // apres la sortie (C1), comme le compte rendu.
     if (_etape == _Etape.envoye) {
       return PageShell(
         titre: t.controleur.compteRendu.titre,
@@ -231,7 +234,13 @@ class _ObservationControlePageState
             libelleSecondaire: t.controleur.compteRendu.ecrireAdmin,
             onSecondaire:
                 widget.onEcrireAdmin ??
-                () => GoRouter.of(context).go(Routes.controleurEchanges),
+                // Le fil de CETTE mission (P-CTR-06), la liste si son
+                // identifiant n'est pas connu.
+                () => GoRouter.of(context).go(
+                  Routes.controleurEcrireAdmin(
+                    ref.read(missionControleProvider).value?.id,
+                  ),
+                ),
           ),
         ),
       );

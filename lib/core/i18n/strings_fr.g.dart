@@ -1840,6 +1840,9 @@ class Traductions$compte$fr {
 	/// fr: 'Les espaces auxquels votre compte donne accès'
 	String get espacesDetail => 'Les espaces auxquels votre compte donne accès';
 
+	/// fr: 'Pour revenir à votre espace principal, quittez d'abord la mission en cours.'
+	String get espacesMissionEnCours => 'Pour revenir à votre espace principal, quittez d\'abord la mission en cours.';
+
 	/// fr: 'Habilité'
 	String get habilitation => 'Habilité';
 
@@ -2236,6 +2239,7 @@ class Traductions$controleur$fr {
 	late final Traductions$controleur$observation$fr observation = Traductions$controleur$observation$fr.internal(_root);
 	late final Traductions$controleur$echanges$fr echanges = Traductions$controleur$echanges$fr.internal(_root);
 	late final Traductions$controleur$demo$fr demo = Traductions$controleur$demo$fr.internal(_root);
+	late final Traductions$controleur$acces$fr acces = Traductions$controleur$acces$fr.internal(_root);
 	late final Traductions$controleur$controle$fr controle = Traductions$controleur$controle$fr.internal(_root);
 }
 
@@ -9310,6 +9314,51 @@ class Traductions$controleur$demo$fr {
 
 	/// fr: 'Mission indisponible'
 	String get etatIndisponible => 'Mission indisponible';
+
+	/// fr: 'Espaces et accès'
+	String get espaces => 'Espaces et accès';
+
+	/// fr: 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.'
+	String get espacesIntro => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.';
+
+	/// fr: 'Enseignant-Contrôleur, espace Contrôle'
+	String get enseignantControle => 'Enseignant-Contrôleur, espace Contrôle';
+
+	/// fr: 'Enseignant-Contrôleur, espace Enseignant'
+	String get enseignantPrincipal => 'Enseignant-Contrôleur, espace Enseignant';
+
+	/// fr: 'Admin-Contrôleur, espace Contrôle'
+	String get adminControle => 'Admin-Contrôleur, espace Contrôle';
+
+	/// fr: 'Admin-Contrôleur, espace Admin'
+	String get adminPrincipal => 'Admin-Contrôleur, espace Admin';
+
+	/// fr: 'Mission en cours, retour à l'espace principal'
+	String get missionEnCours => 'Mission en cours, retour à l\'espace principal';
+
+	/// fr: 'Accès révoqué pendant la navigation'
+	String get accesRevoque => 'Accès révoqué pendant la navigation';
+
+	/// fr: 'Enseignant sans capacité Contrôle'
+	String get sansCapacite => 'Enseignant sans capacité Contrôle';
+
+	/// fr: 'Compte rendu, mission devenue indisponible'
+	String get compteRenduIndisponible => 'Compte rendu, mission devenue indisponible';
+}
+
+// Path: controleur.acces
+class Traductions$controleur$acces$fr {
+	Traductions$controleur$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre accès au contrôle n'est plus actif.'
+	String get revoque => 'Votre accès au contrôle n\'est plus actif.';
+
+	/// fr: 'Revenir à mon espace'
+	String get revenir => 'Revenir à mon espace';
 }
 
 // Path: controleur.controle
@@ -9350,8 +9399,11 @@ class Traductions$controleur$controle$fr {
 	/// fr: '{minutes} min prévues'
 	String duree({required Object minutes}) => '${minutes} min prévues';
 
-	/// fr: '{nombre} élèves'
-	String eleves({required Object nombre}) => '${nombre} élèves';
+	/// fr: '(one) {{n} élève} (other) {{n} élèves}'
+	String eleves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève',
+		other: '${n} élèves',
+	);
 
 	/// fr: 'Lecture de votre mission en cours.'
 	String get chargement => 'Lecture de votre mission en cours.';
@@ -15314,6 +15366,7 @@ extension on Traductions {
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
+			'compte.espacesMissionEnCours' => 'Pour revenir à votre espace principal, quittez d\'abord la mission en cours.',
 			'compte.habilitation' => 'Habilité',
 			'compte.deconnexion' => 'Se déconnecter',
 			'compte.deconnexionDetail' => 'Mettre fin à la session sur cet appareil',
@@ -15544,9 +15597,9 @@ extension on Traductions {
 			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Séance du ${date}, ${classe}, ${etat}',
 			'historique.observations.indisponibleTitre' => 'Historique des observations indisponible',
 			'historique.observations.indisponiblePhrase' => 'Les visites enregistrées ne peuvent pas encore être lues dans l\'application.',
-			'historique.observations.videTitre' => 'Aucune observation',
 			_ => null,
 		} ?? switch (path) {
+			'historique.observations.videTitre' => 'Aucune observation',
 			'historique.observations.videPhrase' => ({required Object prenom}) => 'Les visites que vous faites pendant les séances de ${prenom} s\'afficheront ici.',
 			'historique.observations.videPhraseFoyer' => 'Vos visites pendant les séances s\'afficheront ici.',
 			'historique.observations.filtreVideTitre' => 'Aucune observation ne correspond',
@@ -16058,9 +16111,9 @@ extension on Traductions {
 			'enseignant.journee.enAttenteLibelle' => 'élèves en attente sur vos heures',
 			'enseignant.journee.enAttenteLibelleUn' => 'élève en attente sur vos heures',
 			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
-			'enseignant.journee.maJournee' => 'Ma journée',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
 			'enseignant.journee.aTerminerAide' => 'Le cahier aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers attendent d\'être terminés',
@@ -16411,6 +16464,18 @@ extension on Traductions {
 			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			'controleur.demo.etatEnDirect' => 'Séance en direct',
 			'controleur.demo.etatIndisponible' => 'Mission indisponible',
+			'controleur.demo.espaces' => 'Espaces et accès',
+			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
+			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
+			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
+			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
+			'controleur.demo.adminPrincipal' => 'Admin-Contrôleur, espace Admin',
+			'controleur.demo.missionEnCours' => 'Mission en cours, retour à l\'espace principal',
+			'controleur.demo.accesRevoque' => 'Accès révoqué pendant la navigation',
+			'controleur.demo.sansCapacite' => 'Enseignant sans capacité Contrôle',
+			'controleur.demo.compteRenduIndisponible' => 'Compte rendu, mission devenue indisponible',
+			'controleur.acces.revoque' => 'Votre accès au contrôle n\'est plus actif.',
+			'controleur.acces.revenir' => 'Revenir à mon espace',
 			'controleur.controle.titre' => 'Contrôle',
 			'controleur.controle.mission' => 'Votre prochaine mission',
 			'controleur.controle.commencer' => 'Commencer le contrôle',
@@ -16421,7 +16486,7 @@ extension on Traductions {
 			'controleur.controle.incognito' => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
-			'controleur.controle.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
 			'controleur.controle.chargement' => 'Lecture de votre mission en cours.',
 			'controleur.controle.erreur' => 'Votre mission n\'a pas pu être lue. Réessayez dans un instant.',
 			'aConstruire.titre' => 'Écran à construire',
@@ -16560,6 +16625,8 @@ extension on Traductions {
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
@@ -16573,8 +16640,6 @@ extension on Traductions {
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
 			'tc.outils.dock.focus' => 'Focus',
 			'tc.outils.dock.marquer' => 'Marquer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',
