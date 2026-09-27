@@ -3891,7 +3891,21 @@
       "ajouterLegende": "Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.",
       "maFamille": "Ma famille",
       "forfaitFamille": "Forfait famille",
-      "retourMonEspace": "Revenir à Mon espace"
+      "retourMonEspace": "Revenir à Mon espace",
+      "titulaire": "Titulaire du foyer",
+      "paiementsFoyer": "Paiements du foyer",
+      "place": {
+        "ajouterConjointe": "Ajouter une conjointe",
+        "ajouterConjoint": "Ajouter un conjoint",
+        "inviterConjointe": "Invitez votre conjointe à rejoindre Rewayah avec son propre compte.",
+        "inviterConjoint": "Invitez votre conjoint à rejoindre Rewayah avec son propre compte.",
+        "invitationEnvoyee": "Invitation envoyée",
+        "maConjointe": "Ma conjointe · {prenom}",
+        "monConjoint": "Mon conjoint · {prenom}",
+        "validationEnAttente": "En attente de validation administrative",
+        "validationRefusee": "Demande refusée par l'administration",
+        "nouvelleInvitation": "Nouvelle invitation possible à partir du {date}"
+      }
     },
     "demo": {
       "titre": "Démonstration de l'élève adulte",

@@ -199,7 +199,10 @@ void main() {
     expect(find.byType(AccueilAdultePage), findsNothing);
   });
 
-  testWidgets('vue du second adulte : son prenom', (WidgetTester tester) async {
+  testWidgets('vue du second adulte : jamais la Classe du titulaire, '
+      'l\'accueil est indisponible (EA-BR-13, EA-5)', (
+    WidgetTester tester,
+  ) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(
       tester,
@@ -208,10 +211,13 @@ void main() {
         vue: VueDemoAdulte.secondAdulte,
       ),
     );
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
     expect(
-      find.text(t.adulte.accueil.salutation(prenom: 'Mariama')),
-      findsOneWidget,
+      find.text(t.adulte.accueil.salutation(prenom: 'Mamadou')),
+      findsNothing,
     );
+    expect(find.byType(CarteSession), findsNothing);
+    expect(find.text(DonneesAdulteDemo.ligneParcours), findsNothing);
   });
 
   testWidgets(

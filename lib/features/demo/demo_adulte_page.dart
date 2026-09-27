@@ -52,6 +52,7 @@ import '../compte/paiements_page.dart';
 import '../compte/preferences_page.dart';
 import '../compte/securite_page.dart';
 import '../foyer/foyer_page.dart';
+import '../foyer/place_adulte.dart' show foyerTitulaireProvider;
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'adulte_demo.dart';
@@ -108,6 +109,10 @@ enum EcranDemoAdulte {
 
   /// Informations legales, ouvertes depuis Mon espace (EA-4).
   informationsLegales,
+
+  /// Paiements du foyer, ouverts depuis Ma famille (EA-5 ; la page du foyer
+  /// vient avec EA-9).
+  paiementsFoyer,
 }
 
 /// L'ecran de la demonstration qu'ouvre une rubrique de Mon espace.
@@ -192,6 +197,7 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.apparence => t.compte.tuteur.pagePreferences.apparence,
   EcranDemoAdulte.aide => t.compte.tuteur.aide.ligne,
   EcranDemoAdulte.informationsLegales => t.compte.tuteur.aide.legal,
+  EcranDemoAdulte.paiementsFoyer => t.adulte.famille.paiementsFoyer,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -394,7 +400,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (ecran == EcranDemoAdulte.maFamille) return _foyer(context);
+    if (ecran == EcranDemoAdulte.maFamille ||
+        ecran == EcranDemoAdulte.paiementsFoyer) {
+      return _foyer(context);
+    }
     final List<Destination> destinations = destinationsEleveAdulte();
     // Les pages ouvertes depuis Mon espace gardent sa destination allumee.
     final bool depuisMonEspace = ecran.index >= EcranDemoAdulte.monEspace.index;
@@ -410,9 +419,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
         // (seance, reseau, travail, supports), plus sa propre vue.
         if (ecran == EcranDemoAdulte.accueil) ...<Override>[
           ...surchargesEleveDemo(seance),
-          accueilAdulteProvider.overrideWith(
-            (Ref _) async => DonneesAdulteDemo.accueil(genre, vue),
-          ),
+          // Le second adulte est eleve d'une autre Classe, que la
+          // demonstration n'a pas : le fournisseur reel reste (indisponible),
+          // jamais la Classe An-Nour du titulaire (EA-BR-13).
+          if (DonneesAdulteDemo.accueil(genre, vue)
+              case final AccueilAdulteVM accueil)
+            accueilAdulteProvider.overrideWith((Ref _) async => accueil),
         ] else if (ecran == EcranDemoAdulte.maClasse) ...<Override>[
           // Ma classe lit la meme Classe An-Nour, plus sa propre vue (EA-3).
           ...surchargesEleveDemo(seance),
@@ -528,7 +540,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
               phrase: t.adulte.provisoire.forfaitFamille,
               onRetour: versMonEspace,
             ),
-            EcranDemoAdulte.maFamille => const SizedBox.shrink(),
+            EcranDemoAdulte.maFamille ||
+            EcranDemoAdulte.paiementsFoyer => const SizedBox.shrink(),
           },
         ),
       ),
@@ -536,29 +549,46 @@ class CoquilleAdulteDemo extends StatelessWidget {
   }
 
   /// La coquille du tuteur existante (Accueil, Foyer, Historique, Compte) sur
-  /// le Foyer, peuplee des enfants Diallo. Le retour vers Mon espace est une
-  /// ligne au bord de debut, au-dessus du Foyer (UX_REVIEW_07 ligne 1 a).
+  /// Ma famille, le Foyer du tuteur peuple du foyer Diallo (EA-5). Le retour
+  /// vers Mon espace est une ligne au bord de debut, au-dessus du Foyer
+  /// (UX_REVIEW_07 ligne 1 a).
+  ///
+  /// Decision EA-5 (releve d'EA-1b, « seul le Foyer reagit ») : la coquille
+  /// du tuteur n'est pas recreee ; chacune de ses destinations reagit, et
+  /// celles qui n'ont pas de page dans l'espace foyer de la demonstration
+  /// ramenent a l'espace eleve, dont elles ont l'equivalent : « Compte » ouvre
+  /// Mon espace (une seule place pour le compte, E3), « Accueil » et
+  /// « Historique » ouvrent l'Accueil (prochaine et dernieres seances). Les
+  /// chemins internes du Foyer (ajout, fiche, appareils) n'ont pas encore de
+  /// page de demonstration : ils ne quittent pas la coquille.
   Widget _foyer(BuildContext context) {
     final List<Destination> destinations = destinationsPour(
       role: AppRole.guardian,
       mode: InterfaceMode.standard,
     );
+    final List<EleveDuFoyer> enfants = DonneesAdulteDemo.enfantsPour(etat);
+    void versMaFamille() => context.go(_adresse(EcranDemoAdulte.maFamille));
     return ProviderScope(
       key: ValueKey<String>(_adresse(ecran)),
       overrides: <Override>[
-        ...surchargesDemoTuteur(
-          environnement: environnement,
-          eleves: DonneesAdulteDemo.enfants,
-        ),
+        ...surchargesDemoTuteur(environnement: environnement, eleves: enfants),
         // Sous un ProviderScope imbrique, un provider derive non surcharge se
         // resoudrait dans le conteneur racine, sans les eleves Diallo.
         profilsElevesFoyerProvider.overrideWith(
           (Ref _) async => <ProfilEleveFoyer>[
-            for (final EleveDuFoyer e in DonneesAdulteDemo.enfants)
-              ProfilEleveFoyer.depuis(e),
+            for (final EleveDuFoyer e in enfants) ProfilEleveFoyer.depuis(e),
           ],
         ),
         horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+        // Ma famille du titulaire (EA-5, EA-BR-14) : son identite par le port
+        // du Compte, et la place adulte selon la situation.
+        identiteTitulaireProvider.overrideWith(
+          (Ref _) async =>
+              DonneesAdulteDemo.identite(genre, VueDemoAdulte.titulaire),
+        ),
+        foyerTitulaireProvider.overrideWith(
+          (Ref _) async => DonneesAdulteDemo.foyerTitulaire(etat, genre),
+        ),
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -566,30 +596,43 @@ class CoquilleAdulteDemo extends StatelessWidget {
           indexActif: destinations.indexWhere(
             (Destination d) => d.chemin == Routes.tuteurFoyer,
           ),
-          // Seul le Foyer existe dans cette demonstration : les autres
-          // destinations du tuteur restent en place, sans effet (EA-5).
-          onAller: (String _) {},
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsetsDirectional.only(
-                  start: AppSpacing.lg,
-                  end: AppSpacing.lg,
-                  top: AppSpacing.sm,
-                ),
-                child: LienFleche(
-                  key: const ValueKey<String>('retour-mon-espace'),
-                  icone: AppIcons.retour,
-                  fleche: false,
-                  libelle: t.adulte.famille.retourMonEspace,
-                  onPress: () =>
-                      context.go(_adresse(EcranDemoAdulte.monEspace)),
-                ),
-              ),
-              const Expanded(child: FoyerPage()),
-            ],
+          onAller: (String chemin) => context.go(
+            _adresse(switch (chemin) {
+              Routes.tuteurFoyer => EcranDemoAdulte.maFamille,
+              Routes.tuteurCompte => EcranDemoAdulte.monEspace,
+              _ => EcranDemoAdulte.accueil,
+            }),
           ),
+          child: ecran == EcranDemoAdulte.paiementsFoyer
+              ? PaiementsComptePage(onRetour: versMaFamille)
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: AppSpacing.lg,
+                        end: AppSpacing.lg,
+                        top: AppSpacing.sm,
+                      ),
+                      child: LienFleche(
+                        key: const ValueKey<String>('retour-mon-espace'),
+                        icone: AppIcons.retour,
+                        fleche: false,
+                        libelle: t.adulte.famille.retourMonEspace,
+                        onPress: () =>
+                            context.go(_adresse(EcranDemoAdulte.monEspace)),
+                      ),
+                    ),
+                    Expanded(
+                      child: FoyerPage(
+                        onAller: (String _) {},
+                        onPaiementsFoyer: () => context.go(
+                          _adresse(EcranDemoAdulte.paiementsFoyer),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

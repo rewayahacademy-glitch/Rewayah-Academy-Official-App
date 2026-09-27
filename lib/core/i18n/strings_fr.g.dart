@@ -8956,6 +8956,14 @@ class Traductions$adulte$famille$fr {
 
 	/// fr: 'Revenir à Mon espace'
 	String get retourMonEspace => 'Revenir à Mon espace';
+
+	/// fr: 'Titulaire du foyer'
+	String get titulaire => 'Titulaire du foyer';
+
+	/// fr: 'Paiements du foyer'
+	String get paiementsFoyer => 'Paiements du foyer';
+
+	late final Traductions$adulte$famille$place$fr place = Traductions$adulte$famille$place$fr.internal(_root);
 }
 
 // Path: adulte.demo
@@ -12537,6 +12545,45 @@ class Traductions$adulte$monEspace$pageCoursAcces$fr {
 
 	/// fr: 'Le détail de vos cours, de vos séances et de votre accès n'est pas encore disponible dans l'application.'
 	String get indisponiblePhrase => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.';
+}
+
+// Path: adulte.famille.place
+class Traductions$adulte$famille$place$fr {
+	Traductions$adulte$famille$place$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouter une conjointe'
+	String get ajouterConjointe => 'Ajouter une conjointe';
+
+	/// fr: 'Ajouter un conjoint'
+	String get ajouterConjoint => 'Ajouter un conjoint';
+
+	/// fr: 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.'
+	String get inviterConjointe => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.';
+
+	/// fr: 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.'
+	String get inviterConjoint => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.';
+
+	/// fr: 'Invitation envoyée'
+	String get invitationEnvoyee => 'Invitation envoyée';
+
+	/// fr: 'Ma conjointe · {prenom}'
+	String maConjointe({required Object prenom}) => 'Ma conjointe · ${prenom}';
+
+	/// fr: 'Mon conjoint · {prenom}'
+	String monConjoint({required Object prenom}) => 'Mon conjoint · ${prenom}';
+
+	/// fr: 'En attente de validation administrative'
+	String get validationEnAttente => 'En attente de validation administrative';
+
+	/// fr: 'Demande refusée par l'administration'
+	String get validationRefusee => 'Demande refusée par l\'administration';
+
+	/// fr: 'Nouvelle invitation possible à partir du {date}'
+	String nouvelleInvitation({required Object date}) => 'Nouvelle invitation possible à partir du ${date}';
 }
 
 // Path: adulte.demo.etats
@@ -16305,6 +16352,18 @@ extension on Traductions {
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
+			'adulte.famille.titulaire' => 'Titulaire du foyer',
+			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
+			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
+			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
+			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
+			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
+			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => 'Ma conjointe · ${prenom}',
+			'adulte.famille.place.monConjoint' => ({required Object prenom}) => 'Mon conjoint · ${prenom}',
+			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
+			'adulte.famille.place.validationRefusee' => 'Demande refusée par l\'administration',
+			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',

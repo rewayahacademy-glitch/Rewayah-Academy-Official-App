@@ -11,6 +11,7 @@ import '../../core/domain/enums.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'classe_demo.dart';
@@ -184,8 +185,13 @@ abstract final class DonneesAdulteDemo {
     _ => false,
   };
 
-  /// La date de fin du delai en cours, rendue telle quelle, ou nulle.
+  /// La date de fin du delai en cours, rendue telle quelle, ou nulle. Un
+  /// depart (quitte, retire, second depart) ouvre deja un delai (doc
+  /// section 10) : la meme date de demonstration.
   static DateTime? finDelaiPour(EtatDemoAdulte etat) => switch (etat) {
+    EtatDemoAdulte.conjointQuitte ||
+    EtatDemoAdulte.conjointRetire ||
+    EtatDemoAdulte.secondDepart ||
     EtatDemoAdulte.delai60 ||
     EtatDemoAdulte.delai120 ||
     EtatDemoAdulte.departsSuivants => finDelai,
@@ -236,14 +242,53 @@ abstract final class DonneesAdulteDemo {
       ),
   ];
 
-  /// L'accueil de la personne qui regarde.
-  static AccueilAdulteVM accueil(GenreTitulaireDemo genre, VueDemoAdulte vue) =>
-      AccueilAdulteVM(
-        prenom: prenomVue(genre, vue),
-        groupeId: DonneesClasseDemo.groupeId,
-        ligneParcours: ligneParcours,
-        dernieresSeances: dernieresSeances(),
-      );
+  /// L'accueil de la personne qui regarde, ou `null` quand la demonstration
+  /// n'a pas sa Classe.
+  ///
+  /// Le second adulte est eleve d'une AUTRE Classe (EA-BR-13) : comme pour Ma
+  /// classe, son accueil garde le fournisseur reel (indisponible) plutot que
+  /// de montrer la Classe An-Nour du titulaire (EA-5, report d'EA-2).
+  static AccueilAdulteVM? accueil(
+    GenreTitulaireDemo genre,
+    VueDemoAdulte vue,
+  ) => vue == VueDemoAdulte.secondAdulte
+      ? null
+      : AccueilAdulteVM(
+          prenom: prenomVue(genre, vue),
+          groupeId: DonneesClasseDemo.groupeId,
+          ligneParcours: ligneParcours,
+          dernieresSeances: dernieresSeances(),
+        );
+
+  /// Les enfants que Ma famille montre : aucun sans foyer.
+  static List<EleveDuFoyer> enfantsPour(EtatDemoAdulte etat) =>
+      aUnFoyer(etat) ? enfants : const <EleveDuFoyer>[];
+
+  /// L'etat de la place adulte vu par le titulaire (F21, EA-5, EA-BR-14).
+  /// Une invitation expiree ou annulee rend la place libre, sans delai (F5).
+  static EtatPlaceAdulte place(EtatDemoAdulte etat, GenreTitulaireDemo genre) {
+    final DateTime? fin = finDelaiPour(etat);
+    if (fin != null) return DelaiEnCours(fin);
+    if (secondAdultePresent(etat)) {
+      return PlaceOccupee(prenomSecondAdulte(genre));
+    }
+    return switch (etat) {
+      EtatDemoAdulte.invitationEnAttente => const InvitationEnvoyee(),
+      EtatDemoAdulte.validationEnAttente => const ValidationEnAttente(),
+      EtatDemoAdulte.validationRefusee => const ValidationRefusee(),
+      _ => const PlaceDisponible(),
+    };
+  }
+
+  /// Ma famille du titulaire (EA-5) : la place adulte selon son genre (F3),
+  /// sans photo livree (initiales en repli, E5).
+  static FoyerTitulaireVM foyerTitulaire(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+  ) => FoyerTitulaireVM(
+    placeFeminine: genre == GenreTitulaireDemo.homme,
+    place: place(etat, genre),
+  );
 
   /// « A propos de cette classe », tel que le serveur le rendrait.
   static const String aProposClasse =
