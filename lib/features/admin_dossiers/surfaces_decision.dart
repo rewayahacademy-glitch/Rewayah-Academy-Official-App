@@ -11,11 +11,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/groupe_reglages.dart';
 import 'decision_dossier.dart';
 import 'file_dossiers.dart' show actualiserDossiers;
 import 'textes_dossier.dart';
@@ -151,7 +151,7 @@ class _CorpsState extends ConsumerState<_Corps> {
           enfants: <Widget>[
             ActionPrincipale(
               libelle: t.dossiers.refus.continuerSaisie,
-              niveau: NiveauAction.secondaire,
+              niveau: NiveauAction.tertiaire,
               pleineLargeur: false,
               focusNode: n,
               onPress: () => Navigator.of(c).pop(false),
@@ -208,15 +208,14 @@ class _CorpsState extends ConsumerState<_Corps> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          GroupeReglages(
-            lignes: <LigneRubrique>[
-              LigneRubrique(
-                libelle: t.dossiers.revue.typeDossier,
-                valeur: typeDossier(dossier.role),
-              ),
-            ],
+          // HL-A-5 : meme anatomie que 02D, une ligne de contexte douce.
+          Text(
+            t.dossiers.refus.nomType(nom: nom, type: typeDossier(dossier.role)),
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
           ),
-          Ecart.vLg,
+          Ecart.vSm,
           Text(
             dossier.consequence == ConsequenceValidation.activationPossible
                 ? t.dossiers.validation.corpsActivation(nom: nom)
@@ -289,21 +288,38 @@ class _CorpsState extends ConsumerState<_Corps> {
   }
 }
 
-/// Les actions : Wrap a la fin, secondaire puis principale, 8 d'ecart.
+/// Les actions : Wrap a la fin, secondaire puis principale, 8 d'ecart. Sur
+/// mobile (HL-A-5, reference CL-4.7), empilees en pleine largeur, l'action
+/// qui confirme (la derniere) en haut.
 class _RangeeActions extends StatelessWidget {
   const _RangeeActions({required this.enfants});
 
   final List<Widget> enfants;
 
   @override
-  Widget build(BuildContext context) => Wrap(
-    alignment: WrapAlignment.end,
-    spacing: AppSpacing.sm,
-    runSpacing: AppSpacing.sm,
-    children: <Widget>[
-      for (final Widget e in enfants) IntrinsicWidth(child: e),
-    ],
-  );
+  Widget build(BuildContext context) {
+    if (AppGabarit.de(context) == Gabarit.mobile) {
+      final List<Widget> ordre = enfants.reversed.toList();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          for (int i = 0; i < ordre.length; i++) ...<Widget>[
+            if (i > 0) Ecart.vSm,
+            ordre[i],
+          ],
+        ],
+      );
+    }
+    return Wrap(
+      alignment: WrapAlignment.end,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: <Widget>[
+        for (final Widget e in enfants) IntrinsicWidth(child: e),
+      ],
+    );
+  }
 }
 
 /// Donne un noeud focalise apres la premiere image (ActionPrincipale n'a
@@ -528,7 +544,9 @@ class _ActionsState extends ConsumerState<_Actions> {
         enfants: <Widget>[
           ActionPrincipale(
             libelle: t.commun.annuler,
-            niveau: NiveauAction.secondaire,
+            // HL-A-5 : a cote d'un destructif (texte rouge), un contour
+            // dominerait l'action qui confirme.
+            niveau: _refus ? NiveauAction.tertiaire : NiveauAction.secondaire,
             pleineLargeur: false,
             focusNode: _annuler,
             // Pendant l'envoi, Annuler laisserait croire a une annulation

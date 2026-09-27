@@ -104,14 +104,6 @@ class _AttentePageState extends ConsumerState<AttentePage> {
             ),
             Ecart.vMd,
           ],
-          if (etat.value?.etape == EtapeDossier.enVerification) ...<Widget>[
-            ActionPrincipale(
-              libelle: t.attente.actualiser,
-              onPress: () => unawaited(_relire()),
-              niveau: NiveauAction.tertiaire,
-            ),
-            Ecart.vMd,
-          ],
           ActionPrincipale(
             libelle: t.attente.seDeconnecter,
             onPress: () =>
@@ -132,6 +124,20 @@ class _AttentePageState extends ConsumerState<AttentePage> {
                 ? _Illisible(erreur: etat.error!)
                 : const _Patience(),
           ),
+          // HL-A-5 (DESIGN-GOV B) : l'action rattachee a la carte d'etat se
+          // place 16 sous elle, au bord de fin, et non dans le pied.
+          if (etat.value?.etape == EtapeDossier.enVerification) ...<Widget>[
+            Ecart.vLg,
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ActionPrincipale(
+                libelle: t.attente.actualiser,
+                onPress: () => unawaited(_relire()),
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
+            ),
+          ],
         ],
       ),
     );
