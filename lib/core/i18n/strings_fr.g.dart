@@ -8297,8 +8297,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Vos heures n'ont pas pu être lues'
 	String get grilleErreur => 'Vos heures n\'ont pas pu être lues';
 
-	/// fr: 'Le serveur n'a pas répondu. Les heures que vous avez déjà posées ne sont pas perdues.'
-	String get grilleErreurDetail => 'Le serveur n\'a pas répondu. Les heures que vous avez déjà posées ne sont pas perdues.';
+	/// fr: 'Les heures que vous avez déjà posées ne sont pas perdues.'
+	String get grilleErreurDetail => 'Les heures que vous avez déjà posées ne sont pas perdues.';
 
 	/// fr: 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.'
 	String get horsLigneGrille => 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.';
@@ -15344,7 +15344,7 @@ extension on Traductions {
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',
 			'enseignant.creneaux.retraitEngage' => ({required Object heure}) => '${heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.grilleErreur' => 'Vos heures n\'ont pas pu être lues',
-			'enseignant.creneaux.grilleErreurDetail' => 'Le serveur n\'a pas répondu. Les heures que vous avez déjà posées ne sont pas perdues.',
+			'enseignant.creneaux.grilleErreurDetail' => 'Les heures que vous avez déjà posées ne sont pas perdues.',
 			'enseignant.creneaux.horsLigneGrille' => 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.',
 			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.',
 			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.',

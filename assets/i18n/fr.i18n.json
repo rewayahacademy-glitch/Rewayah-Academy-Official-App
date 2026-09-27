@@ -3048,7 +3048,7 @@
       "heureRetiree": "{heure} retiré",
       "retraitEngage": "{heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l'arrêter.",
       "grilleErreur": "Vos heures n'ont pas pu être lues",
-      "grilleErreurDetail": "Le serveur n'a pas répondu. Les heures que vous avez déjà posées ne sont pas perdues.",
+      "grilleErreurDetail": "Les heures que vous avez déjà posées ne sont pas perdues.",
       "horsLigneGrille": "Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.",
       "heureEngagee": "Vous avez déjà une Classe sur {heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.",
       "heuresEngagees": "Vous avez déjà une Classe sur {heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.",

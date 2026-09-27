@@ -537,8 +537,10 @@ class _Constat extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+                  // Meme ordre de lecture que sur mobile (K-42 §6, E2) :
+                  // « A regarder » juste apres le resume.
                   resume,
-                  if (nominaux != null) ...<Widget>[ecart, nominaux],
+                  if (aRegarder != null) ...<Widget>[ecart, aRegarder],
                 ],
               ),
             ),
@@ -547,7 +549,7 @@ class _Constat extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  if (aRegarder != null) ...<Widget>[aRegarder, ecart],
+                  if (nominaux != null) ...<Widget>[nominaux, ecart],
                   fin,
                 ],
               ),

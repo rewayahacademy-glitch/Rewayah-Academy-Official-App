@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
@@ -45,9 +46,15 @@ void main() {
       final Finder fiche = find.byType(FicheEleveEnseignant);
       expect(fiche, findsOneWidget);
       expect(find.byType(PanneauFicheEleve), findsNothing);
+      // Le prenom est le titre de la feuille, sans « Fiche de » ni
+      // repetition a cote de la photo (K-42 §5).
       expect(
         find.text(t.enseignant.eleve.titre(prenom: 'Mariam')),
-        findsOneWidget,
+        findsNothing,
+      );
+      expect(
+        find.descendant(of: fiche, matching: find.text('Mariam')),
+        findsNothing,
       );
       // Photo en tete (initiales en repli), identifiant, les tuiles.
       expect(
@@ -63,13 +70,20 @@ void main() {
         t.enseignant.eleve.objectif,
         t.enseignant.eleve.presence,
         t.enseignant.eleve.travail,
-        t.enseignant.eleve.derniereSeance,
       ]) {
         expect(
           find.descendant(of: fiche, matching: find.text(libelle)),
           findsOneWidget,
         );
       }
+      // Sans date connue, jamais « Derniere seance » sur un point travaille.
+      expect(
+        find.descendant(
+          of: fiche,
+          matching: find.text(t.enseignant.eleve.derniereSeance),
+        ),
+        findsNothing,
+      );
       expect(find.text('Terminer la sourate Al-Mulk'), findsOneWidget);
       // Hors seance, une seule action (E14).
       expect(find.byKey(FicheEleveEnseignant.signalerKey), findsOneWidget);
@@ -161,6 +175,55 @@ void main() {
       // En demonstration, jamais la pretention d'un envoi reel.
       expect(find.byKey(SignalerBesoin.confirmationKey), findsOneWidget);
       expect(find.text(t.enseignant.signalement.demoSucces), findsOneWidget);
+    });
+
+    testWidgets('un envoi qui echoue ne passe jamais pour un succes', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 1400));
+      int essais = 0;
+      await tester.pumpWidget(
+        hote(
+          Scaffold(
+            body: SingleChildScrollView(
+              child: SignalerBesoin(
+                eleve: const EleveFiche(
+                  membre: MembreSeance(
+                    studentId: 'e1',
+                    identifiantImmuable: 'RA-TEST-001',
+                    prenom: 'Mariam',
+                  ),
+                  classe: 'Hifz A',
+                ),
+                envoi: (SignalementBesoin _) async {
+                  essais++;
+                  throw StateError('hors ligne');
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(CategorieBesoin.technique.libelle));
+      await tester.enterText(find.byKey(SignalerBesoin.detailsKey), 'Micro');
+      await tester.pumpAndSettle();
+      final Finder envoyer = find.byKey(SignalerBesoin.envoyerKey);
+      await tester.ensureVisible(envoyer);
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+
+      expect(essais, 1);
+      expect(find.byKey(SignalerBesoin.confirmationKey), findsNothing);
+      expect(find.text(t.tc.parcours.signalement.echec), findsOneWidget);
+      expect(find.text('Micro'), findsOneWidget);
+      expect(
+        find.descendant(of: envoyer, matching: find.text(t.commun.reessayer)),
+        findsOneWidget,
+      );
+      await tester.tap(envoyer);
+      await tester.pumpAndSettle();
+      expect(essais, 2);
     });
   });
 

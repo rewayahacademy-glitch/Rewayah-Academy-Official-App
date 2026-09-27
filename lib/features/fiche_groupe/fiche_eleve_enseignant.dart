@@ -61,7 +61,8 @@ class EleveFiche {
 Future<void> ouvrirFicheEleve(BuildContext context, EleveFiche eleve) {
   return AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.enseignant.eleve.titre(prenom: eleve.prenom),
+    // Le nom humain comme titre, pas « Fiche de » (K-42 §5).
+    titre: eleve.prenom,
     constructeur: (BuildContext contexte) => FicheEleveEnseignant(
       eleve: eleve,
       onSignaler: () => ouvrirSignalement(contexte, eleve),
@@ -113,6 +114,7 @@ class FicheEleveEnseignant extends StatelessWidget {
     final String travail = page == null || page.isEmpty
         ? t.enseignant.eleve.nonRenseigne
         : t.enseignant.eleve.travailReprise(page: page.toLowerCase());
+    final String? dernierPoint = p?.dernierPoint?.trim();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -132,27 +134,14 @@ class FicheEleveEnseignant extends StatelessWidget {
               ),
             ),
             Ecart.hLg,
+            // Le prenom est deja le titre (K-42 §5) : seul l'identifiant
+            // Academie accompagne la photo.
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    eleve.prenom,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleLarge ?? const TextStyle(),
-                    ),
-                  ),
-                  Ecart.vXs,
-                  Text(
-                    t.enseignant.eleve.identifiant(
-                      id: membre.identifiantImmuable,
-                    ),
-                    style: palette.inkMuted.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
-                  ),
-                ],
+              child: Text(
+                t.enseignant.eleve.identifiant(id: membre.identifiantImmuable),
+                style: palette.inkMuted.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
               ),
             ),
           ],
@@ -182,11 +171,15 @@ class FicheEleveEnseignant extends StatelessWidget {
               libelle: t.enseignant.eleve.travail,
               legende: travail,
             ),
-            LigneRubrique(
-              icone: AppIcons.historique,
-              libelle: t.enseignant.eleve.derniereSeance,
-              legende: texte(p?.dernierPoint),
-            ),
+            // La projection n'a pas de date de derniere seance (EN-RC) : le
+            // dernier point travaille garde son propre intitule.
+            if (dernierPoint != null && dernierPoint.isNotEmpty)
+              LigneRubrique(
+                icone: AppIcons.historique,
+                libelle: t.enseignant.ficheGroupe.dernierPoint(
+                  texte: dernierPoint,
+                ),
+              ),
           ],
         ),
         Ecart.vXl,
@@ -259,7 +252,7 @@ class PanneauFicheEleve extends StatelessWidget {
             Semantics(
               header: true,
               child: Text(
-                t.enseignant.eleve.titre(prenom: eleve.prenom),
+                eleve.prenom,
                 style: palette.inkStrong.applyTo(
                   textes.headlineSmall ?? const TextStyle(),
                 ),
@@ -390,6 +383,7 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
   String? _erreurDetails;
   bool _enCours = false;
   bool _termine = false;
+  bool _echec = false;
 
   @override
   void initState() {
@@ -426,18 +420,33 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
     if (categorie == null || _erreurDetails != null) return;
     final Future<void> Function(SignalementBesoin)? envoi = widget.envoi;
     if (envoi != null) {
-      setState(() => _enCours = true);
-      await envoi(
-        SignalementBesoin(
-          studentId: widget.eleve.membre.studentId,
-          categorie: categorie,
-          detailsInternes: _details.text.trim(),
-          resumePartageable: _resume.text.trim(),
-          classe: widget.eleve.classe,
-          seanceId: widget.eleve.seanceId,
-          horodatage: DateTime.now(),
-        ),
-      );
+      setState(() {
+        _enCours = true;
+        _echec = false;
+      });
+      try {
+        await envoi(
+          SignalementBesoin(
+            studentId: widget.eleve.membre.studentId,
+            categorie: categorie,
+            detailsInternes: _details.text.trim(),
+            resumePartageable: _resume.text.trim(),
+            classe: widget.eleve.classe,
+            seanceId: widget.eleve.seanceId,
+            horodatage: DateTime.now(),
+          ),
+        );
+      } on Object {
+        // Jamais de faux succes (E7, doc 04 §22.5) : les champs restent
+        // saisis, la feuille reste ouverte, « Reessayer » relance l'envoi.
+        if (mounted) {
+          setState(() {
+            _enCours = false;
+            _echec = true;
+          });
+        }
+        return;
+      }
     }
     if (mounted) {
       setState(() {
@@ -581,12 +590,22 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
         ),
         Ecart.vLg,
         Text(t.enseignant.signalement.notice, style: doux),
+        if (_echec) ...<Widget>[
+          Ecart.vLg,
+          // Meme phrase que le signalement du parcours (tc.parcours).
+          Semantics(
+            liveRegion: true,
+            child: Text(t.tc.parcours.signalement.echec, style: erreur),
+          ),
+        ],
         Ecart.vLg,
         Align(
           alignment: AlignmentDirectional.centerEnd,
           child: ActionPrincipale(
             key: SignalerBesoin.envoyerKey,
-            libelle: t.enseignant.signalement.envoyer,
+            libelle: _echec
+                ? t.commun.reessayer
+                : t.enseignant.signalement.envoyer,
             pleineLargeur: false,
             enCours: _enCours,
             onPress: _enCours ? null : _envoyer,
