@@ -25,8 +25,15 @@ class LienFleche extends StatelessWidget {
     super.key,
     this.fleche = true,
     this.icone,
+    this.annonceLien = false,
+    this.alignerEnFin = false,
     this.legende = false,
   });
+
+  /// Vrai : le lien se range au bord de fin, comme les actions qu'il suit
+  /// (HL-A-3) : aucun retrait de fin, lignes alignees en fin quand le texte
+  /// passe a la ligne (200 %, 390). Faux (defaut) : rendu inchange.
+  final bool alignerEnFin;
 
   /// Registre de legende (`labelSmall`, fleche plus petite) : le « Voir tout »
   /// d'un titre de rubrique dense. La cible tactile reste de 48 sur 48.
@@ -43,6 +50,10 @@ class LienFleche extends StatelessWidget {
   /// part ne devrait d'ailleurs pas etre rendu.
   final VoidCallback? onPress;
 
+  /// Vrai : annonce comme lien (Semantics.link), non comme bouton. Pour un
+  /// lien qui deplace le focus dans l'ecran (AD-6).
+  final bool annonceLien;
+
   /// Faux pour un lien sans fleche, en fin de phrase par exemple.
   final bool fleche;
 
@@ -57,9 +68,12 @@ class LienFleche extends StatelessWidget {
     return Pressable.selon(
       onPress: onPress,
       libelleSemantique: libelle,
+      lien: annonceLien,
       arrondiFocus: AppRadius.arrondiSm,
       constructeur: (BuildContext contexte, EtatPression etat) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        padding: alignerEnFin
+            ? const EdgeInsetsDirectional.only(start: AppSpacing.xs)
+            : const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         // Le libelle est deja porte par `Pressable` : le texte visible est
         // retire de l'arbre semantique pour ne pas etre lu deux fois.
         child: ExcludeSemantics(
@@ -76,6 +90,7 @@ class LienFleche extends StatelessWidget {
               Flexible(
                 child: Text(
                   libelle,
+                  textAlign: alignerEnFin ? TextAlign.end : null,
                   style: palette.inkAccent
                       .applyTo(base)
                       .copyWith(

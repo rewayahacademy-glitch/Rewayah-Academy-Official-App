@@ -404,6 +404,11 @@ class _BandeauChaine extends ConsumerWidget {
         );
 }
 
+/// Un etat qui defile si la hauteur manque : la tete du Journal est haute et,
+/// sur telephone, l'etat n'y dispose parfois que de quelques pixels (meme
+/// choix que `_Defilant` de l'historique des observations).
+Widget _defilant(Widget etat) => SingleChildScrollView(child: etat);
+
 /// La liste, et ses cinq etats.
 class _Corps extends StatelessWidget {
   const _Corps({
@@ -432,11 +437,13 @@ class _Corps extends StatelessWidget {
     // suivante qui echoue ne doit pas effacer ce que l'administration a deja
     // sous les yeux.
     if (erreur != null && entrees.isEmpty) {
-      return EmptyState(
-        message: t.admin.journal.erreur,
-        icone: AppIcons.avertissement,
-        libelleAction: t.commun.reessayer,
-        onAction: () => unawaited(onReessayer()),
+      return _defilant(
+        EmptyState(
+          message: t.admin.journal.erreur,
+          icone: AppIcons.avertissement,
+          libelleAction: t.commun.reessayer,
+          onAction: () => unawaited(onReessayer()),
+        ),
       );
     }
 
@@ -449,18 +456,20 @@ class _Corps extends StatelessWidget {
       // Un journal vide sous filtre est une impasse dont on peut sortir ; un
       // journal vide tout court est une bonne nouvelle, pas une panne
       // (`02-regles-ux.md` section 6).
-      return filtre
-          ? EmptyState(
-              message: t.admin.journal.videFiltre,
-              invitation: t.admin.journal.videFiltreDetail,
-              libelleAction: t.admin.journal.effacerFiltres,
-              onAction: onEffacerFiltres,
-            )
-          : EmptyState(
-              message: t.admin.journal.vide,
-              invitation: t.admin.journal.videDetail,
-              registre: RegistreVide.bonneNouvelle,
-            );
+      return _defilant(
+        filtre
+            ? EmptyState(
+                message: t.admin.journal.videFiltre,
+                invitation: t.admin.journal.videFiltreDetail,
+                libelleAction: t.admin.journal.effacerFiltres,
+                onAction: onEffacerFiltres,
+              )
+            : EmptyState(
+                message: t.admin.journal.vide,
+                invitation: t.admin.journal.videDetail,
+                registre: RegistreVide.bonneNouvelle,
+              ),
+      );
     }
 
     return DataCollection<EntreeJournal>(

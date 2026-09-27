@@ -118,6 +118,7 @@ class Traductions$commun$fr {
 	/// fr: 'Chargement'
 	String get chargement => 'Chargement';
 
+	late final Traductions$commun$demonstration$fr demonstration = Traductions$commun$demonstration$fr.internal(_root);
 	late final Traductions$commun$etape$fr etape = Traductions$commun$etape$fr.internal(_root);
 	late final Traductions$commun$choix$fr choix = Traductions$commun$choix$fr.internal(_root);
 	late final Traductions$commun$etats$fr etats = Traductions$commun$etats$fr.internal(_root);
@@ -492,11 +493,11 @@ class Traductions$attente$fr {
 	/// fr: 'Il manque encore des pièces à votre dossier.'
 	String get dossierIncomplet => 'Il manque encore des pièces à votre dossier.';
 
-	/// fr: 'Nous vérifions votre dossier. Vous recevrez une notification dès qu'il est validé.'
-	String get enVerification => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.';
+	/// fr: 'Nous vérifions votre dossier.'
+	String get enVerification => 'Nous vérifions votre dossier.';
 
-	/// fr: 'Votre dossier n'a pas été validé.'
-	String get refuse => 'Votre dossier n\'a pas été validé.';
+	/// fr: 'Dossier refusé'
+	String get refuse => 'Dossier refusé';
 
 	/// fr: 'Votre compte est suspendu.'
 	String get suspendu => 'Votre compte est suspendu.';
@@ -534,8 +535,14 @@ class Traductions$attente$fr {
 	/// fr: 'Tout est déposé.'
 	String get toutEstDepose => 'Tout est déposé.';
 
-	/// fr: 'Reprendre mon dossier'
-	String get corriger => 'Reprendre mon dossier';
+	/// fr: 'Corriger'
+	String get corriger => 'Corriger';
+
+	/// fr: 'Ce dossier ne peut pas être modifié pour le moment.'
+	String get correctionImpossible => 'Ce dossier ne peut pas être modifié pour le moment.';
+
+	/// fr: 'Actualiser l'état du dossier'
+	String get actualiser => 'Actualiser l\'état du dossier';
 
 	/// fr: 'Vous pouvez joindre l'académie pour connaître la marche à suivre.'
 	String get suspenduDetail => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.';
@@ -545,6 +552,27 @@ class Traductions$attente$fr {
 
 	/// fr: 'Votre dossier'
 	String get titreDossier => 'Votre dossier';
+
+	/// fr: 'Votre compte'
+	String get titreCompte => 'Votre compte';
+
+	/// fr: 'Il vous reste nos conditions à lire et à accepter.'
+	String get accordsARelire => 'Il vous reste nos conditions à lire et à accepter.';
+
+	/// fr: 'Votre compte est créé'
+	String get accesTitre => 'Votre compte est créé';
+
+	/// fr: 'L'ouverture de votre compte n'est pas encore automatique.'
+	String get accesEnPreparation => 'L\'ouverture de votre compte n\'est pas encore automatique.';
+
+	/// fr: 'Vous n'avez aucun document à envoyer.'
+	String get aucunDocument => 'Vous n\'avez aucun document à envoyer.';
+
+	/// fr: 'L'académie peut l'ouvrir pour vous : joignez-la.'
+	String get accesContact => 'L\'académie peut l\'ouvrir pour vous : joignez-la.';
+
+	/// fr: 'Actualiser'
+	String get actualiserCompte => 'Actualiser';
 
 	/// fr: '(one) {Il reste un élément à fournir.} (other) {Il reste {n} éléments à fournir.}'
 	String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
@@ -558,8 +586,11 @@ class Traductions$attente$fr {
 	/// fr: 'Prochaine étape : {etape}'
 	String prochaineEtape({required Object etape}) => 'Prochaine étape : ${etape}';
 
-	/// fr: 'Déposez une nouvelle pièce pour relancer la vérification.'
-	String get refuseDetail => 'Déposez une nouvelle pièce pour relancer la vérification.';
+	/// fr: 'Pour relancer la vérification, commencez par cet élément : {element}.'
+	String refuseDetail({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.';
+
+	/// fr: 'Vous pouvez joindre l'académie pour connaître la marche à suivre.'
+	String get refuseSansElement => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.';
 
 	/// fr: 'L'état de votre dossier ne s'affiche pas pour le moment.'
 	String get illisible => 'L\'état de votre dossier ne s\'affiche pas pour le moment.';
@@ -1228,11 +1259,19 @@ class Traductions$dossiers$fr {
 	/// fr: 'Dossiers à valider'
 	String get titre => 'Dossiers à valider';
 
-	/// fr: 'Aucun dossier en attente'
-	String get aucun => 'Aucun dossier en attente';
+	/// fr: 'Examinez les dossiers prêts pour une décision.'
+	String get sousTitre => 'Examinez les dossiers prêts pour une décision.';
 
-	/// fr: 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.'
-	String get aucunDetail => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.';
+	/// fr: 'Aucun dossier n'attend de validation.'
+	String get aucun => 'Aucun dossier n\'attend de validation.';
+
+	/// fr: 'Les nouveaux dossiers apparaîtront ici lorsqu'ils seront prêts.'
+	String get aucunDetail => 'Les nouveaux dossiers apparaîtront ici lorsqu\'ils seront prêts.';
+
+	late final Traductions$dossiers$file$fr file = Traductions$dossiers$file$fr.internal(_root);
+	late final Traductions$dossiers$detail$fr detail = Traductions$dossiers$detail$fr.internal(_root);
+	late final Traductions$dossiers$visionneuse$fr visionneuse = Traductions$dossiers$visionneuse$fr.internal(_root);
+	late final Traductions$dossiers$revue$fr revue = Traductions$dossiers$revue$fr.internal(_root);
 
 	/// fr: '1 dossier en attente'
 	String get restantUn => '1 dossier en attente';
@@ -1291,23 +1330,13 @@ class Traductions$dossiers$fr {
 	/// fr: 'Valider le dossier'
 	String get approuver => 'Valider le dossier';
 
-	/// fr: 'Refuser'
-	String get refuser => 'Refuser';
+	/// fr: 'Refuser le dossier'
+	String get refuser => 'Refuser le dossier';
 
-	/// fr: 'Ce qui ne va pas, en une phrase'
-	String get motif => 'Ce qui ne va pas, en une phrase';
-
-	/// fr: 'Un refus doit dire ce qui ne va pas : la famille n'a que cette phrase pour corriger.'
-	String get motifRequis => 'Un refus doit dire ce qui ne va pas : la famille n\'a que cette phrase pour corriger.';
-
-	/// fr: 'Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.'
-	String get journalisation => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.';
-
-	/// fr: 'Renseignez votre genre dans votre profil avant de consulter un dossier.'
-	String get genreManquant => 'Renseignez votre genre dans votre profil avant de consulter un dossier.';
-
-	/// fr: 'La décision n'a pas abouti. Réessayez dans un instant.'
-	String get erreur => 'La décision n\'a pas abouti. Réessayez dans un instant.';
+	late final Traductions$dossiers$profilACompleter$fr profilACompleter = Traductions$dossiers$profilACompleter$fr.internal(_root);
+	late final Traductions$dossiers$refus$fr refus = Traductions$dossiers$refus$fr.internal(_root);
+	late final Traductions$dossiers$validation$fr validation = Traductions$dossiers$validation$fr.internal(_root);
+	late final Traductions$dossiers$decision$fr decision = Traductions$dossiers$decision$fr.internal(_root);
 }
 
 // Path: admin
@@ -1326,6 +1355,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$regles$fr regles = Traductions$admin$regles$fr.internal(_root);
 	late final Traductions$admin$fonctionnalites$fr fonctionnalites = Traductions$admin$fonctionnalites$fr.internal(_root);
 	late final Traductions$admin$conservationDonnees$fr conservationDonnees = Traductions$admin$conservationDonnees$fr.internal(_root);
+	late final Traductions$admin$politiqueRevueKyc$fr politiqueRevueKyc = Traductions$admin$politiqueRevueKyc$fr.internal(_root);
 	late final Traductions$admin$evaluations$fr evaluations = Traductions$admin$evaluations$fr.internal(_root);
 	late final Traductions$admin$progression$fr progression = Traductions$admin$progression$fr.internal(_root);
 	late final Traductions$admin$programmes$fr programmes = Traductions$admin$programmes$fr.internal(_root);
@@ -2268,6 +2298,21 @@ class Traductions$tc$fr {
 	late final Traductions$tc$realtime$fr realtime = Traductions$tc$realtime$fr.internal(_root);
 	late final Traductions$tc$observation$fr observation = Traductions$tc$observation$fr.internal(_root);
 	late final Traductions$tc$parcours$fr parcours = Traductions$tc$parcours$fr.internal(_root);
+}
+
+// Path: commun.demonstration
+class Traductions$commun$demonstration$fr {
+	Traductions$commun$demonstration$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration'
+	String get repere => 'Démonstration';
+
+	/// fr: 'Mode Démonstration'
+	String get repereLu => 'Mode Démonstration';
 }
 
 // Path: commun.etape
@@ -3951,6 +3996,338 @@ class Traductions$eleveConnexion$refus$fr {
 	String get generique => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.';
 }
 
+// Path: dossiers.file
+class Traductions$dossiers$file$fr {
+	Traductions$dossiers$file$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement des dossiers…'
+	String get chargement => 'Chargement des dossiers…';
+
+	/// fr: 'Impossible de charger les dossiers.'
+	String get erreur => 'Impossible de charger les dossiers.';
+
+	/// fr: 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.'
+	String get horsLigne => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.';
+
+	/// fr: 'Vous n'avez pas accès aux dossiers à valider.'
+	String get accesRefuse => 'Vous n\'avez pas accès aux dossiers à valider.';
+
+	/// fr: 'Actualisation des dossiers…'
+	String get actualisation => 'Actualisation des dossiers…';
+
+	/// fr: 'Le chargement prend plus de temps que prévu.'
+	String get chargementProlonge => 'Le chargement prend plus de temps que prévu.';
+
+	/// fr: 'Impossible de charger les dossiers suivants.'
+	String get suivantsErreur => 'Impossible de charger les dossiers suivants.';
+
+	/// fr: 'La consultation des dossiers est indisponible pour le moment.'
+	String get indisponible => 'La consultation des dossiers est indisponible pour le moment.';
+
+	/// fr: 'Ce dossier n’est plus disponible dans la file.'
+	String get selectionRetiree => 'Ce dossier n’est plus disponible dans la file.';
+
+	/// fr: 'Actualiser les dossiers'
+	String get actualiser => 'Actualiser les dossiers';
+
+	/// fr: 'Sélectionnez un dossier à examiner.'
+	String get aucuneSelection => 'Sélectionnez un dossier à examiner.';
+
+	/// fr: 'Charger les dossiers suivants'
+	String get suivants => 'Charger les dossiers suivants';
+
+	/// fr: 'Ouvrir le dossier de {nom}'
+	String ouvrirDe({required Object nom}) => 'Ouvrir le dossier de ${nom}';
+
+	/// fr: 'Ouvrir le dossier d'{nom}'
+	String ouvrirElide({required Object nom}) => 'Ouvrir le dossier d\'${nom}';
+
+	/// fr: 'En cours de vérification'
+	String get enVerification => 'En cours de vérification';
+
+	/// fr: 'Dossier sans nom disponible'
+	String get sansNom => 'Dossier sans nom disponible';
+
+	/// fr: '{type} · {date}'
+	String legende({required Object type, required Object date}) => '${type} · ${date}';
+
+	/// fr: '{date} à {heure} ({zone})'
+	String dateHeure({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})';
+
+	/// fr: '{jour}/{mois}/{annee}'
+	String dateChiffres({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}';
+
+	/// fr: '{heures}:{minutes}'
+	String heureChiffres({required Object heures, required Object minutes}) => '${heures}:${minutes}';
+
+	/// fr: 'UTC'
+	String get zoneUtc => 'UTC';
+
+	/// fr: 'Dossier suivant : {nom}'
+	String suivantAnnonce({required Object nom}) => 'Dossier suivant : ${nom}';
+}
+
+// Path: dossiers.detail
+class Traductions$dossiers$detail$fr {
+	Traductions$dossiers$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dossier de {nom}'
+	String titreDe({required Object nom}) => 'Dossier de ${nom}';
+
+	/// fr: 'Dossier d'{nom}'
+	String titreElide({required Object nom}) => 'Dossier d\'${nom}';
+}
+
+// Path: dossiers.visionneuse
+class Traductions$dossiers$visionneuse$fr {
+	Traductions$dossiers$visionneuse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement de la pièce…'
+	String get chargement => 'Chargement de la pièce…';
+
+	/// fr: 'La pièce ne peut pas être affichée.'
+	String get erreur => 'La pièce ne peut pas être affichée.';
+
+	/// fr: 'L'accès à cette pièce a expiré.'
+	String get expire => 'L\'accès à cette pièce a expiré.';
+
+	/// fr: 'Recharger la pièce'
+	String get recharger => 'Recharger la pièce';
+
+	/// fr: 'Ce format de pièce ne peut pas être affiché.'
+	String get formatNonPrisEnCharge => 'Ce format de pièce ne peut pas être affiché.';
+
+	/// fr: 'Vous n’avez plus accès à cette pièce.'
+	String get accesRetire => 'Vous n’avez plus accès à cette pièce.';
+
+	/// fr: 'Vous êtes hors ligne. La pièce ne peut pas être chargée.'
+	String get horsLigne => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.';
+
+	/// fr: 'Aucune pièce n’est disponible.'
+	String get aucune => 'Aucune pièce n’est disponible.';
+
+	/// fr: 'Fermer la pièce'
+	String get fermerPiece => 'Fermer la pièce';
+
+	/// fr: 'Agrandir'
+	String get agrandir => 'Agrandir';
+
+	/// fr: 'Réduire'
+	String get reduire => 'Réduire';
+
+	/// fr: 'Ajuster à l’écran'
+	String get ajuster => 'Ajuster à l’écran';
+
+	/// fr: '{action} (touche {touche})'
+	String infoBulle({required Object action, required Object touche}) => '${action} (touche ${touche})';
+
+	/// fr: 'Document fictif'
+	String get documentFictif => 'Document fictif';
+}
+
+// Path: dossiers.revue
+class Traductions$dossiers$revue$fr {
+	Traductions$dossiers$revue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Identité et dossier'
+	String get identite => 'Identité et dossier';
+
+	/// fr: 'La pièce requise n’a pas été transmise.'
+	String get pieceNonTransmise => 'La pièce requise n’a pas été transmise.';
+
+	/// fr: 'Pièce d'identité'
+	String get piece => 'Pièce d\'identité';
+
+	/// fr: 'Voir la pièce'
+	String get voirPiece => 'Voir la pièce';
+
+	/// fr: 'Accords et éléments soumis'
+	String get accords => 'Accords et éléments soumis';
+
+	/// fr: 'Nom'
+	String get nom => 'Nom';
+
+	/// fr: 'Prénom'
+	String get prenom => 'Prénom';
+
+	/// fr: 'Type de dossier'
+	String get typeDossier => 'Type de dossier';
+
+	/// fr: 'Date de dépôt'
+	String get dateDepot => 'Date de dépôt';
+
+	/// fr: 'État du dossier'
+	String get etatDossier => 'État du dossier';
+
+	/// fr: 'Date de dépôt indisponible'
+	String get dateIndisponible => 'Date de dépôt indisponible';
+
+	/// fr: 'Ce dossier n'est pas encore prêt à être validé.'
+	String get pasPret => 'Ce dossier n\'est pas encore prêt à être validé.';
+
+	/// fr: 'Impossible de charger ce dossier.'
+	String get erreurChargement => 'Impossible de charger ce dossier.';
+
+	/// fr: 'La consultation de la pièce est indisponible pour le moment.'
+	String get pieceIndisponible => 'La consultation de la pièce est indisponible pour le moment.';
+
+	late final Traductions$dossiers$revue$etats$fr etats = Traductions$dossiers$revue$etats$fr.internal(_root);
+}
+
+// Path: dossiers.profilACompleter
+class Traductions$dossiers$profilACompleter$fr {
+	Traductions$dossiers$profilACompleter$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Profil à compléter'
+	String get titre => 'Profil à compléter';
+
+	/// fr: 'Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle.'
+	String get texte => 'Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle.';
+}
+
+// Path: dossiers.refus
+class Traductions$dossiers$refus$fr {
+	Traductions$dossiers$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Refuser le dossier'
+	String get titre => 'Refuser le dossier';
+
+	/// fr: '{nom} · {type}'
+	String nomType({required Object nom, required Object type}) => '${nom} · ${type}';
+
+	/// fr: 'Indiquez le motif qui sera affiché à la personne concernée.'
+	String get corps => 'Indiquez le motif qui sera affiché à la personne concernée.';
+
+	/// fr: 'Motif du refus'
+	String get champ => 'Motif du refus';
+
+	/// fr: 'Expliquez ce qui doit être corrigé, sans donnée interne ni commentaire personnel.'
+	String get aide => 'Expliquez ce qui doit être corrigé, sans donnée interne ni commentaire personnel.';
+
+	/// fr: 'Indiquez le motif du refus.'
+	String get erreurVide => 'Indiquez le motif du refus.';
+
+	/// fr: 'Le motif dépasse la longueur autorisée.'
+	String get tropLong => 'Le motif dépasse la longueur autorisée.';
+
+	/// fr: 'Refus en cours…'
+	String get envoi => 'Refus en cours…';
+
+	/// fr: 'Le dossier n'a pas pu être refusé.'
+	String get erreur => 'Le dossier n\'a pas pu être refusé.';
+
+	/// fr: 'Vous êtes hors ligne. Le refus n’a pas été envoyé.'
+	String get horsLigne => 'Vous êtes hors ligne. Le refus n’a pas été envoyé.';
+
+	/// fr: 'Le résultat du refus n’est pas encore confirmé.'
+	String get inconnu => 'Le résultat du refus n’est pas encore confirmé.';
+
+	/// fr: 'Vous ne pouvez plus refuser ce dossier.'
+	String get interdit => 'Vous ne pouvez plus refuser ce dossier.';
+
+	/// fr: 'Le refus est indisponible pour le moment.'
+	String get indisponible => 'Le refus est indisponible pour le moment.';
+
+	/// fr: 'Dossier refusé.'
+	String get succes => 'Dossier refusé.';
+
+	/// fr: 'Abandonner le motif saisi ?'
+	String get abandonQuestion => 'Abandonner le motif saisi ?';
+
+	/// fr: 'Continuer la saisie'
+	String get continuerSaisie => 'Continuer la saisie';
+
+	/// fr: 'Abandonner'
+	String get abandonner => 'Abandonner';
+}
+
+// Path: dossiers.validation
+class Traductions$dossiers$validation$fr {
+	Traductions$dossiers$validation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Valider ce dossier ?'
+	String get titre => 'Valider ce dossier ?';
+
+	/// fr: 'Le dossier de {nom} sera validé. Son compte pourra accéder à son espace.'
+	String corpsActivation({required Object nom}) => 'Le dossier de ${nom} sera validé. Son compte pourra accéder à son espace.';
+
+	/// fr: 'Le dossier de {nom} sera validé. Les autres conditions d’accès resteront applicables.'
+	String corpsDocumentaire({required Object nom}) => 'Le dossier de ${nom} sera validé. Les autres conditions d’accès resteront applicables.';
+
+	/// fr: 'La validation est indisponible pour le moment.'
+	String get indisponible => 'La validation est indisponible pour le moment.';
+
+	/// fr: 'Validation en cours…'
+	String get envoi => 'Validation en cours…';
+
+	/// fr: 'Le dossier n'a pas pu être validé.'
+	String get erreur => 'Le dossier n\'a pas pu être validé.';
+
+	/// fr: 'Vous êtes hors ligne. La validation n’a pas été envoyée.'
+	String get horsLigne => 'Vous êtes hors ligne. La validation n’a pas été envoyée.';
+
+	/// fr: 'Le résultat de la validation n’est pas encore confirmé.'
+	String get inconnu => 'Le résultat de la validation n’est pas encore confirmé.';
+
+	/// fr: 'Ce dossier n’est plus prêt à être validé.'
+	String get plusPret => 'Ce dossier n’est plus prêt à être validé.';
+
+	/// fr: 'Vous ne pouvez plus valider ce dossier.'
+	String get interdit => 'Vous ne pouvez plus valider ce dossier.';
+
+	/// fr: 'Dossier validé.'
+	String get succes => 'Dossier validé.';
+}
+
+// Path: dossiers.decision
+class Traductions$dossiers$decision$fr {
+	Traductions$dossiers$decision$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérifier le résultat'
+	String get verifierResultat => 'Vérifier le résultat';
+
+	/// fr: 'Ce dossier a déjà été traité.'
+	String get dejaTraite => 'Ce dossier a déjà été traité.';
+
+	/// fr: 'Ce dossier a été traité par un autre membre de l'équipe.'
+	String get conflit => 'Ce dossier a été traité par un autre membre de l\'équipe.';
+
+	/// fr: '{prenom} {nom}'
+	String nomComplet({required Object prenom, required Object nom}) => '${prenom} ${nom}';
+}
+
 // Path: admin.tableau
 class Traductions$admin$tableau$fr {
 	Traductions$admin$tableau$fr.internal(this._root);
@@ -4812,6 +5189,27 @@ class Traductions$admin$conservationDonnees$fr {
 	String uniteJours({required Object n}) => '${n} j';
 }
 
+// Path: admin.politiqueRevueKyc
+class Traductions$admin$politiqueRevueKyc$fr {
+	Traductions$admin$politiqueRevueKyc$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Politique de genre pour la revue KYC'
+	String get titre => 'Politique de genre pour la revue KYC';
+
+	/// fr: 'Limiter la revue KYC selon le genre'
+	String get libelle => 'Limiter la revue KYC selon le genre';
+
+	/// fr: 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.'
+	String get aide => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.';
+
+	/// fr: 'Le réglage n'a pas pu être enregistré.'
+	String get echecEnregistrement => _root.admin.groupes.observationErreur;
+}
+
 // Path: admin.evaluations
 class Traductions$admin$evaluations$fr {
 	Traductions$admin$evaluations$fr.internal(this._root);
@@ -5563,8 +5961,8 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'Comptes'
 	String get titre => 'Comptes';
 
-	/// fr: 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.'
-	String get intro => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.';
+	/// fr: 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.'
+	String get intro => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.';
 
 	/// fr: 'Une personne attend une décision, inscrite aujourd'hui.'
 	String get attenteUneAujourdhui => 'Une personne attend une décision, inscrite aujourd\'hui.';
@@ -5667,6 +6065,9 @@ class Traductions$admin$comptes$fr {
 
 	/// fr: 'Hors de votre portée'
 	String get pieceNonVisible => 'Hors de votre portée';
+
+	/// fr: 'Sans objet'
+	String get pieceSansObjet => 'Sans objet';
 
 	/// fr: 'Aujourd'hui'
 	String get attendAujourdhui => 'Aujourd\'hui';
@@ -9370,8 +9771,8 @@ class Traductions$appareils$emetteur$erreur$fr {
 	/// fr: 'Connexion d'appareil pas encore ouverte'
 	String get compteTitre => 'Connexion d\'appareil pas encore ouverte';
 
-	/// fr: 'Votre compte doit être validé avant de connecter l'appareil d'un élève.'
-	String get comptePhrase => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.';
+	/// fr: 'Votre compte doit être ouvert avant de connecter l'appareil d'un élève.'
+	String get comptePhrase => 'Votre compte doit être ouvert avant de connecter l\'appareil d\'un élève.';
 
 	/// fr: 'Le code n'a pas pu être préparé'
 	String get generiqueTitre => 'Le code n\'a pas pu être préparé';
@@ -9421,8 +9822,8 @@ class Traductions$foyer$ajout$pourQui$fr {
 	/// fr: 'Un profil rattaché à votre foyer, que vous gérez pour lui.'
 	String get enfantDescription => 'Un profil rattaché à votre foyer, que vous gérez pour lui.';
 
-	/// fr: 'Possible dès que votre dossier est validé.'
-	String get enfantAttente => 'Possible dès que votre dossier est validé.';
+	/// fr: 'Possible dès que votre accès est ouvert.'
+	String get enfantAttente => 'Possible dès que votre accès est ouvert.';
 
 	/// fr: 'Un proche adulte'
 	String get procheTitre => 'Un proche adulte';
@@ -9499,8 +9900,8 @@ class Traductions$foyer$ajout$refus$fr {
 
 	// Translations
 
-	/// fr: 'Votre dossier doit être validé avant d'ajouter un profil élève.'
-	String get compteNonValide => 'Votre dossier doit être validé avant d\'ajouter un profil élève.';
+	/// fr: 'Votre accès doit être ouvert avant d'ajouter un profil élève.'
+	String get compteNonValide => 'Votre accès doit être ouvert avant d\'ajouter un profil élève.';
 
 	/// fr: 'Cet âge n'est pas accepté. Vérifiez-le puis réessayez.'
 	String get ageHorsBornes => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.';
@@ -9528,6 +9929,45 @@ class Traductions$foyer$ajout$incertaine$fr {
 
 	/// fr: 'Réessayer quand même'
 	String get reessayer => 'Réessayer quand même';
+}
+
+// Path: dossiers.revue.etats
+class Traductions$dossiers$revue$etats$fr {
+	Traductions$dossiers$revue$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement du dossier…'
+	String get chargement => 'Chargement du dossier…';
+
+	/// fr: 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.'
+	String get horsLigne => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.';
+
+	/// fr: 'Vous n’avez plus accès à ce dossier.'
+	String get accesPerdu => 'Vous n’avez plus accès à ce dossier.';
+
+	/// fr: 'Retour aux dossiers'
+	String get retourDossiers => 'Retour aux dossiers';
+
+	/// fr: 'Terminez les vérifications requises.'
+	String get verificationsIncompletes => 'Terminez les vérifications requises.';
+
+	/// fr: 'Un accord requis manque à ce dossier.'
+	String get accordManquant => 'Un accord requis manque à ce dossier.';
+
+	/// fr: 'La décision est indisponible pour le moment.'
+	String get decisionIndisponible => 'La décision est indisponible pour le moment.';
+
+	/// fr: 'Ce dossier a changé depuis son ouverture.'
+	String get modifie => 'Ce dossier a changé depuis son ouverture.';
+
+	/// fr: 'Actualiser le dossier'
+	String get actualiserDossier => 'Actualiser le dossier';
+
+	/// fr: 'Ce dossier ne peut pas être refusé dans son état actuel.'
+	String get refusNonAutorise => 'Ce dossier ne peut pas être refusé dans son état actuel.';
 }
 
 // Path: admin.journal.evenements
@@ -12722,6 +13162,8 @@ extension on Traductions {
 			'commun.fermer' => 'Fermer',
 			'commun.reessayer' => 'Réessayer',
 			'commun.chargement' => 'Chargement',
+			'commun.demonstration.repere' => 'Démonstration',
+			'commun.demonstration.repereLu' => 'Mode Démonstration',
 			'commun.etape.sur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'commun.etape.surLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'commun.choix.indisponible' => 'Indisponible',
@@ -13089,8 +13531,8 @@ extension on Traductions {
 			'bienvenue.dejaCompte' => 'J\'ai déjà un compte',
 			'attente.titre' => 'Votre dossier est en cours de vérification',
 			'attente.dossierIncomplet' => 'Il manque encore des pièces à votre dossier.',
-			'attente.enVerification' => 'Nous vérifions votre dossier. Vous recevrez une notification dès qu\'il est validé.',
-			'attente.refuse' => 'Votre dossier n\'a pas été validé.',
+			'attente.enVerification' => 'Nous vérifions votre dossier.',
+			'attente.refuse' => 'Dossier refusé',
 			'attente.suspendu' => 'Votre compte est suspendu.',
 			'attente.contacterAcademie' => 'Contacter l\'académie',
 			'attente.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
@@ -13103,14 +13545,24 @@ extension on Traductions {
 			'attente.signerLeContrat' => 'Lire et signer',
 			'attente.lireLaCarte' => 'Lire',
 			'attente.toutEstDepose' => 'Tout est déposé.',
-			'attente.corriger' => 'Reprendre mon dossier',
+			'attente.corriger' => 'Corriger',
+			'attente.correctionImpossible' => 'Ce dossier ne peut pas être modifié pour le moment.',
+			'attente.actualiser' => 'Actualiser l\'état du dossier',
 			'attente.suspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.seDeconnecter' => 'Se déconnecter',
 			'attente.titreDossier' => 'Votre dossier',
+			'attente.titreCompte' => 'Votre compte',
+			'attente.accordsARelire' => 'Il vous reste nos conditions à lire et à accepter.',
+			'attente.accesTitre' => 'Votre compte est créé',
+			'attente.accesEnPreparation' => 'L\'ouverture de votre compte n\'est pas encore automatique.',
+			'attente.aucunDocument' => 'Vous n\'avez aucun document à envoyer.',
+			'attente.accesContact' => 'L\'académie peut l\'ouvrir pour vous : joignez-la.',
+			'attente.actualiserCompte' => 'Actualiser',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
 			'attente.etatAFournir' => 'À fournir',
 			'attente.prochaineEtape' => ({required Object etape}) => 'Prochaine étape : ${etape}',
-			'attente.refuseDetail' => 'Déposez une nouvelle pièce pour relancer la vérification.',
+			'attente.refuseDetail' => ({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.',
+			'attente.refuseSansElement' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.illisible' => 'L\'état de votre dossier ne s\'affiche pas pour le moment.',
 			'attente.horsLigne' => 'Vous êtes hors ligne. L\'état de votre dossier s\'affichera dès le retour du réseau.',
 			'connexion.titre' => 'Se connecter',
@@ -13214,6 +13666,8 @@ extension on Traductions {
 			'consentement.texte.pourquoiDetail' => 'Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu\'une visite est possible.',
 			'consentement.texte.limites' => 'Des visites courtes, en nombre limité.',
 			'consentement.texte.limitesDetail' => 'Chaque parent a un petit nombre de visites par séance, fixé par l\'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.texte.caseResponsable' => 'J\'accepte ces modalités pour mon enfant',
 			'consentement.texte.caseAdulte' => 'J\'accepte ces modalités',
 			'consentement.texte.continuer' => 'Continuer',
@@ -13226,8 +13680,6 @@ extension on Traductions {
 			'consentement.comment.ecouter' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
 			'consentement.comment.sansMicro' => 'Votre micro et votre caméra restent désactivés pendant la visite.',
 			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
 			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
 			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
@@ -13325,7 +13777,7 @@ extension on Traductions {
 			'appareils.emetteur.erreur.horsFoyerTitre' => 'Profil élève introuvable',
 			'appareils.emetteur.erreur.horsFoyerPhrase' => 'Ce profil élève n\'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.',
 			'appareils.emetteur.erreur.compteTitre' => 'Connexion d\'appareil pas encore ouverte',
-			'appareils.emetteur.erreur.comptePhrase' => 'Votre compte doit être validé avant de connecter l\'appareil d\'un élève.',
+			'appareils.emetteur.erreur.comptePhrase' => 'Votre compte doit être ouvert avant de connecter l\'appareil d\'un élève.',
 			'appareils.emetteur.erreur.generiqueTitre' => 'Le code n\'a pas pu être préparé',
 			'appareils.emetteur.erreur.generiquePhrase' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'appareils.regenerer' => 'Générer un nouveau code',
@@ -13372,7 +13824,7 @@ extension on Traductions {
 			'foyer.ajout.pourQui.indisponible' => 'Indisponible',
 			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
-			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre dossier est validé.',
+			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
 			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
 			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
@@ -13389,7 +13841,7 @@ extension on Traductions {
 			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
 			'foyer.ajout.erreurs.ageRequis' => 'Indiquez l\'âge, en chiffres.',
 			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.',
-			'foyer.ajout.refus.compteNonValide' => 'Votre dossier doit être validé avant d\'ajouter un profil élève.',
+			'foyer.ajout.refus.compteNonValide' => 'Votre accès doit être ouvert avant d\'ajouter un profil élève.',
 			'foyer.ajout.refus.ageHorsBornes' => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.',
 			'foyer.ajout.refus.refuse' => 'La création n\'a pas été acceptée. Vérifiez les informations puis réessayez.',
 			'foyer.ajout.incertaine.titre' => 'Le profil a peut-être été créé',
@@ -13625,8 +14077,71 @@ extension on Traductions {
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
-			'dossiers.aucun' => 'Aucun dossier en attente',
-			'dossiers.aucunDetail' => 'Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.',
+			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
+			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
+			'dossiers.aucunDetail' => 'Les nouveaux dossiers apparaîtront ici lorsqu\'ils seront prêts.',
+			'dossiers.file.chargement' => 'Chargement des dossiers…',
+			'dossiers.file.erreur' => 'Impossible de charger les dossiers.',
+			'dossiers.file.horsLigne' => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.',
+			'dossiers.file.accesRefuse' => 'Vous n\'avez pas accès aux dossiers à valider.',
+			'dossiers.file.actualisation' => 'Actualisation des dossiers…',
+			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
+			'dossiers.file.suivantsErreur' => 'Impossible de charger les dossiers suivants.',
+			'dossiers.file.indisponible' => 'La consultation des dossiers est indisponible pour le moment.',
+			'dossiers.file.selectionRetiree' => 'Ce dossier n’est plus disponible dans la file.',
+			'dossiers.file.actualiser' => 'Actualiser les dossiers',
+			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
+			'dossiers.file.suivants' => 'Charger les dossiers suivants',
+			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
+			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
+			'dossiers.file.enVerification' => 'En cours de vérification',
+			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
+			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
+			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
+			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
+			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
+			'dossiers.file.zoneUtc' => 'UTC',
+			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
+			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
+			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
+			'dossiers.visionneuse.chargement' => 'Chargement de la pièce…',
+			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
+			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
+			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
+			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
+			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
+			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
+			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
+			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
+			'dossiers.visionneuse.agrandir' => 'Agrandir',
+			'dossiers.visionneuse.reduire' => 'Réduire',
+			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
+			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
+			'dossiers.visionneuse.documentFictif' => 'Document fictif',
+			'dossiers.revue.identite' => 'Identité et dossier',
+			'dossiers.revue.pieceNonTransmise' => 'La pièce requise n’a pas été transmise.',
+			'dossiers.revue.piece' => 'Pièce d\'identité',
+			'dossiers.revue.voirPiece' => 'Voir la pièce',
+			'dossiers.revue.accords' => 'Accords et éléments soumis',
+			'dossiers.revue.nom' => 'Nom',
+			'dossiers.revue.prenom' => 'Prénom',
+			'dossiers.revue.typeDossier' => 'Type de dossier',
+			'dossiers.revue.dateDepot' => 'Date de dépôt',
+			'dossiers.revue.etatDossier' => 'État du dossier',
+			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
+			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
+			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
+			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
+			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
+			'dossiers.revue.etats.horsLigne' => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.',
+			'dossiers.revue.etats.accesPerdu' => 'Vous n’avez plus accès à ce dossier.',
+			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
+			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
+			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
+			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
+			'dossiers.revue.etats.modifie' => 'Ce dossier a changé depuis son ouverture.',
+			'dossiers.revue.etats.actualiserDossier' => 'Actualiser le dossier',
+			'dossiers.revue.etats.refusNonAutorise' => 'Ce dossier ne peut pas être refusé dans son état actuel.',
 			'dossiers.restantUn' => '1 dossier en attente',
 			'dossiers.restants' => ({required Object n}) => '${n} dossiers en attente',
 			'dossiers.deposeLe' => ({required Object date}) => 'Déposé le ${date}',
@@ -13646,12 +14161,43 @@ extension on Traductions {
 			'dossiers.pointValidite' => 'La pièce n\'est pas expirée',
 			'dossiers.verdict' => 'Décision',
 			'dossiers.approuver' => 'Valider le dossier',
-			'dossiers.refuser' => 'Refuser',
-			'dossiers.motif' => 'Ce qui ne va pas, en une phrase',
-			'dossiers.motifRequis' => 'Un refus doit dire ce qui ne va pas : la famille n\'a que cette phrase pour corriger.',
-			'dossiers.journalisation' => 'Chaque consultation de pièce est inscrite au journal d\'audit, avec votre nom.',
-			'dossiers.genreManquant' => 'Renseignez votre genre dans votre profil avant de consulter un dossier.',
-			'dossiers.erreur' => 'La décision n\'a pas abouti. Réessayez dans un instant.',
+			'dossiers.refuser' => 'Refuser le dossier',
+			'dossiers.profilACompleter.titre' => 'Profil à compléter',
+			'dossiers.profilACompleter.texte' => 'Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle.',
+			'dossiers.refus.titre' => 'Refuser le dossier',
+			'dossiers.refus.nomType' => ({required Object nom, required Object type}) => '${nom} · ${type}',
+			'dossiers.refus.corps' => 'Indiquez le motif qui sera affiché à la personne concernée.',
+			'dossiers.refus.champ' => 'Motif du refus',
+			'dossiers.refus.aide' => 'Expliquez ce qui doit être corrigé, sans donnée interne ni commentaire personnel.',
+			'dossiers.refus.erreurVide' => 'Indiquez le motif du refus.',
+			'dossiers.refus.tropLong' => 'Le motif dépasse la longueur autorisée.',
+			'dossiers.refus.envoi' => 'Refus en cours…',
+			'dossiers.refus.erreur' => 'Le dossier n\'a pas pu être refusé.',
+			'dossiers.refus.horsLigne' => 'Vous êtes hors ligne. Le refus n’a pas été envoyé.',
+			'dossiers.refus.inconnu' => 'Le résultat du refus n’est pas encore confirmé.',
+			'dossiers.refus.interdit' => 'Vous ne pouvez plus refuser ce dossier.',
+			'dossiers.refus.indisponible' => 'Le refus est indisponible pour le moment.',
+			'dossiers.refus.succes' => 'Dossier refusé.',
+			'dossiers.refus.abandonQuestion' => 'Abandonner le motif saisi ?',
+			'dossiers.refus.continuerSaisie' => 'Continuer la saisie',
+			_ => null,
+		} ?? switch (path) {
+			'dossiers.refus.abandonner' => 'Abandonner',
+			'dossiers.validation.titre' => 'Valider ce dossier ?',
+			'dossiers.validation.corpsActivation' => ({required Object nom}) => 'Le dossier de ${nom} sera validé. Son compte pourra accéder à son espace.',
+			'dossiers.validation.corpsDocumentaire' => ({required Object nom}) => 'Le dossier de ${nom} sera validé. Les autres conditions d’accès resteront applicables.',
+			'dossiers.validation.indisponible' => 'La validation est indisponible pour le moment.',
+			'dossiers.validation.envoi' => 'Validation en cours…',
+			'dossiers.validation.erreur' => 'Le dossier n\'a pas pu être validé.',
+			'dossiers.validation.horsLigne' => 'Vous êtes hors ligne. La validation n’a pas été envoyée.',
+			'dossiers.validation.inconnu' => 'Le résultat de la validation n’est pas encore confirmé.',
+			'dossiers.validation.plusPret' => 'Ce dossier n’est plus prêt à être validé.',
+			'dossiers.validation.interdit' => 'Vous ne pouvez plus valider ce dossier.',
+			'dossiers.validation.succes' => 'Dossier validé.',
+			'dossiers.decision.verifierResultat' => 'Vérifier le résultat',
+			'dossiers.decision.dejaTraite' => 'Ce dossier a déjà été traité.',
+			'dossiers.decision.conflit' => 'Ce dossier a été traité par un autre membre de l\'équipe.',
+			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '${prenom} ${nom}',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.foyers' => 'Foyers sans enseignant',
@@ -13740,8 +14286,6 @@ extension on Traductions {
 			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
-			_ => null,
-		} ?? switch (path) {
 			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
@@ -13914,6 +14458,10 @@ extension on Traductions {
 			'admin.conservationDonnees.documentsIdentite' => 'Documents d\'identité',
 			'admin.conservationDonnees.documentsIdentiteDetail' => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.',
 			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '${n} j',
+			'admin.politiqueRevueKyc.titre' => 'Politique de genre pour la revue KYC',
+			'admin.politiqueRevueKyc.libelle' => 'Limiter la revue KYC selon le genre',
+			'admin.politiqueRevueKyc.aide' => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.',
+			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'Évaluations',
 			'admin.evaluations.intro' => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.',
 			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -14146,10 +14694,12 @@ extension on Traductions {
 			'admin.observations.videFiltrePhrase' => 'Élargissez la période ou retirez un filtre.',
 			'admin.observations.effacerFiltres' => 'Effacer les filtres',
 			'admin.observations.chargerSuite' => 'Charger les visites plus anciennes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.observations.erreurSuite' => 'Les visites plus anciennes n\'ont pas pu être lues.',
 			'admin.observations.fin' => 'Toutes les visites sont affichées.',
 			'admin.comptes.titre' => 'Comptes',
-			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
+			'admin.comptes.intro' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d\'identité déposée reste visible ici : c\'est le seul endroit qui le montre.',
 			'admin.comptes.attenteUneAujourdhui' => 'Une personne attend une décision, inscrite aujourd\'hui.',
 			'admin.comptes.attenteUneUnJour' => 'Une personne attend une décision depuis 1 jour.',
 			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
@@ -14184,6 +14734,7 @@ extension on Traductions {
 			'admin.comptes.pieceValidee' => 'Validée',
 			'admin.comptes.pieceRefusee' => 'Refusée',
 			'admin.comptes.pieceNonVisible' => 'Hors de votre portée',
+			'admin.comptes.pieceSansObjet' => 'Sans objet',
 			'admin.comptes.attendAujourdhui' => 'Aujourd\'hui',
 			'admin.comptes.attendUnJour' => '1 jour',
 			'admin.comptes.attendJours' => ({required Object jours}) => '${jours} jours',
@@ -14254,8 +14805,6 @@ extension on Traductions {
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
 			'agent.ouverture' => 'Ouverture',
-			_ => null,
-		} ?? switch (path) {
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
 			'agent.indisponible' => 'Service indisponible',
@@ -14659,6 +15208,8 @@ extension on Traductions {
 			'historique.observations.nonRefermee' => 'Sortie non enregistrée',
 			'historique.observations.eleveInconnu' => 'Élève',
 			'historique.observations.tronquee' => 'Seules les visites les plus récentes sont affichées.',
+			_ => null,
+		} ?? switch (path) {
 			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations du ${date}, ${classe}, ${etat}',
 			'historique.seance.titreSansClasse' => ({required Object date}) => 'Séance du ${date}',
 			'historique.seance.blocSeance' => 'La séance',
@@ -14768,8 +15319,6 @@ extension on Traductions {
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
@@ -15173,6 +15722,8 @@ extension on Traductions {
 			'enseignant.journee.classe' => 'Classe',
 			'enseignant.journee.classeNommee' => ({required Object classe}) => 'Classe ${classe}',
 			'enseignant.journee.preparerSeance' => 'Préparer la séance',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Préparer la séance ${classe}',
 			'enseignant.journee.finaliserCahier' => 'Finaliser le cahier',
 			'enseignant.journee.finaliserCahierLecteur' => ({required Object classe}) => 'Finaliser le cahier ${classe}',
@@ -15282,8 +15833,6 @@ extension on Traductions {
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
@@ -15687,6 +16236,8 @@ extension on Traductions {
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
 			'tc.classe.commandes.micro' => 'Ouvrir le micro',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.commandes.microFermer' => 'Fermer le micro',
 			'tc.classe.commandes.camera' => 'Ouvrir la caméra',
 			'tc.classe.commandes.cameraFermer' => 'Fermer la caméra',
@@ -15796,8 +16347,6 @@ extension on Traductions {
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',

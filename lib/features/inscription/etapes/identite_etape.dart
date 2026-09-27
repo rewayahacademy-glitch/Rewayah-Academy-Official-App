@@ -66,7 +66,13 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
     return CoquilleEtape(
       route: _route,
       question: t.inscription.identiteQuestion,
-      explication: t.inscription.identiteRaison,
+      // K-47 : seul l'enseignant depose une piece ; le tuteur n'en entend pas
+      // parler.
+      explication:
+          ref.watch(brouillonInscriptionProvider).usage ==
+              UsageInscription.enseignant
+          ? t.inscription.identiteRaison
+          : null,
       libelleAction: t.commun.continuer,
       onAction: _continuer,
       onRetour: () => reculerDepuis(context, _route),

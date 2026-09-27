@@ -388,12 +388,83 @@ void main() {
       expect(debutFilet - finMeneur, AppSpacing.md);
     });
 
-    test('une rubrique sans icone ni meneur est refusee', () {
+    // AD-5 a retire l'assert (lignes d'identite sans icone) : la regle
+    // devient positive, la ligne nue se construit et garde son libelle au
+    // debut (Q-AD7-9).
+    testWidgets('une rubrique sans icone ni meneur reste lisible', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, vueMobile);
+      await tester.pumpWidget(
+        hoteTheme(
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(libelle: 'Vide', onPress: () {}),
+            ],
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.text('Vide'), findsOneWidget);
       expect(
-        () => LigneRubrique(libelle: 'Vide', onPress: () {}),
-        throwsAssertionError,
+        tester.getTopLeft(find.text('Vide')).dx,
+        lessThan(vueMobile.width / 2),
       );
     });
+
+    // HL-A-3 : le controle de fin de ligne passe sous le libelle selon une
+    // MESURE (largeur disponible contre mot le plus long du libelle + 8 +
+    // largeur naturelle du controle), plus selon un seuil d'echelle fixe.
+    for (final (String cas, double largeur, double echelle, bool dessous)
+        in <(String, double, double, bool)>[
+          ('390 a 100 % : a cote', 358, 1, false),
+          ('1440 a 200 % : a cote (place suffisante)', 900, 2, false),
+          ('carte etroite a 100 % : dessous (mesure)', 200, 1, true),
+          ('390 a 200 % : dessous', 358, 2, true),
+        ]) {
+      testWidgets('GroupeReglages controle mesure, $cas', (
+        WidgetTester tester,
+      ) async {
+        fixerVue(tester, largeur > 400 ? const Size(1440, 900) : vueMobile);
+        await tester.pumpWidget(
+          hoteTheme(
+            Align(
+              alignment: AlignmentDirectional.topStart,
+              child: SizedBox(
+                width: largeur,
+                child: GroupeReglages(
+                  lignes: <LigneRubrique>[
+                    LigneRubrique(
+                      icone: AppIcons.dossiers,
+                      libelle: 'Piece',
+                      controle: ActionPrincipale(
+                        libelle: 'Voir',
+                        niveau: NiveauAction.tertiaire,
+                        pleineLargeur: false,
+                        onPress: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            echelleTexte: echelle,
+          ),
+        );
+        expect(tester.takeException(), isNull);
+        final Rect libelle = tester.getRect(find.text('Piece'));
+        final Rect controle = tester.getRect(find.byType(ActionPrincipale));
+        final Rect groupe = tester.getRect(find.byType(GroupeReglages));
+        if (dessous) {
+          expect(controle.top, greaterThanOrEqualTo(libelle.bottom));
+        } else {
+          expect(controle.left, greaterThan(libelle.right));
+          expect(controle.top, lessThan(libelle.bottom));
+        }
+        // Toujours au bord de fin (16 de retrait), jamais au-dela.
+        expect(controle.right, closeTo(groupe.right - AppSpacing.lg, 0.5));
+      });
+    }
 
     for (final Brightness luminosite in Brightness.values) {
       testWidgets('surface du theme et texte 200 %, $luminosite', (
@@ -412,15 +483,21 @@ void main() {
           tester,
           find.byType(GroupeReglages),
         );
-        final ColoredBox fond = tester.widget(
-          find
-              .descendant(
+        // Le fond de ligne est un DecoratedBox (barre de selection, HL-A-1).
+        final Iterable<Color?> fonds = tester
+            .widgetList<DecoratedBox>(
+              find.descendant(
                 of: find.byType(GroupeReglages),
-                matching: find.byType(ColoredBox),
-              )
-              .first,
-        );
-        expect(fond.color, palette.surfaceRaised.background);
+                matching: find.byType(DecoratedBox),
+              ),
+            )
+            .map(
+              (DecoratedBox b) => switch (b.decoration) {
+                final BoxDecoration d => d.color,
+                _ => null,
+              },
+            );
+        expect(fonds, contains(palette.surfaceRaised.background));
       });
     }
   });

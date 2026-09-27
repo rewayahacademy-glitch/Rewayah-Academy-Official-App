@@ -410,6 +410,11 @@ abstract final class Routes {
   static const String adminConfigurationConservationDonnees =
       '/admin/configuration/conservation-donnees';
 
+  /// Politique de genre pour la revue KYC (AD-9), sous Configuration.
+  /// Onglet et contenu reserves a la capacite Super Admin lue par le port.
+  static const String adminConfigurationPolitiqueRevueKyc =
+      '/admin/configuration/politique-revue-kyc';
+
   /// Domaine Securite et audit.
   static const String adminSecuriteAudit = '/admin/securite-audit';
 

@@ -8,6 +8,10 @@
     "fermer": "Fermer",
     "reessayer": "Réessayer",
     "chargement": "Chargement",
+    "demonstration": {
+      "repere": "Démonstration",
+      "repereLu": "Mode Démonstration"
+    },
     "etape": {
       "sur": "{n} sur {total}",
       "surLue": "Étape {n} sur {total}"
@@ -471,8 +475,8 @@
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
     "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
-    "enVerification": "Nous vérifions votre dossier. Vous recevrez une notification dès qu'il est validé.",
-    "refuse": "Votre dossier n'a pas été validé.",
+    "enVerification": "Nous vérifions votre dossier.",
+    "refuse": "Dossier refusé",
     "suspendu": "Votre compte est suspendu.",
     "contacterAcademie": "Contacter l'académie",
     "deposeLe": "Déposé le {date}",
@@ -485,17 +489,27 @@
     "signerLeContrat": "Lire et signer",
     "lireLaCarte": "Lire",
     "toutEstDepose": "Tout est déposé.",
-    "corriger": "Reprendre mon dossier",
+    "corriger": "Corriger",
+    "correctionImpossible": "Ce dossier ne peut pas être modifié pour le moment.",
+    "actualiser": "Actualiser l'état du dossier",
     "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "seDeconnecter": "Se déconnecter",
     "titreDossier": "Votre dossier",
+    "titreCompte": "Votre compte",
+    "accordsARelire": "Il vous reste nos conditions à lire et à accepter.",
+    "accesTitre": "Votre compte est créé",
+    "accesEnPreparation": "L'ouverture de votre compte n'est pas encore automatique.",
+    "aucunDocument": "Vous n'avez aucun document à envoyer.",
+    "accesContact": "L'académie peut l'ouvrir pour vous : joignez-la.",
+    "actualiserCompte": "Actualiser",
     "reste": {
       "one": "Il reste un élément à fournir.",
       "other": "Il reste {n} éléments à fournir."
     },
     "etatAFournir": "À fournir",
     "prochaineEtape": "Prochaine étape : {etape}",
-    "refuseDetail": "Déposez une nouvelle pièce pour relancer la vérification.",
+    "refuseDetail": "Pour relancer la vérification, commencez par cet élément : {element}.",
+    "refuseSansElement": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "illisible": "L'état de votre dossier ne s'affiche pas pour le moment.",
     "horsLigne": "Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau."
   },
@@ -764,7 +778,7 @@
         "horsFoyerTitre": "Profil élève introuvable",
         "horsFoyerPhrase": "Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.",
         "compteTitre": "Connexion d'appareil pas encore ouverte",
-        "comptePhrase": "Votre compte doit être validé avant de connecter l'appareil d'un élève.",
+        "comptePhrase": "Votre compte doit être ouvert avant de connecter l'appareil d'un élève.",
         "generiqueTitre": "Le code n'a pas pu être préparé",
         "generiquePhrase": "La demande n'a pas abouti. Réessayez dans un instant."
       }
@@ -829,7 +843,7 @@
         "indisponible": "Indisponible",
         "enfantTitre": "Un enfant ou un mineur",
         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
-        "enfantAttente": "Possible dès que votre dossier est validé.",
+        "enfantAttente": "Possible dès que votre accès est ouvert.",
         "procheTitre": "Un proche adulte",
         "procheDescription": "Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.",
         "moiTitre": "Moi-même",
@@ -852,7 +866,7 @@
         "ageHorsBornes": "Indiquez un âge entre {min} et {max} ans."
       },
       "refus": {
-        "compteNonValide": "Votre dossier doit être validé avant d'ajouter un profil élève.",
+        "compteNonValide": "Votre accès doit être ouvert avant d'ajouter un profil élève.",
         "ageHorsBornes": "Cet âge n'est pas accepté. Vérifiez-le puis réessayez.",
         "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez."
       },
@@ -1132,8 +1146,81 @@
   },
   "dossiers": {
     "titre": "Dossiers à valider",
-    "aucun": "Aucun dossier en attente",
-    "aucunDetail": "Les nouvelles inscriptions apparaîtront ici, la plus ancienne en premier.",
+    "sousTitre": "Examinez les dossiers prêts pour une décision.",
+    "aucun": "Aucun dossier n'attend de validation.",
+    "aucunDetail": "Les nouveaux dossiers apparaîtront ici lorsqu'ils seront prêts.",
+    "file": {
+      "chargement": "Chargement des dossiers…",
+      "erreur": "Impossible de charger les dossiers.",
+      "horsLigne": "Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.",
+      "accesRefuse": "Vous n'avez pas accès aux dossiers à valider.",
+      "actualisation": "Actualisation des dossiers…",
+      "chargementProlonge": "Le chargement prend plus de temps que prévu.",
+      "suivantsErreur": "Impossible de charger les dossiers suivants.",
+      "indisponible": "La consultation des dossiers est indisponible pour le moment.",
+      "selectionRetiree": "Ce dossier n’est plus disponible dans la file.",
+      "actualiser": "Actualiser les dossiers",
+      "aucuneSelection": "Sélectionnez un dossier à examiner.",
+      "suivants": "Charger les dossiers suivants",
+      "ouvrirDe": "Ouvrir le dossier de {nom}",
+      "ouvrirElide": "Ouvrir le dossier d'{nom}",
+      "enVerification": "En cours de vérification",
+      "sansNom": "Dossier sans nom disponible",
+      "legende": "{type} · {date}",
+      "dateHeure": "{date} à {heure} ({zone})",
+      "dateChiffres": "{jour}/{mois}/{annee}",
+      "heureChiffres": "{heures}:{minutes}",
+      "zoneUtc": "UTC",
+      "suivantAnnonce": "Dossier suivant : {nom}"
+    },
+    "detail": {
+      "titreDe": "Dossier de {nom}",
+      "titreElide": "Dossier d'{nom}"
+    },
+    "visionneuse": {
+      "chargement": "Chargement de la pièce…",
+      "erreur": "La pièce ne peut pas être affichée.",
+      "expire": "L'accès à cette pièce a expiré.",
+      "recharger": "Recharger la pièce",
+      "formatNonPrisEnCharge": "Ce format de pièce ne peut pas être affiché.",
+      "accesRetire": "Vous n’avez plus accès à cette pièce.",
+      "horsLigne": "Vous êtes hors ligne. La pièce ne peut pas être chargée.",
+      "aucune": "Aucune pièce n’est disponible.",
+      "fermerPiece": "Fermer la pièce",
+      "agrandir": "Agrandir",
+      "reduire": "Réduire",
+      "ajuster": "Ajuster à l’écran",
+      "infoBulle": "{action} (touche {touche})",
+      "documentFictif": "Document fictif"
+    },
+    "revue": {
+      "identite": "Identité et dossier",
+      "pieceNonTransmise": "La pièce requise n’a pas été transmise.",
+      "piece": "Pièce d'identité",
+      "voirPiece": "Voir la pièce",
+      "accords": "Accords et éléments soumis",
+      "nom": "Nom",
+      "prenom": "Prénom",
+      "typeDossier": "Type de dossier",
+      "dateDepot": "Date de dépôt",
+      "etatDossier": "État du dossier",
+      "dateIndisponible": "Date de dépôt indisponible",
+      "pasPret": "Ce dossier n'est pas encore prêt à être validé.",
+      "erreurChargement": "Impossible de charger ce dossier.",
+      "pieceIndisponible": "La consultation de la pièce est indisponible pour le moment.",
+      "etats": {
+        "chargement": "Chargement du dossier…",
+        "horsLigne": "Vous êtes hors ligne. Aucune décision ne peut être envoyée.",
+        "accesPerdu": "Vous n’avez plus accès à ce dossier.",
+        "retourDossiers": "Retour aux dossiers",
+        "verificationsIncompletes": "Terminez les vérifications requises.",
+        "accordManquant": "Un accord requis manque à ce dossier.",
+        "decisionIndisponible": "La décision est indisponible pour le moment.",
+        "modifie": "Ce dossier a changé depuis son ouverture.",
+        "actualiserDossier": "Actualiser le dossier",
+        "refusNonAutorise": "Ce dossier ne peut pas être refusé dans son état actuel."
+      }
+    },
     "restantUn": "1 dossier en attente",
     "restants": "{n} dossiers en attente",
     "deposeLe": "Déposé le {date}",
@@ -1153,12 +1240,49 @@
     "pointValidite": "La pièce n'est pas expirée",
     "verdict": "Décision",
     "approuver": "Valider le dossier",
-    "refuser": "Refuser",
-    "motif": "Ce qui ne va pas, en une phrase",
-    "motifRequis": "Un refus doit dire ce qui ne va pas : la famille n'a que cette phrase pour corriger.",
-    "journalisation": "Chaque consultation de pièce est inscrite au journal d'audit, avec votre nom.",
-    "genreManquant": "Renseignez votre genre dans votre profil avant de consulter un dossier.",
-    "erreur": "La décision n'a pas abouti. Réessayez dans un instant."
+    "refuser": "Refuser le dossier",
+    "profilACompleter": {
+      "titre": "Profil à compléter",
+      "texte": "Votre profil doit être complété avant de consulter les dossiers autorisés par cette règle."
+    },
+    "refus": {
+      "titre": "Refuser le dossier",
+      "nomType": "{nom} · {type}",
+      "corps": "Indiquez le motif qui sera affiché à la personne concernée.",
+      "champ": "Motif du refus",
+      "aide": "Expliquez ce qui doit être corrigé, sans donnée interne ni commentaire personnel.",
+      "erreurVide": "Indiquez le motif du refus.",
+      "tropLong": "Le motif dépasse la longueur autorisée.",
+      "envoi": "Refus en cours…",
+      "erreur": "Le dossier n'a pas pu être refusé.",
+      "horsLigne": "Vous êtes hors ligne. Le refus n’a pas été envoyé.",
+      "inconnu": "Le résultat du refus n’est pas encore confirmé.",
+      "interdit": "Vous ne pouvez plus refuser ce dossier.",
+      "indisponible": "Le refus est indisponible pour le moment.",
+      "succes": "Dossier refusé.",
+      "abandonQuestion": "Abandonner le motif saisi ?",
+      "continuerSaisie": "Continuer la saisie",
+      "abandonner": "Abandonner"
+    },
+    "validation": {
+      "titre": "Valider ce dossier ?",
+      "corpsActivation": "Le dossier de {nom} sera validé. Son compte pourra accéder à son espace.",
+      "corpsDocumentaire": "Le dossier de {nom} sera validé. Les autres conditions d’accès resteront applicables.",
+      "indisponible": "La validation est indisponible pour le moment.",
+      "envoi": "Validation en cours…",
+      "erreur": "Le dossier n'a pas pu être validé.",
+      "horsLigne": "Vous êtes hors ligne. La validation n’a pas été envoyée.",
+      "inconnu": "Le résultat de la validation n’est pas encore confirmé.",
+      "plusPret": "Ce dossier n’est plus prêt à être validé.",
+      "interdit": "Vous ne pouvez plus valider ce dossier.",
+      "succes": "Dossier validé."
+    },
+    "decision": {
+      "verifierResultat": "Vérifier le résultat",
+      "dejaTraite": "Ce dossier a déjà été traité.",
+      "conflit": "Ce dossier a été traité par un autre membre de l'équipe.",
+      "nomComplet": "{prenom} {nom}"
+    }
   },
   "admin": {
     "tableau": {
@@ -1439,6 +1563,12 @@
       "documentsIdentiteDetail": "Le nombre de jours pendant lesquels un document d'identité déposé reste accessible avant sa purge.",
       "uniteJours": "{n} j"
     },
+    "politiqueRevueKyc": {
+      "titre": "Politique de genre pour la revue KYC",
+      "libelle": "Limiter la revue KYC selon le genre",
+      "aide": "Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.",
+      "echecEnregistrement": "@:admin.groupes.observationErreur"
+    },
     "evaluations": {
       "titre": "Évaluations",
       "intro": "Ce qui est prévu, ce qui a été passé, et les certifications obtenues.",
@@ -1687,7 +1817,7 @@
     },
     "comptes": {
       "titre": "Comptes",
-      "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un compte sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.",
+      "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici : c'est le seul endroit qui le montre.",
       "attenteUneAujourdhui": "Une personne attend une décision, inscrite aujourd'hui.",
       "attenteUneUnJour": "Une personne attend une décision depuis 1 jour.",
       "attenteUne": "Une personne attend une décision depuis {jours} jours.",
@@ -1722,6 +1852,7 @@
       "pieceValidee": "Validée",
       "pieceRefusee": "Refusée",
       "pieceNonVisible": "Hors de votre portée",
+      "pieceSansObjet": "Sans objet",
       "attendAujourdhui": "Aujourd'hui",
       "attendUnJour": "1 jour",
       "attendJours": "{jours} jours"

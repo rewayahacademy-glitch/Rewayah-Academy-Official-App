@@ -9,14 +9,18 @@ import '../theme/app_spacing.dart';
 import 'entete_page.dart';
 import 'offline_banner.dart';
 
+/// Hauteur disponible sous laquelle la tete d'une page defilante defile avec
+/// le corps (vue tres basse, zoom 400 %) au lieu de rester fixe.
+const double _hauteurTeteFixe = 360;
+
 /// Le gabarit de page du produit. **Tout ecran passe par lui.**
 ///
 /// Ce qu'il tient, et qu'aucun ecran ne refait
 /// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2) :
 ///
 /// - le fond creme, qui vient du theme ;
-/// - la **gouttiere du gabarit courant** : 20 sur mobile, 32 sur tablette, 48
-///   sur desktop. Aucun ecran ne compare une largeur a un nombre, c'est
+/// - la **gouttiere du gabarit courant** : 16 sur mobile, 24 sur tablette, 32
+///   sur desktop (contrat A). Aucun ecran ne compare une largeur a un nombre, c'est
 ///   `AppGabarit` qui le fait, en un seul endroit ;
 /// - la **largeur bornee a 1200**, au dela de laquelle la colonne se centre.
 ///   Un ecran mobile etire sur 1400 pixels donne une colonne perdue au milieu
@@ -51,7 +55,12 @@ class PageShell extends StatelessWidget {
     this.actions,
     this.defilante = true,
     this.actionsCoquille = true,
+    this.focusTitre,
   });
+
+  /// Le focus du titre, pour qu'une page y ramene le lecteur (voir
+  /// [EntetePage.focusTitre]).
+  final FocusNode? focusTitre;
 
   /// Le corps de la page.
   final Widget child;
@@ -99,8 +108,11 @@ class PageShell extends StatelessWidget {
       ...actionsEntete,
       if (actionsCoquille) ...ActionsEnteteCoquille.de(context),
     ];
+    final VoidCallback? retour =
+        onRetour ??
+        (actionsCoquille ? ActionsEnteteCoquille.retourDe(context) : null);
     final bool enteteRiche =
-        onRetour != null || sousTitre != null || actionsTete.isNotEmpty;
+        retour != null || sousTitre != null || actionsTete.isNotEmpty;
 
     // La tete ne defile pas : le titre d'ecran, puis l'en-tete (un onglet, le
     // selecteur d'enfant de `TUT-01`, une ligne de contexte). C'est une zone
@@ -123,11 +135,15 @@ class PageShell extends StatelessWidget {
           EntetePage(
             titre: titre!,
             sousTitre: sousTitre,
-            onRetour: onRetour,
+            onRetour: retour,
             actions: actionsTete,
+            focusTitre: focusTitre,
           )
         else
-          Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
+          titreFocalisable(
+            focusTitre,
+            Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
+          ),
         Ecart.vXxl,
       ] else if (enteteRiche) ...<Widget>[
         // Sans titre, la page garde son disque retour et les actions de la
@@ -135,7 +151,7 @@ class PageShell extends StatelessWidget {
         Ecart.vLg,
         Row(
           children: <Widget>[
-            if (onRetour != null) DisqueRetour(onPress: onRetour!),
+            if (retour != null) DisqueRetour(onPress: retour),
             const Spacer(),
             for (final Widget action in actionsTete) ...<Widget>[
               Ecart.hXs,
@@ -183,16 +199,33 @@ class PageShell extends StatelessWidget {
             Expanded(
               child: _Colonne(
                 gouttiere: gabarit.gouttiere,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    ...tete,
-                    Expanded(
-                      child: defilante
-                          ? SingleChildScrollView(child: corps)
-                          : corps,
-                    ),
-                  ],
+                // AD-11 (1.4.10) : sur une vue tres basse (1280x1024 a
+                // 400 %, soit 256 de haut), la tete fixe ne laisse plus de
+                // place au corps et deborde ; la page defilante fait alors
+                // defiler la tete avec le corps. Un corps non defilant (liste
+                // paresseuse) y recoit la hauteur de la vue : la tete defile,
+                // puis la liste occupe tout l'ecran.
+                // Meme regle sur mobile a 200 % de texte : la tete (titre,
+                // sous-titre, onglets) y prend presque toute la hauteur et
+                // ne laissait au corps qu'une bande (390x844, 44 de
+                // debordement, ligne de la file hors d'atteinte).
+                // Le clavier virtuel ne compte pas dans ce seuil : il est
+                // passager, et basculer la structure a son ouverture
+                // remontait le corps (la revue et le motif de 02D, ouvert
+                // dessus, a 320x640 avec un clavier de 300). Lu sur la vue :
+                // le Scaffold de la coquille retire le clavier du MediaQuery
+                // de son corps.
+                child: _Bascule(
+                  teteDefilante: (double hauteur) =>
+                      hauteur +
+                              View.of(context).viewInsets.bottom /
+                                  View.of(context).devicePixelRatio <
+                          _hauteurTeteFixe ||
+                      (gabarit == Gabarit.mobile &&
+                          MediaQuery.textScalerOf(context).scale(1) >= 2),
+                  tete: tete,
+                  corps: corps,
+                  defilante: defilante,
                 ),
               ),
             ),
@@ -218,10 +251,16 @@ class ActionsEnteteCoquille extends InheritedWidget {
     required this.actions,
     required super.child,
     super.key,
+    this.onRetour,
   });
 
   /// Les actions, dans l'ordre de lecture (la cloche en dernier).
   final List<Widget> actions;
+
+  /// Le retour que la coquille pose sur chacune de ses pages quand la page
+  /// n'en donne pas (l'admin : retour vers l'Accueil, spec section 26 ter).
+  /// Nul par defaut : le tuteur n'en pose aucun.
+  final VoidCallback? onRetour;
 
   /// Les actions posees au-dessus de [context], ou une liste vide.
   static List<Widget> de(BuildContext context) =>
@@ -230,9 +269,95 @@ class ActionsEnteteCoquille extends InheritedWidget {
           ?.actions ??
       const <Widget>[];
 
+  /// Le retour pose au-dessus de [context], ou nul.
+  static VoidCallback? retourDe(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
+      ?.onRetour;
+
   @override
   bool updateShouldNotify(ActionsEnteteCoquille ancien) =>
-      !listEquals(actions, ancien.actions);
+      !listEquals(actions, ancien.actions) || onRetour != ancien.onRetour;
+}
+
+/// La bascule entre la tete fixe (`Column(tete, Expanded(corps))`) et le
+/// defilement global (`SingleChildScrollView(Column(tete, corps))`).
+///
+/// AD-RC M4 : la tete et le corps changent de parent a chaque bascule
+/// (rotation, redimensionnement, texte a 200 %). Sans cle, leur etat local
+/// (saisie, focus, position d'une liste) etait recree. Chacun porte donc une
+/// `GlobalKey` tenue par ce `State` : Flutter deplace le sous-arbre au lieu de
+/// le reconstruire. Une seule branche est rendue a la fois, chaque cle n'est
+/// donc jamais a deux endroits de l'arbre.
+class _Bascule extends StatefulWidget {
+  const _Bascule({
+    required this.teteDefilante,
+    required this.tete,
+    required this.corps,
+    required this.defilante,
+  });
+
+  /// Vrai quand, pour la hauteur disponible, la tete doit defiler avec le
+  /// corps.
+  final bool Function(double hauteur) teteDefilante;
+  final List<Widget> tete;
+  final Widget corps;
+  final bool defilante;
+
+  @override
+  State<_Bascule> createState() => _BasculeState();
+}
+
+class _BasculeState extends State<_Bascule> {
+  final GlobalKey _cleTete = GlobalKey(debugLabel: 'PageShell.tete');
+  final GlobalKey _cleCorps = GlobalKey(debugLabel: 'PageShell.corps');
+
+  @override
+  Widget build(BuildContext context) {
+    // La tete garde sa mise en page d'avant : une colonne etiree de hauteur
+    // minimale rend ses enfants comme s'ils etaient ceux de la colonne
+    // exterieure.
+    final Widget tete = KeyedSubtree(
+      key: _cleTete,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: widget.tete,
+      ),
+    );
+    final Widget corps = KeyedSubtree(key: _cleCorps, child: widget.corps);
+
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) =>
+          widget.teteDefilante(contraintes.maxHeight)
+          ? SingleChildScrollView(
+              // Un corps non defilant (liste paresseuse) garde le defileur
+              // principal de la page dans les deux branches : sur mobile, sa
+              // liste reste attachee au meme controleur et garde sa position.
+              primary: widget.defilante ? null : false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  tete,
+                  if (widget.defilante)
+                    corps
+                  else
+                    SizedBox(height: contraintes.maxHeight, child: corps),
+                ],
+              ),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                tete,
+                Expanded(
+                  child: widget.defilante
+                      ? SingleChildScrollView(child: corps)
+                      : corps,
+                ),
+              ],
+            ),
+    );
+  }
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.

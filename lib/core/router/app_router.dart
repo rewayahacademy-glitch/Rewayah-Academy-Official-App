@@ -11,6 +11,7 @@ import '../../features/admin_attribution/attribution_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
+import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_page.dart';
 import '../../features/admin_configuration_regles/regles_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
@@ -856,9 +857,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminPersonnesDossiers,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        // Le dossier vise depuis l'Accueil passe par `extra`, jamais par
+        // l'URL : un identifiant de personne n'a rien a faire dans un
+        // historique de navigateur (spec l.1933).
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: DossiersPage(),
+          child: DossiersPage(
+            profilId: switch (etat.extra) {
+              final String id => id,
+              _ => null,
+            },
+          ),
         ),
       ),
       // `ADM-08` : les comptes, atteints depuis l'Accueil
@@ -946,6 +955,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
           child: ConservationDonneesPage(),
+        ),
+      ),
+      // AD-9 : pas de redirect, la capacite arrive de facon asynchrone ; la
+      // garde est dans la page (accesRefuse / indisponible).
+      GoRoute(
+        path: Routes.adminConfigurationPolitiqueRevueKyc,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.configuration,
+          child: PolitiqueRevueKycPage(),
         ),
       ),
       GoRoute(
@@ -1216,6 +1234,8 @@ class _CoquilleSecondaire extends ConsumerWidget {
         domaineActif: null,
         onAller: aller,
         onCompte: () => aller(Routes.compte),
+        // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
+        onRetour: () => aller(Routes.admin),
         child: child,
       );
     }
@@ -1374,6 +1394,11 @@ class _CoquilleAdmin extends ConsumerWidget {
       domaineActif: domaine,
       onAller: aller,
       onCompte: () => aller(Routes.compte),
+      // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
+      // (spec section 26 ter, Q14).
+      onRetour: domaine == AdminDomaine.accueil
+          ? null
+          : () => aller(Routes.admin),
       child: child,
     );
   }

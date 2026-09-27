@@ -60,6 +60,7 @@ class ActionPrincipale extends StatelessWidget {
     this.pilule = false,
     this.compacte = false,
     this.autofocus = false,
+    this.focusNode,
   });
 
   /// Vrai pour prendre le focus clavier a l'ouverture de l'ecran : un ecran
@@ -113,6 +114,9 @@ class ActionPrincipale extends StatelessWidget {
   /// bouton a le rayon `sm` (12).
   final bool pilule;
 
+  /// Le noeud de focus, pour y rendre le focus apres une modale.
+  final FocusNode? focusNode;
+
   BorderRadius get _arrondi =>
       pilule ? AppRadius.arrondiFull : AppRadius.arrondiSm;
 
@@ -131,6 +135,7 @@ class ActionPrincipale extends StatelessWidget {
       respecterCibleTactile: reduit,
       arrondiFocus: _arrondi,
       autofocus: autofocus,
+      focusNode: focusNode,
       constructeur: (BuildContext contexte, EtatPression etat) {
         final Widget corps = _corps(
           contexte,

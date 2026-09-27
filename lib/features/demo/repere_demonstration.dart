@@ -5,9 +5,10 @@
 
 import 'package:flutter/material.dart';
 
-/// Le libelle du repere. Volontairement en dur : le mode n'existe que sur
-/// l'apercu, il n'entre pas dans les traductions du produit.
-const String libelleRepereDemonstration = 'Démonstration';
+import '../../core/i18n/strings.g.dart';
+
+/// Le libelle du repere, traduit (K-41) : `commun.demonstration.repere`.
+String get libelleRepereDemonstration => t.commun.demonstration.repere;
 
 /// Coiffe [child] d'un bandeau d'angle « Démonstration ».
 class RepereDemonstration extends StatelessWidget {
@@ -24,21 +25,25 @@ class RepereDemonstration extends StatelessWidget {
     // l'annonce (revue P2-10, constat 2), sans rien changer au rendu.
     return Semantics(
       container: true,
-      label: 'Mode $libelleRepereDemonstration',
+      label: t.commun.demonstration.repereLu,
       child: Banner(
         message: libelleRepereDemonstration,
         location: BannerLocation.topEnd,
         textDirection: sens,
         layoutDirection: sens,
         color: Theme.of(context).colorScheme.tertiary,
-        // La police du theme (K-42 : captures lisibles) : un `TextStyle` nu
-        // retombait sur la police de test et le ruban se peignait en blocs.
-        textStyle: (Theme.of(context).textTheme.labelSmall ??
-                const TextStyle())
+        // La famille vient du theme : un `TextStyle` nu laisse le bandeau
+        // (peint, hors `DefaultTextStyle`) sans police, donc illisible
+        // (revue AD-S). Couleurs inchangees.
+        textStyle: (Theme.of(context).textTheme.labelSmall ?? const TextStyle())
             .copyWith(
               color: Theme.of(context).colorScheme.onTertiary,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+              height: 1,
+              // Le bandeau de `Banner` ne fait que 80 de long : sans
+              // interlettrage et en 9, le mot y tient en entier.
+              letterSpacing: 0,
             ),
         child: child ?? const SizedBox.shrink(),
       ),

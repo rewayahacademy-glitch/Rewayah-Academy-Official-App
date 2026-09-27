@@ -107,7 +107,10 @@ class Pressable extends StatefulWidget {
     this.respecterCibleTactile = true,
     this.arrondiFocus,
     this.autofocus = false,
+    this.selectionne,
+    this.coche,
     this.focusNode,
+    this.lien = false,
   }) : constructeur = null;
 
   /// Cree une zone pressable dont le contenu suit l'etat d'interaction.
@@ -125,7 +128,10 @@ class Pressable extends StatefulWidget {
     this.respecterCibleTactile = true,
     this.arrondiFocus,
     this.autofocus = false,
+    this.selectionne,
+    this.coche,
     this.focusNode,
+    this.lien = false,
   }) : child = null;
 
   /// Le contenu rendu, quand il ne depend pas de l'etat.
@@ -156,8 +162,19 @@ class Pressable extends StatefulWidget {
   /// Prend le focus des l'apparition. Reserve au premier champ d'une feuille.
   final bool autofocus;
 
-  /// Le noeud de focus, fourni quand l'appelant doit rendre le focus a cette
-  /// zone (le bouton qui a ouvert un panneau, a sa fermeture).
+  /// Etat de selection annonce (`Semantics.selected`). Nul : non annonce.
+  final bool? selectionne;
+
+  /// Etat de case annonce (`Semantics.checked`). Nul : non annonce.
+  final bool? coche;
+
+  /// Annonce un lien (Semantics.link) plutot qu'un bouton : il mene a un
+  /// endroit, il n'engage rien.
+  final bool lien;
+
+  /// Le noeud de focus de la zone, pour qu'un ecran puisse y poser le focus
+  /// ou que l'appelant le rende a cette zone (le bouton qui a ouvert un
+  /// panneau, a sa fermeture).
   final FocusNode? focusNode;
 
   /// Duree de l'animation de pression : le retour tactile du budget de
@@ -306,8 +323,11 @@ class _PressableState extends State<Pressable>
     }
 
     return Semantics(
-      button: _pressable,
+      button: _pressable && !widget.lien,
+      link: widget.lien,
       enabled: _pressable,
+      selected: widget.selectionne,
+      checked: widget.coche,
       label: widget.libelleSemantique,
       child: FocusableActionDetector(
         enabled: _pressable,

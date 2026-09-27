@@ -1,455 +1,312 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/admin/service_comptes.dart' show EtatPiece;
-import '../../core/dossier/service_validation.dart';
+import '../../core/admin/admin_domaine.dart';
+import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_metriques.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/bento_tile.dart';
-import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pressable.dart';
-import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/sous_navigation_domaine.dart';
+import 'decision_dossier.dart';
+import 'detail_dossier.dart';
+import 'etat_file_dossiers.dart';
+import 'file_dossiers.dart';
+import 'textes_dossier.dart';
 
-/// `ADM-02` : la validation des dossiers.
+/// Largeur de la file en maitre-detail (contrat D, bureau 1440).
+const double largeurFileDossiers = 336;
+
+/// Ecart entre la file et le detail.
+const double ecartFileDetail = 24;
+
+/// Largeur du panneau de detail.
+const double largeurDetailDossier = 728;
+
+/// `ADM-02A` : la file des dossiers a valider, et son detail.
 ///
-/// **Un dossier a la fois, jamais une grille de vignettes** : la verification
-/// d'identite merite une attention sequentielle, pas un balayage rapide.
-///
-/// **Separation stricte du constat et du jugement** : l'apercu du document en
-/// haut, la checklist au milieu, les deux verdicts en bas, dans cet ordre et
-/// jamais melanges (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`).
-///
-/// Le cloisonnement de genre n'est pas applique ici : il vit dans
-/// `read_kyc_documents()`, sur laquelle la file et le verdict sont tous deux
-/// construits. L'ecran ne peut pas le contourner.
+/// Orchestration seule : la file vient du port (`PortRevueDossiers`, K-09),
+/// le detail de la revue existante (AD-6 la refondra). A partir de 1088 de
+/// largeur utile et sous 200 % de texte, maitre-detail 336 / 24 / 728 ;
+/// sinon, repli sequentiel sur la meme route (liste, puis detail).
 class DossiersPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de validation.
-  const DossiersPage({super.key});
+  const DossiersPage({super.key, this.profilId});
+
+  /// Le dossier a ouvrir (ligne de l'Accueil), passe par `extra`.
+  final String? profilId;
 
   @override
   ConsumerState<DossiersPage> createState() => _DossiersPageState();
 }
 
 class _DossiersPageState extends ConsumerState<DossiersPage> {
-  final Set<String> _verifie = <String>{};
-  final TextEditingController _motif = TextEditingController();
-  bool _refusEnCours = false;
-  bool _envoi = false;
-  String? _erreur;
+  /// Vrai juste apres la fermeture du detail : le focus revient a la ligne.
+  bool _retourDetail = false;
 
-  /// Les trois constats a poser avant de juger.
-  static const List<String> _points = <String>['lisible', 'nom', 'validite'];
+  /// Le message du retour local apres une decision (AD-8).
+  String? _retour;
+
+  /// Le titre de la page : il recoit le focus quand une decision vide la
+  /// file en panneau unique (plus aucune ligne ou le poser).
+  final FocusNode _focusTitre = FocusNode(debugLabel: 'adm02a-titre');
 
   @override
   void dispose() {
-    _motif.dispose();
+    _focusTitre.dispose();
     super.dispose();
   }
 
-  void _reinitialiser() => setState(() {
-    _verifie.clear();
-    _motif.clear();
-    _refusEnCours = false;
-    _erreur = null;
-  });
-
-  Future<void> _decider(
-    DossierAValider dossier, {
-    required bool approuve,
-  }) async {
-    // Sans piece, il n'y a rien a trancher : l'ecran ne propose alors aucun
-    // verdict, et ce garde-fou ferme le chemin si un geste arrive quand meme.
-    final String? documentId = dossier.documentId;
-    if (documentId == null) {
-      return;
-    }
-    setState(() {
-      _envoi = true;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(serviceValidationProvider)
-          .decider(
-            documentId: documentId,
-            approuve: approuve,
-            motif: approuve ? null : _motif.text.trim(),
-          );
-      ref.invalidate(dossiersEnAttenteProvider);
-      if (mounted) {
-        _reinitialiser();
-      }
-    } on Object {
-      if (mounted) {
-        setState(() => _erreur = t.dossiers.erreur);
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _envoi = false);
-      }
-    }
-  }
-
   @override
-  Widget build(BuildContext context) {
-    final AsyncValue<List<DossierAValider>> file = ref.watch(
-      dossiersEnAttenteProvider,
-    );
-
-    return PageShell(
-      titre: t.dossiers.titre,
-      // Les getters, jamais le type d'execution : Riverpod 3 relance un
-      // provider en echec tout seul, et l'etat repasse alors par
-      // `AsyncLoading` en conservant `hasError`. Un `switch` sur
-      // `AsyncError<T>` rate donc l'erreur une fois sur deux.
-      child: switch (file) {
-        AsyncValue<List<DossierAValider>>(hasValue: true) =>
-          file.requireValue.isEmpty
-              ? EmptyState(
-                  message: t.dossiers.aucun,
-                  invitation: t.dossiers.aucunDetail,
-                  icone: AppIcons.dossiers,
-                )
-              : _Dossier(
-                  dossier: file.requireValue.first,
-                  restants: file.requireValue.length,
-                  verifie: _verifie,
-                  motif: _motif,
-                  refusEnCours: _refusEnCours,
-                  envoi: _envoi,
-                  erreur: _erreur,
-                  onCocher: (String point) => setState(() {
-                    if (!_verifie.remove(point)) {
-                      _verifie.add(point);
-                    }
-                  }),
-                  onOuvrirRefus: () => setState(() => _refusEnCours = true),
-                  onMotifChange: (String _) => setState(() {}),
-                  onApprouver: () => unawaited(
-                    _decider(file.requireValue.first, approuve: true),
-                  ),
-                  onRefuser: () => unawaited(
-                    _decider(file.requireValue.first, approuve: false),
-                  ),
-                  tousVerifies: _verifie.length == _points.length,
-                  points: _points,
-                ),
-        AsyncValue<List<DossierAValider>>(hasError: true) => _Indisponible(
-          genreManquant: file.error is GenreLecteurInconnu,
-          onReessayer: () => ref.invalidate(dossiersEnAttenteProvider),
-        ),
-        _ => const Skeleton.liste(lignes: 4),
-      },
-    );
-  }
-}
-
-class _Dossier extends StatelessWidget {
-  const _Dossier({
-    required this.dossier,
-    required this.restants,
-    required this.verifie,
-    required this.motif,
-    required this.refusEnCours,
-    required this.envoi,
-    required this.erreur,
-    required this.onCocher,
-    required this.onOuvrirRefus,
-    required this.onApprouver,
-    required this.onRefuser,
-    required this.onMotifChange,
-    required this.tousVerifies,
-    required this.points,
-  });
-
-  final DossierAValider dossier;
-  final int restants;
-  final Set<String> verifie;
-  final TextEditingController motif;
-  final bool refusEnCours;
-  final bool envoi;
-  final String? erreur;
-  final void Function(String point) onCocher;
-  final VoidCallback onOuvrirRefus;
-  final VoidCallback onApprouver;
-  final VoidCallback onRefuser;
-  final void Function(String motif) onMotifChange;
-  final bool tousVerifies;
-  final List<String> points;
-
-  String _libelle(String point) => switch (point) {
-    'lisible' => t.dossiers.pointLisible,
-    'nom' => t.dossiers.pointNom,
-    _ => t.dossiers.pointValidite,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    // Nulle quand aucune piece n'a ete deposee, ou quand la regle de genre
-    // interdit de la lire : depuis la migration `0015`, cette file contient des
-    // personnes, pas seulement des documents.
-    final String? cleObjet = dossier.cleObjet;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          restants == 1
-              ? t.dossiers.restantUn
-              : t.dossiers.restants(n: restants),
-          style: textes.bodySmall,
-        ),
-        Ecart.vXl,
-
-        // 1. LE CONSTAT. L'apercu reste volontairement abstrait : aucune piece
-        // d'identite reelle ou vraisemblable n'est representee dans ce depot.
-        BentoTile(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(dossier.libelle, style: textes.titleLarge),
-              // L'identifiant seulement quand le nom est lisible : masque, le
-              // libelle **est** deja l'identifiant, et le repeter sous lui
-              // n'apprend rien.
-              if (dossier.nomConnu)
-                Text(dossier.identifiantImmuable, style: textes.bodySmall),
-              Ecart.vSm,
-              if (cleObjet != null) ...<Widget>[
-                Text(
-                  t.dossiers.deposeLe(date: _jour(dossier.deposeLe)),
-                  style: textes.bodySmall,
-                ),
-                Ecart.vLg,
-                Text(t.dossiers.apercu, style: textes.bodyMedium),
-                Ecart.vSm,
-                _Apercu(cleObjet: cleObjet),
-              ] else ...<Widget>[
-                // Faute de depot, il n'y a pas de date de depot a dire : c'est
-                // l'anciennete de l'inscription qui mesure l'attente, et c'est
-                // justement cette personne qui attend le plus longtemps.
-                Text(
-                  switch (dossier.joursDAttente(DateTime.now())) {
-                    <= 0 => t.dossiers.inscritAujourdhui,
-                    1 => t.dossiers.inscritDepuisUnJour,
-                    final int jours => t.dossiers.inscritDepuis(
-                      jours: '$jours',
-                    ),
-                  },
-                  style: textes.bodySmall,
-                ),
-                Ecart.vMd,
-                StatusPill(
-                  libelle: dossier.etatPiece == EtatPiece.nonVisible
-                      ? t.dossiers.pieceNonVisible
-                      : t.dossiers.sansPiece,
-                  ton: TonEtat.avertissement,
-                ),
-              ],
-            ],
-          ),
-        ),
-        Ecart.vXxl,
-
-        if (!dossier.jugeable) ...<Widget>[
-          // **Rien a constater, donc rien a trancher.** Afficher la checklist
-          // et deux verdicts sur un dossier sans piece proposerait un geste
-          // qui echouerait en base. L'ecran dit ce qui manque et chez qui se
-          // trouve le geste -- c'est le meme choix que la carte « aucune heure
-          // proposee » d'`ADM-05`.
-          Text(t.dossiers.rienATrancher, style: textes.titleMedium),
-          Ecart.vMd,
-          Text(
-            dossier.etatPiece == EtatPiece.nonVisible
-                ? t.dossiers.pieceNonVisibleDetail
-                : t.dossiers.sansPieceDetail,
-            style: textes.bodyMedium,
-          ),
-        ] else ...<Widget>[
-          // 2. LA CHECKLIST, separee du constat comme du jugement.
-          Text(t.dossiers.verifications, style: textes.titleMedium),
-          Ecart.vMd,
-          for (final String point in points)
-            _Case(
-              libelle: _libelle(point),
-              cochee: verifie.contains(point),
-              onPress: () => onCocher(point),
-            ),
-          Ecart.vXxl,
-
-          // 3. LE JUGEMENT, en dernier et jamais melange au reste.
-          Text(t.dossiers.verdict, style: textes.titleMedium),
-          Ecart.vMd,
-          if (refusEnCours) ...<Widget>[
-            TextField(
-              controller: motif,
-              // Le bouton de refus depend de ce champ : sans ce rappel, il
-              // resterait inerte alors que le motif est saisi.
-              onChanged: onMotifChange,
-              maxLines: 2,
-              decoration: InputDecoration(labelText: t.dossiers.motif),
-            ),
-            Ecart.vSm,
-            Text(t.dossiers.motifRequis, style: textes.bodySmall),
-            Ecart.vMd,
-            ActionPrincipale(
-              libelle: t.dossiers.refuser,
-              enCours: envoi,
-              niveau: NiveauAction.destructive,
-              onPress: motif.text.trim().isEmpty ? null : onRefuser,
-            ),
-          ] else ...<Widget>[
-            ActionPrincipale(
-              libelle: t.dossiers.approuver,
-              enCours: envoi,
-              onPress: tousVerifies ? onApprouver : null,
-            ),
-            Ecart.vMd,
-            ActionPrincipale(
-              libelle: t.dossiers.refuser,
-              onPress: onOuvrirRefus,
-              niveau: NiveauAction.secondaire,
-            ),
-          ],
-        ],
-        if (erreur != null) ...<Widget>[
-          Ecart.vMd,
-          Text(
-            erreur!,
-            textAlign: TextAlign.center,
-            style: palette.inkAlert.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-        ],
-        Ecart.vLg,
-        // Rappelee en toutes lettres sous les boutons de decision, pas dans une
-        // page d'aide.
-        Text(
-          t.dossiers.journalisation,
-          textAlign: TextAlign.center,
-          style: textes.bodySmall,
-        ),
-      ],
-    );
-  }
-}
-
-/// L'apercu de la piece.
-///
-/// L'URL signee est demandee a l'affichage et vit une minute : une URL de piece
-/// d'identite qui traine dans un historique de navigateur est une piece
-/// d'identite qui traine.
-class _Apercu extends ConsumerWidget {
-  const _Apercu({required this.cleObjet});
-
-  final String cleObjet;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AppPalette palette = AppPalette.of(context);
-
-    return FutureBuilder<String>(
-      future: ref.read(serviceValidationProvider).apercu(cleObjet),
-      builder: (BuildContext context, AsyncSnapshot<String> instantane) {
-        if (instantane.hasError || instantane.data == null) {
-          return Text(
-            t.dossiers.apercuIndisponible,
-            style: Theme.of(context).textTheme.bodySmall,
-          );
+  void initState() {
+    super.initState();
+    final String? cible = widget.profilId;
+    if (cible != null) {
+      // L'Accueil ouvre ce dossier, quelle que soit la largeur (AD-S).
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          ref
+              .read(selectionDossierProvider.notifier)
+              .choisir(cible, ouvrir: true);
         }
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(AppSpacing.md),
-          child: ColoredBox(
-            color: palette.surfaceCanvas.background,
-            child: Image.network(
-              instantane.data!,
-              fit: BoxFit.contain,
-              errorBuilder: (BuildContext _, Object _, StackTrace? _) => Text(
-                t.dossiers.apercuIndisponible,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
-          ),
-        );
-      },
-    );
+      });
+    }
   }
-}
 
-class _Case extends StatelessWidget {
-  const _Case({
-    required this.libelle,
-    required this.cochee,
-    required this.onPress,
-  });
+  void _fermerDetail() {
+    setState(() => _retourDetail = true);
+    ref.read(selectionDossierProvider.notifier).fermerDetail();
+  }
 
-  final String libelle;
-  final bool cochee;
-  final VoidCallback onPress;
+  /// Apres une decision : relire, puis passer au suivant de l'ancien ordre.
+  /// Deux panneaux : le suivant est selectionne et annonce (§26 ter,
+  /// « Dossier suivant : {nom} »). Panneau unique : retour a la liste, le
+  /// focus sur la ligne suivante (la ligne decidee a disparu).
+  void _apresDecision(String id, String message, {required bool maitreDetail}) {
+    // Le retour local, apres confirmation serveur seulement. Remis a nul
+    // d'abord : deux decisions de suite rejouent l'apparition.
+    setState(() => _retour = null);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) {
+        setState(() => _retour = message);
+      }
+    });
+    final List<DossierEnFile> avant =
+        ref.read(fileDossiersProvider).value?.elements ?? <DossierEnFile>[];
+    final int i = avant.indexWhere((DossierEnFile d) => d.dossierId == id);
+    final DossierEnFile? suivant = i >= 0 && i + 1 < avant.length
+        ? avant[i + 1]
+        : null;
+    actualiserDossiers(ref);
+    final SelectionDossierNotifier selection = ref.read(
+      selectionDossierProvider.notifier,
+    );
+    if (maitreDetail && suivant != null) {
+      selection.choisir(suivant.dossierId);
+      unawaited(
+        SemanticsService.sendAnnouncement(
+          View.of(context),
+          t.dossiers.file.suivantAnnonce(nom: nomOuDefaut(suivant.nomAffiche)),
+          Directionality.of(context),
+        ),
+      );
+    } else if (maitreDetail) {
+      selection.retirer();
+    } else {
+      setState(() => _retourDetail = true);
+      if (suivant != null) {
+        selection.choisir(suivant.dossierId);
+      } else {
+        selection.retirer();
+        if (avant.length <= 1) {
+          // La file est vide : le focus va au titre de la page.
+          WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+            if (mounted) {
+              _focusTitre.requestFocus();
+            }
+          });
+        }
+      }
+    }
+  }
+
+  /// Le mode mesure dans le corps (largeur utile du PageShell), retenu pour
+  /// le titre et le retour, poses au-dessus de lui.
+  bool _maitreDetail = false;
+
+  void _signalerMode(bool maitreDetail) {
+    if (maitreDetail != _maitreDetail) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && maitreDetail != _maitreDetail) {
+          setState(() => _maitreDetail = maitreDetail);
+        }
+      });
+    }
+  }
+
+  void _choisir(String id, {required bool maitreDetail}) {
+    setState(() => _retourDetail = false);
+    ref
+        .read(selectionDossierProvider.notifier)
+        .choisir(id, ouvrir: !maitreDetail);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
+    // Les decisions en cours sont portees par la page (pas par la feuille
+    // ni par la revue) : leur suivi survit a la fermeture des surfaces.
+    ref.listen(decisionsDossiersProvider, (Object? _, Object? _) {});
+    final SelectionDossier selection = ref.watch(selectionDossierProvider);
+    final List<DossierEnFile> elements =
+        ref.watch(fileDossiersProvider).value?.elements ?? <DossierEnFile>[];
+    final bool texteGrand = MediaQuery.textScalerOf(context).scale(1) >= 2.0;
+    final String? id = selection.dossierId;
+    final bool detailSeul =
+        !_maitreDetail && selection.detailOuvert && id != null;
+    final String? nom = id == null
+        ? null
+        : elements
+              .where((DossierEnFile d) => d.dossierId == id)
+              .map((DossierEnFile d) => d.nomAffiche)
+              .firstOrNull;
 
-    return Pressable(
-      onPress: onPress,
-      libelleSemantique: libelle,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: Row(
+    return PopScope(
+      canPop: !detailSeul,
+      onPopInvokedWithResult: (bool fait, Object? _) {
+        if (!fait && detailSeul) {
+          _fermerDetail();
+        }
+      },
+      child: PageShell(
+        titre: detailSeul && nom != null ? titreRevue(nom) : t.dossiers.titre,
+        sousTitre: detailSeul ? null : t.dossiers.sousTitre,
+        onRetour: detailSeul ? _fermerDetail : null,
+        focusTitre: _focusTitre,
+        entete: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            IconTheme(
-              data: cochee
-                  ? palette.inkAccent.asIconTheme(size: AppSpacing.xxl)
-                  : palette.borderStrong.asIconTheme(size: AppSpacing.xxl),
-              child: Icon(AppIcons.succes.resoudre(selectionne: cochee)),
-            ),
-            SizedBox(width: metriques.marge),
-            Expanded(
-              child: Text(
-                libelle,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
+            SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 0),
+            LocalFeedback(message: _retour),
           ],
+        ),
+        defilante: false,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints contraintes) {
+            final bool md =
+                !texteGrand &&
+                contraintes.maxWidth >=
+                    largeurFileDossiers +
+                        ecartFileDetail +
+                        largeurDetailDossier;
+            _signalerMode(md);
+            if (md) {
+              return _MaitreDetail(
+                selection: selection,
+                elements: elements,
+                onChoisir: (String x) => _choisir(x, maitreDetail: true),
+                onDecision: (String x, String m) =>
+                    _apresDecision(x, m, maitreDetail: true),
+              );
+            }
+            if (selection.detailOuvert && id != null) {
+              return SingleChildScrollView(
+                key: ValueKey<String>('adm02a-detail-$id'),
+                // Le detail ne s'etire pas : plafond 728, aligne au debut.
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: largeurDetailDossier,
+                    ),
+                    child: DetailDossier(
+                      id: id,
+                      avecTitre: false,
+                      onDecision: (String x, String m) =>
+                          _apresDecision(x, m, maitreDetail: false),
+                    ),
+                  ),
+                ),
+              );
+            }
+            return SingleChildScrollView(
+              key: const PageStorageKey<String>('adm02a-file'),
+              child: FileDossiers(
+                selection: id,
+                marquerSelection: false,
+                focusSurSelection: _retourDetail,
+                onChoisir: (String x) => _choisir(x, maitreDetail: false),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-class _Indisponible extends StatelessWidget {
-  const _Indisponible({required this.genreManquant, required this.onReessayer});
+class _MaitreDetail extends ConsumerStatefulWidget {
+  const _MaitreDetail({
+    required this.selection,
+    required this.elements,
+    required this.onChoisir,
+    required this.onDecision,
+  });
 
-  final bool genreManquant;
-  final VoidCallback onReessayer;
+  final SelectionDossier selection;
+  final List<DossierEnFile> elements;
+  final void Function(String id) onChoisir;
+  final void Function(String id, String message) onDecision;
 
   @override
+  ConsumerState<_MaitreDetail> createState() => _MaitreDetailState();
+}
+
+class _MaitreDetailState extends ConsumerState<_MaitreDetail> {
+  @override
   Widget build(BuildContext context) {
-    // La base refuse la lecture quand le genre du lecteur est inconnu, plutot
-    // que de rendre la moitie des dossiers en silence. Ce n'est pas une panne :
-    // c'est une information manquante que l'administrateur peut fournir.
-    return EmptyState(
-      message: genreManquant ? t.dossiers.genreManquant : t.dossiers.erreur,
-      invitation: genreManquant ? null : t.reseau.horsLigne,
-      icone: AppIcons.avertissement,
-      libelleAction: genreManquant ? null : t.commun.reessayer,
-      onAction: genreManquant ? null : onReessayer,
+    final String? id = widget.selection.dossierId;
+    // Selection automatique du premier, une fois, sans focus ni appel de plus.
+    if (id == null &&
+        !widget.selection.autoFaite &&
+        widget.elements.isNotEmpty) {
+      final String premier = widget.elements.first.dossierId;
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          ref.read(selectionDossierProvider.notifier).choisirAuto(premier);
+        }
+      });
+    }
+    // AD-11 (2.4.3) : l'ordre de lecture classait la file par sa geometrie
+    // defilee (groupe plus haut que la vue une fois descendu) ; apres la
+    // derniere ligne, Tab revenait a la barre et n'atteignait jamais le
+    // detail. Ordre de l'arbre ici : la file, puis le detail.
+    return FocusTraversalGroup(
+      policy: WidgetOrderTraversalPolicy(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+            width: largeurFileDossiers,
+            child: SingleChildScrollView(
+              key: const PageStorageKey<String>('adm02a-file'),
+              child: FileDossiers(selection: id, onChoisir: widget.onChoisir),
+            ),
+          ),
+          const SizedBox(width: ecartFileDetail),
+          SizedBox(
+            width: largeurDetailDossier,
+            child: SingleChildScrollView(
+              key: ValueKey<String?>(id),
+              child: id == null
+                  ? const AucuneSelection()
+                  : DetailDossier(id: id, onDecision: widget.onDecision),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
-
-String _jour(DateTime quand) =>
-    '${quand.day.toString().padLeft(2, '0')}/'
-    '${quand.month.toString().padLeft(2, '0')}/${quand.year}';

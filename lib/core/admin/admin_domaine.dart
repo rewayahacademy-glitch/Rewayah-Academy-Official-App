@@ -133,12 +133,13 @@ List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
 /// **Une recherche de navigation, pas une recherche metier** : aucune donnee
 /// n'est interrogee, seulement des libelles fixes et leurs routes -- ce
 /// qu'une coquille a le droit de faire, rien de plus. Un domaine sans
-/// fonction (Finance, Configuration) n'y figure pas : il n'a pas de route a
-/// trouver.
+/// fonction (Finance) n'y figure pas : il n'a pas de route a trouver.
 List<({String libelle, String chemin})> ciblesRechercheAdmin({
   required bool voitDirection,
 }) => <({String libelle, String chemin})>[
-  for (final AdminDomaine domaine in domainesAdmin(voitDirection: voitDirection))
+  for (final AdminDomaine domaine in domainesAdmin(
+    voitDirection: voitDirection,
+  ))
     if (domaine.chemin case final String chemin)
       (libelle: domaine.libelle, chemin: chemin),
 ];
@@ -151,10 +152,22 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
 /// ecrans.
 List<({String libelle, String chemin})> ongletsPedagogie() =>
     <({String libelle, String chemin})>[
-      (libelle: t.admin.diagnostics.titre, chemin: Routes.adminPedagogieDiagnostics),
-      (libelle: t.admin.progression.titre, chemin: Routes.adminPedagogieProgression),
-      (libelle: t.admin.evaluations.titre, chemin: Routes.adminPedagogieEvaluations),
-      (libelle: t.admin.programmes.titre, chemin: Routes.adminPedagogieProgrammes),
+      (
+        libelle: t.admin.diagnostics.titre,
+        chemin: Routes.adminPedagogieDiagnostics,
+      ),
+      (
+        libelle: t.admin.progression.titre,
+        chemin: Routes.adminPedagogieProgression,
+      ),
+      (
+        libelle: t.admin.evaluations.titre,
+        chemin: Routes.adminPedagogieEvaluations,
+      ),
+      (
+        libelle: t.admin.programmes.titre,
+        chemin: Routes.adminPedagogieProgrammes,
+      ),
       (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
     ];
 
@@ -166,17 +179,35 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
 /// l'audit interdit pour un domaine sans fonction reelle. Cette liste
 /// grandit lot par lot (`CFG-02`, `CFG-03`), jamais d'un coup comme
 /// Pedagogie.
-List<({String libelle, String chemin})> ongletsConfiguration() =>
+///
+/// [politiqueRevueKyc] ajoute l'onglet de la politique de genre (AD-9) ; il
+/// ne vaut vrai que pour la capacite Super Admin lue par le port.
+List<({String libelle, String chemin})> ongletsConfiguration({
+  bool politiqueRevueKyc = false,
+}) => <({String libelle, String chemin})>[
+  (libelle: t.admin.regles.titre, chemin: Routes.adminConfigurationRegles),
+  (
+    libelle: t.admin.fonctionnalites.titre,
+    chemin: Routes.adminConfigurationFonctionnalites,
+  ),
+  (
+    libelle: t.admin.conservationDonnees.titre,
+    chemin: Routes.adminConfigurationConservationDonnees,
+  ),
+  if (politiqueRevueKyc)
+    (
+      libelle: t.admin.politiqueRevueKyc.titre,
+      chemin: Routes.adminConfigurationPolitiqueRevueKyc,
+    ),
+];
+
+/// Les deux fonctions pairs du domaine Personnes : Dossiers a valider
+/// (`ADM-02`) et Comptes (`ADM-08`), modification UX n°1. Consommee par
+/// `SousNavigationDomaine` dans l'en-tete des deux ecrans.
+List<({String libelle, String chemin})> ongletsPersonnes() =>
     <({String libelle, String chemin})>[
-      (libelle: t.admin.regles.titre, chemin: Routes.adminConfigurationRegles),
-      (
-        libelle: t.admin.fonctionnalites.titre,
-        chemin: Routes.adminConfigurationFonctionnalites,
-      ),
-      (
-        libelle: t.admin.conservationDonnees.titre,
-        chemin: Routes.adminConfigurationConservationDonnees,
-      ),
+      (libelle: t.dossiers.titre, chemin: Routes.adminPersonnesDossiers),
+      (libelle: t.admin.comptes.titre, chemin: Routes.adminPersonnesComptes),
     ];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/service_admin.dart';
+import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
@@ -32,6 +33,7 @@ class ATraiter {
     required this.depuis,
     required this.destination,
     required this.icone,
+    this.extra,
   });
 
   /// Ce qui attend, dit en clair.
@@ -45,6 +47,10 @@ class ATraiter {
 
   /// L'icone de la nature de la ligne.
   final AppIcon icone;
+
+  /// Ce que la destination doit ouvrir (le `profilId` d'un dossier), passe
+  /// par `extra` de GoRouter, jamais par l'URL (spec l.1933).
+  final Object? extra;
 }
 
 /// Assemble la liste a traiter, la plus ancienne en premier.
@@ -68,6 +74,9 @@ List<ATraiter> aTraiter({
         depuis: dossier.deposeLe,
         destination: Routes.adminPersonnesDossiers,
         icone: AppIcons.dossiers,
+        // La ligne nomme une personne : elle ouvre son dossier, pas le
+        // premier de la file (modification UX n°2).
+        extra: dossier.profilId,
       ),
     for (final Demande demande in demandes)
       ATraiter(
@@ -123,8 +132,13 @@ class TableauDeBordPage extends ConsumerWidget {
     // Les getters, jamais le type d'execution : Riverpod 3 relance un provider
     // en echec tout seul, et l'etat repasse par `AsyncLoading` en conservant
     // `hasError` (piege de l'etape 3).
+    // K-47 (HL-A-6) : les lignes « Dossier d'identite » ne portent que des
+    // enseignants, comme la file ADM-02 qu'elles ouvrent. Meme cache, aucun
+    // appel de plus ; le compteur serveur compte encore les tuteurs (BR-1.c).
     final List<ATraiter> lignes = aTraiter(
-      dossiers: dossiers.value ?? const <DossierAValider>[],
+      dossiers: RevueDossiersDepuisValidation.enseignantsSeulement(
+        dossiers.value ?? const <DossierAValider>[],
+      ),
       demandes: demandes.value ?? const <Demande>[],
     );
 
@@ -183,7 +197,9 @@ class TableauDeBordPage extends ConsumerWidget {
                       jours: '${maintenant.difference(ligne.depuis).inDays}',
                     ),
                   },
-                  onPress: () => GoRouter.of(context).go(ligne.destination),
+                  onPress: () =>
+                      GoRouter.of(context)
+                          .go(ligne.destination, extra: ligne.extra),
                 ),
               ),
           // La file des dossiers passe par `read_kyc_documents()`, qui refuse
@@ -222,7 +238,8 @@ class TableauDeBordPage extends ConsumerWidget {
             title: t.admin.tableau.outilsComptes,
             description: t.admin.tableau.outilsComptesDetail,
             icon: AppIcons.profil,
-            onPress: () => GoRouter.of(context).go(Routes.adminPersonnesComptes),
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminPersonnesComptes),
           ),
           Ecart.vSm,
           SettingRow(
@@ -269,7 +286,8 @@ class _Compteurs extends StatelessWidget {
       StatTile(
         valeur: indicateurs.foyersSansEnseignant,
         libelle: t.admin.tableau.foyers,
-        onPress: () => GoRouter.of(context).go(Routes.adminOperationsAttributions),
+        onPress: () =>
+            GoRouter.of(context).go(Routes.adminOperationsAttributions),
       ),
       StatTile(
         valeur: indicateurs.rapportsManquants,

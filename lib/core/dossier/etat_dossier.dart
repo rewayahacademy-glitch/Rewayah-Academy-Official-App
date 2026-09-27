@@ -20,6 +20,8 @@ class EtatDossier {
     this.deposeLe,
     this.contratSigne = false,
     this.accuseSigne = false,
+    this.correctionAutorisee,
+    this.pieceRequise = true,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -41,6 +43,8 @@ class EtatDossier {
       deposeLe: depose is String ? DateTime.tryParse(depose)?.toLocal() : null,
       contratSigne: json['contrat_signe'] == true,
       accuseSigne: json['accuse_signe'] == true,
+      correctionAutorisee: json['correction_autorisee'] as bool?,
+      pieceRequise: json['piece_requise'] as bool? ?? true,
     );
   }
 
@@ -72,6 +76,17 @@ class EtatDossier {
   /// Vrai quand la carte d'accuse de l'ADR-011 a ete accusee.
   final bool accuseSigne;
 
+  /// Faux quand l'administration interdit la correction d'un dossier refuse.
+  /// Absent de la reponse actuelle d'`etat_dossier()` (AD-BR-28) : nul, et la
+  /// correction reste permise comme avant.
+  final bool? correctionAutorisee;
+
+  /// Faux quand le serveur dit qu'aucune piece n'est attendue. K-47 : la
+  /// piece ne concerne que l'enseignant (voir [pieceExigee]) ; il n'y a plus
+  /// de dispense famille. Absent de la reponse actuelle d'`etat_dossier()`
+  /// (AD-BR-29) : vrai, comme avant.
+  final bool pieceRequise;
+
   /// Ce que le portail d'attente doit afficher.
   ///
   /// L'ordre compte : un compte suspendu le reste quel que soit l'etat de son
@@ -81,14 +96,33 @@ class EtatDossier {
     if (statutCompte == AccountStatus.disabled) {
       return EtapeDossier.suspendu;
     }
-    if (statutPiece == StatutPiece.refusee) {
+    // K-47 (HL-A-6) : un tuteur n'a pas de piece, donc pas de refus de piece,
+    // meme s'il en avait depose une avant la decision.
+    if (statutPiece == StatutPiece.refusee && !estTuteur) {
       return EtapeDossier.refuse;
     }
     if (manquants.isNotEmpty) {
       return EtapeDossier.incomplet;
     }
-    return EtapeDossier.enVerification;
+    // Personne ne verifie le dossier d'un tuteur : son acces attend le
+    // serveur (BR-1), pas une validation.
+    return estTuteur
+        ? EtapeDossier.accesEnPreparation
+        : EtapeDossier.enVerification;
   }
+
+  /// Vrai pour un tuteur (famille ou eleve adulte). K-47 : la piece
+  /// d'identite et la validation ne concernent que l'enseignant.
+  bool get estTuteur => role == AppRole.guardian;
+
+  /// Vrai quand un profil existe sans role lisible : ni tuteur ni enseignant
+  /// ne se devinent, le portail le dit illisible (jamais une piece demandee).
+  bool get roleIllisible => profilExiste && role == null;
+
+  /// Vrai quand une piece d'identite est attendue : pour l'enseignant
+  /// seulement (K-47), meme tant que `etat_dossier()` ne rend pas
+  /// `piece_requise`. Un role absent n'exige rien.
+  bool get pieceExigee => pieceRequise && role == AppRole.teacher;
 
   /// Ce qu'il reste a fournir, dans l'ordre ou l'ecran le proposera.
   ///
@@ -102,7 +136,7 @@ class EtatDossier {
   List<PieceManquante> get manquants => <PieceManquante>[
     if (!accuseSigne) PieceManquante.accuse,
     if (!contratSigne) PieceManquante.contrat,
-    if (!pieceDeposee || statutPiece == StatutPiece.refusee)
+    if (pieceExigee && (!pieceDeposee || statutPiece == StatutPiece.refusee))
       PieceManquante.pieceIdentite,
   ];
 
@@ -117,7 +151,9 @@ class EtatDossier {
       other.motifRefus == motifRefus &&
       other.deposeLe == deposeLe &&
       other.contratSigne == contratSigne &&
-      other.accuseSigne == accuseSigne;
+      other.accuseSigne == accuseSigne &&
+      other.correctionAutorisee == correctionAutorisee &&
+      other.pieceRequise == pieceRequise;
 
   @override
   int get hashCode => Object.hash(
@@ -130,16 +166,22 @@ class EtatDossier {
     deposeLe,
     contratSigne,
     accuseSigne,
+    correctionAutorisee,
+    pieceRequise,
   );
 }
 
-/// Les quatre etats du portail d'attente.
+/// Les cinq etats du portail d'attente.
 enum EtapeDossier {
   /// Il manque des pieces. Une liste courte, chacune avec son bouton.
   incomplet,
 
-  /// Tout est depose, l'academie verifie.
+  /// Tout est depose, l'academie verifie (enseignant).
   enVerification,
+
+  /// Tuteur : accords signes, aucune piece a fournir ; l'acces s'ouvre cote
+  /// serveur (BR-1). Aucune verification, aucun delai promis.
+  accesEnPreparation,
 
   /// Refuse, avec un motif et de quoi corriger.
   refuse,

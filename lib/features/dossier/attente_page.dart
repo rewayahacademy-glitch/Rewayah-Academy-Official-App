@@ -10,6 +10,8 @@ import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -32,26 +34,61 @@ import '../inscription/brouillon_inscription.dart';
 /// Quatre etats, calcules en base par `etat_dossier()` et non ici : le portail
 /// doit dire exactement ce que l'administration voit, et deux calculs finissent
 /// toujours par diverger.
-class AttentePage extends ConsumerWidget {
+class AttentePage extends ConsumerStatefulWidget {
   /// Cree le portail d'attente.
   const AttentePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AttentePage> createState() => _AttentePageState();
+}
+
+class _AttentePageState extends ConsumerState<AttentePage> {
+  /// Relit l'etat au retour dans l'application (P-ADM-11.1) : aucun signal
+  /// serveur n'existe (AD-BR-26), la relecture est le seul moyen honnete de
+  /// voir une decision prise pendant l'absence.
+  late final AppLifecycleListener _cycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _cycle = AppLifecycleListener(onResume: () => unawaited(_relire()));
+  }
+
+  @override
+  void dispose() {
+    _cycle.dispose();
+    super.dispose();
+  }
+
+  /// Relit le dossier puis la session : un compte devenu actif est alors
+  /// redirige par la garde existante vers la racine de son role.
+  Future<void> _relire() async {
+    ref.invalidate(etatDossierProvider);
+    await ref.read(sourceSessionProvider).rafraichir();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<EtatDossier> etat = ref.watch(etatDossierProvider);
     final GoRouter? routeur = GoRouter.maybeOf(context);
+    // Un profil sans role lisible ne se devine ni tuteur ni enseignant : il
+    // se dit illisible, avec Reessayer, plutot que de demander une piece.
+    final EtatDossier? lu = etat.hasValue && !etat.requireValue.roleIllisible
+        ? etat.requireValue
+        : null;
+    final bool illisible = lu == null && (etat.hasError || etat.hasValue);
 
     // Les getters, jamais le type d'execution : Riverpod 3 relance un provider
     // en echec tout seul, et l'etat repasse alors par `AsyncLoading` en
     // conservant `hasError`.
-    final _Prochaine? prochaine = etat.hasValue
+    final _Prochaine? prochaine = lu != null
         ? _prochaine(
-              etat.requireValue,
-              adulte:
-                  ref.watch(brouillonInscriptionProvider).usage ==
-                  UsageInscription.moi,
-            )
-        : etat.hasError
+            lu,
+            adulte:
+                ref.watch(brouillonInscriptionProvider).usage ==
+                UsageInscription.moi,
+          )
+        : illisible
         ? _Prochaine(
             t.commun.reessayer,
             () => ref.invalidate(etatDossierProvider),
@@ -59,28 +96,17 @@ class AttentePage extends ConsumerWidget {
         : null;
 
     return PageShell(
-      titre: t.attente.titreDossier,
-      actions: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (prochaine != null) ...<Widget>[
-            ActionPrincipale(
-              libelle: prochaine.libelle,
-              onPress: prochaine.chemin != null
-                  ? () => routeur?.go(prochaine.chemin!)
-                  : prochaine.geste,
-              fleche: prochaine.chemin != null,
-            ),
-            Ecart.vMd,
-          ],
-          ActionPrincipale(
-            libelle: t.attente.seDeconnecter,
-            onPress: () =>
-                unawaited(ref.read(serviceAuthProvider).deconnexion()),
-            niveau: NiveauAction.tertiaire,
-          ),
-        ],
+      // K-47 : un tuteur n'a pas de dossier a faire verifier, seulement un
+      // compte a ouvrir.
+      titre: lu?.estTuteur ?? false
+          ? t.attente.titreCompte
+          : t.attente.titreDossier,
+      // HL-A-5 : le pied ne garde que Se deconnecter ; la prochaine action
+      // se place 16 sous la carte d'etat qu'elle confirme.
+      actions: ActionPrincipale(
+        libelle: t.attente.seDeconnecter,
+        onPress: () => unawaited(ref.read(serviceAuthProvider).deconnexion()),
+        niveau: NiveauAction.tertiaire,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -88,16 +114,66 @@ class AttentePage extends ConsumerWidget {
           const MarquePage(),
           Ecart.vXxl,
           AppCard(
-            child: etat.hasValue
-                ? _Statut(etat: etat.requireValue)
-                : etat.hasError
-                ? _Illisible(erreur: etat.error!)
+            child: lu != null
+                ? _Statut(etat: lu)
+                : illisible
+                ? _Illisible(erreur: etat.error ?? const FormatException())
                 : const _Patience(),
           ),
+          // HL-A-5 (DESIGN-GOV B) : les actions rattachees a la carte d'etat
+          // se placent 16 sous elle, au bord de fin, et non dans le pied ;
+          // pleine largeur sur mobile, largeur naturelle au-dela.
+          if (prochaine != null) ...<Widget>[
+            Ecart.vLg,
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              // IntrinsicWidth au-dela du mobile : le Container centre
+              // d'ActionPrincipale s'etirerait sinon (meme remede que 02B).
+              child: _AuContenu(
+                actif: AppGabarit.de(context) != Gabarit.mobile,
+                child: ActionPrincipale(
+                  libelle: prochaine.libelle,
+                  onPress: prochaine.chemin != null
+                      ? () => routeur?.go(prochaine.chemin!)
+                      : prochaine.geste,
+                  fleche: prochaine.chemin != null,
+                  pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
+                ),
+              ),
+            ),
+          ],
+          if (lu?.etape
+              case EtapeDossier.enVerification ||
+                  EtapeDossier.accesEnPreparation) ...<Widget>[
+            Ecart.vLg,
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ActionPrincipale(
+                libelle: lu!.estTuteur
+                    ? t.attente.actualiserCompte
+                    : t.attente.actualiser,
+                onPress: () => unawaited(_relire()),
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
+}
+
+/// Le bouton a sa largeur naturelle quand [actif].
+class _AuContenu extends StatelessWidget {
+  const _AuContenu({required this.actif, required this.child});
+
+  final bool actif;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      actif ? IntrinsicWidth(child: child) : child;
 }
 
 /// La prochaine action : une route, ou un geste (reessayer).
@@ -113,17 +189,22 @@ class _Prochaine {
 /// `adulte` : l'inscription vient de « Moi uniquement » (eleve adulte, son
 /// propre tuteur) ; le contrat s'ouvre alors en variante eleve adulte
 /// (`?pour=moi`). Sans brouillon (rechargement), variante responsable legal.
-_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) => switch (etat.etape) {
-  EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
-    _action(etat.manquants.first),
-    _chemin(etat.manquants.first, adulte: adulte),
-  ),
-  EtapeDossier.refuse => _Prochaine.vers(
-    t.attente.corriger,
-    Routes.attentePiece,
-  ),
-  _ => null,
-};
+_Prochaine? _prochaine(EtatDossier etat, {required bool adulte}) =>
+    switch (etat.etape) {
+      EtapeDossier.incomplet when etat.manquants.isNotEmpty => _Prochaine.vers(
+        _action(etat.manquants.first),
+        _chemin(etat.manquants.first, adulte: adulte),
+      ),
+      // « Corriger » mene au premier element a corriger (P-ADM-09.2) : la piece
+      // refusee figure dans manquants, apres l'accuse et le contrat.
+      EtapeDossier.refuse
+          when etat.correctionAutorisee != false && etat.manquants.isNotEmpty =>
+        _Prochaine.vers(
+          t.attente.corriger,
+          _chemin(etat.manquants.first, adulte: adulte),
+        ),
+      _ => null,
+    };
 
 String _libelle(PieceManquante piece) => switch (piece) {
   PieceManquante.accuse => t.attente.carteAccuse,
@@ -137,8 +218,7 @@ String _action(PieceManquante piece) => switch (piece) {
   PieceManquante.pieceIdentite => t.attente.deposerLaPiece,
 };
 
-String _chemin(PieceManquante piece, {required bool adulte}) =>
-    switch (piece) {
+String _chemin(PieceManquante piece, {required bool adulte}) => switch (piece) {
   PieceManquante.accuse => Routes.attenteAccuse,
   PieceManquante.contrat =>
     adulte ? '${Routes.attenteContrat}?pour=moi' : Routes.attenteContrat,
@@ -165,7 +245,12 @@ class _Statut extends StatelessWidget {
       EtapeDossier.incomplet => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.attente.dossierIncomplet, style: textes.headlineSmall),
+          Text(
+            etat.estTuteur
+                ? t.attente.accordsARelire
+                : t.attente.dossierIncomplet,
+            style: textes.headlineSmall,
+          ),
           Ecart.vMd,
           Text(
             t.attente.reste(n: etat.manquants.length),
@@ -202,6 +287,19 @@ class _Statut extends StatelessWidget {
         ].join('\n'),
         icone: AppIcons.dossiers,
       ),
+      // K-47 (HL-A-6) : l'etat honnete du tuteur tant que le serveur le fait
+      // naitre en attente (BR-1) : ni piece, ni verification, ni delai. Rien
+      // n'est promis « en cours » : aucun ecran admin ne l'ouvre avant BR-1,
+      // la sortie est de joindre l'academie (comme l'etat suspendu).
+      EtapeDossier.accesEnPreparation => _Bloc(
+        titre: t.attente.accesTitre,
+        message: t.attente.accesEnPreparation,
+        detail: <String>[
+          t.attente.aucunDocument,
+          t.attente.accesContact,
+        ].join('\n'),
+        icone: AppIcons.foyer,
+      ),
       EtapeDossier.refuse => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -216,7 +314,19 @@ class _Statut extends StatelessWidget {
             ),
           ),
           Ecart.vMd,
-          Text(t.attente.refuseDetail, style: textes.bodyMedium),
+          // La phrase suit le premier element a corriger, celui que « Corriger »
+          // ouvre (P-ADM-09.2) ; sans element, la sortie est de joindre
+          // l'academie (K-47 : seul l'enseignant passe par ce refus).
+          Text(
+            etat.correctionAutorisee == false
+                ? t.attente.correctionImpossible
+                : etat.manquants.isEmpty
+                ? t.attente.refuseSansElement
+                : t.attente.refuseDetail(
+                    element: _libelle(etat.manquants.first),
+                  ),
+            style: textes.bodyMedium,
+          ),
         ],
       ),
       EtapeDossier.suspendu => _Bloc(

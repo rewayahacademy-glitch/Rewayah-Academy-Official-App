@@ -43,16 +43,17 @@ DossierAValider _dossier({
   String id = 'doc1',
   String prenom = 'Moussa',
   DateTime? depose,
+  AppRole role = AppRole.teacher,
 }) => DossierAValider(
   documentId: id,
-  profilId: 'p1',
+  profilId: 'p-$id',
   type: TypePiece.carteIdentite,
   cleObjet: 'p1/piece.webp',
   deposeLe: depose ?? DateTime(2026, 9, 5, 9),
   prenom: prenom,
   nom: 'Barry',
-  identifiantImmuable: 'GUARDIAN-MB-000001',
-  role: AppRole.guardian,
+  identifiantImmuable: 'TEACHER-MB-000001',
+  role: role,
 );
 
 Demande _demande({
@@ -218,13 +219,17 @@ void main() {
 
       expect(
         lignes
-            .where((ATraiter l) => l.destination == Routes.adminOperationsDemandes)
+            .where(
+              (ATraiter l) => l.destination == Routes.adminOperationsDemandes,
+            )
             .length,
         2,
       );
       expect(
         lignes
-            .where((ATraiter l) => l.destination == Routes.adminPersonnesDossiers)
+            .where(
+              (ATraiter l) => l.destination == Routes.adminPersonnesDossiers,
+            )
             .length,
         1,
       );
@@ -247,6 +252,35 @@ void main() {
       expect(
         find.text(t.admin.tableau.attenteJours(jours: '3')),
         findsOneWidget,
+      );
+    });
+
+    // K-47 (HL-A-6) : un tuteur pending_kyc n'est pas un dossier d'identite ;
+    // sa ligne ouvrirait une fiche que la file ADM-02 ecarte (lien mort).
+    testWidgets('la file A traiter ne porte que des enseignants', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin(),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[
+            _dossier(prenom: 'Enseignante'),
+            _dossier(id: 'doc2', prenom: 'Famille', role: AppRole.guardian),
+          ],
+      );
+
+      await _allerA(
+        tester,
+        find.text(t.admin.tableau.ligneDossier(prenom: 'Enseignante')),
+      );
+      expect(
+        find.text(t.admin.tableau.ligneDossier(prenom: 'Enseignante')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.admin.tableau.ligneDossier(prenom: 'Famille')),
+        findsNothing,
       );
     });
 

@@ -8,16 +8,25 @@
 // workflow. La garde, elle, est compilee : `ENVIRONNEMENT=production` la
 // ferme quelle que soit l'adresse.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
+import '../../core/admin/service_admin.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_politique_revue_kyc.dart';
+import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/selecteur_fichier.dart';
+import '../../core/dossier/service_dossier.dart';
+import '../../core/dossier/service_validation.dart';
+import '../../core/matching/service_matching.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
@@ -36,8 +45,10 @@ import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
 import 'catalogue_demo.dart';
+import 'dossiers_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
+import 'services_admin_demo.dart';
 
 /// Parametre d'adresse qui demande la demonstration tuteur.
 const String parametreDemo = 'demo';
@@ -71,13 +82,36 @@ bool get demoTuteurActiveIci =>
 ///
 /// Leve une [StateError] si l'environnement ne l'autorise pas : meme appelee
 /// par erreur, elle ne produit rien en production.
-List<Override> surchargesDemoTuteur({String? environnement}) {
+///
+/// Avec [dossiers] et [titulaire] (AD-10), la personne est le titulaire d'un
+/// dossier du jeu de revue : sa session et son portail d'attente lisent le
+/// meme etat que la revue admin, et « Corriger » depose une piece fictive.
+List<Override> surchargesDemoTuteur({
+  String? environnement,
+  EtatRevueDemo? dossiers,
+  String? titulaire,
+}) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
   }
+  final bool avecDossier = dossiers != null && titulaire != null;
   return <Override>[
-    sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
-    elevesDuFoyerProvider.overrideWith((Ref ref) async => DonneesDemo.eleves),
+    if (avecDossier) ...<Override>[
+      sourceSessionProvider.overrideWithValue(
+        SourceSessionDemoTitulaire(dossiers, titulaire),
+      ),
+      serviceDossierProvider.overrideWithValue(
+        ServiceDossierDemo(dossiers, titulaire),
+      ),
+      selecteurFichierProvider.overrideWithValue(const SelecteurFichierDemo()),
+    ] else
+      sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
+    // Un titulaire tout juste valide n'a ni eleve ni classe (P-ADM-08.6,
+    // 11.3) : la validation ne donne rien de plus que l'arrivee a /tuteur.
+    elevesDuFoyerProvider.overrideWith(
+      (Ref ref) async =>
+          avecDossier ? const <EleveDuFoyer>[] : DonneesDemo.eleves,
+    ),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
@@ -95,7 +129,9 @@ List<Override> surchargesDemoTuteur({String? environnement}) {
     monFuseauProvider.overrideWith((Ref ref) async => 'Europe/Paris'),
     seancesDuSuiviProvider.overrideWith((Ref ref) async => const <Seance>[]),
     mesGroupesProvider.overrideWith(
-      (Ref ref) async => DonneesDemo.classes.values.toList(),
+      (Ref ref) async => avecDossier
+          ? const <GroupSummaryVM>[]
+          : DonneesDemo.classes.values.toList(),
     ),
     // Observation simulee : politique, budget, historique. La salle video
     // demande un jeton au serveur, donc l'observation reelle reste fermee.
@@ -113,6 +149,156 @@ List<Override> surchargesDemoTuteur({String? environnement}) {
     servicePresenceProvider.overrideWithValue(const PresenceDemo()),
     acceptationsProvider.overrideWith((Ref ref) async => const <Acceptation>[]),
   ];
+}
+
+/// Valeur du parametre qui ouvre la demonstration admin (AD-4).
+const String valeurDemoAdmin = 'admin';
+
+/// Vrai si l'adresse demande la demonstration admin.
+bool demoAdminDemandee(Uri adresse) =>
+    adresse.queryParameters[parametreDemo]?.trim().toLowerCase() ==
+    valeurDemoAdmin;
+
+/// La garde admin, meme porte compilee que celle du tuteur.
+bool demoAdminActive({required Uri adresse, required String environnement}) =>
+    environnementAutoriseDemo(environnement) && demoAdminDemandee(adresse);
+
+/// La garde admin appliquee a la compilation et a l'adresse d'ouverture.
+bool get demoAdminActiveIci =>
+    demoAdminActive(adresse: Uri.base, environnement: Env.environnement);
+
+/// Les surcharges de la demonstration admin.
+///
+/// Une seule [EtatRevueDemo] partagee par les doubles : une bascule de
+/// politique se voit dans la file. Leve une [StateError] en production.
+List<Override> surchargesDemoAdmin({
+  String? environnement,
+  EtatRevueDemo? etat,
+}) {
+  if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
+    throw StateError('Demonstration interdite en production.');
+  }
+  final EtatRevueDemo e = etat ?? EtatRevueDemo.initial();
+  return <Override>[
+    sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
+    portRevueDossiersProvider.overrideWithValue(RevueDossiersDemo(e)),
+    portPolitiqueRevueKycProvider.overrideWithValue(PolitiqueRevueKycDemo(e)),
+    // L'ecran ADM-02 actuel et l'Accueil admin : aucun appel serveur.
+    serviceValidationProvider.overrideWithValue(ServiceValidationDemo(e)),
+    indicateursProvider.overrideWith(
+      (Ref ref) async => IndicateursAdmin(
+        dossiersEnAttente: e.nombreAVerifier,
+        foyersSansEnseignant: 0,
+        rapportsManquants: 0,
+        incidents24h: 0,
+        comptesEchus: 0,
+        demandesEnAttente: 0,
+      ),
+    ),
+    demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+    // Tous les autres services admin adosses a Supabase : « indisponible ».
+    ...surchargesServicesAdminIndisponibles(),
+  ];
+}
+
+/// Parametre d'adresse de la variante « profil a completer » (9.8).
+const String parametreProfilDemo = 'profil';
+
+/// Valeur qui simule un relecteur dont le genre n'est pas renseigne.
+const String valeurProfilACompleter = 'a-completer';
+
+/// L'etat de depart de la demonstration admin selon l'adresse :
+/// `?demo=admin&profil=a-completer` rend la variante « Profil a completer ».
+EtatRevueDemo etatRevueDemoPour(Uri adresse) => EtatRevueDemo.initial(
+  genreRelecteurRenseigne:
+      adresse.queryParameters[parametreProfilDemo]?.trim().toLowerCase() !=
+      valeurProfilACompleter,
+);
+
+/// Session admin fictive, resolue tout de suite, sans Supabase. Aucune
+/// valeur `super_admin` dans [AppRole] (Q40).
+class SourceSessionDemoAdmin implements SourceSession {
+  const SourceSessionDemoAdmin();
+
+  static const SessionState etat = SessionState(
+    resolue: true,
+    role: AppRole.admin,
+    profileId: 'demo-admin',
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
+  );
+
+  @override
+  Stream<SessionState> etats() => Stream<SessionState>.value(etat);
+
+  @override
+  Future<void> rafraichir() async {}
+}
+
+/// Parametre d'adresse du dossier de la personne en demonstration (AD-10).
+const String parametreDossierDemo = 'dossier';
+
+/// K-47 (HL-A-6) : DEMONSTRATION ENSEIGNANT. La titulaire est une enseignante
+/// (la piece ne concerne jamais le tuteur) ; l'adresse garde `demo=tuteur`
+/// pour ne pas casser les liens existants, mais ne montre AUCUN parcours
+/// tuteur. Le parcours tuteur voulu est `?demo=tuteur` sans `dossier` :
+/// arrivee directe sur /tuteur (capture HL-A-5 n° 15).
+/// ?demo=tuteur&dossier=refuse|refuse-fige|verification : la personne est
+/// Amina Benali, titulaire d'un dossier refuse (motif fictif), refuse sans
+/// correction permise (AD-BR-28), ou en cours de verification.
+/// Nul sans ce parametre : la demonstration tuteur habituelle.
+({EtatRevueDemo dossiers, String titulaire})? dossierTitulaireDemoPour(
+  Uri adresse, {
+  DateTime? maintenant,
+}) {
+  final String? v = adresse.queryParameters[parametreDossierDemo]
+      ?.trim()
+      .toLowerCase();
+  if (v != 'refuse' && v != 'refuse-fige' && v != 'verification') {
+    return null;
+  }
+  final EtatRevueDemo e = EtatRevueDemo.initial(maintenant: maintenant);
+  const String id = DonneesDossiersDemo.enseignantDocumentaire;
+  if (v != 'verification') {
+    e.dossiers[id]!
+      ..statut = StatutRevue.refuse
+      ..motifRefus = 'Motif fictif : la photo de la pièce est floue.'
+      ..correctionAutorisee = v == 'refuse-fige' ? false : null;
+  }
+  return (dossiers: e, titulaire: id);
+}
+
+/// La session du titulaire d'un dossier de demonstration (AD-10) : son statut
+/// de compte suit l'etat partage, relu a chaque [rafraichir], comme le
+/// rafraichissement de jeton relit le profil en production.
+class SourceSessionDemoTitulaire implements SourceSession {
+  SourceSessionDemoTitulaire(this.dossiers, this.titulaire);
+
+  final EtatRevueDemo dossiers;
+  final String titulaire;
+  final StreamController<SessionState> _flux =
+      StreamController<SessionState>.broadcast();
+
+  SessionState get _etat {
+    final DossierDemo d = dossiers.dossiers[titulaire]!;
+    return SessionState(
+      resolue: true,
+      role: d.role,
+      householdId: d.role == AppRole.guardian ? DonneesDemo.foyerId : null,
+      profileId: d.id,
+      accountStatus: d.etatCompte,
+      lectureProfil: LectureProfil.presente,
+    );
+  }
+
+  @override
+  Stream<SessionState> etats() async* {
+    yield _etat;
+    yield* _flux.stream;
+  }
+
+  @override
+  Future<void> rafraichir() async => _flux.add(_etat);
 }
 
 /// Donnees fictives partagees par les doubles.

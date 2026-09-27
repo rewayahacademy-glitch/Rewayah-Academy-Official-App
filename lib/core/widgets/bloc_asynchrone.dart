@@ -14,8 +14,8 @@ import 'etat_systeme.dart';
 ///
 /// Quatre temps, dans cet ordre, et jamais un autre :
 ///
-/// 1. **squelette** a la forme du contenu (le delai de 200 ms est tenu par
-///    `Skeleton` lui-meme) ;
+/// 1. **squelette** a la forme du contenu (le delai d'apparition,
+///    `AppMouvement.apparition` soit 180 ms, est tenu par `Skeleton`) ;
 /// 2. passe [AppDelais.chargementProlonge], le squelette reste et une phrase
 ///    dit que c'est long (`NatureEtat.chargementProlonge`) ;
 /// 3. passe [AppDelais.requeteMax], la tentative est **tenue pour perdue** :
@@ -48,7 +48,24 @@ class BlocAsynchrone<T> extends StatefulWidget {
     this.onReessayer,
     this.vide,
     this.estVide,
+    this.titreProlonge,
+    this.titreEchec,
+    this.erreurVersEtat,
   });
+
+  /// Le titre du chargement prolonge propre a l'ecran. Nul : celui de la
+  /// nature.
+  final String? titreProlonge;
+
+  /// Le titre de l'echec propre a l'ecran. Nul : celui de la nature.
+  final String? titreEchec;
+
+  /// Rend un etat propre a une erreur typee (permission, hors ligne, capacite
+  /// absente...), consulte AVANT le cas `CapaciteIndisponible`. Nul, ou
+  /// rendant nul : traitement par defaut. Recoit « Reessayer » quand il en
+  /// reste.
+  final Widget? Function(Object erreur, VoidCallback? reessayer)?
+  erreurVersEtat;
 
   /// La valeur lue, telle que le provider la rend.
   final AsyncValue<T> valeur;
@@ -182,9 +199,10 @@ class _BlocAsynchroneState<T> extends State<BlocAsynchrone<T>> {
   /// L'echec de bloc, avec « Reessayer » tant qu'il reste des essais.
   Widget _echec({bool enCours = false}) => EtatSysteme(
     nature: NatureEtat.echecServeur,
+    titre: widget.titreEchec,
     phrase: widget.onReessayer != null && !_peutReessayer
         ? t.commun.etats.reessaisEpuises
-        : null,
+        : (widget.titreEchec != null ? '' : null),
     onAction: _peutReessayer ? _reessayer : null,
     actionEnCours: enCours,
   );
@@ -206,6 +224,15 @@ class _BlocAsynchroneState<T> extends State<BlocAsynchrone<T>> {
     }
     if (v.hasError) {
       final Object? erreur = v.error;
+      final Widget? propre = erreur == null
+          ? null
+          : widget.erreurVersEtat?.call(
+              erreur,
+              _peutReessayer ? _reessayer : null,
+            );
+      if (propre != null) {
+        return (_Temps.indisponible, propre);
+      }
       if (erreur is CapaciteIndisponible) {
         return (
           _Temps.indisponible,
@@ -234,6 +261,8 @@ class _BlocAsynchroneState<T> extends State<BlocAsynchrone<T>> {
           Ecart.vMd,
           EtatSysteme(
             nature: NatureEtat.chargementProlonge,
+            titre: widget.titreProlonge,
+            phrase: widget.titreProlonge != null ? '' : null,
             onAction: _peutReessayer ? _reessayer : null,
           ),
         ],

@@ -30,7 +30,12 @@ class EntetePage extends StatelessWidget {
     this.sousTitre,
     this.onRetour,
     this.actions = const <Widget>[],
+    this.focusTitre,
   });
+
+  /// Rend le titre focalisable par programme (hors parcours clavier) : une
+  /// page y ramene le focus quand son contenu disparait.
+  final FocusNode? focusTitre;
 
   /// Le titre de la page. Il ne souhaite pas la bienvenue.
   final String titre;
@@ -64,11 +69,14 @@ class EntetePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Semantics(
-                header: true,
-                child: Text(
-                  titre,
-                  style: palette.inkStrong.applyTo(styleTitre),
+              titreFocalisable(
+                focusTitre,
+                Semantics(
+                  header: true,
+                  child: Text(
+                    titre,
+                    style: palette.inkStrong.applyTo(styleTitre),
+                  ),
                 ),
               ),
               if (sousTitre != null) ...<Widget>[
@@ -89,14 +97,28 @@ class EntetePage extends StatelessWidget {
   }
 }
 
+/// Enveloppe [titre] dans un [Focus] hors parcours clavier quand [noeud] est
+/// donne ; sinon le rend tel quel (aucune semantique ajoutee).
+Widget titreFocalisable(FocusNode? noeud, Widget titre) => noeud == null
+    ? titre
+    : Focus(focusNode: noeud, skipTraversal: true, child: titre);
+
 /// Le disque retour de 48 : surface des superpositions, filet de carte,
 /// fleche d'accent miroitee en arabe. Lu « Retour ».
 class DisqueRetour extends StatelessWidget {
   /// Cree le disque.
-  const DisqueRetour({required this.onPress, super.key});
+  const DisqueRetour({
+    required this.onPress,
+    super.key,
+    this.libelleSemantique,
+  });
 
   /// Le retour.
   final VoidCallback onPress;
+
+  /// Ce qu'annonce le disque ; « Retour » par defaut (« Fermer la piece »
+  /// dans la visionneuse plein ecran).
+  final String? libelleSemantique;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +126,7 @@ class DisqueRetour extends StatelessWidget {
 
     return Pressable(
       onPress: onPress,
-      libelleSemantique: t.commun.entete.retour,
+      libelleSemantique: libelleSemantique ?? t.commun.entete.retour,
       arrondiFocus: AppRadius.arrondiFull,
       child: ExcludeSemantics(
         child: SizedBox.square(
