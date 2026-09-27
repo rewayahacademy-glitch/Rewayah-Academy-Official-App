@@ -270,12 +270,27 @@ abstract final class DonneesAdulteDemo {
       return PlaceOccupee(prenomSecondAdulte(genre));
     }
     return switch (etat) {
-      EtatDemoAdulte.invitationEnAttente => const InvitationEnvoyee(),
+      EtatDemoAdulte.invitationEnAttente => invitationEnvoyee(genre),
+      EtatDemoAdulte.invitationExpiree => const PlaceDisponible(
+        precedente: FinInvitation.expiree,
+      ),
+      EtatDemoAdulte.invitationAnnulee => const PlaceDisponible(
+        precedente: FinInvitation.annulee,
+      ),
       EtatDemoAdulte.validationEnAttente => const ValidationEnAttente(),
       EtatDemoAdulte.validationRefusee => const ValidationRefusee(),
       _ => const PlaceDisponible(),
     };
   }
+
+  /// L'invitation envoyee au second adulte (EA-6, EA-BR-15) : le prenom et
+  /// l'adresse fictive (RFC 2606) que le titulaire a saisis.
+  static InvitationEnvoyee invitationEnvoyee(GenreTitulaireDemo genre) =>
+      InvitationEnvoyee(
+        prenom: prenomSecondAdulte(genre),
+        courriel:
+            '${prenomSecondAdulte(genre).toLowerCase()}.diallo@example.com',
+      );
 
   /// Ma famille du titulaire (EA-5) : la place adulte selon son genre (F3),
   /// sans photo livree (initiales en repli, E5).

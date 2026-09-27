@@ -60,8 +60,8 @@ import '../compte/securite_page.dart';
 import '../foyer/fiche_eleve_page.dart';
 import '../foyer/formulaire_profil_eleve.dart';
 import '../foyer/foyer_page.dart';
-import '../foyer/place_adulte.dart'
-    show FoyerTitulaireVM, foyerTitulaireProvider, libellePlace;
+import '../foyer/invitation_conjoint.dart';
+import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'adulte_demo.dart';
@@ -123,8 +123,8 @@ enum EcranDemoAdulte {
   /// vient avec EA-9).
   paiementsFoyer,
 
-  /// La place adulte, ouverte depuis sa ligne de Ma famille : provisoire
-  /// (EA-6 et EA-8).
+  /// La place adulte occupee, ouverte depuis sa ligne de Ma famille :
+  /// provisoire (EA-8).
   placeAdulte,
 
   /// Le formulaire d'ajout d'un profil eleve, ouvert depuis Ma famille.
@@ -139,6 +139,13 @@ enum EcranDemoAdulte {
   /// « Ajouter ma famille », ouvert depuis Mon espace par l'adulte sans
   /// foyer : provisoire.
   ajouterMaFamille,
+
+  /// Inviter la conjointe ou le conjoint, ouvert depuis la place libre de Ma
+  /// famille (EA-6).
+  inviterConjoint,
+
+  /// L'invitation envoyee, ouverte depuis sa ligne de Ma famille (EA-6).
+  invitationEnvoyee,
 }
 
 /// Les ecrans de l'espace foyer (coquille du tuteur), reserves au titulaire
@@ -150,7 +157,16 @@ const Set<EcranDemoAdulte> _ecransFoyer = <EcranDemoAdulte>{
   EcranDemoAdulte.ajouterProfil,
   EcranDemoAdulte.ficheEleve,
   EcranDemoAdulte.appareils,
+  EcranDemoAdulte.inviterConjoint,
+  EcranDemoAdulte.invitationEnvoyee,
 };
+
+/// Les situations « pendant une mutation » du doc section 18 (22, 23) : la
+/// demonstration les montre sur l'invitation, quel que soit l'etat de la
+/// place (EA-6).
+bool _mutation(EtatDemoAdulte etat) =>
+    etat == EtatDemoAdulte.erreurReseau ||
+    etat == EtatDemoAdulte.doubleSoumission;
 
 /// L'ecran que la personne a le droit de voir : l'espace foyer n'est qu'au
 /// titulaire d'un foyer. Le second adulte arrive sur « Forfait famille »,
@@ -166,7 +182,21 @@ EcranDemoAdulte ecranPermisDemoAdulte(
   if (!DonneesAdulteDemo.aUnFoyer(etat)) {
     return EcranDemoAdulte.ajouterMaFamille;
   }
-  return ecran;
+  // L'invitation suit l'etat de la place : jamais un formulaire d'invitation
+  // sur une place occupee ou en delai (F17, R4), jamais le detail d'une
+  // invitation qui n'existe pas. Sinon, Ma famille dit l'etat.
+  final EtatPlaceAdulte place = DonneesAdulteDemo.place(
+    etat,
+    GenreTitulaireDemo.homme,
+  );
+  final bool permis = switch (ecran) {
+    EcranDemoAdulte.inviterConjoint =>
+      place is PlaceDisponible || _mutation(etat),
+    EcranDemoAdulte.invitationEnvoyee =>
+      place is InvitationEnvoyee || _mutation(etat),
+    _ => true,
+  };
+  return permis ? ecran : EcranDemoAdulte.maFamille;
 }
 
 /// L'ecran de la demonstration qu'ouvre une rubrique de Mon espace.
@@ -260,6 +290,8 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.ficheEleve => t.ficheEleve.titreRepli,
   EcranDemoAdulte.appareils => t.foyer.appareilsFoyer,
   EcranDemoAdulte.ajouterMaFamille => t.adulte.famille.ajouter,
+  EcranDemoAdulte.inviterConjoint => t.adulte.invitation.envoyer,
+  EcranDemoAdulte.invitationEnvoyee => t.adulte.famille.place.invitationEnvoyee,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -630,7 +662,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
             EcranDemoAdulte.placeAdulte ||
             EcranDemoAdulte.ajouterProfil ||
             EcranDemoAdulte.ficheEleve ||
-            EcranDemoAdulte.appareils => const SizedBox.shrink(),
+            EcranDemoAdulte.appareils ||
+            EcranDemoAdulte.inviterConjoint ||
+            EcranDemoAdulte.invitationEnvoyee => const SizedBox.shrink(),
           },
         ),
       ),
@@ -655,7 +689,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
   /// chaque enfant (`FicheElevePage`) et les appareils du foyer
   /// (`AppareilsPage`). Les sous-pages de la fiche n'ont pas encore d'ecran
   /// de demonstration : leurs lignes ne quittent pas la coquille. La ligne
-  /// de la place adulte ouvre une page provisoire (EA-6, EA-8).
+  /// de la place adulte ouvre l'invitation (place libre) ou l'invitation
+  /// envoyee (EA-6), sinon une page provisoire (EA-8).
   Widget _foyer(BuildContext context, EcranDemoAdulte vu) {
     final List<Destination> destinations = destinationsPour(
       role: AppRole.guardian,
@@ -684,9 +719,35 @@ class CoquilleAdulteDemo extends StatelessWidget {
       }
     }
 
+    // Apres un envoi ou une annulation, Ma famille dans la situation que le
+    // serveur rendrait : l'invitation envoyee, ou la place libre « annulee ».
+    void versMaFamilleApres(EtatDemoAdulte suite) => context.go(
+      adresseDemoAdulte(
+        EcranDemoAdulte.maFamille,
+        etat: suite,
+        genre: genre,
+        vue: vue,
+        seance: seance,
+      ),
+    );
+    final EtatPlaceAdulte place = titulaire.place;
+
     final Widget page = switch (vu) {
       EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
         onRetour: versMaFamille,
+      ),
+      EcranDemoAdulte.inviterConjoint => InviterConjointPage(
+        placeFeminine: titulaire.placeFeminine,
+        onAbandon: versMaFamille,
+        onTerminee: () =>
+            versMaFamilleApres(EtatDemoAdulte.invitationEnAttente),
+      ),
+      EcranDemoAdulte.invitationEnvoyee => InvitationEnvoyeePage(
+        invitation: place is InvitationEnvoyee
+            ? place
+            : DonneesAdulteDemo.invitationEnvoyee(genre),
+        onRetour: versMaFamille,
+        onAnnulee: () => versMaFamilleApres(EtatDemoAdulte.invitationAnnulee),
       ),
       EcranDemoAdulte.placeAdulte => _PageProvisoire(
         titre: libellePlace(titulaire),
@@ -731,8 +792,15 @@ class CoquilleAdulteDemo extends StatelessWidget {
             Expanded(
               child: FoyerPage(
                 onAller: allerFoyer,
-                onPlaceAdulte: () =>
-                    context.go(_adresse(EcranDemoAdulte.placeAdulte)),
+                // La ligne de la place ouvre ce que son etat permet : inviter
+                // (place libre), l'invitation envoyee, ou la place (EA-8).
+                onPlaceAdulte: () => context.go(
+                  _adresse(switch (place) {
+                    PlaceDisponible() => EcranDemoAdulte.inviterConjoint,
+                    InvitationEnvoyee() => EcranDemoAdulte.invitationEnvoyee,
+                    _ => EcranDemoAdulte.placeAdulte,
+                  }),
+                ),
                 onPaiementsFoyer: () =>
                     context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
               ),
@@ -771,6 +839,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
               DonneesAdulteDemo.identite(genre, VueDemoAdulte.titulaire),
         ),
         foyerTitulaireProvider.overrideWith((Ref _) async => titulaire),
+        // L'invitation (EA-6, EA-BR-15) : rien n'est envoye (K-28).
+        portInvitationConjointProvider.overrideWithValue(_InvitationDemo(etat)),
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -806,6 +876,40 @@ class _CreationProfilDemo implements PortCreationProfilEleve {
   Future<ResultatCreationProfil> creer(BrouillonProfilEleve _) async =>
       const ProfilCree();
 }
+
+/// L'invitation en demonstration (EA-6) : rien n'est envoye (K-28). « Erreur
+/// reseau » rend la coupure ; « Double soumission » repond apres une latence
+/// SIMULEE, qui laisse voir le bouton en attente et le second appui ignore
+/// (ce n'est pas un delai du produit, F17).
+class _InvitationDemo implements PortInvitationConjoint {
+  const _InvitationDemo(this.etat);
+
+  final EtatDemoAdulte etat;
+
+  Future<T> _repondre<T>(T reussite, T coupure) async {
+    if (etat == EtatDemoAdulte.erreurReseau) return coupure;
+    if (etat == EtatDemoAdulte.doubleSoumission) {
+      await Future<void>.delayed(latenceSimulee);
+    }
+    return reussite;
+  }
+
+  @override
+  Future<ResultatInvitation> envoyer(InvitationConjoint _) =>
+      _repondre<ResultatInvitation>(
+        const InvitationPartie(),
+        const InvitationEchecReseau(),
+      );
+
+  @override
+  Future<ResultatAnnulation> annuler() => _repondre<ResultatAnnulation>(
+    const AnnulationFaite(),
+    const AnnulationEchecReseau(),
+  );
+}
+
+/// La latence reseau simulee de la situation « Double soumission ».
+const Duration latenceSimulee = Duration(milliseconds: 800);
 
 /// Une page provisoire : son titre et une phrase qui dit ce qui viendra.
 class _PageProvisoire extends StatelessWidget {

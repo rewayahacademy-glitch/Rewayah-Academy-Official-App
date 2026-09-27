@@ -3886,7 +3886,7 @@
       "coran": "Le Coran de votre espace élève s'affichera ici.",
       "forfaitFamille": "La page de votre forfait famille arrivera dans une prochaine étape.",
       "ajouterMaFamille": "L'ajout de votre famille arrivera dans une prochaine étape.",
-      "placeAdulte": "L'invitation et le détail de cette place arriveront dans une prochaine étape."
+      "placeAdulte": "Le détail de cette place arrivera dans une prochaine étape."
     },
     "famille": {
       "ajouter": "Ajouter ma famille",
@@ -3906,8 +3906,48 @@
         "monConjoint": "Mon conjoint · {prenom}",
         "validationEnAttente": "En attente de validation administrative",
         "validationRefusee": "Demande refusée par l'administration",
-        "nouvelleInvitation": "Nouvelle invitation possible à partir du {date}"
+        "nouvelleInvitation": "Nouvelle invitation possible à partir du {date}",
+        "envoyeeA": "Envoyée à {courriel}",
+        "expiree": "L'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.",
+        "annulee": "L'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle."
       }
+    },
+    "invitation": {
+        "enteteElle": "Un compte personnel pour elle",
+        "enteteLui": "Un compte personnel pour lui",
+        "phraseElle": "Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.",
+        "phraseLui": "Votre conjoint utilisera son propre compte. Il ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.",
+        "prenom": "Prénom",
+        "nom": "Nom",
+        "nomAide": "Facultatif.",
+        "courriel": "Adresse e-mail",
+        "courrielAide": "Nous l'utiliserons seulement pour lui envoyer cette invitation.",
+        "prenomRequis": "Indiquez son prénom.",
+        "courrielRequis": "Indiquez son adresse e-mail.",
+        "courrielInvalide": "Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.",
+        "verifier": "Vérifier l'invitation",
+        "verifierTitre": "Vérifier et envoyer",
+        "verifierPhrase": "Relisez ces informations. L'invitation partira à cette adresse.",
+        "nonRenseigne": "Non renseigné",
+        "modifier": "Modifier",
+        "envoyer": "Envoyer l'invitation",
+        "horsLigne": "Vous êtes hors ligne. L'invitation pourra partir quand la connexion reviendra.",
+        "echecTitre": "L'invitation n'est pas partie",
+        "echecPhrase": "La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.",
+        "refusTitre": "Cette invitation ne peut pas être envoyée",
+        "refusPhrase": "Revenez à Ma famille pour voir l'état de la place.",
+        "envoyeeTitre": "Invitation envoyée",
+        "envoyeePhrase": "L'invitation est partie vers {courriel}.",
+        "revenirMaFamille": "Revenir à Ma famille",
+        "detailPhrase": "L'invitation attend sa réponse. Vous pouvez l'annuler tant qu'elle n'a pas été acceptée.",
+        "annuler": "Annuler l'invitation",
+        "annulerQuestion": "Annuler l'invitation de {prenom} ?",
+        "annulerQuestionSansPrenom": "Annuler cette invitation ?",
+        "annulerHorsLigne": "Vous êtes hors ligne. L'invitation pourra être annulée quand la connexion reviendra.",
+        "annulerConsequence": "L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.",
+        "garder": "Garder l'invitation",
+        "annulationEchecTitre": "L'invitation n'a pas été annulée",
+        "annulationEchecPhrase": "La connexion a été interrompue. L'invitation est toujours envoyée : vous pouvez réessayer."
     },
     "demo": {
       "titre": "Démonstration de l'élève adulte",

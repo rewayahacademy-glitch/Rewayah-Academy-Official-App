@@ -31,18 +31,39 @@ sealed class EtatPlaceAdulte {
   const EtatPlaceAdulte();
 }
 
-/// La place est libre : la ligne est l'action « Ajouter une conjointe » ou
-/// « Ajouter un conjoint ». Une invitation expiree ou annulee la rend libre,
-/// sans delai (F5).
-final class PlaceDisponible extends EtatPlaceAdulte {
-  /// Cree l'etat.
-  const PlaceDisponible();
+/// Comment la derniere invitation a pris fin, quand le serveur le rend
+/// (doc section 5.2, EA-6).
+enum FinInvitation {
+  /// Elle a expire sans reponse.
+  expiree,
+
+  /// Le titulaire l'a annulee : une reponse tardive ne rattache personne.
+  annulee,
 }
 
-/// Une invitation est envoyee et attend sa reponse.
+/// La place est libre : la ligne est l'action « Ajouter une conjointe » ou
+/// « Ajouter un conjoint ». Une invitation expiree ou annulee la rend libre,
+/// sans delai (F5) ; sa fin se lit alors sur la ligne (F21).
+final class PlaceDisponible extends EtatPlaceAdulte {
+  /// Cree l'etat.
+  const PlaceDisponible({this.precedente});
+
+  /// La fin de la derniere invitation, `null` s'il n'y en a pas eu.
+  final FinInvitation? precedente;
+}
+
+/// Une invitation est envoyee et attend sa reponse. Le prenom et l'adresse
+/// sont ceux que le titulaire a saisis, rendus par le serveur (EA-BR-15) ;
+/// rien ne dit si l'adresse a deja un compte (F4).
 final class InvitationEnvoyee extends EtatPlaceAdulte {
   /// Cree l'etat.
-  const InvitationEnvoyee();
+  const InvitationEnvoyee({this.prenom, this.courriel});
+
+  /// Le prenom saisi pour l'invitation.
+  final String? prenom;
+
+  /// L'adresse a laquelle l'invitation est partie.
+  final String? courriel;
 }
 
 /// La place est occupee par le second adulte, dont seul le prenom est rendu.
@@ -113,12 +134,31 @@ const Key lignePlaceAdulteKey = Key('foyer.placeAdulte');
 /// La cle de la ligne « Paiements du foyer ».
 const Key paiementsFoyerKey = Key('foyer.paiementsFoyer');
 
-/// Vrai quand la ligne de la place est une action : ajouter quand la place
-/// est libre, ou ouvrir la place occupee. Les autres etats se lisent sur la
-/// ligne, sans bouton qui echouerait (F17, R4) ; leur detail vient avec EA-6
-/// et EA-8.
+/// Vrai quand la ligne de la place est une action : inviter quand la place
+/// est libre, ouvrir l'invitation envoyee (pour l'annuler, EA-6) ou la place
+/// occupee. Les autres etats se lisent sur la ligne, sans bouton qui
+/// echouerait (F17, R4) ; leur detail vient avec EA-8.
 bool placeActionnable(EtatPlaceAdulte place) =>
-    place is PlaceDisponible || place is PlaceOccupee;
+    place is PlaceDisponible ||
+    place is InvitationEnvoyee ||
+    place is PlaceOccupee;
+
+/// La legende de la ligne de la place : l'invitation a envoyer, la fin de la
+/// precedente, ou l'adresse de celle qui attend (F21).
+String? legendePlace(FoyerTitulaireVM vue) => switch (vue.place) {
+  PlaceDisponible(precedente: FinInvitation.expiree) =>
+    t.adulte.famille.place.expiree,
+  PlaceDisponible(precedente: FinInvitation.annulee) =>
+    t.adulte.famille.place.annulee,
+  PlaceDisponible() =>
+    vue.placeFeminine
+        ? t.adulte.famille.place.inviterConjointe
+        : t.adulte.famille.place.inviterConjoint,
+  InvitationEnvoyee(:final String courriel?) => t.adulte.famille.place.envoyeeA(
+    courriel: courriel,
+  ),
+  _ => null,
+};
 
 /// Le libelle de la ligne de la place, selon l'etat et le genre (F3, F21).
 String libellePlace(FoyerTitulaireVM vue) {
@@ -157,11 +197,7 @@ LigneRubrique lignePlaceAdulte(FoyerTitulaireVM vue, {VoidCallback? onPress}) {
         ? AvatarTile(prenom: place.prenom, diametre: AppSpacing.section)
         : null,
     libelle: libellePlace(vue),
-    legende: place is PlaceDisponible
-        ? (vue.placeFeminine
-              ? t.adulte.famille.place.inviterConjointe
-              : t.adulte.famille.place.inviterConjoint)
-        : null,
+    legende: legendePlace(vue),
     onPress: placeActionnable(place) ? onPress : null,
   );
 }
