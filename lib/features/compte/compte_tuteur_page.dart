@@ -93,7 +93,7 @@ class _Hub extends ConsumerWidget {
       squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
       onReessayer: () => ref.invalidate(identiteTitulaireProvider),
       construire: (IdentiteTitulaire valeur) =>
-          _CarteIdentite(identite: valeur, large: large),
+          CarteIdentiteCompte(identite: valeur, large: large),
     );
 
     final Widget acces = CarteRubriques(
@@ -243,7 +243,7 @@ class _Hub extends ConsumerWidget {
             else
               pile(<Widget>[acces, securite, informations, foyer, aide]),
             SizedBox(height: ecart),
-            const _CarteDeconnexion(),
+            const CarteDeconnexion(),
           ],
         );
       },
@@ -254,20 +254,49 @@ class _Hub extends ConsumerWidget {
 /// La carte d'identite du titulaire : initiales, nom, role, statut reel,
 /// adresse de connexion et methode. Aucun telephone, aucune ville : le
 /// tuteur n'en a pas en base (C08 section 3).
-class _CarteIdentite extends StatelessWidget {
-  const _CarteIdentite({required this.identite, required this.large});
+///
+/// Publique pour que « Mon espace » de l'eleve adulte (EA-4) la reprenne
+/// telle quelle (K-51) : il y passe son role (« Eleve adulte ») et sa photo
+/// (`PhotoEleve`, K-44) ; sans eux, la carte du tuteur ne change pas.
+class CarteIdentiteCompte extends StatelessWidget {
+  /// Cree la carte.
+  const CarteIdentiteCompte({
+    required this.identite,
+    required this.large,
+    this.role,
+    this.photo,
+    this.pastilleEtatNormal = true,
+    super.key,
+  });
 
+  /// Vrai (defaut, Compte du tuteur) : la pastille dit aussi l'etat normal
+  /// (« Compte valide »). Faux (Mon espace de l'eleve adulte, E12) : la
+  /// pastille n'apparait que pour une exception (« Profil a completer »).
+  final bool pastilleEtatNormal;
+
+  /// L'identite lue.
   final IdentiteTitulaire identite;
+
+  /// Vrai sur une fenetre large : un portrait plus grand.
   final bool large;
+
+  /// Le role affiche sous le nom ; « Tuteur » par defaut.
+  final String? role;
+
+  /// Le portrait, construit a son diametre ; les initiales par defaut.
+  final Widget Function(double diametre)? photo;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? nom = nomComplet(identite);
-    final ({String libelle, bool valide})? statut = statutAffiche(
-      identite.statut,
-    );
+    final double diametre = large
+        ? AppSpacing.section * 2
+        : AppSpacing.respiration;
+    final ({String libelle, bool valide})? lu = statutAffiche(identite.statut);
+    final ({String libelle, bool valide})? statut =
+        lu != null && lu.valide && !pastilleEtatNormal ? null : lu;
 
     return SurfaceCarte(
       child: Padding(
@@ -279,12 +308,9 @@ class _CarteIdentite extends StatelessWidget {
             Row(
               children: <Widget>[
                 ExcludeSemantics(
-                  child: AvatarTile(
-                    prenom: nom ?? '',
-                    diametre: large
-                        ? AppSpacing.section * 2
-                        : AppSpacing.respiration,
-                  ),
+                  child:
+                      photo?.call(diametre) ??
+                      AvatarTile(prenom: nom ?? '', diametre: diametre),
                 ),
                 Ecart.hLg,
                 Expanded(
@@ -303,7 +329,7 @@ class _CarteIdentite extends StatelessWidget {
                       ),
                       Ecart.vXs,
                       Text(
-                        t.compte.roles.guardian,
+                        role ?? t.compte.roles.guardian,
                         style: palette.inkMuted.applyTo(
                           textes.bodyMedium ?? const TextStyle(),
                         ),
@@ -465,14 +491,18 @@ class _ResumeFoyer extends StatelessWidget {
 /// « Se deconnecter » : une carte a part, en bas, rouge et centree
 /// (maquettes V3), toujours precedee d'une confirmation. Une session de
 /// demonstration se ferme localement (`fermerDemo`), sans appel reseau.
-class _CarteDeconnexion extends ConsumerStatefulWidget {
-  const _CarteDeconnexion();
+///
+/// Publique pour que « Mon espace » de l'eleve adulte (EA-4) la reprenne
+/// telle quelle, sans copie (K-51).
+class CarteDeconnexion extends ConsumerStatefulWidget {
+  /// Cree la carte.
+  const CarteDeconnexion({super.key});
 
   @override
-  ConsumerState<_CarteDeconnexion> createState() => _CarteDeconnexionState();
+  ConsumerState<CarteDeconnexion> createState() => _CarteDeconnexionState();
 }
 
-class _CarteDeconnexionState extends ConsumerState<_CarteDeconnexion> {
+class _CarteDeconnexionState extends ConsumerState<CarteDeconnexion> {
   bool _enCours = false;
   bool _echec = false;
 

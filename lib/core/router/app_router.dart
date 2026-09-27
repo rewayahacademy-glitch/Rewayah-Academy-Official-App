@@ -62,6 +62,7 @@ import '../../features/controleur/historique_controleur_page.dart';
 import '../../features/controleur/observation_controle_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
 import '../../features/demo/demo_accessibilite_page.dart';
+import '../../features/demo/demo_adulte_page.dart';
 import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
@@ -1160,6 +1161,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoEnseignant(Env.environnement),
       ...routesDemoControleur(Env.environnement),
       ...routesDemoAccessibilite(Env.environnement),
+      ...routesDemoAdulte(Env.environnement),
     ],
   );
 });

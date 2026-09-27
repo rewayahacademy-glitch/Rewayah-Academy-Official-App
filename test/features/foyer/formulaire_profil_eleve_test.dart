@@ -197,23 +197,21 @@ void main() {
     );
 
     testWidgets(
-      'proche adulte et moi-meme : visibles, dits indisponibles, ne se '
-      'choisissent pas',
+      'proche adulte absent (F2, EA-5) ; moi-meme visible, dit indisponible, '
+      'ne se choisit pas',
       (WidgetTester tester) async {
         await _monter(tester, appairage: _AppairageCreant());
         await _ouvrirAjout(tester);
 
-        expect(find.text(t.foyer.ajout.pourQui.procheTitre), findsOneWidget);
-        expect(find.text(t.foyer.ajout.pourQui.moiTitre), findsOneWidget);
-        expect(find.text(t.foyer.ajout.pourQui.procheDescription), findsOne);
-        expect(find.text(t.foyer.ajout.pourQui.moiDescription), findsOne);
-        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsNWidgets(2));
-
-        await _toucher(
-          tester,
-          find.text(t.foyer.ajout.pourQui.procheTitre),
+        expect(find.text(t.foyer.ajout.pourQui.procheTitre), findsNothing);
+        expect(
+          find.text(t.foyer.ajout.pourQui.procheDescription),
+          findsNothing,
         );
-        expect(_action(tester), isNull);
+        expect(find.text(t.foyer.ajout.pourQui.moiTitre), findsOneWidget);
+        expect(find.text(t.foyer.ajout.pourQui.moiDescription), findsOne);
+        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsOneWidget);
+
         await _toucher(tester, find.text(t.foyer.ajout.pourQui.moiTitre));
         expect(_action(tester), isNull);
         expect(find.text(t.foyer.ajout.pourQui.question), findsOneWidget);
@@ -469,11 +467,9 @@ void main() {
         await _ouvrirAjout(tester);
 
         expect(find.text(t.foyer.ajout.pourQui.enfantAttente), findsOneWidget);
-        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsNWidgets(2));
-        await _toucher(
-          tester,
-          find.text(t.foyer.ajout.pourQui.enfantTitre),
-        );
+        // « Moi-meme » seul dit « Indisponible » : plus de proche adulte (F2).
+        expect(find.text(t.foyer.ajout.pourQui.indisponible), findsOneWidget);
+        await _toucher(tester, find.text(t.foyer.ajout.pourQui.enfantTitre));
         expect(_action(tester), isNull);
       },
     );

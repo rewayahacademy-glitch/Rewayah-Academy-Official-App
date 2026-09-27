@@ -26,7 +26,11 @@ import 'donnees_compte.dart';
 /// l'appareil.
 class InformationsComptePage extends ConsumerWidget {
   /// Cree la page.
-  const InformationsComptePage({super.key});
+  const InformationsComptePage({super.key, this.onRetour});
+
+  /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
+  /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +43,7 @@ class InformationsComptePage extends ConsumerWidget {
 
     return PageShell(
       titre: t.compte.tuteur.pageInformations.titre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
       child: ColonneSousPage(
         child: BlocAsynchrone<IdentiteTitulaire>(
           valeur: ref.watch(identiteTitulaireProvider),

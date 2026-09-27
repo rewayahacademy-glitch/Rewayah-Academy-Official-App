@@ -58,9 +58,9 @@ enum EtapeProfilEleve {
 /// Sur bureau, une colonne centree de largeur de dialogue (V6 section 8.13) :
 /// jamais la page de telephone etiree.
 ///
-/// **Honnetete** : les trois choix de K3 sont montres. Seul « Un enfant ou un
-/// mineur » se cree aujourd'hui ; « Un proche adulte » (DB-FOY-02) et
-/// « Moi-meme » (DB-FOY-01) sont visibles, desactives et expliques. Un compte
+/// **Honnetete** : deux choix sont montres. Seul « Un enfant ou un mineur » se
+/// cree aujourd'hui ; « Moi-meme » (DB-FOY-01) est visible, desactive et
+/// explique. « Un proche adulte » (DB-FOY-02) n'est plus propose (F2, EA-5). Un compte
 /// qui n'est pas a la porte `actif` (DB-ADM-04) voit aussi le premier choix
 /// desactive, avec sa raison. Aucune presélection : le bouton attend un choix.
 ///
@@ -412,14 +412,9 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
               disponible: enfantCreable,
               raisonIndisponible: t.foyer.ajout.pourQui.enfantAttente,
             ),
-            OptionChoix(
-              valeur: PourQui.procheAdulte.name,
-              libelle: t.foyer.ajout.pourQui.procheTitre,
-              icone: AppIcons.foyer,
-              description: t.foyer.ajout.pourQui.procheDescription,
-              disponible: _creable(PourQui.procheAdulte),
-              raisonIndisponible: t.foyer.ajout.pourQui.indisponible,
-            ),
+            // Pas de choix « Un proche adulte » (F2, EA-5) : un adulte n'est
+            // jamais un profil gere ; il a son propre compte, et la place
+            // adulte du foyer se dit sur la ligne de Ma famille.
             OptionChoix(
               valeur: PourQui.moiMeme.name,
               libelle: t.foyer.ajout.pourQui.moiTitre,

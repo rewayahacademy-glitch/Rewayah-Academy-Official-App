@@ -81,13 +81,15 @@ bool get demoTuteurActiveIci =>
 /// Les surcharges de la demonstration tuteur.
 ///
 /// Leve une [StateError] si l'environnement ne l'autorise pas : meme appelee
-/// par erreur, elle ne produit rien en production.
+/// par erreur, elle ne produit rien en production. [eleves] remplace les
+/// eleves du foyer (la demonstration adulte y met le foyer Diallo, EA-1b).
 ///
 /// Avec [dossiers] et [titulaire] (AD-10), la personne est le titulaire d'un
 /// dossier du jeu de revue : sa session et son portail d'attente lisent le
 /// meme etat que la revue admin, et « Corriger » depose une piece fictive.
 List<Override> surchargesDemoTuteur({
   String? environnement,
+  List<EleveDuFoyer>? eleves,
   EtatRevueDemo? dossiers,
   String? titulaire,
 }) {
@@ -110,7 +112,7 @@ List<Override> surchargesDemoTuteur({
     // 11.3) : la validation ne donne rien de plus que l'arrivee a /tuteur.
     elevesDuFoyerProvider.overrideWith(
       (Ref ref) async =>
-          avecDossier ? const <EleveDuFoyer>[] : DonneesDemo.eleves,
+          avecDossier ? const <EleveDuFoyer>[] : eleves ?? DonneesDemo.eleves,
     ),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),

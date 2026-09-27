@@ -29,7 +29,11 @@ import 'donnees_compte.dart';
 /// 1 ter-9) sans refonte : rien n'est construit.
 class PaiementsComptePage extends ConsumerWidget {
   /// Cree la page.
-  const PaiementsComptePage({super.key});
+  const PaiementsComptePage({super.key, this.onRetour});
+
+  /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
+  /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +44,7 @@ class PaiementsComptePage extends ConsumerWidget {
 
     return PageShell(
       titre: t.compte.tuteur.pagePaiements.titre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
       child: ColonneSousPage(
         child: erreur is CapaciteIndisponible
             ? EtatSysteme(

@@ -26,7 +26,14 @@ import 'donnees_compte.dart';
 /// (« Connexion et securite »), une seule fois.
 class PreferencesComptePage extends ConsumerWidget {
   /// Cree la page.
-  const PreferencesComptePage({super.key});
+  const PreferencesComptePage({super.key, this.onRetour, this.onApparence});
+
+  /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
+  /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
+  final VoidCallback? onRetour;
+
+  /// Ouvre l'Apparence ; par defaut, la route du tuteur.
+  final VoidCallback? onApparence;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +47,7 @@ class PreferencesComptePage extends ConsumerWidget {
     return PageShell(
       titre: t.compte.tuteur.pagePreferences.titre,
       sousTitre: t.compte.tuteur.pagePreferences.sousTitre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
       child: ColonneSousPage(
         child: GroupeReglages(
           lignes: <LigneRubrique>[
@@ -48,8 +55,9 @@ class PreferencesComptePage extends ConsumerWidget {
               icone: AppIcons.personnalisationGroupe,
               libelle: t.compte.tuteur.pagePreferences.apparence,
               legende: t.compte.tuteur.pagePreferences.apparenceDetail,
-              onPress: () =>
-                  GoRouter.of(context).go(Routes.tuteurCompteApparence),
+              onPress:
+                  onApparence ??
+                  () => GoRouter.of(context).go(Routes.tuteurCompteApparence),
             ),
             LigneRubrique(
               icone: AppIcons.direction,
