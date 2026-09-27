@@ -33,7 +33,11 @@ import 'mission_controle.dart';
 /// terminer » : on ne remplit pas le vide (UX_REVIEW_08 CTR-01 d).
 class ControleControleurPage extends ConsumerWidget {
   /// Cree l'ecran.
-  const ControleControleurPage({super.key});
+  const ControleControleurPage({super.key, this.onCommencer});
+
+  /// L'entree en salle ; par defaut `/salle` avec le billet (ADR-005). La
+  /// demonstration la redirige vers sa salle fictive (CT-3).
+  final void Function(MissionControle mission)? onCommencer;
 
   /// La cle du bouton d'entree.
   static const Key commencerKey = ValueKey<String>('ctr01-commencer');
@@ -48,7 +52,7 @@ class ControleControleurPage extends ConsumerWidget {
     );
     final Widget corps = switch (mission) {
       AsyncData<MissionControle?>(:final MissionControle? value) =>
-        _Mission(mission: value),
+        _Mission(mission: value, onCommencer: onCommencer),
       AsyncError<MissionControle?>() => EtatSysteme(
         nature: NatureEtat.echecServeur,
         phrase: t.controleur.controle.erreur,
@@ -73,9 +77,10 @@ class ControleControleurPage extends ConsumerWidget {
 }
 
 class _Mission extends StatelessWidget {
-  const _Mission({required this.mission});
+  const _Mission({required this.mission, this.onCommencer});
 
   final MissionControle? mission;
+  final void Function(MissionControle mission)? onCommencer;
 
   @override
   Widget build(BuildContext context) {
@@ -95,14 +100,15 @@ class _Mission extends StatelessWidget {
         registre: RegistreVide.subi,
       );
     }
-    return _CarteMission(mission: m);
+    return _CarteMission(mission: m, onCommencer: onCommencer);
   }
 }
 
 class _CarteMission extends StatelessWidget {
-  const _CarteMission({required this.mission});
+  const _CarteMission({required this.mission, this.onCommencer});
 
   final MissionControle mission;
+  final void Function(MissionControle mission)? onCommencer;
 
   bool get _enDirect => mission.etat == EtatMissionControle.enDirect;
 
@@ -195,7 +201,9 @@ class _CarteMission extends StatelessWidget {
                         key: ControleControleurPage.commencerKey,
                         libelle: t.controleur.controle.commencer,
                         pleineLargeur: compact,
-                        onPress: () => _commencer(context),
+                        onPress: () => onCommencer == null
+                            ? _commencer(context)
+                            : onCommencer!(mission),
                       ),
                     )
                   : Align(

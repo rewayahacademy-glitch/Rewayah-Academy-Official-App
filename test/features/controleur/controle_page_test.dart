@@ -37,6 +37,15 @@ void main() {
         etat: etat,
       ),
       routes: <RouteBase>[
+        // Pose AVANT les routes de demonstration : la premiere qui
+        // correspond l'emporte. La demonstration entre dans SA salle (CT-3).
+        GoRoute(
+          path: cheminDemoSalleControleur,
+          builder: (BuildContext _, GoRouterState e) {
+            billet = e.extra is BilletSalle ? e.extra! as BilletSalle : null;
+            return const Scaffold(body: Text('salle'));
+          },
+        ),
         ...routesDemoControleur('dev'),
         GoRoute(
           path: Routes.salle,
@@ -115,7 +124,7 @@ void main() {
     sansPlanningNiCompte();
     await tester.tap(find.byKey(ControleControleurPage.commencerKey));
     await tester.pumpAndSettle();
-    expect(routeur.state.uri.path, Routes.salle);
+    expect(routeur.state.uri.path, cheminDemoSalleControleur);
     expect(find.text('salle'), findsOneWidget);
     expect(
       billet?.sessionId,

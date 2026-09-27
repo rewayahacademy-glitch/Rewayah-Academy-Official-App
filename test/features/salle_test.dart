@@ -330,7 +330,14 @@ void main() {
         );
         expect(_commande(t.salle.ouvrirMicro), findsNothing, reason: role);
         expect(_commande(t.salle.ouvrirCamera), findsNothing, reason: role);
-        expect(_commande(t.salle.quitterLeCours), findsOneWidget, reason: role);
+        // CTR-02 (CT-3) : le controleur sort par « Quitter » de sa zone haute.
+        expect(
+          role == 'masked_controller'
+              ? find.text(t.salle.quitter)
+              : _commande(t.salle.quitterLeCours),
+          findsOneWidget,
+          reason: role,
+        );
       }
     });
 

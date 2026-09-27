@@ -26,7 +26,8 @@ void main() {
     expect(routesDemoControleur('production'), isEmpty);
     expect(routesDemoControleur(' Production '), isEmpty);
     expect(routesDemoControleur(''), isEmpty);
-    expect(routesDemoControleur('development'), hasLength(1));
+    // Coquille, salle (CT-3) et compte rendu provisoire.
+    expect(routesDemoControleur('development'), hasLength(3));
   });
 
   test('la porte ne laisse passer /demo/controleur que hors production', () {

@@ -343,6 +343,10 @@ abstract final class Routes {
   /// La quatrieme, Compte, est `/compte`, partage par tous les roles.
   static const String controleurEchanges = '/controleur/echanges';
 
+  /// Compte rendu (CTR-03), la sortie de la salle d'observation (P-CTR-03
+  /// point 12). Tache focalisee, hors coquille. Page provisoire jusqu'a CT-4.
+  static const String controleurCompteRendu = '/controleur/compte-rendu';
+
   // --- Admin, huit domaines (gel d'architecture,
   // docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md) ------------------------------------
   //

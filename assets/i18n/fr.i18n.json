@@ -424,7 +424,16 @@
     "roleTuteur": "Tuteur, en observation",
     "roleAdministration": "Administration Rewayah",
     "observationMuette": "Vous assistez au cours. Vous n'êtes pas entendu.",
-    "bandeauControle": "Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal."
+    "bandeauControle": "Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.",
+    "visiteControle": {
+      "titre": "Contrôle Rewayah",
+      "sonRecu": "Son reçu",
+      "sonCoupe": "Son coupé",
+      "couperSon": "Couper le son reçu",
+      "retablirSon": "Rétablir le son reçu",
+      "agrandir": "Agrandir le support",
+      "reduire": "Réduire le support"
+    }
   },
   "presence": {
     "titre": "Présence",
@@ -3132,6 +3141,11 @@
     "historique": {
       "titre": "Historique",
       "provisoire": "Cet écran est en préparation."
+    },
+    "compteRendu": {
+      "titre": "Compte rendu",
+      "provisoire": "Cet écran est en préparation.",
+      "revenir": "Revenir au contrôle"
     },
     "echanges": {
       "titre": "Échanges",

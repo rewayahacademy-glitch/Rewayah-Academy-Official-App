@@ -19,7 +19,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/presence/service_presence.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -27,17 +29,23 @@ import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/livekit_session_provider.dart';
+import '../../core/video/pre_vol.dart';
+import '../../core/video/service_video.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../compte/compte_page.dart';
+import '../controleur/compte_rendu_controle_page.dart';
 import '../controleur/controle_page.dart';
 import '../controleur/echanges_controleur_page.dart';
 import '../controleur/historique_controleur_page.dart';
 import '../controleur/mission_controle.dart';
+import '../salle/salle_page.dart';
 import 'controleur_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
+import 'salle_controleur_demo.dart';
 
 /// Les routes de la demonstration controleur : AUCUNE en production.
 List<RouteBase> routesDemoControleur(String environnement) {
@@ -58,7 +66,81 @@ List<RouteBase> routesDemoControleur(String environnement) {
             EtatDemoControleur.enDirect,
       ),
     ),
+    // CTR-02 (CT-3) : la VRAIE salle, en role controleur, sans serveur.
+    GoRoute(
+      path: cheminDemoSalleControleur,
+      builder: (BuildContext _, GoRouterState etat) => SalleControleurDemo(
+        seanceId: etat.extra is BilletSalle
+            ? (etat.extra! as BilletSalle).sessionId
+            : 'demo-controle',
+      ),
+    ),
+    // CTR-03 provisoire : la sortie de la salle (CT-4 le construit).
+    GoRoute(
+      path: cheminDemoCompteRenduControleur,
+      builder: (BuildContext contexte, GoRouterState _) => ProviderScope(
+        overrides: surchargesCoquilleControleurDemo(
+          EtatDemoControleur.enDirect,
+        ),
+        child: RepereDemonstration(
+          child: CompteRenduControlePage(
+            onRevenir: () => contexte.go(
+              adresseDemoControleur(EcranDemoControleur.controle),
+            ),
+          ),
+        ),
+      ),
+    ),
   ];
+}
+
+/// La salle du controleur en demonstration.
+const String cheminDemoSalleControleur = '${Routes.demoControleur}/salle';
+
+/// Le compte rendu provisoire en demonstration.
+const String cheminDemoCompteRenduControleur =
+    '${Routes.demoControleur}/compte-rendu';
+
+/// La VRAIE salle (`SallePage`) en role controleur : ses ports remplaces
+/// par les doubles de `salle_controleur_demo.dart`, aucun appel serveur.
+class SalleControleurDemo extends StatelessWidget {
+  /// Cree la salle.
+  const SalleControleurDemo({required this.seanceId, super.key});
+
+  /// La seance de la mission.
+  final String seanceId;
+
+  @override
+  Widget build(BuildContext context) => ProviderScope(
+    overrides: <Override>[
+      ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
+      moteurSalleProvider.overrideWith(
+        (Ref _) => MoteurSalleControleurDemo(),
+      ),
+      serviceVideoProvider.overrideWithValue(
+        const ServiceVideoControleurDemo(),
+      ),
+      servicePreVolProvider.overrideWithValue(const PreVolControleurDemo()),
+      // Les lecteurs derives sont surcharges aussi : sans declaration de
+      // dependances, ils vivraient dans le conteneur racine et liraient les
+      // vrais ports (Riverpod, portee imbriquee).
+      preVolProvider.overrideWith(
+        (Ref _) => const PreVolControleurDemo().verifier(),
+      ),
+      presenceSeanceProvider.overrideWith(
+        (Ref _, String _) => Stream<List<PresenceParticipant>?>.value(null),
+      ),
+      servicePresenceProvider.overrideWithValue(
+        const PresenceControleurDemo(),
+      ),
+    ],
+    child: RepereDemonstration(
+      child: SallePage(
+        seanceId: seanceId,
+        cheminCompteRenduControle: cheminDemoCompteRenduControleur,
+      ),
+    ),
+  );
 }
 
 T? _lire<T extends Enum>(List<T> valeurs, String? nom) {
@@ -240,7 +322,12 @@ class CoquilleControleurDemo extends StatelessWidget {
             );
           },
           child: switch (ecran) {
-            EcranDemoControleur.controle => const ControleControleurPage(),
+            EcranDemoControleur.controle => ControleControleurPage(
+              onCommencer: (MissionControle m) => context.go(
+                cheminDemoSalleControleur,
+                extra: BilletSalle(sessionId: m.seanceId, emisA: DateTime.now()),
+              ),
+            ),
             EcranDemoControleur.historique => const HistoriqueControleurPage(),
             EcranDemoControleur.echanges => const EchangesControleurPage(),
             EcranDemoControleur.compte => const ComptePage(),

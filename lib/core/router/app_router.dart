@@ -50,6 +50,7 @@ import '../../features/compte/securite_page.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/recuperation_page.dart';
 import '../../features/consentements/consentement_observation_page.dart';
+import '../../features/controleur/compte_rendu_controle_page.dart';
 import '../../features/controleur/controle_page.dart';
 import '../../features/controleur/echanges_controleur_page.dart';
 import '../../features/controleur/historique_controleur_page.dart';
@@ -1092,6 +1093,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ? (etat.extra! as BilletSalle).groupeId
               : null,
         ),
+      ),
+
+      // CTR-03, la sortie de la salle d'observation : tache focalisee, sans
+      // coquille (UX_REVIEW_08 n° 1 c). Provisoire jusqu'a CT-4.
+      GoRoute(
+        path: Routes.controleurCompteRendu,
+        builder: (BuildContext _, GoRouterState _) =>
+            const CompteRenduControlePage(),
       ),
 
       // Galerie de developpement, absente des versions de production.

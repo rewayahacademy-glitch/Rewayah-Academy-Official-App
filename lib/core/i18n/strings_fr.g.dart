@@ -344,6 +344,8 @@ class Traductions$salle$fr {
 
 	/// fr: 'Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.'
 	String get bandeauControle => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.';
+
+	late final Traductions$salle$visiteControle$fr visiteControle = Traductions$salle$visiteControle$fr.internal(_root);
 }
 
 // Path: presence
@@ -2200,6 +2202,7 @@ class Traductions$controleur$fr {
 
 	// Translations
 	late final Traductions$controleur$historique$fr historique = Traductions$controleur$historique$fr.internal(_root);
+	late final Traductions$controleur$compteRendu$fr compteRendu = Traductions$controleur$compteRendu$fr.internal(_root);
 	late final Traductions$controleur$echanges$fr echanges = Traductions$controleur$echanges$fr.internal(_root);
 	late final Traductions$controleur$demo$fr demo = Traductions$controleur$demo$fr.internal(_root);
 	late final Traductions$controleur$controle$fr controle = Traductions$controleur$controle$fr.internal(_root);
@@ -2821,6 +2824,36 @@ class Traductions$salle$fin$fr {
 	String get retourAccueil => 'Retour à l\'accueil';
 
 	late final Traductions$salle$fin$enseignant$fr enseignant = Traductions$salle$fin$enseignant$fr.internal(_root);
+}
+
+// Path: salle.visiteControle
+class Traductions$salle$visiteControle$fr {
+	Traductions$salle$visiteControle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contrôle Rewayah'
+	String get titre => 'Contrôle Rewayah';
+
+	/// fr: 'Son reçu'
+	String get sonRecu => 'Son reçu';
+
+	/// fr: 'Son coupé'
+	String get sonCoupe => 'Son coupé';
+
+	/// fr: 'Couper le son reçu'
+	String get couperSon => 'Couper le son reçu';
+
+	/// fr: 'Rétablir le son reçu'
+	String get retablirSon => 'Rétablir le son reçu';
+
+	/// fr: 'Agrandir le support'
+	String get agrandir => 'Agrandir le support';
+
+	/// fr: 'Réduire le support'
+	String get reduire => 'Réduire le support';
 }
 
 // Path: connexion.recuperation
@@ -8556,6 +8589,24 @@ class Traductions$controleur$historique$fr {
 	String get provisoire => 'Cet écran est en préparation.';
 }
 
+// Path: controleur.compteRendu
+class Traductions$controleur$compteRendu$fr {
+	Traductions$controleur$compteRendu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Compte rendu'
+	String get titre => 'Compte rendu';
+
+	/// fr: 'Cet écran est en préparation.'
+	String get provisoire => 'Cet écran est en préparation.';
+
+	/// fr: 'Revenir au contrôle'
+	String get revenir => 'Revenir au contrôle';
+}
+
 // Path: controleur.echanges
 class Traductions$controleur$echanges$fr {
 	Traductions$controleur$echanges$fr.internal(this._root);
@@ -13076,6 +13127,13 @@ extension on Traductions {
 			'salle.roleAdministration' => 'Administration Rewayah',
 			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
 			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
+			'salle.visiteControle.titre' => 'Contrôle Rewayah',
+			'salle.visiteControle.sonRecu' => 'Son reçu',
+			'salle.visiteControle.sonCoupe' => 'Son coupé',
+			'salle.visiteControle.couperSon' => 'Couper le son reçu',
+			'salle.visiteControle.retablirSon' => 'Rétablir le son reçu',
+			'salle.visiteControle.agrandir' => 'Agrandir le support',
+			'salle.visiteControle.reduire' => 'Réduire le support',
 			'presence.titre' => 'Présence',
 			'presence.voir' => 'Voir la présence',
 			'presence.mienne' => 'Votre présence',
@@ -13246,6 +13304,8 @@ extension on Traductions {
 			'consentement.texte.continuer' => 'Continuer',
 			'consentement.texte.retour' => 'Retour',
 			'consentement.comment.titre' => 'Comment ça marche ?',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.comment.visites' => ({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une visite de ${minutes} min par séance.', other: '${n} visites de ${minutes} min par séance.', ), 
 			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une visite courte par séance.', other: '${n} visites courtes par séance.', ), 
 			'consentement.comment.parParent' => 'Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.',
@@ -13253,8 +13313,6 @@ extension on Traductions {
 			'consentement.comment.ecouter' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
 			'consentement.comment.sansMicro' => 'Votre micro et votre caméra restent désactivés pendant la visite.',
 			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
 			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
 			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
@@ -13760,6 +13818,8 @@ extension on Traductions {
 			'admin.attribution.colonneEnseignants' => 'Enseignants',
 			'admin.attribution.aucunEleve' => 'Chaque élève a son enseignant',
 			'admin.attribution.aucunEleveDetail' => 'Les enfants que personne n\'a encore pris apparaîtront ici, celui qui attend depuis le plus longtemps en premier.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.erreurEleves' => 'La file n\'a pas pu être lue. Réessayez dans un instant.',
 			'admin.attribution.erreurEnseignants' => 'Les enseignants n\'ont pas pu être lus. Réessayez dans un instant.',
 			'admin.attribution.attendAujourdhui' => 'Inscrit aujourd\'hui',
@@ -13767,8 +13827,6 @@ extension on Traductions {
 			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
-			_ => null,
-		} ?? switch (path) {
 			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
@@ -14274,6 +14332,8 @@ extension on Traductions {
 			'admin.agents.erreur' => 'La liste des jetons n\'a pas pu être lue.',
 			'admin.notifications.titre' => 'Notifications',
 			'admin.notifications.vide' => 'Aucune notification',
+			_ => null,
+		} ?? switch (path) {
 			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
@@ -14281,8 +14341,6 @@ extension on Traductions {
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
 			'agent.ouverture' => 'Ouverture',
-			_ => null,
-		} ?? switch (path) {
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
 			'agent.indisponible' => 'Service indisponible',
@@ -14788,6 +14846,8 @@ extension on Traductions {
 			'eleve.suivi.finUn' => '1 cours au suivi.',
 			'tuteur.accueil.titre' => 'Accueil',
 			'tuteur.accueil.voirLaClasse' => 'Voir la classe',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.prochaineSeance' => 'Prochaine séance',
 			'tuteur.accueil.heureDe' => ({required Object ville}) => 'Heure de ${ville}',
 			'tuteur.accueil.heureAppareil' => 'Heure de cet appareil',
@@ -14795,8 +14855,6 @@ extension on Traductions {
 			'tuteur.accueil.heureClasse' => ({required Object heure, required Object ville}) => 'Heure de la classe : ${heure} ${ville}',
 			'tuteur.accueil.seanceEnDirect' => 'Séance en direct',
 			'tuteur.accueil.seanceTerminee' => 'Séance terminée',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.seanceAnnulee' => 'Cette séance n\'aura pas lieu.',
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
@@ -15302,6 +15360,8 @@ extension on Traductions {
 			'enseignant.cahier.exceptionTitre' => 'Signaler une exception',
 			'enseignant.cahier.exceptionCorriger' => 'Corriger la présence',
 			'enseignant.cahier.exceptionExcuser' => 'Excuser l\'absence',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
 			'enseignant.cahier.exceptionMotif' => 'Motif',
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
@@ -15309,8 +15369,6 @@ extension on Traductions {
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
 			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.aValider' => 'À valider',
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
@@ -15450,6 +15508,9 @@ extension on Traductions {
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
 			'controleur.historique.titre' => 'Historique',
 			'controleur.historique.provisoire' => 'Cet écran est en préparation.',
+			'controleur.compteRendu.titre' => 'Compte rendu',
+			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
+			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.provisoire' => 'Cet écran est en préparation.',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -15813,6 +15874,8 @@ extension on Traductions {
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
@@ -15823,8 +15886,6 @@ extension on Traductions {
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
