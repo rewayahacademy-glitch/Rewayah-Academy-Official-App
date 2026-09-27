@@ -16,15 +16,18 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_eleve/accueil_accessibilite.dart';
 import 'accessibilite_demo.dart';
+import 'classe_demo.dart' show EtatDemoClasse;
 import 'demo_classe_page.dart' show EcranEleveDemo;
 import 'mode_demonstration.dart';
 
@@ -193,12 +196,56 @@ class EcranAccessibiliteDemo extends StatefulWidget {
 class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
   late int _index = widget.destinationInitiale;
 
-  void _aller(int index) => setState(() => _index = index);
+  /// Vrai quand le Suivi est ouvert depuis Ma classe (MA-4).
+  bool _suivi = false;
+
+  void _aller(int index) => setState(() {
+    _index = index;
+    _suivi = false;
+  });
 
   @override
   Widget build(BuildContext context) {
+    final EtatDemoClasse etatClasse = DonneesAccessibiliteDemo.etatClasse(
+      widget.moment,
+    );
+    // MA-4 : Ma classe avant la seance. Le VRAI Espace Classe (carte CL-4,
+    // un seul emplacement d'entree), titre « Ma classe », tutoiement selon
+    // l'age ; le Suivi reste atteignable, puis l'aide en dernier (MA14).
+    final Widget maClasse = EcranEleveDemo(
+      etat: etatClasse,
+      titre: DonneesAccessibiliteDemo.titre,
+      titreDestination: t.accessibilite.maClasse.titre,
+      tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
+      pied: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                libelle: t.accessibilite.maClasse.suivi,
+                legende: t.accessibilite.maClasse.suiviDetail,
+                icone: AppIcons.historique,
+                onPress: () => setState(() => _suivi = true),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                libelle: t.accessibilite.accueil.aide,
+                icone: AppIcons.info,
+                onPress: () => _aller(EcranAccessibiliteDemo.indexMonEspace),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
     final Widget classe = EcranEleveDemo(
-      etat: DonneesAccessibiliteDemo.etatClasse(widget.moment),
+      etat: etatClasse,
       titre: DonneesAccessibiliteDemo.titre,
     );
     final List<Destination> destinations = destinationsPour(
@@ -215,10 +262,17 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
               final int i = destinations.indexWhere(
                 (Destination d) => d.chemin == chemin,
               );
-              if (i != -1) setState(() => _index = i);
+              if (i != -1) _aller(i);
             },
-            child: _index == EcranAccessibiliteDemo.indexMaClasse
-                ? classe
+            child: _index == EcranAccessibiliteDemo.indexMaClasse && _suivi
+                ? PageShell(
+                    key: const ValueKey<String>('demo-suivi'),
+                    titre: t.accessibilite.maClasse.suivi,
+                    sousTitre: t.accessibilite.demo.mention,
+                    child: const SizedBox.shrink(),
+                  )
+                : _index == EcranAccessibiliteDemo.indexMaClasse
+                ? maClasse
                 : _index == EcranAccessibiliteDemo.indexAccueil
                 ? AccueilAccessibilite(
                     key: const ValueKey<String>('demo-accueil'),

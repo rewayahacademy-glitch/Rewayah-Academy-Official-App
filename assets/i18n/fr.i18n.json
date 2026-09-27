@@ -622,6 +622,11 @@
       "lireCoranDetail": "Accéder au Mushaf",
       "aide": "Besoin d'aide ?"
     },
+    "maClasse": {
+      "titre": "Ma classe",
+      "suivi": "Mon suivi",
+      "suiviDetail": "Les séances passées et la présence"
+    },
     "tutoiement": {
       "tonHeure": "Ton heure",
       "attenteDetail": "Ce temps d'attente ne compte pas dans ta présence.",

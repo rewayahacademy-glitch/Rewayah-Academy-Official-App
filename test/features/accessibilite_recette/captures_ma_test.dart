@@ -174,4 +174,33 @@ void main() {
       );
     });
   });
+
+  // -------------------------------------------------------------------
+  // MA-4 : Ma classe avant la seance (Mariam ; texte a 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-4 : Ma classe', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in _tailles) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('ma_classe_${l}_${mode.name}', (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            'ma4/ma4_ma_classe_mariam_avant_${l}_${mode.name}',
+            const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+            taille,
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('ma_classe_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma4/ma4_ma_classe_mariam_avant_390_light_texte200',
+        const EcranAccessibiliteDemo(eleve: EleveDemoAccessibilite.mariam),
+        const Size(390, 4200),
+        echelle: 2,
+      );
+    });
+  });
 }

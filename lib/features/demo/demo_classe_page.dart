@@ -419,6 +419,9 @@ class EcranEleveDemo extends StatelessWidget {
   const EcranEleveDemo({
     required this.etat,
     this.titre = TitreEnseignant.sayyid,
+    this.titreDestination,
+    this.tutoiement = false,
+    this.pied,
     super.key,
   });
 
@@ -428,6 +431,15 @@ class EcranEleveDemo extends StatelessWidget {
   /// Le titre de l'enseignant.
   final TitreEnseignant titre;
 
+  /// Le titre de destination (Ma classe du Mode Accessibilite, MA-4).
+  final String? titreDestination;
+
+  /// Vrai pour l'eleve mineur (MA-4).
+  final bool tutoiement;
+
+  /// Le bas de page de l'hote (MA-4 : Suivi, aide).
+  final Widget? pied;
+
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
@@ -436,6 +448,11 @@ class EcranEleveDemo extends StatelessWidget {
       child: RepereDemonstration(
         child: EspaceGroupePage(
           groupeId: DonneesClasseDemo.groupeId,
+          titre: titreDestination,
+          tutoiement: tutoiement,
+          pied: pied,
+          // Le titre de destination n'existe qu'en Mode Accessibilite.
+          enPile: titreDestination != null,
           onRejoindre: (_) => context.go(
             adressePreparationEleveDemo(PreparationEleveDemo.pret),
           ),
