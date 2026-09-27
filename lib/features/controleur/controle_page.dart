@@ -18,6 +18,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
+import 'compte_rendu_controle.dart';
 import 'mission_controle.dart';
 
 /// `CTR-01` Controle (CT-2) : **une seule** carte de mission, jamais un
@@ -33,14 +34,24 @@ import 'mission_controle.dart';
 /// terminer » : on ne remplit pas le vide (UX_REVIEW_08 CTR-01 d).
 class ControleControleurPage extends ConsumerWidget {
   /// Cree l'ecran.
-  const ControleControleurPage({super.key, this.onCommencer});
+  const ControleControleurPage({
+    super.key,
+    this.onCommencer,
+    this.onReprendreCompteRendu,
+  });
 
   /// L'entree en salle ; par defaut `/salle` avec le billet (ADR-005). La
   /// demonstration la redirige vers sa salle fictive (CT-3).
   final void Function(MissionControle mission)? onCommencer;
 
+  /// Le retour au compte rendu a terminer ; par defaut, sa route (CT-4).
+  final VoidCallback? onReprendreCompteRendu;
+
   /// La cle du bouton d'entree.
   static const Key commencerKey = ValueKey<String>('ctr01-commencer');
+
+  /// La cle de « Reprendre le compte rendu ».
+  static const Key reprendreKey = ValueKey<String>('ctr01-reprendre');
 
   /// La largeur utile de la colonne.
   static const double largeurMax = 640;
@@ -63,14 +74,91 @@ class ControleControleurPage extends ConsumerWidget {
         child: const Skeleton(hauteur: 180),
       ),
     };
+    // Le compte rendu commence et non envoye (CT-4, doc 08 CTR-01).
+    final CompteRenduEnSuspens? aTerminer = ref.watch(
+      compteRenduATerminerProvider,
+    );
     return PageShell(
       titre: t.controleur.controle.titre,
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: largeurMax),
-          child: ApparitionDouce(child: corps),
+          child: ApparitionDouce(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                corps,
+                if (aTerminer != null) ...<Widget>[
+                  Ecart.vXxl,
+                  _BlocATerminer(
+                    visite: aTerminer,
+                    onReprendre:
+                        onReprendreCompteRendu ??
+                        () => GoRouter.of(
+                          context,
+                        ).go(Routes.controleurCompteRendu),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+/// « Compte rendu a terminer » : la visite dont la reponse n'est pas partie.
+class _BlocATerminer extends StatelessWidget {
+  const _BlocATerminer({required this.visite, required this.onReprendre});
+
+  final CompteRenduEnSuspens visite;
+  final VoidCallback onReprendre;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return AppCard(
+      surface: palette.surfaceRaised,
+      marge: AppSpacing.lg,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Semantics(
+            header: true,
+            child: Text(
+              t.controleur.compteRendu.aTerminer,
+              style: palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Ecart.vXs,
+          Text(
+            t.controleur.compteRendu.sousTitre(
+              classe: visite.classe,
+              heure: heureDeLAppareil(visite.debut),
+            ),
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vLg,
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: ActionPrincipale(
+              key: ControleControleurPage.reprendreKey,
+              libelle: t.controleur.compteRendu.reprendre,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              onPress: onReprendre,
+            ),
+          ),
+        ],
       ),
     );
   }

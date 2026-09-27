@@ -36,6 +36,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../compte/compte_page.dart';
+import '../controleur/compte_rendu_controle.dart';
 import '../controleur/compte_rendu_controle_page.dart';
 import '../controleur/controle_page.dart';
 import '../controleur/echanges_controleur_page.dart';
@@ -75,23 +76,73 @@ List<RouteBase> routesDemoControleur(String environnement) {
             : 'demo-controle',
       ),
     ),
-    // CTR-03 provisoire : la sortie de la salle (CT-4 le construit).
+    // CTR-03 (CT-4) : la sortie de la salle, faits et envoi de
+    // demonstration, aucun serveur.
     GoRoute(
       path: cheminDemoCompteRenduControleur,
       builder: (BuildContext contexte, GoRouterState _) => ProviderScope(
-        overrides: surchargesCoquilleControleurDemo(
-          EtatDemoControleur.enDirect,
-        ),
+        overrides: <Override>[
+          ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
+          faitsVisiteProvider.overrideWith(
+            (Ref _) async => faitsVisiteDemoControleur(),
+          ),
+          envoiCompteRenduProvider.overrideWithValue(
+            const EnvoiCompteRenduDemo(),
+          ),
+        ],
         child: RepereDemonstration(
           child: CompteRenduControlePage(
             onRevenir: () => contexte.go(
               adresseDemoControleur(EcranDemoControleur.controle),
             ),
+            onObservation: (ChoixCompteRendu _) =>
+                contexte.go(cheminDemoObservationControleur),
+            onEcrireAdmin: () => contexte.go(
+              adresseDemoControleur(EcranDemoControleur.echanges),
+            ),
           ),
         ),
       ),
     ),
+    // CTR-03A provisoire (CT-5 le construit).
+    GoRoute(
+      path: cheminDemoObservationControleur,
+      builder: (BuildContext contexte, GoRouterState _) => RepereDemonstration(
+        child: ObservationControlePage(
+          onRetour: () => contexte.go(cheminDemoCompteRenduControleur),
+        ),
+      ),
+    ),
   ];
+}
+
+/// L'observation provisoire en demonstration.
+const String cheminDemoObservationControleur =
+    '${Routes.demoControleur}/compte-rendu/observation';
+
+/// Les faits de la seance en direct, dans le modele de CTR-03.
+FaitsVisite faitsVisiteDemoControleur() {
+  final FaitsAutomatiquesDemo f = DonneesControleurDemo.faitsEnDirect;
+  return FaitsVisite(
+    debutPrevu: f.debutPrevu,
+    finPrevue: f.debutPrevu.add(f.dureePrevue),
+    debutReel: f.debutReel,
+    finReelle: f.finReelle,
+    participantsAttendus: f.participantsAttendus,
+    participantsPresents: f.participantsPresents,
+    reconnexions: f.reconnexions,
+  );
+}
+
+/// L'envoi de demonstration : rien ne part ; la reponse arrive apres un court
+/// delai, comme celle d'un serveur (K-28).
+class EnvoiCompteRenduDemo implements EnvoiCompteRendu {
+  /// Cree le port.
+  const EnvoiCompteRenduDemo();
+
+  @override
+  Future<void> envoyer(ChoixCompteRendu choix) =>
+      Future<void>.delayed(const Duration(milliseconds: 400));
 }
 
 /// La salle du controleur en demonstration.
@@ -327,6 +378,8 @@ class CoquilleControleurDemo extends StatelessWidget {
                 cheminDemoSalleControleur,
                 extra: BilletSalle(sessionId: m.seanceId, emisA: DateTime.now()),
               ),
+              onReprendreCompteRendu: () =>
+                  context.go(cheminDemoCompteRenduControleur),
             ),
             EcranDemoControleur.historique => const HistoriqueControleurPage(),
             EcranDemoControleur.echanges => const EchangesControleurPage(),

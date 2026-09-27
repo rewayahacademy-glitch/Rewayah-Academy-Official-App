@@ -8605,6 +8605,93 @@ class Traductions$controleur$compteRendu$fr {
 
 	/// fr: 'Revenir au contrôle'
 	String get revenir => 'Revenir au contrôle';
+
+	/// fr: '{classe} · {heure}'
+	String sousTitre({required Object classe, required Object heure}) => '${classe} · ${heure}';
+
+	/// fr: 'Faits automatiques'
+	String get faits => 'Faits automatiques';
+
+	/// fr: 'Faits automatiques, repliés'
+	String get faitsReplies => 'Faits automatiques, repliés';
+
+	/// fr: 'Faits automatiques, dépliés'
+	String get faitsDeplies => 'Faits automatiques, dépliés';
+
+	/// fr: 'Lecture des faits de la visite en cours.'
+	String get faitsChargement => 'Lecture des faits de la visite en cours.';
+
+	/// fr: 'Les faits de la visite ne sont pas encore disponibles.'
+	String get faitsAbsents => 'Les faits de la visite ne sont pas encore disponibles.';
+
+	/// fr: 'Heure prévue'
+	String get cleHoraire => 'Heure prévue';
+
+	/// fr: '{debut} à {fin}'
+	String horaire({required Object debut, required Object fin}) => '${debut} à ${fin}';
+
+	/// fr: 'Début réel'
+	String get cleDebutReel => 'Début réel';
+
+	/// fr: '{heure}, {minutes} min de retard'
+	String debutRetard({required Object heure, required Object minutes}) => '${heure}, ${minutes} min de retard';
+
+	/// fr: '{heure}, à l'heure'
+	String debutALHeure({required Object heure}) => '${heure}, à l\'heure';
+
+	/// fr: 'Fin'
+	String get cleFin => 'Fin';
+
+	/// fr: 'En cours'
+	String get enCours => 'En cours';
+
+	/// fr: 'Élèves présents'
+	String get clePresents => 'Élèves présents';
+
+	/// fr: '{presents} sur {attendus}'
+	String presents({required Object presents, required Object attendus}) => '${presents} sur ${attendus}';
+
+	/// fr: 'Reconnexions'
+	String get cleReconnexions => 'Reconnexions';
+
+	/// fr: 'Avez-vous quelque chose à signaler ?'
+	String get question => 'Avez-vous quelque chose à signaler ?';
+
+	/// fr: 'Rien à signaler'
+	String get rienASignaler => 'Rien à signaler';
+
+	/// fr: 'Ajouter une observation'
+	String get ajouterObservation => 'Ajouter une observation';
+
+	/// fr: 'Signaler un point important'
+	String get pointImportant => 'Signaler un point important';
+
+	/// fr: 'Envoyer le compte rendu'
+	String get envoyer => 'Envoyer le compte rendu';
+
+	/// fr: 'Plus tard'
+	String get plusTard => 'Plus tard';
+
+	/// fr: 'Ce compte rendu est transmis automatiquement à l'administration.'
+	String get notice => 'Ce compte rendu est transmis automatiquement à l\'administration.';
+
+	/// fr: 'Le compte rendu n'a pas pu être envoyé. Votre choix est gardé : réessayez dans un instant.'
+	String get echec => 'Le compte rendu n\'a pas pu être envoyé. Votre choix est gardé : réessayez dans un instant.';
+
+	/// fr: 'Compte rendu envoyé'
+	String get envoyeTitre => 'Compte rendu envoyé';
+
+	/// fr: 'Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».'
+	String get envoyePhrase => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».';
+
+	/// fr: 'Écrire à l'administration'
+	String get ecrireAdmin => 'Écrire à l\'administration';
+
+	/// fr: 'Compte rendu à terminer'
+	String get aTerminer => 'Compte rendu à terminer';
+
+	/// fr: 'Reprendre le compte rendu'
+	String get reprendre => 'Reprendre le compte rendu';
 }
 
 // Path: controleur.echanges
@@ -15511,6 +15598,35 @@ extension on Traductions {
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
+			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
+			'controleur.compteRendu.faits' => 'Faits automatiques',
+			'controleur.compteRendu.faitsReplies' => 'Faits automatiques, repliés',
+			'controleur.compteRendu.faitsDeplies' => 'Faits automatiques, dépliés',
+			'controleur.compteRendu.faitsChargement' => 'Lecture des faits de la visite en cours.',
+			'controleur.compteRendu.faitsAbsents' => 'Les faits de la visite ne sont pas encore disponibles.',
+			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
+			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
+			'controleur.compteRendu.cleDebutReel' => 'Début réel',
+			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '${heure}, ${minutes} min de retard',
+			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '${heure}, à l\'heure',
+			'controleur.compteRendu.cleFin' => 'Fin',
+			'controleur.compteRendu.enCours' => 'En cours',
+			'controleur.compteRendu.clePresents' => 'Élèves présents',
+			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '${presents} sur ${attendus}',
+			'controleur.compteRendu.cleReconnexions' => 'Reconnexions',
+			'controleur.compteRendu.question' => 'Avez-vous quelque chose à signaler ?',
+			'controleur.compteRendu.rienASignaler' => 'Rien à signaler',
+			'controleur.compteRendu.ajouterObservation' => 'Ajouter une observation',
+			'controleur.compteRendu.pointImportant' => 'Signaler un point important',
+			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
+			'controleur.compteRendu.plusTard' => 'Plus tard',
+			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
+			'controleur.compteRendu.echec' => 'Le compte rendu n\'a pas pu être envoyé. Votre choix est gardé : réessayez dans un instant.',
+			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
+			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
+			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
+			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
+			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.provisoire' => 'Cet écran est en préparation.',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -15845,6 +15961,8 @@ extension on Traductions {
 			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
 			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
 			'tc.observation.disponibilite.seanceNonTenue' => 'Elle a été annulée, reportée ou n\'a pas été tenue.',
@@ -15874,8 +15992,6 @@ extension on Traductions {
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',

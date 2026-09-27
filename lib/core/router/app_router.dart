@@ -1096,11 +1096,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // CTR-03, la sortie de la salle d'observation : tache focalisee, sans
-      // coquille (UX_REVIEW_08 n° 1 c). Provisoire jusqu'a CT-4.
+      // coquille (UX_REVIEW_08 n° 1 c). CT-4.
       GoRoute(
         path: Routes.controleurCompteRendu,
         builder: (BuildContext _, GoRouterState _) =>
             const CompteRenduControlePage(),
+      ),
+      // CTR-03A, provisoire jusqu'a CT-5.
+      GoRoute(
+        path: Routes.controleurObservation,
+        builder: (BuildContext _, GoRouterState _) =>
+            const ObservationControlePage(),
       ),
 
       // Galerie de developpement, absente des versions de production.

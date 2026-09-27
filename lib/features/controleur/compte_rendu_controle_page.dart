@@ -1,53 +1,474 @@
-// Compte rendu (CTR-03) : page provisoire, sortie de la salle d'observation
-// (P-CTR-03 point 12, CT-3). CT-4 la construit (question « Avez-vous quelque
-// chose a signaler ? », trois cartes, transmission automatique au depart).
-// Aucun appel serveur (K-28).
+// Compte rendu (CTR-03, CT-4) : la sortie de la salle d'observation
+// (P-CTR-03 point 12, P-CTR-04).
+//
+// Decisions du directeur du 27/09/2026 (C2) et UX_REVIEW_08 n° 5, 6 et 9 :
+// - la visite et ses faits sont deja transmis a l'administration ; l'ecran ne
+//   propose aucun interrupteur de partage, il le dit en une ligne ;
+// - les faits automatiques sont en lecture seule, replies par defaut (C4) ;
+// - trois cartes sans preselection ; choisir une carte n'envoie rien : le
+//   bouton apparait 16 sous le groupe, au bord de fin ;
+// - « Rien a signaler » part en une action, sans fenetre de confirmation ni
+//   « Annuler » qui s'efface seul : on corrige par « Ajouter un complement »
+//   (C10), ce que dit l'ecran de resultat ;
+// - aucun succes sans reponse : sans serveur, l'envoi echoue et l'ecran le
+//   dit (K-28) ;
+// - « Plus tard » ramene au Controle, ou le compte rendu reste « a terminer ».
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/apparition_douce.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/status_pill.dart' show TonEtat;
+import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
+import 'compte_rendu_controle.dart';
+import 'mission_controle.dart';
 
-/// Le compte rendu du controleur, provisoire : un titre, un constat, et le
-/// retour au controle.
-class CompteRenduControlePage extends StatelessWidget {
+enum _Etape { choix, envoye }
+
+/// Le compte rendu du controleur : faits, question, trois cartes, envoi.
+class CompteRenduControlePage extends ConsumerStatefulWidget {
   /// Cree la page.
-  const CompteRenduControlePage({super.key, this.onRevenir});
+  const CompteRenduControlePage({
+    super.key,
+    this.onRevenir,
+    this.onObservation,
+    this.onEcrireAdmin,
+  });
 
   /// Le retour au controle ; par defaut, la destination Controle.
   final VoidCallback? onRevenir;
 
+  /// L'entree du parcours d'observation (CTR-03A) ; par defaut, sa route.
+  final void Function(ChoixCompteRendu choix)? onObservation;
+
+  /// La discussion avec l'administration (CTR-04) ; par defaut, Echanges.
+  final VoidCallback? onEcrireAdmin;
+
+  /// La cle de la carte d'un choix.
+  static Key cleChoix(ChoixCompteRendu choix) =>
+      ValueKey<String>('ctr03-choix-${choix.name}');
+
+  /// La cle du bouton qui envoie ou continue.
+  static const Key actionKey = ValueKey<String>('ctr03-action');
+
+  /// La cle de « Plus tard ».
+  static const Key plusTardKey = ValueKey<String>('ctr03-plus-tard');
+
+  /// La largeur utile de la colonne.
+  static const double largeurMax = 640;
+
+  @override
+  ConsumerState<CompteRenduControlePage> createState() =>
+      _CompteRenduControlePageState();
+}
+
+class _CompteRenduControlePageState
+    extends ConsumerState<CompteRenduControlePage> {
+  ChoixCompteRendu? _choix;
+  _Etape _etape = _Etape.choix;
+  bool _enCours = false;
+  bool _echec = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Tant que la reponse n'est pas envoyee, le compte rendu est « a
+    // terminer » (doc 08 CTR-01) ; en memoire seulement (C12).
+    ref.read(missionControleProvider.future).then((MissionControle? m) {
+      if (!mounted || m == null || _etape == _Etape.envoye) return;
+      ref
+          .read(compteRenduATerminerProvider.notifier)
+          .ouvrir(CompteRenduEnSuspens(classe: m.classe, debut: m.debut));
+    }, onError: (Object _) {});
+  }
+
+  void _revenir() => widget.onRevenir == null
+      ? GoRouter.of(context).go(Routes.controleur)
+      : widget.onRevenir!();
+
+  Future<void> _agir() async {
+    final ChoixCompteRendu? choix = _choix;
+    if (choix == null || _enCours) return;
+    if (choix != ChoixCompteRendu.rienASignaler) {
+      final void Function(ChoixCompteRendu)? f = widget.onObservation;
+      if (f == null) {
+        GoRouter.of(context).go(Routes.controleurObservation, extra: choix);
+      } else {
+        f(choix);
+      }
+      return;
+    }
+    setState(() {
+      _enCours = true;
+      _echec = false;
+    });
+    try {
+      await ref.read(envoiCompteRenduProvider).envoyer(choix);
+      if (!mounted) return;
+      ref.read(compteRenduATerminerProvider.notifier).terminer();
+      setState(() {
+        _enCours = false;
+        _etape = _Etape.envoye;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _enCours = false;
+        _echec = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final MissionControle? mission = ref.watch(missionControleProvider).value;
+    final String? sousTitre = mission == null
+        ? null
+        : t.controleur.compteRendu.sousTitre(
+            classe: mission.classe,
+            heure: heureDeLAppareil(mission.debut),
+          );
+
+    if (_etape == _Etape.envoye) {
+      return PageShell(
+        titre: t.controleur.compteRendu.titre,
+        sousTitre: sousTitre,
+        child: ApparitionDouce(
+          child: EcranResultat(
+            icone: AppIcons.succes,
+            ton: TonEtat.succes,
+            titre: t.controleur.compteRendu.envoyeTitre,
+            phrase: t.controleur.compteRendu.envoyePhrase,
+            libelleAction: t.controleur.compteRendu.revenir,
+            onAction: _revenir,
+            libelleSecondaire: t.controleur.compteRendu.ecrireAdmin,
+            onSecondaire:
+                widget.onEcrireAdmin ??
+                () => GoRouter.of(context).go(Routes.controleurEchanges),
+          ),
+        ),
+      );
+    }
+
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle doux = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    final ChoixCompteRendu? choix = _choix;
+    final bool envoi = choix == ChoixCompteRendu.rienASignaler;
+
     return PageShell(
       titre: t.controleur.compteRendu.titre,
+      sousTitre: sousTitre,
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: CompteRenduControlePage.largeurMax,
+          ),
+          child: ApparitionDouce(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const _FaitsAutomatiques(),
+                Ecart.vXxl,
+                Semantics(
+                  header: true,
+                  child: Text(
+                    t.controleur.compteRendu.question,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleLarge ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+                Ecart.vLg,
+                ChoiceCardGroup(
+                  autoriserSaisieLibre: false,
+                  options: <OptionChoix>[
+                    for (final ChoixCompteRendu c in ChoixCompteRendu.values)
+                      OptionChoix(
+                        cle: CompteRenduControlePage.cleChoix(c),
+                        valeur: c.name,
+                        libelle: switch (c) {
+                          ChoixCompteRendu.rienASignaler =>
+                            t.controleur.compteRendu.rienASignaler,
+                          ChoixCompteRendu.ajouterObservation =>
+                            t.controleur.compteRendu.ajouterObservation,
+                          ChoixCompteRendu.pointImportant =>
+                            t.controleur.compteRendu.pointImportant,
+                        },
+                        icone: switch (c) {
+                          ChoixCompteRendu.rienASignaler => AppIcons.succes,
+                          ChoixCompteRendu.ajouterObservation =>
+                            AppIcons.noter,
+                          ChoixCompteRendu.pointImportant => AppIcons.signaler,
+                        },
+                      ),
+                  ],
+                  onChange: (ReponseChoix r) => setState(() {
+                    _echec = false;
+                    _choix = r.valeurs.isEmpty
+                        ? null
+                        : ChoixCompteRendu.values.byName(r.valeurs.first);
+                  }),
+                ),
+                Ecart.vLg,
+                if (envoi) ...<Widget>[
+                  // La notice informe AVANT l'action (UX_REVIEW_08 n° 8 d) :
+                  // une ligne de texte, jamais une case ni un interrupteur.
+                  ApparitionDouce(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        IconTheme(
+                          data: palette.inkMuted.asIconTheme(size: 18),
+                          child: Icon(AppIcons.info.resoudre()),
+                        ),
+                        Ecart.hSm,
+                        Expanded(
+                          child: Text(
+                            t.controleur.compteRendu.notice,
+                            style: doux,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Ecart.vLg,
+                ],
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: <Widget>[
+                    ActionPrincipale(
+                      key: CompteRenduControlePage.plusTardKey,
+                      libelle: t.controleur.compteRendu.plusTard,
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      onPress: _enCours ? null : _revenir,
+                    ),
+                    if (choix != null)
+                      ApparitionDouce(
+                        child: ActionPrincipale(
+                          key: CompteRenduControlePage.actionKey,
+                          libelle: envoi
+                              ? t.controleur.compteRendu.envoyer
+                              : t.commun.continuer,
+                          pleineLargeur: false,
+                          enCours: _enCours,
+                          onPress: _agir,
+                        ),
+                      ),
+                  ],
+                ),
+                Semantics(
+                  liveRegion: true,
+                  child: _echec
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: AppSpacing.md),
+                          child: Text(
+                            t.controleur.compteRendu.echec,
+                            textAlign: TextAlign.end,
+                            style: palette.inkStrong.applyTo(
+                              textes.bodyMedium ?? const TextStyle(),
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Les faits automatiques de la visite, en lecture seule, replies par
+/// defaut ; les deplier ne quitte pas la page (UX_REVIEW_08 n° 5 a).
+class _FaitsAutomatiques extends ConsumerStatefulWidget {
+  const _FaitsAutomatiques();
+
+  @override
+  ConsumerState<_FaitsAutomatiques> createState() => _FaitsAutomatiquesState();
+}
+
+class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
+  bool _deplie = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AsyncValue<FaitsVisite?> faits = ref.watch(faitsVisiteProvider);
+    final TextStyle doux = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+
+    return AppCard(
+      surface: palette.surfaceRaised,
+      marge: AppSpacing.lg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          EmptyState(
-            message: t.controleur.compteRendu.provisoire,
-            registre: RegistreVide.subi,
-          ),
-          Ecart.vXl,
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: ActionPrincipale(
-              libelle: t.controleur.compteRendu.revenir,
-              niveau: NiveauAction.secondaire,
-              pleineLargeur: false,
-              onPress:
-                  onRevenir ??
-                  () => GoRouter.of(context).go(Routes.controleur),
+          Semantics(
+            button: true,
+            expanded: _deplie,
+            label: _deplie
+                ? t.controleur.compteRendu.faitsDeplies
+                : t.controleur.compteRendu.faitsReplies,
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: () => setState(() => _deplie = !_deplie),
+              borderRadius: BorderRadius.circular(AppSpacing.sm),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        t.controleur.compteRendu.faits,
+                        style: palette.inkStrong.applyTo(
+                          textes.titleMedium ?? const TextStyle(),
+                        ),
+                      ),
+                    ),
+                    AnimatedRotation(
+                      turns: _deplie ? 0.25 : 0,
+                      duration: Mouvement.duree(context, Mouvement.court),
+                      curve: Mouvement.entree,
+                      child: IconTheme(
+                        data: palette.inkMuted.asIconTheme(size: 20),
+                        child: Icon(AppIcons.chevron.resoudre()),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
+          ),
+          AnimatedSize(
+            duration: Mouvement.duree(context, Mouvement.moyen),
+            curve: Mouvement.entree,
+            alignment: AlignmentDirectional.topStart,
+            child: !_deplie
+                ? const SizedBox(width: double.infinity)
+                : Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.md),
+                    child: switch (faits) {
+                      AsyncData<FaitsVisite?>(:final FaitsVisite? value)
+                          when value != null =>
+                        _Lignes(faits: value),
+                      AsyncData<FaitsVisite?>() || AsyncError<FaitsVisite?>() =>
+                        Text(t.controleur.compteRendu.faitsAbsents, style: doux),
+                      _ => Text(
+                        t.controleur.compteRendu.faitsChargement,
+                        style: doux,
+                      ),
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
+}
+
+class _Lignes extends StatelessWidget {
+  const _Lignes({required this.faits});
+
+  final FaitsVisite faits;
+
+  @override
+  Widget build(BuildContext context) {
+    final int retard = faits.minutesDeRetard;
+    final String debutReel = heureDeLAppareil(faits.debutReel);
+    final DateTime? fin = faits.finReelle;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        LigneCleValeur(
+          cle: t.controleur.compteRendu.cleHoraire,
+          valeur: t.controleur.compteRendu.horaire(
+            debut: heureDeLAppareil(faits.debutPrevu),
+            fin: heureDeLAppareil(faits.finPrevue),
+          ),
+          chiffres: true,
+        ),
+        LigneCleValeur(
+          cle: t.controleur.compteRendu.cleDebutReel,
+          // L'ecart est ecrit, jamais porte par la couleur seule (C4).
+          valeur: retard > 0
+              ? t.controleur.compteRendu.debutRetard(
+                  heure: debutReel,
+                  minutes: retard,
+                )
+              : t.controleur.compteRendu.debutALHeure(heure: debutReel),
+          chiffres: true,
+        ),
+        LigneCleValeur(
+          cle: t.controleur.compteRendu.cleFin,
+          valeur: fin == null
+              ? t.controleur.compteRendu.enCours
+              : heureDeLAppareil(fin),
+          chiffres: true,
+        ),
+        LigneCleValeur(
+          cle: t.controleur.compteRendu.clePresents,
+          valeur: t.controleur.compteRendu.presents(
+            presents: faits.participantsPresents,
+            attendus: faits.participantsAttendus,
+          ),
+          chiffres: true,
+        ),
+        LigneCleValeur(
+          cle: t.controleur.compteRendu.cleReconnexions,
+          valeur: '${faits.reconnexions}',
+          chiffres: true,
+        ),
+      ],
+    );
+  }
+}
+
+/// Observation (CTR-03A) : page provisoire, construite par CT-5.
+class ObservationControlePage extends StatelessWidget {
+  /// Cree la page.
+  const ObservationControlePage({super.key, this.onRetour});
+
+  /// Le retour au compte rendu ; par defaut, sa route.
+  final VoidCallback? onRetour;
+
+  @override
+  Widget build(BuildContext context) => PageShell(
+    titre: t.controleur.compteRendu.ajouterObservation,
+    onRetour:
+        onRetour ??
+        () => GoRouter.of(context).go(Routes.controleurCompteRendu),
+    child: EmptyState(
+      message: t.controleur.compteRendu.provisoire,
+      registre: RegistreVide.subi,
+    ),
+  );
 }

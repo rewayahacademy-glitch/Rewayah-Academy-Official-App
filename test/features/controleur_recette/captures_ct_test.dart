@@ -10,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
+import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
@@ -37,6 +39,7 @@ Future<void> _capturerRoute(
   String route,
   Size taille, {
   ThemeMode mode = ThemeMode.light,
+  Future<void> Function(WidgetTester tester)? avant,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final GoRouter routeur = GoRouter(
@@ -65,6 +68,10 @@ Future<void> _capturerRoute(
     ),
   );
   await stabiliser(tester);
+  if (avant != null) {
+    await avant(tester);
+    await stabiliser(tester);
+  }
   debugPrint('PNG ${await capturer(tester, fichier)}');
 }
 
@@ -171,4 +178,62 @@ void main() {
       }
     },
   );
+
+  group('Capture : CT-4, CTR-03 compte rendu', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    // Trois etats par la VRAIE route `/demo/controleur/compte-rendu` :
+    // initial (faits replies, aucune preselection), « Rien a signaler »
+    // choisi (faits deplies, notice, bouton), resultat apres envoi.
+    Future<void> choisir(WidgetTester tester) async {
+      await tester.tap(find.text(t.controleur.compteRendu.faits));
+      await tester.pumpAndSettle();
+      final Finder carte = find.byKey(
+        CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+      );
+      await tester.ensureVisible(carte);
+      await tester.tap(carte);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(CompteRenduControlePage.actionKey));
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> envoyer(WidgetTester tester) async {
+      await choisir(tester);
+      await tester.tap(find.byKey(CompteRenduControlePage.actionKey));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+    }
+
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 844)),
+      ('768', const Size(768, 1000)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String s = '${l}_${mode.name}';
+        for (final (String nom, Future<void> Function(WidgetTester)? avant)
+            in <(String, Future<void> Function(WidgetTester)?)>[
+              ('initial', null),
+              ('rien_a_signaler', choisir),
+              ('resultat', envoyer),
+            ]) {
+          testWidgets('ct4_compte_rendu_${nom}_$s', (
+            WidgetTester tester,
+          ) async {
+            await _capturerRoute(
+              tester,
+              'ct4_compte_rendu_${nom}_$s',
+              cheminDemoCompteRenduControleur,
+              taille,
+              mode: mode,
+              avant: avant,
+            );
+          });
+        }
+      }
+    }
+  });
 }

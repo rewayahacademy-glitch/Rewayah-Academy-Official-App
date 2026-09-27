@@ -344,8 +344,13 @@ abstract final class Routes {
   static const String controleurEchanges = '/controleur/echanges';
 
   /// Compte rendu (CTR-03), la sortie de la salle d'observation (P-CTR-03
-  /// point 12). Tache focalisee, hors coquille. Page provisoire jusqu'a CT-4.
+  /// point 12). Tache focalisee, hors coquille (CT-4).
   static const String controleurCompteRendu = '/controleur/compte-rendu';
+
+  /// Observation (CTR-03A), depuis « Ajouter une observation » ou « Signaler
+  /// un point important » du compte rendu. Page provisoire jusqu'a CT-5.
+  static const String controleurObservation =
+      '/controleur/compte-rendu/observation';
 
   // --- Admin, huit domaines (gel d'architecture,
   // docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md) ------------------------------------
