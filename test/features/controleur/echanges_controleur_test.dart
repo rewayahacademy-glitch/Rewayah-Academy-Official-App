@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -63,10 +64,10 @@ Future<void> _ecrireEtEnvoyer(WidgetTester tester, String texte) async {
   final e = t.controleur.echanges;
   // Champ vide : le bouton est inactif, la raison est ecrite.
   expect(find.text(e.champVide), findsOneWidget);
-  final IconButton inactif = tester.widget<IconButton>(
+  final ActionPrincipale inactif = tester.widget<ActionPrincipale>(
     find.byKey(FilDiscussion.envoyerKey),
   );
-  expect(inactif.onPressed, isNull);
+  expect(inactif.onPress, isNull);
 
   await tester.enterText(find.byKey(FilDiscussion.champKey), texte);
   await tester.pump();
