@@ -35,40 +35,45 @@ class TimelineRow extends StatelessWidget {
     );
     final int minutes = entree.duree.inMinutes;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        IconTheme(
-          data: encres.asIconTheme(size: AppSpacing.xl),
-          child: Icon(_icone(entree.sorte).repos),
-        ),
-        Ecart.hMd,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                t.enseignant.journee.plage(
-                  debut: _hhmm(entree.debut),
-                  fin: _hhmm(entree.fin),
-                ),
-                style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
-              ),
-              Text(_libelle(entree), style: textes.titleMedium),
-              if (entree.sorte == SorteEntree.cours)
+    // Une seance se lit d'un tenant : plage, libelle, eleves et duree (W-243).
+    return MergeSemantics(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          IconTheme(
+            data: encres.asIconTheme(size: AppSpacing.xl),
+            child: Icon(_icone(entree.sorte).repos),
+          ),
+          Ecart.hMd,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
                 Text(
-                  entree.seance?.eleveIdentifiant ?? '',
+                  t.enseignant.journee.plage(
+                    debut: _hhmm(entree.debut),
+                    fin: _hhmm(entree.fin),
+                  ),
                   style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
                 ),
-            ],
+                Text(_libelle(entree), style: textes.titleMedium),
+                if (entree.sorte == SorteEntree.cours)
+                  Text(
+                    entree.seance?.eleveIdentifiant ?? '',
+                    style: encres.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
-        Ecart.hSm,
-        Text(
-          t.enseignant.journee.duree(minutes: '$minutes'),
-          style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
-        ),
-      ],
+          Ecart.hSm,
+          Text(
+            t.enseignant.journee.duree(minutes: '$minutes'),
+            style: encres.applyTo(textes.bodySmall ?? const TextStyle()),
+          ),
+        ],
+      ),
     );
   }
 }

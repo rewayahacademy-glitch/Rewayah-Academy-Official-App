@@ -27,6 +27,8 @@ import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../fiche_groupe/preparation_seance.dart'
+    show ProjectionEleve, projectionElevesProvider;
 import '../foyer/photo_eleve.dart';
 import '../presence_correction/presence_correction.dart';
 import '../presence_correction/presence_correction_page.dart';
@@ -139,6 +141,15 @@ class _CahierState extends ConsumerState<_Cahier> {
     }
   }
 
+  /// Les projections des eleves de la Classe de la seance, pour leur photo
+  /// (E5, K-44) ; vides si la seance ne porte pas de Classe.
+  Map<String, ProjectionEleve> _projections(VueCahier vue) {
+    final String? groupeId = vue.brouillon?.groupeId;
+    return groupeId == null
+        ? const <String, ProjectionEleve>{}
+        : ref.watch(projectionElevesProvider(groupeId));
+  }
+
   @override
   Widget build(BuildContext context) {
     final VueCahier vue = widget.vue;
@@ -193,6 +204,7 @@ class _CahierState extends ConsumerState<_Cahier> {
             EtatCahier.dejaDepose || EtatCahier.constat => _Constat(
               vue: vue,
               decisions: _decisions,
+              projections: _projections(vue),
               lectureSeule: lectureSeule,
               aValider: !lectureSeule && !_enCorrection,
               onAjuster: _ajuster,
@@ -219,8 +231,8 @@ class _CahierState extends ConsumerState<_Cahier> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Semantics(
-          header: true,
+        // Le champ porte deja ce libelle : le titre n'est pas relu (W-243).
+        ExcludeSemantics(
           child: Text(t.enseignant.cahier.reprise, style: textes.titleSmall),
         ),
         Ecart.vSm,
@@ -384,6 +396,7 @@ class _Constat extends StatelessWidget {
   const _Constat({
     required this.vue,
     required this.decisions,
+    required this.projections,
     required this.lectureSeule,
     required this.aValider,
     required this.onAjuster,
@@ -394,6 +407,7 @@ class _Constat extends StatelessWidget {
 
   final VueCahier vue;
   final Map<String, DecisionEleve> decisions;
+  final Map<String, ProjectionEleve> projections;
   final bool lectureSeule;
   final bool aValider;
   final Future<void> Function(ParticipantBrouillon participant) onAjuster;
@@ -506,11 +520,11 @@ class _Constat extends StatelessWidget {
         ? '${t.enseignant.cahier.travailMaison} : $devoir'
         : p.unite?.nomHumain;
     return LigneRubrique(
-      // La photo s'affiche chez l'enseignant (E5) ; les initiales en repli
-      // tant que le brouillon ne porte pas de cle d'avatar.
+      // La photo s'affiche chez l'enseignant (E5, K-44) ; les initiales en
+      // repli seulement, sans cle d'avatar.
       meneur: PhotoEleve(
         prenom: p.membre.libelle,
-        cleAvatar: null,
+        cleAvatar: projections[p.membre.studentId]?.cleAvatar,
         diametre: AppSpacing.section,
       ),
       libelle: p.membre.libelle,
@@ -605,7 +619,7 @@ class _Resume extends StatelessWidget {
               libelle: t.enseignant.cahier.statutAbsents(
                 nombre: '${statuts.absents}',
               ),
-              ton: statuts.absents > 0 ? TonEtat.avertissement : TonEtat.neutre,
+              ton: statuts.absents > 0 ? TonEtat.alerte : TonEtat.neutre,
             ),
             StatusPill(
               libelle: t.enseignant.cahier.statutEnRetard(
