@@ -16,6 +16,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -42,6 +43,10 @@ List<RouteBase> routesDemoSalle(String environnement) {
       builder: (BuildContext _, GoRouterState etat) => DemoSallePage(
         role: _lire(RoleSeance.values, etat.uri.queryParameters['role']),
         etat: _lire(EtatDemoSalle.values, etat.uri.queryParameters['etat']),
+        // Le titre de demonstration, comme l'Espace Classe (`&titre=sayyida`).
+        titre: etat.uri.queryParameters['titre'] == 'sayyida'
+            ? TitreEnseignant.sayyida
+            : TitreEnseignant.sayyid,
       ),
     ),
   ];
@@ -62,10 +67,18 @@ String adresseDemoSalle(RoleSeance role, EtatDemoSalle etat) => Uri(
 
 /// La page : la liste, ou la salle si [role] et [etat] sont donnes.
 class DemoSallePage extends StatelessWidget {
-  const DemoSallePage({this.role, this.etat, super.key});
+  const DemoSallePage({
+    this.role,
+    this.etat,
+    this.titre = TitreEnseignant.sayyid,
+    super.key,
+  });
 
   final RoleSeance? role;
   final EtatDemoSalle? etat;
+
+  /// Le titre de l'enseignant de la demonstration (E16).
+  final TitreEnseignant titre;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +89,7 @@ class DemoSallePage extends StatelessWidget {
       key: ValueKey<String>('${r.name}-${e.name}'),
       role: r,
       etat: e,
+      titre: titre,
       onSortir: () => context.go(Routes.demoSalle),
     );
     if (r != RoleSeance.guidee) return salle;
@@ -257,12 +271,16 @@ class SalleDemo extends StatefulWidget {
     required this.role,
     required this.etat,
     required this.onSortir,
+    this.titre = TitreEnseignant.sayyid,
     super.key,
   });
 
   final RoleSeance role;
   final EtatDemoSalle etat;
   final VoidCallback onSortir;
+
+  /// Le titre de l'enseignant de la demonstration (E16).
+  final TitreEnseignant titre;
 
   @override
   State<SalleDemo> createState() => _SalleDemoState();
@@ -321,7 +339,11 @@ class _SalleDemoState extends State<SalleDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final VueSeance etat = DonneesSeanceDemo.vue(widget.role, widget.etat);
+    final VueSeance etat = DonneesSeanceDemo.vue(
+      widget.role,
+      widget.etat,
+      titre: widget.titre,
+    );
     final VueSeance vue = etat.copyWith(
       panneau: _panneau,
       support: etat.support == null ? null : _support,

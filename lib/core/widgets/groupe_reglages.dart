@@ -21,6 +21,7 @@ class LigneRubrique {
     this.onPress,
     this.controle,
     this.marque,
+    this.focusNode,
   }) : assert(
          icone != null || meneur != null,
          'une rubrique porte une icone ou un meneur',
@@ -55,6 +56,10 @@ class LigneRubrique {
   /// un `PointRappel` (EN-3). Elle est lue avec la ligne et, contrairement a
   /// [controle], elle n'empeche pas la ligne de se presser.
   final Widget? marque;
+
+  /// Le noeud de focus de la ligne pressable, pour qu'un ecran y rende le
+  /// focus (fermeture du panneau de la fiche eleve, EN-12).
+  final FocusNode? focusNode;
 }
 
 /// Un groupe de rubriques a filets en retrait : le hub du Compte, la fiche
@@ -137,6 +142,7 @@ class _Ligne extends StatelessWidget {
     }
     return Pressable.selon(
       onPress: ligne.onPress,
+      focusNode: ligne.focusNode,
       respecterCibleTactile: false,
       arrondiFocus: AppRadius.arrondiSm,
       constructeur: _contenu,

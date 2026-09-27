@@ -588,10 +588,29 @@ class _DetailOffrePageEtat extends State<DetailOffrePage> {
             valeur: offre.creneau.fuseau,
           ),
           Ecart.vLg,
-          if (_demandee)
-            // Succes honnete (E7) : la demonstration n'envoie rien, et le dit.
-            LocalFeedback(message: t.enseignant.demo.mention, persistant: true)
-          else if (offre.etat == EtatOffreDemo.disponible)
+          if (_demandee) ...<Widget>[
+            // Succes E7 et doc 04 §16.5, annonce une fois, poliment.
+            Semantics(
+              liveRegion: true,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    t.enseignant.creneaux.demandeTransmise,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Ecart.vXs,
+                  Text(
+                    t.enseignant.creneaux.demandeTransmiseDetail,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+            Ecart.vMd,
+            // La demonstration n'envoie rien, et le dit.
+            LocalFeedback(message: t.enseignant.demo.mention, persistant: true),
+          ] else if (offre.etat == EtatOffreDemo.disponible)
             ActionPrincipale(
               libelle: t.enseignant.creneaux.reserver,
               onPress: _confirmer,

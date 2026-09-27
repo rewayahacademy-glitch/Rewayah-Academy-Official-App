@@ -145,7 +145,7 @@ void main() {
       expect(find.text(t.enseignant.bienvenue.declarer), findsOneWidget);
     });
 
-    testWidgets('photo manquante : compteur en texte, lignes faites, bouton', (
+    testWidgets('photo manquante : compteur en texte, lignes faites absentes', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -164,7 +164,8 @@ void main() {
         find.text(t.enseignant.bienvenue.compteur(fait: 3, total: 4)),
         findsOneWidget,
       );
-      expect(find.text(t.enseignant.bienvenue.fait), findsNWidgets(3));
+      expect(find.text(t.enseignant.bienvenue.prerequisLangues), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.prerequisFuseau), findsNothing);
       expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsOneWidget);
       expect(find.text(t.enseignant.bienvenue.ctaPhoto), findsOneWidget);
     });
@@ -202,7 +203,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.bienvenue.fait), findsNWidgets(4));
+      expect(find.text(t.enseignant.bienvenue.aCompleter), findsNothing);
+      expect(find.text(t.enseignant.bienvenue.prerequisPhoto), findsNothing);
       expect(find.text(t.enseignant.bienvenue.versJournee), findsNothing);
       await tester.tap(find.text(t.enseignant.bienvenue.ctaJournee));
       await tester.pumpAndSettle();

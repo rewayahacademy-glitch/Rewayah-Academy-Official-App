@@ -152,7 +152,7 @@ void main() {
         for (final String texte in <String>[
           'Séance terminée',
           'Le cahier est prêt avec les informations de la séance.',
-          'Sayyida Amina',
+          'Sayyid Ibrahim',
           'Fin',
           '15:16',
           '2 élèves connectés',

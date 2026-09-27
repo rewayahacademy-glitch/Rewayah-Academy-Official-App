@@ -3045,15 +3045,15 @@
     },
     "creneaux": {
       "heureLibelle": "{jour} {heure} h",
-      "aucuneHeure": "Vous n'avez proposé aucune heure. Sans créneau, aucune famille ne peut vous être proposée.",
+      "aucuneHeure": "Vous n'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.",
       "heureEnregistree": "{heure} enregistré",
       "heureRetiree": "{heure} retiré",
-      "retraitEngage": "{heure} retiré. Le cours déjà attribué sur cette heure continue : demandez une réaffectation pour l'arrêter.",
+      "retraitEngage": "{heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l'arrêter.",
       "grilleErreur": "Vos heures n'ont pas pu être lues",
       "grilleErreurDetail": "Le serveur n'a pas répondu. Les heures que vous avez déjà posées ne sont pas perdues.",
       "horsLigneGrille": "Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.",
-      "heureEngagee": "Vous avez déjà un élève sur {heures}. Retirer cette heure ne met pas fin au cours : il faut une réaffectation.",
-      "heuresEngagees": "Vous avez déjà un élève sur {heures}. Retirer ces heures ne met pas fin aux cours : il faut une réaffectation.",
+      "heureEngagee": "Vous avez déjà une Classe sur {heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.",
+      "heuresEngagees": "Vous avez déjà une Classe sur {heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.",
       "feedErreur": "Les familles en attente n'ont pas pu être lues",
       "feedErreurDetail": "Rien n'est perdu : personne n'a été pris, et vos heures restent posées.",
       "horsLignePrise": "Sans réseau, vous ne pouvez pas prendre d'élève. Les demandes ci-dessous restent consultables.",
@@ -3074,6 +3074,8 @@
       "aucuneClasse": "Aucune Classe compatible pour le moment",
       "aucuneClasseDetail": "Modifiez vos disponibilités si votre emploi du temps a changé.",
       "reserver": "Réserver cette Classe",
+      "demandeTransmise": "Votre demande a été transmise.",
+      "demandeTransmiseDetail": "Elle apparaîtra dans vos Classes après confirmation.",
       "confirmerTitre": "Confirmer cette Classe ?",
       "confirmer": "Confirmer cette Classe",
       "revenir": "Revenir",
@@ -3275,7 +3277,7 @@
       },
       "sections": {
         "continuer": "Continuer",
-        "pourCeGroupe": "Pour ce groupe",
+        "pourCeGroupe": "Pour cette Classe",
         "recents": "Récents",
         "tousLesSupports": "Tous les supports",
         "resultats": "Résultats"
@@ -3369,7 +3371,7 @@
       },
       "reprise": {
         "groupe": "Reprendre le cours",
-        "groupeDetail": "Le groupe en était page {page}"
+        "groupeDetail": "La Classe en était page {page}"
       },
       "focus": {
         "aucunePlage": "Aucun passage mis en avant",
@@ -3460,7 +3462,7 @@
         "indisponible": "Roster indisponible",
         "indisponibleDetail": "Les états de vos élèves n'ont pas pu être lus. Le cours continue.",
         "vide": "Aucun élève inscrit",
-        "videDetail": "Cette séance n'a aucun élève inscrit. Vérifiez le groupe.",
+        "videDetail": "Cette séance n'a aucun élève inscrit.",
         "ouvrirFiche": "Ouvrir la fiche de {prenom}",
         "places": "{inscrits} / {plafond} places"
       },
@@ -3512,7 +3514,7 @@
       },
       "support": {
         "aucun": "Aucun support présenté",
-        "aucunDetail": "Ouvrez la Bibliothèque pour présenter un support au groupe.",
+        "aucunDetail": "Ouvrez la Bibliothèque pour présenter un support à la Classe.",
         "bibliotheque": "Bibliothèque",
         "bibliothequeAbsente": "Bibliothèque non branchée",
         "bibliothequeAbsenteDetail": "Le choix de support sera disponible dès l'intégration du catalogue."

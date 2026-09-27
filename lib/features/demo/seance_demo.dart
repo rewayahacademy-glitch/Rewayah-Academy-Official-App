@@ -6,8 +6,11 @@
 
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
+import 'enseignant_demo.dart';
 
 /// Les etats montrables de la salle de demonstration.
 enum EtatDemoSalle {
@@ -65,8 +68,13 @@ enum EtatDemoSalle {
 /// Les donnees exactes de la demonstration.
 abstract final class DonneesSeanceDemo {
   static const String classe = 'Classe An-Nour';
-  static const String enseignante = 'Sayyida Amina';
-  static const String initialesEnseignante = 'SA';
+  /// L'enseignant de la salle, le meme que sur Aujourd'hui et l'Espace
+  /// Classe (E16) : « Sayyid Ibrahim » par defaut, pour tous les roles.
+  static String enseignantPour(TitreEnseignant titre) =>
+      DonneesEnseignantDemo.nomAffiche(titre);
+
+  /// Le nom par defaut, « Sayyid Ibrahim ».
+  static final String enseignante = enseignantPour(TitreEnseignant.sayyid);
 
   /// L'identifiant fictif de la Classe An-Nour (rail enseignant).
   static const String groupeDemo = 'demo-an-nour';
@@ -207,13 +215,18 @@ abstract final class DonneesSeanceDemo {
   /// l'enseignant montre « La seance se poursuit. » comme l'image CLV-06.
   /// La vue eleve de la meme visite garde l'horloge en cours, comme CLV-04
   /// (l'eleve n'affiche la suite que depassee, sans duree restante).
-  static VueSeance vue(RoleSeance role, EtatDemoSalle etat) {
+  static VueSeance vue(
+    RoleSeance role,
+    EtatDemoSalle etat, {
+    TitreEnseignant titre = TitreEnseignant.sayyid,
+  }) {
     final bool enseignant = role == RoleSeance.enseignant;
+    final String nom = enseignantPour(titre);
     return VueSeance(
       role: role,
       nomClasse: classe,
-      nomEnseignant: enseignante,
-      initialesEnseignant: initialesEnseignante,
+      nomEnseignant: nom,
+      initialesEnseignant: DepuisSalle.initiales(nom),
       prenomEleve: enseignant ? null : eleveCourant,
       horloge:
           (etat == EtatDemoSalle.visite && enseignant) ||

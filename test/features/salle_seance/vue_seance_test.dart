@@ -143,10 +143,10 @@ void main() {
       }
     });
 
-    test('jamais « Mariam » comme compte : le sien, SA Sayyida Amina', () {
+    test('jamais « Mariam » comme compte : le sien, SI Sayyid Ibrahim', () {
       for (final EtatDemoSalle e in EtatDemoSalle.values) {
-        expect(_vue(r, e).compte.nom, 'Sayyida Amina');
-        expect(_vue(r, e).compte.initiales, 'SA');
+        expect(_vue(r, e).compte.nom, 'Sayyid Ibrahim');
+        expect(_vue(r, e).compte.initiales, 'SI');
       }
     });
 
@@ -289,7 +289,7 @@ void main() {
       expect(_vue(RoleSeance.enseignant).titre, 'Séance en direct');
       expect(
         _vue(RoleSeance.eleve).ligneEtat,
-        'Classe An-Nour · Sayyida Amina',
+        'Classe An-Nour · Sayyid Ibrahim',
       );
     });
 

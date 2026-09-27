@@ -213,7 +213,7 @@ class FicheEleveEnseignant extends StatelessWidget {
 
 /// Le panneau de la fiche sur bureau : il prend la place de la colonne des
 /// eleves (contrat D), avec un retour « Eleves » au bord de debut. Echap le
-/// ferme ; le focus revient alors a l'Espace Classe.
+/// ferme ; l'Espace Classe rend alors le focus a la ligne de l'eleve.
 class PanneauFicheEleve extends StatelessWidget {
   /// Cree le panneau.
   const PanneauFicheEleve({

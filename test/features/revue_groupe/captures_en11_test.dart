@@ -87,7 +87,7 @@ void main() {
             taille,
             mode,
             anomalies: <AnomalieRevue>[
-              AnomalieRevue(
+              const AnomalieRevue(
                 type: TypeAnomalieRevue.gateAVenir,
                 studentId: 'demo-eleve-yusuf',
                 eleve: 'Yusuf',

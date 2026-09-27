@@ -211,8 +211,8 @@ void main() {
     }
     // Le seul « Séance en direct » est le titre.
     expect(find.text('Séance en direct'), findsOneWidget);
-    expect(find.text('Sayyida Amina'), findsWidgets);
-    expect(find.text('SA'), findsOneWidget);
+    expect(find.text('Sayyid Ibrahim'), findsWidgets);
+    expect(find.text('SI'), findsOneWidget);
   });
 
   testWidgets('EN-9 : aucune barre, meme avec un rappel de navigation', (
@@ -308,7 +308,7 @@ void main() {
       final Rect cadre = tester.getRect(vignette);
       final Rect nom = tester.getRect(_cle('nom-video'));
       expect(
-        find.descendant(of: vignette, matching: find.text('Sayyida Amina')),
+        find.descendant(of: vignette, matching: find.text('Sayyid Ibrahim')),
         findsOneWidget,
       );
       expect(cadre.contains(nom.topLeft), isTrue);

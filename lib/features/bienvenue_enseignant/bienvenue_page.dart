@@ -207,7 +207,7 @@ class _Corps extends StatelessWidget {
             ton: TonEtat.succes,
           ),
         ),
-        if (p != null) ...<Widget>[
+        if (p != null && p.faits < PrerequisEnseignant.total) ...<Widget>[
           Ecart.vSection,
           _ACompleter(prerequis: p, prenom: prenom),
         ],
@@ -233,7 +233,8 @@ class _Corps extends StatelessWidget {
 }
 
 /// La carte groupee « A completer » : compteur en texte, une ligne par
-/// prerequis, la ligne faite garde sa place avec « Fait ».
+/// prerequis manquant ; une tache deja confirmee n'est pas affichee
+/// (spec 04 §10.1).
 class _ACompleter extends StatelessWidget {
   const _ACompleter({required this.prerequis, required this.prenom});
 
@@ -246,17 +247,12 @@ class _ACompleter extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final PrerequisEnseignant p = prerequis;
 
-    LigneRubrique ligne(
-      String libelle,
-      AppIcon icone,
-      bool fait,
-      _Manque manque,
-    ) => LigneRubrique(
-      libelle: libelle,
-      icone: icone,
-      marque: fait ? const _Fait() : null,
-      onPress: fait ? null : () => _allerVers(context, manque, prenom),
-    );
+    LigneRubrique ligne(String libelle, AppIcon icone, _Manque manque) =>
+        LigneRubrique(
+          libelle: libelle,
+          icone: icone,
+          onPress: () => _allerVers(context, manque, prenom),
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -291,60 +287,31 @@ class _ACompleter extends StatelessWidget {
         Ecart.vSm,
         GroupeReglages(
           lignes: <LigneRubrique>[
-            ligne(
-              t.enseignant.bienvenue.prerequisPhoto,
-              AppIcons.image,
-              p.photo,
-              _Manque.photo,
-            ),
-            ligne(
-              t.enseignant.bienvenue.prerequisLangues,
-              AppIcons.cours,
-              p.langues,
-              _Manque.informations,
-            ),
-            ligne(
-              t.enseignant.bienvenue.prerequisFuseau,
-              AppIcons.horloge,
-              p.fuseau,
-              _Manque.informations,
-            ),
-            ligne(
-              t.enseignant.bienvenue.declarer,
-              AppIcons.disponibilites,
-              p.disponibilites,
-              _Manque.disponibilites,
-            ),
+            if (!p.photo)
+              ligne(
+                t.enseignant.bienvenue.prerequisPhoto,
+                AppIcons.image,
+                _Manque.photo,
+              ),
+            if (!p.langues)
+              ligne(
+                t.enseignant.bienvenue.prerequisLangues,
+                AppIcons.cours,
+                _Manque.informations,
+              ),
+            if (!p.fuseau)
+              ligne(
+                t.enseignant.bienvenue.prerequisFuseau,
+                AppIcons.horloge,
+                _Manque.informations,
+              ),
+            if (!p.disponibilites)
+              ligne(
+                t.enseignant.bienvenue.declarer,
+                AppIcons.disponibilites,
+                _Manque.disponibilites,
+              ),
           ],
-        ),
-      ],
-    );
-  }
-}
-
-/// Une coche doublee du mot « Fait » : jamais la couleur seule.
-class _Fait extends StatelessWidget {
-  const _Fait();
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        ExcludeSemantics(
-          child: IconTheme(
-            data: palette.inkSuccess.asIconTheme(size: AppSpacing.xl),
-            child: Icon(AppIcons.succes.repos),
-          ),
-        ),
-        Ecart.hXs,
-        Text(
-          t.enseignant.bienvenue.fait,
-          style: palette.inkSuccess.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
         ),
       ],
     );

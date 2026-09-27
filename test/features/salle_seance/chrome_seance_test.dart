@@ -196,7 +196,7 @@ void main() {
     expect(find.byType(ClocheNotifications), findsNothing);
   });
 
-  testWidgets('enseignant : compte SA, notice tuteur, jamais parent', (
+  testWidgets('enseignant : compte SI, notice tuteur, jamais parent', (
     WidgetTester tester,
   ) async {
     await _poser(
@@ -205,8 +205,8 @@ void main() {
       EtatDemoSalle.visite,
       const Size(1440, 900),
     );
-    expect(find.text('Sayyida Amina'), findsOneWidget);
-    expect(find.text('SA'), findsOneWidget);
+    expect(find.text('Sayyid Ibrahim'), findsOneWidget);
+    expect(find.text('SI'), findsOneWidget);
     expect(find.text('Mariam'), findsNothing);
     expect(find.text('Tuteur de Mariam observe.'), findsOneWidget);
     expect(find.textContaining('parent'), findsNothing);
@@ -222,7 +222,7 @@ void main() {
       const Size(390, 844),
     );
     expect(find.byType(BasculeTheme), findsNothing);
-    expect(find.text('Sayyida Amina'), findsNothing);
+    expect(find.text('Sayyid Ibrahim'), findsNothing);
   });
 
   testWidgets('fin : aucune mention', (WidgetTester tester) async {

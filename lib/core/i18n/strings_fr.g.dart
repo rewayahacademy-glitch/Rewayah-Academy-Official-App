@@ -8288,8 +8288,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: '{jour} {heure} h'
 	String heureLibelle({required Object jour, required Object heure}) => '${jour} ${heure} h';
 
-	/// fr: 'Vous n'avez proposé aucune heure. Sans créneau, aucune famille ne peut vous être proposée.'
-	String get aucuneHeure => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune famille ne peut vous être proposée.';
+	/// fr: 'Vous n'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.'
+	String get aucuneHeure => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.';
 
 	/// fr: '{heure} enregistré'
 	String heureEnregistree({required Object heure}) => '${heure} enregistré';
@@ -8297,8 +8297,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: '{heure} retiré'
 	String heureRetiree({required Object heure}) => '${heure} retiré';
 
-	/// fr: '{heure} retiré. Le cours déjà attribué sur cette heure continue : demandez une réaffectation pour l'arrêter.'
-	String retraitEngage({required Object heure}) => '${heure} retiré. Le cours déjà attribué sur cette heure continue : demandez une réaffectation pour l\'arrêter.';
+	/// fr: '{heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l'arrêter.'
+	String retraitEngage({required Object heure}) => '${heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l\'arrêter.';
 
 	/// fr: 'Vos heures n'ont pas pu être lues'
 	String get grilleErreur => 'Vos heures n\'ont pas pu être lues';
@@ -8309,11 +8309,11 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.'
 	String get horsLigneGrille => 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.';
 
-	/// fr: 'Vous avez déjà un élève sur {heures}. Retirer cette heure ne met pas fin au cours : il faut une réaffectation.'
-	String heureEngagee({required Object heures}) => 'Vous avez déjà un élève sur ${heures}. Retirer cette heure ne met pas fin au cours : il faut une réaffectation.';
+	/// fr: 'Vous avez déjà une Classe sur {heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.'
+	String heureEngagee({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.';
 
-	/// fr: 'Vous avez déjà un élève sur {heures}. Retirer ces heures ne met pas fin aux cours : il faut une réaffectation.'
-	String heuresEngagees({required Object heures}) => 'Vous avez déjà un élève sur ${heures}. Retirer ces heures ne met pas fin aux cours : il faut une réaffectation.';
+	/// fr: 'Vous avez déjà une Classe sur {heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.'
+	String heuresEngagees({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.';
 
 	/// fr: 'Les familles en attente n'ont pas pu être lues'
 	String get feedErreur => 'Les familles en attente n\'ont pas pu être lues';
@@ -8374,6 +8374,12 @@ class Traductions$enseignant$creneaux$fr {
 
 	/// fr: 'Réserver cette Classe'
 	String get reserver => 'Réserver cette Classe';
+
+	/// fr: 'Votre demande a été transmise.'
+	String get demandeTransmise => 'Votre demande a été transmise.';
+
+	/// fr: 'Elle apparaîtra dans vos Classes après confirmation.'
+	String get demandeTransmiseDetail => 'Elle apparaîtra dans vos Classes après confirmation.';
 
 	/// fr: 'Confirmer cette Classe ?'
 	String get confirmerTitre => 'Confirmer cette Classe ?';
@@ -10608,8 +10614,8 @@ class Traductions$tc$bibliotheque$sections$fr {
 	/// fr: 'Continuer'
 	String get continuer => 'Continuer';
 
-	/// fr: 'Pour ce groupe'
-	String get pourCeGroupe => 'Pour ce groupe';
+	/// fr: 'Pour cette Classe'
+	String get pourCeGroupe => 'Pour cette Classe';
 
 	/// fr: 'Récents'
 	String get recents => 'Récents';
@@ -10932,8 +10938,8 @@ class Traductions$tc$coran$reprise$fr {
 	/// fr: 'Reprendre le cours'
 	String get groupe => 'Reprendre le cours';
 
-	/// fr: 'Le groupe en était page {page}'
-	String groupeDetail({required Object page}) => 'Le groupe en était page ${page}';
+	/// fr: 'La Classe en était page {page}'
+	String groupeDetail({required Object page}) => 'La Classe en était page ${page}';
 }
 
 // Path: tc.coran.focus
@@ -11205,8 +11211,8 @@ class Traductions$tc$classe$roster$fr {
 	/// fr: 'Aucun élève inscrit'
 	String get vide => 'Aucun élève inscrit';
 
-	/// fr: 'Cette séance n'a aucun élève inscrit. Vérifiez le groupe.'
-	String get videDetail => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.';
+	/// fr: 'Cette séance n'a aucun élève inscrit.'
+	String get videDetail => 'Cette séance n\'a aucun élève inscrit.';
 
 	/// fr: 'Ouvrir la fiche de {prenom}'
 	String ouvrirFiche({required Object prenom}) => 'Ouvrir la fiche de ${prenom}';
@@ -11379,8 +11385,8 @@ class Traductions$tc$classe$support$fr {
 	/// fr: 'Aucun support présenté'
 	String get aucun => 'Aucun support présenté';
 
-	/// fr: 'Ouvrez la Bibliothèque pour présenter un support au groupe.'
-	String get aucunDetail => 'Ouvrez la Bibliothèque pour présenter un support au groupe.';
+	/// fr: 'Ouvrez la Bibliothèque pour présenter un support à la Classe.'
+	String get aucunDetail => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.';
 
 	/// fr: 'Bibliothèque'
 	String get bibliotheque => 'Bibliothèque';
@@ -15362,15 +15368,15 @@ extension on Traductions {
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
-			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune famille ne peut vous être proposée.',
+			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
 			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} retiré',
-			'enseignant.creneaux.retraitEngage' => ({required Object heure}) => '${heure} retiré. Le cours déjà attribué sur cette heure continue : demandez une réaffectation pour l\'arrêter.',
+			'enseignant.creneaux.retraitEngage' => ({required Object heure}) => '${heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.grilleErreur' => 'Vos heures n\'ont pas pu être lues',
 			'enseignant.creneaux.grilleErreurDetail' => 'Le serveur n\'a pas répondu. Les heures que vous avez déjà posées ne sont pas perdues.',
 			'enseignant.creneaux.horsLigneGrille' => 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.',
-			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà un élève sur ${heures}. Retirer cette heure ne met pas fin au cours : il faut une réaffectation.',
-			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà un élève sur ${heures}. Retirer ces heures ne met pas fin aux cours : il faut une réaffectation.',
+			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.',
+			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.',
 			'enseignant.creneaux.feedErreur' => 'Les familles en attente n\'ont pas pu être lues',
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
 			'enseignant.creneaux.horsLignePrise' => 'Sans réseau, vous ne pouvez pas prendre d\'élève. Les demandes ci-dessous restent consultables.',
@@ -15391,6 +15397,8 @@ extension on Traductions {
 			'enseignant.creneaux.aucuneClasse' => 'Aucune Classe compatible pour le moment',
 			'enseignant.creneaux.aucuneClasseDetail' => 'Modifiez vos disponibilités si votre emploi du temps a changé.',
 			'enseignant.creneaux.reserver' => 'Réserver cette Classe',
+			'enseignant.creneaux.demandeTransmise' => 'Votre demande a été transmise.',
+			'enseignant.creneaux.demandeTransmiseDetail' => 'Elle apparaîtra dans vos Classes après confirmation.',
 			'enseignant.creneaux.confirmerTitre' => 'Confirmer cette Classe ?',
 			'enseignant.creneaux.confirmer' => 'Confirmer cette Classe',
 			'enseignant.creneaux.revenir' => 'Revenir',
@@ -15547,7 +15555,7 @@ extension on Traductions {
 			'tc.bibliotheque.filtre.type' => 'Type',
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
-			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour ce groupe',
+			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
 			'tc.bibliotheque.sections.recents' => 'Récents',
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
@@ -15607,7 +15615,7 @@ extension on Traductions {
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
-			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'Le groupe en était page ${page}',
+			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
 			'tc.coran.focus.quitter' => 'Quitter le focus',
@@ -15666,7 +15674,7 @@ extension on Traductions {
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
-			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit. Vérifiez le groupe.',
+			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit.',
 			'tc.classe.roster.ouvrirFiche' => ({required Object prenom}) => 'Ouvrir la fiche de ${prenom}',
 			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places',
 			'tc.classe.etat.inconnu' => 'État inconnu',
@@ -15706,7 +15714,7 @@ extension on Traductions {
 			'tc.classe.recitation.personne' => 'Personne ne récite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.support.aucun' => 'Aucun support présenté',
-			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support au groupe.',
+			'tc.classe.support.aucunDetail' => 'Ouvrez la Bibliothèque pour présenter un support à la Classe.',
 			'tc.classe.support.bibliotheque' => 'Bibliothèque',
 			'tc.classe.support.bibliothequeAbsente' => 'Bibliothèque non branchée',
 			'tc.classe.support.bibliothequeAbsenteDetail' => 'Le choix de support sera disponible dès l\'intégration du catalogue.',
@@ -15812,10 +15820,10 @@ extension on Traductions {
 			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
-			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
-			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',
+			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
 			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',

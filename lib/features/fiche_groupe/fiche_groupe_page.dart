@@ -150,6 +150,31 @@ class _CorpsState extends ConsumerState<_Corps> {
   /// alors en panneau, a la place du roster ; sinon, en feuille.
   bool _large = false;
 
+  /// Un noeud de focus par ligne d'eleve, pour y rendre le focus quand le
+  /// panneau de sa fiche se ferme (UX_REVIEW_04 n° 12 b, W-243).
+  final Map<String, FocusNode> _noeuds = <String, FocusNode>{};
+
+  FocusNode _noeud(String studentId) =>
+      _noeuds.putIfAbsent(studentId, FocusNode.new);
+
+  @override
+  void dispose() {
+    for (final FocusNode noeud in _noeuds.values) {
+      noeud.dispose();
+    }
+    super.dispose();
+  }
+
+  /// Ferme le panneau et rend le focus a la ligne de l'eleve.
+  void _fermer() {
+    final String? id = _ouvert;
+    setState(() => _ouvert = null);
+    if (id == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) _noeuds[id]?.requestFocus();
+    });
+  }
+
   /// ENS-11 : toute la ligne d'un eleve ouvre sa fiche, feuille sous 840,
   /// panneau au-dessus. Le rappel `onOuvrirEleve` est ensuite prevenu.
   void _ouvrir(EleveFiche eleve) {
@@ -232,6 +257,7 @@ class _CorpsState extends ConsumerState<_Corps> {
     final Widget eleves = _Membres(
       membres: membres.requireValue,
       projections: ref.watch(projectionElevesProvider(groupe.id)),
+      noeud: _noeud,
       onOuvrirEleve: onOuvrirEleve == null
           ? null
           : (String id) {
@@ -328,7 +354,7 @@ class _CorpsState extends ConsumerState<_Corps> {
                   child: PanneauFicheEleve(
                     key: ValueKey<String>('panneau-${e.membre.studentId}'),
                     eleve: e,
-                    onFermer: () => setState(() => _ouvert = null),
+                    onFermer: _fermer,
                   ),
                 ),
               },
@@ -654,12 +680,16 @@ class _Membres extends StatelessWidget {
     required this.projections,
     required this.revue,
     this.onOuvrirEleve,
+    this.noeud,
   });
 
   final List<MembreSeance> membres;
   final Map<String, ProjectionEleve> projections;
   final Widget revue;
   final void Function(String studentId)? onOuvrirEleve;
+
+  /// Le noeud de focus de la ligne d'un eleve.
+  final FocusNode Function(String studentId)? noeud;
 
   @override
   Widget build(BuildContext context) {
@@ -690,6 +720,7 @@ class _Membres extends StatelessWidget {
                   membre,
                   projections[membre.studentId],
                   onOuvrirEleve,
+                  noeud?.call(membre.studentId),
                 ),
             ],
           ),
@@ -716,6 +747,7 @@ LigneRubrique _ligneMembre(
   MembreSeance membre,
   ProjectionEleve? projection,
   void Function(String studentId)? onOuvrirEleve,
+  FocusNode? focusNode,
 ) {
   final String? niveau = membre.niveau?.trim();
   final String? page = projection?.pageReprise?.trim();
@@ -767,6 +799,7 @@ LigneRubrique _ligneMembre(
     onPress: onOuvrirEleve == null
         ? null
         : () => onOuvrirEleve(membre.studentId),
+    focusNode: focusNode,
   );
 }
 
