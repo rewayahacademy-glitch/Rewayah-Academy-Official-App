@@ -7,6 +7,10 @@
 
 import '../../core/appairage/service_appairage.dart' show EleveDuFoyer;
 import '../../core/domain/enums.dart';
+import '../../core/planning/service_planning.dart' show Seance;
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../accueil_adulte/accueil_adulte_page.dart';
+import 'classe_demo.dart';
 
 /// Les 25 cas du doc section 18, dans son ordre.
 enum EtatDemoAdulte {
@@ -193,6 +197,59 @@ abstract final class DonneesAdulteDemo {
     EtatDemoAdulte.departsSuivants => finDelai,
     _ => null,
   };
+
+  /// Le prenom de la personne qui regarde.
+  static String prenomVue(GenreTitulaireDemo genre, VueDemoAdulte vue) =>
+      vue == VueDemoAdulte.titulaire
+      ? prenomTitulaire(genre)
+      : prenomSecondAdulte(genre);
+
+  /// « Mon parcours », tel que le serveur le rendrait : le cours, le niveau
+  /// et le chapitre de la Classe An-Nour de la demonstration de Classe.
+  static String get ligneParcours => <String>[
+    DonneesClasseDemo.cours,
+    DonneesClasseDemo.niveau,
+    DonneesClasseDemo.progression.chapitre,
+  ].join(' · ');
+
+  /// Les trois dernieres seances de la Classe An-Nour, les plus recentes
+  /// d'abord, a l'heure de la demonstration de Classe (lundi, 18:00, 45 min).
+  /// Une seule absence, pour montrer sa pastille.
+  static List<SeancePasseeAdulte> dernieresSeances() => <SeancePasseeAdulte>[
+    for (final (int i, (int jour, String date, bool absence))
+        in <(int, String, bool)>[
+          (21, 'Lundi 21 septembre', false),
+          (14, 'Lundi 14 septembre', true),
+          (7, 'Lundi 7 septembre', false),
+        ].indexed)
+      SeancePasseeAdulte(
+        dateRendue: date,
+        absence: absence,
+        seance: Seance(
+          id: 'demo-seance-passee-$i',
+          debut: DateTime(2026, 9, jour, 18),
+          fin: DateTime(2026, 9, jour, 18, 45),
+          statut: null,
+          eleveId: '',
+          elevePrenom: DonneesClasseDemo.classe,
+          eleveIdentifiant: LibellesGroupe.enseignantNomme(
+            DonneesClasseDemo.enseignant,
+          ),
+          enseignantId: DonneesClasseDemo.enseignant.enseignantId,
+          enseignantPrenom: DonneesClasseDemo.enseignant.nomAffichage,
+          enseignantIdentifiant: '',
+        ),
+      ),
+  ];
+
+  /// L'accueil de la personne qui regarde.
+  static AccueilAdulteVM accueil(GenreTitulaireDemo genre, VueDemoAdulte vue) =>
+      AccueilAdulteVM(
+        prenom: prenomVue(genre, vue),
+        groupeId: DonneesClasseDemo.groupeId,
+        ligneParcours: ligneParcours,
+        dernieresSeances: dernieresSeances(),
+      );
 
   /// La ligne famille de Mon espace pour cet etat et cette vue.
   static LigneFamilleDemo ligneFamille(EtatDemoAdulte etat, VueDemoAdulte vue) {

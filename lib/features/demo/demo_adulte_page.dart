@@ -12,8 +12,8 @@
 // Aucun role serveur n'est change : la demonstration choisit la coquille, le
 // role reel reste lu du jeton. Aucun appel serveur (K-28).
 //
-// Les pages d'Accueil, Ma classe, Coran, Mon espace et Forfait famille sont
-// PROVISOIRES : EA-2, EA-3 et EA-4 les remplacent.
+// L'Accueil est le vrai ecran (EA-2). Ma classe, Coran, Mon espace et
+// Forfait famille sont PROVISOIRES : EA-3 et EA-4 les remplacent.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,8 +36,12 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import '../accueil_adulte/accueil_adulte_page.dart';
 import '../foyer/foyer_page.dart';
 import 'adulte_demo.dart';
+import 'classe_demo.dart';
+import 'demo_classe_page.dart'
+    show PreparationEleveDemo, adressePreparationEleveDemo, surchargesEleveDemo;
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 
@@ -82,6 +86,9 @@ List<RouteBase> routesDemoAdulte(String environnement) {
           vue: p['vue'] == 'conjoint'
               ? VueDemoAdulte.secondAdulte
               : VueDemoAdulte.titulaire,
+          seance:
+              _lire(EtatDemoClasse.values, p['seance']) ??
+              EtatDemoClasse.aVenir,
         );
       },
     ),
@@ -101,6 +108,7 @@ String adresseDemoAdulte(
   EtatDemoAdulte etat = EtatDemoAdulte.conjointActif,
   GenreTitulaireDemo genre = GenreTitulaireDemo.homme,
   VueDemoAdulte vue = VueDemoAdulte.titulaire,
+  EtatDemoClasse seance = EtatDemoClasse.aVenir,
 }) => Uri(
   path: Routes.demoAdulte,
   queryParameters: <String, String>{
@@ -108,6 +116,7 @@ String adresseDemoAdulte(
     'etat': etat.name,
     if (genre == GenreTitulaireDemo.femme) 'titulaire': 'femme',
     if (vue == VueDemoAdulte.secondAdulte) 'vue': 'conjoint',
+    if (seance != EtatDemoClasse.aVenir) 'seance': seance.name,
   },
 ).toString();
 
@@ -170,8 +179,12 @@ class DemoAdultePage extends StatelessWidget {
     this.etat = EtatDemoAdulte.conjointActif,
     this.genre = GenreTitulaireDemo.homme,
     this.vue = VueDemoAdulte.titulaire,
+    this.seance = EtatDemoClasse.aVenir,
     super.key,
   });
+
+  /// La situation de la prochaine seance (Accueil).
+  final EtatDemoClasse seance;
 
   /// L'ecran choisi, ou nul pour la liste.
   final EcranDemoAdulte? ecran;
@@ -189,7 +202,13 @@ class DemoAdultePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final EcranDemoAdulte? e = ecran;
     if (e != null) {
-      return CoquilleAdulteDemo(ecran: e, etat: etat, genre: genre, vue: vue);
+      return CoquilleAdulteDemo(
+        ecran: e,
+        etat: etat,
+        genre: genre,
+        vue: vue,
+        seance: seance,
+      );
     }
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
@@ -282,9 +301,13 @@ class CoquilleAdulteDemo extends StatelessWidget {
     this.etat = EtatDemoAdulte.conjointActif,
     this.genre = GenreTitulaireDemo.homme,
     this.vue = VueDemoAdulte.titulaire,
+    this.seance = EtatDemoClasse.aVenir,
     this.environnement = Env.environnement,
     super.key,
   });
+
+  /// La situation de la prochaine seance (Accueil).
+  final EtatDemoClasse seance;
 
   /// L'ecran affiche.
   final EcranDemoAdulte ecran;
@@ -303,7 +326,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
   final String environnement;
 
   String _adresse(EcranDemoAdulte e) =>
-      adresseDemoAdulte(e, etat: etat, genre: genre, vue: vue);
+      adresseDemoAdulte(e, etat: etat, genre: genre, vue: vue, seance: seance);
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +339,15 @@ class CoquilleAdulteDemo extends StatelessWidget {
       key: ValueKey<String>(_adresse(ecran)),
       overrides: <Override>[
         sessionProvider.overrideWith(_SessionAdulteDemo.new),
-        horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+        // L'Accueil lit la Classe An-Nour de la demonstration de Classe
+        // (seance, reseau, travail, supports), plus sa propre vue.
+        if (ecran == EcranDemoAdulte.accueil) ...<Override>[
+          ...surchargesEleveDemo(seance),
+          accueilAdulteProvider.overrideWith(
+            (Ref _) async => DonneesAdulteDemo.accueil(genre, vue),
+          ),
+        ] else
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -331,9 +362,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
             if (cible != null) context.go(_adresse(cible));
           },
           child: switch (ecran) {
-            EcranDemoAdulte.accueil => _PageProvisoire(
-              titre: t.adulte.nav.accueil,
-              phrase: t.adulte.provisoire.accueil,
+            EcranDemoAdulte.accueil => AccueilAdultePage(
+              onRejoindre: (_) => context.go(
+                adressePreparationEleveDemo(PreparationEleveDemo.pret),
+              ),
             ),
             EcranDemoAdulte.maClasse => _PageProvisoire(
               titre: t.adulte.nav.maClasse,

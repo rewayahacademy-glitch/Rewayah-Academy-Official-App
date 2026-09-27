@@ -3845,8 +3845,17 @@
       "coran": "Coran",
       "monEspace": "Mon espace"
     },
+    "accueil": {
+      "salutation": "Bonjour {prenom}",
+      "prochaineSeance": "Prochaine séance",
+      "parcours": "Mon parcours",
+      "dernieresSeances": "Dernières séances",
+      "ressources": "Ressources de la classe",
+      "absence": "Absence",
+      "aucuneClasse": "Aucune classe pour le moment.",
+      "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte."
+    },
     "provisoire": {
-      "accueil": "Votre accueil arrivera dans une prochaine étape : votre prochaine séance, ce qu'il faut préparer et vos dernières séances.",
       "maClasse": "Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.",
       "coran": "Le Coran de votre espace élève s'affichera ici.",
       "monEspace": "Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.",
