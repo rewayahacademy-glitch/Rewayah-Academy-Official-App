@@ -10,6 +10,7 @@ import '../../core/domain/enums.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'classe_demo.dart';
 
 /// Les 25 cas du doc section 18, dans son ordre.
@@ -250,6 +251,40 @@ abstract final class DonneesAdulteDemo {
         ligneParcours: ligneParcours,
         dernieresSeances: dernieresSeances(),
       );
+
+  /// « A propos de cette classe », tel que le serveur le rendrait.
+  static const String aProposClasse =
+      'Lecture du Coran avec application des règles de tajwid.';
+
+  /// La progression dans la Classe An-Nour, une ligne rendue : le chapitre
+  /// de la demonstration de Classe et la page de reprise.
+  static String get ligneProgressionClasse =>
+      '${DonneesClasseDemo.progression.chapitre} · Page 24';
+
+  /// Ma classe de la personne qui regarde. Les participants sont autant que
+  /// l'effectif que le groupe rend (`DonneesClasseDemo.groupe`) : la
+  /// personne qui regarde, puis les premiers eleves de la demonstration de
+  /// Classe. Aucune photo livree : les initiales en repli (E5).
+  static MaClasseAdulteVM maClasse(
+    GenreTitulaireDemo genre,
+    VueDemoAdulte vue,
+  ) => MaClasseAdulteVM(
+    groupeId: DonneesClasseDemo.groupeId,
+    aPropos: aProposClasse,
+    ligneProgression: ligneProgressionClasse,
+    participants: <ParticipantClasseAdulte>[
+      ParticipantClasseAdulte(
+        id: vue == VueDemoAdulte.titulaire ? mamadouId : mariamaId,
+        prenom: prenomVue(genre, vue),
+        estMoi: true,
+      ),
+      for (final (int i, EleveProjectionDemo e)
+          in DonneesClasseDemo.eleves
+              .take(DonneesClasseDemo.eleves.length - 1)
+              .indexed)
+        ParticipantClasseAdulte(id: 'demo-eleve-$i', prenom: e.prenom),
+    ],
+  );
 
   /// La ligne famille de Mon espace pour cet etat et cette vue.
   static LigneFamilleDemo ligneFamille(EtatDemoAdulte etat, VueDemoAdulte vue) {

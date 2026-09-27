@@ -12,8 +12,8 @@
 // Aucun role serveur n'est change : la demonstration choisit la coquille, le
 // role reel reste lu du jeton. Aucun appel serveur (K-28).
 //
-// L'Accueil est le vrai ecran (EA-2). Ma classe, Coran, Mon espace et
-// Forfait famille sont PROVISOIRES : EA-3 et EA-4 les remplacent.
+// L'Accueil (EA-2) et Ma classe (EA-3) sont les vrais ecrans. Coran, Mon
+// espace et Forfait famille sont PROVISOIRES : EA-4 les remplace.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +38,7 @@ import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
 import '../foyer/foyer_page.dart';
+import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'adulte_demo.dart';
 import 'classe_demo.dart';
 import 'demo_classe_page.dart'
@@ -346,6 +347,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
           accueilAdulteProvider.overrideWith(
             (Ref _) async => DonneesAdulteDemo.accueil(genre, vue),
           ),
+        ] else if (ecran == EcranDemoAdulte.maClasse) ...<Override>[
+          // Ma classe lit la meme Classe An-Nour, plus sa propre vue (EA-3).
+          ...surchargesEleveDemo(seance),
+          maClasseAdulteProvider.overrideWith(
+            (Ref _) async => DonneesAdulteDemo.maClasse(genre, vue),
+          ),
         ] else
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
       ],
@@ -372,9 +379,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
               onVoirRessources: (_) =>
                   context.go(_adresse(EcranDemoAdulte.maClasse)),
             ),
-            EcranDemoAdulte.maClasse => _PageProvisoire(
-              titre: t.adulte.nav.maClasse,
-              phrase: t.adulte.provisoire.maClasse,
+            EcranDemoAdulte.maClasse => MaClasseAdultePage(
+              onRejoindre: (_) => context.go(
+                adressePreparationEleveDemo(PreparationEleveDemo.pret),
+              ),
             ),
             EcranDemoAdulte.coran => _PageProvisoire(
               titre: t.adulte.nav.coran,

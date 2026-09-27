@@ -2280,6 +2280,7 @@ class Traductions$adulte$fr {
 	// Translations
 	late final Traductions$adulte$nav$fr nav = Traductions$adulte$nav$fr.internal(_root);
 	late final Traductions$adulte$accueil$fr accueil = Traductions$adulte$accueil$fr.internal(_root);
+	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
@@ -8851,6 +8852,30 @@ class Traductions$adulte$accueil$fr {
 	String get aucuneClasseDetail => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.';
 }
 
+// Path: adulte.maClasse
+class Traductions$adulte$maClasse$fr {
+	Traductions$adulte$maClasse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À propos de cette classe'
+	String get aPropos => 'À propos de cette classe';
+
+	/// fr: 'Participants'
+	String get participants => 'Participants';
+
+	/// fr: '{prenom} (vous)'
+	String vous({required Object prenom}) => '${prenom} (vous)';
+
+	/// fr: 'Ma progression dans cette classe'
+	String get progression => 'Ma progression dans cette classe';
+
+	/// fr: 'Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte.'
+	String get aucuneClasseDetail => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.';
+}
+
 // Path: adulte.provisoire
 class Traductions$adulte$provisoire$fr {
 	Traductions$adulte$provisoire$fr.internal(this._root);
@@ -8858,9 +8883,6 @@ class Traductions$adulte$provisoire$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
-
-	/// fr: 'Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.'
-	String get maClasse => 'Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.';
 
 	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
 	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
@@ -16187,7 +16209,11 @@ extension on Traductions {
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
-			'adulte.provisoire.maClasse' => 'Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.',
+			'adulte.maClasse.aPropos' => 'À propos de cette classe',
+			'adulte.maClasse.participants' => 'Participants',
+			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (vous)',
+			'adulte.maClasse.progression' => 'Ma progression dans cette classe',
+			'adulte.maClasse.aucuneClasseDetail' => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
 			'adulte.provisoire.monEspace' => 'Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.',
 			'adulte.provisoire.forfaitFamille' => 'La page de votre forfait famille arrivera dans une prochaine étape.',

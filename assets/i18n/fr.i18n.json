@@ -3855,8 +3855,14 @@
       "aucuneClasse": "Aucune classe pour le moment.",
       "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte."
     },
+    "maClasse": {
+      "aPropos": "À propos de cette classe",
+      "participants": "Participants",
+      "vous": "{prenom} (vous)",
+      "progression": "Ma progression dans cette classe",
+      "aucuneClasseDetail": "Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte."
+    },
     "provisoire": {
-      "maClasse": "Votre classe arrivera dans une prochaine étape : les participants, les ressources et votre progression.",
       "coran": "Le Coran de votre espace élève s'affichera ici.",
       "monEspace": "Vos rubriques arriveront dans une prochaine étape. La ligne de votre famille est déjà en place.",
       "forfaitFamille": "La page de votre forfait famille arrivera dans une prochaine étape."
