@@ -653,6 +653,34 @@ class FileRecitationSeance extends StatelessWidget {
     final String? actif = file.actif;
     final List<String> suivants = file.suivantsVisibles;
     final TextStyle corps = textes.bodyMedium ?? const TextStyle();
+    final TextStyle discret = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    final TextStyle fort = palette.inkStrong.applyTo(corps);
+    // EN-9b : un bloc compact (intitule, puis une seule ligne « Mariam
+    // recite · A suivre : Yusuf, Aicha »), pour que la fiche depliee et les
+    // inscrits restent a l'ecran sous lui.
+    final List<Widget> ligne = <Widget>[
+      Text(
+        actif == null
+            ? t.tc.classe.recitation.personne
+            : t.tc.classe.recitation.actif(prenom: _prenomDe(actif, eleves)),
+        style: AppTypography.graisse(fort, FontWeight.w700),
+      ),
+      if (suivants.isNotEmpty) ...<Widget>[
+        ExcludeSemantics(child: Text('·', style: discret)),
+        Text(t.salle.seance.aSuivre, style: discret),
+        ExcludeSemantics(child: Text(':', style: discret)),
+        for (int i = 0; i < suivants.length; i++)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(_prenomDe(suivants[i], eleves), style: fort),
+              if (i < suivants.length - 1) Text(',', style: fort),
+            ],
+          ),
+      ],
+    ];
     return DecoratedBox(
       key: const ValueKey<String>('file-recitation'),
       decoration: palette.surfaceOverlay.decoration(
@@ -660,48 +688,22 @@ class FileRecitationSeance extends StatelessWidget {
         side: palette.borderHairline.asBorderSide(),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Semantics(
               header: true,
-              child: Text(
-                t.salle.seance.fileRecitation,
-                style: palette.inkStrong.applyTo(
-                  textes.titleSmall ?? const TextStyle(),
-                ),
-              ),
+              child: Text(t.salle.seance.fileRecitation, style: discret),
             ),
-            Ecart.vSm,
-            Text(
-              actif == null
-                  ? t.tc.classe.recitation.personne
-                  : t.tc.classe.recitation.actif(
-                      prenom: _prenomDe(actif, eleves),
-                    ),
-              style: AppTypography.graisse(
-                palette.inkStrong.applyTo(corps),
-                FontWeight.w700,
-              ),
+            Wrap(
+              spacing: AppSpacing.xs,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: ligne,
             ),
-            if (suivants.isNotEmpty) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                t.salle.seance.aSuivre,
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
-                ),
-              ),
-              for (final String cle in suivants)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.xs),
-                  child: Text(
-                    _prenomDe(cle, eleves),
-                    style: palette.inkStrong.applyTo(corps),
-                  ),
-                ),
-            ],
           ],
         ),
       ),

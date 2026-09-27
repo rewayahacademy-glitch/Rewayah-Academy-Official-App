@@ -6,6 +6,8 @@
 // etat local (micro, camera, zoom, agrandi, panneaux). Aucun appel serveur
 // (consigne K-28). La guidee lit le theme `InterfaceMode.enfant`.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -24,6 +26,7 @@ import '../salle_seance/actions_seance.dart';
 import '../salle_seance/panneau_eleves.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
+import '../salle_seance/signalement_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import 'mode_demonstration.dart';
 import 'seance_demo.dart';
@@ -391,7 +394,11 @@ class _SalleDemoState extends State<SalleDemo> {
               )
             : null,
         onNoter: enseignant ? (EleveSeance _) => _inerte() : null,
-        onSignaler: enseignant ? (EleveSeance _) => _inerte() : null,
+        // EN-9b : la feuille « Signaler un besoin » d'EN-4, sans envoi.
+        onSignaler: enseignant
+            ? (EleveSeance e) =>
+                  unawaited(signalerDepuisSeance(context, e, vue))
+            : null,
         // Le panneau Supports : « Ouvrir » agit ; la Bibliotheque complete
         // n'est pas ouverte en demonstration (catalogue cable a BR-1).
         onOuvrirSupport: enseignant ? _ouvrirSupport : null,

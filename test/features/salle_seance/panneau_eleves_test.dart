@@ -124,18 +124,17 @@ void main() {
           // Fermeture : la croix en volet et en feuille (I-8) ; en colonne
           // desktop, le menu « … » de l'image CLV-07, qui porte « Fermer le
           // panneau ».
+          // EN-9 : sur bureau, le panneau Eleves reste ouvert a droite du
+          // support ; il n'a ni menu ni croix.
           if (forme == 'colonne') {
             expect(
               find.byKey(const ValueKey<String>('menu-panneau-seance')),
-              findsOneWidget,
+              findsNothing,
             );
-            await tester.tap(
-              find.byKey(const ValueKey<String>('menu-panneau-seance')),
+            expect(
+              find.bySemanticsLabel(t.salle.seance.fermerPanneau),
+              findsNothing,
             );
-            await tester.pump(const Duration(milliseconds: 500));
-            expect(find.text(t.salle.seance.fermerPanneau), findsOneWidget);
-            await tester.tapAt(Offset.zero);
-            await tester.pump(const Duration(milliseconds: 500));
           } else {
             expect(
               find.bySemanticsLabel(t.salle.seance.fermerPanneau),
@@ -218,19 +217,20 @@ void main() {
         find.text(t.salle.seance.statut.connexionInterrompue),
         findsOneWidget,
       );
+      // EN-9 : deux volets. Les outils en rangee au-dessus du support, le
+      // panneau a droite du support, jamais par-dessus.
+      expect(find.byKey(const ValueKey<String>('outils-carte')), findsNothing);
       expect(
-        find.byKey(const ValueKey<String>('outils-carte')),
+        find.byKey(const ValueKey<String>('outils-rangee')),
         findsOneWidget,
       );
-      expect(find.byKey(const ValueKey<String>('outils-rangee')), findsNothing);
-      // Le panneau est a gauche du support, jamais par-dessus.
       final Rect panneau = tester.getRect(
         find.byKey(const ValueKey<String>('panneau-seance-colonne')),
       );
-      final Rect outils = tester.getRect(
-        find.byKey(const ValueKey<String>('outils-carte')),
+      final Rect support = tester.getRect(
+        find.byKey(const ValueKey<String>('zone-support')),
       );
-      expect(panneau.right, lessThan(outils.left));
+      expect(panneau.left, greaterThan(support.right));
     });
 
     testWidgets('une fiche depliee a la fois ; les actions visent l\'eleve', (
@@ -242,9 +242,24 @@ void main() {
       await tester.pump();
       expect(_journal, <String>['rappeler Mariam']);
       expect(find.byKey(const ValueKey<String>('fiche-eleve')), findsOneWidget);
-      await tester.ensureVisible(find.text('Yusuf'));
+      // EN-9 : « Yusuf » figure aussi dans la file de recitation (A suivre) ;
+      // on vise sa carte.
+      final Finder yusuf = find.descendant(
+        of: find.byKey(const ValueKey<String>('eleve-Yusuf')),
+        matching: find.text('Yusuf'),
+      );
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey<String>('eleve-Yusuf')),
+        80,
+        scrollable: find
+            .descendant(
+              of: find.byType(PanneauEleves),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       await tester.pump();
-      await tester.tap(find.text('Yusuf'));
+      await tester.tap(yusuf);
       await tester.pump();
       expect(find.byKey(const ValueKey<String>('fiche-eleve')), findsOneWidget);
       expect(find.text('Pages 20 à 23'), findsOneWidget);

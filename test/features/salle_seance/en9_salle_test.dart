@@ -277,4 +277,78 @@ void main() {
       });
     }
   });
+
+  group('EN-9b salle enseignant sur bureau', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('sans barre de navigation, Eleves ouvert a droite du support', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        const Size(1440, 900),
+        RoleSeance.enseignant,
+        EtatDemoSalle.repos,
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const ValueKey<String>('rail-seance')), findsNothing);
+      for (final String entree in <String>[
+        'Journée',
+        'Classes',
+        'Ressources',
+        'Profil',
+      ]) {
+        expect(find.text(entree), findsNothing, reason: entree);
+      }
+      expect(find.byType(PanneauEleves), findsOneWidget);
+      final Rect panneau = tester.getRect(
+        find.byKey(const ValueKey<String>('panneau-seance-colonne')),
+      );
+      final Rect support = tester.getRect(
+        find.byKey(const ValueKey<String>('zone-support')),
+      );
+      expect(panneau.left, greaterThan(support.right));
+    });
+
+    testWidgets('« Signaler un besoin » ouvre la feuille d\'EN-4', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        const Size(1440, 900),
+        RoleSeance.enseignant,
+        EtatDemoSalle.eleves,
+      );
+      final Finder signaler = find.text(t.salle.seance.signalerBesoin);
+      await tester.ensureVisible(signaler);
+      await tester.pump();
+      await tester.tap(signaler);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(tester.takeException(), isNull);
+      expect(find.text(t.enseignant.signalement.titre), findsWidgets);
+    });
+
+    testWidgets('telephone : la file tient en un bloc compact', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        const Size(390, 844),
+        RoleSeance.enseignant,
+        EtatDemoSalle.eleves,
+      );
+      final Rect file = tester.getRect(_file);
+      final Rect mariam = tester.getRect(
+        find.text(t.tc.classe.recitation.actif(prenom: 'Mariam')),
+      );
+      final Rect yusuf = tester.getRect(
+        find.descendant(of: _file, matching: find.text('Yusuf')),
+      );
+      // « Mariam recite · A suivre : Yusuf, Aicha » sur une seule ligne.
+      expect(yusuf.top, closeTo(mariam.top, 4));
+      expect(file.height, lessThan(80));
+    });
+  });
 }

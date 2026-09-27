@@ -160,8 +160,8 @@ void main() {
       expect(find.text('support presente'), findsOneWidget);
       // Le compteur derive du roster (I-6) : deux connectes sur trois.
       expect(compteur(2, 3), findsOneWidget);
-      expect(find.text('Amina'), findsNothing);
-      await ouvrirEleves(tester);
+      // EN-9 : sur bureau, le panneau Eleves est ouvert d'office a droite
+      // du support, sans passer par le bouton.
       expect(find.text('Amina'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -647,7 +647,8 @@ void main() {
         await tester.tap(find.text('Amina'));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.text(t.tc.classe.action.reciter));
+      // EN-9 : l'action s'intitule « Faire réciter » dans la salle.
+      await tester.tap(find.text(t.salle.seance.faireReciter));
       await tester.pumpAndSettle();
 
       expect(find.text('support presente'), findsOneWidget);

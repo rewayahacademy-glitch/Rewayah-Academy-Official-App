@@ -128,9 +128,10 @@ void main() {
   });
 
   group('Panneaux Eleves et Supports : clavier', () {
+    // EN-9 : sur bureau, le panneau Eleves reste ouvert a droite du support ;
+    // Echap ne le ferme donc qu'en web etroit.
     for (final MapEntry<String, Size> taille in <String, Size>{
       'web etroit': const Size(640, 1000),
-      'desktop': const Size(1440, 900),
     }.entries) {
       testWidgets('Echap ferme le panneau, le focus revient au bouton '
           '(${taille.key})', (WidgetTester tester) async {
@@ -174,7 +175,10 @@ void main() {
     ) async {
       final SemanticsHandle semantique = tester.ensureSemantics();
       await _monterSalle(tester, const Size(1440, 900));
-      final Finder eleves = find.byKey(const ValueKey<String>('bouton-eleves'));
+      // EN-9 : sur bureau, Eleves est ouvert d'office ; on ouvre Supports.
+      final Finder eleves = find.byKey(
+        const ValueKey<String>('bouton-supports'),
+      );
       expect(tester.getSemantics(eleves), isNot(isSemantics(isSelected: true)));
       await tester.tap(eleves);
       await tester.pump();

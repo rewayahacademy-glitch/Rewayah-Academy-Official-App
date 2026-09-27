@@ -28,7 +28,6 @@ import 'outils_enseignement.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
-import 'rail_seance.dart';
 import 'vue_seance.dart';
 import 'zone_support.dart';
 
@@ -225,6 +224,14 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
 
   @override
   Widget build(BuildContext context) {
+    // EN-9 : sur bureau, le panneau Eleves est ouvert d'office (a droite du
+    // support), jamais derriere le bouton « Eleves ».
+    final VueSeance vue =
+        widget.gabarit == Gabarit.desktop &&
+            widget.vue.voitBoutonsPanneaux &&
+            widget.vue.panneau == PanneauOuvert.aucun
+        ? widget.vue.copyWith(panneau: PanneauOuvert.eleves)
+        : widget.vue;
     final bool ouvert =
         widget.vue.voitBoutonsPanneaux &&
         widget.vue.panneau != PanneauOuvert.aucun;
@@ -233,7 +240,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         if (ouvert) const SingleActivator(LogicalKeyboardKey.escape): _fermer,
       },
       child: _SalleEnseignant(
-        vue: widget.vue,
+        vue: vue,
         actions: widget.actions,
         local: widget.local,
         gabarit: widget.gabarit,
@@ -462,18 +469,9 @@ class _SalleEnseignant extends StatelessWidget {
     }
   }
 
-  /// Desktop : le rail enseignant a gauche, s'il a un rappel.
-  Widget _avecRail(Widget contenu) {
-    final ValueChanged<String>? naviguer = actions.onNaviguer;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (vue.voitRail(gabarit) && naviguer != null)
-          RailSeance(onNaviguer: naviguer, groupeId: vue.groupeId),
-        Expanded(child: contenu),
-      ],
-    );
-  }
+  /// EN-9 : la salle de l'enseignant n'a pas de barre de navigation, meme
+  /// sur bureau (le rail reste a la fin de seance, `FinSeanceEnseignant`).
+  Widget _avecRail(Widget contenu) => contenu;
 
   /// Le panneau ouvert, ou `null`. Enseignant seulement : ce widget n'est
   /// construit que pour `RoleSeance.enseignant`, et la vue le confirme.
@@ -484,10 +482,11 @@ class _SalleEnseignant extends StatelessWidget {
       PanneauOuvert.aucun => null,
       PanneauOuvert.eleves => PanneauSeance(
         titre: t.salle.seance.eleves,
-        onFermer: actions.onEleves,
+        // EN-9 : sur bureau, le panneau Eleves reste ouvert a droite du
+        // support ; il ne se ferme pas.
+        onFermer: forme == FormePanneau.colonne ? null : actions.onEleves,
         forme: forme,
-        // Image CLV-07 desktop : menu « … » et colonne ajustee a la liste.
-        enMenu: true,
+        enMenu: forme != FormePanneau.colonne,
         ajusteAuContenu: true,
         enfant: PanneauEleves(
           eleves: vue.eleves,
@@ -543,14 +542,6 @@ class _SalleEnseignant extends StatelessWidget {
       focusEleves: focusEleves,
       focusSupports: focusSupports,
     );
-    final Widget? carteOutils = outils
-        // Images CLV-07 et CLV-08 : aucun outil selectionne.
-        ? OutilsEnseignement(
-            onOutil: actions.onOutil,
-            forme: FormeOutils.carte,
-            initial: null,
-          )
-        : null;
     final Widget? pagination = page != null && vue.voitPaginationActive(gabarit)
         ? PaginationSupport(
             page: page.page,
@@ -631,6 +622,9 @@ class _SalleEnseignant extends StatelessWidget {
         ],
       );
     }
+    // EN-9 (salle A, bureau) : deux volets seulement. A gauche, la rangee
+    // d'outils puis le support ; a droite, les boutons Eleves et Supports
+    // puis le panneau Eleves et la file de recitation, ouverts d'office.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -643,20 +637,32 @@ class _SalleEnseignant extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                SizedBox(width: largeurColonneSeance, child: panneau),
-                Ecart.hMd,
-                Expanded(child: support),
-                Ecart.hMd,
-                SizedBox(
-                  width: largeurColonneDroiteSeance,
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      ?boutons,
-                      if (carteOutils != null) ...<Widget>[
-                        Ecart.vLg,
-                        carteOutils,
+                      if (outils) ...<Widget>[
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: OutilsEnseignement(
+                            onOutil: actions.onOutil,
+                            forme: FormeOutils.rangee,
+                          ),
+                        ),
+                        Ecart.vMd,
                       ],
+                      Expanded(child: support),
+                    ],
+                  ),
+                ),
+                Ecart.hMd,
+                SizedBox(
+                  width: largeurColonneSeance,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      if (boutons != null) ...<Widget>[boutons, Ecart.vMd],
+                      Expanded(child: panneau),
                     ],
                   ),
                 ),
@@ -664,20 +670,18 @@ class _SalleEnseignant extends StatelessWidget {
             ),
           ),
         ),
-        // La barre basse part juste apres le bas du panneau (image : ≈ 580
-        // a 1440 de large), la ou la colonne elargie laisse sa place.
+        // La barre basse sous le support seulement.
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-            gouttiere + largeurPanneauSeance,
-            AppSpacing.xl,
             gouttiere,
+            AppSpacing.xl,
+            gouttiere + largeurColonneSeance + AppSpacing.md,
             AppSpacing.lg,
           ),
           // Pres du bas du gabarit desktop (1200 a 1400), la rangee se
           // reduit d'un bloc plutot que de deborder, comme sur CLV-08.
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               spacing: AppSpacing.md,
