@@ -392,30 +392,34 @@ void main() {
     });
   });
 
-  group('5. Mission indisponible (P-CTR-08)', () {
-    testWidgets(
-      'pendant le compte rendu : message et « Revenir au controle »',
-      (WidgetTester tester) async {
-        await _monter(
-          tester,
-          Uri(
-            path: cheminDemoCompteRenduControleur,
-            queryParameters: <String, String>{
-              'etat': EtatDemoControleur.indisponible.name,
-            },
-          ).toString(),
-        );
-        expect(find.byKey(MissionIndisponible.cle), findsOneWidget);
-        expect(find.text(t.controleur.controle.indisponible), findsOneWidget);
-        // Titre et action seuls (C7) : pas la phrase generique au masculin.
-        expect(find.text(t.commun.etats.ressourceExpiree.phrase), findsNothing);
-        expect(find.text('Classe An-Nour'), findsNothing);
-        expect(find.byKey(CompteRenduControlePage.plusTardKey), findsNothing);
-        await tester.tap(find.text(t.controleur.compteRendu.revenir));
-        await tester.pumpAndSettle();
-        expect(find.byType(ControleControleurPage), findsOneWidget);
-      },
-    );
+  group('5. Mission devenue indisponible apres la sortie (C1)', () {
+    testWidgets('le compte rendu reste a terminer, aucune impasse', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        Uri(
+          path: cheminDemoCompteRenduControleur,
+          queryParameters: <String, String>{
+            'etat': EtatDemoControleur.indisponible.name,
+          },
+        ).toString(),
+      );
+      // Seance finie, mission indisponible : le compte rendu se termine
+      // quand meme (C1) ; « Cette mission n'est plus disponible. » ne
+      // garde que l'entree en mission (P-CTR-08).
+      expect(find.text(t.controleur.controle.indisponible), findsNothing);
+      expect(
+        find.byKey(
+          CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byKey(CompteRenduControlePage.plusTardKey), findsOneWidget);
+      // La transmission de la visite repond (demonstration, 400 ms).
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+    });
   });
 
   group('6. Utilisateur sans capacite', () {

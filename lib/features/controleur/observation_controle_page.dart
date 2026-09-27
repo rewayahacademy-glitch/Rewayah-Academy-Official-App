@@ -29,7 +29,6 @@ import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import 'compte_rendu_controle.dart';
-import 'garde_controle.dart';
 import 'mission_controle.dart';
 import 'observation_controle.dart';
 
@@ -217,17 +216,8 @@ class _ObservationControlePageState
 
   @override
   Widget build(BuildContext context) {
-    // Mission retiree ou seance annulee pendant l'observation (P-CTR-08,
-    // CT-9) : rien de la mission ne reste visible.
-    if (_etape != _Etape.envoye &&
-        ref.watch(missionControleProvider).value?.etat ==
-            EtatMissionControle.indisponible) {
-      return MissionIndisponible(
-        onRevenir:
-            widget.onRevenir ??
-            () => GoRouter.of(context).go(Routes.controleur),
-      );
-    }
+    // Mission devenue indisponible : l'observation se termine quand meme
+    // apres la sortie (C1), comme le compte rendu.
     if (_etape == _Etape.envoye) {
       return PageShell(
         titre: t.controleur.compteRendu.titre,
