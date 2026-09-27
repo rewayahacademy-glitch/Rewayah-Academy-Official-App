@@ -54,7 +54,7 @@ abstract final class GroupesDemonstration {
 ///
 /// Chaque champ correspond a une capacite qui **manque** aujourd'hui, et la
 /// demande correspondante est chiffree dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_A.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md`.
 @immutable
 class DonneeSeanceDemonstration {
   /// Cree une donnee de demonstration.
@@ -248,7 +248,7 @@ Map<String, DonneeSeanceDemonstration> seancesDemonstration() {
 /// **Ce n'est pas une implementation de production, et il ne doit pas le
 /// devenir.** Les trois capacites serveur qu'il simule (`join_opens_at`
 /// configurable, horloge serveur, conversions rendues) sont chiffrees dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_A.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md`.
 class HorlogeSeanceDemonstration implements PortHorlogeSeance {
   /// Cree le double.
   ///

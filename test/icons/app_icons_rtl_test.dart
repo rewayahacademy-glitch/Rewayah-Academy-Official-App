@@ -9,7 +9,7 @@ import 'package:rewayah_academy/core/icons/app_icons.dart';
 /// regression qui retirerait `matchTextDirection` de
 /// [AppIcons.chevron] sans qu'aucun test ne le remarque, puisqu'une icone qui
 /// ne se miroite plus ne leve toujours aucune exception. C'est exactement le
-/// piege documente dans `docs/design/06-accessibilite.md` section 5 : les
+/// piege documente dans `docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md` section 5 : les
 /// icones directionnelles se miroitent, l'horloge et les icones de media ne se
 /// miroitent pas.
 void main() {
@@ -51,7 +51,7 @@ void main() {
 
     test(
       'les icones de media et l heure ne se miroitent jamais '
-      '(docs/design/06-accessibilite.md section 5)',
+      '(docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md section 5)',
       () {
         for (final AppIcon icone in <AppIcon>[
           AppIcons.micro,

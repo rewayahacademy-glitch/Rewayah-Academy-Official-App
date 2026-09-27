@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.rewayahacademy.rewayah_academy"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37 // flutter_secure_storage exige 37 (HL-B-3)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

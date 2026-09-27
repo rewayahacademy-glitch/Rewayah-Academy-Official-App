@@ -8,10 +8,17 @@ void main() {
     const GuardianObservationPolicy defauts =
         GuardianObservationPolicy.defautsNormatifs(policyVersion: 'p1');
 
-    test('observation activee, une visite, cent vingt secondes', () {
+    test('observation activee, DEUX visites de deux minutes', () {
       expect(defauts.observationActivee, isTrue);
-      expect(defauts.maxVisitsPerSession, 1);
-      expect(defauts.maxTotalObservationTime, const Duration(seconds: 120));
+      // Realignes sur le serveur le 21/09/2026, migration `0036` appliquee :
+      // deux visites, parce que le tuteur peut tomber a un moment ou ce n'est
+      // pas le tour de son enfant et doit pouvoir revenir.
+      expect(defauts.maxVisitsPerSession, 2);
+      // Deux minutes PAR VISITE, jamais deux minutes partagees : d'ou 240 s au
+      // total. Avec 120 s de total, la premiere visite consommerait tout et la
+      // seconde naitrait vide.
+      expect(defauts.maxParVisite, const Duration(seconds: 120));
+      expect(defauts.maxTotalObservationTime, const Duration(seconds: 240));
     });
 
     test('micro, camera, publication data et admission : tous fermes', () {

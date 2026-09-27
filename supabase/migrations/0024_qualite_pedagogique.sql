@@ -10,7 +10,7 @@
 -- `0023`) sans rien dupliquer. Le premier type -- rapport manquant --
 -- raccorde enfin le compteur « rapports manquants » d'`ADM-01`, present
 -- depuis le tout debut mais jamais consomme par aucun ecran
--- (`docs/architecture/ADMIN_IA_AUDIT.md`, ligne 134). Le suivi enseignant
+-- (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`, ligne 134). Le suivi enseignant
 -- (mission) est un agregat cote client des memes rapports manquants, par
 -- `sessions.teacher_id` -- aucun quatrieme type d'anomalie necessaire.
 --

@@ -11,7 +11,7 @@ import '../theme/app_spacing.dart';
 /// Bandeau de degradation reseau.
 ///
 /// Un seul composant, calibre une fois, jamais reecrit par ecran
-/// (`docs/architecture/etape-2-core-flutter.md` section 2).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 2).
 ///
 /// Le hors ligne ne bloque qu'une chose : l'entree en seance et la validation
 /// d'un rapport. Le reste reste consultable depuis le cache, et un rapport se
@@ -26,7 +26,7 @@ import '../theme/app_spacing.dart';
 /// sur toute la largeur, en permanence, sur chaque ecran d'un appareil sans
 /// reseau, alors que la regle n'autorise qu'une zone pleine
 /// par ecran et la reserve a l'action principale
-/// (`docs/design/01-systeme-visuel.md` section 3). Il prend desormais
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3). Il prend desormais
 /// `washWarning` en fond, `inkWarning` en encre, et un filet fort en tete qui
 /// le detache de la barre.
 class OfflineBanner extends ConsumerWidget {

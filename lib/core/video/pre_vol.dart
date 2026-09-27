@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 
+import '../observabilite/journal_dev.dart';
+
 /// A partir de quand la salle s'ouvre a l'enseignant.
 ///
 /// Le meme seuil que la base (ADR-005 : `debut - 10 minutes`), pose ici pour
@@ -86,8 +88,8 @@ class ServicePreVolLiveKit implements ServicePreVol {
   @override
   Future<ResultatPreVol> verifier() async {
     try {
-      final List<lk.MediaDevice> appareils =
-          await lk.Hardware.instance.enumerateDevices();
+      final List<lk.MediaDevice> appareils = await lk.Hardware.instance
+          .enumerateDevices();
 
       // Un peripherique dont le `label` est vide signale un navigateur qui n'a
       // pas encore accorde la permission : il existe, mais on ne sait pas
@@ -107,7 +109,7 @@ class ServicePreVolLiveKit implements ServicePreVol {
       // ne peut pas le distinguer proprement d'une panne de peripherique sur
       // toutes les plateformes, et pretendre le contraire donnerait un message
       // faux une fois sur deux.
-      debugPrint('pre-vol impossible : $e');
+      journalDev('pre-vol impossible : $e');
       return const ResultatPreVol(
         microDisponible: false,
         cameraDisponible: false,

@@ -10,7 +10,7 @@ import 'app_bottom_sheet.dart';
 ///
 /// **Seul point d'entree d'une confirmation destructive.** Jamais
 /// `clic vers suppression`, et jamais une `AlertDialog` posee dans un ecran :
-/// `docs/design/07-catalogue-composants.md` section 6 interdit tout autre
+/// `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6 interdit tout autre
 /// chemin.
 ///
 /// Trois regles portees par l'API elle-meme, et non par la relecture
@@ -65,6 +65,11 @@ class ConfirmDestructive extends StatelessWidget {
   ///
   /// Rend `false` en cas d'annulation **comme en cas de fermeture par le
   /// glissement ou par `Echap`** : une feuille fermee n'a rien confirme.
+  ///
+  /// Sur bureau, la meme confirmation s'ouvre en boite de dialogue centree
+  /// (`AppBottomSheet.ouvrir`, `FormeModale.dialogue`) : memes actions, meme
+  /// ordre de lecture et de tabulation, « Annuler » toujours avant le
+  /// destructif au clavier.
   static Future<bool> demander(
     BuildContext context, {
     required String question,

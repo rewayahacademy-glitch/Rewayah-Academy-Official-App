@@ -32,7 +32,7 @@ import '../disponibilites/grille_semaine.dart';
 /// **Onglets sur mobile seulement.** A partir de la tablette, l'ecran a la
 /// place de montrer la grille et le feed a la fois : un onglet sur un ecran de
 /// 1440 pixels cacherait la moitie de l'information sans raison
-/// (`docs/design/08-catalogue-ecrans.md` section 2). Reprise au lot R4.
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md` section 2). Reprise au lot R4.
 ///
 /// **Deux vues LOCALES, jamais deux destinations.** « Disponibilites » est une
 /// destination du TUTEUR (`TUT-04`) et « Creneaux » une destination de
@@ -585,7 +585,7 @@ class _OngletElevesEtat extends ConsumerState<_OngletEleves> {
 /// `guard_assignment_cap()` rendent des PHRASES SQL non traduites ; les montrer
 /// telles quelles ferait dependre un libelle d'interface d'une chaine de
 /// migration. Le vrai remede est un code d'erreur ferme cote base : il est
-/// demande dans `docs/parallel-reports/CONTRACT_REQUEST_D.md`. En attendant, on
+/// demande dans `docs/archive/2026-09-pre-remise-a-plat/parallel-reports/CONTRACT_REQUEST_D.md`. En attendant, on
 /// reconnait la phrase et on affiche la notre, avec un repli qui recopie le
 /// message brut plutot que d'avaler un refus qu'on n'avait pas prevu.
 enum _Refus {

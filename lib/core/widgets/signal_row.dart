@@ -12,7 +12,7 @@ import 'status_pill.dart';
 /// **C'est le composant du `signal vers action`.** Le parcours attendu d'un
 /// tableau de bord est `signal, decision, action`, jamais
 /// `tableau de bord, statistiques, menu, recherche, action`
-/// (`docs/design/02-regles-ux.md` section 2). Une ligne qui n'irait nulle part
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 2). Une ligne qui n'irait nulle part
 /// serait donc un rapport, pas un signal : [onPress] est obligatoire.
 ///
 /// L'etat n'est jamais porte par la seule couleur : l'icone, la phrase et la

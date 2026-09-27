@@ -14,10 +14,11 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/bento_tile.dart';
-import '../../core/widgets/marque_page.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
+import '../connexion/recuperation_page.dart'
+    show IssueEnvoiLien, issueEchecEnvoi;
+import '../consentements/texte_observation.dart';
 
 /// La carte a accuser une fois (ADR-011).
 ///
@@ -43,6 +44,11 @@ class AccusePage extends ConsumerWidget {
 
 /// Le contrat propre au role : conditions du tuteur, ou non-concurrence de
 /// l'enseignant.
+///
+/// Pour le tuteur, la version signee est celle qui ajoute le paragraphe des
+/// visites d'observation (03 section 1 bis-2 et 3) au texte existant, notice
+/// d'enregistrement comprise ; la case d'accord n'est jamais precochee.
+/// `?pour=moi` donne la variante eleve adulte.
 class ContratPage extends ConsumerWidget {
   /// Cree la page de contrat.
   const ContratPage({super.key});
@@ -51,6 +57,12 @@ class ContratPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<EtatDossier> etat = ref.watch(etatDossierProvider);
     final AppRole role = etat.value?.role ?? AppRole.guardian;
+    String? pour;
+    try {
+      pour = GoRouterState.of(context).uri.queryParameters['pour'];
+    } on Object {
+      pour = null;
+    }
 
     return _PageASigner(
       titre: t.contrat.titre,
@@ -65,11 +77,15 @@ class ContratPage extends ConsumerWidget {
         // l'ADR-008.
         if (role == AppRole.teacher) t.contrat.pointCoordonnees,
       ],
+      observation: role == AppRole.teacher
+          ? null
+          : VarianteObservation.depuisParametre(pour),
     );
   }
 }
 
-/// La coquille commune : des points en clair, un bouton, rien d'autre.
+/// La coquille commune : des points en clair dans UNE carte groupee, un
+/// bouton, rien d'autre.
 class _PageASigner extends ConsumerStatefulWidget {
   const _PageASigner({
     required this.titre,
@@ -77,6 +93,7 @@ class _PageASigner extends ConsumerStatefulWidget {
     required this.sorte,
     required this.points,
     this.introduction,
+    this.observation,
   });
 
   final String titre;
@@ -85,13 +102,19 @@ class _PageASigner extends ConsumerStatefulWidget {
   final SorteContrat sorte;
   final List<String> points;
 
+  /// Avec une variante, le paragraphe des visites d'observation et sa case.
+  final VarianteObservation? observation;
+
   @override
   ConsumerState<_PageASigner> createState() => _PageASignerState();
 }
 
 class _PageASignerState extends ConsumerState<_PageASigner> {
   bool _envoi = false;
+  bool _cochee = false;
   String? _erreur;
+
+  bool get _signable => widget.observation == null || _cochee;
 
   Future<void> _signer() async {
     setState(() {
@@ -101,14 +124,18 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
     try {
       await ref
           .read(serviceDossierProvider)
-          .accepterContrat(widget.sorte, VersionsContrat.courante);
+          .accepterContrat(widget.sorte, VersionsContrat.pour(widget.sorte));
       ref.invalidate(etatDossierProvider);
       if (mounted) {
         GoRouter.of(context).go(Routes.attente);
       }
-    } on Object {
+    } on Object catch (e) {
       if (mounted) {
-        setState(() => _erreur = t.contrat.erreur);
+        setState(
+          () => _erreur = issueEchecEnvoi(e) == IssueEnvoiLien.horsLigne
+              ? t.contrat.horsLigne
+              : t.contrat.erreur,
+        );
       }
     } finally {
       if (mounted) {
@@ -121,8 +148,11 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final VarianteObservation? observation = widget.observation;
 
     return PageShell(
+      titre: widget.titre,
+      onRetour: () => GoRouter.of(context).go(Routes.attente),
       actions: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -142,7 +172,7 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
           ],
           ActionPrincipale(
             libelle: widget.libelleAction,
-            onPress: () => unawaited(_signer()),
+            onPress: _signable ? () => unawaited(_signer()) : null,
             enCours: _envoi,
           ),
         ],
@@ -150,42 +180,30 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const MarquePage(),
-          Ecart.vXxxl,
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(widget.titre, style: textes.headlineSmall),
-                if (widget.introduction != null) ...<Widget>[
-                  Ecart.vMd,
-                  Text(widget.introduction!, style: textes.bodyMedium),
-                ],
-                Ecart.vXxl,
-                for (final String point in widget.points)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                    child: BentoTile(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          IconTheme(
-                            data: palette.inkAccent.asIconTheme(
-                              size: AppSpacing.xxl,
-                            ),
-                            child: Icon(AppIcons.controleQualite.repos),
-                          ),
-                          Ecart.hMd,
-                          Expanded(
-                            child: Text(point, style: textes.bodyLarge),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+          if (widget.introduction != null) ...<Widget>[
+            Text(widget.introduction!, style: textes.bodyMedium),
+            Ecart.vXl,
+          ],
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              for (final String point in widget.points)
+                LigneRubrique(icone: AppIcons.controleQualite, libelle: point),
+            ],
           ),
+          if (observation != null) ...<Widget>[
+            Ecart.vXxl,
+            Text(t.consentement.texte.titre, style: textes.titleMedium),
+            Ecart.vMd,
+            TexteObservation(variante: observation),
+            Ecart.vXl,
+            CaseAccordObservation(
+              variante: observation,
+              cochee: _cochee,
+              onChanged: _envoi
+                  ? null
+                  : (bool v) => setState(() => _cochee = v),
+            ),
+          ],
         ],
       ),
     );

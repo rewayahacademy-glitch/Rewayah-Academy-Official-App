@@ -14,7 +14,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 
 /// `ADM-15` : Configuration > Regles, premiere fonction du domaine (contrat
 /// metier reçu le 19 septembre 2026,
-/// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
 ///
 /// **Le defaut de plateforme, jamais l'exception d'un profil.** Quatre de ces
 /// dix cles (`session_duration_minutes`, `session_paid_minimum_minutes`,

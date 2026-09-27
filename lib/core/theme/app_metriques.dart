@@ -26,7 +26,7 @@ class AppMetriques extends ThemeExtension<AppMetriques> {
   final InterfaceMode mode;
 
   /// Cible tactile minimale : 72pt en mode enfant, 48pt en mode standard
-  /// (`docs/architecture/etape-2-core-flutter.md` section 2).
+  /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 2).
   final double cibleTactile;
 
   /// Vrai en mode enfant.
@@ -34,7 +34,7 @@ class AppMetriques extends ThemeExtension<AppMetriques> {
 
   /// Rayon d'arrondi des surfaces, plus genereux en mode enfant : la tuile
   /// Bento en mode enfant, la carte en mode standard
-  /// (`docs/produit/design-tokens.md` section 8).
+  /// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 8).
   double get rayon => estEnfant ? AppRadius.lg : AppRadius.md;
 
   /// L'arrondi correspondant a [rayon].

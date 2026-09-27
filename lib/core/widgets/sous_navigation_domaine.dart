@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 /// fonctions (Diagnostics, Progression, Evaluations, Programmes, Qualite).
 /// Operations, Personnes et Securite et audit n'en ont que deux ou trois,
 /// atteintes depuis l'Accueil sans chrome de sous-navigation -- voir
-/// `docs/architecture/ADMIN_IA_AUDIT.md`. Ce composant reste generique pour
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`. Ce composant reste generique pour
 /// qu'un futur domaine avec plusieurs fonctions pairs le reutilise sans en
 /// ecrire un second.
 ///

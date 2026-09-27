@@ -42,7 +42,7 @@ jobs:
       # Inscription bornee a deux roles, depot KYC de l'enseignant, cloisonnement
       # de genre, appareil partage, plafond d'appareils, codes d'appairage,
       # immuabilite des signatures, etancheite du journal d'audit, RLS partout,
-      # search_path partout. Voir docs/architecture/etape-3-auth-kyc.md section 8.
+      # search_path partout. Voir docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md section 8.
       - name: Scenarios d'acceptation SQL des etapes 1 et 3
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape3.sql
@@ -51,14 +51,14 @@ jobs:
       # plafond, regles par eleve et leur immuabilite, chevauchement de seances,
       # cloisonnement des disponibilites, demandes des quatre parties, feed de
       # matching a cheval sur deux fuseaux, compteurs de ADM-01.
-      # Voir docs/architecture/etape-4-dashboards.md section 7.
+      # Voir docs/archive/2026-09-pre-remise-a-plat/architecture/etape-4-dashboards.md section 7.
       - name: Scenarios d'acceptation SQL de l'etape 4
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_etape4.sql
 
       # Coran structure, position de lecture personnelle, machine a etats de
       # presence a quatorze etats et sa derivation.
-      # Voir docs/architecture/etape-5-salle-coran-presence.md section 6.
+      # Voir docs/archive/2026-09-pre-remise-a-plat/architecture/etape-5-salle-coran-presence.md section 6.
       #
       # Ce fichier existait depuis le lot N1 et n'avait jamais ete ajoute ici :
       # ses quinze controles n'ont ete rejoues que sur le poste, jamais par la
@@ -80,7 +80,7 @@ jobs:
       # Video : aiguillage a deux fournisseurs ancre par seance, emission de
       # jeton, capacites deduites du role, webhooks idempotents, et l'etat
       # `en_connexion` que N1 refusait de deviner faute de trace en base.
-      # Voir docs/architecture/decisions.md, ADR-001 et ADR-023.
+      # Voir docs/archive/2026-09-pre-remise-a-plat/architecture/decisions.md, ADR-001 et ADR-023.
       - name: Scenarios d'acceptation SQL de N2 (video)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n2.sql

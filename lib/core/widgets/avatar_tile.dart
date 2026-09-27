@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_typography.dart';
 
 /// Photo de profil d'un eleve, avec repli sur les initiales.
 ///
@@ -24,7 +25,7 @@ import '../theme/app_palette.dart';
 /// faisaient quatre aplats pleins, la ou la regle n'en autorise qu'un par
 /// ecran. Il prend desormais la teinte du domaine foyer, `washFamily`, et un
 /// contour `borderStrong` qui le detache de la carte
-/// (`docs/design/07-catalogue-composants.md` section 1).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1).
 class AvatarTile extends StatelessWidget {
   /// Cree une tuile d'avatar.
   const AvatarTile({
@@ -120,12 +121,24 @@ class _Initiales extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle base =
-        Theme.of(context).textTheme.headlineMedium ?? const TextStyle();
+    // Le style chiffre, a la taille de la tuile : une initiale n'est pas un
+    // titre, et retailler un style DM Sans par `copyWith(fontSize:)` laisserait
+    // son axe `opsz` cale sur l'ancienne taille.
+    //
+    // Le disque a un diametre fixe : a 200 % de texte, deux initiales
+    // debordaient et le cercle les coupait (« MA » lu « M », capture 0b du
+    // 24/09/2026). Elles tiennent desormais dans le carre inscrit du disque,
+    // reduites seulement si elles n'y tiennent pas.
     return Center(
-      child: Text(
-        _lettres,
-        style: paire.applyTo(base).copyWith(fontSize: taille * 0.36),
+      child: SizedBox.square(
+        dimension: taille * 0.7,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            _lettres,
+            style: paire.applyTo(AppTypography.chiffre(taille: taille * 0.36)),
+          ),
+        ),
       ),
     );
   }

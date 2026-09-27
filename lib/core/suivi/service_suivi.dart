@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
 import '../planning/service_planning.dart';
 import '../presence/service_presence.dart';
 
@@ -81,7 +81,7 @@ class ServiceSuiviSupabase implements ServiceSuivi {
       // Aucune exception ne remonte a l'ecran : un historique de cours ne
       // disparait pas parce que la presence n'a pas repondu. Les dates et les
       // enseignants restent lisibles, les etats disent « inconnu ».
-      debugPrint('presence du foyer indisponible : $erreur');
+      journalDev('presence du foyer indisponible : $erreur');
       return null;
     }
   }

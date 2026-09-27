@@ -64,6 +64,7 @@ List<Override> surchargesClasse({
   FauxRosterEnseignant? roster,
   PortRappelDiscret? rappel,
   FauxAnnonceObservation? annonces,
+  FauxAnnonceObservationEnfant? annonceEnfant,
 }) => <Override>[
   servicePreVolProvider.overrideWithValue(preVol),
   serviceVideoProvider.overrideWithValue(video),
@@ -80,6 +81,11 @@ List<Override> surchargesClasse({
   // exercer l'en-tete sans annonce, pas une salle observee par commodite.
   portAnnonceObservationProvider.overrideWithValue(
     annonces ?? FauxAnnonceObservation(),
+  ),
+  // **Le tuteur de l'eleve n'observe pas par defaut**, meme raison : le vrai
+  // port appellerait `annonce_observation_pour_moi` sur Supabase.
+  portAnnonceObservationEnfantProvider.overrideWithValue(
+    annonceEnfant ?? FauxAnnonceObservationEnfant(),
   ),
   if (rappel != null) portRappelDiscretProvider.overrideWithValue(rappel),
 ];

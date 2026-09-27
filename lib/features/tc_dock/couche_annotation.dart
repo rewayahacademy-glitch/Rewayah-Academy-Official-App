@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_outils/ancrage_annotation.dart';
 import '../../core/tc_outils/annotation_layer.dart';
@@ -130,7 +133,57 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
       styletDetecte: _styletDetecte,
       styletArme: etat.styletArme,
     );
+    final bool effacable = _dernierTrait() != null;
 
+    // Alternative au geste (revue P2-10, mineur 4) : l'ardoise se nomme au
+    // lecteur d'ecran, dit qu'elle est facultative, et offre « Effacer mon
+    // dernier trait » en action semantique et au clavier (Suppr, Retour
+    // arriere) quand la surface a le focus.
+    return Semantics(
+      container: true,
+      label: t.tc.outils.trait.ardoise,
+      customSemanticsActions: <CustomSemanticsAction, VoidCallback>{
+        if (effacable)
+          CustomSemanticsAction(label: t.tc.outils.trait.effacerDernier):
+              effacerDernierTrait,
+      },
+      child: CallbackShortcuts(
+        bindings: <ShortcutActivator, VoidCallback>{
+          const SingleActivator(LogicalKeyboardKey.delete): effacerDernierTrait,
+          const SingleActivator(LogicalKeyboardKey.backspace):
+              effacerDernierTrait,
+        },
+        child: Focus(child: _surface(palette, etat, appareils)),
+      ),
+    );
+  }
+
+  /// Le dernier trait encore visible, ou `null`.
+  TraitVectoriel? _dernierTrait() {
+    for (final TraitVectoriel trait in widget.traits.reversed) {
+      if (!_effaces.contains(trait.id)) {
+        return trait;
+      }
+    }
+    return null;
+  }
+
+  /// Retire le dernier trait visible, sans geste : la voie du clavier et du
+  /// lecteur d'ecran. Meme effet que la gomme sur ce seul trait.
+  void effacerDernierTrait() {
+    final TraitVectoriel? trait = _dernierTrait();
+    if (trait == null) {
+      return;
+    }
+    setState(() => _effaces.add(trait.id));
+    unawaited(_retirer(trait.id));
+  }
+
+  Widget _surface(
+    AppPalette palette,
+    EtatOutils etat,
+    Set<PointerDeviceKind> appareils,
+  ) {
     return Listener(
       // Le guetteur est passif : il ne consomme rien, il apprend seulement
       // qu'un stylet existe sur cet appareil. Des lors, le doigt redevient la
@@ -435,9 +488,7 @@ class _PeintreAnnotations extends CustomPainter {
     final Paint pinceau = Paint()
       ..color = encre.couleur(opacite: surligne ? opaciteSurligneur : 1)
       ..strokeWidth =
-          epaisseurStylet *
-          facteurPression *
-          (surligne ? facteurSurligneur : 1)
+          epaisseurStylet * facteurPression * (surligne ? facteurSurligneur : 1)
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
       ..style = PaintingStyle.stroke;

@@ -37,6 +37,7 @@ BudgetObservation unBudget({
   bool peutEntrer = true,
   MotifRefusObservation? motifRefus,
   String policyVersion = 'p1',
+  bool visiteEnCours = false,
 }) => BudgetObservation(
   policyVersion: policyVersion,
   visitesUtilisees: visitesUtilisees,
@@ -46,6 +47,7 @@ BudgetObservation unBudget({
   restant: restant,
   peutEntrer: peutEntrer,
   motifRefus: motifRefus,
+  visiteEnCours: visiteEnCours,
 );
 
 /// Un intervalle de visite ouvert par le serveur.
@@ -86,12 +88,20 @@ class FauxPortVisite implements PortVisiteObservation {
   /// Les seances quittees, dans l'ordre.
   final List<String> sorties = <String>[];
 
+  /// Quand il est pose, l'entree attend qu'il soit complete : la demande est
+  /// « en vol », comme une reponse serveur qui tarde.
+  Completer<void>? entreeSuspendue;
+
   @override
   Future<ResultatEntreeObservation> entrer({
     required String sessionId,
     required RoleObservateur role,
   }) async {
     rolesDemandes.add(role);
+    final Completer<void>? suspension = entreeSuspendue;
+    if (suspension != null) {
+      await suspension.future;
+    }
     final EchecObservation? echec = echecEntree;
     if (echec != null) {
       throw echec;
@@ -114,8 +124,9 @@ class FauxPortVisite implements PortVisiteObservation {
   }
 
   @override
-  Future<List<GuardianSessionVisit>> visites({required String sessionId}) async =>
-      <GuardianSessionVisit>[uneVisite(sessionId: sessionId)];
+  Future<List<GuardianSessionVisit>> visites({
+    required String sessionId,
+  }) async => <GuardianSessionVisit>[uneVisite(sessionId: sessionId)];
 }
 
 /// La politique et le budget, remplaces.
@@ -129,8 +140,16 @@ class FauxPortPolitique implements PortPolitiqueObservation {
   /// La politique rendue.
   GuardianObservationPolicy politique;
 
-  /// Le budget rendu par la lecture ponctuelle.
-  BudgetObservation dernierBudget = unBudget();
+  /// Le budget rendu par la lecture ponctuelle : celui qu'un parent lit AVANT
+  /// d'entrer (verification prealable), deux visites, aucune consommee.
+  BudgetObservation dernierBudget = unBudget(
+    visitesUtilisees: 0,
+    visitesMax: 2,
+    total: const Duration(seconds: 240),
+  );
+
+  /// Combien de fois le budget ponctuel a ete lu.
+  int lecturesBudget = 0;
 
   /// Le flux que le test pilote a la main.
   final StreamController<BudgetObservation> flux =
@@ -164,9 +183,25 @@ class FauxPortPolitique implements PortPolitiqueObservation {
     return this.politique = politique;
   }
 
+  /// L'echec leve a la lecture ponctuelle du budget, s'il y en a un.
+  EchecObservation? echecBudget;
+
+  /// Quand il est pose, la lecture ponctuelle attend qu'il soit complete.
+  Completer<void>? budgetSuspendu;
+
   @override
-  Future<BudgetObservation> budget({required String sessionId}) async =>
-      dernierBudget;
+  Future<BudgetObservation> budget({required String sessionId}) async {
+    lecturesBudget++;
+    final Completer<void>? suspension = budgetSuspendu;
+    if (suspension != null) {
+      await suspension.future;
+    }
+    final EchecObservation? echec = echecBudget;
+    if (echec != null) {
+      throw echec;
+    }
+    return dernierBudget;
+  }
 
   @override
   Stream<BudgetObservation> suivreBudget({required String sessionId}) {

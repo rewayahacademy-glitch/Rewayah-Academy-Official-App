@@ -7,6 +7,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
@@ -55,7 +56,10 @@ class CarteSession extends StatelessWidget {
     return AppCard(
       dominante: true,
       entete: _EnteteSession(horloge: horloge),
-      actions: horloge.rejoindreOuvert
+      // Le tuteur ne rejoint pas la classe de son enfant : il l'observe, par
+      // la porte d'observation (lot C-obs). Aucun « Rejoindre » ne lui est
+      // rendu, meme fenetre ouverte (revue phase 0, routes D8).
+      actions: horloge.rejoindreOuvert && espace.role != RoleEspaceGroupe.tuteur
           ? ActionPrincipale(
               libelle: LibellesGroupe.rejoindre,
               onPress: onRejoindre,
@@ -119,16 +123,18 @@ class _EnteteSession extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    // Un `Wrap` et non une `Row` : a 200 pour cent de taille de texte, la
+    // pastille passe sous la date au lieu de deborder (revue P2-10).
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.sm,
       children: <Widget>[
-        Expanded(
-          child: Text(
-            horloge.horlogeUtilisateur.dateLocaleRendue,
-            style: textes.titleMedium ?? const TextStyle(),
-          ),
+        Text(
+          horloge.horlogeUtilisateur.dateLocaleRendue,
+          style: textes.titleMedium ?? const TextStyle(),
         ),
-        Ecart.hMd,
         StatusPill(
           libelle: LibellesGroupe.phase(horloge.phase),
           ton: switch (horloge.phase) {
@@ -192,7 +198,10 @@ class _LigneValeur extends StatelessWidget {
             child: Text(
               valeur,
               textAlign: TextAlign.end,
-              style: textes.titleSmall ?? const TextStyle(),
+              // Une heure : chiffres tabulaires (revue phase 0, jetons D4).
+              style: AppTypography.tabulaire(
+                textes.titleSmall ?? const TextStyle(),
+              ),
             ),
           ),
         ],
@@ -219,7 +228,11 @@ class _EtatDuTemps extends StatelessWidget {
         children: <Widget>[
           Text(
             LibellesGroupe.ligneEtat(horloge),
-            style: textes.titleMedium ?? const TextStyle(),
+            // « Dans 12 min » : un compte a rebours, en chiffres tabulaires
+            // (revue phase 0, jetons D4).
+            style: AppTypography.tabulaire(
+              textes.titleMedium ?? const TextStyle(),
+            ),
           ),
           // Entrer vingt minutes en avance prouve qu'on etait pret ; cela ne
           // credite aucune minute de presence academique. On le dit a la

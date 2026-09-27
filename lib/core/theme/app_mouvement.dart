@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 /// Le budget de mouvement de l'application.
 ///
-/// Source : `docs/design/04-systeme-mouvement.md`, valeurs resumees dans
-/// `docs/produit/design-tokens.md` section 11.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md`, valeurs resumees dans
+/// `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 11.
 ///
 /// **C'est le seul fichier du depot autorise a poser une duree d'animation
 /// litterale ou a nommer une [Curve]** : `tool/verifier_jetons.dart` echoue sur

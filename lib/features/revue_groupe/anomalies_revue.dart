@@ -16,7 +16,7 @@ import '../../core/enseignant/modeles_enseignant.dart';
 /// `rapport_manquant`, `blocage_sans_suivi` et `evaluation_en_retard`, et
 /// `anomalies_qualite()` est reservee a l'administration. La correspondance est
 /// une decision de socle, pas une invention d'ecran
-/// (`docs/parallel-reports/CONTRACT_REQUEST_C.md`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/parallel-reports/CONTRACT_REQUEST_C.md`).
 enum TypeAnomalieRevue {
   /// Un palier de programme approche pour un eleve.
   gateAVenir,

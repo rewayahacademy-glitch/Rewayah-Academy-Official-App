@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -10,11 +11,15 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_elevation.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/theme/app_radius.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/theme/app_typography.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -23,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/child_card.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/local_feedback.dart';
+import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -32,6 +38,7 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../support/harnais.dart';
+import '../theme/support/contraste.dart';
 
 /// L'hote des composants, avec un reseau fige.
 Widget hoteComposant(
@@ -135,7 +142,7 @@ void main() {
   });
 
   group('ActionPrincipale : quatre niveaux, pas cinq', () {
-    testWidgets('le niveau principal est le seul aplat sature', (
+    testWidgets('le niveau principal est le CTA doux, au rayon des boutons', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -147,7 +154,85 @@ void main() {
         tester,
         find.byType(ActionPrincipale),
       );
+      // Decisions du coordinateur du 24/09 (3.1, 3.3) : lavande doux et encre
+      // `inkStrong` en clair, plus d'aplat violet sature.
+      expect(d.color, palette.surfaceActionDouce.background);
+      expect(d.borderRadius, AppRadius.arrondiSm);
+      final Text libelle = tester.widget<Text>(find.text('Continuer'));
+      expect(libelle.style!.color, palette.surfaceActionDouce.onBackground);
+      expect(find.byIcon(AppIcons.flecheAction.repos), findsNothing);
+    });
+
+    testWidgets('en Interface guidee, le CTA garde l aplat qui se detache', (
+      WidgetTester tester,
+    ) async {
+      // Revue phase 0 (jetons D3) : la lavande douce ne se detache de sa
+      // carte qu'a 1,5:1. Tant que le directeur n'a pas tranche, le CTA guide
+      // reste `surfacePrimary`, a 3:1 au moins contre chaque surface.
+      await tester.pumpWidget(
+        hoteComposant(
+          const ActionPrincipale(libelle: 'Rejoindre', onPress: _rien),
+          mode: InterfaceMode.enfant,
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
       expect(d.color, palette.surfacePrimary.background);
+      final Text libelle = tester.widget<Text>(find.text('Rejoindre'));
+      expect(libelle.style!.color, palette.surfacePrimary.onBackground);
+    });
+
+    testWidgets('fleche et pilule : l anatomie du CTA des maquettes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteComposant(
+          const ActionPrincipale(
+            libelle: 'Voir la classe',
+            onPress: _rien,
+            fleche: true,
+            pilule: true,
+          ),
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.borderRadius, AppRadius.arrondiFull);
+      expect(find.byIcon(AppIcons.flecheAction.repos), findsOneWidget);
+      // La fleche est decorative : elle n'ajoute aucune etiquette.
+      final Icon fleche = tester.widget<Icon>(
+        find.byIcon(AppIcons.flecheAction.repos),
+      );
+      expect(fleche.semanticLabel, isNull);
+    });
+
+    testWidgets('en sombre, le CTA principal est l accent plein', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+          child: TranslationProvider(
+            child: MaterialApp(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              home: const Scaffold(
+                body: ActionPrincipale(libelle: 'Continuer', onPress: _rien),
+              ),
+            ),
+          ),
+        ),
+      );
+      final BoxDecoration d = decorationSous(
+        tester,
+        find.byType(ActionPrincipale),
+      );
+      expect(d.color, AppPalette.sombre().surfacePrimary.background);
     });
 
     testWidgets('le destructif n a jamais de fond rouge plein', (
@@ -428,7 +513,8 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(coquille(768, 3));
-      final Offset rail = tester.getCenter(find.text('D0'));
+      // Replie, le rail ne porte que l'icone : le nom passe par l'infobulle.
+      final Offset rail = tester.getCenter(find.byTooltip('D0'));
       final Offset contenu = tester.getCenter(find.text('contenu'));
       expect(rail.dx, lessThan(contenu.dx));
     });
@@ -437,9 +523,11 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(coquille(768, 3));
-      final double rail = tester.getSize(find.byType(SizedBox).first).width;
+      final double rail = tester.getSize(find.byKey(NavShell.railKey)).width;
       await tester.pumpWidget(coquille(1440, 3));
-      final double laterale = tester.getSize(find.byType(SizedBox).first).width;
+      final double laterale = tester
+          .getSize(find.byKey(NavShell.barreLateraleKey))
+          .width;
       expect(rail, AppGabarit.largeurRail);
       expect(laterale, AppGabarit.largeurBarreLaterale);
       expect(laterale, greaterThan(rail));
@@ -878,6 +966,50 @@ void main() {
       );
       expect(d.border, isNotNull);
       expect(d.boxShadow, AppElevation.niveau3(palette.ombre));
+    });
+  });
+
+  group('Revue phase 0 : jetons de la marque et des pastilles', () {
+    testWidgets('le mot-marque est un titre DM Sans (jetons D6)', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(hoteComposant(const MarquePage()));
+      final Text marque = tester.widget<Text>(find.text(t.commun.marque));
+      expect(marque.style!.fontFamily, AppFontFamily.titre);
+    });
+
+    testWidgets('StatusPill pose le point de statut, a 3:1 sur son fond doux', (
+      WidgetTester tester,
+    ) async {
+      // Jetons D8 : l'aplat `surfaceSuccess` clair mesurait 1,28:1 sur
+      // `washSuccess` ; les points de statut sont valides a 3:1.
+      for (final (TonEtat ton, AppIndicatorColor point)
+          in <(TonEtat, AppIndicatorColor)>[
+            (TonEtat.succes, palette.pointsStatut.succes),
+            (TonEtat.avertissement, palette.pointsStatut.attention),
+            (TonEtat.alerte, palette.pointsStatut.alerte),
+            (TonEtat.neutre, palette.pointsStatut.neutre),
+          ]) {
+        await tester.pumpWidget(
+          hoteComposant(StatusPill(libelle: 'En direct', ton: ton)),
+        );
+        // Le dernier `DecoratedBox` : le premier est la pilule elle-meme.
+        final DecoratedBox disque = tester
+            .widgetList<DecoratedBox>(
+              find.descendant(
+                of: find.byType(StatusPill),
+                matching: find.byType(DecoratedBox),
+              ),
+            )
+            .last;
+        final Color couleur = (disque.decoration as BoxDecoration).color!;
+        expect(couleur, point.debugValue, reason: '$ton');
+        expect(
+          contraste(couleur, palette.paireDe(ton).background),
+          greaterThanOrEqualTo(seuilComposant),
+          reason: '$ton',
+        );
+      }
     });
   });
 }

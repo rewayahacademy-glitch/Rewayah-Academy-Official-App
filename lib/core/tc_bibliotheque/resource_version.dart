@@ -38,7 +38,7 @@ enum StatutVersionRessource {
 /// **Une version publiee ne se modifie plus.** La contrainte appartient a la
 /// base, pas au client : c'est ce que fait deja `0020` pour le programme
 /// pedagogique, et c'est ce que demande
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md` pour les ressources.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md` pour les ressources.
 ///
 /// **[downloadAssetId] est renseigne une seule fois, a la publication.** On ne
 /// regenere jamais un PDF a chaque clic (spec section 6.5).

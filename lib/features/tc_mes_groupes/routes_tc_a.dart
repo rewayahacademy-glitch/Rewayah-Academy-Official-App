@@ -20,7 +20,7 @@ import 'mes_groupes_page.dart';
 /// de [CheminsTcA] dans `routes.dart` et ajuste `redirection.dart`.
 ///
 /// Trois points a traiter a l'integration, detailles en section 7 de
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_A.md` :
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md` :
 ///
 /// 1. `redirection.dart` renvoie toute route hors prefixe de role vers la
 ///    racine du role : sans ajustement, `/tc/groupes` est **inatteignable** ;

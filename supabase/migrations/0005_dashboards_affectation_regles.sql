@@ -1,6 +1,6 @@
 -- 0005 : ce que l'etape 4 exige de la base
 --
--- Source de verite : docs/architecture/etape-4-dashboards.md
+-- Source de verite : docs/archive/2026-09-pre-remise-a-plat/architecture/etape-4-dashboards.md
 --
 -- Cette migration corrige les huit defauts de la section 3 de ce document, puis
 -- ajoute les tables et fonctions dont les tableaux de bord, l'affectation

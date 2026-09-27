@@ -26,7 +26,7 @@ import 'vue_classe_live.dart';
 /// ces trois classes sont **privees a ce fichier**, qui est de surcroit nomme
 /// INTERDIT a Agent E. Elles sont donc inaccessibles, pas seulement
 /// inconvenables. La demande de promotion vers `lib/core/widgets/` est en
-/// section 5 de `docs/teaching-core/TC_CONTRACT_REQUEST_E.md` ; tant qu'elle
+/// section 5 de `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_E.md` ; tant qu'elle
 /// n'est pas faite, deux galeries existent et peuvent diverger.
 class SceneClasse extends StatelessWidget {
   /// Cree la scene.

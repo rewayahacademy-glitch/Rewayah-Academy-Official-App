@@ -338,6 +338,21 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
               const <AnnonceObservation>[]
         : const <AnnonceObservation>[];
 
+    // **La symetrie cote eleve, par une AUTRE lecture.** L'eleve ne peut pas
+    // se servir de celle de l'enseignant : elle lui est refusee par le serveur,
+    // et elle porte les prenoms de tous les enfants observes.
+    // `annonce_observation_pour_moi` (`0040`) ne rend que SA ligne, et rien
+    // d'un autre foyer -- pas meme son nombre.
+    //
+    // Meme raison qu'au-dessus pour la condition de role : elle n'ajoute
+    // aucune securite (le serveur refuse deja qui n'est pas membre du groupe),
+    // elle evite de battre la RPC sur l'appareil de l'enseignant et du
+    // controleur, qui montent le meme en-tete.
+    final bool monTuteurObserve =
+        salle.role == RoleSalle.eleve &&
+        (ref.watch(monTuteurObserveProvider(contexte.sessionId)).value ??
+            false);
+
     final RosterClasseVM roster = ref
         .watch(rosterClasseProvider(contexte.sessionId))
         .avecFile(ref.watch(recitationProvider))
@@ -390,6 +405,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         vue: vue,
         roster: roster,
         annonces: annonces,
+        monTuteurObserve: monTuteurObserve,
         // Le bouton compact n'existe que la ou le roster est replie : a cote
         // d'une colonne, il ferait doublon.
         onVoirRoster: vue.placeRoster == PlaceRoster.feuille

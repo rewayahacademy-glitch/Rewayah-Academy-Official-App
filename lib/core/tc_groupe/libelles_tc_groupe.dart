@@ -12,7 +12,7 @@ import 'group_summary_vm.dart';
 /// chaque site d'appel referait diverger ce que la carte de « Mes groupes »
 /// et la Session Card de l'Espace Groupe affichent pour le meme instant.
 /// Seule sa source change : les libelles viennent desormais de
-/// `t.tc.groupe.*`, fusionnes depuis `docs/teaching-core/i18n/tc_i18n_A.json`.
+/// `t.tc.groupe.*`, fusionnes depuis `docs/archive/2026-09-pre-remise-a-plat/teaching-core/i18n/tc_i18n_A.json`.
 abstract final class LibellesGroupe {
   /// Le titre de l'ecran « Mes groupes ».
   static String get mesGroupesTitre => t.tc.groupe.mesGroupes.titre;
@@ -51,12 +51,10 @@ abstract final class LibellesGroupe {
   static String get aucuneSeance => t.tc.groupe.carte.aucuneSeance;
 
   /// Pourquoi, sans accuser l'utilisateur.
-  static String get aucuneSeanceDetail =>
-      t.tc.groupe.carte.aucuneSeanceDetail;
+  static String get aucuneSeanceDetail => t.tc.groupe.carte.aucuneSeanceDetail;
 
   /// La duree prevue.
-  static String duree(String valeur) =>
-      t.tc.groupe.carte.duree(valeur: valeur);
+  static String duree(String valeur) => t.tc.groupe.carte.duree(valeur: valeur);
 
   /// L'intitule seul, pour une ligne libelle/valeur.
   static String get dureeLibelle => t.tc.groupe.carte.dureeLibelle;
@@ -111,11 +109,11 @@ abstract final class LibellesGroupe {
       t.tc.groupe.temps.dansMinutes(minutes: minutes);
 
   /// Compte a rebours long.
-  static String dansHeures({required int heures, required int minutes}) =>
-      t.tc.groupe.temps.dansHeures(
-        heures: heures,
-        minutes: minutes.toString().padLeft(2, '0'),
-      );
+  static String dansHeures({required int heures, required int minutes}) => t
+      .tc
+      .groupe
+      .temps
+      .dansHeures(heures: heures, minutes: minutes.toString().padLeft(2, '0'));
 
   /// Moins d'une minute.
   static String get imminent => t.tc.groupe.temps.imminent;
@@ -128,19 +126,18 @@ abstract final class LibellesGroupe {
   static String get attenteAvantDebut => t.tc.groupe.temps.attente;
 
   /// L'invariant de presence, dit simplement.
-  static String get attenteAvantDebutDetail =>
-      t.tc.groupe.temps.attenteDetail;
+  static String get attenteAvantDebutDetail => t.tc.groupe.temps.attenteDetail;
 
   /// Le temps restant, court.
   static String resteMinutes(int minutes) =>
       t.tc.groupe.temps.resteMinutes(minutes: minutes);
 
   /// Le temps restant, long.
-  static String resteHeures({required int heures, required int minutes}) =>
-      t.tc.groupe.temps.resteHeures(
-        heures: heures,
-        minutes: minutes.toString().padLeft(2, '0'),
-      );
+  static String resteHeures({required int heures, required int minutes}) => t
+      .tc
+      .groupe
+      .temps
+      .resteHeures(heures: heures, minutes: minutes.toString().padLeft(2, '0'));
 
   /// Le cours se tient.
   static String enCours(String reste) =>
@@ -215,8 +212,7 @@ abstract final class LibellesGroupe {
   static String get conseilAppareil => t.tc.groupe.session.conseilAppareil;
 
   /// L'intitule du bloc de travail a venir.
-  static String get avantProchainCours =>
-      t.tc.groupe.espace.avantProchainCours;
+  static String get avantProchainCours => t.tc.groupe.espace.avantProchainCours;
 
   /// Rien a preparer.
   static String get aucuneAction => t.tc.groupe.espace.aucuneAction;
@@ -248,8 +244,7 @@ abstract final class LibellesGroupe {
       t.tc.groupe.espace.introuvableDetail;
 
   /// Un emplacement dont le port n'est pas encore branche.
-  static String get emplacementNonBranche =>
-      t.tc.groupe.emplacement.nonBranche;
+  static String get emplacementNonBranche => t.tc.groupe.emplacement.nonBranche;
 
   /// Ce qui manque, dit sans jargon.
   static String get emplacementNonBrancheDetail =>
@@ -287,16 +282,22 @@ abstract final class LibellesGroupe {
   }
 
   /// Une duree prevue, en clair : « 1 h 30 » ou « 45 min ».
+  ///
+  /// Les unites passent par les libelles (`tc.groupe.duree`), plus par des
+  /// chaines en dur (defaut D11 de la cartographie C06).
   static String dureeLisible(Duration duree) {
     final int minutes = duree.inMinutes;
     if (minutes < Duration.minutesPerHour) {
-      return '$minutes min';
+      return t.tc.groupe.duree.minutes(minutes: minutes);
     }
     final int heures = minutes ~/ Duration.minutesPerHour;
     final int reste = minutes % Duration.minutesPerHour;
     return reste == 0
-        ? '$heures h'
-        : '$heures h ${reste.toString().padLeft(2, '0')}';
+        ? t.tc.groupe.duree.heures(heures: heures)
+        : t.tc.groupe.duree.heuresMinutes(
+            heures: heures,
+            minutes: reste.toString().padLeft(2, '0'),
+          );
   }
 
   /// La ligne d'etat de la Session Card, deduite de l'horloge.

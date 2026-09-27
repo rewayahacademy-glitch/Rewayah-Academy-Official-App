@@ -137,6 +137,65 @@ class GuardianSessionVisit {
     );
   }
 
+  /// Lit une ligne de `guardian_session_visit`, ou rend `null` si elle est
+  /// incomplete.
+  ///
+  /// **Pour l'historique : une ligne incomplete est ecartee, jamais
+  /// completee.** [GuardianSessionVisit.depuisJson] se replie sur le role
+  /// tuteur et sur l'epoque 1970 quand une cle manque ; relue six mois plus
+  /// tard, une telle ligne afficherait une visite du 1er janvier 1970 ou un
+  /// role que personne n'a tenu. Ici, identifiant, seance, groupe,
+  /// observateur, role connu, entree lisible, rang et version de politique
+  /// sont exiges ; la sortie, la duree et le motif restent facultatifs (une
+  /// visite ouverte n'en a pas).
+  static GuardianSessionVisit? lire(Map<String, dynamic> json) {
+    String? texte(String cle) {
+      final Object? valeur = json[cle];
+      return valeur is String && valeur.isNotEmpty ? valeur : null;
+    }
+
+    final String? id = texte('id');
+    final String? sessionId = texte('session_id');
+    final String? groupeId = texte('groupe_id');
+    final String? observateur = texte('observateur_profile_id');
+    final String? policyVersion = texte('policy_version');
+    final RoleObservateur? role = RoleObservateur.depuisSql(texte('role'));
+    final DateTime? entree = DateTime.tryParse(texte('entered_at') ?? '');
+    final Object? rang = json['visit_number'];
+    if (id == null ||
+        sessionId == null ||
+        groupeId == null ||
+        observateur == null ||
+        policyVersion == null ||
+        role == null ||
+        entree == null ||
+        rang is! num) {
+      return null;
+    }
+    final String? sortie = texte('left_at');
+    final DateTime? sortieLue = sortie == null
+        ? null
+        : DateTime.tryParse(sortie);
+    if (sortie != null && sortieLue == null) {
+      return null;
+    }
+    final Object? duree = json['duration_seconds'];
+    return GuardianSessionVisit(
+      id: id,
+      sessionId: sessionId,
+      groupeId: groupeId,
+      observateurProfilId: observateur,
+      role: role,
+      enfantConcerneId: texte('enfant_profile_id'),
+      enteredAtUtc: entree.toUtc(),
+      leftAtUtc: sortieLue?.toUtc(),
+      durationSeconds: duree is num ? Duration(seconds: duree.toInt()) : null,
+      visitNumber: rang.toInt(),
+      policyVersion: policyVersion,
+      finDeVisite: FinDeVisite.depuisSql(texte('fin_de_visite')),
+    );
+  }
+
   /// Identifiant de l'intervalle.
   final String id;
 

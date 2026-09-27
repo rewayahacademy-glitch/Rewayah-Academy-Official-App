@@ -1,10 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
+import 'package:rewayah_academy/features/dossier/signature_page.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 
 import '../support/harnais.dart';
 
@@ -150,6 +155,66 @@ void main() {
     });
   });
 
+  group('La prochaine action mene au bon contrat, geste depuis le portail', () {
+    Future<void> monter(
+      WidgetTester tester, {
+      required UsageInscription? usage,
+    }) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(accuse: true);
+      final List<Override> surcharges = <Override>[
+        serviceDossierProvider.overrideWithValue(dossier),
+      ];
+      if (usage != null) {
+        surcharges.add(
+          brouillonInscriptionProvider.overrideWith(
+            () => _ControleurBrouillonDeTest(usage),
+          ),
+        );
+      }
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.attente,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.attente,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const AttentePage(),
+            ),
+            GoRoute(
+              path: Routes.attenteContrat,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const ContratPage(),
+            ),
+          ],
+          surcharges: surcharges,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(t.attente.signerLeContrat));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('inscription « Moi uniquement » : variante eleve adulte', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, usage: UsageInscription.moi);
+
+      expect(find.text(t.consentement.texte.caseAdulte), findsOneWidget);
+      expect(find.text(t.consentement.texte.caseResponsable), findsNothing);
+    });
+
+    testWidgets('sans brouillon (rechargement) : variante responsable legal', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, usage: null);
+
+      expect(find.text(t.consentement.texte.caseResponsable), findsOneWidget);
+      expect(find.text(t.consentement.texte.caseAdulte), findsNothing);
+    });
+  });
+
   group('EtatDossier : ce qui manque, et dans quel ordre', () {
     test('un refus prime sur une piece manquante', () {
       // C est le refus qui porte le motif, donc ce que la famille doit lire.
@@ -205,4 +270,16 @@ void main() {
       },
     );
   });
+}
+
+/// Un brouillon d'inscription fige a un usage, pour tester la variante lue
+/// par le portail d'attente sans rejouer les quatre etapes.
+class _ControleurBrouillonDeTest extends BrouillonInscriptionControleur {
+  _ControleurBrouillonDeTest(this._usage);
+
+  final UsageInscription _usage;
+
+  @override
+  BrouillonInscription build() =>
+      const BrouillonInscription().copier(usage: _usage);
 }

@@ -15,7 +15,7 @@ import '../theme/app_spacing.dart';
 /// le deroule et jamais dans un encadre a cote. Un ecran qui choisirait une
 /// ligne differente selon la sorte casserait cette colonne ; c'est pourquoi le
 /// composant decide lui-meme du libelle et de l'icone a partir de la sorte
-/// (`docs/design/07-catalogue-composants.md` section 2). Ce qui distingue les
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2). Ce qui distingue les
 /// trois est le libelle, jamais la seule couleur.
 class TimelineRow extends StatelessWidget {
   /// Cree une ligne de journee.

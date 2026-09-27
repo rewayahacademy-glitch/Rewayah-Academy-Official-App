@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -9,12 +10,12 @@ import 'pressable.dart';
 
 /// Les quatre niveaux d'action, pas cinq.
 ///
-/// Source : `docs/design/02-regles-ux.md` section 4. Le nombre par ecran est
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 4. Le nombre par ecran est
 /// une regle d'ecran, pas une regle de composant : elle se tient en revue, et
 /// c'est `08-catalogue-ecrans.md` qui la porte.
 enum NiveauAction {
-  /// Fond plein `surfacePrimary`. **Une seule par ecran**, zero si l'ecran est
-  /// en lecture.
+  /// Fond plein `surfaceActionDouce` (lavande doux en clair, accent plein en
+  /// sombre). **Une seule par ecran**, zero si l'ecran est en lecture.
   principale,
 
   /// Contour `borderStrong` sur `surfaceRaised`. Deux au plus.
@@ -54,6 +55,8 @@ class ActionPrincipale extends StatelessWidget {
     this.enCours = false,
     this.pleineLargeur = true,
     this.prefixe,
+    this.fleche = false,
+    this.pilule = false,
   });
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
@@ -78,11 +81,27 @@ class ActionPrincipale extends StatelessWidget {
   /// usage est le logo Google du bouton de connexion, qu'une marque tierce
   /// impose de montrer tel quel. Ce n'est pas une porte d'entree pour
   /// l'iconographie du produit : une action du produit se nomme, elle ne
-  /// s'illustre pas (`docs/design/02-regles-ux.md` section 9).
+  /// s'illustre pas (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 9).
   ///
   /// L'indicateur d'activite le remplace tant que [enCours] vaut vrai : les
   /// deux occuperaient la meme place, et c'est l'attente qui prime.
   final Widget? prefixe;
+
+  /// Pose une fleche apres le libelle : « Voir la classe -> ». C'est l'anatomie
+  /// du CTA dominant des maquettes Tuteur (decisions du coordinateur, section
+  /// 3, point 3). Decorative : le libelle seul porte le sens, l'etiquette
+  /// semantique ne change pas. Miroitee en arabe.
+  final bool fleche;
+
+  /// Forme pilule (`AppRadius.full`) au lieu du rayon `sm` des boutons.
+  ///
+  /// **Reservee au CTA des etapes d'admission**, seule exception retenue par
+  /// le coordinateur (decisions, section 3, point 2) ; partout ailleurs, un
+  /// bouton a le rayon `sm` (12).
+  final bool pilule;
+
+  BorderRadius get _arrondi =>
+      pilule ? AppRadius.arrondiFull : AppRadius.arrondiSm;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +113,7 @@ class ActionPrincipale extends StatelessWidget {
       onPress: actif ? onPress : null,
       libelleSemantique: libelle,
       respecterCibleTactile: false,
-      arrondiFocus: AppRadius.arrondiMd,
+      arrondiFocus: _arrondi,
       constructeur: (BuildContext contexte, EtatPression etat) =>
           _corps(contexte, palette, metriques, etat, actif: actif),
     );
@@ -107,7 +126,12 @@ class ActionPrincipale extends StatelessWidget {
     EtatPression etat, {
     required bool actif,
   }) {
-    final _Peinture peinture = _peinturePour(palette, actif: actif, etat: etat);
+    final _Peinture peinture = _peinturePour(
+      palette,
+      actif: actif,
+      etat: etat,
+      guidee: metriques.estEnfant,
+    );
 
     return Container(
       width: pleineLargeur ? double.infinity : null,
@@ -123,7 +147,7 @@ class ActionPrincipale extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: peinture.fond,
-        borderRadius: AppRadius.arrondiMd,
+        borderRadius: _arrondi,
         border: peinture.filet == null
             ? null
             : Border.fromBorderSide(peinture.filet!),
@@ -153,6 +177,16 @@ class ActionPrincipale extends StatelessWidget {
                 ),
               ),
             ),
+            if (fleche && !enCours) ...<Widget>[
+              Ecart.hSm,
+              IconTheme(
+                data: IconThemeData(
+                  color: peinture.encre(const TextStyle()).color,
+                  size: AppSpacing.xl,
+                ),
+                child: Icon(AppIcons.flecheAction.repos),
+              ),
+            ],
           ],
         ),
       ),
@@ -181,6 +215,7 @@ class ActionPrincipale extends StatelessWidget {
     AppPalette palette, {
     required bool actif,
     required EtatPression etat,
+    required bool guidee,
   }) {
     if (!actif) {
       return _Peinture(
@@ -192,9 +227,23 @@ class ActionPrincipale extends StatelessWidget {
 
     switch (niveau) {
       case NiveauAction.principale:
+        // `surfaceActionDouce` depuis le 24/09/2026 (decisions du
+        // coordinateur, section 3.1 et 3.3) : lavande doux et encre
+        // `inkStrong` en clair, accent plein et encre sombre en sombre. Plus
+        // aucun aplat violet sature en clair : aucune maquette n'en montre.
+        //
+        // **Sauf en Interface guidee** : la lavande douce ne se detache de sa
+        // carte qu'a 1,5:1, et c'est souvent la seule action de l'ecran d'un
+        // enfant. Tant que le directeur n'a pas tranche sur capture, le CTA
+        // guide garde l'aplat `surfacePrimary`, a 3:1 au moins contre chaque
+        // surface (teste), comme avant le chantier (revue phase 0, jetons D3).
+        // En sombre, les deux paires sont identiques.
+        final AppColorPair paireCta = guidee
+            ? palette.surfacePrimary
+            : palette.surfaceActionDouce;
         return _Peinture(
-          fond: palette.surfacePrimary.background,
-          encre: palette.surfacePrimary.applyTo,
+          fond: paireCta.background,
+          encre: paireCta.applyTo,
           // Au survol, l'aplat plein ne change pas de teinte : il gagne le
           // filet fort. Une seconde nuance de violet serait une couleur de
           // plus, hors palette.

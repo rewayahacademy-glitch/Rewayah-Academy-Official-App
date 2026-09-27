@@ -64,12 +64,16 @@ class ComptePage extends ConsumerWidget {
             icon: AppIcons.reglages,
             onPress: () => context.push(Routes.compteReglages),
           ),
+          // Le Foyer est une destination du tuteur (seul role a qui la ligne
+          // s'affiche) : on la rejoint par `go`, pour que la barre allume le
+          // Foyer. Un `push` de `/compte/profils`, redirige vers le Foyer,
+          // l'empilait dans la branche Compte (revue phase 0, routes D7).
           if (projection.afficheFoyer)
             SettingRow(
               title: t.compte.profils,
               description: t.compte.profilsDetail,
               icon: AppIcons.foyer,
-              onPress: () => context.push(Routes.compteProfils),
+              onPress: () => context.go(Routes.tuteurFoyer),
             ),
           SettingRow(
             title: t.compte.appareils,
@@ -178,7 +182,7 @@ class ProfilPersonnelPage extends ConsumerWidget {
               title: t.compte.profils,
               description: t.compte.profilsDetail,
               icon: AppIcons.foyer,
-              onPress: () => context.push(Routes.compteProfils),
+              onPress: () => context.go(Routes.tuteurFoyer),
             ),
         ],
       ),
@@ -189,7 +193,13 @@ class ProfilPersonnelPage extends ConsumerWidget {
 /// Preferences qui restent dans l'appareil et prennent effet immediatement.
 class ReglagesComptePage extends ConsumerWidget {
   /// Cree les reglages locaux.
-  const ReglagesComptePage({super.key});
+  const ReglagesComptePage({super.key, this.onRetour});
+
+  /// Le disque retour de l'en-tete, pour une **tache focalisee** : sur
+  /// telephone, la barre basse du tuteur s'efface sur ses preferences, et ce
+  /// disque est alors sa sortie (manifeste visuel Tuteur V1 section 4.2
+  /// point 5). Nul pour les autres roles, qui gardent leur barre.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -207,6 +217,7 @@ class ReglagesComptePage extends ConsumerWidget {
 
     return PageShell(
       titre: t.compte.reglagesTitre,
+      onRetour: onRetour,
       entete: Text(t.compte.reglagesIntro),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -612,7 +623,7 @@ class _DetailEnfant extends StatelessWidget {
         title: t.compte.reglages,
         description: t.compte.reglagesDetail,
         icon: AppIcons.reglages,
-        onPress: () => context.push(Routes.tuteurReglages),
+        onPress: () => context.push(Routes.ficheElevePour(enfant.id)),
       ),
     ],
   );

@@ -20,7 +20,7 @@ abstract final class RoutesCoran {
 /// **Une route sans entree de navigation n'existe pas.** L'entree reste a
 /// arbitrer : `nav_shell.dart` est PROTECTED et plafonne a quatre destinations
 /// par assertion, et le Coran en a deja une (`/eleve/coran`). Le detail est
-/// dans `docs/teaching-core/TC_CONTRACT_REQUEST_C.md`.
+/// dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_C.md`.
 List<RouteBase> routesTcC() => <RouteBase>[
   GoRoute(
     path: RoutesCoran.mushaf,

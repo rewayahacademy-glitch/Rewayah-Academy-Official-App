@@ -38,7 +38,7 @@
 /// **L'objectif commun de la seance n'est pas affiche, et c'est volontaire** :
 /// aucune couche ne le porte (ni `sessions`, ni `SeanceEnseignant`). Se taire
 /// coute moins cher qu'un tiret a chaque ligne. La demande est ecrite dans
-/// `docs/parallel-reports/CONTRACT_REQUEST_A.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/parallel-reports/CONTRACT_REQUEST_A.md`.
 ///
 /// Les heures affichees sont celles de l'appareil. Aucune mention de fuseau
 /// n'est posee ici, contrairement a la grille de `ENS-06` : les seances et les
@@ -71,6 +71,7 @@ import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -115,7 +116,7 @@ class JourneePage extends ConsumerWidget {
 ///
 /// Il vit dans un widget a part pour que [JourneePage] reste un
 /// `ConsumerWidget` : c'est la declaration exacte que le routeur attend
-/// (`docs/architecture/TEACHER_FILE_OWNERSHIP.md` section 3), et une page
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md` section 3), et une page
 /// devenue `ConsumerStatefulWidget` pour porter une horloge serait un ecart de
 /// contrat pour une raison purement interne.
 class _Cadence extends StatefulWidget {
@@ -450,6 +451,9 @@ class _BlocDominant extends ConsumerWidget {
               style: textes.bodySmall ?? const TextStyle(),
             ),
           Ecart.vSm,
+          // Heure et compte a rebours : chiffres tabulaires (Jakarta), sans
+          // quoi « Dans 1 h 59 » bouge a chaque minute (DM Sans n'a pas de
+          // `tnum`, revue phase 0, jetons D4).
           Text(switch ((enCours, aujourdhui)) {
             (true, _) => t.enseignant.journee.jusqua(heure: _hhmm(cours.fin)),
             (false, true) => _minuteur(cours.avantDebut(maintenant)),
@@ -457,7 +461,7 @@ class _BlocDominant extends ConsumerWidget {
               jour: t.disponibilites.joursLongs[cours.debut.weekday - 1],
               heure: _hhmm(cours.debut),
             ),
-          }, style: textes.titleMedium ?? const TextStyle()),
+          }, style: _heureTabulaire(textes)),
           Ecart.vSm,
           // Le lancement, ou la raison de son absence. Jamais les deux, jamais
           // un bouton inerte.
@@ -810,6 +814,11 @@ String _nommer(PresenceParticipant ligne) =>
 String _hhmm(DateTime quand) =>
     '${quand.hour.toString().padLeft(2, '0')}:'
     '${quand.minute.toString().padLeft(2, '0')}';
+
+/// Le style d'une heure ou d'un compte a rebours du bloc dominant : le titre
+/// en chiffres tabulaires (Plus Jakarta Sans), DM Sans n'ayant pas de `tnum`.
+TextStyle _heureTabulaire(TextTheme textes) =>
+    AppTypography.tabulaire(textes.titleMedium ?? const TextStyle());
 
 /// Le temps restant avant le debut, en heures et minutes.
 String _minuteur(Duration reste) {

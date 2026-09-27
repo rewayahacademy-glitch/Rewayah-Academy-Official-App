@@ -19,7 +19,7 @@ import '../../core/widgets/pressable.dart';
 /// afficher la meme chose (ADR-017).
 ///
 /// On tape une case, elle bascule. Aucune saisie d'heures, aucun selecteur
-/// horaire : c'est ce que demande `docs/produit/parcours-utilisateurs.md` pour
+/// horaire : c'est ce que demande `docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md` pour
 /// `TUT-04`.
 class GrilleSemaine extends StatelessWidget {
   /// Cree une grille.
@@ -143,7 +143,7 @@ class _Case extends StatelessWidget {
   /// La decoration d'une case, dans l'etat ou elle se trouve.
   ///
   /// Les trois surfaces de la refonte, appliquees a la grille
-  /// (`docs/design/07-catalogue-composants.md` section 1) :
+  /// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1) :
   ///
   /// - **case vide : `surfaceSunken`**, parce qu'une case vide de grille est
   ///   nommement l'un des emplois de la surface enfoncee

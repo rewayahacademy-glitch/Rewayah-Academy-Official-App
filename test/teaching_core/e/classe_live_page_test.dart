@@ -80,6 +80,7 @@ void main() {
     FauxPreVolClasse preVol,
     FauxRappelDiscret rappel,
     FauxAnnonceObservation annonces,
+    FauxAnnonceObservationEnfant annonceEnfant,
     List<Override> surcharges,
     List<String> journal,
   })
@@ -89,11 +90,14 @@ void main() {
     List<TeacherStudentProjection>? fiches,
     EchecRappel? echecRappel,
     List<AnnonceObservation> annonces = const <AnnonceObservation>[],
+    bool monTuteurObserve = false,
   }) {
     final List<String> journal = <String>[];
     final FauxAnnonceObservation annonceur = FauxAnnonceObservation(
       lignes: annonces,
     );
+    final FauxAnnonceObservationEnfant annonceurEnfant =
+        FauxAnnonceObservationEnfant(observe: monTuteurObserve);
     final FauxMoteurClasse moteur = FauxMoteurClasse(journal: journal);
     final FauxServiceVideoClasse video = FauxServiceVideoClasse(
       acces0: accesDe(role),
@@ -107,6 +111,7 @@ void main() {
       preVol: preVol,
       rappel: rappel,
       annonces: annonceur,
+      annonceEnfant: annonceurEnfant,
       journal: journal,
       surcharges: surchargesClasse(
         moteur: moteur,
@@ -118,6 +123,7 @@ void main() {
         ),
         rappel: rappel,
         annonces: annonceur,
+        annonceEnfant: annonceurEnfant,
       ),
     );
   }
@@ -582,6 +588,74 @@ void main() {
       expect(banc0.annonces.demandes, isEmpty);
       expect(find.byType(IndicateurObservation), findsNothing);
       expect(find.text('Tuteur d Amina observe'), findsNothing);
+    });
+
+    testWidgets('l enfant observe lit la mention discrete, et rien de plus', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(
+        role: 'student',
+        presence: troisEleves(),
+        monTuteurObserve: true,
+      );
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.tablette,
+      );
+
+      // La lecture est demandee pour CETTE seance, et elle s'allume.
+      expect(banc0.annonceEnfant.demandes, <String>[seance]);
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsOneWidget,
+      );
+      // Et rien de ce que lit l'enseignant : ni prenom d'un autre enfant, ni
+      // compteur d'observateurs. C'est la specification 11.3.
+      expect(find.byType(IndicateurObservation), findsNothing);
+      expect(find.textContaining('Tuteur de'), findsNothing);
+    });
+
+    testWidgets('l enfant NON observe ne lit rien, et le serveur le dit', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(role: 'student', presence: troisEleves());
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.tablette,
+      );
+
+      // Le flux est bien ouvert -- l'eleve a le droit de demander -- mais il
+      // rend faux : `annonce_observation_pour_moi` borne sa reponse a la ligne
+      // de l'appelant, donc l'enfant d'un autre foyer recoit `observe: false`.
+      expect(banc0.annonceEnfant.demandes, <String>[seance]);
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
+    });
+
+    testWidgets('l enseignant ne demande jamais l annonce reservee a l enfant', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(presence: troisEleves(), annonces: uneVisite);
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.tablette,
+      );
+
+      // Le serveur la lui refuserait de toute facon (il n'est pas membre du
+      // groupe) : ne pas la demander evite de battre une RPC qui refuse.
+      expect(banc0.annonceEnfant.demandes, isEmpty);
+      expect(
+        find.text(t.tc.observation.annonce.enfantIndicateur),
+        findsNothing,
+      );
     });
   });
 }

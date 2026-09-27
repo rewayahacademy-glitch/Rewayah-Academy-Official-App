@@ -7,7 +7,120 @@
     "annuler": "Annuler",
     "fermer": "Fermer",
     "reessayer": "Réessayer",
-    "chargement": "Chargement"
+    "chargement": "Chargement",
+    "etape": {
+      "sur": "{n} sur {total}",
+      "surLue": "Étape {n} sur {total}"
+    },
+    "choix": {
+      "indisponible": "Indisponible"
+    },
+    "etats": {
+      "chargementProlonge": {
+        "titre": "La connexion prend plus de temps que prévu",
+        "phrase": "Vous pouvez patienter encore un peu ou réessayer."
+      },
+      "horsLigne": {
+        "titre": "Vous êtes hors ligne",
+        "phrase": "Vérifiez votre connexion. Ce qui est déjà affiché reste consultable."
+      },
+      "reconnexion": {
+        "titre": "Reconnexion en cours",
+        "phrase": "Une nouvelle tentative de connexion est en cours."
+      },
+      "echecServeur": {
+        "titre": "Impossible de charger ces informations",
+        "phrase": "Le chargement n'a pas abouti. Réessayez dans un instant."
+      },
+      "introuvable": {
+        "titre": "Cette page est introuvable",
+        "phrase": "Le lien est peut-être incomplet, ou la page n'existe plus."
+      },
+      "accesRefuse": {
+        "titre": "Vous n'avez pas accès à cette page",
+        "phrase": "Ce contenu n'est pas ouvert à votre compte."
+      },
+      "sessionExpiree": {
+        "titre": "Votre session a expiré",
+        "phrase": "Reconnectez-vous pour continuer."
+      },
+      "dossierEnAttente": {
+        "titre": "Votre dossier est en attente",
+        "phrase": "Une étape reste à franchir avant d'ouvrir cet espace."
+      },
+      "aucunResultat": {
+        "titre": "Aucun résultat",
+        "phrase": "Rien ne correspond pour le moment."
+      },
+      "permissionRefusee": {
+        "titre": "Autorisation refusée",
+        "phrase": "Sans cette autorisation, cette fonction ne peut pas s'ouvrir. Vous pouvez la modifier dans les réglages de votre appareil."
+      },
+      "ressourceExpiree": {
+        "titre": "Ce contenu n'est plus disponible",
+        "phrase": "Il a été retiré, ou son accès a pris fin."
+      },
+      "indisponible": {
+        "titre": "Pas encore disponible",
+        "phrase": "Cette fonction n'est pas encore ouverte."
+      },
+      "reessaisEpuises": "Toujours sans réponse. Réessayez un peu plus tard.",
+      "horsLigneDemarrage": "Rewayah a besoin d'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.",
+      "actions": {
+        "reessayer": "Réessayer",
+        "retourAccueil": "Retour à l'accueil",
+        "seConnecter": "Se connecter",
+        "seReconnecter": "Se reconnecter",
+        "voirDossier": "Voir mon dossier",
+        "reinitialiserFiltres": "Réinitialiser les filtres",
+        "revenir": "Revenir en arrière"
+      }
+    },
+    "entete": {
+      "retour": "Retour",
+      "notifications": "Notifications",
+      "notificationsUneNonLue": "Notifications, une non lue",
+      "notificationsNonLues": "Notifications, {nombre} non lues"
+    },
+    "selecteurProfils": {
+      "etiquette": "{prenom}, {etat}",
+      "ajouter": "Ajouter",
+      "ajouterSemantique": "Ajouter un profil élève"
+    },
+    "theme": {
+      "groupe": "Apparence",
+      "clair": "Thème clair",
+      "sombre": "Thème sombre"
+    },
+    "demarrage": {
+      "ouverture": "Ouverture de Rewayah"
+    },
+    "dates": {
+      "jours": [
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi",
+        "Samedi",
+        "Dimanche"
+      ],
+      "mois": [
+        "janvier",
+        "février",
+        "mars",
+        "avril",
+        "mai",
+        "juin",
+        "juillet",
+        "août",
+        "septembre",
+        "octobre",
+        "novembre",
+        "décembre"
+      ],
+      "jourDate": "{jour} {numero} {mois}"
+    }
   },
   "reseau": {
     "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
@@ -103,6 +216,20 @@
     "attenteInstant": "le cours vient de commencer",
     "attenteMinutes": "le cours a commencé il y a {minutes} min"
   },
+  "bienvenue": {
+    "titre": "Bienvenue",
+    "accroche": "Apprendre le Coran en classe, avec un enseignant attitré",
+    "phrase": "Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.",
+    "pointsTitre": "Comment ça se passe",
+    "pointClasseTitre": "Une classe stable",
+    "pointClasse": "Les mêmes camarades et le même horaire, chaque semaine.",
+    "pointEnseignantTitre": "Un enseignant attitré",
+    "pointEnseignant": "Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.",
+    "pointFoyerTitre": "Un seul compte pour le foyer",
+    "pointFoyer": "Les séances de chaque élève du foyer se suivent depuis votre compte.",
+    "commencer": "Commencer",
+    "dejaCompte": "J'ai déjà un compte"
+  },
   "attente": {
     "titre": "Votre dossier est en cours de vérification",
     "dossierIncomplet": "Il manque encore des pièces à votre dossier.",
@@ -122,7 +249,17 @@
     "toutEstDepose": "Tout est déposé.",
     "corriger": "Reprendre mon dossier",
     "suspenduDetail": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
-    "seDeconnecter": "Se déconnecter"
+    "seDeconnecter": "Se déconnecter",
+    "titreDossier": "Votre dossier",
+    "reste": {
+      "one": "Il reste un élément à fournir.",
+      "other": "Il reste {n} éléments à fournir."
+    },
+    "etatAFournir": "À fournir",
+    "prochaineEtape": "Prochaine étape : {etape}",
+    "refuseDetail": "Déposez une nouvelle pièce pour relancer la vérification.",
+    "illisible": "L'état de votre dossier ne s'affiche pas pour le moment.",
+    "horsLigne": "Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau."
   },
   "connexion": {
     "titre": "Se connecter",
@@ -140,14 +277,34 @@
     "erreurEnvoi": "L'envoi n'a pas abouti. Réessayez dans un instant.",
     "appareilEleveAide": "Vous êtes tuteur et vous préparez l'appareil d'un élève ?",
     "appareilEleve": "Connecter l'appareil d'un élève",
+    "renvoyer": "Renvoyer le lien",
+    "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
+    "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
+    "horsLigne": "Vous êtes hors ligne : le lien ne peut pas partir pour l'instant.",
+    "probleme": "Lien expiré ou jamais reçu ?",
+    "decouvrir": "Découvrir Rewayah Academy",
+    "recuperation": {
+      "titre": "Retrouver mon accès",
+      "intro": "Il n'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.",
+      "lienExpireTitre": "Ce lien n'est plus valable",
+      "lienExpire": "Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.",
+      "lienRefuseTitre": "La connexion n'a pas abouti",
+      "lienRefuse": "Ce lien n'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.",
+      "envoyer": "Recevoir un nouveau lien",
+      "envoyeTitre": "Nouveau lien envoyé",
+      "envoye": "Ouvrez le message envoyé à {courriel}, puis suivez le lien.",
+      "envoyeEncart": "Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.",
+      "autreAdresse": "Utiliser une autre adresse",
+      "revenirConnexion": "Revenir à la connexion"
+    },
     "feuilleAppareil": {
       "pourQui": "Réservé aux tuteurs déjà inscrits. Cet écran donne à un élève de votre foyer son propre accès, sur sa tablette ou son téléphone, sans lui confier votre compte.",
       "etapesTitre": "Où trouver le code",
-      "etape1": "Sur votre propre appareil, ouvrez Foyer et appareils.",
-      "etape2": "Ouvrez le profil de l'élève, puis Ajouter un appareil.",
-      "etape3": "Un code de six caractères s'affiche. Il reste valable dix minutes.",
-      "etape4": "Saisissez-le ici, sur l'appareil de l'élève.",
-      "plafond": "Deux appareils au plus par élève. Au-delà, révoquez-en un depuis Foyer et appareils.",
+      "etape1": "Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.",
+      "etape2": "Touchez le profil de l'élève, puis Connecter un appareil.",
+      "etape3": "Un QR code et un code de six caractères s'affichent, avec leur heure de fin.",
+      "etape4": "Sur l'appareil de l'élève, scannez le QR code ou saisissez le code.",
+      "plafond": "Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.",
       "saisir": "Saisir le code",
       "fermer": "Fermer"
     }
@@ -172,7 +329,27 @@
     "recapitulatif": "Avant de continuer",
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
-    "champRequis": "Cette réponse est nécessaire pour continuer."
+    "champRequis": "Cette réponse est nécessaire pour continuer.",
+    "etapeCourte": "{n} sur {total}",
+    "retourEtape": "Revenir à l'étape précédente",
+    "seDeconnecter": "Se déconnecter",
+    "modifier": "Modifier",
+    "reessayer": "Réessayer",
+    "erreurActualisation": "Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.",
+    "usage": {
+      "question": "Quel type de compte souhaitez-vous créer ?",
+      "moiTitre": "Moi uniquement",
+      "moiDescription": "Je souhaite suivre les cours avec mon propre profil élève.",
+      "familleTitre": "Moi et ma famille",
+      "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
+      "enseignant": "Je suis enseignant"
+    },
+    "recap": {
+      "usage": "Type de compte",
+      "identite": "Nom",
+      "genre": "Genre",
+      "enseignant": "Enseignant"
+    }
   },
   "contrat": {
     "titre": "Ce que vous signez",
@@ -183,11 +360,59 @@
     "lireTexte": "Lire le texte complet",
     "accepter": "J'ai lu et j'accepte",
     "accepteLe": "Accepté le {date}",
-    "erreur": "La signature n'a pas abouti. Réessayez dans un instant."
+    "erreur": "La signature n'a pas abouti. Réessayez dans un instant.",
+    "horsLigne": "Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
+    "caseRequise": "Cochez la case pour continuer."
   },
   "accuse": {
     "titre": "À savoir avant de commencer",
     "compris": "J'ai compris"
+  },
+  "consentement": {
+    "titre": "Consentements",
+    "texte": {
+      "titre": "Les visites des parents",
+      "quiResponsable": "Les parents des élèves présents peuvent observer brièvement la séance.",
+      "quiResponsableDetail": "Ils entendent l'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.",
+      "quiAdulte": "Les parents des autres élèves présents peuvent observer brièvement la séance.",
+      "quiAdulteDetail": "Ils entendent l'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.",
+      "pourquoi": "Pour suivre l'apprentissage sans interrompre la classe.",
+      "pourquoiDetail": "Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu'une visite est possible.",
+      "limites": "Des visites courtes, en nombre limité.",
+      "limitesDetail": "Chaque parent a un petit nombre de visites par séance, fixé par l'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.",
+      "caseResponsable": "J'accepte ces modalités pour mon enfant",
+      "caseAdulte": "J'accepte ces modalités",
+      "continuer": "Continuer",
+      "retour": "Retour"
+    },
+    "comment": {
+      "titre": "Comment ça marche ?",
+      "visites": {
+        "one": "Une visite de {minutes} min par séance.",
+        "other": "{n} visites de {minutes} min par séance."
+      },
+      "visitesSansDuree": {
+        "one": "Une visite courte par séance.",
+        "other": "{n} visites courtes par séance."
+      },
+      "parParent": "Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.",
+      "ecourtee": "Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu'à la dernière.",
+      "ecouter": "Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.",
+      "sansMicro": "Votre micro et votre caméra restent désactivés pendant la visite.",
+      "valeursIndisponibles": "Le nombre de visites et leur durée s'affichent depuis la classe de votre enfant, selon les règles de sa classe.",
+      "fermee": "Les visites d'observation ne sont pas ouvertes pour cette classe."
+    },
+    "compte": {
+      "intro": "L'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n'est considéré comme accepté tant que vous ne l'avez pas fait.",
+      "accepteLe": "Vous avez accepté ces modalités le {date}.",
+      "merci": "Merci, votre accord est enregistré.",
+      "chargement": "Lecture de vos accords",
+      "erreur": "Vos accords ne s'affichent pas pour le moment.",
+      "horsLigne": "Vous êtes hors ligne. Vos accords s'afficheront dès le retour du réseau.",
+      "sansProfil": "Aucun compte connecté : reconnectez-vous pour lire vos accords.",
+      "invite": "Une nouvelle version à lire : les visites des parents",
+      "inviteAction": "Lire"
+    }
   },
   "kyc": {
     "titre": "Votre pièce d'identité",
@@ -206,31 +431,307 @@
   },
   "appareils": {
     "titre": "Appareils",
-    "regle": "Deux appareils au maximum par enfant, un seul en cours à la fois.",
-    "ajouter": "Ajouter un appareil",
-    "limiteAtteinte": "Deux appareils sont déjà appairés pour {prenom}. Retirez-en un pour en ajouter un autre.",
-    "codeTitre": "Sur l'appareil de l'enfant",
-    "codeInstruction": "Ouvrez l'application Rewayah, puis entrez ce code.",
-    "expireDans": "Expire dans {temps}",
-    "expire": "Ce code a expiré.",
+    "foyer": {
+      "titre": "Appareils du foyer",
+      "phrase": "Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.",
+      "groupeProfils": "Profils élèves",
+      "aucunAppareil": "Aucun appareil connecté",
+      "unAppareil": "1 appareil connecté : {nom}",
+      "plusieursAppareils": "{nombre} appareils connectés : {noms}",
+      "partageTitre": "Appareil partagé",
+      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.",
+      "videTitre": "Aucun profil élève",
+      "vide": "Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.",
+      "videAction": "Ajouter un profil élève"
+    },
+    "eleve": {
+      "sousTitre": "Gérez les appareils autorisés pour {prenom}.",
+      "groupe": "Appareils connectés",
+      "connecter": "Connecter un appareil",
+      "videTitre": "Aucun appareil connecté",
+      "vide": "Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.",
+      "introuvableTitre": "Profil élève introuvable",
+      "introuvable": "Ce profil élève n'est pas rattaché à votre foyer.",
+      "introuvableAction": "Voir les appareils du foyer",
+      "connecteLe": "Connecté le {date}",
+      "utiliseLe": "Dernière utilisation : {date}",
+      "jamaisUtilise": "Pas encore utilisé",
+      "retirerLibelle": "Retirer {appareil}",
+      "horsLigne": "Retirer ou connecter un appareil demande une connexion internet.",
+      "partageTitre": "Choix du profil et code personnel",
+      "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.",
+      "retraitTitre": "Retirer un appareil",
+      "retrait": "Un appareil retiré ne peut plus se reconnecter. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion."
+    },
+    "plateforme": {
+      "android": "Téléphone ou tablette Android",
+      "ios": "iPhone ou iPad",
+      "web": "Navigateur web",
+      "windows": "Ordinateur",
+      "inconnue": "Appareil"
+    },
+    "retrait": {
+      "question": "Retirer cet appareil ?",
+      "consequence": "{appareil} ne pourra plus se connecter au profil de {prenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.",
+      "confirmer": "Retirer l'appareil",
+      "enCours": "Retrait en cours",
+      "reussi": "Appareil retiré. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.",
+      "echec": "Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.",
+      "horsLigne": "Pas de connexion internet : l'appareil n'a pas été retiré."
+    },
+    "emetteur": {
+      "titre": "Connecter un appareil",
+      "pourEleve": "Pour {prenom}",
+      "consigneTitre": "Sur l'autre appareil",
+      "consigne": "Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.",
+      "libelleQr": "QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l'appareil ne lit pas le QR.",
+      "codeManuel": "Code à saisir",
+      "codeLu": "Code à saisir : {code}",
+      "valableJusqua": "Valable jusqu'à {heure}",
+      "restant": "Encore {temps}",
+      "sortie": "Quitter cet écran n'annule pas le code : il reste valable jusqu'à {heure}.",
+      "suiviIndisponible": "Cet écran ne peut pas confirmer la connexion. Vérifiez sur l'appareil de l'élève.",
+      "preparation": "Préparation du code",
+      "verification": {
+        "titre": "Vérification du code",
+        "phrase": "Le code est masqué le temps de vérifier qu'il est toujours valable."
+      },
+      "confirme": {
+        "titre": "Appareil connecté",
+        "phrase": "L'appareil de {prenom} est prêt. Le code n'est plus affiché et ne peut plus servir.",
+        "phraseSansPrenom": "L'appareil de l'élève est prêt. Le code n'est plus affiché et ne peut plus servir.",
+        "action": "Terminé"
+      },
+      "expire": {
+        "titre": "Ce code a expiré",
+        "phrase": "Il ne peut plus servir. Générez-en un nouveau quand l'autre appareil est prêt."
+      },
+      "remplace": {
+        "titre": "Ce code a été remplacé",
+        "phrase": "Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus."
+      },
+      "dejaActif": {
+        "titre": "Un code est déjà valable",
+        "phrase": "Un code créé pour cet élève vaut jusqu'à {heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l'ancien inutilisable."
+      },
+      "horsLigne": {
+        "titre": "Connexion interrompue",
+        "phraseAvecCode": "Le code est masqué jusqu'au retour de la connexion. Il reste valable jusqu'à {heure}.",
+        "phraseSansCode": "Le code n'a pas pu être préparé. Il le sera dès le retour de la connexion."
+      },
+      "erreur": {
+        "plafondTitre": "Limite d'appareils atteinte",
+        "plafondPhrase": "Cet élève a déjà le nombre maximal d'appareils. Retirez-en un pour en connecter un autre.",
+        "plafondAction": "Voir les appareils",
+        "horsFoyerTitre": "Profil élève introuvable",
+        "horsFoyerPhrase": "Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.",
+        "compteTitre": "Connexion d'appareil pas encore ouverte",
+        "comptePhrase": "Votre compte doit être validé avant de connecter l'appareil d'un élève.",
+        "generiqueTitre": "Le code n'a pas pu être préparé",
+        "generiquePhrase": "La demande n'a pas abouti. Réessayez dans un instant."
+      }
+    },
     "regenerer": "Générer un nouveau code",
     "revoquer": "Retirer",
-    "revoquerConfirmation": "Retirer cet appareil ? L'enfant devra le réappairer pour s'en resservir.",
-    "derniereUtilisation": "Utilisé {quand}",
-    "jamaisUtilise": "Jamais utilisé",
-    "erreur": "L'opération n'a pas abouti. Réessayez dans un instant."
+    "revoquerConfirmation": "Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code."
   },
   "enfant": {
-    "titre": "Ajouter un enfant",
-    "prenom": "Son prénom",
-    "nom": "Son nom",
-    "age": "Son âge",
-    "ageInvalide": "Indiquez un âge entre 3 et 18 ans.",
-    "ageRaison": "L'âge fixe le mode d'affichage et la politique caméra. Vous pourrez changer les deux à tout moment.",
-    "creer": "Ajouter au foyer",
-    "erreur": "L'ajout n'a pas abouti. Réessayez dans un instant.",
-    "aucun": "Aucun enfant dans le foyer",
-    "aucunDetail": "Ajoutez votre premier enfant pour pouvoir appairer son appareil."
+    "titre": "Ajouter un profil élève",
+    "aucun": "Aucun profil élève dans le foyer",
+    "aucunDetail": "Ajoutez d'abord un profil élève depuis le Foyer."
+  },
+  "reglagesEnfant": {
+    "titre": "Réglages par profil élève",
+    "intro": "La photo, la caméra et l'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l'administration restent ici.",
+    "renvoi": "Photo, caméra et interface",
+    "renvoiLegende": "Dans la fiche de {prenom}"
+  },
+  "foyer": {
+    "titre": "Foyer",
+    "ajouterProfil": "Ajouter un profil élève",
+    "sousTitre": "Les profils élèves de votre foyer",
+    "membres": "Profils élèves",
+    "vide": {
+      "titre": "Aucun profil élève pour l'instant",
+      "phrase": "Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil."
+    },
+    "membre": {
+      "sansClasse": "Pas encore de classe",
+      "classeEchec": "Classe non lue",
+      "accesSansEcheance": "Accès sans échéance",
+      "accesJusquau": "Accès jusqu'au {date}",
+      "accesExpire": "Accès expiré depuis le {date}",
+      "date": "{jour} {mois} {annee}"
+    },
+    "classesIndisponibles": "La classe de chaque élève ne s'affiche pas encore sur cette page.",
+    "classesEchec": "La classe de certains élèves n'a pas pu être lue.",
+    "relireClasses": "Relire les classes",
+    "inscriptionIllisible": "L'inscription en cours de chaque élève ne s'affiche pas encore sur cette page.",
+    "appareilsPartages": "Appareils partagés",
+    "appareilsFoyer": "Appareils du foyer",
+    "appareilsFoyerLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
+    "creerMonProfil": "Créer mon profil élève",
+    "monProfil": {
+      "titre": "Créer mon profil élève",
+      "indisponibleTitre": "Pas encore possible",
+      "indisponiblePhrase": "Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.",
+      "retour": "Retour au foyer"
+    },
+    "ajout": {
+      "suivant": "Suivant",
+      "creer": "Créer le profil",
+      "porte": {
+        "illisibleTitre": "Votre compte n'a pas pu être lu",
+        "illisiblePhrase": "Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant."
+      },
+      "pourQui": {
+        "question": "Pour qui est ce profil élève ?",
+        "sousTitre": "Choisissez la personne qui suivra les cours.",
+        "requis": "Choisissez pour qui est ce profil pour continuer.",
+        "indisponible": "Indisponible",
+        "enfantTitre": "Un enfant ou un mineur",
+        "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
+        "enfantAttente": "Possible dès que votre dossier est validé.",
+        "procheTitre": "Un proche adulte",
+        "procheDescription": "Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.",
+        "moiTitre": "Moi-même",
+        "moiDescription": "Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement."
+      },
+      "identite": {
+        "question": "Qui est l'élève ?",
+        "sousTitre": "Son prénom, son nom et son âge.",
+        "prenom": "Prénom",
+        "nom": "Nom",
+        "nomAide": "Le nom de famille n'est jamais montré à l'enseignant.",
+        "age": "Âge",
+        "ageSuffixe": "ans",
+        "ageAide": "L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite."
+      },
+      "erreurs": {
+        "prenomRequis": "Indiquez le prénom de l'élève.",
+        "nomRequis": "Indiquez le nom de l'élève.",
+        "ageRequis": "Indiquez l'âge, en chiffres.",
+        "ageHorsBornes": "Indiquez un âge entre {min} et {max} ans."
+      },
+      "refus": {
+        "compteNonValide": "Votre dossier doit être validé avant d'ajouter un profil élève.",
+        "ageHorsBornes": "Cet âge n'est pas accepté. Vérifiez-le puis réessayez.",
+        "refuse": "La création n'a pas été acceptée. Vérifiez les informations puis réessayez."
+      },
+      "incertaine": {
+        "titre": "Le profil a peut-être été créé",
+        "phrase": "La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.",
+        "voirFoyer": "Voir le foyer",
+        "reessayer": "Réessayer quand même"
+      },
+      "horsLigne": "Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra."
+    }
+  },
+  "ficheEleve": {
+    "titreRepli": "Profil élève",
+    "parametres": "Paramètres de l'élève",
+    "appareilsGroupe": "Appareils",
+    "introuvable": {
+      "titre": "Ce profil élève est introuvable",
+      "phrase": "Il ne fait pas partie de votre foyer, ou le lien est incomplet.",
+      "retour": "Retour au foyer"
+    },
+    "lignes": {
+      "informations": "Informations",
+      "informationsLegende": "Prénom et photo",
+      "inscription": "Parcours et inscription",
+      "inscriptionLegende": "Questionnaire et classe",
+      "interface": "Interface",
+      "camera": "Caméra en cours",
+      "cameraAutorisee": "Autorisée",
+      "cameraNonAutorisee": "Non autorisée",
+      "acces": "Accès Rewayah",
+      "appareils": "Appareils de {prenom}",
+      "appareilsLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un"
+    },
+    "informations": {
+      "titre": "Informations de l'élève",
+      "identite": "Identité",
+      "prenom": "Prénom",
+      "identiteNote": "Le prénom ne se modifie pas encore depuis cette page.",
+      "ageNote": "L'âge et la date de naissance ne sont pas encore enregistrés sur le profil.",
+      "photo": "Photo",
+      "photoLegende": "Une photo du visage de {prenom}. Ce n'est pas une pièce d'identité.",
+      "photoAucune": "Pas encore de photo",
+      "photoPresente": "Photo enregistrée",
+      "choisir": "Choisir une photo",
+      "changer": "Changer la photo",
+      "apercuTitre": "Aperçu",
+      "apercuPhrase": "Vérifiez la photo avant de l'envoyer.",
+      "apercuIllisible": "L'aperçu ne s'affiche pas sur cet appareil. La photo peut quand même être envoyée.",
+      "envoyer": "Envoyer cette photo",
+      "autre": "Choisir une autre photo",
+      "annuler": "Annuler",
+      "etapeEnvoi": "Envoi de la photo, étape 1 sur 2",
+      "etapeEnregistrement": "Enregistrement sur le profil, étape 2 sur 2",
+      "succes": "La photo est enregistrée.",
+      "tropLourde": "Cette photo dépasse {taille} Mo. Choisissez une image plus légère.",
+      "echecEnvoi": "La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.",
+      "echecEnregistrement": "La photo est envoyée, mais elle n'a pas pu être enregistrée sur le profil.",
+      "reprendre": "Réessayer",
+      "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
+      "horsLigne": "Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra."
+    },
+    "inscription": {
+      "titre": "Parcours et inscription",
+      "intro": "Où en est {prenom} : questionnaire et classe.",
+      "questionnaire": "Questionnaire",
+      "classe": "Classe",
+      "lecture": "Lecture en cours",
+      "etatInconnu": "L'état du questionnaire ne s'affiche pas encore.",
+      "aRemplir": "À remplir",
+      "horaireAChoisir": "Rempli, horaire à choisir",
+      "horaireRetire": "Horaire retiré, à choisir de nouveau",
+      "echangeAPrevoir": "Préférence enregistrée, échange de niveau à prévoir",
+      "echangePrevu": "Échange de niveau prévu",
+      "classeEnConstitution": "Classe en cours de constitution",
+      "classeConfirmee": "Classe confirmée",
+      "classeAucune": "Pas encore de classe. Choisir une classe",
+      "classeIndisponible": "La classe ne s'affiche pas encore ici. Choisir une classe",
+      "classeEchec": "La classe n'a pas pu être lue.",
+      "relireClasse": "Relire la classe"
+    },
+    "interface": {
+      "titre": "Interface",
+      "intro": "Comment Rewayah s'affiche sur l'appareil de {prenom}.",
+      "guidee": "Interface guidée",
+      "guideeDescription": "Des écrans simplifiés, de grands boutons, une chose à la fois.",
+      "standard": "Interface standard",
+      "standardDescription": "L'affichage habituel de Rewayah.",
+      "politique": "Vous choisissez ce réglage. Au départ, il a été fixé selon l'âge indiqué à la création du profil.",
+      "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
+      "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
+      "enCours": "Enregistrement en cours",
+      "echec": "Le changement n'a pas été enregistré. Réessayez.",
+      "horsLigne": "Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra."
+    },
+    "camera": {
+      "titre": "Caméra en cours",
+      "ligne": "Caméra pendant les séances",
+      "autorisee": "{prenom} peut allumer sa caméra pendant les séances.",
+      "interdite": "Le bouton caméra n'apparaîtra pas pour {prenom} pendant les séances.",
+      "application": "Le changement compte à la prochaine entrée de {prenom} en séance.",
+      "distincte": "Ce réglage ne change pas l'autorisation caméra de l'appareil, celle que le téléphone demande pour lire un QR code.",
+      "echec": "Le changement n'a pas été enregistré. Réessayez.",
+      "horsLigne": "Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra."
+    },
+    "acces": {
+      "titre": "Accès Rewayah",
+      "ligne": "Accès de {prenom}",
+      "pastilleSansEcheance": "Sans échéance",
+      "pastilleEnCours": "En cours",
+      "pastilleExpire": "Expiré",
+      "sansEcheance": "Aucune date de fin n'est enregistrée.",
+      "jusquau": "Jusqu'au {date}",
+      "expireDepuis": "Expiré depuis le {date}",
+      "expirePhrase": "Depuis cette date, {prenom} ne peut plus entrer dans Rewayah.",
+      "detailIndisponible": "Le début de l'accès et son motif ne s'affichent pas encore."
+    }
   },
   "disponibilites": {
     "titre": "Quand vos enfants peuvent-ils suivre un cours ?",
@@ -309,14 +810,87 @@
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
     "scanner": "Scanner le carré",
-    "codeInvite": "Entre le code affiché sur le téléphone de tes parents",
-    "codeErreur": "Ce code ne marche pas",
-    "codeExpire": "Ce code est trop vieux. Demande-en un nouveau.",
     "choisirProfil": "Qui es-tu ?",
-    "nouveauCode": "Choisis ton code secret",
-    "nouveauCodeConfirmer": "Entre-le encore une fois",
-    "codeDifferent": "Les deux codes ne sont pas les mêmes",
-    "codeEnregistre": "Code enregistré"
+    "profils": {
+      "phrase": "Touche ton prénom pour continuer.",
+      "ajouter": "Ajouter un profil sur cet appareil",
+      "ajouterLegende": "Avec le code affiché par le tuteur",
+      "profilLibelle": "Continuer en tant que {prenom}",
+      "videTitre": "Aucun profil sur cet appareil",
+      "vide": "Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.",
+      "videAction": "Saisir un code",
+      "retire": "Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.",
+      "jetonAbsent": "Cet appareil ne retrouve plus la connexion de {prenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici."
+    },
+    "pin": {
+      "bonjour": "Bonjour {prenom}",
+      "creer": "Choisis ton code personnel",
+      "creerPhrase": "Quatre chiffres, rien que pour toi. Il reste sur cet appareil.",
+      "confirmer": "Entre-le encore une fois",
+      "different": "Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.",
+      "ouverture": "Connexion en cours",
+      "horsLigne": "Pas de connexion internet. Ton code est bon : réessaie quand internet revient.",
+      "tropDEssais": "Trop d'essais. Patiente un instant avant de réessayer.",
+      "echec": "La connexion n'a pas abouti. Réessaie dans un instant.",
+      "changerProfil": "Changer de profil",
+      "oublie": "Code oublié ?",
+      "oubliePhrase": "Demande au tuteur d'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.",
+      "oublieAction": "Saisir un nouveau code"
+    },
+    "saisie": {
+      "titre": "Connecter cet appareil",
+      "phrase": "Saisissez le code de six caractères affiché sous le QR code, sur l'appareil du tuteur.",
+      "champ": "Code",
+      "aide": "Chiffres de 2 à 9 et lettres, sans I ni O.",
+      "valider": "Connecter l'appareil",
+      "scanner": "Scanner le QR code",
+      "horsLigne": "Pas de connexion internet. Le code pourra être vérifié au retour du réseau."
+    },
+    "lecteur": {
+      "titre": "Scanner le QR code",
+      "consigne": "Visez le QR code affiché sur l'appareil du tuteur.",
+      "demarrage": "Autorisez la caméra si l'appareil le demande.",
+      "libelleApercu": "Vue de la caméra",
+      "contenuInvalide": "Ce QR code n'est pas un code de connexion Rewayah. Visez celui affiché par le tuteur.",
+      "saisir": "Saisir le code",
+      "scannerANouveau": "Scanner à nouveau",
+      "verificationTitre": "Vérification du code",
+      "verificationPhrase": "La caméra est arrêtée pendant la vérification.",
+      "refuseeTitre": "Caméra non autorisée",
+      "refuseePhrase": "Pour lire le QR code, autorisez la caméra. Vous pouvez aussi saisir le code affiché sous le QR.",
+      "refuseeAction": "Autoriser la caméra",
+      "refuseeDurablementTitre": "Caméra bloquée",
+      "refuseeDurablementPhrase": "La caméra reste refusée pour Rewayah. Autorisez-la dans les réglages de l'appareil ou du navigateur, ou saisissez le code.",
+      "occupeeTitre": "Caméra occupée",
+      "occupeePhrase": "Une autre application utilise la caméra. Fermez-la, puis réessayez, ou saisissez le code.",
+      "absenteTitre": "Aucune caméra",
+      "absentePhrase": "Cet appareil n'a pas de caméra disponible. Saisissez le code affiché sous le QR.",
+      "nonSupporteeTitre": "Lecture impossible ici",
+      "nonSupporteePhrase": "Cet appareil ou ce navigateur ne sait pas lire un QR code. Saisissez le code affiché sous le QR.",
+      "erreurTitre": "La caméra n'a pas démarré",
+      "erreurPhrase": "Réessayez, ou saisissez le code affiché sous le QR."
+    },
+    "refus": {
+      "format": "Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.",
+      "inconnuTitre": "Code non reconnu",
+      "inconnu": "Ce code n'existe pas, ou un code plus récent l'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l'appareil du tuteur.",
+      "expireTitre": "Code expiré",
+      "expire": "Ce code n'est plus valable. Affichez un nouveau code sur l'appareil du tuteur.",
+      "dejaUtiliseTitre": "Code déjà utilisé",
+      "dejaUtilise": "Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l'appareil du tuteur.",
+      "revoqueTitre": "Appareil retiré",
+      "revoque": "Le tuteur a retiré cet appareil. Demandez-lui d'afficher un nouveau code.",
+      "plafondTitre": "Limite d'appareils atteinte",
+      "plafond": "Ce profil élève a atteint le nombre d'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.",
+      "tropDEssaisTitre": "Trop d'essais",
+      "tropDEssais": "Patientez un instant avant de réessayer.",
+      "horsLigneTitre": "Pas de connexion",
+      "horsLigne": "Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.",
+      "nonEnregistreTitre": "Connexion non enregistrée",
+      "nonEnregistre": "Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.",
+      "generiqueTitre": "Connexion non aboutie",
+      "generique": "La vérification du code n'a pas abouti. Réessayez dans un instant."
+    }
   },
   "dossiers": {
     "titre": "Dossiers à valider",
@@ -820,7 +1394,58 @@
       "erreur": "Le journal n'a pas pu être lu. Réessayez dans un instant.",
       "erreurSuite": "Les entrées plus anciennes n'ont pas pu être lues.",
       "chargerSuite": "Charger les entrées plus anciennes",
-      "fin": "Vous êtes remonté jusqu'à la première entrée du journal."
+      "fin": "Vous êtes remonté jusqu'à la première entrée du journal.",
+      "evenements": {
+        "observationEntree": "Visite d'observation commencée",
+        "observationSortie": "Visite d'observation terminée",
+        "observationPolitiqueGroupeModifiee": "Règles d'observation de la classe modifiées"
+      }
+    },
+    "observations": {
+      "titre": "Observations",
+      "titrePage": "Historique des observations",
+      "sousTitre": "Administration",
+      "recherche": "Rechercher un tuteur ou un élève",
+      "rechercheCourte": "Saisissez au moins deux lettres.",
+      "rechercheAucune": "Aucun tuteur ni élève ne porte ce nom.",
+      "rechercheErreur": "La recherche n'a pas abouti. Réessayez.",
+      "roleTuteur": "Tuteur",
+      "roleEleve": "Élève",
+      "filtreTuteur": "Tuteur : {nom}",
+      "filtreEleve": "Élève : {nom}",
+      "retirerFiltre": "Retirer le filtre {filtre}",
+      "classe": "Classe",
+      "toutesClasses": "Toutes les classes",
+      "periode": "Période",
+      "statut": "Statut",
+      "tousStatuts": "Tous les statuts",
+      "colonneDate": "Date",
+      "colonneTuteur": "Tuteur",
+      "colonneEleve": "Élève",
+      "colonneClasse": "Classe",
+      "colonneEntree": "Entrée",
+      "colonneSortie": "Sortie",
+      "colonneDuree": "Durée",
+      "colonneStatut": "Statut",
+      "terminee": "Terminée",
+      "ouverte": "Sortie non enregistrée",
+      "sortieAbsente": "Non enregistrée",
+      "dureeNonConfirmee": "Non confirmée",
+      "nomInconnu": "Nom non disponible",
+      "classeInconnue": "Classe non disponible",
+      "plage": "{entree} - {sortie}",
+      "ligne": "Visite {rang} du {date}, {tuteur} pour {eleve}, {classe}, entrée {entree}, sortie {sortie}, durée {duree}, {statut}",
+      "fuseau": "Heures affichées à l'heure de cet appareil (UTC{decalage}).",
+      "indisponibleTitre": "Historique des observations indisponible",
+      "indisponiblePhrase": "La lecture des visites d'observation n'est pas encore ouverte dans l'application.",
+      "videTitre": "Aucune visite enregistrée",
+      "videPhrase": "Les visites d'observation des tuteurs s'afficheront ici.",
+      "videFiltreTitre": "Aucune visite ne correspond",
+      "videFiltrePhrase": "Élargissez la période ou retirez un filtre.",
+      "effacerFiltres": "Effacer les filtres",
+      "chargerSuite": "Charger les visites plus anciennes",
+      "erreurSuite": "Les visites plus anciennes n'ont pas pu être lues.",
+      "fin": "Toutes les visites sont affichées."
     },
     "comptes": {
       "titre": "Comptes",
@@ -970,9 +1595,25 @@
     "modifier": "Modifier mes réponses",
     "erreur": "Cette réponse n'a pas pu être enregistrée. Réessayez.",
     "chargement": "Nous préparons vos options.",
+    "pourPrenom": "Pour {prenom}",
+    "retourAccueil": "Retour à l'accueil",
+    "retourFoyer": "Retour au Foyer",
+    "reessayer": "Réessayer",
+    "indisponibleTitre": "Le questionnaire n'est pas encore disponible",
+    "indisponibleDetail": "Cette étape n'est pas encore ouverte par l'académie. Vous n'avez rien à faire pour l'instant : rien n'est perdu, et vous pourrez la remplir dès qu'elle sera ouverte.",
+    "horsLigneTitre": "Pas de connexion",
+    "horsLigneDetail": "Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.",
+    "erreurChargement": "Le questionnaire n'a pas pu s'afficher",
+    "erreurChargementDetail": "Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.",
+    "introuvableTitre": "Ce profil élève est introuvable",
+    "introuvableDetail": "Il a peut-être été retiré du foyer. Revenez au Foyer pour choisir un profil élève.",
+    "finTitre": "Préférence enregistrée pour {prenom}",
+    "finDetail": "Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.",
+    "finAjouterDetail": "Une autre personne du foyer souhaite apprendre ?",
+    "finAjouterProfil": "Ajouter un profil élève",
 
     "ageQuestion": "Quel âge a {prenom} ?",
-    "ageRaison": "L'âge décide de la durée des séances et du nombre d'élèves par groupe. Nous ne demandons pas de date de naissance : une tranche suffit.",
+    "ageRaison": "L'âge décide de la durée des séances et du nombre d'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.",
 
     "langueQuestion": "Dans quelle langue le cours doit-il être donné ?",
     "langueRaison": "C'est la langue que l'enseignant parlera pendant la séance. Elle est indépendante de la langue de l'application, que vous pouvez changer à tout moment dans vos réglages.",
@@ -1003,7 +1644,7 @@
     "momentSoir": "Le soir",
 
     "offresQuestion": "Voici les horaires ouverts pour {prenom}",
-    "offresRaison": "Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore un groupe.",
+    "offresRaison": "Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.",
     "offreRecommandee": "Le plus proche de vos réponses",
     "offresAutres": "Autres horaires possibles",
     "offreRecurrence": "{seances} séances par semaine, {duree} min",
@@ -1019,7 +1660,7 @@
     "aucuneOffreDetail": "L'académie ouvre de nouveaux horaires au fil des inscriptions. Vous pouvez nous signaler votre besoin : cela nous aide à décider lesquels ouvrir.",
     "refusAucun": "Aucun de ces horaires ne me convient",
     "refusPrevenir": "Me prévenir si de nouveaux horaires ouvrent",
-    "refusEffet": "Nous enregistrons que la demande existe. Cela ne crée pas de groupe, ne cherche pas d'enseignant et ne promet aucun horaire futur.",
+    "refusEffet": "Nous enregistrons que la demande existe. Cela ne crée pas de classe, ne cherche pas d'enseignant et ne promet aucun horaire futur.",
     "refusEnregistre": "C'est noté. Nous vous préviendrons si un horaire correspondant ouvre.",
 
     "etatAPersonnaliser": "Parcours à personnaliser",
@@ -1027,15 +1668,16 @@
     "etatHoraireAChoisir": "Horaire à choisir",
     "etatHoraireAChoisirDetail": "Les horaires ouverts pour {prenom} vous attendent.",
     "etatOffreIndisponible": "Cet horaire n'est plus proposé",
-    "etatOffreIndisponibleDetail": "L'horaire retenu pour {prenom} a été retiré avant qu'un groupe soit constitué. Choisissez-en un autre : rien n'est perdu.",
+    "etatOffreIndisponibleDetail": "L'horaire retenu pour {prenom} a été retiré avant qu'une classe soit constituée. Choisissez-en un autre : rien n'est perdu.",
     "etatDiagnosticRequis": "Préférence enregistrée",
     "etatDiagnosticRequisDetail": "Il reste un échange avec un enseignant pour situer le niveau de {prenom}. L'académie vous proposera un rendez-vous.",
     "etatDiagnosticEnAttente": "Rendez-vous prévu",
     "etatDiagnosticEnAttenteDetail": "Un échange est prévu pour situer le niveau de {prenom}.",
-    "etatGroupeEnFormation": "Groupe en cours de constitution",
-    "etatGroupeEnFormationDetail": "Un groupe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'il est confirmé.",
-    "etatGroupeConfirme": "Groupe confirmé",
-    "etatGroupeConfirmeDetail": "Le groupe de {prenom} est constitué. Vous retrouverez ses séances dans son espace.",
+    "etatClasseEnFormation": "Classe en cours de constitution",
+    "etatClasseEnFormationDetail": "Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.",
+    "etatClasseEnFormationDetailSansMinimum": "Une classe démarre à partir d'un certain nombre d'élèves. Nous vous préviendrons dès qu'elle est confirmée.",
+    "etatClasseConfirmee": "Classe confirmée",
+    "etatClasseConfirmeeDetail": "La classe de {prenom} est constituée. Vous retrouverez ses séances dans son espace.",
 
     "fuseauChange": "Votre lieu a changé depuis ce choix",
     "fuseauChangeDetail": "L'horaire est le même pour l'académie, mais il ne tombe plus à la même heure chez vous. Vérifiez qu'il vous convient toujours.",
@@ -1058,7 +1700,9 @@
       "foyer": "Foyer",
       "disponibilites": "Disponibilités",
       "reglages": "Réglages",
-      "suivi": "Suivi"
+      "suivi": "Suivi",
+      "historique": "Historique",
+      "compte": "Compte"
     },
     "enseignant": {
       "journee": "Journée",
@@ -1089,7 +1733,11 @@
       "notificationsTitre": "Notifications",
       "menu": "Menu"
     },
-    "compte": "Mon compte"
+    "compte": "Mon compte",
+    "principale": "Navigation principale",
+    "motSymbole": "Rewayah",
+    "replier": "Replier la navigation",
+    "deplier": "Déplier la navigation"
   },
   "compte": {
     "titre": "Mon compte",
@@ -1099,7 +1747,7 @@
     "profilDetail": "Voir et gérer vos informations",
     "reglages": "Réglages",
     "reglagesDetail": "Apparence, notifications et accessibilité",
-    "profils": "Profils du foyer",
+    "profils": "Gérer mon foyer",
     "profilsDetail": "Gérer les profils de vos enfants",
     "appareils": "Foyer",
     "appareilsDetail": "Les appareils et profils rattachés à votre foyer",
@@ -1184,7 +1832,254 @@
       "teacher": "Donne les cours et suit ses créneaux",
       "guardian": "Suit le foyer et ses enfants",
       "student": "Suit ses cours et son Coran"
+    },
+    "tuteur": {
+      "preferences": "Préférences",
+      "dateLongue": "{jour} {mois} {annee}",
+      "identite": {
+        "statutValide": "Compte validé",
+        "statutProvisoire": "Profil à compléter",
+        "nomInconnu": "Titulaire du compte",
+        "courrielAbsent": "Adresse de connexion non communiquée",
+        "connexionLien": "Connexion par lien reçu par courriel",
+        "connexionGoogle": "Connexion avec Google",
+        "connexionInconnue": "Méthode de connexion non précisée"
+      },
+      "acces": {
+        "titre": "Accès et paiements",
+        "resume": "Statut et échéance de chaque profil élève",
+        "pastilleActif": "Accès actif",
+        "pastilleExpire": "Accès terminé",
+        "ligne": "Accès des profils élèves",
+        "paiements": "Paiements et reçus"
+      },
+      "securite": {
+        "titre": "Connexion et sécurité",
+        "methode": "Méthode de connexion",
+        "methodeLien": "Lien par courriel",
+        "methodeGoogle": "Google"
+      },
+      "informations": {
+        "titre": "Informations personnelles",
+        "resume": "Nom, adresse de connexion, langue et fuseau",
+        "langueFuseau": "Français · {ville}",
+        "consulter": "Consulter mes informations"
+      },
+      "foyer": {
+        "titre": "Mon foyer",
+        "aucun": "Aucun profil élève pour le moment",
+        "un": "1 profil élève",
+        "plusieurs": "{nombre} profils élèves",
+        "legende": "Profils élèves et appareils du foyer",
+        "creerMonProfil": "Créer mon profil élève"
+      },
+      "aide": {
+        "titre": "Aide et support",
+        "ligne": "Aide et contact",
+        "legal": "Informations légales"
+      },
+      "deconnexion": {
+        "question": "Se déconnecter de Rewayah ?",
+        "consequence": "Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.",
+        "confirmer": "Me déconnecter",
+        "echec": "La déconnexion n'a pas abouti. Vérifiez votre connexion, puis réessayez."
+      },
+      "pageInformations": {
+        "titre": "Informations personnelles",
+        "prenom": "Prénom",
+        "nom": "Nom",
+        "courriel": "Adresse de connexion",
+        "langue": "Langue de l'interface",
+        "fuseau": "Fuseau des séances",
+        "fuseauIndisponible": "Non disponible pour le moment",
+        "note": "Ces informations sont tenues par l'académie. Elles ne se modifient pas encore depuis l'application."
+      },
+      "pageSecurite": {
+        "titre": "Connexion et sécurité",
+        "sousTitre": "Comment vous accédez à votre compte.",
+        "methode": "Méthode de connexion",
+        "adresse": "Adresse de connexion",
+        "appareils": "Les appareils connectés à votre compte ne sont pas encore listés dans l'application.",
+        "deconnexion": "Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte."
+      },
+      "pageAcces": {
+        "titre": "Accès des profils élèves",
+        "sousTitre": "Le statut de l'accès de chaque profil élève.",
+        "sansEcheance": "Sans date de fin",
+        "jusqua": "Ouvert jusqu'au {date}",
+        "expire": "Terminé le {date}",
+        "pastilleActif": "Actif",
+        "pastilleExpire": "Terminé",
+        "aucunTitre": "Aucun profil élève",
+        "aucunePhrase": "L'accès de chaque profil élève s'affichera ici.",
+        "titulaire": "Votre compte de titulaire n'a pas d'échéance propre : l'accès se règle profil par profil."
+      },
+      "pagePaiements": {
+        "titre": "Paiements et reçus",
+        "indisponibleTitre": "Paiements pas encore consultables",
+        "indisponiblePhrase": "L'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l'application. Aucun paiement ne vous est demandé ici.",
+        "aucunTitre": "Aucun paiement enregistré",
+        "aucunePhrase": "Les paiements enregistrés par l'académie s'afficheront ici.",
+        "paiementDu": "Paiement du {date}",
+        "justificatif": "Justificatif disponible"
+      },
+      "pagePreferences": {
+        "titre": "Préférences",
+        "sousTitre": "Personnalisez votre expérience sur cet appareil.",
+        "apparence": "Apparence",
+        "apparenceDetail": "Thème et confort visuel",
+        "langue": "Langue et région",
+        "notifications": "Notifications",
+        "notificationsDetail": "Pas encore disponibles dans l'application"
+      },
+      "pageApparence": {
+        "titre": "Apparence",
+        "sousTitre": "Appliqué sur cet appareil.",
+        "theme": "Thème de l'application",
+        "themeDetail": "Personnalisez l'apparence de Rewayah.",
+        "confort": "Confort visuel",
+        "animations": "Animations",
+        "animationsDetail": "Réduites quand votre appareil le demande",
+        "texte": "Taille du texte",
+        "texteDetail": "Suit la taille du système"
+      },
+      "pageAide": {
+        "titre": "Aide et support",
+        "indisponibleTitre": "Aide pas encore disponible",
+        "indisponiblePhrase": "Les questions fréquentes et le contact de l'académie ne sont pas encore ouverts dans l'application.",
+        "canalCourriel": "Courriel de l'académie",
+        "canalLien": "Page d'aide de l'académie",
+        "aucunCanal": "Aucun canal d'aide n'est publié pour le moment."
+      },
+      "pageLegal": {
+        "titre": "Informations légales",
+        "documents": "Documents acceptés",
+        "conditionsTuteur": "Conditions du tuteur",
+        "contratEnseignant": "Contrat enseignant",
+        "accuseEnregistrement": "Accusé d'enregistrement des cours",
+        "acceptation": "Version {version}, acceptée le {date}",
+        "aucunTitre": "Aucun document accepté",
+        "aucun": "Aucun document accepté n'est enregistré pour ce compte.",
+        "lectureSeule": "Un document accepté ne se modifie pas.",
+        "textes": "Conditions et confidentialité",
+        "textesIndisponibles": "Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l'application."
+      }
     }
+  },
+  "historique": {
+    "titre": "Historique",
+    "detailSeance": "Détail de la séance",
+    "segments": {
+      "seances": "Séances",
+      "observations": "Observations"
+    },
+    "moisCourts": ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."],
+    "dateCourte": "{jour} {mois} {annee}",
+    "dateLongue": "{jourSemaine} {jour} {mois} {annee}",
+    "plage": "{debut} - {fin}",
+    "duree": {
+      "secondes": "{s} s",
+      "minutes": "{m} min",
+      "minutesSecondes": "{m} min {s} s",
+      "heures": "{h} h",
+      "heuresMinutes": "{h} h {m}"
+    },
+    "fuseauListe": "Heures affichées à l'heure de cet appareil.",
+    "fuseauDetail": "Heures affichées à l'heure de cet appareil (UTC{decalage}).",
+    "classeInconnue": "Classe non disponible",
+    "selecteur": {
+      "aucune": "Aucune séance",
+      "une": "1 séance",
+      "plusieurs": "{n} séances"
+    },
+    "filtres": {
+      "classe": "Classe",
+      "toutesClasses": "Toutes les classes",
+      "periode": "Période",
+      "toutePeriode": "Toute la période",
+      "septJours": "7 derniers jours",
+      "trenteJours": "30 derniers jours",
+      "troisMois": "3 derniers mois",
+      "statut": "Statut",
+      "tousStatuts": "Tous les statuts"
+    },
+    "retour": "Retour à l'historique",
+    "etat": {
+      "presence": "Présence",
+      "retard": "Retard {minutes} min",
+      "retardSansDuree": "Retard",
+      "verification": "En cours de vérification",
+      "annule": "Cours annulé",
+      "nonTenu": "Cours non tenu"
+    },
+    "presenceIllisible": "La présence n'a pas pu être lue : les états restent inconnus pour le moment.",
+    "seances": {
+      "videTitre": "Aucune séance passée",
+      "videPhrase": "Les séances passées de {prenom} s'afficheront ici.",
+      "videPhraseFoyer": "Les séances passées des profils élèves s'afficheront ici.",
+      "filtreVideTitre": "Aucune séance ne correspond",
+      "filtreVidePhrase": "Changez les filtres pour retrouver les autres séances.",
+      "tronquee": "Les {nombre} séances les plus récentes sont affichées.",
+      "ouvrir": "Séance du {date}, {classe}, {etat}"
+    },
+    "observations": {
+      "indisponibleTitre": "Historique des observations indisponible",
+      "indisponiblePhrase": "Les visites enregistrées ne peuvent pas encore être lues dans l'application.",
+      "videTitre": "Aucune observation",
+      "videPhrase": "Les visites que vous faites pendant les séances de {prenom} s'afficheront ici.",
+      "videPhraseFoyer": "Vos visites pendant les séances s'afficheront ici.",
+      "filtreVideTitre": "Aucune observation ne correspond",
+      "filtreVidePhrase": "Changez les filtres pour retrouver les autres visites.",
+      "visiteUne": "1 visite",
+      "visites": "{n} visites",
+      "dureeNonConfirmee": "Durée non confirmée",
+      "terminee": "Terminée",
+      "nonRefermee": "Sortie non enregistrée",
+      "eleveInconnu": "Élève",
+      "tronquee": "Seules les visites les plus récentes sont affichées.",
+      "ouvrir": "Observations du {date}, {classe}, {etat}"
+    },
+    "seance": {
+      "titreSansClasse": "Séance du {date}",
+      "blocSeance": "La séance",
+      "blocPresence": "Présence de {prenom}",
+      "date": "Date",
+      "horaire": "Horaire",
+      "dureePrevue": "Durée prévue",
+      "classe": "Classe",
+      "enseignant": "Enseignant",
+      "presence": "Présence",
+      "arrivee": "Arrivée",
+      "interruption": "Interruption",
+      "verificationPhrase": "La présence n'est pas encore confirmée pour cette séance.",
+      "nonTenuPhrase": "La séance n'a pas eu lieu : ce n'est pas le fait de l'élève.",
+      "annulePhrase": "La séance a été annulée.",
+      "introuvableTitre": "Séance introuvable",
+      "introuvablePhrase": "Cette séance ne figure pas dans l'historique de votre foyer."
+    },
+    "observation": {
+      "titreSansClasse": "Observations du {date}",
+      "blocResume": "Résumé",
+      "blocVisites": "Visites",
+      "observateur": "Observateur",
+      "vous": "Vous",
+      "eleve": "Élève",
+      "enseignant": "Enseignant",
+      "dureeTotale": "Durée totale",
+      "visite": "Visite {n}",
+      "plageOuverte": "Entrée à {debut}",
+      "terminee": "Visite terminée",
+      "introuvableTitre": "Aucune visite pour cette séance",
+      "introuvablePhrase": "Aucune visite enregistrée ne correspond à cette séance."
+    }
+  },
+  "notifications": {
+    "titre": "Notifications",
+    "indisponibleTitre": "Les notifications ne sont pas encore disponibles",
+    "indisponiblePhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici dès qu'ils seront ouverts.",
+    "videTitre": "Aucune notification",
+    "videPhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici.",
+    "ligne": "{titre}, le {date} à {heure}"
   },
   "eleve": {
     "accueil": {
@@ -1256,7 +2151,59 @@
   },
   "tuteur": {
     "accueil": {
-      "titre": "Votre foyer",
+      "titre": "Accueil",
+      "voirLaClasse": "Voir la classe",
+      "prochaineSeance": "Prochaine séance",
+      "heureDe": "Heure de {ville}",
+      "heureAppareil": "Heure de cet appareil",
+      "dateEtFuseau": "{date} · {fuseau}",
+      "heureClasse": "Heure de la classe : {heure} {ville}",
+      "seanceEnDirect": "Séance en direct",
+      "seanceTerminee": "Séance terminée",
+      "seanceAnnulee": "Cette séance n'aura pas lieu.",
+      "seanceNonTenue": "Cette séance n'a pas pu se tenir.",
+      "horaireIncertain": "Ouverture de la salle non confirmée pour l'instant",
+      "pastilleAnnulee": "Annulée",
+      "pastilleNonTenue": "Non tenue",
+      "pastilleTerminee": "Terminée",
+      "aucuneSeance": "Aucune séance planifiée",
+      "aucuneSeanceDetail": "La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.",
+      "seanceIllisible": "La prochaine séance n'a pas pu être lue.",
+      "classeIndisponible": "Le détail de la classe n'est pas encore disponible ici.",
+      "classeIllisible": "La classe n'a pas pu être lue.",
+      "sansClasseTitre": "Aucune classe pour {prenom}",
+      "sansClassePhrase": "Choisissez une classe pour que {prenom} puisse commencer les cours.",
+      "foyerVideTitre": "Aucun profil élève pour l'instant",
+      "foyerVidePhrase": "Ajoutez un profil élève pour choisir une classe et suivre ses séances.",
+      "ajouterProfil": "Ajouter un profil élève",
+      "profilsIllisibles": "Les profils du foyer n'ont pas pu être lus.",
+      "blocageAppareilTitre": "Aucun appareil prêt pour {prenom}",
+      "blocageAppareilPhrase": "Sans appareil connecté, {prenom} ne pourra pas entrer en classe.",
+      "connecterAppareil": "Connecter un appareil",
+      "avantProchainCours": "Avant le prochain cours",
+      "voirTout": "Voir tout",
+      "travailIndisponible": "Le travail à préparer n'est pas encore relié à cet espace.",
+      "travailIllisible": "Le travail à préparer n'a pas pu être lu.",
+      "rienAPreparer": "Rien à préparer pour l'instant",
+      "derniereSeance": "Dernière séance",
+      "voirHistorique": "Voir l'historique",
+      "detailsSeance": "Détails de la séance",
+      "aucuneDerniere": "Aucune séance passée pour l'instant",
+      "derniereIllisible": "La dernière séance n'a pas pu être lue.",
+      "dateEtDuree": "{date} · {duree}",
+      "etatCourt": {
+        "enDirect": "En direct",
+        "salleOuverte": "Salle ouverte",
+        "dansMinutes": "Dans {minutes} min",
+        "dansHeures": "Dans {heures} h {minutes}",
+        "dansJours": "Dans {jours} j",
+        "prevue": "Séance prévue",
+        "annulee": "Séance annulée",
+        "nonTenue": "Séance non tenue",
+        "terminee": "Séance terminée",
+        "aucune": "Aucune séance",
+        "illisible": "Non disponible"
+      },
       "assister": "Assister",
       "assisterRefuse": "Le cours n'a pas pu être rejoint. Il vient peut-être de se terminer.",
       "enCours": "En cours avec {prenom}",
@@ -1327,28 +2274,134 @@
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.",
       "erreur": "L'enregistrement n'a pas abouti : {message}"
+    }
+  },
+  "classe": {
+    "catalogue": "Choisir une classe",
+    "planning": "Planning",
+    "travail": "Avant le prochain cours",
+    "ressources": "Bibliothèque",
+    "progression": "Progression",
+    "observer": "Observer la séance",
+    "titre": "Classe",
+    "historique": "Historique",
+    "sousTitre": "{prenom} · {enseignant}",
+    "indisponiblePhrase": "Le détail de la classe n'est pas encore disponible ici.",
+    "introuvableTitre": "Cette classe n'est pas ouverte à ce profil",
+    "introuvablePhrase": "Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.",
+    "seance": {
+      "aucune": "Aucune séance planifiée",
+      "aucuneDetail": "La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.",
+      "illisible": "La prochaine séance n'a pas pu être lue.",
+      "presence": "{prenom} : {etat}"
     },
-    "suivi": {
-      "titre": "Suivi du foyer",
-      "tousLesEnfants": "Tous les enfants",
-      "colonneDate": "Date",
-      "colonneEnfant": "Enfant",
-      "colonneEnseignant": "Enseignant",
-      "colonneEtat": "État",
-      "aujourdhui": "Aujourd'hui, {heure}",
-      "hier": "Hier, {heure}",
-      "date": "{date}, {heure}",
-      "annule": "Cours annulé",
-      "nonTenu": "Cours non tenu",
-      "vide": "Aucun cours pour l'instant",
-      "videDetail": "Les cours de vos enfants s'afficheront ici, du plus récent au plus ancien, avec leur présence.",
-      "videFiltre": "Aucun cours pour cet enfant",
-      "videFiltreDetail": "Relâchez le filtre pour retrouver le reste du foyer.",
-      "effacerFiltres": "Tout afficher",
-      "erreur": "Le suivi n'a pas pu être lu. Réessayez dans un instant.",
-      "tronquee": "Les {nombre} cours les plus récents sont affichés.",
-      "fin": "{nombre} cours au suivi.",
-      "finUn": "1 cours au suivi."
+    "observation": {
+      "commentCaMarche": "Comment ça marche ?",
+      "uneVisite": "1 visite disponible",
+      "visites": "{nombre} visites disponibles",
+      "resume": "{visites} · {duree} par visite",
+      "restanteAucune": "Aucune visite restante pour cette séance",
+      "restanteUne": "1 visite restante pour cette séance",
+      "restantes": "{nombre} visites restantes pour cette séance",
+      "minutes": "{minutes} min",
+      "minutesSecondes": "{minutes} min {secondes} s",
+      "secondes": "{secondes} s",
+      "motif": {
+        "visitesEpuisees": "Vous avez utilisé vos visites pour cette séance.",
+        "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",
+        "seanceNonCommencee": "L'observation ouvre quand la séance commence.",
+        "seanceTerminee": "La séance est terminée.",
+        "seanceNonTenue": "Cette séance n'a pas lieu : il n'y a rien à observer.",
+        "horsFenetre": "La salle n'est pas ouverte à cette heure.",
+        "observationDesactivee": "L'observation est fermée pour cette classe.",
+        "lienAbsent": "Aucun élève de votre foyer n'est rattaché à cette séance.",
+        "enfantAbsent": "L'observation attend l'arrivée de {prenom}.",
+        "presenceEnVerification": "La présence de {prenom} est en cours de vérification.",
+        "visiteDejaOuverte": "Une visite est déjà ouverte, sur cet appareil ou sur un autre.",
+        "garantieServeurAbsente": "L'observation des séances n'est pas encore ouverte.",
+        "reseau": "La disponibilité de l'observation n'a pas pu être vérifiée.",
+        "capaciteAbsente": "L'observation n'est pas disponible pour le moment."
+      }
+    },
+    "pagePlanning": {
+      "prochaines": "Prochaines séances",
+      "ligne": "{heure} · {duree}",
+      "ligneFuseau": "{heure} ({fuseau}) · {duree}",
+      "aucune": "Aucune séance à venir pour l'instant",
+      "aucuneDetail": "Les prochaines séances de {prenom} apparaîtront ici dès qu'elles seront programmées.",
+      "habituelIndisponible": "Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.",
+      "indisponible": "Le planning de la classe n'est pas encore relié à cet espace."
+    },
+    "pageTravail": {
+      "aucun": "Rien à préparer pour l'instant",
+      "aucunDetail": "Le travail donné par l'enseignant apparaîtra ici.",
+      "indisponible": "Le travail à préparer n'est pas encore relié à cet espace.",
+      "echeance": "Échéance : {date}",
+      "nonCochable": "Marquer un travail comme fait n'est pas encore possible ici.",
+      "statut": {
+        "aFaire": "À faire",
+        "enCours": "Commencé",
+        "fait": "Fait",
+        "expire": "Échéance passée"
+      }
+    },
+    "pageRessources": {
+      "aucune": "Aucune ressource pour cette classe pour l'instant",
+      "aucuneDetail": "Les supports choisis par l'enseignant apparaîtront ici.",
+      "indisponible": "La bibliothèque de la classe n'est pas encore reliée à cet espace."
+    },
+    "pageProgression": {
+      "indisponible": "La progression de {prenom} n'est pas encore partagée ici.",
+      "niveau": "Niveau",
+      "jalons": "Étapes franchies",
+      "aucune": "Aucune étape partagée pour l'instant",
+      "aucuneDetail": "Les progrès que l'enseignant partage avec la famille apparaîtront ici."
+    },
+    "pageCatalogue": {
+      "pour": "Pour {prenom}",
+      "proposees": "Classes proposées",
+      "indisponible": "Le choix de classe en ligne n'est pas encore ouvert.",
+      "aucune": "Aucune classe ne convient pour l'instant",
+      "aucuneDetail": "Aucune classe ouverte ne correspond au profil de {prenom} en ce moment.",
+      "eleveInconnuTitre": "Ce profil n'est pas dans votre foyer",
+      "eleveInconnuPhrase": "Revenez à l'accueil et choisissez le profil élève concerné.",
+      "horairesAbsents": "Les jours et heures de cette classe ne sont pas encore affichés ici.",
+      "seanceHebdo": "{jour} à {heure} · {duree} min",
+      "fuseauClasse": "Heures de la classe ({fuseau})",
+      "placeUne": "1 place restante",
+      "places": "{nombre} places restantes",
+      "etat": {
+        "ouverte": "Ouverte",
+        "complete": "Complète",
+        "listeAttente": "Liste d'attente"
+      },
+      "choisir": "Choisir cette classe",
+      "rejoindreAttente": "Rejoindre la liste d'attente",
+      "precisionsTitre": "Avant de choisir",
+      "precisionEnseignant": "Une classe garde le même enseignant pour toutes ses séances.",
+      "precisionPlaces": "Les places affichées sont celles de l'académie au moment de la lecture.",
+      "precisionReserve": "Rien n'est réservé avant votre confirmation.",
+      "confirmerTitre": "Confirmer la classe",
+      "confirmerPhrase": "Vous inscrivez {prenom} dans cette classe.",
+      "confirmerAttentePhrase": "Vous inscrivez {prenom} sur la liste d'attente de cette classe.",
+      "memeEnseignant": "Même classe et même enseignant pour toutes les séances de la semaine : {enseignant}.",
+      "confirmer": "Confirmer l'inscription",
+      "confirmerAttente": "Confirmer la liste d'attente",
+      "envoiIncertain": "La réponse de l'académie n'est pas arrivée. Réessayer ne crée pas de seconde inscription.",
+      "envoiIndisponible": "L'inscription en ligne n'est pas encore ouverte : aucune place n'a été réservée.",
+      "resultat": {
+        "inscritTitre": "Inscription confirmée",
+        "inscritPhrase": "{prenom} rejoint {classe}.",
+        "voirClasse": "Voir la classe",
+        "validationTitre": "Demande envoyée",
+        "validationPhrase": "L'académie doit encore valider l'inscription de {prenom} dans {classe}.",
+        "listeAttenteTitre": "Inscription sur liste d'attente",
+        "listeAttentePhrase": "{prenom} est sur la liste d'attente de {classe}. Aucune place n'est réservée pour l'instant.",
+        "refuseTitre": "Inscription non acceptée",
+        "refusePhrase": "Aucune place n'a été réservée pour {prenom}. Vous pouvez choisir une autre classe.",
+        "autresClasses": "Voir les autres classes",
+        "retourAccueil": "Retour à l'accueil"
+      }
     }
   },
   "enseignant": {
@@ -1376,7 +2429,7 @@
       "preflight": "Vérifier avant le cours",
       "titre": "Votre journée",
       "prochainCours": "Prochain cours",
-      "coursEnCours": "Cours en cours",
+      "coursEnCours": "Séance en direct",
       "minuteurHeures": "Dans {heures} h {minutes}",
       "minuteurMinutes": "Dans {minutes} min",
       "minuteurImminent": "Ça commence",
@@ -1657,22 +2710,22 @@
   "tc": {
     "groupe": {
       "mesGroupes": {
-        "titre": "Mes groupes",
-        "aucun": "Aucun groupe pour le moment",
-        "aucunDetail": "L'académie vous placera dans un groupe dès qu'un créneau vous correspond."
+        "titre": "Mes classes",
+        "aucun": "Aucune classe pour le moment",
+        "aucunDetail": "L'académie vous placera dans une classe dès qu'un créneau vous correspond."
       },
       "commun": {
-        "erreur": "Vos groupes n'ont pas pu être lus",
+        "erreur": "Vos classes n'ont pas pu être lues",
         "reessayer": "Réessayer"
       },
       "carte": {
-        "ouvrir": "Ouvrir le groupe {libelle}",
+        "ouvrir": "Ouvrir la classe {libelle}",
         "capacite": "{membres} / {seuil}",
         "capacitePhrase": "{membres} élèves sur {seuil} places",
         "complet": "Complet",
         "prochainCours": "Prochain cours",
         "aucuneSeance": "Aucune séance planifiée",
-        "aucuneSeanceDetail": "Le planning de ce groupe n'est pas encore posé.",
+        "aucuneSeanceDetail": "Le planning de cette classe n'est pas encore posé.",
         "duree": "Durée {valeur}",
         "dureeLibelle": "Durée",
         "rejoindre": "Rejoindre"
@@ -1697,16 +2750,21 @@
         "enSalle": "En salle",
         "resteMinutes": "Reste {minutes} min",
         "resteHeures": "Reste {heures} h {minutes}",
-        "enCours": "Cours en cours · {reste}",
+        "enCours": "Séance en direct · {reste}",
         "enDirect": "En direct",
-        "prolongee": "Cours toujours en cours",
+        "prolongee": "Séance toujours en direct",
         "depassement": "En dépassement",
         "terminee": "Cours terminé"
+      },
+      "duree": {
+        "minutes": "{minutes} min",
+        "heures": "{heures} h",
+        "heuresMinutes": "{heures} h {minutes}"
       },
       "horloges": {
         "votreHeure": "Votre heure",
         "chezEnseignant": "Chez {nomme}",
-        "heureGroupe": "Heure du groupe",
+        "heureGroupe": "Heure de la classe",
         "heureEtVille": "{heure} {ville}"
       },
       "dst": {
@@ -1719,16 +2777,16 @@
         "conseilAppareil": "Tablette ou ordinateur conseillé pour le cours. Le téléphone reste pris en charge."
       },
       "espace": {
-        "retour": "Mes groupes",
+        "retour": "Mes classes",
         "avantProchainCours": "Avant le prochain cours",
         "aucuneAction": "Rien à préparer pour l'instant",
         "bibliotheque": "Bibliothèque",
         "bibliothequeVoirTout": "Voir tout",
         "progression": "Progression",
-        "roster": "Élèves du groupe",
+        "roster": "Élèves de la classe",
         "reprendreLeCours": "Reprendre le cours",
-        "introuvable": "Ce groupe ne vous est pas ouvert",
-        "introuvableDetail": "Il a peut-être été clôturé, ou il appartient à une autre classe."
+        "introuvable": "Cette classe ne vous est pas ouverte",
+        "introuvableDetail": "Elle a peut-être été clôturée, ou elle concerne un autre profil."
       },
       "emplacement": {
         "nonBranche": "Bientôt disponible",
@@ -1877,7 +2935,9 @@
         "surligneur": "Surligner",
         "gomme": "Gomme",
         "annuler": "Annuler",
-        "plus": "Plus"
+        "plus": "Plus",
+        "ardoise": "Ardoise d'annotation, facultative : le cours reste lisible sans elle",
+        "effacerDernier": "Effacer mon dernier trait"
       },
       "portee": {
         "temporaire": "Le temps d'expliquer",
@@ -1920,7 +2980,7 @@
         },
         "resteMinutes": "Reste {minutes} min",
         "resteHeuresMinutes": "Reste {heures} h {minutes}",
-        "coursEnCours": "Cours toujours en cours",
+        "coursEnCours": "Séance toujours en direct",
         "photoManquante": "Photo enseignant manquante"
       },
       "roster": {
@@ -2020,7 +3080,7 @@
         "retourDeSuspension": "Le cours a été mis en pause par le système. Vérification du lien en cours."
       },
       "barre": {
-        "titre": "Cours en cours",
+        "titre": "Séance en direct",
         "revenir": "Revenir au cours de {groupe}"
       },
       "prevol": {
@@ -2057,10 +3117,75 @@
         "modeVisibleDetail": "Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.",
         "nomInstitutionnel": "Administration Rewayah",
         "visiteJournalisee": "Visite journalisée : identité, séance, entrée, sortie et durée.",
-        "roleSansObservation": "Votre compte n'observe pas les séances."
+        "roleSansObservation": "Votre compte n'observe pas les séances.",
+        "retourClasse": "Retour à la classe"
+      },
+      "explication": {
+        "titre": "Un aperçu de son apprentissage",
+        "regleUne": "{n} visite de {duree}",
+        "regle": "{n} visites de {duree}",
+        "regleDetail": "Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.",
+        "ecoute": "Écoutez l'enseignant et les élèves",
+        "ecouteDetail": "Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.",
+        "sansMedia": "Sans micro ni caméra",
+        "sansMediaDetail": "Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.",
+        "revenir": "Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.",
+        "ecourtee": "Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.",
+        "sansIntervenir": "Pour préserver la concentration, vous observez sans intervenir.",
+        "informes": "Votre enfant et son enseignant sont informés.",
+        "observer": "Observer maintenant",
+        "pasMaintenant": "Pas maintenant",
+        "restanteUne": "{restantes}/{max} visite restante pour cette séance",
+        "restantes": "{restantes}/{max} visites restantes pour cette séance",
+        "aucuneRestante": "Aucune visite restante pour cette séance"
+      },
+      "disponibilite": {
+        "visitesEpuiseesTitre": "Aucune visite restante pour cette séance",
+        "visitesEpuisees": "Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.",
+        "tempsEpuiseTitre": "Temps d'observation écoulé",
+        "tempsEpuise": "Votre temps d'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.",
+        "seanceNonCommenceeTitre": "La séance n'a pas encore commencé",
+        "seanceNonCommencee": "L'observation s'ouvre pendant la séance.",
+        "seanceTermineeTitre": "La séance est terminée",
+        "seanceTerminee": "Vous pourrez observer la prochaine séance.",
+        "seanceNonTenueTitre": "Cette séance n'a pas lieu",
+        "seanceNonTenue": "Elle a été annulée, reportée ou n'a pas été tenue.",
+        "horsFenetreTitre": "La séance n'est pas ouverte en ce moment",
+        "horsFenetre": "L'observation est possible seulement pendant la séance.",
+        "desactiveeTitre": "Observation fermée pour cette classe",
+        "desactivee": "L'administration a fermé l'observation de cette classe.",
+        "lienAbsentTitre": "Aucun de vos enfants dans cette séance",
+        "lienAbsent": "L'observation est réservée aux parents des élèves de la séance.",
+        "enfantAbsentTitre": "Votre enfant n'est pas dans la séance",
+        "enfantAbsent": "L'observation s'ouvre quand votre enfant est présent.",
+        "presenceTitre": "Présence en cours de vérification",
+        "presence": "L'observation s'ouvre dès que la présence de votre enfant est confirmée.",
+        "visiteOuverteTitre": "Une visite est déjà ouverte",
+        "visiteOuverte": "Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.",
+        "fermeeTitre": "Observation pas encore ouverte",
+        "fermee": "L'observation des séances par les parents n'est pas encore ouverte. Elle sera proposée ici dès son ouverture.",
+        "reseauTitre": "Vérification impossible",
+        "reseau": "La disponibilité de l'observation n'a pas pu être vérifiée. Aucune visite n'a commencé.",
+        "capaciteTitre": "Observation indisponible",
+        "capacite": "L'observation n'est pas disponible pour le moment."
+      },
+      "connexion": {
+        "titre": "Connexion et vérification",
+        "phrase": "Vos visites restantes sont vérifiées. La visite commence dès que l'entrée est acceptée, connexion vidéo comprise.",
+        "enCours": "Connexion et vérification en cours",
+        "prolongee": "Restez sur cette page : la vérification continue.",
+        "impossibleTitre": "Connexion impossible",
+        "impossible": "L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau."
+      },
+      "duree": {
+        "secondeUne": "{n} seconde",
+        "secondes": "{n} secondes",
+        "minuteUne": "{n} minute",
+        "minutes": "{n} minutes",
+        "minutesSecondes": "{m} min {s} s"
       },
       "refus": {
-        "politiqueDesactivee": "L'observation est désactivée pour ce groupe.",
+        "politiqueDesactivee": "L'observation est désactivée pour cette classe.",
         "quotaVisites": "Vous avez déjà utilisé vos visites pour cette séance.",
         "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",
         "lienTuteur": "Vous n'êtes rattaché à aucun élève de cette séance.",
@@ -2072,16 +3197,30 @@
       "visite": {
         "titre": "Observation en cours",
         "quitter": "Quitter",
-        "mediaFerme": "Micro et caméra fermés pendant l'observation.",
         "supportIndisponible": "Le support partagé par l'enseignant s'affiche ici.",
         "enseignant": "Enseignant",
         "monEnfant": "Votre enfant",
-        "enfantAbsent": "Votre enfant n'a pas d'image ouverte.",
         "budgetIncertain": "Temps restant non confirmé par le serveur.",
         "videoIndisponible": "La vidéo de la séance n'a pas pu s'ouvrir. Votre temps d'observation continue de s'écouler.",
         "sortieNonConfirmee": "La fin de votre visite n'a pas pu être confirmée. Elle sera fermée par le serveur.",
-        "restant": "{secondes} s restantes",
-        "visites": "Visite {rang} sur {total}"
+        "restantes": "restantes",
+        "decompteLu": "Temps restant : {duree}",
+        "enDirect": "En direct",
+        "connexion": "Connexion",
+        "reconnexion": "Reconnexion",
+        "videoCoupee": "Vidéo indisponible",
+        "reconnexionDetail": "La connexion est interrompue, reconnexion en cours. Votre temps d'observation continue de s'écouler.",
+        "sonRecu": "Son reçu",
+        "sonInterrompu": "Son interrompu",
+        "agrandir": "Agrandir",
+        "reduire": "Réduire",
+        "cameraFermee": "Caméra fermée",
+        "pasEncoreLa": "Pas encore dans la salle",
+        "parle": "{nom} parle",
+        "quitterQuestion": "Quitter la visite ?",
+        "quitterConsequence": "Il vous reste {duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.",
+        "quitterConsequenceSansTemps": "Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.",
+        "quitterConfirmer": "Quitter la visite"
       },
       "fin": {
         "sortieVolontaire": "Vous avez quitté l'observation.",
@@ -2090,10 +3229,29 @@
         "revocationServeur": "Votre observation a été interrompue.",
         "deconnexion": "La connexion a été perdue."
       },
+      "resultat": {
+        "premiereTerminee": "Votre première visite est terminée",
+        "derniereTerminee": "Votre dernière visite est terminée",
+        "terminee": "Votre visite est terminée",
+        "dureeAtteinte": "Durée de visite atteinte",
+        "interrompue": "Observation interrompue",
+        "continuePour": "La séance continue pour {prenom}.",
+        "continueSansPrenom": "La séance continue.",
+        "resteUne": "Il vous reste une visite de {duree}. Revenez plus tard pour l'écouter.",
+        "restent": "Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter.",
+        "resteUneSansDuree": "Il vous reste une visite. Revenez plus tard pour l'écouter.",
+        "restentSansDuree": "Il vous reste {n} visites. Revenez plus tard pour l'écouter.",
+        "aucune": "Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.",
+        "prochaineSeance": "Vous pourrez observer la prochaine séance.",
+        "verification": "Vérification de vos visites restantes",
+        "inconnues": "Vos visites restantes n'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.",
+        "voirObservations": "Voir mes observations"
+      },
       "annonce": {
         "tuteurObserve": "Tuteur de {prenomEnfant} observe",
         "restant": "{secondes} s",
-        "enfantIndicateur": "Ton tuteur regarde le cours"
+        "enfantIndicateur": "Ton tuteur regarde le cours",
+        "tuteursObservent": "{nombre} tuteurs observent"
       },
       "reglages": {
         "titre": "Observation par les tuteurs",

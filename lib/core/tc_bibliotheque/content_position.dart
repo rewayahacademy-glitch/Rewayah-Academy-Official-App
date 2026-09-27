@@ -48,7 +48,7 @@ class ContentPosition {
   /// `final` ne peuvent pas etre initialises ainsi. La forme retenue garde la
   /// surface publique exacte -- quatre constructeurs nommes -- et rend le
   /// constructeur prive utilisable. Ecart signale dans
-  /// `docs/teaching-core/TC_CONTRACT_REQUEST_B.md`.
+  /// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
   const ContentPosition._({
     required this.resourceId,
     required this.typeAncrage,

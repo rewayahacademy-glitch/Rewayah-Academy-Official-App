@@ -15,12 +15,12 @@ import 'page_shell.dart';
 ///
 /// L'estimation de temps restant n'est pas un ornement : sur ce type d'ecran,
 /// l'incertitude coute plus cher que la longueur
-/// (`docs/produit/parcours-utilisateurs.md`, `TUT-00c`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, `TUT-00c`).
 ///
 /// **Le lot C l'a remontee de `lib/features/inscription/` vers ici**, et posee
 /// sur `PageShell` : c'est un composant partage, employe par l'inscription
 /// comme par l'ajout d'un enfant, pas un detail de l'inscription
-/// (`docs/design/07-catalogue-composants.md` section 1). Elle avait son propre
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1). Elle avait son propre
 /// `Scaffold`, sa propre gouttiere et son propre bandeau hors ligne : trois
 /// choses que le gabarit de page tient desormais pour tout le produit.
 class PageParcours extends StatelessWidget {

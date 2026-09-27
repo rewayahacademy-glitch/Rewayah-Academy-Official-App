@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/capacites/classes_foyer_supabase.dart';
+import 'core/capacites/port_classes_foyer.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/i18n/strings.g.dart';
@@ -14,6 +16,21 @@ import 'core/observabilite/supervision.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/demo/mode_demonstration.dart';
+import 'features/demo/racine_demonstrable.dart';
+import 'features/demo/repere_demonstration.dart';
+
+/// Les surcharges de l'application reelle (jamais le mode demonstration) :
+/// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
+/// client est initialise (constat C-INT-1, `demandes/c.md`). Un provider
+/// partage ne doit pas dependre implicitement d'un service reseau pour son
+/// comportement par defaut ; ce branchement se fait ici et nulle part
+/// ailleurs.
+List<Override> _surchargesAppReelle() => <Override>[
+  portClassesFoyerProvider.overrideWithValue(
+    ClassesFoyerSupabase(Supabase.instance.client),
+  ),
+];
 
 /// Point d'entree unique de l'application.
 ///
@@ -56,6 +73,22 @@ Future<void> main() async {
     publishableKey: Env.supabaseAnonKey,
   );
 
+  // Demonstration tuteur (P2-07) : `?demo=tuteur`, jamais en production.
+  if (demoTuteurActiveIci) {
+    runApp(
+      ProviderScope(
+        overrides: surchargesDemoTuteur(),
+        child: TranslationProvider(
+          child: RewayahApp(
+            builder: (BuildContext context, Widget? child) =>
+                RepereDemonstration(child: child),
+          ),
+        ),
+      ),
+    );
+    return;
+  }
+
   if (Env.playgroundActif) {
     runApp(
       ProviderScope(
@@ -65,7 +98,10 @@ Future<void> main() async {
     return;
   }
 
-  runApp(ProviderScope(child: TranslationProvider(child: const RewayahApp())));
+  // Hors production, la racine porte l'entree « Essayer la demonstration »
+  // (P2-07) ; en production elle n'a aucun lanceur et se comporte comme
+  // l'application seule.
+  runApp(RacineDemonstrable(surchargesReelles: _surchargesAppReelle()));
 }
 
 /// Demarre l'application en session d'observation.
@@ -103,7 +139,10 @@ Future<void> _demarrerObservation(String jeton) async {
     );
     runApp(
       ProviderScope(
-        overrides: <Override>[echecAgentProvider.overrideWithValue(echec)],
+        overrides: <Override>[
+          echecAgentProvider.overrideWithValue(echec),
+          ..._surchargesAppReelle(),
+        ],
         child: TranslationProvider(child: const RewayahApp()),
       ),
     );
@@ -126,6 +165,7 @@ Future<void> _demarrerObservation(String jeton) async {
         sourceSessionProvider.overrideWithValue(
           SourceSessionAgent(porteur, Supabase.instance.client),
         ),
+        ..._surchargesAppReelle(),
       ],
       child: TranslationProvider(child: const RewayahApp()),
     ),

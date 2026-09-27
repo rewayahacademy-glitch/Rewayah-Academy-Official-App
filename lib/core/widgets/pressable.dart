@@ -12,7 +12,7 @@ import '../theme/app_spacing.dart';
 ///
 /// Le survol n'existe pas au doigt et le clavier n'existe pas au telephone :
 /// un composant ne doit donc jamais faire reposer un etat sur un seul des deux
-/// (`docs/design/05-regles-responsive.md` section 5). Les trois voyants sont
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 5). Les trois voyants sont
 /// exposes ensemble pour que le composant qui porte une surface puisse les
 /// traiter ensemble.
 @immutable
@@ -54,7 +54,7 @@ class EtatPression {
 /// **Reserve a la galerie.** Le survol, la pression et le focus naissent de la
 /// souris et du clavier : ils ne se declenchent pas depuis l'exterieur. Sans ce
 /// forcage, la galerie ne pourrait pas montrer les dix etats cote a cote, ce
-/// que `docs/design/07-catalogue-composants.md` section 5 exige, et la seule
+/// que `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 5 exige, et la seule
 /// facon de les voir serait de promener une souris sur chaque composant.
 ///
 /// Il est pose **au dessus** des composants plutot que passe en parametre a
@@ -85,14 +85,14 @@ class PressionForcee extends InheritedWidget {
 /// Echelle 0.98, 100 ms, retour haptique moyen. **Aucun `onTap` nu ailleurs
 /// dans le code** : `tool/verifier_jetons.dart` echoue si un autre fichier de
 /// `lib/` en declare un
-/// (`docs/architecture/etape-2-core-flutter.md` section 2).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 2).
 ///
 /// Une seule implementation garantit que deux boutons de deux ecrans differents
 /// ne repondent jamais differemment au doigt.
 ///
 /// **Le lot C lui ajoute les deux entrees qui manquaient au Web** : le survol
 /// de la souris et l'anneau de focus du clavier
-/// (`docs/design/07-catalogue-composants.md` section 1). Ils sont rendus ici et
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1). Ils sont rendus ici et
 /// non dans chaque composant, pour la meme raison que la pression : deux
 /// anneaux de focus dessines a deux endroits finiraient par ne plus se
 /// ressembler.

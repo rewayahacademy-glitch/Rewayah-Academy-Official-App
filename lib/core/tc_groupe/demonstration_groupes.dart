@@ -18,7 +18,7 @@ import 'port_groupes.dart';
 /// 4. `groupes` n'a **ni couleur, ni cours, ni niveau** ;
 /// 5. `teacher_profiles` n'a **aucune colonne de photo ni de titre**.
 ///
-/// Chacun est chiffre dans `docs/teaching-core/TC_CONTRACT_REQUEST_A.md`.
+/// Chacun est chiffre dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md`.
 /// Les donnees ci-dessous sont coherentes avec `seancesDemonstration()` : le
 /// meme identifiant de groupe y porte la meme occurrence.
 class GroupesDemonstrationLocale implements PortGroupes {

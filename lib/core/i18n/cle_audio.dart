@@ -6,7 +6,7 @@ import 'strings.g.dart';
 ///
 /// Les libelles audio suivent la meme logique que les chaines textuelles : une
 /// cle identique pointe vers un fichier son plutot que vers une chaine
-/// (`docs/architecture/etape-2-core-flutter.md` section 5). Texte et audio
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 5). Texte et audio
 /// restent ainsi dans un seul systeme, pas deux qui divergent.
 ///
 /// Le composant `AudioLabel` consomme ce type, jamais une chaine libre.

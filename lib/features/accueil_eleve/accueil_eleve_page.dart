@@ -34,7 +34,7 @@ import '../../core/widgets/status_pill.dart';
 /// Les six etats sont ceux que la fiche produit tabule, dans son ordre : cours
 /// dans plus d'une heure, cours dans moins de cinq minutes, cours en direct,
 /// aucun cours aujourd'hui, seance annulee, hors ligne
-/// (`docs/produit/parcours-utilisateurs.md`, fiche `ELV-02`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, fiche `ELV-02`).
 enum EtatAccueilEleve {
   /// Un cours plus tard dans la journee.
   ///
@@ -116,7 +116,7 @@ EtatAccueilEleve etatAccueilEleve({
 /// `ELV-02` : l'accueil de l'eleve.
 ///
 /// **Deux blocs, rien d'autre.** En mode enfant, aucune navigation : l'ecran est
-/// le produit (`docs/architecture/etape-4-dashboards.md` section 5). Le premier
+/// le produit (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-4-dashboards.md` section 5). Le premier
 /// bloc dit ce qui vient, dans ses six etats ; le second, permanent, mene au
 /// Coran.
 ///
@@ -200,7 +200,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
 
     // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
     // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
-    // `docs/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
+    // `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
     // L'ecran ne rend plus que ses deux blocs.
     final bool enChargement = seances.isLoading && seances.value == null;
 
@@ -251,7 +251,7 @@ class _BlocPrincipal extends StatelessWidget {
     final bool imminent = etat == EtatAccueilEleve.coursImminent;
     final bool mouvementReduit = AppMouvement.mouvementReduit(context);
 
-    // **Une seule zone pleine par ecran** (`docs/design/01-systeme-visuel.md`
+    // **Une seule zone pleine par ecran** (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md`
     // section 3) : le bloc imminent, et lui seul. Le cours en direct redevient
     // une carte normale avec sa pastille verte et son bouton d'entree en
     // `surfacePrimary`. Une paire dit sur quoi elle s'ecrit : les styles des
@@ -264,7 +264,7 @@ class _BlocPrincipal extends StatelessWidget {
       surface: imminent ? palette.surfacePrimary : null,
       // Sous mouvement reduit, la pulsation disparait et une bordure
       // `borderStrong` fixe porte a sa place l'information d'imminence
-      // (`docs/design/04-systeme-mouvement.md` section 5).
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 5).
       contourFort: imminent && mouvementReduit,
       child: switch (etat) {
         EtatAccueilEleve.coursPlusTard ||
@@ -371,7 +371,7 @@ class _CoursEnDirect extends StatelessWidget {
       children: <Widget>[
         // La pastille verte de la fiche produit, portee par le composant
         // d'etat : une pastille pleine `surfaceSuccess` et son mot, jamais la
-        // couleur seule (`docs/design/01-systeme-visuel.md` section 8).
+        // couleur seule (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 8).
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
@@ -478,7 +478,7 @@ class _SansCoursAujourdhui extends StatelessWidget {
       message: message,
       // Registre **subi** : l'enfant ne peut rien y faire, son enseignant
       // prepare le prochain cours. Proposer un bouton ici mentirait sur ce que
-      // l'enfant peut obtenir (`docs/design/02-regles-ux.md` section 6).
+      // l'enfant peut obtenir (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 6).
       registre: RegistreVide.subi,
       // Un etat vide est une invitation, pas un constat. Le prochain cours peut
       // tomber le jour meme : une seance annulee le matin n'empeche pas celle
@@ -615,7 +615,7 @@ class _PulsationEtat extends State<_Pulsation>
   // Le battement se compose des deux seules courbes du produit : l'entree a
   // l'aller, la sortie au retour. Aucune troisieme courbe n'est necessaire, et
   // le systeme de mouvement n'en autorise pas
-  // (`docs/design/04-systeme-mouvement.md` section 2).
+  // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 2).
   late final Animation<double> _echelle = Tween<double>(begin: 1, end: 1.02)
       .animate(
         CurvedAnimation(

@@ -7,10 +7,12 @@ import 'package:go_router/go_router.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
@@ -32,6 +34,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
+import '../tc_observation_ui/indicateur_observation.dart';
 import 'vue_salle.dart';
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
@@ -175,7 +178,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
       // qu'a nommer la cause pour l'usager. Aucun detail technique ne remonte
       // a l'ecran : « ICE failed » ne se lit pas devant un enfant.
-      debugPrint('entree en salle impossible : $erreur');
+      journalDev('entree en salle impossible : $erreur');
       if (mounted) {
         setState(() => _impasse = CauseImpasse.reseau);
       }
@@ -233,12 +236,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// cours qui n'a pas eu lieu.
   void _rentrer() {
     final AppRole? role = ref.read(sessionProvider).role;
-    GoRouter.of(
-      context,
-    ).go(role == null ? Routes.racine : Routes.racinePour(role));
+    GoRouter.of(context)
+        .go(role == null ? Routes.racine : Routes.racinePour(role));
   }
 
-  Future<void> _basculerMicro(bool ouvert) => _moteur.reglerMicro(actif: !ouvert);
+  Future<void> _basculerMicro(bool ouvert) =>
+      _moteur.reglerMicro(actif: !ouvert);
 
   Future<void> _basculerCamera(bool ouverte) =>
       _moteur.reglerCamera(actif: !ouverte);
@@ -287,10 +290,37 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       maintenant: DateTime.now(),
     );
 
+    // **Le tuteur de cet enfant observe-t-il ?** Question posee au serveur, qui
+    // ne rend que la ligne de l'appelant (`annonce_observation_pour_moi`,
+    // `0040`). La condition de role n'ajoute aucune securite -- le serveur
+    // refuse deja qui n'est pas membre du groupe -- elle evite de battre la RPC
+    // sur l'appareil de l'enseignant, du controleur et de l'observateur, qui
+    // montent tous cette meme salle.
+    final bool monTuteurObserve =
+        vue.role == RoleSalle.eleve &&
+        (ref.watch(monTuteurObserveProvider(widget.seanceId)).value ?? false);
+
+    // **L'annonce a l'enseignant, ici AUSSI.** Il y a deux salles d'enseignant :
+    // `ClasseLivePage` (`/tc/classe`) et celle-ci, ou mene le bouton « Lancer »
+    // de sa journee (`ENS-02`). Ne poser l'annonce que sur la premiere laissait
+    // un enseignant faire cours deux minutes devant un parent sans le savoir,
+    // sur le chemin qu'il emprunte reellement.
+    //
+    // Meme raison qu'au-dessus pour la condition de role : elle n'ajoute aucune
+    // securite -- `annonces_observation` leve `insufficient_privilege` pour qui
+    // n'est pas l'enseignant de la seance -- elle evite de battre la RPC toutes
+    // les dix secondes sur l'appareil de chaque eleve.
+    final List<AnnonceObservation> annonces = vue.role == RoleSalle.enseignant
+        ? ref.watch(annoncesObservationProvider(widget.seanceId)).value ??
+              const <AnnonceObservation>[]
+        : const <AnnonceObservation>[];
+
     return PageImmersive(
       registre: RegistreImmersif.salle,
       entete: _Entete(
         vue: vue,
+        monTuteurObserve: monTuteurObserve,
+        annonces: annonces,
         // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
         // et la vue en base le lui impose de toute facon. L'observateur, lui,
         // n'a aucun etat pedagogique a lire -- il assiste.
@@ -317,7 +347,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               onQuitter: () => _quitter(vue),
             ),
       child: enImpasse
-          ? _Impasse(cause: vue.cause, onReessayer: _entrer, onRentrer: _rentrer)
+          ? _Impasse(
+              cause: vue.cause,
+              onReessayer: _entrer,
+              onRentrer: _rentrer,
+            )
           // `ENS-03` : la surface de presentation de l'enseignant, en UN SEUL
           // point. Les deux conditions comptent. Le role vient du **jeton**
           // (`vue.role`), jamais de `sessionProvider.role` : c'est le jeton qui
@@ -334,7 +368,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           : _Corps(vue: vue, lignes: lignes),
     );
   }
-
 }
 
 /// La ligne de contexte : ou l'on en est, ce que vaut le lien, et -- pour
@@ -346,12 +379,26 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 /// etre parfaitement connecte et note « en retard », et on peut avoir perdu le
 /// lien depuis dix secondes sans etre encore note « deconnecte ».
 class _Entete extends StatelessWidget {
-  const _Entete({required this.vue, this.mienne, this.onVoirPresence});
+  const _Entete({
+    required this.vue,
+    this.mienne,
+    this.monTuteurObserve = false,
+    this.annonces = const <AnnonceObservation>[],
+    this.onVoirPresence,
+  });
 
   final VueSalle vue;
 
   /// Ma propre presence, pour l'eleve et lui seul. `null` ailleurs.
   final VuePresence? mienne;
+
+  /// Vrai quand le tuteur de l'eleve qui regarde cet ecran observe la seance.
+  /// Faux pour tout autre role : c'est une information sur SON foyer.
+  final bool monTuteurObserve;
+
+  /// Les tuteurs qui observent, pour l'enseignant et lui seul. Vide ailleurs :
+  /// cette liste porte les prenoms de TOUS les enfants observes.
+  final List<AnnonceObservation> annonces;
 
   /// Ouvre la liste de presence, quand elle ne tient pas en colonne.
   final VoidCallback? onVoirPresence;
@@ -450,6 +497,26 @@ class _Entete extends StatelessWidget {
           Ecart.vSm,
           LignePresence(nom: t.presence.mienne, vue: etat),
         ],
+        // **L'enfant apprend que son tuteur regarde, ici aussi.** Il y a DEUX
+        // salles cote eleve : celle-ci, ou mene « Rejoindre » depuis l'accueil
+        // `ELV-02`, et `ClasseLivePage` (`/tc/classe`), ou mene « Rejoindre »
+        // depuis `/tc/groupes`. Ne poser le temoin que dans l'une laisserait
+        // l'autre chemin muet.
+        //
+        // La borne de vie privee est en base : `annonce_observation_pour_moi`
+        // (`0040`) porte `enfant_profile_id = auth.uid()` dans son WHERE, donc
+        // les quatre autres enfants du groupe ne lisent rien (spec 11.3).
+        if (monTuteurObserve) ...<Widget>[
+          Ecart.vSm,
+          const IndicateurObservationEnfant(visible: true),
+        ],
+        // Le meme composant qu'en Classe Live, pas une seconde ecriture : il
+        // porte deja la regle (rien quand personne n'observe, aucune
+        // notification de sortie).
+        if (annonces.isNotEmpty) ...<Widget>[
+          Ecart.vSm,
+          IndicateurObservation(annonces: annonces),
+        ],
       ],
     );
   }
@@ -491,11 +558,7 @@ class _Bandeaux extends StatelessWidget {
 
 /// Une ligne de rappel pleine largeur, en registre doux.
 class _Rappel extends StatelessWidget {
-  const _Rappel({
-    required this.texte,
-    required this.ton,
-    required this.icone,
-  });
+  const _Rappel({required this.texte, required this.ton, required this.icone});
 
   final String texte;
   final TonEtat ton;
@@ -536,9 +599,7 @@ class _Rappel extends StatelessWidget {
             Flexible(
               child: Text(
                 texte,
-                style: paire.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
-                ),
+                style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ),
           ],
@@ -678,7 +739,10 @@ class _CorpsEnseignant extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               SizedBox(height: document, child: panneau),
-              SizedBox(height: _hauteurScene, child: _Scene(vue: vue)),
+              SizedBox(
+                height: _hauteurScene,
+                child: _Scene(vue: vue),
+              ),
               // La presence sous la scene, et non en feuille : la colonne defile
               // deja, elle a donc la place que `_Corps` n'a pas en largeur.
               // `_ListePresence` est une colonne de taille minimale, elle vit

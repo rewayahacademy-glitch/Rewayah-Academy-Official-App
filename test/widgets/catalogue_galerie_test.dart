@@ -18,7 +18,7 @@ import '../support/harnais.dart';
 /// lieu de le contredire, et un composant ajoute sans entree de galerie ne
 /// serait jamais signale.
 ///
-/// Source : `docs/design/07-catalogue-composants.md`, sections 1 et 2.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md`, sections 1 et 2.
 const List<String> composantsDuCatalogue = <String>[
   // Section 2 : les douze P0.
   'PageShell',
@@ -96,9 +96,24 @@ const List<String> composantsDuCatalogue = <String>[
   'MenuFiltre',
   'SelecteurNiveauProgramme',
   'SousNavigationDomaine',
+  // Les composants partages du chantier Tuteur V1 (phase 0c1 du 24/09/2026,
+  // manifeste visuel section 3.4 et contrat K5), sans cle i18n nouvelle.
+  'EcranResultat',
+  'LienFleche',
+  'LigneCleValeur',
+  'GroupeReglages',
+  'ControleSegmente',
+  // Les cinq qui lisent des cles `commun.*` (meme phase).
+  'EtatSysteme',
+  'BlocAsynchrone',
+  'SelecteurProfils',
+  'EntetePage',
+  'BasculeTheme',
+  // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
+  'PageEtape',
 ];
 
-/// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.
+/// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
 ///
 /// Une valeur au milieu de chaque plage, jamais sa borne : un composant qui ne
 /// tiendrait qu'a 599 passerait sinon pour bon.

@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
+import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 
+/// La forme d'une surface modale, selon le gabarit.
+enum FormeModale {
+  /// Telephone : la feuille de bas d'ecran, pleine largeur, au pouce.
+  feuille,
+
+  /// Tablette : la meme feuille, bornee a [AppPage.largeurDialogue] et
+  /// centree. Jamais une feuille de telephone etiree sur 800 points.
+  feuilleBornee,
+
+  /// Bureau : une boite de dialogue centree, meme contenu, meme largeur
+  /// bornee, sans poignee de glissement (il n'y a pas de doigt).
+  dialogue,
+}
+
 /// La feuille de bas d'ecran du produit.
 ///
-/// **Seul point d'entree d'une surface modale.** Le produit n'ouvre pas de
-/// boite de dialogue Material : une feuille se prend au pouce sur un telephone,
-/// une boite de dialogue non.
+/// **Seul point d'entree d'une surface modale.** Sur telephone, une feuille se
+/// prend au pouce ; sur tablette, la meme feuille est bornee en largeur ; sur
+/// bureau, elle devient une boite de dialogue centree (contrat K5 du chantier
+/// Tuteur V1 : pas de feuille mobile etiree). Le contenu, les actions et leur
+/// ordre ne changent pas d'une forme a l'autre : seul le gabarit decide
+/// ([formePour]).
 ///
-/// Le motif de mouvement est celui de `docs/design/04-systeme-mouvement.md`
+/// Le motif de mouvement est celui de `docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md`
 /// section 3 : 280 ms a l'ouverture, 200 ms a la fermeture, voile a 0,32
 /// d'opacite, et **la feuille suit le doigt pendant le glissement**. Elle ne se
 /// referme que si la vitesse ou la distance depasse le seuil : une feuille qui
@@ -28,6 +47,7 @@ class AppBottomSheet extends StatelessWidget {
     required this.child,
     super.key,
     this.actions,
+    this.forme = FormeModale.feuille,
   });
 
   /// Le titre de la feuille, en une phrase.
@@ -38,6 +58,17 @@ class AppBottomSheet extends StatelessWidget {
 
   /// La zone d'action, collee en bas de la feuille.
   final Widget? actions;
+
+  /// La forme rendue. [ouvrir] la choisit d'apres le gabarit ; la galerie la
+  /// fixe pour montrer les trois.
+  final FormeModale forme;
+
+  /// La forme qui convient a un gabarit.
+  static FormeModale formePour(Gabarit gabarit) => switch (gabarit) {
+    Gabarit.mobile => FormeModale.feuille,
+    Gabarit.tablette => FormeModale.feuilleBornee,
+    Gabarit.desktop => FormeModale.dialogue,
+  };
 
   /// Largeur de la poignee de glissement.
   static const double largeurPoignee = AppSpacing.section;
@@ -70,6 +101,16 @@ class AppBottomSheet extends StatelessWidget {
   /// construit alors le controleur lui-meme -- et le detruit lui-meme, au bon
   /// moment. **Ne jamais repasser de `transitionAnimationController` ici** :
   /// ce serait reprendre la propriete du controleur, donc le bug.
+  ///
+  /// **Sur bureau, une boite de dialogue** (voir [FormeModale]) : meme titre,
+  /// meme corps, memes actions dans le meme ordre, fermee par `Echap`, par le
+  /// voile ou par ses actions, et rendant la meme valeur. Sur tablette, la
+  /// feuille est bornee a [AppPage.largeurDialogue].
+  ///
+  /// Le voile est `palette.voile` (noir a 32 % en clair, 56 % en sombre) : il
+  /// derivait de `surfaceInverse`, qui est **clair** dans le theme sombre et
+  /// voilait donc l'ecran de blanc (defaut releve par l'audit C02 et la phase
+  /// 0b du chantier Tuteur V1).
   static Future<T?> ouvrir<T>(
     BuildContext context, {
     required String titre,
@@ -77,6 +118,28 @@ class AppBottomSheet extends StatelessWidget {
     Widget Function(BuildContext context)? actions,
   }) {
     final AppPalette palette = AppPalette.of(context);
+    final FormeModale forme = formePour(AppGabarit.de(context));
+
+    if (forme == FormeModale.dialogue) {
+      return showDialog<T>(
+        context: context,
+        barrierColor: palette.voile,
+        animationStyle: const AnimationStyle(
+          curve: AppMouvement.entree,
+          duration: AppMouvement.feuilleOuverture,
+          reverseCurve: AppMouvement.sortie,
+          reverseDuration: AppMouvement.feuilleFermeture,
+        ),
+        builder: (BuildContext contexte) => _CadreDialogue(
+          child: AppBottomSheet(
+            titre: titre,
+            forme: FormeModale.dialogue,
+            actions: actions?.call(contexte),
+            child: constructeur(contexte),
+          ),
+        ),
+      );
+    }
 
     return showModalBottomSheet<T>(
       context: context,
@@ -96,10 +159,12 @@ class AppBottomSheet extends StatelessWidget {
         reverseDuration: AppMouvement.feuilleFermeture,
       ),
       backgroundColor: palette.surfaceRaised.background,
-      // Le voile derive du noir de la charte, jamais d'un gris invente.
-      barrierColor: palette.surfaceInverse.background.withValues(
-        alpha: AppMouvement.opaciteVoile,
-      ),
+      // Le voile du theme, sombre dans les deux themes (voir plus haut).
+      barrierColor: palette.voile,
+      // Tablette : la feuille garde sa forme mais ne s'etire plus.
+      constraints: forme == FormeModale.feuilleBornee
+          ? const BoxConstraints(maxWidth: AppPage.largeurDialogue)
+          : null,
       // L'ombre et le filet viennent d'AppElevation, sur la surface elle-meme
       // (voir `build`) : le `Material` de la feuille ne fait que clipper les
       // coins.
@@ -109,6 +174,7 @@ class AppBottomSheet extends StatelessWidget {
       ),
       builder: (BuildContext contexte) => AppBottomSheet(
         titre: titre,
+        forme: forme,
         actions: actions?.call(contexte),
         child: constructeur(contexte),
       ),
@@ -120,20 +186,28 @@ class AppBottomSheet extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool dialogue = forme == FormeModale.dialogue;
+    // La boite de dialogue prend la surface des superpositions (plus claire
+    // que la carte en sombre) et arrondit ses quatre coins : elle n'est
+    // ancree a aucun bord.
+    final AppColorPair surface = dialogue
+        ? palette.surfaceOverlay
+        : palette.surfaceRaised;
 
     return DecoratedBox(
       // Un filet ET une ombre, composes en une fois : une feuille est une
       // surface elevee, et une surface elevee ne porte jamais l'un sans
-      // l'autre (`01-systeme-visuel.md` section 2).
+      // l'autre (`01-systeme-visuel.md` section 2). Niveau 3 pour les deux
+      // formes : c'est le niveau de « ce qui recouvre » (`app_elevation.dart`).
       decoration: AppElevation.avecFilet(
-        surface: palette.surfaceRaised,
+        surface: surface,
         filet: palette.borderHairline,
         ombre: palette.ombre,
-        arrondi: AppRadius.arrondiFeuille,
+        arrondi: dialogue ? AppRadius.arrondiLg : AppRadius.arrondiFeuille,
         ombres: AppElevation.niveau3(palette.ombre),
       ),
       child: Padding(
-        padding: EdgeInsets.all(metriques.marge),
+        padding: EdgeInsets.all(dialogue ? AppSpacing.xxl : metriques.marge),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -141,31 +215,66 @@ class AppBottomSheet extends StatelessWidget {
             // La poignee dit que la feuille se glisse. Elle est decorative :
             // le glissement double toujours un bouton ou la touche Echap,
             // aucun geste n'est le seul chemin (`06-accessibilite.md` section 2).
-            Center(
-              child: ExcludeSemantics(
-                child: SizedBox(
-                  width: largeurPoignee,
-                  height: hauteurPoignee,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: palette.borderResting.asBorderSide().color,
-                      borderRadius: AppRadius.arrondiFull,
+            // Une boite de dialogue ne se glisse pas : pas de poignee.
+            if (!dialogue) ...<Widget>[
+              Center(
+                child: ExcludeSemantics(
+                  child: SizedBox(
+                    width: largeurPoignee,
+                    height: hauteurPoignee,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: palette.borderResting.asBorderSide().color,
+                        borderRadius: AppRadius.arrondiFull,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Ecart.vLg,
-            Text(
-              titre,
-              style: palette.surfaceRaised.applyTo(
-                textes.headlineSmall ?? const TextStyle(),
+              Ecart.vLg,
+            ],
+            Semantics(
+              header: true,
+              child: Text(
+                titre,
+                style: surface.applyTo(
+                  textes.headlineSmall ?? const TextStyle(),
+                ),
               ),
             ),
             Ecart.vLg,
             Flexible(child: SingleChildScrollView(child: child)),
             if (actions != null) ...<Widget>[Ecart.vXxl, actions!],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Le cadre de la boite de dialogue de bureau : centree, bornee a
+/// [AppPage.largeurDialogue], tenue a distance des bords, jamais plus haute que
+/// la fenetre (le corps defile dans [AppBottomSheet]).
+class _CadreDialogue extends StatelessWidget {
+  const _CadreDialogue({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xxxl),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppPage.largeurDialogue,
+            ),
+            // Un `Material` transparent : le texte et les controles du corps
+            // trouvent leur ancetre Material sans qu'aucune couleur ni ombre
+            // Material ne s'ajoute a celles d'AppElevation.
+            child: Material(type: MaterialType.transparency, child: child),
+          ),
         ),
       ),
     );

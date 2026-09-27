@@ -43,7 +43,7 @@ enum CoteDePage {
 abstract final class GeometrieMushaf {
   /// Quinze lignes par page.
   ///
-  /// Fixe par `docs/architecture/etape-5-salle-coran-presence.md` section 3.1,
+  /// Fixe par `docs/archive/2026-09-pre-remise-a-plat/architecture/etape-5-salle-coran-presence.md` section 3.1,
   /// avec la riwaya et les 604 pages. Les pages 1 et 2 font exception sur
   /// l'edition imprimee ; sans donnees de ligne, l'exception ne se rend pas.
   static const int lignesParPage = 15;
