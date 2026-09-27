@@ -12,15 +12,21 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
-import 'package:rewayah_academy/core/widgets/timeline_row.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/demo/demo_classe_page.dart'
+    show EcranPreparationEleveDemo, routesDemoClasse;
+import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
+
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 void main() {
   Widget app({required Widget child, List<Override> overrides = const []}) =>
@@ -93,7 +99,24 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     expect(find.text(DonneesAdulteDemo.ligneParcours), findsOneWidget);
-    expect(find.byType(TimelineRow), findsNWidgets(3));
+    // K-42 point 4 : chaque seance passee, sa date puis une seule ligne ; la
+    // Classe et l'enseignant ne sont pas repetes.
+    final Finder dernieres = find.byKey(
+      const ValueKey<String>('accueil-adulte-dernieres'),
+    );
+    for (final SeancePasseeAdulte s in DonneesAdulteDemo.dernieresSeances()) {
+      expect(
+        find.descendant(of: dernieres, matching: find.text(s.dateRendue)),
+        findsOneWidget,
+      );
+    }
+    expect(
+      find.descendant(
+        of: dernieres,
+        matching: find.text(DonneesClasseDemo.classe),
+      ),
+      findsNothing,
+    );
     // Une seule absence porte une pastille ; une presence n'en porte pas.
     expect(
       find.widgetWithText(StatusPill, t.adulte.accueil.absence),
@@ -102,17 +125,78 @@ void main() {
     expect(find.text(t.adulte.accueil.ressources), findsOneWidget);
   });
 
-  testWidgets('bureau : seance et « Avant » cote a cote', (
+  // Mesure avec les vraies polices du depot : la police de test par defaut
+  // donne a chaque glyphe la largeur d'un carre.
+  group('polices du depot', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('390 : la salutation tient sur une ligne, sans photo', (
+      WidgetTester tester,
+    ) async {
+      taille(tester, const Size(390, 844));
+      await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
+      final Finder titre = find.text(
+        t.adulte.accueil.salutation(prenom: 'Mamadou'),
+      );
+      final double police = tester.widget<Text>(titre).style!.fontSize!;
+      expect(tester.getSize(titre).height, lessThan(police * 2));
+      expect(find.byType(PhotoEleve), findsNothing);
+    });
+  });
+
+  testWidgets('bureau : seance et « Avant » cote a cote, a la meme hauteur', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(1440, 1000));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
-    final Offset carte = tester.getTopLeft(find.byType(CarteSession));
+    final Offset seance = tester.getTopLeft(
+      find.byKey(const ValueKey<String>('accueil-adulte-prochaine-seance')),
+    );
     final Offset avant = tester.getTopLeft(
       find.byType(EmplacementAvantProchainCours),
     );
-    expect(avant.dx, greaterThan(carte.dx));
-    expect(avant.dy, lessThan(carte.dy));
+    expect(avant.dx, greaterThan(seance.dx));
+    expect(avant.dy, moreOrLessEquals(seance.dy));
+  });
+
+  testWidgets('porte ouverte : le bouton de l\'emplacement mene a la '
+      'preparation', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    final GoRouter routeur = GoRouter(
+      initialLocation: adresseDemoAdulte(
+        EcranDemoAdulte.accueil,
+        seance: EtatDemoClasse.fenetreOuverte,
+      ),
+      routes: <RouteBase>[
+        ...routesDemoAdulte('dev'),
+        ...routesDemoClasse('dev'),
+      ],
+    );
+    addTearDown(routeur.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final Finder bouton = find.descendant(
+      of: find.byType(EmplacementEntreeVue),
+      matching: find.byType(ActionPrincipale),
+    );
+    expect(bouton, findsOneWidget);
+    await tester.ensureVisible(bouton);
+    await tester.tap(bouton);
+    await tester.pumpAndSettle();
+    expect(find.byType(EcranPreparationEleveDemo), findsOneWidget);
+    expect(find.byType(AccueilAdultePage), findsNothing);
   });
 
   testWidgets('vue du second adulte : son prenom', (WidgetTester tester) async {
@@ -160,6 +244,8 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.byType(SqueletteCarteSession), findsOneWidget);
+    // L'en-tete garde sa place : la cloche est deja posee.
+    expect(find.byType(ClocheNotifications), findsOneWidget);
     expect(find.byType(CarteSession), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -187,6 +273,7 @@ void main() {
   ) async {
     await tester.pumpWidget(app(child: const AccueilAdultePage()));
     await tester.pumpAndSettle();
+    expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
     expect(find.text(t.commun.reessayer), findsNothing);
     expect(find.byType(CarteSession), findsNothing);
   });
@@ -207,6 +294,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(t.adulte.accueil.aucuneClasse), findsOneWidget);
     expect(find.byType(CarteSession), findsNothing);
-    expect(find.byType(TimelineRow), findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('accueil-adulte-dernieres')),
+      findsNothing,
+    );
   });
 }

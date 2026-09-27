@@ -78,12 +78,15 @@ class EspaceGroupePage extends ConsumerWidget {
     // repeterait le libelle du chemin de sortie, juste en dessous.
     return PageShell(
       entete: const _Sortie(),
-      child: _Corps(
+      child: LecteurGroupe(
         groupeId: groupeId,
         role: role,
-        onRejoindre: onRejoindre,
-        onReprendreLeCours: onReprendreLeCours,
-        contenuRoster: contenuRoster,
+        construire: (BuildContext _, LectureGroupe lecture) => _Colonnes(
+          lecture: lecture,
+          onRejoindre: onRejoindre,
+          onReprendreLeCours: onReprendreLeCours,
+          contenuRoster: contenuRoster,
+        ),
       ),
     );
   }
@@ -118,20 +121,93 @@ class _Sortie extends StatelessWidget {
   }
 }
 
-class _Corps extends ConsumerWidget {
-  const _Corps({
-    required this.groupeId,
-    required this.role,
-    this.onRejoindre,
-    this.onReprendreLeCours,
-    this.contenuRoster,
+/// Ce qu'un groupe rend une fois lu : l'espace du role, et ce que la carte de
+/// seance CL-4 doit savoir du reseau et de l'horloge.
+///
+/// Partage par l'Espace Groupe et l'accueil de l'eleve adulte (EA-2, K-51) :
+/// la carte dit la meme chose ici et la-bas, parce qu'elle est lue et cablee
+/// au meme endroit.
+@immutable
+class LectureGroupe {
+  /// Cree la lecture.
+  const LectureGroupe({
+    required this.espace,
+    required this.portTravailBranche,
+    required this.horsLigne,
+    required this.annulee,
+    required this.lectureEchouee,
+    required this.onReessayer,
   });
 
+  /// L'espace du groupe pour le role qui regarde.
+  final GroupHomeVM espace;
+
+  /// Vrai quand le port du travail a venir est branche.
+  final bool portTravailBranche;
+
+  /// Vrai hors ligne : « Rejoindre » est alors desactive.
+  final bool horsLigne;
+
+  /// Vrai quand la seance du jour est annulee.
+  final bool annulee;
+
+  /// Vrai quand l'horloge n'a jamais pu etre lue.
+  final bool lectureEchouee;
+
+  /// Relit le reseau et l'horloge.
+  final VoidCallback onReessayer;
+
+  /// La carte de seance CL-4, cablee sur cette lecture. « Rejoindre » est
+  /// desactive hors ligne ou sans [onRejoindre].
+  Widget carte({void Function(GroupSummaryVM groupe)? onRejoindre}) {
+    final GroupSummaryVM identite = espace.identite;
+    return CarteSession(
+      espace: espace,
+      horsLigne: horsLigne,
+      annulee: annulee,
+      lectureEchouee: lectureEchouee,
+      onReessayer: onReessayer,
+      onRejoindre: horsLigne || onRejoindre == null
+          ? null
+          : () => onRejoindre(identite),
+    );
+  }
+
+  /// L'identite du groupe puis la carte de seance, dans cet ordre.
+  List<Widget> identiteEtCarte({
+    void Function(GroupSummaryVM groupe)? onRejoindre,
+  }) => <Widget>[
+    IdentiteGroupe(
+      groupe: espace.identite,
+      // Cote famille, une photo absente se replie sur les initiales, sans
+      // pastille : « Photo a fournir » est une information interne.
+      repliInitiales: espace.estCoteFamille,
+    ),
+    Ecart.vXl,
+    carte(onRejoindre: onRejoindre),
+  ];
+}
+
+/// Lit un groupe (identite, horloge, reseau, annulation, travail a venir) et
+/// rend [construire] sur la lecture ; le chargement, l'erreur et le groupe
+/// introuvable sont dits ici, une seule fois pour tous les ecrans.
+class LecteurGroupe extends ConsumerWidget {
+  /// Cree le lecteur.
+  const LecteurGroupe({
+    required this.groupeId,
+    required this.construire,
+    super.key,
+    this.role = RoleEspaceGroupe.eleve,
+  });
+
+  /// Le groupe a lire.
   final String groupeId;
+
+  /// Qui regarde.
   final RoleEspaceGroupe role;
-  final void Function(GroupSummaryVM groupe)? onRejoindre;
-  final void Function(GroupSummaryVM groupe)? onReprendreLeCours;
-  final Widget? contenuRoster;
+
+  /// Ce qui se construit sur la lecture.
+  final Widget Function(BuildContext context, LectureGroupe lecture) construire;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -149,15 +225,7 @@ class _Corps extends ConsumerWidget {
     }
 
     if (!lecture.hasValue) {
-      // La forme de ce qui arrive : l'identite, puis la carte de seance.
-      return const Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          ExcludeSemantics(child: Skeleton.tuileBento()),
-          Ecart.vXl,
-          SqueletteCarteSession(),
-        ],
-      );
+      return const SqueletteGroupe();
     }
 
     final GroupSummaryVM? trouve = lecture.requireValue;
@@ -196,20 +264,37 @@ class _Corps extends ConsumerWidget {
       // R17 : trois actions au plus.
       actions: actions.take(3).toList(),
     );
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
-    return _Colonnes(
-      espace: espace,
-      portTravailBranche: travail != null,
-      horsLigne: horsLigne,
-      annulee: ref.watch(seanceAnnuleeProvider(groupeId)),
-      lectureEchouee: flux.hasError && tic == null,
-      onReessayer: () => ref
-        ..invalidate(horsLigneProvider)
-        ..invalidate(horlogeGroupeProvider(groupeId)),
-      onRejoindre: onRejoindre,
-      onReprendreLeCours: onReprendreLeCours,
-      contenuRoster: contenuRoster,
+    return construire(
+      context,
+      LectureGroupe(
+        espace: espace,
+        portTravailBranche: travail != null,
+        horsLigne: ref.watch(horsLigneProvider).value ?? false,
+        annulee: ref.watch(seanceAnnuleeProvider(groupeId)),
+        lectureEchouee: flux.hasError && tic == null,
+        onReessayer: () => ref
+          ..invalidate(horsLigneProvider)
+          ..invalidate(horlogeGroupeProvider(groupeId)),
+      ),
+    );
+  }
+}
+
+/// La forme de ce qui arrive : l'identite, puis la carte de seance.
+class SqueletteGroupe extends StatelessWidget {
+  /// Cree le squelette.
+  const SqueletteGroupe({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ExcludeSemantics(child: Skeleton.tuileBento()),
+        Ecart.vXl,
+        SqueletteCarteSession(),
+      ],
     );
   }
 }
@@ -217,48 +302,26 @@ class _Corps extends ConsumerWidget {
 /// La page, composee par rangees (revue UX, ajustement n° 2).
 ///
 /// Rangee 1 : [identite + seance | Avant le prochain cours] ; rangee 2 :
-/// [bibliotheque | progression]. Deux colonnes seulement quand la largeur
-/// utile divisee par le facteur de texte atteint 840 (ajustements n° 3 et 4) ;
-/// en dessous, une colonne, dans le meme ordre. Chaque rangee est un
-/// `FocusTraversalGroup` : le focus parcourt une rangee avant la suivante.
+/// [bibliotheque | progression].
 class _Colonnes extends StatelessWidget {
   const _Colonnes({
-    required this.espace,
-    required this.portTravailBranche,
-    required this.horsLigne,
-    required this.onReessayer,
-    this.annulee = false,
-    this.lectureEchouee = false,
+    required this.lecture,
     this.onRejoindre,
     this.onReprendreLeCours,
     this.contenuRoster,
   });
 
-  final GroupHomeVM espace;
-  final bool portTravailBranche;
-  final bool horsLigne;
-  final bool annulee;
-  final bool lectureEchouee;
-  final VoidCallback onReessayer;
+  final LectureGroupe lecture;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(GroupSummaryVM groupe)? onReprendreLeCours;
   final Widget? contenuRoster;
 
   @override
   Widget build(BuildContext context) {
+    final GroupHomeVM espace = lecture.espace;
     final GroupSummaryVM identite = espace.identite;
-    final void Function(GroupSummaryVM groupe)? entrer = onRejoindre;
     final void Function(GroupSummaryVM groupe)? reprendre = onReprendreLeCours;
     final SlotRoster? roster = espace.roster;
-
-    final Widget session = CarteSession(
-      espace: espace,
-      horsLigne: horsLigne,
-      annulee: annulee,
-      lectureEchouee: lectureEchouee,
-      onReessayer: onReessayer,
-      onRejoindre: horsLigne || entrer == null ? null : () => entrer(identite),
-    );
 
     // R16 : contextuelle, jamais permanente. Rien a reprendre tant que la
     // seance n'a pas commence, et plus rien une fois qu'elle est close.
@@ -277,19 +340,12 @@ class _Colonnes extends StatelessWidget {
         : null;
 
     final List<Widget> identiteEtSeance = <Widget>[
-      IdentiteGroupe(
-        groupe: identite,
-        // Cote famille, une photo absente se replie sur les initiales, sans
-        // pastille : « Photo a fournir » est une information interne.
-        repliInitiales: espace.estCoteFamille,
-      ),
-      Ecart.vXl,
-      session,
+      ...lecture.identiteEtCarte(onRejoindre: onRejoindre),
       if (reprise != null) ...<Widget>[Ecart.vLg, reprise],
     ];
     final Widget avant = EmplacementAvantProchainCours(
       actions: espace.avantProchainCours,
-      portBranche: portTravailBranche,
+      portBranche: lecture.portTravailBranche,
     );
     final Widget bibliotheque = BlocBibliotheque(
       emplacement: espace.bibliotheque,
@@ -307,49 +363,54 @@ class _Colonnes extends StatelessWidget {
         BlocProgression(emplacement: espace.progression!),
     ];
 
+    return ColonnesParRangees(
+      rangees: <(List<Widget>, List<Widget>)>[
+        (identiteEtSeance, <Widget>[avant]),
+        (<Widget>[bibliotheque], secondaire),
+      ],
+    );
+  }
+}
+
+/// Des rangees de deux colonnes (la principale, deux tiers ; la laterale, un
+/// tiers), seulement quand la largeur utile divisee par le facteur de texte
+/// atteint 840 (ajustements n° 3 et 4) ; en dessous, une colonne, dans le
+/// meme ordre : la principale puis la laterale de chaque rangee. Chaque
+/// rangee est un `FocusTraversalGroup` : le focus parcourt une rangee avant
+/// la suivante. Partage par l'Espace Groupe et l'accueil de l'eleve adulte.
+class ColonnesParRangees extends StatelessWidget {
+  /// Cree la disposition.
+  const ColonnesParRangees({required this.rangees, super.key});
+
+  /// Les rangees, (principale, laterale), dans l'ordre de lecture.
+  final List<(List<Widget>, List<Widget>)> rangees;
+
+  @override
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) {
         final double facteur = MediaQuery.textScalerOf(contexte).scale(1);
         final bool deuxColonnes =
             contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
-
-        if (!deuxColonnes) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              FocusTraversalGroup(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    ...identiteEtSeance,
-                    Ecart.vSection,
-                    avant,
-                  ],
-                ),
-              ),
-              Ecart.vSection,
-              FocusTraversalGroup(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    bibliotheque,
-                    if (secondaire.isNotEmpty) ...<Widget>[
-                      Ecart.vSection,
-                      ...secondaire,
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          );
-        }
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            _Rangee(principale: identiteEtSeance, laterale: <Widget>[avant]),
-            Ecart.vSection,
-            _Rangee(principale: <Widget>[bibliotheque], laterale: secondaire),
+            for (final (int i, (List<Widget>, List<Widget>) r)
+                in rangees.indexed) ...<Widget>[
+              if (i > 0) Ecart.vSection,
+              if (deuxColonnes)
+                Rangee(principale: r.$1, laterale: r.$2)
+              else
+                FocusTraversalGroup(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      ...r.$1,
+                      if (r.$2.isNotEmpty) ...<Widget>[Ecart.vSection, ...r.$2],
+                    ],
+                  ),
+                ),
+            ],
           ],
         );
       },
@@ -359,10 +420,14 @@ class _Colonnes extends StatelessWidget {
 
 /// Une rangee de deux colonnes : la principale (deux tiers) et la laterale,
 /// separees de 24. Un groupe de focus.
-class _Rangee extends StatelessWidget {
-  const _Rangee({required this.principale, required this.laterale});
+class Rangee extends StatelessWidget {
+  /// Cree la rangee.
+  const Rangee({required this.principale, required this.laterale, super.key});
 
+  /// La colonne principale.
   final List<Widget> principale;
+
+  /// La colonne laterale.
   final List<Widget> laterale;
 
   @override

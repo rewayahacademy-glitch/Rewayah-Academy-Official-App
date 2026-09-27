@@ -362,10 +362,15 @@ class CoquilleAdulteDemo extends StatelessWidget {
             if (cible != null) context.go(_adresse(cible));
           },
           child: switch (ecran) {
+            // La cloche reste sans destination jusqu'a EA-8 (centre de
+            // notifications de l'eleve adulte) ; « Voir tout » ouvre Ma
+            // classe, qui porte la Bibliotheque (EA-3).
             EcranDemoAdulte.accueil => AccueilAdultePage(
               onRejoindre: (_) => context.go(
                 adressePreparationEleveDemo(PreparationEleveDemo.pret),
               ),
+              onVoirRessources: (_) =>
+                  context.go(_adresse(EcranDemoAdulte.maClasse)),
             ),
             EcranDemoAdulte.maClasse => _PageProvisoire(
               titre: t.adulte.nav.maClasse,

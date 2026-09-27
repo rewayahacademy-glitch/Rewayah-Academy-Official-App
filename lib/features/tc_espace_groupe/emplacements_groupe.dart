@@ -10,6 +10,7 @@ import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_bibliotheque/port_catalogue.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -127,36 +128,47 @@ class BlocBibliotheque extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final PortCatalogue catalogue = ref.watch(portCatalogueProvider);
+    final Widget entete = SectionHeader(
+      titre: titre ?? LibellesGroupe.bibliotheque,
+    );
+    final Widget? voirTout = onVoirTout == null
+        ? null
+        : IntrinsicWidth(
+            child: ActionPrincipale(
+              libelle: LibellesGroupe.bibliothequeVoirTout,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: onVoirTout,
+            ),
+          );
+    // A grande taille de texte, le titre prend toute la largeur et le lien
+    // passe dessous, au bord de debut : un titre borne aux deux tiers se
+    // couperait au milieu d'un mot (« Ressour / ces », revue EA-2).
+    final bool empile =
+        MediaQuery.textScalerOf(context).scale(1) >=
+        AppGabarit.seuilTexteColonne;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // « Voir tout » au bord de fin de l'en-tete, sur mobile comme sur
         // bureau : `IntrinsicWidth` donne au lien sa largeur naturelle,
-        // bornee par la place restante ; a 200 %, titre et lien passent a la
-        // ligne au lieu de deborder.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Flexible(
-              flex: 2,
-              child: SectionHeader(titre: titre ?? LibellesGroupe.bibliotheque),
-            ),
-            if (onVoirTout != null) ...<Widget>[
-              Ecart.hLg,
-              Flexible(
-                child: IntrinsicWidth(
-                  child: ActionPrincipale(
-                    libelle: LibellesGroupe.bibliothequeVoirTout,
-                    niveau: NiveauAction.tertiaire,
-                    pleineLargeur: false,
-                    onPress: onVoirTout,
-                  ),
-                ),
-              ),
+        // bornee par la place restante.
+        if (empile) ...<Widget>[
+          entete,
+          if (voirTout != null)
+            Align(alignment: AlignmentDirectional.centerStart, child: voirTout),
+        ] else
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(flex: 2, child: entete),
+              if (voirTout != null) ...<Widget>[
+                Ecart.hLg,
+                Flexible(child: voirTout),
+              ],
             ],
-          ],
-        ),
+          ),
         Ecart.vMd,
         _Couvertures(
           catalogue: catalogue,
