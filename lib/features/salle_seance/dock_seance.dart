@@ -442,9 +442,30 @@ class DockSeance extends StatelessWidget {
               if (!serre && !texteAgrandi) return rangee;
               // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
               // moins un ecart, jamais sous la cible tactile.
+              final double cible = AppMetriques.of(contexte).cibleTactile;
+              // UX_REVIEW_04 n. 17 d, WCAG 1.4.10 : quand la part egale
+              // tombe sous la cible (320), les boutons ne se partagent plus
+              // la largeur ; ils passent sur deux lignes, en cases fixes, et
+              // chaque disque garde la cible tactile.
+              if (parCase < cible + AppSpacing.xs) {
+                return _DockEtroit(
+                  diametre: cible,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    runSpacing: AppSpacing.sm,
+                    children: <Widget>[
+                      for (final Widget bouton in boutons)
+                        SizedBox(
+                          width: cible + AppSpacing.xs,
+                          child: Center(child: bouton),
+                        ),
+                    ],
+                  ),
+                );
+              }
               final double reduit = math.max(
                 math.min(diametre, parCase - AppSpacing.xs),
-                AppMetriques.of(contexte).cibleTactile,
+                cible,
               );
               return _DockEtroit(diametre: reduit, child: rangee);
             },

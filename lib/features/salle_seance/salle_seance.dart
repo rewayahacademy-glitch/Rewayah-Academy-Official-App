@@ -229,7 +229,12 @@ class _FocusPanneaux extends StatefulWidget {
 class _FocusPanneauxState extends State<_FocusPanneaux> {
   final FocusNode _focusEleves = FocusNode(debugLabel: 'bouton-eleves');
   final FocusNode _focusSupports = FocusNode(debugLabel: 'bouton-supports');
-  final FocusNode _focusSupport = FocusNode(debugLabel: 'support');
+  // Hors de l'ordre Tab : la zone n'est pas interactive (UX_REVIEW_04 n. 17 f) ;
+  // `requestFocus` y pose toujours le focus.
+  final FocusNode _focusSupport = FocusNode(
+    debugLabel: 'support',
+    skipTraversal: true,
+  );
 
   /// EN-12 (micro), decision du directeur du 27/09 : l'etat du micro obtenu
   /// (« Micro ouvert » ou « Micro coupe »), montre brievement et lu par le

@@ -154,7 +154,7 @@ void main() {
           'Le cahier est prêt avec les informations de la séance.',
           'Sayyid Ibrahim',
           'Fin',
-          '15:16',
+          '18:45',
           '2 élèves connectés',
           'sur 3 inscrits',
           'Cahier de séance',

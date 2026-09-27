@@ -8,6 +8,7 @@ import '../../core/coran/service_coran.dart' show PositionLecture;
 import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/vue_presence.dart';
@@ -71,10 +72,30 @@ class CahierPage extends ConsumerWidget {
     final bool enFile =
         ref.watch(cahiersEnFileProvider).value?.contains(seanceId) ?? false;
 
+    // K-42 §5 : l'en-tete dit quelle Classe et quelle seance, avec les
+    // libelles de « A terminer » (cahierLigne, cahierDetail). La Classe se
+    // lit dans la seance ou dans la ligne « A terminer » ; sinon, le titre
+    // generique reste.
+    SeanceEnseignant? seance;
+    for (final SeanceEnseignant s
+        in ref.watch(seancesEnseignantProvider).value ??
+            const <SeanceEnseignant>[]) {
+      if (s.id == seanceId) seance = s;
+    }
+    CahierEnRetard? enRetard;
+    for (final CahierEnRetard c
+        in ref.watch(cahiersEnRetardProvider).value ??
+            const <CahierEnRetard>[]) {
+      if (c.seanceId == seanceId) enRetard = c;
+    }
+    final String? classe = seance?.groupeLibelle ?? enRetard?.groupeLibelle;
+
     return _Cahier(
       seanceId: seanceId,
       vue: VueCahier.depuis(lecture: lecture),
       enFile: enFile,
+      classe: classe == null || classe.isEmpty ? null : classe,
+      debut: seance?.debut ?? enRetard?.debut,
     );
   }
 }
@@ -88,10 +109,18 @@ class _Cahier extends ConsumerStatefulWidget {
     required this.seanceId,
     required this.vue,
     this.enFile = false,
+    this.classe,
+    this.debut,
   });
 
   final String seanceId;
   final VueCahier vue;
+
+  /// Le nom de la Classe de la seance, s'il est connu.
+  final String? classe;
+
+  /// Le debut de la seance, tant que le brouillon ne l'a pas apporte.
+  final DateTime? debut;
 
   /// Vrai quand ce cahier, deja valide, attend le serveur dans la file locale.
   final bool enFile;
@@ -169,10 +198,18 @@ class _CahierState extends ConsumerState<_Cahier> {
     final SortCahier? sort =
         _sort ?? (widget.enFile && !_enCorrection ? SortCahier.enFile : null);
     _proposerReprise(vue);
+    final String? classe = widget.classe;
+    final String titre = classe == null
+        ? t.enseignant.cahier.titre
+        : t.enseignant.journee.cahierLigne(classe: deDevant(classe));
+    final DateTime? debut = vue.brouillon?.debut ?? widget.debut;
+    final String? sousTitre = debut == null ? null : _seanceDu(debut);
 
     if (sort != null) {
       return PageShell(
-        titre: t.enseignant.cahier.titre,
+        titre: titre,
+        sousTitre: sousTitre,
+        onRetour: _retourJournee,
         child: _ApresDepot(
           sort: sort,
           corrigeLe: _corrigeLe,
@@ -186,7 +223,9 @@ class _CahierState extends ConsumerState<_Cahier> {
         vue.etat == EtatCahier.dejaDepose && !_enCorrection;
 
     return PageShell(
-      titre: t.enseignant.cahier.titre,
+      titre: titre,
+      sousTitre: sousTitre,
+      onRetour: _retourJournee,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -532,6 +571,9 @@ class _Constat extends StatelessWidget {
     final String? devoir = d?.travailMaison;
     final String? legende = d != null && !d.confirme
         ? t.enseignant.cahier.exceptionConsignee
+        // K-45 : ce qui est consigne se relit avant de valider (EN-7).
+        : d?.pointPhonetique != null
+        ? t.enseignant.cahier.pointPhonetiqueNote
         : devoir != null
         ? '${t.enseignant.cahier.travailMaison} : $devoir'
         : p.unite?.nomHumain;
@@ -599,22 +641,8 @@ class _Resume extends StatelessWidget {
           ),
           Ecart.vSm,
         ],
-        // Doc 04 §20.3 et §33 n. 7 : de quelle seance il s'agit, avant la
-        // phrase de bonne foi (libelle de « A terminer »). Le nom de la
-        // Classe attend EN-BR : le brouillon ne porte que `groupeId`.
-        Text(
-          t.enseignant.journee.cahierDetail(
-            jour: t.commun.dates.jours[brouillon.debut.weekday - 1]
-                .toLowerCase(),
-            numero: '${brouillon.debut.day}',
-            mois: t.commun.dates.mois[brouillon.debut.month - 1],
-            heure:
-                '${brouillon.debut.hour.toString().padLeft(2, '0')}:'
-                '${brouillon.debut.minute.toString().padLeft(2, '0')}',
-          ),
-          style: textes.titleSmall,
-        ),
-        Ecart.vXs,
+        // Doc 04 §20.3 et §33 n. 7 : la seance est dite une fois, dans
+        // l'en-tete (K-42 §5), sous le nom de la Classe.
         // La duree du cahier est celle que la base a calculee, et une seule.
         Text(
           brouillon.minutesInterruption > 0
@@ -1096,3 +1124,13 @@ class _Borne extends StatelessWidget {
   Widget build(BuildContext context) =>
       borne ? IntrinsicWidth(child: child) : child;
 }
+
+/// « Seance du {jour} {numero} {mois} a {heure} » (libelle de « A terminer »).
+String _seanceDu(DateTime debut) => t.enseignant.journee.cahierDetail(
+  jour: t.commun.dates.jours[debut.weekday - 1].toLowerCase(),
+  numero: '${debut.day}',
+  mois: t.commun.dates.mois[debut.month - 1],
+  heure:
+      '${debut.hour.toString().padLeft(2, '0')}:'
+      '${debut.minute.toString().padLeft(2, '0')}',
+);

@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/libelles_salle_b.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/selecteur_ressources.dart';
@@ -216,6 +217,35 @@ void main() {
             'PNG ${await capturer(tester, 'en10_selecteur_${nom}_$theme')}',
           );
         });
+      }
+    }
+  });
+
+  // UX_REVIEW_04 n. 17 d, WCAG 1.4.10 : a 320, chaque disque du dock garde
+  // la cible tactile, sans chevauchement ni debordement.
+  testWidgets('EN-RC : a 320 x 640, chaque bouton du dock fait au moins 48', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(320, 640));
+    expect(tester.takeException(), isNull);
+    final Finder boutons = find.descendant(
+      of: _cle('dock-seance'),
+      matching: find.byType(BoutonAppel),
+    );
+    expect(boutons, findsWidgets);
+    final List<Rect> cases = <Rect>[
+      for (final Element e in boutons.evaluate())
+        tester.getRect(find.byWidget(e.widget)),
+    ];
+    for (final Rect r in cases) {
+      expect(r.width, greaterThanOrEqualTo(48));
+      expect(r.height, greaterThanOrEqualTo(48));
+      expect(r.left, greaterThanOrEqualTo(0));
+      expect(r.right, lessThanOrEqualTo(320));
+    }
+    for (int i = 0; i < cases.length; i++) {
+      for (int j = i + 1; j < cases.length; j++) {
+        expect(cases[i].overlaps(cases[j]), isFalse);
       }
     }
   });

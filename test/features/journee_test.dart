@@ -467,9 +467,10 @@ void main() {
       expect(find.text(t.enseignant.journee.aTerminer), findsOneWidget);
       expect(find.text(t.enseignant.journee.aTerminerAide), findsOneWidget);
       expect(find.byType(PointRappel), findsOneWidget);
+      // Le plus ancien d'abord (Q9) : Al-Badr, le plus recent, attend « Voir tout ».
       expect(
         find.text(
-          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Badr')),
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Ikhlas')),
         ),
         findsOneWidget,
       );
@@ -481,7 +482,7 @@ void main() {
       );
       expect(
         find.text(
-          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Ikhlas')),
+          t.enseignant.journee.cahierLigne(classe: deDevant('Al-Badr')),
         ),
         findsNothing,
       );

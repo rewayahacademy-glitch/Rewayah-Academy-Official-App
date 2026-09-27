@@ -11,8 +11,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
@@ -40,7 +40,7 @@ final Provider<List<OffreClasseDemo>?> offresClassesProvider =
 /// **Hebdomadaire, sans date** (E15) : aucun « 16 sept. », aucune navigation
 /// de semaine.
 ///
-/// Mobile : une colonne, « Mes disponibilites » puis « Classes disponibles ».
+/// Mobile : une colonne, les heures puis « Classes disponibles ».
 /// Bureau : deux colonnes, le planning hebdomadaire et les Classes (doc 04
 /// §15.3).
 class CreneauxPage extends StatelessWidget {
@@ -50,25 +50,24 @@ class CreneauxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Gabarit gabarit = AppGabarit.de(context);
-    final Widget heures = _Panneau(
-      titre: t.enseignant.creneaux.mesDisponibilites,
-      child: const _OngletHeures(),
-    );
+    // Le titre de la page dit deja « Disponibilites » : pas de sous-titre
+    // « Mes disponibilites » qui le repete (K-42 §1).
+    const Widget heures = _OngletHeures();
     const Widget classes = _ClassesDisponibles();
 
     return PageShell(
       // Le titre concorde avec la destination de la coquille.
       titre: t.nav.enseignant.creneaux,
       child: gabarit == Gabarit.desktop
-          ? Row(
+          ? const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(child: heures),
                 Ecart.hXxl,
-                const Expanded(child: classes),
+                Expanded(child: classes),
               ],
             )
-          : Column(
+          : const Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[heures, Ecart.vXxl, classes],
             ),
@@ -405,78 +404,44 @@ class _ClassesDisponiblesEtat extends ConsumerState<_ClassesDisponibles> {
               message: t.enseignant.creneaux.aucuneClasse,
               invitation: t.enseignant.creneaux.aucuneClasseDetail,
             )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
+          // K-42 §4 : un seul groupe a filets, une ligne par Classe, jamais
+          // une carte par Classe.
+          : GroupeReglages(
+              lignes: <LigneRubrique>[
                 for (final OffreClasseDemo offre in offres)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                    child: _CarteOffre(
-                      offre: offre,
-                      etat: _demandees.contains(offre.id)
-                          ? EtatOffreDemo.enAttenteValidation
-                          : offre.etat,
-                      onOuvrir: () => _ouvrir(offre),
-                    ),
+                  _ligneOffre(
+                    offre,
+                    _demandees.contains(offre.id)
+                        ? EtatOffreDemo.enAttenteValidation
+                        : offre.etat,
                   ),
               ],
             ),
     );
   }
-}
 
-/// Une Classe disponible : nom, niveau, langue, jours et heure, etat ecrit.
-class _CarteOffre extends StatelessWidget {
-  const _CarteOffre({
-    required this.offre,
-    required this.etat,
-    required this.onOuvrir,
-  });
-
-  final OffreClasseDemo offre;
-  final EtatOffreDemo etat;
-  final VoidCallback onOuvrir;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final (String mot, TonEtat ton) = _etat(etat);
+  /// Une Classe disponible : nom, niveau, langue, jours et heure. Seule
+  /// l'exception porte une pastille (E2) ; seule une Classe disponible
+  /// s'ouvre sur son detail, avec un chevron (ENS-06B).
+  LigneRubrique _ligneOffre(OffreClasseDemo offre, EtatOffreDemo etat) {
     final bool ouvrable = etat == EtatOffreDemo.disponible;
     final String heure = t.enseignant.creneaux.heure(
       heure: '${offre.creneau.heure}',
     );
-
-    return BentoTile(
-      // Seule une Classe disponible s'ouvre sur son detail (ENS-06B).
-      onPress: ouvrable ? onOuvrir : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Le nom puis l'etat, en retour a la ligne : « Limite de charge
-          // atteinte » ne tient pas a cote du nom sur 390 pixels.
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xs,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[
-              Text(offre.nom, style: textes.titleMedium),
-              StatusPill(libelle: mot, ton: ton),
-            ],
-          ),
-          Ecart.vXs,
-          Text(
-            '${t.creneaux.niveau(niveau: '${offre.niveau}')} · ${offre.langue}',
-            style: textes.bodySmall,
-          ),
-          Text('${_recurrence(offre)} · $heure', style: textes.bodySmall),
-          if (etat == EtatOffreDemo.limiteAtteinte) ...<Widget>[
-            Ecart.vSm,
-            // La charge de l'ENSEIGNANT, pas la capacite de la Classe
-            // (00_MAQUETTES, ENS-06 R3).
-            Text(t.enseignant.creneaux.limiteDetail, style: textes.bodySmall),
-          ],
-        ],
-      ),
+    final (String mot, TonEtat ton) = _etat(etat);
+    return LigneRubrique(
+      icone: AppIcons.classes,
+      libelle: offre.nom,
+      legende: <String>[
+        '${t.creneaux.niveau(niveau: '${offre.niveau}')} · ${offre.langue}',
+        '${_recurrence(offre)} · $heure',
+        // La charge de l'ENSEIGNANT, pas la capacite de la Classe
+        // (00_MAQUETTES, ENS-06 R3).
+        if (etat == EtatOffreDemo.limiteAtteinte)
+          t.enseignant.creneaux.limiteDetail,
+      ].join('\n'),
+      marque: ouvrable ? null : StatusPill(libelle: mot, ton: ton),
+      onPress: ouvrable ? () => _ouvrir(offre) : null,
     );
   }
 }

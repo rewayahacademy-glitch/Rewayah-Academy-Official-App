@@ -39,7 +39,7 @@ void main() {
           lignes.map((ClasseListee l) => l.groupe.libelle).toList(),
           <String>['An-Nour', 'Al-Badr', 'Al-Ikhlas'],
         );
-        // Le cahier du 26 septembre d'Al-Badr n'est pas valide (K-45).
+        // Le cahier du 24 septembre d'Al-Badr n'est pas valide (K-45).
         expect(
           lignes
               .where((ClasseListee l) => l.cahierAValider)

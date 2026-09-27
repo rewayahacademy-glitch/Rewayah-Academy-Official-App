@@ -525,10 +525,18 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           child: GroupeReglages(
             lignes: <LigneRubrique>[
               for (final CategorieBesoin c in CategorieBesoin.values)
+                // Toute la ligne choisit (contrat B, cibles larges) : la
+                // radio est une marque, hors de l'ordre Tab, pour ne pas
+                // faire un second arret.
                 LigneRubrique(
                   libelle: c.libelle,
                   icone: c.icone,
-                  controle: Radio<CategorieBesoin>(value: c),
+                  marque: ExcludeFocus(child: Radio<CategorieBesoin>(value: c)),
+                  onPress: () => setState(() {
+                    _categorie = c;
+                    _erreurCategorie = null;
+                    if (_erreurDetails != null) _validerDetails();
+                  }),
                 ),
             ],
           ),

@@ -386,16 +386,16 @@ abstract final class DonneesEnseignantDemo {
     );
     return <SeanceEnseignant>[
       seance(
-        'demo-seance-an-nour-2409',
+        'demo-seance-an-nour-2109',
         classes[0],
-        DateTime(2026, 9, 24, 18),
+        DateTime(2026, 9, 21, 18),
         StatutSeance.terminee,
         cahier: true,
       ),
       seance(
-        'demo-seance-al-badr-2609',
+        'demo-seance-al-badr-2409',
         classes[2],
-        DateTime(2026, 9, 26, 17),
+        DateTime(2026, 9, 24, 17),
         StatutSeance.terminee,
       ),
       seance(
@@ -419,15 +419,15 @@ abstract final class DonneesEnseignantDemo {
     ];
   }
 
-  /// Les cahiers : un a remplir (Al-Badr, 26 septembre), un valide.
+  /// Les cahiers : un a remplir (Al-Badr, 24 septembre), un valide.
   static const List<CahierDemo> cahiers = <CahierDemo>[
     CahierDemo(
-      seanceId: 'demo-seance-al-badr-2609',
+      seanceId: 'demo-seance-al-badr-2409',
       classeId: 'demo-classe-al-badr',
       etat: EtatCahierDemo.aRemplir,
     ),
     CahierDemo(
-      seanceId: 'demo-seance-an-nour-2409',
+      seanceId: 'demo-seance-an-nour-2109',
       classeId: 'demo-classe-an-nour',
       etat: EtatCahierDemo.valide,
     ),
@@ -437,14 +437,14 @@ abstract final class DonneesEnseignantDemo {
   static List<CahierEnRetard> cahiersEnRetard(EtatDemoEnseignant etat) {
     if (etat == EtatDemoEnseignant.vide) return const <CahierEnRetard>[];
     final ClasseEnseignantDemo c = classes[2];
-    final DateTime debut = DateTime(2026, 9, 26, 17);
+    final DateTime debut = DateTime(2026, 9, 24, 17);
     return <CahierEnRetard>[
       CahierEnRetard(
-        seanceId: 'demo-seance-al-badr-2609',
+        seanceId: 'demo-seance-al-badr-2409',
         debut: debut,
         fin: debut.add(const Duration(minutes: 45)),
         nbParticipants: c.eleves.length,
-        heuresDeRetard: 47,
+        heuresDeRetard: 95,
         groupeId: c.id,
         groupeLibelle: c.nom,
       ),
@@ -556,13 +556,13 @@ abstract final class DonneesEnseignantDemo {
     ),
   ];
 
-  /// Le brouillon du cahier d'Al-Badr, 26 septembre 2026, tel que
+  /// Le brouillon du cahier d'Al-Badr, 24 septembre 2026, tel que
   /// `brouillon_cahier()` le rendrait (ENS-04, EN-7) : Nour presente, Idris en
   /// retard, Aya absente. Nour et Idris se sont arretes au meme verset, ce qui
   /// donne la proposition de reprise. [deja] rend le cahier deja valide.
   static BrouillonCahier brouillonCahier({bool deja = false}) {
     final ClasseEnseignantDemo c = classes[2];
-    final DateTime debut = DateTime(2026, 9, 26, 17);
+    final DateTime debut = DateTime(2026, 9, 24, 17);
     const PositionLecture position = PositionLecture(
       page: 582,
       sourate: 78,
@@ -607,5 +607,5 @@ abstract final class DonneesEnseignantDemo {
   }
 
   /// La seance du cahier de demonstration.
-  static const String cahierDemoSeanceId = 'demo-seance-al-badr-2609';
+  static const String cahierDemoSeanceId = 'demo-seance-al-badr-2409';
 }

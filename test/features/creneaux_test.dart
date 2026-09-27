@@ -152,10 +152,7 @@ void main() {
       await _monter(tester);
 
       expect(find.text(t.nav.enseignant.creneaux), findsWidgets);
-      expect(
-        find.text(t.enseignant.creneaux.mesDisponibilites),
-        findsOneWidget,
-      );
+      expect(find.text(t.enseignant.creneaux.mesDisponibilites), findsNothing);
     });
 
     testWidgets('ni onglet « Eleves en attente », ni « Prendre… » (E1)', (
@@ -210,10 +207,14 @@ void main() {
         find.text(t.enseignant.creneaux.classesDisponibles),
         findsOneWidget,
       );
-      expect(find.text(t.enseignant.creneaux.etatDisponible), findsOneWidget);
+      // E2 : seule l'exception porte une pastille.
+      expect(find.text(t.enseignant.creneaux.etatDisponible), findsNothing);
       expect(find.text(t.enseignant.creneaux.etatEnAttente), findsOneWidget);
       expect(find.text(t.enseignant.creneaux.etatLimite), findsOneWidget);
-      expect(find.text(t.enseignant.creneaux.limiteDetail), findsOneWidget);
+      expect(
+        find.textContaining(t.enseignant.creneaux.limiteDetail),
+        findsOneWidget,
+      );
     });
 
     testWidgets('aucune offre : le texte vide du document §15.7', (

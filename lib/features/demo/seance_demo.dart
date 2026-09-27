@@ -90,7 +90,7 @@ abstract final class DonneesSeanceDemo {
         // L'intitule « Niveau » est celui de la fiche : la valeur seule ici.
         niveau: '1',
         objectifActuel: 'Chapitre 1 (les bonnes manières)',
-        derniereSeance: '24 sept. 2026',
+        derniereSeance: '21 sept. 2026',
         aReprendre: 'Pages 24 à 26',
         presenceRecente: '3 séances cette semaine',
         travailActuel: 'Écoute de la récitation',
@@ -104,7 +104,7 @@ abstract final class DonneesSeanceDemo {
       fiche: FicheEleveSeance(
         niveau: '1',
         objectifActuel: 'Chapitre 1 (les bonnes manières)',
-        derniereSeance: '24 sept. 2026',
+        derniereSeance: '21 sept. 2026',
         aReprendre: 'Pages 20 à 23',
         presenceRecente: '2 séances cette semaine',
         travailActuel: 'Lecture du chapitre',
@@ -116,7 +116,7 @@ abstract final class DonneesSeanceDemo {
       fiche: FicheEleveSeance(
         niveau: '1',
         objectifActuel: 'Chapitre 1 (les bonnes manières)',
-        derniereSeance: '24 sept. 2026',
+        derniereSeance: '21 sept. 2026',
         aReprendre: 'Pages 24 à 26',
         presenceRecente: '3 séances cette semaine',
         travailActuel: 'Écoute de la récitation',
@@ -206,7 +206,7 @@ abstract final class DonneesSeanceDemo {
   );
 
   static const FinSeance fin = FinSeance(
-    heureFin: '15:16',
+    heureFin: '18:45',
     cahierACompleter: true,
   );
 
